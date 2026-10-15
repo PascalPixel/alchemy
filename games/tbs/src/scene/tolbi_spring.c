@@ -35,12 +35,12 @@
 #include "frame.h"
 
 // 前方宣言
-static void TorebiIzumi_RiseAndFadeIn(void);
-static void TorebiIzumi_OfferLuckyWheels(s32 spoken);
-static s32 TorebiIzumi_RunSpringGame(void);
+static void TolbiSpring_RiseAndFadeIn(void);
+static void TolbiSpring_OfferLuckyWheels(s32 spoken);
+static s32 TolbiSpring_RunSpringGame(void);
 static s32 SceneDialogue_PickTopicVariantId(s32 topic);
 static void SceneState_InitFourActorRecordsAndInstallTask(void);
-static s32 TorebiIzumi_RunSpringRide(s32 side);
+static s32 TolbiSpring_RunSpringRide(s32 side);
 
 struct SpringPoint
 {
@@ -84,7 +84,7 @@ static __inline__ void Io_SetBlendAlpha(s32 value)
 
 u8 *SceneData_GetSceneTableA(void)
 {
-	return TorebiIzumi_SceneTableA;
+	return TolbiSpring_SceneTableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -94,21 +94,21 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTableB(void)
 {
-	return TorebiIzumi_SceneTableB;
+	return TolbiSpring_SceneTableB;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_TorebiIzumi2)
+	if (gGameState.scene == (s32)&SceneId_TolbiSpring2)
 	{
-		return gTorebiIzumiPlacements2;
+		return gTolbiSpringPlacements2;
 	}
-	return gTorebiIzumiPlacementsOther;
+	return gTolbiSpringPlacementsOther;
 }
 
 static void EV27_TALK(s32 object)
 {
-	s32 question = MsgTorebiLuckyMedal;
+	s32 question = MsgTolbiLuckyMedal;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(object, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -125,7 +125,7 @@ static void EV27_TALK(s32 object)
 
 static void EV11_TALK(s32 object)
 {
-	s32 question = MsgTorebiYerFirstTime;
+	s32 question = MsgTolbiYerFirstTime;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(object, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -147,19 +147,19 @@ static void EV80_SEARCH(void)
 	if (GameFlag_IsSet(0x200) == 0)
 	{
 		Engine_GameFlagSet(0x200);
-		TorebiIzumi_RiseAndFadeIn();
+		TolbiSpring_RiseAndFadeIn();
 	}
 	Engine_EventBegin();
 	Engine_ActorWalkToAndWait(leader, 120, 152);
 	Engine_ActorFaceDirection(leader, 0x4000, 0);
-	TorebiIzumi_RunSpringGame();
+	TolbiSpring_RunSpringGame();
 	Engine_EventEnd();
 }
 
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiLuckyWheelsRulesPullLever);
+	Engine_EventSetMessage(MsgTolbiLuckyWheelsRulesPullLever);
 	Engine_EventOpenMessage(-1, 0);
 	Engine_EventEnd();
 }
@@ -167,33 +167,33 @@ static void EV15_TALK(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiLuckyWheelsPrizesPrizesDetermined);
+	Engine_EventSetMessage(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
 	Engine_EventOpenMessage(-1, 0);
 	Engine_EventEnd();
 }
 
 static void EV08_TALK(void)
 {
-	TorebiIzumi_OfferLuckyWheels(0);
+	TolbiSpring_OfferLuckyWheels(0);
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_TorebiIzumi2)
+	if (gGameState.scene == (s32)&SceneId_TolbiSpring2)
 	{
-		return gTorebiIzumiEvents2;
+		return gTolbiSpringEvents2;
 	}
-	return gTorebiIzumiEventsOther;
+	return gTolbiSpringEventsOther;
 }
 
-s32 TorebiIzumi_OpenScene(void)
+s32 TolbiSpring_OpenScene(void)
 {
 	s32 diff;
 	s8 *list;
 	s32 i;
 	s32 item;
 
-	if (gGameState.scene == (s32)&SceneId_TorebiIzumi2)
+	if (gGameState.scene == (s32)&SceneId_TolbiSpring2)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Io_Write16(0x3f42, &REG_BLDCNT);
@@ -254,14 +254,14 @@ s32 TorebiIzumi_OpenScene(void)
 					Engine_AudioPlayCue(91);
 				}
 				Engine_EventWait(20);
-				Engine_EventSetMessage(MsgTorebiYaWonNumber);
+				Engine_EventSetMessage(MsgTolbiYaWonNumber);
 				UiWork_PushValueSlot(diff, 5);
 				Engine_EventShowMessage(9, 0);
 				AudioCommand_WaitForStateByteClear();
 			}
 			else if (diff < 0)
 			{
-				Engine_EventSetMessage(MsgTorebiYaLostNumber);
+				Engine_EventSetMessage(MsgTolbiYaLostNumber);
 				UiWork_PushValueSlot(-diff, 5);
 				Engine_EventShowMessage(9, 0);
 			}
@@ -276,11 +276,11 @@ s32 TorebiIzumi_OpenScene(void)
 			Engine_EventWait(10);
 			if (list[0] == -1)
 			{
-				TorebiIzumi_OfferLuckyWheels(1);
+				TolbiSpring_OfferLuckyWheels(1);
 			}
 			else if (list[0] != -2)
 			{
-				Engine_EventSetMessage(MsgTorebiCongratulations);
+				Engine_EventSetMessage(MsgTolbiCongratulations);
 				Engine_EventShowMessage(8, 0);
 				if (*list != -1)
 				{
@@ -288,11 +288,11 @@ s32 TorebiIzumi_OpenScene(void)
 					{
 						if (i == 0)
 						{
-							Engine_EventSetMessage(MsgTorebiWonItemGo);
+							Engine_EventSetMessage(MsgTolbiWonItemGo);
 						}
 						else
 						{
-							Engine_EventSetMessage(MsgTorebiWonItemGo2);
+							Engine_EventSetMessage(MsgTolbiWonItemGo2);
 						}
 						item = SceneDialogue_PickTopicVariantId(list[i]);
 						UiWork_PushValueSlot(item, 2);
@@ -305,7 +305,7 @@ s32 TorebiIzumi_OpenScene(void)
 					}
 				}
 				gGameState.won_prizes[0] = -2;
-				Engine_EventSetMessage(MsgTorebiComeAgain);
+				Engine_EventSetMessage(MsgTolbiComeAgain);
 				Engine_EventShowMessage(8, 0);
 			}
 			Engine_EventEnd();
@@ -314,7 +314,7 @@ s32 TorebiIzumi_OpenScene(void)
 	return 0;
 }
 
-static void TorebiIzumi_RevealPrize(s32 item)
+static void TolbiSpring_RevealPrize(s32 item)
 {
 	Engine_EventBegin();
 	Engine_EventWait(30);
@@ -419,7 +419,7 @@ static void TorebiIzumi_RevealPrize(s32 item)
 	Engine_EventEnd();
 }
 
-static void TorebiIzumi_RiseAndFadeIn(void)
+static void TolbiSpring_RiseAndFadeIn(void)
 {
 	u8		  *p = gMapWork[0];
 	const u16 *step;
@@ -432,7 +432,7 @@ static void TorebiIzumi_RiseAndFadeIn(void)
 		((struct FieldActor *)p)->y.fixed -= 0x10000;
 		Engine_TaskWait(4);
 	}
-	step = TorebiIzumi_AlphaSteps;
+	step = TolbiSpring_AlphaSteps;
 	for (i = 0; i < 8; i++)
 	{
 		Io_Write16(0x3f42, &REG_BLDCNT);
@@ -441,7 +441,7 @@ static void TorebiIzumi_RiseAndFadeIn(void)
 	}
 }
 
-static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
+static void TolbiSpring_OfferLuckyWheels(s32 spoken)
 {
 	s32 tickets = PartyInventory_CountItem(228);
 	s32 room;
@@ -449,7 +449,7 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 	ObjectTable_Snapshot();
 	if (spoken == 0)
 	{
-		s32 message = MsgTorebiStepRightTry;
+		s32 message = MsgTolbiStepRightTry;
 
 		Engine_EventSetMessage(message);
 		Engine_EventShowMessage(8, 0);
@@ -479,7 +479,7 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 		}
 		if (room <= 6 && Engine_EventChooseYesNo(0, 0) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiGetRidItems);
+			Engine_EventSetMessage(MsgTolbiGetRidItems);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
@@ -488,23 +488,23 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 	{
 		if (tickets == 0)
 		{
-			Engine_EventSetMessage(MsgTorebiBadComeBack);
+			Engine_EventSetMessage(MsgTolbiBadComeBack);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
-		Engine_EventSetMessage(MsgTorebiBadLikeUse);
+		Engine_EventSetMessage(MsgTolbiBadLikeUse);
 		Engine_EventOpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiComeAgain);
+			Engine_EventSetMessage(MsgTolbiComeAgain);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
 	}
-	Engine_EventSetMessage(MsgTorebiStepRightEnjoy);
+	Engine_EventSetMessage(MsgTolbiStepRightEnjoy);
 	Engine_EventShowMessage(8, 0);
 	Event_RequestDestination(508, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiSpring1, 12);
 }
 
 static void EV09_TALK(void)
@@ -517,13 +517,13 @@ static void EV09_TALK(void)
 	coins = gGameState.coins;
 	if (coins < cost)
 	{
-		Engine_EventSetMessage(MsgTorebiYaDontEnough);
+		Engine_EventSetMessage(MsgTolbiYaDontEnough);
 		Engine_EventOpenMessage(9, 0);
 		return;
 	}
 	*(u32 *)gSceneState = coins;
 	ObjectTable_Snapshot();
-	Engine_EventSetMessage(MsgTorebiBuddyWannaTry);
+	Engine_EventSetMessage(MsgTolbiBuddyWannaTry);
 	UiWork_PushValueSlot(cost, 5);
 	Engine_EventOpenMessage(9, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -534,7 +534,7 @@ static void EV09_TALK(void)
 		Engine_ActorFaceDirection(0, 0x8000, 0);
 		Engine_EventWait(20);
 		Event_RequestDestination(0x1fd, 0);
-		Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 13);
+		Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiSpring1, 13);
 	}
 	else
 	{
@@ -563,7 +563,7 @@ static void EV09_TALK(void)
 #define TOSS_WIDTH 10
 #endif
 
-static s32 TorebiIzumi_RunSpringGame(void)
+static s32 TolbiSpring_RunSpringGame(void)
 {
 	s32				  choice = 0;
 	s32				  text;
@@ -580,7 +580,7 @@ static s32 TorebiIzumi_RunSpringGame(void)
 
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	message = MsgTorebiThrow;
+	message = MsgTolbiThrow;
 #if EDITION_INTERNATIONAL
 	state = &gGameState;
 prompt:
@@ -590,7 +590,7 @@ prompt:
 	Event_OpenMessage(-1, 0);
 	window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
 	{
-		text = MsgTorebiCoins;
+		text = MsgTolbiCoins;
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
@@ -635,7 +635,7 @@ prompt:
 	}
 	window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
 	{
-		text = MsgTorebiToss;
+		text = MsgTolbiToss;
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
 	}
@@ -659,11 +659,11 @@ prompt:
 	}
 	UiWork_Finalize(window, 2);
 #else
-	/* FAKEMATCH: whole marker ids swap message/label registers; keep message in r10 and label in r9. 2026-10-11: writing the marker as text + 2 matches in tbs-ja (the pool word becomes MsgTorebiCoins+2) but the id gate refuses an id with an addend (O3), so both barriers stay. */
+	/* FAKEMATCH: whole marker ids swap message/label registers; keep message in r10 and label in r9. 2026-10-11: writing the marker as text + 2 matches in tbs-ja (the pool word becomes MsgTolbiCoins+2) but the id gate refuses an id with an addend (O3), so both barriers stay. */
 	asm("" : "+r"(message));
 	for (;;)
 	{
-		text = MsgTorebiCoins;
+		text = MsgTolbiCoins;
 		/* FAKEMATCH: keep the coin label in r9; otherwise the repeated marker takes fp and moves state into r9. */
 		asm("" : "+r"(text));
 		state = &gGameState;
@@ -674,10 +674,10 @@ prompt:
 		window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
-		UiText_DrawCharacterAtOffset(MsgTorebiCounterMarker, window, 104, 0);
+		UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
 		UiText_DrawNumberInWindow(tickets, 6, window, NUMBER_X, 8);
-		UiText_DrawCharacterAtOffset(MsgTorebiCounterMarker, window, 104, 8);
+		UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 8);
 		choice = Menu_SelectEntry20To21(choice);
 		UiWork_Finalize(window, 2);
 		UiWork_FinalizePendingCore();
@@ -717,7 +717,7 @@ prompt:
 			}
 		}
 		window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
-		result = MsgTorebiToss;
+		result = MsgTolbiToss;
 		UiText_DrawCharacterAtOffset(result, window, 0, 0);
 		UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
 		Task_Wait(5);
@@ -752,17 +752,17 @@ prompt:
 		{
 			PartyInventory_Remove(229);
 		}
-		result = TorebiIzumi_RunSpringRide(choice);
+		result = TolbiSpring_RunSpringRide(choice);
 		if (choice == 0)
 		{
 			if (result != 4)
 			{
 				Party_AdjustCoins(
-					((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result]);
+					((struct { u16 coins[1]; } *)TolbiSpring_CoinPrizes)->coins[result]);
 				Event_PlayCue(91);
 				UiWork_PushValueSlot(
-					((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result], 5);
-				Event_SetMessage(MsgTorebiWonNumberCoin);
+					((struct { u16 coins[1]; } *)TolbiSpring_CoinPrizes)->coins[result], 5);
+				Event_SetMessage(MsgTolbiWonNumberCoin);
 				Event_ShowMessage(-1, 0);
 			}
 			else
@@ -797,7 +797,7 @@ prompt:
 			{
 				i = 14;
 			}
-			TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)TorebiIzumi_PrizeItems)->prize[i]);
+			TolbiSpring_RevealPrize(((struct { s32 prize[1]; } *)TolbiSpring_PrizeItems)->prize[i]);
 
 #if EDITION_INTERNATIONAL
 			/* FAKEMATCH: the pointer pair keeps the native prize-weight base
@@ -867,10 +867,10 @@ static s32 SceneDialogue_PickTopicVariantId(s32 topic)
 
 	gGameState.won_prizes[8 + topic] = variant;
 
-	return TorebiIzumi_TopicIds[topic * 3 + variant];
+	return TolbiSpring_TopicIds[topic * 3 + variant];
 }
 
-static void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
+static void TolbiSpring_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 {
 	u8 *actor = (u8 *)Object_GetById(id);
 	u8 *sprite;
@@ -915,7 +915,7 @@ static void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 v
 	}
 }
 
-static void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
+static void TolbiSpring_SetActorActive(s32 arg0, s32 arg1)
 {
 	struct FieldActor *entry = Object_GetById(arg0);
 
@@ -927,17 +927,17 @@ static void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
 	}
 }
 
-static struct SpringRide TorebiIzumi_Ride;
+static struct SpringRide TolbiSpring_Ride;
 
-static s32 TorebiIzumi_RideSide;
+static s32 TolbiSpring_RideSide;
 
-static s32 TorebiIzumi_RideUnknown[3];
+static s32 TolbiSpring_RideUnknown[3];
 
-static struct SpringActor TorebiIzumi_ActorRecords[4];
+static struct SpringActor TolbiSpring_ActorRecords[4];
 
-static s32 TorebiIzumi_RideFrame;
-static s32 TorebiIzumi_RideEnded;
-static s32 TorebiIzumi_RideResult;
+static s32 TolbiSpring_RideFrame;
+static s32 TolbiSpring_RideEnded;
+static s32 TolbiSpring_RideResult;
 
 static void FieldScene_RunSecondaryScript(void)
 {
@@ -956,7 +956,7 @@ static void FieldScene_RunSecondaryScript(void)
 	/* FAKEMATCH: never used; the reference's frame keeps twelve bytes that no instruction touches. */
 	struct SpringPoint spare;
 
-	ride = &TorebiIzumi_Ride;
+	ride = &TolbiSpring_Ride;
 	i = 3;
 	do
 	{
@@ -979,7 +979,7 @@ static void FieldScene_RunSecondaryScript(void)
 			if (ride->velocity.y != 0)
 			{
 				ride->velocity.y = 0;
-				if (TorebiIzumi_RideSide == 1)
+				if (TolbiSpring_RideSide == 1)
 				{
 					Object_SetMode(Object_GetById(17), 1);
 				}
@@ -1018,45 +1018,45 @@ static void FieldScene_RunSecondaryScript(void)
 				}
 				if (ride->velocity.x == 0 && ride->velocity.z == 0)
 				{
-					if (TorebiIzumi_RideSide == 1)
+					if (TolbiSpring_RideSide == 1)
 					{
 						Object_SetMode(Object_GetById(17), 2);
-						TorebiIzumi_SetActorActive(15, 0);
-						TorebiIzumi_SetActorActive(14, 0);
-						TorebiIzumi_SetActorActive(13, 0);
+						TolbiSpring_SetActorActive(15, 0);
+						TolbiSpring_SetActorActive(14, 0);
+						TolbiSpring_SetActorActive(13, 0);
 					}
 					else
 					{
 						Object_SetMode(Object_GetById(12), 2);
-						TorebiIzumi_SetActorActive(10, 0);
-						TorebiIzumi_SetActorActive(9, 0);
-						TorebiIzumi_SetActorActive(8, 0);
+						TolbiSpring_SetActorActive(10, 0);
+						TolbiSpring_SetActorActive(9, 0);
+						TolbiSpring_SetActorActive(8, 0);
 					}
 					{
 						s32 dx = (0x780000 - ride->trail[0].x) >> 16;
 						s32 dz = (0x470000 - ride->trail[0].z) >> 16;
 						s32 dist = dx * dx + dz * dz;
 
-						TorebiIzumi_RideEnded = 1;
+						TolbiSpring_RideEnded = 1;
 						if (dist <= 224)
 						{
-							TorebiIzumi_RideResult = 0;
+							TolbiSpring_RideResult = 0;
 						}
 						else if (dist <= 624)
 						{
-							TorebiIzumi_RideResult = 1;
+							TolbiSpring_RideResult = 1;
 						}
 						else if (dist <= 1088)
 						{
-							TorebiIzumi_RideResult = 2;
+							TolbiSpring_RideResult = 2;
 						}
 						else if (dist <= 1680)
 						{
-							TorebiIzumi_RideResult = 3;
+							TolbiSpring_RideResult = 3;
 						}
 						else
 						{
-							TorebiIzumi_RideResult = 4;
+							TolbiSpring_RideResult = 4;
 						}
 					}
 				}
@@ -1165,7 +1165,7 @@ static void FieldScene_RunSecondaryScript(void)
 	i = 0;
 	do
 	{
-		rec = &TorebiIzumi_ActorRecords[i];
+		rec = &TolbiSpring_ActorRecords[i];
 
 		if (rec->react > 0)
 		{
@@ -1353,20 +1353,20 @@ static void FieldScene_RunSecondaryScript(void)
 		switch (i)
 		{
 		case 0:
-			TorebiIzumi_PlaceActor(
-				18, &rec->x, 0, TorebiIzumi_SliderFrames[rec->mode], (rec->mode << 4) + 16);
+			TolbiSpring_PlaceActor(
+				18, &rec->x, 0, TolbiSpring_SliderFrames[rec->mode], (rec->mode << 4) + 16);
 			break;
 		case 1:
-			TorebiIzumi_PlaceActor(
-				19, &rec->x, 0, TorebiIzumi_SliderFrames[rec->mode], (rec->mode << 4) + 16);
+			TolbiSpring_PlaceActor(
+				19, &rec->x, 0, TolbiSpring_SliderFrames[rec->mode], (rec->mode << 4) + 16);
 			break;
 		case 2:
-			TorebiIzumi_PlaceActor(20, &rec->x, 0x8000 - rec->heading,
-				TorebiIzumi_CircleFrames[rec->mode], (rec->mode << 4) + 16);
+			TolbiSpring_PlaceActor(20, &rec->x, 0x8000 - rec->heading,
+				TolbiSpring_CircleFrames[rec->mode], (rec->mode << 4) + 16);
 			break;
 		case 3:
-			TorebiIzumi_PlaceActor(21, &rec->x, 0xffff - rec->heading,
-				TorebiIzumi_CircleFrames[rec->mode], (rec->mode << 4) + 16);
+			TolbiSpring_PlaceActor(21, &rec->x, 0xffff - rec->heading,
+				TolbiSpring_CircleFrames[rec->mode], (rec->mode << 4) + 16);
 			break;
 		}
 
@@ -1377,24 +1377,24 @@ static void FieldScene_RunSecondaryScript(void)
 	ride->shadow.y = 0;
 	ride->shadow.z = ride->trail[0].z;
 
-	if (TorebiIzumi_RideSide == 1)
+	if (TolbiSpring_RideSide == 1)
 	{
-		TorebiIzumi_PlaceActor(17, &ride->trail[0].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(16, &ride->shadow.x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(15, &ride->trail[1].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(14, &ride->trail[2].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(13, &ride->trail[3].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(17, &ride->trail[0].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(16, &ride->shadow.x, 0, 0, 16);
+		TolbiSpring_PlaceActor(15, &ride->trail[1].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(14, &ride->trail[2].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(13, &ride->trail[3].x, 0, 0, 16);
 		Object_SetMode(Object_GetById(15), 4);
 		Object_SetMode(Object_GetById(14), 4);
 		Object_SetMode(Object_GetById(13), 4);
 	}
 	else
 	{
-		TorebiIzumi_PlaceActor(12, &ride->trail[0].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(11, &ride->shadow.x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(10, &ride->trail[1].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(9, &ride->trail[2].x, 0, 0, 16);
-		TorebiIzumi_PlaceActor(8, &ride->trail[3].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(12, &ride->trail[0].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(11, &ride->shadow.x, 0, 0, 16);
+		TolbiSpring_PlaceActor(10, &ride->trail[1].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(9, &ride->trail[2].x, 0, 0, 16);
+		TolbiSpring_PlaceActor(8, &ride->trail[3].x, 0, 0, 16);
 		Object_SetMode(Object_GetById(10), 4);
 		Object_SetMode(Object_GetById(9), 4);
 		Object_SetMode(Object_GetById(8), 4);
@@ -1408,17 +1408,17 @@ static void FieldScene_RunSecondaryScript(void)
 
 static void SceneState_InitFourActorRecordsAndInstallTask(void)
 {
-	struct SpringRide *ride = &TorebiIzumi_Ride;
+	struct SpringRide *ride = &TolbiSpring_Ride;
 	s32				   i = 0;
 	u8				  *xtbl;
 	u16				  *htbl;
 	u8				  *rec;
 	u8				  *ztbl;
 
-	xtbl = (u8 *)TorebiIzumi_ActorTileX;
-	rec = (u8 *)TorebiIzumi_ActorRecords;
-	htbl = (u16 *)TorebiIzumi_ActorHeadings;
-	ztbl = (u8 *)TorebiIzumi_ActorTileZ;
+	xtbl = (u8 *)TolbiSpring_ActorTileX;
+	rec = (u8 *)TolbiSpring_ActorRecords;
+	htbl = (u16 *)TolbiSpring_ActorHeadings;
+	ztbl = (u8 *)TolbiSpring_ActorTileZ;
 
 	do
 	{
@@ -1457,25 +1457,25 @@ static void SceneState_InitFourActorRecordsAndInstallTask(void)
 	}
 }
 
-static s32 TorebiIzumi_RunSpringRide(s32 side)
+static s32 TolbiSpring_RunSpringRide(s32 side)
 {
 	struct SpringRide *ride;
 
-	ride = &TorebiIzumi_Ride;
+	ride = &TolbiSpring_Ride;
 	ride->trail[0].y = 0;
 	ride->trail[1].y = 0;
 	ride->trail[2].y = 0;
 	ride->trail[3].y = 0;
-	TorebiIzumi_RideSide = side;
-	TorebiIzumi_RideEnded = 0;
+	TolbiSpring_RideSide = side;
+	TolbiSpring_RideEnded = 0;
 	ride->hold = 0xffff;
-	for (TorebiIzumi_RideFrame = 0;; TorebiIzumi_RideFrame++)
+	for (TolbiSpring_RideFrame = 0;; TolbiSpring_RideFrame++)
 	{
-		if (TorebiIzumi_RideFrame == 50)
+		if (TolbiSpring_RideFrame == 50)
 		{
 			Engine_AudioPlayCue(300);
 		}
-		if (TorebiIzumi_RideFrame == 16)
+		if (TolbiSpring_RideFrame == 16)
 		{
 			Engine_ActorSetAnimation(gGameState.selected_actor, 29);
 			ride->hold = 0;
@@ -1486,33 +1486,33 @@ static s32 TorebiIzumi_RunSpringRide(s32 side)
 			ride->trail[0].y = 0x100000;
 			ride->trail[0].z = 0x980000;
 			ride->frames = 300;
-			if (TorebiIzumi_RideSide == 1)
+			if (TolbiSpring_RideSide == 1)
 			{
 				Object_SetMode(Object_GetById(16), 3);
 				Object_SetMode(Object_GetById(17), 0);
-				TorebiIzumi_SetActorActive(15, 1);
-				TorebiIzumi_SetActorActive(14, 1);
-				TorebiIzumi_SetActorActive(13, 1);
+				TolbiSpring_SetActorActive(15, 1);
+				TolbiSpring_SetActorActive(14, 1);
+				TolbiSpring_SetActorActive(13, 1);
 			}
 			else
 			{
 				Object_SetMode(Object_GetById(11), 3);
 				Object_SetMode(Object_GetById(12), 0);
-				TorebiIzumi_SetActorActive(10, 1);
-				TorebiIzumi_SetActorActive(9, 1);
-				TorebiIzumi_SetActorActive(8, 1);
+				TolbiSpring_SetActorActive(10, 1);
+				TolbiSpring_SetActorActive(9, 1);
+				TolbiSpring_SetActorActive(8, 1);
 			}
 		}
 		Engine_TaskWait(1);
-		if (TorebiIzumi_RideEnded == 1)
+		if (TolbiSpring_RideEnded == 1)
 		{
 			break;
 		}
 	}
-	return TorebiIzumi_RideResult;
+	return TolbiSpring_RideResult;
 }
 
-const struct SceneEntrance TorebiIzumi_SceneTableA[] = {
+const struct SceneEntrance TolbiSpring_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1523,7 +1523,7 @@ const struct SceneEntrance TorebiIzumi_SceneTableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-const u32 TorebiIzumi_SceneTableB[] = {
+const u32 TolbiSpring_SceneTableB[] = {
 	SCENE_EXITS(189),
 	SCENE_EXIT_IF(1, 135, 20, 0xffffffff),
 	SCENE_EXIT(0, 137, 0),
@@ -1532,7 +1532,7 @@ const u32 TorebiIzumi_SceneTableB[] = {
 	SCENE_EXITS_END,
 };
 
-const struct ScenePlacement gTorebiIzumiPlacements2[] = {
+const struct ScenePlacement gTolbiSpringPlacements2[] = {
 	{ 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1578,7 +1578,7 @@ const struct ScenePlacement gTorebiIzumiPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gTorebiIzumiPlacementsOther[] = {
+const struct ScenePlacement gTolbiSpringPlacementsOther[] = {
 	{ 0x94, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(144), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1604,82 +1604,82 @@ const struct ScenePlacement gTorebiIzumiPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-const struct SceneEvent gTorebiIzumiEventsOther[] = {
+const struct SceneEvent gTolbiSpringEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiHmmIWonderIfTheseKids) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiReadTheSignIfYaDont) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWhoaGettingTripleDigitsIsReal) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiIDontWantToStopPlaying) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWinningOrLosingIsPureLuck) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTheRulesForLuckyDiceAint) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiSometimesPeopleWhoHaveNeverPlayed) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiThinkingWontHelpYouWinThis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiMyLuckHasRunOutFor) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheRulesForLuckyDiceAint) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiLuckyDiceThrowTheDiceOn) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiLuckyDiceIfTwoNumbersMatch) },
-	{ EVENT_TALK, 17, 0x962, MSGNO(MsgTorebiIzumiYeahThatDiceGameLooksKinda) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x962, MSGNO(MsgTorebiIzumiILikePlayingLuckyDiceBut) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiOhThereAreAlwaysScalpersAt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTheresNoWayPoorSoldiersLike) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
+	{ EVENT_TALK, 17, 0x962, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x962, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
 	{ SCENE_EVENTS_END },
 };
 
-const struct SceneEvent gTorebiIzumiEvents2[] = {
+const struct SceneEvent gTolbiSpringEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiTossLuckyMedal) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiFaceAwayTolbi) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTolbiSpringHasMysteriousPowersStand) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTolbiSpringHasMysteriousPowersStand) },
 	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
-	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTooBadIOnlyHaveOne) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiIGetNervousWhenIToss) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWhyWontAnyoneGiveMeA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiThisIsALuckyMedalSo) },
+	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTooBadIOnlyHaveOne) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
 	{ SEARCH(SEARCH_UNNAMED), 80, CONDITION_ALWAYS, EVENT_SCRIPT(EV80_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 // BLDALPHA の段階
-const u16 TorebiIzumi_AlphaSteps[] = {
+const u16 TolbiSpring_AlphaSteps[] = {
 	0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
 };
 
-const u32 TorebiIzumi_PrizeItems[] = {
+const u32 TolbiSpring_PrizeItems[] = {
 	23, 124, 81, 152, 37, 108, 171, 142,
 	48, 160, 133, 97, 183, 186, 189,
 };
 
-const u32 TorebiIzumi_CoinPrizes[] = {
+const u32 TolbiSpring_CoinPrizes[] = {
 	0xa0014, 0x10002, 0,
 };
 
-const u32 TorebiIzumi_TopicIds[] = {
+const u32 TolbiSpring_TopicIds[] = {
 	250, 251, 252, 256, 257, 258, 262, 263,
 	264, 183, 182, 181, 189, 186, 188,
 };
 
-const u8 TorebiIzumi_SliderFrames[] = {
+const u8 TolbiSpring_SliderFrames[] = {
 	0, 1, 9,
 };
 
-const u8 TorebiIzumi_CircleFrames[] = {
+const u8 TolbiSpring_CircleFrames[] = {
 	0, 3, 4,
 };
 
-const u16 TorebiIzumi_ActorTileX[] = {
+const u16 TolbiSpring_ActorTileX[] = {
 	0xa050, 0x4850,
 };
 
-const u16 TorebiIzumi_ActorTileZ[] = {
+const u16 TolbiSpring_ActorTileZ[] = {
 	0x6820, 0x4844,
 };
 
-const u16 TorebiIzumi_ActorHeadings[] = {
+const u16 TolbiSpring_ActorHeadings[] = {
 	FACING_EAST, 0x1, FACING_EAST, FACING_WEST,
 };

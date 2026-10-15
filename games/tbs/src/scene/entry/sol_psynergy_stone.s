@@ -5,4 +5,4 @@
 	overlay_veneer SceneData_GetPrimaryTable37c
 	overlay_veneer SceneData_GetSecondaryTable37c
 	overlay_veneer SceneData_GetTertiaryTable37c
-	overlay_veneer SoruDou_GetView
+	overlay_veneer SolPsynergyStone_GetView

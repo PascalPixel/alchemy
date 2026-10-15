@@ -2,7 +2,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer Scene_Initialize
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer KareiMachi_GetExits
+	overlay_veneer Kalay_GetExits
 	overlay_veneer Scene_GetPlacements
 	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

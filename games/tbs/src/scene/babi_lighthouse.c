@@ -35,10 +35,10 @@
 #include "fieldobj.h"
 
 // 前方宣言
-static void BabiIriguchi_CloseTruthDoor(void);
+static void BabiLighthouse_CloseTruthDoor(void);
 static void SceneState_ApplyRectsAtActors8And9(void);
 
-static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
+static __inline__ s32 Entrance_Divide(s32 dividend, s32 divisor)
 {
 	return dividend / divisor;
 }
@@ -139,55 +139,55 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_BabiIriguchi3)
+	if (scene == (s32)&SceneId_BabiLighthouse3)
 	{
-		return gBabiIriguchiEntrances3;
+		return gBabiLighthouseEntrances3;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi2)
+	if (scene == (s32)&SceneId_BabiLighthouse2)
 	{
-		return gBabiIriguchiEntrances2;
+		return gBabiLighthouseEntrances2;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi1)
+	if (scene == (s32)&SceneId_BabiLighthouse1)
 	{
-		return gBabiIriguchiEntrances1;
+		return gBabiLighthouseEntrances1;
 	}
-	return gBabiIriguchiEntrancesOther;
+	return gBabiLighthouseEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
 {
-	if (gGameState.scene == (s32)&SceneId_BabiIriguchi3)
+	if (gGameState.scene == (s32)&SceneId_BabiLighthouse3)
 	{
-		return gBabiIriguchiRegions3;
+		return gBabiLighthouseRegions3;
 	}
 	return 0;
 }
 
-u8 *BabiIriguchi_GetExits(void)
+u8 *BabiLighthouse_GetExits(void)
 {
-	return gBabiIriguchiExits;
+	return gBabiLighthouseExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_BabiIriguchi3)
+	if (scene == (s32)&SceneId_BabiLighthouse3)
 	{
-		return gBabiIriguchiPlacements3;
+		return gBabiLighthousePlacements3;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi2)
+	if (scene == (s32)&SceneId_BabiLighthouse2)
 	{
-		return gBabiIriguchiPlacements2;
+		return gBabiLighthousePlacements2;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi1)
+	if (scene == (s32)&SceneId_BabiLighthouse1)
 	{
-		return gBabiIriguchiPlacements1;
+		return gBabiLighthousePlacements1;
 	}
-	return gBabiIriguchiPlacementsOther;
+	return gBabiLighthousePlacementsOther;
 }
 
-static void BabiIriguchi_JumpFromLedge(void)
+static void BabiLighthouse_JumpFromLedge(void)
 {
 	struct FieldActor *rec7;
 
@@ -224,7 +224,7 @@ static void EV10_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
-	BabiIriguchi_JumpFromLedge();
+	BabiLighthouse_JumpFromLedge();
 	Engine_EventEnd();
 }
 
@@ -326,7 +326,7 @@ static void EV10_TOUCH(void)
 	FieldMotion_LaunchFromFocusedObject(1, -8, 16, 0xc000);
 	FieldMotion_LaunchFromFocusedObject(2, 8, 16, 0xc000);
 	FieldMotion_LaunchFromFocusedObject(3, 24, 16, 0xc000);
-	Engine_ActorWaitForMove(MEARI);
+	Engine_ActorWaitForMove(MIA);
 	Engine_EventWait(20);
 	Event_ShowMessage(14, 0);
 	Engine_EventWait(10);
@@ -403,17 +403,17 @@ static void EV10_TOUCH(void)
 	Actor_ShowEmote(14, 0x105, 60);
 	Event_ShowMessage(14, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(30);
@@ -449,16 +449,16 @@ static void EV10_TOUCH(void)
 	Engine_EventWait(20);
 	Event_ShowMessage(14, 0);
 	Engine_EventWait(20);
-	Actor_ShowEmote(MEARI, 0x102, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, 0x102, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Actor_ShowEmote(14, 0x100, 40);
 	Event_OpenMessage(14, 0);
@@ -565,33 +565,33 @@ static void EV10_TOUCH(void)
 	Actor_WalkToAndWait(11, 0x148, 0x148);
 	Actor_FaceDirection(11, FACING_WEST, 0);
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(IWAN, 2);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(IVAN, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	Engine_ActorSetAnimation(MEARI, 2);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	Engine_ActorSetAnimation(MIA, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
 	Engine_EventWait(10);
 	Engine_EventEnd();
 }
@@ -611,7 +611,7 @@ static void FieldScene_RunActorEventSequence(void)
 	Motion_LaunchFromFocusedObject(1, 0, 16, 0);
 	FieldMotion_LaunchFromFocusedObject(2, -16, -8, 0);
 	Motion_LaunchFromFocusedObject(3, -16, 24, 0);
-	Engine_ActorWaitForMove(MEARI);
+	Engine_ActorWaitForMove(MIA);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x30000, 0x6000);
 	Camera_MoveTo(0x1180000, -1, 0x1480000, 1);
@@ -652,16 +652,16 @@ static void FieldScene_RunActorEventSequence(void)
 	Actor_FaceDirection(13, FACING_WEST, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x102, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, 0x102, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(10, 4);
 	Engine_EventWait(20);
@@ -695,7 +695,7 @@ static void FieldScene_RunActorEventSequence(void)
 	Engine_EventWait(30);
 	Engine_CameraFollowActor(10, 1);
 	Actor_WalkByAndWait(10, 0, -32);
-	BabiIriguchi_CloseTruthDoor();
+	BabiLighthouse_CloseTruthDoor();
 	GameFlag_Clear(0x301);
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_EventBegin();
@@ -707,9 +707,9 @@ static void FieldScene_RunActorEventSequence(void)
 	Actor_FaceDirection(12, 0xb000, 0);
 	Actor_FaceDirection(13, 0xb000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
 	Engine_EventWait(30);
 	Actor_ShowEmote(11, 0x100, 0);
 	Actor_ShowEmote(12, 0x100, 0);
@@ -725,24 +725,24 @@ static void FieldScene_RunActorEventSequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessage(13, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(30);
-	Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Actor_FaceDirection(10, FACING_SOUTH, 0);
 	Engine_EventWait(30);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	Engine_EventWait(30);
-	Actor_ShowEmote(MEARI, 0x102, 40);
+	Actor_ShowEmote(MIA, 0x102, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Actor_ShowEmote(14, 0x103, 50);
 	Actor_FaceDirection(14, FACING_WEST, 0);
@@ -752,8 +752,8 @@ static void FieldScene_RunActorEventSequence(void)
 	Actor_FaceDirection(11, FACING_WEST, 0);
 	Actor_FaceDirection(12, FACING_WEST, 0);
 	Actor_FaceDirection(13, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, 0x1000, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, 0x1000, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(30);
@@ -842,41 +842,41 @@ static void FieldScene_RunActorEventSequence(void)
 	Engine_EventWait(25);
 	Event_ShowMessage(10, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(IWAN, 2);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(IVAN, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	Engine_ActorSetAnimation(MEARI, 2);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	Engine_ActorSetAnimation(MIA, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_FaceDirection(10, 0xb000, 0);
@@ -925,7 +925,7 @@ static void EV22_TOUCH(void)
 	}
 }
 
-static void BabiIriguchi_CloseTruthDoor(void)
+static void BabiLighthouse_CloseTruthDoor(void)
 {
 	if (GameFlag_IsSet(0x985) != 0)
 	{
@@ -978,7 +978,7 @@ static void EV60_SEARCH(void)
 	Engine_EventEnd();
 }
 
-static struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
+static struct StagedActor *BabiLighthouse_FindActorAhead(struct StagedActor *actor)
 {
 	s32	 pos[3];
 	s32 *p = pos;
@@ -1028,7 +1028,7 @@ static void EV12_PSYNERGY(void)
 static void EV50_SCRIPT(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
-	struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
+	struct StagedActor *q = BabiLighthouse_FindActorAhead(p);
 	s32					diff;
 
 	if (q == 0)
@@ -1060,7 +1060,7 @@ static void EV50_SCRIPT(void)
 static void EV51_SCRIPT(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
-	struct StagedActor *ahead = BabiIriguchi_FindActorAhead(p);
+	struct StagedActor *ahead = BabiLighthouse_FindActorAhead(p);
 	s32					m = (p->direction_and_kind + 0x2000) & 0xc000;
 	s32					r = -1;
 
@@ -1088,19 +1088,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_BabiIriguchi3)
+	if (scene == (s32)&SceneId_BabiLighthouse3)
 	{
-		return gBabiIriguchiEvents3;
+		return gBabiLighthouseEvents3;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi2)
+	if (scene == (s32)&SceneId_BabiLighthouse2)
 	{
-		return gBabiIriguchiEvents2;
+		return gBabiLighthouseEvents2;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi1)
+	if (scene == (s32)&SceneId_BabiLighthouse1)
 	{
-		return gBabiIriguchiEvents1;
+		return gBabiLighthouseEvents1;
 	}
-	return gBabiIriguchiEventsOther;
+	return gBabiLighthouseEventsOther;
 }
 
 static void EV10_PSYNERGY(void)
@@ -1141,7 +1141,7 @@ static void SceneState_ApplyRectsAtActors8And9(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-static void BabiIriguchi_MatchLeaderPriority(void)
+static void BabiLighthouse_MatchLeaderPriority(void)
 {
 	struct FieldSprite *sprite;
 	struct FieldActor  *actor;
@@ -1193,7 +1193,7 @@ struct RowActor
 	u16					  delay;
 };
 
-s32 BabiIriguchi_SetupScene(void)
+s32 BabiLighthouse_SetupScene(void)
 {
 	struct FieldActor *actor;
 	struct RowActor	  *row;
@@ -1208,13 +1208,13 @@ s32 BabiIriguchi_SetupScene(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	state = &gGameState;
 	scene = state->scene;
-	if (scene != (s32)&SceneId_BabiIriguchi4)
+	if (scene != (s32)&SceneId_BabiLighthouse4)
 	{
 		state->retreat_entrance = 1;
-		state->retreat_scene = (s32)&SceneId_BabiIriguchi3;
+		state->retreat_scene = (s32)&SceneId_BabiLighthouse3;
 		copy = state->scene;
 	}
-	if (scene == (s32)&SceneId_BabiIriguchi4)
+	if (scene == (s32)&SceneId_BabiLighthouse4)
 	{
 		row = (struct RowActor *)Object_GetById(12);
 		x = row->x.fixed >> 20;
@@ -1227,16 +1227,16 @@ s32 BabiIriguchi_SetupScene(void)
 			}
 		}
 	}
-	else if (copy == (s32)&SceneId_BabiIriguchi3)
+	else if (copy == (s32)&SceneId_BabiLighthouse3)
 	{
 		Actor_SetChildValue(8, 6);
 		Actor_SetChildValue(9, 6);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 		((union FieldObject *)Object_GetById(8))->actor.update =
-			(void (*)(union FieldObject *))BabiIriguchi_MatchLeaderPriority;
+			(void (*)(union FieldObject *))BabiLighthouse_MatchLeaderPriority;
 		((union FieldObject *)Object_GetById(9))->actor.update =
-			(void (*)(union FieldObject *))BabiIriguchi_MatchLeaderPriority;
+			(void (*)(union FieldObject *))BabiLighthouse_MatchLeaderPriority;
 #endif
 		if (state->entrance == 5 && GameFlag_IsSet(0x109) == 0)
 		{
@@ -1285,7 +1285,7 @@ s32 BabiIriguchi_SetupScene(void)
 		row->sprite->rotation = 0x8000;
 		Engine_ActorSetAnimation(14, 0);
 	}
-	else if (copy == (s32)&SceneId_BabiIriguchi2)
+	else if (copy == (s32)&SceneId_BabiLighthouse2)
 	{
 		switch (state->entrance)
 		{
@@ -1323,7 +1323,7 @@ s32 BabiIriguchi_SetupScene(void)
 			break;
 		}
 	}
-	else if (scene == (s32)&SceneId_BabiIriguchi1)
+	else if (scene == (s32)&SceneId_BabiLighthouse1)
 	{
 		Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
 		Object_GetById(9)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -1477,7 +1477,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gBabiIriguchiPlacements3_Data[] = {
+s32 gBabiLighthousePlacements3_Data[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -1509,7 +1509,7 @@ s32 gBabiIriguchiPlacements3_Data[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gBabiIriguchiEntrances3[] = {
+struct SceneEntrance gBabiLighthouseEntrances3[] = {
 	{0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 200, 0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0},
 	{2, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
@@ -1520,7 +1520,7 @@ struct SceneEntrance gBabiIriguchiEntrances3[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiIriguchiEntrances2[] = {
+struct SceneEntrance gBabiLighthouseEntrances2[] = {
 	{0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 232, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
 	{2, CONDITION_ALWAYS, 280, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
@@ -1542,21 +1542,21 @@ struct SceneEntrance gBabiIriguchiEntrances2[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiIriguchiEntrances1[] = {
+struct SceneEntrance gBabiLighthouseEntrances1[] = {
 	{1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
 	{2, CONDITION_ALWAYS, 136, 0, 368, FACING_NORTH, 0, 96, 48, 384, 432, 0},
 	{3, CONDITION_ALWAYS, 168, 0, 344, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiIriguchiEntrancesOther[] = {
+struct SceneEntrance gBabiLighthouseEntrancesOther[] = {
 	{0, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0, 464, 400, 0},
 	{1, CONDITION_ALWAYS, 112, 0, 360, FACING_NORTH, 0, 0, 0, 464, 400, 0},
 	{2, CONDITION_ALWAYS, 136, 0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0},
 	{SCENE_TABLE_END},
 };
 
-s16 gBabiIriguchiRegions3[] = {
+s16 gBabiLighthouseRegions3[] = {
 	96,
 	-20,
 	320,
@@ -1591,7 +1591,7 @@ s16 gBabiIriguchiRegions3[] = {
 	0,
 };
 
-u32 gBabiIriguchiExits[] = {
+u32 gBabiLighthouseExits[] = {
 	SCENE_EXITS(176),
 	SCENE_EXIT(1, 177, 2),
 	SCENE_EXIT(2, 175, 7),
@@ -1627,38 +1627,38 @@ u32 gBabiIriguchiExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBabiIriguchiNoPlacements[] = {
+struct ScenePlacement gBabiLighthouseNoPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiIriguchiPlacements3[] = {
+struct ScenePlacement gBabiLighthousePlacements3[] = {
 	{0xfd, CONDITION_ALWAYS, 7, PIXELS(88), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0xfd, CONDITION_ALWAYS, 7, PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{0xee, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(130), FACING_SOUTH,
 		TALK_FACE_PARTY, 0},
-	{0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data, PIXELS(176), 0, PIXELS(360),
+	{0x98, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(176), 0, PIXELS(360),
 		FACING_SOUTH, TALK_KEEP_FACING, 0},
-	{0x74, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data, PIXELS(240), 0, PIXELS(240),
+	{0x74, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(240), 0, PIXELS(240),
 		FACING_SOUTH, TALK_KEEP_FACING, 0},
-	{0x98, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data, PIXELS(216), 0, PIXELS(280),
+	{0x98, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(216), 0, PIXELS(280),
 		FACING_SOUTH, TALK_KEEP_FACING, 0},
-	{0x72, CONDITION_ALWAYS, (s32)gBabiIriguchiPlacements3_Data, PIXELS(184), 0, PIXELS(248),
+	{0x72, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(184), 0, PIXELS(248),
 		FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiIriguchiPlacements2[] = {
+struct ScenePlacement gBabiLighthousePlacements2[] = {
 	{0x5d, 0x72, ACTOR_STAND, PIXELS(472), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiIriguchiPlacements1[] = {
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
+struct ScenePlacement gBabiLighthousePlacements1[] = {
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
 		TALK_FACE_PARTY, 0},
-	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY,
+	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY,
 		0},
-	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
+	{MIA, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
 		TALK_FACE_PARTY, 0},
 	{0x128, CONDITION_ALWAYS, 7, PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_KEEP_FACING, 0},
 	{0x128, CONDITION_ALWAYS, 7, PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_KEEP_FACING, 0},
@@ -1675,7 +1675,7 @@ struct ScenePlacement gBabiIriguchiPlacements1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiIriguchiPlacementsOther[] = {
+struct ScenePlacement gBabiLighthousePlacementsOther[] = {
 	{0x72, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
 		TALK_FACE_PARTY, 0},
 	{0x74, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY,
@@ -1689,31 +1689,31 @@ struct ScenePlacement gBabiIriguchiPlacementsOther[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent gBabiIriguchiEvents3[] = {
+struct SceneEvent gBabiLighthouseEvents3[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
 	{0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely)},
-	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiOnlyTwoOfThoseSixEver)},
-	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyJustKickedUsOutOf)},
-	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheySetFireToEverythingThats)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiWereTheOnesWhoAttackedBut)},
+		MSGNO(MsgBabiLighthouseWereTheOnesWhoAttackedBut)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiTheOtherFourDidntSeemTo)},
+		MSGNO(MsgBabiLighthouseTheOtherFourDidntSeemTo)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiWhatCouldTheyBePlanningFor)},
+		MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiNoneOfThemHadAnyTorches)},
-	{PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge)},
-	{PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge)},
+		MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
+	{PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+	{PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
 	{PSYNERGY_ON_ACTOR(0xc), 10, 0x300, EVENT_SCRIPT(EV10_PSYNERGY)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiIriguchiEvents2[] = {
+struct SceneEvent gBabiLighthouseEvents2[] = {
 	{0x31, 5, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 6, CONDITION_ALWAYS, 2},
 	{0x21, 1, CONDITION_ALWAYS, 3},
@@ -1734,40 +1734,40 @@ struct SceneEvent gBabiIriguchiEvents2[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiIriguchiEvents1[] = {
+struct SceneEvent gBabiLighthouseEvents1[] = {
 	{0x31, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(EV10_TOUCH)},
-	{EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor)},
-	{EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor)},
+	{EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
+	{EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
 	{EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TOUCH)},
-	{EVENT_TALK, 10, 0x989, MSGNO(MsgBabiIriguchiIAmCountingOnYouRobin)},
-	{EVENT_TALK, 11, 0x989, MSGNO(MsgBabiIriguchiWhenISawThemTheyHad)},
-	{EVENT_TALK, 12, 0x989, MSGNO(MsgBabiIriguchiIAmSorryButNotEven)},
-	{EVENT_TALK, 13, 0x989, MSGNO(MsgBabiIriguchiThisAllStartedWhenActorWas)},
-	{EVENT_TALK, 14, 0x989, MSGNO(MsgBabiIriguchiIfYouCanOpenThisDoor)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x989, MSGNO(MsgBabiIriguchiIDoNotMeanToDoubt)},
+	{EVENT_TALK, 10, 0x989, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
+	{EVENT_TALK, 11, 0x989, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
+	{EVENT_TALK, 12, 0x989, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
+	{EVENT_TALK, 13, 0x989, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
+	{EVENT_TALK, 14, 0x989, MSGNO(MsgBabiLighthouseIfYouCanOpenThisDoor)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x989, MSGNO(MsgBabiLighthouseIDoNotMeanToDoubt)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x989,
-		MSGNO(MsgBabiIriguchiNobodyThinksTheDoorCanBe)},
+		MSGNO(MsgBabiLighthouseNobodyThinksTheDoorCanBe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x989,
-		MSGNO(MsgBabiIriguchiIDontKnowWhatTheyreWaiting)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x989, MSGNO(MsgBabiIriguchiThisIsAllAHugeWaste)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x989, MSGNO(MsgBabiIriguchiIHopeTheyCanOpenThe)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIBegOfYouRobinPlease)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiICantBelieveThisDoorActually)},
-	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiItTakesGreatCourageToContinue)},
-	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiImVeryInterestedInWhatLies)},
-	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiIAmNotAfraidOfDanger)},
+		MSGNO(MsgBabiLighthouseIDontKnowWhatTheyreWaiting)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x989, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x989, MSGNO(MsgBabiLighthouseIHopeTheyCanOpenThe)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIBegOfYouIsaacPlease)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseICantBelieveThisDoorActually)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIAmNotAfraidOfDanger)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiIfAnythingHappensToActorTolbi)},
+		MSGNO(MsgBabiLighthouseIfAnythingHappensToActorTolbi)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiIfThisDoorOpensMaybeWe)},
+		MSGNO(MsgBabiLighthouseIfThisDoorOpensMaybeWe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiIBetTheMonstersAroundHere)},
+		MSGNO(MsgBabiLighthouseIBetTheMonstersAroundHere)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiThisIsABigWasteOf)},
+		MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiIDontWantToHinderActors)},
+		MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},
 	{SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SEARCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ActorPresentation_SetSceneCellByFlag985)},
@@ -1776,7 +1776,7 @@ struct SceneEvent gBabiIriguchiEvents1[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiIriguchiEventsOther[] = {
+struct SceneEvent gBabiLighthouseEventsOther[] = {
 	{0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT)},
 	{0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_SCRIPT)},
 	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
@@ -1784,18 +1784,18 @@ struct SceneEvent gBabiIriguchiEventsOther[] = {
 	{PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWeHaventBeenOrderedToStart)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiThereWereStrangeFolkGoingTo)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiItsOddThatBabiWouldBuild)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiCuttingTheseStonesAndStackingThem)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseWeHaventBeenOrderedToStart)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseThereWereStrangeFolkGoingTo)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItsOddThatBabiWouldBuild)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseCuttingTheseStonesAndStackingThem)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiThereWasABigFightThat)},
+		MSGNO(MsgBabiLighthouseThereWasABigFightThat)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiIfFaranWentAfterThemThen)},
+		MSGNO(MsgBabiLighthouseIfFaranWentAfterThemThen)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiWhyWouldTheyWantToRush)},
+		MSGNO(MsgBabiLighthouseWhyWouldTheyWantToRush)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-		MSGNO(MsgBabiIriguchiNowThatIThinkOfIt)},
+		MSGNO(MsgBabiLighthouseNowThatIThinkOfIt)},
 	{0x413, 100, 0xfbc, FIND_ITEM(0xc4)},
 	{SCENE_EVENTS_END},
 };

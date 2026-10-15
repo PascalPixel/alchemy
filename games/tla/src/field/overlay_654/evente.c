@@ -1,17 +1,17 @@
 #include "shrine_of_the_sea_god.h"
 
-struct KabeSpot {
+struct ShrineOfTheSeaGodSpot {
     s32 x;
     s32 z;
     s32 field_18;
     s32 rotation;
 };
 
-extern const struct KabeSpot Data_02003cc0[];
+extern const struct ShrineOfTheSeaGodSpot Data_02003cc0[];
 extern const u8 Data_02003cbc[];
 extern const u8 Data_02003c10[];
 
-void Object_SetPartAttribute(struct KabeObject *object, s32 value);
+void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
 void Func_02003b18(void);
 void Func_02003b20(s32 a, s32 b, s32 c, s32 d);

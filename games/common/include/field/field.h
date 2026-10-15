@@ -71,7 +71,7 @@ struct EffectStep;
 struct FacingObject;
 struct FieldActor;
 struct FieldPosition;
-struct MakyuriLights;
+struct MercuryLights;
 struct MapActor;
 struct MapCell;
 struct MenuSprite;
@@ -282,23 +282,23 @@ struct WorldMapVramBlock
 	u16 base;
 	u16 offset;
 };
-#ifndef OWN_ArutinYama_ActorScript
+#ifndef OWN_AltinPeak_ActorScript
 #endif
-extern s16 ArutinYama_PaletteHold;
-extern s16 ArutinYama_PaletteStep;
-#ifndef OWN_BabiFune_CountTicks
+extern s16 AltinPeak_PaletteHold;
+extern s16 AltinPeak_PaletteStep;
+#ifndef OWN_LemurianShip_CountTicks
 #endif
-#ifndef OWN_BabiFune_DriftActive
+#ifndef OWN_LemurianShip_DriftActive
 #endif
-#ifndef OWN_BabiFune_ShimmerActive
+#ifndef OWN_LemurianShip_ShimmerActive
 #endif
-#ifndef OWN_BabiFune_ShimmerPhase
+#ifndef OWN_LemurianShip_ShimmerPhase
 #endif
-#ifndef OWN_BabiFune_SwellActive
+#ifndef OWN_LemurianShip_SwellActive
 #endif
-#ifndef OWN_BabiFune_SwellLayerSevenY
+#ifndef OWN_LemurianShip_SwellLayerSevenY
 #endif
-#ifndef OWN_BabiFune_SwellLayerSixY
+#ifndef OWN_LemurianShip_SwellLayerSixY
 #endif
 extern const u8 BattleFx_BurstParticleScriptA[];
 extern const u8 BattleFx_BurstParticleScriptB[];
@@ -309,11 +309,11 @@ extern const u8 Field_TileMessageOffsets[];
 extern const u8 FieldFx_MoteTiles[];
 extern s32		FourObjectMotion_ResourceIds[];
 extern s32		FuneHeya_CueTimer;
-#ifndef OWN_FuneHeya_TurnSteps
+#ifndef OWN_TolbiShipInteriors_TurnSteps
 #endif
-extern s16 *gKorimaMagariLayout;
-extern s16 *gKorimaMagariRecords;
-extern u16 *gKorimaMagariReturned;
+extern s16 *gKolimaForestBendLayout;
+extern s16 *gKolimaForestBendRecords;
+extern u16 *gKolimaForestBendReturned;
 #ifndef OWN_gObjectSlots
 extern struct ObjectRuntime *gObjectSlots;
 #endif
@@ -321,37 +321,37 @@ extern u32 gScanlineAngle;
 #ifndef OWN_gScanlinePitch
 extern u32 gScanlinePitch;
 #endif
-extern struct SceneEvent gTorebiKyudenEvents2AfterColosso[];
+extern struct SceneEvent gBabiPalaceEvents2AfterColosso[];
 extern const u8			 gWorldMapPackedFrames[];
 extern const u8			 gWorldMapPackedTiles[];
 extern const u8			 gWorldMapPalettes[];
-extern s32				 KareiMachi_DanceStep;
-extern u32				 KorimaMagari_ShakeChance;
-extern u32				 KorimaMagari_ShakeScroll[];
-extern u8				 KorimaPalette_First[];
-extern u8				 KorimaPalette_Second[];
-extern s32				 Korosseo_CompetitorStartAngle;
-extern s32				 Korosseo_CompetitorStartX;
-extern s32				 Korosseo_CompetitorStartZ;
-extern u16				 Korosseo_GaugePalette[];
-extern s32				 Korosseo_MarkerOam[3];
-extern s16				 Korosseo_ModeBlendDuration;
-extern s16				 Korosseo_ModeBlendStart;
-extern s16				 Korosseo_ModeBlendStep;
-extern s16				 Korosseo_ModeBlendTarget;
-extern s16				 Korosseo_ModeMoveStart;
-extern s16				 Korosseo_ModeMoveStep;
-extern s16				 Korosseo_ModeScaleDuration;
-extern s16				 Korosseo_ModeScaleStart;
-extern s16				 Korosseo_ModeScaleStep;
-extern s16				 Korosseo_ModeScaleTarget;
-extern u32				 Korosseo_ModeTaskSprites[];
-#ifndef OWN_KuupuappuHeya_PairScriptP
+extern s32				 Kalay_DanceStep;
+extern u32				 KolimaForestBend_ShakeChance;
+extern u32				 KolimaForestBend_ShakeScroll[];
+extern u8				 KolimaPalette_First[];
+extern u8				 KolimaPalette_Second[];
+extern s32				 Colosso_CompetitorStartAngle;
+extern s32				 Colosso_CompetitorStartX;
+extern s32				 Colosso_CompetitorStartZ;
+extern u16				 Colosso_GaugePalette[];
+extern s32				 Colosso_MarkerOam[3];
+extern s16				 Colosso_ModeBlendDuration;
+extern s16				 Colosso_ModeBlendStart;
+extern s16				 Colosso_ModeBlendStep;
+extern s16				 Colosso_ModeBlendTarget;
+extern s16				 Colosso_ModeMoveStart;
+extern s16				 Colosso_ModeMoveStep;
+extern s16				 Colosso_ModeScaleDuration;
+extern s16				 Colosso_ModeScaleStart;
+extern s16				 Colosso_ModeScaleStep;
+extern s16				 Colosso_ModeScaleTarget;
+extern u32				 Colosso_ModeTaskSprites[];
+#ifndef OWN_VaultInteriors_PairScriptP
 #endif
-#ifndef OWN_KuupuappuHeya_PairScriptR
+#ifndef OWN_VaultInteriors_PairScriptR
 #endif
 extern u16 KuupuappuHeya_StopTimer;
-#ifndef OWN_Makyuri_PillarScript
+#ifndef OWN_Mercury_PillarScript
 #endif
 extern u8		Object_UpdateAllCodeSize[];
 extern u8		ObjectGroup_BlinkChildValues[];
@@ -365,29 +365,29 @@ extern const u8 ObjectMotion_ResetActionScript[];
 extern const u8 ObjectMotion_StepAngleScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_VariantScripts[];
-#ifndef OWN_RamakanSabaku_SandCounter
+#ifndef OWN_LamakanDesert_SandCounter
 #endif
-extern u8		 RamakanSabaku_SandEffectTiles[];
-extern const u16 RamakanSabaku_SandPalette[16];
-#ifndef OWN_RamakanSabaku_SandPhase
-extern u16 RamakanSabaku_SandPhase;
+extern u8		 LamakanDesert_SandEffectTiles[];
+extern const u16 LamakanDesert_SandPalette[16];
+#ifndef OWN_LamakanDesert_SandPhase
+extern u16 LamakanDesert_SandPhase;
 #endif
-extern u8 RamakanSabaku_SandTileBuffer[];
-#ifndef OWN_RamakanSabaku_SandVramSlot
-extern u16 RamakanSabaku_SandVramSlot;
+extern u8 LamakanDesert_SandTileBuffer[];
+#ifndef OWN_LamakanDesert_SandVramSlot
+extern u16 LamakanDesert_SandVramSlot;
 #endif
-extern struct MenuSprite RamakanSabaku_SandWork[];
+extern struct MenuSprite LamakanDesert_SandWork[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
-extern u8		SoruSekizo_SpriteRowsGfx[];
+extern u8		SolStatue_SpriteRowsGfx[];
 extern u32		StagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8		TileMap_DrawRowsCodeSize[];
 extern u8		Transform_UpdateVerticesSize;
-#ifndef OWN_VinasuChojo_BeamOpenAction
+#ifndef OWN_VenusAerie_BeamOpenAction
 #endif
-#ifndef OWN_VinasuChojo_ScaleStepAction
+#ifndef OWN_VenusAerie_ScaleStepAction
 #endif
 extern const u8	 WorldMap_FootprintActions[];
 extern const s16 WorldMap_KeyHeadings[16];
@@ -421,7 +421,7 @@ void FieldScene_PrepareActors(struct SceneRegionEntry *entry);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-#ifndef OWN_Makyuri_SpawnLightObjects
+#ifndef OWN_Mercury_SpawnLightObjects
 #endif
 void Map_ResumeAnimation(void);
 #ifndef OWN_MapGroupTable_SelectEntry
@@ -450,7 +450,7 @@ void Object_Destroy(struct DispatchObject *work);
 #endif
 #ifndef OWN_OverlayObject_WaitUntilSettledAndReset
 #endif
-#ifndef OWN_RamakanSabaku_EmitSandEffect
+#ifndef OWN_LamakanDesert_EmitSandEffect
 #endif
 #ifndef OWN_Scene_FadeColorFromWhite
 #endif
@@ -472,7 +472,7 @@ void SceneTable_Prepare(void *);
 #endif
 #ifndef OWN_StoryActor_ConfigureSpawnedObject
 #endif
-#ifndef OWN_TakaraHashira_ReadMapCell
+#ifndef OWN_CrossbonePillar_ReadMapCell
 #endif
 #endif
 
@@ -490,7 +490,7 @@ struct SceneRegion;
 struct ScriptInterpreter;
 
 extern const u8					   DriftScene_SpawnScript[];
-extern const struct SceneEntrance  gDeriMuraEntrances[];
+extern const struct SceneEntrance  gDailaEntrances[];
 extern const struct SceneEntrance  gIdejimaEntrances[];
 extern const struct SceneEvent	   gIdejimaEvents[];
 extern const struct SceneEvent	   gIdejimaEventsEntrance1[];

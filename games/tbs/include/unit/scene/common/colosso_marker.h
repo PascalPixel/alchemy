@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-/* Korosseo_FadeInCompetitor is called before its definition with no prototype in scope. */
-void Korosseo_RestoreCompetitor(s32 id);
+/* Colosso_FadeInCompetitor is called before its definition with no prototype in scope. */
+void Colosso_RestoreCompetitor(s32 id);
 
 void OverlayObject_ResetMotionFields(s32 actor);
 

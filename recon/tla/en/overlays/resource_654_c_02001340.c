@@ -9,9 +9,9 @@
 
 extern s32 Data_02004a18[3];
 
-void Func_02001340(struct KabeObject *object, struct KabeObject *other)
+void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSeaGodObject *other)
 {
-    struct KabeSprite *sprite = object->sprite;
+    struct ShrineOfTheSeaGodSprite *sprite = object->sprite;
     u32 n;
     u32 i;
 

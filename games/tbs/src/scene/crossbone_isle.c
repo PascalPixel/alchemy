@@ -33,8 +33,8 @@
 
 // 前方宣言
 static void FieldScene_RunScene3b2SequenceA(void);
-static void TakaraShima_LeaveClearedRoom(void);
-static void TakaraShima_RestoreRoomActors(void);
+static void CrossboneIsle_LeaveClearedRoom(void);
+static void CrossboneIsle_RestoreRoomActors(void);
 static void InitializeEscapeSceneActors(void);
 
 struct Vec
@@ -64,27 +64,27 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraShima1)
+	if (scene == (s32)&SceneId_CrossboneIsle1)
 	{
-		return gTakaraShimaEntrances1;
+		return gCrossboneIsleEntrances1;
 	}
-	if (scene == (s32)&SceneId_TakaraShima2)
+	if (scene == (s32)&SceneId_CrossboneIsle2)
 	{
-		return gTakaraShimaEntrances2;
+		return gCrossboneIsleEntrances2;
 	}
-	if (scene == (s32)&SceneId_TakaraShima3)
+	if (scene == (s32)&SceneId_CrossboneIsle3)
 	{
-		return gTakaraShimaEntrances3;
+		return gCrossboneIsleEntrances3;
 	}
-	if (scene == (s32)&SceneId_TakaraShima4)
+	if (scene == (s32)&SceneId_CrossboneIsle4)
 	{
-		return gTakaraShimaEntrances4;
+		return gCrossboneIsleEntrances4;
 	}
-	if (scene == (s32)&SceneId_TakaraShima5)
+	if (scene == (s32)&SceneId_CrossboneIsle5)
 	{
-		return gTakaraShimaEntrances5;
+		return gCrossboneIsleEntrances5;
 	}
-	return gTakaraShimaEntrancesOther;
+	return gCrossboneIsleEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -94,26 +94,26 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return gTakaraShimaExits;
+	return gCrossboneIsleExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraShima1)
+	if (scene == (s32)&SceneId_CrossboneIsle1)
 	{
-		return gTakaraShimaPlacements1;
+		return gCrossboneIslePlacements1;
 	}
-	if (scene == (s32)&SceneId_TakaraShima3)
+	if (scene == (s32)&SceneId_CrossboneIsle3)
 	{
-		return gTakaraShimaPlacements3;
+		return gCrossboneIslePlacements3;
 	}
-	if (scene <= (s32)&SceneId_TakaraShima14 && scene >= (s32)&SceneId_TakaraShima6)
+	if (scene <= (s32)&SceneId_CrossboneIsle14 && scene >= (s32)&SceneId_CrossboneIsle6)
 	{
-		return gTakaraShimaPlacements6To14;
+		return gCrossboneIslePlacements6To14;
 	}
-	return gTakaraShimaPlacementsOther;
+	return gCrossboneIslePlacementsOther;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -163,27 +163,27 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraShima1)
+	if (scene == (s32)&SceneId_CrossboneIsle1)
 	{
-		return gTakaraShimaEvents1;
+		return gCrossboneIsleEvents1;
 	}
-	if (scene == (s32)&SceneId_TakaraShima2)
+	if (scene == (s32)&SceneId_CrossboneIsle2)
 	{
-		return gTakaraShimaEvents2;
+		return gCrossboneIsleEvents2;
 	}
-	if (scene == (s32)&SceneId_TakaraShima3)
+	if (scene == (s32)&SceneId_CrossboneIsle3)
 	{
-		return gTakaraShimaEvents3;
+		return gCrossboneIsleEvents3;
 	}
-	if (scene == (s32)&SceneId_TakaraShima4)
+	if (scene == (s32)&SceneId_CrossboneIsle4)
 	{
-		return gTakaraShimaEvents4;
+		return gCrossboneIsleEvents4;
 	}
-	if (scene == (s32)&SceneId_TakaraShima5)
+	if (scene == (s32)&SceneId_CrossboneIsle5)
 	{
-		return gTakaraShimaEvents5;
+		return gCrossboneIsleEvents5;
 	}
-	return gTakaraShimaEventsOther;
+	return gCrossboneIsleEventsOther;
 }
 
 static void EV08_PSYNERGY_1(void)
@@ -205,12 +205,12 @@ s32 Scene_Initialize(void)
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_TakaraShima3)
+	if (scene == (s32)&SceneId_CrossboneIsle3)
 	{
 		InitializeEscapeSceneActors();
 		return 0;
 	}
-	if (scene == (s32)&SceneId_TakaraShima5)
+	if (scene == (s32)&SceneId_CrossboneIsle5)
 	{
 		if (GameFlag_IsSet(0xef7) == 0)
 		{
@@ -234,9 +234,9 @@ s32 Scene_Initialize(void)
 		}
 	}
 	current = gGameState.scene;
-	if (current == (s32)&SceneId_TakaraShima1)
+	if (current == (s32)&SceneId_CrossboneIsle1)
 	{
-		TakaraShima_RestoreRoomActors();
+		CrossboneIsle_RestoreRoomActors();
 		Actor_Get(8)->target_x = 0x810000;
 		FieldScene_RedrawActorFootprint(9);
 		FieldScene_RedrawActorFootprint(10);
@@ -292,7 +292,7 @@ s32 Scene_Initialize(void)
 		InitializeStagedActorSceneOrbitingEffect(8);
 		return 0;
 	}
-	first = (s32)&SceneId_TakaraShima6;
+	first = (s32)&SceneId_CrossboneIsle6;
 	if (current == first)
 	{
 		if (GameFlag_IsSet(0xef4) == 0)
@@ -304,12 +304,12 @@ s32 Scene_Initialize(void)
 	current = gGameState.scene;
 	if (current >= first)
 	{
-		if (current <= (s32)&SceneId_TakaraShima14)
+		if (current <= (s32)&SceneId_CrossboneIsle14)
 		{
 			FieldScene_RunScene3b2SequenceA();
 			if (gGameState.entrance == 5)
 			{
-				TakaraShima_LeaveClearedRoom();
+				CrossboneIsle_LeaveClearedRoom();
 			}
 		}
 	}
@@ -323,7 +323,7 @@ static void FieldScene_RunScene3b2SequenceA(void)
 
 	actor = Actor_Get(8);
 	cleared = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0]
-							  + (0x8d2 - (s32)&SceneId_TakaraShima6)));
+							  + (0x8d2 - (s32)&SceneId_CrossboneIsle6)));
 	if (cleared != 0)
 	{
 		Actor_SetPosition(8, 0x28a0000, 0xa80000);
@@ -358,7 +358,7 @@ static void EV08_PSYNERGY(void)
 		s32 off = 448;
 		slot = (s16 *)((u8 *)((s16 *)&gGameState) + off);
 	}
-	if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0)
+	if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_CrossboneIsle6)) != 0)
 	{
 		return;
 	}
@@ -385,7 +385,7 @@ static void EV08_PSYNERGY(void)
 		slot = (s16 *)((u8 *)((s16 *)&gGameState) + off);
 	}
 #endif
-	Engine_GameFlagSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6));
+	Engine_GameFlagSet(*slot + (0x8d2 - (s32)&SceneId_CrossboneIsle6));
 }
 
 static void EV20_SCRIPT(void)
@@ -398,19 +398,19 @@ static void EV20_SCRIPT(void)
 
 static void EV04_TOUCH(void)
 {
-	Engine_MapAnimateCells(TakaraShima_EntranceCells, 37, 7);
+	Engine_MapAnimateCells(CrossboneIsle_EntranceCells, 37, 7);
 	Engine_AudioPlayCue(183);
 	Engine_EventRequestExit(4);
 }
 
 static void EV03_TOUCH(void)
 {
-	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0)
+	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_CrossboneIsle6)) == 0)
 	{
 		Engine_EventBegin();
 		Party_SetFields1ceAnd1d0(gGameState.scene, 5);
 		((u8 *)((s16(*)[1]) & gGameState))[0x22b] = 3;
-		switch (gGameState.scene - (s32)&SceneId_TakaraShima6)
+		switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6)
 		{
 		case 0:
 			BattleFx_SetWeightedResult(63, 0);
@@ -444,22 +444,22 @@ static void EV03_TOUCH(void)
 	}
 	else
 	{
-		Engine_MapAnimateCells((s32)TakaraShima_EntranceCells, 44, 7);
+		Engine_MapAnimateCells((s32)CrossboneIsle_EntranceCells, 44, 7);
 		Engine_AudioPlayCue(183);
 		Engine_EventRequestExit(3);
 	}
 }
 
-static void TakaraShima_LeaveClearedRoom(void)
+static void CrossboneIsle_LeaveClearedRoom(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0]
-				  + (0x8c8 - (s32)&SceneId_TakaraShima6)));
+				  + (0x8c8 - (s32)&SceneId_CrossboneIsle6)));
 	Engine_EventWait(30);
-	Map_AnimateCells(TakaraShima_EntranceCells, 44, 7);
+	Map_AnimateCells(CrossboneIsle_EntranceCells, 44, 7);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();
@@ -552,7 +552,7 @@ static void EV18_PSYNERGY(void)
 	Engine_GameFlagSet(2247);
 }
 
-static void TakaraShima_RestoreRoomActors(void)
+static void CrossboneIsle_RestoreRoomActors(void)
 {
 	struct FieldActor *record;
 
@@ -1504,7 +1504,7 @@ static void UpdateActor17NorthRoute(void)
 
 #define IN_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-static void TakaraShima_SettlePushedBlockNorth(void)
+static void CrossboneIsle_SettlePushedBlockNorth(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -1699,7 +1699,7 @@ static void AdvanceActor18AlongEscapeRoute(void)
 #undef IN_COLUMNS
 #define IN_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-static void TakaraShima_SettleSecondBlockNorth(void)
+static void CrossboneIsle_SettleSecondBlockNorth(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -1897,7 +1897,7 @@ static void AdvanceActor9AlongEscapeRoute(void)
 	Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-static void TakaraShima_SettlePushedBlockWest(void)
+static void CrossboneIsle_SettlePushedBlockWest(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -2001,7 +2001,7 @@ static void TakaraShima_SettlePushedBlockWest(void)
 	Map_CopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
 }
 
-static void TakaraShima_SettlePushedBlock(void)
+static void CrossboneIsle_SettlePushedBlock(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -2387,7 +2387,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u16 TakaraShima_EntranceCells[] = {
+u16 CrossboneIsle_EntranceCells[] = {
 	MAP_CELL_STEP(58, 23, 1, 2, 5), MAP_CELL_STEP(59, 23, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
@@ -2409,38 +2409,38 @@ const s32 *gEffectScripts[] = {
 	0,
 };
 
-struct SceneEntrance gTakaraShimaEntrances1[] = {
+struct SceneEntrance gCrossboneIsleEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 280, 0, 544, FACING_NORTH, 0, 0, 0, 512, 560, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 360, FACING_SOUTH, 0, 0, 0, 512, 560, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraShimaEntrances2[] = {
+struct SceneEntrance gCrossboneIsleEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 312, 0, 520, FACING_NORTH, 0, 16, 64, 416, 544, 0 },
 	{ 2, CONDITION_ALWAYS, 280, 0, 144, FACING_EAST, 0, 16, 64, 416, 544, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraShimaEntrances3[] = {
+struct SceneEntrance gCrossboneIsleEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 312, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
 	{ 2, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
 	{ 99, CONDITION_ALWAYS, 272, 0, 232, FACING_SOUTH, 0, 0, 16, 640, 464, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraShimaEntrances4[] = {
+struct SceneEntrance gCrossboneIsleEntrances4[] = {
 	{ 1, CONDITION_ALWAYS, 184, 0, 136, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 40, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u16 gTakaraShimaEntrances5[] = {
+u16 gCrossboneIsleEntrances5[] = {
 	MAP_CELL_STEP(1, 65535, 312, 0, 656), MAP_CELL_STEP(32768, 0, 65535, 65535, 65535), MAP_CELL_STEPS_END,
 	MAP_CELL_STEP(0, 5, 65535, 216, 0), MAP_CELL_STEP(544, 49152, 0, 65535, 65535), MAP_CELL_STEPS_END,
 	MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gTakaraShimaEntrancesOther[] = {
+struct SceneEntrance gCrossboneIsleEntrancesOther[] = {
 	{ 1, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
 	{ 2, CONDITION_ALWAYS, 488, 0, 176, FACING_EAST, 0, 432, 32, 880, 352, 0 },
 	{ 3, CONDITION_ALWAYS, 712, 0, 152, FACING_SOUTH, 0, 432, 32, 880, 352, 0 },
@@ -2449,7 +2449,7 @@ struct SceneEntrance gTakaraShimaEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gTakaraShimaExits[] = {
+u32 gCrossboneIsleExits[] = {
 	SCENE_EXITS(113),
 	SCENE_EXIT(1, 2, 76),
 	SCENE_EXIT(2, 114, 1),
@@ -2512,11 +2512,11 @@ u32 gTakaraShimaExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTakaraShimaPlacementsOther[] = {
+struct ScenePlacement gCrossboneIslePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraShimaPlacements1[] = {
+struct ScenePlacement gCrossboneIslePlacements1[] = {
 	{ 0x16, 0xfd7, 7,
 		PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -2540,7 +2540,7 @@ struct ScenePlacement gTakaraShimaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraShimaPlacements3[] = {
+struct ScenePlacement gCrossboneIslePlacements3[] = {
 	{ 0xec, CONDITION_ALWAYS, 7,
 		PIXELS(408), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xec, CONDITION_ALWAYS, 7,
@@ -2568,13 +2568,13 @@ struct ScenePlacement gTakaraShimaPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraShimaPlacements6To14[] = {
+struct ScenePlacement gCrossboneIslePlacements6To14[] = {
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(632), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gTakaraShimaEventsOther[] = {
+struct SceneEvent gCrossboneIsleEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -2585,13 +2585,13 @@ struct SceneEvent gTakaraShimaEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraShimaEvents2[] = {
+struct SceneEvent gCrossboneIsleEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraShimaEvents1[] = {
+struct SceneEvent gCrossboneIsleEvents1[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(EV08_PSYNERGY_1) },
 	{ PSYNERGY_ON_ACTOR(0xc), 11, 0x240, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0xc), 12, 0x241, EVENT_SCRIPT(EV12_PSYNERGY) },
@@ -2614,7 +2614,7 @@ struct SceneEvent gTakaraShimaEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraShimaEvents3[] = {
+struct SceneEvent gCrossboneIsleEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
@@ -2649,16 +2649,16 @@ struct SceneEvent gTakaraShimaEvents3[] = {
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateActor17NorthRoute) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraShima_SettlePushedBlockNorth) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_SettlePushedBlockNorth) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor18AlongEscapeRoute) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraShima_SettleSecondBlockNorth) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_SettleSecondBlockNorth) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(AdvanceActor9AlongEscapeRoute) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathEast) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathWest) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraShima_SettlePushedBlockWest) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraShima_SettlePushedBlock) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_SettlePushedBlockWest) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIsle_SettlePushedBlock) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathSouth) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(RetreatActor14AlongEscapeRoute) },
@@ -2688,13 +2688,13 @@ struct SceneEvent gTakaraShimaEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraShimaEvents4[] = {
+struct SceneEvent gCrossboneIsleEvents4[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraShimaEvents5[] = {
+struct SceneEvent gCrossboneIsleEvents5[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TOUCH, 10, 0x8d1, EVENT_SCRIPT(EV10_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },

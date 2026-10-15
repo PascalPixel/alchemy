@@ -26,13 +26,13 @@
 // 前方宣言
 static void Scene_RunGuardSequenceC(void);
 static void EV17_PSYNERGY(void);
-static void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);
+static void SolStatue_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);
 static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
-static void SoruSekizo_OpenNorthwestSeal(void);
-static void SoruSekizo_OpenNortheastSeal(void);
-static void SoruSekizo_OpenSouthwestSeal(void);
-static void SoruSekizo_OpenSoutheastSeal(void);
-static void SoruSekizo_OpenSeal(void);
+static void SolStatue_OpenNorthwestSeal(void);
+static void SolStatue_OpenNortheastSeal(void);
+static void SolStatue_OpenSouthwestSeal(void);
+static void SolStatue_OpenSoutheastSeal(void);
+static void SolStatue_OpenSeal(void);
 static void Scene_ShineLeftBeam(void);
 static void Scene_ShineRightBeam(void);
 static void Event_SayThenWait(s32 speaker, s32 frames);
@@ -96,7 +96,7 @@ void InitializeSceneRecordBuffer();
 
 enum StatueHallActor
 {
-	ACTOR_SUKURETA = ACTOR_FIRST_PLACED
+	ACTOR_KRADEN = ACTOR_FIRST_PLACED
 };
 
 struct FocusPoint
@@ -113,7 +113,7 @@ struct FocusWork
 
 // bss in this order: as commons of one object the linker would sort them itself
 static struct SealScene gSealScene;
-static struct Ent		SoruSekizo_SpriteRows[27];
+static struct Ent		SolStatue_SpriteRows[27];
 
 u8 *SceneEventRuntime_GetScriptData(void)
 {
@@ -195,22 +195,22 @@ static void FieldScene_SetupStagedActors(void)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
-	Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0xe80000);
+	Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0xe80000);
 	Engine_EventWait(1);
-	Engine_EventSetMessage(MsgSoruSukuretaYouFoundIt);
-	Event_SayThenWait(ACTOR_SUKURETA, 6);
-	Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0x1180000);
+	Engine_EventSetMessage(MsgSolKradenYouFoundIt);
+	Event_SayThenWait(ACTOR_KRADEN, 6);
+	Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0x1180000);
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 216);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 216);
 	Engine_EventWait(20);
-	Engine_ActorJump(JASMINE, 2, 0);
+	Engine_ActorJump(JENNA, 2, 0);
 	Engine_EventWait(30);
-	Event_SayThenWait(JASMINE, 6);
-	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
+	Event_SayThenWait(JENNA, 6);
+	Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	Engine_EventWait(6);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST + FACING_STEP, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x59999, 0xb333);
 	Camera_MoveTo(0x11f0000, -1, 0xb00000, 1);
@@ -219,16 +219,16 @@ static void FieldScene_SetupStagedActors(void)
 	Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	Engine_EventWait(10);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
 	Engine_EventWait(10);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 0);
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x30000, 0x20000);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 184);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x30000, 0x20000);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 184);
 	Engine_EventWait(40);
-	Event_SayThenWait(ACTOR_SUKURETA, 6);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 0);
+	Event_SayThenWait(ACTOR_KRADEN, 6);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
 	Engine_EventWait(40);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	gEventWork->transition_frames = 16;
@@ -240,12 +240,12 @@ static void FieldScene_SetupStagedActors(void)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
-	Actor_SetPosition(ACTOR_SUKURETA, 0x1a80000, 0xc80000);
+	Actor_SetPosition(ACTOR_KRADEN, 0x1a80000, 0xc80000);
 	Engine_TaskWait(1);
-	Event_SayThenWait(ACTOR_SUKURETA, 20);
+	Event_SayThenWait(ACTOR_KRADEN, 20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
-	Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0xb80000);
+	Actor_SetPosition(ACTOR_KRADEN, 0x2400000, 0xb80000);
 	Camera_MoveTo(0x23e0000, -1, 0xb40000, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
@@ -256,74 +256,74 @@ static void FieldScene_SetupStagedActors(void)
 	Camera_MoveTo(0x23e0000, -1, 0x9d0000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_SayThenWait(GERALD, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
-	Event_SayThenWait(JASMINE, 6);
-	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_SayThenWait(GARET, 20);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+	Event_SayThenWait(JENNA, 6);
+	Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
-	Event_SayThenWait(ACTOR_SUKURETA, 80);
-	Actor_ShowEmote(ACTOR_SUKURETA, EMOTE_IN_FRONT | 2, 0);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+	Event_SayThenWait(ACTOR_KRADEN, 80);
+	Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 0);
 	Engine_EventWait(60);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
 	Engine_EventWait(30);
-	Event_SayThenWait(ACTOR_SUKURETA, 20);
+	Event_SayThenWait(ACTOR_KRADEN, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 1, 0);
-	Actor_ShowEmote(JASMINE, EMOTE_IN_FRONT | 1, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+	Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
 	Engine_EventWait(60);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
 	Engine_EventWait(30);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
-	Event_SayThenWait(ACTOR_SUKURETA, 6);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+	Event_SayThenWait(ACTOR_KRADEN, 6);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_EventWait(40);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
-	Event_SayThenWait(ACTOR_SUKURETA, 6);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+	Event_SayThenWait(ACTOR_KRADEN, 6);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(JASMINE, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimation(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimation(JENNA, ANIM_NOD);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
-	Event_SayThenWait(ACTOR_SUKURETA, 6);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+	Event_SayThenWait(ACTOR_KRADEN, 6);
 	Camera_SetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0x2400000, -1, 0xd70000, 1);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_SOUTH, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	Engine_EventWait(10);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 0);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 217);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 0);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 217);
 	Engine_EventWait(20);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 0x141);
-	Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 0x141);
+	Actor_SetPosition(ACTOR_KRADEN, 0, 0);
 	Camera_SetSpeed(0x39999, 0x7333);
 	Camera_MoveTo(0x2400000, -1, 0x880000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
-	Engine_ActorSetAnimation(GERALD, ANIM_WALK);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
+	Engine_ActorSetAnimation(GARET, ANIM_WALK);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	if (leader != NULL)
 	{
-		Actor_SetDestination(GERALD, leader->x.part.pixel, leader->z.part.pixel);
+		Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(JASMINE, ANIM_WALK);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(JENNA, ANIM_WALK);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	if (leader != NULL)
 	{
-		Actor_SetDestination(JASMINE, leader->x.part.pixel, leader->z.part.pixel);
+		Actor_SetDestination(JENNA, leader->x.part.pixel, leader->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(JASMINE);
-	Actor_SetPosition(JASMINE, 0, 0);
+	Engine_ActorWaitForMove(JENNA);
+	Actor_SetPosition(JENNA, 0, 0);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	gEventWork->transition_frames = 16;
@@ -344,7 +344,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_EventWait(20);
 	Engine_ActorSetPosition(8, 0x2400000, 0x1280000);
 	Engine_EventWait(1);
-	Engine_EventSetMessage(MsgSoruWait);
+	Engine_EventSetMessage(MsgSolWait);
 	Event_SayThenWait(8, 6);
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
@@ -375,7 +375,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_SayThenWait(8, 6);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(5, 3);
 	Engine_ActorSetAnimationAndWait(0, 3);
 	Engine_EventWait(40);
@@ -390,10 +390,10 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_SayThenWait(8, 6);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
 	Engine_EventWait(40);
 	Engine_ActorFaceActor(8, 0, 0);
-	Actor_FaceActor(8, JASMINE, 0);
+	Actor_FaceActor(8, JENNA, 0);
 	Engine_EventWait(40);
 	Engine_ActorJump(8, 6, 0);
 	Actor_WalkToAndWait(8, 0x240, 216);
@@ -416,7 +416,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0x4000, 0);
 	Actor_FaceDirection(5, 0x4000, 0);
-	Actor_FaceDirection(GERALD, 0x4000, 0);
+	Actor_FaceDirection(GARET, 0x4000, 0);
 	Engine_CameraSetSpeed(0xcccc, 0x1999);
 	Engine_CameraMoveTo(0x23e0000, -1, 0xab0000, 1);
 	Engine_ActorJump(8, 6, 0);
@@ -428,7 +428,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Event_SayThenWait(8, 20);
 	Engine_ActorShowEmote(5, 0x102, 0);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Event_SayThenWait(5, 6);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_ActorFaceDirection(8, 0x8000, 0);
@@ -438,13 +438,13 @@ static void FieldScene_RunStagedActorScene(void)
 	Event_SayThenWait(8, 6);
 	Actor_ShowEmote(0, 0x101, 0);
 	Actor_ShowEmote(1, 0x101, 0);
-	Actor_ShowEmote(JASMINE, 0x101, 0);
+	Actor_ShowEmote(JENNA, 0x101, 0);
 	Engine_EventWait(60);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_SayThenWait(8, 6);
 	Engine_ActorFaceEachOther(1, 0, 0);
 	Engine_EventWait(40);
-	Engine_ActorFaceEachOther(JASMINE, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(JENNA, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(40);
 	UiText_OpenMessageAtObject(8, 0);
 	Actor_FaceDirection(0, 0x4000, 0);
@@ -452,14 +452,14 @@ static void FieldScene_RunStagedActorScene(void)
 	Actor_FaceDirection(1, 0x4000, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgSoruHonestlyDoubtUnderstand);
+		Engine_EventSetMessage(MsgSolHonestlyDoubtUnderstand);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgSoruHmphWellTold);
+		Engine_EventSetMessage(MsgSolHmphWellTold);
 	}
 	Event_SayThenWait(8, 6);
-	Engine_EventSetMessage(MsgSoruTryFindSolution);
+	Engine_EventSetMessage(MsgSolTryFindSolution);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Event_SayThenWait(8, 6);
 	Engine_ActorShowEmote(1, 0x102, 0);
@@ -498,7 +498,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_ActorSetAnimationAndWait(5, 3);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(5, 0x10000, 0x8000);
-	Engine_ActorSetAnimation(JASMINE, 2);
+	Engine_ActorSetAnimation(JENNA, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
@@ -521,7 +521,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_EventEnd();
 }
 
-static void SoruSekizo_RunSealOpenedSequence(void)
+static void SolStatue_RunSealOpenedSequence(void)
 {
 	struct FocusWork  *work;
 	struct FieldActor *leader;
@@ -614,7 +614,7 @@ static void SoruSekizo_RunSealOpenedSequence(void)
 static void SceneEffect_UpdateScrollingSpriteRows(void)
 {
 	s32		   *cp = &((struct Cam *)gMapWork[0])->x;
-	struct Ent *e = SoruSekizo_SpriteRows;
+	struct Ent *e = SolStatue_SpriteRows;
 	s32			sx = cp[0] / 65536;
 	s32			sy = 80 - cp[1] / 65536;
 	s32			v;
@@ -622,7 +622,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 
 	if ((u32)(sy + 16) <= 175)
 	{
-		v = (SoruSekizo_ScrollPhase >> 10) - sx;
+		v = (SolStatue_ScrollPhase >> 10) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -634,7 +634,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SoruSekizo_ScrollPhase >> 9) - sx;
+		v = (SolStatue_ScrollPhase >> 9) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -646,7 +646,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 				e++;
 			}
 		}
-		v = (SoruSekizo_ScrollPhase >> 8) - sx;
+		v = (SolStatue_ScrollPhase >> 8) - sx;
 		v |= -32;
 		{
 			for (i = 0; i <= 8; i++)
@@ -663,7 +663,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void)
 			}
 		}
 	}
-	SoruSekizo_ScrollPhase += 0x80;
+	SolStatue_ScrollPhase += 0x80;
 }
 
 static void SceneState_RunWhenSlotZeroFacingC000(void)
@@ -715,8 +715,8 @@ s32 Scene_RunGuardSequenceB(void)
 	Engine_ActorSetSpritePriority(18, 1);
 	if ((u32)(((u16)gGameState.entrance - 3) << 16) > 0x10000)
 	{
-		Actor_SetPosition(JASMINE, 0, 0);
-		Actor_SetPosition(GERALD, 0, 0);
+		Actor_SetPosition(JENNA, 0, 0);
+		Actor_SetPosition(GARET, 0, 0);
 	}
 	if (GameFlag_IsSet(0x818) != 0)
 	{
@@ -789,8 +789,8 @@ s32 Scene_RunGuardSequenceB(void)
 	{
 		if (GameFlag_IsSet(0x30a) != 0)
 		{
-			Actor_SetPosition(GERALD, 0, 0);
-			Actor_SetPosition(JASMINE, 0, 0);
+			Actor_SetPosition(GARET, 0, 0);
+			Actor_SetPosition(JENNA, 0, 0);
 		}
 		else if (GameFlag_IsSet(0x109) == 0)
 		{
@@ -802,8 +802,8 @@ s32 Scene_RunGuardSequenceB(void)
 	{
 		if (GameFlag_IsSet(0x30b) != 0)
 		{
-			Actor_SetPosition(GERALD, 0, 0);
-			Actor_SetPosition(JASMINE, 0, 0);
+			Actor_SetPosition(GARET, 0, 0);
+			Actor_SetPosition(JENNA, 0, 0);
 		}
 		else if (GameFlag_IsSet(0x109) == 0)
 		{
@@ -827,9 +827,9 @@ static void Scene_RunGuardSequenceC(void)
 	s32 *p;
 	s32	 buf;
 
-	p = (s32 *)SoruSekizo_SpriteRows;
+	p = (s32 *)SolStatue_SpriteRows;
 	buf = (s32)Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz((s32)SoruSekizo_SpriteRowsGfx, buf);
+	Resource_DecodeByteLz((s32)SolStatue_SpriteRowsGfx, buf);
 	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
 	for (i = 0; i < 9; i++)
 	{
@@ -872,7 +872,7 @@ static void EV09_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(9, 31, 9) != 0)
 	{
-		SoruSekizo_OpenNorthwestSeal();
+		SolStatue_OpenNorthwestSeal();
 	}
 }
 
@@ -880,7 +880,7 @@ static void EV11_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(11, 40, 9) != 0)
 	{
-		SoruSekizo_OpenNortheastSeal();
+		SolStatue_OpenNortheastSeal();
 	}
 }
 
@@ -888,7 +888,7 @@ static void EV13_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(13, 31, 12) != 0)
 	{
-		SoruSekizo_OpenSouthwestSeal();
+		SolStatue_OpenSouthwestSeal();
 	}
 }
 
@@ -896,7 +896,7 @@ static void EV15_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(15, 40, 12) != 0)
 	{
-		SoruSekizo_OpenSoutheastSeal();
+		SolStatue_OpenSoutheastSeal();
 	}
 }
 
@@ -937,7 +937,7 @@ static void EV17_SCRIPT(void)
 	}
 }
 
-static void SoruSekizo_BlockLeftTriggerCell(void)
+static void SolStatue_BlockLeftTriggerCell(void)
 {
 	s32 x = Object_GetById(0)->x.fixed >> 20;
 	s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -1033,7 +1033,7 @@ static void EV17_PSYNERGY(void)
 					Engine_GameFlagSet(0x80f);
 				}
 				Engine_EventWait(40);
-				Engine_MessageShowCentered(MsgSoruSomethingClicked, 1);
+				Engine_MessageShowCentered(MsgSolSomethingClicked, 1);
 				Map_CopyCellAttributes(0, 1, 2, 1, 17, 8);
 				Map_CopyCellAttributes(17, 9, 2, 1, 17, 7);
 			}
@@ -1069,31 +1069,31 @@ static void EV32_TOUCH(void)
 
 static void EV05_TOUCH(void)
 {
-	SoruSekizo_RunEventSequence(9, 31, 9, 30, 9);
-	SoruSekizo_OpenNorthwestSeal();
+	SolStatue_RunEventSequence(9, 31, 9, 30, 9);
+	SolStatue_OpenNorthwestSeal();
 }
 
 static void EV06_TOUCH(void)
 {
-	SoruSekizo_RunEventSequence(11, 40, 9, 41, 9);
-	SoruSekizo_OpenNortheastSeal();
+	SolStatue_RunEventSequence(11, 40, 9, 41, 9);
+	SolStatue_OpenNortheastSeal();
 }
 
 static void EV07_TOUCH(void)
 {
-	SoruSekizo_RunEventSequence(13, 31, 12, 30, 12);
-	SoruSekizo_OpenSouthwestSeal();
+	SolStatue_RunEventSequence(13, 31, 12, 30, 12);
+	SolStatue_OpenSouthwestSeal();
 }
 
 static void EV08_TOUCH(void)
 {
-	SoruSekizo_RunEventSequence(15, 40, 12, 41, 12);
-	SoruSekizo_OpenSoutheastSeal();
+	SolStatue_RunEventSequence(15, 40, 12, 41, 12);
+	SolStatue_OpenSoutheastSeal();
 }
 
 static void FieldScene_ApplyRect10_14_7_13_7(void)
 {
-	SoruSekizo_RunEventSequence(10, 14, 7, 13, 7);
+	SolStatue_RunEventSequence(10, 14, 7, 13, 7);
 	Scene_ShineLeftBeam();
 }
 
@@ -1108,7 +1108,7 @@ static void EV21_TOUCH(void)
 	}
 
 	cell = record->z.fixed >> 20;
-	SoruSekizo_RunEventSequence(10, 13, cell + 1, 13, cell);
+	SolStatue_RunEventSequence(10, 13, cell + 1, 13, cell);
 }
 
 static void SceneActor_MoveActor10ByRow(void)
@@ -1117,13 +1117,13 @@ static void SceneActor_MoveActor10ByRow(void)
 	if (p != NULL)
 	{
 		s32 v = p[4] >> 20;
-		SoruSekizo_RunEventSequence(10, 13, v - 1, 13, v);
+		SolStatue_RunEventSequence(10, 13, v - 1, 13, v);
 	}
 }
 
 static void FieldScene_ApplyRect12_21_7_22_7(void)
 {
-	SoruSekizo_RunEventSequence(12, 21, 7, 22, 7);
+	SolStatue_RunEventSequence(12, 21, 7, 22, 7);
 	Scene_ShineRightBeam();
 }
 
@@ -1133,7 +1133,7 @@ static void EV26_TOUCH(void)
 	if (p != NULL)
 	{
 		s32 v = p[4] >> 20;
-		SoruSekizo_RunEventSequence(12, 22, v + 1, 22, v);
+		SolStatue_RunEventSequence(12, 22, v + 1, 22, v);
 	}
 }
 
@@ -1143,11 +1143,11 @@ static void SceneActor_RunSlot12ColumnStep(void)
 	if (p != NULL)
 	{
 		s32 v = p[4] >> 20;
-		SoruSekizo_RunEventSequence(12, 22, v - 1, 22, v);
+		SolStatue_RunEventSequence(12, 22, v - 1, 22, v);
 	}
 }
 
-static void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
+static void SolStatue_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
 	s32 p10;
 	s32 p10b;
@@ -1191,7 +1191,7 @@ static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
 	return 1;
 }
 
-static void SoruSekizo_OpenNorthwestSeal(void)
+static void SolStatue_OpenNorthwestSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 0;
@@ -1243,10 +1243,10 @@ static void SoruSekizo_OpenNorthwestSeal(void)
 	p[46] = 9;
 	p[47] = 488;
 	p[48] = 152;
-	SoruSekizo_OpenSeal();
+	SolStatue_OpenSeal();
 }
 
-static void SoruSekizo_OpenNortheastSeal(void)
+static void SolStatue_OpenNortheastSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 4;
@@ -1298,10 +1298,10 @@ static void SoruSekizo_OpenNortheastSeal(void)
 	p[46] = 11;
 	p[47] = 664;
 	p[48] = 152;
-	SoruSekizo_OpenSeal();
+	SolStatue_OpenSeal();
 }
 
-static void SoruSekizo_OpenSouthwestSeal(void)
+static void SolStatue_OpenSouthwestSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 0;
@@ -1353,10 +1353,10 @@ static void SoruSekizo_OpenSouthwestSeal(void)
 	p[46] = 13;
 	p[47] = 488;
 	p[48] = 200;
-	SoruSekizo_OpenSeal();
+	SolStatue_OpenSeal();
 }
 
-static void SoruSekizo_OpenSoutheastSeal(void)
+static void SolStatue_OpenSoutheastSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 4;
@@ -1408,13 +1408,13 @@ static void SoruSekizo_OpenSoutheastSeal(void)
 	p[46] = 15;
 	p[47] = 664;
 	p[48] = 200;
-	SoruSekizo_OpenSeal();
+	SolStatue_OpenSeal();
 }
 
 #define COPY_CELLS(c) \
 	Map_CopyCellsTo((c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
 
-static void SoruSekizo_OpenSeal(void)
+static void SolStatue_OpenSeal(void)
 {
 	struct SealScene *scene;
 	s32				  result;
@@ -1470,7 +1470,7 @@ static void SoruSekizo_OpenSeal(void)
 				if (!GameFlag_IsSet(0x80f))
 				{
 					Engine_GameFlagSet(0x80f);
-					SoruSekizo_RunSealOpenedSequence();
+					SolStatue_RunSealOpenedSequence();
 				}
 			}
 			else if (Engine_GameFlagIsSet(0x812))
@@ -1597,9 +1597,9 @@ struct ScenePlacement SceneEventRuntime_ActorData[] = {
 		PIXELS(288), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xcc, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(560), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(592), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
@@ -1617,7 +1617,7 @@ struct SceneEvent SceneEventRuntime_EffectData[] = {
 	{ TOUCH_WALKING_INTO(FACING_WEST), 6, 0x80c, EVENT_SCRIPT(EV06_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 7, 0x80d, EVENT_SCRIPT(EV07_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 8, 0x80e, EVENT_SCRIPT(EV08_TOUCH) },
-	{ 0x10008c15, 10, 0x816, EVENT_SCRIPT(SoruSekizo_BlockLeftTriggerCell) },
+	{ 0x10008c15, 10, 0x816, EVENT_SCRIPT(SolStatue_BlockLeftTriggerCell) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x816, EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ 0x10008c15, 12, 0x817, EVENT_SCRIPT(EV12_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x817, EVENT_SCRIPT(EV12_PSYNERGY) },
@@ -1637,4 +1637,4 @@ struct SceneEvent SceneEventRuntime_EffectData[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 SoruSekizo_ScrollPhase = 0;
+s32 SolStatue_ScrollPhase = 0;

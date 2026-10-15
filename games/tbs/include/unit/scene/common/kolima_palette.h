@@ -4,6 +4,6 @@
 #include "types.h"
 
 void SceneEffect_AdjustPaletteColors(s32 a);
-void KorimaPalette_Restore(s32 second);
+void KolimaPalette_Restore(s32 second);
 
 #endif

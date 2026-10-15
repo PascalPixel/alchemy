@@ -14563,7 +14563,7 @@ msgctxt "MsgHpRecover"
 msgid "03638"
 msgstr "¡{argument_actor_name:1} recupera {argument_signed_number} PV!"
 
-msgctxt "MsgEpRecover"
+msgctxt "MsgPpRecover"
 msgid "03639"
 msgstr "¡{argument_actor_name:1} recupera {argument_signed_number} PP!"
 
@@ -14575,7 +14575,7 @@ msgctxt "MsgHpFull"
 msgid "03641"
 msgstr "¡PV de {argument_actor_name:1} al máximo!"
 
-msgctxt "MsgEpFull"
+msgctxt "MsgPpFull"
 msgid "03642"
 msgstr "¡PP de {argument_actor_name:1} al máximo!"
 
@@ -14607,11 +14607,11 @@ msgctxt "message"
 msgid "03649"
 msgstr "¡La Muerte llama a {argument_actor_name:1}!"
 
-msgctxt "MsgEpLossE"
+msgctxt "MsgPpLossE"
 msgid "03650"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PP!"
 
-msgctxt "MsgEpLossP"
+msgctxt "MsgPpLossP"
 msgid "03651"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PP!"
 
@@ -23779,19 +23779,19 @@ msgctxt "message"
 msgid "05942"
 msgstr "61"
 
-msgctxt "MsgDeriHeyaGah"
+msgctxt "MsgDailaInteriorsGah"
 msgid "05943"
 msgstr "{text_effect:4}GAH!{reset_text_style}{end_wait}"
 
-msgctxt "MsgDeriHeyaYarg"
+msgctxt "MsgDailaInteriorsYarg"
 msgid "05944"
 msgstr "{text_effect:4}YARG!{reset_text_style}{end_wait}"
 
-msgctxt "MsgDeriHeyaWhatAreYouDoing"
+msgctxt "MsgDailaInteriorsWhatAreYouDoing"
 msgid "05945"
 msgstr "{text_effect:4}What are you doing???{reset_text_style}{end_wait}"
 
-msgctxt "MsgVinasuChojoAreYouSureWeShouldBeLeaving"
+msgctxt "MsgVenusLighthouseAreYouSureWeShouldBeLeaving"
 msgid "05946"
 msgstr "¿Crees que hacemos bien{line_break}marchándonos así sin más?{end_wait}"
 
@@ -24459,11 +24459,11 @@ msgctxt "MsgNotThatWay"
 msgid "06112"
 msgstr "¡Por ahí no, {actor_name:6}!{line_break}El punto de encuentro{line_break}está bajando por aquí.{page_break}Bajemos y entremos{line_break}en esa cueva.{end_wait}"
 
-msgctxt "MsgVinasuChojoReliefWords"
+msgctxt "MsgVenusLighthouseReliefWords"
 msgid "06113"
 msgstr "Hay unas palabras{line_break}esculpidas en relieve...{page_break}Si queréis subir al{line_break}Faro de Venus, primero{line_break}busca su poder.{page_break}Para obtenerlo, debes ver{line_break}con los ojos de la verdad.{line_break}Así se abrirá el camino.{page_break}Pero el camino que desvelo{line_break}no es el comienzo.{page_break}El verdadero comienzo está{line_break}en antiguos pasadizos{line_break}de tierras lejanas.{end_wait}"
 
-msgctxt "MsgVinasuChojoTrueHeart"
+msgctxt "MsgVenusLighthouseTrueHeart"
 msgid "06114"
 msgstr "El verdadero camino sólo puede{line_break}ser revelado a aquel que tenga{line_break}un corazón verdadero.{end_wait}"
 
@@ -25131,7 +25131,7 @@ msgctxt "message"
 msgid "06280"
 msgstr "{actor_name:7} se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "MsgIdejimaHeyGarcia"
+msgctxt "MsgIdejimaHeyFelix"
 msgid "06281"
 msgstr "¡Ey, {actor_name:5}!{end_wait}"
 
@@ -25463,7 +25463,7 @@ msgctxt "message"
 msgid "06363"
 msgstr "Me está empezando a entrar{line_break}hambre. ¿Nos vamos ya?{end_wait}"
 
-msgctxt "MsgDeriBeenBefore"
+msgctxt "MsgDailaBeenBefore"
 msgid "06364"
 msgstr "No me suena tu cara. ¿Has{line_break}estado antes en Daila?{end_now}"
 
@@ -25475,11 +25475,11 @@ msgctxt "message"
 msgid "06366"
 msgstr "¡Pues entonces, sé bienvenido{line_break}a Daila, la ciudad más norteña{line_break}del continente indro!{end_wait}"
 
-msgctxt "MsgDeriWaveNoInjuries"
+msgctxt "MsgDailaWaveNoInjuries"
 msgid "06367"
 msgstr "Un gigantesco tsunami{line_break}afectó a la ciudad, pero{line_break}no hubo heridos...{page_break}¡Fue un milagro!{end_wait}"
 
-msgctxt "MsgDeriIndraMoved"
+msgctxt "MsgDailaIndraMoved"
 msgid "06368"
 msgstr "¿No te dio la impresión de que{line_break}el continente se movió cuando{line_break}lo del tsunami?{end_now}"
 
@@ -25519,7 +25519,7 @@ msgctxt "MsgFieldOurVillageSurvivedTheWaveBut"
 msgid "06377"
 msgstr "Nuestra aldea soportó el{line_break}tsunami, pero nuestros{line_break}barcos fueron destruidos...{page_break}No podremos navegar por{line_break}un tiempo, pero saldremos{line_break}adelante de alguna forma...{end_wait}"
 
-msgctxt "MsgDeriWantBoat"
+msgctxt "MsgDailaWantBoat"
 msgid "06378"
 msgstr "¿Mm? ¿Quieres un barco?{end_now}"
 
@@ -25675,7 +25675,7 @@ msgctxt "MsgFieldNowThatBriggsIsLockedAway"
 msgid "06416"
 msgstr "Ahora que Briggs está entre{line_break}rejas, no tendremos ningún{line_break}incidente con piratas este año.{page_break}Aunque una cosa está clara:{line_break}ese tsunami hizo más daño{line_break}que toda una legión de piratas...{end_wait}"
 
-msgctxt "MsgDeriHeyaSouthRoadDanger"
+msgctxt "MsgDailaInteriorsSouthRoadDanger"
 msgid "06417"
 msgstr "Tenéis intención de ir{line_break}hacia el sur, ¿verdad?{page_break}Dejadme deciros que la ruta del{line_break}sur está hecha un desastre por el{line_break}terremoto. Y también es peligrosa.{end_wait}"
 
@@ -25683,15 +25683,15 @@ msgctxt "MsgFieldImGladImNotGoingTo"
 msgid "06418"
 msgstr "Me alegro de no tener que ir a{line_break}Madra... He oído que la zona{line_break}sigue afectada por la sequía...{page_break}Y seguro que ahora, con el{line_break}terremoto, debe de estar{line_break}llena de simas y grietas...{end_wait}"
 
-msgctxt "MsgDeriHeyaNewTravelers"
+msgctxt "MsgDailaInteriorsNewTravelers"
 msgid "06419"
 msgstr "¡Parece que tenemos nuevas{line_break}caras en la aldea! ¿Qué os{line_break}trae por aquí?{page_break}No hay mucho que merezca{line_break}la pena en este continente{line_break}olvidado.{end_wait}"
 
-msgctxt "MsgDeriHeyaScamps"
+msgctxt "MsgDailaInteriorsScamps"
 msgid "06420"
 msgstr "Si esos dos pillos supieran que{line_break}hay forasteros en la aldea, ya{line_break}estarían pululando por aquí.{end_wait}"
 
-msgctxt "MsgDeriTaviRikiWorry"
+msgctxt "MsgDailaTaviRikiWorry"
 msgid "06421"
 msgstr "Llevo un tiempo sin ver a{line_break}Tavi ni a Riki por aquí...{page_break}Adoro a esos pequeños;{line_break}estoy preocupada por{line_break}ellos.{end_wait}"
 
@@ -25699,7 +25699,7 @@ msgctxt "MsgFieldImSureThoseTwoWentTo"
 msgid "06422"
 msgstr "Seguro que esos dos están en{line_break}el lugar sagrado del dios de{line_break}los mares. ¡No hacen ni caso!{page_break}Les advertí que eran{line_break}muy pequeños para{line_break}escalar riscos...{end_wait}"
 
-msgctxt "MsgDeriHeyaDinnerChoice"
+msgctxt "MsgDailaInteriorsDinnerChoice"
 msgid "06423"
 msgstr "¿Qué voy a cocinar esta noche{line_break}para nuestros huéspedes? No{line_break}termino de decidirme.{end_wait}"
 
@@ -25731,7 +25731,7 @@ msgctxt "MsgFieldImSoTornDoILike"
 msgid "06430"
 msgstr "Estoy confusa... ¿Cómo{line_break}quiero el pescado: escalfado{line_break}o a la plancha?{page_break}Qué dilema... ¿Por qué{line_break}será tan dura la vida?{end_wait}"
 
-msgctxt "MsgDeriHeyaTravelersFreeTime"
+msgctxt "MsgDailaInteriorsTravelersFreeTime"
 msgid "06431"
 msgstr "Agotados viajeros... ¿Tenéis{line_break}mucho tiempo libre y no{line_break}sabéis qué hacer?{end_now}"
 
@@ -26295,7 +26295,7 @@ msgctxt "message"
 msgid "06571"
 msgstr "Nosotros también{line_break}deberíamos irnos.{end_wait}"
 
-msgctxt "MsgFieldStatueLikeDeriShrine"
+msgctxt "MsgFieldStatueLikeDailaShrine"
 msgid "06572"
 msgstr "Esta estatua se parece{line_break}mucho a la que hay en{line_break}el templo de Daila.{end_wait}"
 
@@ -26319,7 +26319,7 @@ msgctxt "MsgFieldAhTheSeaIsCalmAgain"
 msgid "06577"
 msgstr "Ah, el mar está en calma de{line_break}nuevo y nuestras vidas pueden{line_break}volver a la normalidad.{end_wait}"
 
-msgctxt "MsgDeriHurtHip"
+msgctxt "MsgDailaHurtHip"
 msgid "06578"
 msgstr "Seguro que pensaste que{line_break}fue la ola la que me hizo{line_break}caer y dañarme la cadera, ¿eh?{end_now}"
 
@@ -26463,7 +26463,7 @@ msgctxt "MsgFieldImSureGladIMadeIt"
 msgid "06613"
 msgstr "Menos mal que pude{line_break}bajar de ese risco...{page_break}¡Me podría haber muerto{line_break}de hambre allá arriba!{end_wait}"
 
-msgctxt "MsgDeriHeyaGoingToMadora"
+msgctxt "MsgDailaInteriorsGoingToMadra"
 msgid "06614"
 msgstr "¿Vas a Madra?{end_now}"
 
@@ -26487,7 +26487,7 @@ msgctxt "MsgFieldSomeoneShouldSeeHowTheRoad"
 msgid "06619"
 msgstr "Alguien debería ir a ver cómo{line_break}ha quedado el camino a{line_break}Madra después del temblor...{end_wait}"
 
-msgctxt "MsgDeriGarciaCall"
+msgctxt "MsgDailaFelixCall"
 msgid "06620"
 msgstr "{actor_name:5}...{end_wait}"
 
@@ -26579,7 +26579,7 @@ msgctxt "message"
 msgid "06642"
 msgstr "Pongámonos en camino.{end_wait}"
 
-msgctxt "MsgDeriHeyaLookingForBoat"
+msgctxt "MsgDailaInteriorsLookingForBoat"
 msgid "06643"
 msgstr "No me digáis que vosotros{line_break}también estáis buscando{line_break}un barco...{end_now}"
 
@@ -26619,7 +26619,7 @@ msgctxt "MsgFieldBriggsProbablyHasLotsOfMen"
 msgid "06652"
 msgstr "Probablemente, haya{line_break}muchos hombres{line_break}buscando a Briggs...{page_break}Si viviera en Madra, estaría{line_break}más preocupada por ellos{line_break}que por otra cosa.{end_wait}"
 
-msgctxt "MsgDeriHeyaPirateTreasure"
+msgctxt "MsgDailaInteriorsPirateTreasure"
 msgid "06653"
 msgstr "Hace mucho tiempo, Daila{line_break}fue la guarida de una banda{line_break}de piratas...{page_break}Todos fueron capturados,{line_break}pero nunca se encontraron{line_break}los tesoros que robaron.{end_wait}"
 
@@ -26627,31 +26627,31 @@ msgctxt "MsgFieldThisTownMayBeDirtPoor"
 msgid "06654"
 msgstr "Quizás la ciudad esté{line_break}sucia, pero no dejamos{line_break}de recibir viajeros.{page_break}Están buscando tesoros,{line_break}seguro. ¡Oí que incluso{line_break}Briggs estaba buscándolos!{end_wait}"
 
-msgctxt "MsgDeriHeyaSpaciousVillage"
+msgctxt "MsgDailaInteriorsSpaciousVillage"
 msgid "06655"
 msgstr "Aunque no somos muchos{line_break}habitantes en Daila, es una{line_break}aldea muy grande...{page_break}¡A veces hasta{line_break}me pierdo en ella!{end_wait}"
 
-msgctxt "MsgDeriHeyaMazeTreasure"
+msgctxt "MsgDailaInteriorsMazeTreasure"
 msgid "06656"
 msgstr "Puede que escondieran los{line_break}tesoros aquí, porque esta{line_break}aldea parece un laberinto...{end_wait}"
 
-msgctxt "MsgDeriTaviRikiHome"
+msgctxt "MsgDailaTaviRikiHome"
 msgid "06657"
 msgstr "Tavi y Riki ya están{line_break}de vuelta en casa,{line_break}sanos y salvos...{page_break}Se detuvieron para saludarme{line_break}cuando iban de camino... Qué{line_break}chicos tan majos.{end_wait}"
 
-msgctxt "MsgDeriTaviRikiPunishment"
+msgctxt "MsgDailaTaviRikiPunishment"
 msgid "06658"
 msgstr "Espero que sus padres{line_break}no hayan sido muy{line_break}severos con ellos...{page_break}¡Han debido de estar{line_break}al borde del infarto!{end_wait}"
 
-msgctxt "MsgDeriHeyaFishermenWaiting"
+msgctxt "MsgDailaInteriorsFishermenWaiting"
 msgid "06659"
 msgstr "Nuestros pescadores todavía{line_break}no pueden echarse a la mar...{page_break}¿Cuándo empezarán a{line_break}arreglar los barcos?{end_wait}"
 
-msgctxt "MsgDeriHeyaDinnerShowPractice"
+msgctxt "MsgDailaInteriorsDinnerShowPractice"
 msgid "06660"
 msgstr "Oh, sólo practicaba. Es parte de{line_break}la cena-espectáculo que les{line_break}preparamos a los huéspedes...{page_break}No es que tengamos un{line_break}buen menú para esta noche...{end_wait}"
 
-msgctxt "MsgDeriHeyaWatchingPractice"
+msgctxt "MsgDailaInteriorsWatchingPractice"
 msgid "06661"
 msgstr "Er... Je, je... ¿No estarías...?{line_break}¿No estarías observándome?{end_wait}"
 
@@ -26659,39 +26659,39 @@ msgctxt "message"
 msgid "06662"
 msgstr "Estaba practicando para el{line_break}espectáculo que ponemos{line_break}esta noche en escena.{end_wait}"
 
-msgctxt "MsgDeriHeyaSeafoodWhen"
+msgctxt "MsgDailaInteriorsSeafoodWhen"
 msgid "06663"
 msgstr "¿Dónde podemos{line_break}probar el famoso{line_break}marisco de Daila?{end_wait}"
 
-msgctxt "MsgDeriHeyaVegetablesAgain"
+msgctxt "MsgDailaInteriorsVegetablesAgain"
 msgid "06664"
 msgstr "Estoy harta de comer{line_break}comida vegetariana...{line_break}¡Y el servicio es patético!{page_break}Por lo menos hay un{line_break}espectáculo esta noche,{line_break}me pregunto de qué irá...{end_wait}"
 
-msgctxt "MsgDeriHeyaTiredPerformer"
+msgctxt "MsgDailaInteriorsTiredPerformer"
 msgid "06665"
 msgstr "Hasta que no volvamos a{line_break}recibir marisco, tendremos que{line_break}programar espectáculos...{page_break}Me duelen los pies... ¿Podré{line_break}escaquearme del espectáculo{line_break}de hoy?...{end_wait}"
 
-msgctxt "MsgDeriHeyaDragonKingLine"
+msgctxt "MsgDailaInteriorsDragonKingLine"
 msgid "06666"
 msgstr "¡Cielos!... ¿Cuál era mi primera{line_break}frase? ¿Era \"Bienvenidos al{line_break}palacio del Rey Dragón\"?{end_wait}"
 
-msgctxt "MsgDeriHeyaSeafoodStory"
+msgctxt "MsgDailaInteriorsSeafoodStory"
 msgid "06667"
 msgstr "Supongo que ver un espectáculo{line_break}en lugar de comer un buen plato{line_break}de marisco no está tan mal...{page_break}Pero ¿no harán las historias{line_break}de dragones marinos pensar{line_break}en mariscos a la gente?{end_wait}"
 
-msgctxt "MsgDeriHeyaBadShows"
+msgctxt "MsgDailaInteriorsBadShows"
 msgid "06668"
 msgstr "¡Espero que no pretendan{line_break}que nos traguemos otro de{line_break}esos horribles espectáculos!{page_break}¡Prefiero comerme una bandeja{line_break}de repollo cocido antes que{line_break}verlos actuar de nuevo!{end_wait}"
 
-msgctxt "MsgDeriHeyaGuestDance"
+msgctxt "MsgDailaInteriorsGuestDance"
 msgid "06669"
 msgstr "Quizás me plante hoy en{line_break}el escenario y me marque{line_break}un baile en solitario.{end_wait}"
 
-msgctxt "MsgDeriHeyaLeaveForMadora"
+msgctxt "MsgDailaInteriorsLeaveForMadra"
 msgid "06670"
 msgstr "Ya no hay nada que te{line_break}retenga en Daila...{page_break}Por favor, ten cuidado{line_break}de camino a Madra.{end_wait}"
 
-msgctxt "MsgDeriHeyaBoringVillage"
+msgctxt "MsgDailaInteriorsBoringVillage"
 msgid "06671"
 msgstr "Seguro que los viajeros se{line_break}aburren de lo lindo en Daila.{end_wait}"
 
@@ -26735,7 +26735,7 @@ msgctxt "message"
 msgid "06681"
 msgstr "Busquemos un barco{line_break}que podamos usar.{end_wait}"
 
-msgctxt "MsgKibonboWarriorsFound"
+msgctxt "MsgKibomboWarriorsFound"
 msgid "06682"
 msgstr "¡Nos han encontrado!{end_wait}"
 
@@ -26755,35 +26755,35 @@ msgctxt "message"
 msgid "06686"
 msgstr "Si crees que nosotros hemos{line_break}empezado todo esto, mejor será{line_break}que puedas demostrarlo.{end_wait}"
 
-msgctxt "MsgKibonboWarriorIntroducesHimself"
+msgctxt "MsgKibomboWarriorIntroducesHimself"
 msgid "06687"
 msgstr "Soy... eeeh... de Kibombo...{line_break}Es... un placer conoceros.{end_wait}"
 
-msgctxt "MsgKibonboWarriorsBlameContinentsCollision"
+msgctxt "MsgKibomboWarriorsBlameContinentsCollision"
 msgid "06688"
 msgstr "Ey, sólo estamos aquí para{line_break}terminar lo que vosotros{line_break}empezasteis, ¿vale?{page_break}Vosotros fuisteis los que{line_break}chocasteis contra nuestro,{line_break}continente, ¡no lo olvidéis!{end_wait}"
 
-msgctxt "MsgKibonboWarriorsClaimCamping"
+msgctxt "MsgKibomboWarriorsClaimCamping"
 msgid "06689"
 msgstr "Ey, sólo estamos, mmm...{line_break}acampando... Si te gusta{line_break}ir de acampada, ve a Indra.{page_break}Hemos venido para, ya sabes,{line_break}admirar las vistas y esas{line_break}cosas...{end_wait}"
 
-msgctxt "MsgKibonboWarriorsFriendsComing"
+msgctxt "MsgKibomboWarriorsFriendsComing"
 msgid "06690"
 msgstr "Nuestros amigos de Kibombo{line_break}llegarán pronto.{page_break}Cuando lleguen, les daremos{line_break}una gran bienvenida.{end_wait}"
 
-msgctxt "MsgKibonboWarriorsRegretMadraRaid"
+msgctxt "MsgKibomboWarriorsRegretMadraRaid"
 msgid "06691"
 msgstr "Qué nervios... ¡La hemos{line_break}pifiado! ¡Vienen a por{line_break}nosotros, seguro!{page_break}¡No teníamos que haber{line_break}lanzado el ataque a Madra{line_break}sin los demás!{end_wait}"
 
-msgctxt "MsgKibonboWarriorsLostFood"
+msgctxt "MsgKibomboWarriorsLostFood"
 msgid "06692"
 msgstr "Mi familia perdió todas sus{line_break}reservas de comida; ¡meses{line_break}de sacrificio, esfumados!{page_break}¡Vamos a demostrarles a esos{line_break}forasteros que no pueden{line_break}salirse con la suya!{end_wait}"
 
-msgctxt "MsgKibonboWarriorsThreatenTown"
+msgctxt "MsgKibomboWarriorsThreatenTown"
 msgid "06693"
 msgstr "Cuando los guerreros kibombos{line_break}estén por todo el pueblo,{line_break}seremos amigos...{end_wait}"
 
-msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
+msgctxt "MsgKibomboWarriorsWonderAboutPrisoners"
 msgid "06694"
 msgstr "Fue un buen ataque, pero,{line_break}después de tanto trabajo,{line_break}no hemos encontrado nada...{page_break}Me pregunto qué habrá pasado{line_break}con aquellos que escaparon de{line_break}la cárcel en la que irrumpimos.{end_wait}"
 
@@ -27471,7 +27471,7 @@ msgctxt "MsgScene659No48"
 msgid "06865"
 msgstr "Resistimos gracias{line_break}a nuestro karma.{page_break}La gente que tiene mal{line_break}karma salió herida, seguro...{end_wait}"
 
-msgctxt "MsgMadoraNeedEldersPermission"
+msgctxt "MsgMadraNeedEldersPermission"
 msgid "06866"
 msgstr "¡Si quieres cruzar, necesitarás{line_break}un permiso del anciano del{line_break}pueblo!{end_wait}"
 
@@ -27479,7 +27479,7 @@ msgctxt "message"
 msgid "06867"
 msgstr "Si no hay permiso,{line_break}no se puede cruzar.{line_break}¡Ésas son las órdenes!{end_wait}"
 
-msgctxt "MsgMadoraGoingToOsenia"
+msgctxt "MsgMadraGoingToOsenia"
 msgid "06868"
 msgstr "¿Vas a Osenia?{end_now}"
 
@@ -27491,19 +27491,19 @@ msgctxt "message"
 msgid "06870"
 msgstr "Entonces, márchate.{line_break}Este paraje es{line_break}peligroso...{end_wait}"
 
-msgctxt "MsgMadoraCanCrossWithPermission"
+msgctxt "MsgMadraCanCrossWithPermission"
 msgid "06871"
 msgstr "Si tienes un permiso, puedes{line_break}cruzar cuando gustes.{page_break}Pero intenta hacerlo de forma{line_break}ilegal y te meteremos en{line_break}chirona con \"Peliazul\".{end_wait}"
 
-msgctxt "MsgMadoraForTheirSafety"
+msgctxt "MsgMadraForTheirSafety"
 msgid "06872"
 msgstr "Ojalá pudiera decirle que{line_break}no es nada personal...{line_break}Es por su propio bien.{page_break}¡Quién sabe lo que puede{line_break}estar esperando para{line_break}tragárselo en Osenia!{end_wait}"
 
-msgctxt "MsgMadoraElderReturn"
+msgctxt "MsgMadraElderReturn"
 msgid "06873"
 msgstr "Me empiezo a preguntar{line_break}cuándo volverán de Osenia{line_break}el anciano y los demás.{end_wait}"
 
-msgctxt "MsgMadoraHeardAboutYou"
+msgctxt "MsgMadraHeardAboutYou"
 msgid "06874"
 msgstr "Sí, ya nos han informado{line_break}de vosotros.{page_break}Si os dirigís a Osenia,{line_break}será mejor que os{line_break}pongáis en marcha.{end_wait}"
 
@@ -27511,43 +27511,43 @@ msgctxt "message"
 msgid "06875"
 msgstr "Alhafra está yendo hacia{line_break}el nordeste de Osenia...{line_break}No tiene pérdida.{end_wait}"
 
-msgctxt "MsgMadoraMikasaraVillage"
+msgctxt "MsgMadraMikasallaVillage"
 msgid "06876"
 msgstr "Dirígete al sudeste de Osenia{line_break}para llegar a Mikasala.{page_break}Es una aldea pequeña.{line_break}Probablemente no sea{line_break}de tu interés.{end_wait}"
 
-msgctxt "MsgMadoraAvoidYanpiSabaku"
+msgctxt "MsgMadraAvoidYampiDesert"
 msgid "06877"
 msgstr "Si decides adentrarte en Osenia{line_break}para llegar a Alhafra, te toparás{line_break}con el Desierto de Yampi.{page_break}Será mejor que evites ese{line_break}camino y vayas a Alhafra{line_break}por la ruta costera.{end_wait}"
 
-msgctxt "MsgMadoraWouldNeedBoat"
+msgctxt "MsgMadraWouldNeedBoat"
 msgid "06878"
 msgstr "Con permiso o sin él,{line_break}no iría a Osenia a no{line_break}ser que tuviera barco.{end_wait}"
 
-msgctxt "MsgMadoraRatherStayHome"
+msgctxt "MsgMadraRatherStayHome"
 msgid "06879"
 msgstr "Estos chicos parecen buscar{line_break}problemas. Si fuera yo, me{line_break}quedaría en casa, a la bartola.{page_break}Mi hogar es tan acogedor{line_break}y confortable...{pause_20_skippable} y seguro.{end_wait}"
 
-msgctxt "MsgMadoraChampaBoat"
+msgctxt "MsgMadraChampaBoat"
 msgid "06880"
 msgstr "Es un barco champa...{line_break}Mira su marca en la{line_break}bandera.{page_break}Debió de encallar{line_break}aquí cuando lo del{line_break}tsunami.{end_wait}"
 
-msgctxt "MsgMadoraSailorNotChampa"
+msgctxt "MsgMadraSailorNotChampa"
 msgid "06881"
 msgstr "¡Un momento, si éste es el{line_break}barco champa, eso significa{line_break}que {actor_name:8} no es de Champa!{page_break}Si es así..., ¿por qué sigue{line_break}necesitando el anciano que{line_break}Briggs limpie su nombre?{end_wait}"
 
-msgctxt "MsgMadoraWaveDamage"
+msgctxt "MsgMadraWaveDamage"
 msgid "06882"
 msgstr "Mira cuántos daños...{line_break}Esa ola ha debido de{line_break}ser gigantesca...{page_break}¿Cuántos champas{line_break}habrán muerto en{line_break}el naufragio?{end_wait}"
 
-msgctxt "MsgMadoraCannotEscapeBySea"
+msgctxt "MsgMadraCannotEscapeBySea"
 msgid "06883"
 msgstr "Aunque hayan podido{line_break}liberar a Briggs...,{page_break}no habrán podido{line_break}volver mar adentro...{end_wait}"
 
-msgctxt "MsgMadoraPayayamuNewShip"
+msgctxt "MsgMadraBriggsNewShip"
 msgid "06884"
 msgstr "Briggs puede estar{line_break}intentando encontrar{line_break}otro barco en Alhafra.{page_break}¡Espero que el anciano{line_break}lo encuentre antes!{end_wait}"
 
-msgctxt "MsgMadoraPirateAttackParties"
+msgctxt "MsgMadraPirateAttackParties"
 msgid "06885"
 msgstr "Tuvieron hombres suficientes{line_break}para cavar ese hoyo y atacar{line_break}Madra.{page_break}Y suficientes también para{line_break}formar dos grupos de ataque...{end_wait}"
 
@@ -38931,11 +38931,11 @@ msgctxt "MsgWatchingOurCatches"
 msgid "09730"
 msgstr "Las capturas son más reducidas{line_break}cada día... ¡Menuda pesadilla!{line_break}¿Dónde están los peces?{end_wait}"
 
-msgctxt "MsgChanpaCaptainLastHope"
+msgctxt "MsgChampaCaptainLastHope"
 msgid "09731"
 msgstr "Briggs es nuestra última{line_break}esperanza para salir de{line_break}esta pobreza.{page_break}Debe volver pronto, antes{line_break}de que todos pierdan la{line_break}esperanza.{end_wait}"
 
-msgctxt "MsgChanpaNeedsCaptainTreasure"
+msgctxt "MsgChampaNeedsCaptainTreasure"
 msgid "09732"
 msgstr "Espero que Briggs traiga algo...{line_break}Si no, será el fin de los champas.{end_wait}"
 
@@ -41455,11 +41455,11 @@ msgctxt "MsgTheOnlyWay"
 msgid "10361"
 msgstr "La única forma de conseguir{line_break}tu objetivo en la vida es{line_break}trabajando duro.{end_wait}"
 
-msgctxt "MsgChanpaTreasureEncouragesLaziness"
+msgctxt "MsgChampaTreasureEncouragesLaziness"
 msgid "10362"
 msgstr "Las joyas de Briggs han{line_break}enriquecido esta pobre aldea,{line_break}aunque trajo demasiadas.{page_break}Ahora, los esforzados{line_break}trabajadores de Champa{line_break}han empezado a vaguear.{end_wait}"
 
-msgctxt "MsgChanpaVillagersStoppedWorking"
+msgctxt "MsgChampaVillagersStoppedWorking"
 msgid "10363"
 msgstr "Todos los aldeanos creen{line_break}que pueden vivir sin necesidad{line_break}de trabajar.{page_break}Han dejado sus trabajos y{line_break}se aferran solamente a lo{line_break}que Briggs pueda encontrar.{end_wait}"
 
@@ -49131,7 +49131,7 @@ msgctxt "message"
 msgid "12280"
 msgstr "¡No puede ser!{end_wait}"
 
-msgctxt "MsgImiruVoicesDisbeliefReply"
+msgctxt "MsgImilVoicesDisbeliefReply"
 msgid "12281"
 msgstr "¡No puede ser!{end_wait}"
 
@@ -51231,7 +51231,7 @@ msgctxt "message"
 msgid "12805"
 msgstr "Tus amigos y tú debéis{line_break}aseguraros de que nos{line_break}sacáis todo el provecho.{end_wait}"
 
-msgctxt "MsgDeriWellSeawater"
+msgctxt "MsgDailaWellSeawater"
 msgid "12806"
 msgstr "Parece que el agua de mar{line_break}ha inundado el pozo.{page_break}Dudo que lo vayan a usar{line_break}por una temporada.{end_wait}"
 

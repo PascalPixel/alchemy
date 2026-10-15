@@ -7,7 +7,7 @@
 
 enum
 {
-	ACTOR_SUKURETA = ACTOR_FIRST_PLACED
+	ACTOR_KRADEN = ACTOR_FIRST_PLACED
 };
 
 enum SanctumEntranceFlag
@@ -22,6 +22,6 @@ enum SanctumEntranceFlag
 #define RECORD_A16(rec) (*(s16 *)((rec) + 10))
 #define RECORD_B16(rec) (*(s16 *)((rec) + 18))
 
-extern s32 SoruIriguchi_CueTimer;
+extern s32 SolEntrance_CueTimer;
 
 #endif

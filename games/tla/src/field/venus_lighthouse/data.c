@@ -8,8 +8,8 @@ void SceneActor_ApplyCounterLowBitsAsMode(void);
 void SceneActor_ClearSingleChildField(void);
 void SceneState_ApplySixRectsAfter161(void);
 void SceneState_ApplySixRectsAfterFlag161(void);
-void VinasuChojo_ReadRelief(void);
-void VinasuChojo_ReadTrueHeart(void);
+void VenusLighthouse_ReadRelief(void);
+void VenusLighthouse_ReadTrueHeart(void);
 
 extern u32 Data_02001ce4[];
 extern u32 Data_02001d1c[];
@@ -257,12 +257,12 @@ struct SceneEvent gSceneEvents[] = {
 	{33, 32, CONDITION_ALWAYS, 32},
 	{2, 45, 0x200, EVENT_SCRIPT(Func_020006ac)},
 	{2, 46, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200078c)},
-	{3, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadRelief)},
-	{3, 36, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadRelief)},
-	{3, 37, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadRelief)},
-	{3, 38, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadRelief)},
-	{3, 39, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadRelief)},
-	{3, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ReadTrueHeart)},
+	{3, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
+	{3, 36, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
+	{3, 37, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
+	{3, 38, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
+	{3, 39, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadRelief)},
+	{3, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ReadTrueHeart)},
 	{0x50009085, 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplySixRectsAfterFlag161)},
 	{0x40009085, 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplySixRectsAfter161)},
 	{SCENE_EVENTS_END},

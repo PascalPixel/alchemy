@@ -21,7 +21,7 @@ s32 Party_SetFields1f2And1f4();
 s32 Func_020029a4();
 void Func_020028bc(void);
 extern u8 MsgWhyDoI[];
-extern char SceneId_VinasuIriguchi;
+extern char SceneId_VenusEntrance;
 extern u8 gPartyState[];
 
 void Func_02001a2c(void)
@@ -63,8 +63,8 @@ void Func_02001a2c(void)
     Call3(ObjectMotion_OffsetPositionAndReset, 0x16, 0x1a, 0);
     Call1(Battle_WaitMode0, 8);
     Call2(Object_SetModeById, 0x16, 1);
-    Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_VinasuIriguchi, 0x63);
-    Call2(Party_SetFields1f2And1f4, (s32)&SceneId_VinasuIriguchi, 0x62);
+    Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_VenusEntrance, 0x63);
+    Call2(Party_SetFields1f2And1f4, (s32)&SceneId_VenusEntrance, 0x62);
     {
         u8 *party = (u8 *)gPartyState;
         /* FAKEMATCH: the native schedule loads the party state address before it builds the field offset. */

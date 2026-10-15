@@ -42,16 +42,16 @@
 
 // 前方宣言
 static void FieldScene_RunSharedSetPiece(s32 a0);
-static void ArutinYama_ApplyEntryState(void);
-static void ArutinYama_RestoreAreaThree(void);
-static void ArutinYama_RestoreAreaFour(void);
-static void ArutinYama_RestoreAreaFive(void);
-static void ArutinYama_RestoreAreaSix(void);
-static void ArutinYama_RestoreAreaSeven(void);
-static void ArutinYama_PlaceFlaggedActors(void);
-static void ArutinYama_RestoreAreaTen(void);
-static void ArutinYama_RestoreAreaEleven(void);
-static void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
+static void AltinPeak_ApplyEntryState(void);
+static void AltinPeak_RestoreAreaThree(void);
+static void AltinPeak_RestoreAreaFour(void);
+static void AltinPeak_RestoreAreaFive(void);
+static void AltinPeak_RestoreAreaSix(void);
+static void AltinPeak_RestoreAreaSeven(void);
+static void AltinPeak_PlaceFlaggedActors(void);
+static void AltinPeak_RestoreAreaTen(void);
+static void AltinPeak_RestoreAreaEleven(void);
+static void AltinPeak_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
 static void FieldScene_RunScene3a4SequenceG(void);
 static void SceneState_ForwardByRuntimeSelector(s32 arg);
 static void FieldScene_RunActorTenFourStepSequence(void);
@@ -61,8 +61,8 @@ static void FieldScene_RunScene3a4SequenceE(void);
 static void RunEventScript01(void);
 static void SceneActor_SetActor12ModeByActorZeroHeight(void);
 static void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no);
-static void ArutinYama_RunRollingObject(s32 id, s32 heading);
-static void ArutinYama_StartPaletteAnim(void);
+static void AltinPeak_RunRollingObject(s32 id, s32 heading);
+static void AltinPeak_StartPaletteAnim(void);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -71,8 +71,8 @@ enum
 	ITEM_FROST_JEWEL = 202
 };
 
-extern s32 ArutinYama_LeafMode;
-extern s32 ArutinYama_LeafOrigin[3];
+extern s32 AltinPeak_LeafMode;
+extern s32 AltinPeak_LeafOrigin[3];
 
 static void EV14_TALK(void)
 {
@@ -112,114 +112,114 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ArutinYama1)
+	if (scene == (s32)&SceneId_AltinPeak1)
 	{
-		return gArutinYamaEntrances1;
+		return gAltinPeakEntrances1;
 	}
-	if (scene == (s32)&SceneId_ArutinYama2)
+	if (scene == (s32)&SceneId_AltinPeak2)
 	{
-		return gArutinYamaEntrances2;
+		return gAltinPeakEntrances2;
 	}
-	if (scene == (s32)&SceneId_ArutinYama3)
+	if (scene == (s32)&SceneId_AltinPeak3)
 	{
-		return gArutinYamaEntrances3;
+		return gAltinPeakEntrances3;
 	}
-	if (scene == (s32)&SceneId_ArutinYama4)
+	if (scene == (s32)&SceneId_AltinPeak4)
 	{
-		return gArutinYamaEntrances4;
+		return gAltinPeakEntrances4;
 	}
-	if (scene == (s32)&SceneId_ArutinYama5)
+	if (scene == (s32)&SceneId_AltinPeak5)
 	{
-		return gArutinYamaEntrances5;
+		return gAltinPeakEntrances5;
 	}
-	if (scene == (s32)&SceneId_ArutinYama6)
+	if (scene == (s32)&SceneId_AltinPeak6)
 	{
-		return gArutinYamaEntrances6;
+		return gAltinPeakEntrances6;
 	}
-	if (scene == (s32)&SceneId_ArutinYama7)
+	if (scene == (s32)&SceneId_AltinPeak7)
 	{
-		return gArutinYamaEntrances7;
+		return gAltinPeakEntrances7;
 	}
-	if (scene == (s32)&SceneId_ArutinYama8)
+	if (scene == (s32)&SceneId_AltinPeak8)
 	{
-		return gArutinYamaEntrances8;
+		return gAltinPeakEntrances8;
 	}
-	if (scene == (s32)&SceneId_ArutinYama9)
+	if (scene == (s32)&SceneId_AltinPeak9)
 	{
-		return gArutinYamaEntrances9;
+		return gAltinPeakEntrances9;
 	}
-	if (scene == (s32)&SceneId_ArutinYama10)
+	if (scene == (s32)&SceneId_AltinPeak10)
 	{
-		return gArutinYamaEntrances10;
+		return gAltinPeakEntrances10;
 	}
-	if (scene == (s32)&SceneId_ArutinYama11)
+	if (scene == (s32)&SceneId_AltinPeak11)
 	{
-		return gArutinYamaEntrances11;
+		return gAltinPeakEntrances11;
 	}
-	return gArutinYamaEntrancesOther;
+	return gAltinPeakEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ArutinYama9)
+	if (scene == (s32)&SceneId_AltinPeak9)
 	{
-		return (const struct SceneRegion *)gArutinYamaRegions9;
+		return (const struct SceneRegion *)gAltinPeakRegions9;
 	}
-	if (scene == (s32)&SceneId_ArutinYama10)
+	if (scene == (s32)&SceneId_AltinPeak10)
 	{
-		return (const struct SceneRegion *)gArutinYamaRegions10;
+		return (const struct SceneRegion *)gAltinPeakRegions10;
 	}
 	return 0;
 }
 
-u8 *ArutinYama_GetExits(void)
+u8 *AltinPeak_GetExits(void)
 {
-	return (u8 *)ArutinYama_StatueTable;
+	return (u8 *)AltinPeak_StatueTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ArutinYama1)
+	if (scene == (s32)&SceneId_AltinPeak1)
 	{
-		return gArutinYamaPlacements1;
+		return gAltinPeakPlacements1;
 	}
-	if (scene == (s32)&SceneId_ArutinYama3)
+	if (scene == (s32)&SceneId_AltinPeak3)
 	{
-		return gArutinYamaPlacements3;
+		return gAltinPeakPlacements3;
 	}
-	if (scene == (s32)&SceneId_ArutinYama5)
+	if (scene == (s32)&SceneId_AltinPeak5)
 	{
-		return gArutinYamaPlacements5;
+		return gAltinPeakPlacements5;
 	}
-	if (scene == (s32)&SceneId_ArutinYama6)
+	if (scene == (s32)&SceneId_AltinPeak6)
 	{
-		return gArutinYamaPlacements6;
+		return gAltinPeakPlacements6;
 	}
-	if (scene == (s32)&SceneId_ArutinYama7)
+	if (scene == (s32)&SceneId_AltinPeak7)
 	{
-		return gArutinYamaPlacements7;
+		return gAltinPeakPlacements7;
 	}
-	if (scene == (s32)&SceneId_ArutinYama8)
+	if (scene == (s32)&SceneId_AltinPeak8)
 	{
-		return gArutinYamaPlacements8;
+		return gAltinPeakPlacements8;
 	}
-	if (scene == (s32)&SceneId_ArutinYama9)
+	if (scene == (s32)&SceneId_AltinPeak9)
 	{
-		return gArutinYamaPlacements9;
+		return gAltinPeakPlacements9;
 	}
-	if (scene == (s32)&SceneId_ArutinYama10)
+	if (scene == (s32)&SceneId_AltinPeak10)
 	{
-		return gArutinYamaPlacements10;
+		return gAltinPeakPlacements10;
 	}
-	if (scene == (s32)&SceneId_ArutinYama11)
+	if (scene == (s32)&SceneId_AltinPeak11)
 	{
-		return gArutinYamaPlacements11;
+		return gAltinPeakPlacements11;
 	}
-	return gArutinYamaPlacementsOther;
+	return gAltinPeakPlacementsOther;
 }
 
 static void EV08_TALK(s32 a0)
@@ -249,29 +249,29 @@ static void EV08_TALK(s32 a0)
 	}
 	Engine_EventEnd();
 	Engine_AudioPlayCue(159);
-	ArutinYama_RunRollingObject(a0, 0);
+	AltinPeak_RunRollingObject(a0, 0);
 	Engine_TaskWait(20);
 	BattleFx_PlayQueuedSound();
 }
 
-static void ArutinYama_StartAreaOneEncounter(void)
+static void AltinPeak_StartAreaOneEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_AltinPeak1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-static void ArutinYama_StartAreaThreeEncounter(void)
+static void AltinPeak_StartAreaThreeEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_AltinPeak3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-static void ArutinYama_StartAreaFiveEncounter(void)
+static void AltinPeak_StartAreaFiveEncounter(void)
 {
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_AltinPeak5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
@@ -411,16 +411,16 @@ static void SceneState_SetDispcntBit9ByThreshold(void)
 {
 #ifdef MODERN
 	// modern GCC holds one type for a name in a file
-	extern u16 ArutinYama_RiseTimer_modern __asm__("ArutinYama_RiseTimer");
-#define ArutinYama_RiseTimer ArutinYama_RiseTimer_modern
+	extern u16 AltinPeak_RiseTimer_modern __asm__("AltinPeak_RiseTimer");
+#define AltinPeak_RiseTimer AltinPeak_RiseTimer_modern
 #else
-	extern u16 ArutinYama_RiseTimer;
+	extern u16 AltinPeak_RiseTimer;
 #endif
 
 	volatile u16 *reg = &REG_DISPCNT;
 	s16			  v = *reg & 0xfdff;
 
-	if ((u32)(Engine_RandomNext() * 100) >> 16 >= ArutinYama_RiseTimer)
+	if ((u32)(Engine_RandomNext() * 100) >> 16 >= AltinPeak_RiseTimer)
 	{
 		s32 k = 0x200;
 
@@ -433,12 +433,12 @@ static void SceneState_SetDispcntBit9ByThreshold(void)
 	}
 }
 #ifdef MODERN
-#undef ArutinYama_RiseTimer
+#undef AltinPeak_RiseTimer
 #endif
 
 static void FieldScene_RunEarlySequence(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	s32				   i;
 	struct FieldActor *record;
@@ -462,16 +462,16 @@ static void FieldScene_RunEarlySequence(void)
 			record = Actor_Get(8);
 			record->scale_y = 0x1999;
 			Actor_SetPosition(8, 0x980000, 0xd80000);
-			Engine_ActorEnableActionCallback(8, ArutinYama_EarlyActorScript);
+			Engine_ActorEnableActionCallback(8, AltinPeak_EarlyActorScript);
 		}
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)ArutinYama_RiseTimer = 0;
+	*(u16 *)AltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = v;
+		v = *(u16 *)AltinPeak_RiseTimer + 1;
+		*(u16 *)AltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -484,7 +484,7 @@ static void FieldScene_RunEarlySequence(void)
 
 static void FieldScene_RunScene3a4SequenceH(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	s32 i;
 	u8 *p5;
@@ -503,12 +503,12 @@ static void FieldScene_RunScene3a4SequenceH(void)
 		Engine_TaskWait(4);
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)ArutinYama_RiseTimer = 0;
+	*(u16 *)AltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = v;
+		v = *(u16 *)AltinPeak_RiseTimer + 1;
+		*(u16 *)AltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -521,7 +521,7 @@ static void FieldScene_RunScene3a4SequenceH(void)
 
 static void FieldScene_RunScene3a4SequenceI(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	s32 i;
 	u8 *p8;
@@ -542,12 +542,12 @@ static void FieldScene_RunScene3a4SequenceI(void)
 		Engine_TaskWait(4);
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
-	*(u16 *)ArutinYama_RiseTimer = 0;
+	*(u16 *)AltinPeak_RiseTimer = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = v;
+		v = *(u16 *)AltinPeak_RiseTimer + 1;
+		*(u16 *)AltinPeak_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -560,7 +560,7 @@ static void FieldScene_RunScene3a4SequenceI(void)
 
 static void FieldScene_RunScene3a4SequenceB(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x323) != 0)
 	{
@@ -589,7 +589,7 @@ static void EV83_SEARCH(void)
 
 static void FieldScene_RunScene3a4SequenceA(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x325) != 0)
 	{
@@ -607,7 +607,7 @@ static void FieldScene_RunScene3a4SequenceA(void)
 
 static void EV50_SEARCH_5(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -620,7 +620,7 @@ static void EV50_SEARCH_5(void)
 
 static void EV50_SEARCH_6(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -644,7 +644,7 @@ static void EV50_SEARCH_6(void)
 
 static void EV50_SEARCH_7(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -680,7 +680,7 @@ static void EV11_TOUCH_7(void)
 
 static void EV12_TOUCH(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
@@ -833,11 +833,11 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
 	actor0->timer = 0;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, AltinPeak_LeaderRideScript);
 	if (GameFlag_IsSet(0x205) != 0)
 	{
-		Actor_SetPosition(GERALD, 0x36e0000, 0x2100000);
-		actor = Actor_Get(GERALD);
+		Actor_SetPosition(GARET, 0x36e0000, 0x2100000);
+		actor = Actor_Get(GARET);
 		actor->facing = FACING_SOUTH + FACING_STEP;
 	}
 	Camera_SetSpeed(0x14000, 0x2800);
@@ -846,7 +846,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Engine_ActorSetSpritePriority(8, 1);
 	Actor_SetSpeed(8, 0x195c2, 0xcae1);
 	actor8->timer = 0;
-	Engine_ActorEnableActionCallback(8, ArutinYama_LogRideScript);
+	Engine_ActorEnableActionCallback(8, AltinPeak_LogRideScript);
 	do
 	{
 		Engine_TaskWait(1);
@@ -886,18 +886,18 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Engine_EventWait(120);
 	if (GameFlag_IsSet(0x205) != 0)
 	{
-		Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-		Actor_WalkTo(GERALD, 0x338, 0x22e);
+		Actor_SetSpeed(GARET, 0x10000, 0x8000);
+		Actor_WalkTo(GARET, 0x338, 0x22e);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x356, 0x248);
 	if (GameFlag_IsSet(0x205) != 0)
 	{
-		Engine_ActorSetAnimation(GERALD, 1);
-		Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+		Engine_ActorSetAnimation(GARET, 1);
+		Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	}
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
 	Camera_MoveTo(0x3140000, -0x400000, 0x2620000, 1);
 	Engine_CameraWaitForMove();
@@ -908,16 +908,16 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 		Camera_SetSpeed(0x40000, 0x8000);
 		Camera_MoveTo(0x3560000, 0, 0x2480000, 1);
 		Engine_CameraWaitForMove();
-		Actor_WalkToAndWait(GERALD, 0x348, 0x228);
-		Actor_WalkToAndWait(GERALD, 0x356, 0x232);
-		Engine_ActorSetAnimation(GERALD, 2);
+		Actor_WalkToAndWait(GARET, 0x348, 0x228);
+		Actor_WalkToAndWait(GARET, 0x356, 0x232);
+		Engine_ActorSetAnimation(GARET, 2);
 		actor = Actor_Get(ACTOR_PARTY_LEADER);
 		if (actor != NULL)
 		{
-			Actor_SetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
+			Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
 		}
-		Engine_ActorWaitForMove(GERALD);
-		Actor_SetPosition(GERALD, 0, 0);
+		Engine_ActorWaitForMove(GARET);
+		Actor_SetPosition(GARET, 0, 0);
 	}
 	Audio_PlayCueFromEventWork();
 	GameFlag_Set(0x908);
@@ -929,7 +929,7 @@ static void EV12_SEARCH(void)
 	s32				   msg;
 
 	Engine_EventBegin();
-	msg = MsgArutinWatchFallingRocks;
+	msg = MsgAltinWatchFallingRocks;
 	Engine_MessageShowCentered(msg, 1);
 	if (GameFlag_IsSet(0x908) == 0 && GameFlag_IsSet(0xf14) == 0)
 	{
@@ -941,28 +941,28 @@ static void EV12_SEARCH(void)
 		record = Object_GetById(ACTOR_PARTY_LEADER);
 		if (record != 0)
 		{
-			Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+			Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 		}
-		Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-		Actor_WalkToAndWait(GERALD, 0x320, 140);
-		Actor_FaceDirection(GERALD, 0xc000, 20);
+		Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+		Actor_WalkToAndWait(GARET, 0x320, 140);
+		Actor_FaceDirection(GARET, 0xc000, 20);
 		Engine_EventSetMessage(msg + 1);
-		Engine_ActorSetAnimation(GERALD, 4);
+		Engine_ActorSetAnimation(GARET, 4);
 		Engine_EventWait(20);
-		Event_ShowMessageAndWait(GERALD, 0, 10);
-		Engine_ActorJump(GERALD, 6, 0);
-		Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
-		Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-		Actor_WalkToAndWait(GERALD, 0x318, 110);
+		Event_ShowMessageAndWait(GARET, 0, 10);
+		Engine_ActorJump(GARET, 6, 0);
+		Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+		Object_GetById(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Actor_WalkToAndWait(GARET, 0x318, 110);
 		Engine_EventWait(1);
-		Object_GetById(GERALD)->steering_flags |= ACTOR_FACES_MOTION;
+		Object_GetById(GARET)->steering_flags |= ACTOR_FACES_MOTION;
 		Event_PlayCue(161);
 		Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-		Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-		Actor_WalkToAndWait(GERALD, 0x318, 120);
+		Object_GetById(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+		Actor_WalkToAndWait(GARET, 0x318, 120);
 		Engine_EventWait(1);
 		{
-			struct FieldActor *record = Actor_Get(GERALD);
+			struct FieldActor *record = Actor_Get(GARET);
 
 			record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
 		}
@@ -972,33 +972,33 @@ static void EV12_SEARCH(void)
 		Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 		Engine_EventWait(40);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-		Actor_ShowEmote(GERALD, 0x101, 60);
+		Actor_ShowEmote(GARET, 0x101, 60);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-		Actor_FaceDirection(GERALD, 0, 20);
+		Actor_FaceDirection(GARET, 0, 20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-		Actor_FaceDirection(GERALD, 0x8000, 40);
+		Actor_FaceDirection(GARET, 0x8000, 40);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-		Actor_FaceDirection(GERALD, 0, 40);
+		Actor_FaceDirection(GARET, 0, 40);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-		Actor_FaceDirection(GERALD, 0xc000, 40);
-		Actor_ShowEmote(GERALD, 0x102, 60);
-		Actor_FaceDirection(GERALD, 0x4000, 20);
-		Engine_ActorStartRepeatedMotion(GERALD, 2);
-		Event_ShowMessageAndWait(GERALD, 0, 10);
-		Actor_SetSpeed(GERALD, 0x28000, 0x14000);
-		Engine_ActorSetAnimation(GERALD, 5);
-		Actor_MoveToAndWait(GERALD, 0x31c, 138);
+		Actor_FaceDirection(GARET, 0xc000, 40);
+		Actor_ShowEmote(GARET, 0x102, 60);
+		Actor_FaceDirection(GARET, 0x4000, 20);
+		Engine_ActorStartRepeatedMotion(GARET, 2);
+		Event_ShowMessageAndWait(GARET, 0, 10);
+		Actor_SetSpeed(GARET, 0x28000, 0x14000);
+		Engine_ActorSetAnimation(GARET, 5);
+		Actor_MoveToAndWait(GARET, 0x31c, 138);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-		Actor_MoveToAndWait(GERALD, 0x324, 140);
+		Actor_MoveToAndWait(GARET, 0x324, 140);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-		Actor_MoveToAndWait(GERALD, 0x324, 166);
-		Actor_MoveToAndWait(GERALD, 0x2fc, 166);
-		Actor_MoveToAndWait(GERALD, 0x2fc, 198);
-		Actor_MoveToAndWait(GERALD, 0x312, 198);
+		Actor_MoveToAndWait(GARET, 0x324, 166);
+		Actor_MoveToAndWait(GARET, 0x2fc, 166);
+		Actor_MoveToAndWait(GARET, 0x2fc, 198);
+		Actor_MoveToAndWait(GARET, 0x312, 198);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-		Actor_MoveToAndWait(GERALD, 0x312, 246);
-		Engine_ActorSetAnimation(GERALD, 1);
-		Actor_SetPosition(GERALD, 0, 0);
+		Actor_MoveToAndWait(GARET, 0x312, 246);
+		Engine_ActorSetAnimation(GARET, 1);
+		Actor_SetPosition(GARET, 0, 0);
 		Engine_EventWait(40);
 		FieldScene_RunSharedSetPiece(10);
 	}
@@ -1009,60 +1009,60 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	const struct SceneEvent *table;
 
-	if (gGameState.scene == (s32)&SceneId_ArutinYama1)
+	if (gGameState.scene == (s32)&SceneId_AltinPeak1)
 	{
 		if (Engine_GameFlagIsSet(0x8fd) != 0)
 		{
-			table = ArutinYama_OpenedAreaScript;
+			table = AltinPeak_OpenedAreaScript;
 		}
 		else
 		{
-			table = gArutinYamaEvents1;
+			table = gAltinPeakEvents1;
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama2)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak2)
 	{
-		table = gArutinYamaEvents2;
+		table = gAltinPeakEvents2;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama3)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak3)
 	{
-		table = gArutinYamaEvents3;
+		table = gAltinPeakEvents3;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama4)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak4)
 	{
-		table = gArutinYamaEvents4;
+		table = gAltinPeakEvents4;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama5)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak5)
 	{
-		table = gArutinYamaEvents5;
+		table = gAltinPeakEvents5;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama6)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak6)
 	{
-		table = gArutinYamaEvents6;
+		table = gAltinPeakEvents6;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama7)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak7)
 	{
-		table = gArutinYamaEvents7;
+		table = gAltinPeakEvents7;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama8)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak8)
 	{
-		table = gArutinYamaEvents8;
+		table = gAltinPeakEvents8;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama9)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak9)
 	{
-		table = gArutinYamaEvents9;
+		table = gAltinPeakEvents9;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama10)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak10)
 	{
-		table = gArutinYamaEvents10;
+		table = gAltinPeakEvents10;
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama11)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak11)
 	{
-		table = gArutinYamaEvents11;
+		table = gAltinPeakEvents11;
 	}
 	else
 	{
-		table = gArutinYamaEventsOther;
+		table = gAltinPeakEventsOther;
 	}
 	return table;
 }
@@ -1238,7 +1238,7 @@ static void EV10_TOUCH_1(void)
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	FieldObject_SetTargetAndCallback(10, 0x10000, ArutinYama_ActorScript);
+	FieldObject_SetTargetAndCallback(10, 0x10000, AltinPeak_ActorScript);
 	Engine_GameFlagSet(0x904);
 	Engine_EventEnd();
 }
@@ -1322,7 +1322,7 @@ static void EV11_TOUCH_1(void)
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Engine_EventWait(80);
 	Engine_ActorSetAnimation(10, 3);
-	ArutinYama_StartLeafGust(0x820000, 0, 0xa80000, 0);
+	AltinPeak_StartLeafGust(0x820000, 0, 0xa80000, 0);
 	Engine_EventWait(60);
 	for (n = 0; n < 60 && gKeyState == 0; n++)
 	{
@@ -1336,49 +1336,49 @@ static void EV11_TOUCH_1(void)
 	Engine_EventEnd();
 }
 
-s32 ArutinYama_RunAreaScene(void)
+s32 AltinPeak_RunAreaScene(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_ArutinYama1)
+	if (gGameState.scene == (s32)&SceneId_AltinPeak1)
 	{
-		ArutinYama_ApplyEntryState();
+		AltinPeak_ApplyEntryState();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama3)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak3)
 	{
-		ArutinYama_RestoreAreaThree();
+		AltinPeak_RestoreAreaThree();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama4)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak4)
 	{
-		ArutinYama_RestoreAreaFour();
+		AltinPeak_RestoreAreaFour();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama5)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak5)
 	{
-		ArutinYama_RestoreAreaFive();
+		AltinPeak_RestoreAreaFive();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama6)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak6)
 	{
-		ArutinYama_RestoreAreaSix();
+		AltinPeak_RestoreAreaSix();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama7)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak7)
 	{
-		ArutinYama_RestoreAreaSeven();
+		AltinPeak_RestoreAreaSeven();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama9)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak9)
 	{
-		ArutinYama_PlaceFlaggedActors();
+		AltinPeak_PlaceFlaggedActors();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama10)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak10)
 	{
-		ArutinYama_RestoreAreaTen();
+		AltinPeak_RestoreAreaTen();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ArutinYama11)
+	else if (gGameState.scene == (s32)&SceneId_AltinPeak11)
 	{
-		ArutinYama_RestoreAreaEleven();
+		AltinPeak_RestoreAreaEleven();
 	}
 	return 0;
 }
 
-static void ArutinYama_ApplyEntryState(void)
+static void AltinPeak_ApplyEntryState(void)
 {
 	s32				   opened;
 	s32				   flag;
@@ -1392,7 +1392,7 @@ static void ArutinYama_ApplyEntryState(void)
 			FieldScene_RunOpeningAuxiliarySequence();
 		}
 	}
-	ArutinYama_StartPaletteAnim();
+	AltinPeak_StartPaletteAnim();
 	if (Engine_GameFlagIsSet(0x8fd) == 0)
 	{
 		Engine_ActorSetPosition(8, 0, 0);
@@ -1430,7 +1430,7 @@ static void ArutinYama_ApplyEntryState(void)
 			actor = Object_GetById(10);
 			actor->facing = opened;
 			Engine_ActorSetAnimation(10, 3);
-			ArutinYama_StartLeafGust(0x820000, 0, 0xa80000, 0);
+			AltinPeak_StartLeafGust(0x820000, 0, 0xa80000, 0);
 			return;
 		}
 		if (Engine_GameFlagIsSet(0x904) == 0)
@@ -1445,7 +1445,7 @@ static void ArutinYama_ApplyEntryState(void)
 		actor->y.fixed = 0x200000;
 		Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
 		Actor_SetPosition(10, 0x1040000, 0xd70000);
-		FieldObject_SetTargetAndCallback(10, 0x10000, ArutinYama_ActorScript);
+		FieldObject_SetTargetAndCallback(10, 0x10000, AltinPeak_ActorScript);
 	}
 	else
 	{
@@ -1474,7 +1474,7 @@ static void ArutinYama_ApplyEntryState(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaThree(void)
+static void AltinPeak_RestoreAreaThree(void)
 {
 
 	if (GameFlag_IsSet(0x8fe) != 0)
@@ -1484,7 +1484,7 @@ static void ArutinYama_RestoreAreaThree(void)
 	}
 	else
 	{
-		ArutinYama_StartPaletteAnim();
+		AltinPeak_StartPaletteAnim();
 		if (GameFlag_IsSet(0x109) == 0 && gGameState.entrance == 99)
 		{
 			FieldScene_RunScene3a4SequenceF();
@@ -1497,7 +1497,7 @@ static void ArutinYama_RestoreAreaThree(void)
 			{
 				Actor_SetChildValue(9, 2);
 				Engine_ActorSetAnimation(9, 3);
-				ArutinYama_StartLeafGust(0xee0000, 0, 0x1a20000, 0x8000);
+				AltinPeak_StartLeafGust(0xee0000, 0, 0x1a20000, 0x8000);
 			}
 		}
 	}
@@ -1513,9 +1513,9 @@ static void ArutinYama_RestoreAreaThree(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaFour(void)
+static void AltinPeak_RestoreAreaFour(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	if (GameFlag_IsSet(0x8fe) != 0)
 	{
@@ -1534,9 +1534,9 @@ static void ArutinYama_RestoreAreaFour(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaFive(void)
+static void AltinPeak_RestoreAreaFive(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1554,12 +1554,12 @@ static void ArutinYama_RestoreAreaFive(void)
 				FieldScene_RunScene3a4SequenceE();
 			}
 		}
-		ArutinYama_StartPaletteAnim();
+		AltinPeak_StartPaletteAnim();
 		if (GameFlag_IsSet(0x907) == 0)
 		{
 			Actor_SetChildValue(10, 2);
 			Engine_ActorSetAnimation(10, 3);
-			ArutinYama_StartLeafGust(0x2ec0000, 0x80000, 0x1180000, 0x8000);
+			AltinPeak_StartLeafGust(0x2ec0000, 0x80000, 0x1180000, 0x8000);
 		}
 	}
 	SceneActor_ClearCollisionFlagAndPlaceMarker(9);
@@ -1584,9 +1584,9 @@ static void ArutinYama_RestoreAreaFive(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaSix(void)
+static void AltinPeak_RestoreAreaSix(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	struct FieldActor *rec7;
 
@@ -1623,9 +1623,9 @@ static void ArutinYama_RestoreAreaSix(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaSeven(void)
+static void AltinPeak_RestoreAreaSeven(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1675,7 +1675,7 @@ static void ArutinYama_RestoreAreaSeven(void)
 	}
 }
 
-static void ArutinYama_PlaceFlaggedActors(void)
+static void AltinPeak_PlaceFlaggedActors(void)
 {
 	struct FieldActor *actor;
 
@@ -1713,9 +1713,9 @@ static void ArutinYama_PlaceFlaggedActors(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaTen(void)
+static void AltinPeak_RestoreAreaTen(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	s32				   rec7;
 	struct FieldActor *record;
@@ -1756,9 +1756,9 @@ static void ArutinYama_RestoreAreaTen(void)
 	}
 }
 
-static void ArutinYama_RestoreAreaEleven(void)
+static void AltinPeak_RestoreAreaEleven(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	struct FieldActor *record;
 
@@ -1770,7 +1770,7 @@ static void ArutinYama_RestoreAreaEleven(void)
 	}
 }
 
-static void ArutinYama_InitLeaf(struct FieldActor *leaf)
+static void AltinPeak_InitLeaf(struct FieldActor *leaf)
 {
 	leaf->motion_flags = 0;
 	leaf->sprite->priority = 1;
@@ -1780,11 +1780,11 @@ static void ArutinYama_InitLeaf(struct FieldActor *leaf)
 	leaf->scale_y = 0x4ccc;
 }
 
-static void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
+static void AltinPeak_UpdateDriftingLeaf(union FieldObject *object)
 {
 	struct FieldActor *leaf = &object->actor;
 
-	switch (ArutinYama_LeafMode)
+	switch (AltinPeak_LeafMode)
 	{
 	case 0:
 		leaf->x.fixed +=
@@ -1797,7 +1797,7 @@ static void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 	}
 	if (leaf->timer <= 3)
 	{
-		switch (ArutinYama_LeafMode)
+		switch (AltinPeak_LeafMode)
 		{
 		case 0:
 			leaf->x.fixed += 0x8000;
@@ -1825,33 +1825,33 @@ static void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 		Engine_ObjectDispatchRelease(leaf);
 }
 
-static void ArutinYama_SpawnLeaf(void)
+static void AltinPeak_SpawnLeaf(void)
 {
 	union FieldObject *leaf;
 
 	if ((gFrameCount & 3) != 0)
 		return;
 	leaf = (union FieldObject *)Engine_ObjectCreate(
-		222, ArutinYama_LeafOrigin[0], ArutinYama_LeafOrigin[1], ArutinYama_LeafOrigin[2]);
+		222, AltinPeak_LeafOrigin[0], AltinPeak_LeafOrigin[1], AltinPeak_LeafOrigin[2]);
 	if (leaf == NULL)
 		return;
 	leaf->actor.timer = 30;
 	leaf->actor.work = 1;
 	leaf->effect.countdown = 20;
-	ArutinYama_InitLeaf(&leaf->actor);
-	leaf->effect.update = ArutinYama_UpdateDriftingLeaf;
+	AltinPeak_InitLeaf(&leaf->actor);
+	leaf->effect.update = AltinPeak_UpdateDriftingLeaf;
 	Object_SetMode(&leaf->actor, 1);
 }
 
-static void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
+static void AltinPeak_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 {
-	ArutinYama_LeafOrigin[0] = x;
-	ArutinYama_LeafOrigin[1] = y;
-	ArutinYama_LeafOrigin[2] = z;
-	ArutinYama_LeafMode = facing;
+	AltinPeak_LeafOrigin[0] = x;
+	AltinPeak_LeafOrigin[1] = y;
+	AltinPeak_LeafOrigin[2] = z;
+	AltinPeak_LeafMode = facing;
 
 	BattleFx_SetQueuedSoundAndPlay(170);
-	FieldScheduler_AddCallback(ArutinYama_SpawnLeaf, 0xc80);
+	FieldScheduler_AddCallback(AltinPeak_SpawnLeaf, 0xc80);
 }
 
 static void FieldScene_RunScene3a4SequenceG(void)
@@ -1882,7 +1882,7 @@ static void FieldScene_RunScene3a4SequenceG(void)
 			spark->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 			spark->sprite->priority = 1;
 			Object_SetMode(spark, 1);
-			Engine_ObjectSetScript(spark, ArutinYama_SparkScript);
+			Engine_ObjectSetScript(spark, AltinPeak_SparkScript);
 			spark->velocity_x = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
 			spark->velocity_y = 0x80000;
 			spark->velocity_z = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
@@ -1922,7 +1922,7 @@ static void FieldScene_RunActorTenFourStepSequence(void)
 
 static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	struct FieldActor *rec7;
 
@@ -1944,14 +1944,14 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	FieldScene_RunEarlySequence();
 	Camera_MoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	Event_LoadAreaScript(ArutinYama_OpenedAreaScript);
+	Event_LoadAreaScript(AltinPeak_OpenedAreaScript);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Engine_EventEnd();
 }
 
 static void FieldScene_RunScene3a4SequenceF(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_ActorSetPosition(9, 0, 0);
@@ -1970,7 +1970,7 @@ static void FieldScene_RunScene3a4SequenceF(void)
 
 static void FieldScene_RunScene3a4SequenceE(void)
 {
-	extern u8 ArutinYama_RiseTimer[];
+	extern u8 AltinPeak_RiseTimer[];
 
 	Engine_EventBegin();
 	Engine_ActorSetPosition(10, 0, 0);
@@ -1989,11 +1989,11 @@ static void FieldScene_RunScene3a4SequenceE(void)
 
 static void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
-	ArutinYama_CueTicks++;
-	if (ArutinYama_CueTicks == 60)
+	AltinPeak_CueTicks++;
+	if (AltinPeak_CueTicks == 60)
 	{
 		Engine_AudioPlayCue(183);
-		ArutinYama_CueTicks = 0;
+		AltinPeak_CueTicks = 0;
 	}
 }
 
@@ -2017,7 +2017,7 @@ static void EV10_TOUCH_10(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorWaitForMove(8);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama10, 99);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_AltinPeak10, 99);
 	BattleFx_SetWeightedResult(53, 3);
 }
 
@@ -2055,104 +2055,104 @@ static void RunEventScript01(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(MEARI, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
-	Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
-	Actor_SetSpeed(MEARI, 0x9999, 0x4ccc);
-	Engine_ActorEnableActionCallback(1, ArutinYama_GeraldScript);
-	Engine_ActorEnableActionCallback(2, ArutinYama_IvanScript);
-	Object_SetActionCallbackAndRefreshById(3, ArutinYama_MiaScript);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	Actor_FaceDirection(GERALD, 0xe000, 10);
-	Engine_EventSetMessage(MsgArutinWeDidRobinWeBeat);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	Actor_FaceDirection(IWAN, 0xa000, 10);
+	Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
+	Actor_SetSpeed(IVAN, 0x9999, 0x4ccc);
+	Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
+	Engine_ActorEnableActionCallback(1, AltinPeak_GaretScript);
+	Engine_ActorEnableActionCallback(2, AltinPeak_IvanScript);
+	Object_SetActionCallbackAndRefreshById(3, AltinPeak_MiaScript);
+	Actor_FaceDirection(GARET, 0xc000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xc000, 40);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	Actor_FaceDirection(GARET, 0xe000, 10);
+	Engine_EventSetMessage(MsgAltinWeDidIsaacWeBeat);
+	Event_ShowMessageAndWait(GARET, 0, 10);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	Actor_FaceDirection(IVAN, 0xa000, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Event_OpenMessage(IWAN, 0);
+	Event_OpenMessage(IVAN, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
 	}
 	else
 	{
-		Engine_ActorSetAnimationAndWait(IWAN, 4);
+		Engine_ActorSetAnimationAndWait(IVAN, 4);
 		Event_SkipMessages(1);
 	}
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Engine_EventSetMessage(MsgArutinGuardianStatuesWereCreatedLong);
-	Event_ShowMessage(MEARI, 0);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
+	Engine_EventSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
+	Event_ShowMessage(MIA, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
-	Actor_ShowEmote(GERALD, 0x102, 60);
-	Actor_FaceDirection(GERALD, 0x2000, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, 0x102, 60);
+	Actor_FaceDirection(GARET, 0x2000, 40);
+	Event_ShowMessage(GARET, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 40);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 40);
 	Event_PlayCue(190);
 	Actor_SetChildValue(8, 7);
 	Engine_EventWait(10);
 	Event_PlayCue(0x121);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 40);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 40);
 	Event_PlayCue(103);
 	update = (s32)SceneActor_SetActor8ModeByCounterBit;
 	Task_AddCallback((void (*)(void))update, 0xc80);
-	celebrate = (s32)ArutinYama_CelebrateScript;
+	celebrate = (s32)AltinPeak_CelebrateScript;
 	Engine_ActorEnableActionCallback(9, celebrate);
 	Object_SetActionCallbackAndRefreshById(8, celebrate);
 	Engine_TaskRemoveCallback(update);
 	Engine_EventWait(60);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
-	Actor_FaceDirection(GERALD, 0xe000, 0);
-	Actor_FaceDirection(IWAN, 0xa000, 20);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Event_ShowMessage(IVAN, 0);
+	Actor_FaceDirection(GARET, 0xe000, 0);
+	Actor_FaceDirection(IVAN, 0xa000, 20);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Actor_FaceDirection(GERALD, 0xe000, 0);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Actor_FaceDirection(GARET, 0xe000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 40);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	party = (s32)ArutinYama_PartyScript;
-	Engine_ActorEnableActionCallback(GERALD, party);
+	party = (s32)AltinPeak_PartyScript;
+	Engine_ActorEnableActionCallback(GARET, party);
 	Engine_ActorEnableActionCallback(2, party);
 	Object_SetActionCallbackAndRefreshById(3, party);
 	Engine_EventWait(20);
@@ -2163,7 +2163,7 @@ static void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-static void ArutinYama_RequestPsynergy(void)
+static void AltinPeak_RequestPsynergy(void)
 {
 	gEventWork->psynergy_request = 0x1018;
 }
@@ -2198,7 +2198,7 @@ static void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 	SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
 
-static void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
+static void AltinPeak_SettleAndMountLeader(struct FieldActor *object)
 {
 	s32					x;
 	s32					z;
@@ -2245,11 +2245,11 @@ static void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
 	Engine_AudioPlayCue(159);
 }
 
-static void ArutinYama_ReservedNoOp(void)
+static void AltinPeak_ReservedNoOp(void)
 {
 }
 
-static void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
+static void AltinPeak_TurnRollingObjectA(struct FieldActor *object)
 {
 	union FieldCoordinate *p;
 	union FieldCoordinate  pos[3];
@@ -2285,7 +2285,7 @@ static void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
 	Engine_AudioPlayCue(233);
 }
 
-static void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
+static void AltinPeak_TurnRollingObjectB(struct FieldActor *object)
 {
 	union FieldCoordinate *p;
 	union FieldCoordinate  pos[3];
@@ -2321,7 +2321,7 @@ static void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
 	Engine_AudioPlayCue(233);
 }
 
-static void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
+static void AltinPeak_SetRollingStateAndPlayCue(u16 *record)
 {
 	record = (u16 *)((char *)record + 102);
 	{
@@ -2332,7 +2332,7 @@ static void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 	Engine_AudioPlayCue(288);
 }
 
-static void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
+static void AltinPeak_AdvanceRollingObject(struct FieldActor *object)
 {
 	s32					   angle = 0xc000;
 	s32					   radius;
@@ -2344,7 +2344,7 @@ static void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 
 	angle &= object->facing;
 	radius = object->y.fixed / 0x10000;
-	radius = ArutinYama_RollRadii[object->timer - radius + 16];
+	radius = AltinPeak_RollRadii[object->timer - radius + 16];
 	timer = (s16 *)&object->work;
 	if (*timer != 0)
 	{
@@ -2384,7 +2384,7 @@ static void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 	}
 }
 
-static void ArutinYama_RunRollingObject(s32 id, s32 heading)
+static void AltinPeak_RunRollingObject(s32 id, s32 heading)
 {
 	struct FieldActor	 *object = Object_GetById(id);
 	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selected_actor);
@@ -2437,55 +2437,55 @@ static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 		switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed))
 		{
 		case 98:
-			ArutinYama_TurnRollingObjectA(object);
+			AltinPeak_TurnRollingObjectA(object);
 			break;
 		case 97:
-			ArutinYama_TurnRollingObjectB(object);
+			AltinPeak_TurnRollingObjectB(object);
 			break;
 		case 96:
-			ArutinYama_SetRollingStateAndPlayCue(object);
+			AltinPeak_SetRollingStateAndPlayCue(object);
 			break;
 		case 99:
 			goto arrived;
 		}
-		ArutinYama_AdvanceRollingObject(object);
+		AltinPeak_AdvanceRollingObject(object);
 		Engine_TaskWait(1);
 	}
 arrived:
-	ArutinYama_SettleAndMountLeader(object);
+	AltinPeak_SettleAndMountLeader(object);
 	Engine_EventEnd();
 }
 
-static void ArutinYama_StepPaletteAnim(void)
+static void AltinPeak_StepPaletteAnim(void)
 {
 	u16 *palette = gPaletteBufferWork;
 
-	if (ArutinYama_PaletteHold <= 0)
+	if (AltinPeak_PaletteHold <= 0)
 	{
 		s32 frame;
 
 	next:
-		frame = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
+		frame = AltinPeak_PaletteScript[AltinPeak_PaletteStep++];
 		if (frame == -1)
 		{
-			ArutinYama_PaletteStep = 0;
+			AltinPeak_PaletteStep = 0;
 			goto next;
 		}
-		ArutinYama_PaletteHold = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
+		AltinPeak_PaletteHold = AltinPeak_PaletteScript[AltinPeak_PaletteStep++];
 		palette += frame;
 		Dma_Set(palette, (void *)0x05000006, DMA_ENABLE32 | 9, REG_DMA3);
 	}
-	ArutinYama_PaletteHold--;
+	AltinPeak_PaletteHold--;
 }
 
-static void ArutinYama_StartPaletteAnim(void)
+static void AltinPeak_StartPaletteAnim(void)
 {
-	ArutinYama_PaletteStep = 0;
-	ArutinYama_PaletteHold = 0;
-	FieldScheduler_AddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
+	AltinPeak_PaletteStep = 0;
+	AltinPeak_PaletteHold = 0;
+	FieldScheduler_AddCallback((s32)&AltinPeak_StepPaletteAnim, 0xc80);
 }
 
-s8 ArutinYama_PaletteScript[] = {
+s8 AltinPeak_PaletteScript[] = {
 	3, 16,
 	2, 32,
 	1, 64,
@@ -2493,12 +2493,12 @@ s8 ArutinYama_PaletteScript[] = {
 	-1,
 };
 
-s32 ArutinYama_ActorScript[] = {
+s32 AltinPeak_ActorScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 ArutinYama_EarlyActorScript[] = {
+s32 AltinPeak_EarlyActorScript[] = {
 	SC_ADD(SW_SCALE_X, 546),
 	SC_ADD(SW_SCALE_Y, 546),
 	SC_WAIT(1),
@@ -2506,7 +2506,7 @@ s32 ArutinYama_EarlyActorScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_LogRideScript[] = {
+s32 AltinPeak_LogRideScript[] = {
 	SC_MOVE(PIXELS(786), 0, PIXELS(220)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(786), 0, PIXELS(326)),
@@ -2521,7 +2521,7 @@ s32 ArutinYama_LogRideScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_LeaderRideScript[] = {
+s32 AltinPeak_LeaderRideScript[] = {
 	SC_ARG(5),
 	SC_MOVE(PIXELS(804), 0, PIXELS(140)),
 	SC_SYNC,
@@ -2581,7 +2581,7 @@ s32 ArutinYama_LeaderRideScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_SparkScript[] = {
+s32 AltinPeak_SparkScript[] = {
 	SC_CALL(OverlayObject_IntegrateAndDamp),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -2590,7 +2590,7 @@ s32 ArutinYama_SparkScript[] = {
 	SC_FREE,
 };
 
-s32 ArutinYama_GeraldScript[] = {
+s32 AltinPeak_GaretScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(314), 0, PIXELS(126)),
 	SC_SYNC,
@@ -2599,7 +2599,7 @@ s32 ArutinYama_GeraldScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_IvanScript[] = {
+s32 AltinPeak_IvanScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(346), 0, PIXELS(126)),
 	SC_SYNC,
@@ -2608,7 +2608,7 @@ s32 ArutinYama_IvanScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_MiaScript[] = {
+s32 AltinPeak_MiaScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(328), 0, PIXELS(138)),
 	SC_SYNC,
@@ -2617,7 +2617,7 @@ s32 ArutinYama_MiaScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_CelebrateScript[] = {
+s32 AltinPeak_CelebrateScript[] = {
 	SC_ADD(SW_SCALE_X, 128),
 	SC_ADD(SW_SCALE_Y, -1024),
 	SC_WAIT(1),
@@ -2627,7 +2627,7 @@ s32 ArutinYama_CelebrateScript[] = {
 	SC_END,
 };
 
-s32 ArutinYama_PartyScript[] = {
+s32 AltinPeak_PartyScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(328), 0, PIXELS(118)),
 	SC_SYNC,
@@ -2636,12 +2636,12 @@ s32 ArutinYama_PartyScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance gArutinYamaEntrancesOther[] = {
+struct SceneEntrance gAltinPeakEntrancesOther[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances1[] = {
+struct SceneEntrance gAltinPeakEntrances1[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
 	{98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
@@ -2649,14 +2649,14 @@ struct SceneEntrance gArutinYamaEntrances1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances2[] = {
+struct SceneEntrance gAltinPeakEntrances2[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{2, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances3[] = {
+struct SceneEntrance gAltinPeakEntrances3[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{2, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2666,7 +2666,7 @@ struct SceneEntrance gArutinYamaEntrances3[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances4[] = {
+struct SceneEntrance gAltinPeakEntrances4[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
 	{2, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
@@ -2678,7 +2678,7 @@ struct SceneEntrance gArutinYamaEntrances4[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances5[] = {
+struct SceneEntrance gAltinPeakEntrances5[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
 	{98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
@@ -2686,7 +2686,7 @@ struct SceneEntrance gArutinYamaEntrances5[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances6[] = {
+struct SceneEntrance gAltinPeakEntrances6[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0},
 	{2, CONDITION_ALWAYS, 295, 0, 95, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
@@ -2697,7 +2697,7 @@ struct SceneEntrance gArutinYamaEntrances6[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances7[] = {
+struct SceneEntrance gAltinPeakEntrances7[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
 	{2, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
@@ -2705,7 +2705,7 @@ struct SceneEntrance gArutinYamaEntrances7[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances8[] = {
+struct SceneEntrance gAltinPeakEntrances8[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0},
 	{2, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0},
@@ -2715,7 +2715,7 @@ struct SceneEntrance gArutinYamaEntrances8[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances9[] = {
+struct SceneEntrance gAltinPeakEntrances9[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0},
 	{2, CONDITION_ALWAYS, 89, 0, 749, FACING_NORTH, 0, 0, 0, 524, 816, 0},
@@ -2726,7 +2726,7 @@ struct SceneEntrance gArutinYamaEntrances9[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances10[] = {
+struct SceneEntrance gAltinPeakEntrances10[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
 	{98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
@@ -2734,7 +2734,7 @@ struct SceneEntrance gArutinYamaEntrances10[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinYamaEntrances11[] = {
+struct SceneEntrance gAltinPeakEntrances11[] = {
 	{0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0},
 	{2, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0},
@@ -2743,7 +2743,7 @@ struct SceneEntrance gArutinYamaEntrances11[] = {
 	{SCENE_TABLE_END},
 };
 
-s16 gArutinYamaRegions9[] = {
+s16 gAltinPeakRegions9[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
 	790,
 	-106,
@@ -2781,7 +2781,7 @@ s16 gArutinYamaRegions9[] = {
 	0,
 };
 
-s16 gArutinYamaRegions10[] = {
+s16 gAltinPeakRegions10[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
 	84,
 	38,
@@ -2811,7 +2811,7 @@ s16 gArutinYamaRegions10[] = {
 	0,
 };
 
-u32 ArutinYama_StatueTable[] = {
+u32 AltinPeak_StatueTable[] = {
 	SCENE_EXITS(77),
 	SCENE_EXIT(1, 75, 10),
 	SCENE_EXIT(0, 78, 0),
@@ -2865,11 +2865,11 @@ u32 ArutinYama_StatueTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gArutinYamaPlacementsOther[] = {
+struct ScenePlacement gAltinPeakPlacementsOther[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements1[] = {
+struct ScenePlacement gAltinPeakPlacements1[] = {
 	{0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(152), 0, PIXELS(216), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(216), FACING_SOUTH,
@@ -2879,7 +2879,7 @@ struct ScenePlacement gArutinYamaPlacements1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements3[] = {
+struct ScenePlacement gAltinPeakPlacements3[] = {
 	{0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(216), 0, PIXELS(312), FACING_EAST,
 		TALK_KEEP_FACING, 0},
 	{0xbe, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(248), 0, PIXELS(464), FACING_WEST,
@@ -2889,7 +2889,7 @@ struct ScenePlacement gArutinYamaPlacements3[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements5[] = {
+struct ScenePlacement gAltinPeakPlacements5[] = {
 	{0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
 		TALK_KEEP_FACING, 0},
 	{0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
@@ -2899,7 +2899,7 @@ struct ScenePlacement gArutinYamaPlacements5[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements6[] = {
+struct ScenePlacement gAltinPeakPlacements6[] = {
 	{0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
 		TALK_KEEP_FACING, 0},
 	{0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
@@ -2907,7 +2907,7 @@ struct ScenePlacement gArutinYamaPlacements6[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements7[] = {
+struct ScenePlacement gAltinPeakPlacements7[] = {
 	{0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
 		TALK_KEEP_FACING, 0},
 	{0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
@@ -2924,35 +2924,35 @@ struct ScenePlacement gArutinYamaPlacements7[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements8[] = {
+struct ScenePlacement gAltinPeakPlacements8[] = {
 	{0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements9[] = {
+struct ScenePlacement gAltinPeakPlacements9[] = {
 	{0xc8, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0x120, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0xcd, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x16, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x112, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements10[] = {
+struct ScenePlacement gAltinPeakPlacements10[] = {
 	{0xc7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0x120, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
-	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
-	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
+	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
+	{MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinYamaPlacements11[] = {
+struct ScenePlacement gAltinPeakPlacements11[] = {
 	{0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0xd3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
@@ -2960,21 +2960,21 @@ struct ScenePlacement gArutinYamaPlacements11[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent gArutinYamaEventsOther[] = {
+struct SceneEvent gAltinPeakEventsOther[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents1[] = {
+struct SceneEvent gAltinPeakEvents1[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_TOUCH, 10, 0x904, EVENT_SCRIPT(EV10_TOUCH_1)},
 	{EVENT_TOUCH, 11, 0x905, EVENT_SCRIPT(EV11_TOUCH_1)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_StartAreaOneEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter)},
+		EVENT_SCRIPT(AltinPeak_StartAreaOneEncounter)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent ArutinYama_OpenedAreaScript[] = {
+struct SceneEvent AltinPeak_OpenedAreaScript[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200,
 		EVENT_SCRIPT(EV08_PSYNERGY)},
@@ -2982,20 +2982,20 @@ struct SceneEvent ArutinYama_OpenedAreaScript[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents2[] = {
+struct SceneEvent gAltinPeakEvents2[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents3[] = {
+struct SceneEvent gAltinPeakEvents3[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
 	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_StartAreaThreeEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter)},
+		EVENT_SCRIPT(AltinPeak_StartAreaThreeEncounter)},
 	{PSYNERGY_ON_ACTOR(0x8f), 10, CONDITION_ALWAYS, 0},
 	{SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(EV83_SEARCH)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf76, FIND_ITEM(0xc0)},
@@ -3005,7 +3005,7 @@ struct SceneEvent gArutinYamaEvents3[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents4[] = {
+struct SceneEvent gAltinPeakEvents4[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3016,12 +3016,12 @@ struct SceneEvent gArutinYamaEvents4[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents5[] = {
+struct SceneEvent gAltinPeakEvents5[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(EV09_PSYNERGY_5)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_StartAreaFiveEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter)},
+		EVENT_SCRIPT(AltinPeak_StartAreaFiveEncounter)},
 	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
 	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SEARCH_5)},
 	{0x2413, 100, 0xf77, FIND_ITEM(0x7b)},
@@ -3030,7 +3030,7 @@ struct SceneEvent gArutinYamaEvents5[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents6[] = {
+struct SceneEvent gAltinPeakEvents6[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3044,7 +3044,7 @@ struct SceneEvent gArutinYamaEvents6[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents7[] = {
+struct SceneEvent gAltinPeakEvents7[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3065,7 +3065,7 @@ struct SceneEvent gArutinYamaEvents7[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents8[] = {
+struct SceneEvent gAltinPeakEvents8[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3076,7 +3076,7 @@ struct SceneEvent gArutinYamaEvents8[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents9[] = {
+struct SceneEvent gAltinPeakEvents9[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3087,13 +3087,13 @@ struct SceneEvent gArutinYamaEvents9[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents10[] = {
+struct SceneEvent gAltinPeakEvents10[] = {
 	{EVENT_TOUCH, 10, 0x909, EVENT_SCRIPT(EV10_TOUCH_10)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf08, FIND_ITEM(0xcb)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinYamaEvents11[] = {
+struct SceneEvent gAltinPeakEvents11[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3104,9 +3104,9 @@ struct SceneEvent gArutinYamaEvents11[] = {
 	{SCENE_EVENTS_END},
 };
 
-s32 ArutinYama_CueTicks = 0;
+s32 AltinPeak_CueTicks = 0;
 
-u32 ArutinYama_RollRadii[] = {
+u32 AltinPeak_RollRadii[] = {
 	0x10000,
 	0x10b55,
 	0x1172b,

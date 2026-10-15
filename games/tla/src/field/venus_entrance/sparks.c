@@ -21,7 +21,7 @@ struct SparkWork {
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 
-void VinasuIriguchi_StopSparks(void)
+void VenusEntrance_StopSparks(void)
 {
     struct SparkWork *work = Ram_HeapSlots->menu_runtime;
 

@@ -26,7 +26,7 @@ struct CompetitorState
 	u8 stage;
 };
 
-void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
+void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z)
 {
 	struct CompetitorState *state;
 	struct FieldActor	   *actor;
@@ -37,10 +37,10 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 	actor = Object_GetById(id);
 	state->mode = 1;
 	state->stage = 4;
-	Korosseo_CompetitorStartX = actor->x.fixed;
-	Korosseo_CompetitorStartZ = actor->z.fixed;
+	Colosso_CompetitorStartX = actor->x.fixed;
+	Colosso_CompetitorStartZ = actor->z.fixed;
 	sprite = (struct AnimationObject *)actor->sprite;
-	Korosseo_CompetitorStartAngle = actor->facing;
+	Colosso_CompetitorStartAngle = actor->facing;
 	Engine_ActorSetSpritePriority(id, 2);
 	actor->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	actor->facing = FACING_SOUTH;
@@ -73,7 +73,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 	Engine_EventWait(20);
 }
 
-void Korosseo_RestoreCompetitor(s32 id)
+void Colosso_RestoreCompetitor(s32 id)
 {
 	struct CompetitorState *state;
 	struct FieldActor	   *actor;
@@ -94,13 +94,13 @@ void Korosseo_RestoreCompetitor(s32 id)
 		Engine_EventWait(30);
 	}
 	zero = 0;
-	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store at a varying address may pass the scalar load of Korosseo_CompetitorStartX (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no struct reference. The actor held as union FieldObject with field stores: differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
+	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. Measured 2026-10-13: a struct-field store at a varying address may pass the scalar load of Colosso_CompetitorStartX (fixed_scalar_and_varying_struct_p); a byte store through a pointer is no struct reference. The actor held as union FieldObject with field stores: differ 6; gMenuCtrlWork->fill and ->edge: differ 40. */
 	control = (u8 *)state;
 	control[(u32) & ((struct CompetitorState *)0)->stage] = zero;
 	control[(u32) & ((struct CompetitorState *)0)->mode] = 15;
-	actor->x.fixed = Korosseo_CompetitorStartX;
-	actor->z.fixed = Korosseo_CompetitorStartZ;
-	actor->facing = Korosseo_CompetitorStartAngle;
+	actor->x.fixed = Colosso_CompetitorStartX;
+	actor->z.fixed = Colosso_CompetitorStartZ;
+	actor->facing = Colosso_CompetitorStartAngle;
 	actor->target_x = ACTOR_NO_TARGET;
 	actor->target_z = ACTOR_NO_TARGET;
 	actor->velocity_x = zero;
@@ -126,12 +126,12 @@ void OverlayObject_ResetMotionFields(s32 actor)
 	o->target_z = ACTOR_NO_TARGET;
 }
 
-static void Korosseo_EnsureMarkerSlot(void)
+static void Colosso_EnsureMarkerSlot(void)
 {
 
-	if (Korosseo_MarkerSlot == -1)
+	if (Colosso_MarkerSlot == -1)
 	{
-		Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+		Colosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
 	}
 }
 
@@ -141,18 +141,18 @@ union MarkerCoordinate
 	u16 value;
 };
 
-extern s16					  Korosseo_MarkerSteps;
-extern s16					  Korosseo_MarkerStep;
-extern s16					  Korosseo_MarkerX;
-extern union MarkerCoordinate Korosseo_MarkerStartX;
-extern s16					  Korosseo_MarkerEndX;
-extern s16					  Korosseo_MarkerY;
-extern union MarkerCoordinate Korosseo_MarkerStartY;
-extern s16					  Korosseo_MarkerEndY;
-extern s16					  Korosseo_MarkerBlink;
-extern s16					  Korosseo_MarkerPriority;
+extern s16					  Colosso_MarkerSteps;
+extern s16					  Colosso_MarkerStep;
+extern s16					  Colosso_MarkerX;
+extern union MarkerCoordinate Colosso_MarkerStartX;
+extern s16					  Colosso_MarkerEndX;
+extern s16					  Colosso_MarkerY;
+extern union MarkerCoordinate Colosso_MarkerStartY;
+extern s16					  Colosso_MarkerEndY;
+extern s16					  Colosso_MarkerBlink;
+extern s16					  Colosso_MarkerPriority;
 
-static void Korosseo_UpdateMarker(void)
+static void Colosso_UpdateMarker(void)
 {
 	s32						tile;
 	s32						total;
@@ -167,75 +167,75 @@ static void Korosseo_UpdateMarker(void)
 	s16					   *py;
 	union MarkerCoordinate *sy;
 
-	oam = Korosseo_MarkerOam;
-	tile = gVramBlockCache[Korosseo_MarkerSlot].offset >> 5;
-	steps = &Korosseo_MarkerSteps;
+	oam = Colosso_MarkerOam;
+	tile = gVramBlockCache[Colosso_MarkerSlot].offset >> 5;
+	steps = &Colosso_MarkerSteps;
 	total = *steps;
 	if (total != 0)
 	{
-		step = ++Korosseo_MarkerStep;
-		py = &Korosseo_MarkerX;
-		sy = &Korosseo_MarkerStartX;
-		diff = Korosseo_MarkerEndX - sy->signed_value;
+		step = ++Colosso_MarkerStep;
+		py = &Colosso_MarkerX;
+		sy = &Colosso_MarkerStartX;
+		diff = Colosso_MarkerEndX - sy->signed_value;
 		base = sy->value;
 		*py = base + diff * (s16)step / total;
-		Korosseo_MarkerY =
-			Korosseo_MarkerStartY.value
-			+ (Korosseo_MarkerEndY - Korosseo_MarkerStartY.signed_value) * (s16)step / total;
+		Colosso_MarkerY =
+			Colosso_MarkerStartY.value
+			+ (Colosso_MarkerEndY - Colosso_MarkerStartY.signed_value) * (s16)step / total;
 		if ((s16)step >= total)
 			*steps = 0;
-		Korosseo_MarkerBlink = 0;
+		Colosso_MarkerBlink = 0;
 	}
-	if (++Korosseo_MarkerBlink <= 13)
+	if (++Colosso_MarkerBlink <= 13)
 	{
 		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. As the literal 0x40000000 in the expression, in any of four operand orders: differ 6. */
 		s32 size = 0x40000000;
 
-		x = Korosseo_MarkerX;
-		y = Korosseo_MarkerY;
+		x = Colosso_MarkerX;
+		y = Colosso_MarkerY;
 		dst = oam;
 		*dst++ = 0;
-		*dst++ = (y - 8) | ((x - 8) << 16) | size | (Korosseo_MarkerPriority << 28);
+		*dst++ = (y - 8) | ((x - 8) << 16) | size | (Colosso_MarkerPriority << 28);
 		*dst = tile | 0x400;
 		Runtime_PushSlotEntry(oam, 255);
 	}
-	else if (Korosseo_MarkerBlink > 19)
+	else if (Colosso_MarkerBlink > 19)
 	{
-		Korosseo_MarkerBlink = 0;
+		Colosso_MarkerBlink = 0;
 	}
 }
 
 void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
-	Korosseo_EnsureMarkerSlot();
+	Colosso_EnsureMarkerSlot();
 
-	Korosseo_MarkerX = x;
-	Korosseo_MarkerY = y;
-	Korosseo_MarkerPriority = (style & 3);
-	Korosseo_MarkerBlink = 0;
-	Korosseo_MarkerSteps = 0;
+	Colosso_MarkerX = x;
+	Colosso_MarkerY = y;
+	Colosso_MarkerPriority = (style & 3);
+	Colosso_MarkerBlink = 0;
+	Colosso_MarkerSteps = 0;
 
-	FieldScheduler_AddCallback((s32)Korosseo_UpdateMarker, 0xc80);
+	FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
 }
 
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
 {
-	Korosseo_MarkerEndX = x;
-	Korosseo_MarkerEndY = y;
-	*(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
-	*(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-	Korosseo_MarkerSteps = duration;
-	Korosseo_MarkerStep = 0;
+	Colosso_MarkerEndX = x;
+	Colosso_MarkerEndY = y;
+	*(u16 *)&Colosso_MarkerStartX = Colosso_MarkerX;
+	*(u16 *)&Colosso_MarkerStartY = Colosso_MarkerY;
+	Colosso_MarkerSteps = duration;
+	Colosso_MarkerStep = 0;
 
-	FieldScheduler_AddCallback((s32)Korosseo_UpdateMarker, 0xc80);
+	FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
 }
 
 void SceneEffect_RemoveMarkerTask(void)
 {
 
-	Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
-	Resource_ResetEntry(Korosseo_MarkerSlot);
-	Korosseo_MarkerSlot = -1;
+	Engine_TaskRemoveCallback(Colosso_UpdateMarker);
+	Resource_ResetEntry(Colosso_MarkerSlot);
+	Colosso_MarkerSlot = -1;
 }
 
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)

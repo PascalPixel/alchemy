@@ -15,9 +15,9 @@ s32 BtlEfxDeadChk(s32 efx)
 	switch (efx)
 	{
 	case 31: // HPをうばう
-	case 32: // EPをうばう
+	case 32: // PPをうばう
 	case 60: // HPをうばう（半分）
-	case 69: // EPをうばう（1/10）
+	case 69: // PPをうばう（1/10）
 		return 1;
 	default:
 		return 0;

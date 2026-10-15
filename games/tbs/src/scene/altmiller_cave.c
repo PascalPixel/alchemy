@@ -39,7 +39,7 @@
 #include "frame.h"
 
 // 前方宣言
-static void ArutamiraDou_ReleaseWallBurst(void);
+static void AltmillerCave_ReleaseWallBurst(void);
 
 typedef struct
 {
@@ -58,7 +58,7 @@ struct ActorWheel
 	u16 travel;
 };
 
-#define ArutamiraDou_Wheel ((struct ActorWheel *)ArutamiraDou_ClearTarget)
+#define AltmillerCave_Wheel ((struct ActorWheel *)AltmillerCave_ClearTarget)
 
 struct RockPuzzle
 {
@@ -66,9 +66,9 @@ struct RockPuzzle
 	s8 chosen;
 };
 
-#define ArutamiraDou_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
+#define AltmillerCave_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
 
-u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
+u16 gAltmillerActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
@@ -78,9 +78,9 @@ static void EV13_TALK(void)
 	BattleFx_SetPhaseRequest(13, 0x41);
 }
 
-u8 *ArutamiraDou_GetEntrances(void)
+u8 *AltmillerCave_GetEntrances(void)
 {
-	return ArutamiraDou_SceneTableA;
+	return AltmillerCave_SceneTableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -88,31 +88,31 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *ArutamiraDou_GetExits(void)
+u8 *AltmillerCave_GetExits(void)
 {
-	return ArutamiraDou_SceneTableB;
+	return AltmillerCave_SceneTableB;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ArutamiraDou2)
+	if (scene == (s32)&SceneId_AltmillerCave2)
 	{
-		return gArutamiraDouPlacements2;
+		return gAltmillerCavePlacements2;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou4)
+	if (scene == (s32)&SceneId_AltmillerCave4)
 	{
-		return gArutamiraDouPlacements4;
+		return gAltmillerCavePlacements4;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou6)
+	if (scene == (s32)&SceneId_AltmillerCave6)
 	{
-		return gArutamiraDouPlacements6;
+		return gAltmillerCavePlacements6;
 	}
-	return gArutamiraDouPlacementsOther;
+	return gAltmillerCavePlacementsOther;
 }
 
-static void ArutamiraDou_ApplyFadeBlend(void)
+static void AltmillerCave_ApplyFadeBlend(void)
 {
 	s8 level = ((s8 *)gSceneState)[4];
 
@@ -155,7 +155,7 @@ static void ArutamiraDou_ApplyFadeBlend(void)
 	}
 }
 
-static void ArutamiraDou_SetFadeLevel(s32 level)
+static void AltmillerCave_SetFadeLevel(s32 level)
 {
 	u8 *work;
 	u8 *fade = &gSceneState[4];
@@ -164,38 +164,38 @@ static void ArutamiraDou_SetFadeLevel(s32 level)
 	*fade = level;
 	if (*(s16 *)(work + 0xcb8) == 0)
 	{
-		ArutamiraDou_ApplyFadeBlend();
+		AltmillerCave_ApplyFadeBlend();
 	}
 }
 
 static void EV60_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(0);
+	AltmillerCave_SetFadeLevel(0);
 }
 
 static void EV61_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(1);
+	AltmillerCave_SetFadeLevel(1);
 }
 
 static void EV62_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(2);
+	AltmillerCave_SetFadeLevel(2);
 }
 
 static void EV63_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(3);
+	AltmillerCave_SetFadeLevel(3);
 }
 
 static void EV64_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(4);
+	AltmillerCave_SetFadeLevel(4);
 }
 
 static void EV65_TOUCH(void)
 {
-	ArutamiraDou_SetFadeLevel(5);
+	AltmillerCave_SetFadeLevel(5);
 }
 
 static void SceneEffect_SetupBlendByFlag201(void)
@@ -228,7 +228,7 @@ static void SceneEffect_SetupBlendByFlag201(void)
 			s32	 c = 0x3f;
 			*slot = c;
 		}
-		ArutamiraDou_ApplyFadeBlend();
+		AltmillerCave_ApplyFadeBlend();
 		return;
 	}
 	{
@@ -251,15 +251,15 @@ static void SceneEffect_SetupBlendByFlag201(void)
 	}
 }
 
-static void ArutamiraDou_ApplyRoomVisuals(void)
+static void AltmillerCave_ApplyRoomVisuals(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou1)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave1)
 	{
 		s32 alpha = 0x1000;
 
 		REG_BLDALPHA = alpha;
 	}
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou6)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave6)
 	{
 		Engine_ActorSetChildValue(16, 1);
 		Engine_ActorSetChildValue(17, 4);
@@ -280,7 +280,7 @@ static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 		work[0x34] = 1;
 	}
 	tbl = (s16 *)&gGameState;
-	if (tbl[0xe0] == (s32)&SceneId_ArutamiraDou6)
+	if (tbl[0xe0] == (s32)&SceneId_AltmillerCave6)
 	{
 		Engine_ActorSetChildValue(16, 6);
 		Engine_ActorSetChildValue(17, 6);
@@ -290,7 +290,7 @@ static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 	}
 }
 
-static void ArutamiraDou_RespawnActorObject(void)
+static void AltmillerCave_RespawnActorObject(void)
 {
 	u8				  *work;
 	struct FieldActor *old;
@@ -371,7 +371,7 @@ static void EV11_PSYNERGY(void)
 	}
 }
 
-static void ArutamiraDou_HopSelectedActor(void)
+static void AltmillerCave_HopSelectedActor(void)
 {
 	struct FieldActor	  *actor = Object_GetById(gGameState.selected_actor);
 	s32					   flags = actor->motion_flags;
@@ -418,9 +418,9 @@ static void FieldScene_RunGuardedSixWordStep(void)
 	Engine_EventEnd();
 }
 
-static void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj)
+static void AltmillerCave_UpdateScalePulse(struct FieldActor *obj)
 {
-	s32 v = ArutamiraDou_PulseScales[(obj->timer >> 2) & 3];
+	s32 v = AltmillerCave_PulseScales[(obj->timer >> 2) & 3];
 
 	obj->scale_x = v;
 	obj->scale_y = v;
@@ -457,9 +457,9 @@ static void SceneActor_PlaceFiveActorsInRow(u8 *p)
 	} while (i <= 4);
 }
 
-static void ArutamiraDou_SpinActorWheel(void)
+static void AltmillerCave_SpinActorWheel(void)
 {
-	struct ActorWheel *wheel = ArutamiraDou_Wheel;
+	struct ActorWheel *wheel = AltmillerCave_Wheel;
 	s32				   flag = 1;
 	s32				   state = wheel->phase;
 
@@ -497,7 +497,7 @@ static void ArutamiraDou_SpinActorWheel(void)
 			wheel->phase = 0x63;
 			wheel->speed = 0;
 			Object_GetById(v + 11)->update =
-				(void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
+				(void (*)(union FieldObject *))AltmillerCave_UpdateScalePulse;
 		}
 	}
 	else if (state == 0x63)
@@ -506,19 +506,19 @@ static void ArutamiraDou_SpinActorWheel(void)
 	}
 	if (flag != 0)
 	{
-		ArutamiraDou_Wheel->angle += ArutamiraDou_Wheel->speed;
-		SceneActor_PlaceFiveActorsInRow(ArutamiraDou_Wheel->angle);
-		ArutamiraDou_Wheel->travel += ArutamiraDou_Wheel->speed;
-		if (ArutamiraDou_Wheel->travel > 0x3000)
+		AltmillerCave_Wheel->angle += AltmillerCave_Wheel->speed;
+		SceneActor_PlaceFiveActorsInRow(AltmillerCave_Wheel->angle);
+		AltmillerCave_Wheel->travel += AltmillerCave_Wheel->speed;
+		if (AltmillerCave_Wheel->travel > 0x3000)
 		{
-			ArutamiraDou_Wheel->travel = 0;
+			AltmillerCave_Wheel->travel = 0;
 			Engine_AudioPlayCue(0x87);
 		}
 	}
-	ArutamiraDou_Wheel->ticks++;
+	AltmillerCave_Wheel->ticks++;
 }
 
-static void ArutamiraDou_TurnRock(s32 action)
+static void AltmillerCave_TurnRock(s32 action)
 {
 	s32				   won = 0;
 	s32				   i;
@@ -533,7 +533,7 @@ static void ArutamiraDou_TurnRock(s32 action)
 
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage(MsgArutamiraRotatedRock);
+	Event_SetMessage(MsgAltmillerRotatedRock);
 	Event_ShowMessage(16, 0);
 	Event_End();
 	for (i = 0; i <= 4; i++)
@@ -546,10 +546,10 @@ static void ArutamiraDou_TurnRock(s32 action)
 	{
 		struct ActorWheel *wheel;
 
-		state = ArutamiraDou_RockPuzzle->state;
-		previous = ArutamiraDou_RockPuzzle->chosen;
-		wheel = ArutamiraDou_Wheel;
-		chosen = ArutamiraDou_RockPuzzle->chosen;
+		state = AltmillerCave_RockPuzzle->state;
+		previous = AltmillerCave_RockPuzzle->chosen;
+		wheel = AltmillerCave_Wheel;
+		chosen = AltmillerCave_RockPuzzle->chosen;
 		wheel->angle = (chosen << 16) / 5 + 0x4000;
 	}
 	if (state == 0)
@@ -576,7 +576,7 @@ static void ArutamiraDou_TurnRock(s32 action)
 			state = 2;
 			Event_PlayCue(110);
 			Task_Wait(30);
-			angle = ArutamiraDou_Wheel->angle;
+			angle = AltmillerCave_Wheel->angle;
 			for (i = 0; i <= 4; i++)
 			{
 				SceneActor_SetPositionFromTransformedBase(i + 11, 0x180000, angle);
@@ -636,14 +636,14 @@ static void ArutamiraDou_TurnRock(s32 action)
 		u8 rounds = ++rock[-1];
 
 		rock[1] = ((s8)(((u32)(Random_Next() << 2) >> 16) + previous + 1) + 5) % 5;
-		ArutamiraDou_Wheel->phase = 0;
-		ArutamiraDou_Wheel->ticks = 0;
-		ArutamiraDou_Wheel->speed = 0x200;
-		ArutamiraDou_Wheel->travel = 0x3000;
-		Task_AddCallback(ArutamiraDou_SpinActorWheel, TASK_PRIORITY_SCENE);
+		AltmillerCave_Wheel->phase = 0;
+		AltmillerCave_Wheel->ticks = 0;
+		AltmillerCave_Wheel->speed = 0x200;
+		AltmillerCave_Wheel->travel = 0x3000;
+		Task_AddCallback(AltmillerCave_SpinActorWheel, TASK_PRIORITY_SCENE);
 		if (rounds <= 2)
 		{
-			while (ArutamiraDou_Wheel->phase != 99)
+			while (AltmillerCave_Wheel->phase != 99)
 			{
 				Task_Wait(1);
 			}
@@ -653,19 +653,19 @@ static void ArutamiraDou_TurnRock(s32 action)
 		else
 		{
 			rock[0] = 99;
-			while (ArutamiraDou_Wheel->phase != 2)
+			while (AltmillerCave_Wheel->phase != 2)
 			{
 				Task_Wait(1);
 			}
-			ArutamiraDou_Wheel->phase = 2;
-			ArutamiraDou_Wheel->ticks = 0;
+			AltmillerCave_Wheel->phase = 2;
+			AltmillerCave_Wheel->ticks = 0;
 			Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
 			Engine_EventWait(20);
 			Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-			ArutamiraDou_Wheel->phase = 99;
+			AltmillerCave_Wheel->phase = 99;
 			Event_PlayCue(190);
 			reach = 0x180000;
-			angle = ArutamiraDou_Wheel->angle;
+			angle = AltmillerCave_Wheel->angle;
 			do
 			{
 				for (i = 0; i <= 4; i++)
@@ -684,10 +684,10 @@ static void ArutamiraDou_TurnRock(s32 action)
 			{
 				Actor_SetPosition(i + 11, 0, 0);
 			}
-			ArutamiraDou_ReleaseWallBurst();
+			AltmillerCave_ReleaseWallBurst();
 			Event_PlayCue(80);
 		}
-		Engine_TaskRemoveCallback(ArutamiraDou_SpinActorWheel);
+		Engine_TaskRemoveCallback(AltmillerCave_SpinActorWheel);
 	}
 }
 
@@ -708,7 +708,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Battle_ResetEffectCounter();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgArutamiraCameBackPleaseDraughtQuickly);
+	Engine_EventSetMessage(MsgAltmillerCameBackPleaseDraughtQuickly);
 	Event_ShowMessage(8, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 160);
@@ -719,18 +719,18 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 208);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	FieldMotion_LaunchFromFocusedObject(GERALD, -16, 16, FACING_NORTH);
-	FieldMotion_LaunchFromFocusedObject(MEARI, 0, 16, FACING_NORTH);
-	FieldMotion_LaunchFromFocusedObject(IWAN, 16, 16, FACING_NORTH);
-	Engine_ActorWaitForMove(GERALD);
+	FieldMotion_LaunchFromFocusedObject(GARET, -16, 16, FACING_NORTH);
+	FieldMotion_LaunchFromFocusedObject(MIA, 0, 16, FACING_NORTH);
+	FieldMotion_LaunchFromFocusedObject(IVAN, 16, 16, FACING_NORTH);
+	Engine_ActorWaitForMove(GARET);
 	Engine_EventWait(20);
 	Engine_EventWait(10);
 	Actor_ShowEmote(8, EMOTE_IN_FRONT | 8, 40);
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_EventWait(20);
 	actor = Actor_Get(8);
 	Engine_EventWait(30);
@@ -767,103 +767,103 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_FaceDirection(9, FACING_SOUTH, 0);
 	Engine_EventWait(20);
 	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(MEARI)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_Get(IWAN)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(MIA)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_Get(IVAN)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkBy(ACTOR_PARTY_LEADER, 0, 16);
-	Actor_WalkBy(GERALD, 0, 16);
-	Actor_WalkBy(MEARI, 0, 16);
-	Actor_WalkByAndWait(IWAN, 0, 16);
+	Actor_WalkBy(GARET, 0, 16);
+	Actor_WalkBy(MIA, 0, 16);
+	Actor_WalkByAndWait(IVAN, 0, 16);
 	Actor_Get(ACTOR_PARTY_LEADER)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(GERALD)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(MEARI)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_Get(IWAN)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(GARET)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(MIA)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_Get(IVAN)->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	Engine_ActorSetAnimation(GERALD, ANIM_STAND);
-	Engine_ActorSetAnimation(MEARI, ANIM_STAND);
-	Engine_ActorSetAnimation(IWAN, ANIM_STAND);
+	Engine_ActorSetAnimation(GARET, ANIM_STAND);
+	Engine_ActorSetAnimation(MIA, ANIM_STAND);
+	Engine_ActorSetAnimation(IVAN, ANIM_STAND);
 	Engine_TaskWait(1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_EventWait(30);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT | 5, 40);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT, 40);
-	Engine_ActorJump(GERALD, 4, 13);
-	Engine_ActorJump(GERALD, 4, 30);
-	Event_ShowMessage(GERALD, 0);
-	Actor_FaceActor(IWAN, GERALD, 30);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 5, 40);
-	Event_ShowMessage(IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 30);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
+	Engine_ActorJump(GARET, 4, 13);
+	Engine_ActorJump(GARET, 4, 30);
+	Event_ShowMessage(GARET, 0);
+	Actor_FaceActor(IVAN, GARET, 30);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 40);
+	Event_ShowMessage(IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 30);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_ActorSetAnimationAndWait(9, ANIM_SHAKE_HEAD);
 	Engine_EventWait(30);
 	Event_OpenMessage(9, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage(MsgArutamiraWouldHaveRevealedMyselfSooner);
+		Engine_EventSetMessage(MsgAltmillerWouldHaveRevealedMyselfSooner);
 		Event_ShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgArutamiraMustTraveledIndeedIfDidnt);
+		Engine_EventSetMessage(MsgAltmillerMustTraveledIndeedIfDidnt);
 		Event_ShowMessage(9, 0);
 	}
-	Engine_EventSetMessage(MsgArutamiraHowDidBecomeParalyzedWhile);
+	Engine_EventSetMessage(MsgAltmillerHowDidBecomeParalyzedWhile);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 40);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
 	Engine_EventWait(30);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 1, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(20);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_WalkByAndWait(IWAN, 0, -48);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_WalkByAndWait(IVAN, 0, -48);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
 	Engine_EventWait(40);
 	Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
 	Engine_PsynergySetTarget(2, 9);
@@ -872,24 +872,24 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_EventWait(150);
 	Engine_PsynergyPlayEffect(2);
 	Engine_PsynergyLowerHands();
-	Engine_ActorSetAnimation(IWAN, ANIM_STAND);
+	Engine_ActorSetAnimation(IVAN, ANIM_STAND);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(40);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 1, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 2, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 0);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 2, 40);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
 	Engine_EventWait(10);
-	Actor_FaceDirection(IWAN, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorJump(9, 4, 13);
 	Engine_ActorJump(9, 4, 30);
@@ -905,39 +905,39 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_ShowEmote(9, EMOTE_IN_FRONT, 40);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 1, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 40);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(50);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
 	Engine_EventWait(10);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
 	Engine_EventWait(20);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_WalkByAndWait(IWAN, 0, 48);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_WalkByAndWait(IVAN, 0, 48);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_EventWait(50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Engine_EventWait(30);
@@ -945,74 +945,74 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_EventWait(30);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 2, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_SHAKE_HEAD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(9, ANIM_SHAKE_HEAD);
 	Engine_EventWait(30);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT, 80);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 80);
 	Engine_EventWait(20);
 	Actor_FaceDirection(9, FACING_NORTH, 0);
 	Engine_EventWait(50);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 1, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 1, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 1, 40);
-	Event_OpenMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgArutamiraThatsSukuretaSaidAlchemyCould);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerThatsKradenSaidAlchemyCould);
+		Event_ShowMessage(GARET, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgArutamiraForgotSukuretaSaidAlchemyCould);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerForgotKradenSaidAlchemyCould);
+		Event_ShowMessage(GARET, 0);
 	}
-	Engine_EventSetMessage(MsgArutamiraWhatWasThat);
+	Engine_EventSetMessage(MsgAltmillerWhatWasThat);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT, 40);
 	Actor_FaceDirection(9, FACING_SOUTH, 0);
 	Engine_EventWait(10);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 40);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(30);
 	Event_OpenMessage(9, 0);
-	Engine_EventSetMessage(MsgArutamiraBabi);
+	Engine_EventSetMessage(MsgAltmillerBabi);
 	Engine_EventChooseYesNo(0, 0);
 	display = (u8 *)gDisplayTransition;
 	{
@@ -1040,11 +1040,11 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_SetPosition(10, PIXELS(280), PIXELS(304));
 	Actor_SetPosition(11, PIXELS(296), PIXELS(304));
 	Event_ShowMessage(10, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	Engine_EventWait(10);
@@ -1055,9 +1055,9 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_ShowEmote(11, EMOTE_IN_FRONT | 2, 40);
 	Event_ShowMessage(11, 0);
 	Engine_ActorFollow(ACTOR_PARTY_LEADER, 10);
-	Engine_ActorFollow(GERALD, 10);
-	Engine_ActorFollow(MEARI, 10);
-	Engine_ActorFollow(IWAN, 10);
+	Engine_ActorFollow(GARET, 10);
+	Engine_ActorFollow(MIA, 10);
+	Engine_ActorFollow(IVAN, 10);
 	Actor_SetSpeed(10, 0x16666, 0xb333);
 	Actor_SetSpeed(11, 0x16666, 0xb333);
 	Engine_ActorEnableActionCallback(10, gAltmillerActionA);
@@ -1070,13 +1070,13 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_FaceDirection(10, FACING_EAST, 0);
 	Actor_FaceDirection(11, FACING_EAST, 0);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
-	Engine_ActorStop(GERALD);
-	Engine_ActorStop(MEARI);
-	Engine_ActorStop(IWAN);
+	Engine_ActorStop(GARET);
+	Engine_ActorStop(MIA);
+	Engine_ActorStop(IVAN);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Actor_FaceDirection(9, FACING_WEST, 0);
 	Camera_MoveTo(PIXELS(248), -1, PIXELS(216), 1);
 	Engine_CameraWaitForMove();
@@ -1167,18 +1167,18 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_EventWait(20);
 	Event_ShowMessage(11, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimation(MEARI, ANIM_NOD);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimation(MIA, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
 	Actor_ShowEmote(11, EMOTE_IN_FRONT | 8, 40);
@@ -1201,9 +1201,9 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
 	Engine_EventWait(40);
 	Engine_ActorFollow(ACTOR_PARTY_LEADER, 9);
-	Engine_ActorFollow(GERALD, 9);
-	Engine_ActorFollow(MEARI, 9);
-	Engine_ActorFollow(IWAN, 9);
+	Engine_ActorFollow(GARET, 9);
+	Engine_ActorFollow(MIA, 9);
+	Engine_ActorFollow(IVAN, 9);
 	Actor_SetSpeed(9, 0x10000, 0x8000);
 	Actor_WalkByAndWait(9, -16, 0);
 	Actor_WalkBy(10, 0, 48);
@@ -1213,9 +1213,9 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_ActorSetAnimation(10, ANIM_STAND);
 	Engine_ActorSetAnimation(11, ANIM_STAND);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
-	Engine_ActorStop(GERALD);
-	Engine_ActorStop(MEARI);
-	Engine_ActorStop(IWAN);
+	Engine_ActorStop(GARET);
+	Engine_ActorStop(MIA);
+	Engine_ActorStop(IVAN);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT, 40);
 	Actor_FaceDirection(9, FACING_EAST, 0);
@@ -1224,23 +1224,23 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Actor_FaceDirection(10, FACING_NORTH, 0);
 	Actor_FaceDirection(11, FACING_NORTH, 0);
 	Engine_EventWait(30);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 30);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 30);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Actor_FaceActor(GERALD, 9, 30);
-	Event_ShowMessage(GERALD, 0);
+	Actor_FaceActor(GARET, 9, 30);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
@@ -1260,19 +1260,19 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_ActorEnableActionCallback(10, gAltmillerActionC);
 	Engine_ActorEnableActionCallback(9, gAltmillerActionD);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	Object_RefreshSelectorById(9);
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT, 0);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT, 40);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
 	Engine_EventWait(20);
 	Camera_MoveTo(PIXELS(248), -1, PIXELS(248), 1);
 	Engine_CameraWaitForMove();
@@ -1363,132 +1363,132 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_CameraMoveToActor(0, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 2, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(20);
-	Event_OpenMessage(GERALD, 0);
-	Actor_FaceActor(MEARI, ACTOR_PARTY_LEADER, 0);
-	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 0);
+	Event_OpenMessage(GARET, 0);
+	Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(10);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgArutamiraSoWellDoIt);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerSoWellDoIt);
+		Event_ShowMessage(GARET, 0);
 	}
 	else
 	{
 		Engine_EventWait(10);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgArutamiraDontWantEitherDo);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerDontWantEitherDo);
+		Event_ShowMessage(GARET, 0);
 	}
-	Engine_EventSetMessage(MsgArutamiraEitherWayWereStuckHere);
+	Engine_EventSetMessage(MsgAltmillerEitherWayWereStuckHere);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(20);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT, 40);
-	Event_ShowMessage(GERALD, 0);
-	Event_OpenMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
+	Event_ShowMessage(GARET, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(10);
-		Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+		Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage(MsgArutamiraGreatItsDecidedJustHave);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerGreatItsDecidedJustHave);
+		Event_ShowMessage(GARET, 0);
 		Engine_EventWait(10);
-		Engine_ActorFaceEachOther(MEARI, IWAN, 50);
-		Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-		Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+		Engine_ActorFaceEachOther(MIA, IVAN, 50);
+		Actor_FaceDirection(MIA, FACING_NORTH, 0);
+		Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 		Engine_EventWait(30);
-		Event_ShowMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
 		Engine_EventWait(20);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-		Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-		Engine_ActorSetAnimation(MEARI, ANIM_NOD);
-		Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+		Engine_ActorSetAnimation(GARET, ANIM_NOD);
+		Engine_ActorSetAnimation(MIA, ANIM_NOD);
+		Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 		Engine_EventWait(30);
 	}
 	else
 	{
 		Engine_EventWait(10);
-		Engine_ActorSetAnimationAndWait(GERALD, ANIM_SHAKE_HEAD);
+		Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage(MsgArutamiraDontLetMeDownLike);
-		Event_ShowMessage(GERALD, 0);
+		Engine_EventSetMessage(MsgAltmillerDontLetMeDownLike);
+		Event_ShowMessage(GARET, 0);
 		Engine_EventWait(10);
-		Engine_ActorFaceEachOther(MEARI, IWAN, 50);
-		Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-		Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+		Engine_ActorFaceEachOther(MIA, IVAN, 50);
+		Actor_FaceDirection(MIA, FACING_NORTH, 0);
+		Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 		Engine_EventWait(30);
-		Event_ShowMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
+		Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(MEARI, ANIM_NOD);
+		Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
 		Engine_EventWait(30);
-		Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 70);
+		Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 70);
 	}
 	Event_PlayCue(17);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, ANIM_WALK);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, ANIM_WALK);
 	object = Actor_Get(ACTOR_PARTY_LEADER);
 	if (object != NULL)
 	{
-		Actor_SetDestination(GERALD, object->x.part.pixel, object->z.part.pixel);
+		Actor_SetDestination(GARET, object->x.part.pixel, object->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(IWAN, ANIM_WALK);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(IVAN, ANIM_WALK);
 	object = Actor_Get(ACTOR_PARTY_LEADER);
 	if (object != NULL)
 	{
-		Actor_SetDestination(IWAN, object->x.part.pixel, object->z.part.pixel);
+		Actor_SetDestination(IVAN, object->x.part.pixel, object->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	Engine_ActorSetAnimation(MEARI, ANIM_WALK);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	Engine_ActorSetAnimation(MIA, ANIM_WALK);
 	object = Actor_Get(ACTOR_PARTY_LEADER);
 	if (object != NULL)
 	{
-		Actor_SetDestination(MEARI, object->x.part.pixel, object->z.part.pixel);
+		Actor_SetDestination(MIA, object->x.part.pixel, object->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
 	Audio_PlayCueFromEventWork();
 	Engine_EventEnd();
 }
@@ -1501,7 +1501,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_AudioPlayCue(24);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage(MsgArutamiraSee);
+	Engine_EventSetMessage(MsgAltmillerSee);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(8, 0);
@@ -1517,7 +1517,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(20);
 	Actor_ShowEmote(2, 0x102, 0);
 	Engine_EventWait(40);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_ActorRunRepeatedMotion(3, 2);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(3, 0);
@@ -1525,8 +1525,8 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Actor_ShowEmote(8, 0x100, 40);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, IWAN, 50);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
+	Engine_ActorFaceEachOther(GARET, IVAN, 50);
+	Actor_FaceDirection(GARET, 0xc000, 0);
 	Actor_FaceDirection(2, 0xc000, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(1, 0);
@@ -1536,8 +1536,8 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(20);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Actor_FaceDirection(2, 0xc000, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(2, 0);
@@ -1545,16 +1545,16 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Actor_ShowEmote(8, 0x100, 40);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(8, 0x105, 40);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 30);
-	Actor_ShowEmote(GERALD, 0x101, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 30);
+	Actor_ShowEmote(GARET, 0x101, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_ActorFaceDirection(1, 0xc000, 0);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(1, 0);
@@ -1571,8 +1571,8 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 0);
 	Engine_ActorShowEmote(2, 0x101, 0);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(2, 2);
@@ -1581,7 +1581,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x102, 40);
+	Actor_ShowEmote(GARET, 0x102, 40);
 	Engine_EventShowMessage(1, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -1593,51 +1593,51 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(10);
 	Actor_ShowEmote(8, 0x102, 40);
 	Event_OpenMessage(8, 0);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
-	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgArutamiraKiddingHaventActually);
+		Engine_EventSetMessage(MsgAltmillerKiddingHaventActually);
 		Engine_EventWait(20);
-		Actor_ShowEmote(GERALD, 0x100, 40);
-		Actor_SetSpeed(GERALD, 0x20000, 0x10000);
+		Actor_ShowEmote(GARET, 0x100, 40);
+		Actor_SetSpeed(GARET, 0x20000, 0x10000);
 		Actor_WalkByAndWait(1, 0, -16);
 		Engine_EventWait(10);
-		Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 30);
+		Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 30);
 		Engine_EventShowMessage(1, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgArutamiraDontTrustAnyone);
+		Engine_EventSetMessage(MsgAltmillerDontTrustAnyone);
 		Engine_EventWait(10);
-		Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+		Actor_SetSpeed(GARET, 0x10000, 0x8000);
 		Actor_WalkByAndWait(1, 0, -16);
 		Engine_EventWait(10);
-		Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 30);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 30);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 		Engine_EventWait(20);
 		Engine_EventShowMessage(1, 0);
 	}
 
-	line = MsgArutamiraSaidCouldntMove;
+	line = MsgAltmillerSaidCouldntMove;
 	Engine_EventSetMessage(line);
-	Actor_ShowEmote(IWAN, 0x103, 40);
-	Actor_SetSpeed(IWAN, 0x20000, 0x10000);
+	Actor_ShowEmote(IVAN, 0x103, 40);
+	Actor_SetSpeed(IVAN, 0x20000, 0x10000);
 	Actor_WalkByAndWait(2, 0, -16);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(IWAN, ACTOR_PARTY_LEADER, 30);
-	Event_ShowMessage(IWAN, 0);
+	Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 30);
+	Event_ShowMessage(IVAN, 0);
 	Engine_ActorSetAnimationAndWait(3, 3);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(3, 3);
 	Engine_EventWait(20);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, MEARI, 0);
-	Actor_FaceActor(GERALD, MEARI, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, MIA, 0);
+	Actor_FaceActor(GARET, MIA, 0);
 	Engine_ActorFaceActor(2, 3, 0);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Engine_ActorWalkByAndWait(1, 0, 16);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(1, 4);
@@ -1646,16 +1646,16 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(1, 0);
 	Engine_EventWait(30);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 30);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorFaceEachOther(MIA, IVAN, 30);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(30);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Engine_ActorWalkByAndWait(2, 0, 16);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Actor_FaceDirection(2, 0xc000, 0);
 	line += 7;
 	Engine_EventSetMessage(line);
@@ -1678,25 +1678,25 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 	Actor_FaceDirection(1, 0xc000, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, 0x101, 40);
+	Actor_ShowEmote(MIA, 0x101, 40);
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 50);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 	Actor_FaceDirection(1, 0xc000, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 50);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 50);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Engine_ActorFaceDirection(2, 0xc000, 0);
 	Engine_EventWait(30);
 	Engine_EventShowMessage(8, 0);
@@ -1714,7 +1714,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Actor_ShowEmote(8, 0x108, 50);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x101, 40);
+	Actor_ShowEmote(GARET, 0x101, 40);
 	Engine_EventShowMessage(1, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(8, 0x102, 40);
@@ -1726,19 +1726,19 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(10);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, MEARI, 40);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, MIA, 40);
 	Engine_ActorSetAnimationAndWait(0, 3);
 	Engine_EventWait(30);
-	Actor_FaceActor(GERALD, MEARI, 0);
+	Actor_FaceActor(GARET, MIA, 0);
 	Engine_ActorFaceActor(2, 3, 0);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(17);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
 	Engine_ActorSetAnimation(1, 2);
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if (leader != 0)
@@ -1746,7 +1746,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 		Engine_ActorSetDestination(1, leader->x.part.pixel, leader->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(1);
-	Actor_SetPosition(GERALD, 0, 0);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_ActorSetAnimation(2, 2);
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if (leader != 0)
@@ -1754,7 +1754,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 		Engine_ActorSetDestination(2, leader->x.part.pixel, leader->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(2);
-	Actor_SetPosition(IWAN, 0, 0);
+	Actor_SetPosition(IVAN, 0, 0);
 	Engine_ActorSetAnimation(3, 2);
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if (leader != 0)
@@ -1762,7 +1762,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 		Engine_ActorSetDestination(3, leader->x.part.pixel, leader->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(3);
-	Actor_SetPosition(MEARI, 0, 0);
+	Actor_SetPosition(MIA, 0, 0);
 	Audio_PlayCueFromEventWork();
 	Engine_EventEnd();
 }
@@ -1772,7 +1772,7 @@ static void EV08_TALK(void)
 	s32 question;
 
 	Engine_EventBegin();
-	question = MsgArutamiraForgetOrderRock;
+	question = MsgAltmillerForgetOrderRock;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1799,7 +1799,7 @@ static void EV19_TOUCH(void)
 
 	Engine_GameFlagSet(0x961);
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutamiraWait);
+	Engine_EventSetMessage(MsgAltmillerWait);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1816,30 +1816,30 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ArutamiraDou2)
+	if (scene == (s32)&SceneId_AltmillerCave2)
 	{
-		return gArutamiraDouEvents2;
+		return gAltmillerCaveEvents2;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou3)
+	if (scene == (s32)&SceneId_AltmillerCave3)
 	{
-		return gArutamiraDouEvents3;
+		return gAltmillerCaveEvents3;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou4)
+	if (scene == (s32)&SceneId_AltmillerCave4)
 	{
-		return gArutamiraDouEvents4;
+		return gAltmillerCaveEvents4;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou5)
+	if (scene == (s32)&SceneId_AltmillerCave5)
 	{
-		return gArutamiraDouEvents5;
+		return gAltmillerCaveEvents5;
 	}
-	if (scene == (s32)&SceneId_ArutamiraDou6)
+	if (scene == (s32)&SceneId_AltmillerCave6)
 	{
-		return gArutamiraDouEvents6;
+		return gAltmillerCaveEvents6;
 	}
-	return gArutamiraDouEventsOther;
+	return gAltmillerCaveEventsOther;
 }
 
-static void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
+static void AltmillerCave_MatchLeaderPriority(struct FieldActor *actor)
 {
 	if (actor != NULL)
 	{
@@ -1848,7 +1848,7 @@ static void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
 	}
 }
 
-s32 ArutamiraDou_ApplyEntryState(void)
+s32 AltmillerCave_ApplyEntryState(void)
 {
 	s8				  *state;
 	struct FieldActor *actor;
@@ -1856,30 +1856,30 @@ s32 ArutamiraDou_ApplyEntryState(void)
 
 	if (gGameState.entrance == 0)
 	{
-		if (gGameState.scene == (s32)&SceneId_ArutamiraDou2)
+		if (gGameState.scene == (s32)&SceneId_AltmillerCave2)
 		{
 			gGameState.entrance = 10;
 		}
-		if (gGameState.scene == (s32)&SceneId_ArutamiraDou3)
+		if (gGameState.scene == (s32)&SceneId_AltmillerCave3)
 		{
 			gGameState.entrance = 20;
 		}
-		if (gGameState.scene == (s32)&SceneId_ArutamiraDou4)
+		if (gGameState.scene == (s32)&SceneId_AltmillerCave4)
 		{
 			gGameState.entrance = 30;
 		}
-		if (gGameState.scene == (s32)&SceneId_ArutamiraDou5)
+		if (gGameState.scene == (s32)&SceneId_AltmillerCave5)
 		{
 			gGameState.entrance = 40;
 		}
-		if (gGameState.scene == (s32)&SceneId_ArutamiraDou6)
+		if (gGameState.scene == (s32)&SceneId_AltmillerCave6)
 		{
 			gGameState.entrance = 50;
 		}
 	}
 	Engine_GameFlagSet(0x200);
 	GameFlag_Clear(0x201);
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou1)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave1)
 	{
 		if (gGameState.entrance == 1)
 		{
@@ -1898,7 +1898,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 			Engine_GameFlagSet(0x201);
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou2)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave2)
 	{
 		if (Engine_GameFlagIsSet(0x962))
 		{
@@ -1912,7 +1912,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 			actor->sprite->rotation = 0x4000;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou4)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave4)
 	{
 		Engine_GameFlagClear(0x200);
 		FieldScene_RedrawActorFootprint(8);
@@ -1935,19 +1935,19 @@ s32 ArutamiraDou_ApplyEntryState(void)
 		}
 #endif
 	}
-	if (gGameState.scene == (s32)&SceneId_ArutamiraDou6)
+	if (gGameState.scene == (s32)&SceneId_AltmillerCave6)
 	{
 		Engine_GameFlagClear(0x200);
 		FieldScene_RedrawActorFootprint(8);
 		FieldScene_RedrawActorFootprint(9);
 		FieldScene_RedrawActorFootprint(10);
 		/* FAKEMATCH: the three callbacks are stored as s32, so the entrance read after them may alias them and stays below the last store. 2026-10-13: stored through the update field itself (with a cast of the function) or as void *, 2 of 403 differ: the last store moves below the entrance's ldrsh. */
-		*(s32 *)&Object_GetById(8)->update = (s32)ArutamiraDou_MatchLeaderPriority;
-		*(s32 *)&Object_GetById(9)->update = (s32)ArutamiraDou_MatchLeaderPriority;
-		*(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;
+		*(s32 *)&Object_GetById(8)->update = (s32)AltmillerCave_MatchLeaderPriority;
+		*(s32 *)&Object_GetById(9)->update = (s32)AltmillerCave_MatchLeaderPriority;
+		*(s32 *)&Object_GetById(10)->update = (s32)AltmillerCave_MatchLeaderPriority;
 		if (gGameState.entrance == 52)
 		{
-			Dma_Fill32(0, ArutamiraDou_ClearTarget, 12);
+			Dma_Fill32(0, AltmillerCave_ClearTarget, 12);
 			if (!Engine_GameFlagIsSet(0x109))
 			{
 				u8 *race = gSceneState;
@@ -2050,7 +2050,7 @@ static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 	}
 }
 
-static void ArutamiraDou_ReleaseWallBurst(void)
+static void AltmillerCave_ReleaseWallBurst(void)
 {
 	u8				  *work;
 	s32				   pos[3];
@@ -2164,9 +2164,9 @@ s32 StagedActor_FootprintBounds[] = {
 	32,
 };
 
-u16 *ArutamiraDou_ClearTarget = gArutamiraActorWheelWork;
+u16 *AltmillerCave_ClearTarget = gAltmillerActorWheelWork;
 
-struct SceneEntrance ArutamiraDou_SceneTableA[] = {
+struct SceneEntrance AltmillerCave_SceneTableA[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0},
 	{2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
@@ -2188,7 +2188,7 @@ struct SceneEntrance ArutamiraDou_SceneTableA[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 ArutamiraDou_SceneTableB[] = {
+u32 AltmillerCave_SceneTableB[] = {
 	SCENE_EXITS(146),
 	SCENE_EXIT(1, 2, 24),
 	SCENE_EXIT(2, 146, 3),
@@ -2215,14 +2215,14 @@ u32 ArutamiraDou_SceneTableB[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gArutamiraDouPlacementsOther[] = {
+struct ScenePlacement gAltmillerCavePlacementsOther[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutamiraDouPlacements2[] = {
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
-	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
-	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+struct ScenePlacement gAltmillerCavePlacements2[] = {
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
 	{0x41, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(232), 0, PIXELS(160), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0x34, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH,
@@ -2234,7 +2234,7 @@ struct ScenePlacement gArutamiraDouPlacements2[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutamiraDouPlacements4[] = {
+struct ScenePlacement gAltmillerCavePlacements4[] = {
 	{0x129, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x12a, CONDITION_ALWAYS, 7, PIXELS(352), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x12a, CONDITION_ALWAYS, 7, PIXELS(368), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0},
@@ -2246,7 +2246,7 @@ struct ScenePlacement gArutamiraDouPlacements4[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutamiraDouPlacements6[] = {
+struct ScenePlacement gAltmillerCavePlacements6[] = {
 	{0x129, CONDITION_ALWAYS, 7, PIXELS(392), 0, PIXELS(416), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x12a, CONDITION_ALWAYS, 7, PIXELS(416), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0x129, CONDITION_ALWAYS, 7, PIXELS(456), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0},
@@ -2273,7 +2273,7 @@ struct ScenePlacement gArutamiraDouPlacements6[] = {
 	{SCENE_TABLE_END},
 };
 
-u32 ArutamiraDou_PulseScales[] = {
+u32 AltmillerCave_PulseScales[] = {
 	0x10000,
 	0x11999,
 	0x13333,
@@ -2332,7 +2332,7 @@ s32 gAltmillerActionD[] = {
 	SC_END,
 };
 
-struct SceneEvent gArutamiraDouEventsOther[] = {
+struct SceneEvent gAltmillerCaveEventsOther[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2344,14 +2344,14 @@ struct SceneEvent gArutamiraDouEventsOther[] = {
 	{EVENT_TOUCH, 64, CONDITION_ALWAYS, EVENT_SCRIPT(EV64_TOUCH)},
 	{EVENT_TOUCH, 65, CONDITION_ALWAYS, EVENT_SCRIPT(EV65_TOUCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutamiraDou_ApplyRoomVisuals)},
+		EVENT_SCRIPT(AltmillerCave_ApplyRoomVisuals)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20)},
-	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject)},
+	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_RespawnActorObject)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutamiraDouEvents2[] = {
+struct SceneEvent gAltmillerCaveEvents2[] = {
 	{0x21, 10, CONDITION_ALWAYS, 10},
 	{0x31, 11, CONDITION_ALWAYS, 11},
 	{EVENT_TALK, 8, 0x960, EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence)},
@@ -2360,33 +2360,33 @@ struct SceneEvent gArutamiraDouEvents2[] = {
 	{EVENT_TOUCH, 19, 0x961, EVENT_SCRIPT(EV19_TOUCH)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x960,
 		EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xf30, MSGNO(MsgArutamiraNeedDraught)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xf30, MSGNO(MsgAltmillerNeedDraught)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x962,
 		EVENT_SCRIPT(FieldScene_RunExtendedActorPresentation)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20)},
-	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject)},
+	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_RespawnActorObject)},
 	{SEARCH(SEARCH_CHEST), 100, 0xef5, 0x500005},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutamiraDouEvents3[] = {
+struct SceneEvent gAltmillerCaveEvents3[] = {
 	{0x21, 20, CONDITION_ALWAYS, 20},
 	{0x31, 21, CONDITION_ALWAYS, 21},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20)},
-	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject)},
+	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_RespawnActorObject)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf9c, FIND_ITEM(ITEM_VIAL)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutamiraDouEvents4[] = {
+struct SceneEvent gAltmillerCaveEvents4[] = {
 	{0x21, 30, CONDITION_ALWAYS, 30},
 	{0x31, 31, CONDITION_ALWAYS, 31},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 72, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
-	{TOUCH_WALKING_INTO(FACING_WEST), 73, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
-	{TOUCH_WALKING_INTO(FACING_NORTH), 74, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
-	{TOUCH_WALKING_INTO(FACING_EAST), 75, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 72, 0x211, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 73, 0x211, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+	{TOUCH_WALKING_INTO(FACING_NORTH), 74, 0x211, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 75, 0x211, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
 	{0x202, 71, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedSixWordStep)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(EV77_TOUCH)},
 	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
@@ -2396,31 +2396,31 @@ struct SceneEvent gArutamiraDouEvents4[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutamiraDouEvents5[] = {
+struct SceneEvent gAltmillerCaveEvents5[] = {
 	{0x21, 40, CONDITION_ALWAYS, 40},
 	{0x31, 41, CONDITION_ALWAYS, 41},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20)},
-	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_RespawnActorObject)},
+	{PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_RespawnActorObject)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf9d, FIND_ITEM(0xc0)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutamiraDouEvents6[] = {
+struct SceneEvent gAltmillerCaveEvents6[] = {
 	{0x21, 50, CONDITION_ALWAYS, 50},
 	{EVENT_EXIT, 51, CONDITION_ALWAYS, 51},
 	{EVENT_EXIT, 52, CONDITION_ALWAYS, 52},
 	{EVENT_EXIT, 53, CONDITION_ALWAYS, 53},
 	{EVENT_EXIT, 54, CONDITION_ALWAYS, 54},
 	{0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedSixWordStep)},
-	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock)},
-	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock)},
-	{EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock)},
-	{EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock)},
-	{EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_TurnRock)},
+	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_TurnRock)},
+	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_TurnRock)},
+	{EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_TurnRock)},
+	{EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_TurnRock)},
+	{EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_TurnRock)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf30, FIND_ITEM(0xed)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutamiraDou_ApplyRoomVisuals)},
+		EVENT_SCRIPT(AltmillerCave_ApplyRoomVisuals)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneState_RunFlag200SetupAndPlaceActors16To20)},
 	{SCENE_EVENTS_END},

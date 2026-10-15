@@ -5,7 +5,7 @@
 #include "text/msg_ids.h"
 #include "daila.h"
 
-struct DeriActor {
+struct DailaActor {
     u8 unknown_00[0xc];
     s32 y;
     u8 unknown_10[8];
@@ -23,13 +23,13 @@ struct DeriActor {
     s32 unknown_6c;
 };
 
-struct DeriActor *Object_GetById(s32 id);
+struct DailaActor *Object_GetById(s32 id);
 s32 PartyInventory_Add(s32 item);
 s32 Func_02000d14(s32 item);
-void Func_02000da4(struct DeriActor *object, s32 mode);
+void Func_02000da4(struct DailaActor *object, s32 mode);
 void Func_02000dfc(s32 cue);
 void Func_02000ccc(s32 value, s32 slot);
-void Func_02000c9c(struct DeriActor *object);
+void Func_02000c9c(struct DailaActor *object);
 s32 Func_02000878(s32 item, s32 mode);
 
 void Func_02000730(void)
@@ -74,7 +74,7 @@ void Func_02000730(void)
             Object_GetById(9)->speed_1c = 0x13333;
             Object_GetById(9)->speed_18 = 0x13333;
             Object_GetById(9)->flags_59 |= 4;
-            Deri_ObjPlace(9, 232 << 16, 196 << 16);
+            Daila_ObjPlace(9, 232 << 16, 196 << 16);
         }
     }
     Engine_EventEnd();

@@ -145,7 +145,7 @@ s32 Title_Run(void)
 		Engine_AudioPlayCue(64);
 		PaletteFar_Entry00(0);
 		Party_ApplyStatePreset();
-		Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
+		Event_SetDestination((s32)&SceneId_Vale, 16);
 		Engine_AudioPlayCue(17);
 	}
 	Engine_AudioPlayCue(17);

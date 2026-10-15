@@ -14,15 +14,15 @@
 
 // 前方宣言
 static u16	SceneEffect_AdjustColorChannels(u16 color, s32 adj);
-static void KorimaPalette_SaveFirst(void);
-static void KorimaPalette_SaveSecond(void);
-static void KorimaPalette_Capture(void);
+static void KolimaPalette_SaveFirst(void);
+static void KolimaPalette_SaveSecond(void);
+static void KolimaPalette_Capture(void);
 
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
 	u16 i;
 
-	KorimaPalette_SaveFirst();
+	KolimaPalette_SaveFirst();
 	for (i = 0; i < 224; i++)
 	{
 		if ((i < 17 || i > 23) && (i < 193 || i > 200))
@@ -31,8 +31,8 @@ void SceneEffect_AdjustPaletteColors(s32 a)
 			*pal = SceneEffect_AdjustColorChannels(*pal, a);
 		}
 	}
-	KorimaPalette_Capture();
-	KorimaPalette_SaveSecond();
+	KolimaPalette_Capture();
+	KolimaPalette_SaveSecond();
 	Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
@@ -55,19 +55,19 @@ static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 	return packed;
 }
 
-static void KorimaPalette_SaveFirst(void)
+static void KolimaPalette_SaveFirst(void)
 {
-	Dma_Set(gPaletteBufferWork->palette, KorimaPalette_First, DMA_ENABLE32 | DMA_32BIT | 0xe0,
+	Dma_Set(gPaletteBufferWork->palette, KolimaPalette_First, DMA_ENABLE32 | DMA_32BIT | 0xe0,
 		REG_DMA3);
 }
 
-static void KorimaPalette_SaveSecond(void)
+static void KolimaPalette_SaveSecond(void)
 {
-	Dma_Set(gPaletteBufferWork->palette, KorimaPalette_Second, DMA_ENABLE32 | DMA_32BIT | 0xe0,
+	Dma_Set(gPaletteBufferWork->palette, KolimaPalette_Second, DMA_ENABLE32 | DMA_32BIT | 0xe0,
 		REG_DMA3);
 }
 
-static void KorimaPalette_Capture(void)
+static void KolimaPalette_Capture(void)
 {
 	u16 *buf = gPaletteBufferWork->palette;
 
@@ -76,14 +76,14 @@ static void KorimaPalette_Capture(void)
 	Engine_ColorBufferApplySource(0x10000, 0);
 }
 
-void KorimaPalette_Restore(s32 second)
+void KolimaPalette_Restore(s32 second)
 {
 	u16 *buf = gPaletteBufferWork->palette;
 
 	if (second)
-		Dma_Set(KorimaPalette_Second, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
+		Dma_Set(KolimaPalette_Second, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
 	else
-		Dma_Set(KorimaPalette_First, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
+		Dma_Set(KolimaPalette_First, buf, DMA_ENABLE32 | DMA_32BIT | 0xe0, REG_DMA3);
 	Engine_ColorBufferApplyTarget(0x10000, 0);
-	KorimaPalette_Capture();
+	KolimaPalette_Capture();
 }

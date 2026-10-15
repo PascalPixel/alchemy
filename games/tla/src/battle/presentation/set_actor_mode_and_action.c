@@ -134,7 +134,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
     state = UnitGet(id);
     value = 1;
     if (state->hp != 0) {
-        if (state->nemuri != 0 || state->shibire != 0 || state->miugoki != 0)
+        if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
             value = (state->side != 1) * 4;
     } else {
         s32 changed = state->side ^ value;

@@ -33,8 +33,8 @@
 #include "iowrite.h"
 
 // 前方宣言
-static void SuharaSabaku_ApplyVisitFlagBlend(void);
-static void SuharaSabaku_ApplyAltarFlagBlend(void);
+static void SuhallaDesert_ApplyVisitFlagBlend(void);
+static void SuhallaDesert_ApplyAltarFlagBlend(void);
 
 struct SelectedActorId
 {
@@ -54,7 +54,7 @@ struct StateMarkerWork
 	u16 state_one_marker;
 };
 
-static u16 gSuharaSabakuShownLevel;
+static u16 gSuhallaDesertShownLevel;
 
 #define ACTOR_ID 13
 
@@ -80,14 +80,14 @@ static void EV15_TALK(void)
 	BattleFx_SetPhaseRequest(15, 45);
 }
 
-static s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
+static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
 	Engine_ActorSetSpriteFlags(obj, 0);
 	((struct FieldActor *)obj)->collision_flags = 0;
 	return 0;
 }
 
-static s32 SuharaSabaku_ToggleActorActive(u8 *obj)
+static s32 SuhallaDesert_ToggleActorActive(u8 *obj)
 {
 	((struct FieldActor *)obj)->active ^= 1;
 	return 1;
@@ -97,19 +97,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_SuharaSabaku1)
+	if (selector == (s32)&SceneId_SuhallaDesert1)
 	{
-		return gSuharaSabakuEntrances1;
+		return gSuhallaDesertEntrances1;
 	}
-	if (selector == (s32)&SceneId_SuharaSabaku2)
+	if (selector == (s32)&SceneId_SuhallaDesert2)
 	{
-		return gSuharaSabakuEntrances2;
+		return gSuhallaDesertEntrances2;
 	}
-	if (selector == (s32)&SceneId_SuharaSabaku3)
+	if (selector == (s32)&SceneId_SuhallaDesert3)
 	{
-		return gSuharaSabakuEntrances3;
+		return gSuhallaDesertEntrances3;
 	}
-	return gSuharaSabakuEntrancesOther;
+	return gSuhallaDesertEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -117,31 +117,31 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *SuharaSabaku_GetExits(void)
+u8 *SuhallaDesert_GetExits(void)
 {
-	return gSuharaSabakuExits;
+	return gSuhallaDesertExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_SuharaSabaku1)
+	if (selector == (s32)&SceneId_SuhallaDesert1)
 	{
-		return gSuharaSabakuPlacements1;
+		return gSuhallaDesertPlacements1;
 	}
-	if (selector == (s32)&SceneId_SuharaSabaku2)
+	if (selector == (s32)&SceneId_SuhallaDesert2)
 	{
-		return gSuharaSabakuPlacements2;
+		return gSuhallaDesertPlacements2;
 	}
-	if (selector == (s32)&SceneId_SuharaSabaku3)
+	if (selector == (s32)&SceneId_SuhallaDesert3)
 	{
-		return gSuharaSabakuPlacements3;
+		return gSuhallaDesertPlacements3;
 	}
-	return gSuharaSabakuPlacementsOther;
+	return gSuhallaDesertPlacementsOther;
 }
 
-static void SuharaSabaku_SyncSelectedActorProgress(void)
+static void SuhallaDesert_SyncSelectedActorProgress(void)
 {
 	struct SelectedActorFacing	  *actor;
 	struct StateMarkerWork *scene;
@@ -193,7 +193,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		}
 		Engine_ActorWaitForMove((s32)p6);
 		Event_PlayCue(244);
-		FieldScheduler_AddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+		FieldScheduler_AddCallback((s32)SuhallaDesert_SyncSelectedActorProgress, 0xc80);
 		rec7->motion_flags = rec2;
 		Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
 		Engine_ActorWaitForMove((s32)p6);
@@ -233,7 +233,7 @@ static void FieldScene_RunActor12Step(void)
 	FieldScene_RunMiddleAuxiliarySequence(12);
 }
 
-static void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
+static void SuhallaDesert_RestoreActorScaleAndBlend(s32 a0)
 {
 	s32				   i;
 	s32				   next_frame;
@@ -299,7 +299,7 @@ static void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 			Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
 			Engine_ActorSetAnimation(13, 1);
 			Engine_ActorFaceDirection(0, 0x4000, 0);
-			Engine_EventSetMessage(MsgSuharaSandstorm);
+			Engine_EventSetMessage(MsgSuhallaSandstorm);
 			Actor_ShowEmote(13, 0x106, 60);
 			Engine_EventShowMessage(13, 0);
 			Actor_ShowEmote(13, 0x102, 60);
@@ -329,27 +329,27 @@ static void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 
 static void FieldScene_RunLateActor8Step(void)
 {
-	SuharaSabaku_RestoreActorScaleAndBlend(8);
+	SuhallaDesert_RestoreActorScaleAndBlend(8);
 }
 
 static void FieldScene_RunLateActor9Step(void)
 {
-	SuharaSabaku_RestoreActorScaleAndBlend(9);
+	SuhallaDesert_RestoreActorScaleAndBlend(9);
 }
 
 static void FieldScene_RunLateActor10Step(void)
 {
-	SuharaSabaku_RestoreActorScaleAndBlend(10);
+	SuhallaDesert_RestoreActorScaleAndBlend(10);
 }
 
 static void EV64_TOUCH(void)
 {
-	SuharaSabaku_RestoreActorScaleAndBlend(11);
+	SuhallaDesert_RestoreActorScaleAndBlend(11);
 }
 
 static void EV65_TOUCH(void)
 {
-	SuharaSabaku_RestoreActorScaleAndBlend(12);
+	SuhallaDesert_RestoreActorScaleAndBlend(12);
 }
 
 static void EV09_TOUCH(void)
@@ -373,7 +373,7 @@ static void EV09_TOUCH(void)
 			{
 				GameFlag_Set(0x9b5);
 				Engine_EventBegin();
-				Engine_EventSetMessage(MsgSuharaNowhereFound);
+				Engine_EventSetMessage(MsgSuhallaNowhereFound);
 				record = Actor_Get(ACTOR_PARTY_LEADER);
 				if (record != 0)
 				{
@@ -418,7 +418,7 @@ static void EV09_TOUCH(void)
 	}
 }
 
-static s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
+static s32 SuhallaDesert_FollowLeaderWithSparks(struct FieldActor *actor)
 {
 	struct EffectOptions options;
 	struct FieldActor	*leader;
@@ -482,17 +482,17 @@ static void EV81_TOUCH(void)
 	{
 		GameFlag_Set(526);
 		Actor_SetPosition(12, 240 << 15, 206 << 18);
-		Engine_ActorEnableActionCallback(12, gSuharaSabakuActor12Action);
+		Engine_ActorEnableActionCallback(12, gSuhallaDesertActor12Action);
 	}
 }
 
-static void SuharaSabaku_EnableEffectChildOption(void)
+static void SuhallaDesert_EnableEffectChildOption(void)
 {
 	u8 *state = gEffectWork;
 	((struct BattleFxScene *)state)->child_option = 1;
 }
 
-static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
+static void SuhallaDesert_MeetActor(s32 a0, s32 actor)
 {
 	struct GameState *state;
 
@@ -501,13 +501,13 @@ static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 		gEventWork->raised_trigger = 0;
 	}
 	Engine_GameFlagClear(0x20f);
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku1)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1)
 	{
 		Engine_GameFlagSet((actor + 0x2f9));
 	}
 	else
 	{
-		if (gGameState.scene == (s32)&SceneId_SuharaSabaku2)
+		if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 		{
 			Engine_GameFlagSet((actor + 0x309));
 		}
@@ -516,7 +516,7 @@ static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	state = &gGameState;
-	if (state->scene == (s32)&SceneId_SuharaSabaku2)
+	if (state->scene == (s32)&SceneId_SuhallaDesert2)
 	{
 		if (actor == 11)
 		{
@@ -564,7 +564,7 @@ static void EV99_RAISED(void)
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
 	Engine_GameFlagSet(0x122);
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && FieldGameFlag_GetByte(0x218) == 11)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert2 && FieldGameFlag_GetByte(0x218) == 11)
 	{
 		Event_SetDestination((s32)&SceneId_WorldMap, 77);
 	}
@@ -590,7 +590,7 @@ static s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	s32 record;
 
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
 		Object_GetById(14)->priority_flags = 2;
 		Object_GetById(14)->motion_flags = 3;
@@ -600,14 +600,14 @@ static s32 FieldScene_RunOpeningAuxiliarySequence(void)
 		Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
 		Map_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 		record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
-		Io_Write16(gSuharaSabakuShownLevel, &EncounterPalette);
+		Io_Write16(gSuhallaDesertShownLevel, &EncounterPalette);
 		return record;
 	}
 }
 
 static s32 FieldScene_RunScene3c0SequenceA(void)
 {
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
 		Object_GetById(14)->priority_flags = 2;
 		Object_GetById(14)->motion_flags = 0;
@@ -622,14 +622,14 @@ static s32 FieldScene_RunScene3c0SequenceA(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku3)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert3)
 	{
-		return gSuharaSabakuEvents3;
+		return gSuhallaDesertEvents3;
 	}
-	return gSuharaSabakuEventsOther;
+	return gSuhallaDesertEventsOther;
 }
 
-s32 SuharaSabaku_RunSceneScript(void)
+s32 SuhallaDesert_RunSceneScript(void)
 {
 	u8 *map;
 
@@ -639,21 +639,21 @@ s32 SuharaSabaku_RunSceneScript(void)
 	if (FieldGameFlag_GetByte(0x210) != 0)
 	{
 		gGameState.movement_mode = 2;
-		FieldScheduler_AddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+		FieldScheduler_AddCallback(SuhallaDesert_SyncSelectedActorProgress, 0xc80);
 	}
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku1
-		|| gGameState.scene == (s32)&SceneId_SuharaSabaku2)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1
+		|| gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
-		gSuharaSabakuShownLevel = EncounterPalette;
+		gSuhallaDesertShownLevel = EncounterPalette;
 		FieldScene_RunOpeningAuxiliarySequence();
 	}
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku1)
+	if (gGameState.scene == (s32)&SceneId_SuhallaDesert1)
 	{
-		SuharaSabaku_ApplyVisitFlagBlend();
+		SuhallaDesert_ApplyVisitFlagBlend();
 	}
-	else if (gGameState.scene == (s32)&SceneId_SuharaSabaku2)
+	else if (gGameState.scene == (s32)&SceneId_SuhallaDesert2)
 	{
-		SuharaSabaku_ApplyAltarFlagBlend();
+		SuhallaDesert_ApplyAltarFlagBlend();
 	}
 	else
 	{
@@ -666,7 +666,7 @@ s32 SuharaSabaku_RunSceneScript(void)
 	return 0;
 }
 
-static void SuharaSabaku_ApplyVisitFlagBlend(void)
+static void SuhallaDesert_ApplyVisitFlagBlend(void)
 {
 	struct FieldActor *actor;
 	s32				   id;
@@ -714,7 +714,7 @@ static void SuharaSabaku_ApplyVisitFlagBlend(void)
 	IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - alpha) << 8) | alpha, 0x20000);
 }
 
-static void SuharaSabaku_ApplyAltarFlagBlend(void)
+static void SuhallaDesert_ApplyAltarFlagBlend(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -807,30 +807,30 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gSuharaSabakuPlacements1_Data[] = {
-	SC_CALL(SuharaSabaku_ClearActorSpriteAndCollisionFlags),
-	SC_CALL(SuharaSabaku_ToggleActorActive),
+s32 gSuhallaDesertPlacements1_Data[] = {
+	SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
+	SC_CALL(SuhallaDesert_ToggleActorActive),
 	SC_END,
 };
 
-s32 gSuharaSabakuPlacements2_1[] = {
-	SC_CALL(SuharaSabaku_ClearActorSpriteAndCollisionFlags),
-	SC_CALL(SuharaSabaku_ToggleActorActive),
+s32 gSuhallaDesertPlacements2_1[] = {
+	SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
+	SC_CALL(SuhallaDesert_ToggleActorActive),
 	SC_END,
 };
 
-struct SceneEntrance gSuharaSabakuEntrancesOther[] = {
+struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSuharaSabakuEntrances1[] = {
+struct SceneEntrance gSuhallaDesertEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 264, 0, 56, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 24, 0, 936, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSuharaSabakuEntrances2[] = {
+struct SceneEntrance gSuhallaDesertEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 488, 0, 456, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 488, 0, 1208, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 3, CONDITION_ALWAYS, 440, 0, 624, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -838,7 +838,7 @@ struct SceneEntrance gSuharaSabakuEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSuharaSabakuEntrances3[] = {
+struct SceneEntrance gSuhallaDesertEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 72, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 440, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 3, CONDITION_ALWAYS, 632, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -846,7 +846,7 @@ struct SceneEntrance gSuharaSabakuEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gSuharaSabakuExits[] = {
+u32 gSuhallaDesertExits[] = {
 	SCENE_EXITS(164),
 	SCENE_EXIT(1, 2, 28),
 	SCENE_EXIT(2, 165, 1),
@@ -863,34 +863,34 @@ u32 gSuharaSabakuExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSuharaSabakuPlacementsOther[] = {
+struct ScenePlacement gSuhallaDesertPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaSabakuPlacements1[] = {
-	{ 0x121, 0x301, (s32)gSuharaSabakuPlacements1_Data,
+struct ScenePlacement gSuhallaDesertPlacements1[] = {
+	{ 0x121, 0x301, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x121, 0x302, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x302, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x303, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x303, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x304, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x304, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x305, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x305, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x39, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaSabakuPlacements2[] = {
-	{ 0x121, 0x311, (s32)gSuharaSabakuPlacements1_Data,
+struct ScenePlacement gSuhallaDesertPlacements2[] = {
+	{ 0x121, 0x311, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x121, 0x312, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x312, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x313, (s32)gSuharaSabakuPlacements1_Data,
+	{ 0x121, 0x313, (s32)gSuhallaDesertPlacements1_Data,
 		PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x121, 0x314, (s32)gSuharaSabakuPlacements2_1,
+	{ 0x121, 0x314, (s32)gSuhallaDesertPlacements2_1,
 		PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x121, 0x315, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -903,16 +903,16 @@ struct ScenePlacement gSuharaSabakuPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaSabakuPlacements3[] = {
+struct ScenePlacement gSuhallaDesertPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-s32 gSuharaSabakuActor12Action[] = {
-	SC_CALL(SuharaSabaku_FollowLeaderWithSparks),
+s32 gSuhallaDesertActor12Action[] = {
+	SC_CALL(SuhallaDesert_FollowLeaderWithSparks),
 	SC_END,
 };
 
-struct SceneEvent gSuharaSabakuEventsOther[] = {
+struct SceneEvent gSuhallaDesertEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -946,16 +946,16 @@ struct SceneEvent gSuharaSabakuEventsOther[] = {
 	{ SEARCH(SEARCH_CHEST), 104, 0xfb2, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfb3, FIND_ITEM(0xc0) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xef6, 0x500006 },
-	{ 0x10002115, 8, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_EnableEffectChildOption) },
-	{ 0x10002115, 9, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_EnableEffectChildOption) },
-	{ 0x10002115, 10, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_EnableEffectChildOption) },
-	{ 0x10002115, 11, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_EnableEffectChildOption) },
-	{ 0x10002115, 12, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_EnableEffectChildOption) },
-	{ PSYNERGY_ON_ACTOR(0x21), 8, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
-	{ PSYNERGY_ON_ACTOR(0x21), 9, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
-	{ PSYNERGY_ON_ACTOR(0x21), 10, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
-	{ PSYNERGY_ON_ACTOR(0x21), 11, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
-	{ PSYNERGY_ON_ACTOR(0x21), 12, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
+	{ 0x10002115, 8, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_EnableEffectChildOption) },
+	{ 0x10002115, 9, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_EnableEffectChildOption) },
+	{ 0x10002115, 10, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_EnableEffectChildOption) },
+	{ 0x10002115, 11, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_EnableEffectChildOption) },
+	{ 0x10002115, 12, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_EnableEffectChildOption) },
+	{ PSYNERGY_ON_ACTOR(0x21), 8, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_MeetActor) },
+	{ PSYNERGY_ON_ACTOR(0x21), 9, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_MeetActor) },
+	{ PSYNERGY_ON_ACTOR(0x21), 10, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_MeetActor) },
+	{ PSYNERGY_ON_ACTOR(0x21), 11, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_MeetActor) },
+	{ PSYNERGY_ON_ACTOR(0x21), 12, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuhallaDesert_MeetActor) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c0SequenceA) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
 	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
@@ -963,7 +963,7 @@ struct SceneEvent gSuharaSabakuEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSuharaSabakuEvents3[] = {
+struct SceneEvent gSuhallaDesertEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ 0x21, 2, CONDITION_ALWAYS, 2 },
 	{ 0x31, 3, CONDITION_ALWAYS, 3 },

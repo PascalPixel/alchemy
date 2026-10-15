@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const u16 SentouKouka_IroBitOperands[];
-extern const u16 SentouKouka_BitOperands[];
+extern const u16 BattleEffect_ColorBitOperands[];
+extern const u16 BattleEffect_BitOperands[];
 
 #endif

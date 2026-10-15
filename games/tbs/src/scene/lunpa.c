@@ -65,11 +65,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaMura1)
+	if (scene == (s32)&SceneId_Lunpa1)
 	{
 		return gLunpaEntrances;
 	}
-	if (scene == (s32)&SceneId_RunpaMura2)
+	if (scene == (s32)&SceneId_Lunpa2)
 	{
 		return gGateEntrances;
 	}
@@ -85,11 +85,11 @@ const u32 *Scene_GetExits(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaMura1)
+	if (scene == (s32)&SceneId_Lunpa1)
 	{
 		return gLunpaExits;
 	}
-	if (scene == (s32)&SceneId_RunpaMura2)
+	if (scene == (s32)&SceneId_Lunpa2)
 	{
 		return gGateExits;
 	}
@@ -100,11 +100,11 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaMura1)
+	if (scene == (s32)&SceneId_Lunpa1)
 	{
 		return gLunpaPlacements;
 	}
-	if (scene == (s32)&SceneId_RunpaMura2)
+	if (scene == (s32)&SceneId_Lunpa2)
 	{
 		return gGatePlacements;
 	}
@@ -231,7 +231,7 @@ static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered(MsgRunpaWellFrogs, 1);
+	Engine_MessageShowCentered(MsgLunpaWellFrogs, 1);
 	Engine_EventEnd();
 }
 
@@ -239,12 +239,12 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaMura2)
+	if (scene == (s32)&SceneId_Lunpa2)
 	{
 		Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED);
 		return gGateEvents;
 	}
-	if (scene == (s32)&SceneId_RunpaMura1 && Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
+	if (scene == (s32)&SceneId_Lunpa1 && Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
 		return gLunpaReopenedEvents;
 	}
@@ -255,7 +255,7 @@ static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
-	Engine_EventSetMessage(MsgRunpaWestGuardAsksAboutEntering);
+	Engine_EventSetMessage(MsgLunpaWestGuardAsksAboutEntering);
 	Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
 	Engine_EventEnd();
 }
@@ -265,12 +265,12 @@ static void EV18_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0)
 	{
-		Engine_EventSetMessage(MsgRunpaEastGuardDemandsAuthorization);
+		Engine_EventSetMessage(MsgLunpaEastGuardDemandsAuthorization);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaEastGuardAsksIfFrom);
+		Engine_EventSetMessage(MsgLunpaEastGuardAsksIfFrom);
 		Engine_EventOpenMessage(ACTOR_EAST_GUARD, 0);
 		if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
 		{
@@ -295,18 +295,18 @@ static void EV18_PSYNERGY(void)
 		thoughts = Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY);
 		if (thoughts == 0)
 		{
-			thoughts = MsgRunpaEastGuardFearsBlame;
+			thoughts = MsgLunpaEastGuardFearsBlame;
 		}
 		else
 		{
-			thoughts = MsgRunpaEastGuardTrustsCaveGate;
+			thoughts = MsgLunpaEastGuardTrustsCaveGate;
 		}
 		Engine_EventSetMessage(thoughts);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaEastGuardThinksMerchantHarmless);
+		Engine_EventSetMessage(MsgLunpaEastGuardThinksMerchantHarmless);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 }
@@ -314,7 +314,7 @@ static void EV18_PSYNERGY(void)
 static void VillagerA_Talk(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRunpaVillagerAAsksHowLong);
+	Engine_EventSetMessage(MsgLunpaVillagerAAsksHowLong);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_A, 0);
 	Engine_EventEnd();
 }
@@ -322,7 +322,7 @@ static void VillagerA_Talk(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRunpaVillagerCAsksAboutKidnapping);
+	Engine_EventSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_C, 0);
 	Engine_EventEnd();
 }
@@ -330,7 +330,7 @@ static void EV11_TALK(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRunpaVillagerGAsksAboutDonpa);
+	Engine_EventSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_G, 0);
 	Engine_EventEnd();
 }
@@ -339,7 +339,7 @@ static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
-	Engine_EventSetMessage(MsgRunpaVillagerBShivers);
+	Engine_EventSetMessage(MsgLunpaVillagerBShivers);
 	Engine_EventShowMessage(ACTOR_VILLAGER_B, 0);
 	Engine_EventEnd();
 }
@@ -347,7 +347,7 @@ static void EV10_TALK(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRunpaVillagerDAsksAboutCommotion);
+	Engine_EventSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_D, 0);
 	Engine_EventEnd();
 }
@@ -358,13 +358,13 @@ static void EV08_TALK(void)
 
 	if (gGameState.cloaked != 0)
 	{
-		Engine_EventSetMessage(MsgRunpaLeftGuardHearsSomeone);
+		Engine_EventSetMessage(MsgLunpaLeftGuardHearsSomeone);
 	}
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0
 			 && Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0)
 	{
 		Engine_ActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-		recognition = MsgRunpaLeftGuardRecognizesHammet;
+		recognition = MsgLunpaLeftGuardRecognizesHammet;
 		Engine_EventSetMessage(recognition + RECOGNITION_SEEN_THAT_MAN);
 		Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
@@ -373,7 +373,7 @@ static void EV08_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaLeftGuardResentsDodonpa);
+		Engine_EventSetMessage(MsgLunpaLeftGuardResentsDodonpa);
 	}
 	Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -382,15 +382,15 @@ static void RightGuard_Talk(void)
 {
 	if (gGameState.cloaked != 0)
 	{
-		Engine_EventSetMessage(MsgRunpaRightGuardFeelsCreepy);
+		Engine_EventSetMessage(MsgLunpaRightGuardFeelsCreepy);
 	}
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage(MsgRunpaRightGuardWondersHow);
+		Engine_EventSetMessage(MsgLunpaRightGuardWondersHow);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaRightGuardBoasts);
+		Engine_EventSetMessage(MsgLunpaRightGuardBoasts);
 	}
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -409,20 +409,20 @@ static void LeftGuard_MindRead(void)
 			Engine_PsynergyCancel();
 			Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
 			Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-			Engine_EventSetMessage(MsgRunpaLeftGuardRecognizesHammet);
+			Engine_EventSetMessage(MsgLunpaLeftGuardRecognizesHammet);
 			GameFlag_Set(FLAG_GATE_GUARD_SAW_HAMMET);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgRunpaLeftGuardGlimpsedMerchant);
+			Engine_EventSetMessage(MsgLunpaLeftGuardGlimpsedMerchant);
 		}
 		Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-		Engine_EventSetMessage(MsgRunpaLeftGuardDismissesThought);
+		Engine_EventSetMessage(MsgLunpaLeftGuardDismissesThought);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaLeftGuardThoughts);
+		Engine_EventSetMessage(MsgLunpaLeftGuardThoughts);
 	}
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -431,11 +431,11 @@ static void EV09_PSYNERGY(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage(MsgRunpaRightGuardReopenedThoughts);
+		Engine_EventSetMessage(MsgLunpaRightGuardReopenedThoughts);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRunpaYoudShadowSneak);
+		Engine_EventSetMessage(MsgLunpaYoudShadowSneak);
 	}
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -455,8 +455,8 @@ static void EV20_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	Engine_EventSetMessage(MsgRunpaGeraldRefusesToReturn);
-	Event_ShowMessage(GERALD, 0);
+	Engine_EventSetMessage(MsgLunpaGaretRefusesToReturn);
+	Event_ShowMessage(GARET, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
@@ -602,7 +602,7 @@ static void EV10_TOUCH(void)
 		Engine_ActorStop(ACTOR_RIGHT_GUARD);
 		Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, 0);
 		Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-		Engine_EventSetMessage(MsgRunpaGuardsWarnPartyAway);
+		Engine_EventSetMessage(MsgLunpaGuardsWarnPartyAway);
 		Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 		GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
 		Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
@@ -642,7 +642,7 @@ static void EV91_RAISED(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
 	Engine_EventWait(20);
 	Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
-	warning = MsgRunpaGuardsCatchParty;
+	warning = MsgLunpaGuardsCatchParty;
 	Engine_EventSetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
@@ -803,7 +803,7 @@ static void Party_ThrownOut(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	Engine_TaskRemoveCallback(Leader_KickUpDust);
 	Engine_EventWait(50);
-	Engine_EventSetMessage(MsgRunpaGuardForbidsReturn);
+	Engine_EventSetMessage(MsgLunpaGuardForbidsReturn);
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 	Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -852,7 +852,7 @@ s32 Scene_Initialize(void)
 {
 	struct FieldActor *puddle;
 
-	if (gGameState.scene == (s32)&SceneId_RunpaMura1)
+	if (gGameState.scene == (s32)&SceneId_Lunpa1)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		Reveal_HideSecrets();
@@ -867,7 +867,7 @@ s32 Scene_Initialize(void)
 		}
 		Engine_GameFlagSet(FLAG_LUNPA_SECRETS_HIDDEN);
 	}
-	if (gGameState.scene == (s32)&SceneId_RunpaMura2)
+	if (gGameState.scene == (s32)&SceneId_Lunpa2)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		gGameState.retreat_entrance = GATE_RETREAT_ENTRANCE;
@@ -939,13 +939,13 @@ struct SceneEntrance gGateEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-#define ROOM_EXIT(exit) SCENE_EXIT((exit), SCENE_RUNPA_SUHARA, ROOM_ENTRANCE(exit))
+#define ROOM_EXIT(exit) SCENE_EXIT((exit), SCENE_LUNPA_SUHALLA, ROOM_ENTRANCE(exit))
 
 u32 gLunpaExits[] = {
-	SCENE_EXITS(SCENE_RUNPA_MURA),
+	SCENE_EXITS(SCENE_LUNPA),
 	SCENE_EXIT(LUNPA_EXIT_TO_WORLD_MAP, SCENE_WORLD_MAP, WORLD_MAP_ENTRANCE_FROM_LUNPA),
-	SCENE_EXIT(LUNPA_EXIT_TO_GATE, SCENE_RUNPA_JO_GATE, GATE_ENTRANCE_FROM_LUNPA),
-	SCENE_EXIT(LUNPA_EXIT_TO_CAVE, SCENE_RUNPA_DOU, CAVE_ENTRANCE_FROM_LUNPA),
+	SCENE_EXIT(LUNPA_EXIT_TO_GATE, SCENE_LUNPA_FORTRESS_GATE, GATE_ENTRANCE_FROM_LUNPA),
+	SCENE_EXIT(LUNPA_EXIT_TO_CAVE, SCENE_WEST_LUNPA_CAVE, CAVE_ENTRANCE_FROM_LUNPA),
 	ROOM_EXIT(LUNPA_EXIT_TO_FIRST_HOME),
 	ROOM_EXIT(LUNPA_EXIT_TO_SECOND_HOME),
 	ROOM_EXIT(LUNPA_EXIT_TO_THIRD_HOME),
@@ -954,14 +954,14 @@ u32 gLunpaExits[] = {
 	ROOM_EXIT(LUNPA_EXIT_TO_INN),
 	ROOM_EXIT(LUNPA_EXIT_TO_TEMPLE),
 	ROOM_EXIT(LUNPA_EXIT_TO_EIGHTH_ROOM),
-	SCENE_EXIT(LUNPA_EXIT_TO_JAIL, SCENE_KUUPUAPPU_RUNPA, JAIL_ENTRANCE_FROM_LUNPA),
+	SCENE_EXIT(LUNPA_EXIT_TO_JAIL, SCENE_VAULT_JAIL, JAIL_ENTRANCE_FROM_LUNPA),
 	SCENE_EXITS_END,
 };
 
 u32 gGateExits[] = {
-	SCENE_EXITS(SCENE_RUNPA_JO_GATE),
-	SCENE_EXIT(GATE_EXIT_TO_FORTRESS, SCENE_RUNPA_JO, FORTRESS_ENTRANCE_FROM_GATE),
-	SCENE_EXIT(GATE_EXIT_TO_LUNPA, SCENE_RUNPA_MURA, LUNPA_ENTRANCE_FROM_GATE),
+	SCENE_EXITS(SCENE_LUNPA_FORTRESS_GATE),
+	SCENE_EXIT(GATE_EXIT_TO_FORTRESS, SCENE_LUNPA_FORTRESS, FORTRESS_ENTRANCE_FROM_GATE),
+	SCENE_EXIT(GATE_EXIT_TO_LUNPA, SCENE_LUNPA, LUNPA_ENTRANCE_FROM_GATE),
 	SCENE_EXITS_END,
 };
 
@@ -1000,7 +1000,7 @@ struct ScenePlacement gGatePlacements[] = {
       PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
@@ -1047,49 +1047,49 @@ struct ScenePlacement gGatePlacements[] = {
 struct SceneEvent gLunpaSealedEvents[] = {
 	LUNPA_ROADS_AND_DOORS,
 	TALK(ACTOR_VILLAGER_A, EVENT_SCRIPT(VillagerA_Talk)),
-	TALK(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealed)),
+	TALK(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealed)),
 	TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(EV11_TALK)),
-	TALK(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDSealed)),
-	TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerESealed)),
-	TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFSealed)),
+	TALK(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDSealed)),
+	TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerESealed)),
+	TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFSealed)),
 	TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(EV15_TALK)),
-	TALK(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealed)),
+	TALK(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealed)),
 	TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(EV17_TALK)),
 	TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_TALK)),
-	MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerASealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCSealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDSealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerESealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFSealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGSealedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealedThoughts)),
-	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerASealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerESealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGSealedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealedThoughts)),
+	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardSealedThoughts)),
 	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
 	LUNPA_SECRETS,
 };
 
 struct SceneEvent gLunpaReopenedEvents[] = {
 	LUNPA_ROADS_AND_DOORS,
-	TALK(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerAReopened)),
+	TALK(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerAReopened)),
 	TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(EV10_TALK)),
-	TALK(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCReopened)),
+	TALK(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCReopened)),
 	TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(EV12_TALK)),
-	TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerEReopened)),
-	TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFReopened)),
-	TALK(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopened)),
-	TALK(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHReopened)),
-	TALK(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardReopened)),
-	TALK(ACTOR_EAST_GUARD, MSGNO(MsgRunpaVillageEastGuardReopened)),
-	MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerAReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerEReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopenedThoughts)),
-	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHReopenedThoughts)),
-	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardReopenedThoughts)),
+	TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerEReopened)),
+	TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFReopened)),
+	TALK(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGReopened)),
+	TALK(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHReopened)),
+	TALK(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardReopened)),
+	TALK(ACTOR_EAST_GUARD, MSGNO(MsgLunpaVillageEastGuardReopened)),
+	MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerAReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerEReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGReopenedThoughts)),
+	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHReopenedThoughts)),
+	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardReopenedThoughts)),
 	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
 	LUNPA_SECRETS,
 };

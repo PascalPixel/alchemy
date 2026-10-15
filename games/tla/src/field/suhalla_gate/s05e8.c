@@ -2,8 +2,8 @@
 #include "party_state.h"
 #include "object_runtime.h"
 
-extern char SceneId_VinasuIriguchi;
-extern char SceneId_SuharaGate3;
+extern char SceneId_VenusEntrance;
+extern char SceneId_SuhallaGate3;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Battle_WaitMode0(s32 frames);
@@ -23,8 +23,8 @@ void Func_020005e8(void)
     if (owner != NULL)
         ObjectMotion_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10), *(s16 *)((u8 *)owner + 18));
     Battle_WaitMode0(20);
-    Party_SetFields1eeAnd1f0((s32)&SceneId_SuharaGate3, 99);
-    Party_SetFields1f2And1f4((s32)&SceneId_VinasuIriguchi, 98);
+    Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
+    Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
     gPartyState.battle_rule_24b = 2;
     Func_02000a40(9, 3);
     Func_02000990();

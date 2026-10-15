@@ -9,9 +9,9 @@ s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);
 u8 *SceneData_GetActorTable(void);
 u8 *SceneData_GetEffectTable(void);
-extern struct SceneEntrance SoruMeiro_SceneTable0[];
-extern u32 SoruMeiro_SceneTable1[];
-extern struct ScenePlacement SoruMeiro_SceneTable2[];
-extern struct SceneEvent SoruMeiro_SceneTable3[];
+extern struct SceneEntrance SolMaze_SceneTable0[];
+extern u32 SolMaze_SceneTable1[];
+extern struct ScenePlacement SolMaze_SceneTable2[];
+extern struct SceneEvent SolMaze_SceneTable3[];
 
 #endif

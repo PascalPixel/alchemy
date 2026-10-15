@@ -91,7 +91,7 @@ static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 	return 0;
 }
 
-static s32 MogoruMori_CopyTimerToChild(s32 a)
+static s32 MogallForest_CopyTimerToChild(s32 a)
 {
 	ObjectGroup_SetChildValue(a, ((struct FieldActor *)a)->timer);
 	return 0;
@@ -103,7 +103,7 @@ static s32 OverlayObject_ApplyZero(s32 a)
 	return 0;
 }
 
-static void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
+static void MogallForest_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	struct FieldActor *rec7;
 
@@ -121,7 +121,7 @@ static void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 	rec7->gravity = 0x10000;
 }
 
-static void MogoruMori_SpawnPuffRing(s32 id)
+static void MogallForest_SpawnPuffRing(s32 id)
 {
 	struct Vec			  dir;
 	struct EffectOptions  params;
@@ -159,7 +159,7 @@ static void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
 	Engine_CameraMoveToActor(no, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
-	MogoruMori_SpawnPuffRing(no);
+	MogallForest_SpawnPuffRing(no);
 	Engine_ActorSetChildValue(no, val);
 }
 
@@ -167,19 +167,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MogoruMori1)
+	if (selector == (s32)&SceneId_MogallForest1)
 	{
-		return gMogoruMoriEntrances1;
+		return gMogallForestEntrances1;
 	}
-	if (selector == (s32)&SceneId_MogoruMori2)
+	if (selector == (s32)&SceneId_MogallForest2)
 	{
-		return gMogoruMoriEntrances2;
+		return gMogallForestEntrances2;
 	}
-	if (selector == (s32)&SceneId_MogoruMori3)
+	if (selector == (s32)&SceneId_MogallForest3)
 	{
-		return gMogoruMoriEntrances3;
+		return gMogallForestEntrances3;
 	}
-	return gMogoruMoriEntrancesOther;
+	return gMogallForestEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -187,28 +187,28 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *MogoruMori_GetExits(void)
+u8 *MogallForest_GetExits(void)
 {
-	return MogoruMori_SceneTable;
+	return MogallForest_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MogoruMori1)
+	if (selector == (s32)&SceneId_MogallForest1)
 	{
-		return gMogoruMoriPlacements1;
+		return gMogallForestPlacements1;
 	}
-	if (selector == (s32)&SceneId_MogoruMori2)
+	if (selector == (s32)&SceneId_MogallForest2)
 	{
-		return gMogoruMoriPlacements2;
+		return gMogallForestPlacements2;
 	}
-	if (selector == (s32)&SceneId_MogoruMori3)
+	if (selector == (s32)&SceneId_MogallForest3)
 	{
-		return gMogoruMoriPlacements3;
+		return gMogallForestPlacements3;
 	}
-	return gMogoruMoriPlacementsOther;
+	return gMogallForestPlacementsOther;
 }
 
 static void EV20_SCRIPT_1(void)
@@ -294,7 +294,7 @@ static void EV27_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MSGNO(MsgMogoruMoriBrokenSign), 1);
+	Engine_MessageShowCentered(MSGNO(MsgMogallForestBrokenSign), 1);
 	Engine_EventEnd();
 }
 
@@ -307,7 +307,7 @@ static void EV13_PSYNERGY_1(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(10, 1);
-	MogoruMori_HopActorTo(10, 88, 120, 0x60000);
+	MogallForest_HopActorTo(10, 88, 120, 0x60000);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x180000, 0, 0, 0, 1, 0);
 
@@ -318,15 +318,15 @@ static void EV13_PSYNERGY_1(void)
 	Engine_ActorSetAttachedEffect(10, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(10, 88, 152, 0x30000);
+	MogallForest_HopActorTo(10, 88, 152, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
 	Engine_EventWait(10);
 
-	MogoruMori_HopActorTo(10, 120, 192, 0x30000);
+	MogallForest_HopActorTo(10, 120, 192, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
 	Engine_EventWait(10);
 
-	MogoruMori_HopActorTo(10, 120, 240, 0x30000);
+	MogallForest_HopActorTo(10, 120, 240, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 10, 0);
 	Engine_EventWait(10);
 
@@ -346,7 +346,7 @@ static void EV14_PSYNERGY_1(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(11, 0);
-	MogoruMori_HopActorTo(11, 408, 456, 0x60000);
+	MogallForest_HopActorTo(11, 408, 456, 0x60000);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x180000, 0, 0, 0, 1, 0);
 
@@ -358,7 +358,7 @@ static void EV14_PSYNERGY_1(void)
 	Engine_AudioPlayCue(147);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(
+	MogallForest_HopActorTo(
 		11, Object_GetById(0)->x.part.pixel, Object_GetById(0)->z.part.pixel, 0x40000);
 
 	Engine_EventWait(10);
@@ -381,7 +381,7 @@ static void EV15_PSYNERGY_1(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(12, 1);
-	MogoruMori_HopActorTo(12, 536, 344, 0x70000);
+	MogallForest_HopActorTo(12, 536, 344, 0x70000);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x100000, 0, 0, 0, 1, 0);
 
@@ -392,15 +392,15 @@ static void EV15_PSYNERGY_1(void)
 	Engine_ActorSetAttachedEffect(12, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(12, 584, 344, 0x30000);
+	MogallForest_HopActorTo(12, 584, 344, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(12, 632, 344, 0x30000);
+	MogallForest_HopActorTo(12, 632, 344, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(12, 680, 344, 0x30000);
+	MogallForest_HopActorTo(12, 680, 344, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
 	Engine_EventWait(6);
 
@@ -499,7 +499,7 @@ static void EV15_PSYNERGY_2(void)
 	rec7 = Object_GetById(12);
 	Engine_EventBegin();
 	FieldScene_RunSixCallSetupSequence(12, 1);
-	MogoruMori_HopActorTo(12, 0x188, 104, 0x70000);
+	MogallForest_HopActorTo(12, 0x188, 104, 0x70000);
 	Engine_EventWait(10);
 	Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
 	Engine_CameraFollowActor(12, 1);
@@ -508,16 +508,16 @@ static void EV15_PSYNERGY_2(void)
 	Engine_ActorStartRepeatedMotion(12, 2);
 	Engine_ActorSetAttachedEffect(12, 0x102);
 	Engine_EventWait(60);
-	MogoruMori_HopActorTo(12, 0x1a8, 120, 0x30000);
+	MogallForest_HopActorTo(12, 0x1a8, 120, 0x30000);
 	Engine_ActorFaceActor(0, 12, 0);
 	Engine_EventWait(6);
-	MogoruMori_HopActorTo(12, 0x1a8, 168, 0x30000);
+	MogallForest_HopActorTo(12, 0x1a8, 168, 0x30000);
 	Engine_ActorFaceActor(0, 12, 0);
 	Engine_EventWait(6);
-	MogoruMori_HopActorTo(12, 0x1a8, 208, 0x30000);
+	MogallForest_HopActorTo(12, 0x1a8, 208, 0x30000);
 	Engine_ActorFaceActor(0, 12, 0);
 	Engine_EventWait(6);
-	MogoruMori_HopActorTo(12, 0x1a8, 232, 0x30000);
+	MogallForest_HopActorTo(12, 0x1a8, 232, 0x30000);
 	Engine_ActorFaceActor(0, 12, 0);
 	Engine_EventWait(6);
 	Engine_ActorSetPosition(12, 0, 0);
@@ -535,7 +535,7 @@ static void EV16_PSYNERGY_2(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(13, 1);
-	MogoruMori_HopActorTo(13, 456, 104, 0x70000);
+	MogallForest_HopActorTo(13, 456, 104, 0x70000);
 	Engine_EventWait(10);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x40000, 0, 0, 0, 1, 0);
@@ -547,19 +547,19 @@ static void EV16_PSYNERGY_2(void)
 	Engine_ActorSetAttachedEffect(13, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(13, 472, 136, 0x30000);
+	MogallForest_HopActorTo(13, 472, 136, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(13, 504, 136, 0x33333);
+	MogallForest_HopActorTo(13, 504, 136, 0x33333);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(13, 552, 136, 0x38000);
+	MogallForest_HopActorTo(13, 552, 136, 0x38000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(13, 584, 136, 0x38000);
+	MogallForest_HopActorTo(13, 584, 136, 0x38000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_EventWait(6);
 
@@ -570,15 +570,15 @@ static void EV16_PSYNERGY_2(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_TransferActorFourteen(void)
+static void MogallForest_TransferActorFourteen(void)
 {
 	s32 record;
 
 	Engine_EventBegin();
 	FieldScene_RunSixCallSetupSequence(14, 1);
-	MogoruMori_HopActorTo(14, 0x1a8, 0x1e0, 0x79999);
+	MogallForest_HopActorTo(14, 0x1a8, 0x1e0, 0x79999);
 	Engine_EventWait(2);
-	MogoruMori_SpawnPuffRing(14);
+	MogallForest_SpawnPuffRing(14);
 	Actor_SetChildValue(14, 15);
 	record = Actor_Get(14);
 	Engine_ActorSetSpriteFlags(record, 0);
@@ -597,7 +597,7 @@ static void SceneActor_RunActorFourteenFourWaypointMotion(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(14, 1);
-	MogoruMori_HopActorTo(14, 392, 504, 0x60000);
+	MogallForest_HopActorTo(14, 392, 504, 0x60000);
 	Engine_EventWait(10);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x40000, 0, 0, 0, 1, 0);
@@ -609,19 +609,19 @@ static void SceneActor_RunActorFourteenFourWaypointMotion(void)
 	Engine_ActorSetAttachedEffect(14, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(14, 360, 528, 0x30000);
+	MogallForest_HopActorTo(14, 360, 528, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(14, 328, 528, 0x30000);
+	MogallForest_HopActorTo(14, 328, 528, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(14, 288, 528, 0x30000);
+	MogallForest_HopActorTo(14, 288, 528, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(14, 256, 528, 0x30000);
+	MogallForest_HopActorTo(14, 256, 528, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
 	Engine_EventWait(6);
 
@@ -804,7 +804,7 @@ static void EV19_PSYNERGY(void)
 	big = 0x80000;
 	Engine_EventBegin();
 	FieldScene_RunSixCallSetupSequence(15, 0);
-	MogoruMori_HopActorTo(15, 0x1d8, 104, big);
+	MogallForest_HopActorTo(15, 0x1d8, 104, big);
 	Engine_EventWait(10);
 	Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + big), 0, 0, 0, 1, 0);
 	Engine_CameraFollowActor(15, 1);
@@ -817,7 +817,7 @@ static void EV19_PSYNERGY(void)
 	first = Object_GetById(ACTOR_PARTY_LEADER);
 	shown = first->x.part.pixel;
 	second = Object_GetById(ACTOR_PARTY_LEADER);
-	MogoruMori_HopActorTo(15, shown, second->z.part.pixel, 0x60000);
+	MogallForest_HopActorTo(15, shown, second->z.part.pixel, 0x60000);
 	Engine_EventWait(10);
 	Engine_GameFlagSet(0x307);
 	Battle_SetStart(3);
@@ -834,7 +834,7 @@ static void EV20_PSYNERGY(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(16, 1);
-	MogoruMori_HopActorTo(16, 456, 152, 0x60000);
+	MogallForest_HopActorTo(16, 456, 152, 0x60000);
 	Engine_EventWait(10);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x40000, 0, 0, 0, 1, 0);
@@ -846,15 +846,15 @@ static void EV20_PSYNERGY(void)
 	Engine_ActorSetAttachedEffect(16, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(16, 448, 192, 0x30000);
+	MogallForest_HopActorTo(16, 448, 192, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(16, 424, 208, 0x30000);
+	MogallForest_HopActorTo(16, 424, 208, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(16, 424, 224, 0x30000);
+	MogallForest_HopActorTo(16, 424, 224, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 16, 0);
 	Engine_EventWait(6);
 
@@ -876,7 +876,7 @@ static void EV21_PSYNERGY(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(17, 1);
-	MogoruMori_HopActorTo(17, 392, 104, 0x60000);
+	MogallForest_HopActorTo(17, 392, 104, 0x60000);
 	Engine_EventWait(10);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x40000, 0, 0, 0, 1, 0);
@@ -888,15 +888,15 @@ static void EV21_PSYNERGY(void)
 	Engine_ActorSetAttachedEffect(17, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(17, 376, 152, 0x60000);
+	MogallForest_HopActorTo(17, 376, 152, 0x60000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
 	Engine_EventWait(10);
 
-	MogoruMori_HopActorTo(17, 328, 160, 0x30000);
+	MogallForest_HopActorTo(17, 328, 160, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(17, 296, 160, 0x30000);
+	MogallForest_HopActorTo(17, 296, 160, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 17, 0);
 	Engine_EventWait(6);
 
@@ -909,15 +909,15 @@ static void EV21_PSYNERGY(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_TransferActorEighteen(void)
+static void MogallForest_TransferActorEighteen(void)
 {
 	s32 record;
 
 	Engine_EventBegin();
 	FieldScene_RunSixCallSetupSequence(18, 1);
 	Camera_MoveTo(0x2e80000, -1, 0x1f80000, 1);
-	MogoruMori_HopActorTo(18, 0x2e8, 0x1f8, 0x90000);
-	MogoruMori_SpawnPuffRing(18);
+	MogallForest_HopActorTo(18, 0x2e8, 0x1f8, 0x90000);
+	MogallForest_SpawnPuffRing(18);
 	Actor_SetChildValue(18, 15);
 	record = Actor_Get(18);
 	Engine_ActorSetSpriteFlags(record, 0);
@@ -936,7 +936,7 @@ static void FieldScene_RunActorEighteenEffectSequence(void)
 	Engine_EventBegin();
 
 	FieldScene_RunSixCallSetupSequence(18, 1);
-	MogoruMori_HopActorTo(18, 712, 536, 0x60000);
+	MogallForest_HopActorTo(18, 712, 536, 0x60000);
 	Engine_EventWait(10);
 
 	Effect_Spawn(slot->x.fixed, slot->y.fixed, slot->z.fixed + 0x40000, 0, 0, 0, 1, 0);
@@ -948,19 +948,19 @@ static void FieldScene_RunActorEighteenEffectSequence(void)
 	Engine_ActorSetAttachedEffect(18, 258);
 	Engine_EventWait(60);
 
-	MogoruMori_HopActorTo(18, 712, 568, 0x60000);
+	MogallForest_HopActorTo(18, 712, 568, 0x60000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(10);
 
-	MogoruMori_HopActorTo(18, 712, 600, 0x30000);
+	MogallForest_HopActorTo(18, 712, 600, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(18, 736, 640, 0x30000);
+	MogallForest_HopActorTo(18, 736, 640, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(6);
 
-	MogoruMori_HopActorTo(18, 736, 704, 0x30000);
+	MogallForest_HopActorTo(18, 736, 704, 0x30000);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(6);
 
@@ -980,20 +980,20 @@ static void EV22_TOUCH(void)
 	Engine_EventBegin();
 	Actor_SetPosition(18, 0x880000, 0x1680000);
 	FieldScene_RunSixCallSetupSequence(18, 1);
-	MogoruMori_HopActorTo(18, 136, 0x198, 0x80000);
+	MogallForest_HopActorTo(18, 136, 0x198, 0x80000);
 	Engine_EventWait(10);
 	Effect_Spawn(rec7->x.fixed, rec7->y.fixed, (rec7->z.fixed + 0x40000), 0, 0, 0, 1, 0);
 	Actor_FaceDirection(18, 0xc000, 40);
 	Actor_SetAttachedEffect(18, 0x102);
 	Engine_ActorRunRepeatedMotion(18, 2);
 	Engine_CameraFollowActor(18, 1);
-	MogoruMori_HopActorTo(18, 136, 0x1b8, 0x60000);
+	MogallForest_HopActorTo(18, 136, 0x1b8, 0x60000);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(10);
-	MogoruMori_HopActorTo(18, 136, 0x1d8, 0x30000);
+	MogallForest_HopActorTo(18, 136, 0x1d8, 0x30000);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(6);
-	MogoruMori_HopActorTo(18, 136, 0x1f8, 0x30000);
+	MogallForest_HopActorTo(18, 136, 0x1f8, 0x30000);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
 	Engine_EventWait(6);
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1022,22 +1022,22 @@ static void EV23_TOUCH(void)
 	Engine_CameraWaitForMove();
 	Engine_EventWait(60);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-	MogoruMori_SpawnPuffRing(18);
+	MogallForest_SpawnPuffRing(18);
 	Engine_ActorStartRepeatedMotion(0, 2);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapWaitWorkValuesBelow256();
 	Engine_ActorFaceDirection(0, 0xc000, 20);
 	Engine_EventWait(40);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-	MogoruMori_SpawnPuffRing(18);
+	MogallForest_SpawnPuffRing(18);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapWaitWorkValuesBelow256();
 	Engine_EventWait(40);
-	MogoruMori_SpawnPuffRing(18);
+	MogallForest_SpawnPuffRing(18);
 	actor->scale_x = 0x13333;
 	actor->scale_y = 0x13333;
 	Engine_ActorSetChildValue(18, 5);
-	MogoruMori_HopActorTo(18, 136, 0x188, 0xf0000);
+	MogallForest_HopActorTo(18, 136, 0x188, 0xf0000);
 	Engine_EventWait(15);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
 	for (i = 0; i <= 16; i++)
@@ -1061,11 +1061,11 @@ static void EV23_TOUCH(void)
 	{
 		s32 px = Object_GetById(0)->x.part.pixel;
 
-		MogoruMori_HopActorTo(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
+		MogallForest_HopActorTo(18, px, Object_GetById(0)->z.part.pixel - 16, 0x80000);
 	}
 	Engine_EventWait(10);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MogallForest3, 15);
 	BattleFx_SetWeightedResult(53, 1);
 	Engine_EventEnd();
 }
@@ -1074,19 +1074,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MogoruMori1)
+	if (selector == (s32)&SceneId_MogallForest1)
 	{
-		return gMogoruMoriEvents1;
+		return gMogallForestEvents1;
 	}
-	if (selector == (s32)&SceneId_MogoruMori2)
+	if (selector == (s32)&SceneId_MogallForest2)
 	{
-		return gMogoruMoriEvents2;
+		return gMogallForestEvents2;
 	}
-	if (selector == (s32)&SceneId_MogoruMori3)
+	if (selector == (s32)&SceneId_MogallForest3)
 	{
-		return gMogoruMoriEvents3;
+		return gMogallForestEvents3;
 	}
-	return gMogoruMoriEventsOther;
+	return gMogallForestEventsOther;
 }
 
 s32 FieldScene_RunSceneEntryHook(void)
@@ -1099,7 +1099,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	area = gGameState.scene;
-	if (area == (s32)&SceneId_MogoruMori1)
+	if (area == (s32)&SceneId_MogallForest1)
 	{
 		entry = gGameState.entrance;
 		switch (entry)
@@ -1124,8 +1124,8 @@ s32 FieldScene_RunSceneEntryHook(void)
 				Actor_ShowEmote(10, 256, 0);
 				Engine_ActorRunRepeatedMotion(10, 2);
 				Engine_EventWait(30);
-				MogoruMori_HopActorTo(10, 136, 116, 0x70000);
-				MogoruMori_SpawnPuffRing(10);
+				MogallForest_HopActorTo(10, 136, 116, 0x70000);
+				MogallForest_SpawnPuffRing(10);
 				Engine_ActorSetChildValue(10, 15);
 				Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
 				Engine_GameFlagSet(0x89c);
@@ -1183,7 +1183,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_MogoruMori2)
+	else if (area == (s32)&SceneId_MogallForest2)
 	{
 		entry = gGameState.entrance;
 		switch (entry)
@@ -1249,7 +1249,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_MogoruMori3)
+	else if (area == (s32)&SceneId_MogallForest3)
 	{
 		entry = gGameState.entrance;
 		switch (entry)
@@ -1355,7 +1355,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 
 		case 12:
 		case 13:
-			Engine_ActorEnableActionCallback(18, MogoruMori_ActorScript);
+			Engine_ActorEnableActionCallback(18, MogallForest_ActorScript);
 			if (Engine_GameFlagIsSet(0x893) == 0)
 			{
 				break;
@@ -1446,23 +1446,23 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gMogoruMoriPlacements2_0[] = {
+s32 gMogallForestPlacements2_0[] = {
 	SC_ARG(2),
 	SC_SET(0x23, 6),
-	SC_CALL(MogoruMori_CopyTimerToChild),
+	SC_CALL(MogallForest_CopyTimerToChild),
 	SC_END,
 };
 
-s32 MogoruMori_ActorScript[] = {
+s32 MogallForest_ActorScript[] = {
 	SC_SET(SW_SCALE_X, 0xcccc),
 	SC_SET(SW_SCALE_Y, 0xcccc),
 	SC_SET(0x23, 15),
-	SC_CALL(MogoruMori_CopyTimerToChild),
+	SC_CALL(MogallForest_CopyTimerToChild),
 	SC_CALL(OverlayObject_ApplyZero),
 	SC_END,
 };
 
-s32 gMogoruMoriPlacements1_1[] = {
+s32 gMogallForestPlacements1_1[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
 	SC_SET(SW_TARGET_Y, PIXELS(-32768)),
@@ -1471,7 +1471,7 @@ s32 gMogoruMoriPlacements1_1[] = {
 	SC_END,
 };
 
-struct SceneEntrance gMogoruMoriEntrances1[] = {
+struct SceneEntrance gMogallForestEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 136, 0, 24, FACING_SOUTH, 0, 0, 0, 272, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ 3, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1484,7 +1484,7 @@ struct SceneEntrance gMogoruMoriEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMogoruMoriEntrances2[] = {
+struct SceneEntrance gMogallForestEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1501,7 +1501,7 @@ struct SceneEntrance gMogoruMoriEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMogoruMoriEntrances3[] = {
+struct SceneEntrance gMogallForestEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1520,7 +1520,7 @@ struct SceneEntrance gMogoruMoriEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMogoruMoriEntrancesOther[] = {
+struct SceneEntrance gMogallForestEntrancesOther[] = {
 	{ 1, CONDITION_ALWAYS, 312, 0, 128, FACING_EAST, 0, 288, 0, 560, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 368, FACING_WEST, 0, 0, 240, 272, 464, 0 },
 	{ 3, CONDITION_ALWAYS, 424, 0, 440, FACING_NORTH, 0, 288, 240, 560, 464, 0 },
@@ -1534,7 +1534,7 @@ struct SceneEntrance gMogoruMoriEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 MogoruMori_SceneTable[] = {
+u32 MogallForest_SceneTable[] = {
 	SCENE_EXITS(68),
 	SCENE_EXIT(1, 2, 13),
 	SCENE_EXIT(2, 71, 2),
@@ -1594,55 +1594,55 @@ u32 MogoruMori_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gMogoruMoriPlacements1[] = {
+struct ScenePlacement gMogallForestPlacements1[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(488), 0, PIXELS(464), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(528), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x300, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x300, (s32)MogallForest_ActorScript,
 		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x301, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x301, (s32)MogallForest_ActorScript,
 		PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x302, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x302, (s32)MogallForest_ActorScript,
 		PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x300, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x300, (s32)gMogallForestPlacements1_1,
 		PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x301, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x301, (s32)gMogallForestPlacements1_1,
 		PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x302, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x302, (s32)gMogallForestPlacements1_1,
 		PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x16, 0xfd4, 7,
 		PIXELS(632), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMogoruMoriPlacements2[] = {
+struct ScenePlacement gMogallForestPlacements2[] = {
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(592), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(592), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(648), 0, PIXELS(512), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogallForestPlacements2_0,
 		PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x303, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x303, (s32)MogallForest_ActorScript,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x304, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x304, (s32)MogallForest_ActorScript,
 		PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x306, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x306, (s32)MogallForest_ActorScript,
 		PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x303, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x303, (s32)gMogallForestPlacements1_1,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x304, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x304, (s32)gMogallForestPlacements1_1,
 		PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x306, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x306, (s32)gMogallForestPlacements1_1,
 		PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x5a, 0x32, ACTOR_STAND,
 		PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMogoruMoriPlacements3[] = {
+struct ScenePlacement gMogallForestPlacements3[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(680), 0, PIXELS(96), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
@@ -1653,44 +1653,44 @@ struct ScenePlacement gMogoruMoriPlacements3[] = {
 		PIXELS(600), 0, PIXELS(544), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(544), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogallForestPlacements2_0,
 		PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x125, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements2_0,
+	{ 0x125, CONDITION_ALWAYS, (s32)gMogallForestPlacements2_0,
 		PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xbf, 0x307, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x307, (s32)MogallForest_ActorScript,
 		PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x308, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x308, (s32)MogallForest_ActorScript,
 		PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xbf, 0x309, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x309, (s32)MogallForest_ActorScript,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if defined(TBS_EDITION_EN)
-	{ 0xbf, 0x30b, (s32)MogoruMori_ActorScript,
+	{ 0xbf, 0x30b, (s32)MogallForest_ActorScript,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else
-	{ 0xbf, CONDITION_ALWAYS, (s32)MogoruMori_ActorScript,
+	{ 0xbf, CONDITION_ALWAYS, (s32)MogallForest_ActorScript,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif
-	{ 0x16, 0x307, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x307, (s32)gMogallForestPlacements1_1,
 		PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x16, 0x308, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x308, (s32)gMogallForestPlacements1_1,
 		PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x16, 0x309, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x309, (s32)gMogallForestPlacements1_1,
 		PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #if !EDITION_INTERNATIONAL
-	{ 0x16, CONDITION_ALWAYS, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, CONDITION_ALWAYS, (s32)gMogallForestPlacements1_1,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #else
-	{ 0x16, 0x30b, (s32)gMogoruMoriPlacements1_1,
+	{ 0x16, 0x30b, (s32)gMogallForestPlacements1_1,
 		PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 #endif
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMogoruMoriPlacementsOther[] = {
+struct ScenePlacement gMogallForestPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gMogoruMoriEvents1[] = {
+struct SceneEvent gMogallForestEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1711,7 +1711,7 @@ struct SceneEvent gMogoruMoriEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMogoruMoriEvents2[] = {
+struct SceneEvent gMogallForestEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1728,14 +1728,14 @@ struct SceneEvent gMogoruMoriEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 15, 0x303, EVENT_SCRIPT(EV15_PSYNERGY_2) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 16, 0x304, EVENT_SCRIPT(EV16_PSYNERGY_2) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 17, 0x305, EVENT_SCRIPT(MogoruMori_TransferActorFourteen) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 17, 0x305, EVENT_SCRIPT(MogallForest_TransferActorFourteen) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 17, 0x306, EVENT_SCRIPT(SceneActor_RunActorFourteenFourWaypointMotion) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf1b, FIND_ITEM(0xc1) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMogoruMoriEvents3[] = {
+struct SceneEvent gMogallForestEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1758,13 +1758,13 @@ struct SceneEvent gMogoruMoriEvents3[] = {
 	{ PSYNERGY_ON_ACTOR(0x8e), 19, 0x307, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 20, 0x308, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 21, 0x309, EVENT_SCRIPT(EV21_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 22, 0x30a, EVENT_SCRIPT(MogoruMori_TransferActorEighteen) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 22, 0x30a, EVENT_SCRIPT(MogallForest_TransferActorEighteen) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 22, 0x30b, EVENT_SCRIPT(FieldScene_RunActorEighteenEffectSequence) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf1a, FIND_ITEM(0x5d) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMogoruMoriEventsOther[] = {
+struct SceneEvent gMogallForestEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

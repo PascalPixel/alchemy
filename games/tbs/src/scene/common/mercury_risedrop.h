@@ -7,7 +7,7 @@ static void SceneActor_RunActorZeroHandledMotion(s32 a)
 	struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
 	Engine_AudioPlayCue(0xe4);
-	v->update = (void (*)(union FieldObject *))Makyuri_TrailSparks;
+	v->update = (void (*)(union FieldObject *))Mercury_TrailSparks;
 	v->speed = 0x3333;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
@@ -22,7 +22,7 @@ static void SceneActor_RunActorZeroHandledMotion(s32 a)
 	Engine_EventEnd();
 }
 
-static void Makyuri_DropLeaderToColumn(s32 a0)
+static void Mercury_DropLeaderToColumn(s32 a0)
 {
 	s32 record;
 

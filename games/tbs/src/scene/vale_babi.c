@@ -50,7 +50,7 @@ static void FieldScene_RunComplexActorSequence(void);
 static void FieldScene_RunPaletteRampSequence(void);
 static void ActorPresentation_SetTwoSceneCells(void);
 static void FieldScene_RunSupplementalSequenceOne(void);
-static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
+static void ValeBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -62,11 +62,11 @@ enum
 	ITEM_MYTHRIL_BAG = 224
 };
 
-extern struct SceneEvent gHaidiaBabiEvents2[];
+extern struct SceneEvent gValeBabiEvents2[];
 
-s32 *HaidiaBabi_GetEntrances(void)
+s32 *ValeBabi_GetEntrances(void)
 {
-	return gHaidiaBabiEntrances;
+	return gValeBabiEntrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -74,34 +74,34 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-s32 HaidiaBabi_SelectExits(void)
+s32 ValeBabi_SelectExits(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return (s32)gHaidiaBabiExits2;
+		return (s32)gValeBabiExits2;
 	}
-	return (s32)gHaidiaBabiExits;
+	return (s32)gValeBabiExits;
 }
 
-s32 HaidiaBabi_SelectPlacements(void)
+s32 ValeBabi_SelectPlacements(void)
 {
 	s32 *tbl;
 
 	if (gGameState.entrance == 19)
-		return (s32)gHaidiaBabiPlacements4;
+		return (s32)gValeBabiPlacements4;
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		tbl = gHaidiaBabiPlacements3;
+		tbl = gValeBabiPlacements3;
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		tbl = gHaidiaBabiPlacements2;
+		tbl = gValeBabiPlacements2;
 	else
-		tbl = gHaidiaBabiPlacements;
+		tbl = gValeBabiPlacements;
 	FieldScene_PrepareActors((s32)tbl);
 	return (s32)tbl;
 }
 
 static void EV09_TALK(s32 object)
 {
-	s32 msg = MsgHaidiaFolksSeemKnow;
+	s32 msg = MsgValeFolksSeemKnow;
 
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(object, 0);
@@ -117,30 +117,30 @@ static void EV09_TALK(s32 object)
 	Engine_EventShowMessage(object, 0);
 }
 
-s32 HaidiaBabi_SelectEvents(void)
+s32 ValeBabi_SelectEvents(void)
 {
 	if (gGameState.entrance == 19)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return (s32)gHaidiaBabiEvents6;
+			return (s32)gValeBabiEvents6;
 		}
-		return (s32)gHaidiaBabiEvents5;
+		return (s32)gValeBabiEvents5;
 	}
 
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return (s32)gHaidiaBabiEvents4;
+		return (s32)gValeBabiEvents4;
 	}
 	if (Engine_GameFlagIsSet(0x87A) != 0)
 	{
-		return (s32)gHaidiaBabiEvents3;
+		return (s32)gValeBabiEvents3;
 	}
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		return (s32)gHaidiaBabiEvents2;
+		return (s32)gValeBabiEvents2;
 	}
-	return (s32)gHaidiaBabiEvents;
+	return (s32)gValeBabiEvents;
 }
 
 static void EV16_TALK(void)
@@ -148,7 +148,7 @@ static void EV16_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorStartRepeatedMotion(16, 2);
 	Engine_EventWait(30);
-	Engine_EventSetMessage(MsgHaidiaHeyBoy);
+	Engine_EventSetMessage(MsgValeHeyBoy);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
 	Event_ShowMessageAndWait(16, 0, 6);
 	Actor_ShowEmote(16, 0x102, 0);
@@ -173,7 +173,7 @@ static void EV14_TALK(void)
 
 	Engine_EventBegin();
 	Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
-	Engine_EventSetMessage(MsgHaidiaTheMaskedManWasGarcia);
+	Engine_EventSetMessage(MsgValeTheMaskedManWasFelix);
 	Engine_EventOpenMessage(0xE, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -188,7 +188,7 @@ static void EV14_TALK(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaBabi_CloseScreenAndExit(s32 object)
+static void ValeBabi_CloseScreenAndExit(s32 object)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
@@ -203,70 +203,70 @@ static void HaidiaBabi_CloseScreenAndExit(s32 object)
 static void EV01_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(1);
+	ValeBabi_CloseScreenAndExit(1);
 }
 
 static void EV02_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(2);
+	ValeBabi_CloseScreenAndExit(2);
 }
 
 static void EV03_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(3);
+	ValeBabi_CloseScreenAndExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(4);
+	ValeBabi_CloseScreenAndExit(4);
 }
 
 static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x80);
-	HaidiaBabi_CloseScreenAndExit(5);
+	ValeBabi_CloseScreenAndExit(5);
 }
 
 static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(6);
+	ValeBabi_CloseScreenAndExit(6);
 }
 
 static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x80);
-	HaidiaBabi_CloseScreenAndExit(7);
+	ValeBabi_CloseScreenAndExit(7);
 }
 
 static void EV08_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x81);
-	HaidiaBabi_CloseScreenAndExit(8);
+	ValeBabi_CloseScreenAndExit(8);
 }
 
 static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x81);
-	HaidiaBabi_CloseScreenAndExit(9);
+	ValeBabi_CloseScreenAndExit(9);
 }
 
 static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(10);
+	ValeBabi_CloseScreenAndExit(10);
 }
 
 static void EV11_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
-	HaidiaBabi_CloseScreenAndExit(11);
+	ValeBabi_CloseScreenAndExit(11);
 }
 
-s32 HaidiaBabi_RestoreEntryState(void)
+s32 ValeBabi_RestoreEntryState(void)
 {
 	s32 record;
 
@@ -398,7 +398,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetPosition(8, 34996224, 45088768);
 	Graphics_EnableObjLayerAndCallbacks();
 	Ui_SetRenderResultFromObject(8);
-	base = MsgHaidiaWake;
+	base = MsgValeWake;
 	UiText_ShowCenteredMessage(base, 1, 0);
 	Engine_EventWait(40);
 	MapRender_SetValues(65536, 65536, 65536);
@@ -477,9 +477,9 @@ static void FieldScene_RunComplexActorSequence(void)
 	Actor_SetSpeed(0, 98304, 49152);
 	Engine_CameraFollowActor(8, 1);
 	Object_GetById(0)->priority_flags |= 0x1;
-	Engine_ActorEnableActionCallback(8, gHaidiaBabiSharedAction);
+	Engine_ActorEnableActionCallback(8, gValeBabiSharedAction);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, gHaidiaBabiSharedAction);
+	Engine_ActorEnableActionCallback(0, gValeBabiSharedAction);
 	Object_RefreshSelectorById(8);
 	Actor_WalkToAndWait(8, 419, 661);
 	Actor_WalkToAndWait(8, 408, 661);
@@ -496,8 +496,8 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetAnimation(0, 3);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);
-	Engine_ActorEnableActionCallback(0, gHaidiaBabiLeaderExitAction);
+	Engine_ActorEnableActionCallback(8, gValeBabiActorExitAction);
+	Engine_ActorEnableActionCallback(0, gValeBabiLeaderExitAction);
 	Engine_EventWait(20);
 	(*control)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	(*control)->transition_frames = 16;
@@ -555,7 +555,7 @@ static void FieldScene_RunPaletteRampSequence(void)
 	actor->priority_flags &= 0xfe;
 	actor->motion_flags = 0;
 	sprite->priority = 1;
-	Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10Action);
+	Engine_ActorEnableActionCallback(10, gValeBabiRampActor10Action);
 	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -578,8 +578,8 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Actor_SetSpeed(8, 0x18000, 0xc000);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 	Actor_SetSpeed(9, 0x18000, 0xc000);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gHaidiaBabiRampLeaderAction);
-	Engine_ActorEnableActionCallback(8, gHaidiaBabiRampActor8Action);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gValeBabiRampLeaderAction);
+	Engine_ActorEnableActionCallback(8, gValeBabiRampActor8Action);
 	Engine_EventOpenScreen();
 	Object_RefreshSelectorById(8);
 	Engine_AudioPlayCue(158);
@@ -591,7 +591,7 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Actor_SetPosition(9, PIXELS(414), PIXELS(530));
 	Engine_ActorWalkToAndWait(9, 427, 483);
 	Engine_CameraWaitForMove();
-	Engine_EventSetMessage(MsgHaidiaDoraHurryBoulder);
+	Engine_EventSetMessage(MsgValeDoraHurryBoulder);
 	Engine_EventShowMessageAndWait(32777, 0, 10);
 	Engine_CameraSetSpeed(0x18000, 0x3000);
 	Engine_CameraMoveTo(PIXELS(480), -1, PIXELS(444), 1);
@@ -603,11 +603,11 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Engine_ActorWalkTo(9, 415, 589);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(8, gHaidiaBabiRampActor8ActionB);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gHaidiaBabiRampLeaderActionB);
+	Engine_ActorEnableActionCallback(8, gValeBabiRampActor8ActionB);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gValeBabiRampLeaderActionB);
 	Engine_AudioPlayCue(234);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10ActionB);
+	Engine_ActorEnableActionCallback(10, gValeBabiRampActor10ActionB);
 	alpha = &REG_BLDALPHA;
 
 	i = 0;
@@ -640,8 +640,8 @@ ramp:
 	Engine_EventWait(40);
 	Engine_CameraSetSpeed(0xcccc, 0x1999);
 	Engine_CameraFollowActor(8, 1);
-	Engine_ActorEnableActionCallback(8, gHaidiaBabiRampFinalAction);
-	Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER, gHaidiaBabiRampFinalAction);
+	Engine_ActorEnableActionCallback(8, gValeBabiRampFinalAction);
+	Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER, gValeBabiRampFinalAction);
 	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
 		SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transition_frames = 32;
@@ -650,7 +650,7 @@ ramp:
 	Engine_EventRequestExit(21);
 }
 
-static void HaidiaBabi_RunInnkeeperTalk(void)
+static void ValeBabi_RunInnkeeperTalk(void)
 {
 	struct FieldActor *actor;
 
@@ -668,11 +668,11 @@ static void HaidiaBabi_RunInnkeeperTalk(void)
 			Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
 			if (GameFlag_IsSet(0x300) == 0)
 			{
-				Engine_EventSetMessage(MsgHaidiaCameBack2);
+				Engine_EventSetMessage(MsgValeCameBack2);
 				Event_ShowMessage(13, 0);
 				GameFlag_Set(0x300);
 			}
-			Engine_EventSetMessage(MsgHaidiaHomeJustToStay);
+			Engine_EventSetMessage(MsgValeHomeJustToStay);
 			Event_AskYesNo(13, 0);
 			Actor_FaceDirection(13, 0x9000, 10);
 		}
@@ -680,11 +680,11 @@ static void HaidiaBabi_RunInnkeeperTalk(void)
 		{
 			if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
 			{
-				Engine_EventSetMessage(MsgHaidiaTheVisitorsCausedTheEruption);
+				Engine_EventSetMessage(MsgValeTheVisitorsCausedTheEruption);
 			}
 			else
 			{
-				Engine_EventSetMessage(MsgHaidiaTheThreeTravelersSeemOdd);
+				Engine_EventSetMessage(MsgValeTheThreeTravelersSeemOdd);
 			}
 			Event_ShowMessage(13, 0);
 		}
@@ -696,7 +696,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
-	Engine_EventSetMessage(MsgHaidiaYouveGrownSoMuch);
+	Engine_EventSetMessage(MsgValeYouveGrownSoMuch);
 	Engine_EventShowMessage(0x10, 0);
 	Engine_ActorFaceDirection(0x10, 0xB000, 0xA);
 	Engine_GameFlagSet(0x301);
@@ -706,7 +706,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaDoraWouldntLetHimStay);
+	Engine_EventSetMessage(MsgValeDoraWouldntLetHimStay);
 	Engine_EventShowMessage(0xD, 0);
 	Engine_GameFlagSet(0x81C);
 	Engine_EventEnd();
@@ -715,13 +715,13 @@ static void EV13_PSYNERGY(void)
 static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaDoraWasStruckWithIllness);
+	Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
 	Engine_EventShowMessage(0x10, 0);
 	Engine_GameFlagSet(0x81C);
 	Engine_EventEnd();
 }
 
-static void HaidiaBabi_RunSickbedVisit(void)
+static void ValeBabi_RunSickbedVisit(void)
 {
 	struct FieldActor *record;
 	s32				   msg;
@@ -731,7 +731,7 @@ static void HaidiaBabi_RunSickbedVisit(void)
 	Actor_WalkToAndWait(0, 0x239, 0x189);
 	Actor_FaceDirection(0, 0x4000, 40);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage(MsgHaidiaCoughCoughWho);
+	Engine_EventSetMessage(MsgValeCoughCoughWho);
 	Engine_EventShowMessageAndWait(8, 0, 80);
 	Actor_ShowEmote(8, 0x101, 60);
 	Engine_ActorStartRepeatedMotion(8, 1);
@@ -774,7 +774,7 @@ static void HaidiaBabi_RunSickbedVisit(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(8, 0);
 	Actor_ShowEmote(8, 0x107, 60);
-	msg = MsgHaidiaWhoToldIll;
+	msg = MsgValeWhoToldIll;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -838,16 +838,16 @@ static void EV08_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x203) != 0)
 	{
-		Object_SetTargetAndCallback(8, 0x10000, (s32)gHaidiaBabiActor8Departure);
+		Object_SetTargetAndCallback(8, 0x10000, (s32)gValeBabiActor8Departure);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgHaidiaDontWorryBest);
+		Engine_EventSetMessage(MsgValeDontWorryBest);
 		Engine_EventShowMessage(8, 0);
 	}
 	else
 	{
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(40);
-		message = MsgHaidiaUnnOhhKyle;
+		message = MsgValeUnnOhhKyle;
 		Engine_EventSetMessage(message);
 		Engine_EventShowMessageAndWait(8, 0, 40);
 		Engine_MessageShowCentered((message + 1), 1);
@@ -894,9 +894,9 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	Actor_WalkToAndWait(18, 0x1a4, 164);
 	Actor_WalkToAndWait(18, 0x146, 185);
 	Actor_FaceDirection(18, 0x4000, 10);
-	Engine_ObjectSetScript(actor, gHaidiaBabiBagLiftScript);
+	Engine_ObjectSetScript(actor, gValeBabiBagLiftScript);
 	ObjectDispatch_WaitForValue16(actor);
-	Object_SetScript(actor, gHaidiaBabiBagShowScript);
+	Object_SetScript(actor, gValeBabiBagShowScript);
 	ObjectDispatch_WaitForValue16(actor);
 	Engine_EventWait(20);
 	Engine_ObjectDispatchRelease(actor);
@@ -919,7 +919,7 @@ static void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
 	}
 	if ((gFrameCount & 15) == 0)
 	{
-		HaidiaBabi_SpawnEffectPair(object);
+		ValeBabi_SpawnEffectPair(object);
 	}
 }
 
@@ -931,7 +931,7 @@ static void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
 	}
 	if ((gFrameCount & 15) == 0)
 	{
-		HaidiaBabi_SpawnEffectPair(object);
+		ValeBabi_SpawnEffectPair(object);
 	}
 }
 
@@ -948,7 +948,7 @@ static void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
 
-static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
+static void ValeBabi_SpawnEffectPair(union FieldObject *object)
 {
 	union PairObject	   *parent = (union PairObject *)object;
 	union PairObject	   *pair[2];
@@ -1026,7 +1026,7 @@ static void FieldScene_RunSixStepSequence17e4(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-s32 gHaidiaBabiSharedAction[] = {
+s32 gValeBabiSharedAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(522), 0, PIXELS(748)),
 	SC_SYNC,
@@ -1038,7 +1038,7 @@ s32 gHaidiaBabiSharedAction[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiActorExitAction[] = {
+s32 gValeBabiActorExitAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(387), 0, PIXELS(661)),
 	SC_SYNC,
@@ -1046,7 +1046,7 @@ s32 gHaidiaBabiActorExitAction[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiLeaderExitAction[] = {
+s32 gValeBabiLeaderExitAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(408), 0, PIXELS(661)),
 	SC_SYNC,
@@ -1056,7 +1056,7 @@ s32 gHaidiaBabiLeaderExitAction[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampActor8Action[] = {
+s32 gValeBabiRampActor8Action[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(468), 0, PIXELS(390)),
 	SC_SYNC,
@@ -1066,7 +1066,7 @@ s32 gHaidiaBabiRampActor8Action[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampLeaderAction[] = {
+s32 gValeBabiRampLeaderAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(431), 0, PIXELS(391)),
 	SC_SYNC,
@@ -1078,7 +1078,7 @@ s32 gHaidiaBabiRampLeaderAction[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampActor8ActionB[] = {
+s32 gValeBabiRampActor8ActionB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(525), 0, PIXELS(414)),
 	SC_SYNC,
@@ -1090,7 +1090,7 @@ s32 gHaidiaBabiRampActor8ActionB[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampLeaderActionB[] = {
+s32 gValeBabiRampLeaderActionB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(525), 0, PIXELS(414)),
 	SC_SYNC,
@@ -1102,7 +1102,7 @@ s32 gHaidiaBabiRampLeaderActionB[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampFinalAction[] = {
+s32 gValeBabiRampFinalAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(428), 0, PIXELS(460)),
 	SC_SYNC,
@@ -1113,7 +1113,7 @@ s32 gHaidiaBabiRampFinalAction[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiRampActor10Action[] = {
+s32 gValeBabiRampActor10Action[] = {
 	SC_SET(SW_SCALE_X, 0xe666),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_WAIT(4),
@@ -1123,7 +1123,7 @@ s32 gHaidiaBabiRampActor10Action[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gHaidiaBabiRampActor10ActionB[] = {
+s32 gValeBabiRampActor10ActionB[] = {
 	SC_ARG(2),
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x13333),
@@ -1156,7 +1156,7 @@ s32 gHaidiaBabiRampActor10ActionB[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiActor8Departure[] = {
+s32 gValeBabiActor8Departure[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 	SC_MOVE(PIXELS(567), 0, PIXELS(690)),
@@ -1166,13 +1166,13 @@ s32 gHaidiaBabiActor8Departure[] = {
 	SC_END,
 };
 
-s32 gHaidiaBabiBagLiftScript[] = {
+s32 gValeBabiBagLiftScript[] = {
 	SC_ADD(SW_Y, 0x8000),
 	SC_WAIT(1),
 	SC_LOOP(16, SC_TOP),
 };
 
-s32 gHaidiaBabiBagShowScript[] = {
+s32 gValeBabiBagShowScript[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1200,7 +1200,7 @@ s32 gHaidiaBabiBagShowScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance gHaidiaBabiEntrances[] = {
+struct SceneEntrance gValeBabiEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 160, 0, 228, FACING_NORTH, 0, 24, 0, 248, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 480, 0, 176, FACING_NORTH, 0, 264, 8, 560, 240, 0 },
@@ -1222,7 +1222,7 @@ struct SceneEntrance gHaidiaBabiEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gHaidiaBabiExits[] = {
+u32 gValeBabiExits[] = {
 	SCENE_EXITS(8),
 	SCENE_EXIT(1, 5, 6),
 	SCENE_EXIT(2, 6, 3),
@@ -1242,7 +1242,7 @@ u32 gHaidiaBabiExits[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gHaidiaBabiExits2[] = {
+u32 gValeBabiExits2[] = {
 	SCENE_EXITS(8),
 	SCENE_EXIT(1, 5, 6),
 	SCENE_EXIT(2, 6, 3),
@@ -1260,7 +1260,7 @@ u32 gHaidiaBabiExits2[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gHaidiaBabiPlacements[] = {
+struct ScenePlacement gValeBabiPlacements[] = {
 	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x35, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1286,7 +1286,7 @@ struct ScenePlacement gHaidiaBabiPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaBabiPlacements2[] = {
+struct ScenePlacement gValeBabiPlacements2[] = {
 	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x35, 0x0, ACTOR_STAND,
@@ -1306,7 +1306,7 @@ struct ScenePlacement gHaidiaBabiPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaBabiPlacements3[] = {
+struct ScenePlacement gValeBabiPlacements3[] = {
 	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ 0x35, 0x0, ACTOR_STAND,
@@ -1330,7 +1330,7 @@ struct ScenePlacement gHaidiaBabiPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaBabiPlacements4[] = {
+struct ScenePlacement gValeBabiPlacements4[] = {
 	{ 0x70, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x71, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1344,7 +1344,7 @@ struct ScenePlacement gHaidiaBabiPlacements4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents4[] = {
+struct SceneEvent gValeBabiEvents4[] = {
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1356,26 +1356,26 @@ struct SceneEvent gHaidiaBabiEvents4[] = {
 	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
 	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
-	{ SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaWoodenBoxEmpty)) },
-	{ SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
-	{ SEARCH(SEARCH_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuButDidntFindAnything)) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaNotebookStudyOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookAncientLemurians)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookFountainOfTolbi)) },
-	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaEncyclopediaOfAlchemy)) },
-	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLegendOfAleph)) },
-	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookBeingAdept)) },
-	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookTravelersEtiquette)) },
+	{ SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
+	{ SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+	{ SEARCH(SEARCH_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents[] = {
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaMyFatherAlsoDiedInThat) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaMySonIsStillYoungSo) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaOneOfTheMenFromThat) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaTwoOfThoseThreeGuestsStaying) },
+struct SceneEvent gValeBabiEvents[] = {
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1390,27 +1390,27 @@ struct SceneEvent gHaidiaBabiEvents[] = {
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaNotebookStudyOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookAncientLemurians)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookFountainOfTolbi)) },
-	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaEncyclopediaOfAlchemy)) },
-	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLegendOfAleph)) },
-	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookBeingAdept)) },
-	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookTravelersEtiquette)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents2[] = {
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaComeBackAsAStrongWarrior) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWantedJasminToBeMy) },
+struct SceneEvent gValeBabiEvents2[] = {
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaWereASmallHotelAndWe) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWillThinkOfJasminAs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaNowThatJasminIsGoneWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWonderIfGarsiaChangedMuch) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaGarsiaAndHisGangMustHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaWhoCouldHaveKnownThatMasked) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1425,37 +1425,37 @@ struct SceneEvent gHaidiaBabiEvents2[] = {
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaNotebookStudyOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookAncientLemurians)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookFountainOfTolbi)) },
-	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaEncyclopediaOfAlchemy)) },
-	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLegendOfAleph)) },
-	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookBeingAdept)) },
-	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookTravelersEtiquette)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents3[] = {
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaOwItsGonnaBeYearsBefore) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaWelcomeHomeRobinOhWhatHappened) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouTraveledAroundTheEasternEdge) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaArentYouGladToSeeThe) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
+struct SceneEvent gValeBabiEvents3[] = {
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
 	{ EVENT_TALK, 16, 0x300, EVENT_SCRIPT(SceneDialogue_ShowLine1C13WithActor16Steps) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouveGrownSoMuch) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIPromisedIdBecomeAGreat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaThatShyGirlWithRobinSure) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWonderIfRobinWillContinue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeWillNeverChangeSoYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40d, 0x300, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40d, 0x300, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x301, EVENT_SCRIPT(SceneDialogue_ShowLine1C13WithActor16Steps) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
-	{ EVENT_TALK, 8, 0x81e, EVENT_SCRIPT(HaidiaBabi_RunSickbedVisit) },
+	{ EVENT_TALK, 8, 0x81e, EVENT_SCRIPT(ValeBabi_RunSickbedVisit) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x81e, EVENT_SCRIPT(HaidiaBabi_RunSickbedVisit) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x203, MSGNO(MsgHaidiaKairuWatchOutTheBoulderThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaImSorryISeemedSoHarsh) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x81e, EVENT_SCRIPT(ValeBabi_RunSickbedVisit) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x203, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1470,20 +1470,20 @@ struct SceneEvent gHaidiaBabiEvents3[] = {
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaNotebookStudyOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookAncientLemurians)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookFountainOfTolbi)) },
-	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaEncyclopediaOfAlchemy)) },
-	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLegendOfAleph)) },
-	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookBeingAdept)) },
-	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookTravelersEtiquette)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+	{ 0xc4f3, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+	{ 0xc4f3, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+	{ 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
 	{ SEARCH(SEARCH_JAR), 108, 0x8ad, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 107, 0x8ae, FIND_COINS(123) },
 	{ SEARCH(SEARCH_UNNAMED), 109, 0x8af, FIND_PSYNERGY_STONE },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents5[] = {
+struct SceneEvent gValeBabiEvents5[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1496,13 +1496,13 @@ struct SceneEvent gHaidiaBabiEvents5[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
 	{ 0x21, 20, CONDITION_ALWAYS, 19 },
 	{ SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(0xc2) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresABookEntitledEncyclopediaOf)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresANotebookEntitledExperimentsIn)) },
-	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresANotebookEntitledStudyOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
+	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaBabiEvents6[] = {
+struct SceneEvent gValeBabiEvents6[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
@@ -1515,8 +1515,8 @@ struct SceneEvent gHaidiaBabiEvents6[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
 	{ 0x21, 20, CONDITION_ALWAYS, 19 },
 	{ SEARCH(SEARCH_JAR), 103, 0xf9e, FIND_ITEM(0xc2) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresABookEntitledEncyclopediaOf)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresANotebookEntitledExperimentsIn)) },
-	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaTheresANotebookEntitledStudyOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
+	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },
 	{ SCENE_EVENTS_END },
 };

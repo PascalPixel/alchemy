@@ -19,7 +19,7 @@ struct OwnerLevelState {
     u8 unknown_000[0x0f];
     u8 level;
     u16 base_hp;
-    u16 base_ep;
+    u16 base_pp;
     u8 unknown_014[4];
     u16 base_attack;
     u16 base_defense;
@@ -37,7 +37,7 @@ struct OwnerLevelState {
 struct OwnerGrowth {
     u8 unknown_00[0x50];
     s16 hp[6];
-    s16 ep[6];
+    s16 pp[6];
     u16 atk[6];
     u16 def[6];
     u16 agi[6];
@@ -48,7 +48,7 @@ struct LevelUpResult {
     s16 level;
     u16 ability;
     u16 hp;
-    u16 ep;
+    u16 pp;
     u16 atk;
     u16 def;
     u16 agi;
@@ -88,7 +88,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     res->level = level;
     res->ability = 0xffff;
     res->hp = 0;
-    res->ep = 0;
+    res->pp = 0;
     res->atk = 0;
     res->def = 0;
     res->agi = 0;
@@ -102,7 +102,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         work->growth = Character_GetDefinition(owner);
         if (res->level == 1) {
             res->hp += work->growth->hp[0];
-            res->ep += work->growth->ep[0];
+            res->pp += work->growth->pp[0];
             res->atk += work->growth->atk[0];
             res->def += work->growth->def[0];
             res->agi += work->growth->agi[0];
@@ -115,8 +115,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
             band = 4;
         diff = work->growth->hp[band + 1] - work->growth->hp[band];
         res->hp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
-        diff = work->growth->ep[band + 1] - work->growth->ep[band];
-        res->ep += __udivsi3((Random16() * 20 >> 16) + diff, 20);
+        diff = work->growth->pp[band + 1] - work->growth->pp[band];
+        res->pp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->atk[band + 1] - work->growth->atk[band];
         res->atk += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->def[band + 1] - work->growth->def[band];
@@ -126,7 +126,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
         res->luck += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         st->base_hp += res->hp;
-        st->base_ep += res->ep;
+        st->base_pp += res->pp;
         st->base_attack += res->atk;
         st->base_defense += res->def;
         st->base_agility += res->agi;

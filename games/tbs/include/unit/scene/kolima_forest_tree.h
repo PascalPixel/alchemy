@@ -4,21 +4,21 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *KorimaKi_GetEntrances(void);
-u8 *KorimaKi_GetRegions(void);
-u8 *KorimaKi_GetExits(void);
-u8 *KorimaKi_GetPlacements(void);
-u8 *KorimaKi_GetEvents(void);
-s32 KorimaKi_PrepareActors(void);
+u8 *KolimaForestTree_GetEntrances(void);
+u8 *KolimaForestTree_GetRegions(void);
+u8 *KolimaForestTree_GetExits(void);
+u8 *KolimaForestTree_GetPlacements(void);
+u8 *KolimaForestTree_GetEvents(void);
+s32 KolimaForestTree_PrepareActors(void);
 extern s32 SceneAction_ActorOneEntry[];
 extern s32 SceneAction_ActorTwoEntry[];
 extern s32 SceneAction_ActorThreeEntry[];
 extern s32 SceneAction_GroupFinish[];
-extern struct SceneEntrance gKorimaKiEntrances[];
-extern s16 gKorimaKiRegions[];
-extern u32 gKorimaKiExits[];
-extern struct ScenePlacement gKorimaKiPlacements[];
-extern struct SceneEvent gKorimaKiEvents[];
-extern s32 gKorimaKiEffectScript[];
+extern struct SceneEntrance gKolimaForestTreeEntrances[];
+extern s16 gKolimaForestTreeRegions[];
+extern u32 gKolimaForestTreeExits[];
+extern struct ScenePlacement gKolimaForestTreePlacements[];
+extern struct SceneEvent gKolimaForestTreeEvents[];
+extern s32 gKolimaForestTreeEffectScript[];
 
 #endif

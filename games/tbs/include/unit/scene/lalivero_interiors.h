@@ -4,22 +4,22 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *RariberoHeya_GetEntrances(void);
-u8 *RariberoHeya_GetRegions(void);
-u8 *RariberoHeya_GetExits(void);
-u8 *RariberoHeya_GetPlacements(void);
-u8 *RariberoHeya_GetEvents(void);
+u8 *LaliveroInteriors_GetEntrances(void);
+u8 *LaliveroInteriors_GetRegions(void);
+u8 *LaliveroInteriors_GetExits(void);
+u8 *LaliveroInteriors_GetPlacements(void);
+u8 *LaliveroInteriors_GetEvents(void);
 s32 Scene_Initialize(void);
-extern s32 gRariberoPoseAction[];
-extern struct SceneEntrance gRariberoEntrances[];
-extern s16 gRariberoSanctumRegions[];
-extern s16 gRariberoRegions[];
-extern u32 gRariberoExits[];
-extern struct ScenePlacement gRariberoPlacements[];
-extern struct ScenePlacement gRariberoHeyaPlacements[];
-extern struct ScenePlacement gRariberoHeyaPlacements9a7[];
-extern struct SceneEvent gRariberoEvents[];
-extern struct SceneEvent gRariberoEvents9a7[];
-extern struct SceneEvent gRariberoHeyaEvents[];
+extern s32 gLaliveroPoseAction[];
+extern struct SceneEntrance gLaliveroEntrances[];
+extern s16 gLaliveroSanctumRegions[];
+extern s16 gLaliveroRegions[];
+extern u32 gLaliveroExits[];
+extern struct ScenePlacement gLaliveroPlacements[];
+extern struct ScenePlacement gLaliveroInteriorsPlacements[];
+extern struct ScenePlacement gLaliveroInteriorsPlacements9a7[];
+extern struct SceneEvent gLaliveroEvents[];
+extern struct SceneEvent gLaliveroEvents9a7[];
+extern struct SceneEvent gLaliveroInteriorsEvents[];
 
 #endif

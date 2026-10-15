@@ -1,5 +1,5 @@
 /* Draft of overlay 64f's Func_02000494 (0x02008494), the sibling of
- * Func_020003ac (s03ac.c) that sends the party to Suhara Gate 2: differ 51
+ * Func_020003ac (s03ac.c) that sends the party to Suhalla Gate 2: differ 51
  * of 130, from the listing. Every call's constants matched the native once
  * routed through local.h's inline layer except the repeated ones: 920 and
  * 0x4000 still end in callee-saved registers shared between calls (here r6
@@ -7,8 +7,8 @@
  * r5. Four minutes of alchemy permute: 28, by a char temporary. */
 #include "../../../../games/tla/src/field/suhalla_gate/local.h"
 
-extern char SceneId_SuharaGate2;
-extern char SceneId_VinasuIriguchi;
+extern char SceneId_SuhallaGate2;
+extern char SceneId_VenusEntrance;
 extern u8 MsgHaThatWas[];
 
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
@@ -57,8 +57,8 @@ void Func_02000494(void)
     Motion_SetModeAndWaitAnimation_(13, 3);
     Object_SetModeById_(14, 3);
     Motion_SetModeAndWaitAnimation_(15, 3);
-    Party_SetFields1eeAnd1f0((s32)&SceneId_SuharaGate2, 99);
-    Party_SetFields1f2And1f4((s32)&SceneId_VinasuIriguchi, 98);
+    Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate2, 99);
+    Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
     gPartyState.battle_rule_24b = 2;
     Func_02000a40(9, 2);
     Func_02000990();

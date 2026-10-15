@@ -22,7 +22,7 @@ static void RunEventScript01(void);
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
-	return (u8 *)HaidiaFunka_SceneTable0;
+	return (u8 *)ValeEruption_SceneTable0;
 }
 
 s32 ConditionalSceneSetup_GetInitialState(void)
@@ -32,17 +32,17 @@ s32 ConditionalSceneSetup_GetInitialState(void)
 
 u8 *ConditionalSceneSetup_GetMessageData(void)
 {
-	return (u8 *)HaidiaFunka_SceneTable1;
+	return (u8 *)ValeEruption_SceneTable1;
 }
 
 u8 *ConditionalSceneSetup_GetActorData(void)
 {
-	return (u8 *)HaidiaFunka_SceneTable2;
+	return (u8 *)ValeEruption_SceneTable2;
 }
 
 u8 *ConditionalSceneSetup_GetEffectData(void)
 {
-	return (u8 *)HaidiaFunka_SceneTable3;
+	return (u8 *)ValeEruption_SceneTable3;
 }
 
 s32 ConditionalSceneSetup_InitForScene15(void)
@@ -96,7 +96,7 @@ static void RunEventScript01(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
 	Engine_EventWait(60);
-	Engine_EventSetMessage(MsgHaidiaMtAlephWasInactive);
+	Engine_EventSetMessage(MsgValeMtAlephWasInactive);
 	Actor_ShowEmote(8, 0x102, 0);
 	Engine_EventWait(60);
 	Event_ShowMessage(8, 0);
@@ -142,59 +142,59 @@ static void RunEventScript01(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
+	Actor_SetSpeed(GARET, 0x8000, 0x4000);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x780000, 0x1020000);
 	Camera_SetSpeed(0x18000, 0x3000);
 	Camera_MoveTo(0x700000, -1, 0x1400000, 1);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 120, 0x140);
-	Actor_MoveToAndWait(GERALD, 104, 0x140);
+	Actor_MoveToAndWait(GARET, 104, 0x140);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorSetAnimation(GERALD, 1);
+	Engine_ActorSetAnimation(GARET, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
+	Actor_FaceDirection(GARET, 0x3000, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
 	Engine_EventWait(50);
-	Actor_SetSpeed(GERALD, 0x18000, 0xc000);
-	Engine_ActorSetAnimation(GERALD, 2);
-	Actor_MoveToAndWait(GERALD, 105, 0x156);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessage(GERALD, 0);
+	Actor_SetSpeed(GARET, 0x18000, 0xc000);
+	Engine_ActorSetAnimation(GARET, 2);
+	Actor_MoveToAndWait(GARET, 105, 0x156);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_EventWait(20);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(60);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_EventWait(50);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-		Engine_ActorSetAnimation(GERALD, 2);
-		Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-		Actor_MoveToAndWait(GERALD, 103, 0x140);
-		Engine_ActorSetAnimation(GERALD, 1);
+		Engine_ActorSetAnimation(GARET, 2);
+		Actor_SetSpeed(GARET, 0x10000, 0x8000);
+		Actor_MoveToAndWait(GARET, 103, 0x140);
+		Engine_ActorSetAnimation(GARET, 1);
 	}
 	else
 	{
 		Engine_EventWait(60);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_EventWait(50);
-		Actor_FaceDirection(GERALD, 0x3000, 0);
+		Actor_FaceDirection(GARET, 0x3000, 0);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 		Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 0x154);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	}
 	Event_ShowMessage(12, 0);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
 	Actor_FaceDirection(9, 0xa000, 0);
 	Actor_FaceDirection(11, 0xa000, 0);
@@ -215,27 +215,27 @@ static void RunEventScript01(void)
 	Event_ShowMessage(9, 0);
 	Engine_EventWait(40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x3000, 0);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
+	Actor_FaceDirection(GARET, 0x3000, 0);
 	Camera_MoveTo(0x700000, -1, 0x1400000, 1);
 	Engine_CameraWaitForMove();
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Object_RefreshSelectorById(1);
 	Engine_EventWait(50);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Object_RefreshSelectorById(1);
 	Engine_EventWait(60);
 	Camera_SetSpeed(0x10000, 0x2000);
 	Camera_MoveTo(0xd60000, -1, 0x1d80000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, HaidiaFunka_ActionScriptHead);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ValeEruption_ActionScriptHead);
 	Engine_EventWait(30);
-	Engine_ActorEnableActionCallback(GERALD, HaidiaFunka_ActionScriptGerald);
+	Engine_ActorEnableActionCallback(GARET, ValeEruption_ActionScriptGaret);
 	Object_RefreshSelectorById(1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_FaceDirection(GARET, 0, 0);
 	Engine_CameraWaitForMove();
 	Actor_FaceDirection(9, 0x8000, 0);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
@@ -248,22 +248,22 @@ static void RunEventScript01(void)
 	Event_ShowMessage(9, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
 	Engine_EventWait(50);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Engine_EventWait(50);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(40);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_EventWait(50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_FaceDirection(GARET, 0, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(40);
 	Actor_ShowEmote(10, 0x102, 0);
 	Engine_EventWait(50);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
+	Actor_FaceDirection(GARET, 0x3000, 0);
 	Engine_EventWait(10);
 	Event_OpenMessage(10, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -291,13 +291,13 @@ static void RunEventScript01(void)
 		Event_ShowMessage(9, 0);
 	}
 	Engine_EventWait(30);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_FaceDirection(GARET, 0, 0);
 	Engine_EventWait(30);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_ShowMessage(8, 0);
@@ -326,7 +326,7 @@ static void RunEventScript01(void)
 	Engine_EventWait(30);
 	Actor_WalkToAndWait(8, 255, 0x1bd);
 	Engine_EventWait(40);
-	Map_AnimateCells(HaidiaFunka_CellSteps, 45, 11);
+	Map_AnimateCells(ValeEruption_CellSteps, 45, 11);
 	Event_PlayCue(188);
 	Engine_EventWait(30);
 	Actor_WalkTo(8, 255, 0x186);
@@ -340,13 +340,13 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimationAndWait(10, 3);
 	Engine_EventWait(30);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(40);
 	Actor_WalkTo(10, 255, 0x186);
-	action_script = (s32)HaidiaFunka_ActionScript;
+	action_script = (s32)ValeEruption_ActionScript;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, action_script);
 	Engine_EventWait(40);
-	Engine_ActorEnableActionCallback(GERALD, action_script);
+	Engine_ActorEnableActionCallback(GARET, action_script);
 	Object_RefreshSelectorById(1);
 	Actor_ShowEmote(11, 0x102, 0);
 	Actor_ShowEmote(12, 0x102, 0);
@@ -367,7 +367,7 @@ static void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-s32 HaidiaFunka_ActionScriptHead[] = {
+s32 ValeEruption_ActionScriptHead[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
 	SC_SYNC,
@@ -381,7 +381,7 @@ s32 HaidiaFunka_ActionScriptHead[] = {
 	SC_END,
 };
 
-s32 HaidiaFunka_ActionScriptGerald[] = {
+s32 ValeEruption_ActionScriptGaret[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
 	SC_SYNC,
@@ -393,7 +393,7 @@ s32 HaidiaFunka_ActionScriptGerald[] = {
 	SC_END,
 };
 
-s32 HaidiaFunka_ActionScript[] = {
+s32 ValeEruption_ActionScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(255), 0, PIXELS(452)),
 	SC_SYNC,
@@ -403,20 +403,20 @@ s32 HaidiaFunka_ActionScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance HaidiaFunka_SceneTable0[] = {
+struct SceneEntrance ValeEruption_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 15, CONDITION_ALWAYS, 103, 0, 284, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 HaidiaFunka_SceneTable1[] = {
+u32 ValeEruption_SceneTable1[] = {
 	SCENE_EXITS(10),
 	SCENE_EXIT(1, 9, 20),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement HaidiaFunka_SceneTable2[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement ValeEruption_SceneTable2[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
@@ -445,10 +445,10 @@ struct ScenePlacement HaidiaFunka_SceneTable2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent HaidiaFunka_SceneTable3[] = {
+struct SceneEvent ValeEruption_SceneTable3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 HaidiaFunka_CellSteps[] = {
+u16 ValeEruption_CellSteps[] = {
 	MAP_CELL_STEP(0, 98, 2, 2, 2), MAP_CELL_STEP(2, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };

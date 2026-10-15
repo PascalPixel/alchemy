@@ -26,8 +26,8 @@
 static void Scene_EnterInnerSanctum(void);
 static void FieldScene_RunActorPositionTransition(void);
 static s32 CheckAllStatueLights(void);
-static void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
-static void SoruNichigetsu_RunLightScene(void);
+static void SetSolSanctumActorStep(s32 actor_step, s32 wait_frames);
+static void SolLunaRooms_RunLightScene(void);
 
 void InitializeSceneRecordBuffer(void);
 
@@ -40,7 +40,7 @@ struct EventGlobals
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	return gSoruNichigetsuEntrances;
+	return gSolLunaRoomsEntrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -50,17 +50,17 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return gSoruNichigetsuExits;
+	return gSolLunaRoomsExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	return gSoruNichigetsuPlacements;
+	return gSolLunaRoomsPlacements;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return gSoruNichigetsuEvents;
+	return gSolLunaRoomsEvents;
 }
 
 static void EV13_TOUCH(void)
@@ -236,7 +236,7 @@ static void EV11_TOUCH(void)
 	if (Engine_GameFlagIsSet(0x809) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgSoruFound);
+		Engine_EventSetMessage(MsgSolFound);
 		Engine_AudioPlayCue(17);
 		Actor_SetSpeed(0, 0x10000, 0x8000);
 		Actor_WalkToAndWait(0, 0x120, 232);
@@ -254,7 +254,7 @@ static void EV11_TOUCH(void)
 		Engine_EventWait(40);
 		Actor_ShowEmote(16, 0x100, 0);
 		Engine_ActorJump(16, 4, 60);
-		SetSolShindenActorStep(16, 20);
+		SetSolSanctumActorStep(16, 20);
 		rec = Object_GetById(0);
 		if (rec != 0)
 		{
@@ -278,9 +278,9 @@ static void EV11_TOUCH(void)
 		Engine_ActorWalkToAndWait(16, 0x120, 176);
 		Engine_EventWait(40);
 		Engine_ActorRunRepeatedMotion(16, 2);
-		SetSolShindenActorStep(16, 6);
+		SetSolSanctumActorStep(16, 6);
 		Actor_FaceDirection(16, 0x4000, 60);
-		SetSolShindenActorStep(16, 20);
+		SetSolSanctumActorStep(16, 20);
 		Engine_ActorFaceDirection(16, 0, 40);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_EventWait(10);
@@ -289,14 +289,14 @@ static void EV11_TOUCH(void)
 		Engine_EventWait(20);
 		Engine_ActorRunRepeatedMotion(5, 2);
 		Actor_FaceDirection(5, 0x9000, 10);
-		SetSolShindenActorStep(5, 10);
+		SetSolSanctumActorStep(5, 10);
 		Engine_ActorRunRepeatedMotion(1, 2);
 		Actor_FaceDirection(1, 0xf000, 10);
-		SetSolShindenActorStep(1, 6);
+		SetSolSanctumActorStep(1, 6);
 		Actor_SetAttachedEffect(5, 0x102);
 		Engine_EventWait(40);
 		Actor_FaceDirection(5, 0xa000, 10);
-		SetSolShindenActorStep(0x2005, 10);
+		SetSolSanctumActorStep(0x2005, 10);
 		Engine_ActorRunRepeatedMotion(16, 2);
 		Engine_EventWait(10);
 		Actor_FaceDirection(16, 0xa000, 20);
@@ -311,24 +311,24 @@ static void EV11_TOUCH(void)
 		Engine_EventWait(60);
 		Engine_ActorSetAnimationAndWait(16, 4);
 		Engine_EventWait(40);
-		SetSolShindenActorStep(16, 20);
+		SetSolSanctumActorStep(16, 20);
 		Actor_ShowEmote(5, 0x101, 40);
-		SetSolShindenActorStep(5, 60);
+		SetSolSanctumActorStep(5, 60);
 		Engine_ActorSetAnimationAndWait(16, 3);
-		SetSolShindenActorStep(16, 10);
+		SetSolSanctumActorStep(16, 10);
 		Actor_ShowEmote(0, 0x105, 0);
 		Actor_ShowEmote(1, 0x105, 0);
 		Actor_ShowEmote(5, 0x105, 60);
 		Engine_ActorRunRepeatedMotion(1, 2);
 		Engine_EventWait(20);
-		SetSolShindenActorStep(1, 10);
+		SetSolSanctumActorStep(1, 10);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_EventWait(20);
 		Actor_ShowEmote(0, 0x102, 0);
 		Actor_ShowEmote(1, 0x102, 0);
 		Actor_ShowEmote(5, 0x102, 80);
 		Actor_ShowEmote(16, 0x105, 80);
-		SetSolShindenActorStep(16, 6);
+		SetSolSanctumActorStep(16, 6);
 		Actor_FaceDirection(0, 0x4000, 0);
 		Actor_FaceDirection(1, 0xf000, 0);
 		Actor_FaceDirection(5, 0x9000, 60);
@@ -338,33 +338,33 @@ static void EV11_TOUCH(void)
 		Engine_EventOpenMessage(16, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			Engine_EventSetMessage(MsgSoruThank);
+			Engine_EventSetMessage(MsgSolThank);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgSoruGoBackVillage);
+			Engine_EventSetMessage(MsgSolGoBackVillage);
 			Actor_ShowEmote(16, 0x107, 20);
 		}
 		Engine_ActorJump(16, 4, 20);
 		Actor_FaceDirection(0, 0xc000, 0);
 		Actor_FaceDirection(1, 0xe000, 0);
 		Actor_FaceDirection(5, 0xa000, 0);
-		SetSolShindenActorStep(16, 6);
-		Engine_EventSetMessage(MsgSoruPutWayDont);
+		SetSolSanctumActorStep(16, 6);
+		Engine_EventSetMessage(MsgSolPutWayDont);
 		Engine_EventWait(30);
 		Engine_ActorSetAnimationAndWait(5, 4);
-		SetSolShindenActorStep(0x2005, 6);
+		SetSolSanctumActorStep(0x2005, 6);
 		Engine_ActorSetAnimationAndWait(1, 3);
-		SetSolShindenActorStep(1, 20);
+		SetSolSanctumActorStep(1, 20);
 		Engine_ActorJump(16, 6, 20);
 		Actor_ShowEmote(16, 0x104, 20);
-		SetSolShindenActorStep(16, 30);
+		SetSolSanctumActorStep(16, 30);
 		Engine_ActorSetAnimation(0, 3);
 		Engine_ActorSetAnimation(1, 3);
 		Engine_ActorSetAnimationAndWait(5, 3);
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(16, 3);
-		SetSolShindenActorStep(16, 6);
+		SetSolSanctumActorStep(16, 6);
 		Actor_SetSpeed(1, 0x10000, 0x8000);
 		Actor_SetSpeed(5, 0x10000, 0x8000);
 		Actor_SetSpeed(16, 0x20000, 0x10000);
@@ -372,7 +372,7 @@ static void EV11_TOUCH(void)
 		rec = Object_GetById(0);
 		if (rec != 0)
 		{
-			Engine_ActorSetDestination(ACTOR_SUKURETA, rec->x.part.pixel, rec->z.part.pixel);
+			Engine_ActorSetDestination(ACTOR_KRADEN, rec->x.part.pixel, rec->z.part.pixel);
 		}
 		Engine_ActorWaitForMove(16);
 		Engine_ActorSetPosition(16, 0, 0);
@@ -380,7 +380,7 @@ static void EV11_TOUCH(void)
 		rec = Object_GetById(0);
 		if (rec != 0)
 		{
-			Engine_ActorSetDestination(GERALD, rec->x.part.pixel, rec->z.part.pixel);
+			Engine_ActorSetDestination(GARET, rec->x.part.pixel, rec->z.part.pixel);
 		}
 		Engine_ActorWaitForMove(1);
 		Engine_ActorSetPosition(1, 0, 0);
@@ -388,7 +388,7 @@ static void EV11_TOUCH(void)
 		rec = Object_GetById(0);
 		if (rec != 0)
 		{
-			Engine_ActorSetDestination(JASMINE, rec->x.part.pixel, rec->z.part.pixel);
+			Engine_ActorSetDestination(JENNA, rec->x.part.pixel, rec->z.part.pixel);
 		}
 		Engine_ActorWaitForMove(5);
 		Engine_ActorSetPosition(5, 0, 0);
@@ -403,67 +403,67 @@ static void Scene_EnterInnerSanctum(void)
 	struct FieldActor *record;
 	s32				   request;
 
-	Engine_EventSetMessage(MsgSoruWhRoom);
+	Engine_EventSetMessage(MsgSolWhRoom);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(ACTOR_SUKURETA, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(ACTOR_KRADEN, record->x.fixed, record->z.fixed);
 	}
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 1);
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d8, 168);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
-	Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
-	SetSolShindenActorStep(16, 6);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d8, 168);
+	Actor_FaceDirection(ACTOR_KRADEN, 0, 60);
+	Engine_ActorJump(ACTOR_KRADEN, 4, 40);
+	SetSolSanctumActorStep(16, 6);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	Camera_MoveTo(0x23f0000, -1, 0xb50000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(120);
-	SetSolShindenActorStep(0x1010, 80);
+	SetSolSanctumActorStep(0x1010, 80);
 	Camera_MoveTo(0x1ec0000, -1, 0xa80000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
-	SetSolShindenActorStep(0x4010, 6);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
-	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 20);
+	SetSolSanctumActorStep(0x4010, 6);
+	Actor_FaceDirection(ACTOR_KRADEN, 0, 60);
+	Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
 	Event_OpenMessage(0x4010, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgSoruLunaSolRooms);
+		Engine_EventSetMessage(MsgSolLunaSolRooms);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgSoruRoomLunaOne);
+		Engine_EventSetMessage(MsgSolRoomLunaOne);
 	}
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
-	SetSolShindenActorStep(0x4010, 10);
-	request = MsgSoruMeanLookFarther;
+	SetSolSanctumActorStep(0x4010, 10);
+	request = MsgSolMeanLookFarther;
 	Engine_EventSetMessage(request);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
-	Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 4);
+	Actor_FaceDirection(ACTOR_KRADEN, 0, 40);
+	Actor_ShowEmote(ACTOR_KRADEN, 0x105, 40);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
 	Event_OpenMessage(0x4010, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventSetMessage((request + 1));
-		GameFlag_Set(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
+		GameFlag_Set(FLAG_ISAAC_SEARCHING_FOR_KRADEN);
 	}
 	else
 	{
 		Engine_EventSetMessage((request + 2));
 	}
-	SetSolShindenActorStep(0x4010, 4);
-	Engine_CameraFollowActor(ACTOR_SUKURETA, 1);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1e6, 131);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 120);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 2);
+	SetSolSanctumActorStep(0x4010, 4);
+	Engine_CameraFollowActor(ACTOR_KRADEN, 1);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x1e6, 131);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 120);
+	Actor_FaceDirection(ACTOR_KRADEN, 0xc000, 2);
 	Camera_SetSpeed(0x40000, 0x8000);
 	GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
@@ -490,47 +490,47 @@ static void EV09_TOUCH(void)
 	}
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-	Engine_EventSetMessage(MsgSoruWayLeadsOutSanctum);
+	Engine_EventSetMessage(MsgSolWayLeadsOutSanctum);
 	if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0)
 	{
 		target_actor = Object_GetById(0);
 		if (target_actor != 0)
 		{
-			Actor_SetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
+			Actor_SetPosition(ACTOR_KRADEN, target_actor->unk8, target_actor->unk10);
 		}
 		Engine_EventWait(4);
-		Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+		Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
 	}
 	else if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000)
 	{
-		Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
+		Actor_SetPosition(ACTOR_KRADEN, 0x1880000, 0xa80000);
 		Engine_EventWait(4);
-		Actor_SetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
+		Actor_SetSpeed(ACTOR_KRADEN, 0x20000, 0x10000);
 	}
 	if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000)
 	{
-		Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
+		Actor_WalkToAndWait(ACTOR_KRADEN, 0x120, 0xe8);
 	}
 	else
 	{
 		// 結果は使わない
 		GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
 	}
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 0x120, 0xe8);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 10);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 10);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0)
 	{
-		Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+		Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 		target_position = Object_GetById(0);
 		if (target_position != 0)
 		{
-			Actor_SetDestination(ACTOR_SUKURETA, target_position->unkA, target_position->unk12);
+			Actor_SetDestination(ACTOR_KRADEN, target_position->unkA, target_position->unk12);
 		}
-		Engine_ActorWaitForMove(ACTOR_SUKURETA);
-		Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+		Engine_ActorWaitForMove(ACTOR_KRADEN);
+		Actor_SetPosition(ACTOR_KRADEN, 0, 0);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xe8);
 	}
 	else
@@ -544,7 +544,7 @@ static void UpdateStatueLight1(void)
 {
 	if ((Random_Next() & 3) != 0)
 	{
-		switch (SoruNichigetsu_Light1Timer)
+		switch (SolLunaRooms_Light1Timer)
 		{
 		case 0:
 			Event_PlayCue(0xbb);
@@ -563,7 +563,7 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 5);
 			break;
 		case 4:
-			SoruNichigetsu_FlashState = 2;
+			SolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 30, 0x25, 1, 5);
 			break;
@@ -571,23 +571,23 @@ static void UpdateStatueLight1(void)
 			Map_CopyCellsTo(0x2e, 0x31, 30, 0x21, 1, 10);
 			break;
 		}
-		SoruNichigetsu_Light1Timer++;
-		if (SoruNichigetsu_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
+		SolLunaRooms_Light1Timer++;
+		if (SolLunaRooms_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90)
 		{
-			SoruNichigetsu_Light1Timer = 0;
+			SolLunaRooms_Light1Timer = 0;
 		}
 	}
-	if (SoruNichigetsu_FlashState != 0)
+	if (SolLunaRooms_FlashState != 0)
 	{
-		if (SoruNichigetsu_FlashState == 2)
+		if (SolLunaRooms_FlashState == 2)
 		{
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 		}
-		else if (SoruNichigetsu_FlashState == 1)
+		else if (SolLunaRooms_FlashState == 1)
 		{
 			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 		}
-		SoruNichigetsu_FlashState--;
+		SolLunaRooms_FlashState--;
 	}
 }
 
@@ -595,7 +595,7 @@ static void UpdateStatueLight2(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SoruNichigetsu_Light2Timer)
+		switch (SolLunaRooms_Light2Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -614,7 +614,7 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 5);
 			break;
 		case 4:
-			SoruNichigetsu_FlashState = 2;
+			SolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 1);
 			Map_CopyCellsTo(0x2f, 0x3b, 42, 0x25, 1, 5);
 			break;
@@ -622,10 +622,10 @@ static void UpdateStatueLight2(void)
 			Map_CopyCellsTo(0x2f, 0x31, 42, 0x21, 1, 10);
 			break;
 		}
-		SoruNichigetsu_Light2Timer++;
-		if (SoruNichigetsu_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
+		SolLunaRooms_Light2Timer++;
+		if (SolLunaRooms_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100)
 		{
-			SoruNichigetsu_Light2Timer = 0;
+			SolLunaRooms_Light2Timer = 0;
 		}
 	}
 }
@@ -634,7 +634,7 @@ static void UpdateStatueLight3(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SoruNichigetsu_Light3Timer)
+		switch (SolLunaRooms_Light3Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -653,7 +653,7 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 5);
 			break;
 		case 4:
-			SoruNichigetsu_FlashState = 2;
+			SolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 1);
 			Map_CopyCellsTo(0x30, 0x3b, 31, 0x28, 1, 5);
 			break;
@@ -661,10 +661,10 @@ static void UpdateStatueLight3(void)
 			Map_CopyCellsTo(0x30, 0x31, 31, 0x24, 1, 10);
 			break;
 		}
-		SoruNichigetsu_Light3Timer++;
-		if (SoruNichigetsu_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
+		SolLunaRooms_Light3Timer++;
+		if (SolLunaRooms_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105)
 		{
-			SoruNichigetsu_Light3Timer = 0;
+			SolLunaRooms_Light3Timer = 0;
 		}
 	}
 }
@@ -673,7 +673,7 @@ static void UpdateStatueLight4(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
-		switch (SoruNichigetsu_Light4Timer)
+		switch (SolLunaRooms_Light4Timer)
 		{
 		case 0:
 			Engine_AudioPlayCue(0xbb);
@@ -692,7 +692,7 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 5);
 			break;
 		case 4:
-			SoruNichigetsu_FlashState = 2;
+			SolLunaRooms_FlashState = 2;
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 1);
 			Map_CopyCellsTo(0x2e, 0x3b, 41, 0x28, 1, 5);
 			break;
@@ -700,10 +700,10 @@ static void UpdateStatueLight4(void)
 			Map_CopyCellsTo(0x2e, 0x31, 41, 0x24, 1, 10);
 			break;
 		}
-		SoruNichigetsu_Light4Timer++;
-		if (SoruNichigetsu_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
+		SolLunaRooms_Light4Timer++;
+		if (SolLunaRooms_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95)
 		{
-			SoruNichigetsu_Light4Timer = 0;
+			SolLunaRooms_Light4Timer = 0;
 		}
 	}
 }
@@ -717,7 +717,7 @@ static void FieldScene_PrepareStatueTransition(void)
 	Map_CopyCellsTo(14, 41, 32, 41, 8, 4);
 	Camera_MoveTo(0x23e0000, -1, 0x9e0000, 0);
 	Engine_MapRedraw();
-	Actor_SetPosition(ACTOR_SUKURETA, 0x23e0000, 0x780000);
+	Actor_SetPosition(ACTOR_KRADEN, 0x23e0000, 0x780000);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
 	ColorBuffer_ApplyTarget(0x2051cc, 1);
@@ -748,14 +748,14 @@ static void Scene_SpringStatueTrap(void)
 
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
-	Engine_EventSetMessage(MsgSoruWhatsHappeningAtTheTrap);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 20);
-	Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
+	Engine_EventSetMessage(MsgSolWhatsHappeningAtTheTrap);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 20);
+	Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 30);
 	Camera_MoveTo(37617664, -1, 11403264, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
-	SetSolShindenActorStep(32784, 20);
+	SetSolSanctumActorStep(32784, 20);
 	for (outer_pair = 0; outer_pair != 4; outer_pair++)
 	{
 		Event_PlayCue(246);
@@ -803,9 +803,9 @@ static void Scene_SpringStatueTrap(void)
 	}
 	SetStatueLightGroup1();
 	Engine_EventWait(6);
-	SetSolShindenActorStep(32784, 6);
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
+	SetSolSanctumActorStep(32784, 6);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x20000, 0x10000);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	gEventWork->transition_frames = 32;
 	Engine_EventCloseScreen();
@@ -819,18 +819,18 @@ static void FieldScene_RunClosingSequence(void)
 	s32 i;
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
-	SoruNichigetsu_Light1Timer = 0;
-	SoruNichigetsu_Light2Timer = 0;
-	SoruNichigetsu_Light3Timer = 0;
-	SoruNichigetsu_Light4Timer = 0;
-	Engine_EventSetMessage(MsgSoruWhatsHappening);
-	Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
-	Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
+	SolLunaRooms_Light1Timer = 0;
+	SolLunaRooms_Light2Timer = 0;
+	SolLunaRooms_Light3Timer = 0;
+	SolLunaRooms_Light4Timer = 0;
+	Engine_EventSetMessage(MsgSolWhatsHappening);
+	Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
+	Actor_ShowEmote(ACTOR_KRADEN, 256, 0);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 30);
 	Camera_MoveTo(37617664, -1, 11403264, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
-	SetSolShindenActorStep(32784, 20);
+	SetSolSanctumActorStep(32784, 20);
 	for (i = 0; i != 4; i++)
 	{
 		Event_PlayCue(246);
@@ -840,12 +840,12 @@ static void FieldScene_RunClosingSequence(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(12);
 	}
-	SetSolShindenActorStep(32784, 6);
-	SoruNichigetsu_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SoruNichigetsu_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SoruNichigetsu_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SoruNichigetsu_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
-	SoruNichigetsu_FlashState = 0;
+	SetSolSanctumActorStep(32784, 6);
+	SolLunaRooms_Light1Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	SolLunaRooms_Light2Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	SolLunaRooms_Light3Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	SolLunaRooms_Light4Timer = (((u32)Engine_RandomNext() * 60) >> 16) + 20;
+	SolLunaRooms_FlashState = 0;
 	Task_AddCallback(UpdateStatueLight1, 3200);
 	Task_AddCallback(UpdateStatueLight2, 3200);
 	Task_AddCallback(UpdateStatueLight3, 3200);
@@ -887,10 +887,10 @@ static void FieldScene_RunClosingSequence(void)
 		Engine_EventWait(2);
 	}
 	Map_CopyCellsTo(45, 30, 34, 10, 4, 2);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 40);
-	SetSolShindenActorStep(32784, 6);
-	Actor_SetSpeed(ACTOR_SUKURETA, 131072, 65536);
-	Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 40);
+	SetSolSanctumActorStep(32784, 6);
+	Actor_SetSpeed(ACTOR_KRADEN, 131072, 65536);
+	Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight1);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight2);
 	Engine_TaskRemoveCallback((s32)UpdateStatueLight3);
@@ -949,8 +949,8 @@ static void FieldScene_RunFlaggedSequence(void)
 		GameFlag_Set(2089);
 	}
 	FieldScene_PrepareStatueTransition();
-	Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
-	Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
+	Actor_FaceDirection(ACTOR_KRADEN, 16384, 20);
+	Engine_ActorJump(ACTOR_KRADEN, 6, 30);
 	Camera_MoveTo(37617664, -1, 11403264, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
@@ -1005,10 +1005,10 @@ static void FieldScene_RunFlaggedSequence(void)
 	if (GameFlag_IsSet(2082) == 0)
 	{
 		base = 32784;
-		Engine_EventSetMessage(MsgSoruYouFoundIt);
-		SetSolShindenActorStep(base, 6);
-		Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
-		SetSolShindenActorStep(base, 6);
+		Engine_EventSetMessage(MsgSolYouFoundIt);
+		SetSolSanctumActorStep(base, 6);
+		Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+		SetSolSanctumActorStep(base, 6);
 	}
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	gEventWork->transition_frames = 32;
@@ -1032,47 +1032,47 @@ static void EV08_TOUCH(void)
 		else
 		{
 			Engine_EventBegin();
-			Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
-			Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 1);
+			Actor_SetPosition(ACTOR_KRADEN, 0x2410000, 0x930000);
+			Actor_FaceDirection(ACTOR_KRADEN, 0x4000, 1);
 			Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
-			Engine_EventSetMessage(MsgSoruThePictureOfLunaChanged);
+			Engine_EventSetMessage(MsgSolThePictureOfLunaChanged);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(10);
-			Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-			Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 152);
+			Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
+			Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 152);
 			Engine_EventWait(6);
-			Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
-			SetSolShindenActorStep(16, 6);
+			Engine_ActorJump(ACTOR_KRADEN, 6, 30);
+			SetSolSanctumActorStep(16, 6);
 			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 			Engine_EventWait(2);
-			Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-			SetSolShindenActorStep(16, 6);
+			Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+			SetSolSanctumActorStep(16, 6);
 			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 			Engine_EventWait(40);
-			Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
+			Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 			Engine_EventWait(30);
-			SetSolShindenActorStep(16, 6);
+			SetSolSanctumActorStep(16, 6);
 			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-			Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 184);
+			Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 184);
 			Engine_EventWait(6);
-			Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
+			Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 			Engine_EventWait(40);
-			SetSolShindenActorStep(0x4010, 6);
-			Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 208);
+			SetSolSanctumActorStep(0x4010, 6);
+			Actor_WalkToAndWait(ACTOR_KRADEN, 0x240, 208);
 			Engine_EventWait(40);
 			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 			Engine_EventWait(6);
-			Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
-			Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+			Actor_SetSpeed(ACTOR_KRADEN, 0x8000, 0x4000);
+			Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 			record = Object_GetById(0);
 			if (record != 0)
 			{
-				Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
+				Actor_SetDestination(ACTOR_KRADEN, record->x.part.pixel, record->z.part.pixel);
 			}
-			Engine_ActorWaitForMove(ACTOR_SUKURETA);
-			Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+			Engine_ActorWaitForMove(ACTOR_KRADEN);
+			Actor_SetPosition(ACTOR_KRADEN, 0, 0);
 			GameFlag_Set(FLAG_LUNA_PICTURE_CHANGED_TO_SOL);
 			Engine_EventEnd();
 		}
@@ -1089,13 +1089,13 @@ static void FieldScene_RunActorPositionTransition(void)
 	Actor_WalkToAndWait(16, 0x188, 168);
 	Actor_FaceDirection(16, 0x8000, 30);
 	Engine_ActorSetAnimation(16, 1);
-	Engine_EventSetMessage(MsgSoruLookSymbolFloor);
+	Engine_EventSetMessage(MsgSolLookSymbolFloor);
 	Engine_ActorJump(16, 4, 30);
-	SetSolShindenActorStep(16, 6);
+	SetSolSanctumActorStep(16, 6);
 	Engine_ActorRunRepeatedMotion(0, 2);
 	Engine_EventWait(6);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
-	SetSolShindenActorStep(16, 6);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+	SetSolSanctumActorStep(16, 6);
 	Actor_WalkToAndWait(16, 0x178, 184);
 	Actor_SetPosition(16, 0x6480000, 0x6480000);
 	Engine_EventWait(4);
@@ -1168,8 +1168,8 @@ static void EV20_SEARCH(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimation(16, 1);
 		Engine_ActorSetAnimation(0, 0);
-		Engine_EventSetMessage(MsgSoruHa);
-		SetSolShindenActorStep(32784, 6);
+		Engine_EventSetMessage(MsgSolHa);
+		SetSolSanctumActorStep(32784, 6);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_ActorSetAnimation(16, 1);
 		Engine_EventShowMessage(32784, 0);
@@ -1212,7 +1212,7 @@ static void EV20_SEARCH(void)
 		} while (base5_0 != 60);
 		Engine_ActorSetPosition(0, 0, 0);
 		Engine_ActorJump(16, 4, 20);
-		SetSolShindenActorStep(16, 6);
+		SetSolSanctumActorStep(16, 6);
 		Actor_WalkToAndWait(16, 0x120, 120);
 		Engine_ActorRunRepeatedMotion(16, 2);
 		Engine_EventWait(20);
@@ -1266,7 +1266,7 @@ static void EV20_SEARCH(void)
 	}
 }
 
-s32 SoruNichigetsu_RestoreEntryState(void)
+s32 SolLunaRooms_RestoreEntryState(void)
 {
 	s32 done;
 	s32 lit;
@@ -1422,7 +1422,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
 	}
 	if (GameFlag_IsSet(0x309) == 0 && gGameState.entrance == 8)
 	{
-		SoruNichigetsu_RunLightScene();
+		SolLunaRooms_RunLightScene();
 		Engine_GameFlagSet(0x309);
 		Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
 	}
@@ -1455,13 +1455,13 @@ static s32 CheckAllStatueLights(void)
 	return all_set;
 }
 
-static void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
+static void SetSolSanctumActorStep(s32 actor_step, s32 wait_frames)
 {
 	Engine_EventShowMessage(actor_step, 0);
 	Engine_EventWait(wait_frames);
 }
 
-static void SoruNichigetsu_RunLightScene(void)
+static void SolLunaRooms_RunLightScene(void)
 {
 	struct FieldActor *leader;
 	u8				  *field;
@@ -1504,7 +1504,7 @@ static void SoruNichigetsu_RunLightScene(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(1, 2);
-	Engine_EventSetMessage(MsgSoruFloatingEyeThing);
+	Engine_EventSetMessage(MsgSolFloatingEyeThing);
 	Engine_EventOpenMessage(1, 0);
 	Engine_EventChooseYesNo(0, 0);
 	Engine_ActorSetAnimation(0, 1);
@@ -1527,7 +1527,7 @@ static void SoruNichigetsu_RunLightScene(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(1, 2);
-	SetSolShindenActorStep(1, 10);
+	SetSolSanctumActorStep(1, 10);
 	Engine_ActorSetAnimation(0, 3);
 	Engine_ActorSetAnimationAndWait(1, 3);
 	Engine_ActorSetAnimation(1, 2);
@@ -1556,20 +1556,20 @@ static void SoruNichigetsu_RunLightScene(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0)
+	if (GameFlag_IsSet(FLAG_ISAAC_SEARCHING_FOR_KRADEN) != 0)
 	{
-		Engine_EventSetMessage(MsgSoruSukuretaLetMeKnowWhat);
+		Engine_EventSetMessage(MsgSolKradenLetMeKnowWhat);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgSoruSukuretaJustWaitOverThere);
+		Engine_EventSetMessage(MsgSolKradenJustWaitOverThere);
 	}
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 10);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+	Actor_FaceDirection(ACTOR_KRADEN, 0xc000, 10);
 	Engine_EventEnd();
 }
 
-struct SceneEntrance gSoruNichigetsuEntrances[] = {
+struct SceneEntrance gSolLunaRoomsEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0, 752, 496, 0 },
 	{ 1, CONDITION_ALWAYS, 55, 0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0 },
 	{ 2, CONDITION_ALWAYS, 647, 0, 327, FACING_SOUTH, 0, 0, 0, 752, 496, 0 },
@@ -1582,7 +1582,7 @@ struct SceneEntrance gSoruNichigetsuEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gSoruNichigetsuExits[] = {
+u32 gSolLunaRoomsExits[] = {
 	SCENE_EXITS(11),
 	SCENE_EXIT(1, 16, 16),
 	SCENE_EXIT(2, 12, 1),
@@ -1595,7 +1595,7 @@ u32 gSoruNichigetsuExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSoruNichigetsuPlacements[] = {
+struct ScenePlacement gSolLunaRoomsPlacements[] = {
 	{ 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1614,14 +1614,14 @@ struct ScenePlacement gSoruNichigetsuPlacements[] = {
 		PIXELS(504), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gSoruNichigetsuEvents[] = {
+struct SceneEvent gSolLunaRoomsEvents[] = {
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },

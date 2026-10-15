@@ -28,9 +28,9 @@
 #include "objcmd.h"
 
 // 前方宣言
-static void KareiTorebi_PreparePort(void);
+static void KalayTolbiDocks_PreparePort(void);
 static void FieldScene_ConfigureFlaggedActors(void);
-static void KareiTorebi_PrepareWindowTransition(void);
+static void KalayTolbiDocks_PrepareWindowTransition(void);
 static void FieldScene_PlaceSlots14And15(void);
 static void SceneActor_SetMode3AndFlagBit1(s32 no);
 static void FieldScene_RunScene3aeSequenceA(void);
@@ -44,19 +44,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiTorebi1)
+	if (scene == (s32)&SceneId_KalayTolbiDocks1)
 	{
-		return gKareiTorebiEntrances1;
+		return gKalayTolbiDocksEntrances1;
 	}
-	if (scene == (s32)&SceneId_KareiTorebi3)
+	if (scene == (s32)&SceneId_KalayTolbiDocks3)
 	{
-		return gKareiTorebiEntrances3;
+		return gKalayTolbiDocksEntrances3;
 	}
-	if (scene == (s32)&SceneId_KareiTorebi2)
+	if (scene == (s32)&SceneId_KalayTolbiDocks2)
 	{
-		return gKareiTorebiEntrances2;
+		return gKalayTolbiDocksEntrances2;
 	}
-	return gKareiTorebiEntrancesOther;
+	return gKalayTolbiDocksEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -64,47 +64,47 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *KareiTorebi_GetExits(void)
+u8 *KalayTolbiDocks_GetExits(void)
 {
-	return KareiTorebi_SceneTable;
+	return KalayTolbiDocks_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 room = gGameState.scene;
 
-	if (room == (s32)&SceneId_KareiTorebi1)
+	if (room == (s32)&SceneId_KalayTolbiDocks1)
 	{
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return gKareiTorebiPlacements1Flag93e;
+			return gKalayTolbiDocksPlacements1Flag93e;
 		}
-		return gKareiTorebiPlacements1;
+		return gKalayTolbiDocksPlacements1;
 	}
 
-	if (room == (s32)&SceneId_KareiTorebi3)
+	if (room == (s32)&SceneId_KalayTolbiDocks3)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return gKareiTorebiPlacements3Flag950;
+			return gKalayTolbiDocksPlacements3Flag950;
 		}
-		return gKareiTorebiPlacements3;
+		return gKalayTolbiDocksPlacements3;
 	}
 
-	if (room == (s32)&SceneId_KareiTorebi2)
+	if (room == (s32)&SceneId_KalayTolbiDocks2)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return gKareiTorebiPlacements2Flag950;
+			return gKalayTolbiDocksPlacements2Flag950;
 		}
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return gKareiTorebiPlacements2Flag93e;
+			return gKalayTolbiDocksPlacements2Flag93e;
 		}
-		return gKareiTorebiPlacements2;
+		return gKalayTolbiDocksPlacements2;
 	}
 
-	return gKareiTorebiPlacementsOther;
+	return gKalayTolbiDocksPlacementsOther;
 }
 
 static void EV20_TOUCH(void)
@@ -123,44 +123,44 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiTorebi1)
+	if (scene == (s32)&SceneId_KalayTolbiDocks1)
 	{
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return gKareiTorebiEvents1Flag93e;
+			return gKalayTolbiDocksEvents1Flag93e;
 		}
-		return gKareiTorebiEvents1;
+		return gKalayTolbiDocksEvents1;
 	}
 
-	if (scene == (s32)&SceneId_KareiTorebi3)
+	if (scene == (s32)&SceneId_KalayTolbiDocks3)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return gKareiTorebiEvents3Flag950;
+			return gKalayTolbiDocksEvents3Flag950;
 		}
-		return gKareiTorebiEvents3;
+		return gKalayTolbiDocksEvents3;
 	}
 
-	if (scene == (s32)&SceneId_KareiTorebi2)
+	if (scene == (s32)&SceneId_KalayTolbiDocks2)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return gKareiTorebiEvents2Flag950;
+			return gKalayTolbiDocksEvents2Flag950;
 		}
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return gKareiTorebiEvents2Flag93e;
+			return gKalayTolbiDocksEvents2Flag93e;
 		}
-		return gKareiTorebiEvents2;
+		return gKalayTolbiDocksEvents2;
 	}
 
-	return gKareiTorebiEventsOther;
+	return gKalayTolbiDocksEventsOther;
 }
 
 static void EV08_TALK_1(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiWantGoToTolbi);
+	Engine_EventSetMessage(MsgKalayWantGoToTolbi);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -170,7 +170,7 @@ static void EV11_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a6) == 0)
 	{
-		Engine_EventSetMessage(MsgKareiGoingTakeShip);
+		Engine_EventSetMessage(MsgKalayGoingTakeShip);
 		Event_OpenMessage(11, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -185,13 +185,13 @@ static void EV11_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKareiPassMessageDaughter);
+		Engine_EventSetMessage(MsgKalayPassMessageDaughter);
 		Event_ShowMessage(11, 0);
 	}
 	Engine_EventEnd();
 }
 
-static void KareiTorebi_RemindBoardShip(void)
+static void KalayTolbiDocks_RemindBoardShip(void)
 {
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
 	((void)Object_GetById(0));
@@ -204,7 +204,7 @@ static void KareiTorebi_RemindBoardShip(void)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			Engine_EventBegin();
 #endif
-			Engine_EventSetMessage(MsgKareiFinishedOutHereBoardShip);
+			Engine_EventSetMessage(MsgKalayFinishedOutHereBoardShip);
 			Event_OpenMessage(12, 0);
 			Actor_FaceDirection(12, 0x4000, 0);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -228,17 +228,17 @@ static void SceneDialogue_RunActor12Event(void)
 	{
 		if (GameFlag_IsSet(0x8a9) != 0)
 		{
-			Engine_EventSetMessage(MsgKareiFinishedOutHereBoardShip);
+			Engine_EventSetMessage(MsgKalayFinishedOutHereBoardShip);
 			Event_OpenMessage(12, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKareiWantGoAshore);
+			Engine_EventSetMessage(MsgKalayWantGoAshore);
 			Event_OpenMessage(12, 0);
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
 				Engine_EventWait(10);
-				Engine_EventSetMessage(MsgKareiWantGoAshore + 1);
+				Engine_EventSetMessage(MsgKalayWantGoAshore + 1);
 				Event_ShowMessage(12, 0);
 				Actor_WalkToAndWait(12, 88, 0x508);
 				Actor_FaceDirection(12, 0x4000, 0);
@@ -247,7 +247,7 @@ static void SceneDialogue_RunActor12Event(void)
 			}
 			else
 			{
-				Engine_EventSetMessage(MsgKareiWantGoAshore + 2);
+				Engine_EventSetMessage(MsgKalayWantGoAshore + 2);
 				Event_ShowMessage(12, 0);
 			}
 		}
@@ -258,7 +258,7 @@ static void SceneDialogue_RunActor12Event(void)
 		{
 			return;
 		}
-		Engine_EventSetMessage(MsgKareiTicketsPlease);
+		Engine_EventSetMessage(MsgKalayTicketsPlease);
 		Event_ShowMessage(12, 0);
 		if (GameFlag_IsSet(0x8a5) != 0)
 		{
@@ -291,17 +291,17 @@ static void EV13_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x8A7) != 0)
 	{
-		Engine_EventSetMessage(MsgKareiBoardWaitSetSail);
+		Engine_EventSetMessage(MsgKalayBoardWaitSetSail);
 		Engine_EventOpenMessage(13, 0);
 	}
 	else if (Engine_GameFlagIsSet(0x8A5) != 0)
 	{
-		Engine_EventSetMessage(MsgKareiHaveTicketsGiveHim);
+		Engine_EventSetMessage(MsgKalayHaveTicketsGiveHim);
 		Engine_EventShowMessage(13, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKareiAfterHandingOverTicket);
+		Engine_EventSetMessage(MsgKalayAfterHandingOverTicket);
 		Engine_EventShowMessage(13, 0);
 	}
 
@@ -323,12 +323,12 @@ static void EV08_TALK_2(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a5) != 0)
 	{
-		Engine_EventSetMessage(MsgKareiHandInTicketPlank);
+		Engine_EventSetMessage(MsgKalayHandInTicketPlank);
 		Event_ShowMessage(8, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKareiLookingForTickets);
+		Engine_EventSetMessage(MsgKalayLookingForTickets);
 		Event_OpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -389,7 +389,7 @@ static void EV08_TALK_2(void)
 static void EV08_TALK_3(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiHearScaryTrip);
+	Engine_EventSetMessage(MsgKalayHearScaryTrip);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -397,19 +397,19 @@ static void EV08_TALK_3(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiTouristsLookUpset);
+	Engine_EventSetMessage(MsgKalayTouristsLookUpset);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
 
-static void KareiTorebi_DeliverParentsMessage(void)
+static void KalayTolbiDocks_DeliverParentsMessage(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a8) != 0)
 	{
 		Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgKareiThanksMessageParents);
+		Engine_EventSetMessage(MsgKalayThanksMessageParents);
 		Event_ShowMessage(11, 0);
 		Engine_EventEnd();
 	}
@@ -419,7 +419,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 		Actor_ShowEmote(11, 0x100, 50);
 		Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgKareiSilkRoadBlocked);
+		Engine_EventSetMessage(MsgKalaySilkRoadBlocked);
 		Event_ShowMessage(11, 0);
 		if (GameFlag_IsSet(0x8a6) != 0)
 		{
@@ -458,17 +458,17 @@ static void EV10_TOUCH(void)
 	Event_PlayCue(158);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-	if (gGameState.scene == (s32)&SceneId_KareiTorebi1)
+	if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1)
 	{
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x130, 0x570);
-		Map_AnimateCells(KareiTorebi_LeaveCells1, 78, 86);
+		Map_AnimateCells(KalayTolbiDocks_LeaveCells1, 78, 86);
 	}
 	else
 	{
-		if (gGameState.scene == (s32)&SceneId_KareiTorebi3)
+		if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3)
 		{
 			Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
-			Map_AnimateCells(KareiTorebi_LeaveCells3, 74, 9);
+			Map_AnimateCells(KalayTolbiDocks_LeaveCells3, 74, 9);
 		}
 	}
 	Engine_EventWait(16);
@@ -482,28 +482,28 @@ s32 Scene_Initialize(void)
 	{
 		Engine_GameFlagSet(0x950);
 	}
-	if (gGameState.scene == (s32)&SceneId_KareiTorebi1)
+	if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1)
 	{
-		KareiTorebi_PreparePort();
+		KalayTolbiDocks_PreparePort();
 	}
 	else
 	{
-		if (gGameState.scene == (s32)&SceneId_KareiTorebi3)
+		if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3)
 		{
 			FieldScene_ConfigureFlaggedActors();
 		}
 		else
 		{
-			if (gGameState.scene == (s32)&SceneId_KareiTorebi2)
+			if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks2)
 			{
-				KareiTorebi_PrepareWindowTransition();
+				KalayTolbiDocks_PrepareWindowTransition();
 			}
 		}
 	}
 	return 0;
 }
 
-static void KareiTorebi_PreparePort(void)
+static void KalayTolbiDocks_PreparePort(void)
 {
 	if (gGameState.entrance == 1)
 	{
@@ -582,7 +582,7 @@ static void FieldScene_ConfigureFlaggedActors(void)
 	}
 }
 
-static void KareiTorebi_PrepareWindowTransition(void)
+static void KalayTolbiDocks_PrepareWindowTransition(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_GameFlagClear(0x12F);
@@ -626,20 +626,20 @@ static void FieldScene_RunScene3aeSequenceA(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
 	FieldMotion_LaunchFromFocusedObject(1, -16, 0, 0x8000);
-	Engine_ActorWaitForMove(GERALD);
+	Engine_ActorWaitForMove(GARET);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKareiIncredibleOcean);
+	Engine_EventSetMessage(MsgKalayIncredibleOcean);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
-	Actor_WalkToAndWait(GERALD, 232, 0x590);
-	Actor_FaceDirection(GERALD, 0x8000, 0);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+	Actor_WalkToAndWait(GARET, 232, 0x590);
+	Actor_FaceDirection(GARET, 0x8000, 0);
 	Camera_MoveTo(0xb80000, -1, 0x5a00000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(10);
-	Engine_ActorJump(GERALD, 6, 15);
-	Engine_ActorJump(GERALD, 6, 40);
-	Event_ShowMessage(GERALD, 0);
+	Engine_ActorJump(GARET, 6, 15);
+	Engine_ActorJump(GARET, 6, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Camera_MoveTo(0x1080000, -1, 0x5a80000, 1);
 	Engine_CameraWaitForMove();
@@ -649,42 +649,42 @@ static void FieldScene_RunScene3aeSequenceA(void)
 	Actor_WalkToAndWait(8, 0x108, 0x590);
 	Actor_FaceDirection(8, 0x8000, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_FaceDirection(GARET, 0, 0);
 	Engine_EventWait(20);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(10);
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(20);
-	Actor_ShowEmote(GERALD, 0x102, 40);
+	Actor_ShowEmote(GARET, 0x102, 40);
 	Engine_EventWait(30);
-	Actor_FaceDirection(GERALD, 0x8000, 0);
+	Actor_FaceDirection(GARET, 0x8000, 0);
 	Engine_EventWait(50);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x2000, 0);
+	Actor_FaceDirection(GARET, 0x2000, 0);
 	Engine_EventWait(30);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_WalkToAndWait(GERALD, 0x108, 0x5b8);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_WalkToAndWait(GARET, 0x108, 0x5b8);
+	Actor_FaceDirection(GARET, 0, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
 	Actor_FaceDirection(8, 0x4000, 0);
 	Engine_EventWait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(30);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(30);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_EventWait(20);
 	Object_GetById(8)->paused = 0;
 	Engine_ActorEnableActionCallback(8, 2);
@@ -709,7 +709,7 @@ static void EV50_TOUCH(void)
 	GameFlag_Set(0x8ab);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage(MsgKareiReturnedTicketCost);
+	Engine_EventSetMessage(MsgKalayReturnedTicketCost);
 	actor = Object_GetById(11);
 	actor->priority_flags = 0;
 	((u8 *)actor->sprite)[9] |= 12;
@@ -843,7 +843,7 @@ static void EV50_TOUCH(void)
 	Actor_WalkByAndWait(10, 24, 0);
 	Event_PlayCue(133);
 	Engine_ActorJump(16, 6, 0);
-	Engine_ActorEnableActionCallback(16, KareiTorebi_ActorSixteenScript);
+	Engine_ActorEnableActionCallback(16, KalayTolbiDocks_ActorSixteenScript);
 	Object_GetById(10)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorJump(10, 6, 0);
 	Actor_WalkByAndWait(10, -12, 4);
@@ -895,27 +895,27 @@ static void EV50_TOUCH(void)
 	Engine_EventEnd();
 }
 
-u16 KareiTorebi_LeaveCells1[] = {
+u16 KalayTolbiDocks_LeaveCells1[] = {
 	MAP_CELL_STEP(98, 84, 2, 2, 5), MAP_CELL_STEP(98, 82, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 KareiTorebi_LeaveCells3[] = {
+u16 KalayTolbiDocks_LeaveCells3[] = {
 	MAP_CELL_STEP(92, 9, 2, 2, 5), MAP_CELL_STEP(92, 7, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-s32 KareiTorebi_ActorSixteenScript[] = {
+s32 KalayTolbiDocks_ActorSixteenScript[] = {
 	SC_ADD(SW_FACING, -0x2000),
 	SC_WAIT(2),
 	SC_LOOP(8, SC_TOP),
 	SC_END,
 };
 
-struct SceneEntrance gKareiTorebiEntrancesOther[] = {
+struct SceneEntrance gKalayTolbiDocksEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiTorebiEntrances1[] = {
+struct SceneEntrance gKalayTolbiDocksEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 288, 0, 1464, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 72, 0, 1304, FACING_EAST, 0, -1, -1, -1, -1, 0 },
@@ -924,7 +924,7 @@ struct SceneEntrance gKareiTorebiEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiTorebiEntrances3[] = {
+struct SceneEntrance gKalayTolbiDocksEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 408, 0, 296, FACING_WEST, 0, 0, 0, 448, 432, 0 },
 	{ 2, CONDITION_ALWAYS, 24, 0, 232, FACING_EAST, 0, 0, 0, 448, 432, 0 },
@@ -932,14 +932,14 @@ struct SceneEntrance gKareiTorebiEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiTorebiEntrances2[] = {
+struct SceneEntrance gKalayTolbiDocksEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, 32, 32, 272, 272, 0 },
 	{ 2, CONDITION_ALWAYS, 384, 0, 248, FACING_NORTH, 0, 320, 32, 560, 272, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 KareiTorebi_SceneTable[] = {
+u32 KalayTolbiDocks_SceneTable[] = {
 	SCENE_EXITS(107),
 	SCENE_EXIT(1, 2, 21),
 	SCENE_EXIT(2, 109, 5),
@@ -955,11 +955,11 @@ u32 KareiTorebi_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKareiTorebiPlacementsOther[] = {
+struct ScenePlacement gKalayTolbiDocksPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements3[] = {
+struct ScenePlacement gKalayTolbiDocksPlacements3[] = {
 	{ 0x92, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(408), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x93, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -979,7 +979,7 @@ struct ScenePlacement gKareiTorebiPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements3Flag950[] = {
+struct ScenePlacement gKalayTolbiDocksPlacements3Flag950[] = {
 	{ 0x92, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(408), 0, PIXELS(296), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x93, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1003,8 +1003,8 @@ struct ScenePlacement gKareiTorebiPlacements3Flag950[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements1[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gKalayTolbiDocksPlacements1[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(248), 0, PIXELS(1408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1023,8 +1023,8 @@ struct ScenePlacement gKareiTorebiPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements1Flag93e[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gKalayTolbiDocksPlacements1Flag93e[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1043,7 +1043,7 @@ struct ScenePlacement gKareiTorebiPlacements1Flag93e[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements2[] = {
+struct ScenePlacement gKalayTolbiDocksPlacements2[] = {
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1059,7 +1059,7 @@ struct ScenePlacement gKareiTorebiPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements2Flag93e[] = {
+struct ScenePlacement gKalayTolbiDocksPlacements2Flag93e[] = {
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1075,7 +1075,7 @@ struct ScenePlacement gKareiTorebiPlacements2Flag93e[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiTorebiPlacements2Flag950[] = {
+struct ScenePlacement gKalayTolbiDocksPlacements2Flag950[] = {
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1091,72 +1091,72 @@ struct ScenePlacement gKareiTorebiPlacements2Flag950[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKareiTorebiEventsOther[] = {
+struct SceneEvent gKalayTolbiDocksEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents1[] = {
+struct SceneEvent gKalayTolbiDocksEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_1) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeCantTakeSilkRoadSo) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiYouCantTakeSilkRoadMuch) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, 0x911, MSGNO(MsgKareiTorebiTodayThereAreSupposedToBe) },
-	{ EVENT_TALK, 13, 0x911, MSGNO(MsgKareiTorebiTheShipWillBeOpenUntil) },
+	{ EVENT_TALK, 12, 0x911, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
+	{ EVENT_TALK, 13, 0x911, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
 	{ 0x400, 12, 0x8a9, EVENT_SCRIPT(SceneDialogue_RunActor12Event) },
 	{ 0x8400, 12, 0x8a9, EVENT_SCRIPT(SceneDialogue_RunActor12Event) },
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_RemindBoardShip) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #else
-	{ 0xc400, 12, IF_FLAG_SET(0x8a9), EVENT_SCRIPT(KareiTorebi_RemindBoardShip) },
+	{ 0xc400, 12, IF_FLAG_SET(0x8a9), EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #endif
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWithSilkRoadClosedEveryoneWill) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiICantBelieveHowExpensiveTickets) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWellIsntThisGreatWeCant) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeveSpentAYearPlanningThis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x911, MSGNO(MsgKareiTorebiTheCaptainsInAGoodMood) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x911, MSGNO(MsgKareiTorebiTheCaptainsInAGoodMoodThats) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSilkRoadIsBlockedSoThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheReplacementShipHasntArrivedSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveSpentAYearPlanningThis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x911, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x911, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMoodThats) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents1Flag93e[] = {
+struct SceneEvent gKalayTolbiDocksEvents1Flag93e[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheShipHasntReturnedSoWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiOhHoHoWithoutAShip) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiImGladIOnlyWorkOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIWonderIfMonstersGotEveryone) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents3[] = {
+struct SceneEvent gKalayTolbiDocksEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, 20, 0x8aa, EVENT_SCRIPT(EV20_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_3) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighIThinkWereDoneSailing) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_DeliverParentsMessage) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfYoureGoingToTolbiKeep) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiItsBeenQuiteSomeTimeSince) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x8a8), MSGNO(MsgKareiTorebiItWasAHardCrossingVery) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40b, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_DeliverParentsMessage) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAfterSeeingTheLooksOnThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIGetTheFeelingThatIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiYouCrossedTheSeaJustFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIGuessWeWontBeSeeing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIThinkThatMissingShipMust) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_DeliverParentsMessage) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x8a8), MSGNO(MsgKalayTolbiDocksItWasAHardCrossingVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40b, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_DeliverParentsMessage) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGetTheFeelingThatIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(0xb7) },
@@ -1164,27 +1164,27 @@ struct SceneEvent gKareiTorebiEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents3Flag950[] = {
+struct SceneEvent gKalayTolbiDocksEvents3Flag950[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, 50, 0x8ab, EVENT_SCRIPT(EV50_TOUCH) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiThereAreManyHereWhoWant) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiHangingAroundHereLikeThisAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfBothTheCaptainAndKaja) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfKajaAndTheOthersSay) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTourGroupsShouldTakeCareOf) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiToHeckWithYouImStaying) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighIWonderWhenWellBe) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWellBeCountingOnYouIf) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAsLongAsWereStuckHere) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighIfIKnewItWould) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfTheydJustLetTheShip) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfImGoingToBeStuck) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiGrrrWhyDontYouGetUp) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAsLongAsYoureHereWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiThisTourWasntWellOrganizedThats) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIWonderIfGrandmaIsDoing) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfKajaAndTheOthersSay) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTourGroupsShouldTakeCareOf) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksToHeckWithYouImStaying) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIWonderWhenWellBe) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellBeCountingOnYouIf) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsWereStuckHere) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIfIKnewItWould) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfTheydJustLetTheShip) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfImGoingToBeStuck) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksGrrrWhyDontYouGetUp) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(0xb7) },
@@ -1192,49 +1192,49 @@ struct SceneEvent gKareiTorebiEvents3Flag950[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents2[] = {
+struct SceneEvent gKalayTolbiDocksEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiHmmmThatsStrangeIsntTheReplacement) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiOnceWeveCrossedTheKaragolWell) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a5, MSGNO(MsgKareiTorebiIFeelSortOfBadThat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfYouveAlreadyBoughtYourTicket) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheShipWontLeaveHereTill) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiLetsGetGoingImNotGetting) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiImSorryButWeJustCant) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeRentedOutOurHouseFor) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeRentedOutOurHouseIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighWeCouldHaveMadeLots) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiMaybeWellStayHereUntilThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAreWeSupposedToSleepOn) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a5, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYouveAlreadyBoughtYourTicket) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontLeaveHereTill) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksLetsGetGoingImNotGetting) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents2Flag93e[] = {
+struct SceneEvent gKalayTolbiDocksEvents2Flag93e[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheShipWontBeLeavingHere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAhhhImBoredWhenAreWe) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiImSorryButWeJustCant) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeRentedOutOurHouseFor) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeRentedOutOurHouseIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighWeCouldHaveMadeLots) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiMaybeWellStayHereUntilThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAreWeSupposedToSleepOn) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiTorebiEvents2Flag950[] = {
+struct SceneEvent gKalayTolbiDocksEvents2Flag950[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheShipWontBeLeavingHere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiAhhhImBoredWhenAreWe) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiImStuckIWantToCross) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiYeahTheShipsNotGoingAnywhere) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheKaragolSeaLooksSoCalm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeveGotPassengersButNobodysSailing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheCaptainMustBeAStubborn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheMarineBlueKaragolSeaIs) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImStuckIWantToCross) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYeahTheShipsNotGoingAnywhere) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheKaragolSeaLooksSoCalm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveGotPassengersButNobodysSailing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheCaptainMustBeAStubborn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheMarineBlueKaragolSeaIs) },
 	{ SCENE_EVENTS_END },
 };

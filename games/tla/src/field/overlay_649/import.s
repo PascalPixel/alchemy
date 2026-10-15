@@ -61,11 +61,11 @@ Func_020005dc:
 	.global Func_020005e4
 	.thumb_func
 Func_020005e4:
-	overlay_veneer Party_SetLeaderJasmineFar
+	overlay_veneer Party_SetLeaderJennaFar
 	.global Func_020005ec
 	.thumb_func
 Func_020005ec:
-	overlay_veneer Party_SetLeaderGarciaFar
+	overlay_veneer Party_SetLeaderFelixFar
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

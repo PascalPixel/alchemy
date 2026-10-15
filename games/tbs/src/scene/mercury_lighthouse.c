@@ -51,15 +51,15 @@
 // 前方宣言
 static void EV11_PSYNERGY(void);
 static void EV08_PSYNERGY_3(void);
-static void MakyuriHeya_SyncBlockFlags(void);
+static void MercuryLighthouse_SyncBlockFlags(void);
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
-static void MakyuriHeya_OpenThreeStepStair(void);
+static void MercuryLighthouse_OpenThreeStepStair(void);
 static void SceneEffect_SpawnParticleEveryFourthFrame(void);
 static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z);
 static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
 static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
-static void MakyuriHeya_RideLift(void);
-static void MakyuriHeya_CastPsynergyAtActor11(void);
+static void MercuryLighthouse_RideLift(void);
+static void MercuryLighthouse_CastPsynergyAtActor11(void);
 static void SceneState_SetRecordTableValue(s32 key, s32 value);
 
 #define NULL ((void *)0)
@@ -107,7 +107,7 @@ struct LeaderEffectWork
 	struct FieldActor *target;
 };
 
-static void MakyuriHeya_UpdateLeaderEffectTarget(void)
+static void MercuryLighthouse_UpdateLeaderEffectTarget(void)
 {
 	struct FieldActor		*actor = Object_GetById(0);
 	struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
@@ -127,19 +127,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MakyuriHeya4)
+	if (selector == (s32)&SceneId_MercuryLighthouse4)
 	{
-		return gMakyuriHeyaEntrances4;
+		return gMercuryLighthouseEntrances4;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya3)
+	if (selector == (s32)&SceneId_MercuryLighthouse3)
 	{
-		return gMakyuriHeyaEntrances3;
+		return gMercuryLighthouseEntrances3;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya2)
+	if (selector == (s32)&SceneId_MercuryLighthouse2)
 	{
-		return gMakyuriHeyaEntrances2;
+		return gMercuryLighthouseEntrances2;
 	}
-	return gMakyuriHeyaEntrancesOther;
+	return gMercuryLighthouseEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -147,58 +147,58 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *MakyuriHeya_GetExits(void)
+u8 *MercuryLighthouse_GetExits(void)
 {
-	return MakyuriHeya_SceneTable;
+	return MercuryLighthouse_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MakyuriHeya1)
+	if (selector == (s32)&SceneId_MercuryLighthouse1)
 	{
-		return gMakyuriHeyaPlacements1;
+		return gMercuryLighthousePlacements1;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya2)
+	if (selector == (s32)&SceneId_MercuryLighthouse2)
 	{
-		return gMakyuriHeyaPlacements2;
+		return gMercuryLighthousePlacements2;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya3)
+	if (selector == (s32)&SceneId_MercuryLighthouse3)
 	{
-		return gMakyuriHeyaPlacements3;
+		return gMercuryLighthousePlacements3;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya4)
+	if (selector == (s32)&SceneId_MercuryLighthouse4)
 	{
-		return gMakyuriHeyaPlacements4;
+		return gMercuryLighthousePlacements4;
 	}
-	return gMakyuriHeyaPlacementsOther;
+	return gMercuryLighthousePlacementsOther;
 }
 
 static void EV21_TOUCH(void)
 {
-	Makyuri_TickSpawnTimer();
+	Mercury_TickSpawnTimer();
 }
 
-static void MakyuriHeya_ClearSceneRecordAndTarget(void)
+static void MercuryLighthouse_ClearSceneRecordAndTarget(void)
 {
 	SceneState_ClearCurrentRecordAndReleaseTarget();
 }
 
 static void FieldScene_RunSingleStep(void)
 {
-	Makyuri_RunActorMove();
+	Mercury_RunActorMove();
 }
 
 static void EV11_TOUCH(void)
 {
-	MakyuriIriguchi_RaisePillar();
+	MercuryEntrance_RaisePillar();
 }
 
 static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgMakyuriHeyaStrangeForcesBlockWay, 1);
+	Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
 	Engine_EventEnd();
 }
 
@@ -206,19 +206,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_MakyuriHeya1)
+	if (selector == (s32)&SceneId_MercuryLighthouse1)
 	{
-		return gMakyuriHeyaEvents1;
+		return gMercuryLighthouseEvents1;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya2)
+	if (selector == (s32)&SceneId_MercuryLighthouse2)
 	{
-		return gMakyuriHeyaEvents2;
+		return gMercuryLighthouseEvents2;
 	}
-	if (selector == (s32)&SceneId_MakyuriHeya3)
+	if (selector == (s32)&SceneId_MercuryLighthouse3)
 	{
-		return gMakyuriHeyaEvents3;
+		return gMercuryLighthouseEvents3;
 	}
-	return gMakyuriHeyaEventsOther;
+	return gMercuryLighthouseEventsOther;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -239,7 +239,7 @@ static void EV55_TOUCH(void)
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-static void MakyuriHeya_ExitWhenChannelsOpen(void)
+static void MercuryLighthouse_ExitWhenChannelsOpen(void)
 {
 	if (GameFlag_IsSet(0x310) != 0 && GameFlag_IsSet(0x311) != 0 && GameFlag_IsSet(0x312) != 0)
 	{
@@ -332,12 +332,12 @@ static void EV25_SCRIPT(void)
 			}
 			break;
 		}
-		MakyuriHeya_ExitWhenChannelsOpen();
+		MercuryLighthouse_ExitWhenChannelsOpen();
 	}
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_WalkLeaderIn(void)
+static void MercuryLighthouse_WalkLeaderIn(void)
 {
 	struct EventWork *work;
 
@@ -402,7 +402,7 @@ static void EV11_PSYNERGY(void)
 		p->target_y = Object_GetById(11)->y.fixed;
 		Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 		Engine_AudioPlayCue(0xd9);
-		Engine_MapAnimateCells(MakyuriHeya_GateCells, 9, 7);
+		Engine_MapAnimateCells(MercuryLighthouse_GateCells, 9, 7);
 		{
 			s32 s0 = 9;
 			s32 s1 = 10;
@@ -433,13 +433,13 @@ static void EV12_TOUCH_2(void)
 			actor->target_y = Object_GetById(0)->y.fixed;
 			Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 			Engine_AudioPlayCue(217);
-			Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
+			Engine_MapAnimateCells((s32)MercuryLighthouse_GateCells, 9, 7);
 			Engine_EventEnd();
 		}
 	}
 }
 
-static void MakyuriHeya_CloseFloorSwitch(void)
+static void MercuryLighthouse_CloseFloorSwitch(void)
 {
 	struct FieldActor *actor;
 
@@ -453,7 +453,7 @@ static void MakyuriHeya_CloseFloorSwitch(void)
 		Engine_EventWait(5);
 		Map_CopyCellsTo(7, 2, 5, 11, 1, 1);
 		Engine_AudioPlayCue(217);
-		Map_AnimateCells(MakyuriHeya_GateCloseCells, 9, 7);
+		Map_AnimateCells(MercuryLighthouse_GateCloseCells, 9, 7);
 		Engine_EventEnd();
 	}
 }
@@ -489,7 +489,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
 	Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-static void MakyuriHeya_RunSequenceG(s32 a0)
+static void MercuryLighthouse_RunSequenceG(s32 a0)
 {
 	u32 i;
 	s32 x;
@@ -527,7 +527,7 @@ static void MakyuriHeya_RunSequenceG(s32 a0)
 	Engine_MapRenderWaitForValues();
 }
 
-static void MakyuriHeya_SprayAtFountain(void)
+static void MercuryLighthouse_SprayAtFountain(void)
 {
 	SceneEffect_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
 }
@@ -602,11 +602,11 @@ static void FieldScene_RunSupplementalSequenceOne(s32 a0)
 	Engine_EventWait(a0);
 	FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
 	Engine_AudioPlayCue(211);
-	FieldScheduler_AddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
+	FieldScheduler_AddCallback((s32)MercuryLighthouse_SprayAtFountain, 0xc80);
 	Engine_MapRenderWaitForValues();
 }
 
-static void MakyuriHeya_RunSequenceF(void)
+static void MercuryLighthouse_RunSequenceF(void)
 {
 	s32 *rec;
 	s32	 outer;
@@ -643,10 +643,10 @@ static void MakyuriHeya_RunSequenceF(void)
 		Map_CopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
 		outer++;
 	} while ((u32)outer <= 2);
-	Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
+	Engine_TaskRemoveCallback((s32)MercuryLighthouse_SprayAtFountain);
 }
 
-static void MakyuriHeya_RunSequenceE(void)
+static void MercuryLighthouse_RunSequenceE(void)
 {
 	struct StagedActorProbe probe;
 	s32						kind;
@@ -675,7 +675,7 @@ static void MakyuriHeya_RunSequenceE(void)
 			}
 			else
 			{
-				probe.callback = MakyuriHeya_OpenThreeStepStair;
+				probe.callback = MercuryLighthouse_OpenThreeStepStair;
 				Map_CopyCellsTo(75, 57, 86, 41, 1, 1);
 				Map_CopyCellsTo(71, 59, 86, 42, 1, 1);
 				Map_CopyCellsTo(71, 59, 86, 43, 1, 1);
@@ -710,9 +710,9 @@ static void MakyuriHeya_RunSequenceE(void)
 			}
 			else if ((probe.position_z >> 20) == 42)
 			{
-				probe.callback = MakyuriHeya_RunSequenceF;
+				probe.callback = MercuryLighthouse_RunSequenceF;
 				SceneActor_MoveAndRedraw(probe);
-				MakyuriHeya_RunSequenceG(5);
+				MercuryLighthouse_RunSequenceG(5);
 				GameFlag_Clear(0x306);
 			}
 		}
@@ -742,7 +742,7 @@ static void EV08_PSYNERGY_3(void)
 		p[15] = Object_GetById(8)->y.fixed;
 		Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 		Engine_AudioPlayCue(0xd9);
-		Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
+		Engine_MapAnimateCells(MercuryLighthouse_FloorSwitchCells, 10, 18);
 		Map_CopyCellAttributes(10, 16, 1, 1, x, 19);
 		Engine_GameFlagSet(0x878);
 	}
@@ -771,7 +771,7 @@ static void EV12_TOUCH_3(void)
 	Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
 	Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 	Engine_AudioPlayCue(217);
-	Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
+	Engine_MapAnimateCells(MercuryLighthouse_FloorSwitchCells, 10, 18);
 	Engine_EventEnd();
 }
 
@@ -789,7 +789,7 @@ static void EV10_TOUCH(void)
 		Engine_EventWait(5);
 		Map_CopyCellsTo(8, 29, 10, 23, 1, 1);
 		Engine_AudioPlayCue(217);
-		Map_AnimateCells(MakyuriHeya_FloorSwitchCloseCells, 10, 18);
+		Map_AnimateCells(MercuryLighthouse_FloorSwitchCloseCells, 10, 18);
 		Engine_EventEnd();
 	}
 }
@@ -801,7 +801,7 @@ static __inline__ s32 Door_DriftStep(void)
 	return ((drift << 3) >> 16) * 0x3333;
 }
 
-static void MakyuriHeya_OpenStoneDoor(s32 side)
+static void MercuryLighthouse_OpenStoneDoor(s32 side)
 {
 	struct EffectOptions  params;
 	u32					  j;
@@ -925,7 +925,7 @@ static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 	}
 }
 
-static s32 MakyuriHeya_StartPillarPush(void)
+static s32 MercuryLighthouse_StartPillarPush(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -939,22 +939,22 @@ static s32 MakyuriHeya_StartPillarPush(void)
 	{
 		if (cell_x == 50 && Engine_GameFlagIsSet(0x319))
 		{
-			Engine_ActorEnableActionCallback(9, MakyuriHeya_PushScriptA);
+			Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptA);
 		}
 		else if (cell_x == 49)
 		{
 			if (cell_z == 44 && !Engine_GameFlagIsSet(0x319) && !Engine_GameFlagIsSet(0x31a)
 				&& !Engine_GameFlagIsSet(0x31b))
 			{
-				Engine_ActorEnableActionCallback(9, MakyuriHeya_PushScriptB);
+				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptB);
 			}
 			else if (cell_z == 44 && Engine_GameFlagIsSet(0x319))
 			{
-				Engine_ActorEnableActionCallback(9, MakyuriHeya_PushScriptC);
+				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptC);
 			}
 			else if (cell_z == 46 && Engine_GameFlagIsSet(0x31a))
 			{
-				Engine_ActorEnableActionCallback(9, MakyuriHeya_PushScriptD);
+				Engine_ActorEnableActionCallback(9, MercuryLighthouse_PushScriptD);
 				Engine_EventWait(30);
 				return 1;
 			}
@@ -975,7 +975,7 @@ static void SceneActor_UseActorNinePositionWithYOffset(void)
 	SceneEffect_SpawnRandomEveryFourFrames(p[2], b, c);
 }
 
-static s32 MakyuriHeya_StartActorNineParticles(void)
+static s32 MercuryLighthouse_StartActorNineParticles(void)
 {
 	s32 n = 0xc80;
 
@@ -983,7 +983,7 @@ static s32 MakyuriHeya_StartActorNineParticles(void)
 	return 0;
 }
 
-static s32 MakyuriHeya_StopActorNinePositionCallback(void)
+static s32 MercuryLighthouse_StopActorNinePositionCallback(void)
 {
 	Engine_TaskRemoveCallback((s32)SceneActor_UseActorNinePositionWithYOffset);
 	return 0;
@@ -1016,12 +1016,12 @@ static void EV40_SCRIPT(void)
 				Engine_GameFlagSet(0x319);
 				Engine_GameFlagClear(0x31a);
 				Engine_GameFlagClear(0x31b);
-				MakyuriHeya_StartPillarPush();
+				MercuryLighthouse_StartPillarPush();
 				if (start == 54)
 					SceneEffect_SpawnParticleRowsByMode(0);
 				else if (start == 48)
 					SceneEffect_SpawnParticleRowsByMode(1);
-				MakyuriHeya_OpenStoneDoor(2);
+				MercuryLighthouse_OpenStoneDoor(2);
 				Engine_EventWait(60);
 			}
 			else if (column == 48)
@@ -1029,14 +1029,14 @@ static void EV40_SCRIPT(void)
 				Engine_GameFlagSet(0x31a);
 				Engine_GameFlagClear(0x31b);
 				Engine_GameFlagClear(0x319);
-				if (MakyuriHeya_StartPillarPush() != 0)
+				if (MercuryLighthouse_StartPillarPush() != 0)
 				{
 					s32 x;
 
 					SceneEffect_SpawnParticleRowsByMode(2);
 					x = 210 << 18;
-					MakyuriHeya_StopActorNinePositionCallback();
-					MakyuriHeya_OpenStoneDoor(1);
+					MercuryLighthouse_StopActorNinePositionCallback();
+					MercuryLighthouse_OpenStoneDoor(1);
 					Object_RefreshSelectorById(9);
 					OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
 					OverlayObject_PrepareObject(x, 0, 0x3320000, 223);
@@ -1055,8 +1055,8 @@ static void EV40_SCRIPT(void)
 				else
 				{
 					SceneEffect_SpawnParticleRowsByMode(2);
-					MakyuriHeya_StopActorNinePositionCallback();
-					MakyuriHeya_OpenStoneDoor(1);
+					MercuryLighthouse_StopActorNinePositionCallback();
+					MercuryLighthouse_OpenStoneDoor(1);
 					Engine_EventWait(60);
 				}
 			}
@@ -1065,7 +1065,7 @@ static void EV40_SCRIPT(void)
 				Engine_GameFlagSet(0x31b);
 				Engine_GameFlagClear(0x319);
 				Engine_GameFlagClear(0x31a);
-				MakyuriHeya_StartPillarPush();
+				MercuryLighthouse_StartPillarPush();
 				SceneEffect_SpawnParticleRowsByMode(0);
 				Engine_EventWait(60);
 			}
@@ -1074,12 +1074,12 @@ static void EV40_SCRIPT(void)
 				Engine_GameFlagClear(0x319);
 				Engine_GameFlagClear(0x31a);
 				Engine_GameFlagClear(0x31b);
-				MakyuriHeya_StartPillarPush();
+				MercuryLighthouse_StartPillarPush();
 				if (start == 47)
 					SceneEffect_SpawnParticleRowsByMode(2);
 				else if (start == 48)
 					SceneEffect_SpawnParticleRowsByMode(1);
-				MakyuriHeya_OpenStoneDoor(0);
+				MercuryLighthouse_OpenStoneDoor(0);
 				Engine_EventWait(60);
 			}
 			break;
@@ -1092,11 +1092,11 @@ static void EV47_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
-	MakyuriHeya_SyncBlockFlags();
+	MercuryLighthouse_SyncBlockFlags();
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_SyncBlockFlags(void)
+static void MercuryLighthouse_SyncBlockFlags(void)
 {
 	s32 i;
 	s32 flag;
@@ -1195,7 +1195,7 @@ static void FieldScene_RunActorThreeBranchSequence(void)
 	Engine_EventBegin();
 	Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
 	Actor_SetSpeed(0, FX16_0_8, FX16_0_4);
-	Engine_EventSetMessage(MsgImiruSomebodyHere);
+	Engine_EventSetMessage(MsgImilSomebodyHere);
 	Event_ShowMessageAndWait(3, 0, 20);
 	Actor_WalkToAndWait(3, 0x348, 0x288);
 	Actor_ShowEmote(3, 0x100, 60);
@@ -1246,12 +1246,12 @@ static void EV03_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(3, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MSGNO(MsgImiruStatueBlocksEntrance));
+	Engine_EventSetMessage(MSGNO(MsgImilStatueBlocksEntrance));
 	Engine_EventShowMessageAndWait(3, 0, 20);
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_FadePaletteToWhite(void)
+static void MercuryLighthouse_FadePaletteToWhite(void)
 {
 	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component; without it one load is shifted for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
@@ -1312,7 +1312,7 @@ static void EV10_PSYNERGY(void)
 		Engine_EventWait(20);
 		Actor_FaceDirection(3, 0xd000, 0);
 		Engine_ActorFaceDirection(0, 0x5000, 10);
-		Engine_EventSetMessage(MsgMakyuriDidThat);
+		Engine_EventSetMessage(MsgMercuryDidThat);
 		Engine_EventOpenMessage(3, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -1396,7 +1396,7 @@ static void EV10_PSYNERGY(void)
 		Actor_FaceDirection(1, 0x5000, 0);
 		Actor_FaceDirection(2, 0x8000, 0);
 		Engine_EventWait(30);
-		MakyuriHeya_CastPsynergyAtActor11();
+		MercuryLighthouse_CastPsynergyAtActor11();
 		Engine_EventWait(50);
 		Engine_AudioPlayCue(131);
 		ColorBuffer_ApplySource(0x10000, 0);
@@ -1409,9 +1409,9 @@ static void EV10_PSYNERGY(void)
 		Engine_ColorBufferInterpolate(60);
 		Engine_TaskWait(60);
 		Engine_AudioPlayCue(209);
-		MakyuriHeya_FadePaletteToWhite();
+		MercuryLighthouse_FadePaletteToWhite();
 		Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-		Engine_MapAnimateCells((s32)MakyuriHeya_ColumnCells, 116, 35);
+		Engine_MapAnimateCells((s32)MercuryLighthouse_ColumnCells, 116, 35);
 		Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(3, 3);
@@ -1480,7 +1480,7 @@ static void SceneEffect_RotatePaletteEntries97To103(void)
 	}
 }
 
-static void MakyuriHeya_FadePaletteToBlack(void)
+static void MercuryLighthouse_FadePaletteToBlack(void)
 {
 	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component, and again after the store; without it one load is shifted for all three and the function is 98 bytes for 100 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
@@ -1514,7 +1514,7 @@ static void MakyuriHeya_FadePaletteToBlack(void)
 	} while (done != 7);
 }
 
-static void MakyuriHeya_SinkActorWithSparks(s32 actor)
+static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 {
 	struct EffectOptions  params;
 	struct EffectOptions *p;
@@ -1533,7 +1533,7 @@ static void MakyuriHeya_SinkActorWithSparks(s32 actor)
 	p->priority = 1;
 	p->palette = 5;
 	p->type = 0x11e;
-	p->script = MakyuriHeya_SparkBurstScript;
+	p->script = MercuryLighthouse_SparkBurstScript;
 	for (i = 0; i <= 47; i++)
 	{
 		if (i <= 31)
@@ -1566,7 +1566,7 @@ static void EV12_PSYNERGY(void)
 
 	Engine_EventBegin();
 	Engine_EventWait(20);
-	MakyuriHeya_FadePaletteToBlack();
+	MercuryLighthouse_FadePaletteToBlack();
 	Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
 	Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
 	Engine_EventWait(30);
@@ -1574,7 +1574,7 @@ static void EV12_PSYNERGY(void)
 	effect->mode_bits = 1;
 	effect->mode = 5;
 	effect->kind = 0x11e;
-	effect->callback_arg = (s32)MakyuriHeya_SparkBurstScript;
+	effect->callback_arg = (s32)MercuryLighthouse_SparkBurstScript;
 	zero = 0;
 	phase = zero;
 	do
@@ -1674,7 +1674,7 @@ static void EV12_PSYNERGY(void)
 		Actor_WalkTo(0, 0x318, 200);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimation(0, 18);
-		MakyuriHeya_SinkActorWithSparks(0);
+		MercuryLighthouse_SinkActorWithSparks(0);
 		Engine_EventWait(60);
 		Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
 		ColorBuffer_ApplySource(0x10000, 0);
@@ -1704,7 +1704,7 @@ static void EV12_PSYNERGY(void)
 		Engine_EventWait(40);
 		Actor_FaceDirection(3, 0xc000, 20);
 		Actor_WalkToAndWait(3, 0x318, 200);
-		MakyuriHeya_SinkActorWithSparks(3);
+		MercuryLighthouse_SinkActorWithSparks(3);
 		Engine_EventWait(20);
 		Engine_ActorRunRepeatedMotion(0, 2);
 		Engine_EventWait(30);
@@ -1742,7 +1742,7 @@ static void EV12_PSYNERGY(void)
 		Actor_ShowEmote(2, 0x100, 0);
 		Engine_ActorStartRepeatedMotion(1, 2);
 		Engine_ActorStartRepeatedMotion(2, 2);
-		MakyuriHeya_SinkActorWithSparks(0);
+		MercuryLighthouse_SinkActorWithSparks(0);
 		Engine_EventWait(60);
 		Actor_ShowEmote(1, 0x102, 0);
 		Actor_ShowEmote(2, 0x102, 80);
@@ -1754,11 +1754,11 @@ static void EV12_PSYNERGY(void)
 		Actor_FaceDirection(2, 0xe000, 0);
 		Actor_WalkToAndWait(1, 0x318, 200);
 		Engine_EventWait(30);
-		MakyuriHeya_SinkActorWithSparks(1);
+		MercuryLighthouse_SinkActorWithSparks(1);
 		Actor_WalkToAndWait(2, 0x318, 216);
 		Actor_WalkToAndWait(2, 0x318, 200);
 		Engine_EventWait(30);
-		MakyuriHeya_SinkActorWithSparks(2);
+		MercuryLighthouse_SinkActorWithSparks(2);
 		ColorBuffer_ApplySource(0x10000, 0);
 		Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
 		ColorBuffer_ApplyTarget(0x10005, 0);
@@ -1776,7 +1776,7 @@ static void EV42_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
-	Engine_MessageShowCentered(MSGNO(MsgImiruHermesHealingWaterFountain), 1);
+	Engine_MessageShowCentered(MSGNO(MsgImilHermesHealingWaterFountain), 1);
 	Engine_EventEnd();
 }
 
@@ -1794,9 +1794,9 @@ static void EV05_SEARCH(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
 	if (Engine_GameFlagIsSet(0x881) == 0)
-		Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaFountainSeemsDry), 1);
+		Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
 	else
-		Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaFountainFlowsWithWater), 1);
+		Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
 	if (PartyInventory_FindOwner(0xb9) != -1)
 	{
 		s16 *slot = (s16 *)gEventWork + 185;
@@ -1815,7 +1815,7 @@ static void EV05_SCRIPT(void)
 	SceneState_SetRecordTableValue(0xb9, 0xb8);
 	UiWork_PushValueSlot(PartyInventory_FindOwner(0xb8), 1);
 	UiWork_PushValueSlot(0xb8, 2);
-	Engine_MessageShowCentered(MSGNO(MsgMakyuriHeyaRobinGot), 1);
+	Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
 	Engine_GameFlagSet(512);
 	Engine_EventEnd();
 }
@@ -1823,7 +1823,7 @@ static void EV05_SCRIPT(void)
 static void EV15_TOUCH(void)
 {
 	Engine_EventBegin();
-	if (gGameState.scene == (s32)&SceneId_MakyuriHeya1)
+	if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1)
 	{
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d8, 0x258);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
@@ -1876,7 +1876,7 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 	}
 }
 
-static void MakyuriHeya_OpenThreeStepStair(void)
+static void MercuryLighthouse_OpenThreeStepStair(void)
 {
 	struct EffectOptions  params;
 	struct EffectOptions *p;
@@ -2018,20 +2018,20 @@ s32 Scene_Initialize(void)
 
 	Engine_GameFlagSet(0x111);
 	gGameState.retreat_entrance = 11;
-	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
+	gGameState.retreat_scene = (s32)&SceneId_MercuryLighthouse4;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	Io_Write16(0x3f40, &REG_BLDCNT);
 	{
 		s32 alpha = 0x1010;
 		REG_BLDALPHA = alpha;
 	}
-	Makyuri_SpawnLightObjects(21, (s32)gSceneState);
+	Mercury_SpawnLightObjects(21, (s32)gSceneState);
 	BattleFx_StartFadeOverlay(0);
 	if (Engine_GameFlagIsSet(0x875))
-		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
 	else
-		Makyuri_ClearPalette();
-	if (gGameState.scene == (s32)&SceneId_MakyuriHeya1)
+		Mercury_ClearPalette();
+	if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2093,7 +2093,7 @@ s32 Scene_Initialize(void)
 			break;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_MakyuriHeya2)
+	if (gGameState.scene == (s32)&SceneId_MercuryLighthouse2)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2137,7 +2137,7 @@ s32 Scene_Initialize(void)
 				Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
 			}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-			FieldScheduler_AddCallback(MakyuriHeya_UpdateLeaderEffectTarget, 0xc80);
+			FieldScheduler_AddCallback(MercuryLighthouse_UpdateLeaderEffectTarget, 0xc80);
 #endif
 			break;
 		case 7:
@@ -2154,7 +2154,7 @@ s32 Scene_Initialize(void)
 			break;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_MakyuriHeya3)
+	if (gGameState.scene == (s32)&SceneId_MercuryLighthouse3)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2200,7 +2200,7 @@ s32 Scene_Initialize(void)
 			break;
 		case 3:
 		case 13:
-			Makyuri_ArriveWithSparks();
+			Mercury_ArriveWithSparks();
 		case 1:
 		case 2:
 		case 12:
@@ -2249,20 +2249,20 @@ s32 Scene_Initialize(void)
 	|| defined(TBS_EDITION_IT)
 			if (Engine_GameFlagIsSet(0x319))
 			{
-				MakyuriHeya_OpenStoneDoor(2);
+				MercuryLighthouse_OpenStoneDoor(2);
 				if (Object_GetById(9)->z.fixed >> 20 == 44)
 					FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
 			}
 			else if (Engine_GameFlagIsSet(0x31a))
 			{
-				MakyuriHeya_OpenStoneDoor(1);
+				MercuryLighthouse_OpenStoneDoor(1);
 			}
 			else if (!Engine_GameFlagIsSet(0x31b))
 			{
-				MakyuriHeya_OpenStoneDoor(0);
+				MercuryLighthouse_OpenStoneDoor(0);
 			}
 #else
-			MakyuriHeya_OpenStoneDoor(1);
+			MercuryLighthouse_OpenStoneDoor(1);
 #endif
 		case 14:
 			if (gGameState.entrance == 14)
@@ -2289,17 +2289,17 @@ s32 Scene_Initialize(void)
 			SceneEffect_SpawnParticleRowsByMode(0);
 			if (Engine_GameFlagIsSet(0x319))
 			{
-				MakyuriHeya_OpenStoneDoor(2);
+				MercuryLighthouse_OpenStoneDoor(2);
 				if (Object_GetById(9)->z.fixed >> 20 == 44)
 					FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
 			}
 			else if (Engine_GameFlagIsSet(0x31a))
 			{
-				MakyuriHeya_OpenStoneDoor(1);
+				MercuryLighthouse_OpenStoneDoor(1);
 			}
 			else if (!Engine_GameFlagIsSet(0x31b))
 			{
-				MakyuriHeya_OpenStoneDoor(0);
+				MercuryLighthouse_OpenStoneDoor(0);
 			}
 			break;
 		case 15:
@@ -2328,7 +2328,7 @@ s32 Scene_Initialize(void)
 			break;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_MakyuriHeya4)
+	if (gGameState.scene == (s32)&SceneId_MercuryLighthouse4)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2336,7 +2336,7 @@ s32 Scene_Initialize(void)
 			FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries97To103, 0xc80);
 			if (Engine_GameFlagIsSet(0x109))
 				break;
-			Makyuri_ArriveWithSparks();
+			Mercury_ArriveWithSparks();
 			BattleFx_SetQueuedSoundAndPlay(170);
 			ColorBuffer_ApplySource(128 << 9, 0);
 			Engine_ColorBufferApplyTarget(0x10003, 1);
@@ -2344,7 +2344,7 @@ s32 Scene_Initialize(void)
 			Engine_EventWaitForScreen();
 			Engine_ActorSetAnimation(0, 1);
 			Engine_EventWait(30);
-			UiText_ShowCenteredMessage(MsgMakyuriHonorsGoddessRainbows, 0, 0);
+			UiText_ShowCenteredMessage(MsgMercuryHonorsGoddessRainbows, 0, 0);
 			Engine_ColorBufferApplyTarget(128 << 9, 0);
 			Engine_ColorBufferInterpolate(30);
 			break;
@@ -2372,7 +2372,7 @@ s32 Scene_Initialize(void)
 			Engine_EventGetViewCenter()->motion_flags = set;
 			Engine_ActorSetSpritePriority(0, 1);
 			Engine_ActorSetSpritePriority(13, 1);
-			MakyuriHeya_RideLift();
+			MercuryLighthouse_RideLift();
 			DisplayBlend_DisableRunScript();
 			Engine_EventEnd();
 			break;
@@ -2451,7 +2451,7 @@ static void EV08_PSYNERGY_1(void)
 		return;
 	}
 	Engine_EventBegin();
-	base = MsgMakyuriSavedMeAgain;
+	base = MsgMercurySavedMeAgain;
 	Engine_EventSetMessage(base);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(3, 1);
@@ -2497,11 +2497,11 @@ static void EV08_PSYNERGY_1(void)
 				/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 				((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 				Engine_EventWait(20);
-				event = MsgMakyuriDontHideTruth;
+				event = MsgMercuryDontHideTruth;
 			}
 		}
 	}
-	Engine_EventSetMessage(MsgMakyuriThoughtSo);
+	Engine_EventSetMessage(MsgMercuryThoughtSo);
 	Actor_SetSpeed(3, 52428, 26214);
 	Engine_ActorWalkToAndWait(3, 728, 632);
 	Engine_EventWait(20);
@@ -2535,7 +2535,7 @@ static void EV08_PSYNERGY_1(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_RideLift(void)
+static void MercuryLighthouse_RideLift(void)
 {
 	struct LiftLayer *layer;
 	s32				  speed;
@@ -2620,7 +2620,7 @@ static void MakyuriHeya_RideLift(void)
 	Actor_Get(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-static void MakyuriHeya_CastPsynergyAtActor11(void)
+static void MercuryLighthouse_CastPsynergyAtActor11(void)
 {
 	u8 *p5;
 	u8 *addr;
@@ -2668,7 +2668,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 
 	sprite = obj->sprite;
-	Engine_ObjectSetScript(obj, MakyuriHeya_RiseScript);
+	Engine_ObjectSetScript(obj, MercuryLighthouse_RiseScript);
 
 	obj->motion_flags = 0;
 	obj->terrain_id = 1;
@@ -2747,32 +2747,32 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 MakyuriHeya_RiseScript[] = {
+s32 MercuryLighthouse_RiseScript[] = {
 	SC_WAIT(30),
 	SC_FREE,
 };
 
-s32 MakyuriHeya_SparkScript[] = {
+s32 MercuryLighthouse_SparkScript[] = {
 	SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
 	SC_FREE,
 };
 
-s32 Makyuri_RampScript[] = {
+s32 Mercury_RampScript[] = {
 	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
-s32 Makyuri_ScaleCounterScript[] = {
+s32 Mercury_ScaleCounterScript[] = {
 	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
-s32 Makyuri_PillarScript[] = {
-	SC_CALL(Makyuri_FollowLeader),
+s32 Mercury_PillarScript[] = {
+	SC_CALL(Mercury_FollowLeader),
 	SC_END,
 };
 
-u16 Makyuri_MoveAngles[] = {
+u16 Mercury_MoveAngles[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
 	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
@@ -2783,7 +2783,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 MakyuriHeya_SparkBurstScript[] = {
+s32 MercuryLighthouse_SparkBurstScript[] = {
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_WAIT(6),
@@ -2803,41 +2803,41 @@ s32 MakyuriHeya_SparkBurstScript[] = {
 	SC_FREE,
 };
 
-s32 MakyuriHeya_PushScriptA[] = {
+s32 MercuryLighthouse_PushScriptA[] = {
 	SC_WAIT(45),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
-	SC_CALL(MakyuriHeya_StartActorNineParticles),
+	SC_CALL(MercuryLighthouse_StartActorNineParticles),
 	SC_MOVE(PIXELS(792), 0, PIXELS(712)),
 	SC_SYNC,
 	SC_END,
 };
 
-s32 MakyuriHeya_PushScriptB[] = {
+s32 MercuryLighthouse_PushScriptB[] = {
 	SC_WAIT(60),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
-	SC_CALL(MakyuriHeya_StartActorNineParticles),
+	SC_CALL(MercuryLighthouse_StartActorNineParticles),
 	SC_MOVE(PIXELS(792), 0, PIXELS(744)),
 	SC_SYNC,
-	SC_CALL(MakyuriHeya_StopActorNinePositionCallback),
+	SC_CALL(MercuryLighthouse_StopActorNinePositionCallback),
 	SC_END,
 };
 
-s32 MakyuriHeya_PushScriptD[] = {
+s32 MercuryLighthouse_PushScriptD[] = {
 	SC_WAIT(60),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
-	SC_CALL(MakyuriHeya_StartActorNineParticles),
+	SC_CALL(MercuryLighthouse_StartActorNineParticles),
 	SC_MOVE(PIXELS(824), 0, PIXELS(744)),
 	SC_SYNC,
-	SC_CALL(MakyuriHeya_StopActorNinePositionCallback),
+	SC_CALL(MercuryLighthouse_StopActorNinePositionCallback),
 	SC_END,
 };
 
-s32 MakyuriHeya_PushScriptC[] = {
+s32 MercuryLighthouse_PushScriptC[] = {
 	SC_WAIT(45),
-	SC_CALL(MakyuriHeya_StartActorNineParticles),
+	SC_CALL(MercuryLighthouse_StartActorNineParticles),
 	SC_END,
 };
 
@@ -2847,27 +2847,27 @@ s32 gPaletteCycleGreen = 0;
 
 s32 gPaletteCycleBlue = 0;
 
-u16 MakyuriHeya_GateCells[] = {
+u16 MercuryLighthouse_GateCells[] = {
 	MAP_CELL_STEP(15, 1, 1, 2, 10), MAP_CELL_STEP(13, 1, 1, 2, 6), MAP_CELL_STEP(11, 1, 1, 2, 6), MAP_CELL_STEP(9, 1, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MakyuriHeya_GateCloseCells[] = {
+u16 MercuryLighthouse_GateCloseCells[] = {
 	MAP_CELL_STEP(9, 1, 1, 2, 10), MAP_CELL_STEP(11, 1, 1, 2, 6), MAP_CELL_STEP(13, 1, 1, 2, 6), MAP_CELL_STEP(15, 1, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MakyuriHeya_FloorSwitchCells[] = {
+u16 MercuryLighthouse_FloorSwitchCells[] = {
 	MAP_CELL_STEP(16, 28, 1, 2, 10), MAP_CELL_STEP(14, 28, 1, 2, 6), MAP_CELL_STEP(12, 28, 1, 2, 6), MAP_CELL_STEP(10, 28, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MakyuriHeya_FloorSwitchCloseCells[] = {
+u16 MercuryLighthouse_FloorSwitchCloseCells[] = {
 	MAP_CELL_STEP(10, 28, 1, 2, 10), MAP_CELL_STEP(12, 28, 1, 2, 6), MAP_CELL_STEP(14, 28, 1, 2, 6), MAP_CELL_STEP(16, 28, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 MakyuriHeya_ColumnCells[] = {
+u16 MercuryLighthouse_ColumnCells[] = {
 	MAP_CELL_STEP(126, 35, 1, 2, 2), MAP_CELL_STEP(126, 38, 1, 2, 2), MAP_CELL_STEP(126, 41, 1, 2, 2), MAP_CELL_STEP(126, 44, 1, 2, 2), MAP_CELL_STEP(126, 47, 1, 2, 2), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gMakyuriHeyaEntrancesOther[] = {
+struct SceneEntrance gMercuryLighthouseEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 56, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
@@ -2884,7 +2884,7 @@ struct SceneEntrance gMakyuriHeyaEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMakyuriHeyaEntrances2[] = {
+struct SceneEntrance gMercuryLighthouseEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 120, 0, 472, FACING_SOUTH, 0, 32, 400, 480, 848, 0 },
 	{ 2, CONDITION_ALWAYS, 152, 0, 824, FACING_NORTH, 0, 32, 400, 480, 848, 0 },
@@ -2899,7 +2899,7 @@ struct SceneEntrance gMakyuriHeyaEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMakyuriHeyaEntrances3[] = {
+struct SceneEntrance gMercuryLighthouseEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 88, 0, 184, FACING_NORTH, 0, 32, 32, 544, 208, 0 },
 	{ 2, CONDITION_ALWAYS, 504, 0, 184, FACING_NORTH, 0, 32, 32, 544, 208, 0 },
@@ -2920,7 +2920,7 @@ struct SceneEntrance gMakyuriHeyaEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMakyuriHeyaEntrances4[] = {
+struct SceneEntrance gMercuryLighthouseEntrances4[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 232, 0, 104, FACING_SOUTH, 0, 64, 32, 288, 504, 0 },
 	{ 2, CONDITION_ALWAYS, 232, 0, 488, FACING_NORTH, 0, 64, 32, 288, 504, 0 },
@@ -2934,7 +2934,7 @@ struct SceneEntrance gMakyuriHeyaEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 MakyuriHeya_SceneTable[] = {
+u32 MercuryLighthouse_SceneTable[] = {
 	SCENE_EXITS(54),
 	SCENE_EXIT(1, 53, 11),
 	SCENE_EXIT(2, 53, 12),
@@ -2990,12 +2990,12 @@ u32 MakyuriHeya_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gMakyuriHeyaPlacementsOther[] = {
+struct ScenePlacement gMercuryLighthousePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMakyuriHeyaPlacements1[] = {
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gMercuryLighthousePlacements1[] = {
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0xe0, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(792), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3010,7 +3010,7 @@ struct ScenePlacement gMakyuriHeyaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMakyuriHeyaPlacements2[] = {
+struct ScenePlacement gMercuryLighthousePlacements2[] = {
 	{ 0xe5, CONDITION_ALWAYS, 7,
 		PIXELS(152), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xe6, CONDITION_ALWAYS, 7,
@@ -3024,7 +3024,7 @@ struct ScenePlacement gMakyuriHeyaPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMakyuriHeyaPlacements3[] = {
+struct ScenePlacement gMercuryLighthousePlacements3[] = {
 	{ 0xe0, IF_FLAG_SET(0x877), ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xe0, 0x877, ACTOR_STAND,
@@ -3054,12 +3054,12 @@ struct ScenePlacement gMakyuriHeyaPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMakyuriHeyaPlacements4[] = {
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gMercuryLighthousePlacements4[] = {
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(840), 0, PIXELS(664), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0xe0, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(792), 0, PIXELS(872), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3084,7 +3084,7 @@ struct ScenePlacement gMakyuriHeyaPlacements4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gMakyuriHeyaEvents1[] = {
+struct SceneEvent gMercuryLighthouseEvents1[] = {
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
 	{ 0x21, 53, CONDITION_ALWAYS, 3 },
@@ -3096,24 +3096,24 @@ struct SceneEvent gMakyuriHeyaEvents1[] = {
 	{ EVENT_EXIT, 57, CONDITION_ALWAYS, 7 },
 	{ 0x31, 55, CONDITION_ALWAYS, 5 },
 	{ 0x21, 56, CONDITION_ALWAYS, 6 },
-	{ EVENT_TOUCH, 32, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriHeya_ClearSceneRecordAndTarget) },
+	{ EVENT_TOUCH, 32, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryLighthouse_ClearSceneRecordAndTarget) },
 	{ 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriHeya_ClearSceneRecordAndTarget) },
+	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MercuryLighthouse_ClearSceneRecordAndTarget) },
 	{ 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV21_TOUCH) },
 	{ 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV11_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
 	{ 0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SCRIPT) },
-	{ EVENT_TALK, 3, 0x873, MSGNO(MsgMakyuriHeyaThePathIsBlockedAgainWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x873, MSGNO(MsgMakyuriHeyaThisStatueWasntHereBeforeI) },
+	{ EVENT_TALK, 3, 0x873, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x873, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x873, EVENT_SCRIPT(EV08_PSYNERGY_1) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf64, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMakyuriHeyaEvents2[] = {
+struct SceneEvent gMercuryLighthouseEvents2[] = {
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 56, CONDITION_ALWAYS, 6 },
@@ -3125,16 +3125,16 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 	{ EVENT_EXIT, 59, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 60, CONDITION_ALWAYS, 10 },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
-	{ 0x202, 1, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunSequenceE) },
-	{ EVENT_TOUCH, 2, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
-	{ EVENT_TOUCH, 3, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
-	{ EVENT_TOUCH, 4, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
+	{ 0x202, 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RunSequenceE) },
+	{ EVENT_TOUCH, 2, IF_FLAG_SET(0x302), EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
+	{ EVENT_TOUCH, 3, IF_FLAG_SET(0x302), EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
+	{ EVENT_TOUCH, 4, IF_FLAG_SET(0x302), EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
 	{ 0x202, 10, 0x874, EVENT_SCRIPT(EV10_SCRIPT) },
 	{ EVENT_TOUCH, 12, 0x874, EVENT_SCRIPT(EV12_TOUCH_2) },
-	{ EVENT_TOUCH, 10, 0x874, EVENT_SCRIPT(MakyuriHeya_CloseFloorSwitch) },
-	{ EVENT_TOUCH, 13, 0x874, EVENT_SCRIPT(MakyuriHeya_CloseFloorSwitch) },
-	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunSequenceE) },
-	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
+	{ EVENT_TOUCH, 10, 0x874, EVENT_SCRIPT(MercuryLighthouse_CloseFloorSwitch) },
+	{ EVENT_TOUCH, 13, 0x874, EVENT_SCRIPT(MercuryLighthouse_CloseFloorSwitch) },
+	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RunSequenceE) },
+	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
@@ -3144,7 +3144,7 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMakyuriHeyaEvents3[] = {
+struct SceneEvent gMercuryLighthouseEvents3[] = {
 	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH) },
@@ -3168,16 +3168,16 @@ struct SceneEvent gMakyuriHeyaEvents3[] = {
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x878, EVENT_SCRIPT(EV08_PSYNERGY_3) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 18, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 18, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMakyuriHeyaEventsOther[] = {
+struct SceneEvent gMercuryLighthouseEventsOther[] = {
 	{ EVENT_EXIT, 44, CONDITION_ALWAYS, 7 },
 	{ EVENT_EXIT, 43, CONDITION_ALWAYS, 6 },
 	{ 0x31, 51, CONDITION_ALWAYS, 1 },
@@ -3188,15 +3188,15 @@ struct SceneEvent gMakyuriHeyaEventsOther[] = {
 	{ EVENT_TALK, 3, 0x870, EVENT_SCRIPT(FieldScene_RunActorThreeBranchSequence) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x403, 0x870, EVENT_SCRIPT(FieldScene_RunActorThreeBranchSequence) },
 	{ EVENT_TALK, 3, 0x871, EVENT_SCRIPT(EV03_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x871, MSGNO(MsgMakyuriHeyaSomeoneDoesntWantMeToGet) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaTheLegendsSaidThatIfThe) },
-	{ EVENT_TALK, 15, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaOurFountainIsBackTheySay) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaIDrankTheHealingWaterAnd) },
-	{ EVENT_TALK, 17, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaWeDontHaveToFearAny) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaHowDidTheFountainKnowThat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaAllThatLivesThatMeansIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaIKnewItWouldWorkBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaINeverBelievedThoseStoriesBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x871, MSGNO(MsgMercuryLighthouseSomeoneDoesntWantMeToGet) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseTheLegendsSaidThatIfThe) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseOurFountainIsBackTheySay) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseIDrankTheHealingWaterAnd) },
+	{ EVENT_TALK, 17, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseWeDontHaveToFearAny) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseHowDidTheFountainKnowThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseAllThatLivesThatMeansIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseIKnewItWouldWorkBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(0x881), MSGNO(MsgMercuryLighthouseINeverBelievedThoseStoriesBut) },
 	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SEARCH) },
 	{ SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_SEARCH) },
 	{ SEARCH(SEARCH_UNNAMED), 5, 0x200, EVENT_SCRIPT(EV05_SEARCH) },

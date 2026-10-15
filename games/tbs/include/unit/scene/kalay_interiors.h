@@ -11,23 +11,23 @@ struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *KareiHeya_GetExits(void);
+u8 *KalayInteriors_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern struct SceneEntrance gKareiHeyaEntrancesOther[];
-extern struct SceneEntrance gKareiHeyaEntrances1[];
-extern struct SceneEntrance gKareiHeyaEntrances2[];
-extern u32 KareiHeya_Exits[];
-extern struct ScenePlacement gKareiHeyaPlacementsOther[];
-extern struct ScenePlacement gKareiHeyaPlacements1[];
-extern struct ScenePlacement gKareiHeyaPlacements1Entrance9[];
-extern struct ScenePlacement gKareiHeyaPlacements2[];
-extern struct SceneEvent gKareiHeyaEventsOther[];
-extern struct SceneEvent gKareiHeyaEvents1[];
-extern struct SceneEvent gKareiHeyaEvents1Entrance9[];
-extern struct SceneEvent gKareiHeyaEvents2[];
-extern u16 KareiHeya_ArrivalPlacementData[];
-extern struct MapCellAnim KareiHeya_ArrivalPlacements[];
+extern struct SceneEntrance gKalayInteriorsEntrancesOther[];
+extern struct SceneEntrance gKalayInteriorsEntrances1[];
+extern struct SceneEntrance gKalayInteriorsEntrances2[];
+extern u32 KalayInteriors_Exits[];
+extern struct ScenePlacement gKalayInteriorsPlacementsOther[];
+extern struct ScenePlacement gKalayInteriorsPlacements1[];
+extern struct ScenePlacement gKalayInteriorsPlacements1Entrance9[];
+extern struct ScenePlacement gKalayInteriorsPlacements2[];
+extern struct SceneEvent gKalayInteriorsEventsOther[];
+extern struct SceneEvent gKalayInteriorsEvents1[];
+extern struct SceneEvent gKalayInteriorsEvents1Entrance9[];
+extern struct SceneEvent gKalayInteriorsEvents2[];
+extern u16 KalayInteriors_ArrivalPlacementData[];
+extern struct MapCellAnim KalayInteriors_ArrivalPlacements[];
 
 #endif

@@ -33,12 +33,12 @@
 // 前方宣言
 struct IcePlacement;
 static void State_ApplyRectByLayoutSelector(void);
-static void KorimaMagari_PlaceObjects(struct IcePlacement *entry);
+static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry);
 static void Scene_PushBlockAlongRun(struct TileRun2 *runs);
 
-u8 *KorimaMagari_GetEntrances(void)
+u8 *KolimaForestBend_GetEntrances(void)
 {
-	return gKorimaMagariEntrances;
+	return gKolimaForestBendEntrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -46,26 +46,26 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *KorimaMagari_GetExits(void)
+u8 *KolimaForestBend_GetExits(void)
 {
-	return gKorimaMagariExits;
+	return gKolimaForestBendExits;
 }
 
-u8 *KorimaMagari_GetPlacements(void)
+u8 *KolimaForestBend_GetPlacements(void)
 {
-	return gKorimaMagariPlacements;
+	return gKolimaForestBendPlacements;
 }
 
-u8 *KorimaMagari_GetEvents(void)
+u8 *KolimaForestBend_GetEvents(void)
 {
-	return gKorimaMagariEvents;
+	return gKolimaForestBendEvents;
 }
 
 static void EV11_SCRIPT(void)
 {
-	Scene_PushBlockAlongRun(gKorimaMagariRecords);
+	Scene_PushBlockAlongRun(gKolimaForestBendRecords);
 	Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-	State_StampRecordCells((s32)gKorimaMagariRecords, 0xff);
+	State_StampRecordCells((s32)gKolimaForestBendRecords, 0xff);
 	State_ApplyRectByLayoutSelector();
 }
 
@@ -97,7 +97,7 @@ struct TileRun2
 
 static void State_ApplyRectByLayoutSelector(void)
 {
-	if (*(s16 *)gKorimaMagariReturned == 1)
+	if (*(s16 *)gKolimaForestBendReturned == 1)
 	{
 		Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
 	}
@@ -110,9 +110,9 @@ static void State_ApplyRectByLayoutSelector(void)
 static void Scene_RepaintBoardRecords(void)
 {
 	struct FieldActor *piece;
-	s16				  *record = gKorimaMagariRecords;
+	s16				  *record = gKolimaForestBendRecords;
 
-	if (*gKorimaMagariLayout != 0)
+	if (*gKolimaForestBendLayout != 0)
 	{
 		Map_CopyCells(65, 53, 2, 1, 79, 29);
 		Map_CopyCells(65, 40, 2, 4, 15, 28);
@@ -122,7 +122,7 @@ static void Scene_RepaintBoardRecords(void)
 		Map_CopyCells(65, 50, 2, 5, 79, 25);
 	}
 
-	if (*gKorimaMagariLayout != 0)
+	if (*gKolimaForestBendLayout != 0)
 	{
 		Map_CopyCells(0, 32, 32, 32, 32, 0);
 		Map_CopyCells(32, 32, 32, 32, 64, 0);
@@ -139,7 +139,7 @@ static void Scene_RepaintBoardRecords(void)
 	{
 		piece = *(struct FieldActor **)(record + 4);
 
-		if (*gKorimaMagariLayout == 1)
+		if (*gKolimaForestBendLayout == 1)
 		{
 			Object_SetMode(piece, 4);
 			piece->priority_flags = 3;
@@ -167,15 +167,15 @@ static void Scene_RepaintBoardRecords(void)
 
 	Map_CopyCells(70, 42, 1, 1, 10, 50);
 
-	if (*gKorimaMagariLayout == 1)
+	if (*gKolimaForestBendLayout == 1)
 	{
 		Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-		State_StampRecordCells(gKorimaMagariRecords, 254);
+		State_StampRecordCells(gKolimaForestBendRecords, 254);
 	}
 	else
 	{
 		Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-		State_StampRecordCells(gKorimaMagariRecords, 255);
+		State_StampRecordCells(gKolimaForestBendRecords, 255);
 	}
 
 	State_ApplyRectByLayoutSelector();
@@ -193,9 +193,9 @@ static void State_UpdateScrollRegistersWithPreset(void)
 
 	if (line == 227 || line <= 52)
 	{
-		if ((((u32)Engine_RandomNext() * 100) >> 16) < KorimaMagari_ShakeChance)
+		if ((((u32)Engine_RandomNext() * 100) >> 16) < KolimaForestBend_ShakeChance)
 		{
-			source = KorimaMagari_ShakeScroll;
+			source = KolimaForestBend_ShakeScroll;
 		}
 	}
 
@@ -205,18 +205,18 @@ static void State_UpdateScrollRegistersWithPreset(void)
 	*destination = *source;
 }
 
-static void KorimaMagari_CaptureShakeScroll(void)
+static void KolimaForestBend_CaptureShakeScroll(void)
 {
 	u32		  *dst;
 	const u32 *src;
 	u16		  *p;
 
 	src = (const u32 *)((u8 *)gBgScroll + 4);
-	dst = KorimaMagari_ShakeScroll;
+	dst = KolimaForestBend_ShakeScroll;
 	*dst++ = *src++;
 	*dst++ = *src++;
 	*dst = *src;
-	p = (u16 *)KorimaMagari_ShakeScroll;
+	p = (u16 *)KolimaForestBend_ShakeScroll;
 	p[1] += 0xb0;
 	p[3] += 0xb0;
 	p[5] += 0xb0;
@@ -232,7 +232,7 @@ static void EV09_SEARCH(void)
 	Engine_CameraWaitForMove();
 	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(232);
-	if (*gKorimaMagariLayout == 0)
+	if (*gKolimaForestBendLayout == 0)
 	{
 		Actor_SetPosition(9, 0x1000000, 0x1ce0000);
 		Map_CopyCells(77, 34, 1, 2, 83, 25);
@@ -280,9 +280,9 @@ static void EV09_SEARCH(void)
 		Map_CopyCells(65, 50, 2, 5, 79, 25);
 		Engine_TaskWait(30);
 	}
-	if (*gKorimaMagariLayout == 0)
+	if (*gKolimaForestBendLayout == 0)
 	{
-		Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);
+		Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestBendLayout, 9, 30);
 		Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 30);
 		Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 30);
 	}
@@ -293,22 +293,22 @@ static void EV09_SEARCH(void)
 		Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 30);
 	}
 
-	KorimaMagari_ShakeChance = 0;
-	FieldScheduler_AddCallback(KorimaMagari_CaptureShakeScroll, 0xc80);
+	KolimaForestBend_ShakeChance = 0;
+	FieldScheduler_AddCallback(KolimaForestBend_CaptureShakeScroll, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
 	Engine_AudioPlayCue(231);
-	KorimaMagari_ShakeChance = 0;
+	KolimaForestBend_ShakeChance = 0;
 	do
 	{
 		Engine_TaskWait(1);
-		v3 = (KorimaMagari_ShakeChance + 1);
-		KorimaMagari_ShakeChance += 1;
+		v3 = (KolimaForestBend_ShakeChance + 1);
+		KolimaForestBend_ShakeChance += 1;
 	} while (v3 <= 100);
 	Engine_AudioPlayCue(0x121);
-	if (*gKorimaMagariLayout == 0)
+	if (*gKolimaForestBendLayout == 0)
 	{
-		Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 19);
+		Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestBendLayout, 9, 19);
 		Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
 		Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 19);
 	}
@@ -321,8 +321,8 @@ static void EV09_SEARCH(void)
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
 	Engine_TaskWait(1);
-	Engine_TaskRemoveCallback(KorimaMagari_CaptureShakeScroll);
-	*(u16 *)gKorimaMagariLayout ^= 1;
+	Engine_TaskRemoveCallback(KolimaForestBend_CaptureShakeScroll);
+	*(u16 *)gKolimaForestBendLayout ^= 1;
 	Scene_RepaintBoardRecords();
 	Engine_MapRedraw();
 	Engine_EventEnd();
@@ -350,7 +350,7 @@ static void EV13_TOUCH(void)
 	Engine_AudioPlayCue(213);
 	Map_CopyCellAttributes(5, 9, 1, 4, 6, 9);
 	Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
-	*gKorimaMagariReturned = 1;
+	*gKolimaForestBendReturned = 1;
 	Engine_EventEnd();
 }
 
@@ -376,29 +376,29 @@ static void EV12_TOUCH(void)
 	Engine_AudioPlayCue(213);
 	Map_CopyCellAttributes(5, 9, 1, 4, 4, 9);
 	Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
-	*gKorimaMagariReturned = 0;
+	*gKolimaForestBendReturned = 0;
 	Engine_EventEnd();
 }
 
-s32 KorimaMagari_SetupBoard(void)
+s32 KolimaForestBend_SetupBoard(void)
 {
 	struct FieldActor *actor;
 
-	gKorimaMagariReturned = (u16 *)gSceneState;
-	(*(u16 **)&gKorimaMagariLayout) = (u16 *)gSceneState + 1;
-	gKorimaMagariRecords = (s16 *)gSceneState + 2;
+	gKolimaForestBendReturned = (u16 *)gSceneState;
+	(*(u16 **)&gKolimaForestBendLayout) = (u16 *)gSceneState + 1;
+	gKolimaForestBendRecords = (s16 *)gSceneState + 2;
 	Map_CopyCells(32, 0, 64, 32, 0, 64);
 	Map_CopyCellAttributes(0, 0, 32, 32, 0, 64);
 	Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
-		Dma_Set(KorimaMagari_DefaultRecords, gKorimaMagariRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
+		Dma_Set(KolimaForestBend_DefaultRecords, gKolimaForestBendRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
 			REG_DMA3);
-		*gKorimaMagariReturned = 0;
-		*(*(u16 **)&gKorimaMagariLayout) = 1;
+		*gKolimaForestBendReturned = 0;
+		*(*(u16 **)&gKolimaForestBendLayout) = 1;
 	}
-	KorimaMagari_PlaceObjects(gKorimaMagariRecords);
-	State_StampRecordCells(KorimaMagari_DefaultRecords, 255);
+	KolimaForestBend_PlaceObjects(gKolimaForestBendRecords);
+	State_StampRecordCells(KolimaForestBend_DefaultRecords, 255);
 	Scene_RepaintBoardRecords();
 	Engine_ActorSetAnimation(9, 0);
 	Object_GetById(9)->motion_flags = 0;
@@ -412,7 +412,7 @@ s32 KorimaMagari_SetupBoard(void)
 	return 0;
 }
 
-static void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
+static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry)
 {
 	struct FieldActor *actor;
 	s32				   height;
@@ -575,14 +575,14 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 	actor->speed = 0x8000;
 	actor->acceleration = 0x3333;
 	Event_PlayCue(239);
-	Object_SetMode(actor, KorimaMagari_PushAnimations[quarter]);
+	Object_SetMode(actor, KolimaForestBend_PushAnimations[quarter]);
 	Engine_ObjectSetPosition(actor, x, 0, z);
 	Engine_EventWait(6);
 	Engine_ActorSetAnimation(0, 2);
 	ObjectDispatch_InitFromTable4WithArgument(
 		*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
 	Actor_SetSpeed(0, 0x4ccc, 0x3333);
-	Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
+	Actor_SetDestinationOffset(0, KolimaForestBend_PushStepX[quarter], KolimaForestBend_PushStepZ[quarter]);
 	Engine_EventWait(24);
 	Engine_ActorSetAnimation(0, 1);
 	Object_CommitPosition(actor);
@@ -596,33 +596,33 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_palette.h"
 
-u32 KorimaMagari_DefaultRecords[] = {
+u32 KolimaForestBend_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,
 	0, 0xd00cd, 0x1000d, 0, 0xa00cf, 18, 0, 0xffff,
 	0, 0,
 };
 
-u8 KorimaMagari_PushAnimations[] = {2, 2, 3, 3};
+u8 KolimaForestBend_PushAnimations[] = {2, 2, 3, 3};
 
-s8 KorimaMagari_PushStepX[] = {8, 0, -8, 0};
+s8 KolimaForestBend_PushStepX[] = {8, 0, -8, 0};
 
-s8 KorimaMagari_PushStepZ[] = {0, 8, 0, -8};
+s8 KolimaForestBend_PushStepZ[] = {0, 8, 0, -8};
 
-struct SceneEntrance gKorimaMagariEntrances[] = {
+struct SceneEntrance gKolimaForestBendEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 gKorimaMagariExits[] = {
+u32 gKolimaForestBendExits[] = {
 	SCENE_EXITS(43),
 	SCENE_EXIT(1, 42, 2),
 	SCENE_EXIT(2, 44, 1),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKorimaMagariPlacements[] = {
+struct ScenePlacement gKolimaForestBendPlacements[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xd6, CONDITION_ALWAYS, 7,
@@ -632,14 +632,14 @@ struct ScenePlacement gKorimaMagariPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKorimaMagariEvents[] = {
+struct SceneEvent gKolimaForestBendEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKorimaDoNotTouchFloodgate) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKolimaDoNotTouchFloodgate) },
 	{ SEARCH(SEARCH_UNNAMED), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(0x5b) },
 	{ SCENE_EVENTS_END },

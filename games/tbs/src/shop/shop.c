@@ -212,9 +212,9 @@ s32 Battle_ApplyPresetItemsAndFlags(s32 unused)
 	Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
 	Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
 	Inventory_AddItemFar(2, 0xe7);
-	UnitGetFar(3)->doku = 1;
-	UnitGetFar(5)->doku = 1;
-	UnitGetFar(2)->akuryo = 1;
+	UnitGetFar(3)->poison = 1;
+	UnitGetFar(5)->poison = 1;
+	UnitGetFar(2)->haunt = 1;
 	Shop_Run(FINAL_ARG, 0x1e);
 	return 0;
 }
@@ -2350,8 +2350,8 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
 	struct BtlUnit *entry = UnitGetFar(entry_no);
 	s32				result = 0;
 
-	if ((kind == 0 && entry->hp <= 0) || (kind == 1 && entry->doku != 0)
-		|| (kind == 2 && entry->akuryo != 0) || (kind == 3 && entry->restraint != 0))
+	if ((kind == 0 && entry->hp <= 0) || (kind == 1 && entry->poison != 0)
+		|| (kind == 2 && entry->haunt != 0) || (kind == 3 && entry->restraint != 0))
 	{
 		result = 1;
 	}
@@ -2660,11 +2660,11 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 	}
 	else if (mode == 1)
 	{
-		unit->doku = 0;
+		unit->poison = 0;
 	}
 	else if (mode == 2)
 	{
-		unit->akuryo = 0;
+		unit->haunt = 0;
 	}
 	else if (mode == 3)
 	{
@@ -2986,7 +2986,7 @@ void Inn_PlaySleep(s32 room_price)
 		if (object->hp != 0)
 		{
 			object->hp = object->max_hp;
-			object->ep = object->max_ep;
+			object->pp = object->max_pp;
 			UnitRatioFar(objects[index]);
 		}
 	}

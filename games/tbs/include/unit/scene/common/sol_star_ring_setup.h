@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void SoruStar_SetupElementalRings(s32 first, u32 count);
+void SolStar_SetupElementalRings(s32 first, u32 count);
 
 #endif

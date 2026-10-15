@@ -49,19 +49,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KaragoruDou1)
+	if (scene == (s32)&SceneId_GondowanCave1)
 	{
-		return gKaragoruDouEntrances1;
+		return gGondowanCaveEntrances1;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou2)
+	if (scene == (s32)&SceneId_GondowanCave2)
 	{
-		return gKaragoruDouEntrances2;
+		return gGondowanCaveEntrances2;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou3)
+	if (scene == (s32)&SceneId_GondowanCave3)
 	{
-		return gKaragoruDouEntrances3;
+		return gGondowanCaveEntrances3;
 	}
-	return gKaragoruDouEntrancesOther;
+	return gGondowanCaveEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -71,53 +71,53 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return gKaragoruDouExits;
+	return gGondowanCaveExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KaragoruDou1)
+	if (scene == (s32)&SceneId_GondowanCave1)
 	{
 		if (Engine_GameFlagIsSet(0x96f) != 0)
 		{
-			return gKaragoruDouPlacements1Flag96f;
+			return gGondowanCavePlacements1Flag96f;
 		}
-		return gKaragoruDouPlacements1;
+		return gGondowanCavePlacements1;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou2)
+	if (scene == (s32)&SceneId_GondowanCave2)
 	{
-		return gKaragoruDouPlacements2;
+		return gGondowanCavePlacements2;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou3)
+	if (scene == (s32)&SceneId_GondowanCave3)
 	{
-		return gKaragoruDouPlacements3;
+		return gGondowanCavePlacements3;
 	}
-	return gKaragoruDouPlacementsOther;
+	return gGondowanCavePlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KaragoruDou1)
+	if (scene == (s32)&SceneId_GondowanCave1)
 	{
 		if (Engine_GameFlagIsSet(0x96f) != 0)
 		{
-			return gKaragoruDouEvents1Flag96f;
+			return gGondowanCaveEvents1Flag96f;
 		}
-		return gKaragoruDouEvents1;
+		return gGondowanCaveEvents1;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou2)
+	if (scene == (s32)&SceneId_GondowanCave2)
 	{
-		return gKaragoruDouEvents2;
+		return gGondowanCaveEvents2;
 	}
-	if (scene == (s32)&SceneId_KaragoruDou3)
+	if (scene == (s32)&SceneId_GondowanCave3)
 	{
-		return gKaragoruDouEvents3;
+		return gGondowanCaveEvents3;
 	}
-	return gKaragoruDouEventsOther;
+	return gGondowanCaveEventsOther;
 }
 
 static void EV10_TOUCH(void)
@@ -138,7 +138,7 @@ static void EV10_TOUCH(void)
 		Actor_FaceDirection(11, 0xd000, 0);
 		Engine_EventWait(10);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-		Engine_EventSetMessage(MsgKaragoruWhyGoingBackRobinDo);
+		Engine_EventSetMessage(MsgKaragolWhyGoingBackIsaacDo);
 		Event_OpenMessage(11, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -147,7 +147,7 @@ static void EV10_TOUCH(void)
 			GameFlag_Clear(0x9a0);
 			Engine_ActorWaitForMove(11);
 			Engine_ActorSetAnimation(11, 1);
-			gGameState.saved_scene = (s32)&SceneId_TorebiHeya;
+			gGameState.saved_scene = (s32)&SceneId_TolbiInteriors;
 			gGameState.saved_entrance = 30;
 		}
 		else
@@ -180,7 +180,7 @@ static void EV11_SCRIPT(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(10);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
-	Engine_EventSetMessage(MsgKaragoruIveBeenWaitingForRobin);
+	Engine_EventSetMessage(MsgKaragolIveBeenWaitingForIsaac);
 	Engine_EventShowMessage(11, 0);
 	Engine_ActorSetAnimation(11, 2);
 	{
@@ -200,7 +200,7 @@ static void EV08_TALK(void)
 {
 	s32 base;
 
-	base = MsgKaragoruDoYouWishCrossInto;
+	base = MsgKaragolDoYouWishCrossInto;
 	Engine_EventSetMessage(base);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -224,9 +224,9 @@ static void EV08_TALK(void)
 static void EV09_PSYNERGY_1(void)
 {
 	if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
-		Engine_EventSetMessage(MsgKaragoruWeMissedColossoBecauseWe);
+		Engine_EventSetMessage(MsgKaragolWeMissedColossoBecauseWe);
 	else
-		Engine_EventSetMessage(MsgKaragoruWarriorsHaveBeenFightingWhile);
+		Engine_EventSetMessage(MsgKaragolWarriorsHaveBeenFightingWhile);
 	Engine_EventShowMessage(9, 0);
 }
 
@@ -390,7 +390,7 @@ s32 Scene_Initialize(void)
 {
 	struct FieldActor *actor;
 
-	if (gGameState.scene == (s32)&SceneId_KaragoruDou1)
+	if (gGameState.scene == (s32)&SceneId_GondowanCave1)
 	{
 		GameFlag_Set(0x144);
 		if (GameFlag_IsSet(0x9a0) != 0)
@@ -398,7 +398,7 @@ s32 Scene_Initialize(void)
 			Actor_SetPosition(11, 0, 0);
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_KaragoruDou3)
+	if (gGameState.scene == (s32)&SceneId_GondowanCave3)
 	{
 		if (gGameState.entrance == 1)
 		{
@@ -490,18 +490,18 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance gKaragoruDouEntrancesOther[] = {
+struct SceneEntrance gGondowanCaveEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKaragoruDouEntrances1[] = {
+struct SceneEntrance gGondowanCaveEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 152, 0, 120, FACING_SOUTH, 0, 32, 32, 272, 480, 0 },
 	{ 2, CONDITION_ALWAYS, 152, 0, 440, FACING_NORTH, 0, 32, 32, 272, 480, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKaragoruDouEntrances2[] = {
+struct SceneEntrance gGondowanCaveEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 728, 0, 312, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
 	{ 2, CONDITION_ALWAYS, 168, 0, 408, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
 	{ 3, CONDITION_ALWAYS, 168, 0, 520, FACING_SOUTH, 0, 112, 464, 576, 704, 0 },
@@ -509,7 +509,7 @@ struct SceneEntrance gKaragoruDouEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKaragoruDouEntrances3[] = {
+struct SceneEntrance gGondowanCaveEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 792, 0, 456, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
 	{ 2, CONDITION_ALWAYS, 360, 0, 152, FACING_SOUTH, 0, 240, 48, 864, 464, 0 },
 	{ 3, CONDITION_ALWAYS, 344, 0, 440, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
@@ -519,7 +519,7 @@ struct SceneEntrance gKaragoruDouEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gKaragoruDouExits[] = {
+u32 gGondowanCaveExits[] = {
 	SCENE_EXITS(152),
 	SCENE_EXIT(1, 2, 25),
 	SCENE_EXIT(2, 2, 54),
@@ -538,11 +538,11 @@ u32 gKaragoruDouExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKaragoruDouPlacementsOther[] = {
+struct ScenePlacement gGondowanCavePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKaragoruDouPlacements1[] = {
+struct ScenePlacement gGondowanCavePlacements1[] = {
 	{ 0x96, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x96, CONDITION_ALWAYS, ACTOR_STAND,
@@ -552,7 +552,7 @@ struct ScenePlacement gKaragoruDouPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKaragoruDouPlacements1Flag96f[] = {
+struct ScenePlacement gGondowanCavePlacements1Flag96f[] = {
 	{ 0x96, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x96, CONDITION_ALWAYS, ACTOR_STAND,
@@ -564,7 +564,7 @@ struct ScenePlacement gKaragoruDouPlacements1Flag96f[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKaragoruDouPlacements2[] = {
+struct ScenePlacement gGondowanCavePlacements2[] = {
 	{ 0x127, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
@@ -574,7 +574,7 @@ struct ScenePlacement gKaragoruDouPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKaragoruDouPlacements3[] = {
+struct ScenePlacement gGondowanCavePlacements3[] = {
 	{ 0xd4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(496), 0, PIXELS(304), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -588,43 +588,43 @@ struct ScenePlacement gKaragoruDouPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKaragoruDouEventsOther[] = {
+struct SceneEvent gGondowanCaveEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKaragoruDouEvents1[] = {
+struct SceneEvent gGondowanCaveEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouUsWereTheSoldiersWhoGuard) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEvenIfYouHeadEastYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouThoseWhoGoToGondowanRarely) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_1) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouYoudThinkYouCouldGetThrough) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKaragoruDouEvents1Flag96f[] = {
+struct SceneEvent gGondowanCaveEvents1Flag96f[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, 11, 0x9a0, EVENT_SCRIPT(EV11_SCRIPT) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouWhyWouldIodemChooseToWait) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouWeHaventSeenAnybodyUnusualCrossing) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEvenIfYouGoEastFrom) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouIodemIsGoingToBabiLighthouse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouItsALotOfStressBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEveryoneComesDownThisWayWhen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouWeHaveToHeadForThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKaragoruDouEvents2[] = {
+struct SceneEvent gGondowanCaveEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -635,7 +635,7 @@ struct SceneEvent gKaragoruDouEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKaragoruDouEvents3[] = {
+struct SceneEvent gGondowanCaveEvents3[] = {
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

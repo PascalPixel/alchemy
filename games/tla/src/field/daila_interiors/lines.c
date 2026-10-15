@@ -9,24 +9,24 @@
 
 void Func_020000ac(s32 unused, s32 actor)
 {
-    Deri_Jump(actor, 0x100, 50);
-    Deri_ObjLaunch(actor, 6, 15);
-    Deri_ObjLaunch(actor, 6, 15);
-    Deri_Wait(10);
-    if (!Deri_FlagChk(0x200)) {
-        Deri_MesSet((s32)MsgDeriHeyaGah);
-        Deri_MesPut(actor, 0);
-        Deri_ObjWalk(actor, 360, 72);
-        Deri_ObjTurn(actor, 0x4000, 0);
-        Deri_FlagSet(0x200);
+    Daila_Jump(actor, 0x100, 50);
+    Daila_ObjLaunch(actor, 6, 15);
+    Daila_ObjLaunch(actor, 6, 15);
+    Daila_Wait(10);
+    if (!Daila_FlagChk(0x200)) {
+        Daila_MesSet((s32)MsgDailaInteriorsGah);
+        Daila_MesPut(actor, 0);
+        Daila_ObjWalk(actor, 360, 72);
+        Daila_ObjTurn(actor, 0x4000, 0);
+        Daila_FlagSet(0x200);
     } else {
-        Deri_MesSet((s32)MsgDeriHeyaYarg);
-        Deri_MesPut(actor, 0);
-        Deri_ObjWalk(actor, 392, 104);
-        Deri_ObjTurn(actor, 0x8000, 0);
-        Deri_FlagClr(0x200);
+        Daila_MesSet((s32)MsgDailaInteriorsYarg);
+        Daila_MesPut(actor, 0);
+        Daila_ObjWalk(actor, 392, 104);
+        Daila_ObjTurn(actor, 0x8000, 0);
+        Daila_FlagClr(0x200);
     }
-    Deri_Wait(20);
+    Daila_Wait(20);
 }
 
 void Func_02000150(s32 unused, s32 actor)
@@ -37,32 +37,32 @@ void Func_02000150(s32 unused, s32 actor)
     ObjectMotion_Launch(actor, 6, 15);
     ObjectMotion_Launch(actor, 6, 15);
     Battle_WaitMode0(10);
-    Engine_EventSetMessage((s32)MsgDeriHeyaWhatAreYouDoing);
+    Engine_EventSetMessage((s32)MsgDailaInteriorsWhatAreYouDoing);
     Engine_EventShowMessage(actor, 0);
     Battle_WaitMode0(10);
 }
 
-s32 DeriHeya_TalkScamps(void)
+s32 DailaInteriors_TalkScamps(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDeriHeyaScamps);
+    Engine_EventSetMessage((s32)MsgDailaInteriorsScamps);
     Engine_EventShowMessage(19, 0);
     Engine_EventEnd();
     return 0;
 }
 
-s32 DeriHeya_TalkMazeTreasure(void)
+s32 DailaInteriors_TalkMazeTreasure(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDeriHeyaMazeTreasure);
+    Engine_EventSetMessage((s32)MsgDailaInteriorsMazeTreasure);
     Engine_EventShowMessage(19, 0);
     Engine_EventEnd();
     return 0;
 }
 
-void DeriHeya_BeginLeaderEvent(void)
+void DailaInteriors_BeginLeaderEvent(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
@@ -78,7 +78,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
     s32 flag = GameFlag_Test(0x873);
     struct PartyState *party = &gPartyState;
-    s32 id = (s32)&SceneId_DeriHeya2;
+    s32 id = (s32)&SceneId_DailaInteriors2;
 
     if (flag) {
         if (party->scene == id)

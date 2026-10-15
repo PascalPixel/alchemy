@@ -59,21 +59,21 @@ static void SceneActor_RunActorStep(s32 arg0)
 
 static void EV09_TALK(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuThoughtSawCatGetUp);
+	Engine_EventSetMessage(MsgVaultThoughtSawCatGetUp);
 	Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(9);
 }
 
 static void EV11_TALK(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuDodonpasHenchmenNeverAttackedUs);
+	Engine_EventSetMessage(MsgVaultDodonpasHenchmenNeverAttackedUs);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(11);
 }
 
 static void EV12_TALK(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuItsNearTimeForColosso);
+	Engine_EventSetMessage(MsgVaultItsNearTimeForColosso);
 	Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(12);
 }
@@ -81,7 +81,7 @@ static void EV12_TALK(void)
 static void FieldScene_RunActor16Sequence(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuRobinYouveComeBackVault);
+	Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetAnimation(16, 1);
 	Event_ShowMessageAndWait(16, 0, 20);
@@ -103,14 +103,14 @@ static void FieldScene_RunActor16Sequence(void)
 
 static void SceneDialogue_RunActor16Line(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuThoseGuysReallyWantedRevenge);
+	Engine_EventSetMessage(MsgVaultThoseGuysReallyWantedRevenge);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(16);
 }
 
 static void EV23_TALK(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuDidSomeCookingNowIve);
+	Engine_EventSetMessage(MsgVaultDidSomeCookingNowIve);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(23);
 }
@@ -121,12 +121,12 @@ static void EV18_TALK(void)
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
 	if (GameFlag_IsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuHaveLotLeftoverBonesFrom);
+		Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
 		Event_OpenMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuWantMoreBones);
+		Engine_EventSetMessage(MsgVaultWantMoreBones);
 		Event_OpenMessage(18, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -140,7 +140,7 @@ static void EV18_TALK(void)
 		{
 			Engine_ActorSetAnimationAndWait(18, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage(MsgKuupuappuWowHaveManyThingsArent);
+			Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
 		}
 		else
@@ -194,7 +194,7 @@ static void EV19_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuTheresRiverFireOnOther);
+		Engine_EventSetMessage(MsgVaultTheresRiverFireOnOther);
 		Engine_EventShowMessage(19, 0);
 	}
 
@@ -214,7 +214,7 @@ static void EV20_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuTheySayVolcanoOnMt);
+		Engine_EventSetMessage(MsgVaultTheySayVolcanoOnMt);
 		Engine_EventShowMessage(20, 0);
 	}
 
@@ -234,7 +234,7 @@ static void EV21_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuWeHaventBeenGettingMany);
+		Engine_EventSetMessage(MsgVaultWeHaventBeenGettingMany);
 		Engine_EventShowMessage(21, 0);
 	}
 
@@ -254,7 +254,7 @@ static void EV22_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuMmmmNothingDoNothingDo);
+		Engine_EventSetMessage(MsgVaultMmmmNothingDoNothingDo);
 		Engine_EventShowMessage(22, 0);
 	}
 
@@ -266,11 +266,11 @@ static void EV18_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x85B) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuGeeAlwaysGetHungryWhen);
+		Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuHeReallyLikesBonesWonder);
+		Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
 	}
 	Engine_EventShowMessage(18, 0);
 	Engine_EventEnd();
@@ -381,47 +381,47 @@ struct SceneEvent Placement_Effects[] = {
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWaahACatAteMyPrecious) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThePrisonersSaidTheyWantedTo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheWarriorsISawFightingAt) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
 	{ EVENT_TALK, 16, 0x300, EVENT_SCRIPT(FieldScene_RunActor16Sequence) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Line) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheMayorsFamilyUrnIsOn) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThoseThievesYouGoToAll) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIHearThatABigFestival) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWeDontGetALotOf) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ EVENT_TALK, 18, 0x250, EVENT_SCRIPT(EV18_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIfIdKnownThisWasGoing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMyHusbandSaysMyCatAte) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyDoYouSupposeThoseThieves) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKuupuappuDaddyHasntBeenPayingAttentionSince) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWheneverMyWifeUsedToGo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuLatelyMyHusbandsBeenGoingOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x300, EVENT_SCRIPT(EV1040_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAsLongAsWeStayAlert) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWellBeSecuringItInA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuItsJustEmbarrassingThatWeLet) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuILoveFestivalsIllBetColosso) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKuupuappuJustImagineHowTerribleItWould) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuItsAGoodThingThatGiant) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyKeepTheStoreOpenIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWontAnyoneComeStayTheNight) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAfterYouveBeenInThisBusiness) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
 	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(0xc3) },
-	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledHistoryOf)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledGemsOfAngara)) },
+	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOfAngara)) },
 	{ SCENE_EVENTS_END },
 };

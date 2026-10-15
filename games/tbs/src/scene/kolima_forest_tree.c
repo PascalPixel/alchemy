@@ -34,33 +34,33 @@ static void RunEventScript01(void);
 static void PaletteScene_RunActorTransitionSequence(void);
 static void PaletteScene_SpawnEffect(void);
 static void PaletteScene_AdvanceTransition(void);
-static void KorimaKi_PlayGesture(s32 actor, s32 gesture);
-static void KorimaKi_SpawnOrbitSparks(void);
+static void KolimaForestTree_PlayGesture(s32 actor, s32 gesture);
+static void KolimaForestTree_SpawnOrbitSparks(void);
 static void PaletteScene_SetRecordValue(s32 key, s32 value);
 
-s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
-s32 gKorimaKiSparkCount __attribute__((section(".bss")));
-s32 gKorimaKiSparkSound __attribute__((section(".bss")));
-s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkOrigin[3] __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkCount __attribute__((section(".bss")));
+s32 gKolimaForestTreeSparkSound __attribute__((section(".bss")));
+s32 gKolimaForestTreeTransitionStep __attribute__((section(".bss")));
 
-u8 *KorimaKi_GetEntrances(void)
+u8 *KolimaForestTree_GetEntrances(void)
 {
-	return gKorimaKiEntrances;
+	return gKolimaForestTreeEntrances;
 }
 
-u8 *KorimaKi_GetRegions(void)
+u8 *KolimaForestTree_GetRegions(void)
 {
-	return gKorimaKiRegions;
+	return gKolimaForestTreeRegions;
 }
 
-u8 *KorimaKi_GetExits(void)
+u8 *KolimaForestTree_GetExits(void)
 {
-	return gKorimaKiExits;
+	return gKolimaForestTreeExits;
 }
 
-u8 *KorimaKi_GetPlacements(void)
+u8 *KolimaForestTree_GetPlacements(void)
 {
-	return gKorimaKiPlacements;
+	return gKolimaForestTreePlacements;
 }
 
 static void PaletteScene_Initialize(void)
@@ -74,67 +74,67 @@ static void PaletteScene_Initialize(void)
 	Engine_EventEnd();
 }
 
-u8 *KorimaKi_GetEvents(void)
+u8 *KolimaForestTree_GetEvents(void)
 {
-	return gKorimaKiEvents;
+	return gKolimaForestTreeEvents;
 }
 
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	KorimaKi_PlayGesture(11, 1);
+	KolimaForestTree_PlayGesture(11, 1);
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage(MsgKorimaForestKolimaAlive);
+		Engine_EventSetMessage(MsgKolimaForestKolimaAlive);
 		Engine_EventShowMessage(9, 0);
 	}
 	else if (GameFlag_IsSet(0x84c) != 0)
 	{
-		Engine_EventSetMessage(MsgKorimaLeaveBeforeForest);
+		Engine_EventSetMessage(MsgKolimaLeaveBeforeForest);
 		Engine_EventShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKorimaWho);
+		Engine_EventSetMessage(MsgKolimaWho);
 		Engine_EventShowMessageAndWait(9, 0, 20);
-		KorimaKi_PlayGesture(11, 0);
+		KolimaForestTree_PlayGesture(11, 0);
 		Engine_EventWait(60);
-		KorimaKi_PlayGesture(11, 1);
+		KolimaForestTree_PlayGesture(11, 1);
 		Engine_EventShowMessageAndWait(9, 0, 10);
 		Engine_ActorSetAnimationAndWait(0, 3);
 		Engine_EventWait(40);
 		Engine_EventShowMessage(9, 0);
-		KorimaKi_PlayGesture(11, 0);
+		KolimaForestTree_PlayGesture(11, 0);
 		Engine_EventWait(80);
 		Engine_EventShowMessageAndWait(9, 0, 20);
-		KorimaKi_PlayGesture(11, 1);
+		KolimaForestTree_PlayGesture(11, 1);
 		Engine_EventShowMessageAndWait(9, 0, 20);
 		Engine_GameFlagSet(0x84c);
 	}
-	KorimaKi_PlayGesture(11, 0);
+	KolimaForestTree_PlayGesture(11, 0);
 	Engine_EventEnd();
 }
 
-static void KorimaKi_TalkToToreto(void)
+static void KolimaForestTree_TalkToTret(void)
 {
 	s32 record;
 
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x845) != 0)
 	{
-		KorimaKi_PlayGesture(10, 1);
-		Engine_EventSetMessage(MsgKorimaNowHaveSuchPowerAxe);
+		KolimaForestTree_PlayGesture(10, 1);
+		Engine_EventSetMessage(MsgKolimaNowHaveSuchPowerAxe);
 		Event_ShowMessage(8, 0);
-		KorimaKi_PlayGesture(10, 0);
+		KolimaForestTree_PlayGesture(10, 0);
 	}
 	else
 	{
 		if (GameFlag_IsSet(0x844) != 0)
 		{
-			KorimaKi_PlayGesture(10, 1);
-			Engine_EventSetMessage(MsgKorimaSilence2);
+			KolimaForestTree_PlayGesture(10, 1);
+			Engine_EventSetMessage(MsgKolimaSilence2);
 			Event_ShowMessage(8, 0);
-			KorimaKi_PlayGesture(10, 0);
+			KolimaForestTree_PlayGesture(10, 0);
 			record = PartyInventory_FindOwner(184);
 			if (record != -1)
 			{
@@ -146,7 +146,7 @@ static void KorimaKi_TalkToToreto(void)
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKorimaSilence);
+			Engine_EventSetMessage(MsgKolimaSilence);
 			Event_ShowMessage(8, 0);
 			ColorBuffer_ApplyTarget(0x406218, 1);
 			Engine_ColorBufferInterpolate(20);
@@ -167,11 +167,11 @@ static void EV13_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage(MsgKorimaMustHorribleBeyondRiverAm);
+		Engine_EventSetMessage(MsgKolimaMustHorribleBeyondRiverAm);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKorimaHealingWatersMercuryLighthouseMight);
+		Engine_EventSetMessage(MsgKolimaHealingWatersMercuryLighthouseMight);
 	}
 	Engine_EventShowMessage(9, 0);
 	Engine_EventEnd();
@@ -182,11 +182,11 @@ static void EV12_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage(MsgKorimaKnowCannotStopButPlease);
+		Engine_EventSetMessage(MsgKolimaKnowCannotStopButPlease);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKorimaPeopleKolimaForgiveMe);
+		Engine_EventSetMessage(MsgKolimaPeopleKolimaForgiveMe);
 	}
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
@@ -218,10 +218,10 @@ static void RunEventScript01(void)
 	Engine_ColorBufferInterpolate(20);
 	Engine_TaskWait(40);
 	Event_PlayCue(17);
-	gKorimaKiSparkSound = 1;
+	gKolimaForestTreeSparkSound = 1;
 	FieldScheduler_AddCallback(PaletteScene_SpawnEffect, 0xc80);
 	Engine_TaskWait(30);
-	gKorimaKiSparkSound = 0;
+	gKolimaForestTreeSparkSound = 0;
 	Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -251,7 +251,7 @@ static void RunEventScript01(void)
 		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
 	}
 	Engine_EventWait(80);
-	Engine_EventSetMessage(MsgKorimaControlTretsHeartShallNot);
+	Engine_EventSetMessage(MsgKolimaControlTretsHeartShallNot);
 	Event_ShowMessageAndWait(0x200e, 0, 20);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(20);
@@ -287,53 +287,53 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
 	Event_PlayCue(17);
-	Engine_MessageShowCentered(MsgKorimaWaterHermesSeepedIntoTret, 1);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+	Engine_MessageShowCentered(MsgKolimaWaterHermesSeepedIntoTret, 1);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	object = Actor_Get(ACTOR_PARTY_LEADER);
 	if (object != 0)
 	{
-		Actor_SetPosition(GERALD, object->x.fixed, object->z.fixed);
+		Actor_SetPosition(GARET, object->x.fixed, object->z.fixed);
 	}
 	object = Actor_Get(ACTOR_PARTY_LEADER);
 	if (object != 0)
 	{
-		Actor_SetPosition(IWAN, object->x.fixed, object->z.fixed);
+		Actor_SetPosition(IVAN, object->x.fixed, object->z.fixed);
 	}
-	Engine_ActorEnableActionCallback(GERALD, SceneAction_ActorOneEntry);
-	Engine_ActorEnableActionCallback(IWAN, SceneAction_ActorTwoEntry);
+	Engine_ActorEnableActionCallback(GARET, SceneAction_ActorOneEntry);
+	Engine_ActorEnableActionCallback(IVAN, SceneAction_ActorTwoEntry);
 	if (actorThreeEnabled != 0)
 	{
-		Actor_SetSpeed(MEARI, 0x10000, 0x8000);
+		Actor_SetSpeed(MIA, 0x10000, 0x8000);
 		object = Actor_Get(ACTOR_PARTY_LEADER);
 		if (object != 0)
 		{
-			Actor_SetPosition(MEARI, object->x.fixed, object->z.fixed);
+			Actor_SetPosition(MIA, object->x.fixed, object->z.fixed);
 		}
-		Engine_ActorEnableActionCallback(MEARI, SceneAction_ActorThreeEntry);
+		Engine_ActorEnableActionCallback(MIA, SceneAction_ActorThreeEntry);
 	}
 	Object_RefreshSelectorById(2);
 	Engine_EventWait(40);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(32);
 	Engine_TaskWait(40);
-	transitionState = &gKorimaKiTransitionStep;
+	transitionState = &gKolimaForestTreeTransitionStep;
 	*transitionState = 0;
 	FieldScheduler_AddCallback(PaletteScene_AdvanceTransition, 0xc80);
 	Engine_EventWait(40);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 20);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
 	Camera_SetSpeed(0x33333, 0x6666);
 	Camera_MoveTo(0x1000000, -1, 0xfe0000, 1);
 	Engine_CameraWaitForMove();
 	Event_PlayCue(246);
 	Engine_EventWait(40);
-	Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 20);
+	Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
 	Camera_MoveTo(0x19d0000, -1, 0x1050000, 1);
 	Engine_CameraWaitForMove();
 	Event_PlayCue(246);
 	Engine_EventWait(40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 20);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 20);
 	Camera_MoveTo(0x1460000, -1, 0x1800000, 1);
 	Engine_CameraWaitForMove();
 	Event_PlayCue(246);
@@ -349,74 +349,74 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	cycle = 0;
 	do
 	{
-		KorimaPalette_Restore(0);
+		KolimaPalette_Restore(0);
 		Engine_ColorBufferInterpolate(6);
 		Engine_TaskWait(6);
-		KorimaPalette_Restore(1);
+		KolimaPalette_Restore(1);
 		Engine_ColorBufferInterpolate(6);
 		cycle = (cycle + 1);
 		Engine_TaskWait(6);
 	} while ((u32)cycle <= 3);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(40);
 	Engine_TaskWait(80);
 	Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(10, 1);
+	KolimaForestTree_PlayGesture(10, 1);
 	Engine_EventWait(40);
 	Event_PlayCue(7);
-	Engine_EventSetMessage(MsgKorimaFeelGreatPowerSpreadingThrough);
+	Engine_EventSetMessage(MsgKolimaFeelGreatPowerSpreadingThrough);
 	Event_ShowMessage(8, 0);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 20);
-	KorimaKi_PlayGesture(10, 2);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 20);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(10, 3);
+	KolimaForestTree_PlayGesture(10, 3);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(10, 1);
+	KolimaForestTree_PlayGesture(10, 1);
 	Engine_EventWait(20);
 	Event_ShowMessage(8, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-	Actor_ShowEmote(GERALD, 0x105, 0);
-	Actor_ShowEmote(MEARI, 0x105, 0);
-	Actor_ShowEmote(IWAN, 0x105, 40);
+	Actor_ShowEmote(GARET, 0x105, 0);
+	Actor_ShowEmote(MIA, 0x105, 0);
+	Actor_ShowEmote(IVAN, 0x105, 40);
 	Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(11, 1);
+	KolimaForestTree_PlayGesture(11, 1);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 20);
-	KorimaKi_PlayGesture(11, 2);
+	KolimaForestTree_PlayGesture(11, 2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 20);
-	KorimaKi_PlayGesture(11, 3);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 20);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(11, 2);
+	KolimaForestTree_PlayGesture(11, 2);
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Event_ShowMessageAndWait(0x4009, 0, 10);
-	KorimaKi_PlayGesture(10, 0);
+	KolimaForestTree_PlayGesture(10, 0);
 	Engine_EventWait(20);
 	Event_ShowMessage(0x8008, 0);
-	KorimaKi_PlayGesture(10, 1);
+	KolimaForestTree_PlayGesture(10, 1);
 	Engine_EventWait(20);
 	Event_OpenMessage(0x8008, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Event_ShowMessage(0x4009, 0);
@@ -425,238 +425,238 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	else
 	{
 		gEventWork->message += 2;
-		Actor_ShowEmote(MEARI, 0x103, 0);
-		Actor_ShowEmote(GERALD, 0x103, 0);
-		Actor_ShowEmote(IWAN, 0x103, 40);
-		Engine_ActorSetAnimation(GERALD, 4);
-		Event_ShowMessage(GERALD, 0);
+		Actor_ShowEmote(MIA, 0x103, 0);
+		Actor_ShowEmote(GARET, 0x103, 0);
+		Actor_ShowEmote(IVAN, 0x103, 40);
+		Engine_ActorSetAnimation(GARET, 4);
+		Event_ShowMessage(GARET, 0);
 		if (actorThreeEnabled != 0)
 		{
-			Engine_ActorRunRepeatedMotion(MEARI, 2);
-			Event_ShowMessage(MEARI, 0);
+			Engine_ActorRunRepeatedMotion(MIA, 2);
+			Event_ShowMessage(MIA, 0);
 		}
 		else
 		{
 			gEventWork->message += 1;
 		}
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
-		Event_ShowMessage(IWAN, 0);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
+		Event_ShowMessage(IVAN, 0);
 		Event_ShowMessage(0x4009, 0);
 		Event_ShowMessage(0x8008, 0);
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(10, 0);
+	KolimaForestTree_PlayGesture(10, 0);
 	Engine_EventWait(20);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
 	ColorBuffer_ApplyTarget(0x406218, 1);
 	Engine_ColorBufferInterpolate(40);
 	Engine_EventWait(60);
-	gKorimaKiSparkCount = 0;
-	gKorimaKiSparkOrigin[0] = 0x1480000;
-	gKorimaKiSparkOrigin[1] = 0x300000;
-	effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
-	gKorimaKiSparkOrigin[2] = 0xcd0000;
+	gKolimaForestTreeSparkCount = 0;
+	gKolimaForestTreeSparkOrigin[0] = 0x1480000;
+	gKolimaForestTreeSparkOrigin[1] = 0x300000;
+	effectCallback = (s32)KolimaForestTree_SpawnOrbitSparks;
+	gKolimaForestTreeSparkOrigin[2] = 0xcd0000;
 	FieldScheduler_AddCallback(effectCallback, 0xc80);
 	Engine_EventWait(100);
 	Engine_TaskRemoveCallback(effectCallback);
 	ColorBuffer_ApplyTarget(0x7fff, 0);
 	Engine_ColorBufferInterpolate(60);
 	Engine_EventWait(100);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(20);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(10, 1);
+	KolimaForestTree_PlayGesture(10, 1);
 	Engine_EventWait(10);
-	Engine_EventSetMessage(MsgKorimaShouldDoPeopleKolimaCursed);
+	Engine_EventSetMessage(MsgKolimaShouldDoPeopleKolimaCursed);
 	Event_ShowMessage(0x8008, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
 	Event_ShowMessage(0x4009, 0);
 	Event_ShowMessageAndWait(0x8008, 0, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 10);
-	Event_OpenMessage(GERALD, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Actor_ShowEmote(GERALD, 0x102, 40);
+		Actor_ShowEmote(GARET, 0x102, 40);
 	}
 	else
 	{
-		Engine_ActorSetAnimationAndWait(GERALD, 4);
+		Engine_ActorSetAnimationAndWait(GARET, 4);
 		gEventWork->message += 1;
 	}
-	Event_ShowMessage(GERALD, 0);
-	KorimaKi_PlayGesture(10, 4);
+	Event_ShowMessage(GARET, 0);
+	KolimaForestTree_PlayGesture(10, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKorimaWasIndeedAngryPeopleHad);
+	Engine_EventSetMessage(MsgKolimaWasIndeedAngryPeopleHad);
 	Event_ShowMessage(0x8008, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
 	Event_ShowMessage(0x8008, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	KorimaKi_PlayGesture(10, 4);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	KolimaForestTree_PlayGesture(10, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x8008, 0, 20);
-	KorimaKi_PlayGesture(11, 0);
+	KolimaForestTree_PlayGesture(11, 0);
 	Event_ShowMessageAndWait(0x4009, 0, 20);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(11, 1);
+	KolimaForestTree_PlayGesture(11, 1);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 20);
-	KorimaKi_PlayGesture(10, 2);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
 	Event_ShowMessage(0x8008, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 0);
-	Actor_ShowEmote(IWAN, 0x102, 80);
-	KorimaKi_PlayGesture(11, 5);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Actor_ShowEmote(MIA, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 80);
+	KolimaForestTree_PlayGesture(11, 5);
 	Engine_EventWait(60);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 20);
-	KorimaKi_PlayGesture(10, 5);
+	KolimaForestTree_PlayGesture(10, 5);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(10, 2);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4008, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Actor_FaceDirection(GERALD, FACING_WEST, 10);
-	Event_ShowMessage(GERALD, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Actor_FaceDirection(GARET, FACING_WEST, 10);
+	Event_ShowMessage(GARET, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 20);
 	Event_ShowMessage(0x8002, 0);
-	KorimaKi_PlayGesture(11, 4);
+	KolimaForestTree_PlayGesture(11, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 20);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	KorimaKi_PlayGesture(10, 1);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	KolimaForestTree_PlayGesture(10, 1);
 	Event_ShowMessageAndWait(0x8008, 0, 10);
-	KorimaKi_PlayGesture(10, 2);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(11, 0);
+	KolimaForestTree_PlayGesture(11, 0);
 	Engine_EventWait(20);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
 	ColorBuffer_ApplyTarget(0x406218, 1);
 	Engine_ColorBufferInterpolate(40);
 	Engine_EventWait(60);
-	gKorimaKiSparkCount = 0;
-	gKorimaKiSparkOrigin[0] = 0x880000;
-	gKorimaKiSparkOrigin[1] = 0x140000;
-	effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
-	gKorimaKiSparkOrigin[2] = 0x1020000;
+	gKolimaForestTreeSparkCount = 0;
+	gKolimaForestTreeSparkOrigin[0] = 0x880000;
+	gKolimaForestTreeSparkOrigin[1] = 0x140000;
+	effectCallback = (s32)KolimaForestTree_SpawnOrbitSparks;
+	gKolimaForestTreeSparkOrigin[2] = 0x1020000;
 	FieldScheduler_AddCallback(effectCallback, 0xc80);
 	Engine_EventWait(100);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 40);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
-	Actor_ShowEmote(IWAN, 0x100, 20);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
+	Actor_ShowEmote(IVAN, 0x100, 20);
 	Event_ShowMessageAndWait(0x8002, 0, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	KorimaKi_PlayGesture(10, 4);
+	KolimaForestTree_PlayGesture(10, 4);
 	Engine_EventWait(20);
 	Event_ShowMessage(0x8008, 0);
-	Actor_ShowEmote(IWAN, 0x101, 60);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 10);
+	Actor_ShowEmote(IVAN, 0x101, 60);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 10);
 	Event_ShowMessageAndWait(0x8002, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 20);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 20);
 	Event_ShowMessageAndWait(0x8008, 0, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 120);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 120);
 	Engine_TaskRemoveCallback(effectCallback);
 	Engine_EventWait(60);
-	KorimaPalette_Restore(0);
+	KolimaPalette_Restore(0);
 	Engine_ColorBufferInterpolate(40);
-	KorimaKi_PlayGesture(10, 2);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x8008, 0, 20);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Event_ShowMessage(0x4009, 0);
 	Event_ShowMessage(0x8008, 0);
-	KorimaKi_PlayGesture(11, 4);
+	KolimaForestTree_PlayGesture(11, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	KorimaKi_PlayGesture(10, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	KolimaForestTree_PlayGesture(10, 1);
 	Event_OpenMessage(0x8008, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
 	{
 		gEventWork->message += 1;
 	}
 	Engine_EventWait(10);
-	KorimaKi_PlayGesture(10, 2);
+	KolimaForestTree_PlayGesture(10, 2);
 	Engine_EventWait(20);
-	KorimaKi_PlayGesture(11, 3);
+	KolimaForestTree_PlayGesture(11, 3);
 	Engine_EventWait(40);
-	KorimaKi_PlayGesture(10, 1);
+	KolimaForestTree_PlayGesture(10, 1);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x8008, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_EAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 10);
+	Actor_FaceDirection(GARET, FACING_EAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Event_PlayCue(17);
 	finalActions = SceneAction_GroupFinish;
-	Engine_ActorEnableActionCallback(GERALD, finalActions);
+	Engine_ActorEnableActionCallback(GARET, finalActions);
 	if (actorThreeEnabled != 0)
 	{
-		Engine_ActorEnableActionCallback(MEARI, finalActions);
+		Engine_ActorEnableActionCallback(MIA, finalActions);
 	}
 	Object_SetActionCallbackAndRefreshById(2, (s32)finalActions);
-	KorimaKi_PlayGesture(10, 4);
-	KorimaKi_PlayGesture(10, 4);
+	KolimaForestTree_PlayGesture(10, 4);
+	KolimaForestTree_PlayGesture(10, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKorimaOweGreatDebtHaveSaved);
+	Engine_EventSetMessage(MsgKolimaOweGreatDebtHaveSaved);
 	Event_ShowMessage(0x8008, 0);
-	KorimaKi_PlayGesture(11, 4);
-	KorimaKi_PlayGesture(11, 4);
+	KolimaForestTree_PlayGesture(11, 4);
+	KolimaForestTree_PlayGesture(11, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4009, 0, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -665,7 +665,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	PaletteScene_SetRecordValue(184, 185);
 }
 
-s32 KorimaKi_PrepareActors(void)
+s32 KolimaForestTree_PrepareActors(void)
 {
 	struct FieldActor *first;
 	struct FieldActor *third;
@@ -677,7 +677,7 @@ s32 KorimaKi_PrepareActors(void)
 	Engine_TaskWait(1);
 	Engine_ActorSetChildValue(14, 15);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
+	gGameState.retreat_scene = (s32)&SceneId_KolimaForestBridge;
 	gGameState.retreat_entrance = 4;
 	if (!Engine_GameFlagIsSet(0x845))
 		SceneEffect_AdjustPaletteColors(3);
@@ -729,7 +729,7 @@ static void PaletteScene_SpawnEffect(void)
 	phase = gFrameCount & 3;
 	if (phase != 0)
 		return;
-	if (gKorimaKiSparkSound != 0)
+	if (gKolimaForestTreeSparkSound != 0)
 		Engine_AudioPlayCue(200);
 	effect = (struct PaletteEffect *)Engine_ObjectCreate(26, spawn_x, spawn_y, spawn_z);
 	if (effect == 0)
@@ -749,32 +749,32 @@ static void PaletteScene_SpawnEffect(void)
 	effect->mode = phase;
 	Object_SetMode(effect, 2);
 	Engine_ObjectSetPosition((struct FieldActor *)effect, target_x, 0, target_z);
-	Engine_ObjectSetScript(effect, gKorimaKiEffectScript);
+	Engine_ObjectSetScript(effect, gKolimaForestTreeEffectScript);
 }
 
 static void PaletteScene_AdvanceTransition(void)
 {
-	s32 step = gKorimaKiTransitionStep;
+	s32 step = gKolimaForestTreeTransitionStep;
 
 	if (step == 0)
 	{
-		KorimaPalette_Restore(0);
+		KolimaPalette_Restore(0);
 		Engine_ColorBufferInterpolate(20);
 	}
 	else if (step == 20)
 	{
-		KorimaPalette_Restore(1);
+		KolimaPalette_Restore(1);
 		Engine_ColorBufferInterpolate(8);
 	}
-	step = gKorimaKiTransitionStep + 1;
-	gKorimaKiTransitionStep = step;
+	step = gKolimaForestTreeTransitionStep + 1;
+	gKolimaForestTreeTransitionStep = step;
 	if (step == 30)
 	{
-		gKorimaKiTransitionStep = 0;
+		gKolimaForestTreeTransitionStep = 0;
 	}
 }
 
-static void KorimaKi_PlayGesture(s32 actor, s32 gesture)
+static void KolimaForestTree_PlayGesture(s32 actor, s32 gesture)
 {
 	if (actor == 10)
 	{
@@ -916,14 +916,14 @@ static void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
 	}
 }
 
-static void KorimaKi_SpawnOrbitSparks(void)
+static void KolimaForestTree_SpawnOrbitSparks(void)
 {
 	struct FieldActor *spark;
 	s32				   previous;
 	u32				   i;
 
 	previous = 0;
-	switch (gKorimaKiSparkCount)
+	switch (gKolimaForestTreeSparkCount)
 	{
 	case 0:
 	case 10:
@@ -934,7 +934,7 @@ static void KorimaKi_SpawnOrbitSparks(void)
 		for (i = 0; i <= 5; i++)
 		{
 			spark = Engine_ObjectCreate(
-				0x11d, gKorimaKiSparkOrigin[0], gKorimaKiSparkOrigin[1], gKorimaKiSparkOrigin[2]);
+				0x11d, gKolimaForestTreeSparkOrigin[0], gKolimaForestTreeSparkOrigin[1], gKolimaForestTreeSparkOrigin[2]);
 			if (spark != 0)
 			{
 				previous = Object_ReplaceResourceEntry(spark->sprite, previous);
@@ -944,18 +944,18 @@ static void KorimaKi_SpawnOrbitSparks(void)
 				Object_SetMode(spark, 1);
 				spark->timer = 0;
 				spark->work = (i * 60 << 16) / 360;
-				spark->target_x = gKorimaKiSparkOrigin[0];
-				spark->target_y = gKorimaKiSparkOrigin[1];
-				spark->target_z = gKorimaKiSparkOrigin[2];
+				spark->target_x = gKolimaForestTreeSparkOrigin[0];
+				spark->target_y = gKolimaForestTreeSparkOrigin[1];
+				spark->target_z = gKolimaForestTreeSparkOrigin[2];
 				spark->speed = 0x19999;
 				spark->update = (void (*)(union FieldObject *))PaletteScene_AdvanceOrbit;
 			}
 		}
 		break;
 	}
-	if (++gKorimaKiSparkCount > 120)
+	if (++gKolimaForestTreeSparkCount > 120)
 	{
-		gKorimaKiSparkCount = 0;
+		gKolimaForestTreeSparkCount = 0;
 	}
 }
 
@@ -1016,26 +1016,26 @@ s32 SceneAction_GroupFinish[] = {
 	SC_END,
 };
 
-struct SceneEntrance gKorimaKiEntrances[] = {
+struct SceneEntrance gKolimaForestTreeEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, 0, 0, 512, 448, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 424, FACING_NORTH, 0, 0, 0, 512, 448, 0 },
 	{ 2, CONDITION_ALWAYS, 328, 16, 200, FACING_SOUTH, 0, 0, 0, 512, 448, 0 },
 	{ SCENE_TABLE_END },
 };
 
-s16 gKorimaKiRegions[] = {
+s16 gKolimaForestTreeRegions[] = {
 	320, 88, 176, 336, 104, 192, -1, 2,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gKorimaKiExits[] = {
+u32 gKolimaForestTreeExits[] = {
 	SCENE_EXITS(44),
 	SCENE_EXIT(1, 43, 2),
 	SCENE_EXIT(2, 45, 1),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKorimaKiPlacements[] = {
+struct ScenePlacement gKolimaForestTreePlacements[] = {
 	{ 0x47, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x38, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1050,27 +1050,27 @@ struct ScenePlacement gKorimaKiPlacements[] = {
 		PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x37, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKorimaKiEvents[] = {
+struct SceneEvent gKolimaForestTreeEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ 0xb814, 12, 0x845, EVENT_SCRIPT(EV12_SCRIPT) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x844, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x844, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 gKorimaKiEffectScript[] = {
+s32 gKolimaForestTreeEffectScript[] = {
 	SC_ADD(SW_SCALE_X, 0x1999),
 	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),

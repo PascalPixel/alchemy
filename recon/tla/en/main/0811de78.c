@@ -61,7 +61,7 @@ s32 Func_0811de78(struct BtlPlan *plan)
             while (index != -1) {
                 struct BtlUnit *unit = UnitGet(unit_ids[index]);
 
-                if (unit->shibire == 0 && unit->nemuri == 0) {
+                if (unit->stun == 0 && unit->sleep == 0) {
                     BattleMotion_SetupEscapeObject(unit_ids[index]);
                     WaitFrames(8);
                 }

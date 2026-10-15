@@ -56,11 +56,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_ShianJiin1)
+	if (scene == (s32)&SceneId_FuchinTemple1)
 	{
-		return gShianJiinEntrances1;
+		return gFuchinTempleEntrances1;
 	}
-	return gShianJiinEntrancesOther;
+	return gFuchinTempleEntrancesOther;
 }
 
 s32 GetXianInitialState(void)
@@ -70,36 +70,36 @@ s32 GetXianInitialState(void)
 
 s32 GetXianMessageData(void)
 {
-	return (s32)ShianJiin_XianMessages;
+	return (s32)FuchinTemple_XianMessages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ShianJiin1)
+	if (gGameState.scene == (s32)&SceneId_FuchinTemple1)
 	{
-		return gShianJiinPlacements1;
+		return gFuchinTemplePlacements1;
 	}
 	if (gGameState.entrance == 3)
 	{
-		return gShianJiinPlacementsEntrance3;
+		return gFuchinTemplePlacementsEntrance3;
 	}
 	if (GameFlag_IsSet(0x895))
 	{
-		gShianJiinPlacements[5].condition = 0x895;
-		gShianJiinPlacements[7].condition = 0x895;
-		gShianJiinPlacements[8].x = 0x1200000;
-		gShianJiinPlacements[8].z = 0xf80000;
-		gShianJiinPlacements[11].condition = 0x895;
-		gShianJiinPlacements[12].condition = 0x895;
+		gFuchinTemplePlacements[5].condition = 0x895;
+		gFuchinTemplePlacements[7].condition = 0x895;
+		gFuchinTemplePlacements[8].x = 0x1200000;
+		gFuchinTemplePlacements[8].z = 0xf80000;
+		gFuchinTemplePlacements[11].condition = 0x895;
+		gFuchinTemplePlacements[12].condition = 0x895;
 	}
-	FieldScene_PrepareActors(gShianJiinPlacements);
-	return gShianJiinPlacements;
+	FieldScene_PrepareActors(gFuchinTemplePlacements);
+	return gFuchinTemplePlacements;
 }
 
 static void EV08_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianHowDidGetHereBridge);
+	Engine_EventSetMessage(MsgXianHowDidGetHereBridge);
 	if (GameFlag_IsSet(0x890) != 0)
 	{
 		gEventWork->message += 4;
@@ -123,13 +123,13 @@ static void EV12_TALK_1(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x88F) != 0)
 	{
-		Engine_EventSetMessage(MsgShianNowHeTrulyBeyondWorlds);
+		Engine_EventSetMessage(MsgXianNowHeTrulyBeyondWorlds);
 		Engine_EventAskYesNo(12, 0);
 		Engine_EventEnd();
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianIsntNobleHimTrySave);
+		Engine_EventSetMessage(MsgXianIsntNobleHimTrySave);
 		Engine_EventOpenMessage(12, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -156,7 +156,7 @@ static void EV09_TALK_1(void)
 
 	master = Object_GetById(9);
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianAlreadyHeardTest);
+	Engine_EventSetMessage(MsgXianAlreadyHeardTest);
 	Engine_EventShowMessageAndWait(9, 0, 20);
 	Actor_WalkToAndWait(0, 168, 0x188);
 	Engine_ActorFaceDirection(0, 0xc000, 20);
@@ -193,7 +193,7 @@ static void EV05_TOUCH(void)
 	Engine_GameFlagSet(2196);
 	Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_EventSetMessage(MsgShianYoungMasterDidCompleteTest);
+	Engine_EventSetMessage(MsgXianYoungMasterDidCompleteTest);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(0, 32768, 20);
@@ -230,11 +230,11 @@ static void Scene_RunScene39eSequenceB(void)
 		record->velocity_y = 0x80000;
 		Engine_ActorSetAnimation(8, 1);
 		Engine_EventWait(30);
-		Engine_EventSetMessage(MsgShianMustSurviveTestGrottoBefore);
+		Engine_EventSetMessage(MsgXianMustSurviveTestGrottoBefore);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianMmmmWhoWhoSpeaksMy);
+		Engine_EventSetMessage(MsgXianMmmmWhoWhoSpeaksMy);
 		FieldScene_SetFlag140AndFinishSequence(0, 8);
 		Engine_EventWait(30);
 		Event_ShowMessage(8, 0);
@@ -273,7 +273,7 @@ static void Scene_RunScene39eSequenceB(void)
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(30);
 		Actor_ShowEmote(8, 0x100, 60);
-		Engine_EventSetMessage(MsgShianFollowThemDoNot);
+		Engine_EventSetMessage(MsgXianFollowThemDoNot);
 		Event_OpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -315,13 +315,13 @@ static void Scene_RunScene39eSequenceB(void)
 	Event_OpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
 	{
-		Engine_EventSetMessage(MsgShianThenCannotTellGiveUp);
+		Engine_EventSetMessage(MsgXianThenCannotTellGiveUp);
 		Event_ShowMessage(8, 0);
 		GameFlag_Set(0x300);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianDoNotWorryWillPermitted);
+		Engine_EventSetMessage(MsgXianDoNotWorryWillPermitted);
 		Engine_EventWait(30);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(20);
@@ -352,7 +352,7 @@ static void Scene_RunScene39eSequenceB(void)
 static void EV1032_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianEnjoyReadingMindsOthersDo);
+	Engine_EventSetMessage(MsgXianEnjoyReadingMindsOthersDo);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -360,7 +360,7 @@ static void EV1032_PSYNERGY(void)
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianMasterFehsSchoolCameWatch);
+	Engine_EventSetMessage(MsgXianMasterFehsSchoolCameWatch);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -388,15 +388,15 @@ static void EV12_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x895) != 0)
 	{
-		Engine_EventSetMessage(MsgShianHsuDidNotPracticeJumping);
+		Engine_EventSetMessage(MsgXianHsuDidNotPracticeJumping);
 	}
 	else if (Engine_GameFlagIsSet(0x89b) != 0)
 	{
-		Engine_EventSetMessage(MsgShianLamaTempleFarWestIn);
+		Engine_EventSetMessage(MsgXianLamaTempleFarWestIn);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianFlexibilityJumpingVeryImportantIn);
+		Engine_EventSetMessage(MsgXianFlexibilityJumpingVeryImportantIn);
 	}
 
 	Engine_EventShowMessage(12, 0);
@@ -405,14 +405,14 @@ static void EV12_TALK(void)
 
 	Object_GetById(12)->paused = 0;
 
-	Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
 	Engine_EventEnd();
 }
 
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianMasterFehVeryBusyDo);
+	Engine_EventSetMessage(MsgXianMasterFehVeryBusyDo);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
 }
@@ -445,7 +445,7 @@ static void FieldScene_RunForwardArcBurst(void)
 		0x3333, 0, 0, 0);
 }
 
-static void ShianJiin_SpinAway(void)
+static void FuchinTemple_SpinAway(void)
 {
 	struct FieldActor *actor;
 	u32				   i;
@@ -532,7 +532,7 @@ static void Scene_RunPrimarySequence(void)
 		actor->x.fixed + 0x60000, actor->y.fixed, actor->z.fixed - 0x80000, base, 0, 0x10000, 0, 0);
 }
 
-static void ShianJiin_WalkByFacing(void)
+static void FuchinTemple_WalkByFacing(void)
 {
 	u32 dir;
 	u32 limit;
@@ -563,13 +563,13 @@ static void ShianJiin_WalkByFacing(void)
 	}
 }
 
-static void ShianJiin_RunMasterScene(s32 mode)
+static void FuchinTemple_RunMasterScene(s32 mode)
 {
 	s32 msg;
 
 	Actor_SetSpeed(15, 0xcccc, 0x6666);
 	Engine_EventWait(60);
-	msg = MsgShianCannotPushHands;
+	msg = MsgXianCannotPushHands;
 	Engine_EventSetMessage(msg);
 	if (mode == 0)
 	{
@@ -577,7 +577,7 @@ static void ShianJiin_RunMasterScene(s32 mode)
 		Actor_ShowEmote(15, 0x101, 60);
 		Engine_EventShowMessageAndWait(15, 0, 20);
 		Engine_ActorRunRepeatedMotion(15, 2);
-		Engine_EventSetMessage(MsgShianWarriorsCannotUse);
+		Engine_EventSetMessage(MsgXianWarriorsCannotUse);
 		Engine_EventShowMessageAndWait(15, 0, 20);
 		Engine_ActorSetAnimationAndWait(15, 4);
 		Engine_EventWait(20);
@@ -587,12 +587,12 @@ static void ShianJiin_RunMasterScene(s32 mode)
 	}
 	if (mode == 2)
 	{
-		Engine_EventSetMessage(MsgShianGreatWarriorTrain);
+		Engine_EventSetMessage(MsgXianGreatWarriorTrain);
 		Engine_ActorRunRepeatedMotion(15, 2);
 		Engine_EventWait(20);
 	}
 	Engine_EventShowMessageAndWait(15, 0, 20);
-	ShianJiin_WalkByFacing();
+	FuchinTemple_WalkByFacing();
 	Engine_ActorRunRepeatedMotion(15, 3);
 	Actor_SetPosition(19, 0xe80000, 0xa80000);
 	Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
@@ -606,7 +606,7 @@ static void ShianJiin_RunMasterScene(s32 mode)
 	Actor_FaceDirection(15, 0x2000, 30);
 }
 
-static void ShianJiin_RunGatheringScene(void)
+static void FuchinTemple_RunGatheringScene(void)
 {
 	struct FieldActor *record;
 
@@ -618,7 +618,7 @@ static void ShianJiin_RunGatheringScene(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(15, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgShianLookTreeFell);
+	Engine_EventSetMessage(MsgXianLookTreeFell);
 	Engine_EventShowMessageAndWait(15, 0, 20);
 	Engine_EventShowMessageAndWait(16, 0, 20);
 	Actor_ShowEmote(18, 0x105, 60);
@@ -636,7 +636,7 @@ static void ShianJiin_RunGatheringScene(void)
 	Engine_ActorSetAnimationAndWait(15, 3);
 	Engine_EventWait(20);
 	Actor_SetSpeed(15, 0xcccc, 0x6666);
-	ShianJiin_WalkByFacing();
+	FuchinTemple_WalkByFacing();
 	Engine_ActorRunRepeatedMotion(15, 3);
 	Actor_SetPosition(19, 0xe80000, 0xa80000);
 	Engine_ActorSetPosition(20, 0xe80000, 0xa80000);
@@ -670,16 +670,16 @@ static void EV19_PSYNERGY(void)
 	}
 	else
 	{
-		ShianJiin_SpinAway();
+		FuchinTemple_SpinAway();
 	}
 
 	if (Engine_GameFlagIsSet(0x898) != 0)
 	{
-		ShianJiin_RunGatheringScene();
+		FuchinTemple_RunGatheringScene();
 	}
 	else
 	{
-		ShianJiin_RunMasterScene(0);
+		FuchinTemple_RunMasterScene(0);
 	}
 
 	Engine_EventEnd();
@@ -710,11 +710,11 @@ static void FieldScene_DispatchByFacing(void)
 	}
 	else
 	{
-		ShianJiin_SpinAway();
+		FuchinTemple_SpinAway();
 	}
 
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	ShianJiin_RunMasterScene(1);
+	FuchinTemple_RunMasterScene(1);
 	Engine_EventEnd();
 }
 
@@ -740,7 +740,7 @@ static void EV20_PSYNERGY(void)
 	}
 	else
 	{
-		ShianJiin_SpinAway();
+		FuchinTemple_SpinAway();
 	}
 
 	Engine_CameraSetSpeed(0x10000, 0x2000);
@@ -751,11 +751,11 @@ static void EV20_PSYNERGY(void)
 	{
 		if (Engine_GameFlagIsSet(0x89a) == 0 || Engine_GameFlagIsSet(0x89b) != 0)
 		{
-			ShianJiin_RunMasterScene(0);
+			FuchinTemple_RunMasterScene(0);
 		}
 		else
 		{
-			ShianJiin_RunGatheringScene();
+			FuchinTemple_RunGatheringScene();
 		}
 		Engine_EventEnd();
 		return;
@@ -763,7 +763,7 @@ static void EV20_PSYNERGY(void)
 
 	if (Engine_GameFlagIsSet(0x89b) != 0)
 	{
-		ShianJiin_RunMasterScene(2);
+		FuchinTemple_RunMasterScene(2);
 	}
 	else if (Engine_GameFlagIsSet(0x89a) == 0)
 	{
@@ -790,7 +790,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_ShowEmote(15, 128 << 1, 0);
 	Actor_ShowEmote(16, 128 << 1, 0);
 	Engine_EventWait(60);
-	Engine_EventSetMessage(MsgShianDidDoWarrior);
+	Engine_EventSetMessage(MsgXianDidDoWarrior);
 	Event_ShowMessageAndWait(13, 0, 20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_ActorRunRepeatedMotion(15, 1);
@@ -809,7 +809,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 128 << 6, 0);
 	Actor_FaceDirection(16, 192 << 8, 20);
 	Event_PlayCue(158);
-	Map_AnimateCells(ShianJiin_CellStepsB, 78, 13);
+	Map_AnimateCells(FuchinTemple_CellStepsB, 78, 13);
 	Engine_ActorRunRepeatedMotion(16, 2);
 	Engine_EventWait(20);
 	Actor_SetSpeed(16, 192 << 9, 192 << 8);
@@ -849,7 +849,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(18, 160 << 7, 0);
 	Engine_ActorWaitForMove(17);
 	Event_PlayCue(159);
-	Map_AnimateCells(ShianJiin_CellStepsC, 78, 13);
+	Map_AnimateCells(FuchinTemple_CellStepsC, 78, 13);
 	Event_ShowMessageAndWait(18, 0, 20);
 	Actor_FaceActor(9, 17, 0);
 	Actor_FaceActor(10, 17, 0);
@@ -1038,14 +1038,14 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_FaceDirection(11, 128 << 8, 20);
 	Engine_ActorSetAnimation(10, 5);
 	Engine_ActorSetAnimation(11, 5);
-	Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
 }
 
 static void EV18_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianWarriorWillShowMeYour);
+	Engine_EventSetMessage(MsgXianWarriorWillShowMeYour);
 	Engine_EventOpenMessage(18, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1081,7 +1081,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	Camera_SetSpeed(0x8000, 0x1000);
 	Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
 	Engine_CameraWaitForMove();
-	Engine_EventSetMessage(MsgShianYaTreeFell);
+	Engine_EventSetMessage(MsgXianYaTreeFell);
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_SetSpeed(12, 0xcccc, 0x6666);
 	Actor_WalkTo(10, 152, 200);
@@ -1243,7 +1243,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	Engine_ActorSetAnimation(10, 5);
 	Engine_ActorSetAnimation(11, 5);
 	Engine_ActorWaitForMove(12);
-	Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
+	Engine_ActorEnableActionCallback(12, FuchinTemple_ActorTwelveScript);
 	Actor_SetSpeed(15, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(15, 216, 168);
 	Actor_WalkToAndWait(15, 232, 168);
@@ -1272,7 +1272,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianWaterMonstersFloodedAltinDid);
+	Engine_EventSetMessage(MsgXianWaterMonstersFloodedAltinDid);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -1282,13 +1282,13 @@ static void EV03_TOUCH(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0)
 	{
-		Engine_MessageShowCentered(MsgShianItIsLocked, 1);
+		Engine_MessageShowCentered(MsgXianItIsLocked, 1);
 		Engine_EventEnd();
 	}
 	else
 	{
 		Event_PlayCue(158);
-		Map_AnimateCells(ShianJiin_CellStepsB, 78, 13);
+		Map_AnimateCells(FuchinTemple_CellStepsB, 78, 13);
 		Actor_SetSpeed(0, 0x8000, 0x4000);
 		Actor_WalkToAndWait(0, 306, 248);
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 216);
@@ -1314,7 +1314,7 @@ static void EV13_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianImTravelingAroundWorldSpread);
+		Engine_EventSetMessage(MsgXianImTravelingAroundWorldSpread);
 		Engine_EventShowMessage(13, 0);
 	}
 
@@ -1325,22 +1325,22 @@ static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_EventSetMessage(MsgShianRobinAmCountingOnBring);
+	Engine_EventSetMessage(MsgXianIsaacAmCountingOnBring);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ShianJiin1)
+	if (gGameState.scene == (s32)&SceneId_FuchinTemple1)
 	{
-		return gShianJiinEvents1;
+		return gFuchinTempleEvents1;
 	}
 	if (gGameState.entrance == 3)
 	{
-		return gShianJiinEventsEntrance3;
+		return gFuchinTempleEventsEntrance3;
 	}
-	return gShianJiinEvents;
+	return gFuchinTempleEvents;
 }
 
 static void FieldScene_SpawnRandomizedParticle(void)
@@ -1432,7 +1432,7 @@ static void EV02_TOUCH(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(188);
-	Map_AnimateCells(ShianJiin_CellStepsA, 77, 8);
+	Map_AnimateCells(FuchinTemple_CellStepsA, 77, 8);
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1443,7 +1443,7 @@ static void EV02_TOUCH(void)
 	Engine_EventEnd();
 }
 
-static void ShianJiin_AskIfCurious(void)
+static void FuchinTemple_AskIfCurious(void)
 {
 	struct FieldActor *record;
 
@@ -1463,7 +1463,7 @@ static void ShianJiin_AskIfCurious(void)
 	record = Actor_Get(8);
 	record->velocity_y = 0x80000;
 	Engine_ActorSetAnimation(8, 1);
-	Engine_EventSetMessage(MsgShianExcellentRobin);
+	Engine_EventSetMessage(MsgXianExcellentIsaac);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1502,7 +1502,7 @@ static void ShianJiin_AskIfCurious(void)
 	{
 		Engine_EventWait(10);
 		Actor_ShowEmote(8, 0x102, 60);
-		Engine_EventSetMessage(MsgShianCanReadMindsKnowCurious);
+		Engine_EventSetMessage(MsgXianCanReadMindsKnowCurious);
 		Event_OpenMessage(8, 0);
 		do
 		{
@@ -1512,11 +1512,11 @@ static void ShianJiin_AskIfCurious(void)
 			}
 			Engine_EventWait(10);
 			Actor_ShowEmote(8, 0x102, 60);
-			Engine_EventSetMessage(MsgShianDontTryHard);
+			Engine_EventSetMessage(MsgXianDontTryHard);
 			Event_OpenMessage(8, 0);
 		} while (1);
 	}
-	Engine_EventSetMessage(MsgShianMonstersWaitInHidingWould);
+	Engine_EventSetMessage(MsgXianMonstersWaitInHidingWould);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
@@ -1564,7 +1564,7 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_FaceDirection(9, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgShianMasterHamaMeditatingPleaseExtremely);
+	Engine_EventSetMessage(MsgXianMasterHamaMeditatingPleaseExtremely);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1580,142 +1580,142 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	source_record = Actor_Get(ACTOR_PARTY_LEADER);
 	if (source_record != 0)
 	{
-		Actor_SetPosition(GERALD, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(GARET, source_record->x.fixed, source_record->z.fixed);
 	}
 	source_record = Actor_Get(ACTOR_PARTY_LEADER);
 	if (source_record != 0)
 	{
-		Actor_SetPosition(IWAN, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(IVAN, source_record->x.fixed, source_record->z.fixed);
 	}
 	source_record = Actor_Get(ACTOR_PARTY_LEADER);
 	if (source_record != 0)
 	{
-		Actor_SetPosition(MEARI, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(MIA, source_record->x.fixed, source_record->z.fixed);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
-	Actor_SetSpeed(IWAN, 0x8000, 0x4000);
-	Actor_SetSpeed(MEARI, 0x8000, 0x4000);
+	Actor_SetSpeed(GARET, 0x8000, 0x4000);
+	Actor_SetSpeed(IVAN, 0x8000, 0x4000);
+	Actor_SetSpeed(MIA, 0x8000, 0x4000);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1d0, 0x1f8);
-	Actor_WalkTo(IWAN, 0x1e0, 0x1f8);
-	Actor_WalkTo(GERALD, 0x1f0, 0x1f0);
-	Actor_WalkTo(MEARI, 0x1c0, 0x1f0);
+	Actor_WalkTo(IVAN, 0x1e0, 0x1f8);
+	Actor_WalkTo(GARET, 0x1f0, 0x1f0);
+	Actor_WalkTo(MIA, 0x1c0, 0x1f0);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-	Engine_ActorWaitForMove(IWAN);
-	Engine_ActorWaitForMove(MEARI);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
+	Engine_ActorWaitForMove(IVAN);
+	Engine_ActorWaitForMove(MIA);
+	Actor_FaceDirection(MIA, 0xe000, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, 0xa000, 0);
 	Engine_EventWait(20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Actor_FaceDirection(GERALD, 0x5000, 20);
-	Event_AskYesNo(GERALD, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Actor_FaceDirection(GARET, 0x5000, 20);
+	Event_AskYesNo(GARET, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_FaceDirection(GERALD, 0xa000, 20);
-	Actor_ShowEmote(MEARI, 0x100, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_FaceDirection(GARET, 0xa000, 20);
+	Actor_ShowEmote(MIA, 0x100, 60);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(IWAN, 0x100, 60);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Actor_ShowEmote(IVAN, 0x100, 60);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Actor_FaceDirection(8, 0x3000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
-	Actor_FaceDirection(MEARI, 0x2000, 0);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Actor_SetAttachedEffect(IWAN, 0x102);
+	Actor_FaceDirection(GARET, 0x6000, 0);
+	Actor_FaceDirection(MIA, 0x2000, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Actor_SetAttachedEffect(IVAN, 0x102);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 50);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 30);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Actor_FaceDirection(IVAN, 0xc000, 30);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
+	Actor_FaceDirection(GARET, 0x6000, 0);
 	Engine_EventWait(30);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Actor_FaceDirection(GARET, 0xa000, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
-	Actor_FaceActor(8, IWAN, 0);
+	Actor_FaceActor(8, IVAN, 0);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_FaceActor(MEARI, IWAN, 0);
-	Actor_ShowEmote(IWAN, 0x102, 60);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_FaceActor(MIA, IVAN, 0);
+	Actor_ShowEmote(IVAN, 0x102, 60);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_ShowEmote(8, 0x100, 60);
-	Actor_FaceActor(8, GERALD, 0);
+	Actor_FaceActor(8, GARET, 0);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(IWAN, 0x100, 60);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Actor_FaceActor(8, GERALD, 0);
+	Actor_ShowEmote(IVAN, 0x100, 60);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Actor_FaceActor(8, GARET, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
@@ -1724,21 +1724,21 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(GERALD, 0x103, 0);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Actor_ShowEmote(GARET, 0x103, 0);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Engine_EventWait(60);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 60);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Actor_ShowEmote(GARET, 0x101, 60);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_ShowEmote(8, 0x102, 0);
 	Engine_ActorStartRepeatedMotion(8, 1);
 	Engine_EventWait(60);
@@ -1747,119 +1747,119 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Event_ShowMessageAndWait(8, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(GERALD, 0x101, 60);
-	Actor_FaceDirection(GERALD, 0x5000, 20);
-	Event_AskYesNo(GERALD, 0);
+	Actor_ShowEmote(GARET, 0x101, 60);
+	Actor_FaceDirection(GARET, 0x5000, 20);
+	Event_AskYesNo(GARET, 0);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Actor_FaceDirection(GERALD, 0xa000, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Actor_FaceDirection(GARET, 0xa000, 20);
 	Actor_FaceDirection(8, 0xc000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(8, 0x4000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(IWAN, 0x101, 60);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Actor_ShowEmote(IVAN, 0x101, 60);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(60);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, GERALD, 0);
-	Actor_FaceActor(IWAN, GERALD, 0);
-	Actor_FaceActor(MEARI, GERALD, 0);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, GARET, 0);
+	Actor_FaceActor(IVAN, GARET, 0);
+	Actor_FaceActor(MIA, GARET, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xd000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xd000, 0);
 	Engine_EventWait(20);
 	Event_AskYesNo(8, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(IWAN, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 0);
+	Actor_ShowEmote(MIA, 0x102, 0);
 	Engine_EventWait(60);
-	Actor_FaceDirection(GERALD, 0x6000, 20);
-	Event_AskYesNo(GERALD, 0);
+	Actor_FaceDirection(GARET, 0x6000, 20);
+	Event_AskYesNo(GARET, 0);
 	Engine_EventWait(20);
-	Actor_FaceDirection(MEARI, 0x2000, 20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 30);
+	Actor_FaceDirection(MIA, 0x2000, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 30);
 	Actor_FaceDirection(8, 0, 20);
 	Actor_ShowEmote(8, 0x105, 60);
-	Actor_ShowEmote(IWAN, 0x101, 60);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Actor_ShowEmote(IVAN, 0x101, 60);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Actor_FaceDirection(8, 0xc000, 20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 60);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 60);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
-	Actor_FaceDirection(IWAN, 0x8000, 0);
-	Actor_FaceDirection(MEARI, 0x2000, 0);
+	Actor_FaceDirection(GARET, 0x6000, 0);
+	Actor_FaceDirection(IVAN, 0x8000, 0);
+	Actor_FaceDirection(MIA, 0x2000, 0);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	Engine_EventWait(30);
 	Actor_FaceDirection(8, 0x4000, 20);
 	Engine_ActorSetAnimationAndWait(8, 4);
@@ -1868,26 +1868,26 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_SetPosition(10, 0x1d80000, 0x2600000);
 	Event_ShowMessageAndWait(10, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
 	Actor_ShowEmote(8, 0x100, 0);
 	Actor_ShowEmote(9, 0x100, 0);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-	Actor_FaceDirection(GERALD, 0x4000, 0);
-	Actor_FaceDirection(IWAN, 0x4000, 0);
-	Actor_FaceDirection(MEARI, 0x4000, 0);
+	Actor_FaceDirection(GARET, 0x4000, 0);
+	Actor_FaceDirection(IVAN, 0x4000, 0);
+	Actor_FaceDirection(MIA, 0x4000, 0);
 	Actor_FaceDirection(9, 0, 0);
 	Engine_EventWait(30);
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(10, 0x1d8, 0x218);
 	Actor_ShowEmote(8, 0x101, 60);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_FaceDirection(IWAN, 0xc000, 40);
-	Actor_WalkToAndWait(IWAN, 0x1e8, 0x200);
+	Actor_FaceDirection(IVAN, 0xc000, 40);
+	Actor_WalkToAndWait(IVAN, 0x1e8, 0x200);
 	Engine_EventWait(10);
-	Actor_FaceDirection(IWAN, 0x6000, 20);
+	Actor_FaceDirection(IVAN, 0x6000, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 30);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c8, 0x200);
 	Engine_EventWait(10);
@@ -1909,9 +1909,9 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_ShowEmote(8, 0x100, 60);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(IWAN, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(IVAN, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(10, 3);
 	Engine_EventWait(20);
@@ -1930,11 +1930,11 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(2);
-	Engine_ActorSetAnimation(IWAN, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_EventWait(1);
-	Engine_ActorSetAnimation(MEARI, 3);
+	Engine_ActorSetAnimation(MIA, 3);
 	Engine_EventWait(5);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
@@ -1947,9 +1947,9 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_FaceActor(8, 10, 0);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
-	Actor_FaceDirection(IWAN, 0x6000, 0);
-	Actor_FaceDirection(MEARI, 0x2000, 0);
+	Actor_FaceDirection(GARET, 0x6000, 0);
+	Actor_FaceDirection(IVAN, 0x6000, 0);
+	Actor_FaceDirection(MIA, 0x2000, 0);
 	Engine_ActorWaitForMove(8);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(8, 3);
@@ -1957,27 +1957,27 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_WalkTo(10, 0x1d8, 0x238);
 	Actor_WalkToAndWait(8, 0x1d8, 0x218);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_ActorWaitForMove(10);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Actor_ShowEmote(8, 0x102, 60);
 	Actor_FaceDirection(10, 0xd000, 0);
 	Actor_FaceDirection(8, 0xd000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Actor_WalkToAndWait(8, 0x1d8, 0x200);
 	Actor_FaceDirection(8, 0, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(IWAN, 0x8000, 0);
+	Actor_FaceDirection(IVAN, 0x8000, 0);
 	Actor_FaceDirection(9, 0xd000, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
 	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
@@ -1994,14 +1994,14 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
-	Actor_FaceDirection(IWAN, 0x6000, 0);
-	Actor_FaceDirection(MEARI, 0x2000, 0);
+	Actor_FaceDirection(GARET, 0x6000, 0);
+	Actor_FaceDirection(IVAN, 0x6000, 0);
+	Actor_FaceDirection(MIA, 0x2000, 0);
 	Actor_FaceDirection(9, 0x3000, 0);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(8, 0x1d8, 0x228);
@@ -2027,86 +2027,86 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_SetPosition(8, 0, 0);
 	Engine_ActorWaitForMove(9);
 	Actor_SetPosition(9, 0, 0);
-	Actor_WalkToAndWait(IWAN, 0x1e8, 0x208);
-	Actor_ShowEmote(IWAN, 0x101, 60);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Actor_WalkToAndWait(IVAN, 0x1e8, 0x208);
+	Actor_ShowEmote(IVAN, 0x101, 60);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
-	Actor_FaceDirection(MEARI, 0x2000, 20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_FaceDirection(MIA, 0x2000, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Actor_FaceDirection(IWAN, 0xa000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Actor_FaceDirection(IVAN, 0xa000, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Actor_ShowEmote(MEARI, 0x105, 60);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	Actor_FaceDirection(GERALD, 0x6000, 20);
-	Event_AskYesNo(GERALD, 0);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Actor_ShowEmote(MIA, 0x105, 60);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	Actor_FaceDirection(GARET, 0x6000, 20);
+	Event_AskYesNo(GARET, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0x8000, 0);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_FaceDirection(GARET, 0x8000, 0);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 60);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Actor_ShowEmote(GARET, 0x101, 60);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 60);
-	Event_OpenMessage(MEARI, 0);
+	Actor_ShowEmote(GARET, 0x102, 60);
+	Event_OpenMessage(MIA, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 		Engine_EventWait(20);
-		Event_ShowMessageAndWait(GERALD, 0, 20);
+		Event_ShowMessageAndWait(GARET, 0, 20);
 		gEventWork->message++;
 	}
 	else
 	{
 		Engine_EventWait(20);
 		gEventWork->message++;
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		Engine_EventWait(20);
-		Event_ShowMessageAndWait(MEARI, 0, 20);
+		Event_ShowMessageAndWait(MIA, 0, 20);
 	}
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Actor_WalkTo(GERALD, 0x1c0, 0x200);
-	Actor_WalkToAndWait(MEARI, 0x1c0, 0x200);
-	Actor_SetPosition(MEARI, 0, 0);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Actor_WalkTo(GARET, 0x1c0, 0x200);
+	Actor_WalkToAndWait(MIA, 0x1c0, 0x200);
+	Actor_SetPosition(MIA, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_EventWait(20);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 20);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 20);
 	Engine_EventWait(30);
-	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Actor_SetAttachedEffect(IWAN, 0x102);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Actor_SetAttachedEffect(IVAN, 0x102);
 	Engine_EventWait(60);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Actor_WalkToAndWait(IWAN, 0x1c0, 0x200);
-	Actor_SetPosition(IWAN, 0, 0);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Actor_WalkToAndWait(IVAN, 0x1c0, 0x200);
+	Actor_SetPosition(IVAN, 0, 0);
 	Engine_EventEnd();
 	GameFlag_Set(0x895);
 }
 
-s32 ShianJiin_ApplyEntryState(void)
+s32 FuchinTemple_ApplyEntryState(void)
 {
 	struct FieldActor *actor;
 	s32				   set;
 
-	if (gGameState.scene == (s32)&SceneId_ShianJiin2)
+	if (gGameState.scene == (s32)&SceneId_FuchinTemple2)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		if (gGameState.entrance == 1)
@@ -2121,7 +2121,7 @@ s32 ShianJiin_ApplyEntryState(void)
 				if (Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x893)
 					&& !Engine_GameFlagIsSet(0x109))
 				{
-					ShianJiin_AskIfCurious();
+					FuchinTemple_AskIfCurious();
 				}
 			}
 		}
@@ -2230,7 +2230,7 @@ static void FieldScene_SpawnEightShots(void)
 	record = Object_GetById(8);
 	descriptor.priority = 1;
 	descriptor.type = 0x0119;
-	descriptor.script = ShianJiin_ShotScript;
+	descriptor.script = FuchinTemple_ShotScript;
 	descriptor.target_scale_x = 224 << 10;
 	descriptor.target_scale_y = 192 << 9;
 	for (i = 0; i <= 7; i++)
@@ -2303,7 +2303,7 @@ static void FieldScene_RunParticleRain(void)
 	Object_GetById(8)->update = NULL;
 	Object_GetById(2)->update = NULL;
 	Engine_ActorSetChildValue(8, 0);
-	Engine_ActorSetChildValue(IWAN, 0);
+	Engine_ActorSetChildValue(IVAN, 0);
 }
 
 s32 gEffectScript0[] = {
@@ -2339,7 +2339,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 ShianJiin_ActorTwelveScript[] = {
+s32 FuchinTemple_ActorTwelveScript[] = {
 	SC_ARG(0),
 	SC_SET(SW_GRAVITY, 0x9999),
 	SC_LABEL(1),
@@ -2371,25 +2371,25 @@ s32 ShianJiin_ActorTwelveScript[] = {
 	SC_END,
 };
 
-s32 gShianJiinPlacement1[] = {
+s32 gFuchinTemplePlacement1[] = {
 	SC_CALL(StopXianActor),
 	SC_WAIT(1),
 	SC_END,
 };
 
-u16 ShianJiin_CellStepsA[] = {
+u16 FuchinTemple_CellStepsA[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(63, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ShianJiin_CellStepsB[] = {
+u16 FuchinTemple_CellStepsB[] = {
 	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(64, 19, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ShianJiin_CellStepsC[] = {
+u16 FuchinTemple_CellStepsC[] = {
 	MAP_CELL_STEP(62, 19, 2, 2, 5), MAP_CELL_STEP(60, 19, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gShianJiinEntrances1[] = {
+struct SceneEntrance gFuchinTempleEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 296, 0, 504, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 296, 0, 304, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2398,7 +2398,7 @@ struct SceneEntrance gShianJiinEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gShianJiinEntrancesOther[] = {
+struct SceneEntrance gFuchinTempleEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, 48, 384, 288, 576, 0 },
 	{ 2, CONDITION_ALWAYS, 256, 0, 264, FACING_NORTH, 0, 48, 80, 368, 288, 0 },
@@ -2407,7 +2407,7 @@ struct SceneEntrance gShianJiinEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 ShianJiin_XianMessages[] = {
+u32 FuchinTemple_XianMessages[] = {
 	SCENE_EXITS(60),
 	SCENE_EXIT(1, 2, 12),
 	SCENE_EXIT(2, 61, 1),
@@ -2420,7 +2420,7 @@ u32 ShianJiin_XianMessages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gShianJiinPlacements1[] = {
+struct ScenePlacement gFuchinTemplePlacements1[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(296), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x95, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2436,7 +2436,7 @@ struct ScenePlacement gShianJiinPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gShianJiinPlacements[] = {
+struct ScenePlacement gFuchinTemplePlacements[] = {
 	{ 0x33, 0x0, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(472), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x6c, 0x0, ACTOR_STAND,
@@ -2445,7 +2445,7 @@ struct ScenePlacement gShianJiinPlacements[] = {
 		PIXELS(120), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x83, 0x0, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(152), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x83, 0x0, (s32)ShianJiin_ActorTwelveScript,
+	{ 0x83, 0x0, (s32)FuchinTemple_ActorTwelveScript,
 		PIXELS(120), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x83, 0x0, ACTOR_STAND,
 		PIXELS(176), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -2461,17 +2461,17 @@ struct ScenePlacement gShianJiinPlacements[] = {
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(232), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x16, CONDITION_ALWAYS, (s32)gShianJiinPlacement1,
+	{ 0x16, CONDITION_ALWAYS, (s32)gFuchinTemplePlacement1,
 		PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gShianJiinPlacementsEntrance3[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gFuchinTemplePlacementsEntrance3[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(472), 0, PIXELS(472), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -2482,128 +2482,128 @@ struct ScenePlacement gShianJiinPlacementsEntrance3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gShianJiinEvents1[] = {
+struct SceneEvent gFuchinTempleEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH_1) },
 	{ EVENT_TOUCH, 5, 0x894, EVENT_SCRIPT(EV05_TOUCH) },
-	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinTheFuchinTempleIsAPleasant) },
-	{ EVENT_TALK, 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinOhRobinWhatTookYouSo) },
-	{ EVENT_TALK, 10, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinAhhhMasterNyunpaHeHasPassed) },
-	{ EVENT_TALK, 11, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaHasWastedAwayAt) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleOhIsaacWhatTookYouSo) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleAhhhMasterNyunpaHeHasPassed) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleMasterNyunpaHasWastedAwayAt) },
 	{ EVENT_TALK, 12, IF_FLAG_SET(0x88f), EVENT_SCRIPT(EV12_TALK_1) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 9, 0x891, MSGNO(MsgShianJiinOmOmBlueLightsInThe) },
+	{ EVENT_TALK, 9, 0x891, MSGNO(MsgFuchinTempleOmOmBlueLightsInThe) },
 	{ EVENT_TALK, 9, 0x892, EVENT_SCRIPT(EV09_TALK_1) },
-	{ EVENT_TALK, 9, 0xf14, MSGNO(MsgShianJiinTheTestOfFuchinFallsIs) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterNyunpaIsWaitingForYou) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinGemsFromTheSkyBlueLights) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinNyunpaHasNotEatenInDays) },
+	{ EVENT_TALK, 9, 0xf14, MSGNO(MsgFuchinTempleTheTestOfFuchinFallsIs) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterNyunpaIsWaitingForYou) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGemsFromTheSkyBlueLights) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK_1) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinGemsFallingFromTheSkyMountains) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinIKnewMasterNyunpaWasFasting) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaReachedEnlightenmentDuringHis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaIsNothingButSkin) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinHeCantLeaveUsYetHe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x890, MSGNO(MsgShianJiinIBeginningToThinkIllBe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinIDontFeelSafeGoingHome) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x891, MSGNO(MsgShianJiinManyStarsFellFromTheSky) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x892, MSGNO(MsgShianJiinCanSuchYoungWarriorsEndureThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xf14, MSGNO(MsgShianJiinCanSuchYoungWarriorsEndureThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinTheWarriorsHaveMasteredTheSecrets) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinThereIsNoPointInTraining) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinICantImagineFastingItGets) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianJiinIWillTrainToBecomeA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinSinceImHereIdLikeTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleMasterNyunpaIsNothingButSkin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTempleHeCantLeaveUsYetHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x890, MSGNO(MsgFuchinTempleIBeginningToThinkIllBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x891, MSGNO(MsgFuchinTempleManyStarsFellFromTheSky) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x892, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xf14, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheWarriorsHaveMasteredTheSecrets) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleThereIsNoPointInTraining) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICantImagineFastingItGets) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIWillTrainToBecomeA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleSinceImHereIdLikeTo) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gShianJiinEvents[] = {
+struct SceneEvent gFuchinTempleEvents[] = {
 	{ 0x4402, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SCRIPT) },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiin) },
-	{ EVENT_TALK, 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinUseThisEnergyToFindThe) },
-	{ EVENT_TALK, 8, IF_FLAG_SET(0x891), MSGNO(MsgShianJiinSpeakToTheMonkStandingBeneath) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgFuchinTemple) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x893), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
+	{ EVENT_TALK, 8, IF_FLAG_SET(0x891), MSGNO(MsgFuchinTempleSpeakToTheMonkStandingBeneath) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x300), EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianNyunpaMeditates) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianNyunpaMeditates) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), EVENT_SCRIPT(EV08_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinNowThatIHavePassedMy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x893), MSGNO(MsgFuchinTempleNowThatIHavePassedMy) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, IF_FLAG_SET(0x891), EVENT_SCRIPT(EV1032_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
-	{ EVENT_TALK, 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinThisIsMasterFehsKungFu) },
-	{ EVENT_TALK, 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinBouldersOvercameHsuKungFuShould) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleThisIsMasterFehsKungFu) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleBouldersOvercameHsuKungFuShould) },
 	{ EVENT_TALK, 11, IF_FLAG_SET(0x895), EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, IF_FLAG_SET(0x895), EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinFeizhiPredictedHsusDangerHerProphecy) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinHsuIsRestingFeizhiIsWatching) },
-	{ EVENT_TALK, 18, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinPracticeEveryoneChiHasItsLimits) },
-	{ EVENT_TALK, 9, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWarriorYouAreGreatYouHave) },
-	{ EVENT_TALK, 10, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinEveryoneWantsToLearnTheChi) },
-	{ EVENT_TALK, 11, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinConcentrateEnergyIntoTheHandsAnd) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleFeizhiPredictedHsusDangerHerProphecy) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleHsuIsRestingFeizhiIsWatching) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTemplePracticeEveryoneChiHasItsLimits) },
+	{ EVENT_TALK, 9, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleWarriorYouAreGreatYouHave) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleEveryoneWantsToLearnTheChi) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleConcentrateEnergyIntoTheHandsAnd) },
 	{ EVENT_TALK, 12, IF_FLAG_SET(0x89b), EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIDidNotThinkMuchOf) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWhereDidFeizhiGoIAm) },
-	{ EVENT_TALK, 15, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinMasterHsuIsLateICan) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIWillLearnChiIWill) },
-	{ EVENT_TALK, 18, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorUseYourChiFromThe) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorPleaseUseYourChiFrom) },
-	{ EVENT_TALK, 18, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorLetMeSeeYourChi) },
-	{ EVENT_TALK, 13, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIsGoneItIsDangerous) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooks) },
-	{ EVENT_TALK, 15, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorShowUsYourChiLike) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorThatWasGreatButMaster) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleIDidNotThinkMuchOf) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleWhereDidFeizhiGoIAm) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleMasterHsuIsLateICan) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleIWillLearnChiIWill) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x301), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x301), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleWarriorLetMeSeeYourChi) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleFeizhiIsGoneItIsDangerous) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleFeizhiIsStrongerThanSheLooks) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleWarriorShowUsYourChiLike) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleWarriorThatWasGreatButMaster) },
 	{ EVENT_TALK, 18, IF_FLAG_SET(0x899), EVENT_SCRIPT(EV18_TALK) },
-	{ EVENT_TALK, 13, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsGoneItIsDangerousOutside) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooksShe) },
-	{ EVENT_TALK, 15, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinIKnowWhyYouCanUse) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorChiIsAGreatPower) },
+	{ EVENT_TALK, 13, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleFeizhiIsGoneItIsDangerousOutside) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleFeizhiIsStrongerThanSheLooksShe) },
+	{ EVENT_TALK, 15, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleIKnowWhyYouCanUse) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleWarriorChiIsAGreatPower) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinStrongKicksAreVeryImportantKick) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinIWantToLearnSoI) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleStrongKicksAreVeryImportantKick) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIWantToLearnSoI) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinEveryoneInXianCanDoMartial) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShianJiinJustListeningDoesNotMakeOne) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleEveryoneInXianCanDoMartial) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleJustListeningDoesNotMakeOne) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterFehIsVeryBusyHe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinPeaceHasReturnedToXianBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinNoMatterHowMuchYouPractice) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinTheMonstersAreVeryLargeStriking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinWhenABoulderFallsJumpRepeat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinWhereDidFeizhiGainThePower) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinMasterFehIsVeryWorriedAbout) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinCanSuchAYoungWarriorReally) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinYourChiIsFuchinTemplesHow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIDontCareWhichChiIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinMasterHamasChiCanShatterBoulders) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFollowSilkRoadStraightPassThrough) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWarriorYouUseWeaponsAndChi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFeizhiIsNotInTheFeh) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinFeizhiWorriesOnlyAboutMasterHsu) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinLearningChiIsVeryHardMaster) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinWarriorTheRulesRequireYouTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x301), MSGNO(MsgShianJiinSoCloseWarriorUseChiFrom) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorShowMeYourChiI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIKnowIKnowHow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinMyKickAndPunchAreVery) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinShowUsYourChiNowDo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinIAmShockedThatThisWarrior) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinIWantToSeeTheChi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIKnowHowYouFeel) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinMyKickAndPunchAreVeryLoud) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorShowMeYourChiNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorDoNotHideYourChi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinWarriorsFightWithWeaponsKungFu) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinPracticingKicksHurtsMyFeetVery) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinThatPunchWasGoodYouSurprise) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianJiinIMoveTooQuicklyYouCant) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinWarriorsCameToLearnTheFeh) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgShianJiinGreatKickKickFromTheHip) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShianJiinYouAreTheWarriorsWhoCame) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterFehIsTalkingWithFeizhi) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterFehIsVeryBusyHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTemplePeaceHasReturnedToXianBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleNoMatterHowMuchYouPractice) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleTheMonstersAreVeryLargeStriking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleWhenABoulderFallsJumpRepeat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleWhereDidFeizhiGainThePower) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x895), MSGNO(MsgFuchinTempleMasterFehIsVeryWorriedAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleCanSuchAYoungWarriorReally) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleYourChiIsFuchinTemplesHow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleIDontCareWhichChiIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleMasterHamasChiCanShatterBoulders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleFollowSilkRoadStraightPassThrough) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleWarriorYouUseWeaponsAndChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleFeizhiIsNotInTheFeh) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleFeizhiWorriesOnlyAboutMasterHsu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x89b), MSGNO(MsgFuchinTempleLearningChiIsVeryHardMaster) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x301), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x301), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleWarriorShowMeYourChiI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleFeizhiIKnowIKnowHow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleMyKickAndPunchAreVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleShowUsYourChiNowDo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x898), MSGNO(MsgFuchinTempleIAmShockedThatThisWarrior) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleIWantToSeeTheChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleFeizhiIKnowHowYouFeel) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleMyKickAndPunchAreVeryLoud) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleWarriorShowMeYourChiNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x899), MSGNO(MsgFuchinTempleWarriorDoNotHideYourChi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleWarriorsFightWithWeaponsKungFu) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTemplePracticingKicksHurtsMyFeetVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleThatPunchWasGoodYouSurprise) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIMoveTooQuicklyYouCant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleWarriorsCameToLearnTheFeh) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGreatKickKickFromTheHip) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleYouAreTheWarriorsWhoCame) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterFehIsTalkingWithFeizhi) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
@@ -2615,17 +2615,17 @@ struct SceneEvent gShianJiinEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gShianJiinEventsEntrance3[] = {
+struct SceneEvent gFuchinTempleEventsEntrance3[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 3 },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterHamaIsMeditatingAskingFor) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinTheFutureHoldsManyHardshipsBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinIDoNotThinkMasterHama) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianJiinICannotSeeYourFutureClearly) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICannotSeeYourFutureClearly) },
 	{ SEARCH(SEARCH_JAR), 102, 0xf6a, FIND_COINS(6) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 ShianJiin_ShotScript[] = {
+s32 FuchinTemple_ShotScript[] = {
 	SC_SET(SW_FACING, FACING_NORTH),
 	SC_WAIT(44),
 	SC_WAIT(1),

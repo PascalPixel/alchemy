@@ -26,9 +26,9 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 ShianHeya_GetEntrances(void)
+s32 XianInteriors_GetEntrances(void)
 {
-	return (s32)ShianHeya_SceneTable0;
+	return (s32)XianInteriors_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -36,19 +36,19 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-s32 ShianHeya_GetExits(void)
+s32 XianInteriors_GetExits(void)
 {
-	return (s32)ShianHeya_SceneTable1;
+	return (s32)XianInteriors_SceneTable1;
 }
 
-s32 ShianHeya_SelectPlacements(void)
+s32 XianInteriors_SelectPlacements(void)
 {
 	if (gGameState.entrance == 8)
 	{
-		return (s32)ShianHeya_SceneTable2Entrance8;
+		return (s32)XianInteriors_SceneTable2Entrance8;
 	}
-	SceneTable_Prepare(ShianHeya_SceneTable2);
-	return (s32)ShianHeya_SceneTable2;
+	SceneTable_Prepare(XianInteriors_SceneTable2);
+	return (s32)XianInteriors_SceneTable2;
 }
 
 static void EV14_TALK(void)
@@ -65,11 +65,11 @@ static void EV14_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage(MsgShianXianHasMartialArtsBut);
+			Engine_EventSetMessage(MsgXianXianHasMartialArtsBut);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgShianHsusInjuryTaughtGoodLesson);
+			Engine_EventSetMessage(MsgXianHsusInjuryTaughtGoodLesson);
 		}
 		Engine_EventShowMessage(14, 0);
 	}
@@ -90,11 +90,11 @@ static void EV15_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage(MsgShianMartialArtistsCantUseHeavy);
+			Engine_EventSetMessage(MsgXianMartialArtistsCantUseHeavy);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgShianKungFuMakesQuickDoes);
+			Engine_EventSetMessage(MsgXianKungFuMakesQuickDoes);
 		}
 		Engine_EventShowMessage(15, 0);
 	}
@@ -114,12 +114,12 @@ static void EV16_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x895) == 0)
 	{
-		Engine_EventSetMessage(MsgShianXiansSpecialArmorNotSuited);
+		Engine_EventSetMessage(MsgXianXiansSpecialArmorNotSuited);
 		Engine_EventShowMessage(16, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShianDoPlanCrossDesertWarrior);
+		Engine_EventSetMessage(MsgXianDoPlanCrossDesertWarrior);
 		Engine_EventAskYesNo(16, 0);
 	}
 	Engine_EventEnd();
@@ -140,11 +140,11 @@ static void EV17_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage(MsgShianWarriorsShouldLearnAboutTowns);
+			Engine_EventSetMessage(MsgXianWarriorsShouldLearnAboutTowns);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgShianWeHaveFewCustomersThese);
+			Engine_EventSetMessage(MsgXianWeHaveFewCustomersThese);
 		}
 		Engine_EventShowMessage(17, 0);
 	}
@@ -155,7 +155,7 @@ static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianSomethingWrongOnSilkRoad);
+	Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -164,7 +164,7 @@ static void EV12_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianDidMonstersInAltinSpit);
+	Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
 	Engine_EventAskYesNo(12, 0);
 	Engine_EventEnd();
 }
@@ -173,7 +173,7 @@ static void EV09_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShianWarriorWelcome);
+	Engine_EventSetMessage(MsgXianWarriorWelcome);
 	Engine_EventShowMessageAndWait(9, 0, 20);
 	Engine_ActorFaceActor(9, 10, 0);
 	Engine_EventWait(60);
@@ -183,16 +183,16 @@ static void EV09_TALK(void)
 	Engine_EventEnd();
 }
 
-s32 ShianHeya_SelectEvents(void)
+s32 XianInteriors_SelectEvents(void)
 {
 	if (gGameState.entrance == 8)
 	{
-		return (s32)ShianHeya_SceneTable3Entrance8;
+		return (s32)XianInteriors_SceneTable3Entrance8;
 	}
-	return (s32)ShianHeya_SceneTable3;
+	return (s32)XianInteriors_SceneTable3;
 }
 
-s32 ShianHeya_PrepareWindowTransition(void)
+s32 XianInteriors_PrepareWindowTransition(void)
 {
 
 	s16 scene;
@@ -249,7 +249,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance ShianHeya_SceneTable0[] = {
+struct SceneEntrance XianInteriors_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0 },
 	{ 2, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0, 288, 8, 592, 224, 0 },
@@ -262,7 +262,7 @@ struct SceneEntrance ShianHeya_SceneTable0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 ShianHeya_SceneTable1[] = {
+u32 XianInteriors_SceneTable1[] = {
 	SCENE_EXITS(73),
 	SCENE_EXIT(1, 72, 5),
 	SCENE_EXIT(2, 72, 6),
@@ -275,7 +275,7 @@ u32 ShianHeya_SceneTable1[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement ShianHeya_SceneTable2[] = {
+struct ScenePlacement XianInteriors_SceneTable2[] = {
 	{ 0xa0, 0x0, ACTOR_STAND,
 		PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xa2, 0x0, ACTOR_STAND,
@@ -303,7 +303,7 @@ struct ScenePlacement ShianHeya_SceneTable2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement ShianHeya_SceneTable2Entrance8[] = {
+struct ScenePlacement XianInteriors_SceneTable2Entrance8[] = {
 	{ 0x28, IF_FLAG_SET(0x895), ACTOR_STAND,
 		PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x27, IF_FLAG_SET(0x895), ACTOR_STAND,
@@ -313,7 +313,7 @@ struct ScenePlacement ShianHeya_SceneTable2Entrance8[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent ShianHeya_SceneTable3[] = {
+struct SceneEvent XianInteriors_SceneTable3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -321,81 +321,81 @@ struct SceneEvent ShianHeya_SceneTable3[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-	{ EVENT_TALK, 8, 0x895, MSGNO(MsgShianHeyaTheMulberryHarvestIsOverNow) },
-	{ EVENT_TALK, 9, 0x895, MSGNO(MsgShianHeyaFarmWorkIsVeryHardWarriors) },
-	{ EVENT_TALK, 10, 0x895, MSGNO(MsgShianHeyaXianSilkIsSentOnSilk) },
-	{ EVENT_TALK, 11, 0x895, MSGNO(MsgShianHeyaSilkRoadEndsInTolbiIt) },
-	{ EVENT_TALK, 12, 0x895, MSGNO(MsgShianHeyaFollowSilkRoadWhenYouSee) },
-	{ EVENT_TALK, 13, 0x895, MSGNO(MsgShianHeyaThereIsAMineInAltin) },
+	{ EVENT_TALK, 8, 0x895, MSGNO(MsgXianInteriorsTheMulberryHarvestIsOverNow) },
+	{ EVENT_TALK, 9, 0x895, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
+	{ EVENT_TALK, 10, 0x895, MSGNO(MsgXianInteriorsXianSilkIsSentOnSilk) },
+	{ EVENT_TALK, 11, 0x895, MSGNO(MsgXianInteriorsSilkRoadEndsInTolbiIt) },
+	{ EVENT_TALK, 12, 0x895, MSGNO(MsgXianInteriorsFollowSilkRoadWhenYouSee) },
+	{ EVENT_TALK, 13, 0x895, MSGNO(MsgXianInteriorsThereIsAMineInAltin) },
 	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, 0x895, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, 0x895, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(EV17_TALK) },
-	{ EVENT_TALK, 18, 0x895, MSGNO(MsgShianHeyaNormallyManyMerchantsComeToThe) },
-	{ EVENT_TALK, 19, 0x895, MSGNO(MsgShianHeyaAllThePeopleWhoCameTo) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianMuraWhereAreTheMerchantsNoOne) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianHeyaMerchantsBringUsCoinsTheyMust) },
+	{ EVENT_TALK, 18, 0x895, MSGNO(MsgXianInteriorsNormallyManyMerchantsComeToThe) },
+	{ EVENT_TALK, 19, 0x895, MSGNO(MsgXianInteriorsAllThePeopleWhoCameTo) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsBringUsCoinsTheyMust) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianHeyaNoneCanPassThroughLamakanThis) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsNoneCanPassThroughLamakanThis) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianHeyaTheMineInAltinFilledWith) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheMineInAltinFilledWith) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgShianHeyaWhenLamakanDesertBurnsItIs) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgShianHeyaHotFoodIsGoodForCrossing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgShianHeyaSoonMasterHammetWillComeHe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x895, MSGNO(MsgShianHeyaFarmWorkIsHardOnThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgShianHeyaSilkRoadIsFullOfSilk) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x895, MSGNO(MsgShianHeyaMerchantsSayTolbiIsVeryBeautiful) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x895, MSGNO(MsgShianHeyaAltinHasManyMenAllScary) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x895, MSGNO(MsgShianHeyaMiningIsVeryHardWorkIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x895, MSGNO(MsgShianHeyaSomeSayFightingWithWeaponsIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x895, MSGNO(MsgShianHeyaInWarriorBattlesYouFightWith) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x895, MSGNO(MsgShianHeyaXianIsAVillageOfCraftsmen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x895, MSGNO(MsgShianHeyaWhenYouGoToANew) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x895, MSGNO(MsgShianHeyaWhenManyMerchantsComeMyBusiness) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x895, MSGNO(MsgShianHeyaThereAreFewerTravelersSoFewer) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianHeyaWhyDoesMasterHammetNotCome) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianHeyaMerchantsSellSilkItIsLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianHeyaFeizhiSaidTheDesertBecameEvil) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShianHeyaTheDesertWasVeryHotNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShianHeyaTheVillageIsFloodedBecauseOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShianHeyaWaterMonstersHowTerribleForAltin) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgShianHeyaHsuWasPummeledByHugeBoulders) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShianHeyaWeShouldSellArmorToKung) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShianHeyaYouLoseStrengthInHeatUse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShianHeyaCaravansCannotBringMerchantsHereWhen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgShianHeyaTheMerchantsDoNotComeBecause) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgShianHeyaEatWarriorIWillAddMany) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhenLamakanDesertBurnsItIs) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHotFoodIsGoodForCrossing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgXianInteriorsSoonMasterHammetWillComeHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x895, MSGNO(MsgXianInteriorsFarmWorkIsHardOnThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgXianInteriorsSilkRoadIsFullOfSilk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x895, MSGNO(MsgXianInteriorsMerchantsSayTolbiIsVeryBeautiful) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x895, MSGNO(MsgXianInteriorsAltinHasManyMenAllScary) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x895, MSGNO(MsgXianInteriorsMiningIsVeryHardWorkIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x895, MSGNO(MsgXianInteriorsSomeSayFightingWithWeaponsIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x895, MSGNO(MsgXianInteriorsInWarriorBattlesYouFightWith) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x895, MSGNO(MsgXianInteriorsXianIsAVillageOfCraftsmen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x895, MSGNO(MsgXianInteriorsWhenYouGoToANew) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x895, MSGNO(MsgXianInteriorsWhenManyMerchantsComeMyBusiness) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x895, MSGNO(MsgXianInteriorsThereAreFewerTravelersSoFewer) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhyDoesMasterHammetNotCome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsSellSilkItIsLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhiSaidTheDesertBecameEvil) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheDesertWasVeryHotNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheVillageIsFloodedBecauseOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWaterMonstersHowTerribleForAltin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHsuWasPummeledByHugeBoulders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWeShouldSellArmorToKung) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsYouLoseStrengthInHeatUse) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsCaravansCannotBringMerchantsHereWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheMerchantsDoNotComeBecause) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsEatWarriorIWillAddMany) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf6f, FIND_ITEM(ITEM_ELIXIR) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf70, FIND_ITEM(ITEM_SLEEP_BOMB) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaTheyreMakingStirFryTheCabbage)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaItsTheXianGourmetTheBest)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaTheyreSteamedDumplingsTheyreGreatPiping)) },
-	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaRobinAndHisFriendsAreShocked)) },
-	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaHesMakingHotBeanCurdTastes)) },
-	{ 0xc5b3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaThereAreManyChopsticksButNot)) },
-	{ SEARCH(SEARCH_SHELF), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaThereAreMedicinalHerbsTheyHave)) },
-	{ SEARCH(SEARCH_SHELF), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaTheresAKimonoItLooksLike)) },
-	{ SEARCH(SEARCH_SHELF), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgShianHeyaItsJustASalesReportIt)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsTheyreMakingStirFryTheCabbage)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsItsTheXianGourmetTheBest)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsTheyreSteamedDumplingsTheyreGreatPiping)) },
+	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsIsaacAndHisFriendsAreShocked)) },
+	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsHesMakingHotBeanCurdTastes)) },
+	{ 0xc5b3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsThereAreManyChopsticksButNot)) },
+	{ SEARCH(SEARCH_SHELF), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsThereAreMedicinalHerbsTheyHave)) },
+	{ SEARCH(SEARCH_SHELF), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsTheresAKimonoItLooksLike)) },
+	{ SEARCH(SEARCH_SHELF), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianInteriorsItsJustASalesReportIt)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShianHeya_SceneTable3Entrance8[] = {
+struct SceneEvent XianInteriors_SceneTable3Entrance8[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-	{ EVENT_TALK, 8, 0x8b3, MSGNO(MsgShianHeyaFeizhisPredictionCameTrueNowI) },
+	{ EVENT_TALK, 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
 	{ EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, 0x8b3, MSGNO(MsgShianHeyaIWasInjuredByRocksOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8b3, MSGNO(MsgShianHeyaFeizhisAbilityToSenseTroubleIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b3, MSGNO(MsgShianHeyaMasterHamaHasGreatPowerYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b3, MSGNO(MsgShianHeyaIKnewHelpWouldComeWhen) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianHeyaFeizhisPredictionCameTrueNowIBelieve) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianHeyaHsuWasTrappedUnderTheRocks) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianHeyaIWasInjuredByBouldersOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShianHeyaFeizhisAbilityToForeseeIsReal) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShianHeyaMasterHamaHasGreatPowerSome) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShianHeyaIKnewHelpWouldComeWhenI) },
+	{ EVENT_TALK, 10, 0x8b3, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisAbilityToSenseTroubleIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b3, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b3, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhen) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowIBelieve) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHsuWasTrappedUnderTheRocks) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIWasInjuredByBouldersOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhisAbilityToForeseeIsReal) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerSome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsIKnewHelpWouldComeWhenI) },
 	{ SCENE_EVENTS_END },
 };

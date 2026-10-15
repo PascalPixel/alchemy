@@ -46,7 +46,7 @@
 struct StatWork
 {
 	s32					   hp;
-	s32					   ep;
+	s32					   pp;
 	s32					   atk;
 	s32					   def;
 	s32					   agi;
@@ -54,7 +54,7 @@ struct StatWork
 	s32					   luck;
 	s32					   turns;
 	s32					   hp_regen;
-	s32					   ep_regen;
+	s32					   pp_regen;
 	s32					   element[4][2];
 	s32					   kind;
 	s32					   unknown_4c[2];
@@ -185,14 +185,14 @@ void UnitCalc(s32 owner)
 	work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
 	st = UnitGet(owner);
 	work->hp = st->base_hp;
-	work->ep = st->base_ep;
+	work->pp = st->base_pp;
 	work->atk = st->base_attack;
 	work->def = st->base_defense;
 	work->agi = st->base_agility;
 	work->luck = st->base_luck;
 	work->turns = st->base_action_count & 15;
 	work->hp_regen = st->base_hp_regen;
-	work->ep_regen = st->base_ep_regen;
+	work->pp_regen = st->base_pp_regen;
 	{
 		s16 *src = &st->base_elm[0].pow;
 		s32 *dst = work->element[0];
@@ -206,18 +206,18 @@ void UnitCalc(s32 owner)
 	}
 
 	if (STAT_DIFF(st->max_hp * st->hp_gauge / 0x4000, st->hp) > 1
-		|| STAT_DIFF(st->max_ep * st->ep_gauge / 0x4000, st->ep) > 1)
+		|| STAT_DIFF(st->max_pp * st->pp_gauge / 0x4000, st->pp) > 1)
 	{
 		st->hp_gauge = 0x4000;
-		st->ep_gauge = 0x4000;
+		st->pp_gauge = 0x4000;
 		st->hp = st->max_hp;
-		st->ep = st->max_ep;
+		st->pp = st->max_pp;
 	}
 
 	st->restraint &= ~3;
 	if (st->restraint & 4)
 		st->restraint |= 1;
-	if (st->sonae)
+	if (st->ready)
 		work->turns++;
 	st->unknown_142[0] = 0;
 	st->unknown_142[1] = 0;
@@ -256,10 +256,10 @@ void UnitCalc(s32 owner)
 					work->hp_regen += work->amount;
 					break;
 				case ITEM_EFFECT_ADD_PP:
-					work->ep += work->amount;
+					work->pp += work->amount;
 					break;
 				case ITEM_EFFECT_ADD_PP_REGEN:
-					work->ep_regen += work->amount;
+					work->pp_regen += work->amount;
 					break;
 				case ITEM_EFFECT_ADD_AGILITY:
 					work->agi += work->amount;
@@ -320,7 +320,7 @@ void UnitCalc(s32 owner)
 					struct DjinnDefinition *djinn = Djinn_GetDefinition(el, i);
 
 					work->hp += djinn->hp;
-					work->ep += djinn->ep;
+					work->pp += djinn->pp;
 					work->atk += djinn->atk;
 					work->def += djinn->def;
 					work->agi += djinn->agi;
@@ -333,7 +333,7 @@ void UnitCalc(s32 owner)
 			struct ClassDefinition *class = Owner_GetRecordStride84(st->class_index);
 
 			work->hp = work->hp * class->hp / 10;
-			work->ep = work->ep * class->ep / 10;
+			work->pp = work->pp * class->pp / 10;
 			work->atk = work->atk * class->atk / 10;
 			work->def = work->def * class->def / 10;
 			work->agi = work->agi * class->agi / 10;
@@ -361,10 +361,10 @@ void UnitCalc(s32 owner)
 					work->hp_regen = work->hp_regen * work->amount / 10;
 					break;
 				case 2:
-					work->ep = work->ep * work->amount / 10;
+					work->pp = work->pp * work->amount / 10;
 					break;
 				case 3:
-					work->ep_regen = work->ep_regen * work->amount / 10;
+					work->pp_regen = work->pp_regen * work->amount / 10;
 					break;
 				case 4:
 					work->atk = work->atk * work->amount / 10;
@@ -413,7 +413,7 @@ void UnitCalc(s32 owner)
 			break;
 		}
 		if (flag)
-			work->ep_regen += 4;
+			work->pp_regen += 4;
 	}
 
 	if (work->atk < 0)
@@ -440,10 +440,10 @@ void UnitCalc(s32 owner)
 		work->hp_regen = 0;
 	if (work->hp_regen > 10000)
 		work->hp_regen = 10000;
-	if (work->ep_regen < 0)
-		work->ep_regen = 0;
-	if (work->ep_regen > 200)
-		work->ep_regen = 200;
+	if (work->pp_regen < 0)
+		work->pp_regen = 0;
+	if (work->pp_regen > 200)
+		work->pp_regen = 200;
 	for (i = 0; i < 4; i++)
 	{
 		if (work->element[i][0] < 0)
@@ -462,7 +462,7 @@ void UnitCalc(s32 owner)
 	st->luck = work->luck;
 	st->action_entry_count = work->turns;
 	st->hp_regen = work->hp_regen;
-	st->ep_regen = work->ep_regen;
+	st->pp_regen = work->pp_regen;
 	for (i = 0; i < 4; i++)
 	{
 		st->elm[i].pow = work->element[i][0];
@@ -491,22 +491,22 @@ void UnitCalc(s32 owner)
 		st->hp = value;
 	}
 
-	old = st->max_ep;
-	if (work->ep < 0)
-		work->ep = 0;
-	if (work->ep > cap)
-		work->ep = cap;
-	st->max_ep = work->ep;
-	if (old != st->max_ep)
+	old = st->max_pp;
+	if (work->pp < 0)
+		work->pp = 0;
+	if (work->pp > cap)
+		work->pp = cap;
+	st->max_pp = work->pp;
+	if (old != st->max_pp)
 	{
-		value = work->ep * st->ep_gauge / 0x4000;
+		value = work->pp * st->pp_gauge / 0x4000;
 		if (value < 0)
 			value = 0;
 		if (value > cap)
 			value = cap;
-		if (st->ep != 0 && value == 0)
+		if (st->pp != 0 && value == 0)
 			value = 1;
-		st->ep = value;
+		st->pp = value;
 	}
 
 	MemFree(work);
@@ -686,7 +686,7 @@ void Party_ApplyStatePreset(void)
 		s32				slot;
 
 		unit->hp = unit->max_hp;
-		unit->ep = unit->max_ep;
+		unit->pp = unit->max_pp;
 		Unit_UpdateGauges(unit);
 
 		for (slot = 0; slot <= 14; slot++)
@@ -723,13 +723,13 @@ void Owner_RefreshActiveRatios(s32 arg0)
 		obj = UnitGet(gGameState.active_owners[n]);
 
 		obj->hp = obj->max_hp;
-		obj->ep = obj->max_ep;
+		obj->pp = obj->max_pp;
 		Unit_UpdateGauges(obj);
 
 		if (arg0 == 1)
 		{
-			obj->doku = 0;
-			obj->akuryo = 0;
+			obj->poison = 0;
+			obj->haunt = 0;
 		}
 	}
 }
@@ -770,7 +770,7 @@ void Owner_RefreshRatiosOnFlag(void)
 		}
 
 		obj = UnitGet(ownerId);
-		obj->ep = obj->max_ep;
+		obj->pp = obj->max_pp;
 		Unit_UpdateGauges(obj);
 	}
 }
@@ -809,29 +809,29 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 
 //--------------------------------------------------------------------------
 // ratios_second_input.c
-// キャラクタ：EP の設定とゲージの計算
+// キャラクタ：PP の設定とゲージの計算
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// EP を 0 から最大 EP の間で設定し、HP と EP のゲージを計算し直す
+// PP を 0 から最大 PP の間で設定し、HP と PP のゲージを計算し直す
 // ゲージは 0x4000 で満タン。残っていれば最低 1 にする
 // unit : ユニット
-// ep   : 新しい EP
+// pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
+void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 pp)
 {
 	s32 cur;
 
-	if (ep > unit->max_ep)
+	if (pp > unit->max_pp)
 	{
-		cur = unit->max_ep;
+		cur = unit->max_pp;
 	}
 	else
 	{
 		cur = 0;
-		if (ep >= 0)
-			cur = ep;
+		if (pp >= 0)
+			cur = pp;
 	}
-	unit->ep = cur;
+	unit->pp = cur;
 	Unit_UpdateGauges(unit);
 }
 
@@ -856,11 +856,11 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 	return state->hp;
 }
 
-s16 UnitEpAdd(s32 owner, s32 delta)
+s16 UnitPpAdd(s32 owner, s32 delta)
 {
 	struct BtlUnit *state = UnitGet(owner);
-	s32				cur = state->ep;
-	s32				max = state->max_ep;
+	s32				cur = state->pp;
+	s32				max = state->max_pp;
 	s32				value = cur + delta;
 	s32				result;
 
@@ -872,9 +872,9 @@ s16 UnitEpAdd(s32 owner, s32 delta)
 		if (value >= 0)
 			result = value;
 	}
-	state->ep = result;
+	state->pp = result;
 	UnitRatio(owner);
-	return state->ep;
+	return state->pp;
 }
 
 //--------------------------------------------------------------------------
@@ -1719,7 +1719,7 @@ void Owner_InitRecords(void)
 				}
 
 				Owner_RefreshDerivedData(*remote);
-				state->ep_gauge = 0x4000;
+				state->pp_gauge = 0x4000;
 				state->hp_gauge = 0x4000;
 				Party_AdvanceOwnerCountToTarget(*remote, tmpl->starting_level);
 				UnitCalc(*remote);
@@ -1768,7 +1768,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 	res->level = level;
 	res->ability = 0xffff;
 	res->hp = 0;
-	res->ep = 0;
+	res->pp = 0;
 	res->atk = 0;
 	res->def = 0;
 	res->agi = 0;
@@ -1784,7 +1784,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 		if (res->level == 1)
 		{
 			res->hp += work->growth->hp[0];
-			res->ep += work->growth->ep[0];
+			res->pp += work->growth->pp[0];
 			res->atk += work->growth->atk[0];
 			res->def += work->growth->def[0];
 			res->agi += work->growth->agi[0];
@@ -1797,8 +1797,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 			band = 4;
 		diff = work->growth->hp[band + 1] - work->growth->hp[band];
 		res->hp += ((Random16() * 20 >> 16) + diff) / 20;
-		diff = work->growth->ep[band + 1] - work->growth->ep[band];
-		res->ep += ((Random16() * 20 >> 16) + diff) / 20;
+		diff = work->growth->pp[band + 1] - work->growth->pp[band];
+		res->pp += ((Random16() * 20 >> 16) + diff) / 20;
 		diff = work->growth->atk[band + 1] - work->growth->atk[band];
 		res->atk += ((Random16() * 20 >> 16) + diff) / 20;
 		diff = work->growth->def[band + 1] - work->growth->def[band];
@@ -1808,14 +1808,14 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 		diff = work->growth->luck[band + 1] - work->growth->luck[band];
 		res->luck += ((Random16() * 20 >> 16) + diff) / 20;
 		st->base_hp += res->hp;
-		st->base_ep += res->ep;
+		st->base_pp += res->pp;
 		st->base_attack += res->atk;
 		st->base_defense += res->def;
 		st->base_agility += res->agi;
 		st->base_luck += res->luck;
 		st->base_action_count = 1;
 		st->base_hp_regen = 0;
-		st->base_ep_regen = 0;
+		st->base_pp_regen = 0;
 		Owner_RefreshClassActions(owner);
 		UnitCalc(owner);
 	}
@@ -2010,18 +2010,18 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 	unit->base_hp = enemy->hp;
 	unit->hp = enemy->hp;
 	unit->max_hp = enemy->hp;
-	unit->base_ep = enemy->ep;
-	unit->ep = enemy->ep;
-	unit->max_ep = enemy->ep;
+	unit->base_pp = enemy->pp;
+	unit->pp = enemy->pp;
+	unit->max_pp = enemy->pp;
 	unit->hp_gauge = 0x4000;
-	unit->ep_gauge = 0x4000;
+	unit->pp_gauge = 0x4000;
 	unit->base_attack = enemy->atk;
 	unit->base_defense = enemy->def;
 	unit->base_agility = enemy->agi;
 	unit->base_luck = enemy->luck;
 	unit->base_action_count = enemy->turns;
 	unit->base_hp_regen = enemy->hp_regen;
-	unit->base_ep_regen = enemy->ep_regen;
+	unit->base_pp_regen = enemy->pp_regen;
 	UiText_DecodeMessageFar(index + MsgEnemyName, name, 15);
 	for (i = 0; i < 14 && name[i] != 0; i++)
 		unit->name[i] = name[i];
@@ -2720,7 +2720,7 @@ s32 BtlEfxRevChk(s32 effect_id)
 s32 BattleFx_RollSuccess(
 	s32 caster, s32 target, s32 resistance_category, s32 effect_id, s32 success_scale)
 {
-	/* FAKEMATCH: three status reads (fuuji after the effect 4 test, konran in it, akuryo for effect 0x40) go through the byte view state[offset], so each builds its address from a fresh offset constant as the native does; read as unit fields, CSE reuses a neighbouring address. All eleven reads as fields differ 120 (184 instructions for 204); every other read is a field at no cost. */
+	/* FAKEMATCH: three status reads (psy_seal after the effect 4 test, confusion in it, haunt for effect 0x40) go through the byte view state[offset], so each builds its address from a fresh offset constant as the native does; read as unit fields, CSE reuses a neighbouring address. All eleven reads as fields differ 120 (184 instructions for 204); every other read is a field at no cost. */
 	u8			   *state = (u8 *)UnitGet(target);
 	struct BtlUnit *unit = (struct BtlUnit *)state;
 	s32				attempts = 1;
@@ -2738,15 +2738,15 @@ s32 BattleFx_RollSuccess(
 		return 0;
 	}
 
-	if (effect_id == 3 && unit->doku == 0)
+	if (effect_id == 3 && unit->poison == 0)
 	{
 		return 0;
 	}
 
 	goto action4_check;
 action4_tail:
-	if (unit->shibire == 0 && unit->nemuri == 0 && state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
-		&& unit->shiryo == 0)
+	if (unit->stun == 0 && unit->sleep == 0 && state[(u32) & ((struct BtlUnit *)0)->psy_seal] == 0
+		&& unit->grim_reaper == 0)
 	{
 		return 0;
 	}
@@ -2754,7 +2754,7 @@ action4_tail:
 action4_check:
 	if (effect_id == 4)
 	{
-		if (unit->maboroshi == 0 && state[(u32) & ((struct BtlUnit *)0)->konran] == 0
+		if (unit->delusion == 0 && state[(u32) & ((struct BtlUnit *)0)->confusion] == 0
 			&& unit->charm == 0)
 		{
 			goto action4_tail;
@@ -2762,20 +2762,20 @@ action4_check:
 	}
 
 action4_done:
-	poison = &unit->doku;
-	delusion = &unit->maboroshi;
-	confusion = (u8 *)&unit->konran;
+	poison = &unit->poison;
+	delusion = &unit->delusion;
+	confusion = (u8 *)&unit->confusion;
 	charm = &unit->charm;
-	stun = &unit->shibire;
-	sleep = &unit->nemuri;
+	stun = &unit->stun;
+	sleep = &unit->sleep;
 	if (effect_id == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
-		&& *stun == 0 && *sleep == 0 && unit->fuuji == 0 && unit->shiryo == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->akuryo] == 0)
+		&& *stun == 0 && *sleep == 0 && unit->psy_seal == 0 && unit->grim_reaper == 0
+		&& state[(u32) & ((struct BtlUnit *)0)->haunt] == 0)
 	{
 		return 0;
 	}
 
-	if (effect_id == 0x1C && unit->shiryo == 1)
+	if (effect_id == 0x1C && unit->grim_reaper == 1)
 	{
 		return 0;
 	}

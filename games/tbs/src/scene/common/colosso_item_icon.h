@@ -15,7 +15,7 @@
 #include "dma.h"
 #include "io_reg.h"
 
-void Korosseo_ShowItemIcon(s32 id, s32 item)
+void Colosso_ShowItemIcon(s32 id, s32 item)
 {
 	struct FieldActor	   *obj;
 	s32						one;

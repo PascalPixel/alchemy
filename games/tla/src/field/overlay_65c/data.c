@@ -34,12 +34,12 @@ struct ScenePlacement gScenePlacements[] = {
 struct SceneEvent gSceneEvents[] = {
 	{1, 1, CONDITION_ALWAYS, 1},
 	{1, 2, CONDITION_ALWAYS, 2},
-	{0, 8, CONDITION_ALWAYS, MSGNO(MsgMadoraChampaBoat)},
-	{0, 9, CONDITION_ALWAYS, MSGNO(MsgMadoraSailorNotChampa)},
-	{0, 10, CONDITION_ALWAYS, MSGNO(MsgMadoraWaveDamage)},
-	{0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadoraCannotEscapeBySea)},
-	{0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadoraPayayamuNewShip)},
-	{0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadoraPirateAttackParties)},
+	{0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
+	{0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
+	{0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
+	{0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
+	{0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
+	{0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
 	{0x8515, 13, 0x203, EVENT_SCRIPT(Func_02000054)},
 	{SCENE_EVENTS_END},
 };

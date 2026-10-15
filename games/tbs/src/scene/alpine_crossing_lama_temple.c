@@ -48,11 +48,11 @@ static s32 OverlayObject_SetFacingTowardObject10(void *self)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	if (gGameState.scene == (s32)&SceneId_YamaRama1)
+	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return YamaRama_TempleEntrances;
+		return AlpineCrossingLamaTemple_TempleEntrances;
 	}
-	return YamaRama_Entrances;
+	return AlpineCrossingLamaTemple_Entrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -62,16 +62,16 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return YamaRama_Exits;
+	return AlpineCrossingLamaTemple_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_YamaRama1)
+	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return YamaRama_TemplePlacements;
+		return AlpineCrossingLamaTemple_TemplePlacements;
 	}
-	return YamaRama_Placements;
+	return AlpineCrossingLamaTemple_Placements;
 }
 
 static void SceneDialogue_RunMessage1958Step(void)
@@ -80,7 +80,7 @@ static void SceneDialogue_RunMessage1958Step(void)
 	struct EventWork *work;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgYamaYoungWarriorsDoComeFrom);
+	Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
 	Engine_EventOpenMessage(10, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -101,7 +101,7 @@ static void SceneDialogue_RunMessage1958Step(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgYamaDoKnowMeditation);
+	Engine_EventSetMessage(MsgMountainDoKnowMeditation);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -109,7 +109,7 @@ static void EV11_TALK(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgYamaDidKnowMasterHamaGreatest);
+	Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -117,7 +117,7 @@ static void EV13_TALK(void)
 static void EV02_TOUCH(void)
 {
 	Event_PlayCue(188);
-	Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
+	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCells, 67, 6);
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -135,84 +135,84 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Actor_SetPosition(8, 0x880000, 0xa80000);
 	Actor_FaceDirection(8, 0x5000, 0);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x900000, 0xc80000);
-	Actor_SetPosition(GERALD, 0xa00000, 0xc00000);
-	Actor_SetPosition(IWAN, 0x800000, 0xc80000);
-	Actor_SetPosition(MEARI, 0x700000, 0xc00000);
+	Actor_SetPosition(GARET, 0xa00000, 0xc00000);
+	Actor_SetPosition(IVAN, 0x800000, 0xc80000);
+	Actor_SetPosition(MIA, 0x700000, 0xc00000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgYamaAdeptsLetMeThankAgain);
+	Engine_EventSetMessage(MsgMountainAdeptsLetMeThankAgain);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(IWAN, 0x102, 60);
+	Actor_ShowEmote(IVAN, 0x102, 60);
 	Engine_EventWait(120);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x6000, 20);
-	Event_OpenMessage(GERALD, 0);
+	Actor_FaceDirection(GARET, 0x6000, 20);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Actor_FaceDirection(MEARI, 0, 20);
-		Actor_ShowEmote(MEARI, 0x101, 60);
-		Event_ShowMessageAndWait(MEARI, 0, 20);
+		Actor_FaceDirection(MIA, 0, 20);
+		Actor_ShowEmote(MIA, 0x101, 60);
+		Event_ShowMessageAndWait(MIA, 0, 20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-		Actor_FaceDirection(IWAN, 0xe000, 0);
-		Engine_ActorStartRepeatedMotion(GERALD, 2);
-		Actor_SetAttachedEffect(GERALD, 0x102);
+		Actor_FaceDirection(IVAN, 0xe000, 0);
+		Engine_ActorStartRepeatedMotion(GARET, 2);
+		Actor_SetAttachedEffect(GARET, 0x102);
 		Engine_EventWait(60);
-		Actor_FaceDirection(GERALD, 0x8000, 20);
-		Event_ShowMessageAndWait(GERALD, 0, 20);
+		Actor_FaceDirection(GARET, 0x8000, 20);
+		Event_ShowMessageAndWait(GARET, 0, 20);
 		gEventWork->message += 2;
 	}
 	else
 	{
 		gEventWork->message += 2;
 		Engine_EventWait(20);
-		Actor_FaceDirection(MEARI, 0, 20);
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Actor_FaceDirection(MIA, 0, 20);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		Engine_EventWait(20);
-		Event_ShowMessageAndWait(MEARI, 0, 20);
-		Actor_ShowEmote(GERALD, 0x102, 60);
+		Event_ShowMessageAndWait(MIA, 0, 20);
+		Actor_ShowEmote(GARET, 0x102, 60);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-		Actor_FaceDirection(IWAN, 0xe000, 0);
-		Event_ShowMessageAndWait(GERALD, 0, 20);
+		Actor_FaceDirection(IVAN, 0xe000, 0);
+		Event_ShowMessageAndWait(GARET, 0, 20);
 	}
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 0);
 	Engine_EventWait(20);
 	Actor_FaceDirection(8, 0x3000, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
@@ -221,96 +221,96 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(8, 0xc000, 30);
 	Event_PlayCue(188);
-	Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
+	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCells, 67, 6);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(8, 136, 136);
 	Actor_SetPosition(8, 0, 0);
 	Event_PlayCue(188);
-	Map_AnimateCells(YamaRama_BoulderCellsBack, 67, 6);
+	Map_AnimateCells(AlpineCrossingLamaTemple_BoulderCellsBack, 67, 6);
 	Engine_EventWait(60);
 	BattleFx_PlayQueuedSound();
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x6000, 20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Actor_FaceDirection(GARET, 0x6000, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(MEARI, 0x2000, 20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Actor_FaceDirection(MIA, 0x2000, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
-	Event_AskYesNo(GERALD, 0);
+	Event_AskYesNo(GARET, 0);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Actor_FaceDirection(IWAN, 0xb000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Actor_FaceDirection(IVAN, 0xb000, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Actor_ShowEmote(GERALD, 0x102, 60);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_FaceDirection(IWAN, 0xe000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Actor_ShowEmote(GARET, 0x102, 60);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_FaceDirection(IVAN, 0xe000, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Actor_FaceDirection(IWAN, 0xa000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Actor_ShowEmote(MIA, 0x102, 60);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Actor_FaceDirection(IVAN, 0xa000, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
-	Actor_SetSpeed(IWAN, 0x8000, 0x4000);
-	Actor_WalkToAndWait(IWAN, 128, 184);
-	Actor_FaceDirection(IWAN, 0x4000, 20);
+	Actor_SetSpeed(IVAN, 0x8000, 0x4000);
+	Actor_WalkToAndWait(IVAN, 128, 184);
+	Actor_FaceDirection(IVAN, 0x4000, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xe000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Actor_FaceDirection(GARET, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xe000, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
-	Actor_SetSpeed(MEARI, 0x8000, 0x4000);
-	Actor_WalkTo(GERALD, 144, 200);
-	Actor_WalkTo(IWAN, 144, 200);
-	Actor_WalkTo(MEARI, 144, 200);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
+	Actor_SetSpeed(GARET, 0x8000, 0x4000);
+	Actor_SetSpeed(MIA, 0x8000, 0x4000);
+	Actor_WalkTo(GARET, 144, 200);
+	Actor_WalkTo(IVAN, 144, 200);
+	Actor_WalkTo(MIA, 144, 200);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
 	Engine_EventEnd();
 }
 
@@ -319,7 +319,7 @@ static void EV05_SEARCH(void)
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MsgYamaHeWhoHasPowerSee, 1);
+	Engine_MessageShowCentered(MsgMountainHeWhoHasPowerSee, 1);
 	Engine_EventEnd();
 }
 
@@ -331,7 +331,7 @@ static void ConfigureAndPlaceActorFourteen(void)
 	Actor_SetPosition(14, 0x01580000, 0x00980000);
 }
 
-static void YamaRama_ClearActorPlacement(void)
+static void AlpineCrossingLamaTemple_ClearActorPlacement(void)
 {
 	Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
 	MapObject_SetPosition(100, -1, -1);
@@ -350,7 +350,7 @@ static void EV15_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgYamaAmTravelingAroundWorldSpread);
+		Engine_EventSetMessage(MsgMountainAmTravelingAroundWorldSpread);
 		Engine_EventShowMessage(15, 0);
 	}
 	Engine_EventEnd();
@@ -368,7 +368,7 @@ static void EV10_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetPosition(10, 0x2180000, 0xd80000);
-		Engine_EventSetMessage(MsgYamaYahhSilkRoadBouldersBlock);
+		Engine_EventSetMessage(MsgMountainYahhSilkRoadBouldersBlock);
 		Event_ShowMessageAndWait(10, 0, 20);
 		Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 		Engine_EventWait(20);
@@ -394,13 +394,13 @@ static void EV10_TOUCH(void)
 		Actor_SetAttachedEffect(10, 0x102);
 		Engine_EventWait(60);
 		Event_ShowMessageAndWait(10, 0, 20);
-		Engine_ActorEnableActionCallback(10, YamaRama_HsuAction);
+		Engine_ActorEnableActionCallback(10, AlpineCrossingLamaTemple_HsuAction);
 		Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
 		GameFlag_Set(0x8b0);
 		Object_RefreshSelectorById(10);
 		Engine_CameraWaitForMove();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-		Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, YamaRama_LeaderAction);
+		Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, AlpineCrossingLamaTemple_LeaderAction);
 		Object_RefreshSelectorById(0);
 		Engine_EventWait(10);
 		none = 0;
@@ -422,7 +422,7 @@ static void EV10_TOUCH(void)
 static void Scene_RunActorCue(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgYamaDoDoWarriorShouldReturn);
+	Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
 	Actor_ShowEmote(10, 0x105, 60);
 	Event_OpenMessage(10, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -447,7 +447,7 @@ static void Scene_RunActorExchange(void)
 	Engine_CameraWaitForMove();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgYamaHsuOkay);
+	Engine_EventSetMessage(MsgMountainHsuOkay);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventWait(20);
@@ -481,7 +481,7 @@ static void EV11_PSYNERGY(void)
 	Actor_SetAttachedEffect(8, 0x102);
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Engine_EventWait(60);
-	Engine_EventSetMessage(MsgYamaRobinDidLiftBoulder);
+	Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_SetAttachedEffect(10, 0x102);
 	Engine_ActorJump(10, 4, 0);
@@ -593,7 +593,7 @@ static void EV07_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MsgYamaNorthAltinMineWestLama, 1);
+	Engine_MessageShowCentered(MsgMountainNorthAltinMineWestLama, 1);
 	Engine_EventEnd();
 }
 
@@ -687,19 +687,19 @@ static void EV15_PSYNERGY(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_YamaRama1)
+	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
-		return YamaRama_TempleEvents;
+		return AlpineCrossingLamaTemple_TempleEvents;
 	}
-	return YamaRama_Events;
+	return AlpineCrossingLamaTemple_Events;
 }
 
-s32 YamaRama_ApplyEntryState(void)
+s32 AlpineCrossingLamaTemple_ApplyEntryState(void)
 {
 	s32 entrance;
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	if (gGameState.scene == (s32)&SceneId_YamaRama2)
+	if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple2)
 	{
 		BattleFx_SetQueuedSoundAndPlay(169);
 		Engine_ActorSetAnimation(11, 5);
@@ -722,7 +722,7 @@ s32 YamaRama_ApplyEntryState(void)
 			FieldScene_RunScene3a2SequenceA();
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_YamaRama1)
+	else if (gGameState.scene == (s32)&SceneId_AlpineCrossingLamaTemple1)
 	{
 		Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
 		Object_GetById(14)->priority_flags |= 2;
@@ -768,13 +768,13 @@ s32 YamaRama_ApplyEntryState(void)
 			Actor_SetPosition(10, 0xb80000, 0x1300000);
 			Actor_FaceDirection(8, 0x5000, 0);
 			Actor_FaceDirection(10, 0xb000, 0);
-			Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
+			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
 			Object_GetById(9)->scale_x = -0x10000;
 		}
 		if (!GameFlag_IsSet(0x8b2))
 		{
 			Actor_SetPosition(9, 0xa40000, 0x1180000);
-			Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
+			Engine_ActorEnableActionCallback(9, AlpineCrossingLamaTemple_ActorNineAction);
 			Object_GetById(9)->scale_x = -0x10000;
 		}
 		if (gGameState.entrance == 5 && !Engine_GameFlagIsSet(0x8b1) && !Engine_GameFlagIsSet(0x109)
@@ -786,12 +786,12 @@ s32 YamaRama_ApplyEntryState(void)
 	return 0;
 }
 
-s32 YamaRama_TemplePlacement1[] = {
+s32 AlpineCrossingLamaTemple_TemplePlacement1[] = {
 	SC_CALL(EventScript_PrepareActorRenderFlags),
 	SC_END,
 };
 
-s32 YamaRama_HsuAction[] = {
+s32 AlpineCrossingLamaTemple_HsuAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(392), 0, PIXELS(232)),
 	SC_SYNC,
@@ -809,7 +809,7 @@ s32 YamaRama_HsuAction[] = {
 	SC_END,
 };
 
-s32 YamaRama_LeaderAction[] = {
+s32 AlpineCrossingLamaTemple_LeaderAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(392), 0, PIXELS(232)),
 	SC_SYNC,
@@ -825,7 +825,7 @@ s32 YamaRama_LeaderAction[] = {
 	SC_END,
 };
 
-s32 YamaRama_ActorNineAction[] = {
+s32 AlpineCrossingLamaTemple_ActorNineAction[] = {
 	SC_ARG(1),
 	SC_ARG(5),
 	SC_WAIT(240),
@@ -839,15 +839,15 @@ s32 YamaRama_ActorNineAction[] = {
 	SC_END,
 };
 
-u16 YamaRama_BoulderCells[] = {
+u16 AlpineCrossingLamaTemple_BoulderCells[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(63, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 YamaRama_BoulderCellsBack[] = {
+u16 AlpineCrossingLamaTemple_BoulderCellsBack[] = {
 	MAP_CELL_STEP(66, 46, 3, 2, 5), MAP_CELL_STEP(69, 46, 3, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance YamaRama_Entrances[] = {
+struct SceneEntrance AlpineCrossingLamaTemple_Entrances[] = {
 	{ 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -856,7 +856,7 @@ struct SceneEntrance YamaRama_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance YamaRama_TempleEntrances[] = {
+struct SceneEntrance AlpineCrossingLamaTemple_TempleEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, 16, 32, 520, 416, 0 },
 	{ 2, CONDITION_ALWAYS, 384, 0, 72, FACING_SOUTH, 0, 16, 32, 520, 416, 0 },
@@ -866,7 +866,7 @@ struct SceneEntrance YamaRama_TempleEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 YamaRama_Exits[] = {
+u32 AlpineCrossingLamaTemple_Exits[] = {
 	SCENE_EXITS(88),
 	SCENE_EXIT(1, 2, 17),
 	SCENE_EXIT(2, 61, 3),
@@ -880,12 +880,12 @@ u32 YamaRama_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement YamaRama_Placements[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement AlpineCrossingLamaTemple_Placements[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -906,16 +906,16 @@ struct ScenePlacement YamaRama_Placements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement YamaRama_TemplePlacements[] = {
+struct ScenePlacement AlpineCrossingLamaTemple_TemplePlacements[] = {
 	{ 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x29, CONDITION_ALWAYS, (s32)YamaRama_ActorNineAction,
+	{ 0x29, CONDITION_ALWAYS, (s32)AlpineCrossingLamaTemple_ActorNineAction,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x27, 0x8b2, ACTOR_STAND,
 		PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x127, 0x8b2, ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ 0x82, IF_FLAG_SET(0x895), (s32)YamaRama_TemplePlacement1,
+	{ 0x82, IF_FLAG_SET(0x895), (s32)AlpineCrossingLamaTemple_TemplePlacement1,
 		PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x83, IF_FLAG_SET(0x895), ACTOR_STAND,
 		PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -926,32 +926,32 @@ struct ScenePlacement YamaRama_TemplePlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent YamaRama_Events[] = {
+struct SceneEvent AlpineCrossingLamaTemple_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ EVENT_TALK, 9, 0x8b2, MSGNO(MsgYamaRamaThisIsLamaTempleWelcomeTravelers) },
+	{ EVENT_TALK, 9, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
 	{ EVENT_TALK, 10, 0x8b2, EVENT_SCRIPT(SceneDialogue_RunMessage1958Step) },
 	{ EVENT_TALK, 11, 0x8b2, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, 0x8b2, MSGNO(MsgYamaRamaYouWhoSpeakToMeI) },
+	{ EVENT_TALK, 12, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
 	{ EVENT_TALK, 13, 0x8b2, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaItIsVeryDangerousToCross) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaTheEvilDesertIsHotterThan) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIBelieveItIsPossibleTo) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIWillBeMostThankfulOnce) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWhenYourTemperatureReachesItsMaximum) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleItIsVeryDangerousToCross) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilDesertIsHotterThan) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIBelieveItIsPossibleTo) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWillBeMostThankfulOnce) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWhenYourTemperatureReachesItsMaximum) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b2, MSGNO(MsgYamaRamaTheySeemToBeAnxiousThey) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b2, MSGNO(MsgYamaRamaTheySayAPersonCanOvercome) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8b2, MSGNO(MsgYamaRamaIAmHungry) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x8b2, MSGNO(MsgYamaRamaISenseImpureThoughtsFromThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x8b2, MSGNO(MsgYamaRamaChiIsButAFragmentOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaICannotCrossTheDesertIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaTheEvilInTheDesertDistorts) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYamaRamaHowNiceItWouldBeIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaMasterHamaWillBeVerySad) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWithRevealYouWillFindOases) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgYamaRamaForSomeReasonThesePeopleGive) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(YamaRama_ClearActorPlacement) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleTheySeemToBeAnxiousThey) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleTheySayAPersonCanOvercome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleIAmHungry) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleISenseImpureThoughtsFromThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x8b2, MSGNO(MsgAlpineCrossingLamaTempleChiIsButAFragmentOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleICannotCrossTheDesertIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilInTheDesertDistorts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowNiceItWouldBeIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWithRevealYouWillFindOases) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossingLamaTemple_ClearActorPlacement) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorFourteen) },
 	{ SEARCH(SEARCH_UNNAMED), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SEARCH) },
 	{ 0xc403, 110, 0x350, FIND_PSYNERGY_STONE },
@@ -962,7 +962,7 @@ struct SceneEvent YamaRama_Events[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent YamaRama_TempleEvents[] = {
+struct SceneEvent AlpineCrossingLamaTemple_TempleEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -970,18 +970,18 @@ struct SceneEvent YamaRama_TempleEvents[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 5 },
 	{ EVENT_TOUCH, 10, 0x8b0, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TALK, 10, 0x895, EVENT_SCRIPT(Scene_RunActorCue) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWellRobinAdeptsYouCameTo) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIAmTrappedBetweenTheseTwo) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaBeStrongHsuWeWillHelp) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWeMovedTheRocksNowPeople) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaManyPeopleFromXianHelpedMove) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAmTrappedBetweenTheseTwo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleBeStrongHsuWeWillHelp) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove) },
 	{ PSYNERGY_ON_ACTOR(0x8f), 11, 0x8b2, EVENT_SCRIPT(EV11_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgYamaRamaHsuIsInDangerICan) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYamaRamaHowShouldWeMoveTheBoulders) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIWantToScreamButFeizhi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaHsuTiresHeLooksExhaustedI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWeClearedTheWayButWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIAlmostHurtMyBackIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgAlpineCrossingLamaTempleHsuIsInDangerICan) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowShouldWeMoveTheBoulders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWantToScreamButFeizhi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHsuTiresHeLooksExhaustedI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeClearedTheWayButWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAlmostHurtMyBackIt) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPairedLayoutStepsThenSetOne) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunRect6x28Step) },
 	{ 0x10001815, 14, 0x200, EVENT_SCRIPT(EV14_SCRIPT) },

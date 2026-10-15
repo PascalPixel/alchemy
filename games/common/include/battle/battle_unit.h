@@ -48,29 +48,29 @@ struct BtlUnit
 	u8						  name[0x0f];
 	u8						  level;
 	s16						  base_hp;
-	s16						  base_ep;
+	s16						  base_pp;
 	s16						  hp_gauge;
-	s16						  ep_gauge;
+	s16						  pp_gauge;
 	u16						  base_attack;
 	u16						  base_defense;
 	u16						  base_agility;
 	u8						  base_luck;
 	u8						  base_action_count;
 	u8						  base_hp_regen;
-	u8						  base_ep_regen;
+	u8						  base_pp_regen;
 	u8						  unknown_022[2];
 	struct BattleElementStats base_elm[4];
 	s16						  max_hp;
-	s16						  max_ep;
+	s16						  max_pp;
 	s16						  hp;
-	s16						  ep;
+	s16						  pp;
 	u16						  atk;
 	u16						  def;
 	u16						  agi;
 	u8						  luck;
 	u8						  action_entry_count;
 	u8						  hp_regen;
-	u8						  ep_regen;
+	u8						  pp_regen;
 	u8						  unknown_046[2];
 	struct BattleElementStats elm[4];
 	struct OwnerActionSlot	  action_slots[32];
@@ -92,29 +92,29 @@ struct BtlUnit
 #endif
 	s8	elm_lv[4];
 	s8	restraint;
-	s8	doku;
+	s8	poison;
 	u8	atk_cnt;
 	s8	atk_lv;
 	u8	def_cnt;
 	s8	def_lv;
 	u8	res_cnt;
 	s8	res_lv;
-	u8	maboroshi;
-	s8	konran;
+	u8	delusion;
+	s8	confusion;
 	u8	charm;
-	u8	shibire;
-	u8	nemuri;
-	u8	fuuji;
+	u8	stun;
+	u8	sleep;
+	u8	psy_seal;
 	u8	refrain;
 	s8	reflect;
-	u8	akuryo;
-	u8	shiryo;
+	u8	haunt;
+	u8	grim_reaper;
 	u8	unknown_142[2];
-	u8	sonae;
-	u8	miugoki;
+	u8	ready;
+	u8	immobile;
 	u8	agi_cnt;
 	s8	agi_lv;
-	s8	chouhatsu;
+	s8	challenge;
 	u8	unknown_149;
 	u16 enemy_id;
 };
@@ -137,13 +137,13 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BtlUnit, hp, 0x038);
 LAYOUT_OFFSET_GUARD(BattleUnit_BaseElements, struct BtlUnit, base_elm, 0x024);
 LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BtlUnit, level, 0x00f);
 LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BtlUnit, elm, 0x048);
-LAYOUT_OFFSET_GUARD(BattleUnit_ReadyPose, struct BtlUnit, sonae, 0x144);
+LAYOUT_OFFSET_GUARD(BattleUnit_ReadyPose, struct BtlUnit, ready, 0x144);
 LAYOUT_OFFSET_GUARD(BattleUnit_Inventory, struct BtlUnit, inventory, 0x0d8);
 LAYOUT_OFFSET_GUARD(BattleUnit_DjinnOwnedCounts, struct BtlUnit, djinn_owned_counts, 0x118);
 LAYOUT_OFFSET_GUARD(BattleUnit_DjinnActiveCounts, struct BtlUnit, djinn_active_counts, 0x11c);
 LAYOUT_OFFSET_GUARD(BattleUnit_GuardLevel, struct BtlUnit, guard_lv, 0x12b);
 LAYOUT_OFFSET_GUARD(BattleUnit_Status13a, struct BtlUnit, charm, 0x13a);
-LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BtlUnit, akuryo, 0x140);
+LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BtlUnit, haunt, 0x140);
 
 LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BtlUnit, enemy_id, 0x14a);
 
@@ -161,7 +161,7 @@ static __inline__ s32 Vitals_Clamp(s32 ratio)
 	return clamped;
 }
 
-// HP と EP のゲージを計算し直す（残っていれば最低 1）
+// HP と PP のゲージを計算し直す（残っていれば最低 1）
 // A statement macro, written do { } while (0): every site matches through
 // that shape. Written out at each site, or as an inline function, the
 // gauge loads are scheduled across the store before them.
@@ -171,9 +171,9 @@ static __inline__ s32 Vitals_Clamp(s32 ratio)
 		(unit)->hp_gauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->max_hp); \
 		if ((unit)->hp_gauge == 0 && (unit)->hp != 0)                         \
 			(unit)->hp_gauge = 1;                                             \
-		(unit)->ep_gauge = Vitals_Clamp(((unit)->ep << 14) / (unit)->max_ep); \
-		if ((unit)->ep_gauge == 0 && (unit)->ep != 0)                         \
-			(unit)->ep_gauge = 1;                                             \
+		(unit)->pp_gauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->max_pp); \
+		if ((unit)->pp_gauge == 0 && (unit)->pp != 0)                         \
+			(unit)->pp_gauge = 1;                                             \
 	} while (0)
 
 #endif

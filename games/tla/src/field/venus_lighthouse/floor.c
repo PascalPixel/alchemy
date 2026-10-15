@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "eventwrk.h"
 
-struct VinasuActor {
+struct VenusActor {
     u8 unknown_00[6];
     u16 facing;
     s16 x_low;
@@ -38,7 +38,7 @@ extern const u32 Data_02001d8c[];
 extern const u8 Data_02001dd8[];
 extern u8 gMapCellBuffer[];
 
-struct VinasuActor *Engine_ActorGet(s32 id);
+struct VenusActor *Engine_ActorGet(s32 id);
 s32 Engine_PartyGetLeaderActor(void);
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
@@ -52,31 +52,31 @@ void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 wid
 void WaitFrames(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_RefreshSelectorById(s32 actor);
-void Object_SetPartAttribute(struct VinasuActor *object, s32 value);
+void Object_SetPartAttribute(struct VenusActor *object, s32 value);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Func_02001b2c(struct VinasuActor *object, s32 mode);
-void Func_02001b44(struct VinasuActor *object, s32 x, s32 y, s32 z);
-void Func_02001b4c(struct VinasuActor *object);
-s32 Func_02001b64(struct VinasuActor *object, s32 *position);
+void Func_02001b2c(struct VenusActor *object, s32 mode);
+void Func_02001b44(struct VenusActor *object, s32 x, s32 y, s32 z);
+void Func_02001b4c(struct VenusActor *object);
+s32 Func_02001b64(struct VenusActor *object, s32 *position);
 void Func_02001c34(s32 actor, s32 height, s32 frames);
 void Func_02001cbc(void);
-s32 Func_020005a8(struct VinasuActor *object);
+s32 Func_020005a8(struct VenusActor *object);
 
-static inline s32 Vinasu_FlagChk(s32 flag)
+static inline s32 Venus_FlagChk(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
 }
 
-static inline void Vinasu_FlagSet(s32 flag)
+static inline void Venus_FlagSet(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Engine_GameFlagSet(flag);
 }
 
-static inline void Vinasu_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h)
+static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Engine_MapCopyCellsTo(sx, sy, dx, dy, w, h);
@@ -85,7 +85,7 @@ static inline void Vinasu_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h
 void Func_020006ac(void)
 {
     s32 leader = Engine_PartyGetLeaderActor();
-    struct VinasuActor *actor = Engine_ActorGet(leader);
+    struct VenusActor *actor = Engine_ActorGet(leader);
     s32 z;
 
     Engine_EventBegin();
@@ -136,24 +136,24 @@ void Func_020006ac(void)
 
 void Func_0200078c(void)
 {
-    struct VinasuActor *leader = Engine_ActorGet(Engine_PartyGetLeaderActor());
+    struct VenusActor *leader = Engine_ActorGet(Engine_PartyGetLeaderActor());
     s32 x = leader->x_pixel;
     s32 z = leader->z_pixel;
 
     if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
-        Vinasu_CopyCells(53, 50, 42, 49, 1, 1);
-        Vinasu_CopyCells(55, 117, 41, 117, 3, 5);
+        Venus_CopyCells(53, 50, 42, 49, 1, 1);
+        Venus_CopyCells(55, 117, 41, 117, 3, 5);
         GameFlag_ClearBit(0x201);
         leader->motion_flags |= 1;
         leader->terrain_height = 0;
         leader->y = 0;
-    } else if (!Vinasu_FlagChk(0x201)) {
+    } else if (!Venus_FlagChk(0x201)) {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
         Engine_EventWait(5);
-        Vinasu_CopyCells(52, 50, 42, 49, 1, 1);
-        Vinasu_CopyCells(52, 117, 41, 117, 3, 5);
-        Vinasu_FlagSet(0x201);
+        Venus_CopyCells(52, 50, 42, 49, 1, 1);
+        Venus_CopyCells(52, 117, 41, 117, 3, 5);
+        Venus_FlagSet(0x201);
         Engine_AudioPlayCue(161);
         leader->motion_flags &= ~1;
         leader->terrain_height = -0x20000;

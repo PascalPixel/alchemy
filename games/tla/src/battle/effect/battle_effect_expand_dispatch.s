@@ -1,7 +1,7 @@
 .syntax unified
 	.arm
-	.global SentouKouka_TenkaiYomi
-SentouKouka_TenkaiYomi:
+	.global BattleEffect_ExpandRead
+BattleEffect_ExpandRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
 AlchemyUncredited_081a012c:

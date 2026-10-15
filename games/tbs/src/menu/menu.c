@@ -322,26 +322,26 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 void UiText_DrawNumberRightAlignedFar(s32 num, s32 win, s32 x, s32 y)
 {
 	s32 v = num;
-	s32 keta = 1;
+	s32 digits = 1;
 
-	while (keta <= 15)
+	while (digits <= 15)
 	{
 		v = v / 10;
 		if (v <= 9)
 		{
 			break;
 		}
-		keta++;
+		digits++;
 	}
 
-	keta++;
-	x -= keta * 8;
-	UiText_DrawNumberAtOffsetFar(num, keta, win, x, y);
+	digits++;
+	x -= digits * 8;
+	UiText_DrawNumberAtOffsetFar(num, digits, win, x, y);
 }
 
 #endif
 //--------------------------------------------------------------------------
-// ウィンドウの y 40 に HP、y 48 に EP を書く
+// ウィンドウの y 40 に HP、y 48 に PP を書く
 // HP は最大の 1/4 未満なら色 4、0 なら色 2 で書く
 // unit : キャラクター
 // win  : 書き込み先のウィンドウ
@@ -368,9 +368,9 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 win)
 	UiWork_SetParamNibbleFar(15);
 	UiText_DrawStringAtOffsetFar(Ui_PpString, win, 0, 48);
 	UiText_DrawStringInWindowFar((u8 *)Ui_SlashString, win, 48, 48);
-	val = unit->ep;
+	val = unit->pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
-	val = unit->max_ep;
+	val = unit->max_pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
 #else
 	UiText_DrawStringInWindowFar((u8 *)Ui_HpRowString, win, 0, 40);
@@ -387,10 +387,10 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 win)
 	}
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringInWindowFar((u8 *)Ui_EpRowString, win, 0, 48);
-	val = unit->ep;
+	UiText_DrawStringInWindowFar((u8 *)Ui_PpRowString, win, 0, 48);
+	val = unit->pp;
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
-	val = unit->max_ep;
+	val = unit->max_pp;
 	UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
 #endif
 }
@@ -4482,7 +4482,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 			if (result != -1)
 			{
 				action = BtlActGet(work->pane_action[0] & OWNER_ACTION_ID_MASK);
-				UnitEpAddFar(work->owner_ids[0], -action->pp_cost);
+				UnitPpAddFar(work->owner_ids[0], -action->pp_cost);
 			}
 			UnitCalcFar(work->owner_ids[0]);
 			if (result != -1)
@@ -5296,7 +5296,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 			owner = UnitGetFar(menu->owner_ids[0]);
 			ability = BtlActGet(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
 
-			if (ability->pp_cost > owner->ep)
+			if (ability->pp_cost > owner->pp)
 			{
 				UiWork_SetParamNibbleFar(2);
 			}
@@ -5487,7 +5487,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 					}
 					ability =
 						BtlActGet(menu->psynergies[state.selected_index] & OWNER_ACTION_ID_MASK);
-					if (ability->pp_cost > owner->ep)
+					if (ability->pp_cost > owner->pp)
 					{
 						AudioCommand_PlayFar(114);
 					}
@@ -6641,8 +6641,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 #else
 	UiText_DrawStringInWindowFar(Menu_PpString, window, 40, 24);
 #endif
-	UiText_DrawNumberInWindowFar(unit->ep, 4, window, 72, 24);
-	UiText_DrawNumberInWindowFar(unit->max_ep, 4, window, 112, 24);
+	UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
+	UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
 	UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
 	UiText_DrawCharacterAtOffsetFar(MsgExpLabel, window, 40, 8);
 	UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);
@@ -6679,7 +6679,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 		count = 1;
 	}
 
-	mode = state->doku;
+	mode = state->poison;
 	if (mode != 0)
 	{
 		if (mode == 1)
@@ -6693,7 +6693,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 		output[CHARACTER_CURSE] = 1;
 		count++;
 	}
-	if (state->akuryo != 0)
+	if (state->haunt != 0)
 	{
 		output[CHARACTER_HAUNT] = 1;
 		count++;
@@ -7964,7 +7964,7 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 				changed = 1;
 				break;
 			case 0x105:
-				target->base_ep += amount + random_adjust;
+				target->base_pp += amount + random_adjust;
 				result_code = 0x11;
 				changed = 1;
 				break;
@@ -7994,18 +7994,18 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 			break;
 
 		case BATTLE_DAMAGE_PP_HEAL:
-			if (target->ep == target->max_ep)
+			if (target->pp == target->max_pp)
 			{
 				if (later_target == 0)
 					result_code = 7;
 			}
 			else
 			{
-				target->ep += amount;
-				if (target->ep > target->max_ep)
+				target->pp += amount;
+				if (target->pp > target->max_pp)
 				{
-					amount -= target->ep - target->max_ep;
-					target->ep = target->max_ep;
+					amount -= target->pp - target->max_pp;
+					target->pp = target->max_pp;
 					if (later_target == 0)
 						result_code = 5;
 				}
@@ -8061,17 +8061,17 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 			break;
 
 		case 2:
-			if (target->ep == target->max_ep)
+			if (target->pp == target->max_pp)
 			{
 				if (later_target == 0)
 					result_code = 7;
 			}
 			else
 			{
-				target->ep += amount;
-				if (target->ep > target->max_ep)
+				target->pp += amount;
+				if (target->pp > target->max_pp)
 				{
-					target->ep = target->max_ep;
+					target->pp = target->max_pp;
 					if (later_target == 0)
 						result_code = 5;
 				}
@@ -8128,9 +8128,9 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 			break;
 
 		case EFX_CURE_POISON:
-			if (target->doku != 0)
+			if (target->poison != 0)
 			{
-				target->doku = 0;
+				target->poison = 0;
 				changed = 1;
 				if (later_target == 0)
 					result_code = 0xa;
@@ -9870,11 +9870,11 @@ s32 DjinnMenu_DrawStatPreview(
 			UiText_DrawNumberInWindowFar(
 				state->max_hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 56);
 			UiText_DrawNumberInWindowFar(
-				state->max_ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
+				state->max_pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
 			UiText_DrawNumberInWindowFar(
 				state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
 			UiText_DrawNumberInWindowFar(
-				state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+				state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
 			UiText_DrawStringAtOffsetFar(
 				DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
 			UiText_DrawStringAtOffsetFar(
@@ -9885,7 +9885,7 @@ s32 DjinnMenu_DrawStatPreview(
 			UiText_DrawNumberInWindowFar(
 				state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
 			UiText_DrawNumberInWindowFar(
-				state->ep, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+				state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
 		}
 		UiText_DrawNumberInWindowFar(
 			state->atk, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
@@ -9982,10 +9982,10 @@ s32 DjinnMenu_DrawStatPreview(
 				else
 					UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 1);
 			}
-			if (state->ep != saved->ep)
+			if (state->pp != saved->pp)
 			{
-				UiText_DrawNumberInWindowFar(state->ep, 4, window, x * 8 + 72, y * 8 + 64);
-				if (state->ep > saved->ep)
+				UiText_DrawNumberInWindowFar(state->pp, 4, window, x * 8 + 72, y * 8 + 64);
+				if (state->pp > saved->pp)
 					UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 0);
 				else
 					UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 1);

@@ -27,7 +27,7 @@ struct BtlWork {
     u8 unknown_004[0x3d];
     u8 pty_st;
     u8 unknown_042;
-    u8 chouhatsu_flg;
+    u8 challenge_flg;
     u8 two_sided;
     u8 encounter_mode;
     u8 unknown_046[2];
@@ -65,7 +65,7 @@ LAYOUT_OFFSET_GUARD(
     struct BtlWork,
     pty_st,
     0x041);
-LAYOUT_OFFSET_GUARD(BtlWork_ChouhatsuFlg, struct BtlWork, chouhatsu_flg, 0x043);
+LAYOUT_OFFSET_GUARD(BtlWork_ChallengeFlg, struct BtlWork, challenge_flg, 0x043);
 LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BtlWork, two_sided, 0x044);
 LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BtlWork, encounter_mode, 0x045);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BtlWork, party_units, 0x058);

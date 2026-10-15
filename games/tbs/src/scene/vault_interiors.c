@@ -35,38 +35,38 @@
 
 // 前方宣言
 static void Scene_JoinRodSearch(void);
-static void KuupuappuHeya_RunBranchingDialogueScene(void);
+static void VaultInteriors_RunBranchingDialogueScene(void);
 static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc);
 static void SceneActor_FaceActors24And25TowardActorZero(void);
 static void FieldScene_RunLateSequence(void);
-static void KuupuappuHeya_RunVaultEvent(void);
+static void VaultInteriors_RunVaultEvent(void);
 static void RunEventScript01(void);
 static void RunDialoguePromptScene(void);
-static void KuupuappuHeya_OpenWindowTransition(void);
+static void VaultInteriors_OpenWindowTransition(void);
 static void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 static void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 static void SceneState_SetValue2ThenFinish(void);
-static void KuupuappuHeya_UpdateActorStops(void);
-static void KuupuappuHeya_StartActorStops(void);
+static void VaultInteriors_UpdateActorStops(void);
+static void VaultInteriors_StartActorStops(void);
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return KuupuappuHeya_Scripts;
+	return VaultInteriors_Scripts;
 }
 
 u8 *SceneData_GetRegionTable(void)
 {
-	return KuupuappuHeya_Regions;
+	return VaultInteriors_Regions;
 }
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return KuupuappuHeya_Messages;
+	return VaultInteriors_Messages;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -78,10 +78,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	case 15:
 	case 16:
 	case 17:
-		table = KuupuappuHeya_SceneTableB;
+		table = VaultInteriors_SceneTableB;
 		break;
 	default:
-		table = KuupuappuHeya_SceneTableA;
+		table = VaultInteriors_SceneTableA;
 		break;
 	}
 	FieldScene_PrepareActors(table);
@@ -89,7 +89,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 #if !EDITION_INTERNATIONAL
-static s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
+static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos)
 {
 	struct FieldActor *obj;
 	u8				  *flags;
@@ -143,7 +143,7 @@ static void EV40_SCRIPT(void)
 		pos->x = obj->x.fixed;
 		pos->y = Object_GetById(0)->y.fixed;
 		pos->z = Object_GetById(0)->z.fixed - 0x1e0000;
-		KuupuappuHeya_TryJumpTo(pos);
+		VaultInteriors_TryJumpTo(pos);
 #endif
 		x = 42;
 		z = 85;
@@ -159,7 +159,7 @@ static void EV40_SCRIPT(void)
 		pos->x = obj->x.fixed;
 		pos->y = Object_GetById(0)->y.fixed;
 		pos->z = Object_GetById(0)->z.fixed + 0x1e0000;
-		KuupuappuHeya_TryJumpTo(pos);
+		VaultInteriors_TryJumpTo(pos);
 #endif
 		x = 42;
 		z = 85;
@@ -196,11 +196,11 @@ static void EV19_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuMasterHammetIsntOnlyOne);
+			Engine_EventSetMessage(MsgVaultMasterHammetIsntOnlyOne);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKuupuappuWeFoundOurStolenWeapons);
+			Engine_EventSetMessage(MsgVaultWeFoundOurStolenWeapons);
 		}
 		Engine_EventShowMessage(19, 0);
 	}
@@ -220,11 +220,11 @@ static void EV20_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuThievesDidntHitOurHouse);
+			Engine_EventSetMessage(MsgVaultThievesDidntHitOurHouse);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKuupuappuIfYoureGonnaHeadInto);
+			Engine_EventSetMessage(MsgVaultIfYoureGonnaHeadInto);
 		}
 		Engine_EventShowMessage(20, 0);
 	}
@@ -244,11 +244,11 @@ static void EV23_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuEveryoneThinksOurGuestsThieves);
+			Engine_EventSetMessage(MsgVaultEveryoneThinksOurGuestsThieves);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKuupuappuTheyHidThoseStolenGoods);
+			Engine_EventSetMessage(MsgVaultTheyHidThoseStolenGoods);
 		}
 		Engine_EventShowMessage(23, 0);
 	}
@@ -263,23 +263,23 @@ static void EV250_RAISED(void)
 #if EDITION_INTERNATIONAL
 	Battle_InitializeRenderObject();
 #endif
-	Engine_EventSetMessage(MsgKuupuappuWeDontHaveTimeFor);
-	Engine_EventShowMessage(GERALD, 0);
+	Engine_EventSetMessage(MsgVaultWeDontHaveTimeFor);
+	Engine_EventShowMessage(GARET, 0);
 }
 
 static void SceneDialogue_ShowEmptyBarrel(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgKuupuappuRobinCheckedBarrel, 1);
-	Engine_MessageShowCentered(MsgKuupuappuButDidntFindAnything, 1);
+	Engine_MessageShowCentered(MsgVaultIsaacCheckedBarrel, 1);
+	Engine_MessageShowCentered(MsgVaultButDidntFindAnything, 1);
 	Engine_EventEnd();
 }
 
 static void SceneDialogue_ShowEmptyChest(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgKuupuappuRobinCheckedChest, 1);
-	Engine_MessageShowCentered(MsgKuupuappuButChestWasEmpty, 1);
+	Engine_MessageShowCentered(MsgVaultIsaacCheckedChest, 1);
+	Engine_MessageShowCentered(MsgVaultButChestWasEmpty, 1);
 	Engine_EventEnd();
 }
 
@@ -290,13 +290,13 @@ const struct SceneEvent *Scene_GetEvents(void)
 	case 15:
 	case 16:
 	case 17:
-		return gKuupuappuHeyaEventsEntrances15To17;
+		return gVaultInteriorsEventsEntrances15To17;
 	}
 	if (Engine_GameFlagIsSet(0x855) != 0)
 	{
-		return gKuupuappuHeyaEventsFlag855;
+		return gVaultInteriorsEventsFlag855;
 	}
-	return gKuupuappuHeyaEvents;
+	return gVaultInteriorsEvents;
 }
 
 static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
@@ -323,7 +323,7 @@ static void SceneDialogue_PromptAndCountSkip(s32 x)
 static void SceneDialogue_RunActorElevenDialogue(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuMisterFunSeeStrangeNew);
+	Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
 	Engine_ActorSetAnimation(11, 1);
 	SceneDialogue_PromptAndCountSkip(11);
 	Engine_EventEnd();
@@ -332,7 +332,7 @@ static void SceneDialogue_RunActorElevenDialogue(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuIvanHasGreatPowersWouldnt);
+	Engine_EventSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
 	SceneDialogue_PromptAndCountSkip(15);
 	Actor_FaceDirection(15, 0x8000, 0);
 	Engine_EventEnd();
@@ -349,12 +349,12 @@ static void EV21_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuDidJustArriveInTown);
+		Engine_EventSetMessage(MsgVaultDidJustArriveInTown);
 		SceneDialogue_PromptAndCountSkip(21);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuWithBridgeOutWillQuite);
+		Engine_EventSetMessage(MsgVaultWithBridgeOutWillQuite);
 		Engine_EventShowMessage(21, 0);
 	}
 	Engine_EventEnd();
@@ -365,11 +365,11 @@ static void EV09_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuIfOnlyTheseRocksWere);
+		Engine_EventSetMessage(MsgVaultIfOnlyTheseRocksWere);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuThankGoodnessThoseThievesWere);
+		Engine_EventSetMessage(MsgVaultThankGoodnessThoseThievesWere);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(9);
 	Engine_EventEnd();
@@ -380,11 +380,11 @@ static void EV12_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) != 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuThievesHidStolenTreasureIn);
+		Engine_EventSetMessage(MsgVaultThievesHidStolenTreasureIn);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuJustMeOrAmMissing);
+		Engine_EventSetMessage(MsgVaultJustMeOrAmMissing);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(12);
 	Engine_EventEnd();
@@ -399,7 +399,7 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 	{
 		if (Engine_GameFlagIsSet(g) == 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuYoureGoingHelpIvan);
+			Engine_EventSetMessage(MsgVaultYoureGoingHelpIvan);
 			ActorPresentation_RunActorModeOneThenZeroWithStep(16);
 			Engine_EventWait(10);
 			SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
@@ -407,12 +407,12 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKuupuappuPleaseLookAfterIvan);
+			Engine_EventSetMessage(MsgVaultPleaseLookAfterIvan);
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuCouldSomeonePleaseHelpIvan);
+		Engine_EventSetMessage(MsgVaultCouldSomeonePleaseHelpIvan);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(16);
 	Engine_EventEnd();
@@ -421,7 +421,7 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 static void SceneDialogue_ShowLine128E(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuThoseThreeStrangersSureHave);
+	Engine_EventSetMessage(MsgVaultThoseThreeStrangersSureHave);
 	ActorPresentation_RunActorModeOneThenZeroWithStep(18);
 	Engine_EventEnd();
 }
@@ -436,7 +436,7 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 	p = Object_GetById(24);
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(24, 2);
-	Engine_EventSetMessage(MsgKuupuappuOwStop);
+	Engine_EventSetMessage(MsgVaultOwStop);
 	Engine_EventShowMessage(24, 0);
 	Engine_ActorSetSpeed(24, 0x40000, 0x20000);
 	if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000)
@@ -445,12 +445,12 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		v = *q;
 		if (v <= 2)
 		{
-			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+			Engine_ActorEnableActionCallback(24, VaultInteriors_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
 		}
 		else
 		{
-			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			Engine_ActorEnableActionCallback(24, VaultInteriors_IdleActions[v]);
 			n = *(u16 *)q - 1;
 			*(u16 *)q = n;
 		}
@@ -461,12 +461,12 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		v = *q;
 		if (v > 2)
 		{
-			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+			Engine_ActorEnableActionCallback(24, VaultInteriors_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
 		}
 		else
 		{
-			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			Engine_ActorEnableActionCallback(24, VaultInteriors_IdleActions[v]);
 			n = *(u16 *)q - 1;
 			*(u16 *)q = n;
 		}
@@ -485,13 +485,13 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 	Engine_EventEnd();
 }
 
-static inline void KuupuappuHeya_WalkOn(struct FieldActor *actor, s32 row, s32 half, u16 turn)
+static inline void VaultInteriors_WalkOn(struct FieldActor *actor, s32 row, s32 half, u16 turn)
 {
-	Engine_ActorEnableActionCallback(25, KuupuappuHeya_ResponseScripts[row * 4 + actor->timer]);
+	Engine_ActorEnableActionCallback(25, VaultInteriors_ResponseScripts[row * 4 + actor->timer]);
 	actor->timer = actor->timer - half * 2 + turn;
 }
 
-static void KuupuappuHeya_RunActor25Response(void)
+static void VaultInteriors_RunActor25Response(void)
 {
 	struct FieldActor *actor;
 	u32				   facing;
@@ -502,7 +502,7 @@ static void KuupuappuHeya_RunActor25Response(void)
 	half = actor->timer >> 1;
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(25, 2);
-	Engine_EventSetMessage(MsgKuupuappuNoLeaveAlone);
+	Engine_EventSetMessage(MsgVaultNoLeaveAlone);
 	Engine_EventShowMessage(25, 0);
 	Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
 	switch (actor->timer)
@@ -510,12 +510,12 @@ static void KuupuappuHeya_RunActor25Response(void)
 	case 4:
 		if (facing > 0x2000 && facing < 0xa000)
 		{
-			Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptR);
+			Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptR);
 			actor->timer = 2;
 		}
 		else
 		{
-			Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptP);
+			Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptP);
 			actor->timer = 3;
 		}
 		break;
@@ -523,22 +523,22 @@ static void KuupuappuHeya_RunActor25Response(void)
 	case 2:
 		if (facing > 0x2000 && facing < 0xa000)
 		{
-			KuupuappuHeya_WalkOn(actor, half, half, 1);
+			VaultInteriors_WalkOn(actor, half, half, 1);
 		}
 		else
 		{
-			KuupuappuHeya_WalkOn(actor, half ^ 1, half, -1);
+			VaultInteriors_WalkOn(actor, half ^ 1, half, -1);
 		}
 		break;
 	case 1:
 	case 3:
 		if (facing > 0x6000 && facing < 0xe000)
 		{
-			KuupuappuHeya_WalkOn(actor, half, half, 1);
+			VaultInteriors_WalkOn(actor, half, half, 1);
 		}
 		else
 		{
-			KuupuappuHeya_WalkOn(actor, half ^ 1, half, -1);
+			VaultInteriors_WalkOn(actor, half ^ 1, half, -1);
 		}
 		break;
 	}
@@ -571,7 +571,7 @@ struct StopRecord
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuDidThoseThievesComeFrom);
+	Engine_EventSetMessage(MsgVaultDidThoseThievesComeFrom);
 	SceneDialogue_PromptAndCountSkip(10);
 	Engine_EventEnd();
 }
@@ -579,7 +579,7 @@ static void EV10_TALK(void)
 static void SceneDialogue_RunActor11Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuMyFatherWorriedAboutThose);
+	Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
 	ActorPresentation_RunActorModeOneThenZeroWithStep(11);
 	Engine_EventEnd();
 }
@@ -587,7 +587,7 @@ static void SceneDialogue_RunActor11Line(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuHeardDefeatedThoseThieves);
+	Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
 	SceneDialogue_PromptAndCountSkip(14);
 	Engine_EventEnd();
 }
@@ -597,7 +597,7 @@ static void FieldScene_RunScene383SequenceC(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x857) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuYouWereSuchGreatHelp);
+		Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp);
 		SceneActor_SetModeZeroAndValue(16, 20);
 		SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
 		SceneActor_SetModeZeroAndValue(16, 30);
@@ -610,7 +610,7 @@ static void FieldScene_RunScene383SequenceC(void)
 		gEventWork->message++;
 		if (PartyInventory_HasSpace() == 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuYouWereSuchGreatHelp + 3);
+			Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
 			SceneActor_SetModeZeroAndValue(16, 20);
 			Engine_EventEnd();
 			return;
@@ -618,7 +618,7 @@ static void FieldScene_RunScene383SequenceC(void)
 		GameFlag_Set(0x857);
 		Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
 	}
-	Engine_EventSetMessage(MsgKuupuappuHeadingOutBeyondGomaRange);
+	Engine_EventSetMessage(MsgVaultHeadingOutBeyondGomaRange);
 	Event_OpenMessage(16, 0);
 	Engine_EventWait(20);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -629,18 +629,18 @@ static void FieldScene_RunScene383SequenceC(void)
 	Engine_EventEnd();
 }
 
-static void KuupuappuHeya_OfferBone(void)
+static void VaultInteriors_OfferBone(void)
 {
 	Engine_EventBegin();
 	SceneActor_SetPairZeroAndValue(18, 0, 2);
 	if (GameFlag_IsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuHaveLotLeftoverBonesFrom);
+		Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
 		Event_OpenMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuWantMoreBones);
+		Engine_EventSetMessage(MsgVaultWantMoreBones);
 		Event_OpenMessage(18, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -654,7 +654,7 @@ static void KuupuappuHeya_OfferBone(void)
 		{
 			Engine_ActorSetAnimationAndWait(18, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage(MsgKuupuappuWowHaveManyThingsArent);
+			Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
 		}
 		else
@@ -681,11 +681,11 @@ static void EV09_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuOkMisterLetMeSee);
+		Engine_EventSetMessage(MsgVaultOkMisterLetMeSee);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuIfRockWorthlessMaybeThats);
+		Engine_EventSetMessage(MsgVaultIfRockWorthlessMaybeThats);
 	}
 	SceneActor_RunActorCommandWithFlag91(9);
 	Engine_EventEnd();
@@ -696,11 +696,11 @@ static void EV11_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuWonderOutsideWorldLike);
+		Engine_EventSetMessage(MsgVaultWonderOutsideWorldLike);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuFatherLooksSadWorryingLike);
+		Engine_EventSetMessage(MsgVaultFatherLooksSadWorryingLike);
 	}
 	SceneActor_RunActorCommandWithFlag91(11);
 	Engine_EventEnd();
@@ -711,11 +711,11 @@ static void EV12_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuCouldTheyThievesGoodDont);
+		Engine_EventSetMessage(MsgVaultCouldTheyThievesGoodDont);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuGuessNothingInOurHouse);
+		Engine_EventSetMessage(MsgVaultGuessNothingInOurHouse);
 	}
 	SceneActor_RunActorCommandWithFlag91(12);
 	Engine_EventEnd();
@@ -726,11 +726,11 @@ static void EV16_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuTicklesBeingTickledByBoy);
+		Engine_EventSetMessage(MsgVaultTicklesBeingTickledByBoy);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuCaveInGomaRangeDangerous);
+		Engine_EventSetMessage(MsgVaultCaveInGomaRangeDangerous);
 	}
 	SceneActor_RunActorCommandWithFlag91(16);
 	Engine_EventEnd();
@@ -741,15 +741,15 @@ static void EV18_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuMasterHisWifeBlindedBy);
+		Engine_EventSetMessage(MsgVaultMasterHisWifeBlindedBy);
 	}
 	else if (Engine_GameFlagIsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuGeeAlwaysGetHungryWhen);
+		Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuHeReallyLikesBonesWonder);
+		Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
 	}
 	SceneActor_RunActorCommandWithFlag91(18);
 	Engine_EventEnd();
@@ -762,27 +762,27 @@ static void EV02_TALK(void)
 
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
 	Event_PlayCue(19);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x180, 0x198);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_SetPosition(GERALD, 0x1800000, 0x1980000);
-	Actor_WalkToAndWait(GERALD, 0x170, 0x198);
-	Actor_FaceDirection(GERALD, 0xd000, 20);
+	Actor_SetPosition(GARET, 0x1800000, 0x1980000);
+	Actor_WalkToAndWait(GARET, 0x170, 0x198);
+	Actor_FaceDirection(GARET, 0xd000, 20);
 	if (GameFlag_IsSet(0x850) == 0)
 	{
 		GameFlag_Set(0x850);
 		SceneEffect_ApplyPairWithValue141(2, 0);
 		Engine_EventWait(40);
 		SceneState_SetValue2ThenFinish();
-		Engine_EventSetMessage(MsgKuupuappuDoPossessStrangePowers);
+		Engine_EventSetMessage(MsgVaultDoPossessStrangePowers);
 		Event_PlayCue(60);
 		Engine_EventWait(30);
 		SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
 		SceneActor_SetModeZeroAndValue(2, 30);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorRunRepeatedMotion(GERALD, 1);
+		Engine_ActorRunRepeatedMotion(GARET, 1);
 		Engine_EventWait(20);
 		SceneEffect_ApplyPairWithValue141(2, 0);
 		Engine_EventWait(40);
@@ -790,65 +790,65 @@ static void EV02_TALK(void)
 		SceneActor_SetModeZeroAndValue(2, 30);
 		SceneActor_SetPairZeroAndValue(0, 1, 50);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-		Actor_FaceDirection(GERALD, 0xd000, 0);
+		Actor_FaceDirection(GARET, 0xd000, 0);
 		Engine_EventWait(20);
 		SceneEffect_ApplyPairWithValue141(2, 0);
 		Engine_EventWait(40);
 		SceneState_SetValue2ThenFinish();
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
 		SceneActor_SetModeZeroAndValue(2, 50);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 		SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
 		SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 		SceneActor_SetModeZeroAndValue(2, 40);
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
 		Engine_EventWait(30);
 		Actor_FaceDirection(2, 0xc000, 0);
 		Engine_EventWait(30);
-		Actor_WalkToAndWait(IWAN, 0x178, 0x178);
+		Actor_WalkToAndWait(IVAN, 0x178, 0x178);
 		Engine_EventWait(40);
 		SceneActor_SetPairZeroAndValue(0, 1, 50);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-		Actor_FaceDirection(GERALD, 0xd000, 0);
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
+		Actor_FaceDirection(GARET, 0xd000, 0);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
 		Engine_EventWait(50);
 		SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
-		Actor_FaceDirection(IWAN, 0x4000, 0);
+		Actor_FaceDirection(IVAN, 0x4000, 0);
 		Engine_EventWait(10);
-		Event_ShowMessage(IWAN, 0);
-		Event_OpenMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
+		Event_OpenMessage(IVAN, 0);
 	}
 	else
 	{
 		Event_PlayCue(60);
-		Engine_EventSetMessage(MsgKuupuappuWouldReallyWouldHelpMe);
-		Event_OpenMessage(IWAN, 0);
+		Engine_EventSetMessage(MsgVaultWouldReallyWouldHelpMe);
+		Event_OpenMessage(IVAN, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Scene_JoinRodSearch();
 		GameFlag_Set(0x856);
-		Engine_ActorSetAnimation(IWAN, 2);
+		Engine_ActorSetAnimation(IVAN, 2);
 		record = Object_GetById(0);
 		if (record != 0)
 		{
-			Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+			Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 		}
-		Engine_ActorWaitForMove(IWAN);
-		Actor_SetPosition(IWAN, 0, 0);
+		Engine_ActorWaitForMove(IVAN);
+		Actor_SetPosition(IVAN, 0, 0);
 	}
 	else
 	{
-		Event_ShowMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
 	}
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Audio_PlayCueFromEventWork();
 	Engine_EventEnd();
 }
@@ -861,7 +861,7 @@ static void Scene_JoinRodSearch(void)
 	Object_GetById(2)->paused = 0;
 	Engine_ActorJump(2, 4, 0);
 	Engine_EventWait(40);
-	mes = MsgKuupuappuThankHelpBelieve;
+	mes = MsgVaultThankHelpBelieve;
 	Engine_EventSetMessage(mes);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(2, 20);
@@ -1017,11 +1017,11 @@ static void EV08_TALK(void)
 
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
-	Actor_SetSpeed(GERALD, 52428, 26214);
-	Actor_SetSpeed(IWAN, 52428, 26214);
+	Actor_SetSpeed(GARET, 52428, 26214);
+	Actor_SetSpeed(IVAN, 52428, 26214);
 	Engine_ActorRunRepeatedMotion(0, 3);
 	Engine_EventWait(20);
-	base = MsgKuupuappuVaultCutFree;
+	base = MsgVaultVaultCutFree;
 	Engine_MessageShowCentered(base, 1);
 	base++;
 	Engine_EventSetMessage(base);
@@ -1031,10 +1031,10 @@ static void EV08_TALK(void)
 	SceneEffect_ApplyThreeValuesAndFinish(8, 3, 40);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 440);
 	FieldScene_RunSplitTripleSteps(0, 8, 20);
-	Actor_SetPosition(GERALD, 51904512, 28835840);
-	Actor_SetPosition(IWAN, 51904512, 28835840);
-	Actor_WalkTo(GERALD, 808, 432);
-	Actor_WalkTo(IWAN, 792, 456);
+	Actor_SetPosition(GARET, 51904512, 28835840);
+	Actor_SetPosition(IVAN, 51904512, 28835840);
+	Actor_WalkTo(GARET, 808, 432);
+	Actor_WalkTo(IVAN, 792, 456);
 	Engine_ActorWaitForMove(1);
 	Engine_ActorFaceActor(1, 8, 0);
 	Engine_ActorWaitForMove(2);
@@ -1047,8 +1047,8 @@ static void EV08_TALK(void)
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(8, 20);
-	Actor_ShowEmote(IWAN, 258, 0);
-	Actor_ShowEmote(GERALD, 258, 0);
+	Actor_ShowEmote(IVAN, 258, 0);
+	Actor_ShowEmote(GARET, 258, 0);
 	Engine_EventWait(60);
 	Actor_FaceDirection(8, 12288, 0);
 	Engine_EventWait(10);
@@ -1087,12 +1087,12 @@ static void EV08_TALK(void)
 	Actor_FaceDirection(10, 12288, 0);
 	Engine_EventWait(70);
 	Engine_ActorFaceActor(0, 10, 0);
-	Actor_FaceActor(GERALD, 10, 0);
+	Actor_FaceActor(GARET, 10, 0);
 	Engine_ActorFaceActor(2, 10, 0);
 	Engine_ActorFaceActor(8, 10, 0);
-	Engine_ActorEnableActionCallback(11, KuupuappuHeya_Villager11ExitScript);
+	Engine_ActorEnableActionCallback(11, VaultInteriors_Villager11ExitScript);
 	Engine_EventWait(40);
-	Engine_ActorEnableActionCallback(12, KuupuappuHeya_Villager12ExitScript);
+	Engine_ActorEnableActionCallback(12, VaultInteriors_Villager12ExitScript);
 	Object_RefreshSelectorById(12);
 	Actor_FaceDirection(11, 8192, 0);
 	Actor_FaceDirection(12, 8192, 0);
@@ -1105,12 +1105,12 @@ static void EV08_TALK(void)
 	Engine_ActorRunRepeatedMotion(12, 1);
 	Engine_EventWait(10);
 	SceneActor_SetModeZeroAndValue(12, 40);
-	Actor_ShowEmote(IWAN, 257, 0);
+	Actor_ShowEmote(IVAN, 257, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
-	Actor_ShowEmote(GERALD, 257, 0);
+	Actor_ShowEmote(GARET, 257, 0);
 	Engine_EventWait(60);
 	Actor_ShowEmote(8, 256, 0);
 	Engine_EventWait(40);
@@ -1134,15 +1134,15 @@ static void EV08_TALK(void)
 	Engine_EventWait(10);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Engine_ActorFaceActor(0, 10, 0);
-	Actor_FaceActor(GERALD, 10, 0);
+	Actor_FaceActor(GARET, 10, 0);
 	FieldScene_RunSplitTripleSteps(2, 10, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(11, 3, 20);
 	SceneActor_SetModeZeroAndValue(11, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(12, 4, 20);
 	SceneActor_SetModeZeroAndValue(12, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
-	Actor_ShowEmote(GERALD, 258, 0);
-	Actor_ShowEmote(IWAN, 258, 0);
+	Actor_ShowEmote(GARET, 258, 0);
+	Actor_ShowEmote(IVAN, 258, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
 	Engine_EventOpenMessage(10, 0);
@@ -1153,7 +1153,7 @@ static void EV08_TALK(void)
 	{
 		Engine_EventWait(40);
 		Engine_ActorFaceActor(1, 10, 0);
-		Actor_FaceActor(IWAN, 10, 0);
+		Actor_FaceActor(IVAN, 10, 0);
 		Engine_ActorRunRepeatedMotion(10, 2);
 		Engine_EventWait(20);
 		Engine_EventShowMessage(10, 0);
@@ -1163,7 +1163,7 @@ static void EV08_TALK(void)
 		Engine_EventWait(40);
 		Engine_ActorFaceActor(1, 10, 0);
 		Engine_ActorFaceActor(2, 10, 0);
-		base = MsgKuupuappuVaultThievesCaught;
+		base = MsgVaultVaultThievesCaught;
 		Engine_EventSetMessage(base);
 		Engine_ActorRunRepeatedMotion(10, 2);
 		Engine_EventWait(20);
@@ -1190,7 +1190,7 @@ static void EV08_TALK(void)
 	Engine_EventShowMessage(10, 0);
 	GameFlag_Set(2132);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	base = (s32)&SceneId_KuupuappuHeya;
+	base = (s32)&SceneId_VaultInteriors;
 	Party_SetFields1ceAnd1d0(base, 17);
 	Event_SetDefeatDestination(base, 16);
 	Battle_SetStart(3);
@@ -1220,7 +1220,7 @@ static void EV27_TOUCH(void)
 	if (GameFlag_IsSet(0x854) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgKuupuappuUhnnUhnn);
+		Engine_EventSetMessage(MsgVaultUhnnUhnn);
 		Event_ShowMessage(8, 0);
 		Engine_EventEnd();
 	}
@@ -1239,8 +1239,8 @@ static void EV10_TOUCH(void)
 	actor25 = Object_GetById(25);
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, RATIO_HI, RATIO_LO);
-	Actor_SetSpeed(GERALD, RATIO_HI, RATIO_LO);
-	Actor_SetSpeed(IWAN, RATIO_HI, RATIO_LO);
+	Actor_SetSpeed(GARET, RATIO_HI, RATIO_LO);
+	Actor_SetSpeed(IVAN, RATIO_HI, RATIO_LO);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 696);
 	Engine_EventWait(10);
@@ -1250,7 +1250,7 @@ static void EV10_TOUCH(void)
 	FieldScene_RunSplitTripleSteps(25, 0, 10);
 	Engine_ActorRunRepeatedMotion(24, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKuupuappuWant);
+	Engine_EventSetMessage(MsgVaultWant);
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_SetAttachedEffect(25, 258);
 	Engine_EventWait(60);
@@ -1259,8 +1259,8 @@ static void EV10_TOUCH(void)
 	SceneActor_SetModeZeroAndValue(24, 30);
 	Actor_SetSpeed(24, 262144, 131072);
 	Actor_SetSpeed(25, 229376, 114688);
-	Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
-	Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
+	Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptO);
+	Engine_ActorEnableActionCallback(24, VaultInteriors_PairScriptB);
 	Object_RefreshSelectorById(24);
 	Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 	GameFlag_Set(2130);
@@ -1284,73 +1284,73 @@ static void EV20_TOUCH(void)
 	GameFlag_Clear(0x300);
 	if (actor24->timer <= 3)
 	{
-		Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
+		Engine_ActorEnableActionCallback(24, VaultInteriors_PairScriptG);
 	}
 	else
 	{
-		Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptF);
+		Engine_ActorEnableActionCallback(24, VaultInteriors_PairScriptF);
 	}
 	if (actor25->timer <= 2)
 	{
-		Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptK);
+		Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptK);
 	}
 	else
 	{
-		Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptF);
+		Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptF);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 0x2d8);
-	Actor_SetPosition(IWAN, 0xf80000, 0x2d80000);
-	Actor_SetPosition(GERALD, 0xf80000, 0x2d80000);
-	Actor_WalkTo(IWAN, 0x108, 0x2e8);
-	Actor_WalkToAndWait(GERALD, 232, 0x2e8);
-	Engine_ActorWaitForMove(IWAN);
+	Actor_SetPosition(IVAN, 0xf80000, 0x2d80000);
+	Actor_SetPosition(GARET, 0xf80000, 0x2d80000);
+	Actor_WalkTo(IVAN, 0x108, 0x2e8);
+	Actor_WalkToAndWait(GARET, 232, 0x2e8);
+	Engine_ActorWaitForMove(IVAN);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 	FieldScene_RunSplitTripleSteps(2, 0, 30);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	base = MsgKuupuappuTheyreActingSuspiciousSomethingsNot;
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	base = MsgVaultTheyreActingSuspiciousSomethingsNot;
 	Engine_EventSetMessage(base);
-	Event_ShowMessage(IWAN, 0);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
 	SceneActor_SetPairZeroAndValue(0, 1, 10);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
 		gEventWork->message++;
 	}
 	SceneActor_SetModeZeroAndValue(1, 30);
 	Engine_EventSetMessage((base + 4));
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 50);
-	Actor_ShowEmote(IWAN, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
 	Engine_EventWait(60);
 	SceneActor_SetPairZeroAndValue(0, 1, 50);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 30);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 30);
-	Engine_EventSetMessage(MsgKuupuappuRobinTakeLead);
-	Event_ShowMessage(GERALD, 0);
+	Engine_EventSetMessage(MsgVaultIsaacTakeLead);
+	Event_ShowMessage(GARET, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
-	Actor_WalkTo(IWAN, 248, 0x2d8);
-	Actor_WalkToAndWait(GERALD, 248, 0x2d8);
-	Actor_SetPosition(GERALD, 0, 0);
-	Actor_SetPosition(IWAN, 0, 0);
+	Actor_WalkTo(IVAN, 248, 0x2d8);
+	Actor_WalkToAndWait(GARET, 248, 0x2d8);
+	Actor_SetPosition(GARET, 0, 0);
+	Actor_SetPosition(IVAN, 0, 0);
 	Actor_SetPosition(24, 0x680000, 0x2b80000);
 	Actor_SetPosition(25, 0x780000, 0x2b80000);
 	Actor_FaceDirection(24, 0, 0);
@@ -1363,7 +1363,7 @@ static void EV21_TOUCH(void)
 {
 	Engine_GameFlagSet(0x107);
 	Engine_GameFlagSet(0x250);
-	KuupuappuHeya_StartActorStops();
+	VaultInteriors_StartActorStops();
 }
 
 static void FieldScene_ConfigurePairedActors(void)
@@ -1371,7 +1371,7 @@ static void FieldScene_ConfigurePairedActors(void)
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(24, 1);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKuupuappuTheyreBack);
+	Engine_EventSetMessage(MsgVaultTheyreBack);
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_FaceDirection(25, 0, 20);
 	Actor_SetAttachedEffect(25, 0x102);
@@ -1382,8 +1382,8 @@ static void FieldScene_ConfigurePairedActors(void)
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_SetSpeed(24, 0x40000, 0x20000);
 	Actor_SetSpeed(25, 0x38000, 0x1c000);
-	Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
-	Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
+	Engine_ActorEnableActionCallback(25, VaultInteriors_PairScriptO);
+	Engine_ActorEnableActionCallback(24, VaultInteriors_PairScriptB);
 	Object_RefreshSelectorById(24);
 	{
 		struct FieldActor *record = Object_GetById(24);
@@ -1408,25 +1408,25 @@ static void FieldScene_SelectActorPair(void)
 
 	work = gEventWork;
 	Engine_EventBegin();
-	Scheduler_RemoveCallback(((s32)KuupuappuHeya_UpdateActorStops));
+	Scheduler_RemoveCallback(((s32)VaultInteriors_UpdateActorStops));
 	GameFlag_Clear(0x107);
 	GameFlag_Clear(0x250);
 	Engine_ActorSetAnimation(24, 1);
 	Engine_ActorSetAnimation(25, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(24, IWAN, 0);
-	Actor_FaceActor(25, IWAN, 0);
+	Engine_ActorSetAnimation(GARET, 1);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(24, IVAN, 0);
+	Actor_FaceActor(25, IVAN, 0);
 	Engine_EventWait(10);
 	actor = 24;
 	switch (work->raised_trigger)
 	{
 	case 202:
 	case 203:
-		Engine_EventSetMessage(MsgKuupuappuImSurrounded);
+		Engine_EventSetMessage(MsgVaultImSurrounded);
 		Actor_SetAttachedEffect(25, 0x102);
 		Engine_ActorRunRepeatedMotion(25, 2);
 		SceneActor_SetModeZeroAndValue(25, 20);
@@ -1436,21 +1436,21 @@ static void FieldScene_SelectActorPair(void)
 			break;
 		}
 	case 201:
-		Engine_EventSetMessage(MsgKuupuappuTheresNowhereRun);
+		Engine_EventSetMessage(MsgVaultTheresNowhereRun);
 		Actor_SetAttachedEffect(24, 0x102);
 		Engine_ActorRunRepeatedMotion(24, 2);
 		actor = 24;
 		SceneActor_SetModeZeroAndValue(24, 20);
 		break;
 	}
-	Engine_ActorSetAnimation(IWAN, 1);
-	Actor_FaceActor(IWAN, actor, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorSetAnimation(IVAN, 1);
+	Actor_FaceActor(IVAN, actor, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKuupuappuNowIvan);
+	Engine_EventSetMessage(MsgVaultNowIvan);
 	SceneActor_SetModeZeroAndValue(1, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	SceneEffect_ApplyPairWithValue141(2, actor);
@@ -1460,15 +1460,15 @@ static void FieldScene_SelectActorPair(void)
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Engine_ActorRunRepeatedMotion(25, 2);
 	SceneActor_SetModeZeroAndValue(25, 20);
-	Actor_ShowEmote(IWAN, 0x100, 60);
+	Actor_ShowEmote(IVAN, 0x100, 60);
 	SceneState_SetValue2ThenFinish();
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(1, 20);
-	Actor_FaceActor(IWAN, GERALD, 0);
+	Actor_FaceActor(IVAN, GARET, 0);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(40);
 	record = (u8 *)Object_GetById(0);
 	((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)->priority = 1;
@@ -1481,7 +1481,7 @@ static void FieldScene_SelectActorPair(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
-	KuupuappuHeya_RunBranchingDialogueScene();
+	VaultInteriors_RunBranchingDialogueScene();
 	Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 	GameFlag_Set(0x853);
 	{
@@ -1501,7 +1501,7 @@ static void FieldScene_SelectActorPair(void)
 	Engine_EventEnd();
 }
 
-static void KuupuappuHeya_RunBranchingDialogueScene(void)
+static void VaultInteriors_RunBranchingDialogueScene(void)
 {
 	u8 *record;
 	s32 v5;
@@ -1546,7 +1546,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(1, 1);
 	Engine_EventWait(10);
-	Engine_EventSetMessage(MsgKuupuappuLearn);
+	Engine_EventSetMessage(MsgVaultLearn);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
@@ -1605,7 +1605,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 	}
 	if (v5 == 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuLeave);
+		Engine_EventSetMessage(MsgVaultLeave);
 		SceneActor_SetModeZeroAndValue(1, 20);
 		SceneActor_SetPairZeroAndValue(1, 0, 20);
 		SceneActor_SetModeZeroAndValue(1, 20);
@@ -1625,45 +1625,45 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 	Engine_ActorSetPosition(2, 0, 0);
 }
 
-static void KuupuappuHeya_PoseDialogueActors(void)
+static void VaultInteriors_PoseDialogueActors(void)
 {
 	switch (gEventWork->touched_trigger)
 	{
 	case 11:
-		SceneActor_UpdateAnimationOnStateMatch(24, 1, 2, (s32)KuupuappuHeya_PairScriptC);
-		SceneActor_UpdateAnimationOnStateMatch(25, 3, 4, (s32)KuupuappuHeya_PairScriptR);
+		SceneActor_UpdateAnimationOnStateMatch(24, 1, 2, (s32)VaultInteriors_PairScriptC);
+		SceneActor_UpdateAnimationOnStateMatch(25, 3, 4, (s32)VaultInteriors_PairScriptR);
 		break;
 	case 12:
-		SceneActor_UpdateAnimationOnStateMatch(24, 1, 4, (s32)KuupuappuHeya_PairScriptG);
-		SceneActor_UpdateAnimationOnStateMatch(24, 2, 3, (s32)KuupuappuHeya_PairScriptD);
-		SceneActor_UpdateAnimationOnStateMatch(25, 1, 3, (s32)KuupuappuHeya_PairScriptO);
+		SceneActor_UpdateAnimationOnStateMatch(24, 1, 4, (s32)VaultInteriors_PairScriptG);
+		SceneActor_UpdateAnimationOnStateMatch(24, 2, 3, (s32)VaultInteriors_PairScriptD);
+		SceneActor_UpdateAnimationOnStateMatch(25, 1, 3, (s32)VaultInteriors_PairScriptO);
 		break;
 	case 13:
-		SceneActor_UpdateAnimationOnStateMatch(24, 2, 1, (s32)KuupuappuHeya_PairScriptA);
-		SceneActor_UpdateAnimationOnStateMatch(24, 3, 6, (s32)KuupuappuHeya_PairScriptJ);
-		SceneActor_UpdateAnimationOnStateMatch(25, 2, 4, (s32)KuupuappuHeya_PairScriptQ);
+		SceneActor_UpdateAnimationOnStateMatch(24, 2, 1, (s32)VaultInteriors_PairScriptA);
+		SceneActor_UpdateAnimationOnStateMatch(24, 3, 6, (s32)VaultInteriors_PairScriptJ);
+		SceneActor_UpdateAnimationOnStateMatch(25, 2, 4, (s32)VaultInteriors_PairScriptQ);
 		break;
 	case 14:
-		SceneActor_UpdateAnimationOnStateMatch(24, 3, 2, (s32)KuupuappuHeya_PairScriptC);
-		SceneActor_UpdateAnimationOnStateMatch(25, 4, 3, (s32)KuupuappuHeya_PairScriptP);
+		SceneActor_UpdateAnimationOnStateMatch(24, 3, 2, (s32)VaultInteriors_PairScriptC);
+		SceneActor_UpdateAnimationOnStateMatch(25, 4, 3, (s32)VaultInteriors_PairScriptP);
 		break;
 	case 15:
-		SceneActor_UpdateAnimationOnStateMatch(24, 4, 5, (s32)KuupuappuHeya_PairScriptH);
-		SceneActor_UpdateAnimationOnStateMatch(25, 1, 2, (s32)KuupuappuHeya_PairScriptM);
+		SceneActor_UpdateAnimationOnStateMatch(24, 4, 5, (s32)VaultInteriors_PairScriptH);
+		SceneActor_UpdateAnimationOnStateMatch(25, 1, 2, (s32)VaultInteriors_PairScriptM);
 		break;
 	case 16:
-		SceneActor_UpdateAnimationOnStateMatch(24, 4, 1, (s32)KuupuappuHeya_PairScriptB);
-		SceneActor_UpdateAnimationOnStateMatch(24, 5, 6, (s32)KuupuappuHeya_PairScriptI);
-		SceneActor_UpdateAnimationOnStateMatch(25, 3, 1, (s32)KuupuappuHeya_PairScriptL);
+		SceneActor_UpdateAnimationOnStateMatch(24, 4, 1, (s32)VaultInteriors_PairScriptB);
+		SceneActor_UpdateAnimationOnStateMatch(24, 5, 6, (s32)VaultInteriors_PairScriptI);
+		SceneActor_UpdateAnimationOnStateMatch(25, 3, 1, (s32)VaultInteriors_PairScriptL);
 		break;
 	case 17:
-		SceneActor_UpdateAnimationOnStateMatch(24, 5, 4, (s32)KuupuappuHeya_PairScriptF);
-		SceneActor_UpdateAnimationOnStateMatch(24, 6, 3, (s32)KuupuappuHeya_PairScriptE);
-		SceneActor_UpdateAnimationOnStateMatch(25, 4, 2, (s32)KuupuappuHeya_PairScriptN);
+		SceneActor_UpdateAnimationOnStateMatch(24, 5, 4, (s32)VaultInteriors_PairScriptF);
+		SceneActor_UpdateAnimationOnStateMatch(24, 6, 3, (s32)VaultInteriors_PairScriptE);
+		SceneActor_UpdateAnimationOnStateMatch(25, 4, 2, (s32)VaultInteriors_PairScriptN);
 		break;
 	case 18:
-		SceneActor_UpdateAnimationOnStateMatch(24, 6, 5, (s32)KuupuappuHeya_PairScriptH);
-		SceneActor_UpdateAnimationOnStateMatch(25, 2, 1, (s32)KuupuappuHeya_PairScriptK);
+		SceneActor_UpdateAnimationOnStateMatch(24, 6, 5, (s32)VaultInteriors_PairScriptH);
+		SceneActor_UpdateAnimationOnStateMatch(25, 2, 1, (s32)VaultInteriors_PairScriptK);
 		break;
 	}
 }
@@ -1682,7 +1682,7 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_spotflag.h"
 
-s32 KuupuappuHeya_ApplyEntryState(void)
+s32 VaultInteriors_ApplyEntryState(void)
 {
 	gEventWork->start_transition = 0x209;
 	switch (gGameState.entrance)
@@ -1790,14 +1790,14 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
 		if (Engine_GameFlagIsSet(0x854) != 0)
 		{
-			KuupuappuHeya_RunVaultEvent();
+			VaultInteriors_RunVaultEvent();
 			Engine_EventEnd();
 			break;
 		}
 		Engine_ActorSetAnimation(8, 7);
-		KuupuappuHeya_OpenWindowTransition();
+		VaultInteriors_OpenWindowTransition();
 		Engine_AudioPlayCue(17);
-		Engine_EventSetMessage(MsgKuupuappuUhnnUhnn);
+		Engine_EventSetMessage(MsgVaultUhnnUhnn);
 		SceneActor_SetModeZeroAndValue(8, 10);
 		Engine_EventEnd();
 		break;
@@ -1852,11 +1852,11 @@ static void FieldScene_RunLateSequence(void)
 	Actor_SetSpeed(11, 0xcccc, 0x6666);
 	Actor_SetSpeed(12, 0xcccc, 0x6666);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3100000, 0x1c00000);
-	Actor_SetPosition(GERALD, 0x3280000, 0x1b00000);
-	Actor_SetPosition(IWAN, 0x3080000, 0x1b00000);
+	Actor_SetPosition(GARET, 0x3280000, 0x1b00000);
+	Actor_SetPosition(IVAN, 0x3080000, 0x1b00000);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-	Engine_ActorSetAnimation(GERALD, 19);
-	Engine_ActorSetAnimation(IWAN, 19);
+	Engine_ActorSetAnimation(GARET, 19);
+	Engine_ActorSetAnimation(IVAN, 19);
 	v5 = 2;
 	Object_GetById(0)->priority_flags = v5;
 	Object_GetById(1)->priority_flags = v5;
@@ -1872,10 +1872,10 @@ static void FieldScene_RunLateSequence(void)
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
-	KuupuappuHeya_OpenWindowTransition();
+	VaultInteriors_OpenWindowTransition();
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
-	Engine_EventSetMessage(MsgKuupuappuTheseKidsNothingWorryAbout);
+	Engine_EventSetMessage(MsgVaultTheseKidsNothingWorryAbout);
 	SceneActor_SetModeZeroAndValue(10, 30);
 	SceneActor_SetModeZeroAndValue(8, 30);
 	Actor_WalkTo(11, 0x328, 0x1c8);
@@ -1892,7 +1892,7 @@ static void FieldScene_RunLateSequence(void)
 	Engine_EventEnd();
 }
 
-static void KuupuappuHeya_RunVaultEvent(void)
+static void VaultInteriors_RunVaultEvent(void)
 {
 
 	Actor_SetPosition(10, 0x3180000, 0x1a00000);
@@ -1914,9 +1914,9 @@ static void KuupuappuHeya_RunVaultEvent(void)
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	gEventWork->transition_frames = 32;
-	KuupuappuHeya_OpenWindowTransition();
+	VaultInteriors_OpenWindowTransition();
 	Engine_EventWait(60);
-	Engine_EventSetMessage(MsgKuupuappuWontGoAway);
+	Engine_EventSetMessage(MsgVaultWontGoAway);
 	Engine_ActorRunRepeatedMotion(11, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(11, 30);
@@ -1936,13 +1936,13 @@ static void KuupuappuHeya_RunVaultEvent(void)
 	SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
 	Event_ShowMessage(10, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
-	Event_SetDefeatDestination((s32)&SceneId_KuupuappuHeya, 16);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_VaultInteriors, 17);
+	Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(12, 5);
 }
 
-static s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
+static s32 VaultInteriors_GetIvanVenusDjinnCount(void)
 {
 	return UnitGet(2)->djinn_owned_counts[0];
 }
@@ -1974,38 +1974,38 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(12, 9);
 	Object_GetById(12)->priority_flags &= 254;
 	actor12_record[9] |= 12;
-	actions = (s32)KuupuappuHeya_ActionTable;
+	actions = (s32)VaultInteriors_ActionTable;
 	Engine_ActorEnableActionCallback(10, actions);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
-	Actor_SetPosition(GERALD, 0x3280000, 0x1b00000);
-	Actor_SetPosition(IWAN, 0x3080000, 0x1b80000);
+	Actor_SetPosition(GARET, 0x3280000, 0x1b00000);
+	Actor_SetPosition(IVAN, 0x3080000, 0x1b80000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xb000, 0);
-	Actor_FaceDirection(IWAN, 0xb000, 0);
+	Actor_FaceDirection(GARET, 0xb000, 0);
+	Actor_FaceDirection(IVAN, 0xb000, 0);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Actor_FaceDirection(8, 0xb000, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
-	KuupuappuHeya_OpenWindowTransition();
+	VaultInteriors_OpenWindowTransition();
 	Engine_ActorEnableActionCallback(11, actions);
 	Engine_EventWait(30);
 	Engine_ActorEnableActionCallback(12, actions);
 	Engine_EventWait(30);
-	Engine_EventSetMessage(MsgKuupuappuTheyTheyGotUs);
+	Engine_EventSetMessage(MsgVaultTheyTheyGotUs);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Actor_ShowEmote(8, 0x102, 0);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(8, 20);
 	Actor_WalkToAndWait(8, 0x328, 0x1c8);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(GERALD, 0x318, 0x1b0);
-	Actor_FaceDirection(GERALD, 0, 0);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(GARET, 0x318, 0x1b0);
+	Actor_FaceDirection(GARET, 0, 0);
 	Actor_WalkToAndWait(8, 0x328, 0x198);
 	Actor_FaceDirection(8, 0x8000, 0);
-	Actor_WalkToAndWait(GERALD, 0x328, 0x1b0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
+	Actor_WalkToAndWait(GARET, 0x328, 0x1b0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
 	Engine_EventWait(20);
 	SceneEffect_ApplyThreeValuesAndFinish(8, 3, 20);
 	SceneActor_SetModeZeroAndValue(8, 20);
@@ -2013,27 +2013,27 @@ static void RunEventScript01(void)
 	Engine_EventWait(20);
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	FieldScene_RunSplitTripleSteps(2, 8, 40);
 	SceneActor_SetModeZeroAndValue(8, 30);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	Actor_WalkToAndWait(8, 0x2e8, 0x198);
 	Engine_EventWait(50);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	SceneActor_SetModeZeroAndValue(11, 20);
 	Engine_ActorEnableActionCallback(11, actions);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-	Actor_FaceActor(GERALD, 11, 0);
+	Actor_FaceActor(GARET, 11, 0);
 	FieldScene_RunSplitTripleSteps(2, 11, 20);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetModeZeroAndValue(12, 30);
 	Engine_ActorEnableActionCallback(12, actions);
-	Actor_ShowEmote(GERALD, 0x103, 0);
+	Actor_ShowEmote(GARET, 0x103, 0);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(1, 30);
 	FieldScene_RunSplitTripleSteps(2, 0, 30);
@@ -2043,53 +2043,53 @@ static void RunEventScript01(void)
 	FieldScene_RunSplitTripleSteps(1, 2, 30);
 	SceneEffect_ApplyThreeValuesAndFinish(0, 3, 30);
 	SceneActor_SetModeZeroAndValue(2, 20);
-	Actor_ShowEmote(GERALD, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(1, 30);
-	Actor_ShowEmote(IWAN, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
 	Engine_EventWait(60);
 	SceneActor_SetPairZeroAndValue(0, 1, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
 	SceneEffect_ApplyPairWithValue141(2, 0);
 	Ui_SetBank15PaletteAndClearRenderMode();
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(60);
 	FieldScene_RunSplitTripleSteps(0, 1, 10);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+		Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 		FieldScene_RunSplitTripleSteps(1, 2, 20);
 		SceneState_SetValue2ThenFinish();
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorRunRepeatedMotion(GERALD, 1);
+		Engine_ActorRunRepeatedMotion(GARET, 1);
 		Engine_EventWait(20);
 		SceneActor_SetModeZeroAndValue(1, 20);
 	}
 	else
 	{
 		gEventWork->message++;
-		Actor_ShowEmote(GERALD, 0x102, 0);
+		Actor_ShowEmote(GARET, 0x102, 0);
 		Engine_EventWait(60);
 		SceneActor_SetModeZeroAndValue(1, 20);
-		Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+		Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 		FieldScene_RunSplitTripleSteps(1, 2, 20);
 		SceneState_SetValue2ThenFinish();
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorRunRepeatedMotion(GERALD, 1);
+		Engine_ActorRunRepeatedMotion(GARET, 1);
 		Engine_EventWait(20);
 	}
-	Actor_ShowEmote(IWAN, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-	Engine_EventSetMessage(MsgKuupuappuSeeThatsHappened);
+	Engine_EventSetMessage(MsgVaultSeeThatsHappened);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 40);
@@ -2097,7 +2097,7 @@ static void RunEventScript01(void)
 	Actor_FaceDirection(8, 0x8000, 0);
 	Engine_EventWait(30);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	FieldScene_RunSplitTripleSteps(2, 8, 20);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(20);
@@ -2117,7 +2117,7 @@ static void RunEventScript01(void)
 	Actor_FaceActor(13, 10, 0);
 	FieldScene_RunSplitTripleSteps(14, 10, 20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-	Actor_FaceActor(GERALD, 9, 0);
+	Actor_FaceActor(GARET, 9, 0);
 	FieldScene_RunSplitTripleSteps(2, 9, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
@@ -2150,7 +2150,7 @@ static void RunEventScript01(void)
 	SceneActor_SetPairZeroAndValue(13, 0, 20);
 	SceneActor_SetModeZeroAndValue(13, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
 	work = gEventWork;
 	work->transition_frames = 30;
@@ -2204,18 +2204,18 @@ static void RunDialoguePromptScene(void)
 	Actor_FaceActor(14, 10, 0);
 	Actor_FaceActor(9, 10, 0);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
-	Actor_SetPosition(GERALD, 0x3280000, 0x1b80000);
-	Actor_SetPosition(IWAN, 0x3080000, 0x1b80000);
+	Actor_SetPosition(GARET, 0x3280000, 0x1b80000);
+	Actor_SetPosition(IVAN, 0x3080000, 0x1b80000);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
-	Actor_FaceActor(GERALD, 10, 0);
-	Actor_FaceActor(IWAN, 10, 0);
+	Actor_FaceActor(GARET, 10, 0);
+	Actor_FaceActor(IVAN, 10, 0);
 	gEventWork->transition_frames = 30;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(10, 2);
-	aftermath = MsgKuupuappuYouRobinRightWontForget;
+	aftermath = MsgVaultYouIsaacRightWontForget;
 	Engine_EventSetMessage(aftermath);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
@@ -2231,13 +2231,13 @@ static void RunDialoguePromptScene(void)
 	Actor_WalkTo(13, 0x2ea, 0x198);
 	Actor_FaceDirection(9, 0xb000, 0);
 	Actor_FaceDirection(14, 0xb000, 0);
-	Engine_ActorEnableActionCallback(11, KuupuappuHeya_VaultScriptB);
+	Engine_ActorEnableActionCallback(11, VaultInteriors_VaultScriptB);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(10, KuupuappuHeya_VaultScriptB);
+	Engine_ActorEnableActionCallback(10, VaultInteriors_VaultScriptB);
 	Engine_EventWait(15);
-	Engine_ActorEnableActionCallback(12, KuupuappuHeya_VaultScriptB);
+	Engine_ActorEnableActionCallback(12, VaultInteriors_VaultScriptB);
 	Engine_EventWait(35);
-	Engine_ActorEnableActionCallback(8, KuupuappuHeya_VaultScriptA);
+	Engine_ActorEnableActionCallback(8, VaultInteriors_VaultScriptA);
 	Engine_EventWait(20);
 	Engine_ActorWaitForMove(13);
 	Actor_SetPosition(13, 0, 0);
@@ -2256,26 +2256,26 @@ static void RunDialoguePromptScene(void)
 	SceneActor_SetPairZeroAndValue(0, 1, 50);
 	SceneActor_SetPairZeroAndValue(0, 2, 50);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-	Actor_FaceActor(GERALD, 9, 0);
+	Actor_FaceActor(GARET, 9, 0);
 	FieldScene_RunSplitTripleSteps(2, 9, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
 	Engine_ActorFaceEachOther(9, 14, 0);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
-	Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptC);
+	Engine_ActorEnableActionCallback(14, VaultInteriors_VaultScriptC);
 	Engine_EventWait(50);
-	Engine_ActorEnableActionCallback(9, KuupuappuHeya_VaultScriptD);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(GERALD, 0x318, 0x1c8);
-	Actor_FaceDirection(GERALD, 0xd000, 0);
+	Engine_ActorEnableActionCallback(9, VaultInteriors_VaultScriptD);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(GARET, 0x318, 0x1c8);
+	Actor_FaceDirection(GARET, 0xd000, 0);
 	Engine_EventWait(30);
-	Actor_WalkToAndWait(IWAN, 0x318, 0x198);
-	Actor_FaceDirection(IWAN, 0, 0);
-	Actor_WalkToAndWait(GERALD, 0x328, 0x1c8);
-	Actor_FaceDirection(GERALD, 0xd000, 0);
+	Actor_WalkToAndWait(IVAN, 0x318, 0x198);
+	Actor_FaceDirection(IVAN, 0, 0);
+	Actor_WalkToAndWait(GARET, 0x328, 0x1c8);
+	Actor_FaceDirection(GARET, 0xd000, 0);
 	Engine_EventWait(100);
 	FieldScene_RunSplitTripleSteps(14, 9, 60);
 	FieldScene_RunSplitTripleSteps(9, 14, 40);
@@ -2325,8 +2325,8 @@ static void RunDialoguePromptScene(void)
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	SceneEffect_ApplyThreeValuesAndFinish(14, 3, 50);
 	FieldScene_RunSplitTripleSteps(9, 0, 20);
@@ -2340,7 +2340,7 @@ static void RunDialoguePromptScene(void)
 	FieldScene_RunSplitTripleSteps(14, 9, 20);
 	SceneActor_SetModeZeroAndValue(14, 20);
 	Actor_FaceActor(9, 14, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
 	Engine_EventWait(60);
 	FieldScene_RunSplitTripleSteps(2, 14, 30);
 	FieldScene_RunSplitTripleSteps(9, 2, 20);
@@ -2351,7 +2351,7 @@ static void RunDialoguePromptScene(void)
 	FieldScene_RunSplitTripleSteps(2, 9, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 40);
@@ -2361,52 +2361,52 @@ static void RunDialoguePromptScene(void)
 	SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-	Actor_FaceActor(GERALD, 9, 0);
+	Actor_FaceActor(GARET, 9, 0);
 	FieldScene_RunSplitTripleSteps(2, 9, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Actor_ShowEmote(IWAN, 0x102, 0);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Actor_ShowEmote(IVAN, 0x102, 0);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(2, 40);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
-	Engine_ActorRunRepeatedMotion(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
+	Engine_ActorRunRepeatedMotion(IVAN, 3);
 	Engine_EventWait(30);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	SceneActor_SetPairZeroAndValue(0, 1, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 4, 30);
-	Actor_SetSpeed(IWAN, 0x18000, 0xc000);
-	Actor_WalkToAndWait(IWAN, 0x320, 0x198);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Event_ShowMessage(IWAN, 0);
+	Actor_SetSpeed(IVAN, 0x18000, 0xc000);
+	Actor_WalkToAndWait(IVAN, 0x320, 0x198);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	Event_ShowMessage(IVAN, 0);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
 	FieldScene_RunSplitTripleSteps(1, 9, 30);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
 	SceneActor_SetModeZeroAndValue(9, 40);
-	Actor_ShowEmote(IWAN, 0x105, 0);
+	Actor_ShowEmote(IVAN, 0x105, 0);
 	Engine_EventWait(60);
 	Actor_WalkToAndWait(9, 0x348, 0x1a8);
 	SceneActor_SetPairZeroAndValue(9, 0, 20);
@@ -2415,7 +2415,7 @@ static void RunDialoguePromptScene(void)
 	Actor_FaceDirection(9, 0x5000, 0);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(9, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
@@ -2423,15 +2423,15 @@ static void RunDialoguePromptScene(void)
 	SceneActor_SetPairZeroAndValue(9, 14, 20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Actor_WalkToAndWait(14, 0x358, 0x198);
-	Engine_ActorEnableActionCallback(9, KuupuappuHeya_VaultScriptE);
-	Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptE);
-	Actor_WalkTo(GERALD, 0x318, 0x1c8);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	Actor_WalkTo(IWAN, 0x308, 0x1b0);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, 0xd000, 0);
-	Engine_ActorWaitForMove(IWAN);
-	Actor_FaceDirection(IWAN, 0xd000, 0);
+	Engine_ActorEnableActionCallback(9, VaultInteriors_VaultScriptE);
+	Engine_ActorEnableActionCallback(14, VaultInteriors_VaultScriptE);
+	Actor_WalkTo(GARET, 0x318, 0x1c8);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	Actor_WalkTo(IVAN, 0x308, 0x1b0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, 0xd000, 0);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_FaceDirection(IVAN, 0xd000, 0);
 	Object_RefreshSelectorById(9);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
 	obj = Object_GetById(14);
@@ -2448,8 +2448,8 @@ static void RunDialoguePromptScene(void)
 	Engine_ActorSetAnimation(14, 1);
 	Engine_EventWait(50);
 	Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
-	Actor_WalkToAndWait(GERALD, 0x328, 0x1b8);
-	Actor_FaceDirection(GERALD, 0xb000, 0);
+	Actor_WalkToAndWait(GARET, 0x328, 0x1b8);
+	Actor_FaceDirection(GARET, 0xb000, 0);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(9, 20);
 	SceneActor_SetPairZeroAndValue(0, 1, 50);
@@ -2463,23 +2463,23 @@ static void RunDialoguePromptScene(void)
 	Engine_EventWait(30);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x318, 0x198);
 	SceneActor_SetPairZeroAndValue(0, 1, 30);
-	Actor_ShowEmote(IWAN, 0x105, 0);
+	Actor_ShowEmote(IVAN, 0x105, 0);
 	Engine_EventWait(50);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(1, 40);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
 	SceneActor_SetPairZeroAndValue(0, 1, 40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 4, 30);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(1, 40);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -2487,61 +2487,61 @@ static void RunDialoguePromptScene(void)
 	SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
 	SceneActor_SetModeZeroAndValue(1, 30);
-	Event_OpenMessage(IWAN, 0);
+	Event_OpenMessage(IVAN, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorRunRepeatedMotion(GERALD, 1);
+		Engine_ActorRunRepeatedMotion(GARET, 1);
 		Engine_EventWait(20);
 		SceneActor_SetModeZeroAndValue(1, 20);
 		SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
 		SceneActor_SetModeZeroAndValue(2, 20);
 	}
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
-	Actor_WalkToAndWait(IWAN, 0x320, 0x1c8);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_WalkToAndWait(IWAN, 0x358, 0x1c8);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_WalkToAndWait(IWAN, 0x358, 0x178);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_FaceDirection(IWAN, 0, 0);
+	Actor_WalkToAndWait(IVAN, 0x320, 0x1c8);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x358, 0x1c8);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x358, 0x178);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_FaceDirection(IVAN, 0, 0);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	obj = (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
 	Engine_EventWait(60);
-	rod = MsgKuupuappuIvanGotShamansRod;
+	rod = MsgVaultIvanGotShamansRod;
 	Engine_MessageShowCentered(rod, 1);
 	Engine_ObjectDispatchRelease(obj);
 	Engine_ActorSetAnimation(17, 2);
 	Engine_EventWait(20);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-	Actor_WalkToAndWait(IWAN, 0x358, 0x1c8);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_WalkToAndWait(IWAN, 0x320, 0x1c8);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_WalkToAndWait(IWAN, 0x308, 0x1a8);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x358, 0x1c8);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x320, 0x1c8);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x308, 0x1a8);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
 	FieldScene_RunSplitTripleSteps(1, 2, 30);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	Engine_EventSetMessage((rod + 1));
@@ -2551,34 +2551,34 @@ static void RunDialoguePromptScene(void)
 		u16 *slot = &event->message;
 		s32	 saved = (s16)*slot;
 
-		if (KuupuappuHeya_GetIwanVenusDjinnCount() != 0)
+		if (VaultInteriors_GetIvanVenusDjinnCount() != 0)
 		{
-			Engine_EventSetMessage(MsgKuupuappuWaitDontWantTakeYour);
-			Event_ShowMessage(IWAN, 0);
+			Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
+			Event_ShowMessage(IVAN, 0);
 			OverlayObject_RunObject2WhenFlagged();
 		}
 		Party_RemoveOwnerRestored(2);
 		*slot = saved;
 	}
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 50);
-	Actor_WalkToAndWait(IWAN, 0x308, 0x198);
-	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
-	Actor_WalkToAndWait(IWAN, 0x2e8, 0x198);
+	Actor_WalkToAndWait(IVAN, 0x308, 0x198);
+	Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
+	Actor_WalkToAndWait(IVAN, 0x2e8, 0x198);
 	Engine_EventWait(40);
 	SceneActor_SetPairZeroAndValue(0, 1, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	actor = Object_GetById(0);
 	if (actor != NULL)
 	{
-		Actor_SetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
+		Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_EventWait(30);
 	Actor_SetPosition(8, 0, 0);
 	Actor_SetPosition(9, 0, 0);
@@ -2587,12 +2587,12 @@ static void RunDialoguePromptScene(void)
 	Actor_SetPosition(10, 0, 0);
 	Actor_SetPosition(11, 0, 0);
 	Actor_SetPosition(12, 0, 0);
-	Actor_SetPosition(IWAN, 0, 0);
+	Actor_SetPosition(IVAN, 0, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
 
-static void KuupuappuHeya_OpenWindowTransition(void)
+static void VaultInteriors_OpenWindowTransition(void)
 {
 	struct EventWork *state;
 
@@ -2651,7 +2651,7 @@ static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {
 	s32 x = (o[0] - 0x400000) >> 19;
 	s32 y = (o[2] - 0x2700000) >> 19;
-	u8 *e = KuupuappuHeya_Stops;
+	u8 *e = VaultInteriors_Stops;
 	u8 *ret = 0;
 	u32 i;
 
@@ -2673,7 +2673,7 @@ static u8 *SceneData_FindEntryAtPosition(s32 *o)
 	return ret;
 }
 
-static struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos)
+static struct StopRecord *VaultInteriors_SnapToNearestStop(struct StopSet *set, s16 *pos)
 {
 	struct Stop *stop;
 	s32			 id;
@@ -2708,10 +2708,10 @@ static struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s
 	if (id == -1)
 		return 0;
 	*pos = at;
-	return &((struct StopRecord *)KuupuappuHeya_Stops)[id];
+	return &((struct StopRecord *)VaultInteriors_Stops)[id];
 }
 
-static s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
+static s32 VaultInteriors_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
 	struct FieldActor *rec = Engine_ActorLookup(id);
 	s32				   target_x = rec->target_x;
@@ -2734,7 +2734,7 @@ static s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 	return 0;
 }
 
-static s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
+static s32 VaultInteriors_IsActorNearPoint(s32 x, s32 z, s32 id)
 {
 	struct FieldActor *actor = Engine_ActorLookup(id);
 	s32				   ax;
@@ -2764,10 +2764,10 @@ static s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 	}
 	x = (p[0] << 19) + 0x480000;
 	y = (p[1] << 19) + 0x2780000;
-	if (KuupuappuHeya_IsActorNearPoint(x, y, 0) != 0
-		|| KuupuappuHeya_IsRecordNearPoint(x, y, 2) != 0
-		|| KuupuappuHeya_IsRecordNearPoint(x, y, 24) != 0
-		|| KuupuappuHeya_IsRecordNearPoint(x, y, 25) != 0)
+	if (VaultInteriors_IsActorNearPoint(x, y, 0) != 0
+		|| VaultInteriors_IsRecordNearPoint(x, y, 2) != 0
+		|| VaultInteriors_IsRecordNearPoint(x, y, 24) != 0
+		|| VaultInteriors_IsRecordNearPoint(x, y, 25) != 0)
 	{
 		return -1;
 	}
@@ -2779,7 +2779,7 @@ static void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
 	Engine_ObjectSetPosition(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
 }
 
-static void KuupuappuHeya_UpdateActorStops(void)
+static void VaultInteriors_UpdateActorStops(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -2822,7 +2822,7 @@ static void KuupuappuHeya_UpdateActorStops(void)
 #endif
 			facing = actor->facing;
 		}
-		dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+		dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry, &facing);
 		if (SceneActor_CheckTileFreeOfKinds(dest) == 0)
 		{
 			SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
@@ -2844,11 +2844,11 @@ static void KuupuappuHeya_UpdateActorStops(void)
 		turn *= 0x60000000;
 		f = actor->facing;
 		facing = (turn - 0x30000000 >> 16) + f;
-		dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+		dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry, &facing);
 		if (SceneActor_CheckTileFreeOfKinds(dest) != 0)
 		{
 			facing = actor->facing + 0x8000;
-			dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+			dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry, &facing);
 			if (SceneActor_CheckTileFreeOfKinds(dest) == 0)
 			{
 				Engine_ActorSetAttachedEffect(24, 2);
@@ -2875,11 +2875,11 @@ static void KuupuappuHeya_UpdateActorStops(void)
 		turn *= 0x30000000;
 		f = actor->facing;
 		facing = (turn - 0x30000000 >> 16) + f;
-		dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+		dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry, &facing);
 		if (SceneActor_CheckTileFreeOfKinds(dest) != 0)
 		{
 			facing = actor->facing + 0x8000;
-			dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+			dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry, &facing);
 			if (SceneActor_CheckTileFreeOfKinds(dest) == 0)
 			{
 				Engine_ActorSetAttachedEffect(25, 2);
@@ -2906,7 +2906,7 @@ static void KuupuappuHeya_UpdateActorStops(void)
 	}
 }
 
-static void KuupuappuHeya_StartActorStops(void)
+static void VaultInteriors_StartActorStops(void)
 {
 	Engine_EventBegin();
 	Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
@@ -2931,13 +2931,13 @@ static void KuupuappuHeya_StartActorStops(void)
 	Actor_SetSpeed(24, 0x10000, 0x13333);
 	Actor_SetSpeed(25, 0x18000, 0x18000);
 	KuupuappuHeya_StopTimer = 0;
-	FieldScheduler_AddOrUpdateCallback((s32)KuupuappuHeya_UpdateActorStops, 0xc94);
+	FieldScheduler_AddOrUpdateCallback((s32)VaultInteriors_UpdateActorStops, 0xc94);
 	GameFlag_Clear(0x1ff);
 	Engine_EventEnd();
 	Engine_AudioPlayCue(9);
 }
 
-u32 KuupuappuHeya_Stops[] = {
+u32 VaultInteriors_Stops[] = {
 	4, 1, 0x801e, 0xffff, 6, 2, 0x8000, 0xffff,
 	8, 3, 0x8001, 0x401f, 10, 4, 0x8002, 0xffff,
 	12, 5, 0x8003, 0xffff, 14, 6, 0x8004, 0xffff,
@@ -2959,7 +2959,7 @@ u32 KuupuappuHeya_Stops[] = {
 	1552, 0x4012, 0xc023, 0xffff,
 };
 
-s32 KuupuappuHeya_ActionTable[] = {
+s32 VaultInteriors_ActionTable[] = {
 	SC_ADD(SW_SCALE_Y, -0x1000),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2981,7 +2981,7 @@ s32 KuupuappuHeya_ActionTable[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 KuupuappuHeya_Villager11ExitScript[] = {
+s32 VaultInteriors_Villager11ExitScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(776), 0, PIXELS(408)),
 	SC_SYNC,
@@ -2995,7 +2995,7 @@ s32 KuupuappuHeya_Villager11ExitScript[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_Villager12ExitScript[] = {
+s32 VaultInteriors_Villager12ExitScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(776), 0, PIXELS(408)),
 	SC_SYNC,
@@ -3007,7 +3007,7 @@ s32 KuupuappuHeya_Villager12ExitScript[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_VaultScriptA[] = {
+s32 VaultInteriors_VaultScriptA[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_ARG(2),
 	SC_MOVE(PIXELS(776), 0, PIXELS(408)),
@@ -3019,7 +3019,7 @@ s32 KuupuappuHeya_VaultScriptA[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_VaultScriptB[] = {
+s32 VaultInteriors_VaultScriptB[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_ARG(6),
 	SC_MOVE(PIXELS(776), 0, PIXELS(408)),
@@ -3031,7 +3031,7 @@ s32 KuupuappuHeya_VaultScriptB[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_VaultScriptC[] = {
+s32 VaultInteriors_VaultScriptC[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_ARG(2),
 	SC_MOVE(PIXELS(792), 0, PIXELS(408)),
@@ -3050,7 +3050,7 @@ s32 KuupuappuHeya_VaultScriptC[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_VaultScriptD[] = {
+s32 VaultInteriors_VaultScriptD[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_ARG(2),
 	SC_MOVE(PIXELS(808), 0, PIXELS(408)),
@@ -3067,7 +3067,7 @@ s32 KuupuappuHeya_VaultScriptD[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_VaultScriptE[] = {
+s32 VaultInteriors_VaultScriptE[] = {
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_ARG(2),
 	SC_MOVE(PIXELS(840), 0, PIXELS(456)),
@@ -3082,7 +3082,7 @@ s32 KuupuappuHeya_VaultScriptE[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptA[] = {
+s32 VaultInteriors_PairScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(104), 0, PIXELS(632)),
 	SC_SYNC,
@@ -3090,7 +3090,7 @@ s32 KuupuappuHeya_PairScriptA[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptB[] = {
+s32 VaultInteriors_PairScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(72), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3102,7 +3102,7 @@ s32 KuupuappuHeya_PairScriptB[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptC[] = {
+s32 VaultInteriors_PairScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(632)),
 	SC_SYNC,
@@ -3110,7 +3110,7 @@ s32 KuupuappuHeya_PairScriptC[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptD[] = {
+s32 VaultInteriors_PairScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(232), 0, PIXELS(632)),
 	SC_SYNC,
@@ -3118,7 +3118,7 @@ s32 KuupuappuHeya_PairScriptD[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptE[] = {
+s32 VaultInteriors_PairScriptE[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(264), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3130,7 +3130,7 @@ s32 KuupuappuHeya_PairScriptE[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptF[] = {
+s32 VaultInteriors_PairScriptF[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(104), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3138,7 +3138,7 @@ s32 KuupuappuHeya_PairScriptF[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptG[] = {
+s32 VaultInteriors_PairScriptG[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(80), 0, PIXELS(640)),
 	SC_SYNC,
@@ -3150,7 +3150,7 @@ s32 KuupuappuHeya_PairScriptG[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptH[] = {
+s32 VaultInteriors_PairScriptH[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3158,7 +3158,7 @@ s32 KuupuappuHeya_PairScriptH[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptI[] = {
+s32 VaultInteriors_PairScriptI[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(232), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3166,7 +3166,7 @@ s32 KuupuappuHeya_PairScriptI[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptJ[] = {
+s32 VaultInteriors_PairScriptJ[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(264), 0, PIXELS(632)),
 	SC_SYNC,
@@ -3178,7 +3178,7 @@ s32 KuupuappuHeya_PairScriptJ[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptK[] = {
+s32 VaultInteriors_PairScriptK[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(648)),
 	SC_SYNC,
@@ -3188,7 +3188,7 @@ s32 KuupuappuHeya_PairScriptK[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptL[] = {
+s32 VaultInteriors_PairScriptL[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(72), 0, PIXELS(648)),
 	SC_SYNC,
@@ -3196,7 +3196,7 @@ s32 KuupuappuHeya_PairScriptL[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptM[] = {
+s32 VaultInteriors_PairScriptM[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(648)),
 	SC_SYNC,
@@ -3206,7 +3206,7 @@ s32 KuupuappuHeya_PairScriptM[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptN[] = {
+s32 VaultInteriors_PairScriptN[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(264), 0, PIXELS(648)),
 	SC_SYNC,
@@ -3214,7 +3214,7 @@ s32 KuupuappuHeya_PairScriptN[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptO[] = {
+s32 VaultInteriors_PairScriptO[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(72), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3222,7 +3222,7 @@ s32 KuupuappuHeya_PairScriptO[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptP[] = {
+s32 VaultInteriors_PairScriptP[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(120), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3232,7 +3232,7 @@ s32 KuupuappuHeya_PairScriptP[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptQ[] = {
+s32 VaultInteriors_PairScriptQ[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(264), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3240,7 +3240,7 @@ s32 KuupuappuHeya_PairScriptQ[] = {
 	SC_END,
 };
 
-s32 KuupuappuHeya_PairScriptR[] = {
+s32 VaultInteriors_PairScriptR[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(696)),
 	SC_SYNC,
@@ -3250,7 +3250,7 @@ s32 KuupuappuHeya_PairScriptR[] = {
 	SC_END,
 };
 
-struct SceneEntrance KuupuappuHeya_Scripts[] = {
+struct SceneEntrance VaultInteriors_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 5, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0 },
 	{ 6, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0 },
@@ -3268,12 +3268,12 @@ struct SceneEntrance KuupuappuHeya_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 KuupuappuHeya_Regions[] = {
+s16 VaultInteriors_Regions[] = {
 	639, 33, 407, 657, 51, 425, -1, 13,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 KuupuappuHeya_Messages[] = {
+u32 VaultInteriors_Messages[] = {
 	SCENE_EXITS(21),
 	SCENE_EXIT(5, 20, 5),
 	SCENE_EXIT(6, 20, 6),
@@ -3290,10 +3290,10 @@ u32 KuupuappuHeya_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement KuupuappuHeya_SceneTableA[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement VaultInteriors_SceneTableA[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(376), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6c, 0x0, ACTOR_STAND,
 		PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3336,10 +3336,10 @@ struct ScenePlacement KuupuappuHeya_SceneTableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement KuupuappuHeya_SceneTableB[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement VaultInteriors_SceneTableB[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(376), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(160), 0, PIXELS(136), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3368,7 +3368,7 @@ struct ScenePlacement KuupuappuHeya_SceneTableB[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKuupuappuHeyaEvents[] = {
+struct SceneEvent gVaultInteriorsEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 7 },
@@ -3378,14 +3378,14 @@ struct SceneEvent gKuupuappuHeyaEvents[] = {
 	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
 	{ EVENT_TOUCH, 10, IF_FLAG_SET(0x856), EVENT_SCRIPT(EV10_TOUCH) },
-	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 12, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 13, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 14, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 15, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 16, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 17, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
-	{ EVENT_TOUCH, 18, IF_FLAG_SET(0x300), EVENT_SCRIPT(KuupuappuHeya_PoseDialogueActors) },
+	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 12, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 13, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 14, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 15, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 16, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 17, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
+	{ EVENT_TOUCH, 18, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
 	{ EVENT_TOUCH, 20, IF_FLAG_SET(0x300), EVENT_SCRIPT(EV20_TOUCH) },
 	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x852), EVENT_SCRIPT(EV21_TOUCH) },
 	{ EVENT_RAISED, 201, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SelectActorPair) },
@@ -3396,73 +3396,73 @@ struct SceneEvent gKuupuappuHeyaEvents[] = {
 	{ 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SCRIPT) },
 	{ EVENT_TALK, 2, IF_FLAG_SET(0x250), 0 },
 	{ EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TALK) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThisRockWasBlownHereAll) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMyNeighborCreepsMeOutHe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultMyNeighborCreepsMeOutHe) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorElevenDialogue) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuEverSinceTheEruptionGrandpaKeeps) },
-	{ EVENT_TALK, 14, 0x856, MSGNO(MsgKuupuappuICouldHelpIvanIfI) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYoureHelpingIvanYouDontLook) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultEverSinceTheEruptionGrandpaKeeps) },
+	{ EVENT_TALK, 14, 0x856, MSGNO(MsgVaultICouldHelpIvanIfI) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
 	{ EVENT_TALK, 15, 0x856, EVENT_SCRIPT(EV15_TALK) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuSinceYoureHelpingIvanIllTell) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag856DialogueBranch) },
-	{ EVENT_TALK, 17, 0x856, MSGNO(MsgKuupuappuMyHusbandTheMayorCantBelieve) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuReallyYoureGoingToHelpIvan) },
+	{ EVENT_TALK, 17, 0x856, MSGNO(MsgVaultMyHusbandTheMayorCantBelieve) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultReallyYoureGoingToHelpIvan) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine128E) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheGuestsUpstairsWerentInTheir) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ EVENT_TALK, 24, IF_FLAG_SET(0x250), 0 },
 	{ EVENT_TALK, 25, IF_FLAG_SET(0x250), 0 },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, IF_FLAG_SET(0x250), 0 },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, IF_FLAG_SET(0x250), 0 },
-	{ EVENT_TALK, 24, 0x853, MSGNO(MsgKuupuappuThatKidIvanHeCreepsMe) },
-	{ EVENT_TALK, 25, 0x853, MSGNO(MsgKuupuappuWeHaventDoneAnythingYoureA) },
+	{ EVENT_TALK, 24, 0x853, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
+	{ EVENT_TALK, 25, 0x853, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_StepActor24AnimationByFacing) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuHeya_RunActor25Response) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheOtherSparklingRocksAllCrumbled) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RunActor25Response) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuHeyMaybeMyNeighborIsThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYouNeverBoughtMeAnythingWorth) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheseGuysLookReliableIGuess) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWonderWhatSortOfThing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMaybeTheyllFindOurStolenFamily) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultMaybeTheyllFindOurStolenFamily) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAllOurBestWeaponsWereStolen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWonderIfTheyLeftUs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKuupuappuHahhWereSureToSeeA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuItWouldBeAwfulIfOur) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThatVolcanoCostUsALot) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultAllOurBestWeaponsWereStolen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderIfTheyLeftUs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultHahhWereSureToSeeA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultItWouldBeAwfulIfOur) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultThatVolcanoCostUsALot) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x418, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_StepActor24AnimationByFacing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x419, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuHeya_RunActor25Response) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x419, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RunActor25Response) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 26, 0x859, EVENT_SCRIPT(EV26_PSYNERGY) },
 	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyBarrel) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(0xc3) },
-	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledHistoryOf)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledGemsOf)) },
+	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKuupuappuHeyaEventsEntrances15To17[] = {
+struct SceneEvent gVaultInteriorsEventsEntrances15To17[] = {
 	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAhhHelpMe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultAhhHelpMe) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKuupuappuHeyaEventsFlag855[] = {
+struct SceneEvent gVaultInteriorsEventsFlag855[] = {
 	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
@@ -3474,74 +3474,74 @@ struct SceneEvent gKuupuappuHeyaEventsFlag855[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
 	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH) },
 	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuICanSleepWellNowThat) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11Line) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuJustAsIThoughtNothingWas) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultJustAsIThoughtNothingWas) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIvanLearnedALotByTalking) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene383SequenceC) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYoureThePersonWhoGotOur) },
-	{ EVENT_TALK, 18, 0x250, EVENT_SCRIPT(KuupuappuHeya_OfferBone) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
+	{ EVENT_TALK, 18, 0x250, EVENT_SCRIPT(VaultInteriors_OfferBone) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuImShockedThoseGuestsOfOurs) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgVaultImShockedThoseGuestsOfOurs) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuEverybodysAfterMyRockTheyWant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheReasonLunpaTurnedBadIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWishIHadSomethingWorth) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhenIGrowUpIWant) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWishIHadWingsLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuImSoRelievedNowThatWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultImSoRelievedNowThatWe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMyWeaponsWereFoundInThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuItMustBeSnowingUpIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyAreThesePeopleSoAnxious) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhoCouldHaveKnownTheyWere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuOfCourseIAlwaysSuspectedThey) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultMyWeaponsWereFoundInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultItMustBeSnowingUpIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(0xc3) },
-	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledHistoryOf)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuTheresABookEntitledGemsOf)) },
+	{ 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 *KuupuappuHeya_StepActions[] = {
-	KuupuappuHeya_PairScriptC,
-	KuupuappuHeya_PairScriptD,
-	KuupuappuHeya_PairScriptJ,
-	KuupuappuHeya_PairScriptH,
-	KuupuappuHeya_PairScriptF,
-	KuupuappuHeya_PairScriptB,
+s32 *VaultInteriors_StepActions[] = {
+	VaultInteriors_PairScriptC,
+	VaultInteriors_PairScriptD,
+	VaultInteriors_PairScriptJ,
+	VaultInteriors_PairScriptH,
+	VaultInteriors_PairScriptF,
+	VaultInteriors_PairScriptB,
 };
 
-s32 *KuupuappuHeya_IdleActions[] = {
-	KuupuappuHeya_PairScriptG,
-	KuupuappuHeya_PairScriptA,
-	KuupuappuHeya_PairScriptC,
-	KuupuappuHeya_PairScriptE,
-	KuupuappuHeya_PairScriptI,
-	KuupuappuHeya_PairScriptH,
+s32 *VaultInteriors_IdleActions[] = {
+	VaultInteriors_PairScriptG,
+	VaultInteriors_PairScriptA,
+	VaultInteriors_PairScriptC,
+	VaultInteriors_PairScriptE,
+	VaultInteriors_PairScriptI,
+	VaultInteriors_PairScriptH,
 };
 
-s32 *KuupuappuHeya_ResponseScripts[] = {
-	KuupuappuHeya_PairScriptM,
-	KuupuappuHeya_PairScriptQ,
-	KuupuappuHeya_PairScriptP,
-	KuupuappuHeya_PairScriptL,
-	KuupuappuHeya_PairScriptO,
-	KuupuappuHeya_PairScriptK,
-	KuupuappuHeya_PairScriptN,
-	KuupuappuHeya_PairScriptR,
+s32 *VaultInteriors_ResponseScripts[] = {
+	VaultInteriors_PairScriptM,
+	VaultInteriors_PairScriptQ,
+	VaultInteriors_PairScriptP,
+	VaultInteriors_PairScriptL,
+	VaultInteriors_PairScriptO,
+	VaultInteriors_PairScriptK,
+	VaultInteriors_PairScriptN,
+	VaultInteriors_PairScriptR,
 };
 
 u16 KuupuappuHeya_StopTimer;

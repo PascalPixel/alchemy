@@ -42,9 +42,9 @@
 static void SceneActor_BranchOnSlotZeroAtTile38(void);
 static void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 static void SceneActor_PassActorNinePositionWithId107(void);
-static void TakaraAshiba_InitializeScene1(void);
-static void TakaraAshiba_InitializeScene2(void);
-static void TakaraAshiba_InitializeScene3(void);
+static void CrossbonePlatform_InitializeScene1(void);
+static void CrossbonePlatform_InitializeScene2(void);
+static void CrossbonePlatform_InitializeScene3(void);
 
 enum
 {
@@ -83,19 +83,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_TakaraAshiba1)
+	if (selector == (s32)&SceneId_CrossbonePlatform1)
 	{
-		return gTakaraAshibaEntrances1;
+		return gCrossbonePlatformEntrances1;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba2)
+	if (selector == (s32)&SceneId_CrossbonePlatform2)
 	{
-		return gTakaraAshibaEntrances2;
+		return gCrossbonePlatformEntrances2;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba3)
+	if (selector == (s32)&SceneId_CrossbonePlatform3)
 	{
-		return gTakaraAshibaEntrances3;
+		return gCrossbonePlatformEntrances3;
 	}
-	return gTakaraAshibaEntrancesOther;
+	return gCrossbonePlatformEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -105,26 +105,26 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTable(void)
 {
-	return TakaraAshiba_SceneTable;
+	return CrossbonePlatform_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_TakaraAshiba1)
+	if (selector == (s32)&SceneId_CrossbonePlatform1)
 	{
-		return gTakaraAshibaPlacements1;
+		return gCrossbonePlatformPlacements1;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba2)
+	if (selector == (s32)&SceneId_CrossbonePlatform2)
 	{
-		return gTakaraAshibaPlacements2;
+		return gCrossbonePlatformPlacements2;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba3)
+	if (selector == (s32)&SceneId_CrossbonePlatform3)
 	{
-		return gTakaraAshibaPlacements3;
+		return gCrossbonePlatformPlacements3;
 	}
-	return gTakaraAshibaPlacementsOther;
+	return gCrossbonePlatformPlacementsOther;
 }
 
 static void Resource3b4_EmptyHookB(void)
@@ -207,7 +207,7 @@ static void EV21_TOUCH(void)
 			rec7->sprite->rotation = 0xf800;
 			rec7->facing = 0;
 			ObjectDispatch_ApplyValueToChildren(rec7, 0);
-			Engine_ObjectSetScript(rec7, TakaraAshiba_ActorFifteenMotionScript);
+			Engine_ObjectSetScript(rec7, CrossbonePlatform_ActorFifteenMotionScript);
 			Engine_EventEnd();
 		}
 	}
@@ -280,7 +280,7 @@ static void FieldScene_CopyActorPosition(void)
 			src = Object_GetById(0);
 			dst->acceleration = src->speed;
 			idx -= 30;
-			tbl = (s32)TakaraAshiba_ActorFifteenWalkTargets;
+			tbl = (s32)CrossbonePlatform_ActorFifteenWalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
 			Engine_ActorWalkTo(15, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
@@ -299,27 +299,27 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_TakaraAshiba1)
+	if (selector == (s32)&SceneId_CrossbonePlatform1)
 	{
-		return gTakaraAshibaEvents1;
+		return gCrossbonePlatformEvents1;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba2)
+	if (selector == (s32)&SceneId_CrossbonePlatform2)
 	{
-		return gTakaraAshibaEvents2;
+		return gCrossbonePlatformEvents2;
 	}
-	if (selector == (s32)&SceneId_TakaraAshiba3)
+	if (selector == (s32)&SceneId_CrossbonePlatform3)
 	{
-		return gTakaraAshibaEvents3;
+		return gCrossbonePlatformEvents3;
 	}
-	return gTakaraAshibaEventsOther;
+	return gCrossbonePlatformEventsOther;
 }
 
-static void TakaraAshiba_CheckLeaderAhead(void)
+static void CrossbonePlatform_CheckLeaderAhead(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-static void TakaraAshiba_OpenPassage(s32 arg)
+static void CrossbonePlatform_OpenPassage(s32 arg)
 {
 	s32 step = (arg & 0xff) * 4;
 	s32 dest = step + 77;
@@ -338,7 +338,7 @@ static void TakaraAshiba_OpenPassage(s32 arg)
 	Map_CopyCellAttributes(column, 40, 1, 1, column, 42);
 }
 
-static void TakaraAshiba_OpenPlatformPassage(s32 a0)
+static void CrossbonePlatform_OpenPlatformPassage(s32 a0)
 {
 	if ((a0 & 0x100) != 0)
 	{
@@ -365,7 +365,7 @@ static void EV50_TOUCH(void)
 			if (PartyInventory_FindOwner(243) != -1)
 			{
 				GameFlag_Set(0x9c4);
-				TakaraAshiba_OpenPlatformPassage(0x100);
+				CrossbonePlatform_OpenPlatformPassage(0x100);
 				PartyInventory_Remove(243);
 			}
 		}
@@ -391,7 +391,7 @@ static void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 		return;
 	}
 	Engine_GameFlagSet(flag);
-	TakaraAshiba_OpenPassage(0x100 | selector);
+	CrossbonePlatform_OpenPassage(0x100 | selector);
 	PartyInventory_Remove(244);
 }
 
@@ -508,7 +508,7 @@ static void EV12_PSYNERGY_1(void)
 	Engine_GameFlagSet(0xEEB);
 }
 
-static void TakaraAshiba_RaiseTriggerOnStand(void)
+static void CrossbonePlatform_RaiseTriggerOnStand(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   x = leader->x.fixed / 0x100000;
@@ -606,14 +606,14 @@ static void SceneActor_TrackOriginColumnForSlot(s32 no)
 
 	if (gGameState.paused_object == slot)
 		return;
-	if (col == TakaraAshiba_SlotColumns[no])
+	if (col == CrossbonePlatform_SlotColumns[no])
 		return;
 
 	Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
 	Engine_AudioPlayCue(188);
 	Engine_ActorSetDestination(slot, (col << 4) + 8, 360);
 
-	TakaraAshiba_SlotColumns[no] = col;
+	CrossbonePlatform_SlotColumns[no] = col;
 
 	if (row <= 22)
 	{
@@ -854,7 +854,7 @@ static void EV70_SCRIPT(void)
 	}
 }
 
-static void TakaraAshiba_RestoreActorEightTerrain(void)
+static void CrossbonePlatform_RestoreActorEightTerrain(void)
 {
 	Map_CopyCellAttributes(57, 42, 1, 1, 40, 42);
 	Map_CopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -871,14 +871,14 @@ static void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 	Object_GetById(8)->priority_flags = 2;
 }
 
-static void TakaraAshiba_RestoreRightUnderfootCell(void)
+static void CrossbonePlatform_RestoreRightUnderfootCell(void)
 {
 
 	Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
 	Object_GetById(8)->priority_flags = 2;
 }
 
-static void TakaraAshiba_RestoreLeftUnderfootCell(void)
+static void CrossbonePlatform_RestoreLeftUnderfootCell(void)
 {
 
 	Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
@@ -897,12 +897,12 @@ static void EV08_PSYNERGY_3(void)
 	{
 		Object_GetById(8)->priority_flags = 2;
 	}
-	TakaraAshiba_RestoreActorEightTerrain();
+	CrossbonePlatform_RestoreActorEightTerrain();
 	lowered = 0;
 	Object_GetById(8)->motion_flags = 3;
 	if (column == 40)
 	{
-		TakaraAshiba_RestoreLeftUnderfootCell();
+		CrossbonePlatform_RestoreLeftUnderfootCell();
 	}
 	else if (column == 42)
 	{
@@ -910,7 +910,7 @@ static void EV08_PSYNERGY_3(void)
 	}
 	else if (column == 41)
 	{
-		TakaraAshiba_RestoreRightUnderfootCell();
+		CrossbonePlatform_RestoreRightUnderfootCell();
 	}
 	else if (column == 39)
 	{
@@ -949,12 +949,12 @@ static void SceneActor_BranchOnSlotZeroAtTile38(void)
 		}
 	}
 
-	TakaraAshiba_RestoreActorEightTerrain();
+	CrossbonePlatform_RestoreActorEightTerrain();
 	StagedActor_AdvancePair();
 	EV08_PSYNERGY_3();
 }
 
-static void TakaraAshiba_ReleaseActorNinePlatform(void)
+static void CrossbonePlatform_ReleaseActorNinePlatform(void)
 {
 	Scheduler_RemoveCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
 	Actor_SetPosition(14, 0, 0);
@@ -978,7 +978,7 @@ static void EV09_PSYNERGY_3(void)
 
 	if (x == 45 && z == 43)
 	{
-		TakaraAshiba_ReleaseActorNinePlatform();
+		CrossbonePlatform_ReleaseActorNinePlatform();
 	}
 }
 
@@ -995,14 +995,14 @@ static void SceneState_ApplyTwoRectsAtRow56(void)
 	Map_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
-static void TakaraAshiba_RestoreActorTenLeftCell(void)
+static void CrossbonePlatform_RestoreActorTenLeftCell(void)
 {
 
 	Map_CopyCellAttributes(40, 54, 1, 1, 38, 55);
 	Object_GetById(10)->motion_flags = 0;
 }
 
-static void TakaraAshiba_RestoreActorTenRightCell(void)
+static void CrossbonePlatform_RestoreActorTenRightCell(void)
 {
 
 	Map_CopyCellAttributes(40, 54, 1, 1, 42, 55);
@@ -1018,18 +1018,18 @@ static void EV10_PSYNERGY_3(void)
 
 	if (!GameFlag_IsSet(0x300) && y <= 2)
 	{
-		TakaraAshiba_RestoreActorTenLeftCell();
+		CrossbonePlatform_RestoreActorTenLeftCell();
 		Engine_GameFlagSet(0x300);
 	}
 	if (z == 55)
 	{
 		if (x == 42)
 		{
-			TakaraAshiba_RestoreActorTenRightCell();
+			CrossbonePlatform_RestoreActorTenRightCell();
 		}
 		if (x == 38)
 		{
-			TakaraAshiba_RestoreActorTenLeftCell();
+			CrossbonePlatform_RestoreActorTenLeftCell();
 		}
 	}
 	else
@@ -1157,28 +1157,28 @@ static void SceneActor_PublishMarkerBySlotZeroHeight(void)
 s32 Scene_Initialize(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_TakaraAshiba1)
+	if (gGameState.scene == (s32)&SceneId_CrossbonePlatform1)
 	{
-		TakaraAshiba_InitializeScene1();
+		CrossbonePlatform_InitializeScene1();
 	}
-	if (gGameState.scene == (s32)&SceneId_TakaraAshiba2)
+	if (gGameState.scene == (s32)&SceneId_CrossbonePlatform2)
 	{
-		TakaraAshiba_InitializeScene2();
+		CrossbonePlatform_InitializeScene2();
 	}
-	if (gGameState.scene == (s32)&SceneId_TakaraAshiba3)
+	if (gGameState.scene == (s32)&SceneId_CrossbonePlatform3)
 	{
-		TakaraAshiba_InitializeScene3();
+		CrossbonePlatform_InitializeScene3();
 	}
 	return 0;
 }
 
-static void TakaraAshiba_UpdateItemIcons(void)
+static void CrossbonePlatform_UpdateItemIcons(void)
 {
-	if (++TakaraAshiba_IconTimer > 16)
+	if (++CrossbonePlatform_IconTimer > 16)
 	{
-		TakaraAshiba_IconTimer = 0;
+		CrossbonePlatform_IconTimer = 0;
 	}
-	switch (TakaraAshiba_IconTimer)
+	switch (CrossbonePlatform_IconTimer)
 	{
 	case 12:
 		if (Engine_GameFlagIsSet(0xee7) == 0)
@@ -1199,19 +1199,19 @@ static void TakaraAshiba_UpdateItemIcons(void)
 		}
 		break;
 	case 10:
-		Korosseo_ShowItemIcon(8, 0);
+		Colosso_ShowItemIcon(8, 0);
 		break;
 	case 8:
-		Korosseo_ShowItemIcon(9, 0);
+		Colosso_ShowItemIcon(9, 0);
 		break;
 	case 6:
-		Korosseo_ShowItemIcon(10, 0);
+		Colosso_ShowItemIcon(10, 0);
 		break;
 	case 4:
-		Korosseo_ShowItemIcon(11, 0);
+		Colosso_ShowItemIcon(11, 0);
 		break;
 	case 2:
-		Korosseo_ShowItemIcon(12, 1);
+		Colosso_ShowItemIcon(12, 1);
 		break;
 	}
 }
@@ -1219,14 +1219,14 @@ static void TakaraAshiba_UpdateItemIcons(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/colosso_item_icon.h"
 
-static void TakaraAshiba_InitializeScene1(void)
+static void CrossbonePlatform_InitializeScene1(void)
 {
 	Engine_TaskWait(1);
-	Korosseo_ShowItemIcon(12, 243);
-	Korosseo_ShowItemIcon(11, 244);
-	Korosseo_ShowItemIcon(10, 244);
-	Korosseo_ShowItemIcon(9, 244);
-	Korosseo_ShowItemIcon(8, 244);
+	Colosso_ShowItemIcon(12, 243);
+	Colosso_ShowItemIcon(11, 244);
+	Colosso_ShowItemIcon(10, 244);
+	Colosso_ShowItemIcon(9, 244);
+	Colosso_ShowItemIcon(8, 244);
 	if (GameFlag_IsSet(0xee7) == 0)
 	{
 		Actor_SetPosition(8, 0xe80000, 0x3680000);
@@ -1245,27 +1245,27 @@ static void TakaraAshiba_InitializeScene1(void)
 	}
 	if (GameFlag_IsSet(0x9c0) != 0)
 	{
-		TakaraAshiba_OpenPassage(0);
+		CrossbonePlatform_OpenPassage(0);
 	}
 	if (GameFlag_IsSet(0x9c1) != 0)
 	{
-		TakaraAshiba_OpenPassage(1);
+		CrossbonePlatform_OpenPassage(1);
 	}
 	if (GameFlag_IsSet(0x9c2) != 0)
 	{
-		TakaraAshiba_OpenPassage(2);
+		CrossbonePlatform_OpenPassage(2);
 	}
 	if (GameFlag_IsSet(0x9c3) != 0)
 	{
-		TakaraAshiba_OpenPassage(3);
+		CrossbonePlatform_OpenPassage(3);
 	}
 	if (GameFlag_IsSet(0x9c4) != 0)
 	{
-		TakaraAshiba_OpenPlatformPassage(0);
+		CrossbonePlatform_OpenPlatformPassage(0);
 	}
 }
 
-static void TakaraAshiba_InitializeScene2(void)
+static void CrossbonePlatform_InitializeScene2(void)
 {
 	Object_GetById(8)->collision_flags = 1;
 	Object_GetById(9)->collision_flags = 1;
@@ -1278,12 +1278,12 @@ static void TakaraAshiba_InitializeScene2(void)
 	Object_GetById(12)->scale_x = 0xb333;
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnNineteen, 0xc80);
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnTen, 0xc80);
-	FieldScheduler_AddCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
+	FieldScheduler_AddCallback((s32)CrossbonePlatform_RaiseTriggerOnStand, 0xc80);
 	Io_Write16(0x3f42, &REG_BLDCNT);
 	Io_Write16(0x607, &REG_BLDALPHA);
 }
 
-static void TakaraAshiba_InitializeScene3(void)
+static void CrossbonePlatform_InitializeScene3(void)
 {
 	s32 record;
 
@@ -1372,7 +1372,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 TakaraAshiba_ActorFifteenMotionScript[] = {
+s32 CrossbonePlatform_ActorFifteenMotionScript[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1400,7 +1400,7 @@ s32 TakaraAshiba_ActorFifteenMotionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 TakaraAshiba_ActorFifteenWalkTargets[] = {
+s32 CrossbonePlatform_ActorFifteenWalkTargets[] = {
 	0x378, 0x358,
 	0x368, 0x358,
 	0x358, 0x358,
@@ -1415,30 +1415,30 @@ s32 TakaraAshiba_ActorFifteenWalkTargets[] = {
 	0x378, 0x348,
 };
 
-struct SceneEntrance gTakaraAshibaEntrancesOther[] = {
+struct SceneEntrance gCrossbonePlatformEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraAshibaEntrances1[] = {
+struct SceneEntrance gCrossbonePlatformEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
 	{ 2, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraAshibaEntrances2[] = {
+struct SceneEntrance gCrossbonePlatformEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
 	{ 2, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraAshibaEntrances3[] = {
+struct SceneEntrance gCrossbonePlatformEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
 	{ 2, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 TakaraAshiba_SceneTable[] = {
+u32 CrossbonePlatform_SceneTable[] = {
 	SCENE_EXITS(117),
 	SCENE_EXIT(1, 128, 3),
 	SCENE_EXIT(2, 128, 4),
@@ -1451,11 +1451,11 @@ u32 TakaraAshiba_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTakaraAshibaPlacementsOther[] = {
+struct ScenePlacement gCrossbonePlatformPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraAshibaPlacements1[] = {
+struct ScenePlacement gCrossbonePlatformPlacements1[] = {
 	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1469,7 +1469,7 @@ struct ScenePlacement gTakaraAshibaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraAshibaPlacements2[] = {
+struct ScenePlacement gCrossbonePlatformPlacements2[] = {
 	{ 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1483,7 +1483,7 @@ struct ScenePlacement gTakaraAshibaPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraAshibaPlacements3[] = {
+struct ScenePlacement gCrossbonePlatformPlacements3[] = {
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1503,11 +1503,11 @@ struct ScenePlacement gTakaraAshibaPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gTakaraAshibaEventsOther[] = {
+struct SceneEvent gCrossbonePlatformEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraAshibaEvents1[] = {
+struct SceneEvent gCrossbonePlatformEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndPlaceSlot12) },
@@ -1522,8 +1522,8 @@ struct SceneEvent gTakaraAshibaEvents1[] = {
 	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
 	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_1) },
 	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH_1) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_CheckLeaderAhead) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CheckLeaderAhead) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xecb, FIND_ITEM(0x10b) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xecc, FIND_ITEM(0xc0) },
@@ -1531,7 +1531,7 @@ struct SceneEvent gTakaraAshibaEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraAshibaEvents2[] = {
+struct SceneEvent gCrossbonePlatformEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_2) },
@@ -1555,7 +1555,7 @@ struct SceneEvent gTakaraAshibaEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraAshibaEvents3[] = {
+struct SceneEvent gCrossbonePlatformEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
@@ -1598,8 +1598,8 @@ struct SceneEvent gTakaraAshibaEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 TakaraAshiba_SlotColumns[] = {
+u32 CrossbonePlatform_SlotColumns[] = {
 	16, 21, 0,
 };
 
-s32 TakaraAshiba_IconTimer = 0;
+s32 CrossbonePlatform_IconTimer = 0;

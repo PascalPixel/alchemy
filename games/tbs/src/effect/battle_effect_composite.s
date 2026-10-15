@@ -3,37 +3,37 @@
 .syntax unified
 .text
 	.arm
-	.global SentouKouka_YomiGyaku
-	.global SentouKouka_YomiJun
-	.global SentouKouka_NuriJun
-	.global SentouKouka_NuriGyaku
-	.global SentouKouka_Nuri8Jun
-	.global SentouKouka_Nuri8Gyaku
-	.global SentouKouka_HikakuJun
-	.global SentouKouka_HikakuGyaku
-	.global SentouKouka_Hikaku4Jun
-	.global SentouKouka_Hikaku4Gyaku
-	.global SentouKouka_KasanJun
-	.global SentouKouka_KasanGyaku
-	.global SentouKouka_Mask
-	.global SentouKouka_Gousei
-SentouKouka_YomiGyaku:
+	.global BattleEffect_CopyReverse
+	.global BattleEffect_CopyForward
+	.global BattleEffect_TransparentForward
+	.global BattleEffect_TransparentReverse
+	.global BattleEffect_Transparent8Forward
+	.global BattleEffect_Transparent8Reverse
+	.global BattleEffect_MaxForward
+	.global BattleEffect_MaxReverse
+	.global BattleEffect_Max4Forward
+	.global BattleEffect_Max4Reverse
+	.global BattleEffect_AdditiveForward
+	.global BattleEffect_AdditiveReverse
+	.global BattleEffect_Mask
+	.global BattleEffect_Composite
+BattleEffect_CopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-SentouKouka_YomiJun:
+BattleEffect_CopyForward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-SentouKouka_NuriJun:
+BattleEffect_TransparentForward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-SentouKouka_NuriGyaku:
+BattleEffect_TransparentReverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-SentouKouka_Nuri8Jun:
+BattleEffect_Transparent8Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -59,7 +59,7 @@ SentouKouka_Nuri8Jun:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-SentouKouka_Nuri8Gyaku:
+BattleEffect_Transparent8Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -85,17 +85,17 @@ SentouKouka_Nuri8Gyaku:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-SentouKouka_HikakuJun:
+BattleEffect_MaxForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-SentouKouka_HikakuGyaku:
+BattleEffect_MaxReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-SentouKouka_Hikaku4Jun:
+BattleEffect_Max4Forward:
 	ldrb	r5, [r1], #1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -112,7 +112,7 @@ SentouKouka_Hikaku4Jun:
 	ldrb	r5, [r1], #1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-SentouKouka_Hikaku4Gyaku:
+BattleEffect_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -129,25 +129,25 @@ SentouKouka_Hikaku4Gyaku:
 	ldrb	r5, [r1], #-1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-SentouKouka_KasanJun:
+BattleEffect_AdditiveForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-SentouKouka_KasanGyaku:
+BattleEffect_AdditiveReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-SentouKouka_Mask:
+BattleEffect_Mask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
-SentouKouka_Gousei:
+BattleEffect_Composite:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32
 	ldm	r4, {r4, r5}

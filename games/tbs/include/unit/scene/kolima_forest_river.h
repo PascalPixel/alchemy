@@ -8,14 +8,14 @@ u8 *MapStagedScene_SelectPrimaryData(void);
 s32 MapStagedScene_GetEmptyData(void);
 u8 *MapStagedScene_SelectSecondaryData(void);
 u8 *MapStagedScene_SelectTertiaryData(void);
-u8 *KorimaKawa_GetEvents(void);
-s32 KorimaKawa_PrepareWindowTransition(void);
+u8 *KolimaForestRiver_GetEvents(void);
+s32 KolimaForestRiver_PrepareWindowTransition(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
-extern struct SceneEntrance gKorimaKawaEntrances[];
-extern u32 gKorimaKawaExits[];
-extern struct ScenePlacement gKorimaKawaPlacements[];
-extern struct SceneEvent gKorimaKawaEvents[];
+extern struct SceneEntrance gKolimaForestRiverEntrances[];
+extern u32 gKolimaForestRiverExits[];
+extern struct ScenePlacement gKolimaForestRiverPlacements[];
+extern struct SceneEvent gKolimaForestRiverEvents[];
 
 #endif

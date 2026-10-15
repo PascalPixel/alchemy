@@ -126,10 +126,10 @@ Inventory_AddItem:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitEpAdd
+	.global UnitPpAdd
 	.thumb_func
-UnitEpAdd:
-	overlay_veneer UnitEpAddFar
+UnitPpAdd:
+	overlay_veneer UnitPpAddFar
 	.global Djinn_AddToOwner
 	.thumb_func
 Djinn_AddToOwner:

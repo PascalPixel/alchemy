@@ -26,13 +26,13 @@ struct BtlPlan
 	s32 outcome;
 	u32 presentation_flags;
 	s32 failure;
-	u32 akuryo_dmg;
+	u32 haunt_dmg;
 };
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BtlPlan, BATTLE_PLAN_SIZE);
 LAYOUT_OFFSET_GUARD(BattlePlan_TgtNo, struct BtlPlan, tgt_no, 0x02);
 LAYOUT_OFFSET_GUARD(BattlePlan_TgtAdj, struct BtlPlan, tgt_adj, 0x1e);
 LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BtlPlan, act_no, 0x4c);
-LAYOUT_OFFSET_GUARD(BattlePlan_SpiritDmg, struct BtlPlan, akuryo_dmg, 0x60);
+LAYOUT_OFFSET_GUARD(BattlePlan_SpiritDmg, struct BtlPlan, haunt_dmg, 0x60);
 
 #endif

@@ -266,10 +266,10 @@ Func_020047a4:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitEpAdd
+	.global UnitPpAdd
 	.thumb_func
-UnitEpAdd:
-	overlay_veneer UnitEpAddFar
+UnitPpAdd:
+	overlay_veneer UnitPpAddFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

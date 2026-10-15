@@ -27,7 +27,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     return gSceneEvents;
 }
 
-s32 VinasuChojo_Idle(void)
+s32 VenusLighthouse_Idle(void)
 {
     return 0;
 }
@@ -38,11 +38,11 @@ struct SetupWork {
 };
 
 
-void VinasuChojo_RunSetupStep(void)
+void VenusLighthouse_RunSetupStep(void)
 {
     Func_02001c7c(140, 1);
     Func_02001c84(4, 10);
-    ((struct SetupWork *)Ram_HeapSlots->effect_work)->idle = VinasuChojo_Idle;
+    ((struct SetupWork *)Ram_HeapSlots->effect_work)->idle = VenusLighthouse_Idle;
     Func_02001c9c();
     Engine_EventWait(10);
     Field_DispatchTypeHandler(1);
@@ -56,14 +56,14 @@ struct AerieEventWork {
 };
 
 
-s32 VinasuChojo_Start(void)
+s32 VenusLighthouse_Start(void)
 {
     ((struct AerieEventWork *)Ram_HeapSlots->event_work)->mode = 0x204;
     if (gPartyState.entrance == ENTRANCE_OPENING) {
 #if EDITION_INTERNATIONAL
         // The international editions also save this scene and entrance 22.
         {
-            s32 scene = (s32)&SceneId_VinasuChojo;
+            s32 scene = (s32)&SceneId_VenusLighthouse;
 
             /* FAKEMATCH: the native loads the scene id before it builds the saved-scene offset (one reordered row without). */
             __asm__ volatile("");

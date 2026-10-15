@@ -1,13 +1,13 @@
 	.section .bss,"aw",%nobits
-	.global RamakanSabaku_SandVramSlot
-RamakanSabaku_SandVramSlot:
+	.global LamakanDesert_SandVramSlot
+LamakanDesert_SandVramSlot:
 	.space 16
-	.global RamakanSabaku_SandWork
-RamakanSabaku_SandWork:
+	.global LamakanDesert_SandWork
+LamakanDesert_SandWork:
 	.space 0x50
-	.global RamakanSabaku_SandTileBuffer
-RamakanSabaku_SandTileBuffer:
+	.global LamakanDesert_SandTileBuffer
+LamakanDesert_SandTileBuffer:
 	.space 0x900
-	.global RamakanSabaku_SandPhase
-RamakanSabaku_SandPhase:
+	.global LamakanDesert_SandPhase
+LamakanDesert_SandPhase:
 	.space 2

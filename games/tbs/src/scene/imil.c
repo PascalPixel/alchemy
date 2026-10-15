@@ -33,7 +33,7 @@
 
 // 前方宣言
 static void FieldScene_RunPrimaryScriptChoreography(void);
-static void ImiruMura_CastPsynergyAtActorNine(void);
+static void Imil_CastPsynergyAtActorNine(void);
 static void FieldScene_RunScene399SequenceA(void);
 static void SceneState_UpdateZoneFlagsFromActorZero(void);
 static void EV11_PSYNERGY(void);
@@ -106,11 +106,11 @@ static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ImiruMura2)
+	if (gGameState.scene == (s32)&SceneId_Imil2)
 	{
-		return gImiruMuraEntrances2;
+		return gImilEntrances2;
 	}
-	return gImiruMuraEntrancesOther;
+	return gImilEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -118,18 +118,18 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *ImiruMura_GetExits(void)
+u8 *Imil_GetExits(void)
 {
-	return (u8 *)ImiruMura_SceneTable;
+	return (u8 *)Imil_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	u8 *script;
 
-	if (gGameState.scene == ((s32)&SceneId_ImiruMura2))
+	if (gGameState.scene == ((s32)&SceneId_Imil2))
 	{
-		script = gImiruMuraPlacements2;
+		script = gImilPlacements2;
 		FieldScene_PrepareActors(script);
 		if (Engine_GameFlagIsSet(0x881) != 0)
 		{
@@ -143,9 +143,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 	if (Engine_GameFlagIsSet(0x881) != 0)
 	{
-		return gImiruMuraPlacementsFlag881;
+		return gImilPlacementsFlag881;
 	}
-	return gImiruMuraPlacements;
+	return gImilPlacements;
 }
 
 static void EV90_TOUCH(void)
@@ -155,11 +155,11 @@ static void EV90_TOUCH(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ImiruMura2)
+	if (gGameState.scene == (s32)&SceneId_Imil2)
 	{
-		return gImiruMuraEvents2;
+		return gImilEvents2;
 	}
-	return gImiruMuraEventsOther;
+	return gImilEventsOther;
 }
 
 static void EV08_TALK(void)
@@ -167,11 +167,11 @@ static void EV08_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruEvenIfMaryHealsUs));
+		Engine_EventSetMessage(MSGNO(MsgImilEvenIfMiaHealsUs));
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruBrrrrrChooImFreezingMary));
+		Engine_EventSetMessage(MSGNO(MsgImilBrrrrrChooImFreezingMia));
 	}
 	{
 		s32 val = 0;
@@ -186,11 +186,11 @@ static void EV08_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruCantUnderstandWhyAnyOne));
+		Engine_EventSetMessage(MSGNO(MsgImilCantUnderstandWhyAnyOne));
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruMaryShouldHereByNow));
+		Engine_EventSetMessage(MSGNO(MsgImilMiaShouldHereByNow));
 	}
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
@@ -200,7 +200,7 @@ static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 10);
-	Engine_EventSetMessage(MSGNO(MsgImiruHiNewInImil));
+	Engine_EventSetMessage(MSGNO(MsgImilHiNewInImil));
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -211,7 +211,7 @@ static void EV10_TALK(void)
 
 	if (GameFlag_IsSet(0x881) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruCountingAfterDeparture));
+		Engine_EventSetMessage(MSGNO(MsgImilCountingAfterDeparture));
 		Event_ShowMessage(10, 0);
 		Actor_SetAttachedEffect(10, 258);
 		Engine_EventWait(40);
@@ -224,7 +224,7 @@ static void EV10_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruOneTwoThreeFour));
+		Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
 		Event_ShowMessage(10, 0);
 		Actor_SetAttachedEffect(10, 258);
 		Engine_EventWait(40);
@@ -250,7 +250,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		Engine_EventBegin();
 		Actor_FaceActor(9, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage(MsgMakyuriReallySayDie);
+		Engine_EventSetMessage(MsgMercuryReallySayDie);
 		Event_AskYesNo(9, 0);
 		Engine_EventEnd();
 	}
@@ -260,11 +260,11 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		{
 			Engine_EventBegin();
 			Engine_ActorSetAnimation(9, 7);
-			Engine_MapAnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
-			Engine_EventSetMessage(MsgMakyuriFeelMuchBetter);
+			Engine_MapAnimateCells((s32)Imil_CellStepsA, 10, 69);
+			Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
 			Event_ShowMessage(9, 0);
 			Engine_ActorSetAnimation(9, 8);
-			Map_AnimateCells((s32)ImiruMura_CellStepsB, 10, 69);
+			Map_AnimateCells((s32)Imil_CellStepsB, 10, 69);
 			Engine_EventEnd();
 		}
 		else
@@ -272,17 +272,17 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Engine_EventBegin();
 			actor9_record = Object_GetById(9);
 			actor9_record->timer = 10;
-			Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
-			Engine_EventSetMessage(MsgMakyuriOoohHelpMe);
+			Engine_ActorEnableActionCallback(9, Imil_ActorScriptA);
+			Engine_EventSetMessage(MsgMercuryOoohHelpMe);
 			Engine_EventShowMessage(9, 0);
 			Engine_ActorStop(8);
 			Actor_ShowEmote(8, 256, 40);
 			Actor_FaceDirection(8, 53248, 10);
 			Engine_ActorStartRepeatedMotion(8, 2);
 			Event_ShowMessageAndWait(8, 0, 20);
-			Engine_ActorEnableActionCallback(0, ImiruMura_ActorScriptC);
+			Engine_ActorEnableActionCallback(0, Imil_ActorScriptC);
 			Actor_SetSpeed(8, 104857, 52428);
-			Object_SetActionCallbackAndRefreshById(8, (s32)ImiruMura_ActorScriptB);
+			Object_SetActionCallbackAndRefreshById(8, (s32)Imil_ActorScriptB);
 			Engine_EventWait(40);
 			Engine_ActorJump(8, 2, 0);
 			Engine_ActorStartRepeatedMotion(8, 2);
@@ -303,7 +303,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MSGNO(MsgImiruDoWantWeapons));
+	Engine_EventSetMessage(MSGNO(MsgImilDoWantWeapons));
 	Engine_EventAskYesNo(12, 0);
 	Engine_EventEnd();
 }
@@ -311,7 +311,7 @@ static void EV12_TALK(void)
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MSGNO(MsgImiruDoWantSeeRestaurantMenu));
+	Engine_EventSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
 	Engine_EventAskYesNo(18, 0);
 	Engine_EventEnd();
 }
@@ -321,12 +321,12 @@ static void EV20_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruEveryoneCountsOnMaryThats));
+		Engine_EventSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
 		Engine_EventShowMessage(20, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgImiruHaveVisitedOldCoupleWho);
+		Engine_EventSetMessage(MsgImilHaveVisitedOldCoupleWho);
 		Engine_EventAskYesNo(20, 0);
 		Engine_GameFlagSet(0x82a);
 		Engine_GameFlagSet(0x82c);
@@ -339,11 +339,11 @@ static void EV20_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruWeHaveDoWhateverWe));
+		Engine_EventSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruMaryWasSayingSheHas));
+		Engine_EventSetMessage(MSGNO(MsgImilMiaWasSayingSheHas));
 	}
 	Engine_EventShowMessage(20, 0);
 	Engine_EventEnd();
@@ -352,7 +352,7 @@ static void EV20_PSYNERGY(void)
 static void EV08_TALK_2(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MSGNO(MsgImiruHappenedInLighthouseNortheast));
+	Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
 	Event_ShowMessage(8, 0);
 	Actor_FaceDirection(8, 0x3000, 10);
 	Engine_EventEnd();
@@ -363,15 +363,15 @@ static void EV08_PSYNERGY_2(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x82b) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruMaryClanOnceLivedHere));
+		Engine_EventSetMessage(MSGNO(MsgImilMiaClanOnceLivedHere));
 	}
 	else if (Engine_GameFlagIsSet(0x82c) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruHesAlwaysExaggeratingThingsBut));
+		Engine_EventSetMessage(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruMaryRunningAroundTownCaring));
+		Engine_EventSetMessage(MSGNO(MsgImilMiaRunningAroundTownCaring));
 	}
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
@@ -385,7 +385,7 @@ static void EV10_TALK_2(void)
 static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MSGNO(MsgImiruMuraMaryIsAGoodGirlI));
+	Engine_EventSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
 	Engine_EventShowMessage(10, 0);
 	Engine_EventEnd();
 }
@@ -395,17 +395,17 @@ static void EV19_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruFeelLikeGrownUpWhen));
+		Engine_EventSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
 	}
 	else
 	{
-		Engine_EventSetMessage(MSGNO(MsgImiruTheseFolkOkayTheyDont));
+		Engine_EventSetMessage(MSGNO(MsgImilTheseFolkOkayTheyDont));
 	}
 	Engine_EventShowMessage(19, 0);
 	Engine_EventEnd();
 }
 
-static void ImiruMura_RunExitDoor(void)
+static void Imil_RunExitDoor(void)
 {
 	struct EventWork  *event;
 	struct FieldActor *actor;
@@ -432,10 +432,10 @@ static void ImiruMura_RunExitDoor(void)
 		Engine_AudioPlayCue(158);
 	}
 	{
-		s32 x = ImiruMura_ExitCellPoints[exit - 1][0];
-		s32 y = ImiruMura_ExitCellPoints[exit - 1][1];
+		s32 x = Imil_ExitCellPoints[exit - 1][0];
+		s32 y = Imil_ExitCellPoints[exit - 1][1];
 
-		Engine_MapAnimateCells(ImiruMura_ExitCellSteps[exit - 1], x, y);
+		Engine_MapAnimateCells(Imil_ExitCellSteps[exit - 1], x, y);
 	}
 	Actor_SetSpeed(0, 0x8000, 0x4000);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -456,7 +456,7 @@ static void ImiruMura_RunExitDoor(void)
 	Engine_EventEnd();
 }
 
-static void ImiruMura_RunWeaponShop(void)
+static void Imil_RunWeaponShop(void)
 {
 	s32 dir;
 
@@ -471,7 +471,7 @@ static void ImiruMura_RunWeaponShop(void)
 		Engine_EventBegin();
 		Engine_ActorFaceActor(12, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage(MsgMakyuriCatchUpLostOpportunity);
+		Engine_EventSetMessage(MsgMercuryCatchUpLostOpportunity);
 		Engine_EventShowMessage(12, 0);
 		Actor_FaceDirection(12, 0x4000, 10);
 		Engine_EventEnd();
@@ -485,8 +485,8 @@ static void ImiruMura_RunWeaponShop(void)
 			Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
-			Object_SetActionCallbackAndRefreshById(12, (s32)ImiruMura_TurnScript);
-			Engine_EventSetMessage(MsgMakyuriStoreClosedUntilWell);
+			Object_SetActionCallbackAndRefreshById(12, (s32)Imil_TurnScript);
+			Engine_EventSetMessage(MsgMercuryStoreClosedUntilWell);
 			Engine_EventShowMessage(12, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
 			Engine_CameraWaitForMove();
@@ -495,7 +495,7 @@ static void ImiruMura_RunWeaponShop(void)
 	}
 }
 
-static void ImiruMura_RunArmorShop(void)
+static void Imil_RunArmorShop(void)
 {
 	s32 dir;
 
@@ -510,7 +510,7 @@ static void ImiruMura_RunArmorShop(void)
 		Engine_EventBegin();
 		Engine_ActorFaceActor(13, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage(MsgMakyuriShameStoreClosed);
+		Engine_EventSetMessage(MsgMercuryShameStoreClosed);
 		Engine_EventShowMessage(13, 0);
 		Actor_FaceDirection(13, 0x4000, 10);
 		Engine_EventEnd();
@@ -524,8 +524,8 @@ static void ImiruMura_RunArmorShop(void)
 			Camera_MoveTo(0x1aa0000, -1, 0x1ec0000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
-			Object_SetActionCallbackAndRefreshById(13, (s32)ImiruMura_TurnScript);
-			Engine_EventSetMessage(MsgMakyuriTooSickBusiness);
+			Object_SetActionCallbackAndRefreshById(13, (s32)Imil_TurnScript);
+			Engine_EventSetMessage(MsgMercuryTooSickBusiness);
 			Engine_EventShowMessage(13, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
 			Engine_CameraWaitForMove();
@@ -534,7 +534,7 @@ static void ImiruMura_RunArmorShop(void)
 	}
 }
 
-static void ImiruMura_RunItemShop(void)
+static void Imil_RunItemShop(void)
 {
 	s32 dir;
 
@@ -548,7 +548,7 @@ static void ImiruMura_RunItemShop(void)
 		}
 		Engine_EventBegin();
 		Engine_ActorFaceActor(15, 0, 0);
-		Engine_EventSetMessage(MsgMakyuriRecoveredThanksFountain);
+		Engine_EventSetMessage(MsgMercuryRecoveredThanksFountain);
 		Engine_EventShowMessage(15, 0);
 		Actor_FaceDirection(15, 0x4000, 0);
 		Engine_EventEnd();
@@ -558,7 +558,7 @@ static void ImiruMura_RunItemShop(void)
 		if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage(MsgMakyuriMomsSickGetWhatever);
+			Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
 			Engine_EventShowMessage(14, 0);
 			/* FAKEMATCH: called through a cast to the value-returning call the bytes show; called by its void prototype, the two argument moves swap (differ 2). A prototyped s32 (*)(s32, s32) cast matches as well (2026-10-13). */
 			((s32 (*)())Engine_ShopOpen)(12, 14);
@@ -567,7 +567,7 @@ static void ImiruMura_RunItemShop(void)
 		else
 		{
 			Engine_ActorFaceActor(14, 0, 10);
-			Engine_EventSetMessage(MsgMakyuriDadLumberjack);
+			Engine_EventSetMessage(MsgMercuryDadLumberjack);
 			Engine_EventShowMessage(14, 0);
 			Actor_FaceDirection(14, 0x5000, 10);
 		}
@@ -589,12 +589,12 @@ static void EV16_TALK(void)
 		Actor_FaceActor(16, ACTOR_PARTY_LEADER, 10);
 		if (GameFlag_IsSet(0x881) != 0)
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruItsAlmostTimeForLeave));
+			Engine_EventSetMessage(MSGNO(MsgImilItsAlmostTimeForLeave));
 			Event_AskYesNo(16, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruWhyHaveTwoGroupsTravelers));
+			Engine_EventSetMessage(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
 			Event_ShowMessage(16, 0);
 		}
 		Actor_FaceDirection(16, 0x3000, 10);
@@ -612,7 +612,7 @@ static void EV19_TALK(void)
 		Engine_EventBegin();
 		if (GameFlag_IsSet(0x82d) == 0)
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruMayOnlyStudentButCan));
+			Engine_EventSetMessage(MSGNO(MsgImilMayOnlyStudentButCan));
 			Event_ShowMessage(19, 0);
 			GameFlag_Set(0x82d);
 		}
@@ -624,17 +624,17 @@ static void EV19_TALK(void)
 		Engine_EventBegin();
 		if (GameFlag_IsSet(0x881) != 0)
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruMaryGoingOnJourneyWith));
+			Engine_EventSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
 			Event_ShowMessage(19, 0);
 		}
 		else if (GameFlag_IsSet(3) != 0)
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruAmHealerWhileMaryOut));
+			Engine_EventSetMessage(MSGNO(MsgImilAmHealerWhileMiaOut));
 			Event_ShowMessage(19, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MSGNO(MsgImiruLookingForMary));
+			Engine_EventSetMessage(MSGNO(MsgImilLookingForMia));
 			(void)Event_AskYesNo(19, 0);
 			Actor_FaceDirection(19, 0x3000, 10);
 		}
@@ -642,12 +642,12 @@ static void EV19_TALK(void)
 	}
 }
 
-s32 ImiruMura_ApplyEntryState(void)
+s32 Imil_ApplyEntryState(void)
 {
 	struct FieldActor *leader;
 	s32				   entrance;
 
-	if (gGameState.scene == (s32)&SceneId_ImiruMura1)
+	if (gGameState.scene == (s32)&SceneId_Imil1)
 	{
 		leader = Object_GetById(0);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -671,7 +671,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			RunEventScript02();
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_ImiruMura2)
+	else if (gGameState.scene == (s32)&SceneId_Imil2)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		entrance = gGameState.entrance;
@@ -713,7 +713,7 @@ s32 ImiruMura_ApplyEntryState(void)
 					Engine_ActorSetPosition(8, 0x950000, 0x740000);
 					Object_GetById(8)->facing = 0;
 					Object_GetById(9)->work = 0;
-					Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
+					Engine_ActorEnableActionCallback(9, Imil_ActorScriptA);
 				}
 				else
 				{
@@ -726,7 +726,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			if (!Engine_GameFlagIsSet(0x881))
 			{
 				Object_GetById(11)->work = 1;
-				Engine_ActorEnableActionCallback(11, ImiruMura_ActorScriptA);
+				Engine_ActorEnableActionCallback(11, Imil_ActorScriptA);
 			}
 		}
 		else if (entrance == 4)
@@ -799,7 +799,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	struct EventWork  *work;
 
 	Engine_EventBegin();
-	Actor_SetPosition(MEARI, 0xb60000, 0x960000);
+	Actor_SetPosition(MIA, 0xb60000, 0x960000);
 	Camera_MoveTo(0x8d0000, -1, 0xdd0000, 0);
 	Engine_TaskWait(1);
 	Camera_SetSpeed(0x4ccc, 0x999);
@@ -809,91 +809,91 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	work->transition_frames = 40;
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-	Actor_SetSpeed(GERALD, 0x6666, 0x3333);
-	Actor_SetSpeed(IWAN, 0x6666, 0x3333);
+	Actor_SetSpeed(GARET, 0x6666, 0x3333);
+	Actor_SetSpeed(IVAN, 0x6666, 0x3333);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
 	leader = Object_GetById(0);
 	if (leader != NULL)
 	{
-		Actor_SetPosition(GERALD, leader->x.fixed, leader->z.fixed);
+		Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
 	}
 	leader = Object_GetById(0);
 	if (leader != NULL)
 	{
-		Actor_SetPosition(IWAN, leader->x.fixed, leader->z.fixed);
+		Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
 	}
-	Actor_WalkTo(GERALD, 150, 234);
-	Actor_WalkToAndWait(IWAN, 134, 234);
-	Engine_ActorSetAnimation(GERALD, 1);
-	FieldObject_SetTargetAndCallback(0, 0x10003, ImiruMura_PrimaryScript);
-	FieldObject_SetTargetAndCallback(1, 0x10003, ImiruMura_PrimaryScript);
-	FieldObject_SetTargetAndCallback(2, 0x10003, ImiruMura_PrimaryScript);
+	Actor_WalkTo(GARET, 150, 234);
+	Actor_WalkToAndWait(IVAN, 134, 234);
+	Engine_ActorSetAnimation(GARET, 1);
+	FieldObject_SetTargetAndCallback(0, 0x10003, Imil_PrimaryScript);
+	FieldObject_SetTargetAndCallback(1, 0x10003, Imil_PrimaryScript);
+	FieldObject_SetTargetAndCallback(2, 0x10003, Imil_PrimaryScript);
 	Engine_CameraWaitForMove();
-	tbl = (s32)ImiruMura_TurnScript;
+	tbl = (s32)Imil_TurnScript;
 	Engine_ActorEnableActionCallback(9, tbl);
 	Engine_EventWait(40);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Engine_EventSetMessage(MSGNO(MsgImiruHowFeeling));
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Engine_EventSetMessage(MSGNO(MsgImilHowFeeling));
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Engine_ActorEnableActionCallback(9, tbl);
 	Event_ShowMessageAndWait(9, 0, 20);
-	Actor_FaceDirection(MEARI, 0x8000, 20);
+	Actor_FaceDirection(MIA, 0x8000, 20);
 	Actor_FaceDirection(8, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 40);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(10);
-	Actor_FaceDirection(MEARI, 0x4000, 0);
+	Actor_FaceDirection(MIA, 0x4000, 0);
 	Actor_FaceDirection(8, 0x3000, 20);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Engine_ActorEnableActionCallback(9, tbl);
 
-	ImiruMura_CastPsynergyAtActorNine();
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
+	Imil_CastPsynergyAtActorNine();
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Event_ShowMessageAndWait(MIA, 0, 40);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Engine_ActorSetAnimation(9, 7);
-	Map_AnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
+	Map_AnimateCells((s32)Imil_CellStepsA, 10, 69);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimation(9, 8);
-	Map_AnimateCells((s32)ImiruMura_CellStepsB, 10, 69);
+	Map_AnimateCells((s32)Imil_CellStepsB, 10, 69);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(8, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_ShowEmote(MEARI, 0x101, 30);
-	Actor_FaceDirection(MEARI, 0x8000, 10);
-	Engine_ActorSetAnimation(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Actor_ShowEmote(MIA, 0x101, 30);
+	Actor_FaceDirection(MIA, 0x8000, 10);
+	Engine_ActorSetAnimation(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(40);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
 	Object_GetById(3)->timer = 0;
-	Engine_ActorEnableActionCallback(MEARI, ImiruMura_MiaScriptA);
+	Engine_ActorEnableActionCallback(MIA, Imil_MiaScriptA);
 	while (Object_GetById(3)->timer == 0)
 	{
 		Engine_TaskWait(1);
 	}
 	Camera_MoveTo(0x8c0000, -1, 0xc60000, 1);
 	Object_RefreshSelectorById(3);
-	Actor_ShowEmote(MEARI, 0x101, 80);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Actor_ShowEmote(MIA, 0x101, 80);
+	Event_ShowMessageAndWait(MIA, 0, 40);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(10);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Event_PlayCue(131);
 	ColorBuffer_ApplySource(0x10000, 0);
 	ColorBuffer_ApplyTarget(0x207e9f, 0);
@@ -904,54 +904,54 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	ColorBuffer_ApplyTarget(0x10000, 0);
 	Engine_ColorBufferInterpolate(60);
 	Engine_TaskWait(60);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(20);
-	Actor_FaceDirection(MEARI, 0, 10);
-	Actor_SetSpeed(MEARI, 0x20000, 0x10000);
-	Actor_WalkToAndWait(MEARI, 202, 198);
+	Actor_FaceDirection(MIA, 0, 10);
+	Actor_SetSpeed(MIA, 0x20000, 0x10000);
+	Actor_WalkToAndWait(MIA, 202, 198);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Event_ShowMessage(MEARI, 0);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
+	Event_ShowMessage(MIA, 0);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
-	Actor_ShowEmote(MEARI, 0x100, 40);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessageAndWait(MIA, 0, 40);
+	Actor_ShowEmote(MIA, 0x100, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
-	Engine_ActorStop(GERALD);
-	Engine_ActorStop(IWAN);
-	Actor_SetSpeed(MEARI, 0x30000, 0x18000);
+	Engine_ActorStop(GARET);
+	Engine_ActorStop(IVAN);
+	Actor_SetSpeed(MIA, 0x30000, 0x18000);
 	Object_GetById(3)->timer = 0;
-	Engine_ActorEnableActionCallback(MEARI, ImiruMura_MiaScriptB);
+	Engine_ActorEnableActionCallback(MIA, Imil_MiaScriptB);
 	while (Object_GetById(3)->timer == 0)
 	{
 		Engine_TaskWait(1);
 	}
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-	Actor_FaceDirection(GERALD, 0x4000, 0);
-	Actor_FaceDirection(IWAN, 0x4000, 10);
+	Actor_FaceDirection(GARET, 0x4000, 0);
+	Actor_FaceDirection(IVAN, 0x4000, 10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
-	Actor_SetSpeed(GERALD, 0x40000, 0x20000);
-	Actor_SetSpeed(IWAN, 0x40000, 0x20000);
+	Actor_SetSpeed(GARET, 0x40000, 0x20000);
+	Actor_SetSpeed(IVAN, 0x40000, 0x20000);
 	Event_PlayCue(152);
 	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(2)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
-	Actor_SetDestination(GERALD, 136, 221);
-	Actor_SetDestination(IWAN, 122, 238);
+	Actor_SetDestination(GARET, 136, 221);
+	Actor_SetDestination(IVAN, 122, 238);
 	Object_RefreshSelectorById(3);
 	Engine_EventWait(80);
 	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
 	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
 	Object_GetById(2)->steering_flags |= ACTOR_FACES_MOTION;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	tbl = (s32)ImiruMura_PrimaryScript2;
-	Engine_ActorEnableActionCallback(GERALD, tbl);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	tbl = (s32)Imil_PrimaryScript2;
+	Engine_ActorEnableActionCallback(GARET, tbl);
 	Object_SetActionCallbackAndRefreshById(2, tbl);
 	Engine_EventWait(20);
 	work = gEventWork;
@@ -991,7 +991,7 @@ static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o)
 	}
 }
 
-static void ImiruMura_SwayAndSpark(struct FieldActor *actor)
+static void Imil_SwayAndSpark(struct FieldActor *actor)
 {
 	s32				   pos[3];
 	struct FieldActor *spark;
@@ -1019,26 +1019,26 @@ static void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 			spark->priority_flags = 2;
 			spark->motion_flags = 0;
 			ObjectGroup_SetChildValue(spark, 9);
-			Engine_ObjectSetScript(spark, ImiruMura_SparkScript);
+			Engine_ObjectSetScript(spark, Imil_SparkScript);
 		}
 	}
 }
 
 
-static void ImiruMura_ShowActorNineTurnMessage(void)
+static void Imil_ShowActorNineTurnMessage(void)
 {
-	Engine_ActorEnableActionCallback(9, (s32)ImiruMura_TurnScript);
+	Engine_ActorEnableActionCallback(9, (s32)Imil_TurnScript);
 	Engine_EventShowMessage(9, 0);
 }
 
-static void ImiruMura_CastPsynergyAtActorNine(void)
+static void Imil_CastPsynergyAtActorNine(void)
 {
 	u8 *work;
 
 	Engine_PsynergyBegin(93, 1);
 	work = gEffectWork;
 	Engine_PsynergySetTarget(3, 9);
-	*(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
+	*(s32 *)(work + 36) = (s32)Imil_ShowActorNineTurnMessage;
 	Engine_PsynergyRaiseHands();
 	Engine_PsynergyPlayEffect(1);
 	Engine_PsynergyLowerHands();
@@ -1237,7 +1237,7 @@ static void FieldScene_RunThreeActorChoreography(void)
 	struct EventWork  *work;
 
 	Engine_EventBegin();
-	Actor_FaceDirection(MEARI, 0xa000, 0);
+	Actor_FaceDirection(MIA, 0xa000, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 	Engine_ActorWalkTo(0, 0x2b2, 200);
 
@@ -1250,26 +1250,26 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Engine_EventOpenScreen();
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Actor_SetSpeed(MEARI, 0x9999, 0x4ccc);
+	Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
 	leader = Object_GetById(0);
 	if (leader != NULL)
 	{
-		Actor_SetPosition(MEARI, leader->x.fixed, leader->z.fixed);
+		Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
 	}
-	Actor_WalkToAndWait(MEARI, 0x2a1, 183);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Actor_WalkToAndWait(MIA, 0x2a1, 183);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Engine_ActorStartRepeatedMotion(19, 2);
 	Engine_ActorRunRepeatedMotion(20, 2);
 	Engine_EventWait(40);
-	Engine_EventSetMessage(MSGNO(MsgImiruMary));
+	Engine_EventSetMessage(MSGNO(MsgImilMia));
 	Event_ShowMessageAndWait(19, 0, 10);
-	Actor_FaceDirection(MEARI, 0xe000, 40);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(MIA, 0xe000, 40);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Actor_SetAttachedEffect(20, 0x102);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4014, 0, 10);
-	Actor_FaceDirection(MEARI, 0xa000, 40);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Actor_FaceDirection(MIA, 0xa000, 40);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Event_ShowMessageAndWait(0x2003, 0, 10);
 	Engine_ActorSetAnimationAndWait(20, 3);
 	Engine_EventWait(20);
@@ -1277,26 +1277,26 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(19, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-	Actor_FaceDirection(MEARI, 0xf000, 10);
-	Actor_FaceDirection(MEARI, 0x2000, 40);
+	Actor_FaceDirection(MIA, 0xf000, 10);
+	Actor_FaceDirection(MIA, 0x2000, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 40);
+	Actor_FaceDirection(MIA, 0xc000, 40);
 	Engine_ActorRunRepeatedMotion(20, 2);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4014, 0, 20);
-	Actor_FaceDirection(MEARI, 0xa000, 20);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(MIA, 0xa000, 20);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(60);
-	Actor_ShowEmote(MEARI, 0x105, 60);
+	Actor_ShowEmote(MIA, 0x105, 60);
 	Actor_ShowEmote(19, 0x101, 0);
 	Actor_ShowEmote(20, 0x101, 60);
 	Engine_ActorRunRepeatedMotion(19, 1);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(19, 0, 10);
-	Actor_FaceDirection(MEARI, 0xe000, 40);
-	Actor_FaceDirection(MEARI, 0xa000, 40);
-	Actor_FaceDirection(MEARI, 0xe000, 20);
-	Actor_FaceDirection(MEARI, 0x6000, 80);
+	Actor_FaceDirection(MIA, 0xe000, 40);
+	Actor_FaceDirection(MIA, 0xa000, 40);
+	Actor_FaceDirection(MIA, 0xe000, 20);
+	Actor_FaceDirection(MIA, 0x6000, 80);
 	Event_ShowMessageAndWait(0x2003, 0, 20);
 	Actor_FaceDirection(20, 0xf000, 0);
 	Actor_FaceDirection(19, 0x7000, 40);
@@ -1309,30 +1309,30 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Object_GetById(20)->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x4014, 0, 10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(40);
-	Actor_FaceDirection(MEARI, 0xa000, 10);
+	Actor_FaceDirection(MIA, 0xa000, 10);
 	Event_ShowMessageAndWait(0x2003, 0, 40);
-	Actor_FaceDirection(MEARI, 0x2000, 20);
+	Actor_FaceDirection(MIA, 0x2000, 20);
 	Event_ShowMessageAndWait(0x4003, 0, 10);
 	Actor_SetAttachedEffect(19, 0x102);
 	Actor_SetAttachedEffect(20, 0x102);
 	Engine_EventWait(40);
-	Actor_FaceDirection(MEARI, 0xc000, 20);
-	Engine_ActorSetAnimation(MEARI, 4);
+	Actor_FaceDirection(MIA, 0xc000, 20);
+	Engine_ActorSetAnimation(MIA, 4);
 	Event_ShowMessageAndWait(0x2003, 0, 20);
 	Engine_ActorRunRepeatedMotion(19, 1);
 	Event_ShowMessageAndWait(19, 0, 10);
-	Actor_FaceDirection(MEARI, 0x2000, 40);
-	Actor_FaceDirection(MEARI, 0xc000, 20);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(MIA, 0x2000, 40);
+	Actor_FaceDirection(MIA, 0xc000, 20);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(20, 1);
 	Event_ShowMessageAndWait(0x4014, 0, 20);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
-	Actor_FaceDirection(MEARI, 0xa000, 20);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(MIA, 0xa000, 20);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Event_ShowMessageAndWait(0x2003, 0, 80);
 	Actor_ShowEmote(19, 0x105, 0);
 	Actor_ShowEmote(20, 0x105, 60);
@@ -1340,29 +1340,29 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Event_ShowMessageAndWait(19, 0, 10);
 	Engine_ActorSetAnimation(20, 4);
 	Event_ShowMessageAndWait(0x4014, 0, 20);
-	Actor_ShowEmote(MEARI, 0x102, 60);
+	Actor_ShowEmote(MIA, 0x102, 60);
 	Event_ShowMessageAndWait(0x2003, 0, 40);
 	Engine_ActorSetAnimationAndWait(19, 3);
 	Event_ShowMessageAndWait(19, 0, 10);
-	Actor_FaceDirection(MEARI, 0xe000, 20);
+	Actor_FaceDirection(MIA, 0xe000, 20);
 	Engine_ActorSetAnimationAndWait(20, 3);
 	Event_ShowMessageAndWait(0x4014, 0, 10);
-	Actor_FaceDirection(MEARI, 0xa000, 60);
-	Actor_FaceDirection(MEARI, 0xe000, 20);
-	Actor_FaceDirection(MEARI, 0xa000, 20);
-	Actor_FaceDirection(MEARI, 0xc000, 40);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(MIA, 0xa000, 60);
+	Actor_FaceDirection(MIA, 0xe000, 20);
+	Actor_FaceDirection(MIA, 0xa000, 20);
+	Actor_FaceDirection(MIA, 0xc000, 40);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Event_ShowMessageAndWait(0x2003, 0, 10);
 	Engine_ActorSetAnimation(19, 3);
 	Engine_ActorSetAnimationAndWait(20, 3);
 	Engine_EventWait(40);
-	Actor_FaceDirection(MEARI, 0x2000, 20);
+	Actor_FaceDirection(MIA, 0x2000, 20);
 	Event_ShowMessageAndWait(0x4003, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(20);
-	Actor_WalkToAndWait(MEARI, 0x2b0, 200);
-	Actor_SetPosition(MEARI, 0, 0);
+	Actor_WalkToAndWait(MIA, 0x2b0, 200);
+	Actor_SetPosition(MIA, 0, 0);
 	Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(20, 0x284, 166);
 	Engine_EventWait(1);
@@ -1392,7 +1392,7 @@ static void SceneActor_TurnTowardTableAngle(s32 z)
 	}
 	o->unk5A = t;
 	z = 1;
-	d = ImiruMura_KeyHeadings[(gKeysHeld >> 4) & 0xF];
+	d = Imil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
 	z = -z;
 	if (d == z)
 	{
@@ -1426,7 +1426,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 
 	for (;;)
 	{
-		heading = ImiruMura_SwayHeadings[(gKeysHeld >> 4) & 15];
+		heading = Imil_SwayHeadings[(gKeysHeld >> 4) & 15];
 		if ((heading << 16) == -0x10000)
 		{
 			return;
@@ -1504,19 +1504,19 @@ tail:
 	Engine_EventEnd();
 }
 
-s16 ImiruMura_KeyHeadings[] = {
+s16 Imil_KeyHeadings[] = {
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
 	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, -1, -1, FACING_NORTH,
 	FACING_SOUTH, -1, -1, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
-s16 ImiruMura_SwayHeadings[] = {
+s16 Imil_SwayHeadings[] = {
 	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
 	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
-s32 gImiruMuraPlacementData[] = {
+s32 gImilPlacementData[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -1534,12 +1534,12 @@ s32 gImiruMuraPlacementData[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 ImiruMura_ActorScriptA[] = {
+s32 Imil_ActorScriptA[] = {
 	SC_CALL(OverlayObject_UpdateWobbleByCounter),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 ImiruMura_ActorScriptB[] = {
+s32 Imil_ActorScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(136), 0, PIXELS(192)),
 	SC_SYNC,
@@ -1552,7 +1552,7 @@ s32 ImiruMura_ActorScriptB[] = {
 	SC_END,
 };
 
-s32 ImiruMura_ActorScriptC[] = {
+s32 Imil_ActorScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(155), 0, PIXELS(135)),
 	SC_SYNC,
@@ -1570,7 +1570,7 @@ s32 ImiruMura_ActorScriptC[] = {
 	SC_END,
 };
 
-s32 ImiruMura_TurnScript[] = {
+s32 Imil_TurnScript[] = {
 	SC_ADD(SW_SCALE_Y, 0x6000),
 	SC_WAIT(2),
 	SC_ADD(SW_SCALE_Y, -0x3000),
@@ -1583,14 +1583,14 @@ s32 ImiruMura_TurnScript[] = {
 	SC_END,
 };
 
-s32 ImiruMura_SparkScript[] = {
+s32 Imil_SparkScript[] = {
 	SC_ADD(SW_Y, -0x6666),
 	SC_WAIT(1),
 	SC_LOOP(72, SC_TOP),
 	SC_FREE,
 };
 
-s32 ImiruMura_MiaScriptA[] = {
+s32 Imil_MiaScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(177), 0, PIXELS(136)),
 	SC_SYNC,
@@ -1605,7 +1605,7 @@ s32 ImiruMura_MiaScriptA[] = {
 	SC_END,
 };
 
-s32 ImiruMura_MiaScriptB[] = {
+s32 Imil_MiaScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(165), 0, PIXELS(207)),
 	SC_SYNC,
@@ -1619,12 +1619,12 @@ s32 ImiruMura_MiaScriptB[] = {
 	SC_END,
 };
 
-s32 ImiruMura_PrimaryScript[] = {
+s32 Imil_PrimaryScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 ImiruMura_PrimaryScript2[] = {
+s32 Imil_PrimaryScript2[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(132), 0, PIXELS(206)),
 	SC_SYNC,
@@ -1633,7 +1633,7 @@ s32 ImiruMura_PrimaryScript2[] = {
 	SC_END,
 };
 
-struct SceneEntrance gImiruMuraEntrancesOther[] = {
+struct SceneEntrance gImilEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
@@ -1647,7 +1647,7 @@ struct SceneEntrance gImiruMuraEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruMuraEntrances2[] = {
+struct SceneEntrance gImilEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
 	{ 2, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
@@ -1660,7 +1660,7 @@ struct SceneEntrance gImiruMuraEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 ImiruMura_SceneTable[] = {
+u32 Imil_SceneTable[] = {
 	SCENE_EXITS(50),
 	SCENE_EXIT(1, 51, 1),
 	SCENE_EXIT(2, 51, 5),
@@ -1683,8 +1683,8 @@ u32 ImiruMura_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gImiruMuraPlacements[] = {
-	{ 0x6c, CONDITION_ALWAYS, (s32)gImiruMuraPlacementData,
+struct ScenePlacement gImilPlacements[] = {
+	{ 0x6c, CONDITION_ALWAYS, (s32)gImilPlacementData,
 		PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1695,7 +1695,7 @@ struct ScenePlacement gImiruMuraPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruMuraPlacementsFlag881[] = {
+struct ScenePlacement gImilPlacementsFlag881[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -1707,7 +1707,7 @@ struct ScenePlacement gImiruMuraPlacementsFlag881[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruMuraPlacements2[] = {
+struct ScenePlacement gImilPlacements2[] = {
 	{ 0x6f, 0x0, ACTOR_STAND,
 		PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x67, 0x0, ACTOR_STAND,
@@ -1734,107 +1734,107 @@ struct ScenePlacement gImiruMuraPlacements2[] = {
 		PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x66, 0x0, ACTOR_STAND,
 		PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xdf, 0x0, 7,
 		PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gImiruMuraEventsOther[] = {
+struct SceneEvent gImilEventsOther[] = {
 	{ EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x200, EVENT_SCRIPT(EV11_PSYNERGY) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
 	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
 	{ EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_TOUCH) },
 	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheMercuryLighthouseIsShiningMary) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
 	{ EVENT_TALK, 9, 0x881, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImilWillBeFineDiseaseIs) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImilImilWillBeFineDiseaseIs) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(EV08_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMaryWasOnlyInImilTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraWeveHadALotOfStrangers) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraDontWorryAboutUsMaryWell) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x881, MSGNO(MsgImiruMuraPeopleGetSickBecauseTheyStay) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgImiruMuraNowThatIveLetMyGuard) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilMiaWasOnlyInImilTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilWeveHadALotOfStrangers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilDontWorryAboutUsMiaWell) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x881, MSGNO(MsgImilPeopleGetSickBecauseTheyStay) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgImilNowThatIveLetMyGuard) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf5f, FIND_COINS(9) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf60, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_GRAVE), 102, 0xf61, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruMuraEvents2[] = {
-	{ EVENT_TALK, 8, 0x82c, MSGNO(MsgImiruMuraTheresBeenAnEpidemicGoingAround) },
-	{ EVENT_TALK, 8, 0x82b, MSGNO(MsgImiruMuraGetMaryHurry) },
+struct SceneEvent gImilEvents2[] = {
+	{ EVENT_TALK, 8, 0x82c, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
+	{ EVENT_TALK, 8, 0x82b, MSGNO(MsgImilGetMiaHurry) },
 	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(EV08_TALK_2) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatFountainWaterReallyMadeGrandpa) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
 	{ EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
-	{ EVENT_TALK, 9, 0x82b, MSGNO(MsgImiruMuraItHurts) },
+	{ EVENT_TALK, 9, 0x82b, MSGNO(MsgImilItHurts) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
 	{ EVENT_TALK, 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(EV10_TALK_2) },
-	{ EVENT_TALK, 11, 0x881, MSGNO(MsgImiruMuraCoughTheEpidemicHasHitAlmost) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraItsNiceThatTheFountainCan) },
+	{ EVENT_TALK, 11, 0x881, MSGNO(MsgImilCoughTheEpidemicHasHitAlmost) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImilItsNiceThatTheFountainCan) },
 	{ EVENT_TALK, 12, 0x881, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
-	{ EVENT_TALK, 13, 0x881, MSGNO(MsgImiruMuraWereClosedSorryIGetA) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunArmorShop) },
-	{ EVENT_TALK, 15, 0x881, MSGNO(MsgImiruMuraIfYouWantToBuyAnything) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunItemShop) },
-	{ EVENT_TALK, 14, 0x881, EVENT_SCRIPT(ImiruMura_RunItemShop) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSoHappyThatMommyIs) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunWeaponShop) },
+	{ EVENT_TALK, 13, 0x881, MSGNO(MsgImilWereClosedSorryIGetA) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunArmorShop) },
+	{ EVENT_TALK, 15, 0x881, MSGNO(MsgImilIfYouWantToBuyAnything) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunItemShop) },
+	{ EVENT_TALK, 14, 0x881, EVENT_SCRIPT(Imil_RunItemShop) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImilImSoHappyThatMommyIs) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 17, 0x881, MSGNO(MsgImiruMuraWereTheOnlyInnThatStays) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThankGoodnessTheTownIsBack) },
+	{ EVENT_TALK, 17, 0x881, MSGNO(MsgImilWereTheOnlyInnThatStays) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
 	{ EVENT_TALK, 18, 0x881, EVENT_SCRIPT(EV18_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImGladTheBeaconHasBeen) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, 0x881, EVENT_SCRIPT(EV20_TALK) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraIWillBeAKindGirl) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(EV08_PSYNERGY_2) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraGrandpasAllBetterNowThanksTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x82b, MSGNO(MsgImiruMuraOoohIDontFeelSoGood) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraMaryIsAGoodGirlI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraNowMaryCanLeaveTheVillage) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x82b, MSGNO(MsgImilOoohIDontFeelSoGood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(EV10_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImiruMuraHerPalmsShineWithABlue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatBlueLightFromHerHands) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImiruMuraWhoAreThesePeopleTheyMust) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgImiruMuraCustomersAreHardToComeBy) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x881, MSGNO(MsgImiruMuraWhyDoTheyAlwaysComeWhen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheCustomersAreBackIThought) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x881, MSGNO(MsgImiruMuraIfOnlyWeHadSomeOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMarySaidItWouldntBeGood) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x881, MSGNO(MsgImiruMuraIWonderIfTheyAreHeaded) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMyDaddysStillInKolimaIll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x881, MSGNO(MsgImiruMuraSoManyCustomersItJustGoes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMaryWillBeLeavingWithYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x881, MSGNO(MsgImiruMuraWintersAreToughHereSoIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheyCameToOurVillageAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImiruMuraWeDontGetToEatMany) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraINeverToldMaryThatI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImilHerPalmsShineWithABlue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgImilCustomersAreHardToComeBy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x881, MSGNO(MsgImilWhyDoTheyAlwaysComeWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgImilTheCustomersAreBackIThought) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x881, MSGNO(MsgImilIfOnlyWeHadSomeOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgImilMiaSaidItWouldntBeGood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x881, MSGNO(MsgImilIWonderIfTheyAreHeaded) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgImilMyDaddysStillInKolimaIll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x881, MSGNO(MsgImilSoManyCustomersItJustGoes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgImilMiaWillBeLeavingWithYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x881, MSGNO(MsgImilWintersAreToughHereSoIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImilWeDontGetToEatMany) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(EV19_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMarysGoingToDefendTheHonor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(EV20_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSorryMaryButICant) },
-	{ 0xc403, 10, 0x881, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
-	{ 0xc403, 11, 0x881, EVENT_SCRIPT(ImiruMura_RunArmorShop) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
+	{ 0xc403, 10, 0x881, EVENT_SCRIPT(Imil_RunWeaponShop) },
+	{ 0xc403, 11, 0x881, EVENT_SCRIPT(Imil_RunArmorShop) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf26, FIND_ITEM(0xb9) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_OVEN), 102, 0xf63, FIND_ITEM(0xc4) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImiruMuraItLooksLikePorridgeItIs)) },
-	{ SEARCH(SEARCH_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImiruMuraItsSomeHotStewItWarms)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItLooksLikePorridgeItIs)) },
+	{ SEARCH(SEARCH_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItsSomeHotStewItWarms)) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1846,50 +1846,50 @@ struct SceneEvent gImiruMuraEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 ImiruMura_ExitCellStep5[] = {
+u16 Imil_ExitCellStep5[] = {
 	MAP_CELL_STEP(40, 37, 4, 2, 5), MAP_CELL_STEP(40, 39, 4, 2, 5), MAP_CELL_STEPS_END,
 	MAP_CELL_STEP(35, 35, 2, 2, 5), MAP_CELL_STEP(33, 35, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_ExitCellStep4[] = {
+u16 Imil_ExitCellStep4[] = {
 	MAP_CELL_STEP(35, 37, 2, 2, 5), MAP_CELL_STEP(33, 37, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_ExitCellStep1[] = {
+u16 Imil_ExitCellStep1[] = {
 	MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_ExitCellStep0[] = {
+u16 Imil_ExitCellStep0[] = {
 	MAP_CELL_STEP(35, 39, 2, 2, 5), MAP_CELL_STEP(33, 39, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_ExitCellStep2[] = {
+u16 Imil_ExitCellStep2[] = {
 	MAP_CELL_STEP(42, 48, 2, 2, 5), MAP_CELL_STEP(40, 48, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_ExitCellStep3[] = {
+u16 Imil_ExitCellStep3[] = {
 	MAP_CELL_STEP(42, 46, 2, 2, 5), MAP_CELL_STEP(40, 46, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 *ImiruMura_ExitCellSteps[] = {
-	ImiruMura_ExitCellStep0,
-	ImiruMura_ExitCellStep1,
-	ImiruMura_ExitCellStep2,
-	ImiruMura_ExitCellStep3,
-	ImiruMura_ExitCellStep4,
-	ImiruMura_ExitCellStep5,
+u16 *Imil_ExitCellSteps[] = {
+	Imil_ExitCellStep0,
+	Imil_ExitCellStep1,
+	Imil_ExitCellStep2,
+	Imil_ExitCellStep3,
+	Imil_ExitCellStep4,
+	Imil_ExitCellStep5,
 };
 
 // 出口ごとのセル位置 (x, y)
-s16 ImiruMura_ExitCellPoints[][2] = {
+s16 Imil_ExitCellPoints[][2] = {
 	{ 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };
 
-u16 ImiruMura_CellStepsA[] = {
+u16 Imil_CellStepsA[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(0, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
 
-u16 ImiruMura_CellStepsB[] = {
+u16 Imil_CellStepsB[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(2, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
 

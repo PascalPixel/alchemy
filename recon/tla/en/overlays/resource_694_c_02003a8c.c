@@ -1,6 +1,6 @@
 /* Draft, differ 10 of 220: overlay 694's scene setup, which on entrances 18 and 19 shows the coins
  * won or lost and on entrance 20 hands out the prize list, written from the listing (its ☀️ twin
- * by score, tolbi_spring.c's TorebiIzumi_OpenScene, is a different scene). Left: scheduling only.
+ * by score, tolbi_spring.c's TolbiSpring_OpenScene, is a different scene). Left: scheduling only.
  * The native builds -1 after the ldrsb of the list head and of the next prize (movs; ldrsb; movs
  * r5/r2, #1; negs), loads the item for PartyInventory_GiveItem after the mode 0 (movs r1, #0;
  * adds r0, r5), and steps the prize pointer after the 0xc000 wait argument; the draft does each

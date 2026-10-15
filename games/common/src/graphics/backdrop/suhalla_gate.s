@@ -1,7 +1,7 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-	.global Battle_SuharaGateBackdrop
-Battle_SuharaGateBackdrop:
+	.global Battle_SuhallaGateBackdrop
+Battle_SuhallaGateBackdrop:
 	.incbin "games/common/src/graphics/backdrop/suhalla_gate.gbapal"
 	.incbin "games/common/src/graphics/backdrop/suhalla_gate.bitmap.d7"
 	.ifeq GAME_TLA

@@ -28,9 +28,9 @@
 
 // 前方宣言
 static void SceneState_ApplyThreeRects(void);
-static void KuupuappuDou_RaiseActorPriorities(void);
-static void KuupuappuDou_EnableGroupAutomaticPriority(void);
-static void KuupuappuDou_SpawnPuffs(struct FieldActor *source);
+static void VaultCave_RaiseActorPriorities(void);
+static void VaultCave_EnableGroupAutomaticPriority(void);
+static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
 s32 Math_RemainderUnsigned();
 
@@ -51,62 +51,62 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KuupuappuDou1)
+	if (scene == (s32)&SceneId_VaultCave1)
 	{
-		return gKuupuappuDouEntrances1;
+		return gVaultCaveEntrances1;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou2)
+	if (scene == (s32)&SceneId_VaultCave2)
 	{
-		return gKuupuappuDouEntrances2;
+		return gVaultCaveEntrances2;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou3)
+	if (scene == (s32)&SceneId_VaultCave3)
 	{
-		return gKuupuappuDouEntrances3;
+		return gVaultCaveEntrances3;
 	}
-	return gKuupuappuDouEntrancesOther;
+	return gVaultCaveEntrancesOther;
 }
 
-u8 *KuupuappuDou_GetRegions(void)
+u8 *VaultCave_GetRegions(void)
 {
-	return (u8 *)gKuupuappuDouRegions;
+	return (u8 *)gVaultCaveRegions;
 }
 
 const u32 *Scene_GetExits(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KuupuappuDou1)
+	if (scene == (s32)&SceneId_VaultCave1)
 	{
-		return gKuupuappuDouExits1;
+		return gVaultCaveExits1;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou2)
+	if (scene == (s32)&SceneId_VaultCave2)
 	{
-		return gKuupuappuDouExits2;
+		return gVaultCaveExits2;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou3)
+	if (scene == (s32)&SceneId_VaultCave3)
 	{
-		return gKuupuappuDouExits3;
+		return gVaultCaveExits3;
 	}
-	return gKuupuappuDouExitsOther;
+	return gVaultCaveExitsOther;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KuupuappuDou1)
+	if (scene == (s32)&SceneId_VaultCave1)
 	{
-		return gKuupuappuDouPlacements1;
+		return gVaultCavePlacements1;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou2)
+	if (scene == (s32)&SceneId_VaultCave2)
 	{
-		return gKuupuappuDouPlacements2;
+		return gVaultCavePlacements2;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou3)
+	if (scene == (s32)&SceneId_VaultCave3)
 	{
-		return gKuupuappuDouPlacements3;
+		return gVaultCavePlacements3;
 	}
-	return gKuupuappuDouPlacementsOther;
+	return gVaultCavePlacementsOther;
 }
 
 static s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
@@ -132,9 +132,9 @@ struct DirectionSteps
 };
 
 #define DIRECTION_STEP(heading) \
-	(((struct DirectionSteps *)KuupuappuDou_DirectionSteps)->xz[heading])
+	(((struct DirectionSteps *)VaultCave_DirectionSteps)->xz[heading])
 
-static void KuupuappuDou_PushBlockAhead(void)
+static void VaultCave_PushBlockAhead(void)
 {
 	/* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one word per heading through an array reference, as native; through a plain s32 pointer cast the address is summed once into a register and no longer matches, the table as const s32 words indexed directly differs 79 (143 instructions for 146), a const s32 local pointer 94. */
 	struct FieldActor	 *leader = Object_GetById(0);
@@ -211,19 +211,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KuupuappuDou1)
+	if (scene == (s32)&SceneId_VaultCave1)
 	{
-		return gKuupuappuDouEvents1;
+		return gVaultCaveEvents1;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou2)
+	if (scene == (s32)&SceneId_VaultCave2)
 	{
-		return gKuupuappuDouEvents2;
+		return gVaultCaveEvents2;
 	}
-	if (scene == (s32)&SceneId_KuupuappuDou3)
+	if (scene == (s32)&SceneId_VaultCave3)
 	{
-		return gKuupuappuDouEvents3;
+		return gVaultCaveEvents3;
 	}
-	return gKuupuappuDouEventsOther;
+	return gVaultCaveEventsOther;
 }
 
 static s32 IsActor9AtTile15x54(void)
@@ -256,7 +256,7 @@ static void EV60_SCRIPT(void)
 {
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
-		KuupuappuDou_PushBlockAhead();
+		VaultCave_PushBlockAhead();
 		if (IsActor9AtTile15x54() != 0)
 		{
 			GameFlag_Set(0x9a9);
@@ -333,7 +333,7 @@ static s32 SceneActor_IsActor10AtTile16x12(void)
 
 static void EV50_SCRIPT(void)
 {
-	KuupuappuDou_PushBlockAhead();
+	VaultCave_PushBlockAhead();
 	if (GameFlag_IsSet(0x9aa) == 0)
 	{
 		if (SceneActor_IsActor10AtTile16x12() != 0)
@@ -479,15 +479,15 @@ static void SceneState_DispatchByActorZeroDepth(void)
 
 	if (p->y.fixed >= 0x100000)
 	{
-		KuupuappuDou_RaiseActorPriorities();
+		VaultCave_RaiseActorPriorities();
 	}
 	else
 	{
-		KuupuappuDou_EnableGroupAutomaticPriority();
+		VaultCave_EnableGroupAutomaticPriority();
 	}
 }
 
-static void KuupuappuDou_RaiseActorPriorities(void)
+static void VaultCave_RaiseActorPriorities(void)
 {
 	s32 i;
 	s32 id;
@@ -500,7 +500,7 @@ static void KuupuappuDou_RaiseActorPriorities(void)
 	}
 }
 
-static void KuupuappuDou_EnableGroupAutomaticPriority(void)
+static void VaultCave_EnableGroupAutomaticPriority(void)
 {
 	s32 index = 16;
 	s32 flag = 1;
@@ -516,7 +516,7 @@ static void KuupuappuDou_EnableGroupAutomaticPriority(void)
 	} while (remaining >= 0);
 }
 
-static void KuupuappuDou_RunRumble(void)
+static void VaultCave_RunRumble(void)
 {
 	struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
 	s32				 frames;
@@ -589,7 +589,7 @@ static void EV20_SEARCH(void)
 		Engine_EventWait(40);
 		Map_CopyCells(2, 24, 1, 2, v6, v5);
 		Engine_EventWait(40);
-		KuupuappuDou_RunRumble();
+		VaultCave_RunRumble();
 	}
 }
 
@@ -636,18 +636,18 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	flag = Object_GetById(10)->paused;
 	if (flag == 0)
 	{
-		if (++KuupuappuDou_ScheduleTimer > 190)
+		if (++VaultCave_ScheduleTimer > 190)
 		{
-			KuupuappuDou_ScheduleTimer = 0;
+			VaultCave_ScheduleTimer = 0;
 		}
-		index = KuupuappuDou_ScheduleIndex;
-		if (KuupuappuDou_ScheduleFrames[index] == KuupuappuDou_ScheduleTimer)
+		index = VaultCave_ScheduleIndex;
+		if (VaultCave_ScheduleFrames[index] == VaultCave_ScheduleTimer)
 		{
 			rec7 = Actor_Get((index + 11));
 			rec7->gravity = 0xa3d;
-			if (++KuupuappuDou_ScheduleIndex > 3)
+			if (++VaultCave_ScheduleIndex > 3)
 			{
-				KuupuappuDou_ScheduleIndex = 0;
+				VaultCave_ScheduleIndex = 0;
 			}
 		}
 		for (i = 0; i <= 3; i++)
@@ -657,7 +657,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 			{
 				if (rec7->y.fixed <= 0xffff)
 				{
-					KuupuappuDou_SpawnPuffs(rec7);
+					VaultCave_SpawnPuffs(rec7);
 					rec7->y.fixed = 0xff0000;
 					rec7->gravity = 0;
 					rec7->velocity_y = 0;
@@ -697,9 +697,9 @@ static void FieldScene_RunScene3a7SequenceD(void)
 	rec7 = Object_GetById(10);
 	if (rec7->paused == 0)
 	{
-		if ((++KuupuappuDou_TickCounter & 63) == 0)
+		if ((++VaultCave_TickCounter & 63) == 0)
 		{
-			selected = &KuupuappuDou_TickValue;
+			selected = &VaultCave_TickValue;
 			record = Engine_RandomNext();
 			record = Math_RemainderUnsigned(record, 6);
 			*selected = record;
@@ -757,7 +757,7 @@ static void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
 	Engine_ObjectSetPosition(rec, pos[0], pos[1], pos[2]);
 }
 
-static void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
+static void VaultCave_SpawnPuffs(struct FieldActor *source)
 {
 	struct FieldActor *puff;
 	s32				   i;
@@ -780,7 +780,7 @@ static void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
 
 			*timer = frames;
 		}
-		Engine_ObjectSetScript(puff, KuupuappuDou_PuffScript);
+		Engine_ObjectSetScript(puff, VaultCave_PuffScript);
 	}
 }
 
@@ -827,10 +827,10 @@ static void SceneActor_SetupActors11To14AndInstallTask(void)
 	FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, TASK_PRIORITY_SCENE);
 }
 
-s32 KuupuappuDou_ApplyEntryState(void)
+s32 VaultCave_ApplyEntryState(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_KuupuappuDou1)
+	if (gGameState.scene == (s32)&SceneId_VaultCave1)
 	{
 		switch (gGameState.entrance)
 		{
@@ -859,7 +859,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
 			break;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_KuupuappuDou2)
+	if (gGameState.scene == (s32)&SceneId_VaultCave2)
 	{
 		if (Engine_GameFlagIsSet(0x300) == 0)
 		{
@@ -934,7 +934,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
 		Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 		Object_GetById(9)->collision_flags = 1;
 	}
-	if (gGameState.scene == (s32)&SceneId_KuupuappuDou3)
+	if (gGameState.scene == (s32)&SceneId_VaultCave3)
 	{
 		Engine_ActorSetAnimation(8, 2);
 		if (Engine_GameFlagIsSet(0x207) == 0)
@@ -967,11 +967,11 @@ s32 KuupuappuDou_ApplyEntryState(void)
 		}
 	}
 	gGameState.retreat_entrance = 10;
-	gGameState.retreat_scene = (s32)&SceneId_KuupuappuDou1;
+	gGameState.retreat_scene = (s32)&SceneId_VaultCave1;
 	return 0;
 }
 
-const s16 KuupuappuDou_DirectionSteps[] = {
+const s16 VaultCave_DirectionSteps[] = {
 	0, 16,
 	0, 16,
 	0, 16,
@@ -990,16 +990,16 @@ const s16 KuupuappuDou_DirectionSteps[] = {
 	0, 16,
 };
 
-const s32 KuupuappuDou_PuffScript[] = {
+const s32 VaultCave_PuffScript[] = {
 	SC_FREE,
 };
 
-struct SceneEntrance gKuupuappuDouEntrancesOther[] = {
+struct SceneEntrance gVaultCaveEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKuupuappuDouEntrances1[] = {
+struct SceneEntrance gVaultCaveEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
@@ -1017,7 +1017,7 @@ struct SceneEntrance gKuupuappuDouEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKuupuappuDouEntrances2[] = {
+struct SceneEntrance gVaultCaveEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
 	{ 2, CONDITION_ALWAYS, 344, 0, 152, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
@@ -1035,7 +1035,7 @@ struct SceneEntrance gKuupuappuDouEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKuupuappuDouEntrances3[] = {
+struct SceneEntrance gVaultCaveEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 312, 0, 664, FACING_NORTH, 0, 200, 520, 440, 680, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 600, FACING_SOUTH, 0, 200, 520, 440, 680, 0 },
@@ -1046,16 +1046,16 @@ struct SceneEntrance gKuupuappuDouEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 gKuupuappuDouRegions[] = {
+s16 gVaultCaveRegions[] = {
 	447, 47, 783, 463, 63, 799, -1, 10,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gKuupuappuDouExitsOther[] = {
+u32 gVaultCaveExitsOther[] = {
 	SCENE_EXITS(511),
 };
 
-u32 gKuupuappuDouExits1[] = {
+u32 gVaultCaveExits1[] = {
 	SCENE_EXITS(96),
 	SCENE_EXIT(1, 98, 2),
 	SCENE_EXIT(2, 97, 1),
@@ -1074,7 +1074,7 @@ u32 gKuupuappuDouExits1[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gKuupuappuDouExits2[] = {
+u32 gVaultCaveExits2[] = {
 	SCENE_EXITS(97),
 	SCENE_EXIT(1, 96, 2),
 	SCENE_EXIT(2, 98, 6),
@@ -1092,7 +1092,7 @@ u32 gKuupuappuDouExits2[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gKuupuappuDouExits3[] = {
+u32 gVaultCaveExits3[] = {
 	SCENE_EXITS(98),
 	SCENE_EXIT(1, 23, 14),
 	SCENE_EXIT(2, 96, 1),
@@ -1103,15 +1103,15 @@ u32 gKuupuappuDouExits3[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKuupuappuDouPlacementsOther[] = {
+struct ScenePlacement gVaultCavePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKuupuappuDouPlacements1[] = {
+struct ScenePlacement gVaultCavePlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKuupuappuDouPlacements2[] = {
+struct ScenePlacement gVaultCavePlacements2[] = {
 	{ 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(280), 0, PIXELS(876), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1145,7 +1145,7 @@ struct ScenePlacement gKuupuappuDouPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKuupuappuDouPlacements3[] = {
+struct ScenePlacement gVaultCavePlacements3[] = {
 	{ 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(296), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1163,11 +1163,11 @@ struct ScenePlacement gKuupuappuDouPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKuupuappuDouEventsOther[] = {
+struct SceneEvent gVaultCaveEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKuupuappuDouEvents1[] = {
+struct SceneEvent gVaultCaveEvents1[] = {
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
 	{ 0x31, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1187,7 +1187,7 @@ struct SceneEvent gKuupuappuDouEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKuupuappuDouEvents2[] = {
+struct SceneEvent gVaultCaveEvents2[] = {
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
 	{ 0x31, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1215,7 +1215,7 @@ struct SceneEvent gKuupuappuDouEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKuupuappuDouEvents3[] = {
+struct SceneEvent gVaultCaveEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ 0x31, 2, CONDITION_ALWAYS, 2 },
 	{ 0x21, 3, CONDITION_ALWAYS, 3 },
@@ -1229,14 +1229,14 @@ struct SceneEvent gKuupuappuDouEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 KuupuappuDou_ScheduleFrames[] = {
+u32 VaultCave_ScheduleFrames[] = {
 	20, 80, 115, 170,
 };
 
-s32 KuupuappuDou_ScheduleTimer = 0;
+s32 VaultCave_ScheduleTimer = 0;
 
-s32 KuupuappuDou_ScheduleIndex = 0;
+s32 VaultCave_ScheduleIndex = 0;
 
-s32 KuupuappuDou_TickCounter = 0;
+s32 VaultCave_TickCounter = 0;
 
-s32 KuupuappuDou_TickValue = 0;
+s32 VaultCave_TickValue = 0;

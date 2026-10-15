@@ -67,7 +67,7 @@ struct BtlWork
 	u8						  summon_count;
 	u8						  pty_st;
 	u8						  battle_type;
-	u8						  chouhatsu_flg;
+	u8						  challenge_flg;
 	u8						  two_sided;
 	u8						  encounter_mode;
 	u8						  escape_failures;
@@ -101,7 +101,7 @@ struct BtlWork
 LAYOUT_SIZE_GUARD(BattleSession_Size, struct BtlWork, 0x82c);
 
 LAYOUT_OFFSET_GUARD(BattleSession_PartyStatusMode, struct BtlWork, pty_st, 0x041);
-LAYOUT_OFFSET_GUARD(BtlWork_ChouhatsuFlg, struct BtlWork, chouhatsu_flg, 0x043);
+LAYOUT_OFFSET_GUARD(BtlWork_ChallengeFlg, struct BtlWork, challenge_flg, 0x043);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BtlWork, party_units, 0x058);
 LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BtlWork, enm_no, 0x066);
 LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BtlWork, slots, 0x074);

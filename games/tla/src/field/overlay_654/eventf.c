@@ -1,18 +1,18 @@
 #include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
 
-struct KabeSpot {
+struct ShrineOfTheSeaGodSpot {
     s32 x;
     s32 z;
     s32 field_18;
     s32 rotation;
 };
 
-extern const struct KabeSpot Data_02003cc0[];
+extern const struct ShrineOfTheSeaGodSpot Data_02003cc0[];
 extern const u8 Data_02003cbc[];
 extern const u8 Data_02003c10[];
 
-void Object_SetPartAttribute(struct KabeObject *object, s32 value);
+void Object_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
 void Func_02003b00(s32 value);
 void Func_02003b18(void);
 void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
@@ -51,34 +51,34 @@ s32 Func_02002ec4(void)
 {
     s16 scene;
 
-    ((struct KabeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x204;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x204;
     scene = gPartyState.scene;
-    if (scene == (s32)&SceneId_Kabe1)
+    if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
         Func_02003094();
-    else if (scene == (s32)&SceneId_Kabe2)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
         Func_02003134();
-    else if (scene == (s32)&SceneId_Kabe3)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
         Func_0200320c();
-    else if (scene == (s32)&SceneId_Kabe4)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
         Func_02003354();
-    else if (scene == (s32)&SceneId_Kabe5)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
         Func_0200338c();
-    else if (scene == (s32)&SceneId_Kabe6)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
         Func_02003504();
-    else if (scene == (s32)&SceneId_Kabe7)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
         Func_02003598();
-    else if (scene == (s32)&SceneId_Kabe8)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
         Func_02003740();
-    else if (scene == (s32)&SceneId_Kabe9)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
         Func_0200377c();
-    else if (scene == (s32)&SceneId_Kabe11)
+    else if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
         Func_0200380c();
     return 0;
 }
 
-struct KabeObject *Func_02002f88(s32 id)
+struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id)
 {
-    struct KabeObject *object = Object_GetById(id);
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(id);
 
     object->priority_flags |= 2;
     object->y = 0xc0000;
@@ -115,15 +115,15 @@ void Func_0200300c(void)
 
 void Func_02003024(void)
 {
-    const struct KabeSpot *spot = Data_02003cc0;
+    const struct ShrineOfTheSeaGodSpot *spot = Data_02003cc0;
     u32 i;
 
     /* FAKEMATCH: loads the spot table before it clears the counter. */
     __asm__("");
     for (i = 0; i <= 15; i++) {
         s32 id = i + 8;
-        struct KabeObject *object = Object_GetById(id);
-        struct KabeSprite *sprite;
+        struct ShrineOfTheSeaGodObject *object = Object_GetById(id);
+        struct ShrineOfTheSeaGodSprite *sprite;
 
         Func_02003aa0(id);
         Object_SetModeById(id, 0);
@@ -141,7 +141,7 @@ void Func_02003024(void)
 
 void Func_02003094(void)
 {
-    struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
 
     Func_02003854(8);
     Func_02003854(9);
@@ -162,8 +162,8 @@ void Func_02003094(void)
 
 void Func_020030fc(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
-    struct KabeObject *object = Object_GetById(11);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(11);
     s32 x = object->x;
     u8 *flags = &object->collision_flags;
 
@@ -182,29 +182,29 @@ void Func_02003134(void)
     ObjectMotion_SetActionVariant(10, 3);
     Func_02003b30(Data_02003cbc);
     Func_02002e70();
-    Kabe_TaskAdd(Func_020011a0, 0x480);
+    ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
     Func_02003aa0(11);
     Func_02003aa0(12);
     Object_GetById(12)->motion_flags = 0;
-    Kabe_BlendStart(3, 15, 1, 1, 6, 15);
+    ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
     if (GameFlag_Test(0x873)) {
         Func_02003a30(11, 0, 0);
     } else if (GameFlag_Test(0x872)) {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 2. */
         angle = 0x8000;
-        Kabe_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
+        ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
         WaitFrames(1);
         ObjectMotion_EnableActionAndSetCallback(11, Data_02003c10);
         ObjectDispatch_SetSingleChildFlags(Object_GetById(11), 1);
         Object_GetById(11)->collision_flags = 1;
     }
     /* FAKEMATCH: the native builds the priority before it loads the callback. */
-    KABE_TASK_ADD_LATE(Func_020030fc, 0x480);
+    SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
 void Func_0200320c(void)
 {
-    struct KabeObject *block;
+    struct ShrineOfTheSeaGodObject *block;
     s32 angle;
 
     Func_02002f88(9);
@@ -222,23 +222,23 @@ void Func_0200320c(void)
     ObjectMotion_SetActionVariant(12, 1);
     ObjectMotion_SetActionVariant(13, 1);
     ObjectMotion_SetActionVariant(14, 1);
-    Kabe_TaskAdd(Func_02001088, 0x480);
+    ShrineOfTheSeaGod_TaskAdd(Func_02001088, 0x480);
     if (GameFlag_Test(0x230)) {
-        Kabe_ObjSetPos(block, 408 << 16, -0xd0000, 336 << 16);
-        ((struct KabeSprite *)block->sprite)->rotation = 0x1000;
+        ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -0xd0000, 336 << 16);
+        ((struct ShrineOfTheSeaGodSprite *)block->sprite)->rotation = 0x1000;
         ObjectMotion_SetActionVariant(14, 3);
         block->priority_flags |= 2;
-        Kabe_BlendStart(0, 50, 3, 1, 24, 70);
+        ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
     }
     if (GameFlag_Test(0x84c))
-        Kabe_ObjSetPos(Object_GetById(8), 200 << 16, 0, 296 << 16);
+        ShrineOfTheSeaGod_ObjSetPos(Object_GetById(8), 200 << 16, 0, 296 << 16);
     Func_02003b30(Data_02003cbc);
     if (GameFlag_Test(0x875))
         Func_02003a30(15, 0, 0);
     else if (GameFlag_Test(0x874)) {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
         angle = 0x4000;
-        Kabe_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
+        ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
     }
     Func_02003b00(0);
     WaitFrames(1);
@@ -246,7 +246,7 @@ void Func_0200320c(void)
 
 void Func_02003354(void)
 {
-    struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
 
     if (GameFlag_Test(0x876) == 0)
         Func_02003024();
@@ -262,7 +262,7 @@ void Func_02003354(void)
 void Func_0200338c(void)
 {
     s32 angle;
-    struct KabeObject *object = Func_02002f88(13);
+    struct ShrineOfTheSeaGodObject *object = Func_02002f88(13);
     u8 *flags = &object->priority_flags;
 
     if ((u16)(gPartyState.entrance - 2) <= 1) {
@@ -277,30 +277,30 @@ void Func_0200338c(void)
     Func_02000f18(11);
     Func_02000f18(12);
     if (GameFlag_Test(0x200))
-        Kabe_BlendStart(0, 0, 1, 1, 8, 18);
+        ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
     if (GameFlag_Test(0x201))
-        Kabe_BlendStart(0, 0, 1, 1, 10, 18);
+        ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
     if (GameFlag_Test(0x202))
-        Kabe_BlendStart(0, 0, 1, 1, 10, 17);
-    Kabe_TaskAdd(Func_02001128, 0x480);
+        ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
+    ShrineOfTheSeaGod_TaskAdd(Func_02001128, 0x480);
     Func_02003b30(Data_02003cbc);
     Func_02002e70();
-    Kabe_TaskAdd(Func_020011a0, 0x480);
+    ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
     if (GameFlag_Test(115) || GameFlag_Test(0x340)) {
         GameFlag_SetBit(0x205);
     } else if (GameFlag_Test(0x87c)) {
-        struct KabeObject *block = Object_GetById(14);
+        struct ShrineOfTheSeaGodObject *block = Object_GetById(14);
         s32 moved = GameFlag_Test(265);
 
         if (moved == 0) {
             block->state = moved;
-            Kabe_ObjPlace(14, 392 << 16, 296 << 16);
+            ShrineOfTheSeaGod_ObjPlace(14, 392 << 16, 296 << 16);
         }
         Object_LinkObjectAndSetCallback(14, gPartyState.current_owner);
     } else if (GameFlag_Test(0x877)) {
         /* FAKEMATCH: the function-scope angle temporary preserves its early constant construction; a direct argument through the unbound helper differs 4. */
         angle = 0x4000;
-        Kabe_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
+        ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
     }
 }
 
@@ -312,10 +312,10 @@ void Func_02003504(void)
     ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 0);
     open = GameFlag_Test(0x301);
     if (open) {
-        Kabe_ObjPlace(8, 248 << 16, 264 << 16);
+        ShrineOfTheSeaGod_ObjPlace(8, 248 << 16, 264 << 16);
         ObjectMotion_SetActionVariant(8, 3);
         Object_GetById(8)->motion_flags = 0;
-        Kabe_BlendStart(0, 0, 1, 1, 15, 16);
+        ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, 16);
         Func_02003aa0(8);
     } else {
         ObjectMotion_SetActionVariant(8, 1);

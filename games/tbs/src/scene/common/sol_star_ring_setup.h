@@ -11,7 +11,7 @@
 #include "dma.h"
 #include "io_reg.h"
 
-struct SoruRingObject
+struct SolRingObject
 {
 	u8	pad00[8];
 	s32 x;
@@ -30,9 +30,9 @@ struct SoruRingObject
 	u8	state;
 };
 
-struct SoruRingEntry
+struct SolRingEntry
 {
-	struct SoruRingObject *obj;
+	struct SolRingObject *obj;
 	s32					   x;
 	s32					   y;
 	s32					   z;
@@ -46,22 +46,22 @@ struct SoruRingEntry
 	u8					   pad26[2];
 };
 
-struct SoruRingList
+struct SolRingList
 {
-	struct SoruRingEntry entries[10];
+	struct SolRingEntry entries[10];
 	u16					 count;
 };
 
-static void Soru_UpdateRing(void)
+static void Sol_UpdateRing(void)
 {
-	struct SoruRingList	 *list = Runtime_AllocateBlock(33, 404);
-	struct SoruRingEntry *entry = list->entries;
+	struct SolRingList	 *list = Runtime_AllocateBlock(33, 404);
+	struct SolRingEntry *entry = list->entries;
 	u32					  i;
 
 	i = 0;
 	while (i != list->count)
 	{
-		struct SoruRingObject *obj;
+		struct SolRingObject *obj;
 		s32					   speed_x;
 		s32					   speed_y;
 		s32					   speed_z;
@@ -96,13 +96,13 @@ static void Soru_UpdateRing(void)
 			if (hold == 0)
 			{
 				scale += step;
-				if (scale >= Soru_RingOffsetX[i])
+				if (scale >= Sol_RingOffsetX[i])
 				{
-					step = -Soru_RingOffsetZ[i];
+					step = -Sol_RingOffsetZ[i];
 				}
 				else if (scale <= 0x1999)
 				{
-					step = Soru_RingOffsetZ[i];
+					step = Sol_RingOffsetZ[i];
 					scale = 0x1999;
 					hold = 24;
 					x = obj->x;
@@ -115,34 +115,34 @@ static void Soru_UpdateRing(void)
 				obj->scale_x = scale;
 				obj->scale_y = scale;
 			}
-			rx = (Soru_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
-			ry = (Soru_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
-			rz = (Soru_RingDrift[i][2] * (u32)Engine_RandomNext()) >> 16;
+			rx = (Sol_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
+			ry = (Sol_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
+			rz = (Sol_RingDrift[i][2] * (u32)Engine_RandomNext()) >> 16;
 			rx = rx != 0 ? (rx << 16) / 1000 : 0;
 			ry = ry != 0 ? (ry << 16) / 1000 : 0;
 			rz = rz != 0 ? (rz << 16) / 1000 : 0;
-			if (Soru_RingDirection[i][0] == 1)
+			if (Sol_RingDirection[i][0] == 1)
 				speed_x += rx;
-			else if (Soru_RingDirection[i][0] == -1)
+			else if (Sol_RingDirection[i][0] == -1)
 				speed_x -= rx;
 			else
 				speed_x = 0;
-			if (Soru_RingDirection[i][1] == 1)
+			if (Sol_RingDirection[i][1] == 1)
 				speed_y += ry;
-			else if (Soru_RingDirection[i][1] == -1)
+			else if (Sol_RingDirection[i][1] == -1)
 				speed_y -= ry;
 			else
 				speed_y = 0;
-			if (Soru_RingDirection[i][2] == 1)
+			if (Sol_RingDirection[i][2] == 1)
 				speed_z += rz;
-			else if (Soru_RingDirection[i][2] == -1)
+			else if (Sol_RingDirection[i][2] == -1)
 				speed_z -= rz;
 			else
 				speed_z = 0;
-			dx = Engine_MathSin(speed_x * Soru_RingSwing[i][0]) * 2;
-			dy = Engine_MathSin(speed_y * Soru_RingSwing[i][1]) * 2;
+			dx = Engine_MathSin(speed_x * Sol_RingSwing[i][0]) * 2;
+			dy = Engine_MathSin(speed_y * Sol_RingSwing[i][1]) * 2;
 			{
-				s32 dz = Engine_MathCos(speed_z * Soru_RingSwing[i][2]) * 2;
+				s32 dz = Engine_MathCos(speed_z * Sol_RingSwing[i][2]) * 2;
 
 				if (hold != 0)
 				{
@@ -191,11 +191,11 @@ static void Soru_UpdateRing(void)
 	}
 }
 
-void SoruStar_SetupElementalRings(s32 first, u32 count)
+void SolStar_SetupElementalRings(s32 first, u32 count)
 {
-	struct SoruRingList	  *list;
-	struct SoruRingEntry  *entry;
-	struct SoruRingObject *obj;
+	struct SolRingList	  *list;
+	struct SolRingEntry  *entry;
+	struct SolRingObject *obj;
 	u32					   i;
 	s32					   none;
 	s32					   cleared;
@@ -212,7 +212,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 		cleared = none;
 		do
 		{
-			obj = (struct SoruRingObject *)Object_GetById(first);
+			obj = (struct SolRingObject *)Object_GetById(first);
 			{
 				u8 *frame = &obj->anim[38];
 
@@ -221,8 +221,8 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 			}
 			obj->state = cleared;
 			Engine_ObjectSetBlendMode(Object_GetById(first), 1);
-			entry->scale = Soru_RingOffsetX[i];
-			entry->scale_step = -Soru_RingOffsetZ[i];
+			entry->scale = Sol_RingOffsetX[i];
+			entry->scale_step = -Sol_RingOffsetZ[i];
 			entry->timer = 3;
 			i++;
 			entry++;
@@ -230,5 +230,5 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 		} while (i != count);
 	}
 	list->count = count;
-	FieldScheduler_AddCallback(Soru_UpdateRing, 0xc80);
+	FieldScheduler_AddCallback(Sol_UpdateRing, 0xc80);
 }

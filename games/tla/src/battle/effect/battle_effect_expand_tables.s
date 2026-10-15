@@ -2,13 +2,13 @@
 	.section .data,"aw",%progbits
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.global SentouKouka_TenkaiCaseTable
-SentouKouka_TenkaiCaseTable:
-	.4byte	SentouKouka_TenkaiCase2
-	.4byte	SentouKouka_TenkaiCase4Plus
-	.4byte	SentouKouka_TenkaiCase8
-	.4byte	SentouKouka_TenkaiCase6Plus
-	.4byte	SentouKouka_TenkaiCase2
-	.4byte	SentouKouka_TenkaiCase4Minus
-	.4byte	SentouKouka_TenkaiCase10
-	.4byte	SentouKouka_TenkaiCase6Minus
+	.global BattleEffect_ExpandCaseTable
+BattleEffect_ExpandCaseTable:
+	.4byte	BattleEffect_ExpandCase2
+	.4byte	BattleEffect_ExpandCase4Plus
+	.4byte	BattleEffect_ExpandCase8
+	.4byte	BattleEffect_ExpandCase6Plus
+	.4byte	BattleEffect_ExpandCase2
+	.4byte	BattleEffect_ExpandCase4Minus
+	.4byte	BattleEffect_ExpandCase10
+	.4byte	BattleEffect_ExpandCase6Minus

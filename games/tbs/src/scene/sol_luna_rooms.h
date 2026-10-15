@@ -4,7 +4,7 @@
 
 enum InnerSanctumActor
 {
-	ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 8
+	ACTOR_KRADEN = ACTOR_FIRST_PLACED + 8
 };
 
 enum InnerSanctumFlag
@@ -16,7 +16,7 @@ enum InnerSanctumFlag
 	FLAG_STATUE_LIGHT_4,
 	FLAG_LUNA_PICTURE_CHANGED_TO_SOL = 0x810,
 	FLAG_STATUE_TRAP_SPRUNG = 0x813,
-	FLAG_ROBIN_SEARCHING_FOR_SUKURETA = 0x896
+	FLAG_ISAAC_SEARCHING_FOR_KRADEN = 0x896
 };
 
 #include "types.h"
@@ -47,11 +47,11 @@ typedef struct
 	s16 unk12;
 } EntB;
 
-extern u16 SoruNichigetsu_Light1Timer;
-extern s32 SoruNichigetsu_FlashState;
-extern u16 SoruNichigetsu_Light2Timer;
-extern u16 SoruNichigetsu_Light3Timer;
-extern u16 SoruNichigetsu_Light4Timer;
+extern u16 SolLunaRooms_Light1Timer;
+extern s32 SolLunaRooms_FlashState;
+extern u16 SolLunaRooms_Light2Timer;
+extern u16 SolLunaRooms_Light3Timer;
+extern u16 SolLunaRooms_Light4Timer;
 
 #include "types.h"
 

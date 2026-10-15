@@ -5,11 +5,11 @@ extern const u8 Data_02003c10[];
 
 void Func_020004b0(void)
 {
-    struct KabeEventWork *work = Ram_HeapSlots->event_work;
+    struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->event_work;
 
     Func_020039d8();
     Func_02003b08(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgFieldStatueLikeDeriShrine, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgFieldStatueLikeDailaShrine, 1);
     work->unknown_15a = 1;
     Func_020039e0();
 }
@@ -19,7 +19,7 @@ void Func_020004e0(void)
     Func_020039d8();
     Func_02003b08(0);
     ObjectMotion_EnableActionAndResetMotion(11);
-    Kabe_Jump(11, 0x100, 20);
+    ShrineOfTheSeaGod_Jump(11, 0x100, 20);
     ObjectMotion_SetAngleToward(11, gPartyState.current_owner, 0);
     Func_02003a70((s32)MsgFieldStartledCompanion);
     Func_02003a80(11, 0);
@@ -32,7 +32,7 @@ void Func_020004e0(void)
 
 void Func_02000554(void)
 {
-    struct KabeEventWork *work = Ram_HeapSlots->event_work;
+    struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->event_work;
 
     work->unknown_15a = 1;
 }

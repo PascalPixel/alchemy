@@ -27,15 +27,15 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiHeya1)
+	if (scene == (s32)&SceneId_KalayInteriors1)
 	{
-		return gKareiHeyaEntrances1;
+		return gKalayInteriorsEntrances1;
 	}
-	if (scene == (s32)&SceneId_KareiHeya2)
+	if (scene == (s32)&SceneId_KalayInteriors2)
 	{
-		return gKareiHeyaEntrances2;
+		return gKalayInteriorsEntrances2;
 	}
-	return gKareiHeyaEntrancesOther;
+	return gKalayInteriorsEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -43,16 +43,16 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *KareiHeya_GetExits(void)
+u8 *KalayInteriors_GetExits(void)
 {
-	return KareiHeya_Exits;
+	return KalayInteriors_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiHeya1)
+	if (scene == (s32)&SceneId_KalayInteriors1)
 	{
 		s32							 entrance = gGameState.entrance;
 		const struct ScenePlacement *table;
@@ -67,27 +67,27 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 		case 14:
 		case 15:
 		case 17:
-			table = gKareiHeyaPlacements1Entrance9;
+			table = gKalayInteriorsPlacements1Entrance9;
 			break;
 		default:
-			table = gKareiHeyaPlacements1;
+			table = gKalayInteriorsPlacements1;
 			break;
 		}
 		FieldScene_PrepareActors(table);
 		return table;
 	}
-	if (scene == (s32)&SceneId_KareiHeya2)
+	if (scene == (s32)&SceneId_KalayInteriors2)
 	{
-		return gKareiHeyaPlacements2;
+		return gKalayInteriorsPlacements2;
 	}
-	return gKareiHeyaPlacementsOther;
+	return gKalayInteriorsPlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s32 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiHeya1)
+	if (scene == (s32)&SceneId_KalayInteriors1)
 	{
 		s32 entrance = gGameState.entrance;
 
@@ -101,22 +101,22 @@ const struct SceneEvent *Scene_GetEvents(void)
 		case 14:
 		case 15:
 		case 17:
-			return gKareiHeyaEvents1Entrance9;
+			return gKalayInteriorsEvents1Entrance9;
 		default:
-			return gKareiHeyaEvents1;
+			return gKalayInteriorsEvents1;
 		}
 	}
-	if (scene == (s32)&SceneId_KareiHeya2)
+	if (scene == (s32)&SceneId_KalayInteriors2)
 	{
-		return gKareiHeyaEvents2;
+		return gKalayInteriorsEvents2;
 	}
-	return gKareiHeyaEventsOther;
+	return gKalayInteriorsEventsOther;
 }
 
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiPleaseFinishEatingIfTaking);
+	Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);
 	Engine_EventShowMessage(0xC, 0);
 	Engine_GameFlagSet(0x910);
 	Engine_EventEnd();
@@ -125,7 +125,7 @@ static void EV12_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiDoKnowAboutContinentSouth);
+	Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -144,12 +144,12 @@ static void EV08_TALK(void)
 
 		if (Engine_GameFlagIsSet(0x911) != 0)
 		{
-			Engine_EventSetMessage(MsgKareiOurInnFeelsEmptyNow);
+			Engine_EventSetMessage(MsgKalayOurInnFeelsEmptyNow);
 			Engine_EventShowMessage(8, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKareiGoingTolbiAlso);
+			Engine_EventSetMessage(MsgKalayGoingTolbiAlso);
 			Engine_EventAskYesNo(8, 0);
 			Engine_GameFlagSet(0x910);
 		}
@@ -170,7 +170,7 @@ static void EV08_TALK_2(void)
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgKareiCanLiveInPeaceIn);
+		Engine_EventSetMessage(MsgKalayCanLiveInPeaceIn);
 		Engine_EventShowMessage(8, 0);
 		Engine_EventEnd();
 	}
@@ -217,10 +217,10 @@ static void FieldScene_RunArrivalPlacement(void)
 	Engine_AudioPlayCue(158);
 
 	{
-		u32 x = KareiHeya_ArrivalPlacements[idx].x;
-		u32 y = KareiHeya_ArrivalPlacements[idx].y;
+		u32 x = KalayInteriors_ArrivalPlacements[idx].x;
+		u32 y = KalayInteriors_ArrivalPlacements[idx].y;
 
-		Engine_MapAnimateCells(KareiHeya_ArrivalPlacements[idx].steps, x, y);
+		Engine_MapAnimateCells(KalayInteriors_ArrivalPlacements[idx].steps, x, y);
 	}
 
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
@@ -241,7 +241,7 @@ static void FieldScene_RunArrivalPlacement(void)
 s32 Scene_Initialize(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	if (gGameState.scene == (s32)&SceneId_KareiHeya1)
+	if (gGameState.scene == (s32)&SceneId_KalayInteriors1)
 	{
 		SceneState_ClearSlotsBySubState();
 	}
@@ -295,12 +295,12 @@ static void SceneState_ClearSlotsBySubState(void)
 	}
 }
 
-struct SceneEntrance gKareiHeyaEntrancesOther[] = {
+struct SceneEntrance gKalayInteriorsEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiHeyaEntrances1[] = {
+struct SceneEntrance gKalayInteriorsEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 144, 0, 192, FACING_NORTH, 0, 5, 45, 245, 230, 0 },
 	{ 2, CONDITION_ALWAYS, 400, 0, 192, FACING_NORTH, 0, 255, 45, 485, 230, 0 },
@@ -324,14 +324,14 @@ struct SceneEntrance gKareiHeyaEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiHeyaEntrances2[] = {
+struct SceneEntrance gKalayInteriorsEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0, 110, 35, 390, 345, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 KareiHeya_Exits[] = {
+u32 KalayInteriors_Exits[] = {
 	SCENE_EXITS(100),
 	SCENE_EXIT(1, 99, 1),
 	SCENE_EXIT(2, 99, 2),
@@ -357,11 +357,11 @@ u32 KareiHeya_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKareiHeyaPlacementsOther[] = {
+struct ScenePlacement gKalayInteriorsPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiHeyaPlacements1[] = {
+struct ScenePlacement gKalayInteriorsPlacements1[] = {
 	{ 0x6c, 0x0, ACTOR_STAND,
 		PIXELS(101), 0, PIXELS(181), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6a, 0x0, ACTOR_STAND,
@@ -389,7 +389,7 @@ struct ScenePlacement gKareiHeyaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiHeyaPlacements1Entrance9[] = {
+struct ScenePlacement gKalayInteriorsPlacements1Entrance9[] = {
 	{ 0x77, 0x0, ACTOR_STAND,
 		PIXELS(120), 0, PIXELS(627), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x80, 0x0, ACTOR_WANDER,
@@ -417,17 +417,17 @@ struct ScenePlacement gKareiHeyaPlacements1Entrance9[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiHeyaPlacements2[] = {
+struct ScenePlacement gKalayInteriorsPlacements2[] = {
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(248), 0, PIXELS(106), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKareiHeyaEventsOther[] = {
+struct SceneEvent gKalayInteriorsEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiHeyaEvents1[] = {
+struct SceneEvent gKalayInteriorsEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -439,46 +439,46 @@ struct SceneEvent gKareiHeyaEvents1[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaImShockedToHearTheRighteous) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaLunpaWasAKindThiefHis) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaSomehowTheNorthHasBecomeThe) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaAMerchantFromVaultHadBeen) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaNoOneIsAllowedToGo) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIDoNotWantMySon) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheMostImportantSkillForA) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaMySonReceivedHisKnackFor) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsAMerchantFromVaultHadBeen) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsNoOneIsAllowedToGo) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIBetterGetReadyTheColosso) },
-	{ EVENT_TALK, 18, 0x911, MSGNO(MsgKareiHeyaWeFledFromGondowanToThe) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaWeCameHereToEscapeThe) },
-	{ EVENT_TALK, 19, 0x911, MSGNO(MsgKareiHeyaLaliveroWhereImFromIsThe) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaWeEscapedFromTheNortheasternRegion) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheRegionNorthOfVaultWas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaLunpasReputationIsVeryBadNowadays) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaThreeYearsAgoThievesRaidedMt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheySayOtherNorthernPartsAre) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaImAnAdultNowIDont) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIDontCareHowMySon) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheMostImportantThingIsNot) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaMySonIsVeryTightWith) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaPeopleFromTheContinentSouthOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaImPrettyExcitedBecauseThisIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x911, MSGNO(MsgKareiHeyaIFledAllThisWayNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWonderWhatColossoIsLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x911, MSGNO(MsgKareiHeyaItLooksLikeColossoWillSoon) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWasSoScaredComingTo) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
+	{ EVENT_TALK, 18, 0x911, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
+	{ EVENT_TALK, 19, 0x911, MSGNO(MsgKalayInteriorsLaliveroWhereImFromIsThe) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeEscapedFromTheNortheasternRegion) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheRegionNorthOfVaultWas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpasReputationIsVeryBadNowadays) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsThreeYearsAgoThievesRaidedMt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheySayOtherNorthernPartsAre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImAnAdultNowIDont) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDontCareHowMySon) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantThingIsNot) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonIsVeryTightWith) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsPeopleFromTheContinentSouthOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImPrettyExcitedBecauseThisIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x911, MSGNO(MsgKalayInteriorsIFledAllThisWayNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhatColossoIsLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x911, MSGNO(MsgKalayInteriorsItLooksLikeColossoWillSoon) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoScaredComingTo) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
 	{ SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaShesToastingSomeBreadItSmells)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaHesMakingCurryItsSpicyScent)) },
-	{ SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaHesMakingRoastedEggplantWithCheese)) },
-	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaItsAKalaySaladWithCucumber)) },
-	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaItsPicklesWithGarlicThePickle)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
+	{ SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
+	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
+	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiHeyaEvents1Entrance9[] = {
+struct SceneEvent gKalayInteriorsEvents1Entrance9[] = {
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
@@ -488,59 +488,59 @@ struct SceneEvent gKareiHeyaEvents1Entrance9[] = {
 	{ EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
 	{ EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 9, 0x911, MSGNO(MsgKareiHeyaEveryoneIsGoingToTolbiTo) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaEvenOurChefLeftSoWe) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIveSignedOnForATour) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheColossoGladiatorsAreAllStrong) },
+	{ EVENT_TALK, 9, 0x911, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaEveryoneLooksForwardToGoingTo) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaSurelyLordHammetWillPopUp) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWouldHaveEnteredColossoIf) },
-	{ EVENT_TALK, 16, 0x911, MSGNO(MsgKareiHeyaManyOfTheGuestsHereSeem) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaUhOhHesStillHereEven) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaArentYouGoingToColossoYou) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIfYouAreEnteringColossoYou) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaWereSoStrongMakingTheFinals) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x911, MSGNO(MsgKareiHeyaHesAShrewdMerchantIfHe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIdHaveGoneOnTheColosso) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x911, MSGNO(MsgKareiHeyaEveryYearEveryoneGoesToTolbi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaEvenIfMyHusbandWantedTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaJoiningATourGroupIsThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWonderWhichWarriorWillWin) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaItsBusinessSoYouCantHelp) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaImExhaustedFromPreparingThisTour) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWasSoExcitedICouldnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaMyAnimalInstinctsStartWakingUp) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x911, MSGNO(MsgKareiHeyaColossoIsSoCommonWhatsSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaICantSeemToRelaxNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaImGoingToSignUpFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIHavePowerAndSeanHas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaWeAreTheToughestOfAll) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
+	{ EVENT_TALK, 16, 0x911, MSGNO(MsgKalayInteriorsManyOfTheGuestsHereSeem) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsUhOhHesStillHereEven) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsArentYouGoingToColossoYou) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIfYouAreEnteringColossoYou) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWereSoStrongMakingTheFinals) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x911, MSGNO(MsgKalayInteriorsHesAShrewdMerchantIfHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIdHaveGoneOnTheColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x911, MSGNO(MsgKalayInteriorsEveryYearEveryoneGoesToTolbi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenIfMyHusbandWantedTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsJoiningATourGroupIsThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhichWarriorWillWin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsItsBusinessSoYouCantHelp) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImExhaustedFromPreparingThisTour) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoExcitedICouldnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMyAnimalInstinctsStartWakingUp) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x911, MSGNO(MsgKalayInteriorsColossoIsSoCommonWhatsSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICantSeemToRelaxNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImGoingToSignUpFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIHavePowerAndSeanHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeAreTheToughestOfAll) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
 	{ SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaShesToastingSomeBreadItSmells)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaHesMakingCurryItsSpicyScent)) },
-	{ SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaHesMakingRoastedEggplantWithCheese)) },
-	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaItsAKalaySaladWithCucumber)) },
-	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiHeyaItsPicklesWithGarlicThePickle)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
+	{ SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
+	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
+	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiHeyaEvents2[] = {
+struct SceneEvent gKalayInteriorsEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaICameHereToSpreadGood) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
 	{ SCENE_EVENTS_END },
 };
 
-u16 KareiHeya_ArrivalPlacementData[] = {
+u16 KalayInteriors_ArrivalPlacementData[] = {
 	MAP_CELL_STEP(7, 125, 1, 2, 5), MAP_CELL_STEP(8, 125, 1, 2, 5), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim KareiHeya_ArrivalPlacements[] = {
-	{ KareiHeya_ArrivalPlacementData, 34, 98 },
-	{ KareiHeya_ArrivalPlacementData, 39, 98 },
-	{ KareiHeya_ArrivalPlacementData, 50, 96 },
-	{ KareiHeya_ArrivalPlacementData, 52, 107 },
+struct MapCellAnim KalayInteriors_ArrivalPlacements[] = {
+	{ KalayInteriors_ArrivalPlacementData, 34, 98 },
+	{ KalayInteriors_ArrivalPlacementData, 39, 98 },
+	{ KalayInteriors_ArrivalPlacementData, 50, 96 },
+	{ KalayInteriors_ArrivalPlacementData, 52, 107 },
 };

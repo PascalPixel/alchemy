@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-/* Korosseo_ShowItemIcon is called before its definition with no prototype in scope. */
+/* Colosso_ShowItemIcon is called before its definition with no prototype in scope. */
 
 #endif

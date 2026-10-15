@@ -22,7 +22,7 @@ void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta);
 void UnitCalc(s32 owner);
-s32 UnitEpAdd(s32 owner, s32 delta);
+s32 UnitPpAdd(s32 owner, s32 delta);
 void Func_02004904(s32 a, s32 b);
 
 static __inline__ void Ov6a3_AdjustFirstValue(s32 owner, s32 delta)
@@ -31,10 +31,10 @@ static __inline__ void Ov6a3_AdjustFirstValue(s32 owner, s32 delta)
     Owner_AdjustFirstValue(owner, delta);
 }
 
-static __inline__ void Ov6a3_EpAdd(s32 owner, s32 delta)
+static __inline__ void Ov6a3_PpAdd(s32 owner, s32 delta)
 {
     /* FAKEMATCH: forwarding through the inline reloads -10000 from the pool at each call, as the native does (direct: the four uses share it in r5, differ 23 of 160). */
-    UnitEpAdd(owner, delta);
+    UnitPpAdd(owner, delta);
 }
 
 static __inline__ void Ov6a3_Func_020048b4(s32 actor, s32 a)
@@ -57,7 +57,7 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle)
     }
 
 // Places actors 0, 2, 27 and 26 and shows "I'm sorry"; then the party is
-// left with owners 2 and 0, whose first values and EP drop by 10000.
+// left with owners 2 and 0, whose first values and PP drop by 10000.
 void Func_02001c7c(void)
 {
     Func_020047d4();
@@ -108,8 +108,8 @@ void Func_02001c7c(void)
     UnitCalc(0);
     UnitCalc(2);
     Ov6a3_AdjustFirstValue(0, 173);
-    Ov6a3_EpAdd(2, -10000);
-    Ov6a3_EpAdd(0, -10000);
+    Ov6a3_PpAdd(2, -10000);
+    Ov6a3_PpAdd(0, -10000);
     gPartyState.current_owner = 0;
     Func_02004904(102, 4);
 }

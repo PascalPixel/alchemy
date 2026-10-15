@@ -36,7 +36,7 @@ static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 	return 0;
 }
 
-void *HaidiaHeya_GetEntrances(void)
+void *ValeInteriors_GetEntrances(void)
 {
 	return gValeHouseEntrances;
 }
@@ -46,7 +46,7 @@ int SceneData_ReturnZero(void)
 	return 0;
 }
 
-void *HaidiaHeya_SelectExits(void)
+void *ValeInteriors_SelectExits(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 		return gValeHouseLateExits;
@@ -73,7 +73,7 @@ void *SceneData_SelectFlaggedTable(void)
 	return tbl;
 }
 
-void *HaidiaHeya_SelectEvents(void)
+void *ValeInteriors_SelectEvents(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 		return gValeHouseLateEvents;
@@ -87,7 +87,7 @@ void *HaidiaHeya_SelectEvents(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaSukuretaCameToStudyMt);
+	Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
@@ -96,7 +96,7 @@ static void EV15_TALK(void)
 static void EV19_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaLetsScareSukuretasVisitors);
+	Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
 	Engine_EventAskYesNo(19, 0);
 	Engine_EventEnd();
@@ -109,13 +109,13 @@ static void Scene_GiveFarewellHerb(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaYouMustSaveJasmine);
+		Engine_EventSetMessage(MsgValeYouMustSaveJenna);
 		Event_ShowMessage(20, 0);
 		FieldObject_SetTargetAndCallback(20, 0x10000, gValeFaceTargetScript);
 	}
 	else
 	{
-		gift = MsgHaidiaThisIsMyFarewellGift;
+		gift = MsgValeThisIsMyFarewellGift;
 		Engine_EventSetMessage(gift);
 		Event_ShowMessageAndWait(20, 0, 20);
 		Engine_MessageShowCentered((gift + 1), 1);
@@ -128,7 +128,7 @@ static void Scene_GiveFarewellHerb(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaTheCulpritsHadStrangePowers);
+	Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -136,7 +136,7 @@ static void EV16_TALK(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaDidYouHearAboutDora);
+	Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -144,12 +144,12 @@ static void EV10_TALK(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaHopeDidntGet);
+	Engine_EventSetMessage(MsgValeHopeDidntGet);
 	Engine_EventShowMessage(0x800b, 0);
 	Engine_EventEnd();
 }
 
-static void HaidiaHeya_RequestWindowExit(s32 value)
+static void ValeInteriors_RequestWindowExit(s32 value)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 		BattleFx_SetBlock30ValuesMaxZero();
@@ -163,42 +163,42 @@ static void HaidiaHeya_RequestWindowExit(s32 value)
 
 static void EV01_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(1);
+	ValeInteriors_RequestWindowExit(1);
 }
 
 static void EV02_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(2);
+	ValeInteriors_RequestWindowExit(2);
 }
 
 static void EV03_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(3);
+	ValeInteriors_RequestWindowExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(4);
+	ValeInteriors_RequestWindowExit(4);
 }
 
 static void EV05_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(5);
+	ValeInteriors_RequestWindowExit(5);
 }
 
 static void EV06_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(6);
+	ValeInteriors_RequestWindowExit(6);
 }
 
 static void EV07_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(7);
+	ValeInteriors_RequestWindowExit(7);
 }
 
 static void EV08_TOUCH(void)
 {
-	HaidiaHeya_RequestWindowExit(8);
+	ValeInteriors_RequestWindowExit(8);
 }
 
 s32 Scene_RunSupplementalSequenceOne(void)
@@ -277,18 +277,18 @@ static void EV21_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaYouCameBack);
+		Engine_EventSetMessage(MsgValeYouCameBack);
 		Engine_EventAskYesNo(21, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 		{
-			Engine_EventSetMessage(MsgHaidiaValeFeelsEmpty);
+			Engine_EventSetMessage(MsgValeValeFeelsEmpty);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgHaidiaGoodWeaponsDrawOutStrength);
+			Engine_EventSetMessage(MsgValeGoodWeaponsDrawOutStrength);
 		}
 		Engine_EventShowMessage(21, 0);
 	}
@@ -309,17 +309,17 @@ static void EV22_TALK(void)
 		Engine_EventBegin();
 		if (Engine_GameFlagIsSet(0x87a) != 0)
 		{
-			Engine_EventSetMessage(MsgHaidiaTheRumorWasTrue);
+			Engine_EventSetMessage(MsgValeTheRumorWasTrue);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 			{
-				Engine_EventSetMessage(MsgHaidiaImNotSadJustGo);
+				Engine_EventSetMessage(MsgValeImNotSadJustGo);
 			}
 			else
 			{
-				Engine_EventSetMessage(MsgHaidiaGoodArmorDrawsOutStrength);
+				Engine_EventSetMessage(MsgValeGoodArmorDrawsOutStrength);
 			}
 		}
 		Engine_EventShowMessage(22, 0);
@@ -341,7 +341,7 @@ static void EV20_TALK(void)
 		if (Engine_GameFlagIsSet(0x87a) != 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage(MsgHaidiaWhenDidYouComeBack);
+			Engine_EventSetMessage(MsgValeWhenDidYouComeBack);
 			Engine_EventShowMessage(20, 0);
 			Engine_EventEnd();
 		}
@@ -354,7 +354,7 @@ static void EV20_TALK(void)
 			else
 			{
 				Engine_EventBegin();
-				Engine_EventSetMessage(MsgHaidiaAWiseManFleesWhen);
+				Engine_EventSetMessage(MsgValeAWiseManFleesWhen);
 				Engine_EventShowMessage(20, 0);
 				Engine_EventEnd();
 			}
@@ -375,11 +375,11 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
-	Engine_ActorSetSpritePriority(MEARI, 1);
+	Engine_ActorSetSpritePriority(MIA, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-	Actor_SetSpeed(GERALD, 0x6666, 0x3333);
-	Actor_SetSpeed(IWAN, 0x6666, 0x3333);
-	Actor_SetSpeed(MEARI, 0x6666, 0x3333);
+	Actor_SetSpeed(GARET, 0x6666, 0x3333);
+	Actor_SetSpeed(IVAN, 0x6666, 0x3333);
+	Actor_SetSpeed(MIA, 0x6666, 0x3333);
 	Engine_ActorSetAnimation(8, 5);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x328, 0x1fc);
 	record = Actor_Get(23);
@@ -403,23 +403,23 @@ static void FieldScene_RunLongPresentationSequence(void)
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(GERALD, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
 	}
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(IWAN, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
 	}
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(MEARI, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
 	}
-	Actor_WalkTo(GERALD, 0x318, 0x200);
-	Actor_WalkTo(IWAN, 0x338, 0x1f8);
-	Actor_WalkToAndWait(MEARI, 0x332, 0x20c);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
+	Actor_WalkTo(GARET, 0x318, 0x200);
+	Actor_WalkTo(IVAN, 0x338, 0x1f8);
+	Actor_WalkToAndWait(MIA, 0x332, 0x20c);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
 	Engine_EventWait(10);
 	FieldObject_SetTargetAndCallback(0, 0x1000a, gValeFaceTargetScript);
 	FieldObject_SetTargetAndCallback(1, 0x1000a, gValeFaceTargetScript);
@@ -437,12 +437,12 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_ActorSetAnimationAndWait(10, 4);
 	Engine_EventWait(40);
 	Actor_FaceDirection(10, 0xd000, 20);
-	Engine_EventSetMessage(MsgHaidiaHey2);
+	Engine_EventSetMessage(MsgValeHey2);
 	Event_ShowMessageAndWait(0x900a, 0, 20);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
-	Engine_ActorStop(GERALD);
-	Engine_ActorStop(IWAN);
-	Engine_ActorStop(MEARI);
+	Engine_ActorStop(GARET);
+	Engine_ActorStop(IVAN);
+	Engine_ActorStop(MIA);
 	Actor_ShowEmote(11, 0x100, 40);
 	Event_ShowMessageAndWait(0x200b, 0, 20);
 	Engine_ActorRunRepeatedMotion(10, 2);
@@ -505,7 +505,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Event_ShowMessageAndWait(0x1001, 0, 20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_TaskRemoveCallback((void (*)(void))timed_update);
@@ -526,19 +526,19 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_EventWait(60);
 	Engine_ActorJump(8, 6, 0);
 	Event_ShowMessageAndWait(0x4008, 0, 20);
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
-	Actor_WalkToAndWait(GERALD, 0x315, 0x1d9);
-	Actor_FaceDirection(GERALD, 0x7000, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+	Actor_WalkToAndWait(GARET, 0x315, 0x1d9);
+	Actor_FaceDirection(GARET, 0x7000, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Event_ShowMessageAndWait(0x4001, 0, 10);
 	Actor_FaceDirection(8, 0x1000, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_OpenMessage(0x4008, 0);
 	Actor_FaceDirection(10, 0x5000, 0);
 	Actor_FaceDirection(9, 0x1000, 0);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
-	Actor_FaceDirection(IWAN, 0x7000, 0);
-	Actor_FaceDirection(MEARI, 0xb000, 0);
+	Actor_FaceDirection(GARET, 0x3000, 0);
+	Actor_FaceDirection(IVAN, 0x7000, 0);
+	Actor_FaceDirection(MIA, 0xb000, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
 	{
 		gEventWork->message++;
@@ -549,60 +549,60 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Event_ShowMessage(10, 0);
 	Engine_ActorSetAnimationAndWait(11, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgHaidiaYoureLeavingAgainSoon);
+	Engine_EventSetMessage(MsgValeYoureLeavingAgainSoon);
 	Event_ShowMessage(0x200b, 0);
 	Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0xd000, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Actor_FaceDirection(GARET, 0xd000, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(9, 4);
 	Actor_FaceDirection(9, 0xd000, 10);
 	Event_ShowMessage(0x4009, 0);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessage(0x4008, 0);
-	Actor_FaceDirection(GERALD, 0x7000, 10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Actor_FaceDirection(GARET, 0x7000, 10);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Actor_FaceDirection(9, 0x1000, 10);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimation(10, 3);
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x3000, 20);
-	Actor_ShowEmote(GERALD, 0x102, 80);
-	Actor_FaceDirection(GERALD, 0x7000, 20);
+	Actor_FaceDirection(GARET, 0x3000, 20);
+	Actor_ShowEmote(GARET, 0x102, 80);
+	Actor_FaceDirection(GARET, 0x7000, 20);
 	Event_ShowMessageAndWait(0x4001, 0, 20);
-	Actor_FaceDirection(GERALD, 0x3000, 10);
+	Actor_FaceDirection(GARET, 0x3000, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x1000, 0);
+	Actor_FaceDirection(GARET, 0x1000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_WalkToAndWait(IWAN, 0x333, 0x1e9);
-	Actor_FaceDirection(IWAN, 0xb000, 40);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_WalkToAndWait(IVAN, 0x333, 0x1e9);
+	Actor_FaceDirection(IVAN, 0xb000, 40);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_ActorSetAnimation(8, 3);
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimation(10, 3);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Object_GetById(3)->priority_flags &= 254;
-	Engine_ActorSetSpritePriority(MEARI, 1);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	Actor_WalkToAndWait(MEARI, 0x31a, 0x208);
-	Actor_FaceDirection(GERALD, 0x5000, 0);
+	Engine_ActorSetSpritePriority(MIA, 1);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	Actor_WalkToAndWait(MIA, 0x31a, 0x208);
+	Actor_FaceDirection(GARET, 0x5000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-	Actor_WalkToAndWait(MEARI, 0x310, 0x1f0);
-	Actor_FaceDirection(MEARI, 0x9000, 10);
+	Actor_WalkToAndWait(MIA, 0x310, 0x1f0);
+	Actor_FaceDirection(MIA, 0x9000, 10);
 	Object_GetById(3)->priority_flags |= 1;
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Engine_ActorSetAnimation(8, 3);
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimation(10, 3);
@@ -617,29 +617,29 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Event_ShowMessageAndWait(0x200b, 0, 20);
 	Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
 	Engine_EventWait(40);
-	Actor_FaceDirection(IWAN, 0x7000, 0);
-	Actor_FaceDirection(MEARI, 0xf000, 40);
-	Actor_FaceDirection(IWAN, 0x9000, 0);
-	Actor_FaceDirection(MEARI, 0xd000, 20);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_FaceDirection(IVAN, 0x7000, 0);
+	Actor_FaceDirection(MIA, 0xf000, 40);
+	Actor_FaceDirection(IVAN, 0x9000, 0);
+	Actor_FaceDirection(MIA, 0xd000, 20);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(10, 1);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(10, 3);
 	Event_ShowMessageAndWait(10, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xd000, 0);
-	Actor_FaceDirection(IWAN, 0xb000, 0);
-	Actor_FaceDirection(MEARI, 0xd000, 40);
+	Actor_FaceDirection(GARET, 0xd000, 0);
+	Actor_FaceDirection(IVAN, 0xb000, 0);
+	Actor_FaceDirection(MIA, 0xd000, 40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	party_script = (s32)gValePartyScript;
-	Engine_ActorEnableActionCallback(GERALD, party_script);
+	Engine_ActorEnableActionCallback(GARET, party_script);
 	Engine_ActorEnableActionCallback(2, party_script);
 	Object_SetActionCallbackAndRefreshById(3, party_script);
 	Engine_ActorEnableActionCallback(10, (s32)gValeActor10Script);
@@ -859,11 +859,11 @@ struct ScenePlacement gValeHousePlacementsAfterLeaving[] = {
 };
 
 struct ScenePlacement gValeHouseReturnPlacements[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x75, 0x0, ACTOR_STAND,
 		PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -913,38 +913,38 @@ struct SceneEvent gValeHouseLateEvents[] = {
 	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
 	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
 	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
-	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBooksAboutContinents)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLawsOfHaidia)) },
-	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPowerOfNature)) },
-	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPsynergyStone)) },
-	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaAuntNotebook)) },
-	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookMakingGreatVillage)) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaNotebookStudyOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookAncientLemurians)) },
-	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookFountainOfTolbi)) },
-	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaEncyclopediaOfAlchemy)) },
-	{ SEARCH(SEARCH_BOOKCASE), 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLegendOfAleph)) },
-	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookBeingAdept)) },
-	{ SEARCH(SEARCH_BARREL), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuButDidntFindAnything)) },
-	{ SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
-	{ SEARCH(SEARCH_JAR), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
-	{ SEARCH(SEARCH_JAR), 103, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
-	{ SEARCH(SEARCH_JAR), 104, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
+	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
+	{ SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
+	{ SEARCH(SEARCH_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeEncyclopediaOfAlchemy)) },
+	{ SEARCH(SEARCH_BOOKCASE), 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
+	{ SEARCH(SEARCH_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
+	{ SEARCH(SEARCH_BARREL), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
+	{ SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+	{ SEARCH(SEARCH_JAR), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+	{ SEARCH(SEARCH_JAR), 103, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
+	{ SEARCH(SEARCH_JAR), 104, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gValeHouseEvents[] = {
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaAtTheVeryLeastVisitorsShould) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaIHearKradenHasGuestsAgain) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaGeraldHasGrownQuiteStrongIn) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouAndGeraldAreOlderNow) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaMyGranddaughterJasminIsFinallyHappy) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaIHopeYouTwoWontBe) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaJasminIsTheSpittingImageOf) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeAtTheVeryLeastVisitorsShould) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeYouAndGaretAreOlderNow) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaIfThereAreVisitorsInTown) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaDoYouEverDreamOfSeeing) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaFewPeopleOutsideOfValePossess) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
@@ -957,12 +957,12 @@ struct SceneEvent gValeHouseEvents[] = {
 	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
 	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
 	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
-	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBooksAboutContinents)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLawsOfHaidia)) },
-	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPowerOfNature)) },
-	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPsynergyStone)) },
-	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaAuntNotebook)) },
-	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookMakingGreatVillage)) },
+	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
 	{ SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
@@ -972,36 +972,36 @@ struct SceneEvent gValeHouseEvents[] = {
 };
 
 struct SceneEvent gValeHouseEventsAfterLeaving[] = {
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaRobinPleaseTakeCareOfMy) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaReceivingAQuestDirectlyFromThe) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaImProudOfYouGeraldMy) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaAsMothersDoraAndIWill) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaIHeardThatJasminBrotherGarsia) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaPleaseReturnMyPreciousGranddaughterJasmin) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaAfterJasminWasTakenGrandmotherGrew) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaItsBecauseKradenWasStudyingAlchemy) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeIsaacPleaseTakeCareOfMy) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeAsMothersDoraAndIWill) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaImSoJealousOfYouBeing) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaOnceYouLeaveTownTakeCare) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaIHadNoIdeaThatSuch) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgHaidiaRobinYoureGoingOnADifficult) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaIfYouFaceAnyHardshipIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgHaidiaSoIfThatWasGarsiaWho) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaItsHardLettingMyPreciousGerald) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheWiseOneChoseGeraldHimself) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaOnceGeraldLeavesIWontBe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIAmConcernedForGeraldBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaGarsiaInheritedHisFathersSkillWith) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaJasminAnytimeYouFaceDangerJust) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaWhyWouldGarsiaTakeHisSister) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaWeAlmostLostTheTownOver) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaIdLikeToBelieveThatOnly) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaIfOnlyIdGoneToSol) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaValesLawsStateThatYouCannot) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWishIWereTheOne) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeItsHardLettingMyPreciousGaret) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeTheWiseOneChoseGaretHimself) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIAmConcernedForGaretBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1015,47 +1015,47 @@ struct SceneEvent gValeHouseEventsAfterLeaving[] = {
 	{ SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
 	{ SEARCH(SEARCH_JAR), 103, 0xf45, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_JAR), 104, 0xf46, FIND_COINS(3) },
-	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBooksAboutContinents)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLawsOfHaidia)) },
-	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPowerOfNature)) },
-	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPsynergyStone)) },
-	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaAuntNotebook)) },
-	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookMakingGreatVillage)) },
+	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gValeHouseReturnEvents[] = {
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaMaryIsSuchANiceGirl) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaThatIvanSeemsToBeA) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaOhSoYouStillHaventRescued) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaIGetOverColdsQuicklyBut) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaAColdIsGoingAroundI) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaWhatWasThatAlchemyThatKraden) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaEarthquakesStillStrikeOnceInA) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheMountainIsApparentlyStillCasting) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheNorthwestFaceOfMtAleph) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheGreatHealersAreTooAfraid) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaItMustBeNiceToBe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaHisNewFriendsAreAllSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaItWasntTooSmartToTalk) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaGeraldSeemsToHaveGrownUp) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgHaidiaWeveSeenManyMonstersLatelyAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWishICouldLearnThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x81b, MSGNO(MsgHaidiaWhatHappenedToJasminHaventYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgHaidiaIGaveHimAFarewellGift) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaWillIEverSeeJasminAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaDoraSaysItsJustACold) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaIKnowThatThereAreAlways) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaEvenIfTheEruptionHadNo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaEveryTimeTheGroundShakesI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaIfThePsynergyStonesInThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheySayTheLavaLookedLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheHealersAreSupposedToGuard) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeItMustBeNiceToBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeHisNewFriendsAreAllSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeItWasntTooSmartToTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeGaretSeemsToHaveGrownUp) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgValeWeveSeenManyMonstersLatelyAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x81b, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -1069,11 +1069,11 @@ struct SceneEvent gValeHouseReturnEvents[] = {
 	{ SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
 	{ SEARCH(SEARCH_JAR), 103, 0xf45, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_JAR), 104, 0xf46, FIND_COINS(3) },
-	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBooksAboutContinents)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookLawsOfHaidia)) },
-	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPowerOfNature)) },
-	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookPsynergyStone)) },
-	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaAuntNotebook)) },
-	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaBookMakingGreatVillage)) },
+	{ SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
+	{ 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+	{ 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+	{ 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+	{ 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
 	{ SCENE_EVENTS_END },
 };

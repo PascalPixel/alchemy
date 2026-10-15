@@ -261,7 +261,7 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text)
 			text[0] = 0xe4;
 		else
 			text[0] = cell - 81;
-		text[1] = TEXT_MARK_DAKUTEN;
+		text[1] = TEXT_MARK_VOICED;
 	}
 #endif
 }
@@ -417,7 +417,7 @@ menu_top:;
 			}
 		}
 		Party_SetFlag32AndRefreshMembers();
-		gGameState.scene = (s32)&SceneId_HaidiaBabi;
+		gGameState.scene = (s32)&SceneId_ValeBabi;
 		gGameState.entrance = 20;
 		goto leave;
 	}

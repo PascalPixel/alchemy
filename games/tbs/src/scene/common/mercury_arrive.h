@@ -2,7 +2,7 @@
 #include "fieldobj.h"
 #include "field_event.h"
 
-static void Makyuri_ArriveWithSparks(void)
+static void Mercury_ArriveWithSparks(void)
 {
 	struct FieldActor *actor;
 	s32				   flag;
@@ -23,7 +23,7 @@ static void Makyuri_ArriveWithSparks(void)
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_AudioPlayCue(228);
-		actor->update = (void (*)(union FieldObject *))Makyuri_TrailSparks;
+		actor->update = (void (*)(union FieldObject *))Mercury_TrailSparks;
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
 		Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
 		Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);

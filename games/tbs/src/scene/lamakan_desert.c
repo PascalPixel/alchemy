@@ -40,7 +40,7 @@
 #include "objcmd.h"
 
 // 前方宣言
-static void RamakanSabaku_SetSandPhase(u16 value);
+static void LamakanDesert_SetSandPhase(u16 value);
 
 #define NULL ((void *)0)
 
@@ -56,7 +56,7 @@ static void EV13_TALK(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_waitdown.h"
 
-static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
+static s32 LamakanDesert_EmitSandEffect(struct FieldActor *actor)
 {
 	struct EffectOptions params;
 	s32					 phase;
@@ -82,23 +82,23 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_RamakanSabaku1)
+	if (v == (s32)&SceneId_LamakanDesert1)
 	{
-		return gRamakanSabakuEntrances1;
+		return gLamakanDesertEntrances1;
 	}
-	if (v == (s32)&SceneId_RamakanSabaku2)
+	if (v == (s32)&SceneId_LamakanDesert2)
 	{
-		return gRamakanSabakuEntrances2;
+		return gLamakanDesertEntrances2;
 	}
-	if (v == (s32)&SceneId_RamakanSabaku3)
+	if (v == (s32)&SceneId_LamakanDesert3)
 	{
-		return gRamakanSabakuEntrances3;
+		return gLamakanDesertEntrances3;
 	}
-	if (v == (s32)&SceneId_RamakanSabaku4)
+	if (v == (s32)&SceneId_LamakanDesert4)
 	{
-		return gRamakanSabakuEntrances4;
+		return gLamakanDesertEntrances4;
 	}
-	return gRamakanSabakuEntrancesOther;
+	return gLamakanDesertEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -108,12 +108,12 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return RamakanSabaku_Exits;
+	return LamakanDesert_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert3)
 	{
 		if (gGameState.entrance == 5)
 		{
@@ -123,19 +123,19 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 #endif
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
-		return gRamakanSabakuPlacements1;
+		return gLamakanDesertPlacements1;
 	}
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
-		return gRamakanSabakuPlacements2;
+		return gLamakanDesertPlacements2;
 	}
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert3)
 	{
-		return gRamakanSabakuPlacements3;
+		return gLamakanDesertPlacements3;
 	}
-	return gRamakanSabakuPlacementsOther;
+	return gLamakanDesertPlacementsOther;
 }
 
 static void EV09_TOUCH(void)
@@ -156,16 +156,16 @@ static void EV09_TOUCH(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return RamakanSabaku_Events;
+	return LamakanDesert_Events;
 }
 
-static s32 RamakanSabaku_ApplyEntryState(void)
+static s32 LamakanDesert_ApplyEntryState(void)
 {
 	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	s32 v5;
 
 	Engine_GameFlagClear(0x201);
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
 		Map_CopyCells(70, 68, 4, 2, 22, 7);
 		Map_CopyCells(70, 68, 4, 2, 8, 10);
@@ -175,7 +175,7 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 		Map_CopyCells(70, 68, 4, 2, 36, 44);
 		Map_CopyCells(70, 68, 4, 2, 14, 55);
 	}
-	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
+	else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
 		Map_CopyCells(70, 68, 4, 2, 42, 5);
 		Map_CopyCells(70, 68, 4, 2, 20, 11);
@@ -196,7 +196,7 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 		Map_CopyCells(70, 68, 4, 2, 27, 55);
 		Map_CopyCells(70, 68, 4, 2, 43, 56);
 	}
-	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	else if (gGameState.scene == (s32)&SceneId_LamakanDesert3)
 	{
 		Engine_MapCopyCellsLayered(69, 99, 4, 2, 8, 16);
 		Engine_MapCopyCellsLayered(69, 99, 4, 2, 6, 20);
@@ -223,19 +223,19 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 		Engine_MapObjectSetPosition(v5, 0, 0);
 		v5 = (v5 + 1);
 	} while (v5 <= 107);
-	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
+	if (gGameState.scene != (s32)&SceneId_LamakanDesert4)
 	{
 		DisplayScroll_StartHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 	}
 }
 
-static s32 RamakanSabaku_ConfigureAreaLayout(void)
+static s32 LamakanDesert_ConfigureAreaLayout(void)
 {
 	s32 i;
 
 	Engine_GameFlagClear(0x200);
 	Engine_GameFlagSet(0x201);
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
 		Map_CopyCells(64, 126, 4, 2, 22, 7);
 		Map_CopyCells(68, 126, 4, 2, 8, 10);
@@ -246,7 +246,7 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 		Map_CopyCells(84, 126, 4, 2, 14, 55);
 		Actor_SetPosition(9, 0x1900000, 0x16c0000);
 	}
-	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
+	else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
 		Map_CopyCells(64, 126, 4, 2, 42, 5);
 		Map_CopyCells(68, 126, 4, 2, 20, 11);
@@ -272,7 +272,7 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 		Actor_SetPosition(12, 0x2400000, 0x2cc0000);
 		Actor_SetPosition(13, 0x2880000, 0x1980000);
 	}
-	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	else if (gGameState.scene == (s32)&SceneId_LamakanDesert3)
 	{
 		Map_CopyCells(64, 124, 4, 4, 8, 14);
 		Map_CopyCells(68, 124, 4, 4, 6, 18);
@@ -295,7 +295,7 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 		MapObject_SetPosition(i, -1, -1);
 	}
 	BattleFx_EmitRandomParticle();
-	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
+	if (gGameState.scene != (s32)&SceneId_LamakanDesert4)
 	{
 		DisplayScroll_DisarmHBlankDma();
 	}
@@ -304,12 +304,12 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 static void EV08_TALK(void)
 {
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_LamakanDesert3, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(53, 5);
 }
 
-static void RamakanSabaku_ShowRandomPartyLine(s32 a0)
+static void LamakanDesert_ShowRandomPartyLine(s32 a0)
 {
 	s32 i;
 	s32 p8;
@@ -332,12 +332,12 @@ static void RamakanSabaku_ShowRandomPartyLine(s32 a0)
 		}
 	}
 	Engine_EventBegin();
-	Engine_EventSetMessage((((p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
+	Engine_EventSetMessage((((p8 << 1) + p8) + v6) + MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
 	Engine_EventShowMessage((v6 + 1), 0);
 	Engine_EventEnd();
 }
 
-static void RamakanSabaku_RaiseQuarterTriggers(void)
+static void LamakanDesert_RaiseQuarterTriggers(void)
 {
 	struct EventWork *work = gEventWork;
 	u8				 *state = (u8 *)&gGameState;
@@ -383,7 +383,7 @@ static void RamakanSabaku_RaiseQuarterTriggers(void)
 	}
 }
 
-static s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
+static s32 LamakanDesert_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 {
 	s32 dx = (*position_b++ - *position_a++) >> 16;
 	s32 dz = (*position_b - position_a[1]) >> 16;
@@ -432,21 +432,21 @@ static void EV20_TOUCH(void)
 	frames = 60;
 	best = 0xf00000;
 	GameFlag_Set(0x200);
-	RamakanSabaku_SetSandPhase(1);
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
+	LamakanDesert_SetSandPhase(1);
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 	{
 		count = 3;
-		points = RamakanSabaku_SafePoints1;
+		points = LamakanDesert_SafePoints1;
 	}
-	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
+	else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 	{
 		count = 5;
-		points = RamakanSabaku_SafePoints2;
+		points = LamakanDesert_SafePoints2;
 	}
 	else
 	{
 		count = 2;
-		points = RamakanSabaku_SafePointsOther;
+		points = LamakanDesert_SafePointsOther;
 	}
 	left = count;
 	point = points;
@@ -455,7 +455,7 @@ static void EV20_TOUCH(void)
 		offset = 0;
 		do
 		{
-			distance = RamakanSabaku_CalculatePlanarDistance(
+			distance = LamakanDesert_CalculatePlanarDistance(
 				&Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
 			if (distance <= best)
 			{
@@ -532,10 +532,10 @@ static void EV20_TOUCH(void)
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
 	Event_Wait(10);
 	*(u16 *)(work + 0xcba) = frames;
-	RamakanSabaku_SetSandPhase(0);
+	LamakanDesert_SetSandPhase(0);
 }
 
-static void RamakanSabaku_UpdateTravelDust(void)
+static void LamakanDesert_UpdateTravelDust(void)
 {
 	struct FieldActor	*actor;
 	struct EventWork	*event;
@@ -649,7 +649,7 @@ static void EV22_TOUCH(void)
 	Object_SetActionById(0, 24);
 	Actor_SetSpeed(0, 0x1999, 0xccc);
 	record = Object_GetById(0);
-	*(s32 *)((u8 *)record + 108) = (s32)RamakanSabaku_EmitSandEffect;
+	*(s32 *)((u8 *)record + 108) = (s32)LamakanDesert_EmitSandEffect;
 	record = Actor_Get(best);
 	if (record != 0)
 	{
@@ -676,7 +676,7 @@ static void EV30_TOUCH(void)
 	s32					 phase;
 	s32					 x;
 
-	RamakanSabaku_UpdateTravelDust();
+	LamakanDesert_UpdateTravelDust();
 	{
 		struct EventWork *event = gEventWork;
 
@@ -748,14 +748,14 @@ static void EV40_TOUCH(void)
 	u8				  *p5;
 
 	p5 = (u8 *)gEventWork;
-	RamakanSabaku_UpdateTravelDust();
+	LamakanDesert_UpdateTravelDust();
 	if (GameFlag_IsSet(0x90a) == 0)
 	{
 		rec8 = GameFlag_IsSet(0x200);
 		if (rec8 == 0)
 		{
 			GameFlag_Set(0x200);
-			RamakanSabaku_SetSandPhase(1);
+			LamakanDesert_SetSandPhase(1);
 			shown_addr = (u16 *)(p5 + 0xcba);
 			shown = 0x258;
 			*shown_addr = shown;
@@ -794,27 +794,27 @@ static void EV40_TOUCH(void)
 			Actor_SetSpeed(8, 0x8000, 0x4000);
 			Actor_WalkToAndWait(8, 168, 92);
 			*shown_addr = shown;
-			RamakanSabaku_SetSandPhase(0);
+			LamakanDesert_SetSandPhase(0);
 		}
 	}
 }
 
-s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
+s32 LamakanDesert_EnterArea(s32 a0, s32 a1)
 {
 	s32 v5;
 
 	gGameState.hazard_limit = 0x258;
 	gGameState.hazard_mode = 0;
 	gGameState.hazard_damage = 0x119;
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku4)
+	if (gGameState.scene == (s32)&SceneId_LamakanDesert4)
 	{
 	}
 	else
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		RamakanSabaku_ClaimSandEffectVram();
-		FieldScheduler_AddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
-		if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
+		LamakanDesert_ClaimSandEffectVram();
+		FieldScheduler_AddCallback((s32)LamakanDesert_RaiseQuarterTriggers, 0xc80);
+		if (gGameState.scene == (s32)&SceneId_LamakanDesert1)
 		{
 			Map_CopyCells(22, 7, 4, 2, 64, 126);
 			Map_CopyCells(8, 10, 4, 2, 68, 126);
@@ -823,7 +823,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Map_CopyCells(36, 44, 4, 2, 80, 126);
 			Map_CopyCells(14, 55, 4, 2, 84, 126);
 		}
-		else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
+		else if (gGameState.scene == (s32)&SceneId_LamakanDesert2)
 		{
 			Map_CopyCells(42, 5, 4, 2, 64, 126);
 			Map_CopyCells(20, 11, 4, 2, 68, 126);
@@ -840,7 +840,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Map_CopyCells(27, 55, 4, 2, 112, 126);
 			Map_CopyCells(43, 56, 4, 2, 116, 126);
 		}
-		else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+		else if (gGameState.scene == (s32)&SceneId_LamakanDesert3)
 		{
 			v5 = 124;
 			BattleFx_SetQueuedSoundAndPlay(169);
@@ -848,12 +848,12 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Map_CopyCells(6, 18, 4, 4, 68, v5);
 			Map_CopyCells(10, 21, 4, 4, 72, v5);
 		}
-		RamakanSabaku_ApplyEntryState();
+		LamakanDesert_ApplyEntryState();
 	}
 	return 0;
 }
 
-static void RamakanSabaku_ResetActorEightPosition(void)
+static void LamakanDesert_ResetActorEightPosition(void)
 {
 	Actor_SetSpeed(8, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(8, 1);
@@ -861,7 +861,7 @@ static void RamakanSabaku_ResetActorEightPosition(void)
 	Engine_ActorSetAnimation(8, 2);
 }
 
-static void RamakanSabaku_RunSandstorm(void)
+static void LamakanDesert_RunSandstorm(void)
 {
 	u8				  *buffer;
 	s32				   tile;
@@ -885,29 +885,29 @@ static void RamakanSabaku_RunSandstorm(void)
 	s32				   x;
 	u32				   offset;
 
-	tile = gVramBlockCache[(*(s16 *)&RamakanSabaku_SandVramSlot)].offset >> 5;
-	if ((*(s16 *)&RamakanSabaku_SandPhase) != 0)
+	tile = gVramBlockCache[(*(s16 *)&LamakanDesert_SandVramSlot)].offset >> 5;
+	if ((*(s16 *)&LamakanDesert_SandPhase) != 0)
 	{
-		RamakanSabaku_SandCounter = 2;
+		LamakanDesert_SandCounter = 2;
 	}
 	else if (Engine_GameFlagIsSet(0x104) != 0)
 	{
-		if (RamakanSabaku_SandCounter > 0)
+		if (LamakanDesert_SandCounter > 0)
 		{
-			RamakanSabaku_SandCounter--;
+			LamakanDesert_SandCounter--;
 		}
 	}
-	else if (RamakanSabaku_SandCounter <= 1)
+	else if (LamakanDesert_SandCounter <= 1)
 	{
-		if (++RamakanSabaku_SandCounter == 1)
+		if (++LamakanDesert_SandCounter == 1)
 		{
-			Dma_Set(RamakanSabaku_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+			Dma_Set(LamakanDesert_SandPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
 		}
 	}
-	counter = RamakanSabaku_SandCounter;
+	counter = LamakanDesert_SandCounter;
 	if (counter == 0)
 	{
-		Resource_ActivateEntry((*(s16 *)&RamakanSabaku_SandVramSlot));
+		Resource_ActivateEntry((*(s16 *)&LamakanDesert_SandVramSlot));
 		return;
 	}
 	display = *Ram_DisplayWork;
@@ -925,7 +925,7 @@ static void RamakanSabaku_RunSandstorm(void)
 	}
 
 	buffer = MemAlloc(0x900);
-	Dma_Set(RamakanSabaku_SandPalette, buffer, 0x80000010, REG_DMA3);
+	Dma_Set(LamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
 	colors = (s16 *)(buffer + 12);
 	color = colors;
 	for (i = 6; i < 12; i++)
@@ -935,7 +935,7 @@ static void RamakanSabaku_RunSandstorm(void)
 		red = value & 31;
 		green = (value >> 5) & 31;
 		blue = ((value >> 10) & 31) - 20;
-		level = RamakanSabaku_SandLevel;
+		level = LamakanDesert_SandLevel;
 		red += level / 3;
 		blue = blue - level / 6 + 20;
 		if (level > 60 && (gFrameCount & 1))
@@ -962,27 +962,27 @@ static void RamakanSabaku_RunSandstorm(void)
 	QueueIoWriteDelay3((u32)palette++, *word++);
 	QueueIoWriteDelay3((u32)palette++, *word++);
 
-	RamakanSabaku_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
-	if (RamakanSabaku_SandLevel > 118)
+	LamakanDesert_SandLevel = gGameState.hazard_steps * 120 / gGameState.hazard_limit;
+	if (LamakanDesert_SandLevel > 118)
 	{
-		RamakanSabaku_SandFlash = 119;
+		LamakanDesert_SandFlash = 119;
 	}
-	if (RamakanSabaku_SandFlash != 0)
+	if (LamakanDesert_SandFlash != 0)
 	{
-		RamakanSabaku_SandLevel = RamakanSabaku_SandFlash;
-		RamakanSabaku_SandFlash -= 8;
-		if (RamakanSabaku_SandFlash <= 0)
+		LamakanDesert_SandLevel = LamakanDesert_SandFlash;
+		LamakanDesert_SandFlash -= 8;
+		if (LamakanDesert_SandFlash <= 0)
 		{
-			RamakanSabaku_SandFlash = 0;
+			LamakanDesert_SandFlash = 0;
 		}
 	}
 
-	Dma_Set(RamakanSabaku_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
-	if (RamakanSabaku_SandFlash <= 118)
+	Dma_Set(LamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
+	if (LamakanDesert_SandFlash <= 118)
 	{
 		column = (u32 *)(buffer + 80);
 		fill = 0xeeeeeeee;
-		for (i = 12; i < 128 - RamakanSabaku_SandLevel; i++)
+		for (i = 12; i < 128 - LamakanDesert_SandLevel; i++)
 		{
 			column[8] = fill;
 			*column++ = fill;
@@ -1006,13 +1006,13 @@ static void RamakanSabaku_RunSandstorm(void)
 		}
 		destination++;
 	}
-	Engine_VramLoad((*(s16 *)&RamakanSabaku_SandVramSlot), 0x480, buffer);
+	Engine_VramLoad((*(s16 *)&LamakanDesert_SandVramSlot), 0x480, buffer);
 
 	attributes = 0x80008000;
-	sprite = RamakanSabaku_SandWork;
+	sprite = LamakanDesert_SandWork;
 	for (i = 0, offset = 0, x = 8; i < 5; i++)
 	{
-		u32 y = (RamakanSabaku_SandCounter * 8 - 16) & 0x1ff;
+		u32 y = (LamakanDesert_SandCounter * 8 - 16) & 0x1ff;
 
 		if (i == 4)
 		{
@@ -1021,7 +1021,7 @@ static void RamakanSabaku_RunSandstorm(void)
 		sprite->next = NULL;
 		sprite->oam.word.attr01 = (y << 16) | x | attributes;
 		sprite->oam.word.attr23 = 0xe400 | tile;
-		Runtime_PushSlotEntry(((u8 *)RamakanSabaku_SandWork + offset), 255);
+		Runtime_PushSlotEntry(((u8 *)LamakanDesert_SandWork + offset), 255);
 		sprite++;
 		tile += 8;
 		offset += 12;
@@ -1035,26 +1035,26 @@ struct Half
 	u16 v;
 };
 
-void RamakanSabaku_ClaimSandEffectVram(void)
+void LamakanDesert_ClaimSandEffectVram(void)
 {
 	s32			slot;
 	u16		   *slotp;
 	struct Half zero;
 
-	FieldResource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
-	slotp = &RamakanSabaku_SandVramSlot;
+	FieldResource_DecodeType01(LamakanDesert_SandEffectTiles, LamakanDesert_SandTileBuffer);
+	slotp = &LamakanDesert_SandVramSlot;
 	slot = Resource_FindFreeEntry();
 	*slotp = slot;
 	Engine_VramLoad((s16)slot, 0x480, 0);
 	zero.v = 0;
-	RamakanSabaku_SandCounter = zero.v;
-	RamakanSabaku_SandPhase = zero.v;
-	FieldScheduler_AddCallback(RamakanSabaku_RunSandstorm, 0xc76);
+	LamakanDesert_SandCounter = zero.v;
+	LamakanDesert_SandPhase = zero.v;
+	FieldScheduler_AddCallback(LamakanDesert_RunSandstorm, 0xc76);
 }
 
-static void RamakanSabaku_SetSandPhase(u16 value)
+static void LamakanDesert_SetSandPhase(u16 value)
 {
-	RamakanSabaku_SandPhase = value;
+	LamakanDesert_SandPhase = value;
 }
 
 const s32 gEffectScript0[] = {
@@ -1084,13 +1084,13 @@ const s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-const s32 RamakanSabaku_SafePoints1[] = {
+const s32 LamakanDesert_SafePoints1[] = {
 	PIXELS(384), PIXELS(128),
 	PIXELS(288), PIXELS(688),
 	PIXELS(608), PIXELS(720),
 };
 
-const s32 RamakanSabaku_SafePoints2[] = {
+const s32 LamakanDesert_SafePoints2[] = {
 	PIXELS(704), PIXELS(96),
 	PIXELS(448), PIXELS(464),
 	PIXELS(832), PIXELS(592),
@@ -1098,7 +1098,7 @@ const s32 RamakanSabaku_SafePoints2[] = {
 	PIXELS(464), PIXELS(896),
 };
 
-const s32 RamakanSabaku_SafePointsOther[] = {
+const s32 LamakanDesert_SafePointsOther[] = {
 	PIXELS(192), PIXELS(224),
 	PIXELS(192), PIXELS(352),
 };
@@ -1109,27 +1109,27 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance gRamakanSabakuEntrancesOther[] = {
+struct SceneEntrance gLamakanDesertEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, 0, 0, 0, 0, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRamakanSabakuEntrances1[] = {
+struct SceneEntrance gLamakanDesertEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 984, 0, 952, FACING_WEST, 0, 0, 0, 1016, 1016, 0 },
 	{ 2, CONDITION_ALWAYS, 400, 0, 24, FACING_SOUTH, 0, 0, 0, 1016, 1016, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRamakanSabakuEntrances2[] = {
+struct SceneEntrance gLamakanDesertEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 912, 0, 1000, FACING_NORTH, 0, 0, 0, 1016, 1016, 0 },
 	{ 2, CONDITION_ALWAYS, 24, 0, 584, FACING_EAST, 0, 0, 0, 1016, 1016, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRamakanSabakuEntrances3[] = {
+struct SceneEntrance gLamakanDesertEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 1511, 0, 104, FACING_WEST, 0, 0, 8, 1528, 504, 0 },
 	{ 2, CONDITION_ALWAYS, 727, 0, 104, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
@@ -1139,7 +1139,7 @@ struct SceneEntrance gRamakanSabakuEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRamakanSabakuEntrances4[] = {
+struct SceneEntrance gLamakanDesertEntrances4[] = {
 	{ 0, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 424, 0, 968, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
 	{ 2, CONDITION_ALWAYS, 552, 0, 776, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
@@ -1148,7 +1148,7 @@ struct SceneEntrance gRamakanSabakuEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 RamakanSabaku_Exits[] = {
+u32 LamakanDesert_Exits[] = {
 	SCENE_EXITS(89),
 	SCENE_EXIT(1, 2, 18),
 	SCENE_EXIT(2, 90, 1),
@@ -1168,11 +1168,11 @@ u32 RamakanSabaku_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gRamakanSabakuPlacementsOther[] = {
+struct ScenePlacement gLamakanDesertPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRamakanSabakuPlacements1[] = {
+struct ScenePlacement gLamakanDesertPlacements1[] = {
 	{ 0xc3, 0x90a, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1180,7 +1180,7 @@ struct ScenePlacement gRamakanSabakuPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRamakanSabakuPlacements2[] = {
+struct ScenePlacement gLamakanDesertPlacements2[] = {
 	{ 0xc3, 0x90a, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1196,7 +1196,7 @@ struct ScenePlacement gRamakanSabakuPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRamakanSabakuPlacements3[] = {
+struct ScenePlacement gLamakanDesertPlacements3[] = {
 	{ 0xc3, 0x90a, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1204,7 +1204,7 @@ struct ScenePlacement gRamakanSabakuPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent RamakanSabaku_Events[] = {
+struct SceneEvent LamakanDesert_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1215,7 +1215,7 @@ struct SceneEvent RamakanSabaku_Events[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
 	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
 	{ EVENT_TOUCH, 20, 0x200, EVENT_SCRIPT(EV20_TOUCH) },
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
 	{ EVENT_TOUCH, 22, 0x200, EVENT_SCRIPT(EV22_TOUCH) },
 	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TOUCH) },
 	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
@@ -1228,24 +1228,24 @@ struct SceneEvent RamakanSabaku_Events[] = {
 	{ SEARCH(SEARCH_CHEST), 105, 0xf7d, FIND_COINS(777) },
 	{ SEARCH(SEARCH_CHEST), 106, 0xf7e, FIND_ITEM(0xb7) },
 	{ SEARCH(SEARCH_CHEST), 107, 0xf7f, FIND_ITEM(0xc3) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_ConfigureAreaLayout) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_ApplyEntryState) },
-	{ EVENT_RAISED, 1, 0x201, EVENT_SCRIPT(RamakanSabaku_ShowRandomPartyLine) },
-	{ EVENT_RAISED, 2, 0x201, EVENT_SCRIPT(RamakanSabaku_ShowRandomPartyLine) },
-	{ EVENT_RAISED, 3, 0x201, EVENT_SCRIPT(RamakanSabaku_ShowRandomPartyLine) },
-	{ EVENT_TOUCH, 100, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 101, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 102, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 103, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 104, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 105, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 106, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 107, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_ConfigureAreaLayout) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_ApplyEntryState) },
+	{ EVENT_RAISED, 1, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
+	{ EVENT_RAISED, 2, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
+	{ EVENT_RAISED, 3, 0x201, EVENT_SCRIPT(LamakanDesert_ShowRandomPartyLine) },
+	{ EVENT_TOUCH, 100, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 101, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 102, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 103, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 104, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 105, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 106, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
+	{ EVENT_TOUCH, 107, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_UpdateTravelDust) },
 	{ SCENE_EVENTS_END },
 };
 
-s16 RamakanSabaku_SandLevel = 0;
+s16 LamakanDesert_SandLevel = 0;
 
-s16 RamakanSabaku_SandCounter = 0;
+s16 LamakanDesert_SandCounter = 0;
 
-s16 RamakanSabaku_SandFlash = 0;
+s16 LamakanDesert_SandFlash = 0;

@@ -41,14 +41,14 @@
 // 前方宣言
 static void FieldScene_RunScriptedSceneSequence(void);
 static void FieldScene_RunActorUpdateSequence(void);
-static void ShindenHeya_CopyActorPose(void);
-static void ShindenHeya_ResetActorUpdate(void);
-static void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor);
-static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
-static s32 ShindenHeya_ChooseRestartOption(void);
+static void Sanctum_CopyActorPose(void);
+static void Sanctum_ResetActorUpdate(void);
+static void Sanctum_FollowLeaderOffset(struct FieldActor *actor);
+static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1);
+static s32 Sanctum_ChooseRestartOption(void);
 static void FieldScene_RunPairedActorChoreography(void);
-static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z);
-static void ShindenHeya_SpawnActorSpark(s32 id);
+static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+static void Sanctum_SpawnActorSpark(s32 id);
 static void SceneState_ApplyTwoRects(void);
 
 struct ShrineWork
@@ -69,9 +69,9 @@ static s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 	return 0;
 }
 
-void *ShindenHeya_GetEntrances(void)
+void *Sanctum_GetEntrances(void)
 {
-	return &ShindenHeya_TableA;
+	return &Sanctum_TableA;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -79,9 +79,9 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-void *ShindenHeya_GetExits(void)
+void *Sanctum_GetExits(void)
 {
-	return &ShindenHeya_TableB;
+	return &Sanctum_TableB;
 }
 
 void *SceneData_SelectPlacementTableBySubstate(void)
@@ -90,24 +90,24 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 	{
 	case 1:
 	case 2:
-		return ShindenHeya_PlacementB;
+		return Sanctum_PlacementB;
 
 	case 10:
 	case 11:
 	case 12:
 	case 35:
-		return ShindenHeya_PlacementC;
+		return Sanctum_PlacementC;
 
 	case 20:
 	case 21:
-		return ShindenHeya_PlacementD;
+		return Sanctum_PlacementD;
 
 	case 29:
 	case 32:
-		return ShindenHeya_PlacementE;
+		return Sanctum_PlacementE;
 
 	default:
-		return ShindenHeya_PlacementA;
+		return Sanctum_PlacementA;
 	}
 }
 
@@ -117,32 +117,32 @@ u8 *SceneData_SelectTableBySceneIdAndFlags(void)
 	{
 	case 10:
 	case 12:
-		return ShindenHeya_SceneTableB;
+		return Sanctum_SceneTableB;
 	case 11:
-		return ShindenHeya_SceneTableC;
+		return Sanctum_SceneTableC;
 	case 20:
 	case 21:
 	case 50:
-		return ShindenHeya_SceneTableD;
+		return Sanctum_SceneTableD;
 	case 32:
-		return ShindenHeya_SceneTableI;
+		return Sanctum_SceneTableI;
 	case 29:
-		return ShindenHeya_SceneTableG;
+		return Sanctum_SceneTableG;
 	case 35:
-		return ShindenHeya_SceneTableH;
+		return Sanctum_SceneTableH;
 	default:
 		break;
 	}
 
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return ShindenHeya_SceneTableF;
+		return Sanctum_SceneTableF;
 	}
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		return ShindenHeya_SceneTableE;
+		return Sanctum_SceneTableE;
 	}
-	return ShindenHeya_SceneTableA;
+	return Sanctum_SceneTableA;
 }
 
 static void FieldScene_RunActorNineFlagDialogueA(void)
@@ -151,16 +151,16 @@ static void FieldScene_RunActorNineFlagDialogueA(void)
 
 	if (Engine_GameFlagIsSet(0x855) != 0)
 	{
-		Engine_EventSetMessage(MsgShindenWhenStrayFromYourWorldly);
+		Engine_EventSetMessage(MsgSanctumWhenStrayFromYourWorldly);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShindenHealerMustWorriedAboutNever);
+		Engine_EventSetMessage(MsgSanctumHealerMustWorriedAboutNever);
 	}
 
 	if (gGameState.entrance == 11)
 	{
-		Engine_EventSetMessage(MsgShindenPolishedGoldStatueReturnedUs);
+		Engine_EventSetMessage(MsgSanctumPolishedGoldStatueReturnedUs);
 	}
 
 	Engine_ActorSetAnimation(9, 1);
@@ -177,16 +177,16 @@ static void EV09_PSYNERGY(void)
 
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage(MsgShindenWonderIfEverSeeOur);
+		Engine_EventSetMessage(MsgSanctumWonderIfEverSeeOur);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgShindenChildHasAwakenedOurTeachings);
+		Engine_EventSetMessage(MsgSanctumChildHasAwakenedOurTeachings);
 	}
 
 	if (gGameState.entrance == 11)
 	{
-		Engine_EventSetMessage(MsgShindenDirtyGoldenStatueCleanedUp);
+		Engine_EventSetMessage(MsgSanctumDirtyGoldenStatueCleanedUp);
 	}
 
 	Engine_ActorStop(9);
@@ -200,7 +200,7 @@ static void EV09_PSYNERGY(void)
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShindenAreYouSure);
+	Engine_EventSetMessage(MsgSanctumAreYouSure);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -262,10 +262,10 @@ static void FieldScene_RunScene378SequenceB(void)
 {
 	Engine_EventBegin();
 #if EDITION_INTERNATIONAL
-	Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
+	Event_CallWithLastActiveObjectId((s32)Sanctum_PlacementSequenceB);
 	Engine_TaskWait(1);
 #endif
-	Engine_EventSetMessage(MsgShindenRobinYourNewFriendsAdepts);
+	Engine_EventSetMessage(MsgSanctumIsaacYourNewFriendsAdepts);
 	Engine_EventOpenMessage(9, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -290,7 +290,7 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorFaceActor(10, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_EventSetMessage(MsgShindenDoFeelAnyChangeIn);
+	Engine_EventSetMessage(MsgSanctumDoFeelAnyChangeIn);
 	Engine_EventOpenMessage(10, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -302,7 +302,7 @@ static void EV10_TALK(void)
 	Engine_EventEnd();
 }
 
-s32 ShindenHeya_ApplyEntryState(void)
+s32 Sanctum_ApplyEntryState(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_ColorBufferApplyTarget(0x10000, 0);
@@ -354,7 +354,7 @@ static void EV02_TOUCH(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgShindenOnceStepOutsideVillageCannot);
+	Engine_EventSetMessage(MsgSanctumOnceStepOutsideVillageCannot);
 	Engine_EventShowMessage(8, 0);
 	Engine_GameFlagSet(0x200);
 	Engine_EventEnd();
@@ -384,12 +384,12 @@ static void EV01_TOUCH(void)
 	work->lamps[2] = 1;
 	work->lamps[3] = 1;
 	Engine_EventWait(1);
-	UiText_ShowCenteredMessage(MsgShindenWorldBeganDrifting, 1, 0);
+	UiText_ShowCenteredMessage(MsgSanctumWorldBeganDrifting, 1, 0);
 	Engine_ColorBufferApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(120);
 	Engine_EventWait(120);
 	Engine_EventWait(60);
-	if (ShindenHeya_ChooseRestartOption() == 0)
+	if (Sanctum_ChooseRestartOption() == 0)
 	{
 		Engine_EventEnd();
 		Engine_EventRequestExit(20);
@@ -401,7 +401,7 @@ static void EV01_TOUCH(void)
 	}
 }
 
-static s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor)
+static s32 Sanctum_MatchLeaderPriority(struct FieldActor *actor)
 {
 	actor->sprite->priority = Object_GetById(0)->sprite->priority;
 	actor->sprite->second_priority = Object_GetById(0)->sprite->priority;
@@ -416,7 +416,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 	if (GameFlag_IsSet(0x201) != 0)
 	{
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+		Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 		Actor_FaceActor(0xb, ACTOR_PARTY_LEADER, 0);
 		Actor_FaceActor(0xc, ACTOR_PARTY_LEADER, 0);
 		Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
@@ -444,15 +444,15 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_ColorBufferInterpolate(0x3c);
 		Engine_EventWait(0x64);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorSetAnimation(GERALD, 1);
+		Engine_ActorSetAnimation(GARET, 1);
 		Engine_EventWait(0x1e);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 0xc, 0);
-		Actor_FaceActor(GERALD, 0xc, 0);
+		Actor_FaceActor(GARET, 0xc, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorEnableActionCallback(8, 1);
 		Engine_ActorEnableActionCallback(0xc, 1);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-		Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
+		Actor_SetSpeed(GARET, 0xcccc, 0x6666);
 		Actor_SetSpeed(0xb, 0xcccc, 0x6666);
 		Actor_SetSpeed(0xc, 0xcccc, 0x6666);
 		Actor_SetSpeed(9, 0xcccc, 0x6666);
@@ -460,18 +460,18 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_SetSpeed(8, 0xcccc, 0x6666);
 		Engine_EventWait(0x1e);
 		Engine_ActorRunRepeatedMotion(0xc, 2);
-		Engine_EventSetMessage(MsgShindenWeHadIdeaTrueSanctum);
+		Engine_EventSetMessage(MsgSanctumWeHadIdeaTrueSanctum);
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0xa);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 		Engine_EventWait(0x1e);
 		Engine_ActorSetAnimationAndWait(0xc, 3);
 		Engine_EventWait(0x14);
 		Engine_ActorRunRepeatedMotion(0xb, 2);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 0xb, 0);
-		Actor_FaceActor(GERALD, 0xb, 0);
+		Actor_FaceActor(GARET, 0xb, 0);
 		Engine_EventWait(0x14);
 		Event_OpenMessage(0xb, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -494,7 +494,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_ActorRunRepeatedMotion(9, 1);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-		Actor_FaceActor(GERALD, 9, 0);
+		Actor_FaceActor(GARET, 9, 0);
 		Actor_FaceActor(0xb, 9, 0);
 		Engine_EventWait(0x14);
 		Event_OpenMessage(9, 0);
@@ -516,7 +516,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		}
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_ActorSetAnimation(0xb, 3);
 		Engine_ActorSetAnimation(0xc, 3);
 		Engine_ActorSetAnimation(9, 3);
@@ -531,7 +531,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Actor_FaceActor(0xb, 8, 0);
 		Actor_FaceActor(9, 8, 0);
 		Actor_FaceActor(0xa, 8, 0);
@@ -570,7 +570,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_ShowEmote(0xc, 0x101, 0);
 		Engine_EventWait(0x28);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-		Actor_ShowEmote(GERALD, 0x101, 0);
+		Actor_ShowEmote(GARET, 0x101, 0);
 		Actor_ShowEmote(0xb, 0x101, 0);
 		Actor_ShowEmote(9, 0x101, 0);
 		Actor_ShowEmote(0xa, 0x101, 0);
@@ -580,15 +580,15 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0xa);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-		Actor_ShowEmote(GERALD, 0x100, 0);
+		Actor_ShowEmote(GARET, 0x100, 0);
 		Actor_ShowEmote(0xb, 0x100, 0);
 		Actor_ShowEmote(0xc, 0x100, 0);
 		Actor_ShowEmote(9, 0x100, 0);
 		Actor_ShowEmote(0xa, 0x100, 0);
 		Engine_EventWait(0x3c);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		Engine_EventWait(0xa);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(0xa);
@@ -596,7 +596,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0xa);
 		Actor_ShowEmote(0xc, 0x102, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorStartRepeatedMotion(GERALD, 1);
+		Engine_ActorStartRepeatedMotion(GARET, 1);
 		Engine_ActorStartRepeatedMotion(0xb, 1);
 		Engine_ActorStartRepeatedMotion(9, 1);
 		Engine_ActorRunRepeatedMotion(0xa, 1);
@@ -626,26 +626,26 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_ActorSetAnimation(8, 0);
 		Actor_SetChildValue(8, 0x100);
-		ShindenHeya_CopyActorPose();
+		Sanctum_CopyActorPose();
 		Event_PlayCue(0xc4);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x20);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x10);
 		for (i = 0; i < 6; i++)
 		{
-			ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+			Sanctum_SpawnOwnerEffect(8, 0x1200);
 			Engine_EventWait(8);
 		}
 		Engine_EventWait(8);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x20);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x60);
 		Engine_EventWait(0x20);
 		Actor_SetChildValue(8, 0);
 		Engine_EventWait(0x1e);
-		ShindenHeya_ResetActorUpdate();
+		Sanctum_ResetActorUpdate();
 		Engine_ActorSetAnimation(8, 1);
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(0x14);
@@ -653,7 +653,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Actor_SetAttachedEffect(0xc, 0x102);
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-		Actor_SetAttachedEffect(GERALD, 0x102);
+		Actor_SetAttachedEffect(GARET, 0x102);
 		Actor_SetAttachedEffect(0xb, 0x102);
 		Actor_SetAttachedEffect(9, 0x102);
 		Actor_SetAttachedEffect(0xa, 0x102);
@@ -662,19 +662,19 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Event_ShowMessage(0xa, 0);
 		Engine_EventWait(0x14);
-		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 		Engine_EventWait(0x3c);
 		Engine_ActorSetAnimationAndWait(8, 4);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Engine_EventWait(0x14);
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x1e);
-		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_ActorFaceEachOther(9, 0xa, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimation(9, 3);
@@ -682,48 +682,48 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		ObjectMotion_WaitForAnimationChange(0xa);
 		Engine_EventWait(0x1e);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 0xb, 0);
-		Engine_ActorFaceEachOther(GERALD, 0xc, 0);
+		Engine_ActorFaceEachOther(GARET, 0xc, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimation(0xb, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_ActorSetAnimation(0xc, 3);
 		ObjectMotion_WaitForAnimationChange(0xc);
 		Engine_EventWait(0x3c);
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_ActorSetAnimation(8, 0);
 		Actor_SetChildValue(8, 0x100);
-		ShindenHeya_CopyActorPose();
+		Sanctum_CopyActorPose();
 		Event_PlayCue(0xc4);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x20);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Actor_FaceActor(0xb, 8, 0);
 		Actor_FaceActor(0xc, 8, 0);
 		Actor_FaceActor(9, 8, 0);
 		Actor_FaceActor(0xa, 8, 0);
 		Engine_EventWait(0x10);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorStartRepeatedMotion(GERALD, 1);
+		Engine_ActorStartRepeatedMotion(GARET, 1);
 		Engine_ActorStartRepeatedMotion(0xb, 1);
 		Engine_ActorStartRepeatedMotion(0xc, 1);
 		Engine_ActorStartRepeatedMotion(9, 1);
 		Engine_ActorStartRepeatedMotion(0xa, 1);
 		for (i = 0; i < 6; i++)
 		{
-			ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+			Sanctum_SpawnOwnerEffect(8, 0x1200);
 			Engine_EventWait(8);
 		}
 		Engine_EventWait(8);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x20);
-		ShindenHeya_SpawnOwnerEffect(8, 0x1200);
+		Sanctum_SpawnOwnerEffect(8, 0x1200);
 		Engine_EventWait(0x80);
 		Actor_SetChildValue(8, 0);
 		Engine_EventWait(0x1e);
-		ShindenHeya_ResetActorUpdate();
+		Sanctum_ResetActorUpdate();
 		Engine_ActorSetAnimation(8, 1);
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(0x1e);
@@ -740,8 +740,8 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(0xb, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorStartRepeatedMotion(GERALD, 1);
-		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+		Engine_ActorStartRepeatedMotion(GARET, 1);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 		Engine_ActorStartRepeatedMotion(9, 1);
 		Engine_ActorStartRepeatedMotion(0xa, 1);
 		Engine_ActorFaceEachOther(9, 0xa, 0);
@@ -750,18 +750,18 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Actor_FaceActor(9, 8, 0);
 		Actor_FaceActor(0xa, 8, 0);
 		Engine_EventWait(0x14);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(0x14);
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x14);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-		Actor_ShowEmote(GERALD, 0x101, 0);
+		Actor_ShowEmote(GARET, 0x101, 0);
 		Actor_ShowEmote(0xb, 0x101, 0);
 		Actor_ShowEmote(0xc, 0x101, 0);
 		Actor_ShowEmote(9, 0x101, 0);
@@ -772,7 +772,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x14);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_ActorSetAnimation(0xb, 3);
 		Engine_ActorSetAnimation(0xc, 3);
 		Engine_ActorSetAnimation(9, 3);
@@ -794,7 +794,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x1e);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-		Actor_ShowEmote(GERALD, 0x102, 0);
+		Actor_ShowEmote(GARET, 0x102, 0);
 		Actor_ShowEmote(0xb, 0x102, 0);
 		Actor_ShowEmote(0xc, 0x102, 0);
 		Actor_ShowEmote(9, 0x102, 0);
@@ -807,7 +807,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_ActorSetAnimationAndWait(8, 4);
 		Engine_EventWait(0x14);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-		Actor_ShowEmote(GERALD, 0x101, 0);
+		Actor_ShowEmote(GARET, 0x101, 0);
 		Actor_ShowEmote(0xb, 0x101, 0);
 		Actor_ShowEmote(0xc, 0x101, 0);
 		Actor_ShowEmote(9, 0x101, 0);
@@ -818,7 +818,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x14);
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-		Actor_SetAttachedEffect(GERALD, 0x102);
+		Actor_SetAttachedEffect(GARET, 0x102);
 		Actor_SetAttachedEffect(0xb, 0x102);
 		Actor_SetAttachedEffect(0xc, 0x102);
 		Actor_SetAttachedEffect(9, 0x102);
@@ -834,12 +834,12 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x28);
-		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 		Engine_ActorFaceEachOther(9, 0xa, 0);
 		Actor_FaceActor(0xc, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(0x3c);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Actor_FaceActor(0xb, 8, 0);
 		Actor_FaceActor(0xc, 8, 0);
 		Actor_FaceActor(9, 8, 0);
@@ -852,7 +852,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_WalkToAndWait(8, 0xc8, 0x88);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
 		Actor_FaceActor(0xc, ACTOR_PARTY_LEADER, 0);
-		Engine_ActorFaceEachOther(8, GERALD, 0);
+		Engine_ActorFaceEachOther(8, GARET, 0);
 		Engine_EventWait(0x28);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(0x32);
@@ -865,7 +865,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x1e);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-		Actor_ShowEmote(GERALD, 0x102, 0);
+		Actor_ShowEmote(GARET, 0x102, 0);
 		Engine_EventWait(0x3c);
 		Actor_SetAttachedEffect(0xb, 0x102);
 		Engine_ActorRunRepeatedMotion(0xb, 1);
@@ -880,7 +880,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x1e);
 		Actor_WalkToAndWait(8, 0xa8, 0x78);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-		Actor_FaceActor(GERALD, 8, 0);
+		Actor_FaceActor(GARET, 8, 0);
 		Actor_FaceActor(0xc, 8, 0);
 		Actor_FaceDirection(8, 0xd000, 0);
 		Engine_EventWait(0x14);
@@ -889,7 +889,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x1e);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-		Actor_ShowEmote(GERALD, 0x102, 0);
+		Actor_ShowEmote(GARET, 0x102, 0);
 		Engine_EventWait(0x3c);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(0xa);
@@ -900,14 +900,14 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(8, 0);
 		Engine_EventWait(0x14);
 		Actor_FaceActor(0xc, ACTOR_PARTY_LEADER, 0);
-		Actor_SetAttachedEffect(GERALD, 0x102);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
-		Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+		Actor_SetAttachedEffect(GARET, 0x102);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
+		Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(0x14);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		Engine_EventWait(0x1e);
 	}
-	Engine_EventSetMessage(MsgShindenRobinWillAcceptResponsibilityFor);
+	Engine_EventSetMessage(MsgSanctumIsaacWillAcceptResponsibilityFor);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(0x14);
 	Event_OpenMessage(8, 0);
@@ -932,7 +932,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Engine_EventWait(0x14);
 		Object_GetById(0xa)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		Object_GetById(0xa)->update =
-			(void (*)(union FieldObject *))ShindenHeya_MatchLeaderPriority;
+			(void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
 	}
 	Engine_EventEnd();
 }
@@ -944,7 +944,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	struct FieldActor *record;
 
 	Actor_SetAttachedEffect(1, 0x102);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
@@ -955,7 +955,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
 	Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
 	Engine_CameraWaitForMove();
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
@@ -975,24 +975,24 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Actor_FaceActor(9, 8, 0);
 	Actor_FaceActor(10, 8, 0);
 	Engine_EventWait(30);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgShindenAcceptRobinCantMean);
-	Event_ShowMessage(GERALD, 0);
+	Engine_EventSetMessage(MsgSanctumAcceptIsaacCantMean);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
-	Actor_FaceActor(12, GERALD, 0);
+	Actor_FaceActor(12, GARET, 0);
 	Engine_ActorStartRepeatedMotion(12, 2);
 	Engine_ActorShowEmote(12, 0x103, 0);
 	Engine_EventWait(60);
 	Event_ShowMessage(12, 0);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Actor_FaceActor(GERALD, 12, 0);
+	Actor_FaceActor(GARET, 12, 0);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(40);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	Actor_FaceActor(12, 8, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
@@ -1019,15 +1019,15 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_ActorSetAnimation(8, 0);
-	ShindenHeya_CopyActorPose();
+	Sanctum_CopyActorPose();
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-	Actor_FaceActor(GERALD, 13, 0);
+	Actor_FaceActor(GARET, 13, 0);
 	Actor_FaceActor(11, 13, 0);
 	Actor_FaceActor(12, 13, 0);
 	Actor_FaceActor(9, 13, 0);
 	Actor_FaceActor(10, 13, 0);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Engine_ActorStartRepeatedMotion(11, 2);
 	Engine_ActorStartRepeatedMotion(12, 2);
 	Engine_ActorStartRepeatedMotion(9, 2);
@@ -1043,7 +1043,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_PlayCue(0x134);
 	for (i = 0; i < 32; i++)
 	{
-		ShindenHeya_SpawnActorSpark(13);
+		Sanctum_SpawnActorSpark(13);
 		Engine_EventWait(4);
 		record = Object_GetById(13);
 		record->scale_x += -0x28f;
@@ -1059,14 +1059,14 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_ColorBufferApplyTarget(0x10000, 0);
 	Engine_ColorBufferInterpolate(60);
 	Engine_EventWait(120);
-	ShindenHeya_ResetActorUpdate();
+	Sanctum_ResetActorUpdate();
 	Engine_ActorSetAnimation(8, 1);
 	Event_PlayCue(2);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
 	Engine_ActorStartRepeatedMotion(11, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	Engine_ActorStartRepeatedMotion(9, 1);
@@ -1079,7 +1079,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Actor_FaceActor(12, 8, 0);
 	Engine_EventWait(20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	Actor_FaceActor(11, 8, 0);
 	Actor_FaceActor(9, 8, 0);
 	Actor_FaceActor(10, 8, 0);
@@ -1091,7 +1091,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(20);
@@ -1111,7 +1111,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimation(12, 3);
 	Engine_ActorSetAnimation(9, 3);
@@ -1121,22 +1121,22 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(180);
 	Actor_ShowEmote(12, 0x105, 0);
 	Engine_EventWait(60);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_ActorFaceEachOther(9, 10, 0);
 	Engine_EventWait(40);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	Actor_FaceActor(9, 8, 0);
 	Actor_FaceActor(10, 8, 0);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(30);
 	Actor_ShowEmote(8, 0x101, 0);
 	Engine_EventWait(60);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
 	Engine_ActorStartRepeatedMotion(11, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	Engine_ActorStartRepeatedMotion(9, 1);
@@ -1156,7 +1156,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_ActorShowEmote(8, 0x106, 0);
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
 	Engine_ActorStartRepeatedMotion(11, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	Engine_ActorStartRepeatedMotion(9, 1);
@@ -1165,7 +1165,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimation(12, 3);
 	Engine_ActorSetAnimation(9, 3);
@@ -1174,15 +1174,15 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
+	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimation(12, 3);
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimationAndWait(10, 3);
 	Engine_EventWait(120);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
@@ -1218,14 +1218,14 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(40);
 	Actor_WalkToAndWait(8, 168, 176);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	Actor_FaceActor(11, 8, 0);
 	Actor_FaceActor(12, 8, 0);
 	Actor_FaceActor(9, 8, 0);
 	Actor_FaceActor(10, 8, 0);
 	Actor_WalkToAndWait(8, 200, 200);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Actor_FaceActor(GERALD, 8, 0);
+	Actor_FaceActor(GARET, 8, 0);
 	Actor_FaceActor(12, 8, 0);
 	Actor_FaceDirection(11, 0, 0);
 	Actor_FaceDirection(9, 0x8000, 0);
@@ -1247,7 +1247,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(60);
 	Engine_EventWait(120);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-	Actor_FaceActor(GERALD, 10, 0);
+	Actor_FaceActor(GARET, 10, 0);
 	Actor_FaceActor(11, 9, 0);
 	Actor_FaceActor(12, 9, 0);
 	Engine_EventWait(120);
@@ -1291,7 +1291,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(60);
 	Actor_WalkToAndWait(12, 200, 136);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
-	Actor_FaceActor(GERALD, 12, 0);
+	Actor_FaceActor(GARET, 12, 0);
 	Actor_FaceActor(11, 12, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(12, 4);
@@ -1299,7 +1299,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_ShowMessage(12, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Event_ShowMessage(11, 0);
 	Engine_EventWait(20);
@@ -1307,7 +1307,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Actor_FaceActor(11, 12, 0);
 	Engine_EventWait(20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-	Actor_FaceActor(GERALD, 11, 0);
+	Actor_FaceActor(GARET, 11, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(11, 4);
 	Engine_EventWait(20);
@@ -1319,7 +1319,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_ActorSetAnimationAndWait(12, 4);
 	Engine_EventWait(20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-	Actor_FaceActor(GERALD, 12, 0);
+	Actor_FaceActor(GARET, 12, 0);
 	Engine_EventWait(20);
 	Event_ShowMessage(12, 0);
 	Engine_EventWait(20);
@@ -1335,7 +1335,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Event_ShowMessage(12, 0);
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Actor_ShowEmote(0, 0x100, 0);
 	Engine_ActorShowEmote(1, 0x100, 0);
 	Engine_EventWait(60);
@@ -1350,7 +1350,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_ActorSetAnimation(12, 3);
 }
 
-static void ShindenHeya_CopyActorPose(void)
+static void Sanctum_CopyActorPose(void)
 {
 	u32						i;
 	struct FieldActor	   *rec7;
@@ -1367,7 +1367,7 @@ static void ShindenHeya_CopyActorPose(void)
 	record = Object_GetById(8);
 	rec7->facing = record->facing;
 	record = Object_GetById(14);
-	record->update = (void (*)(union FieldObject *))ShindenHeya_FollowLeaderOffset;
+	record->update = (void (*)(union FieldObject *))Sanctum_FollowLeaderOffset;
 	record = Object_GetById(14);
 	p5 = (struct AnimationObject *)record->sprite;
 	{
@@ -1386,14 +1386,14 @@ static void ShindenHeya_CopyActorPose(void)
 	((struct FieldSprite *)p5)->priority = 2;
 }
 
-static void ShindenHeya_ResetActorUpdate(void)
+static void Sanctum_ResetActorUpdate(void)
 {
 	struct FieldActor *state = Object_GetById(14);
 	state->update = 0;
 	Engine_ActorSetPosition(14, 0, 0);
 }
 
-static void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
+static void Sanctum_FollowLeaderOffset(struct FieldActor *actor)
 {
 	struct FieldActor *leader;
 
@@ -1439,7 +1439,7 @@ static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 	*angle = (*angle + obj->work);
 }
 
-static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
+static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1)
 {
 	s32					p8;
 	struct FieldActor  *rec;
@@ -1454,7 +1454,7 @@ static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 		if (rec8 != 0)
 		{
 			p5 = rec8->sprite;
-			Engine_ObjectSetScript(rec8, ShindenHeya_OwnerEffectScript);
+			Engine_ObjectSetScript(rec8, Sanctum_OwnerEffectScript);
 			{
 				s32 zero = 0;
 
@@ -1483,7 +1483,7 @@ static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 #define CURSOR_X 64
 #endif
 
-static s32 ShindenHeya_ChooseRestartOption(void)
+static s32 Sanctum_ChooseRestartOption(void)
 {
 	s32				  slot;
 	struct MenuSprite cursor;
@@ -1502,7 +1502,7 @@ static s32 ShindenHeya_ChooseRestartOption(void)
 	Engine_ColorBufferInterpolate(1);
 	Engine_EventWait(1);
 	window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
-	text = MsgShindenGreatHealer;
+	text = MsgSanctumGreatHealer;
 	UiText_DrawResource(text, window, 16, 0);
 	if (SaveState_CountRecordsExcludingFlagged(1) == 0)
 	{
@@ -1523,7 +1523,7 @@ static s32 ShindenHeya_ChooseRestartOption(void)
 		{
 			choice ^= 1;
 		}
-		x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
+		x = Sanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
 		FieldUiTextResource_SetPosition(&cursor, x, (choice << 4) + 60);
 		Engine_EventWait(1);
 	}
@@ -1545,7 +1545,7 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(15);
-	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_ActorStartRepeatedMotion(0, 1);
 	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
@@ -1557,24 +1557,24 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
 	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
-	Engine_ActorJump(GERALD, 2, 0);
+	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(15);
-	Engine_ActorFaceActor(GERALD, 8, 0);
+	Engine_ActorFaceActor(GARET, 8, 0);
 	Engine_EventWait(5);
-	Engine_ActorJump(GERALD, 2, 0);
+	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(25);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(5);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(5);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(10);
-	Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(15);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimation(12, 3);
@@ -1583,27 +1583,27 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_ActorSetAnimationAndWait(10, 3);
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
-	Engine_ActorFaceActor(GERALD, 11, 0);
+	Engine_ActorFaceActor(GARET, 11, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_EventWait(15);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(10);
-	ShindenHeya_RaiseItemIcon(222, 0xb80000, 0x1b0000, 0xa80000);
-	Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+	Sanctum_RaiseItemIcon(222, 0xb80000, 0x1b0000, 0xa80000);
+	Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(10);
-	Engine_ActorJump(GERALD, 4, 0);
+	Engine_ActorJump(GARET, 4, 0);
 	Actor_FaceDirection(1, 0xd000, 0);
 	Engine_EventWait(15);
 	Actor_FaceDirection(1, 0xb000, 0);
@@ -1614,7 +1614,7 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(10);
 	Actor_FaceDirection(1, 0xd000, 0);
 	Engine_EventWait(30);
-	Engine_ActorJump(GERALD, 4, 0);
+	Engine_ActorJump(GARET, 4, 0);
 	Actor_FaceDirection(1, 0x3000, 0);
 	Engine_EventWait(15);
 	Actor_FaceDirection(1, 0x5000, 0);
@@ -1631,25 +1631,25 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Actor_ShowEmote(0, 0x102, 0);
 	Actor_ShowEmote(1, 0x102, 0);
 	Engine_EventWait(60);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
 	Object_GetById(8)->timer = 1;
 	Object_GetById(8)->update = (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
 	Object_GetById(12)->timer = 1;
 	Object_GetById(12)->update = (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
 	Engine_ActorWalkToAndWait(1, 196, 180);
-	Engine_ActorWalkToAndWait(GERALD, 184, 184);
-	Engine_ActorWalkToAndWait(GERALD, 180, 180);
-	Engine_ActorWalkToAndWait(GERALD, 168, 168);
-	Engine_ActorWalkToAndWait(GERALD, 180, 156);
-	Engine_ActorWalkTo(GERALD, 200, 104);
+	Engine_ActorWalkToAndWait(GARET, 184, 184);
+	Engine_ActorWalkToAndWait(GARET, 180, 180);
+	Engine_ActorWalkToAndWait(GARET, 168, 168);
+	Engine_ActorWalkToAndWait(GARET, 180, 156);
+	Engine_ActorWalkTo(GARET, 200, 104);
 	Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
 	Actor_FaceDirection(0, 0xc000, 0);
-	Engine_ActorWaitForMove(GERALD);
+	Engine_ActorWaitForMove(GARET);
 	Engine_EventWait(30);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(10);
 	Actor_FaceDirection(1, 0x5000, 0);
 	Engine_EventWait(15);
@@ -1682,49 +1682,49 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(12, 3);
 	Engine_EventWait(60);
-	Engine_ActorWalkToAndWait(GERALD, 208, 168);
+	Engine_ActorWalkToAndWait(GARET, 208, 168);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(10);
-	Engine_ActorFaceDirection(GERALD, 0, 0);
+	Engine_ActorFaceDirection(GARET, 0, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(12, 3);
 	Engine_EventWait(10);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-	Engine_ActorFaceDirection(GERALD, 0, 0);
+	Engine_ActorFaceDirection(GARET, 0, 0);
 	Engine_EventWait(10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(0, ShindenHeya_LeaderCircleScript);
-	Engine_ActorEnableActionCallback(1, ShindenHeya_GeraldCircleScript);
+	Engine_ActorEnableActionCallback(0, Sanctum_LeaderCircleScript);
+	Engine_ActorEnableActionCallback(1, Sanctum_GaretCircleScript);
 	Object_RefreshSelectorById(0);
 	Object_RefreshSelectorById(1);
 	Actor_SetSpeed(0, 0x18000, 0xc000);
 	Actor_SetSpeed(1, 0x18000, 0xc000);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-	Engine_ActorJump(GERALD, 6, 0);
+	Engine_ActorJump(GARET, 6, 0);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 9, 0);
-	Engine_ActorFaceActor(GERALD, 8, 0);
+	Engine_ActorFaceActor(GARET, 8, 0);
 	Engine_EventWait(1);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
-	Engine_ActorFaceActor(GERALD, 11, 0);
+	Engine_ActorFaceActor(GARET, 11, 0);
 	Engine_EventWait(1);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 8, 0);
-	Engine_ActorFaceActor(GERALD, 9, 0);
+	Engine_ActorFaceActor(GARET, 9, 0);
 	Engine_EventWait(1);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 192, 168);
-	Engine_ActorWalkToAndWait(GERALD, 208, 168);
+	Engine_ActorWalkToAndWait(GARET, 208, 168);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0x3000, 0);
@@ -1740,27 +1740,27 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_ActorFaceDirection(1, 0xb000, 0);
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
-	Engine_ActorFaceActor(GERALD, 12, 0);
+	Engine_ActorFaceActor(GARET, 12, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(11, 3);
 	Engine_ActorSetAnimationAndWait(12, 3);
 	Engine_EventWait(30);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorFaceDirection(GERALD, 0, 0);
+	Engine_ActorFaceDirection(GARET, 0, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	Engine_EventWait(60);
 }
 
-static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
@@ -1772,7 +1772,7 @@ static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fi
 	zero = 0;
 	if (obj != 0)
 	{
-		Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconGrowScript);
 		spr = obj->sprite;
 		spr->flags = zero;
 		spr->part_count = zero;
@@ -1790,11 +1790,11 @@ static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fi
 				obj->motion_flags = 0;
 			Engine_TaskWait(1);
 		}
-		Engine_ObjectSetScript((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
+		Engine_ObjectSetScript((s32)obj, (s32)Sanctum_ItemIconEndScript);
 	}
 }
 
-static void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
+static void Sanctum_UpdateRisingSpark(union FieldObject *object)
 {
 	struct FieldActor *spark = &object->actor;
 	s32				   scale;
@@ -1821,10 +1821,10 @@ static void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 	timer = spark->work - 1;
 	spark->work = timer;
 	if ((s16)timer <= 0)
-		Engine_ObjectSetScript(spark, ShindenHeya_SparkEndScript);
+		Engine_ObjectSetScript(spark, Sanctum_SparkEndScript);
 }
 
-static void ShindenHeya_SpawnActorSpark(s32 id)
+static void Sanctum_SpawnActorSpark(s32 id)
 {
 	struct FieldActor  *actor;
 	struct FieldActor  *obj;
@@ -1847,7 +1847,7 @@ static void ShindenHeya_SpawnActorSpark(s32 id)
 	obj->motion_flags = 0;
 	obj->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
 	obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
-	obj->update = ShindenHeya_UpdateRisingSpark;
+	obj->update = Sanctum_UpdateRisingSpark;
 	spr->flags = 0;
 	spr->priority = actor->sprite->priority;
 }
@@ -1884,11 +1884,11 @@ static void FieldScene_RunActorEightFacingDialogue(void)
 
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		Engine_EventSetMessage(MsgShindenPathSolSanctumStillClosed);
+		Engine_EventSetMessage(MsgSanctumPathSolSanctumStillClosed);
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		Engine_EventSetMessage(MsgShindenMyControlOverPsynergyHas);
+		Engine_EventSetMessage(MsgSanctumMyControlOverPsynergyHas);
 	else
-		Engine_EventSetMessage(MsgShindenWieldersPsynergyCalledAdeptsAdepts);
+		Engine_EventSetMessage(MsgSanctumWieldersPsynergyCalledAdeptsAdepts);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1913,15 +1913,15 @@ static void FieldScene_DispatchBySceneId(void)
 	case 12:
 		if (Engine_GameFlagIsSet(0x855) != 0)
 		{
-			Engine_EventSetMessage(MsgShindenWasHandFateReturnedGold);
+			Engine_EventSetMessage(MsgSanctumWasHandFateReturnedGold);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgShindenWeWillHelpAnytimeAs);
+			Engine_EventSetMessage(MsgSanctumWeWillHelpAnytimeAs);
 		}
 		break;
 	case 11:
-		Engine_EventSetMessage(MsgShindenMayWrongButLatelyThere);
+		Engine_EventSetMessage(MsgSanctumMayWrongButLatelyThere);
 		break;
 	case 20:
 	case 21:
@@ -1947,9 +1947,9 @@ static void SceneDialogue_RunActorEightFlaggedDialogue(void)
 
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
-		Engine_EventSetMessage(MsgShindenCurseMayOverButWe);
+		Engine_EventSetMessage(MsgSanctumCurseMayOverButWe);
 	else
-		Engine_EventSetMessage(MsgShindenAmStartingFeelOnlyBeginning);
+		Engine_EventSetMessage(MsgSanctumAmStartingFeelOnlyBeginning);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1963,9 +1963,9 @@ static void SceneDialogue_RunActorEightFollowupDialogue(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShindenWasAfterEerieNightWhen);
+	Engine_EventSetMessage(MsgSanctumWasAfterEerieNightWhen);
 	if (Engine_GameFlagIsSet(0x909) != 0)
-		Engine_EventSetMessage(MsgShindenSavedAltinFromMonstersClearly);
+		Engine_EventSetMessage(MsgSanctumSavedAltinFromMonstersClearly);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1979,12 +1979,12 @@ static void SceneDialogue_RunActorEightDialogue(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgShindenCameXianFromVeryDistant);
+	Engine_EventSetMessage(MsgSanctumCameXianFromVeryDistant);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
 
-u32 ShindenHeya_LeaderCircleScript[] = {
+u32 Sanctum_LeaderCircleScript[] = {
 	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
 	0x80010000, 3, 0xcc0000, 0, 0xbc0000, 1, 3, 0xd80000,
 	0, 0xc00000, 1, 3, 0xec0000, 0, 0xbc0000, 1,
@@ -1994,7 +1994,7 @@ u32 ShindenHeya_LeaderCircleScript[] = {
 	1, 12, 4, 0x80010000, 28, 1, 16,
 };
 
-u32 ShindenHeya_GeraldCircleScript[] = {
+u32 Sanctum_GaretCircleScript[] = {
 	28, 2, 21, 15, 0x28000, 21, 16, 0x8000,
 	0x80010000, 3, 0xcc0000, 0, 0x9c0000, 1, 3, 0xb80000,
 	0, 0x900000, 1, 3, 0xac0000, 0, 0x9c0000, 1,
@@ -2004,7 +2004,7 @@ u32 ShindenHeya_GeraldCircleScript[] = {
 	1, 12, 4, 0x80010000, 28, 1, 16,
 };
 
-s32 ShindenHeya_ItemIconGrowScript[] = {
+s32 Sanctum_ItemIconGrowScript[] = {
 	SC_SET(SW_SCALE_X, 0x8000),
 	SC_SET(SW_SCALE_Y, 0x8000),
 	SC_WAIT(2),
@@ -2047,12 +2047,12 @@ s32 ShindenHeya_ItemIconGrowScript[] = {
 	SC_END,
 };
 
-s32 ShindenHeya_ItemIconEndScript[] = {
+s32 Sanctum_ItemIconEndScript[] = {
 	SC_WAIT(60),
 	SC_FREE,
 };
 
-struct SceneEntrance ShindenHeya_TableA[] = {
+struct SceneEntrance Sanctum_TableA[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
 	{ 2, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
@@ -2067,7 +2067,7 @@ struct SceneEntrance ShindenHeya_TableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 ShindenHeya_TableB[] = {
+u32 Sanctum_TableB[] = {
 	SCENE_EXITS(9),
 	SCENE_EXIT(1, 4, 1),
 	SCENE_EXIT(10, 20, 11),
@@ -2081,14 +2081,14 @@ u32 ShindenHeya_TableB[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement ShindenHeya_PlacementA[] = {
+struct ScenePlacement Sanctum_PlacementA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement ShindenHeya_PlacementB[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement Sanctum_PlacementB[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2100,14 +2100,14 @@ struct ScenePlacement ShindenHeya_PlacementB[] = {
 };
 
 #if EDITION_INTERNATIONAL
-struct ScenePlacement ShindenHeya_PlacementSequenceB[] = {
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement Sanctum_PlacementSequenceB[] = {
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 #endif
 
-struct ScenePlacement ShindenHeya_PlacementC[] = {
+struct ScenePlacement Sanctum_PlacementC[] = {
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x7a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -2117,8 +2117,8 @@ struct ScenePlacement ShindenHeya_PlacementC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement ShindenHeya_PlacementD[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement Sanctum_PlacementD[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -2137,102 +2137,102 @@ struct ScenePlacement ShindenHeya_PlacementD[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement ShindenHeya_PlacementE[] = {
+struct ScenePlacement Sanctum_PlacementE[] = {
 	{ 0x79, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableA[] = {
+struct SceneEvent Sanctum_SceneTableA[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenOurPsynergyWasGivenToUs) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenPsynergyIsAPowerThatShould) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableB[] = {
+struct SceneEvent Sanctum_SceneTableB[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
 	{ EVENT_TALK, 9, 0x855, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenGoOnIfThatEasesThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 10 },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableC[] = {
+struct SceneEvent Sanctum_SceneTableC[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenIHopeTheEarthquakesArentA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableD[] = {
+struct SceneEvent Sanctum_SceneTableD[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
-	{ EVENT_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgShindenItIsATerribleBurdenTo) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShindenMotherWouldNeverDoubtYourCourage) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgShindenIDontBlameYouICouldnt) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenWasItRightToRefuseWhen) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenItsClearThatTheGreatHealer) },
+	{ EVENT_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, 0x200, EVENT_SCRIPT(EV02_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableE[] = {
+struct SceneEvent Sanctum_SceneTableE[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMtAlephStems) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMyPsynergyHas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenTheAngaranContinentWillCertainlySee) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShindenMyPsynergyHasntChangedAtAll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMyPsynergyHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSanctumTheAngaranContinentWillCertainlySee) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSanctumMyPsynergyHasntChangedAtAll) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableF[] = {
+struct SceneEvent Sanctum_SceneTableF[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene378SequenceB) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenWhyIsItThatDifferentAdepts) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenItllBeDifficultToReachSol) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenISeeABeautifulGirlHas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShindenItsNotFairIWantTo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumItllBeDifficultToReachSol) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSanctumISeeABeautifulGirlHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSanctumItsNotFairIWantTo) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableG[] = {
+struct SceneEvent Sanctum_SceneTableG[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 40 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFollowupDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgShindenPleaseSaveTheHelplessInAltin) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenAlmightyFateMustHaveHeardMe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableH[] = {
+struct SceneEvent Sanctum_SceneTableH[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightFlaggedDialogue) },
-	{ EVENT_TALK, 9, 0x845, MSGNO(MsgShindenPleaseGiveMeStrengthAtTimes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgShindenWillITurnIntoATree) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgShindenSomeoneWillSaveUsJustKeep) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenHowAboutThatOurWishesHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenTheSignsOfDangerAreActually) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenPeaceWillBeKeptAsLong) },
+	{ EVENT_TALK, 9, 0x845, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgSanctumWillITurnIntoATree) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 41 },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent ShindenHeya_SceneTableI[] = {
+struct SceneEvent Sanctum_SceneTableI[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 42 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorEightDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenWhenYouStayInXianFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 ShindenHeya_CursorBob[] = {
+s32 Sanctum_CursorBob[] = {
 	SC_WAIT(0),
 	SC_WAIT(1),
 	SC_SYNC,
@@ -2243,7 +2243,7 @@ s32 ShindenHeya_CursorBob[] = {
 	SC_SYNC,
 };
 
-s32 ShindenHeya_OwnerEffectScript[] = {
+s32 Sanctum_OwnerEffectScript[] = {
 	SC_ADD(SW_Y, -0x8000),
 	SC_ADD(SW_TARGET_Y, -0x8000),
 	SC_WAIT(1),
@@ -2251,6 +2251,6 @@ s32 ShindenHeya_OwnerEffectScript[] = {
 	SC_FREE,
 };
 
-s32 ShindenHeya_SparkEndScript[] = {
+s32 Sanctum_SparkEndScript[] = {
 	SC_FREE,
 };

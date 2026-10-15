@@ -80,7 +80,7 @@ void Func_020000c8(void)
         Func_02000338();
         MapCopyAttr(11, 9, 4, 1, 8, 14);
         if (FlagChk(0x301) == 0) {
-            Func_02000300((s32)MsgMadoraNeedEldersPermission);
+            Func_02000300((s32)MsgMadraNeedEldersPermission);
             Battle_WaitMode0(10);
             Motion_SetVarCbAndRefresh(8, 1);
             Func_02000310(8, 0, 5);

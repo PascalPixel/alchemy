@@ -13,13 +13,13 @@ u8 *SceneData_GetMessageTable(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern u16 Niwa_GateCells[];
-extern s32 BiribinoNiwa_GuardScript[];
+extern u16 Garden_GateCells[];
+extern s32 McCoyPalaceGarden_GuardScript[];
 extern struct SceneEntrance Placement_Scripts[];
 extern u32 Placement_Messages[];
-extern struct ScenePlacement gBiribinoNiwaPlacementsOther[];
-extern struct ScenePlacement gBiribinoNiwaPlacements[];
-extern struct SceneEvent gBiribinoNiwaEventsOther[];
-extern struct SceneEvent gBiribinoNiwaEvents[];
+extern struct ScenePlacement gMcCoyPalaceGardenPlacementsOther[];
+extern struct ScenePlacement gMcCoyPalaceGardenPlacements[];
+extern struct SceneEvent gMcCoyPalaceGardenEventsOther[];
+extern struct SceneEvent gMcCoyPalaceGardenEvents[];
 
 #endif

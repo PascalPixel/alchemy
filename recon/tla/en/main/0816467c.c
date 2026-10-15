@@ -22,7 +22,7 @@
 #include "battle_fx_work.h"
 
 #define HI(v) (((s16 *)&(v))[1])
-#define HAHEN_E 0x59d8
+#define SHARD_E 0x59d8
 
 extern char ResourceId_Data134;
 extern char ResourceId_FlareSheet;
@@ -42,8 +42,8 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 {
     struct BattleFxWork *work;
     void *canvas;
-    DrawRectangle kasan;
-    DrawRectangle hikaku;
+    DrawRectangle additive;
+    DrawRectangle max_blend;
     u8 *sheet;
     s32 org_x;
     struct EffectStep *p;
@@ -68,12 +68,12 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
     Func_081963ec(104, 19);
-    hikaku = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    max_blend = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
     Func_081963ec(188, 3);
-    kasan = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
+    additive = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + HAHEN_E, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E, 0, 0);
     work->transfer_mode = 2;
     work->transfer_value = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
@@ -121,7 +121,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            hikaku(canvas, work->sheet + Data_081989f2[cell],
+            max_blend(canvas, work->sheet + Data_081989f2[cell],
                 (x >> 16) - ((width = Data_081989e2[cell]) >> 1),
                 (y >> 16) - ((height = Data_081989ea[cell]) >> 1), width, height);
         }
@@ -137,7 +137,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 3;
                 px = HI(p->x);
                 py = HI(p->y);
-                kasan(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 
@@ -152,23 +152,23 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 size = p->variant / 16 + 1;
                 px = HI(p->x);
                 py = HI(p->y);
-                kasan(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
+                additive(canvas, sheet + Data_08197410[size - 1], px - size / 2, py - size, size, size * 2);
             }
         }
 
         for (i = 0; i != 3; i++) {
-            struct EffectStep *hahen = &work->particles[61 + i];
+            struct EffectStep *shard = &work->particles[61 + i];
 
             if (frame >= 36 && frame <= 63) {
                 s32 cell;
                 s32 px;
                 s32 py;
 
-                BattleFxKernels_IntegrateVector2(hahen, 64, 0);
+                BattleFxKernels_IntegrateVector2(shard, 64, 0);
                 cell = (frame - 36) / 7;
-                px = HI(hahen->x);
-                py = HI(hahen->y);
-                hikaku(canvas, work->sheet + cell * 0x120 + HAHEN_E, px - 6, py - 12, 12, 24);
+                px = HI(shard->x);
+                py = HI(shard->y);
+                max_blend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
             }
         }
 

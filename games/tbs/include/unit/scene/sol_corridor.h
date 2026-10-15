@@ -9,9 +9,9 @@ s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);
 u8 *SceneData_GetActorTable(void);
 u8 *SceneData_GetEffectTable(void);
-extern struct SceneEntrance SoruRoka_SceneTable0[];
-extern u32 SoruRoka_SceneTable1[];
-extern struct ScenePlacement SoruRoka_SceneTable2[];
-extern struct SceneEvent SoruRoka_SceneTable3[];
+extern struct SceneEntrance SolCorridor_SceneTable0[];
+extern u32 SolCorridor_SceneTable1[];
+extern struct ScenePlacement SolCorridor_SceneTable2[];
+extern struct SceneEvent SolCorridor_SceneTable3[];
 
 #endif

@@ -146,7 +146,7 @@ void Func_020006a8(void)
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();
-        Call1(Engine_EventSetMessage, (s32)MsgIdejimaHeyGarcia);
+        Call1(Engine_EventSetMessage, (s32)MsgIdejimaHeyFelix);
         Call2(Engine_EventShowMessage, 8, 0);
         Call3(Func_02003228, 5, 0, 0);
         Call3(Func_02003228, 6, 0, 0);
@@ -185,7 +185,7 @@ void Func_020006a8(void)
             ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
         Call3(Func_02003228, 8, 0, 0);
-        Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgIdejimaHeyGarcia + 8, 1);
+        Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgIdejimaHeyFelix + 8, 1);
         Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 20);
         FlagSet(0x863);
         Engine_EventEnd();

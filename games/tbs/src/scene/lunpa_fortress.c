@@ -41,7 +41,7 @@ static s32 IsSceneActorWithinTriggerBox(s32 actor_id);
 static void RunActorScriptedSequenceA(s32 actor_id);
 static void RunActorScriptedSequenceB(s32 handle);
 static void RunActorScriptedSequenceC(s32 actor_id);
-static void RunpaJo_ActOutGuardShiftDialogue(s32 a0);
+static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0);
 static void RunActorScriptedSequenceD(s32 actor_id);
 static void FieldScene_InstallSceneTasks(void);
 static void FieldScene_SetupActorsForScene(void);
@@ -58,19 +58,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaJo1)
+	if (scene == (s32)&SceneId_LunpaFortress1)
 	{
-		return gRunpaJoEntrances1;
+		return gLunpaFortressEntrances1;
 	}
-	if (scene == (s32)&SceneId_RunpaJo2)
+	if (scene == (s32)&SceneId_LunpaFortress2)
 	{
-		return gRunpaJoEntrances2;
+		return gLunpaFortressEntrances2;
 	}
-	if (scene == (s32)&SceneId_RunpaJo3)
+	if (scene == (s32)&SceneId_LunpaFortress3)
 	{
-		return gRunpaJoEntrances3;
+		return gLunpaFortressEntrances3;
 	}
-	return gRunpaJoEntrancesOther;
+	return gLunpaFortressEntrancesOther;
 }
 
 s32 GetEmptySceneData(void)
@@ -82,61 +82,61 @@ const u32 *Scene_GetExits(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaJo2)
+	if (scene == (s32)&SceneId_LunpaFortress2)
 	{
-		return gRunpaJoExits2;
+		return gLunpaFortressExits2;
 	}
-	if (scene == (s32)&SceneId_RunpaJo3 || scene == (s32)&SceneId_RunpaJo4)
+	if (scene == (s32)&SceneId_LunpaFortress3 || scene == (s32)&SceneId_LunpaFortress4)
 	{
-		return gRunpaJoExits3And4;
+		return gLunpaFortressExits3And4;
 	}
-	return gRunpaJoExitsOther;
+	return gLunpaFortressExitsOther;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaDou)
+	if (scene == (s32)&SceneId_WestLunpaCave)
 	{
-		return gRunpaJoPlacementsRunpaDou;
+		return gLunpaFortressPlacementsWestLunpaCave;
 	}
-	if (scene == (s32)&SceneId_RunpaJo3)
+	if (scene == (s32)&SceneId_LunpaFortress3)
 	{
-		return gRunpaJoPlacements3;
+		return gLunpaFortressPlacements3;
 	}
-	if (scene == (s32)&SceneId_RunpaJo2)
+	if (scene == (s32)&SceneId_LunpaFortress2)
 	{
-		return gRunpaJoPlacements2;
+		return gLunpaFortressPlacements2;
 	}
-	if (scene == (s32)&SceneId_RunpaJo1)
+	if (scene == (s32)&SceneId_LunpaFortress1)
 	{
-		return gRunpaJoPlacements1;
+		return gLunpaFortressPlacements1;
 	}
-	if (scene == (s32)&SceneId_RunpaJo4)
+	if (scene == (s32)&SceneId_LunpaFortress4)
 	{
-		return gRunpaJoPlacements4;
+		return gLunpaFortressPlacements4;
 	}
-	return gRunpaJoPlacementsOther;
+	return gLunpaFortressPlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_RunpaJo1)
+	if (scene == (s32)&SceneId_LunpaFortress1)
 	{
-		return gRunpaJoEvents1;
+		return gLunpaFortressEvents1;
 	}
-	if (scene == (s32)&SceneId_RunpaJo2)
+	if (scene == (s32)&SceneId_LunpaFortress2)
 	{
-		return gRunpaJoEvents2;
+		return gLunpaFortressEvents2;
 	}
-	if (scene == (s32)&SceneId_RunpaJo3)
+	if (scene == (s32)&SceneId_LunpaFortress3)
 	{
-		return gRunpaJoEvents3;
+		return gLunpaFortressEvents3;
 	}
-	return gRunpaJoEventsOther;
+	return gLunpaFortressEventsOther;
 }
 
 static void ConfigureSceneActor12(void)
@@ -204,8 +204,8 @@ static void PlaceActorTwelveAndFinishScene(void)
 static void PlaceSceneObjectPairFromTableA(s32 table_index)
 {
 
-	s32 position_x = gRunpaJoPairTableA[table_index * 2];
-	s32 position_z = gRunpaJoPairTableA[table_index * 2 + 1];
+	s32 position_x = gLunpaFortressPairTableA[table_index * 2];
+	s32 position_z = gLunpaFortressPairTableA[table_index * 2 + 1];
 
 	Map_CopyCells(0, 0x4d, 1, 3, position_x, position_z);
 	Map_CopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
@@ -241,8 +241,8 @@ static void FieldScene_SetPositionPairs(s32 idx)
 	s32 top_y;
 	s32 bottom_y;
 
-	top_x = gRunpaJoSupportPairs[idx * 2];
-	top_y = gRunpaJoSupportPairs[idx * 2 + 1];
+	top_x = gLunpaFortressSupportPairs[idx * 2];
+	top_y = gLunpaFortressSupportPairs[idx * 2 + 1];
 	Map_CopyCells(0, 77, 1, 3, top_x, top_y);
 	Map_CopyCells(1, 77, 1, 1, top_x + 1, top_y);
 	bottom_y = top_y - 44;
@@ -272,8 +272,8 @@ static void EV40_B(void)
 static void PlaceSceneObjectPairFromTableB(s32 table_index)
 {
 
-	s32 position_x = gRunpaJoPairTableB[table_index * 2];
-	s32 position_z = gRunpaJoPairTableB[table_index * 2 + 1];
+	s32 position_x = gLunpaFortressPairTableB[table_index * 2];
+	s32 position_z = gLunpaFortressPairTableB[table_index * 2 + 1];
 
 	Map_CopyCells(0x37, 0x79, 1, 3, position_x, position_z);
 	Map_CopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
@@ -301,8 +301,8 @@ static void EV40_D(void)
 static void PlaceSceneObjectPairFromTableC(s32 table_index)
 {
 
-	s32 position_x = gRunpaJoPairTableC[table_index * 2];
-	s32 position_z = gRunpaJoPairTableC[table_index * 2 + 1];
+	s32 position_x = gLunpaFortressPairTableC[table_index * 2];
+	s32 position_z = gLunpaFortressPairTableC[table_index * 2 + 1];
 
 	Map_CopyCells(1, 0x50, 1, 3, position_x, position_z);
 	Map_CopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
@@ -328,7 +328,7 @@ static void EV40_C(void)
 	}
 }
 
-static void EV99_ROUYA(void)
+static void EV99_JAIL(void)
 {
 	if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1)
 	{
@@ -336,7 +336,7 @@ static void EV99_ROUYA(void)
 	}
 }
 
-static void EV98_TOBIRA(void)
+static void EV98_DOOR(void)
 {
 	Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
@@ -411,7 +411,7 @@ static void NoOpSceneCallbackD(void)
 {
 }
 
-static void EV08_KAGI(void)
+static void EV08_KEY(void)
 {
 
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
@@ -975,7 +975,7 @@ static void RunActor9ScriptedSequence(void)
 	OBJ_MODE(9, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	{
-		s32 t = MsgRunpaWho2;
+		s32 t = MsgLunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(9, 0);
@@ -1004,7 +1004,7 @@ static void RunActorScriptedSequenceA(s32 actor_id)
 	OBJ_MODE(actor_id, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	{
-		s32 t = MsgRunpaWho2;
+		s32 t = MsgLunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(actor_id, 0);
@@ -1024,7 +1024,7 @@ static void TurnActorToSceneDirection(s32 actor_id)
 
 	OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
 	OBJ_FACE(ACTOR_PARTY_LEADER, actor_id, 0);
-	switch (gRunpaJoRandomPick & 3)
+	switch (gLunpaFortressRandomPick & 3)
 	{
 	case 0:
 		RunActorScriptedSequenceB(actor_id);
@@ -1033,7 +1033,7 @@ static void TurnActorToSceneDirection(s32 actor_id)
 		RunActorScriptedSequenceC(actor_id);
 		break;
 	case 2:
-		RunpaJo_ActOutGuardShiftDialogue(actor_id);
+		LunpaFortress_ActOutGuardShiftDialogue(actor_id);
 		break;
 	case 3:
 		RunActorScriptedSequenceD(actor_id);
@@ -1049,7 +1049,7 @@ static void RunActorScriptedSequenceB(s32 handle)
 	s32 id;
 
 	Engine_ActorRunRepeatedMotion(handle, 1);
-	id = MsgRunpaIntruder;
+	id = MsgLunpaIntruder;
 	MES_SET(id);
 	MES_PUT(handle, 0);
 	OBJ_EMO(handle, 258, 60);
@@ -1063,7 +1063,7 @@ static void RunActorScriptedSequenceB(s32 handle)
 
 static void RunActorScriptedSequenceC(s32 actor_id)
 {
-	s32 t = MsgRunpaGuardWhosThat;
+	s32 t = MsgLunpaGuardWhosThat;
 
 	MES_SET(t);
 	MES_PUT(actor_id, 0);
@@ -1075,11 +1075,11 @@ static void RunActorScriptedSequenceC(s32 actor_id)
 	MES_PUT(actor_id, 0);
 }
 
-static void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
+static void LunpaFortress_ActOutGuardShiftDialogue(s32 a0)
 {
 	s32 intruder;
 
-	intruder = MsgRunpaShiftAlready;
+	intruder = MsgLunpaShiftAlready;
 	MES_SET(intruder);
 	MES_PUT(a0, 0);
 	WAIT(120);
@@ -1096,7 +1096,7 @@ static void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 
 static void RunActorScriptedSequenceD(s32 actor_id)
 {
-	s32 t = MsgRunpaScoundrel;
+	s32 t = MsgLunpaScoundrel;
 
 	MES_SET(t);
 	MES_PUT(actor_id, 0);
@@ -1111,7 +1111,7 @@ static void RunActorScriptedSequenceD(s32 actor_id)
 	MES_PUT(actor_id, 0);
 }
 
-static void EV33_SHIRABE(void)
+static void EV33_CHECK(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1126,7 +1126,7 @@ static void EV33_SHIRABE(void)
 	Engine_GameFlagSet(2380);
 }
 
-static void EV30_TAKARABAKO(void)
+static void EV30_TREASURE_CHEST(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1141,7 +1141,7 @@ static void EV30_TAKARABAKO(void)
 	Engine_GameFlagSet(2377);
 }
 
-static void EV31_BANPEI(void)
+static void EV31_GUARD(void)
 {
 	s32 line;
 
@@ -1153,7 +1153,7 @@ static void EV31_BANPEI(void)
 	OBJ_EMO(12, 0x100, 0);
 	WAIT(30);
 	OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
-	line = MsgRunpaWho3;
+	line = MsgLunpaWho3;
 	MES_SET(line);
 	MES_PUT(12, 0);
 	OBJ_EMO(13, 0x100, 0);
@@ -1192,7 +1192,7 @@ static void EV31_BANPEI(void)
 	MES_SET((line + 6));
 	MES_PUT(12, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
+	Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress2, 31);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 3);
 	OBJ_POS_SET(12, 0, 0);
@@ -1216,7 +1216,7 @@ static void FieldScene_RunSequenceTail(void)
 	Engine_EventOpenScreen();
 }
 
-static void EV32_KARA(void)
+static void EV32_TOUCH(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1241,7 +1241,7 @@ static void EV50_MAIN(void)
 	SE(113);
 	Engine_ActorShowEmote(12, 256, 60);
 	{
-		s32 t = MsgRunpaWho2;
+		s32 t = MsgLunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(12, 0);
@@ -1269,7 +1269,7 @@ static void EV51_MAIN(void)
 	OBJ_EMO(13, 0x100, 60);
 	OBJ_FACE(21, ACTOR_PARTY_LEADER, 0);
 	OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
-	msg = MsgRunpaWho2;
+	msg = MsgLunpaWho2;
 	MES_SET(msg);
 	MES_PUT(13, 0);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x102, 30);
@@ -1300,7 +1300,7 @@ static void ConfigureInteractionRegionC(void)
 	Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
-static void EV52_IDO(void)
+static void EV52_WELL(void)
 {
 
 	if (*(s16 *)(((u8 *)gEventWork) + 0xcb8) != 0)
@@ -1340,7 +1340,7 @@ static void EV51_SUB(void)
 	}
 }
 
-static void EV00_HANTEI1(void)
+static void EV00_REVEAL1(void)
 {
 	Map_CopyCells(5, 77, 1, 2, 17, 82);
 	Map_CopyCells(5, 77, 1, 2, 3, 55);
@@ -1348,7 +1348,7 @@ static void EV00_HANTEI1(void)
 	Map_CopyCellAttributes(3, 8, 1, 1, 3, 10);
 }
 
-static void EV00_HANTEI2(void)
+static void EV00_REVEAL2(void)
 {
 	Map_CopyCells(8, 77, 1, 2, 17, 82);
 	Map_CopyCells(8, 77, 1, 2, 3, 55);
@@ -1356,21 +1356,21 @@ static void EV00_HANTEI2(void)
 	Map_CopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
-static void EV08_TANSU(void)
+static void EV08_WARDROBE(void)
 {
 	Engine_GameFlagSet(2372);
 	Engine_GameFlagClear(535);
 	Engine_ActorSetPosition(8, 0, 0);
 }
 
-static void EV09_MAKI(void)
+static void EV09_FIREWOOD(void)
 {
 	Engine_GameFlagSet(2373);
 	ConfigureInteractionRegionC();
 	Engine_ActorSetPosition(9, 0, 0);
 }
 
-static void EV10_HON(void)
+static void EV10_BOOK(void)
 {
 	Engine_GameFlagSet(2374);
 	Engine_GameFlagClear(536);
@@ -1381,42 +1381,42 @@ static void NoOpInteractionCallback(void)
 {
 }
 
-static void RunpaJo_GatherPartyAroundActorTwelve(void)
+static void LunpaFortress_GatherPartyAroundActorTwelve(void)
 {
 	struct FieldActor *actor;
 
 	actor = Actor_Get(0);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(IWAN, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
 	}
 	actor = Actor_Get(0);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(MEARI, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
 	}
 	actor = Actor_Get(0);
 	if (actor != NULL)
 	{
-		Actor_SetPosition(GERALD, actor->x.fixed, actor->z.fixed);
+		Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
 	}
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0, 0);
-	OBJ_SPD(IWAN, 0xb333, 0x5999);
-	OBJ_WALK(IWAN, 456, 192);
-	OBJ_SPD(MEARI, 0xb333, 0x5999);
-	OBJ_WALK(MEARI, 440, 184);
-	OBJ_SPD(GERALD, 0xb333, 0x5999);
-	OBJ_WALK(GERALD, 448, 240);
-	Engine_ActorWaitForMove(IWAN);
-	OBJ_FACE(IWAN, 12, 0);
-	Engine_ActorWaitForMove(GERALD);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_FACE(GERALD, 12, 0);
-	OBJ_FACE(MEARI, 12, 0);
+	OBJ_SPD(IVAN, 0xb333, 0x5999);
+	OBJ_WALK(IVAN, 456, 192);
+	OBJ_SPD(MIA, 0xb333, 0x5999);
+	OBJ_WALK(MIA, 440, 184);
+	OBJ_SPD(GARET, 0xb333, 0x5999);
+	OBJ_WALK(GARET, 448, 240);
+	Engine_ActorWaitForMove(IVAN);
+	OBJ_FACE(IVAN, 12, 0);
+	Engine_ActorWaitForMove(GARET);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_FACE(GARET, 12, 0);
+	OBJ_FACE(MIA, 12, 0);
 	WAIT(15);
 }
 
-static void RunpaJo_ActivateLeverTrap(void)
+static void LunpaFortress_ActivateLeverTrap(void)
 {
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	SE(141);
@@ -1427,19 +1427,19 @@ static void RunpaJo_ActivateLeverTrap(void)
 	Map_CopyCells(16, 75, 7, 4, 26, 55);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x100, 0);
-	OBJ_EMO(GERALD, 0x100, 0);
-	OBJ_EMO(IWAN, 0x100, 0);
-	OBJ_EMO(MEARI, 0x100, 0);
+	OBJ_EMO(GARET, 0x100, 0);
+	OBJ_EMO(IVAN, 0x100, 0);
+	OBJ_EMO(MIA, 0x100, 0);
 	OBJ_EMO(12, 0x100, 0);
 	WAIT(60);
 }
 
-static void RunpaJo_RevealMonster(void)
+static void LunpaFortress_RevealMonster(void)
 {
 	Engine_CameraMoveToActor(11, 1);
 	Engine_CameraWaitForMove();
 	WAIT(60);
-	MES_SET(MsgRunpaPrepareBecomeMonster);
+	MES_SET(MsgLunpaPrepareBecomeMonster);
 	MES_PUT(13, 0);
 	OBJ_SPD(11, 0x10000, 0x8000);
 	OBJ_SPD(15, 0x10000, 0x8000);
@@ -1451,20 +1451,20 @@ static void RunpaJo_RevealMonster(void)
 	WAIT(30);
 }
 
-static void RunpaJo_PositionPartyForMonster(void)
+static void LunpaFortress_PositionPartyForMonster(void)
 {
-	OBJ_SPD(IWAN, 0x10000, 0x8000);
-	OBJ_WALK(IWAN, 504, 216);
-	OBJ_SPD(MEARI, 0x10000, 0x8000);
-	OBJ_WALK(MEARI, 440, 232);
-	OBJ_SPD(GERALD, 0x10000, 0x8000);
-	OBJ_WALK(GERALD, 480, 224);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_DIR(GERALD, 0xc000, 0);
-	Engine_ActorWaitForMove(IWAN);
-	OBJ_DIR(IWAN, 0xc000, 0);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_DIR(MEARI, 0xc000, 0);
+	OBJ_SPD(IVAN, 0x10000, 0x8000);
+	OBJ_WALK(IVAN, 504, 216);
+	OBJ_SPD(MIA, 0x10000, 0x8000);
+	OBJ_WALK(MIA, 440, 232);
+	OBJ_SPD(GARET, 0x10000, 0x8000);
+	OBJ_WALK(GARET, 480, 224);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_DIR(GARET, 0xc000, 0);
+	Engine_ActorWaitForMove(IVAN);
+	OBJ_DIR(IVAN, 0xc000, 0);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_DIR(MIA, 0xc000, 0);
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0xc000, 0);
 }
 
@@ -1481,23 +1481,23 @@ static void EV20_DEMO(void)
 		OBJ_SPD(ACTOR_PARTY_LEADER, 32768, 16384);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-		RunpaJo_GatherPartyAroundActorTwelve();
+		LunpaFortress_GatherPartyAroundActorTwelve();
 		OBJ_EMO(12, 256, 60);
 		OBJ_DIR(12, 32768, 0);
 		Engine_ActorJump(12, 4, 0);
 		Engine_ActorSetSpriteFlags(Actor_Get(12), 1);
 		WAIT(30);
-		OBJ_SPD(IWAN, 45875, 22937);
+		OBJ_SPD(IVAN, 45875, 22937);
 		OBJ_WALK(2, 464, 192);
-		Engine_ActorWaitForMove(IWAN);
+		Engine_ActorWaitForMove(IVAN);
 		WAIT(30);
 		OBJ_DIR(ACTOR_PARTY_LEADER, 16384, 0);
-		OBJ_DIR(IWAN, 16384, 0);
-		OBJ_DIR(GERALD, 16384, 0);
-		OBJ_DIR(MEARI, 16384, 0);
+		OBJ_DIR(IVAN, 16384, 0);
+		OBJ_DIR(GARET, 16384, 0);
+		OBJ_DIR(MIA, 16384, 0);
 		OBJ_POS_SET(13, 456, 320);
 		Camera_SetSpeed(131072, 16384);
-		text_line = MsgRunpaBackMoreGuess;
+		text_line = MsgLunpaBackMoreGuess;
 		MES_SET(text_line);
 		MES_PUT(13, 0);
 		OBJ_WALK(13, 458, 272);
@@ -1510,23 +1510,23 @@ static void EV20_DEMO(void)
 		SE(155);
 		Engine_MessageShowCentered(text_line + 1, 1);
 		Actor_SetDestinationOffset(13, 8, -8);
-		RunpaJo_ActivateLeverTrap();
+		LunpaFortress_ActivateLeverTrap();
 		WAIT(120);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-		Engine_ActorStartRepeatedMotion(IWAN, 2);
-		Engine_ActorStartRepeatedMotion(GERALD, 2);
-		Engine_ActorStartRepeatedMotion(MEARI, 2);
+		Engine_ActorStartRepeatedMotion(IVAN, 2);
+		Engine_ActorStartRepeatedMotion(GARET, 2);
+		Engine_ActorStartRepeatedMotion(MIA, 2);
 		WAIT(20);
 		text_line += 2;
-		RunpaJo_PositionPartyForMonster();
+		LunpaFortress_PositionPartyForMonster();
 		OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
 		MES_SET(text_line);
 		MES_PUT(13, 0);
-		RunpaJo_RevealMonster();
+		LunpaFortress_RevealMonster();
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	else
@@ -1534,7 +1534,7 @@ static void EV20_DEMO(void)
 		OBJ_MODE(ACTOR_PARTY_LEADER, 1);
 		SE(17);
 		WAIT(30);
-		text_line = MsgRunpaTimeEat;
+		text_line = MsgLunpaTimeEat;
 		MES_SET(text_line);
 		MES_PUT(12, 0);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
@@ -1547,22 +1547,22 @@ static void EV20_DEMO(void)
 		OBJ_SPD(ACTOR_PARTY_LEADER, 32768, 16384);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-		RunpaJo_GatherPartyAroundActorTwelve();
-		OBJ_SPD(IWAN, 45875, 22937);
+		LunpaFortress_GatherPartyAroundActorTwelve();
+		OBJ_SPD(IVAN, 45875, 22937);
 		OBJ_WALK(2, 464, 192);
-		Engine_ActorWaitForMove(IWAN);
+		Engine_ActorWaitForMove(IVAN);
 		WAIT(30);
 		MES_SET(text_line + 2);
-		MES_PUT(IWAN, 0);
+		MES_PUT(IVAN, 0);
 		OBJ_EMO(12, 256, 0);
 		WAIT(110);
 		SE(60);
 		MES_SET(text_line + 3);
 		MES_PUT(12, 0);
 		WAIT(30);
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
 		WAIT(20);
-		OBJ_MODE(IWAN, 1);
+		OBJ_MODE(IVAN, 1);
 		Engine_ActorStartRepeatedMotion(12, 1);
 		WAIT(20);
 		OBJ_SPD(12, 26214, 13107);
@@ -1574,28 +1574,28 @@ static void EV20_DEMO(void)
 		WAIT(30);
 		OBJ_DIR(12, 20480, 0);
 		WAIT(30);
-		OBJ_FACE(12, IWAN, 0);
+		OBJ_FACE(12, IVAN, 0);
 		WAIT(20);
 		MES_SET(text_line + 4);
 		MES_PUT(12, 0);
 		WAIT(40);
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
 		WAIT(20);
 		OBJ_EMO(12, 264, 0);
 		WAIT(120);
 		MES_SET(text_line + 5);
 		MES_PUT(12, 0);
 		WAIT(25);
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
 		WAIT(30);
 		Engine_ActorSetAnimationAndWait(12, 3);
 		WAIT(40);
 		OBJ_WALK(2, 480, 200);
-		Engine_ActorWaitForMove(IWAN);
-		Engine_ActorFaceEachOther(IWAN, 12, 0);
+		Engine_ActorWaitForMove(IVAN);
+		Engine_ActorFaceEachOther(IVAN, 12, 0);
 		WAIT(60);
 		MES_SET(text_line + 6);
-		MES_PUT(IWAN, 0);
+		MES_PUT(IVAN, 0);
 		WAIT(20);
 		OBJ_MODE(12, 4);
 		WAIT(80);
@@ -1606,10 +1606,10 @@ static void EV20_DEMO(void)
 		MES_SET(text_line + 8);
 		MES_PUT(13, 0);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
-		OBJ_FACE(IWAN, 13, 0);
-		OBJ_FACE(GERALD, 13, 0);
+		OBJ_FACE(IVAN, 13, 0);
+		OBJ_FACE(GARET, 13, 0);
 		WAIT(5);
-		OBJ_DIR(MEARI, 16384, 0);
+		OBJ_DIR(MIA, 16384, 0);
 		OBJ_FACE(12, 13, 0);
 		WAIT(30);
 		SE(61);
@@ -1620,11 +1620,11 @@ static void EV20_DEMO(void)
 		OBJ_WALK(13, 456, 304);
 		Engine_CameraFollowActor(13, 1);
 		Engine_ActorWaitForMove(13);
-		Engine_CameraFollowActor(GERALD, 1);
+		Engine_CameraFollowActor(GARET, 1);
 		OBJ_EMO(ACTOR_PARTY_LEADER, 258, 0);
-		OBJ_EMO(IWAN, 258, 0);
-		OBJ_EMO(GERALD, 258, 0);
-		OBJ_EMO(MEARI, 258, 0);
+		OBJ_EMO(IVAN, 258, 0);
+		OBJ_EMO(GARET, 258, 0);
+		OBJ_EMO(MIA, 258, 0);
 		OBJ_EMO(12, 258, 0);
 		WAIT(60);
 		OBJ_FACE(12, 13, 0);
@@ -1636,17 +1636,17 @@ static void EV20_DEMO(void)
 		MES_SET(text_line + 10);
 		MES_PUT(13, 0);
 		WAIT(60);
-		OBJ_FACE(13, IWAN, 0);
+		OBJ_FACE(13, IVAN, 0);
 		WAIT(30);
 		MES_SET(text_line + 11);
 		MES_PUT(13, 0);
-		Engine_ActorFaceEachOther(MEARI, IWAN, 0);
-		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
+		Engine_ActorFaceEachOther(MIA, IVAN, 0);
+		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
 		WAIT(60);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
-		OBJ_FACE(IWAN, 13, 0);
-		OBJ_FACE(GERALD, 13, 0);
-		OBJ_FACE(MEARI, 13, 0);
+		OBJ_FACE(IVAN, 13, 0);
+		OBJ_FACE(GARET, 13, 0);
+		OBJ_FACE(MIA, 13, 0);
 		Engine_ActorStartRepeatedMotion(13, 1);
 		WAIT(60);
 		MES_SET(text_line + 12);
@@ -1657,34 +1657,34 @@ static void EV20_DEMO(void)
 		MES_SET(text_line + 13);
 		MES_PUT(13, 0);
 		OBJ_WALK(1, 456, 248);
-		Engine_ActorWaitForMove(GERALD);
+		Engine_ActorWaitForMove(GARET);
 		OBJ_DIR(1, 16384, 0);
 		MES_SET(text_line + 14);
-		MES_PUT(GERALD, 0);
+		MES_PUT(GARET, 0);
 		OBJ_WALK(2, 472, 216);
-		Engine_ActorWaitForMove(IWAN);
+		Engine_ActorWaitForMove(IVAN);
 		OBJ_DIR(2, 16384, 0);
 		WAIT(10);
 		MES_SET(text_line + 15);
-		MES_PUT(IWAN, 0);
+		MES_PUT(IVAN, 0);
 		OBJ_EMO(12, 261, 0);
 		WAIT(60);
 		MES_SET(text_line + 16);
 		MES_PUT(12, 0);
 		OBJ_WALK(3, 440, 216);
-		Engine_ActorWaitForMove(MEARI);
-		OBJ_FACE(MEARI, 13, 0);
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Engine_ActorWaitForMove(MIA);
+		OBJ_FACE(MIA, 13, 0);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		WAIT(10);
 		MES_SET(text_line + 17);
-		MES_PUT(MEARI, 0);
+		MES_PUT(MIA, 0);
 		OBJ_MODE(13, 4);
 		MES_SET(text_line + 18);
 		MES_PUT(13, 0);
 		OBJ_EMO(ACTOR_PARTY_LEADER, 258, 0);
-		OBJ_EMO(GERALD, 258, 0);
-		OBJ_EMO(MEARI, 258, 0);
-		OBJ_EMO(IWAN, 258, 0);
+		OBJ_EMO(GARET, 258, 0);
+		OBJ_EMO(MIA, 258, 0);
+		OBJ_EMO(IVAN, 258, 0);
 		OBJ_EMO(13, 264, 0);
 		WAIT(60);
 		MES_SET(text_line + 19);
@@ -1693,7 +1693,7 @@ static void EV20_DEMO(void)
 		OBJ_EMO(1, 259, 0);
 		WAIT(60);
 		MES_SET(text_line + 20);
-		MES_PUT(GERALD, 0);
+		MES_PUT(GARET, 0);
 		Engine_ActorStartRepeatedMotion(13, 1);
 		WAIT(60);
 		MES_SET(text_line + 21);
@@ -1706,26 +1706,26 @@ static void EV20_DEMO(void)
 		Engine_ActorWaitForMove(13);
 		WAIT(60);
 		SE(155);
-		Engine_MessageShowCentered(MsgRunpaDodonpaPulledLever, 1);
+		Engine_MessageShowCentered(MsgLunpaDodonpaPulledLever, 1);
 		Actor_SetDestinationOffset(13, 8, -8);
 		OBJ_FACE(13, 11, 0);
-		RunpaJo_ActivateLeverTrap();
+		LunpaFortress_ActivateLeverTrap();
 		SE(52);
 		MES_SET(text_line + 23);
 		MES_PUT(13, 0);
 		WAIT(60);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 11, 0);
-		OBJ_FACE(GERALD, 11, 0);
-		OBJ_FACE(IWAN, 11, 0);
-		OBJ_FACE(MEARI, 11, 0);
+		OBJ_FACE(GARET, 11, 0);
+		OBJ_FACE(IVAN, 11, 0);
+		OBJ_FACE(MIA, 11, 0);
 		OBJ_FACE(12, 11, 0);
-		RunpaJo_PositionPartyForMonster();
-		RunpaJo_RevealMonster();
+		LunpaFortress_PositionPartyForMonster();
+		LunpaFortress_RevealMonster();
 		FLAG_SET(2370);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_LunpaFortress4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	EV_END();
@@ -1747,12 +1747,12 @@ static void FieldScene_RunMainScriptSequence(void)
 	Engine_ActorSetSpriteFlags(record, 1);
 	OBJ_POS_SET(ACTOR_PARTY_LEADER, 456, 184);
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
-	OBJ_POS_SET(GERALD, 440, 192);
-	OBJ_DIR(GERALD, 0x4000, 0);
-	OBJ_POS_SET(MEARI, 488, 184);
-	OBJ_DIR(MEARI, 0x4000, 0);
-	OBJ_POS_SET(IWAN, 472, 184);
-	OBJ_DIR(IWAN, 0x4000, 0);
+	OBJ_POS_SET(GARET, 440, 192);
+	OBJ_DIR(GARET, 0x4000, 0);
+	OBJ_POS_SET(MIA, 488, 184);
+	OBJ_DIR(MIA, 0x4000, 0);
+	OBJ_POS_SET(IVAN, 472, 184);
+	OBJ_DIR(IVAN, 0x4000, 0);
 	OBJ_POS_SET(12, 520, 224);
 	OBJ_DIR(12, 0xb000, 0);
 	OBJ_POS_SET(11, 448, 237);
@@ -1766,24 +1766,24 @@ static void FieldScene_RunMainScriptSequence(void)
 	Engine_EventOpenScreen();
 	WAIT(120);
 
-	script_a = MsgRunpaUhnnGetOff;
+	script_a = MsgLunpaUhnnGetOff;
 	MES_SET(script_a);
 	MES_PUT(13, 0);
-	OBJ_EMO(GERALD, 0x101, 60);
+	OBJ_EMO(GARET, 0x101, 60);
 	MES_SET((script_a + 1));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 1);
-	OBJ_EMO(IWAN, 0x101, 1);
-	OBJ_EMO(MEARI, 0x101, 1);
+	OBJ_EMO(IVAN, 0x101, 1);
+	OBJ_EMO(MIA, 0x101, 1);
 	WAIT(60);
 	OBJ_FACE(12, 13, 0);
 	WAIT(60);
 	MES_SET((script_a + 2));
 	MES_PUT(12, 0);
 	OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-	OBJ_FACE(GERALD, 12, 0);
-	OBJ_FACE(IWAN, 12, 0);
-	OBJ_FACE(MEARI, 12, 0);
+	OBJ_FACE(GARET, 12, 0);
+	OBJ_FACE(IVAN, 12, 0);
+	OBJ_FACE(MIA, 12, 0);
 	WAIT(60);
 	OBJ_WALK(12, 512, 232);
 	OBJ_MODE(12, 4);
@@ -1795,50 +1795,50 @@ static void FieldScene_RunMainScriptSequence(void)
 	MES_SET((script_a + 4));
 	MES_PUT(13, 0);
 	OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
-	OBJ_FACE(IWAN, 13, 0);
-	OBJ_FACE(MEARI, 13, 0);
-	OBJ_FACE(GERALD, 13, 0);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	OBJ_FACE(IVAN, 13, 0);
+	OBJ_FACE(MIA, 13, 0);
+	OBJ_FACE(GARET, 13, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	MES_SET((script_a + 5));
-	MES_PUT(IWAN, 0);
-	OBJ_EMO(MEARI, 0x105, 0);
-	OBJ_MODE(MEARI, 4);
+	MES_PUT(IVAN, 0);
+	OBJ_EMO(MIA, 0x105, 0);
+	OBJ_MODE(MIA, 4);
 	WAIT(80);
-	OBJ_MODE(MEARI, 1);
+	OBJ_MODE(MIA, 1);
 	MES_SET((script_a + 6));
-	MES_PUT(MEARI, 0);
+	MES_PUT(MIA, 0);
 	OBJ_EMO(12, 0x102, 65);
 	Engine_ActorStartRepeatedMotion(12, 2);
 	WAIT(100);
 	MES_SET((script_a + 7));
 	MES_PUT(13, 0);
-	OBJ_FACE(GERALD, ACTOR_PARTY_LEADER, 0);
+	OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
 	WAIT(10);
 	MES_SET((script_a + 8));
-	MES_PUT(GERALD, 0);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	MES_PUT(GARET, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	WAIT(30);
 	MES_SET((script_a + 9));
-	MES_PUT(IWAN, 0);
-	OBJ_FACE(MEARI, ACTOR_PARTY_LEADER, 0);
+	MES_PUT(IVAN, 0);
+	OBJ_FACE(MIA, ACTOR_PARTY_LEADER, 0);
 	MES_SET((script_a + 10));
-	MES_OPEN(MEARI, 0);
+	MES_OPEN(MIA, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		OBJ_MODE(IWAN, 3);
-		OBJ_MODE(GERALD, 3);
-		OBJ_MODE(MEARI, 3);
+		OBJ_MODE(IVAN, 3);
+		OBJ_MODE(GARET, 3);
+		OBJ_MODE(MIA, 3);
 		OBJ_FACE(12, 13, 0);
 		WAIT(60);
 	}
 	else
 	{
 		MES_SET((script_a + 11));
-		MES_PUT(MEARI, 0);
+		MES_PUT(MIA, 0);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-		OBJ_FACE(GERALD, 12, 0);
-		OBJ_FACE(IWAN, 12, 0);
-		OBJ_FACE(MEARI, 12, 0);
+		OBJ_FACE(GARET, 12, 0);
+		OBJ_FACE(IVAN, 12, 0);
+		OBJ_FACE(MIA, 12, 0);
 		WAIT(20);
 		OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
 		WAIT(60);
@@ -1850,61 +1850,61 @@ static void FieldScene_RunMainScriptSequence(void)
 		MES_SET((script_a + 12));
 		MES_PUT(12, 0);
 		WAIT(60);
-		OBJ_FACE(IWAN, 12, 0);
-		OBJ_FACE(GERALD, 12, 0);
-		OBJ_FACE(MEARI, 12, 0);
+		OBJ_FACE(IVAN, 12, 0);
+		OBJ_FACE(GARET, 12, 0);
+		OBJ_FACE(MIA, 12, 0);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 12, 0);
-		OBJ_MODE(IWAN, 3);
-		OBJ_MODE(GERALD, 3);
-		OBJ_MODE(MEARI, 3);
+		OBJ_MODE(IVAN, 3);
+		OBJ_MODE(GARET, 3);
+		OBJ_MODE(MIA, 3);
 		OBJ_MODE(ACTOR_PARTY_LEADER, 3);
 		WAIT(80);
 		OBJ_FACE(12, 13, 0);
-		OBJ_FACE(IWAN, 13, 0);
-		OBJ_FACE(GERALD, 13, 0);
-		OBJ_FACE(MEARI, 13, 0);
+		OBJ_FACE(IVAN, 13, 0);
+		OBJ_FACE(GARET, 13, 0);
+		OBJ_FACE(MIA, 13, 0);
 		OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
 	}
 	OBJ_SPD(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-	OBJ_SPD(GERALD, 0x8000, 0x4000);
-	OBJ_SPD(MEARI, 0x8000, 0x4000);
-	OBJ_SPD(IWAN, 0x8000, 0x4000);
-	OBJ_WALK(GERALD, 416, 216);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_WALK(GERALD, 416, 248);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_WALK(GERALD, 440, 248);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_DIR(GERALD, 0xc000, 0);
+	OBJ_SPD(GARET, 0x8000, 0x4000);
+	OBJ_SPD(MIA, 0x8000, 0x4000);
+	OBJ_SPD(IVAN, 0x8000, 0x4000);
+	OBJ_WALK(GARET, 416, 216);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_WALK(GARET, 416, 248);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_WALK(GARET, 440, 248);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_DIR(GARET, 0xc000, 0);
 	OBJ_WALK(ACTOR_PARTY_LEADER, 440, 216);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0, 0);
-	OBJ_WALK(MEARI, 488, 248);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_WALK(MEARI, 456, 248);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_DIR(MEARI, 0xc000, 0);
-	OBJ_WALK(IWAN, 456, 216);
-	Engine_ActorWaitForMove(IWAN);
-	OBJ_DIR(IWAN, 0x8000, 0);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	OBJ_WALK(MIA, 488, 248);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_WALK(MIA, 456, 248);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_DIR(MIA, 0xc000, 0);
+	OBJ_WALK(IVAN, 456, 216);
+	Engine_ActorWaitForMove(IVAN);
+	OBJ_DIR(IVAN, 0x8000, 0);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	WAIT(60);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	OBJ_MODE(IWAN, 3);
-	OBJ_MODE(GERALD, 3);
-	OBJ_MODE(MEARI, 3);
+	OBJ_MODE(IVAN, 3);
+	OBJ_MODE(GARET, 3);
+	OBJ_MODE(MIA, 3);
 	WAIT(100);
 	SE(226);
 	OBJ_MODE(13, 7);
 	OBJ_SPD(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
 	Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
-	OBJ_SPD(GERALD, 0x1999, 0xccc);
-	Actor_SetDestinationOffset(GERALD, -24, 0);
-	OBJ_SPD(MEARI, 0x1999, 0xccc);
-	Actor_SetDestinationOffset(MEARI, -24, 0);
-	OBJ_SPD(IWAN, 0x1999, 0xccc);
-	Actor_SetDestinationOffset(IWAN, -24, 0);
+	OBJ_SPD(GARET, 0x1999, 0xccc);
+	Actor_SetDestinationOffset(GARET, -24, 0);
+	OBJ_SPD(MIA, 0x1999, 0xccc);
+	Actor_SetDestinationOffset(MIA, -24, 0);
+	OBJ_SPD(IVAN, 0x1999, 0xccc);
+	Actor_SetDestinationOffset(IVAN, -24, 0);
 	OBJ_SPD(11, 0x1999, 0xccc);
 	OBJ_SPD(15, 0x1999, 0xccc);
 	Actor_SetDestinationOffset(11, -24, 0);
@@ -1913,46 +1913,46 @@ static void FieldScene_RunMainScriptSequence(void)
 	SE(0x120);
 	WAIT(60);
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
-	OBJ_DIR(GERALD, 0xc000, 0);
-	OBJ_DIR(IWAN, 0x4000, 0);
-	OBJ_DIR(MEARI, 0xc000, 0);
+	OBJ_DIR(GARET, 0xc000, 0);
+	OBJ_DIR(IVAN, 0x4000, 0);
+	OBJ_DIR(MIA, 0xc000, 0);
 	WAIT(60);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-	OBJ_MODE(GERALD, 3);
-	OBJ_MODE(IWAN, 3);
-	OBJ_MODE(MEARI, 3);
+	OBJ_MODE(GARET, 3);
+	OBJ_MODE(IVAN, 3);
+	OBJ_MODE(MIA, 3);
 	WAIT(100);
 	OBJ_SPD(ACTOR_PARTY_LEADER, 0xb333, 0x5999);
-	OBJ_SPD(GERALD, 0xb333, 0x5999);
-	OBJ_SPD(IWAN, 0xb333, 0x5999);
-	OBJ_SPD(MEARI, 0xb333, 0x5999);
+	OBJ_SPD(GARET, 0xb333, 0x5999);
+	OBJ_SPD(IVAN, 0xb333, 0x5999);
+	OBJ_SPD(MIA, 0xb333, 0x5999);
 	OBJ_WALK(ACTOR_PARTY_LEADER, 456, 184);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0x4000, 0);
-	OBJ_WALK(GERALD, 464, 256);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_WALK(GERALD, 480, 248);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_WALK(GERALD, 440, 192);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_MODE(GERALD, 1);
-	OBJ_DIR(GERALD, 0x4000, 0);
-	OBJ_WALK(MEARI, 488, 248);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_WALK(MEARI, 488, 184);
-	OBJ_WALK(IWAN, 472, 184);
-	Engine_ActorWaitForMove(IWAN);
-	OBJ_MODE(IWAN, 1);
-	OBJ_DIR(IWAN, 0x4000, 0);
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_MODE(MEARI, 1);
-	OBJ_DIR(MEARI, 0x4000, 0);
+	OBJ_WALK(GARET, 464, 256);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_WALK(GARET, 480, 248);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_WALK(GARET, 440, 192);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_MODE(GARET, 1);
+	OBJ_DIR(GARET, 0x4000, 0);
+	OBJ_WALK(MIA, 488, 248);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_WALK(MIA, 488, 184);
+	OBJ_WALK(IVAN, 472, 184);
+	Engine_ActorWaitForMove(IVAN);
+	OBJ_MODE(IVAN, 1);
+	OBJ_DIR(IVAN, 0x4000, 0);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_MODE(MIA, 1);
+	OBJ_DIR(MIA, 0x4000, 0);
 	WAIT(30);
 	WAIT(60);
-	script_b = MsgRunpaAbleGet;
+	script_b = MsgLunpaAbleGet;
 	MES_SET(script_b);
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	OBJ_MODE(13, 6);
 	WAIT(120);
 	Engine_ActorStartRepeatedMotion(13, 2);
@@ -1961,13 +1961,13 @@ static void FieldScene_RunMainScriptSequence(void)
 	MES_SET((script_b + 1));
 	MES_PUT(13, 0);
 	WAIT(20);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	WAIT(10);
-	OBJ_EMO(MEARI, 0x101, 80);
-	OBJ_FACE(MEARI, 13, 0);
-	OBJ_FACE(IWAN, 13, 0);
+	OBJ_EMO(MIA, 0x101, 80);
+	OBJ_FACE(MIA, 13, 0);
+	OBJ_FACE(IVAN, 13, 0);
 	MES_SET((script_b + 2));
-	MES_PUT(MEARI, 0);
+	MES_PUT(MIA, 0);
 	OBJ_EMO(13, 0x102, 70);
 	Engine_ActorStartRepeatedMotion(13, 2);
 	WAIT(60);
@@ -1976,68 +1976,68 @@ static void FieldScene_RunMainScriptSequence(void)
 	MES_SET((script_b + 3));
 	MES_PUT(13, 0);
 	OBJ_MODE(13, 7);
-	OBJ_EMO(IWAN, 0x108, 40);
+	OBJ_EMO(IVAN, 0x108, 40);
 	MES_SET((script_b + 4));
-	MES_PUT(IWAN, 0);
+	MES_PUT(IVAN, 0);
 	Engine_ActorSetAnimationAndWait(12, 3);
-	OBJ_EMO(GERALD, 0x103, 60);
-	OBJ_WALK(GERALD, 440, 208);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_FACE(GERALD, ACTOR_PARTY_LEADER, 0);
+	OBJ_EMO(GARET, 0x103, 60);
+	OBJ_WALK(GARET, 440, 208);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
 	MES_SET((script_b + 5));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	WAIT(20);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-	OBJ_EMO(IWAN, 0x101, 0);
-	OBJ_EMO(MEARI, 0x101, 0);
+	OBJ_EMO(IVAN, 0x101, 0);
+	OBJ_EMO(MIA, 0x101, 0);
 	OBJ_EMO(12, 0x101, 0);
 	WAIT(70);
-	OBJ_FACE(GERALD, IWAN, 0);
-	OBJ_EMO(GERALD, 0x102, 75);
-	OBJ_FACE(GERALD, ACTOR_PARTY_LEADER, 0);
-	OBJ_MODE(GERALD, 4);
+	OBJ_FACE(GARET, IVAN, 0);
+	OBJ_EMO(GARET, 0x102, 75);
+	OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
+	OBJ_MODE(GARET, 4);
 	MES_SET((script_b + 6));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	OBJ_EMO(12, 0x101, 0);
 	WAIT(60);
 	MES_SET((script_b + 7));
 	MES_PUT(12, 0);
-	OBJ_WALK(GERALD, 448, 208);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_MODE(GERALD, 1);
-	OBJ_FACE(GERALD, 12, 0);
+	OBJ_WALK(GARET, 448, 208);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_MODE(GARET, 1);
+	OBJ_FACE(GARET, 12, 0);
 	MES_SET((script_b + 8));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	WAIT(60);
-	OBJ_FACE(GERALD, 12, 0);
+	OBJ_FACE(GARET, 12, 0);
 	WAIT(60);
 	MES_SET((script_b + 9));
 	MES_PUT(12, 0);
-	OBJ_MODE(GERALD, 4);
+	OBJ_MODE(GARET, 4);
 	WAIT(60);
 	MES_SET((script_b + 10));
-	MES_PUT(GERALD, 0);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	MES_PUT(GARET, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	WAIT(30);
 	MES_SET((script_b + 11));
-	MES_PUT(IWAN, 0);
-	OBJ_FACE(GERALD, MEARI, 0);
+	MES_PUT(IVAN, 0);
+	OBJ_FACE(GARET, MIA, 0);
 	WAIT(20);
 	MES_SET((script_b + 12));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	WAIT(30);
-	OBJ_EMO(MEARI, 0x100, 80);
-	OBJ_FACE(MEARI, GERALD, 0);
+	OBJ_EMO(MIA, 0x100, 80);
+	OBJ_FACE(MIA, GARET, 0);
 	MES_SET((script_b + 13));
-	MES_PUT(MEARI, 0);
-	OBJ_FACE(MEARI, 13, 0);
+	MES_PUT(MIA, 0);
+	OBJ_FACE(MIA, 13, 0);
 	MES_SET((script_b + 14));
-	MES_PUT(MEARI, 0);
+	MES_PUT(MIA, 0);
 	OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
-	OBJ_FACE(IWAN, 13, 0);
-	OBJ_FACE(GERALD, 13, 0);
-	OBJ_FACE(MEARI, 13, 0);
+	OBJ_FACE(IVAN, 13, 0);
+	OBJ_FACE(GARET, 13, 0);
+	OBJ_FACE(MIA, 13, 0);
 	WAIT(120);
 	OBJ_EMO(13, 0x102, 30);
 	Engine_ActorStartRepeatedMotion(13, 1);
@@ -2046,46 +2046,46 @@ static void FieldScene_RunMainScriptSequence(void)
 	WAIT(60);
 	MES_SET((script_b + 15));
 	MES_PUT(12, 0);
-	OBJ_EMO(GERALD, 0x107, 110);
-	OBJ_WALK(GERALD, 456, 212);
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_MODE(GERALD, 1);
+	OBJ_EMO(GARET, 0x107, 110);
+	OBJ_WALK(GARET, 456, 212);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_MODE(GARET, 1);
 	MES_SET((script_b + 16));
-	MES_PUT(GERALD, 0);
-	OBJ_FACE(IWAN, GERALD, 0);
+	MES_PUT(GARET, 0);
+	OBJ_FACE(IVAN, GARET, 0);
 	WAIT(60);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	MES_SET((script_b + 17));
-	MES_PUT(IWAN, 0);
-	OBJ_FACE(GERALD, 13, 0);
+	MES_PUT(IVAN, 0);
+	OBJ_FACE(GARET, 13, 0);
 	WAIT(80);
-	OBJ_FACE(GERALD, IWAN, 0);
+	OBJ_FACE(GARET, IVAN, 0);
 	WAIT(60);
-	OBJ_FACE(GERALD, 13, 0);
+	OBJ_FACE(GARET, 13, 0);
 	WAIT(30);
 	OBJ_FACE(ACTOR_PARTY_LEADER, 13, 0);
-	OBJ_FACE(MEARI, 13, 0);
+	OBJ_FACE(MIA, 13, 0);
 	OBJ_FACE(13, 13, 0);
 	OBJ_FACE(12, 13, 0);
 	WAIT(80);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	WAIT(30);
 	MES_SET((script_b + 18));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	Engine_ActorStartRepeatedMotion(13, 2);
 	WAIT(70);
 	MES_SET((script_b + 19));
 	MES_PUT(13, 0);
-	OBJ_EMO(MEARI, 0x100, 60);
+	OBJ_EMO(MIA, 0x100, 60);
 	MES_SET((script_b + 20));
-	MES_PUT(MEARI, 0);
-	OBJ_FACE(IWAN, ACTOR_PARTY_LEADER, 0);
+	MES_PUT(MIA, 0);
+	OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
 	WAIT(80);
 	MES_SET((script_b + 21));
-	MES_OPEN(IWAN, 0);
-	OBJ_FACE(GERALD, ACTOR_PARTY_LEADER, 0);
-	OBJ_FACE(MEARI, ACTOR_PARTY_LEADER, 0);
-	OBJ_FACE(IWAN, ACTOR_PARTY_LEADER, 0);
+	MES_OPEN(IVAN, 0);
+	OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
+	OBJ_FACE(MIA, ACTOR_PARTY_LEADER, 0);
+	OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
 	OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
 	OBJ_POS_SET(14, 456, 304);
 	OBJ_SPD(14, 0x8000, 0x4000);
@@ -2102,16 +2102,16 @@ static void FieldScene_RunMainScriptSequence(void)
 		MES_PUT(14, 0);
 	}
 	OBJ_FACE(ACTOR_PARTY_LEADER, 14, 0);
-	OBJ_FACE(GERALD, 14, 0);
-	OBJ_FACE(MEARI, 14, 0);
-	OBJ_FACE(IWAN, 14, 0);
+	OBJ_FACE(GARET, 14, 0);
+	OBJ_FACE(MIA, 14, 0);
+	OBJ_FACE(IVAN, 14, 0);
 	OBJ_FACE(12, 14, 0);
 	OBJ_FACE(13, 14, 0);
 	Camera_MoveTo(0x1c80000, -1, 0xf00000, 1);
 	Engine_ActorStartRepeatedMotion(13, 1);
 	WAIT(60);
 	SE(8);
-	script_c = MsgRunpaDad;
+	script_c = MsgLunpaDad;
 	MES_SET(script_c);
 	MES_PUT(13, 0);
 	OBJ_WALK(14, 456, 280);
@@ -2189,9 +2189,9 @@ static void FieldScene_RunMainScriptSequence(void)
 	WAIT(120);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 14, 0);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-	OBJ_MODE(IWAN, 3);
-	OBJ_MODE(GERALD, 3);
-	OBJ_MODE(MEARI, 3);
+	OBJ_MODE(IVAN, 3);
+	OBJ_MODE(GARET, 3);
+	OBJ_MODE(MIA, 3);
 	WAIT(120);
 	OBJ_EMO(14, 0x108, 180);
 	MES_SET((script_c + 15));
@@ -2199,37 +2199,37 @@ static void FieldScene_RunMainScriptSequence(void)
 	OBJ_EMO(12, 0x101, 80);
 	MES_SET((script_c + 16));
 	MES_PUT(12, 0);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GERALD, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	WAIT(80);
 	OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
 	WAIT(60);
 	OBJ_FACE(ACTOR_PARTY_LEADER, 14, 0);
-	OBJ_FACE(GERALD, 14, 0);
-	OBJ_FACE(IWAN, 14, 0);
-	OBJ_FACE(MEARI, 14, 0);
+	OBJ_FACE(GARET, 14, 0);
+	OBJ_FACE(IVAN, 14, 0);
+	OBJ_FACE(MIA, 14, 0);
 	WAIT(60);
 	MES_SET((script_c + 17));
 	MES_PUT(14, 0);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-	OBJ_EMO(GERALD, 0x101, 0);
-	OBJ_EMO(IWAN, 0x101, 0);
-	OBJ_EMO(MEARI, 0x101, 0);
+	OBJ_EMO(GARET, 0x101, 0);
+	OBJ_EMO(IVAN, 0x101, 0);
+	OBJ_EMO(MIA, 0x101, 0);
 	WAIT(100);
 	MES_SET((script_c + 18));
-	MES_PUT(GERALD, 0);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	MES_PUT(GARET, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	WAIT(60);
 	MES_SET((script_c + 19));
-	MES_PUT(IWAN, 0);
-	OBJ_FACE(14, IWAN, 0);
+	MES_PUT(IVAN, 0);
+	OBJ_FACE(14, IVAN, 0);
 	WAIT(20);
 	MES_SET((script_c + 20));
 	MES_PUT(14, 0);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x101, 0);
-	OBJ_EMO(GERALD, 0x101, 0);
-	OBJ_EMO(IWAN, 0x101, 0);
-	OBJ_EMO(MEARI, 0x101, 0);
+	OBJ_EMO(GARET, 0x101, 0);
+	OBJ_EMO(IVAN, 0x101, 0);
+	OBJ_EMO(MIA, 0x101, 0);
 	WAIT(120);
 	OBJ_MODE(14, 4);
 	WAIT(120);
@@ -2239,9 +2239,9 @@ static void FieldScene_RunMainScriptSequence(void)
 	MES_SET((script_c + 22));
 	MES_PUT(14, 0);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 3);
-	OBJ_MODE(IWAN, 3);
-	OBJ_MODE(MEARI, 3);
-	OBJ_MODE(GERALD, 3);
+	OBJ_MODE(IVAN, 3);
+	OBJ_MODE(MIA, 3);
+	OBJ_MODE(GARET, 3);
 	OBJ_MODE(12, 3);
 	WAIT(80);
 	OBJ_MODE(14, 4);
@@ -2257,21 +2257,21 @@ static void FieldScene_RunMainScriptSequence(void)
 	WAIT(50);
 	MES_SET((script_c + 25));
 	MES_PUT(14, 0);
-	OBJ_MODE(GERALD, 3);
+	OBJ_MODE(GARET, 3);
 	WAIT(70);
 	MES_SET((script_c + 26));
-	MES_PUT(GERALD, 0);
-	OBJ_MODE(MEARI, 3);
+	MES_PUT(GARET, 0);
+	OBJ_MODE(MIA, 3);
 	MES_SET((script_c + 27));
-	MES_PUT(MEARI, 0);
+	MES_PUT(MIA, 0);
 	OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
 	Engine_ActorSetAnimationAndWait(14, 3);
 	WAIT(20);
 	MES_SET((script_c + 28));
 	MES_PUT(14, 0);
-	OBJ_EMO(IWAN, 0x101, 90);
+	OBJ_EMO(IVAN, 0x101, 90);
 	MES_SET((script_c + 29));
-	MES_PUT(IWAN, 0);
+	MES_PUT(IVAN, 0);
 	OBJ_DIR(14, 0x5000, 0);
 	WAIT(20);
 	MES_SET((script_c + 30));
@@ -2286,63 +2286,63 @@ static void FieldScene_RunMainScriptSequence(void)
 	WAIT(20);
 	MES_SET((script_c + 32));
 	MES_PUT(14, 0);
-	OBJ_EMO(GERALD, 0x100, 70);
+	OBJ_EMO(GARET, 0x100, 70);
 	MES_SET((script_c + 33));
-	MES_PUT(GERALD, 0);
+	MES_PUT(GARET, 0);
 	OBJ_FACE(14, ACTOR_PARTY_LEADER, 0);
 	WAIT(30);
 	MES_SET((script_c + 34));
 	MES_PUT(14, 0);
-	OBJ_EMO(MEARI, 0x100, 80);
+	OBJ_EMO(MIA, 0x100, 80);
 	MES_SET((script_c + 35));
-	MES_PUT(MEARI, 0);
+	MES_PUT(MIA, 0);
 	Engine_ActorSetAnimationAndWait(14, 3);
 	MES_SET((script_c + 36));
 	MES_PUT(14, 0);
-	OBJ_FACE(IWAN, ACTOR_PARTY_LEADER, 0);
+	OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
 	WAIT(30);
-	OBJ_MODE(IWAN, 3);
+	OBJ_MODE(IVAN, 3);
 	WAIT(100);
 	MES_SET((script_c + 37));
-	MES_OPEN(IWAN, 0);
+	MES_OPEN(IVAN, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
 		MES_SET((script_c + 38));
 		MES_PUT(14, 0);
 	}
 	WAIT(30);
-	OBJ_MODE(GERALD, 3);
-	OBJ_MODE(IWAN, 3);
-	OBJ_MODE(MEARI, 3);
+	OBJ_MODE(GARET, 3);
+	OBJ_MODE(IVAN, 3);
+	OBJ_MODE(MIA, 3);
 	WAIT(100);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
 	OBJ_MODE(ACTOR_PARTY_LEADER, 3);
 	OBJ_MODE(12, 3);
 	WAIT(100);
-	OBJ_MODE(GERALD, 2);
+	OBJ_MODE(GARET, 2);
 	record = Actor_Get(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	OBJ_POS_SET(GERALD, 0, 0);
-	OBJ_MODE(IWAN, 2);
+	Engine_ActorWaitForMove(GARET);
+	OBJ_POS_SET(GARET, 0, 0);
+	OBJ_MODE(IVAN, 2);
 	record = Actor_Get(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	OBJ_POS_SET(IWAN, 0, 0);
-	OBJ_MODE(MEARI, 2);
+	Engine_ActorWaitForMove(IVAN);
+	OBJ_POS_SET(IVAN, 0, 0);
+	OBJ_MODE(MIA, 2);
 	record = Actor_Get(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	OBJ_POS_SET(MEARI, 0, 0);
+	Engine_ActorWaitForMove(MIA);
+	OBJ_POS_SET(MIA, 0, 0);
 	WAIT(30);
 	OBJ_SPD(12, 0x6666, 0x3333);
 	OBJ_WALK(12, 472, 184);
@@ -2405,34 +2405,34 @@ static void FieldScene_RunMainScriptSequence(void)
 static void EV21_MES(void)
 {
 
-	switch (gRunpaJoRandomPick)
+	switch (gLunpaFortressRandomPick)
 	{
 	case 0:
-		MES_SET(MsgRunpaHammetGreatMerchant);
+		MES_SET(MsgLunpaHammetGreatMerchant);
 		MES_PUT(21, 0);
 		break;
 	case 1:
-		MES_SET(MsgRunpaZZZ);
+		MES_SET(MsgLunpaZZZ);
 		MES_PUT(21, 0);
 		break;
 	case 2:
-		MES_SET(MsgRunpaDodonpasOrdersAbsolute);
+		MES_SET(MsgLunpaDodonpasOrdersAbsolute);
 		MES_PUT(21, 0);
 		break;
 	case 3:
-		MES_SET(MsgRunpaSighBadCouldnt);
+		MES_SET(MsgLunpaSighBadCouldnt);
 		MES_PUT(21, 0);
 		break;
 	case 4:
-		MES_SET(MsgRunpaStrangeSwearSomeone);
+		MES_SET(MsgLunpaStrangeSwearSomeone);
 		MES_PUT(21, 0);
 		break;
 	case 6:
-		MES_SET(MsgRunpaToldStandGuard);
+		MES_SET(MsgLunpaToldStandGuard);
 		MES_PUT(21, 0);
 		break;
 	case 7:
-		MES_SET(MsgRunpaWhoDisruptingSleep);
+		MES_SET(MsgLunpaWhoDisruptingSleep);
 		MES_PUT(21, 0);
 		break;
 	case 5:
@@ -2442,7 +2442,7 @@ static void EV21_MES(void)
 		WAIT(50);
 		Engine_ActorFaceDirection(21, 0x5000, 0);
 		WAIT(50);
-		MES_SET(MsgRunpaTakeCareAnybody);
+		MES_SET(MsgLunpaTakeCareAnybody);
 		MES_PUT(21, 0);
 		break;
 	}
@@ -2460,7 +2460,7 @@ static void EV21_MAIN(void)
 	WAIT(50);
 	OBJ_DIR(21, 0x5000, 0);
 	WAIT(50);
-	msg = MsgRunpaLeftGuardHearsSomeone;
+	msg = MsgLunpaLeftGuardHearsSomeone;
 	MES_SET(msg);
 	MES_PUT(21, 0);
 	OBJ_MODE(21, 4);
@@ -2479,7 +2479,7 @@ static void EV25_DONPA(void)
 	EV_BEGIN();
 	if (FLAG_CHK(0x941) != 0)
 	{
-		MES_SET(MsgRunpaDonpaGrateful);
+		MES_SET(MsgLunpaDonpaGrateful);
 		MES_PUT(18, 0);
 		EV_END();
 	}
@@ -2487,7 +2487,7 @@ static void EV25_DONPA(void)
 	{
 		if (FLAG_CHK(0x313) != 0)
 		{
-			MES_SET(MsgRunpaMaybeDodonpasEyes);
+			MES_SET(MsgLunpaMaybeDodonpasEyes);
 			MES_OPEN(25, 0);
 			EV_END();
 		}
@@ -2495,7 +2495,7 @@ static void EV25_DONPA(void)
 		{
 			OBJ_EMO(25, 0x102, 30);
 			OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
-			msg = MsgRunpaShhhPleaseDont;
+			msg = MsgLunpaShhhPleaseDont;
 			MES_SET(msg);
 			MES_PUT(25, 0);
 			OBJ_FACE(25, 24, 0);
@@ -2527,7 +2527,7 @@ static void EV25_DONPA(void)
 			}
 			WAIT(60);
 			OBJ_EMO(25, 0x105, 60);
-			msg2 = MsgRunpaDonpaKnowsCoddled;
+			msg2 = MsgLunpaDonpaKnowsCoddled;
 			MES_SET(msg2);
 			MES_OPEN(25, 0);
 			Engine_ActorRunRepeatedMotion(25, 1);
@@ -2546,12 +2546,12 @@ static void EV25_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
-		MES_SET(MsgRunpaDifficultDonpaRight);
+		MES_SET(MsgLunpaDifficultDonpaRight);
 		MES_PUT(25, 0);
 	}
 	else
 	{
-		MES_SET(MsgRunpaSomeonePunishDodonpa);
+		MES_SET(MsgLunpaSomeonePunishDodonpa);
 		MES_PUT(25, 0);
 	}
 }
@@ -2560,12 +2560,12 @@ static void EV24_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
-		MES_SET(MsgRunpaFatherStayAngry);
+		MES_SET(MsgLunpaFatherStayAngry);
 		MES_PUT(24, 0);
 	}
 	else
 	{
-		MES_SET(MsgRunpaFatherSorryDodonpa);
+		MES_SET(MsgLunpaFatherSorryDodonpa);
 		MES_PUT(24, 0);
 	}
 }
@@ -2578,7 +2578,7 @@ static void EV24_MAIN(void)
 	{
 		if (FLAG_CHK(2382) == 0 && FLAG_CHK(788) == 0)
 		{
-			sequence_id = MsgRunpaThankHelpDodonpa;
+			sequence_id = MsgLunpaThankHelpDodonpa;
 			MES_SET(sequence_id);
 			MES_PUT(PRIMARY_ID, 0);
 			Engine_ActorRunRepeatedMotion(PRIMARY_ID, 1);
@@ -2624,13 +2624,13 @@ static void EV24_MAIN(void)
 		}
 		else
 		{
-			MES_SET(MsgRunpaWellWorriedDodonpa);
+			MES_SET(MsgLunpaWellWorriedDodonpa);
 			MES_PUT(PRIMARY_ID, 0);
 		}
 	}
 	else
 	{
-		MES_SET(MsgRunpaZZZZ);
+		MES_SET(MsgLunpaZZZZ);
 		MES_PUT(PRIMARY_ID, 0);
 	}
 }
@@ -2644,27 +2644,27 @@ static void EV26_SET(void)
 static void EV14_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(14, 2);
-	MES_SET(MsgRunpaOwwwDontHurt);
+	MES_SET(MsgLunpaOwwwDontHurt);
 	MES_PUT(14, 0);
 }
 
 static void EV13_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(13, 2);
-	MES_SET(MsgRunpaRightRightGive);
+	MES_SET(MsgLunpaRightRightGive);
 	MES_PUT(13, 0);
 }
 
 static void EV12_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(12, 2);
-	MES_SET(MsgRunpaGuysTougherThought);
+	MES_SET(MsgLunpaGuysTougherThought);
 	MES_PUT(12, 0);
 }
 
 static void EV18_SET(void)
 {
-	MES_SET(MsgRunpaKnowWhereDodonpa);
+	MES_SET(MsgLunpaKnowWhereDodonpa);
 	Engine_EventAskYesNo(18, 0);
 }
 
@@ -2675,7 +2675,7 @@ static void EV20_MAIN(void)
 
 	if (FLAG_CHK(0x226) != 0)
 	{
-		MES_SET(MsgRunpaWontTellAnyone);
+		MES_SET(MsgLunpaWontTellAnyone);
 		MES_PUT(20, 0);
 	}
 	else
@@ -2688,7 +2688,7 @@ static void EV20_MAIN(void)
 			Engine_ActorStop(20);
 			Object_RefreshSelectorById(20);
 			WAIT(20);
-			msg = MsgRunpaWhWhWho;
+			msg = MsgLunpaWhWhWho;
 			MES_SET(msg);
 			MES_PUT(20, 0);
 			OBJ_EMO(20, 0x102, 30);
@@ -2698,7 +2698,7 @@ static void EV20_MAIN(void)
 			OBJ_MODE(20, 4);
 			WAIT(30);
 		}
-		msg2 = MsgRunpaDontLookNearly;
+		msg2 = MsgLunpaDontLookNearly;
 		MES_SET(msg2);
 		MES_PUT(20, 0);
 		OBJ_EMO(20, 0x101, 40);
@@ -2725,7 +2725,7 @@ static void EV20_END(void)
 
 	if (Engine_GameFlagIsSet(0x226))
 	{
-		MES_SET(MsgRunpaMaybeMerchantReason);
+		MES_SET(MsgLunpaMaybeMerchantReason);
 		MES_PUT(20, 0);
 	}
 	else
@@ -2744,7 +2744,7 @@ static void NoOpActorCallback(void)
 
 static void EV17_TALK(void)
 {
-	s32 msg = MsgRunpaWrongTurnOver;
+	s32 msg = MsgLunpaWrongTurnOver;
 
 	MES_SET(msg);
 	MES_PUT(0x800d, 0);
@@ -2756,7 +2756,7 @@ static void EV17_TALK(void)
 
 static void EV17_LOAD(void)
 {
-	MES_SET(MsgRunpaCantBelieveWhen);
+	MES_SET(MsgLunpaCantBelieveWhen);
 	MES_PUT(13, 0);
 }
 
@@ -2764,17 +2764,17 @@ s32 FieldScene_DispatchActorUpdate(void)
 {
 	struct FieldActor *actor;
 
-	gRunpaJoRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
-	if (gGameState.scene == (s32)&SceneId_RunpaJo1)
+	gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
+	if (gGameState.scene == (s32)&SceneId_LunpaFortress1)
 	{
 		Engine_MapSetWorkFlagBits9To11(0xe00);
 		FieldScene_InstallSceneTasks();
 	}
-	if (gGameState.scene == (s32)&SceneId_RunpaJo2)
+	if (gGameState.scene == (s32)&SceneId_LunpaFortress2)
 		FieldScene_SetupActorsForScene();
-	if (gGameState.scene == (s32)&SceneId_RunpaJo3)
+	if (gGameState.scene == (s32)&SceneId_LunpaFortress3)
 		FieldScene_RestoreActorsFromFlags();
-	if (gGameState.scene == (s32)&SceneId_RunpaJo4)
+	if (gGameState.scene == (s32)&SceneId_LunpaFortress4)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 		Engine_ActorSetSpriteFlags(Actor_Get(12), 0);
@@ -2943,7 +2943,7 @@ static void FieldScene_SetupActorsForScene(void)
 		break;
 	case 31:
 		gEventWork->start_transition =
-			SCENE_TRANSITION(TRANSITION_WINDOW, RUNPA_RETURN_TRANSITION_VARIANT);
+			SCENE_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
 		FieldScene_RunSequenceTail();
 		break;
 	case 14:
@@ -3135,9 +3135,9 @@ s32 StagedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
 	-8, -32, 8, 32,
 };
 
-s32 gRunpaJoRandomPick = 0;
+s32 gLunpaFortressRandomPick = 0;
 
-s32 gRunpaJoPlacements2_1[] = {
+s32 gLunpaFortressPlacements2_1[] = {
 	SC_SET(SW_ACCEL, 0x11999),
 	SC_SET(SW_SPEED, 0x11999),
 	SC_ARG(2),
@@ -3150,7 +3150,7 @@ s32 gRunpaJoPlacements2_1[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gRunpaJoPlacements2_0[] = {
+s32 gLunpaFortressPlacements2_0[] = {
 	SC_SET(SW_ACCEL, 0x11999),
 	SC_SET(SW_SPEED, 0x11999),
 	SC_ARG(2),
@@ -3163,12 +3163,12 @@ s32 gRunpaJoPlacements2_0[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gRunpaJoPlacements2_3[] = {
+s32 gLunpaFortressPlacements2_3[] = {
 	SC_ARG(5),
 	SC_END,
 };
 
-s32 gRunpaJoPlacements1_Data[] = {
+s32 gLunpaFortressPlacements1_Data[] = {
 	SC_SET(SW_ACCEL, 0x3333),
 	SC_SET(SW_SPEED, 0x9999),
 	SC_ARG(2),
@@ -3204,7 +3204,7 @@ s32 gRunpaJoPlacements1_Data[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gRunpaJoPlacements2_2[] = {
+s32 gLunpaFortressPlacements2_2[] = {
 	SC_SET(SW_ACCEL, 0x3333),
 	SC_SET(SW_SPEED, 0x9999),
 	SC_ARG(2),
@@ -3234,7 +3234,7 @@ s32 gRunpaJoPlacements2_2[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gRunpaJoEntrances1[] = {
+struct SceneEntrance gLunpaFortressEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 160, 0, 168, FACING_NORTH, 0, 40, 24, 296, 280, 0 },
 	{ 2, CONDITION_ALWAYS, 160, 0, 104, FACING_SOUTH, 0, 40, 24, 296, 280, 0 },
@@ -3259,7 +3259,7 @@ struct SceneEntrance gRunpaJoEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRunpaJoEntrances2[] = {
+struct SceneEntrance gLunpaFortressEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 392, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 80, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
@@ -3290,7 +3290,7 @@ struct SceneEntrance gRunpaJoEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRunpaJoEntrances3[] = {
+struct SceneEntrance gLunpaFortressEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 424, 0, 584, FACING_SOUTH, 0, 200, 488, 480, 648, 0 },
 	{ 2, CONDITION_ALWAYS, 344, 0, 568, FACING_SOUTH, 0, 200, 488, 480, 648, 0 },
@@ -3301,7 +3301,7 @@ struct SceneEntrance gRunpaJoEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gRunpaJoEntrancesOther[] = {
+struct SceneEntrance gLunpaFortressEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 56, 0, 328, FACING_NORTH, 0, 8, 8, 264, 424, 0 },
 	{ 2, CONDITION_ALWAYS, 184, 0, 368, FACING_NORTH, 0, 8, 8, 264, 424, 0 },
@@ -3310,7 +3310,7 @@ struct SceneEntrance gRunpaJoEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gRunpaJoExitsOther[] = {
+u32 gLunpaFortressExitsOther[] = {
 	SCENE_EXITS(106),
 	SCENE_EXIT(1, 2, 49),
 	SCENE_EXIT(2, 104, 3),
@@ -3340,7 +3340,7 @@ u32 gRunpaJoExitsOther[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gRunpaJoExits2[] = {
+u32 gLunpaFortressExits2[] = {
 	SCENE_EXITS(161),
 	SCENE_EXIT(60, 159, 4),
 	SCENE_EXIT(1, 160, 8),
@@ -3370,7 +3370,7 @@ u32 gRunpaJoExits2[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gRunpaJoExits3And4[] = {
+u32 gLunpaFortressExits3And4[] = {
 	SCENE_EXITS(162),
 	SCENE_EXIT(1, 160, 11),
 	SCENE_EXIT(2, 162, 3),
@@ -3388,11 +3388,11 @@ u32 gRunpaJoExits3And4[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gRunpaJoPlacementsOther[] = {
+struct ScenePlacement gLunpaFortressPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRunpaJoPlacementsRunpaDou[] = {
+struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
 	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3405,16 +3405,16 @@ struct ScenePlacement gRunpaJoPlacementsRunpaDou[] = {
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x31, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRunpaJoPlacements1[] = {
+struct ScenePlacement gLunpaFortressPlacements1[] = {
 	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x14, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3435,7 +3435,7 @@ struct ScenePlacement gRunpaJoPlacements1[] = {
 		PIXELS(192), 0, PIXELS(432), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0x85, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x85, CONDITION_ALWAYS, (s32)gRunpaJoPlacements1_Data,
+	{ 0x85, CONDITION_ALWAYS, (s32)gLunpaFortressPlacements1_Data,
 		PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -3446,12 +3446,12 @@ struct ScenePlacement gRunpaJoPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRunpaJoPlacements2[] = {
+struct ScenePlacement gLunpaFortressPlacements2[] = {
 	{ 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x85, CONDITION_ALWAYS, (s32)gRunpaJoPlacements2_0,
+	{ 0x85, CONDITION_ALWAYS, (s32)gLunpaFortressPlacements2_0,
 		PIXELS(88), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x85, CONDITION_ALWAYS, (s32)gRunpaJoPlacements2_1,
+	{ 0x85, CONDITION_ALWAYS, (s32)gLunpaFortressPlacements2_1,
 		PIXELS(88), 0, PIXELS(288), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x85, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(456), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3465,7 +3465,7 @@ struct ScenePlacement gRunpaJoPlacements2[] = {
 		PIXELS(312), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x85, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(680), 0, PIXELS(824), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x85, CONDITION_ALWAYS, (s32)gRunpaJoPlacements2_2,
+	{ 0x85, CONDITION_ALWAYS, (s32)gLunpaFortressPlacements2_2,
 		PIXELS(920), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(88), 0, PIXELS(616), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3479,7 +3479,7 @@ struct ScenePlacement gRunpaJoPlacements2[] = {
 		PIXELS(664), 0, PIXELS(360), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(712), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x2c, CONDITION_ALWAYS, (s32)gRunpaJoPlacements2_3,
+	{ 0x2c, CONDITION_ALWAYS, (s32)gLunpaFortressPlacements2_3,
 		PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -3488,7 +3488,7 @@ struct ScenePlacement gRunpaJoPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRunpaJoPlacements3[] = {
+struct ScenePlacement gLunpaFortressPlacements3[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3502,7 +3502,7 @@ struct ScenePlacement gRunpaJoPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRunpaJoPlacements4[] = {
+struct ScenePlacement gLunpaFortressPlacements4[] = {
 	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3513,11 +3513,11 @@ struct ScenePlacement gRunpaJoPlacements4[] = {
 		PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x31, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x32, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -3532,11 +3532,11 @@ struct ScenePlacement gRunpaJoPlacements4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gRunpaJoNoEvents[] = {
+struct SceneEvent gLunpaFortressNoEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRunpaJoEvents1[] = {
+struct SceneEvent gLunpaFortressEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -3557,7 +3557,7 @@ struct SceneEvent gRunpaJoEvents1[] = {
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_ROUYA) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_JAIL) },
 	{ 0xc402, 40, 0x35a, EVENT_SCRIPT(EV40_C) },
 	{ 0x4402, 40, 0x35a, EVENT_SCRIPT(EV40_C) },
 	{ 0xc402, 41, 0x35b, EVENT_SCRIPT(EV40_C) },
@@ -3566,16 +3566,16 @@ struct SceneEvent gRunpaJoEvents1[] = {
 	{ 0x4402, 42, 0x35c, EVENT_SCRIPT(EV40_C) },
 	{ EVENT_TOUCH, 50, 0x224, EVENT_SCRIPT(EV50_MAIN) },
 	{ EVENT_TOUCH, 51, 0x225, EVENT_SCRIPT(EV51_MAIN) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgRunpaDonpaResting) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRunpaWhereIsDodonpa) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRunpaHammetBuysDrink) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRunpaHammetMoneyTree) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetBuysDrink) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetMoneyTree) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_MAIN) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_MAIN) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRunpaWhoFoughtDonpa) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRunpaWifeSeeksDodonpa) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRunpaKareiBuysDrink) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRunpaHammetKeepsEarnings) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLunpaWhoFoughtDonpa) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLunpaKalayBuysDrink) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_END) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_MES) },
 	{ EVENT_RAISED, 93, CONDITION_ALWAYS, EVENT_SCRIPT(EV93_ON) },
@@ -3590,7 +3590,7 @@ struct SceneEvent gRunpaJoEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRunpaJoEvents2[] = {
+struct SceneEvent gLunpaFortressEvents2[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -3615,37 +3615,37 @@ struct SceneEvent gRunpaJoEvents2[] = {
 	{ EVENT_EXIT, 22, CONDITION_ALWAYS, 22 },
 	{ EVENT_EXIT, 23, CONDITION_ALWAYS, 23 },
 	{ EVENT_EXIT, 24, CONDITION_ALWAYS, 24 },
-	{ EVENT_TOUCH, 30, 0x949, EVENT_SCRIPT(EV30_TAKARABAKO) },
-	{ EVENT_TOUCH, 31, 0x94a, EVENT_SCRIPT(EV31_BANPEI) },
-	{ EVENT_TOUCH, 32, 0x94b, EVENT_SCRIPT(EV32_KARA) },
-	{ EVENT_TOUCH, 33, 0x94c, EVENT_SCRIPT(EV33_SHIRABE) },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_ROUYA) },
+	{ EVENT_TOUCH, 30, 0x949, EVENT_SCRIPT(EV30_TREASURE_CHEST) },
+	{ EVENT_TOUCH, 31, 0x94a, EVENT_SCRIPT(EV31_GUARD) },
+	{ EVENT_TOUCH, 32, 0x94b, EVENT_SCRIPT(EV32_TOUCH) },
+	{ EVENT_TOUCH, 33, 0x94c, EVENT_SCRIPT(EV33_CHECK) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_JAIL) },
 	{ 0x4402, 40, 0x358, EVENT_SCRIPT(EV40_D) },
 	{ 0xc402, 41, 0x359, EVENT_SCRIPT(EV40_D) },
 	{ 0x4402, 41, 0x359, EVENT_SCRIPT(EV40_D) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_KAGI) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_KAGI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_KEY) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_KEY) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_SET) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgRunpaChildMustGrowUp) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgRunpaPapaWatchesLadies) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgRunpaChildTooResponsible) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgRunpaDonpaExhausted) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgRunpaWomenWantHome) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgLunpaChildMustGrowUp) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgLunpaPapaWatchesLadies) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgLunpaChildTooResponsible) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaExhausted) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgLunpaWomenWantHome) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_SET) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_SET) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_SET) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_DONPA) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_MAIN) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_SET) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRunpaDonpappaSuccessor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRunpaDonpappaProtectsFortress) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgRunpaDaughterWillNotMarryPapa) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgRunpaDonpappaJudges) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgRunpaFearWithoutDonpa) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgRunpaHopeDonpaRecovers) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRunpaShouldNotHaveFought) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRunpaHammetInCave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRunpaHiddenDoorSwitch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaSuccessor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaProtectsFortress) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgLunpaDaughterWillNotMarryPapa) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaJudges) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgLunpaFearWithoutDonpa) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgLunpaHopeDonpaRecovers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLunpaShouldNotHaveFought) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetInCave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLunpaHiddenDoorSwitch) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEL) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SEL) },
 	{ EVENT_RAISED, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_SET) },
@@ -3653,15 +3653,15 @@ struct SceneEvent gRunpaJoEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRunpaJoEvents3[] = {
+struct SceneEvent gLunpaFortressEvents3[] = {
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ 0x31, 6, CONDITION_ALWAYS, 6 },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_ROUYA) },
-	{ SEARCH(SEARCH_UNNAMED), 98, CONDITION_ALWAYS, EVENT_SCRIPT(EV98_TOBIRA) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_JAIL) },
+	{ SEARCH(SEARCH_UNNAMED), 98, CONDITION_ALWAYS, EVENT_SCRIPT(EV98_DOOR) },
 	{ 0xc402, 40, 0x355, EVENT_SCRIPT(EV40_B) },
 	{ 0xc402, 41, 0x356, EVENT_SCRIPT(EV40_B) },
 	{ 0xc402, 42, 0x357, EVENT_SCRIPT(EV40_B) },
@@ -3669,50 +3669,50 @@ struct SceneEvent gRunpaJoEvents3[] = {
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_START) },
 	{ 0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EV70_INIT) },
 	{ SEARCH(SEARCH_UNNAMED), 51, 0x218, EVENT_SCRIPT(EV51_SUB) },
-	{ SEARCH(SEARCH_UNNAMED), 52, 0x217, EVENT_SCRIPT(EV52_IDO) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_HANTEI1) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_HANTEI2) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TANSU) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_MAKI) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_HON) },
+	{ SEARCH(SEARCH_UNNAMED), 52, 0x217, EVENT_SCRIPT(EV52_WELL) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_REVEAL1) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_REVEAL2) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_WARDROBE) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_FIREWOOD) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_BOOK) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x943, EVENT_SCRIPT(EV12_MOVE) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRunpaJoEventsOther[] = {
+struct SceneEvent gLunpaFortressEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x21, 5, CONDITION_ALWAYS, 5 },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_ROUYA) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_JAIL) },
 	{ 0xc402, 40, 0x350, EVENT_SCRIPT(EV40_A) },
 	{ 0xc402, 41, 0x351, EVENT_SCRIPT(EV40_A) },
 	{ 0xc402, 42, 0x352, EVENT_SCRIPT(EV40_A) },
 	{ 0xc402, 43, 0x353, EVENT_SCRIPT(EV40_A) },
 	{ 0xc402, 44, 0x354, EVENT_SCRIPT(EV40_A) },
 	{ EVENT_TOUCH, 20, 0x270, EVENT_SCRIPT(EV20_DEMO) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRunpaHammetStillInside) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRunpaDodonpaSecretlyInside) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRunpaWrongTurnOver) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRunpaCantBelieveWhen) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_LOAD) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfa7, FIND_ITEM(0xbf) },
 	{ SCENE_EVENTS_END },
 };
 
-u32 gRunpaJoPairTableA[] = {
+u32 gLunpaFortressPairTableA[] = {
 	13, 56, 8, 56, 3, 56, 28, 85,
 	28, 65,
 };
 
-u32 gRunpaJoSupportPairs[] = {
+u32 gLunpaFortressSupportPairs[] = {
 	31, 61, 15, 57, 6, 61,
 };
 
-u32 gRunpaJoPairTableB[] = {
+u32 gLunpaFortressPairTableB[] = {
 	16, 119, 16, 113,
 };
 
-u32 gRunpaJoPairTableC[] = {
+u32 gLunpaFortressPairTableC[] = {
 	28, 72, 43, 92,
 };

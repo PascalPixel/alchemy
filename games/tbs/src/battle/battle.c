@@ -188,7 +188,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 #endif
 
 #define DEBUG_VIEW_LIMIT \
-	(MsgRariberoHowDidSearchForSheba - MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
+	(MsgLaliveroHowDidSearchForSheba - MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
 void DebugBattle_ViewMessages(void)
 {
@@ -229,7 +229,7 @@ void DebugBattle_ViewMessages(void)
 			UiWork_PushValueSlotFar(2, 4);
 			if (second == 0)
 			{
-				message = MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
+				message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
 				window = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
 			}
 			else
@@ -342,7 +342,7 @@ restart:
 			if (gKeysHeld & KEY_DOWN)
 				GameFlag_SetBitFar(364);
 			UnitCalcFar(0);
-			gGameState.special = (s32)&ResourceId_SuharaGateBackdrop;
+			gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
 			if (encounter == 28)
 				GameFlag_SetBitFar(366);
 			GameFlag_SetBitFar(354);
@@ -565,22 +565,22 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 			unit->def_lv = 0;
 			unit->res_cnt = 0;
 			unit->res_lv = 0;
-			unit->maboroshi = 0;
-			unit->konran = 0;
+			unit->delusion = 0;
+			unit->confusion = 0;
 			unit->charm = 0;
-			unit->shibire = 0;
-			unit->nemuri = 0;
-			unit->fuuji = 0;
+			unit->stun = 0;
+			unit->sleep = 0;
+			unit->psy_seal = 0;
 			unit->refrain = 0;
 			unit->reflect = 0;
-			unit->shiryo = 0;
+			unit->grim_reaper = 0;
 			unit->unknown_142[0] = 0;
 			unit->unknown_142[1] = 0;
-			unit->sonae = 0;
-			unit->miugoki = 0;
+			unit->ready = 0;
+			unit->immobile = 0;
 			unit->agi_cnt = 0;
 			unit->agi_lv = 0;
-			unit->chouhatsu = 0;
+			unit->challenge = 0;
 
 			UnitCalcFar(owners[i]);
 			i++;
@@ -1768,21 +1768,21 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 		sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
 		switch (state->class_id)
 		{
-		case ROBIN:
+		case ISAAC:
 			result = BattleUnit_WeaponAnimsClass0[sel];
 			break;
-		case GERALD:
+		case GARET:
 			result = BattleUnit_WeaponAnimsClass1[sel];
 			break;
-		case IWAN:
+		case IVAN:
 			result = BattleUnit_WeaponAnimsClass2[sel];
 			break;
-		case MEARI:
+		case MIA:
 			result = BattleUnit_WeaponAnimsClass3[sel];
 			break;
-		case GARUSHIA:
+		case FELIX:
 			break;
-		case JASMINE:
+		case JENNA:
 			result = BattleUnit_WeaponAnimsClass5[sel];
 			break;
 		}
@@ -1822,21 +1822,21 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
 	{
 		switch (unit_record->class_id)
 		{
-		case GERALD:
-			sprite = BTL_CHARA(GERALD);
+		case GARET:
+			sprite = BTL_CHARACTER(GARET);
 			break;
-		case MEARI:
-			sprite = BTL_CHARA(MEARI);
+		case MIA:
+			sprite = BTL_CHARACTER(MIA);
 			break;
-		case IWAN:
-			sprite = BTL_CHARA(IWAN);
+		case IVAN:
+			sprite = BTL_CHARACTER(IVAN);
 			break;
-		case JASMINE:
-			sprite = BTL_CHARA(JASMINE);
+		case JENNA:
+			sprite = BTL_CHARACTER(JENNA);
 			break;
-		case ROBIN:
+		case ISAAC:
 		default:
-			sprite = BTL_CHARA(ROBIN);
+			sprite = BTL_CHARACTER(ISAAC);
 			break;
 		}
 		if (unit < 0 || unit > 7)
@@ -1999,9 +1999,9 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
 	class_id = unit_record->class_id;
 	actor->overlay = anim;
 
-	if (class_id <= GERALD && Inventory_GetEquippedItemFar(unit_record, 1) == 15)
+	if (class_id <= GARET && Inventory_GetEquippedItemFar(unit_record, 1) == 15)
 	{
-		if (unit_record->class_id == ROBIN)
+		if (unit_record->class_id == ISAAC)
 		{
 			sprite = 480;
 			actor->resource = sprite;
@@ -2340,14 +2340,14 @@ void BattleActor_UpdateSpritePriorities(void)
 //--------------------------------------------------------------------------
 // 状態アイコンのビット
 //--------------------------------------------------------------------------
-#define ICON_DOKU 0x01		// 毒
-#define ICON_MOUDOKU 0x02	// もう毒
-#define ICON_SHIBIRE 0x04	// しびれ
-#define ICON_FUUJI 0x08		// エナジーふうじ
-#define ICON_NEMURI 0x10	// ねむり
-#define ICON_MABOROSHI 0x20 // まぼろし
-#define ICON_AKURYO 0x40	// あくりょう
-#define ICON_SHIRYO 6		// しりょう：残りの数 1-7 が bit 7-13
+#define ICON_POISON 0x01		// 毒
+#define ICON_VENOM 0x02	// もう毒
+#define ICON_STUN 0x04	// しびれ
+#define ICON_PSY_SEAL 0x08		// エナジーふうじ
+#define ICON_SLEEP 0x10	// ねむり
+#define ICON_DELUSION 0x20 // まぼろし
+#define ICON_HAUNT 0x40	// あくりょう
+#define ICON_GRIM_REAPER 6		// しりょう：残りの数 1-7 が bit 7-13
 
 #define ICON_MAX 14 // アイコンの種類
 
@@ -2357,31 +2357,31 @@ void BattleActor_UpdateSpritePriorities(void)
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot)
 {
 	struct BtlUnit *unit = UnitGetFar(id);
-	s8				doku = unit->doku;
+	s8				poison = unit->poison;
 	u32				flags = 0;
 
-	if (doku == 1)
-		flags = ICON_DOKU;
-	if (doku == 2)
-		flags |= doku; // もう毒 (ICON_MOUDOKU)
-	if (unit->maboroshi != 0)
-		flags |= ICON_MABOROSHI;
-	if (unit->shibire != 0)
+	if (poison == 1)
+		flags = ICON_POISON;
+	if (poison == 2)
+		flags |= poison; // もう毒 (ICON_VENOM)
+	if (unit->delusion != 0)
+		flags |= ICON_DELUSION;
+	if (unit->stun != 0)
 	{
 		s32 cls;
-		flags |= ICON_SHIBIRE;
+		flags |= ICON_STUN;
 		cls = unit->class_id;
 		if (cls == 121 || cls == 148) // この二体には出さない
-			flags &= ~ICON_SHIBIRE;
+			flags &= ~ICON_STUN;
 	}
-	if (unit->fuuji != 0)
-		flags |= ICON_FUUJI;
-	if (unit->akuryo != 0)
-		flags |= ICON_AKURYO;
-	if (unit->nemuri != 0)
-		flags |= ICON_NEMURI;
-	if (unit->shiryo != 0)
-		flags |= 1 << (unit->shiryo + ICON_SHIRYO);
+	if (unit->psy_seal != 0)
+		flags |= ICON_PSY_SEAL;
+	if (unit->haunt != 0)
+		flags |= ICON_HAUNT;
+	if (unit->sleep != 0)
+		flags |= ICON_SLEEP;
+	if (unit->grim_reaper != 0)
+		flags |= 1 << (unit->grim_reaper + ICON_GRIM_REAPER);
 	slot->active_conditions = flags;
 }
 
@@ -2488,13 +2488,13 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
 	mode = 1;
 	if (unit->hp != 0)
 	{
-		if (unit->nemuri != 0 || unit->shibire != 0 || unit->miugoki != 0)
+		if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
 			mode = (unit->side != BATTLE_UNIT_ENEMY) * 4;
 	}
 	else
 	{
-		s32 mikata = unit->side ^ mode;
-		mode = (u32)(-mikata | mikata) >> 31;
+		s32 ally = unit->side ^ mode;
+		mode = (u32)(-ally | ally) >> 31;
 		mode = 5 - mode;
 	}
 
@@ -3863,7 +3863,7 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 
 		for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++)
 		{
-			if (unit->nemuri != 0 || (*(u32 *)&unit->maboroshi & 0xffffff00))
+			if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00))
 			{
 				struct BattleActionRecord *entry = &entries[entry_count];
 				entry->unit_id = unit_ids[unit_index];
@@ -3960,7 +3960,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 				entry->priority = (s16)value / 2;
 			}
 
-			if (unit->nemuri != 0 || unit->shibire != 0)
+			if (unit->sleep != 0 || unit->stun != 0)
 			{
 				entry->command = 8;
 				entry->parameter = 0;
@@ -4596,7 +4596,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 			{
 				struct BtlUnit *unit = UnitGetFar(unit_ids[index]);
 
-				if (unit->shibire == 0 && unit->nemuri == 0)
+				if (unit->stun == 0 && unit->sleep == 0)
 				{
 					BattleMotion_SetupEscapeObject(unit_ids[index]);
 					WaitFrames(8);
@@ -5503,26 +5503,26 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 
 #define COUNT_PARTIAL_CURES(unit, count) \
 	{                                    \
-		if ((unit)->maboroshi != 0)      \
+		if ((unit)->delusion != 0)      \
 			(count)++;                   \
-		if ((u8)(unit)->konran != 0)     \
+		if ((u8)(unit)->confusion != 0)     \
 			(count)++;                   \
 		if ((unit)->charm != 0)          \
 			(count)++;                   \
-		if ((unit)->nemuri != 0)         \
+		if ((unit)->sleep != 0)         \
 			(count)++;                   \
-		if ((unit)->fuuji != 0)          \
+		if ((unit)->psy_seal != 0)          \
 			(count)++;                   \
-		if ((unit)->shiryo != 0)         \
+		if ((unit)->grim_reaper != 0)         \
 			(count)++;                   \
 	}
 
 #define COUNT_ALL_CURES(unit, count)          \
 	{                                         \
 		COUNT_PARTIAL_CURES((unit), (count)); \
-		if ((unit)->akuryo != 0)              \
+		if ((unit)->haunt != 0)              \
 			(count)++;                        \
-		if ((unit)->doku != 0)                \
+		if ((unit)->poison != 0)                \
 			(count)++;                        \
 	}
 
@@ -5592,7 +5592,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 				(applies)++;                                        \
 			break;                                                  \
 		case EFX_CURE_POISON:                                       \
-			if ((unit)->doku != 0)                                  \
+			if ((unit)->poison != 0)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_CURE_PART:                                         \
@@ -5610,27 +5610,27 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 			COUNT_ALL_CURES((unit), (applies));                     \
 			break;                                                  \
 		case EFX_DEATH_CURSE:                                       \
-			if ((unit)->shiryo == 0)                                \
+			if ((unit)->grim_reaper == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_POISON:                                            \
-			if ((unit)->doku == 0)                                  \
+			if ((unit)->poison == 0)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_VENOM:                                             \
-			if ((unit)->doku <= 1)                                  \
+			if ((unit)->poison <= 1)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_STUN:                                              \
-			if ((unit)->shibire == 0)                               \
+			if ((unit)->stun == 0)                               \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_SLEEP:                                             \
-			if ((unit)->nemuri == 0)                                \
+			if ((unit)->sleep == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_EVIL_SPIRIT:                                       \
-			if ((unit)->akuryo == 0)                                \
+			if ((unit)->haunt == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
 		case EFX_REVIVE_FULL:                                       \
@@ -5665,7 +5665,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 					(applies)++;                                    \
 				break;                                              \
 			case 9:                                                 \
-				if ((unit)->ep != 0)                                \
+				if ((unit)->pp != 0)                                \
 					(applies)++;                                    \
 				break;                                              \
 			case 0:                                                 \
@@ -5885,30 +5885,30 @@ s32 BattleActor_ResetRuntimeFields(s32 id)
 		*lv-- = zero;
 	} while (n >= 0);
 
-	unit->doku = 0;
+	unit->poison = 0;
 	unit->atk_cnt = 0;
 	unit->atk_lv = 0;
 	unit->def_cnt = 0;
 	unit->def_lv = 0;
 	unit->res_cnt = 0;
 	unit->res_lv = 0;
-	unit->maboroshi = 0;
-	unit->konran = 0;
+	unit->delusion = 0;
+	unit->confusion = 0;
 	unit->charm = 0;
-	unit->shibire = 0;
-	unit->nemuri = 0;
-	unit->fuuji = 0;
+	unit->stun = 0;
+	unit->sleep = 0;
+	unit->psy_seal = 0;
 	unit->refrain = 0;
 	unit->reflect = 0;
-	unit->akuryo = 0;
-	unit->shiryo = 0;
+	unit->haunt = 0;
+	unit->grim_reaper = 0;
 	unit->unknown_142[0] = 0;
 	unit->unknown_142[1] = 0;
-	unit->sonae = 0;
-	unit->miugoki = 0;
+	unit->ready = 0;
+	unit->immobile = 0;
 	unit->agi_cnt = 0;
 	unit->agi_lv = 0;
-	unit->chouhatsu = 0;
+	unit->challenge = 0;
 
 	UnitCalcFar(id);
 	return BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
@@ -5917,7 +5917,7 @@ s32 BattleActor_ResetRuntimeFields(s32 id)
 //--------------------------------------------------------------------------
 // メッセージ送りの矢印
 //--------------------------------------------------------------------------
-#define KEY_OKURI (KEY_A | KEY_B | KEYS_SHOULDERS) // 送りのキー
+#define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS) // 送りのキー
 
 // OAM の一枚
 // A second view of struct BattlePromptSprite, kept: plain halfwords, where its bit-fields
@@ -5976,8 +5976,8 @@ s32 BattlePresentation_WaitForAdvance(void)
 		*(u8 *)&spr->attr0 =
 			Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
 		Runtime_PushSlotEntry(spr, 240);
-		if ((gKeysHeld & KEY_B) || (gKeyState & KEY_OKURI)
-			|| (frame > 15 && (gKeysHeld & KEY_OKURI)))
+		if ((gKeysHeld & KEY_B) || (gKeyState & KEY_ADVANCE)
+			|| (frame > 15 && (gKeysHeld & KEY_ADVANCE)))
 			break;
 		WaitFrames(1);
 	}
@@ -6017,7 +6017,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 		spr->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
 		spr->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
 		Runtime_PushSlotEntry(spr, 240);
-		if (gKeyState & KEY_OKURI)
+		if (gKeyState & KEY_ADVANCE)
 			break;
 		WaitFrames(1);
 	}
@@ -6148,9 +6148,9 @@ s32 BtlEfxDeadChk(s32 efx)
 	switch (efx)
 	{
 	case 31: // HPをうばう
-	case 32: // EPをうばう
+	case 32: // PPをうばう
 	case 60: // HPをうばう（半分）
-	case 69: // EPをうばう（1/10）
+	case 69: // PPをうばう（1/10）
 		return 1;
 	default:
 		return 0;
@@ -6160,9 +6160,9 @@ s32 BtlEfxDeadChk(s32 efx)
 //--------------------------------------------------------------------------
 // 対象の判定・効果計算・メッセージ登録
 //--------------------------------------------------------------------------
-#define MIKATA 2 // 味方
+#define ALLY 2 // 味方
 
-#define MIKATA_CHK(id) ((id) >= 0 && (id) < 8)
+#define ALLY_CHK(id) ((id) >= 0 && (id) < 8)
 
 #define STEP_LIM(v)   \
 	{                 \
@@ -6180,7 +6180,7 @@ s32 BtlEfxDeadChk(s32 efx)
 
 #define MES_SIDE(m, e)       \
 	{                        \
-		if (MIKATA_CHK(tid)) \
+		if (ALLY_CHK(tid)) \
 			MES_PUSH(m);     \
 		else                 \
 			MES_PUSH(e);     \
@@ -6433,7 +6433,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		}
 		else if (action->efx == 32)
 		{
-			if (target->ep != 0)
+			if (target->pp != 0)
 				type = 10;
 			else
 				hit = 0;
@@ -6445,7 +6445,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	//------------------------------------------------------------------
 	if (skip == 0 && (target->hp != 0 || BtlEfxRevChkFar(action->efx) != 0))
 	{
-		s32 ep;
+		s32 pp;
 		s32 cur;
 		s32 ap;
 
@@ -6487,7 +6487,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 							s32 mes;
 
 							mes = MsgCritical;
-							if (MIKATA_CHK(tid))
+							if (ALLY_CHK(tid))
 								mes += 1;
 							BtlEvPush(BEV_MES_ADD, mes);
 						}
@@ -6516,7 +6516,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_UNIT, tid);
 			BtlEvPush(BEV_NUM, dmg);
-			MES_PUSH((MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			MES_PUSH((ALLY_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 
 			if (hp <= 0)
 			{
@@ -6533,30 +6533,30 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 		}
 
-		case 10: /* EPダメージ */
+		case 10: /* PPダメージ */
 		{
 			if (action->pow == 0)
 				break;
-			ep = target->ep;
+			pp = target->pp;
 			ELM_BONUS();
 			ap = action->pow;
 			dmg = BtlPowCalc(ap, bonus, 256);
-			dmg = dmg * EpLossTbl[dist] / 100;
+			dmg = dmg * PpLossTbl[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
-			if (action->efx == 32 && dmg > ep)
-				dmg = ep;
+			if (action->efx == 32 && dmg > pp)
+				dmg = pp;
 
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_NUM, dmg);
 			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(MIKATA_CHK(tid) ? MsgEpLossP : MsgEpLossE);
-			ep -= dmg;
-			if (ep <= 0)
-				ep = 0;
+			MES_PUSH(ALLY_CHK(tid) ? MsgPpLossP : MsgPpLossE);
+			pp -= dmg;
+			if (pp <= 0)
+				pp = 0;
 			BtlEvPush(BEV_OBJ_END, tid);
-			dealt = target->ep - ep;
-			target->ep = ep;
+			dealt = target->pp - pp;
+			target->pp = pp;
 			UnitRatioFar(tid);
 			break;
 		}
@@ -6596,22 +6596,22 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		{
 			if (action->pow == 0)
 				break;
-			ep = target->ep;
+			pp = target->pp;
 			ELM_BONUS();
 			ap = action->pow;
 			dmg = BtlPowCalc(ap, bonus, 256);
-			dmg = dmg * EpDmgTbl[dist] / 100;
+			dmg = dmg * PpDmgTbl[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_NUM, dmg);
 			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(MIKATA_CHK(tid) ? MsgDmgP : MsgDmgE);
-			ep -= dmg;
-			if (ep <= 0)
-				ep = 0;
+			MES_PUSH(ALLY_CHK(tid) ? MsgDmgP : MsgDmgE);
+			pp -= dmg;
+			if (pp <= 0)
+				pp = 0;
 			BtlEvPush(BEV_OBJ_END, tid);
-			target->ep = ep;
+			target->pp = pp;
 			UnitRatioFar(tid);
 			break;
 		}
@@ -6694,7 +6694,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_NUM, dmg);
 			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH((MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			MES_PUSH((ALLY_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 			cur -= dmg;
 
 			if (cur <= 0)
@@ -6702,7 +6702,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				BtlEvPush(BEV_OBJ_RES, tid);
 				BtlEvPush(BEV_UNIT, tid);
 				cur = 0;
-				MES_PUSH(MIKATA_CHK(tid) ? MsgGoesDown : MsgFelled);
+				MES_PUSH(ALLY_CHK(tid) ? MsgGoesDown : MsgFelled);
 			}
 			else
 				BtlEvPush(BEV_OBJ_END, tid);
@@ -6712,30 +6712,30 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 		}
 
-		case 11: /* EPかいふく */
+		case 11: /* PPかいふく */
 		{
 			if (action->pow == 0)
 				break;
-			ep = target->ep;
+			pp = target->pp;
 			ap = action->pow;
 			dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
-			dmg = dmg * EpRcvTbl[dist] / 100;
+			dmg = dmg * PpRcvTbl[dist] / 100;
 			dmg *= adj;
-			ep += dmg;
-			if (ep > target->max_ep)
+			pp += dmg;
+			if (pp > target->max_pp)
 			{
-				ep = target->max_ep;
-				dmg = ep - target->ep;
+				pp = target->max_pp;
+				dmg = pp - target->pp;
 			}
 			BtlEvPush(BEV_UNIT, tid);
-			if (ep == target->max_ep)
-				MES_PUSH(MsgEpFull);
+			if (pp == target->max_pp)
+				MES_PUSH(MsgPpFull);
 			else
 			{
 				BtlEvPush(BEV_NUM, dmg);
-				MES_PUSH(MsgEpRecover);
+				MES_PUSH(MsgPpRecover);
 			}
-			target->ep = ep;
+			target->pp = pp;
 			UnitRatioFar(tid);
 			break;
 		}
@@ -6760,7 +6760,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				BtlEvPush(BEV_OBJ_BGN, tid);
 				BtlEvPush(BEV_NUM, dmg);
 				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MIKATA_CHK(tid) ? MsgDmgP : MsgDmgE);
+				MES_PUSH(ALLY_CHK(tid) ? MsgDmgP : MsgDmgE);
 				cur -= dmg;
 
 				if (cur <= 0)
@@ -6795,72 +6795,72 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		{
 
 		case 64: /* 状態異常をすべてなおす */
-			if (target->maboroshi != 0)
+			if (target->delusion != 0)
 			{
-				target->maboroshi = 0;
+				target->delusion = 0;
 				MES_PUSH(MsgCureDelusion);
 				BtlEvPush(BEV_UNIT, tid);
 			}
-			if (target->shibire != 0)
+			if (target->stun != 0)
 			{
-				target->shibire = 0;
+				target->stun = 0;
 				BtlEvPush(BEV_CLR, 0);
 				BtlEvPush(BEV_UNIT, tid);
 				MES_PUSH(MsgCureStun);
 			}
-			target->nemuri = 0;
-			if (target->fuuji != 0)
+			target->sleep = 0;
+			if (target->psy_seal != 0)
 			{
-				target->fuuji = 0;
+				target->psy_seal = 0;
 				MES_PUSH(MsgCureSeal);
 				BtlEvPush(BEV_UNIT, tid);
 			}
-			if (target->shiryo != 0)
+			if (target->grim_reaper != 0)
 			{
-				target->shiryo = 0;
+				target->grim_reaper = 0;
 				MES_PUSH(MsgCureCurse);
 				BtlEvPush(BEV_UNIT, tid);
 			}
-			if (target->akuryo != 0)
+			if (target->haunt != 0)
 			{
-				target->akuryo = 0;
+				target->haunt = 0;
 				MES_PUSH(MsgCureSpirit);
 				BtlEvPush(BEV_UNIT, tid);
 			}
-			if (target->doku != 0)
+			if (target->poison != 0)
 			{
 				MES_PUSH(MsgCurePoison);
-				target->doku = 0;
+				target->poison = 0;
 			}
 			BtlEvPush(BEV_CLR, 0);
 			break;
 
 		case 4: /* 状態異常をなおす */
-			if (target->maboroshi != 0)
+			if (target->delusion != 0)
 			{
-				target->maboroshi = 0;
+				target->delusion = 0;
 				BtlEvPush(BEV_CLR, 0);
 				BtlEvPush(BEV_UNIT, tid);
 				MES_PUSH(MsgCureDelusion);
 			}
-			if (target->shibire != 0)
+			if (target->stun != 0)
 			{
-				target->shibire = 0;
+				target->stun = 0;
 				BtlEvPush(BEV_CLR, 0);
 				BtlEvPush(BEV_UNIT, tid);
 				MES_PUSH(MsgCureStun);
 			}
-			target->nemuri = 0;
-			if (target->fuuji != 0)
+			target->sleep = 0;
+			if (target->psy_seal != 0)
 			{
-				target->fuuji = 0;
+				target->psy_seal = 0;
 				BtlEvPush(BEV_CLR, 0);
 				BtlEvPush(BEV_UNIT, tid);
 				MES_PUSH(MsgCureSeal);
 			}
-			if (target->shiryo == 0)
+			if (target->grim_reaper == 0)
 				break;
-			target->shiryo = 0;
+			target->grim_reaper = 0;
 			BtlEvPush(BEV_CLR, 0);
 			BtlEvPush(BEV_UNIT, tid);
 			MES_PUSH(MsgCureCurse);
@@ -6903,14 +6903,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 		}
 
-		case 63: /* EPかいふく */
+		case 63: /* PPかいふく */
 		{
 			s32 old;
 			s32 maxv;
 			s32 heal;
 
-			heal = target->ep;
-			maxv = target->max_ep;
+			heal = target->pp;
+			maxv = target->max_pp;
 			old = heal;
 			heal += maxv * 7 / 100;
 			if (heal > maxv)
@@ -6919,13 +6919,13 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			if (tmp == 0 && type != 11)
 				break;
 			if (heal == maxv)
-				MES_PUSH(MsgEpFull);
+				MES_PUSH(MsgPpFull);
 			else
 			{
 				BtlEvPush(BEV_NUM, tmp);
-				MES_PUSH(MsgEpRecover);
+				MES_PUSH(MsgPpRecover);
 			}
-			target->ep = heal;
+			target->pp = heal;
 			UnitRatioFar(tid);
 			break;
 		}
@@ -7043,9 +7043,9 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 
 		case 3: /* 毒がきえる */
-			if (target->doku != 0)
+			if (target->poison != 0)
 				MES_PUSH(MsgCurePoison);
-			target->doku = 0;
+			target->poison = 0;
 			break;
 
 		case 17: /* たいせいダウン */
@@ -7065,25 +7065,25 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 
 		case 18: /* 毒 */
-			if (target->doku != 0)
+			if (target->poison != 0)
 				break;
 			MES_PUSH(MsgPoisoned);
-			target->doku = 1;
+			target->poison = 1;
 			break;
 
 		case 19: /* もう毒 */
-			if (target->doku > 1)
+			if (target->poison > 1)
 				break;
 			MES_PUSH(MsgVenom);
-			target->doku = 2;
+			target->poison = 2;
 			break;
 
 		case 20: /* まぼろし */
-			STAT_SET(target->maboroshi, MsgDelusion);
+			STAT_SET(target->delusion, MsgDelusion);
 			break;
 
 		case 21: /* こんらん */
-			STAT_SET(target->konran, MsgConfused);
+			STAT_SET(target->confusion, MsgConfused);
 			break;
 
 		case 22: /* こころをうばう */
@@ -7091,26 +7091,26 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 
 		case 23: /* しびれ */
-			STAT_SET(target->shibire, MsgStunned);
+			STAT_SET(target->stun, MsgStunned);
 			break;
 
 		case 24: /* ねむり */
-			STAT_SET(target->nemuri, MsgAsleep);
+			STAT_SET(target->sleep, MsgAsleep);
 			break;
 
 		case 25: /* エナジーふうじ */
 			MES_SIDE(MsgPsyBlock, MsgPsySeal);
-			target->fuuji |= 7;
+			target->psy_seal |= 7;
 			break;
 
 		case 67: /* エナジーふうじ */
 			MES_SIDE(MsgPsyBlock, MsgPsySeal);
-			target->fuuji |= 16;
+			target->psy_seal |= 16;
 			break;
 
 		case 27: /* せんとうふのう */
 			BtlEvPush(BEV_OBJ_RES, tid);
-			if (target->side == MIKATA)
+			if (target->side == ALLY)
 				MES_PUSH(MsgKoDown);
 			else if (act_no == 219)
 				MES_PUSH(MsgSuffocate);
@@ -7157,44 +7157,44 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 		}
 
-		case 32: /* EPをうばう */
+		case 32: /* PPをうばう */
 		{
 			s32 heal;
 			s32 amt;
 
-			heal = actor->ep;
+			heal = actor->pp;
 			amt = dealt;
 			heal += amt;
-			if (heal > actor->max_ep)
+			if (heal > actor->max_pp)
 			{
-				heal = actor->max_ep;
-				amt = heal - actor->ep;
+				heal = actor->max_pp;
+				amt = heal - actor->pp;
 			}
 			BtlEvPush(BEV_CLR, 0);
 			BtlEvPush(BEV_UNIT, aid);
-			if (heal == actor->max_ep)
-				MES_PUSH(MsgEpFull);
+			if (heal == actor->max_pp)
+				MES_PUSH(MsgPpFull);
 			else
 			{
 				BtlEvPush(BEV_NUM, amt);
-				MES_PUSH(MsgEpRecover);
+				MES_PUSH(MsgPpRecover);
 			}
-			actor->ep = heal;
+			actor->pp = heal;
 			UnitRatioFar(aid);
 			break;
 		}
 
-		case 69: /* EPをうばう */
+		case 69: /* PPをうばう */
 			dmg = dealt / 10;
-			if (target->ep < dmg)
-				dmg = target->ep;
-			if (actor->ep + dmg > actor->max_ep)
-				dmg = actor->max_ep - actor->ep;
+			if (target->pp < dmg)
+				dmg = target->pp;
+			if (actor->pp + dmg > actor->max_pp)
+				dmg = actor->max_pp - actor->pp;
 			if (dmg == 0)
 				break;
 			BtlEvPush(BEV_NUM, dmg);
 			MES_SIDE(MsgLeechTake, MsgLeechGain);
-			UnitEpAddFar(aid, dmg);
+			UnitPpAddFar(aid, dmg);
 			break;
 
 		case 33: /* つよさがもどる */
@@ -7224,38 +7224,38 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 		case 26: /* あくりょう */
 			MES_PUSH(MsgEvilSpirit);
-			target->akuryo = 1;
+			target->haunt = 1;
 			break;
 
 		case 28: /* しりょう */
-			if (target->shiryo == 0)
+			if (target->grim_reaper == 0)
 			{
 				MES_PUSH(MsgDeathCurse);
-				target->shiryo = 7;
+				target->grim_reaper = 7;
 				break;
 			}
-			if (target->shiryo <= 1)
+			if (target->grim_reaper <= 1)
 				break;
-			target->shiryo -= 1;
-			BtlEvPush(BEV_NUM, target->shiryo);
+			target->grim_reaper -= 1;
+			BtlEvPush(BEV_NUM, target->grim_reaper);
 			MES_PUSH(MsgDeathCount);
 			break;
 
 		case 66: /* そなえ */
 			MES_PUSH(MsgReadies);
-			target->sonae = 2;
+			target->ready = 2;
 			break;
 
 		case 54: /* ちょうはつ */
 			MES_PUSH(MsgChallenge);
-			target->chouhatsu = 1;
-			if (MIKATA_CHK(tid))
-				work->chouhatsu_flg |= 2;
+			target->challenge = 1;
+			if (ALLY_CHK(tid))
+				work->challenge_flg |= 2;
 			break;
 
 		case 53: /* みうごき */
 			MES_PUSH(MsgImmobile);
-			target->miugoki = 1;
+			target->immobile = 1;
 			break;
 
 		case 46: /* まもりのオーラ */
@@ -7288,10 +7288,10 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 	if (target->hp != 0)
 	{
-		if (target->nemuri != 0)
-			if (target->nemuri <= 6 && dealt > 0 && (3 & BtlRndFar()) == 0)
+		if (target->sleep != 0)
+			if (target->sleep <= 6 && dealt > 0 && (3 & BtlRndFar()) == 0)
 			{
-				target->nemuri = 0;
+				target->sleep = 0;
 				BtlEvPush(BEV_UNIT, tid);
 				MES_PUSH(MsgWakes);
 			}
@@ -7302,33 +7302,33 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	if (target->hp != 0)
 		BtlEvPush(BEV_OBJ_END, tid);
 	// あくりょうによる反動を行動側に加算する
-	if (actor->akuryo != 0 && (BtlRndFar() & 3) == 0 && dealt > 0)
+	if (actor->haunt != 0 && (BtlRndFar() & 3) == 0 && dealt > 0)
 	{
 		s32 share;
 
 		share = dealt >> 2;
 		if (share == 0)
 			share = 1;
-		plan->akuryo_dmg += share;
+		plan->haunt_dmg += share;
 	}
 }
 
 //--------------------------------------------------------------------------
 // check_status_or_special_id.c
-// バトル：EP を使うわざの判定
+// バトル：PP を使うわざの判定
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// EP を使うわざなら 1 を返す。エナジードレインは EP に関係なく 1
+// PP を使うわざなら 1 を返す。エナジードレインは PP に関係なく 1
 // act_no : わざ番号
 //--------------------------------------------------------------------------
 u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 {
-	u8 ep;
+	u8 pp;
 
 	if (act_no == 126) // エナジードレイン
 		return 1;
-	ep = BtlActGet(act_no)->pp_cost;
-	return (u32)((0 - ep) | ep) >> 31; // ep が 0 でなければ 1
+	pp = BtlActGet(act_no)->pp_cost;
+	return (u32)((0 - pp) | pp) >> 31; // pp が 0 でなければ 1
 }
 
 //--------------------------------------------------------------------------
@@ -7338,16 +7338,16 @@ u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 //--------------------------------------------------------------------------
 // 行動の種類
 //--------------------------------------------------------------------------
-#define CMD_KOUGEKI 0 // こうげき
-#define CMD_ENA 1	  // エナジー
+#define CMD_ATTACK 0 // こうげき
+#define CMD_PSYNERGY 1	  // エナジー
 #define CMD_ITEM 2	  // アイテム
-#define CMD_BOUGYO 3  // ぼうぎょ
-#define CMD_WAZA 4	  // 敵のわざ
-#define CMD_BOUGYO2 7 // ぼうぎょ (効果 47)
-#define CMD_NIGERU 99 // にげる
+#define CMD_DEFEND 3  // ぼうぎょ
+#define CMD_ABILITY 4	  // 敵のわざ
+#define CMD_DEFEND2 7 // ぼうぎょ (効果 47)
+#define CMD_FLEE 99 // にげる
 
-#define WAZA_KOUGEKI 1 // わざ番号：こうげき
-#define MIKATA_MAX 7   // 仲間の番号の上限
+#define ABILITY_ATTACK 1 // わざ番号：こうげき
+#define ALLY_MAX 7   // 仲間の番号の上限
 
 // 敵の行動の記録 (BtlUnit の rewards を使う)
 struct BattleAutomaticState
@@ -7420,7 +7420,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	sel = -1U;
 	if (unit->class_index != 0) // 仲間は選ばない
 		return;
-	if (retry != 0 && req->command != CMD_WAZA)
+	if (retry != 0 && req->command != CMD_ABILITY)
 		return;
 
 	enm = Owner_GetRecordFar(unit->class_id);
@@ -7467,7 +7467,7 @@ select_again:
 	use_item = (*item_mask >> sel) & 1;
 	use_item &= item_ok;
 	act_no = enm->actions[sel];
-	req->command = CMD_WAZA;
+	req->command = CMD_ABILITY;
 	if (use_item != 0 && retry != 0)
 	{
 		if (!(0x1ff & unit->inventory[0]))
@@ -7517,15 +7517,15 @@ select_again:
 		switch (efx)
 		{
 		case 46:
-			req->command = CMD_BOUGYO;
+			req->command = CMD_DEFEND;
 			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
 			break;
 		case 47:
-			req->command = CMD_BOUGYO2;
+			req->command = CMD_DEFEND2;
 			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
 			break;
 		case 49:
-			req->command = CMD_NIGERU;
+			req->command = CMD_FLEE;
 			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
 			break;
 		}
@@ -7534,36 +7534,36 @@ select_again:
 		{
 			switch (req->command)
 			{
-			case CMD_BOUGYO:
-			case CMD_BOUGYO2:
+			case CMD_DEFEND:
+			case CMD_DEFEND2:
 				break;
 			default:
 				goto done;
 			}
 		}
 
-		// エナジーならEPとふうじを確かめる
-		// target_strategy が 0 でなければEP不足を、2 ならふうじも避ける
+		// エナジーならPPとふうじを確かめる
+		// target_strategy が 0 でなければPP不足を、2 ならふうじも避ける
 		if (req->command != CMD_ITEM && Ability_CheckStatusOrSpecialId(act_no) != 0)
 		{
-			req->command = CMD_ENA;
+			req->command = CMD_PSYNERGY;
 			req->parameter = act_no;
-			if (act->pp_cost > unit->ep && enm->target_strategy != 0)
+			if (act->pp_cost > unit->pp && enm->target_strategy != 0)
 				goto next_candidate;
-			if (unit->fuuji != 0 && enm->target_strategy == 2)
+			if (unit->psy_seal != 0 && enm->target_strategy == 2)
 				goto next_candidate;
 		}
 		cmd = req->command;
-		if (cmd == CMD_NIGERU && (u8)unit->chouhatsu != 0)
+		if (cmd == CMD_FLEE && (u8)unit->challenge != 0)
 			goto next_candidate;
-		if (retry != 0 && (cmd == CMD_BOUGYO || cmd == CMD_BOUGYO2))
+		if (retry != 0 && (cmd == CMD_DEFEND || cmd == CMD_DEFEND2))
 			goto next_candidate;
 
-		if (cmd == CMD_WAZA)
+		if (cmd == CMD_ABILITY)
 		{
 			req->parameter = act_no;
-			if (act_no == WAZA_KOUGEKI)
-				req->command = CMD_KOUGEKI;
+			if (act_no == ABILITY_ATTACK)
+				req->command = CMD_ATTACK;
 		}
 
 		// 対象を選ぶ
@@ -7577,7 +7577,7 @@ select_again:
 			if (tgt == -2)
 			{
 				side = 0;
-				if (req->unit_id <= (u32)MIKATA_MAX)
+				if (req->unit_id <= (u32)ALLY_MAX)
 					side = 1;
 				tgt = BattleTarget_SelectRandomPosition(side);
 			}
@@ -7592,7 +7592,7 @@ select_again:
 			if (tgt2 == -2)
 			{
 				side2 = 0;
-				if (req->unit_id <= (u32)MIKATA_MAX)
+				if (req->unit_id <= (u32)ALLY_MAX)
 					side2 = 1;
 				tgt2 = BattleTarget_SelectRandomPosition(side2);
 			}
@@ -7618,7 +7618,7 @@ next_candidate:
 	// 18 回選べなければ、ぼうぎょ
 	if (keep_going != 0 && tries > 16)
 	{
-		req->command = CMD_BOUGYO;
+		req->command = CMD_DEFEND;
 		keep_going = 0;
 	}
 	tries++;
@@ -7679,15 +7679,15 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 // バトルイベントの再生
 //--------------------------------------------------------------------------
 #define PLAY_MES 3		// メッセージの表示を待つ
-#define PLAY_OKURI 5	// 送りのキーを待つ
+#define PLAY_ADVANCE 5	// 送りのキーを待つ
 #define PLAY_HIT 10		// 当たった者を点滅させる
-#define PLAY_TAORE 11	// 倒れた敵を消す
+#define PLAY_FELLED 11	// 倒れた敵を消す
 #define PLAY_MES_ADD 13 // 続きのメッセージ (キーを待たない)
 
 #define POSE_DAMAGE 5 // ダメージを受けたポーズ
 #define PAL_HIT 7	  // 点滅の色
 
-#define TAORE_FLASH 0x400 // 色を変えている間のタイマーの基準
+#define FELLED_FLASH 0x400 // 色を変えている間のタイマーの基準
 
 #define OBJ_VRAM 0x06010000
 
@@ -7816,7 +7816,7 @@ void BattleEvent_Playback(void)
 						}
 						if (unit->side == BATTLE_UNIT_ENEMY)
 						{
-							ev->phase = PLAY_TAORE;
+							ev->phase = PLAY_FELLED;
 							ev->timer = 0;
 						}
 						break;
@@ -7855,12 +7855,12 @@ void BattleEvent_Playback(void)
 			}
 			else
 			{
-				ev->phase = PLAY_OKURI;
+				ev->phase = PLAY_ADVANCE;
 				ev->display_source = -1;
 				ev->timer = gFrameTick;
 			}
 		}
-		else if (ev->phase == PLAY_OKURI)
+		else if (ev->phase == PLAY_ADVANCE)
 		{
 			// 矢印を出して送りのキーを待つ
 			// B を押し続けるか送りのキーを押すと進み、10 ティックを過ぎれば押し続けていても進む
@@ -7883,8 +7883,8 @@ void BattleEvent_Playback(void)
 			x = window->x * 8 + (offset->x >> 8) + 4;
 			spr->x = x;
 			spr->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
-			if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_OKURI)
-				|| ((u32)(gFrameTick - ev->timer) > 10 && (BATTLE_OPTIONS & KEY_OKURI)))
+			if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE)
+				|| ((u32)(gFrameTick - ev->timer) > 10 && (BATTLE_OPTIONS & KEY_ADVANCE)))
 			{
 				AudioCommand_PlayFar(111);
 				ev->phase = BATTLE_PLAYBACK_DISPATCH;
@@ -7924,10 +7924,10 @@ void BattleEvent_Playback(void)
 			ev->phase = BATTLE_PLAYBACK_DISPATCH;
 			ev->timer = 0;
 		}
-		else if (ev->phase == PLAY_TAORE)
+		else if (ev->phase == PLAY_FELLED)
 		{
 			// flags があれば、まず 30 フレームのあいだ色を変える
-			if (ev->timer == 0 || ev->timer >= TAORE_FLASH)
+			if (ev->timer == 0 || ev->timer >= FELLED_FLASH)
 			{
 				s32 frame = 6;
 
@@ -7942,9 +7942,9 @@ void BattleEvent_Playback(void)
 							kind = 0;
 						AudioCommand_PlayFar(kind + 146);
 					}
-					ev->timer = TAORE_FLASH;
+					ev->timer = FELLED_FLASH;
 				}
-				if (ev->timer > TAORE_FLASH + 29)
+				if (ev->timer > FELLED_FLASH + 29)
 					ev->timer = 0;
 				if (ev->timer == 0)
 				{
@@ -7953,8 +7953,8 @@ void BattleEvent_Playback(void)
 					if (kind >= 0)
 						AudioCommand_PlayFar(kind + 146);
 				}
-				if (ev->timer >= TAORE_FLASH)
-					frame = (ev->timer - TAORE_FLASH) / 8 % 5 + 1;
+				if (ev->timer >= FELLED_FLASH)
+					frame = (ev->timer - FELLED_FLASH) / 8 % 5 + 1;
 				if (frame == 6 || (ev->timer & 7) == 0)
 				{
 					struct AnimationObject	*rec;
@@ -8150,7 +8150,7 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
 #define CMD_DJINN 5	  // ジン
-#define CMD_SHOUKAN 6 // しょうかん
+#define CMD_SUMMON 6 // しょうかん
 #define CMD_NONE 8	  // 何もしない
 #define TGT_MAX 14
 
@@ -8267,7 +8267,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	tid = Battle_GetTaggedSlotValue(req->target);
 	BattleEventRuntime_Reset();
-	plan->akuryo_dmg = 0;
+	plan->haunt_dmg = 0;
 	plan->aid = req->unit_id;
 	plan->target_count = 0;
 	plan->presentation_flags = 0;
@@ -8280,15 +8280,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	// デバッグ：R を押していれば敵全員 (SELECT も押せば味方全員) を倒す
 	if (BATTLE_AUTO_MODE && GameFlag_TestFar(0x16d) && (BATTLE_OPTIONS & KEY_R))
 	{
-		s32 teki = 1;
+		s32 enemy = 1;
 		s32 i;
 		s32 id;
 
 		if (BATTLE_OPTIONS & KEY_SELECT)
-			teki = 0;
+			enemy = 0;
 		for (i = 0;; i++)
 		{
-			if (teki)
+			if (enemy)
 				id = work->enm_no[i];
 			else
 				id = work->party_units[i];
@@ -8308,27 +8308,27 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	// 動けない状態
 	UiWork_ClearValueNameTablesFar();
-	if (unit->miugoki)
+	if (unit->immobile)
 	{
-		unit->miugoki = 0;
+		unit->immobile = 0;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgUnableToMove);
 		return -1;
 	}
-	if (unit->nemuri)
+	if (unit->sleep)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgIsAsleep);
 		return -1;
 	}
-	if (unit->shibire)
+	if (unit->stun)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgIsParalyzed);
 		return -1;
 	}
 	// かなしばりは 1/4 で動けない
-	if ((unit->restraint & 1) && req->command != CMD_BOUGYO && (BtlRndFar() & 3) == 0)
+	if ((unit->restraint & 1) && req->command != CMD_DEFEND && (BtlRndFar() & 3) == 0)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
@@ -8336,7 +8336,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	}
 	if (req->command == CMD_NONE)
 		return -2;
-	act_no = WAZA_KOUGEKI;
+	act_no = ABILITY_ATTACK;
 	{
 		s32 i;
 
@@ -8351,8 +8351,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	switch (req->command)
 	{
-	case CMD_NIGERU:
-		if ((u16)req->unit_id <= MIKATA_MAX)
+	case CMD_FLEE:
+		if ((u16)req->unit_id <= ALLY_MAX)
 		{
 			UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
 		}
@@ -8365,12 +8365,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		plan->outcome = 7;
 		return 0;
 
-	case CMD_KOUGEKI:
+	case CMD_ATTACK:
 		// 武器の力が発動すれば、そのわざになる
 		act_no = RollWeaponUnleashFar(unit);
 		if (TgtSet(act_no) == -1)
 			return -1;
-		if (act_no != WAZA_KOUGEKI)
+		if (act_no != ABILITY_ATTACK)
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(unit, 1), 2);
@@ -8381,7 +8381,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		break;
 
-	case CMD_ENA:
+	case CMD_PSYNERGY:
 	{
 		struct BtlAct *act;
 		s32			   ok = 1;
@@ -8393,13 +8393,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiWork_PushValueSlotFar(act_no, 4);
 		UiText_ShowMessageAndWaitCoreFar(MsgActorCasts);
-		// EPが足りないか、ふうじなら失敗
-		if (unit->ep < act->pp_cost)
+		// PPが足りないか、ふうじなら失敗
+		if (unit->pp < act->pp_cost)
 		{
 			plan->failure = 2;
 			ok = 0;
 		}
-		if (unit->fuuji)
+		if (unit->psy_seal)
 		{
 			plan->failure = 1;
 			ok = 0;
@@ -8407,12 +8407,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		if (ok)
 		{
 			plan->failure = 0;
-			unit->ep -= act->pp_cost;
+			unit->pp -= act->pp_cost;
 			UnitRatioFar(req->unit_id);
-			if (unit->ep < 0)
-				unit->ep = 0;
-			if (unit->ep > unit->max_ep)
-				unit->ep = unit->max_ep;
+			if (unit->pp < 0)
+				unit->pp = 0;
+			if (unit->pp > unit->max_pp)
+				unit->pp = unit->max_pp;
 		}
 	}
 	break;
@@ -8464,8 +8464,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	}
 	break;
 
-	case CMD_BOUGYO:
-	case CMD_BOUGYO2:
+	case CMD_DEFEND:
+	case CMD_DEFEND2:
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
 		return -1;
@@ -8473,7 +8473,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	case CMD_NONE:
 		return -2;
 
-	case CMD_WAZA:
+	case CMD_ABILITY:
 	{
 		s32 mes;
 
@@ -8604,7 +8604,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		break;
 
-	case CMD_SHOUKAN:
+	case CMD_SUMMON:
 	{
 		const struct SummonDefinition *summon;
 		struct DjinnRecoveryList	  *list;
@@ -8618,7 +8618,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		summon = SummonDefinition_Get(req->parameter);
 		BattlePlacement_CountValidEntries(req->unit_id, counts);
 		side = 0;
-		if ((u16)req->unit_id > MIKATA_MAX)
+		if ((u16)req->unit_id > ALLY_MAX)
 			side = 1;
 		list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
 		for (i = 0; i < 4 && counts[i] >= summon->djinn_required[i]; i++)
@@ -8655,11 +8655,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	// こうげきの計画
 	//----------------------------------------------------------------------
-	if (act_no == WAZA_KOUGEKI)
+	if (act_no == ABILITY_ATTACK)
 	{
 		struct BtlUnit *tgt = UnitGetFar(plan->tgt_no[0]);
 
-		plan->act_no = WAZA_KOUGEKI;
+		plan->act_no = ABILITY_ATTACK;
 		plan->elm = Item_GetEquippedElementFar(req->unit_id);
 		plan->outcome = 2;
 		if (unit->class_index == 0) // 敵
@@ -8671,19 +8671,19 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			plan->presentation_flags = 0;
 			switch (unit->class_id)
 			{
-			case ROBIN:
+			case ISAAC:
 				plan->presentation_flags = 0x4001;
 				break;
-			case GERALD:
+			case GARET:
 				plan->presentation_flags = 0x4001;
 				break;
-			case IWAN:
+			case IVAN:
 				plan->presentation_flags = 0x4004;
 				break;
-			case MEARI:
+			case MIA:
 				plan->presentation_flags = 0x4004;
 				break;
-			case JASMINE:
+			case JENNA:
 				plan->presentation_flags = 0x4001;
 				break;
 			}
@@ -8698,10 +8698,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		 * first (differ 105 in tbs-en). */
 		do
 		{
-			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0
+			if (tgt->hp == 0 || tgt->sleep != 0 || tgt->stun != 0 || tgt->immobile != 0
 				|| tgt->charm != 0)
 				break;
-			if (unit->maboroshi != 0 && (BtlRndFar() & 255) <= 152)
+			if (unit->delusion != 0 && (BtlRndFar() & 255) <= 152)
 				plan->tgt_adj[0] = 0;
 			if ((BtlRndFar() & 31) == 0)
 				plan->tgt_adj[0] = 0;
@@ -8913,19 +8913,19 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, res_cnt, res_lv)
 		return 0;                                                                   \
 	}
 
-DEFINE_TICK_STATUS(BattleUnit_TickDelusion, maboroshi, 30)
+DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
 	struct BtlUnit *state = UnitGetFar(unit_id);
-	if ((u8)state->konran != 0)
+	if ((u8)state->confusion != 0)
 	{
-		(*(u8 *)&state->konran)--;
-		if (state->konran == 0)
+		(*(u8 *)&state->confusion)--;
+		if (state->confusion == 0)
 			return 1;
-		if (BattleUnit_RollCounterEarlyEnd(unit_id, (u8)state->konran, 60) != 0)
+		if (BattleUnit_RollCounterEarlyEnd(unit_id, (u8)state->confusion, 60) != 0)
 		{
-			state->konran = 0;
+			state->confusion = 0;
 			return 1;
 		}
 	}
@@ -8933,8 +8933,8 @@ s32 BattleUnit_TickConfusion(s32 unit_id)
 }
 
 DEFINE_TICK_STATUS(BattleUnit_TickCharm, charm, 70)
-DEFINE_TICK_STATUS(BattleUnit_TickStun, shibire, 40)
-DEFINE_TICK_STATUS(BattleUnit_TickSleep, nemuri, 50)
+DEFINE_TICK_STATUS(BattleUnit_TickStun, stun, 40)
+DEFINE_TICK_STATUS(BattleUnit_TickSleep, sleep, 50)
 
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 {
@@ -8945,28 +8945,28 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 	struct BtlUnit *unit;
 
 	unit = UnitGetFar(id);
-	packed = unit->fuuji;
+	packed = unit->psy_seal;
 	turns = packed & 0xFF;
 	if (turns != 0)
 	{
 		if (turns > 7U)
 		{
 			turns += 0xF8;
-			unit->fuuji = turns;
+			unit->psy_seal = turns;
 			packed = turns;
 		}
 		if (packed & 7)
 		{
 			next = packed + 0xFF;
-			unit->fuuji = next;
+			unit->psy_seal = next;
 			packed = next;
 		}
 		remaining = packed;
 		if (remaining == 0)
 			return 1;
-		if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(id, unit->fuuji, 0x1E) != 0)
+		if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0)
 		{
-			unit->fuuji = 0U;
+			unit->psy_seal = 0U;
 			return 1;
 		}
 	}
@@ -9187,9 +9187,9 @@ s32 Battle_ProcessRoundEnd(void)
 				s32				id = ids[j];
 				struct BtlUnit *unit = UnitGetFar(id);
 
-				if (unit->sonae != 0)
+				if (unit->ready != 0)
 				{
-					unit->sonae--;
+					unit->ready--;
 				}
 				if (unit->hp != 0)
 				{
@@ -9214,23 +9214,23 @@ s32 Battle_ProcessRoundEnd(void)
 						AudioCommand_PlayFar(175);
 						BattlePresentation_WaitForAdvance();
 					}
-					if (unit->ep_regen != 0 && unit->ep != unit->max_ep)
+					if (unit->pp_regen != 0 && unit->pp != unit->max_pp)
 					{
-						pp_amount = unit->ep_regen;
-						if (unit->ep + pp_amount > unit->max_ep)
+						pp_amount = unit->pp_regen;
+						if (unit->pp + pp_amount > unit->max_pp)
 						{
-							pp_amount = unit->max_ep - unit->ep;
+							pp_amount = unit->max_pp - unit->pp;
 						}
-						UnitEpAddFar(id, pp_amount);
+						UnitPpAddFar(id, pp_amount);
 						UiWork_PushValueSlotFar(id, 1);
 						UiWork_PushValueSlotFar(pp_amount, 5);
-						if (unit->ep == unit->max_ep)
+						if (unit->pp == unit->max_pp)
 						{
-							UiText_ShowMessageAndWaitCoreFar(MsgEpFull);
+							UiText_ShowMessageAndWaitCoreFar(MsgPpFull);
 						}
 						else
 						{
-							UiText_ShowMessageAndWaitCoreFar(MsgEpRecover);
+							UiText_ShowMessageAndWaitCoreFar(MsgPpRecover);
 						}
 						AudioCommand_PlayFar(175);
 						BattlePresentation_WaitForAdvance();
@@ -9450,13 +9450,13 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 	{
 		s8 *poison;
 		BattleEventRuntime_Reset();
-		if (plan->akuryo_dmg != 0)
+		if (plan->haunt_dmg != 0)
 		{
 			BtlEvPush(BEV_OBJ_BGN, id);
 			BtlEvPush(BEV_UNIT, id);
-			BtlEvPush(BEV_NUM, plan->akuryo_dmg);
+			BtlEvPush(BEV_NUM, plan->haunt_dmg);
 			MES_PUSH(MsgCurseDamage);
-			if (Owner_AdjustFirstValueFar(id, -plan->akuryo_dmg) == 0)
+			if (Owner_AdjustFirstValueFar(id, -plan->haunt_dmg) == 0)
 			{
 				s32 text;
 				BtlEvPush(BEV_OBJ_RES, id);
@@ -9478,7 +9478,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		}
 		BattleEv_DispatchQueued();
 		BattleEventRuntime_Reset();
-		poison = &unit->doku;
+		poison = &unit->poison;
 		if (*poison != 0)
 		{
 			s32				damage = unit->max_hp * *poison / 10;
@@ -9517,9 +9517,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		}
 		BattleEv_DispatchQueued();
 		BattleEventRuntime_Reset();
-		if (unit->shiryo != 0)
+		if (unit->grim_reaper != 0)
 		{
-			if (--unit->shiryo == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0)
+			if (--unit->grim_reaper == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0)
 			{
 				BtlEvPush(BEV_UNIT, id);
 				MES_PUSH(MsgReaperCalls);
@@ -9866,7 +9866,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 		{
 			s32 start = 0;
 
-			session->background = (u32)&ResourceId_VinasuChojoStormBackdrop;
+			session->background = (u32)&ResourceId_VenusAerieStormBackdrop;
 			list.count = BattleParty_ListActorIds(2, list.actors);
 			list.actors[list.count] = 0xff;
 			BattleActor_SpawnObjectsForList(list.actors, 0);
@@ -10932,16 +10932,16 @@ struct FormationCandidate
 struct BattleBaseStats
 {
 	s16						  base_hp;
-	s16						  base_ep;
+	s16						  base_pp;
 	s16						  hp_gauge;
-	s16						  ep_gauge;
+	s16						  pp_gauge;
 	u16						  base_attack;
 	u16						  base_defense;
 	u16						  base_agility;
 	u8						  base_luck;
 	u8						  action_count;
 	u8						  hp_regen;
-	u8						  ep_regen;
+	u8						  pp_regen;
 	u8						  unknown_12[2];
 	struct BattleElementStats elm[4];
 };
@@ -11057,14 +11057,14 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 		value = 9999;
 	state->base_hp = value;
 
-	value = state->base_ep;
+	value = state->base_pp;
 	value += levels * 15 / 10;
-	floor = base->base_ep * 7 / 10;
+	floor = base->base_pp * 7 / 10;
 	if (value < floor)
 		value = floor;
 	if (value > 9999)
 		value = 9999;
-	state->base_ep = value;
+	state->base_pp = value;
 
 	floor = levels * 123 / 10;
 	value = state->base_attack;
@@ -11750,9 +11750,9 @@ void Battle_AwardSpoils(void)
 				UiText_ShowMessageAndWaitCoreFar(MsgMaxHpRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if ((s16)gains.ep != 0)
+			if ((s16)gains.pp != 0)
 			{
-				UiWork_PushValueSlotFar((s16)gains.ep, 5);
+				UiWork_PushValueSlotFar((s16)gains.pp, 5);
 				UiText_ShowMessageAndWaitCoreFar(MsgMaxPpRises);
 				BattlePresentation_WaitForAdvance();
 			}

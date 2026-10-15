@@ -44,8 +44,8 @@
 #include "objcmd.h"
 
 // 前方宣言
-static void MakyuriIriguchi_CrossDoorway(void);
-static void MakyuriIriguchi_RunDoorScene(void);
+static void MercuryEntrance_CrossDoorway(void);
+static void MercuryEntrance_RunDoorScene(void);
 
 struct WorkPointers
 {
@@ -77,7 +77,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 	}
 	else if (object->facing != 0xc000)
 	{
-		Engine_ActorFaceDirection(MEARI, 0xc000, 0);
+		Engine_ActorFaceDirection(MIA, 0xc000, 0);
 	}
 	return 0;
 }
@@ -87,7 +87,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 
 static void EV21_TOUCH(void)
 {
-	Makyuri_TickSpawnTimer();
+	Mercury_TickSpawnTimer();
 }
 
 static void EV31_TOUCH(void)
@@ -97,17 +97,17 @@ static void EV31_TOUCH(void)
 
 static void FieldScene_RunSingleStep(void)
 {
-	Makyuri_RunActorMove();
+	Mercury_RunActorMove();
 }
 
 static void EV11_TOUCH(void)
 {
-	MakyuriIriguchi_RaisePillar();
+	MercuryEntrance_RaisePillar();
 }
 
 void *SceneData_GetSceneTableA(void)
 {
-	return MakyuriIriguchi_SceneTableA;
+	return MercuryEntrance_SceneTableA;
 }
 
 int SceneData_ReturnZero(void)
@@ -117,19 +117,19 @@ int SceneData_ReturnZero(void)
 
 void *SceneData_GetSceneTableB(void)
 {
-	return MakyuriIriguchi_SceneTableB;
+	return MercuryEntrance_SceneTableB;
 }
 
 void *SceneData_GetSceneTableC(void)
 {
-	return MakyuriIriguchi_SceneTableC;
+	return MercuryEntrance_SceneTableC;
 }
 
 static void EV01_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MsgMakyuriWhoHonorsHeart, 1);
+	Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
 	Engine_EventEnd();
 }
 
@@ -153,7 +153,7 @@ static void EV69_TOUCH(void)
 
 void *SceneData_GetSceneTableD(void)
 {
-	return MakyuriIriguchi_SceneTableD;
+	return MercuryEntrance_SceneTableD;
 }
 
 static void EV16_PSYNERGY(void)
@@ -191,7 +191,7 @@ static void EV16_PSYNERGY(void)
 
 				*(u16 *)(slot + 24) = shown;
 			}
-			*(s32 *)(slot + 28) = (s32)MakyuriIriguchi_SparkBurstScript;
+			*(s32 *)(slot + 28) = (s32)MercuryEntrance_SparkBurstScript;
 			Engine_AudioPlayCue(246);
 			x = 208 - ((u32)(Random_Next() << 4) >> 16);
 			y = 560 - ((u32)(Random_Next() << 4) >> 16);
@@ -204,7 +204,7 @@ static void EV16_PSYNERGY(void)
 		Engine_AudioPlayCue(220);
 		Engine_EventWait(60);
 		GameFlag_Set(0x875);
-		FieldScheduler_AddCallback((s32)Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback((s32)Mercury_CyclePalette, 0xc80);
 		Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
 		Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
 		ColorBuffer_ApplyTarget(0x10000, 0);
@@ -219,10 +219,10 @@ static void EV10_TOUCH(void)
 	Engine_EventRequestExit(63);
 }
 
-static void MakyuriIriguchi_InstallActorEightPath(void)
+static void MercuryEntrance_InstallActorEightPath(void)
 {
 	Engine_GameFlagClear(0x205);
-	Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
+	Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path1);
 }
 
 static void EV41_TOUCH(void)
@@ -237,21 +237,21 @@ static void EV41_TOUCH(void)
 	Engine_GameFlagSet(0x205);
 	if (quotient == 7)
 	{
-		Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path2);
+		Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path2);
 	}
 	else
 	{
-		Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path3);
+		Engine_ActorEnableActionCallback(8, MercuryEntrance_Actor8Path3);
 	}
 }
 
-static void MakyuriIriguchi_OpenEntrance(void)
+static void MercuryEntrance_OpenEntrance(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_MercuryEntrance, 31);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(36, 1);
 	Engine_EventEnd();
@@ -260,7 +260,7 @@ static void MakyuriIriguchi_OpenEntrance(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/mercury_arrive.h"
 
-s32 MakyuriIriguchi_ApplyEntryState(void)
+s32 MercuryEntrance_ApplyEntryState(void)
 {
 	struct EffectOptions options;
 	s32					 velocity[3];
@@ -274,15 +274,15 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 		s32 alpha = 0x1010;
 		REG_BLDALPHA = alpha;
 	}
-	Makyuri_SpawnLightObjects(21, (struct MakyuriLights *)gSceneState);
+	Mercury_SpawnLightObjects(21, (struct MercuryLights *)gSceneState);
 	GameFlag_Set(0x111);
 	gGameState.retreat_entrance = 11;
-	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
+	gGameState.retreat_scene = (s32)&SceneId_MercuryLighthouse4;
 	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
-		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
 	else
-		Makyuri_ClearPalette();
+		Mercury_ClearPalette();
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	switch (gGameState.entrance)
 	{
@@ -311,7 +311,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	case 4:
 	case 5:
 	case 6:
-		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
 		if (GameFlag_IsSet(0x875))
 		{
 			Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
@@ -369,7 +369,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 			Engine_EventWaitForScreen();
 			Engine_ActorSetAnimation(0, 1);
 			Engine_EventWait(30);
-			UiText_ShowCenteredMessage(MsgMakyuriWhoHonorsHeart, 0, 0);
+			UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
 			ColorBuffer_ApplyTarget(0x10000, 0);
 			Engine_ColorBufferInterpolate(30);
 		}
@@ -378,7 +378,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	case 18:
 	case 19:
 	case 20:
-		Makyuri_ArriveWithSparks();
+		Mercury_ArriveWithSparks();
 	case 17:
 		BattleFx_SetQueuedSoundAndPlay(170);
 		break;
@@ -397,19 +397,19 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 		break;
 	case 30:
 		if (!GameFlag_IsSet(0x109))
-			MakyuriIriguchi_CrossDoorway();
+			MercuryEntrance_CrossDoorway();
 		else
 			Map_CopyCellAttributes(0, 0, 3, 3, 7, 9);
 		break;
 	case 31:
 		if (!GameFlag_IsSet(0x109))
-			MakyuriIriguchi_RunDoorScene();
+			MercuryEntrance_RunDoorScene();
 		break;
 	}
 	return 0;
 }
 
-static void MakyuriIriguchi_CrossDoorway(void)
+static void MercuryEntrance_CrossDoorway(void)
 {
 	s32				   i;
 	struct FieldActor *ivan;
@@ -439,7 +439,7 @@ static void MakyuriIriguchi_CrossDoorway(void)
 	{
 		Engine_ActorWalkTo(3, 152, 168);
 		Engine_EventWait(10);
-		Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path3);
+		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path3);
 		Engine_ActorWaitForMove(3);
 		Actor_FaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
@@ -447,13 +447,13 @@ static void MakyuriIriguchi_CrossDoorway(void)
 		ivan->steering_flags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(10);
-		Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
+		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
 		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
 		Engine_EventWait(30);
 		Engine_ActorWalkTo(3, 120, 168);
 		Engine_EventWait(5);
-		Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path2);
+		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path2);
 		Engine_ActorWaitForMove(3);
 		Engine_ActorFaceDirection(3, 0xc000, 30);
 		Engine_ActorRunRepeatedMotion(3, 1);
@@ -461,7 +461,7 @@ static void MakyuriIriguchi_CrossDoorway(void)
 		Object_GetById(3)->steering_flags &= ~ACTOR_FACES_MOTION;
 		Engine_ActorWalkTo(3, 136, 184);
 		Engine_EventWait(15);
-		Engine_ActorEnableActionCallback(8, (s32)MakyuriIriguchi_Actor8Path1);
+		Engine_ActorEnableActionCallback(8, (s32)MercuryEntrance_Actor8Path1);
 		Engine_ActorWaitForMove(3);
 		Engine_ActorRunRepeatedMotion(3, 1);
 		Object_GetById(3)->steering_flags |= ACTOR_FACES_MOTION;
@@ -478,7 +478,7 @@ static void MakyuriIriguchi_CrossDoorway(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriIriguchi_RunDoorScene(void)
+static void MercuryEntrance_RunDoorScene(void)
 {
 	struct FieldActor *record;
 
@@ -492,20 +492,20 @@ static void MakyuriIriguchi_RunDoorScene(void)
 		record->scale_x = -0x10000;
 		record = Actor_Get(14);
 		record->scale_x = -0x10000;
-		Actor_SetPosition(MEARI, 0x880000, 0x900000);
-		Actor_FaceDirection(MEARI, 0x4000, 10);
+		Actor_SetPosition(MIA, 0x880000, 0x900000);
+		Actor_FaceDirection(MIA, 0x4000, 10);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		Engine_EventWait(60);
-		Actor_FaceActor(MEARI, ACTOR_PARTY_LEADER, 0);
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		Engine_EventWait(30);
-		Actor_WalkTo(MEARI, 136, 72);
+		Actor_WalkTo(MIA, 136, 72);
 		Engine_EventWait(40);
 		Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-		Engine_ActorWaitForMove(MEARI);
-		Actor_SetPosition(MEARI, 0, 0);
+		Engine_ActorWaitForMove(MIA);
+		Actor_SetPosition(MIA, 0, 0);
 		GameFlag_Set(0x872);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 		Engine_EventEnd();
@@ -523,7 +523,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	{
 		struct FieldSprite *sprite = obj->sprite;
 
-		Engine_ObjectSetScript(obj, MakyuriIriguchi_RiseScript);
+		Engine_ObjectSetScript(obj, MercuryEntrance_RiseScript);
 		obj->motion_flags = 0;
 		obj->terrain_id = 1;
 		obj->priority_flags = 2;
@@ -601,32 +601,32 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 MakyuriIriguchi_RiseScript[] = {
+s32 MercuryEntrance_RiseScript[] = {
 	SC_WAIT(30),
 	SC_FREE,
 };
 
-s32 MakyuriHeya_SparkScript[] = {
+s32 MercuryLighthouse_SparkScript[] = {
 	SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
 	SC_FREE,
 };
 
-s32 Makyuri_RampScript[] = {
+s32 Mercury_RampScript[] = {
 	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
-s32 Makyuri_ScaleCounterScript[] = {
+s32 Mercury_ScaleCounterScript[] = {
 	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
-s32 Makyuri_PillarScript[] = {
-	SC_CALL(Makyuri_FollowLeader),
+s32 Mercury_PillarScript[] = {
+	SC_CALL(Mercury_FollowLeader),
 	SC_END,
 };
 
-u16 Makyuri_MoveAngles[] = {
+u16 Mercury_MoveAngles[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
 	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
@@ -637,7 +637,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 MakyuriIriguchi_Actor8Path1[] = {
+s32 MercuryEntrance_Actor8Path1[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -649,7 +649,7 @@ s32 MakyuriIriguchi_Actor8Path1[] = {
 	SC_END,
 };
 
-s32 MakyuriIriguchi_Actor8Path2[] = {
+s32 MercuryEntrance_Actor8Path2[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -661,7 +661,7 @@ s32 MakyuriIriguchi_Actor8Path2[] = {
 	SC_END,
 };
 
-s32 MakyuriIriguchi_Actor8Path3[] = {
+s32 MercuryEntrance_Actor8Path3[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SET(SW_STEERING, 0),
@@ -679,7 +679,7 @@ s32 gPaletteCycleGreen = 0;
 
 s32 gPaletteCycleBlue = 0;
 
-struct SceneEntrance MakyuriIriguchi_SceneTableA[] = {
+struct SceneEntrance MercuryEntrance_SceneTableA[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 280, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 120, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
@@ -712,14 +712,14 @@ struct SceneEntrance MakyuriIriguchi_SceneTableA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance MakyuriIriguchi_SceneTableB[] = {
+struct SceneEntrance MercuryEntrance_SceneTableB[] = {
 	{ 53, 0x0, -16327, 16, 12341, 0x20, 8245, 48, -28619, 64, -32715, 80 },
 	{ 4149, 0x61, 16437, 112, 20533, 0x80, 12341, 145, 4150, 160, 8246, 176 },
 	{ 28726, 0xc0, 16438, 208, 8245, 0xe1, 16437, 241, 28725, 256, -12235, 272 },
 	{ -24523, 0x120, 53, 305, -8139, 0x141, -4042, 800, -4043, 1009, 511, 0 },
 };
 
-struct SceneEntrance MakyuriIriguchi_SceneTableC[] = {
+struct SceneEntrance MercuryEntrance_SceneTableC[] = {
 	{ 3, CONDITION_ALWAYS, 1, 0, 0, 0x8, 0, 0, 0, 8, -16384, 2 },
 	{ 192, CONDITION_ALWAYS, 1, 0, 0, 0x8, 0, 0, 0, 8, 16384, 2 },
 	{ 224, CONDITION_ALWAYS, 7, 0, 0, 0x58, 0, 0, 0, 136, 16384, 2 },
@@ -733,7 +733,7 @@ struct SceneEntrance MakyuriIriguchi_SceneTableC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
+struct SceneEvent MercuryEntrance_SceneTableD[] = {
 	{ 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV31_TOUCH) },
 	{ 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
@@ -741,11 +741,11 @@ struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
 	{ 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV11_TOUCH) },
 	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
-	{ EVENT_TOUCH, 40, IF_FLAG_SET(0x205), EVENT_SCRIPT(MakyuriIriguchi_InstallActorEightPath) },
-	{ EVENT_TOUCH, 42, IF_FLAG_SET(0x205), EVENT_SCRIPT(MakyuriIriguchi_InstallActorEightPath) },
+	{ EVENT_TOUCH, 40, IF_FLAG_SET(0x205), EVENT_SCRIPT(MercuryEntrance_InstallActorEightPath) },
+	{ EVENT_TOUCH, 42, IF_FLAG_SET(0x205), EVENT_SCRIPT(MercuryEntrance_InstallActorEightPath) },
 	{ EVENT_TOUCH, 41, 0x205, EVENT_SCRIPT(EV41_TOUCH) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(EV67_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(EV68_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(EV69_TOUCH) },
@@ -765,10 +765,10 @@ struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
 	{ EVENT_EXIT, 64, CONDITION_ALWAYS, 14 },
 	{ EVENT_EXIT, 65, CONDITION_ALWAYS, 15 },
 	{ EVENT_EXIT, 66, CONDITION_ALWAYS, 16 },
-	{ EVENT_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgMakyuriMonsterInsideTower) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, CONDITION_ALWAYS, MSGNO(MsgMakyuriLetMePass) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
+	{ EVENT_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgMercuryMonsterInsideTower) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryEntrance_OpenEntrance) },
 	{ SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SEARCH) },
 	{ PSYNERGY_ON_ACTOR(0x5d), 16, 0x875, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
@@ -777,7 +777,7 @@ struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u32 MakyuriIriguchi_SparkBurstScript[] = {
+u32 MercuryEntrance_SparkBurstScript[] = {
 	21, 10, 0x10000, 21, 9, 0x10000, 0, 6,
 	21, 10, 0xa000, 21, 9, 0xa000, 0, 6,
 	21, 10, 0x4000, 21, 9, 0x4000, 0, 6,

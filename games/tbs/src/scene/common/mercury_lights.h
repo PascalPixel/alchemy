@@ -17,7 +17,7 @@
 #include "map.h"
 #include "io_reg.h"
 
-struct MakyuriLights
+struct MercuryLights
 {
 	s32				   lit;
 	s32				   region;
@@ -26,7 +26,7 @@ struct MakyuriLights
 	struct FieldActor *upper;
 };
 
-void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
+void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st)
 {
 	struct ObjectRuntime *actor;
 	struct FieldActor	 *obj;
@@ -35,7 +35,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 	s32					  z;
 	s32					  flag;
 
-	*(struct MakyuriLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
+	*(struct MercuryLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
 	flag = Engine_GameFlagIsSet(0x109);
 	if (flag == 0)
 	{
@@ -53,7 +53,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 		{
 			obj->terrain_height = actor->terrain_height;
 			anim = obj->sprite;
-			Engine_ObjectSetScript(obj, Makyuri_PillarScript);
+			Engine_ObjectSetScript(obj, Mercury_PillarScript);
 			obj->linked_object = (struct FieldActor *)actor;
 			obj->motion_flags = 4;
 			obj->y.fixed += -0x8000;
@@ -77,7 +77,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 			return;
 		obj->terrain_height = actor->terrain_height;
 		anim = obj->sprite;
-		Engine_ObjectSetScript(obj, Makyuri_RampScript);
+		Engine_ObjectSetScript(obj, Mercury_RampScript);
 		obj->motion_flags = 0;
 		obj->timer = 0;
 		obj->priority_flags = 2;

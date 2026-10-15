@@ -35,7 +35,7 @@
 
 u8 *MapStagedScene_SelectPrimaryData(void)
 {
-	return gKorimaKawaEntrances;
+	return gKolimaForestRiverEntrances;
 }
 
 s32 MapStagedScene_GetEmptyData(void)
@@ -45,12 +45,12 @@ s32 MapStagedScene_GetEmptyData(void)
 
 u8 *MapStagedScene_SelectSecondaryData(void)
 {
-	return gKorimaKawaExits;
+	return gKolimaForestRiverExits;
 }
 
 u8 *MapStagedScene_SelectTertiaryData(void)
 {
-	return gKorimaKawaPlacements;
+	return gKolimaForestRiverPlacements;
 }
 
 static void EV10_SCRIPT(void)
@@ -82,12 +82,12 @@ static void EV10_SCRIPT(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_jump.h"
 
-u8 *KorimaKawa_GetEvents(void)
+u8 *KolimaForestRiver_GetEvents(void)
 {
-	return gKorimaKawaEvents;
+	return gKolimaForestRiverEvents;
 }
 
-s32 KorimaKawa_PrepareWindowTransition(void)
+s32 KolimaForestRiver_PrepareWindowTransition(void)
 {
 	struct EventWork *work = gEventWork;
 
@@ -150,21 +150,21 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-struct SceneEntrance gKorimaKawaEntrances[] = {
+struct SceneEntrance gKolimaForestRiverEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 gKorimaKawaExits[] = {
+u32 gKolimaForestRiverExits[] = {
 	SCENE_EXITS(42),
 	SCENE_EXIT(1, 43, 1),
 	SCENE_EXIT(2, 41, 2),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKorimaKawaPlacements[] = {
+struct ScenePlacement gKolimaForestRiverPlacements[] = {
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -174,7 +174,7 @@ struct ScenePlacement gKorimaKawaPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKorimaKawaEvents[] = {
+struct SceneEvent gKolimaForestRiverEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
@@ -183,5 +183,5 @@ struct SceneEvent gKorimaKawaEvents[] = {
 };
 
 // .bss 内の並びは最初に宣言した順 (field.h の extern)
-u8 KorimaPalette_First[1792] __attribute__((section(".bss")));
-u8 KorimaPalette_Second[896] __attribute__((section(".bss")));
+u8 KolimaPalette_First[1792] __attribute__((section(".bss")));
+u8 KolimaPalette_Second[896] __attribute__((section(".bss")));

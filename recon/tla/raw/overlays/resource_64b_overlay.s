@@ -46,7 +46,7 @@ Func_0200050c:
 	adds r3, r3, r1
 	ldr r0, [r3]
 	movs r1, #1
-	bl UnitEpAdd
+	bl UnitPpAdd
 .L_0200856c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

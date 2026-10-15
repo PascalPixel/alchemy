@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-void *HaidiaHeya_GetEntrances(void);
+void *ValeInteriors_GetEntrances(void);
 int SceneData_ReturnZero(void);
-void *HaidiaHeya_SelectExits(void);
+void *ValeInteriors_SelectExits(void);
 void *SceneData_SelectFlaggedTable(void);
-void *HaidiaHeya_SelectEvents(void);
+void *ValeInteriors_SelectEvents(void);
 s32 Scene_RunSupplementalSequenceOne(void);
 extern s32 gValeFaceTargetScript[];
 extern s32 gValeActor10Script[];

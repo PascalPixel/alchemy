@@ -36,8 +36,8 @@
 static s32	OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner);
 static void FieldScene_PlaceAndPinSlots8And9(void);
 static void FieldScene_PlaceAndPinSlots10And11(void);
-static void BabiChika_RestorePlatformCells(void);
-static void BabiChika_MarkActorCells(void);
+static void TunnelRuins_RestorePlatformCells(void);
+static void TunnelRuins_MarkActorCells(void);
 
 struct Vec
 {
@@ -125,7 +125,7 @@ static void SceneActor_PassActorZeroOffsetPoint(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-static void BabiChika_UpdateTrackedActor(void)
+static void TunnelRuins_UpdateTrackedActor(void)
 {
 	struct FieldActor *actor;
 	u8				  *work;
@@ -134,7 +134,7 @@ static void BabiChika_UpdateTrackedActor(void)
 	actor = Object_GetById(0);
 	work = gActorEffectWork;
 	limit = 0;
-	if (gGameState.scene == (s32)&SceneId_BabiChika1)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
 		switch (gGameState.entrance)
 		{
@@ -169,7 +169,7 @@ static void BabiChika_UpdateTrackedActor(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_depth.h"
 
-static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
+static s32 TunnelRuins_UpdateFlickerEffect(struct FieldActor *object)
 {
 	struct EffectOptions options;
 	s32					 x;
@@ -241,7 +241,7 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_advance.h"
 
-static void BabiChika_RunLeaderSpray(void)
+static void TunnelRuins_RunLeaderSpray(void)
 {
 	struct FieldActor	*leader = Object_GetById(0);
 	struct EffectOptions options;
@@ -291,42 +291,42 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_BabiChika1)
+	if (v == (s32)&SceneId_TunnelRuins1)
 	{
-		return gBabiChikaEntrances1;
+		return gTunnelRuinsEntrances1;
 	}
-	if (v == (s32)&SceneId_BabiChika2)
+	if (v == (s32)&SceneId_TunnelRuins2)
 	{
-		return gBabiChikaEntrances2;
+		return gTunnelRuinsEntrances2;
 	}
-	return gBabiChikaEntrancesOther;
+	return gTunnelRuinsEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
 {
-	if (gGameState.scene == (s32)&SceneId_BabiChika2)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins2)
 	{
-		return gBabiChikaRegions2;
+		return gTunnelRuinsRegions2;
 	}
 	return 0;
 }
 
-u8 *BabiChika_GetExits(void)
+u8 *TunnelRuins_GetExits(void)
 {
-	return gBabiChikaExits;
+	return gTunnelRuinsExits;
 }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
 {
 	u8 *tbl;
 
-	if (gGameState.scene == (s32)&SceneId_BabiChika1)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
-		tbl = gBabiChikaPlacements1;
+		tbl = gTunnelRuinsPlacements1;
 	}
 	else
 	{
-		tbl = gBabiChikaPlacementsOther;
+		tbl = gTunnelRuinsPlacementsOther;
 	}
 	FieldScene_PrepareActors((struct SceneRegionEntry *)tbl);
 	return tbl;
@@ -383,7 +383,7 @@ static void EV28_SCRIPT(void)
 	Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
 	Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
 	StagedActor_AdvancePair();
-	BabiChika_RestorePlatformCells();
+	TunnelRuins_RestorePlatformCells();
 	Engine_EventEnd();
 }
 
@@ -623,7 +623,7 @@ static void FieldScene_RunFourStepSequenceA(void)
 
 static void EV19_SCRIPT(void)
 {
-	Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
+	Engine_ActorEnableActionCallback(19, TunnelRuins_FlickerScript);
 }
 
 static void SceneState_SetValue202ThenCall(void)
@@ -650,11 +650,11 @@ static void EV40_SEARCH(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0)
 	{
-		Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSpeaksAfterAnswer), 1);
+		Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
 	}
 	else
 	{
-		Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSpeaksRobinSoulYe), 1);
+		Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
 	}
 	Engine_EventEnd();
 }
@@ -677,7 +677,7 @@ static void EV08_SCRIPT(void)
 {
 	struct FieldActor *owner;
 
-	Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
+	Engine_ActorEnableActionCallback(8, TunnelRuins_FlickerScript);
 	Engine_GameFlagSet(0x203);
 	owner = Object_GetById(9);
 	owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
@@ -724,7 +724,7 @@ static s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
 	return 0;
 }
 
-static void BabiChika_SettleSteps(s32 wait)
+static void TunnelRuins_SettleSteps(s32 wait)
 {
 	u32 i;
 
@@ -735,13 +735,13 @@ static void BabiChika_SettleSteps(s32 wait)
 		Engine_AudioPlayCue(180);
 	}
 	Engine_ObjectSetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
-		BabiChika_SettleHeights[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
+		TunnelRuins_SettleHeights[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
 	Engine_ObjectSetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
-		BabiChika_SettleHeights[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
+		TunnelRuins_SettleHeights[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
 	Engine_ActorWaitForMove(10);
 	Engine_ActorWaitForMove(11);
-	Object_GetById(10)->y.fixed = BabiChika_SettleHeights[Object_GetById(10)->timer];
-	Object_GetById(11)->y.fixed = BabiChika_SettleHeights[Object_GetById(11)->timer];
+	Object_GetById(10)->y.fixed = TunnelRuins_SettleHeights[Object_GetById(10)->timer];
+	Object_GetById(11)->y.fixed = TunnelRuins_SettleHeights[Object_GetById(11)->timer];
 	if (wait != 0)
 	{
 		Engine_AudioPlayCue(0x121);
@@ -862,7 +862,7 @@ static void FieldScene_RunMiddleSequence(void)
 			}
 			Actor_Get(found + 12)->update =
 				(void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
-			BabiChika_SettleSteps(40);
+			TunnelRuins_SettleSteps(40);
 			Actor_Get(found + 12)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
 			GameFlag_Set(0x200 + found);
 			break;
@@ -900,7 +900,7 @@ static void SceneState_SetSlot17And18Selectors(void)
 		Engine_GameFlagClear(0x975);
 	}
 
-	BabiChika_MarkActorCells();
+	TunnelRuins_MarkActorCells();
 	Engine_EventEnd();
 }
 
@@ -1031,7 +1031,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 		Engine_EventWait(30);
 		GameFlag_Set(0x984);
 		Engine_AudioPlayCue(158);
-		Map_AnimateCells(BabiChika_CellStepsA, 32, 46);
+		Map_AnimateCells(TunnelRuins_CellStepsA, 32, 46);
 		Map_CopyCellAttributes(24, 60, 1, 1, 32, 47);
 		Engine_EventWait(40);
 	}
@@ -1046,7 +1046,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 			Engine_EventWait(30);
 			GameFlag_Clear(0x984);
 			Engine_AudioPlayCue(159);
-			Map_AnimateCells(BabiChika_CellStepsB, 32, 46);
+			Map_AnimateCells(TunnelRuins_CellStepsB, 32, 46);
 			Map_CopyCellAttributes(31, 47, 1, 1, 32, 47);
 			Engine_EventWait(40);
 		}
@@ -1070,7 +1070,7 @@ static void EV42_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MSGNO(MsgBabiChikaStatueSeemsSpeakYourSoul), 1);
+	Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
 	Engine_EventEnd();
 }
 
@@ -1081,13 +1081,13 @@ static void EV20_SEARCH(void)
 	Engine_EventEnd();
 }
 
-s32 BabiChika_SelectEvents(void)
+s32 TunnelRuins_SelectEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_BabiChika1)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
-		return (s32)gBabiChikaEvents1;
+		return (s32)gTunnelRuinsEvents1;
 	}
-	return (s32)gBabiChikaEventsOther;
+	return (s32)gTunnelRuinsEventsOther;
 }
 
 static void FieldScene_PlaceAndPinSlots8And9(void)
@@ -1134,7 +1134,7 @@ static void FieldScene_PlaceAndPinSlots10And11(void)
 	}
 }
 
-static void BabiChika_RestorePlatformCells(void)
+static void TunnelRuins_RestorePlatformCells(void)
 {
 	struct FieldActor *record;
 	s32				   p5;
@@ -1159,7 +1159,7 @@ static void BabiChika_RestorePlatformCells(void)
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 
-static void BabiChika_MarkActorCells(void)
+static void TunnelRuins_MarkActorCells(void)
 {
 	Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
 	StagedActor_FillGridAttributeRectangle(
@@ -1171,14 +1171,14 @@ static void BabiChika_MarkActorCells(void)
 s32 FieldScene_InitializeActorGroups(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_BabiChika1
-		|| gGameState.scene == (s32)&SceneId_BabiChika2)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins1
+		|| gGameState.scene == (s32)&SceneId_TunnelRuins2)
 	{
 		BattleFx_StartFadeOverlay(0);
 		gGameState.retreat_entrance = 1;
-		gGameState.retreat_scene = (s32)&SceneId_BabiChika1;
+		gGameState.retreat_scene = (s32)&SceneId_TunnelRuins1;
 	}
-	if (gGameState.scene == (s32)&SceneId_BabiChika1)
+	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
 		switch (gGameState.entrance)
 		{
@@ -1215,7 +1215,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 			Object_GetById(8)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(9)->update = ACTOR_UPDATE_IDLE;
-			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
 			break;
 		case 5:
 		case 6:
@@ -1234,7 +1234,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 			Object_GetById(10)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(11)->update = ACTOR_UPDATE_IDLE;
-			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
 			break;
 		case 10:
 		case 11:
@@ -1283,7 +1283,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			break;
 		case 12:
 		case 13:
-			BabiChika_RestorePlatformCells();
+			TunnelRuins_RestorePlatformCells();
 			Object_GetById(12)->motion_flags = 0;
 			Object_GetById(13)->motion_flags = 0;
 			Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
@@ -1295,7 +1295,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Object_GetById(12)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(13)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(14)->update = ACTOR_UPDATE_IDLE;
-			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
 			break;
 		}
 	}
@@ -1309,7 +1309,7 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 2:
 		case 3:
 			gGameState.retreat_entrance = 1;
-			gGameState.retreat_scene = (s32)&SceneId_BabiIriguchi3;
+			gGameState.retreat_scene = (s32)&SceneId_BabiLighthouse3;
 			Engine_GameFlagClear(0x12f);
 			Engine_ActorSetChildValue(17, 6);
 			Engine_ActorSetChildValue(18, 6);
@@ -1317,7 +1317,7 @@ s32 FieldScene_InitializeActorGroups(void)
 				Actor_SetPosition(17, 182 << 18, 156 << 17);
 			if (Engine_GameFlagIsSet(0x975))
 				Actor_SetPosition(18, 186 << 18, 156 << 17);
-			BabiChika_MarkActorCells();
+			TunnelRuins_MarkActorCells();
 			break;
 		case 6:
 		case 7:
@@ -1385,7 +1385,7 @@ s32 FieldScene_InitializeActorGroups(void)
 				Engine_GameFlagSet(0x201);
 				Engine_GameFlagSet(0x202);
 			}
-			BabiChika_SettleSteps(0);
+			TunnelRuins_SettleSteps(0);
 			break;
 		case 8:
 		case 9:
@@ -1400,7 +1400,7 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 12:
 			Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
 			FieldScene_RunLateSequenceHead();
-			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
 			break;
 		case 13:
 		case 14:
@@ -1531,7 +1531,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u32 BabiChika_SettleHeights[] = {
+u32 TunnelRuins_SettleHeights[] = {
 	0xfff00000,
 	0xfff00000,
 	0xffe00000,
@@ -1547,7 +1547,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 BabiChika_ShrinkScript[] = {
+s32 TunnelRuins_ShrinkScript[] = {
 	SC_SET(SW_SCALE_X, 0x9999),
 	SC_SET(SW_SCALE_Y, 0x9999),
 	SC_SET(SW_COLLISION, 0),
@@ -1555,41 +1555,41 @@ s32 BabiChika_ShrinkScript[] = {
 	SC_END,
 };
 
-s32 BabiChika_StretchScript[] = {
+s32 TunnelRuins_StretchScript[] = {
 	SC_SET(SW_SCALE_Y, 0x19999),
 	SC_END,
 };
 
-s32 BabiChika_FlickerScript[] = {
+s32 TunnelRuins_FlickerScript[] = {
 	SC_WAIT(35),
-	SC_SET(SW_HOOK, (s32)BabiChika_UpdateFlickerEffect),
+	SC_SET(SW_HOOK, (s32)TunnelRuins_UpdateFlickerEffect),
 	SC_WAIT(130),
 	SC_SET(SW_HOOK, 0),
 	SC_ARG(2),
 	SC_END,
 };
 
-u16 BabiChika_CellStepsA[] = {
+u16 TunnelRuins_CellStepsA[] = {
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(24, 59, 1, 2, 4),
 	MAP_CELL_STEPS_END,
 };
 
-u16 BabiChika_CellStepsB[] = {
+u16 TunnelRuins_CellStepsB[] = {
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(30, 59, 1, 2, 4),
 	MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gBabiChikaEntrancesOther[] = {
+struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
 	{0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{10, CONDITION_ALWAYS, 440, 0, 552, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiChikaEntrances1[] = {
+struct SceneEntrance gTunnelRuinsEntrances1[] = {
 	{0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 104, 0, 152, FACING_SOUTH, 0, 48, 48, 288, 368, 0},
 	{2, CONDITION_ALWAYS, 200, 0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
@@ -1612,7 +1612,7 @@ struct SceneEntrance gBabiChikaEntrances1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiChikaEntrances2[] = {
+struct SceneEntrance gTunnelRuinsEntrances2[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 632, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
 	{2, CONDITION_ALWAYS, 840, 0, 120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
@@ -1634,7 +1634,7 @@ struct SceneEntrance gBabiChikaEntrances2[] = {
 	{SCENE_TABLE_END},
 };
 
-s16 gBabiChikaRegions2[] = {
+s16 gTunnelRuinsRegions2[] = {
 	624,
 	16,
 	336,
@@ -1669,7 +1669,7 @@ s16 gBabiChikaRegions2[] = {
 	0,
 };
 
-u32 gBabiChikaExits[] = {
+u32 gTunnelRuinsExits[] = {
 	SCENE_EXITS(172),
 	SCENE_EXIT(1, 174, 1),
 	SCENE_EXIT(2, 172, 3),
@@ -1710,7 +1710,7 @@ u32 gBabiChikaExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBabiChikaPlacements1[] = {
+struct ScenePlacement gTunnelRuinsPlacements1[] = {
 	{0xfd, 0x0, ACTOR_STAND, PIXELS(152), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0xfd, 0x0, ACTOR_STAND, PIXELS(168), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -1722,22 +1722,22 @@ struct ScenePlacement gBabiChikaPlacements1[] = {
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{0xfe, 0x0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{0xf8, 0x0, (s32)BabiChika_StretchScript, PIXELS(416), 0, PIXELS(794), FACING_NORTH,
+	{0xf8, 0x0, (s32)TunnelRuins_StretchScript, PIXELS(416), 0, PIXELS(794), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
-	{0xf8, 0x0, (s32)BabiChika_StretchScript, PIXELS(432), 0, PIXELS(794), FACING_NORTH,
+	{0xf8, 0x0, (s32)TunnelRuins_StretchScript, PIXELS(432), 0, PIXELS(794), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
-	{0xf8, 0x970, (s32)BabiChika_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
+	{0xf8, 0x970, (s32)TunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
 		TALK_FACE_PARTY, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(808), 0, PIXELS(232), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
-	{0x114, 0x0, (s32)BabiChika_ShrinkScript, PIXELS(232), 0, PIXELS(248), FACING_SOUTH,
+	{0x114, 0x0, (s32)TunnelRuins_ShrinkScript, PIXELS(232), 0, PIXELS(248), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 gBabiChikaPlacementsOther[] = {
+u32 gTunnelRuinsPlacementsOther[] = {
 	SCENE_EXITS(255),
 	SCENE_EXIT(0, 1, 0),
 	SCENE_EXIT(24, 0, 128),
@@ -1842,7 +1842,7 @@ u32 gBabiChikaPlacementsOther[] = {
 	SCENE_EXIT(0, 0, 0),
 };
 
-struct SceneEvent gBabiChikaEvents1[] = {
+struct SceneEvent gTunnelRuinsEvents1[] = {
 	{0x21, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1866,7 +1866,7 @@ struct SceneEvent gBabiChikaEvents1[] = {
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
 	{0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
-		EVENT_SCRIPT(BabiChika_RunLeaderSpray)},
+		EVENT_SCRIPT(TunnelRuins_RunLeaderSpray)},
 	{0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
@@ -1911,9 +1911,9 @@ struct SceneEvent gBabiChikaEvents1[] = {
 		EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
 	{PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
-	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
-	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
-	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
 	{PSYNERGY_ON_ACTOR(0x4e), 15, 0x200, EVENT_SCRIPT(EV15_PSYNERGY)},
 	{PSYNERGY_ON_ACTOR(0x4e), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY)},
 	{PSYNERGY_ON_ACTOR(0x4e), 17, 0x970, EVENT_SCRIPT(EV17_PSYNERGY)},
@@ -1926,7 +1926,7 @@ struct SceneEvent gBabiChikaEvents1[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiChikaEventsOther[] = {
+struct SceneEvent gTunnelRuinsEventsOther[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1946,7 +1946,7 @@ struct SceneEvent gBabiChikaEventsOther[] = {
 	{TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
-		EVENT_SCRIPT(BabiChika_RunLeaderSpray)},
+		EVENT_SCRIPT(TunnelRuins_RunLeaderSpray)},
 	{0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
@@ -1986,14 +1986,14 @@ struct SceneEvent gBabiChikaEventsOther[] = {
 	{PSYNERGY_ON_ACTOR(0x8c), 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
 	{PSYNERGY_ON_ACTOR(0x8c), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-		MSGNO(MsgBabiChikaRedShinesNorthwestOfMe)},
+		MSGNO(MsgTunnelRuinsRedShinesNorthwestOfMe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-		MSGNO(MsgBabiChikaYellowShinesNortheastOfMe)},
+		MSGNO(MsgTunnelRuinsYellowShinesNortheastOfMe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-		MSGNO(MsgBabiChikaRedShinesDueWestOfMe)},
+		MSGNO(MsgTunnelRuinsRedShinesDueWestOfMe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-		MSGNO(MsgBabiChikaVioletShinesSoutheastOfMe)},
+		MSGNO(MsgTunnelRuinsVioletShinesSoutheastOfMe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
-		MSGNO(MsgBabiChikaVioletPointsSoutheast)},
+		MSGNO(MsgTunnelRuinsVioletPointsSoutheast)},
 	{SCENE_EVENTS_END},
 };

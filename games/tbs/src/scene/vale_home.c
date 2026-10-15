@@ -35,41 +35,41 @@
 #include "field_effect.h"
 
 // 前方宣言
-static void HaidiaIe_RunScriptScene(void);
+static void ValeHome_RunScriptScene(void);
 static void FieldScene_RunGroupChoreography(void);
-static void HaidiaIe_RunActorPairEffectScene(void);
+static void ValeHome_RunActorPairEffectScene(void);
 static void Scene_RunExtendedActorSequence(void);
 static void Event_SayThenWait(s32 speaker, s32 frames);
 static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void OverlayObject_UpdateOnFrameBit1(s32 obj);
-static void HaidiaIe_SpawnEffectPair(union PairObject *parent);
+static void ValeHome_SpawnEffectPair(union PairObject *parent);
 static void FieldScene_RunStep15(void);
 static void FieldScene_RunStep17(void);
 static void FieldScene_RunStep20(void);
 static void SceneState_SetValues352_365_2116_2117_40(void);
 
 // 向きを変えて待つ: SceneActor_SetPairZeroAndValue をインライン関数を通して呼ぶ
-static inline void HaidiaIe_TurnAndWait(s32 actor, s32 facing, s32 frames)
+static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames)
 {
 	/* FAKEMATCH: forwarding inline for Scene_RunExtendedActorSequence's three calls (call.h's Call3 did the same); called directly the function grows by 4 bytes and builds its stack arguments in other registers (2026-10-13). */
 	SceneActor_SetPairZeroAndValue(actor, facing, frames);
 }
 
-static inline s32 HaidiaIe_TurnAndWaitValue(s32 actor, s32 facing, s32 frames)
+static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames)
 {
-	/* FAKEMATCH: forwarding inline called as returning a value, its result discarded (call.h's Value3 did the same); through HaidiaIe_TurnAndWait the argument allocation changes, called directly differ 30 (r5 and r6 swap), and through a plain s32 cast EV20_TOUCH differs 15 halfwords (2026-10-13). */
+	/* FAKEMATCH: forwarding inline called as returning a value, its result discarded (call.h's Value3 did the same); through ValeHome_TurnAndWait the argument allocation changes, called directly differ 30 (r5 and r6 swap), and through a plain s32 cast EV20_TOUCH differs 15 halfwords (2026-10-13). */
 	return ((s32 (*)())SceneActor_SetPairZeroAndValue)(actor, facing, frames);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_facing.h"
 
-u8 *HaidiaIe_GetEntrances(void)
+u8 *ValeHome_GetEntrances(void)
 {
-	return (u8 *)gHaidiaIeEntrances;
+	return (u8 *)gValeHomeEntrances;
 }
 
-s32 HaidiaIe_GetDefaultResult(void)
+s32 ValeHome_GetDefaultResult(void)
 {
 	return 0;
 }
@@ -78,36 +78,36 @@ void *SceneData_SelectTableByFlag834(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return gHaidiaIeExitsFlag834;
+		return gValeHomeExitsFlag834;
 	}
-	return gHaidiaIeExits;
+	return gValeHomeExits;
 }
 
 void *SceneData_SelectTableByFlags834And87a(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return gHaidiaIePlacementsFlag834;
+		return gValeHomePlacementsFlag834;
 	}
 	if (gGameState.entrance == 12)
 	{
-		return gHaidiaIePlacementsEntrance12;
+		return gValeHomePlacementsEntrance12;
 	}
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return gHaidiaIePlacementsFlag87a;
+		return gValeHomePlacementsFlag87a;
 	}
-	return gHaidiaIePlacements;
+	return gValeHomePlacements;
 }
 
 static void EV100_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgHaidiaCheckedThePsynergyStone, 1);
+	Engine_MessageShowCentered(MsgValeCheckedThePsynergyStone, 1);
 	Engine_AudioPlayCue(126);
 	BattleParty_ApplyDrain(0x3e7, 0);
 	Engine_EventWait(10);
-	Engine_MessageShowCentered(MsgHaidiaPartyPpRestored, 1);
+	Engine_MessageShowCentered(MsgValePartyPpRestored, 1);
 	UiWork_FinalizePendingCore();
 	Engine_GameFlagClear(322);
 	Engine_EventEnd();
@@ -117,27 +117,27 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 {
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return gHaidiaIeEventsFlag87a;
+		return gValeHomeEventsFlag87a;
 	}
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		return gHaidiaIeEventsAfterLeaving;
+		return gValeHomeEventsAfterLeaving;
 	}
 	if (gGameState.entrance == 12)
 	{
-		return gHaidiaIeEventsEntrance12;
+		return gValeHomeEventsEntrance12;
 	}
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return gHaidiaIeEventsFlag834;
+		return gValeHomeEventsFlag834;
 	}
-	return gHaidiaIeEvents;
+	return gValeHomeEvents;
 }
 
 static void EV23_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaMeditateOnMtAlephDaily);
+	Engine_EventSetMessage(MsgValeMeditateOnMtAlephDaily);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(23, 0);
 	Engine_EventEnd();
@@ -146,7 +146,7 @@ static void EV23_TALK(void)
 static void EV24_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaADifficultTimeThreeYears);
+	Engine_EventSetMessage(MsgValeADifficultTimeThreeYears);
 	Engine_ActorFaceEachOther(24, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(24, 0);
 	Engine_EventEnd();
@@ -155,7 +155,7 @@ static void EV24_TALK(void)
 static void Villager_AskAboutTheTravelers(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgHaidiaDidTheTravelersMeetThe);
+	Engine_EventSetMessage(MsgValeDidTheTravelersMeetThe);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
@@ -171,7 +171,7 @@ static void EV17_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		message = MsgHaidiaArentWorriedCrossing;
+		message = MsgValeArentWorriedCrossing;
 		Engine_EventSetMessage(message);
 		if (Engine_GameFlagIsSet(2) != 0)
 		{
@@ -195,7 +195,7 @@ static void EV17_TALK(void)
 	else
 	{
 		origin = ((struct MapScrollWork *)gMapWork[0])->origin;
-		Engine_EventSetMessage(MsgHaidiaShownNewAbility);
+		Engine_EventSetMessage(MsgValeShownNewAbility);
 		Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 0);
 		Engine_EventAskYesNo(17, 0);
 		Engine_EventWait(20);
@@ -232,7 +232,7 @@ static void EV17_TALK(void)
 		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetChildValue(17, 0);
 		Engine_EventWait(40);
-		Engine_EventSetMessage(MsgHaidiaBeholdPowerPsynergy);
+		Engine_EventSetMessage(MsgValeBeholdPowerPsynergy);
 		Engine_EventShowMessage(17, 0);
 	}
 	Engine_EventEnd();
@@ -243,7 +243,7 @@ static void SceneDialogue_RunFlagGatedMessageStep(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaAnythingInterestingOnYourTrip);
+		Engine_EventSetMessage(MsgValeAnythingInterestingOnYourTrip);
 		Engine_EventOpenMessage(15, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -259,12 +259,12 @@ static void SceneDialogue_RunFlagGatedMessageStep(void)
 	}
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaYouSawTheWiseOne);
+		Engine_EventSetMessage(MsgValeYouSawTheWiseOne);
 		Engine_EventAskYesNo(11, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaCanIUsePsynergy);
+		Engine_EventSetMessage(MsgValeCanIUsePsynergy);
 		Engine_EventAskYesNo(11, 0);
 	}
 	Engine_EventEnd();
@@ -276,7 +276,7 @@ static void EV26_TALK(void)
 	Engine_ActorSetAnimation(26, 1);
 	Engine_ActorFaceActor(26, ACTOR_PARTY_LEADER, 20);
 	Engine_ActorFaceActor(26, 21, 40);
-	Engine_EventSetMessage(MsgHaidiaTheStoneFellOnThe);
+	Engine_EventSetMessage(MsgValeTheStoneFellOnThe);
 	Event_SayThenWait(26, 20);
 	Engine_CameraSetSpeed(0x19999, 0x3333);
 	Engine_CameraMoveTo(0x1510000, -1, 0x1100000, 1);
@@ -299,7 +299,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	Engine_EventBegin();
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 30);
-	Engine_EventSetMessage(MsgHaidiaIHaveSomePsynergyLeft);
+	Engine_EventSetMessage(MsgValeIHaveSomePsynergyLeft);
 	Event_SayThenWait(15, 20);
 	SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
 	Actor_SetAttachedEffect(15, 0x102);
@@ -342,12 +342,12 @@ static void EV16_TALK(void)
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 10);
 	if (Engine_GameFlagIsSet(0x840) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaSureHelp);
+		Engine_EventSetMessage(MsgValeSureHelp);
 		Engine_EventShowMessage(16, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaWentOffWay);
+		Engine_EventSetMessage(MsgValeWentOffWay);
 		Engine_EventShowMessage(16, 0);
 	}
 	Engine_EventEnd();
@@ -358,11 +358,11 @@ static void EV11_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x302) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaThisIsVale);
+		Engine_EventSetMessage(MsgValeThisIsVale);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaYouCameBackHome);
+		Engine_EventSetMessage(MsgValeYouCameBackHome);
 		GameFlag_Set(0x302);
 	}
 	Event_ShowMessage(11, 0);
@@ -382,7 +382,7 @@ static void Scene_PsynergyStoneIsGone(void)
 	p->f06 = 0xb000;
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	Engine_EventSetMessage(MsgHaidiaThePsynergyStoneIsGone);
+	Engine_EventSetMessage(MsgValeThePsynergyStoneIsGone);
 	Engine_EventShowMessageAndWait(21, 0, 40);
 	Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 20);
 	Engine_ActorStartRepeatedMotion(21, 2);
@@ -390,7 +390,7 @@ static void Scene_PsynergyStoneIsGone(void)
 	Engine_GameFlagSet(0x306);
 	Engine_ActorStop(21);
 	Engine_TaskWait(1);
-	Engine_ActorEnableActionCallback(21, HaidiaIe_Actor21Actions);
+	Engine_ActorEnableActionCallback(21, ValeHome_Actor21Actions);
 	Engine_EventEnd();
 }
 
@@ -400,9 +400,9 @@ static void Scene_PsynergyStoneIsGone(void)
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 44, 7);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 44, 7);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
-	Haidia_RequestBackdropExit(1);
+	Vale_RequestBackdropExit(1);
 }
 
 static void EV02_TOUCH(void)
@@ -415,53 +415,53 @@ static void EV02_TOUCH(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-	Haidia_RequestBackdropExit(2);
+	Vale_RequestBackdropExit(2);
 }
 
 static void EV03_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 43, 15);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 43, 15);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
-	Haidia_RequestBackdropExit(3);
+	Vale_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 52, 18);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 52, 18);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
-	Haidia_RequestBackdropExit(4);
+	Vale_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 41, 32);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 41, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
-	Haidia_RequestBackdropExit(5);
+	Vale_RequestBackdropExit(5);
 }
 
 static void EV06_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 35, 36);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 35, 36);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
-	Haidia_RequestBackdropExit(6);
+	Vale_RequestBackdropExit(6);
 }
 
 static void EV07_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 51, 39);
+	Map_AnimateCells((s32)&ValeHome_CellSteps, 51, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
-	Haidia_RequestBackdropExit(7);
+	Vale_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
-	Haidia_RequestBackdropExit(8);
+	Vale_RequestBackdropExit(8);
 }
 
 static void EV08_TOUCH(void)
@@ -469,7 +469,7 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
 		Engine_AudioPlayCue(123);
-		Haidia_RequestBackdropExit(10);
+		Vale_RequestBackdropExit(10);
 	}
 }
 
@@ -488,7 +488,7 @@ static void EV10_PSYNERGY(void)
 	Engine_GameFlagSet(0x90d);
 }
 
-s32 HaidiaIe_RestoreEntryState(void)
+s32 ValeHome_RestoreEntryState(void)
 {
 
 	s32 record;
@@ -516,7 +516,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 		SceneState_SetValues352_365_2116_2117_40();
 		return 0;
 	case 97:
-		HaidiaIe_RunActorPairEffectScene();
+		ValeHome_RunActorPairEffectScene();
 		return 0;
 	}
 	v5 = 192;
@@ -545,7 +545,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			{
 				Engine_ActorSetPosition(17, 0, 0);
 				Engine_ActorSetPosition(18, 0, 0);
-				FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
+				FieldObject_SetTargetAndCallback(19, 0x10000, ValeHome_FaceTargetActions);
 			}
 		}
 		else
@@ -593,13 +593,13 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 			if (gGameState.entrance == 19)
 			{
-				HaidiaIe_RunActorPairEffectScene();
+				ValeHome_RunActorPairEffectScene();
 			}
 			else
 			{
 				if (Engine_GameFlagIsSet(0x834) != 0 && (record = Engine_GameFlagIsSet(0x842)) != 0)
 				{
-					HaidiaIe_RunScriptScene();
+					ValeHome_RunScriptScene();
 				}
 				else
 				{
@@ -628,7 +628,7 @@ static void EV20_TOUCH(void)
 		Camera_SetSpeed(0x19999, 0x3333);
 		Engine_CameraMoveTo(0xc50000, -1, 0x3000000, 1);
 		BattleFx_CommitObjectPositionAndWait();
-		Engine_EventSetMessage(MsgHaidiaGoAidElders);
+		Engine_EventSetMessage(MsgValeGoAidElders);
 		Engine_ActorRunRepeatedMotion(19, 2);
 		Event_ShowMessageAndWait(0x4013, 0, 10);
 		Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -660,16 +660,16 @@ static void EV20_TOUCH(void)
 #endif
 		Actor_SetSpeed(17, 0x19999, 0xcccc);
 		Actor_SetSpeed(18, 0x19999, 0xcccc);
-		Engine_ActorEnableActionCallback(17, (s32)HaidiaIe_Actor17Actions);
+		Engine_ActorEnableActionCallback(17, (s32)ValeHome_Actor17Actions);
 		Engine_EventWait(20);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 		Object_GetById(18)->priority_flags |= 1;
 #endif
-		Engine_ActorEnableActionCallback(18, (s32)HaidiaIe_Actor17Actions);
+		Engine_ActorEnableActionCallback(18, (s32)ValeHome_Actor17Actions);
 		Actor_FaceDirection(0, 0xc000, 0);
 		Actor_FaceDirection(25, 0xc000, 60);
-		Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderStepActions);
-		Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25StepActions);
+		Engine_ActorEnableActionCallback(0, (s32)ValeHome_LeaderStepActions);
+		Object_SetActionCallbackAndRefreshById(25, (s32)ValeHome_Actor25StepActions);
 		Engine_EventWait(20);
 		Engine_ActorFaceDirection(0, 0, 0);
 		Engine_ActorFaceDirection(25, 0, 10);
@@ -714,9 +714,9 @@ static void EV20_TOUCH(void)
 		BattleFx_CommitObjectPositionAndWait();
 		Engine_CameraSetSpeed(0xcccc, 0x1999);
 		Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
-		Engine_ActorEnableActionCallback(22, (s32)HaidiaIe_Actor22Actions);
+		Engine_ActorEnableActionCallback(22, (s32)ValeHome_Actor22Actions);
 		Object_RefreshSelectorById(22);
-		HaidiaIe_TurnAndWaitValue(22, 0x2000, 60);
+		ValeHome_TurnAndWaitValue(22, 0x2000, 60);
 		Engine_ActorRunRepeatedMotion(19, 2);
 		Event_SayThenWait(19, 10);
 		Engine_ActorSetAnimationAndWait(22, 3);
@@ -763,13 +763,13 @@ static void EV20_TOUCH(void)
 		}
 		Engine_ActorWaitForMove(22);
 		Engine_ActorSetPosition(22, 0, 0);
-		FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
+		FieldObject_SetTargetAndCallback(19, 0x10000, ValeHome_FaceTargetActions);
 		Engine_GameFlagSet(0x840);
 		Engine_EventEnd();
 	}
 }
 
-static void HaidiaIe_RunScriptScene(void)
+static void ValeHome_RunScriptScene(void)
 {
 	u8 *rec7;
 
@@ -788,7 +788,7 @@ static void HaidiaIe_RunScriptScene(void)
 	Engine_TaskWait(1);
 	Actor_SetSpeed(0, 0x13333, 0x9999);
 	Engine_ActorWalkToAndWait(0, 93, 0x157);
-	Engine_EventSetMessage(MsgHaidiaOnlyTwoSurvived);
+	Engine_EventSetMessage(MsgValeOnlyTwoSurvived);
 	Engine_EventShowMessage(23, 0);
 	Engine_AudioPlayCue(61);
 	rec7[85] = 0;
@@ -883,7 +883,7 @@ static void FieldScene_RunGroupChoreography(void)
 	SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
 	Engine_ActorRunRepeatedMotion(25, 2);
 	Event_SayThenWait(0x1019, 10);
-	FieldObject_SetTargetAndCallback(0, 0x10019, HaidiaIe_FaceTargetActions);
+	FieldObject_SetTargetAndCallback(0, 0x10019, ValeHome_FaceTargetActions);
 	Actor_WalkToAndWait(25, 93, 0x169);
 	SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
 	Event_SayThenWait(25, 20);
@@ -904,16 +904,16 @@ static void FieldScene_RunGroupChoreography(void)
 	Actor_SetAttachedEffect(0, 0x102);
 	Engine_ActorSetAttachedEffect(25, 0x102);
 	Engine_EventWait(80);
-	Engine_ActorEnableActionCallback(24, (s32)HaidiaIe_Actor24Actions);
+	Engine_ActorEnableActionCallback(24, (s32)ValeHome_Actor24Actions);
 	Engine_EventWait(6);
-	Engine_ActorEnableActionCallback(23, (s32)HaidiaIe_Actor23Actions);
+	Engine_ActorEnableActionCallback(23, (s32)ValeHome_Actor23Actions);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, (s32)HaidiaIe_LeaderActions);
+	Engine_ActorEnableActionCallback(0, (s32)ValeHome_LeaderActions);
 	Engine_EventWait(6);
-	Object_SetActionCallbackAndRefreshById(25, (s32)HaidiaIe_Actor25Actions);
+	Object_SetActionCallbackAndRefreshById(25, (s32)ValeHome_Actor25Actions);
 	Battle_SetStart(2);
 	{
-		const void *message = &SceneId_HaidiaIe;
+		const void *message = &SceneId_ValeHome;
 
 		Party_SetFields1ceAnd1d0((s32)message, 19);
 		Event_SetDefeatDestination((s32)message, 19);
@@ -922,7 +922,7 @@ static void FieldScene_RunGroupChoreography(void)
 	Engine_GameFlagSet(0x11a);
 }
 
-static void HaidiaIe_RunActorPairEffectScene(void)
+static void ValeHome_RunActorPairEffectScene(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -973,13 +973,13 @@ static void HaidiaIe_RunActorPairEffectScene(void)
 	record = Object_GetById(23);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Engine_ActorEnableActionCallback(23, (s32)HaidiaIe_Actor23BounceActions);
+	Engine_ActorEnableActionCallback(23, (s32)ValeHome_Actor23BounceActions);
 	Engine_EventWait(24);
 	Engine_ActorSetSpeed(24, 0x26666, 0x13333);
 	record = Object_GetById(24);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Object_SetActionCallbackAndRefreshById(24, (s32)HaidiaIe_Actor24BounceActions);
+	Object_SetActionCallbackAndRefreshById(24, (s32)ValeHome_Actor24BounceActions);
 	Engine_EventWait(40);
 	BattleFx_SetBlock30ValuesMaxZero();
 	BattleFx_SetBlock30Values12Zero();
@@ -1037,7 +1037,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(80);
 	Actor_ShowEmote(12, 0x101, 40);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 20);
-	Event_SetMessage(MSGNO(MsgHaidiaWhysEveryoneHanging));
+	Event_SetMessage(MSGNO(MsgValeWhysEveryoneHanging));
 	Event_SayThenWait(12, 10);
 	Actor_ShowEmote(11, 0x102, 20);
 	SceneActor_SetPairZeroAndValue(11, 0x1000, 10);
@@ -1053,7 +1053,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Event_SayThenWait(12, 20);
 	Actor_SetSpeed(11, 0x10000, 0x8000);
 	Actor_WalkToAndWait(11, 168, 0x26a);
-	HaidiaIe_TurnAndWait(11, 0xf000, 10);
+	ValeHome_TurnAndWait(11, 0xf000, 10);
 	Engine_ActorSetAnimation(11, 4);
 	Event_SayThenWait(11, 20);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1064,9 +1064,9 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_SetPosition(30, 0x6e0000, 0x2e80000);
 	Engine_TaskWait(2);
 	Engine_ActorSetAnimation(30, 3);
-	Engine_ActorEnableActionCallback(30, (s32)HaidiaIe_Actor30Actions);
+	Engine_ActorEnableActionCallback(30, (s32)ValeHome_Actor30Actions);
 	Engine_EventWait(40);
-	face_actions = (const u8 *)HaidiaIe_FaceTargetActions;
+	face_actions = (const u8 *)ValeHome_FaceTargetActions;
 	FieldObject_SetTargetAndCallback(11, 0x1001e, face_actions);
 	FieldObject_SetTargetAndCallback(12, 0x1001e, face_actions);
 	Object_RefreshSelectorById(30);
@@ -1126,7 +1126,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
 	Engine_ActorSetAnimation(31, 2);
-	actor31_actions = HaidiaIe_Actor31Actions;
+	actor31_actions = ValeHome_Actor31Actions;
 	Engine_ActorEnableActionCallback(31, actor31_actions);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(30, 3);
@@ -1147,14 +1147,14 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(20);
 	Actor_SetSpeed(11, 0x26666, 0x13333);
 	Actor_SetSpeed(12, 0x26666, 0x13333);
-	Engine_ActorEnableActionCallback(11, (s32)HaidiaIe_Actor11Actions);
+	Engine_ActorEnableActionCallback(11, (s32)ValeHome_Actor11Actions);
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
 	Battle_GetWorkObject1e0()->motion_flags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(12, (s32)HaidiaIe_Actor12Actions);
+	Engine_ActorEnableActionCallback(12, (s32)ValeHome_Actor12Actions);
 	Object_RefreshSelectorById(12);
 	SceneActor_SetPairZeroAndValue(12, 0x3000, 120);
 	Engine_ActorRunRepeatedMotion(13, 2);
@@ -1178,7 +1178,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_WalkToAndWait(16, 0x108, 0x320);
 	Actor_FaceDirection(16, 0x6000, 0);
 	Actor_ShowEmote(1, 0x102, 40);
-	HaidiaIe_TurnAndWait(1, 0xf000, 10);
+	ValeHome_TurnAndWait(1, 0xf000, 10);
 	Event_SayThenWait(1, 10);
 	Engine_ActorSetAnimationAndWait(17, 4);
 	Event_SayThenWait(17, 10);
@@ -1214,7 +1214,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_ShowEmote(0, 0x101, 60);
 	Engine_ActorRunRepeatedMotion(16, 1);
 	Event_SayThenWait(16, 10);
-	HaidiaIe_TurnAndWait(1, 0xf000, 10);
+	ValeHome_TurnAndWait(1, 0xf000, 10);
 	Actor_ShowEmote(1, 0x101, 20);
 	Engine_ActorSetAnimationAndWait(16, 4);
 	Event_SayThenWait(16, 10);
@@ -1288,7 +1288,7 @@ static void Scene_RunExtendedActorSequence(void)
 	ObjectMotion_Launch(22, 4, 0);
 	ObjectMotion_Launch(25, 4, 0);
 	ObjectMotion_Launch(28, 4, 0);
-	Engine_MessageShowCentered(MSGNO(MsgHaidiaFarewell), 1);
+	Engine_MessageShowCentered(MSGNO(MsgValeFarewell), 1);
 	v5 = 1;
 	Engine_EventWait(80);
 	Object_GetById(0)->priority_flags |= v5;
@@ -1303,7 +1303,7 @@ static void Scene_RunExtendedActorSequence(void)
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
-	pair_actions = HaidiaIe_Actor0And1Actions;
+	pair_actions = ValeHome_Actor0And1Actions;
 	Engine_ActorEnableActionCallback(0, pair_actions);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x6666, 0xccc);
@@ -1347,7 +1347,7 @@ static void OverlayObject_UpdateOnFrameBit1(s32 obj)
 	}
 	if ((gFrameCount & 15) == 0)
 	{
-		HaidiaIe_SpawnEffectPair(obj);
+		ValeHome_SpawnEffectPair(obj);
 	}
 }
 
@@ -1360,7 +1360,7 @@ static void SceneEffect_UpdateByFrameBits(s32 no)
 	}
 	if ((gFrameCount & 15) == 0)
 	{
-		HaidiaIe_SpawnEffectPair(no);
+		ValeHome_SpawnEffectPair(no);
 	}
 }
 
@@ -1376,7 +1376,7 @@ static void SceneEffect_UpdateByFrameBit(s32 no)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
 
-static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
+static void ValeHome_SpawnEffectPair(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -1510,11 +1510,11 @@ static void SceneState_SetValues352_365_2116_2117_40(void)
 	Engine_EventRequestExit(40);
 }
 
-u32 HaidiaIe_Actor22ActionsHead[] = {
+u32 ValeHome_Actor22ActionsHead[] = {
 	0x1000000, 0x2020101, 0x3030302, 0x5040404, 0x6060505, 0x1000006, 0x3020201, 0x5040403,
 };
 
-s32 HaidiaIe_Actor22Actions[] = {
+s32 ValeHome_Actor22Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(214), 0, PIXELS(721)),
 	SC_SYNC,
@@ -1530,7 +1530,7 @@ s32 HaidiaIe_Actor22Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor24Actions[] = {
+s32 ValeHome_Actor24Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(153),
@@ -1542,7 +1542,7 @@ s32 HaidiaIe_Actor24Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor23Actions[] = {
+s32 ValeHome_Actor23Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(153),
@@ -1554,7 +1554,7 @@ s32 HaidiaIe_Actor23Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_LeaderActions[] = {
+s32 ValeHome_LeaderActions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(152),
@@ -1566,7 +1566,7 @@ s32 HaidiaIe_LeaderActions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor25Actions[] = {
+s32 ValeHome_Actor25Actions[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_SE(152),
@@ -1578,7 +1578,7 @@ s32 HaidiaIe_Actor25Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor23BounceActions[] = {
+s32 ValeHome_Actor23BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1606,7 +1606,7 @@ s32 HaidiaIe_Actor23BounceActions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor24BounceActions[] = {
+s32 ValeHome_Actor24BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1632,12 +1632,12 @@ s32 HaidiaIe_Actor24BounceActions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_FaceTargetActions[] = {
+s32 ValeHome_FaceTargetActions[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 HaidiaIe_Actor30Actions[] = {
+s32 ValeHome_Actor30Actions[] = {
 	SC_MOVE(PIXELS(132), 0, PIXELS(636)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(171), 0, PIXELS(629)),
@@ -1653,7 +1653,7 @@ s32 HaidiaIe_Actor30Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor31Actions[] = {
+s32 ValeHome_Actor31Actions[] = {
 	SC_MOVE(PIXELS(271), 0, PIXELS(571)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(187), 0, PIXELS(577)),
@@ -1667,7 +1667,7 @@ s32 HaidiaIe_Actor31Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor11Actions[] = {
+s32 ValeHome_Actor11Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1683,7 +1683,7 @@ s32 HaidiaIe_Actor11Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor12Actions[] = {
+s32 ValeHome_Actor12Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1699,7 +1699,7 @@ s32 HaidiaIe_Actor12Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor0And1Actions[] = {
+s32 ValeHome_Actor0And1Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(216), 0, PIXELS(854)),
 	SC_SYNC,
@@ -1709,7 +1709,7 @@ s32 HaidiaIe_Actor0And1Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor21Actions[] = {
+s32 ValeHome_Actor21Actions[] = {
 	SC_SET(SW_SPEED, 0x8000),
 	SC_SET(SW_ACCEL, 3276),
 	SC_SET(SW_COLLISION, 3),
@@ -1733,7 +1733,7 @@ s32 HaidiaIe_Actor21Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor17Actions[] = {
+s32 ValeHome_Actor17Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(148), 0, PIXELS(758)),
 	SC_SYNC,
@@ -1746,7 +1746,7 @@ s32 HaidiaIe_Actor17Actions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_LeaderStepActions[] = {
+s32 ValeHome_LeaderStepActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(196), 0, PIXELS(774)),
 	SC_SYNC,
@@ -1754,7 +1754,7 @@ s32 HaidiaIe_LeaderStepActions[] = {
 	SC_END,
 };
 
-s32 HaidiaIe_Actor25StepActions[] = {
+s32 ValeHome_Actor25StepActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(196), 0, PIXELS(790)),
 	SC_SYNC,
@@ -1762,7 +1762,7 @@ s32 HaidiaIe_Actor25StepActions[] = {
 	SC_END,
 };
 
-struct SceneEntrance gHaidiaIeEntrances[] = {
+struct SceneEntrance gValeHomeEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1780,7 +1780,7 @@ struct SceneEntrance gHaidiaIeEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gHaidiaIeExits[] = {
+u32 gValeHomeExits[] = {
 	SCENE_EXITS(5),
 	SCENE_EXIT(1, 7, 8),
 	SCENE_EXIT(2, 8, 3),
@@ -1802,7 +1802,7 @@ u32 gHaidiaIeExits[] = {
 	SCENE_EXITS_END,
 };
 
-u32 gHaidiaIeExitsFlag834[] = {
+u32 gValeHomeExitsFlag834[] = {
 	SCENE_EXITS(5),
 	SCENE_EXIT(1, 7, 8),
 	SCENE_EXIT(2, 8, 3),
@@ -1816,7 +1816,7 @@ u32 gHaidiaIeExitsFlag834[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gHaidiaIePlacements[] = {
+struct ScenePlacement gValeHomePlacements[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1855,14 +1855,14 @@ struct ScenePlacement gHaidiaIePlacements[] = {
 		PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x30, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaIePlacementsFlag834[] = {
+struct ScenePlacement gValeHomePlacementsFlag834[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1909,14 +1909,14 @@ struct ScenePlacement gHaidiaIePlacementsFlag834[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaIePlacementsEntrance12[] = {
+struct ScenePlacement gValeHomePlacementsEntrance12[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(225), 0, PIXELS(814), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(607), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1963,7 +1963,7 @@ struct ScenePlacement gHaidiaIePlacementsEntrance12[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaIePlacementsFlag87a[] = {
+struct ScenePlacement gValeHomePlacementsFlag87a[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1995,18 +1995,18 @@ struct ScenePlacement gHaidiaIePlacementsFlag87a[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gHaidiaIeEvents[] = {
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaQuietDay) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaSukuretaHadVisitors) },
+struct SceneEvent gValeHomeEvents[] = {
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeQuietDay) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeKradenHadVisitors) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaChosenPeople) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaProudOfAdeptGrandfather) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeChosenPeople) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeProudOfAdeptGrandfather) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Villager_AskAboutTheTravelers) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaPracticePsynergy) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValePracticePsynergy) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaWalkToRecoverPsynergy) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHaidiaFoodStoredForWinter) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeWalkToRecoverPsynergy) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgValeFoodStoredForWinter) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
@@ -2023,14 +2023,14 @@ struct SceneEvent gHaidiaIeEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaIeEventsFlag834[] = {
+struct SceneEvent gValeHomeEventsFlag834[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlagGatedMessageStep) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaOldWomanCannotUsePsynergy) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaExhaustedFromFallingRocks) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaFelixFellInRiver) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOldWomanCannotUsePsynergy) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeExhaustedFromFallingRocks) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeFelixFellInRiver) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleAuxiliarySequence) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaRaceAgainstTime) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeRaceAgainstTime) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
@@ -2043,33 +2043,33 @@ struct SceneEvent gHaidiaIeEventsFlag834[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaIeEventsEntrance12[] = {
+struct SceneEvent gValeHomeEventsEntrance12[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaIeEventsAfterLeaving[] = {
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaTremorsSettled) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaRoadToKuupuappu) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgHaidiaRoadToGomaRange) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgHaidiaPsynergyStonePowder) },
+struct SceneEvent gValeHomeEventsAfterLeaving[] = {
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeTremorsSettled) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeRoadToVault) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgValeRoadToGomaRange) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgValePsynergyStonePowder) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlagGatedMessageStep) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRunpaFoundedNorthernTown) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaDoraHasBeenCrying) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaStonesScatteredByEruption) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeLunpaFoundedNorthernTown) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeDoraHasBeenCrying) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeStonesScatteredByEruption) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaReplenishPsynergyBeforeDungeon) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeReplenishPsynergyBeforeDungeon) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaWorriedAboutAnotherEruption) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaKuupuappuUndergroundPath) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgHaidiaGomaWinterCold) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgHaidiaStonesPowerAleph) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaProofOfWiseOne) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRunpaThievesChanged) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaDoraMustBeLonely) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaLuckyToFindPsynergyStones) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaComeBackAlive) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaRecoverPsynergyByWalking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgHaidiaStonesReplenishPsynergy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeWorriedAboutAnotherEruption) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeVaultUndergroundPath) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgValeGomaWinterCold) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgValeStonesPowerAleph) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeProofOfWiseOne) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeLunpaThievesChanged) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeDoraMustBeLonely) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeLuckyToFindPsynergyStones) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAlive) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeRecoverPsynergyByWalking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgValeStonesReplenishPsynergy) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
@@ -2086,30 +2086,30 @@ struct SceneEvent gHaidiaIeEventsAfterLeaving[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaIeEventsFlag87a[] = {
+struct SceneEvent gValeHomeEventsFlag87a[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaCameBackSooner) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaMadeFriendsOnJourney) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaRiverHeatedAndCooled) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeCameBackSooner) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeMadeFriendsOnJourney) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeRiverHeatedAndCooled) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlagGatedMessageStep) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaReturnHowHaveYouBeen) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaWelcomeHome) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaWantToMakeFriends) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaEruptionMadeMess) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgHaidiaNorthwestCrack) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeReturnHowHaveYouBeen) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHome) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeWantToMakeFriends) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeEruptionMadeMess) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgValeNorthwestCrack) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_PsynergyStoneIsGone) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaSurprisedByEarlyReturn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRobinHasGrown) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaNewFriendsAreAdepts) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaEruptionHeatsRiver) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaStrangeEventsElsewhere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaWhenDidYouReturn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaPlayTogetherAgain) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaWantToJourney) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaLavaBurntOtherSide) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgHaidiaCrackWidening) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeSurprisedByEarlyReturn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeIsaacHasGrown) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeNewFriendsAreAdepts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeEruptionHeatsRiver) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeStrangeEventsElsewhere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeWhenDidYouReturn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValePlayTogetherAgain) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeWantToJourney) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeLavaBurntOtherSide) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgValeCrackWidening) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x415, 0x306, EVENT_SCRIPT(Scene_PsynergyStoneIsGone) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgHaidiaEruptionTooMuchForPeople) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgValeEruptionTooMuchForPeople) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -2127,6 +2127,6 @@ struct SceneEvent gHaidiaIeEventsFlag87a[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 HaidiaIe_CellSteps[] = {
+u16 ValeHome_CellSteps[] = {
 	MAP_CELL_STEP(0, 57, 2, 2, 1), MAP_CELL_STEP(0, 59, 2, 2, 1), MAP_CELL_STEP(2, 59, 2, 2, 1), MAP_CELL_STEPS_END,
 };

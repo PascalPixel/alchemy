@@ -156,7 +156,7 @@ static s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 	return 1;
 }
 
-static s32 Makyuri_FollowLeader(struct FieldActor *actor)
+static s32 Mercury_FollowLeader(struct FieldActor *actor)
 {
 	struct FieldActor	*leader;
 	struct FollowSprite *sprite;
@@ -207,7 +207,7 @@ static s32 Makyuri_FollowLeader(struct FieldActor *actor)
 	return 1;
 }
 
-static void MakyuriHeya_SpawnSparkPair(void)
+static void MercuryLighthouse_SpawnSparkPair(void)
 {
 	struct SpawnPoint  *point;
 	struct FieldActor  *spark;
@@ -219,7 +219,7 @@ static void MakyuriHeya_SpawnSparkPair(void)
 	{
 		spark->terrain_height = point->value;
 		sprite = spark->sprite;
-		Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
+		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
 		spark->motion_flags = 0;
 		spark->timer = 0;
 		spark->linked_object = (struct FieldActor *)point;
@@ -235,7 +235,7 @@ static void MakyuriHeya_SpawnSparkPair(void)
 	{
 		spark->terrain_height = point->value;
 		sprite = spark->sprite;
-		Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
+		Engine_ObjectSetScript(spark, MercuryLighthouse_SparkScript);
 		spark->motion_flags = 0;
 		spark->timer = 0;
 		spark->linked_object = (struct FieldActor *)point;
@@ -249,7 +249,7 @@ static void MakyuriHeya_SpawnSparkPair(void)
 	Engine_AudioPlayCue(130);
 }
 
-void MakyuriIriguchi_RaisePillar(void)
+void MercuryEntrance_RaisePillar(void)
 {
 	struct PillarState *state;
 	u8				   *leader;
@@ -272,7 +272,7 @@ void MakyuriIriguchi_RaisePillar(void)
 		{
 			spr = *(struct Sprite39b **)(obj + 80);
 			*(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-			Engine_ObjectSetScript(obj, Makyuri_PillarScript);
+			Engine_ObjectSetScript(obj, Mercury_PillarScript);
 			((struct Obj *)obj)->owner = leader;
 			((struct Obj *)obj)->f85 = 4;
 			((struct Obj *)obj)->y += -0x8000;
@@ -292,7 +292,7 @@ void MakyuriIriguchi_RaisePillar(void)
 	}
 	for (step = state->step; step <= 2; step++)
 	{
-		MakyuriHeya_SpawnSparkPair();
+		MercuryLighthouse_SpawnSparkPair();
 		Engine_TaskWait(30);
 		pillar[84] = 1;
 		Object_SetMode(pillar, 5 - step);
@@ -334,7 +334,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 	if (target != 0)
 	{
 		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
+		Engine_ObjectSetScript(target, (s32)Mercury_ScaleCounterScript);
 		Object_SetMode(target, 7);
 		record[5] = 0;
 	}
@@ -346,7 +346,7 @@ struct SceneTimer
 	s32 count;
 };
 
-void Makyuri_RunActorMove(void)
+void Mercury_RunActorMove(void)
 {
 	struct FieldStepWork *work;
 	struct PushState	 *state;
@@ -371,8 +371,8 @@ void Makyuri_RunActorMove(void)
 	flags = &actor->motion_flags;
 	saved = *flags;
 	keys = gKeysHeld;
-	angle = Makyuri_MoveAngles[(keys >> 4) & 15];
-	if ((s16)Makyuri_MoveAngles[(keys >> 4) & 15] == -1)
+	angle = Mercury_MoveAngles[(keys >> 4) & 15];
+	if ((s16)Mercury_MoveAngles[(keys >> 4) & 15] == -1)
 		return;
 	pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
 	pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;
@@ -391,7 +391,7 @@ void Makyuri_RunActorMove(void)
 	if (obj != NULL)
 	{
 		((union FieldObject *)obj)->effect.spin = 0;
-		Engine_ObjectSetScript(obj, Makyuri_ScaleCounterScript);
+		Engine_ObjectSetScript(obj, Mercury_ScaleCounterScript);
 		Object_SetMode(obj, 7);
 		state->effect = NULL;
 	}
@@ -404,7 +404,7 @@ void Makyuri_RunActorMove(void)
 			sprite = obj->sprite;
 			((struct ObjectRuntime *)obj)->terrain_height =
 				((struct ObjectRuntime *)source)->terrain_height;
-			Engine_ObjectSetScript(obj, Makyuri_RampScript);
+			Engine_ObjectSetScript(obj, Mercury_RampScript);
 			obj->motion_flags = 0;
 			((union FieldObject *)obj)->effect.spin = 0;
 			obj->priority_flags = 2;
@@ -473,7 +473,7 @@ void Makyuri_RunActorMove(void)
 	work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
 }
 
-void Makyuri_TickSpawnTimer(void)
+void Mercury_TickSpawnTimer(void)
 {
 	struct SceneTimer *timer;
 	struct FieldActor *point;

@@ -4,34 +4,34 @@
 #include "types.h"
 #include "edition.h"
 
-extern char ResourceId_SuharaGateBackdrop;
-extern char ResourceId_TakaraShimaBackdrop;
-extern char ResourceId_TakaraShimaCaveBackdrop;
-extern char ResourceId_KorosseoBackdrop;
-extern char ResourceId_VinasuChojoStormBackdrop;
-extern char ResourceId_VinasuChojoBackdrop;
-extern char ResourceId_VinasuHeyaBackdrop;
-extern char ResourceId_SuharaSabakuBackdrop;
-extern char ResourceId_ArutamiraDouBackdrop;
-extern char ResourceId_BabiChikaBackdrop;
-extern char ResourceId_BabiIriguchiBackdrop;
-extern char ResourceId_RamakanSabakuBackdrop;
-extern char ResourceId_MogoruMoriBackdrop;
-extern char ResourceId_MakyuriChojoBackdrop;
-extern char ResourceId_FuneHeyaBackdrop;
-extern char ResourceId_ImiruFuchinBackdrop;
-extern char ResourceId_KorimaMoriBackdrop;
-extern char ResourceId_ToretoHeyaBackdrop;
+extern char ResourceId_SuhallaGateBackdrop;
+extern char ResourceId_PirateShipBackdrop;
+extern char ResourceId_CrossboneIsleCaveBackdrop;
+extern char ResourceId_ColossoBackdrop;
+extern char ResourceId_VenusAerieStormBackdrop;
+extern char ResourceId_VenusAerieBackdrop;
+extern char ResourceId_VenusLighthouseBackdrop;
+extern char ResourceId_SuhallaDesertBackdrop;
+extern char ResourceId_AltmillerCaveBackdrop;
+extern char ResourceId_TunnelRuinsBackdrop;
+extern char ResourceId_BabiLighthouseBackdrop;
+extern char ResourceId_LamakanDesertBackdrop;
+extern char ResourceId_MogallForestBackdrop;
+extern char ResourceId_MercuryAerieBackdrop;
+extern char ResourceId_TolbiShipInteriorsBackdrop;
+extern char ResourceId_ImilFuchinFallsBackdrop;
+extern char ResourceId_KolimaForestBackdrop;
+extern char ResourceId_TretInteriorsBackdrop;
 extern char ResourceId_InteriorBackdrop;
-extern char ResourceId_ArutinYamaBackdrop;
-extern char ResourceId_FuneKanpanBackdrop;
-extern char ResourceId_MakyuriHeyaBackdrop;
-extern char ResourceId_HaidiaArashiBackdrop;
-extern char ResourceId_ToretoEdaBackdrop;
+extern char ResourceId_AltinPeakBackdrop;
+extern char ResourceId_TolbiShipDeckBackdrop;
+extern char ResourceId_MercuryLighthouseBackdrop;
+extern char ResourceId_ValeStormBackdrop;
+extern char ResourceId_TretBranchBackdrop;
 extern char ResourceId_BeachBackdrop;
 extern char ResourceId_SnowfieldBackdrop;
 extern char ResourceId_GrasslandBackdrop;
-extern char ResourceId_SoruShindenBackdrop;
+extern char ResourceId_SolSanctumBackdrop;
 extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
@@ -39,35 +39,35 @@ extern char ResourceId_DuskCloudsBackdrop;
 // The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
 // reads this list.
 const u32 DisplayScroll_UnusedSlideResources[] = {
-    (u32)&ResourceId_HaidiaArashiBackdrop,
-    (u32)&ResourceId_SoruShindenBackdrop,
+    (u32)&ResourceId_ValeStormBackdrop,
+    (u32)&ResourceId_SolSanctumBackdrop,
     (u32)&ResourceId_GrasslandBackdrop,
     (u32)&ResourceId_InteriorBackdrop,
     (u32)&ResourceId_ForestBackdrop,
-    (u32)&ResourceId_KorimaMoriBackdrop,
-    (u32)&ResourceId_ToretoHeyaBackdrop,
-    (u32)&ResourceId_ToretoEdaBackdrop,
+    (u32)&ResourceId_KolimaForestBackdrop,
+    (u32)&ResourceId_TretInteriorsBackdrop,
+    (u32)&ResourceId_TretBranchBackdrop,
     (u32)&ResourceId_SnowfieldBackdrop,
-    (u32)&ResourceId_MakyuriHeyaBackdrop,
-    (u32)&ResourceId_MakyuriChojoBackdrop,
-    (u32)&ResourceId_ImiruFuchinBackdrop,
-    (u32)&ResourceId_MogoruMoriBackdrop,
-    (u32)&ResourceId_ArutinYamaBackdrop,
-    (u32)&ResourceId_RamakanSabakuBackdrop,
-    (u32)&ResourceId_FuneKanpanBackdrop,
-    (u32)&ResourceId_FuneHeyaBackdrop,
+    (u32)&ResourceId_MercuryLighthouseBackdrop,
+    (u32)&ResourceId_MercuryAerieBackdrop,
+    (u32)&ResourceId_ImilFuchinFallsBackdrop,
+    (u32)&ResourceId_MogallForestBackdrop,
+    (u32)&ResourceId_AltinPeakBackdrop,
+    (u32)&ResourceId_LamakanDesertBackdrop,
+    (u32)&ResourceId_TolbiShipDeckBackdrop,
+    (u32)&ResourceId_TolbiShipInteriorsBackdrop,
     (u32)&ResourceId_BeachBackdrop,
-    (u32)&ResourceId_KorosseoBackdrop,
-    (u32)&ResourceId_ArutamiraDouBackdrop,
-    (u32)&ResourceId_SuharaSabakuBackdrop,
-    (u32)&ResourceId_TakaraShimaCaveBackdrop,
-    (u32)&ResourceId_TakaraShimaBackdrop,
-    (u32)&ResourceId_SuharaGateBackdrop,
-    (u32)&ResourceId_BabiChikaBackdrop,
-    (u32)&ResourceId_BabiIriguchiBackdrop,
-    (u32)&ResourceId_VinasuHeyaBackdrop,
-    (u32)&ResourceId_VinasuChojoBackdrop,
-    (u32)&ResourceId_VinasuChojoStormBackdrop,
+    (u32)&ResourceId_ColossoBackdrop,
+    (u32)&ResourceId_AltmillerCaveBackdrop,
+    (u32)&ResourceId_SuhallaDesertBackdrop,
+    (u32)&ResourceId_CrossboneIsleCaveBackdrop,
+    (u32)&ResourceId_PirateShipBackdrop,
+    (u32)&ResourceId_SuhallaGateBackdrop,
+    (u32)&ResourceId_TunnelRuinsBackdrop,
+    (u32)&ResourceId_BabiLighthouseBackdrop,
+    (u32)&ResourceId_VenusLighthouseBackdrop,
+    (u32)&ResourceId_VenusAerieBackdrop,
+    (u32)&ResourceId_VenusAerieStormBackdrop,
     (u32)&ResourceId_DuskCloudsBackdrop,
     (u32)&ResourceId_VioletSkyBackdrop,
     0
@@ -76,26 +76,26 @@ const u32 DisplayScroll_UnusedSlideResources[] = {
 // The backdrops the slideshow fades between, in turn; 0 ends the list,
 // and the table has room for 25.
 const u32 DisplayScroll_SlideResources[25] = {
-    (u32)&ResourceId_HaidiaArashiBackdrop,
-    (u32)&ResourceId_SoruShindenBackdrop,
+    (u32)&ResourceId_ValeStormBackdrop,
+    (u32)&ResourceId_SolSanctumBackdrop,
     (u32)&ResourceId_InteriorBackdrop,
-    (u32)&ResourceId_KorimaMoriBackdrop,
-    (u32)&ResourceId_ToretoEdaBackdrop,
+    (u32)&ResourceId_KolimaForestBackdrop,
+    (u32)&ResourceId_TretBranchBackdrop,
     (u32)&ResourceId_SnowfieldBackdrop,
-    (u32)&ResourceId_MakyuriHeyaBackdrop,
-    (u32)&ResourceId_ImiruFuchinBackdrop,
-    (u32)&ResourceId_MogoruMoriBackdrop,
-    (u32)&ResourceId_ArutinYamaBackdrop,
-    (u32)&ResourceId_RamakanSabakuBackdrop,
-    (u32)&ResourceId_FuneKanpanBackdrop,
-    (u32)&ResourceId_FuneHeyaBackdrop,
+    (u32)&ResourceId_MercuryLighthouseBackdrop,
+    (u32)&ResourceId_ImilFuchinFallsBackdrop,
+    (u32)&ResourceId_MogallForestBackdrop,
+    (u32)&ResourceId_AltinPeakBackdrop,
+    (u32)&ResourceId_LamakanDesertBackdrop,
+    (u32)&ResourceId_TolbiShipDeckBackdrop,
+    (u32)&ResourceId_TolbiShipInteriorsBackdrop,
     (u32)&ResourceId_BeachBackdrop,
-    (u32)&ResourceId_KorosseoBackdrop,
-    (u32)&ResourceId_SuharaSabakuBackdrop,
-    (u32)&ResourceId_BabiChikaBackdrop,
-    (u32)&ResourceId_BabiIriguchiBackdrop,
-    (u32)&ResourceId_VinasuHeyaBackdrop,
-    (u32)&ResourceId_VinasuChojoBackdrop,
+    (u32)&ResourceId_ColossoBackdrop,
+    (u32)&ResourceId_SuhallaDesertBackdrop,
+    (u32)&ResourceId_TunnelRuinsBackdrop,
+    (u32)&ResourceId_BabiLighthouseBackdrop,
+    (u32)&ResourceId_VenusLighthouseBackdrop,
+    (u32)&ResourceId_VenusAerieBackdrop,
     (u32)&ResourceId_DuskCloudsBackdrop,
     0
 };

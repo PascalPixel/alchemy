@@ -1297,10 +1297,10 @@ Func_080ad0a8:
 Owner_AdjustFirstValueFar:
 	.incbin "baserom.gba", 0x000b60c0, 0x00000008
 	.section .rom.000b60c8, "ax"
-	.global UnitEpAddFar
-	.type UnitEpAddFar, %function
+	.global UnitPpAddFar
+	.type UnitPpAddFar, %function
 	.thumb_func
-UnitEpAddFar:
+UnitPpAddFar:
 	.incbin "baserom.gba", 0x000b60c8, 0x00000008
 	.section .rom.000b60d0, "ax"
 	.global UnitRatioFar
@@ -1549,16 +1549,16 @@ Func_080ad208:
 Func_080ad210:
 	.incbin "baserom.gba", 0x000b6210, 0x00000008
 	.section .rom.000b6218, "ax"
-	.global Party_SetLeaderJasmineFar
-	.type Party_SetLeaderJasmineFar, %function
+	.global Party_SetLeaderJennaFar
+	.type Party_SetLeaderJennaFar, %function
 	.thumb_func
-Party_SetLeaderJasmineFar:
+Party_SetLeaderJennaFar:
 	.incbin "baserom.gba", 0x000b6218, 0x00000008
 	.section .rom.000b6220, "ax"
-	.global Party_SetLeaderGarciaFar
-	.type Party_SetLeaderGarciaFar, %function
+	.global Party_SetLeaderFelixFar
+	.type Party_SetLeaderFelixFar, %function
 	.thumb_func
-Party_SetLeaderGarciaFar:
+Party_SetLeaderFelixFar:
 	.incbin "baserom.gba", 0x000b6220, 0x00000008
 	.section .rom.000b6228, "ax"
 	.global Func_080ad228

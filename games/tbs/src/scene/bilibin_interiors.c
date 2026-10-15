@@ -20,7 +20,7 @@
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-	return (u8 *)BiribinoHeya_PrimaryTable;
+	return (u8 *)BilibinInteriors_PrimaryTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -30,13 +30,13 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSecondaryTable(void)
 {
-	return (u8 *)BiribinoHeya_SecondaryTable;
+	return (u8 *)BilibinInteriors_SecondaryTable;
 }
 
-s32 BiribinoHeya_PreparePlacements(void)
+s32 BilibinInteriors_PreparePlacements(void)
 {
-	ScenePlacement_ClipToView((s32)gBiribinoHeyaPlacements);
-	return (s32)gBiribinoHeyaPlacements;
+	ScenePlacement_ClipToView((s32)gBilibinInteriorsPlacements);
+	return (s32)gBilibinInteriorsPlacements;
 }
 
 static void EV16_TALK(void)
@@ -55,11 +55,11 @@ static void EV16_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage(MsgBiribinoThereWasAbleHealerIn);
+			Engine_EventSetMessage(MsgBilibinThereWasAbleHealerIn);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgBiribinoOurWeaponsBestCanFind);
+			Engine_EventSetMessage(MsgBilibinOurWeaponsBestCanFind);
 		}
 		Engine_EventShowMessage(16, 0);
 	}
@@ -83,11 +83,11 @@ static void EV18_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage(MsgBiribinoMustUsedTypesDangerBeing);
+			Engine_EventSetMessage(MsgBilibinMustUsedTypesDangerBeing);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgBiribinoTurnedOutWarriorsHiredBy);
+			Engine_EventSetMessage(MsgBilibinTurnedOutWarriorsHiredBy);
 		}
 		Engine_EventShowMessage(18, 0);
 	}
@@ -97,7 +97,7 @@ static void EV18_TALK(void)
 
 u8 *SceneData_GetTertiaryTable(void)
 {
-	return (u8 *)BiribinoHeya_TertiaryTable;
+	return (u8 *)BilibinInteriors_TertiaryTable;
 }
 
 static void EV17_TALK(void)
@@ -114,7 +114,7 @@ static void EV17_TALK(void)
 	{
 		if (GameFlag_IsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage(MsgBiribinoHaveEverHeardOcean);
+			Engine_EventSetMessage(MsgBilibinHaveEverHeardOcean);
 			Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
 			Engine_EventWait(10);
 			Event_AskYesNo(17, 0);
@@ -122,7 +122,7 @@ static void EV17_TALK(void)
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgBiribinoForSomeReasonOceanFills);
+			Engine_EventSetMessage(MsgBilibinForSomeReasonOceanFills);
 			Event_ShowMessage(17, 0);
 		}
 	}
@@ -132,7 +132,7 @@ static void EV17_TALK(void)
 static void FieldScene_ConfigureActor21Scene(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoImReallyWorriedAboutKolima);
+	Engine_EventSetMessage(MsgBilibinImReallyWorriedAboutKolima);
 	Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
 	Event_ShowMessage(21, 0);
 	Actor_FaceDirection(21, 0xc000, 10);
@@ -142,7 +142,7 @@ static void FieldScene_ConfigureActor21Scene(void)
 static void EV24_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoGrrr);
+	Engine_EventSetMessage(MsgBilibinGrrr);
 	Event_ShowMessageAndWait(24, 0, 20);
 	Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
@@ -161,7 +161,7 @@ static void FieldScene_RunActor27Sequence(void)
 	void Actor_FaceDirection();
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoDoBelieveTreeSpiritCan);
+	Engine_EventSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
 	Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
 	Event_OpenMessage(27, 0);
@@ -177,7 +177,7 @@ static void FieldScene_RunActor27Sequence(void)
 static void EV08_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoDoKnowIfHolyTree);
+	Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -185,7 +185,7 @@ static void EV08_TALK(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoDoKnowSilk);
+	Engine_EventSetMessage(MsgBilibinDoKnowSilk);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -204,12 +204,12 @@ static void EV19_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage(MsgBiribinoWasntCurseInKolimaHorrifying);
+		Engine_EventSetMessage(MsgBilibinWasntCurseInKolimaHorrifying);
 		Engine_EventAskYesNo(19, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgBiribinoCurseOnKolimaScaryDevelopment);
+		Engine_EventSetMessage(MsgBilibinCurseOnKolimaScaryDevelopment);
 		Engine_EventShowMessage(19, 0);
 	}
 
@@ -223,7 +223,7 @@ static void FieldScene_RunActor21SequenceOnFlag300(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x300) == 0)
 	{
-		Engine_EventSetMessage(MsgBiribinoTwoSpecialsOneDinnerOne);
+		Engine_EventSetMessage(MsgBilibinTwoSpecialsOneDinnerOne);
 		Event_ShowMessage(21, 0);
 		Actor_FaceDirection(21, 0x8000, 20);
 		Event_ShowMessage(21, 0);
@@ -235,7 +235,7 @@ static void FieldScene_RunActor21SequenceOnFlag300(void)
 		GameFlag_Set(0x300);
 	}
 	Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
-	Engine_EventSetMessage(MsgBiribinoIfWantMealSpeakWaitress);
+	Engine_EventSetMessage(MsgBilibinIfWantMealSpeakWaitress);
 	Event_ShowMessage(21, 0);
 	Actor_FaceDirection(21, 0xc000, 10);
 	Engine_EventEnd();
@@ -245,7 +245,7 @@ static void EV22_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoReallyThinkHeadChefHas);
+	Engine_EventSetMessage(MsgBilibinReallyThinkHeadChefHas);
 	Engine_EventShowMessage(0x16, 0);
 	Engine_ActorFaceActor(0x16, ACTOR_PARTY_LEADER, 0);
 	Engine_EventShowMessage(0x16, 0);
@@ -257,7 +257,7 @@ static void EV23_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoLetsSeeServeThemWater);
+	Engine_EventSetMessage(MsgBilibinLetsSeeServeThemWater);
 	Event_ShowMessage(23, 0);
 	Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
 	Event_ShowMessage(23, 0);
@@ -269,7 +269,7 @@ static void FieldScene_RunActor27Message(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoWasSomeMealDontJust);
+	Engine_EventSetMessage(MsgBilibinWasSomeMealDontJust);
 	Engine_EventAskYesNo(27, 0);
 	Engine_EventEnd();
 }
@@ -280,11 +280,11 @@ static void EV10_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage(MsgBiribinoEvenFrozenImilMustFeel);
+		Engine_EventSetMessage(MsgBilibinEvenFrozenImilMustFeel);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgBiribinoWhenSpringComesWantGo);
+		Engine_EventSetMessage(MsgBilibinWhenSpringComesWantGo);
 	}
 	Engine_EventShowMessage(10, 0);
 	Engine_EventEnd();
@@ -309,7 +309,7 @@ s32 FieldScene_SetupActor27OnEntry(void)
 	return 0;
 }
 
-struct SceneEntrance BiribinoHeya_PrimaryTable[] = {
+struct SceneEntrance BilibinInteriors_PrimaryTable[] = {
 	{ 0, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, 24, 32, 264, 240, 0 },
 	{ 2, CONDITION_ALWAYS, 400, 0, 264, FACING_NORTH, 0, 256, 0, 496, 288, 0 },
@@ -322,7 +322,7 @@ struct SceneEntrance BiribinoHeya_PrimaryTable[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 BiribinoHeya_SecondaryTable[] = {
+u32 BilibinInteriors_SecondaryTable[] = {
 	SCENE_EXITS(31),
 	SCENE_EXIT(1, 30, 4),
 	SCENE_EXIT(2, 30, 5),
@@ -335,7 +335,7 @@ u32 BiribinoHeya_SecondaryTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBiribinoHeyaPlacements[] = {
+struct ScenePlacement gBilibinInteriorsPlacements[] = {
 	{ 0x6c, 0x0, ACTOR_STAND,
 		PIXELS(104), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6a, 0x0, ACTOR_WANDER,
@@ -385,7 +385,7 @@ struct ScenePlacement gBiribinoHeyaPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent BiribinoHeya_TertiaryTable[] = {
+struct SceneEvent BilibinInteriors_TertiaryTable[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

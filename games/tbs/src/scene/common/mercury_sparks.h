@@ -2,7 +2,7 @@
 #include "fieldobj.h"
 #include "field_effect.h"
 
-static s32 Makyuri_TrailSparks(struct FieldActor *actor)
+static s32 Mercury_TrailSparks(struct FieldActor *actor)
 {
 	struct EffectOptions options;
 	s32					 velocity_y;

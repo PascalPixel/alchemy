@@ -5,10 +5,10 @@
 	.thumb_func
 Owner_AdjustFirstValueFar:
 	overlay_veneer Owner_AdjustFirstValue
-	.global UnitEpAddFar
+	.global UnitPpAddFar
 	.thumb_func
-UnitEpAddFar:
-	overlay_veneer UnitEpAdd
+UnitPpAddFar:
+	overlay_veneer UnitPpAdd
 	.global UnitRatioFar
 	.thumb_func
 UnitRatioFar:

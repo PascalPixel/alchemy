@@ -42,28 +42,28 @@
 
 // 前方宣言
 static void SceneEffect_LoadTablesAndStopDma0(void);
-static void BabiFune_ScheduleFade(void);
+static void LemurianShip_ScheduleFade(void);
 
 s32 Math_DivideUnsigned();
 
-u8 *BabiFune_GetEntrances(void)
+u8 *LemurianShip_GetEntrances(void)
 {
-	return BabiFune_SceneTableA;
+	return LemurianShip_SceneTableA;
 }
 
-s32 BabiFune_GetDefaultResult(void)
+s32 LemurianShip_GetDefaultResult(void)
 {
 	return 0;
 }
 
-u8 *BabiFune_GetExits(void)
+u8 *LemurianShip_GetExits(void)
 {
-	return BabiFune_SceneTableB;
+	return LemurianShip_SceneTableB;
 }
 
-u8 *BabiFune_GetPlacements(void)
+u8 *LemurianShip_GetPlacements(void)
 {
-	return BabiFune_SceneTableC;
+	return LemurianShip_SceneTableC;
 }
 
 static void EV01_TOUCH(void)
@@ -72,7 +72,7 @@ static void EV01_TOUCH(void)
 	Io_Write16(0, &PLTT_BACKDROP);
 }
 
-static void BabiFune_LoadTablesAndStopDma(void)
+static void LemurianShip_LoadTablesAndStopDma(void)
 {
 	SceneEffect_LoadTablesAndStopDma0();
 }
@@ -82,26 +82,26 @@ static void FieldScene_ConfigureFixedPointValues(void)
 	DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
-u8 *BabiFune_GetEvents(void)
+u8 *LemurianShip_GetEvents(void)
 {
-	return BabiFune_SceneTableD;
+	return LemurianShip_SceneTableD;
 }
 
-static void BabiFune_CyclePalette(void)
+static void LemurianShip_CyclePalette(void)
 {
 	u16 *frame;
 	s32	 v;
 
-	frame = &BabiFune_PaletteStep;
+	frame = &LemurianShip_PaletteStep;
 	v = Math_DivideUnsigned(*frame, 6);
-	Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)BabiFune_PaletteFrames),
+	Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)LemurianShip_PaletteFrames),
 		(void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
 	(*frame)++;
 	if (*frame > 35)
 		*frame = 0;
 }
 
-static void BabiFune_UpdateDriftingObject(u8 *obj)
+static void LemurianShip_UpdateDriftingObject(u8 *obj)
 {
 	u16 *wait = &((struct FieldActor *)obj)->timer;
 	s32	 left = *wait;
@@ -126,21 +126,21 @@ static void BabiFune_UpdateDriftingObject(u8 *obj)
 
 			*p = delay;
 		}
-		Engine_ObjectSetScript(obj, BabiFune_DriftScript);
+		Engine_ObjectSetScript(obj, LemurianShip_DriftScript);
 	}
 }
 
 static void SceneState_CountDownEveryFortyTicks(void)
 {
-	s32 n = BabiFune_CountTicks + 1;
+	s32 n = LemurianShip_CountTicks + 1;
 
-	BabiFune_CountTicks = n;
+	LemurianShip_CountTicks = n;
 	if (n == 40)
 	{
-		if (BabiFune_Count > 4)
+		if (LemurianShip_Count > 4)
 		{
-			BabiFune_Count -= 1;
-			BabiFune_CountTicks = 0;
+			LemurianShip_Count -= 1;
+			LemurianShip_CountTicks = 0;
 		}
 	}
 }
@@ -158,7 +158,7 @@ struct WaveMap
 	struct WaveMapLayer layers[8];
 };
 
-static void BabiFune_UpdateWaves(void)
+static void LemurianShip_UpdateWaves(void)
 {
 	/* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18 and is loaded again with ldrh for the register write (a 20-byte frame for 16). Without it differ 24, 223 instructions for 225. */
 	volatile u16			   blend;
@@ -170,49 +170,49 @@ static void BabiFune_UpdateWaves(void)
 	s32						   x, z;
 
 	map = gMapWork[0];
-	if (BabiFune_ShimmerActive != 0)
+	if (LemurianShip_ShimmerActive != 0)
 	{
-		swell = Iwram_MulQ16(Engine_MathSin(BabiFune_ShimmerPhase << 9), 3);
-		blend = BabiFune_Count + ((swell + 8) << 8);
+		swell = Iwram_MulQ16(Engine_MathSin(LemurianShip_ShimmerPhase << 9), 3);
+		blend = LemurianShip_Count + ((swell + 8) << 8);
 		Io_Write16(blend, &REG_BLDALPHA);
-		BabiFune_ShimmerPhase++;
+		LemurianShip_ShimmerPhase++;
 	}
-	if (BabiFune_SwellActive != 0)
+	if (LemurianShip_SwellActive != 0)
 	{
-		swell = Iwram_MulQ16(Engine_MathSin(BabiFune_SwellPhase << 9), 2) << 16;
-		map->layers[6].y = BabiFune_SwellLayerSixY + swell;
-		map->layers[7].y = BabiFune_SwellLayerSevenY + swell;
-		if (BabiFune_StoredSlot0 != -0x10000)
+		swell = Iwram_MulQ16(Engine_MathSin(LemurianShip_SwellPhase << 9), 2) << 16;
+		map->layers[6].y = LemurianShip_SwellLayerSixY + swell;
+		map->layers[7].y = LemurianShip_SwellLayerSevenY + swell;
+		if (LemurianShip_StoredSlot0 != -0x10000)
 		{
 			actor = Object_GetById(0);
-			actor->y.fixed = BabiFune_StoredSlot0 + swell;
-			actor->terrain_height = BabiFune_StoredSlot0 + swell;
+			actor->y.fixed = LemurianShip_StoredSlot0 + swell;
+			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
 			actor->motion_flags = 0;
 		}
-		if (BabiFune_StoredRecord1 != -0x10000)
+		if (LemurianShip_StoredRecord1 != -0x10000)
 		{
 			actor = Object_GetById(1);
-			actor->y.fixed = BabiFune_StoredRecord1 + swell;
-			actor->terrain_height = BabiFune_StoredSlot0 + swell;
+			actor->y.fixed = LemurianShip_StoredRecord1 + swell;
+			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
 			actor->motion_flags = 0;
 		}
-		if (BabiFune_StoredSlot3 != -0x10000)
+		if (LemurianShip_StoredSlot3 != -0x10000)
 		{
 			actor = Object_GetById(3);
-			actor->y.fixed = BabiFune_StoredSlot3 + swell;
-			actor->terrain_height = BabiFune_StoredSlot0 + swell;
+			actor->y.fixed = LemurianShip_StoredSlot3 + swell;
+			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
 			actor->motion_flags = 0;
 		}
-		if (BabiFune_StoredRecord2 != -0x10000)
+		if (LemurianShip_StoredRecord2 != -0x10000)
 		{
 			actor = Object_GetById(2);
-			actor->y.fixed = BabiFune_StoredRecord2 + swell;
-			actor->terrain_height = BabiFune_StoredSlot0 + swell;
+			actor->y.fixed = LemurianShip_StoredRecord2 + swell;
+			actor->terrain_height = LemurianShip_StoredSlot0 + swell;
 			actor->motion_flags = 0;
 		}
-		BabiFune_SwellPhase++;
+		LemurianShip_SwellPhase++;
 	}
-	if (BabiFune_DriftActive != 0 && (gFrameCount & 1) != 0)
+	if (LemurianShip_DriftActive != 0 && (gFrameCount & 1) != 0)
 	{
 		x = map->layers[4].unknown_10[0] & -0x10000;
 		z = map->layers[4].unknown_10[1] & -0x10000;
@@ -226,7 +226,7 @@ static void BabiFune_UpdateWaves(void)
 		actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
 		if (actor != 0)
 		{
-			actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
+			actor->update = (void (*)(union FieldObject *))LemurianShip_UpdateDriftingObject;
 			actor->timer = 60;
 			actor->work = 1;
 			actor->motion_flags = 0;
@@ -238,45 +238,45 @@ static void BabiFune_UpdateWaves(void)
 	}
 }
 
-static s32 BabiFune_StoreLeaderHeight(void)
+static s32 LemurianShip_StoreLeaderHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &BabiFune_StoredSlot0;
+	d = &LemurianShip_StoredSlot0;
 	p = Object_GetById(0);
 	*d = p->y.fixed;
 	return 0;
 }
 
-static s32 BabiFune_StoreActorOneHeight(void)
+static s32 LemurianShip_StoreActorOneHeight(void)
 {
 	s32				  *p;
 	struct FieldActor *rec;
 
-	p = &BabiFune_StoredRecord1;
+	p = &LemurianShip_StoredRecord1;
 	rec = Object_GetById(1);
 	*p = rec->y.fixed;
 	return 0;
 }
 
-static s32 BabiFune_StoreActorThreeHeight(void)
+static s32 LemurianShip_StoreActorThreeHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &BabiFune_StoredSlot3;
+	d = &LemurianShip_StoredSlot3;
 	p = Object_GetById(3);
 	*d = p->y.fixed;
 	return 0;
 }
 
-static s32 BabiFune_StoreActorTwoHeight(void)
+static s32 LemurianShip_StoreActorTwoHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
 
-	d = &BabiFune_StoredRecord2;
+	d = &LemurianShip_StoredRecord2;
 	p = Object_GetById(2);
 	*d = p->y.fixed;
 	return 0;
@@ -447,12 +447,12 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Actor_SetSpeed(1, 78643, 39321);
 	Actor_SetSpeed(2, 78643, 39321);
 	Actor_SetSpeed(3, 78643, 39321);
-	Engine_ActorEnableActionCallback(0, BabiFune_ActionScriptA);
+	Engine_ActorEnableActionCallback(0, LemurianShip_ActionScriptA);
 	Engine_EventWait(50);
 	Camera_MoveTo(17301504, -1, 13107200, 1);
-	Engine_ActorEnableActionCallback(1, BabiFune_ActionScriptB);
+	Engine_ActorEnableActionCallback(1, LemurianShip_ActionScriptB);
 	Engine_EventWait(50);
-	Engine_ActorEnableActionCallback(2, BabiFune_ActionScriptC);
+	Engine_ActorEnableActionCallback(2, LemurianShip_ActionScriptC);
 	Object_RefreshSelectorById(2);
 	Actor_FaceDirection(0, 16384, 0);
 	Actor_FaceDirection(1, 16384, 0);
@@ -463,7 +463,7 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(60);
 	Actor_FaceDirection(3, 32768, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(3, BabiFune_ActionScriptD);
+	Engine_ActorEnableActionCallback(3, LemurianShip_ActionScriptD);
 	Object_RefreshSelectorById(3);
 	Engine_ActorFaceDirection(3, 49152, 0);
 	Engine_EventWait(20);
@@ -482,7 +482,7 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(67);
 	MusicCommand_SetPitchAndUpdateFrequency(240);
-	BabiFune_ScheduleFade();
+	LemurianShip_ScheduleFade();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 	Engine_EventWait(30);
 #else
@@ -537,7 +537,7 @@ struct ScrollWork
 
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {
-	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
+	return (u16)(Iwram_MulQ16(LemurianShip_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
 static void EV10_SCRIPT(void)
@@ -581,19 +581,19 @@ static void EV10_SCRIPT(void)
 			Event_Wait(65);
 		}
 	}
-	BabiFune_ShimmerActive = 1;
-	BabiFune_ShimmerPhase = 0;
-	FieldScheduler_AddCallback(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
-	BabiFune_DriftActive = 1;
+	LemurianShip_ShimmerActive = 1;
+	LemurianShip_ShimmerPhase = 0;
+	FieldScheduler_AddCallback(LemurianShip_UpdateWaves, TASK_PRIORITY_SCENE);
+	LemurianShip_DriftActive = 1;
 	Event_Wait(20);
 	Event_PlayCue(163);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Event_Wait(60);
-	BabiFune_DriftActive = 1;
+	LemurianShip_DriftActive = 1;
 	Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-	BabiFune_CountTicks = 0;
+	LemurianShip_CountTicks = 0;
 	FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
@@ -604,11 +604,11 @@ static void EV10_SCRIPT(void)
 		Task_Wait(1);
 	} while (sunk <= 0x59ffff);
 	Engine_TaskRemoveCallback(SceneState_CountDownEveryFortyTicks);
-	BabiFune_DriftActive = 0;
+	LemurianShip_DriftActive = 0;
 	REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 3;
 	REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
 	REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
-	BabiFune_ShimmerActive = 0;
+	LemurianShip_ShimmerActive = 0;
 	Event_PlayCue(288);
 	Task_Wait(1);
 	Event_PlayCue(145);
@@ -620,15 +620,15 @@ static void EV10_SCRIPT(void)
 	}
 	Event_Wait(40);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	BabiFune_SwellLayerSixY = map->layers[6].y;
-	BabiFune_SwellLayerSevenY = map->layers[7].y;
-	BabiFune_SwellActive = 1;
+	LemurianShip_SwellLayerSixY = map->layers[6].y;
+	LemurianShip_SwellLayerSevenY = map->layers[7].y;
+	LemurianShip_SwellActive = 1;
 	for (dark = 16; dark >= 0; dark--)
 	{
 		REG_BLDY = dark;
 		Event_Wait(8);
 	}
-	FieldScheduler_AddCallback(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(LemurianShip_CyclePalette, TASK_PRIORITY_SCENE);
 	Event_PlayCue(80);
 	AudioCommand_WaitForStateByteClear();
 	Event_Wait(20);
@@ -636,7 +636,7 @@ static void EV10_SCRIPT(void)
 	Scene_RunExtendedPresentationSequence();
 }
 
-s32 BabiFune_SetupScene(void)
+s32 LemurianShip_SetupScene(void)
 {
 	struct WaveMap *map;
 	/* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2 and each step is stored there with strh (a 4-byte frame for none). Without it (2026-10-13, the BGxCNT writes chained as in EV10_SCRIPT) differ 23, 158 instructions for 165. */
@@ -784,11 +784,11 @@ struct FadeSprite
 	u32 tile;
 };
 
-static struct FadeSprite BabiFune_FadeSprites[24];
-static s16				 BabiFune_FadeStep;
-static s16				 BabiFune_FadeSlot;
+static struct FadeSprite LemurianShip_FadeSprites[24];
+static s16				 LemurianShip_FadeStep;
+static s16				 LemurianShip_FadeSlot;
 
-static void BabiFune_StepFade(void)
+static void LemurianShip_StepFade(void)
 {
 	u32 *entry;
 	u32	 tile;
@@ -796,15 +796,15 @@ static void BabiFune_StepFade(void)
 	s32	 x;
 	u32	 i;
 
-	tile = gVramBlockCache[BabiFune_FadeSlot].offset >> 5;
-	entry = (u32 *)BabiFune_FadeSprites;
-	if (BabiFune_FadeStep != 0)
-		BabiFune_FadeStep--;
+	tile = gVramBlockCache[LemurianShip_FadeSlot].offset >> 5;
+	entry = (u32 *)LemurianShip_FadeSprites;
+	if (LemurianShip_FadeStep != 0)
+		LemurianShip_FadeStep--;
 	for (i = 0; i < 8; i++)
 	{
 		s32 left;
 
-		step = BabiFune_FadeStep;
+		step = LemurianShip_FadeStep;
 		left = -step / 2;
 		*entry++ = 0;
 		*entry++ = (left & 0xff) | (i << 21) | 0x80004000;
@@ -818,7 +818,7 @@ static void BabiFune_StepFade(void)
 		*entry++ = tile;
 	}
 	i = 0;
-	x = (BabiFune_FadeStep / 2 + 152) & 0xff;
+	x = (LemurianShip_FadeStep / 2 + 152) & 0xff;
 	for (; i < 8; i++)
 	{
 		*entry++ = 0;
@@ -826,32 +826,32 @@ static void BabiFune_StepFade(void)
 		*entry++ = tile;
 	}
 	for (i = 0; i < 24; i++)
-		Runtime_PushSlotEntry(&BabiFune_FadeSprites[i], 255);
+		Runtime_PushSlotEntry(&LemurianShip_FadeSprites[i], 255);
 }
 
-static void BabiFune_ScheduleFade(void)
+static void LemurianShip_ScheduleFade(void)
 {
 	u8 *buf;
 
 	buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-	BabiFune_FadeSlot = Resource_FindFreeEntry();
+	LemurianShip_FadeSlot = Resource_FindFreeEntry();
 	Dma_Fill32(0x11111111, buf, 0x100);
-	Engine_VramLoad(BabiFune_FadeSlot, 0x100, (s32)buf);
+	Engine_VramLoad(LemurianShip_FadeSlot, 0x100, (s32)buf);
 
-	BabiFune_FadeStep = 0x30;
-	FieldScheduler_AddCallback(BabiFune_StepFade, 0xc80);
+	LemurianShip_FadeStep = 0x30;
+	FieldScheduler_AddCallback(LemurianShip_StepFade, 0xc80);
 }
 
-struct SceneEvent BabiFune_PaletteFrames[] = {
+struct SceneEvent LemurianShip_PaletteFrames[] = {
 	{0x69c05860, 0x7f20, 0x69c0, 0x48005860},
 	{0x69c05860, 0x7f20, 0x69c0, 0x5860},
 };
 
-s32 BabiFune_DriftScript[] = {
+s32 LemurianShip_DriftScript[] = {
 	SC_FREE,
 };
 
-s16 BabiFune_WaveSine[256] = {
+s16 LemurianShip_WaveSine[256] = {
 	0, 100, 200, 301, 401, 501, 601, 700,
 	799, 897, 995, 1092, 1189, 1284, 1379, 1474,
 	1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,
@@ -886,22 +886,22 @@ s16 BabiFune_WaveSine[256] = {
 	-799, -700, -601, -501, -401, -301, -200, -100,
 };
 
-struct SceneEntrance BabiFune_SceneTableA[] = {
+struct SceneEntrance LemurianShip_SceneTableA[] = {
 	{0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 BabiFune_SceneTableB[] = {
+u32 LemurianShip_SceneTableB[] = {
 	SCENE_EXITS(188),
 	SCENE_EXIT(1, 180, 31),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement BabiFune_SceneTableC[] = {
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
-	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
-	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+struct ScenePlacement LemurianShip_SceneTableC[] = {
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
 	{0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248), FACING_SOUTH,
 		TALK_KEEP_FACING, 0},
 	{0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312), FACING_SOUTH,
@@ -909,47 +909,47 @@ struct ScenePlacement BabiFune_SceneTableC[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent BabiFune_SceneTableD[] = {
+struct SceneEvent LemurianShip_SceneTableD[] = {
 	{EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-		EVENT_SCRIPT(BabiFune_LoadTablesAndStopDma)},
+		EVENT_SCRIPT(LemurianShip_LoadTablesAndStopDma)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_ConfigureFixedPointValues)},
 	{0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
 	{SCENE_EVENTS_END},
 };
 
-s32 BabiFune_ShimmerActive = 0;
+s32 LemurianShip_ShimmerActive = 0;
 
-s32 BabiFune_ShimmerPhase = 0;
+s32 LemurianShip_ShimmerPhase = 0;
 
-s32 BabiFune_Count = 16;
+s32 LemurianShip_Count = 16;
 
-s32 BabiFune_CountTicks = 0;
+s32 LemurianShip_CountTicks = 0;
 
-s32 BabiFune_DriftActive = 0;
+s32 LemurianShip_DriftActive = 0;
 
-s32 BabiFune_SwellActive = 0;
+s32 LemurianShip_SwellActive = 0;
 
-s32 BabiFune_SwellPhase = 0;
+s32 LemurianShip_SwellPhase = 0;
 
-s32 BabiFune_SwellLayerSixY = 0;
+s32 LemurianShip_SwellLayerSixY = 0;
 
-s32 BabiFune_SwellLayerSevenY = 0;
+s32 LemurianShip_SwellLayerSevenY = 0;
 
-s32 BabiFune_StoredSlot0 = -0x10000;
+s32 LemurianShip_StoredSlot0 = -0x10000;
 
-s32 BabiFune_StoredRecord1 = -0x10000;
+s32 LemurianShip_StoredRecord1 = -0x10000;
 
-s32 BabiFune_StoredSlot3 = -0x10000;
+s32 LemurianShip_StoredSlot3 = -0x10000;
 
-s32 BabiFune_StoredRecord2 = -0x10000;
+s32 LemurianShip_StoredRecord2 = -0x10000;
 
-u32 BabiFune_PaletteStep[] = {
+u32 LemurianShip_PaletteStep[] = {
 	0,
 };
 
-s32 BabiFune_ActionScriptA[] = {
+s32 LemurianShip_ActionScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-8), 0, 0),
 	SC_SYNC,
@@ -969,11 +969,11 @@ s32 BabiFune_ActionScriptA[] = {
 	SC_ARG(1),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(1),
-	SC_CALL(BabiFune_StoreLeaderHeight),
+	SC_CALL(LemurianShip_StoreLeaderHeight),
 	SC_END,
 };
 
-s32 BabiFune_ActionScriptB[] = {
+s32 LemurianShip_ActionScriptB[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(0, 0, PIXELS(-32)),
 	SC_SYNC,
@@ -991,11 +991,11 @@ s32 BabiFune_ActionScriptB[] = {
 	SC_ARG(1),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(1),
-	SC_CALL(BabiFune_StoreActorOneHeight),
+	SC_CALL(LemurianShip_StoreActorOneHeight),
 	SC_END,
 };
 
-s32 BabiFune_ActionScriptC[] = {
+s32 LemurianShip_ActionScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-20), 0, 0),
 	SC_SYNC,
@@ -1015,11 +1015,11 @@ s32 BabiFune_ActionScriptC[] = {
 	SC_ARG(1),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(1),
-	SC_CALL(BabiFune_StoreActorTwoHeight),
+	SC_CALL(LemurianShip_StoreActorTwoHeight),
 	SC_END,
 };
 
-s32 BabiFune_ActionScriptD[] = {
+s32 LemurianShip_ActionScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE_BY(PIXELS(-8), 0, 0),
 	SC_SYNC,
@@ -1037,6 +1037,6 @@ s32 BabiFune_ActionScriptD[] = {
 	SC_MOVE_BY(0, 0, PIXELS(-8)),
 	SC_SYNC,
 	SC_ARG(1),
-	SC_CALL(BabiFune_StoreActorThreeHeight),
+	SC_CALL(LemurianShip_StoreActorThreeHeight),
 	SC_END,
 };

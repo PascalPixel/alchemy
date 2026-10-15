@@ -207,8 +207,8 @@ const s8 *const UiText_ArticleTable[8] =
 #if !EDITION_INTERNATIONAL
 const u16 UiText_MarkGlyphCodes[] = {
 	TEXT_MARK_NONE,
-	TEXT_MARK_DAKUTEN,
-	TEXT_MARK_HANDAKUTEN,
+	TEXT_MARK_VOICED,
+	TEXT_MARK_SEMIVOICED,
 	TEXT_MARK_NONE
 };
 #endif

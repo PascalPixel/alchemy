@@ -13,7 +13,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    return gDeriMuraEntrances;
+    return gDailaEntrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)

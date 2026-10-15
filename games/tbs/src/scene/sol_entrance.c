@@ -23,15 +23,15 @@
 #include "fieldobj.h"
 
 // 前方宣言
-static void SoruIriguchi_ApplyEntryState(void);
+static void SolEntrance_ApplyEntryState(void);
 static void FieldScene_RunSceneEntryHook(void);
 static void Scene_EnterSolSanctum(void);
-static void Scene_SukuretaSuspectsHiddenPassage(void);
+static void Scene_KradenSuspectsHiddenPassage(void);
 static void Scene_RunTransitionCue(void);
 static void Scene_RunActorFormation(s32 a0);
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
-s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
+s32 SolEntrance_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
@@ -39,15 +39,15 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_SoruIriguchi2)
+	if (scene == (s32)&SceneId_SolEntrance2)
 	{
-		return gSoruIriguchiEntrances2;
+		return gSolEntranceEntrances2;
 	}
-	if (scene == (s32)&SceneId_SoruIriguchi1)
+	if (scene == (s32)&SceneId_SolEntrance1)
 	{
-		return gSoruIriguchiEntrances1;
+		return gSolEntranceEntrances1;
 	}
-	return gSoruIriguchiEntrancesOther;
+	return gSolEntranceEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -57,7 +57,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return SoruIriguchi_Exits;
+	return SolEntrance_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -65,7 +65,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	s32 table;
 	s32 lo = 11;
 
-	if (gGameState.scene == (s32)&SceneId_SoruIriguchi1)
+	if (gGameState.scene == (s32)&SceneId_SolEntrance1)
 	{
 		if (gGameState.entrance >= lo)
 		{
@@ -73,34 +73,34 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 			{
 				if (gGameState.entrance <= 16)
 				{
-					return gSoruIriguchiPlacements1Entrances14To16;
+					return gSolEntrancePlacements1Entrances14To16;
 				}
 			}
 			else
 			{
-				return gSoruIriguchiPlacements1Entrances11To13;
+				return gSolEntrancePlacements1Entrances11To13;
 			}
 		}
-		table = (s32)gSoruIriguchiPlacements1;
+		table = (s32)gSolEntrancePlacements1;
 		FieldScene_PrepareActors(table);
 		return (const struct ScenePlacement *)table;
 	}
-	if (gGameState.scene == (s32)&SceneId_SoruIriguchi2)
+	if (gGameState.scene == (s32)&SceneId_SolEntrance2)
 	{
-		return gSoruIriguchiPlacements2;
+		return gSolEntrancePlacements2;
 	}
-	return gSoruIriguchiPlacementsOther;
+	return gSolEntrancePlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s32 lo = 11;
 
-	if (gGameState.scene == (s32)&SceneId_SoruIriguchi2)
+	if (gGameState.scene == (s32)&SceneId_SolEntrance2)
 	{
-		return gSoruIriguchiEvents2;
+		return gSolEntranceEvents2;
 	}
-	if (gGameState.scene == (s32)&SceneId_SoruIriguchi1)
+	if (gGameState.scene == (s32)&SceneId_SolEntrance1)
 	{
 		if (gGameState.entrance >= lo)
 		{
@@ -108,20 +108,20 @@ const struct SceneEvent *Scene_GetEvents(void)
 			{
 				if (gGameState.entrance <= 16)
 				{
-					return gSoruIriguchiEvents1Entrances14To16;
+					return gSolEntranceEvents1Entrances14To16;
 				}
 			}
 			else
 			{
-				return gSoruIriguchiEvents1Entrances11To13;
+				return gSolEntranceEvents1Entrances11To13;
 			}
 		}
-		return gSoruIriguchiEvents1;
+		return gSolEntranceEvents1;
 	}
 	else
 	{
 	}
-	return gSoruIriguchiEventsOther;
+	return gSolEntranceEventsOther;
 }
 
 static void EV02_TOUCH(void)
@@ -158,11 +158,11 @@ static void EV20_SEARCH(void)
 
 	if (Engine_GameFlagIsSet(0x81a) != 0)
 	{
-		Engine_MessageShowCentered(MsgSoruMinotaurReliefBothEyes, 1);
+		Engine_MessageShowCentered(MsgSolMinotaurReliefBothEyes, 1);
 	}
 	else
 	{
-		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSolMinotaurReliefOneEye, 1);
 		if (Engine_GameFlagIsSet(0xf01) != 0)
 		{
 			u16 *p = &gEventWork->unknown_172;
@@ -197,7 +197,7 @@ static void EV1044_SCRIPT(void)
 			Map_CopyCellsTo(0, 70, 30, 42, v5, v5);
 			Engine_MapRedraw();
 			Engine_EventWait(40);
-			id = MsgSoruSetSmallGem;
+			id = MsgSolSetSmallGem;
 			Engine_MessageShowCentered(id, 1);
 			Engine_EventWait(20);
 			v6 = 3;
@@ -236,12 +236,12 @@ static void EV21_SEARCH(void)
 
 	if (Engine_GameFlagIsSet(0x821) != 0)
 	{
-		Engine_MessageShowCentered(MsgSoruMinotaurReliefBothEyes, 1);
+		Engine_MessageShowCentered(MsgSolMinotaurReliefBothEyes, 1);
 	}
 	else if (Engine_GameFlagIsSet(0xf02) != 0)
 	{
 		work = gEventWork;
-		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSolMinotaurReliefOneEye, 1);
 		{
 
 			u16 *frame = &work->unknown_172;
@@ -251,7 +251,7 @@ static void EV21_SEARCH(void)
 	}
 	else
 	{
-		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSolMinotaurReliefOneEye, 1);
 	}
 
 	Engine_EventEnd();
@@ -269,7 +269,7 @@ static void EV1045_SCRIPT(void)
 		Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
 		Engine_MapRedraw();
 		Engine_EventWait(40);
-		message = MsgSoruSetSmallGem;
+		message = MsgSolSetSmallGem;
 		Engine_MessageShowCentered(message, 1);
 		Engine_EventWait(20);
 		Engine_AudioPlayCue(183);
@@ -479,7 +479,7 @@ static void EV14_PSYNERGY(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_findcell.h"
 
-static void SoruIriguchi_PushFacedBlock(void)
+static void SolEntrance_PushFacedBlock(void)
 {
 	struct FieldActor	  *leader;
 	struct FieldActor	  *block;
@@ -491,14 +491,14 @@ static void SoruIriguchi_PushFacedBlock(void)
 
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
-	block = SceneActor_FindActorAtCell((leader->x.part.pixel + (gSoruPushSteps[dir] >> 16)) >> 4,
-		(leader->z.part.pixel + (s16)gSoruPushSteps[dir]) >> 4);
+	block = SceneActor_FindActorAtCell((leader->x.part.pixel + (gSolPushSteps[dir] >> 16)) >> 4,
+		(leader->z.part.pixel + (s16)gSolPushSteps[dir]) >> 4);
 	if (block != NULL)
 	{
 		zero = 0;
 		block->terrain_id = 2;
 		p = pos;
-		step = gSoruPushSteps[dir];
+		step = gSolPushSteps[dir];
 		p[0].fixed = block->x.fixed + (step & -0x10000);
 		p[1].fixed = block->y.fixed;
 		p[2].fixed = block->z.fixed + (step << 16);
@@ -546,24 +546,24 @@ s32 Scene_Initialize(void)
 {
 	s32 scenario = gGameState.scene;
 
-	if (scenario == (s32)&SceneId_SoruIriguchi2)
+	if (scenario == (s32)&SceneId_SolEntrance2)
 	{
-		SoruIriguchi_ApplyEntryState();
+		SolEntrance_ApplyEntryState();
 	}
-	else if (scenario == (s32)&SceneId_SoruIriguchi1)
+	else if (scenario == (s32)&SceneId_SolEntrance1)
 	{
 		FieldScene_RunSceneEntryHook();
 	}
 	return 0;
 }
 
-static void SoruIriguchi_ApplyEntryState(void)
+static void SolEntrance_ApplyEntryState(void)
 {
 	GameFlag_Set(0x144);
 	gEventWork->start_transition = 0x100;
 	if (GameFlag_IsSet(0x814) != 0)
 	{
-		SoruIriguchi_CueTimer = 0;
+		SolEntrance_CueTimer = 0;
 		Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);
 	}
 	if (GameFlag_IsSet(0x879) != 0)
@@ -613,7 +613,7 @@ static void FieldScene_RunSceneEntryHook(void)
 		break;
 
 	case 8:
-		gGameState.retreat_scene = (s32)&SceneId_SoruIriguchi1;
+		gGameState.retreat_scene = (s32)&SceneId_SolEntrance1;
 		gGameState.retreat_entrance = 8;
 		if (GameFlag_IsSet(0x802) == 0)
 			Scene_EnterSolSanctum();
@@ -634,7 +634,7 @@ static void FieldScene_RunSceneEntryHook(void)
 		Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
 		if (Engine_GameFlagIsSet(0x804) == 0)
-			Scene_SukuretaSuspectsHiddenPassage();
+			Scene_KradenSuspectsHiddenPassage();
 		if (Engine_GameFlagIsSet(0x303) != 0)
 			Actor_SetPosition(9, 0x5d80000, 0x880000);
 		else if (GameFlag_IsSet(0x302) != 0)
@@ -684,78 +684,78 @@ static void Scene_EnterSolSanctum(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(ACTOR_SUKURETA, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(ACTOR_KRADEN, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(JASMINE, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(JENNA, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-	Actor_SetSpeed(JASMINE, 0x9999, 0x4ccc);
-	Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
-	Engine_ActorSetAnimation(GERALD, 2);
-	Engine_ActorSetAnimation(JASMINE, 2);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-	Actor_SetDestinationOffset(GERALD, -16, 0);
-	Actor_SetDestinationOffset(JASMINE, 16, 0);
-	Actor_SetDestinationOffset(ACTOR_SUKURETA, 0, -32);
-	Engine_ActorWaitForMove(GERALD);
-	Engine_ActorSetAnimation(GERALD, 0);
-	Engine_ActorSetAnimation(JASMINE, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTH, 0);
-	Engine_ActorWaitForMove(ACTOR_SUKURETA);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x9999, 0x4ccc);
+	Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
+	Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
+	Engine_ActorSetAnimation(GARET, 2);
+	Engine_ActorSetAnimation(JENNA, 2);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
+	Actor_SetDestinationOffset(GARET, -16, 0);
+	Actor_SetDestinationOffset(JENNA, 16, 0);
+	Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
+	Engine_ActorWaitForMove(GARET);
+	Engine_ActorSetAnimation(GARET, 0);
+	Engine_ActorSetAnimation(JENNA, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTH, 0);
+	Engine_ActorWaitForMove(ACTOR_KRADEN);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
+	Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 40);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
-	Engine_ActorJump(ACTOR_SUKURETA, 4, 20);
-	Engine_EventSetMessage(MsgSoruSukuretaFirstTimeAtSol);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 40);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 40);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 20);
+	Engine_ActorJump(ACTOR_KRADEN, 4, 20);
+	Engine_EventSetMessage(MsgSolKradenFirstTimeAtSol);
 	Event_AskYesNo(0x4008, 0);
 	Engine_EventWait(20);
 	Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorSetAnimation(JASMINE, 2);
+	Engine_ActorSetAnimation(JENNA, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(JASMINE, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(JENNA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(ACTOR_SUKURETA, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(ACTOR_KRADEN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Actor_SetPosition(JASMINE, 0, 0);
-	Engine_ActorWaitForMove(ACTOR_SUKURETA);
-	Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(JASMINE, 1);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Actor_SetPosition(JENNA, 0, 0);
+	Engine_ActorWaitForMove(ACTOR_KRADEN);
+	Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(JENNA, 1);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 	GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 	Engine_EventEnd();
 }
 
-static void Scene_SukuretaSuspectsHiddenPassage(void)
+static void Scene_KradenSuspectsHiddenPassage(void)
 {
 	u8 *record;
 
@@ -773,51 +773,51 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 	if (record != 0)
 		Engine_ActorSetPosition(1, RECORD_A32(record), RECORD_B32(record));
 
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-	Actor_SetSpeed(JASMINE, 0x9999, 0x4ccc);
-	Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
-	Engine_ActorSetAnimation(GERALD, 2);
-	Engine_ActorSetAnimation(JASMINE, 2);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-	Actor_SetDestinationOffset(GERALD, -16, 0);
-	Actor_SetDestinationOffset(JASMINE, 16, 0);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x9999, 0x4ccc);
+	Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
+	Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
+	Engine_ActorSetAnimation(GARET, 2);
+	Engine_ActorSetAnimation(JENNA, 2);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
+	Actor_SetDestinationOffset(GARET, -16, 0);
+	Actor_SetDestinationOffset(JENNA, 16, 0);
 	Actor_SetDestinationOffset(8, 0, -16);
 	Engine_ActorWaitForMove(8);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-	Engine_ActorSetAnimation(GERALD, 0);
-	Engine_ActorSetAnimation(JASMINE, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 30);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(JASMINE, FACING_EAST, 0);
+	Engine_ActorSetAnimation(GARET, 0);
+	Engine_ActorSetAnimation(JENNA, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(JENNA, FACING_EAST, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 30);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_SOUTH, 30);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 30);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 40);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 	Engine_ActorSetDestinationOffset(8, 0, -16);
 	Engine_ActorWaitForMove(8);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_EventWait(6);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 20);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_EAST, 20);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 40);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 	Engine_ActorSetDestinationOffset(8, 0, -32);
 	Engine_ActorWaitForMove(8);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 
 	Camera_SetSpeed(0x20000, 0x4000);
 	Camera_MoveTo(0x06310000, -1, 0x00960000, 1);
@@ -828,7 +828,7 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 	Engine_CameraWaitForMove();
 	Camera_MoveTo(0x06b60000, -1, 0x00640000, 1);
 	Engine_CameraWaitForMove();
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
 	Camera_MoveTo(0x06d80000, -1, 0x00960000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(40);
@@ -838,94 +838,94 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(10);
 
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 10);
-	Actor_ShowEmote(GERALD, 0x101, 20);
-	Engine_EventSetMessage(MsgSoruWrongSukureta);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
-	Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
-	Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 2);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
+	Actor_ShowEmote(GARET, 0x101, 20);
+	Engine_EventSetMessage(MsgSolWrongKraden);
+	Event_ShowMessageAndWait(GARET, 0, 10);
+	Actor_ShowEmote(ACTOR_KRADEN, 0x102, 60);
+	Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(JASMINE, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(JENNA, 2);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Actor_SetAttachedEffect(5, 0x102);
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(ACTOR_SUKURETA, 0);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+	Event_ShowMessage(ACTOR_KRADEN, 0);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
 	Engine_ActorFaceEachOther(0, 5, 0);
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_ActorRunRepeatedMotion(5, 1);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 20);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
-	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 20);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
+	Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+	Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(10);
-	Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_WEST, 20);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_EAST, 20);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 60);
+	Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-	Actor_FaceDirection(ACTOR_SUKURETA, FACING_SOUTH, 20);
-	Engine_ActorJump(ACTOR_SUKURETA, 2, 20);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+	Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
+	Engine_ActorJump(ACTOR_KRADEN, 2, 20);
 
-	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
-	Actor_FaceDirection(GERALD, FACING_EAST, 20);
-	Event_OpenMessage(GERALD, 0);
+	Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
+	Actor_FaceDirection(GARET, FACING_EAST, 20);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgSoruDangerousSplitStay);
-		Engine_ActorRunRepeatedMotion(GERALD, 1);
+		Engine_EventSetMessage(MsgSolDangerousSplitStay);
+		Engine_ActorRunRepeatedMotion(GARET, 1);
 		Engine_EventShowMessageAndWait(1, 0, 10);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgSoruCantSeriouslyWant);
-		Actor_FaceDirection(JASMINE, FACING_WEST, 20);
-		Event_ShowMessageAndWait(JASMINE, 0, 10);
+		Engine_EventSetMessage(MsgSolCantSeriouslyWant);
+		Actor_FaceDirection(JENNA, FACING_WEST, 20);
+		Event_ShowMessageAndWait(JENNA, 0, 10);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-		Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-		Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 60);
+		Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+		Actor_FaceDirection(JENNA, FACING_NORTHWEST, 60);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
 		Engine_ActorRunRepeatedMotion(1, 1);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(1, 3);
 		Engine_EventWait(10);
-		Actor_FaceDirection(GERALD, FACING_EAST, 0);
-		Actor_FaceDirection(JASMINE, FACING_WEST, 30);
+		Actor_FaceDirection(GARET, FACING_EAST, 0);
+		Actor_FaceDirection(JENNA, FACING_WEST, 30);
 		Engine_ActorRunRepeatedMotion(1, 1);
 		Engine_EventWait(10);
 		Engine_EventShowMessageAndWait(1, 0, 10);
 	}
 
-	Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
+	Actor_SetSpeed(ACTOR_KRADEN, 0x9999, 0x4ccc);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
 	Engine_ActorSetDestinationOffset(8, 0, 48);
 	Engine_ActorWaitForMove(8);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_EventWait(6);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
 	Engine_ActorFaceDirection(5, FACING_NORTHWEST, 0);
 	Engine_ActorWaitForMove(8);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(JASMINE, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(JENNA, 3);
 	Engine_ActorSetAnimationAndWait(0, 3);
 	Engine_EventWait(6);
 	Engine_ActorSetAnimation(1, 2);
@@ -943,11 +943,11 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 		Engine_ActorSetDestination(8, RECORD_A16(record), RECORD_B16(record));
 
 	Engine_ActorWaitForMove(8);
-	Actor_SetPosition(GERALD, 0, 0);
-	Actor_SetPosition(JASMINE, 0, 0);
-	Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
-	Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
-	Engine_ActorSetAnimation(GERALD, 1);
+	Actor_SetPosition(GARET, 0, 0);
+	Actor_SetPosition(JENNA, 0, 0);
+	Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+	Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+	Engine_ActorSetAnimation(GARET, 1);
 	Engine_ActorSetAnimation(5, 1);
 	GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
 	Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -990,7 +990,7 @@ static void Scene_RunTransitionCue(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Actor_FaceDirection(8, FACING_EAST, 30);
-	Engine_EventSetMessage(MsgSoruMoreStatuesOutOfReach);
+	Engine_EventSetMessage(MsgSolMoreStatuesOutOfReach);
 	Event_ShowMessageAndWait(0x4008, 0, 10);
 	Actor_ShowEmote(8, 0x100, 40);
 	Engine_ActorRunRepeatedMotion(8, 1);
@@ -1145,7 +1145,7 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	s32 *timer;
 	s32	 v3;
 
-	timer = &SoruIriguchi_CueTimer;
+	timer = &SolEntrance_CueTimer;
 	if (*timer != 0)
 	{
 		v3 = (*timer - 1);
@@ -1167,19 +1167,19 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	}
 }
 
-struct SceneEntrance gSoruIriguchiEntrancesOther[] = {
+struct SceneEntrance gSolEntranceEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSoruIriguchiEntrances2[] = {
+struct SceneEntrance gSolEntranceEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 120, 0, 112, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSoruIriguchiEntrances1[] = {
+struct SceneEntrance gSolEntranceEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 280, 0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0 },
 	{ 2, CONDITION_ALWAYS, 72, 0, 56, FACING_SOUTH, 0, 5, 0, 555, 510, 0 },
@@ -1200,7 +1200,7 @@ struct SceneEntrance gSoruIriguchiEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SoruIriguchi_Exits[] = {
+u32 SolEntrance_Exits[] = {
 	SCENE_EXITS(19),
 	SCENE_EXIT_IF(1, 4, 2, 0x814),
 	SCENE_EXIT_IF(1, 10, 15, 0x815),
@@ -1226,14 +1226,14 @@ u32 SoruIriguchi_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSoruIriguchiPlacementsOther[] = {
+struct ScenePlacement gSolEntrancePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSoruIriguchiPlacements1[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gSolEntrancePlacements1[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1242,10 +1242,10 @@ struct ScenePlacement gSoruIriguchiPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSoruIriguchiPlacements1Entrances11To13[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gSolEntrancePlacements1Entrances11To13[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1274,10 +1274,10 @@ struct ScenePlacement gSoruIriguchiPlacements1Entrances11To13[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSoruIriguchiPlacements1Entrances14To16[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gSolEntrancePlacements1Entrances14To16[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1296,26 +1296,26 @@ struct ScenePlacement gSoruIriguchiPlacements1Entrances14To16[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSoruIriguchiPlacements2[] = {
+struct ScenePlacement gSolEntrancePlacements2[] = {
 	{ 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gSoruIriguchiEventsOther[] = {
+struct SceneEvent gSolEntranceEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSoruIriguchiEvents2[] = {
+struct SceneEvent gSolEntranceEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SEARCH) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaItIsVeryDangerousToGo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaIAmAllAloneInThis) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSoruIriguchiEvents1[] = {
+struct SceneEvent gSolEntranceEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1338,7 +1338,7 @@ struct SceneEvent gSoruIriguchiEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSoruIriguchiEvents1Entrances11To13[] = {
+struct SceneEvent gSolEntranceEvents1Entrances11To13[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1357,13 +1357,13 @@ struct SceneEvent gSoruIriguchiEvents1Entrances11To13[] = {
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x234, EVENT_SCRIPT(Scene_UpdateOuterActor9Flags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x234, EVENT_SCRIPT(Scene_UpdateOuterActor10Flags) },
-	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_PushFacedBlock) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_PushFacedBlock) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_PushFacedBlock) },
+	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SolEntrance_PushFacedBlock) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SolEntrance_PushFacedBlock) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SolEntrance_PushFacedBlock) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSoruIriguchiEvents1Entrances14To16[] = {
+struct SceneEvent gSolEntranceEvents1Entrances14To16[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -1386,7 +1386,7 @@ struct SceneEvent gSoruIriguchiEvents1Entrances14To16[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_PSYNERGY) },
-	{ 0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_PushFacedBlock) },
+	{ 0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SolEntrance_PushFacedBlock) },
 	{ 0xe104, 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(EV1045_SCRIPT) },
 	{ SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_SEARCH) },
 	{ SCENE_EVENTS_END },
@@ -1395,7 +1395,7 @@ struct SceneEvent gSoruIriguchiEvents1Entrances14To16[] = {
 // 向きごとの押す一歩: 上位16ビットがx、下位16ビットがz (ピクセル)
 #define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
 
-s32 gSoruPushSteps[] = {
+s32 gSolPushSteps[] = {
 	PUSH_STEP(16, 0),
 	PUSH_STEP(16, 0),
 	PUSH_STEP(16, 0),

@@ -3,9 +3,9 @@
 #include "party_state.h"
 #include "eventwrk.h"
 
-extern char SceneId_SuharaGate1;
-extern char SceneId_SuharaGate2;
-extern char SceneId_SuharaGate3;
+extern char SceneId_SuhallaGate1;
+extern char SceneId_SuhallaGate2;
+extern char SceneId_SuhallaGate3;
 
 void Func_02000110(void);
 void Func_02000168(void);
@@ -19,11 +19,11 @@ s32 Func_0200028c(void)
     work = Ram_HeapSlots->event_work;
     work->screen_effect = 256;
     scene = gPartyState.scene;
-    if (scene == (s32)&SceneId_SuharaGate1)
+    if (scene == (s32)&SceneId_SuhallaGate1)
         Func_02000110();
-    else if (scene == (s32)&SceneId_SuharaGate2)
+    else if (scene == (s32)&SceneId_SuhallaGate2)
         Func_02000168();
-    else if (scene == (s32)&SceneId_SuharaGate3)
+    else if (scene == (s32)&SceneId_SuhallaGate3)
         Func_02000264();
     return 0;
 }

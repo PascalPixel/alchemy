@@ -100,7 +100,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 mode)
 	}
 #endif
 	UiWork_PushValueSlotFar(item, 2);
-	UiText_ShowPositionedMessageAndWaitFar(MsgKorosseoRobinGotItem, mode);
+	UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem, mode);
 }
 
 // イベントのワーク (gEventWork) のこのファイルでの見え方。共通の EventWork に欄のない 0xcb6 以降も持つ
@@ -303,9 +303,9 @@ void Party_RemoveOwnerRestored(s32 owner)
 	Event_ClearInvalidPackedValues();
 	vitals = UnitGetFar(owner);
 	vitals->hp = vitals->max_hp;
-	vitals->ep = vitals->max_ep;
+	vitals->pp = vitals->max_pp;
 	Unit_UpdateGauges(vitals);
-	vitals->doku = 0;
+	vitals->poison = 0;
 	standing = 0;
 	count = Party_CountActiveOwnersFar();
 	for (i = 0; i < count; i++)
@@ -431,9 +431,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
 #if defined(TBS_EDITION_DE)
 			UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember, 1);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-			UiText_ShowPositionedMessageAndWaitFar(MsgKorosseoRobinGotItem + 1, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem + 1, 1);
 #else
-			UiText_ShowPositionedMessageAndWaitFar(MsgKorosseoRobinGotItem + 1, 3);
+			UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem + 1, 3);
 #endif
 		}
 		work->message = saved;
@@ -622,9 +622,9 @@ void Event_SetExitRequest(u16 value)
 // バトル効果：イベントから決まった敵との戦闘を用意する
 //--------------------------------------------------------------------------
 
-#define CHOJO 98	  // 頂上の嵐の背景で戦うエンカウント表
-#define TOBANAI 0x800 // ジンを跳ねさせない
-#define JIN_0 300	  // ジン 0 番の pending_djinn_event
+#define AERIE 98	  // 頂上の嵐の背景で戦うエンカウント表
+#define DJINN_NO_HOP 0x800 // ジンを跳ねさせない
+#define DJINNI_0 300	  // ジン 0 番の pending_djinn_event
 
 //--------------------------------------------------------------------------
 // エンカウント表 zone の slot 番目の敵グループとの戦闘を用意する
@@ -637,8 +637,8 @@ void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no)
 	struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
 
 	ev->value_17c = BattleFx_GetWeightedResult(zone, slot); // 敵グループ
-	if (zone == CHOJO && slot == 0)
-		gGameState.special = (s32)&ResourceId_VinasuChojoStormBackdrop;
+	if (zone == AERIE && slot == 0)
+		gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
 	if (ev->mode_19e == 3)
 		BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.selected_actor) + 8); // 位置
 	BattleFx_SelectBattleCue(zone, slot);
@@ -646,7 +646,7 @@ void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no)
 
 //--------------------------------------------------------------------------
 // ジン no 番との戦闘を用意する
-// flag の下 8 ビットはジンのオブジェクトで、TOBANAI がなければ跳ねさせる
+// flag の下 8 ビットはジンのオブジェクトで、DJINN_NO_HOP がなければ跳ねさせる
 // no は属性ごとに 20 ずつ（Djinn_ResolvePendingEvent）
 //--------------------------------------------------------------------------
 void BattleFx_SetPhaseRequest(s32 flag, s32 no)
@@ -656,14 +656,14 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 	s32					 skip;
 
 	ev = (struct EventRuntime *)gEventWork;
-	skip = flag & TOBANAI;
+	skip = flag & DJINN_NO_HOP;
 	flag &= 0xff;
 
 	if (skip == 0)
 		EventActor_RunHopAndLeapSequence(flag);
 
 	gs = &gGameState;
-	gs->pending_djinn_event = (no + JIN_0) | skip;
+	gs->pending_djinn_event = (no + DJINNI_0) | skip;
 	ev->value_17c = BattleFx_GetPhaseResult(no); // ジンの敵グループ
 	if (ev->mode_19e == 3)
 	{
@@ -3646,7 +3646,7 @@ struct ActorDescriptor
 	s32 z;
 };
 
-#define BUNSHIN_MAX 8 // 分身の数
+#define CLONE_MAX 8 // 分身の数
 
 //--------------------------------------------------------------------------
 // 後ろへ 3 回跳ね、分身を引いて前へ跳ぶ
@@ -3664,7 +3664,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	s32				   kind;
 	s32				   value;
 	s32				   i;
-	struct FieldActor *copies[BUNSHIN_MAX];
+	struct FieldActor *copies[CLONE_MAX];
 
 	// 選択中のオブジェクトの向きを 90 度単位に丸める
 	actor = Object_GetById(id);
@@ -3711,7 +3711,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 		value = 9;
 	res = NULL;
 	prev = actor;
-	for (i = 0; i < BUNSHIN_MAX; i++)
+	for (i = 0; i < CLONE_MAX; i++)
 	{
 		copy = (struct FieldActor *)Object_CreateFar(
 			kind, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -4031,44 +4031,44 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // ジンが跳ねて光の粒になり、操作キャラへ集まる
-// jin_id : ジンのオブジェクト番号
+// djinni_id : ジンのオブジェクト番号
 //--------------------------------------------------------------------------
-void BattleFx_FinishHeavyImpact(s32 jin_id)
+void BattleFx_FinishHeavyImpact(s32 djinni_id)
 {
 	struct EffectVector	  pos;
-	struct MotionObject	 *jin;
+	struct MotionObject	 *djinni;
 	struct BattleFxScene *scene;
 	struct EffectSlot	 *slot;
 	s32					  scale;
 	s32					  cnt;
 
-	jin = (struct MotionObject *)Object_GetById(jin_id);
-	if (jin == NULL)
+	djinni = (struct MotionObject *)Object_GetById(djinni_id);
+	if (djinni == NULL)
 		return;
 	BattleFx_InitializeSlots();
 	scene = gEffectWork;
 	Shop_RestoreSceneTilesFar(0x20118c);
 	AudioCommand_PlayFar(173);
-	Motion_SetVarCbAndRefresh(jin_id, 1);
+	Motion_SetVarCbAndRefresh(djinni_id, 1);
 	AudioCommand_PlayFar(174);
-	Motion_SetVarCbAndRefresh(jin_id, 1);
+	Motion_SetVarCbAndRefresh(djinni_id, 1);
 	AudioCommand_PlayFar(175);
-	Motion_SetVarCbAndRefresh(jin_id, 1);
+	Motion_SetVarCbAndRefresh(djinni_id, 1);
 	WaitFrames(20);
 
 	// 回転してから高く跳ねる
 	AudioCommand_PlayFar(140);
-	jin->update = BattleFx_AdvanceSpinAngle;
+	djinni->update = BattleFx_AdvanceSpinAngle;
 	WaitFrames(40);
 	AudioCommand_PlayFar(153);
-	ObjectMotion_Launch(jin_id, 12, 22);
+	ObjectMotion_Launch(djinni_id, 12, 22);
 
 	// ジンの画面位置から光の粒を 24 個出す
-	pos.x = jin->x;
-	pos.y = jin->y;
-	pos.z = jin->z;
+	pos.x = djinni->x;
+	pos.y = djinni->y;
+	pos.z = djinni->z;
 	Camera_WorldToScreen(&pos);
-	ObjectDispatch_ReleaseFar(jin);
+	ObjectDispatch_ReleaseFar(djinni);
 	AudioCommand_PlayFar(164);
 	slot = scene->slots;
 	cnt = 23;
@@ -4651,8 +4651,8 @@ void BattleFx_HalveDistanceToTarget(struct FieldActor *object)
 // フィールド演出：水のジンが仲間になるとき、跳ねて残像を引いて昇り、粒を降らせる
 //--------------------------------------------------------------------------
 
-#define ZANZOU_MAX 8 // 残像の数
-#define TSUBU_MAX 24 // 降らせる粒の数 (scene->slots)
+#define AFTERIMAGE_MAX 8 // 残像の数
+#define PARTICLE_MAX 24 // 降らせる粒の数 (scene->slots)
 
 //--------------------------------------------------------------------------
 // 画面を青く染め、ジンを 3 回跳ねさせてから 8 つの残像を引いて 120 ドット
@@ -4662,7 +4662,7 @@ void BattleFx_HalveDistanceToTarget(struct FieldActor *object)
 //--------------------------------------------------------------------------
 void BattleFx_RunMercuryDjinnCapture(s32 id)
 {
-	struct FieldActor  *jin;
+	struct FieldActor  *djinni;
 	struct FieldActor  *copy;
 	struct FieldActor  *previous;
 	struct FieldSprite *resource;
@@ -4674,11 +4674,11 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	s32					kind;
 	s32					remaining;
 	s32					resource_id;
-	struct FieldActor  *copies[ZANZOU_MAX];
+	struct FieldActor  *copies[AFTERIMAGE_MAX];
 	struct EffectVector position;
 
-	jin = Object_GetById(id);
-	if (jin == NULL)
+	djinni = Object_GetById(id);
+	if (djinni == NULL)
 		return;
 
 	// 画面の色を青 (R4 G4 B16) で染める
@@ -4686,7 +4686,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	scene = gEffectWork;
 	Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | (16 << 10) | (4 << 5) | 4);
 	WaitFrames(30);
-	jin->paused = 0;
+	djinni->paused = 0;
 	AudioCommand_PlayFar(173);
 	Motion_SetVarCbAndRefresh(id, 1);
 	AudioCommand_PlayFar(175);
@@ -4703,14 +4703,14 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	WaitFrames(20);
 
 	// 残像：同じ絵を 8 つ作り、それぞれ一つ前を半分ずつ追いかけさせる
-	kind = ((struct AnimationObject *)jin->sprite)->entries[0]->anim_id;
+	kind = ((struct AnimationObject *)djinni->sprite)->entries[0]->anim_id;
 	resource = NULL;
-	previous = jin;
+	previous = djinni;
 	cursor = copies;
-	for (remaining = ZANZOU_MAX - 1; remaining >= 0; remaining--)
+	for (remaining = AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
 	{
 		copy =
-			(struct FieldActor *)Object_CreateFar(kind, jin->x.fixed, jin->y.fixed, jin->z.fixed);
+			(struct FieldActor *)Object_CreateFar(kind, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
 		*cursor++ = copy;
 		if (copy != NULL)
 		{
@@ -4720,7 +4720,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 			copy->priority_flags = 2;
 			copy->steering_flags |= 1;
 			copy->update = (void *)BattleFx_HalveDistanceToTarget;
-			copy->facing = jin->facing;
+			copy->facing = djinni->facing;
 			Animation_ApplyChildValuesFar(copy, 9);
 			ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
 			ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
@@ -4733,15 +4733,15 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	// 8 ドットずつ 15 フレーム昇らせ、ジンと残像を消す
 	resource_id = resource->vram_block;
 	AudioCommand_PlayFar(153);
-	jin->motion_flags = 0;
+	djinni->motion_flags = 0;
 	for (remaining = 14; remaining >= 0; remaining--)
 	{
-		jin->y.fixed += 8 << 16;
+		djinni->y.fixed += 8 << 16;
 		WaitFrames(1);
 	}
-	ObjectDispatch_ReleaseFar(jin);
+	ObjectDispatch_ReleaseFar(djinni);
 	list = copies;
-	for (remaining = ZANZOU_MAX - 1; remaining >= 0; remaining--)
+	for (remaining = AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
 		ObjectDispatch_ReleaseFar(*list++);
 	if (resource_id != 96)
 		Resource_ResetEntry(resource_id);
@@ -4752,13 +4752,13 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 	WaitFrames(20);
 
 	// 粒 (種類 240) を 1 フレームに 1 つずつ出す。動きは BattleFx_UpdateRandomTargetParticle
-	position.x = jin->x.fixed;
-	position.y = jin->y.fixed;
-	position.z = jin->z.fixed;
+	position.x = djinni->x.fixed;
+	position.y = djinni->y.fixed;
+	position.z = djinni->z.fixed;
 	Camera_WorldToScreen(&position);
 
 	slot = (u8 *)scene + 88; // scene->slots[0]
-	remaining = TSUBU_MAX - 1;
+	remaining = PARTICLE_MAX - 1;
 	do
 	{
 		EffectSlot_Initialize((struct EffectSlot *)slot, 240, position.x, position.z);
@@ -4778,7 +4778,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 		next_state = 2;
 		slot_state = scene;
 		slot_state += 152; // scene->slots[0].state
-		remaining = TSUBU_MAX - 1;
+		remaining = PARTICLE_MAX - 1;
 		do
 		{
 			if (slot_state[5] != 0) // active
@@ -5430,9 +5430,9 @@ void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 	work->saved_x = map->shake_x;
 	work->saved_y = map->shake_y;
 	work->saved_z = map->shake_decay;
-	if (gGameState.map == (s32)&SceneId_MakyuriIriguchi)
+	if (gGameState.map == (s32)&SceneId_MercuryEntrance)
 		work->lit = 1;
-	if (gGameState.map == (s32)&SceneId_MakyuriHeya2)
+	if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
 		work->lit = 1;
 	BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
 	if (work->animation != 8)
@@ -6631,9 +6631,9 @@ void RunBattleEffect08(void)
 // エナジー演出：イマジンの打ち切り、演出 12 の粒、演出 7 で対象を持ち上げる
 //--------------------------------------------------------------------------
 
-#define ENA_EV_4 0x40000005 // エナジーのイベント、段階 4
-#define FX_IMAJIN 8			// イマジンの演出
-#define TSUBU_OBJ 284		// 粒の物体
+#define PSYNERGY_EV_4 0x40000005 // エナジーのイベント、段階 4
+#define FX_REVEAL 8			// イマジンの演出
+#define PARTICLE_OBJ 284		// 粒の物体
 #define FALL_OBJ 217		// 落ちる物体
 #define FALL_LAST 4			// 落ちる物体は 0-4 の 5 個
 
@@ -6706,7 +6706,7 @@ void ResetSceneTransitionEffect(void)
 		BattleFx_StartBufferInterpolation(30);
 		WaitFrames(1);
 
-		ev = BattleFx_FindMatchingEvent(ENA_EV_4, FX_IMAJIN, &tid);
+		ev = BattleFx_FindMatchingEvent(PSYNERGY_EV_4, FX_REVEAL, &tid);
 		if (ev != NULL)
 			BattleFx_RunEventAction(ev, gGameState.selected_actor, tid);
 
@@ -6795,7 +6795,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 	user = work->main_object;
 	BattleEffect_InitializeSharedScene();
 
-	for (n = 0; n < TSUBU_MAX; n++)
+	for (n = 0; n < PARTICLE_MAX; n++)
 	{
 		struct FieldActor		   *obj;
 		struct BurstParticleVisual *visual;
@@ -6823,7 +6823,7 @@ void BattleEffect_SpawnBurstParticleField(void)
 		}
 
 		// 子のスプライトに、向きと形と色を写す
-		obj = Object_Spawn(TSUBU_OBJ, pos[0], pos[1], pos[2]);
+		obj = Object_Spawn(PARTICLE_OBJ, pos[0], pos[1], pos[2]);
 		visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
 		child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
 		child->flip = visual->flip;
@@ -6931,7 +6931,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused)
 // エナジー演出 7：左右の二つの物体と、飛び散る破片
 //--------------------------------------------------------------------------
 // 破片の数
-#define HAHEN_MAX 24
+#define ANCHOR_SHARD_MAX 24
 
 //--------------------------------------------------------------------------
 // 対象のない演出の本体：演出の位置の 16 ドット上、左右 32 ドットに spawn で
@@ -6968,7 +6968,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused)
                                                                                        \
 		Script_WaitForEventTimeoutFar(pair[0]);                                        \
 		AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);                                      \
-		for (n = 0; n < HAHEN_MAX; n++)                                                \
+		for (n = 0; n < ANCHOR_SHARD_MAX; n++)                                                \
 		{                                                                              \
 			pos.x = work->x;                                                           \
 			pos.y = work->y + 0x100000;                                                \
@@ -7147,7 +7147,7 @@ void BattleFx_CallEffect04(s32 unused)
 // フィールドのエナジー演出：4 番（押し出す弾）、6 番（渦を巻いて集まる粒）
 //--------------------------------------------------------------------------
 
-#define UE (16 << 16) // 16 ドット上
+#define ABOVE (16 << 16) // 16 ドット上
 
 //--------------------------------------------------------------------------
 // obj の 16 ドット上の位置
@@ -7155,7 +7155,7 @@ void BattleFx_CallEffect04(s32 unused)
 static __inline__ void PosAbove(struct FieldActor *obj, struct EffectVector *pos)
 {
 	pos->x = obj->x.fixed;
-	pos->y = obj->y.fixed + UE;
+	pos->y = obj->y.fixed + ABOVE;
 	pos->z = obj->z.fixed;
 }
 
@@ -7229,7 +7229,7 @@ void RunBattleEffect04(void)
 	// 弾：使う者の向きに 8 ドット先で、0.25 倍から等倍まで大きくする
 	src = scene->main_object;
 	pos.x = src->x.fixed;
-	pos.y = src->y.fixed + UE;
+	pos.y = src->y.fixed + ABOVE;
 	pos.z = src->z.fixed;
 	Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
 	obj = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
@@ -7285,14 +7285,14 @@ void RunBattleEffect04(void)
 	{
 		src = scene->main_object;
 		pos.x = src->x.fixed;
-		pos.y = src->y.fixed + UE;
+		pos.y = src->y.fixed + ABOVE;
 		pos.z = src->z.fixed;
 		Vector_AddPolarOffset(56 << 16, scene->angle, &pos);
 	}
 	else
 	{
 		pos.x = scene->x;
-		pos.y = scene->y + UE;
+		pos.y = scene->y + ABOVE;
 		pos.z = scene->z;
 	}
 	Object_SetMoveTargetFar(obj, pos.x, pos.y, pos.z);
@@ -7622,7 +7622,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *obj)
 	if (*phase != -1)
 	{
 		obj->x = scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10));
-		obj->y = scene->y + UE;
+		obj->y = scene->y + ABOVE;
 		obj->z = scene->z;
 		(*phase)++;
 		*phase = (*phase + 64) % 64;
@@ -8708,7 +8708,7 @@ void RunBattleEffect14(void)
 	struct EffectVector	  pos;
 	struct EffectVector	  from;
 	struct EffectVector	  to;
-	struct FieldActor	 *tama;
+	struct FieldActor	 *ball;
 	s32					  step;
 	struct FieldActor	 *particle;
 	s32					  steps = 11;
@@ -8720,27 +8720,27 @@ void RunBattleEffect14(void)
 	to.x = scene->x;
 	to.y = scene->y - (4 << 16);
 	to.z = scene->z;
-	tama = Object_Spawn(0xda, 0, 0, 0);
-	if (tama == 0)
+	ball = Object_Spawn(0xda, 0, 0, 0);
+	if (ball == 0)
 	{
 		return;
 	}
 	BattleEffect_InitializeSharedScene();
-	ObjectDispatch_ApplyArgumentToChildrenFar(tama, 2);
+	ObjectDispatch_ApplyArgumentToChildrenFar(ball, 2);
 	do
 	{
 		s32 scale;
-		tama->x.fixed = from.x + step * (to.x - from.x) / 10;
-		tama->y.fixed = from.y + step * (to.y - from.y) / 10;
-		tama->z.fixed = from.z + step * (to.z - from.z) / 10;
+		ball->x.fixed = from.x + step * (to.x - from.x) / 10;
+		ball->y.fixed = from.y + step * (to.y - from.y) / 10;
+		ball->z.fixed = from.z + step * (to.z - from.z) / 10;
 		scale = 0x4000 + step * 0x10ccc / 10; // 0.25 倍から 1.3 倍へ
-		tama->scale_x = scale;
-		tama->scale_y = scale;
+		ball->scale_x = scale;
+		ball->scale_y = scale;
 		WaitFrames(1);
 		step++;
 	} while (step < steps);
-	tama->scale_x = 0x1b333; // 横 1.7 倍
-	tama->scale_y = 0x14ccc; // 縦 1.3 倍
+	ball->scale_x = 0x1b333; // 横 1.7 倍
+	ball->scale_y = 0x14ccc; // 縦 1.3 倍
 	AudioCommand_PlayFar(163);
 	WaitFrames(20);
 	if (scene->enabled == 0)
@@ -8754,16 +8754,16 @@ void RunBattleEffect14(void)
 		{
 			s32 dist;
 
-			pos.x = tama->x.fixed;
-			pos.y = tama->y.fixed + step * 0xcccc + (4 << 16);
-			pos.z = tama->z.fixed;
+			pos.x = ball->x.fixed;
+			pos.y = ball->y.fixed + step * 0xcccc + (4 << 16);
+			pos.z = ball->z.fixed;
 			dist = Random16() * 5 + (3 << 16);
 			Vector_AddPolarOffset(dist, Random16(), &pos);
 			particle = Object_Spawn(0xf9, pos.x, pos.y, pos.z);
 			if (particle != 0)
 			{
 				particle->update = BattleFx_CircleAnchor;
-				particle->linked_object = tama;
+				particle->linked_object = ball;
 				particle->timer = 0;
 				particle->work = 0;
 				particle->facing = Random16();
@@ -8774,11 +8774,11 @@ void RunBattleEffect14(void)
 		WaitFrames(20);
 		WaitFrames(120);
 	}
-	ObjectDispatch_ApplyArgumentToChildrenFar(tama, 1);
+	ObjectDispatch_ApplyArgumentToChildrenFar(ball, 1);
 	WaitFrames(30);
 	AudioCommand_PlayFar(136);
 	WaitFrames(20);
-	ObjectDispatch_ReleaseFar(tama);
+	ObjectDispatch_ReleaseFar(ball);
 	BattleFx_PrepareBufferInterpolation();
 }
 
@@ -9440,8 +9440,8 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc)
 // エナジー演出 16 (プルーフ)：使う者の動きと、効果が切れたときのメッセージ
 //--------------------------------------------------------------------------
 
-#define ENA_PURUFU 150 // プルーフ
-#define ITEM_HANE 236  // せいなるはね
+#define PSYNERGY_AVOID 150 // プルーフ
+#define ITEM_SACRED_FEATHER 236  // せいなるはね
 
 //--------------------------------------------------------------------------
 // 演出の終わり：使う者の表示の flags を 5 フレームの周期で 3 と 1 に切り替える
@@ -9504,11 +9504,11 @@ void FieldEvent_ShowStatusMessage(void)
 	gGameState.avoid_distance = 0;
 	if (gGameState.avoid_by_item == 0)
 	{
-		UiWork_PushValueSlotFar(ENA_PURUFU, 4);
+		UiWork_PushValueSlotFar(PSYNERGY_AVOID, 4);
 		UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
 		return;
 	}
-	UiWork_PushValueSlotFar(ITEM_HANE, 2);
+	UiWork_PushValueSlotFar(ITEM_SACRED_FEATHER, 2);
 	UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 

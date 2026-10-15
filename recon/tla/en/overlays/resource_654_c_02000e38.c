@@ -14,7 +14,7 @@ void Event_FinishScreenTransition(void);
 void Func_020039b8(s32 a, s32 b, s32 c);
 void Func_02003ad8(s32 a);
 
-static inline void Kabe_Scale(s32 a, s32 b, s32 c)
+static inline void ShrineOfTheSeaGod_Scale(s32 a, s32 b, s32 c)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_020039b8(a, b, c);
@@ -22,21 +22,21 @@ static inline void Kabe_Scale(s32 a, s32 b, s32 c)
 
 void Func_02000e38(void)
 {
-    struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
-    struct KabeMapLayer *layer = &map->layers[1];
-    struct KabeObject *object = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[1];
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(gPartyState.current_owner);
     u32 i;
 
     Func_020039d8();
     Func_02003b08(0);
-    Kabe_CamMove(-1, -1, -1, 0);
-    Kabe_CamMove(344 << 16, -1, 248 << 16, 1);
-    Kabe_CopyRect(62, 77, 62, 18, 19, 6);
-    Kabe_ObjTurn(gPartyState.current_owner, 0x4000, 20);
+    ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+    ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
+    ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
+    ShrineOfTheSeaGod_ObjTurn(gPartyState.current_owner, 0x4000, 20);
     ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
     object->motion_flags = 0;
     Func_02003b48(245);
-    Kabe_Scale(0x10000, 0x10000, 0x10000);
+    ShrineOfTheSeaGod_Scale(0x10000, 0x10000, 0x10000);
     /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes reload the step on every pass, and a for loop hoists it (differ 30). */
     i = 0;
 loop:
@@ -46,7 +46,7 @@ loop:
         layer->y -= 0x8000;
         WaitFrames(2);
         if (i == 90) {
-            ((struct KabeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x203;
+            ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x203;
             Event_FinishScreenTransition();
         }
     }

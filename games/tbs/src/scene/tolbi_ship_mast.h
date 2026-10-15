@@ -10,13 +10,13 @@ enum
 	ITEM_ANCHOR_CHARM = 232
 };
 
-extern s32 FuneHobashira_DriftY;
-extern s32 FuneHobashira_DriftX;
-extern s32 FuneHobashira_SwayY;
-extern s32 FuneHobashira_SwayUnused;
-extern s32 FuneHobashira_CameraCenter[2];
-extern s32 FuneHobashira_CameraOrigin[2];
-extern s32 FuneHobashira_SwayX;
+extern s32 TolbiShipMast_DriftY;
+extern s32 TolbiShipMast_DriftX;
+extern s32 TolbiShipMast_SwayY;
+extern s32 TolbiShipMast_SwayUnused;
+extern s32 TolbiShipMast_CameraCenter[2];
+extern s32 TolbiShipMast_CameraOrigin[2];
+extern s32 TolbiShipMast_SwayX;
 
 enum
 {

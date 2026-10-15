@@ -1,4 +1,4 @@
-@ C2: SentouKouka_SekiWa:
+@ C2: BattleEffect_DotProduct:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
@@ -11,14 +11,14 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
-@ C2: SentouKouka_Tenkai:
+@ C2: BattleEffect_Expand:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm
-	.global SentouKouka_SekiWa
-SentouKouka_SekiWa:
+	.global BattleEffect_DotProduct
+BattleEffect_DotProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}
@@ -29,8 +29,8 @@ SentouKouka_SekiWa:
 .syntax unified
 .text
 	.arm
-	.global SentouKouka_Tenkai
-SentouKouka_Tenkai:
+	.global BattleEffect_Expand
+BattleEffect_Expand:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -54,23 +54,23 @@ SentouKouka_Tenkai:
 .Lcolumn:
 	mov	r7, #32
 .Lrow:
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	lsr	r6, r5, #25
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #17
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #9
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	lsr	r6, r5, #25
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #17
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #9
-	bl SentouKouka_TenkaiYomi
+	bl BattleEffect_ExpandRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

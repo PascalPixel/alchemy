@@ -54,7 +54,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y) // 上下左右ではみ出しを切る
+#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // 上下左右ではみ出しを切る
 
 #define HI(v) (((s16 *)&(v))[1])
 

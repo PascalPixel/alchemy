@@ -29,9 +29,9 @@ struct PathWork
 	s16 path[0x3840];
 };
 
-static void Korosseo_UpdatePathRival(void)
+static void Colosso_UpdatePathRival(void)
 {
-	struct PathWork		*work = (struct PathWork *)gKorosseoWork;
+	struct PathWork		*work = (struct PathWork *)gColossoWork;
 	struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
 	struct FieldActor	*obj;
 	s32					 x, z, d;
@@ -74,7 +74,7 @@ static void Korosseo_UpdatePathRival(void)
 			obj->speed = 0x10000;
 			Engine_ObjectSetPosition(obj, x, 0, fz);
 			Engine_GameFlagSet(0x211);
-			Engine_ObjectSetScript(obj, Korosseo_RivalFinishScript);
+			Engine_ObjectSetScript(obj, Colosso_RivalFinishScript);
 			return;
 		}
 		x <<= 16;
@@ -132,13 +132,13 @@ static void Korosseo_UpdatePathRival(void)
 	}
 }
 
-extern u8 Korosseo_GaugeGraphics[];
+extern u8 Colosso_GaugeGraphics[];
 
-static void Korosseo_DrawGauge(void)
+static void Colosso_DrawGauge(void)
 {
-	struct KorosseoGaugeWork   *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;
+	struct ColossoGaugeWork   *gauge = (struct ColossoGaugeWork *)gColossoWork;
 	s32						   *dst = (s32 *)gauge;
-	struct KorosseoGaugeSprite *entry = gauge->sprites;
+	struct ColossoGaugeSprite *entry = gauge->sprites;
 	s32							tile;
 	u32							segments;
 	u32							i;
@@ -166,10 +166,10 @@ static void Korosseo_DrawGauge(void)
 	{
 		if (++gauge->level == 1)
 		{
-			Dma_Set(Korosseo_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10,
+			Dma_Set(Colosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0), DMA_ENABLE32 | 0x10,
 				REG_DMA3);
 			buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
-			FieldResource_DecodeType01(Korosseo_GaugeGraphics, buf);
+			FieldResource_DecodeType01(Colosso_GaugeGraphics, buf);
 			Engine_VramLoad(gauge->vram_block, 512, buf);
 			Runtime_BumpFree(buf);
 		}

@@ -5,14 +5,14 @@
 #include "field_scene.h"
 
 u8 *State_Run(void);
-s32 SoruDou_GetView(void);
+s32 SolPsynergyStone_GetView(void);
 u8 *SceneData_GetPrimaryTable37c(void);
 u8 *SceneData_GetSecondaryTable37c(void);
 u8 *SceneData_GetTertiaryTable37c(void);
 s32 Resource37c_Run(void);
-extern struct SceneEntrance SoruDou_SceneTable0[];
-extern u32 SoruDou_SceneTable1[];
-extern struct ScenePlacement SoruDou_SceneTable2[];
-extern struct SceneEvent SoruDou_SceneTable3[];
+extern struct SceneEntrance SolPsynergyStone_SceneTable0[];
+extern u32 SolPsynergyStone_SceneTable1[];
+extern struct ScenePlacement SolPsynergyStone_SceneTable2[];
+extern struct SceneEvent SolPsynergyStone_SceneTable3[];
 
 #endif

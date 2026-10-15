@@ -22,7 +22,7 @@ void Func_02002c88(void);
 
 void Func_02002d50(void)
 {
-    struct KabeEventWork *work;
+    struct ShrineOfTheSeaGodEventWork *work;
     u8 *state;
 
     if (!GameFlag_Test(0x87c))

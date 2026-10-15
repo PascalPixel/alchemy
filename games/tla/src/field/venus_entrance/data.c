@@ -7,7 +7,7 @@ void Func_02000440(void);
 void Func_02000510(void);
 void Func_02001a2c(void);
 void Func_02001bb0(void);
-void VinasuIriguchi_RunActorSparkBurst(void);
+void VenusEntrance_RunActorSparkBurst(void);
 
 struct SceneEntrance gSceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -55,7 +55,7 @@ struct SceneEvent gSceneEvents[] = {
 	{2, 11, 0x893, EVENT_SCRIPT(Func_02001a2c)},
 	{2, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02001bb0)},
 	{0, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
-	{0, 14, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuIriguchi_RunActorSparkBurst)},
+	{0, 14, CONDITION_ALWAYS, EVENT_SCRIPT(VenusEntrance_RunActorSparkBurst)},
 	{0, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_020000c8)},
 	{SCENE_EVENTS_END},
 };

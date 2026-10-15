@@ -38,9 +38,9 @@
 
 // 前方宣言
 static void FieldScene_RunScene373SequenceC(void);
-static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1);
-static void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3);
-static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3);
+static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1);
+static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3);
+static void Vale_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3);
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 static void FieldScene_RunLargeStagingSequence(void);
 static void Scene_RepairTheHouse(void);
@@ -54,7 +54,7 @@ static s32 SceneActor_RunStep18WhenTargetSet(s32 *p);
 static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source);
 static void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter);
 static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
-static void HaidiaMura_OpenVillagerLane(void);
+static void Vale_OpenVillagerLane(void);
 static void Effect_PlayStepSound(void);
 static void FieldScene_RunScene373SequenceB(void);
 static void SceneActor_SetFlagByteBySlotZeroPosition(void);
@@ -78,7 +78,7 @@ enum
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {
-	return (s32)gHaidiaMuraEntrances;
+	return (s32)gValeEntrances;
 }
 
 s32 MapStagedScene_GetEmptyData(void)
@@ -88,19 +88,19 @@ s32 MapStagedScene_GetEmptyData(void)
 
 s32 MapStagedScene_SelectSecondaryData(void)
 {
-	return (s32)gHaidiaMuraExits;
+	return (s32)gValeExits;
 }
 
 s32 MapStagedScene_SelectTertiaryData(void)
 {
 	u8 *scene_state = (u8 *)&gGameState;
 	if (((struct GameState *)scene_state)->entrance == 16)
-		return (s32)gHaidiaMuraPlacements4;
+		return (s32)gValePlacements4;
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		return (s32)gHaidiaMuraPlacements3;
+		return (s32)gValePlacements3;
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		return (s32)gHaidiaMuraPlacements2;
-	return (s32)gHaidiaMuraPlacements;
+		return (s32)gValePlacements2;
+	return (s32)gValePlacements;
 }
 
 static void EV26_PSYNERGY(void)
@@ -126,10 +126,10 @@ static void EV20_PSYNERGY(void)
 s32 MapStagedScene_SelectQuaternaryData(void)
 {
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		return (s32)gHaidiaMuraEvents3;
+		return (s32)gValeEvents3;
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		return (s32)gHaidiaMuraEvents2;
-	return (s32)gHaidiaMuraEvents;
+		return (s32)gValeEvents2;
+	return (s32)gValeEvents;
 }
 
 static void EV10_TALK(void)
@@ -137,12 +137,12 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaTheGroundStillShakes);
+		Engine_EventSetMessage(MsgValeTheGroundStillShakes);
 		Engine_EventShowMessage(10, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaYourGrandpaIsTheMayor);
+		Engine_EventSetMessage(MsgValeYourGrandpaIsTheMayor);
 		Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 4);
 		Engine_EventAskYesNo(10, 0);
 	}
@@ -155,19 +155,19 @@ static void EV14_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaSukuretaHasntComeBack);
+		Engine_EventSetMessage(MsgValeKradenHasntComeBack);
 		Engine_EventShowMessage(14, 0);
 	}
 	else if (Engine_GameFlagIsSet(flag) == 0)
 	{
 		Engine_GameFlagSet(flag);
-		Engine_EventSetMessage(MsgHaidiaDoYouNeedToGo);
+		Engine_EventSetMessage(MsgValeDoYouNeedToGo);
 		Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 4);
 		Engine_EventAskYesNo(14, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaDontGoBeyondSukuretasCottage);
+		Engine_EventSetMessage(MsgValeDontGoBeyondKradensCottage);
 		Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 4);
 		Engine_EventShowMessage(14, 0);
 	}
@@ -180,7 +180,7 @@ static void EV18_TALK(void)
 	if (GameFlag_IsSet(0x807) == 0)
 	{
 		GameFlag_Set(0x807);
-		Engine_EventSetMessage(MsgHaidiaYouMakeMeSoMad);
+		Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
 		Actor_ShowEmote(18, 0x103, 0);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 18, 20);
 		Event_ShowMessageAndWait(18, 0, 6);
@@ -195,7 +195,7 @@ static void EV18_TALK(void)
 	else
 	{
 		Actor_ShowEmote(18, 0x103, 0);
-		Engine_EventSetMessage(MsgHaidiaIllGetYouForMy);
+		Engine_EventSetMessage(MsgValeIllGetYouForMy);
 		Event_ShowMessageAndWait(18, 0, 20);
 	}
 	Engine_EventEnd();
@@ -206,11 +206,11 @@ static void EV21_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x202) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaIToldGeraldItWas);
+		Engine_EventSetMessage(MsgValeIToldGaretItWas);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaItWontRainForSome);
+		Engine_EventSetMessage(MsgValeItWontRainForSome);
 	}
 	Engine_EventShowMessage(21, 0);
 	Engine_EventEnd();
@@ -220,7 +220,7 @@ static void SceneDialogue_RunActor10LineAndFlag81f(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
-	Engine_EventSetMessage(MsgHaidiaIsJasmineBackYet);
+	Engine_EventSetMessage(MsgValeIsJennaBackYet);
 	Engine_EventShowMessage(10, 0);
 	Engine_GameFlagSet(0x81f);
 	Engine_EventEnd();
@@ -232,7 +232,7 @@ static void EV17_TALK(void)
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_TaskWait(10);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	Engine_EventSetMessage(MsgHaidiaIFeltAnotherOne);
+	Engine_EventSetMessage(MsgValeIFeltAnotherOne);
 	Event_ShowMessageAndWait(17, 0, 20);
 	Actor_FaceActor(17, ACTOR_PARTY_LEADER, 20);
 	Event_ShowMessage(17, 0);
@@ -245,7 +245,7 @@ static void SceneDialogue_RunActorNineteenDialogue(void)
 	Engine_ActorRunRepeatedMotion(19, 2);
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(19, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage(MsgHaidiaNoTravelersSinceTheEruption);
+	Engine_EventSetMessage(MsgValeNoTravelersSinceTheEruption);
 	Engine_EventAskYesNo(19, 0);
 	Engine_GameFlagSet(0x307);
 	Engine_EventEnd();
@@ -272,7 +272,7 @@ static void EV14_TOUCH(void)
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(188);
-	Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
+	Map_AnimateCells((s32)gValeCellAnimC, 45, 11);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1a4);
 	Engine_EventRequestExit(11);
 }
@@ -311,7 +311,7 @@ static void EV05_TOUCH(void)
 static void EV06_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((u32)gHaidiaMuraCellAnimA, 54, 32);
+	Map_AnimateCells((u32)gValeCellAnimA, 54, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x196, 0x2d7);
 	Engine_EventRequestExit(5);
 }
@@ -319,7 +319,7 @@ static void EV06_TOUCH(void)
 static void EV07_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((u32)gHaidiaMuraCellAnimB, 45, 39);
+	Map_AnimateCells((u32)gValeCellAnimB, 45, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 	Engine_EventRequestExit(6);
 }
@@ -329,7 +329,7 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 && Engine_GameFlagIsSet(0x87a) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgHaidiaYouCantBeRobin);
+		Engine_EventSetMessage(MsgValeYouCantBeIsaac);
 		Engine_EventOpenMessage(21, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -349,7 +349,7 @@ static void EV08_TOUCH(void)
 	else
 	{
 		Engine_AudioPlayCue(0x9e);
-		Engine_MapAnimateCells((s32)gHaidiaMuraCellAnimA, 50, 44);
+		Engine_MapAnimateCells((s32)gValeCellAnimA, 50, 44);
 		Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
 		Engine_EventRequestExit(7);
 	}
@@ -358,7 +358,7 @@ static void EV08_TOUCH(void)
 static void EV09_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
+	Map_AnimateCells((s32)gValeCellAnimB, 49, 69);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 0x466);
 	Engine_EventRequestExit(8);
 }
@@ -366,7 +366,7 @@ static void EV09_TOUCH(void)
 static void EV10_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
+	Map_AnimateCells((s32)gValeCellAnimD, 52, 76);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
 	Engine_EventRequestExit(9);
 }
@@ -374,7 +374,7 @@ static void EV10_TOUCH(void)
 static void EV11_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
+	Map_AnimateCells((s32)gValeCellAnimA, 35, 74);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventRequestExit(10);
 }
@@ -382,28 +382,28 @@ static void EV11_TOUCH(void)
 static void FieldScene_RunScene373SequenceC(void)
 {
 	struct FieldActor *leader;
-	struct FieldActor *jasmine;
+	struct FieldActor *jenna;
 	struct FieldActor *actor;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	jasmine = Object_GetById(JASMINE);
+	jenna = Object_GetById(JENNA);
 	Engine_EventBegin();
-	jasmine->x.fixed = leader->x.fixed;
-	jasmine->y.fixed = leader->y.fixed;
-	jasmine->z.fixed = leader->z.fixed;
-	jasmine->target_x = ACTOR_NO_TARGET;
-	jasmine->target_y = ACTOR_NO_TARGET;
-	jasmine->target_z = ACTOR_NO_TARGET;
-	jasmine->velocity_x = 0;
-	jasmine->velocity_y = 0;
-	jasmine->velocity_z = 0;
-	jasmine->terrain_height = leader->y.fixed;
+	jenna->x.fixed = leader->x.fixed;
+	jenna->y.fixed = leader->y.fixed;
+	jenna->z.fixed = leader->z.fixed;
+	jenna->target_x = ACTOR_NO_TARGET;
+	jenna->target_y = ACTOR_NO_TARGET;
+	jenna->target_z = ACTOR_NO_TARGET;
+	jenna->velocity_x = 0;
+	jenna->velocity_y = 0;
+	jenna->velocity_z = 0;
+	jenna->terrain_height = leader->y.fixed;
 	Engine_TaskWait(1);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
-	Actor_WalkToAndWait(JASMINE, 110, 0x11b);
-	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 2);
-	Engine_EventSetMessage(MsgHaidiaSukuretaIsWaitingForUs);
-	if (leader->x.fixed < jasmine->x.fixed)
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
+	Actor_WalkToAndWait(JENNA, 110, 0x11b);
+	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 2);
+	Engine_EventSetMessage(MsgValeKradenIsWaitingForUs);
+	if (leader->x.fixed < jenna->x.fixed)
 	{
 		Event_ShowMessageAndWait(0xa005, 0, 2);
 	}
@@ -413,14 +413,14 @@ static void FieldScene_RunScene373SequenceC(void)
 	}
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(2);
-	Engine_ActorSetAnimation(JASMINE, 2);
+	Engine_ActorSetAnimation(JENNA, 2);
 	actor = Object_GetById(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Actor_SetDestination(JASMINE, actor->x.part.pixel, actor->z.part.pixel);
+		Actor_SetDestination(JENNA, actor->x.part.pixel, actor->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(JASMINE);
-	Actor_SetPosition(JASMINE, 0, 0);
+	Engine_ActorWaitForMove(JENNA);
+	Actor_SetPosition(JENNA, 0, 0);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 110, 0x12f);
 	Engine_EventEnd();
 }
@@ -440,7 +440,7 @@ static void EV20_TOUCH(void)
 		Actor_SetSpeed(0, 0x10000, 0x8000);
 		Engine_ActorSetAnimation(0, 1);
 		Engine_EventWait(2);
-		Engine_EventSetMessage(MsgHaidiaRrruffRrrruff);
+		Engine_EventSetMessage(MsgValeRrruffRrrruff);
 		Engine_EventShowMessageAndWait(15, 0, 2);
 		Engine_EventShowMessageAndWait(16, 0, 2);
 		rec = (s32 *)Object_GetById(0);
@@ -458,7 +458,7 @@ static void EV20_TOUCH(void)
 			Engine_MapRedraw();
 		} while (n != 40);
 		Engine_EventWait(60);
-		Engine_MessageShowCentered(MsgHaidiaPuppiesPlayingOver, 1);
+		Engine_MessageShowCentered(MsgValePuppiesPlayingOver, 1);
 		n = 0;
 		Engine_EventWait(6);
 		do
@@ -483,7 +483,7 @@ static void EV21_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-		msg = MsgHaidiaRrruffRrrruff;
+		msg = MsgValeRrruffRrrruff;
 		Engine_EventSetMessage(msg);
 		Event_ShowMessageAndWait(15, 0, 2);
 		Event_ShowMessageAndWait(16, 0, 2);
@@ -501,7 +501,7 @@ static void EV100_TOUCH(void)
 	m = 20;
 	n = 50;
 	Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
-	HaidiaMura_MoveActorAlongLowerZPath(0, 10, 11, 1);
+	Vale_MoveActorAlongLowerZPath(0, 10, 11, 1);
 	Engine_GameFlagSet(0x204);
 	Engine_EventEnd();
 }
@@ -510,7 +510,7 @@ static void EV101_TOUCH(void)
 {
 	s32 p5, p6;
 	Engine_EventBegin();
-	HaidiaMura_MoveActorAlongHigherZPath(0, 13, 10, 1);
+	Vale_MoveActorAlongHigherZPath(0, 13, 10, 1);
 	Engine_GameFlagClear(0x204);
 	p5 = 20;
 	p6 = 50;
@@ -543,10 +543,10 @@ static void EV50_TOUCH(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(20);
 	Actor_SetSpeed(22, 0x18000, 0x10000);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gHaidiaMuraLeaderWalkActions);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
 	Engine_EventWait(10);
 	Actor_ShowEmote(22, 0x103, 0);
-	Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22WalkActions);
+	Engine_ActorEnableActionCallback(22, gValeActor22WalkActions);
 	Object_RefreshSelectorById(0);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x1da);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -556,11 +556,11 @@ static void EV50_TOUCH(void)
 	Actor_FaceDirection(22, FACING_SOUTH, 20);
 	Engine_ActorStartRepeatedMotion(22, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgHaidiaNotSneakingUpMtAleph);
+	Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
 	Event_AskYesNo(22, 0);
 	record = Actor_Get(22);
 	record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
-	Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
+	Engine_ActorEnableActionCallback(22, gValeActor22Actions);
 	GameFlag_Set(0x823);
 	Engine_EventEnd();
 }
@@ -574,13 +574,13 @@ static void EV51_TOUCH(void)
 		q += 100;
 		if (*(s16 *)q == 1)
 		{
-			HaidiaMura_AskAboutSneakingToAleph(
-				(s32)gHaidiaMuraPairTableA, (s32)gHaidiaMuraPairTableB);
+			Vale_AskAboutSneakingToAleph(
+				(s32)gValePairTableA, (s32)gValePairTableB);
 		}
 	}
 }
 
-static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
+static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1)
 {
 	s32				   p8;
 	struct FieldActor *rec8;
@@ -605,11 +605,11 @@ static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	record->scale_x = 0x10000;
 	record->scale_y = 0x10000;
-	Engine_EventSetMessage(MsgHaidiaNotSneakingUpMtAleph);
+	Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
 	Event_AskYesNo(22, 0);
 	record = Actor_Get(22);
 	record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
-	Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
+	Engine_ActorEnableActionCallback(22, gValeActor22Actions);
 	Engine_EventEnd();
 }
 
@@ -622,8 +622,8 @@ static void EV52_TOUCH(void)
 		q += 100;
 		if (*(s16 *)q == 2)
 		{
-			HaidiaMura_AskAboutSneakingToAleph(
-				(s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
+			Vale_AskAboutSneakingToAleph(
+				(s32)gValePairTableC, (s32)gValePairTableD);
 		}
 	}
 }
@@ -639,13 +639,13 @@ static void EV53_TOUCH(void)
 		v = *(s16 *)q;
 		if (v == 1)
 		{
-			HaidiaMura_AskAboutSneakingToAleph(
-				(s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableB);
+			Vale_AskAboutSneakingToAleph(
+				(s32)gValePairTableC, (s32)gValePairTableB);
 		}
 		else if (v == 2)
 		{
-			HaidiaMura_AskAboutSneakingToAleph(
-				(s32)gHaidiaMuraPairTableC, (s32)gHaidiaMuraPairTableD);
+			Vale_AskAboutSneakingToAleph(
+				(s32)gValePairTableC, (s32)gValePairTableD);
 		}
 	}
 }
@@ -675,22 +675,22 @@ static void HouseScene_RunRepairMorning(void)
 	*leader_motion = 0;
 	Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
 	Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
-	Actor_SetPosition(GERALD, PIXELS(298), PIXELS(736));
-	Actor_SetPosition(JASMINE, PIXELS(298), PIXELS(760));
+	Actor_SetPosition(GARET, PIXELS(298), PIXELS(736));
+	Actor_SetPosition(JENNA, PIXELS(298), PIXELS(760));
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
 	SceneActor_ResetActorRun(ACTOR_BOARD, 2, 1);
 	gEventWork->start_transition = 0;
 	gEventWork->transition_frames = 32;
 	Engine_EventOpenScreen();
-	Actor_SetSpeed(JASMINE, 0x8000, 0x4000);
-	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
-	Engine_ActorEnableActionCallback(JASMINE, gJasmineAction);
-	Engine_ActorEnableActionCallback(GERALD, gGeraldAction);
+	Actor_SetSpeed(JENNA, 0x8000, 0x4000);
+	Actor_SetSpeed(GARET, 0x8000, 0x4000);
+	Engine_ActorEnableActionCallback(JENNA, gJennaAction);
+	Engine_ActorEnableActionCallback(GARET, gGaretAction);
 
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
 	leader->scale_x = 0x10000;
@@ -780,11 +780,11 @@ static void HouseScene_RunRepairMorning(void)
 	leader->scale_x = 0x10000;
 	leader->scale_y = 0x10000;
 
-	Engine_EventSetMessage(MsgHaidiaGoodJob);
+	Engine_EventSetMessage(MsgValeGoodJob);
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-	HaidiaMura_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
+	Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
 	Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
 	Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
 	Engine_EventWait(20);
@@ -818,7 +818,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage(MsgHaidiaWorkingYourselvesBone);
+	Engine_EventSetMessage(MsgValeWorkingYourselvesBone);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
@@ -836,7 +836,7 @@ static void HouseScene_RunRepairMorning(void)
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgHaidiaDevastatedWhenKyle);
+	Engine_EventSetMessage(MsgValeDevastatedWhenKyle);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
 	Engine_EventWait(10);
@@ -864,48 +864,48 @@ static void HouseScene_RunRepairMorning(void)
 
 	Camera_SetSpeed(0x6666, 0xccc);
 	Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_WalkTo(GERALD, 369, 904);
-	Actor_WalkToAndWait(JASMINE, 392, 904);
-	Engine_ActorSetAnimation(GERALD, ANIM_STAND);
-	HaidiaMura_MoveActorAlongLowerZPath(JASMINE, 10, 11, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_WalkTo(GARET, 369, 904);
+	Actor_WalkToAndWait(JENNA, 392, 904);
+	Engine_ActorSetAnimation(GARET, ANIM_STAND);
+	Vale_MoveActorAlongLowerZPath(JENNA, 10, 11, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 30);
-	Engine_ActorJump(JASMINE, 4, 0);
-	Actor_WalkToAndWait(JASMINE, 392, 843);
-	Actor_FaceDirection(JASMINE, FACING_WEST + FACING_STEP, 0);
+	Engine_ActorJump(JENNA, 4, 0);
+	Actor_WalkToAndWait(JENNA, 392, 843);
+	Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	HaidiaMura_MoveActorAlongLowerZPath(GERALD, 10, 11, 0);
-	Actor_SetSpeed(JASMINE, 0x4ccc, 0x2666);
-	Actor_SetSpeed(GERALD, 0x4ccc, 0x2666);
-	Actor_WalkTo(GERALD, 392, 843);
-	Actor_Get(JASMINE)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_WalkToAndWait(JASMINE, 408, 843);
+	Vale_MoveActorAlongLowerZPath(GARET, 10, 11, 0);
+	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
+	Actor_SetSpeed(GARET, 0x4ccc, 0x2666);
+	Actor_WalkTo(GARET, 392, 843);
+	Actor_Get(JENNA)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Actor_WalkToAndWait(JENNA, 408, 843);
 	Engine_EventWait(1);
-	Actor_Get(JASMINE)->steering_flags |= ACTOR_FACES_MOTION;
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
-	Engine_ActorWaitForMove(GERALD);
-	Engine_ActorSetAnimation(GERALD, ANIM_STAND);
-	Actor_FaceDirection(GERALD, FACING_WEST, 30);
+	Actor_Get(JENNA)->steering_flags |= ACTOR_FACES_MOTION;
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
+	Engine_ActorWaitForMove(GARET);
+	Engine_ActorSetAnimation(GARET, ANIM_STAND);
+	Actor_FaceDirection(GARET, FACING_WEST, 30);
 	Engine_ActorJump(ACTOR_DORA, 4, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(30);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -914,44 +914,44 @@ static void HouseScene_RunRepairMorning(void)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
 	Engine_EventWait(100);
-	Engine_ActorFaceEachOther(JASMINE, GERALD, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorFaceEachOther(JENNA, GARET, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 30);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_WEST, 30);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(30);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(30);
@@ -962,12 +962,12 @@ static void HouseScene_RunRepairMorning(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 40);
-	Engine_ActorFaceEachOther(JASMINE, GERALD, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorFaceEachOther(JENNA, GARET, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(30);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 30);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(JENNA, FACING_WEST, 30);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
@@ -981,7 +981,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
-	Engine_EventSetMessage(MsgHaidiaAsStubbornAsYourFather);
+	Engine_EventSetMessage(MsgValeAsStubbornAsYourFather);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Engine_EventWait(30);
@@ -990,7 +990,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Engine_ActorSetAnimation(ACTOR_DORA, 7);
 	Engine_EventWait(5);
-	Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, GERALD, 10, 14, 4, 14, 0);
+	Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, GARET, 10, 14, 4, 14, 0);
 	actor = Actor_Get(ACTOR_DORA);
 	actor->sprite->flags = 0;
 	actor->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -1004,24 +1004,24 @@ static void HouseScene_RunRepairMorning(void)
 		Engine_EventWait(1);
 	}
 	Actor_SetPosition(ACTOR_DORA, 0, 0);
-	Actor_SetSpeed(GERALD, 0x30000, 0x18000);
-	Engine_ActorJump(GERALD, 6, 0);
-	Actor_WalkToAndWait(GERALD, 374, 827);
-	Event_ShowMessage(JASMINE, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST + FACING_STEP, 0);
-	Actor_ShowEmote(JASMINE, EMOTE_IN_FRONT | 0, 0);
-	Engine_ActorStartRepeatedMotion(JASMINE, 2);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 0, 10);
-	Engine_ActorSetAnimation(GERALD, 13);
-	Engine_ActorJump(GERALD, 2, 5);
+	Actor_SetSpeed(GARET, 0x30000, 0x18000);
+	Engine_ActorJump(GARET, 6, 0);
+	Actor_WalkToAndWait(GARET, 374, 827);
+	Event_ShowMessage(JENNA, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+	Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
+	Engine_ActorStartRepeatedMotion(JENNA, 2);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 10);
+	Engine_ActorSetAnimation(GARET, 13);
+	Engine_ActorJump(GARET, 2, 5);
 	MapRender_SetValues(0, 0x40000, 0x10000);
 	Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 10);
-	Engine_ActorStartRepeatedMotion(GERALD, 3);
+	Engine_ActorStartRepeatedMotion(GARET, 3);
 	MapRender_SetValues(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 80);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
 	Engine_ActorSetAnimation(ACTOR_DORA, 8);
 	actor->scale_y = 0x8000;
 	Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
@@ -1031,10 +1031,10 @@ static void HouseScene_RunRepairMorning(void)
 		Engine_EventWait(1);
 	}
 	Engine_EventWait(60);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(20);
@@ -1057,55 +1057,55 @@ static void HouseScene_RunRepairMorning(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_SetAttachedEffect(ACTOR_DORA, EMOTE_IN_FRONT | 2);
 	Engine_EventWait(80);
-	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 30);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 80);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_FaceDirection(GERALD, FACING_WEST, 30);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_FaceDirection(GARET, FACING_WEST, 30);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 1);
-	Engine_ActorJump(GERALD, 6, 0);
-	Engine_ActorSetAnimation(GERALD, ANIM_STAND);
-	Actor_SetSpeed(GERALD, 0x40000, 0x20000);
-	actor = Actor_Get(GERALD);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 1);
+	Engine_ActorJump(GARET, 6, 0);
+	Engine_ActorSetAnimation(GARET, ANIM_STAND);
+	Actor_SetSpeed(GARET, 0x40000, 0x20000);
+	actor = Actor_Get(GARET);
 	actor->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_SetDestination(GERALD, 403, 827);
-	Actor_SetAttachedEffect(JASMINE, EMOTE_IN_FRONT | 2);
-	Actor_FaceDirection(JASMINE, FACING_NORTH, 20);
-	Event_ShowMessageAndWait(JASMINE, 0, 1);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 0, 0);
-	Engine_ActorSetAnimation(GERALD, 13);
-	Engine_ActorJump(GERALD, 2, 5);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
+	Actor_SetDestination(GARET, 403, 827);
+	Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
+	Actor_FaceDirection(JENNA, FACING_NORTH, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 1);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
+	Engine_ActorSetAnimation(GARET, 13);
+	Engine_ActorJump(GARET, 2, 5);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
 	Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
 	MapRender_SetValues(0, 0x40000, 0x10000);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	MapRender_SetValues(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 30);
-	Actor_SetSpeed(JASMINE, 0x4ccc, 0x2666);
-	Actor_WalkToAndWait(JASMINE, 408, 855);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 30);
+	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
+	Actor_WalkToAndWait(JENNA, 408, 855);
 	Engine_EventWait(60);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
-	Engine_ActorStartRepeatedMotion(JASMINE, 3);
+	Engine_ActorStartRepeatedMotion(JENNA, 3);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(80);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 30);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 30);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_SHAKE_HEAD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(80);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST + FACING_STEP, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
@@ -1116,39 +1116,39 @@ static void HouseScene_RunRepairMorning(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-	Actor_ShowEmote(JASMINE, EMOTE_IN_FRONT | 1, 0);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 1, 60);
+	Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 70);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 60);
+	Actor_FaceDirection(JENNA, FACING_WEST, 60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, ANIM_NOD);
+	Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Engine_EventWait(30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
-	Engine_ActorJump(GERALD, 4, 0);
-	Actor_WalkToAndWait(GERALD, 398, 828);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
+	Engine_ActorJump(GARET, 4, 0);
+	Actor_WalkToAndWait(GARET, 398, 828);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 60);
@@ -1157,33 +1157,33 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	Engine_EventWait(60);
 
-	actor = Actor_Get(GERALD);
+	actor = Actor_Get(GARET);
 	actor->steering_flags |= ACTOR_FACES_MOTION;
-	actor = Actor_Get(JASMINE);
+	actor = Actor_Get(JENNA);
 	actor->steering_flags |= ACTOR_FACES_MOTION;
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-	Actor_WalkTo(JASMINE, actor->x.part.pixel + 16, actor->z.part.pixel);
-	Actor_WalkToAndWait(GERALD, actor->x.part.pixel + 16, actor->z.part.pixel - 16);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 30);
-	Engine_ActorSetAnimation(GERALD, ANIM_NOD);
-	Engine_ActorSetAnimation(JASMINE, ANIM_NOD);
+	Actor_WalkTo(JENNA, actor->x.part.pixel + 16, actor->z.part.pixel);
+	Actor_WalkToAndWait(GARET, actor->x.part.pixel + 16, actor->z.part.pixel - 16);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
+	Engine_ActorSetAnimation(GARET, ANIM_NOD);
+	Engine_ActorSetAnimation(JENNA, ANIM_NOD);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	Engine_EventWait(40);
-	Actor_WalkToAndWait(JASMINE, actor->x.part.pixel, actor->z.part.pixel);
-	Actor_SetPosition(JASMINE, 0, 0);
-	Actor_WalkToAndWait(GERALD, actor->x.part.pixel, actor->z.part.pixel);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_PartyAddMembers(GERALD, JASMINE);
+	Actor_WalkToAndWait(JENNA, actor->x.part.pixel, actor->z.part.pixel);
+	Actor_SetPosition(JENNA, 0, 0);
+	Actor_WalkToAndWait(GARET, actor->x.part.pixel, actor->z.part.pixel);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_PartyAddMembers(GARET, JENNA);
 	Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
-	HaidiaMura_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 0);
+	Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER, 13, 10, 0);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_Get(ACTOR_DORA)->steering_flags |= ACTOR_FACES_MOTION;
-	HaidiaMura_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
+	Vale_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
 	Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -1199,7 +1199,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventEnd();
 }
 
-s32 HaidiaMura_ApplyEntryState(void)
+s32 Vale_ApplyEntryState(void)
 {
 	struct FieldActor *actor;
 	s32				   set;
@@ -1240,7 +1240,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 		}
 		actor->z.fixed = 0x2480000;
 		actor->y.fixed = 0xc00000;
-		HaidiaMura_OpenVillagerLane();
+		Vale_OpenVillagerLane();
 		actor->terrain_id = 3;
 		actor->motion_flags = 0;
 		FieldScheduler_AddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
@@ -1287,7 +1287,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 					{
 						Actor_SetPosition(22, 0x1000000, 0x1c80000);
 						Object_GetById(22)->update = (void *)SceneActor_RunStep18WhenTargetSet;
-						Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
+						Engine_ActorEnableActionCallback(22, gValeActor22Actions);
 					}
 				}
 				else
@@ -1355,30 +1355,30 @@ static void FieldScene_RunSecondaryActorSequence(void)
 	Engine_EventBegin();
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
-	msg = MsgHaidiaAh;
+	msg = MsgValeAh;
 	Engine_EventSetMessage(msg);
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Camera_SetSpeed(0x10000, 0x2000);
 	Camera_MoveTo(0x18e0000, -1, 0x2460000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a4, 0x260);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(8, 0x3000, 0);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_WalkToAndWait(GERALD, 0x192, 0x260);
-	Actor_FaceDirection(GERALD, 0xd000, 20);
+	Actor_WalkToAndWait(GARET, 0x192, 0x260);
+	Actor_FaceDirection(GARET, 0xd000, 20);
 	Event_ShowMessage(0x1001, 0);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessage(0x4008, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Event_OpenMessage(0x4008, 0);
@@ -1391,35 +1391,35 @@ static void FieldScene_RunSecondaryActorSequence(void)
 	Actor_ShowEmote(8, 0x105, 60);
 	Engine_EventSetMessage(msg + 6);
 	Event_ShowMessageAndWait(0x4008, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(0x1001, 0, 40);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Actor_FaceDirection(8, 0xd000, 20);
 	Event_ShowMessage(0x4008, 0);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Event_ShowMessageAndWait(0x1001, 0, 120);
 	Event_ShowMessageAndWait(0x4008, 0, 20);
-	Actor_ShowEmote(GERALD, 0x105, 40);
+	Actor_ShowEmote(GARET, 0x105, 40);
 	Event_ShowMessageAndWait(0x1001, 0, 40);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(0x4008, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(40);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Event_ShowMessageAndWait(0x4008, 0, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, 3);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	GameFlag_Set(0x303);
 	Engine_EventEnd();
 }
@@ -1435,12 +1435,12 @@ static void FieldScene_RunPrimaryActorSequence(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_WalkToAndWait(GERALD, 0x15a, 0x2e9);
-	Actor_FaceDirection(GERALD, 0xd000, 20);
-	Engine_EventSetMessage(MsgHaidiaHowHaveYouBeen);
-	Event_ShowMessage(GERALD, 0);
+	Actor_WalkToAndWait(GARET, 0x15a, 0x2e9);
+	Actor_FaceDirection(GARET, 0xd000, 20);
+	Engine_EventSetMessage(MsgValeHowHaveYouBeen);
+	Event_ShowMessage(GARET, 0);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Actor_ShowEmote(9, 0x100, 0);
 	Actor_FaceDirection(9, 0x3000, 10);
@@ -1448,60 +1448,60 @@ static void FieldScene_RunPrimaryActorSequence(void)
 	Actor_FaceDirection(9, 0x3000, 40);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Actor_FaceDirection(9, 0x5000, 10);
 	Event_ShowMessageAndWait(9, 0, 20);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Actor_ShowEmote(GERALD, 0x103, 40);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Actor_ShowEmote(GARET, 0x103, 40);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, 0x1000, 40);
+	Actor_FaceDirection(GARET, 0x1000, 40);
 	Engine_ActorSetAnimationAndWait(9, 4);
 	Event_ShowMessage(9, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xb000, 0);
-	Actor_FaceDirection(GERALD, 0xd000, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_FaceDirection(GARET, 0xd000, 10);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 80);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Actor_ShowEmote(GARET, 0x102, 80);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Event_ShowMessageAndWait(9, 0, 20);
-	Actor_FaceDirection(GERALD, 0x1000, 20);
-	Event_OpenMessage(GERALD, 0);
+	Actor_FaceDirection(GARET, 0x1000, 20);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Actor_ShowEmote(GERALD, 0x105, 60);
+		Actor_ShowEmote(GARET, 0x105, 60);
 	}
 	else
 	{
 		gEventWork->message++;
 	}
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_FaceDirection(GERALD, 0xd000, 10);
-	Engine_EventSetMessage(MsgHaidiaEverProtectFamily);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_FaceDirection(GARET, 0xd000, 10);
+	Engine_EventSetMessage(MsgValeEverProtectFamily);
+	Event_ShowMessage(GARET, 0);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessageAndWait(9, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x1000, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Actor_FaceDirection(GARET, 0x1000, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	GameFlag_Set(0x304);
 	Engine_EventEnd();
 }
@@ -1533,7 +1533,7 @@ static void FieldScene_RunCompanionActorSequence(void)
 	Actor_ShowEmote(ACTOR_D, 0x100, 40);
 	Engine_ActorRunRepeatedMotion(ACTOR_D, 2);
 	Actor_FaceDirection(ACTOR_D, 0xd000, 10);
-	Engine_EventSetMessage(MsgHaidiaIUsedToPlayHere);
+	Engine_EventSetMessage(MsgValeIUsedToPlayHere);
 	Event_ShowMessageAndWait(ACTOR_D, 0, 40);
 	Actor_FaceActor(ACTOR_D, ACTOR_PARTY_LEADER, 20);
 	Event_ShowMessage(ACTOR_D, 0);
@@ -1542,7 +1542,7 @@ static void FieldScene_RunCompanionActorSequence(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
+static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	s32				   p10;
 	s32				   p8;
@@ -1576,7 +1576,7 @@ static void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Engine_ActorSetAnimation(a0, 1);
 }
 
-static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
+static void Vale_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	s32				   p10;
 	s32				   p8;
@@ -1685,7 +1685,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
 	Graphics_EnableObjLayerAndCallbacks();
-	msg = MsgHaidiaRepairCaption;
+	msg = MsgValeRepairCaption;
 	UiText_ShowCenteredMessage(msg, 0, 0);
 	ObjectDispatch_StopCallbacksAndHideLayers();
 	Camera_MoveTo(0x1530000, 0xa00000, 0x4950000, 0);
@@ -1693,38 +1693,38 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_TaskWait(1);
 	Camera_SetSpeed(0x547a, 0xa8f);
 	Camera_MoveTo(0x1280000, 0xa00000, 0x3990000, 1);
-	Actor_SetPosition(JASMINE, 0x1990000, 0x46e0000);
+	Actor_SetPosition(JENNA, 0x1990000, 0x46e0000);
 	Engine_TaskWait(1);
-	Actor_SetSpeed(JASMINE, 0xb333, 0x5999);
-	Actor_WalkTo(JASMINE, 0x1a4, 0x42c);
+	Actor_SetSpeed(JENNA, 0xb333, 0x5999);
+	Actor_WalkTo(JENNA, 0x1a4, 0x42c);
 	Audio_PlayCueFromEventWork();
 	gEventWork->transition_frames = 60;
 	Engine_EventOpenScreen();
-	Engine_ActorWaitForMove(JASMINE);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
-	Actor_WalkToAndWait(JASMINE, 0x155, 0x428);
-	Actor_SetSpeed(JASMINE, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(JASMINE, 0x167, 0x409);
+	Engine_ActorWaitForMove(JENNA);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
+	Actor_WalkToAndWait(JENNA, 0x155, 0x428);
+	Actor_SetSpeed(JENNA, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(JENNA, 0x167, 0x409);
 	Actor_SetSpeed(8, 0x8000, 0x4000);
 	Actor_WalkTo(8, 0x13e, 0x3b3);
 	Engine_ActorSetAnimation(8, 2);
-	Actor_WalkToAndWait(JASMINE, 0x19c, 0x409);
-	Actor_WalkToAndWait(JASMINE, 0x19c, 0x3fb);
-	Actor_WalkToAndWait(JASMINE, 0x176, 0x3f0);
-	Actor_WalkToAndWait(JASMINE, 0x15b, 0x3bb);
+	Actor_WalkToAndWait(JENNA, 0x19c, 0x409);
+	Actor_WalkToAndWait(JENNA, 0x19c, 0x3fb);
+	Actor_WalkToAndWait(JENNA, 0x176, 0x3f0);
+	Actor_WalkToAndWait(JENNA, 0x15b, 0x3bb);
 	Actor_WalkToAndWait(8, 0x13e, 0x3b3);
-	Engine_ActorFaceEachOther(JASMINE, 8, 40);
+	Engine_ActorFaceEachOther(JENNA, 8, 40);
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(10);
 	Actor_WalkTo(8, 0x17b, 0x3f9);
 	Camera_SetSpeed(0x8000, 0x1000);
-	Actor_WalkToAndWait(JASMINE, 0x14d, 0x398);
-	Actor_WalkToAndWait(JASMINE, 0x12b, 0x39c);
+	Actor_WalkToAndWait(JENNA, 0x14d, 0x398);
+	Actor_WalkToAndWait(JENNA, 0x12b, 0x39c);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(10);
-	Actor_FaceDirection(JASMINE, 0xf000, 30);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Actor_FaceDirection(JENNA, 0xf000, 30);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x20000, 0x4000);
 	Camera_MoveTo(0x1830000, 0xa00000, 0x3620000, 1);
@@ -1744,43 +1744,43 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Event_ShowMessageAndWait(0x100a, 0, 40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
-	Engine_CameraFollowActor(JASMINE, 1);
+	Engine_CameraFollowActor(JENNA, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
-	Actor_FaceDirection(JASMINE, 0xd000, 10);
-	Actor_WalkToAndWait(JASMINE, 0x138, 0x2f7);
-	Actor_WalkToAndWait(JASMINE, 0x169, 0x2f8);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
+	Actor_FaceDirection(JENNA, 0xd000, 10);
+	Actor_WalkToAndWait(JENNA, 0x138, 0x2f7);
+	Actor_WalkToAndWait(JENNA, 0x169, 0x2f8);
 	Engine_EventWait(20);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 40);
-	Actor_FaceDirection(JASMINE, FACING_EAST, 40);
+	Actor_FaceDirection(JENNA, FACING_WEST, 40);
+	Actor_FaceDirection(JENNA, FACING_EAST, 40);
 	Event_ShowMessageAndWait(0x6001, 0, 10);
-	Actor_ShowEmote(JASMINE, 0x100, 0);
-	Engine_ActorJump(JASMINE, 4, 40);
-	Actor_FaceDirection(JASMINE, FACING_NORTH, 30);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Actor_ShowEmote(JENNA, 0x100, 0);
+	Engine_ActorJump(JENNA, 4, 40);
+	Actor_FaceDirection(JENNA, FACING_NORTH, 30);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(40);
-	Event_ShowMessageAndWait(JASMINE, 0, 30);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Event_ShowMessageAndWait(JENNA, 0, 30);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x40000, 0x8000);
 	Camera_MoveTo(0x18c0000, -1, 0x24c0000, 1);
-	Actor_WalkToAndWait(JASMINE, 0x1c8, 0x2e3);
+	Actor_WalkToAndWait(JENNA, 0x1c8, 0x2e3);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x105, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_ShowEmote(GARET, 0x105, 40);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
 	SceneState_SetValue140Mode0();
-	Engine_ActorSetAnimation(GERALD, 17);
+	Engine_ActorSetAnimation(GARET, 17);
 	Event_ShowMessageAndWait(0x2001, 0, 20);
 	Event_PlayCue(131);
 	for (i = 0; i < 60; i++)
 	{
-		OverlayObject_UpdateOnFrameBit1(Object_GetById(GERALD));
+		OverlayObject_UpdateOnFrameBit1(Object_GetById(GARET));
 		Engine_TaskWait(1);
 	}
-	Engine_ActorSetSpritePriority(GERALD, 1);
+	Engine_ActorSetSpritePriority(GARET, 1);
 	Task_AddCallback(SceneState_SetValue1ThenCall, 0xc80);
 	Task_AddCallback(FieldScene_RunStep9, 0xc80);
 	record = Object_GetById(14);
@@ -1805,136 +1805,136 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x2005, 0, 10);
 	rec8->update = (void (*)(union FieldObject *))none2;
-	Engine_ActorSetSpritePriority(GERALD, 2);
-	Actor_Get(GERALD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+	Engine_ActorSetSpritePriority(GARET, 2);
+	Actor_Get(GARET)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Scheduler_RemoveCallback((s32)SceneState_SetValue1ThenCall);
 	Scheduler_RemoveCallback((s32)FieldScene_RunStep9);
 	Engine_TaskWait(1);
-	Actor_SetChildValue(GERALD, 0);
+	Actor_SetChildValue(GARET, 0);
 	Actor_SetChildValue(9, 0);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
-	Engine_ActorSetAnimation(GERALD, 1);
+	Actor_FaceDirection(GARET, 0x3000, 0);
+	Engine_ActorSetAnimation(GARET, 1);
 	Effect_SpawnRisingDustBurst((s32)rec8);
 	SceneEffect_CleanupSceneObjects();
 	Engine_EventWait(10);
-	Actor_WalkToAndWait(JASMINE, 0x1a8, 0x270);
-	Engine_ActorFaceEachOther(GERALD, JASMINE, 60);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_WalkToAndWait(JENNA, 0x1a8, 0x270);
+	Engine_ActorFaceEachOther(GARET, JENNA, 60);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x6001, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
-	Actor_ShowEmote(GERALD, 0x102, 40);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
+	Actor_ShowEmote(GARET, 0x102, 40);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
-	Actor_ShowEmote(GERALD, 0x101, 80);
-	Engine_ActorRunRepeatedMotion(JASMINE, 1);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
+	Actor_ShowEmote(GARET, 0x101, 80);
+	Engine_ActorRunRepeatedMotion(JENNA, 1);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
-	Actor_ShowEmote(GERALD, 0x102, 80);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
+	Actor_ShowEmote(GARET, 0x102, 80);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
-	Actor_WalkToAndWait(JASMINE, 0x184, 0x25c);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 20);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Actor_WalkToAndWait(JENNA, 0x184, 0x25c);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x105, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_ShowEmote(GARET, 0x105, 40);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
-	Actor_FaceDirection(JASMINE, FACING_EAST, 0);
-	Actor_FaceDirection(GERALD, 0x8000, 40);
+	Actor_FaceDirection(JENNA, FACING_EAST, 0);
+	Actor_FaceDirection(GARET, 0x8000, 40);
 	Event_ShowTwoMessagesAndWait(1, 1, 2, 25, 2, 5, 10, 14, 4, 14, none2);
 	Engine_EventWait(40);
-	Actor_SetAttachedEffect(JASMINE, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(JENNA, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(80);
-	Actor_ShowEmote(JASMINE, 0x101, 40);
+	Actor_ShowEmote(JENNA, 0x101, 40);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(80);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(10);
-	Actor_ShowEmote(JASMINE, 0x101, 40);
+	Actor_ShowEmote(JENNA, 0x101, 40);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(20);
-	Actor_ShowEmote(JASMINE, 0x101, 80);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Actor_ShowEmote(JENNA, 0x101, 80);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x1005, 0, 10);
-	Actor_FaceDirection(JASMINE, 0x1000, 40);
-	Actor_FaceActor(JASMINE, GERALD, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Actor_FaceDirection(JENNA, 0x1000, 40);
+	Actor_FaceActor(JENNA, GARET, 40);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
-	Actor_WalkToAndWait(JASMINE, 0x17c, 0x26c);
+	Actor_WalkToAndWait(JENNA, 0x17c, 0x26c);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x1005, 0, 10);
-	Actor_FaceDirection(GERALD, 0x5000, 30);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_FaceDirection(GARET, 0x5000, 30);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(80);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x6001, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x101, 80);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Actor_ShowEmote(GARET, 0x101, 80);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(GERALD, 0x19c, 0x25c);
-	Actor_FaceDirection(GERALD, 0x5000, 20);
-	Engine_ActorRunRepeatedMotion(JASMINE, 1);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(GARET, 0x19c, 0x25c);
+	Actor_FaceDirection(GARET, 0x5000, 20);
+	Engine_ActorRunRepeatedMotion(JENNA, 1);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Actor_ShowEmote(GERALD, 0x101, 80);
-	Engine_ActorJump(JASMINE, 4, 30);
+	Actor_ShowEmote(GARET, 0x101, 80);
+	Engine_ActorJump(JENNA, 4, 30);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x6001, 0, 20);
 	Engine_EventWait(30);
-	Actor_FaceDirection(JASMINE, FACING_NORTHEAST, 40);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Actor_FaceDirection(JENNA, FACING_NORTHEAST, 40);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Event_ShowMessageAndWait(0x1005, 0, 20);
-	Actor_ShowEmote(GERALD, 0x101, 80);
-	Actor_ShowEmote(JASMINE, 0x103, 40);
-	Actor_SetSpeed(JASMINE, 0xcccc, 0x6666);
-	Actor_WalkTo(JASMINE, 0x1ac, 0x274);
+	Actor_ShowEmote(GARET, 0x101, 80);
+	Actor_ShowEmote(JENNA, 0x103, 40);
+	Actor_SetSpeed(JENNA, 0xcccc, 0x6666);
+	Actor_WalkTo(JENNA, 0x1ac, 0x274);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, 0x3000, 0);
-	Engine_ActorWaitForMove(JASMINE);
+	Actor_FaceDirection(GARET, 0x3000, 0);
+	Engine_ActorWaitForMove(JENNA);
 	Event_ShowMessage(0x5001, 0);
-	Engine_ActorSetAnimation(JASMINE, 1);
+	Engine_ActorSetAnimation(JENNA, 1);
 	Engine_EventWait(60);
-	Actor_FaceDirection(JASMINE, 0xb000, 30);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Actor_WalkToAndWait(JASMINE, 0x1ac, 0x274);
-	Actor_FaceDirection(JASMINE, 0xb000, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Actor_FaceDirection(JENNA, 0xb000, 30);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Actor_WalkToAndWait(JENNA, 0x1ac, 0x274);
+	Actor_FaceDirection(JENNA, 0xb000, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(0x2005, 0, 20);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(0x5001, 0, 20);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(10);
-	Actor_SetSpeed(JASMINE, 0x8000, 0x4000);
-	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
-	Actor_WalkTo(JASMINE, 0x1c2, 0x2ee);
-	Actor_WalkTo(GERALD, 0x1c2, 0x2ee);
+	Actor_SetSpeed(JENNA, 0x8000, 0x4000);
+	Actor_SetSpeed(GARET, 0x8000, 0x4000);
+	Actor_WalkTo(JENNA, 0x1c2, 0x2ee);
+	Actor_WalkTo(GARET, 0x1c2, 0x2ee);
 	Engine_EventWait(60);
 	gEventWork->transition_frames = 60;
 	Engine_EventCloseScreen();
@@ -1974,12 +1974,12 @@ static void Scene_RepairTheHouse(void)
 	turned->facing = 0;
 	turn_back = 0xc000;
 	turned->facing = turn_back;
-	Actor_SetPosition(GERALD, 0x12a0000, 0x2e00000);
-	turned = Actor_Get(GERALD);
+	Actor_SetPosition(GARET, 0x12a0000, 0x2e00000);
+	turned = Actor_Get(GARET);
 	turn_side = 0x4000;
 	turned->facing = turn_side;
-	Actor_SetPosition(JASMINE, 0x12a0000, 0x2f80000);
-	turned = Actor_Get(JASMINE);
+	Actor_SetPosition(JENNA, 0x12a0000, 0x2f80000);
+	turned = Actor_Get(JENNA);
 	turned->facing = turn_side;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
@@ -2008,10 +2008,10 @@ static void Scene_RepairTheHouse(void)
 	Engine_TaskWait(1);
 	gEventWork->transition_frames = 32;
 	Engine_EventOpenScreen();
-	Actor_SetSpeed(JASMINE, 0x8000, turn_side);
-	Actor_SetSpeed(GERALD, 0x8000, turn_side);
-	Engine_ActorEnableActionCallback(5, (u32)gJasmineAction);
-	Engine_ActorEnableActionCallback(1, (u32)gGeraldAction);
+	Actor_SetSpeed(JENNA, 0x8000, turn_side);
+	Actor_SetSpeed(GARET, 0x8000, turn_side);
+	Engine_ActorEnableActionCallback(5, (u32)gJennaAction);
+	Engine_ActorEnableActionCallback(1, (u32)gGaretAction);
 	Engine_EventWait(40);
 	Engine_ActorEnableActionCallback(0, 1);
 	scene->scale_x = 0x10000;
@@ -2157,10 +2157,10 @@ static void Scene_RepairTheHouse(void)
 	scene->scale_x = 0x10000;
 	scene->scale_y = 0x10000;
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
-	Engine_EventSetMessage(MsgHaidiaGoodJob);
+	Engine_EventSetMessage(MsgValeGoodJob);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
-	HaidiaMura_MoveActorAlongLowerZPath(21, 5, 6, 0);
+	Vale_MoveActorAlongLowerZPath(21, 5, 6, 0);
 	Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
 	Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
 	Engine_EventWait(20);
@@ -2193,7 +2193,7 @@ static void Scene_RepairTheHouse(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
 	}
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage(MsgHaidiaWorkingYourselvesBone);
+	Engine_EventSetMessage(MsgValeWorkingYourselvesBone);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
@@ -2208,7 +2208,7 @@ static void Scene_RepairTheHouse(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
-	Engine_EventSetMessage(MsgHaidiaDevastatedWhenKyle);
+	Engine_EventSetMessage(MsgValeDevastatedWhenKyle);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
 	Engine_EventWait(10);
@@ -2232,49 +2232,49 @@ static void Scene_RepairTheHouse(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Camera_SetSpeed(0x6666, 0xccc);
 	Camera_MoveTo(0x1790000, 0xa00000, 0x35c0000, 1);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_WalkTo(GERALD, 369, 904);
-	Actor_WalkToAndWait(JASMINE, 392, 904);
-	Engine_ActorSetAnimation(GERALD, 1);
-	HaidiaMura_MoveActorAlongLowerZPath(5, 10, 11, 0);
-	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 0);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_WalkTo(GARET, 369, 904);
+	Actor_WalkToAndWait(JENNA, 392, 904);
+	Engine_ActorSetAnimation(GARET, 1);
+	Vale_MoveActorAlongLowerZPath(5, 10, 11, 0);
+	Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 20);
-	Engine_ActorJump(JASMINE, 4, 0);
-	Actor_WalkToAndWait(JASMINE, 392, 843);
-	Actor_FaceDirection(JASMINE, 0x9000, 0);
+	Engine_ActorJump(JENNA, 4, 0);
+	Actor_WalkToAndWait(JENNA, 392, 843);
+	Actor_FaceDirection(JENNA, 0x9000, 0);
 	Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
 	Engine_ActorSetAnimationAndWait(21, 3);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
 	Engine_ActorSetAnimation(ACTOR_DORA, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	HaidiaMura_MoveActorAlongLowerZPath(1, 10, 11, 0);
-	Actor_SetSpeed(JASMINE, 0x4ccc, 0x2666);
-	Actor_SetSpeed(GERALD, 0x4ccc, 0x2666);
-	Actor_WalkTo(GERALD, 392, 843);
+	Vale_MoveActorAlongLowerZPath(1, 10, 11, 0);
+	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
+	Actor_SetSpeed(GARET, 0x4ccc, 0x2666);
+	Actor_WalkTo(GARET, 392, 843);
 	Object_GetById(5)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Actor_WalkToAndWait(JASMINE, 408, 843);
+	Actor_WalkToAndWait(JENNA, 408, 843);
 	Engine_EventWait(1);
 	{
-		struct FieldActor *record = Actor_Get(JASMINE);
+		struct FieldActor *record = Actor_Get(JENNA);
 
 		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
 	}
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
-	Engine_ActorWaitForMove(GERALD);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Actor_FaceDirection(GERALD, FACING_WEST, 30);
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
+	Engine_ActorWaitForMove(GARET);
+	Engine_ActorSetAnimation(GARET, 1);
+	Actor_FaceDirection(GARET, FACING_WEST, 30);
 	Engine_ActorJump(ACTOR_DORA, 4, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_DORA, 0x5000, 20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2283,41 +2283,41 @@ static void Scene_RepairTheHouse(void)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_DORA, 0x3000, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_ShowEmote(ACTOR_DORA, 257, 80);
 	Actor_FaceDirection(ACTOR_DORA, 0x5000, 30);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
 	Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(80);
-	Engine_ActorFaceEachOther(JASMINE, GERALD, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorFaceEachOther(JENNA, GARET, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_DORA, 261, 60);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 10);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Actor_FaceDirection(JENNA, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_WEST, 10);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
@@ -2327,11 +2327,11 @@ static void Scene_RepairTheHouse(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
 	Actor_FaceDirection(ACTOR_DORA, 0x3000, 10);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 40);
-	Engine_ActorFaceEachOther(JASMINE, GERALD, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorFaceEachOther(JENNA, GARET, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
 	Actor_FaceDirection(5, 0x8000, 20);
 	Actor_FaceDirection(ACTOR_DORA, 0x5000, 20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2345,7 +2345,7 @@ static void Scene_RepairTheHouse(void)
 		gEventWork->message++;
 	}
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage(MsgHaidiaAsStubbornAsYourFather);
+	Engine_EventSetMessage(MsgValeAsStubbornAsYourFather);
 	Actor_ShowEmote(ACTOR_DORA, 259, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2368,31 +2368,31 @@ static void Scene_RepairTheHouse(void)
 		Engine_EventWait(1);
 	}
 	Actor_SetPosition(ACTOR_DORA, 0, 0);
-	Actor_SetSpeed(GERALD, 0x30000, 0x18000);
-	Engine_ActorJump(GERALD, 6, 0);
+	Actor_SetSpeed(GARET, 0x30000, 0x18000);
+	Engine_ActorJump(GARET, 6, 0);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-	Actor_WalkToAndWait(GERALD, 374, 829);
-	Actor_SetPosition(GERALD, PIXELS(374), PIXELS(829));
+	Actor_WalkToAndWait(GARET, 374, 829);
+	Actor_SetPosition(GARET, PIXELS(374), PIXELS(829));
 #else
-	Actor_WalkToAndWait(GERALD, 374, 827);
+	Actor_WalkToAndWait(GARET, 374, 827);
 #endif
-	Event_ShowMessage(JASMINE, 0);
-	Actor_FaceDirection(GERALD, 0xb000, 0);
-	Actor_ShowEmote(JASMINE, 256, 0);
-	Engine_ActorStartRepeatedMotion(JASMINE, 2);
-	Actor_ShowEmote(GERALD, 256, 10);
-	Engine_ActorSetAnimation(GERALD, 13);
-	Engine_ActorJump(GERALD, 2, 5);
+	Event_ShowMessage(JENNA, 0);
+	Actor_FaceDirection(GARET, 0xb000, 0);
+	Actor_ShowEmote(JENNA, 256, 0);
+	Engine_ActorStartRepeatedMotion(JENNA, 2);
+	Actor_ShowEmote(GARET, 256, 10);
+	Engine_ActorSetAnimation(GARET, 13);
+	Engine_ActorJump(GARET, 2, 5);
 	Event_PlayCue(143);
 	Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
 	Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 10);
-	Engine_ActorStartRepeatedMotion(GERALD, 3);
+	Engine_ActorStartRepeatedMotion(GARET, 3);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
-	Actor_ShowEmote(GERALD, 258, 80);
+	Actor_ShowEmote(GARET, 258, 80);
 	Engine_ActorSetAnimation(ACTOR_DORA, 8);
 	rec->scale_y = 0x8000;
 	Actor_SetPosition(ACTOR_DORA, 0x16c0000, 0x32b0000);
@@ -2402,10 +2402,10 @@ static void Scene_RepairTheHouse(void)
 		Engine_EventWait(1);
 	}
 	Engine_EventWait(60);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Actor_FaceDirection(GERALD, 0x5000, 30);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Actor_FaceDirection(GARET, 0x5000, 30);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(20);
@@ -2426,60 +2426,60 @@ static void Scene_RepairTheHouse(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Actor_SetAttachedEffect(ACTOR_DORA, 258);
 	Engine_EventWait(80);
-	Actor_FaceDirection(GERALD, 0x5000, 40);
-	Actor_ShowEmote(GERALD, 258, 80);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_FaceDirection(GERALD, FACING_WEST, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Actor_FaceDirection(GARET, 0x5000, 40);
+	Actor_ShowEmote(GARET, 258, 80);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_FaceDirection(GARET, FACING_WEST, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 1);
-	Engine_ActorJump(GERALD, 6, 0);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Actor_SetSpeed(GERALD, 0x40000, 0x20000);
-	rec = Actor_Get(GERALD);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 1);
+	Engine_ActorJump(GARET, 6, 0);
+	Engine_ActorSetAnimation(GARET, 1);
+	Actor_SetSpeed(GARET, 0x40000, 0x20000);
+	rec = Actor_Get(GARET);
 	rec->steering_flags &= ~ACTOR_FACES_MOTION;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-	Actor_SetDestination(GERALD, 403, 829);
+	Actor_SetDestination(GARET, 403, 829);
 #else
-	Actor_SetDestination(GERALD, 403, 827);
+	Actor_SetDestination(GARET, 403, 827);
 #endif
-	Actor_SetAttachedEffect(JASMINE, 258);
-	Actor_FaceDirection(JASMINE, FACING_NORTH, 20);
-	Event_ShowMessageAndWait(JASMINE, 0, 1);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, 0x5000, 20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Actor_ShowEmote(GERALD, 256, 0);
-	Engine_ActorSetAnimation(GERALD, 13);
-	Engine_ActorJump(GERALD, 2, 5);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
+	Actor_SetAttachedEffect(JENNA, 258);
+	Actor_FaceDirection(JENNA, FACING_NORTH, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 1);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, 0x5000, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Actor_ShowEmote(GARET, 256, 0);
+	Engine_ActorSetAnimation(GARET, 13);
+	Engine_ActorJump(GARET, 2, 5);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
 	Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
 	Event_PlayCue(143);
 	Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
-	Actor_ShowEmote(GERALD, 258, 30);
-	Actor_SetSpeed(JASMINE, 0x4ccc, 0x2666);
-	Actor_WalkToAndWait(JASMINE, 408, 855);
+	Actor_ShowEmote(GARET, 258, 30);
+	Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
+	Actor_WalkToAndWait(JENNA, 408, 855);
 	Engine_EventWait(60);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Actor_ShowEmote(ACTOR_DORA, 261, 60);
-	Engine_ActorStartRepeatedMotion(JASMINE, 3);
+	Engine_ActorStartRepeatedMotion(JENNA, 3);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(80);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 30);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 30);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(JASMINE, 4);
+	Engine_ActorSetAnimationAndWait(JENNA, 4);
 	Engine_EventWait(80);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-	Actor_FaceDirection(JASMINE, 0xb000, 0);
+	Actor_FaceDirection(JENNA, 0xb000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
@@ -2490,38 +2490,38 @@ static void Scene_RepairTheHouse(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
-	Actor_ShowEmote(JASMINE, 257, 0);
-	Actor_ShowEmote(GERALD, 257, 60);
+	Actor_ShowEmote(JENNA, 257, 0);
+	Actor_ShowEmote(GARET, 257, 60);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
 	Engine_EventWait(30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Engine_EventWait(20);
-	Actor_FaceDirection(JASMINE, FACING_WEST, 60);
+	Actor_FaceDirection(JENNA, FACING_WEST, 60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_ActorSetAnimationAndWait(JASMINE, 3);
+	Engine_ActorSetAnimationAndWait(JENNA, 3);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(10);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
+	Event_ShowMessageAndWait(GARET, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
 	Actor_ShowEmote(ACTOR_DORA, 256, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Engine_EventWait(30);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
-	Engine_ActorJump(GERALD, 4, 0);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
+	Engine_ActorJump(GARET, 4, 0);
 	Engine_ActorWalkToAndWait(1, 398, 828);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
@@ -2530,30 +2530,30 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventWait(60);
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
 	Engine_EventWait(60);
-	rec = Actor_Get(GERALD);
+	rec = Actor_Get(GARET);
 	flag = 1;
 	rec->steering_flags |= flag;
-	rec = Actor_Get(JASMINE);
+	rec = Actor_Get(JENNA);
 	rec->steering_flags |= flag;
 	rec = Actor_Get(ACTOR_PARTY_LEADER);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(JENNA, 0x10000, 0x8000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-	Actor_WalkTo(JASMINE, rec->x.part.pixel + 16, rec->z.part.pixel);
-	Actor_WalkToAndWait(GERALD, rec->x.part.pixel + 16, rec->z.part.pixel - 16);
-	Engine_ActorWaitForMove(GERALD);
-	Actor_FaceDirection(GERALD, 0x5000, 30);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(JASMINE, 3);
+	Actor_WalkTo(JENNA, rec->x.part.pixel + 16, rec->z.part.pixel);
+	Actor_WalkToAndWait(GARET, rec->x.part.pixel + 16, rec->z.part.pixel - 16);
+	Engine_ActorWaitForMove(GARET);
+	Actor_FaceDirection(GARET, 0x5000, 30);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(JENNA, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(40);
-	Actor_WalkToAndWait(JASMINE, rec->x.part.pixel, rec->z.part.pixel);
-	Actor_SetPosition(JASMINE, 0, 0);
-	Actor_WalkToAndWait(GERALD, rec->x.part.pixel, rec->z.part.pixel);
-	Actor_SetPosition(GERALD, 0, 0);
+	Actor_WalkToAndWait(JENNA, rec->x.part.pixel, rec->z.part.pixel);
+	Actor_SetPosition(JENNA, 0, 0);
+	Actor_WalkToAndWait(GARET, rec->x.part.pixel, rec->z.part.pixel);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_PartyAddMembers(1, 5);
 	Camera_MoveTo(0x1790000, 0xa00000, 0x3770000, 1);
-	HaidiaMura_MoveActorAlongHigherZPath(0, 13, 10, 0);
+	Vale_MoveActorAlongHigherZPath(0, 13, 10, 0);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	{
@@ -2561,7 +2561,7 @@ static void Scene_RepairTheHouse(void)
 
 		record->steering_flags = flag | record->steering_flags;
 	}
-	HaidiaMura_MoveActorAlongHigherZPath(21, 6, 5, 0);
+	Vale_MoveActorAlongHigherZPath(21, 6, 5, 0);
 	Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
 	Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -2590,7 +2590,7 @@ static void Scene_RepairTheHouse(void)
 
 static void SceneState_SetValue1ThenCall(void)
 {
-	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(GERALD));
+	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(GARET));
 }
 
 static void SceneState_SetValue0ThenCall(void)
@@ -2630,7 +2630,7 @@ static s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_po
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-static s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
+static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
 {
 	s32 result;
 	u32 angle;
@@ -2682,7 +2682,7 @@ static s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
 	struct FieldActor *t = Object_GetById(ACTOR_PARTY_LEADER);
 	if (p[14] == 0x80000000 && p[16] == 0x80000000)
 		return 0;
-	HaidiaMura_TestFacing((struct FieldActor *)p, t, 18, 0);
+	Vale_TestFacing((struct FieldActor *)p, t, 18, 0);
 	return 0;
 }
 
@@ -2794,10 +2794,10 @@ static void SceneState_ApplyRectAndRunTwo(void)
 #endif
 	Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
 	StagedActor_AdvancePair();
-	HaidiaMura_OpenVillagerLane();
+	Vale_OpenVillagerLane();
 }
 
-static void HaidiaMura_OpenVillagerLane(void)
+static void Vale_OpenVillagerLane(void)
 {
 	struct FieldActor *actor;
 	s32				   column;
@@ -2839,7 +2839,7 @@ static void Effect_PlayStepSound(void)
 static void EV24_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgHaidiaDoorWontOpen, 1);
+	Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
 	Engine_EventEnd();
 }
 
@@ -2950,7 +2950,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 gHaidiaMuraActor22Actions[] = {
+s32 gValeActor22Actions[] = {
 	SC_SET(SW_SPEED, 0x8000),
 	SC_SET(SW_ACCEL, 0x4000),
 	SC_SET(0x23, 2),
@@ -3049,7 +3049,7 @@ s32 gLeaderHammerAction[] = {
 	SC_END,
 };
 
-s32 gGeraldAction[] = {
+s32 gGaretAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(300), 0, PIXELS(880)),
 	SC_SYNC,
@@ -3060,7 +3060,7 @@ s32 gGeraldAction[] = {
 	SC_END,
 };
 
-s32 gJasmineAction[] = {
+s32 gJennaAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(300), 0, PIXELS(904)),
 	SC_SYNC,
@@ -3096,7 +3096,7 @@ s32 gDustBurstScript[] = {
 	SC_FREE,
 };
 
-struct SceneEntrance gHaidiaMuraEntrances[] = {
+struct SceneEntrance gValeEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -3114,7 +3114,7 @@ struct SceneEntrance gHaidiaMuraEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gHaidiaMuraExits[] = {
+u32 gValeExits[] = {
 	SCENE_EXITS(4),
 	SCENE_EXIT(1, 19, 1),
 	SCENE_EXIT(2, 5, 8),
@@ -3131,10 +3131,10 @@ u32 gHaidiaMuraExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gHaidiaMuraPlacements[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gValePlacements[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3182,10 +3182,10 @@ struct ScenePlacement gHaidiaMuraPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaMuraPlacements2[] = {
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gValePlacements2[] = {
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3228,8 +3228,8 @@ struct ScenePlacement gHaidiaMuraPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaMuraPlacements3[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gValePlacements3[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(412), 0, PIXELS(586), FACING_NORTH + FACING_STEP, 3, 0 },
@@ -3262,10 +3262,10 @@ struct ScenePlacement gHaidiaMuraPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaMuraPlacements4[] = {
-	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gValePlacements4[] = {
+	{ JENNA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -3289,18 +3289,18 @@ struct ScenePlacement gHaidiaMuraPlacements4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gHaidiaMuraEvents[] = {
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephLooksBeautifulTodayIts) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeStaysPristineBecauseOfMt) },
+struct SceneEvent gValeEvents[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaThisPlaceLooksJustLikeIt) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRobinWatchOutDontGetToo) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeMustRemainHiddenPsynergysSecrets) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIsaacWatchOutDontGetToo) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaYoureInTroubleNowGeraldYour) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephIsASacredPeak) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -3323,34 +3323,34 @@ struct SceneEvent gHaidiaMuraEvents[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(EV26_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaMuraEvents2[] = {
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeIsSavedThanksToThe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaEverSinceTheTremorsStartedMt) },
+struct SceneEvent gValeEvents2[] = {
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaSighNoLongerWillISee) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaIDontBlameGarsiaIfOnly) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheMayorWasTooKindTo) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIDontBlameFelixIfOnly) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouGuysAreSoLuckyGerald) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaPleaseTakeCareOfMyBrother) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaItIsVeryDangerousToGo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaIAmAllAloneInThis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaGeeIWishICouldSee) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaMyBrothersStrengthIsHisBest) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaImGladThatGarsiaIsAlive) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaGarsiaWasAGoodPersonI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaPoorKradenWasTakenToSome) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeWasSavedBecausePeopleLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaICantBelieveAnyoneWouldClimb) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaIJustDontFeelSafeKnowing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaThePeopleOfValeWillNever) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeGeeIWishICouldSee) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeFelixWasAGoodPersonI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValePoorKradenWasTakenToSome) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeValeWasSavedBecausePeopleLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeICantBelieveAnyoneWouldClimb) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeIJustDontFeelSafeKnowing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -3373,37 +3373,37 @@ struct SceneEvent gHaidiaMuraEvents2[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(EV26_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaMuraEvents3[] = {
+struct SceneEvent gValeEvents3[] = {
 	{ EVENT_TALK, 8, 0x303, EVENT_SCRIPT(FieldScene_RunSecondaryActorSequence) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaICanTellJustByLooking) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
 	{ EVENT_TALK, 9, 0x304, EVENT_SCRIPT(FieldScene_RunPrimaryActorSequence) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWillDoMyBestTo) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
 	{ EVENT_TALK, 10, 0x81f, EVENT_SCRIPT(SceneDialogue_RunActor10LineAndFlag81f) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaPromiseMeRobinPromiseMeYoull) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIUsedToPlayHere) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephsEruptionWasSoPowerful) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheySayTheDangerIsGone) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x303, EVENT_SCRIPT(FieldScene_RunSecondaryActorSequence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouGuysAreWorkingSoHard) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x304, EVENT_SCRIPT(FieldScene_RunPrimaryActorSequence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaICouldGoWithYouIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, 0x81f, EVENT_SCRIPT(SceneDialogue_RunActor10LineAndFlag81f) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouDidntBringJasminWithYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaGarsiaMustBeProtectingJasminIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheEarthquakesArentCausedByEruptions) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaAhhICantStandTheseEarthquakes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheSmokeFromMtAlephIsnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, 0x307, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaHavingNoTravelersIsNoFun) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
@@ -3420,30 +3420,30 @@ struct SceneEvent gHaidiaMuraEvents3[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 20, 0xfd0, EVENT_SCRIPT(EV20_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
-u16 gHaidiaMuraCellAnimC[] = {
+u16 gValeCellAnimC[] = {
 	MAP_CELL_STEP(0, 98, 2, 2, 2), MAP_CELL_STEP(2, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 gHaidiaMuraCellAnimA[] = {
+u16 gValeCellAnimA[] = {
 	MAP_CELL_STEP(0, 96, 2, 2, 2), MAP_CELL_STEP(2, 96, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 gHaidiaMuraCellAnimB[] = {
+u16 gValeCellAnimB[] = {
 	MAP_CELL_STEP(4, 98, 2, 2, 2), MAP_CELL_STEP(4, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 gHaidiaMuraCellAnimD[] = {
+u16 gValeCellAnimD[] = {
 	MAP_CELL_STEP(4, 96, 2, 2, 2), MAP_CELL_STEP(4, 96, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-s32 gHaidiaMuraLeaderWalkActions[] = {
+s32 gValeLeaderWalkActions[] = {
 	SC_ARG(5),
 	SC_MOVE(PIXELS(199), 0, PIXELS(446)),
 	SC_SYNC,
@@ -3455,7 +3455,7 @@ s32 gHaidiaMuraLeaderWalkActions[] = {
 	SC_END,
 };
 
-s32 gHaidiaMuraActor22WalkActions[] = {
+s32 gValeActor22WalkActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(199), 0, PIXELS(446)),
 	SC_SYNC,
@@ -3467,7 +3467,7 @@ s32 gHaidiaMuraActor22WalkActions[] = {
 	SC_END,
 };
 
-s32 gHaidiaMuraPairTableA[] = {
+s32 gValePairTableA[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_ARG(5),
@@ -3485,7 +3485,7 @@ s32 gHaidiaMuraPairTableA[] = {
 	SC_END,
 };
 
-s32 gHaidiaMuraPairTableB[] = {
+s32 gValePairTableB[] = {
 	SC_SET(SW_SPEED, 0x18000),
 	SC_SET(SW_ACCEL, 0x10000),
 	SC_ARG(2),
@@ -3501,7 +3501,7 @@ s32 gHaidiaMuraPairTableB[] = {
 	SC_END,
 };
 
-s32 gHaidiaMuraPairTableC[] = {
+s32 gValePairTableC[] = {
 	SC_SET(SW_SPEED, 0x20000),
 	SC_SET(SW_ACCEL, 0x20000),
 	SC_ARG(5),
@@ -3517,7 +3517,7 @@ s32 gHaidiaMuraPairTableC[] = {
 	SC_END,
 };
 
-s32 gHaidiaMuraPairTableD[] = {
+s32 gValePairTableD[] = {
 	SC_SET(SW_SPEED, 0x18000),
 	SC_SET(SW_ACCEL, 0x10000),
 	SC_ARG(2),

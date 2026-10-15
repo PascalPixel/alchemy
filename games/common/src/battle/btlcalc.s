@@ -6,16 +6,16 @@ HitTbl:
 	.byte 100, 60, 30, 30, 30, 30
 	.balign 4
 @ PP drained
-	.global EpLossTbl
-EpLossTbl:
+	.global PpLossTbl
+PpLossTbl:
 	.4byte 100, 50, 30, 10, 10, 10
 @ HP healed
 	.global HpRcvTbl
 HpRcvTbl:
 	.4byte 100, 80, 60, 40, 20, 10
 @ PP damage
-	.global EpDmgTbl
-EpDmgTbl:
+	.global PpDmgTbl
+PpDmgTbl:
 	.4byte 100, 50, 30, 10, 10, 10
 @ HP damage of effect types 5, 8 and 6
 	.global HpDmgTbl5
@@ -28,8 +28,8 @@ HpDmgTbl8:
 HpDmgTbl6:
 	.4byte 100, 50, 30, 10, 10, 10
 @ PP restored
-	.global EpRcvTbl
-EpRcvTbl:
+	.global PpRcvTbl
+PpRcvTbl:
 	.4byte 100, 80, 60, 40, 20, 10
 @ HP damage
 	.global HpDmgTbl

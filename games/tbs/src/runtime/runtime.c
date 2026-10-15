@@ -1778,15 +1778,15 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
 // debug_number.c
 // デバッグ：数を右そろえでデバッグ文字にする
 //--------------------------------------------------------------------------
-// どちらも数を作業域に右づめで作り、その終わりから keta 文字を書く
+// どちらも数を作業域に右づめで作り、その終わりから digits 文字を書く
 //--------------------------------------------------------------------------
-// 16 進で keta けた（1〜8、範囲外なら 8）
+// 16 進で digits けた（1〜8、範囲外なら 8）
 //--------------------------------------------------------------------------
-void Text_DrawHexRightAligned(u32 value, s32 keta)
+void Text_DrawHexRightAligned(u32 value, s32 digits)
 {
 	s32 n;
 
-	n = keta;
+	n = digits;
 	if ((n - 1) > 7U)
 	{
 		n = 8;
@@ -1796,13 +1796,13 @@ void Text_DrawHexRightAligned(u32 value, s32 keta)
 }
 
 //--------------------------------------------------------------------------
-// 符号つきの 10 進で keta けた（1〜10、範囲外なら 10）
+// 符号つきの 10 進で digits けた（1〜10、範囲外なら 10）
 //--------------------------------------------------------------------------
-void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
+void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits)
 {
 	s32 n;
 
-	n = keta;
+	n = digits;
 	if ((n - 1) > 9U)
 	{
 		n = 10;

@@ -52,7 +52,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             owner = UnitGetFar(menu->owner_ids[0]);
             ability = BtlActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
-            if (ability->pp_cost > owner->ep) {
+            if (ability->pp_cost > owner->pp) {
                 UiWork_SetParamNibbleFar(2);
             } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiWork_SetParamNibbleFar(4);

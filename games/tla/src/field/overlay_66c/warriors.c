@@ -28,7 +28,7 @@ void Func_02000074(void)
     if (!GameFlag_Test(2219)) {
         Func_020001b4();
         Func_02000214(0);
-        Func_020001e4((s32)MsgKibonboWarriorsFound);
+        Func_020001e4((s32)MsgKibomboWarriorsFound);
         Func_02000204(0x10000, 0x2000);
         Object_AttachWorkTargetToObject(8, 1);
         Func_0200020c();

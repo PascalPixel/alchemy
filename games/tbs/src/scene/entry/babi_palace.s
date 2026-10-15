@@ -1,8 +1,8 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.include "games/tbs/src/system/overlay.inc"
-	overlay_veneer TorebiKyuden_ApplyEntryState
+	overlay_veneer BabiPalace_ApplyEntryState
 	overlay_veneer Scene_GetEntrances
-	overlay_veneer TorebiKyuden_GetExits
+	overlay_veneer BabiPalace_GetExits
 	overlay_veneer Scene_GetPlacements
 	overlay_veneer Scene_GetEvents
-	overlay_veneer TorebiKyuden_GetRegions
+	overlay_veneer BabiPalace_GetRegions

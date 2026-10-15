@@ -31,12 +31,12 @@ extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern struct SceneEntrance gGomaSuiroEntrancesOther[];
-extern struct SceneEntrance gGomaSuiroEntrances2[];
-extern u32 GomaSuiro_Exits[];
-extern struct ScenePlacement gGomaSuiroPlacementsOther[];
-extern struct ScenePlacement gGomaSuiroPlacements2[];
-extern struct SceneEvent gGomaSuiroEventsOther[];
-extern struct SceneEvent gGomaSuiroEvents2[];
+extern struct SceneEntrance gGomaWaterwayEntrancesOther[];
+extern struct SceneEntrance gGomaWaterwayEntrances2[];
+extern u32 GomaWaterway_Exits[];
+extern struct ScenePlacement gGomaWaterwayPlacementsOther[];
+extern struct ScenePlacement gGomaWaterwayPlacements2[];
+extern struct SceneEvent gGomaWaterwayEventsOther[];
+extern struct SceneEvent gGomaWaterwayEvents2[];
 
 #endif

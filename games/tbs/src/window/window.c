@@ -839,8 +839,8 @@ enum
 	TEXT_END_ALT = 30,
 	TEXT_COMMANDS = 31,
 	TEXT_SPACE = 32,
-	TEXT_DAKUTEN = 222,
-	TEXT_HANDAKUTEN = 223
+	TEXT_VOICED_MARK = 222, // dakuten
+	TEXT_SEMIVOICED_MARK = 223 // handakuten
 };
 
 s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
@@ -1074,12 +1074,12 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 			pc = (pc + 1) & RENDER_ENTRY_MASK;
 			next = work->entries[pc];
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
-			if (next == TEXT_DAKUTEN)
+			if (next == TEXT_VOICED_MARK)
 			{
 				code |= 0x4000;
 				ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
 			}
-			else if (next == TEXT_HANDAKUTEN)
+			else if (next == TEXT_SEMIVOICED_MARK)
 			{
 				code |= 0x8000;
 				ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;

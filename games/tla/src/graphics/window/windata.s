@@ -59,11 +59,11 @@ StatusMenu_LevelLetterString:
 	.endif
 	.endif
 @ The kana that take a dakuten or handakuten, as ranges
-	.global NameEntry_DakutenRanges
-NameEntry_DakutenRanges:
+	.global NameEntry_VoicedMarkRanges
+NameEntry_VoicedMarkRanges:
 	.byte 0xb6, 0xc4, 0xca, 0xce, 0x96, 0x9f, 0xe0, 0xe4, 0xea, 0xee, 0x93, 0x93, 0xb3, 0xb3, 0x00
-	.global NameEntry_HandakutenRanges
-NameEntry_HandakutenRanges:
+	.global NameEntry_SemivoicedMarkRanges
+NameEntry_SemivoicedMarkRanges:
 	.byte 0xca, 0xce, 0xea, 0xee, 0x00
 	.global NameEntry_CaretWave
 NameEntry_CaretWave:

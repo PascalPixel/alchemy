@@ -78,7 +78,7 @@ void Func_020003a0(void)
         return;
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    msg = (s32)MsgDeriGarciaCall;
+    msg = (s32)MsgDailaFelixCall;
     Engine_EventSetMessage(msg);
     Func_02000ca8_(27, 472 << 16, 264 << 16);
     Engine_EventWait(30);

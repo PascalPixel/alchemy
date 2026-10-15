@@ -26,8 +26,8 @@
 #include "facing_object.h"
 
 // 前方宣言
-static void BiribinoNiwa_ApplyEntryState(void);
-static void BiribinoNiwa_RunGardenScene(void);
+static void McCoyPalaceGarden_ApplyEntryState(void);
+static void McCoyPalaceGarden_RunGardenScene(void);
 static void FieldScene_OpenGate(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -50,15 +50,15 @@ u8 *SceneData_GetMessageTable(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_BiribinoNiwa)
+	if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
 	{
 		if (Engine_GameFlagIsSet(0x84f) != 0)
-			gBiribinoNiwaPlacements[4].talk_facing = TALK_FACE_PARTY_AND_BACK;
+			gMcCoyPalaceGardenPlacements[4].talk_facing = TALK_FACE_PARTY_AND_BACK;
 		if (Engine_GameFlagIsSet(0x845) != 0)
-			gBiribinoNiwaPlacements[2].talk_facing = TALK_FACE_PARTY;
-		return gBiribinoNiwaPlacements;
+			gMcCoyPalaceGardenPlacements[2].talk_facing = TALK_FACE_PARTY;
+		return gMcCoyPalaceGardenPlacements;
 	}
-	return gBiribinoNiwaPlacementsOther;
+	return gMcCoyPalaceGardenPlacementsOther;
 }
 
 static void EV13_PSYNERGY(void)
@@ -75,23 +75,23 @@ static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered(MsgBiribinoUponCloserInspectionSeemsDried, 1);
+	Engine_MessageShowCentered(MsgBilibinUponCloserInspectionSeemsDried, 1);
 	Engine_EventEnd();
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_BiribinoNiwa)
+	if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
 	{
-		return gBiribinoNiwaEvents;
+		return gMcCoyPalaceGardenEvents;
 	}
-	return gBiribinoNiwaEventsOther;
+	return gMcCoyPalaceGardenEventsOther;
 }
 
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoHaveYouSeenBarricadeWe);
+	Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -99,7 +99,7 @@ static void EV09_TALK(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoTellingMeImResponsibleFor);
+	Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -107,7 +107,7 @@ static void EV10_TALK(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgBiribinoDoThinkCanBecomeAs);
+	Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -121,26 +121,26 @@ static void EV12_TALK(void)
 		{
 			if (GameFlag_IsSet(0x201) == 0)
 			{
-				Engine_EventSetMessage(MsgBiribinoWhere);
+				Engine_EventSetMessage(MsgBilibinWhere);
 				Engine_EventShowMessageAndWait(12, 0, 10);
 				Actor_ShowEmote(12, 0x107, 40);
 				Engine_EventShowMessageAndWait(12, 0, 10);
 				Engine_ActorRunRepeatedMotion(12, 2);
 				Engine_GameFlagSet(0x201);
 			}
-			Engine_EventSetMessage(MsgBiribinoMasterQuiteCranky);
+			Engine_EventSetMessage(MsgBilibinMasterQuiteCranky);
 			Engine_EventShowMessage(12, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgBiribinoLordMccoyDifficult);
+			Engine_EventSetMessage(MsgBilibinLordMccoyDifficult);
 			Engine_EventShowMessage(12, 0);
 			goto guard;
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgBiribinoLordOnlyMeet);
+		Engine_EventSetMessage(MsgBilibinLordOnlyMeet);
 		Engine_EventOpenMessage(12, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -194,7 +194,7 @@ static void EV12_TALK(void)
 				Engine_GameFlagSet(0x84a);
 			} while (0);
 		guard:
-			FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
+			FieldObject_SetTargetAndCallback(12, 0x10000, McCoyPalaceGarden_GuardScript);
 		}
 		else
 		{
@@ -232,15 +232,15 @@ s32 Scene_Initialize(void)
 	actor->priority_flags = 0;
 	actor->sprite->priority = 1;
 
-	if (gGameState.scene == (s32)&SceneId_BiribinoNiwa)
+	if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden)
 	{
-		BiribinoNiwa_ApplyEntryState();
+		McCoyPalaceGarden_ApplyEntryState();
 	}
 
 	return 0;
 }
 
-static void BiribinoNiwa_ApplyEntryState(void)
+static void McCoyPalaceGarden_ApplyEntryState(void)
 {
 	if (Engine_GameFlagIsSet(0x109) != 0)
 	{
@@ -259,7 +259,7 @@ static void BiribinoNiwa_ApplyEntryState(void)
 			if (Engine_GameFlagIsSet(0x845) == 0)
 			{
 				Engine_ActorSetPosition(11, 0, 0);
-				FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
+				FieldObject_SetTargetAndCallback(12, 0x10000, McCoyPalaceGarden_GuardScript);
 			}
 		}
 	}
@@ -270,12 +270,12 @@ static void BiribinoNiwa_ApplyEntryState(void)
 		Engine_ActorFaceDirection(8, 0, 0);
 		if (Engine_GameFlagIsSet(0x85e) == 0)
 		{
-			BiribinoNiwa_RunGardenScene();
+			McCoyPalaceGarden_RunGardenScene();
 		}
 	}
 }
 
-static void BiribinoNiwa_RunGardenScene(void)
+static void McCoyPalaceGarden_RunGardenScene(void)
 {
 
 	Engine_EventBegin();
@@ -292,7 +292,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	Actor_FaceDirection(11, 0x3000, 10);
 	Engine_ActorStartRepeatedMotion(11, 2);
 	Actor_ShowEmote(11, 0x100, 60);
-	Engine_EventSetMessage(MsgBiribinoOhItS);
+	Engine_EventSetMessage(MsgBilibinOhItS);
 	Engine_EventShowMessageAndWait(11, 0, 10);
 	Actor_FaceDirection(12, 0x5000, 10);
 	Engine_ActorStartRepeatedMotion(12, 2);
@@ -310,7 +310,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	while (Engine_EventChooseYesNo(0, 0) != 0)
 	{
 		Engine_ActorShowEmote(12, 0x100, 60);
-		Engine_EventSetMessage(MsgBiribinoNotTrueWitnesses);
+		Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
 		Engine_EventShowMessageAndWait(12, 0, 10);
 		Engine_ActorStartRepeatedMotion(12, 2);
 		Engine_EventOpenMessage(12, 0);
@@ -322,7 +322,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	Engine_ActorSetAnimationAndWait(12, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(11, 1);
-	Engine_EventSetMessage(MsgBiribinoUnderArrest);
+	Engine_EventSetMessage(MsgBilibinUnderArrest);
 	Engine_EventShowMessageAndWait(11, 0, 10);
 	Actor_SetSpeed(11, 0x10000, 0x8000);
 	Actor_WalkToAndWait(11, 0x13a, 0x118);
@@ -364,18 +364,18 @@ static void BiribinoNiwa_RunGardenScene(void)
 static void FieldScene_OpenGate(void)
 {
 	Engine_AudioPlayCue(0xBC);
-	Engine_MapAnimateCells(Niwa_GateCells, 0x34, 0xB);
+	Engine_MapAnimateCells(Garden_GateCells, 0x34, 0xB);
 	Engine_GameFlagSet(0x200);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_orbit.h"
 
-u16 Niwa_GateCells[] = {
+u16 Garden_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-s32 BiribinoNiwa_GuardScript[] = {
+s32 McCoyPalaceGarden_GuardScript[] = {
 	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -394,11 +394,11 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBiribinoNiwaPlacementsOther[] = {
+struct ScenePlacement gMcCoyPalaceGardenPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBiribinoNiwaPlacements[] = {
+struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
 	{ 0x87, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x87, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -418,11 +418,11 @@ struct ScenePlacement gBiribinoNiwaPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gBiribinoNiwaEventsOther[] = {
+struct SceneEvent gMcCoyPalaceGardenEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBiribinoNiwaEvents[] = {
+struct SceneEvent gMcCoyPalaceGardenEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, 0x845, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
@@ -449,7 +449,7 @@ struct SceneEvent gBiribinoNiwaEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84a, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84f, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84e, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveRobinBeMyMentor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
 	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 13, 0xfd2, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ SCENE_EVENTS_END },

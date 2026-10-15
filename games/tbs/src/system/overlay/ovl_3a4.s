@@ -1,17 +1,17 @@
 	.section .bss,"aw",%nobits
-	.global ArutinYama_RiseTimer
-ArutinYama_RiseTimer:
+	.global AltinPeak_RiseTimer
+AltinPeak_RiseTimer:
 	.space 4
-	.global ArutinYama_LeafMode
-ArutinYama_LeafMode:
+	.global AltinPeak_LeafMode
+AltinPeak_LeafMode:
 	.space 4
-	.global ArutinYama_LeafOrigin
-ArutinYama_LeafOrigin:
+	.global AltinPeak_LeafOrigin
+AltinPeak_LeafOrigin:
 	.space 12
 	.space 16
-	.global ArutinYama_PaletteHold
-ArutinYama_PaletteHold:
+	.global AltinPeak_PaletteHold
+AltinPeak_PaletteHold:
 	.space 4
-	.global ArutinYama_PaletteStep
-ArutinYama_PaletteStep:
+	.global AltinPeak_PaletteStep
+AltinPeak_PaletteStep:
 	.space 4

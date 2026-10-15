@@ -1,4 +1,4 @@
-@ C2: SentouKouka_TenkaiYomi:
+@ C2: BattleEffect_ExpandRead:
 @ Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
 @ fp as a mask. ldr pc jumps into those commands in battle_effect_expand.s
 @ and battle_effect_expand_commands.s.
@@ -8,7 +8,7 @@
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next
 @ object.
-@ C2: SentouKouka_TenkaiCase2 to SentouKouka_TenkaiCase10:
+@ C2: BattleEffect_ExpandCase2 to BattleEffect_ExpandCase10:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
@@ -17,37 +17,37 @@
 .L_bias:
 	.4byte 0x80808080
 .L_dispatch_base:
-	.4byte SentouKouka_TenkaiCaseTable
+	.4byte BattleEffect_ExpandCaseTable
 .syntax unified
 .text
 	.arm
-	.global SentouKouka_TenkaiYomi
-SentouKouka_TenkaiYomi:
+	.global BattleEffect_ExpandRead
+BattleEffect_ExpandRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_sentou_kouka_tenkai_1:
+AlchemyUncredited_battle_effect_expand_1:
 	nop
-AlchemyUncreditedEnd_sentou_kouka_tenkai_1:
+AlchemyUncreditedEnd_battle_effect_expand_1:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
 .L_dispatch_runtime:
 	.space 32, 0
-	.global SentouKouka_TenkaiCaseTable
-SentouKouka_TenkaiCaseTable:
-	.4byte SentouKouka_TenkaiCase2
-	.4byte SentouKouka_TenkaiCase4Plus
-	.4byte SentouKouka_TenkaiCase8
-	.4byte SentouKouka_TenkaiCase6Plus
-	.4byte SentouKouka_TenkaiCase2
-	.4byte SentouKouka_TenkaiCase4Minus
-	.4byte SentouKouka_TenkaiCase10
-	.4byte SentouKouka_TenkaiCase6Minus
+	.global BattleEffect_ExpandCaseTable
+BattleEffect_ExpandCaseTable:
+	.4byte BattleEffect_ExpandCase2
+	.4byte BattleEffect_ExpandCase4Plus
+	.4byte BattleEffect_ExpandCase8
+	.4byte BattleEffect_ExpandCase6Plus
+	.4byte BattleEffect_ExpandCase2
+	.4byte BattleEffect_ExpandCase4Minus
+	.4byte BattleEffect_ExpandCase10
+	.4byte BattleEffect_ExpandCase6Minus
 .syntax unified
-	.section .text.sentou_kouka_tenkai_commands,"ax",%progbits
+	.section .text.battle_effect_expand_commands,"ax",%progbits
 	.arm
-	.global SentouKouka_TenkaiCase2
-SentouKouka_TenkaiCase2:
+	.global BattleEffect_ExpandCase2
+BattleEffect_ExpandCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -55,8 +55,8 @@ SentouKouka_TenkaiCase2:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase4Plus
-SentouKouka_TenkaiCase4Plus:
+	.global BattleEffect_ExpandCase4Plus
+BattleEffect_ExpandCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -67,8 +67,8 @@ SentouKouka_TenkaiCase4Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase4Minus
-SentouKouka_TenkaiCase4Minus:
+	.global BattleEffect_ExpandCase4Minus
+BattleEffect_ExpandCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -79,8 +79,8 @@ SentouKouka_TenkaiCase4Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase6Plus
-SentouKouka_TenkaiCase6Plus:
+	.global BattleEffect_ExpandCase6Plus
+BattleEffect_ExpandCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -91,8 +91,8 @@ SentouKouka_TenkaiCase6Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase6Minus
-SentouKouka_TenkaiCase6Minus:
+	.global BattleEffect_ExpandCase6Minus
+BattleEffect_ExpandCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -103,8 +103,8 @@ SentouKouka_TenkaiCase6Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase8
-SentouKouka_TenkaiCase8:
+	.global BattleEffect_ExpandCase8
+BattleEffect_ExpandCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -117,8 +117,8 @@ SentouKouka_TenkaiCase8:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global SentouKouka_TenkaiCase10
-SentouKouka_TenkaiCase10:
+	.global BattleEffect_ExpandCase10
+BattleEffect_ExpandCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #-33554432
 	lsr	r3, r3, #10

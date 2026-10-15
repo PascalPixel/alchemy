@@ -2,7 +2,7 @@
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
 	.balign 4
-	overlay_veneer DeriHeya_Start
+	overlay_veneer DailaInteriors_Start
 	overlay_veneer Scene_GetEntrances
 	overlay_veneer Scene_GetExits
 	overlay_veneer Scene_GetPlacements

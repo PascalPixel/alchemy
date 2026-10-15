@@ -23,9 +23,9 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
         unit->hp = unit->max_hp;
         UnitRatioFar(id);
     } else if (mode == 1) {
-        unit->doku = 0;
+        unit->poison = 0;
     } else if (mode == 2) {
-        unit->akuryo = 0;
+        unit->haunt = 0;
     } else if (mode == 3) {
         s32 i;
 

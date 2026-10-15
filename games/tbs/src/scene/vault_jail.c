@@ -124,7 +124,7 @@ static void EV08_TALK(void)
 	Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
 	Engine_EventWait(40);
 
-	Engine_EventSetMessage(MsgKuupuappuThiefLeaderSilencesThieves);
+	Engine_EventSetMessage(MsgVaultThiefLeaderSilencesThieves);
 	Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 
 	Engine_ActorStartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -147,7 +147,7 @@ static void EV09_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKuupuappuLeftThiefRegretsEscape);
+	Engine_EventSetMessage(MsgVaultLeftThiefRegretsEscape);
 	Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -157,7 +157,7 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgKuupuappuRightThiefRegretsStaying);
+	Engine_EventSetMessage(MsgVaultRightThiefRegretsStaying);
 	Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -165,7 +165,7 @@ static void EV10_TALK(void)
 static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuThiefLeaderThoughts);
+	Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
 	Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 	Engine_EventEnd();
 }
@@ -173,7 +173,7 @@ static void EV08_PSYNERGY(void)
 static void EV09_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuLeftThiefThoughts);
+	Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
 	Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -181,7 +181,7 @@ static void EV09_PSYNERGY(void)
 static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuRightThiefThoughts);
+	Engine_EventSetMessage(MsgVaultRightThiefThoughts);
 	Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -226,10 +226,10 @@ const struct SceneEntrance gJailEntrances[] = {
 };
 
 const u32 gJailExits[] = {
-	SCENE_EXITS(SCENE_KUUPUAPPU_RUNPA),
-	SCENE_EXIT(JAIL_EXIT_TO_VAULT, SCENE_KUUPUAPPU_MURA, ENTRANCE_FROM_JAIL),
-	SCENE_EXIT(JAIL_EXIT_TO_VAULT_REVISIT, SCENE_KUUPUAPPU_MURA_SAI, ENTRANCE_FROM_JAIL),
-	SCENE_EXIT(JAIL_EXIT_TO_LUNPA, SCENE_RUNPA_MURA, ENTRANCE_FROM_JAIL),
+	SCENE_EXITS(SCENE_VAULT_JAIL),
+	SCENE_EXIT(JAIL_EXIT_TO_VAULT, SCENE_VAULT, ENTRANCE_FROM_JAIL),
+	SCENE_EXIT(JAIL_EXIT_TO_VAULT_REVISIT, SCENE_VAULT_REVISIT, ENTRANCE_FROM_JAIL),
+	SCENE_EXIT(JAIL_EXIT_TO_LUNPA, SCENE_LUNPA, ENTRANCE_FROM_JAIL),
 	SCENE_EXITS_END,
 };
 
@@ -280,8 +280,8 @@ const struct SceneEvent gJailThiefEvents[] = {
 
 const struct SceneEvent gJailPrisonerEvents[] = {
 	{ EVENT_EXIT, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_VAULT_REVISIT },
-	{ EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MsgKuupuappuPrisonerRegretsFight },
+	{ EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MsgVaultPrisonerRegretsFight },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
-      MsgKuupuappuPrisonerThoughts },
+      MsgVaultPrisonerThoughts },
 	{ SCENE_EVENTS_END },
 };

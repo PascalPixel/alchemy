@@ -183,7 +183,7 @@ void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 void BattleFx_AdvanceSpinAngle(struct MotionObject *object);
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor);
-void BattleFx_FinishHeavyImpact(s32 jin_id);
+void BattleFx_FinishHeavyImpact(s32 djinni_id);
 void BattleFx_SetObjectAlternatingWords(u8 *object);
 void BattleFx_AdvanceAngleWithRamp(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);

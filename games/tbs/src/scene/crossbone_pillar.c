@@ -244,7 +244,7 @@ static s32 SceneActor_ApplyPlacementQuery(u8 *no)
 	return 1;
 }
 
-static void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
+static void CrossbonePillar_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
 	struct MapState *map = gMapWork[0];
 
@@ -263,7 +263,7 @@ static void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 	}
 }
 
-static void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
+static void CrossbonePillar_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
 {
 	struct MapCellFields *src = (struct MapCellFields *)source;
 	struct MapState		 *map = gMapWork[0];
@@ -281,7 +281,7 @@ static void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapC
 	}
 }
 
-static s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
+static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far)
 {
 	struct FieldActor *actor = Object_GetById(id);
 	s32				   found;
@@ -510,27 +510,27 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraHashira1)
+	if (scene == (s32)&SceneId_CrossbonePillar1)
 	{
-		return gTakaraHashiraEntrances1;
+		return gCrossbonePillarEntrances1;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira2)
+	if (scene == (s32)&SceneId_CrossbonePillar2)
 	{
-		return gTakaraHashiraEntrances2;
+		return gCrossbonePillarEntrances2;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira3)
+	if (scene == (s32)&SceneId_CrossbonePillar3)
 	{
-		return gTakaraHashiraEntrances3;
+		return gCrossbonePillarEntrances3;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira4)
+	if (scene == (s32)&SceneId_CrossbonePillar4)
 	{
-		return gTakaraHashiraEntrances4;
+		return gCrossbonePillarEntrances4;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira5)
+	if (scene == (s32)&SceneId_CrossbonePillar5)
 	{
-		return gTakaraHashiraEntrances5;
+		return gCrossbonePillarEntrances5;
 	}
-	return gTakaraHashiraEntrancesOther;
+	return gCrossbonePillarEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -540,30 +540,30 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return gTakaraHashiraExits;
+	return gCrossbonePillarExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraHashira1)
+	if (scene == (s32)&SceneId_CrossbonePillar1)
 	{
-		return gTakaraHashiraPlacements1;
+		return gCrossbonePillarPlacements1;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira2)
+	if (scene == (s32)&SceneId_CrossbonePillar2)
 	{
-		return gTakaraHashiraPlacements2;
+		return gCrossbonePillarPlacements2;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira3)
+	if (scene == (s32)&SceneId_CrossbonePillar3)
 	{
-		return gTakaraHashiraPlacements3;
+		return gCrossbonePillarPlacements3;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira5)
+	if (scene == (s32)&SceneId_CrossbonePillar5)
 	{
-		return gTakaraHashiraPlacements5;
+		return gCrossbonePillarPlacements5;
 	}
-	return gTakaraHashiraPlacementsOther;
+	return gCrossbonePillarPlacementsOther;
 }
 
 static void EV10_SCRIPT_1(void)
@@ -593,12 +593,12 @@ struct PillarSlot
 	s32					 flag;
 };
 
-static struct PillarSlot TakaraHashira_PillarSlots[4];
-static s32				 TakaraHashira_ProbePosition[3];
-static u8				 TakaraHashira_ShakenScroll[12];
-static s32				 TakaraHashira_ShakeChance;
+static struct PillarSlot CrossbonePillar_PillarSlots[4];
+static s32				 CrossbonePillar_ProbePosition[3];
+static u8				 CrossbonePillar_ShakenScroll[12];
+static s32				 CrossbonePillar_ShakeChance;
 
-static void TakaraHashira_JitterBackgroundScroll(void)
+static void CrossbonePillar_JitterBackgroundScroll(void)
 {
 	u32			  line = REG_VCOUNT;
 	u32			 *src = &((u32 *)gBgScroll)[1];
@@ -606,9 +606,9 @@ static void TakaraHashira_JitterBackgroundScroll(void)
 
 	if (line == 227 || line <= 46)
 	{
-		if ((u32)(Engine_RandomNext() * 100) >> 16 < TakaraHashira_ShakeChance)
+		if ((u32)(Engine_RandomNext() * 100) >> 16 < CrossbonePillar_ShakeChance)
 		{
-			src = ((u32 *)TakaraHashira_ShakenScroll);
+			src = ((u32 *)CrossbonePillar_ShakenScroll);
 		}
 	}
 	*reg = *src++;
@@ -634,11 +634,11 @@ static void CopyAndOffsetCoordinatePreset(void)
 	u16		  *coordinates;
 
 	source = (const u32 *)&((u32 *)gBgScroll)[1];
-	destination = (u32 *)TakaraHashira_ShakenScroll;
+	destination = (u32 *)CrossbonePillar_ShakenScroll;
 	*destination++ = *source++;
 	*destination++ = *source++;
 	*destination = *source;
-	coordinates = (u16 *)TakaraHashira_ShakenScroll;
+	coordinates = (u16 *)CrossbonePillar_ShakenScroll;
 	coordinates[1] += 0xc0;
 	coordinates[3] += 0xc0;
 	coordinates[5] += 0xc0;
@@ -661,16 +661,16 @@ static void FieldScene_RunScene3b3SequenceA(void)
 		Map_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
 		Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
 	}
-	TakaraHashira_ShakeChance = 0;
+	CrossbonePillar_ShakeChance = 0;
 	FieldScheduler_AddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
 	Engine_TaskWait(1);
-	Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
+	Runtime_SetIrqHandler(1, 0, CrossbonePillar_JitterBackgroundScroll);
 	Engine_AudioPlayCue(231);
-	TakaraHashira_ShakeChance = 0;
+	CrossbonePillar_ShakeChance = 0;
 	do
 	{
 		Engine_TaskWait(1);
-	} while (++TakaraHashira_ShakeChance <= 100);
+	} while (++CrossbonePillar_ShakeChance <= 100);
 	Engine_AudioPlayCue(0x121);
 	if (Engine_GameFlagIsSet(0x200) == 0)
 	{
@@ -704,7 +704,7 @@ static void EV20_SEARCH(void)
 	if (queried == 0)
 	{
 		Event_PlayCue(232);
-		Map_AnimateCells(TakaraHashira_ShiftSteps1, 84, 24);
+		Map_AnimateCells(CrossbonePillar_ShiftSteps1, 84, 24);
 		Engine_EventWait(30);
 		Event_PlayCue(240);
 		Engine_ActorSetSpritePriority(REC_ID, 1);
@@ -713,8 +713,8 @@ static void EV20_SEARCH(void)
 		record->y.fixed = -0x200000;
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
 		Engine_ActorSetAnimation(REC_ID, 1);
-		Map_AnimateCells(TakaraHashira_ShiftSteps3, 80, 24);
-		Map_AnimateCells(TakaraHashira_ShiftSteps5, 80, 28);
+		Map_AnimateCells(CrossbonePillar_ShiftSteps3, 80, 24);
+		Map_AnimateCells(CrossbonePillar_ShiftSteps5, 80, 28);
 		Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
 		FieldScene_RunScene3b3SequenceA();
 		SceneActor_ApplyPlacementQueryAndTag(9);
@@ -730,7 +730,7 @@ static void EV20_SEARCH(void)
 	else
 	{
 		Event_PlayCue(232);
-		Map_AnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
+		Map_AnimateCells(CrossbonePillar_ShiftSteps2, 84, 24);
 		Engine_EventWait(30);
 		Event_PlayCue(230);
 		Object_GetById(REC_ID)->motion_flags = 0;
@@ -739,7 +739,7 @@ static void EV20_SEARCH(void)
 		Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
 		Engine_ActorSetAnimation(REC_ID, 2);
 		Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
-		Map_AnimateCells(TakaraHashira_ShiftSteps4, 80, 24);
+		Map_AnimateCells(CrossbonePillar_ShiftSteps4, 80, 24);
 		FieldScene_RunScene3b3SequenceA();
 		SceneActor_ApplyPlacementQuery(9);
 		SceneActor_ApplyPlacementQuery(10);
@@ -754,7 +754,7 @@ static void EV20_SEARCH(void)
 	Engine_EventEnd();
 }
 
-static s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
+static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
 {
 	s32 result = 0;
 
@@ -778,7 +778,7 @@ static s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct F
 	return result;
 }
 
-static s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
+static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
 {
 	s32 result = 0;
 
@@ -802,7 +802,7 @@ static s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct Fi
 	return result;
 }
 
-static s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
+static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   hit;
@@ -814,16 +814,16 @@ static s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 		actor->collision_flags |= 1;
 		return 0;
 	}
-	hit = TakaraHashira_SyncPriorityIfBehind(actor, leader);
+	hit = CrossbonePillar_SyncPriorityIfBehind(actor, leader);
 	for (id = 8; id <= 11; id++)
 	{
-		hit += TakaraHashira_SyncPriorityIfBehind(actor, Object_GetById(id));
+		hit += CrossbonePillar_SyncPriorityIfBehind(actor, Object_GetById(id));
 	}
 	if (hit != 0)
 	{
 		for (id = 8; id <= 11; id++)
 		{
-			TakaraHashira_SyncPriorityIfAhead(actor, Object_GetById(id));
+			CrossbonePillar_SyncPriorityIfAhead(actor, Object_GetById(id));
 		}
 	}
 	if (actor->y.fixed < leader->y.fixed)
@@ -850,7 +850,7 @@ static s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 	return 0;
 }
 
-static void TakaraHashira_SortPillarActors(void)
+static void CrossbonePillar_SortPillarActors(void)
 {
 	u32				   i;
 	u32				   j;
@@ -875,23 +875,23 @@ static void TakaraHashira_SortPillarActors(void)
 			Dma_Wait(DMA3);
 			Dma_Set(actor, a, 0x8400001c, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(&TakaraHashira_PillarSlots[j], slot, 0x84000004, DMA3);
+			Dma_Set(&CrossbonePillar_PillarSlots[j], slot, 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(&TakaraHashira_PillarSlots[i], &TakaraHashira_PillarSlots[j], 0x84000004, DMA3);
+			Dma_Set(&CrossbonePillar_PillarSlots[i], &CrossbonePillar_PillarSlots[j], 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			Dma_Set(slot, &TakaraHashira_PillarSlots[i], 0x84000004, DMA3);
+			Dma_Set(slot, &CrossbonePillar_PillarSlots[i], 0x84000004, DMA3);
 			Dma_Wait(DMA3);
-			if (Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag)
-				&& !Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag))
+			if (Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[i].flag)
+				&& !Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[j].flag))
 			{
-				Engine_GameFlagClear(TakaraHashira_PillarSlots[i].flag);
-				Engine_GameFlagSet(TakaraHashira_PillarSlots[j].flag);
+				Engine_GameFlagClear(CrossbonePillar_PillarSlots[i].flag);
+				Engine_GameFlagSet(CrossbonePillar_PillarSlots[j].flag);
 			}
-			else if (!Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag)
-					 && Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag))
+			else if (!Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[i].flag)
+					 && Engine_GameFlagIsSet(CrossbonePillar_PillarSlots[j].flag))
 			{
-				Engine_GameFlagSet(TakaraHashira_PillarSlots[i].flag);
-				Engine_GameFlagClear(TakaraHashira_PillarSlots[j].flag);
+				Engine_GameFlagSet(CrossbonePillar_PillarSlots[i].flag);
+				Engine_GameFlagClear(CrossbonePillar_PillarSlots[j].flag);
 			}
 		}
 	}
@@ -912,7 +912,7 @@ struct PillarActor
 	u8	motion_flags;
 };
 
-static void TakaraHashira_UpdatePillarActors(void)
+static void CrossbonePillar_UpdatePillarActors(void)
 {
 	u32					 id;
 	struct PillarActor	*actor;
@@ -927,22 +927,22 @@ static void TakaraHashira_UpdatePillarActors(void)
 		actor = (struct PillarActor *)Object_GetById(id);
 		actor->unknown_22 = 2;
 		i = id - 8;
-		if ((actor->x >> 20) == TakaraHashira_PillarSlots[i].x
-			&& (actor->z >> 20) == TakaraHashira_PillarSlots[i].z && actor->velocity_y == 0)
+		if ((actor->x >> 20) == CrossbonePillar_PillarSlots[i].x
+			&& (actor->z >> 20) == CrossbonePillar_PillarSlots[i].z && actor->velocity_y == 0)
 		{
 			continue;
 		}
-		Dma_Set(&actor->x, TakaraHashira_ProbePosition, 0x84000003, DMA3);
+		Dma_Set(&actor->x, CrossbonePillar_ProbePosition, 0x84000003, DMA3);
 		Dma_Wait(DMA3);
-		if (FieldObject_CheckMovementCollision(actor, TakaraHashira_ProbePosition) == -1)
+		if (FieldObject_CheckMovementCollision(actor, CrossbonePillar_ProbePosition) == -1)
 		{
 			actor->motion_flags = 3;
 		}
 		flags = &actor->motion_flags;
-		TakaraHashira_SetCellAttributes(0, TakaraHashira_PillarSlots[i].x,
-			TakaraHashira_PillarSlots[i].z, (struct MapCell *)&TakaraHashira_PillarSlots[i].cell);
-		TakaraHashira_SetCellAttributes(2, TakaraHashira_PillarSlots[i].x,
-			TakaraHashira_PillarSlots[i].z, (struct MapCell *)&TakaraHashira_PillarSlots[i].cell);
+		CrossbonePillar_SetCellAttributes(0, CrossbonePillar_PillarSlots[i].x,
+			CrossbonePillar_PillarSlots[i].z, (struct MapCell *)&CrossbonePillar_PillarSlots[i].cell);
+		CrossbonePillar_SetCellAttributes(2, CrossbonePillar_PillarSlots[i].x,
+			CrossbonePillar_PillarSlots[i].z, (struct MapCell *)&CrossbonePillar_PillarSlots[i].cell);
 		if (*flags & 1)
 		{
 			if (GetMapCellCollision(2, actor->x, actor->z) == 50)
@@ -951,7 +951,7 @@ static void TakaraHashira_UpdatePillarActors(void)
 				// Both u8 accesses are alias set 0, and the view is no struct reference (MEM_IN_STRUCT_P).
 				/* FAKEMATCH: the u8 view keeps these flag updates out of the record's alias set, as native; field stores reallocate the loop (score 2573, differ 217), a priority bit-field differs 65, the record as struct FieldActor with the view kept 2 (it matches once FieldActor's x, y and z are s32; then this PillarActor view can go). */
 				*(u8 *)&actor->priority_flags &= 254;
-				TakaraHashira_LowerActorToLedge(id, 1);
+				CrossbonePillar_LowerActorToLedge(id, 1);
 				*(u8 *)&actor->priority_flags |= 1;
 			}
 			else if (GetMapCellCollision(2, actor->x, actor->z) == 51)
@@ -972,39 +972,39 @@ static void TakaraHashira_UpdatePillarActors(void)
 			}
 			*flags = 0;
 		}
-		TakaraHashira_ReadMapCell(
-			0, actor->x >> 20, actor->z >> 20, &TakaraHashira_PillarSlots[i].cell);
+		CrossbonePillar_ReadMapCell(
+			0, actor->x >> 20, actor->z >> 20, &CrossbonePillar_PillarSlots[i].cell);
 		if (actor->y >= 0)
 		{
-			TakaraHashira_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
-			TakaraHashira_SetCellAttributes(
+			CrossbonePillar_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
+			CrossbonePillar_SetCellAttributes(
 				0, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
-			cell.kind = TakaraHashira_PillarSlots[i].cell.kind;
-			TakaraHashira_SetCellAttributes(
+			cell.kind = CrossbonePillar_PillarSlots[i].cell.kind;
+			CrossbonePillar_SetCellAttributes(
 				2, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
 		}
-		TakaraHashira_PillarSlots[i].x = actor->x >> 20;
-		TakaraHashira_PillarSlots[i].y = actor->y >> 20;
-		TakaraHashira_PillarSlots[i].z = actor->z >> 20;
+		CrossbonePillar_PillarSlots[i].x = actor->x >> 20;
+		CrossbonePillar_PillarSlots[i].y = actor->y >> 20;
+		CrossbonePillar_PillarSlots[i].z = actor->z >> 20;
 		for (k = 0; k <= 3; k++)
 		{
 			if (k == i)
 			{
 				continue;
 			}
-			Engine_GameFlagClear(TakaraHashira_PillarSlots[k].flag);
+			Engine_GameFlagClear(CrossbonePillar_PillarSlots[k].flag);
 			other = (struct PillarActor *)Object_GetById(k + 8);
 			if ((actor->x >> 20) == (other->x >> 20) && (actor->z >> 20) == (other->z >> 20)
 				&& actor->y > other->y)
 			{
-				Engine_GameFlagSet(TakaraHashira_PillarSlots[k].flag);
+				Engine_GameFlagSet(CrossbonePillar_PillarSlots[k].flag);
 			}
 		}
 	}
-	TakaraHashira_SortPillarActors();
+	CrossbonePillar_SortPillarActors();
 }
 
-static void TakaraHashira_PushPillar(void)
+static void CrossbonePillar_PushPillar(void)
 {
 	Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -1016,7 +1016,7 @@ static void TakaraHashira_PushPillar(void)
 		Object_GetById(0)->motion_flags &= 254;
 		Object_GetById(0)->priority_flags &= 254;
 		StagedActor_AdvancePair();
-		TakaraHashira_UpdatePillarActors();
+		CrossbonePillar_UpdatePillarActors();
 		Object_GetById(ACTOR_PARTY_LEADER)->motion_flags |= ACTOR_FOLLOWS_TERRAIN;
 		Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	}
@@ -1028,7 +1028,7 @@ static void FieldScene_RunSingleStep(void)
 	battle_owner_69();
 }
 
-static void TakaraHashira_RunStagedCellScene(void)
+static void CrossbonePillar_RunStagedCellScene(void)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   pos[3];
@@ -1039,7 +1039,7 @@ static void TakaraHashira_RunStagedCellScene(void)
 	p[2] = leader->z.fixed + 0x100000;
 	if (StagedActor_FindAtTile(p, leader) != NULL)
 	{
-		TakaraHashira_PushPillar();
+		CrossbonePillar_PushPillar();
 	}
 	else if (FieldScene_RunScene3b3SequenceD() == 0)
 	{
@@ -1076,7 +1076,7 @@ static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 	return 0;
 }
 
-static void TakaraHashira_RunActorAction(s32 id)
+static void CrossbonePillar_RunActorAction(s32 id)
 {
 	struct FieldActor *actor;
 
@@ -1085,21 +1085,21 @@ static void TakaraHashira_RunActorAction(s32 id)
 	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
 	Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	GameFlag_Set(id + 0x1f5);
-	Engine_ActorEnableActionCallback(id, TakaraHashira_ActionTable);
+	Engine_ActorEnableActionCallback(id, CrossbonePillar_ActionTable);
 	Engine_EventEnd();
 }
 
 static void EV11_PSYNERGY(void)
 {
-	TakaraHashira_RunActorAction(11);
+	CrossbonePillar_RunActorAction(11);
 }
 
 static void EV12_PSYNERGY(void)
 {
-	TakaraHashira_RunActorAction(12);
+	CrossbonePillar_RunActorAction(12);
 }
 
-static void TakaraHashira_CheckLeaderOnPillar(void)
+static void CrossbonePillar_CheckLeaderOnPillar(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *pillar;
@@ -1120,7 +1120,7 @@ static void TakaraHashira_CheckLeaderOnPillar(void)
 	}
 }
 
-static void TakaraHashira_RaiseActorFourteen(void)
+static void CrossbonePillar_RaiseActorFourteen(void)
 {
 	struct FieldActor *pillar;
 
@@ -1282,7 +1282,7 @@ static void EV10_PSYNERGY(void)
 	Engine_EventEnd();
 }
 
-static void TakaraHashira_RunPushScene(void)
+static void CrossbonePillar_RunPushScene(void)
 {
 	struct StagedActorProbe probe;
 
@@ -1304,30 +1304,30 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_TakaraHashira1)
+	if (scene == (s32)&SceneId_CrossbonePillar1)
 	{
-		return gTakaraHashiraEvents1;
+		return gCrossbonePillarEvents1;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira2)
+	if (scene == (s32)&SceneId_CrossbonePillar2)
 	{
-		return gTakaraHashiraEvents2;
+		return gCrossbonePillarEvents2;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira3)
+	if (scene == (s32)&SceneId_CrossbonePillar3)
 	{
-		return gTakaraHashiraEvents3;
+		return gCrossbonePillarEvents3;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira4)
+	if (scene == (s32)&SceneId_CrossbonePillar4)
 	{
-		return gTakaraHashiraEvents4;
+		return gCrossbonePillarEvents4;
 	}
-	if (scene == (s32)&SceneId_TakaraHashira5)
+	if (scene == (s32)&SceneId_CrossbonePillar5)
 	{
-		return gTakaraHashiraEvents5;
+		return gCrossbonePillarEvents5;
 	}
-	return gTakaraHashiraEventsOther;
+	return gCrossbonePillarEventsOther;
 }
 
-static void TakaraHashira_PrepLoweredActor(s32 id)
+static void CrossbonePillar_PrepLoweredActor(s32 id)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
@@ -1338,7 +1338,7 @@ static void TakaraHashira_PrepLoweredActor(s32 id)
 	actor->sprite->priority = 2;
 }
 
-static void TakaraHashira_RestoreFlaggedPillar(s32 a0)
+static void CrossbonePillar_RestoreFlaggedPillar(s32 a0)
 {
 	struct FieldActor *actor;
 
@@ -1348,7 +1348,7 @@ static void TakaraHashira_RestoreFlaggedPillar(s32 a0)
 		Object_SetMode(actor, 5);
 		actor->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
 		Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
-		Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
+		Engine_ActorEnableActionCallback(a0, CrossbonePillar_ActionTable);
 	}
 }
 
@@ -1358,7 +1358,7 @@ static void OverlayObject_SetCallbackAndMode2(s32 id)
 
 	actor->terrain_id = 2;
 	actor->motion_flags = 0;
-	actor->update = (void (*)(union FieldObject *))TakaraHashira_UpdateActorPriority;
+	actor->update = (void (*)(union FieldObject *))CrossbonePillar_UpdateActorPriority;
 }
 
 static void SceneActor_CheckActors8To11NearSlotZero(void)
@@ -1389,7 +1389,7 @@ static void SceneActor_CheckActors8To11NearSlotZero(void)
 	}
 }
 
-s32 TakaraHashira_SetupArea(void)
+s32 CrossbonePillar_SetupArea(void)
 {
 	struct FieldActor *actor;
 	u32				   i;
@@ -1398,7 +1398,7 @@ s32 TakaraHashira_SetupArea(void)
 	s32				   z;
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_TakaraHashira2)
+	if (gGameState.scene == (s32)&SceneId_CrossbonePillar2)
 	{
 		FieldScene_RedrawActorFootprint(8);
 		FieldScene_RedrawActorFootprint(9);
@@ -1406,7 +1406,7 @@ s32 TakaraHashira_SetupArea(void)
 		FieldScene_RedrawActorFootprint(11);
 		FieldScene_RedrawActorFootprint(12);
 	}
-	else if (gGameState.scene == (s32)&SceneId_TakaraHashira3)
+	else if (gGameState.scene == (s32)&SceneId_CrossbonePillar3)
 	{
 		Map_CopyCells(32, 0, 64, 32, 0, 64);
 		FieldScene_RedrawActorFootprint(8);
@@ -1432,7 +1432,7 @@ s32 TakaraHashira_SetupArea(void)
 			Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_TakaraHashira4)
+	else if (gGameState.scene == (s32)&SceneId_CrossbonePillar4)
 	{
 		OverlayObject_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
 		if (Engine_GameFlagIsSet(0x109) == 0)
@@ -1449,7 +1449,7 @@ s32 TakaraHashira_SetupArea(void)
 		OverlayObject_SetCallbackAndMode2(10);
 		OverlayObject_SetCallbackAndMode2(11);
 		{
-			s32 *entry = (s32 *)TakaraHashira_PillarSlots;
+			s32 *entry = (s32 *)CrossbonePillar_PillarSlots;
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1460,7 +1460,7 @@ s32 TakaraHashira_SetupArea(void)
 				entry += 5;
 			}
 		}
-		TakaraHashira_UpdatePillarActors();
+		CrossbonePillar_UpdatePillarActors();
 		Engine_EventWait(1);
 		FieldScheduler_AddCallback(SceneActor_CheckActors8To11NearSlotZero, TASK_PRIORITY_SCENE);
 		if (Engine_GameFlagIsSet(0x109) != 0)
@@ -1481,7 +1481,7 @@ s32 TakaraHashira_SetupArea(void)
 			}
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_TakaraHashira5)
+	else if (gGameState.scene == (s32)&SceneId_CrossbonePillar5)
 	{
 		Engine_ActorSetAnimation(10, 2);
 		Engine_ActorSetChildValue(10, 6);
@@ -1492,15 +1492,15 @@ s32 TakaraHashira_SetupArea(void)
 		Object_GetById(9)->motion_flags = 0;
 #endif
 		EV10_PSYNERGY();
-		TakaraHashira_PrepLoweredActor(11);
-		TakaraHashira_PrepLoweredActor(12);
-		TakaraHashira_PrepLoweredActor(13);
-		TakaraHashira_RestoreFlaggedPillar(11);
-		TakaraHashira_RestoreFlaggedPillar(12);
-		TakaraHashira_RestoreFlaggedPillar(13);
+		CrossbonePillar_PrepLoweredActor(11);
+		CrossbonePillar_PrepLoweredActor(12);
+		CrossbonePillar_PrepLoweredActor(13);
+		CrossbonePillar_RestoreFlaggedPillar(11);
+		CrossbonePillar_RestoreFlaggedPillar(12);
+		CrossbonePillar_RestoreFlaggedPillar(13);
 		actor = Object_GetById(13);
 		actor->update = 0;
-		TakaraHashira_PrepLoweredActor(14);
+		CrossbonePillar_PrepLoweredActor(14);
 		Object_GetById(14)->collision_flags |= 8;
 		if (Engine_GameFlagIsSet(0x202) == 0)
 		{
@@ -1582,7 +1582,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 TakaraHashira_ActionTable[] = {
+s32 CrossbonePillar_ActionTable[] = {
 	SC_SET(0x23, 2),
 	SC_CALL(SceneActor_ApplyCounterLowBitsAsMode),
 	SC_WAIT(2),
@@ -1592,62 +1592,62 @@ s32 TakaraHashira_ActionTable[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 TakaraHashira_ShiftSteps1[] = {
+u16 CrossbonePillar_ShiftSteps1[] = {
 	MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 TakaraHashira_ShiftSteps2[] = {
+u16 CrossbonePillar_ShiftSteps2[] = {
 	MAP_CELL_STEP(79, 34, 1, 2, 4), MAP_CELL_STEP(78, 34, 1, 2, 4), MAP_CELL_STEP(77, 34, 1, 2, 4), MAP_CELL_STEP(76, 34, 1, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 TakaraHashira_ShiftSteps3[] = {
+u16 CrossbonePillar_ShiftSteps3[] = {
 	MAP_CELL_STEP(67, 34, 2, 5, 6), MAP_CELL_STEP(69, 34, 2, 5, 6), MAP_CELL_STEP(71, 34, 2, 5, 6), MAP_CELL_STEP(73, 34, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 TakaraHashira_ShiftSteps4[] = {
+u16 CrossbonePillar_ShiftSteps4[] = {
 	MAP_CELL_STEP(71, 50, 2, 5, 6), MAP_CELL_STEP(69, 50, 2, 5, 6), MAP_CELL_STEP(67, 50, 2, 5, 6), MAP_CELL_STEP(65, 50, 2, 5, 6), MAP_CELL_STEPS_END,
 };
 
-u16 TakaraHashira_ShiftSteps5[] = {
+u16 CrossbonePillar_ShiftSteps5[] = {
 	MAP_CELL_STEP(75, 38, 2, 1, 4), MAP_CELL_STEP(77, 38, 2, 1, 6), MAP_CELL_STEP(79, 38, 2, 1, 8), MAP_CELL_STEP(65, 53, 2, 1, 1), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gTakaraHashiraEntrancesOther[] = {
+struct SceneEntrance gCrossbonePillarEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraHashiraEntrances1[] = {
+struct SceneEntrance gCrossbonePillarEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 712, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
 	{ 2, CONDITION_ALWAYS, 600, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraHashiraEntrances2[] = {
+struct SceneEntrance gCrossbonePillarEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 216, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
 	{ 2, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraHashiraEntrances3[] = {
+struct SceneEntrance gCrossbonePillarEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 64, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraHashiraEntrances4[] = {
+struct SceneEntrance gCrossbonePillarEntrances4[] = {
 	{ 1, CONDITION_ALWAYS, 744, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
 	{ 2, CONDITION_ALWAYS, 632, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTakaraHashiraEntrances5[] = {
+struct SceneEntrance gCrossbonePillarEntrances5[] = {
 	{ 1, CONDITION_ALWAYS, 280, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
 	{ 2, CONDITION_ALWAYS, 168, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 gTakaraHashiraExits[] = {
+u32 gCrossbonePillarExits[] = {
 	SCENE_EXITS(115),
 	SCENE_EXIT(1, 126, 3),
 	SCENE_EXIT(2, 126, 4),
@@ -1666,11 +1666,11 @@ u32 gTakaraHashiraExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTakaraHashiraNoPlacements[] = {
+struct ScenePlacement gCrossbonePillarNoPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraHashiraPlacements1[] = {
+struct ScenePlacement gCrossbonePillarPlacements1[] = {
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(744), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1682,7 +1682,7 @@ struct ScenePlacement gTakaraHashiraPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraHashiraPlacements2[] = {
+struct ScenePlacement gCrossbonePillarPlacements2[] = {
 	{ 0x12a, CONDITION_ALWAYS, 7,
 		PIXELS(144), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x12a, CONDITION_ALWAYS, 7,
@@ -1696,7 +1696,7 @@ struct ScenePlacement gTakaraHashiraPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraHashiraPlacements3[] = {
+struct ScenePlacement gCrossbonePillarPlacements3[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -1718,7 +1718,7 @@ struct ScenePlacement gTakaraHashiraPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraHashiraPlacementsOther[] = {
+struct ScenePlacement gCrossbonePillarPlacementsOther[] = {
 	{ 0x100, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(648), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x100, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1730,7 +1730,7 @@ struct ScenePlacement gTakaraHashiraPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTakaraHashiraPlacements5[] = {
+struct ScenePlacement gCrossbonePillarPlacements5[] = {
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -1748,11 +1748,11 @@ struct ScenePlacement gTakaraHashiraPlacements5[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gTakaraHashiraEventsOther[] = {
+struct SceneEvent gCrossbonePillarEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraHashiraEvents1[] = {
+struct SceneEvent gCrossbonePillarEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_1) },
@@ -1767,7 +1767,7 @@ struct SceneEvent gTakaraHashiraEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraHashiraEvents2[] = {
+struct SceneEvent gCrossbonePillarEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
@@ -1778,7 +1778,7 @@ struct SceneEvent gTakaraHashiraEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraHashiraEvents3[] = {
+struct SceneEvent gCrossbonePillarEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
@@ -1792,34 +1792,34 @@ struct SceneEvent gTakaraHashiraEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraHashiraEvents4[] = {
+struct SceneEvent gCrossbonePillarEvents4[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_PushPillar) },
+	{ 0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_PushPillar) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_RunStagedCellScene) },
-	{ 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_PushPillar) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_RunStagedCellScene) },
+	{ 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_PushPillar) },
 	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
 	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xeda, FIND_COINS(777) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xedb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ 0x413, 102, 0xedc, FIND_ITEM(0xba) },
 	{ SEARCH(SEARCH_CHEST), 103, 0xedd, FIND_ITEM(0x32) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x200, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x201, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x202, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x203, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x93), 8, 0x200, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x93), 9, 0x201, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x93), 10, 0x202, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
-	{ PSYNERGY_ON_ACTOR(0x93), 11, 0x203, EVENT_SCRIPT(TakaraHashira_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x200, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x201, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x202, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x203, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x93), 8, 0x200, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x93), 9, 0x201, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x93), 10, 0x202, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
+	{ PSYNERGY_ON_ACTOR(0x93), 11, 0x203, EVENT_SCRIPT(CrossbonePillar_UpdatePillarActors) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTakaraHashiraEvents5[] = {
+struct SceneEvent gCrossbonePillarEvents5[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_RunPushScene) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_RunPushScene) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xede, FIND_COINS(888) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xedf, FIND_ITEM(0xb7) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(0x10c) },
@@ -1828,8 +1828,8 @@ struct SceneEvent gTakaraHashiraEvents5[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x204, EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT_SCRIPT(EV12_PSYNERGY) },
-	{ 0x10001815, 13, 0x202, EVENT_SCRIPT(TakaraHashira_CheckLeaderOnPillar) },
-	{ 0x50001815, 13, 0x202, EVENT_SCRIPT(TakaraHashira_RaiseActorFourteen) },
+	{ 0x10001815, 13, 0x202, EVENT_SCRIPT(CrossbonePillar_CheckLeaderOnPillar) },
+	{ 0x50001815, 13, 0x202, EVENT_SCRIPT(CrossbonePillar_RaiseActorFourteen) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

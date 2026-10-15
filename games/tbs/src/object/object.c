@@ -180,7 +180,7 @@ void Party_SetReturnPoint(s32 reason)
 			{
 				unit = UnitGetFar(i);
 				unit->hp = unit->max_hp;
-				unit->ep = unit->max_ep;
+				unit->pp = unit->max_pp;
 				Unit_UpdateGauges(unit);
 			}
 		}
@@ -283,7 +283,7 @@ void Game_ResetForNewGame(s32 mode)
 	table = Field_SceneTable;
 	if (gDebugMode && mode == 1)
 	{
-		gGameState.scene = (s32)&SceneId_HaidiaIe;
+		gGameState.scene = (s32)&SceneId_ValeHome;
 		gGameState.entrance = mode;
 	}
 	else if (gDebugMode && mode == 2)
@@ -843,7 +843,7 @@ void BattleFx_SelectResultPointer(s32 arg0)
 		value = (u32)&ResourceId_SnowfieldBackdrop;
 		break;
 	default:
-		value = (u32)&ResourceId_SoruShindenBackdrop;
+		value = (u32)&ResourceId_SolSanctumBackdrop;
 		break;
 	}
 	gGameState.special = value;
@@ -1410,7 +1410,7 @@ struct StepOwner
 	u8	unknown_000[0x38];
 	s16 hp;
 	u8	unknown_03a[0x131 - 0x3a];
-	u8	doku;
+	u8	poison;
 };
 
 enum StepTileEvent
@@ -1569,7 +1569,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
 
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. Plain struct BtlUnit differs by 2: its alias set ties the doku store to the active-owner read. */
+	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. Plain struct BtlUnit differs by 2: its alias set ties the poison store to the active-owner read. */
 	struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
 	struct MapState		 *map = WORK_SLOT(8);
 	s32					  selected = gGameState.selected_actor;
@@ -1706,7 +1706,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 			{
 				work->fallen[work->fallen_count++] = gGameState.active_owners[i];
 				work->raised_trigger = 0xffff;
-				owner->doku = 0;
+				owner->poison = 0;
 			}
 		}
 	}
@@ -1718,7 +1718,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused)
 	s32 i;
 
 	for (i = 0; i < target_count; i++)
-		UnitEpAddFar(gGameState.active_owners[i], amount);
+		UnitPpAddFar(gGameState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -1775,7 +1775,7 @@ s32 BattleParty_ApplyStatusDamage(void)
 		struct BtlUnit *unit = UnitGetFar(gGameState.active_owners[i]);
 		s32				amount;
 
-		switch (unit->doku)
+		switch (unit->poison)
 		{
 		case 1:
 			amount = -((unit->max_hp + 10) / 20);
@@ -3196,7 +3196,7 @@ s32 Field_RunTileAction(s32 tile)
 								if (owner == gGameState.selected_actor)
 								{
 									UiText_ShowPositionedMessageAndWaitFar(
-										MsgKorosseoRobinGotItem, 3);
+										MsgColossoIsaacGotItem, 3);
 								}
 								else
 								{
@@ -3758,27 +3758,27 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 //--------------------------------------------------------------------------
 #define ACT_NO(c) ((c) & 0x3ff)		   // わざ番号
 #define ACT_UNIT(c) (((c) >> 10) & 15) // 使う者
-#define ACT_PACKED 0x2000			   // EPを使わずに実行する
+#define ACT_PACKED 0x2000			   // PPを使わずに実行する
 #define UNIT_NONE 15
-#define MIKATA_MAX 7 // 仲間の番号の上限
+#define ALLY_MAX 7 // 仲間の番号の上限
 
-#define ENA_IMAJIN 144 // イマジン
-#define ENA_RITAN 149  // リターン
+#define PSYNERGY_REVEAL 144 // イマジン
+#define PSYNERGY_RETREAT 149  // リターン
 
-#define EXIT_RITAN 999 // リターンによる出口
+#define EXIT_RETREAT 999 // リターンによる出口
 
-#define FLG_ENA_NONE 0x17e // エナジーが効かない
+#define FLG_PSYNERGY_NONE 0x17e // エナジーが効かない
 #define FLG_RITAN_NG 0x144 // リターンが打ち消される
 #define FLG_ITEM_USE 0x145 // 道具から使った
-#define FLG_ENA_EFX 0x140  // 標準の演出を行う
-#define FLG_ENA_TGT 0x141  // 対象に向けて演出する
+#define FLG_PSYNERGY_EFX 0x140  // 標準の演出を行う
+#define FLG_PSYNERGY_TGT 0x141  // 対象に向けて演出する
 
 // エナジーのイベントの段階
-#define ENA_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
-#define ENA_EV_ANY ENA_EV(7) // 段階を問わない
+#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
+#define PSYNERGY_EV_ANY PSYNERGY_EV(7) // 段階を問わない
 
 // 使う者とわざの名前を入れたメッセージを出して待つ
-#define ENA_MES(who, act, m)                                               \
+#define PSYNERGY_MES(who, act, m)                                               \
 	(UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4), \
 		UiText_ShowPositionedMessageAndWaitFar((m), 1))
 
@@ -3795,7 +3795,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 	const struct SceneEvent *mid;
 	s32						 aid;
 	s32						 tid;
-	s32						 ritan;
+	s32						 retreat;
 	s32						 group;
 	s32						 cost;
 	s32						 no;
@@ -3803,33 +3803,33 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 	group = BtlActGet(act_no)->type_0c;
 	aid = ACT_UNIT(code);
 	ObjectTable_Get(gGameState.selected_actor);
-	ritan = 0;
+	retreat = 0;
 	Battle_InitializeRenderObject();
 	GameFlag_ClearBitFar(FLG_ITEM_USE);
 	if (aid == UNIT_NONE)
 		aid = 0;
 
 	// 効かないとき
-	if (GameFlag_TestFar(FLG_ENA_NONE))
+	if (GameFlag_TestFar(FLG_PSYNERGY_NONE))
 	{
-		ENA_MES(aid, act_no, MsgNothingHappened);
+		PSYNERGY_MES(aid, act_no, MsgNothingHappened);
 		return 0;
 	}
-	if (work->mode == MODE_WORLD_MAP && act_no == ENA_IMAJIN)
+	if (work->mode == MODE_WORLD_MAP && act_no == PSYNERGY_REVEAL)
 	{
-		ENA_MES(aid, ENA_IMAJIN, MsgNothingHappened);
+		PSYNERGY_MES(aid, PSYNERGY_REVEAL, MsgNothingHappened);
 		return 0;
 	}
 
 	// リターン：確かめてから戻り先へ
-	if (act_no == ENA_RITAN)
+	if (act_no == PSYNERGY_RETREAT)
 	{
 		if (GameFlag_TestFar(FLG_RITAN_NG))
 		{
-			ENA_MES(aid, ENA_RITAN, MsgDoesNotWorkHere);
+			PSYNERGY_MES(aid, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
 			return 0;
 		}
-		UiWork_PushValueSlotFar(ENA_RITAN, 4);
+		UiWork_PushValueSlotFar(PSYNERGY_RETREAT, 4);
 		UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
 		no = Object_CallSpawnRoutineAtOrigin(1); // 0 = はい
 		UiWork_FinalizePendingCoreFar();
@@ -3843,44 +3843,44 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 			ent = (u16)st->retreat_entrance;
 			st->entrance = ent;
 		}
-		work->exit = EXIT_RITAN;
-		ritan = 1;
+		work->exit = EXIT_RETREAT;
+		retreat = 1;
 	}
 	if (code & ACT_PACKED)
 		return BattleFx_ExecutePackedAbilityEffect(code);
 
-	// 仲間ならEPを払う
-	if (aid <= MIKATA_MAX)
+	// 仲間ならPPを払う
+	if (aid <= ALLY_MAX)
 	{
 		cost = BtlActGet(act_no)->pp_cost;
-		if (UnitGetFar(aid)->ep < cost)
+		if (UnitGetFar(aid)->pp < cost)
 		{
-			ENA_MES(aid, act_no, MsgNotEnoughPp);
-			if (ritan)
+			PSYNERGY_MES(aid, act_no, MsgNotEnoughPp);
+			if (retreat)
 				work->exit = 0;
 			return 0;
 		}
-		UnitEpAddFar(aid, -cost);
+		UnitPpAddFar(aid, -cost);
 	}
 
 	// マップのイベントを探し、演出の方法を決める
-	pre = BattleFx_FindMatchingEvent(ENA_EV(1), group, &tid);
-	post = BattleFx_FindMatchingEvent(ENA_EV(0), group, &tid);
-	mid = BattleFx_FindMatchingEvent(ENA_EV(5), group, &tid);
+	pre = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), group, &tid);
+	post = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), group, &tid);
+	mid = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), group, &tid);
 	tid = -1;
-	GameFlag_SetBitFar(FLG_ENA_EFX);
-	GameFlag_SetBitFar(FLG_ENA_TGT);
+	GameFlag_SetBitFar(FLG_PSYNERGY_EFX);
+	GameFlag_SetBitFar(FLG_PSYNERGY_TGT);
 	if (pre || post || mid)
 	{
 		tid = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, group);
 		if (post && (post->trigger & 0x400)) // イベントが演出を受け持つ
 		{
-			GameFlag_ClearBitFar(FLG_ENA_EFX);
-			GameFlag_ClearBitFar(FLG_ENA_TGT);
+			GameFlag_ClearBitFar(FLG_PSYNERGY_EFX);
+			GameFlag_ClearBitFar(FLG_PSYNERGY_TGT);
 		}
 	}
 	else
-		GameFlag_ClearBitFar(FLG_ENA_TGT);
+		GameFlag_ClearBitFar(FLG_PSYNERGY_TGT);
 
 	// 演出
 	if (work->mode == MODE_WORLD_MAP)
@@ -3891,19 +3891,19 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 	EventObject_Initialize();
 
 	BattleFx_RunEventAction(pre, aid, tid);
-	if (GameFlag_TestFar(FLG_ENA_EFX))
+	if (GameFlag_TestFar(FLG_PSYNERGY_EFX))
 	{
-		if (GameFlag_TestFar(FLG_ENA_TGT))
+		if (GameFlag_TestFar(FLG_PSYNERGY_TGT))
 			BattleFx_DispatchRequestKind();
 		else
 			BattleFx_Run();
 	}
 	EffectRuntime_StopCurrentObject();
 	BattleFx_RunEventAction(post, aid, tid);
-	if (GameFlag_TestFar(FLG_ENA_EFX))
+	if (GameFlag_TestFar(FLG_PSYNERGY_EFX))
 		BattleFx_ClearChildValueOnMismatch();
-	GameFlag_ClearBitFar(FLG_ENA_EFX);
-	GameFlag_ClearBitFar(FLG_ENA_TGT);
+	GameFlag_ClearBitFar(FLG_PSYNERGY_EFX);
+	GameFlag_ClearBitFar(FLG_PSYNERGY_TGT);
 	work->resolving_action = 0;
 	BattleEffect_CleanupSceneObjects();
 	if (work->mode == MODE_WORLD_MAP)
@@ -3917,7 +3917,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 s32 BattleFx_HasMatchingEvent5(s32 group)
 {
 	s32 tid;
-	s32 ev = (s32)BattleFx_FindMatchingEvent(ENA_EV_ANY, (u16)group, &tid);
+	s32 ev = (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &tid);
 	return (u32)((-ev) | ev) >> 31;
 }
 

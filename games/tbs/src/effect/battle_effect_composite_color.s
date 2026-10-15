@@ -4,9 +4,9 @@
 .syntax unified
 .text
 	.arm
-	.global SentouKouka_IroJun
-	.global SentouKouka_IroGyaku
-SentouKouka_IroJun:
+	.global BattleEffect_ColorForward
+	.global BattleEffect_ColorReverse
+BattleEffect_ColorForward:
 	ldr	r8, [r9]
 	ldrb	r5, [r1], #1
 	add	r8, r8, r5
@@ -21,7 +21,7 @@ SentouKouka_IroJun:
 	sub	r5, r5, r5, lsr #6
 	orr	r8, r8, r5
 	str	r8, [r9], #4
-SentouKouka_IroGyaku:
+BattleEffect_ColorReverse:
 	ldr	r8, [r9]
 	ldrb	r5, [r1], #-1
 	add	r8, r8, r5

@@ -4,23 +4,23 @@
 #ifndef CHARACTER_IDS_H
 #define CHARACTER_IDS_H
 
-#define ROBIN 0	   /* ロビン */
-#define GERALD 1   /* ジェラルド */
-#define IWAN 2	   /* イワン */
-#define MEARI 3	   /* メアリィ */
-#define GARUSHIA 4 /* ガルシア */
-#define JASMINE 5  /* ジャスミン */
-#define SHIBA 6	   /* シバ */
-#define PIKAADO 7  /* ピカード */
+#define ISAAC 0	   /* ロビン */
+#define GARET 1   /* ジェラルド */
+#define IVAN 2	   /* イワン */
+#define MIA 3	   /* メアリィ */
+#define FELIX 4 /* ガルシア */
+#define JENNA 5  /* ジャスミン */
+#define SHEBA 6	   /* シバ */
+#define PIERS 7  /* ピカード */
 
-#define BTL_CHARA(no) (300 + (no)) /* 戦闘キャラ */
+#define BTL_CHARACTER(no) (300 + (no)) /* 戦闘キャラ */
 
 /* 子供のころの絵 (フラグ 32 のあいだ); 仲間 8 人の絵の番号はキャラ番号と同じ */
-#define ROBIN_KO 18	 /* ロビン(こ) */
-#define GERALD_KO 19 /* ジェラルド(こ) */
+#define ISAAC_CHILD 18	 /* ロビン(こ) */
+#define GARET_CHILD 19 /* ジェラルド(こ) */
 
 /* 顔の番号 */
-#define KAO_ROBIN_KO 56	 /* ロビン(こ) */
-#define KAO_GERALD_KO 57 /* ジェラルド(こ) */
+#define FACE_ISAAC_CHILD 56	 /* ロビン(こ) */
+#define FACE_GARET_CHILD 57 /* ジェラルド(こ) */
 
 #endif

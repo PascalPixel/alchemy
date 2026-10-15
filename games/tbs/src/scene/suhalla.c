@@ -20,7 +20,7 @@
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return (u8 *)SuharaMura_Scripts;
+	return (u8 *)Suhalla_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -30,21 +30,21 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return (u8 *)SuharaMura_Messages;
+	return (u8 *)Suhalla_Messages;
 }
 
 s32 SceneData_SelectActorTableByFlag96f(void)
 {
 	if (Engine_GameFlagIsSet(0x96f) != 0)
 	{
-		return (s32)SuharaMura_ActorsFlag96f;
+		return (s32)Suhalla_ActorsFlag96f;
 	}
-	return (s32)SuharaMura_Actors;
+	return (s32)Suhalla_Actors;
 }
 
 static void EV09_TALK(s32 obj)
 {
-	s32 cue = MsgSuharaTryingGetLalivero;
+	s32 cue = MsgSuhallaTryingGetLalivero;
 	Engine_EventSetMessage(cue);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -61,7 +61,7 @@ static void EV09_TALK(s32 obj)
 
 static void EV13_TALK(s32 obj)
 {
-	s32 cue = MsgSuharaBroughtSuhallaSandstorm;
+	s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
 	Engine_EventSetMessage(cue);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -83,15 +83,15 @@ static void EV16_PSYNERGY(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static void SuharaMura_AnimateCells0(void)
+static void Suhalla_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	u16				  x = SuharaMura_CellAnimationOrigins[no][0];
-	u16				  y = SuharaMura_CellAnimationOrigins[no][1];
+	u16				  x = Suhalla_CellAnimationOrigins[no][0];
+	u16				  y = Suhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
-	Map_AnimateCells(SuharaMura_CellSteps0, x, y);
+	Map_AnimateCells(Suhalla_CellSteps0, x, y);
 	Actor_WalkBy(0, 0, -16);
 	gEventWork->transition_frames = 16;
 	Engine_EventRequestExit(no);
@@ -101,11 +101,11 @@ static void EV02_TOUCH(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	u16				  x = SuharaMura_CellAnimationOrigins[no][0];
-	u16				  y = SuharaMura_CellAnimationOrigins[no][1];
+	u16				  x = Suhalla_CellAnimationOrigins[no][0];
+	u16				  y = Suhalla_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
-	Map_AnimateCells(SuharaMura_CellSteps1, x, y);
+	Map_AnimateCells(Suhalla_CellSteps1, x, y);
 	Actor_WalkBy(0, 0, -16);
 	gEventWork->transition_frames = 16;
 	Engine_EventRequestExit(no);
@@ -115,9 +115,9 @@ s32 SceneData_SelectExtraTableByFlag96f(void)
 {
 	if (Engine_GameFlagIsSet(0x96F) != 0)
 	{
-		return (s32)SuharaMura_ExtrasFlag96f;
+		return (s32)Suhalla_ExtrasFlag96f;
 	}
-	return (s32)SuharaMura_Extras;
+	return (s32)Suhalla_Extras;
 }
 
 s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
@@ -141,7 +141,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 	return 0;
 }
 
-struct SceneEntrance SuharaMura_Scripts[] = {
+struct SceneEntrance Suhalla_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -153,7 +153,7 @@ struct SceneEntrance SuharaMura_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SuharaMura_Messages[] = {
+u32 Suhalla_Messages[] = {
 	SCENE_EXITS(167),
 	SCENE_EXIT(1, 168, 1),
 	SCENE_EXIT(2, 168, 2),
@@ -166,7 +166,7 @@ u32 SuharaMura_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement SuharaMura_Actors[] = {
+struct ScenePlacement Suhalla_Actors[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -188,7 +188,7 @@ struct ScenePlacement SuharaMura_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement SuharaMura_ActorsFlag96f[] = {
+struct ScenePlacement Suhalla_ActorsFlag96f[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -211,41 +211,41 @@ struct ScenePlacement SuharaMura_ActorsFlag96f[] = {
 };
 
 // セルアニメの原点 (x, y)
-s16 SuharaMura_CellAnimationOrigins[][2] = {
+s16 Suhalla_CellAnimationOrigins[][2] = {
 	{ 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };
 
-u16 SuharaMura_CellSteps0[] = {
+u16 Suhalla_CellSteps0[] = {
 	MAP_CELL_STEP(25, 0, 1, 2, 8), MAP_CELL_STEP(26, 0, 1, 2, 1), MAP_CELL_STEPS_END,
 };
 
-u16 SuharaMura_CellSteps1[] = {
+u16 Suhalla_CellSteps1[] = {
 	MAP_CELL_STEP(26, 2, 2, 2, 8), MAP_CELL_STEP(28, 2, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 
-struct SceneEvent SuharaMura_Extras[] = {
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
+struct SceneEvent Suhalla_Extras[] = {
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThisIsSuhallaDontTryCrossing) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWeGondowansWillNeverTrustAnyone) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraItHasBeenSaidForAges) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraYouCantGetToSouthernGondowan) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheWorkersSayTherereHugeFestivals) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheSandstormsSuddenlyIncreasedIHope) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheSuhallaHasLongBeenKnown) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThePeopleOfLaliveroHaveBeen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheRulerOfTolbiTookA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIKnowTheDesertSpiritsWill) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraSouthernGondowanIsGuardedByThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIveHeardThatTolbisColossoIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraNoneOfTheGrownUpsIn) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSuhallaHasLongBeenKnown) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaThePeopleOfLaliveroHaveBeen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaIKnowTheDesertSpiritsWill) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaNoneOfTheGrownUpsIn) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
 	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
@@ -253,31 +253,31 @@ struct SceneEvent SuharaMura_Extras[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent SuharaMura_ExtrasFlag96f[] = {
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
+struct SceneEvent Suhalla_ExtrasFlag96f[] = {
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Suhalla_AnimateCells0) },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWelcomeToSuhallaIBetThe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheDesertIsEnvelopedInSandstorms) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraSoldiersFromTolbiWereCaughtIn) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWeWereBroughtHereByThe) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThisSandstormIsTheFaultOf) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWhyAreTheSandstormsAttackingHumans) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThoseSoldiersKeptMumblingAboutMonsters) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIBetTheseWarriorsWereBrought) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIWonderWhyThereAreSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheSoldiersFromTolbiWereCollapsing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraAfterYouGetSwallowedByA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraLatelyAllTheSandstormsHaveBeen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIfYouFightTheStormsYoull) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraGrownUpsSayTheSandstormsAttack) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraTheySayTheSoldiersWereRavaged) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaIWonderWhyThereAreSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuhallaAfterYouGetSwallowedByA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuhallaLatelyAllTheSandstormsHaveBeen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuhallaGrownUpsSayTheSandstormsAttack) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheySayTheSoldiersWereRavaged) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
 	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },

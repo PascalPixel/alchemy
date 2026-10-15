@@ -102,7 +102,7 @@ static s32 OverlayObject_ApplyValue15(s32 actor)
 	return 0;
 }
 
-static void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
+static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
 	struct ScriptTable	table;
 	struct FieldActor  *leader;
@@ -111,7 +111,7 @@ static void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s
 	u32					sel;
 
 	leader = Object_GetById(0);
-	table = *(struct ScriptTable *)GomaHashira_PillarScripts;
+	table = *(struct ScriptTable *)GomaPillar_PillarScripts;
 	obj = Engine_ObjectCreate(222, x, y, z);
 	if (obj == 0)
 		return;
@@ -143,7 +143,7 @@ static void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return GomaHashira_Scripts;
+	return GomaPillar_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -153,12 +153,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return GomaHashira_Messages;
+	return GomaPillar_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return GomaHashira_Actors;
+	return GomaPillar_Actors;
 }
 
 static void EV08_PSYNERGY(void)
@@ -222,7 +222,7 @@ static void FieldScene_RunPrimarySequence(void)
 		na += ta;
 		v3a = (u32)(Engine_RandomNext() << 1) >> 16;
 		na = -na;
-		GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, na, v3a, flags);
+		GomaPillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, na, v3a, flags);
 		flags = gFrameCount & 15;
 		if (flags == 0)
 		{
@@ -243,7 +243,7 @@ static void FieldScene_RunPrimarySequence(void)
 			nb += tb;
 			v3b = (u32)(Engine_RandomNext() << 1) >> 16;
 			nb = -nb;
-			GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, nb, v3b, flags);
+			GomaPillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, nb, v3b, flags);
 		}
 	}
 }
@@ -319,7 +319,7 @@ static void EV09_PSYNERGY(void)
 		n += t;
 		v3 = (u32)(Engine_RandomNext() << 1) >> 16;
 		n = -n;
-		GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, zero, n, v3, zero);
+		GomaPillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, zero, n, v3, zero);
 		Engine_EventWait(20);
 		Engine_AudioPlayCue(154);
 		Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
@@ -345,17 +345,17 @@ static void FieldScene_RunPillarBurst(void)
 		Object_GetById(10)->y.fixed = -0x20000;
 		Object_GetById(10)->target_y = Object_GetById(10)->y.fixed;
 		Engine_AudioPlayCue(188);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, 0x8000, 0, 0, 1);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, 0x6666, 0x6666, 0, 1);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, -0x6666, 0x6666, 0, 1);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, -0x8000, 0, 0, 1);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, 0x6666, -0x6666, 0, 1);
-		GomaHashira_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+		GomaPillar_SpawnPillarEffect(Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
 			Object_GetById(10)->z.fixed, -0x6666, -0x6666, 0, 1);
 		Engine_GameFlagSet(0x301);
 	}
@@ -417,10 +417,10 @@ static void EV20_TOUCH(void)
 
 u8 *SceneData_GetExtraTable(void)
 {
-	return GomaHashira_Extras;
+	return GomaPillar_Extras;
 }
 
-static void GomaHashira_DriveActor13Idle(void)
+static void GomaPillar_DriveActor13Idle(void)
 {
 	struct EventWork *work;
 	s32				  t;
@@ -450,7 +450,7 @@ static void GomaHashira_DriveActor13Idle(void)
 
 static void EV99_RAISED(void)
 {
-	Engine_TaskRemoveCallback(GomaHashira_DriveActor13Idle);
+	Engine_TaskRemoveCallback(GomaPillar_DriveActor13Idle);
 	Engine_EventBegin();
 	Actor_ShowEmote(13, 0x100, 30);
 	Engine_ActorRunRepeatedMotion(13, 2);
@@ -519,7 +519,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 	if (gGameState.pending_djinn_event != 0)
 	{
 		GomaHashira_Actor13Frames = 0;
-		Task_AddCallback(GomaHashira_DriveActor13Idle, 0xc80);
+		Task_AddCallback(GomaPillar_DriveActor13Idle, 0xc80);
 	}
 	return 0;
 }
@@ -559,13 +559,13 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 *GomaHashira_PillarScripts[] = {
-	GomaHashira_PillarScript0,
-	GomaHashira_PillarScript1,
-	GomaHashira_PillarScript2,
+s32 *GomaPillar_PillarScripts[] = {
+	GomaPillar_PillarScript0,
+	GomaPillar_PillarScript1,
+	GomaPillar_PillarScript2,
 };
 
-s32 GomaHashira_PillarScript0[] = {
+s32 GomaPillar_PillarScript0[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -573,7 +573,7 @@ s32 GomaHashira_PillarScript0[] = {
 	SC_FREE,
 };
 
-s32 GomaHashira_PillarScript1[] = {
+s32 GomaPillar_PillarScript1[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -581,7 +581,7 @@ s32 GomaHashira_PillarScript1[] = {
 	SC_FREE,
 };
 
-s32 GomaHashira_PillarScript2[] = {
+s32 GomaPillar_PillarScript2[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_CALL(OverlayObject_ApplyValue15),
@@ -589,7 +589,7 @@ s32 GomaHashira_PillarScript2[] = {
 	SC_FREE,
 };
 
-struct SceneEntrance GomaHashira_Scripts[] = {
+struct SceneEntrance GomaPillar_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
 	{ 2, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
@@ -600,7 +600,7 @@ struct SceneEntrance GomaHashira_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaHashira_Messages[] = {
+u32 GomaPillar_Messages[] = {
 	SCENE_EXITS(27),
 	SCENE_EXIT(1, 28, 2),
 	SCENE_EXIT(2, 26, 1),
@@ -610,7 +610,7 @@ u32 GomaHashira_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct SceneEntrance GomaHashira_Actors[] = {
+struct SceneEntrance GomaPillar_Actors[] = {
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x148, 0, 0, 0, 104, 16384, 2 },
 	{ 212, CONDITION_ALWAYS, 1, 0, 0, 0x180, 0, 0, 0, 192, 16384, 2 },
 	{ 211, CONDITION_ALWAYS, 1, 0, 0, 0x248, 0, 0, 0, 280, 16384, 2 },
@@ -620,7 +620,7 @@ struct SceneEntrance GomaHashira_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent GomaHashira_Extras[] = {
+struct SceneEvent GomaPillar_Extras[] = {
 	{ 0x21, 5, CONDITION_ALWAYS, 1 },
 	{ 0x31, 6, CONDITION_ALWAYS, 2 },
 	{ 0x31, 7, CONDITION_ALWAYS, 3 },
@@ -629,10 +629,10 @@ struct SceneEvent GomaHashira_Extras[] = {
 	{ 0x202, 10, 0x301, EVENT_SCRIPT(EV10_SCRIPT) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-	{ EVENT_TALK, 13, 0xa8, MSGNO(MsgKuupuappuDidYouSeeSomethingStrangeOver) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuHmmmItMustBeHidingSomewhere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa8, MSGNO(MsgKuupuappuItJustWhackedMeInThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIKnowitsKindItllBeBack) },
+	{ EVENT_TALK, 13, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x300, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x301, EVENT_SCRIPT(EV10_PSYNERGY) },

@@ -20,7 +20,7 @@
 
 extern u8 gSceneState[];
 
-extern u8 *gKorosseoWork;
+extern u8 *gColossoWork;
 
 #include "frame.h"
 

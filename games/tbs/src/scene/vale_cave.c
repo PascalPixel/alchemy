@@ -34,7 +34,7 @@
 
 // 前方宣言
 static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
-static void HaidiaDou_ApplyEntryState(void);
+static void ValeCave_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
@@ -74,19 +74,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_HaidiaDou1)
+	if (scene == (s32)&SceneId_ValeCave1)
 	{
-		return gHaidiaDouEntrances1;
+		return gValeCaveEntrances1;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou2)
+	if (scene == (s32)&SceneId_ValeCave2)
 	{
-		return gHaidiaDouEntrances2;
+		return gValeCaveEntrances2;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou3)
+	if (scene == (s32)&SceneId_ValeCave3)
 	{
-		return gHaidiaDouEntrances3;
+		return gValeCaveEntrances3;
 	}
-	return gHaidiaDouEntrancesOther;
+	return gValeCaveEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -96,26 +96,26 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return HaidiaDou_Exits;
+	return ValeCave_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_HaidiaDou1)
+	if (scene == (s32)&SceneId_ValeCave1)
 	{
-		return gHaidiaDouPlacements1;
+		return gValeCavePlacements1;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou2)
+	if (scene == (s32)&SceneId_ValeCave2)
 	{
-		return gHaidiaDouPlacements2;
+		return gValeCavePlacements2;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou3)
+	if (scene == (s32)&SceneId_ValeCave3)
 	{
-		return gHaidiaDouPlacements3;
+		return gValeCavePlacements3;
 	}
-	return gHaidiaDouPlacements1;
+	return gValeCavePlacements1;
 }
 
 static void FieldScene_ConfigureRegionAtRow15(void)
@@ -348,7 +348,7 @@ static void FieldScene_RunScene3a6SequenceC(void)
 			record = Object_GetById(ACTOR_PARTY_LEADER);
 			rec8->acceleration = record->acceleration;
 			idx -= 45;
-			tbl = (s32)HaidiaDou_WalkTargets;
+			tbl = (s32)ValeCave_WalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
 			Engine_ActorWalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
@@ -495,27 +495,27 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_HaidiaDou1)
+	if (scene == (s32)&SceneId_ValeCave1)
 	{
-		return gHaidiaDouEvents1;
+		return gValeCaveEvents1;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou2)
+	if (scene == (s32)&SceneId_ValeCave2)
 	{
-		return gHaidiaDouEvents2;
+		return gValeCaveEvents2;
 	}
-	if (scene == (s32)&SceneId_HaidiaDou3)
+	if (scene == (s32)&SceneId_ValeCave3)
 	{
-		return gHaidiaDouEvents3;
+		return gValeCaveEvents3;
 	}
-	return gHaidiaDouEventsOther;
+	return gValeCaveEventsOther;
 }
 
-s32 HaidiaDou_RunSceneScript(void)
+s32 ValeCave_RunSceneScript(void)
 {
 	s32 *request = &gEventWork->start_transition;
 
 	*request = 0x204;
-	if (gGameState.scene == (s32)&SceneId_HaidiaDou1)
+	if (gGameState.scene == (s32)&SceneId_ValeCave1)
 	{
 		*request = 0x100;
 		Engine_TaskWait(1);
@@ -523,11 +523,11 @@ s32 HaidiaDou_RunSceneScript(void)
 		Engine_ActorSetSpritePriority(12, 3);
 		Engine_GameFlagClear(0x12f);
 	}
-	HaidiaDou_ApplyEntryState();
+	ValeCave_ApplyEntryState();
 	return 0;
 }
 
-static void HaidiaDou_PlayCueAndRequestTouchedExit(void)
+static void ValeCave_PlayCueAndRequestTouchedExit(void)
 {
 	s32 val = gEventWork->touched_trigger;
 
@@ -592,11 +592,11 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 	}
 }
 
-static void HaidiaDou_ApplyEntryState(void)
+static void ValeCave_ApplyEntryState(void)
 {
 	s32 flag;
 
-	if (gGameState.scene == (s32)&SceneId_HaidiaDou2)
+	if (gGameState.scene == (s32)&SceneId_ValeCave2)
 	{
 		switch (gGameState.entrance)
 		{
@@ -649,7 +649,7 @@ static void HaidiaDou_ApplyEntryState(void)
 			break;
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_HaidiaDou3)
+	else if (gGameState.scene == (s32)&SceneId_ValeCave3)
 	{
 		switch (gGameState.entrance)
 		{
@@ -763,7 +763,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 HaidiaDou_WalkTargets[] = {
+s32 ValeCave_WalkTargets[] = {
 	0x2f8, 0x128,
 	0x2f8, 0x118,
 	0x308, 0x118,
@@ -784,12 +784,12 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance gHaidiaDouEntrancesOther[] = {
+struct SceneEntrance gValeCaveEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gHaidiaDouEntrances1[] = {
+struct SceneEntrance gValeCaveEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
 	{ 1, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
@@ -797,7 +797,7 @@ struct SceneEntrance gHaidiaDouEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gHaidiaDouEntrances2[] = {
+struct SceneEntrance gValeCaveEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
@@ -812,7 +812,7 @@ struct SceneEntrance gHaidiaDouEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gHaidiaDouEntrances3[] = {
+struct SceneEntrance gValeCaveEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
 	{ 2, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
@@ -822,7 +822,7 @@ struct SceneEntrance gHaidiaDouEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 HaidiaDou_Exits[] = {
+u32 ValeCave_Exits[] = {
 	SCENE_EXITS(93),
 	SCENE_EXIT(1, 6, 4),
 	SCENE_EXIT(2, 94, 1),
@@ -847,7 +847,7 @@ u32 HaidiaDou_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gHaidiaDouPlacements1[] = {
+struct ScenePlacement gValeCavePlacements1[] = {
 	{ 0xf1, CONDITION_ALWAYS, 7,
 		PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf1, CONDITION_ALWAYS, 7,
@@ -861,7 +861,7 @@ struct ScenePlacement gHaidiaDouPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaDouPlacements2[] = {
+struct ScenePlacement gValeCavePlacements2[] = {
 	{ 0x5d, 0x70, ACTOR_STAND,
 		PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xf1, CONDITION_ALWAYS, 7,
@@ -881,7 +881,7 @@ struct ScenePlacement gHaidiaDouPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gHaidiaDouPlacements3[] = {
+struct ScenePlacement gValeCavePlacements3[] = {
 	{ 0x5d, 0x70, ACTOR_STAND,
 		PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0xcd, CONDITION_ALWAYS, 7,
@@ -893,18 +893,18 @@ struct ScenePlacement gHaidiaDouPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gHaidiaDouEventsOther[] = {
+struct SceneEvent gValeCaveEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaDouEvents1[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_PlayCueAndRequestTouchedExit) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_PlayCueAndRequestTouchedExit) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_PlayCueAndRequestTouchedExit) },
+struct SceneEvent gValeCaveEvents1[] = {
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeCave_PlayCueAndRequestTouchedExit) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeCave_PlayCueAndRequestTouchedExit) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeCave_PlayCueAndRequestTouchedExit) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaDouEvents2[] = {
+struct SceneEvent gValeCaveEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -946,7 +946,7 @@ struct SceneEvent gHaidiaDouEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gHaidiaDouEvents3[] = {
+struct SceneEvent gValeCaveEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

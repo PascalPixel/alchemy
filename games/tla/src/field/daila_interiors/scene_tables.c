@@ -37,13 +37,13 @@ extern const u8 Data_020014a4[];
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_DeriHeya2)
+    if (gPartyState.scene == (s32)&SceneId_DailaInteriors2)
         return (const struct ScenePlacement *)Data_020013fc;
     if (GameFlag_Test(0x873))
         return (const struct ScenePlacement *)Data_020014a4;
     return (const struct ScenePlacement *)Data_02001204;
 }
 
-void DeriHeya_EmptyHook(void)
+void DailaInteriors_EmptyHook(void)
 {
 }

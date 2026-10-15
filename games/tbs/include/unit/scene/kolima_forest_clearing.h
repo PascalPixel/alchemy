@@ -13,9 +13,9 @@ s32 FieldScene_SetupEntryActors8To11(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
-extern struct SceneEntrance KorimaHiroba_Scripts[];
-extern u32 KorimaHiroba_Messages[];
-extern struct ScenePlacement KorimaHiroba_Actors[];
-extern struct SceneEvent KorimaHiroba_Extras[];
+extern struct SceneEntrance KolimaForestClearing_Scripts[];
+extern u32 KolimaForestClearing_Messages[];
+extern struct ScenePlacement KolimaForestClearing_Actors[];
+extern struct SceneEvent KolimaForestClearing_Extras[];
 
 #endif

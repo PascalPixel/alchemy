@@ -29,15 +29,15 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_SuharaGate2)
+	if (scene == (s32)&SceneId_SuhallaGate2)
 	{
-		return gSuharaGateEntrances2;
+		return gSuhallaGateEntrances2;
 	}
-	if (scene == (s32)&SceneId_SuharaGate3)
+	if (scene == (s32)&SceneId_SuhallaGate3)
 	{
-		return gSuharaGateEntrances3;
+		return gSuhallaGateEntrances3;
 	}
-	return gSuharaGateEntrancesOther;
+	return gSuhallaGateEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -47,54 +47,54 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSceneTable(void)
 {
-	return (u8 *)SuharaGate_SceneTable;
+	return (u8 *)SuhallaGate_SceneTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_SuharaGate2)
+	if (scene == (s32)&SceneId_SuhallaGate2)
 	{
-		return gSuharaGatePlacements2;
+		return gSuhallaGatePlacements2;
 	}
-	if (scene == (s32)&SceneId_SuharaGate1)
+	if (scene == (s32)&SceneId_SuhallaGate1)
 	{
 		if (Engine_GameFlagIsSet(0x96f) != 0)
 		{
-			return gSuharaGatePlacements1Flagged;
+			return gSuhallaGatePlacements1Flagged;
 		}
-		return gSuharaGatePlacements1;
+		return gSuhallaGatePlacements1;
 	}
-	return gSuharaGatePlacementsOther;
+	return gSuhallaGatePlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_SuharaGate2)
+	if (scene == (s32)&SceneId_SuhallaGate2)
 	{
-		return gSuharaGateEvents2;
+		return gSuhallaGateEvents2;
 	}
-	if (scene == (s32)&SceneId_SuharaGate3)
+	if (scene == (s32)&SceneId_SuhallaGate3)
 	{
-		return gSuharaGateEvents3;
+		return gSuhallaGateEvents3;
 	}
-	return gSuharaGateEventsOther;
+	return gSuhallaGateEventsOther;
 }
 
-s32 SuharaGate_EnterScene(void)
+s32 SuhallaGate_EnterScene(void)
 {
 	s32 scene;
 
 	if (Engine_GameFlagIsSet(0x89f))
 	{
-		gGameState.saved_scene = (s32)&SceneId_RunpaSuhara;
+		gGameState.saved_scene = (s32)&SceneId_LunpaSuhalla;
 		gGameState.saved_entrance = 10;
 	}
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_SuharaGate1)
+	if (scene == (s32)&SceneId_SuhallaGate1)
 	{
 		if (Engine_GameFlagIsSet(0x897))
 			Engine_ActorSetPosition(10, 0, 0);
@@ -112,7 +112,7 @@ s32 SuharaGate_EnterScene(void)
 			if (Engine_GameFlagIsSet(0x8fb))
 			{
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-				gGameState.retreat_scene = (s32)&SceneId_SuharaGate1;
+				gGameState.retreat_scene = (s32)&SceneId_SuhallaGate1;
 #else
 				gGameState.retreat_scene = scene;
 #endif
@@ -121,7 +121,7 @@ s32 SuharaGate_EnterScene(void)
 			if (Engine_GameFlagIsSet(0x8fc))
 			{
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-				gGameState.retreat_scene = (s32)&SceneId_SuharaGate1;
+				gGameState.retreat_scene = (s32)&SceneId_SuhallaGate1;
 #else
 				gGameState.retreat_scene = scene;
 #endif
@@ -138,7 +138,7 @@ s32 SuharaGate_EnterScene(void)
 		if (gGameState.entrance == 5)
 			Engine_GameFlagSet(0x8fc);
 	}
-	else if (scene == (s32)&SceneId_SuharaGate2)
+	else if (scene == (s32)&SceneId_SuhallaGate2)
 	{
 		Engine_ActorSetAnimation(8, 4);
 		Engine_ActorSetAnimation(9, 4);
@@ -222,7 +222,7 @@ static void Scene_RunScene3c3SequenceA(void)
 	Actor_FaceDirection(11, 0xd000, 40);
 	Actor_FaceDirection(11, 0, 20);
 	Engine_ActorStartRepeatedMotion(11, 2);
-	Engine_EventSetMessage(MsgSuharaMeaning);
+	Engine_EventSetMessage(MsgSuhallaMeaning);
 	Event_ShowMessageAndWait(11, 0, 40);
 	Actor_ShowEmote(8, 0x100, 0);
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -315,12 +315,12 @@ static void EV09_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x89f) != 0)
 	{
-		Engine_EventSetMessage(MsgSuharaPityColossoVictor);
+		Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
 		Engine_EventShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgSuharaWantGoBabi);
+		Engine_EventSetMessage(MsgSuhallaWantGoBabi);
 		{
 			s32 mode = 0;
 			s32 no = 9;
@@ -391,29 +391,29 @@ static void Scene_RunActorTenRepeatedMotion(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-s32 SuharaGate_PatrolStartup[] = {
+s32 SuhallaGate_PatrolStartup[] = {
 	SC_SET(SW_COLLISION, 0),
 };
 #endif
 
-s32 gSuharaGatePlacements1Flagged1[] = {
+s32 gSuhallaGatePlacements1Flagged1[] = {
 	SC_ARG(5),
 	SC_END,
 };
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-s32 SuharaGate_FirstGuardStartup[] = {
+s32 SuhallaGate_FirstGuardStartup[] = {
 	SC_SET(SW_COLLISION, 0),
 };
 #endif
 
-s32 gSuharaGatePlacements1Flagged0[] = {
+s32 gSuhallaGatePlacements1Flagged0[] = {
 	SC_SET(SW_SCALE_X, -0x10000),
 	SC_ARG(5),
 	SC_END,
 };
 
-struct SceneEntrance gSuharaGateEntrancesOther[] = {
+struct SceneEntrance gSuhallaGateEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0 },
 	{ 1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0 },
@@ -423,7 +423,7 @@ struct SceneEntrance gSuharaGateEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSuharaGateEntrances2[] = {
+struct SceneEntrance gSuhallaGateEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0 },
 	{ 2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0 },
 	{ 3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0 },
@@ -432,7 +432,7 @@ struct SceneEntrance gSuharaGateEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gSuharaGateEntrances3[] = {
+struct SceneEntrance gSuhallaGateEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0 },
 	{ 3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0 },
@@ -440,7 +440,7 @@ struct SceneEntrance gSuharaGateEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SuharaGate_SceneTable[] = {
+u32 SuhallaGate_SceneTable[] = {
 	SCENE_EXITS(169),
 	SCENE_EXIT(1, 2, 29),
 	SCENE_EXIT(2, 170, 1),
@@ -461,11 +461,11 @@ u32 SuharaGate_SceneTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gSuharaGatePlacementsOther[] = {
+struct ScenePlacement gSuhallaGatePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaGatePlacements2[] = {
+struct ScenePlacement gSuhallaGatePlacements2[] = {
 	{ 0xee, CONDITION_ALWAYS, 7,
 		PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0xee, CONDITION_ALWAYS, 7,
@@ -481,7 +481,7 @@ struct ScenePlacement gSuharaGatePlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaGatePlacements1[] = {
+struct ScenePlacement gSuhallaGatePlacements1[] = {
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -489,20 +489,20 @@ struct ScenePlacement gSuharaGatePlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuharaGatePlacements1Flagged[] = {
+struct ScenePlacement gSuhallaGatePlacements1Flagged[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
-	{ 0x98, CONDITION_ALWAYS, (s32)gSuharaGatePlacements1Flagged0,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged0,
 		PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)gSuharaGatePlacements1Flagged1,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged1,
 		PIXELS(168), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)gSuharaGatePlacements1Flagged1,
+	{ 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged1,
 		PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #else
-	{ 0x98, CONDITION_ALWAYS, (s32)SuharaGate_FirstGuardStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_FirstGuardStartup,
 		PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)SuharaGate_PatrolStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_PatrolStartup,
 		PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ 0x98, CONDITION_ALWAYS, (s32)SuharaGate_PatrolStartup,
+	{ 0x98, CONDITION_ALWAYS, (s32)SuhallaGate_PatrolStartup,
 		PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #endif
 	{ 0x39, CONDITION_ALWAYS, ACTOR_STAND,
@@ -510,7 +510,7 @@ struct ScenePlacement gSuharaGatePlacements1Flagged[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gSuharaGateEventsOther[] = {
+struct SceneEvent gSuhallaGateEventsOther[] = {
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_ShowMessages8fbAnd8fc) },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
@@ -518,19 +518,19 @@ struct SceneEvent gSuharaGateEventsOther[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_TOUCH, 10, 0x96f, EVENT_SCRIPT(Scene_RunPrimarySequence) },
 	{ EVENT_TOUCH, 10, 0x89f, EVENT_SCRIPT(Scene_RunScene3c3SequenceA) },
-	{ EVENT_TALK, 8, 0x89f, MSGNO(MsgSuharaTravelPapersRequired) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuharaSendHelpFromTower) },
+	{ EVENT_TALK, 8, 0x89f, MSGNO(MsgSuhallaTravelPapersRequired) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x89f, MSGNO(MsgSuharaObeyBabiOrders) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuharaAshamedBeforeYodemu) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x89f, MSGNO(MsgSuharaSeeKorosseoNextYear) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuharaSurvivedAttack) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x89f, MSGNO(MsgSuhallaObeyBabiOrders) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaAshamedBeforeIodem) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x89f, MSGNO(MsgSuhallaSeeColossoNextYear) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaSurvivedAttack) },
 	{ EVENT_TALK, 10, 0x897, EVENT_SCRIPT(Scene_RunActorTenRepeatedMotion) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, 0x897, EVENT_SCRIPT(Scene_RunActorTenRepeatedMotion) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSuharaGateEvents2[] = {
+struct SceneEvent gSuhallaGateEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -543,7 +543,7 @@ struct SceneEvent gSuharaGateEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gSuharaGateEvents3[] = {
+struct SceneEvent gSuhallaGateEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ 0x31, 2, CONDITION_ALWAYS, 2 },
 	{ 0x21, 3, CONDITION_ALWAYS, 3 },

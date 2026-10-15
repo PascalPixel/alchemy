@@ -92,16 +92,16 @@ static void EV10_TALK(s32 actor)
 	object->scale_x = 0x10000;
 	object = Actor_Get(actor);
 	object->scale_y = 0x10000;
-	Engine_EventSetMessage(MsgRariberoOhhTheyTookShebaHeaded);
+	Engine_EventSetMessage(MsgLaliveroOhhTheyTookShebaHeaded);
 	Event_ShowMessage(actor, 0);
 	Actor_FaceDirection(actor, 0xc000, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(actor, RariberoMachi_LamentActions);
+	Engine_ActorEnableActionCallback(actor, Lalivero_LamentActions);
 }
 
 static void EV11_TALK(s32 obj)
 {
-	s32 msg = MsgRariberoLeavingLalivero;
+	s32 msg = MsgLaliveroLeavingLalivero;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -120,7 +120,7 @@ static void SceneActor_SetupActor18Event(void)
 {
 
 	Engine_GameFlagSet(2491);
-	Engine_EventSetMessage(MsgRariberoWasToldLetInIf);
+	Engine_EventSetMessage(MsgLaliveroWasToldLetInIf);
 	Engine_EventShowMessage(18, 0);
 	Actor_SetSpeed(18, 0x10000, 0x8000);
 	Actor_WalkByAndWait(18, -16, 0);
@@ -131,19 +131,19 @@ static void SceneActor_SetupActor18Event(void)
 static void Scene_RunTableTransition(void)
 {
 	s32 no = gEventWork->touched_trigger;
-	s32 x = RariberoMachi_DoorCells[no][0];
-	s32 y = RariberoMachi_DoorCells[no][1];
+	s32 x = Lalivero_DoorCells[no][0];
+	s32 y = Lalivero_DoorCells[no][1];
 
 	Object_GetById(0)->motion_flags = 2;
 	Engine_AudioPlayCue(158);
 	if (no == 6)
 	{
-		Map_AnimateCells((s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
+		Map_AnimateCells((s32)Lalivero_GateOpenSteps, (u16)x, (u16)y);
 		Actor_WalkBy(0, 0, -16);
 	}
 	else
 	{
-		Map_AnimateCells((s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
+		Map_AnimateCells((s32)Lalivero_DoorOpenSteps, (u16)x, (u16)y);
 		Actor_CenterAndWalk(0, 2, -16);
 	}
 	Engine_EventWait(10);
@@ -151,7 +151,7 @@ static void Scene_RunTableTransition(void)
 	Engine_EventRequestExit(no);
 }
 
-static void RariberoMachi_RequestTouchedExit(void)
+static void Lalivero_RequestTouchedExit(void)
 {
 	struct EventWork *work = gEventWork;
 	s16				 *p = (s16 *)&work->touched_trigger;
@@ -166,7 +166,7 @@ static void Scene_RunPrimarySequence(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRariberoMoreTolbisSoldiersLayDefeated);
+	Engine_EventSetMessage(MsgLaliveroMoreTolbisSoldiersLayDefeated);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0xf80000, 0x1a80000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 	Engine_ActorSetAnimation(8, 0);
@@ -353,54 +353,54 @@ static void EV50_TOUCH(void)
 
 	GameFlag_Set(0x9ba);
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRariberoWhereGoingRobinIodemAsked);
+	Engine_EventSetMessage(MsgLaliveroWhereGoingIsaacIodemAsked);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
 	FieldMotion_LaunchFromFocusedObject(1, -32, 0, 0);
 	FieldMotion_LaunchFromFocusedObject(3, -16, 16, 0xe000);
 	Motion_LaunchFromFocusedObject(2, 0, 16, 0xc000);
-	Engine_ActorWaitForMove(GERALD);
+	Engine_ActorWaitForMove(GARET);
 	Engine_EventWait(30);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
 	Engine_EventWait(10);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(MEARI, 4);
+		Engine_ActorSetAnimationAndWait(MIA, 4);
 		Engine_EventWait(20);
-		Event_ShowMessage(MEARI, 0);
+		Event_ShowMessage(MIA, 0);
 		gEventWork->message += 1;
 	}
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(MEARI, 4);
+		Engine_ActorSetAnimationAndWait(MIA, 4);
 		Engine_EventWait(20);
 		gEventWork->message += 1;
-		Event_ShowMessage(MEARI, 0);
+		Event_ShowMessage(MIA, 0);
 	}
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, 0x108, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, 0x108, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(30);
 	Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -16, 0);
-	Actor_WalkBy(IWAN, 0, -16);
-	Actor_WalkBy(MEARI, 0, -8);
+	Actor_WalkBy(IVAN, 0, -16);
+	Actor_WalkBy(MIA, 0, -8);
 	Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-	Engine_ActorSetAnimation(MEARI, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
+	Engine_ActorSetAnimation(MIA, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xc000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
 	Actor_FaceDirection(22, 0x4000, 0);
 	Engine_EventWait(80);
 	Actor_SetSpeed(22, 0xcccc, 0x6666);
@@ -426,9 +426,9 @@ static void EV50_TOUCH(void)
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(40);
 	Actor_WalkByAndWait(22, 16, 0);
 	Actor_FaceDirection(22, 0x4000, 0);
@@ -438,51 +438,51 @@ static void EV50_TOUCH(void)
 	Engine_EventWait(30);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(22, 0x102, 40);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, 0x100, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, 0x100, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
 	Engine_EventWait(30);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
-	Engine_ActorFaceEachOther(MEARI, IWAN, 0);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(MIA, IVAN, 0);
 	Engine_EventWait(60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	Actor_FaceDirection(MEARI, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	Actor_FaceDirection(MIA, 0xc000, 0);
 	Engine_EventWait(40);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
 	Engine_EventWait(30);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, 0x102, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, 0x102, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
 	Engine_EventWait(20);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(GERALD, 0xe000, 0);
+	Actor_FaceDirection(GARET, 0xe000, 0);
 	Engine_EventWait(20);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -500,20 +500,20 @@ static void EV50_TOUCH(void)
 		Event_ShowMessage(22, 0);
 	}
 	Engine_EventWait(10);
-	Actor_ShowEmote(IWAN, 0x102, 40);
-	Event_ShowMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, 0x102, 40);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
 	Actor_ShowEmote(22, 0x106, 50);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(20);
 	Actor_SetPosition(25, 0x580000, 0x14c0000);
 	Event_ShowMessage(-1, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, 0x100, 40);
-	Engine_ActorJump(MEARI, 4, 13);
-	Engine_ActorJump(MEARI, 4, 30);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, 0x100, 40);
+	Engine_ActorJump(MIA, 4, 13);
+	Engine_ActorJump(MIA, 4, 30);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
 	Engine_EventWait(30);
@@ -522,7 +522,7 @@ static void EV50_TOUCH(void)
 	{
 		FieldScene_RunScene3c6SequenceA();
 	}
-	Engine_EventSetMessage(MsgRariberoBabiToldMeShipAncients);
+	Engine_EventSetMessage(MsgLaliveroBabiToldMeShipAncients);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
@@ -532,16 +532,16 @@ static void EV50_TOUCH(void)
 	Engine_EventWait(30);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(GERALD, 0x100, 40);
-	Event_ShowMessage(GERALD, 0);
+	Actor_ShowEmote(GARET, 0x100, 40);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
 	Engine_EventWait(30);
@@ -567,9 +567,9 @@ static void EV50_TOUCH(void)
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(50);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 3);
@@ -587,59 +587,59 @@ static void EV50_TOUCH(void)
 	Event_PlayCue(159);
 	Engine_EventWait(50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
-	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
+	Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(30);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(MEARI, 2);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(MIA, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
-	Engine_ActorSetAnimation(IWAN, 2);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
+	Engine_ActorSetAnimation(IVAN, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
 	Engine_EventWait(10);
 	Engine_EventEnd();
 }
 
 static void FieldScene_RunScene3c6SequenceA(void)
 {
-	Engine_EventSetMessage(MsgRariberoThoughtShipWeSawAt);
+	Engine_EventSetMessage(MsgLaliveroThoughtShipWeSawAt);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
@@ -650,39 +650,39 @@ static void FieldScene_RunScene3c6SequenceA(void)
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 55);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 55);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(22, 4);
 	Engine_EventWait(20);
 	Event_ShowMessage(22, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, 0x102, 40);
-	Event_ShowMessage(MEARI, 0);
+	Actor_ShowEmote(MIA, 0x102, 40);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(10);
-	Actor_FaceDirection(IWAN, 0x8000, 0);
+	Actor_FaceDirection(IVAN, 0x8000, 0);
 	Engine_EventWait(65);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
 	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 }
 
 static void EV51_TOUCH(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgRariberoWhereGoingArentWeTaking);
-	Event_ShowMessage(GERALD, 0);
+	Engine_EventSetMessage(MsgLaliveroWhereGoingArentWeTaking);
+	Event_ShowMessage(GARET, 0);
 	Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
 	Engine_EventEnd();
 }
@@ -786,7 +786,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-s32 RariberoMachi_LamentActions[] = {
+s32 Lalivero_LamentActions[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -857,7 +857,7 @@ struct ScenePlacement Placement_Actors[] = {
 		PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x6c, CONDITION_ALWAYS, (s32)RariberoMachi_LamentActions,
+	{ 0x6c, CONDITION_ALWAYS, (s32)Lalivero_LamentActions,
 		PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(312), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -925,25 +925,25 @@ struct ScenePlacement Placement_Actors9a7[] = {
 		PIXELS(248), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-s16 RariberoMachi_DoorCells[][2] = {
+s16 Lalivero_DoorCells[][2] = {
 	{ 0, 0 }, { 4, 9 }, { 9, 11 }, { 12, 8 }, { 18, 8 }, { 22, 8 }, { 26, 7 }, { 4, 18 },
 	{ 0, 0 }, { 22, 15 }, { 27, 18 }, { 0, 0 },
 };
 
-u16 RariberoMachi_DoorOpenSteps[] = {
+u16 Lalivero_DoorOpenSteps[] = {
 	MAP_CELL_STEP(33, 0, 1, 2, 8), MAP_CELL_STEP(34, 0, 1, 2, 1), MAP_CELL_STEPS_END,
 };
 
-u16 RariberoMachi_GateOpenSteps[] = {
+u16 Lalivero_GateOpenSteps[] = {
 	MAP_CELL_STEP(34, 2, 2, 2, 8), MAP_CELL_STEP(36, 2, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 
@@ -957,32 +957,32 @@ struct SceneEvent Placement_Effects[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_RequestTouchedExit) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Lalivero_RequestTouchedExit) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_RequestTouchedExit) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiUhhnnWeWereTakenBySurprise) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheyWereTerribleWeWereNo) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Lalivero_RequestTouchedExit) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiActorIsOurOnlyHopeIf) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThisAllHappenedBecauseTolbiTook) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiFaranFollowedActorImSureHell) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheRumblingAtTheRuinsMust) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThereWasAnEarthquakeAtThe) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIfIWereBiggerIWould) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIBetActorCanUseHer) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiBabisMostPreciousBelongingIsKept) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIfOnlyTheyDidntHaveActor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheyUsedFireOnUsThats) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiCursesWeCouldntStopActorAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiWhatDoTheyPlanToDo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiWeNeverShouldHaveLetTolbi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiFaranStillDoesNotReturnWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiWeHaveSeenManyOmensOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheStonesWeStackedForThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiITriedToStepInFront) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheyAllHaveALessonComing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIWonderWhatBabisMostPrecious) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheRumblingAtTheRuinsMust) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroThereWasAnEarthquakeAtThe) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfIWereBiggerIWould) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroIBetActorCanUseHer) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroBabisMostPreciousBelongingIsKept) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfOnlyTheyDidntHaveActor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyUsedFireOnUsThats) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroCursesWeCouldntStopActorAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhatDoTheyPlanToDo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeNeverShouldHaveLetTolbi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranStillDoesNotReturnWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeHaveSeenManyOmensOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheStonesWeStackedForThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWonderWhatBabisMostPrecious) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(0xba) },
@@ -1000,35 +1000,35 @@ struct SceneEvent Placement_Effects9a7[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_RequestTouchedExit) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Lalivero_RequestTouchedExit) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_RequestTouchedExit) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Lalivero_RequestTouchedExit) },
 	{ EVENT_TALK, 18, 0x9bb, EVENT_SCRIPT(SceneActor_SetupActor18Event) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x412, 0x9bb, EVENT_SCRIPT(SceneActor_SetupActor18Event) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiHaHaIThoughtTheyHad) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIWillNeverLetMyGuard) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiWhereCouldActorBeNowIm) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiISawTheBeaconOfVenus) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheExplosionInTheVenusRuins) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThePeninsulaBehindVenusLighthouseIs) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiICantBelieveYouEscapedVenus) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIfYouDefeatedThatEvilBunch) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiActorJumpedIntoTheOceanFrom) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiNoTrespassingDangerBeyondThisPoint) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiApparentlyAShipHasBeenDocked) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIAmAllHealedNowBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIWantedToBeAPart) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIfActorUsedHerGreatPowers) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiAfterEverythingThatsHappenedLaliveroNo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiVenusLighthouseHasBeenTheSymbol) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIodemOfTolbiDoesntSeemToo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheOceanIsSoRoughSince) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiVenusLighthouseIsStillStandingStrong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiYouMustBeGreatWarriorsTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiActorWouldBeFineEvenAfter) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThisSureSeemsLikeAStrange) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroICantBelieveYouEscapedVenus) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfYouDefeatedThatEvilBunch) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorJumpedIntoTheOceanFrom) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgLaliveroNoTrespassingDangerBeyondThisPoint) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroApparentlyAShipHasBeenDocked) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroIAmAllHealedNowBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWantedToBeAPart) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfActorUsedHerGreatPowers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroAfterEverythingThatsHappenedLaliveroNo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseHasBeenTheSymbol) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroIodemOfTolbiDoesntSeemToo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheOceanIsSoRoughSince) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseIsStillStandingStrong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisSureSeemsLikeAStrange) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(0xba) },

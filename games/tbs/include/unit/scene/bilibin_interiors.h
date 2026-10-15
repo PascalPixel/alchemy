@@ -7,12 +7,12 @@
 u8 *SceneData_GetPrimaryTable(void);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetSecondaryTable(void);
-s32 BiribinoHeya_PreparePlacements(void);
+s32 BilibinInteriors_PreparePlacements(void);
 u8 *SceneData_GetTertiaryTable(void);
 s32 FieldScene_SetupActor27OnEntry(void);
-extern struct SceneEntrance BiribinoHeya_PrimaryTable[];
-extern u32 BiribinoHeya_SecondaryTable[];
-extern struct ScenePlacement gBiribinoHeyaPlacements[];
-extern struct SceneEvent BiribinoHeya_TertiaryTable[];
+extern struct SceneEntrance BilibinInteriors_PrimaryTable[];
+extern u32 BilibinInteriors_SecondaryTable[];
+extern struct ScenePlacement gBilibinInteriorsPlacements[];
+extern struct SceneEvent BilibinInteriors_TertiaryTable[];
 
 #endif

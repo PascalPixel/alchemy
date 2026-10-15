@@ -14,13 +14,13 @@ u8 *SceneData_GetMessageTable(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern s32 KareiKyuden_PartyActions[];
-extern struct SceneEntrance gKareiKyudenEntrancesOther[];
-extern struct SceneEntrance gKareiKyudenEntrances[];
+extern s32 HammetPalace_PartyActions[];
+extern struct SceneEntrance gHammetPalaceEntrancesOther[];
+extern struct SceneEntrance gHammetPalaceEntrances[];
 extern u32 Placement_Messages[];
-extern struct ScenePlacement gKareiKyudenPlacementsOther[];
-extern struct ScenePlacement gKareiKyudenPlacements[];
-extern struct SceneEvent gKareiKyudenEventsOther[];
-extern struct SceneEvent gKareiKyudenEvents[];
+extern struct ScenePlacement gHammetPalacePlacementsOther[];
+extern struct ScenePlacement gHammetPalacePlacements[];
+extern struct SceneEvent gHammetPalaceEventsOther[];
+extern struct SceneEvent gHammetPalaceEvents[];
 
 #endif

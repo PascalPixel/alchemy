@@ -38,19 +38,19 @@ void Func_02000a9c(void)
 s32 Func_02000ac8(void)
 {
     *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
-    if (gPartyState.scene == (s32)&SceneId_DeriMura1)
+    if (gPartyState.scene == (s32)&SceneId_Daila1)
         Func_02000d68(12, 0);
-    else if (gPartyState.scene == (s32)&SceneId_DeriMura2)
+    else if (gPartyState.scene == (s32)&SceneId_Daila2)
         Func_02000d50(Data_02000d80);
     Engine_ActorSetSpritePriority(21, 1);
-    if (gPartyState.scene == (s32)&SceneId_DeriMura2 && Engine_GameFlagIsSet(0x300) == 0)
+    if (gPartyState.scene == (s32)&SceneId_Daila2 && Engine_GameFlagIsSet(0x300) == 0)
         Object_SetWideSprite(66, 0);
     return 0;
 }
 
 s32 Func_02000b44(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_DeriMura2) {
+    if (gPartyState.scene == (s32)&SceneId_Daila2) {
         if (Engine_GameFlagIsSet(0x210))
             MapCopyAttr(10, 19, 1, 1, 11, 19);
         if (Engine_GameFlagIsSet(0x211))

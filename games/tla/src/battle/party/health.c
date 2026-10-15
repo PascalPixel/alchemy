@@ -23,7 +23,7 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 i;
 
     for (i = 0; i < target_count; i++)
-        UnitEpAddFar(gPartyState.active_owners[i], amount);
+        UnitPpAddFar(gPartyState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -77,7 +77,7 @@ s32 BattleParty_ApplyStatusDamage(void)
             struct BtlUnit *object = UnitGet(*entry);
             s32 amount;
 
-            switch (object->doku) {
+            switch (object->poison) {
             case 1:
                 amount = -((object->max_hp + 10) / 20);
                 if (amount == 0)

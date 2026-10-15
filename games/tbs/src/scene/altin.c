@@ -31,15 +31,15 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_ArutinMura1)
+	if (v == (s32)&SceneId_Altin1)
 	{
-		return gArutinMuraEntrances1;
+		return gAltinEntrances1;
 	}
-	if (v == (s32)&SceneId_ArutinMura2)
+	if (v == (s32)&SceneId_Altin2)
 	{
-		return gArutinMuraEntrances2;
+		return gAltinEntrances2;
 	}
-	return gArutinMuraEntrancesOther;
+	return gAltinEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -55,40 +55,40 @@ u8 *SceneData_GetMessageTable(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s32 id = gGameState.scene;
-	if (id == (s32)&SceneId_ArutinMura1)
+	if (id == (s32)&SceneId_Altin1)
 	{
 		if (Engine_GameFlagIsSet(0x909))
 		{
-			gArutinMuraPlacements1[5].talk_facing = TALK_FACE_PARTY;
-			gArutinMuraPlacements1[6].talk_facing = TALK_FACE_PARTY;
+			gAltinPlacements1[5].talk_facing = TALK_FACE_PARTY;
+			gAltinPlacements1[6].talk_facing = TALK_FACE_PARTY;
 		}
-		return gArutinMuraPlacements1;
+		return gAltinPlacements1;
 	}
-	if (id == (s32)&SceneId_ArutinMura2)
+	if (id == (s32)&SceneId_Altin2)
 	{
 		if (Engine_GameFlagIsSet(0x8fd))
-			gArutinMuraPlacements2[1].talk_facing = TALK_FACE_PARTY_AND_BACK;
+			gAltinPlacements2[1].talk_facing = TALK_FACE_PARTY_AND_BACK;
 		if (Engine_GameFlagIsSet(0x8fe) || Engine_GameFlagIsSet(0x907))
-			gArutinMuraPlacements2[3].talk_facing = TALK_FACE_PARTY_AND_BACK;
-		FieldScene_PrepareActors(gArutinMuraPlacements2);
-		return gArutinMuraPlacements2;
+			gAltinPlacements2[3].talk_facing = TALK_FACE_PARTY_AND_BACK;
+		FieldScene_PrepareActors(gAltinPlacements2);
+		return gAltinPlacements2;
 	}
-	return gArutinMuraPlacementsOther;
+	return gAltinPlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_ArutinMura1)
+	if (v == (s32)&SceneId_Altin1)
 	{
-		return gArutinMuraEvents1;
+		return gAltinEvents1;
 	}
-	if (v == (s32)&SceneId_ArutinMura2)
+	if (v == (s32)&SceneId_Altin2)
 	{
-		return gArutinMuraEvents2;
+		return gAltinEvents2;
 	}
-	return gArutinMuraEventsOther;
+	return gAltinEventsOther;
 }
 
 static void EV08_TALK(void)
@@ -96,7 +96,7 @@ static void EV08_TALK(void)
 	struct EventWork *work;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinYourFirstTimeVisitAltin);
+	Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
 
 	Engine_EventOpenMessage(8, 0);
 
@@ -117,7 +117,7 @@ static void EV08_TALK(void)
 static void EV09_TALK_1(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinDidSeeWaterGushingOut);
+	Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -132,13 +132,13 @@ static void EV14_TALK_1(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage(MsgArutinOnesWhoDefeatedWaterBeasts);
+		Engine_EventSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
 		Event_AskYesNo(14, 0);
 	}
 	else
 	{
 		Engine_ActorSetAnimation(14, 4);
-		Engine_EventSetMessage(MsgArutinWeCantDrinkWaterMonsters);
+		Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
 		Event_ShowMessageAndWait(14, 0, 10);
 		ready_flag = GameFlag_IsSet(0x8ff);
 		if (ready_flag == 0)
@@ -165,7 +165,7 @@ static void EV17_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinTrueFoundAncientRuinsIn);
+	Engine_EventSetMessage(MsgAltinTrueFoundAncientRuinsIn);
 	Engine_EventAskYesNo(17, 0);
 	Engine_EventEnd();
 }
@@ -174,7 +174,7 @@ static void EV09_TALK_2(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinGirlFromXianWasAsking);
+	Engine_EventSetMessage(MsgAltinGirlFromXianWasAsking);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -183,7 +183,7 @@ static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinTryingFindYourWayWest);
+	Engine_EventSetMessage(MsgAltinTryingFindYourWayWest);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -192,7 +192,7 @@ static void EV14_TALK_2(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinDefeatedThoseMonstersDidnt);
+	Engine_EventSetMessage(MsgAltinDefeatedThoseMonstersDidnt);
 	Engine_EventAskYesNo(14, 0);
 	Engine_EventEnd();
 }
@@ -201,7 +201,7 @@ static void EV21_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinThereFewBeastsInMine);
+	Engine_EventSetMessage(MsgAltinThereFewBeastsInMine);
 	Engine_EventAskYesNo(21, 0);
 	Engine_EventEnd();
 }
@@ -223,7 +223,7 @@ static void EV15_TALK(void)
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgArutinDoWantWeapons);
+		Engine_EventSetMessage(MsgAltinDoWantWeapons);
 
 		Engine_EventAskYesNo(15, 0);
 		Engine_EventEnd();
@@ -237,10 +237,10 @@ static void EV15_TALK(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinThankGoodnessWaterHasReceded);
+	Engine_EventSetMessage(MsgAltinThankGoodnessWaterHasReceded);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage(MsgArutinYoullHaveFindPassageIn);
+		Engine_EventSetMessage(MsgAltinYoullHaveFindPassageIn);
 	}
 	Engine_EventShowMessage(15, 0);
 	Engine_EventEnd();
@@ -252,7 +252,7 @@ static void FieldScene_RunActorTwentyFlagBranch(void)
 	if (Engine_GameFlagIsSet(0x241) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgArutinMyStoreSubmergedWantSell);
+		Engine_EventSetMessage(MsgAltinMyStoreSubmergedWantSell);
 		Engine_EventShowMessage(20, 0);
 		Engine_EventEnd();
 		return;
@@ -265,10 +265,10 @@ static void FieldScene_RunActorTwentyFlagBranch(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinItsGreatCanSellArmor);
+	Engine_EventSetMessage(MsgAltinItsGreatCanSellArmor);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage(MsgArutinHowAboutArentImpressedBy);
+		Engine_EventSetMessage(MsgAltinHowAboutArentImpressedBy);
 	}
 	Engine_EventShowMessage(17, 0);
 	Engine_EventEnd();
@@ -279,7 +279,7 @@ static void FieldScene_RunActorTwentyOneFlagBranch(void)
 	if (Engine_GameFlagIsSet(0x240) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage(MsgArutinWillDoIfMyMerchandise);
+		Engine_EventSetMessage(MsgAltinWillDoIfMyMerchandise);
 		Engine_EventShowMessage(21, 0);
 		Engine_EventEnd();
 		return;
@@ -292,10 +292,10 @@ static void FieldScene_RunActorTwentyOneFlagBranch(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgArutinNoneMyGoodsWereDamaged);
+	Engine_EventSetMessage(MsgAltinNoneMyGoodsWereDamaged);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage(MsgArutinGirlFromXianBoughtLot);
+		Engine_EventSetMessage(MsgAltinGirlFromXianBoughtLot);
 	}
 	Engine_EventShowMessage(16, 0);
 	Engine_EventEnd();
@@ -317,12 +317,12 @@ static void EV18_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage(MsgArutinThereSmallTempleWestAltin);
+		Engine_EventSetMessage(MsgAltinThereSmallTempleWestAltin);
 		Engine_EventShowMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgArutinWeGotLittleDampBut);
+		Engine_EventSetMessage(MsgAltinWeGotLittleDampBut);
 		Engine_EventAskYesNo(18, 0);
 	}
 
@@ -352,7 +352,7 @@ static void FieldScene_RunEarlySequence(void)
 			record->motion_flags = 0;
 		}
 	}
-	tbl = (u8 *)ArutinMura_TriggerTable;
+	tbl = (u8 *)Altin_TriggerTable;
 	idx = ((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
 	off = idx << 3;
 	o4 = off + 4;
@@ -514,11 +514,11 @@ s32 Scene_Initialize(void)
 	}
 
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_ArutinMura1)
+	if (scene == (s32)&SceneId_Altin1)
 	{
 		FieldScene_RunMiddleSequence();
 	}
-	else if (scene == (s32)&SceneId_ArutinMura2)
+	else if (scene == (s32)&SceneId_Altin2)
 	{
 		FieldScene_RunScene3a3SequenceD();
 	}
@@ -741,7 +741,7 @@ static void EV20_TOUCH(void)
 	Engine_EventEnd();
 }
 
-s32 gArutinMuraPlacements2_Data[] = {
+s32 gAltinPlacements2_Data[] = {
 	SC_ADD(SW_COLLISION, 128),
 	SC_SET(SW_SPEED, 0x26666),
 	SC_SET(SW_ACCEL, 0x13333),
@@ -779,12 +779,12 @@ s32 gArutinMuraPlacements2_Data[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gArutinMuraEntrancesOther[] = {
+struct SceneEntrance gAltinEntrancesOther[] = {
 	{0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinMuraEntrances1[] = {
+struct SceneEntrance gAltinEntrances1[] = {
 	{0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1, -1, -1, -1, 0},
 	{2, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -802,7 +802,7 @@ struct SceneEntrance gArutinMuraEntrances1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct SceneEntrance gArutinMuraEntrances2[] = {
+struct SceneEntrance gAltinEntrances2[] = {
 	{0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{1, CONDITION_ALWAYS, 159, 0, 258, FACING_NORTH, 0, 25, 16, 255, 300, 0},
 	{2, CONDITION_ALWAYS, 336, 0, 213, FACING_NORTH, 0, 268, 40, 500, 250, 0},
@@ -844,11 +844,11 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gArutinMuraPlacementsOther[] = {
+struct ScenePlacement gAltinPlacementsOther[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinMuraPlacements1[] = {
+struct ScenePlacement gAltinPlacements1[] = {
 	{0x72, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(440), 0, PIXELS(200), FACING_SOUTH + FACING_STEP,
 		TALK_FACE_PARTY_AND_BACK, 0},
 	{0x74, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH + FACING_STEP,
@@ -885,7 +885,7 @@ struct ScenePlacement gArutinMuraPlacements1[] = {
 	{SCENE_TABLE_END},
 };
 
-struct ScenePlacement gArutinMuraPlacements2[] = {
+struct ScenePlacement gAltinPlacements2[] = {
 	{0x6c, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
 		TALK_FACE_PARTY, 0},
 	{0x6a, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
@@ -908,18 +908,18 @@ struct ScenePlacement gArutinMuraPlacements2[] = {
 	{0x77, 0x0, ACTOR_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
 		TALK_FACE_PARTY, 0},
 	{0x80, 0x0, 3, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
-	{0x7b, 0x0, (s32)gArutinMuraPlacements2_Data, PIXELS(350), 0, PIXELS(746),
+	{0x7b, 0x0, (s32)gAltinPlacements2_Data, PIXELS(350), 0, PIXELS(746),
 		FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
 	{0x6c, 0x0, ACTOR_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
 		TALK_FACE_PARTY, 0},
 	{SCENE_TABLE_END},
 };
 
-struct SceneEvent gArutinMuraEventsOther[] = {
+struct SceneEvent gAltinEventsOther[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinMuraEvents1[] = {
+struct SceneEvent gAltinEvents1[] = {
 	{0xc402, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a3SequenceB)},
 	{0xc402, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a3SequenceB)},
 	{0xc402, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a3SequenceB)},
@@ -942,71 +942,71 @@ struct SceneEvent gArutinMuraEvents1[] = {
 	{TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_RunEarlySequence)},
 	{EVENT_TALK, 8, 0x909, EVENT_SCRIPT(EV08_TALK)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThankYouSoMuchForDefeating)},
-	{EVENT_TALK, 9, 0x909, MSGNO(MsgArutinMuraHowCanThoseCreaturesSpitUp)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
+	{EVENT_TALK, 9, 0x909, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
 	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK_1)},
-	{EVENT_TALK, 10, 0x909, MSGNO(MsgArutinMuraHowHorribleMyHouseIsTotally)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgArutinMuraOnceTheMineOpensAgainWell)},
-	{EVENT_TALK, 11, 0x909, MSGNO(MsgArutinMuraEvenTheMineIsSubmergedNo)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgArutinMuraTheyAlreadyStartedMiningTheUpper)},
-	{EVENT_TALK, 12, 0x909, MSGNO(MsgArutinMuraIfWeCouldJustDestroyThe)},
-	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgArutinMuraTheWaterDrainedOutOfThe)},
-	{EVENT_TALK, 13, 0x909, MSGNO(MsgArutinMuraAltinAlwaysUsedToRunShort)},
-	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThankGoodnessTheVillageIsFree)},
+	{EVENT_TALK, 10, 0x909, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
+	{EVENT_TALK, 11, 0x909, MSGNO(MsgAltinEvenTheMineIsSubmergedNo)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAltinTheyAlreadyStartedMiningTheUpper)},
+	{EVENT_TALK, 12, 0x909, MSGNO(MsgAltinIfWeCouldJustDestroyThe)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAltinTheWaterDrainedOutOfThe)},
+	{EVENT_TALK, 13, 0x909, MSGNO(MsgAltinAltinAlwaysUsedToRunShort)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAltinThankGoodnessTheVillageIsFree)},
 	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK_1)},
-	{EVENT_TALK, 15, 0x909, MSGNO(MsgArutinMuraTheWatersAroundHereHaveSubsided)},
-	{EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgArutinMuraTheVillageWentRightBackTo)},
-	{EVENT_TALK, 16, 0x909, MSGNO(MsgArutinMuraTheWaterBeastsLookedExactlyLike)},
-	{EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgArutinMuraSoThoseHydrosCreaturesReallyWere)},
-	{EVENT_TALK, 17, 0x909, MSGNO(MsgArutinMuraTheWatersHaveFlushedOutTons)},
+	{EVENT_TALK, 15, 0x909, MSGNO(MsgAltinTheWatersAroundHereHaveSubsided)},
+	{EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAltinTheVillageWentRightBackTo)},
+	{EVENT_TALK, 16, 0x909, MSGNO(MsgAltinTheWaterBeastsLookedExactlyLike)},
+	{EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAltinSoThoseHydrosCreaturesReallyWere)},
+	{EVENT_TALK, 17, 0x909, MSGNO(MsgAltinTheWatersHaveFlushedOutTons)},
 	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
 	{EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFlagBranch)},
 	{EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyOneFlagBranch)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgArutinMuraYouCameToAltinAtA)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgAltinYouCameToAltinAtA)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraWeCanGoBackToWork)},
+		MSGNO(MsgAltinWeCanGoBackToWork)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x909,
-		MSGNO(MsgArutinMuraItsAlmostLikeTheyreTurningThe)},
+		MSGNO(MsgAltinItsAlmostLikeTheyreTurningThe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIWasAfraidMoreWaterWould)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x909, MSGNO(MsgArutinMuraImGladISavedMyVery)},
+		MSGNO(MsgAltinIWasAfraidMoreWaterWould)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x909, MSGNO(MsgAltinImGladISavedMyVery)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIHopeAltinMineWillThrive)},
+		MSGNO(MsgAltinIHopeAltinMineWillThrive)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x909,
-		MSGNO(MsgArutinMuraEvenTheToughestOfMinersCant)},
+		MSGNO(MsgAltinEvenTheToughestOfMinersCant)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraTheWaterSeepedIntoTheMine)},
+		MSGNO(MsgAltinTheWaterSeepedIntoTheMine)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x909,
-		MSGNO(MsgArutinMuraIfTheWaterBeastsContinueTo)},
+		MSGNO(MsgAltinIfTheWaterBeastsContinueTo)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraItsSoHumidInsideThatCave)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x909, MSGNO(MsgArutinMuraWaterIsNiceButNotWhen)},
+		MSGNO(MsgAltinItsSoHumidInsideThatCave)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x909, MSGNO(MsgAltinWaterIsNiceButNotWhen)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraThatStrangeChamberInTheMines)},
+		MSGNO(MsgAltinThatStrangeChamberInTheMines)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x909,
-		MSGNO(MsgArutinMuraUghTheMonstersSpewedOutAll)},
+		MSGNO(MsgAltinUghTheMonstersSpewedOutAll)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraYouFoughtPrettyWellDespiteAll)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x909, MSGNO(MsgArutinMuraAsTheMonstersGoAwayThe)},
+		MSGNO(MsgAltinYouFoughtPrettyWellDespiteAll)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x909, MSGNO(MsgAltinAsTheMonstersGoAwayThe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraThatMineIsFullOfHoles)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x909, MSGNO(MsgArutinMuraComeToThinkOfItIt)},
+		MSGNO(MsgAltinThatMineIsFullOfHoles)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x909, MSGNO(MsgAltinComeToThinkOfItIt)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraTheOldGuardianStatuesAlwaysCreeped)},
+		MSGNO(MsgAltinTheOldGuardianStatuesAlwaysCreeped)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x909,
-		MSGNO(MsgArutinMuraItllBeBetterThanDiggingUp)},
+		MSGNO(MsgAltinItllBeBetterThanDiggingUp)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIUsedToFindAllSorts)},
+		MSGNO(MsgAltinIUsedToFindAllSorts)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraAllMyArmorInventoryIsRusting)},
+		MSGNO(MsgAltinAllMyArmorInventoryIsRusting)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIfMyGoodsAreWetIll)},
+		MSGNO(MsgAltinIfMyGoodsAreWetIll)},
 	{PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY)},
 	{EVENT_TOUCH, 20, 0x8ff, EVENT_SCRIPT(EV20_TOUCH)},
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent gArutinMuraEvents2[] = {
+struct SceneEvent gAltinEvents2[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1016,105 +1016,105 @@ struct SceneEvent gArutinMuraEvents2[] = {
 	{EVENT_EXIT, 7, CONDITION_ALWAYS, 7},
 	{EVENT_EXIT, 8, CONDITION_ALWAYS, 8},
 	{EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
-	{EVENT_TALK, 8, 0x240, MSGNO(MsgArutinMuraNoMatterWhatHappensIdNever)},
-	{EVENT_TALK, 8, 0x909, MSGNO(MsgArutinMuraOhNoTheWholeHouseIs)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgArutinMuraIHearThatSilkRoadIs)},
-	{EVENT_TALK, 9, 0x240, MSGNO(MsgArutinMuraOfCourseOurHouseWillBe)},
-	{EVENT_TALK, 9, 0x909, MSGNO(MsgArutinMuraIfTheMonsterThatDidThis)},
+	{EVENT_TALK, 8, 0x240, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
+	{EVENT_TALK, 8, 0x909, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
+	{EVENT_TALK, 9, 0x240, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
+	{EVENT_TALK, 9, 0x909, MSGNO(MsgAltinIfTheMonsterThatDidThis)},
 	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK_2)},
-	{EVENT_TALK, 10, 0x241, MSGNO(MsgArutinMuraNotManyPeopleComeUpSilk)},
+	{EVENT_TALK, 10, 0x241, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
 	{EVENT_TALK, 10, 0x909, EVENT_SCRIPT(EV10_TALK)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgArutinMuraAncientRuinsAndTreasureDefinitelyGo)},
-	{EVENT_TALK, 11, 0x241, MSGNO(MsgArutinMuraItsBeenALongTimeSince)},
-	{EVENT_TALK, 11, 0x909, MSGNO(MsgArutinMuraDontBeTooHarshOnThose)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgArutinMuraIfOnlyTheyHadLeftA)},
-	{EVENT_TALK, 12, 0x909, MSGNO(MsgArutinMuraIDidntWantToLeaveMy)},
-	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgArutinMuraReallyAncientRuinsAtTheBottom)},
-	{EVENT_TALK, 13, 0x909, MSGNO(MsgArutinMuraIHeardSomeoneKilledTheWater)},
-	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThereProbablyIsntMuchTreasureIn)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAltinAncientRuinsAndTreasureDefinitelyGo)},
+	{EVENT_TALK, 11, 0x241, MSGNO(MsgAltinItsBeenALongTimeSince)},
+	{EVENT_TALK, 11, 0x909, MSGNO(MsgAltinDontBeTooHarshOnThose)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAltinIfOnlyTheyHadLeftA)},
+	{EVENT_TALK, 12, 0x909, MSGNO(MsgAltinIDidntWantToLeaveMy)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
+	{EVENT_TALK, 13, 0x909, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
 	{EVENT_TALK, 14, 0x909, EVENT_SCRIPT(EV14_TALK_2)},
-	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgArutinMuraSomethingsWrongWithMomAndPop)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAltinSomethingsWrongWithMomAndPop)},
 	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
 	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFlagBranch)},
 	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyOneFlagBranch)},
 	{EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK)},
-	{EVENT_TALK, 19, 0x909, MSGNO(MsgArutinMuraIdGiveAnythingForSomeoneTo)},
-	{EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThereIsAnEndlessDesertWest)},
-	{EVENT_TALK, 20, 0x909, MSGNO(MsgArutinMuraICameFromXianICook)},
-	{EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgArutinMuraWestOfTheMountainsIsVery)},
-	{EVENT_TALK, 21, 0x240, MSGNO(MsgArutinMuraNoneOfUsCanGoHome)},
-	{EVENT_TALK, 21, 0x241, MSGNO(MsgArutinMuraTheGuestsInRoomOneMoved)},
-	{EVENT_TALK, 21, 0x909, MSGNO(MsgArutinMuraTheGuestsInRoomTwoAlso)},
+	{EVENT_TALK, 19, 0x909, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
+	{EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
+	{EVENT_TALK, 20, 0x909, MSGNO(MsgAltinICameFromXianICook)},
+	{EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAltinWestOfTheMountainsIsVery)},
+	{EVENT_TALK, 21, 0x240, MSGNO(MsgAltinNoneOfUsCanGoHome)},
+	{EVENT_TALK, 21, 0x241, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
+	{EVENT_TALK, 21, 0x909, MSGNO(MsgAltinTheGuestsInRoomTwoAlso)},
 	{EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x240,
-		MSGNO(MsgArutinMuraLeavingAltinForTolbiWellThats)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgArutinMuraItsGoingToTakeALot)},
+		MSGNO(MsgAltinLeavingAltinForTolbiWellThats)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgAltinItsGoingToTakeALot)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraTheMerchantsMustBeHavingA)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x240, MSGNO(MsgArutinMuraNowIFinallyHaveAnExcuse)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x909, MSGNO(MsgArutinMuraOneBlowsNotEnoughJabJab)},
+		MSGNO(MsgAltinTheMerchantsMustBeHavingA)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x240, MSGNO(MsgAltinNowIFinallyHaveAnExcuse)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x909, MSGNO(MsgAltinOneBlowsNotEnoughJabJab)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIWonderWhatBusinessThatGirl)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x241, MSGNO(MsgArutinMuraOfCourseYouCantGoWest)},
+		MSGNO(MsgAltinIWonderWhatBusinessThatGirl)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x241, MSGNO(MsgAltinOfCourseYouCantGoWest)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x909,
-		MSGNO(MsgArutinMuraIThoughtTheVillageWasDone)},
+		MSGNO(MsgAltinIThoughtTheVillageWasDone)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraTheySayYouCanStillFind)},
+		MSGNO(MsgAltinTheySayYouCanStillFind)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x241,
-		MSGNO(MsgArutinMuraIHateSittingAroundLikeThis)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x909, MSGNO(MsgArutinMuraImJustGladToGetMy)},
+		MSGNO(MsgAltinIHateSittingAroundLikeThis)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x909, MSGNO(MsgAltinImJustGladToGetMy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraHowCanITrulyBeHappy)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x909, MSGNO(MsgArutinMuraTheBottomOfTheMineThe)},
+		MSGNO(MsgAltinHowCanITrulyBeHappy)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x909, MSGNO(MsgAltinTheBottomOfTheMineThe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraCripesAncientRuinsDownInThe)},
+		MSGNO(MsgAltinCripesAncientRuinsDownInThe)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x909,
-		MSGNO(MsgArutinMuraMyHusbandsSenseForFindingTreasure)},
+		MSGNO(MsgAltinMyHusbandsSenseForFindingTreasure)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIHadNoIdeaThereWere)},
+		MSGNO(MsgAltinIHadNoIdeaThereWere)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x909,
-		MSGNO(MsgArutinMuraMomAndPopKnowSomethingAbout)},
+		MSGNO(MsgAltinMomAndPopKnowSomethingAbout)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIWonderIfMomAndPop)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x242, MSGNO(MsgArutinMuraCripesIsThisHowMyWeapon)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x909, MSGNO(MsgArutinMuraOnlyAMerchantKnowsTheJoy)},
+		MSGNO(MsgAltinIWonderIfMomAndPop)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x242, MSGNO(MsgAltinCripesIsThisHowMyWeapon)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x909, MSGNO(MsgAltinOnlyAMerchantKnowsTheJoy)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIveHeardOfAPassageIn)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x909, MSGNO(MsgArutinMuraWeDriedOffAllThatArmor)},
+		MSGNO(MsgAltinIveHeardOfAPassageIn)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x909, MSGNO(MsgAltinWeDriedOffAllThatArmor)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraWellIfYouAreImpressedThen)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x909, MSGNO(MsgArutinMuraAFewThingsGotDampBut)},
+		MSGNO(MsgAltinWellIfYouAreImpressedThen)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x909, MSGNO(MsgAltinAFewThingsGotDampBut)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraTheGirlFromXianBoughtAll)},
+		MSGNO(MsgAltinTheGirlFromXianBoughtAll)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x909,
-		MSGNO(MsgArutinMuraWellComeThroughThisAllRight)},
+		MSGNO(MsgAltinWellComeThroughThisAllRight)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraIThinkThatTempleWasCalled)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x909, MSGNO(MsgArutinMuraIKnowTheyDontLookSo)},
+		MSGNO(MsgAltinIThinkThatTempleWasCalled)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x909, MSGNO(MsgAltinIKnowTheyDontLookSo)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraYouWontBeAbleToGo)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x909, MSGNO(MsgArutinMuraIBecameACookAfterI)},
+		MSGNO(MsgAltinYouWontBeAbleToGo)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x909, MSGNO(MsgAltinIBecameACookAfterI)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraNoOneCanGoWestOf)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x240, MSGNO(MsgArutinMuraMostOfTheVillageIsStill)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x909, MSGNO(MsgArutinMuraItLooksLikeTheWaterHas)},
+		MSGNO(MsgAltinNoOneCanGoWestOf)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x240, MSGNO(MsgAltinMostOfTheVillageIsStill)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x909, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-		MSGNO(MsgArutinMuraItWillTakeSomeTimeBefore)},
+		MSGNO(MsgAltinItWillTakeSomeTimeBefore)},
 	{SEARCH(SEARCH_BARREL), 100, 0xf73, FIND_ITEM(ITEM_NUT)},
 	{SEARCH(SEARCH_BARREL), 101, 0xf74, FIND_COINS(9)},
 	{SEARCH(SEARCH_BED), 102, 0xf75, FIND_ITEM(ITEM_SLEEP_BOMB)},
 	{SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS,
-		FIND_MESSAGE(MSGNO(MsgArutinMuraThePotsAndPansAreRusted))},
+		FIND_MESSAGE(MSGNO(MsgAltinThePotsAndPansAreRusted))},
 	{SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS,
-		FIND_MESSAGE(MSGNO(MsgArutinMuraHeIsMakingRoastBeefEven))},
+		FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingRoastBeefEven))},
 	{SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS,
-		FIND_MESSAGE(MSGNO(MsgArutinMuraHeIsMakingShrimpInA))},
+		FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingShrimpInA))},
 	{SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS,
-		FIND_MESSAGE(MSGNO(MsgArutinMuraThereIsABookTitledAltin))},
+		FIND_MESSAGE(MSGNO(MsgAltinThereIsABookTitledAltin))},
 	{SCENE_EVENTS_END},
 };
 
-u16 ArutinMura_TriggerTable1[] = {
+u16 Altin_TriggerTable1[] = {
 	MAP_CELL_STEP(42, 33, 2, 2, 0),
 	MAP_CELL_STEP(42, 35, 2, 2, 5),
 	MAP_CELL_STEP(40, 33, 2, 2, 0),
@@ -1122,49 +1122,49 @@ u16 ArutinMura_TriggerTable1[] = {
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable0[] = {
+u16 Altin_TriggerTable0[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 5),
 	MAP_CELL_STEP(33, 48, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable5[] = {
+u16 Altin_TriggerTable5[] = {
 	MAP_CELL_STEP(35, 35, 2, 2, 5),
 	MAP_CELL_STEP(33, 35, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable6[] = {
+u16 Altin_TriggerTable6[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 5),
 	MAP_CELL_STEP(33, 46, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable2[] = {
+u16 Altin_TriggerTable2[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 5),
 	MAP_CELL_STEP(33, 50, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable3[] = {
+u16 Altin_TriggerTable3[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 5),
 	MAP_CELL_STEP(33, 33, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-u16 ArutinMura_TriggerTable4[] = {
+u16 Altin_TriggerTable4[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 5),
 	MAP_CELL_STEP(33, 52, 2, 2, 5),
 	MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim ArutinMura_TriggerTable[] = {
-	{ArutinMura_TriggerTable0, 41, 5},
-	{ArutinMura_TriggerTable1, 51, 6},
-	{ArutinMura_TriggerTable2, 57, 17},
-	{ArutinMura_TriggerTable3, 39, 17},
-	{ArutinMura_TriggerTable4, 48, 25},
-	{ArutinMura_TriggerTable5, 59, 9},
-	{ArutinMura_TriggerTable6, 42, 23},
-	{ArutinMura_TriggerTable3, 41, 27},
+struct MapCellAnim Altin_TriggerTable[] = {
+	{Altin_TriggerTable0, 41, 5},
+	{Altin_TriggerTable1, 51, 6},
+	{Altin_TriggerTable2, 57, 17},
+	{Altin_TriggerTable3, 39, 17},
+	{Altin_TriggerTable4, 48, 25},
+	{Altin_TriggerTable5, 59, 9},
+	{Altin_TriggerTable6, 42, 23},
+	{Altin_TriggerTable3, 41, 27},
 };

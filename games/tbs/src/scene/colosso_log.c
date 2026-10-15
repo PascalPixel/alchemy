@@ -49,7 +49,7 @@
 
 // 前方宣言
 static void FieldScene_RunMultiPhaseActorSequence(s32 a0);
-static void Korosseo_RunGreetScene(s32 a0);
+static void Colosso_RunGreetScene(s32 a0);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
 static void ColossoLogRollingStage_NoopSceneHook(void);
 static void ColossoLogRollingStage_WaitForBalanceState(void);
@@ -65,7 +65,7 @@ typedef struct SceneControl
 	s16 timer;
 } SceneControl;
 
-typedef struct MarutaSceneRecord
+typedef struct LogSceneRecord
 {
 	u8	pad_00[6];
 	u16 facing;
@@ -82,7 +82,7 @@ typedef struct MarutaSceneRecord
 	s32 rate_z;
 	u8	pad_38[33];
 	u8	flags;
-} MarutaSceneRecord;
+} LogSceneRecord;
 
 typedef struct Position3
 {
@@ -165,11 +165,11 @@ static inline void InitializeSelectedActor(s32 actorId)
 
 extern s32 gColossoParticleCount;
 
-// コロッセオ共通 (scene/common/korosseo_*.c)
+// コロッセオ共通 (scene/common/colosso_*.c)
 
 u8 *ColossoLogRollingStage_GetScriptData(void)
 {
-	return (u8 *)gKorosseoMarutaEntrances;
+	return (u8 *)gColossoLogEntrances;
 }
 
 s32 ColossoLogRollingStage_GetMessageData(void)
@@ -179,12 +179,12 @@ s32 ColossoLogRollingStage_GetMessageData(void)
 
 u8 *ColossoLogRollingStage_GetActorData(void)
 {
-	return (u8 *)gKorosseoMarutaExits;
+	return (u8 *)gColossoLogExits;
 }
 
 u8 *ColossoLogRollingStage_GetEffectData(void)
 {
-	return (u8 *)gKorosseoMarutaPlacements;
+	return (u8 *)gColossoLogPlacements;
 }
 
 static void ColossoLogRollingStage_SceneTask(void)
@@ -200,7 +200,7 @@ static void ColossoLogRollingStage_SceneTask(void)
 		gColossoSceneTaskStatus = (gColossoSceneTaskStatus + 1) & 3;
 		for (i = 18; i <= 22; i++)
 		{
-			kind = KorosseoMaruta_LogPattern[gColossoSceneTaskStatus][i - 18];
+			kind = ColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
 			Engine_ActorSetAnimation(i, kind);
 			Engine_ActorSetAnimation(i + 5, kind + 8);
 			Engine_MapCopyCellAttributes(32, 11, 1, 2, (i - 18) * 2 + 33, 11);
@@ -209,13 +209,13 @@ static void ColossoLogRollingStage_SceneTask(void)
 				Engine_MapCopyCellAttributes(74, 12, 1, 1, (i - 18) * 2 + 33, 11);
 			}
 		}
-		Engine_ActorSetAnimation(28, KorosseoMaruta_LogPattern[gColossoSceneTaskStatus][5]);
+		Engine_ActorSetAnimation(28, ColossoLog_LogPattern[gColossoSceneTaskStatus][5]);
 	}
 	else
 	{
 		for (i = 18; i <= 22; i++)
 		{
-			kind = KorosseoMaruta_LogPattern[gColossoSceneTaskStatus][i - 18];
+			kind = ColossoLog_LogPattern[gColossoSceneTaskStatus][i - 18];
 			if ((u32)(actor->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe)
 			{
 				if (row == 11 && kind == 4)
@@ -770,7 +770,7 @@ static void ColossoLogRollingStage_NoopSceneEventHook(void)
 {
 }
 
-static void KorosseoMaruta_RunCompetitorTalk(s32 a0)
+static void ColossoLog_RunCompetitorTalk(s32 a0)
 {
 	struct EventWork *work;
 	s32				  owner;
@@ -784,23 +784,23 @@ static void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 	{
 		Engine_EventBegin();
 		lines = a0 * 3;
-		Engine_EventSetMessage(lines + MsgKorosseoDidntThinkBattles);
+		Engine_EventSetMessage(lines + MsgColossoDidntThinkBattles);
 		Engine_EventOpenMessage(a0, 0);
 		if (Engine_EventChooseYesNo(owner, 0) == 0)
 		{
-			Engine_EventSetMessage(lines + MsgKorosseoDidntThinkBattles + 1);
+			Engine_EventSetMessage(lines + MsgColossoDidntThinkBattles + 1);
 			Engine_EventShowMessage(a0, 0);
 			work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 			work->transition_frames = 15;
 			Engine_EventCloseScreen();
 			Engine_EventWaitForScreen();
-			Korosseo_SelectSoloCompetitor(a0);
+			Colosso_SelectSoloCompetitor(a0);
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
 		}
 		else
 		{
-			Engine_EventSetMessage(lines + MsgKorosseoDidntThinkBattles + 2);
+			Engine_EventSetMessage(lines + MsgColossoDidntThinkBattles + 2);
 			Engine_EventShowMessage(a0, 0);
 		}
 		Engine_EventEnd();
@@ -842,8 +842,8 @@ static void EV50_TOUCH(void)
 	Engine_EventWait(10);
 	BattleFx_SetWeightedResult(72, last - place + 1);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoMaruta, 4);
-	Event_SetDefeatDestination((s32)&SceneId_KorosseoMaruta, 5);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_ColossoLog, 4);
+	Event_SetDefeatDestination((s32)&SceneId_ColossoLog, 5);
 	Engine_GameFlagSet(0x11a);
 }
 
@@ -869,7 +869,7 @@ static void EV91_SCRIPT(void)
 
 s32 ColossoLogRollingStage_GetSceneEventState(void)
 {
-	return (s32)gKorosseoMarutaEvents;
+	return (s32)gColossoLogEvents;
 }
 
 s32 StageSetup_BuildAndDispatch(void)
@@ -1007,7 +1007,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor->z.fixed = 184 << 16;
 		Engine_ActorSetSpriteFlags(actor, 0);
 		Object_SetMode(actor, 3);
-		Engine_ObjectSetScript(actor, KorosseoMaruta_Record30Script);
+		Engine_ObjectSetScript(actor, ColossoLog_Record30Script);
 	}
 	else
 	{
@@ -1040,8 +1040,8 @@ s32 StageSetup_BuildAndDispatch(void)
 	actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
 	Engine_ActorSetAnimation(8, 9);
 	gGameState.movement_mode = 0;
-	Korosseo_ShowItemIcon(39, 3);
-	Korosseo_ShowItemIcon(40, 17);
+	Colosso_ShowItemIcon(39, 3);
+	Colosso_ShowItemIcon(40, 17);
 	Engine_ActorSetChildValue(8, 2);
 
 	switch (gGameState.entrance)
@@ -1059,7 +1059,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
 		{
 			Engine_AudioPlayCue(17);
-			Korosseo_SelectSoloCompetitor(0);
+			Colosso_SelectSoloCompetitor(0);
 			SceneActor_PlacePartyAtSavedTiles();
 			Object_LinkObjectAndSetCallback(1, 0);
 			ColossoLogRollingStage_RunScriptedTransition(3);
@@ -1079,7 +1079,7 @@ s32 StageSetup_BuildAndDispatch(void)
 			break;
 		}
 		SceneActor_PlacePartyAtSavedTiles();
-		Korosseo_SelectSoloCompetitor(1);
+		Colosso_SelectSoloCompetitor(1);
 		ColossoLogRollingStage_RunScriptedTransition(0);
 		break;
 
@@ -1088,8 +1088,8 @@ s32 StageSetup_BuildAndDispatch(void)
 		{
 			break;
 		}
-		Korosseo_RunGreetScene(32);
-		Korosseo_ClearSavedActorPositions();
+		Colosso_RunGreetScene(32);
+		Colosso_ClearSavedActorPositions();
 		break;
 
 	case 4:
@@ -1195,7 +1195,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	{
 		Engine_ActorSetAnimation(8, 8);
 	}
-	Engine_ActorEnableActionCallback(8, KorosseoMaruta_Actor8Action);
+	Engine_ActorEnableActionCallback(8, ColossoLog_Actor8Action);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
 	record = Object_GetById(0);
 	{
@@ -1203,14 +1203,14 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
 		record->facing = shown;
 	}
-	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionA);
+	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionA);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	Actor_SetPosition(GERALD, 0x5b80000, 0xb80000);
-	Actor_SetPosition(IWAN, 0x5b80000, 0xc80000);
-	Actor_SetPosition(MEARI, 0x5a80000, 0xc00000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	Actor_SetPosition(GARET, 0x5b80000, 0xb80000);
+	Actor_SetPosition(IVAN, 0x5b80000, 0xc80000);
+	Actor_SetPosition(MIA, 0x5a80000, 0xc00000);
 	record = Object_GetById(1);
 	{
 		u16 shown = 0;
@@ -1235,7 +1235,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	ColorBuffer_ApplyTarget(0x10001, 1);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	Engine_EventSetMessage(MsgKorosseoRobin);
+	Engine_EventSetMessage(MsgColossoIsaac);
 	Engine_EventWait(60);
 	data_table_addr = (s32)gColossoMultiPhaseData;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
@@ -1250,56 +1250,56 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionB);
-	Event_ShowMessage(GERALD, 0);
+	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionB);
+	Event_ShowMessage(GARET, 0);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(1, 0x5e0, 176);
-	Actor_FaceDirection(GERALD, 0x4000, 10);
+	Actor_FaceDirection(GARET, 0x4000, 10);
 	Engine_ActorShowEmote(1, 0x100, 20);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Object_LinkObjectAndSetCallback(1, 2);
 	Engine_EventWait(30);
-	Actor_WalkToAndWait(IWAN, 0x5d0, 176);
-	Actor_WalkTo(GERALD, 0x5f0, 184);
-	Actor_WalkToAndWait(IWAN, 0x5e0, 176);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Actor_FaceDirection(GERALD, 0x6000, 0);
-	Actor_FaceDirection(IWAN, 0x4000, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Actor_WalkToAndWait(IVAN, 0x5d0, 176);
+	Actor_WalkTo(GARET, 0x5f0, 184);
+	Actor_WalkToAndWait(IVAN, 0x5e0, 176);
+	Engine_ActorSetAnimation(GARET, 1);
+	Actor_FaceDirection(GARET, 0x6000, 0);
+	Actor_FaceDirection(IVAN, 0x4000, 10);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(10);
 	Object_LinkObjectAndSetCallback(2, 1);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(1, 4);
 	Engine_EventWait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Object_LinkObjectAndSetCallback(1, 3);
 	Object_LinkObjectAndSetCallback(2, 3);
-	Actor_WalkToAndWait(MEARI, 0x5d0, 184);
+	Actor_WalkToAndWait(MIA, 0x5d0, 184);
 	Object_LinkObjectAndSetCallback(2, 0);
 	Object_LinkObjectAndSetCallback(1, 0);
-	Actor_ShowEmote(GERALD, 0x102, 60);
+	Actor_ShowEmote(GARET, 0x102, 60);
 	Object_LinkObjectAndSetCallback(2, 1);
 	Object_LinkObjectAndSetCallback(1, 2);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_EventWait(10);
 	Object_LinkObjectAndSetCallback(2, 3);
 	Object_LinkObjectAndSetCallback(1, 3);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
-	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionC);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Event_ShowMessage(MIA, 0);
+	Engine_ActorEnableActionCallback(0, ColossoLog_LeaderActionC);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Object_LinkObjectAndSetCallback(1, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(GERALD, 0);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Event_ShowMessage(GARET, 0);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Object_LinkObjectAndSetCallback(2, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(IWAN, 0);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Event_ShowMessage(IVAN, 0);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Object_LinkObjectAndSetCallback(3, 0);
 	Engine_EventWait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
 	Engine_EventWait(60);
 	callback_target = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
@@ -1308,18 +1308,18 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Engine_EventWait(5);
 	Engine_TaskRemoveCallback(callback_target);
 	Engine_EventWait(55);
-	Actor_ShowEmote(GERALD, 0x101, 60);
+	Actor_ShowEmote(GARET, 0x101, 60);
 	Task_AddCallback((void (*)(void))callback_target, 0xc80);
 	Engine_EventWait(20);
 	Engine_TaskRemoveCallback(callback_target);
 	Engine_EventWait(40);
-	Actor_ShowEmote(IWAN, 0x101, 60);
+	Actor_ShowEmote(IVAN, 0x101, 60);
 	gColossoParticleCount = 9;
 	Task_AddCallback((void (*)(void))callback_target, 0xc80);
 	Engine_EventWait(35);
 	Engine_TaskRemoveCallback(callback_target);
 	Engine_EventWait(25);
-	Actor_ShowEmote(MEARI, 0x102, 60);
+	Actor_ShowEmote(MIA, 0x102, 60);
 	gColossoParticleCount = 9;
 	Task_AddCallback((void (*)(void))callback_target, 0xc80);
 	Engine_EventWait(35);
@@ -1336,48 +1336,48 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Engine_EventWait(35);
 	Engine_TaskRemoveCallback(callback_target);
 	Engine_EventWait(25);
-	Actor_ShowEmote(MEARI, 0x108, 60);
-	Engine_ActorStartRepeatedMotion(GERALD, 3);
+	Actor_ShowEmote(MIA, 0x108, 60);
+	Engine_ActorStartRepeatedMotion(GARET, 3);
 	Engine_ActorStartRepeatedMotion(2, 3);
 	Engine_ActorRunRepeatedMotion(3, 3);
 	Object_LinkObjectAndSetCallback(3, 2);
 	Object_LinkObjectAndSetCallback(1, 2);
 	gColossoParticleCount = 9;
 	Task_AddCallback((void (*)(void))callback_target, 0xc80);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimation(MIA, 3);
 	Engine_EventWait(60);
-	Actor_WalkTo(MEARI, 0x5b8, 200);
+	Actor_WalkTo(MIA, 0x5b8, 200);
 	Engine_EventWait(5);
-	Actor_WalkTo(IWAN, 0x558, 184);
+	Actor_WalkTo(IVAN, 0x558, 184);
 	Engine_EventWait(3);
-	Actor_WalkToAndWait(GERALD, 0x5e8, 184);
-	Actor_WalkTo(GERALD, 0x558, 184);
-	Engine_ActorWaitForMove(MEARI);
+	Actor_WalkToAndWait(GARET, 0x5e8, 184);
+	Actor_WalkTo(GARET, 0x558, 184);
+	Engine_ActorWaitForMove(MIA);
 	Engine_ActorSetAnimation(3, 1);
 	Object_LinkObjectAndSetCallback(3, 0);
 	Engine_EventWait(60);
-	Actor_WalkToAndWait(MEARI, 0x598, 200);
-	Actor_WalkTo(MEARI, 0x558, 184);
+	Actor_WalkToAndWait(MIA, 0x598, 200);
+	Actor_WalkTo(MIA, 0x558, 184);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(30);
-	Actor_SetPosition(GERALD, 0x5e80000, 0xb00000);
-	Actor_SetPosition(IWAN, 0x5b80000, 0xc00000);
-	Actor_SetPosition(MEARI, 0x6180000, 0xc80000);
+	Actor_SetPosition(GARET, 0x5e80000, 0xb00000);
+	Actor_SetPosition(IVAN, 0x5b80000, 0xc00000);
+	Actor_SetPosition(MIA, 0x6180000, 0xc80000);
 	Graphics_EnableObjLayerAndCallbacks();
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(1);
-	Engine_EventSetMessage(MsgKorosseoRobinFellAsleep);
-	Event_ShowMessage(GERALD, 0);
-	Event_ShowMessage(IWAN, 0);
-	Event_ShowMessage(MEARI, 0);
+	Engine_EventSetMessage(MsgColossoIsaacFellAsleep);
+	Event_ShowMessage(GARET, 0);
+	Event_ShowMessage(IVAN, 0);
+	Event_ShowMessage(MIA, 0);
 	Engine_EventWait(60);
 	Engine_EventEnd();
 }
 
-static void Korosseo_RunGreetScene(s32 a0)
+static void Colosso_RunGreetScene(s32 a0)
 {
 	s32				   p10;
 	s32				   p9;
@@ -1402,7 +1402,7 @@ static void Korosseo_RunGreetScene(s32 a0)
 	Engine_CameraFollowActor(0, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	Engine_EventSetMessage(MsgKorosseoSiteThirdFinals);
+	Engine_EventSetMessage(MsgColossoSiteThirdFinals);
 	Engine_ActorSetAnimationAndWait(a0, 3);
 	Engine_EventShowMessage(a0, 0);
 	Engine_ActorRunRepeatedMotion(a0, 2);
@@ -1454,14 +1454,14 @@ static void EV33_TALK(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(scene);
+		Colosso_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
 	state = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
 	if (state == 0)
 	{
-		Engine_EventSetMessage(MsgKorosseoStageCalledScales);
+		Engine_EventSetMessage(MsgColossoStageCalledScales);
 		Engine_CameraSetSpeed(3 << 16, 0x6000);
 		Engine_CameraMoveTo(152 << 16, -1, 200 << 16, 1);
 		Engine_CameraWaitForMove();
@@ -1509,11 +1509,11 @@ static void EV33_TALK(s32 scene)
 		SceneEffect_RemoveMarkerTask();
 		Engine_TaskWait(2);
 		Engine_CameraFollowActor(0, 0);
-		Korosseo_ShowFollowUpPrompt(scene, 1);
+		Colosso_ShowFollowUpPrompt(scene, 1);
 	}
 	else if (state == 1)
 	{
-		Engine_EventSetMessage(MsgKorosseoObjectiveGetAcross);
+		Engine_EventSetMessage(MsgColossoObjectiveGetAcross);
 		Engine_EventShowMessage(scene, 0);
 	}
 	FieldScene_RunMiddleSequence(state, scene, 1);
@@ -1527,21 +1527,21 @@ static void EV34_TALK(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(scene);
+		Colosso_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
 	state = SceneDialogue_RunFlagGatedPromptInteraction(scene, 2);
 	if (state == 0)
 	{
-		Engine_EventSetMessage(MsgKorosseoSteppingStoneStage);
+		Engine_EventSetMessage(MsgColossoSteppingStoneStage);
 		Camera_SetSpeed(3 << 16, 0x6000);
 		Camera_MoveTo(188 << 17, -1, 152 << 16, 1);
 		x = 280;
 		Engine_CameraWaitForMove();
 		Engine_EventWait(30);
 		Event_ShowMessage(scene, 0);
-		Korosseo_FadeInCompetitor(0, x, 200);
+		Colosso_FadeInCompetitor(0, x, 200);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 		OverlayObject_PlaceWithScale14000(0, x, 152);
 		OverlayObject_PlaceWithScale14000(0, 296, 152);
@@ -1565,13 +1565,13 @@ static void EV34_TALK(s32 scene)
 		Engine_EventWait(30);
 		Event_ShowMessage(scene, 0);
 		SceneEffect_RemoveMarkerTask();
-		Korosseo_RestoreCompetitor(0);
+		Colosso_RestoreCompetitor(0);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		Korosseo_ShowFollowUpPrompt(scene, 2);
+		Colosso_ShowFollowUpPrompt(scene, 2);
 	}
 	else if (state == 1)
 	{
-		Engine_EventSetMessage(MsgKorosseoYourGoalInStageSimple);
+		Engine_EventSetMessage(MsgColossoYourGoalInStageSimple);
 		Event_ShowMessage(scene, 0);
 	}
 	FieldScene_RunMiddleSequence(state, scene, 2);
@@ -1585,7 +1585,7 @@ static void EV35_TALK(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(scene);
+		Colosso_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1594,7 +1594,7 @@ static void EV35_TALK(s32 scene)
 		if (state == 0)
 		{
 			work = gEventWork;
-			Engine_EventSetMessage(MsgKorosseoPlaceCalledWall);
+			Engine_EventSetMessage(MsgColossoPlaceCalledWall);
 			ColossoLogRollingStage_ResetAndRunSceneTask();
 			Engine_CameraSetSpeed(3 << 16, 0x6000);
 			Engine_CameraMoveTo(154 << 18, -1, 184 << 16, 1);
@@ -1604,7 +1604,7 @@ static void EV35_TALK(s32 scene)
 			ColossoLogRollingStage_StartSceneTask();
 			Engine_EventWait(60);
 			Engine_EventShowMessage(scene, 0);
-			Korosseo_FadeInCompetitor(0, 504, 200);
+			Colosso_FadeInCompetitor(0, 504, 200);
 			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result
 			 * discarded (as call.h's Value3 did, 2026-10-13); Call3 changes argument allocation.
 			 * 2026-10-13: the scene layer's Actor_FaceDirection loads r0 before r1
@@ -1628,14 +1628,14 @@ static void EV35_TALK(s32 scene)
 			Actor_FaceDirection(0, 0xc000, 20);
 			Actor_ShowEmote(0, 0x103, 60);
 			Engine_EventShowMessage(scene, 0);
-			Korosseo_RestoreCompetitor(0);
+			Colosso_RestoreCompetitor(0);
 			Engine_CameraFollowActor(0, 0);
-			Korosseo_ShowFollowUpPrompt(scene, 3);
+			Colosso_ShowFollowUpPrompt(scene, 3);
 			work->raised_trigger = 0;
 		}
 		else if (state == 1)
 		{
-			Engine_EventSetMessage(MsgKorosseoOperatorWallsCheer);
+			Engine_EventSetMessage(MsgColossoOperatorWallsCheer);
 			Engine_EventShowMessage(scene, 0);
 		}
 		FieldScene_RunMiddleSequence(state, scene, 3);
@@ -1655,7 +1655,7 @@ static void EV36_TALK(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(event);
+		Colosso_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1663,14 +1663,14 @@ static void EV36_TALK(s32 event)
 		result = SceneDialogue_RunFlagGatedPromptInteraction(event, 4);
 		if (result == 0)
 		{
-			Engine_EventSetMessage(MsgKorosseoPlaceNormallyCalledFreeClimb);
+			Engine_EventSetMessage(MsgColossoPlaceNormallyCalledFreeClimb);
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(30);
 			Event_ShowMessage(event, 0);
 			Event_ShowMessage(event, 0);
-			Korosseo_FadeInCompetitor(0, 0x330, 200);
+			Colosso_FadeInCompetitor(0, 0x330, 200);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
 			Engine_ActorFaceDirection(0, 0xc000, 20);
@@ -1697,13 +1697,13 @@ static void EV36_TALK(s32 event)
 			Object_CommitPosition(actor);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 12);
 			Event_ShowMessage(event, 0);
-			Korosseo_RestoreCompetitor(0);
+			Colosso_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			Korosseo_ShowFollowUpPrompt(event, 4);
+			Colosso_ShowFollowUpPrompt(event, 4);
 		}
 		else if (result == 1)
 		{
-			Engine_EventSetMessage(MsgKorosseoClearStageMustAbleChange);
+			Engine_EventSetMessage(MsgColossoClearStageMustAbleChange);
 			Event_ShowMessage(event, 0);
 		}
 		FieldScene_RunMiddleSequence(result, event, 4);
@@ -1750,7 +1750,7 @@ static void EV37_TALK(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(event);
+		Colosso_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1758,14 +1758,14 @@ static void EV37_TALK(s32 event)
 		result = SceneDialogue_RunFlagGatedPromptInteraction(event, 5);
 		if (result == 0)
 		{
-			Engine_EventSetMessage(MsgKorosseoCalledMovingSidewalkStage);
+			Engine_EventSetMessage(MsgColossoCalledMovingSidewalkStage);
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventWait(30);
 			Event_ShowMessage(event, 0);
 			Event_ShowMessage(event, 0);
-			Korosseo_FadeInCompetitor(0, 0x3d8, 184);
+			Colosso_FadeInCompetitor(0, 0x3d8, 184);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 			ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
@@ -1793,13 +1793,13 @@ static void EV37_TALK(s32 event)
 			Event_ShowMessage(event, 0);
 			OverlayObject_ResetMotionFields(0);
 			gGameState.movement_mode = 1;
-			Korosseo_RestoreCompetitor(0);
+			Colosso_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			Korosseo_ShowFollowUpPrompt(event, 5);
+			Colosso_ShowFollowUpPrompt(event, 5);
 		}
 		else if (result == 1)
 		{
-			Engine_EventSetMessage(MsgKorosseoInStageMustTryOutpace);
+			Engine_EventSetMessage(MsgColossoInStageMustTryOutpace);
 			Event_ShowMessage(event, 0);
 		}
 		FieldScene_RunMiddleSequence(result, event, 5);
@@ -1814,7 +1814,7 @@ static void EV38_TALK(s32 actor)
 
 	if (gGameState.entrance == 2)
 	{
-		Korosseo_FinishSoloRound(actor);
+		Colosso_FinishSoloRound(actor);
 		return;
 	}
 
@@ -1823,7 +1823,7 @@ static void EV38_TALK(s32 actor)
 
 	if (state == 0)
 	{
-		Engine_EventSetMessage(MsgKorosseoAnotherLogRollingArea);
+		Engine_EventSetMessage(MsgColossoAnotherLogRollingArea);
 		Engine_CameraSetSpeed(0x30000, 0x6000);
 		Engine_CameraMoveTo(0x5080000, -1, 0x980000, 1);
 		Engine_CameraWaitForMove();
@@ -1841,11 +1841,11 @@ static void EV38_TALK(s32 actor)
 		SceneEffect_RemoveMarkerTask();
 		Engine_EventWait(2);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		Korosseo_ShowFollowUpPrompt(actor, 6);
+		Colosso_ShowFollowUpPrompt(actor, 6);
 	}
 	else if (state == 1)
 	{
-		Engine_EventSetMessage(MsgKorosseoHereMustFigureOutHow);
+		Engine_EventSetMessage(MsgColossoHereMustFigureOutHow);
 		Engine_EventShowMessage(actor, 0);
 	}
 
@@ -1862,12 +1862,12 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
 	s32 handler;
 
-	Korosseo_ModeTaskMode = mode;
-	Korosseo_ModeTaskParam = (parameter << 4);
+	Colosso_ModeTaskMode = mode;
+	Colosso_ModeTaskParam = (parameter << 4);
 
 	{
 		s32 budget = 0xc80;
-		s32 task = (s32)Korosseo_UpdateModeTask;
+		s32 task = (s32)Colosso_UpdateModeTask;
 		FieldScheduler_AddCallback(task, budget);
 	}
 
@@ -1892,11 +1892,11 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 		}
 	}
 
-	Korosseo_ModeTaskTimer = 0;
-	Korosseo_ModeTaskScript = (s16 *)handler;
-	Korosseo_ModeMoveTarget = 0;
-	Korosseo_ModeMoveDuration = 0;
-	Korosseo_ModeTaskPosition = 0;
+	Colosso_ModeTaskTimer = 0;
+	Colosso_ModeTaskScript = (s16 *)handler;
+	Colosso_ModeMoveTarget = 0;
+	Colosso_ModeMoveDuration = 0;
+	Colosso_ModeTaskPosition = 0;
 }
 
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
@@ -1909,7 +1909,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 		Engine_EventWaitForScreen();
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(0x59);
-		Korosseo_LoadPortrait(0);
+		Colosso_LoadPortrait(0);
 		ColossoLogRollingStage_InitializeModeTask(1, 0);
 		Engine_EventWait(120);
 		Engine_EventEnd();
@@ -1926,7 +1926,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 	}
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(mode + 0x5a);
-	Korosseo_LoadPortrait(mode);
+	Colosso_LoadPortrait(mode);
 	ColossoLogRollingStage_InitializeModeTask(1, 0);
 	Engine_EventWait(120);
 
@@ -1936,18 +1936,18 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 	}
 
 	Engine_AudioPlayCue(0x121);
-	Korosseo_LoadPortrait(5);
+	Colosso_LoadPortrait(5);
 	ColossoLogRollingStage_InitializeModeTask(2, 0);
 	Engine_AudioPlayCue(0xec);
 	Engine_EventWait(60);
 	ColossoLogRollingStage_InitializeModeTask(2, 1);
 	Engine_AudioPlayCue(0xec);
 	Engine_EventWait(60);
-	Korosseo_LoadPortrait(6);
+	Colosso_LoadPortrait(6);
 	ColossoLogRollingStage_InitializeModeTask(2, 0);
 	Engine_AudioPlayCue(0xec);
 	Engine_EventWait(60);
-	Korosseo_LoadPortrait(7);
+	Colosso_LoadPortrait(7);
 	ColossoLogRollingStage_InitializeModeTask(4, 0);
 	Engine_AudioPlayCue(0xed);
 	Audio_PlayCueFromEventWork();
@@ -1969,7 +1969,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 	{
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
-		Korosseo_LoadPortrait(8);
+		Colosso_LoadPortrait(8);
 		/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result
 		 * discarded (as call.h's Value2 did, 2026-10-13); Call2 changes argument allocation.
 		 * 2026-10-13: called directly, as elsewhere in this file, each of these two
@@ -1982,7 +1982,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 	{
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
-		Korosseo_LoadPortrait(4);
+		Colosso_LoadPortrait(4);
 		/* FAKEMATCH: called through the s32 cast, its result discarded, as in the first arm. */
 		((s32 (*)())ColossoLogRollingStage_InitializeModeTask)(3, 0);
 		Engine_EventWait(a0 * 60 + 60);
@@ -2096,7 +2096,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(LinkedStageEffect *sour
 
 static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
 {
-	u8				  *work = gKorosseoWork;
+	u8				  *work = gColossoWork;
 	struct FieldActor *actor;
 	s32				   flag;
 	s32				   x;
@@ -2130,7 +2130,7 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	actor->speed = 0x10000;
 	Engine_ObjectSetPosition(actor, x, 0, z);
 	Engine_GameFlagSet(0x211);
-	Engine_ObjectSetScript(actor, KorosseoMaruta_PlaceScript);
+	Engine_ObjectSetScript(actor, ColossoLog_PlaceScript);
 	while (*wait != 0)
 	{
 		Engine_TaskWait(1);
@@ -2150,7 +2150,7 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 		UiWork_PushValueSlot(second_handle, 2);
 	}
 	UiWork_PushValueSlot(gGameState.selected_actor, 1);
-	Engine_MessageShowCentered(MsgKorosseoRobinGotItem, 3);
+	Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
 	ObjectDispatch_WaitForValue16(actor);
 	return flag;
 }
@@ -2164,9 +2164,9 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 static void ColossoLogRollingStage_PushStagedActor(void)
 {
 
-	MarutaSceneRecord *subject;
-	MarutaSceneRecord *target;
-	MarutaSceneRecord *blocker;
+	LogSceneRecord *subject;
+	LogSceneRecord *target;
+	LogSceneRecord *blocker;
 	u32				   step;
 	u32				   direction;
 	Position3		   position;
@@ -2253,7 +2253,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/colosso_occupant.h"
 
-const s32 KorosseoMaruta_Record30Script[] = {
+const s32 ColossoLog_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),
 	SC_WAIT(10),
 	SC_SET(SW_Y, 0),
@@ -2261,7 +2261,7 @@ const s32 KorosseoMaruta_Record30Script[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s8 KorosseoMaruta_LogPattern[][6] = {
+const s8 ColossoLog_LogPattern[][6] = {
 	{ 7, 5, 7, 5, 7, 11 },
 	{ 4, 6, 4, 6, 4, 10 },
 	{ 5, 7, 5, 7, 5, 12 },
@@ -2286,7 +2286,7 @@ const s32 gColossoSceneEventEffect[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-const u8 Korosseo_PortraitPaletteOffsets[] = {
+const u8 Colosso_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -2377,7 +2377,7 @@ u32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-struct SceneEntrance gKorosseoMarutaEntrances[] = {
+struct SceneEntrance gColossoLogEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
@@ -2386,7 +2386,7 @@ struct SceneEntrance gKorosseoMarutaEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gKorosseoMarutaExits[] = {
+u32 gColossoLogExits[] = {
 	SCENE_EXITS(145),
 	SCENE_EXIT(10, 145, 1),
 	SCENE_EXIT(11, 140, 66),
@@ -2395,14 +2395,14 @@ u32 gKorosseoMarutaExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKorosseoMarutaPlacements[] = {
+struct ScenePlacement gColossoLogPlacements[] = {
 	{ 0x0, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
@@ -2483,7 +2483,7 @@ s32 gColossoSceneTaskStatus = 0;
 
 s32 gColossoSceneTaskState = 0;
 
-struct SceneEvent gKorosseoMarutaEvents[] = {
+struct SceneEvent gColossoLogEvents[] = {
 	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SCRIPT) },
 	{ 0x202, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_SCRIPT) },
 	{ EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(EV11_TOUCH) },
@@ -2515,18 +2515,18 @@ struct SceneEvent gKorosseoMarutaEvents[] = {
 	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TALK) },
 	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(EV37_TALK) },
 	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(EV38_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaThisYearsFinalsAreIncredibleThis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaTheStreetVendorsCornOnThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaICantSeeAnythingWhenIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaItsNotVeryExcitingWorkBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaStandingForLongPeriodsOfTime) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaIWasUpAllNightTrying) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaSomeTouristToldMeILook) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgColossoLogItsNotVeryExcitingWorkBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
 	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };
 
-s32 KorosseoMaruta_Actor8Action[] = {
+s32 ColossoLog_Actor8Action[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2549,7 +2549,7 @@ s32 KorosseoMaruta_Actor8Action[] = {
 	SC_END,
 };
 
-s32 KorosseoMaruta_LeaderActionA[] = {
+s32 ColossoLog_LeaderActionA[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2572,7 +2572,7 @@ s32 KorosseoMaruta_LeaderActionA[] = {
 	SC_END,
 };
 
-s32 KorosseoMaruta_LeaderActionB[] = {
+s32 ColossoLog_LeaderActionB[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -2592,7 +2592,7 @@ s32 KorosseoMaruta_LeaderActionB[] = {
 	SC_END,
 };
 
-s32 KorosseoMaruta_LeaderActionC[] = {
+s32 ColossoLog_LeaderActionC[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_LABEL(1),
@@ -2627,7 +2627,7 @@ s32 gColossoParticleKinds[] = {
 	SC_END,
 };
 
-s16 Korosseo_PortraitSlot = -1;
+s16 Colosso_PortraitSlot = -1;
 
 s16 gColossoModeScriptDefault[] = {
 #if !EDITION_INTERNATIONAL
@@ -2681,9 +2681,9 @@ s16 gColossoModeScript3A[] = {
 	6, 0x1000, 448, 6, 0x7fff, 6, -1,
 };
 
-s16 Korosseo_MarkerSlot = -1;
+s16 Colosso_MarkerSlot = -1;
 
-s32 Korosseo_RivalFinishScript[] = {
+s32 Colosso_RivalFinishScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2697,7 +2697,7 @@ s32 Korosseo_RivalFinishScript[] = {
 	SC_END,
 };
 
-s32 KorosseoMaruta_PlaceScript[] = {
+s32 ColossoLog_PlaceScript[] = {
 	SC_ARG(2),
 	SC_SYNC,
 	SC_ARG(1),

@@ -19,11 +19,11 @@ extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern struct SceneEntrance gMakyuriChojoEntrances[];
-extern u32 gMakyuriChojoExits[];
-extern struct ScenePlacement gMakyuriChojoPlacements[];
-extern struct SceneEvent gMakyuriChojoEvents[];
-extern s32 MakyuriChojo_NearestActor;
-extern s32 MakyuriChojo_SparkScript[];
+extern struct SceneEntrance gMercuryAerieEntrances[];
+extern u32 gMercuryAerieExits[];
+extern struct ScenePlacement gMercuryAeriePlacements[];
+extern struct SceneEvent gMercuryAerieEvents[];
+extern s32 MercuryAerie_NearestActor;
+extern s32 MercuryAerie_SparkScript[];
 
 #endif

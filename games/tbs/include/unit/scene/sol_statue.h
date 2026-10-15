@@ -14,6 +14,6 @@ extern struct SceneEntrance SceneEventRuntime_ScriptData[];
 extern u32 SceneEventRuntime_MessageData[];
 extern struct ScenePlacement SceneEventRuntime_ActorData[];
 extern struct SceneEvent SceneEventRuntime_EffectData[];
-extern s32 SoruSekizo_ScrollPhase;
+extern s32 SolStatue_ScrollPhase;
 
 #endif

@@ -50,34 +50,34 @@ Resource_DirectoryTable:
 	resource IntroTilesB, Resource_Data025
 	resource , Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
-	resource SuharaGateBackdrop, Battle_SuharaGateBackdrop
-	resource TakaraShimaBackdrop, Battle_TakaraShimaBackdrop
-	resource TakaraShimaCaveBackdrop, Battle_TakaraShimaCaveBackdrop
-	resource KorosseoBackdrop, Battle_KorosseoBackdrop
-	resource VinasuChojoStormBackdrop, Battle_VinasuChojoStormBackdrop
-	resource VinasuChojoBackdrop, Battle_VinasuChojoBackdrop
-	resource VinasuHeyaBackdrop, Battle_VinasuHeyaBackdrop
-	resource SuharaSabakuBackdrop, Battle_SuharaSabakuBackdrop
-	resource ArutamiraDouBackdrop, Battle_ArutamiraDouBackdrop
-	resource BabiChikaBackdrop, Battle_BabiChikaBackdrop
-	resource BabiIriguchiBackdrop, Battle_BabiIriguchiBackdrop
-	resource RamakanSabakuBackdrop, Battle_RamakanSabakuBackdrop
-	resource MogoruMoriBackdrop, Battle_MogoruMoriBackdrop
-	resource MakyuriChojoBackdrop, Battle_MakyuriChojoBackdrop
-	resource FuneHeyaBackdrop, Battle_FuneHeyaBackdrop
-	resource ImiruFuchinBackdrop, Battle_ImiruFuchinBackdrop
-	resource KorimaMoriBackdrop, Battle_KorimaMoriBackdrop
-	resource ToretoHeyaBackdrop, Battle_ToretoHeyaBackdrop
+	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
+	resource PirateShipBackdrop, Battle_PirateShipBackdrop
+	resource CrossboneIsleCaveBackdrop, Battle_CrossboneIsleCaveBackdrop
+	resource ColossoBackdrop, Battle_ColossoBackdrop
+	resource VenusAerieStormBackdrop, Battle_VenusAerieStormBackdrop
+	resource VenusAerieBackdrop, Battle_VenusAerieBackdrop
+	resource VenusLighthouseBackdrop, Battle_VenusLighthouseBackdrop
+	resource SuhallaDesertBackdrop, Battle_SuhallaDesertBackdrop
+	resource AltmillerCaveBackdrop, Battle_AltmillerCaveBackdrop
+	resource TunnelRuinsBackdrop, Battle_TunnelRuinsBackdrop
+	resource BabiLighthouseBackdrop, Battle_BabiLighthouseBackdrop
+	resource LamakanDesertBackdrop, Battle_LamakanDesertBackdrop
+	resource MogallForestBackdrop, Battle_MogallForestBackdrop
+	resource MercuryAerieBackdrop, Battle_MercuryAerieBackdrop
+	resource TolbiShipInteriorsBackdrop, Battle_TolbiShipInteriorsBackdrop
+	resource ImilFuchinFallsBackdrop, Battle_ImilFuchinFallsBackdrop
+	resource KolimaForestBackdrop, Battle_KolimaForestBackdrop
+	resource TretInteriorsBackdrop, Battle_TretInteriorsBackdrop
 	resource InteriorBackdrop, Battle_InteriorBackdrop
-	resource ArutinYamaBackdrop, Battle_ArutinYamaBackdrop
-	resource FuneKanpanBackdrop, Battle_FuneKanpanBackdrop
-	resource MakyuriHeyaBackdrop, Battle_MakyuriHeyaBackdrop
-	resource HaidiaArashiBackdrop, Battle_HaidiaArashiBackdrop
-	resource ToretoEdaBackdrop, Battle_ToretoEdaBackdrop
+	resource AltinPeakBackdrop, Battle_AltinPeakBackdrop
+	resource TolbiShipDeckBackdrop, Battle_TolbiShipDeckBackdrop
+	resource MercuryLighthouseBackdrop, Battle_MercuryLighthouseBackdrop
+	resource ValeStormBackdrop, Battle_ValeStormBackdrop
+	resource TretBranchBackdrop, Battle_TretBranchBackdrop
 	resource BeachBackdrop, Battle_BeachBackdrop
 	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
 	resource GrasslandBackdrop, Battle_GrasslandBackdrop
-	resource SoruShindenBackdrop, Battle_SoruShindenBackdrop
+	resource SolSanctumBackdrop, Battle_SolSanctumBackdrop
 	resource ForestBackdrop, Battle_ForestBackdrop
 	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
 	resource GrasslandBBackdrop, Battle_GrasslandBBackdrop

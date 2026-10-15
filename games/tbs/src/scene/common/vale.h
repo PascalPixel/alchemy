@@ -2,7 +2,7 @@
 #include "fieldobj.h"
 #include "field_event.h"
 
-static void Haidia_RequestBackdropExit(s32 no)
+static void Vale_RequestBackdropExit(s32 no)
 {
 	struct EventWork *p;
 	if (Engine_GameFlagIsSet(0x834) != 0)

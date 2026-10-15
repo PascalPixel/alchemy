@@ -32,9 +32,9 @@ struct OwnerState
 {
 	u8	unknown_00[0x34];
 	u16 max_hp;
-	u16 max_ep;
+	u16 max_pp;
 	u16 hp;
-	u16 ep;
+	u16 pp;
 };
 
 static __inline__ void Party_RestoreAll(void)
@@ -49,7 +49,7 @@ static __inline__ void Party_RestoreAll(void)
 	{
 		state = UnitGet(owners[i]);
 		state->hp = state->max_hp;
-		state->ep = state->max_ep;
+		state->pp = state->max_pp;
 		Engine_OwnerRecalculateRatios(owners[i]);
 	}
 	Party_AddActiveOwner(1);
@@ -60,43 +60,43 @@ static __inline__ void Party_RestoreAll(void)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	if (gGameState.scene == (s32)&SceneId_TorebiKyuden2)
+	if (gGameState.scene == (s32)&SceneId_BabiPalace2)
 	{
-		return gTorebiKyudenEntrances2;
+		return gBabiPalaceEntrances2;
 	}
-	return gTorebiKyudenEntrancesOther;
+	return gBabiPalaceEntrancesOther;
 }
 
-s32 TorebiKyuden_GetRegions(void)
+s32 BabiPalace_GetRegions(void)
 {
-	return (s32)TorebiKyuden_EmptyTable;
+	return (s32)BabiPalace_EmptyTable;
 }
 
-s32 TorebiKyuden_GetExits(void)
+s32 BabiPalace_GetExits(void)
 {
-	return (s32)TorebiKyuden_MessageTable;
+	return (s32)BabiPalace_MessageTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_TorebiKyuden2)
+	if (gGameState.scene == (s32)&SceneId_BabiPalace2)
 	{
-		return gTorebiKyudenPlacements2;
+		return gBabiPalacePlacements2;
 	}
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return gTorebiKyudenPlacementsAfterColosso;
+		return gBabiPalacePlacementsAfterColosso;
 	}
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		return gTorebiKyudenPlacementsColosso;
+		return gBabiPalacePlacementsColosso;
 	}
-	return gTorebiKyudenPlacementsOther;
+	return gBabiPalacePlacementsOther;
 }
 
 static void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
-	s32 k = MsgTorebiRunBabisSoldiers;
+	s32 k = MsgTolbiRunBabisSoldiers;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -123,7 +123,7 @@ static void RunOpeningAuxiliarySequence(s32 a)
 	{
 		GameFlag_Set(512);
 		GameFlag_Clear(0x969);
-		Event_SetMessage(MsgTorebiWeHaveJustEnoughExtra);
+		Event_SetMessage(MsgTolbiWeHaveJustEnoughExtra);
 		Event_ShowMessage(a, 0);
 		Event_Wait(10);
 		t = v << 16;
@@ -146,7 +146,7 @@ static void RunOpeningAuxiliarySequence(s32 a)
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Event_Wait(20);
-		c = MsgTorebiUseFourBeds;
+		c = MsgTolbiUseFourBeds;
 		Event_SetMessage(c);
 		Event_OpenMessage(a, 0);
 		if (Event_ChooseYesNo(0, 0) == 0)
@@ -171,7 +171,7 @@ static void RunOpeningAuxiliarySequence(s32 a)
 	Event_End();
 }
 
-static void TorebiKyuden_OfferRest(s32 a0)
+static void BabiPalace_OfferRest(s32 a0)
 {
 	s32 base6_2241;
 
@@ -185,7 +185,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Event_Wait(20);
-		base6_2241 = MsgTorebiCameRestBefore;
+		base6_2241 = MsgTolbiCameRestBefore;
 		Event_SetMessage(base6_2241);
 		Event_OpenMessage(a0, 0);
 		if (Event_ChooseYesNo(0, 0) == 0)
@@ -207,7 +207,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 	}
 	else
 	{
-		Event_SetMessage(MsgTorebiTiredFeelFreeRest);
+		Event_SetMessage(MsgTolbiTiredFeelFreeRest);
 		Event_OpenMessage(a0, 0);
 	}
 	Event_End();
@@ -215,7 +215,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 
 static void FieldScene_RunBranchedSteps2006(s32 a)
 {
-	s32 k = MsgTorebiPlanningEnterColosso;
+	s32 k = MsgTolbiPlanningEnterColosso;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -241,9 +241,9 @@ static void RunMiddleAuxiliarySequence(s32 a)
 
 	obj = Actor_Get(a);
 	Event_Begin();
-	q = (u8 *)TorebiKyuden_MiddleActionScript;
+	q = (u8 *)BabiPalace_MiddleActionScript;
 	Actor_EnableActionCallback(a, q);
-	Event_SetMessage(MsgTorebiCantFightBecauseLittleIndigestion);
+	Event_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
 	Event_ShowMessage(a, 0);
 	Actor_Stop(a);
 	obj->scale_y = 0x10000;
@@ -275,7 +275,7 @@ static void RunMiddleAuxiliarySequence(s32 a)
 static void EV06_PSYNERGY(s32 unused0, s32 a1)
 {
 	Event_Begin();
-	Event_SetMessage(MsgTorebiEvenIfEscapedBabiPalace);
+	Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
 	Event_ShowMessage(a1, 0);
 	if (GameFlag_IsSet(0x968) == 0)
 	{
@@ -296,7 +296,7 @@ static void EV06_PSYNERGY(s32 unused0, s32 a1)
 
 static void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
-	s32 k = MsgTorebiMeetBabi;
+	s32 k = MsgTolbiMeetBabi;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -309,7 +309,7 @@ static void SceneDialogue_ShowMessage22a8Branch(s32 a)
 
 static void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
-	s32 msg = MsgTorebiEasternShoresKaragol;
+	s32 msg = MsgTolbiEasternShoresKaragol;
 
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(no, 0);
@@ -326,7 +326,7 @@ static void EV16_TALK(void)
 
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	msg = MsgTorebiFoundCloakBall;
+	msg = MsgTolbiFoundCloakBall;
 	Engine_EventSetMessage(msg);
 	Engine_EventShowMessage(-1, 0);
 	Engine_EventWait(10);
@@ -362,7 +362,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	struct FieldActor *record;
 
 	Event_Begin();
-	Event_SetMessage(MsgTorebiGetUp);
+	Event_SetMessage(MsgTolbiGetUp);
 	Actor_Get(0)->active = 0;
 	Actor_Get(10)->active = 0;
 	Task_Wait(1);
@@ -386,7 +386,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	Event_Wait(20);
 	gEventWork->transition_frames = 24;
 	Actor_SetSpeed(3, 0x10000, 0x8000);
-	Actor_WalkByAndWait(MEARI, 16, 0);
+	Actor_WalkByAndWait(MIA, 16, 0);
 	Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
 	Event_Wait(20);
 	Actor_RunRepeatedMotion(3, 2);
@@ -405,7 +405,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	Event_Wait(50);
 	Actor_RunRepeatedMotion(1, 2);
 	Event_Wait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(10);
 	Actor_ShowEmote(0, 0x105, 60);
 	Event_Wait(20);
@@ -445,7 +445,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 		Event_Wait(30);
 		Actor_SetAnimationAndWait(1, 3);
 		Event_Wait(20);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		gEventWork->message += 1;
 	}
 	else
@@ -518,7 +518,7 @@ static void EV70_SEARCH(void)
 	dir = (record->facing + 0x2000) & -0x4000;
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage(MsgTorebiLikeSleep);
+	Event_SetMessage(MsgTolbiLikeSleep);
 	Event_OpenMessage(-1, 0);
 	if (Event_ChooseYesNo(0, 0) != 0)
 	{
@@ -552,7 +552,7 @@ static void EV70_SEARCH(void)
 		Actor_SetAnimationAndWait(0, 3);
 		Event_Wait(20);
 		Actor_SetSpeed(1, 0x10000, 0x8000);
-		Actor_WalkByAndWait(GERALD, 40, 0);
+		Actor_WalkByAndWait(GARET, 40, 0);
 		Actor_WalkByAndWait(1, 0, -32);
 		Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
 		Event_Wait(20);
@@ -626,7 +626,7 @@ static void EV70_SEARCH(void)
 		Actor_SetAnimationAndWait(1, 3);
 		Event_Wait(10);
 		Event_ShowMessage(1, 0);
-		Actor_SetAnimationAndWait(IWAN, 3);
+		Actor_SetAnimationAndWait(IVAN, 3);
 		Event_Wait(10);
 		if (GameFlag_IsSet(0x96a) == 0)
 		{
@@ -640,7 +640,7 @@ static void EV70_SEARCH(void)
 		Event_Wait(10);
 		if (GameFlag_IsSet(0x96a) == 0)
 		{
-			Event_ShowMessage(MEARI, 0);
+			Event_ShowMessage(MIA, 0);
 		}
 		else
 		{
@@ -649,16 +649,16 @@ static void EV70_SEARCH(void)
 		Actor_WalkByAndWait(1, 0, 32);
 		Actor_WalkBy(1, -112, 0);
 		Actor_WalkByAndWait(3, 0, -40);
-		Actor_WalkBy(MEARI, -112, 0);
+		Actor_WalkBy(MIA, -112, 0);
 		Event_Wait(50);
 		Actor_WalkByAndWait(2, 0, -24);
-		Actor_WaitForMove(GERALD);
+		Actor_WaitForMove(GARET);
 		Actor_FaceDirection(0, FACING_SOUTH, 0);
 		Actor_WalkByAndWait(1, 0, -16);
 		Actor_WaitForMove(3);
 		Actor_FaceDirection(3, FACING_NORTH, 0);
 		Event_Wait(20);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		Event_Wait(10);
 		Actor_SetAnimationAndWait(0, 3);
 		Event_Wait(20);
@@ -671,7 +671,7 @@ static void EV70_SEARCH(void)
 		{
 			Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
 		}
-		Actor_WaitForMove(GERALD);
+		Actor_WaitForMove(GARET);
 		Actor_SetPosition(1, 0, 0);
 		Actor_SetAnimation(3, 2);
 		record = Actor_Get(ACTOR_PARTY_LEADER);
@@ -679,7 +679,7 @@ static void EV70_SEARCH(void)
 		{
 			Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
 		}
-		Actor_WaitForMove(MEARI);
+		Actor_WaitForMove(MIA);
 		Actor_SetPosition(3, 0, 0);
 		Actor_SetAnimation(2, 2);
 		record = Actor_Get(0);
@@ -699,7 +699,7 @@ static void EV60_TOUCH(void)
 	GameFlag_Set(2411);
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage(MsgTorebiIodemIodem);
+	Event_SetMessage(MsgTolbiIodemIodem);
 	Actor_WalkToAndWait(0, 520, 424);
 	Actor_FaceDirection(0, 57344, 0);
 	Camera_MoveTo(36700160, -1, 24117248, 1);
@@ -957,16 +957,16 @@ static void FieldScene_RunBranchingActorSequence(void)
 	u8				  *work;
 
 	Event_Begin();
-	Event_SetMessage(MsgTorebiCallsName);
+	Event_SetMessage(MsgTolbiCallsName);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	Actor_SetSpriteFlags(actor, 0);
-	Actor_SetPosition(GERALD, 0x680000, 0x680000);
-	Actor_SetPosition(MEARI, 0x580000, 0x780000);
-	Actor_SetPosition(IWAN, 0x780000, 0x780000);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_EAST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
+	Actor_SetPosition(GARET, 0x680000, 0x680000);
+	Actor_SetPosition(MIA, 0x580000, 0x780000);
+	Actor_SetPosition(IVAN, 0x780000, 0x780000);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_EAST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
 	event = (struct EventWork *)((u8 **)&gEventWork)[0];
 	event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	event->transition_frames = 12;
@@ -996,27 +996,27 @@ static void FieldScene_RunBranchingActorSequence(void)
 	event->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	event->transition_frames = 24;
 	Event_Wait(20);
-	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT, 50);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 40);
-	Actor_RunRepeatedMotion(GERALD, 2);
+	Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 50);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 40);
+	Actor_RunRepeatedMotion(GARET, 2);
 	Event_Wait(30);
 	Event_Wait(10);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 1, 40);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
 	Event_Wait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Event_Wait(10);
-	Event_ShowMessage(MEARI, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Event_ShowMessage(MIA, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	Event_Wait(30);
-	Actor_RunRepeatedMotion(MEARI, 2);
+	Actor_RunRepeatedMotion(MIA, 2);
 	Event_Wait(30);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	Actor_WalkByAndWait(MEARI, 0, -40);
-	Actor_WalkByAndWait(MEARI, 32, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 0);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	Actor_WalkByAndWait(MIA, 0, -40);
+	Actor_WalkByAndWait(MIA, 32, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
 	Event_Wait(10);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	actor->z.fixed -= 0x30000;
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1027,22 +1027,22 @@ static void FieldScene_RunBranchingActorSequence(void)
 	Event_Wait(30);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 33);
 	Event_Wait(40);
-	Actor_SetAnimationAndWait(GERALD, ANIM_SHAKE_HEAD);
+	Actor_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
 	Event_Wait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT, 50);
-	Event_OpenMessage(IWAN, 0);
+	Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 50);
+	Event_OpenMessage(IVAN, 0);
 	if (Event_ChooseYesNo(-1, 0) == 0)
 	{
 		Event_Wait(10);
 		Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
 		Event_Wait(20);
-		Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 3, 40);
-		Actor_Jump(GERALD, 4, 13);
-		Actor_Jump(GERALD, 4, 30);
-		Event_ShowMessage(GERALD, 0);
+		Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+		Actor_Jump(GARET, 4, 13);
+		Actor_Jump(GARET, 4, 30);
+		Event_ShowMessage(GARET, 0);
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
 	}
 	else
@@ -1050,48 +1050,48 @@ static void FieldScene_RunBranchingActorSequence(void)
 		Event_Wait(10);
 		Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
 		Event_Wait(20);
-		Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 3, 40);
-		Actor_Jump(GERALD, 4, 13);
-		Actor_Jump(GERALD, 4, 30);
+		Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
+		Actor_Jump(GARET, 4, 13);
+		Actor_Jump(GARET, 4, 30);
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 	}
 	Event_Wait(10);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
 	Event_Wait(30);
-	Actor_SetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
+	Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
 	Event_Wait(20);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	Event_Wait(30);
-	Actor_RunRepeatedMotion(GERALD, 2);
+	Actor_RunRepeatedMotion(GARET, 2);
 	Event_Wait(40);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
 	Event_Wait(30);
-	Actor_SetAnimationAndWait(GERALD, ANIM_NOD);
+	Actor_SetAnimationAndWait(GARET, ANIM_NOD);
 	Event_Wait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(10);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
 	Event_Wait(50);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
 	Event_Wait(35);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 8, 50);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
 	Event_Wait(10);
-	Actor_SetAnimationAndWait(MEARI, ANIM_NOD);
+	Actor_SetAnimationAndWait(MIA, ANIM_NOD);
 	Event_Wait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Event_Wait(10);
-	Actor_RunRepeatedMotion(IWAN, 2);
+	Actor_RunRepeatedMotion(IVAN, 2);
 	Event_Wait(20);
-	Event_OpenMessage(IWAN, 0);
+	Event_OpenMessage(IVAN, 0);
 	if (Event_ChooseYesNo(-1, 0) == 0)
 	{
 		Event_Wait(10);
 		Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 33);
 		Event_Wait(20);
-		Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 7, 40);
-		Event_ShowMessage(GERALD, 0);
+		Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
+		Event_ShowMessage(GARET, 0);
 		pick = 0;
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
 	}
@@ -1100,70 +1100,70 @@ static void FieldScene_RunBranchingActorSequence(void)
 		Event_Wait(10);
 		Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
 		Event_Wait(20);
-		Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 7, 40);
+		Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
 		pick = 1;
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 	}
 	Event_Wait(10);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
 	Event_Wait(30);
-	Actor_SetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
+	Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
 	Event_Wait(20);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	Event_Wait(30);
-	Actor_RunRepeatedMotion(GERALD, 2);
+	Actor_RunRepeatedMotion(GARET, 2);
 	Event_Wait(40);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
 	Event_Wait(30);
-	Actor_SetAnimationAndWait(GERALD, ANIM_NOD);
+	Actor_SetAnimationAndWait(GARET, ANIM_NOD);
 	Event_Wait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(10);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
 	Event_Wait(50);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
 	Event_Wait(35);
-	Actor_ShowEmote(MEARI, EMOTE_IN_FRONT | 8, 50);
+	Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 8, 50);
 	Event_Wait(10);
-	Actor_SetAnimationAndWait(MEARI, ANIM_NOD);
+	Actor_SetAnimationAndWait(MIA, ANIM_NOD);
 	Event_Wait(30);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	if (pick == 0)
 	{
 		Event_Wait(10);
-		Actor_SetAnimationAndWait(IWAN, ANIM_NOD);
+		Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
 		Event_Wait(30);
-		Event_ShowMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
 		Event_Wait(10);
-		Actor_RunRepeatedMotion(GERALD, 2);
+		Actor_RunRepeatedMotion(GARET, 2);
 		Event_Wait(30);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
 	}
 	else
 	{
 		((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
 		Event_Wait(10);
-		Actor_SetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
+		Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
 		Event_Wait(20);
-		Event_ShowMessage(IWAN, 0);
+		Event_ShowMessage(IVAN, 0);
 		Event_Wait(10);
-		Actor_RunRepeatedMotion(GERALD, 2);
+		Actor_RunRepeatedMotion(GARET, 2);
 		Event_Wait(20);
-		Event_ShowMessage(GERALD, 0);
+		Event_ShowMessage(GARET, 0);
 	}
 	Event_Wait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
 	Event_Wait(10);
-	Actor_SetAnimationAndWait(GERALD, ANIM_NOD);
+	Actor_SetAnimationAndWait(GARET, ANIM_NOD);
 	Event_Wait(30);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(20);
-	Actor_FaceEachOther(IWAN, MEARI, 40);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
+	Actor_FaceEachOther(IVAN, MIA, 40);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
 	Event_Wait(30);
 	while ((gKeysHeld & KEYS_DPAD) == 0)
 	{
@@ -1176,56 +1176,56 @@ static void FieldScene_RunBranchingActorSequence(void)
 	Actor_SetSpriteFlags(actor, 1);
 	Event_Wait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Event_Wait(20);
 	Event_Wait(10);
-	Actor_RunRepeatedMotion(MEARI, 2);
+	Actor_RunRepeatedMotion(MIA, 2);
 	Event_Wait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Event_Wait(10);
-	Actor_RunRepeatedMotion(GERALD, 2);
+	Actor_RunRepeatedMotion(GARET, 2);
 	Event_Wait(20);
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_Wait(20);
-	Actor_SetAnimationAndWait(IWAN, ANIM_NOD);
+	Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
 	Event_Wait(30);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	Event_Wait(30);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	Event_Wait(20);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-	Actor_SetAnimation(GERALD, ANIM_NOD);
-	Actor_SetAnimationAndWait(MEARI, ANIM_NOD);
+	Actor_SetAnimation(GARET, ANIM_NOD);
+	Actor_SetAnimationAndWait(MIA, ANIM_NOD);
 	Event_Wait(30);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetAnimation(GERALD, ANIM_WALK);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetAnimation(GARET, ANIM_WALK);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Engine_ActorSetDestination(GERALD, actor->x.part.pixel, actor->z.part.pixel);
+		Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
 	}
 	Actor_WaitForMove(1);
-	Actor_SetPosition(GERALD, 0, 0);
-	Actor_SetAnimation(MEARI, ANIM_WALK);
+	Actor_SetPosition(GARET, 0, 0);
+	Actor_SetAnimation(MIA, ANIM_WALK);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Engine_ActorSetDestination(MEARI, actor->x.part.pixel, actor->z.part.pixel);
+		Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
 	}
 	Actor_WaitForMove(3);
-	Actor_SetPosition(MEARI, 0, 0);
-	Actor_SetAnimation(IWAN, ANIM_WALK);
+	Actor_SetPosition(MIA, 0, 0);
+	Actor_SetAnimation(IVAN, ANIM_WALK);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	if (actor != NULL)
 	{
-		Engine_ActorSetDestination(IWAN, actor->x.part.pixel, actor->z.part.pixel);
+		Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
 	}
 	Actor_WaitForMove(2);
-	Actor_SetPosition(IWAN, 0, 0);
+	Actor_SetPosition(IVAN, 0, 0);
 	Event_Wait(10);
 	Event_End();
 }
@@ -1236,7 +1236,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 
 	Event_PlayCue(30);
 	Event_Begin();
-	Event_SetMessage(MsgTorebiWaitingCompanions);
+	Event_SetMessage(MsgTolbiWaitingCompanions);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
@@ -1374,7 +1374,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_SetAnimationAndWait(20, 3);
 	Event_Wait(30);
 	Event_Wait(10);
-	Actor_Jump(GERALD, 4, 13);
+	Actor_Jump(GARET, 4, 13);
 	Actor_Jump(1, 4, 30);
 	Event_ShowMessage(1, 0);
 	Event_Wait(10);
@@ -1395,7 +1395,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_Wait(10);
 	Actor_RunRepeatedMotion(20, 2);
 	Event_Wait(20);
-	Actor_FaceEachOther(14, GERALD, 0);
+	Actor_FaceEachOther(14, GARET, 0);
 	Event_Wait(40);
 	Event_ShowMessage(14, 0);
 	Event_Wait(10);
@@ -1425,7 +1425,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_FaceEachOther(1, 0, 0);
 	Actor_FaceEachOther(3, 2, 50);
 	Actor_FaceDirection(0, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
 	Actor_FaceDirection(3, FACING_NORTH, 0);
 	Actor_FaceDirection(2, FACING_NORTH, 0);
 	Event_Wait(30);
@@ -1466,9 +1466,9 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_ShowMessage(20, 0);
 	Event_Wait(20);
 	Actor_SetAnimation(0, 3);
-	Actor_SetAnimation(GERALD, 3);
+	Actor_SetAnimation(GARET, 3);
 	Actor_SetAnimation(3, 3);
-	Actor_SetAnimationAndWait(IWAN, 3);
+	Actor_SetAnimationAndWait(IVAN, 3);
 	Event_Wait(50);
 	Actor_FaceActor(14, 20, 60);
 	Actor_FaceDirection(14, FACING_SOUTH, 0);
@@ -1551,7 +1551,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_ShowMessage(20, 0);
 	Event_Wait(10);
 	Actor_FaceEachOther(1, 0, 40);
-	Actor_RunRepeatedMotion(GERALD, 2);
+	Actor_RunRepeatedMotion(GARET, 2);
 	Event_Wait(20);
 	Event_OpenMessage(1, 0);
 	if (Event_ChooseYesNo(0, 0) == 0)
@@ -1614,7 +1614,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_Wait(10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
 	Actor_ShowEmote(1, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 0);
 	Actor_ShowEmote(2, 0x101, 40);
 	Event_Wait(10);
 	Actor_SetAnimationAndWait(14, 4);
@@ -1625,20 +1625,20 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_Wait(30);
 	Event_ShowMessage(14, 0);
 	Event_Wait(20);
-	Actor_SetAnimationAndWait(GERALD, 3);
+	Actor_SetAnimationAndWait(GARET, 3);
 	Event_Wait(30);
 	Event_ShowMessage(1, 0);
 	Event_Wait(20);
 	Actor_SetAnimationAndWait(14, 3);
 	Event_Wait(30);
 	Event_Wait(10);
-	Actor_ShowEmote(IWAN, 0x101, 40);
+	Actor_ShowEmote(IVAN, 0x101, 40);
 	Event_ShowMessage(2, 0);
 	Event_Wait(10);
 	Actor_SetAnimationAndWait(14, 3);
 	Event_Wait(40);
 	Actor_FaceActor(0, 2, 0);
-	Actor_FaceActor(GERALD, IWAN, 0);
+	Actor_FaceActor(GARET, IVAN, 0);
 	Actor_FaceActor(3, 2, 0);
 	Actor_FaceActor(20, 2, 0);
 	Event_Wait(50);
@@ -1692,7 +1692,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_FaceEachOther(3, 2, 50);
 	Actor_FaceDirection(0, FACING_NORTH, 0);
 	Actor_FaceDirection(1, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
 	Actor_FaceDirection(2, FACING_NORTH, 0);
 	Event_Wait(40);
 	Actor_FaceDirection(14, FACING_SOUTH, 0);
@@ -1790,7 +1790,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_FaceEachOther(1, 0, 0);
 	Actor_FaceEachOther(3, 2, 50);
 	Actor_FaceDirection(0, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
 	Actor_FaceDirection(3, FACING_NORTH, 0);
 	Actor_FaceDirection(2, FACING_NORTH, 0);
 	Event_Wait(30);
@@ -1802,7 +1802,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_ShowEmote(0, 0x101, 0);
 	Actor_ShowEmote(1, 0x101, 0);
 	Actor_ShowEmote(3, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 50);
+	Actor_ShowEmote(IVAN, 0x101, 50);
 	Event_Wait(10);
 	Actor_SetAnimationAndWait(14, 3);
 	Event_Wait(30);
@@ -1848,7 +1848,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_Wait(10);
 	Actor_RunRepeatedMotion(3, 2);
 	Event_Wait(20);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Event_Wait(10);
 	Actor_ShowEmote(14, 0x102, 40);
 	Event_ShowMessage(14, 0);
@@ -1856,7 +1856,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_SetAnimation(0, 3);
 	Actor_SetAnimation(1, 3);
 	Actor_SetAnimation(3, 3);
-	Actor_SetAnimationAndWait(IWAN, 3);
+	Actor_SetAnimationAndWait(IVAN, 3);
 	Event_Wait(30);
 	Event_Wait(20);
 	Actor_ShowEmote(14, 0x105, 60);
@@ -1878,14 +1878,14 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_ShowMessage(14, 0);
 	Event_Wait(10);
 	Actor_ShowEmote(3, 0x101, 40);
-	Event_ShowMessage(MEARI, 0);
+	Event_ShowMessage(MIA, 0);
 	Event_Wait(10);
 	Actor_SetAnimationAndWait(14, 4);
 	Event_Wait(20);
 	Event_ShowMessage(14, 0);
 	Event_Wait(10);
 	Actor_ShowEmote(0, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
 	Actor_ShowEmote(2, 0x101, 0);
 	Actor_ShowEmote(3, 0x101, 40);
 	Event_Wait(10);
@@ -1986,7 +1986,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_SetAnimation(0, 3);
 	Actor_SetAnimation(1, 3);
 	Actor_SetAnimation(3, 3);
-	Actor_SetAnimationAndWait(IWAN, 3);
+	Actor_SetAnimationAndWait(IVAN, 3);
 	Event_Wait(30);
 	Event_Wait(10);
 	Actor_ShowEmote(14, 0x100, 40);
@@ -2101,7 +2101,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_WalkByAndWait(1, 16, 0);
 	Actor_WalkBy(20, 0, 80);
 	Event_Wait(40);
-	Actor_WalkByAndWait(GERALD, -16, 0);
+	Actor_WalkByAndWait(GARET, -16, 0);
 	Actor_FaceDirection(1, FACING_SOUTH, 0);
 	Actor_FaceDirection(3, FACING_SOUTH, 0);
 	Actor_WaitForMove(20);
@@ -2132,7 +2132,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_WalkByAndWait(14, 0, 48);
 	Actor_WalkByAndWait(14, -64, 0);
 	Actor_Stop(0);
-	Actor_Stop(GERALD);
+	Actor_Stop(GARET);
 	Actor_Stop(3);
 	Actor_Stop(2);
 	Actor_SetPosition(14, 0, 0);
@@ -2143,19 +2143,19 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Actor_SetAnimation(0, 3);
 	Actor_SetAnimation(1, 3);
 	Actor_SetAnimation(3, 3);
-	Actor_SetAnimationAndWait(IWAN, 3);
+	Actor_SetAnimationAndWait(IVAN, 3);
 	Event_Wait(30);
 	Event_PlayCue(17);
 	Actor_SetSpeed(1, 0x13333, 0x9999);
 	Actor_SetSpeed(2, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
 	Actor_SetAnimation(1, 2);
 	position = Actor_Get(0);
 	if (position != 0)
 		Engine_ActorSetDestination(1, position[5], position[9]);
 	Actor_WaitForMove(1);
 	Actor_SetPosition(1, 0, 0);
-	Actor_SetAnimation(IWAN, 2);
+	Actor_SetAnimation(IVAN, 2);
 	position = Actor_Get(ACTOR_PARTY_LEADER);
 	if (position != 0)
 		Engine_ActorSetDestination(2, position[5], position[9]);
@@ -2172,7 +2172,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 	Event_End();
 }
 
-static void TorebiKyuden_LeaveThroughDoor(void)
+static void BabiPalace_LeaveThroughDoor(void)
 {
 	struct EventWork *work;
 
@@ -2215,7 +2215,7 @@ static void EV02_TOUCH(void)
 	Event_Begin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
 	Event_PlayCue(158);
-	Map_AnimateCells(TorebiKyuden_CellSteps, 36, 10);
+	Map_AnimateCells(BabiPalace_CellSteps, 36, 10);
 	Actor_CenterAndWalk(0, 2, -16);
 	Event_Wait(16);
 	Event_RequestExit(2);
@@ -2233,7 +2233,7 @@ static void RunSupplementalSequenceOne(void)
 	Actor_WalkToAndWait(0, 200, 272);
 	Actor_FaceDirection(0, 49152, 0);
 	Event_Wait(20);
-	p = MsgTorebiArent;
+	p = MsgTolbiArent;
 	Event_SetMessage(p);
 	Event_OpenMessage(8, 0);
 	if (Event_ChooseYesNo(0, 0) == 0)
@@ -2276,19 +2276,19 @@ static void SceneDialogue_ThankForSavingBabi(void)
 	if (GameFlag_IsSet(0x96d) == 0)
 	{
 		GameFlag_Set(0x96d);
-		Event_SetMessage(MsgTorebiRobinIdReallyLikeThank);
+		Event_SetMessage(MsgTolbiIsaacIdReallyLikeThank);
 		Event_ShowMessage(9, 0);
 	}
 	else
 	{
-		Event_SetMessage(MsgTorebiBabiWaitingForAtColosseum);
+		Event_SetMessage(MsgTolbiBabiWaitingForAtColosseum);
 		Event_ShowMessage(9, 0);
 	}
 }
 
 static void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
-	s32 k = MsgTorebiWarriorsWhoStayed;
+	s32 k = MsgTolbiWarriorsWhoStayed;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -2308,36 +2308,36 @@ static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered(MsgTorebiItsFilledWithFreshClean, 1);
+	Engine_MessageShowCentered(MsgTolbiItsFilledWithFreshClean, 1);
 	Engine_EventEnd();
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_TorebiKyuden2)
+	if (gGameState.scene == (s32)&SceneId_BabiPalace2)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			return gTorebiKyudenEvents2AfterColosso;
+			return gBabiPalaceEvents2AfterColosso;
 		}
 		if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			return gTorebiKyudenEvents2Colosso;
+			return gBabiPalaceEvents2Colosso;
 		}
-		return gTorebiKyudenEvents2;
+		return gBabiPalaceEvents2;
 	}
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return gTorebiKyudenEventsAfterColosso;
+		return gBabiPalaceEventsAfterColosso;
 	}
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		return gTorebiKyudenEventsColosso;
+		return gBabiPalaceEventsColosso;
 	}
-	return gTorebiKyudenEventsOther;
+	return gBabiPalaceEventsOther;
 }
 
-s32 TorebiKyuden_ApplyEntryState(void)
+s32 BabiPalace_ApplyEntryState(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -2356,7 +2356,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
 		GameFlag_Set(0x962);
 		GameFlag_Set(0x950);
 	}
-	if (gGameState.scene != (s32)&SceneId_TorebiKyuden2)
+	if (gGameState.scene != (s32)&SceneId_BabiPalace2)
 	{
 		if (gGameState.entrance == 11)
 		{
@@ -2419,11 +2419,11 @@ s32 TorebiKyuden_ApplyEntryState(void)
 	return 0;
 }
 
-u16 TorebiKyuden_CellSteps[] = {
+u16 BabiPalace_CellSteps[] = {
 	MAP_CELL_STEP(25, 28, 1, 3, 5), MAP_CELL_STEP(26, 28, 1, 3, 5), MAP_CELL_STEP(27, 28, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-s32 TorebiKyuden_MiddleActionScript[] = {
+s32 BabiPalace_MiddleActionScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x4000),
@@ -2441,7 +2441,7 @@ s32 TorebiKyuden_MiddleActionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gTorebiKyudenEntrancesOther[] = {
+struct SceneEntrance gBabiPalaceEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
@@ -2487,18 +2487,18 @@ struct SceneEntrance gTorebiKyudenEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gTorebiKyudenEntrances2[] = {
+struct SceneEntrance gBabiPalaceEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-s16 TorebiKyuden_EmptyTable[] = {
+s16 BabiPalace_EmptyTable[] = {
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 TorebiKyuden_MessageTable[] = {
+u32 BabiPalace_MessageTable[] = {
 	SCENE_EXITS(138),
 	SCENE_EXIT(1, 139, 2),
 	SCENE_EXIT(2, 138, 24),
@@ -2545,7 +2545,7 @@ u32 TorebiKyuden_MessageTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTorebiKyudenPlacements2[] = {
+struct ScenePlacement gBabiPalacePlacements2[] = {
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2553,12 +2553,12 @@ struct ScenePlacement gTorebiKyudenPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTorebiKyudenPlacementsOther[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gBabiPalacePlacementsOther[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(752), 0, PIXELS(136), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
@@ -2566,7 +2566,7 @@ struct ScenePlacement gTorebiKyudenPlacementsOther[] = {
 		PIXELS(56), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(392), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ 0x3e, CONDITION_ALWAYS, (s32)TorebiKyuden_MiddleActionScript,
+	{ 0x3e, CONDITION_ALWAYS, (s32)BabiPalace_MiddleActionScript,
 		PIXELS(472), 0, PIXELS(136), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(88), 0, PIXELS(296), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
@@ -2595,12 +2595,12 @@ struct ScenePlacement gTorebiKyudenPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTorebiKyudenPlacementsColosso[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gBabiPalacePlacementsColosso[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2619,12 +2619,12 @@ struct ScenePlacement gTorebiKyudenPlacementsColosso[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTorebiKyudenPlacementsAfterColosso[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gBabiPalacePlacementsAfterColosso[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2655,14 +2655,14 @@ struct ScenePlacement gTorebiKyudenPlacementsAfterColosso[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gTorebiKyudenEventsOther[] = {
+struct SceneEvent gBabiPalaceEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
@@ -2670,7 +2670,7 @@ struct SceneEvent gTorebiKyudenEventsOther[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ 0x31, 13, CONDITION_ALWAYS, 13 },
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 21 },
@@ -2682,9 +2682,9 @@ struct SceneEvent gTorebiKyudenEventsOther[] = {
 	{ EVENT_EXIT, 27, CONDITION_ALWAYS, 27 },
 	{ EVENT_EXIT, 28, CONDITION_ALWAYS, 28 },
 	{ EVENT_EXIT, 29, CONDITION_ALWAYS, 29 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 33, CONDITION_ALWAYS, 33 },
 	{ EVENT_EXIT, 34, CONDITION_ALWAYS, 34 },
 	{ EVENT_EXIT, 35, CONDITION_ALWAYS, 35 },
@@ -2693,55 +2693,55 @@ struct SceneEvent gTorebiKyudenEventsOther[] = {
 	{ EVENT_EXIT, 41, CONDITION_ALWAYS, 41 },
 	{ EVENT_EXIT, 42, CONDITION_ALWAYS, 42 },
 	{ EVENT_EXIT, 43, CONDITION_ALWAYS, 43 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 45, CONDITION_ALWAYS, 45 },
 	{ EVENT_TOUCH, 60, 0x96b, EVENT_SCRIPT(EV60_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunBranchedSteps1FF1) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIfYoureEnteringColossoHurryAlong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWonderHowDiligentlyBabisSoldiers) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWarriorsAreNotAllowedToStay) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWarriorsAreNotAllowedToStay) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(RunOpeningAuxiliarySequence) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunBranchedSteps2006) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RunMiddleAuxiliarySequence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWantToWatchTheColosso) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIGetSoAngrySeeingAll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenMaybeIShouldntHaveEatenQuite) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenOnlyWarriorsWhoFightWellIn) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenLordBabiIsBuildingTheLighthouse) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabisNameIsRidingOnThe) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenEvenIfLordBabiDoesntReturn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenMyFirstColossoWasSoExciting) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenOnceTheLighthouseIsCompleteBabis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWedNeverGetNearTheLighthouse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIHearThatGirlIsGoing) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenItLooksLikeLordBabiDidnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIGuessLordBabiDidNot) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorHasBeenStayingAsLord) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorWasReveredAsAChild) },
-	{ EVENT_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiIsHoldingMeHostageIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorWasTakenHostageToForce) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorIsNotPermittedToLeave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWantToWatchTheColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGetSoAngrySeeingAll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceMaybeIShouldntHaveEatenQuite) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceOnlyWarriorsWhoFightWellIn) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceLordBabiIsBuildingTheLighthouse) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisNameIsRidingOnThe) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceEvenIfLordBabiDoesntReturn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceMyFirstColossoWasSoExciting) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceOnceTheLighthouseIsCompleteBabis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWedNeverGetNearTheLighthouse) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHearThatGirlIsGoing) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItLooksLikeLordBabiDidnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGuessLordBabiDidNot) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorHasBeenStayingAsLord) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasReveredAsAChild) },
+	{ EVENT_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsHoldingMeHostageIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_PSYNERGY) },
 	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x969), EVENT_SCRIPT(EV70_SEARCH) },
-	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
-	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
-	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
-	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledTheHeart)) },
-	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresANotebookThatShowsThe)) },
-	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledBecomeA)) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenHeyItsBabisDiaryItReads)) },
+	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiKyudenEventsColosso[] = {
+struct SceneEvent gBabiPalaceEventsColosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
@@ -2749,7 +2749,7 @@ struct SceneEvent gTorebiKyudenEventsColosso[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ 0x31, 13, CONDITION_ALWAYS, 13 },
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 21 },
@@ -2761,9 +2761,9 @@ struct SceneEvent gTorebiKyudenEventsColosso[] = {
 	{ EVENT_EXIT, 27, CONDITION_ALWAYS, 27 },
 	{ EVENT_EXIT, 28, CONDITION_ALWAYS, 28 },
 	{ EVENT_EXIT, 29, CONDITION_ALWAYS, 29 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 33, CONDITION_ALWAYS, 33 },
 	{ EVENT_EXIT, 34, CONDITION_ALWAYS, 34 },
 	{ EVENT_EXIT, 35, CONDITION_ALWAYS, 35 },
@@ -2772,42 +2772,42 @@ struct SceneEvent gTorebiKyudenEventsColosso[] = {
 	{ EVENT_EXIT, 41, CONDITION_ALWAYS, 41 },
 	{ EVENT_EXIT, 42, CONDITION_ALWAYS, 42 },
 	{ EVENT_EXIT, 43, CONDITION_ALWAYS, 43 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 45, CONDITION_ALWAYS, 45 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabisSoldiersHaveGoneToSee) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWhatAreYouDoingHurryOver) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenThoseGuysLookReallyConfidentAbout) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheFinalsAreAllThatsLeft) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_OfferRest) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIHopeYoullAllDoWell) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiHasReturnedAndTheFinals) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWhenBabiReturnedHeHeadedOff) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWhatsGoingOnActorIsLooking) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheSoldiersCameToSeeActor) },
-	{ EVENT_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenHmphIWishColossoWouldHurry) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenASmileOnAPrettyGirl) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorIsAGoodGirlBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIDontHaveTheLeastInterest) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatAreYouDoingHurryOver) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceThoseGuysLookReallyConfidentAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheFinalsAreAllThatsLeft) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_OfferRest) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHopeYoullAllDoWell) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiHasReturnedAndTheFinals) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhenBabiReturnedHeHeadedOff) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatsGoingOnActorIsLooking) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheSoldiersCameToSeeActor) },
+	{ EVENT_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceHmphIWishColossoWouldHurry) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
 	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x967), EVENT_SCRIPT(EV70_SEARCH) },
-	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
-	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
-	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
-	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledTheHeart)) },
-	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresANotebookThatShowsThe)) },
-	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledBecomeA)) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenHeyItsBabisDiaryItReads)) },
+	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
+struct SceneEvent gBabiPalaceEventsAfterColosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
@@ -2815,7 +2815,7 @@ struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ 0x31, 13, CONDITION_ALWAYS, 13 },
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 20 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 21 },
@@ -2827,9 +2827,9 @@ struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
 	{ EVENT_EXIT, 27, CONDITION_ALWAYS, 27 },
 	{ EVENT_EXIT, 28, CONDITION_ALWAYS, 28 },
 	{ EVENT_EXIT, 29, CONDITION_ALWAYS, 29 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 33, CONDITION_ALWAYS, 33 },
 	{ EVENT_EXIT, 34, CONDITION_ALWAYS, 34 },
 	{ EVENT_EXIT, 35, CONDITION_ALWAYS, 35 },
@@ -2838,76 +2838,76 @@ struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
 	{ EVENT_EXIT, 41, CONDITION_ALWAYS, 41 },
 	{ EVENT_EXIT, 42, CONDITION_ALWAYS, 42 },
 	{ EVENT_EXIT, 43, CONDITION_ALWAYS, 43 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 45, CONDITION_ALWAYS, 45 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowMessage22a8Branch) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunChoiceSequence22ab) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIHaventSeenMuchOfBabi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenItWouldBeAWasteTo) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenNoOnesGoingToSleepIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenWouldThisRoomGetVeryDusty) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiWasFoundSafeAndSound) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenNowThatColossoIsOverIm) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheSouthernContinentIsADangerous) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWasHopingIdBeThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenColossoHasEndedSoWeHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWantThatLighthouseFinishedQuickly) },
-	{ EVENT_TALK, 14, IF_FLAG_SET(0xf31), MSGNO(MsgTorebiKyudenIfYouUseTheCloakBall) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0xf31), MSGNO(MsgTorebiKyudenWhyWouldAnAdeptLikeYou) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenSleepingALotHelpsToDelay) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabisFaceIsVeryPaleLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWishIHadMetYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIfSomethingHappensToBabiWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHaventSeenMuchOfBabi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItWouldBeAWasteTo) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNoOnesGoingToSleepIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWouldThisRoomGetVeryDusty) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiWasFoundSafeAndSound) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNowThatColossoIsOverIm) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheSouthernContinentIsADangerous) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWasHopingIdBeThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceColossoHasEndedSoWeHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWantThatLighthouseFinishedQuickly) },
+	{ EVENT_TALK, 14, IF_FLAG_SET(0xf31), MSGNO(MsgBabiPalaceIfYouUseTheCloakBall) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0xf31), MSGNO(MsgBabiPalaceWhyWouldAnAdeptLikeYou) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSleepingALotHelpsToDelay) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisFaceIsVeryPaleLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWishIHadMetYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfSomethingHappensToBabiWhat) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheGirlFromLaliveroIsNo) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIAmSurprisedActorWasAllowed) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenItSeemedOnlyNaturalThatActor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIAmSoRelievedActorHas) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheGirlFromLaliveroIsNo) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
 	{ SEARCH(SEARCH_UNNAMED), 70, CONDITION_ALWAYS, EVENT_SCRIPT(EV70_SEARCH) },
-	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
-	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
-	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
-	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledTheHeart)) },
-	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresANotebookThatShowsThe)) },
-	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresABookEntitledBecomeA)) },
-	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenHeyItsBabisDiaryItReads)) },
+	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+	{ SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+	{ SEARCH(SEARCH_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+	{ SEARCH(SEARCH_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+	{ SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiKyudenEvents2[] = {
+struct SceneEvent gBabiPalaceEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenNormallyNoOnesAllowedIntoBabis) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenSomeOfTheRoomsInThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenShouldThePalaceReallyBeOpen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWonderHowManyPeopleWill) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
 	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiKyudenEvents2Colosso[] = {
+struct SceneEvent gBabiPalaceEvents2Colosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
 	{ EVENT_TALK, 9, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiWantsYouToGoStraight) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiWantsYouToGoStraight) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ThankForSavingBabi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenSureTheySavedBabiButIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiIsADeliberateManHe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
 	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiKyudenEvents2AfterColosso[] = {
+struct SceneEvent gBabiPalaceEvents2AfterColosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIveLostAllMyEnthusiasmSince) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskIfLeavingPalace) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheEndOfAFestivalIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenAllTheHeroicWarriorsWhoTook) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
 	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };

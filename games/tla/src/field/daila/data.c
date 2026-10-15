@@ -2,10 +2,10 @@
 #include "field_scene.h"
 #include "text/msg_ids.h"
 
-void DeriMura_TalkBeenBefore(void);
-void DeriMura_TalkBoat(void);
-void DeriMura_TalkHip(void);
-void DeriMura_TalkIndraMoved(void);
+void Daila_TalkBeenBefore(void);
+void Daila_TalkBoat(void);
+void Daila_TalkHip(void);
+void Daila_TalkIndraMoved(void);
 void Func_0200009c(void);
 void Func_02000118(void);
 void Func_02000288(void);
@@ -57,7 +57,7 @@ u32 Data_02000f44[] = {
 	60, 13, 0xffff, 0xc0010000, 17,
 };
 
-s32 gDeriMuraEntrances[] = {
+s32 gDailaEntrances[] = {
 	-0x10000, 120, 0x40000152, -0x10000, -1, 0xffff,
 	(s32)0xffff000a, 368, 0x400000e0, -0x10000, -1, 0xffff,
 	(s32)0xffff0014, 80, 0x40000160, -0x10000, -1, 0xffff,
@@ -355,10 +355,10 @@ s32 Data_02001490[] = {
 	9,
 	0,
 	(s32)0xffff0008,
-	(s32)DeriMura_TalkBeenBefore,
+	(s32)Daila_TalkBeenBefore,
 	0,
 	(s32)0xffff0009,
-	(s32)DeriMura_TalkIndraMoved,
+	(s32)Daila_TalkIndraMoved,
 	0,
 	(s32)0xffff000a,
 	MSGNO(MsgFieldISawABrightLightIn),
@@ -382,7 +382,7 @@ s32 Data_02001490[] = {
 	MSGNO(MsgFieldOurVillageSurvivedTheWaveBut),
 	0,
 	(s32)0xffff0011,
-	(s32)DeriMura_TalkBoat,
+	(s32)Daila_TalkBoat,
 	0,
 	(s32)0xffff0012,
 	MSGNO(MsgFieldThatTidalWaveLeftALot),
@@ -439,7 +439,7 @@ s32 Data_02001490[] = {
 	MSGNO(MsgFieldImSureThoseTwoWentTo),
 	499,
 	(s32)0xffff00c8,
-	0x00400000 | MSGNO(MsgDeriWellSeawater),
+	0x00400000 | MSGNO(MsgDailaWellSeawater),
 	-1,
 	0,
 	0,
@@ -502,7 +502,7 @@ s32 Data_02001664[] = {
 	MSGNO(MsgFieldAhTheSeaIsCalmAgain),
 	0,
 	(s32)0xffff000c,
-	(s32)DeriMura_TalkHip,
+	(s32)Daila_TalkHip,
 	0,
 	(s32)0xffff000d,
 	MSGNO(MsgFieldIveAlwaysHeardThatTheShrine),
@@ -571,7 +571,7 @@ s32 Data_02001664[] = {
 	MSGNO(MsgFieldICaughtMyFootOnSomething),
 	0x8d15,
 	(s32)0xffff0015,
-	MSGNO(MsgDeriTaviRikiPunishment),
+	MSGNO(MsgDailaTaviRikiPunishment),
 	0x50008a05,
 	0x210003c,
 	(s32)Func_02000924,
@@ -613,7 +613,7 @@ s32 Data_02001664[] = {
 	(s32)Func_02000118,
 	499,
 	(s32)0xffff00c8,
-	0x00400000 | MSGNO(MsgDeriWellSeawater),
+	0x00400000 | MSGNO(MsgDailaWellSeawater),
 	-1,
 	0,
 	0,

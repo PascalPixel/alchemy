@@ -14,15 +14,15 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020026f4(void);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void Battle_WaitMode0(s32 frames);
-void VinasuIriguchi_StopSparks(void);
-void VinasuIriguchi_UpdateSparkTrail(void);
+void VenusEntrance_StopSparks(void);
+void VenusEntrance_UpdateSparkTrail(void);
 
 void Func_020000c8(s32 actor)
 {
     struct ObjectRuntime *object = Object_GetById(actor);
 
     Func_020026f4();
-    object->update = VinasuIriguchi_UpdateSparkTrail;
+    object->update = VenusEntrance_UpdateSparkTrail;
     object->priority_flags = 0;
     {
         /* FAKEMATCH: the pin keeps this -96 out of a pseudo the second call would share (differ 23 without it). */
@@ -34,5 +34,5 @@ void Func_020000c8(s32 actor)
     object->update = 0;
     object->priority_flags = 1;
     Battle_WaitMode0(30);
-    VinasuIriguchi_StopSparks();
+    VenusEntrance_StopSparks();
 }

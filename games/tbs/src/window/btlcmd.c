@@ -599,11 +599,11 @@ void PtyStDraw(s32 flags)
 			work->level = 14;
 			if (work->menu_state != 0)
 				work->level = 5;
-			UiText_DrawPrefixedNumberAtOffset(unit->ep, window, (x + i * 6) * 8, y * 8 + 16, 1);
-			if (unit->max_ep != 0)
+			UiText_DrawPrefixedNumberAtOffset(unit->pp, window, (x + i * 6) * 8, y * 8 + 16, 1);
+			if (unit->max_pp != 0)
 			{
-				current = unit->ep;
-				value = ((current * 40) / unit->max_ep);
+				current = unit->pp;
+				value = ((current * 40) / unit->max_pp);
 				if (value == 0 && current != 0)
 					value = 1;
 				UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);
@@ -2122,9 +2122,9 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
 	if (mark < 0xde || mark > 223)
 		return 1;
 	if (mark == 0xde)
-		range = NameEntry_DakutenRanges;
+		range = NameEntry_VoicedMarkRanges;
 	else
-		range = NameEntry_HandakutenRanges;
+		range = NameEntry_SemivoicedMarkRanges;
 	for (; *range != 0; range += 2)
 	{
 		if (letter >= range[0] && letter <= range[1])
@@ -3673,9 +3673,9 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 }
 
 #if EDITION_INTERNATIONAL
-#define MADO_X 22 /* 窓の X */
+#define WINDOW_X 22 /* 窓の X */
 #else
-#define MADO_X 23
+#define WINDOW_X 23
 #endif
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -3701,7 +3701,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 	if (mode == 0)
 		work->window = UiWindow_Create(20, 17, 10, 3, 6);
 	else
-		work->window = UiWindow_Create(MADO_X, 17, 30 - MADO_X, 3, 6);
+		work->window = UiWindow_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
 	work->previous = -1;
 	if (mode == 0)
 	{
@@ -3750,7 +3750,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 			s32 x = (cnt - work->count) * 24;
 			work->entries[cnt].pos_x = x + 155;
 			if (mode != 0)
-				work->entries[cnt].pos_x = x + MADO_X * 8 - 5;
+				work->entries[cnt].pos_x = x + WINDOW_X * 8 - 5;
 			work->entries[cnt].pos_y = 136;
 			cnt++;
 		} while (cnt < work->count);
@@ -3779,7 +3779,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 					{
 						s32 col;
 						for (col = 0; col <= 2; col++)
-							*(render->tilemap + (cnt + 17) * 32 + panel * 3 + MADO_X - 18
+							*(render->tilemap + (cnt + 17) * 32 + panel * 3 + WINDOW_X - 18
 								+ (col & 3)) = 0xf07f;
 					}
 				}
@@ -3793,7 +3793,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 						{
 							s32 tmp;
 							/* FAKEMATCH: vram, ofs and mask restore two forms the bytes prove. Set ahead of the index, they are three more moves out of the column loop in loop.c's first pass, which drops its threshold so the tile pattern's row part stays in the column loop until the second pass: the row loop reduces the index giv first and copies it first (inits index r6, pattern r5; per row mov ip, r6 and str r5, [sp, #4]). volatile keeps the VRAM base add apart from the store it addresses. Without the three 24, without ofs 564, without mask 470, without volatile 112. */
-							volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + MADO_X;
+							volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
 							s32			  ofs = 0x100;
 							s32			  mask = 3;
 							/* FAKEMATCH: needed to match: tmp, set twice (the tile, then the column's index), is no giv, so the tile is recomputed in the column loop as the bytes show (adds r3, r7, r0; adds r3, r3, r7); 267 differ without it, 846 in both modes. */
@@ -3801,7 +3801,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 								panel * 16 + cnt * 4 + col + ofs;
 							tmp = col & mask;
 							*(render->tilemap + (cnt + 17) * 32 + panel * 3 + tmp - count * 3
-								+ MADO_X) = 0;
+								+ WINDOW_X) = 0;
 						}
 					}
 				}
@@ -4287,7 +4287,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #else
 		UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
 #endif
-		oldPp = snap->ep;
+		oldPp = snap->pp;
 		UiText_FormatNumberToHalfwords(buf, oldPp);
 #if !EDITION_INTERNATIONAL
 		UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
@@ -4405,12 +4405,12 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 			DjinnMenu_DrawStatArrow(80, 14, val);
 		}
 
-		UiText_FormatNumberToHalfwords(buf, unit->ep);
+		UiText_FormatNumberToHalfwords(buf, unit->pp);
 		UiText_RenderWideStringInWindow(buf + 7, win, 11, 2);
-		if (unit->ep != oldPp)
+		if (unit->pp != oldPp)
 		{
 			val = 0;
-			if (unit->ep > oldPp)
+			if (unit->pp > oldPp)
 				val = 1;
 			DjinnMenu_DrawStatArrow(80, 22, val);
 		}
@@ -4890,10 +4890,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 				UiText_DrawNumberInWindow(object->max_hp, 4, (struct RenderInput *)winMain, 96, 24);
 				UiText_DrawStringAtOffset(
 					(u8 *)OwnerStatus_PpString, (struct RenderInput *)winMain, 40, 32);
-				UiText_DrawNumberInWindow(object->ep, 4, (struct RenderInput *)winMain, 56, 32);
+				UiText_DrawNumberInWindow(object->pp, 4, (struct RenderInput *)winMain, 56, 32);
 				UiText_DrawStringAtOffset(
 					(u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 88, 32);
-				UiText_DrawNumberInWindow(object->max_ep, 4, (struct RenderInput *)winMain, 96, 32);
+				UiText_DrawNumberInWindow(object->max_pp, 4, (struct RenderInput *)winMain, 96, 32);
 
 				UiText_DrawCharacterAtOffset(
 					OWNER_STATUS_LABEL(0), (struct RenderInput *)winMain, 136, 16);
@@ -4970,7 +4970,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->shiryo != 0)
+					if (object->grim_reaper != 0)
 					{
 						sel[i++] = 8;
 					}
@@ -4978,7 +4978,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->doku == 1)
+					if (object->poison == 1)
 					{
 						sel[i++] = 1;
 					}
@@ -4986,7 +4986,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->doku == 2)
+					if (object->poison == 2)
 					{
 						sel[i++] = 2;
 					}
@@ -4994,7 +4994,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->fuuji != 0)
+					if (object->psy_seal != 0)
 					{
 						sel[i++] = 4;
 					}
@@ -5002,7 +5002,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->shibire != 0)
+					if (object->stun != 0)
 					{
 						sel[i++] = 3;
 					}
@@ -5010,7 +5010,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->nemuri != 0)
+					if (object->sleep != 0)
 					{
 						sel[i++] = 5;
 					}
@@ -5018,7 +5018,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->akuryo != 0)
+					if (object->haunt != 0)
 					{
 						sel[i++] = 7;
 					}
@@ -5026,7 +5026,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					{
 						break;
 					}
-					if (object->maboroshi != 0)
+					if (object->delusion != 0)
 					{
 						sel[i++] = 6;
 					}
@@ -5143,7 +5143,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 				switch (iconIdx)
 				{
 				case 8:
-					code = object->shiryo;
+					code = object->grim_reaper;
 					break;
 				case 9:
 					code = atkDelta;
@@ -5903,7 +5903,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 // アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
 //--------------------------------------------------------------------------
 
-#define SENTOU_OK 0x80 // tgt_flg：戦闘で使える
+#define BATTLE_OK 0x80 // tgt_flg：戦闘で使える
 
 #if !GAME_TLA
 
@@ -6349,7 +6349,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	{
 		return ret;
 	}
-	if ((SENTOU_OK & BtlActGet(def->action_id)->tgt_flg) == 0)
+	if ((BATTLE_OK & BtlActGet(def->action_id)->tgt_flg) == 0)
 	{
 		return 2;
 	}
@@ -6800,11 +6800,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 					{
 						UiWork_SetParamNibble(4);
 					}
-					else if (action->pp_cost > unit->ep)
+					else if (action->pp_cost > unit->pp)
 					{
 						UiWork_SetParamNibble(2);
 					}
-					else if (unit->fuuji != 0)
+					else if (unit->psy_seal != 0)
 					{
 						UiWork_SetParamNibble(9);
 					}
@@ -7146,17 +7146,17 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 					}
 					break;
 				case 3:
-					if (st->doku != 0)
+					if (st->poison != 0)
 						found = 1;
 					break;
 				case 4:
-					if (st->maboroshi != 0 || st->shibire != 0 || st->nemuri != 0 || st->fuuji != 0
-						|| st->shiryo != 0)
+					if (st->delusion != 0 || st->stun != 0 || st->sleep != 0 || st->psy_seal != 0
+						|| st->grim_reaper != 0)
 						found = 1;
 					break;
 				case 6:
-					if (st->maboroshi != 0 || st->shibire != 0 || st->nemuri != 0 || st->fuuji != 0
-						|| st->shiryo != 0 || st->doku != 0 || st->akuryo != 0)
+					if (st->delusion != 0 || st->stun != 0 || st->sleep != 0 || st->psy_seal != 0
+						|| st->grim_reaper != 0 || st->poison != 0 || st->haunt != 0)
 						found = 1;
 					break;
 				}
@@ -7431,10 +7431,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 					}
 						UiText_DrawStringAtOffset(
 							(u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
-						UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
+						UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
 						UiText_DrawStringAtOffset(
 							(u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
-						UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
+						UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
 						break;
 					case 5:
 					{
@@ -7461,22 +7461,22 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 							column = 18;
 						infoWin = UiWindow_Create(column, 8, 12, 3, 6);
 					}
-						if (unit->doku == 0)
+						if (unit->poison == 0)
 							goto no_condition;
 						UiText_DrawCharacterAtOffset(
 							MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
 						break;
 					case 4:
 						count = 0;
-						if (unit->maboroshi != 0)
+						if (unit->delusion != 0)
 							count = 1;
-						if (unit->shibire != 0)
+						if (unit->stun != 0)
 							count++;
-						if (unit->nemuri != 0)
+						if (unit->sleep != 0)
 							count++;
-						if (unit->fuuji != 0)
+						if (unit->psy_seal != 0)
 							count++;
-						if (unit->shiryo != 0)
+						if (unit->grim_reaper != 0)
 							count++;
 						if (count == 0)
 							count = 1;
@@ -7512,31 +7512,31 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 #endif
 						}
 						count = 0;
-						if (unit->maboroshi != 0)
+						if (unit->delusion != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
 							count = 1;
 						}
-						if (unit->shibire != 0)
+						if (unit->stun != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->nemuri != 0)
+						if (unit->sleep != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->fuuji != 0)
+						if (unit->psy_seal != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
 							++count;
 						}
-						if (unit->shiryo != 0)
+						if (unit->grim_reaper != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
@@ -7549,19 +7549,19 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						break;
 					case 6:
 						count = 0;
-						if (unit->doku != 0)
+						if (unit->poison != 0)
 							count = 1;
-						if (unit->maboroshi != 0)
+						if (unit->delusion != 0)
 							count++;
-						if (unit->shibire != 0)
+						if (unit->stun != 0)
 							count++;
-						if (unit->nemuri != 0)
+						if (unit->sleep != 0)
 							count++;
-						if (unit->fuuji != 0)
+						if (unit->psy_seal != 0)
 							count++;
-						if (unit->shiryo != 0)
+						if (unit->grim_reaper != 0)
 							count++;
-						if (unit->akuryo != 0)
+						if (unit->haunt != 0)
 							count++;
 						if (count == 0)
 							count = 1;
@@ -7597,43 +7597,43 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 #endif
 						}
 						count = 0;
-						if (unit->doku != 0)
+						if (unit->poison != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
 							count = 1;
 						}
-						if (unit->maboroshi != 0)
+						if (unit->delusion != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->shibire != 0)
+						if (unit->stun != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->nemuri != 0)
+						if (unit->sleep != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->fuuji != 0)
+						if (unit->psy_seal != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->shiryo != 0)
+						if (unit->grim_reaper != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
-						if (unit->akuryo != 0)
+						if (unit->haunt != 0)
 						{
 							UiText_DrawCharacterAtOffset(
 								MsgTargetCureHaunt, (struct RenderInput *)infoWin, 0, 8 * count);
@@ -7953,7 +7953,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 	}
 	if (result == 0)
 	{
-		if ((s8)battle->chouhatsu_flg != 0)
+		if ((s8)battle->challenge_flg != 0)
 		{
 			result = 1;
 		}
@@ -7979,7 +7979,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // わざの効果から、対象選びで使う種類を返す
-// 0 その他、1 HPかいふく、2 EPかいふく、3 毒がきえる、4 状態異常をなおす、
+// 0 その他、1 HPかいふく、2 PPかいふく、3 毒がきえる、4 状態異常をなおす、
 // 5 ふっき、6 状態異常をすべてなおす
 // act : わざのデータ
 //--------------------------------------------------------------------------
@@ -7994,7 +7994,7 @@ s32 Battle_ClassifyEntryKind(const struct BtlAct *act)
 	type = act->tgt_flg & 15;
 	if (type == 1) // HPかいふく
 		kind = 1;
-	if (type == 11) // EPかいふく
+	if (type == 11) // PPかいふく
 		kind = 2;
 	val = (s8)act->efx;
 	efx = val;
@@ -8377,11 +8377,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
 				state->entryActive[1] = 1;
 				ui->level = 5;
-				if ((s32)ability->pp_cost > (s32)actor->ep)
+				if ((s32)ability->pp_cost > (s32)actor->pp)
 				{
 					UiWork_SetParamNibble(2);
 				}
-				else if (actor->fuuji != 0)
+				else if (actor->psy_seal != 0)
 				{
 					UiWork_SetParamNibble(9);
 				}

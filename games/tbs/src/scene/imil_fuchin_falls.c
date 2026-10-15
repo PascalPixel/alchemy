@@ -39,10 +39,10 @@ static void DialogueLayout_ConfigureGroupTwo(void);
 static void DialogueLayout_ConfigureGroupThree(void);
 static void FieldScene_RunFlagBranchedLayoutSteps(void);
 static void FieldScene_RunScene39aSequenceA(void);
-static void ImiruFuchin_ApplyEntrySetup(void);
-static void ImiruFuchin_ApplyRoomLayout(void);
-static void ImiruFuchin_HopBy(s32 dx, s32 dz);
-static void ImiruFuchin_PlaceDragonsEye(void);
+static void ImilFuchinFalls_ApplyEntrySetup(void);
+static void ImilFuchinFalls_ApplyRoomLayout(void);
+static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
+static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void SceneActor_StepSubjectAlongHeading(void);
 
 s32 ImiruFuchin_TrackLeader;
@@ -90,35 +90,35 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_ImiruFuchin1)
+	if (v == (s32)&SceneId_ImilFuchinFalls1)
 	{
-		return gImiruFuchinEntrances1;
+		return gImilFuchinFallsEntrances1;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin2)
+	if (v == (s32)&SceneId_ImilFuchinFalls2)
 	{
-		return gImiruFuchinEntrances2;
+		return gImilFuchinFallsEntrances2;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin3)
+	if (v == (s32)&SceneId_ImilFuchinFalls3)
 	{
-		return gImiruFuchinEntrances3;
+		return gImilFuchinFallsEntrances3;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin4)
+	if (v == (s32)&SceneId_ImilFuchinFalls4)
 	{
-		return gImiruFuchinEntrances4;
+		return gImilFuchinFallsEntrances4;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin5)
+	if (v == (s32)&SceneId_ImilFuchinFalls5)
 	{
-		return gImiruFuchinEntrances5;
+		return gImilFuchinFallsEntrances5;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin6)
+	if (v == (s32)&SceneId_ImilFuchinFalls6)
 	{
-		return gImiruFuchinEntrances6;
+		return gImilFuchinFallsEntrances6;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin7)
+	if (v == (s32)&SceneId_ImilFuchinFalls7)
 	{
-		return gImiruFuchinEntrances7;
+		return gImilFuchinFallsEntrances7;
 	}
-	return gImiruFuchinEntrancesOther;
+	return gImilFuchinFallsEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -126,40 +126,40 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-s32 *ImiruFuchin_GetExits(void)
+s32 *ImilFuchinFalls_GetExits(void)
 {
-	return gImiruFuchinExits;
+	return gImilFuchinFallsExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_ImiruFuchin1)
+	if (v == (s32)&SceneId_ImilFuchinFalls1)
 	{
-		return gImiruFuchinPlacements1;
+		return gImilFuchinFallsPlacements1;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin2)
+	if (v == (s32)&SceneId_ImilFuchinFalls2)
 	{
-		return gImiruFuchinPlacements2;
+		return gImilFuchinFallsPlacements2;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin3)
+	if (v == (s32)&SceneId_ImilFuchinFalls3)
 	{
-		return gImiruFuchinPlacements3;
+		return gImilFuchinFallsPlacements3;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin4)
+	if (v == (s32)&SceneId_ImilFuchinFalls4)
 	{
-		return gImiruFuchinPlacements4;
+		return gImilFuchinFallsPlacements4;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin5)
+	if (v == (s32)&SceneId_ImilFuchinFalls5)
 	{
-		return gImiruFuchinPlacements5;
+		return gImilFuchinFallsPlacements5;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin7)
+	if (v == (s32)&SceneId_ImilFuchinFalls7)
 	{
-		return gImiruFuchinPlacements7;
+		return gImilFuchinFallsPlacements7;
 	}
-	return gImiruFuchinPlacementsOther;
+	return gImilFuchinFallsPlacementsOther;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -801,35 +801,35 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_ImiruFuchin1)
+	if (v == (s32)&SceneId_ImilFuchinFalls1)
 	{
-		return gImiruFuchinEvents1;
+		return gImilFuchinFallsEvents1;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin2)
+	if (v == (s32)&SceneId_ImilFuchinFalls2)
 	{
-		return gImiruFuchinEvents2;
+		return gImilFuchinFallsEvents2;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin3)
+	if (v == (s32)&SceneId_ImilFuchinFalls3)
 	{
-		return gImiruFuchinEvents3;
+		return gImilFuchinFallsEvents3;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin4)
+	if (v == (s32)&SceneId_ImilFuchinFalls4)
 	{
-		return gImiruFuchinEvents4;
+		return gImilFuchinFallsEvents4;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin5)
+	if (v == (s32)&SceneId_ImilFuchinFalls5)
 	{
-		return gImiruFuchinEvents5;
+		return gImilFuchinFallsEvents5;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin6)
+	if (v == (s32)&SceneId_ImilFuchinFalls6)
 	{
-		return gImiruFuchinEvents6;
+		return gImilFuchinFallsEvents6;
 	}
-	if (v == (s32)&SceneId_ImiruFuchin7)
+	if (v == (s32)&SceneId_ImilFuchinFalls7)
 	{
-		return gImiruFuchinEvents7;
+		return gImilFuchinFallsEvents7;
 	}
-	return gImiruFuchinEventsOther;
+	return gImilFuchinFallsEventsOther;
 }
 
 static void EV01_TOUCH(void)
@@ -1255,17 +1255,17 @@ static void EV16_TOUCH_7(void)
 	}
 }
 
-s32 ImiruFuchin_ApplyEntryHook(void)
+s32 ImilFuchinFalls_ApplyEntryHook(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (Engine_GameFlagIsSet(0x109) == 0 && gGameState.scene == (s32)&SceneId_ImiruFuchin1)
+	if (Engine_GameFlagIsSet(0x109) == 0 && gGameState.scene == (s32)&SceneId_ImilFuchinFalls1)
 	{
 		Engine_GameFlagSet(0x144);
 		FieldScene_RunScene39aSequenceA();
 	}
 	else
 	{
-		ImiruFuchin_ApplyEntrySetup();
+		ImilFuchinFalls_ApplyEntrySetup();
 	}
 	return 0;
 }
@@ -1283,18 +1283,18 @@ static void FieldScene_RunScene39aSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void ImiruFuchin_ApplyEntrySetup(void)
+static void ImilFuchinFalls_ApplyEntrySetup(void)
 {
 	struct FieldActor *actor;
 	/* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. Literal zeros and the slot read in place: differ 51. */
 	s32 value;
 
-	ImiruFuchin_ApplyRoomLayout();
-	if (gGameState.scene == (s32)&SceneId_ImiruFuchin4)
+	ImilFuchinFalls_ApplyRoomLayout();
+	if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4)
 	{
 		if (!GameFlag_IsSet(0xf13) && gGameState.entrance == 1)
 		{
-			ImiruFuchin_PlaceDragonsEye();
+			ImilFuchinFalls_PlaceDragonsEye();
 		}
 		if ((u16)(gGameState.entrance - 2) <= 3)
 		{
@@ -1302,7 +1302,7 @@ static void ImiruFuchin_ApplyEntrySetup(void)
 			OverlayObject_CreateAndInitialize(0xbc0000, 0, 0x1c40000, 223);
 		}
 	}
-	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7)
+	else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls7)
 	{
 		value = 0;
 		actor = Actor_Get(8);
@@ -1344,24 +1344,24 @@ static void ImiruFuchin_ApplyEntrySetup(void)
 	}
 }
 
-static void ImiruFuchin_ApplyRoomLayout(void)
+static void ImilFuchinFalls_ApplyRoomLayout(void)
 {
-	if (gGameState.scene == (s32)&SceneId_ImiruFuchin2)
+	if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls2)
 	{
 		Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
 		DialogueLayout_ConfigureGroupOne();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin3)
+	else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls3)
 	{
 		Map_CopyCellAttributes(12, 8, 10, 18, 0, 28);
 		DialogueLayout_ConfigureGroupTwo();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && gGameState.entrance != 1)
+	else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4 && gGameState.entrance != 1)
 	{
 		Map_CopyCellAttributes(12, 21, 9, 16, 12, 3);
 		DialogueLayout_ConfigureGroupThree();
 	}
-	else if (gGameState.scene == (s32)&SceneId_ImiruFuchin5)
+	else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls5)
 	{
 		if (gGameState.entrance == 1 || gGameState.entrance == 2)
 		{
@@ -1375,39 +1375,39 @@ static void ImiruFuchin_ApplyRoomLayout(void)
 	}
 }
 
-static void ImiruFuchin_HopOnTrigger(void)
+static void ImilFuchinFalls_HopOnTrigger(void)
 {
 	s32 trigger = gEventWork->touched_trigger;
 
-	if (gGameState.scene == (s32)&SceneId_ImiruFuchin3)
+	if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls3)
 	{
 		if (trigger == 17)
 		{
-			ImiruFuchin_HopBy(0, -32);
+			ImilFuchinFalls_HopBy(0, -32);
 		}
 		else
 		{
-			ImiruFuchin_HopBy(-32, 0);
+			ImilFuchinFalls_HopBy(-32, 0);
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_ImiruFuchin4 && trigger == 25
+	if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4 && trigger == 25
 		&& Engine_GameFlagIsSet(0x309))
 	{
-		ImiruFuchin_HopBy(0, 32);
+		ImilFuchinFalls_HopBy(0, 32);
 	}
 }
 
 static void FieldScene_ApplyOffset0Neg32(void)
 {
-	ImiruFuchin_HopBy(0, -32);
+	ImilFuchinFalls_HopBy(0, -32);
 }
 
 static void SceneState_ApplyOffsetMinus32(void)
 {
-	ImiruFuchin_HopBy(-32, 0);
+	ImilFuchinFalls_HopBy(-32, 0);
 }
 
-static void ImiruFuchin_HopBy(s32 dx, s32 dz)
+static void ImilFuchinFalls_HopBy(s32 dx, s32 dz)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
@@ -1419,7 +1419,7 @@ static void ImiruFuchin_HopBy(s32 dx, s32 dz)
 	Engine_EventEnd();
 }
 
-static void ImiruFuchin_PlaceDragonsEye(void)
+static void ImilFuchinFalls_PlaceDragonsEye(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -1440,7 +1440,7 @@ static void ImiruFuchin_PlaceDragonsEye(void)
 		Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
 		Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
 		Engine_HeapRelease(17);
-		gImiruFuchinDragonsEye = actor;
+		gImilFuchinFallsDragonsEye = actor;
 	}
 }
 
@@ -1449,17 +1449,17 @@ static void EV30_SEARCH(void)
 
 	Engine_EventBegin();
 
-	if (gImiruFuchinDragonsEye != NULL)
+	if (gImilFuchinFallsDragonsEye != NULL)
 	{
-		Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
+		Engine_RunRisingObjectSequence(gImilFuchinFallsDragonsEye, 3);
 	}
 
 	Engine_PartyGiveItem(0xE6, 0);
 	Engine_GameFlagSet(0xF13);
 
-	if (gImiruFuchinDragonsEye != NULL)
+	if (gImilFuchinFallsDragonsEye != NULL)
 	{
-		Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye);
+		Engine_ObjectDispatchRelease(gImilFuchinFallsDragonsEye);
 	}
 
 	Engine_EventEnd();
@@ -1536,7 +1536,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 	}
 }
 
-static void ImiruFuchin_BlowCaveMouthDust(void)
+static void ImilFuchinFalls_BlowCaveMouthDust(void)
 {
 	struct CaveDustOptions params;
 	s32					   phase;
@@ -1585,12 +1585,12 @@ static void EV20_SCRIPT(void)
 
 	Engine_TaskWait(30);
 
-	FieldScheduler_AddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
+	FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust, 0xc80);
 	Engine_TaskWait(40);
 	Engine_ColorBufferApplyTarget(0x201090, 1);
 	Engine_ColorBufferInterpolate(40);
 	Engine_TaskWait(80);
-	Engine_TaskRemoveCallback(ImiruFuchin_BlowCaveMouthDust);
+	Engine_TaskRemoveCallback(ImilFuchinFalls_BlowCaveMouthDust);
 	Engine_TaskWait(20);
 
 	Engine_ColorBufferApplyTarget(0x10000, 1);
@@ -1680,7 +1680,7 @@ static void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 		return;
 	}
 	actor->steering_flags = 0;
-	direction = gImiruFuchinKeyHeadings[(gKeysHeld >> 4) & 15];
+	direction = gImilFuchinFallsKeyHeadings[(gKeysHeld >> 4) & 15];
 	if (direction == -1)
 	{
 		Object_SetMode(actor, 9);
@@ -1712,7 +1712,7 @@ static void SceneActor_StepSubjectAlongHeading(void)
 
 	for (;;)
 	{
-		heading = gImiruFuchinHeadings[(gKeysHeld >> 4) & 15];
+		heading = gImilFuchinFallsHeadings[(gKeysHeld >> 4) & 15];
 		if ((heading << 16) == -0x10000)
 		{
 			return;
@@ -1798,33 +1798,33 @@ s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s16 gImiruFuchinKeyHeadings[] = {
+s16 gImilFuchinFallsKeyHeadings[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
 	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
 	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
 
-s16 gImiruFuchinHeadings[] = {
+s16 gImilFuchinFallsHeadings[] = {
 	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
 	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 	FACING_EAST, FACING_EAST,
 };
 
-s32 gImiruFuchinDragonsEye = 0;
+s32 gImilFuchinFallsDragonsEye = 0;
 
-struct SceneEntrance gImiruFuchinEntrancesOther[] = {
+struct SceneEntrance gImilFuchinFallsEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 256, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances1[] = {
+struct SceneEntrance gImilFuchinFallsEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 264, 0, 289, FACING_NORTH, 0, 135, 62, 376, 328, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances2[] = {
+struct SceneEntrance gImilFuchinFallsEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 600, FACING_SOUTH, 0, 64, 64, 416, 656, 0 },
 	{ 1, CONDITION_ALWAYS, 248, 0, 632, FACING_NORTH, 0, 64, 368, 416, 656, 0 },
 	{ 2, CONDITION_ALWAYS, 376, 0, 488, FACING_SOUTH, 0, 64, 368, 416, 656, 0 },
@@ -1837,13 +1837,13 @@ struct SceneEntrance gImiruFuchinEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances3[] = {
+struct SceneEntrance gImilFuchinFallsEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 64, 416, 480, 0 },
 	{ 2, CONDITION_ALWAYS, 152, 0, 200, FACING_NORTH, 0, 96, 64, 416, 480, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances4[] = {
+struct SceneEntrance gImilFuchinFallsEntrances4[] = {
 	{ 1, CONDITION_ALWAYS, 248, 0, 104, FACING_SOUTH, 0, 128, 64, 368, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 184, 0, 328, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
 	{ 3, CONDITION_ALWAYS, 152, 0, 432, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
@@ -1852,7 +1852,7 @@ struct SceneEntrance gImiruFuchinEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances5[] = {
+struct SceneEntrance gImilFuchinFallsEntrances5[] = {
 	{ 1, CONDITION_ALWAYS, 328, 0, 72, FACING_SOUTH, 0, 64, 16, 416, 416, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 392, FACING_NORTH, 0, 64, 16, 416, 416, 0 },
 	{ 3, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 416, 416, 800, 0 },
@@ -1860,7 +1860,7 @@ struct SceneEntrance gImiruFuchinEntrances5[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances6[] = {
+struct SceneEntrance gImilFuchinFallsEntrances6[] = {
 	{ 1, CONDITION_ALWAYS, 264, 0, 232, FACING_NORTH, 0, 128, 16, 384, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 256, 416, 720, 0 },
 	{ 3, CONDITION_ALWAYS, 216, 0, 664, FACING_NORTH, 0, 64, 256, 416, 720, 0 },
@@ -1868,7 +1868,7 @@ struct SceneEntrance gImiruFuchinEntrances6[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImiruFuchinEntrances7[] = {
+struct SceneEntrance gImilFuchinFallsEntrances7[] = {
 	{ 1, CONDITION_ALWAYS, 280, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
 	{ 2, CONDITION_ALWAYS, 216, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
 	{ 3, CONDITION_ALWAYS, 104, 0, 280, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
@@ -1884,7 +1884,7 @@ struct SceneEntrance gImiruFuchinEntrances7[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gImiruFuchinExits[] = {
+u32 gImilFuchinFallsExits[] = {
 	SCENE_EXITS(52),
 	SCENE_EXIT(1, 50, 9),
 	SCENE_EXIT(0, 62, 0),
@@ -1931,17 +1931,17 @@ u32 gImiruFuchinExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gImiruFuchinPlacementsOther[] = {
+struct ScenePlacement gImilFuchinFallsPlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements1[] = {
+struct ScenePlacement gImilFuchinFallsPlacements1[] = {
 	{ 0x5c, 0x59, ACTOR_STAND,
 		PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements2[] = {
+struct ScenePlacement gImilFuchinFallsPlacements2[] = {
 	{ 0xed, CONDITION_ALWAYS, 7,
 		PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xec, CONDITION_ALWAYS, 7,
@@ -1951,7 +1951,7 @@ struct ScenePlacement gImiruFuchinPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements3[] = {
+struct ScenePlacement gImilFuchinFallsPlacements3[] = {
 	{ 0xed, CONDITION_ALWAYS, 7,
 		PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xec, CONDITION_ALWAYS, 7,
@@ -1963,7 +1963,7 @@ struct ScenePlacement gImiruFuchinPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements4[] = {
+struct ScenePlacement gImilFuchinFallsPlacements4[] = {
 	{ 0xed, CONDITION_ALWAYS, 7,
 		PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xed, CONDITION_ALWAYS, 7,
@@ -1975,7 +1975,7 @@ struct ScenePlacement gImiruFuchinPlacements4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements5[] = {
+struct ScenePlacement gImilFuchinFallsPlacements5[] = {
 	{ 0xec, CONDITION_ALWAYS, 7,
 		PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xed, CONDITION_ALWAYS, 7,
@@ -1985,24 +1985,24 @@ struct ScenePlacement gImiruFuchinPlacements5[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImiruFuchinPlacements7[] = {
+struct ScenePlacement gImilFuchinFallsPlacements7[] = {
 	{ 0xdf, CONDITION_ALWAYS, 7,
 		PIXELS(312), 0, PIXELS(128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gImiruFuchinEventsOther[] = {
+struct SceneEvent gImilFuchinFallsEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents1[] = {
+struct SceneEvent gImilFuchinFallsEvents1[] = {
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH_1) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents2[] = {
+struct SceneEvent gImilFuchinFallsEvents2[] = {
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH_2) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_2) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
@@ -2028,17 +2028,17 @@ struct SceneEvent gImiruFuchinEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents3[] = {
+struct SceneEvent gImilFuchinFallsEvents3[] = {
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, 0x306, EVENT_SCRIPT(FieldScene_RunActor8Transition304) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition305) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(ImilFuchinFalls_HopOnTrigger) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TOUCH_3) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_3) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 14, 0x304, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImilFuchinFalls_HopOnTrigger) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 14, 0x304, EVENT_SCRIPT(ImilFuchinFalls_HopOnTrigger) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH_3) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH_3) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
@@ -2053,7 +2053,7 @@ struct SceneEvent gImiruFuchinEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents4[] = {
+struct SceneEvent gImilFuchinFallsEvents4[] = {
 	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH_4) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition308And309) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorEightForFlags308And309Guarded) },
@@ -2093,7 +2093,7 @@ struct SceneEvent gImiruFuchinEvents4[] = {
 	{ EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor11Values1And2) },
 	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor11Values1And2) },
 	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor11Values1And2) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(ImilFuchinFalls_HopOnTrigger) },
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
 	{ 0x21, 2, CONDITION_ALWAYS, 2 },
 	{ 0x31, 3, CONDITION_ALWAYS, 3 },
@@ -2103,7 +2103,7 @@ struct SceneEvent gImiruFuchinEvents4[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents5[] = {
+struct SceneEvent gImilFuchinFallsEvents5[] = {
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH_5) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_5) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
@@ -2124,7 +2124,7 @@ struct SceneEvent gImiruFuchinEvents5[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents6[] = {
+struct SceneEvent gImilFuchinFallsEvents6[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -2134,7 +2134,7 @@ struct SceneEvent gImiruFuchinEvents6[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImiruFuchinEvents7[] = {
+struct SceneEvent gImilFuchinFallsEvents7[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x31, 3, CONDITION_ALWAYS, 3 },

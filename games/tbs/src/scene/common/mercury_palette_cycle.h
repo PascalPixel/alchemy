@@ -11,7 +11,7 @@
 #include "frame.h"
 #include "io_reg.h"
 
-static void Makyuri_CyclePalette(void)
+static void Mercury_CyclePalette(void)
 {
 	/* FAKEMATCH: volatile restores the form the bytes prove: cur lives at sp+2, stored with strh and loaded again with ldrh for v (a 4-byte frame and r7 for none). Without it differ 38, 55 instructions for 65. */
 	volatile u16 cur;
@@ -37,7 +37,7 @@ static void Makyuri_CyclePalette(void)
 	BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | bits;
 }
 
-static void Makyuri_ClearPalette(void)
+static void Mercury_ClearPalette(void)
 {
 	u32 i;
 

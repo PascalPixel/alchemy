@@ -1,5 +1,5 @@
 /* Draft of Func_020001b0 (overlay 6B2, 303 instructions), differ 12: the scene of
- * Imiru's voices (actors 8, 9, 11 and 12), written from the listing. Calls with
+ * Imil's voices (actors 8, 9, 11 and 12), written from the listing. Calls with
  * constants go through call.h's Call2 and Call3, Func_020005c0 through Value3 (as
  * Call3: differ 22; all direct: 135). Three scheduling differences remain:
  *  - the event work's frames store: the native builds 0x3000000 (copied to r8)
@@ -17,7 +17,7 @@
 #include "call.h"
 
 extern u32 Data_020007e4;
-extern u8 MsgImiruVoicesDisbeliefReply[];
+extern u8 MsgImilVoicesDisbeliefReply[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
@@ -61,7 +61,7 @@ void Func_020001b0(void)
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
     Call2((void (*)())Func_02000600, 13, 14);
-    Func_02000598(MsgImiruVoicesDisbeliefReply);
+    Func_02000598(MsgImilVoicesDisbeliefReply);
     Call2((void (*)())Func_020005a0, 3, 0);
     Func_02000608();
     Value3((s32 (*)())Func_020005c0, 8, 256, 0);

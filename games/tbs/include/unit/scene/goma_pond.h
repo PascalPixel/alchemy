@@ -10,9 +10,9 @@ u8 *SceneData_GetSecondaryTable(void);
 u8 *SceneData_GetTertiaryTable(void);
 u8 *SceneData_GetQuaternaryTable(void);
 s32 Scene_PlaceActor8OnGate300(void);
-extern struct SceneEntrance GomaIke_SceneTable0[];
-extern u32 GomaIke_SceneTable1[];
-extern struct ScenePlacement GomaIke_SceneTable2[];
-extern struct SceneEvent GomaIke_SceneTable3[];
+extern struct SceneEntrance GomaPond_SceneTable0[];
+extern u32 GomaPond_SceneTable1[];
+extern struct ScenePlacement GomaPond_SceneTable2[];
+extern struct SceneEvent GomaPond_SceneTable3[];
 
 #endif

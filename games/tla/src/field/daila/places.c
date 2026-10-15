@@ -25,7 +25,7 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag)
 
 s32 *Func_02000044(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_DeriMura2)
+    if (gPartyState.scene == (s32)&SceneId_Daila2)
         return Data_02001068;
     else
         return Data_02001018;
@@ -33,7 +33,7 @@ s32 *Func_02000044(void)
 
 s32 *Func_02000070(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_DeriMura2)
+    if (gPartyState.scene == (s32)&SceneId_Daila2)
         return Data_02001238;
     else
         return Data_020010d0;
@@ -65,7 +65,7 @@ void Func_02000118(s32 mode)
 
 s32 *Func_02000128(void)
 {
-    if (gPartyState.scene == (s32)&SceneId_DeriMura2)
+    if (gPartyState.scene == (s32)&SceneId_Daila2)
         return Data_02001664;
     else
         return Data_02001490;

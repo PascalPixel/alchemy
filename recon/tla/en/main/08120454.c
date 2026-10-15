@@ -19,7 +19,7 @@
  * listing does) to 510, the HP drain halving dealt in apwr (declared for
  * the whole function, so it keeps r7 as in the listing) to
  * 428, the PP restore reading action->efx directly (the listing loads
- * it again) and adding max_ep / 10 before reading maxu in case 77 to 424
+ * it again) and adding max_pp / 10 before reading maxu in case 77 to 424
  * (draft 3454, common 3240). BtlEvPush declared void for
  * this game (its body here sets no result, and void calls load r0 before r1,
  * as the listing does at 61 of 68 two-argument calls) to 330 (common 3287).
@@ -38,7 +38,7 @@
  * before give 435; with the void BtlEvPush, maxu first gives 635, and
  * with (s16)maxu / 10 as well 635. There the listing copies the target
  * into r2 at the PP restore's head, so the effect's ldrb fits between the
- * ep loads and case 77 keeps r2; ours copies it into r3, which the effect
+ * pp loads and case 77 keeps r2; ours copies it into r3, which the effect
  * load takes. The summon's enemy reset as a for loop over saved[] keeps
  * 330 only with its (u16) read (377 without). Tried and worse: a while loop
  * for the immobilize scan (832), tmp or one shared amt for the drains (708,
@@ -67,7 +67,7 @@
  * (660); in the heal, case 76 reading max_hp directly or maxu before maxv
  * (337 both), maxu before maxv in case 71 (648), 2 * maxv / 5 (no change);
  * in the PP restore, old
- * read before heal (332), the block's declaration order and ep read
+ * read before heal (332), the block's declaration order and pp read
  * through s16 and u16 pointers (no change); in
  * the HP drain, a block-local amt (505: heal in r5 and amt in r6 as in the
  * listing, but apwr then shares r6 and the listing's copy from r7 is
@@ -168,7 +168,7 @@
  * ldrh before it (the 60/30 tails, 77) both agree. An s16 local or a
  * byte-offset read for case 76's max_hp changes nothing.
  * The PP restore head matches exactly when it walks a pointer as the
- * heal does (u16 *stat_ptr; stat_ptr = (u16 *)&target->ep;
+ * heal does (u16 *stat_ptr; stat_ptr = (u16 *)&target->pp;
  * old = *stat_ptr--; heal = *(s16 *)(stat_ptr + 1);, tagged FAKEMATCH
  * as the heal's): ldrsh, the effect, then ldrh, and the later
  * (s16)old gets its lsls/asrs pair. It scores 145 (draft 3451, common
@@ -280,7 +280,7 @@
  * had the unsigned read first, yet kept two loads. Studied with a cc1
  * that has that reuse removed: plain reads (old = (u16)target->hp;
  * heal = target->hp; maxu = (u16)target->max_hp; maxv =
- * target->max_hp; the same for ep) and none of the two walks or four
+ * target->max_hp; the same for pp) and none of the two walks or four
  * memory barriers score 60 (common 3420; the heal and PP restore match
  * outright), against 391 with the admitted cc1. But that cc1 breaks ☀️
  * English from System_Initialize on (2,406 linked sections differ), so
@@ -367,7 +367,7 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-#define MIKATA      2           /* 味方 */
+#define ALLY      2           /* 味方 */
 
 #define STEP_LIM(v)                                                           \
     {                                                                          \
@@ -377,7 +377,7 @@
             (v) = 4;                                                           \
     }
 
-#define MIKATA_CHK(id) ((id) >= 0 && (id) < 8)
+#define ALLY_CHK(id) ((id) >= 0 && (id) < 8)
 
 #define ELM_BONUS()                                                           \
     {                                                                          \
@@ -389,7 +389,7 @@
 
 #define MES_SIDE(m, e)                                               \
 {                                                                              \
-    if (MIKATA_CHK(tid))                                                   \
+    if (ALLY_CHK(tid))                                                   \
         MES_PUSH(m);                                                      \
     else                                                                       \
         MES_PUSH(e);                                                       \
@@ -682,7 +682,7 @@ pow_end:
             if (actor->hp != 0)
                 BtlEvPush(BEV_OBJ_EFX, aid);
         } else if (action->efx == 32) {
-            if (target->ep != 0)
+            if (target->pp != 0)
                 type = 10;
             else
                 hit = 0;
@@ -695,7 +695,7 @@ pow_end:
 
     if ((action->efx != 75 || slot == 0) && skip == 0
         && (target->hp != 0 || BtlEfxRevChkFar(action->efx) != 0)) {
-        s32 ep;
+        s32 pp;
         s32 cur;
 
         switch (type) {
@@ -749,7 +749,7 @@ pow_end:
                             s32 mes;
 
                             mes = (s32)MsgCritical;
-                            if (MIKATA_CHK(tid))
+                            if (ALLY_CHK(tid))
                                 mes += 1;
                             BtlEvPush(BEV_MES_ADD, mes);
                         }
@@ -779,7 +779,7 @@ pow_end:
             {
                 s32 mes;
 
-                if (MIKATA_CHK(tid))
+                if (ALLY_CHK(tid))
                     mes = (s32)MsgDmgEmphP + aff;
                 else
                     mes = (s32)MsgDmgEmphE + aff;
@@ -816,17 +816,17 @@ pow_end:
                 break;
             if (action->pow == 0)
                 break;
-            ep = target->ep;
+            pp = target->pp;
             ELM_BONUS();
             ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
-            dmg = dmg * EpLossTbl[dist] / 100;
+            dmg = dmg * PpLossTbl[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
-            if (action->efx == 32 && dmg > ep)
-                dmg = ep;
-            if (dmg > ep)
-                dmg = ep;
+            if (action->efx == 32 && dmg > pp)
+                dmg = pp;
+            if (dmg > pp)
+                dmg = pp;
 
             BtlEvPush(BEV_OBJ_BGN, tid);
             BtlEvPush(BEV_NUM, dmg);
@@ -834,18 +834,18 @@ pow_end:
             {
                 s32 mes;
 
-                if (MIKATA_CHK(tid))
-                    mes = (s32)MsgEpLossP;
+                if (ALLY_CHK(tid))
+                    mes = (s32)MsgPpLossP;
                 else
-                    mes = (s32)MsgEpLossE;
+                    mes = (s32)MsgPpLossE;
                 BtlEvPush(BEV_MES, mes);
-                ep -= dmg;
+                pp -= dmg;
             }
-            if (ep <= 0)
-                ep = 0;
+            if (pp <= 0)
+                pp = 0;
             BtlEvPush(BEV_OBJ_END, tid);
-            dealt = target->ep - ep;
-            target->ep = ep;
+            dealt = target->pp - pp;
+            target->pp = pp;
             UnitRatioFar(tid);
             break;
         }
@@ -887,11 +887,11 @@ pow_end:
                 break;
             if (action->pow == 0)
                 break;
-            ep = target->ep;
+            pp = target->pp;
             ELM_BONUS();
             ap = action->pow;
             dmg = BtlPowCalc(ap, bonus, 256);
-            dmg = dmg * EpDmgTbl[dist] / 100;
+            dmg = dmg * PpDmgTbl[dist] / 100;
             dmg *= adj;
             GUARD_CUT();
             BtlEvPush(BEV_OBJ_BGN, tid);
@@ -900,17 +900,17 @@ pow_end:
             {
                 s32 mes;
 
-                if (MIKATA_CHK(tid))
+                if (ALLY_CHK(tid))
                     mes = (s32)MsgDmgP;
                 else
                     mes = (s32)MsgDmgE;
                 BtlEvPush(BEV_MES, mes);
-                ep -= dmg;
+                pp -= dmg;
             }
-            if (ep <= 0)
-                ep = 0;
+            if (pp <= 0)
+                pp = 0;
             BtlEvPush(BEV_OBJ_END, tid);
-            target->ep = ep;
+            target->pp = pp;
             UnitRatioFar(tid);
             break;
         }
@@ -1016,7 +1016,7 @@ pow_end:
             {
                 s32 mes;
 
-                if (MIKATA_CHK(tid))
+                if (ALLY_CHK(tid))
                     mes = (s32)MsgDmgEmphP + aff;
                 else
                     mes = (s32)MsgDmgEmphE + aff;
@@ -1035,7 +1035,7 @@ pow_end:
                     s32 mes;
 
                     cur = 0;
-                    if (MIKATA_CHK(tid))
+                    if (ALLY_CHK(tid))
                         mes = (s32)MsgGoesDown;
                     else
                         mes = (s32)MsgFelled;
@@ -1053,24 +1053,24 @@ pow_end:
         {
             if (action->pow == 0)
                 break;
-            ep = target->ep;
+            pp = target->pp;
             ap = action->pow;
             dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
-            dmg = dmg * EpRcvTbl[dist] / 100;
+            dmg = dmg * PpRcvTbl[dist] / 100;
             dmg *= adj;
-            ep += dmg;
-            if (ep > target->max_ep) {
-                ep = target->max_ep;
-                dmg = ep - target->ep;
+            pp += dmg;
+            if (pp > target->max_pp) {
+                pp = target->max_pp;
+                dmg = pp - target->pp;
             }
             BtlEvPush(BEV_UNIT, tid);
-            if (ep == target->max_ep)
-                MES_PUSH(MsgEpFull);
+            if (pp == target->max_pp)
+                MES_PUSH(MsgPpFull);
             else {
                 BtlEvPush(BEV_NUM, dmg);
-                MES_PUSH(MsgEpRecover);
+                MES_PUSH(MsgPpRecover);
             }
-            target->ep = ep;
+            target->pp = pp;
             UnitRatioFar(tid);
             break;
         }
@@ -1099,7 +1099,7 @@ pow_end:
             {
                 s32 mes;
 
-                if (MIKATA_CHK(tid))
+                if (ALLY_CHK(tid))
                     mes = (s32)MsgDmgP;
                 else
                     mes = (s32)MsgDmgE;
@@ -1151,72 +1151,72 @@ pow_end:
         switch (action->efx) {
 
         case 64:
-            if (target->maboroshi != 0) {
-                target->maboroshi = 0;
+            if (target->delusion != 0) {
+                target->delusion = 0;
                 MES_PUSH(MsgCureDelusion);
                 BtlEvPush(BEV_UNIT, tid);
             }
-            if (target->shibire != 0) {
-                target->shibire = 0;
+            if (target->stun != 0) {
+                target->stun = 0;
                 BtlEvPush(BEV_CLR, 0);
                 BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureStun);
             }
-            if (target->nemuri != 0) {
-                target->nemuri = 0;
+            if (target->sleep != 0) {
+                target->sleep = 0;
                 MES_PUSH(MsgWakes);
                 BtlEvPush(BEV_UNIT, tid);
             }
-            if (target->fuuji != 0) {
-                target->fuuji = 0;
+            if (target->psy_seal != 0) {
+                target->psy_seal = 0;
                 MES_PUSH(MsgCureSeal);
                 BtlEvPush(BEV_UNIT, tid);
             }
-            if (target->shiryo != 0) {
-                target->shiryo = 0;
+            if (target->grim_reaper != 0) {
+                target->grim_reaper = 0;
                 MES_PUSH(MsgCureCurse);
                 BtlEvPush(BEV_UNIT, tid);
             }
-            if (target->akuryo != 0) {
-                target->akuryo = 0;
+            if (target->haunt != 0) {
+                target->haunt = 0;
                 MES_PUSH(MsgCureSpirit);
                 BtlEvPush(BEV_UNIT, tid);
             }
-            if (target->doku != 0) {
+            if (target->poison != 0) {
                 MES_PUSH(MsgCurePoison);
-                target->doku = 0;
+                target->poison = 0;
             }
             BtlEvPush(BEV_CLR, 0);
             break;
 
         case 4:
-            if (target->maboroshi != 0) {
-                target->maboroshi = 0;
+            if (target->delusion != 0) {
+                target->delusion = 0;
                 BtlEvPush(BEV_CLR, 0);
                 BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureDelusion);
             }
-            if (target->shibire != 0) {
-                target->shibire = 0;
+            if (target->stun != 0) {
+                target->stun = 0;
                 BtlEvPush(BEV_CLR, 0);
                 BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureStun);
             }
-            if (target->nemuri != 0) {
-                target->nemuri = 0;
+            if (target->sleep != 0) {
+                target->sleep = 0;
                 BtlEvPush(BEV_CLR, 0);
                 BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgWakes);
             }
-            if (target->fuuji != 0) {
-                target->fuuji = 0;
+            if (target->psy_seal != 0) {
+                target->psy_seal = 0;
                 BtlEvPush(BEV_CLR, 0);
                 BtlEvPush(BEV_UNIT, tid);
                 MES_PUSH(MsgCureSeal);
             }
-            if (target->shiryo == 0)
+            if (target->grim_reaper == 0)
                 break;
-            target->shiryo = 0;
+            target->grim_reaper = 0;
             BtlEvPush(BEV_CLR, 0);
             BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgCureCurse);
@@ -1300,25 +1300,25 @@ pow_end:
             s32 maxu;
             u16 *pt;
 
-            /* FAKEMATCH: walking a pointer down from ep reads it twice, signed and unsigned, as the ROM does; plain field reads share one load. */
-            pt = (u16 *)&target->ep;
+            /* FAKEMATCH: walking a pointer down from pp reads it twice, signed and unsigned, as the ROM does; plain field reads share one load. */
+            pt = (u16 *)&target->pp;
             old = *pt--;
             heal = *(s16 *)(pt + 1);
             if (action->efx == 77) {
-                maxv = target->max_ep;
-                maxu = (u16)target->max_ep;
+                maxv = target->max_pp;
+                maxu = (u16)target->max_pp;
                 heal += (s16)maxv / 10;
             } else if (action->efx == 78) {
-                maxu = (u16)target->max_ep;
+                maxu = (u16)target->max_pp;
                 /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
                 asm("" ::: "memory");
-                maxv = target->max_ep;
+                maxv = target->max_pp;
                 heal += maxv * 3 / 10;
             } else {
-                maxu = (u16)target->max_ep;
+                maxu = (u16)target->max_pp;
                 /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
                 asm("" ::: "memory");
-                maxv = target->max_ep;
+                maxv = target->max_pp;
                 /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #100 before the 7% product's shifts, where the ROM issues it last, as at 60 and 30, 2 instructions. */
                 asm("");
                 heal += maxv * 7 / 100;
@@ -1329,12 +1329,12 @@ pow_end:
             if (tmp == 0 && type != 11)
                 break;
             if (heal == (s16)maxu)
-                MES_PUSH(MsgEpFull);
+                MES_PUSH(MsgPpFull);
             else {
                 BtlEvPush(BEV_NUM, tmp);
-                MES_PUSH(MsgEpRecover);
+                MES_PUSH(MsgPpRecover);
             }
-            target->ep = heal;
+            target->pp = heal;
             UnitRatioFar(tid);
             break;
         }
@@ -1466,9 +1466,9 @@ pow_end:
             break;
 
         case 3:
-            if (target->doku != 0)
+            if (target->poison != 0)
                 MES_PUSH(MsgCurePoison);
-            target->doku = 0;
+            target->poison = 0;
             break;
 
         case 17:
@@ -1506,26 +1506,26 @@ pow_end:
             break;
 
         case 18:
-            if (target->doku != 0)
+            if (target->poison != 0)
                 break;
             MES_PUSH(MsgPoisoned);
-            target->doku = 1;
+            target->poison = 1;
             break;
 
         case 19:
-            if (target->doku > 1)
+            if (target->poison > 1)
                 break;
             MES_PUSH(MsgVenom);
-            target->doku = 2;
+            target->poison = 2;
             break;
 
         case 20:
         case 75:
-            STAT_SET(target->maboroshi, MsgDelusion);
+            STAT_SET(target->delusion, MsgDelusion);
             break;
 
         case 21:
-            STAT_SET(target->konran, MsgConfused);
+            STAT_SET(target->confusion, MsgConfused);
             break;
 
         case 22:
@@ -1534,28 +1534,28 @@ pow_end:
 
         case 23:
         case 85:
-            STAT_SET(target->shibire, MsgStunned);
+            STAT_SET(target->stun, MsgStunned);
             break;
 
         case 24:
-            STAT_SET(target->nemuri, MsgAsleep);
+            STAT_SET(target->sleep, MsgAsleep);
             break;
 
         case 25:
             MES_SIDE(MsgPsyBlock, MsgPsySeal);
-            target->fuuji |= 7;
+            target->psy_seal |= 7;
             break;
 
         case 67:
             MES_SIDE(MsgPsyBlock, MsgPsySeal);
-            target->fuuji |= 16;
+            target->psy_seal |= 16;
             break;
 
         case 27:
             if (BattleUnit_KeepsOneHp(tid) != 0)
                 break;
             BtlEvPush(BEV_OBJ_RES, tid);
-            if (target->side == MIKATA)
+            if (target->side == ALLY)
                 MES_PUSH(MsgKoDown);
             else if (act_no == 219)
                 MES_PUSH(MsgSuffocate);
@@ -1603,48 +1603,48 @@ pow_end:
             s32 heal;
             s32 amt;
 
-            heal = actor->ep;
+            heal = actor->pp;
             amt = dealt;
             heal += amt;
-            if (heal > actor->max_ep) {
-                heal = actor->max_ep;
-                amt = heal - actor->ep;
+            if (heal > actor->max_pp) {
+                heal = actor->max_pp;
+                amt = heal - actor->pp;
             }
             BtlEvPush(BEV_CLR, 0);
             BtlEvPush(BEV_UNIT, aid);
-            if (heal == actor->max_ep)
-                MES_PUSH(MsgEpFull);
+            if (heal == actor->max_pp)
+                MES_PUSH(MsgPpFull);
             else {
                 BtlEvPush(BEV_NUM, amt);
-                MES_PUSH(MsgEpRecover);
+                MES_PUSH(MsgPpRecover);
             }
-            actor->ep = heal;
+            actor->pp = heal;
             UnitRatioFar(aid);
             break;
         }
 
         case 69:
             dmg = dealt / 10;
-            if (target->ep < dmg)
-                dmg = target->ep;
-            if (actor->ep + dmg > actor->max_ep)
-                dmg = actor->max_ep - actor->ep;
+            if (target->pp < dmg)
+                dmg = target->pp;
+            if (actor->pp + dmg > actor->max_pp)
+                dmg = actor->max_pp - actor->pp;
             if (dmg == 0)
                 break;
             BtlEvPush(BEV_NUM, dmg);
             MES_SIDE(MsgLeechTake, MsgLeechGain);
-            UnitEpAddFar(aid, dmg);
+            UnitPpAddFar(aid, dmg);
             break;
 
         case 84:
-            dmg = (s16)(target->max_ep / 10);
-            if (target->ep < dmg)
-                dmg = target->ep;
+            dmg = (s16)(target->max_pp / 10);
+            if (target->pp < dmg)
+                dmg = target->pp;
             if (dmg == 0)
                 break;
             BtlEvPush(BEV_NUM, dmg);
             MES_SIDE(MsgMorePpLossP, MsgMorePpLossE);
-            UnitEpAddFar(tid, -dmg);
+            UnitPpAddFar(tid, -dmg);
             break;
 
         case 33:
@@ -1671,40 +1671,40 @@ pow_end:
 
         case 26:
             MES_PUSH(MsgEvilSpirit);
-            target->akuryo = 1;
+            target->haunt = 1;
             break;
 
         case 28:
         case 80:
-            if (target->shiryo == 0) {
+            if (target->grim_reaper == 0) {
                 MES_PUSH(MsgDeathCurse);
-                target->shiryo = 7;
+                target->grim_reaper = 7;
                 break;
             }
-            if (target->shiryo <= 1)
+            if (target->grim_reaper <= 1)
                 break;
-            target->shiryo -= 1;
-            BtlEvPush(BEV_NUM, target->shiryo);
+            target->grim_reaper -= 1;
+            BtlEvPush(BEV_NUM, target->grim_reaper);
             MES_PUSH(MsgDeathCount);
             break;
 
         case 66:
             MES_PUSH(MsgReadies);
-            target->sonae = 2;
+            target->ready = 2;
             break;
 
         case 54:
             MES_PUSH(MsgChallenge);
-            target->chouhatsu = 1;
-            if (MIKATA_CHK(tid))
-                work->chouhatsu_flg |= 2;
+            target->challenge = 1;
+            if (ALLY_CHK(tid))
+                work->challenge_flg |= 2;
             break;
 
         case 53:
         case 83:
 
             MES_PUSH(MsgImmobile);
-            target->miugoki = 1;
+            target->immobile = 1;
             break;
 
         case 46:
@@ -1772,10 +1772,10 @@ done:
     }
 
     if (target->hp != 0) {
-        if (target->nemuri != 0)
-        if (target->nemuri <= 6
+        if (target->sleep != 0)
+        if (target->sleep <= 6
             && dealt > 0 && (3 & BtlRndFar()) == 0) {
-            target->nemuri = 0;
+            target->sleep = 0;
             BtlEvPush(BEV_UNIT, tid);
             MES_PUSH(MsgWakes);
         }
@@ -1785,13 +1785,13 @@ done:
     PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st);
     if (target->hp != 0)
         BtlEvPush(BEV_OBJ_END, tid);
-    if (act_no != 403 && actor->akuryo != 0
+    if (act_no != 403 && actor->haunt != 0
         && (BtlRndFar() & 3) == 0 && dealt > 0) {
         s32 share;
 
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        plan->akuryo_dmg += share;
+        plan->haunt_dmg += share;
     }
 }

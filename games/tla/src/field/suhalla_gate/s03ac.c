@@ -1,7 +1,7 @@
 #include "local.h"
 
-extern char SceneId_SuharaGate1;
-extern char SceneId_VinasuIriguchi;
+extern char SceneId_SuhallaGate1;
+extern char SceneId_VenusEntrance;
 extern u8 MsgWaahhhItS[];
 
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -18,7 +18,7 @@ static __inline__ void ObjectMotion_SetPositionAndReset_(s32 id, s32 x, s32 z)
 }
 
 // After the "Waahhh" message, places the leader and the camera, runs actor
-// 8's motions and sends the party to Suhara Gate 1, entrance 99.
+// 8's motions and sends the party to Suhalla Gate 1, entrance 99.
 void Func_020003ac(void)
 {
     Func_02000988();
@@ -46,8 +46,8 @@ void Func_020003ac(void)
     Battle_WaitMode0(30);
     Func_02000a08(8, 0, 10);
     ObjectMotion_SetPositionAndReset_(8, 456, 312);
-    Party_SetFields1eeAnd1f0((s32)&SceneId_SuharaGate1, 99);
-    Party_SetFields1f2And1f4((s32)&SceneId_VinasuIriguchi, 98);
+    Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
+    Party_SetFields1f2And1f4((s32)&SceneId_VenusEntrance, 98);
     gPartyState.battle_rule_24b = 2;
     Func_02000a40(9, 1);
     Func_02000990();

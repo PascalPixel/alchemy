@@ -281,8 +281,8 @@ gLinkCountdownWork:
 	.global gMenuSelectWork
 gMenuSelectWork:
 	.space 0x00000004
-	.global gKorosseoWork
-gKorosseoWork:
+	.global gColossoWork
+gColossoWork:
 	.space 0x00000018
 	.global gDebugMode
 gDebugMode:

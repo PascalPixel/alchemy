@@ -84,12 +84,12 @@ s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 s32 BattleUnit_TickDelusion(s32 unit_id)
 {
     struct BtlUnit *state = UnitGet(unit_id);
-    if (state->maboroshi != 0) {
-        state->maboroshi--;
-        if (state->maboroshi == 0)
+    if (state->delusion != 0) {
+        state->delusion--;
+        if (state->delusion == 0)
             return 1;
-        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->maboroshi, 30) != 0) {
-            state->maboroshi = 0;
+        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->delusion, 30) != 0) {
+            state->delusion = 0;
             return 1;
         }
     }
@@ -99,12 +99,12 @@ s32 BattleUnit_TickDelusion(s32 unit_id)
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
     struct BtlUnit *state = UnitGet(unit_id);
-    if ((u8)state->konran != 0) {
-        (*(u8 *)&state->konran)--;
-        if (state->konran == 0)
+    if ((u8)state->confusion != 0) {
+        (*(u8 *)&state->confusion)--;
+        if (state->confusion == 0)
             return 1;
-        if (BattleUnit_RollCounterEarlyEnd(unit_id, (u8)state->konran, 60) != 0) {
-            state->konran = 0;
+        if (BattleUnit_RollCounterEarlyEnd(unit_id, (u8)state->confusion, 60) != 0) {
+            state->confusion = 0;
             return 1;
         }
     }
@@ -129,12 +129,12 @@ s32 BattleUnit_TickCharm(s32 unit_id)
 s32 BattleUnit_TickStun(s32 unit_id)
 {
     struct BtlUnit *state = UnitGet(unit_id);
-    if (state->shibire != 0) {
-        state->shibire--;
-        if (state->shibire == 0)
+    if (state->stun != 0) {
+        state->stun--;
+        if (state->stun == 0)
             return 1;
-        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->shibire, 40) != 0) {
-            state->shibire = 0;
+        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->stun, 40) != 0) {
+            state->stun = 0;
             return 1;
         }
     }
@@ -144,12 +144,12 @@ s32 BattleUnit_TickStun(s32 unit_id)
 s32 BattleUnit_TickSleep(s32 unit_id)
 {
     struct BtlUnit *state = UnitGet(unit_id);
-    if (state->nemuri != 0) {
-        state->nemuri--;
-        if (state->nemuri == 0)
+    if (state->sleep != 0) {
+        state->sleep--;
+        if (state->sleep == 0)
             return 1;
-        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->nemuri, 50) != 0) {
-            state->nemuri = 0;
+        if (BattleUnit_RollCounterEarlyEnd(unit_id, state->sleep, 50) != 0) {
+            state->sleep = 0;
             return 1;
         }
     }
@@ -166,17 +166,17 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     struct BtlUnit *unit;
 
     unit = UnitGet(id);
-    packed = unit->fuuji;
+    packed = unit->psy_seal;
     turns = packed & 0xFF;
     if (turns != 0) {
         if ((u32)turns > 7U) {
             turns += 0xF8;
-            unit->fuuji = turns;
+            unit->psy_seal = turns;
             packed = turns;
         }
         if (packed & 7) {
             next = packed + 0xFF;
-            unit->fuuji = next;
+            unit->psy_seal = next;
             packed = next;
         }
         expired = 1;
@@ -184,8 +184,8 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
         if (remaining == 0)
             return expired;
         if ((u32)remaining <= 7U &&
-            BattleUnit_RollCounterEarlyEnd(id, unit->fuuji, 0x1E) != 0) {
-            unit->fuuji = 0U;
+            BattleUnit_RollCounterEarlyEnd(id, unit->psy_seal, 0x1E) != 0) {
+            unit->psy_seal = 0U;
             return 1;
         }
     }

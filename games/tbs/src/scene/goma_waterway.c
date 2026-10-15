@@ -33,11 +33,11 @@ static void SceneEffect_RunActorBurst(s32 no);
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaWaterway2)
 	{
-		return gGomaSuiroEntrances2;
+		return gGomaWaterwayEntrances2;
 	}
-	return gGomaSuiroEntrancesOther;
+	return gGomaWaterwayEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -47,16 +47,16 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return GomaSuiro_Exits;
+	return GomaWaterway_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaWaterway2)
 	{
-		return gGomaSuiroPlacements2;
+		return gGomaWaterwayPlacements2;
 	}
-	return gGomaSuiroPlacementsOther;
+	return gGomaWaterwayPlacementsOther;
 }
 
 static void EV08_PSYNERGY(void)
@@ -80,11 +80,11 @@ static void EV08_PSYNERGY(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaWaterway2)
 	{
-		return gGomaSuiroEvents2;
+		return gGomaWaterwayEvents2;
 	}
-	return gGomaSuiroEventsOther;
+	return gGomaWaterwayEventsOther;
 }
 
 s32 FieldScene_PlaceActor8OnEntry(void)
@@ -92,7 +92,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 	struct FieldActor *record;
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	if (gGameState.scene == (s32)&SceneId_GomaSuiro1)
+	if (gGameState.scene == (s32)&SceneId_GomaWaterway1)
 	{
 		if (gGameState.entrance == 5)
 		{
@@ -247,7 +247,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-struct SceneEntrance gGomaSuiroEntrancesOther[] = {
+struct SceneEntrance gGomaWaterwayEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 376, 0, 776, FACING_NORTH, 0, 88, 8, 664, 832, 0 },
 	{ 2, CONDITION_ALWAYS, 168, 0, 552, FACING_SOUTH, 0, 88, 8, 664, 832, 0 },
@@ -258,13 +258,13 @@ struct SceneEntrance gGomaSuiroEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gGomaSuiroEntrances2[] = {
+struct SceneEntrance gGomaWaterwayEntrances2[] = {
 	{ 1, CONDITION_ALWAYS, 154, 0, 350, FACING_NORTH, 0, 16, 48, 632, 360, 0 },
 	{ 2, CONDITION_ALWAYS, 552, 0, 312, FACING_NORTH, 0, 16, 48, 632, 360, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 GomaSuiro_Exits[] = {
+u32 GomaWaterway_Exits[] = {
 	SCENE_EXITS(28),
 	SCENE_EXIT(1, 25, 2),
 	SCENE_EXIT(2, 27, 1),
@@ -277,17 +277,17 @@ u32 GomaSuiro_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gGomaSuiroPlacementsOther[] = {
+struct ScenePlacement gGomaWaterwayPlacementsOther[] = {
 	{ 0xd4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gGomaSuiroPlacements2[] = {
+struct ScenePlacement gGomaWaterwayPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gGomaSuiroEventsOther[] = {
+struct SceneEvent gGomaWaterwayEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 1 },
 	{ 0x31, 6, CONDITION_ALWAYS, 2 },
@@ -298,7 +298,7 @@ struct SceneEvent gGomaSuiroEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gGomaSuiroEvents2[] = {
+struct SceneEvent gGomaWaterwayEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ SCENE_EVENTS_END },

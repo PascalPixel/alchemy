@@ -60,9 +60,9 @@ struct PaletteSceneRecord
 	u16 values[1];
 };
 
-extern s32 gKorimaKiSparkOrigin[3];
-extern s32 gKorimaKiSparkCount;
-extern s32 gKorimaKiSparkSound;
-extern s32 gKorimaKiTransitionStep;
+extern s32 gKolimaForestTreeSparkOrigin[3];
+extern s32 gKolimaForestTreeSparkCount;
+extern s32 gKolimaForestTreeSparkSound;
+extern s32 gKolimaForestTreeTransitionStep;
 
 #endif

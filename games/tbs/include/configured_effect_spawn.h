@@ -21,7 +21,7 @@ struct Effect
 	s32			   accum18;
 	s32			   accum1c;
 	u8			   pad20[3];
-	u8			   flatla3;
+	u8			   flags23;
 	u8			   pad24[12];
 	s32			   rate30;
 	s32			   rate34;

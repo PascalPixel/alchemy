@@ -54,28 +54,28 @@
 union PairObject;
 static void EV11_TOUCH(void);
 static void Scene_RunScriptedActorPresentation(void);
-static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown);
+static void VenusAerie_ShowPartyMember(s32 actor, s32 shown);
 static void SceneEffect_UpdateObjectByFrameParity(s32 a);
-static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent);
+static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent);
 static void FieldScene_RunStep6(void);
 static void Scene_RunPairedActorEffectSequence(void);
-static void VinasuChojo_FlashScreen(void);
+static void VenusAerie_FlashScreen(void);
 static void SceneEffect_SpawnParticlesAboveActor(void);
-static void VinasuChojo_UpdateBeamActors(void);
+static void VenusAerie_UpdateBeamActors(void);
 static void FieldScene_RunThreeStepsInBracket(void);
 static void FieldScene_RunBracketedSceneWithFlag282(void);
-static void VinasuChojo_RunLeapEntrance(void);
+static void VenusAerie_RunLeapEntrance(void);
 static void FieldScene_RunPairDefeat(void);
 static void FieldScene_RunMultiActorPresentation(void);
-static void VinasuChojo_RunActorTransition(void);
+static void VenusAerie_RunActorTransition(void);
 static void FieldScene_RestageParty(void);
-static void VinasuChojo_TryToPreventFall(void);
+static void VenusAerie_TryToPreventFall(void);
 static void Scene_RunExtendedActorTransition(void);
 static void SceneActor_ParkRecord(struct FieldActor *actor);
-static void VinasuChojo_RunTransitionStep(void);
+static void VenusAerie_RunTransitionStep(void);
 static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 static void SceneEffect_SpawnParticlesBesideActor(void);
-static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
+static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object);
 
 s32 Math_RemainderUnsigned(s32, s32);
 
@@ -169,7 +169,7 @@ static void Effect_MoveWithDrag(union FieldObject *object)
 	object->effect.sprite->rotation += object->effect.spin;
 }
 
-static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
+static void VenusAerie_StepSpriteRotation(struct FieldActor *actor)
 {
 	struct FieldSprite *sprite = actor->sprite;
 	u16					rotation = sprite->rotation;
@@ -188,7 +188,7 @@ static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	return gVinasuChojoEntrances;
+	return gVenusAerieEntrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -198,12 +198,12 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return gVinasuChojoExits;
+	return gVenusAerieExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	return gVinasuChojoPlacements;
+	return gVenusAeriePlacements;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -253,11 +253,11 @@ static void EV10_TOUCH(void)
 
 	Engine_EventBegin();
 	id = SceneActor_FindNearestSlotOfKindF2();
-	VinasuChojo_NearestActor = id;
+	VenusAerie_NearestActor = id;
 	if (id != 0)
 	{
 		Engine_GameFlagSet(592);
-		pillar = Object_GetById(VinasuChojo_NearestActor);
+		pillar = Object_GetById(VenusAerie_NearestActor);
 		pillar->motion_flags = 0;
 		leader->motion_flags &= 0xfe;
 		pillar->y.fixed += -0x30000;
@@ -300,7 +300,7 @@ static void EV11_TOUCH(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return gVinasuChojoEvents;
+	return gVenusAerieEvents;
 }
 
 s32 Scene_Initialize(void)
@@ -354,7 +354,7 @@ s32 Scene_Initialize(void)
 		FieldScene_RunBracketedSceneWithFlag282();
 		break;
 	case 4:
-		VinasuChojo_RunLeapEntrance();
+		VenusAerie_RunLeapEntrance();
 		break;
 	case 9:
 		Engine_EventBegin();
@@ -394,13 +394,13 @@ s32 Scene_Initialize(void)
 	return z;
 }
 
-static void VinasuChojo_ShowMessage(s32 speaker)
+static void VenusAerie_ShowMessage(s32 speaker)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(10);
 }
 
-static void VinasuChojo_FaceActor(s32 actor, s32 facing)
+static void VenusAerie_FaceActor(s32 actor, s32 facing)
 {
 	Engine_ActorFaceDirection(actor, facing, 10);
 }
@@ -412,9 +412,9 @@ static void Scene_RunScriptedActorPresentation(void)
 
 	companion = Object_GetById(18);
 	Engine_EventBegin();
-	VinasuChojo_ShowPartyMember(1, 0);
-	VinasuChojo_ShowPartyMember(2, 0);
-	VinasuChojo_ShowPartyMember(3, 0);
+	VenusAerie_ShowPartyMember(1, 0);
+	VenusAerie_ShowPartyMember(2, 0);
+	VenusAerie_ShowPartyMember(3, 0);
 	Engine_CameraMoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
 	companion->motion_flags = 0;
@@ -473,44 +473,44 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_ActorSetDestination(18, 580, 338);
 	Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	VinasuChojo_ShowPartyMember(1, 1);
-	VinasuChojo_ShowPartyMember(2, 1);
-	VinasuChojo_ShowPartyMember(3, 1);
+	VenusAerie_ShowPartyMember(1, 1);
+	VenusAerie_ShowPartyMember(2, 1);
+	VenusAerie_ShowPartyMember(3, 1);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 492, 164);
 	Engine_ActorWalkTo(1, 514, 164);
-	Actor_WalkTo(IWAN, 492, 140);
+	Actor_WalkTo(IVAN, 492, 140);
 	Engine_ActorWalkToAndWait(3, 514, 140);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Engine_ActorFaceDirection(GERALD, FACING_SOUTH, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_SOUTH, 0);
-	Engine_ActorFaceDirection(MEARI, FACING_SOUTH, 0);
+	Engine_ActorFaceDirection(GARET, FACING_SOUTH, 0);
+	Engine_ActorFaceDirection(IVAN, FACING_SOUTH, 0);
+	Engine_ActorFaceDirection(MIA, FACING_SOUTH, 0);
 	Engine_ActorWaitForMove(18);
 	Engine_ActorSetPosition(18, 0, 0);
 	Engine_AudioPlayCue(0x121);
-	Engine_EventSetMessage(MsgVinasuLongLastTime);
-	VinasuChojo_ShowMessage(0x4013);
+	Engine_EventSetMessage(MsgVenusLongLastTime);
+	VenusAerie_ShowMessage(0x4013);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Engine_ActorFaceDirection(GERALD, FACING_WEST, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_WEST, 0);
-	VinasuChojo_FaceActor(MEARI, FACING_WEST);
+	Engine_ActorFaceDirection(GARET, FACING_WEST, 0);
+	Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
+	VenusAerie_FaceActor(MIA, FACING_WEST);
 	Engine_EventGetViewCenter()->motion_flags = 0;
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(0x1300000, 0x200000, 0x9e0000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Engine_AudioPlayCue(61);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x4013);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+	VenusAerie_ShowMessage(0x4013);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 40);
-	VinasuChojo_ShowMessage(0x2014);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x100, 0);
 	Engine_ActorShowEmote(20, 0x100, 20);
 	Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -523,31 +523,31 @@ static void Scene_RunScriptedActorPresentation(void)
 	Actor_WalkToAndWait(21, 272, 200);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Engine_EventWait(20);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Engine_ActorSetAnimationAndWait(21, 3);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 40);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorSetAnimationAndWait(21, 4);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 60);
 	Engine_EventShowMessageAndWait(19, 0, 40);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x106, 40);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorFaceDirection(6, FACING_EAST, 0);
 	Actor_ShowEmote(21, 0x103, 40);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 0);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 40);
 	Engine_ActorRunRepeatedMotion(21, 1);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 0);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTH + FACING_STEP);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTH + FACING_STEP);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x108, 20);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x103, 20);
 	Engine_EventShowMessageAndWait(21, 0, 20);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 40);
@@ -557,15 +557,15 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_EventShowMessageAndWait(21, 0, 20);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 20);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 0);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x105, 80);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 60);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorSetAnimationAndWait(21, 3);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Engine_EventWait(20);
@@ -573,21 +573,21 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_EventShowMessageAndWait(21, 0, 20);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
 	Engine_EventShowMessageAndWait(0x2014, 0, 20);
-	VinasuChojo_FaceActor(21, FACING_NORTHWEST + FACING_STEP);
-	VinasuChojo_ShowMessage(21);
-	VinasuChojo_FaceActor(6, FACING_SOUTHEAST + FACING_STEP);
+	VenusAerie_FaceActor(21, FACING_NORTHWEST + FACING_STEP);
+	VenusAerie_ShowMessage(21);
+	VenusAerie_FaceActor(6, FACING_SOUTHEAST + FACING_STEP);
 	Engine_ActorRunRepeatedMotion(6, 2);
 	Engine_EventWait(20);
-	VinasuChojo_FaceActor(21, FACING_NORTH + FACING_STEP);
+	VenusAerie_FaceActor(21, FACING_NORTH + FACING_STEP);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorFaceDirection(6, FACING_EAST, 0);
 	Engine_ActorRunRepeatedMotion(21, 1);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorSetAnimationAndWait(21, 4);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 0);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 80);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
@@ -598,49 +598,49 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_ActorFaceDirection(21, FACING_WEST, 40);
 	Engine_ActorFaceDirection(21, FACING_EAST, 20);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	VinasuChojo_ShowMessage(0x8015);
+	VenusAerie_ShowMessage(0x8015);
 	Engine_ActorShowEmote(19, 0x100, 20);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	VinasuChojo_ShowMessage(0x8015);
+	VenusAerie_ShowMessage(0x8015);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 40);
 	Event_ShowMessageAndWait(0xa014, 0, 20);
 	Actor_ShowEmote(21, 0x105, 20);
-	VinasuChojo_ShowMessage(0x8015);
+	VenusAerie_ShowMessage(0x8015);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x101, 40);
-	VinasuChojo_ShowMessage(0x8015);
+	VenusAerie_ShowMessage(0x8015);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0xa014);
+	VenusAerie_ShowMessage(0xa014);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x103, 60);
 	Engine_ActorFaceDirection(21, FACING_WEST, 20);
 	Engine_EventShowMessageAndWait(0xa015, 0, 40);
 	Actor_ShowEmote(6, 0x105, 120);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
-	VinasuChojo_ShowMessage(0xa014);
+	VenusAerie_ShowMessage(0xa014);
 	Engine_ActorFaceDirection(21, FACING_EAST, 40);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorRunRepeatedMotion(21, 1);
 	Engine_EventShowMessageAndWait(0x8015, 0, 20);
-	VinasuChojo_ShowMessage(0xa014);
+	VenusAerie_ShowMessage(0xa014);
 	Engine_ActorShowEmote(21, 0x100, 40);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(6, 0x105, 40);
 	Engine_ActorShowEmote(20, 0x108, 40);
-	VinasuChojo_ShowMessage(0xa014);
+	VenusAerie_ShowMessage(0xa014);
 	Engine_ActorShowEmote(19, 0x103, 20);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorRunRepeatedMotion(21, 1);
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(0xa014);
+	VenusAerie_ShowMessage(0xa014);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -651,38 +651,38 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	VinasuChojo_ShowMessage(0x8001);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	VenusAerie_ShowMessage(0x8001);
 	Engine_ActorShowEmote(3, 0x101, 40);
-	VinasuChojo_ShowMessage(MEARI);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	VenusAerie_ShowMessage(MIA);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventShowMessageAndWait(0x1002, 0, 40);
-	Engine_ActorJump(GERALD, 2, 20);
-	VinasuChojo_ShowMessage(0x8001);
+	Engine_ActorJump(GARET, 2, 20);
+	VenusAerie_ShowMessage(0x8001);
 	Engine_EventOpenMessage(0x8001, 0);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 0);
+	Engine_ActorFaceDirection(IVAN, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
 	{
 		gEventWork->message += 1;
 	}
 	Engine_EventWait(20);
-	VinasuChojo_ShowMessage(GERALD);
-	Engine_ActorFaceDirection(IWAN, FACING_EAST, 0);
-	Engine_ActorFaceDirection(MEARI, FACING_WEST, 20);
+	VenusAerie_ShowMessage(GARET);
+	Engine_ActorFaceDirection(IVAN, FACING_EAST, 0);
+	Engine_ActorFaceDirection(MIA, FACING_WEST, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
-	Engine_ActorEnableActionCallback(GERALD, VinasuChojo_PairActionScript);
-	Engine_ActorEnableActionCallback(IWAN, VinasuChojo_PairActionScript);
-	Object_SetActionCallbackAndRefreshById(MEARI, VinasuChojo_PairActionScript);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
+	Engine_ActorEnableActionCallback(GARET, VenusAerie_PairActionScript);
+	Engine_ActorEnableActionCallback(IVAN, VenusAerie_PairActionScript);
+	Object_SetActionCallbackAndRefreshById(MIA, VenusAerie_PairActionScript);
 	Engine_EventWait(20);
 	Engine_EventEnd();
 }
 
-static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
+static void VenusAerie_ShowPartyMember(s32 actor, s32 shown)
 {
 	s32 record;
 
@@ -715,95 +715,95 @@ static void EV05_TOUCH(void)
 	Camera_MoveTo(PIXELS(332), PIXELS(32), PIXELS(180), 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 340, 184);
-	VinasuChojo_FaceActor(ACTOR_PARTY_LEADER, FACING_WEST);
+	VenusAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_WEST);
 	Engine_ActorRunRepeatedMotion(21, 1);
-	Engine_EventSetMessage(MsgVinasuRobin);
-	VinasuChojo_ShowMessage(0x9015);
+	Engine_EventSetMessage(MsgVenusIsaac);
+	VenusAerie_ShowMessage(0x9015);
 	Engine_EventGetViewCenter()->motion_flags = 0;
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_SetSpeed(MEARI, 0x16666, 0xb333);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x16666, 0xb333);
 	object = Object_GetById(ACTOR_PARTY_LEADER);
 	if (object != 0)
 	{
-		Actor_SetPosition(GERALD, object->x.fixed, object->z.fixed);
+		Actor_SetPosition(GARET, object->x.fixed, object->z.fixed);
 	}
 	object = Object_GetById(ACTOR_PARTY_LEADER);
 	if (object != 0)
 	{
-		Actor_SetPosition(IWAN, object->x.fixed, object->z.fixed);
+		Actor_SetPosition(IVAN, object->x.fixed, object->z.fixed);
 	}
 	object = Object_GetById(ACTOR_PARTY_LEADER);
 	if (object != 0)
 	{
-		Actor_SetPosition(MEARI, object->x.fixed, object->z.fixed);
+		Actor_SetPosition(MIA, object->x.fixed, object->z.fixed);
 	}
-	Actor_WalkTo(GERALD, 328, 168);
-	Actor_WalkTo(IWAN, 340, 196);
-	Actor_WalkToAndWait(MEARI, 326, 204);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
-	Engine_ActorFaceDirection(GERALD, FACING_WEST, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_WEST, 0);
-	VinasuChojo_FaceActor(MEARI, FACING_WEST);
+	Actor_WalkTo(GARET, 328, 168);
+	Actor_WalkTo(IVAN, 340, 196);
+	Actor_WalkToAndWait(MIA, 326, 204);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
+	Engine_ActorFaceDirection(GARET, FACING_WEST, 0);
+	Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
+	VenusAerie_FaceActor(MIA, FACING_WEST);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 0);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 40);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x103, 20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorStartRepeatedMotion(21, 2);
 	Event_ShowMessageAndWait(21, 0, 20);
 	Engine_ActorFaceDirection(21, FACING_NORTH + FACING_STEP, 40);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorSetAnimationAndWait(21, 4);
-	VinasuChojo_FaceActor(21, FACING_EAST);
+	VenusAerie_FaceActor(21, FACING_EAST);
 	Event_ShowMessageAndWait(21, 0, 20);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
-	VinasuChojo_ShowMessage(0x2014);
-	Actor_SetAttachedEffect(MEARI, 0x102);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	VinasuChojo_ShowMessage(MEARI);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	VinasuChojo_ShowMessage(IWAN);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
+	VenusAerie_ShowMessage(0x2014);
+	Actor_SetAttachedEffect(MIA, 0x102);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	VenusAerie_ShowMessage(MIA);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	VenusAerie_ShowMessage(IVAN);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x106, 40);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 20);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	Engine_ActorFaceDirection(21, FACING_WEST, 0);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x102, 40);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 20);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Engine_ActorFaceDirection(GERALD, FACING_WEST, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_WEST, 0);
-	Engine_ActorFaceDirection(MEARI, FACING_WEST, 0);
+	Engine_ActorFaceDirection(GARET, FACING_WEST, 0);
+	Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
+	Engine_ActorFaceDirection(MIA, FACING_WEST, 0);
 	Engine_ActorFaceDirection(21, FACING_EAST, 20);
 	Actor_ShowEmote(6, 0x101, 40);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorRunRepeatedMotion(6, 2);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(6, 3);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_SetSpeed(6, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(6, 260, 186);
 	Engine_ActorFaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -812,7 +812,7 @@ static void EV05_TOUCH(void)
 	object->facing = FACING_SOUTH + FACING_STEP;
 	Engine_TaskWait(1);
 	Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorJump(6, 2, 20);
 	Actor_SetSpeed(6, 0x26666, 0x13333);
 	Actor_WalkToAndWait(6, 260, 186);
@@ -836,29 +836,29 @@ static void EV05_TOUCH(void)
 	FieldScheduler_AddCallback(FieldScene_RunStep6, TASK_PRIORITY_SCENE);
 	Engine_EventWait(80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 20);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
 	Engine_ActorFaceDirection(21, FACING_EAST, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 0);
-	VinasuChojo_FaceActor(21, FACING_WEST);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 0);
+	VenusAerie_FaceActor(21, FACING_WEST);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 40);
 	Event_ShowMessageAndWait(0x2014, 0, 20);
 	Actor_ShowEmote(6, 0x105, 80);
 	Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Scheduler_RemoveCallback((u32)FieldScene_RunStep6);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(6, 0);
 	Engine_TaskWait(10);
 	SceneEffect_CleanupSceneObjects();
 	Engine_ActorJump(6, 2, 40);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorRunRepeatedMotion(6, 2);
 	Object_GetById(6)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(6, 250, 176);
@@ -866,9 +866,9 @@ static void EV05_TOUCH(void)
 	Object_GetById(6)->steering_flags |= ACTOR_FACES_MOTION;
 	Actor_ShowEmote(21, 0x103, 20);
 	Engine_ActorFaceDirection(21, FACING_EAST, 20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorRunRepeatedMotion(6, 2);
 	Engine_EventWait(40);
 	Actor_SetSpeed(6, 0x9999, 0x4ccc);
@@ -880,26 +880,26 @@ static void EV05_TOUCH(void)
 	Engine_ActorSetAnimationAndWait(6, 3);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Engine_ActorSetAnimationAndWait(6, 3);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x105, 0);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
 	Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 40);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 100);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Engine_EventWait(20);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
 	Event_OpenMessage(ACTOR_FIRST_OF_PAIR, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -913,68 +913,68 @@ static void EV05_TOUCH(void)
 		gEventWork->message += 1;
 		pending = 0;
 	}
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	if (pending != 0)
 	{
 		gEventWork->message += 1;
 	}
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 20);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 20);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
 	Event_OpenMessage(ACTOR_FIRST_OF_PAIR, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimation(IWAN, 3);
+		Engine_ActorSetAnimation(IVAN, 3);
 		pending = 1;
 	}
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimation(IWAN, 4);
+		Engine_ActorSetAnimation(IVAN, 4);
 		gEventWork->message += 1;
 		pending = 0;
 	}
-	VinasuChojo_ShowMessage(IWAN);
+	VenusAerie_ShowMessage(IVAN);
 	if (pending != 0)
 	{
 		gEventWork->message += 1;
 	}
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTH);
-	VinasuChojo_ShowMessage(GERALD);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	VenusAerie_FaceActor(GARET, FACING_SOUTH);
+	VenusAerie_ShowMessage(GARET);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	VinasuChojo_FaceActor(MEARI, FACING_WEST);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	VenusAerie_FaceActor(MIA, FACING_WEST);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
 	Event_ShowMessageAndWait(ACTOR_FIRST_OF_PAIR, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
 	Engine_EventWait(40);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorRunRepeatedMotion(21, 2);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(21, 0, 40);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_ShowEmote(21, 0x103, 60);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x105, 60);
 	Engine_ActorSetAnimationAndWait(21, 3);
 	Engine_EventWait(20);
@@ -987,7 +987,7 @@ static void EV05_TOUCH(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(21, 2);
 
-	message = MsgVinasuRobinHandedOverShamansRod;
+	message = MsgVenusIsaacHandedOverShamansRod;
 	Engine_MessageShowCentered(message, 1);
 	Actor_WalkToAndWait(21, 310, 192);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
@@ -996,12 +996,12 @@ static void EV05_TOUCH(void)
 	Actor_WalkToAndWait(21, 262, 176);
 	Engine_ActorFaceDirection(21, FACING_EAST, 40);
 	Engine_EventSetMessage((message + 1));
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_ShowMessage(0x2014);
 	Engine_ActorSetAnimationAndWait(21, 3);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-	VinasuChojo_FaceActor(21, FACING_WEST);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
+	VenusAerie_FaceActor(21, FACING_WEST);
 	Engine_ActorSetAnimationAndWait(21, 3);
 	Engine_ActorSetAnimationAndWait(6, 3);
 	Actor_SetSpeed(6, 0xcccc, 0x6666);
@@ -1013,14 +1013,14 @@ static void EV05_TOUCH(void)
 	object->facing = FACING_SOUTH + FACING_STEP;
 	Engine_TaskWait(1);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Engine_ActorRunRepeatedMotion(6, 2);
 	Engine_ActorFaceDirection(21, FACING_EAST, 0);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 20);
-	Engine_ActorJump(MEARI, 2, 20);
-	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
-	VinasuChojo_ShowMessage(MEARI);
+	Engine_ActorJump(MIA, 2, 20);
+	VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
+	VenusAerie_ShowMessage(MIA);
 	Engine_ActorFaceDirection(21, FACING_EAST, 0);
 	Engine_ActorFaceDirection(6, FACING_EAST, 0);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1028,91 +1028,91 @@ static void EV05_TOUCH(void)
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 0);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 40);
 	Event_PlayCue(29);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorFaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_NORTHWEST + FACING_STEP, 20);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	VinasuChojo_ShowMessage(IWAN);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	VenusAerie_ShowMessage(IVAN);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Engine_ActorFaceDirection(21, FACING_EAST, 0);
-	VinasuChojo_FaceActor(6, FACING_NORTH + FACING_STEP);
-	Engine_ActorSetAnimation(MEARI, 3);
-	VinasuChojo_ShowMessage(MEARI);
+	VenusAerie_FaceActor(6, FACING_NORTH + FACING_STEP);
+	Engine_ActorSetAnimation(MIA, 3);
+	VenusAerie_ShowMessage(MIA);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x100, 20);
 	Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 20);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_ShowEmote(6, 0x102, 0);
 	Actor_ShowEmote(21, 0x102, 60);
 	Engine_ActorFaceDirection(6, FACING_EAST, 0);
-	VinasuChojo_FaceActor(21, FACING_EAST);
-	Actor_ShowEmote(GERALD, 0x103, 40);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	VinasuChojo_ShowMessage(GERALD);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
+	VenusAerie_FaceActor(21, FACING_EAST);
+	Actor_ShowEmote(GARET, 0x103, 40);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	VenusAerie_ShowMessage(GARET);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
 	Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
 	Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorFaceDirection(6, FACING_NORTH + FACING_STEP, 0);
 	Actor_ShowEmote(6, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Event_ShowMessageAndWait(MIA, 0, 20);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
 	Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Event_ShowMessageAndWait(IWAN, 0, 20);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Event_ShowMessageAndWait(IVAN, 0, 20);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
 	Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 40);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
-	VinasuChojo_ShowMessage(MEARI);
-	Engine_ActorFaceDirection(GERALD, FACING_WEST, 20);
-	Actor_ShowEmote(GERALD, 0x103, 20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	VinasuChojo_ShowMessage(GERALD);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
+	VenusAerie_ShowMessage(MIA);
+	Engine_ActorFaceDirection(GARET, FACING_WEST, 20);
+	Actor_ShowEmote(GARET, 0x103, 20);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	VenusAerie_ShowMessage(GARET);
 	Engine_ActorFaceDirection(6, FACING_EAST, 0);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Engine_ActorFaceDirection(IWAN, FACING_WEST, 40);
+	Engine_ActorFaceDirection(IVAN, FACING_WEST, 40);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 40);
 	Engine_ActorStartRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	owner = PartyInventory_FindOwner(65);
 	GameFlag_Set(owner + 0x345);
 	PartyInventory_Remove(65);
 	Object_GetById(ACTOR_PARTY_LEADER)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(GERALD)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(IWAN)->steering_flags &= ~ACTOR_FACES_MOTION;
-	Object_GetById(MEARI)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(GARET)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(IVAN)->steering_flags &= ~ACTOR_FACES_MOTION;
+	Object_GetById(MIA)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(ACTOR_SECOND_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(ACTOR_FIRST_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(21)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Object_GetById(6)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, SceneAction_EntryGroup);
-	Engine_ActorEnableActionCallback(GERALD, SceneAction_EntryGroup);
-	Engine_ActorEnableActionCallback(IWAN, SceneAction_EntryGroup);
-	Engine_ActorEnableActionCallback(MEARI, SceneAction_EntryGroup);
+	Engine_ActorEnableActionCallback(GARET, SceneAction_EntryGroup);
+	Engine_ActorEnableActionCallback(IVAN, SceneAction_EntryGroup);
+	Engine_ActorEnableActionCallback(MIA, SceneAction_EntryGroup);
 	Engine_ActorEnableActionCallback(ACTOR_SECOND_OF_PAIR, SceneAction_EntryPair);
 	Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, SceneAction_EntryPair);
 	Engine_ActorEnableActionCallback(21, SceneAction_EntryGroup);
 	Object_SetActionCallbackAndRefreshById(6, SceneAction_EntryGroup);
 	Battle_SetStart(3);
 	{
-		s32 actor = (s32)&SceneId_VinasuChojo;
+		s32 actor = (s32)&SceneId_VenusAerie;
 
 		Party_SetFields1ceAnd1d0(actor, 2);
 		Event_SetDefeatDestination(actor, 9);
@@ -1133,7 +1133,7 @@ static void SceneEffect_UpdateObjectByFrameParity(s32 a)
 	}
 	if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0)
 	{
-		VinasuChojo_SpawnLinkedPairEffects(a);
+		VenusAerie_SpawnLinkedPairEffects(a);
 	}
 }
 
@@ -1145,14 +1145,14 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 	}
 	if (Math_RemainderUnsigned(gFrameCount, 15) == 0)
 	{
-		VinasuChojo_SpawnLinkedPairEffects(a);
+		VenusAerie_SpawnLinkedPairEffects(a);
 	}
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
 
-static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
+static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -1215,7 +1215,7 @@ static void FieldScene_RunStep6(void)
 	SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
 
-static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
+static inline void VenusAerie_AimBurst(s32 velocity[3], s32 angle)
 {
 	s32 sine;
 	s32 cosine;
@@ -1246,12 +1246,12 @@ static void Scene_RunPairedActorEffectSequence(void)
 
 	Event_Begin();
 	Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
-	Actor_Get(GERALD)->facing = FACING_WEST;
-	Actor_SetPosition(GERALD, PIXELS(328), PIXELS(168));
-	Actor_Get(IWAN)->facing = FACING_WEST;
-	Actor_SetPosition(IWAN, PIXELS(340), PIXELS(196));
-	Actor_Get(MEARI)->facing = FACING_WEST;
-	Actor_SetPosition(MEARI, PIXELS(326), PIXELS(204));
+	Actor_Get(GARET)->facing = FACING_WEST;
+	Actor_SetPosition(GARET, PIXELS(328), PIXELS(168));
+	Actor_Get(IVAN)->facing = FACING_WEST;
+	Actor_SetPosition(IVAN, PIXELS(340), PIXELS(196));
+	Actor_Get(MIA)->facing = FACING_WEST;
+	Actor_SetPosition(MIA, PIXELS(326), PIXELS(204));
 	Actor_Get(6)->facing = FACING_SOUTHEAST + FACING_STEP;
 	Actor_SetPosition(6, PIXELS(268), PIXELS(154));
 	Actor_Get(21)->facing = FACING_SOUTHEAST + FACING_STEP;
@@ -1261,14 +1261,14 @@ static void Scene_RunPairedActorEffectSequence(void)
 	actor->facing = FACING_NORTH + FACING_STEP;
 	Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(294), PIXELS(212));
 	Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 9);
-	Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, VinasuChojo_ScaleStepAction);
+	Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, VenusAerie_ScaleStepAction);
 	Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 0);
 	actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
 	actor->timer = 10;
 	actor->facing = FACING_EAST;
 	Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(286), PIXELS(192));
 	Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 7);
-	Actor_EnableActionCallback(ACTOR_SECOND_OF_PAIR, VinasuChojo_ScaleStepAction);
+	Actor_EnableActionCallback(ACTOR_SECOND_OF_PAIR, VenusAerie_ScaleStepAction);
 	Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 0);
 	Event_GetViewCenter()->motion_flags = 0;
 	Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
@@ -1279,14 +1279,14 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Event_WaitForScreen();
 	Event_Wait(80);
 
-	Actor_Jump(GERALD, 2, 20);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTHEAST);
-	Event_SetMessage(MsgVinasuBeatEm);
-	VinasuChojo_ShowMessage(0x1001);
-	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
-	VinasuChojo_ShowMessage(MEARI);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	VinasuChojo_FaceActor(IWAN, FACING_NORTHWEST);
+	Actor_Jump(GARET, 2, 20);
+	VenusAerie_FaceActor(GARET, FACING_SOUTHEAST);
+	Event_SetMessage(MsgVenusBeatEm);
+	VenusAerie_ShowMessage(0x1001);
+	VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
+	VenusAerie_ShowMessage(MIA);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	VenusAerie_FaceActor(IVAN, FACING_NORTHWEST);
 	Actor_RunRepeatedMotion(21, 2);
 	Actor_SetSpeed(21, 0xcccc, 0x6666);
 	Actor_Get(21)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -1294,32 +1294,32 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Event_Wait(1);
 	Actor_Get(21)->steering_flags |= ACTOR_FACES_MOTION;
 	Event_Wait(20);
-	Actor_ShowEmote(IWAN, 0x102, 40);
-	VinasuChojo_ShowMessage(IWAN);
+	Actor_ShowEmote(IVAN, 0x102, 40);
+	VenusAerie_ShowMessage(IVAN);
 	Actor_SetAnimationAndWait(21, 4);
-	VinasuChojo_ShowMessage(21);
-	Actor_ShowEmote(GERALD, 0x103, 20);
-	Actor_RunRepeatedMotion(GERALD, 1);
-	VinasuChojo_ShowMessage(GERALD);
+	VenusAerie_ShowMessage(21);
+	Actor_ShowEmote(GARET, 0x103, 20);
+	Actor_RunRepeatedMotion(GARET, 1);
+	VenusAerie_ShowMessage(GARET);
 	Actor_RunRepeatedMotion(21, 1);
-	VinasuChojo_FaceActor(21, FACING_EAST);
-	VinasuChojo_ShowMessage(21);
-	Actor_StartRepeatedMotion(MEARI, 2);
-	VinasuChojo_ShowMessage(MEARI);
-	Actor_SetAnimation(MEARI, 4);
-	VinasuChojo_ShowMessage(MEARI);
+	VenusAerie_FaceActor(21, FACING_EAST);
+	VenusAerie_ShowMessage(21);
+	Actor_StartRepeatedMotion(MIA, 2);
+	VenusAerie_ShowMessage(MIA);
+	Actor_SetAnimation(MIA, 4);
+	VenusAerie_ShowMessage(MIA);
 	Actor_ShowEmote(21, 0x105, 40);
-	VinasuChojo_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
-	VinasuChojo_ShowMessage(21);
-	Actor_Jump(IWAN, 2, 20);
-	VinasuChojo_ShowMessage(IWAN);
+	VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
+	VenusAerie_ShowMessage(21);
+	Actor_Jump(IVAN, 2, 20);
+	VenusAerie_ShowMessage(IVAN);
 	Actor_SetAnimationAndWait(21, 3);
-	VinasuChojo_ShowMessage(21);
-	Actor_RunRepeatedMotion(GERALD, 1);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTHEAST);
-	Event_OpenMessage(GERALD, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 0);
+	VenusAerie_ShowMessage(21);
+	Actor_RunRepeatedMotion(GARET, 1);
+	VenusAerie_FaceActor(GARET, FACING_SOUTHEAST);
+	Event_OpenMessage(GARET, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
 	if (Event_ChooseYesNo(0, 0) == 0)
 	{
 		i = TRUE;
@@ -1330,10 +1330,10 @@ static void Scene_RunPairedActorEffectSequence(void)
 		i = FALSE;
 	}
 	Task_Wait(20);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
-	VinasuChojo_FaceActor(21, FACING_EAST);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
+	VenusAerie_FaceActor(21, FACING_EAST);
 	Event_ShowMessage(21, 0);
 	Event_PlayCue(17);
 	Event_Wait(40);
@@ -1352,12 +1352,12 @@ static void Scene_RunPairedActorEffectSequence(void)
 	actor->scale_x = 0x10000;
 	actor->scale_y = 0x10000;
 	Task_Wait(1);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 40);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 40);
 	Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 1);
 	Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 1);
 	Event_Wait(20);
@@ -1387,32 +1387,32 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Event_Wait(20);
 	Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Event_Wait(80);
-	Actor_SetAnimationAndWait(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_SetAnimationAndWait(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
 	Event_Wait(40);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 40);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 20);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 20);
 
 	actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
 	actor->facing = FACING_SOUTHEAST + FACING_STEP;
 	actor->scale_x = 0x10000;
 	Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 1);
 	Event_Wait(10);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
 	Actor_Jump(ACTOR_FIRST_OF_PAIR, 6, 0);
 	Event_Wait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_EAST, 0);
 	star = (union FieldObject *)Object_Create(
@@ -1480,47 +1480,47 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Actor_ShowEmote(21, 0x100, 0);
 	Actor_ShowEmote(6, 0x100, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 30);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 30);
 	Actor_SetSpritePriority(21, 1);
 	Actor_Get(21)->priority_flags |= 1;
-	Actor_StartRepeatedMotion(IWAN, 2);
-	VinasuChojo_ShowMessage(IWAN);
-	Actor_RunRepeatedMotion(MEARI, 1);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
+	Actor_StartRepeatedMotion(IVAN, 2);
+	VenusAerie_ShowMessage(IVAN);
+	Actor_RunRepeatedMotion(MIA, 1);
+	Event_ShowMessageAndWait(MIA, 0, 40);
 	Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
 	Event_Wait(20);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 0);
 	Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 0);
-	VinasuChojo_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
+	VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
 	Actor_ShowEmote(21, 0x101, 0);
 	Actor_ShowEmote(6, 0x101, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 60);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 60);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 40);
-	Event_OpenMessage(GERALD, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 40);
+	Event_OpenMessage(GARET, 0);
 	if (Event_ChooseYesNo(0, 0) == 0)
 	{
-		Actor_SetAnimation(GERALD, ANIM_NOD);
+		Actor_SetAnimation(GARET, ANIM_NOD);
 		i = TRUE;
 	}
 	else
 	{
 		gEventWork->message++;
-		Actor_SetAnimation(GERALD, ANIM_SHAKE_HEAD);
+		Actor_SetAnimation(GARET, ANIM_SHAKE_HEAD);
 		i = FALSE;
 	}
-	VinasuChojo_ShowMessage(GERALD);
+	VenusAerie_ShowMessage(GARET);
 	if (i)
 	{
 		gEventWork->message++;
@@ -1548,16 +1548,16 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Actor_ShowEmote(21, 0x100, 0);
 	Actor_ShowEmote(6, 0x100, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_EAST, 0);
-	Actor_EnableActionCallback(24, VinasuChojo_BeamOpenAction);
-	Actor_EnableActionCallback(25, VinasuChojo_BeamOpenAction);
+	Actor_EnableActionCallback(24, VenusAerie_BeamOpenAction);
+	Actor_EnableActionCallback(25, VenusAerie_BeamOpenAction);
 	Event_PlayCue(145);
 	Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
 	ColorBuffer_ApplyTarget(0x4063ff, 0);
@@ -1571,8 +1571,8 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	ColorBuffer_ApplyTarget(0x4063ff, 0);
 	ColorBuffer_Interpolate(120);
-	Actor_EnableActionCallback(24, VinasuChojo_BeamNarrowAction);
-	Actor_EnableActionCallback(25, VinasuChojo_BeamNarrowAction);
+	Actor_EnableActionCallback(24, VenusAerie_BeamNarrowAction);
+	Actor_EnableActionCallback(25, VenusAerie_BeamNarrowAction);
 	Task_Wait(120);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	ColorBuffer_ApplyTarget(0x203210, 0);
@@ -1592,136 +1592,136 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
 	Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 0);
 	Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 20);
 	Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
-	Actor_RunRepeatedMotion(MEARI, 1);
-	VinasuChojo_FaceActor(MEARI, FACING_WEST);
-	VinasuChojo_ShowMessage(MEARI);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	Actor_RunRepeatedMotion(MIA, 1);
+	VenusAerie_FaceActor(MIA, FACING_WEST);
+	VenusAerie_ShowMessage(MIA);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
 	Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
 	Actor_StartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	Actor_ShowEmote(GERALD, 0x100, 20);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTHWEST);
-	VinasuChojo_ShowMessage(GERALD);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	Actor_ShowEmote(GARET, 0x100, 20);
+	VenusAerie_FaceActor(GARET, FACING_SOUTHWEST);
+	VenusAerie_ShowMessage(GARET);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
 	Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
 	Event_ShowMessageAndWait(ACTOR_FIRST_OF_PAIR, 0, 20);
-	Actor_RunRepeatedMotion(GERALD, 1);
-	VinasuChojo_ShowMessage(GERALD);
+	Actor_RunRepeatedMotion(GARET, 1);
+	VenusAerie_ShowMessage(GARET);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
 	Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Actor_StartRepeatedMotion(GERALD, 1);
-	Actor_StartRepeatedMotion(IWAN, 1);
-	Actor_RunRepeatedMotion(MEARI, 1);
+	Actor_StartRepeatedMotion(GARET, 1);
+	Actor_StartRepeatedMotion(IVAN, 1);
+	Actor_RunRepeatedMotion(MIA, 1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
 	Actor_ShowEmote(21, 0x101, 80);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 40);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
 	Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 20);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
-	VinasuChojo_ShowMessage(0x2014);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 20);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_SetAnimationAndWait(21, 3);
 	Actor_FaceDirection(21, FACING_NORTHWEST + FACING_STEP, 60);
 	Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 40);
 	Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_FaceDirection(21, FACING_EAST, 40);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP, 40);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
-	VinasuChojo_ShowMessage(0x2014);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+	VenusAerie_ShowMessage(0x2014);
 	Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 40);
 	Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 20);
 	Actor_SetAnimationAndWait(21, 3);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 40);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
 	Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 40);
-	VinasuChojo_ShowMessage(0x2013);
-	VinasuChojo_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
+	VenusAerie_ShowMessage(0x2013);
+	VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
 	Actor_ShowEmote(21, 0x101, 20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
 	Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x103, 80);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_SetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x103, 20);
 	Actor_StartRepeatedMotion(21, 2);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(0x2013);
+	VenusAerie_ShowMessage(0x2013);
 	Actor_ShowEmote(21, 0x102, 60);
 	Actor_RunRepeatedMotion(21, 1);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
 	Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 4);
 	Event_ShowMessageAndWait(0x2014, 0, 40);
 	Actor_RunRepeatedMotion(21, 1);
 	Event_Wait(20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 20);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
 	Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 20);
 	Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 3);
 	Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
 	Actor_FaceDirection(21, FACING_NORTHWEST + FACING_STEP, 20);
-	VinasuChojo_ShowMessage(0xa015);
+	VenusAerie_ShowMessage(0xa015);
 	Actor_SetSpeed(6, 0x10000, 0x8000);
 	Actor_SetSpeed(21, 0x10000, 0x8000);
-	Actor_EnableActionCallback(21, VinasuChojo_WalkOutAction);
+	Actor_EnableActionCallback(21, VenusAerie_WalkOutAction);
 	Event_Wait(20);
-	Actor_EnableActionCallback(6, VinasuChojo_WalkOutAction);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTHWEST);
-	Actor_StartRepeatedMotion(GERALD, 2);
-	VinasuChojo_ShowMessage(GERALD);
+	Actor_EnableActionCallback(6, VenusAerie_WalkOutAction);
+	VenusAerie_FaceActor(GARET, FACING_SOUTHWEST);
+	Actor_StartRepeatedMotion(GARET, 2);
+	VenusAerie_ShowMessage(GARET);
 	Event_PlayCue(17);
 	ColorBuffer_ApplyTarget(0x40250d, 1);
 	ColorBuffer_Interpolate(40);
-	VinasuChojo_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 0);
-	VinasuChojo_FlashScreen();
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 0);
+	VenusAerie_FlashScreen();
 	Actor_SetChildValue(ACTOR_FIRST_OF_PAIR, 7);
 	Actor_SetChildValue(ACTOR_SECOND_OF_PAIR, 7);
 	Event_Wait(20);
 	Actor_SetChildValue(ACTOR_FIRST_OF_PAIR, 0x100);
 	Actor_SetChildValue(ACTOR_SECOND_OF_PAIR, 0x100);
 	Event_Wait(20);
-	VinasuChojo_FlashScreen();
-	Actor_Jump(MEARI, 2, 20);
-	VinasuChojo_ShowMessage(MEARI);
-	VinasuChojo_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-	VinasuChojo_ShowMessage(ACTOR_SECOND_OF_PAIR);
-	VinasuChojo_FlashScreen();
+	VenusAerie_FlashScreen();
+	Actor_Jump(MIA, 2, 20);
+	VenusAerie_ShowMessage(MIA);
+	VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
+	VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+	VenusAerie_FlashScreen();
 
 	second = Actor_Get(ACTOR_SECOND_OF_PAIR);
 	second_burst.palette = 7;
@@ -1730,14 +1730,14 @@ static void Scene_RunPairedActorEffectSequence(void)
 	second_burst.start_scale_y = 0x10000;
 	for (i = 0; i <= 16; i++)
 	{
-		VinasuChojo_AimBurst(velocity, i << 12);
+		VenusAerie_AimBurst(velocity, i << 12);
 		Effect_Spawn(second->x.fixed, second->y.fixed, second->z.fixed, velocity[0], velocity[1],
 			velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
 			&second_burst);
 	}
 	Event_PlayCue(212);
 	Task_Wait(6);
-	VinasuChojo_FlashScreen();
+	VenusAerie_FlashScreen();
 	first = Actor_Get(ACTOR_FIRST_OF_PAIR);
 	first_burst.palette = 7;
 	first_burst.update = Effect_MoveWithDrag;
@@ -1745,43 +1745,43 @@ static void Scene_RunPairedActorEffectSequence(void)
 	first_burst.start_scale_y = 0x10000;
 	for (i = 0; i <= 16; i++)
 	{
-		VinasuChojo_AimBurst(velocity, i << 12);
+		VenusAerie_AimBurst(velocity, i << 12);
 		Effect_Spawn(first->x.fixed, first->y.fixed, first->z.fixed, velocity[0], velocity[1],
 			velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
 			&first_burst);
 	}
 	Event_PlayCue(212);
-	Actor_Jump(IWAN, 6, 20);
+	Actor_Jump(IVAN, 6, 20);
 	Event_PlayCue(54);
-	VinasuChojo_ShowMessage(IWAN);
+	VenusAerie_ShowMessage(IVAN);
 	Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 4);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
-	VinasuChojo_FlashScreen();
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	VenusAerie_FlashScreen();
 	Actor_SetSpeed(ACTOR_FIRST_OF_PAIR, 0x3333, 0x1999);
 	Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x3333, 0x1999);
 	Actor_Get(ACTOR_FIRST_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_Get(ACTOR_SECOND_OF_PAIR)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_SetDestination(ACTOR_FIRST_OF_PAIR, 0x126, 196);
 	Actor_SetDestination(ACTOR_SECOND_OF_PAIR, 0x126, 196);
-	Task_AddCallback(VinasuChojo_UpdateBeamActors, TASK_PRIORITY_SCENE);
-	Actor_StartRepeatedMotion(GERALD, 2);
-	Event_ShowMessage(GERALD, 0);
+	Task_AddCallback(VenusAerie_UpdateBeamActors, TASK_PRIORITY_SCENE);
+	Actor_StartRepeatedMotion(GARET, 2);
+	Event_ShowMessage(GARET, 0);
 	GameFlag_Set(FLAG_PAIR_SLIDING);
-	Event_ShowMessage(IWAN, 0);
+	Event_ShowMessage(IVAN, 0);
 	GameFlag_Set(FLAG_PAIR_GROWING);
-	VinasuChojo_FlashScreen();
+	VenusAerie_FlashScreen();
 	Event_Wait(20);
-	VinasuChojo_FlashScreen();
+	VenusAerie_FlashScreen();
 	Event_Wait(20);
 	Battle_SetStart(3);
-	Party_SetFields1ceAnd1d0((s32)&SceneId_VinasuChojo, 3);
-	Event_SetDefeatDestination((s32)&SceneId_VinasuChojo, 9);
+	Party_SetFields1ceAnd1d0((s32)&SceneId_VenusAerie, 3);
+	Event_SetDefeatDestination((s32)&SceneId_VenusAerie, 9);
 	BattleFx_SetWeightedResult(98, 0);
 	Owner_RefreshRatiosOnFlag();
 	GameFlag_Set(0x351);
 }
 
-static void VinasuChojo_FlashScreen(void)
+static void VenusAerie_FlashScreen(void)
 {
 	Engine_AudioPlayCue(187);
 	Engine_ColorBufferApplyTarget(0x7fff, 1);
@@ -1792,7 +1792,7 @@ static void VinasuChojo_FlashScreen(void)
 	Engine_TaskWait(1);
 }
 
-union ChojoOrbitEffect
+union AerieOrbitEffect
 {
 	s32 words[26];
 	struct
@@ -1818,7 +1818,7 @@ enum
 	ORBIT_CENTER_ACTOR = 24
 };
 
-static void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
+static void SceneEffect_UpdateOrbitAroundActor(union AerieOrbitEffect *effect)
 {
 	struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
 	u16				   angle = effect->orbit.angle;
@@ -1861,7 +1861,7 @@ static void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 static void SceneEffect_SpawnParticlesAboveActor(void)
 {
 	struct FieldActor	   *center;
-	union ChojoOrbitEffect *effect;
+	union AerieOrbitEffect *effect;
 	struct FieldSprite	   *sprite;
 	s32						angle;
 
@@ -1872,20 +1872,20 @@ static void SceneEffect_SpawnParticlesAboveActor(void)
 	center = Actor_Get(ORBIT_CENTER_ACTOR);
 	if (GameFlag_IsSet(0x236) != 0)
 	{
-		effect = (union ChojoOrbitEffect *)Object_Create(284, center->x.fixed,
+		effect = (union AerieOrbitEffect *)Object_Create(284, center->x.fixed,
 			(s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
 			center->z.fixed);
 	}
 	else
 	{
-		effect = (union ChojoOrbitEffect *)Object_Create(284, center->x.fixed,
+		effect = (union AerieOrbitEffect *)Object_Create(284, center->x.fixed,
 			(s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
 			center->z.fixed);
 	}
 	if (effect != 0)
 	{
 		sprite = ((struct FieldEffect *)effect)->sprite;
-		Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
+		Object_SetScript((struct FieldActor *)effect, VenusAerie_OrbitParticleScript);
 		ObjectGroup_SetChildValue((struct FieldActor *)effect, 1);
 		((struct FieldEffect *)effect)->motion_flags = 0;
 		angle = Random_Next() & 0xffff000;
@@ -1915,7 +1915,7 @@ static __inline__ s32 Actor_IsParked(struct FieldActor *actor)
 	return 0;
 }
 
-static void VinasuChojo_UpdateBeamActors(void)
+static void VenusAerie_UpdateBeamActors(void)
 {
 	struct FieldActor *first;
 	struct FieldActor *second;
@@ -1975,7 +1975,7 @@ static void FieldScene_RunThreeStepsInBracket(void)
 	Engine_EventBegin();
 	FieldScene_RunPairDefeat();
 	FieldScene_RunMultiActorPresentation();
-	VinasuChojo_RunActorTransition();
+	VenusAerie_RunActorTransition();
 	Engine_EventEnd();
 }
 
@@ -1983,7 +1983,7 @@ static void FieldScene_RunBracketedSceneWithFlag282(void)
 {
 	Engine_EventBegin();
 	FieldScene_RestageParty();
-	VinasuChojo_TryToPreventFall();
+	VenusAerie_TryToPreventFall();
 	Engine_GameFlagSet(141 << 1);
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
@@ -1995,7 +1995,7 @@ static void FieldScene_RunBracketedSceneWithFlag282(void)
 	Engine_EventEnd();
 }
 
-static void VinasuChojo_RunLeapEntrance(void)
+static void VenusAerie_RunLeapEntrance(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -2023,25 +2023,25 @@ static void VinasuChojo_RunLeapEntrance(void)
 	leader->y.fixed = PIXELS(32);
 	leader->facing = FACING_SOUTHWEST;
 	SceneActor_ParkRecord(leader);
-	Engine_ActorSetAnimation(GERALD, 18);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
-	actor = Actor_Get(GERALD);
+	Engine_ActorSetAnimation(GARET, 18);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
+	actor = Actor_Get(GARET);
 	actor->x.fixed = PIXELS(356);
 	actor->z.fixed = PIXELS(192);
 	actor->facing = FACING_NORTHWEST;
 	actor->y.fixed = PIXELS(32);
 	SceneActor_ParkRecord(actor);
-	Engine_ActorSetAnimation(IWAN, 18);
-	Engine_ActorSetSpriteFlags(Actor_Get(IWAN), 0);
-	actor = Actor_Get(IWAN);
+	Engine_ActorSetAnimation(IVAN, 18);
+	Engine_ActorSetSpriteFlags(Actor_Get(IVAN), 0);
+	actor = Actor_Get(IVAN);
 	actor->x.fixed = PIXELS(360);
 	actor->facing = FACING_SOUTHEAST;
 	actor->y.fixed = PIXELS(32);
 	actor->z.fixed = PIXELS(222);
 	SceneActor_ParkRecord(actor);
-	Engine_ActorSetAnimation(MEARI, 18);
-	Engine_ActorSetSpriteFlags(Actor_Get(MEARI), 0);
-	actor = Actor_Get(MEARI);
+	Engine_ActorSetAnimation(MIA, 18);
+	Engine_ActorSetSpriteFlags(Actor_Get(MIA), 0);
+	actor = Actor_Get(MIA);
 	actor->x.fixed = PIXELS(334);
 	actor->facing = FACING_WEST;
 	actor->y.fixed = PIXELS(32);
@@ -2087,12 +2087,12 @@ static void FieldScene_RunPairDefeat(void)
 	Event_PlayCue(141);
 	Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
 	Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHWEST;
-	Actor_Get(GERALD)->facing = FACING_NORTHWEST;
-	Actor_SetPosition(GERALD, PIXELS(328), PIXELS(168));
-	Actor_Get(IWAN)->facing = FACING_NORTHWEST;
-	Actor_SetPosition(IWAN, PIXELS(340), PIXELS(196));
-	Actor_Get(MEARI)->facing = FACING_NORTHWEST;
-	Actor_SetPosition(MEARI, PIXELS(326), PIXELS(204));
+	Actor_Get(GARET)->facing = FACING_NORTHWEST;
+	Actor_SetPosition(GARET, PIXELS(328), PIXELS(168));
+	Actor_Get(IVAN)->facing = FACING_NORTHWEST;
+	Actor_SetPosition(IVAN, PIXELS(340), PIXELS(196));
+	Actor_Get(MIA)->facing = FACING_NORTHWEST;
+	Actor_SetPosition(MIA, PIXELS(326), PIXELS(204));
 	Actor_Get(21)->facing = FACING_NORTH + FACING_STEP;
 	Actor_SetPosition(21, PIXELS(200), PIXELS(216));
 	Actor_Get(6)->facing = FACING_NORTH + FACING_STEP;
@@ -2136,8 +2136,8 @@ static void FieldScene_RunPairDefeat(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
 	Engine_EventWait(10);
-	Engine_EventSetMessage(MsgVinasuPairDefeated);
-	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
+	Engine_EventSetMessage(MsgVenusPairDefeated);
+	VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 40);
@@ -2187,68 +2187,68 @@ static void FieldScene_RunMultiActorPresentation(void)
 	s32 request_a;
 	s32 request_b;
 
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(20);
-	Event_ShowMessageAndWait(GERALD, 0, 20);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Event_ShowMessageAndWait(GARET, 0, 20);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Event_OpenMessage(IWAN, 0);
-	Actor_FaceDirection(IWAN, 0xc000, 0);
-	VinasuChojo_FaceActor(0, 0x4000);
+	Event_OpenMessage(IVAN, 0);
+	Actor_FaceDirection(IVAN, 0xc000, 0);
+	VenusAerie_FaceActor(0, 0x4000);
 	count_flag = 0;
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(IWAN, 4);
+		Engine_ActorSetAnimationAndWait(IVAN, 4);
 		count_flag = 1;
 	}
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
 		gEventWork->message += 1;
 	}
-	VinasuChojo_ShowMessage(2);
+	VenusAerie_ShowMessage(2);
 	if (count_flag != 0)
 	{
 		gEventWork->message += 1;
 	}
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
 	request_a = 0x1001;
-	Actor_WalkToAndWait(GERALD, 0x141, 174);
-	VinasuChojo_FaceActor(1, 0x2000);
-	VinasuChojo_ShowMessage(request_a);
+	Actor_WalkToAndWait(GARET, 0x141, 174);
+	VenusAerie_FaceActor(1, 0x2000);
+	VenusAerie_ShowMessage(request_a);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-	Actor_FaceDirection(IWAN, 0xa000, 0);
-	VinasuChojo_FaceActor(3, 0xc000);
-	VinasuChojo_FaceActor(1, 0x4000);
-	VinasuChojo_ShowMessage(request_a);
-	Actor_ShowEmote(GERALD, 0x105, 40);
-	Actor_FaceDirection(GERALD, 0x2000, 20);
-	VinasuChojo_ShowMessage(request_a);
-	Actor_FaceDirection(GERALD, 0xa000, 40);
+	Actor_FaceDirection(IVAN, 0xa000, 0);
+	VenusAerie_FaceActor(3, 0xc000);
+	VenusAerie_FaceActor(1, 0x4000);
+	VenusAerie_ShowMessage(request_a);
+	Actor_ShowEmote(GARET, 0x105, 40);
+	Actor_FaceDirection(GARET, 0x2000, 20);
+	VenusAerie_ShowMessage(request_a);
+	Actor_FaceDirection(GARET, 0xa000, 40);
 	Event_ShowMessageAndWait(0x8001, 0, 40);
-	Actor_FaceDirection(GERALD, 0x2000, 20);
-	VinasuChojo_ShowMessage(request_a);
+	Actor_FaceDirection(GARET, 0x2000, 20);
+	VenusAerie_ShowMessage(request_a);
 	Event_PlayCue(17);
-	Engine_ActorSetAnimation(MEARI, 4);
-	VinasuChojo_ShowMessage(3);
-	Actor_FaceDirection(GERALD, 0x4000, 80);
-	Actor_FaceDirection(MEARI, 0x6000, 80);
-	Actor_ShowEmote(MEARI, 0x100, 40);
+	Engine_ActorSetAnimation(MIA, 4);
+	VenusAerie_ShowMessage(3);
+	Actor_FaceDirection(GARET, 0x4000, 80);
+	Actor_FaceDirection(MIA, 0x6000, 80);
+	Actor_ShowEmote(MIA, 0x100, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 60);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	VinasuChojo_FaceActor(2, 0xc000);
-	Actor_ShowEmote(IWAN, 0x101, 60);
-	Actor_FaceDirection(IWAN, 0x6000, 40);
-	Engine_ActorJump(IWAN, 4, 60);
-	VinasuChojo_FaceActor(1, 0x2000);
-	Actor_ShowEmote(GERALD, 0x101, 40);
-	VinasuChojo_ShowMessage(request_a);
-	Actor_FaceDirection(GERALD, 0x6000, 40);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Engine_ActorJump(GERALD, 4, 40);
-	VinasuChojo_ShowMessage(1);
+	VenusAerie_FaceActor(2, 0xc000);
+	Actor_ShowEmote(IVAN, 0x101, 60);
+	Actor_FaceDirection(IVAN, 0x6000, 40);
+	Engine_ActorJump(IVAN, 4, 60);
+	VenusAerie_FaceActor(1, 0x2000);
+	Actor_ShowEmote(GARET, 0x101, 40);
+	VenusAerie_ShowMessage(request_a);
+	Actor_FaceDirection(GARET, 0x6000, 40);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Engine_ActorJump(GARET, 4, 40);
+	VenusAerie_ShowMessage(1);
 	Actor_SetSpeed(21, 0xcccc, 0x6666);
 	Actor_SetDestination(21, 200, 188);
 	Actor_SetDestination(6, 200, 204);
@@ -2258,49 +2258,49 @@ static void FieldScene_RunMultiActorPresentation(void)
 	Engine_EventWait(40);
 	Event_PlayCue(23);
 	Actor_SetAttachedEffect(21, 0x102);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorRunRepeatedMotion(21, 1);
 	Engine_EventWait(20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Engine_ActorSetAnimationAndWait(21, 4);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(21, 0x3000, 20);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_SetAttachedEffect(6, 0x102);
 	request_b = 0x2003;
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	VinasuChojo_ShowMessage(request_b);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	VenusAerie_ShowMessage(request_b);
 	Engine_ActorRunRepeatedMotion(21, 2);
 	Engine_EventWait(20);
-	VinasuChojo_ShowMessage(0x2002);
-	VinasuChojo_FaceActor(21, 0xe000);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	VinasuChojo_ShowMessage(1);
+	VenusAerie_ShowMessage(0x2002);
+	VenusAerie_FaceActor(21, 0xe000);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	VenusAerie_ShowMessage(1);
 	Engine_ActorRunRepeatedMotion(21, 1);
 	Event_ShowMessageAndWait(21, 0, 20);
-	VinasuChojo_ShowMessage(request_b);
+	VenusAerie_ShowMessage(request_b);
 	Engine_ActorSetAnimationAndWait(21, 4);
-	VinasuChojo_ShowMessage(21);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	VinasuChojo_ShowMessage(0x2002);
+	VenusAerie_ShowMessage(21);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	VenusAerie_ShowMessage(0x2002);
 	Engine_ActorSetAnimation(21, 3);
-	VinasuChojo_ShowMessage(21);
-	Actor_ShowEmote(GERALD, 0x103, 40);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	VinasuChojo_ShowMessage(1);
+	VenusAerie_ShowMessage(21);
+	Actor_ShowEmote(GARET, 0x103, 40);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	VenusAerie_ShowMessage(1);
 	Engine_ActorSetAnimation(21, 4);
-	VinasuChojo_ShowMessage(21);
+	VenusAerie_ShowMessage(21);
 	Actor_FaceDirection(21, 0x5000, 20);
-	Engine_ActorJump(MEARI, 4, 20);
+	Engine_ActorJump(MIA, 4, 20);
 	Event_ShowMessageAndWait(request_b, 0, 20);
 	Actor_ShowEmote(21, 0x103, 40);
 }
 
-static s32 VinasuChojo_TransitionTimer;
-static s32 VinasuChojo_TransitionStep;
+static s32 VenusAerie_TransitionTimer;
+static s32 VenusAerie_TransitionStep;
 
-static void VinasuChojo_RunActorTransition(void)
+static void VenusAerie_RunActorTransition(void)
 {
 	struct FieldActor *lower;
 	struct FieldActor *middle;
@@ -2311,15 +2311,15 @@ static void VinasuChojo_RunActorTransition(void)
 	Engine_AudioPlayCue(0x120);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
 	Actor_ShowEmote(21, 0x100, 0);
 	Actor_ShowEmote(6, 0x100, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
 	Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 0);
 	Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
@@ -2329,8 +2329,8 @@ static void VinasuChojo_RunActorTransition(void)
 	Engine_CameraWaitForMove();
 	Object_GetById(24)->scale_x = 0x1999;
 	Object_GetById(25)->scale_x = 0x1999;
-	Engine_ActorEnableActionCallback(24, VinasuChojo_BeamOpenAction);
-	Engine_ActorEnableActionCallback(25, VinasuChojo_BeamOpenAction);
+	Engine_ActorEnableActionCallback(24, VenusAerie_BeamOpenAction);
+	Engine_ActorEnableActionCallback(25, VenusAerie_BeamOpenAction);
 	Engine_AudioPlayCue(145);
 	Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
 	ColorBuffer_ApplyTarget(0x4063ff, 0);
@@ -2393,15 +2393,15 @@ static void VinasuChojo_RunActorTransition(void)
 	actor->x.fixed += PIXELS(16);
 	actor->z.fixed += PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(GERALD);
+	actor = Object_GetById(GARET);
 	actor->x.fixed += PIXELS(16);
 	actor->z.fixed += PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(IWAN);
+	actor = Object_GetById(IVAN);
 	actor->x.fixed += PIXELS(16);
 	actor->z.fixed += PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(MEARI);
+	actor = Object_GetById(MIA);
 	actor->x.fixed += PIXELS(16);
 	actor->z.fixed += PIXELS(16);
 	SceneActor_ParkRecord(actor);
@@ -2413,11 +2413,11 @@ static void VinasuChojo_RunActorTransition(void)
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	Engine_ColorBufferApplyTarget(0x4063ff, 0);
 	Engine_ColorBufferInterpolate(120);
-	Engine_ActorEnableActionCallback(24, VinasuChojo_BeamRiseAction);
-	Engine_ActorEnableActionCallback(25, VinasuChojo_BeamRiseAction);
-	Engine_ActorEnableActionCallback(26, VinasuChojo_BeamRiseAction);
-	Engine_ActorEnableActionCallback(27, VinasuChojo_BeamRiseAction);
-	Engine_ActorEnableActionCallback(28, VinasuChojo_BeamRiseAction);
+	Engine_ActorEnableActionCallback(24, VenusAerie_BeamRiseAction);
+	Engine_ActorEnableActionCallback(25, VenusAerie_BeamRiseAction);
+	Engine_ActorEnableActionCallback(26, VenusAerie_BeamRiseAction);
+	Engine_ActorEnableActionCallback(27, VenusAerie_BeamRiseAction);
+	Engine_ActorEnableActionCallback(28, VenusAerie_BeamRiseAction);
 	Engine_TaskWait(120);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_ColorBufferApplyTarget(0x203210, 0);
@@ -2429,43 +2429,43 @@ static void VinasuChojo_RunActorTransition(void)
 	Engine_TaskWait(120);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Object_GetById(24)->scale_y = 0x51e;
-	Engine_ActorEnableActionCallback(25, VinasuChojo_BeamCloseAction);
-	Engine_ActorEnableActionCallback(26, VinasuChojo_BeamCloseAction);
-	Engine_ActorEnableActionCallback(27, VinasuChojo_BeamCloseAction);
-	Object_SetActionCallbackAndRefreshById(28, VinasuChojo_BeamCloseAction);
+	Engine_ActorEnableActionCallback(25, VenusAerie_BeamCloseAction);
+	Engine_ActorEnableActionCallback(26, VenusAerie_BeamCloseAction);
+	Engine_ActorEnableActionCallback(27, VenusAerie_BeamCloseAction);
+	Object_SetActionCallbackAndRefreshById(28, VenusAerie_BeamCloseAction);
 	Engine_AudioPlayCue(0x121);
 	Engine_ActorSetChildValue(24, 15);
 	Engine_EventWait(20);
-	Object_SetActionCallbackAndRefreshById(24, VinasuChojo_BeamEndAction);
+	Object_SetActionCallbackAndRefreshById(24, VenusAerie_BeamEndAction);
 	Scheduler_RemoveCallback((u32)SceneEffect_SpawnParticlesAboveActor);
-	Engine_ActorJump(IWAN, 2, 20);
-	VinasuChojo_ShowMessage(IWAN);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 20);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Engine_ActorJump(IVAN, 2, 20);
+	VenusAerie_ShowMessage(IVAN);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	VinasuChojo_ShowMessage(GERALD);
-	Actor_SetSpeed(MEARI, 0xcccc, 0x6666);
-	Engine_ActorWalkToAndWait(MEARI, 326, 220);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	VenusAerie_ShowMessage(GARET);
+	Actor_SetSpeed(MIA, 0xcccc, 0x6666);
+	Engine_ActorWalkToAndWait(MIA, 326, 220);
 	Engine_EventWait(40);
-	Engine_ActorSetAttachedEffect(MEARI, 0x102);
-	VinasuChojo_ShowMessage(MEARI);
+	Engine_ActorSetAttachedEffect(MIA, 0x102);
+	VenusAerie_ShowMessage(MIA);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	actor->rise_counter = 0;
 	actor->rise_enabled = 1;
 	actor->rise_base_y = actor->y.fixed;
 	actor->facing = FACING_NORTHWEST;
-	actor = Actor_Get(GERALD);
+	actor = Actor_Get(GARET);
 	actor->rise_counter = 0;
 	actor->rise_enabled = 1;
 	actor->facing = FACING_NORTHWEST;
 	actor->rise_base_y = actor->y.fixed;
-	actor = Actor_Get(IWAN);
+	actor = Actor_Get(IVAN);
 	actor->rise_counter = 0;
 	actor->rise_enabled = 1;
 	actor->facing = FACING_NORTHWEST;
 	actor->rise_base_y = actor->y.fixed;
-	actor = Actor_Get(MEARI);
+	actor = Actor_Get(MIA);
 	actor->rise_counter = 0;
 	actor->rise_enabled = 1;
 	actor->facing = FACING_NORTHWEST;
@@ -2482,9 +2482,9 @@ static void VinasuChojo_RunActorTransition(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(PARTICLE_SOURCE_ACTOR), 0);
 	Engine_ActorSetChildValue(PARTICLE_SOURCE_ACTOR, 7);
 	Engine_ActorSetSpritePriority(PARTICLE_SOURCE_ACTOR, 2);
-	VinasuChojo_TransitionStep = 0;
-	VinasuChojo_TransitionTimer = 240;
-	FieldScheduler_AddCallback(VinasuChojo_RunTransitionStep, TASK_PRIORITY_SCENE);
+	VenusAerie_TransitionStep = 0;
+	VenusAerie_TransitionTimer = 240;
+	FieldScheduler_AddCallback(VenusAerie_RunTransitionStep, TASK_PRIORITY_SCENE);
 	do
 	{
 		Engine_TaskWait(1);
@@ -2525,13 +2525,13 @@ static void FieldScene_RestageParty(void)
 	Engine_TaskWait(1);
 	Event_PlayCue(SOUND_ITEM_BREAK);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-	Engine_ActorSetAnimation(GERALD, 18);
-	Engine_ActorSetAnimation(IWAN, 18);
-	Engine_ActorSetAnimation(MEARI, 18);
+	Engine_ActorSetAnimation(GARET, 18);
+	Engine_ActorSetAnimation(IVAN, 18);
+	Engine_ActorSetAnimation(MIA, 18);
 	Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-	Engine_ActorSetSpriteFlags(Actor_Get(GERALD), 0);
-	Engine_ActorSetSpriteFlags(Actor_Get(IWAN), 0);
-	Engine_ActorSetSpriteFlags(Actor_Get(MEARI), 0);
+	Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
+	Engine_ActorSetSpriteFlags(Actor_Get(IVAN), 0);
+	Engine_ActorSetSpriteFlags(Actor_Get(MIA), 0);
 
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	actor->x.fixed = PIXELS(346);
@@ -2541,7 +2541,7 @@ static void FieldScene_RestageParty(void)
 	actor->rise_enabled = 0;
 	actor->velocity_y = 0x20000;
 
-	actor = Actor_Get(GERALD);
+	actor = Actor_Get(GARET);
 	actor->x.fixed = PIXELS(356);
 	actor->y.fixed = PIXELS(32);
 	actor->z.fixed = PIXELS(192);
@@ -2549,7 +2549,7 @@ static void FieldScene_RestageParty(void)
 	actor->rise_enabled = 0;
 	actor->velocity_y = 0x20000;
 
-	actor = Actor_Get(IWAN);
+	actor = Actor_Get(IVAN);
 	actor->x.fixed = PIXELS(360);
 	actor->y.fixed = PIXELS(32);
 	actor->z.fixed = PIXELS(222);
@@ -2557,7 +2557,7 @@ static void FieldScene_RestageParty(void)
 	actor->rise_enabled = 0;
 	actor->velocity_y = 0x20000;
 
-	actor = Actor_Get(MEARI);
+	actor = Actor_Get(MIA);
 	actor->x.fixed = PIXELS(334);
 	actor->y.fixed = PIXELS(32);
 	actor->z.fixed = PIXELS(222);
@@ -2578,10 +2578,10 @@ static void FieldScene_RestageParty(void)
 	Engine_TaskWait(60);
 }
 
-static void VinasuChojo_TryToPreventFall(void)
+static void VenusAerie_TryToPreventFall(void)
 {
-	Engine_EventSetMessage(MsgVinasuNoooo);
-	VinasuChojo_ShowMessage(21);
+	Engine_EventSetMessage(MsgVenusNoooo);
+	VenusAerie_ShowMessage(21);
 	Event_PlayCue(62);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Camera_SetSpeed(0x4cccc, 0x9999);
@@ -2592,14 +2592,14 @@ static void VinasuChojo_TryToPreventFall(void)
 	Engine_ActorRunRepeatedMotion(21, 1);
 	Event_ShowMessageAndWait(0x2015, 0, 40);
 	Engine_ActorRunRepeatedMotion(6, 3);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 	Actor_SetAttachedEffect(21, 0x102);
 	Engine_EventWait(60);
 	Event_ShowMessageAndWait(0x2015, 0, 80);
 	Actor_SetAttachedEffect(6, 0x102);
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(6, 2);
-	VinasuChojo_ShowMessage(6);
+	VenusAerie_ShowMessage(6);
 }
 
 static void Scene_RunExtendedActorTransition(void)
@@ -2608,7 +2608,7 @@ static void Scene_RunExtendedActorTransition(void)
 	s32				   step_pending;
 
 	step_pending = 0;
-	Engine_EventSetMessage(MsgVinasuWhyHappeningProtectVenusLighthouse);
+	Engine_EventSetMessage(MsgVenusWhyHappeningProtectVenusLighthouse);
 	Actor_SetAttachedEffect(21, 0x102);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x2015, 0, 20);
@@ -2622,7 +2622,7 @@ static void Scene_RunExtendedActorTransition(void)
 	Event_ShowMessageAndWait(6, 0, 20);
 	Event_PlayCue(17);
 	Engine_ActorRunRepeatedMotion(6, 2);
-	Engine_ActorEnableActionCallback(6, VinasuChojo_StepBackAction);
+	Engine_ActorEnableActionCallback(6, VenusAerie_StepBackAction);
 	Engine_EventWait(20);
 	Actor_SetAttachedEffect(21, 0x102);
 	Engine_ActorStartRepeatedMotion(21, 3);
@@ -2644,12 +2644,12 @@ static void Scene_RunExtendedActorTransition(void)
 	Actor_SetSpeed(21, 0x30000, 0x18000);
 	Object_GetById(21)->steering_flags &= ~ACTOR_FACES_MOTION;
 	actor = Object_GetById(21);
-	actor->update = (void (*)(union FieldObject *))VinasuChojo_StepSpriteRotation;
+	actor->update = (void (*)(union FieldObject *))VenusAerie_StepSpriteRotation;
 	actor->facing = FACING_WEST;
 	Actor_MoveToAndWait(21, 184, 237);
-	Object_SetActionCallbackAndRefreshById(21, VinasuChojo_LeapAction);
+	Object_SetActionCallbackAndRefreshById(21, VenusAerie_LeapAction);
 	Engine_EventWait(120);
-	VinasuChojo_ShowMessage(ACTOR_PARTY_LEADER);
+	VenusAerie_ShowMessage(ACTOR_PARTY_LEADER);
 	Event_PlayCue(72);
 	Camera_SetSpeed(0x40000, 0x8000);
 	Camera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
@@ -2661,113 +2661,113 @@ static void Scene_RunExtendedActorTransition(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 60);
 	Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VinasuChojo_ScaleStepAction);
-	Actor_ShowEmote(GERALD, 0x100, 80);
-	Event_ShowMessageAndWait(GERALD, 0, 40);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VenusAerie_ScaleStepAction);
+	Actor_ShowEmote(GARET, 0x100, 80);
+	Event_ShowMessageAndWait(GARET, 0, 40);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	VinasuChojo_ShowMessage(IWAN);
-	Actor_ShowEmote(MEARI, 0x102, 40);
-	VinasuChojo_ShowMessage(MEARI);
-	Engine_ActorSetSpriteFlags(Object_GetById(GERALD), 1);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorJump(GERALD, 6, 60);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	VenusAerie_ShowMessage(IVAN);
+	Actor_ShowEmote(MIA, 0x102, 40);
+	VenusAerie_ShowMessage(MIA);
+	Engine_ActorSetSpriteFlags(Object_GetById(GARET), 1);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorJump(GARET, 6, 60);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Engine_ActorSetSpriteFlags(Object_GetById(IWAN), 1);
-	Engine_ActorSetAnimation(IWAN, 1);
-	Engine_ActorJump(IWAN, 6, 40);
-	Engine_ActorSetSpriteFlags(Object_GetById(MEARI), 1);
-	Engine_ActorSetAnimation(MEARI, 1);
-	Engine_ActorJump(MEARI, 6, 60);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 60);
-	Engine_ActorSetAnimation(GERALD, 4);
-	VinasuChojo_ShowMessage(GERALD);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 20);
-	Engine_ActorSetAnimation(IWAN, 4);
-	VinasuChojo_ShowMessage(IWAN);
-	VinasuChojo_FaceActor(MEARI, FACING_SOUTHWEST);
-	Engine_ActorSetAnimation(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 80);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTH);
-	Event_ShowMessageAndWait(GERALD, 0, 40);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 20);
-	Event_ShowMessageAndWait(IWAN, 0, 40);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorSetSpriteFlags(Object_GetById(IVAN), 1);
+	Engine_ActorSetAnimation(IVAN, 1);
+	Engine_ActorJump(IVAN, 6, 40);
+	Engine_ActorSetSpriteFlags(Object_GetById(MIA), 1);
+	Engine_ActorSetAnimation(MIA, 1);
+	Engine_ActorJump(MIA, 6, 60);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 60);
+	Engine_ActorSetAnimation(GARET, 4);
+	VenusAerie_ShowMessage(GARET);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
+	Engine_ActorSetAnimation(IVAN, 4);
+	VenusAerie_ShowMessage(IVAN);
+	VenusAerie_FaceActor(MIA, FACING_SOUTHWEST);
+	Engine_ActorSetAnimation(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 80);
+	VenusAerie_FaceActor(GARET, FACING_SOUTH);
+	Event_ShowMessageAndWait(GARET, 0, 40);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 20);
+	Event_ShowMessageAndWait(IVAN, 0, 40);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 20);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 20);
-	VinasuChojo_ShowMessage(MEARI);
-	Actor_ShowEmote(GERALD, 0x100, 20);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTH);
-	VinasuChojo_ShowMessage(GERALD);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
-	Actor_WalkToAndWait(GERALD, 333, 194);
-	Actor_WalkToAndWait(GERALD, 333, 206);
-	Actor_FaceDirection(GERALD, FACING_EAST, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	Event_ShowMessageAndWait(GERALD, 0, 80);
+	Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
+	VenusAerie_ShowMessage(MIA);
+	Actor_ShowEmote(GARET, 0x100, 20);
+	VenusAerie_FaceActor(GARET, FACING_SOUTH);
+	VenusAerie_ShowMessage(GARET);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+	Actor_WalkToAndWait(GARET, 333, 194);
+	Actor_WalkToAndWait(GARET, 333, 206);
+	Actor_FaceDirection(GARET, FACING_EAST, 20);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	Event_ShowMessageAndWait(GARET, 0, 80);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
 	Engine_TaskWait(1);
 	actor->scale_x = 0x10000;
 	actor->scale_y = 0x10000;
 	Engine_EventWait(40);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 80);
-	VinasuChojo_FaceActor(GERALD, FACING_SOUTHEAST);
-	Engine_ActorJump(GERALD, 4, 0);
-	VinasuChojo_ShowMessage(GERALD);
-	VinasuChojo_FaceActor(GERALD, FACING_NORTHEAST);
-	Event_OpenMessage(GERALD, 0);
+	VenusAerie_FaceActor(GARET, FACING_SOUTHEAST);
+	Engine_ActorJump(GARET, 4, 0);
+	VenusAerie_ShowMessage(GARET);
+	VenusAerie_FaceActor(GARET, FACING_NORTHEAST);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
-		VinasuChojo_ShowMessage(GERALD);
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
-		VinasuChojo_ShowMessage(IWAN);
-		Engine_ActorSetAnimation(MEARI, 4);
-		VinasuChojo_ShowMessage(MEARI);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
+		VenusAerie_ShowMessage(GARET);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
+		VenusAerie_ShowMessage(IVAN);
+		Engine_ActorSetAnimation(MIA, 4);
+		VenusAerie_ShowMessage(MIA);
 		step_pending = 1;
 	}
 	else
 	{
 		gEventWork->message += 3;
 		Engine_EventWait(60);
-		VinasuChojo_ShowMessage(GERALD);
-		Engine_ActorRunRepeatedMotion(IWAN, 1);
-		VinasuChojo_ShowMessage(IWAN);
-		Engine_ActorSetAnimation(MEARI, 4);
-		VinasuChojo_ShowMessage(MEARI);
+		VenusAerie_ShowMessage(GARET);
+		Engine_ActorRunRepeatedMotion(IVAN, 1);
+		VenusAerie_ShowMessage(IVAN);
+		Engine_ActorSetAnimation(MIA, 4);
+		VenusAerie_ShowMessage(MIA);
 	}
 	if (step_pending != 0)
 	{
 		gEventWork->message += 3;
 	}
-	VinasuChojo_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
+	VenusAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 	Engine_EventWait(80);
 	Event_PlayCue(17);
-	Actor_ShowEmote(GERALD, 0x100, 20);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 20);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 40);
-	Actor_FaceDirection(GERALD, FACING_WEST, 20);
-	Actor_ShowEmote(IWAN, 0x101, 40);
-	VinasuChojo_ShowMessage(IWAN);
+	Actor_ShowEmote(GARET, 0x100, 20);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
+	Actor_FaceDirection(GARET, FACING_WEST, 20);
+	Actor_ShowEmote(IVAN, 0x101, 40);
+	VenusAerie_ShowMessage(IVAN);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 20);
-	Engine_ActorSetAnimation(GERALD, 4);
-	VinasuChojo_ShowMessage(GERALD);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 40);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 40);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+	Engine_ActorSetAnimation(GARET, 4);
+	VenusAerie_ShowMessage(GARET);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 40);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 40);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(60);
-	VinasuChojo_ShowMessage(MEARI);
+	VenusAerie_ShowMessage(MIA);
 	Event_PlayCue(141);
 	Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
 	Engine_EventWait(40);
@@ -2781,17 +2781,17 @@ static void Scene_RunExtendedActorTransition(void)
 	actor->z.fixed -= PIXELS(32);
 	actor->work = 0;
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(GERALD);
+	actor = Object_GetById(GARET);
 	actor->x.fixed -= PIXELS(4);
 	actor->z.fixed -= PIXELS(32);
 	actor->work = 0;
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(IWAN);
+	actor = Object_GetById(IVAN);
 	actor->x.fixed -= PIXELS(4);
 	actor->z.fixed -= PIXELS(32);
 	actor->work = 0;
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(MEARI);
+	actor = Object_GetById(MIA);
 	actor->x.fixed -= PIXELS(4);
 	actor->z.fixed -= PIXELS(18);
 	actor->work = 0;
@@ -2801,17 +2801,17 @@ static void Scene_RunExtendedActorTransition(void)
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-	Engine_ActorJump(GERALD, 6, 0);
-	Engine_ActorJump(IWAN, 6, 0);
-	Engine_ActorJump(MEARI, 6, 0);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VinasuChojo_PartyHeadingAction);
-	Engine_ActorEnableActionCallback(GERALD, VinasuChojo_PartyHeadingAction);
-	Engine_ActorEnableActionCallback(IWAN, VinasuChojo_PartyHeadingAction);
-	Engine_ActorEnableActionCallback(MEARI, VinasuChojo_PartyHeadingAction);
+	Engine_ActorJump(GARET, 6, 0);
+	Engine_ActorJump(IVAN, 6, 0);
+	Engine_ActorJump(MIA, 6, 0);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, VenusAerie_PartyHeadingAction);
+	Engine_ActorEnableActionCallback(GARET, VenusAerie_PartyHeadingAction);
+	Engine_ActorEnableActionCallback(IVAN, VenusAerie_PartyHeadingAction);
+	Engine_ActorEnableActionCallback(MIA, VenusAerie_PartyHeadingAction);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_EventWait(80);
 	Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
@@ -2823,13 +2823,13 @@ static void Scene_RunExtendedActorTransition(void)
 	actor = Object_GetById(ACTOR_PARTY_LEADER);
 	actor->x.fixed -= PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(GERALD);
+	actor = Object_GetById(GARET);
 	actor->x.fixed -= PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(IWAN);
+	actor = Object_GetById(IVAN);
 	actor->x.fixed -= PIXELS(16);
 	SceneActor_ParkRecord(actor);
-	actor = Object_GetById(MEARI);
+	actor = Object_GetById(MIA);
 	actor->x.fixed -= PIXELS(16);
 	SceneActor_ParkRecord(actor);
 	actor = Object_GetById(8);
@@ -2848,49 +2848,49 @@ static void Scene_RunExtendedActorTransition(void)
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-	Engine_ActorJump(GERALD, 6, 0);
-	Engine_ActorJump(IWAN, 6, 0);
-	Engine_ActorJump(MEARI, 6, 0);
+	Engine_ActorJump(GARET, 6, 0);
+	Engine_ActorJump(IVAN, 6, 0);
+	Engine_ActorJump(MIA, 6, 0);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(80);
 	Event_PlayCue(0x121);
 	Engine_EventWait(40);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
-	Engine_ActorStop(GERALD);
-	Engine_ActorStop(IWAN);
-	Engine_ActorStop(MEARI);
+	Engine_ActorStop(GARET);
+	Engine_ActorStop(IVAN);
+	Engine_ActorStop(MIA);
 	Engine_EventWait(120);
-	Actor_ShowEmote(IWAN, 0x105, 120);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 20);
-	VinasuChojo_ShowMessage(IWAN);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	VinasuChojo_ShowMessage(GERALD);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 20);
-	Engine_ActorSetAnimation(MEARI, 4);
-	VinasuChojo_ShowMessage(MEARI);
-	Engine_ActorJump(IWAN, 2, 20);
-	VinasuChojo_ShowMessage(IWAN);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Actor_ShowEmote(IVAN, 0x105, 120);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+	VenusAerie_ShowMessage(IVAN);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	VenusAerie_ShowMessage(GARET);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
+	Engine_ActorSetAnimation(MIA, 4);
+	VenusAerie_ShowMessage(MIA);
+	Engine_ActorJump(IVAN, 2, 20);
+	VenusAerie_ShowMessage(IVAN);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	VinasuChojo_FaceActor(GERALD, FACING_EAST);
-	VinasuChojo_ShowMessage(GERALD);
+	VenusAerie_FaceActor(GARET, FACING_EAST);
+	VenusAerie_ShowMessage(GARET);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(GERALD, VinasuChojo_PartyExitAction);
-	Engine_ActorEnableActionCallback(IWAN, VinasuChojo_PartyExitAction);
-	Engine_ActorEnableActionCallback(MEARI, VinasuChojo_PartyExitAction);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	Engine_ActorEnableActionCallback(GARET, VenusAerie_PartyExitAction);
+	Engine_ActorEnableActionCallback(IVAN, VenusAerie_PartyExitAction);
+	Engine_ActorEnableActionCallback(MIA, VenusAerie_PartyExitAction);
 	Engine_EventWait(60);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
@@ -2905,7 +2905,7 @@ static void Scene_RunExtendedActorTransition(void)
 	Graphics_EnableObjLayerAndCallbacks();
 	((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[0] = 0;
 	((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[1] = 0;
-	UiText_ShowCenteredMessage(MsgVinasuDespiteLongTiring, 0, 0);
+	UiText_ShowCenteredMessage(MsgVenusDespiteLongTiring, 0, 0);
 	ObjectDispatch_StopCallbacksAndHideLayers();
 	Engine_EventWait(80);
 }
@@ -2923,7 +2923,7 @@ static void SceneActor_ParkRecord(struct FieldActor *actor)
 	actor->timer = 0;
 }
 
-static void VinasuChojo_RunTransitionStep(void)
+static void VenusAerie_RunTransitionStep(void)
 {
 	struct FieldActor  *center;
 	struct FieldActor  *effect;
@@ -2934,7 +2934,7 @@ static void VinasuChojo_RunTransitionStep(void)
 
 	center = Actor_Get(23);
 	spawn = 0;
-	switch (VinasuChojo_TransitionStep)
+	switch (VenusAerie_TransitionStep)
 	{
 	case 0:
 		Event_PlayCue(220);
@@ -2956,15 +2956,15 @@ static void VinasuChojo_RunTransitionStep(void)
 		center->scale_x = 0x10000;
 		center->scale_y = 0x10000;
 		SceneActor_ParkRecord(center);
-		Engine_ActorEnableActionCallback(23, VinasuChojo_RiseActionScript);
+		Engine_ActorEnableActionCallback(23, VenusAerie_RiseActionScript);
 		break;
 	case 25:
-		VinasuChojo_TransitionStep--;
+		VenusAerie_TransitionStep--;
 		if (center->y.fixed > 0)
 		{
 			ColorBuffer_ApplyTarget(0x203210, 0);
 			Engine_ColorBufferInterpolate(16);
-			VinasuChojo_TransitionStep++;
+			VenusAerie_TransitionStep++;
 			Actor_Get(0)->rise_counter = 1;
 			Actor_Get(1)->rise_counter = 1;
 			Actor_Get(2)->rise_counter = 1;
@@ -2981,12 +2981,12 @@ static void VinasuChojo_RunTransitionStep(void)
 		}
 		break;
 	case 26:
-		VinasuChojo_TransitionStep--;
+		VenusAerie_TransitionStep--;
 		if (center->y.fixed > (160 << 14))
 		{
 			ColorBuffer_ApplyTarget(0x10000, 0);
 			Engine_ColorBufferInterpolate(40);
-			VinasuChojo_TransitionStep++;
+			VenusAerie_TransitionStep++;
 		}
 		else
 		{
@@ -3024,7 +3024,7 @@ static void VinasuChojo_RunTransitionStep(void)
 		if (effect != 0)
 		{
 			sprite = effect->sprite;
-			Object_SetScript(effect, VinasuChojo_RiseParticleScript);
+			Object_SetScript(effect, VenusAerie_RiseParticleScript);
 			ObjectGroup_SetChildValue(effect, 1);
 			effect->motion_flags = 0;
 			angle = Random_Next() & 0xffff000;
@@ -3038,7 +3038,7 @@ static void VinasuChojo_RunTransitionStep(void)
 			sprite->priority = 1;
 		}
 	}
-	VinasuChojo_TransitionStep++;
+	VenusAerie_TransitionStep++;
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(0));
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(1));
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(2));
@@ -3111,20 +3111,20 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	if (effect == 0)
 		return;
 	sprite = effect->sprite;
-	Object_SetScript(effect, VinasuChojo_BesideParticleScript);
+	Object_SetScript(effect, VenusAerie_BesideParticleScript);
 	ObjectGroup_SetChildValue(effect, 5);
 	effect->motion_flags = phase;
 	angle = Random_Next() & 0xffff000;
 	effect->timer = angle;
 	effect->work = phase;
 	effect->linked_object = &center->actor;
-	effect->update = VinasuChojo_UpdateOrbitingEffect;
+	effect->update = VenusAerie_UpdateOrbitingEffect;
 	effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
 	sprite->flags = 0;
 	sprite->priority = center->actor.sprite->priority;
 }
 
-static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
+static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object)
 {
 	struct FieldEffect *anchor;
 	s32					spin;
@@ -3171,7 +3171,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 VinasuChojo_PairActionScript[] = {
+s32 VenusAerie_PairActionScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(492), 0, PIXELS(164)),
 	SC_SYNC,
@@ -3199,33 +3199,33 @@ s32 SceneAction_EntryPair[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_ScaleStepAction[] = {
+s32 VenusAerie_ScaleStepAction[] = {
 	SC_CALL(OverlayObject_StepScaleByCounter),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 VinasuChojo_BeamOpenAction[] = {
+s32 VenusAerie_BeamOpenAction[] = {
 	SC_ADD(SW_SCALE_X, 0x1000),
 	SC_WAIT(1),
 	SC_LOOP(32, SC_TOP),
 	SC_END,
 };
 
-s32 VinasuChojo_BeamNarrowAction[] = {
+s32 VenusAerie_BeamNarrowAction[] = {
 	SC_ADD(SW_SCALE_X, -896),
 	SC_WAIT(1),
 	SC_LOOP(140, SC_TOP),
 	SC_END,
 };
 
-s32 VinasuChojo_BeamRiseAction[] = {
+s32 VenusAerie_BeamRiseAction[] = {
 	SC_ADD(SW_SCALE_X, -896),
 	SC_WAIT(1),
 	SC_LOOP(160, SC_TOP),
 	SC_END,
 };
 
-s32 VinasuChojo_BeamCloseAction[] = {
+s32 VenusAerie_BeamCloseAction[] = {
 	SC_ADD(SW_Y, PIXELS(4)),
 	SC_WAIT(1),
 	SC_LOOP(30, SC_TOP),
@@ -3234,7 +3234,7 @@ s32 VinasuChojo_BeamCloseAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_BeamEndAction[] = {
+s32 VenusAerie_BeamEndAction[] = {
 	SC_ADD(SW_Y, PIXELS(2)),
 	SC_WAIT(1),
 	SC_LOOP(160, SC_TOP),
@@ -3243,7 +3243,7 @@ s32 VinasuChojo_BeamEndAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_OrbitParticleScript[] = {
+s32 VenusAerie_OrbitParticleScript[] = {
 	SC_SET(SW_SCALE_X, 0xcccc),
 	SC_SET(SW_SCALE_Y, 0xcccc),
 	SC_ARG(1),
@@ -3256,7 +3256,7 @@ s32 VinasuChojo_OrbitParticleScript[] = {
 	SC_FREE,
 };
 
-s32 VinasuChojo_RiseParticleScript[] = {
+s32 VenusAerie_RiseParticleScript[] = {
 	SC_SET(SW_SCALE_X, 0xcccc),
 	SC_SET(SW_SCALE_Y, 0xcccc),
 	SC_ARG(1),
@@ -3269,7 +3269,7 @@ s32 VinasuChojo_RiseParticleScript[] = {
 	SC_FREE,
 };
 
-s32 VinasuChojo_WalkOutAction[] = {
+s32 VenusAerie_WalkOutAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(268), 0, PIXELS(186)),
 	SC_SYNC,
@@ -3289,7 +3289,7 @@ s32 VinasuChojo_WalkOutAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_RiseActionScript[] = {
+s32 VenusAerie_RiseActionScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -1536),
 	SC_WAIT(1),
@@ -3301,7 +3301,7 @@ s32 VinasuChojo_RiseActionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 VinasuChojo_StepBackAction[] = {
+s32 VenusAerie_StepBackAction[] = {
 	SC_ADD(SW_Y, -0xc000),
 	SC_WAIT(1),
 	SC_LOOP(120, SC_TOP),
@@ -3310,7 +3310,7 @@ s32 VinasuChojo_StepBackAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_LeapAction[] = {
+s32 VenusAerie_LeapAction[] = {
 	SC_ADD(SW_Y, -0x48000),
 	SC_WAIT(1),
 	SC_LOOP(80, SC_TOP),
@@ -3319,7 +3319,7 @@ s32 VinasuChojo_LeapAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_PartyExitAction[] = {
+s32 VenusAerie_PartyExitAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(330), 0, PIXELS(173)),
 	SC_SYNC,
@@ -3327,12 +3327,12 @@ s32 VinasuChojo_PartyExitAction[] = {
 	SC_END,
 };
 
-s32 VinasuChojo_PartyHeadingAction[] = {
+s32 VenusAerie_PartyHeadingAction[] = {
 	SC_CALL(OverlayObject_UpdateHeadingTimer),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gVinasuChojoEntrances[] = {
+struct SceneEntrance gVenusAerieEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 304, 0, 216, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0 },
 	{ 1, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0 },
 	{ 2, CONDITION_ALWAYS, 340, 0, 184, FACING_WEST, 0, 0, 0, 600, 420, 0 },
@@ -3341,7 +3341,7 @@ struct SceneEntrance gVinasuChojoEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gVinasuChojoExits[] = {
+u32 gVenusAerieExits[] = {
 	SCENE_EXITS(187),
 	SCENE_EXIT(1, 2, 73),
 	SCENE_EXIT(2, 180, 99),
@@ -3349,7 +3349,7 @@ u32 gVinasuChojoExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gVinasuChojoPlacements[] = {
+struct ScenePlacement gVenusAeriePlacements[] = {
 	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(248), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3372,11 +3372,11 @@ struct ScenePlacement gVinasuChojoPlacements[] = {
 		PIXELS(168), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0xf2, CONDITION_ALWAYS, 7,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x21, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(280), 0, PIXELS(164), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
@@ -3403,9 +3403,9 @@ struct ScenePlacement gVinasuChojoPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-s32 VinasuChojo_NearestActor = 0;
+s32 VenusAerie_NearestActor = 0;
 
-struct SceneEvent gVinasuChojoEvents[] = {
+struct SceneEvent gVenusAerieEvents[] = {
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
@@ -3414,7 +3414,7 @@ struct SceneEvent gVinasuChojoEvents[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 VinasuChojo_BesideParticleScript[] = {
+s32 VenusAerie_BesideParticleScript[] = {
 	SC_SET(SW_SCALE_Y, 0x16666),
 	SC_SET(SW_SCALE_X, 0x16666),
 	SC_ARG(4),

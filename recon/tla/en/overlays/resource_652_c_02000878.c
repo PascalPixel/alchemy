@@ -13,7 +13,7 @@
 #include "item.h"
 #include "text/msg_ids.h"
 
-struct DeriEventWork {
+struct DailaEventWork {
     u8 unknown_000[0x1c4];
     s16 message;
 };
@@ -35,7 +35,7 @@ void Owner_RefreshClassActions(s32 member);
 
 s32 Func_02000878(s32 item, s32 unused)
 {
-    struct DeriEventWork *work;
+    struct DailaEventWork *work;
     s32 saved;
     s32 owner;
     s32 result;

@@ -31,7 +31,7 @@ static void FieldScene_RunBranchingFormationPresentation(void);
 static void Event_SayThenWait(s32 speaker, s32 frames);
 static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void SceneEffect_SpawnObject26EveryEightFrames(void);
-static void KorimaHashi_AlternateBridgePostHeights(void);
+static void KolimaForestBridge_AlternateBridgePostHeights(void);
 
 struct Sub
 {
@@ -41,16 +41,16 @@ struct Sub
 	u8 f26;
 };
 
-extern s32 KorimaHashi_TriggerPending;
-extern s32 KorimaHashi_PartyFlag;
-extern s32 KorimaHashi_SparkleSound;
+extern s32 KolimaForestBridge_TriggerPending;
+extern s32 KolimaForestBridge_PartyFlag;
+extern s32 KolimaForestBridge_SparkleSound;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
 
 static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
-	s32 *pending = &KorimaHashi_TriggerPending;
+	s32 *pending = &KolimaForestBridge_TriggerPending;
 	if (*pending)
 	{
 		Object_SetMode(object, 2);
@@ -77,7 +77,7 @@ static s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	return KorimaHashi_Entrances;
+	return KolimaForestBridge_Entrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void)
@@ -87,12 +87,12 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 const u32 *Scene_GetExits(void)
 {
-	return KorimaHashi_Exits;
+	return KolimaForestBridge_Exits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	return KorimaHashi_Placements;
+	return KolimaForestBridge_Placements;
 }
 
 static void EV10_SCRIPT(void)
@@ -129,7 +129,7 @@ static void EV10_SCRIPT(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	return KorimaHashi_Events;
+	return KolimaForestBridge_Events;
 }
 
 s32 Scene_Initialize(void)
@@ -177,7 +177,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
 	Camera_MoveTo(0xf60000, -1, 0x25c0000, 0);
-	party = &KorimaHashi_PartyFlag;
+	party = &KolimaForestBridge_PartyFlag;
 	*party = GameFlag_IsSet(3);
 	record = Object_GetById(13);
 	Engine_ActorSetSpriteFlags(record, 0);
@@ -197,7 +197,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetSpriteFlags(record, 0);
 	record = Object_GetById(21);
 	Engine_ActorSetSpriteFlags(record, 0);
-	entry_action = KorimaHashi_EntryAction;
+	entry_action = KolimaForestBridge_EntryAction;
 	Engine_ActorEnableActionCallback(17, entry_action);
 	Engine_ActorEnableActionCallback(18, entry_action);
 	Engine_ActorEnableActionCallback(19, entry_action);
@@ -211,14 +211,14 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_EventWaitForScreen();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 0x251);
-	Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
-	Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
+	Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
+	Actor_SetSpeed(IVAN, 0x9999, 0x4ccc);
 	{
 		struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
 		if (leader != 0)
 		{
-			Actor_SetPosition(GERALD, leader->x.fixed, leader->z.fixed);
+			Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
 		}
 	}
 	{
@@ -226,57 +226,57 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 
 		if (leader != 0)
 		{
-			Actor_SetPosition(IWAN, leader->x.fixed, leader->z.fixed);
+			Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
 		}
 	}
-	Engine_ActorEnableActionCallback(GERALD, KorimaHashi_GeraldAction);
-	Engine_ActorEnableActionCallback(IWAN, KorimaHashi_IvanAction);
+	Engine_ActorEnableActionCallback(GARET, KolimaForestBridge_GaretAction);
+	Engine_ActorEnableActionCallback(IVAN, KolimaForestBridge_IvanAction);
 	if (*party != 0)
 	{
-		Actor_SetSpeed(MEARI, 0x9999, 0x4ccc);
+		Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
 		{
 			struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
 			if (leader != 0)
 			{
-				Actor_SetPosition(MEARI, leader->x.fixed, leader->z.fixed);
+				Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
 			}
 		}
-		Engine_ActorEnableActionCallback(MEARI, KorimaHashi_MiaAction);
+		Engine_ActorEnableActionCallback(MIA, KolimaForestBridge_MiaAction);
 	}
 	Object_RefreshSelectorById(2);
 	SceneActor_SetPairZeroAndValue(2, 0x2000, 40);
 	SceneActor_SetPairZeroAndValue(2, 0x8000, 20);
 	SceneActor_SetPairZeroAndValue(2, 0x4000, 40);
-	Actor_ShowEmote(IWAN, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
 	Engine_EventWait(60);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 60);
 	SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	SceneActor_SetPairZeroAndValue(0, 0xa000, 10);
-	Actor_ShowEmote(GERALD, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
 	Engine_EventWait(40);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_EventSetMessage(MsgKorimaMatterIvan);
-	Event_SayThenWait(GERALD, 10);
-	Engine_EventSetMessage(MsgKorimaSparklyStuffOnGround);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Engine_EventSetMessage(MsgKolimaMatterIvan);
+	Event_SayThenWait(GARET, 10);
+	Engine_EventSetMessage(MsgKolimaSparklyStuffOnGround);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Event_SayThenWait(IWAN, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	Event_SayThenWait(IVAN, 20);
 	SceneActor_SetPairZeroAndValue(1, 0, 20);
 	SceneActor_SetPairZeroAndValue(0, 0xa000, 40);
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 30);
 	SceneActor_SetPairZeroAndValue(1, 0x6000, 20);
 	SceneActor_SetPairZeroAndValue(0, 0xe000, 30);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Actor_ShowEmote(IWAN, 0x100, 0);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	Actor_ShowEmote(IVAN, 0x100, 0);
 	Engine_EventWait(40);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
 	Event_PlayCue(17);
@@ -284,51 +284,51 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	ColorBuffer_ApplyTarget(0x7fff, 0);
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
-	KorimaHashi_SparkleSound = 1;
+	KolimaForestBridge_SparkleSound = 1;
 	FieldScheduler_AddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
 	Engine_TaskWait(20);
 	ColorBuffer_ApplyTarget(0x405210, 1);
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(120);
 	Engine_TaskWait(60);
-	motion_action = KorimaHashi_PartyAction;
+	motion_action = KolimaForestBridge_PartyAction;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motion_action);
-	Engine_ActorEnableActionCallback(GERALD, motion_action);
-	Engine_ActorEnableActionCallback(IWAN, motion_action);
-	Engine_ActorEnableActionCallback(MEARI, motion_action);
+	Engine_ActorEnableActionCallback(GARET, motion_action);
+	Engine_ActorEnableActionCallback(IVAN, motion_action);
+	Engine_ActorEnableActionCallback(MIA, motion_action);
 	Engine_EventWait(100);
-	Event_SayThenWait(GERALD, 20);
-	Event_SayThenWait(IWAN, 40);
-	if (KorimaHashi_PartyFlag != 0)
+	Event_SayThenWait(GARET, 20);
+	Event_SayThenWait(IVAN, 40);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		Engine_EventWait(40);
-		Actor_ShowEmote(MEARI, 0x102, 0);
+		Actor_ShowEmote(MIA, 0x102, 0);
 		Engine_EventWait(40);
-		Event_SayThenWait(MEARI, 40);
+		Event_SayThenWait(MIA, 40);
 	}
 	else
 	{
 		gEventWork->message += 1;
 	}
 	Engine_EventWait(20);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		record = Object_GetById(3);
 		record->velocity_y = 0x20000;
 		Engine_EventWait(10);
-		Actor_SetSpeed(MEARI, 0x20000, 0x20000);
-		Actor_SetDestinationOffset(MEARI, -2, 0);
-		Engine_ActorEnableActionCallback(MEARI, KorimaHashi_ResetAction);
+		Actor_SetSpeed(MIA, 0x20000, 0x20000);
+		Actor_SetDestinationOffset(MIA, -2, 0);
+		Engine_ActorEnableActionCallback(MIA, KolimaForestBridge_ResetAction);
 		record = Object_GetById(3);
 		Engine_ActorSetSpriteFlags(record, 0);
-		Engine_ActorSetAnimation(MEARI, 19);
+		Engine_ActorSetAnimation(MIA, 19);
 		Engine_EventWait(10);
 	}
 	record = Object_GetById(0);
 	record->velocity_y = 0x20000;
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
-	reset_action = KorimaHashi_ResetAction;
+	reset_action = KolimaForestBridge_ResetAction;
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
@@ -337,20 +337,20 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	record = Object_GetById(1);
 	record->velocity_y = 0x20000;
 	Engine_EventWait(10);
-	Actor_SetSpeed(GERALD, 0x20000, 0x20000);
-	Engine_ActorEnableActionCallback(GERALD, reset_action);
+	Actor_SetSpeed(GARET, 0x20000, 0x20000);
+	Engine_ActorEnableActionCallback(GARET, reset_action);
 	record = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Engine_ActorSetAnimation(GERALD, 19);
+	Engine_ActorSetAnimation(GARET, 19);
 	Engine_EventWait(40);
 	record = Object_GetById(2);
 	record->velocity_y = 0x20000;
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(IWAN, reset_action);
+	Engine_ActorEnableActionCallback(IVAN, reset_action);
 	record = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Engine_ActorSetAnimation(IWAN, 19);
-	KorimaHashi_SparkleSound = 0;
+	Engine_ActorSetAnimation(IVAN, 19);
+	KolimaForestBridge_SparkleSound = 0;
 	Engine_EventWait(160);
 	Engine_TaskRemoveCallback(SceneEffect_SpawnObject26EveryEightFrames);
 	Engine_EventWait(120);
@@ -363,35 +363,35 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(180);
 	Event_PlayCue(21);
-	Event_SayThenWait(GERALD, 80);
-	Event_SayThenWait(IWAN, 40);
+	Event_SayThenWait(GARET, 80);
+	Event_SayThenWait(IVAN, 40);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(IWAN, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 0);
+	Actor_ShowEmote(MIA, 0x102, 0);
 	Engine_EventWait(60);
-	Event_SayThenWait(IWAN, 20);
+	Event_SayThenWait(IVAN, 20);
 	gFallingEffectState = 2;
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(IWAN, 3);
+	Engine_ActorStartRepeatedMotion(IVAN, 3);
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
 	Engine_EventWait(20);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Event_SayThenWait(GERALD, 20);
-	if (KorimaHashi_PartyFlag != 0)
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Event_SayThenWait(GARET, 20);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Actor_ShowEmote(MEARI, 0x102, 0);
-		Event_SayThenWait(MEARI, 10);
+		Actor_ShowEmote(MIA, 0x102, 0);
+		Event_SayThenWait(MIA, 10);
 	}
 	else
 	{
@@ -403,22 +403,22 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Object_GetById(2)->priority_flags &= 254;
 	Object_GetById(3)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetSpritePriority(GERALD, 3);
-	Engine_ActorSetSpritePriority(IWAN, 3);
-	Engine_ActorSetSpritePriority(MEARI, 3);
-	KorimaHashi_TriggerPending = 0;
-	FieldScheduler_AddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
+	Engine_ActorSetSpritePriority(GARET, 3);
+	Engine_ActorSetSpritePriority(IVAN, 3);
+	Engine_ActorSetSpritePriority(MIA, 3);
+	KolimaForestBridge_TriggerPending = 0;
+	FieldScheduler_AddCallback(KolimaForestBridge_AlternateBridgePostHeights, 0xc80);
 	Event_PlayCue(220);
 	Object_GetById(13)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(13, 2);
 	Actor_SetPosition(13, 0xfd0000, 0x25b0000);
-	formation_action = KorimaHashi_FormationAction;
+	formation_action = KolimaForestBridge_FormationAction;
 	Engine_ActorEnableActionCallback(13, formation_action);
 	Object_GetById(14)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(14, 2);
 	Actor_SetPosition(14, 0xe90000, 0x2750000);
 	Engine_ActorEnableActionCallback(14, formation_action);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		Object_GetById(15)->priority_flags &= 254;
 		Engine_ActorSetSpritePriority(15, 2);
@@ -445,24 +445,24 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_TaskWait(60);
 	Engine_ActorStop(13);
 	Engine_ActorStop(14);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		Engine_ActorStop(15);
 	}
 	Engine_ActorStop(16);
 	Engine_TaskWait(1);
-	finish_action = KorimaHashi_FinishAction;
+	finish_action = KolimaForestBridge_FinishAction;
 	Engine_ActorEnableActionCallback(13, finish_action);
 	Engine_ActorEnableActionCallback(14, finish_action);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		Engine_ActorEnableActionCallback(15, finish_action);
 	}
 	Object_SetActionCallbackAndRefreshById(16, finish_action);
 	Engine_EventWait(80);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	Actor_SetPosition(11, 0xdc0000, 0x1ee0000);
 	Actor_SetPosition(12, 0xdc0000, 0x1ee0000);
 	Engine_TaskWait(1);
@@ -472,89 +472,89 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	}
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Event_SayThenWait(IWAN, 20);
-	if (KorimaHashi_PartyFlag != 0)
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	Event_SayThenWait(IVAN, 20);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Engine_ActorRunRepeatedMotion(MEARI, 2);
+		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(10);
-		Engine_EventSetMessage(MsgKorimaKnowThoseFieldsWere);
-		Event_SayThenWait(MEARI, 40);
+		Engine_EventSetMessage(MsgKolimaKnowThoseFieldsWere);
+		Event_SayThenWait(MIA, 40);
 	}
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Actor_ShowEmote(GERALD, 0x101, 0);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Actor_ShowEmote(GARET, 0x101, 0);
 	Engine_EventWait(80);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Engine_EventSetMessage(MsgKorimaWasOurPsynergy);
-	Event_SayThenWait(IWAN, 40);
-	Engine_ActorRunRepeatedMotion(GERALD, 3);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
+	Engine_EventSetMessage(MsgKolimaWasOurPsynergy);
+	Event_SayThenWait(IVAN, 40);
+	Engine_ActorRunRepeatedMotion(GARET, 3);
 	Engine_EventWait(40);
-	Engine_ActorSetSpritePriority(GERALD, 2);
+	Engine_ActorSetSpritePriority(GARET, 2);
 	Object_GetById(1)->priority_flags |= 1;
 	record = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(record, 1);
-	Engine_ActorJump(GERALD, 6, 0);
-	Actor_SetDestinationOffset(GERALD, -3, 0);
-	Engine_ActorSetAnimation(GERALD, 1);
+	Engine_ActorJump(GARET, 6, 0);
+	Actor_SetDestinationOffset(GARET, -3, 0);
+	Engine_ActorSetAnimation(GARET, 1);
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 60);
-	Event_SayThenWait(GERALD, 20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Event_SayThenWait(GERALD, 10);
+	Event_SayThenWait(GARET, 20);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Event_SayThenWait(GARET, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
 	SceneActor_SetPairZeroAndValue(1, 0x2000, 20);
-	Actor_ShowEmote(GERALD, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
 	Engine_EventWait(40);
 	SceneActor_SetPairZeroAndValue(1, 0x6000, 40);
 	SceneActor_SetPairZeroAndValue(1, 0x2000, 20);
 	SceneActor_SetPairZeroAndValue(1, 0x6000, 20);
 	SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
-	Engine_ActorJump(GERALD, 2, 0);
+	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(40);
-	Engine_ActorJump(GERALD, 2, 0);
+	Engine_ActorJump(GARET, 2, 0);
 	Engine_EventWait(10);
-	Engine_ActorJump(GERALD, 4, 0);
+	Engine_ActorJump(GARET, 4, 0);
 	Engine_EventWait(20);
-	Event_SayThenWait(GERALD, 20);
-	if (KorimaHashi_PartyFlag != 0)
+	Event_SayThenWait(GARET, 20);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Actor_ShowEmote(MEARI, 0x100, 0);
+		Actor_ShowEmote(MIA, 0x100, 0);
 		Engine_EventWait(60);
-		Engine_ActorRunRepeatedMotion(MEARI, 2);
+		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(80);
-		Engine_ActorSetSpritePriority(MEARI, 2);
+		Engine_ActorSetSpritePriority(MIA, 2);
 		Object_GetById(3)->priority_flags |= 1;
 		record = Object_GetById(3);
 		Engine_ActorSetSpriteFlags(record, 1);
-		Engine_ActorJump(MEARI, 4, 0);
-		Actor_SetDestinationOffset(MEARI, -2, 0);
-		Engine_ActorSetAnimation(MEARI, 1);
+		Engine_ActorJump(MIA, 4, 0);
+		Actor_SetDestinationOffset(MIA, -2, 0);
+		Engine_ActorSetAnimation(MIA, 1);
 		SceneActor_SetPairZeroAndValue(3, 0xe000, 60);
-		Engine_ActorRunRepeatedMotion(MEARI, 2);
+		Engine_ActorRunRepeatedMotion(MIA, 2);
 		Engine_EventWait(20);
-		Event_SayThenWait(MEARI, 20);
+		Event_SayThenWait(MIA, 20);
 	}
 	else
 	{
 		gEventWork->message += 1;
 	}
-	Engine_ActorJump(GERALD, 2, 0);
+	Engine_ActorJump(GARET, 2, 0);
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
-	Event_SayThenWait(GERALD, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Event_SayThenWait(GARET, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Engine_ActorSetSpritePriority(IWAN, 2);
+	Engine_ActorSetSpritePriority(IVAN, 2);
 	Object_GetById(2)->priority_flags |= 1;
 	record = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(record, 1);
-	Engine_ActorJump(IWAN, 4, 0);
-	Engine_ActorSetAnimation(IWAN, 1);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Engine_ActorJump(IVAN, 4, 0);
+	Engine_ActorSetAnimation(IVAN, 1);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(10);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -565,105 +565,105 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 60);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-	Actor_ShowEmote(IWAN, 0x105, 0);
+	Actor_ShowEmote(IVAN, 0x105, 0);
 	Engine_EventWait(60);
 	SceneActor_SetPairZeroAndValue(0, 0xa000, 20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 10);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Event_SayThenWait(IWAN, 20);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	Event_SayThenWait(IVAN, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Event_OpenMessage(IWAN, 0);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Event_OpenMessage(IVAN, 0);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_ActorSetAnimation(IWAN, 3);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimation(IVAN, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 		gEventWork->message += 1;
 	}
 	else
 	{
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
-		Engine_ActorStartRepeatedMotion(GERALD, 2);
-		Event_ShowMessage(GERALD, 0);
+		Engine_ActorStartRepeatedMotion(GARET, 2);
+		Event_ShowMessage(GARET, 0);
 	}
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 10);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
-	Event_SayThenWait(GERALD, 20);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
+	Event_SayThenWait(GARET, 20);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Event_SayThenWait(IWAN, 10);
-	if (KorimaHashi_PartyFlag != 0)
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	Event_SayThenWait(IVAN, 10);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Engine_ActorRunRepeatedMotion(MEARI, 2);
+		Engine_ActorRunRepeatedMotion(MIA, 2);
 		SceneActor_SetPairZeroAndValue(3, 0, 20);
 		SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
-		Engine_ActorSetAnimation(MEARI, 4);
-		Event_SayThenWait(MEARI, 10);
+		Engine_ActorSetAnimation(MIA, 4);
+		Event_SayThenWait(MIA, 10);
 	}
 	else
 	{
 		gEventWork->message += 1;
 	}
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	SceneActor_SetPairZeroAndValue(0, 0xa000, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	SceneActor_SetPairZeroAndValue(1, 0x4000, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Engine_EventWait(80);
 	SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
-	Event_SayThenWait(IWAN, 20);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
+	Event_SayThenWait(IVAN, 20);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
 	SceneActor_SetPairZeroAndValue(0, 0xa000, 40);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Event_SayThenWait(IWAN, 10);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
+	Event_SayThenWait(IVAN, 10);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(40);
-	Event_SayThenWait(GERALD, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Event_SayThenWait(GARET, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Actor_ShowEmote(GERALD, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
 	Engine_EventWait(40);
-	Event_SayThenWait(GERALD, 20);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Event_SayThenWait(IWAN, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Event_SayThenWait(GARET, 20);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Event_SayThenWait(IVAN, 10);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	SceneActor_SetPairZeroAndValue(1, 0x2000, 10);
-	Event_OpenMessage(GERALD, 0);
+	Event_OpenMessage(GARET, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 	}
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		Engine_EventWait(40);
 		gEventWork->message += 1;
 	}
-	Event_ShowMessage(GERALD, 0);
+	Event_ShowMessage(GARET, 0);
 	Event_PlayCue(21);
 	ColorBuffer_ApplyTarget(0x406218, 1);
 	Engine_ColorBufferInterpolate(60);
@@ -674,16 +674,16 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(80);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(60);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-	Engine_EventSetMessage(MsgKorimaWatchOutItsHappeningAgain);
-	Event_SayThenWait(IWAN, 10);
+	Engine_EventSetMessage(MsgKolimaWatchOutItsHappeningAgain);
+	Event_SayThenWait(IVAN, 10);
 	SceneActor_SetPairZeroAndValue(1, 0xc000, 10);
 	SceneActor_SetPairZeroAndValue(0, 0xc000, 10);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
 	}
@@ -692,17 +692,17 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Object_GetById(2)->priority_flags &= 254;
 	Object_GetById(3)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetSpritePriority(GERALD, 3);
-	Engine_ActorSetSpritePriority(IWAN, 3);
-	Engine_ActorSetSpritePriority(MEARI, 3);
+	Engine_ActorSetSpritePriority(GARET, 3);
+	Engine_ActorSetSpritePriority(IVAN, 3);
+	Engine_ActorSetSpritePriority(MIA, 3);
 	gFallingEffectState = 2;
 	Event_PlayCue(220);
 	Actor_SetPosition(13, 0xfd0000, 0x25b0000);
-	formation_action = KorimaHashi_FormationAction;
+	formation_action = KolimaForestBridge_FormationAction;
 	Engine_ActorEnableActionCallback(13, formation_action);
 	Actor_SetPosition(14, 0xe90000, 0x2750000);
 	Engine_ActorEnableActionCallback(14, formation_action);
-	if (KorimaHashi_PartyFlag != 0)
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
 		Actor_SetPosition(15, 0xcf0000, 0x2610000);
 		Engine_ActorEnableActionCallback(15, formation_action);
@@ -718,95 +718,95 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Event_SayThenWait(11, 80);
 	Event_SayThenWait(12, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 0);
-	Actor_ShowEmote(IWAN, 0x101, 0);
-	Actor_ShowEmote(MEARI, 0x101, 0);
+	Actor_ShowEmote(GARET, 0x101, 0);
+	Actor_ShowEmote(IVAN, 0x101, 0);
+	Actor_ShowEmote(MIA, 0x101, 0);
 	Engine_EventWait(60);
 	Event_SayThenWait(12, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Event_SayThenWait(12, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Event_SayThenWait(12, 10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-	Actor_ShowEmote(GERALD, 0x100, 0);
-	Actor_ShowEmote(IWAN, 0x100, 0);
-	Actor_ShowEmote(MEARI, 0x100, 0);
+	Actor_ShowEmote(GARET, 0x100, 0);
+	Actor_ShowEmote(IVAN, 0x100, 0);
+	Actor_ShowEmote(MIA, 0x100, 0);
 	Engine_EventWait(40);
 	Event_SayThenWait(11, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_EAST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_EAST, 0);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 40);
 	Event_SayThenWait(12, 10);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(IWAN, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 0);
+	Actor_ShowEmote(MIA, 0x102, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0xc000, 80);
 	Event_SayThenWait(12, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0, 40);
 	Event_SayThenWait(11, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimation(GERALD, 4);
-	Engine_ActorSetAnimation(MEARI, 4);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Engine_ActorSetAnimation(GARET, 4);
+	Engine_ActorSetAnimation(MIA, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(60);
 	Event_SayThenWait(12, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Event_SayThenWait(12, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0, 20);
 	Event_SayThenWait(12, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 0);
 	Event_SayThenWait(12, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0, 20);
 	Event_SayThenWait(11, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(MEARI, 0x102, 0);
-	Actor_ShowEmote(IWAN, 0x102, 0);
+	Actor_ShowEmote(GARET, 0x102, 0);
+	Actor_ShowEmote(MIA, 0x102, 0);
+	Actor_ShowEmote(IVAN, 0x102, 0);
 	Engine_EventWait(40);
 	Event_SayThenWait(12, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
 	SceneActor_SetPairZeroAndValue(3, 0xc000, 10);
 	Event_SayThenWait(12, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(60);
 	Event_ShowMessage(12, 0);
 	Event_ShowMessage(11, 0);
@@ -817,11 +817,11 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_TaskWait(80);
 	Engine_ActorStop(13);
 	Engine_ActorStop(14);
-	party_flag = &KorimaHashi_PartyFlag;
+	party_flag = &KolimaForestBridge_PartyFlag;
 	Engine_ActorStop(15);
 	Engine_ActorStop(16);
 	Engine_TaskWait(1);
-	finish_action = KorimaHashi_FinishAction;
+	finish_action = KolimaForestBridge_FinishAction;
 	Engine_ActorEnableActionCallback(13, finish_action);
 	Engine_ActorEnableActionCallback(14, finish_action);
 	if (*party_flag != 0)
@@ -831,205 +831,205 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Object_SetActionCallbackAndRefreshById(16, finish_action);
 	Engine_EventWait(20);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorSetSpritePriority(GERALD, 2);
-	Engine_ActorSetSpritePriority(IWAN, 2);
-	Engine_ActorSetSpritePriority(MEARI, 2);
+	Engine_ActorSetSpritePriority(GARET, 2);
+	Engine_ActorSetSpritePriority(IVAN, 2);
+	Engine_ActorSetSpritePriority(MIA, 2);
 	Object_GetById(0)->priority_flags |= 1;
 	Object_GetById(1)->priority_flags |= 1;
 	Object_GetById(2)->priority_flags |= 1;
 	Object_GetById(3)->priority_flags |= 1;
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
-	Event_OpenMessage(IWAN, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_EAST, 0);
+	Event_OpenMessage(IVAN, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_EAST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		Engine_EventWait(10);
-		Event_OpenMessage(GERALD, 0);
+		Event_OpenMessage(GARET, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
 			SceneActor_SetPairZeroAndValue(3, 0, 20);
-			Actor_ShowEmote(GERALD, 0x101, 0);
-			Actor_ShowEmote(IWAN, 0x101, 0);
-			Actor_ShowEmote(MEARI, 0x101, 0);
+			Actor_ShowEmote(GARET, 0x101, 0);
+			Actor_ShowEmote(IVAN, 0x101, 0);
+			Actor_ShowEmote(MIA, 0x101, 0);
 			Engine_EventWait(40);
 			SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
-			Event_SayThenWait(GERALD, 10);
+			Event_SayThenWait(GARET, 10);
 			SceneActor_SetPairZeroAndValue(2, 0xc000, 20);
 			SceneActor_SetPairZeroAndValue(2, 0xe000, 20);
-			Engine_ActorSetAnimationAndWait(IWAN, 3);
-			Event_SayThenWait(IWAN, 20);
+			Engine_ActorSetAnimationAndWait(IVAN, 3);
+			Event_SayThenWait(IVAN, 20);
 			SceneActor_SetPairZeroAndValue(1, 0x2000, 20);
 		}
 		else
 		{
 			SceneActor_SetPairZeroAndValue(3, 0, 20);
-			Actor_ShowEmote(GERALD, 0x102, 0);
-			Actor_ShowEmote(IWAN, 0x102, 0);
-			Actor_ShowEmote(MEARI, 0x102, 0);
+			Actor_ShowEmote(GARET, 0x102, 0);
+			Actor_ShowEmote(IVAN, 0x102, 0);
+			Actor_ShowEmote(MIA, 0x102, 0);
 			Engine_EventWait(40);
 			SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
-			Engine_EventSetMessage(MsgKorimaHesAsStumpedAsWe);
-			Event_SayThenWait(GERALD, 20);
-			Engine_ActorSetAnimationAndWait(IWAN, 3);
-			Event_SayThenWait(IWAN, 20);
+			Engine_EventSetMessage(MsgKolimaHesAsStumpedAsWe);
+			Event_SayThenWait(GARET, 20);
+			Engine_ActorSetAnimationAndWait(IVAN, 3);
+			Event_SayThenWait(IVAN, 20);
 		}
-		Engine_ActorSetAnimation(MEARI, 3);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
-		Engine_ActorSetAnimationAndWait(IWAN, 3);
+		Engine_ActorSetAnimation(MIA, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
+		Engine_ActorSetAnimationAndWait(IVAN, 3);
 	}
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(GARET, 3);
 		Engine_EventWait(10);
-		Engine_EventSetMessage(MsgKorimaYoureRobinThereIsntMuch);
-		Event_SayThenWait(GERALD, 10);
-		Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+		Engine_EventSetMessage(MsgKolimaYoureIsaacThereIsntMuch);
+		Event_SayThenWait(GARET, 10);
+		Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 		SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
-		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimation(GARET, 3);
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 		Engine_EventWait(10);
-		Engine_ActorSetAnimationAndWait(IWAN, 4);
-		Event_OpenMessage(IWAN, 0);
+		Engine_ActorSetAnimationAndWait(IVAN, 4);
+		Event_OpenMessage(IVAN, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
 			Engine_EventWait(20);
-			Actor_ShowEmote(IWAN, 0x103, 0);
+			Actor_ShowEmote(IVAN, 0x103, 0);
 			Engine_EventWait(40);
 			SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
-			Event_SayThenWait(IWAN, 10);
+			Event_SayThenWait(IVAN, 10);
 			if (*party_flag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0, 10);
-				Engine_ActorStartRepeatedMotion(MEARI, 3);
-				Event_SayThenWait(MEARI, 20);
+				Engine_ActorStartRepeatedMotion(MIA, 3);
+				Event_SayThenWait(MIA, 20);
 			}
 			else
 			{
 				gEventWork->message += 1;
 			}
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-			Actor_ShowEmote(GERALD, 0x102, 0);
+			Actor_ShowEmote(GARET, 0x102, 0);
 			Engine_EventWait(40);
-			Engine_ActorRunRepeatedMotion(GERALD, 2);
-			Event_SayThenWait(GERALD, 20);
-			Actor_ShowEmote(GERALD, 0x105, 0);
+			Engine_ActorRunRepeatedMotion(GARET, 2);
+			Event_SayThenWait(GARET, 20);
+			Actor_ShowEmote(GARET, 0x105, 0);
 			Engine_EventWait(120);
-			Event_SayThenWait(IWAN, 40);
-			if (KorimaHashi_PartyFlag != 0)
+			Event_SayThenWait(IVAN, 40);
+			if (KolimaForestBridge_PartyFlag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
-				Engine_ActorSetAnimationAndWait(MEARI, 4);
-				Event_SayThenWait(MEARI, 10);
+				Engine_ActorSetAnimationAndWait(MIA, 4);
+				Event_SayThenWait(MIA, 10);
 			}
 			else
 			{
 				gEventWork->message += 1;
 			}
 			Engine_EventWait(60);
-			Engine_ActorRunRepeatedMotion(IWAN, 2);
-			if (KorimaHashi_PartyFlag != 0)
+			Engine_ActorRunRepeatedMotion(IVAN, 2);
+			if (KolimaForestBridge_PartyFlag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(2, 0xa000, 40);
 				SceneActor_SetPairZeroAndValue(2, 0xe000, 20);
 			}
-			Event_SayThenWait(IWAN, 10);
+			Event_SayThenWait(IVAN, 10);
 			Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Engine_ActorRunRepeatedMotion(GARET, 2);
 			Engine_EventWait(40);
-			Event_SayThenWait(IWAN, 20);
+			Event_SayThenWait(IVAN, 20);
 			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-			Engine_ActorSetAnimationAndWait(GERALD, 3);
+			Engine_ActorSetAnimationAndWait(GARET, 3);
 			Engine_EventWait(20);
-			Engine_ActorSetAnimation(MEARI, 3);
-			Engine_ActorSetAnimationAndWait(IWAN, 3);
+			Engine_ActorSetAnimation(MIA, 3);
+			Engine_ActorSetAnimationAndWait(IVAN, 3);
 		}
 		else
 		{
-			Actor_ShowEmote(IWAN, 0x105, 0);
+			Actor_ShowEmote(IVAN, 0x105, 0);
 			Engine_EventWait(40);
-			Engine_ActorSetAnimationAndWait(IWAN, 3);
-			Engine_EventSetMessage(MsgKorimaThatsReliefRobinThoughtYoud);
-			Event_SayThenWait(IWAN, 20);
+			Engine_ActorSetAnimationAndWait(IVAN, 3);
+			Engine_EventSetMessage(MsgKolimaThatsReliefIsaacThoughtYoud);
+			Event_SayThenWait(IVAN, 20);
 			if (*party_flag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0, 10);
-				Engine_ActorStartRepeatedMotion(MEARI, 1);
-				Event_SayThenWait(MEARI, 20);
+				Engine_ActorStartRepeatedMotion(MIA, 1);
+				Event_SayThenWait(MIA, 20);
 			}
 			else
 			{
 				gEventWork->message += 1;
 			}
-			Actor_ShowEmote(GERALD, 0x102, 0);
+			Actor_ShowEmote(GARET, 0x102, 0);
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
 			Engine_EventWait(40);
-			Engine_ActorRunRepeatedMotion(GERALD, 2);
-			Event_SayThenWait(GERALD, 20);
-			Actor_ShowEmote(IWAN, 0x105, 0);
+			Engine_ActorRunRepeatedMotion(GARET, 2);
+			Event_SayThenWait(GARET, 20);
+			Actor_ShowEmote(IVAN, 0x105, 0);
 			Engine_EventWait(80);
-			Event_SayThenWait(IWAN, 40);
-			if (KorimaHashi_PartyFlag != 0)
+			Event_SayThenWait(IVAN, 40);
+			if (KolimaForestBridge_PartyFlag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0x2000, 20);
-				Engine_ActorSetAnimation(MEARI, 4);
-				Event_SayThenWait(MEARI, 40);
+				Engine_ActorSetAnimation(MIA, 4);
+				Event_SayThenWait(MIA, 40);
 			}
 			else
 			{
 				gEventWork->message += 1;
 			}
-			Engine_ActorRunRepeatedMotion(IWAN, 2);
+			Engine_ActorRunRepeatedMotion(IVAN, 2);
 			Engine_EventWait(20);
-			Event_SayThenWait(IWAN, 20);
-			Engine_ActorStartRepeatedMotion(GERALD, 2);
+			Event_SayThenWait(IVAN, 20);
+			Engine_ActorStartRepeatedMotion(GARET, 2);
 			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			Engine_EventWait(40);
-			Event_SayThenWait(IWAN, 20);
+			Event_SayThenWait(IVAN, 20);
 		}
 	}
 	Event_PlayCue(17);
-	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
-	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
-	Actor_SetSpeed(MEARI, 0x13333, 0x9999);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Actor_SetSpeed(GARET, 0x13333, 0x9999);
+	Actor_SetSpeed(IVAN, 0x13333, 0x9999);
+	Actor_SetSpeed(MIA, 0x13333, 0x9999);
+	Engine_ActorSetAnimation(GARET, 2);
 	{
 		struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
 		if (leader != 0)
 		{
-			Actor_SetDestination(GERALD, leader->x.part.pixel, leader->z.part.pixel);
+			Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
 		}
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
-	Engine_ActorSetAnimation(IWAN, 2);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
+	Engine_ActorSetAnimation(IVAN, 2);
 	{
 		struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
 		if (leader != 0)
 		{
-			Actor_SetDestination(IWAN, leader->x.part.pixel, leader->z.part.pixel);
+			Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
 		}
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	if (KorimaHashi_PartyFlag != 0)
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	if (KolimaForestBridge_PartyFlag != 0)
 	{
-		Engine_ActorSetAnimation(MEARI, 2);
+		Engine_ActorSetAnimation(MIA, 2);
 		{
 			struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
 			if (leader != 0)
 			{
-				Actor_SetDestination(MEARI, leader->x.part.pixel, leader->z.part.pixel);
+				Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
 			}
 		}
-		Engine_ActorWaitForMove(MEARI);
-		Actor_SetPosition(MEARI, 0, 0);
+		Engine_ActorWaitForMove(MIA);
+		Actor_SetPosition(MIA, 0, 0);
 	}
 	GameFlag_Set(0x843);
 	Actor_SetPosition(11, 0, 0);
@@ -1069,7 +1069,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	phase = gFrameCount & 7;
 	if (phase != 0)
 		return;
-	if (KorimaHashi_SparkleSound != 0)
+	if (KolimaForestBridge_SparkleSound != 0)
 		Engine_AudioPlayCue(200);
 	obj = Engine_ObjectCreate(26, c1, 0, c2);
 	if (obj == 0)
@@ -1089,7 +1089,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	obj->motion_flags = phase;
 	Object_SetMode(obj, 2);
 	Engine_ObjectSetPosition(obj, c3, 0, c4);
-	Engine_ObjectSetScript(obj, KorimaHashi_Object26Script);
+	Engine_ObjectSetScript(obj, KolimaForestBridge_Object26Script);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -1099,7 +1099,7 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
 	s32 x;
 
-	if (!(KorimaHashi_PartyFlag != 0
+	if (!(KolimaForestBridge_PartyFlag != 0
 		? (x = arg0->x.fixed,
 			(x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000
 				&& arg0->z.fixed < 0x2640000)
@@ -1117,18 +1117,18 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 	}
 	Engine_AudioPlayCue(106);
 	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype or through Object_SetScript, r0 is set before the script literal loads (2 differ) */
-	((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
-	KorimaHashi_TriggerPending = 1;
+	((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KolimaForestBridge_TriggerScript);
+	KolimaForestBridge_TriggerPending = 1;
 	return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_forest_bridge_falling_effect.h"
-s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
-s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
-s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
+s32 KolimaForestBridge_TriggerPending __attribute__((section(".bss")));
+s32 KolimaForestBridge_PartyFlag __attribute__((section(".bss")));
+s32 KolimaForestBridge_SparkleSound __attribute__((section(".bss")));
 
-static void KorimaHashi_AlternateBridgePostHeights(void)
+static void KolimaForestBridge_AlternateBridgePostHeights(void)
 {
 	struct FieldActor *p;
 
@@ -1221,7 +1221,7 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-s32 KorimaHashi_GeraldAction[] = {
+s32 KolimaForestBridge_GaretAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(234), 0, PIXELS(576)),
 	SC_SYNC,
@@ -1230,7 +1230,7 @@ s32 KorimaHashi_GeraldAction[] = {
 	SC_END,
 };
 
-s32 KorimaHashi_IvanAction[] = {
+s32 KolimaForestBridge_IvanAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(234), 0, PIXELS(623)),
 	SC_SYNC,
@@ -1239,7 +1239,7 @@ s32 KorimaHashi_IvanAction[] = {
 	SC_END,
 };
 
-s32 KorimaHashi_MiaAction[] = {
+s32 KolimaForestBridge_MiaAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(211), 0, PIXELS(602)),
 	SC_SYNC,
@@ -1248,7 +1248,7 @@ s32 KorimaHashi_MiaAction[] = {
 	SC_END,
 };
 
-s32 KorimaHashi_PartyAction[] = {
+s32 KolimaForestBridge_PartyAction[] = {
 	SC_ADD(SW_SCALE_X, -0x4000),
 	SC_ADD(SW_SCALE_Y, 0x2000),
 	SC_WAIT(2),
@@ -1264,14 +1264,14 @@ s32 KorimaHashi_PartyAction[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 KorimaHashi_ResetAction[] = {
+s32 KolimaForestBridge_ResetAction[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_WAIT(1),
 	SC_END,
 };
 
-s32 KorimaHashi_FormationAction[] = {
+s32 KolimaForestBridge_FormationAction[] = {
 	SC_SET(SW_SCALE_X, 0x1999),
 	SC_SET(SW_SCALE_Y, 0x1999),
 	SC_WAIT(1),
@@ -1284,7 +1284,7 @@ s32 KorimaHashi_FormationAction[] = {
 	SC_END,
 };
 
-s32 KorimaHashi_FinishAction[] = {
+s32 KolimaForestBridge_FinishAction[] = {
 	SC_ARG(1),
 	SC_ADD(SW_Z, -0x1999),
 	SC_ADD(SW_SCALE_X, -983),
@@ -1296,7 +1296,7 @@ s32 KorimaHashi_FinishAction[] = {
 	SC_END,
 };
 
-s32 KorimaHashi_EntryAction[] = {
+s32 KolimaForestBridge_EntryAction[] = {
 	SC_SET(SW_SCALE_X, 0xc000),
 	SC_SET(SW_SCALE_Y, 0xc000),
 	SC_SET(SW_COLLISION, 0),
@@ -1306,18 +1306,18 @@ s32 KorimaHashi_EntryAction[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance KorimaHashi_Entrances[] = {
+struct SceneEntrance KolimaForestBridge_Entrances[] = {
 	{ 0, CONDITION_ALWAYS, 384, 0, 312, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ 4, CONDITION_ALWAYS, 172, 0, 602, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance KorimaHashi_Exits[] = {
+struct SceneEntrance KolimaForestBridge_Exits[] = {
 	{ 40, 0x0, 4137, 16, 4136, 0x20, 4136, 48, -32766, 64, 511, 0 },
 };
 
-struct SceneEntrance KorimaHashi_Placements[] = {
+struct SceneEntrance KolimaForestBridge_Placements[] = {
 	{ 1, CONDITION_ALWAYS, 1, 0, 0, FACING_EAST, 0, 0, 0, 0, 0, 0 },
 	{ 2, CONDITION_ALWAYS, 1, 0, 0, FACING_EAST, 0, 0, 0, 0, 0, 0 },
 	{ 3, CONDITION_ALWAYS, 1, 0, 0, FACING_EAST, 0, 0, 0, 0, 0, 0 },
@@ -1338,7 +1338,7 @@ struct SceneEntrance KorimaHashi_Placements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent KorimaHashi_Events[] = {
+struct SceneEvent KolimaForestBridge_Events[] = {
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
@@ -1346,12 +1346,12 @@ struct SceneEvent KorimaHashi_Events[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s32 KorimaHashi_Object26Script[] = {
+s32 KolimaForestBridge_Object26Script[] = {
 	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 KorimaHashi_TriggerScript[] = {
+s32 KolimaForestBridge_TriggerScript[] = {
 	SC_SET(SW_SCALE_X, 0x20000),
 	SC_SET(SW_SCALE_Y, 0x20000),
 	SC_WAIT(10),

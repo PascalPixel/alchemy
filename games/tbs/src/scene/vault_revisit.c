@@ -36,7 +36,7 @@
 
 const void *SceneData_GetScriptTable(void)
 {
-	return KuupuappuMuraSai_Scripts;
+	return VaultRevisit_Scripts;
 }
 
 int SceneData_ReturnZero(void)
@@ -46,12 +46,12 @@ int SceneData_ReturnZero(void)
 
 const void *SceneData_GetMessageTable(void)
 {
-	return KuupuappuMuraSai_Messages;
+	return VaultRevisit_Messages;
 }
 
 const void *SceneData_GetActorTable(void)
 {
-	return KuupuappuMuraSai_Actors;
+	return VaultRevisit_Actors;
 }
 
 static void ActorPresentation_RunActorModeOneThenZero(s32 actor)
@@ -67,7 +67,7 @@ static void EV08_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 2);
 	Engine_GameFlagSet(0x305);
-	Engine_EventSetMessage(MsgKuupuappuWarriorsWhoCaptured);
+	Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -75,7 +75,7 @@ static void EV08_TALK(void)
 static void EV11_TALK(void)
 {
 
-	Engine_EventSetMessage(MsgKuupuappuRumorsThievesLunpa);
+	Engine_EventSetMessage(MsgVaultRumorsThievesLunpa);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	ActorPresentation_RunActorModeOneThenZero(11);
 }
@@ -87,7 +87,7 @@ static void EV12_TALK(void)
 	Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 2);
 	Engine_GameFlagSet(0x306);
 	Engine_GameFlagSet(0x868);
-	Engine_EventSetMessage(MsgKuupuappuTalkingMayorStrong);
+	Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
 	Engine_EventShowMessage(12, 0);
 	Engine_EventEnd();
 }
@@ -95,7 +95,7 @@ static void EV12_TALK(void)
 static void EV13_TALK(void)
 {
 
-	Engine_EventSetMessage(MsgKuupuappuVolcanoStaysCalm);
+	Engine_EventSetMessage(MsgVaultVolcanoStaysCalm);
 	Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 2);
 	ActorPresentation_RunActorModeOneThenZero(13);
 }
@@ -108,7 +108,7 @@ static void EV14_TALK(void)
 
 	actor->timer |= 2;
 	Engine_EventBegin();
-	text = MsgKuupuappuWarriorGuy;
+	text = MsgVaultWarriorGuy;
 	Engine_EventSetMessage(text);
 	Engine_ActorSetAnimation(14, 0);
 	Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 2);
@@ -137,7 +137,7 @@ static void EV15_TALK(void)
 	facing0 = actor->facing;
 	actor->timer |= 2;
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuWishVaultsElders);
+	Engine_EventSetMessage(MsgVaultWishVaultsElders);
 	Engine_ActorSetAnimation(15, 0);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
 	Engine_EventShowMessageAndWait(15, 0, 10);
@@ -150,7 +150,7 @@ static void EV15_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuGuysCheckJail);
+	Engine_EventSetMessage(MsgVaultGuysCheckJail);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	Engine_EventOpenMessage(16, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -169,14 +169,14 @@ static void EV1032_PSYNERGY(void)
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 20);
 	Engine_GameFlagSet(0x305);
-	Engine_EventSetMessage(MsgKuupuappuWarriorsWhoCaptured);
+	Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
 	Engine_EventShowMessageAndWait(8, 0, 20);
 	Engine_EventEnd();
 }
 
 static void EV11_PSYNERGY(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuOnceDodonpaTook);
+	Engine_EventSetMessage(MsgVaultOnceDodonpaTook);
 	((struct AcceptActor11 *)Object_GetById(11))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(11);
 	((struct AcceptActor11 *)Object_GetById(11))->accepted = 0;
@@ -190,26 +190,26 @@ static void EV1036_PSYNERGY(void)
 	Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 20);
 	Engine_GameFlagSet(0x306);
 	Engine_GameFlagSet(0x868);
-	Engine_EventSetMessage(MsgKuupuappuTalkingMayorStrong);
+	Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
 	Engine_EventShowMessageAndWait(12, 0, 20);
 	Engine_EventEnd();
 }
 
 static void EV13_PSYNERGY(void)
 {
-	Engine_EventSetMessage(MsgKuupuappuGreatEverythingSolved);
+	Engine_EventSetMessage(MsgVaultGreatEverythingSolved);
 	((struct AcceptActor13 *)Object_GetById(13))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(13);
 	((struct AcceptActor13 *)Object_GetById(13))->accepted = 0;
 }
 
-static void KuupuappuMuraSai_RunActor14Talk(void)
+static void VaultRevisit_RunActor14Talk(void)
 {
 	Actor_Get(14)->timer |= 2;
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x307) != 0)
 	{
-		Engine_EventSetMessage(MsgKuupuappuWatchingGuysMakes);
+		Engine_EventSetMessage(MsgVaultWatchingGuysMakes);
 		ActorPresentation_RunActorModeOneThenZero(14);
 	}
 	else
@@ -228,7 +228,7 @@ static void EV15_PSYNERGY(void)
 		actor->timer |= 2;
 	}
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuGrownUpsAlways);
+	Engine_EventSetMessage(MsgVaultGrownUpsAlways);
 	ActorPresentation_RunActorModeOneThenZero(15);
 	Engine_EventEnd();
 	{
@@ -251,7 +251,7 @@ static void FieldScene_RunScene385SequenceA(void)
 		Engine_ActorSetAnimation(16, 1);
 		Engine_ActorRunRepeatedMotion(16, 1);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgKuupuappuGuysCheckJail);
+		Engine_EventSetMessage(MsgVaultGuysCheckJail);
 		Engine_ActorFaceEachOther(16, 0, 2);
 		Event_OpenMessage(16, 0);
 		if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -266,7 +266,7 @@ static void FieldScene_RunScene385SequenceA(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKuupuappuNotLikeEasy);
+		Engine_EventSetMessage(MsgVaultNotLikeEasy);
 		Actor_Get(16)->paused = 1;
 		ActorPresentation_RunActorModeOneThenZero(16);
 		v5 = 0;
@@ -329,21 +329,21 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay)
 static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene5Cells, 56, 19);
+	Engine_MapAnimateCells(VaultRevisit_Scene5Cells, 56, 19);
 	SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
 static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene6Cells, 50, 18);
+	Engine_MapAnimateCells(VaultRevisit_Scene6Cells, 50, 18);
 	SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
 static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene7Cells, 44, 17);
+	Engine_MapAnimateCells(VaultRevisit_Scene7Cells, 44, 17);
 	SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
@@ -354,7 +354,7 @@ static void EV08_TOUCH(void)
 	u8							flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene8Cells, 54, 13);
+	Engine_MapAnimateCells(VaultRevisit_Scene8Cells, 54, 13);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
@@ -373,7 +373,7 @@ static void EV09_TOUCH(void)
 	u8							flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene9Cells, 49, 10);
+	Engine_MapAnimateCells(VaultRevisit_Scene9Cells, 49, 10);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
@@ -388,7 +388,7 @@ static void EV09_TOUCH(void)
 static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene10Cells, 38, 6);
+	Engine_MapAnimateCells(VaultRevisit_Scene10Cells, 38, 6);
 	SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
@@ -405,7 +405,7 @@ static void EV12_TOUCH(void)
 	u8							  flags;
 
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(KuupuappuMuraSai_Scene12Cells, 35, 9);
+	Engine_MapAnimateCells(VaultRevisit_Scene12Cells, 35, 9);
 	{
 
 		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
@@ -465,7 +465,7 @@ static void ActorPresentation_SetAlternatePairedSceneCells(void)
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKuupuappuRuffRrruff2);
+	Engine_EventSetMessage(MsgVaultRuffRrruff2);
 	Engine_ActorSetAnimation(18, 0);
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(2);
@@ -484,13 +484,13 @@ static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered(MsgKuupuappuCanHearWaterRumblingDown, 1);
+	Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
 	Engine_EventEnd();
 }
 
 const u8 *SceneData_GetExtraTable(void)
 {
-	return (const u8 *)KuupuappuMuraSai_Extras;
+	return (const u8 *)VaultRevisit_Extras;
 }
 
 s32 SceneSetup_InitializeActorsAndFlags(void)
@@ -567,7 +567,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 KuupuappuMuraSai_Actor0[] = {
+s32 VaultRevisit_Actor0[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -592,7 +592,7 @@ s32 KuupuappuMuraSai_Actor0[] = {
 	SC_END,
 };
 
-s32 KuupuappuMuraSai_Actor1[] = {
+s32 VaultRevisit_Actor1[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0xcccc),
 	SC_SET(SW_ACCEL, 0x3333),
@@ -617,7 +617,7 @@ s32 KuupuappuMuraSai_Actor1[] = {
 	SC_END,
 };
 
-struct SceneEntrance KuupuappuMuraSai_Scripts[] = {
+struct SceneEntrance VaultRevisit_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -634,7 +634,7 @@ struct SceneEntrance KuupuappuMuraSai_Scripts[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 KuupuappuMuraSai_Messages[] = {
+u32 VaultRevisit_Messages[] = {
 	SCENE_EXITS(23),
 	SCENE_EXIT(1, 2, 3),
 	SCENE_EXIT(2, 2, 44),
@@ -651,7 +651,7 @@ u32 KuupuappuMuraSai_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement KuupuappuMuraSai_Actors[] = {
+struct ScenePlacement VaultRevisit_Actors[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -664,9 +664,9 @@ struct ScenePlacement KuupuappuMuraSai_Actors[] = {
 		PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
 	{ 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0x6b, CONDITION_ALWAYS, (s32)KuupuappuMuraSai_Actor0,
+	{ 0x6b, CONDITION_ALWAYS, (s32)VaultRevisit_Actor0,
 		PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
-	{ 0x66, CONDITION_ALWAYS, (s32)KuupuappuMuraSai_Actor1,
+	{ 0x66, CONDITION_ALWAYS, (s32)VaultRevisit_Actor1,
 		PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -683,35 +683,35 @@ struct ScenePlacement KuupuappuMuraSai_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-u16 KuupuappuMuraSai_Scene5Cells[] = {
+u16 VaultRevisit_Scene5Cells[] = {
 	MAP_CELL_STEP(35, 52, 2, 2, 4), MAP_CELL_STEP(33, 52, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene6Cells[] = {
+u16 VaultRevisit_Scene6Cells[] = {
 	MAP_CELL_STEP(35, 50, 2, 2, 4), MAP_CELL_STEP(33, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene7Cells[] = {
+u16 VaultRevisit_Scene7Cells[] = {
 	MAP_CELL_STEP(35, 48, 2, 2, 4), MAP_CELL_STEP(33, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene8Cells[] = {
+u16 VaultRevisit_Scene8Cells[] = {
 	MAP_CELL_STEP(42, 48, 2, 2, 4), MAP_CELL_STEP(40, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene9Cells[] = {
+u16 VaultRevisit_Scene9Cells[] = {
 	MAP_CELL_STEP(42, 46, 2, 2, 4), MAP_CELL_STEP(40, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene10Cells[] = {
+u16 VaultRevisit_Scene10Cells[] = {
 	MAP_CELL_STEP(35, 46, 2, 2, 4), MAP_CELL_STEP(33, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 KuupuappuMuraSai_Scene12Cells[] = {
+u16 VaultRevisit_Scene12Cells[] = {
 	MAP_CELL_STEP(35, 33, 2, 2, 4), MAP_CELL_STEP(33, 33, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-struct SceneEvent KuupuappuMuraSai_Extras[] = {
+struct SceneEvent VaultRevisit_Extras[] = {
 	{ EVENT_EXIT, 20, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 40, CONDITION_ALWAYS, 13 },
@@ -727,36 +727,36 @@ struct SceneEvent KuupuappuMuraSai_Extras[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorDraw_SetupActorSceneCells) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYouveProbablyAlreadyHeardButThe) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWonderWhatHappenedToHammet) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheThievesEscapedButIThink) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThereYouSeeTheRoofRepairs) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x305, EVENT_SCRIPT(EV1032_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuICantBelieveTheyreHereWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhenThoseGuysFromKalayCame) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYeahSomeWarriorsFromKalayCame) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x306, EVENT_SCRIPT(EV1036_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThoseStupidThievesEscapedAndWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x307, EVENT_SCRIPT(KuupuappuMuraSai_RunActor14Talk) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMuraSai_RunActor14Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x307, EVENT_SCRIPT(VaultRevisit_RunActor14Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RunActor14Talk) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x308, EVENT_SCRIPT(FieldScene_RunScene385SequenceA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene385SequenceA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIKeepWonderingWasOurStatue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x858), MSGNO(MsgKuupuappuCarefulSearchWillRevealPassage) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIfYouBringMeSomeBones) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThatsTheLastOfTheRoof) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x858), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
 	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
 	{ 0xe714, 18, 0x858, EVENT_SCRIPT(EV18_SCRIPT) },

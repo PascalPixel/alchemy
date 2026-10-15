@@ -26,7 +26,7 @@
 
 // 前方宣言
 static void RunGuardedSceneSetup(void);
-static void BiribinoDou_PrepareWindowTransition(void);
+static void BilibinCave_PrepareWindowTransition(void);
 static void FieldScene_RunScene398SequenceC(void);
 static void Resource398_ImportBankNoOp(s32 unused);
 
@@ -40,19 +40,19 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_BiribinoDou3)
+	if (selector == (s32)&SceneId_BilibinCave3)
 	{
-		return gBiribinoDouEntrances3;
+		return gBilibinCaveEntrances3;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou2)
+	if (selector == (s32)&SceneId_BilibinCave2)
 	{
-		return gBiribinoDouEntrances2;
+		return gBilibinCaveEntrances2;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou1)
+	if (selector == (s32)&SceneId_BilibinCave1)
 	{
-		return gBiribinoDouEntrances1;
+		return gBilibinCaveEntrances1;
 	}
-	return gBiribinoDouEntrancesOther;
+	return gBilibinCaveEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -60,47 +60,47 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *BiribinoDou_GetExits(void)
+u8 *BilibinCave_GetExits(void)
 {
-	return (u8 *)gBiribinoDouExits;
+	return (u8 *)gBilibinCaveExits;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_BiribinoDou3)
+	if (selector == (s32)&SceneId_BilibinCave3)
 	{
-		return gBiribinoDouPlacements3;
+		return gBilibinCavePlacements3;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou2)
+	if (selector == (s32)&SceneId_BilibinCave2)
 	{
-		return gBiribinoDouPlacements2;
+		return gBilibinCavePlacements2;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou1)
+	if (selector == (s32)&SceneId_BilibinCave1)
 	{
-		return gBiribinoDouPlacements1;
+		return gBilibinCavePlacements1;
 	}
-	return gBiribinoDouPlacementsOther;
+	return gBilibinCavePlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 selector = gGameState.scene;
 
-	if (selector == (s32)&SceneId_BiribinoDou3)
+	if (selector == (s32)&SceneId_BilibinCave3)
 	{
-		return gBiribinoDouEvents3;
+		return gBilibinCaveEvents3;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou2)
+	if (selector == (s32)&SceneId_BilibinCave2)
 	{
-		return gBiribinoDouEvents2;
+		return gBilibinCaveEvents2;
 	}
-	if (selector == (s32)&SceneId_BiribinoDou1)
+	if (selector == (s32)&SceneId_BilibinCave1)
 	{
-		return gBiribinoDouEvents1;
+		return gBilibinCaveEvents1;
 	}
-	return gBiribinoDouEventsOther;
+	return gBilibinCaveEventsOther;
 }
 
 static void EV10_TOUCH(void)
@@ -279,15 +279,15 @@ s32 Scene_Initialize(void)
 {
 	s16 variant = gGameState.scene;
 
-	if (variant == (s32)&SceneId_BiribinoDou3)
+	if (variant == (s32)&SceneId_BilibinCave3)
 	{
 		RunGuardedSceneSetup();
 	}
-	else if (variant == (s32)&SceneId_BiribinoDou2)
+	else if (variant == (s32)&SceneId_BilibinCave2)
 	{
-		BiribinoDou_PrepareWindowTransition();
+		BilibinCave_PrepareWindowTransition();
 	}
-	else if (variant == (s32)&SceneId_BiribinoDou1)
+	else if (variant == (s32)&SceneId_BilibinCave1)
 	{
 		FieldScene_RunScene398SequenceC();
 	}
@@ -304,7 +304,7 @@ static void RunGuardedSceneSetup(void)
 	}
 }
 
-static void BiribinoDou_PrepareWindowTransition(void)
+static void BilibinCave_PrepareWindowTransition(void)
 {
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -482,17 +482,17 @@ static void Resource398_ImportBankNoOp(s32 unused)
 {
 }
 
-s32 gBiribinoDouPlacements1_Data[] = {
+s32 gBilibinCavePlacements1_Data[] = {
 	SC_CALL(SceneState_ApplyArgMode0AndReturnZero),
 	SC_END,
 };
 
-struct SceneEntrance gBiribinoDouEntrancesOther[] = {
+struct SceneEntrance gBilibinCaveEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gBiribinoDouEntrances3[] = {
+struct SceneEntrance gBilibinCaveEntrances3[] = {
 	{ 0, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 99, 0, 447, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 342, 0, 254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -500,7 +500,7 @@ struct SceneEntrance gBiribinoDouEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gBiribinoDouEntrances2[] = {
+struct SceneEntrance gBilibinCaveEntrances2[] = {
 	{ 0, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 312, 0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0 },
 	{ 2, CONDITION_ALWAYS, 472, 0, 680, FACING_NORTH, 0, 40, 60, 630, 840, 0 },
@@ -511,7 +511,7 @@ struct SceneEntrance gBiribinoDouEntrances2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gBiribinoDouEntrances1[] = {
+struct SceneEntrance gBilibinCaveEntrances1[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 120, 0, 472, FACING_NORTH, 0, 60, 60, 790, 600, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 524, FACING_NORTH, 0, 60, 60, 790, 600, 0 },
@@ -521,7 +521,7 @@ struct SceneEntrance gBiribinoDouEntrances1[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gBiribinoDouExits[] = {
+u32 gBilibinCaveExits[] = {
 	SCENE_EXITS(49),
 	SCENE_EXIT(1, 2, 35),
 	SCENE_EXIT(2, 48, 1),
@@ -542,17 +542,17 @@ u32 gBiribinoDouExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBiribinoDouPlacementsOther[] = {
+struct ScenePlacement gBilibinCavePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBiribinoDouPlacements3[] = {
+struct ScenePlacement gBilibinCavePlacements3[] = {
 	{ 0xee, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBiribinoDouPlacements2[] = {
+struct ScenePlacement gBilibinCavePlacements2[] = {
 	{ 0xf6, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(840), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf7, CONDITION_ALWAYS, ACTOR_STAND,
@@ -562,7 +562,7 @@ struct ScenePlacement gBiribinoDouPlacements2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBiribinoDouPlacements1[] = {
+struct ScenePlacement gBilibinCavePlacements1[] = {
 	{ 0xf7, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(280), 0, PIXELS(232), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf6, CONDITION_ALWAYS, ACTOR_STAND,
@@ -577,11 +577,11 @@ struct ScenePlacement gBiribinoDouPlacements1[] = {
 		PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0xf6, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBilibinCavePlacements1_Data,
 		PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBilibinCavePlacements1_Data,
 		PIXELS(504), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xe3, CONDITION_ALWAYS, (s32)gBiribinoDouPlacements1_Data,
+	{ 0xe3, CONDITION_ALWAYS, (s32)gBilibinCavePlacements1_Data,
 		PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -604,11 +604,11 @@ struct ScenePlacement gBiribinoDouPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gBiribinoDouEventsOther[] = {
+struct SceneEvent gBilibinCaveEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBiribinoDouEvents3[] = {
+struct SceneEvent gBilibinCaveEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -618,7 +618,7 @@ struct SceneEvent gBiribinoDouEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBiribinoDouEvents2[] = {
+struct SceneEvent gBilibinCaveEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -632,7 +632,7 @@ struct SceneEvent gBiribinoDouEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBiribinoDouEvents1[] = {
+struct SceneEvent gBilibinCaveEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },

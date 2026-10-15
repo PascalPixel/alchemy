@@ -20,7 +20,7 @@ void Func_02000054(void)
 {
     Func_020002b8();
     Func_02000340(0);
-    Func_02000300((s32)MsgMadoraGoingToOsenia);
+    Func_02000300((s32)MsgMadraGoingToOsenia);
     UiText_OpenMessageAtObject(8, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
         Motion_SetModeAndWaitAnimation(8, 3);

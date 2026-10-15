@@ -4,36 +4,36 @@
 #include "types.h"
 #include "field_scene.h"
 
-s32 *HaidiaBabi_GetEntrances(void);
+s32 *ValeBabi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-s32 HaidiaBabi_SelectExits(void);
-s32 HaidiaBabi_SelectPlacements(void);
-s32 HaidiaBabi_SelectEvents(void);
-s32 HaidiaBabi_RestoreEntryState(void);
-extern s32 gHaidiaBabiSharedAction[];
-extern s32 gHaidiaBabiActorExitAction[];
-extern s32 gHaidiaBabiLeaderExitAction[];
-extern s32 gHaidiaBabiRampActor8Action[];
-extern s32 gHaidiaBabiRampLeaderAction[];
-extern s32 gHaidiaBabiRampActor8ActionB[];
-extern s32 gHaidiaBabiRampLeaderActionB[];
-extern s32 gHaidiaBabiRampFinalAction[];
-extern s32 gHaidiaBabiRampActor10Action[];
-extern s32 gHaidiaBabiRampActor10ActionB[];
-extern s32 gHaidiaBabiActor8Departure[];
-extern s32 gHaidiaBabiBagLiftScript[];
-extern s32 gHaidiaBabiBagShowScript[];
-extern struct SceneEntrance gHaidiaBabiEntrances[];
-extern u32 gHaidiaBabiExits[];
-extern u32 gHaidiaBabiExits2[];
-extern struct ScenePlacement gHaidiaBabiPlacements[];
-extern struct ScenePlacement gHaidiaBabiPlacements2[];
-extern struct ScenePlacement gHaidiaBabiPlacements3[];
-extern struct ScenePlacement gHaidiaBabiPlacements4[];
-extern struct SceneEvent gHaidiaBabiEvents4[];
-extern struct SceneEvent gHaidiaBabiEvents[];
-extern struct SceneEvent gHaidiaBabiEvents3[];
-extern struct SceneEvent gHaidiaBabiEvents5[];
-extern struct SceneEvent gHaidiaBabiEvents6[];
+s32 ValeBabi_SelectExits(void);
+s32 ValeBabi_SelectPlacements(void);
+s32 ValeBabi_SelectEvents(void);
+s32 ValeBabi_RestoreEntryState(void);
+extern s32 gValeBabiSharedAction[];
+extern s32 gValeBabiActorExitAction[];
+extern s32 gValeBabiLeaderExitAction[];
+extern s32 gValeBabiRampActor8Action[];
+extern s32 gValeBabiRampLeaderAction[];
+extern s32 gValeBabiRampActor8ActionB[];
+extern s32 gValeBabiRampLeaderActionB[];
+extern s32 gValeBabiRampFinalAction[];
+extern s32 gValeBabiRampActor10Action[];
+extern s32 gValeBabiRampActor10ActionB[];
+extern s32 gValeBabiActor8Departure[];
+extern s32 gValeBabiBagLiftScript[];
+extern s32 gValeBabiBagShowScript[];
+extern struct SceneEntrance gValeBabiEntrances[];
+extern u32 gValeBabiExits[];
+extern u32 gValeBabiExits2[];
+extern struct ScenePlacement gValeBabiPlacements[];
+extern struct ScenePlacement gValeBabiPlacements2[];
+extern struct ScenePlacement gValeBabiPlacements3[];
+extern struct ScenePlacement gValeBabiPlacements4[];
+extern struct SceneEvent gValeBabiEvents4[];
+extern struct SceneEvent gValeBabiEvents[];
+extern struct SceneEvent gValeBabiEvents3[];
+extern struct SceneEvent gValeBabiEvents5[];
+extern struct SceneEvent gValeBabiEvents6[];
 
 #endif

@@ -26,7 +26,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		x += 0x80000;
 		y <<= 20;
 		y += 0x80000;
-		Engine_ActorSetPosition(GERALD, x, y);
+		Engine_ActorSetPosition(GARET, x, y);
 	}
 	{
 		s32 x = FieldGameFlag_GetByte(912);
@@ -36,7 +36,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		x += 0x80000;
 		y <<= 20;
 		y += 0x80000;
-		Engine_ActorSetPosition(IWAN, x, y);
+		Engine_ActorSetPosition(IVAN, x, y);
 	}
 	{
 		s32 x = FieldGameFlag_GetByte(928);
@@ -46,11 +46,11 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		x += 0x80000;
 		y <<= 20;
 		y += 0x80000;
-		Engine_ActorSetPosition(MEARI, x, y);
+		Engine_ActorSetPosition(MIA, x, y);
 	}
 }
 
-void Korosseo_SelectSoloCompetitor(s32 id)
+void Colosso_SelectSoloCompetitor(s32 id)
 {
 	struct BtlUnit *unit;
 	s32				v;
@@ -66,8 +66,8 @@ void Korosseo_SelectSoloCompetitor(s32 id)
 	Engine_CameraFollowActor(id, 0);
 	unit = UnitGet(id);
 	unit->hp = unit->max_hp;
-	unit->ep = unit->max_ep;
-	unit->doku = 0;
+	unit->pp = unit->max_pp;
+	unit->poison = 0;
 	v = (unit->hp << 14) / unit->max_hp;
 	t = 0x4000;
 	if (v <= 0x4000)
@@ -81,7 +81,7 @@ void Korosseo_SelectSoloCompetitor(s32 id)
 	{
 		unit->hp_gauge = 1;
 	}
-	v = (unit->ep << 14) / unit->max_ep;
+	v = (unit->pp << 14) / unit->max_pp;
 	t = 0x4000;
 	if (v <= 0x4000)
 	{
@@ -89,10 +89,10 @@ void Korosseo_SelectSoloCompetitor(s32 id)
 		if (v >= 0)
 			t = v;
 	}
-	unit->ep_gauge = t;
-	if ((u16)t == 0 && unit->ep != 0)
+	unit->pp_gauge = t;
+	if ((u16)t == 0 && unit->pp != 0)
 	{
-		unit->ep_gauge = 1;
+		unit->pp_gauge = 1;
 	}
 	Engine_EventClearInvalidPackedValues();
 }
@@ -152,7 +152,7 @@ static void EV99_RAISED(void)
 			}
 		}
 	}
-	Engine_EventSetMessage(MsgKorosseoMatchAboutBeginPleaseTake);
+	Engine_EventSetMessage(MsgColossoMatchAboutBeginPleaseTake);
 	Engine_EventShowMessage(best, 0);
 	q = &((struct EventWork *)state)->start_transition;
 	*q = 512;
@@ -175,7 +175,7 @@ static void EV99_RAISED(void)
 	}
 	else
 	{
-		Korosseo_SelectSoloCompetitor(n);
+		Colosso_SelectSoloCompetitor(n);
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		*q = 0;
@@ -183,7 +183,7 @@ static void EV99_RAISED(void)
 	Engine_EventEnd();
 }
 
-void Korosseo_FinishSoloRound(s32 id)
+void Colosso_FinishSoloRound(s32 id)
 {
 	struct EventWork  *work;
 	s32				   slot;
@@ -198,10 +198,10 @@ void Korosseo_FinishSoloRound(s32 id)
 	slot = gGameState.selected_actor;
 	obj = Object_GetById(slot);
 	Engine_EventBegin();
-	msg = MsgKorosseoCheering;
+	msg = MsgColossoCheering;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(id, 0);
-	gEventWork->choice_message = MsgKorosseoCheeringChoices;
+	gEventWork->choice_message = MsgColossoCheeringChoices;
 	gEventWork->unknown_cc4 = 4;
 	res = Engine_EventChooseYesNo(slot, 0);
 	if (res == 0)
@@ -222,7 +222,7 @@ void Korosseo_FinishSoloRound(s32 id)
 		}
 		else
 		{
-			Korosseo_SelectSoloCompetitor(slot);
+			Colosso_SelectSoloCompetitor(slot);
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
 			work->start_transition = 0;
@@ -249,7 +249,7 @@ static void RunPartyCountInteraction(s32 actorId)
 
 	if (GetPartyMemberCount() <= 1)
 	{
-		Engine_EventSetMessage(MsgKorosseoRobinDidGetGoodLook);
+		Engine_EventSetMessage(MsgColossoIsaacDidGetGoodLook);
 		if (Engine_EventAskYesNo(actorId, 0) == 0)
 		{
 			InitializeActorZero();
@@ -265,14 +265,14 @@ static void RunPartyCountInteraction(s32 actorId)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgKorosseoWaitShouldntDecideWhereBest);
+		Engine_EventSetMessage(MsgColossoWaitShouldntDecideWhereBest);
 		Engine_EventShowMessage(actorId, 0);
 	}
 
 	Engine_EventEnd();
 }
 
-void Korosseo_ClearSavedActorPositions(void)
+void Colosso_ClearSavedActorPositions(void)
 {
 	FieldGameFlag_SetByte(896, 0);
 	FieldGameFlag_SetByte(904, 0);
@@ -291,17 +291,17 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 	Battle_ResetEffectCounter();
 	UiWork_PushValueSlot(competitor, 5);
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_KorosseoKawa)
+	if (scene == (s32)&SceneId_ColossoRiver)
 	{
-		message = MsgKorosseoStageFirstFinalsMatch;
+		message = MsgColossoStageFirstFinalsMatch;
 	}
-	else if (scene == (s32)&SceneId_KorosseoKabe)
+	else if (scene == (s32)&SceneId_ColossoWall)
 	{
-		message = MsgKorosseoStageSecondFinalsMatch;
+		message = MsgColossoStageSecondFinalsMatch;
 	}
 	else
 	{
-		message = MsgKorosseoStageThirdFinalsMatch;
+		message = MsgColossoStageThirdFinalsMatch;
 	}
 	Engine_EventSetMessage(message);
 	Engine_EventShowMessage(speaker, 0);
@@ -323,29 +323,29 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 		return choice;
 	}
 	Engine_GameFlagSet(competitor + 520);
-	Engine_EventSetMessage(MsgKorosseoWouldYouLikeHearDescription);
+	Engine_EventSetMessage(MsgColossoWouldYouLikeHearDescription);
 	Engine_EventOpenMessage(speaker, 0);
 	return Engine_EventChooseYesNo(0, 0);
 }
 
-void Korosseo_ShowFollowUpPrompt(s32 speaker, s32 competitor)
+void Colosso_ShowFollowUpPrompt(s32 speaker, s32 competitor)
 {
 	s32 scene;
 	s32 message;
 
 	UiWork_PushValueSlot(competitor, 5);
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_KorosseoKawa)
+	if (scene == (s32)&SceneId_ColossoRiver)
 	{
-		message = MsgKorosseoStageFirstFinalsMatch;
+		message = MsgColossoStageFirstFinalsMatch;
 	}
-	else if (scene == (s32)&SceneId_KorosseoKabe)
+	else if (scene == (s32)&SceneId_ColossoWall)
 	{
-		message = MsgKorosseoStageSecondFinalsMatch;
+		message = MsgColossoStageSecondFinalsMatch;
 	}
 	else
 	{
-		message = MsgKorosseoStageThirdFinalsMatch;
+		message = MsgColossoStageThirdFinalsMatch;
 	}
 	Engine_EventSetMessage(message + 1);
 	Engine_EventShowMessage(speaker, 0);
@@ -380,13 +380,13 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 		}
 		if (count <= 1)
 		{
-			Engine_EventSetMessage(MsgKorosseoDoYourBest);
+			Engine_EventSetMessage(MsgColossoDoYourBest);
 			Event_ShowMessage(owner, 0);
 			return;
 		}
 		if (GameFlag_IsSet(base + 512) != 0)
 		{
-			Engine_EventSetMessage(MsgKorosseoUnfortunatelyWeHaveFullHouse);
+			Engine_EventSetMessage(MsgColossoUnfortunatelyWeHaveFullHouse);
 			Event_ShowMessage(owner, 0);
 			return;
 		}
@@ -397,7 +397,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgKorosseoWouldLikeFriendCheerFor);
+			Engine_EventSetMessage(MsgColossoWouldLikeFriendCheerFor);
 			Event_OpenMessage(owner, 0);
 			state = Engine_EventChooseYesNo(0, 0);
 		}
@@ -432,12 +432,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 			}
 		}
 	}
-	Engine_EventSetMessage(MsgKorosseoIfKnowWhoWantCheer);
+	Engine_EventSetMessage(MsgColossoIfKnowWhoWantCheer);
 	Event_ShowMessage(owner, 0);
 	return;
 L_main:
 	UiWork_PushValueSlot(obj, 1);
-	Engine_EventSetMessage(MsgKorosseoRobinWillCheerForWay);
+	Engine_EventSetMessage(MsgColossoIsaacWillCheerForWay);
 	Event_ShowMessage(owner, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_SetSpeed(obj, 0x10000, 0x8000);

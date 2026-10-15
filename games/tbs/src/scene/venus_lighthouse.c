@@ -37,7 +37,7 @@
 
 // 前方宣言
 struct DirXZ;
-static void VinasuHeya_StepActorWithDust(struct DirXZ *dir);
+static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir);
 static void Scene_RunPairedParticleWaveSequence(void);
 static void SceneState_CallWith432And32(void);
 static void FieldScene_CallWith560And44(void);
@@ -248,7 +248,7 @@ static void SceneActor_ApplySlotsMatchingKind212(void)
 	}
 }
 
-static s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj)
+static s32 VenusLighthouse_UpdateChildFromTimer(struct FieldActor *obj)
 {
 	ObjectGroup_SetChildValue(obj, obj->timer & 15);
 	return 0;
@@ -574,27 +574,27 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_VinasuHeya1)
+	if (v == (s32)&SceneId_VenusLighthouse1)
 	{
-		return gVinasuHeyaEntrances1;
+		return gVenusLighthouseEntrances1;
 	}
-	if (v == (s32)&SceneId_VinasuHeya3)
+	if (v == (s32)&SceneId_VenusLighthouse3)
 	{
-		return gVinasuHeyaEntrances3;
+		return gVenusLighthouseEntrances3;
 	}
-	if (v == (s32)&SceneId_VinasuHeya4)
+	if (v == (s32)&SceneId_VenusLighthouse4)
 	{
-		return gVinasuHeyaEntrances4;
+		return gVenusLighthouseEntrances4;
 	}
-	if (v == (s32)&SceneId_VinasuHeya5)
+	if (v == (s32)&SceneId_VenusLighthouse5)
 	{
-		return gVinasuHeyaEntrances5;
+		return gVenusLighthouseEntrances5;
 	}
-	if (v == (s32)&SceneId_VinasuHeya6)
+	if (v == (s32)&SceneId_VenusLighthouse6)
 	{
-		return gVinasuHeyaEntrances6;
+		return gVenusLighthouseEntrances6;
 	}
-	return gVinasuHeyaEntrancesOther;
+	return gVenusLighthouseEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -604,7 +604,7 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-	return gVinasuHeyaPrimaryTable;
+	return gVenusLighthousePrimaryTable;
 }
 
 const struct ScenePlacement *Scene_GetPlacements(void)
@@ -613,41 +613,41 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	s16 v;
 
 	v = gGameState.scene;
-	if (v == (s32)&SceneId_VinasuHeya1)
+	if (v == (s32)&SceneId_VenusLighthouse1)
 	{
-		return gVinasuHeyaPlacements1;
+		return gVenusLighthousePlacements1;
 	}
-	if (v == (s32)&SceneId_VinasuHeya2)
+	if (v == (s32)&SceneId_VenusLighthouse2)
 	{
-		ret = gVinasuHeyaPlacements2;
+		ret = gVenusLighthousePlacements2;
 		FieldScene_PrepareActors((void *)ret);
 		return (const struct ScenePlacement *)ret;
 	}
-	if (v == (s32)&SceneId_VinasuHeya3)
+	if (v == (s32)&SceneId_VenusLighthouse3)
 	{
-		ret = gVinasuHeyaPlacements3;
+		ret = gVenusLighthousePlacements3;
 		FieldScene_PrepareActors((void *)ret);
 		return (const struct ScenePlacement *)ret;
 	}
-	if (v == (s32)&SceneId_VinasuHeya4)
+	if (v == (s32)&SceneId_VenusLighthouse4)
 	{
-		ret = gVinasuHeyaPlacements4;
+		ret = gVenusLighthousePlacements4;
 		FieldScene_PrepareActors((void *)ret);
 		return (const struct ScenePlacement *)ret;
 	}
-	if (v == (s32)&SceneId_VinasuHeya5)
+	if (v == (s32)&SceneId_VenusLighthouse5)
 	{
-		ret = gVinasuHeyaPlacements5;
+		ret = gVenusLighthousePlacements5;
 		FieldScene_PrepareActors((void *)ret);
 		return (const struct ScenePlacement *)ret;
 	}
-	if (v == (s32)&SceneId_VinasuHeya6)
+	if (v == (s32)&SceneId_VenusLighthouse6)
 	{
-		ret = gVinasuHeyaPlacements6;
+		ret = gVenusLighthousePlacements6;
 		FieldScene_PrepareActors((void *)ret);
 		return (const struct ScenePlacement *)ret;
 	}
-	return gVinasuHeyaPlacementsOther;
+	return gVenusLighthousePlacementsOther;
 }
 
 static void EV25_SEARCH(void)
@@ -689,7 +689,7 @@ static void FieldScene_RunActorEightTenStepLoop(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgVinasuIveWaitedLongSeeIts);
+	Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);
 	Engine_EventShowMessageAndWait(11, 0, 20);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	Engine_EventShowMessage(11, 0);
@@ -714,7 +714,7 @@ static void SceneDialogue_ReadRelief(void)
 #if defined(TBS_EDITION_EN)
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MSGNO(MsgVinasuThereWordsCarvedIntoRelief), 1);
+	Engine_MessageShowCentered((s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief), 1);
 	Engine_EventEnd();
 #else
 	struct EventWork *work = gEventWork;
@@ -722,7 +722,7 @@ static void SceneDialogue_ReadRelief(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_MessageShowCentered(
-		work->facing_trigger + MSGNO(MsgVinasuThereWordsCarvedIntoRelief) - 35, 1);
+		work->facing_trigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35, 1);
 	Engine_EventEnd();
 #endif
 }
@@ -774,7 +774,7 @@ static void EV45_TOUCH(void)
 
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gVinasuLeaderApproachScript);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gVenusLeaderApproachScript);
 	Object_RefreshSelectorById(0);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
 	actor->velocity_y = 0x40000;
@@ -811,7 +811,7 @@ static void EV41_SEARCH(void)
 	work->field_cb6 = 1;
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered(MsgVinasuStatueSpeaksRobinSoulYe, 1);
+	Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
 	ColorBuffer_ApplySource(0x10000, 0);
 	ColorBuffer_ApplyTarget(0x10005, 0);
 	Engine_ColorBufferInterpolate(120);
@@ -907,36 +907,36 @@ static void FieldScene_RunFlag986ActorOneScene(void)
 			o = Object_GetById(ACTOR_PARTY_LEADER);
 			if (o != 0)
 			{
-				Engine_ActorSetPosition(GERALD, o->x.fixed, o->z.fixed);
+				Engine_ActorSetPosition(GARET, o->x.fixed, o->z.fixed);
 			}
-			Engine_ActorSetSpeed(GERALD, m1, m2);
-			Engine_ActorWalkToAndWait(GERALD, k, 88);
-			Engine_ActorWalkToAndWait(GERALD, k, 104);
-			Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
+			Engine_ActorSetSpeed(GARET, m1, m2);
+			Engine_ActorWalkToAndWait(GARET, k, 88);
+			Engine_ActorWalkToAndWait(GARET, k, 104);
+			Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
 			Engine_EventWait(20);
-			Engine_ActorSetAnimationAndWait(GERALD, 4);
+			Engine_ActorSetAnimationAndWait(GARET, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage(MsgVinasuHmmmWeCantPushBlock);
-			Engine_EventShowMessageAndWait(GERALD, 0, 20);
-			Engine_ActorFaceDirection(GERALD, 0, 10);
-			Engine_ActorShowEmote(GERALD, h, 60);
-			Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
+			Engine_EventSetMessage(MsgVenusHmmmWeCantPushBlock);
+			Engine_EventShowMessageAndWait(GARET, 0, 20);
+			Engine_ActorFaceDirection(GARET, 0, 10);
+			Engine_ActorShowEmote(GARET, h, 60);
+			Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
 			Engine_EventWait(20);
-			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Engine_ActorRunRepeatedMotion(GARET, 2);
 			Engine_EventWait(20);
-			Engine_EventShowMessageAndWait(GERALD, 0, 20);
+			Engine_EventShowMessageAndWait(GARET, 0, 20);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-			Engine_ActorSetAnimationAndWait(GERALD, 3);
+			Engine_ActorSetAnimationAndWait(GARET, 3);
 			Engine_EventWait(30);
-			Engine_ActorWalkToAndWait(GERALD, k, 88);
-			Engine_ActorSetAnimation(GERALD, 2);
+			Engine_ActorWalkToAndWait(GARET, k, 88);
+			Engine_ActorSetAnimation(GARET, 2);
 			u = Object_GetById(ACTOR_PARTY_LEADER);
 			if (u != 0)
 			{
-				Engine_ActorSetDestination(GERALD, u->x.part.pixel, u->z.part.pixel);
+				Engine_ActorSetDestination(GARET, u->x.part.pixel, u->z.part.pixel);
 			}
-			Engine_ActorWaitForMove(GERALD);
-			Engine_ActorSetPosition(GERALD, 0, 0);
+			Engine_ActorWaitForMove(GARET);
+			Engine_ActorSetPosition(GARET, 0, 0);
 			Engine_EventEnd();
 		}
 	}
@@ -1011,7 +1011,7 @@ static void EV10_TALK(void)
 	work->field_cba = 0;
 	work->field_cb6 = 1;
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgVinasuThoughtIdExploreAfterDoor);
+	Engine_EventSetMessage(MsgVenusThoughtIdExploreAfterDoor);
 	Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(10, 0, 20);
@@ -1184,7 +1184,7 @@ static void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
 	Map_CopyCellAttributes(9, 24, 1, 1, x, z);
 }
 
-static void OverlayObject_ResetObjectWhenFlatbs2Set(struct FieldActor *o)
+static void OverlayObject_ResetObjectWhenFlags12Set(struct FieldActor *o)
 {
 	Struct_Sub *q;
 	s32			v;
@@ -1230,7 +1230,7 @@ static void SceneActor_UpdateSlots11And12ByTile(void)
 	}
 	else
 	{
-		OverlayObject_ResetObjectWhenFlatbs2Set(o);
+		OverlayObject_ResetObjectWhenFlags12Set(o);
 	}
 	o = Object_GetById(12);
 	if (o->x.fixed >> 20 == 7)
@@ -1240,7 +1240,7 @@ static void SceneActor_UpdateSlots11And12ByTile(void)
 	}
 	else
 	{
-		OverlayObject_ResetObjectWhenFlatbs2Set(o);
+		OverlayObject_ResetObjectWhenFlags12Set(o);
 	}
 	Engine_EventEnd();
 }
@@ -1401,11 +1401,11 @@ static void EV09_PSYNERGY(void)
 				Object_GetById(10)->collision_flags = set;
 				Object_GetById(10)->priority_flags |= 2;
 				Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
-				Engine_ActorEnableActionCallback(10, gVinasuPushScript);
+				Engine_ActorEnableActionCallback(10, gVenusPushScript);
 				Object_RefreshSelectorById(10);
 				Engine_EventWait(30);
 				Engine_AudioPlayCue(158);
-				Engine_MapAnimateCells(gVinasuPushCells, 110, 41);
+				Engine_MapAnimateCells(gVenusPushCells, 110, 41);
 				Map_CopyCellAttributes(46, 41, 1, 1, x, 42);
 				Engine_GameFlagSet(0x301);
 			}
@@ -1427,7 +1427,7 @@ static void EV36_SCRIPT(void)
 	EV09_PSYNERGY();
 }
 
-static void VinasuHeya_SettlePushedBlocks(void)
+static void VenusLighthouse_SettlePushedBlocks(void)
 {
 	struct FieldActor	*marker = 0;
 	struct FieldActor	*leader = Object_GetById(0);
@@ -1458,8 +1458,8 @@ static void VinasuHeya_SettlePushedBlocks(void)
 		slot = 5;
 		for (i = 0; i <= 3; i++)
 		{
-			if (block->x.fixed >> 20 == gVinasuSwitchCells[i].x
-				&& block->z.fixed >> 20 == gVinasuSwitchCells[i].z && block->y.fixed >= 0)
+			if (block->x.fixed >> 20 == gVenusSwitchCells[i].x
+				&& block->z.fixed >> 20 == gVenusSwitchCells[i].z && block->y.fixed >= 0)
 			{
 				slot = i;
 				break;
@@ -1484,7 +1484,7 @@ static void VinasuHeya_SettlePushedBlocks(void)
 			continue;
 		}
 		priority = leader->sprite->priority;
-		if (leader->z.fixed >> 20 <= gVinasuSwitchCells[slot].z)
+		if (leader->z.fixed >> 20 <= gVenusSwitchCells[slot].z)
 		{
 			marker = OverlayObject_PrepareObjectWithCommand15(
 				block->x.fixed, block->y.fixed, block->z.fixed - 0x40000, 20);
@@ -1496,7 +1496,7 @@ static void VinasuHeya_SettlePushedBlocks(void)
 		block->bounce = 0;
 		block->gravity = 0x1999;
 		Map_CopyCellAttributes(
-			42, 41, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+			42, 41, 1, 1, gVenusSwitchCells[slot].x, gVenusSwitchCells[slot].z);
 		OverlayObject_WaitUntilIdle(block);
 		Engine_AudioPlayCue(188);
 		block->collision_flags = 0;
@@ -1509,7 +1509,7 @@ static void VinasuHeya_SettlePushedBlocks(void)
 			*flags = two;
 		}
 		Map_CopyCellAttributes(
-			46, 39, 1, 1, gVinasuSwitchCells[slot].x, gVinasuSwitchCells[slot].z);
+			46, 39, 1, 1, gVenusSwitchCells[slot].x, gVenusSwitchCells[slot].z);
 		Engine_ActorSetSpritePriority(0, priority);
 		Object_GetById(0)->priority_flags |= 1;
 		if (marker != 0)
@@ -1528,19 +1528,19 @@ static void VinasuHeya_SettlePushedBlocks(void)
 			continue;
 		}
 		first = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(
-			888, 680, (s32)gVinasuSettleScriptA);
+			888, 680, (s32)gVenusSettleScriptA);
 		second = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(
-			888, 680, (s32)gVinasuSettleScriptB);
+			888, 680, (s32)gVenusSettleScriptB);
 		while (first->active != 0 || second->active != 0)
 		{
 			if (first->finished != 0 || second->finished != 0)
 			{
 				Engine_EventWait(30);
 				Engine_AudioPlayCue(158);
-				Engine_MapAnimateCells(gVinasuSettleCells, 109, 37);
+				Engine_MapAnimateCells(gVenusSettleCells, 109, 37);
 				Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-				if (Object_GetById(9)->x.fixed >> 20 == gVinasuSwitchCells[0].x
-					&& Object_GetById(9)->z.fixed >> 20 == gVinasuSwitchCells[0].z)
+				if (Object_GetById(9)->x.fixed >> 20 == gVenusSwitchCells[0].x
+					&& Object_GetById(9)->z.fixed >> 20 == gVenusSwitchCells[0].z)
 				{
 					Engine_GameFlagSet(0x302);
 				}
@@ -1566,7 +1566,7 @@ static void EV35_SCRIPT(void)
 		RunStagedActorTransition();
 	}
 	Engine_EventEnd();
-	VinasuHeya_SettlePushedBlocks();
+	VenusLighthouse_SettlePushedBlocks();
 }
 
 static s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
@@ -1578,7 +1578,7 @@ static s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
 	return 0;
 }
 
-static void VinasuHeya_LowerFloatingBlocks(s32 wait)
+static void VenusLighthouse_LowerFloatingBlocks(s32 wait)
 {
 	struct FieldActor *a = Object_GetById(8);
 	struct FieldActor *b = Object_GetById(9);
@@ -1590,12 +1590,12 @@ static void VinasuHeya_LowerFloatingBlocks(s32 wait)
 	{
 		Engine_AudioPlayCue(180);
 	}
-	FieldObject_SetPosition((s32)a, a->x.fixed, gVinasuBlockHeights[a->timer], a->z.fixed);
-	FieldObject_SetPosition((s32)b, b->x.fixed, gVinasuBlockHeights[b->timer], b->z.fixed);
+	FieldObject_SetPosition((s32)a, a->x.fixed, gVenusBlockHeights[a->timer], a->z.fixed);
+	FieldObject_SetPosition((s32)b, b->x.fixed, gVenusBlockHeights[b->timer], b->z.fixed);
 	Engine_ActorWaitForMove(8);
 	Engine_ActorWaitForMove(9);
-	a->y.fixed = gVinasuBlockHeights[a->timer];
-	b->y.fixed = gVinasuBlockHeights[b->timer];
+	a->y.fixed = gVenusBlockHeights[a->timer];
+	b->y.fixed = gVenusBlockHeights[b->timer];
 	if (wait != 0)
 	{
 		Engine_AudioPlayCue(0x121);
@@ -1671,7 +1671,7 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldAct
 	to->z.fixed = from->z.fixed;
 }
 
-static void VinasuHeya_ResolveFloatingBlock(void)
+static void VenusLighthouse_ResolveFloatingBlock(void)
 {
 	struct FieldActor  work;
 	struct FieldActor *first = NULL;
@@ -1752,7 +1752,7 @@ static void VinasuHeya_ResolveFloatingBlock(void)
 			}
 			Object_GetById(slot + 10)->update =
 				(void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
-			VinasuHeya_LowerFloatingBlocks(40);
+			VenusLighthouse_LowerFloatingBlocks(40);
 			Object_GetById(slot + 10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
 			GameFlag_Set(slot + 0x200);
 			break;
@@ -1941,8 +1941,8 @@ static void Scene_RunScene3c8SequenceA(void)
 		slot = 8;
 		for (i = 0; i < 8; i++)
 		{
-			if ((actor->x.fixed >> 20) == gVinasuPillarCells[i].x
-				&& (actor->z.fixed >> 20) == gVinasuPillarCells[i].z && actor->y.fixed >= 0)
+			if ((actor->x.fixed >> 20) == gVenusPillarCells[i].x
+				&& (actor->z.fixed >> 20) == gVenusPillarCells[i].z && actor->y.fixed >= 0)
 			{
 				slot = i;
 				break;
@@ -1964,7 +1964,7 @@ static void Scene_RunScene3c8SequenceA(void)
 			continue;
 
 		priority = leader->sprite->priority;
-		if ((leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z)
+		if ((leader->z.fixed >> 20) <= gVenusPillarCells[slot].z)
 		{
 			effect = OverlayObject_PrepareObjectWithCommand15(
 				actor->x.fixed, actor->y.fixed, actor->z.fixed - 0x40000, 20);
@@ -1983,7 +1983,7 @@ static void Scene_RunScene3c8SequenceA(void)
 		*motion = 3;
 		((union FieldObject *)actor)->effect.velocity_y = 0x1999;
 		((union FieldObject *)actor)->effect.velocity_x = 0;
-		Map_CopyCellAttributes(6, 44, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
+		Map_CopyCellAttributes(6, 44, 1, 1, gVenusPillarCells[slot].x, gVenusPillarCells[slot].z);
 		OverlayObject_WaitUntilIdle(actor);
 		Event_PlayCue(188);
 		actor->collision_flags = 0;
@@ -1992,7 +1992,7 @@ static void Scene_RunScene3c8SequenceA(void)
 		Actor_SetSpritePriority(id, 3);
 		*flags = 2;
 		Map_CopyCellAttributes(
-			73, 48, 1, 1, gVinasuPillarCells[slot].x, gVinasuPillarCells[slot].z);
+			73, 48, 1, 1, gVenusPillarCells[slot].x, gVenusPillarCells[slot].z);
 		Actor_SetSpritePriority(0, priority);
 		Object_GetById(0)->priority_flags |= 1;
 		for (i = 15; i <= 18; i++)
@@ -2024,20 +2024,20 @@ static void Scene_RunScene3c8SequenceA(void)
 			Object_PlaceCurrentWithinCameraBounds(14, 1);
 			Camera_WaitForMove();
 			first = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(
-				136, 0x308, (s32)gVinasuFirstGateScript);
+				136, 0x308, (s32)gVenusFirstGateScript);
 			Event_Wait(30);
 			Camera_SetSpeed(0x6666, 0xccc);
 			Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
 			ObjectDispatch_WaitForValue16(first);
-			Object_SetScript((struct FieldActor *)first, gVinasuFirstGateOpenScript);
+			Object_SetScript((struct FieldActor *)first, gVenusFirstGateOpenScript);
 			second = (struct SwitchEffect *)SceneEffect_SpawnEffect284AtCell(
-				216, 0x2f8, (s32)gVinasuSecondGateScript);
+				216, 0x2f8, (s32)gVenusSecondGateScript);
 			while (first->active != 0 || second->active != 0)
 			{
 				if (first->finished != 0 || second->finished != 0)
 				{
 					Event_Wait(30);
-					Map_AnimateCells(gVinasuGateCells, 77, 35);
+					Map_AnimateCells(gVenusGateCells, 77, 35);
 					Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
 					GameFlag_Set(0x308);
 					break;
@@ -2084,31 +2084,31 @@ const struct SceneEvent *Scene_GetEvents(void)
 {
 	s32 v = gGameState.scene;
 
-	if (v == (s32)&SceneId_VinasuHeya1)
+	if (v == (s32)&SceneId_VenusLighthouse1)
 	{
-		return gVinasuHeyaEvents1;
+		return gVenusLighthouseEvents1;
 	}
-	if (v == (s32)&SceneId_VinasuHeya2)
+	if (v == (s32)&SceneId_VenusLighthouse2)
 	{
-		return gVinasuHeyaEvents2;
+		return gVenusLighthouseEvents2;
 	}
-	if (v == (s32)&SceneId_VinasuHeya3)
+	if (v == (s32)&SceneId_VenusLighthouse3)
 	{
-		return gVinasuHeyaEvents3;
+		return gVenusLighthouseEvents3;
 	}
-	if (v == (s32)&SceneId_VinasuHeya4)
+	if (v == (s32)&SceneId_VenusLighthouse4)
 	{
-		return gVinasuHeyaEvents4;
+		return gVenusLighthouseEvents4;
 	}
-	if (v == (s32)&SceneId_VinasuHeya5)
+	if (v == (s32)&SceneId_VenusLighthouse5)
 	{
-		return gVinasuHeyaEvents5;
+		return gVenusLighthouseEvents5;
 	}
-	if (v == (s32)&SceneId_VinasuHeya6)
+	if (v == (s32)&SceneId_VenusLighthouse6)
 	{
-		return gVinasuHeyaEvents6;
+		return gVenusLighthouseEvents6;
 	}
-	return gVinasuHeyaEvents2;
+	return gVenusLighthouseEvents2;
 }
 
 static void SceneActor_ClearActorModeAndSetState5(s32 no)
@@ -2157,7 +2157,7 @@ s32 Scene_RunEntrySetup(void)
 	Engine_GameFlagSet(0x110);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	area = gGameState.scene;
-	if (area == (s32)&SceneId_VinasuHeya1)
+	if (area == (s32)&SceneId_VenusLighthouse1)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		if (!Engine_GameFlagIsSet(0x981))
@@ -2173,7 +2173,7 @@ s32 Scene_RunEntrySetup(void)
 		SceneActor_ClearActorModeAndSetState5(13);
 		SceneActor_ClearActorModeAndSetState5(14);
 	}
-	else if (area == (s32)&SceneId_VinasuHeya2)
+	else if (area == (s32)&SceneId_VenusLighthouse2)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2246,7 +2246,7 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_VinasuHeya3)
+	else if (area == (s32)&SceneId_VenusLighthouse3)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2315,7 +2315,7 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_VinasuHeya4)
+	else if (area == (s32)&SceneId_VenusLighthouse4)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2396,7 +2396,7 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_VinasuHeya5)
+	else if (area == (s32)&SceneId_VenusLighthouse5)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2483,14 +2483,14 @@ s32 Scene_RunEntrySetup(void)
 				actor->update = (void (*)(
 					union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
 			}
-			VinasuHeya_SettlePushedBlocks();
+			VenusLighthouse_SettlePushedBlocks();
 			break;
 		case 6:
 			BattleFx_SetQueuedSoundAndPlay(170);
 			break;
 		}
 	}
-	else if (area == (s32)&SceneId_VinasuHeya6)
+	else if (area == (s32)&SceneId_VenusLighthouse6)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2498,7 +2498,7 @@ s32 Scene_RunEntrySetup(void)
 		case 2:
 			if (Engine_GameFlagIsSet(0x109))
 			{
-				VinasuHeya_LowerFloatingBlocks(0);
+				VenusLighthouse_LowerFloatingBlocks(0);
 				OverlayObject_WaitUntilIdle(Object_GetById(0));
 				for (i = 0; i <= 3; i++)
 				{
@@ -2663,7 +2663,7 @@ static void EV31_TOUCH_6(void)
 
 	args.x = 0;
 	args.z = -1;
-	VinasuHeya_StepActorWithDust(&args);
+	VenusLighthouse_StepActorWithDust(&args);
 }
 
 static void SceneState_PassRange0To1(void)
@@ -2672,7 +2672,7 @@ static void SceneState_PassRange0To1(void)
 
 	args.x = 0;
 	args.z = 1;
-	VinasuHeya_StepActorWithDust(&args);
+	VenusLighthouse_StepActorWithDust(&args);
 }
 
 static void EV32_TOUCH_6(void)
@@ -2681,7 +2681,7 @@ static void EV32_TOUCH_6(void)
 
 	args.x = -1;
 	args.z = 0;
-	VinasuHeya_StepActorWithDust(&args);
+	VenusLighthouse_StepActorWithDust(&args);
 }
 
 static void EV33_TOUCH(void)
@@ -2690,10 +2690,10 @@ static void EV33_TOUCH(void)
 
 	args.x = 1;
 	args.z = 0;
-	VinasuHeya_StepActorWithDust(&args);
+	VenusLighthouse_StepActorWithDust(&args);
 }
 
-static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
+static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir)
 {
 	s32					 id;
 	struct FieldActor	*center;
@@ -2838,7 +2838,7 @@ static void Scene_RunPairedParticleWaveSequence(void)
 	Engine_EventEnd();
 }
 
-static void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
+static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z)
 {
 	struct EffectOptions options;
 
@@ -2863,12 +2863,12 @@ static void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 
 static void SceneState_CallWith432And32(void)
 {
-	VinasuHeya_SpawnRandomParticles(432, 32);
+	VenusLighthouse_SpawnRandomParticles(432, 32);
 }
 
 static void FieldScene_CallWith560And44(void)
 {
-	VinasuHeya_SpawnRandomParticles(0x230, 44);
+	VenusLighthouse_SpawnRandomParticles(0x230, 44);
 }
 
 static void Scene_RunParticleWaveSequence(void)
@@ -2993,7 +2993,7 @@ static void Scene_RunEastParticleWaveSequence(void)
 	Engine_EventEnd();
 }
 
-static s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
+static s32 VenusLighthouse_UpdateRisingSpray(struct FieldActor *actor)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o = &options;
@@ -3003,7 +3003,7 @@ static s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
 	o->priority = 1;
 	o->palette = 5;
 	o->type = 286;
-	o->script = gVinasuSprayScript;
+	o->script = gVenusSprayScript;
 	phase = gFrameCount & 3;
 	if (phase == 0)
 	{
@@ -3069,7 +3069,7 @@ static void FieldScene_RunLeaderDropSequence(void)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(40);
-	leader->update = (void *)VinasuHeya_UpdateRisingSpray;
+	leader->update = (void *)VenusLighthouse_UpdateRisingSpray;
 	Engine_EventWait(60);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	Engine_ActorSetSpritePriority(20, 1);
@@ -3099,7 +3099,7 @@ struct TrackSprite
 	struct TrackAnimation *animations[4];
 };
 
-static s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
+static s32 VenusLighthouse_DispatchPushScript(struct FieldActor *actor)
 {
 	s32					pos[3];
 	struct FieldActor  *piece;
@@ -3126,22 +3126,22 @@ static s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 		{
 			if (vx / 0x10000 < 0)
 			{
-				shapes = gVinasuShapesPushedLeft;
+				shapes = gVenusShapesPushedLeft;
 			}
 			else
 			{
-				shapes = gVinasuShapesPushedRight;
+				shapes = gVenusShapesPushedRight;
 			}
 		}
 		else
 		{
 			if (vz / 0x10000 < 0)
 			{
-				shapes = gVinasuShapesPushedUp;
+				shapes = gVenusShapesPushedUp;
 			}
 			else
 			{
-				shapes = gVinasuShapesPushedDown;
+				shapes = gVenusShapesPushedDown;
 			}
 		}
 		for (; *shapes != 0; shapes++)
@@ -3153,63 +3153,63 @@ static s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 		}
 		if (*shapes == 0)
 		{
-			Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+			Engine_ObjectSetScript(actor, gVenusRefusedPushScript);
 			return 0;
 		}
-		if (gGameState.scene == (s32)&SceneId_VinasuHeya5)
+		if (gGameState.scene == (s32)&SceneId_VenusLighthouse5)
 		{
 			for (cell = 0; cell <= 3
-						   && !(actor->x.fixed >> 20 == gVinasuSwitchCells[cell].x
-								&& actor->z.fixed >> 20 == gVinasuSwitchCells[cell].z);
+						   && !(actor->x.fixed >> 20 == gVenusSwitchCells[cell].x
+								&& actor->z.fixed >> 20 == gVenusSwitchCells[cell].z);
 				cell++)
 			{
 			}
 			for (skip = 0;; skip++)
 			{
-				cursor = gVinasuSwitchShapes[cell];
+				cursor = gVenusSwitchShapes[cell];
 				shape = *cursor;
 				if (shape == 0)
 				{
-					Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+					Engine_ObjectSetScript(actor, gVenusRefusedPushScript);
 					return 0;
 				}
 				if (shape == ((struct TrackSprite *)piece->sprite)->shape)
 				{
 					break;
 				}
-				gVinasuSwitchShapes[cell] = cursor + 1;
+				gVenusSwitchShapes[cell] = cursor + 1;
 			}
-			Engine_ObjectSetScript(actor, gVinasuSwitchPushScripts[cell][skip]);
+			Engine_ObjectSetScript(actor, gVenusSwitchPushScripts[cell][skip]);
 		}
 		else
 		{
 			for (cell = 0; cell <= 7
-						   && !(actor->x.fixed >> 20 == gVinasuPillarCells[cell].x
-								&& actor->z.fixed >> 20 == gVinasuPillarCells[cell].z);
+						   && !(actor->x.fixed >> 20 == gVenusPillarCells[cell].x
+								&& actor->z.fixed >> 20 == gVenusPillarCells[cell].z);
 				cell++)
 			{
 			}
 			for (skip = 0;; skip++)
 			{
-				cursor = gVinasuPillarShapes[cell];
+				cursor = gVenusPillarShapes[cell];
 				shape = *cursor;
 				if (shape == 0)
 				{
-					Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+					Engine_ObjectSetScript(actor, gVenusRefusedPushScript);
 					return 0;
 				}
 				if (shape == ((struct TrackSprite *)piece->sprite)->shape)
 				{
 					break;
 				}
-				gVinasuPillarShapes[cell] = cursor + 1;
+				gVenusPillarShapes[cell] = cursor + 1;
 			}
-			Engine_ObjectSetScript(actor, gVinasuPillarPushScripts[cell][skip]);
+			Engine_ObjectSetScript(actor, gVenusPillarPushScripts[cell][skip]);
 		}
 	}
 	else
 	{
-		Engine_ObjectSetScript(actor, gVinasuRefusedPushScript);
+		Engine_ObjectSetScript(actor, gVenusRefusedPushScript);
 	}
 	return 0;
 }
@@ -3263,18 +3263,18 @@ u32 StagedActor_DirectionSteps[] = {
 	DIRECTION_STEP(16, 0),
 };
 
-struct SwitchCell gVinasuSwitchCells[] = {
+struct SwitchCell gVenusSwitchCells[] = {
 	{ 48, 41 },
 	{ 52, 41 },
 	{ 48, 43 },
 	{ 52, 43 },
 };
 
-u32 gVinasuBlockHeights[] = {
+u32 gVenusBlockHeights[] = {
 	0xfff00000, 0xfff00000, 0xffe00000, 0xffd00000, 0xffc00000, 0xffb00000, 0xffb00000,
 };
 
-struct SwitchCell gVinasuPillarCells[] = {
+struct SwitchCell gVenusPillarCells[] = {
 	{ 11, 39 },
 	{ 14, 39 },
 	{ 11, 41 },
@@ -3285,63 +3285,63 @@ struct SwitchCell gVinasuPillarCells[] = {
 	{ 16, 46 },
 };
 
-u8 gVinasuShapesPushedLeft[] = {
+u8 gVenusShapesPushedLeft[] = {
 	5, 6, 7, 0,
 };
 
-u8 gVinasuShapesPushedRight[] = {
+u8 gVenusShapesPushedRight[] = {
 	4, 6, 8, 0,
 };
 
-u8 gVinasuShapesPushedUp[] = {
+u8 gVenusShapesPushedUp[] = {
 	3, 7, 8, 0,
 };
 
-u8 gVinasuShapesPushedDown[] = {
+u8 gVenusShapesPushedDown[] = {
 	3, 4, 5, 0,
 };
 
-u8 gVinasuSwitchShape0[] = {
+u8 gVenusSwitchShape0[] = {
 	6, 7, 8, 0,
 };
 
-u8 gVinasuSwitchShape1[] = {
+u8 gVenusSwitchShape1[] = {
 	6, 7, 8, 0,
 };
 
-u8 gVinasuSwitchShape2[] = {
+u8 gVenusSwitchShape2[] = {
 	4, 5, 6, 0,
 };
 
-u8 gVinasuSwitchShape3[] = {
+u8 gVenusSwitchShape3[] = {
 	4, 5, 6, 0,
 };
 
-u8 gVinasuPillarShape0[] = {
+u8 gVenusPillarShape0[] = {
 	7, 0,
 };
 
-u8 gVinasuPillarShape1[] = {
+u8 gVenusPillarShape1[] = {
 	0, 5,
 };
 
-u8 gVinasuPillarShape2[] = {
+u8 gVenusPillarShape2[] = {
 	0, 8,
 };
 
-u8 gVinasuPillarShape3[] = {
+u8 gVenusPillarShape3[] = {
 	0, 5,
 };
 
-u8 gVinasuPillarShape4[] = {
+u8 gVenusPillarShape4[] = {
 	0, 7, 8, 0,
 };
 
-u8 gVinasuPillarShape5[] = {
+u8 gVenusPillarShape5[] = {
 	3, 0,
 };
 
-u8 gVinasuPillarShape6[] = {
+u8 gVenusPillarShape6[] = {
 	3, 0,
 };
 
@@ -3351,20 +3351,20 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 gVinasuHeyaPlacements2_0[] = {
+s32 gVenusLighthousePlacements2_0[] = {
 	SC_SET(0x23, 0x2126),
 	SC_SET(0x27, 1),
-	SC_CALL(VinasuHeya_UpdateChildFromTimer),
+	SC_CALL(VenusLighthouse_UpdateChildFromTimer),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements3_Data[] = {
+s32 gVenusLighthousePlacements3_Data[] = {
 	SC_SET(0x23, 0x2126),
-	SC_CALL(VinasuHeya_UpdateChildFromTimer),
+	SC_CALL(VenusLighthouse_UpdateChildFromTimer),
 	SC_END,
 };
 
-s32 gVinasuLeaderApproachScript[] = {
+s32 gVenusLeaderApproachScript[] = {
 	SC_ARG(12),
 	SC_SET(SW_HOOK, (s32)OverlayObject_UpdateEveryFourFrames),
 	SC_LABEL(1),
@@ -3380,7 +3380,7 @@ s32 gVinasuLeaderApproachScript[] = {
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements2_1[] = {
+s32 gVenusLighthousePlacements2_1[] = {
 	SC_SET(SW_SCALE_X, 0x9999),
 	SC_SET(SW_SCALE_Y, 0x9999),
 	SC_SET(SW_COLLISION, 0),
@@ -3388,7 +3388,7 @@ s32 gVinasuHeyaPlacements2_1[] = {
 	SC_END,
 };
 
-s32 gVinasuSprayScript[] = {
+s32 gVenusSprayScript[] = {
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_WAIT(6),
@@ -3408,37 +3408,37 @@ s32 gVinasuSprayScript[] = {
 	SC_FREE,
 };
 
-s32 gVinasuHeyaPlacements4_1[] = {
+s32 gVenusLighthousePlacements4_1[] = {
 	SC_ARG(3),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements5_3[] = {
+s32 gVenusLighthousePlacements5_3[] = {
 	SC_ARG(4),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements6_4[] = {
+s32 gVenusLighthousePlacements6_4[] = {
 	SC_ARG(5),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements5_2[] = {
+s32 gVenusLighthousePlacements5_2[] = {
 	SC_ARG(6),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements5_1[] = {
+s32 gVenusLighthousePlacements5_1[] = {
 	SC_ARG(7),
 	SC_END,
 };
 
-s32 gVinasuHeyaPlacements6_3[] = {
+s32 gVenusLighthousePlacements6_3[] = {
 	SC_ARG(8),
 	SC_END,
 };
 
-s32 gVinasuPushScript[] = {
+s32 gVenusPushScript[] = {
 	SC_CALL(OverlayObject_ApplyZero),
 	SC_ARG(7),
 	SC_SET(SW_SPEED, 0x10000),
@@ -3459,7 +3459,7 @@ s32 gVinasuPushScript[] = {
 	SC_END,
 };
 
-s32 gVinasuSettleScriptA[] = {
+s32 gVenusSettleScriptA[] = {
 	SC_MOVE(PIXELS(872), 0, PIXELS(680)),
 	SC_SYNC,
 	SC_POS(PIXELS(872), 0, PIXELS(680)),
@@ -3470,11 +3470,11 @@ s32 gVinasuSettleScriptA[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSettleScriptB[] = {
+s32 gVenusSettleScriptB[] = {
 	SC_MOVE(PIXELS(888), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(888), 0, PIXELS(696)),
@@ -3482,17 +3482,17 @@ s32 gVinasuSettleScriptB[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuRefusedPushScript[] = {
+s32 gVenusRefusedPushScript[] = {
 	SC_SET(SW_HOOK, 0),
 	SC_WAIT(10),
 	SC_FREE,
 };
 
-s32 gVinasuSwitchPushScript0_0[] = {
+s32 gVenusSwitchPushScript0_0[] = {
 	SC_MOVE(PIXELS(728), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_POS(PIXELS(728), 0, PIXELS(664)),
@@ -3503,43 +3503,43 @@ s32 gVinasuSwitchPushScript0_0[] = {
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript0_1[] = {
+s32 gVenusSwitchPushScript0_1[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript1_0[] = {
+s32 gVenusSwitchPushScript1_0[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript1_1[] = {
+s32 gVenusSwitchPushScript1_1[] = {
 	SC_MOVE(PIXELS(840), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript2_1[] = {
+s32 gVenusSwitchPushScript2_1[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript2_0[] = {
+s32 gVenusSwitchPushScript2_0[] = {
 	SC_MOVE(PIXELS(728), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(728), 0, PIXELS(696)),
@@ -3550,25 +3550,25 @@ s32 gVinasuSwitchPushScript2_0[] = {
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript3_1[] = {
+s32 gVenusSwitchPushScript3_1[] = {
 	SC_MOVE(PIXELS(840), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(840)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSwitchPushScript3_0[] = {
+s32 gVenusSwitchPushScript3_0[] = {
 	SC_MOVE(PIXELS(776), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(776)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuFirstGateScript[] = {
+s32 gVenusFirstGateScript[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(776)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(776)),
@@ -3578,7 +3578,7 @@ s32 gVinasuFirstGateScript[] = {
 	SC_END,
 };
 
-s32 gVinasuFirstGateOpenScript[] = {
+s32 gVenusFirstGateOpenScript[] = {
 	SC_MOVE(PIXELS(264), 0, PIXELS(760)),
 	SC_SYNC,
 	SC_POS(PIXELS(264), 0, PIXELS(760)),
@@ -3586,11 +3586,11 @@ s32 gVinasuFirstGateOpenScript[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(264)),
 	SC_SET(SW_Z, PIXELS(744)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript7_0[] = {
+s32 gVenusPillarPushScript7_0[] = {
 	SC_MOVE(PIXELS(264), 0, PIXELS(728)),
 	SC_SYNC,
 	SC_POS(PIXELS(264), 0, PIXELS(728)),
@@ -3601,11 +3601,11 @@ s32 gVinasuPillarPushScript7_0[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(232)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript5_1[] = {
+s32 gVenusPillarPushScript5_1[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(696)),
@@ -3616,11 +3616,11 @@ s32 gVinasuPillarPushScript5_1[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(184)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript5_0[] = {
+s32 gVenusPillarPushScript5_0[] = {
 	SC_MOVE(PIXELS(264), 0, PIXELS(696)),
 	SC_SYNC,
 	SC_POS(PIXELS(264), 0, PIXELS(696)),
@@ -3628,20 +3628,20 @@ s32 gVinasuPillarPushScript5_0[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(264)),
 	SC_SET(SW_Z, PIXELS(680)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript2_0[] = {
+s32 gVenusPillarPushScript2_0[] = {
 	SC_MOVE(PIXELS(184), 0, PIXELS(632)),
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(184)),
 	SC_SET(SW_Z, PIXELS(632)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript3_0[] = {
+s32 gVenusPillarPushScript3_0[] = {
 	SC_MOVE(PIXELS(248), 0, PIXELS(680)),
 	SC_SYNC,
 	SC_POS(PIXELS(248), 0, PIXELS(680)),
@@ -3664,11 +3664,11 @@ s32 gVinasuPillarPushScript3_0[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(232)),
 	SC_SET(SW_Z, PIXELS(632)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuSecondGateScript[] = {
+s32 gVenusSecondGateScript[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(744)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(744)),
@@ -3685,11 +3685,11 @@ s32 gVinasuSecondGateScript[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(168)),
 	SC_SET(SW_Z, PIXELS(744)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript6_0[] = {
+s32 gVenusPillarPushScript6_0[] = {
 	SC_MOVE(PIXELS(168), 0, PIXELS(728)),
 	SC_SYNC,
 	SC_POS(PIXELS(168), 0, PIXELS(728)),
@@ -3703,11 +3703,11 @@ s32 gVinasuPillarPushScript6_0[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(168)),
 	SC_SET(SW_Z, PIXELS(696)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript4_0[] = {
+s32 gVenusPillarPushScript4_0[] = {
 	SC_MOVE(PIXELS(168), 0, PIXELS(664)),
 	SC_SYNC,
 	SC_POS(PIXELS(168), 0, PIXELS(664)),
@@ -3715,11 +3715,11 @@ s32 gVinasuPillarPushScript4_0[] = {
 	SC_SYNC,
 	SC_SET(SW_X, PIXELS(184)),
 	SC_SET(SW_Z, PIXELS(664)),
-	SC_CALL(VinasuHeya_DispatchPushScript),
+	SC_CALL(VenusLighthouse_DispatchPushScript),
 	SC_END,
 };
 
-s32 gVinasuPillarPushScript0_0[] = {
+s32 gVenusPillarPushScript0_0[] = {
 	SC_MOVE(PIXELS(216), 0, PIXELS(632)),
 	SC_SYNC,
 	SC_POS(PIXELS(216), 0, PIXELS(632)),
@@ -3730,26 +3730,26 @@ s32 gVinasuPillarPushScript0_0[] = {
 	SC_END,
 };
 
-u16 gVinasuPushCells[] = {
+u16 gVenusPushCells[] = {
 	MAP_CELL_STEP(124, 50, 1, 2, 6), MAP_CELL_STEP(124, 47, 1, 2, 6), MAP_CELL_STEP(124, 44, 1, 2, 6), MAP_CELL_STEP(124, 41, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 gVinasuSettleCells[] = {
+u16 gVenusSettleCells[] = {
 	MAP_CELL_STEP(117, 59, 1, 2, 6), MAP_CELL_STEP(115, 59, 1, 2, 6), MAP_CELL_STEP(113, 59, 1, 2, 6), MAP_CELL_STEP(111, 59, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-u16 gVinasuGateCells[] = {
+u16 gVenusGateCells[] = {
 	MAP_CELL_STEP(96, 58, 1, 2, 6), MAP_CELL_STEP(95, 58, 1, 2, 6), MAP_CELL_STEP(96, 56, 1, 2, 6), MAP_CELL_STEP(95, 56, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gVinasuHeyaEntrances1[] = {
+struct SceneEntrance gVenusLighthouseEntrances1[] = {
 	{ 1, CONDITION_ALWAYS, 40, 0, 264, FACING_EAST, 0, 0, 0, 512, 544, 0 },
 	{ 2, CONDITION_ALWAYS, 376, 0, 88, FACING_SOUTH, 0, 0, 0, 512, 544, 0 },
 	{ 3, CONDITION_ALWAYS, 488, 0, 424, FACING_WEST, 0, 0, 0, 512, 544, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVinasuHeyaEntrancesOther[] = {
+struct SceneEntrance gVenusLighthouseEntrancesOther[] = {
 	{ 1, CONDITION_ALWAYS, 120, 0, 200, FACING_NORTH, 0, 0, 56, 240, 216, 0 },
 	{ 2, CONDITION_ALWAYS, 120, 0, 104, FACING_SOUTH, 0, 0, 56, 240, 216, 0 },
 	{ 3, CONDITION_ALWAYS, 344, 0, 232, FACING_NORTH, 0, 256, 48, 512, 248, 0 },
@@ -3777,7 +3777,7 @@ struct SceneEntrance gVinasuHeyaEntrancesOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVinasuHeyaEntrances3[] = {
+struct SceneEntrance gVenusLighthouseEntrances3[] = {
 	{ 1, CONDITION_ALWAYS, 456, 0, 552, FACING_SOUTH, 0, 376, 344, 736, 624, 0 },
 	{ 2, CONDITION_ALWAYS, 456, 0, 592, FACING_NORTH, 0, 376, 344, 736, 624, 0 },
 	{ 3, CONDITION_ALWAYS, 696, 0, 472, FACING_SOUTH, 0, 376, 344, 736, 624, 0 },
@@ -3802,7 +3802,7 @@ struct SceneEntrance gVinasuHeyaEntrances3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVinasuHeyaEntrances4[] = {
+struct SceneEntrance gVenusLighthouseEntrances4[] = {
 	{ 1, CONDITION_ALWAYS, 104, 0, 120, FACING_SOUTH, 0, 56, 56, 368, 272, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 200, FACING_SOUTH, 0, 56, 56, 368, 272, 0 },
 	{ 3, CONDITION_ALWAYS, 600, 0, 216, FACING_NORTH, 0, 552, 88, 848, 544, 0 },
@@ -3817,7 +3817,7 @@ struct SceneEntrance gVinasuHeyaEntrances4[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVinasuHeyaEntrances5[] = {
+struct SceneEntrance gVenusLighthouseEntrances5[] = {
 	{ 1, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, 8, 56, 256, 224, 0 },
 	{ 2, CONDITION_ALWAYS, 136, 0, 184, FACING_NORTH, 0, 8, 56, 256, 224, 0 },
 	{ 3, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, 8, 264, 256, 432, 0 },
@@ -3841,7 +3841,7 @@ struct SceneEntrance gVinasuHeyaEntrances5[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVinasuHeyaEntrances6[] = {
+struct SceneEntrance gVenusLighthouseEntrances6[] = {
 	{ 1, CONDITION_ALWAYS, 120, 0, 248, FACING_SOUTH, 0, 72, 56, 320, 416, 0 },
 	{ 2, CONDITION_ALWAYS, 280, 0, 280, FACING_NORTH, 0, 72, 56, 320, 416, 0 },
 	{ 3, CONDITION_ALWAYS, 472, 0, 328, FACING_SOUTH, 0, 424, 24, 992, 560, 0 },
@@ -3865,7 +3865,7 @@ struct SceneEntrance gVinasuHeyaEntrances6[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gVinasuHeyaPrimaryTable[] = {
+u32 gVenusLighthousePrimaryTable[] = {
 	SCENE_EXITS(181),
 	SCENE_EXIT(1, 2, 32),
 	SCENE_EXIT(2, 182, 1),
@@ -3975,11 +3975,11 @@ u32 gVinasuHeyaPrimaryTable[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gVinasuHeyaPlacementsOther[] = {
+struct ScenePlacement gVenusLighthousePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements1[] = {
+struct ScenePlacement gVenusLighthousePlacements1[] = {
 	{ 0x98, 0x981, ACTOR_STAND,
 		PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x70, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3997,8 +3997,8 @@ struct ScenePlacement gVinasuHeyaPlacements1[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements2[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gVenusLighthousePlacements2[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x70, 0x0, ACTOR_STAND,
 		PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4010,37 +4010,37 @@ struct ScenePlacement gVinasuHeyaPlacements2[] = {
 		PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x114, 0x0, (s32)gVinasuHeyaPlacements2_1,
+	{ 0x114, 0x0, (s32)gVenusLighthousePlacements2_1,
 		PIXELS(488), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements3[] = {
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
+struct ScenePlacement gVenusLighthousePlacements3[] = {
+	{ 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
 		PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
+	{ 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
 		PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0xfd, 0x0, (s32)gVinasuHeyaPlacements3_Data,
+	{ 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
 		PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4049,31 +4049,31 @@ struct ScenePlacement gVinasuHeyaPlacements3[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements4[] = {
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+struct ScenePlacement gVenusLighthousePlacements4[] = {
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements4_1,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements4_1,
 		PIXELS(776), 0, PIXELS(712), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, 7,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements5[] = {
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+struct ScenePlacement gVenusLighthousePlacements5[] = {
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_1,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements5_1,
 		PIXELS(792), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_2,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements5_2,
 		PIXELS(808), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_3,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements5_3,
 		PIXELS(824), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVinasuHeyaPlacements6[] = {
+struct ScenePlacement gVenusLighthousePlacements6[] = {
 	{ 0x101, 0x0, 7,
 		PIXELS(104), 0, PIXELS(312), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x101, 0x0, 7,
@@ -4086,15 +4086,15 @@ struct ScenePlacement gVinasuHeyaPlacements6[] = {
 		PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
 	{ 0x100, 0x0, ACTOR_STAND,
 		PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-	{ 0x1f4, 0x0, (s32)gVinasuHeyaPlacements2_0,
+	{ 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
 		PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements4_1,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements4_1,
 		PIXELS(184), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements5_1,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements5_1,
 		PIXELS(200), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements6_3,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements6_3,
 		PIXELS(232), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ 0x100, 0x0, (s32)gVinasuHeyaPlacements6_4,
+	{ 0x100, 0x0, (s32)gVenusLighthousePlacements6_4,
 		PIXELS(248), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4103,28 +4103,28 @@ struct ScenePlacement gVinasuHeyaPlacements6[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents1[] = {
+struct SceneEvent gVenusLighthouseEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightTenStepLoop) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIodemBeHappyTheEntranceTo) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaOhhhHowCouldTheyAttackMere) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIodemBeHappyTheEntranceTo) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseOhhhHowCouldTheyAttackMere) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaHowHowDidTheyOpenThe) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaTheyAreAlreadyHeadedForBabi) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaBabisSoldiersAreAllColossoVictors) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseHowHowDidTheyOpenThe) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyAreAlreadyHeadedForBabi) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseBabisSoldiersAreAllColossoVictors) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightTenStepLoop) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaUhnnnIfOnlyICouldMove) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaTheirPowersWereSoStrangeWho) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIMustGetInsideVenusLighthouse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaTheYoungBoySeemedToGlow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaTheyWerentInVenusLighthouseVery) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIThoughtIRecognizedOneOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseUhnnnIfOnlyICouldMove) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheirPowersWereSoStrangeWho) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIMustGetInsideVenusLighthouse) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheYoungBoySeemedToGlow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyWerentInVenusLighthouseVery) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIThoughtIRecognizedOneOf) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents2[] = {
+struct SceneEvent gVenusLighthouseEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -4152,12 +4152,12 @@ struct SceneEvent gVinasuHeyaEvents2[] = {
 	{ EVENT_TOUCH, 45, 0x200, EVENT_SCRIPT(EV45_TOUCH) },
 	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(EV46_TOUCH) },
 	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenToldThemToStopBut) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenWentInsideButThenCame) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenWentInsideButThenCame) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIfKradenHadntBeenThereWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenSaidSomethingAboutThisBeing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIWonderWhatMysteriesTheStatue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIfKradenHadntBeenThereWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
 	{ SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
 #if !EDITION_INTERNATIONAL
 	{ SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
@@ -4179,7 +4179,7 @@ struct SceneEvent gVinasuHeyaEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents3[] = {
+struct SceneEvent gVenusLighthouseEvents3[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x21, 3, CONDITION_ALWAYS, 3 },
@@ -4222,7 +4222,7 @@ struct SceneEvent gVinasuHeyaEvents3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents4[] = {
+struct SceneEvent gVenusLighthouseEvents4[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_RunObjectZeroColorSequence) },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -4240,7 +4240,7 @@ struct SceneEvent gVinasuHeyaEvents4[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents5[] = {
+struct SceneEvent gVenusLighthouseEvents5[] = {
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -4264,13 +4264,13 @@ struct SceneEvent gVinasuHeyaEvents5[] = {
 	{ 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_SCRIPT) },
 	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf35, FIND_ITEM(0x52) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_SettlePushedBlocks) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_SettlePushedBlocks) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_SettlePushedBlocks) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVinasuHeyaEvents6[] = {
+struct SceneEvent gVenusLighthouseEvents6[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -4309,10 +4309,10 @@ struct SceneEvent gVinasuHeyaEvents6[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, 0 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, 0 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, 0 },
-	{ PSYNERGY_ON_ACTOR(0x93), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ResolveFloatingBlock) },
-	{ PSYNERGY_ON_ACTOR(0x93), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ResolveFloatingBlock) },
-	{ PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ResolveFloatingBlock) },
-	{ PSYNERGY_ON_ACTOR(0x93), 13, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ResolveFloatingBlock) },
+	{ PSYNERGY_ON_ACTOR(0x93), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
+	{ PSYNERGY_ON_ACTOR(0x93), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
+	{ PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
+	{ PSYNERGY_ON_ACTOR(0x93), 13, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene3c8SequenceA) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene3c8SequenceA) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene3c8SequenceA) },
@@ -4320,106 +4320,106 @@ struct SceneEvent gVinasuHeyaEvents6[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u8 *gVinasuSwitchShapes[] = {
-	gVinasuSwitchShape0,
-	gVinasuSwitchShape1,
-	gVinasuSwitchShape2,
-	gVinasuSwitchShape3,
+u8 *gVenusSwitchShapes[] = {
+	gVenusSwitchShape0,
+	gVenusSwitchShape1,
+	gVenusSwitchShape2,
+	gVenusSwitchShape3,
 };
 
-s32 *gVinasuSwitchPushScript0[] = {
-	gVinasuSwitchPushScript0_0,
-	gVinasuSwitchPushScript0_1,
-	gVinasuRefusedPushScript,
-	gVinasuRefusedPushScript,
+s32 *gVenusSwitchPushScript0[] = {
+	gVenusSwitchPushScript0_0,
+	gVenusSwitchPushScript0_1,
+	gVenusRefusedPushScript,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuSwitchPushScript1[] = {
-	gVinasuSwitchPushScript1_0,
-	gVinasuSwitchPushScript1_1,
-	gVinasuRefusedPushScript,
-	gVinasuRefusedPushScript,
+s32 *gVenusSwitchPushScript1[] = {
+	gVenusSwitchPushScript1_0,
+	gVenusSwitchPushScript1_1,
+	gVenusRefusedPushScript,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuSwitchPushScript2[] = {
-	gVinasuSwitchPushScript2_0,
-	gVinasuSwitchPushScript2_1,
-	gVinasuSwitchPushScript2_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusSwitchPushScript2[] = {
+	gVenusSwitchPushScript2_0,
+	gVenusSwitchPushScript2_1,
+	gVenusSwitchPushScript2_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuSwitchPushScript3[] = {
-	gVinasuSwitchPushScript3_0,
-	gVinasuSwitchPushScript3_1,
-	gVinasuSwitchPushScript3_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusSwitchPushScript3[] = {
+	gVenusSwitchPushScript3_0,
+	gVenusSwitchPushScript3_1,
+	gVenusSwitchPushScript3_0,
+	gVenusRefusedPushScript,
 };
 
-s32 * *gVinasuSwitchPushScripts[] = {
-	gVinasuSwitchPushScript0,
-	gVinasuSwitchPushScript1,
-	gVinasuSwitchPushScript2,
-	gVinasuSwitchPushScript3,
+s32 * *gVenusSwitchPushScripts[] = {
+	gVenusSwitchPushScript0,
+	gVenusSwitchPushScript1,
+	gVenusSwitchPushScript2,
+	gVenusSwitchPushScript3,
 };
 
-u8 *gVinasuPillarShapes[] = {
-	gVinasuPillarShape0,
-	gVinasuPillarShape1,
-	gVinasuPillarShape1 + 1,
-	gVinasuPillarShape2 + 1,
-	gVinasuPillarShape3 + 1,
-	gVinasuPillarShape4 + 1,
-	gVinasuPillarShape5,
-	gVinasuPillarShape6,
+u8 *gVenusPillarShapes[] = {
+	gVenusPillarShape0,
+	gVenusPillarShape1,
+	gVenusPillarShape1 + 1,
+	gVenusPillarShape2 + 1,
+	gVenusPillarShape3 + 1,
+	gVenusPillarShape4 + 1,
+	gVenusPillarShape5,
+	gVenusPillarShape6,
 };
 
-s32 *gVinasuPillarPushScript0[] = {
-	gVinasuPillarPushScript0_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript0[] = {
+	gVenusPillarPushScript0_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript1[] = {
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript1[] = {
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript2[] = {
-	gVinasuPillarPushScript2_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript2[] = {
+	gVenusPillarPushScript2_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript3[] = {
-	gVinasuPillarPushScript3_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript3[] = {
+	gVenusPillarPushScript3_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript4[] = {
-	gVinasuPillarPushScript4_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript4[] = {
+	gVenusPillarPushScript4_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript5[] = {
-	gVinasuPillarPushScript5_0,
-	gVinasuPillarPushScript5_1,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript5[] = {
+	gVenusPillarPushScript5_0,
+	gVenusPillarPushScript5_1,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript6[] = {
-	gVinasuPillarPushScript6_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript6[] = {
+	gVenusPillarPushScript6_0,
+	gVenusRefusedPushScript,
 };
 
-s32 *gVinasuPillarPushScript7[] = {
-	gVinasuPillarPushScript7_0,
-	gVinasuRefusedPushScript,
+s32 *gVenusPillarPushScript7[] = {
+	gVenusPillarPushScript7_0,
+	gVenusRefusedPushScript,
 };
 
-s32 * *gVinasuPillarPushScripts[] = {
-	gVinasuPillarPushScript0,
-	gVinasuPillarPushScript1,
-	gVinasuPillarPushScript2,
-	gVinasuPillarPushScript3,
-	gVinasuPillarPushScript4,
-	gVinasuPillarPushScript5,
-	gVinasuPillarPushScript6,
-	gVinasuPillarPushScript7,
+s32 * *gVenusPillarPushScripts[] = {
+	gVenusPillarPushScript0,
+	gVenusPillarPushScript1,
+	gVenusPillarPushScript2,
+	gVenusPillarPushScript3,
+	gVenusPillarPushScript4,
+	gVenusPillarPushScript5,
+	gVenusPillarPushScript6,
+	gVenusPillarPushScript7,
 };

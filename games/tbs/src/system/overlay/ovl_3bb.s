@@ -1,98 +1,98 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .bss,"aw",%nobits
-	.global Korosseo_MarkerStep
-Korosseo_MarkerStep:
+	.global Colosso_MarkerStep
+Colosso_MarkerStep:
 	.space 4
-	.global Korosseo_ModeScaleDuration
-Korosseo_ModeScaleDuration:
+	.global Colosso_ModeScaleDuration
+Colosso_ModeScaleDuration:
 	.space 4
-	.global Korosseo_MarkerPriority
-Korosseo_MarkerPriority:
+	.global Colosso_MarkerPriority
+Colosso_MarkerPriority:
 	.space 4
-	.global Korosseo_CompetitorStartZ
-Korosseo_CompetitorStartZ:
+	.global Colosso_CompetitorStartZ
+Colosso_CompetitorStartZ:
 	.space 4
-	.global Korosseo_MarkerEndX
-Korosseo_MarkerEndX:
+	.global Colosso_MarkerEndX
+Colosso_MarkerEndX:
 	.space 4
-	.global Korosseo_ModeTaskParam
-Korosseo_ModeTaskParam:
+	.global Colosso_ModeTaskParam
+Colosso_ModeTaskParam:
 	.space 4
-	.global Korosseo_ModeScaleStart
-Korosseo_ModeScaleStart:
+	.global Colosso_ModeScaleStart
+Colosso_ModeScaleStart:
 	.space 4
-	.global Korosseo_ModeMoveDuration
-Korosseo_ModeMoveDuration:
+	.global Colosso_ModeMoveDuration
+Colosso_ModeMoveDuration:
 	.space 4
-	.global Korosseo_ModeTaskPosition
-Korosseo_ModeTaskPosition:
+	.global Colosso_ModeTaskPosition
+Colosso_ModeTaskPosition:
 	.space 4
-	.global Korosseo_MarkerBlink
-Korosseo_MarkerBlink:
+	.global Colosso_MarkerBlink
+Colosso_MarkerBlink:
 	.space 4
-	.global Korosseo_ModeScaleTarget
-Korosseo_ModeScaleTarget:
+	.global Colosso_ModeScaleTarget
+Colosso_ModeScaleTarget:
 	.space 4
-	.global Korosseo_ModeMoveStep
-Korosseo_ModeMoveStep:
+	.global Colosso_ModeMoveStep
+Colosso_ModeMoveStep:
 	.space 4
-	.global Korosseo_MarkerY
-Korosseo_MarkerY:
+	.global Colosso_MarkerY
+Colosso_MarkerY:
 	.space 4
-	.global Korosseo_ModeBlendStep
-Korosseo_ModeBlendStep:
+	.global Colosso_ModeBlendStep
+Colosso_ModeBlendStep:
 	.space 4
-	.global Korosseo_CompetitorStartAngle
-Korosseo_CompetitorStartAngle:
+	.global Colosso_CompetitorStartAngle
+Colosso_CompetitorStartAngle:
 	.space 4
-	.global Korosseo_MarkerSteps
-Korosseo_MarkerSteps:
+	.global Colosso_MarkerSteps
+Colosso_MarkerSteps:
 	.space 4
-	.global Korosseo_ModeTaskMode
-Korosseo_ModeTaskMode:
+	.global Colosso_ModeTaskMode
+Colosso_ModeTaskMode:
 	.space 4
-	.global Korosseo_ModeBlendTarget
-Korosseo_ModeBlendTarget:
+	.global Colosso_ModeBlendTarget
+Colosso_ModeBlendTarget:
 	.space 4
-	.global Korosseo_ModeBlendStart
-Korosseo_ModeBlendStart:
+	.global Colosso_ModeBlendStart
+Colosso_ModeBlendStart:
 	.space 4
-	.global Korosseo_ModeTaskTimer
-Korosseo_ModeTaskTimer:
+	.global Colosso_ModeTaskTimer
+Colosso_ModeTaskTimer:
 	.space 4
-	.global Korosseo_ModeTaskScript
-Korosseo_ModeTaskScript:
+	.global Colosso_ModeTaskScript
+Colosso_ModeTaskScript:
 	.space 4
-	.global Korosseo_MarkerStartX
-Korosseo_MarkerStartX:
+	.global Colosso_MarkerStartX
+Colosso_MarkerStartX:
 	.space 4
-	.global Korosseo_ModeBlendDuration
-Korosseo_ModeBlendDuration:
+	.global Colosso_ModeBlendDuration
+Colosso_ModeBlendDuration:
 	.space 8
-	.global Korosseo_MarkerOam
-Korosseo_MarkerOam:
+	.global Colosso_MarkerOam
+Colosso_MarkerOam:
 	.space 12
-	.global Korosseo_MarkerStartY
-Korosseo_MarkerStartY:
+	.global Colosso_MarkerStartY
+Colosso_MarkerStartY:
 	.space 4
-	.global Korosseo_ModeTaskSprites
-Korosseo_ModeTaskSprites:
+	.global Colosso_ModeTaskSprites
+Colosso_ModeTaskSprites:
 	.space 48
-	.global Korosseo_ModeMoveStart
-Korosseo_ModeMoveStart:
+	.global Colosso_ModeMoveStart
+Colosso_ModeMoveStart:
 	.space 4
-	.global Korosseo_MarkerX
-Korosseo_MarkerX:
+	.global Colosso_MarkerX
+Colosso_MarkerX:
 	.space 4
-	.global Korosseo_ModeMoveTarget
-Korosseo_ModeMoveTarget:
+	.global Colosso_ModeMoveTarget
+Colosso_ModeMoveTarget:
 	.space 4
-	.global Korosseo_ModeScaleStep
-Korosseo_ModeScaleStep:
+	.global Colosso_ModeScaleStep
+Colosso_ModeScaleStep:
 	.space 4
-	.global Korosseo_MarkerEndY
-Korosseo_MarkerEndY:
+	.global Colosso_MarkerEndY
+Colosso_MarkerEndY:
 	.space 4
-	.global Korosseo_CompetitorStartX
-Korosseo_CompetitorStartX:
+	.global Colosso_CompetitorStartX
+Colosso_CompetitorStartX:
 	.space 4

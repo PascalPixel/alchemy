@@ -9,7 +9,7 @@ static void EV41_SEARCH(void)
 	{
 		Engine_ActorSetAnimationAndWait(18, 4);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgKuupuappuWowHaveManyThingsArent);
+		Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
 		Engine_EventShowMessage(18, 0);
 	}
 	else

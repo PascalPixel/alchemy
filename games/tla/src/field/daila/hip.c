@@ -4,13 +4,13 @@
 #include "text/msg_ids.h"
 
 
-void DeriMura_TalkHip(void)
+void Daila_TalkHip(void)
 {
     s32 msg;
 
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    msg = (s32)MsgDeriHurtHip;
+    msg = (s32)MsgDailaHurtHip;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(12, 0);
     if (Engine_EventChooseYesNo(Engine_PartyGetLeaderActor(), 0) == 0) {
@@ -34,7 +34,7 @@ void Func_02000340(s32 keeper)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriTaviRikiHome);
+        Engine_EventSetMessage((s32)MsgDailaTaviRikiHome);
         Engine_EventShowMessage(keeper, 0);
         Engine_EventEnd();
     }

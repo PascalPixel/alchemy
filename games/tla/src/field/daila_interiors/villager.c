@@ -3,12 +3,12 @@
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
-struct DeriActor {
+struct DailaActor {
     u8 unknown_00[6];
     u16 facing;
 };
 
-struct DeriActor *Object_GetById(s32 id);
+struct DailaActor *Object_GetById(s32 id);
 void Object_SetModeById(s32 actor, s32 mode);
 void Func_02000ddc(s32 slot, s32 actor);
 void Func_02000dec(s32 slot, s32 actor);
@@ -27,7 +27,7 @@ void Func_02000270(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaSouthRoadDanger);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsSouthRoadDanger);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -45,7 +45,7 @@ void Func_020002d0(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaNewTravelers);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsNewTravelers);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -63,7 +63,7 @@ void Func_02000330(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaDinnerChoice);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsDinnerChoice);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -81,7 +81,7 @@ void Func_02000390(s32 actor)
         if (GameFlag_Test(0x847) == 0) {
             Engine_EventBegin();
             Engine_EventResolvePendingActions(0);
-            msg = (s32)MsgDeriHeyaTravelersFreeTime;
+            msg = (s32)MsgDailaInteriorsTravelersFreeTime;
             Engine_EventSetMessage(msg);
             UiText_OpenMessageAtObject(actor, 0);
             if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
@@ -100,7 +100,7 @@ void Func_02000390(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        msg = (s32)MsgDeriHeyaTravelersFreeTime;
+        msg = (s32)MsgDailaInteriorsTravelersFreeTime;
         Engine_EventSetMessage(msg);
         UiText_OpenMessageAtObject(actor, 0);
         if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
@@ -128,7 +128,7 @@ void Func_02000498(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaLeaveForMadora);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsLeaveForMadra);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -146,7 +146,7 @@ void Func_020004f4(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaPirateTreasure);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsPirateTreasure);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -164,7 +164,7 @@ void Func_02000554(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaSpaciousVillage);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsSpaciousVillage);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -182,7 +182,7 @@ void Func_020005b4(s32 actor)
     } else {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
-        Engine_EventSetMessage((s32)MsgDeriHeyaFishermenWaiting);
+        Engine_EventSetMessage((s32)MsgDailaInteriorsFishermenWaiting);
         Engine_EventShowMessage(actor, 0);
         Engine_EventEnd();
     }
@@ -194,7 +194,7 @@ void Func_02000614(void)
 
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    msg = (s32)MsgDeriHeyaGoingToMadora;
+    msg = (s32)MsgDailaInteriorsGoingToMadra;
     Engine_EventSetMessage(msg);
     UiText_OpenMessageAtObject(12, 0);
     if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
@@ -214,7 +214,7 @@ void Func_0200066c(void)
 
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    msg = (s32)MsgDeriHeyaLookingForBoat;
+    msg = (s32)MsgDailaInteriorsLookingForBoat;
     Engine_EventSetMessage(msg);
     UiText_OpenMessageAtObject(14, 0);
     if (Inventory_PromptAndSetObjectMode(Func_02000dd4(), 0) == 0) {
@@ -232,7 +232,7 @@ void Func_020006c4(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
-    Engine_EventSetMessage((s32)MsgDeriHeyaWatchingPractice);
+    Engine_EventSetMessage((s32)MsgDailaInteriorsWatchingPractice);
     Engine_EventShowMessage(26, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(26, 3);

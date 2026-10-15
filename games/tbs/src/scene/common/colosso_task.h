@@ -33,135 +33,135 @@ struct Sprite
 	u32 words[3];
 };
 
-extern s16	Korosseo_ModeTaskTimer;
-extern s16	Korosseo_ModeMoveTarget;
-extern s16	Korosseo_ModeMoveDuration;
-extern s16	Korosseo_ModeTaskMode;
-extern s16	Korosseo_ModeTaskParam;
-extern s32	Korosseo_ModeTaskPosition;
-extern s16 *Korosseo_ModeTaskScript;
+extern s16	Colosso_ModeTaskTimer;
+extern s16	Colosso_ModeMoveTarget;
+extern s16	Colosso_ModeMoveDuration;
+extern s16	Colosso_ModeTaskMode;
+extern s16	Colosso_ModeTaskParam;
+extern s32	Colosso_ModeTaskPosition;
+extern s16 *Colosso_ModeTaskScript;
 
-static void Korosseo_LoadPortrait(s32 id)
+static void Colosso_LoadPortrait(s32 id)
 {
 	u8 *buf;
 	s32 off;
 
-	buf = Runtime_BumpAllocateAlternatePool(0x1c00 + KOROSSEO_PALETTE_BYTES);
-	if (Korosseo_PortraitSlot == -1)
-		Korosseo_PortraitSlot = Resource_FindFreeEntry();
-	off = Korosseo_PortraitPaletteOffsets[id];
+	buf = Runtime_BumpAllocateAlternatePool(0x1c00 + COLOSSO_PALETTE_BYTES);
+	if (Colosso_PortraitSlot == -1)
+		Colosso_PortraitSlot = Resource_FindFreeEntry();
+	off = Colosso_PortraitPaletteOffsets[id];
 	if (id == 8)
 		id = 4;
 	FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
 	Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
-	Vram_Load(Korosseo_PortraitSlot, 0x400, (u8 *)((id << 10) + (s32)buf + KOROSSEO_PALETTE_BYTES));
+	Vram_Load(Colosso_PortraitSlot, 0x400, (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
 	Dma_Wait(REG_DMA3);
 	Runtime_BumpFree(buf);
 }
 
-static void Korosseo_UpdateModeTask(void)
+static void Colosso_UpdateModeTask(void)
 {
-	u32					  *write = Korosseo_ModeTaskSprites;
+	u32					  *write = Colosso_ModeTaskSprites;
 	struct Sprite		  *sprite = (struct Sprite *)write;
-	s32					   tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;
+	s32					   tile = gVramBlockCache[Colosso_PortraitSlot].offset >> 5;
 	u32					   flags;
 	s32					   scale, blend, pos;
 	s32					   matrix, i, x, y, left;
 	struct AffineTransform work;
 
 commands:
-	if (Korosseo_ModeTaskTimer == 0)
+	if (Colosso_ModeTaskTimer == 0)
 	{
 		{
-			switch (*Korosseo_ModeTaskScript++)
+			switch (*Colosso_ModeTaskScript++)
 			{
 			case 0x4000:
-				Korosseo_ModeTaskPosition = *Korosseo_ModeTaskScript++ << 8;
-				Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeMoveDuration = 0;
+				Colosso_ModeTaskPosition = *Colosso_ModeTaskScript++ << 8;
+				Colosso_ModeMoveTarget = *Colosso_ModeTaskScript++;
+				Colosso_ModeMoveDuration = 0;
 				break;
 			case 0x3000:
-				Korosseo_ModeMoveStart = Korosseo_ModeMoveTarget;
-				Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeMoveDuration = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeMoveStep = 0;
+				Colosso_ModeMoveStart = Colosso_ModeMoveTarget;
+				Colosso_ModeMoveTarget = *Colosso_ModeTaskScript++;
+				Colosso_ModeMoveDuration = *Colosso_ModeTaskScript++;
+				Colosso_ModeMoveStep = 0;
 				break;
 			case 0x1000:
-				Korosseo_ModeScaleStart = Korosseo_ModeScaleTarget;
-				Korosseo_ModeScaleTarget = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeScaleDuration = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeScaleStep = 0;
+				Colosso_ModeScaleStart = Colosso_ModeScaleTarget;
+				Colosso_ModeScaleTarget = *Colosso_ModeTaskScript++;
+				Colosso_ModeScaleDuration = *Colosso_ModeTaskScript++;
+				Colosso_ModeScaleStep = 0;
 				break;
 			case 0x2000:
-				Korosseo_ModeBlendStart = Korosseo_ModeBlendTarget;
-				Korosseo_ModeBlendTarget = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeBlendDuration = *Korosseo_ModeTaskScript++;
-				Korosseo_ModeBlendStep = 0;
+				Colosso_ModeBlendStart = Colosso_ModeBlendTarget;
+				Colosso_ModeBlendTarget = *Colosso_ModeTaskScript++;
+				Colosso_ModeBlendDuration = *Colosso_ModeTaskScript++;
+				Colosso_ModeBlendStep = 0;
 				break;
 			case 0x7fff:
-				Korosseo_ModeTaskTimer = *Korosseo_ModeTaskScript++;
+				Colosso_ModeTaskTimer = *Colosso_ModeTaskScript++;
 				break;
 			case -1:
-				Engine_TaskRemoveCallback(Korosseo_UpdateModeTask);
-				Resource_ResetEntry(Korosseo_PortraitSlot);
+				Engine_TaskRemoveCallback(Colosso_UpdateModeTask);
+				Resource_ResetEntry(Colosso_PortraitSlot);
 				return;
 			}
 		}
 		goto commands;
 	}
-	Korosseo_ModeTaskTimer--;
-	if (Korosseo_ModeScaleDuration == 0)
+	Colosso_ModeTaskTimer--;
+	if (Colosso_ModeScaleDuration == 0)
 	{
-		scale = Korosseo_ModeScaleTarget;
+		scale = Colosso_ModeScaleTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Korosseo_ModeScaleDuration;
-		start = Korosseo_ModeScaleStart;
-		target = Korosseo_ModeScaleTarget;
-		progress = ++Korosseo_ModeScaleStep;
+		duration = Colosso_ModeScaleDuration;
+		start = Colosso_ModeScaleStart;
+		target = Colosso_ModeScaleTarget;
+		progress = ++Colosso_ModeScaleStep;
 		scale = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Korosseo_ModeScaleDuration = 0;
+			Colosso_ModeScaleDuration = 0;
 	}
-	if (Korosseo_ModeBlendDuration == 0)
+	if (Colosso_ModeBlendDuration == 0)
 	{
-		blend = Korosseo_ModeBlendTarget;
+		blend = Colosso_ModeBlendTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Korosseo_ModeBlendDuration;
-		start = Korosseo_ModeBlendStart;
-		target = Korosseo_ModeBlendTarget;
-		progress = ++Korosseo_ModeBlendStep;
+		duration = Colosso_ModeBlendDuration;
+		start = Colosso_ModeBlendStart;
+		target = Colosso_ModeBlendTarget;
+		progress = ++Colosso_ModeBlendStep;
 		blend = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Korosseo_ModeBlendDuration = 0;
+			Colosso_ModeBlendDuration = 0;
 	}
-	if (Korosseo_ModeMoveDuration == 0)
+	if (Colosso_ModeMoveDuration == 0)
 	{
-		pos = Korosseo_ModeMoveTarget;
+		pos = Colosso_ModeMoveTarget;
 	}
 	else
 	{
 		s32 duration, start, progress, target;
-		duration = Korosseo_ModeMoveDuration;
-		start = Korosseo_ModeMoveStart;
-		target = Korosseo_ModeMoveTarget;
-		progress = ++Korosseo_ModeMoveStep;
+		duration = Colosso_ModeMoveDuration;
+		start = Colosso_ModeMoveStart;
+		target = Colosso_ModeMoveTarget;
+		progress = ++Colosso_ModeMoveStep;
 		pos = start + (target - start) * progress / duration;
 		if (progress >= duration)
-			Korosseo_ModeMoveDuration = 0;
+			Colosso_ModeMoveDuration = 0;
 	}
 	work.angle = 0;
 	work.scale_x = scale;
 	work.scale_y = scale;
 	matrix = (s16)AffineMatrix_BuildForEffect(&work);
-	Korosseo_ModeTaskPosition += pos;
-	pos = Korosseo_ModeTaskPosition / 256;
-	switch (Korosseo_ModeTaskMode)
+	Colosso_ModeTaskPosition += pos;
+	pos = Colosso_ModeTaskPosition / 256;
+	switch (Colosso_ModeTaskMode)
 	{
 	case 1:
 	{
@@ -202,7 +202,7 @@ commands:
 				x = left & 511;
 				*write++ = 0;
 				*write++ = (x << 16) | y | flags | attr | 0x700;
-				*write++ = 0xf400 | (tile + Korosseo_ModeTaskParam);
+				*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
 				Runtime_PushSlotEntry(sprite++, 236);
 			}
 			tile += 8;
@@ -226,7 +226,7 @@ commands:
 				x = left & 511;
 				*write++ = 0;
 				*write++ = (x << 16) | y | flags | attr | 0x700;
-				*write++ = 0xf400 | (tile + Korosseo_ModeTaskParam);
+				*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
 				Runtime_PushSlotEntry(sprite++, 236);
 			}
 			tile += 8;
@@ -243,7 +243,7 @@ commands:
 			x = left & 511;
 			*write++ = 0;
 			*write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-			*write++ = 0xf400 | (tile + Korosseo_ModeTaskParam);
+			*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
 			Runtime_PushSlotEntry(sprite, 236);
 		}
 		break;
@@ -257,7 +257,7 @@ commands:
 			x = left & 511;
 			*write++ = 0;
 			*write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-			*write++ = 0xf400 | (tile + Korosseo_ModeTaskParam);
+			*write++ = 0xf400 | (tile + Colosso_ModeTaskParam);
 			Runtime_PushSlotEntry(sprite, 236);
 		}
 		break;

@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-void MakyuriIriguchi_RaisePillar(void);
+void MercuryEntrance_RaisePillar(void);
 
 void SceneState_ClearCurrentRecordAndReleaseTarget(void);
-void Makyuri_RunActorMove(void);
-void Makyuri_TickSpawnTimer(void);
+void Mercury_RunActorMove(void);
+void Mercury_TickSpawnTimer(void);
 
 #endif

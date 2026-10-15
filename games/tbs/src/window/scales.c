@@ -69,15 +69,15 @@ const s8 Menu_WorkspaceIconFrames[8] =
 // {絵の番号, 顔の番号} の組, -1 で終わり
 const s16 Portrait_CharacterMap[20] =
 {
-	ROBIN, ROBIN,			/* ロビン */
-	ROBIN_KO, KAO_ROBIN_KO,	/* ロビン(こ) */
-	GERALD, GERALD,			/* ジェラルド */
-	GERALD_KO, KAO_GERALD_KO,	/* ジェラルド(こ) */
-	IWAN, IWAN,				/* イワン */
-	MEARI, MEARI,			/* メアリー */
-	GARUSHIA, GARUSHIA,		/* ガルシア */
-	JASMINE, JASMINE,		/* ジャスミン */
-	SHIBA, SHIBA,			/* シバ */
+	ISAAC, ISAAC,			/* ロビン */
+	ISAAC_CHILD, FACE_ISAAC_CHILD,	/* ロビン(こ) */
+	GARET, GARET,			/* ジェラルド */
+	GARET_CHILD, FACE_GARET_CHILD,	/* ジェラルド(こ) */
+	IVAN, IVAN,				/* イワン */
+	MIA, MIA,			/* メアリー */
+	FELIX, FELIX,		/* ガルシア */
+	JENNA, JENNA,		/* ジャスミン */
+	SHEBA, SHEBA,			/* シバ */
 	-1, -1,
 };
 

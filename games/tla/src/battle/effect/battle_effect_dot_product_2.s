@@ -1,7 +1,7 @@
 .syntax unified
 	.arm
-	.global SentouKouka_SekiWa2
-SentouKouka_SekiWa2:
+	.global BattleEffect_DotProduct2
+BattleEffect_DotProduct2:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}

@@ -12,28 +12,28 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-u8 *TorebiHeya_GetEntrances(void)
+u8 *TolbiInteriors_GetEntrances(void)
 {
-	return gTorebiHeyaEntrances;
+	return gTolbiInteriorsEntrances;
 }
 
-s32 TorebiHeya_GetDefaultResult(void)
+s32 TolbiInteriors_GetDefaultResult(void)
 {
 	return 0;
 }
 
-u8 *TorebiHeya_GetExits(void)
+u8 *TolbiInteriors_GetExits(void)
 {
-	return gTorebiHeyaExits;
+	return gTolbiInteriorsExits;
 }
 
-s32 TorebiHeya_SelectPlacements(void)
+s32 TolbiInteriors_SelectPlacements(void)
 {
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return (s32)gTorebiHeyaPlacementsFlag950;
+		return (s32)gTolbiInteriorsPlacementsFlag950;
 	}
-	return (s32)gTorebiHeyaPlacements;
+	return (s32)gTolbiInteriorsPlacements;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
@@ -41,7 +41,7 @@ static void SceneDialogue_AskBabiWasMissing(s32 subject)
 {
 	s32 msg;
 
-	msg = MsgTorebiHeyaBabiShowedHimselfAtFinals;
+	msg = MsgTolbiInteriorsBabiShowedHimselfAtFinals;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -57,20 +57,20 @@ static void SceneDialogue_AskBabiWasMissing(s32 subject)
 }
 #endif
 
-u8 *TorebiHeya_SelectEvents(void)
+u8 *TolbiInteriors_SelectEvents(void)
 {
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return gTorebiHeyaEventsFlag950;
+		return gTolbiInteriorsEventsFlag950;
 	}
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		return gTorebiHeyaEventsFlag962;
+		return gTolbiInteriorsEventsFlag962;
 	}
-	return gTorebiHeyaEvents;
+	return gTolbiInteriorsEvents;
 }
 
-static void TorebiHeya_StartWindowTransition(void)
+static void TolbiInteriors_StartWindowTransition(void)
 {
 	struct EventWork *state = gEventWork;
 
@@ -98,7 +98,7 @@ static void FieldScene_RunPrimarySequence(void)
 	p6 += 0x16c;
 	n = *(s16 *)p6 - 14;
 	Engine_AudioPlayCue(158);
-	Map_AnimateCells(TorebiHeya_ExitCells[n].steps, TorebiHeya_ExitCells[n].x, TorebiHeya_ExitCells[n].y);
+	Map_AnimateCells(TolbiInteriors_ExitCells[n].steps, TolbiInteriors_ExitCells[n].x, TolbiInteriors_ExitCells[n].y);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Object_GetById(0)->motion_flags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -110,7 +110,7 @@ static void FieldScene_RunScene3b6SequenceA(void)
 	s32 rec7;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiHeyWhatsThis);
+	Engine_EventSetMessage(MsgTolbiHeyWhatsThis);
 	Engine_EventWait(40);
 	rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
 	Engine_ActorSetSpriteFlags(rec7, 0);
@@ -169,7 +169,7 @@ static void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiHeWontSailShipEven);
+	Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
 	Engine_EventWait(30);
 	Engine_ActorJump(31, 4, 13);
 	Engine_ActorJump(31, 4, 30);
@@ -252,17 +252,17 @@ static void EV21_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		Engine_EventSetMessage(MsgTorebiRightOneWell);
+		Engine_EventSetMessage(MsgTolbiRightOneWell);
 		Engine_EventShowMessage(no, 0);
 	}
 	else if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		Engine_EventSetMessage(MsgTorebiRequireLotHealing);
+		Engine_EventSetMessage(MsgTolbiRequireLotHealing);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		msg = MsgTorebiFirstTimeTolbi;
+		msg = MsgTolbiFirstTimeTolbi;
 		Engine_EventSetMessage(msg);
 		Engine_EventOpenMessage(no, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -288,7 +288,7 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		msg = MsgTorebiComeWayKalay;
+		msg = MsgTolbiComeWayKalay;
 		Engine_EventSetMessage(msg);
 		Engine_EventOpenMessage(no, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -304,12 +304,12 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		Engine_EventSetMessage(MsgTorebiColossoFinalsFinally);
+		Engine_EventSetMessage(MsgTolbiColossoFinalsFinally);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgTorebiLookStrongGo);
+		Engine_EventSetMessage(MsgTolbiLookStrongGo);
 		Engine_EventShowMessage(no, 0);
 		Engine_ActorShowEmote(no, 0x106, 0);
 		Engine_EventWait(40);
@@ -328,17 +328,17 @@ static void EV20_TALK(s32 no)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiWasntAbleWatch);
+			Engine_EventSetMessage(MsgTolbiWasntAbleWatch);
 			Engine_EventShowMessage(no, 0);
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiMaybeCloseShop);
+			Engine_EventSetMessage(MsgTolbiMaybeCloseShop);
 			Engine_EventShowMessage(no, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgTorebiIfCanMakeNameFor);
+			Engine_EventSetMessage(MsgTolbiIfCanMakeNameFor);
 			Engine_EventShowMessage(no, 0);
 		}
 	}
@@ -350,7 +350,7 @@ static void EV26_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	message = MsgTorebiLookLikeWarrior;
+	message = MsgTolbiLookLikeWarrior;
 	Engine_EventSetMessage(message);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -370,7 +370,7 @@ static void EV26_TALK(s32 subject)
 static void EV27_TALK(s32 no)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiGrrrChefInBadMood);
+	Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
 	Engine_EventShowMessage(no, 0);
 	Engine_EventEnd();
 }
@@ -381,7 +381,7 @@ static void EV09_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	msg = MsgTorebiWantStay;
+	msg = MsgTolbiWantStay;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -405,7 +405,7 @@ static void EV25_TALK(s32 a0)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8bd) == 0)
 	{
-		msg = MsgTorebiHeeHeeLook;
+		msg = MsgTolbiHeeHeeLook;
 		Engine_EventSetMessage(msg);
 		Event_OpenMessage(a0, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -424,13 +424,13 @@ static void EV25_TALK(s32 a0)
 		if (GameFlag_IsSet(0x8be) == 0)
 		{
 			GameFlag_Set(0x8be);
-			Engine_EventSetMessage(MsgTorebiHello);
+			Engine_EventSetMessage(MsgTolbiHello);
 			Event_ShowMessage(a0, 0);
 			Engine_EventWait(10);
 			Engine_ActorRunRepeatedMotion(a0, 2);
 			Engine_EventWait(20);
 		}
-		Engine_EventSetMessage(MsgTorebiHoHumFine);
+		Engine_EventSetMessage(MsgTolbiHoHumFine);
 		Event_ShowMessage(a0, 0);
 	}
 	Engine_EventEnd();
@@ -442,11 +442,11 @@ static void EV25_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x8BE) == 0)
 	{
-		Engine_EventSetMessage(MsgTorebiHehHehSheJustHid);
+		Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgTorebiThingFoundDefinitelySameAs);
+		Engine_EventSetMessage(MsgTolbiThingFoundDefinitelySameAs);
 	}
 	Engine_EventShowMessage(25, 0);
 	Engine_EventEnd();
@@ -455,7 +455,7 @@ static void EV25_PSYNERGY(void)
 static void EV31_TALK(s32 a0)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgTorebiGrrrScamWhyWontThey);
+	Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
 	Actor_ShowEmote(31, 0x103, 40);
 	Event_ShowMessage(a0, 0);
 	Engine_EventEnd();
@@ -467,7 +467,7 @@ static void EV35_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	message = MsgTorebiWarriorRemember;
+	message = MsgTolbiWarriorRemember;
 	Engine_EventSetMessage(message);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -496,23 +496,23 @@ static void EV30_TALK(s32 no)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiShipsArentGoing);
+			Engine_EventSetMessage(MsgTolbiShipsArentGoing);
 			Engine_EventShowMessage(no, 0);
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			Engine_EventSetMessage(MsgTorebiMissFinalsTolbis);
+			Engine_EventSetMessage(MsgTolbiMissFinalsTolbis);
 			Engine_EventShowMessage(no, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgTorebiWasteStuckHereWhenSuch);
+			Engine_EventSetMessage(MsgTolbiWasteStuckHereWhenSuch);
 			Engine_EventShowMessage(no, 0);
 		}
 	}
 }
 
-s32 TorebiHeya_ScaleBounceScript[] = {
+s32 TolbiInteriors_ScaleBounceScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -542,7 +542,7 @@ s32 TorebiHeya_ScaleBounceScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gTorebiHeyaEntrances[] = {
+struct SceneEntrance gTolbiInteriorsEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 160, 0, 216, FACING_NORTH, 0, 0, 0, 256, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 336, 0, 200, FACING_NORTH, 0, 248, 64, 488, 216, 0 },
@@ -578,7 +578,7 @@ struct SceneEntrance gTorebiHeyaEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 gTorebiHeyaExits[] = {
+u32 gTolbiInteriorsExits[] = {
 	SCENE_EXITS(136),
 	SCENE_EXIT(1, 135, 2),
 	SCENE_EXIT(2, 135, 3),
@@ -602,7 +602,7 @@ u32 gTorebiHeyaExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTorebiHeyaPlacements[] = {
+struct ScenePlacement gTolbiInteriorsPlacements[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -652,7 +652,7 @@ struct ScenePlacement gTorebiHeyaPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gTorebiHeyaPlacementsFlag950[] = {
+struct ScenePlacement gTolbiInteriorsPlacementsFlag950[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -691,7 +691,7 @@ struct ScenePlacement gTorebiHeyaPlacementsFlag950[] = {
 		PIXELS(568), 0, PIXELS(848), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(232), 0, PIXELS(592), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x94, CONDITION_ALWAYS, (s32)TorebiHeya_ScaleBounceScript,
+	{ 0x94, CONDITION_ALWAYS, (s32)TolbiInteriors_ScaleBounceScript,
 		PIXELS(230), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x42, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(864), 0, PIXELS(848), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -714,7 +714,7 @@ struct ScenePlacement gTorebiHeyaPlacementsFlag950[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gTorebiHeyaEvents[] = {
+struct SceneEvent gTolbiInteriorsEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -734,62 +734,62 @@ struct SceneEvent gTorebiHeyaEvents[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTolbiIsPackedWithTouristsDuring) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaICouldntSleepAtAllLast) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheCrowdsAtTheColosseumMade) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWePaidGoodMoneyToRent) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIReallyWantToSeeColosso) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWahhhIWantToSeeColosso) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWonderIfTheyReallyCant) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiWasntAtColossoAccordingTo) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereGoingToMakeSomeMoney) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHeardBabiIsUsingThe) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICouldntSleepAtAllLast) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrowdsAtTheColosseumMade) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWePaidGoodMoneyToRent) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIReallyWantToSeeColosso) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWahhhIWantToSeeColosso) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfTheyReallyCant) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereFullyBookedWithReservationsDuring) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaColossoIsTheBusiestTimeOf) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereSoBusyRunningTheInn) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaATourGroupCameFromKalay) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWeArentGoingToGetTo) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImNotVeryInterestedInColosso) },
-	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOhNoWeBarelyMadeIt) },
-	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfWedGottenHereJustA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceColossoStartsWereGoingTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItsTooLateToStartLooking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfICouldHaveSleptLast) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHuhUhCrowdsAreADefinite) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWeGetToStayHereUntil) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWasStubbornISaidIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIKeepOnCryingButDaddy) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItsStrangeThatBabisSoldiersAre) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItsStrangeBabiLovesColossoBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHeJustTakesACutOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaNamingTheLighthouseHeBuiltAfter) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIGuessINeverWouldHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheyHaveSomeNiceThingsFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiChoosesColossosVictorsToBe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheTourGroupIsFeelingCramped) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWeCantHandleTooManyMore) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImGoingToGoToThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThereArentEnoughBedsForThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheInnkeeperToldMeToCook) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHaveAHeadacheJustThinking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaEvenThoughICantEnterColosso) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfWeCouldHaveEnteredColosso) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsATourGroupCameFromKalay) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeArentGoingToGetTo) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImNotVeryInterestedInColosso) },
+	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOhNoWeBarelyMadeIt) },
+	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWedGottenHereJustA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceColossoStartsWereGoingTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsTooLateToStartLooking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfICouldHaveSleptLast) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhUhCrowdsAreADefinite) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeGetToStayHereUntil) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasStubbornISaidIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIKeepOnCryingButDaddy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeThatBabisSoldiersAre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeBabiLovesColossoBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeJustTakesACutOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNamingTheLighthouseHeBuiltAfter) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGuessINeverWouldHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheyHaveSomeNiceThingsFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiChoosesColossosVictorsToBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTourGroupIsFeelingCramped) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeCantHandleTooManyMore) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToGoToThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentEnoughBedsForThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheInnkeeperToldMeToCook) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHaveAHeadacheJustThinking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenThoughICantEnterColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
 	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWonderHowTheTryoutsAre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9a, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaShesMakingTheWorldRenownedTolbi)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaHeIsBoilingThePastaIt)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaItsTolbiSeafoodPastaWithLots)) },
-	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaRobinCheckedTheSignInnFull)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiHeyaEventsFlag962[] = {
+struct SceneEvent gTolbiInteriorsEventsFlag962[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -809,67 +809,67 @@ struct SceneEvent gTorebiHeyaEventsFlag962[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSoColossoHasAlreadyReachedThe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheFestivalScheduleWasDelayedFor) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThatsStrangeIWonderWhatHappened) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIJustSawBabiTheTowns) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHereIAmInTolbiFor) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImGoingToWatchTheFinals) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHoorayWereGoingToColossoNow) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheFestivalScheduleWasDelayedFor) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatsStrangeIWonderWhatHappened) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIJustSawBabiTheTowns) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHereIAmInTolbiFor) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToWatchTheFinals) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHoorayWereGoingToColossoNow) },
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskBabiWasMissing) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiDecidedShowUpForFinals) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiDecidedShowUpForFinals) },
 #else
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWellIGuessSoSinceHes) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHuhThenTheyFoundHimIn) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWellIGuessSoSinceHes) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhThenTheyFoundHimIn) },
 #endif
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiApparentlyHasSomeReasonFor) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHeardBabiIsSearchingFor) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceTheFinalsBeginEveryoneTries) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThisYearImNotLettingAnyone) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheWifeHasACloseEye) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHmmIThoughtAllMenLoved) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheMomentIHearTheFinals) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSoColossoIsEndingSoonIts) },
-	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheColossoFinalsAreStartingSoon) },
-	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaMaybeIllDoSomeResearchOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaAreWeMakingMoreMoneyNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSoTheyDidExtendTheFestival) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaICantAffordToStayHere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheAirInTheColosseumIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfSomebodyElseWouldWatchThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaColossoIsAlreadyAtTheFinals) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSinceWeDidntGetToSee) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSoWhatWereBabisSoldiersDoing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaMaybeWatchingTheTrialsIsToo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBeforeHeStartedTheLighthouseBabi) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiHasBeenMakingStrangeReferences) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheTouristsAllBuyWeaponsAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYouCouldSayTheWarriorsIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfMomFindsOutIWent) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImTheOneWhoReallyWants) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceThingsSettleDownImSure) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfTheMasterSlipsOutThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWeWomenAreTheOnlyOnes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHasntTheMasterGoneToColosso) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIDontHaveAnyParticularInterest) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWantToSeeTheFinals) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheTrialBattlesWerentQuiteLike) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHmmIThoughtAllMenLoved) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheMomentIHearTheFinals) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoIsEndingSoonIts) },
+	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheColossoFinalsAreStartingSoon) },
+	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeIllDoSomeResearchOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsAreWeMakingMoreMoneyNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoTheyDidExtendTheFestival) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICantAffordToStayHere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheAirInTheColosseumIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfSomebodyElseWouldWatchThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsAlreadyAtTheFinals) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceWeDidntGetToSee) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoWhatWereBabisSoldiersDoing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeWatchingTheTrialsIsToo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBeforeHeStartedTheLighthouseBabi) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiHasBeenMakingStrangeReferences) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAllBuyWeaponsAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouCouldSayTheWarriorsIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomFindsOutIWent) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImTheOneWhoReallyWants) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThingsSettleDownImSure) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfTheMasterSlipsOutThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeWomenAreTheOnlyOnes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHasntTheMasterGoneToColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIDontHaveAnyParticularInterest) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWantToSeeTheFinals) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
 	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfYoureNotInterestedInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9a, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaShesMakingTheWorldRenownedTolbi)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaHeIsBoilingThePastaIt)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaItsTolbiSeafoodPastaWithLots)) },
-	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaRobinCheckedTheSignInnFull)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gTorebiHeyaEventsFlag950[] = {
+struct SceneEvent gTolbiInteriorsEventsFlag950[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -889,79 +889,79 @@ struct SceneEvent gTorebiHeyaEventsFlag950[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaNowThatColossoIsOverWeve) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWeHadALotOfGuests) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIRentedMyHouseToA) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheTouristsAreAllInA) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWasSoMovedByThis) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThatLittleGuyJumpedStraightInto) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaDidYouKnowMtAlephErupted) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaMaybeAlephsEruptionCausedThoseSea) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheWarriorsSaidTheyWouldRush) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThereWontBeManyCustomersUntil) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeHadALotOfGuests) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIRentedMyHouseToA) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAreAllInA) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasSoMovedByThis) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatLittleGuyJumpedStraightInto) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidYouKnowMtAlephErupted) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIThoughtWedHaveSomeFree) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheSpectatorsFromTheEastCant) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItsBusyAllDayEveryDay) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TALK) },
 	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
-	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWentToThePortBut) },
-	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaColossoHasEndedButWeStill) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSighMakingTheBedsHasWorn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIdLoveAVacationButWhere) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceTheShipsStartSailingAgain) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHeardOfACaveThat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheWarriorsWhoFoughtInThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaDaringAndBraveryAreNiceAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheSparklingStonesThatRainedFrom) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIllBetTheMonstersWereFrightened) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItBothersMeABitThat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThereArentManyMerchantsAtThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaEvenWithoutTheShipsICould) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaDidAllTheWarriorsWhoFought) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImGonnaWatchTheFinalsNext) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSinceTheShipsArentSailingThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHeeHeeItsGreatTheInns) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaEveryoneIsWorkingOnBabiLighthouse) },
+	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
+	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSighMakingTheBedsHasWorn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIdLoveAVacationButWhere) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheShipsStartSailingAgain) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardOfACaveThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsWhoFoughtInThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDaringAndBraveryAreNiceAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSparklingStonesThatRainedFrom) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIllBetTheMonstersWereFrightened) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItBothersMeABitThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentManyMerchantsAtThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenWithoutTheShipsICould) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidAllTheWarriorsWhoFought) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGonnaWatchTheFinalsNext) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceTheShipsArentSailingThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeeHeeItsGreatTheInns) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEveryoneIsWorkingOnBabiLighthouse) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaGrrrIDidntGetToSee) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHeyChefSoWhatIfYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaITriedGoingToTheEastern) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYoudThinkYouCouldGetThrough) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsGrrrIDidntGetToSee) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeyChefSoWhatIfYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsITriedGoingToTheEastern) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
 	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYouAllGotToSeeColosso) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
 	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TALK) },
-	{ EVENT_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceThisGuyGetsMadTheres) },
-	{ EVENT_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWonderIfThisReallyIs) },
-	{ EVENT_TALK, 34, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTolbiGetsSoBoringOnceThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYoureSayingIfWeRowWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheCrewIsSayingThatIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImSickOfStayingAtThis) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfMomHadJustBoughtMe) },
+	{ EVENT_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
+	{ EVENT_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
+	{ EVENT_TALK, 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoureSayingIfWeRowWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
 	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TALK) },
-	{ EVENT_TALK, 36, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIGotToSeeColossoSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThatVoyageAcrossTheSeaWas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaNoMatterWhatHappensImComing) },
+	{ EVENT_TALK, 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9a, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaShesMakingTheWorldRenownedTolbi)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaHeIsBoilingThePastaIt)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaItsTolbiSeafoodPastaWithLots)) },
-	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiHeyaRobinCheckedTheSignInnFull)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsHeIsBoilingThePastaIt)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)) },
+	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsIsaacCheckedTheSignInnFull)) },
 	{ SEARCH(SEARCH_BARREL), 102, 0x8bd, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-u16 TorebiHeya_ExitCellSteps[] = {
+u16 TolbiInteriors_ExitCellSteps[] = {
 	MAP_CELL_STEP(2, 123, 1, 2, 6), MAP_CELL_STEP(4, 123, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim TorebiHeya_ExitCells[] = {
-	{ TorebiHeya_ExitCellSteps, 24, 100 },
-	{ TorebiHeya_ExitCellSteps, 33, 100 },
-	{ TorebiHeya_ExitCellSteps, 50, 99 },
-	{ TorebiHeya_ExitCellSteps, 52, 109 },
+struct MapCellAnim TolbiInteriors_ExitCells[] = {
+	{ TolbiInteriors_ExitCellSteps, 24, 100 },
+	{ TolbiInteriors_ExitCellSteps, 33, 100 },
+	{ TolbiInteriors_ExitCellSteps, 50, 99 },
+	{ TolbiInteriors_ExitCellSteps, 52, 109 },
 };

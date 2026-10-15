@@ -28,21 +28,21 @@ void SceneState_RunActor13AtColumn42Setup(void)
 }
 
 
-void VinasuChojo_ReadRelief(void)
+void VenusLighthouse_ReadRelief(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
     Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
-    Engine_MessageShowCentered((s32)MsgVinasuChojoReliefWords, 1);
+    Engine_MessageShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
     Engine_EventEnd();
 }
 
-void VinasuChojo_ReadTrueHeart(void)
+void VenusLighthouse_ReadTrueHeart(void)
 {
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
     Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
-    Engine_MessageShowCentered((s32)MsgVinasuChojoTrueHeart, 1);
+    Engine_MessageShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
     Engine_EventEnd();
 }
 

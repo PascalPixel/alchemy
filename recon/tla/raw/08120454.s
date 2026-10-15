@@ -1433,7 +1433,7 @@ BtlTgtExec:
 .L_08120f48:
 	.4byte 0x00000c70
 .L_08120f4c:
-	.4byte EpLossTbl
+	.4byte PpLossTbl
 .L_08120f50:
 	.4byte 0x00000c76
 .L_08120f54:
@@ -1445,7 +1445,7 @@ BtlTgtExec:
 .L_08120f60:
 	.4byte 0x00000c69
 .L_08120f64:
-	.4byte EpDmgTbl
+	.4byte PpDmgTbl
 .L_08120f68:
 	.4byte 0x00000c73
 .L_08120f6c:
@@ -2113,7 +2113,7 @@ BtlTgtExec:
 .L_0812144c:
 	.4byte 0x00000c70
 .L_08121450:
-	.4byte EpRcvTbl
+	.4byte PpRcvTbl
 .L_08121454:
 	.4byte 0x00000c6d
 .L_08121458:
@@ -3692,7 +3692,7 @@ BtlTgtExec:
 .L_08122162:
 	ldr r0, [sp, #76]
 	adds r1, r5, #0
-	bl UnitEpAddFar
+	bl UnitPpAddFar
 	b .L_081223ba
 .L_0812216c:
 	mov r3, r8
@@ -3730,7 +3730,7 @@ BtlTgtExec:
 .L_081221ae:
 	negs r1, r5
 	mov r0, r10
-	bl UnitEpAddFar
+	bl UnitPpAddFar
 	b .L_081223ba
 .L_081221b8:
 	movs r2, #52

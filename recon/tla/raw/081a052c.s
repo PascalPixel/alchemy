@@ -102,7 +102,7 @@ Func_081a052c:
 .L_081a05ec:
 	.4byte 0x00000234
 .L_081a05f0:
-	.4byte SentouKouka_TenkaiCode
+	.4byte BattleEffect_ExpandCode
 .L_081a05f4:
 	.4byte Flash_Handler3
 .L_081a05f8:

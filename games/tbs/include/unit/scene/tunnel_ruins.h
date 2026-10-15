@@ -26,9 +26,9 @@ typedef struct Record
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
-u8 *BabiChika_GetExits(void);
+u8 *TunnelRuins_GetExits(void);
 u8 *SceneData_SelectAndApplyTableBySceneId(void);
-s32 BabiChika_SelectEvents(void);
+s32 TunnelRuins_SelectEvents(void);
 s32 FieldScene_InitializeActorGroups(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
@@ -36,21 +36,21 @@ extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
-extern u32 BabiChika_SettleHeights[];
+extern u32 TunnelRuins_SettleHeights[];
 extern const s32 *gEffectScripts[];
-extern s32 BabiChika_ShrinkScript[];
-extern s32 BabiChika_StretchScript[];
-extern s32 BabiChika_FlickerScript[];
-extern u16 BabiChika_CellStepsA[];
-extern u16 BabiChika_CellStepsB[];
-extern struct SceneEntrance gBabiChikaEntrancesOther[];
-extern struct SceneEntrance gBabiChikaEntrances1[];
-extern struct SceneEntrance gBabiChikaEntrances2[];
-extern s16 gBabiChikaRegions2[];
-extern u32 gBabiChikaExits[];
-extern struct ScenePlacement gBabiChikaPlacements1[];
-extern u32 gBabiChikaPlacementsOther[];
-extern struct SceneEvent gBabiChikaEvents1[];
-extern struct SceneEvent gBabiChikaEventsOther[];
+extern s32 TunnelRuins_ShrinkScript[];
+extern s32 TunnelRuins_StretchScript[];
+extern s32 TunnelRuins_FlickerScript[];
+extern u16 TunnelRuins_CellStepsA[];
+extern u16 TunnelRuins_CellStepsB[];
+extern struct SceneEntrance gTunnelRuinsEntrancesOther[];
+extern struct SceneEntrance gTunnelRuinsEntrances1[];
+extern struct SceneEntrance gTunnelRuinsEntrances2[];
+extern s16 gTunnelRuinsRegions2[];
+extern u32 gTunnelRuinsExits[];
+extern struct ScenePlacement gTunnelRuinsPlacements1[];
+extern u32 gTunnelRuinsPlacementsOther[];
+extern struct SceneEvent gTunnelRuinsEvents1[];
+extern struct SceneEvent gTunnelRuinsEventsOther[];
 
 #endif

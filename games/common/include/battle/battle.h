@@ -339,7 +339,7 @@ extern const s32	  BattleFx_RisingPulseScript[];
 extern u16			  BattleUnit_WeaponAnimsClass0[];
 extern u16			  BattleFormation_LevelMatchedEnemies[];
 extern s32			  Battle_BackdropScenes[];
-extern const u32	  SentouKouka_Gousei[];
+extern const u32	  BattleEffect_Composite[];
 extern u8			  ShatterRocks_DropFrames[];
 extern u8			  ShatterRocks_RockCounts[];
 extern s8			  ShatterRocks_RockX[];

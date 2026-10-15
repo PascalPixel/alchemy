@@ -19,18 +19,18 @@ void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 w
 
 enum
 {
-	GOUSEI_CLIP_X = 1,
-	GOUSEI_CLIP_Y = 2,
-	GOUSEI_FLIP_X = 4,
-	GOUSEI_FLIP_Y = 8,
-	GOUSEI_FLIP = GOUSEI_FLIP_X | GOUSEI_FLIP_Y
+	COMPOSITE_CLIP_X = 1,
+	COMPOSITE_CLIP_Y = 2,
+	COMPOSITE_FLIP_X = 4,
+	COMPOSITE_FLIP_Y = 8,
+	COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
 enum
 {
-	GOUSEI_YOMI,
-	GOUSEI_NURI,
-	GOUSEI_HIKAKU,
-	GOUSEI_KASAN
+	COMPOSITE_COPY,
+	COMPOSITE_TRANSPARENT,
+	COMPOSITE_MAX,
+	COMPOSITE_ADDITIVE
 };
 #if GAME_TLA
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);

@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl UnitEpAddFar
+	bl UnitPpAddFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity

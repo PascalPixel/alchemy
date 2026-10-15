@@ -496,9 +496,9 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 #define REC_ANIME 0	 // 0 でなければ筋の絵を 3 枚で回す
 #define REC_HIT 1	 // 0 でなければ当たりの音とパレット
 #define REC_MOTION 2 // 当たったときののけぞり (-1 ならなし)
-#define REC_FURUE 3	 // 0 でなければ当たった対象を震わせる
+#define REC_SHAKE 3	 // 0 でなければ当たった対象を震わせる
 
-#define SUJI_MAX 3 // 対象ひとりあたりの筋の数
+#define STREAK_MAX 3 // 対象ひとりあたりの筋の数
 
 //--------------------------------------------------------------------------
 // mode ごとの入口 (色)
@@ -555,7 +555,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 	s32						 resource;
 	s32						 frame;
 	s32						 j;
-	s32						 streaks = SUJI_MAX;
+	s32						 streaks = STREAK_MAX;
 	s32						 lift = 20 << 16;
 
 	slots = gBattleFxWork;
@@ -569,17 +569,17 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 	// 上半分は上下を反転して描く。向こう側なら左右も反転する
 	if (work->effect->side == 0)
 	{
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 		draw_upper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 		draw_lower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	}
 	else
 	{
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 		draw_upper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 		draw_lower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	}
 
@@ -680,7 +680,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 					}
 
 					// 当たりの 6 フレーム後から 32 フレームのあいだ、対象を左右に震わせる
-					if (REC(mode, REC_FURUE) && frame >= k * 32 + 30 && frame < k * 32 + 62)
+					if (REC(mode, REC_SHAKE) && frame >= k * 32 + 30 && frame < k * 32 + 62)
 					{
 						struct MotionObject *struck =
 							GetBattleObjectSlotFar(work->effect->actors[k])->object;
@@ -1355,7 +1355,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
 	draw[0] = heap_cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
@@ -1497,10 +1497,10 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 	REG_BLDALPHA = 0x1000;
 
 	// [0] そのまま、[1] 左右反転 (どちらも 0 以外の画素だけ描く)
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
 	draw[0] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
 	draw[1] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	blit = draw;
 	Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
@@ -1679,7 +1679,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 	draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 	work->effect->variant++;
 	if (work->effect->variant <= 0)
@@ -1707,7 +1707,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 			i = frame / 2;
 			n = i % 4;
 			BattleEffect_LoadWork(
-				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 			draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
 			draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
 			n = frame / 4 % 3;
@@ -1715,7 +1715,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 			draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+				COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 			draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
 			n = i % 4;
 			draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
@@ -1862,11 +1862,11 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
 	cache = gWorkSlot;
 	draw[0] = cache[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(
-		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw[1] = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
@@ -3802,19 +3802,19 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out)
 	if (flip == 0)
 	{
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+			HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 		out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 		out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 	}
 	else
 	{
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 		out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-			GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_KASAN);
+			COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 		out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 	}
 }
@@ -3891,11 +3891,11 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	}
 
 	// 左半分はそのまま、右半分は左右反転して比較合成で描く
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	slots = gWorkSlot;
 	draw[0] = slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 	draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
 	work->transfer_mode = 2;
 	work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする
@@ -6008,10 +6008,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	BattleFx_BeginCanvasLayer(0);
 	REG_BLDALPHA = 0x1010;
 	REG_BG2CNT = 0x784;
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw[0] = cursor[6];
 	BattleEffect_LoadWork(
-		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 	draw[1] = cursor[7];
 
 	// 閃光は FlashBurst、筋は EmberStreak (sheet + 0x3000) の絵
@@ -10003,7 +10003,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 	}
 
 	// 比較合成で描き、転送のたびにキャンバスの画素値を 4 ずつ下げて残像にする
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 	work->transfer_mode = 3;
 	work->transfer_value = 0x04040404;
@@ -10084,7 +10084,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // PARTICLES : 光の粒 (対象ごとに 64)
 
-#define JIN_OFS 0x1000 // sheet の中のジンの絵
+#define DJINNI_OFS 0x1000 // sheet の中のジンの絵
 
 //--------------------------------------------------------------------------
 // mode ごとの入口
@@ -10233,7 +10233,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 			palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
 	}
 	palette += 128;
-	Resource_DecodeType01(palette, work->sheet + JIN_OFS);
+	Resource_DecodeType01(palette, work->sheet + DJINNI_OFS);
 	BattleFx_FetchRectangleBlitters(work->effect->side, draw = blit); // [0] 比較、[1] 加算
 
 	// 光の粒を中心のまわりに散らす
@@ -10339,9 +10339,9 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
 				if (frame > 32)
 					y = y - frame * 2 + 64;
-				blit[0](canvas, work->sheet + JIN_OFS, x, y, 40, 40);
+				blit[0](canvas, work->sheet + DJINNI_OFS, x, y, 40, 40);
 				if (frame <= 3)
-					draw[1](canvas, work->sheet + JIN_OFS, x, y, 40, 40);
+					draw[1](canvas, work->sheet + DJINNI_OFS, x, y, 40, 40);
 			}
 			else
 			{
@@ -10350,9 +10350,9 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
 				if (frame > 32)
 					y = y - frame * 2 + 64;
-				blit[0](canvas, work->sheet + JIN_OFS, x, y, 20, 40);
+				blit[0](canvas, work->sheet + DJINNI_OFS, x, y, 20, 40);
 				if (frame <= 3)
-					draw[1](canvas, work->sheet + JIN_OFS, x, y, 20, 40);
+					draw[1](canvas, work->sheet + DJINNI_OFS, x, y, 20, 40);
 			}
 		}
 
@@ -10646,9 +10646,9 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	work->transfer_value = 50; // 1/2
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	if (work->effect->side == 1)
-		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X;
+		flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
 	else
-		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y;
+		flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
 	AudioCommand_PlayFar(142);
 
 	for (frame = 0; frame != work->effect->count * 8 + 108; frame++)
@@ -10665,10 +10665,10 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 			s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
 			s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
 
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags ^ GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags ^ COMPOSITE_FLIP_X, COMPOSITE_MAX);
 			draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 			BattleEffect_LoadWork(
-				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags ^ GOUSEI_FLIP_X, GOUSEI_KASAN);
+				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 			draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 			if (frame > 32)
 				y = y - frame * 2 + 64;
@@ -10700,9 +10700,9 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 			// 光の粒を回しながら、1 フレームに 2 ドットずつ中心へ寄せる
 			if (frame > member * 8)
 			{
-				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_MAX);
 				draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, GOUSEI_KASAN);
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, COMPOSITE_ADDITIVE);
 				draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 				if (mode == 0)
 				{
@@ -10767,7 +10767,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 			{
 				s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_MAX);
 				draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 				draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST, screen.x - 20,
 					screen.y - 20, 40, 40);
@@ -10782,7 +10782,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 				{
 					s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
-					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_MAX);
 					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 					draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE, screen.x - 12,
 						screen.y - 20, 24, 40);
@@ -10796,7 +10796,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 				{
 					s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_MAX);
 					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 					draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE, screen.x - 16,
 						screen.y - 32, 32, 64);
@@ -10810,10 +10810,10 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 				{
 					s32 cel = (frame - member * 8 - 80) / 2 % 6;
 
-					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_MAX);
 					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 					BattleEffect_LoadWork(
-						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 					draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 					draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE, screen.x - 32,
 						screen.y - 24, 64, 32);
@@ -10830,7 +10830,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 				{
 					s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_KASAN);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, COMPOSITE_ADDITIVE);
 					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 					draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE, screen.x - 20,
 						screen.y - 20, 40, 40);
@@ -11045,7 +11045,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#define HONOO_KAZU 9 // 炎の数
+#define FLAME_COUNT 9 // 炎の数
 
 //--------------------------------------------------------------------------
 // 9 つの炎が半円の弧の上に 4 フレームおきに立ちのぼる（80 フレーム）
@@ -11080,7 +11080,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 	REG_BLDCNT = 0x3f46;
 	REG_BLDALPHA = 0x100e;
 	Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 	draw = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 
 	// 弧：-90 度から 22.5 度ずつ、横の半径 32、縦の半径 16
@@ -11108,7 +11108,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 		tick -= 4;
 		i += 1;
 		puff++;
-	} while (i != HONOO_KAZU);
+	} while (i != FLAME_COUNT);
 
 	work->transfer_mode = 2;
 	if (work->effect->variant == 2)
@@ -11156,7 +11156,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 			i += 1;
 			p->variant += 1;
 			p++;
-		} while (i != HONOO_KAZU);
+		} while (i != FLAME_COUNT);
 
 		i = 0;
 		while (i != work->effect->count)
@@ -11221,8 +11221,8 @@ struct RockWallHeights
 	s32 column[4]; // 柱ごとの高さ (ドット)
 };
 
-#define HASHIRA_W 40   // 柱の幅 (ドット)
-#define IWA_OFS 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
+#define PILLAR_W 40   // 柱の幅 (ドット)
+#define ROCK_OFS 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
 
 // 横 32 キャラの 8bpp キャラ並びの中で、(x, y) のドットの位置
 #define BG_DOT(x, y) (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
@@ -11260,7 +11260,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	BattleFx_BeginCanvasLayer(1);
 	REG_BG2PA = 0x100; // 横も等倍
 	REG_BLDCNT = 0;	   // 半透明にしない
-	Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + IWA_OFS, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + ROCK_OFS, 1, 1);
 
 	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
 	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
@@ -11268,11 +11268,11 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	for (row = 0; row != 16; row++)
 	{
 		y = row + 96;
-		for (col = 0; col != HASHIRA_W; col++)
+		for (col = 0; col != PILLAR_W; col++)
 		{
 			s32 pixel = BG_DOT(col + 32, y);
 
-			work->sheet[row * HASHIRA_W + col] = Ram_MapCellBuffer[pixel];
+			work->sheet[row * PILLAR_W + col] = Ram_MapCellBuffer[pixel];
 		}
 	}
 
@@ -11286,7 +11286,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	{
 		x_offset = 0;
 	}
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_TRANSPARENT);
 	draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 	for (member = 0; member != work->effect->count; member++)
 		work->particles[member].variant = 0; // 着地したら 1
@@ -11322,8 +11322,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 				if (height < 0)
 					height = -height;
 				top = 112 - height;
-				draw(canvas, work->sheet + IWA_OFS, column * HASHIRA_W + 8, top, HASHIRA_W, height);
-				draw(canvas, work, column * HASHIRA_W + 8, 96 - height, HASHIRA_W, 16);
+				draw(canvas, work->sheet + ROCK_OFS, column * PILLAR_W + 8, top, PILLAR_W, height);
+				draw(canvas, work, column * PILLAR_W + 8, 96 - height, PILLAR_W, 16);
 
 				// 柱の上にいる対象を打ち上げる
 				for (member = 0; member != work->effect->count; member++)
@@ -11336,8 +11336,8 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 					point[2] = object->z;
 					EffectPosition_ApplyBaseAndYOffset(point, &screen);
 					screen.x += x_offset;
-					if (screen.x >= column * HASHIRA_W + 8
-						&& screen.x <= column * HASHIRA_W + 8 + HASHIRA_W && screen.y >= top)
+					if (screen.x >= column * PILLAR_W + 8
+						&& screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top)
 					{
 						object->velocity_y = 12 << 16; // 上へ 12 ドット/フレーム
 						object->vertical_motion_strength = 0xab85;
@@ -11411,10 +11411,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 		BattleFx_BeginCanvasLayer(0);
 	Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(
-		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 	REG_BLDALPHA = 0x1010;
 
@@ -11861,9 +11861,9 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 		REG_BG2PA = 0x80; // 横 2 倍
 	else
 		REG_BG2PA = 0x100;
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
 	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 	draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 	Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + BOLT_SHEET, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -13294,10 +13294,10 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	{
 		REG_BG2X = -0x7000; // 112 ドット右へ
 	}
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
 	rectangle[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
 	second_slot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 	/* FAKEMATCH: needed to match: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot 2026-10-11: rectangle[side] at the columns differs 22 (the address slot of the pair moves from sp+28 to sp+16). */
 	draw = rectangle;
@@ -13539,10 +13539,10 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 	middle += (last.x - middle) / 2;
 	first.x = middle;
 	REG_BG2X = (64 - first.x) << 8;
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
 	draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
 	draw[1] = (DrawRectangle)cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	column = work->particles;
 	i = 0;
@@ -13637,10 +13637,10 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 	{
 		REG_BG2X = -0x7000; // 112 ドット右へ
 	}
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_TRANSPARENT);
 	draw = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
 	work->transfer_mode = 1; // 毎フレーム 0 で消す
 	work->transfer_value = 0;
 	draw_flip = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
@@ -13823,7 +13823,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(1);
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0xc56, 1, 1);
@@ -13907,8 +13907,8 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 					x -= (BattleFx_GlintCellWidths[kind] >> 1);
 
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						LightningBolts_GlintPalettes[Random16() & 3] | GOUSEI_CLIP_X
-							| GOUSEI_CLIP_Y,
+						LightningBolts_GlintPalettes[Random16() & 3] | COMPOSITE_CLIP_X
+							| COMPOSITE_CLIP_Y,
 						LightningBolts_GlintModes[work->effect->variant]);
 					BLIT_ALT(canvas, work->sheet + BattleFx_GlintCellOffsets[kind], x, y,
 						BattleFx_GlintCellWidths[kind], BattleFx_GlintCellHeights[kind]);
@@ -14211,8 +14211,8 @@ void BattleFx_PrepareCanvasEffect(
 
 #define ARG(e) ((struct BattleEffectArgument *)(e))
 
-#define STEP_HAYAI 0x30 // 絵のアニメの step（ふだんは 0x10）
-#define STEP_FUTSU 0x10
+#define STEP_FAST 0x30 // 絵のアニメの step（ふだんは 0x10）
+#define STEP_NORMAL 0x10
 
 void BattleFx_RunMode0(void *effect)
 {
@@ -14253,9 +14253,9 @@ static __inline__ void RunVolleyWithAction(void *effect, s32 mode)
 
 	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FAST);
 	BattleFx_RunProjectileVolley(effect, mode);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_NORMAL);
 }
 
 //--------------------------------------------------------------------------
@@ -14363,16 +14363,16 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 	if (mode == 5)
 	{
 		if (work->effect->side == 1)
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 		else
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
 	}
 	else
 	{
 		if (work->effect->side == 1)
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 		else
-			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_KASAN);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_ADDITIVE);
 	}
 	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 
@@ -14554,9 +14554,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 					y = y - frame * 2 + 138;
 				if (work->effect->side == 1)
 					BattleEffect_LoadWork(
-						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 				else
-					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_KASAN);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_ADDITIVE);
 				draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 				if (frame <= 3)
 					draw[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
@@ -14704,20 +14704,20 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							// 絵は上半分だけで、下半分は上下を反転して描く
 							if (work->effect->side == 1)
 								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-									CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+									CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 							else
 								BattleEffect_LoadWork(
-									HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+									HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + 0x1000, pos->x - 16,
 								pos->y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							if (work->effect->side == 1)
 								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-									CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+									CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 							else
 								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-									CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+									CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + 0x1000, pos->x - 16, pos->y, 32,
 								Volley_CometHeights[kind]);
@@ -14774,7 +14774,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						if (!(i & 1))
 						{
 							BattleEffect_LoadWork(
-								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + Volley_FlashOffsets[step],
 								flash->x - Volley_FlashWidths[step],
@@ -14782,7 +14782,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								Volley_FlashHeights[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-								CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+								CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + Volley_FlashOffsets[step], flash->x,
 								flash->y + Volley_FlashSteps[step] - Volley_FlashRises[step],
@@ -14792,7 +14792,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						else
 						{
 							BattleEffect_LoadWork(
-								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + Volley_FlashOffsets[step] + 0x128a,
 								flash->x - Volley_FlashRises[step],
@@ -14800,7 +14800,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								Volley_FlashWidths[step]);
 							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-								CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+								CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
 								work->sheet + Volley_FlashOffsets[step] + 0x128a,
 								flash->x + Volley_FlashSteps[step] - Volley_FlashRises[step],
@@ -14943,7 +14943,7 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused)
 	} while (y != h);
 }
 
-#define TSUBU_MAX 64	// 粒の数
+#define PARTICLE_MAX 64	// 粒の数
 #define RING_SIZE 0x3c0 // 輪の一枚 (20x48)
 
 //--------------------------------------------------------------------------
@@ -15011,14 +15011,14 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	// 上半分と、上下を反転した下半分。向こう側なら左右も反転する
 	if (work->effect->side == 0)
 	{
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 	}
 	else
 	{
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
 	}
 	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 	draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -15051,7 +15051,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	// 使う者を寄せ、対象の位置に粒を用意する (x は画面の中央の側へ飛ぶ)
 	BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
 	tgt = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-	for (n = 0; n != TSUBU_MAX; n++)
+	for (n = 0; n != PARTICLE_MAX; n++)
 	{
 		step = &work->particles[n];
 		step->x = tgt->x;
@@ -15095,7 +15095,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 		{
 			Render_ResetTransformState();
 			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-			for (n = 0; n != TSUBU_MAX; n++)
+			for (n = 0; n != PARTICLE_MAX; n++)
 			{
 				p = &work->particles[n];
 				size = p->variant;
@@ -16940,16 +16940,16 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 		if (work->effect->side == 0)
 		{
 			BattleEffect_LoadWork(
-				HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+				HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+				COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
 		}
 		else
 		{
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+				COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP, GOUSEI_HIKAKU);
+				COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP, COMPOSITE_MAX);
 		}
 		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -17015,9 +17015,9 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 		// 粒：寿命が尽きるまで描き、地面で跳ね返す
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_ADDITIVE);
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 		for (i = 0; i != 512; i++)
@@ -17186,10 +17186,10 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 			((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
 		}
 	}
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 	draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 	REG_BLDCNT = 0x3f46;
 	REG_BLDALPHA = 0x1010;
@@ -18814,9 +18814,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 					draw_flags = Random16(); // 反転はランダム
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-						CastingImpact_GlintDrawFlags[draw_flags & 3] | GOUSEI_CLIP_X
-							| GOUSEI_CLIP_Y,
-						GOUSEI_HIKAKU);
+						CastingImpact_GlintDrawFlags[draw_flags & 3] | COMPOSITE_CLIP_X
+							| COMPOSITE_CLIP_Y,
+						COMPOSITE_MAX);
 					((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](canvas,
 						Ram_MapCellBuffer + BattleFx_GlintCellOffsets[image], image_x, image_y + 56,
 						BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
@@ -18850,7 +18850,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				while (scroll > 104)
 					scroll -= 104;
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-					GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+					COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 				draw = (DrawRectangle *)gWorkSlot;
 				draw += HEAP_SLOT_BLITTER_ALTERNATE;
 				column_x = origin_x - 8;
@@ -18903,13 +18903,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				pair_x = target_screen->x / 2;
 				height = 48;
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-					GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+					COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
 				slot_draw = (DrawRectangle *)gWorkSlot;
 				DrawImage(canvas, Ram_MapCellBuffer, pair_x - 24, 48, 24, height,
 					slot_draw + HEAP_SLOT_BLITTER_ALTERNATE);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
-					GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+					COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_MAX);
 				DrawImage(canvas, Ram_MapCellBuffer, pair_x, 48, 24, height,
 					slot_draw + HEAP_SLOT_BLITTER_ALTERNATE);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -19705,7 +19705,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 	}
 }
 
-#define HAHEN_E 0x59d8 // 破片の絵の置き場（12×24 が 4 枚）
+#define SHARD_E 0x59d8 // 破片の絵の置き場（12×24 が 4 枚）
 
 //--------------------------------------------------------------------------
 // 着弾点で閃光をひらき、火花と破片を散らす（72 フレーム）
@@ -19719,8 +19719,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 kasan;
-	DrawRectangle			 hikaku;
+	DrawRectangle			 additive;
+	DrawRectangle			 max_blend;
 	u8						*sheet;
 	s32						 org_x;
 	struct EffectStep		*p;
@@ -19739,13 +19739,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	REG_BG2PA = 0x80;
 	REG_BG2X = 0;
 	REG_BLDCNT = 0x3f46;
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
-	hikaku = heap[7];
-	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_KASAN);
-	kasan = heap[8];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
+	max_blend = heap[7];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, COMPOSITE_ADDITIVE);
+	additive = heap[8];
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + HAHEN_E, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E, 0, 0);
 	work->transfer_mode = 2;
 	work->transfer_value = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -19801,7 +19801,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
 			if (cell < 0)
 				cell = 0;
-			hikaku(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
+			max_blend(canvas, work->sheet + ImpactBurst_CellSourceOffsets[cell],
 				(x >> 16) - ((width = ImpactBurst_CellWidths[cell]) >> 1),
 				(y >> 16) - ((height = ImpactBurst_CellHeights[cell]) >> 1), width, height);
 		}
@@ -19820,7 +19820,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 				size = p->variant / 16 + 3;
 				px = HI(p->x);
 				py = HI(p->y);
-				kasan(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+				additive(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
 					py - size, size, size * 2);
 			}
 		}
@@ -19839,7 +19839,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 				size = p->variant / 16 + 1;
 				px = HI(p->x);
 				py = HI(p->y);
-				kasan(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
+				additive(canvas, sheet + ParticleStreams_CellOffsets[size - 1], px - size / 2,
 					py - size, size, size * 2);
 			}
 		}
@@ -19847,7 +19847,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 		// 破片は 36〜63 フレーム、7 フレームごとに次の絵
 		for (i = 0; i != 3; i++)
 		{
-			struct EffectStep *hahen = &work->particles[61 + i];
+			struct EffectStep *shard = &work->particles[61 + i];
 
 			if (frame >= 36 && frame <= 63)
 			{
@@ -19855,11 +19855,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 				s32 px;
 				s32 py;
 
-				EffectStep_AdvanceWithGravity2D(hahen, 64, 0);
+				EffectStep_AdvanceWithGravity2D(shard, 64, 0);
 				cell = (frame - 36) / 7;
-				px = HI(hahen->x);
-				py = HI(hahen->y);
-				hikaku(canvas, work->sheet + cell * 0x120 + HAHEN_E, px - 6, py - 12, 12, 24);
+				px = HI(shard->x);
+				py = HI(shard->y);
+				max_blend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
 			}
 		}
 
@@ -23913,9 +23913,9 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
 
 	if (work->effect->side == 1)
 		BattleEffect_LoadWork(
-			HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_YOMI);
+			HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, COMPOSITE_COPY);
 	else
-		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_YOMI);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_COPY);
 	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 	AudioCommand_PlayFar(212);
 	for (frame = 0; frame != 21; frame++)
@@ -24028,20 +24028,20 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect)
 				if (height > 80)
 				{
 					height = 80;
-					mode = GOUSEI_HIKAKU;
+					mode = COMPOSITE_MAX;
 				}
 				else
 				{
-					mode = GOUSEI_KASAN;
+					mode = COMPOSITE_ADDITIVE;
 				}
 				for (i = 0, x = 50; i != 2; i++, x += 14)
 				{
 					if (i == 0)
 						BattleEffect_LoadWork(
-							HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, mode);
+							HEAP_SLOT_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
 					else
 						BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
-							GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, mode);
+							COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
 					draw[0] = ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER]);
 					((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER])(
 						canvas, work, x, 112 - height, 14, height);
@@ -24116,40 +24116,40 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #define PATCH(site)
 
 	words = 0;
-	src = SentouKouka_Gousei;
+	src = BattleEffect_Composite;
 
 	COPY(3);
-	if (mode == GOUSEI_KASAN)
+	if (mode == COMPOSITE_ADDITIVE)
 	{
-		COPY_FROM(SentouKouka_Mask, 3);
+		COPY_FROM(BattleEffect_Mask, 3);
 	}
 
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_X)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X)
 	{
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_Y)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y)
 	{
 		COPY_FROM(src, 4);
 	}
 	src += 4;
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP)
 	{
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if ((flags & GOUSEI_FLIP) == 0)
+	if ((flags & COMPOSITE_FLIP) == 0)
 	{
 		PUT(src[0]);
 	}
 	src += 1;
 
-	if ((flags & GOUSEI_CLIP_Y) != 0)
+	if ((flags & COMPOSITE_CLIP_Y) != 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
-		if ((flags & GOUSEI_FLIP_Y) != 0)
+		if ((flags & COMPOSITE_FLIP_Y) != 0)
 		{
 			PUT(src[2]);
 		}
@@ -24168,16 +24168,16 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	MARK(no_rows);
 	PUT(*src++);
 
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0] + (1 << width_shift) - 1);
 	}
 	src += 1;
-	if ((flags & GOUSEI_CLIP_X) != 0)
+	if ((flags & COMPOSITE_CLIP_X) != 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
-		if ((flags & GOUSEI_FLIP_X) != 0)
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[2]);
 			PUT(src[3]);
@@ -24189,8 +24189,8 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		}
 		PUT(src[6]);
 		PUT(src[7]);
-		PUT(src[8] + SentouKouka_BitOperands[width_shift]);
-		if ((flags & GOUSEI_FLIP_X) != 0)
+		PUT(src[8] + BattleEffect_BitOperands[width_shift]);
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[9]);
 		}
@@ -24198,7 +24198,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		{
 			PUT(src[10]);
 		}
-		PUT(src[11] + SentouKouka_BitOperands[width_shift]);
+		PUT(src[11] + BattleEffect_BitOperands[width_shift]);
 	}
 	src += 12;
 
@@ -24209,7 +24209,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	COPY(6);
 
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 	}
@@ -24224,7 +24224,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(src[3]);
 	src += 4;
 
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 	}
@@ -24233,7 +24233,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	MARK(skip);
 	PUT(*src++);
-	if ((flags & GOUSEI_FLIP_X) != 0)
+	if ((flags & COMPOSITE_FLIP_X) != 0)
 	{
 		PUT(src[0]);
 	}
@@ -24247,44 +24247,44 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_COPY:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_YomiGyaku, 2);
+			COPY_FROM(BattleEffect_CopyReverse, 2);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_YomiJun, 2);
+			COPY_FROM(BattleEffect_CopyForward, 2);
 		}
 		break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_NuriGyaku, 4);
+			COPY_FROM(BattleEffect_TransparentReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_NuriJun, 4);
+			COPY_FROM(BattleEffect_TransparentForward, 4);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_HikakuGyaku, 4);
+			COPY_FROM(BattleEffect_MaxReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_HikakuJun, 4);
+			COPY_FROM(BattleEffect_MaxForward, 4);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_KasanGyaku, 6);
+			COPY_FROM(BattleEffect_AdditiveReverse, 6);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_KasanJun, 6);
+			COPY_FROM(BattleEffect_AdditiveForward, 6);
 		}
 		break;
 	}
@@ -24293,7 +24293,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	PUT_BRANCH(run);
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
@@ -24309,58 +24309,58 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
+	case COMPOSITE_COPY:
 	{
 		s32 i;
 
 		for (i = 0; i < 8; i++)
 		{
-			if ((flags & GOUSEI_FLIP_X) != 0)
+			if ((flags & COMPOSITE_FLIP_X) != 0)
 			{
-				COPY_FROM(SentouKouka_YomiGyaku, 2);
+				COPY_FROM(BattleEffect_CopyReverse, 2);
 			}
 			else
 			{
-				COPY_FROM(SentouKouka_YomiJun, 2);
+				COPY_FROM(BattleEffect_CopyForward, 2);
 			}
 		}
 	}
 	break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_Nuri8Gyaku, 25);
+			COPY_FROM(BattleEffect_Transparent8Reverse, 25);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_Nuri8Jun, 25);
+			COPY_FROM(BattleEffect_Transparent8Forward, 25);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_TWICE(SentouKouka_Hikaku4Gyaku, 16);
+			COPY_TWICE(BattleEffect_Max4Reverse, 16);
 		}
 		else
 		{
-			COPY_TWICE(SentouKouka_Hikaku4Jun, 16);
+			COPY_TWICE(BattleEffect_Max4Forward, 16);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_TWICE(SentouKouka_IroGyaku, 14);
+			COPY_TWICE(BattleEffect_ColorReverse, 14);
 		}
 		else
 		{
-			COPY_TWICE(SentouKouka_IroJun, 14);
+			COPY_TWICE(BattleEffect_ColorForward, 14);
 		}
 		break;
 	}
 	src += 4;
 
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
@@ -24374,7 +24374,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	MARK(skip);
 	PUT(*src++);
-	if ((flags & GOUSEI_FLIP_X) != 0)
+	if ((flags & COMPOSITE_FLIP_X) != 0)
 	{
 		PUT(src[0]);
 	}
@@ -24388,44 +24388,44 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_COPY:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_YomiGyaku, 2);
+			COPY_FROM(BattleEffect_CopyReverse, 2);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_YomiJun, 2);
+			COPY_FROM(BattleEffect_CopyForward, 2);
 		}
 		break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_NuriGyaku, 4);
+			COPY_FROM(BattleEffect_TransparentReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_NuriJun, 4);
+			COPY_FROM(BattleEffect_TransparentForward, 4);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_HikakuGyaku, 4);
+			COPY_FROM(BattleEffect_MaxReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_HikakuJun, 4);
+			COPY_FROM(BattleEffect_MaxForward, 4);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_KasanGyaku, 6);
+			COPY_FROM(BattleEffect_AdditiveReverse, 6);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_KasanJun, 6);
+			COPY_FROM(BattleEffect_AdditiveForward, 6);
 		}
 		break;
 	}
@@ -24489,40 +24489,40 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	} while (0)
 
 	dst = (u32 *)Runtime_AllocateHeapBlock(slot, words << 2);
-	src = SentouKouka_Gousei;
+	src = BattleEffect_Composite;
 
 	COPY(3);
-	if (mode == GOUSEI_KASAN)
+	if (mode == COMPOSITE_ADDITIVE)
 	{
-		COPY_FROM(SentouKouka_Mask, 3);
+		COPY_FROM(BattleEffect_Mask, 3);
 	}
 
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_X)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X)
 	{
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP_Y)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y)
 	{
 		COPY_FROM(src, 4);
 	}
 	src += 4;
-	if ((flags & GOUSEI_FLIP) == GOUSEI_FLIP)
+	if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP)
 	{
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if ((flags & GOUSEI_FLIP) == 0)
+	if ((flags & COMPOSITE_FLIP) == 0)
 	{
 		PUT(src[0]);
 	}
 	src += 1;
 
-	if ((flags & GOUSEI_CLIP_Y) != 0)
+	if ((flags & COMPOSITE_CLIP_Y) != 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
-		if ((flags & GOUSEI_FLIP_Y) != 0)
+		if ((flags & COMPOSITE_FLIP_Y) != 0)
 		{
 			PUT(src[2]);
 		}
@@ -24541,16 +24541,16 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	MARK(no_rows);
 	PUT(*src++);
 
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0] + (1 << width_shift) - 1);
 	}
 	src += 1;
-	if ((flags & GOUSEI_CLIP_X) != 0)
+	if ((flags & COMPOSITE_CLIP_X) != 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
-		if ((flags & GOUSEI_FLIP_X) != 0)
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[2]);
 			PUT(src[3]);
@@ -24562,8 +24562,8 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		}
 		PUT(src[6]);
 		PUT(src[7]);
-		PUT(src[8] + SentouKouka_BitOperands[width_shift]);
-		if ((flags & GOUSEI_FLIP_X) != 0)
+		PUT(src[8] + BattleEffect_BitOperands[width_shift]);
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
 			PUT(src[9]);
 		}
@@ -24571,7 +24571,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		{
 			PUT(src[10]);
 		}
-		PUT(src[11] + SentouKouka_BitOperands[width_shift]);
+		PUT(src[11] + BattleEffect_BitOperands[width_shift]);
 	}
 	src += 12;
 
@@ -24582,7 +24582,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	COPY(6);
 
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 	}
@@ -24597,7 +24597,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(src[3]);
 	src += 4;
 
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 	}
@@ -24606,7 +24606,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	MARK(skip);
 	PUT(*src++);
-	if ((flags & GOUSEI_FLIP_X) != 0)
+	if ((flags & COMPOSITE_FLIP_X) != 0)
 	{
 		PUT(src[0]);
 	}
@@ -24620,44 +24620,44 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_COPY:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_YomiGyaku, 2);
+			COPY_FROM(BattleEffect_CopyReverse, 2);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_YomiJun, 2);
+			COPY_FROM(BattleEffect_CopyForward, 2);
 		}
 		break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_NuriGyaku, 4);
+			COPY_FROM(BattleEffect_TransparentReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_NuriJun, 4);
+			COPY_FROM(BattleEffect_TransparentForward, 4);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_HikakuGyaku, 4);
+			COPY_FROM(BattleEffect_MaxReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_HikakuJun, 4);
+			COPY_FROM(BattleEffect_MaxForward, 4);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_KasanGyaku, 6);
+			COPY_FROM(BattleEffect_AdditiveReverse, 6);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_KasanJun, 6);
+			COPY_FROM(BattleEffect_AdditiveForward, 6);
 		}
 		break;
 	}
@@ -24666,7 +24666,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	PUT_BRANCH(run);
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
@@ -24682,58 +24682,58 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
+	case COMPOSITE_COPY:
 	{
 		s32 i;
 
 		for (i = 0; i < 8; i++)
 		{
-			if ((flags & GOUSEI_FLIP_X) != 0)
+			if ((flags & COMPOSITE_FLIP_X) != 0)
 			{
-				COPY_FROM(SentouKouka_YomiGyaku, 2);
+				COPY_FROM(BattleEffect_CopyReverse, 2);
 			}
 			else
 			{
-				COPY_FROM(SentouKouka_YomiJun, 2);
+				COPY_FROM(BattleEffect_CopyForward, 2);
 			}
 		}
 	}
 	break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_Nuri8Gyaku, 25);
+			COPY_FROM(BattleEffect_Transparent8Reverse, 25);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_Nuri8Jun, 25);
+			COPY_FROM(BattleEffect_Transparent8Forward, 25);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_TWICE(SentouKouka_Hikaku4Gyaku, 16);
+			COPY_TWICE(BattleEffect_Max4Reverse, 16);
 		}
 		else
 		{
-			COPY_TWICE(SentouKouka_Hikaku4Jun, 16);
+			COPY_TWICE(BattleEffect_Max4Forward, 16);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_TWICE(SentouKouka_IroGyaku, 14);
+			COPY_TWICE(BattleEffect_ColorReverse, 14);
 		}
 		else
 		{
-			COPY_TWICE(SentouKouka_IroJun, 14);
+			COPY_TWICE(BattleEffect_ColorForward, 14);
 		}
 		break;
 	}
 	src += 4;
 
 	PUT(*src++);
-	if ((flags & GOUSEI_CLIP_X) == 0)
+	if ((flags & COMPOSITE_CLIP_X) == 0)
 	{
 		PUT(src[0]);
 		PUT(src[1]);
@@ -24747,7 +24747,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	PUT(*src++);
 	MARK(skip);
 	PUT(*src++);
-	if ((flags & GOUSEI_FLIP_X) != 0)
+	if ((flags & COMPOSITE_FLIP_X) != 0)
 	{
 		PUT(src[0]);
 	}
@@ -24761,44 +24761,44 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	switch (mode)
 	{
 	default:
-	case GOUSEI_YOMI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_COPY:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_YomiGyaku, 2);
+			COPY_FROM(BattleEffect_CopyReverse, 2);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_YomiJun, 2);
+			COPY_FROM(BattleEffect_CopyForward, 2);
 		}
 		break;
-	case GOUSEI_NURI:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_TRANSPARENT:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_NuriGyaku, 4);
+			COPY_FROM(BattleEffect_TransparentReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_NuriJun, 4);
+			COPY_FROM(BattleEffect_TransparentForward, 4);
 		}
 		break;
-	case GOUSEI_HIKAKU:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_MAX:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_HikakuGyaku, 4);
+			COPY_FROM(BattleEffect_MaxReverse, 4);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_HikakuJun, 4);
+			COPY_FROM(BattleEffect_MaxForward, 4);
 		}
 		break;
-	case GOUSEI_KASAN:
-		if ((flags & GOUSEI_FLIP_X) != 0)
+	case COMPOSITE_ADDITIVE:
+		if ((flags & COMPOSITE_FLIP_X) != 0)
 		{
-			COPY_FROM(SentouKouka_KasanGyaku, 6);
+			COPY_FROM(BattleEffect_AdditiveReverse, 6);
 		}
 		else
 		{
-			COPY_FROM(SentouKouka_KasanJun, 6);
+			COPY_FROM(BattleEffect_AdditiveForward, 6);
 		}
 		break;
 	}

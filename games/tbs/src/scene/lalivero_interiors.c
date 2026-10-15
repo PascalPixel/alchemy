@@ -57,36 +57,36 @@ static s32 SceneActor_SetActor14Pose258(void)
 	return 0;
 }
 
-u8 *RariberoHeya_GetEntrances(void)
+u8 *LaliveroInteriors_GetEntrances(void)
 {
-	return gRariberoEntrances;
+	return gLaliveroEntrances;
 }
 
-u8 *RariberoHeya_GetRegions(void)
+u8 *LaliveroInteriors_GetRegions(void)
 {
-	if (gGameState.scene == (s32)&SceneId_RariberoHeya1)
+	if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1)
 	{
-		return gRariberoSanctumRegions;
+		return gLaliveroSanctumRegions;
 	}
-	return gRariberoRegions;
+	return gLaliveroRegions;
 }
 
-u8 *RariberoHeya_GetExits(void)
+u8 *LaliveroInteriors_GetExits(void)
 {
-	return gRariberoExits;
+	return gLaliveroExits;
 }
 
-u8 *RariberoHeya_GetPlacements(void)
+u8 *LaliveroInteriors_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_RariberoHeya2)
+	if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
 	{
 		if (Engine_GameFlagIsSet(0x9A7) != 0)
 		{
-			return gRariberoHeyaPlacements9a7;
+			return gLaliveroInteriorsPlacements9a7;
 		}
-		return gRariberoHeyaPlacements;
+		return gLaliveroInteriorsPlacements;
 	}
-	return gRariberoPlacements;
+	return gLaliveroPlacements;
 }
 
 static void EV18_TALK(s32 keeper)
@@ -100,12 +100,12 @@ static void EV18_TALK(s32 keeper)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage(MsgRariberoWentOceanLook);
+		Engine_EventSetMessage(MsgLaliveroWentOceanLook);
 		Engine_EventShowMessage(keeper, 0);
 	}
 	else
 	{
-		s32 message = MsgRariberoTakenHostageFaran;
+		s32 message = MsgLaliveroTakenHostageFaran;
 
 		Engine_EventSetMessage(message);
 		Engine_EventOpenMessage(keeper, 0);
@@ -131,12 +131,12 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage(MsgRariberoWantedSendShips);
+		Engine_EventSetMessage(MsgLaliveroWantedSendShips);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRariberoWarriorRightPlease);
+		Engine_EventSetMessage(MsgLaliveroWarriorRightPlease);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -150,12 +150,12 @@ static void EV20_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage(MsgRariberoImpossibleGoOcean);
+		Engine_EventSetMessage(MsgLaliveroImpossibleGoOcean);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRariberoGuessPeopleAngara);
+		Engine_EventSetMessage(MsgLaliveroGuessPeopleAngara);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -169,12 +169,12 @@ static void EV21_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage(MsgRariberoBabiLighthouseStruck);
+		Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRariberoBabiIsntBuilding);
+		Engine_EventSetMessage(MsgLaliveroBabiIsntBuilding);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -188,17 +188,17 @@ static void EV13_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage(MsgRariberoDidntKnowTime);
+		Engine_EventSetMessage(MsgLaliveroDidntKnowTime);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgRariberoWantStayLet);
+		Engine_EventSetMessage(MsgLaliveroWantStayLet);
 		Engine_EventShowMessage(no, 0);
 	}
 }
 
-static void RariberoScene_PlayPoseSequence(void)
+static void LaliveroScene_PlayPoseSequence(void)
 {
 	s16 facing;
 
@@ -206,7 +206,7 @@ static void RariberoScene_PlayPoseSequence(void)
 	GameFlag_Set(0x300);
 	Engine_EventBegin();
 	Engine_ResetSceneEffectCounter();
-	Engine_EventSetMessage(MsgRariberoImSorry);
+	Engine_EventSetMessage(MsgLaliveroImSorry);
 	Engine_EventWait(50);
 	Actor_ShowEmote(14, 0x102, 50);
 	Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
@@ -229,7 +229,7 @@ static void RariberoScene_PlayPoseSequence(void)
 		Engine_ActorFaceDirection(0, 0xc000, 0);
 		Engine_EventWait(20);
 	}
-	Engine_ActorEnableActionCallback(14, gRariberoPoseAction);
+	Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
 	Engine_EventEnd();
 }
 
@@ -243,7 +243,7 @@ static void EV51_TOUCH(void)
 	Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(0x1E);
-	Engine_EventSetMessage(MsgRariberoPleaseWaitForMeOutside);
+	Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
 	Engine_EventShowMessage(0xC, 0);
 	Engine_EventWait(0xA);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
@@ -257,11 +257,11 @@ static void EV12_TALK(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
-	Engine_EventSetMessage(MsgRariberoPleaseWaitForMeOutside);
+	Engine_EventSetMessage(MsgLaliveroPleaseWaitForMeOutside);
 	Engine_EventShowMessage(0xC, 0);
 }
 
-static void RariberoHeya_RequestTouchedExitAndPlayCue(void)
+static void LaliveroInteriors_RequestTouchedExitAndPlayCue(void)
 {
 	struct EventWork *work = gEventWork;
 	s16				 *p = (s16 *)&work->touched_trigger;
@@ -270,21 +270,21 @@ static void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 	Engine_AudioPlayCue(0x7B);
 }
 
-u8 *RariberoHeya_GetEvents(void)
+u8 *LaliveroInteriors_GetEvents(void)
 {
-	if (gGameState.scene == (s32)&SceneId_RariberoHeya2)
+	if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
 	{
 		if (Engine_GameFlagIsSet(0x9a7) != 0)
 		{
-			return gRariberoHeyaEvents9a7;
+			return gLaliveroInteriorsEvents9a7;
 		}
-		return gRariberoHeyaEvents;
+		return gLaliveroInteriorsEvents;
 	}
 	if (Engine_GameFlagIsSet(0x9a7) != 0)
 	{
-		return gRariberoEvents9a7;
+		return gLaliveroEvents9a7;
 	}
-	return gRariberoEvents;
+	return gLaliveroEvents;
 }
 
 static void FieldScene_RunPrimaryScript(void)
@@ -296,7 +296,7 @@ static void FieldScene_RunPrimaryScript(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
 	Actor_FaceDirection(11, 0, 0);
 	Actor_FaceDirection(12, 32768, 0);
-	Engine_EventSetMessage(MsgRariberoHowDidSearchForSheba);
+	Engine_EventSetMessage(MsgLaliveroHowDidSearchForSheba);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(10);
@@ -349,7 +349,7 @@ static void FieldScene_RunPrimaryScript(void)
 		Engine_EventWait(20);
 		Engine_EventShowMessage(11, 0);
 		Engine_EventWait(10);
-		Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 50);
+		Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 50);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
 		Engine_EventWait(10);
 		Engine_ActorFaceDirection(1, 49152, 0);
@@ -387,18 +387,18 @@ static void FieldScene_RunPrimaryScript(void)
 		Engine_EventWait(30);
 		Engine_EventShowMessage(2, 0);
 		Engine_EventWait(10);
-		Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 30);
+		Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
 		Event_OpenMessage(8194, 0);
 	}
-	Engine_EventSetMessage(MsgRariberoDoNotWorryAboutSheba);
+	Engine_EventSetMessage(MsgLaliveroDoNotWorryAboutSheba);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
-	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 20);
+	Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 20);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-		Actor_FaceDirection(GERALD, 49152, 0);
+		Actor_FaceDirection(GARET, 49152, 0);
 		Engine_ActorFaceDirection(2, 49152, 0);
 		Engine_EventWait(30);
 		Engine_EventWait(10);
@@ -411,7 +411,7 @@ static void FieldScene_RunPrimaryScript(void)
 	{
 		Engine_EventWait(20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-		Actor_FaceDirection(GERALD, 49152, 0);
+		Actor_FaceDirection(GARET, 49152, 0);
 		Engine_ActorFaceDirection(2, 49152, 0);
 		Engine_EventWait(30);
 		Engine_EventWait(10);
@@ -425,7 +425,7 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
-	Engine_ActorFaceEachOther(GERALD, ACTOR_PARTY_LEADER, 0);
+	Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
 	Engine_ActorFaceEachOther(3, 2, 0);
 	Engine_EventWait(40);
 	Engine_EventWait(10);
@@ -433,8 +433,8 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
-	Actor_FaceDirection(GERALD, 49152, 0);
-	Actor_FaceDirection(IWAN, 49152, 0);
+	Actor_FaceDirection(GARET, 49152, 0);
+	Actor_FaceDirection(IVAN, 49152, 0);
 	Actor_FaceDirection(3, 49152, 0);
 	Engine_EventWait(50);
 	Engine_EventWait(10);
@@ -446,7 +446,7 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
-	Actor_ShowEmote(MEARI, 256, 40);
+	Actor_ShowEmote(MIA, 256, 40);
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(20);
 	Engine_ActorFaceDirection(11, 0, 0);
@@ -496,8 +496,8 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
 	Engine_ActorRunRepeatedMotion(2, 2);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
@@ -535,7 +535,7 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventWait(10);
 	Engine_ActorFaceDirection(2, 32768, 0);
 	Engine_EventWait(30);
-	Actor_ShowEmote(IWAN, 263, 60);
+	Actor_ShowEmote(IVAN, 263, 60);
 	Engine_ActorFaceDirection(2, 49152, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(2, 4);
@@ -547,8 +547,8 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorStartRepeatedMotion(MEARI, 2);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Engine_ActorStartRepeatedMotion(MIA, 2);
 	Engine_ActorRunRepeatedMotion(2, 2);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
@@ -557,8 +557,8 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(MIA, 3);
 	Engine_ActorSetAnimationAndWait(2, 3);
 	Engine_EventWait(30);
 	Engine_EventWait(10);
@@ -579,18 +579,18 @@ static void FieldScene_RunPrimaryScript(void)
 	Engine_EventShowMessage(3, 0);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
-	Actor_FaceDirection(GERALD, 57344, 0);
+	Actor_FaceDirection(GARET, 57344, 0);
 	Engine_ActorFaceDirection(2, 40960, 0);
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(0, 3);
 	Engine_EventWait(10);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimationAndWait(3, 3);
 	Engine_EventWait(30);
-	Actor_SetSpeed(GERALD, 78643, 39321);
-	Actor_SetSpeed(MEARI, 78643, 39321);
-	Actor_SetSpeed(IWAN, 78643, 39321);
+	Actor_SetSpeed(GARET, 78643, 39321);
+	Actor_SetSpeed(MIA, 78643, 39321);
+	Actor_SetSpeed(IVAN, 78643, 39321);
 	Engine_ActorSetAnimation(1, 2);
 	{
 		u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
@@ -602,7 +602,7 @@ static void FieldScene_RunPrimaryScript(void)
 		}
 	}
 	Engine_ActorWaitForMove(1);
-	Actor_SetPosition(GERALD, 0, 0);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_ActorSetAnimation(3, 2);
 	{
 		u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
@@ -614,7 +614,7 @@ static void FieldScene_RunPrimaryScript(void)
 		}
 	}
 	Engine_ActorWaitForMove(3);
-	Actor_SetPosition(MEARI, 0, 0);
+	Actor_SetPosition(MIA, 0, 0);
 	Engine_ActorSetAnimation(2, 2);
 	{
 		u8 *rec = Object_GetById(ACTOR_PARTY_LEADER);
@@ -633,7 +633,7 @@ static void FieldScene_RunPrimaryScript(void)
 
 static void FieldScene_RunSecondaryScript(void)
 {
-	Engine_EventSetMessage(MsgRariberoTellOthers);
+	Engine_EventSetMessage(MsgLaliveroTellOthers);
 	Engine_EventWait(20);
 
 	Engine_ActorRunRepeatedMotion(11, 2);
@@ -641,22 +641,22 @@ static void FieldScene_RunSecondaryScript(void)
 	Engine_EventShowMessage(11, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 50);
+	Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 50);
 	Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
 	Engine_EventWait(10);
-	Engine_ActorFaceDirection(GERALD, 0xc000, 0);
+	Engine_ActorFaceDirection(GARET, 0xc000, 0);
 	Engine_EventWait(20);
-	Engine_EventShowMessage(GERALD, 0);
+	Engine_EventShowMessage(GARET, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
-	Engine_EventShowMessage(MEARI, 0);
+	Engine_EventShowMessage(MIA, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(20);
-	Engine_EventShowMessage(IWAN, 0);
+	Engine_EventShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 
 	Engine_ActorRunRepeatedMotion(12, 2);
@@ -668,27 +668,27 @@ static void FieldScene_RunSecondaryScript(void)
 	Engine_EventWait(20);
 	Engine_EventWait(25);
 
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(30);
-	Engine_EventShowMessage(GERALD, 0);
+	Engine_EventShowMessage(GARET, 0);
 	Engine_EventWait(30);
 
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(20);
-	Engine_EventShowMessage(GERALD, 0);
+	Engine_EventShowMessage(GARET, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Engine_EventWait(20);
-	Engine_EventShowMessage(MEARI, 0);
+	Engine_EventShowMessage(MIA, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(30);
-	Engine_EventShowMessage(IWAN, 0);
+	Engine_EventShowMessage(IVAN, 0);
 	Engine_EventWait(10);
 
-	Engine_ActorFaceActor(IWAN, ACTOR_PARTY_LEADER, 30);
+	Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 30);
 	Engine_EventOpenMessage(0x2002, 0);
 }
 
@@ -704,7 +704,7 @@ s32 Scene_Initialize(void)
 	}
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_RariberoHeya1)
+	if (scene == (s32)&SceneId_LaliveroInteriors1)
 	{
 		actor = Object_GetById(ACTOR_SANCTUM_FIRST);
 		actor->priority_flags = 0;
@@ -726,7 +726,7 @@ s32 Scene_Initialize(void)
 			gGameState.saved_entrance = entrance;
 		}
 	}
-	if (gGameState.scene == (s32)&SceneId_RariberoHeya2)
+	if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2)
 	{
 		actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
 		actor->collision_flags |= 4;
@@ -734,7 +734,7 @@ s32 Scene_Initialize(void)
 		actor->sprite->priority = 2;
 		if (Engine_GameFlagIsSet(0x300) != 0)
 		{
-			Engine_ActorEnableActionCallback(14, gRariberoPoseAction);
+			Engine_ActorEnableActionCallback(14, gLaliveroPoseAction);
 		}
 		if (gGameState.entrance == ENTRANCE_HOUSE_REPORT)
 		{
@@ -747,7 +747,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-s32 gRariberoPoseAction[] = {
+s32 gLaliveroPoseAction[] = {
 	SC_SET(SW_COLLISION, 129),
 	SC_SET(SW_SPEED, 0x26666),
 	SC_SET(SW_ACCEL, 0x13333),
@@ -781,7 +781,7 @@ s32 gRariberoPoseAction[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gRariberoEntrances[] = {
+struct SceneEntrance gLaliveroEntrances[] = {
 	{ 1, CONDITION_ALWAYS, 144, 0, 168, FACING_NORTH, 0, 0, 8, 240, 192, 0 },
 	{ 2, CONDITION_ALWAYS, 400, 0, 168, FACING_NORTH, 0, 256, 8, 496, 192, 0 },
 	{ 3, CONDITION_ALWAYS, 648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0 },
@@ -809,17 +809,17 @@ struct SceneEntrance gRariberoEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-s16 gRariberoSanctumRegions[] = {
+s16 gLaliveroSanctumRegions[] = {
 	196, 28, 595, 204, 36, 603, -1, 10,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-s16 gRariberoRegions[] = {
+s16 gLaliveroRegions[] = {
 	212, 28, 83, 220, 36, 91, -1, 22,
 	-1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gRariberoExits[] = {
+u32 gLaliveroExits[] = {
 	SCENE_EXITS(179),
 	SCENE_EXIT(1, 178, 2),
 	SCENE_EXIT(2, 178, 10),
@@ -847,7 +847,7 @@ u32 gRariberoExits[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gRariberoPlacements[] = {
+struct ScenePlacement gLaliveroPlacements[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(176), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -879,7 +879,7 @@ struct ScenePlacement gRariberoPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRariberoHeyaPlacements[] = {
+struct ScenePlacement gLaliveroInteriorsPlacements[] = {
 	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -899,7 +899,7 @@ struct ScenePlacement gRariberoHeyaPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gRariberoHeyaPlacements9a7[] = {
+struct ScenePlacement gLaliveroInteriorsPlacements9a7[] = {
 	{ 0x73, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 	{ 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -916,174 +916,174 @@ struct ScenePlacement gRariberoHeyaPlacements9a7[] = {
 		PIXELS(160), 0, PIXELS(304), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
 		PIXELS(544), 0, PIXELS(368), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gRariberoEvents[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaOfCourseIHaveSeenActor) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaThereAreSomeWhoDoNot) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaCouldFaranHaveTrickedUsAll) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIfActorCantUseHerPowers) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorCameFlyingToTheRuins) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaEvenActorCouldntHaveEscapedSix) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheySayAManNamedIodem) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaNoOnesCalledMeSoMaybe) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorSaidTheCaveAtThe) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheRuinsThatFormTheLighthouse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorIfThePowerThatYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorIsTheSaviorOfLalivero) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaALegendarySaviorWillAppearIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIdLikeToBelieveInActor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaEvenThoughSheFellOutOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIfSomethingHappensToActorWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhenIodemGetsHereHesGoing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaItsBeenSoLongSinceI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIWonderHowActorKnewAbout) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaThoseCavesAreTooDangerousFor) },
+struct SceneEvent gLaliveroEvents[] = {
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfActorCantUseHerPowers) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorCameFlyingToTheRuins) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheySayAManNamedIodem) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOnesCalledMeSoMaybe) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorSaidTheCaveAtThe) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorIfThePowerThatYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorIsTheSaviorOfLalivero) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsALegendarySaviorWillAppearIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIdLikeToBelieveInActor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenThoughSheFellOutOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfSomethingHappensToActorWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenIodemGetsHereHesGoing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsBeenSoLongSinceI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheLaliveransAreATimidPeople) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaICantRescueActorIfI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIfAnythingHappensToActorIll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIBetBabisTowerWillBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheLaliveransAreATimidPeople) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIBetBabisTowerWillBe) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xfb9, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xfba, FIND_ITEM(ITEM_ANTIDOTE) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesMakingMushroomSoupInLalivero)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaItsALaliveroSaladWithPotato)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaThePotIsFullOfA)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRariberoEvents9a7[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheContinentBrokeApartAroundThe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhatHappenedToThoseLivingOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIShudderToThinkWhatWould) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWereLuckyThatWeLiveNorth) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaEveryoneSaysThatActorIsOkay) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIRealizedHowThoughtlessIWas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIfSheIsIndeedTheChild) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeWantToBelieveInSomething) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorShouldBeFineSheWas) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaActorWillWakeWhenTheBeacon) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaSeeingActorDiveMustHaveBeen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaICantWaitUntilActorIs) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaBabiLighthouseCrumbledWhenAllThe) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIAlwaysWantedABreakBut) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaSoTheRuinsReallyAreConnected) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaYouFinallySolvedTheMysteryOf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWillTheyContinueOnOrQuit) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaImWorriedThatWeWontGet) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeCantPossiblyDigAHole) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheMysteryOfTheRuinsShould) },
+struct SceneEvent gLaliveroEvents9a7[] = {
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWereLuckyThatWeLiveNorth) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEveryoneSaysThatActorIsOkay) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIRealizedHowThoughtlessIWas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfSheIsIndeedTheChild) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeWantToBelieveInSomething) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorShouldBeFineSheWas) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorWillWakeWhenTheBeacon) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSeeingActorDiveMustHaveBeen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantWaitUntilActorIs) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsBabiLighthouseCrumbledWhenAllThe) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIAlwaysWantedABreakBut) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoTheRuinsReallyAreConnected) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouFinallySolvedTheMysteryOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWillTheyContinueOnOrQuit) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImWorriedThatWeWontGet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaNoOneCouldPossiblySwimIn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhenWillTheOceanBeCalm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheChampaArePeopleFromA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaFirstTheLighthouseWasStruckDown) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOneCouldPossiblySwimIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFirstTheLighthouseWasStruckDown) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xfb9, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xfba, FIND_ITEM(ITEM_ANTIDOTE) },
-	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesMakingMushroomSoupInLalivero)) },
-	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaItsALaliveroSaladWithPotato)) },
-	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaThePotIsFullOfA)) },
+	{ SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
+	{ SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
+	{ SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRariberoHeyaEvents[] = {
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeReceivedActorFromTheSky) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIJustKnowThatFatherWill) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaHisWifeSeemsVeryCalmConsidering) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaItsSoPainfulToEvenThink) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIJustWishSomeoneWouldPlease) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaThatCoupleRaisedActorAsThough) },
-	{ EVENT_TALK, 14, 0x300, EVENT_SCRIPT(RariberoScene_PlayPoseSequence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x300, EVENT_SCRIPT(RariberoScene_PlayPoseSequence) },
+struct SceneEvent gLaliveroInteriorsEvents[] = {
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
+	{ EVENT_TALK, 14, 0x300, EVENT_SCRIPT(LaliveroScene_PlayPoseSequence) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x300, EVENT_SCRIPT(LaliveroScene_PlayPoseSequence) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWorkingLikeThisKeepsMyMind) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeMustObeyTolbiThatsWhat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhyDidThisHaveToHappen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaHousecleaningChangingSheetsItsAllDone) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaOnceThisIncidentIsOverI) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyDidThisHaveToHappen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHousecleaningChangingSheetsItsAllDone) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOnceThisIncidentIsOverI) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xfbb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesFryingFreshwaterFishFromThe)) },
-	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaItsRiceMadeWithGrainsFrom)) },
-	{ SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesMakingRoastChickenThisScent)) },
+	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
+	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
+	{ SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gRariberoHeyaEvents9a7[] = {
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
+struct SceneEvent gLaliveroInteriorsEvents9a7[] = {
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(LaliveroInteriors_RequestTouchedExitAndPlayCue) },
 	{ EVENT_TOUCH, 51, 0x9bc, EVENT_SCRIPT(EV51_TOUCH) },
 	{ EVENT_TALK, 12, 0x9ba, EVENT_SCRIPT(EV12_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9ba, MSGNO(MsgRariberoHeyaIMustExplainTheirPromiseTo) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaFaranSaysKnowingHerPowersActor) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaYouAreLeavingAfterAllArent) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheySayTheLighthouseCrumbledDown) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaYouWillFindJasminSomedayFarewell) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaRobinThatBoatBelongsToYou) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIDontNeedFameOrFortune) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhyWontAnyoneStopRobinAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTolbiIsToBeBlamedFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaSoThereAreSomePeopleLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaPleaseUseThatShipToFind) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9ba, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheySayTheLighthouseCrumbledDown) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouWillFindJennaSomedayFarewell) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIsaacThatBoatBelongsToYou) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIDontNeedFameOrFortune) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWontAnyoneStopIsaacAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoThereAreSomePeopleLike) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsPleaseUseThatShipToFind) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIMustSayItIsNice) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaFishingIsSoDifficultNowadaysBecause) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhyWouldTheLightingMakeSuch) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaImSleepyTheseBrightNightsHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaGeeWhatAmIGoingTo) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIMustSayItIsNice) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWouldTheLightingMakeSuch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImSleepyTheseBrightNightsHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsGeeWhatAmIGoingTo) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xfbb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesFryingFreshwaterFishFromThe)) },
-	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaItsRiceMadeWithGrainsFrom)) },
-	{ SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgRariberoHeyaShesMakingRoastChickenThisScent)) },
+	{ SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
+	{ SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
+	{ SEARCH(SEARCH_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },
 	{ SCENE_EVENTS_END },
 };

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // valrows.c
-// 表示：HP と EP を「今 / 最大」の 2 行で書く
+// 表示：HP と PP を「今 / 最大」の 2 行で書く
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -25,7 +25,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y
 s32	 UiWork_SetParamNibbleFar(s32 color);
 
 //--------------------------------------------------------------------------
-// ウィンドウの y 40 に HP、y 48 に EP を書く
+// ウィンドウの y 40 に HP、y 48 に PP を書く
 // HP は最大の 1/4 未満なら色 4、0 なら色 2 で書く
 // unit : キャラクター
 // win  : 書き込み先のウィンドウ
@@ -52,9 +52,9 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 win)
 	UiWork_SetParamNibbleFar(15);
 	UiText_DrawStringAtOffsetFar((s32)Ui_PpString, win, 0, 48);
 	UiText_DrawStringInWindowFar((s32)Ui_SlashString, win, 48, 48);
-	val = unit->ep;
+	val = unit->pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 48, 48);
-	val = unit->max_ep;
+	val = unit->max_pp;
 	UiText_DrawNumberRightAlignedFar(val, win, 88, 48);
 #else
 	UiText_DrawStringInWindowFar((s32)Ui_HpRowString, win, 0, 40);
@@ -71,10 +71,10 @@ void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 win)
 	}
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 40);
 	UiWork_SetParamNibbleFar(15);
-	UiText_DrawStringInWindowFar((s32)Ui_EpRowString, win, 0, 48);
-	val = unit->ep;
+	UiText_DrawStringInWindowFar((s32)Ui_PpRowString, win, 0, 48);
+	val = unit->pp;
 	UiText_DrawNumberAtOffsetFar(val, 4, win, 16, 48);
-	val = unit->max_ep;
+	val = unit->max_pp;
 	UiText_DrawNumberInWindowFar(val, 4, win, 56, 48);
 #endif
 }

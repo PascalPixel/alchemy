@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
-	.global SentouKouka_Tenkai2Code
-SentouKouka_Tenkai2Code:
-	.global SentouKouka_Tenkai2
+	.global BattleEffect_Expand2Code
+BattleEffect_Expand2Code:
+	.global BattleEffect_Expand2
 	.thumb_func
-SentouKouka_Tenkai2:
+BattleEffect_Expand2:
 	bx	pc
 AlchemyUncredited_081a029e:
 	.2byte	0x0200
@@ -33,23 +33,23 @@ AlchemyUncreditedEnd_081a029e:
 .L_081a02e8:
 	mov	r7, #64
 .L_081a02ec:
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	lsr	r6, r5, #25
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #17
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #9
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	lsr	r6, r5, #25
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #17
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #9
-	bl	SentouKouka_TenkaiYomi2
+	bl	BattleEffect_ExpandRead2
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

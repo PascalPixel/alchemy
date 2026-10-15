@@ -94,8 +94,8 @@ struct Resource373Particle
 	u8	field55;
 };
 
-extern struct SceneEvent gHaidiaMuraEvents3[];
-extern s32				 gJasmineAction[];
+extern struct SceneEvent gValeEvents3[];
+extern s32				 gJennaAction[];
 
 #include "global_cells.h"
 

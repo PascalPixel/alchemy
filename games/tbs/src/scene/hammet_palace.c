@@ -38,11 +38,11 @@ const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiKyuden)
+	if (scene == (s32)&SceneId_HammetPalace)
 	{
-		return gKareiKyudenEntrances;
+		return gHammetPalaceEntrances;
 	}
-	return gKareiKyudenEntrancesOther;
+	return gHammetPalaceEntrancesOther;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -57,29 +57,29 @@ u8 *SceneData_GetMessageTable(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (gGameState.scene == (s32)&SceneId_KareiKyuden)
+	if (gGameState.scene == (s32)&SceneId_HammetPalace)
 	{
-		FieldScene_PrepareActors(gKareiKyudenPlacements);
-		return gKareiKyudenPlacements;
+		FieldScene_PrepareActors(gHammetPalacePlacements);
+		return gHammetPalacePlacements;
 	}
-	return gKareiKyudenPlacementsOther;
+	return gHammetPalacePlacementsOther;
 }
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
 	s16 scene = gGameState.scene;
 
-	if (scene == (s32)&SceneId_KareiKyuden)
+	if (scene == (s32)&SceneId_HammetPalace)
 	{
-		return gKareiKyudenEvents;
+		return gHammetPalaceEvents;
 	}
-	return gKareiKyudenEventsOther;
+	return gHammetPalaceEventsOther;
 }
 
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiLordHammetWillReleasedSoon);
+	Engine_EventSetMessage(MsgKalayLordHammetWillReleasedSoon);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -87,7 +87,7 @@ static void EV13_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgKareiHasLegacyLordHammetsSilk);
+	Engine_EventSetMessage(MsgKalayHasLegacyLordHammetsSilk);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -97,7 +97,7 @@ static void EV08_TALK(void)
 
 	Engine_EventBegin();
 	Engine_ActorShowEmote(8, 0x100, 0x3C);
-	Engine_EventSetMessage(MsgKareiRobinSneakedIntoLunpaThats);
+	Engine_EventSetMessage(MsgKalayIsaacSneakedIntoLunpaThats);
 	Engine_EventShowMessageAndWait(8, 0, 0xA);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventShowMessageAndWait(8, 0, 0xA);
@@ -109,7 +109,7 @@ static void EV08_TALK(void)
 	Engine_EventEnd();
 }
 
-static void KareiKyuden_LeaveThroughDoor(void)
+static void HammetPalace_LeaveThroughDoor(void)
 {
 
 	struct EventWork *p5;
@@ -148,7 +148,7 @@ static void KareiKyuden_LeaveThroughDoor(void)
 s32 Scene_Initialize(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	if (gGameState.scene == (u32)&SceneId_KareiKyuden)
+	if (gGameState.scene == (u32)&SceneId_HammetPalace)
 	{
 		FieldScene_DispatchSceneByIndex();
 	}
@@ -237,9 +237,9 @@ static void RunEventScript01(void)
 	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	Actor_SetPosition(8, 0x3580000, 0x1b80000);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3580000, 0x1e60000);
-	Actor_SetPosition(GERALD, 0x3500000, 0x1f60000);
-	Actor_SetPosition(IWAN, 0x3680000, 0x1e60000);
-	Actor_SetPosition(MEARI, 0x3700000, 0x1f60000);
+	Actor_SetPosition(GARET, 0x3500000, 0x1f60000);
+	Actor_SetPosition(IVAN, 0x3680000, 0x1e60000);
+	Actor_SetPosition(MIA, 0x3700000, 0x1f60000);
 	Actor_SetPosition(10, 0x3480000, 0x2060000);
 	Actor_SetPosition(11, 0x3780000, 0x2060000);
 	Camera_MoveTo(0x3600000, -1, 0x1d80000, 0);
@@ -251,19 +251,19 @@ static void RunEventScript01(void)
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(10);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Engine_EventWait(20);
-	Actor_FaceDirection(IWAN, FACING_WEST, 20);
+	Actor_FaceDirection(IVAN, FACING_WEST, 20);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 10);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
 	SceneChannel_ConfigureUniformAndHandoff(20);
 	Actor_SetAttachedEffect(8, 0x102);
@@ -291,46 +291,46 @@ static void RunEventScript01(void)
 	Engine_ColorBufferInterpolate(40);
 	Engine_TaskWait(60);
 	Actor_ShowEmote(8, 0x105, 60);
-	Engine_EventSetMessage(MsgKareiWhenHeardWereBackIvan);
+	Engine_EventSetMessage(MsgKalayWhenHeardWereBackIvan);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Event_ShowMessageAndWait(10, 0, 10);
 	Engine_ActorSetAnimationAndWait(11, 4);
 	Event_ShowMessageAndWait(11, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 10);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
 	Event_ShowMessageAndWait(0x6002, 0, 10);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	Event_ShowMessageAndWait(11, 0, 10);
 	Engine_ActorSetAnimation(10, 4);
 	Event_ShowMessageAndWait(10, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 10);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 10);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Actor_ShowEmote(8, 0x101, 60);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	Event_ShowMessageAndWait(11, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 10);
+	Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 10);
 	Engine_ActorSetAnimationAndWait(10, 3);
 	Event_ShowMessageAndWait(10, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 10);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
 	Event_ShowMessageAndWait(0x6002, 0, 10);
 	Engine_ActorSetAnimationAndWait(10, 3);
-	Actor_FaceDirection(IWAN, FACING_WEST, 10);
+	Actor_FaceDirection(IVAN, FACING_WEST, 10);
 	Event_AskYesNo(0x6002, 0);
 	Actor_SetAttachedEffect(8, 0x102);
 	Engine_EventWait(60);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(10);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 20);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 20);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Actor_ShowEmote(8, 0x105, 60);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
+	Event_ShowMessageAndWait(MIA, 0, 40);
 	Actor_FaceDirection(8, 0x1000, 40);
 	Actor_SetSpeed(8, 0x6666, 0x3333);
 	Actor_WalkToAndWait(8, 0x37c, 0x1b8);
@@ -356,9 +356,9 @@ static void RunEventScript01(void)
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Actor_FaceDirection(8, 0x5000, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
 	Actor_FaceDirection(11, 0x9000, 40);
 	Actor_FaceDirection(10, 0xf000, 20);
 	Event_ShowMessageAndWait(10, 0, 20);
@@ -385,9 +385,9 @@ static void RunEventScript01(void)
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(8, 4);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 20);
-	Event_OpenMessage(GERALD, 0);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
+	Event_OpenMessage(GARET, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	v5 = 1;
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -395,31 +395,31 @@ static void RunEventScript01(void)
 		gEventWork->message++;
 		v5 = 0;
 	}
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	if (v5 != 0)
 	{
 		gEventWork->message++;
 	}
-	Actor_FaceDirection(IWAN, FACING_WEST, 10);
-	Actor_SetAttachedEffect(IWAN, 0x102);
+	Actor_FaceDirection(IVAN, FACING_WEST, 10);
+	Actor_SetAttachedEffect(IVAN, 0x102);
 	Engine_EventWait(60);
 	Actor_ShowEmote(8, 0x101, 0);
 	Actor_FaceDirection(8, 0x3000, 40);
 	Actor_FaceDirection(8, 0x5000, 20);
 	Actor_FaceDirection(8, 0x3000, 20);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 10);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 10);
+	Actor_FaceDirection(GARET, FACING_NORTH, 10);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Actor_ShowEmote(8, 0x107, 60);
 	Engine_EventShowMessageAndWait(8, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_OpenMessage(8, 0);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -435,19 +435,19 @@ static void RunEventScript01(void)
 		Event_ShowMessageAndWait(8, 0, 10);
 	}
 	SceneChannel_ConfigureUniformAndHandoff(20);
-	Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 40);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 10);
-	Event_ShowMessageAndWait(MEARI, 0, 20);
+	Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 10);
+	Event_ShowMessageAndWait(MIA, 0, 20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Event_ShowMessageAndWait(8, 0, 40);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Event_ShowMessageAndWait(8, 0, 40);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Engine_EventWait(20);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(IWAN, 0x364, 0x1d8);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(IVAN, 0x364, 0x1d8);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
@@ -455,8 +455,8 @@ static void RunEventScript01(void)
 	SceneChannel_ConfigureUniformAndHandoff(20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Actor_FaceDirection(8, 0x5000, 10);
 	Event_ShowMessageAndWait(8, 0, 10);
@@ -464,19 +464,19 @@ static void RunEventScript01(void)
 	Actor_FaceDirection(8, 0x3000, 10);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_OpenMessage(8, 0);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -488,30 +488,30 @@ static void RunEventScript01(void)
 	else
 	{
 		Engine_EventWait(20);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		gEventWork->message++;
-		Event_ShowMessageAndWait(GERALD, 0, 10);
+		Event_ShowMessageAndWait(GARET, 0, 10);
 		Actor_SetAttachedEffect(8, 0x102);
 		Engine_EventWait(40);
 		Event_ShowMessageAndWait(8, 0, 10);
 	}
-	Actor_ShowEmote(MEARI, 0x101, 40);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 10);
-	Event_ShowMessage(MEARI, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 20);
+	Actor_ShowEmote(MIA, 0x101, 40);
+	Actor_FaceDirection(MIA, FACING_NORTH, 10);
+	Event_ShowMessage(MIA, 0);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
@@ -521,9 +521,9 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-	Engine_ActorSetAnimation(GERALD, 4);
-	Engine_ActorSetAnimation(IWAN, 4);
-	Engine_ActorSetAnimationAndWait(MEARI, 4);
+	Engine_ActorSetAnimation(GARET, 4);
+	Engine_ActorSetAnimation(IVAN, 4);
+	Engine_ActorSetAnimationAndWait(MIA, 4);
 	Actor_SetAttachedEffect(8, 0x102);
 	Engine_EventWait(60);
 	Event_ShowMessageAndWait(8, 0, 10);
@@ -531,20 +531,20 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
 	SceneChannel_ConfigureUniformAndHandoff(20);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_ShowEmote(MEARI, 0x101, 60);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Actor_ShowEmote(MIA, 0x101, 60);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Actor_ShowEmote(8, 0x108, 60);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_ShowEmote(GERALD, 0x101, 40);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Actor_ShowEmote(GARET, 0x101, 40);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Actor_FaceDirection(8, 0x5000, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
@@ -559,52 +559,52 @@ static void RunEventScript01(void)
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Actor_FaceDirection(8, 0x5000, 10);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Actor_ShowEmote(8, 0x100, 40);
 	Actor_FaceDirection(8, 0x3000, 10);
 	Event_ShowMessageAndWait(8, 0, 10);
 	ConfigureFourSceneChannelsAndHandoff(40);
 	SceneChannel_ConfigureUniformAndHandoff(20);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorSetAnimation(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
 	Engine_EventWait(60);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorStartRepeatedMotion(IWAN, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(IVAN, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorSetAnimation(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_ShowEmote(IWAN, 0x105, 60);
+	Actor_ShowEmote(IVAN, 0x105, 60);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 10);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
-	Actor_FaceDirection(IWAN, FACING_SOUTHEAST, 10);
-	Engine_ActorSetAnimation(IWAN, 4);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
+	Event_ShowMessageAndWait(MIA, 0, 10);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
+	Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 10);
+	Engine_ActorSetAnimation(IVAN, 4);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 10);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
+	Actor_FaceDirection(MIA, FACING_NORTH, 10);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorStartRepeatedMotion(10, 2);
@@ -613,39 +613,39 @@ static void RunEventScript01(void)
 	Event_ShowMessageAndWait(11, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
-	Engine_ActorSetAnimation(IWAN, 4);
+	Engine_ActorSetAnimationAndWait(IVAN, 4);
+	Engine_ActorSetAnimation(IVAN, 4);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventShowMessageAndWait(1, 0, 10);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_OpenMessage(8, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
 		SceneChannel_ConfigureUniformAndHandoff(10);
-		Engine_ActorSetAnimation(GERALD, 3);
-		Engine_ActorSetAnimation(IWAN, 3);
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Engine_ActorSetAnimation(GARET, 3);
+		Engine_ActorSetAnimation(IVAN, 3);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		Engine_EventWait(10);
-		Event_ShowMessageAndWait(GERALD, 0, 10);
+		Event_ShowMessageAndWait(GARET, 0, 10);
 		gEventWork->message += 2;
 	}
 	else
 	{
 		Engine_EventWait(10);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
+		Engine_ActorRunRepeatedMotion(GARET, 2);
 		gEventWork->message++;
-		Event_ShowMessageAndWait(GERALD, 0, 10);
+		Event_ShowMessageAndWait(GARET, 0, 10);
 		SceneChannel_ConfigureUniformAndHandoff(10);
-		Engine_ActorSetAnimation(GERALD, 3);
-		Engine_ActorSetAnimation(IWAN, 3);
-		Engine_ActorSetAnimationAndWait(MEARI, 3);
+		Engine_ActorSetAnimation(GARET, 3);
+		Engine_ActorSetAnimation(IVAN, 3);
+		Engine_ActorSetAnimationAndWait(MIA, 3);
 		Engine_EventWait(10);
-		Event_ShowMessageAndWait(GERALD, 0, 10);
+		Event_ShowMessageAndWait(GARET, 0, 10);
 	}
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 40);
@@ -671,15 +671,15 @@ static void RunEventScript01(void)
 	Actor_SetPosition(11, 0, 0);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	tbl = (s32)KareiKyuden_PartyActions;
-	Engine_ActorEnableActionCallback(GERALD, tbl);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	tbl = (s32)HammetPalace_PartyActions;
+	Engine_ActorEnableActionCallback(GARET, tbl);
 	Engine_ActorEnableActionCallback(2, tbl);
 	Object_SetActionCallbackAndRefreshById(3, tbl);
 	work = gEventWork;
@@ -735,37 +735,37 @@ static void Scene_RunPartySequence(void)
 	Camera_SetSpeed(0x6666, 0xccc);
 	Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	Actor_SetSpeed(MEARI, 0xcccc, 0x6666);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	Actor_SetSpeed(MIA, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(MEARI, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
 	}
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x358, 0x1e6);
-	Actor_WalkTo(GERALD, 0x350, 0x1f6);
-	Actor_WalkTo(IWAN, 0x368, 0x1e6);
-	Actor_WalkToAndWait(MEARI, 0x370, 0x1f6);
+	Actor_WalkTo(GARET, 0x350, 0x1f6);
+	Actor_WalkTo(IVAN, 0x368, 0x1e6);
+	Actor_WalkToAndWait(MIA, 0x370, 0x1f6);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
 	Engine_EventWait(10);
 	SceneChannel_ConfigureUniformAndHandoff(10);
 	Actor_ShowEmote(9, v5, 20);
 	Actor_FaceDirection(9, 0x5000, 20);
-	Engine_EventSetMessage(MsgKareiItsIvanHisCompanionsPerfect);
+	Engine_EventSetMessage(MsgKalayItsIvanHisCompanionsPerfect);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
 	Actor_ShowEmote(8, v5, 20);
 	Actor_FaceDirection(8, 0x3000, 20);
@@ -773,9 +773,9 @@ static void Scene_RunPartySequence(void)
 	Actor_ShowEmote(8, 0x107, 60);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(IWAN, 0x102);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(GARET, 0x102);
+	Actor_SetAttachedEffect(IVAN, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(60);
 	Actor_ShowEmote(9, 0x102, 60);
 	Actor_FaceDirection(9, 0x7000, 10);
@@ -811,34 +811,34 @@ static void Scene_RunPartySequence(void)
 	Event_ShowMessageAndWait(0x2009, 0, 10);
 	Actor_FaceDirection(8, 0x1000, 10);
 	Actor_ShowEmote(8, 0x107, 40);
-	Engine_ActorRunRepeatedMotion(IWAN, 3);
+	Engine_ActorRunRepeatedMotion(IVAN, 3);
 	Event_ShowMessageAndWait(0x2002, 0, 20);
 	Actor_ShowEmote(8, 0x105, 60);
 	Actor_FaceDirection(8, 0x3000, 60);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorStartRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Actor_FaceDirection(9, 0x5000, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 10);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
 	Event_ShowMessageAndWait(0x6002, 0, 10);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 10);
-	Engine_ActorStartRepeatedMotion(IWAN, 2);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 10);
+	Engine_ActorStartRepeatedMotion(IVAN, 2);
 	Event_ShowMessageAndWait(0x2002, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_FaceDirection(IWAN, FACING_WEST, 20);
+	Actor_FaceDirection(IVAN, FACING_WEST, 20);
 	Event_ShowMessageAndWait(0x6002, 0, 10);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 10);
-	Actor_ShowEmote(MEARI, 0x105, 40);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
+	Actor_ShowEmote(MIA, 0x105, 40);
+	Event_ShowMessageAndWait(MIA, 0, 10);
+	Engine_ActorRunRepeatedMotion(IVAN, 2);
 	Engine_EventWait(80);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
+	Engine_ActorSetAnimationAndWait(IVAN, 3);
 	Engine_EventWait(20);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 10);
-	Engine_ActorSetAnimationAndWait(GERALD, 4);
-	Event_OpenMessage(GERALD, 0);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
+	Engine_ActorSetAnimationAndWait(GARET, 4);
+	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -847,39 +847,39 @@ static void Scene_RunPartySequence(void)
 	else
 	{
 		Engine_EventWait(20);
-		Event_ShowMessageAndWait(GERALD, 0, 10);
+		Event_ShowMessageAndWait(GARET, 0, 10);
 	}
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	SceneChannel_ConfigureUniformAndHandoff(20);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
-	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Engine_ActorRunRepeatedMotion(MIA, 2);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Actor_FaceDirection(9, 0x3000, 10);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
-	Actor_ShowEmote(IWAN, 0x101, 60);
+	Actor_ShowEmote(IVAN, 0x101, 60);
 	Event_ShowMessageAndWait(0x2002, 0, 10);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Actor_FaceDirection(9, 0x5000, 10);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_ShowMessageAndWait(GERALD, 0, 10);
+	Engine_ActorRunRepeatedMotion(GARET, 2);
+	Event_ShowMessageAndWait(GARET, 0, 10);
 	Engine_ActorSetAnimationAndWait(9, 4);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
-	Event_ShowMessageAndWait(MEARI, 0, 10);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
+	Event_ShowMessageAndWait(MIA, 0, 10);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	tbl = (s32)KareiKyuden_PartyActions;
-	Engine_ActorEnableActionCallback(GERALD, tbl);
+	tbl = (s32)HammetPalace_PartyActions;
+	Engine_ActorEnableActionCallback(GARET, tbl);
 	Engine_ActorEnableActionCallback(2, tbl);
 	Object_SetActionCallbackAndRefreshById(3, tbl);
 	work = gEventWork;
@@ -890,7 +890,7 @@ static void Scene_RunPartySequence(void)
 	Engine_EventEnd();
 }
 
-s32 KareiKyuden_PartyActions[] = {
+s32 HammetPalace_PartyActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(856), 0, PIXELS(486)),
 	SC_SYNC,
@@ -900,12 +900,12 @@ s32 KareiKyuden_PartyActions[] = {
 	SC_END,
 };
 
-struct SceneEntrance gKareiKyudenEntrancesOther[] = {
+struct SceneEntrance gHammetPalaceEntrancesOther[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance gKareiKyudenEntrances[] = {
+struct SceneEntrance gHammetPalaceEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 240, 0, 648, FACING_NORTH, 0, 45, 360, 440, 680, 0 },
 	{ 2, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0 },
@@ -944,16 +944,16 @@ u32 Placement_Messages[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKareiKyudenPlacementsOther[] = {
+struct ScenePlacement gHammetPalacePlacementsOther[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement gKareiKyudenPlacements[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement gHammetPalacePlacements[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x2d, 0x0, ACTOR_STAND,
 		PIXELS(856), 0, PIXELS(440), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -976,15 +976,15 @@ struct ScenePlacement gKareiKyudenPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent gKareiKyudenEventsOther[] = {
+struct SceneEvent gHammetPalaceEventsOther[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent gKareiKyudenEvents[] = {
+struct SceneEvent gHammetPalaceEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
@@ -994,40 +994,40 @@ struct SceneEvent gKareiKyudenEvents[] = {
 	{ 0x31, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
-	{ EVENT_TALK, 8, 0x321, MSGNO(MsgKareiKyudenDodonpaIsAVeryShrewdMan) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(HammetPalace_LeaveThroughDoor) },
+	{ EVENT_TALK, 8, 0x321, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
 	{ EVENT_TALK, 8, 0x913, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 8, 0x941, MSGNO(MsgKareiKyudenDodonpaPlansToUseHammetTo) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenNoOneInKalayKnowsHammet) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTakeYourShamansRodAndSet) },
-	{ EVENT_TALK, 12, 0x941, MSGNO(MsgKareiKyudenTheTownsfolkDontKnowAboutLord) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIHearHammetWasSavedBy) },
+	{ EVENT_TALK, 8, 0x941, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTakeYourShamansRodAndSet) },
+	{ EVENT_TALK, 12, 0x941, MSGNO(MsgHammetPalaceTheTownsfolkDontKnowAboutLord) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIHearHammetWasSavedBy) },
 	{ EVENT_TALK, 13, 0x941, EVENT_SCRIPT(EV13_TALK) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheySayHammetsReturnIsSupposed) },
-	{ EVENT_TALK, 14, 0x941, MSGNO(MsgKareiKyudenLayanaIsPuttingUpAStrong) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenILeftTheDoorToThe) },
-	{ EVENT_TALK, 15, 0x941, MSGNO(MsgKareiKyudenMerchantsAreSupposedToBeProtected) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIWonderIfAnyOfDodonpas) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheySayHammetsReturnIsSupposed) },
+	{ EVENT_TALK, 14, 0x941, MSGNO(MsgHammetPalaceLayanaIsPuttingUpAStrong) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceILeftTheDoorToThe) },
+	{ EVENT_TALK, 15, 0x941, MSGNO(MsgHammetPalaceMerchantsAreSupposedToBeProtected) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIWonderIfAnyOfDodonpas) },
 	{ EVENT_TALK, 16, 0x941, EVENT_SCRIPT(EV16_TALK) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheSecretPassageIsLockedBecause) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgKareiKyudenIsThisTheRightDecisionHammet) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x941, MSGNO(MsgKareiKyudenIDontCareAboutTheMoney) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenImSoHappyHammetMadeIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenLayanasWordsPainHerMoreThan) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x941, MSGNO(MsgKareiKyudenImSureTheVillagersWouldPanic) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenImSoRelievedHammetMadeIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x941, MSGNO(MsgKareiKyudenEveryonesWorriedAboutLordHammetBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenICantLetOnToThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x941, MSGNO(MsgKareiKyudenLadyLayanaWasCryingAgainLast) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenLayanaOrderedTheDoorToThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x941, MSGNO(MsgKareiKyudenAndToThinkIAlmostWent) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenWeWillNeverLetDodonpasHenchmen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x941, MSGNO(MsgKareiKyudenLordHammetIsALegendAmong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheKeyToTheSecretPassage) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheSecretPassageIsLockedBecause) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x941, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoHappyHammetMadeIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanasWordsPainHerMoreThan) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x941, MSGNO(MsgHammetPalaceImSureTheVillagersWouldPanic) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoRelievedHammetMadeIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x941, MSGNO(MsgHammetPalaceEveryonesWorriedAboutLordHammetBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceICantLetOnToThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x941, MSGNO(MsgHammetPalaceLadyLayanaWasCryingAgainLast) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanaOrderedTheDoorToThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x941, MSGNO(MsgHammetPalaceAndToThinkIAlmostWent) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceWeWillNeverLetDodonpasHenchmen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x941, MSGNO(MsgHammetPalaceLordHammetIsALegendAmong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheKeyToTheSecretPassage) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf86, FIND_ITEM(0x5f) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf87, FIND_ITEM(ITEM_NUT) },
-	{ SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresATurbanItsTheSymbol)) },
-	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresABookEntitledBusinessAnd)) },
-	{ SEARCH(SEARCH_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKareiKyudenTheresABookEntitledTheGood)) },
+	{ SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHammetPalaceTheresATurbanItsTheSymbol)) },
+	{ SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHammetPalaceTheresABookEntitledBusinessAnd)) },
+	{ SEARCH(SEARCH_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHammetPalaceTheresABookEntitledTheGood)) },
 	{ SCENE_EVENTS_END },
 };

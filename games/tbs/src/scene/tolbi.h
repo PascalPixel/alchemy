@@ -13,7 +13,7 @@ extern u8 gWindowWork[];
 
 #define SCENE_OBJECT_ID (*(s32 *)((u8 *)gEventWork + 0x1f4))
 
-struct TorebiSceneWork
+struct TolbiSceneWork
 {
 #if EDITION_INTERNATIONAL
 	u8 unknown_00[0xea4];

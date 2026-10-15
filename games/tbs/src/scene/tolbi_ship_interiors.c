@@ -29,47 +29,47 @@
 #include "objcmd.h"
 
 // 前方宣言
-static void FuneHeya_TurnActorToOpenSide(s32 a0);
+static void TolbiShipInteriors_TurnActorToOpenSide(s32 a0);
 static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket);
 static s32 SceneState_ApplyLevelFromFlags(void);
 static void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2);
 static void FieldScene_RunExtendedActorChoreography(void);
-static void FuneHeya_ApplyFlaggedLayout(void);
+static void TolbiShipInteriors_ApplyFlaggedLayout(void);
 static void SceneState_RunFlagGatedSetupCascade(void);
 static void RunSceneSelectionChain(void);
 static void SceneActor_SetFlagBit3ForActors28To35(void);
 static void FieldScene_RunFourActorCoordinatePresentation(void);
-static void FuneHeya_CastOff(void);
-static void FuneHeya_AnnounceDeparture(void);
-static void FuneHeya_CallActorSixteenToRow(void);
-static void FuneHeya_CallActorEighteenToRow(void);
+static void TolbiShipInteriors_CastOff(void);
+static void TolbiShipInteriors_AnnounceDeparture(void);
+static void TolbiShipInteriors_CallActorSixteenToRow(void);
+static void TolbiShipInteriors_CallActorEighteenToRow(void);
 static void FieldScene_RunFlagBranchedSetupCascade(void);
-static void FuneHeya_AskAboutMonsters(void);
-static void FuneHeya_AnnounceTurn(void);
-static void FuneHeya_SetupFirstRowingPair(void);
+static void TolbiShipInteriors_AskAboutMonsters(void);
+static void TolbiShipInteriors_AnnounceTurn(void);
+static void TolbiShipInteriors_SetupFirstRowingPair(void);
 static void FieldScene_RunActors24And25Setup(void);
 static void Scene_RunConditionalActorPresentation(s32 a0);
-static struct FieldActor *FuneHeya_PlaceAnchorCharm(void);
+static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void);
 static void FieldScene_InstallFlaggedActors10To17(u8 *src);
 static void FieldScene_RunStepThen10(s32 a);
 static void FieldScene_CallPairWith10(s32 a, u16 b);
 static void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
 static void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags);
 static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt);
-static s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate);
+static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate);
 static void SceneState_ApplyActor8FourFlags(void);
 static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1);
-static void FuneHeya_SetupReplacementRower(void);
+static void TolbiShipInteriors_SetupReplacementRower(void);
 static void FieldScene_RunPositionTransferPresentation(void);
 static void FieldScene_RunFormationAndEffectPresentation(void);
 static void FieldScene_RunActors24And25SetupWithValue929(void);
-static void FuneHeya_SetupReplacementPair(void);
+static void TolbiShipInteriors_SetupReplacementPair(void);
 static void FieldScene_RunActors24And25SetupWithValue92a(void);
 static void FieldScene_RunExtendedFormationPresentation(void);
 static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 static void RunActorsEightAndNineMapEvent(void);
 static void Scene_RunFourActorProgressPresentation(void);
-static void FuneHeya_DismissReplacementRowers(void);
+static void TolbiShipInteriors_DismissReplacementRowers(void);
 static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
@@ -134,7 +134,7 @@ static s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 	return 1;
 }
 
-static void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
+static void TolbiShipInteriors_AdvanceWalkerAfterRise(u8 *o)
 {
 	u8 *p = &((struct FieldActor *)o)->rise_counter;
 	s32 n = *p + 1;
@@ -165,7 +165,7 @@ static s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 	return 0;
 }
 
-static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
+static void TolbiShipInteriors_RunWalkerStep(struct FieldActor *obj)
 {
 	struct FieldActor *leader;
 
@@ -232,7 +232,7 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 	case 6:
 	case 8:
 	case 11:
-		FuneHeya_AdvanceWalkerAfterRise((u8 *)obj);
+		TolbiShipInteriors_AdvanceWalkerAfterRise((u8 *)obj);
 		break;
 	case 12:
 		obj->work = 0;
@@ -280,13 +280,13 @@ static s32 StagedActor_SetReadyState(struct FieldActor *work)
 	return 1;
 }
 
-s32 FuneHeya_SelectEntrances(void)
+s32 TolbiShipInteriors_SelectEntrances(void)
 {
-	if (gGameState.scene == (s32)&SceneId_FuneHeya)
+	if (gGameState.scene == (s32)&SceneId_TolbiShipInteriors)
 	{
-		return (s32)FuneHeya_SceneTable02;
+		return (s32)TolbiShipInteriors_SceneTable02;
 	}
-	return (s32)FuneHeya_SceneTable01;
+	return (s32)TolbiShipInteriors_SceneTable01;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -294,12 +294,12 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-s32 FuneHeya_GetExits(void)
+s32 TolbiShipInteriors_GetExits(void)
 {
-	return (s32)&FuneHeya_SceneTable03;
+	return (s32)&TolbiShipInteriors_SceneTable03;
 }
 
-s32 FuneHeya_GetStepScript(void)
+s32 TolbiShipInteriors_GetStepScript(void)
 {
 	u8 *script;
 
@@ -310,13 +310,13 @@ s32 FuneHeya_GetStepScript(void)
 	case 11:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return (s32)FuneHeya_StepScriptF;
+			return (s32)TolbiShipInteriors_StepScriptF;
 		}
 		else if (Engine_GameFlagIsSet(0x928) != 0)
 		{
 			if (Engine_GameFlagIsSet(0x8a0) != 0)
 			{
-				script = (u8 *)FuneHeya_StepScriptG;
+				script = (u8 *)TolbiShipInteriors_StepScriptG;
 				script[22] = 2;
 				script[70] = 2;
 				script[118] = 2;
@@ -326,22 +326,22 @@ s32 FuneHeya_GetStepScript(void)
 				script[166] = 1;
 				script[94] = 2;
 			}
-			return (s32)FuneHeya_StepScriptG;
+			return (s32)TolbiShipInteriors_StepScriptG;
 		}
 		else if (Engine_GameFlagIsSet(0x911) != 0)
 		{
 			if (Engine_GameFlagIsSet(0x925) != 0)
 			{
-				FuneHeya_StepScriptF[0].talk_facing = 2;
-				FuneHeya_StepScriptF[4].talk_facing = 2;
-				FuneHeya_StepScriptF[1].talk_facing = 2;
-				FuneHeya_StepScriptF[3].talk_facing = 2;
+				TolbiShipInteriors_StepScriptF[0].talk_facing = 2;
+				TolbiShipInteriors_StepScriptF[4].talk_facing = 2;
+				TolbiShipInteriors_StepScriptF[1].talk_facing = 2;
+				TolbiShipInteriors_StepScriptF[3].talk_facing = 2;
 			}
-			return (s32)FuneHeya_StepScriptF;
+			return (s32)TolbiShipInteriors_StepScriptF;
 		}
 		else
 		{
-			return (s32)FuneHeya_StepScriptE;
+			return (s32)TolbiShipInteriors_StepScriptE;
 		}
 		break;
 	case 4:
@@ -352,12 +352,12 @@ s32 FuneHeya_GetStepScript(void)
 	case 21:
 	case 23:
 	case 24:
-		return (s32)FuneHeya_StepScriptH;
+		return (s32)TolbiShipInteriors_StepScriptH;
 		break;
 	case 15:
 	case 17:
 	case 19:
-		script = (u8 *)FuneHeya_StepScriptH;
+		script = (u8 *)TolbiShipInteriors_StepScriptH;
 		script[22] = 2;
 		script[46] = 2;
 		script[94] = 1;
@@ -371,7 +371,7 @@ s32 FuneHeya_GetStepScript(void)
 	case 5:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return (s32)FuneHeya_StepScriptD;
+			return (s32)TolbiShipInteriors_StepScriptD;
 		}
 		else if (Engine_GameFlagIsSet(0x911) != 0)
 		{
@@ -379,32 +379,32 @@ s32 FuneHeya_GetStepScript(void)
 			{
 				if (GameFlag_IsSet(0x8a0) != 0)
 				{
-					FuneHeya_StepScriptC[1].talk_facing = 1;
+					TolbiShipInteriors_StepScriptC[1].talk_facing = 1;
 				}
 				if (Engine_GameFlagIsSet(0x925) != 0)
 				{
 					if (Engine_GameFlagIsSet(0x8a0) == 0)
 					{
-						FuneHeya_StepScriptC[0].talk_facing = 0;
+						TolbiShipInteriors_StepScriptC[0].talk_facing = 0;
 					}
 				}
-				return (s32)FuneHeya_StepScriptC;
+				return (s32)TolbiShipInteriors_StepScriptC;
 			}
-			return (s32)FuneHeya_StepScriptA;
+			return (s32)TolbiShipInteriors_StepScriptA;
 		}
 		else
 		{
-			return (s32)FuneHeya_StepScriptB;
+			return (s32)TolbiShipInteriors_StepScriptB;
 		}
 		break;
 	case 10:
 	case 13:
 	case 14:
 	case 22:
-		return (s32)FuneHeya_StepScriptB;
+		return (s32)TolbiShipInteriors_StepScriptB;
 		break;
 	default:
-		return (s32)FuneHeya_StepScriptA;
+		return (s32)TolbiShipInteriors_StepScriptA;
 		break;
 	}
 	return (s32)script;
@@ -421,41 +421,41 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 	case 2:
 		if (Engine_GameFlagIsSet(2208) != 0)
 		{
-			return FuneHeya_SceneTable07;
+			return TolbiShipInteriors_SceneTable07;
 		}
 		if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0)
 		{
-			return FuneHeya_SceneTable06;
+			return TolbiShipInteriors_SceneTable06;
 		}
-		return FuneHeya_SceneTable05;
+		return TolbiShipInteriors_SceneTable05;
 	case 4:
 	case 23:
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return FuneHeya_SceneTable14;
+			return TolbiShipInteriors_SceneTable14;
 		}
-		return FuneHeya_SceneTable11;
+		return TolbiShipInteriors_SceneTable11;
 	case 5:
 		if (Engine_GameFlagIsSet(2208) != 0)
 		{
-			return FuneHeya_SceneTable09;
+			return TolbiShipInteriors_SceneTable09;
 		}
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			return FuneHeya_SceneTable10;
+			return TolbiShipInteriors_SceneTable10;
 		}
-		return FuneHeya_SceneTable08;
+		return TolbiShipInteriors_SceneTable08;
 	case 15:
 	case 17:
 	case 19:
-		return FuneHeya_SceneTable12;
+		return TolbiShipInteriors_SceneTable12;
 	case 21:
-		return FuneHeya_SceneTable13;
+		return TolbiShipInteriors_SceneTable13;
 	default:
 		break;
 	}
 
-	return FuneHeya_SceneTable04;
+	return TolbiShipInteriors_SceneTable04;
 }
 
 static void EV10_TALK_08(void)
@@ -464,14 +464,14 @@ static void EV10_TALK_08(void)
 	Battle_ResetEffectCounter();
 	if (GameFlag_IsSet(0x921) != 0)
 	{
-		Engine_EventSetMessage(MsgFuneIfShipFromTolbiHad);
+		Engine_EventSetMessage(MsgTolbiShipIfShipFromTolbiHad);
 		Event_ShowMessage(10, 0);
 	}
 	else
 	{
 		if (GameFlag_IsSet(0x922) != 0)
 		{
-			Engine_EventSetMessage(MsgFuneNowWantSeeCaptainToo);
+			Engine_EventSetMessage(MsgTolbiShipNowWantSeeCaptainToo);
 			Event_OpenMessage(10, 0);
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
@@ -486,7 +486,7 @@ static void EV10_TALK_08(void)
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgFuneButWeCantSendShip);
+			Engine_EventSetMessage(MsgTolbiShipButWeCantSendShip);
 			Event_ShowMessage(10, 0);
 		}
 	}
@@ -496,7 +496,7 @@ static void EV10_TALK_08(void)
 static void EV12_TALK_08(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage(MsgFuneYouCameAskCaptainSet);
+	Engine_EventSetMessage(MsgTolbiShipYouCameAskCaptainSet);
 	Engine_EventAskYesNo(12, 0);
 	Engine_EventEnd();
 }
@@ -506,7 +506,7 @@ static void EV08_TALK_08(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x928) != 0)
 	{
-		Engine_EventSetMessage(MsgFuneOarsmanWasInjured);
+		Engine_EventSetMessage(MsgTolbiShipOarsmanWasInjured);
 		FieldScene_RunStepThen10(8);
 		Actor_FaceDirection(8, 0xd000, 60);
 		Engine_ActorSetAnimationAndWait(8, 4);
@@ -515,12 +515,12 @@ static void EV08_TALK_08(void)
 	}
 	else if (GameFlag_IsSet(0x925) != 0)
 	{
-		Engine_EventSetMessage(MsgFuneWeDontKnowMightHappen);
+		Engine_EventSetMessage(MsgTolbiShipWeDontKnowMightHappen);
 		Event_ShowMessage(8, 0);
 	}
 	else if (GameFlag_IsSet(0x921) != 0)
 	{
-		Engine_EventSetMessage(MsgFuneBadLuckLosingMyLucky);
+		Engine_EventSetMessage(MsgTolbiShipBadLuckLosingMyLucky);
 		Event_ShowMessage(8, 0);
 		if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0)
 		{
@@ -529,7 +529,7 @@ static void EV08_TALK_08(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgFuneItsTooLateHireMercenaries);
+		Engine_EventSetMessage(MsgTolbiShipItsTooLateHireMercenaries);
 		Event_ShowMessage(8, 0);
 	}
 	Engine_EventEnd();
@@ -541,7 +541,7 @@ static void EV08_TALK_05(void)
 	if (GameFlag_IsSet(0x925) != 0)
 	{
 		Engine_ActorStartRepeatedMotion(8, 2);
-		Engine_EventSetMessage(MsgFuneTheseProudWarriorsNotGoing);
+		Engine_EventSetMessage(MsgTolbiShipTheseProudWarriorsNotGoing);
 		FieldScene_RunStepThen10(8);
 		Actor_FaceActor(8, ACTOR_PARTY_LEADER, 10);
 		Event_OpenMessage(8, 0);
@@ -561,7 +561,7 @@ static void EV08_TALK_05(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgFuneLongerWeSitHereMore);
+		Engine_EventSetMessage(MsgTolbiShipLongerWeSitHereMore);
 		Event_ShowMessage(8, 0);
 	}
 	Engine_EventEnd();
@@ -572,12 +572,12 @@ static void EV10_TALK_05(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x925) != 0)
 	{
-		Engine_EventSetMessage(MsgFuneYouGoingRow);
+		Engine_EventSetMessage(MsgTolbiShipYouGoingRow);
 		Engine_EventAskYesNo(10, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgFuneTheresWholeBunchReallyMuscular);
+		Engine_EventSetMessage(MsgTolbiShipTheresWholeBunchReallyMuscular);
 		Engine_EventShowMessage(10, 0);
 	}
 	Engine_EventEnd();
@@ -591,8 +591,8 @@ static void EV08_TALK_06(void)
 		struct FieldActor *p;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(obj);
-		Engine_EventSetMessage(MsgFuneLooksLikeYouveBeenChosen);
+		TolbiShipInteriors_TurnActorToOpenSide(obj);
+		Engine_EventSetMessage(MsgTolbiShipLooksLikeYouveBeenChosen);
 		FieldScene_RunStepThen10(8);
 		Engine_ActorSetAnimation(obj, 2);
 		p = Object_GetById(0);
@@ -606,19 +606,19 @@ static void EV08_TALK_06(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(8, MsgFuneNoooooNotGoing, 0x990);
+		FieldScene_RunPrimarySequence(8, MsgTolbiShipNoooooNotGoing, 0x990);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(8, MsgFuneNoooooNotGoing, 0x917);
+		FieldScene_RunPrimarySequence(8, MsgTolbiShipNoooooNotGoing, 0x917);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(8, MsgFuneNoooooNotGoing, 0x935);
+		FieldScene_RunPrimarySequence(8, MsgTolbiShipNoooooNotGoing, 0x935);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(8, MsgFuneNoooooNotGoing, 0x92c);
+		FieldScene_RunPrimarySequence(8, MsgTolbiShipNoooooNotGoing, 0x92c);
 	}
 }
 
@@ -630,8 +630,8 @@ static void EV10_TALK_06(void)
 		struct FieldActor *p;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(o);
-		Engine_EventSetMessage(MsgFuneHaHaHaChosenOarsman);
+		TolbiShipInteriors_TurnActorToOpenSide(o);
+		Engine_EventSetMessage(MsgTolbiShipHaHaHaChosenOarsman);
 		FieldScene_RunStepThen10(10);
 		Engine_ActorSetAnimation(o, 2);
 		p = Object_GetById(0);
@@ -645,19 +645,19 @@ static void EV10_TALK_06(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(10, MsgFuneJokingWantRow, 0x992);
+		FieldScene_RunPrimarySequence(10, MsgTolbiShipJokingWantRow, 0x992);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(10, MsgFuneJokingWantRow, 0x919);
+		FieldScene_RunPrimarySequence(10, MsgTolbiShipJokingWantRow, 0x919);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(10, MsgFuneJokingWantRow, 0x937);
+		FieldScene_RunPrimarySequence(10, MsgTolbiShipJokingWantRow, 0x937);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(10, MsgFuneJokingWantRow, 0x92e);
+		FieldScene_RunPrimarySequence(10, MsgTolbiShipJokingWantRow, 0x92e);
 	}
 }
 
@@ -668,7 +668,7 @@ static void EV11_TALK(void)
 		Engine_EventBegin();
 		Engine_ActorSetAttachedEffect(11, 0x102);
 		Engine_EventWait(40);
-		Engine_EventSetMessage(MsgFuneDontFeelDontTalkMe);
+		Engine_EventSetMessage(MsgTolbiShipDontFeelDontTalkMe);
 		Engine_EventShowMessage(11, 0);
 		Engine_EventEnd();
 	}
@@ -678,8 +678,8 @@ static void EV11_TALK(void)
 		struct FieldActor *leader;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(actor);
-		Engine_EventSetMessage(MsgFuneYouFinallyPickedSomeoneDidnt);
+		TolbiShipInteriors_TurnActorToOpenSide(actor);
+		Engine_EventSetMessage(MsgTolbiShipYouFinallyPickedSomeoneDidnt);
 		FieldScene_RunStepThen10(11);
 		Engine_ActorSetAnimation(actor, 2);
 		leader = Object_GetById(0);
@@ -693,19 +693,19 @@ static void EV11_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(11, MsgFuneDontTellGoing, 0x993);
+		FieldScene_RunPrimarySequence(11, MsgTolbiShipDontTellGoing, 0x993);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(11, MsgFuneDontTellGoing, 0x91a);
+		FieldScene_RunPrimarySequence(11, MsgTolbiShipDontTellGoing, 0x91a);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(11, MsgFuneDontTellGoing, 0x938);
+		FieldScene_RunPrimarySequence(11, MsgTolbiShipDontTellGoing, 0x938);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(11, MsgFuneDontTellGoing, 0x92f);
+		FieldScene_RunPrimarySequence(11, MsgTolbiShipDontTellGoing, 0x92f);
 	}
 }
 
@@ -718,8 +718,8 @@ static void EV12_TALK_06(void)
 	if (GameFlag_IsSet(0x300) != 0)
 	{
 		rec7 = SceneState_ApplyLevelFromFlags();
-		FuneHeya_TurnActorToOpenSide(rec7);
-		Engine_EventSetMessage(MsgFuneGivesMeChillsThinkCould);
+		TolbiShipInteriors_TurnActorToOpenSide(rec7);
+		Engine_EventSetMessage(MsgTolbiShipGivesMeChillsThinkCould);
 		FieldScene_RunStepThen10(12);
 		Engine_ActorSetAnimation(rec7, 2);
 		record = Object_GetById(0);
@@ -734,7 +734,7 @@ static void EV12_TALK_06(void)
 	{
 		Engine_ActorRunRepeatedMotion(12, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgFuneOhhhhNooooGoingMakeMe);
+		Engine_EventSetMessage(MsgTolbiShipOhhhhNooooGoingMakeMe);
 		Event_OpenMessage(12, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -783,8 +783,8 @@ static void EV09_TALK(void)
 	if (GameFlag_IsSet(0x300) != 0)
 	{
 		rec7 = SceneState_ApplyLevelFromFlags();
-		FuneHeya_TurnActorToOpenSide(rec7);
-		Engine_EventSetMessage(MsgFuneRobinYouveGotGoodEye);
+		TolbiShipInteriors_TurnActorToOpenSide(rec7);
+		Engine_EventSetMessage(MsgTolbiShipIsaacYouveGotGoodEye);
 		FieldScene_RunStepThen10(9);
 		Engine_ActorSetAnimation(rec7, 2);
 		record = Object_GetById(0);
@@ -797,7 +797,7 @@ static void EV09_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgFuneHaHaHaRowingFeel);
+		Engine_EventSetMessage(MsgTolbiShipHaHaHaRowingFeel);
 		Engine_EventShowMessageAndWait(9, 0, 60);
 		Engine_ActorRunRepeatedMotion(9, 1);
 		Event_OpenMessage(9, 0);
@@ -847,8 +847,8 @@ static void EV13_TALK(void)
 		struct FieldActor *p;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(o);
-		Engine_EventSetMessage(MsgFuneThatsWhoYouPickedOarsman);
+		TolbiShipInteriors_TurnActorToOpenSide(o);
+		Engine_EventSetMessage(MsgTolbiShipThatsWhoYouPickedOarsman);
 		FieldScene_RunStepThen10(13);
 		Engine_ActorSetAnimation(o, 2);
 		p = Object_GetById(0);
@@ -862,19 +862,19 @@ static void EV13_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(13, MsgFuneNotThinkingMaking, 0x995);
+		FieldScene_RunPrimarySequence(13, MsgTolbiShipNotThinkingMaking, 0x995);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(13, MsgFuneNotThinkingMaking, 0x91c);
+		FieldScene_RunPrimarySequence(13, MsgTolbiShipNotThinkingMaking, 0x91c);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(13, MsgFuneNotThinkingMaking, 0x93a);
+		FieldScene_RunPrimarySequence(13, MsgTolbiShipNotThinkingMaking, 0x93a);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(13, MsgFuneNotThinkingMaking, 0x931);
+		FieldScene_RunPrimarySequence(13, MsgTolbiShipNotThinkingMaking, 0x931);
 	}
 }
 
@@ -886,8 +886,8 @@ static void EV14_TALK(void)
 		struct FieldActor *p;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(o);
-		Engine_EventSetMessage(MsgFuneIfYouveChosenOarsmanLets);
+		TolbiShipInteriors_TurnActorToOpenSide(o);
+		Engine_EventSetMessage(MsgTolbiShipIfYouveChosenOarsmanLets);
 		FieldScene_RunStepThen10(14);
 		Engine_ActorSetAnimation(o, 2);
 		p = Object_GetById(0);
@@ -901,19 +901,19 @@ static void EV14_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(14, MsgFuneOarsmanGiveBreak, 0x996);
+		FieldScene_RunPrimarySequence(14, MsgTolbiShipOarsmanGiveBreak, 0x996);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(14, MsgFuneOarsmanGiveBreak, 0x91d);
+		FieldScene_RunPrimarySequence(14, MsgTolbiShipOarsmanGiveBreak, 0x91d);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(14, MsgFuneOarsmanGiveBreak, 0x93b);
+		FieldScene_RunPrimarySequence(14, MsgTolbiShipOarsmanGiveBreak, 0x93b);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(14, MsgFuneOarsmanGiveBreak, 0x932);
+		FieldScene_RunPrimarySequence(14, MsgTolbiShipOarsmanGiveBreak, 0x932);
 	}
 }
 
@@ -925,8 +925,8 @@ static void EV15_TALK(void)
 		struct FieldActor *p;
 
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(o);
-		Engine_EventSetMessage(MsgFuneYouveBeenChosenAsOarsman);
+		TolbiShipInteriors_TurnActorToOpenSide(o);
+		Engine_EventSetMessage(MsgTolbiShipYouveBeenChosenAsOarsman);
 		FieldScene_RunStepThen10(15);
 		Engine_ActorSetAnimation(o, 2);
 		p = Object_GetById(0);
@@ -940,19 +940,19 @@ static void EV15_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		FieldScene_RunPrimarySequence(15, MsgFunePoorOarsmanFeel, 0x997);
+		FieldScene_RunPrimarySequence(15, MsgTolbiShipPoorOarsmanFeel, 0x997);
 	}
 	else if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		FieldScene_RunPrimarySequence(15, MsgFunePoorOarsmanFeel, 0x91e);
+		FieldScene_RunPrimarySequence(15, MsgTolbiShipPoorOarsmanFeel, 0x91e);
 	}
 	else if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		FieldScene_RunPrimarySequence(15, MsgFunePoorOarsmanFeel, 0x93c);
+		FieldScene_RunPrimarySequence(15, MsgTolbiShipPoorOarsmanFeel, 0x93c);
 	}
 	else
 	{
-		FieldScene_RunPrimarySequence(15, MsgFunePoorOarsmanFeel, 0x933);
+		FieldScene_RunPrimarySequence(15, MsgTolbiShipPoorOarsmanFeel, 0x933);
 	}
 }
 
@@ -965,8 +965,8 @@ static void EV16_TALK(void)
 	{
 		obj = SceneState_ApplyLevelFromFlags();
 		Engine_EventBegin();
-		FuneHeya_TurnActorToOpenSide(obj);
-		Engine_EventSetMessage(MsgFuneHoHoPersonGoingGet);
+		TolbiShipInteriors_TurnActorToOpenSide(obj);
+		Engine_EventSetMessage(MsgTolbiShipHoHoPersonGoingGet);
 		FieldScene_RunStepThen10(16);
 		Engine_ActorSetAnimation(obj, 2);
 
@@ -984,19 +984,19 @@ static void EV16_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x92b) != 0)
 		{
-			FieldScene_RunPrimarySequence(16, MsgFunePeopleAskingFrail, 0x998);
+			FieldScene_RunPrimarySequence(16, MsgTolbiShipPeopleAskingFrail, 0x998);
 		}
 		else if (Engine_GameFlagIsSet(0x92a) != 0)
 		{
-			FieldScene_RunPrimarySequence(16, MsgFunePeopleAskingFrail, 0x91f);
+			FieldScene_RunPrimarySequence(16, MsgTolbiShipPeopleAskingFrail, 0x91f);
 		}
 		else if (Engine_GameFlagIsSet(0x929) != 0)
 		{
-			FieldScene_RunPrimarySequence(16, MsgFunePeopleAskingFrail, 0x93d);
+			FieldScene_RunPrimarySequence(16, MsgTolbiShipPeopleAskingFrail, 0x93d);
 		}
 		else
 		{
-			FieldScene_RunPrimarySequence(16, MsgFunePeopleAskingFrail, 0x934);
+			FieldScene_RunPrimarySequence(16, MsgTolbiShipPeopleAskingFrail, 0x934);
 		}
 	}
 }
@@ -1033,7 +1033,7 @@ static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	return 0;
 }
 
-static void FuneHeya_TurnActorToOpenSide(s32 a0)
+static void TolbiShipInteriors_TurnActorToOpenSide(s32 a0)
 {
 	s32				   p10;
 	struct FieldActor *rec4;
@@ -1077,7 +1077,7 @@ static void FuneHeya_TurnActorToOpenSide(s32 a0)
 	Actor_SetSpeed(a0, 0x19999, 0xcccc);
 	Engine_ActorSetAnimation(a0, 2);
 	{
-		s32 w = FuneHeya_TurnSteps[v6];
+		s32 w = TolbiShipInteriors_TurnSteps[v6];
 
 		Engine_ActorSetDestinationOffset(a0, w >> 16, (w << 16) >> 16);
 	}
@@ -1111,7 +1111,7 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
 static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
 	struct FieldActor *obj = Object_GetById(0);
-	u32				   ofs = FuneHeya_TurnSteps[bucket];
+	u32				   ofs = TolbiShipInteriors_TurnSteps[bucket];
 	s32				   x = obj->x.part.pixel + ((s32)ofs >> 16);
 	s32				   z = obj->z.part.pixel + (s16)ofs;
 
@@ -1152,18 +1152,18 @@ static s32 SceneState_ApplyLevelFromFlags(void)
 		ret = 1;
 	}
 
-	return FuneHeya_FindFirstSetFlag(ret, 1);
+	return TolbiShipInteriors_FindFirstSetFlag(ret, 1);
 }
 
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x935))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(0x12, 0);
 	Engine_EventEnd();
 }
@@ -1172,11 +1172,11 @@ static void EV19_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x936))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(0x13, 0);
 	Engine_EventEnd();
 }
@@ -1185,11 +1185,11 @@ static void EV20_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x937))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(0x14, 0);
 	Engine_EventEnd();
 }
@@ -1198,9 +1198,9 @@ static void EV21_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
-		Engine_EventSetMessage(MsgFuneHowManyMonstersOutThere);
+		Engine_EventSetMessage(MsgTolbiShipHowManyMonstersOutThere);
 	else
-		Engine_EventSetMessage(MsgFuneAnotherMonsterIsntFirstClass);
+		Engine_EventSetMessage(MsgTolbiShipAnotherMonsterIsntFirstClass);
 	Engine_EventShowMessage(21, 0);
 	Engine_EventEnd();
 }
@@ -1209,11 +1209,11 @@ static void EV22_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x939))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(22, 0);
 	Engine_EventEnd();
 }
@@ -1222,11 +1222,11 @@ static void EV23_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x93a))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(23, 0);
 	Engine_EventEnd();
 }
@@ -1235,11 +1235,11 @@ static void EV24_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
-		Engine_EventSetMessage(MsgFuneThingHasKajaHisMen);
+		Engine_EventSetMessage(MsgTolbiShipThingHasKajaHisMen);
 	else if (Engine_GameFlagIsSet(0x93b))
-		Engine_EventSetMessage(MsgFuneMonstersEverywhereImStuckRowing);
+		Engine_EventSetMessage(MsgTolbiShipMonstersEverywhereImStuckRowing);
 	else
-		Engine_EventSetMessage(MsgFuneShipStartingListIfWe);
+		Engine_EventSetMessage(MsgTolbiShipShipStartingListIfWe);
 	Engine_EventShowMessage(24, 0);
 	Engine_EventEnd();
 }
@@ -1248,9 +1248,9 @@ static void EV25_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
-		Engine_EventSetMessage(MsgFuneHowManyMonstersOutThere);
+		Engine_EventSetMessage(MsgTolbiShipHowManyMonstersOutThere);
 	else
-		Engine_EventSetMessage(MsgFuneAnotherMonsterIsntFirstClass);
+		Engine_EventSetMessage(MsgTolbiShipAnotherMonsterIsntFirstClass);
 	Engine_EventShowMessage(25, 0);
 	Engine_EventEnd();
 }
@@ -1259,11 +1259,11 @@ static void EV18_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x935))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(18, 0);
 	Engine_EventEnd();
 }
@@ -1272,11 +1272,11 @@ static void EV19_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x936))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(19, 0);
 	Engine_EventEnd();
 }
@@ -1285,11 +1285,11 @@ static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x937))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(20, 0);
 	Engine_EventEnd();
 }
@@ -1298,9 +1298,9 @@ static void EV21_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
-		Engine_EventSetMessage(MsgFuneHadIdeaThereWereMany);
+		Engine_EventSetMessage(MsgTolbiShipHadIdeaThereWereMany);
 	else
-		Engine_EventSetMessage(MsgFuneWereSurroundedByMonstersStill);
+		Engine_EventSetMessage(MsgTolbiShipWereSurroundedByMonstersStill);
 	Engine_EventShowMessage(21, 0);
 	Engine_EventEnd();
 }
@@ -1309,11 +1309,11 @@ static void EV22_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x939))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(22, 0);
 	Engine_EventEnd();
 }
@@ -1322,11 +1322,11 @@ static void EV23_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x93a))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(23, 0);
 	Engine_EventEnd();
 }
@@ -1335,11 +1335,11 @@ static void EV24_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
-		Engine_EventSetMessage(MsgFuneDontCareTakesJustHurry);
+		Engine_EventSetMessage(MsgTolbiShipDontCareTakesJustHurry);
 	else if (Engine_GameFlagIsSet(0x93b))
-		Engine_EventSetMessage(MsgFuneIfThoseMonstersComeBack);
+		Engine_EventSetMessage(MsgTolbiShipIfThoseMonstersComeBack);
 	else
-		Engine_EventSetMessage(MsgFuneBoatsRockingMuchImCertain);
+		Engine_EventSetMessage(MsgTolbiShipBoatsRockingMuchImCertain);
 	Engine_EventShowMessage(24, 0);
 	Engine_EventEnd();
 }
@@ -1348,9 +1348,9 @@ static void EV25_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
-		Engine_EventSetMessage(MsgFuneHadIdeaThereWereMany);
+		Engine_EventSetMessage(MsgTolbiShipHadIdeaThereWereMany);
 	else
-		Engine_EventSetMessage(MsgFuneWereSurroundedByMonstersStill);
+		Engine_EventSetMessage(MsgTolbiShipWereSurroundedByMonstersStill);
 	Engine_EventShowMessage(25, 0);
 	Engine_EventEnd();
 }
@@ -1405,23 +1405,23 @@ static void FieldScene_RunScene3b1SequenceC(void)
 		Engine_EventBegin();
 		if (Engine_GameFlagIsSet(0x93e) != 0)
 		{
-			Engine_EventSetMessage(MsgFuneGoodShipHasArrivedSafely);
+			Engine_EventSetMessage(MsgTolbiShipGoodShipHasArrivedSafely);
 		}
 		else if (Engine_GameFlagIsSet(0x8a0) != 0)
 		{
-			Engine_EventSetMessage(MsgFuneHateArguing);
+			Engine_EventSetMessage(MsgTolbiShipHateArguing);
 		}
 		else if (Engine_GameFlagIsSet(0x928) != 0)
 		{
-			Engine_EventSetMessage(MsgFuneShipsCrewReadyAnything);
+			Engine_EventSetMessage(MsgTolbiShipShipsCrewReadyAnything);
 		}
 		else if (Engine_GameFlagIsSet(0x925) != 0)
 		{
-			Engine_EventSetMessage(MsgFuneShipsCrewReadyForAnything);
+			Engine_EventSetMessage(MsgTolbiShipShipsCrewReadyForAnything);
 		}
 		else
 		{
-			Engine_EventSetMessage(MsgFuneImSpreadingGoodwillWhereverTravel);
+			Engine_EventSetMessage(MsgTolbiShipImSpreadingGoodwillWhereverTravel);
 		}
 		if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0)
 		{
@@ -1435,7 +1435,7 @@ static void FieldScene_RunScene3b1SequenceC(void)
 	}
 }
 
-static void FuneHeya_RunFlagBranchSequence(void)
+static void TolbiShipInteriors_RunFlagBranchSequence(void)
 {
 
 	Engine_EventBegin();
@@ -1444,21 +1444,21 @@ static void FuneHeya_RunFlagBranchSequence(void)
 	GameFlag_Clear(0x8f0);
 	if (Engine_GameFlagIsSet(0x928) == 0)
 	{
-		Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
+		Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiShipInteriors, 16);
 		BattleFx_SetWeightedResult(62, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x929) == 0)
 		{
-			Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
+			Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiShipInteriors, 18);
 			BattleFx_SetWeightedResult(62, 1);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(0x92a) == 0)
 			{
-				Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
+				Party_SetFields1ceAnd1d0((s32)&SceneId_TolbiShipInteriors, 20);
 				BattleFx_SetWeightedResult(62, 2);
 			}
 		}
@@ -1472,7 +1472,7 @@ static void EV04_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Ui_SetRenderResultFromObject(8);
-		UiText_ShowCenteredMessage(MsgFuneWhereGoingSlay, 1, 8);
+		UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
 		FieldScene_CallPairWith10(0, 0x4000);
@@ -1489,7 +1489,7 @@ static void EV10_TOUCH(void)
 	Battle_ResetEffectCounter();
 	Engine_CameraSetSpeed(0x19999, 0x3333);
 	ConfigureSceneMotionFlags(0xe0 << 17, -1, 0x027e0000, 0x10000028u);
-	Engine_EventSetMessage(MsgFuneWonderCouldHaveHappened);
+	Engine_EventSetMessage(MsgTolbiShipWonderCouldHaveHappened);
 
 	FieldScene_RunStepThen10(8);
 	FieldScene_RunStepThen10(10);
@@ -1529,7 +1529,7 @@ static void EV11_TOUCH(void)
 		Camera_SetSpeed(0x26666, 0x4ccc);
 		ConfigureSceneMotionFlags(0x5b70000, -1, 0x1d00000, 0x10000014);
 		Engine_ActorRunRepeatedMotion(13, 1);
-		Engine_EventSetMessage(MsgFuneIfWeArentGoingSet);
+		Engine_EventSetMessage(MsgTolbiShipIfWeArentGoingSet);
 		FieldScene_RunStepThen10(0x200d);
 		FieldScene_CallPairWith10(12, 0xd000);
 		request_a = 0x800c;
@@ -1610,7 +1610,7 @@ static void EV11_TOUCH(void)
 		Engine_ActorSetAnimationAndWait(13, 3);
 		Actor_SetSpeed(14, 0x19999, 0xcccc);
 		Actor_SetSpeed(13, 0x19999, 0xcccc);
-		action = (s32)FuneHeya_ActionScriptA;
+		action = (s32)TolbiShipInteriors_ActionScriptA;
 		Engine_ActorEnableActionCallback(14, action);
 		Engine_ActorEnableActionCallback(13, action);
 		Engine_EventWait(20);
@@ -1649,7 +1649,7 @@ static void FieldScene_RunExtendedActorChoreography(void)
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	ConfigureSceneMotionFlags(0x1c80000, -1, 0x2880000, 0x10000014);
 	Engine_ActorRunRepeatedMotion(9, 1);
-	Engine_EventSetMessage(MsgFuneYoureTryingLaunchShip);
+	Engine_EventSetMessage(MsgTolbiShipYoureTryingLaunchShip);
 	FieldScene_RunStepThen10(9);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
 	Actor_FaceDirection(10, 0xd000, 0);
@@ -1895,7 +1895,7 @@ static void EV08_SCRIPT(void)
 	Actor_ShowEmote(8, 0x100, 40);
 	request_a = 0x1008;
 	Engine_ActorStartRepeatedMotion(8, 3);
-	Engine_EventSetMessage(MsgFuneItsMyLuckyAnchor);
+	Engine_EventSetMessage(MsgTolbiShipItsMyLuckyAnchor);
 	FieldScene_RunStepThen10(request_a);
 	Engine_ActorStartRepeatedMotion(9, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
@@ -1979,27 +1979,27 @@ static void EV08_SCRIPT(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_WalkToAndWait(GERALD, 0x1e6, 0x270);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_WalkToAndWait(GARET, 0x1e6, 0x270);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
 	record = Object_GetById(1);
 	if (record != 0)
 	{
-		Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_WalkToAndWait(IWAN, 0x1e6, 0x280);
-	Actor_FaceDirection(IWAN, FACING_WEST, 0);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_WalkToAndWait(IVAN, 0x1e6, 0x280);
+	Actor_FaceDirection(IVAN, FACING_WEST, 0);
 	record = Object_GetById(2);
 	if (record != 0)
 	{
-		Actor_SetPosition(MEARI, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	Actor_WalkToAndWait(MEARI, 0x1e6, 0x290);
-	Actor_FaceDirection(MEARI, FACING_WEST, 20);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	Actor_WalkToAndWait(MIA, 0x1e6, 0x290);
+	Actor_FaceDirection(MIA, FACING_WEST, 20);
 	Actor_ShowEmote(12, 0x108, 40);
 	FieldScene_RunStepThen10(request_b);
 	Engine_ActorRunRepeatedMotion(9, 1);
@@ -2098,7 +2098,7 @@ static void EV08_SCRIPT(void)
 	Engine_ActorStartRepeatedMotion(10, 2);
 	Engine_ActorRunRepeatedMotion(13, 2);
 	Engine_EventWait(20);
-	action = (s32)FuneHeya_ActionScriptB;
+	action = (s32)TolbiShipInteriors_ActionScriptB;
 	Engine_ActorEnableActionCallback(10, action);
 	Engine_EventWait(4);
 	Engine_ActorEnableActionCallback(11, action);
@@ -2106,30 +2106,30 @@ static void EV08_SCRIPT(void)
 	Engine_ActorEnableActionCallback(12, action);
 	Engine_EventWait(4);
 	Engine_ActorEnableActionCallback(9, action);
-	Engine_ActorSetAnimation(MEARI, 2);
+	Engine_ActorSetAnimation(MIA, 2);
 	record = Object_GetById(2);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(MIA, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(MEARI);
-	Actor_SetPosition(MEARI, 0, 0);
-	Engine_ActorSetAnimation(IWAN, 2);
+	Engine_ActorWaitForMove(MIA);
+	Actor_SetPosition(MIA, 0, 0);
+	Engine_ActorSetAnimation(IVAN, 2);
 	record = Object_GetById(1);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(IWAN);
-	Actor_SetPosition(IWAN, 0, 0);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorWaitForMove(IVAN);
+	Actor_SetPosition(IVAN, 0, 0);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Engine_ActorEnableActionCallback(13, action);
 	Actor_WalkToAndWait(8, 0x1c8, 0x288);
 	FieldScene_CallPairWith10(8, 0);
@@ -2138,7 +2138,7 @@ static void EV08_SCRIPT(void)
 	Engine_EventEnd();
 }
 
-s32 FuneHeya_ApplyEntryState(void)
+s32 TolbiShipInteriors_ApplyEntryState(void)
 {
 	Engine_TaskWait(1);
 	Engine_GameFlagSet(0x144);
@@ -2187,36 +2187,36 @@ s32 FuneHeya_ApplyEntryState(void)
 		RunSceneSelectionChain();
 		break;
 	case 5:
-		FuneHeya_ApplyFlaggedLayout();
+		TolbiShipInteriors_ApplyFlaggedLayout();
 		break;
 	case 10:
 		if (Engine_GameFlagIsSet(0x928) != 0)
 		{
-			FuneHeya_AnnounceDeparture();
+			TolbiShipInteriors_AnnounceDeparture();
 		}
 		else
 		{
-			FuneHeya_CastOff();
+			TolbiShipInteriors_CastOff();
 		}
 		break;
 	case 11:
 		if (Engine_GameFlagIsSet(0x928) != 0)
 		{
-			FuneHeya_CallActorEighteenToRow();
+			TolbiShipInteriors_CallActorEighteenToRow();
 		}
 		else
 		{
-			FuneHeya_CallActorSixteenToRow();
+			TolbiShipInteriors_CallActorSixteenToRow();
 		}
 		break;
 	case 12:
 		FieldScene_RunFlagBranchedSetupCascade();
 		break;
 	case 13:
-		FuneHeya_AskAboutMonsters();
+		TolbiShipInteriors_AskAboutMonsters();
 		break;
 	case 14:
-		FuneHeya_AnnounceTurn();
+		TolbiShipInteriors_AnnounceTurn();
 		break;
 	case 15:
 		if (Engine_GameFlagIsSet(0x109) != 0)
@@ -2224,9 +2224,9 @@ s32 FuneHeya_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 1, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
-			Engine_ActorEnableActionCallback(38, FuneHeya_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(38, TolbiShipInteriors_EntryActionScript);
 			Engine_ActorSetChildValue(36, 3);
 			Engine_ActorSetChildValue(37, 3);
 			Engine_ActorSetChildValue(38, 3);
@@ -2234,7 +2234,7 @@ s32 FuneHeya_ApplyEntryState(void)
 		}
 		else
 		{
-			FuneHeya_SetupFirstRowingPair();
+			TolbiShipInteriors_SetupFirstRowingPair();
 		}
 		break;
 	case 16:
@@ -2246,13 +2246,13 @@ s32 FuneHeya_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 2, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
 			Engine_EventEnd();
 		}
 		else
 		{
-			FuneHeya_SetupReplacementRower();
+			TolbiShipInteriors_SetupReplacementRower();
 		}
 		break;
 	case 18:
@@ -2264,15 +2264,15 @@ s32 FuneHeya_ApplyEntryState(void)
 			Engine_EventBegin();
 			FieldScene_RunSceneStep(25, 3, 0);
 			FieldScene_RunSceneStep(22, 0, 0);
-			Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
-			Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
+			Engine_ActorEnableActionCallback(36, TolbiShipInteriors_EntryActionScript);
+			Engine_ActorEnableActionCallback(37, TolbiShipInteriors_EntryActionScript);
 			Engine_ActorSetChildValue(36, 3);
 			Engine_ActorSetChildValue(37, 3);
 			Engine_EventEnd();
 		}
 		else
 		{
-			FuneHeya_SetupReplacementPair();
+			TolbiShipInteriors_SetupReplacementPair();
 		}
 		break;
 	case 20:
@@ -2303,7 +2303,7 @@ s32 FuneHeya_ApplyEntryState(void)
 		}
 		break;
 	case 24:
-		FuneHeya_DismissReplacementRowers();
+		TolbiShipInteriors_DismissReplacementRowers();
 		break;
 	case 30:
 		FieldScene_RunSceneStep(20, 0x926, 0x92b);
@@ -2315,7 +2315,7 @@ s32 FuneHeya_ApplyEntryState(void)
 	return 0;
 }
 
-static void FuneHeya_ApplyFlaggedLayout(void)
+static void TolbiShipInteriors_ApplyFlaggedLayout(void)
 {
 	struct FieldActor *actor;
 	struct FieldActor *other;
@@ -2326,12 +2326,12 @@ static void FuneHeya_ApplyFlaggedLayout(void)
 
 	if (!Engine_GameFlagIsSet(0x911))
 	{
-		FuneHeya_PlaceAnchorCharm();
+		TolbiShipInteriors_PlaceAnchorCharm();
 		return;
 	}
 	if (GameFlag_IsSet(0x928))
 	{
-		FuneHeya_PlaceAnchorCharm();
+		TolbiShipInteriors_PlaceAnchorCharm();
 	}
 	done = Engine_GameFlagIsSet(0x93e);
 	if (done != 0)
@@ -2350,7 +2350,7 @@ static void FuneHeya_ApplyFlaggedLayout(void)
 		zero.v = 0;
 		actor->rise_enabled = zero.v;
 		actor->collision_flags |= 128;
-		actor->update = (void (*)(union FieldObject *))&FuneHeya_RunWalkerStep;
+		actor->update = (void (*)(union FieldObject *))&TolbiShipInteriors_RunWalkerStep;
 		other = Object_GetById(8);
 		other->rise_counter = zero.v;
 		other->update = (void (*)(union FieldObject *))&UpdateActorNineEffectMode;
@@ -2397,14 +2397,14 @@ static void SceneState_RunFlagGatedSetupCascade(void)
 	if (Engine_GameFlagIsSet(0x8a0) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(8, 0x98, 0x1bc, 0x3000);
-		Engine_ActorEnableActionCallback(8, FuneHeya_ActionScriptF);
+		Engine_ActorEnableActionCallback(8, TolbiShipInteriors_ActionScriptF);
 		OverlayObject_SetPositionAndHeading(10, 0xb8, 0x1e0, 0xb000);
 		OverlayObject_SetPositionAndHeading(12, 0xaa, 0x1e8, 0xb000);
 		OverlayObject_SetPositionAndHeading(13, 0x88, 0x1e8, 0xd000);
 		OverlayObject_SetPositionAndHeading(15, 0x78, 0x1e0, 0xd000);
 		OverlayObject_SetPositionAndHeading(14, 0xb8, 0x20e, 0xb000);
 		OverlayObject_SetPositionAndHeading(11, 0x88, 0x248, 0x8000);
-		Engine_ActorEnableActionCallback(11, FuneHeya_ActionScriptE);
+		Engine_ActorEnableActionCallback(11, TolbiShipInteriors_ActionScriptE);
 		return;
 	}
 
@@ -2509,7 +2509,7 @@ static void SceneActor_SetFlagBit3ForActors28To35(void)
 	}
 }
 
-static void FuneHeya_PlaceFoundActors(s32 gated)
+static void TolbiShipInteriors_PlaceFoundActors(s32 gated)
 {
 	s32 actor;
 
@@ -2517,7 +2517,7 @@ static void FuneHeya_PlaceFoundActors(s32 gated)
 	{
 		return;
 	}
-	if ((actor = FuneHeya_FindFirstSetFlag(0, 0)) != 0)
+	if ((actor = TolbiShipInteriors_FindFirstSetFlag(0, 0)) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(actor, 410, 172, 0xd000);
 		Engine_ActorSetPosition(10, 0, 0);
@@ -2526,7 +2526,7 @@ static void FuneHeya_PlaceFoundActors(s32 gated)
 	{
 		return;
 	}
-	if ((actor = FuneHeya_FindFirstSetFlag(1, 0)) != 0)
+	if ((actor = TolbiShipInteriors_FindFirstSetFlag(1, 0)) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(actor, 470, 172, 0xb000);
 		Engine_ActorSetPosition(11, 0, 0);
@@ -2535,7 +2535,7 @@ static void FuneHeya_PlaceFoundActors(s32 gated)
 	{
 		return;
 	}
-	if ((actor = FuneHeya_FindFirstSetFlag(2, 0)) != 0)
+	if ((actor = TolbiShipInteriors_FindFirstSetFlag(2, 0)) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(actor, 410, 204, 0xd000);
 		Engine_ActorSetPosition(12, 0, 0);
@@ -2544,7 +2544,7 @@ static void FuneHeya_PlaceFoundActors(s32 gated)
 	{
 		return;
 	}
-	if ((actor = FuneHeya_FindFirstSetFlag(3, 0)) != 0)
+	if ((actor = TolbiShipInteriors_FindFirstSetFlag(3, 0)) != 0)
 	{
 		OverlayObject_SetPositionAndHeading(actor, 470, 204, 0xb000);
 		Engine_ActorSetPosition(13, 0, 0);
@@ -2574,7 +2574,7 @@ static void FieldScene_RunFourActorCoordinatePresentation(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a8, 148);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
 	Engine_ActorRunRepeatedMotion(27, 1);
-	Engine_EventSetMessage(MsgFuneOurReplacementNeverArrivedBut);
+	Engine_EventSetMessage(MsgTolbiShipOurReplacementNeverArrivedBut);
 	FieldScene_RunStepThen10(27);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	FieldScene_RunStepThen10(8);
@@ -2584,27 +2584,27 @@ static void FieldScene_RunFourActorCoordinatePresentation(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(GERALD, 0x1b8, 148);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(GARET, 0x1b8, 148);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
 	record = Object_GetById(1);
 	if (record != 0)
 	{
-		Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(IWAN, 0x1c8, 148);
-	Actor_FaceDirection(IWAN, FACING_SOUTH, 0);
+	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(IVAN, 0x1c8, 148);
+	Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
 	record = Object_GetById(2);
 	if (record != 0)
 	{
-		Actor_SetPosition(MEARI, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
 	}
-	Actor_SetSpeed(MEARI, 0xcccc, 0x6666);
-	Actor_WalkToAndWait(MEARI, 0x1d8, 148);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 20);
+	Actor_SetSpeed(MIA, 0xcccc, 0x6666);
+	Actor_WalkToAndWait(MIA, 0x1d8, 148);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 20);
 	FieldScene_RunSceneStep(0, 0, 60);
 	FieldScene_RunSceneStep(1, 0x4000, 20);
 	FieldScene_RunSceneStep(2, 1, 20);
@@ -2613,8 +2613,8 @@ static void FieldScene_RunFourActorCoordinatePresentation(void)
 	Engine_ActorStartRepeatedMotion(9, 1);
 	Actor_ShowEmote(9, (mode << 1), 40);
 	FieldScene_RunStepThen10(9);
-	Engine_ActorStartRepeatedMotion(GERALD, 3);
-	Actor_ShowEmote(GERALD, 0x103, 60);
+	Engine_ActorStartRepeatedMotion(GARET, 3);
+	Actor_ShowEmote(GARET, 0x103, 60);
 	Engine_ActorSetAnimationAndWait(27, 3);
 	FieldScene_RunStepThen10(27);
 	Engine_ActorRunRepeatedMotion(10, 1);
@@ -2681,7 +2681,7 @@ static void FieldScene_RunFourActorCoordinatePresentation(void)
 	GameFlag_Set(0x926);
 }
 
-static void FuneHeya_CastOff(void)
+static void TolbiShipInteriors_CastOff(void)
 {
 	s32 rec7;
 
@@ -2694,33 +2694,33 @@ static void FuneHeya_CastOff(void)
 	Actor_WalkToAndWait(8, 0x1d8, 0x254);
 	Actor_FaceDirection(8, FACING_WEST, 20);
 	Engine_ActorJump(8, 4, 20);
-	rec7 = (s32)FuneHeya_PlaceAnchorCharm();
+	rec7 = (s32)TolbiShipInteriors_PlaceAnchorCharm();
 	Engine_EventWait(20);
 	Event_PlayCue(214);
-	Engine_ObjectSetScript(rec7, FuneHeya_Script01);
+	Engine_ObjectSetScript(rec7, TolbiShipInteriors_Script01);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(8, 0x1d2, 0x270);
 	FieldScene_CallPairWith10(8, 0x5000);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage(MsgFuneCastOff);
+	Engine_EventSetMessage(MsgTolbiShipCastOff);
 	Event_ShowMessageAndWait(8, 0, 20);
 	FieldScene_RunSceneStep(9, 11, 0);
 }
 
-static void FuneHeya_AnnounceDeparture(void)
+static void TolbiShipInteriors_AnnounceDeparture(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(15, 1, 1);
 	Actor_FaceDirection(8, 0x5000, 40);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage(MsgFuneWereOff);
+	Engine_EventSetMessage(MsgTolbiShipWereOff);
 	Event_ShowMessageAndWait(8, 0, 20);
 	FieldScene_RunSceneStep(9, 11, 0);
 }
 
-static void FuneHeya_CallActorSixteenToRow(void)
+static void TolbiShipInteriors_CallActorSixteenToRow(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 0, 0);
@@ -2734,12 +2734,12 @@ static void FuneHeya_CallActorSixteenToRow(void)
 	Actor_WalkToAndWait(16, 168, 0x22a);
 	Actor_FaceDirection(16, FACING_WEST, 20);
 	Engine_ActorStartRepeatedMotion(16, 2);
-	Engine_EventSetMessage(MsgFuneRowThoseOars);
+	Engine_EventSetMessage(MsgTolbiShipRowThoseOars);
 	Event_ShowMessageAndWait(16, 0, 20);
 	FieldScene_RunSceneStep(9, 12, 0);
 }
 
-static void FuneHeya_CallActorEighteenToRow(void)
+static void TolbiShipInteriors_CallActorEighteenToRow(void)
 {
 	Engine_EventBegin();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2752,7 +2752,7 @@ static void FuneHeya_CallActorEighteenToRow(void)
 	Actor_WalkToAndWait(18, 168, 0x22a);
 	Actor_FaceDirection(18, FACING_WEST, 20);
 	Engine_ActorStartRepeatedMotion(18, 2);
-	Engine_EventSetMessage(MsgFuneRowThoseOars);
+	Engine_EventSetMessage(MsgTolbiShipRowThoseOars);
 	Event_ShowMessageAndWait(18, 0, 20);
 	FieldScene_RunSceneStep(9, 12, 0);
 }
@@ -2814,7 +2814,7 @@ static void FieldScene_RunFlagBranchedSetupCascade(void)
 	}
 }
 
-static void FuneHeya_AskAboutMonsters(void)
+static void TolbiShipInteriors_AskAboutMonsters(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(15, 1, 1);
@@ -2822,25 +2822,25 @@ static void FuneHeya_AskAboutMonsters(void)
 	Engine_EventWait(10);
 	Actor_FaceDirection(8, 0x3000, 20);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage(MsgFuneMonsters);
+	Engine_EventSetMessage(MsgTolbiShipMonsters);
 	Event_ShowMessageAndWait(8, 0, 20);
 	FieldScene_RunSceneStep(9, 14, 0);
 }
 
-static void FuneHeya_AnnounceTurn(void)
+static void TolbiShipInteriors_AnnounceTurn(void)
 {
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
 	FieldScene_RunSceneStep(15, 1, 1);
 	Engine_ActorRunRepeatedMotion(8, 1);
-	Engine_EventSetMessage(MsgFuneImTurning);
+	Engine_EventSetMessage(MsgTolbiShipImTurning);
 	FieldScene_RunStepThen10(8);
 	Actor_FaceDirection(8, 0xd000, 40);
 	FieldScene_RunSceneStep(9, 15, 0);
 }
 
-static void FuneHeya_SetupFirstRowingPair(void)
+static void TolbiShipInteriors_SetupFirstRowingPair(void)
 {
 	s32 entry_script;
 
@@ -2850,8 +2850,8 @@ static void FuneHeya_SetupFirstRowingPair(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, 11, 12);
 	Engine_ActorSetAnimation(10, 6);
-	Engine_ActorEnableActionCallback(12, FuneHeya_ActionScriptE);
-	entry_script = (s32)FuneHeya_EntryActionScript;
+	Engine_ActorEnableActionCallback(12, TolbiShipInteriors_ActionScriptE);
+	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
 	Engine_ActorEnableActionCallback(36, entry_script);
 	Engine_ActorEnableActionCallback(37, entry_script);
 	Engine_ActorEnableActionCallback(38, entry_script);
@@ -2886,7 +2886,7 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 	x = 0x1b0;
 	v6 = 0x8000;
 	OverlayObject_SetPositionAndHeading(0, x, 134, v6);
-	FuneHeya_PlaceFoundActors(1);
+	TolbiShipInteriors_PlaceFoundActors(1);
 	Engine_TaskWait(1);
 	Engine_EventOpenScreen();
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
@@ -2898,11 +2898,11 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 	Engine_ActorFaceEachOther(27, 0, 10);
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
-		rec7 = FuneHeya_FindFirstSetFlag(a0, 0);
+		rec7 = TolbiShipInteriors_FindFirstSetFlag(a0, 0);
 		Engine_ActorRunRepeatedMotion(27, 1);
 		Engine_EventWait(20);
 		Engine_ActorFaceEachOther(27, 0, 10);
-		Engine_EventSetMessage(MsgFuneBackBroughtOarsman);
+		Engine_EventSetMessage(MsgTolbiShipBackBroughtOarsman);
 		FieldScene_RunStepThen10(CabinSpeakerRequest);
 		Engine_ActorSetAnimationAndWait(0, 3);
 		v7 = 0;
@@ -2974,7 +2974,7 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgFuneBack);
+		Engine_EventSetMessage(MsgTolbiShipBack);
 		Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
 		Engine_ActorShowEmote(27, 0x101, 60);
 		FieldScene_RunStepThen10(CabinSpeakerRequest);
@@ -2993,7 +2993,7 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 	}
 }
 
-static struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
+static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void)
 {
 	s32					set = GameFlag_IsSet(0x200);
 	struct FieldActor  *object;
@@ -3002,7 +3002,7 @@ static struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 
 	if (set != 0)
 	{
-		return FuneHeya_AnchorObject;
+		return TolbiShipInteriors_AnchorObject;
 	}
 	object = Engine_ObjectCreate(22, 0x1c70000, 0x40000, 0x2200000);
 	object->motion_flags = set;
@@ -3016,7 +3016,7 @@ static struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 	Engine_VramLoad(sprite->vram_block, 128, buffer + 0x400);
 	Engine_HeapRelease(17);
 	Engine_GameFlagSet(0x200);
-	FuneHeya_AnchorObject = object;
+	TolbiShipInteriors_AnchorObject = object;
 	return object;
 }
 
@@ -3024,7 +3024,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 {
 	if (Engine_GameFlagIsSet(0x928) != 0)
 	{
-		u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(0, 0);
+		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(0, 0);
 		Engine_ActorSetPosition(obj, 0xcd << 17, 0xac << 16);
 		FieldScene_RunSceneStep(7, obj, src);
 		Engine_ActorSetPosition(10, 0, 0);
@@ -3036,7 +3036,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 
 	if (Engine_GameFlagIsSet(0x929) != 0)
 	{
-		u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(1, 0);
+		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(1, 0);
 		Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
 		Object_GetById(obj)->scale_x = 0xffff0000;
 		FieldScene_RunSceneStep(7, obj, src);
@@ -3049,7 +3049,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 
 	if (Engine_GameFlagIsSet(0x92a) != 0)
 	{
-		u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(2, 0);
+		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(2, 0);
 		Engine_ActorSetPosition(obj, 0xcd << 17, 0xcc << 16);
 		FieldScene_RunSceneStep(7, obj, src);
 		Engine_ActorSetPosition(12, 0, 0);
@@ -3061,7 +3061,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 
 	if (Engine_GameFlagIsSet(0x92b) != 0)
 	{
-		u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(3, 0);
+		u8 *obj = (u8 *)TolbiShipInteriors_FindFirstSetFlag(3, 0);
 		Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
 		Object_GetById(obj)->scale_x = 0xffff0000;
 		FieldScene_RunSceneStep(7, obj, src);
@@ -3078,7 +3078,7 @@ static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 	FieldScene_RunSceneStep(6, 17, src);
 }
 
-static void FuneHeya_PoseSceneActor(s32 id)
+static void TolbiShipInteriors_PoseSceneActor(s32 id)
 {
 	switch (id)
 	{
@@ -3150,21 +3150,21 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 	{
 	case 0:
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-		Actor_FaceDirection(GERALD, FACING_WEST, 0);
+		Actor_FaceDirection(GARET, FACING_WEST, 0);
 		Engine_ActorFaceDirection(2, 0, 0);
-		Actor_FaceDirection(MEARI, FACING_WEST, opt);
+		Actor_FaceDirection(MIA, FACING_WEST, opt);
 		break;
 	case 1:
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, arg, 0);
-		Actor_FaceDirection(GERALD, arg, 0);
-		Actor_FaceDirection(IWAN, arg, 0);
-		Actor_FaceDirection(MEARI, arg, opt);
+		Actor_FaceDirection(GARET, arg, 0);
+		Actor_FaceDirection(IVAN, arg, 0);
+		Actor_FaceDirection(MIA, arg, opt);
 		break;
 	case 2:
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimation(GERALD, 3);
-		Engine_ActorSetAnimation(IWAN, 3);
-		Engine_ActorSetAnimation(MEARI, 3);
+		Engine_ActorSetAnimation(GARET, 3);
+		Engine_ActorSetAnimation(IVAN, 3);
+		Engine_ActorSetAnimation(MIA, 3);
 		if (arg != 0)
 		{
 			ObjectMotion_WaitForAnimationChange(3);
@@ -3177,9 +3177,9 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		break;
 	case 3:
 		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-		Actor_SetAttachedEffect(GERALD, 0x102);
-		Actor_SetAttachedEffect(IWAN, 0x102);
-		Actor_SetAttachedEffect(MEARI, 0x102);
+		Actor_SetAttachedEffect(GARET, 0x102);
+		Actor_SetAttachedEffect(IVAN, 0x102);
+		Actor_SetAttachedEffect(MIA, 0x102);
 		Engine_EventWait(opt);
 		break;
 	case 4:
@@ -3216,7 +3216,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		rec = Object_GetById(arg);
 		SetPose(rec, 0x5000);
 	}
-		FuneHeya_PoseSceneActor(arg);
+		TolbiShipInteriors_PoseSceneActor(arg);
 		if (opt == 0)
 		{
 			Object_SetActionById(arg, 0);
@@ -3243,7 +3243,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 	case 10:
 		FieldScene_RunSceneStep(24, 1, 0);
 		FieldScene_RunSceneStep(25, 0, 0);
-		FuneHeya_PlaceFoundActors(0);
+		TolbiShipInteriors_PlaceFoundActors(0);
 		OverlayObject_SetPositionAndHeading(0, 0x1b0, 168, 0x4000);
 		OverlayObject_SetPositionAndHeading(1, 0x1c0, 168, 0x4000);
 		OverlayObject_SetPositionAndHeading(2, 0x1a8, 152, 0x4000);
@@ -3334,7 +3334,7 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 		if (arg != 0)
 		{
-			FuneHeya_PlaceAnchorCharm();
+			TolbiShipInteriors_PlaceAnchorCharm();
 		}
 		ConfigureSceneMotionFlags(0x1c00000, 0x200000, 0x2700000, 0x1000001);
 		if (opt == 0)
@@ -3396,12 +3396,12 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 	case 22:
 		Engine_TaskWait(1);
 		FieldScene_RunSceneStep(23, 0, 0);
-		Engine_ActorEnableActionCallback(12, FuneHeya_ActionScriptE);
+		Engine_ActorEnableActionCallback(12, TolbiShipInteriors_ActionScriptE);
 		break;
 	case 23:
-		Engine_ActorDestroy(GERALD);
-		Engine_ActorDestroy(IWAN);
-		Engine_ActorDestroy(MEARI);
+		Engine_ActorDestroy(GARET);
+		Engine_ActorDestroy(IVAN);
+		Engine_ActorDestroy(MIA);
 		break;
 	case 24:
 		Camera_MoveTo(-1, -1, -1, 0);
@@ -3412,28 +3412,28 @@ static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		}
 		break;
 	case 25:
-		Event_CallWithLastActiveObjectId(FuneHeya_CellStepsA);
+		Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsA);
 		Engine_TaskWait(1);
 		if (arg == 1)
 		{
-			Event_CallWithLastActiveObjectId(FuneHeya_CellStepsB);
+			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsB);
 			Engine_TaskWait(1);
 		}
 		else if (arg == 2)
 		{
-			Event_CallWithLastActiveObjectId(FuneHeya_CellStepsC);
+			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsC);
 			Engine_TaskWait(1);
 		}
 		else if (arg == 3)
 		{
-			Event_CallWithLastActiveObjectId(FuneHeya_CellStepsD);
+			Event_CallWithLastActiveObjectId(TolbiShipInteriors_CellStepsD);
 			Engine_TaskWait(1);
 		}
 		break;
 	}
 }
 
-static s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
+static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate)
 {
 	s32 flag = 0;
 	s32 id = 8;
@@ -3493,24 +3493,24 @@ static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 	} while (i <= 8);
 }
 
-static void FuneHeya_SetupReplacementRower(void)
+static void TolbiShipInteriors_SetupReplacementRower(void)
 {
 	s32 rec8;
 	s32 rower_script;
 	s32 entry_script;
 
-	rec8 = FuneHeya_FindFirstSetFlag(0, 0);
+	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
 	FieldScene_RunSceneStep(25, 2, 0);
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, 12);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)FuneHeya_ActionScriptE;
+	rower_script = (s32)TolbiShipInteriors_ActionScriptE;
 	Engine_ActorEnableActionCallback(rec8, rower_script);
 	Engine_ActorDestroy(11);
 	Engine_ActorEnableActionCallback(12, rower_script);
-	entry_script = (s32)FuneHeya_EntryActionScript;
+	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
 	Engine_ActorEnableActionCallback(36, entry_script);
 	Engine_ActorEnableActionCallback(37, entry_script);
 	FieldScene_RunPositionTransferPresentation();
@@ -3535,32 +3535,32 @@ static void FieldScene_RunPositionTransferPresentation(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(IWAN, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
 	record = Object_GetById(1);
 	if (record != 0)
 	{
-		Actor_SetPosition(MEARI, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
 	}
 	Engine_TaskWait(1);
-	Actor_SetSpeed(IWAN, 0x19999, 0xcccc);
-	Actor_WalkTo(IWAN, 0x1a8, 152);
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
-	Actor_WalkTo(GERALD, 0x1c0, 168);
-	Actor_SetSpeed(MEARI, 0x20000, 0x10000);
-	Actor_WalkToAndWait(MEARI, 0x1ca, 152);
-	Engine_ActorSetAnimation(GERALD, 1);
-	Engine_ActorSetAnimation(IWAN, 1);
-	Actor_FaceDirection(IWAN, FACING_SOUTH, 0);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTH, 40);
+	Actor_SetSpeed(IVAN, 0x19999, 0xcccc);
+	Actor_WalkTo(IVAN, 0x1a8, 152);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+	Actor_WalkTo(GARET, 0x1c0, 168);
+	Actor_SetSpeed(MIA, 0x20000, 0x10000);
+	Actor_WalkToAndWait(MIA, 0x1ca, 152);
+	Engine_ActorSetAnimation(GARET, 1);
+	Engine_ActorSetAnimation(IVAN, 1);
+	Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
+	Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTH, 40);
 	Ui_SetRenderResultFromObject(10);
-	message = MsgFuneMonstersBelowdecks;
+	message = MsgTolbiShipMonstersBelowdecks;
 	UiText_ShowCenteredMessage(message, 1, 10);
 	Engine_EventWait(10);
 	FieldScene_RunSceneStep(0, 0, 40);
@@ -3573,9 +3573,9 @@ static void FieldScene_RunPositionTransferPresentation(void)
 	FieldScene_RunStepThen10(8);
 	Actor_FaceDirection(8, FACING_EAST, 20);
 	ConfigureSceneMotionFlags(0x1b80000, -1, 0x860000, 0x10000000);
-	Engine_ActorEnableActionCallback(GERALD, FuneHeya_ProgressTableA);
-	Engine_ActorEnableActionCallback(2, FuneHeya_ProgressTableA);
-	Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);
+	Engine_ActorEnableActionCallback(GARET, TolbiShipInteriors_ProgressTableA);
+	Engine_ActorEnableActionCallback(2, TolbiShipInteriors_ProgressTableA);
+	Object_SetActionCallbackAndRefreshById(3, (s32)TolbiShipInteriors_ProgressTableA);
 	Engine_EventWait(40);
 	GameFlag_Set(0x301);
 	FieldScene_RunSceneStep(23, 0, 0);
@@ -3598,11 +3598,11 @@ static void FieldScene_RunFormationAndEffectPresentation(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_SOUTHEAST, 40);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
 	FieldScene_RunSceneStep(2, 1, 20);
-	Engine_EventSetMessage(MsgFuneHeyAreYouOk);
+	Engine_EventSetMessage(MsgTolbiShipHeyAreYouOk);
 	FieldScene_RunStepThen10(27);
 	FieldScene_RunSceneStep(1, 0xc000, 0);
 	Camera_SetSpeed(0x26666, 0x4ccc);
@@ -3659,9 +3659,9 @@ static void FieldScene_RunFormationAndEffectPresentation(void)
 		FieldScene_RunStepThen10(27);
 	}
 	FieldScene_RunSceneStep(2, 1, 20);
-	action = (s32)FuneHeya_ActionScriptC;
-	Engine_ActorEnableActionCallback(GERALD, action);
-	Engine_ActorEnableActionCallback(IWAN, action);
+	action = (s32)TolbiShipInteriors_ActionScriptC;
+	Engine_ActorEnableActionCallback(GARET, action);
+	Engine_ActorEnableActionCallback(IVAN, action);
 	Object_SetActionCallbackAndRefreshById(3, action);
 	Camera_SetSpeed(0x9999, 0x1333);
 	Camera_MoveTo(0x1b80000, -1, 0xb00000, 1);
@@ -3678,12 +3678,12 @@ static void FieldScene_RunFormationAndEffectPresentation(void)
 
 static void FieldScene_RunActors24And25SetupWithValue929(void)
 {
-	s32 handle = FuneHeya_FindFirstSetFlag(0, 0);
+	s32 handle = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
 	FieldScene_RunSceneStep(25, 0, 0);
-	FuneHeya_PlaceFoundActors(0);
+	TolbiShipInteriors_PlaceFoundActors(0);
 	FieldScene_RunSceneStep(19, handle, 12);
 	Engine_ActorSetPosition(11, 0, 0);
 	FieldScene_RunFormationAndEffectPresentation();
@@ -3691,27 +3691,27 @@ static void FieldScene_RunActors24And25SetupWithValue929(void)
 	Engine_EventEnd();
 }
 
-static void FuneHeya_SetupReplacementPair(void)
+static void TolbiShipInteriors_SetupReplacementPair(void)
 {
 	s32 rec2;
 	s32 rec8;
 	s32 rower_script;
 	s32 entry_script;
 
-	rec8 = FuneHeya_FindFirstSetFlag(0, 0);
-	rec2 = FuneHeya_FindFirstSetFlag(1, 0);
+	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
 	FieldScene_RunSceneStep(25, 3, 0);
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, rec2);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)FuneHeya_ActionScriptE;
+	rower_script = (s32)TolbiShipInteriors_ActionScriptE;
 	Engine_ActorEnableActionCallback(rec8, rower_script);
 	Engine_ActorDestroy(11);
 	Engine_ActorEnableActionCallback(rec2, rower_script);
 	Engine_ActorDestroy(12);
-	entry_script = (s32)FuneHeya_EntryActionScript;
+	entry_script = (s32)TolbiShipInteriors_EntryActionScript;
 	Engine_ActorEnableActionCallback(36, entry_script);
 	Engine_ActorEnableActionCallback(37, entry_script);
 	Engine_ActorSetChildValue(36, 3);
@@ -3722,13 +3722,13 @@ static void FuneHeya_SetupReplacementPair(void)
 
 static void FieldScene_RunActors24And25SetupWithValue92a(void)
 {
-	s32 handle = FuneHeya_FindFirstSetFlag(0, 0);
-	s32 other = FuneHeya_FindFirstSetFlag(1, 0);
+	s32 handle = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	s32 other = TolbiShipInteriors_FindFirstSetFlag(1, 0);
 
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
 	FieldScene_RunSceneStep(25, 0, 0);
-	FuneHeya_PlaceFoundActors(0);
+	TolbiShipInteriors_PlaceFoundActors(0);
 	FieldScene_RunSceneStep(19, handle, other);
 	Engine_ActorSetPosition(11, 0, 0);
 	Engine_ActorSetPosition(12, 0, 0);
@@ -3745,9 +3745,9 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	struct FieldActor *record;
 	s32				   action;
 
-	slot_a = FuneHeya_FindFirstSetFlag(0, 0);
-	slot_b = FuneHeya_FindFirstSetFlag(1, 0);
-	slot_c = FuneHeya_FindFirstSetFlag(2, 0);
+	slot_a = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	slot_b = TolbiShipInteriors_FindFirstSetFlag(1, 0);
+	slot_c = TolbiShipInteriors_FindFirstSetFlag(2, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(10, 0, 0);
 	FieldScene_RunSceneStep(17, 0, 0);
@@ -3772,33 +3772,33 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Event_PlayCue(63);
 	GameFlag_Set(0x11a);
-	Actor_SetAttachedEffect(MEARI, 0x102);
+	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
 	FieldScene_CallPairWith10(3, 0x6000);
-	Engine_EventSetMessage(MsgFuneWonderWhatsWrongShipShouldnt);
-	Event_ShowMessageAndWait(MEARI, 0, 40);
+	Engine_EventSetMessage(MsgTolbiShipWonderWhatsWrongShipShouldnt);
+	Event_ShowMessageAndWait(MIA, 0, 40);
 	FieldScene_RunStepThen10(27);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHWEST, 0);
-	Actor_FaceDirection(IWAN, FACING_EAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHEAST, 40);
+	Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
+	Actor_FaceDirection(IVAN, FACING_EAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(IWAN, FACING_SOUTHWEST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 40);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
-	Actor_ShowEmote(IWAN, 0x100, 60);
+	Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 40);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+	Actor_ShowEmote(IVAN, 0x100, 60);
 	FieldScene_CallPairWith10(2, 0x2000);
-	Engine_ActorRunRepeatedMotion(IWAN, 1);
+	Engine_ActorRunRepeatedMotion(IVAN, 1);
 	FieldScene_RunStepThen10(2);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_ActorRunRepeatedMotion(MEARI, 1);
+	Engine_ActorStartRepeatedMotion(GARET, 1);
+	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTHEAST, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTHWEST, 20);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+	Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
 	Actor_SetChildValue(27, 0);
 	record = Object_GetById(27);
 	Engine_ActorSetSpriteFlags(record, 1);
@@ -3824,32 +3824,32 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Actor_FaceDirection(slot_b, 0xb000, 0);
 	Actor_FaceDirection(slot_c, 0xd000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-	Actor_FaceDirection(GERALD, FACING_WEST, 0);
-	Actor_FaceDirection(IWAN, FACING_EAST, 0);
-	Actor_FaceDirection(MEARI, FACING_WEST, 40);
+	Actor_FaceDirection(GARET, FACING_WEST, 0);
+	Actor_FaceDirection(IVAN, FACING_EAST, 0);
+	Actor_FaceDirection(MIA, FACING_WEST, 40);
 	Engine_ActorStartRepeatedMotion(27, 2);
 	Event_ShowMessage(27, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
-	Actor_FaceDirection(IWAN, FACING_NORTH, 0);
-	Actor_FaceDirection(MEARI, FACING_NORTH, 20);
+	Actor_FaceDirection(GARET, FACING_NORTH, 0);
+	Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+	Actor_FaceDirection(MIA, FACING_NORTH, 20);
 	Actor_WalkToAndWait(27, 0x1b8, 134);
 	Actor_SetPosition(27, 0, 0);
 	FieldScene_CallPairWith10(1, 0x8000);
-	Engine_ActorRunRepeatedMotion(GERALD, 1);
+	Engine_ActorRunRepeatedMotion(GARET, 1);
 	FieldScene_RunStepThen10(1);
-	Actor_FaceDirection(IWAN, FACING_EAST, 0);
+	Actor_FaceDirection(IVAN, FACING_EAST, 0);
 	FieldScene_CallPairWith10(3, 0x8000);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimation(IWAN, 3);
-	Engine_ActorSetAnimationAndWait(MEARI, 3);
-	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	action = (s32)FuneHeya_ActionScriptD;
-	Engine_ActorEnableActionCallback(GERALD, action);
-	Engine_ActorEnableActionCallback(IWAN, action);
+	Engine_ActorSetAnimation(GARET, 3);
+	Engine_ActorSetAnimation(IVAN, 3);
+	Engine_ActorSetAnimationAndWait(MIA, 3);
+	Actor_SetSpeed(GARET, 0x10000, 0x8000);
+	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+	Actor_SetSpeed(MIA, 0x10000, 0x8000);
+	action = (s32)TolbiShipInteriors_ActionScriptD;
+	Engine_ActorEnableActionCallback(GARET, action);
+	Engine_ActorEnableActionCallback(IVAN, action);
 	Object_SetActionCallbackAndRefreshById(3, action);
 	GameFlag_Set(0x302);
 	FuneHeya_CueTimer = 0;
@@ -3912,10 +3912,10 @@ static void Scene_RunFourActorProgressPresentation(void)
 	s32				   progress_c;
 	s32				   progress_a;
 
-	rec7 = FuneHeya_FindFirstSetFlag(0, 0);
-	rec2 = FuneHeya_FindFirstSetFlag(1, 0);
-	rec4 = FuneHeya_FindFirstSetFlag(2, 0);
-	rec = FuneHeya_FindFirstSetFlag(3, 0);
+	rec7 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
+	rec4 = TolbiShipInteriors_FindFirstSetFlag(2, 0);
+	rec = TolbiShipInteriors_FindFirstSetFlag(3, 0);
 	Engine_EventBegin();
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(10, 0, 0);
@@ -3937,7 +3937,7 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Actor_WalkToAndWait(27, 0x198, 142);
 	Actor_FaceDirection(27, 0x3000, 20);
 	Engine_ActorStartRepeatedMotion(27, 2);
-	Engine_EventSetMessage(MsgFuneReachedIslandRowers);
+	Engine_EventSetMessage(MsgTolbiShipReachedIslandRowers);
 	FieldScene_RunStepThen10(27);
 	Engine_EventWait(120);
 	FieldScene_RunSceneStep(12, rec7, 0);
@@ -3968,7 +3968,7 @@ static void Scene_RunFourActorProgressPresentation(void)
 	}
 	Engine_ActorStartRepeatedMotion(rec7, 2);
 	FieldScene_RunStepThen10(rec7);
-	Engine_EventSetMessage(MsgFuneShipWentOff);
+	Engine_EventSetMessage(MsgTolbiShipShipWentOff);
 	Engine_ActorSetAnimationAndWait(27, 4);
 	FieldScene_RunStepThen10(27);
 	Actor_ShowEmote(rec7, 0x102, 0);
@@ -3999,7 +3999,7 @@ static void Scene_RunFourActorProgressPresentation(void)
 	FieldScene_CallPairWith10(rec7, 0);
 	FieldScene_RunStepThen10(rec7);
 	Actor_SetSpeed(rec7, 0x10000, 0x8000);
-	progress_b = (s32)&FuneHeya_ProgressTableB;
+	progress_b = (s32)&TolbiShipInteriors_ProgressTableB;
 	Object_SetActionCallbackAndRefreshById(rec7, progress_b);
 	Actor_FaceDirection(rec2, 0x5000, 0);
 	Engine_ActorFaceDirection(rec4, FACING_EAST, 0);
@@ -4012,7 +4012,7 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Actor_SetSpeed(rec, 0x10000, 0x8000);
 	Engine_ActorEnableActionCallback(rec4, progress_b);
 	Engine_EventWait(40);
-	progress_c = (s32)&FuneHeya_ProgressTableC;
+	progress_c = (s32)&TolbiShipInteriors_ProgressTableC;
 	Object_SetActionCallbackAndRefreshById(rec2, progress_c);
 	Engine_ActorEnableActionCallback(rec2, progress_b);
 	Object_SetActionCallbackAndRefreshById(rec, progress_c);
@@ -4020,7 +4020,7 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(2, 0x10000, 0x8000);
 	Actor_SetSpeed(3, 0x10000, 0x8000);
-	progress_a = (s32)&FuneHeya_ProgressTableA;
+	progress_a = (s32)&TolbiShipInteriors_ProgressTableA;
 	Engine_ActorEnableActionCallback(1, progress_a);
 	Engine_ActorEnableActionCallback(2, progress_a);
 	Object_SetActionCallbackAndRefreshById(3, progress_a);
@@ -4031,17 +4031,17 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Engine_EventEnd();
 }
 
-static void FuneHeya_DismissReplacementRowers(void)
+static void TolbiShipInteriors_DismissReplacementRowers(void)
 {
 	s32 rec2;
 	s32 rec4;
 	s32 rec7;
 	s32 rec8;
 
-	rec2 = FuneHeya_FindFirstSetFlag(0, 0);
-	rec8 = FuneHeya_FindFirstSetFlag(1, 0);
-	rec7 = FuneHeya_FindFirstSetFlag(2, 0);
-	rec4 = FuneHeya_FindFirstSetFlag(3, 0);
+	rec2 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	rec8 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
+	rec7 = TolbiShipInteriors_FindFirstSetFlag(2, 0);
+	rec4 = TolbiShipInteriors_FindFirstSetFlag(3, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(10, 0, 0);
 	OverlayObject_SetPositionAndHeading(8, 0x1d8, 144, 0x5000);
@@ -4051,7 +4051,7 @@ static void FuneHeya_DismissReplacementRowers(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(27, 1);
-	Engine_EventSetMessage(MsgFuneSorryEveryoneButWeNeed);
+	Engine_EventSetMessage(MsgTolbiShipSorryEveryoneButWeNeed);
 	FieldScene_RunStepThen10(27);
 	Engine_ActorStartRepeatedMotion(rec2, 2);
 	Engine_ActorStartRepeatedMotion(rec8, 2);
@@ -4140,7 +4140,7 @@ static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 // 向き (16 方向) ごとの一歩: 上位 16 ビットが x、下位 16 ビットが z
 #define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 FuneHeya_TurnSteps[] = {
+s32 TolbiShipInteriors_TurnSteps[] = {
 	TURN_STEP(16, 0),
 	TURN_STEP(16, 0),
 	TURN_STEP(16, 0),
@@ -4159,7 +4159,7 @@ s32 FuneHeya_TurnSteps[] = {
 	TURN_STEP(16, 0),
 };
 
-s32 FuneHeya_ActionScriptA[] = {
+s32 TolbiShipInteriors_ActionScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(168), 0, PIXELS(500)),
 	SC_SYNC,
@@ -4169,7 +4169,7 @@ s32 FuneHeya_ActionScriptA[] = {
 	SC_END,
 };
 
-s32 FuneHeya_ActionScriptB[] = {
+s32 TolbiShipInteriors_ActionScriptB[] = {
 	SC_SET(SW_SPEED, 0x10000),
 	SC_SET(SW_ACCEL, 0x8000),
 	SC_ARG(2),
@@ -4181,7 +4181,7 @@ s32 FuneHeya_ActionScriptB[] = {
 	SC_END,
 };
 
-s32 FuneHeya_Script01[] = {
+s32 TolbiShipInteriors_Script01[] = {
 	SC_SET(SW_SCALE_X, 0x16000),
 	SC_SET(SW_SCALE_Y, 0x16000),
 	SC_WAIT(2),
@@ -4198,7 +4198,7 @@ s32 FuneHeya_Script01[] = {
 	SC_END,
 };
 
-s32 FuneHeya_ProgressTableA[] = {
+s32 TolbiShipInteriors_ProgressTableA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(434), 0, PIXELS(166)),
 	SC_SYNC,
@@ -4206,7 +4206,7 @@ s32 FuneHeya_ProgressTableA[] = {
 	SC_END,
 };
 
-s32 FuneHeya_ActionScriptC[] = {
+s32 TolbiShipInteriors_ActionScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(438), 0, PIXELS(300)),
 	SC_SYNC,
@@ -4214,7 +4214,7 @@ s32 FuneHeya_ActionScriptC[] = {
 	SC_END,
 };
 
-s32 FuneHeya_ActionScriptD[] = {
+s32 TolbiShipInteriors_ActionScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(432), 0, PIXELS(168)),
 	SC_SYNC,
@@ -4222,7 +4222,7 @@ s32 FuneHeya_ActionScriptD[] = {
 	SC_END,
 };
 
-s32 FuneHeya_ActionScriptE[] = {
+s32 TolbiShipInteriors_ActionScriptE[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -4240,13 +4240,13 @@ s32 FuneHeya_ActionScriptE[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 FuneHeya_EntryActionScript[] = {
+s32 TolbiShipInteriors_EntryActionScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(0x24, 0),
 	SC_CALL(UpdateStagedActorVerticalPosition),
 };
 
-s32 FuneHeya_ProgressTableB[] = {
+s32 TolbiShipInteriors_ProgressTableB[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(408), 0, PIXELS(132)),
 	SC_SYNC,
@@ -4255,28 +4255,28 @@ s32 FuneHeya_ProgressTableB[] = {
 	SC_FREE,
 };
 
-s32 FuneHeya_ProgressTableC[] = {
+s32 TolbiShipInteriors_ProgressTableC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(416), 0, PIXELS(186)),
 	SC_SYNC,
 	SC_END,
 };
 
-s32 FuneHeya_ActionScriptF[] = {
+s32 TolbiShipInteriors_ActionScriptF[] = {
 	SC_CALL(StagedActor_SetAngleByKind),
 };
 
-s32 FuneHeya_StepScriptEData[] = {
+s32 TolbiShipInteriors_StepScriptEData[] = {
 	SC_CALL(StagedActor_SetReadyState),
 };
 
-struct FieldActor *FuneHeya_AnchorObject = 0;
+struct FieldActor *TolbiShipInteriors_AnchorObject = 0;
 
-struct SceneEntrance FuneHeya_SceneTable01[] = {
+struct SceneEntrance TolbiShipInteriors_SceneTable01[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEntrance FuneHeya_SceneTable02[] = {
+struct SceneEntrance TolbiShipInteriors_SceneTable02[] = {
 	{ 1, CONDITION_ALWAYS, 152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0 },
 	{ 2, CONDITION_ALWAYS, 160, 0, 552, FACING_EAST, 0, 30, 380, 270, 620, 0 },
 	{ 3, CONDITION_ALWAYS, 120, 0, 136, FACING_WEST, 0, 25, 80, 265, 350, 0 },
@@ -4301,7 +4301,7 @@ struct SceneEntrance FuneHeya_SceneTable02[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 FuneHeya_SceneTable03[] = {
+u32 TolbiShipInteriors_SceneTable03[] = {
 	SCENE_EXITS(111),
 	SCENE_EXIT(1, 109, 1),
 	SCENE_EXIT(2, 111, 4),
@@ -4323,11 +4323,11 @@ u32 FuneHeya_SceneTable03[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement FuneHeya_StepScriptA[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptA[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptB[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptB[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4337,7 +4337,7 @@ struct ScenePlacement FuneHeya_StepScriptB[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptC[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptC[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4350,28 +4350,28 @@ struct ScenePlacement FuneHeya_StepScriptC[] = {
 		PIXELS(444), 0, PIXELS(628), FACING_EAST, TALK_FACE_PARTY, 0 },
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(472), 0, PIXELS(660), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptD[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptD[] = {
 	{ 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptE[] = {
-	{ 0xf4, CONDITION_ALWAYS, (s32)FuneHeya_StepScriptEData,
+struct ScenePlacement TolbiShipInteriors_StepScriptE[] = {
+	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptF[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptF[] = {
 	{ 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4390,12 +4390,12 @@ struct ScenePlacement FuneHeya_StepScriptF[] = {
 		PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0xf4, CONDITION_ALWAYS, (s32)FuneHeya_StepScriptEData,
+	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptG[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptG[] = {
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0xab, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4418,12 +4418,12 @@ struct ScenePlacement FuneHeya_StepScriptG[] = {
 		PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-	{ 0xf4, CONDITION_ALWAYS, (s32)FuneHeya_StepScriptEData,
+	{ 0xf4, CONDITION_ALWAYS, (s32)TolbiShipInteriors_StepScriptEData,
 		PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_StepScriptH[] = {
+struct ScenePlacement TolbiShipInteriors_StepScriptH[] = {
 	{ 0x93, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
 	{ 0x93, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4483,17 +4483,17 @@ struct ScenePlacement FuneHeya_StepScriptH[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_CellStepsA[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+struct ScenePlacement TolbiShipInteriors_CellStepsA[] = {
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+	{ IVAN, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+	{ MIA, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_CellStepsB[] = {
+struct ScenePlacement TolbiShipInteriors_CellStepsB[] = {
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4503,7 +4503,7 @@ struct ScenePlacement FuneHeya_CellStepsB[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_CellStepsC[] = {
+struct ScenePlacement TolbiShipInteriors_CellStepsC[] = {
 	{ 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xc4, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4513,7 +4513,7 @@ struct ScenePlacement FuneHeya_CellStepsC[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement FuneHeya_CellStepsD[] = {
+struct ScenePlacement TolbiShipInteriors_CellStepsD[] = {
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
 	{ 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
@@ -4523,45 +4523,45 @@ struct ScenePlacement FuneHeya_CellStepsD[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable04[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable04[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf92, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable05[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable05[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(EV11_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_05) },
-	{ EVENT_TALK, 9, 0x925, MSGNO(MsgFuneHeyaApparentlyWeCantTakeSilkRoad) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAllThatMoneyOnTicketsAnd) },
+	{ EVENT_TALK, 9, 0x925, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_05) },
-	{ EVENT_TALK, 11, 0x925, MSGNO(MsgFuneHeyaYoureGoingToTolbiToSee) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaINeverThoughtIdGetTo) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouAllAgreedToHelpOf) },
+	{ EVENT_TALK, 11, 0x925, MSGNO(MsgTolbiShipInteriorsYoureGoingToTolbiToSee) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsINeverThoughtIdGetTo) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouAllAgreedToHelpOf) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgFuneHeyaMaybeIShouldJustForgetAbout) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfSomethingHappensToOurOarsmen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x925, MSGNO(MsgFuneHeyaTheyreJustTakingAdvantageOfUs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaDoTheyHonestlyThinkImGoing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x925, MSGNO(MsgFuneHeyaMusclesRipplingEverywhereLooksGreatIf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImSureItdBeEasierTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x925, MSGNO(MsgFuneHeyaWeLeftTheOldLadyBack) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWellShootMaybeWeShouldHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAskingThePassengersToHelpOut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x925, MSGNO(MsgFuneHeyaEvenThoughImOpposedToViolence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x93e, MSGNO(MsgFuneHeyaICantRowButIAm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeMadeItToColossoIn) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgTolbiShipInteriorsMaybeIShouldJustForgetAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x925, MSGNO(MsgTolbiShipInteriorsTheyreJustTakingAdvantageOfUs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsDoTheyHonestlyThinkImGoing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x925, MSGNO(MsgTolbiShipInteriorsMusclesRipplingEverywhereLooksGreatIf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImSureItdBeEasierTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x925, MSGNO(MsgTolbiShipInteriorsWeLeftTheOldLadyBack) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWellShootMaybeWeShouldHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAskingThePassengersToHelpOut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x925, MSGNO(MsgTolbiShipInteriorsEvenThoughImOpposedToViolence) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x93e, MSGNO(MsgTolbiShipInteriorsICantRowButIAm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMadeItToColossoIn) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable06[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable06[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIsThisCruelOrdealPartOf) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsThisCruelOrdealPartOf) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_06) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_06) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
@@ -4571,189 +4571,189 @@ struct SceneEvent FuneHeya_SceneTable06[] = {
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x300, MSGNO(MsgFuneHeyaNobodyWouldChooseMeAfterAll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouMakeMeNervousJustStanding) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x300, MSGNO(MsgFuneHeyaHeyLooksLikeTheyNeedSomeone) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIveBeenInAColdSweat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x300, MSGNO(MsgFuneHeyaRowingIsAToughJobIsnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOhThisPoorSapLooksSad) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x300, MSGNO(MsgFuneHeyaHeyThisGuysBeenStaringAt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOhNoNoWhenOurEyes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x300, MSGNO(MsgFuneHeyaOhOhNoHesNotComing) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaItsOnlyNaturalThatINot) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x300, MSGNO(MsgFuneHeyaPleasePleaseImBeggingJustDont) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaISnuckByThisTimeBut) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x300, MSGNO(MsgFuneHeyaWhatsWithYouGoBotherThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWowThisWarriorIsntGonnaLet) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x300, MSGNO(MsgFuneHeyaWhyAmIGettingSoWorked) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouCanJustMoveRightAlong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x300, MSGNO(MsgFuneHeyaWeHadEnoughTroubleJustGetting) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaCarefulNowWatchOutDontMake) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x300, MSGNO(MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouMakeMeNervousJustStanding) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x300, MSGNO(MsgTolbiShipInteriorsHeyLooksLikeTheyNeedSomeone) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenInAColdSweat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x300, MSGNO(MsgTolbiShipInteriorsRowingIsAToughJobIsnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhThisPoorSapLooksSad) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x300, MSGNO(MsgTolbiShipInteriorsHeyThisGuysBeenStaringAt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhNoNoWhenOurEyes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x300, MSGNO(MsgTolbiShipInteriorsOhOhNoHesNotComing) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsItsOnlyNaturalThatINot) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x300, MSGNO(MsgTolbiShipInteriorsPleasePleaseImBeggingJustDont) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsISnuckByThisTimeBut) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x300, MSGNO(MsgTolbiShipInteriorsWhatsWithYouGoBotherThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWowThisWarriorIsntGonnaLet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x300, MSGNO(MsgTolbiShipInteriorsWhyAmIGettingSoWorked) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCanJustMoveRightAlong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x300, MSGNO(MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCarefulNowWatchOutDontMake) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable07[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable07[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaInAPerfectWorldThereWouldnt) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouCantGoOntoTheIsland) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaButThereWereMonstersAtSea) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeveBeenCoopedUpOnThat) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaThereCouldBeMonstersHereSo) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheShipKeepsShakingSheCant) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyShouldWeHaveToWait) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfThereAreMonstersImNot) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontHearThePassengersScreaming) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsInAPerfectWorldThereWouldnt) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCantGoOntoTheIsland) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsButThereWereMonstersAtSea) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeveBeenCoopedUpOnThat) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThereCouldBeMonstersHereSo) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheShipKeepsShakingSheCant) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhyShouldWeHaveToWait) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfThereAreMonstersImNot) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontHearThePassengersScreaming) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhatToDoImWorriedAbout) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaButWhyShouldWeStayOnboard) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImSickOfThisShipIm) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaLandMonstersICanHandleSea) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIveBeenWobblingOnThisBoat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaGoAheadTryAndStopMe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaJustDontMakeMeFaceThat) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaSoAnyoneKnowIfThereAre) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOhhThatsCreepy) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhatToDoImWorriedAbout) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsButWhyShouldWeStayOnboard) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImSickOfThisShipIm) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsLandMonstersICanHandleSea) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenWobblingOnThisBoat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsGoAheadTryAndStopMe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJustDontMakeMeFaceThat) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSoAnyoneKnowIfThereAre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhhThatsCreepy) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf93, FIND_COINS(23) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable08[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable08[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_08) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_08) },
-	{ EVENT_TALK, 9, 0x921, MSGNO(MsgFuneHeyaIWonderIfThereAreAny) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaRightWhenWeFoundSomeWarriors) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaICantBelieveHimRefusingTo) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIHadNoIdeaHeWas) },
+	{ EVENT_TALK, 9, 0x921, MSGNO(MsgTolbiShipInteriorsIWonderIfThereAreAny) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsRightWhenWeFoundSomeWarriors) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsICantBelieveHimRefusingTo) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIHadNoIdeaHeWas) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK_08) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x921, MSGNO(MsgFuneHeyaThisIsAChanceToMake) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgFuneHeyaTheShipWontLeaveDockUntil) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgFuneHeyaAsLongAsWeHaveThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeKnewTheRisksWhenWe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x921, MSGNO(MsgFuneHeyaSendingOutAShipWhenIts) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWaitedTooLongIllGet) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x921, MSGNO(MsgFuneHeyaIfWeDontSetSailNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaThisIsRidiculousTheShipCant) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaThatThingCouldntHaveGottenLost) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontThinkAnyoneWouldSteal) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfTheShipDoesntLeaveSoon) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x921, MSGNO(MsgTolbiShipInteriorsThisIsAChanceToMake) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgTolbiShipInteriorsTheShipWontLeaveDockUntil) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgTolbiShipInteriorsAsLongAsWeHaveThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeKnewTheRisksWhenWe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x921, MSGNO(MsgTolbiShipInteriorsSendingOutAShipWhenIts) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWaitedTooLongIllGet) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x921, MSGNO(MsgTolbiShipInteriorsIfWeDontSetSailNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThisIsRidiculousTheShipCant) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
 	{ EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(EV10_TOUCH) },
 	{ 0xe814, 8, 0x925, EVENT_SCRIPT(EV08_SCRIPT) },
 	{ 0xc423, 102, 0xf94, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable09[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable09[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeMayHaveTakenTheWrong) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereLookingIntoTheShipsPosition) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImReallySurprisedThatThereIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheWindsDirectionAndTheHigh) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
 	{ SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable10[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable10[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhenTheWatersAreThisDangerous) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaSeeOurShipSurvivedAnAttack) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
 	{ SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable11[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable11[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ EVENT_TALK, 8, 0x8a0, MSGNO(MsgFuneHeyaWeCanLeaveAsSoonAs) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIveBeenSailingForManyYears) },
-	{ EVENT_TALK, 9, 0x8a0, MSGNO(MsgFuneHeyaEveryoneRowsInTimeWithThis) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWowIHaveABlisterOn) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaRowingIsAMansJob) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereTheOnesWhoMakeThe) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOnceWeCastOffYouJust) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouCanOnlyDoHardWork) },
-	{ EVENT_TALK, 14, 0x8a0, MSGNO(MsgFuneHeyaHmmmIWonderWhenWereGoing) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfItsOkayTo) },
-	{ EVENT_TALK, 15, 0x8a0, MSGNO(MsgFuneHeyaICantWaitUntilWeGet) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaStoppingAgainAndAgainLikeThis) },
-	{ EVENT_TALK, 16, 0x8a0, MSGNO(MsgFuneHeyaIHearTheresAnIsleIn) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaLetsSeeIslandsInTheKaragol) },
-	{ EVENT_TALK, 17, 0x8a0, MSGNO(MsgFuneHeyaFromTheSeaItLooksLike) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhenWereRowingWeCanJust) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a0, MSGNO(MsgFuneHeyaEnoughIsEnoughLetsSetOff) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaItsCrazyToHaveInexperiencedPassengers) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8a0, MSGNO(MsgFuneHeyaILoveItWhenTheOars) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaItWasHardForMeAll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaEveryoneDownHereGetsSoCompetitive) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheseBigMusclesAreASign) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWellSeeToItThatThey) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouveGotToSaveUpLots) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8a0, MSGNO(MsgFuneHeyaIDontFeelLikeRowingAll) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaISureHopeAnotherMonsterDoesnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x8a0, MSGNO(MsgFuneHeyaSpendYourMoneyWhileYoureYoung) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaLooksLikeImGoingToHave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x8a0, MSGNO(MsgFuneHeyaItSeemsLikeThereWouldBe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaCouldThisBeThatIslandThats) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x8a0, MSGNO(MsgFuneHeyaHaHahIfYouWantTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaMaybeItsTimeForMeTo) },
+	{ EVENT_TALK, 8, 0x8a0, MSGNO(MsgTolbiShipInteriorsWeCanLeaveAsSoonAs) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenSailingForManyYears) },
+	{ EVENT_TALK, 9, 0x8a0, MSGNO(MsgTolbiShipInteriorsEveryoneRowsInTimeWithThis) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWowIHaveABlisterOn) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsRowingIsAMansJob) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereTheOnesWhoMakeThe) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOnceWeCastOffYouJust) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCanOnlyDoHardWork) },
+	{ EVENT_TALK, 14, 0x8a0, MSGNO(MsgTolbiShipInteriorsHmmmIWonderWhenWereGoing) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWonderIfItsOkayTo) },
+	{ EVENT_TALK, 15, 0x8a0, MSGNO(MsgTolbiShipInteriorsICantWaitUntilWeGet) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsStoppingAgainAndAgainLikeThis) },
+	{ EVENT_TALK, 16, 0x8a0, MSGNO(MsgTolbiShipInteriorsIHearTheresAnIsleIn) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsLetsSeeIslandsInTheKaragol) },
+	{ EVENT_TALK, 17, 0x8a0, MSGNO(MsgTolbiShipInteriorsFromTheSeaItLooksLike) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenWereRowingWeCanJust) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a0, MSGNO(MsgTolbiShipInteriorsEnoughIsEnoughLetsSetOff) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsItsCrazyToHaveInexperiencedPassengers) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8a0, MSGNO(MsgTolbiShipInteriorsILoveItWhenTheOars) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsItWasHardForMeAll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsEveryoneDownHereGetsSoCompetitive) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheseBigMusclesAreASign) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWellSeeToItThatThey) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouveGotToSaveUpLots) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8a0, MSGNO(MsgTolbiShipInteriorsIDontFeelLikeRowingAll) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsISureHopeAnotherMonsterDoesnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x8a0, MSGNO(MsgTolbiShipInteriorsSpendYourMoneyWhileYoureYoung) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsLooksLikeImGoingToHave) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x8a0, MSGNO(MsgTolbiShipInteriorsItSeemsLikeThereWouldBe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCouldThisBeThatIslandThats) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x8a0, MSGNO(MsgTolbiShipInteriorsHaHahIfYouWantTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsMaybeItsTimeForMeTo) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable12[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable12[] = {
 	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
-	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
-	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaMonstersFromTheDeepAreAttacking) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaCurseThoseBeastsTheyGotOne) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaFightingOffTheMonstersIsYour) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaFoulBeastIMayBeTrembling) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfIWerentSoTiredId) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaCursesIWantToSmackThat) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhoIsThatThingGoingTo) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfYouDontDoABetter) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeOarsmenMayBeStrongBut) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereSurroundedByDangerOnAll) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAhhhhSeaMonstersRealLiveSea) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhaHeyYouThisIsNo) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAahIHaveToRowThis) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaHHeyRobinShouldntYouBe) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYaaahhhIImNotAfraidOf) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheOarsmenAreInDireStraights) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIICantDoThisFighting) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontCareWhatHappensNow) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyArentYouDoingAnythingTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfWeLoseAnyMoreOarsmen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfTheSeaMonstersGetUs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImScaredThoseSeaMonstersAre) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaFightingSeaMonstersIsForWarriors) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheSeaMonstersAreSoTough) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontCareWhoElseThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaPleaseJustStayHereAndProtect) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeDontEvenKnowIfAttacking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaSeaMonstersAreTerriblyFerocious) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfIWereAWarriorI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfThisWarriorHas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereSureInAFixSay) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImSoOutOfMyWits) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheseSeaMonstersLookAwfullyStrong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaPleaseOhPleaseLetMeMake) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyDidSeaMonstersHaveTo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIdRatherBeEatenByA) },
+	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
+	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
+	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsMonstersFromTheDeepAreAttacking) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCurseThoseBeastsTheyGotOne) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsFightingOffTheMonstersIsYour) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsFoulBeastIMayBeTrembling) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfIWerentSoTiredId) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCursesIWantToSmackThat) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhoIsThatThingGoingTo) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfYouDontDoABetter) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeOarsmenMayBeStrongBut) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereSurroundedByDangerOnAll) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAhhhhSeaMonstersRealLiveSea) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhaHeyYouThisIsNo) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAahIHaveToRowThis) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsHHeyIsaacShouldntYouBe) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYaaahhhIImNotAfraidOf) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheOarsmenAreInDireStraights) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIICantDoThisFighting) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontCareWhatHappensNow) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhyArentYouDoingAnythingTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfWeLoseAnyMoreOarsmen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheSeaMonstersGetUs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImScaredThoseSeaMonstersAre) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsFightingSeaMonstersIsForWarriors) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheSeaMonstersAreSoTough) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontCareWhoElseThe) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsPleaseJustStayHereAndProtect) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeDontEvenKnowIfAttacking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeaMonstersAreTerriblyFerocious) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfIWereAWarriorI) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWonderIfThisWarriorHas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereSureInAFixSay) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImSoOutOfMyWits) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheseSeaMonstersLookAwfullyStrong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsPleaseOhPleaseLetMeMake) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhyDidSeaMonstersHaveTo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIdRatherBeEatenByA) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable13[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable13[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 19 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImagineTheSizeOfThatBeast) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaHowCanTheseSeaMonstersKeep) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaJudgingFromKajasReactionItMust) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaKajaWouldntAskForHelpUnless) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheWholeShipIsRockingThat) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereOkayWithYouHereWe) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfTheShipSinksWereFinished) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImagineTheSizeOfThatBeast) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsHowCanTheseSeaMonstersKeep) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJudgingFromKajasReactionItMust) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsKajaWouldntAskForHelpUnless) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWholeShipIsRockingThat) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereOkayWithYouHereWe) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipSinksWereFinished) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
@@ -4762,14 +4762,14 @@ struct SceneEvent FuneHeya_SceneTable13[] = {
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOwwwMyHandsAreRawFrom) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyIsHeDownHereShouldnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhatTheHowManyMonstersDoes) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhatKindOfMonsterIsRocking) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereRunningLowOnOarsmenAnd) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImTakingALittleBreakUntil) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaGoodThingWeHaveSomeStrong) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfTheMonsterIs) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOwwwMyHandsAreRawFrom) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhyIsHeDownHereShouldnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhatTheHowManyMonstersDoes) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhatKindOfMonsterIsRocking) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereRunningLowOnOarsmenAnd) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImTakingALittleBreakUntil) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsGoodThingWeHaveSomeStrong) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWonderIfTheMonsterIs) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_PSYNERGY) },
@@ -4778,24 +4778,24 @@ struct SceneEvent FuneHeya_SceneTable13[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_PSYNERGY) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfTheyllMakeUs) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWonderIfTheyllMakeUs) },
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent FuneHeya_SceneTable14[] = {
+struct SceneEvent TolbiShipInteriors_SceneTable14[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontThinkAnyoneWillBe) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouFolksReallyFoughtWell) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaALotOfOarsmenWereInjured) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAreWeSafeItsAllBecause) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIveBeenAnOarsmanAllMy) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouGoOnAheadJustWhen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWeCantFindAnyoneToReplace) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImJustGladTheKrakenDidnt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaSureThePaysGoodButIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaRobinAndHisPalsWereSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIFeelBetterNowIWas) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImInNoRushAnywayThis) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWillBe) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouFolksReallyFoughtWell) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsALotOfOarsmenWereInjured) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAreWeSafeItsAllBecause) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenAnOarsmanAllMy) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouGoOnAheadJustWhen) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeCantFindAnyoneToReplace) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImJustGladTheKrakenDidnt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSureThePaysGoodButIt) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsaacAndHisPalsWereSo) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIFeelBetterNowIWas) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImInNoRushAnywayThis) },
 	{ SCENE_EVENTS_END },
 };
 

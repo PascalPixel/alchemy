@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-struct MakyuriLights;
+struct MercuryLights;
 
-void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st);
+void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st);
 
 #endif

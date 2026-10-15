@@ -17,8 +17,8 @@
 	.include "games/common/src/graphics/backdrop/imil_fuchin_falls.s"
 	.include "games/common/src/graphics/backdrop/kolima_forest.s"
 	.include "games/common/src/graphics/backdrop/tret_interiors.s"
-	.global Battle_GomaDouBackdrop
-Battle_GomaDouBackdrop:
+	.global Battle_GomaCaveBackdrop
+Battle_GomaCaveBackdrop:
 	.incbin "games/tbs/src/graphics/backdrop/goma_cave.gbapal"
 	.incbin "games/tbs/src/graphics/backdrop/goma_cave.bitmap.d7"
 	.include "games/common/src/graphics/backdrop/interior.s"

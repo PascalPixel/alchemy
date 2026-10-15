@@ -34,26 +34,26 @@
 
 // 前方宣言
 union PairObject;
-static void Scene_DoraSendsRobinToThePlaza(void);
-static void HaidiaArashi_SetStormCellAttributes(void);
+static void Scene_DoraSendsIsaacToThePlaza(void);
+static void ValeStorm_SetStormCellAttributes(void);
 static void ActorPresentation_SetEightSceneCells(void);
 static void SceneState_ApplyFourRects(void);
 static void FieldScene_DrawFiveTileBlocks(void);
 static void FieldScene_RunScene372SequenceA(void);
-static void HaidiaArashi_RunCallOutSequence(void);
+static void ValeStorm_RunCallOutSequence(void);
 static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
-static void HaidiaArashi_RunRiverSearch(void);
+static void ValeStorm_RunRiverSearch(void);
 static void Scene_RunActorGroupDepartureSequence(void);
-static void HaidiaArashi_FlashLightning(void);
-static void HaidiaArashi_UpdatePulsingGlow(void);
+static void ValeStorm_FlashLightning(void);
+static void ValeStorm_UpdatePulsingGlow(void);
 static void ActorPresentation_SelectActorTwentySevenState(void);
 static void FieldScene_ConfigureActorTwentyTwoScene(void);
 static void FieldScene_BuildPlacementGrid(void);
 static void SceneActor_SetModeByFrameBit1(s32 o);
-static void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
+static void ValeStorm_SpawnEffectPair(union PairObject *parent);
 static void FieldScene_RunFourPairedSteps(void);
 static void SceneState_SetValue19ThenCall(void);
-static void HaidiaArashi_CopyLeaderSpritePriority(void);
+static void ValeStorm_CopyLeaderSpritePriority(void);
 
 enum
 {
@@ -75,7 +75,7 @@ union PairObject;
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
-static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
+static s32 ValeStorm_RerollHeadingOnCountdown(struct FieldActor *object)
 {
 	s32 loaded = object->timer;
 	s32 counter = (s16)loaded;
@@ -93,9 +93,9 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_pulse.h"
 
-u8 *HaidiaArashi_GetEntrances(void)
+u8 *ValeStorm_GetEntrances(void)
 {
-	return HaidiaArashi_SceneTable0;
+	return ValeStorm_SceneTable0;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -103,19 +103,19 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-u8 *HaidiaArashi_GetExits(void)
+u8 *ValeStorm_GetExits(void)
 {
-	return HaidiaArashi_SceneTable1;
+	return ValeStorm_SceneTable1;
 }
 
-u8 *HaidiaArashi_GetPlacements(void)
+u8 *ValeStorm_GetPlacements(void)
 {
-	return HaidiaArashi_SceneTable2;
+	return ValeStorm_SceneTable2;
 }
 
-u8 *HaidiaArashi_GetEvents(void)
+u8 *ValeStorm_GetEvents(void)
 {
-	return HaidiaArashi_SceneTable3;
+	return ValeStorm_SceneTable3;
 }
 
 static void EV15_TOUCH(void)
@@ -136,34 +136,34 @@ static void EV14_TOUCH(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vale.h"
 
-static void HaidiaArashi_OpenBackdropExit11(void)
+static void ValeStorm_OpenBackdropExit11(void)
 {
 	Engine_AudioPlayCue(0x9E);
-	Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
+	Engine_MapAnimateCells(ValeStorm_CellSteps0, 45, 11);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(11);
+	Vale_RequestBackdropExit(11);
 }
 
 static void EV02_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	Haidia_RequestBackdropExit(1);
+	Vale_RequestBackdropExit(1);
 }
 
 static void EV03_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	Haidia_RequestBackdropExit(3);
+	Vale_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	Haidia_RequestBackdropExit(4);
+	Vale_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
@@ -173,16 +173,16 @@ static void EV05_TOUCH(void)
 	{
 		FieldScene_ConfigureActorTwentyTwoScene();
 	}
-	Haidia_RequestBackdropExit(2);
+	Vale_RequestBackdropExit(2);
 }
 
 static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x9E);
-	Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
+	Engine_MapAnimateCells(ValeStorm_CellSteps1, 54, 32);
 	Engine_ActorWalkTo(0, 0x196, 0x2d7);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(5);
+	Vale_RequestBackdropExit(5);
 }
 
 static void EV07_TOUCH(void)
@@ -190,7 +190,7 @@ static void EV07_TOUCH(void)
 	if (GameFlag_IsSet(0x206) == 0)
 	{
 		Event_PlayCue(158);
-		Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
+		Map_AnimateCells(ValeStorm_CellSteps2, 45, 39);
 	}
 	if (GameFlag_IsSet(0x835) == 0 && GameFlag_IsSet(0x831) == 0)
 	{
@@ -201,7 +201,7 @@ static void EV07_TOUCH(void)
 	{
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
-		Haidia_RequestBackdropExit(6);
+		Vale_RequestBackdropExit(6);
 	}
 }
 
@@ -210,56 +210,56 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(0x205) == 0)
 	{
 		Engine_AudioPlayCue(0x9E);
-		Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 50, 44);
+		Engine_MapAnimateCells(ValeStorm_CellSteps1, 50, 44);
 	}
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(7);
+	Vale_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
+	Engine_MapAnimateCells(ValeStorm_CellSteps2, 49, 69);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(8);
+	Vale_RequestBackdropExit(8);
 }
 
 static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
-	Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
+	Engine_MapAnimateCells(ValeStorm_CellSteps3, 52, 76);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(9);
+	Vale_RequestBackdropExit(9);
 }
 
 static void EV11_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
+	Map_AnimateCells(ValeStorm_CellSteps1, 35, 74);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(10);
+	Vale_RequestBackdropExit(10);
 }
 
 static void EV12_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
+	Map_AnimateCells(ValeStorm_CellSteps1, 35, 73);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(12);
+	Vale_RequestBackdropExit(12);
 }
 
 static void EV13_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
+	Map_AnimateCells(ValeStorm_CellSteps2, 38, 72);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
 	Engine_EventWait(3);
-	Haidia_RequestBackdropExit(13);
+	Vale_RequestBackdropExit(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
@@ -275,7 +275,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	if (Engine_GameFlagIsSet(0x830) != 0)
 	{
 		Actor_SetPosition(11, 0x14E0000, 0x3A40000);
-		HaidiaArashi_SetStormCellAttributes();
+		ValeStorm_SetStormCellAttributes();
 	}
 	if (Engine_GameFlagIsSet(0x831) != 0)
 	{
@@ -317,7 +317,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	}
 	else
 	{
-		Engine_ActorEnableActionCallback(19, HaidiaArashi_ActorNineteenScript);
+		Engine_ActorEnableActionCallback(19, ValeStorm_ActorNineteenScript);
 	}
 	if (Engine_GameFlagIsSet(0x841) != 0)
 	{
@@ -332,7 +332,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			h2 = 0xE000;
 			actor->facing = h2;
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-			tbl = HaidiaArashi_ActorEightScript;
+			tbl = ValeStorm_ActorEightScript;
 			actor->work = 1;
 			Engine_ActorEnableActionCallback(9, tbl);
 		}
@@ -369,7 +369,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 		Engine_ActorSetAnimation(8, 6);
 		Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-		FieldScheduler_AddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
+		FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority, 0xC80);
 		Engine_ActorSetPosition(24, 0, 0);
 		Engine_ActorSetPosition(25, 0, 0);
 		Engine_ActorSetPosition(23, 0, 0);
@@ -391,7 +391,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor = Object_GetById(10);
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 		}
-		tbl = HaidiaArashi_ActorEightScript;
+		tbl = ValeStorm_ActorEightScript;
 		Engine_ActorEnableActionCallback(10, tbl);
 		Actor_SetPosition(24, 0xE30000, 0x4BE0000);
 		Actor_FaceDirection(24, 0x4000, 0);
@@ -451,7 +451,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	Engine_TaskWait(1);
 	if (Engine_GameFlagIsSet(0x87b) == 0 && gGameState.entrance == 15)
 	{
-		Scene_DoraSendsRobinToThePlaza();
+		Scene_DoraSendsIsaacToThePlaza();
 		return 0;
 	}
 	Engine_ActorSetAnimation(23, 7);
@@ -483,7 +483,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	return 0;
 }
 
-static void Scene_DoraSendsRobinToThePlaza(void)
+static void Scene_DoraSendsIsaacToThePlaza(void)
 {
 	s32 message;
 
@@ -502,7 +502,7 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	Engine_EventWaitForScreen();
 	BattleFx_SetBlock30Values128One();
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps1, 50, 44);
+	Map_AnimateCells(ValeStorm_CellSteps1, 50, 44);
 	Actor_SetAttachedEffect(22, 0x101);
 	Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -518,7 +518,7 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	Engine_ActorSetAnimation(ACTOR_DORA, 1);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
-	message = MsgHaidiaKyleAbleStop;
+	message = MsgValeKyleAbleStop;
 	Engine_EventSetMessage(message);
 	Event_ShowMessage(ACTOR_DORA, 0);
 	Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
@@ -554,11 +554,11 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	while (Engine_EventChooseYesNo(0, 0) == 1)
 	{
 		Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
-		Engine_EventSetMessage(MsgHaidiaBigBoyWhy);
+		Engine_EventSetMessage(MsgValeBigBoyWhy);
 		Event_OpenMessage(ACTOR_DORA, 0);
 	}
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-	Engine_EventSetMessage(MsgHaidiaKnowWayGo);
+	Engine_EventSetMessage(MsgValeKnowWayGo);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
@@ -617,7 +617,7 @@ static void EV41_TOUCH(void)
 			BattleFx_PlayQueuedSound();
 			Engine_GameFlagSet(0x830);
 		}
-		HaidiaArashi_SetStormCellAttributes();
+		ValeStorm_SetStormCellAttributes();
 		Engine_GameFlagSet(0x310);
 		if (Engine_GameFlagIsSet(0x837) != 0)
 		{
@@ -644,7 +644,7 @@ static void EV41_TOUCH(void)
 	}
 }
 
-static void HaidiaArashi_SetStormCellAttributes(void)
+static void ValeStorm_SetStormCellAttributes(void)
 {
 	Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
 	Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
@@ -891,7 +891,7 @@ static void FieldScene_RunScene372SequenceA(void)
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Actor_ShowEmote(20, 0x100, 20);
-	base = MsgHaidiaHuh;
+	base = MsgValeHuh;
 	Engine_EventSetMessage(base);
 	Event_ShowMessage(20, 0);
 	Engine_EventWait(20);
@@ -899,7 +899,7 @@ static void FieldScene_RunScene372SequenceA(void)
 	Engine_ActorRunRepeatedMotion(20, 2);
 	Engine_EventSetMessage((base + 4));
 	Event_ShowMessageAndWait(20, 0, 20);
-	Object_SetActionCallbackAndRefreshById(20, (s32)HaidiaArashi_ActorTwentyScript);
+	Object_SetActionCallbackAndRefreshById(20, (s32)ValeStorm_ActorTwentyScript);
 	GameFlag_Set(0x835);
 	Engine_EventEnd();
 }
@@ -911,7 +911,7 @@ static void EV30_TOUCH(void)
 		if (GameFlag_IsSet(0x837) == 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage(MsgHaidiaUghHrnghhh);
+			Engine_EventSetMessage(MsgValeUghHrnghhh);
 			Event_ShowMessageAndWait(22, 0, 20);
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x17e, 0x26b);
@@ -932,8 +932,8 @@ static void EV31_TOUCH(void)
 		Engine_EventBegin();
 		Engine_ActorRunRepeatedMotion(22, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgHaidiaDontLeaveMeHere);
-		HaidiaArashi_RunCallOutSequence();
+		Engine_EventSetMessage(MsgValeDontLeaveMeHere);
+		ValeStorm_RunCallOutSequence();
 		Engine_EventEnd();
 	}
 }
@@ -945,7 +945,7 @@ static void EV22_TALK(void)
 		Engine_EventBegin();
 		Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgHaidiaBoulderNeedGet);
+		Engine_EventSetMessage(MsgValeBoulderNeedGet);
 		Event_ShowMessage(22, 0);
 		Actor_FaceDirection(22, FACING_NORTHEAST, 10);
 		Engine_EventEnd();
@@ -955,14 +955,14 @@ static void EV22_TALK(void)
 		if (GameFlag_IsSet(0x837) == 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage(MsgHaidiaWantDumpStuff);
-			HaidiaArashi_RunCallOutSequence();
+			Engine_EventSetMessage(MsgValeWantDumpStuff);
+			ValeStorm_RunCallOutSequence();
 			Engine_EventEnd();
 		}
 	}
 }
 
-static void HaidiaArashi_RunCallOutSequence(void)
+static void ValeStorm_RunCallOutSequence(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -972,12 +972,12 @@ static void HaidiaArashi_RunCallOutSequence(void)
 	v5 = 0;
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaThinkForgetThings);
+		Engine_EventSetMessage(MsgValeThinkForgetThings);
 		v5 = 1;
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaRockHitsLose);
+		Engine_EventSetMessage(MsgValeRockHitsLose);
 	}
 	Engine_EventWait(20);
 	Engine_EventShowMessageAndWait(22, 0, 40);
@@ -991,11 +991,11 @@ static void HaidiaArashi_RunCallOutSequence(void)
 	if (v5 != 0)
 	{
 
-		Engine_EventSetMessage(MsgHaidiaKnowRightOk);
+		Engine_EventSetMessage(MsgValeKnowRightOk);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaRightDitchStuff);
+		Engine_EventSetMessage(MsgValeRightDitchStuff);
 	}
 	Engine_EventShowMessage(22, 0);
 	Engine_ActorSetAnimation(22, 2);
@@ -1019,7 +1019,7 @@ static void EV32_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetAttachedEffect(22, 0x100);
-		base = MsgHaidiaHey;
+		base = MsgValeHey;
 		Engine_EventSetMessage(base);
 		Event_ShowMessage(22, 0);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
@@ -1027,10 +1027,10 @@ static void EV32_TOUCH(void)
 		Camera_SetSpeed(0x6666, 0xccc);
 		Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
 		Actor_SetSpeed(22, 0x20000, 0x10000);
-		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
+		Object_SetActionCallbackAndRefreshById(22, (s32)ValeStorm_ActorTwentyTwoScriptA);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
 		Engine_EventWait(30);
-		Engine_ActorEnableActionCallback(22, HaidiaArashi_ActorTwentyTwoScriptB);
+		Engine_ActorEnableActionCallback(22, ValeStorm_ActorTwentyTwoScriptB);
 		Event_ShowMessage(22, 0);
 		record = Actor_Get(22);
 		record->scale_y = 0x10000;
@@ -1075,7 +1075,7 @@ static void EV33_TOUCH(void)
 	Actor_WalkToAndWait(22, 0x119, 0x1fb);
 	Engine_ActorFaceEachOther(22, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(30);
-	Engine_EventSetMessage(MsgHaidiaNorthLeadsToMtAleph);
+	Engine_EventSetMessage(MsgValeNorthLeadsToMtAleph);
 	Event_ShowMessage(22, 0);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
 	Engine_EventWait(10);
@@ -1113,7 +1113,7 @@ static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 	Engine_EventWait(20);
 	Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 	Engine_EventWait(40);
-	Engine_EventSetMessage(MsgHaidiaCantGetAroundThisRock);
+	Engine_EventSetMessage(MsgValeCantGetAroundThisRock);
 	Engine_EventShowMessage(22, 0);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventShowMessage(22, 0);
@@ -1141,7 +1141,7 @@ static void EV34_TOUCH(void)
 	if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0)
 	{
 		Engine_EventBegin();
-		Event_CallWithLastActiveObjectId((s32)HaidiaArashi_LastObjectCall);
+		Event_CallWithLastActiveObjectId((s32)ValeStorm_LastObjectCall);
 		SceneState_SetValue140Mode0();
 		Engine_TaskWait(1);
 		Event_PlayCue(141);
@@ -1157,8 +1157,8 @@ static void EV34_TOUCH(void)
 		}
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
 		Actor_SetSpeed(22, 0x20000, 0x10000);
-		Engine_ActorEnableActionCallback(0, HaidiaArashi_LeaderScript);
-		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScript);
+		Engine_ActorEnableActionCallback(0, ValeStorm_LeaderScript);
+		Object_SetActionCallbackAndRefreshById(22, (s32)ValeStorm_ActorTwentyTwoScript);
 		Object_RefreshSelectorById(0);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
 		Actor_ShowEmote(22, 0x100, 30);
@@ -1180,7 +1180,7 @@ static void EV34_TOUCH(void)
 		Engine_ActorSetSpritePriority(33, 2);
 		Engine_ActorSetSpritePriority(30, 3);
 		Engine_ActorSetSpritePriority(29, 3);
-		Engine_EventSetMessage(MsgHaidiaTheBoulderIsFalling);
+		Engine_EventSetMessage(MsgValeTheBoulderIsFalling);
 		Event_ShowMessageAndWait(28, 0, 20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Actor_FaceDirection(22, FACING_NORTH, 20);
@@ -1304,7 +1304,7 @@ static void EV34_TOUCH(void)
 	}
 }
 
-static void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode)
+static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode)
 {
 	if ((actor->active & 15) == 1)
 	{
@@ -1313,7 +1313,7 @@ static void Arashi_SetActorFrameMode(struct FieldActor *actor, s32 mode)
 		u8						count;
 		if (mode == 0)
 		{
-			param = HaidiaArashi_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
+			param = ValeStorm_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
 		}
 		count = animation->count;
 		if (count != 0)
@@ -1338,17 +1338,17 @@ static void ActorPresentation_SetFourActorsModeByBit(void)
 {
 	if (((gFrameCount >> HaidiaArashi_ShakeShift) & 3) != 0)
 	{
-		Arashi_SetActorFrameMode(Object_GetById(32), 1);
-		Arashi_SetActorFrameMode(Object_GetById(33), 1);
-		Arashi_SetActorFrameMode(Object_GetById(30), 1);
-		Arashi_SetActorFrameMode(Object_GetById(29), 1);
+		Storm_SetActorFrameMode(Object_GetById(32), 1);
+		Storm_SetActorFrameMode(Object_GetById(33), 1);
+		Storm_SetActorFrameMode(Object_GetById(30), 1);
+		Storm_SetActorFrameMode(Object_GetById(29), 1);
 	}
 	else
 	{
-		Arashi_SetActorFrameMode(Object_GetById(32), 8);
-		Arashi_SetActorFrameMode(Object_GetById(33), 8);
-		Arashi_SetActorFrameMode(Object_GetById(30), 8);
-		Arashi_SetActorFrameMode(Object_GetById(29), 8);
+		Storm_SetActorFrameMode(Object_GetById(32), 8);
+		Storm_SetActorFrameMode(Object_GetById(33), 8);
+		Storm_SetActorFrameMode(Object_GetById(30), 8);
+		Storm_SetActorFrameMode(Object_GetById(29), 8);
 	}
 }
 
@@ -1369,7 +1369,7 @@ static void EV35_TOUCH(void)
 		s32				   v;
 		o = Object_GetById(10);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		tbl = HaidiaArashi_ActorEightScript;
+		tbl = ValeStorm_ActorEightScript;
 		o->timer = v;
 		Engine_ActorEnableActionCallback(10, (s32)tbl);
 	}
@@ -1403,7 +1403,7 @@ static void EV35_TOUCH(void)
 	Actor_FaceDirection(23, FACING_NORTH, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
 	Engine_TaskWait(3);
-	Engine_EventSetMessage(MsgHaidiaNoBrother);
+	Engine_EventSetMessage(MsgValeNoBrother);
 	Engine_EventShowMessage(0x201a, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 0x446);
@@ -1589,12 +1589,12 @@ static void EV35_TOUCH(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventShowMessageAndWait(9, 0, 10);
-	HaidiaArashi_RunRiverSearch();
+	ValeStorm_RunRiverSearch();
 	Engine_GameFlagSet(0x83A);
 	Engine_EventEnd();
 }
 
-static void HaidiaArashi_RunRiverSearch(void)
+static void ValeStorm_RunRiverSearch(void)
 {
 	struct FieldActor *entry;
 	s32				   record;
@@ -1617,10 +1617,10 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
 	Actor_SetSpeed(26, 0x19999, 0xcccc);
 	Actor_SetSpeed(9, 0x19999, 0xcccc);
-	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
-	Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
+	Engine_ActorEnableActionCallback(26, ValeStorm_ActorTwentySixScriptA);
+	Object_SetActionCallbackAndRefreshById(9, (s32)ValeStorm_ActorNineScriptA);
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
+	Map_AnimateCells(ValeStorm_CellSteps2, 38, 72);
 	Engine_EventWait(10);
 	Actor_WalkToAndWait(9, 149, 0x497);
 	Actor_SetPosition(9, 0, 0);
@@ -1641,31 +1641,31 @@ static void HaidiaArashi_RunRiverSearch(void)
 	entry = Actor_Get(25);
 	record = Engine_RandomNext();
 	entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-	script = (s32)HaidiaArashi_ActorEightScript;
+	script = (s32)ValeStorm_ActorEightScript;
 	Engine_ActorEnableActionCallback(10, script);
 	Engine_ActorEnableActionCallback(24, script);
 	Engine_ActorEnableActionCallback(25, script);
 	Object_RefreshSelectorById(26);
 	Engine_EventWait(10);
 	Event_PlayCue(159);
-	Map_AnimateCells(HaidiaArashi_CellSteps5, 38, 72);
+	Map_AnimateCells(ValeStorm_CellSteps5, 38, 72);
 	Engine_EventWait(30);
 	BattleFx_PlayQueuedSound();
 	Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
 	Event_PlayCue(158);
-	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
+	Map_AnimateCells(ValeStorm_CellSteps1, 35, 73);
 	Engine_EventWait(20);
 	BattleFx_PlayQueuedSound();
-	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptB);
+	Engine_ActorEnableActionCallback(9, ValeStorm_ActorNineScriptB);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptB);
+	Engine_ActorEnableActionCallback(26, ValeStorm_ActorTwentySixScriptB);
 	Engine_EventWait(40);
 	Event_PlayCue(159);
-	Map_AnimateCells(HaidiaArashi_CellSteps4, 35, 73);
+	Map_AnimateCells(ValeStorm_CellSteps4, 35, 73);
 	Object_RefreshSelectorById(26);
 	BattleFx_PlayQueuedSound();
 	Engine_EventWait(40);
-	north = MsgHaidiaGoLookNorth;
+	north = MsgValeGoLookNorth;
 	Engine_EventSetMessage(north);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Engine_ActorSetAnimationAndWait(26, 3);
@@ -1673,8 +1673,8 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Engine_ActorSetAnimation(9, 3);
 	Engine_ActorSetAnimationAndWait(26, 3);
 	Engine_EventWait(30);
-	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptC);
-	Engine_ActorEnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptC);
+	Engine_ActorEnableActionCallback(9, ValeStorm_ActorNineScriptC);
+	Engine_ActorEnableActionCallback(26, ValeStorm_ActorTwentySixScriptC);
 	Engine_EventWait(40);
 	Camera_SetSpeed(0x20000, 0x4000);
 	Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
@@ -1701,7 +1701,7 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Event_ShowMessage(0x8009, 0);
 	Actor_FaceDirection(22, FACING_WEST, 40);
 	Actor_ShowEmote(9, 0x100, 30);
-	suppose = MsgHaidiaDontSupposeTwo;
+	suppose = MsgValeDontSupposeTwo;
 	Engine_EventSetMessage(suppose);
 	Event_OpenMessage(0x8009, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1723,7 +1723,7 @@ static void HaidiaArashi_RunRiverSearch(void)
 		Engine_EventSetMessage((suppose + 2));
 		Event_ShowMessage(0x8009, 0);
 	}
-	Engine_ActorEnableActionCallback(9, HaidiaArashi_ActorNineScriptD);
+	Engine_ActorEnableActionCallback(9, ValeStorm_ActorNineScriptD);
 	Engine_EventWait(90);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
 	Engine_EventWait(40);
@@ -1752,12 +1752,12 @@ static void EV10_TALK(void)
 	Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 20);
 	if (Engine_GameFlagIsSet(0x30d) != 0)
 	{
-		Engine_EventSetMessage(MsgHaidiaTwoDontEnough);
+		Engine_EventSetMessage(MsgValeTwoDontEnough);
 		Engine_EventShowMessageAndWait(10, 0, 10);
 	}
 	else
 	{
-		Engine_EventSetMessage(MsgHaidiaOh);
+		Engine_EventSetMessage(MsgValeOh);
 		Engine_ActorStartRepeatedMotion(10, 1);
 		Engine_EventShowMessageAndWait(10, 0, 10);
 		Engine_ActorStartRepeatedMotion(10, 2);
@@ -1771,7 +1771,7 @@ static void EV10_TALK(void)
 		s32				   v;
 		rec = Object_GetById(10);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		tbl = HaidiaArashi_ActorEightScript;
+		tbl = ValeStorm_ActorEightScript;
 		rec->timer = v;
 		Engine_ActorEnableActionCallback(10, tbl);
 	}
@@ -1835,7 +1835,7 @@ static void EV36_TOUCH(void)
 			Actor_WalkToAndWait(8, 221, 0x569);
 			Actor_FaceDirection(8, 0xb000, 60);
 			Engine_ActorRunRepeatedMotion(26, 2);
-			Engine_EventSetMessage(MsgHaidiaMomDadBack);
+			Engine_EventSetMessage(MsgValeMomDadBack);
 			Engine_EventShowMessageAndWait(26, 0, 40);
 			Actor_SetPosition(9, 0x650000, 0x4ad0000);
 			Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
@@ -1844,7 +1844,7 @@ static void EV36_TOUCH(void)
 			Engine_CameraSetSpeed(0x13333, 0x2666);
 			Camera_MoveTo(0x650000, -1, 0x4ad0000, 1);
 			Actor_SetSpeed(9, 0x16666, 0xb333);
-			Engine_ActorEnableActionCallback(9, HaidiaArashi_StormRunActions);
+			Engine_ActorEnableActionCallback(9, ValeStorm_StormRunActions);
 			Engine_EventWait(60);
 			Engine_CameraSetSpeed(0x9999, 0x1333);
 			Camera_MoveTo(0xbb0000, -1, 0x5300000, 1);
@@ -1901,7 +1901,7 @@ static void EV36_TOUCH(void)
 	}
 }
 
-static __inline__ void HaidiaArashi_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
+static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object, s32 pos, s32 depth)
 {
 	object->x.fixed = pos;
 	object->y.fixed = pos;
@@ -1937,7 +1937,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Actor_SetSpeed(26, 0x13333, 0x9999);
 	Actor_SetSpeed(0, 0x13333, 0x9999);
 	Actor_SetSpeed(22, 0x13333, 0x9999);
-	entryActions = HaidiaArashi_ArriveScript;
+	entryActions = ValeStorm_ArriveScript;
 	Actor_EnableActionCallback(8, entryActions);
 	Event_Wait(10);
 	Actor_EnableActionCallback(26, entryActions);
@@ -1955,10 +1955,10 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Actor_WalkToAndWait(9, 158, 0x4f8);
 	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
 	Object_RefreshSelectorById(8);
-	Actor_EnableActionCallback(8, HaidiaArashi_GatherPath8);
-	Actor_EnableActionCallback(26, HaidiaArashi_GatherPath26);
-	Actor_EnableActionCallback(0, HaidiaArashi_GatherPath0);
-	Object_SetActionCallbackAndRefreshById(22, HaidiaArashi_GatherPath22);
+	Actor_EnableActionCallback(8, ValeStorm_GatherPath8);
+	Actor_EnableActionCallback(26, ValeStorm_GatherPath26);
+	Actor_EnableActionCallback(0, ValeStorm_GatherPath0);
+	Object_SetActionCallbackAndRefreshById(22, ValeStorm_GatherPath22);
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	Event_PlayCue(145);
 	Event_Wait(20);
@@ -1990,7 +1990,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	fieldActor = Actor_Get(9);
 	random = Random_Next();
 	fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-	moveActions = HaidiaArashi_LookAroundScript;
+	moveActions = ValeStorm_LookAroundScript;
 	Actor_EnableActionCallback(9, moveActions);
 	Event_Wait(30);
 	Actor_EnableActionCallback(0, moveActions);
@@ -2037,7 +2037,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	groupActor->scale_y = 0xcccc;
 	groupActor->priority_flags &= 254;
 	groupVisual->priority = 1;
-	HaidiaArashi_PlaceActor(actor, 0xc80000, 0x3820000);
+	ValeStorm_PlaceActor(actor, 0xc80000, 0x3820000);
 	actor->motion_flags = still;
 	actor->priority_flags &= 254;
 	actorVisual->priority = 0;
@@ -2061,8 +2061,8 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(30);
 	Task_Wait(30);
-	FieldScheduler_AddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
-	Actor_EnableActionCallback(19, HaidiaArashi_ActorNineteenRiseScript);
+	FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow, 0xc80);
+	Actor_EnableActionCallback(19, ValeStorm_ActorNineteenRiseScript);
 	Camera_SetSpeed(0x20000, 0x7ae);
 	Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
 	do
@@ -2086,7 +2086,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	work->velocity_y = phase;
 	work = Battle_GetWorkObject1e0();
 	work->velocity_z = phase;
-	Scheduler_RemoveCallback(HaidiaArashi_UpdatePulsingGlow);
+	Scheduler_RemoveCallback(ValeStorm_UpdatePulsingGlow);
 	Actor_Stop(19);
 	Task_Wait(1);
 	Actor_SetAnimation(19, 0);
@@ -2123,7 +2123,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	actor->target_x = 0x80000000;
 	actor->target_y = 0x80000000;
 	actor->target_z = 0x80000000;
-	HaidiaArashi_FlashLightning();
+	ValeStorm_FlashLightning();
 	Actor_SetPosition(27, 0xda0000, 0x4980000);
 	Camera_MoveTo(0xd20000, 0, 0x4ac0000, 0);
 	Engine_MapRedraw();
@@ -2160,7 +2160,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Actor_SetAnimation(25, 5);
 	groupActor = Actor_Get(27);
 	groupVisual = groupActor->sprite;
-	HaidiaArashi_FlashLightning();
+	ValeStorm_FlashLightning();
 	actor->y.fixed = 0x300000;
 	actor->x.fixed = 0xd60000;
 	actor->z.fixed = 0x4c00000;
@@ -2203,7 +2203,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	actor->facing = 0xe000;
 	random = Random_Next();
 	actor->timer = Math_RemainderUnsigned(random, 90) + 60;
-	departureActions = HaidiaArashi_ActorEightScript;
+	departureActions = ValeStorm_ActorEightScript;
 	actor->work = 1;
 	Actor_EnableActionCallback(9, departureActions);
 	Actor_SetPosition(26, 0xa50000, 0x4e60000);
@@ -2232,7 +2232,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Actor_SetAnimation(8, 6);
 	Object_GetById(22)->priority_flags &= 254;
 	Object_GetById(8)->priority_flags &= 254;
-	FieldScheduler_AddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
+	FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority, 0xc80);
 	Actor_SetPosition(0, 0xb50000, 0x4f90000);
 	work = Actor_Get(0);
 	work->facing = 0xe000;
@@ -2303,7 +2303,7 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-static void HaidiaArashi_FlashLightning(void)
+static void ValeStorm_FlashLightning(void)
 {
 	Engine_TaskWait(20);
 	GameFlag_Set(0x166);
@@ -2329,7 +2329,7 @@ static void HaidiaArashi_FlashLightning(void)
 	Map_ClearLayerEntryFlag(5);
 }
 
-static void HaidiaArashi_UpdatePulsingGlow(void)
+static void ValeStorm_UpdatePulsingGlow(void)
 {
 	struct FieldActor  *source;
 	struct FieldActor  *glow;
@@ -2437,9 +2437,9 @@ static void EV08_TALK(void)
 		}
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgHaidiaICantMoveGetHelp);
+		Engine_EventSetMessage(MsgValeICantMoveGetHelp);
 		Event_ShowMessage(8, 0);
-		Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+		Engine_ActorEnableActionCallback(8, ValeStorm_ActorEightScript);
 		Engine_ActorSetAnimation(8, 6);
 	}
 	else
@@ -2457,7 +2457,7 @@ static void EV08_TALK(void)
 			Engine_ActorSetAnimation(8, 8);
 		}
 		Engine_EventWait(20);
-		Engine_EventSetMessage(MsgHaidiaIllGo);
+		Engine_EventSetMessage(MsgValeIllGo);
 		Event_ShowMessageAndWait(8, 0, 20);
 		Engine_ActorSetAnimation(8, 1);
 		Engine_ActorJump(8, 4, 0);
@@ -2478,7 +2478,7 @@ static void EV08_TALK(void)
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(20);
 		Event_ShowMessage(8, 0);
-		Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
+		Engine_ActorEnableActionCallback(8, ValeStorm_ActorEightScript);
 		Engine_ActorSetAnimation(8, 6);
 		GameFlag_Set(0x305);
 	}
@@ -2490,14 +2490,14 @@ static void FieldScene_ConfigureActorTwentyTwoScene(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_ActorStop(ACTOR_ID);
-	Scheduler_RemoveCallback((s32)HaidiaArashi_CopyLeaderSpritePriority);
+	Scheduler_RemoveCallback((s32)ValeStorm_CopyLeaderSpritePriority);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
 	Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
 	Engine_TaskWait(1);
-	Engine_EventSetMessage(MsgHaidiaRobin);
+	Engine_EventSetMessage(MsgValeIsaac);
 	Event_ShowMessage(0x1016, 0);
 	Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
 	Engine_TaskWait(1);
@@ -2586,7 +2586,7 @@ static void SceneActor_SetModeByFrameBit1(s32 o)
 		v = (HaidiaArashi_ShakeShift << 3) + 16;
 		if (Math_RemainderUnsigned(*frame, v) == 0)
 		{
-			HaidiaArashi_SpawnEffectPair((union PairObject *)o);
+			ValeStorm_SpawnEffectPair((union PairObject *)o);
 		}
 	}
 }
@@ -2604,11 +2604,11 @@ static void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
 	n = (HaidiaArashi_ShakeShift << 3) + 16;
 	if (Math_RemainderUnsigned(gFrameCount, n) == 0)
 	{
-		HaidiaArashi_SpawnEffectPair((union PairObject *)obj);
+		ValeStorm_SpawnEffectPair((union PairObject *)obj);
 	}
 }
 
-static void HaidiaArashi_CycleObjectPalettes(s32 o)
+static void ValeStorm_CycleObjectPalettes(s32 o)
 {
 	s32 t;
 
@@ -2622,7 +2622,7 @@ static void HaidiaArashi_CycleObjectPalettes(s32 o)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
 
-static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
+static void ValeStorm_SpawnEffectPair(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -2694,10 +2694,10 @@ static void FieldScene_RunFourPairedSteps(void)
 static void SceneState_SetValue19ThenCall(void)
 {
 
-	HaidiaArashi_CycleObjectPalettes((s32)Object_GetById(19));
+	ValeStorm_CycleObjectPalettes((s32)Object_GetById(19));
 }
 
-static void HaidiaArashi_CopyLeaderSpritePriority(void)
+static void ValeStorm_CopyLeaderSpritePriority(void)
 {
 	struct FieldSpritePriority *src;
 	struct FieldSpritePriority *dst;
@@ -2719,20 +2719,20 @@ static void EV24_SEARCH(void)
 {
 
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgHaidiaDoorWontOpen, 1);
+	Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
 	Engine_EventEnd();
 }
 
 static void EV19_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered(MsgHaidiaSChestValuables, 1);
+	Engine_MessageShowCentered(MsgValeSChestValuables, 1);
 	Engine_EventEnd();
 }
 
-u8 HaidiaArashi_FrameModes[] = {7, 0, 0, 0};
+u8 ValeStorm_FrameModes[] = {7, 0, 0, 0};
 
-s32 HaidiaArashi_ActorTwentyScript[] = {
+s32 ValeStorm_ActorTwentyScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(185), 0, PIXELS(824)),
 	SC_SYNC,
@@ -2747,7 +2747,7 @@ s32 HaidiaArashi_ActorTwentyScript[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentyTwoScriptA[] = {
+s32 ValeStorm_ActorTwentyTwoScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(345), 0, PIXELS(612)),
 	SC_SYNC,
@@ -2759,7 +2759,7 @@ s32 HaidiaArashi_ActorTwentyTwoScriptA[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentyTwoScriptB[] = {
+s32 ValeStorm_ActorTwentyTwoScriptB[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, 192),
 	SC_ADD(SW_SCALE_Y, 384),
@@ -2774,12 +2774,12 @@ s32 HaidiaArashi_ActorTwentyTwoScriptB[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorNineteenScript[] = {
+s32 ValeStorm_ActorNineteenScript[] = {
 	SC_ARG(2),
 	SC_END,
 };
 
-s32 HaidiaArashi_LeaderScript[] = {
+s32 ValeStorm_LeaderScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(94), 0, PIXELS(564)),
 	SC_SYNC,
@@ -2789,7 +2789,7 @@ s32 HaidiaArashi_LeaderScript[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentyTwoScript[] = {
+s32 ValeStorm_ActorTwentyTwoScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(76), 0, PIXELS(564)),
 	SC_SYNC,
@@ -2799,7 +2799,7 @@ s32 HaidiaArashi_ActorTwentyTwoScript[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorNineScriptA[] = {
+s32 ValeStorm_ActorNineScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(178), 0, PIXELS(1190)),
 	SC_SYNC,
@@ -2809,7 +2809,7 @@ s32 HaidiaArashi_ActorNineScriptA[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentySixScriptA[] = {
+s32 ValeStorm_ActorTwentySixScriptA[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(198), 0, PIXELS(1176)),
 	SC_SYNC,
@@ -2824,7 +2824,7 @@ s32 HaidiaArashi_ActorTwentySixScriptA[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorNineScriptB[] = {
+s32 ValeStorm_ActorNineScriptB[] = {
 	SC_ARG(2),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(30),
@@ -2839,7 +2839,7 @@ s32 HaidiaArashi_ActorNineScriptB[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentySixScriptB[] = {
+s32 ValeStorm_ActorTwentySixScriptB[] = {
 	SC_ARG(2),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(30),
@@ -2854,7 +2854,7 @@ s32 HaidiaArashi_ActorTwentySixScriptB[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorNineScriptC[] = {
+s32 ValeStorm_ActorNineScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(50), 0, PIXELS(1214)),
 	SC_SYNC,
@@ -2866,7 +2866,7 @@ s32 HaidiaArashi_ActorNineScriptC[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorTwentySixScriptC[] = {
+s32 ValeStorm_ActorTwentySixScriptC[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(153), 0, PIXELS(1251)),
 	SC_SYNC,
@@ -2877,7 +2877,7 @@ s32 HaidiaArashi_ActorTwentySixScriptC[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ActorNineScriptD[] = {
+s32 ValeStorm_ActorNineScriptD[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(123), 0, PIXELS(1078)),
 	SC_SYNC,
@@ -2892,7 +2892,7 @@ s32 HaidiaArashi_ActorNineScriptD[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_StormRunActions[] = {
+s32 ValeStorm_StormRunActions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(102), 0, PIXELS(1236)),
 	SC_SYNC,
@@ -2904,7 +2904,7 @@ s32 HaidiaArashi_StormRunActions[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_ArriveScript[] = {
+s32 ValeStorm_ArriveScript[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(1379)),
 	SC_SYNC,
@@ -2923,7 +2923,7 @@ s32 HaidiaArashi_ArriveScript[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_GatherPath8[] = {
+s32 ValeStorm_GatherPath8[] = {
 	SC_MOVE(PIXELS(184), 0, PIXELS(1309)),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2931,7 +2931,7 @@ s32 HaidiaArashi_GatherPath8[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_GatherPath26[] = {
+s32 ValeStorm_GatherPath26[] = {
 	SC_MOVE(PIXELS(165), 0, PIXELS(1306)),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2939,7 +2939,7 @@ s32 HaidiaArashi_GatherPath26[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_GatherPath0[] = {
+s32 ValeStorm_GatherPath0[] = {
 	SC_MOVE(PIXELS(183), 0, PIXELS(1325)),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2947,7 +2947,7 @@ s32 HaidiaArashi_GatherPath0[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_GatherPath22[] = {
+s32 ValeStorm_GatherPath22[] = {
 	SC_MOVE(PIXELS(166), 0, PIXELS(1325)),
 	SC_SYNC,
 	SC_ARG(1),
@@ -2955,17 +2955,17 @@ s32 HaidiaArashi_GatherPath22[] = {
 	SC_END,
 };
 
-s32 HaidiaArashi_LookAroundScript[] = {
-	SC_CALL(HaidiaArashi_RerollHeadingOnCountdown),
+s32 ValeStorm_LookAroundScript[] = {
+	SC_CALL(ValeStorm_RerollHeadingOnCountdown),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 HaidiaArashi_ActorEightScript[] = {
+s32 ValeStorm_ActorEightScript[] = {
 	SC_CALL(SceneActor_UpdateScalePulse),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 HaidiaArashi_ActorNineteenRiseScript[] = {
+s32 ValeStorm_ActorNineteenRiseScript[] = {
 	SC_ARG(2),
 	SC_SET(SW_SPEED, 0x30000),
 	SC_SET(SW_ACCEL, 0x10000),
@@ -3016,7 +3016,7 @@ s32 HaidiaArashi_ActorNineteenRiseScript[] = {
 	SC_END,
 };
 
-struct SceneEntrance HaidiaArashi_SceneTable0[] = {
+struct SceneEntrance ValeStorm_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -3036,7 +3036,7 @@ struct SceneEntrance HaidiaArashi_SceneTable0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 HaidiaArashi_SceneTable1[] = {
+u32 ValeStorm_SceneTable1[] = {
 	SCENE_EXITS(3),
 	SCENE_EXIT(2, 5, 8),
 	SCENE_EXIT(3, 6, 1),
@@ -3054,7 +3054,7 @@ u32 HaidiaArashi_SceneTable1[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement HaidiaArashi_SceneTable2[] = {
+struct ScenePlacement ValeStorm_SceneTable2[] = {
 	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
 	{ 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3098,7 +3098,7 @@ struct ScenePlacement HaidiaArashi_SceneTable2[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement HaidiaArashi_LastObjectCall[] = {
+struct ScenePlacement ValeStorm_LastObjectCall[] = {
 	{ 0x16, CONDITION_ALWAYS, 7,
 		PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3114,7 +3114,7 @@ struct ScenePlacement HaidiaArashi_LastObjectCall[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent HaidiaArashi_SceneTable3[] = {
+struct SceneEvent ValeStorm_SceneTable3[] = {
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
@@ -3129,19 +3129,19 @@ struct SceneEvent HaidiaArashi_SceneTable3[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgHaidiaHangOnGarsiaHelpIsOn) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgHaidiaDontLetGoGarsia) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaNoItCantBeKairuIt) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHaidiaMomDadGarsiaPleaseDontLeave) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgValeHangOnFelixHelpIsOn) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgValeDontLetGoFelix) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeNoItCantBeKyleIt) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgValeMomDadFelixPleaseDontLeave) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
 	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
 	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
@@ -3162,26 +3162,26 @@ struct SceneEvent HaidiaArashi_SceneTable3[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 HaidiaArashi_CellSteps0[] = {
+u16 ValeStorm_CellSteps0[] = {
 	MAP_CELL_STEP(0, 98, 2, 2, 2), MAP_CELL_STEP(2, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 HaidiaArashi_CellSteps1[] = {
+u16 ValeStorm_CellSteps1[] = {
 	MAP_CELL_STEP(0, 96, 2, 2, 2), MAP_CELL_STEP(2, 96, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 HaidiaArashi_CellSteps2[] = {
+u16 ValeStorm_CellSteps2[] = {
 	MAP_CELL_STEP(4, 98, 2, 2, 2), MAP_CELL_STEP(6, 98, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 HaidiaArashi_CellSteps3[] = {
+u16 ValeStorm_CellSteps3[] = {
 	MAP_CELL_STEP(4, 96, 2, 2, 2), MAP_CELL_STEP(6, 96, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 HaidiaArashi_CellSteps4[] = {
+u16 ValeStorm_CellSteps4[] = {
 	MAP_CELL_STEP(0, 96, 2, 2, 2), MAP_CELL_STEP(50, 44, 2, 2, 2), MAP_CELL_STEPS_END,
 };
 
-u16 HaidiaArashi_CellSteps5[] = {
+u16 ValeStorm_CellSteps5[] = {
 	MAP_CELL_STEP(4, 98, 2, 2, 2), MAP_CELL_STEP(44, 108, 2, 2, 2), MAP_CELL_STEPS_END,
 };

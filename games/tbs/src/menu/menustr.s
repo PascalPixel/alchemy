@@ -25,8 +25,8 @@ Ui_HpRowString:
 	.endif
 	.if EDITION_INTERNATIONAL
 	.else
-	.global Ui_EpRowString
-Ui_EpRowString:
+	.global Ui_PpRowString
+Ui_PpRowString:
 	.asciz "EP    /"
 	.endif
 	.ifdef TBS_EDITION_JA

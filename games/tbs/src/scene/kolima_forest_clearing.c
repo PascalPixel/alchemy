@@ -42,7 +42,7 @@ typedef struct
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return KorimaHiroba_Scripts;
+	return KolimaForestClearing_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -52,12 +52,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return KorimaHiroba_Messages;
+	return KolimaForestClearing_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return KorimaHiroba_Actors;
+	return KolimaForestClearing_Actors;
 }
 
 static void EV10_SCRIPT(void)
@@ -81,7 +81,7 @@ static void EV11_PSYNERGY(void)
 
 u8 *SceneData_GetExtraTable(void)
 {
-	return KorimaHiroba_Extras;
+	return KolimaForestClearing_Extras;
 }
 
 s32 FieldScene_SetupEntryActors8To11(void)
@@ -141,21 +141,21 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-struct SceneEntrance KorimaHiroba_Scripts[] = {
+struct SceneEntrance KolimaForestClearing_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 KorimaHiroba_Messages[] = {
+u32 KolimaForestClearing_Messages[] = {
 	SCENE_EXITS(41),
 	SCENE_EXIT(1, 42, 1),
 	SCENE_EXIT(2, 40, 2),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement KorimaHiroba_Actors[] = {
+struct ScenePlacement KolimaForestClearing_Actors[] = {
 	{ 0xcd, CONDITION_ALWAYS, 7,
 		PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -172,7 +172,7 @@ struct ScenePlacement KorimaHiroba_Actors[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent KorimaHiroba_Extras[] = {
+struct SceneEvent KolimaForestClearing_Extras[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
@@ -181,5 +181,5 @@ struct SceneEvent KorimaHiroba_Extras[] = {
 };
 
 // .bss 内の並びは最初に宣言した順 (field.h の extern)
-u8 KorimaPalette_First[1792] __attribute__((section(".bss")));
-u8 KorimaPalette_Second[896] __attribute__((section(".bss")));
+u8 KolimaPalette_First[1792] __attribute__((section(".bss")));
+u8 KolimaPalette_Second[896] __attribute__((section(".bss")));

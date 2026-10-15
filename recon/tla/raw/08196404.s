@@ -459,35 +459,35 @@ Func_08196404:
 .L_0819674c:
 	.4byte BattleFx_PatchTemplateCode
 .L_08196750:
-	.4byte SentouKouka_Mask
+	.4byte BattleEffect_Mask
 .L_08196754:
 	.4byte Data_081973f0
 .L_08196758:
-	.4byte SentouKouka_YomiGyaku
+	.4byte BattleEffect_CopyReverse
 .L_0819675c:
-	.4byte SentouKouka_YomiJun
+	.4byte BattleEffect_CopyForward
 .L_08196760:
-	.4byte SentouKouka_NuriGyaku
+	.4byte BattleEffect_TransparentReverse
 .L_08196764:
-	.4byte SentouKouka_NuriJun
+	.4byte BattleEffect_TransparentForward
 .L_08196768:
-	.4byte SentouKouka_HikakuGyaku
+	.4byte BattleEffect_MaxReverse
 .L_0819676c:
-	.4byte SentouKouka_HikakuJun
+	.4byte BattleEffect_MaxForward
 .L_08196770:
-	.4byte SentouKouka_KasanGyaku
+	.4byte BattleEffect_AdditiveReverse
 .L_08196774:
-	.4byte SentouKouka_KasanJun
+	.4byte BattleEffect_AdditiveForward
 .L_08196778:
 	.4byte 0x00ffffff
 .L_0819677c:
-	.4byte SentouKouka_Yomi8Gyaku
+	.4byte BattleEffect_Copy8Reverse
 .L_08196780:
-	.4byte SentouKouka_Yomi8Jun
+	.4byte BattleEffect_Copy8Forward
 .L_08196784:
-	.4byte SentouKouka_Nuri8Gyaku
+	.4byte BattleEffect_Transparent8Reverse
 .L_08196788:
-	.4byte SentouKouka_Nuri8Jun
+	.4byte BattleEffect_Transparent8Forward
 .L_0819678c:
 	movs r3, #4
 	mov r1, r8
@@ -681,13 +681,13 @@ Func_08196404:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081968f4:
-	.4byte SentouKouka_Hikaku4Gyaku
+	.4byte BattleEffect_Max4Reverse
 .L_081968f8:
-	.4byte SentouKouka_Hikaku4Jun
+	.4byte BattleEffect_Max4Forward
 .L_081968fc:
-	.4byte SentouKouka_IroGyaku
+	.4byte BattleEffect_ColorReverse
 .L_08196900:
-	.4byte SentouKouka_IroJun
+	.4byte BattleEffect_ColorForward
 .L_08196904:
 	.4byte 0x00ffffff
 .L_08196908:

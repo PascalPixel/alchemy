@@ -243,7 +243,7 @@ Func_081a15dc:
 .L_081a17a8:
 	.4byte 0x00000234
 .L_081a17ac:
-	.4byte SentouKouka_Tenkai2Code
+	.4byte BattleEffect_Expand2Code
 .L_081a17b0:
 	.4byte gIoWriteQueue
 .L_081a17b4:

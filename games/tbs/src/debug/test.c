@@ -160,7 +160,7 @@ static void SceneState_ApplyBlockDa2(void)
 static void DebugMenu_RunMessageTest(void)
 {
 	Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
-	Engine_EventSetMessage(MSGNO(MsgHaidiaComeOnHurry));
+	Engine_EventSetMessage(MSGNO(MsgValeComeOnHurry));
 	BattleEv_RunWait(-1, 0);
 }
 #endif
@@ -519,10 +519,10 @@ static void EV10_TALK(void)
 	FieldOwner_AdjustFirstValue(1, -100);
 	FieldOwner_AdjustFirstValue(2, -33);
 	FieldOwner_AdjustFirstValue(3, -100);
-	UnitEpAdd(0, -50);
-	UnitEpAdd(1, -40);
-	UnitEpAdd(2, -35);
-	UnitEpAdd(3, -20);
+	UnitPpAdd(0, -50);
+	UnitPpAdd(1, -40);
+	UnitPpAdd(2, -35);
+	UnitPpAdd(3, -20);
 	record = UnitGet(0);
 	record[0x131] = 1;
 	record += 0x140;
@@ -689,62 +689,62 @@ static void EV17_TALK(void)
 static void EV11_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
-	Inventory_AddItem(ROBIN, 0xb8);
-	Inventory_AddItem(ROBIN, 0xcc);
-	Inventory_AddItem(ROBIN, 0xdc);
-	Inventory_AddItem(ROBIN, 0xdd);
-	Inventory_AddItem(ROBIN, 0xde);
-	Inventory_AddItem(ROBIN, 0xdf);
-	Inventory_AddItem(ROBIN, 0xe0);
-	Inventory_AddItem(GERALD, 0xe2);
-	Inventory_AddItem(GERALD, 0xe3);
-	Inventory_AddItem(GERALD, 0xe6);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe4);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe5);
-	Inventory_AddItem(GERALD, 0xe8);
-	Inventory_AddItem(GERALD, 0xe7);
-	Inventory_AddItem(GERALD, 0xed);
-	Inventory_AddItem(IWAN, 0xf2);
-	Inventory_AddItem(IWAN, 0x102);
-	Inventory_AddItem(IWAN, 0x10b);
-	Inventory_AddItem(IWAN, 0x109);
-	Inventory_AddItem(IWAN, 0xfc);
-	Inventory_AddItem(MEARI, 0xbd);
-	Inventory_AddItem(MEARI, 0xc8);
-	Inventory_AddItem(MEARI, 0xc9);
-	Inventory_AddItem(MEARI, 0xca);
-	Inventory_AddItem(MEARI, 0xcb);
-	Inventory_AddItem(MEARI, 0xcc);
-	Inventory_AddItem(MEARI, 0xcf);
-	UnitCalc(ROBIN);
-	UnitCalc(GERALD);
-	UnitCalc(MEARI);
-	UnitCalc(IWAN);
+	Inventory_AddItem(ISAAC, 0xb8);
+	Inventory_AddItem(ISAAC, 0xcc);
+	Inventory_AddItem(ISAAC, 0xdc);
+	Inventory_AddItem(ISAAC, 0xdd);
+	Inventory_AddItem(ISAAC, 0xde);
+	Inventory_AddItem(ISAAC, 0xdf);
+	Inventory_AddItem(ISAAC, 0xe0);
+	Inventory_AddItem(GARET, 0xe2);
+	Inventory_AddItem(GARET, 0xe3);
+	Inventory_AddItem(GARET, 0xe6);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe4);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe5);
+	Inventory_AddItem(GARET, 0xe8);
+	Inventory_AddItem(GARET, 0xe7);
+	Inventory_AddItem(GARET, 0xed);
+	Inventory_AddItem(IVAN, 0xf2);
+	Inventory_AddItem(IVAN, 0x102);
+	Inventory_AddItem(IVAN, 0x10b);
+	Inventory_AddItem(IVAN, 0x109);
+	Inventory_AddItem(IVAN, 0xfc);
+	Inventory_AddItem(MIA, 0xbd);
+	Inventory_AddItem(MIA, 0xc8);
+	Inventory_AddItem(MIA, 0xc9);
+	Inventory_AddItem(MIA, 0xca);
+	Inventory_AddItem(MIA, 0xcb);
+	Inventory_AddItem(MIA, 0xcc);
+	Inventory_AddItem(MIA, 0xcf);
+	UnitCalc(ISAAC);
+	UnitCalc(GARET);
+	UnitCalc(MIA);
+	UnitCalc(IVAN);
 }
 
 s32 CommandTable_ConfigureCommandList(void)
 {
 	Party_RemoveActiveOwner(5);
-	Party_AddActiveOwner(GERALD);
-	Party_AddActiveOwner(MEARI);
-	Party_AddActiveOwner(IWAN);
+	Party_AddActiveOwner(GARET);
+	Party_AddActiveOwner(MIA);
+	Party_AddActiveOwner(IVAN);
 	Item_AdjustCounter(5, 1);
 	Item_AdjustCounter(5, 1);
 	Item_AdjustCounter(5, 1);
@@ -760,20 +760,20 @@ s32 CommandTable_ConfigureCommandList(void)
 	Item_AdjustCounter(140, 1);
 	Item_AdjustCounter(151, 1);
 #if EDITION_INTERNATIONAL
-	Party_AdvanceOwnerCountToTarget(ROBIN, 50);
-	Party_AdvanceOwnerCountToTarget(GERALD, 30);
-	Party_AdvanceOwnerCountToTarget(MEARI, 30);
+	Party_AdvanceOwnerCountToTarget(ISAAC, 50);
+	Party_AdvanceOwnerCountToTarget(GARET, 30);
+	Party_AdvanceOwnerCountToTarget(MIA, 30);
 #else
 	gGameState.coins = 777777;
-	Party_AdvanceOwnerCountToTarget(ROBIN, 30);
-	Party_AdvanceOwnerCountToTarget(GERALD, 30);
-	Party_AdvanceOwnerCountToTarget(MEARI, 30);
+	Party_AdvanceOwnerCountToTarget(ISAAC, 30);
+	Party_AdvanceOwnerCountToTarget(GARET, 30);
+	Party_AdvanceOwnerCountToTarget(MIA, 30);
 #endif
-	Party_AdvanceOwnerCountToTarget(IWAN, 30);
-	UnitCalc(ROBIN);
-	UnitCalc(GERALD);
-	UnitCalc(MEARI);
-	UnitCalc(IWAN);
+	Party_AdvanceOwnerCountToTarget(IVAN, 30);
+	UnitCalc(ISAAC);
+	UnitCalc(GARET);
+	UnitCalc(MIA);
+	UnitCalc(IVAN);
 	return 0;
 }
 
@@ -872,13 +872,13 @@ u32 MenuTest_Exits[] = {
 };
 
 struct ScenePlacement MenuTest_Placements[] = {
-	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(48), FACING_SOUTHEAST,
+	{GARET, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(48), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
-	{JASMINE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(80), FACING_SOUTHEAST,
+	{JENNA, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(80), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
-	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(112), FACING_SOUTHEAST,
+	{IVAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(112), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
-	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(144), FACING_SOUTHEAST,
+	{MIA, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(144), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
 	{0x1e, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(48), FACING_SOUTHEAST,
 		TALK_FACE_PARTY, 0},
@@ -916,11 +916,11 @@ struct SceneEvent MenuTest_Events[] = {
 #if defined(TBS_EDITION_FR)
 	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiFuneThenTheyAreDangerous)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
 	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult2418)},
 #endif
-	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaKyleAbleStop)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeKyleAbleStop)},
 	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
 #if !EDITION_INTERNATIONAL
 	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},

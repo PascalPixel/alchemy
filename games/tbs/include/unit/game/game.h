@@ -28,9 +28,9 @@ void Owner_RefreshRatiosOnFlag(void);
 void Owner_RatioNoOp(void);
 void UnitRatio(s32 owner_no);
 void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input);
-void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep);
+void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 pp);
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta);
-s16 UnitEpAdd(s32 owner, s32 delta);
+s16 UnitPpAdd(s32 owner, s32 delta);
 s32 Party_AdjustSixDigitCounterB(s32 amount);
 s32 Party_AdjustCounterCappedAt28(s32 amount);
 

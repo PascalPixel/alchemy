@@ -123,7 +123,7 @@ s32 Func_0200005c(void)
             Func_0200063c(0);
             Func_020005dc(gPartyState.unknown_220[5], gPartyState.unknown_220[6]);
             Func_020005e4();
-            Func_02000604((s32)&SceneId_VinasuChojo, 99);
+            Func_02000604((s32)&SceneId_VenusLighthouse, 99);
         }
         /* FAKEMATCH: an empty asm with a memory clobber: the native reads the entrance again for the third test on both paths, where plainly GCSE's PRE carries the first read on the path that skips the second entrance's calls (differ 74 with the cascade). */
         __asm__ volatile("" : : : "memory");

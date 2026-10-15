@@ -1,5 +1,15 @@
-/* Near miss, differ 2 of 97 (one reordered pair): as Func_02000864, the
- * native stores the new scale_y before it addresses the timer. */
+/* Near miss, differ 2 of 97 (one reordered pair): the native stores the new
+ * scale_y before it addresses the action (adds r2, r6, #0); sched2 gives the
+ * reload copy priority 39 against the store's 38. Overlay 6aa's
+ * Func_02001f90 form (and Func_02000864's) with both barriers leaves differ 4:
+ * the second barrier keeps the call's first argument and the zero in r5 from
+ * rising into the block. With the first barrier only, differ 2; plain,
+ * differ 2. A 6-minute permute of this form found nothing better. Also
+ * tried: a one-pass block around the scale_y store (differ 8) or the
+ * rotation (15), a volatile scale_y store (2), the action's address or a
+ * copy of the object through an asm reading scale_y (12), the object
+ * through an asm reading the new scale_y (6: the call's first argument then
+ * follows it), a copy through it (20). */
 #include "../../../../games/tla/src/field/overlay_653/local.h"
 
 s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b);
@@ -10,6 +20,9 @@ void Func_02000a0c(struct ObjectRuntime *object)
     struct ObjectRuntime *other = Object_GetById(12);
     s32 vx = object->bounce;
     s32 vz;
+    struct FieldSprite *sprite;
+    s32 rate;
+    s32 scale;
 
     object->x += vx;
     object->y += object->gravity;
@@ -17,9 +30,14 @@ void Func_02000a0c(struct ObjectRuntime *object)
     object->z += vz;
     object->bounce = vx - vx / 18;
     object->unknown_4c = vz - vz / 16;
-    object->scale_x += object->speed_limit;
+    /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate */
+    asm volatile("");
+    rate = object->speed_limit;
+    scale = object->scale_x;
+    sprite = object->animation;
+    object->scale_x = scale + rate;
     object->scale_y += object->acceleration;
-    ((struct FieldSprite *)object->animation)->rotation += object->action;
+    sprite->rotation += object->action;
     if (Func_02000824(object, leader)) {
         ((struct FieldSprite *)object->animation)->priority = 3;
         object->z -= object->unknown_4c;

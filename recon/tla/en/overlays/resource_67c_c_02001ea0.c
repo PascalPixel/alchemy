@@ -1,4 +1,4 @@
-/* Draft, differ 2: the listing loads the sprite attribute byte before lsls of 0x4000; with rotation stored first the zero for next_frame comes from the pool. */
+/* Draft, differ 2: the listing loads the sprite attribute byte before lsls of 0x4000; with rotation stored first the zero for next_frame comes from the pool. Also tried: every order of the three sprite stores (8 to 19), the sprite through an asm reading the rotation (4), the rotation through an asm (2), a one-pass block around the rotation (4). In sched2 the shift has priority 6 through the r3 reuse and the attribute load 5. */
 #include "../../../../games/tla/src/field/overlay_67c/local.h"
 
 void Func_02001ea0(struct ObjectRuntime *object)

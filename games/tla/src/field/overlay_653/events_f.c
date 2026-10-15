@@ -106,3 +106,59 @@ s32 Func_02000d3c(void)
         return 1;
     return 0;
 }
+
+void Func_02000d64(void)
+{
+    Object_SetModeById_(11, 2);
+    Object_SetModeById_(13, 3);
+    Object_SetModeById_(14, 3);
+    Object_SetModeById_(15, 3);
+    Object_SetModeById_(16, 3);
+    Object_SetModeById_(9, 0);
+    ObjectMotion_SetActionVariant_(9, 2);
+    Object_GetById_(9)->priority_flags &= ~2;
+    Object_SetPositionAndResetMotion_(Object_GetById_(9), 0xd80000, 0x80000, 0xd80000);
+    if (GameFlag_Test_(0x208)) {
+        Object_SetModeById_(9, 4);
+        Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.current_owner), 0xd80000, 0xc0000, 0xd80000);
+        ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.current_owner), 0);
+    }
+    Object_GetById_(11)->scale_y = 0x10000;
+    Object_SetPositionAndResetMotion_(Object_GetById_(11), 0xd80000, 0, 0xd80000);
+    Func_02000c90(13);
+    Func_02000c90(14);
+    if (GameFlag_Test_(0x301)) {
+        Func_02000c90(15);
+        Func_02000c90(16);
+    }
+    Data_02006298 = 1;
+    GameFlag_SetBit_(0x20c);
+}
+
+void Func_02000e60(void)
+{
+    Object_SetModeById_(12, 2);
+    Object_SetModeById_(17, 3);
+    Object_SetModeById_(18, 3);
+    Object_SetModeById_(19, 3);
+    Object_SetModeById_(20, 3);
+    Object_SetModeById_(10, 0);
+    ObjectMotion_SetActionVariant_(10, 2);
+    Object_GetById_(10)->priority_flags &= ~2;
+    Object_SetPositionAndResetMotion_(Object_GetById_(10), 0x1780000, 0x80000, 0xf80000);
+    if (GameFlag_Test_(0x209)) {
+        Object_SetModeById_(10, 4);
+        Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.current_owner), 0x1780000, 0xc0000, 0xf80000);
+        ObjectDispatch_SetSingleChildFlags_(Object_GetById(gPartyState.current_owner), 0);
+    }
+    Object_GetById_(12)->scale_y = 0x10000;
+    Object_SetPositionAndResetMotion_(Object_GetById_(12), 0x1780000, 0, 0xf80000);
+    Func_02000cb4(17);
+    Func_02000cb4(18);
+    if (GameFlag_Test_(0x300)) {
+        Func_02000cb4(19);
+        Func_02000cb4(20);
+    }
+    Data_0200629c = 1;
+    GameFlag_SetBit_(0x20d);
+}

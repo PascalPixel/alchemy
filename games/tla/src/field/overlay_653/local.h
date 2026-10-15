@@ -90,6 +90,9 @@ void Func_020053d8(s32 cue);
 void Func_02005160(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02005168(struct ObjectRuntime *object);
 void Func_020052e8(void);
+struct ObjectRuntime *Func_020052f0(void);
+void Func_020052d8(s32 speed, s32 acceleration);
+void Func_020052d0(s32 id, s32 value);
 void Func_02005300(s32 a, s32 b);
 void Func_02005338(s32 a);
 void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -106,6 +109,7 @@ void Func_02003a8c(void);
 void Func_02003b2c(void);
 void Func_02003c8c(void);
 extern u8 MsgScene653No12;
+extern u8 MsgScene653No06;
 extern char SceneId_Ov653Room1;
 extern char SceneId_Ov653Room2;
 extern char SceneId_Ov653Room3;
@@ -307,6 +311,18 @@ static __inline__ void Func_02005238_(s32 id, s32 x, s32 z, s32 angle)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02005238(id, x, z, angle);
+}
+
+static __inline__ void Func_02005230_(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005230(id, x, z);
+}
+
+static __inline__ void Motion_CamBounds_(s32 x, s32 y, s32 z, s32 mode)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Motion_CamBounds(x, y, z, mode);
 }
 
 /* FAKEMATCH: the native schedules this call as a value-returning one (the variant is loaded before the actor: one reordered pair with the shared void prototype). The routine is not C yet, so its return type is unproven. */

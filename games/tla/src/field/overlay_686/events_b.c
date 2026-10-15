@@ -1,5 +1,21 @@
 #include "ov686.h"
 
+s32 Func_020005c0(struct ObjectRuntime *object)
+{
+    ObjectDispatch_SetSingleChildFlags(object, 0);
+    ((struct FieldSprite *)object->animation)->priority = 2;
+    object->priority_flags &= 0xfe;
+    object->motion_flags = 0;
+    {
+        s32 step = -0x40000;
+
+        /* FAKEMATCH: the object passes through an asm that reads the step, so the step's pool load comes before the y load as the native has; plain, the y load comes first (one reordered row). Measured against it: += (s32)0xfffc0000, the constant first, y and constant temporaries, the y update before the motion_flags store (differ 13), the step behind its own "+l" barrier (differ 2 and 4), the step pinned to r2 behind a one-pass block (differ 2). */
+        __asm__("" : "+l"(object) : "l"(step));
+        object->y += step;
+    }
+    return 0;
+}
+
 extern const u8 Data_020032a0[];
 extern const u8 Data_020032b8[];
 extern const u8 Data_020034f8[];

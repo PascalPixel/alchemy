@@ -758,53 +758,6 @@ Func_0200107c:
 	add sp, #8
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02009170,"ax",%progbits
-	.global Func_02001170
-	.thumb_func
-Func_02001170:
-	push {r5, r6, lr}
-	movs r0, #166
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020091d2
-	movs r0, #12
-	movs r1, #38
-	bl Func_02000b24
-	movs r0, #13
-	movs r1, #39
-	bl Func_02000b24
-	movs r1, #37
-	movs r0, #15
-	bl Func_02000b24
-	bl Func_02003628
-	movs r0, #38
-	movs r1, #2
-	movs r2, #19
-	movs r3, #1
-	bl Func_02003688
-	movs r5, #8
-.L_020091aa:
-	movs r0, #33
-	movs r1, #55
-	bl Func_020036b8
-	subs r5, #1
-	adds r6, r0, #0
-	cmp r5, #0
-	bge .L_020091aa
-	movs r0, #128
-	lsls r0, r0, #2
-	adds r0, #74
-	bl GameFlag_SetBit
-	cmp r6, #1
-	bne .L_020091d2
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #101
-	bl GameFlag_SetBit
-.L_020091d2:
-	pop {r5, r6, pc}
 	.section .text.x020093bc,"ax",%progbits
 	.global Func_020013bc
 	.thumb_func

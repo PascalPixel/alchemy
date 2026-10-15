@@ -149,3 +149,45 @@ void Func_0200030c(s32 actor)
     Func_02000594(26, 0);
     Func_02000554();
 }
+
+static __inline__ void Func_02000534_(const void *script, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline loads the table's fields as the native does, the script last (differ 12 as a direct call). */
+    Func_02000534(script, x, z);
+}
+
+void Func_02000368(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+    s32 index;
+    u32 id;
+
+    Func_0200054c();
+    Func_020005c4(0);
+    for (id = 8; id <= 63; id++) {
+        u8 *actor = (u8 *)Object_GetById(id);
+
+        if (actor != NULL) {
+            u8 *flags = &actor[85];
+            /* FAKEMATCH: the zero pinned to r3 is rebuilt on every pass as the native does; loop.c hoists a plain zero out of the loop into a saved register (differ 16). */
+            register s32 zero asm("r3") = 0;
+
+            *flags = zero;
+        }
+    }
+    work += 0x154;
+    index = *(s16 *)work;
+    /* FAKEMATCH: the empty asms on each side of the call keep the entrance's subtraction after it; sched2 ranks the subtraction above the call (differ 2 and 4 without the first and second). */
+    asm("");
+    Func_020005f4(158);
+    asm("");
+    index -= 4;
+    Func_02000534_(Data_0200064c[index].script, Data_0200064c[index].x, Data_0200064c[index].z);
+    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
+    Object_GetById(gPartyState.current_owner)->motion_flags = 0;
+    Object_SetModeById(gPartyState.current_owner, 2);
+    Func_020005a4(*(s16 *)work);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Func_02000554();
+}

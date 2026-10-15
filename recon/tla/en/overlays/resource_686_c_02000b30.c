@@ -2,7 +2,12 @@
  * the frame count (strb, movs r6 #60, mov r8 r2); this form schedules the
  * store after them. Assigning frames after the store, a for loop, a do/break
  * loop and a counting-up loop all swap the object and the count (r5/r6),
- * differ 14 to 16. */
+ * differ 14 to 16. Also tried: an empty asm or one-pass block after
+ * the store (2); the count pinned to r6 and set after the store keeps the
+ * order but for the address's copy to r8 (2); the address passed to a
+ * long-lived copy through a volatile asm after the store orders all three
+ * but builds the address as adds r2, r5, #0; adds r2, #85 (differ 4); the
+ * offset through an asm (10 and 17). */
 #include "types.h"
 #include "object_runtime.h"
 

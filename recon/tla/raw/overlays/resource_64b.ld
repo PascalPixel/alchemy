@@ -61,7 +61,7 @@ SECTIONS
         "*/games/tla/src/field/world_map/s3bb8.o"(.text)
         "*/games/tla/src/field/world_map/s3bf0.o"(.text)
         "*/games/tla/src/field/world_map/actor_call.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200bc50)
+        "*/games/tla/src/field/world_map/s3c50.o"(.text)
         "*/games/tla/src/field/world_map/s3ca8.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200bd44)
         "*/resource_64b_overlay.o"(.text.x0200c2e0)

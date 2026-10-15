@@ -1,6 +1,10 @@
 /* Near miss of Func_02000324 (120 instructions, 2 differ): the native loads the table address
  * between the two halves of found * 3 (lsls, ldr, adds); the draft adds first. Tried: a local
- * table pointer (81 differ). */
+ * table pointer (81 differ). Round two (devices allowed): the table load is reload's (through
+ * r2 for the table in r8), placed after the multiply, and sched2 ranks it one below the add (85
+ * against 86). A one-pass block around the action call (6), an empty barrier after it, "+r" and
+ * "+l" barriers on found, a one-pass block around the cue call (2 each) and alchemy permute 4
+ * minutes (2) did not move it. */
 #include "../../../../games/tla/src/field/overlay_656/ov656.h"
 
 struct Ov656Warp {

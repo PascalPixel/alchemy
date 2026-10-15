@@ -1,42 +1,49 @@
+/* Draft, differ 2 of 65: The Broken Seal's VramBlock_LoadCached with this
+ * game's ResourceTableEntries. The native loads the table address first,
+ * before it copies no into r5 (ldr r3, =ResourceTableEntries; adds r5, r0,
+ * #0); this copies the argument first. The same one-row load order as the
+ * other near misses of this lane (Resource_InitializeTable, GameFlag_SetNibble,
+ * UiText_ShowCenteredMessage): in each, the native schedules a load one slot
+ * earlier than sched2 ranks it here. */
 #include "resource.h"
 #include "vram_tab.h"
-#include "iwram_call.h"
 #include "dma.h"
+#include "io_reg.h"
+#include "iwram_call.h"
 
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
+s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 {
     struct VramBlockCacheEntry *entry;
-    s32 offset;
-    void *destination;
+    s32 ofs;
+    void *dst;
 
-    entry = &ResourceTableEntries[slot];
-    if (slot >= VRAM_CACHE_ENTRY_COUNT)
+    entry = &ResourceTableEntries[no];
+    if (no >= VRAM_CACHE_ENTRY_COUNT)
         return 0;
-    if (size > 0x2000)
+    if (size > 8192)
         return 0;
     if (entry->size > 16) {
         if (entry->size != size) {
-            Resource_ResetEntry(slot);
-            offset = ResourceTable_AllocateBlocks(slot, size);
+            Resource_ResetEntry(no);
+            ofs = ResourceTable_AllocateBlocks(no, size);
         } else {
-            offset = entry->offset;
+            ofs = entry->offset;
         }
     } else {
-        offset = ResourceTable_AllocateBlocks(slot, size);
+        ofs = ResourceTable_AllocateBlocks(no, size);
     }
 
-    if (offset != -1) {
-        destination = (void *)(0x06010000 + offset);
+    if (ofs != -1) {
+        dst = (void *)(0x06010000 + ofs);
         entry->size = size;
-        entry->offset = offset;
-        if (source != 0) {
-            if (source == (const void *)-1) {
-                Iwram_ClearWords(destination, size);
-            } else {
-                Dma_Set(source, destination, (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
-            }
+        entry->offset = ofs;
+        if (src != 0) {
+            if (src == (const void *)-1)
+                Iwram_ClearWords(dst, size);
+            else
+                Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE32 | DMA_32BIT), REG_DMA3);
         }
-        return (u32)offset >> 5;
+        return (u32)ofs >> 5;
     }
     return 0;
 }

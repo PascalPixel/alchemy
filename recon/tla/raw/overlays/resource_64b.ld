@@ -6,7 +6,6 @@ SECTIONS
         "*/games/tla/src/field/world_map/encounter.o"(.text)
         "*/games/tla/src/field/world_map/scene_tables.o"(.text)
         "*/games/tla/src/field/world_map/tile_sprite.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x020082c4)
         "*/games/tla/src/field/world_map/story_actor.o"(.text)
         "*/games/tla/src/field/world_map/tile_sprite_b.o"(.text)
         "*/games/tla/src/field/world_map/s03f8.o"(.text)

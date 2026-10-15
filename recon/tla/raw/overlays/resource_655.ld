@@ -45,7 +45,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_655/events_e.o"(.text)
         "*/games/tla/src/field/overlay_655/s2124.o"(.text)
         "*/games/tla/src/field/overlay_655/events_f.o"(.text)
-        "*/resource_655_overlay.o"(.text.x0200a1e8)
         "*/games/tla/src/field/overlay_655/events_g.o"(.text)
         "*/games/tla/src/field/overlay_655/events_h.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

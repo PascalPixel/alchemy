@@ -181,6 +181,33 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id)
     return Object_GetById(id);
 }
 
+void Func_020021e8(void)
+{
+    Func_02003c28();
+    Func_02003d78(0);
+    Func_02003cf8()->motion_flags = 0;
+    Camera_SetBounds(658 << 16, -1, 164 << 16, 1);
+    Func_02003cf0();
+    Actor_FaceToward(24, gPartyState.current_owner, 0);
+    Actor_SetTurn(24, 0x100, 40);
+    Actor_SetSpeed(24, 0x19999, 0xcccc);
+    Actor_MoveTo(24, 664, 136);
+    Map_CopyCells(68, 33, 105, 6, 1, 1);
+    Cue(161);
+    Func_020021b4();
+    Flag_Set(0x247);
+    Actor_MoveTo(24, 664, 104);
+    Map_CopyCells(69, 33, 105, 4, 1, 1);
+    Cue(229);
+    Func_020021b4();
+    Pause(10);
+    Actor_Launch(24, 6, 16);
+    Actor_PlaceFacing(24, 222 << 18, 168 << 16, 0x4000);
+    Pause(20);
+    Flag_Set(0x86c);
+    Func_02003c30();
+}
+
 void Func_020022e0(void)
 {
     Func_02003c28();

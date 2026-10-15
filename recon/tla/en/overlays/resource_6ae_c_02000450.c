@@ -3,7 +3,7 @@
  * the scene ids SceneId_Ov6ACRoom3 - SceneId_Ov6a8Room2, as in 6aa and 6ad. Tried: a party
  * pointer in a block or reassigned, a flag variable, inline wrappers on either call, a
  * one-pass block; the permuter finds nothing clean. */
-#include "../../../../games/tla/src/field/overlay_6ae/ov6ae.h"
+#include "../../../../games/tla/src/scene/mars_aerie/mars_aerie.h"
 
 extern char SceneId_Ov6a8Room2;
 extern char SceneId_Ov6ACRoom3;

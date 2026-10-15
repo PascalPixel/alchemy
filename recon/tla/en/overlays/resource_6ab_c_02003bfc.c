@@ -4,9 +4,9 @@
 // (2 to 8), x and z shifted first and ORed after (2), the mask as a local (6), s16 locals
 // for the masked cells (2), five minutes of alchemy permute (2). Its copy group is led by
 // 698's Func_0200146c in another lane.
-#include "../../../../games/tla/src/field/overlay_6ab/ov6ab.h"
+#include "../../../../games/tla/src/scene/mars_star/mars_star.h"
 
-struct Overlay6abCell {
+struct MarsStarCell {
     u8 unknown_00[6];
     s16 column;
     s16 row;
@@ -14,7 +14,7 @@ struct Overlay6abCell {
 
 void Func_02003b74(void);
 
-void Func_02003bfc(struct Overlay6abCell *cell)
+void Func_02003bfc(struct MarsStarCell *cell)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
     s32 x = (object->x >> 20) | (s16)(cell->column & 64);

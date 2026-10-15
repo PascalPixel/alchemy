@@ -1,7 +1,7 @@
 /* Near misses of overlay 6aa: Func_02001254 differ 36 (the listing keeps one counter address in
  * r5 and loads the other twice), Func_020012e4 differ 22 (the listing reloads the counter sign-extended for the
  * last test and builds its zero in r4 before the first). */
-#include "../../../../games/tla/src/field/overlay_6aa/room.h"
+#include "../../../../games/tla/src/scene/mars_entrance/room.h"
 
 extern char SceneId_Ov6a8Room2;
 extern char SceneId_Ov6ACRoom3;

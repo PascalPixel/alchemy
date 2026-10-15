@@ -1,6 +1,6 @@
 /* Near miss: Func_0200215c differs 4 (one reordered pair): the listing builds the part mask before it loads the
  * sprite. Overlay 6aa's Func_02001e1c is the same function. */
-#include "../../../../games/tla/src/field/overlay_6ad/room.h"
+#include "../../../../games/tla/src/scene/mars_room_f/room.h"
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 

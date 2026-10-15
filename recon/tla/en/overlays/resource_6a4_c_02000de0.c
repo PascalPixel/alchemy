@@ -1,10 +1,10 @@
 /* Near miss: differ 4 of 72 (two reordered rows): the native loads the
  * object's x between the two halves of the first random's multiply by nine. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "../../../../games/tla/src/scene/jupiter_aerie/jupiter_aerie.h"
 
 s32 Func_02000de0(struct ObjectRuntime *object)
 {
-    struct Ov6a4Spark spark;
+    struct JupiterAerieSpark spark;
     s32 frame = gFrameCount & 7;
 
     if (frame == 0) {

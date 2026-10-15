@@ -4,7 +4,7 @@
  * and the origin, speed and scale take r9, r8 and r10 where the native has r8, r10 and r9.
  * Also tried: the limit in an asm-pinned variable keeps 0x7fff and bhi but builds it in r3, not
  * r1 (differ 54), pinned to r1 (46); for, while and do-while loops (78, 79). */
-#include "../../../../games/tla/src/field/overlay_6ad/room.h"
+#include "../../../../games/tla/src/scene/mars_room_f/room.h"
 #include "iwram_call.h"
 
 extern const u32 Data_02005b68[];

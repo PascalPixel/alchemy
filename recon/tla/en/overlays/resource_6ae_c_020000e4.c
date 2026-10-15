@@ -6,7 +6,7 @@
  * differs by 2. Tried: the sum and product in either order (9), the radius as
  * a block local, the anchor through a one-pass block (4), an asm input operand
  * on the anchor (45), three minutes of alchemy permute (17,543 candidates). */
-#include "../../../../games/tla/src/field/overlay_6ae/ov6ae.h"
+#include "../../../../games/tla/src/scene/mars_aerie/mars_aerie.h"
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);

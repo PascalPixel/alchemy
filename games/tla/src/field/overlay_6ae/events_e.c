@@ -1,6 +1,0 @@
-#include "ov6ae.h"
-
-void Func_02003648(s32 id)
-{
-    Object_GetById(id)->motion_flags = 3;
-}

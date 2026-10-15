@@ -2,7 +2,7 @@
  * the native reloads the colour table's address from the pool and indexes it
  * by an offset that starts at 4; the draft hoists the address plus 4 and the
  * stack buffer out of the loop. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "../../../../games/tla/src/scene/jupiter_aerie/jupiter_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

@@ -3,7 +3,7 @@
  * each height is copied out of r0 before its shift (the native shifts in r0, then adds the offset
  * into r3); the second branch shares 134 << 18 in r5. Tried: the helper as a macro over two
  * inlines, the shift as its own statement, permuter 3 minutes (83, by changing behaviour). */
-#include "../../../../games/tla/src/field/overlay_6a9/ov6a9.h"
+#include "../../../../games/tla/src/scene/caverns/caverns.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);

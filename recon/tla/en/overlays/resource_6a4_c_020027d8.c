@@ -2,15 +2,15 @@
  * work in r6 and the index in r7 (the draft has them the other way round),
  * and reads the count as a halfword before the loop, extending it at each
  * test; the draft keeps the extended count in ip. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "../../../../games/tla/src/scene/jupiter_aerie/jupiter_aerie.h"
 
 s32 Func_020027d8(void)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    struct Ov6a4Work *work = (struct Ov6a4Work *)Data_02003488;
-    struct Ov6a4Entry *entry = (struct Ov6a4Entry *)(work + 1);
+    struct JupiterAerieWork *work = (struct JupiterAerieWork *)Data_02003488;
+    struct JupiterAerieEntry *entry = (struct JupiterAerieEntry *)(work + 1);
     s32 i;
 
     for (i = 0; i < work->count; i++, entry++) {

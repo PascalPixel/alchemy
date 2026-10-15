@@ -1,12 +1,12 @@
 /* Near miss: differ 2 of 81 (one reordered row): the native loads the party
  * state's address before it spills the third argument; the draft spills first. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "../../../../games/tla/src/scene/jupiter_aerie/jupiter_aerie.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
     u8 *event = Ram_HeapSlots->event_work;
-    struct Ov6a4Work *work = (struct Ov6a4Work *)Data_02003488;
+    struct JupiterAerieWork *work = (struct JupiterAerieWork *)Data_02003488;
     s32 x = GameFlag_GetByte(work->flag);
     s32 z = GameFlag_GetByte(work->flag + 8);
 

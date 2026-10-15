@@ -36,7 +36,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_686/s1d34.o"(.text)
         "*/resource_686_overlay.o"(.text.x02009f7c)
         "*/games/tla/src/field/overlay_686/s20fc.o"(.text)
-        "*/resource_686_overlay.o"(.text.x0200a1d4)
         "*/games/tla/src/field/overlay_686/events_f.o"(.text)
         "*/resource_686_overlay.o"(.text.x0200a438)
         "*/games/tla/src/field/overlay_686/prepare.o"(.text)

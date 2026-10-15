@@ -34,8 +34,8 @@ enum {
 
 s32 Owner_UpdateClassActions(s32 owner)
 {
-    struct BtlUnit *st;
-    u16 *abil;
+    struct BattleUnit *st;
+    u16 *ability;
     struct ClassAbilities *cls;
     struct ItemDefinition *def;
     s32 i;
@@ -44,26 +44,26 @@ s32 Owner_UpdateClassActions(s32 owner)
     struct ClassAbility *cg;
 
     st = UnitGet(owner);
-    abil = (u16 *)st->action_slots;
+    ability = (u16 *)st->action_slots;
     cls = (struct ClassAbilities *)Owner_GetRecordStride84(st->class_index);
     if (st->class_index == 0)
         return 0;
     mask = OWNER_ACTION_CLASS | OWNER_ACTION_ITEM;
     for (j = 0; j < 32; j++) {
-        if (abil[j * 2] & mask)
-            abil[j * 2] = 0;
+        if (ability[j * 2] & mask)
+            ability[j * 2] = 0;
     }
     for (i = 31, j = 31; i >= 0;) {
-        if (abil[i * 2] == 0) {
+        if (ability[i * 2] == 0) {
             i--;
         } else {
-            abil[j * 2] = abil[i * 2];
+            ability[j * 2] = ability[i * 2];
             i--;
             j--;
         }
     }
     for (; j >= 0; j--)
-        abil[j * 2] = 0;
+        ability[j * 2] = 0;
 
     mask = OWNER_ACTION_CLASS;
     for (j = 0; j < 16; j++) {
@@ -73,13 +73,13 @@ s32 Owner_UpdateClassActions(s32 owner)
         if (st->level < cls->abilities[j].level)
             continue;
         i = 0;
-        while (i < 32 && abil[i * 2] != cls->abilities[j].ability)
+        while (i < 32 && ability[i * 2] != cls->abilities[j].ability)
             i++;
         if (i != 32)
             continue;
         for (i = 0; i < 32; i++) {
-            if (abil[i * 2] == 0) {
-                abil[i * 2] = cg->ability | OWNER_ACTION_CLASS;
+            if (ability[i * 2] == 0) {
+                ability[i * 2] = cg->ability | OWNER_ACTION_CLASS;
                 break;
             }
         }
@@ -96,14 +96,14 @@ s32 Owner_UpdateClassActions(s32 owner)
         if (def->use_type != 3)
             continue;
         for (i = 0; i < 32; i++) {
-            if ((abil[i * 2] & OWNER_ACTION_ID_MASK) == def->action_id)
+            if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->action_id)
                 break;
         }
         if (i != 32)
             continue;
         for (i = 0; i < 32; i++) {
-            if (abil[i * 2] == 0) {
-                abil[i * 2] = def->action_id | OWNER_ACTION_ITEM;
+            if (ability[i * 2] == 0) {
+                ability[i * 2] = def->action_id | OWNER_ACTION_ITEM;
                 break;
             }
         }
@@ -112,15 +112,15 @@ s32 Owner_UpdateClassActions(s32 owner)
     }
 
     for (i = 0, j = 0; i < 32;) {
-        if (abil[i * 2] == 0) {
+        if (ability[i * 2] == 0) {
             i++;
         } else {
-            abil[j * 2] = abil[i * 2];
+            ability[j * 2] = ability[i * 2];
             i++;
             j++;
         }
     }
     for (; j < 32; j++)
-        abil[j * 2] = 0;
+        ability[j * 2] = 0;
     return 0;
 }

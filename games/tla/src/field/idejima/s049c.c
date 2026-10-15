@@ -99,7 +99,7 @@ void Func_0200049c(void)
     Engine_EventEnd();
 }
 
-static inline s32 FlagChk(s32 flag)
+static inline s32 FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -129,7 +129,7 @@ void Func_02000640(void)
 
 void Func_02000664(void)
 {
-    if (!FlagChk(0x200)) {
+    if (!FlagCheck(0x200)) {
         ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0xcccc, 0x6666);
         ActorPlace(gPartyState.current_owner, 152, 756);
         FlagSet(0x200);
@@ -142,11 +142,11 @@ void Func_020006a8(void)
 {
     struct ObjectRuntime *leader;
 
-    if (FlagChk(0x863) == 0) {
+    if (FlagCheck(0x863) == 0) {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();
-        Call1(Engine_EventSetMessage, (s32)MsgIdejimaHeyGarcia);
+        Call1(Engine_EventSetMessage, (s32)MsgIdejimaHeyFelix);
         Call2(Engine_EventShowMessage, 8, 0);
         Call3(Func_02003228, 5, 0, 0);
         Call3(Func_02003228, 6, 0, 0);
@@ -185,12 +185,12 @@ void Func_020006a8(void)
             ObjectMotion_ResetAndSetPosition(8, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
         Call1(ObjectMotion_CommitCurrentPositionAndActivate, 8);
         Call3(Func_02003228, 8, 0, 0);
-        Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgIdejimaHeyGarcia + 8, 1);
+        Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgIdejimaHeyFelix + 8, 1);
         Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x4000, 20);
         FlagSet(0x863);
         Engine_EventEnd();
     }
-    if (FlagChk(0x864) == 0) {
+    if (FlagCheck(0x864) == 0) {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();
@@ -244,7 +244,7 @@ void Func_020006a8(void)
         FlagSet(0x864);
         Engine_EventEnd();
     }
-    if (FlagChk(0x865) == 0) {
+    if (FlagCheck(0x865) == 0) {
         Engine_EventBegin();
         Call1(Func_02003310, 0);
         Func_02000664();

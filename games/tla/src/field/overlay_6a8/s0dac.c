@@ -176,7 +176,7 @@ void Func_02000dac(void)
     Call2(Object_SetModeById, 0xb, 4);
     Call2(Func_02004534, 0xb, 0);
     Call2(Func_0200454c, 0, 0x8000);
-    Ov6a8_MesOpen(0xa000, 0);
+    Ov6a8_MessageOpen(0xa000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0, 0);
     result = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
     owner = gPartyState.current_owner;

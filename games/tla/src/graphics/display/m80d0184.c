@@ -3,7 +3,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "disptran.h"
+#include "display_transition.h"
 
 void Func_080cf78c(void);
 void Func_080cf6fc(void);

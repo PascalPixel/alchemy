@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 
 struct BattleEffectArgument;
 struct EffectPosition;
@@ -54,7 +54,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y) // 上下左右ではみ出しを切る
+#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // 上下左右ではみ出しを切る
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -86,10 +86,10 @@ void BattlePresentation_DrawStreaks(void);
 void BattlePresentation_PrepareScene(s32 kind);
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void);
 
-void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx);
-void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx);
-void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx);
+void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *effect);
+void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *effect);
+void BattleFx_RunTwoResource(struct BattleEffectArgument *effect, s32 mode);
+void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect);
 
 void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -160,7 +160,7 @@ void BattleFx_RenderMode7(struct BattleEffectArgument *effect);
 void BattleFx_RenderMode6(struct BattleEffectArgument *effect);
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunBouncingSheep(void *object);
-void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx);
+void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect);
 void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect);
 
 void Camera_ApplyPhasedDelta(void);
@@ -197,7 +197,7 @@ void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode);
-void BattleFx_RunPuffArc(struct BattleEffectArgument *efx);
+void BattleFx_RunPuffArc(struct BattleEffectArgument *effect);
 s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out);
 void BattleFx_RunRockWall(struct BattleEffectArgument *effect);
 void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect);
@@ -217,7 +217,7 @@ void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect);
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *efx, s32 mode);
+void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunSwirlingStars(void *object);
 void BattleFx_RunOrbitingSparks(void);
 void BattleFx_RunTargetBursts(void *object);
@@ -242,7 +242,7 @@ void BattleFx_RunMode10(void *effect);
 void BattleFx_RunMode9WithAction(void *effect);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_InitializeRisingObject(s32 id);
-void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames);
+void BattleFx_SetApproachMotion(s32 id, s32 target_id, s32 frames);
 void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused);
 void BattleFx_RunParticleFieldVariant0(s32 effect);
 void BattleFx_RunParticleFieldVariant1(s32 effect);
@@ -258,7 +258,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect);
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect);
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
-void BattleFx_InitializeMode12(struct BattleEffectArgument *efx);
+void BattleFx_InitializeMode12(struct BattleEffectArgument *effect);
 void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object);
 void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step);
 void EffectStep_RunAnimationMode0(struct EffectStep *step);
@@ -291,8 +291,8 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta);
 void BattleFx_ArmPaletteHBlankDma(void);
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *efx);
-void BattleFx_InitializeMode1(struct BattleEffectArgument *efx);
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
+void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect);
 void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect);
@@ -303,7 +303,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect);
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
-void BattleFx_InitializeMode6(struct BattleEffectArgument *efx);
+void BattleFx_InitializeMode6(struct BattleEffectArgument *effect);
 void BattleFx_RunSparkApproachVariant4(struct BattleEffectArgument *effect);
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect);
 void BattleFx_RunRevealColumnMode1(s32 arg);

@@ -1,5 +1,5 @@
 /* Draft, differ 2 of 170: the scene setup of overlay 669, written from the listing (its ☀️ twin
- * by shape, haidia_heya.c's Scene_RunSupplementalSequenceOne, is a different scene). Left: one
+ * by shape, vale_interiors.c's Scene_RunSupplementalSequenceOne, is a different scene). Left: one
  * scheduling swap at the start: the native loads gPartyState's address before it stores the
  * screen effect (ldr r5, =gPartyState; adds r2, #93; str r2, [r3]); the draft stores first. In
  * sched2 the 0x209 add ranks 7 (its store anti-depends into the next constant) and the pool load

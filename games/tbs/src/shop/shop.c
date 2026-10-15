@@ -15,7 +15,7 @@
 #include "scene.h"
 #include "global_cells.h"
 #include "party_state.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "object_runtime.h"
 #include "dma.h"
 #include "callback_scheduler.h"
@@ -36,8 +36,8 @@
 #include "fixed_point_position.h"
 #include "inn_runtime.h"
 #include "event_runtime.h"
-#include "btlcalc.h"
-#include "fieldobj.h"
+#include "battle_calc.h"
+#include "field_obj.h"
 
 s32 AbilityMenu_BuildAvailableList(void)
 {
@@ -161,7 +161,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 		{
 			shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
 			UiMessage_ShowAndWait(MsgWhatWouldYouLike);
-			Shop_SelBuy();
+			Shop_SelectBuy();
 		}
 		else if (choice == 1)
 		{
@@ -173,7 +173,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 			if (AbilityMenu_BuildAvailableList() != 0)
 			{
 				UiMessage_ShowAndWait(MsgConnoisseur);
-				Shop_SelBuy();
+				Shop_SelectBuy();
 			}
 			else
 			{
@@ -184,7 +184,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 		else if (choice == 3)
 		{
 			UiMessage_ShowAndWait(MsgFixDamaged);
-			Shop_SelUnit();
+			Shop_SelectUnit();
 		}
 		else
 		{
@@ -212,9 +212,9 @@ s32 Battle_ApplyPresetItemsAndFlags(s32 unused)
 	Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
 	Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
 	Inventory_AddItemFar(2, 0xe7);
-	UnitGetFar(3)->doku = 1;
-	UnitGetFar(5)->doku = 1;
-	UnitGetFar(2)->akuryo = 1;
+	UnitGetFar(3)->poison = 1;
+	UnitGetFar(5)->poison = 1;
+	UnitGetFar(2)->haunt = 1;
 	Shop_Run(FINAL_ARG, 0x1e);
 	return 0;
 }
@@ -590,7 +590,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
 	Shop_SetCursor(&shop->cursor, cursor_x, cursor_y, (s8)shop->mode);
 }
 
-s32 Shop_SelBuy(void)
+s32 Shop_SelectBuy(void)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
 	s32					   price_window = 0;
@@ -771,7 +771,7 @@ next_page:
 			}
 			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 			WaitFrames(1);
-			quantity = Shop_SelBuyNum(member, shop->selected_item);
+			quantity = Shop_SelectBuyNum(member, shop->selected_item);
 			ask_again = 1;
 			if (quantity == -1)
 				continue;
@@ -964,20 +964,20 @@ draw:
 }
 
 //--------------------------------------------------------------------------
-// win を描きなおし、メッセージ mes を左上から書く（win が 0 なら何もしない）
+// win を描きなおし、メッセージ message を左上から書く（win が 0 なら何もしない）
 // 日本版は描きなおしたあと 1 フレーム待つ
 //--------------------------------------------------------------------------
-void Shop_DrawMsg(s32 win, s32 mes)
+void Shop_DrawMsg(s32 win, s32 message)
 {
 	if (win != 0)
 	{
 #if EDITION_INTERNATIONAL
 		RenderOutput_RedrawSavedRectFar((struct UiWindow *)win);
-		UiText_DrawCharacterAtOffsetFar(mes, win, 0, 0);
+		UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
 		RenderOutput_ClearListFar((struct UiWindow *)win);
 		WaitFrames(1);
-		UiText_DrawResourceFar(mes, win, 0, 0);
+		UiText_DrawResourceFar(message, win, 0, 0);
 #endif
 	}
 }
@@ -1005,7 +1005,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BtlUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unit_id);
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
 	s32					   replaced = -1;
 	s32					   slot;
@@ -1147,10 +1147,10 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 #define ACTION_Y 128
 #endif
 
-s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
+s32 Shop_SelectBuyNum(s32 unit_id, s32 item_id)
 {
 	struct ShopRuntime	  *shop;
-	struct BtlUnit		  *unit;
+	struct BattleUnit		  *unit;
 	struct ItemDefinition *item;
 	s32					   quantity;
 	s32					   chance;
@@ -1331,7 +1331,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
 	struct ShopRuntime	  *menu = gMenuWork;
-	struct BtlUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unit_id);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *info = Item_GetDirectFar(item_id);
 	s32					   replaced;
@@ -1379,7 +1379,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s32				item_id;
 
 	unit = UnitGetFar(unit_id);
@@ -1467,9 +1467,9 @@ s32 Shop_PickUnit(void)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 				if (shop->party_action == 1)
-					Shop_SelSell(unit_id);
+					Shop_SelectSell(unit_id);
 				else
-					Shop_SelRepair(unit_id);
+					Shop_SelectRepair(unit_id);
 				shop->cursor.anchor->active = 4;
 				shop->mode = 12;
 				redraw = 1;
@@ -1504,12 +1504,12 @@ s32 Shop_PickUnit(void)
 	}
 }
 
-s32 Shop_SelSell(s32 unit_id)
+s32 Shop_SelectSell(s32 unit_id)
 {
 	s32					price_window;
 	struct ShopRuntime *shop;
 	s32					list_window;
-	struct BtlUnit	   *unit;
+	struct BattleUnit	   *unit;
 	s32					selection;
 	s32					item_count;
 	s32					redraw;
@@ -1604,7 +1604,7 @@ s32 Shop_SelSell(s32 unit_id)
 		if (result != 0)
 			break;
 
-		quantity = Shop_SelSellNum(unit_id, selection);
+		quantity = Shop_SelectSellNum(unit_id, selection);
 		if (quantity != -1)
 			Shop_SellItem(unit_id, selection, quantity);
 		UiMessage_ShowAndWait(MsgSellAnythingElse);
@@ -1618,7 +1618,7 @@ s32 Shop_SelSell(s32 unit_id)
 
 void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 {
-	struct BtlUnit		*unit;
+	struct BattleUnit		*unit;
 	s32					 x;
 	s32					 y;
 	s32					 slot;
@@ -1672,7 +1672,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 #define EFFECT_X 0x80
 #endif
 
-s32 Shop_SelSellNum(s32 unit_id, s32 slot)
+s32 Shop_SelectSellNum(s32 unit_id, s32 slot)
 {
 	s32					   result;
 	s16					   saved_x;
@@ -1682,7 +1682,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 	s32					   selection;
 	struct ItemDefinition *item;
 	struct ShopRuntime	  *shop;
-	struct BtlUnit		  *unit;
+	struct BattleUnit		  *unit;
 
 	shop = gMenuWork;
 	unit = UnitGetFar(unit_id);
@@ -1710,7 +1710,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BtlUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unit_id);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
 	u8					   rare = item->flags & 4;
@@ -1785,19 +1785,19 @@ s32 Shop_RepairPrice(s32 item_id)
 
 #define SPECIAL_ITEM 228
 
-s32 Shop_SelUnit(void)
+s32 Shop_SelectUnit(void)
 {
 	Shop_PickUnit();
 	return 0;
 }
 
-s32 Shop_SelRepair(s32 unit_id)
+s32 Shop_SelectRepair(s32 unit_id)
 {
 	struct ShopRuntime *shop;
 	s32					item_count;
 	s32					price_window;
 	s32					list_window;
-	struct BtlUnit	   *unit;
+	struct BattleUnit	   *unit;
 	s32					selection;
 	s32					redraw;
 	s32					result;
@@ -1905,7 +1905,7 @@ s32 Shop_SelRepair(s32 unit_id)
 void Shop_RepairItem(s32 unit_id, s32 slot)
 {
 	struct ShopRuntime	  *shop = gMenuWork;
-	struct BtlUnit		  *unit = UnitGetFar(unit_id);
+	struct BattleUnit		  *unit = UnitGetFar(unit_id);
 	s32					   item_id = unit->inventory[slot] & 0x1ff;
 	struct ItemDefinition *item = Item_GetDirectFar(item_id);
 	s32					   equipped = Inventory_FindEquippedFar(unit_id, item->type);
@@ -2321,9 +2321,9 @@ s32 EventTable_GetRowType(s32 index)
 	return Shop_StockTable[index][32];
 }
 
-s32 Shop_ServicePrice(s32 entry_no, s32 kind)
+s32 Shop_ServicePrice(s32 entry_id, s32 kind)
 {
-	u8	value = UnitGetFar(entry_no)->level;
+	u8	value = UnitGetFar(entry_id)->level;
 	s32 result = 0;
 
 	if (kind == 0)
@@ -2345,13 +2345,13 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 	return result;
 }
 
-s32 Shop_CanServe(s32 entry_no, s32 kind)
+s32 Shop_CanServe(s32 entry_id, s32 kind)
 {
-	struct BtlUnit *entry = UnitGetFar(entry_no);
+	struct BattleUnit *entry = UnitGetFar(entry_id);
 	s32				result = 0;
 
-	if ((kind == 0 && entry->hp <= 0) || (kind == 1 && entry->doku != 0)
-		|| (kind == 2 && entry->akuryo != 0) || (kind == 3 && entry->restraint != 0))
+	if ((kind == 0 && entry->hp <= 0) || (kind == 1 && entry->poison != 0)
+		|| (kind == 2 && entry->haunt != 0) || (kind == 3 && entry->restraint != 0))
 	{
 		result = 1;
 	}
@@ -2575,7 +2575,7 @@ s32 Sanctum_RunPartyService(void)
 			Shop_PlaceCursor((void *)list_window, selection * 24 - 12, 0);
 			shop->mode = 3;
 			Shop_HiliteUnit(list_window, selection);
-			Shop_DrawSelMsg(price_window, unit_id);
+			Shop_DrawSelectMsg(price_window, unit_id);
 		}
 
 		if ((gKeyState & KEY_A) != 0)
@@ -2650,7 +2650,7 @@ s32 Sanctum_RunPartyService(void)
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 
 	unit = UnitGetFar(id);
 	if (mode == 0)
@@ -2660,11 +2660,11 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 	}
 	else if (mode == 1)
 	{
-		unit->doku = 0;
+		unit->poison = 0;
 	}
 	else if (mode == 2)
 	{
-		unit->akuryo = 0;
+		unit->haunt = 0;
 	}
 	else if (mode == 3)
 	{
@@ -2705,7 +2705,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
 	}
 }
 
-void Shop_DrawSelMsg(s32 target, s32 selection)
+void Shop_DrawSelectMsg(s32 target, s32 selection)
 {
 	s32 variant;
 	s32 message;
@@ -2974,7 +2974,7 @@ void Inn_PlaySleep(s32 room_price)
 	s16					 objects[8];
 	s32					 count;
 	s32					 index;
-	struct BtlUnit		*object;
+	struct BattleUnit		*object;
 	struct EventRuntime *state;
 
 	count = Party_ListActiveOwnersFar(objects);
@@ -2986,7 +2986,7 @@ void Inn_PlaySleep(s32 room_price)
 		if (object->hp != 0)
 		{
 			object->hp = object->max_hp;
-			object->ep = object->max_ep;
+			object->pp = object->max_pp;
 			UnitRatioFar(objects[index]);
 		}
 	}
@@ -3060,7 +3060,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 			}
 
 			AudioCommand_PlayFar(0x70);
-			item_slot = Shop_SelUse(unit_id);
+			item_slot = Shop_SelectUse(unit_id);
 			if (item_slot == -1)
 			{
 				shop->cursor.anchor->active = 4;
@@ -3104,13 +3104,13 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 	Inn_Cleanup();
 	return result;
 }
-s32 Shop_SelUse(s32 actor)
+s32 Shop_SelectUse(s32 actor)
 {
 	struct ShopRuntime *shop = gMenuWork;
 
 	s32				win2;
 	s32				win1;
-	struct BtlUnit *object;
+	struct BattleUnit *object;
 	s32				selection;
 	s32				redraw;
 	s32				count;
@@ -3231,7 +3231,7 @@ s32 Shop_SelUse(s32 actor)
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-	struct BtlUnit *unit = UnitGetFar(unit_id);
+	struct BattleUnit *unit = UnitGetFar(unit_id);
 	s32				masked = unit->inventory[item_id] & 0x1ff;
 	u32				entry = unit->inventory[item_id];
 	s32				mult = (entry >> 11) + 1;

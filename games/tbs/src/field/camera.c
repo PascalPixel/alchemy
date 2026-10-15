@@ -11,7 +11,7 @@
 #include "system.h"
 #include "io_reg.h"
 #include "fixed_point_position.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "project.h"
 #include "types.h"
 #include "iwram_call.h"

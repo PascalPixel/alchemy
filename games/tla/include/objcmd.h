@@ -2,7 +2,7 @@
 #define TLA_OBJCMD_H
 
 // Field object scripts: one s32 command word, then its operands, as the
-// command table in field/common/script/objscrpt.c runs them. Each macro
+// command table in field/common/script/object_script.c runs them. Each macro
 // expands to the words of one command. The Lost Age numbers its commands
 // as The Broken Seal does, with SC_CMD_03 added before SC_MOVE, eleven
 // more commands after SC_PLAYER, SC_CMD_2A after SC_SE and SC_MOVE_XZ
@@ -33,7 +33,7 @@
 #define SC_IF(to) 0x0f, (to)    // if the result is true
 #define SC_IFNOT(to) 0x10, (to) // if the result is false
 #define SC_END 0x11             // return to the main script
-#define SC_FLAG_CHK(f) 0x12, (f)
+#define SC_FLAG_CHECK(f) 0x12, (f)
 #define SC_FLAG_ON(f) 0x13, (f)
 #define SC_FLAG_OFF(f) 0x14, (f)
 #define SC_FLAG_REV(f) 0x15, (f)

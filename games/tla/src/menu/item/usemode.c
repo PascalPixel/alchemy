@@ -9,7 +9,7 @@ s32 BattleFx_HasTriggerFar(s32);
 // スペイン語版とイタリア語版のビルドでは、この far call の名前が違う（shop.c と同じ）
 s32 Func_080c8500(s32);
 #endif
-void *BtlActGet(s32);
+void *BattleActGet(s32);
 s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
@@ -38,7 +38,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
         __asm__ volatile("");
         id = 0x3fff;
         id &= use;
-        abilityData = BtlActGet(id);
+        abilityData = BattleActGet(id);
 
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

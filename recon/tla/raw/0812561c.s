@@ -275,29 +275,29 @@ Func_0812561c:
 	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #1
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #14
 	movs r1, #175
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_08125a88
 	movs r0, #4
 	adds r1, r6, r1
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r8
 	movs r0, #11
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #212
 	bl Audio_PlayCue
 	mov r0, r8
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
 	mov r0, r8
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -321,7 +321,7 @@ Func_0812561c:
 	b .L_08125a64
 .L_08125890:
 	mov r0, r8
-	bl BtlObjGet
+	bl BattleObjGet
 	ldr r3, [r0]
 	cmp r3, #0
 	bne .L_0812589e
@@ -334,17 +334,17 @@ Func_0812561c:
 	beq .L_08125924
 	movs r0, #8
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #0
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r3, [sp, #12]
 	movs r0, #1
 	ldr r1, [r3, #96]
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_08125a8c
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r0, [sp, #12]
 	ldr r1, [r0, #96]
 	mov r0, r8
@@ -361,15 +361,15 @@ Func_0812561c:
 	bl Owner_AdjustFirstValueFar
 	movs r0, #11
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_08125924
 .L_081258f8:
 	movs r0, #9
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r8
 	movs r0, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r8
 	cmp r1, #7
 	bhi .L_08125912
@@ -379,12 +379,12 @@ Func_0812561c:
 	ldr r1, .L_08125a94
 .L_08125914:
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_08125924
 .L_0812591c:
 	movs r0, #11
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 .L_08125924:
 	bl BattleEv_DispatchQueued
 	bl BattleEventRuntime_Reset
@@ -407,16 +407,16 @@ Func_0812561c:
 	mov r1, r8
 	movs r0, #8
 	ldr r5, [r3, #36]
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #0
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #1
 	adds r1, r7, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_08125a98
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r3, #0
 	ldrsb r3, [r6, r3]
 	cmp r3, #0
@@ -449,15 +449,15 @@ Func_0812561c:
 	bl Owner_AdjustFirstValueFar
 	movs r0, #11
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_081259e4
 .L_081259b8:
 	movs r0, #9
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r8
 	movs r0, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r8
 	cmp r1, #7
 	bhi .L_081259d2
@@ -467,12 +467,12 @@ Func_0812561c:
 	ldr r1, .L_08125a94
 .L_081259d4:
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_081259e4
 .L_081259dc:
 	movs r0, #11
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 .L_081259e4:
 	bl BattleEv_DispatchQueued
 	bl BattleEventRuntime_Reset
@@ -501,36 +501,36 @@ Func_0812561c:
 	bne .L_08125a60
 	movs r0, #0
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r5, .L_08125a9c
 	movs r0, #4
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #8
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #9
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #0
 	mov r1, r8
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r0, r8
 	cmp r0, #7
 	bhi .L_08125a58
 	subs r1, r5, #3
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_08125a60
 .L_08125a58:
 	adds r1, r5, #3
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 .L_08125a60:
 	bl BattleEv_DispatchQueued
 .L_08125a64:
 	mov r0, r8
-	bl BtlObjGet
+	bl BattleObjGet
 	ldr r3, [r0]
 	cmp r3, #0
 	beq .L_08125a76

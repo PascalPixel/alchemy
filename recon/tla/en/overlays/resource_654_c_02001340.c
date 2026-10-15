@@ -5,13 +5,13 @@
  * in r10. Measured: all four loops written with goto, no loop notes (the
  * same registers, and the counter's step moves ahead of the store, differ
  * 64). Two pool loads also sit one step later than the native's. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 
 extern s32 Data_02004a18[3];
 
-void Func_02001340(struct KabeObject *object, struct KabeObject *other)
+void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSeaGodObject *other)
 {
-    struct KabeSprite *sprite = object->sprite;
+    struct ShrineOfTheSeaGodSprite *sprite = object->sprite;
     u32 n;
     u32 i;
 

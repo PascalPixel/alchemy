@@ -133,7 +133,7 @@ static inline void Ov670_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
     Func_02005a6c(a, b, c, d, e, f);
 }
 
-static inline s32 Ov670_FlagChk(s32 flag)
+static inline s32 Ov670_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -272,13 +272,13 @@ static inline void Ov670_TaskAdd(void (*callback)(void), s32 priority)
     Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-static inline void Ov670_MesPut(s32 speaker, s32 flags)
+static inline void Ov670_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02005b64(speaker, flags);
 }
 
-static inline void Ov670_MesOpen(s32 speaker, s32 flags)
+static inline void Ov670_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);

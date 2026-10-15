@@ -45,7 +45,7 @@ void Func_0200290c(void)
         EVENT_WORK->field_1c4++;
         if (remaining == 0) {
             EVENT_WORK->field_1c4++;
-            Ov696_MesPut(0x200f, 0);
+            Ov696_MessagePut(0x200f, 0);
             Object_LinkObjectAndSetCallback(16, gPartyState.current_owner);
             Object_LinkObjectAndSetCallback(17, gPartyState.current_owner);
             Object_LinkObjectAndSetCallback(15, gPartyState.current_owner);
@@ -56,6 +56,6 @@ void Func_0200290c(void)
     }
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 257, 20)
-    Ov696_MesPut(0x200f, 0);
+    Ov696_MessagePut(0x200f, 0);
     Func_0200289c();
 }

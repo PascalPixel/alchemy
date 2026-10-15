@@ -12,7 +12,7 @@
 #include "types.h"
 #include "system.h"
 #include "resource.h"
-#include "resmenu.h"
+#include "resource_menu.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "io_reg.h"

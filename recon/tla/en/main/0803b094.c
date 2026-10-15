@@ -10,16 +10,16 @@ s32 UiText_RenderTileRow(void *text, s32 source, s32 destination, s32 phase);
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *base = TEXT_IWRAM->work;
-    u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+    u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFFSET);
     s32 offset;
     s32 zero = 0;
 
     *counter = zero;
     UiText_BuildRenderEntries(arg0, 1);
-    offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
+    offset = *counter * 2 + RENDER_ENTRY_TABLE_OFFSET;
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    UiText_DrawWideString(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    UiText_DrawWideString(base + RENDER_ENTRY_TABLE_OFFSET, arg1, arg2, arg3);
 }
 
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "layout_guard.h"
 #include "ram_buffer.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "b5_context.h"
 #include "save_state.h"
 

@@ -8,12 +8,12 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "party_state.h"
 #include "fixed_math.h"
-#include "btlcalc.h"
+#include "battle_calc.h"
 #include "field_event.h"
 
 
@@ -23,7 +23,7 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 i;
 
     for (i = 0; i < target_count; i++)
-        UnitEpAddFar(gPartyState.active_owners[i], amount);
+        UnitPpAddFar(gPartyState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -31,7 +31,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 count;
     s32 i;
     s32 value;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
     if (amount < 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
@@ -74,10 +74,10 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            struct BtlUnit *object = UnitGet(*entry);
+            struct BattleUnit *object = UnitGet(*entry);
             s32 amount;
 
-            switch (object->doku) {
+            switch (object->poison) {
             case 1:
                 amount = -((object->max_hp + 10) / 20);
                 if (amount == 0)

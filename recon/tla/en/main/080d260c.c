@@ -23,7 +23,7 @@ s32 PartyInventory_GiveItem(s32 item)
     owner = PartyInventory_AddFar(item);
     if (owner == -1) {
         UiWork_PushValueSlotFar(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 1);
+        UiText_ShowPositionedMessageAndWaitFar(&MsgColossoIsaacGotItem, 1);
         UiText_ShowPositionedMessageAndWaitFar(&MsgCannotCarryAnyMore, 1);
     retry:
         UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop, 1);
@@ -59,7 +59,7 @@ s32 PartyInventory_GiveItem(s32 item)
             Audio_PlayCue(83);
             if (owner == gGameState[125]) {
                 UiWork_PushValueSlotFar(item, 2);
-                UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+                UiText_ShowPositionedMessageAndWaitFar(&MsgColossoIsaacGotItem, 3);
             } else {
                 UiWork_PushValueSlotFar(item, 2);
                 UiWork_PushValueSlotFar(owner, 1);
@@ -71,11 +71,11 @@ s32 PartyInventory_GiveItem(s32 item)
     } else {
         Audio_PlayCue(83);
         UiWork_PushValueSlotFar(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
+        UiText_ShowPositionedMessageAndWaitFar(&MsgColossoIsaacGotItem, 3);
         if (owner != gGameState[125]) {
             UiWork_PushValueSlotFar(item, 2);
             UiWork_PushValueSlotFar(owner, 1);
-            UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem + 1, 3);
+            UiText_ShowPositionedMessageAndWaitFar(&MsgColossoIsaacGotItem + 1, 3);
         }
         work->message_position = saved;
     }

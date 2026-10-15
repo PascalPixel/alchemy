@@ -7,7 +7,7 @@
 struct OwnerStats {
     u8 unknown_000[0x10];
     s16 base_hp;
-    s16 base_ep;
+    s16 base_pp;
     s16 hp_ratio;
     s16 pp_ratio;
     u16 base_attack;
@@ -20,9 +20,9 @@ struct OwnerStats {
     u8 unknown_022[2];
     s16 base_element[4][2];
     s16 max_hp;
-    s16 max_ep;
+    s16 max_pp;
     s16 hp;
-    s16 ep;
+    s16 pp;
     s16 atk;
     s16 def;
     s16 agi;
@@ -60,7 +60,7 @@ struct OwnerStats {
 struct DjinnDefinition {
     u8 unknown_00[4];
     s8 hp;
-    s8 ep;
+    s8 pp;
     s8 atk;
     s8 def;
     s8 agi;
@@ -70,7 +70,7 @@ struct DjinnDefinition {
 struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;
-    u8 ep;
+    u8 pp;
     u8 atk;
     u8 def;
     u8 agi;
@@ -79,7 +79,7 @@ struct ClassRecord {
 
 struct StatWork {
     s32 hp;
-    s32 ep;
+    s32 pp;
     s32 atk;
     s32 def;
     s32 agi;
@@ -115,7 +115,7 @@ void UnitCalc(s32 owner)
     work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
     st = UnitGet(owner);
     work->hp = st->base_hp;
-    work->ep = st->base_ep;
+    work->pp = st->base_pp;
     work->atk = st->base_attack;
     work->def = st->base_defense;
     work->agi = st->base_agility;
@@ -135,11 +135,11 @@ void UnitCalc(s32 owner)
     }
 
     if (STAT_DIFF(st->max_hp * st->hp_ratio / 0x4000, st->hp) > 1
-        || STAT_DIFF(st->max_ep * st->pp_ratio / 0x4000, st->ep) > 1) {
+        || STAT_DIFF(st->max_pp * st->pp_ratio / 0x4000, st->pp) > 1) {
         st->hp_ratio = 0x4000;
         st->pp_ratio = 0x4000;
         st->hp = st->max_hp;
-        st->ep = st->max_ep;
+        st->pp = st->max_pp;
     }
 
     st->curse &= ~3;
@@ -178,7 +178,7 @@ void UnitCalc(s32 owner)
                     work->stat_20 += work->amount;
                     break;
                 case 3:
-                    work->ep += work->amount;
+                    work->pp += work->amount;
                     break;
                 case 4:
                     work->stat_24 += work->amount;
@@ -240,7 +240,7 @@ void UnitCalc(s32 owner)
                         (const struct DjinnDefinition *)Djinn_GetDefinition(el, i);
 
                     work->hp += djinn->hp;
-                    work->ep += djinn->ep;
+                    work->pp += djinn->pp;
                     work->atk += djinn->atk;
                     work->def += djinn->def;
                     work->agi += djinn->agi;
@@ -253,7 +253,7 @@ void UnitCalc(s32 owner)
             struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_id);
 
             work->hp = __divsi3(work->hp * class->hp, 10);
-            work->ep = __divsi3(work->ep * class->ep, 10);
+            work->pp = __divsi3(work->pp * class->pp, 10);
             work->atk = __divsi3(work->atk * class->atk, 10);
             work->def = __divsi3(work->def * class->def, 10);
             work->agi = __divsi3(work->agi * class->agi, 10);
@@ -278,7 +278,7 @@ void UnitCalc(s32 owner)
                     work->stat_20 = __divsi3(work->stat_20 * work->amount, 10);
                     break;
                 case 2:
-                    work->ep = __divsi3(work->ep * work->amount, 10);
+                    work->pp = __divsi3(work->pp * work->amount, 10);
                     break;
                 case 3:
                     work->stat_24 = __divsi3(work->stat_24 * work->amount, 10);
@@ -403,21 +403,21 @@ void UnitCalc(s32 owner)
         st->hp = value;
     }
 
-    old = st->max_ep;
-    if (work->ep < 0)
-        work->ep = 0;
-    if (work->ep > cap)
-        work->ep = cap;
-    st->max_ep = work->ep;
-    if (old != st->max_ep) {
-        value = work->ep * st->pp_ratio / 0x4000;
+    old = st->max_pp;
+    if (work->pp < 0)
+        work->pp = 0;
+    if (work->pp > cap)
+        work->pp = cap;
+    st->max_pp = work->pp;
+    if (old != st->max_pp) {
+        value = work->pp * st->pp_ratio / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)
             value = cap;
-        if (st->ep != 0 && value == 0)
+        if (st->pp != 0 && value == 0)
             value = 1;
-        st->ep = value;
+        st->pp = value;
     }
 
     MemFree(work);

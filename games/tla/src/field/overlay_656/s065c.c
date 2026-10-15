@@ -6,9 +6,9 @@ void Func_0200065c(void)
 {
     Func_02002c68();
     Func_02002da8(0);
-    if (Ov656_FlagChk(0x983))
+    if (Ov656_FlagCheck(0x983))
     {
-        if (Ov656_FlagChk(0x207))
+        if (Ov656_FlagCheck(0x207))
         {
             Ov656_SePlay(232);
             Ov656_ObjSetPos(Object_GetById(15), 0x3380000, 0xffe00000, 0x480000);
@@ -18,7 +18,7 @@ void Func_0200065c(void)
             Ov656_BlendStart(50, 1, 3, 1, 50, 4);
             GameFlag_ClearBit(0x207);
         }
-        else if (Ov656_FlagChk(0x212))
+        else if (Ov656_FlagCheck(0x212))
         {
             Ov656_SePlay(117);
         }

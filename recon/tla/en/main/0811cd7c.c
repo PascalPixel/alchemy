@@ -7,7 +7,7 @@
  * there, at the declaration or before the transform call (differ 42: the
  * local is propagated and a register spills). */
 #include "types.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "fixed_point_position.h"

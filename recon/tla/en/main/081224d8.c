@@ -2,7 +2,7 @@
  * Earlier register-allocation notes describe the prior pinned form.
  */
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 extern u8 Data_03001e74[];
 
 s32 Battle_SelectWeightedIndex(u8 *weights)
@@ -26,7 +26,7 @@ s32 Battle_SelectWeightedIndex(u8 *weights)
         __asm__("" : "+r"(arg) : "r"(chain));
         weights = arg;
     }
-    value = BtlRndFar() & 0xFF;
+    value = BattleRandomFar() & 0xFF;
     total = weights[0];
     result = 0;
     index = 0;

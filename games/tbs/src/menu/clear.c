@@ -1,10 +1,10 @@
 #include "scene_ids.h"
 #include "unit/menu/clear.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
@@ -26,7 +26,7 @@
 #include "dma.h"
 #include "ram_buffer.h"
 #include "field_event.h"
-#include "engcall.h"
+#include "engine_call.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
@@ -261,7 +261,7 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text)
 			text[0] = 0xe4;
 		else
 			text[0] = cell - 81;
-		text[1] = TEXT_MARK_DAKUTEN;
+		text[1] = TEXT_MARK_VOICED;
 	}
 #endif
 }
@@ -417,7 +417,7 @@ menu_top:;
 			}
 		}
 		Party_SetFlag32AndRefreshMembers();
-		gGameState.scene = (s32)&SceneId_HaidiaBabi;
+		gGameState.scene = (s32)&SceneId_ValeBabi;
 		gGameState.entrance = 20;
 		goto leave;
 	}

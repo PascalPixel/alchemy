@@ -6,7 +6,7 @@
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "object_runtime.h"
 
 struct ImpactVector {

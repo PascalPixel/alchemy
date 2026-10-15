@@ -24,11 +24,11 @@ void Func_02004424(void)
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
     Func_02005b4c((s32)MsgOhTheMagic);
-    Ov670_MesPut(17, 0);
+    Ov670_MessagePut(17, 0);
     Ov670_ObjTurn(17, 0x3000);
-    Ov670_MesPut(0x4011, 0);
+    Ov670_MessagePut(0x4011, 0);
     Ov670_ObjTurn(17, 0x5000);
-    Ov670_MesPut(0x4011, 0);
+    Ov670_MessagePut(0x4011, 0);
     Scheduler_RemoveCallbackFar(Func_02002ccc);
     Ov670_ObjTurn(17, 0xd000);
     Func_02005bdc(0x10000, 0);

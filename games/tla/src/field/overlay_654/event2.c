@@ -1,11 +1,11 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
 
 void Func_02001250(s32 show, s32 first, u32 count);
 
 void Func_02001200(s32 show)
 {
-    if (gPartyState.scene == (s32)&SceneId_Kabe6)
+    if (gPartyState.scene == (s32)&SceneId_ShrineOfTheSeaGod6)
         Func_02001250(show, 9, 3);
 }
 

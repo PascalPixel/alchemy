@@ -25,13 +25,13 @@ void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 color);
-struct BtlUnit *UnitGet(s32 owner);
+struct BattleUnit *UnitGet(s32 owner);
 void WaitFrames(s32 frames);
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct ItemMenuState *menu;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     menu = Ram_HeapSlots->menu_runtime;
     unit = UnitGet(owner);
@@ -49,8 +49,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     UiText_DrawNumberInWindowFar(unit->max_hp, 4, window, 112, 16);
     UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 16);
     UiText_DrawStringAtOffsetFar(Menu_PpString, window, 40, 24);
-    UiText_DrawNumberInWindowFar(unit->ep, 4, window, 72, 24);
-    UiText_DrawNumberInWindowFar(unit->max_ep, 4, window, 112, 24);
+    UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
+    UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
     UiText_DrawStringInWindowFar(Menu_SlashString, window, 104, 24);
     UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 8, window, 80, 8);

@@ -56,7 +56,7 @@ Func_0811c710:
 	bl WaitFrames
 	bl Random16
 	ldr r0, [sp, #8]
-	bl BtlObjGet
+	bl BattleObjGet
 	ldr r2, [sp, #4]
 	ldr r6, [r0]
 	cmp r2, #7
@@ -142,7 +142,7 @@ Func_0811c710:
 	cmp r5, #16
 	bne .L_0811c810
 	movs r0, #9
-	bl PtyStDrawFar
+	bl PartyStatusDrawFar
 	ldr r2, [sp, #4]
 	cmp r2, #127
 	ble .L_0811c86a
@@ -252,7 +252,7 @@ Func_0811c710:
 	bl BattleFx_InitializeModeFar
 	movs r0, #10
 	bl WaitFrames
-	bl BtlObjPut
+	bl BattleObjPut
 	ldr r3, .L_0811c930
 	movs r2, #128
 	lsls r2, r2, #19

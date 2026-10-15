@@ -10,7 +10,7 @@
 #include "types.h"
 #include "motobj.h"
 #include "battle_session.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "ram_buffer.h"
 #include "fixed_point_position.h"
 
@@ -46,10 +46,10 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
     }
 }
 
-static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
+static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
-    struct BtlObj *slots = ((struct BtlWork *)work)->slots;
+    struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)
         id -= 0x78;
@@ -61,7 +61,7 @@ static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
 
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
 
     BattleMotion_ReleaseObjectSlotByValue(object_id);
     slot = BattleObject_FindSlot(object_id);
@@ -73,7 +73,7 @@ void BattleMotion_DestroyAllSlotObjects(void)
 {
     s32 no;
     s32 i;
-    struct BtlObj *slot;
+    struct BattleObj *slot;
 
     i = 0;
     do {
@@ -94,7 +94,7 @@ void BattleMotion_DestroyAllSlotObjects(void)
 // Writes a battle object's anchor to out, at height 0.
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {
-    struct BtlWork *state = Ram_HeapSlots->battle_work;
+    struct BattleWork *state = Ram_HeapSlots->battle_work;
     /* FAKEMATCH: the native sets the return value between the two stores and the last load; plainly the load comes first (one reordered row, differ 2). The value is pinned to the r0 it returns in, and the barrier, which also orders memory, holds the load until it is set. Measured against it: the anchor read into a local, the pin without the memory clobber and the memory clobber alone (differ 4). */
     register s32 result asm("r0");
 

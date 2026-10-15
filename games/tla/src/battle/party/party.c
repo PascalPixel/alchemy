@@ -1,10 +1,10 @@
 #include "types.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "battle_unit.h"
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
-    struct BtlWork *order;
+    struct BattleWork *order;
     s32 count;
     s32 i;
 
@@ -20,10 +20,10 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
         }
     }
     if (groups & 2) {
-        for (i = 0; order->enm_no[i] != 255; i++) {
-            if (order->enm_no[i] != 254) {
+        for (i = 0; order->enemy_ids[i] != 255; i++) {
+            if (order->enemy_ids[i] != 254) {
                 if (dst != NULL)
-                    *dst++ = order->enm_no[i];
+                    *dst++ = order->enemy_ids[i];
                 count++;
             }
         }
@@ -33,12 +33,12 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
     return count;
 }
 
-struct BtlUnit *UnitGet(s32 unit_id);
+struct BattleUnit *UnitGet(s32 unit_id);
 
 // As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
 s32 Func_0811a39c(s32 groups, u16 *dst)
 {
-    struct BtlWork *order;
+    struct BattleWork *order;
     s32 count;
     s32 i;
 
@@ -54,10 +54,10 @@ s32 Func_0811a39c(s32 groups, u16 *dst)
         }
     }
     if (groups & 2) {
-        for (i = 0; order->enm_no[i] != 255; i++) {
-            if (order->enm_no[i] != 254 && UnitGet(order->enm_no[i])->hp != 0) {
+        for (i = 0; order->enemy_ids[i] != 255; i++) {
+            if (order->enemy_ids[i] != 254 && UnitGet(order->enemy_ids[i])->hp != 0) {
                 if (dst != NULL)
-                    *dst++ = order->enm_no[i];
+                    *dst++ = order->enemy_ids[i];
                 count++;
             }
         }

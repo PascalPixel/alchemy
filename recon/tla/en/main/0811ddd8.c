@@ -52,7 +52,7 @@ void Func_0811ddd8(struct ActionTargets *targets, struct ActionPlan *plan)
     plan->side = targets->side;
     for (i = 0; i < targets->count; i++) {
         if (BattleParty_IsUnitListed(targets->ids[i])) {
-            struct BtlUnit *unit = UnitGet(targets->ids[i]);
+            struct BattleUnit *unit = UnitGet(targets->ids[i]);
 
             if (unit->hp != 0 || (targets->cue & 0x10000)) {
                 plan->ids[count] = targets->ids[i];

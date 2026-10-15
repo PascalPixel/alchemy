@@ -2,11 +2,11 @@
 #include "vram_tab.h"
 #include "unit/menu/title.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
@@ -145,7 +145,7 @@ s32 Title_Run(void)
 		Engine_AudioPlayCue(64);
 		PaletteFar_Entry00(0);
 		Party_ApplyStatePreset();
-		Event_SetDestination((s32)&SceneId_HaidiaMura, 16);
+		Event_SetDestination((s32)&SceneId_Vale, 16);
 		Engine_AudioPlayCue(17);
 	}
 	Engine_AudioPlayCue(17);

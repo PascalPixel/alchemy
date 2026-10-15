@@ -35,7 +35,7 @@ and then turned those into the unreadable code that sits on the cartridge. The
 readable version was never released. Alchemy rebuilds it, and every piece is
 checked against the original until the two are identical, in all six
 languages. The AI does the heavy lifting, and the original game is the judge.
-Names follow the Japanese release: Sukureta for Kraden, Gerald for Garet.
+Names follow the English release.
 
 Alchemy is not a remake, a mod, an emulator or a download of the games, and it
 doesn’t include them. It will open to outside contributions once both games

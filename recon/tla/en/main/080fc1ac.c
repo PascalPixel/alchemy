@@ -28,7 +28,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     s32 slot;
     s32 text;
     s32 label;
-    s32 sel; /* Earlier pinned trial: keeps the row in r6 */
+    s32 selection; /* Earlier pinned trial: keeps the row in r6 */
     s32 changed;
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
@@ -43,7 +43,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     UiText_DrawAt(label, win, 24, 40);
     label++;
     UiText_DrawAt(label, win, 24, 56);
-    sel = 1;
+    selection = 1;
     changed = 1;
     UiMenu_SlideCursor(104, 86);
     for (;;) {
@@ -55,7 +55,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         asm("mov %0, %1" : "=l"(c) : "h"(changed)); /* FAKEMATCH: tests the flag through r2 */
         if (c) {
             changed = 0;
-            sel = __modsi3(sel + 2, 2);
+            selection = __modsi3(selection + 2, 2);
         }}
         if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
@@ -63,30 +63,30 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         }
         if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
-            sel = 1;
+            selection = 1;
             break;
         }
-        UiMenu_PositionCursor(104, (sel << 4) + 70);
+        UiMenu_PositionCursor(104, (selection << 4) + 70);
         pad = &gKeysRepeat;
         if (*pad & 64) {
             {
             s32 one = 1; /* Earlier pinned trial: sets the flag through r2 */
             s32 cue = 111; /* Earlier pinned trial: loads the cue before the step */
-            sel -= 1;
+            selection -= 1;
             asm volatile("mov %0, %1" : "=h"(changed) : "l"(one)); /* FAKEMATCH: sets the flag through r2 */
             Audio_PlayCue(cue);
             }
         }
         if (*pad & 128) {
-            sel += 1;
+            selection += 1;
             changed = 1;
             Audio_PlayCue(111);
         }
         WaitFrames(1);
     }
     if (GameFlag_IsSet(0x150) != 0) {
-        sel = 1;
+        selection = 1;
     }
     UiWork_FinalizeFar(win, 1);
-    return sel;
+    return selection;
 }

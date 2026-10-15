@@ -5,7 +5,7 @@
 #include "types.h"
 
 #if GAME_TLA
-u32 BtlRnd(void);
+u32 BattleRandom(void);
 #endif
 
 extern s32 gBattleRandomSeed;

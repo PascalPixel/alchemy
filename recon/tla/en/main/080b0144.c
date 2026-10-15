@@ -12,7 +12,7 @@
 #include "game_flags.h"
 #include "party_state.h"
 #include "types.h"
-#include "btlsmn.h"
+#include "battle_summon.h"
 #include "runtime_interfaces.h"
 #include "fixed_math.h"
 #include "owner_state.h"
@@ -25,7 +25,7 @@ struct TradeFlags {
 };
 
 struct ElementLevelBonus {
-    u16 pow;
+    u16 power;
     u16 res;
 };
 

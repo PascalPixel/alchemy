@@ -6,7 +6,7 @@ extern const u8 MsgTheBodyIs[];
 
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 mode);
 s32 Owner_AdjustFirstValue(s32 owner, s32 amount);
-void UnitEpAdd(s32 owner, s32 amount);
+void UnitPpAdd(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
 u8 *Func_02000d48(s32 item);
 void Func_02000dc0(void);
@@ -27,9 +27,9 @@ void Func_02000520(void)
     AdjustFirstValue(4, -100);
     AdjustFirstValue(5, -100);
     AdjustFirstValue(6, -33);
-    UnitEpAdd(4, -50);
-    UnitEpAdd(5, -40);
-    UnitEpAdd(6, -35);
+    UnitPpAdd(4, -50);
+    UnitPpAdd(5, -40);
+    UnitPpAdd(6, -35);
     unit = UnitGet(4);
     unit[0x131] = 1;
     unit[0x140] = 1;

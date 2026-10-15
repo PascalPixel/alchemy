@@ -15,13 +15,13 @@ Func_08123648:
 	add r3, sp, #32
 	str r1, [r3]
 	mov r11, r1
-	bl BtlActGet
+	bl BattleActGet
 	str r0, [sp, #28]
 	movs r2, #0
 	ldrb r5, [r0]
 	str r2, [sp, #24]
 	ldrb r0, [r0, #3]
-	bl BtlEfxRevChkFar
+	bl BattleEffectRevCheckFar
 	cmp r0, #0
 	beq .L_0812367a
 	movs r3, #1

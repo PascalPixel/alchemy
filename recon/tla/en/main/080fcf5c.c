@@ -2,7 +2,7 @@
 #include "system.h"
 extern u8 Data_03001f2c[];
 
-u8 *BtlActGet(s32 action);
+u8 *BattleActGet(s32 action);
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)

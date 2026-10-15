@@ -35,11 +35,11 @@ void Func_02001650(void)
     ObjectMotion_EnableActionAndSetCallback(8, Data_02002fcc);
     Object_SetActionCallbackAndRefreshById(7, Data_02002f1c);
     Ov656_Wait(20);
-    Ov656_MesPut(7, 0);
+    Ov656_MessagePut(7, 0);
     Ov656_ObjTurn(7, 0x4000);
-    Ov656_MesPut(7, 0);
+    Ov656_MessagePut(7, 0);
     Object_SetModeById(7, 3);
-    Ov656_MesPut(7, 0);
+    Ov656_MessagePut(7, 0);
     Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
     Ov656_ObjWalk(7, 808, 148);
     Motion_SetVarCbAndRefresh(7, 2);

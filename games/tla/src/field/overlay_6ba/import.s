@@ -154,10 +154,10 @@ Inventory_Break:
 	.thumb_func
 Owner_AdjustFirstValue:
 	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitEpAdd
+	.global UnitPpAdd
 	.thumb_func
-UnitEpAdd:
-	overlay_veneer UnitEpAddFar
+UnitPpAdd:
+	overlay_veneer UnitPpAddFar
 	.global Party_ListActiveOwners
 	.thumb_func
 Party_ListActiveOwners:

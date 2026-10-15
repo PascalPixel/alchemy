@@ -56,7 +56,7 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
     s32 done;
-    s32 sel;
+    s32 selection;
     s32 ret;
     struct OwnerInventoryState *source;
     struct OwnerInventoryState *target;
@@ -77,7 +77,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     s8 stack;
 
     done = 0;
-    sel = 0;
+    selection = 0;
     ret = 0;
     state = 0;
     menu = *(struct ItemCommandWork **)((u32)&Data_03001f2c);
@@ -94,7 +94,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             UiText_DrawWorkValueWithLabel(menu->info_window);
             command = ItemMenu_PrepOwner(0);
             if (command == -1) {
-                sel = command = 0;
+                selection = command = 0;
                 ret = -1;
                 done = 1;
             }
@@ -113,9 +113,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_item_icon->state = 13;
             menu->list.icon->state = 1;
             ItemMenu_DrawMsg(0, (s32)&MsgWhichItem);
-            sel = ItemMenu_RunList(0);
+            selection = ItemMenu_RunList(0);
             state = 0;
-            if (sel == -1) {
+            if (selection == -1) {
                 break;
             }
             menu->list_mode = 0xff;
@@ -255,7 +255,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             UiIcon_PrepareObject(menu->selected_item_icon);
             UiWindow_ClearInteriorTilesFar(menu->preview_window, 0, 72, 120, 96);
             RenderOutput_RedrawSavedRectFar(menu->message_window);
-            if (ItemMenu_ConfirmDrop(sel) == 0) {
+            if (ItemMenu_ConfirmDrop(selection) == 0) {
                 command = menu->item_owner;
                 UnitGetFar(command);
                 for (work = 0; work < result + 1; work++) {
@@ -388,8 +388,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             ItemMenu_DrawMsg(0, (s32)&MsgSwapForWhat);
-            sel = ItemMenu_RunList(1);
-            if (sel == -1) {
+            selection = ItemMenu_RunList(1);
+            if (selection == -1) {
                 state = 6;
                 break;
             }

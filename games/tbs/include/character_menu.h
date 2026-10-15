@@ -2,7 +2,7 @@
 #define ALCHEMY_CHARACTER_MENU_H
 
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/menu/menu.h"
 #include "types.h"
 #include "global_cells.h"
@@ -10,7 +10,7 @@
 #include "animspr.h"
 #include "window.h"
 
-struct BtlUnit;
+struct BattleUnit;
 struct OwnerActionSlot;
 
 struct CharacterMenuState

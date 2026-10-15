@@ -3,7 +3,7 @@
 #include "input.h"
 #include "objdisp.h"
 #include "ram_buffer.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "callback_scheduler.h"
 #include "system.h"
 

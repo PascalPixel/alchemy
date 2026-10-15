@@ -7,7 +7,7 @@
 
 struct AbilityListEntry;
 struct BattleActionRecord;
-struct BtlAct;
+struct BattleAct;
 struct GlyphPalette;
 struct MenuSprite;
 struct NodeChainNode;
@@ -41,9 +41,9 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
 void UiWork_UpdateListTail(struct RenderOutputList *list);
-/* RenderOutput_AppendToList is called from btlcmd.c with no prototype in scope: in one file its definition would come before RenderOutput_Create and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61 instructions in tbs-en). Split evidence for window|btlcmd. */
+/* RenderOutput_AppendToList is called from battle_command.c with no prototype in scope: in one file its definition would come before RenderOutput_Create and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61 instructions in tbs-en). Split evidence for window|battle_command. */
 void RenderOutput_Release(struct RenderOutput *entry);
-/* UiText_QueueRenderEntries is called from btlcmd.c with no prototype in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and Djinn_ShowJoinedMessage pass five of its six arguments, and in one file, with its definition first, they would not compile. Split evidence for window|btlcmd. */
+/* UiText_QueueRenderEntries is called from battle_command.c with no prototype in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and Djinn_ShowJoinedMessage pass five of its six arguments, and in one file, with its definition first, they would not compile. Split evidence for window|battle_command. */
 struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s32 preserve);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
@@ -82,7 +82,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out);
 s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer, const struct RenderInput *work, s32 offset_x, s32 offset_y);
-/* UiText_RenderWideStringInWindow is called from btlcmd.c with no prototype in scope: in one file its definition would come before DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18 bytes in tbs-en. Split evidence for window|btlcmd. */
+/* UiText_RenderWideStringInWindow is called from battle_command.c with no prototype in scope: in one file its definition would come before DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18 bytes in tbs-en. Split evidence for window|battle_command. */
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix);
 s32 UiText_BuildRenderEntries(s32 script, s32 clear);
@@ -93,11 +93,11 @@ s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *hei
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing);
 void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16 *spacing);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode);
-/* UiWindow_PutGlyph is called from btlcmd.c with no prototype in scope, as in window.c above its definition: PtyStDraw, SummonMenu_SelectSummon and Battle_CollectPartyCommands pass four of its five arguments, and in one file, with its definition first, they would not compile. Split evidence for window|btlcmd. */
+/* UiWindow_PutGlyph is called from battle_command.c with no prototype in scope, as in window.c above its definition: PartyStatusDraw, SummonMenu_SelectSummon and Battle_CollectPartyCommands pass four of its five arguments, and in one file, with its definition first, they would not compile. Split evidence for window|battle_command. */
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output);
 void UiWork_AnimateSpriteSlots(void);
-void Ui_AdjustValueWithoutLimit(s32 mes, s32 buf);
+void Ui_AdjustValueWithoutLimit(s32 message, s32 buf);
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
 s32 *Runtime_ClearWordIfSet(s32 *p);
@@ -259,6 +259,6 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4);
 void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-/* UiText_DrawPrefixedNumberAtOffset is called from btlcmd.c with no prototype in scope: in one file its definition would come before PtyStDraw, and PtyStDraw changes (2 of 435 instructions in tbs-en). Split evidence for window|btlcmd. */
+/* UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no prototype in scope: in one file its definition would come before PartyStatusDraw, and PartyStatusDraw changes (2 of 435 instructions in tbs-en). Split evidence for window|battle_command. */
 
 #endif

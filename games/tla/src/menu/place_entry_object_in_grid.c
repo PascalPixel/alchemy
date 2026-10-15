@@ -23,12 +23,12 @@ void Func_081005e4(s32 origin_x, s32 origin_y, s32 phase)
 {
     s32 i;
     struct RenderOutput *obj;
-    struct RenderOutput **tbl;
+    struct RenderOutput **table;
 
     i = 0;
-    tbl = ((struct EntryIconMenu *)Ram_HeapSlots->menu_runtime)->entry_icons;
+    table = ((struct EntryIconMenu *)Ram_HeapSlots->menu_runtime)->entry_icons;
     do {
-        obj = *tbl++;
+        obj = *table++;
         if (obj != NULL)
             Menu_PlaceEntryObjectInGrid(obj, i, origin_x, origin_y, phase);
         i += 1;

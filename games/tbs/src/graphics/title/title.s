@@ -74,26 +74,26 @@ Field_WorldMapPicture:
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.ifdef TBS_EDITION_DE
-	.incbin "games/tbs/src/graphics/title/tsuzuku_de.gbapal"
-	.incbin "games/tbs/src/graphics/title/tsuzuku_de.8bpp.lz"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_de.gbapal"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_de.8bpp.lz"
 	.byte 0xab, 0x02	@ PACKER: left in the buffer by Field_WorldMapPicture+0x876
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/title/tsuzuku_es.gbapal"
-	.incbin "games/tbs/src/graphics/title/tsuzuku_es.8bpp.lz"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_es.gbapal"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_es.8bpp.lz"
 	.byte 0xe8, 0x30, 0x22	@ PACKER: left in the buffer by Field_WorldMapPicture+0x719
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/title/tsuzuku_fr.gbapal"
-	.incbin "games/tbs/src/graphics/title/tsuzuku_fr.8bpp.lz"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_fr.gbapal"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_fr.8bpp.lz"
 	.byte 0x85, 0x01, 0x5b	@ PACKER: left in the buffer by Field_WorldMapPicture+0x6a5
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/title/tsuzuku_it.gbapal"
-	.incbin "games/tbs/src/graphics/title/tsuzuku_it.8bpp.lz"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_it.gbapal"
+	.incbin "games/tbs/src/graphics/title/to_be_continued_it.8bpp.lz"
 	.byte 0x8a	@ PACKER: left in the buffer by Field_WorldMapPicture+0x687
 	.else
-	.incbin "games/common/src/graphics/title/tsuzuku.parts.lz"
+	.incbin "games/common/src/graphics/title/to_be_continued.parts.lz"
 	.endif
 	.endif
 	.endif

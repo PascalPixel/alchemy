@@ -1,5 +1,5 @@
 /* Draft of overlay 68e's Func_02000884 (0x02008884), the twin of ☀️'s
- * TorebiIzumi_PlaceActor: differ 14 of 48. Register choice in the palette
+ * TolbiSpring_PlaceActor: differ 14 of 48. Register choice in the palette
  * loop: the native counts in r1, loads the cell count into r3 and walks the
  * list in r4; here the count takes r1 and the index r5. The palette needs a
  * pin to r8 (the native keeps the facing in r7; as a plain argument the

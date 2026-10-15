@@ -30,7 +30,7 @@ u32 Party_GetAverageLevel(void)
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += ((struct BtlUnit *)UnitGet(
+        total += ((struct BattleUnit *)UnitGet(
             gPartyState.active_owners[i]))->level;
     }
     total = total / count;

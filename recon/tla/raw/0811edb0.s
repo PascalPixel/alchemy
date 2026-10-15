@@ -37,7 +37,7 @@ Func_0811edb0:
 	movs r0, #0
 	bl BattlePres_SetActorModes
 	ldr r0, [r5, #8]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #36]
@@ -72,7 +72,7 @@ Func_0811edb0:
 	lsls r3, r7, #1
 	adds r3, #36
 	ldrsh r0, [r2, r3]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -265,7 +265,7 @@ Func_0811edb0:
 	lsrs r3, r3, #24
 	cmp r3, #2
 	bne .L_0811eff4
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #7
 	ands r0, r3
 	cmp r0, #0
@@ -277,10 +277,10 @@ Func_0811edb0:
 	lsls r3, r3, #1
 	adds r3, #216
 	ldrh r1, [r6, r3]
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_0811f02c
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r3, r8
 	movs r2, #0
 	ldrsh r0, [r3, r2]

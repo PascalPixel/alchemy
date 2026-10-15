@@ -1,6 +1,6 @@
 #include "types.h"
 #include "callback_scheduler.h"
-#include "disptran.h"
+#include "display_transition.h"
 #include "frame.h"
 #include "io_reg.h"
 #include "irq.h"

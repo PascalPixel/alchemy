@@ -30,7 +30,7 @@ void UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 void UnitCalc(s32);
-s32 UnitEpAdd(s32, s32);
+s32 UnitPpAdd(s32, s32);
 void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 void ObjectMotion_Launch(s32, s32, s32);
@@ -209,9 +209,9 @@ void Func_0200026c(void)
     Owner_AdjustFirstValueBy(4, -100);
     Owner_AdjustFirstValueBy(5, -100);
     Owner_AdjustFirstValue(6, -33);
-    UnitEpAdd(4, -50);
-    UnitEpAdd(5, -40);
-    UnitEpAdd(6, -35);
+    UnitPpAdd(4, -50);
+    UnitPpAdd(5, -40);
+    UnitPpAdd(6, -35);
     state = UnitGet(4);
     state[0x131] = 1;
     state += 0x140;
@@ -295,13 +295,13 @@ void Func_02000464(s32 unused, s32 actor)
     ObjectMotion_Launch(actor, 6, 15);
     Battle_WaitMode0(10);
     if (GameFlag_TestBit(0x200) == 0) {
-        Func_02000e94((s32)MsgDeriHeyaGah);
+        Func_02000e94((s32)MsgDailaInteriorsGah);
         Func_02000e9c(actor, 0);
         ObjectMotion_SetPosition(actor, 360, 72);
         ObjectMotion_ArmCallback(actor, 0x4000, 0);
         GameFlag_SetBit(0x200);
     } else {
-        Func_02000e94((s32)MsgDeriHeyaYarg);
+        Func_02000e94((s32)MsgDailaInteriorsYarg);
         Func_02000e9c(actor, 0);
         ObjectMotion_SetPosition(actor, 392, 104);
         ObjectMotion_ArmCallback(actor, 0x8000, 0);
@@ -318,7 +318,7 @@ void Func_02000508(s32 unused, s32 actor)
     ObjectMotion_Launch(actor, 6, 15);
     ObjectMotion_Launch(actor, 6, 15);
     Battle_WaitMode0(10);
-    Func_02000e94((s32)MsgDeriHeyaWhatAreYouDoing);
+    Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
     Func_02000e9c(actor, 0);
     Battle_WaitMode0(10);
 }
@@ -331,7 +331,7 @@ void Func_0200055c(s32 unused, s32 actor)
     ObjectMotion_Launch(actor, 6, 15);
     ObjectMotion_Launch(actor, 6, 15);
     Battle_WaitMode0(10);
-    Func_02000e94((s32)MsgDeriHeyaWhatAreYouDoing);
+    Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
     Func_02000e9c(actor, 0);
     Battle_WaitMode0(10);
 }

@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 
@@ -23,7 +23,7 @@ void BattleUnit_ResetGuardLevels(void)
 
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
-        struct BtlUnit *actor;
+        struct BattleUnit *actor;
 
         actor = UnitGet(ids[index]);
         actor->guard_lv = 0;

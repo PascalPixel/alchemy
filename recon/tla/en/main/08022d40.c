@@ -1,4 +1,4 @@
-/* ported from games/common/src/system/resource/resobj.c */
+/* ported from games/common/src/system/resource/resource_obj.c */
 #include "edition.h"
 #include "resource.h"
 #include "dma.h"

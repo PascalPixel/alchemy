@@ -1,6 +1,6 @@
 #include "local.h"
 #include "call.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)

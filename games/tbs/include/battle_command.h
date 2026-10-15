@@ -1,11 +1,11 @@
 #ifndef ALCHEMY_BATTLE_COMMAND_H
 #define ALCHEMY_BATTLE_COMMAND_H
 
-#include "btlsys.h"
+#include "battle_system.h"
 #include "item.h"
 #include "keystate.h"
 #include "frame.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 #define BATTLE_AUTO_MODE gDebugMode
 #define BATTLE_OPTIONS gKeysHeld

@@ -3,7 +3,7 @@
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    struct BtlUnit *state;
+    struct BattleUnit *state;
     s32 i;
     s32 zero;
     s32 count;
@@ -20,7 +20,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         count = 1;
     }
 
-    mode = state->doku;
+    mode = state->poison;
     if (mode != 0) {
         if (mode == 1)
             output[1] = mode;
@@ -32,7 +32,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[3] = 1;
         count++;
     }
-    if (state->akuryo != 0) {
+    if (state->haunt != 0) {
         output[4] = 1;
         count++;
     }

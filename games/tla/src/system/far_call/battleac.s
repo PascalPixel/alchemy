@@ -4,7 +4,7 @@
 	.global BattleActor_CommitPlacementFar
 	.thumb_func
 BattleActor_CommitPlacementFar:
-	overlay_veneer BtlObjPut
+	overlay_veneer BattleObjPut
 	.global ReleaseBattleObjectRecordsFar
 	.thumb_func
 ReleaseBattleObjectRecordsFar:

@@ -1,15 +1,15 @@
 #include "owner_state.h"
 #include "fixed_math.h"
 
-void UnitRatio(s32 owner_no)
+void UnitRatio(s32 owner_id)
 {
     s32 first;
     s32 second;
     s32 first_value;
     s32 second_value;
-    struct BtlUnit *owner;
+    struct BattleUnit *owner;
 
-    owner = UnitGet(owner_no);
+    owner = UnitGet(owner_id);
     first = (owner->hp << 14) / owner->max_hp;
     first_value = 0x4000;
     if (first <= 0x4000) {
@@ -23,7 +23,7 @@ void UnitRatio(s32 owner_no)
         first_value = 1;
         owner->hp_gauge = first_value;
     }
-    second = (owner->ep << 14) / owner->max_ep;
+    second = (owner->pp << 14) / owner->max_pp;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -31,14 +31,14 @@ void UnitRatio(s32 owner_no)
             second_value = second;
         }
     }
-    owner->ep_gauge = second_value;
-    if (owner->ep_gauge == 0 && owner->ep != 0) {
+    owner->pp_gauge = second_value;
+    if (owner->pp_gauge == 0 && owner->pp != 0) {
         second_value = 1;
-        owner->ep_gauge = second_value;
+        owner->pp_gauge = second_value;
     }
 }
 
-void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
+void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
 {
     s32 value;
 
@@ -68,7 +68,7 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
         }
     }
 
-    value = (state->ep << 14) / state->max_ep;
+    value = (state->pp << 14) / state->max_pp;
     {
         s32 output = 0x4000;
 
@@ -78,9 +78,9 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
                 output = value;
             }
         }
-        state->ep_gauge = output;
-        if ((output << 16) == 0 && state->ep != 0) {
-            state->ep_gauge = 1;
+        state->pp_gauge = output;
+        if ((output << 16) == 0 && state->pp != 0) {
+            state->pp_gauge = 1;
         }
     }
 }

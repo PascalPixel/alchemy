@@ -1,30 +1,30 @@
 //--------------------------------------------------------------------------
 // ratios_second_input.c
-// キャラクタ：EP の設定とゲージの計算
+// キャラクタ：PP の設定とゲージの計算
 //--------------------------------------------------------------------------
 
 #include "battle_unit.h"
 
 //--------------------------------------------------------------------------
-// EP を 0 から最大 EP の間で設定し、HP と EP のゲージを計算し直す
+// PP を 0 から最大 PP の間で設定し、HP と PP のゲージを計算し直す
 // ゲージは 0x4000 で満タン。残っていれば最低 1 にする
 // unit : ユニット
-// ep   : 新しい EP
+// pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
+void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp)
 {
 	s32 cur;
 
-	if (ep > unit->max_ep)
+	if (pp > unit->max_pp)
 	{
-		cur = unit->max_ep;
+		cur = unit->max_pp;
 	}
 	else
 	{
 		cur = 0;
-		if (ep >= 0)
-			cur = ep;
+		if (pp >= 0)
+			cur = pp;
 	}
-	unit->ep = cur;
+	unit->pp = cur;
 	Unit_UpdateGauges(unit);
 }

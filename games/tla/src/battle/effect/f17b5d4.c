@@ -13,14 +13,14 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 // anchor's side, its y velocity growing by 0x28000 while y is under 10.
 void Func_0817b5d4(s32 id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
     u32 enemy;
     s32 x;
 
     slot = GetBattleObjectSlotFar(id);
     object = slot->object;
-    enemy = ((struct BtlUnit *)UnitGet(id))->enemy_id;
+    enemy = ((struct BattleUnit *)UnitGet(id))->enemy_id;
     if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
         object->acceleration = 0x20000;
         /* FAKEMATCH: the one-pass block's loop note holds the speed limit's store

@@ -48,7 +48,7 @@ s32 Resource_ActivateEntry(u32 resource_index)
 s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 {
     struct VramBlockCacheEntry *entry;
-    s32 ofs;
+    s32 offset;
     void *dst;
 
     {
@@ -67,25 +67,25 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
     if (entry->size > 16) {
         if (entry->size != size) {
             Resource_ResetEntry(no);
-            ofs = ResourceTable_AllocateBlocks(no, size);
+            offset = ResourceTable_AllocateBlocks(no, size);
         } else {
-            ofs = entry->offset;
+            offset = entry->offset;
         }
     } else {
-        ofs = ResourceTable_AllocateBlocks(no, size);
+        offset = ResourceTable_AllocateBlocks(no, size);
     }
 
-    if (ofs != -1) {
-        dst = (void *)(0x06010000 + ofs);
+    if (offset != -1) {
+        dst = (void *)(0x06010000 + offset);
         entry->size = size;
-        entry->offset = ofs;
+        entry->offset = offset;
         if (src != 0) {
             if (src == (const void *)-1)
                 Iwram_ClearWords(dst, size);
             else
                 Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE32 | DMA_32BIT), REG_DMA3);
         }
-        return (u32)ofs >> 5;
+        return (u32)offset >> 5;
     }
     return 0;
 }

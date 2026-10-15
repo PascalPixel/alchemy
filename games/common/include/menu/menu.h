@@ -26,7 +26,7 @@ void  ItemMenu_PosCategory(void);
 void  Menu_AppendResourceEntry(s32 no);
 void  Menu_EndResourceSelection(void);
 void  Resource_ResetPendingTransfer(void);
-s32	  Shop_CanServe(s32 entry_no, s32 kind);
+s32	  Shop_CanServe(s32 entry_id, s32 kind);
 #endif
 #if GAME_TLA
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -34,7 +34,7 @@ void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 
 #if !GAME_TLA
 struct AnimationObject;
-struct BtlAct;
+struct BattleAct;
 struct DjinnListTable;
 struct EffectSlot;
 struct MenuResult;
@@ -108,7 +108,7 @@ extern u8		 Workspace_StatusTitle[];
 extern const u16 WorkspaceOptions_SliderPalette[];
 extern const u8	 WorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
-struct BtlAct *Ability_GetData(s32 action_id);
+struct BattleAct *Ability_GetData(s32 action_id);
 #endif
 #ifndef OWN_Djinn_ListOwnerEntries
 #endif

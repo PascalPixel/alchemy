@@ -91,7 +91,7 @@ BattlePresentation_AppendLinkedActions:
 	ldr r2, [r3]
 	ldr r3, [r7]
 	str r3, [r2]
-	bl BtlRndFar
+	bl BattleRandomFar
 	mov r1, r10
 	ldr r3, [r1]
 	str r0, [r3, #4]
@@ -139,7 +139,7 @@ BattlePresentation_AppendLinkedActions:
 	bl Func_0811d24c
 	cmp r0, #0
 	blt .L_0811d580
-	bl BtlRndFar
+	bl BattleRandomFar
 	mov r2, r10
 	ldr r1, [r2]
 	ldr r3, [r1, #4]

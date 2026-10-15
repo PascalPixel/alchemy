@@ -11,13 +11,13 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 
 void Func_08163d88(s32 id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
     u32 enemy;
 
     slot = GetBattleObjectSlotFar(id);
     object = slot->object;
-    enemy = ((struct BtlUnit *)UnitGet(id))->enemy_id;
+    enemy = ((struct BattleUnit *)UnitGet(id))->enemy_id;
     if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
         s32 percent = (Random16() & 63) + 130;
 

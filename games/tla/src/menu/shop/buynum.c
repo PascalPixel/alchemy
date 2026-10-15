@@ -34,7 +34,7 @@ extern u8 MsgHowManyToBuy[];
 #define QUANTITY_CURSOR_Y 128
 #endif
 
-s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
+s32 Shop_SelectBuyNum(s32 unit_id, s32 item_id)
 {
     struct ShopWork *shop;
     struct ShopUnit *unit;

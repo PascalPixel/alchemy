@@ -59,7 +59,7 @@ void Func_02001d3c(void)
     Ov696_ObjArm(17, 0x4000, 0);
     ObjectMotion_SetVariantCallback(15, 1);
     Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Ov696_CamSpeed(0xcccc, 0x1999);
     Func_020049fc()->motion_flags = 0;
     Ov696_CamMove(0x780000, 0x320000, 0xe00000, 1);
@@ -73,17 +73,17 @@ void Func_02001d3c(void)
     Object_GetById(gPartyState.current_owner)->action_flags |= 1;
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 259, 20)
-    Ov696_MesPut(0x800f, 0);
+    Ov696_MessagePut(0x800f, 0);
     ObjectMotion_SetVariantCallback(17, 1);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(17, 259, 0)
-    Ov696_MesPut(0x8011, 0);
+    Ov696_MessagePut(0x8011, 0);
     ObjectMotion_SetVariantCallback(16, 1);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(16, 259, 0)
-    Ov696_MesPut(0x8010, 0);
+    Ov696_MessagePut(0x8010, 0);
     Motion_SetModeAndWaitAnimation(15, 3);
-    Ov696_MesPut(0x800f, 0);
+    Ov696_MessagePut(0x800f, 0);
     GameFlag_SetBit(0x94f);
     Func_020048cc();
 }

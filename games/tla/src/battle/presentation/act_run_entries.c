@@ -6,9 +6,9 @@
 #include "types.h"
 #include "battle.h"
 #include "system.h"
-#include "btlev.h"
-#include "btldisp.h"
-#include "btltype.h"
+#include "battle_event.h"
+#include "battle_display.h"
+#include "battle_type.h"
 
 void BattlePresentation_WaitForAdvance(void);
 
@@ -17,7 +17,7 @@ void BattlePresentation_WaitForAdvance(void);
 // 対象がいなければ、メッセージの送りを待つだけ
 // plan : 行動と対象の情報
 //--------------------------------------------------------------------------
-s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
+s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {
 	s32 i;
 
@@ -30,7 +30,7 @@ s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
 	{
 		for (i = 0; i < plan->target_count; i++)
 		{
-			BtlTgtExec(plan, i);
+			BattleTargetExec(plan, i);
 			BattleEv_DispatchQueued();
 		}
 	}

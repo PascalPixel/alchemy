@@ -79,12 +79,12 @@ Resource_DirectoryTable:
 	group Title, GoldenSunLogo
 	group Field, WorldMapPicture
 	group Title, IntroTilesB
-	group Battle, SuharaGateBackdrop, TakaraShimaBackdrop, TakaraShimaCaveBackdrop, KorosseoBackdrop, VinasuChojoStormBackdrop
-	group Battle, VinasuChojoBackdrop, VinasuHeyaBackdrop, SuharaSabakuBackdrop, ArutamiraDouBackdrop, BabiChikaBackdrop
-	group Battle, BabiIriguchiBackdrop, RamakanSabakuBackdrop, MogoruMoriBackdrop, MakyuriChojoBackdrop, FuneHeyaBackdrop
-	group Battle, ImiruFuchinBackdrop, KorimaMoriBackdrop, ToretoHeyaBackdrop, GomaDouBackdrop, InteriorBackdrop
-	group Battle, ArutinYamaBackdrop, FuneKanpanBackdrop, MakyuriHeyaBackdrop, HaidiaArashiBackdrop, ToretoEdaBackdrop
-	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SoruShindenBackdrop, ForestBackdrop
+	group Battle, SuhallaGateBackdrop, PirateShipBackdrop, CrossboneIsleCaveBackdrop, ColossoBackdrop, VenusAerieStormBackdrop
+	group Battle, VenusAerieBackdrop, VenusLighthouseBackdrop, SuhallaDesertBackdrop, AltmillerCaveBackdrop, TunnelRuinsBackdrop
+	group Battle, BabiLighthouseBackdrop, LamakanDesertBackdrop, MogallForestBackdrop, MercuryAerieBackdrop, TolbiShipInteriorsBackdrop
+	group Battle, ImilFuchinFallsBackdrop, KolimaForestBackdrop, TretInteriorsBackdrop, GomaCaveBackdrop, InteriorBackdrop
+	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretBranchBackdrop
+	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SolSanctumBackdrop, ForestBackdrop
 	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
 	resource SlotsFramePicture, Slots_FramePicture
 	resource SlotsIcons, Slots_Icons
@@ -133,7 +133,7 @@ Resource_DirectoryTable:
 	resource WorldMapTilesH, WorldMap_TilesH
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
-	group Korosseo, RivalPathA, RivalPathB, RivalPathC, Lettering
+	group Colosso, RivalPathA, RivalPathB, RivalPathC, Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC
@@ -258,7 +258,7 @@ Resource_DirectoryTable:
 	recolor 32, 131, 132, 133
 	resource , Field_Map134
 	resource , Field_Map135
-	resource , Field_GondowanaTsukojo
+	resource , Field_GondowanPassage
 	resource , Tileset_Palette33
 	recolor 34, 136
 	recolor 35, 137, 138
@@ -280,7 +280,7 @@ Resource_DirectoryTable:
 	recolor 48, 160
 	resource , Field_Map161
 	resource , Field_Map162
-	resource , Field_VinasuIriguchi
+	resource , Field_VenusEntrance
 	resource , Tileset_Palette49
 	recolor 50, 163
 	recolor 51, 164

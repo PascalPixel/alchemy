@@ -5,7 +5,7 @@
 
 #include "types.h"
 #include "motobj.h"
-#include "btldisp.h"
+#include "battle_display.h"
 
 //--------------------------------------------------------------------------
 // ふたつのオブジェクトの中間（x, z）にカメラを合わせる
@@ -14,8 +14,8 @@
 //--------------------------------------------------------------------------
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom)
 {
-	struct MotionObject *obj_a = BtlObjGet(a)->object;
-	struct MotionObject *obj_b = BtlObjGet(b)->object;
+	struct MotionObject *obj_a = BattleObjGet(a)->object;
+	struct MotionObject *obj_b = BattleObjGet(b)->object;
 	s32					 ax = obj_a->x;
 	s32					 bx = obj_b->x;
 	s32					 az = obj_a->z;

@@ -18,7 +18,7 @@ void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
 
-void UiText_DrawStatComparison(const struct BtlUnit *alt, const struct BtlUnit *base, s32 work)
+void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct BattleUnit *base, s32 work)
 {
     UiText_DrawCharacterAtOffsetFar((s32)MsgPanelStatLabel, work, 0, 32);
     UiText_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);

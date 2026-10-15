@@ -244,7 +244,7 @@ Func_02000428:
 	adds r1, #8
 	adds r2, #8
 	bl ObjectMotion_SetPositionAndReset
-	bl ColossoLogRollingStage_Idle
+	bl TrialRoad_Idle
 	movs r0, #0
 	bl Func_020000fc
 	adds r5, r0, #0

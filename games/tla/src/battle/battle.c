@@ -5,14 +5,14 @@
 
 #include "types.h"
 #include "battle.h"
-#include "btlpty.h"
-#include "btldisp.h"
+#include "battle_party.h"
+#include "battle_display.h"
 
 //--------------------------------------------------------------------------
 // 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、
 // 全員の表示モードと動作を設定し直す
 //--------------------------------------------------------------------------
-void BtlObjPut(void)
+void BattleObjPut(void)
 {
 	s16 list[14];
 

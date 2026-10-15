@@ -33,25 +33,25 @@ void Func_020004c8(void)
         return;
     center = Object_GetById(31);
     if (Flag_IsSet(0x201) != 0) {
-        u32 rnd;
+        u32 random;
         s32 y;
 
-        rnd = Random16Far();
+        random = Random16Far();
         /* FAKEMATCH: the barriers keep the random value's copy, the centre's y load and the first shift in the native's order in both branches, so jump2 joins them after the shift (differ 3 without). */
         asm("");
         y = center->y;
         asm("");
-        effect = Object_Create(672, center->x, (s32)((u32)(rnd << 8) >> 16 << 16) + y - 0x1c0000, center->z);
+        effect = Object_Create(672, center->x, (s32)((u32)(random << 8) >> 16 << 16) + y - 0x1c0000, center->z);
     } else {
-        u32 rnd;
+        u32 random;
         s32 y;
 
-        rnd = Random16Far();
+        random = Random16Far();
         /* FAKEMATCH: as in the first branch. */
         asm("");
         y = center->y;
         asm("");
-        effect = Object_Create(672, center->x, (s32)((u32)(rnd << 6) >> 16 << 16) + y - 0x1c0000, center->z);
+        effect = Object_Create(672, center->x, (s32)((u32)(random << 6) >> 16 << 16) + y - 0x1c0000, center->z);
     }
     if (effect != 0) {
         sprite = effect->animation;

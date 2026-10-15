@@ -10,7 +10,7 @@ void UiWork_SetBusyFlags(u32 flags)
     if (work == 0)
         return;
     if (flags & 1)
-        work[WINDOW_BUSY_FLAGS_OFS] = 1;
+        work[WINDOW_BUSY_FLAGS_OFFSET] = 1;
     if (flags & 2)
-        work[WINDOW_BUSY_FLAGS_OFS + 1] = 1;
+        work[WINDOW_BUSY_FLAGS_OFFSET + 1] = 1;
 }

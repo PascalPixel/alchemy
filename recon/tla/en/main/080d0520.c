@@ -6,7 +6,7 @@
 #include "scene.h"
 #include "global_cells.h"
 #include "ram_buffer.h"
-#include "disptran.h"
+#include "display_transition.h"
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
 
 void DisplayTransition_Finish(s32 mode, s32 frames)

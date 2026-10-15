@@ -14,7 +14,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "disptran.h"
+#include "display_transition.h"
 
 struct OwnerMenuState {
     u8 unknown_000[0x28];

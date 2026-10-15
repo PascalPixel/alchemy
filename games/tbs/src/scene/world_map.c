@@ -4,11 +4,11 @@
 #include "unit/scene/world_map.h"
 #include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
@@ -40,7 +40,7 @@
 #include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "frame.h"
 
 // 前方宣言
@@ -53,7 +53,7 @@ static void WorldMap_UpdateTransferredActorLanding(void);
 static void WorldMap_TransferToExit102(void);
 static void WorldMap_TransferToExit103(void);
 static void WorldMap_TransferToExit104(void);
-static void WorldMap_TransferToFuneHeya(void);
+static void WorldMap_TransferToTolbiShipInteriors(void);
 static void WorldMap_TransferToExit106(void);
 static void WorldMap_CompleteTransfer(void);
 static void WorldMap_DisembarkCarriage(void);
@@ -515,12 +515,12 @@ s32 WorldMap_EnterScene(void)
 	if (*entrance == 90)
 	{
 		Scene_RunScene371SequenceA(0);
-		Event_SetDestination((s32)&SceneId_MakyuriChojo1, 1);
+		Event_SetDestination((s32)&SceneId_MercuryAerie1, 1);
 	}
 	else if (*entrance == 91)
 	{
 		Scene_RunScene371SequenceA(1);
-		Event_SetDestination((s32)&SceneId_VinasuChojo, 93);
+		Event_SetDestination((s32)&SceneId_VenusAerie, 93);
 	}
 	else if (*entrance == 78)
 	{
@@ -588,7 +588,7 @@ s32 WorldMap_EnterScene(void)
 			WorldMap_TransferToExit104();
 			break;
 		case 68:
-			WorldMap_TransferToFuneHeya();
+			WorldMap_TransferToTolbiShipInteriors();
 			break;
 		case 69:
 			WorldMap_TransferToExit106();
@@ -709,7 +709,7 @@ static void FieldScene_RunActorTransferSequence(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
+	Actor_SetSpeed(GARET, 0x19999, 0xcccc);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x16fc, 0x628);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
 	Actor_SetPosition(8, 0x16d80000, 0x6280000);
@@ -733,23 +733,23 @@ static void FieldScene_RunActorTransferSequence(void)
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetPosition(GERALD, record->x.fixed, record->z.fixed);
+		Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
 	}
-	Actor_WalkToAndWait(GERALD, 0x1704, 0x640);
+	Actor_WalkToAndWait(GARET, 0x1704, 0x640);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 20);
+	Actor_FaceDirection(GARET, 0xa000, 20);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-	Actor_ShowEmote(GERALD, 0x101, 60);
+	Actor_ShowEmote(GARET, 0x101, 60);
 	Actor_SetPosition(8, 0x16d80000, 0x6380000);
 	Engine_TaskWait(1);
 	Engine_EventSetMessage(MsgWorldMapWeCantStayAnotherMinute);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 40);
+	Actor_FaceDirection(GARET, 0x6000, 40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 60);
+	Actor_FaceDirection(GARET, 0xa000, 60);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
-	Actor_FaceDirection(GERALD, 0x6000, 10);
+	Actor_FaceDirection(GARET, 0x6000, 10);
 	Event_PlayCue(141);
 	Engine_ActorEnableActionCallback(10, gTransferDepart10);
 	Engine_EventWait(20);
@@ -758,7 +758,7 @@ static void FieldScene_RunActorTransferSequence(void)
 	Engine_ActorEnableActionCallback(12, gTransferDepart12);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-	Actor_FaceDirection(GERALD, 0x4000, 10);
+	Actor_FaceDirection(GARET, 0x4000, 10);
 	Object_SetActionCallbackAndRefreshById(13, gTransferDepart13);
 	Event_PlayCue(0x121);
 	Engine_EventWait(20);
@@ -910,7 +910,7 @@ static void FieldScene_RunActorTransferSequence(void)
 	Object_SetActionCallbackAndRefreshById(13, gTransferReturn13);
 	Battle_ClearObjectFlag5bWhenMode3();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170c0000, 0x6280000);
-	Actor_SetPosition(GERALD, 0x17140000, 0x6400000);
+	Actor_SetPosition(GARET, 0x17140000, 0x6400000);
 	Camera_SetSpeed(0x40000, 0x8000);
 	Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
 	Engine_CameraWaitForMove();
@@ -924,29 +924,29 @@ static void FieldScene_RunActorTransferSequence(void)
 	Engine_ActorEnableActionCallback(12, action);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-	Actor_FaceDirection(GERALD, 0x8000, 0);
+	Actor_FaceDirection(GARET, 0x8000, 0);
 	Engine_ActorEnableActionCallback(13, action);
 	Engine_EventWait(40);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-	Actor_FaceDirection(GERALD, 0xc000, 0);
+	Actor_FaceDirection(GARET, 0xc000, 0);
 	Object_RefreshSelectorById(13);
 	Event_PlayCue(0x121);
 	Camera_SetSpeed(0x40000, 0x8000);
 	Camera_MoveTo(0x16f80000, -1, 0x6480000, 1);
 	Engine_CameraWaitForMove();
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
-	Actor_FaceDirection(GERALD, 0xa000, 80);
+	Actor_FaceDirection(GARET, 0xa000, 80);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
+	Engine_ActorSetAnimationAndWait(GARET, 3);
 	Engine_EventWait(20);
-	Engine_ActorSetAnimation(GERALD, 2);
+	Engine_ActorSetAnimation(GARET, 2);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
+		Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
 	}
-	Engine_ActorWaitForMove(GERALD);
-	Actor_SetPosition(GERALD, 0, 0);
+	Engine_ActorWaitForMove(GARET);
+	Actor_SetPosition(GARET, 0, 0);
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -1116,7 +1116,7 @@ static void WorldMap_TransferToExit104(void)
 	Engine_EventEnd();
 }
 
-static void WorldMap_TransferToFuneHeya(void)
+static void WorldMap_TransferToTolbiShipInteriors(void)
 {
 	struct FieldActor *actor;
 
@@ -1649,7 +1649,7 @@ static void WorldMap_StopLeaderLeavingShip(void)
 {
 	Engine_EventBegin();
 	Battle_SetObjectFlag5bWhenMode3();
-	Engine_EventSetMessage(MsgWorldMapRobinWhereGoingSaidUse);
+	Engine_EventSetMessage(MsgWorldMapIsaacWhereGoingSaidUse);
 	Engine_EventShowMessage(gWorldMapTriggerActor, 0);
 	Battle_ClearObjectFlag5bWhenMode3();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -1743,7 +1743,7 @@ static void EV96_SCRIPT(void)
          * them. As plain stores the zero takes r3 and the address a copy in
          * r2 (differ 20 in EN); a repeated struct-field store deletes the
          * first store instead and leaves the clear at the end (differ 6). Held as
-         * union FieldObject, as raribero_machi.c holds the Black Orb, the
+         * union FieldObject, as lalivero.c holds the Black Orb, the
          * plain store still differs 20 (2026-10-13). */
 		motion = &orb->motion_flags;
 		*motion = 0;
@@ -1844,7 +1844,7 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Engine_EventBegin();
 	BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
 	Camera_MoveTo(-1, -1, -1, 0);
-	Engine_ActorSetAnimation(JASMINE, 19);
+	Engine_ActorSetAnimation(JENNA, 19);
 	Engine_ActorSetAnimation(8, 5);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Engine_TaskWait(1);
@@ -1856,35 +1856,35 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Event_WaitForZoomTransition();
 	Battle_SetObjectFlag5bWhenMode3();
 	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(JASMINE, 1);
+	Engine_ActorRunRepeatedMotion(JENNA, 1);
 	Engine_EventWait(20);
-	Engine_EventSetMessage(MsgWorldMapSukuretaHowLongWillIsland);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Engine_EventSetMessage(MsgWorldMapKradenHowLongWillIsland);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(JASMINE, 0x107, 20);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Actor_ShowEmote(JENNA, 0x107, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Actor_ShowEmote(8, 0x105, 80);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Actor_ShowEmote(8, 0x105, 100);
-	Actor_ShowEmote(JASMINE, 0x105, 40);
-	Event_ShowMessageAndWait(JASMINE, 0, 20);
+	Actor_ShowEmote(JENNA, 0x105, 40);
+	Event_ShowMessageAndWait(JENNA, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 10);
-	Actor_ShowEmote(JASMINE, 0x102, 20);
-	Event_ShowMessageAndWait(JASMINE, 0, 10);
+	Actor_ShowEmote(JENNA, 0x102, 20);
+	Event_ShowMessageAndWait(JENNA, 0, 10);
 	Actor_SetAttachedEffect(8, 0x102);
 	Engine_EventWait(80);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(JASMINE, 0x105, 80);
+	Actor_ShowEmote(JENNA, 0x105, 80);
 	Event_ShowMessageAndWait(8, 0, 120);
-	Engine_ActorRunRepeatedMotion(JASMINE, 1);
-	Event_ShowMessageAndWait(JASMINE, 0, 40);
+	Engine_ActorRunRepeatedMotion(JENNA, 1);
+	Event_ShowMessageAndWait(JENNA, 0, 40);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Actor_ShowEmote(JASMINE, 0x105, 40);
-	Event_ShowMessageAndWait(JASMINE, 0, 120);
+	Actor_ShowEmote(JENNA, 0x105, 40);
+	Event_ShowMessageAndWait(JENNA, 0, 120);
 	Actor_SetSpeed(9, 0x6666, 0x3333);
 	Actor_SetPosition(9, 0x1ddc0000, 0xd840000);
 	Actor_WalkToAndWait(9, 0x1d94, 0xd8c);
@@ -1892,7 +1892,7 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x6009, 0, 20);
 	Actor_ShowEmote(8, 0x101, 0);
-	Actor_ShowEmote(JASMINE, 0x101, 60);
+	Actor_ShowEmote(JENNA, 0x101, 60);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessage(0x6009, 0);
 	Map_LoadDefaultCellsAndUpdateBlock();
@@ -1901,12 +1901,12 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Engine_EventWait(80);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_ActorJump(8, 4, 40);
-	Engine_ActorSetAnimation(JASMINE, 1);
-	Engine_ActorJump(JASMINE, 4, 60);
+	Engine_ActorSetAnimation(JENNA, 1);
+	Engine_ActorJump(JENNA, 4, 60);
 	Actor_FaceDirection(8, 0x3000, 0);
-	Actor_FaceDirection(JASMINE, 0xb000, 40);
+	Actor_FaceDirection(JENNA, 0xb000, 40);
 	Actor_SetSpeed(8, 0x9999, 0x4ccc);
-	Actor_SetSpeed(JASMINE, 0x9999, 0x4ccc);
+	Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
 	Engine_ActorEnableActionCallback(8, gPresentGuide8);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0xb333, 0x1666);
@@ -1921,7 +1921,7 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Engine_EventWait(20);
 	Actor_FaceDirection(9, 0x8000, 20);
 	Actor_SetAttachedEffect(8, 0x102);
-	Actor_SetAttachedEffect(JASMINE, 0x102);
+	Actor_SetAttachedEffect(JENNA, 0x102);
 	Engine_EventWait(40);
 	Battle_SetObjectFlag5bWhenMode3();
 	Event_ShowTwoMessagesAndWait(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
@@ -1931,15 +1931,15 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Camera_MoveTo(0x1e580000, -1, 0xdc80000, 1);
 	Actor_FaceDirection(9, 0x3000, 0);
 	Actor_SetSpeed(8, 0x19999, 0xcccc);
-	Actor_SetSpeed(JASMINE, 0x19999, 0xcccc);
+	Actor_SetSpeed(JENNA, 0x19999, 0xcccc);
 	Actor_WalkTo(8, 0x1e7c, 0xdb8);
-	Actor_WalkToAndWait(JASMINE, 0x1e6c, 0xdd8);
+	Actor_WalkToAndWait(JENNA, 0x1e6c, 0xdd8);
 	Engine_ActorSetAnimation(8, 1);
 	Battle_SetObjectFlag5bWhenMode3();
 	Engine_EventWait(80);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Event_ShowMessageAndWait(8, 0, 20);
-	Engine_ActorRunRepeatedMotion(JASMINE, 2);
+	Engine_ActorRunRepeatedMotion(JENNA, 2);
 	Event_ShowMessageAndWait(0x1005, 0, 40);
 	Actor_FaceDirection(8, 0x8000, 20);
 	Engine_ActorStartRepeatedMotion(8, 2);
@@ -3039,13 +3039,13 @@ struct ScenePlacement gWorldMapPlacements[] = {
 	{ 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
 		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
-	{ GERALD, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+	{ GARET, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacements64[] = {
-	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+	{ GARET, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0x31, CONDITION_ALWAYS, ACTOR_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3111,7 +3111,7 @@ struct ScenePlacement gWorldMapPlacements71[] = {
 };
 
 struct ScenePlacement gWorldMapPlacements80[] = {
-	{ JASMINE, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+	{ JENNA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
 		PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },

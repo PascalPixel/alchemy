@@ -298,13 +298,13 @@ or functions is exactly this cheating.
   in `runtime.c`, which C2 already counts as handwritten. A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
-  `field_event.h`, `field_service.h` and `scene/runpa_jo.h`) matches every scene
+  `field_event.h`, `field_service.h` and `scene/lunpa_fortress.h`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). So is the ☀️
   IWRAM call layer (one inline per resident routine in `iwram_call.h`,
   calling its checked fixed entry): 360 call sites match through it, and
   five sites in two functions keep a tagged direct call (2026-10-11,
   decided under Pascal's delegation). So is the ☀️ engine call layer
-  (Pascal, 2026-10-13): `engcall.h`, which `field_service.h` includes, has
+  (Pascal, 2026-10-13): `engine_call.h`, which `field_service.h` includes, has
   one typed inline for each of the thirteen main-image routines it names
   that the scene, menu and debug overlays import, the scheduler's
   `Scheduler_AddOrUpdateCallback` among them. The thirteenth, which joined
@@ -317,8 +317,8 @@ or functions is exactly this cheating.
   `FieldScheduler_AddOrUpdateCallback`, which forward through it. As direct
   calls, 22 functions of the English build differ, 19 distinct (shared
   included code compiles two of them into several scenes).
-  `scene/common/scroll_initialize_hblank_dma.h`, which `babi_fune.c` and the
-  main image's `object/psyfx.c` both include, reaches it from both
+  `scene/common/scroll_initialize_hblank_dma.h`, which `lemurian_ship.c` and the
+  main image's `object/psynergy_effects.c` both include, reaches it from both
   images; other main-image code calls these routines as ordinary
   functions, outside the layer, and `field/camera.c`'s identical decode
   keeps `call.h`'s tagged `Value2`. So are statement macros written

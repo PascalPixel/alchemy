@@ -1,8 +1,8 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
-void Func_02001340(struct KabeObject *object, struct KabeObject *target);
-void Func_02001658(struct KabeObject *object, s32 base);
+void Func_02001340(struct ShrineOfTheSeaGodObject *object, struct ShrineOfTheSeaGodObject *target);
+void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
 void Func_020018ac(void);
 
 void Func_020018ac(void)
@@ -12,15 +12,15 @@ void Func_020018ac(void)
 
 void Func_020018bc(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
-    struct KabeObject *pillar = Object_GetById(16);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *pillar = Object_GetById(16);
 
     Func_020039d8();
     Func_02003b08(0);
-    Kabe_ObjWalk(gPartyState.current_owner, 408, 360);
+    ShrineOfTheSeaGod_ObjWalk(gPartyState.current_owner, 408, 360);
     Func_02001340(leader, pillar);
-    Kabe_BlendStart(0, 0, 3, 1, 24, 22);
-    Kabe_BlendStart(40, 0, 2, 1, 24, 24);
+    ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 24, 22);
+    ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 24, 24);
     WaitFrames(1);
     leader->motion_flags = 3;
     ObjectMotion_SetActionVariant(16, 3);
@@ -28,9 +28,9 @@ void Func_020018bc(void)
     Scheduler_AddOrUpdateCallback(Func_020018ac, 0x480);
     Func_02001658(leader, 2);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 1);
-    Kabe_ObjSpeed(gPartyState.current_owner, 0x9999, 0x1999);
-    Kabe_ObjCommit(gPartyState.current_owner, 406, 360);
-    Kabe_ObjCommit(gPartyState.current_owner, 400, 392);
+    ShrineOfTheSeaGod_ObjSpeed(gPartyState.current_owner, 0x9999, 0x1999);
+    ShrineOfTheSeaGod_ObjCommit(gPartyState.current_owner, 406, 360);
+    ShrineOfTheSeaGod_ObjCommit(gPartyState.current_owner, 400, 392);
     Func_02003b48(161);
     Func_02003a30(23, 0, 0);
     Func_02003a30(24, 0, 0);

@@ -53,7 +53,7 @@ BattleFx_LoadActionEffectResources:
 	strh r3, [r6, #28]
 	mov r0, r10
 	mov r9, r2
-	bl BtlActGet
+	bl BattleActGet
 	movs r1, #192
 	ldrb r3, [r0, #6]
 	lsls r1, r1, #4

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

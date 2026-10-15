@@ -13,12 +13,12 @@
 //--------------------------------------------------------------------------
 void ReleaseBattleObjectRecords(s32 no)
 {
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *obj;
 	s32					 i;
 	void				*rec;
 
-	slot = BtlObjGet(no);
+	slot = BattleObjGet(no);
 	if (slot != NULL)
 	{
 		obj = slot->object;

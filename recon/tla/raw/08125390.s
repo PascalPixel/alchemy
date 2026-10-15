@@ -102,7 +102,7 @@ Battle_ApplyActionExtras:
 	bne .L_08125448
 	b .L_08125600
 .L_08125448:
-	bl BtlRndFar
+	bl BattleRandomFar
 	adds r3, r7, #0
 	muls r3, r0
 	lsrs r7, r3, #16
@@ -128,7 +128,7 @@ Battle_ApplyActionExtras:
 	beq .L_081254ae
 	movs r0, #0
 	mov r1, r9
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r4, r10
 	lsls r1, r4, #2
 	add r1, r10
@@ -138,10 +138,10 @@ Battle_ApplyActionExtras:
 	add r1, r8
 	adds r1, r1, r2
 	movs r0, #3
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_08125610
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_08125600
 .L_081254a6:
 	ldr r3, [sp, #4]
@@ -298,7 +298,7 @@ Battle_ApplyActionExtras:
 	movs r0, #0
 	mov r1, r9
 	str r2, [sp, #0]
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r3, [sp, #8]
 	cmp r3, #0
 	bne .L_081255f0
@@ -311,7 +311,7 @@ Battle_ApplyActionExtras:
 	add r1, r8
 	adds r1, r1, r2
 	movs r0, #3
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r3, r9
 	ldr r1, .L_08125614
 	cmp r3, #7
@@ -319,12 +319,12 @@ Battle_ApplyActionExtras:
 	adds r1, #1
 .L_081255e8:
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	b .L_081255f8
 .L_081255f0:
 	ldr r1, .L_08125618
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 .L_081255f8:
 	ldr r4, [sp, #8]
 	cmp r4, #0

@@ -50,9 +50,9 @@ void Func_080d784c(void)
                     obj->motion_flags = 3;
                     Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
                 } else {
-                    struct ObjectRuntime *sel = ObjectTable_Get(*owner);
+                    struct ObjectRuntime *selection = ObjectTable_Get(*owner);
 
-                    Object_SetPositionAndResetMotionFar(obj, sel->x, sel->y, sel->z - (32 << 16));
+                    Object_SetPositionAndResetMotionFar(obj, selection->x, selection->y, selection->z - (32 << 16));
                 }
                 Object_SetMode(obj, 1);
             }

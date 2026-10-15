@@ -10,7 +10,7 @@ void Func_02002820(void)
 
     Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
     OV656_TASK_ADD(Func_02001474, 0x480);
-    if (Ov656_FlagChk(0x93f))
+    if (Ov656_FlagCheck(0x93f))
     {
         object = Object_GetById(64);
         object->motion_flags = 0;
@@ -26,7 +26,7 @@ void Func_02002820(void)
         Ov656_ObjPlace(13, 0, 0);
         Ov656_WaitFrames(1);
     }
-    if (Ov656_FlagChk(0x9e4))
+    if (Ov656_FlagCheck(0x9e4))
     {
         struct Ov656Object *marker = Object_GetById(64);
 
@@ -38,7 +38,7 @@ void Func_02002820(void)
         Func_02002c10();
         Ov656_WaitFrames(1);
     }
-    if (Ov656_FlagChk(0x22f))
+    if (Ov656_FlagCheck(0x22f))
     {
         Func_02001a9c();
         GameFlag_ClearBit(0x22f);

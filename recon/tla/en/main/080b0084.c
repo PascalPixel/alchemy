@@ -12,7 +12,7 @@
 #include "game_flags.h"
 #include "party_state.h"
 #include "types.h"
-#include "btlsmn.h"
+#include "battle_summon.h"
 #include "runtime_interfaces.h"
 #include "fixed_math.h"
 #include "owner_state.h"
@@ -25,7 +25,7 @@ struct TradeFlags {
 };
 
 struct ElementLevelBonus {
-    u16 pow;
+    u16 power;
     u16 res;
 };
 
@@ -47,7 +47,7 @@ typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
+    struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
     u32 index;
     u32 result;
     s32 values[4];
@@ -87,7 +87,7 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Element_PowerResistByLevel[tens].pow + ones;
+        destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
         destination[i][1] =
             ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].res + ones;
         i++;

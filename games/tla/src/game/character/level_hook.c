@@ -11,7 +11,7 @@ extern u32 Owner_ExperienceThresholds[];
 // レベルに必要な経験値。表は 8 人分、1 人 99 段
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
+    struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
 
     if (state->class_index != 0) {
         if (level <= 0) {

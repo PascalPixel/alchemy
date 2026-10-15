@@ -36,7 +36,7 @@ struct MapScrollWork
 	struct MapLayerScroll	layers[3];
 };
 
-#include "perspect.h"
+#include "perspective.h"
 
 LAYOUT_SIZE_GUARD(MapLayerScroll_Size, struct MapLayerScroll, 0x30);
 LAYOUT_OFFSET_GUARD(MapLayerScroll_Cells, struct MapLayerScroll, cells, 0x2c);

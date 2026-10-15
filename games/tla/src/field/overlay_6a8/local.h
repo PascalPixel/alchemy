@@ -8,14 +8,14 @@
 #include "call.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
 
 s32 UiText_OpenMessageAtObject();
 s32 Func_0200455c();
 
-static inline void Ov6a8_MesOpen(s32 actor, s32 flags)
+static inline void Ov6a8_MessageOpen(s32 actor, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer; through Call2 the actor is finished after the flags (differ 4 in Func_02001cf0, 2 in Func_02000dac). */
     UiText_OpenMessageAtObject(actor, flags);

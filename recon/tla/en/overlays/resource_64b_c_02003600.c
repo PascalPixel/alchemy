@@ -8,7 +8,7 @@
 #include "ram_buffer.h"
 #include "party_state.h"
 #include "object_runtime.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 extern struct ObjectRuntime *Data_02006c08[];
 

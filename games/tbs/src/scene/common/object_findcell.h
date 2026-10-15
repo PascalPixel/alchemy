@@ -1,5 +1,5 @@
 #include "types.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 
 static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {

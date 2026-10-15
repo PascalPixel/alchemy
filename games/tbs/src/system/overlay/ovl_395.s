@@ -1,8 +1,8 @@
 	.section .bss,"aw",%nobits
 	.space 8
-	.global KorimaPalette_First
-KorimaPalette_First:
+	.global KolimaPalette_First
+KolimaPalette_First:
 	.space 1792
-	.global KorimaPalette_Second
-KorimaPalette_Second:
+	.global KolimaPalette_Second
+KolimaPalette_Second:
 	.space 896

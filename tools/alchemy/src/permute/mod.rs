@@ -453,7 +453,7 @@ fn reference(options: &Options) -> Result<Reference, String> {
             .join(options.target.output_dir)
             .join(format!("obj/recon/{}/raw/{address}.o", options.game));
         if object.exists() {
-            // Listings can contain several functions (for example moji.o).
+            // Listings can contain several functions (for example glyph_arm.o).
             // A named target must not be scored against its neighbours.
             let symbol = options.function.as_deref().filter(|name| crate::diff::text_symbols(&object).is_ok_and(|symbols| symbols.iter().any(|s| s == name)));
             listing.extend(crate::diff::disassemble(&object, symbol)?);

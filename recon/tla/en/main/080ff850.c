@@ -27,7 +27,7 @@ struct Object {
 
 extern u32 gFrameTick;
 extern s32 Ui_ObjectPulseScales[];
-s32 AffineMatrix_BuildForEffect(struct Effect *efx);
+s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 
 s32 Menu_BuildLocalizedPatternTiles(void)
 {

@@ -50,7 +50,7 @@ Func_08124e20:
 	cmp r3, #0
 	ble .L_08124e98
 	ldrb r0, [r5, #2]
-	bl BtlObjGet
+	bl BattleObjGet
 	cmp r0, #0
 	beq .L_08124e98
 	ldrb r0, [r5, #2]
@@ -89,7 +89,7 @@ Func_08124e20:
 	bne .L_08124f7e
 	ldrb r5, [r6, #2]
 	adds r0, r5, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	cmp r0, #0
 	beq .L_08124f84
 	bl BattleEventRuntime_Reset
@@ -97,7 +97,7 @@ Func_08124e20:
 	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	ldrb r3, [r6]
 	movs r2, #150
 	lsls r1, r3, #2
@@ -108,19 +108,19 @@ Func_08124e20:
 	lsls r2, r2, #1
 	adds r1, r1, r2
 	movs r0, #3
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #14
 	movs r1, #175
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #10
 	movs r1, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #4
 	ldr r1, .L_0812510c
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #11
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #212
 	bl Audio_PlayCue
 	adds r0, r5, #0
@@ -128,12 +128,12 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08124f46
 	adds r0, r5, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
 	adds r0, r5, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl UnitEpAddFar
+	bl UnitPpAddFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -385,7 +385,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_0812515a
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -401,7 +401,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08125184
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -417,7 +417,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_081251ae
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -433,7 +433,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_081251d8
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -449,7 +449,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08125202
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -465,7 +465,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_0812522c
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -481,7 +481,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08125256
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -497,7 +497,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08125286
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -515,7 +515,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_081252b6
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -533,7 +533,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_081252e0
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -549,7 +549,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_0812530a
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags
@@ -565,7 +565,7 @@ Func_08124e20:
 	cmp r0, #0
 	beq .L_08125334
 	adds r0, r6, #0
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	adds r0, r6, #0
 	bl BattleUnit_BuildStatusFlags

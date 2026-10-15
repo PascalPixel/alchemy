@@ -889,10 +889,10 @@ Ui_LoadCharacterEntryForSlot:
 	.section .rom.00042824, "ax"
 	.incbin "baserom.gba", 0x00042824, 0x0000029c
 	.section .rom.00042ac0, "ax"
-	.global PtyStDraw
-	.type PtyStDraw, %function
+	.global PartyStatusDraw
+	.type PartyStatusDraw, %function
 	.thumb_func
-PtyStDraw:
+PartyStatusDraw:
 	.incbin "baserom.gba", 0x00042ac0, 0x00000430
 	.section .rom.00042f08, "ax"
 	.incbin "baserom.gba", 0x00042f08, 0x00000064
@@ -1111,10 +1111,10 @@ Func_0804e3f4:
 Inventory_GetEquippedItemFar:
 	.incbin "baserom.gba", 0x000a8070, 0x00000008
 	.section .rom.000a8078, "ax"
-	.global BtlActGet
-	.type BtlActGet, %function
+	.global BattleActGet
+	.type BattleActGet, %function
 	.thumb_func
-BtlActGet:
+BattleActGet:
 	.incbin "baserom.gba", 0x000a8078, 0x00000008
 	.section .rom.000a8080, "ax"
 	.global OwnerAction_AddFar
@@ -1159,10 +1159,10 @@ Func_080ad0a8:
 Owner_AdjustFirstValueFar:
 	.incbin "baserom.gba", 0x000a80c0, 0x00000008
 	.section .rom.000a80c8, "ax"
-	.global UnitEpAddFar
-	.type UnitEpAddFar, %function
+	.global UnitPpAddFar
+	.type UnitPpAddFar, %function
 	.thumb_func
-UnitEpAddFar:
+UnitPpAddFar:
 	.incbin "baserom.gba", 0x000a80c8, 0x00000008
 	.section .rom.000a80d0, "ax"
 	.global UnitRatioFar
@@ -1183,10 +1183,10 @@ Owner_UpdateRatioPairFar:
 Owner_UpdateSecondInputAndRatiosFar:
 	.incbin "baserom.gba", 0x000a80e0, 0x00000008
 	.section .rom.000a80e8, "ax"
-	.global BtlUnitSetFar
-	.type BtlUnitSetFar, %function
+	.global BattleUnitSetFar
+	.type BattleUnitSetFar, %function
 	.thumb_func
-BtlUnitSetFar:
+BattleUnitSetFar:
 	.incbin "baserom.gba", 0x000a80e8, 0x00000008
 	.section .rom.000a80f0, "ax"
 	.global Party_CountActiveOwnersFar
@@ -1225,28 +1225,28 @@ Party_RemoveActiveOwnerFar:
 Item_GetEquippedElementFar:
 	.incbin "baserom.gba", 0x000a8118, 0x00000008
 	.section .rom.000a8120, "ax"
-	.global BtlHitChk
-	.type BtlHitChk, %function
+	.global BattleHitCheck
+	.type BattleHitCheck, %function
 	.thumb_func
-BtlHitChk:
+BattleHitCheck:
 	.incbin "baserom.gba", 0x000a8120, 0x00000008
 	.section .rom.000a8128, "ax"
-	.global BtlAtkCalc
-	.type BtlAtkCalc, %function
+	.global BattleAtkCalc
+	.type BattleAtkCalc, %function
 	.thumb_func
-BtlAtkCalc:
+BattleAtkCalc:
 	.incbin "baserom.gba", 0x000a8128, 0x00000008
 	.section .rom.000a8130, "ax"
-	.global BtlPowCalc
-	.type BtlPowCalc, %function
+	.global BattlePowerCalc
+	.type BattlePowerCalc, %function
 	.thumb_func
-BtlPowCalc:
+BattlePowerCalc:
 	.incbin "baserom.gba", 0x000a8130, 0x00000008
 	.section .rom.000a8138, "ax"
-	.global BtlRcvCalc
-	.type BtlRcvCalc, %function
+	.global BattleRecoveryCalc
+	.type BattleRecoveryCalc, %function
 	.thumb_func
-BtlRcvCalc:
+BattleRecoveryCalc:
 	.incbin "baserom.gba", 0x000a8138, 0x00000008
 	.section .rom.000a8140, "ax"
 	.global Owner_GetRecordFar
@@ -1255,10 +1255,10 @@ BtlRcvCalc:
 Owner_GetRecordFar:
 	.incbin "baserom.gba", 0x000a8140, 0x00000008
 	.section .rom.000a8148, "ax"
-	.global BtlRndFar
-	.type BtlRndFar, %function
+	.global BattleRandomFar
+	.type BattleRandomFar, %function
 	.thumb_func
-BtlRndFar:
+BattleRandomFar:
 	.incbin "baserom.gba", 0x000a8148, 0x00000008
 	.section .rom.000a8150, "ax"
 	.global Djinn_AddToOwnerFar
@@ -1411,16 +1411,16 @@ Func_080ad208:
 Func_080ad210:
 	.incbin "baserom.gba", 0x000a8210, 0x00000008
 	.section .rom.000a8218, "ax"
-	.global Party_SetLeaderJasmineFar
-	.type Party_SetLeaderJasmineFar, %function
+	.global Party_SetLeaderJennaFar
+	.type Party_SetLeaderJennaFar, %function
 	.thumb_func
-Party_SetLeaderJasmineFar:
+Party_SetLeaderJennaFar:
 	.incbin "baserom.gba", 0x000a8218, 0x00000008
 	.section .rom.000a8220, "ax"
-	.global Party_SetLeaderGarciaFar
-	.type Party_SetLeaderGarciaFar, %function
+	.global Party_SetLeaderFelixFar
+	.type Party_SetLeaderFelixFar, %function
 	.thumb_func
-Party_SetLeaderGarciaFar:
+Party_SetLeaderFelixFar:
 	.incbin "baserom.gba", 0x000a8220, 0x00000008
 	.section .rom.000a8228, "ax"
 	.global Func_080ad228
@@ -1489,10 +1489,10 @@ Func_080ad270:
 Inventory_DiscardFar:
 	.incbin "baserom.gba", 0x000a8278, 0x00000008
 	.section .rom.000a8280, "ax"
-	.global BtlEfxRevChkFar
-	.type BtlEfxRevChkFar, %function
+	.global BattleEffectRevCheckFar
+	.type BattleEffectRevCheckFar, %function
 	.thumb_func
-BtlEfxRevChkFar:
+BattleEffectRevCheckFar:
 	.incbin "baserom.gba", 0x000a8280, 0x00000008
 	.section .rom.000a8288, "ax"
 	.global Owner_RefreshClassActionsFar
@@ -3827,18 +3827,18 @@ Func_081197f0:
 	.section .rom.0011a71c, "ax"
 	.incbin "baserom.gba", 0x0011a71c, 0x0000008c
 	.section .rom.0011a7a8, "ax"
-	.global BtlObjMake
-	.type BtlObjMake, %function
+	.global BattleObjMake
+	.type BattleObjMake, %function
 	.thumb_func
-BtlObjMake:
+BattleObjMake:
 	.incbin "baserom.gba", 0x0011a7a8, 0x000009c0
 	.section .rom.0011b17c, "ax"
 	.incbin "baserom.gba", 0x0011b17c, 0x00000114
 	.section .rom.0011b2c0, "ax"
-	.global EnmUpd
-	.type EnmUpd, %function
+	.global EnemyUpdate
+	.type EnemyUpdate, %function
 	.thumb_func
-EnmUpd:
+EnemyUpdate:
 	.incbin "baserom.gba", 0x0011b2c0, 0x000001e8
 	.section .rom.0011b4d4, "ax"
 	.balign 4
@@ -3943,10 +3943,10 @@ BattlePresentation_WaitForAdvance:
 Func_08120060:
 	.incbin "baserom.gba", 0x0012005c, 0x000000f8
 	.section .rom.00120450, "ax"
-	.global BtlTgtExec
-	.type BtlTgtExec, %function
+	.global BattleTargetExec
+	.type BattleTargetExec, %function
 	.thumb_func
-BtlTgtExec:
+BattleTargetExec:
 	.incbin "baserom.gba", 0x00120450, 0x0000206c
 	.section .rom.001224d4, "ax"
 	.incbin "baserom.gba", 0x001224d4, 0x00000740
@@ -4029,10 +4029,10 @@ Func_08126e00:
 	.balign 4
 	.incbin "baserom.gba", 0x00127584, 0x00000554
 	.section .rom.00127ad8, "ax"
-	.global EnmCntDec
-	.type EnmCntDec, %function
+	.global EnemyCountDecrement
+	.type EnemyCountDecrement, %function
 	.thumb_func
-EnmCntDec:
+EnemyCountDecrement:
 	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
 	.section .rom.00127c7a, "ax"
 	.incbin "baserom.gba", 0x00127c7a, 0x00000002

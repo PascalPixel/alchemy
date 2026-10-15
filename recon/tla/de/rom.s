@@ -1017,10 +1017,10 @@ Ui_LoadCharacterEntryForSlot:
 	.section .rom.00042734, "ax"
 	.incbin "baserom.gba", 0x00042734, 0x0000029c
 	.section .rom.000429d0, "ax"
-	.global PtyStDraw
-	.type PtyStDraw, %function
+	.global PartyStatusDraw
+	.type PartyStatusDraw, %function
 	.thumb_func
-PtyStDraw:
+PartyStatusDraw:
 	.incbin "baserom.gba", 0x000429d0, 0x00000430
 	.section .rom.00042e18, "ax"
 	.incbin "baserom.gba", 0x00042e18, 0x00000064
@@ -3100,18 +3100,18 @@ Func_081197f0:
 	.section .rom.0011a738, "ax"
 	.incbin "baserom.gba", 0x0011a738, 0x0000008c
 	.section .rom.0011a7c4, "ax"
-	.global BtlObjMake
-	.type BtlObjMake, %function
+	.global BattleObjMake
+	.type BattleObjMake, %function
 	.thumb_func
-BtlObjMake:
+BattleObjMake:
 	.incbin "baserom.gba", 0x0011a7c4, 0x000009c0
 	.section .rom.0011b198, "ax"
 	.incbin "baserom.gba", 0x0011b198, 0x00000114
 	.section .rom.0011b2dc, "ax"
-	.global EnmUpd
-	.type EnmUpd, %function
+	.global EnemyUpdate
+	.type EnemyUpdate, %function
 	.thumb_func
-EnmUpd:
+EnemyUpdate:
 	.incbin "baserom.gba", 0x0011b2dc, 0x000001e8
 	.section .rom.0011b4f0, "ax"
 	.balign 4
@@ -3216,10 +3216,10 @@ BattlePresentation_WaitForAdvance:
 Func_08120060:
 	.incbin "baserom.gba", 0x00120078, 0x000000f8
 	.section .rom.0012046c, "ax"
-	.global BtlTgtExec
-	.type BtlTgtExec, %function
+	.global BattleTargetExec
+	.type BattleTargetExec, %function
 	.thumb_func
-BtlTgtExec:
+BattleTargetExec:
 	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
 	.incbin "baserom.gba", 0x001224f0, 0x00000740
@@ -3302,10 +3302,10 @@ Func_08126e00:
 	.balign 4
 	.incbin "baserom.gba", 0x001275a0, 0x00000554
 	.section .rom.00127af4, "ax"
-	.global EnmCntDec
-	.type EnmCntDec, %function
+	.global EnemyCountDecrement
+	.type EnemyCountDecrement, %function
 	.thumb_func
-EnmCntDec:
+EnemyCountDecrement:
 	.incbin "baserom.gba", 0x00127af4, 0x000000c4
 	.section .rom.00127c96, "ax"
 	.incbin "baserom.gba", 0x00127c96, 0x00000002

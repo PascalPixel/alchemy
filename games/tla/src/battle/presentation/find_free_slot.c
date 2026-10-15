@@ -9,12 +9,12 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "owner_state.h"
-#include "chara.h"
+#include "character_ids.h"
 
 
-struct BtlSpriteSlots
+struct BattleSpriteSlots
 {
-	s32 enm_grp;
+	s32 enemy_group;
 	s16 sprite_slots[6];
 };
 
@@ -22,7 +22,7 @@ s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 void BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-	struct BtlSpriteSlots *work = (struct BtlSpriteSlots *)Ram_HeapSlots->battle_work;
+	struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battle_work;
 	s32					   index;
 
 	for (index = 0; index <= 5; index++)
@@ -93,28 +93,28 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner)
         index = Resource_FindFreeSlot(item & 0x1ff);
         switch (unit->class_id)
         {
-        case ROBIN:
+        case ISAAC:
             result = Data_081287d4[index];
             break;
-        case GERALD:
+        case GARET:
             result = Data_081287e2[index];
             break;
-        case IWAN:
+        case IVAN:
             result = Data_081287f0[index];
             break;
-        case MEARI:
+        case MIA:
             result = Data_081287fe[index];
             break;
-        case JASMINE:
+        case JENNA:
             result = Data_0812880c[index];
             break;
-        case GARUSHIA:
+        case FELIX:
             result = Data_0812881a[index];
             break;
-        case SHIBA:
+        case SHEBA:
             result = Data_08128828[index];
             break;
-        case PIKAADO:
+        case PIERS:
             result = Data_08128836[index];
             break;
         }

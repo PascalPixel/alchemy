@@ -3,7 +3,7 @@
 
 static void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
-	struct BtlUnit *t = UnitGet(a);
+	struct BattleUnit *t = UnitGet(a);
 	s32				i;
 
 	Inventory_AddItem(a, b);

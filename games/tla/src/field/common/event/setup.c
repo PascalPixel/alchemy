@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "ram_buffer.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "party_state.h"
 #include "object_runtime.h"
 #include "callback_scheduler.h"

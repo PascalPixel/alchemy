@@ -73,7 +73,7 @@ s32 Func_02000864(void)
     s32 stop;
     u8 *buf;
     u8 *src;
-    u16 *tbl;
+    u16 *table;
     u32 i;
     s32 scene;
     s32 set;
@@ -187,11 +187,11 @@ s32 Func_02000864(void)
             party->battle_rule_24b = 4;
         }
         Func_02001a8c(1, 1);
-        tbl = (u16 *)gSerialTransfer.payload;
-        tbl[0] = 0x45;
-        tbl[1] = 0x58;
-        tbl[2] = 0x45;
-        tbl[3] = 0x43;
+        table = (u16 *)gSerialTransfer.payload;
+        table[0] = 0x45;
+        table[1] = 0x58;
+        table[2] = 0x45;
+        table[3] = 0x43;
         {
             u32 last = 0x7c7;
 

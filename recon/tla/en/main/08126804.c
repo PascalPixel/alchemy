@@ -6,7 +6,7 @@
  * stores, this draft after them. Measured: the position stores reordered
  * (differ 12 and 16), the bounds unchanged. */
 #include "types.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "graphics.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"

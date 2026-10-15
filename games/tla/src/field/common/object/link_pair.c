@@ -7,7 +7,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "types.h"
 #include "facing_object.h"
 #include "ram_buffer.h"

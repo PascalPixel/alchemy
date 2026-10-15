@@ -66,7 +66,7 @@ void Func_020001b0(void)
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
     Talk(13, 14);
-    Func_02000598((s32)MsgImiruVoicesDisbeliefReply);
+    Func_02000598((s32)MsgImilVoicesDisbeliefReply);
     Say(3, 0);
     Func_02000608();
     Turn(8, 256, 0);

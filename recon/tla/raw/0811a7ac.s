@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BtlObjMake
+	.global BattleObjMake
 	.thumb_func
-BtlObjMake:
+BattleObjMake:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

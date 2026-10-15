@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_676/entry.o"(.text)
         "*/games/tla/src/field/overlay_676/s0038.o"(.text)
-        "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
+        "*/games/tla/src/field/venus_lighthouse/distance.o"(.text)
         "*/resource_676_overlay.o"(.text.x02008088)
         "*/resource_676_overlay.o"(.text.x0200814c)
         "*/games/tla/src/field/overlay_676/scene_tables.o"(.text)

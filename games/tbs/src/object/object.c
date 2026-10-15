@@ -1,15 +1,15 @@
-#include "unit/object/btlcue.h"
+#include "unit/object/battle_cue.h"
 #include "unit/object/zonedata.h"
 #include "vram_tab.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "scene.h"
-#include "btltype.h"
+#include "battle_type.h"
 #include "game_state.h"
-#include "fieldrun.h"
-#include "btlsys.h"
+#include "field_runtime.h"
+#include "battle_system.h"
 #include "battle.h"
 #include "battle_unit.h"
 #include "debug.h"
@@ -29,7 +29,7 @@
 #include "callback_scheduler.h"
 #include "flag_ids.h"
 #include "iwram_call.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "resource_ids.h"
 #include "battle_effect_runtime.h"
 #include "resource.h"
@@ -41,7 +41,7 @@
 #include "object_runtime.h"
 #include "script_object_runtime.h"
 #include "animspr.h"
-#include "fieldobj.h"
+#include "field_obj.h"
 #include "object_dispatch.h"
 #include "field_event.h"
 #include "event_runtime.h"
@@ -49,13 +49,13 @@
 #include "battle_effect_counters.h"
 #include "heap_state.h"
 #include "keystate.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "party_state.h"
 #include "sound_ids.h"
 #include "fixed_math.h"
-#include "itemgift.h"
-#include "btlcalc.h"
-#include "disptran.h"
+#include "item_gift.h"
+#include "battle_calc.h"
+#include "display_transition.h"
 #include "text/msg_ids.h"
 #include "object_lookup.h"
 #include "objdisp.h"
@@ -72,19 +72,19 @@
 #include "inventory.h"
 #include "ui.h"
 #include "window.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "b5_context.h"
 #include "edition.h"
 #include "facing_object.h"
 #include "script_motion.h"
 #include "tbs_edition.h"
 #include "metadata_lookup.h"
-#include "fieldcoo.h"
+#include "field_coordinate.h"
 #include "scroll.h"
 #include "fxblend.h"
 #include "fx_scene.h"
 #include "effect_slot.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
@@ -160,7 +160,7 @@ void MapGroupTable_SelectEntry(s32 kind)
 
 void Party_SetReturnPoint(s32 reason)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s32				i;
 	s32				scene;
 	s32				entrance;
@@ -180,7 +180,7 @@ void Party_SetReturnPoint(s32 reason)
 			{
 				unit = UnitGetFar(i);
 				unit->hp = unit->max_hp;
-				unit->ep = unit->max_ep;
+				unit->pp = unit->max_pp;
 				Unit_UpdateGauges(unit);
 			}
 		}
@@ -283,7 +283,7 @@ void Game_ResetForNewGame(s32 mode)
 	table = Field_SceneTable;
 	if (gDebugMode && mode == 1)
 	{
-		gGameState.scene = (s32)&SceneId_HaidiaIe;
+		gGameState.scene = (s32)&SceneId_ValeHome;
 		gGameState.entrance = mode;
 	}
 	else if (gDebugMode && mode == 2)
@@ -374,10 +374,10 @@ void Game_ResetForNewGame(s32 mode)
 //--------------------------------------------------------------------------
 void BattleFx_LoadResourceGroup(s32 unused)
 {
-	const struct SceneRecord *tbl;
+	const struct SceneRecord *table;
 
-	tbl = Field_SceneTable;
-	Resource_LoadCode(tbl[gGameState.scene].resource_id, &gOverlayArea);
+	table = Field_SceneTable;
+	Resource_LoadCode(table[gGameState.scene].resource_id, &gOverlayArea);
 }
 
 #define SCENE_RECORD(id) (&Field_SceneTable[id])
@@ -698,7 +698,7 @@ void Scene_ResolveInteractionResult(void)
 	s16									cue = 18;
 	s16									scene = gGameState.scene;
 	s16									ent = gGameState.entrance;
-	s16									grp = gGameState.scene_group;
+	s16									group = gGameState.scene_group;
 	const struct SceneInteractionEntry *p = Scene_InteractionRuleTable;
 
 	for (; p->id != -1; p++)
@@ -714,7 +714,7 @@ void Scene_ResolveInteractionResult(void)
 			cue = p->result;
 			break;
 		}
-		if (p->id != grp)
+		if (p->id != group)
 			continue;
 		if (p->value != -1 && p->value != ent)
 			continue;
@@ -744,7 +744,7 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
 	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
 	s32								name = 0;
-	s32								grp = BattleFx_GetResourceGroup(scene);
+	s32								group = BattleFx_GetResourceGroup(scene);
 
 	while (p->id != -1)
 	{
@@ -761,7 +761,7 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 		}
 		else
 		{
-			if (p->id == grp)
+			if (p->id == group)
 			{
 				if (p->entrance == -1 || p->entrance == entrance)
 				{
@@ -843,7 +843,7 @@ void BattleFx_SelectResultPointer(s32 arg0)
 		value = (u32)&ResourceId_SnowfieldBackdrop;
 		break;
 	default:
-		value = (u32)&ResourceId_SoruShindenBackdrop;
+		value = (u32)&ResourceId_SolSanctumBackdrop;
 		break;
 	}
 	gGameState.special = value;
@@ -852,7 +852,7 @@ void BattleFx_SelectResultPointer(s32 arg0)
 void BattleFx_SelectBattleCue(s32 first, s32 second)
 {
 	u16		   key = (first << 4) + second;
-	const u16 *tbl = gBattleCueTable;
+	const u16 *table = gBattleCueTable;
 	u16		   cue;
 	u16		   value;
 
@@ -864,7 +864,7 @@ void BattleFx_SelectBattleCue(s32 first, s32 second)
 	{
 		for (;;)
 		{
-			value = *tbl++;
+			value = *table++;
 			if (value == 0)
 				break;
 			if (value == key)
@@ -1130,8 +1130,8 @@ void *ObjectTable_GetSlotAddress(u32 index)
 // フィールド：画面の範囲による条件フラグと、置いた物体の片付け
 //--------------------------------------------------------------------------
 
-#define FLG_IN 0x164  // 範囲の中 (下ろしたフラグ)
-#define FLG_OUT 0x165 // 範囲の外 (立てたフラグ)
+#define FLAG_IN 0x164  // 範囲の中 (下ろしたフラグ)
+#define FLAG_OUT 0x165 // 範囲の外 (立てたフラグ)
 
 #define PLACED_MAX 58 // 置いた物体の数
 
@@ -1154,8 +1154,8 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {
 	struct MapScrollWork *view = gMapWork[0];
 
-	GameFlag_ClearBitFar(FLG_IN);
-	GameFlag_SetBitFar(FLG_OUT);
+	GameFlag_ClearBitFar(FLAG_IN);
+	GameFlag_SetBitFar(FLAG_OUT);
 	while (entry->id != -1)
 	{
 		/* FAKEMATCH: the flag read through a u16 keeps loop.c to one hoisted bound
@@ -1172,9 +1172,9 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 			s32 z = entry->z;
 
 			if (view->min_x <= x && x <= view->max_x && view->min_y <= z && z <= view->max_y)
-				entry->flag = FLG_IN;
+				entry->flag = FLAG_IN;
 			else
-				entry->flag = FLG_OUT;
+				entry->flag = FLAG_OUT;
 		}
 		entry++;
 	}
@@ -1410,7 +1410,7 @@ struct StepOwner
 	u8	unknown_000[0x38];
 	s16 hp;
 	u8	unknown_03a[0x131 - 0x3a];
-	u8	doku;
+	u8	poison;
 };
 
 enum StepTileEvent
@@ -1569,7 +1569,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
 
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. Plain struct BtlUnit differs by 2: its alias set ties the doku store to the active-owner read. */
+	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. Plain struct BattleUnit differs by 2: its alias set ties the poison store to the active-owner read. */
 	struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
 	struct MapState		 *map = WORK_SLOT(8);
 	s32					  selected = gGameState.selected_actor;
@@ -1706,7 +1706,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 			{
 				work->fallen[work->fallen_count++] = gGameState.active_owners[i];
 				work->raised_trigger = 0xffff;
-				owner->doku = 0;
+				owner->poison = 0;
 			}
 		}
 	}
@@ -1718,7 +1718,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused)
 	s32 i;
 
 	for (i = 0; i < target_count; i++)
-		UnitEpAddFar(gGameState.active_owners[i], amount);
+		UnitPpAddFar(gGameState.active_owners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
@@ -1726,7 +1726,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 	s32				count;
 	s32				i;
 	s32				value;
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 
 	if (amount < 0)
 	{
@@ -1772,10 +1772,10 @@ s32 BattleParty_ApplyStatusDamage(void)
 
 	for (i = 0; i < count; i++)
 	{
-		struct BtlUnit *unit = UnitGetFar(gGameState.active_owners[i]);
+		struct BattleUnit *unit = UnitGetFar(gGameState.active_owners[i]);
 		s32				amount;
 
-		switch (unit->doku)
+		switch (unit->poison)
 		{
 		case 1:
 			amount = -((unit->max_hp + 10) / 20);
@@ -2050,7 +2050,7 @@ s32 Field_RunScene(s32 entrance)
 						}
 						if (work->survived == 0)
 						{
-							struct BtlUnit *vitals;
+							struct BattleUnit *vitals;
 
 							if (gGameState.selected_actor == 0)
 							{
@@ -2810,10 +2810,10 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 			if (ev->result >= 0x10000)
 			{
 				s32 no = BattleFx_GetFlags(id);
-				u32 rnd = Random16();
-				s32 mes = MsgPonderEllipsis + no * 2 + (rnd * 2 >> 16);
+				u32 random = Random16();
+				s32 message = MsgPonderEllipsis + no * 2 + (random * 2 >> 16);
 				Battle_Reset();
-				Event_SetMessageId(mes);
+				Event_SetMessageId(message);
 				BattleEv_RunWait(id, 0);
 				BattleFx_FinishAction();
 				goto finish;
@@ -3196,7 +3196,7 @@ s32 Field_RunTileAction(s32 tile)
 								if (owner == gGameState.selected_actor)
 								{
 									UiText_ShowPositionedMessageAndWaitFar(
-										MsgKorosseoRobinGotItem, 3);
+										MsgColossoIsaacGotItem, 3);
 								}
 								else
 								{
@@ -3552,7 +3552,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	s32						 result;
 	s32						 item_id;
 	s32						 actor;
-	struct BtlUnit			*obj;
+	struct BattleUnit			*obj;
 	const struct SceneEvent *event;
 	s32						 j;
 	s32						 i;
@@ -3703,7 +3703,7 @@ void *BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 
 		if ((event->control & 0x0f) == 5 && GameFlag_IsConditionActive(event->condition) != 0
 			&& (has_reference == 0 || (u16)(high_value - reference + 0x17ff) <= 0x2ffe)
-			&& BtlActGet(((const u8 *)&event->control)[1])->type_0c == group
+			&& BattleActGet(((const u8 *)&event->control)[1])->type_0c == group
 			&& (ignore_flags || (event->control & 0x7000000f) == requested_flags))
 		{
 			if ((event->control & 0x80) != 0)
@@ -3734,7 +3734,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 
 	index = packed & 0x3FF;
 	mode = ((u32)packed >> 10) & 0xF;
-	object = BtlActGet(index)->type_0c;
+	object = BattleActGet(index)->type_0c;
 	// The object is looked up and the result is not used.
 	ObjectTable_Get(gGameState.selected_actor);
 	first = BattleFx_FindMatchingEvent(0x30000005, object, &output);
@@ -3756,29 +3756,29 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 //--------------------------------------------------------------------------
 // エナジーの実行
 //--------------------------------------------------------------------------
-#define ACT_NO(c) ((c) & 0x3ff)		   // わざ番号
+#define ABILITY_ID(c) ((c) & 0x3ff)		   // わざ番号
 #define ACT_UNIT(c) (((c) >> 10) & 15) // 使う者
-#define ACT_PACKED 0x2000			   // EPを使わずに実行する
+#define ACT_PACKED 0x2000			   // PPを使わずに実行する
 #define UNIT_NONE 15
-#define MIKATA_MAX 7 // 仲間の番号の上限
+#define ALLY_MAX 7 // 仲間の番号の上限
 
-#define ENA_IMAJIN 144 // イマジン
-#define ENA_RITAN 149  // リターン
+#define PSYNERGY_REVEAL 144 // イマジン
+#define PSYNERGY_RETREAT 149  // リターン
 
-#define EXIT_RITAN 999 // リターンによる出口
+#define EXIT_RETREAT 999 // リターンによる出口
 
-#define FLG_ENA_NONE 0x17e // エナジーが効かない
-#define FLG_RITAN_NG 0x144 // リターンが打ち消される
-#define FLG_ITEM_USE 0x145 // 道具から使った
-#define FLG_ENA_EFX 0x140  // 標準の演出を行う
-#define FLG_ENA_TGT 0x141  // 対象に向けて演出する
+#define FLAG_PSYNERGY_NONE 0x17e // エナジーが効かない
+#define FLAG_RETREAT_BLOCKED 0x144 // リターンが打ち消される
+#define FLAG_ITEM_USE 0x145 // 道具から使った
+#define FLAG_PSYNERGY_EFFECT 0x140  // 標準の演出を行う
+#define FLAG_PSYNERGY_TARGET 0x141  // 対象に向けて演出する
 
 // エナジーのイベントの段階
-#define ENA_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
-#define ENA_EV_ANY ENA_EV(7) // 段階を問わない
+#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
+#define PSYNERGY_EV_ANY PSYNERGY_EV(7) // 段階を問わない
 
 // 使う者とわざの名前を入れたメッセージを出して待つ
-#define ENA_MES(who, act, m)                                               \
+#define PSYNERGY_MESSAGE(who, act, m)                                               \
 	(UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4), \
 		UiText_ShowPositionedMessageAndWaitFar((m), 1))
 
@@ -3788,48 +3788,48 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 //--------------------------------------------------------------------------
 s32 BattleCommand_ExecuteSelectedAction(u32 code)
 {
-	s32						 act_no = ACT_NO(code);
+	s32						 ability_id = ABILITY_ID(code);
 	struct FieldWork		*work = (struct FieldWork *)gEventWork;
 	const struct SceneEvent *pre;
 	const struct SceneEvent *post;
 	const struct SceneEvent *mid;
 	s32						 aid;
 	s32						 tid;
-	s32						 ritan;
+	s32						 retreat;
 	s32						 group;
 	s32						 cost;
 	s32						 no;
 
-	group = BtlActGet(act_no)->type_0c;
+	group = BattleActGet(ability_id)->type_0c;
 	aid = ACT_UNIT(code);
 	ObjectTable_Get(gGameState.selected_actor);
-	ritan = 0;
+	retreat = 0;
 	Battle_InitializeRenderObject();
-	GameFlag_ClearBitFar(FLG_ITEM_USE);
+	GameFlag_ClearBitFar(FLAG_ITEM_USE);
 	if (aid == UNIT_NONE)
 		aid = 0;
 
 	// 効かないとき
-	if (GameFlag_TestFar(FLG_ENA_NONE))
+	if (GameFlag_TestFar(FLAG_PSYNERGY_NONE))
 	{
-		ENA_MES(aid, act_no, MsgNothingHappened);
+		PSYNERGY_MESSAGE(aid, ability_id, MsgNothingHappened);
 		return 0;
 	}
-	if (work->mode == MODE_WORLD_MAP && act_no == ENA_IMAJIN)
+	if (work->mode == MODE_WORLD_MAP && ability_id == PSYNERGY_REVEAL)
 	{
-		ENA_MES(aid, ENA_IMAJIN, MsgNothingHappened);
+		PSYNERGY_MESSAGE(aid, PSYNERGY_REVEAL, MsgNothingHappened);
 		return 0;
 	}
 
 	// リターン：確かめてから戻り先へ
-	if (act_no == ENA_RITAN)
+	if (ability_id == PSYNERGY_RETREAT)
 	{
-		if (GameFlag_TestFar(FLG_RITAN_NG))
+		if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED))
 		{
-			ENA_MES(aid, ENA_RITAN, MsgDoesNotWorkHere);
+			PSYNERGY_MESSAGE(aid, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
 			return 0;
 		}
-		UiWork_PushValueSlotFar(ENA_RITAN, 4);
+		UiWork_PushValueSlotFar(PSYNERGY_RETREAT, 4);
 		UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
 		no = Object_CallSpawnRoutineAtOrigin(1); // 0 = はい
 		UiWork_FinalizePendingCoreFar();
@@ -3843,67 +3843,67 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 			ent = (u16)st->retreat_entrance;
 			st->entrance = ent;
 		}
-		work->exit = EXIT_RITAN;
-		ritan = 1;
+		work->exit = EXIT_RETREAT;
+		retreat = 1;
 	}
 	if (code & ACT_PACKED)
 		return BattleFx_ExecutePackedAbilityEffect(code);
 
-	// 仲間ならEPを払う
-	if (aid <= MIKATA_MAX)
+	// 仲間ならPPを払う
+	if (aid <= ALLY_MAX)
 	{
-		cost = BtlActGet(act_no)->pp_cost;
-		if (UnitGetFar(aid)->ep < cost)
+		cost = BattleActGet(ability_id)->pp_cost;
+		if (UnitGetFar(aid)->pp < cost)
 		{
-			ENA_MES(aid, act_no, MsgNotEnoughPp);
-			if (ritan)
+			PSYNERGY_MESSAGE(aid, ability_id, MsgNotEnoughPp);
+			if (retreat)
 				work->exit = 0;
 			return 0;
 		}
-		UnitEpAddFar(aid, -cost);
+		UnitPpAddFar(aid, -cost);
 	}
 
 	// マップのイベントを探し、演出の方法を決める
-	pre = BattleFx_FindMatchingEvent(ENA_EV(1), group, &tid);
-	post = BattleFx_FindMatchingEvent(ENA_EV(0), group, &tid);
-	mid = BattleFx_FindMatchingEvent(ENA_EV(5), group, &tid);
+	pre = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), group, &tid);
+	post = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), group, &tid);
+	mid = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), group, &tid);
 	tid = -1;
-	GameFlag_SetBitFar(FLG_ENA_EFX);
-	GameFlag_SetBitFar(FLG_ENA_TGT);
+	GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
+	GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
 	if (pre || post || mid)
 	{
 		tid = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, group);
 		if (post && (post->trigger & 0x400)) // イベントが演出を受け持つ
 		{
-			GameFlag_ClearBitFar(FLG_ENA_EFX);
-			GameFlag_ClearBitFar(FLG_ENA_TGT);
+			GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
+			GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 		}
 	}
 	else
-		GameFlag_ClearBitFar(FLG_ENA_TGT);
+		GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 
 	// 演出
 	if (work->mode == MODE_WORLD_MAP)
 		BattleEffect_ClearOutOfBoundsObjects();
-	BattleFx_LoadActionEffectResources(act_no, 0);
+	BattleFx_LoadActionEffectResources(ability_id, 0);
 	work->resolving_action = 1;
 	BattleFx_SetupObjectPair(gGameState.selected_actor, tid);
 	EventObject_Initialize();
 
 	BattleFx_RunEventAction(pre, aid, tid);
-	if (GameFlag_TestFar(FLG_ENA_EFX))
+	if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
 	{
-		if (GameFlag_TestFar(FLG_ENA_TGT))
+		if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
 			BattleFx_DispatchRequestKind();
 		else
 			BattleFx_Run();
 	}
 	EffectRuntime_StopCurrentObject();
 	BattleFx_RunEventAction(post, aid, tid);
-	if (GameFlag_TestFar(FLG_ENA_EFX))
+	if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
 		BattleFx_ClearChildValueOnMismatch();
-	GameFlag_ClearBitFar(FLG_ENA_EFX);
-	GameFlag_ClearBitFar(FLG_ENA_TGT);
+	GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
+	GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 	work->resolving_action = 0;
 	BattleEffect_CleanupSceneObjects();
 	if (work->mode == MODE_WORLD_MAP)
@@ -3917,7 +3917,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 s32 BattleFx_HasMatchingEvent5(s32 group)
 {
 	s32 tid;
-	s32 ev = (s32)BattleFx_FindMatchingEvent(ENA_EV_ANY, (u16)group, &tid);
+	s32 ev = (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &tid);
 	return (u32)((-ev) | ev) >> 31;
 }
 
@@ -4231,7 +4231,7 @@ LAYOUT_OFFSET_GUARD(ParticleEmitter_travel_offset_offset, struct ObjectRuntime, 
 LAYOUT_OFFSET_GUARD(ParticleEmitter_active_offset, struct ObjectRuntime, flags, 0x55);
 LAYOUT_OFFSET_GUARD(ParticleEffectObject_child_offset, struct ObjectRuntime, animation, 0x50);
 
-struct EfxObj
+struct EffectObj
 {
 	s32						data; // スクリプト
 	u8						pad0[0x24];
@@ -4245,7 +4245,7 @@ struct EfxObj
 };
 
 // オブジェクト 64 個の表 (gEventWork の 88 バイト前)
-#define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
+#define EffectPool (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 
 // マップのイベント (flags が -1 で終わり)
 struct MapEventEntry
@@ -4336,9 +4336,9 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 // 効果が動いていれば、先に残っているきらめきを消す
 // 戻り値：出したオブジェクト (出せなければ 0)
 //--------------------------------------------------------------------------
-struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
+struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 {
-	struct EfxObj *obj;
+	struct EffectObj *obj;
 
 	s32 work = (s32)gEventWork;
 	u32 off = (actor * 4) + 0x14; // EventWork の actors[actor]
@@ -4359,7 +4359,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 
 	if (((struct FieldWork *)work)->effect_active != 0)
 	{
-		struct EfxObj *ent = EfxPool;
+		struct EffectObj *ent = EffectPool;
 
 		work = 63;
 
@@ -4382,7 +4382,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	}
 
 	WaitFrames(3);
-	obj = (struct EfxObj *)Object_CreateFar(22, x, 16 << 16, src_z);
+	obj = (struct EffectObj *)Object_CreateFar(22, x, 16 << 16, src_z);
 	if (obj == 0)
 		return 0;
 
@@ -4456,9 +4456,9 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
 		{
 			ObjectDispatch_SetSingleChildFlagsFar(object, 0);
 			ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
-			((struct EfxObj *)object)->travel = 0x20000;
-			((struct EfxObj *)object)->dy = 0x4000;
-			((struct EfxObj *)object)->proc =
+			((struct EffectObj *)object)->travel = 0x20000;
+			((struct EffectObj *)object)->dy = 0x4000;
+			((struct EffectObj *)object)->proc =
 				(void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
 		}
 		if (flags == 3)
@@ -4485,7 +4485,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 {
 	struct FieldActor *actor = ObjectTable_Get(gGameState.selected_actor);
 	void			  *handle = Runtime_AllocateHeapBlock(17, 0x608);
-	struct EfxObj	  *object = (struct EfxObj *)Object_CreateFar(
+	struct EffectObj	  *object = (struct EffectObj *)Object_CreateFar(
 		22, actor->x.fixed, actor->y.fixed + (36 << 16), actor->z.fixed);
 
 	if (object != 0)
@@ -4521,7 +4521,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 #endif
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-#define MENU_OPEN_OFS 0xcca // gEventWork：メニューを開いていれば 0 以外
+#define MENU_OPEN_OFFSET 0xcca // gEventWork：メニューを開いていれば 0 以外
 
 //--------------------------------------------------------------------------
 // 効果が動いていれば、きらめきのオブジェクトをすべて消す
@@ -4530,7 +4530,7 @@ void BattleFx_ClearRandomParticles(void)
 {
 	if (((struct FieldWork *)gEventWork)->effect_active != 0)
 	{
-		struct EfxObj *ent = EfxPool;
+		struct EffectObj *ent = EffectPool;
 		s32			   n = 63;
 
 		do
@@ -4555,10 +4555,10 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source)
 {
 	struct EffectVector	  pos;
 	struct ObjectRuntime *obj;
-	u32					  rnd;
+	u32					  random;
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-	if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFS) != 0)
+	if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFFSET) != 0)
 		return;
 #endif
 	if ((100 * Random16() >> 16) > 9)
@@ -4567,8 +4567,8 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source)
 	pos.x = source->x.fixed;
 	pos.y = source->y.fixed;
 	pos.z = source->z.fixed;
-	rnd = Random16();
-	Vector_AddPolarOffset(rnd << 4, Random16(), &pos);
+	random = Random16();
+	Vector_AddPolarOffset(random << 4, Random16(), &pos);
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
@@ -4664,7 +4664,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 								ObjectDispatch_InitializeFar(
 									(struct DispatchObject *)actor, BattleFx_MarkerParticleScript);
 								ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
-								((struct EfxObj *)actor)->proc =
+								((struct EffectObj *)actor)->proc =
 									(void (*)(void))BattleFx_SpawnRandomParticleAtPosition;
 							}
 						}

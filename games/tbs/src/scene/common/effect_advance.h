@@ -3,14 +3,14 @@
 
 static void Effect_AdvanceMotion(union FieldObject *object)
 {
-	struct FieldEffect *efx = &object->effect;
+	struct FieldEffect *effect = &object->effect;
 
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
+	effect->x += effect->velocity_x;
+	effect->y += effect->velocity_y;
+	effect->z += effect->velocity_z;
+	effect->velocity_x -= effect->velocity_x / 18;
+	effect->velocity_z -= effect->velocity_z / 16;
+	effect->scale_x += effect->scale_rate_x;
+	effect->scale_y += effect->scale_rate_y;
+	effect->sprite->rotation += effect->spin;
 }

@@ -8,8 +8,8 @@
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
-#include "btldisp.h"
-#include "btlpty.h"
+#include "battle_display.h"
+#include "battle_party.h"
 #include "motobj.h"
 #include "io_reg.h"
 #include "owner_state.h"
@@ -45,7 +45,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
     }
     WaitFrames(10);
     Random16();
-    actorRecord = BtlObjGet(actorId)->object;
+    actorRecord = BattleObjGet(actorId)->object;
 
     if (targetId >= 0 && targetId <= 7)
     {
@@ -73,7 +73,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
         REG_BLDALPHA = (16 - index) | 0x1000;
         WaitFrames(1);
     }
-    PtyStDrawFar(9);
+    PartyStatusDrawFar(9);
 
     if (targetId > 0x7f)
     {
@@ -81,7 +81,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
         for (index = 0; livingCount != count; index++)
         {
             u32 unit = index + 0x80;
-            if (((struct BtlUnit *)UnitGet(unit))->hp > 0)
+            if (((struct BattleUnit *)UnitGet(unit))->hp > 0)
                 visibleUnits[livingCount++] = unit;
         }
     }
@@ -90,7 +90,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
         u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
         for (index = 0; livingCount != count; index++)
         {
-            if (((struct BtlUnit *)UnitGet(index))->hp > 0)
+            if (((struct BattleUnit *)UnitGet(index))->hp > 0)
                 visibleUnits[livingCount++] = index;
         }
     }
@@ -109,7 +109,7 @@ s32 Func_0811c710(struct BattleActionRecord *action)
     BattleFx_InitializeModeFar((s32 *)&context);
 
     WaitFrames(10);
-    BtlObjPut();
+    BattleObjPut();
     REG_BLDCNT = 0x3f40;
     for (index = 0; index != sideCount; index++)
         BattlePres_SetActorRecordMode(index + sideStart, 1);

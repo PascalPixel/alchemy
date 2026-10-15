@@ -75,7 +75,7 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
 {
     struct UiWindow *win;
     s32 minus_four;
-    s32 ofs;
+    s32 offset;
     struct UiRenderWork *work;
 
     work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
@@ -83,15 +83,15 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
         return 0;
     }
     minus_four = -4;
-    ofs = minus_four;
+    offset = minus_four;
     if (work->mode != 0) {
         win = UiWindow_Create(x, y, 6, 5, 2);
-        ofs = 0;
+        offset = 0;
     } else {
         win = UiWindow_Create(x, y, 5, 5, 2);
     }
     if (win != 0) {
-        CreateSideObject(arg0, arg1, -1, win, ofs, minus_four);
+        CreateSideObject(arg0, arg1, -1, win, offset, minus_four);
     }
     return win;
 }

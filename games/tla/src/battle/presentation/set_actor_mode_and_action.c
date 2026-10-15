@@ -14,7 +14,7 @@
 
 #define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(s32,s32))ObjectDispatch_ApplyValueToChildrenFar)
 
-s32 *BtlObjGet(s32);
+s32 *BattleObjGet(s32);
 
 struct StatusIconRecord
 {
@@ -40,7 +40,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 // Cycles the status icon over the slot's conditions every 80 frames, and
 // switches at once when the shown condition ends.
-void BattleStatusIcon_Cycle(struct BtlObj *slot)
+void BattleStatusIcon_Cycle(struct BattleObj *slot)
 {
     struct StatusIconEntry *icon;
     struct StatusIconRecord *rec;
@@ -128,13 +128,13 @@ void BattleStatusIcon_Cycle(struct BtlObj *slot)
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    struct BtlUnit *state;
+    struct BattleUnit *state;
     s32 value;
 
     state = UnitGet(id);
     value = 1;
     if (state->hp != 0) {
-        if (state->nemuri != 0 || state->shibire != 0 || state->miugoki != 0)
+        if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
             value = (state->side != 1) * 4;
     } else {
         s32 changed = state->side ^ value;
@@ -142,7 +142,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
         value = 5 - value;
     }
 
-    Object_SetMode(*BtlObjGet(id), value);
-    ObjectDispatch_ApplyValueToChildrenFar(*BtlObjGet(id), (id & 3) + 14);
+    Object_SetMode(*BattleObjGet(id), value);
+    ObjectDispatch_ApplyValueToChildrenFar(*BattleObjGet(id), (id & 3) + 14);
 }
 

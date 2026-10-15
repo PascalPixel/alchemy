@@ -8,9 +8,9 @@
 
 struct UiWork
 {
-	u8		 unknown_000[RENDER_DIRTY_OFS];
+	u8		 unknown_000[RENDER_DIRTY_OFFSET];
 	unsigned dirty : 8;
-	u8		 unknown_mode[RENDER_MENU_BUSY_OFS - RENDER_DIRTY_OFS - 1];
+	u8		 unknown_mode[RENDER_MENU_BUSY_OFFSET - RENDER_DIRTY_OFFSET - 1];
 	unsigned menu_busy : 8;
 };
 

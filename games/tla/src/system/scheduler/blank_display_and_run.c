@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "fixed_point_position.h"
-#include "btldisp.h"
+#include "battle_display.h"
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *position);

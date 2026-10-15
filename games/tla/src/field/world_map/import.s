@@ -266,10 +266,10 @@ Func_02004bb8:
 	.thumb_func
 Menu_AnimateSelectionToEntry:
 	overlay_veneer Menu_AnimateSelectionToEntryFar
-	.global UnitEpAdd
+	.global UnitPpAdd
 	.thumb_func
-UnitEpAdd:
-	overlay_veneer UnitEpAddFar
+UnitPpAdd:
+	overlay_veneer UnitPpAddFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

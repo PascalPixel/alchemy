@@ -2,7 +2,7 @@
 #define ALCHEMY_MENU_LIST_H
 
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"
@@ -69,7 +69,7 @@ struct CursorSprite
 #define MENU_SPRITE_SIZE_16 0x40000000
 
 // スプライトの形 (attr0/attr1) を決め、残りを 0 にする
-/* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores that follow (the x/y fields in the list setup loops of ItemList_SelectEntry, BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in UiText_DrawCharacter). Not source: the same two stores match only as plain statements in Battle_CollectPartyCommands (resmenu.c, five times) and Ui_RunOwnerStatusScreen (preview.c, three times). */
+/* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores that follow (the x/y fields in the list setup loops of ItemList_SelectEntry, BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in UiText_DrawCharacter). Not source: the same two stores match only as plain statements in Battle_CollectPartyCommands (resource_menu.c, five times) and Ui_RunOwnerStatusScreen (preview.c, three times). */
 #define MenuSprite_Init(sprite, shape)      \
 	do                                      \
 	{                                       \

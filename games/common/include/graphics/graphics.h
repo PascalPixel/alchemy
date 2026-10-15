@@ -23,7 +23,7 @@ extern u8		   gRomShiftedTilePair[];
 extern const u32   RelocatedQ16DotProduct[];
 extern u8		   Resource_Decode2CodeSize[];
 extern u8		   Resource_DecodeByteLzCodeSize[];
-extern const u8	   Ui_EpRowString[];
+extern const u8	   Ui_PpRowString[];
 extern s32		   Ui_FixedTileBlocks[];
 extern const u8	   Ui_HpRowString[];
 extern const u8	   Ui_HpString[];
@@ -56,7 +56,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 s32	 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
-void PtyStDraw(s32 flags);
+void PartyStatusDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 #ifndef OWN_UiWindow_SetTilemapEntry
@@ -75,7 +75,7 @@ void UiWork_UploadDirtyBlocks(void);
 #if !GAME_TLA
 struct AnimationObject;
 struct ArticleTable;
-struct BtlUnit;
+struct BattleUnit;
 struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
@@ -134,10 +134,10 @@ extern const u8 Menu_CursorObjectTiles[];
 #endif
 extern const u8					 NameEntry_AlternateKeyboardTilemap[];
 extern s8						 NameEntry_CaretWave[];
-extern const u8					 NameEntry_DakutenRanges[];
+extern const u8					 NameEntry_VoicedMarkRanges[];
 extern u8						 NameEntry_DeleteKeyLabel[];
 extern u8						 NameEntry_EndKeyLabel[];
-extern const u8					 NameEntry_HandakutenRanges[];
+extern const u8					 NameEntry_SemivoicedMarkRanges[];
 extern const u8					 NameEntry_KeyboardTilemap[];
 extern const u8					 Render_DecodeFrameBuffer[];
 extern const u8					 Resource_Decode2[];
@@ -148,8 +148,8 @@ extern u8						 Resource_DecodeType01CodeSize[];
 extern u8						 Resource_DecompressHalfwordsCodeSize[];
 extern u8						 Resource_FixedBlockBTiles[];
 extern const u8					 Resource_FixedBlockATiles[];
-extern const u8					 SentouKouka_Tenkai[];
-extern u8						 SentouKouka_TenkaiCodeSize[];
+extern const u8					 BattleEffect_Expand[];
+extern u8						 BattleEffect_ExpandCodeSize[];
 extern const u8					 Text_DecodeSymbol[];
 extern u8						 Text_DecodeSymbolCodeSize[];
 extern u8						 Tile_BuildMetatilesCodeSize[];
@@ -306,7 +306,7 @@ void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);
 void UiWork_InitCountersAndScheduleRefresh(s32 kind);
 s32	 UiWork_SetParamNibbleFar(s32 color);
-void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
+void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resource_id);
 #endif
 
 #endif

@@ -64,7 +64,7 @@ void UiGlyph_ResetWorkState(void)
 {
     struct GlyphWork *work;
     struct GlyphVisual *visual;
-    const u8 *tbl;
+    const u8 *table;
     s32 i;
     u16 clear = 0;
 
@@ -90,9 +90,9 @@ void UiGlyph_ResetWorkState(void)
     work->rows[1].index.cursor = 0;
     work->rows[0].state = 0;
     work->rows[1].state = 0;
-    tbl = Data_080346f8;
+    table = Data_080346f8;
     work->slot = Resource_FindFreeEntry();
-    work->tile = VramBlock_LoadCached(work->slot, 256, tbl);
+    work->tile = VramBlock_LoadCached(work->slot, 256, table);
     work->field_2e2 = 0;
     work->field_2fa = 0;
     work->field_316 = 0;

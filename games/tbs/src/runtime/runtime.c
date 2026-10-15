@@ -46,7 +46,7 @@
 #include "runtime_interfaces.h"
 #include "flash.h"
 #include "audio_engine_symbols.h"
-#include "unit/runtime/mathtbl.h"
+#include "unit/runtime/math_table.h"
 #include "unit/runtime/numtext.h"
 #include "savedata.h"
 
@@ -944,7 +944,7 @@ void Render_BuildOamList(void *work)
 }
 
 //--------------------------------------------------------------------------
-// rescache.c
+// resource_cache.c
 // リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
 //--------------------------------------------------------------------------
 // OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
@@ -1108,7 +1108,7 @@ s32 Resource_ActivateEntry(u32 no)
 s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 {
 	struct VramBlockCacheEntry *entry;
-	s32							ofs;
+	s32							offset;
 	void					   *dst;
 
 	entry = &gVramBlockCache[no];
@@ -1121,23 +1121,23 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 		if (entry->size != size)
 		{
 			Resource_ResetEntry(no);
-			ofs = ResourceTable_AllocateBlocks(no, size);
+			offset = ResourceTable_AllocateBlocks(no, size);
 		}
 		else
 		{
-			ofs = entry->offset;
+			offset = entry->offset;
 		}
 	}
 	else
 	{
-		ofs = ResourceTable_AllocateBlocks(no, size);
+		offset = ResourceTable_AllocateBlocks(no, size);
 	}
 
-	if (ofs != -1)
+	if (offset != -1)
 	{
-		dst = (void *)(0x06010000 + ofs);
+		dst = (void *)(0x06010000 + offset);
 		entry->size = size;
-		entry->offset = ofs;
+		entry->offset = offset;
 		if (src != 0)
 		{
 			if (src == (const void *)-1)
@@ -1149,7 +1149,7 @@ s32 VramBlock_LoadCached(u32 no, u32 size, const void *src)
 				Dma_Set(src, dst, (size >> 2) | (DMA_ENABLE32 | DMA_32BIT), REG_DMA3);
 			}
 		}
-		return (u32)ofs >> 5;
+		return (u32)offset >> 5;
 	}
 	return 0;
 }
@@ -1673,7 +1673,7 @@ void Text_FormatHexToWork(u32 value)
 
 void Text_FormatSignedDecimalToWork(s32 arg0)
 {
-	u32 *tbl;
+	u32 *table;
 	s8	*out;
 	s32	 count;
 	u32	 word;
@@ -1683,7 +1683,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 
 	result = arg0;
 	val = result;
-	tbl = (u32 *)Text_PowersOfTen;
+	table = (u32 *)Text_PowersOfTen;
 	sign = 0x20;
 	out = gNumberTextBuffer;
 	if (val < 0)
@@ -1691,7 +1691,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 		val = -val;
 		sign = 0x2D;
 	}
-	word = *tbl++;
+	word = *table++;
 	count = 9;
 	if (val < word)
 	{
@@ -1701,16 +1701,16 @@ void Text_FormatSignedDecimalToWork(s32 arg0)
 			*out++ = 0x20;
 			if (count == 0)
 				break;
-			word = *tbl++;
+			word = *table++;
 		} while (val < word);
 	}
 	*out++ = sign;
-	tbl -= 1;
+	table -= 1;
 	if (count != 0)
 	{
 		do
 		{
-			word = *tbl++;
+			word = *table++;
 			result = val / word;
 			*out++ = result + 0x30;
 			val -= result * word;
@@ -1778,15 +1778,15 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
 // debug_number.c
 // デバッグ：数を右そろえでデバッグ文字にする
 //--------------------------------------------------------------------------
-// どちらも数を作業域に右づめで作り、その終わりから keta 文字を書く
+// どちらも数を作業域に右づめで作り、その終わりから digits 文字を書く
 //--------------------------------------------------------------------------
-// 16 進で keta けた（1〜8、範囲外なら 8）
+// 16 進で digits けた（1〜8、範囲外なら 8）
 //--------------------------------------------------------------------------
-void Text_DrawHexRightAligned(u32 value, s32 keta)
+void Text_DrawHexRightAligned(u32 value, s32 digits)
 {
 	s32 n;
 
-	n = keta;
+	n = digits;
 	if ((n - 1) > 7U)
 	{
 		n = 8;
@@ -1796,13 +1796,13 @@ void Text_DrawHexRightAligned(u32 value, s32 keta)
 }
 
 //--------------------------------------------------------------------------
-// 符号つきの 10 進で keta けた（1〜10、範囲外なら 10）
+// 符号つきの 10 進で digits けた（1〜10、範囲外なら 10）
 //--------------------------------------------------------------------------
-void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
+void Text_DrawSignedDecimalRightAligned(s32 value, s32 digits)
 {
 	s32 n;
 
-	n = keta;
+	n = digits;
 	if ((n - 1) > 9U)
 	{
 		n = 10;

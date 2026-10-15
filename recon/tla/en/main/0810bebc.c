@@ -5,7 +5,7 @@
  * The draft keeps its counter in r8 and copies the template from memory.
  * Tried: indexed lists (the counter then lands in r4 but the pointers do not
  * walk), two word stores. */
-#include "itemicon.h"
+#include "item_icon.h"
 
 void Func_0810bebc(u16 *items, s32 count, s32 mode)
 {

@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "inventory.h"
-#include "btltype.h"
+#include "battle_type.h"
 
 
 s32 Equipment_HasValue(s32 owner, s32 value);
@@ -58,7 +58,7 @@ s32 Party_FindOwnerWithAction(s32 action)
 
 s32 Equipment_HasValue(s32 owner, s32 value)
 {
-    struct BtlUnit *unit = UnitGet(owner);
+    struct BattleUnit *unit = UnitGet(owner);
     struct OwnerActionSlot *entry;
     s32 index = 0;
     s32 mask = OWNER_ACTION_ID_MASK;

@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "motobj.h"
 #include "objdisp.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 
 struct BattleFxScene { u8 pad00[16]; void *volatile main_object; };
 

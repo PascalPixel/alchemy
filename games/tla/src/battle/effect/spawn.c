@@ -23,7 +23,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct ParticleSource *source)
 {
     struct ParticlePosition position;
     struct ParticleEffectObject *object;
-    u32 rnd;
+    u32 random;
 
     if ((100 * Random16() >> 16) > 9)
         return;
@@ -31,8 +31,8 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct ParticleSource *source)
     position.x = source->position.x;
     position.y = source->position.y;
     position.z = source->position.z;
-    rnd = Random16();
-    Vector_AddPolarOffset(rnd << 4, Random16(), &position);
+    random = Random16();
+    Vector_AddPolarOffset(random << 4, Random16(), &position);
     object = Object_Spawn(0x2a1, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;

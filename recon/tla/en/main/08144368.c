@@ -16,7 +16,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "fixed_math.h"
 #include "transform.h"
 #include "object_runtime.h"
@@ -51,7 +51,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-void Func_08144368(struct BattleEffectArgument *efx)
+void Func_08144368(struct BattleEffectArgument *effect)
 {
     struct CanvasEffectWork *work;
     void *canvas;
@@ -59,7 +59,7 @@ void Func_08144368(struct BattleEffectArgument *efx)
     s32 point[3];
     struct EffectPosition screen;
     s32 member;
-    s32 ofs_x;
+    s32 offset_x;
     s32 frame;
 
     work = (struct CanvasEffectWork *)Ram_HeapSlots->battle_fx_work[0];
@@ -75,16 +75,16 @@ void Func_08144368(struct BattleEffectArgument *efx)
     work->transferMode = 2;
     work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-    if (efx->side == 1)
+    if (effect->side == 1)
     {
         REG_BG2X = -0x6800;
-        ofs_x = -112;
+        offset_x = -112;
     }
     else
     {
-        ofs_x = 0;
+        offset_x = 0;
     }
-    for (frame = 0; frame != (efx->count * 16) + 48; frame++)
+    for (frame = 0; frame != (effect->count * 16) + 48; frame++)
     {
         s32 *camera;
         s32 *row;
@@ -93,7 +93,7 @@ void Func_08144368(struct BattleEffectArgument *efx)
         // The background waves sideways line by line.
         camera = Ram_HeapSlots->camera_work;
         row = work->bg2X;
-        if (efx->side == 0)
+        if (effect->side == 0)
         {
             s32 angle;
             s32 base;
@@ -117,20 +117,20 @@ void Func_08144368(struct BattleEffectArgument *efx)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, camera + 3);
         member = 0;
-        if (efx->count != 0)
+        if (effect->count != 0)
         {
-            while (member != efx->count)
+            while (member != effect->count)
             {
                 struct ObjectRuntime *obj;
 
-                obj = GetBattleObjectSlotFar(efx->actors[member])->object;
+                obj = GetBattleObjectSlotFar(effect->actors[member])->object;
                 if (frame > member * 16 && frame < (member * 16) + 60)
                 {
                     s32 spin;
 
                     if (frame == (member * 16) + 32)
                     {
-                        Func_0814cd48(efx->actors[member], 0, 5, -1, 0);
+                        Func_0814cd48(effect->actors[member], 0, 5, -1, 0);
                     }
                     point[0] = obj->x;
                     point[1] = 40 << 16;
@@ -145,7 +145,7 @@ void Func_08144368(struct BattleEffectArgument *efx)
                         s32 half;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + ofs_x;
+                        x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offset_x;
                         y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
                         half = frame / 16;
                         draw[half & 1](canvas, work->sheet + (((frame / 4) - (half * 4)) << 10),

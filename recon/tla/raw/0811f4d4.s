@@ -98,7 +98,7 @@ Func_0811f4d4:
 	cmp r2, #0
 	beq .L_0811f598
 	mov r5, sp
-	bl BtlRndFar
+	bl BattleRandomFar
 	mov r3, r8
 	muls r3, r0
 	lsrs r3, r3, #16

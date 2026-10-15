@@ -24,21 +24,21 @@ struct PairScene {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 
-void BattleFx_SetupObjectPair(s32 user_id, s32 tgt_id)
+void BattleFx_SetupObjectPair(s32 user_id, s32 target_id)
 {
     struct ObjectRuntime *user;
-    struct ObjectRuntime *tgt;
+    struct ObjectRuntime *target;
     struct PairScene *scene;
 
     scene = Ram_HeapSlots->effect_work;
     scene->first_object_id = user_id;
     user = ObjectTable_Get((s16)user_id);
-    scene->second_object_id = tgt_id;
+    scene->second_object_id = target_id;
     scene->main_object = user;
-    tgt = ObjectTable_Get((s16)tgt_id);
+    target = ObjectTable_Get((s16)target_id);
     scene->angle = (user->angle + 0x2000) & 0xc000; // 四方向にまるめる
     scene->angle8 = (user->angle + 0x1000) & 0xe000;
-    scene->child = tgt;
+    scene->child = target;
     if (user != NULL) {
         u8 terrain;
 
@@ -50,14 +50,14 @@ void BattleFx_SetupObjectPair(s32 user_id, s32 tgt_id)
         scene->saved_terrain = terrain;
         scene->saved_priority = (u32)(((u8 *)user->animation)[9] << 28) >> 30;
     }
-    if (tgt != NULL) {
+    if (target != NULL) {
         // 対象の動きと色を、あとで戻すために取っておく
-        scene->saved_callback = tgt->update;
-        scene->saved_script = tgt->script;
-        scene->saved_palette = ((struct AnimationObject *)tgt->animation)->entries[0]->param;
-        scene->x = tgt->x;
-        scene->z = tgt->z;
-        scene->y = tgt->y;
+        scene->saved_callback = target->update;
+        scene->saved_script = target->script;
+        scene->saved_palette = ((struct AnimationObject *)target->animation)->entries[0]->param;
+        scene->x = target->x;
+        scene->z = target->z;
+        scene->y = target->y;
     } else {
         scene->x = user->x;
         scene->z = user->z;

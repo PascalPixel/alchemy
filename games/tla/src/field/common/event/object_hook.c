@@ -1,5 +1,5 @@
 #include "types.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "object_runtime.h"
 
 void WaitFrames(s32 frames);

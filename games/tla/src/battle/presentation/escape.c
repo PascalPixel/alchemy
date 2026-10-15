@@ -10,8 +10,8 @@
 #include "types.h"
 #include "owner_state.h"
 #include "system.h"
-#include "btlpty.h"
-#include "btldisp.h"
+#include "battle_party.h"
+#include "battle_display.h"
 #include "text/msg_ids.h"
 
 
@@ -46,7 +46,7 @@ s32 BattlePres_ShowDefendMessage(s16 *script)
 {
     s32 object_id;
     s32 result;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     object_id = *script;
     unit = UnitGet(object_id);

@@ -18,15 +18,15 @@ u8 *Func_0200012c(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kibonbo1)
+    if (scene == (s32)&SceneId_Kibombo1)
         return Data_02006510;
-    if (scene == (s32)&SceneId_Kibonbo4)
+    if (scene == (s32)&SceneId_Kibombo4)
         return Data_020066d8;
-    if (scene == (s32)&SceneId_Kibonbo2)
+    if (scene == (s32)&SceneId_Kibombo2)
         return Data_020069a8;
-    if (scene == (s32)&SceneId_Kibonbo5)
+    if (scene == (s32)&SceneId_Kibombo5)
         return Data_02006a98;
-    if (scene == (s32)&SceneId_Kibonbo3) {
+    if (scene == (s32)&SceneId_Kibombo3) {
         if (GameFlag_Test(0x8ee))
             Data_02006cd8[22] = 0;
         return Data_02006cd8;
@@ -38,15 +38,15 @@ u8 *Func_020001b4(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kibonbo1)
+    if (scene == (s32)&SceneId_Kibombo1)
         return Data_02006ef4;
-    if (scene == (s32)&SceneId_Kibonbo4)
+    if (scene == (s32)&SceneId_Kibombo4)
         return Data_020070d4;
-    if (scene == (s32)&SceneId_Kibonbo2)
+    if (scene == (s32)&SceneId_Kibombo2)
         return Data_02007434;
-    if (scene == (s32)&SceneId_Kibonbo5)
+    if (scene == (s32)&SceneId_Kibombo5)
         return Data_020074dc;
-    if (scene == (s32)&SceneId_Kibonbo3)
+    if (scene == (s32)&SceneId_Kibombo3)
         return Data_02007698;
     return Data_02006ee8;
 }
@@ -170,7 +170,7 @@ void Func_020003f8(void)
 
 void Func_0200042c(void)
 {
-    if (Ov670_FlagChk(0x9df)) {
+    if (Ov670_FlagCheck(0x9df)) {
         Func_02005a9c();
         Func_02005c3c(0);
         ObjectMotion_SetAngleToward(36, gPartyState.current_owner, 0);
@@ -215,9 +215,9 @@ void Func_02000524(s32 show)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kibonbo2 || scene == (s32)&SceneId_Kibonbo5)
+    if (scene == (s32)&SceneId_Kibombo2 || scene == (s32)&SceneId_Kibombo5)
         Func_02000590(show, 15, 2);
-    else if (scene == (s32)&SceneId_Kibonbo3)
+    else if (scene == (s32)&SceneId_Kibombo3)
         Func_02000590(show, 26, 2);
 }
 

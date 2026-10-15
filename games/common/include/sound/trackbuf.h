@@ -20,7 +20,7 @@ struct AudioTrackSlotWork
 	s32					  bucket_by_slot[0x400];
 	s32					  out_cnt;
 	u8					  out_buf[0x24];
-	s32					  match_ofs;
+	s32					  match_offset;
 	s32					  match_len;
 	s32					  pos;
 	u32					  input_cursor;

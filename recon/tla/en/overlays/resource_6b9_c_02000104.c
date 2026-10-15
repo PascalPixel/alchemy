@@ -8,7 +8,7 @@
 #include "field_scene.h"
 #include "ram_buffer.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "call.h"
 
 struct EventFlags {

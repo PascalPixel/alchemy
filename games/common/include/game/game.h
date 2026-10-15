@@ -5,16 +5,16 @@
 
 #include "types.h"
 #include "edition.h"
-#include "btlsmn.h"
+#include "battle_summon.h"
 #include "battle_unit.h"
 #include "item.h"
-#include "chara.h"
+#include "character_ids.h"
 #if !GAME_TLA
 #include "character.h"
 #include "preset_table.h"
 #endif
 #if GAME_TLA
-#include "btltype.h"
+#include "battle_type.h"
 #endif
 #if !GAME_TLA
 #include "farcall.h"
@@ -30,11 +30,11 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit);
 #endif
 
 #if !GAME_TLA
-struct BtlAct;
+struct BattleAct;
 struct EnemyDefinition;
 struct PresetValues;
 
-extern struct BtlAct				BattleAction_DefinitionTable[];
+extern struct BattleAct				BattleAction_DefinitionTable[];
 extern const u8						Character_ElementGroupTable[];
 extern u32							Character_LevelExpTable[];
 extern s16							Djinn_ElementSprites[];
@@ -75,11 +75,11 @@ s32							   Djinn_AddToOwnerFar(s32, s32, s32);
 void						   Event_ClearInvalidPackedValuesFar(s32);
 s32							   Inventory_AddItemFar(s32, s32);
 s32							   Inventory_RemoveFar(s32 owner, s32 slot);
-void  Owner_CalculateBaseElements(s32 owner_no, struct BattleElementStats *elements);
+void  Owner_CalculateBaseElements(s32 owner_id, struct BattleElementStats *elements);
 s32	  Owner_DetermineClass(s32 class_id, u32 *djinn, s32 item);
 s32	  Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 void  Owner_RefreshClassActions(s32);
-void  Owner_UpdateClassActions(s32 owner_no);
+void  Owner_UpdateClassActions(s32 owner_id);
 void *Resource_FarCall005(s32);
 void  Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 #endif

@@ -6,7 +6,7 @@
 
 void BattleFx_InitializeRisingObject(s32 slot)
 {
-    struct BtlObj *context = GetBattleObjectSlotFar(slot);
+    struct BattleObj *context = GetBattleObjectSlotFar(slot);
     struct ObjectRuntime *object = context->object;
 
     object->acceleration = 0x20000;
@@ -24,16 +24,16 @@ void BattleFx_InitializeRisingObject(s32 slot)
 // Moves the object rate percent of the way to the target's object in the
 // given frames (The Broken Seal's BattleFx_SetApproachMotion, which always
 // moves 80 percent).
-void Func_08157530(s32 id, s32 tgt_id, s32 frames, s32 rate)
+void Func_08157530(s32 id, s32 target_id, s32 frames, s32 rate)
 {
-    struct BtlObj *slot = GetBattleObjectSlotFar(id);
-    struct BtlObj *tgt_slot = GetBattleObjectSlotFar(tgt_id);
+    struct BattleObj *slot = GetBattleObjectSlotFar(id);
+    struct BattleObj *target_slot = GetBattleObjectSlotFar(target_id);
     struct ObjectRuntime *obj = (struct ObjectRuntime *)slot->object;
-    struct ObjectRuntime *tgt = (struct ObjectRuntime *)tgt_slot->object;
-    s32 diff_x = tgt->x - obj->x;
+    struct ObjectRuntime *target = (struct ObjectRuntime *)target_slot->object;
+    s32 diff_x = target->x - obj->x;
     s32 start_x = obj->x;
     s32 dx = rate * diff_x / 100;
-    s32 diff_z = tgt->z - obj->z;
+    s32 diff_z = target->z - obj->z;
     s32 start_z = obj->z;
     s32 dz = rate * diff_z / 100;
     s32 x = start_x + dx;

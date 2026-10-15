@@ -39,7 +39,7 @@ void Func_02001b04(s32 clearStatus)
     s32 clear;
     s32 count;
     s32 n;
-    struct BtlUnit *member;
+    struct BattleUnit *member;
     s16 maxHp;
 
     frame = chain;
@@ -57,12 +57,12 @@ void Func_02001b04(s32 clearStatus)
         member->hp_gauge = Vitals_Clamp((maxHp << 14) / maxHp);
         if (member->hp_gauge == 0 && member->hp != 0)
             member->hp_gauge = 1;
-        member->ep_gauge = Vitals_Clamp((member->ep << 14) / member->max_ep);
-        if (member->ep_gauge == 0 && member->ep != 0)
-            member->ep_gauge = 1;
+        member->pp_gauge = Vitals_Clamp((member->pp << 14) / member->max_pp);
+        if (member->pp_gauge == 0 && member->pp != 0)
+            member->pp_gauge = 1;
         if (clear == 1) {
-            member->doku = 0;
-            member->akuryo = 0;
+            member->poison = 0;
+            member->haunt = 0;
         }
     }
 }

@@ -6,7 +6,7 @@
  * loads. */
 #include "types.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "effect_step.h"
 #include "fixed_math.h"
 #include "io_reg.h"

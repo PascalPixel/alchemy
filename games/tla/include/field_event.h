@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "field_sprite.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 #include "object_runtime.h"
 #define Object_SetMode ((void (*)(struct FieldActor *, s32))Object_SetMode)

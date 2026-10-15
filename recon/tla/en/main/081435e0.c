@@ -14,8 +14,8 @@
 #include "iwram_call.h"
 #include "io_write_queue.h"
 #include "callback_scheduler.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 #include "bg_scroll.h"
 
 struct CanvasWork
@@ -46,12 +46,12 @@ void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void BattleFx_BeginCanvasLayer(s32 bgControl)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct BtlWork *btl = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battle_work;
     void *canvas = Ram_HeapSlots->battle_fx_work[1];
     struct BattleBackgroundView *display = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
     s32 row;
     s32 col;
-    s32 ofs;
+    s32 offset;
 
     Func_0813ba50();
     Func_081434d8();
@@ -84,7 +84,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl)
     gBgScroll[1].y = 32;
     WaitFrames(1);
 
-    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)btl->unknown_670, 0);
+    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unknown_670, 0);
     work->fadeFrames = 0;
     work->fadeStep = 0;
     Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
@@ -106,17 +106,17 @@ void BattleFx_BeginCanvasLayer(s32 bgControl)
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 
-    ofs = 0;
+    offset = 0;
     for (row = 0; row != 16; row++)
     {
-        for (col = 0; col != 8; col++, ofs += 2)
+        for (col = 0; col != 8; col++, offset += 2)
         {
             s32 chr;
             s16 pair;
 
             chr = row * 16 + col * 2;
             pair = ((chr + 1) << 8) | chr;
-            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
         }
     }
 

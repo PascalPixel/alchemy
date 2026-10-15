@@ -1,5 +1,5 @@
 #include "types.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "party_state.h"
@@ -15,7 +15,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 count;
     s32 i;
     s32 value;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
     if (amount < 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);

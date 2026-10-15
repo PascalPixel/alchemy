@@ -103,7 +103,7 @@ static inline void Ov666_ObjTurn(s32 actor, s32 angle)
     Func_02000b4c(actor, angle);
 }
 
-static inline s32 Ov666_FlagChk(s32 flag)
+static inline s32 Ov666_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -197,13 +197,13 @@ static inline void Ov666_TaskAdd(void (*callback)(void), s32 priority)
     Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-static inline void Ov666_MesPut(s32 speaker, s32 flags)
+static inline void Ov666_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02000b3c(speaker, flags);
 }
 
-static inline void Ov666_MesOpen(s32 speaker, s32 flags)
+static inline void Ov666_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);

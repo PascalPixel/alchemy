@@ -12,22 +12,22 @@
 #include "ram_buffer.h"
 
 
-extern struct BtlUnit gOwnerStates[];
+extern struct BattleUnit gOwnerStates[];
 
 void *UnitGet(s32 owner)
 {
-    struct BtlUnit *states;
-    struct BtlUnit *unit;
+    struct BattleUnit *states;
+    struct BattleUnit *unit;
 
     if ((u32)owner < 8) {
         /* FAKEMATCH: the record size as a forced temporary is built first, and a one-pass block loads the table before the size is scaled; indexed straight the scaling comes before the load (differ 2), and either device alone leaves the same two rows apart. */
-        s32 offset = sizeof(struct BtlUnit);
+        s32 offset = sizeof(struct BattleUnit);
 
         do {
             states = gOwnerStates;
         } while (0);
         offset *= owner;
-        unit = (struct BtlUnit *)((u8 *)states + offset);
+        unit = (struct BattleUnit *)((u8 *)states + offset);
         return unit;
     }
     if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unknown_d0[2]) != NULL) {

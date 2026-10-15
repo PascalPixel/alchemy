@@ -15,8 +15,8 @@
 #include "dma.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void BattlePres_UpdateHBlankScroll(void);
@@ -39,7 +39,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
 
     if (fade == 0x80)
     {
-        struct BtlWork *work;
+        struct BattleWork *work;
         u16 *palette;
 
         do
@@ -52,7 +52,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
     }
     else if (fade != 0)
     {
-        struct BtlWork *work;
+        struct BattleWork *work;
         u16 *source;
         u16 *destination;
         s32 i;

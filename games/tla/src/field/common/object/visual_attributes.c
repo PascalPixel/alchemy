@@ -6,7 +6,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "object_runtime.h"
 #include "objdisp.h"
 #include "field_sprite.h"

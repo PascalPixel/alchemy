@@ -21,7 +21,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "object_runtime.h"
 
 // The battle effect work as the canvas effects use it.
@@ -66,7 +66,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-void Func_08148a54(struct BattleEffectArgument *efx)
+void Func_08148a54(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
     struct CanvasEffectWork *work;
@@ -93,8 +93,8 @@ void Func_08148a54(struct BattleEffectArgument *efx)
     Func_081963ec(188, 0x1f);
     REG_BLDALPHA = 0x0f0f;
     draw[1] = (DrawRectangle)Ram_HeapSlots->unknown_b8[1];
-    source = GetBattleObjectSlotFar(efx->actor)->object;
-    y = source->y + Battle_GetObjectTableValueFar(efx->actor);
+    source = GetBattleObjectSlotFar(effect->actor)->object;
+    y = source->y + Battle_GetObjectTableValueFar(effect->actor);
     for (i = 0; i != 30; i++)
     {
         point = &work->particles[i];
@@ -107,10 +107,10 @@ void Func_08148a54(struct BattleEffectArgument *efx)
         point->variant = -1;
         flags[i] = 0;
     }
-    for (i = 0; i != efx->count; i++)
+    for (i = 0; i != effect->count; i++)
     {
         seat = &work->particles[32 + i];
-        object = GetBattleObjectSlotFar(efx->actors[i])->object;
+        object = GetBattleObjectSlotFar(effect->actors[i])->object;
         seat->x = object->x;
         seat->y = 0;
         seat->z = object->z;
@@ -123,18 +123,18 @@ void Func_08148a54(struct BattleEffectArgument *efx)
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     Audio_PlayCue(164);
 
-    for (frame = 0; frame != Data_081979a8[efx->variant * 2 + 1]; frame++)
+    for (frame = 0; frame != Data_081979a8[effect->variant * 2 + 1]; frame++)
     {
         camera = Ram_HeapSlots->camera_work;
         if (frame >= 17 && frame < 64)
             work->cameraDelta = 0x180;
         else
             work->cameraDelta = 0;
-        if (frame == Data_081979a8[efx->variant * 2 + 1] - 16)
+        if (frame == Data_081979a8[effect->variant * 2 + 1] - 16)
             Func_081180e8(133);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, camera + 3);
-        for (i = 0; i != Data_081979a8[efx->variant * 2]; i++)
+        for (i = 0; i != Data_081979a8[effect->variant * 2]; i++)
         {
             point = &work->particles[i];
             if (frame > i * 2 && flags[i] == 0)
@@ -152,7 +152,7 @@ void Func_08148a54(struct BattleEffectArgument *efx)
             }
             if (frame > i * 2 + 48 && flags[i] == 0)
             {
-                target = &work->particles[32 + i % efx->count];
+                target = &work->particles[32 + i % effect->count];
                 point->velocity_x += (target->x - point->x) >> 9;
                 point->velocity_y += (target->y - point->y) >> 9;
                 point->velocity_z += (target->z - point->z) >> 9;
@@ -168,8 +168,8 @@ void Func_08148a54(struct BattleEffectArgument *efx)
                     point->variant = 0;
                     point->x = pos.x;
                     point->y = pos.y + (Random16() & 31) - 16;
-                    Func_0814cd48(efx->actors[i % efx->count], 7, 5, i % efx->count, 4);
-                    Func_08118088(efx->actors[i % efx->count], 0);
+                    Func_0814cd48(effect->actors[i % effect->count], 7, 5, i % effect->count, 4);
+                    Func_08118088(effect->actors[i % effect->count], 0);
                     work->shakeFrames = 4;
                     Audio_PlayCue(132);
                 }
@@ -183,7 +183,7 @@ void Func_08148a54(struct BattleEffectArgument *efx)
                 point->variant++;
             }
         }
-        Func_08158ce0(efx->variant * 2 + 2, efx->variant * 2 + 2);
+        Func_08158ce0(effect->variant * 2 + 2, effect->variant * 2 + 2);
         if (work->cameraPhase == 0)
             work->cameraPhase = 1;
         Func_081434f8();

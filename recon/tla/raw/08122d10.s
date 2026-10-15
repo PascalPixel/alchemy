@@ -70,7 +70,7 @@ BattleEvent_Playback:
 	adds r2, #124
 	adds r0, r1, r2
 	ldr r1, [r6]
-	bl BtlTgtExec
+	bl BattleTargetExec
 	ldr r3, [r6]
 	adds r3, #1
 	str r3, [r6]
@@ -250,7 +250,7 @@ BattleEvent_Playback:
 	adds r3, #64
 	ldr r0, [r7, r3]
 	str r0, [r2]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #5
 	ldr r0, [r0]
 	bl Object_SetMode
@@ -305,7 +305,7 @@ BattleEvent_Playback:
 	lsls r0, r0, #1
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r5, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -333,18 +333,18 @@ BattleEvent_Playback:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PtyStDrawFar
+	bl PartyStatusDrawFar
 	b .L_08122ff0
 .L_08122fb6:
 	lsls r5, r6, #2
 	adds r5, #64
 	ldr r0, [r7, r5]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r0, #0
 	ldr r0, [r7, r5]
 	bl BattleUnit_BuildStatusFlags
 	ldr r0, [r7, r5]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r6, r0, #0
 	ldr r0, [r7, r5]
 	bl BattleMotion_GetSlotPalette
@@ -642,7 +642,7 @@ BattleEvent_Playback:
 	movs r3, #255
 	strh r3, [r1]
 	ldr r0, [r5]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r6, r0, #0
 	ldr r0, [r5]
 	bl BattleMotion_GetSlotPalette
@@ -663,7 +663,7 @@ BattleEvent_Playback:
 	mov r2, r9
 	strh r0, [r1]
 	strh r3, [r2, #2]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #7
 	ldr r0, [r0]
 	bl BattleMotion_SetRecordChildValues
@@ -825,7 +825,7 @@ BattleEvent_Playback:
 	lsls r0, r0, #1
 	adds r3, r7, r0
 	ldr r0, [r3]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r1, r6, #0
 	ldr r0, [r0]
 	bl GetMotionRecord
@@ -849,7 +849,7 @@ BattleEvent_Playback:
 	lsls r4, r4, #1
 	adds r3, r7, r4
 	ldr r0, [r3]
-	bl BtlObjGet
+	bl BattleObjGet
 	adds r6, r0, #0
 	adds r2, r6, #0
 	adds r2, #42

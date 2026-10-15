@@ -37,7 +37,7 @@ s32 PartyInventory_FindOwner(s32 item);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
 
-static inline s32 FlagChk(s32 flag)
+static inline s32 FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -71,7 +71,7 @@ s32 Func_0200051c(void)
 {
     Func_020021c4();
     Func_020022bc(0);
-    if (!FlagChk(0x925)) {
+    if (!FlagCheck(0x925)) {
         Func_02002244((s32)MsgSusaDonT);
         Func_02002254(17, 0);
         Battle_WaitMode0(60);

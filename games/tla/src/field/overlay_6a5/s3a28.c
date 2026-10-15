@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 // Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
 // the three rows from 72 less the row of z, as ☀️'s
-// MakyuriChojo_CollectBandSlots does. Nothing in this overlay calls it.
+// MercuryAerie_CollectBandSlots does. Nothing in this overlay calls it.
 void Func_02003a28(s32 *out, s32 zArg)
 {
     /* FAKEMATCH: four pins (z in r4, its shifted value in r2, the 64 in r3 and the column in r3) give the native's allocation; as plain locals z goes to ip, the 64 takes r4 and the column and row swap r2 and r3 (differ 9 to 40). */

@@ -1,10 +1,10 @@
-#include "btlpty.h"
+#include "battle_party.h"
 #include "game_flags.h"
 #include "owner_state.h"
 #include "types.h"
 #include "battle_unit.h"
 
-s32 BtlEnmList(s16 *unit_ids)
+s32 BattleEnemyList(s16 *unit_ids)
 {
     s16 *output;
     s32 count;
@@ -22,7 +22,7 @@ s32 BtlEnmList(s16 *unit_ids)
         id = 0x80;
         limit += 0x80;
         for (; id < limit; id++) {
-            if (((struct BtlUnit *)UnitGet(id))->side != 0) {
+            if (((struct BattleUnit *)UnitGet(id))->side != 0) {
                 *output = id;
                 listed++;
                 output++;
@@ -47,7 +47,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 active_count;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -64,7 +64,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = ((struct BtlUnit *)UnitGet(unit_id))->hp;
+                hp = ((struct BattleUnit *)UnitGet(unit_id))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -116,7 +116,7 @@ s32 Func_0811a24c(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 count;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -134,7 +134,7 @@ s32 Func_0811a24c(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = ((struct BtlUnit *)UnitGet(unit_id))->hp;
+                hp = ((struct BattleUnit *)UnitGet(unit_id))->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;

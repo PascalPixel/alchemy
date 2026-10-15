@@ -116,13 +116,13 @@ void Func_02000d74(void)
     Ov670_ObjArm(5, 0xc000, 0);
     Ov670_ObjArm(6, 0xc000, 0);
     Ov670_ObjArm(26, 0x5000, 20);
-    Ov670_MesOpen(0x601a, 0);
+    Ov670_MessageOpen(0x601a, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
-        Ov670_MesPut(0x601a, 0);
+        Ov670_MessagePut(0x601a, 0);
         ((struct Ov670EventWork *)Ram_HeapSlots->event_work)->field_1c4++;
     } else {
         ((struct Ov670EventWork *)Ram_HeapSlots->event_work)->field_1c4++;
-        Ov670_MesPut(0x601a, 0);
+        Ov670_MessagePut(0x601a, 0);
         Func_02005c7c();
     }
 }

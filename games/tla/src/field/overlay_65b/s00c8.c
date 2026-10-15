@@ -43,7 +43,7 @@ static inline void ObjPlace(s32 actor, s32 x, s32 z)
     ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
 }
 
-static inline s32 FlagChk(s32 flag)
+static inline s32 FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -57,10 +57,10 @@ static inline void FlagSet(s32 flag)
 
 void Func_020000c8(void)
 {
-    if (FlagChk(0x200) == 0) {
+    if (FlagCheck(0x200) == 0) {
         Func_020002b8();
         Func_02000340(0);
-        if (FlagChk(0x301) == 0) {
+        if (FlagCheck(0x301) == 0) {
             Func_02000328(0x18000, 0x3000);
             Motion_CamBounds(0xa40000, -1, 0x1040000, 1);
             ObjPlace(gPartyState.current_owner, 158, 316);
@@ -79,8 +79,8 @@ void Func_020000c8(void)
         FlagSet(0x200);
         Func_02000338();
         MapCopyAttr(11, 9, 4, 1, 8, 14);
-        if (FlagChk(0x301) == 0) {
-            Func_02000300((s32)MsgMadoraNeedEldersPermission);
+        if (FlagCheck(0x301) == 0) {
+            Func_02000300((s32)MsgMadraNeedEldersPermission);
             Battle_WaitMode0(10);
             Motion_SetVarCbAndRefresh(8, 1);
             Func_02000310(8, 0, 5);

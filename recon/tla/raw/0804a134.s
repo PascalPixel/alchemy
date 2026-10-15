@@ -249,7 +249,7 @@ Func_0804a134:
 	str r2, [sp, #24]
 .L_0804a328:
 	adds r0, r5, #0
-	bl BtlActGet
+	bl BattleActGet
 	movs r1, #240
 	adds r6, r0, #0
 	lsls r1, r1, #8
@@ -673,7 +673,7 @@ Func_0804a134:
 	add r6, r8
 	lsls r3, r6, #1
 	ldrh r0, [r3, r2]
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2

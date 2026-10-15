@@ -38,29 +38,29 @@ void Menu_CenterResourceEntries(s32, s32, s32);
 s32 Menu_RunResourceSelectionLoop(s32);
 void Menu_EndResourceSelection(void);
 
-static __inline__ s32 TblGet(s8 *tbl, s32 index)
+static __inline__ s32 TableGet(s8 *table, s32 index)
 {
-    return tbl[index];
+    return table[index];
 }
 
-s32 Menu_SelectTopEntry(s32 sel)
+s32 Menu_SelectTopEntry(s32 selection)
 {
     s32 group = 0;
-    s32 ofs;
+    s32 offset;
     s32 triple;
     s32 ret;
-    s8 *tbl;
+    s8 *table;
 
     if (Party_SumDjinnCountsFar(-1) == 0) {
         group = 1;
     }
 
     triple = group * 3;
-    tbl = Menu_TopEntryPositionByCommand;
-    ofs = triple << 1;
-    sel = TblGet(tbl, sel + ofs) - 1;
-    if (sel < 0) {
-        sel = 0;
+    table = Menu_TopEntryPositionByCommand;
+    offset = triple << 1;
+    selection = TableGet(table, selection + offset) - 1;
+    if (selection < 0) {
+        selection = 0;
     }
 
     AffineEffect_InitializeWork();
@@ -71,7 +71,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
     Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
-    ret = Menu_RunResourceSelectionLoop(sel);
+    ret = Menu_RunResourceSelectionLoop(selection);
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
@@ -79,7 +79,7 @@ s32 Menu_SelectTopEntry(s32 sel)
         s32 index;
 
         asm volatile("" : "+l"(commands)); /* FAKEMATCH: ⚓️ loads the table's address before forming the index */
-        index = ret + ofs + 1;
+        index = ret + offset + 1;
         asm volatile("" : "+l"(index)); /* FAKEMATCH: and indexes it with the whole sum */
         ret = commands[index];
     }

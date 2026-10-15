@@ -19,7 +19,7 @@ FAR_SLOT(Inventory_TryAddAndReturnOwner)
 FAR_CALL(Inventory_PromptAndSetObjectModeFar, Inventory_PromptAndSetObjectMode, s32,
 	(s32 actor, s32 force_bottom))
 FAR_CALL(
-	UiText_DrawQuantityPairWithCueFar, UiText_DrawQuantityPairWithCue, void, (s32 unit, s32 abil))
+	UiText_DrawQuantityPairWithCueFar, UiText_DrawQuantityPairWithCue, void, (s32 unit, s32 ability))
 FAR_CALL(Object_GetByIdFar, Object_GetById, struct FieldActor *, (s32 object_id))
 FAR_CALL(ObjectTable_DestroyByIdFar, ObjectTable_DestroyById, void, (s32 index))
 FAR_CALL(ObjectMotion_SetSpeedParametersFar, ObjectMotion_SetSpeedParameters, void,
@@ -185,8 +185,8 @@ FAR_SLOT(Object_EnableEffectSpawnCallback)
 FAR_SLOT(Object_DisableEffectSpawnCallback)
 FAR_CALL(Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler, void, (s32 kind))
 FAR_CALL(BattleFx_LoadActionEffectResourcesFar, BattleFx_LoadActionEffectResources, void,
-	(s32 act_no, s32 mode))
-FAR_CALL(BattleFx_SetupObjectPairFar, BattleFx_SetupObjectPair, void, (s32 user_id, s32 tgt_id))
+	(s32 ability_id, s32 mode))
+FAR_CALL(BattleFx_SetupObjectPairFar, BattleFx_SetupObjectPair, void, (s32 user_id, s32 target_id))
 FAR_CALL(EffectRuntime_StopCurrentObjectFar, EffectRuntime_StopCurrentObject, void, (void))
 FAR_CALL(BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects, void, (void))
 FAR_CALL(EventObject_InitializeFar, EventObject_Initialize, void, (void))
@@ -215,7 +215,7 @@ FAR_SLOT(BattleFx_GetWeightedResult)
 FAR_SLOT(BattleFx_GetPhaseResult)
 FAR_CALL(Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork, void, (void))
 FAR_CALL(BattleFx_RunPageEffectForSlotFar, BattleFx_RunPageEffectForSlot, void,
-	(s32 slot, s32 elm, void *djinn))
+	(s32 slot, s32 element, void *djinn))
 FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void, (struct EffectSlot * effect))
 FAR_CALL(BattleFx_HasReachedTargetFar, BattleFx_HasReachedTarget, u32, (struct EffectSlot * effect))
 FAR_CALL(EffectSlot_SetPositionFar, EffectSlot_SetPosition, void,

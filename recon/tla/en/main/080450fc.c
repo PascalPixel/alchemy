@@ -28,14 +28,14 @@ struct Object {
 
 extern u32 gFrameTick;
 extern s32 Ui_ObjectPulseScales[];
-s32 AffineMatrix_BuildForEffect(struct Effect *efx);
+s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 
 void Ui_ApplyTableScaleToObject(struct Object *obj)
 {
     s32 v;
     u32 *tick = &gFrameTick;
     u32 source;
-    struct Effect efx;
+    struct Effect effect;
 
     v = (s32)Ui_ObjectPulseScales;
     /* FAKEMATCH: the empty asm holds both addresses: the native loads the tick address and the table before it reads the tick and builds the mask 7 (two reordered rows). */
@@ -47,10 +47,10 @@ void Ui_ApplyTableScaleToObject(struct Object *obj)
     v >>= 8;
 
     if (obj != 0) {
-        efx.x = v;
-        efx.y = v;
-        efx.z = 0;
-        obj->affine_22 = AffineMatrix_BuildForEffect(&efx);
+        effect.x = v;
+        effect.y = v;
+        effect.z = 0;
+        obj->affine_22 = AffineMatrix_BuildForEffect(&effect);
         obj->mode_21 = 3;
         /* FAKEMATCH: the one-pass block ends the scheduling block: the source is read before 0xfff0 is built (one reordered row). */
         do {

@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_EVENT_H
 
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"
@@ -20,11 +20,11 @@
 
 extern u8 gSceneState[];
 
-extern u8 *gKorosseoWork;
+extern u8 *gColossoWork;
 
 #include "frame.h"
 
-#include "fieldobj.h"
+#include "field_obj.h"
 
 enum
 {

@@ -62,7 +62,7 @@ PsynergyMenu_DrawRangePage:
 	ldrh r3, [r2, r3]
 	ands r5, r3
 	adds r0, r5, #0
-	bl BtlActGet
+	bl BattleActGet
 	movs r3, #104
 	adds r5, r0, #0
 	str r3, [sp, #0]
@@ -149,7 +149,7 @@ PsynergyMenu_DrawRangePage:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	adds r5, r0, #0
 	ldrb r3, [r5, #2]
 	cmp r3, #4
@@ -194,7 +194,7 @@ PsynergyMenu_DrawRangePage:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	adds r5, r0, #0
 	ldrb r3, [r5, #2]
 	cmp r3, #4

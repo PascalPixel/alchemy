@@ -4,7 +4,7 @@ struct PendingAction { u8 unknown_00[6]; u8 event_kind; u8 unknown_07[9]; };
 struct PendingEventRecord { u32 key; u16 metadata; s16 condition; s32 action; };
 struct PendingEventList { u8 unknown_00[16]; struct PendingEventRecord *events; };
 struct PendingFacingObject { u8 unknown_00[6]; u16 facing; };
-const struct PendingAction *BtlActGet(s32 action);
+const struct PendingAction *BattleActGet(s32 action);
 struct PendingFacingObject *ObjectTable_Get(u32 owner);
 s32 EventRuntime_GetControlledOwner(void);
 s32 Func_080cb09c(void);
@@ -24,7 +24,7 @@ struct PendingEventRecord *Func_080ce458(u32 filter, s32 kind, s32 selector)
   s32 angle = (s16)event->metadata & 0xf000;
   s16 limited = event->metadata & 0x0800;
   s32 target = event->metadata & 255;
-  s32 event_kind = BtlActGet((event->key >> 8) & 255)->event_kind;
+  s32 event_kind = BattleActGet((event->key >> 8) & 255)->event_kind;
 
   if ((event->key & 15) == 5 && event_kind == kind &&
       GameFlag_IsConditionActive(event->condition)) {

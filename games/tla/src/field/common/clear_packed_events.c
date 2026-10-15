@@ -18,9 +18,9 @@ struct OwnerVitals {
     s16 pp_ratio;
     u8 unknown_018[28];
     s16 max_hp;
-    s16 max_ep;
+    s16 max_pp;
     s16 hp;
-    s16 ep;
+    s16 pp;
     u8 unknown_03c[0x131 - 60];
     u8 status;
 };
@@ -60,13 +60,13 @@ void Party_RemoveOwnerRestored(s32 owner)
     /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
     do {
         vitals->hp = vitals->max_hp;
-        vitals->ep = vitals->max_ep;
+        vitals->pp = vitals->max_pp;
     } while (0);
     vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
     if (vitals->hp_ratio == 0 && vitals->hp != 0)
         vitals->hp_ratio = 1;
-    vitals->pp_ratio = Vitals_Ratio(vitals->ep, vitals->max_ep);
-    if (vitals->pp_ratio == 0 && vitals->ep != 0)
+    vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
+    if (vitals->pp_ratio == 0 && vitals->pp != 0)
         vitals->pp_ratio = 1;
     vitals->status = 0;
     standing = 0;
@@ -82,8 +82,8 @@ void Party_RemoveOwnerRestored(s32 owner)
         vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_ratio == 0 && vitals->hp != 0)
             vitals->hp_ratio = 1;
-        vitals->pp_ratio = Vitals_Ratio(vitals->ep, vitals->max_ep);
-        if (vitals->pp_ratio == 0 && vitals->ep != 0)
+        vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
+        if (vitals->pp_ratio == 0 && vitals->pp != 0)
             vitals->pp_ratio = 1;
     }
 }

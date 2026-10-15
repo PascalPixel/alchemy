@@ -7,7 +7,7 @@
 #include "edition.h"
 #include "objdisp.h"
 #include "fixed_math.h"
-#include "object_efx.h"
+#include "object_effect_scripts.h"
 #include "system.h"
 #include "field_event.h"
 
@@ -54,17 +54,17 @@ extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 //--------------------------------------------------------------------------
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 {
-	struct ItemBreakFragmentSource	*tgt;
+	struct ItemBreakFragmentSource	*target;
 	struct ItemBreakFragmentPosition pos;
 	struct ItemBreakFragmentObject	*obj;
 	s32								 turn;
 	s32								 dist;
 
-	tgt = src->target;
-	if (tgt != 0)
+	target = src->target;
+	if (target != 0)
 	{
-		s32 dx = tgt->x - src->x;
-		s32 dz = tgt->z - src->z;
+		s32 dx = target->x - src->x;
+		s32 dz = target->z - src->z;
 
 		if (dx != 0 || dz != 0)
 		{

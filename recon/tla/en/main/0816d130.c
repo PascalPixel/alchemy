@@ -21,7 +21,7 @@
 #include "motobj.h"
 #include "battle_session.h"
 #include "effect_step.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_fx_work.h"
 

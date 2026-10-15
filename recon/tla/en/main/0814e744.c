@@ -14,7 +14,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "fixed_math.h"
 #include "object_runtime.h"
 
@@ -59,7 +59,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-void Func_0814e744(struct BattleEffectArgument *efx)
+void Func_0814e744(struct BattleEffectArgument *effect)
 {
     struct CanvasEffectWork *work;
     void *canvas;
@@ -88,7 +88,7 @@ void Func_0814e744(struct BattleEffectArgument *efx)
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera, camera + 3);
 
-    for (member = 0; member != efx->count; member++)
+    for (member = 0; member != effect->count; member++)
     {
         struct ObjectRuntime *object;
         s32 offset;
@@ -96,8 +96,8 @@ void Func_0814e744(struct BattleEffectArgument *efx)
         struct EffectStep *shard;
 
         offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
-        object = GetBattleObjectSlotFar(efx->actors[member])->object;
-        height = Battle_GetObjectTableValueFar(efx->actors[member]) / 2;
+        object = GetBattleObjectSlotFar(effect->actors[member])->object;
+        height = Battle_GetObjectTableValueFar(effect->actors[member]) / 2;
         point[0] = object->x;
         point[1] = height;
         point[2] = object->z;
@@ -126,11 +126,11 @@ void Func_0814e744(struct BattleEffectArgument *efx)
     work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
-    for (frame = 0; frame != efx->count * 20 + 56; frame++)
+    for (frame = 0; frame != effect->count * 20 + 56; frame++)
     {
         if (frame == 32)
             Func_081180e8(0);
-        for (member = 0; member != efx->count; member++)
+        for (member = 0; member != effect->count; member++)
         {
             s32 offset;
 
@@ -138,7 +138,7 @@ void Func_0814e744(struct BattleEffectArgument *efx)
             if (frame == member * 20)
             {
                 Audio_PlayCue(143);
-                Func_0814cd48(efx->actors[member], 7, -1, member, 20);
+                Func_0814cd48(effect->actors[member], 7, -1, member, 20);
             }
             // Shards falling past y = 112 go out.
             if (frame > member * 20)

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "motobj.h"
-#include "btlobj.h"
+#include "battle_obj.h"
 #include "iwram_call.h"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
@@ -19,7 +19,7 @@
 
 s32 ArcTan2(s32, s32);
 
-void BattleMotion_SetObjectPosition(struct BtlObj *slot)
+void BattleMotion_SetObjectPosition(struct BattleObj *slot)
 {
     struct MotionObject *object = slot->object;
 
@@ -34,10 +34,10 @@ void BattleMotion_SetObjectPosition(struct BtlObj *slot)
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 {
     u32 scaled_x;
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
 
-    slot = BtlObjGet(object_id);
+    slot = BattleObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x10000;
     object->speed_limit = 0x40000;
@@ -52,10 +52,10 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 
 void Func_0811c01c(s32 object_id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
 
-    slot = BtlObjGet(object_id);
+    slot = BattleObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x10000;
     object->speed_limit = 0x40000;

@@ -1,24 +1,24 @@
 	.section .bss,"aw",%nobits
 	.space 8
-	.global gKorimaMagariRecords
-gKorimaMagariRecords:
+	.global gKolimaForestBendRecords
+gKolimaForestBendRecords:
 	.space 4
-	.global gKorimaMagariReturned
-gKorimaMagariReturned:
+	.global gKolimaForestBendReturned
+gKolimaForestBendReturned:
 	.space 4
-	.global gKorimaMagariLayout
-gKorimaMagariLayout:
+	.global gKolimaForestBendLayout
+gKolimaForestBendLayout:
 	.space 8
-	.global KorimaPalette_First
-KorimaPalette_First:
+	.global KolimaPalette_First
+KolimaPalette_First:
 	.space 1792
-	.global KorimaPalette_Second
-KorimaPalette_Second:
+	.global KolimaPalette_Second
+KolimaPalette_Second:
 	.space 896
 	.space 896
-	.global KorimaMagari_ShakeScroll
-KorimaMagari_ShakeScroll:
+	.global KolimaForestBend_ShakeScroll
+KolimaForestBend_ShakeScroll:
 	.space 12
-	.global KorimaMagari_ShakeChance
-KorimaMagari_ShakeChance:
+	.global KolimaForestBend_ShakeChance
+KolimaForestBend_ShakeChance:
 	.space 4

@@ -7,7 +7,7 @@
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 extern char SceneId_Ov688;
 

@@ -38,11 +38,11 @@ void Func_02003898(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kibonbo4)
+    if (scene == (s32)&SceneId_Kibombo4)
         Scheduler_RemoveCallbackFar(Func_02002c34);
-    else if (scene == (s32)&SceneId_Kibonbo5)
+    else if (scene == (s32)&SceneId_Kibombo5)
         Scheduler_RemoveCallbackFar(Func_02002ccc);
-    else if (scene == (s32)&SceneId_Kibonbo6)
+    else if (scene == (s32)&SceneId_Kibombo6)
         Scheduler_RemoveCallbackFar(Func_02002d64);
 }
 

@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 extern const u8 Data_02003cbc[];
 
@@ -10,19 +10,19 @@ void Func_02000f18(s32 actor)
 
 void Func_02000f34(void)
 {
-    Kabe_BlendStart(0, 0, 1, 1, 8, 18);
+    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
     GameFlag_SetBit(0x200);
 }
 
 void Func_02000f58(void)
 {
-    Kabe_BlendStart(0, 0, 1, 1, 10, 18);
+    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
     GameFlag_SetBit(0x201);
 }
 
 void Func_02000f80(void)
 {
-    Kabe_BlendStart(0, 0, 1, 1, 10, 17);
+    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
     GameFlag_SetBit(0x202);
 }
 
@@ -33,7 +33,7 @@ void Func_02000fa8(void)
 
 void Func_02000fb8(void)
 {
-    struct KabeObject *object;
+    struct ShrineOfTheSeaGodObject *object;
 
     Func_02003b40();
     object = Object_GetById(8);
@@ -45,14 +45,14 @@ void Func_02000fb8(void)
 
 void Func_02000fec(void)
 {
-    struct KabeObject *object = Object_GetById(8);
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(8);
 
     Func_02003b40();
     if (object->x >> 20 == 12)
         GameFlag_SetBit(0x84c);
 }
 
-void Func_02001010(struct KabeObject *object)
+void Func_02001010(struct ShrineOfTheSeaGodObject *object)
 {
     object->motion_flags = 3;
     do {
@@ -65,14 +65,14 @@ void Func_02001010(struct KabeObject *object)
 
 void Func_02001038(void)
 {
-    struct KabeObject *object = Object_GetById(8);
+    struct ShrineOfTheSeaGodObject *object = Object_GetById(8);
     s32 z = object->z >> 20;
 
     if (z == 16) {
         Func_020039d8();
         Func_02003b08(0);
         Func_02001010(object);
-        Kabe_BlendStart(0, 0, 1, 1, 15, z);
+        ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, z);
         ObjectMotion_SetActionVariant(8, 3);
         Func_020039e0();
         GameFlag_SetBit(0x301);
@@ -81,7 +81,7 @@ void Func_02001038(void)
 
 void Func_02001088(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     u32 id;
 
     for (id = 9; id <= 13;) {
@@ -102,7 +102,7 @@ void Func_02001088(void)
 
 void Func_020010e8(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     s32 y;
 
     Func_02003b28();
@@ -117,7 +117,7 @@ void Func_020010e8(void)
 
 void Func_02001128(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     s32 y;
     s32 z;
 
@@ -146,8 +146,8 @@ void Func_02001128(void)
 
 void Func_020011a0(void)
 {
-    struct KabeObject *first = Object_GetById(8);
-    struct KabeObject *second = Object_GetById(9);
+    struct ShrineOfTheSeaGodObject *first = Object_GetById(8);
+    struct ShrineOfTheSeaGodObject *second = Object_GetById(9);
 
     second->x = first->x;
     second->y = 0x140000;

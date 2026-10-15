@@ -23,9 +23,9 @@ s32 Menu_CenterResourceEntries(s32, s32, s32);
 // えらんでいるコマンドの名前をウィンドウに出す
 //--------------------------------------------------------------------------
 // アイコン 0x11〜0x14 を画面の中央に並べてえらぶ（行 17）
-// sel : はじめにえらんでいる位置。戻り値はえらんだ位置
+// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
 //--------------------------------------------------------------------------
-s32 Menu_SelectEntry11To14(s32 sel)
+s32 Menu_SelectEntry11To14(s32 selection)
 {
 	s32 ret;
 
@@ -41,7 +41,7 @@ s32 Menu_SelectEntry11To14(s32 sel)
 #else
 	Menu_CenterResourceEntries(17, 6, 0);
 #endif
-	ret = Menu_RunResourceSelectionLoop(sel);
+	ret = Menu_RunResourceSelectionLoop(selection);
 	Menu_EndResourceSelection();
 	return ret;
 }
@@ -49,7 +49,7 @@ s32 Menu_SelectEntry11To14(s32 sel)
 //--------------------------------------------------------------------------
 // アイコン 0x19〜0x1c を画面の中央に並べてえらぶ（行 17）
 //--------------------------------------------------------------------------
-s32 Menu_SelectEntry19To1c(s32 sel)
+s32 Menu_SelectEntry19To1c(s32 selection)
 {
 	s32 ret;
 
@@ -63,7 +63,7 @@ s32 Menu_SelectEntry19To1c(s32 sel)
 #else
 	Menu_CenterResourceEntries(17, 8, 0);
 #endif
-	ret = Menu_RunResourceSelectionLoop(sel);
+	ret = Menu_RunResourceSelectionLoop(selection);
 	Menu_EndResourceSelection();
 	return ret;
 }
@@ -71,11 +71,11 @@ s32 Menu_SelectEntry19To1c(s32 sel)
 //--------------------------------------------------------------------------
 // はい・いいえ（アイコン 5・6）をえらぶ。キャンセルは 1（いいえ）
 // low  : 0 なら行 0、0 でなければ行 17 に出す
-// mes  : 名前のメッセージの先頭（0 ならコマンド名）
+// message  : 名前のメッセージの先頭（0 ならコマンド名）
 // w    : 名前のウィンドウの幅（0 なら 3）
-// sel  : はじめにえらんでいる位置
+// selection  : はじめにえらんでいる位置
 //--------------------------------------------------------------------------
-s32 Menu_RunConfirmSelection(s32 low, s32 mes, s32 w, s32 sel)
+s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection)
 {
 	s32 row;
 
@@ -94,35 +94,35 @@ s32 Menu_RunConfirmSelection(s32 low, s32 mes, s32 w, s32 sel)
 
 	Menu_AppendResourceEntry(5);
 	Menu_AppendResourceEntry(6);
-	Menu_CenterResourceEntries(row, w, mes);
+	Menu_CenterResourceEntries(row, w, message);
 
-	sel = Menu_RunResourceSelectionLoop(sel);
+	selection = Menu_RunResourceSelectionLoop(selection);
 	Menu_EndResourceSelection();
-	if (sel == -1)
+	if (selection == -1)
 	{
-		sel = 1;
+		selection = 1;
 	}
-	return sel;
+	return selection;
 }
 
 //--------------------------------------------------------------------------
 // はい・いいえを (x, y) に出してえらぶ。キャンセルは 1（いいえ）
 //--------------------------------------------------------------------------
-s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
+s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection)
 {
-	s32 mes = (s32)MsgCommandYes;
+	s32 message = (s32)MsgCommandYes;
 
 	AffineEffect_InitializeWork();
 	Menu_AppendResourceEntry(5);
 	Menu_AppendResourceEntry(6);
-	Menu_LayoutResourceEntries(x, y, 3, mes);
-	sel = Menu_RunResourceSelectionLoop(sel);
+	Menu_LayoutResourceEntries(x, y, 3, message);
+	selection = Menu_RunResourceSelectionLoop(selection);
 	Menu_EndResourceSelection();
-	if (sel == -1)
+	if (selection == -1)
 	{
-		sel = 1;
+		selection = 1;
 	}
-	return sel;
+	return selection;
 }
 
 //--------------------------------------------------------------------------
@@ -145,9 +145,9 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
 
 //--------------------------------------------------------------------------
 // アイコン 0x20・0x21 を画面の中央に並べてえらぶ（行 17）
-// sel : はじめにえらんでいる位置。戻り値はえらんだ位置
+// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
 //--------------------------------------------------------------------------
-s32 Menu_SelectEntry20To21(s32 sel)
+s32 Menu_SelectEntry20To21(s32 selection)
 {
 	s32 ret;
 
@@ -155,7 +155,7 @@ s32 Menu_SelectEntry20To21(s32 sel)
 	Menu_AppendResourceEntry(0x20);
 	Menu_AppendResourceEntry(0x21);
 	Menu_CenterResourceEntries(17, PAIR_WIDTH, 0);
-	ret = Menu_RunResourceSelectionLoop(sel);
+	ret = Menu_RunResourceSelectionLoop(selection);
 	Menu_EndResourceSelection();
 	return ret;
 }

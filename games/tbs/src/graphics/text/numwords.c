@@ -1,4 +1,4 @@
-#include "unit/window/spranim.h"
+#include "unit/window/articles.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

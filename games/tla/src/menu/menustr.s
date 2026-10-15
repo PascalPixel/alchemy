@@ -58,8 +58,8 @@ Ui_PpString:
 	.global Ui_HpRowString
 Ui_HpRowString:
 	.asciz "HP    /"
-	.global Ui_EpRowString
-Ui_EpRowString:
+	.global Ui_PpRowString
+Ui_PpRowString:
 	.asciz "EP    /"
 	.endif
 @ The frame tile the cancel prompt blinks; ⚓️ drops ☀️'s "x" string here

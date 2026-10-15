@@ -285,12 +285,12 @@ Func_080fcbd8:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r3, [r5]
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0
 	negs r1, r1
-	bl UnitEpAddFar
+	bl UnitPpAddFar
 .L_080fce20:
 	ldrb r0, [r5]
 	bl UnitCalcFar

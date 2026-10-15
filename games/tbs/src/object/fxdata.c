@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "objcmd.h"
 #include "types.h"
 
@@ -9,7 +9,7 @@
 // Effect tables: object scripts, curves and lookup tables of the OBJECT bank.
 //--------------------------------------------------------------------------
 
-// 読む側は battle.h, field.h, graphics.h, scroll.h と object_efx.h、
+// 読む側は battle.h, field.h, graphics.h, scroll.h と object_effect_scripts.h、
 // 色の曲線は object.c が宣言する。次の表は読む側が const なしで宣言する:
 // battle.h の BattleFx_TargetRangeByMode, Animation_ChildPaletteCycle,
 // BattleFx_DefinitionTable, FieldFx_GroundParticleFrames, BattleFx_PulseScales,
@@ -305,7 +305,7 @@ const struct BattleEffectEntry BattleFx_DefinitionTable[131] =
 };
 
 // 方式 (1 から 3) の回数だけ揺れる: (3 - 方式) * 32 語目から始めて終わりまで
-// field.h は const u8[] と宣言し、psyfx.c はバイトで (3 - 方式) << 7 を足して s32 * で読む
+// field.h は const u8[] と宣言し、psynergy_effects.c はバイトで (3 - 方式) << 7 を足して s32 * で読む
 const s32 ObjectMotion_VariantScripts[97] =
 {
 	// 方式 3

@@ -8,9 +8,9 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "battle_unit.h"
-#include "eventwrk.h"
+#include "event_work.h"
 
 void BattleEffect_CleanupSceneObjects(void);
 
@@ -21,7 +21,7 @@ s32 EventRuntime_ExecutePackedAction(u32 packed)
 
     action = packed & 0x3ff;
     mode = (packed >> 10) & 15;
-    kind = BtlActGet(action)->unknown_04[2];
+    kind = BattleActGet(action)->unknown_04[2];
     selector = Func_080ce31c(kind);
     first = Func_080ce458(0x30000005, kind, selector);
     second = Func_080ce458(0x20000005, kind, selector);

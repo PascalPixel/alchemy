@@ -52,7 +52,7 @@ Func_080ce31c:
 	lsrs r0, r0, #24
 	mov r8, r3
 	ands r7, r2
-	bl BtlActGet
+	bl BattleActGet
 	ldr r3, [r5]
 	movs r2, #15
 	ands r3, r2

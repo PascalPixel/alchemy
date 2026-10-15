@@ -1,4 +1,4 @@
-@ BLDY values, the same in both games; each game's btlvars.s includes them
+@ BLDY values, the same in both games; each game's battle_vars.s includes them
 @ in place.
 	.global BattleFx_HighlightBlendRamp
 BattleFx_HighlightBlendRamp:

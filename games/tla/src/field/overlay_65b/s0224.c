@@ -20,7 +20,7 @@ void Func_02000224(void)
 {
     Func_020002b8();
     Func_02000340(0);
-    Func_02000300((s32)MsgMadoraHeardAboutYou);
+    Func_02000300((s32)MsgMadraHeardAboutYou);
     Motion_CamBounds(0xa40000, -1, 0x1040000, 1);
     Func_02000338();
     Motion_SetModeAndWaitAnimation(8, 3);

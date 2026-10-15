@@ -14,7 +14,7 @@ struct Effect05Object;
 struct EffectDescriptor;
 struct EffectSlot;
 struct EffectVector;
-struct EfxObj;
+struct EffectObj;
 struct FacingObject;
 struct FieldActor;
 struct MotionObject;
@@ -46,7 +46,7 @@ void Party_ResolveTablePair(void);
 s16 Event_GetSpecialValue(void);
 void BattleFx_SetSpecialFromTable(void);
 void BattleFx_SelectResultPointer(s32 arg0);
-/* BattleFx_SelectBattleCue is called from psyfx.c with no prototype in scope, as in object.c above its definition: in one file its definition would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult, and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split evidence for object|psyfx. */
+/* BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype in scope, as in object.c above its definition: in one file its definition would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult, and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects. */
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
 void RunBattleEffect07(void);
@@ -153,7 +153,7 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y);
 
 void BattleFx_EmitRandomParticle(void);
 void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
-struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
+struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
 void Object_DestroyIfPresent(void *object);
 void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
@@ -180,7 +180,7 @@ void DisplayTransition_InitializeState(s32 value);
 
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 void BattlePalette_UpdateBlend(void);
-/* BattleFx_BuildBuffer is called from psyfx.c with no prototype in scope: in one file its definition would come before BattleFx_StartTwelveFrameBlend and BattleFx_StartBufferBlend, and they change (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for object|psyfx. */
+/* BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in scope: in one file its definition would come before BattleFx_StartTwelveFrameBlend and BattleFx_StartBufferBlend, and they change (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for object|psynergy_effects. */
 void BattleEffect_InitializeBuffers(void);
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

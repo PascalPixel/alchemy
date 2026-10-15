@@ -7,7 +7,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "system.h"
 #include "callback_scheduler.h"
 
@@ -16,7 +16,7 @@ u32 BattleEventRuntime_Reset(void);
 u32 BattleEventRuntime_Reset(void)
 {
     struct BattleEventState *events;
-    struct BtlWork *work;
+    struct BattleWork *work;
 
     /* FAKEMATCH: the one-pass block loads the battle work before the events offset is built (differ 2 without it). */
     do {

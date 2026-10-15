@@ -15,7 +15,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 
 // The battle effect work as this effect uses it.
 struct MarkerWork
@@ -37,7 +37,7 @@ void Func_08143bb8(void);
 void Func_081180e8(s32 phase);
 void Func_081963ec(s32 slot, s32 flags);
 
-void Func_0814b160(struct BattleEffectArgument *efx)
+void Func_0814b160(struct BattleEffectArgument *effect)
 {
     void *canvas;
     struct MarkerWork *work;
@@ -56,7 +56,7 @@ void Func_0814b160(struct BattleEffectArgument *efx)
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1, 1);
-    if (efx->side == 1)
+    if (effect->side == 1)
     {
         REG_BG2X = -0x7000;
     }
@@ -65,19 +65,19 @@ void Func_0814b160(struct BattleEffectArgument *efx)
     work->transferValue = 0;
     draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-    for (i = 0; i != efx->count; i++)
+    for (i = 0; i != effect->count; i++)
     {
         work->particles[i].variant = Random16() & 63;
     }
     frame = 0;
-    while (frame != (efx->count << 5) + 32)
+    while (frame != (effect->count << 5) + 32)
     {
         if (frame == 32)
         {
             Func_081180e8(0);
         }
         i = 0;
-        if (efx->count != 0)
+        if (effect->count != 0)
         {
             marker = work->particles;
             do
@@ -89,8 +89,8 @@ void Func_0814b160(struct BattleEffectArgument *efx)
                 }
                 if (frame >= start && frame < start + 72)
                 {
-                    EffectPosition_ApplyStepAndYOffset(efx->actors[i], &pos);
-                    if (efx->side == 1)
+                    EffectPosition_ApplyStepAndYOffset(effect->actors[i], &pos);
+                    if (effect->side == 1)
                     {
                         pos.x -= 112;
                     }
@@ -105,7 +105,7 @@ void Func_0814b160(struct BattleEffectArgument *efx)
                 }
                 marker++;
                 i++;
-            } while (i != efx->count);
+            } while (i != effect->count);
         }
         work->transferPending = 1;
         WaitFrames(1);

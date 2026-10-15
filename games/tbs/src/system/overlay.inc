@@ -207,7 +207,7 @@
 	import PartyInventory_FindOwner, PartyInventory_FindOwnerFar
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
-	import Engine_DebugGetAbility, BtlActGet
+	import Engine_DebugGetAbility, BattleActGet
 	import GameState_InitDefaults, GameState_InitDefaultsFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar
 	import Engine_GameFlagSet, GameFlag_SetBitFar
@@ -216,7 +216,7 @@
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
 	import Owner_AdjustFirstValue, Owner_AdjustFirstValueFar
-	import UnitEpAdd, UnitEpAddFar
+	import UnitPpAdd, UnitPpAddFar
 	import Engine_OwnerRecalculateRatios, UnitRatioFar
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_CountActiveOwners, Party_CountActiveOwnersFar

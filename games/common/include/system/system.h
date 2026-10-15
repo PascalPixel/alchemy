@@ -126,21 +126,21 @@ extern const u8	 Resource_ExecuteTransfer[];
 extern const u8	 Resource_PatchThumbBranch[];
 extern const u8	 Rom_LanguageCode;
 extern u8		 Rom_UnknownBytes[];
-extern const u32 SentouKouka_Hikaku4Gyaku[];
-extern const u32 SentouKouka_Hikaku4Jun[];
-extern const u32 SentouKouka_HikakuGyaku[];
-extern const u32 SentouKouka_HikakuJun[];
-extern const u32 SentouKouka_IroGyaku[];
-extern const u32 SentouKouka_IroJun[];
-extern const u32 SentouKouka_KasanGyaku[];
-extern const u32 SentouKouka_KasanJun[];
-extern const u32 SentouKouka_Mask[];
-extern const u32 SentouKouka_Nuri8Gyaku[];
-extern const u32 SentouKouka_Nuri8Jun[];
-extern const u32 SentouKouka_NuriGyaku[];
-extern const u32 SentouKouka_NuriJun[];
-extern const u32 SentouKouka_YomiGyaku[];
-extern const u32 SentouKouka_YomiJun[];
+extern const u32 BattleEffect_Max4Reverse[];
+extern const u32 BattleEffect_Max4Forward[];
+extern const u32 BattleEffect_MaxReverse[];
+extern const u32 BattleEffect_MaxForward[];
+extern const u32 BattleEffect_ColorReverse[];
+extern const u32 BattleEffect_ColorForward[];
+extern const u32 BattleEffect_AdditiveReverse[];
+extern const u32 BattleEffect_AdditiveForward[];
+extern const u32 BattleEffect_Mask[];
+extern const u32 BattleEffect_Transparent8Reverse[];
+extern const u32 BattleEffect_Transparent8Forward[];
+extern const u32 BattleEffect_TransparentReverse[];
+extern const u32 BattleEffect_TransparentForward[];
+extern const u32 BattleEffect_CopyReverse[];
+extern const u32 BattleEffect_CopyForward[];
 extern const u8	 System_BasicColorPalette[];
 extern u8		 Tile_CopyStrided[];
 extern u8		 Tile_CopyStridedCodeSize[];
@@ -161,7 +161,7 @@ void SoundDriver_EnterMixer(void);
 #endif
 
 #if GAME_TLA
-struct BtlObj;
+struct BattleObj;
 struct ObjectRuntime;
 
 struct ParticleChild
@@ -188,7 +188,7 @@ void BattleMotion_ApproachTarget(
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
 void BattleMotion_InterpolatePosition(
-	struct BtlObj *start_slot, struct BtlObj *end_slot, s32 progress);
+	struct BattleObj *start_slot, struct BattleObj *end_slot, s32 progress);
 #endif
 s32	 LuckyDice_Run(void);
 void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);

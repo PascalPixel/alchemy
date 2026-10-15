@@ -6,7 +6,7 @@ const u8 *Func_0200004c(void)
         return Data_02002828;
     if (gPartyState.entrance == 20)
         return Data_02002750;
-    if (FlagChk(0x8ff))
+    if (FlagCheck(0x8ff))
         return Data_02002480;
     return Data_02002240;
 }
@@ -42,15 +42,15 @@ void Func_020000fc(void)
     } else {
 #ifdef TLA_EDITION_JA
         // 日本語版は選択肢なし
-        if (FlagChk(0x8ff))
+        if (FlagCheck(0x8ff))
             Func_02001e18((s32)MsgScene659No155);
-        else if (FlagChk(0x8ab))
+        else if (FlagCheck(0x8ab))
             Func_02001e18((s32)MsgScene659No87);
         else
             Func_02001e18((s32)MsgScene659No39);
         Func_02001e30(22, 0);
 #else
-        if (FlagChk(0x8ff)) {
+        if (FlagCheck(0x8ff)) {
             s32 msg = (s32)MsgScene659No155;
 
             Func_02001e18(msg);
@@ -64,7 +64,7 @@ void Func_020000fc(void)
             }
             Func_02001e30(22, 0);
         } else {
-            if (FlagChk(0x8ab))
+            if (FlagCheck(0x8ab))
                 Func_02001e18((s32)MsgScene659No87);
             else
                 Func_02001e18((s32)MsgScene659No39);

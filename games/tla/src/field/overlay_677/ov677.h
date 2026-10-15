@@ -94,7 +94,7 @@ void Event_WaitTransitionFrames(void);
 void Func_02000a48(s32 a);
 void Event_StartScreenTransition(void);
 
-static inline s32 Ov677_FlagChk(s32 flag)
+static inline s32 Ov677_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -174,13 +174,13 @@ static inline void Ov677_TaskAdd(void (*callback)(void), s32 priority)
     Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-static inline void Ov677_MesPut(s32 speaker, s32 flags)
+static inline void Ov677_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02000a28(speaker, flags);
 }
 
-static inline void Ov677_MesOpen(s32 speaker, s32 flags)
+static inline void Ov677_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);

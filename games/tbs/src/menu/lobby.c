@@ -1,12 +1,12 @@
 #include "unit/import.h"
 #include "unit/menu/lobby.h"
 #include "unit/object/object.h"
-#include "unit/object/psyfx.h"
+#include "unit/object/psynergy_effects.h"
 #include "unit/battle/battle.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/btlcmd.h"
+#include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
@@ -655,7 +655,7 @@ static s32 EV10_TOUCH(void)
 	u8				 *buf;
 	u8				 *src;
 	u8				 *dst;
-	u16				 *tbl;
+	u16				 *table;
 	u32				  i;
 
 	failed = 0;
@@ -774,11 +774,11 @@ static s32 EV10_TOUCH(void)
 		}
 		Battle_SetStart(4);
 		BattleFx_SetWeightedResult(1, 1);
-		tbl = (u16 *)gSerialTransfer.payload;
-		tbl[0] = 0x45;
-		tbl[1] = 0x58;
-		tbl[2] = 0x45;
-		tbl[3] = 0x43;
+		table = (u16 *)gSerialTransfer.payload;
+		table[0] = 0x45;
+		table[1] = 0x58;
+		table[2] = 0x45;
+		table[3] = 0x43;
 		i = 0;
 		src = buf;
 		dst = (u8 *)gMapCellBuffer + 0x8000;
@@ -1504,13 +1504,13 @@ struct ScenePlacement gLinkLobbyPlacements[] = {
 		PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ GERALD, IF_FLAG_SET(0x1), ACTOR_STAND,
+	{ GARET, IF_FLAG_SET(0x1), ACTOR_STAND,
 		PIXELS(352), 0, PIXELS(108), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ IWAN, IF_FLAG_SET(0x2), ACTOR_STAND,
+	{ IVAN, IF_FLAG_SET(0x2), ACTOR_STAND,
 		PIXELS(328), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ MEARI, IF_FLAG_SET(0x3), ACTOR_STAND,
+	{ MIA, IF_FLAG_SET(0x3), ACTOR_STAND,
 		PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ JASMINE, IF_FLAG_SET(0x5), ACTOR_STAND,
+	{ JENNA, IF_FLAG_SET(0x5), ACTOR_STAND,
 		PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
 };
@@ -1550,13 +1550,13 @@ struct ScenePlacement gLinkLobbyBattlePlacements[] = {
 		PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x74, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ GERALD, IF_FLAG_SET(0x1), ACTOR_STAND,
+	{ GARET, IF_FLAG_SET(0x1), ACTOR_STAND,
 		PIXELS(104), 0, PIXELS(144), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ IWAN, IF_FLAG_SET(0x2), ACTOR_STAND,
+	{ IVAN, IF_FLAG_SET(0x2), ACTOR_STAND,
 		PIXELS(152), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ MEARI, IF_FLAG_SET(0x3), ACTOR_STAND,
+	{ MIA, IF_FLAG_SET(0x3), ACTOR_STAND,
 		PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ JASMINE, IF_FLAG_SET(0x5), ACTOR_STAND,
+	{ JENNA, IF_FLAG_SET(0x5), ACTOR_STAND,
 		PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ SCENE_TABLE_END },
 };

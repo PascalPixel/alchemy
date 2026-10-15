@@ -4,7 +4,7 @@ void Party_RemoveOwnerRestored(s32 owner);
 
 void Func_02001218(void)
 {
-    if (!Ov670_FlagChk(0x92e)) {
+    if (!Ov670_FlagCheck(0x92e)) {
         Func_02005bc4(5);
         return;
     }
@@ -18,7 +18,7 @@ void Func_02001218(void)
     Ov670_ObjWalk(7, 62, 444);
     Ov670_ObjTurn(7, 0x2000);
     Func_02005b4c((s32)MsgNowThatIKnow);
-    Ov670_MesPut(7, 0);
+    Ov670_MessagePut(7, 0);
     Object_GetById(7)->priority_flags |= 1;
     Ov670_ObjWalk(7, 56, 420);
     Ov670_ObjWalk(7, 40, 344);

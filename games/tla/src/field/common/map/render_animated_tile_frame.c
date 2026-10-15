@@ -102,7 +102,7 @@ void Map_RenderAnimatedTileFramesForObject(u8 *object)
     } while (pos <= 0x7f);
 }
 
-void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
+void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 {
     u8 **top;
     u8 **p;
@@ -112,7 +112,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
     u32 pos2;
     u32 pos3;
 
-    top = tbl;
+    top = table;
     pos = 0;
     do {
         if (cnt > 0) {

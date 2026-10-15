@@ -13,11 +13,11 @@
 void UiText_BuildRenderEntries(s32 key, s32 mode);
 
 //--------------------------------------------------------------------------
-// メッセージ mes を buf に展開する（長さの上限なし）
+// メッセージ message を buf に展開する（長さの上限なし）
 //--------------------------------------------------------------------------
-void Ui_AdjustValueWithoutLimit(s32 mes, s32 buf)
+void Ui_AdjustValueWithoutLimit(s32 message, s32 buf)
 {
-	UiText_DecodeMessage(mes, buf, 0x7fffffff);
+	UiText_DecodeMessage(message, buf, 0x7fffffff);
 }
 
 // Builds message key's text entries and copies them to destination, at most

@@ -132,15 +132,15 @@ Func_02000520:
 	movs r1, #50
 	negs r1, r1
 	movs r0, #4
-	bl UnitEpAdd
+	bl UnitPpAdd
 	movs r1, #40
 	negs r1, r1
 	movs r0, #5
-	bl UnitEpAdd
+	bl UnitPpAdd
 	movs r1, #35
 	negs r1, r1
 	movs r0, #6
-	bl UnitEpAdd
+	bl UnitPpAdd
 	movs r0, #4
 	bl UnitGet
 	movs r2, #160

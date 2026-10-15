@@ -27,7 +27,7 @@ s32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];
     struct SaveSummary *summary;
-    struct BtlUnit *owner;
+    struct BattleUnit *owner;
     u8 *source;
     u8 *destination;
     u32 *word;

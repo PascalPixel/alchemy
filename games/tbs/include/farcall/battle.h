@@ -25,7 +25,7 @@ FAR_SLOT(BattleMotion_InitializeObject)
 FAR_CALL(BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion, void,
 	(s32 id, s32 variant))
 FAR_CALL(BattleParty_ListActorIdsFar, BattleParty_ListActorIds, s32, (s32 groups, u16 *dst))
-FAR_CALL(GetBattleObjectSlotFar, BtlObjGet, struct BtlObj *, (s32 object_id))
+FAR_CALL(GetBattleObjectSlotFar, BattleObjGet, struct BattleObj *, (s32 object_id))
 FAR_CALL(Battle_RunEncounterFar, Battle_RunEncounter, s32, (s32 enemy_group))
 FAR_CALL(
 	BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition, s32, (s32 id, s32 *projected))
@@ -47,7 +47,7 @@ FAR_CALL(BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette, s32, (s32 
 FAR_CALL(BattlePlacement_UpdateTimedEntriesTwentyTimesFar,
 	BattlePlacement_UpdateTimedEntriesTwentyTimes, s32, (void))
 FAR_CALL(DebugParty_LoadPresetFar, DebugParty_LoadPreset, s32, (s32 preset))
-FAR_CALL(BattleActor_CommitPlacementFar, BtlObjPut, void, (void))
+FAR_CALL(BattleActor_CommitPlacementFar, BattleObjPut, void, (void))
 FAR_SLOT(ReleaseBattleObjectRecords)
 FAR_CALL(
 	BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt, s32, (s32 x, s32 y))

@@ -1,8 +1,8 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 void Func_02000280(void)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     u8 *state = &Object_GetById(14)->state;
     s32 y;
 

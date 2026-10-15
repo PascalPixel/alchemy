@@ -24,11 +24,11 @@ const struct SceneRegion *Scene_GetRegions(void)
 {
     s16 scene = gPartyState.scene;
 
-    if (scene == (s32)&SceneId_Kabe9)
+    if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
         return (const struct SceneRegion *)Data_02003df4;
-    if (scene == (s32)&SceneId_Kabe10)
+    if (scene == (s32)&SceneId_ShrineOfTheSeaGod10)
         return (const struct SceneRegion *)Data_02003e14;
-    if (scene == (s32)&SceneId_Kabe11)
+    if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
         return (const struct SceneRegion *)Data_02003e44;
     return 0;
 }

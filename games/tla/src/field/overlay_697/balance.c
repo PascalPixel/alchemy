@@ -3,11 +3,11 @@
 
 extern u8 gSceneState[];
 
-void ColossoLogRollingStage_Idle(void)
+void TrialRoad_Idle(void)
 {
 }
 
-void ColossoLogRollingStage_SetBalanceStateReady(void)
+void TrialRoad_SetBalanceStateReady(void)
 {
     u16 *state = (u16 *)gSceneState;
     /* FAKEMATCH: the temporary builds 9 with movs instead of a halfword pool load. */
@@ -16,7 +16,7 @@ void ColossoLogRollingStage_SetBalanceStateReady(void)
     *state = ready;
 }
 
-void ColossoLogRollingStage_WaitForBalanceState(void)
+void TrialRoad_WaitForBalanceState(void)
 {
     s16 *state = (s16 *)gSceneState;
 

@@ -12,10 +12,10 @@
 #include "animspr.h"
 #include "object_dispatch.h"
 #include "battle.h"
-#include "btldisp.h"
-#include "btlpty.h"
-#include "btlobj.h"
-#include "btlwork.h"
+#include "battle_display.h"
+#include "battle_party.h"
+#include "battle_obj.h"
+#include "battle_work.h"
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "system.h"
@@ -48,7 +48,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action)
         WaitFrames(40);
     }
     work.kind = action->parameter;
-    work.initial_value = action->rng;
+    work.initial_value = action->range;
     work.actor = action->unit_id;
     work.first_target = action->target;
     if (BattleObject_IsValidId(work.actor) < 0)
@@ -57,8 +57,8 @@ s32 Func_0811ca54(struct BattleActionRecord *action)
         work.count = BattleParty_ListLivingUnits(2, (u16 *)work.actors);
     else
         work.count = BattleParty_ListLivingUnits(1, (u16 *)work.actors);
-    PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st & ~1);
-    object = BtlObjGet(work.actor)->object;
+    PartyStatusDrawFar(Ram_HeapSlots->battle_work->party_status & ~1);
+    object = BattleObjGet(work.actor)->object;
     Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
     if ((u16)action->target <= 7)
@@ -75,7 +75,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action)
     }
     for (i = 0; i != work.count; i++)
     {
-        struct DispatchChild *animation = BtlObjGet(work.actors[i])->object->records;
+        struct DispatchChild *animation = BattleObjGet(work.actors[i])->object->records;
         s32 j;
 
         for (j = 0; j != animation->count - 1; j++)

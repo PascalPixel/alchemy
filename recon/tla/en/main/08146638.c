@@ -15,7 +15,7 @@
 #include "mem.h"
 #include "effect_step.h"
 #include "battle_effect_work.h"
-#include "battle_efx.h"
+#include "battle_effect.h"
 #include "object_runtime.h"
 
 // The battle effect work as the canvas effects use it.
@@ -78,7 +78,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-void Func_08146638(struct BattleEffectArgument *efx)
+void Func_08146638(struct BattleEffectArgument *effect)
 {
     struct EffectPosition pos;
     struct EffectPosition base;
@@ -106,7 +106,7 @@ void Func_08146638(struct BattleEffectArgument *efx)
     canvas = Ram_HeapSlots->battle_fx_work[1];
     graphics = Ram_HeapSlots->unknown_64[0];
     camera = Ram_HeapSlots->camera_work;
-    caster = GetBattleObjectSlotFar(efx->actor)->object;
+    caster = GetBattleObjectSlotFar(effect->actor)->object;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -118,8 +118,8 @@ void Func_08146638(struct BattleEffectArgument *efx)
     draw[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
-    source = GetBattleObjectSlotFar(efx->actor)->object;
-    target = GetBattleObjectSlotFar(efx->actors[0])->object;
+    source = GetBattleObjectSlotFar(effect->actor)->object;
+    target = GetBattleObjectSlotFar(effect->actors[0])->object;
     for (i = 0, point = work->particles; i != 3; i++)
     {
         point->x = source->x;
@@ -147,7 +147,7 @@ void Func_08146638(struct BattleEffectArgument *efx)
                 speed = 128;
             else
                 speed = 0x300 - frame * 16;
-            if (efx->side == 0)
+            if (effect->side == 0)
                 view->yaw -= speed;
             else
                 view->yaw += speed;
@@ -230,7 +230,7 @@ void Func_08146638(struct BattleEffectArgument *efx)
                     else
                     {
                         Audio_PlayCue(134);
-                        Func_0814cd48(efx->actors[0], 7, 5, 0, 8);
+                        Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
                     }
                     work->shakeFrames = 4;
                 }

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "motobj.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 #define Object_ResetMotion ((void (*)(struct MotionObject *))Object_ResetMotion)
 #define Object_SetPosition ((void (*)(struct MotionObject *, s32, s32, s32))Object_SetPosition)
@@ -19,10 +19,10 @@
 s32 ArcTan2(s32, s32);
 
 
-struct BtlObj *BtlObjGet(s32 object_id)
+struct BattleObj *BattleObjGet(s32 object_id)
 {
-    struct BtlWork *work = Ram_HeapSlots->battle_work;
-    struct BtlObj *slots = work->slots;
+    struct BattleWork *work = Ram_HeapSlots->battle_work;
+    struct BattleObj *slots = work->slots;
     s32 index;
 
     if (object_id > 7) {
@@ -39,10 +39,10 @@ void ObjMotRst(s32 slot_id)
 {
     s32 z;
     s32 zero;
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
 
-    slot = BtlObjGet(slot_id);
+    slot = BattleObjGet(slot_id);
     object = slot->object;
     zero = 0;
     object->acceleration = 0x20000;
@@ -63,10 +63,10 @@ void ObjMotRst(s32 slot_id)
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
 
-    slot = BtlObjGet(object_id);
+    slot = BattleObjGet(object_id);
     object = slot->object;
     object->acceleration = 0x20000;
     object->speed_limit = 0x80000;

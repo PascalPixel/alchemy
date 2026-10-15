@@ -196,8 +196,8 @@ gMapAnimationPages:
 	.global gMapWork
 gMapWork:
 	.space 0x00000004
-	.global BtlWk
-BtlWk:
+	.global gBattleWork
+gBattleWork:
 	.space 0x0000000c
 	.global gCameraWork
 gCameraWork:
@@ -281,8 +281,8 @@ gLinkCountdownWork:
 	.global gMenuSelectWork
 gMenuSelectWork:
 	.space 0x00000004
-	.global gKorosseoWork
-gKorosseoWork:
+	.global gColossoWork
+gColossoWork:
 	.space 0x00000018
 	.global gDebugMode
 gDebugMode:

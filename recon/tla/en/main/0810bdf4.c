@@ -2,7 +2,7 @@
  * in r3, the 96 in r0, the counter in r1 and the pointer in r2; the draft
  * allocates r2, r3, r0 and r1. Tried: a walking pointer, an indexed base
  * pointer, an asm barrier on the work. */
-#include "itemicon.h"
+#include "item_icon.h"
 
 void Func_0810bdf4(void)
 {

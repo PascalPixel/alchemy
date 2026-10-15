@@ -3,16 +3,16 @@
 
 #include "unit/game/game.h"
 #include "types.h"
-#include "ownerval.h"
+#include "owner_value.h"
 #include "layout_guard.h"
 
-struct BtlUnit;
+struct BattleUnit;
 
 struct CharacterDefinition
 {
 	u8	unknown_00[0x50];
 	s16 hp[6];
-	s16 ep[6];
+	s16 pp[6];
 	u16 atk[6];
 	u16 def[6];
 	u16 agi[6];
@@ -36,7 +36,7 @@ struct ClassDefinition
 	long				series;
 	u8					required[4];
 	u8					hp;
-	u8					ep;
+	u8					pp;
 	u8					atk;
 	u8					def;
 	u8					agi;
@@ -50,7 +50,7 @@ struct DjinnDefinition
 {
 	u8 unknown_00[4];
 	s8 hp;
-	s8 ep;
+	s8 pp;
 	s8 atk;
 	s8 def;
 	s8 agi;
@@ -63,14 +63,14 @@ struct EnemyDefinition
 	u8	unknown_00[15];
 	u8	level;
 	u16 hp;
-	u16 ep;
+	u16 pp;
 	u16 atk;
 	u16 def;
 	u16 agi;
 	u8	luck;
 	u8	turns;
 	u8	hp_regen;
-	u8	ep_regen;
+	u8	pp_regen;
 	u8	unknown_1e[2];
 	u32 rewards;
 	u8	unknown_24[4];
@@ -93,7 +93,7 @@ struct LevelUpResult
 	s16 level;
 	u16 ability;
 	u16 hp;
-	u16 ep;
+	u16 pp;
 	u16 atk;
 	u16 def;
 	u16 agi;

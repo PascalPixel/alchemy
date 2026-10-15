@@ -7,7 +7,7 @@ FAR_CALL(UiWindow_CreateFar, UiWindow_Create, struct UiWindow *,
 	(s32 x, s32 y, s32 width, s32 height, s32 attrs))
 #endif
 FAR_CALL(UiWork_FinalizeFar, UiWork_Finalize, void, (struct UiWindow * work, s32 release))
-FAR_CALL(Ui_AdjustValueWithoutLimitFar, Ui_AdjustValueWithoutLimit, void, (s32 mes, s32 buf))
+FAR_CALL(Ui_AdjustValueWithoutLimitFar, Ui_AdjustValueWithoutLimit, void, (s32 message, s32 buf))
 FAR_CALL(
 	UiText_DecodeMessageFar, UiText_DecodeMessage, void, (s32 message, u16 *text, s32 capacity))
 FAR_CALL(UiText_CopyMessageStringFar, UiText_CopyMessageString, s32,
@@ -65,7 +65,7 @@ FAR_CALL(UiText_GetResourceDimensionsAltFar, UiText_GetResourceDimensionsAlt, s3
 FAR_CALL(UiWork_ClearValueNameTablesFar, UiWork_ClearValueNameTables, void, (void))
 FAR_CALL(UiWork_PushValueSlotFar, UiWork_PushValueSlot, void, (u32 value, u32 kind))
 FAR_CALL(UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds, void, (s32 flags))
-FAR_CALL(PtyStDrawFar, PtyStDraw, void, (s32 flags))
+FAR_CALL(PartyStatusDrawFar, PartyStatusDraw, void, (s32 flags))
 FAR_CALL(UiWork_FinalizeAndReleaseBlock16Far, UiWork_FinalizeAndReleaseBlock16, void, (void))
 FAR_CALL(UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore, void, (void))
 FAR_CALL(UiWork_DrainPendingFar, UiWork_DrainPending, void, (s32 unused))
@@ -151,14 +151,14 @@ FAR_CALL(PaletteGlow_UpdateFar, PaletteGlow_Update, void, (s32 phase, s32 bright
 FAR_SLOT(Menu_RunWorkspaceOptions)
 FAR_CALL(Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop, s32, ())
 FAR_SLOT(UiWindow_FillScreenBlockRect)
-FAR_CALL(Menu_SelectEntry11To14Far, Menu_SelectEntry11To14, s32, (s32 sel))
-FAR_CALL(Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c, s32, (s32 sel))
+FAR_CALL(Menu_SelectEntry11To14Far, Menu_SelectEntry11To14, s32, (s32 selection))
+FAR_CALL(Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c, s32, (s32 selection))
 FAR_CALL(
-	Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection, s32, (s32 low, s32 mes, s32 w, s32 sel))
-FAR_CALL(Menu_SelectEntry20To21Far, Menu_SelectEntry20To21, s32, (s32 sel))
+	Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection, s32, (s32 low, s32 message, s32 w, s32 selection))
+FAR_CALL(Menu_SelectEntry20To21Far, Menu_SelectEntry20To21, s32, (s32 selection))
 FAR_CALL(PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose, s32, (s32 unused))
 FAR_SLOT(RenderResource_LoadTableEntry)
-FAR_CALL(Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt, s32, (s32 x, s32 y, s32 sel))
+FAR_CALL(Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt, s32, (s32 x, s32 y, s32 selection))
 FAR_CALL(Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot, s32, (void))
 FAR_CALL(
 	UiText_MeasureResourceEntriesFar, UiText_MeasureResourceEntries, void, (s32 no, s32 *x, s32 *y))

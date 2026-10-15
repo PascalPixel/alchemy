@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "owner_state.h"
-#include "btlpty.h"
+#include "battle_party.h"
 #include "b5_context.h"
 
 struct PlacementList {
@@ -30,7 +30,7 @@ u32 BattleEventRuntime_Reset(void);
 
 s32 sub_08124af8(s32 id)
 {
-    struct BtlUnit *unit = UnitGet(id);
+    struct BattleUnit *unit = UnitGet(id);
     u8 *count = &unit->refrain;
 
     if (*count != 0) {
@@ -48,18 +48,18 @@ s32 sub_08124af8(s32 id)
             hp = max;
         gain = hp - before;
         if (gain != 0) {
-            BtlEvPush(0, id);
+            BattleEvPush(0, id);
             if (hp == unit->max_hp) {
-                BtlEvPush(4, (u32)&MsgHpFull);
+                BattleEvPush(4, (u32)&MsgHpFull);
             } else {
                 {
                     u32 opcode = 1;
 
                     /* FAKEMATCH: the barrier builds the opcode before the gain is copied to its argument register, as the native does; plain, the copy comes first (one reordered pair, differ 2). */
                     asm volatile("" : "+l"(opcode));
-                    BtlEvPush(opcode, gain);
+                    BattleEvPush(opcode, gain);
                 }
-                BtlEvPush(4, (u32)&MsgHpRecover);
+                BattleEvPush(4, (u32)&MsgHpRecover);
             }
             unit->hp = hp;
             UnitRatioFar(id);
@@ -73,7 +73,7 @@ s32 sub_08124af8(s32 id)
 
 s32 BattleUnit_TickReflect(s32 id)
 {
-    u8 *value = (u8 *)&((struct BtlUnit *)UnitGet(id))->reflect;
+    u8 *value = (u8 *)&((struct BattleUnit *)UnitGet(id))->reflect;
     if (*value != 0) {
         (*value)--;
         if (*value == 0) {
@@ -85,7 +85,7 @@ s32 BattleUnit_TickReflect(s32 id)
 
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
-    struct BtlUnit *unit = UnitGet(id);
+    struct BattleUnit *unit = UnitGet(id);
     u8 *value = &unit->agi_cnt;
     if (*value != 0) {
         (*value)--;
@@ -114,7 +114,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->turns > 0 &&
-                ((struct BtlUnit *)UnitGet(timed_entry->unit_id))->hp != 0) {
+                ((struct BattleUnit *)UnitGet(timed_entry->unit_id))->hp != 0) {
                 timed_entry->turns--;
             }
             index++;

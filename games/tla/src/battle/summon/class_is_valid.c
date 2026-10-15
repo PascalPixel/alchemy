@@ -15,7 +15,7 @@
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
-    return BtlObjGet(id)->palette;
+    return BattleObjGet(id)->palette;
 }
 
 struct Layout {
@@ -23,7 +23,7 @@ struct Layout {
     s16 field[6];
 };
 
-s32 EnmChk(s32 arg0)
+s32 EnemyCheck(s32 arg0)
 {
     s32 retval;
     s32 i;

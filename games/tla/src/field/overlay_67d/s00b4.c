@@ -37,7 +37,7 @@ s32 PartyInventory_FindOwner(s32 item);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
 
-static inline s32 FlagChk(s32 flag)
+static inline s32 FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -69,7 +69,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames)
 
 const u8 *Func_020000b4(void)
 {
-    if (FlagChk(0x927))
+    if (FlagCheck(0x927))
         return Data_02002d80;
     if (gPartyState.entrance == 7)
         return Data_02002cf0;
@@ -78,7 +78,7 @@ const u8 *Func_020000b4(void)
 
 const u8 *Func_020000f0(void)
 {
-    if (FlagChk(0x927))
+    if (FlagCheck(0x927))
         return Data_0200323c;
     if (gPartyState.entrance == 7)
         return Data_02003164;
@@ -96,7 +96,7 @@ void Func_0200012c(s32 actor)
         } else {
             Func_020021c4();
             Func_020022bc(0);
-            if (FlagChk(0x927)) {
+            if (FlagCheck(0x927)) {
                 Func_02002244((s32)MsgNowThatPeace);
                 Func_02002254(12, 0);
             } else {
@@ -119,7 +119,7 @@ void Func_020001a8(s32 actor)
         } else {
             Func_020021c4();
             Func_020022bc(0);
-            if (FlagChk(0x927))
+            if (FlagCheck(0x927))
                 Func_02002244((s32)MsgBriggsFromChampa);
             else
                 Func_02002244((s32)MsgOfCourseI);
@@ -140,7 +140,7 @@ void Func_02000220(s32 actor)
         } else {
             Func_020021c4();
             Func_020022bc(0);
-            if (FlagChk(0x927))
+            if (FlagCheck(0x927))
                 Func_02002244((s32)MsgYouMustSee);
             else
                 Func_02002244((s32)MsgIzumoSLeaders);
@@ -154,7 +154,7 @@ void Func_02000298(void)
 {
     Func_020021c4();
     Func_020022bc(0);
-    if (!FlagChk(0x922)) {
+    if (!FlagCheck(0x922)) {
         Func_02002244((s32)MsgSusaSNot);
         Func_02002254(8, 0);
         Battle_WaitMode0(30);
@@ -193,7 +193,7 @@ void Func_02000378(void)
     Func_020021c4();
     Func_020022bc(0);
     ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
-    if (FlagChk(0x92c)) {
+    if (FlagCheck(0x92c)) {
         Func_02002244((s32)MsgWithThisDancing);
         Func_02002254(15, 0);
     } else {
@@ -231,13 +231,13 @@ void Func_02000458(void)
     Func_020021c4();
     Func_020022bc(0);
     ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
-    if (FlagChk(0x92b)) {
+    if (FlagCheck(0x92b)) {
         Func_02002244((s32)MsgTryingAgainWhat);
         Func_02002254(15, 0);
     } else {
         Func_02002244((s32)MsgAndWhatWere);
         Func_02002254(15, 0);
-        if (FlagChk(0x923)) {
+        if (FlagCheck(0x923)) {
             LeaderAnimate(256, 30);
             Func_0200226c(15, 259, 30);
             Func_02002254(15, 0);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "mem.h"
-#include "disptran.h"
+#include "display_transition.h"
 #include "dma.h"
 #include "system.h"
 #include "callback_scheduler.h"

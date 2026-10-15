@@ -5,7 +5,7 @@
  * the layer offset to the map (ldr r5 before adds r6), and in the loop it
  * increments the counter before it loads the layer's y. alchemy permute for
  * 3 minutes found nothing closer. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 #include "call.h"
 
 void Func_02003988(void);
@@ -14,17 +14,17 @@ void Event_StartScreenTransition(void);
 
 void Func_02000ce8(void)
 {
-    struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
-    struct KabeMapLayer *layer = &map->layers[1];
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[1];
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     u32 i;
 
     Func_020039d8();
     Func_02003b08(0);
     Func_02003b48(244);
-    Kabe_CamMove(-1, -1, -1, 0);
-    Kabe_CamMove(172 << 17, -1, 248 << 16, 0);
-    Kabe_CopyRect(62, 77, 62, 18, 19, 6);
+    ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+    ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
+    ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
     WaitFrames(1);
     ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
     leader->motion_flags = 0;
@@ -33,7 +33,7 @@ void Func_02000ce8(void)
     layer->y += -50 << 16;
     Func_02003988();
     WaitFrames(1);
-    ((struct KabeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 515;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 515;
     Event_StartScreenTransition();
     Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
     i = 0;
@@ -48,9 +48,9 @@ loop:
     Func_02003b48(288);
     Func_02003b48(390);
     Call3((void (*)())Func_020039b8, 0, 0, 0);
-    ((struct KabeEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->event_work)->screen_effect = 521;
     Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
-    Kabe_CopyRect(62, 69, 62, 18, 19, 6);
+    ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
     WaitFrames(1);
     Func_020039e0();
 }

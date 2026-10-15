@@ -18,16 +18,16 @@ void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 //--------------------------------------------------------------------------
 // わざを覚えさせ、効果音とメッセージを出して、送られるまで待つ
 // unit : キャラクター番号（メッセージの名前 1）
-// abil : わざの番号（メッセージのわざ 4）
+// ability : わざの番号（メッセージのわざ 4）
 //--------------------------------------------------------------------------
-void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
+void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability)
 {
-	// 引数なしの宣言だが、r0・r1 の unit・abil がそのまま渡る
+	// 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
 	OwnerAction_AddFar();
 #if GAME_TLA
 	Audio_PlayCue(83);
 	UiText_DrawQuantity(unit, 1);
-	UiText_DrawQuantity(abil, 4);
+	UiText_DrawQuantity(ability, 4);
 #endif
 	UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }

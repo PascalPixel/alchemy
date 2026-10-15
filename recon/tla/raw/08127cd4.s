@@ -422,7 +422,7 @@ Func_08127cd4:
 	movs r1, #1
 	adds r5, r2, r6
 	ldrh r0, [r5]
-	bl EnmCntDec
+	bl EnemyCountDecrement
 	movs r3, #128
 	adds r4, r0, #0
 	lsls r3, r3, #8
@@ -431,7 +431,7 @@ Func_08127cd4:
 	beq .L_0812800a
 	ldrh r0, [r5]
 	str r4, [sp, #0]
-	bl EnmCntClr
+	bl EnemyCountClear
 	ldr r4, [sp, #0]
 .L_0812800a:
 	movs r2, #254
@@ -442,7 +442,7 @@ Func_08127cd4:
 	ldrh r1, [r5]
 	ands r2, r4
 	adds r0, r6, #0
-	bl BtlUnitSetFar
+	bl BattleUnitSetFar
 	adds r0, r6, #0
 	bl UnitGet
 	ldr r1, [sp, #32]

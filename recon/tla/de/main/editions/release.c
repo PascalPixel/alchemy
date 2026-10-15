@@ -4,12 +4,12 @@
 void ResourceObject_ReleaseFar(void *);
 void ReleaseBattleObjectRecords(s32 object_id)
 {
-    struct BtlObj *slot;
+    struct BattleObj *slot;
     struct MotionObject *object;
     s32 record_index;
     void *record;
 
-    slot = BtlObjGet(object_id);
+    slot = BattleObjGet(object_id);
     if (slot != NULL) {
         object = slot->object;
         if (object != NULL) {

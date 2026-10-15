@@ -5,7 +5,7 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "eventwrk.h"
+#include "event_work.h"
 #include "scene_ids.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);

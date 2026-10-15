@@ -48,9 +48,9 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, 
         height = 20 - y;
 
     if (width > 0 && height > 0) {
-        s32 y_ofs = y << 6;
-        s32 x_ofs = x << 1;
-        s32 offset = y_ofs + ((s32)work + x_ofs);
+        s32 y_offset = y << 6;
+        s32 x_offset = x << 1;
+        s32 offset = y_offset + ((s32)work + x_offset);
         do {
             s32 remaining = width;
             u16 *cell = (u16 *)(offset + 8);

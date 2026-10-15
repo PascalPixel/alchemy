@@ -6,7 +6,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "btlsmn.h"
+#include "battle_summon.h"
 #include "types.h"
 
 

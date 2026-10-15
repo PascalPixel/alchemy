@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "btlsys.h"
+#include "battle_system.h"
 #include "owner_state.h"
 
 #define Item_Get ((u8 * (*)(u16))Item_Get)
@@ -16,16 +16,16 @@
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     unit = UnitGet(id);
     if (mode == 0) {
         unit->hp = unit->max_hp;
         UnitRatioFar(id);
     } else if (mode == 1) {
-        unit->doku = 0;
+        unit->poison = 0;
     } else if (mode == 2) {
-        unit->akuryo = 0;
+        unit->haunt = 0;
     } else if (mode == 3) {
         s32 i;
 

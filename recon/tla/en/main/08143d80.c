@@ -12,8 +12,8 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "btlwork.h"
-#include "btldisp.h"
+#include "battle_work.h"
+#include "battle_display.h"
 #include "bg_scroll.h"
 
 void Func_081434d8(void);
@@ -32,7 +32,7 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value)
 void BattleFx_SetupCanvasTileMap(void)
 {
     void *canvas = Ram_HeapSlots->battle_fx_work[1];
-    struct BtlWork *screen = Ram_HeapSlots->battle_work;
+    struct BattleWork *screen = Ram_HeapSlots->battle_work;
     struct BattleBackgroundView *layer = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
     s32 row;
     s32 col;

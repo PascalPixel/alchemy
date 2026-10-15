@@ -101,17 +101,17 @@ void Func_02000af4(void)
     Func_020041cc(0x10000, 1);
     Func_020041dc(16);
     if (GameFlag_Test(0x9b2))
-        Ov694_MesSet((s32)MsgScene694No164);
+        Ov694_MessageSet((s32)MsgScene694No164);
     else
-        Ov694_MesSet((s32)MsgScene694No65);
+        Ov694_MessageSet((s32)MsgScene694No65);
     Ov694_ObjVar(17, 2);
-    Ov694_MesPut(17, 0);
+    Ov694_MessagePut(17, 0);
     Ov694_ObjMode(17, 1);
     Ov694_Jump(14, 259, 0);
     Ov694_ObjTurn(14, 0x8000, 20);
-    Ov694_MesPut(14, 0);
+    Ov694_MessagePut(14, 0);
     Ov694_ObjFace(15, 0);
-    Ov694_MesPut(15, 0);
+    Ov694_MessagePut(15, 0);
     Ov694_ObjMode(14, 3);
     Ov694_ObjModeWait(15, 3);
     Ov694_ObjTurn(15, 0xd000, 0);

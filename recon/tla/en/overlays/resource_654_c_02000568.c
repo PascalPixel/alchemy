@@ -1,18 +1,18 @@
 /* Near miss, differ 12: the layer pointers and the -0x8000 constant are
  * scheduled a few instructions away from the listing; same instructions. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 
 void Func_02000568(void)
 {
-    struct KabeMapWork *map = (struct KabeMapWork *)Ram_HeapSlots->map_work;
-    struct KabeMapLayer *layer0 = &map->layers[0];
-    struct KabeMapLayer *layer1 = &map->layers[1];
-    struct KabeMapLayer *layer2 = &map->layers[2];
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
-    struct KabeObject *camera = Func_02003ad0();
-    struct KabeObject *object8 = Object_GetById(8);
-    struct KabeObject *object9 = Object_GetById(9);
-    struct KabeObject *object10 = Object_GetById(10);
+    struct ShrineOfTheSeaGodMapWork *map = (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->map_work;
+    struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
+    struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
+    struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *camera = Func_02003ad0();
+    struct ShrineOfTheSeaGodObject *object8 = Object_GetById(8);
+    struct ShrineOfTheSeaGodObject *object9 = Object_GetById(9);
+    struct ShrineOfTheSeaGodObject *object10 = Object_GetById(10);
 
     layer0->y += -0x8000;
     layer1->y += 0x8000;

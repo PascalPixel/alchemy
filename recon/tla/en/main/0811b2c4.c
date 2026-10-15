@@ -3,15 +3,15 @@
  * leading empty slots (254) and lays out up to the last live one. Swapping the two initialisers does not move the load. */
 #include "types.h"
 #include "ram_buffer.h"
-#include "btlwork.h"
+#include "battle_work.h"
 #include "battle_session.h"
 
 void Func_0811b180(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-struct BtlObj *BtlObjGet(s32 id);
+struct BattleObj *BattleObjGet(s32 id);
 
-void EnmUpd(void)
+void EnemyUpdate(void)
 {
-    struct BtlWork *work = Ram_HeapSlots->battle_work;
+    struct BattleWork *work = Ram_HeapSlots->battle_work;
     u16 unit_ids[14];
     s32 x[6];
     s32 z[6];
@@ -20,14 +20,14 @@ void EnmUpd(void)
     s32 i;
     s32 total;
 
-    for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++) {
-        if (work->enm_no[i] == 0xfe) {
+    for (i = 0; i < 6 && work->enemy_ids[i] != 0xff; i++) {
+        if (work->enemy_ids[i] == 0xfe) {
             if (count == 0)
                 continue;
         } else {
             last = count;
         }
-        unit_ids[count] = work->enm_no[i];
+        unit_ids[count] = work->enemy_ids[i];
         count++;
     }
     total = last + 1;
@@ -36,7 +36,7 @@ void EnmUpd(void)
         s32 id = unit_ids[i];
 
         if (id != 0xfe) {
-            struct BtlObj *object = BtlObjGet(id);
+            struct BattleObj *object = BattleObjGet(id);
 
             object->anchor_x = x[i] << 16;
             object->anchor_z = z[i] << 16;

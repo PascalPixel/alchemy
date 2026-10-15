@@ -1,11 +1,11 @@
 #include "types.h"
 #include "motobj.h"
 #include "battle_session.h"
-#include "btldisp.h"
+#include "battle_display.h"
 #include "fixed_point_position.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "btlwork.h"
+#include "battle_work.h"
 
 void Object_Destroy(void *object);
 void Render_ResetTransformState(void);
@@ -34,11 +34,11 @@ s32 Camera_ApplyTransformByFlag(void)
     }
 }
 
-// BtlObjGet, as the native expands it here.
-static __inline__ struct BtlObj *BattleObject_FindSlot(s32 id)
+// BattleObjGet, as the native expands it here.
+static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id)
 {
     u8 *work = (u8 *)Ram_HeapSlots->battle_work;
-    struct BtlObj *slots = ((struct BtlWork *)work)->slots;
+    struct BattleObj *slots = ((struct BattleWork *)work)->slots;
 
     if (id > 7)
         id -= 0x78;

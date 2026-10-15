@@ -1,10 +1,10 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 extern s32 Data_02004a18[];
 
-void Func_0200142c(struct KabeObject *object)
+void Func_0200142c(struct ShrineOfTheSeaGodObject *object)
 {
-    struct KabeObject *leader = Object_GetById(gPartyState.current_owner);
+    struct ShrineOfTheSeaGodObject *leader = Object_GetById(gPartyState.current_owner);
     s32 *offset = Data_02004a18;
 
     object->x = leader->x + offset[0];

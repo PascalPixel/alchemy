@@ -3000,6 +3000,11 @@ struct MapScrollBounds {
   s32 bottom;
 };
 
+// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
+// to 120 pixels inside the map's left and right edges and a band above and
+// below the leader. It closes an eighth of the distance a frame, at most
+// its speed limit, and a quarter of a large height difference; when action
+// is set it jumps there at once.
 s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
   struct ObjectRuntime *leader;
   struct MapScrollBounds *bounds;
@@ -3084,6 +3089,9 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
 extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 
+// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
+// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
+// within 16 it stands (animation 1) and waits for the next frame.
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
   s32 len;
   s32 mz;
@@ -3118,6 +3126,11 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
   return 0;
 }
 
+// SC_WANDER(base, range, limit): walks to a random point base to base +
+// range away, within 90 degrees either side of its heading (scriptValue),
+// that no solid object or wall blocks, with clear ground 8 pixels further at
+// 45 degrees either side, and within limit pixels of home. After seven
+// failed tries it turns around (turnedBack) and waits for the next frame.
 s32 Object_Wander(struct ScriptObjectRuntime *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
@@ -3188,6 +3201,9 @@ retry:
   return 1;
 }
 
+// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
+// more ground around the point, while it is within limit pixels of home;
+// outside that, or when no point works, it heads back towards home.
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
@@ -3351,6 +3367,7 @@ extern OperandFunc gScript_OperandHandlerTable[];
 
 DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
+// Work value SW_CURSOR: sets, adds to or compares the script cursor.
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3368,6 +3385,7 @@ DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
 DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
 DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
 
+// Work value SW_RADIUS: sets, adds to or compares the object's radius.
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3406,6 +3424,7 @@ DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
 DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
 
+// Work value SW_WAIT: sets, adds to or compares the wait counter.
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
                                    s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -3441,14 +3460,17 @@ static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation) {
   return 1;
 }
 
+// SC_SET(w, v): sets work value w to v.
 s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_SET);
 }
 
+// SC_ADD(w, v): adds v to work value w.
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_ADD);
 }
 
+// SC_CMP(w, v): tests whether work value w equals v.
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
   return ApplyOperand(work, SCRIPT_OPERAND_COMPARE);
 }
@@ -3457,6 +3479,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
+// Stores value in the word that the object's unk6c points at.
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
   struct ObjectRuntime *object = raw;
 
@@ -3472,6 +3495,11 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
 #define ASSIGNED_KEYS gKeysHeld
 #endif
 
+// Handles a shortcut key's assignment: the top two bits of value choose
+// what it requests (0 a Psynergy, 1 the other kind, stored in unk180) and
+// the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
+// R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
+// request.
 u32 Field_StoreAssignedKeyValue(u32 value) {
   u32 selector = value >> 14;
   u32 request = 0x3FFF & value;
@@ -3499,6 +3527,9 @@ u32 Field_StoreAssignedKeyValue(u32 value) {
   return request;
 }
 
+// Checks the keys the player has configured: Select, A and Start set their
+// flag in the event work and return 1; the two shortcut keys pass on their
+// assignment (Field_StoreAssignedKeyValue). Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct EventRuntime *work = gEventWork;
   s32 result = 0;
@@ -3522,15 +3553,17 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
+// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
+// with radii radiusA and radiusB (pixels); -1 otherwise.
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
   const struct FieldPosition *first = (const struct FieldPosition *)a;
   const struct FieldPosition *second = (const struct FieldPosition *)b;
-  const s32 *first_word = &first->x;
-  const s32 *second_word = &second->x;
-  s32 dx = (*first_word++ - *second_word++) >> 16;
-  s32 dy = (*first_word++ - *second_word++) >> 16;
-  s32 dz = (*first_word - *second_word) >> 16;
-  s32 radius = radius_a + radius_b;
+  const s32 *firstCoord = &first->x;
+  const s32 *secondCoord = &second->x;
+  s32 dx = (*firstCoord++ - *secondCoord++) >> 16;
+  s32 dy = (*firstCoord++ - *secondCoord++) >> 16;
+  s32 dz = (*firstCoord - *secondCoord) >> 16;
+  s32 radius = radiusA + radiusB;
 
   if (!(dx > 0x400000) && !(dz > 0x400000) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
@@ -3544,6 +3577,10 @@ struct WorldMapSprite {
   u8 *shadow;
 };
 
+// SC_PLAYER: moves the player on the field by the direction pad: walking or
+// running, sliding around walls, pushing movable objects, turning, playing
+// the matching animation and leaving footprints. Also checks the configured
+// keys. Returns 1.
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -3562,6 +3599,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
 
   collision = 0;
   pushed = 0;
+  // Debug (flag 350): beep when fewer than 136 of the 512 resource blocks
+  // are free.
   if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
     s32 free;
     s32 block;
@@ -3606,6 +3645,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
         goto wait_d;
     }
   }
+  // Walk, or run with the dash keys (animation 5 instead of 2); flag 0x17f
+  // and B move much faster.
   if (gKeysHeld & gGameState.dashKeys) {
     object->speedLimit = 0x18000;
     object->acceleration = 0x4000;
@@ -3621,6 +3662,11 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
     mode = 5;
   }
 
+  // Step 8 pixels the way the direction pad points, when that step and the
+  // ones 22.5 and 45 degrees either side are clear (debug L walks through
+  // walls); otherwise try headings up to 67.5 degrees off. Bit 2 of
+  // collision means no direction is held, bit 0 that every heading is
+  // blocked.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
@@ -3709,6 +3755,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       collision |= 1;
 
     push_objects:
+      // Push the movable objects (unk59 bit 1) just ahead 4 pixels further,
+      // when they have room; any other solid object there blocks the step
+      // (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
       contact.y = object->y;
       contact.z = object->z;
@@ -3755,9 +3804,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
                 if (Map_CheckObjectStep(other, &testPosition) == 0) {
                   Vector_AddPolarOffset(0x4000, direction,
                                         (struct FieldPosition *)&other->x);
-                  other->targetX = -0x80000000;
-                  other->targetY = -0x80000000;
-                  other->targetZ = -0x80000000;
+                  other->targetX = TARGET_UNSET;
+                  other->targetY = TARGET_UNSET;
+                  other->targetZ = TARGET_UNSET;
                   pushed |= 1;
                   continue;
                 }
@@ -3773,6 +3822,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       }
     }
   }
+  // Count the blocked steps, and pick the animation: push (8), bump (9, or
+  // 22 when the leader is down) or walk / run.
   if (gEventWork != NULL) {
     if (collision & 3)
       gEventWork->blockedSteps++;
@@ -3792,10 +3843,12 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
     ObjectDispatch_ApplyArgumentToChildren(object, mode);
   }
 
+  // Blocked: stop and turn towards the pad, at most 0x1000 a frame.
+  // Otherwise move to the step, keeping the speed but along the heading.
   if (collision != 0) {
-    object->targetX = -0x80000000;
-    object->targetY = -0x80000000;
-    object->targetZ = -0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if (collision & 3) {
@@ -3825,6 +3878,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
       object->action--;
   }
 
+  // Leave a footprint (object kind 25) every 18 walking or 12 running
+  // frames on maps that show them, alternating left and right.
   rotation = (u16)angle;
   if (((struct MapScrollWork *)gMapWork[0])->footprints != 0 &&
       object->action == 0 && collision == 0) {
@@ -3872,6 +3927,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
 #define WORLD_PROBE_RADIUS 0x80000
 #endif
 
+// SC_WORLD: moves the player on the world map by the direction pad, as
+// SC_PLAYER does on the field, and turns the world map camera with the pad.
+// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object) {
   struct FieldPosition position;
 #if EDITION_INTERNATIONAL
@@ -4084,9 +4142,9 @@ update_object:
     ObjectDispatch_ApplyArgumentToChildren(object, mode);
 
   if (collision != 0) {
-    object->targetX = -0x80000000;
-    object->targetY = -0x80000000;
-    object->targetZ = -0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
@@ -4157,6 +4215,8 @@ update_object:
   return 1;
 }
 
+// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
+// Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(void *work) {
   struct ObjectRuntime *object = work;
 
@@ -4165,6 +4225,10 @@ s32 Field_CheckConfiguredKeysAndCount(void *work) {
   return 1;
 }
 
+// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
+// and down changing its height (y) rather than its depth. Refuses steps
+// into an occupied cell, across a change of collision code, or onto ground
+// too high (up) or too low (down). Returns 1.
 s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   struct FieldPosition pos;
   /* FAKEMATCH: never used; its 68 bytes are the native frame space no
@@ -4239,9 +4303,9 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   }
   ObjectDispatch_ApplyArgumentToChildren(object, motion);
   if (blocked != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -4252,20 +4316,21 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
   return 1;
 }
 
+// Remaps cnt bytes of buf in place through gRuntime_ByteRemapTable.
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt) {
-  s32 n;
-  u8 *p;
+  s32 remaining;
+  u8 *byte;
   u8 *table;
 
-  p = buf;
+  byte = buf;
   table = gRuntime_ByteRemapTable;
-  n = cnt - 1;
-  if (n != -1) {
+  remaining = cnt - 1;
+  if (remaining != -1) {
     do {
-      n -= 1;
-      *p = table[*p];
-      p += 1;
-    } while (n != -1);
+      remaining -= 1;
+      *byte = table[*byte];
+      byte += 1;
+    } while (remaining != -1);
   }
 }
 

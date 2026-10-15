@@ -18,7 +18,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ae/blink.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x02009f10)
         "*/games/tla/src/field/overlay_6ae/events_c.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x0200a9ac)
         "*/resource_6ae_overlay.o"(.text.x0200b210)
         "*/resource_6ae_overlay.o"(.text.x0200b26c)
         "*/games/tla/src/field/common/object/park_record.o"(.text)

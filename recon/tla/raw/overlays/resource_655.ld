@@ -71,7 +71,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x0200b69c)
         "*/resource_655_overlay.o"(.text.x0200b764)
         "*/games/tla/src/field/overlay_655/s390c.o"(.text)
-        "*/resource_655_overlay.o"(.text.x0200ba30)
+        "*/games/tla/src/field/overlay_655/s3a30.o"(.text)
         "*/games/tla/src/field/overlay_655/s3aa0.o"(.text)
         "*/games/tla/src/field/overlay_655/prepare.o"(.text)
         "*/games/tla/src/field/overlay_655/import.o"(.text)

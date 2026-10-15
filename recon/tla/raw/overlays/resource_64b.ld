@@ -44,7 +44,6 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x0200b600)
         "*/resource_64b_overlay.o"(.text.x0200b654)
         "*/resource_64b_overlay.o"(.text.x0200b6a8)
-        "*/resource_64b_overlay.o"(.text.x0200b8e4)
         "*/games/tla/src/field/world_map/s3960.o"(.text)
         "*/games/tla/src/field/world_map/cell_index.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200b9a8)

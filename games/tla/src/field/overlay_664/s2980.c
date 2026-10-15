@@ -1,20 +1,5 @@
 #include "ov664.h"
 
-extern s32 Data_02006c0c;
-extern s32 Data_020073dc;
-extern s32 Data_020073e0;
-extern s32 Data_020073e4;
-extern s32 Data_020073e8;
-
-s32 Func_02005f84(void);
-void Func_02005db4(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z);
-
-static inline void CopyCells(s32 src_x, s32 src_z, s32 width, s32 height, s32 dest_x, s32 dest_z)
-{
-    /* FAKEMATCH: forwarding through the inline puts every argument in a register before the stack arguments are stored, as the native does; called directly, the two stack constants share r3 and the second call loads its last argument first (differ 24). */
-    Func_02005db4(src_x, src_z, width, height, dest_x, dest_z);
-}
-
 // When the controlled object steps onto a new cell, saves the 1 by 3 cells
 // below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 void Func_02002980(void)

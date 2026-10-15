@@ -1,38 +1,38 @@
-#include "mem.h"
+/* Draft, differ 4 of 78: after the allocation the native shifts no1's index
+ * before it builds the field offset 0x604 (ldr r3, =table; lsls r5, #2; movs
+ * r2, #192; ldr r3, [r3, r5]; lsls r2, #3), this builds the offset first:
+ * sched2 ranks the offset's movs (priority 55) above the shift (54).
+ * Measured: the field through pointer locals (differ 4 to 38), a temporary
+ * for the table entry with a barrier after it (4, the copy of the allocation
+ * moving up) or a one-pass block (8), the store in a one-pass block (12), the
+ * index as a byte offset (4); three minutes of permuter each from the plain
+ * form and the barrier form found nothing better. */
 #include "types.h"
-#include "resource.h"
+#include "glyph.h"
+#include "mem.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+extern u8 *UiIcon_BaseGlyphPointers[];
+extern u8 *UiIcon_OverlayPointerTable[];
 
-typedef struct {
-    u8 pad0[0x400];
-    u8 f400;
-    u8 pad1[0x600 - 0x401];
-    s16 f600;
-    s16 f602;
-    s32 f604;
-} T;
-
-extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
-extern s32 UiIcon_FramePointerTable[];
-extern s32 UiIcon_OverlayPointerTable[];
+void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
+s32 Resource_FindFreeEntry(void);
+s32 VramBlock_LoadCached(s32 slot, s32 size, const void *data);
 
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 flag)
 {
-    T *work;
+    GlyphTransfer *work;
 
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    work->f604 = UiIcon_FramePointerTable[no1];
-    work->f600 = 2;
-    work->f602 = 2;
+    work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
+    work->encoded = UiIcon_BaseGlyphPointers[no1];
+    work->width = 2;
+    work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 0);
-    work->f604 = UiIcon_OverlayPointerTable[no0];
-    work->f600 = 2;
-    work->f602 = 2;
+    work->encoded = UiIcon_OverlayPointerTable[no0];
+    work->width = 2;
+    work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
-    if (flag == 0) {
+    if (flag == 0)
         *slot = Resource_FindFreeEntry();
-    }
-    *ret = VramBlock_LoadCached(*slot, 0x80, &work->f400);
-    Runtime_ReleaseHeapBlock(0x11);
+    *ret = VramBlock_LoadCached(*slot, 0x80, work->tiles);
+    Runtime_ReleaseHeapBlock(68);
 }

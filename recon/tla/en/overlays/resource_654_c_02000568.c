@@ -1,6 +1,6 @@
 /* Near miss, differ 12: the layer pointers and the -0x8000 constant are
  * scheduled a few instructions away from the listing; same instructions. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 
 void Func_02000568(void)
 {

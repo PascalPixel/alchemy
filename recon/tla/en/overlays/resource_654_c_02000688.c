@@ -1,12 +1,12 @@
 /* Near miss, differ 2 of 206, from the listing (the twin, ☀️'s
  * Scene_RunTransitionCue, is a false match): the blend fades through
- * Io_Write16, the rectangle copies through kabe.h. Left: after the leader's
+ * Io_Write16, the rectangle copies through shrine_of_the_sea_god.h. Left: after the leader's
  * motion flags are cleared, the native builds ObjectMotion_SetActionVariant's
  * 1 before it loads the leader id; here the load goes first (equal priority,
  * and the load comes first in insn order). Measured: Call2 and Value2 (2), r1
  * pinned (2), the 1 held by an empty asm (fixes it, but the rectangle copy's
  * arguments before it reorder: 4), a second barrier anywhere (4). */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "iowrite.h"
 #include "call.h"

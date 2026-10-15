@@ -1,4 +1,4 @@
-/* Draft, differ 50 of 58: ☀️'s SpawnRadialEffectBurst (scene/takara_shima.c)
+/* Draft, differ 50 of 58: ☀️'s SpawnRadialEffectBurst (scene/crossbone_isle.c)
  * for overlay 65F. Left: the native keeps the object in r7 and the angle step
  * in r10, and forms the vector's address (add r5, sp, #56) after the cosine
  * call on every pass; this C, like ☀️'s native, keeps the object in r10 and

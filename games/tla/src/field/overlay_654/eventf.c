@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
 
 struct KabeSpot {

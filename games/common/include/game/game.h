@@ -8,7 +8,7 @@
 #include "btlsmn.h"
 #include "battle_unit.h"
 #include "item.h"
-#include "chara.h"
+#include "character_ids.h"
 #if !GAME_TLA
 #include "character.h"
 #include "preset_table.h"

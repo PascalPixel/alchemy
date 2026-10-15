@@ -1,0 +1,111 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "eventwrk.h"
+#include "scene_call.h"
+#include "party_state.h"
+#include "scene_ids.h"
+#include "daila.h"
+
+void Func_02000d9c(void);
+void Func_02000ca4(s32 mode);
+
+struct DeriStartActor {
+    u8 unknown_00[0x18];
+    s32 speed_18;
+    s32 speed_1c;
+    u8 unknown_20[3];
+    u8 priority_flags;
+    u8 unknown_24[0x35];
+    u8 collision_flags;
+};
+
+struct DeriMapWork {
+    u8 unknown_000[0x17];
+    u8 low_17 : 2;
+    u8 mode_17 : 2;
+    u8 high_17 : 4;
+};
+
+extern const u8 Data_02000e04[];
+
+struct DeriStartActor *Object_GetById(s32 id);
+void Object_SetModeById(s32 actor, s32 mode);
+void ObjectDispatch_SetSingleChildFlags(struct DeriStartActor *object, s32 value);
+void Func_02000c58(void);
+void Func_02000cbc(struct DeriStartActor *object, s32 item);
+void Func_02000dac(s32 mode);
+void Func_02000dc4(const void *script);
+
+s32 DeriHeya_Start(void)
+{
+    struct DeriMapWork *map;
+
+    ((struct EventWork *)Ram_HeapSlots->event_work)->screen_effect = 0x209;
+    if (gPartyState.scene == (s32)&SceneId_DeriHeya1) {
+        if (gPartyState.entrance == 7) {
+            Func_02000c58();
+        } else {
+            if (GameFlag_Test(0x873)) {
+                Object_SetModeById(24, 5);
+                ObjectDispatch_SetSingleChildFlags(Object_GetById(24), 0);
+                Object_SetModeById(25, 5);
+                ObjectDispatch_SetSingleChildFlags(Object_GetById(25), 0);
+            }
+            Object_GetById(gPartyState.current_owner)->priority_flags |= 32;
+            Object_GetById(13)->priority_flags |= 32;
+            Object_GetById(19)->priority_flags |= 32;
+            Engine_ActorSetSpritePriority(19, 2);
+            Object_GetById(19)->collision_flags |= 4;
+        }
+    } else if (gPartyState.scene == (s32)&SceneId_DeriHeya2) {
+        map = (struct DeriMapWork *)Ram_HeapSlots->map_work;
+        Engine_EventBegin();
+        Engine_EventResolvePendingActions(0);
+        ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
+        Func_02000dac(0);
+        if (!GameFlag_Test(0xa20)) {
+            Func_02000cbc(Object_GetById(9), 458);
+            ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
+            Engine_ActorSetSpritePriority(9, 1);
+            Object_GetById(9)->speed_1c = 0x13333;
+            Object_GetById(9)->speed_18 = 0x13333;
+            Object_GetById(9)->collision_flags |= 4;
+            Object_GetById(13)->collision_flags |= 4;
+        } else {
+            Object_GetById(9)->collision_flags |= 4;
+            ObjectDispatch_SetSingleChildFlags(Object_GetById(9), 0);
+        }
+        if (!GameFlag_Test(0x873)) {
+            Func_02000d4c(10, 0, 0);
+            Func_02000d4c(11, 0, 0);
+            Func_02000d4c(12, 0, 0);
+            map->mode_17 = 1;
+        } else {
+            Func_02000dc4(Data_02000e04);
+        }
+        Engine_EventEnd();
+    }
+    return 0;
+}
+
+s32 Scene_PrepareMap(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_DeriHeya2 && GameFlag_Test(0x873)) {
+        Func_02000ca4(0);
+        Deri_CopyCells(29, 33, 10, 6, 10, 12);
+    }
+    return 0;
+}
+
+void Func_02000c58(void)
+{
+    struct EventWork *work = Ram_HeapSlots->event_work;
+
+    work->screen_effect = 0x209;
+    GameFlag_ClearBit(0x12f);
+}
+
+void Func_02000c74(void)
+{
+    Func_02000d9c();
+}

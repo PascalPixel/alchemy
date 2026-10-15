@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 #include "call.h"
 
 // Actor 14, linked to the leader, walks to (280, 432); then flags 0x876 and

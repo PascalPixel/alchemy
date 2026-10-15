@@ -5,7 +5,7 @@
  * in r10. Measured: all four loops written with goto, no loop notes (the
  * same registers, and the counter's step moves ahead of the store, differ
  * 64). Two pool loads also sit one step later than the native's. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 
 extern s32 Data_02004a18[3];
 

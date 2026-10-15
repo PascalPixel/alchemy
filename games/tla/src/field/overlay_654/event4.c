@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_02001340(struct KabeObject *object, struct KabeObject *target);

@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 extern const u8 Data_02003cbc[];
 

@@ -1,6 +1,6 @@
 #include "unit/window/scales.h"
 #include "types.h"
-#include "chara.h"
+#include "character_ids.h"
 
 // 拡大率 (256 = 1 倍)
 const u16 Ui_BounceScales[32] =

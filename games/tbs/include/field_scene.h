@@ -3,7 +3,7 @@
 
 #include "layout_guard.h"
 #include "scene_ids.h"
-#include "chara.h"
+#include "character_ids.h"
 
 enum SceneId
 {

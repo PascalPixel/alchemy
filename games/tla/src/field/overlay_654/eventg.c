@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 
 struct KabeEffectParams {
     u8 unknown_00[0x18];

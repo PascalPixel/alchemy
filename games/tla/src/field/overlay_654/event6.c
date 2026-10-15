@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
 
 void Func_020019dc(void)

@@ -1,4 +1,4 @@
-#include "unit/effect/koukatbl.h"
+#include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"
 #include "unit/object/object.h"
 #include "unit/object/psyfx.h"
@@ -48,7 +48,7 @@
 #include "battle_unit.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-#include "unit/effect/koukabit.h"
+#include "unit/effect/effect_bits.h"
 #include "call.h"
 
 void BattlePres_ConfigureEffectDisplay(void)

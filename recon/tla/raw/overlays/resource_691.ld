@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_691/create.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200815c)
-        "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
+        "*/games/tla/src/field/venus_lighthouse/distance.o"(.text)
         "*/games/tla/src/field/common/object/find_in_cell.o"(.text)
         "*/resource_691_overlay.o"(.text.x020083b4)
         "*/games/tla/src/field/common/map/cellfilb.o"(.text)

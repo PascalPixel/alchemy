@@ -1,5 +1,5 @@
 // The staff credits font's advance widths in pixels, characters 0x20 to
-// 0x7f, beside the font (staffrol.png). Both games' slides.c include it
+// 0x7f, beside the font (credits.png). Both games' slides.c include it
 // after their line tables.
 const u8 DisplayScroll_GlyphWidths[96] = {
     7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,

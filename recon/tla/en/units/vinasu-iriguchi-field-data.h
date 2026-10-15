@@ -1,4 +1,4 @@
-@ Unlinked overlay field data from the removed games/tla/src/field/vinasu_iriguchi/field_data.inc, kept as a GNU as draft (S4); nothing includes it.
+@ Unlinked overlay field data from the removed games/tla/src/field/venus_entrance/field_data.inc, kept as a GNU as draft (S4); nothing includes it.
 
 FieldEntrances_02002d20:
 	field_entrance 0, -1, 172, 0, 149, 0x4000, -1, -1, -1, -1

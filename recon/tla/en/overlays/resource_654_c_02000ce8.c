@@ -5,7 +5,7 @@
  * the layer offset to the map (ldr r5 before adds r6), and in the loop it
  * increments the counter before it loads the layer's y. alchemy permute for
  * 3 minutes found nothing closer. */
-#include "../../../../games/tla/src/field/overlay_654/kabe.h"
+#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
 #include "call.h"
 
 void Func_02003988(void);

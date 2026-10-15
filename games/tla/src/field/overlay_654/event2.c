@@ -1,4 +1,4 @@
-#include "kabe.h"
+#include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
 
 void Func_02001250(s32 show, s32 first, u32 count);

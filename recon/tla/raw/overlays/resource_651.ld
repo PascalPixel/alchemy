@@ -2,16 +2,16 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/field/deri_mura/entry.o"(.text)
-        "*/games/tla/src/field/deri_mura/scene_tables.o"(.text)
-        "*/games/tla/src/field/deri_mura/places.o"(.text)
-        "*/games/tla/src/field/deri_mura/talk.o"(.text)
-        "*/games/tla/src/field/deri_mura/hip.o"(.text)
-        "*/games/tla/src/field/deri_mura/s03a0.o"(.text)
-        "*/games/tla/src/field/deri_mura/events.o"(.text)
-        "*/games/tla/src/field/deri_mura/scene.o"(.text)
-        "*/games/tla/src/field/deri_mura/import.o"(.text)
-        "*/games/tla/src/field/deri_mura/data.o"(.data)
+        "*/games/tla/src/field/daila/entry.o"(.text)
+        "*/games/tla/src/field/daila/scene_tables.o"(.text)
+        "*/games/tla/src/field/daila/places.o"(.text)
+        "*/games/tla/src/field/daila/talk.o"(.text)
+        "*/games/tla/src/field/daila/hip.o"(.text)
+        "*/games/tla/src/field/daila/s03a0.o"(.text)
+        "*/games/tla/src/field/daila/events.o"(.text)
+        "*/games/tla/src/field/daila/scene.o"(.text)
+        "*/games/tla/src/field/daila/import.o"(.text)
+        "*/games/tla/src/field/daila/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

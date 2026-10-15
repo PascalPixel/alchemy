@@ -9,7 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "owner_state.h"
-#include "chara.h"
+#include "character_ids.h"
 
 
 struct BtlSpriteSlots

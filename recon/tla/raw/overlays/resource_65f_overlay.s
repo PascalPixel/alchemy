@@ -444,90 +444,6 @@ Func_020003d8:
 	pop {r5, r6, r7, pc}
 .L_0200841c:
 	.4byte Data_020054b8
-	.section .text.x020084cc,"ax",%progbits
-	.global Func_020004cc
-	.thumb_func
-Func_020004cc:
-	push {r5, r6, r7, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r7, [r3, #108]
-	bl Func_020051ac
-	movs r0, #0
-	bl Func_02005324
-	movs r5, #8
-.L_020084e0:
-	adds r0, r5, #0
-	bl Object_GetById
-	cmp r0, #0
-	beq .L_020084f2
-	adds r2, r0, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-.L_020084f2:
-	adds r5, #1
-	cmp r5, #63
-	bls .L_020084e0
-	movs r2, #170
-	lsls r2, r2, #1
-	adds r3, r7, r2
-	movs r2, #0
-	ldrsh r6, [r3, r2]
-	movs r0, #158
-	bl Func_02005394
-	subs r6, #1
-	ldr r0, .L_02008578
-	lsls r4, r6, #3
-	adds r3, r4, #4
-	ldrh r1, [r0, r3]
-	adds r3, r3, r0
-	ldrh r2, [r3, #2]
-	ldr r0, [r0, r4]
-	bl Func_0200517c
-	ldr r5, .L_0200857c
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	movs r1, #2
-	bl Object_SetModeById
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	bl ObjectMotion_SetSpeedParameters
-	ldr r0, [r5]
-	cmp r6, #5
-	bne .L_0200854c
-	movs r2, #4
-	movs r1, #0
-	negs r2, r2
-	bl ObjectMotion_OffsetPositionAndResetMotion
-	b .L_02008556
-.L_0200854c:
-	movs r2, #4
-	movs r1, #2
-	negs r2, r2
-	bl ObjectMotion_CenterOnColumn
-.L_02008556:
-	movs r0, #6
-	bl Battle_WaitMode0
-	movs r2, #170
-	lsls r2, r2, #1
-	adds r3, r7, r2
-	movs r2, #0
-	ldrsh r0, [r3, r2]
-	bl Func_020052c4
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	bl Func_020051b4
-	pop {r5, r6, r7, pc}
-.L_02008578:
-	.4byte Data_02005de0
-.L_0200857c:
-	.4byte gPartyState
 	.section .text.x02008aa8,"ax",%progbits
 	.balign 4
 	.global Func_02000aa8
@@ -929,37 +845,6 @@ Func_02000d30:
 	.4byte 0x002048c9
 .L_02008dfc:
 	.4byte Func_020002a4
-	.section .text.x02008e78,"ax",%progbits
-	.balign 4
-	.global Func_02000e78
-	.thumb_func
-Func_02000e78:
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r7, r0, #0
-	movs r6, #16
-.L_02008e88:
-	ldr r3, [r5, #12]
-	ldr r2, .L_02008eac
-	movs r0, #1
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	subs r6, #1
-	bl Battle_WaitMode0
-	cmp r6, #0
-	bgt .L_02008e88
-	movs r0, #136
-	bl Func_02005394
-	adds r0, r7, #0
-	bl Func_020012a8
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008eac:
-	.4byte 0xfffe0000
 	.section .text.x020092a6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020092a8,"ax",%progbits

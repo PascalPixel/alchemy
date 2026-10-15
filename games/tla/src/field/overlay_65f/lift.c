@@ -8,6 +8,25 @@ struct Ov65fEventWork {
     s8 fade_lock;
 };
 
+void Func_02000e78(s32 id, struct ObjectRuntime *object)
+{
+    s32 i;
+    s32 saved;
+
+    object->motion_flags = 0;
+    {
+        /* FAKEMATCH: the id is read through r0 into a second variable after the motion flag store: the native copies it into r7 after the strb, where plainly the copy comes first (one reordered pair, differ 2; a barrier, a one-pass block or a goto loop leave it first). */
+        register s32 arg asm("r0") = id;
+        saved = arg;
+    }
+    for (i = 16; i > 0; i--) {
+        object->y -= 0x20000;
+        Battle_WaitMode0(1);
+    }
+    Func_02005394(136);
+    Func_020012a8(saved);
+}
+
 void Func_02000eb0(void)
 {
     struct ObjectRuntime *object = Object_GetById(8);

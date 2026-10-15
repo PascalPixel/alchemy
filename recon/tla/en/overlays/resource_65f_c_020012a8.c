@@ -3,7 +3,13 @@
  * in r10, and forms the vector's address (add r5, sp, #56) after the cosine
  * call on every pass; this C, like ☀️'s native, keeps the object in r10 and
  * the address in r7 for the whole loop. Tried: a goto loop, a vector pointer
- * or an inner-scope vector. */
+ * or an inner-scope vector. Also measured: loop.c moves the vector's
+ * address out of a for loop (savings 1, life 19 against 37 insns) and in
+ * this goto form GCSE's PRE hoists it to the entry edge; a vector pointer
+ * assigned after the cosine call (43), the address through an empty asm
+ * (its &vec input is hoisted instead: 63), one-pass blocks inside the loop
+ * (50 to 54), the object pinned to r7, four minutes of alchemy permute
+ * (best 38). */
 #include "types.h"
 #include "field_effect.h"
 #include "object_runtime.h"

@@ -731,64 +731,6 @@ Func_02000900:
 	.4byte Data_020056c4
 .L_020089e4:
 	.4byte Data_02005728
-	.section .text.x02008af8,"ax",%progbits
-	.global Func_02000af8
-	.thumb_func
-Func_02000af8:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r0, r1, #0
-	bl Object_GetById
-	adds r6, r0, #0
-	bl Func_02004904
-	ldr r3, .L_02008b60
-	movs r1, #192
-	adds r5, r0, #0
-	lsls r1, r1, #8
-	adds r7, r6, #0
-	ands r1, r5
-	mov r8, r3
-	adds r7, #89
-	movs r3, #0
-	lsrs r1, r1, #14
-	strb r3, [r7]
-	adds r1, #2
-	adds r0, r6, #0
-	bl Func_02004d9c
-	movs r3, #128
-	lsls r3, r3, #7
-	ands r3, r5
-	cmp r3, #0
-	beq .L_02008b36
-	ldr r3, .L_02008b64
-	b .L_02008b38
-.L_02008b36:
-	ldr r3, .L_02008b68
-.L_02008b38:
-	str r3, [r6, #108]
-	movs r3, #1
-	strb r3, [r7]
-	mov r3, r8
-	ldr r0, [r3]
-	movs r3, #165
-	lsls r3, r3, #4
-	adds r0, r0, r3
-	bl GameFlag_SetBit
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	movs r0, #20
-	bl WaitFrames
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-.L_02008b60:
-	.4byte Data_020023c4 + 0x288
-.L_02008b64:
-	.4byte Func_02000aac
-.L_02008b68:
-	.4byte Func_02000a60
 	.section .text.x02008d18,"ax",%progbits
 	.balign 4
 	.global Func_02000d18

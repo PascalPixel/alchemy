@@ -42,7 +42,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x02009df0)
         "*/games/tla/src/field/overlay_6ab/ride.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02009fcc)
-        "*/resource_6ab_overlay.o"(.text.x0200a0b8)
+        "*/games/tla/src/field/common/effect/advance_spin.o"(.text)
         "*/games/tla/src/field/overlay_6ab/flash.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x0200a148)
         "*/games/tla/src/field/overlay_6ab/ride_step.o"(.text)

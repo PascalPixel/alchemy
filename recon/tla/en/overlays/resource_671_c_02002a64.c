@@ -1,11 +1,13 @@
-/* Draft, differ 38 of 521: written from the listing with the scene-layer inline wrappers of
- * gabomba.c (where it adopts, before Func_02002f70). Left: every Func_0200578c call sets the id
- * last, where the draft sets it before the third argument (12 rows); the counter at event work
- * 0x1c4 swaps r2 and r3 in the else branch; the speed 0xc000 finishes one row early; the second
- * party-state address takes r2 where the native has r3. UiText_OpenMessageAtObject declared
- * without a prototype sets r1 between the halves of 0x6005 as the native does (40 to 38). Tried:
- * Func_0200578c through call.h Call3, unprototyped, with u8, s16 or u16 ids (38), an argument
- * barrier in the wrapper (124) or in a macro (67). */
+/* Draft, differ 24 of 521: written from the listing with the scene-layer wrappers of s253c.c,
+ * where it adopts after Func_020027cc. Its Func_0200578c calls go through s253c.c's
+ * Func_0200578c_ArgsFirst (the two values pinned to r1 and r2), which sets the id last as the
+ * native does at all but the first call of the if branch (38 to 24). Left: that call sets the id
+ * before the 20; the counter at event work 0x1c4 swaps r2 and r3 in the else branch (also as a
+ * pointer local, the work base in a local, or read and written apart); the speed 0xc000 finishes
+ * one row early; the second party-state address takes r2 where the native has r3. Tried: call.h
+ * Call3, unprototyped, u8, s16 or u16 ids, an argument barrier in the wrapper (124) or in a
+ * do-while macro (67). UiText_OpenMessageAtObject is unprototyped, as the native's argument
+ * order needs (40 to 38). */
 #include "types.h"
 #include "text/msg_ids.h"
 #include "object_runtime.h"
@@ -125,6 +127,14 @@ void Func_0200581c(void);
 s32 UiText_OpenMessageAtObject();
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 
+static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b)
+{
+    register s32 a_ asm("r1") = a;
+    register s32 b_ asm("r2") = b;
+
+    Func_0200578c(id, a_, b_);
+}
+
 void Func_02002a64(void)
 {
     s32 speed;
@@ -147,7 +157,7 @@ void Func_02002a64(void)
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Battle_WaitMode0(40);
-    Func_0200578c_(23, 256, 20);
+    Func_0200578c_ArgsFirst(23, 256, 20);
     Func_02005754(MsgGabombaUnderstandsChannel);
     Func_02005764_(23, 0);
     Func_020057bc()->motion_flags = 0;
@@ -186,17 +196,17 @@ void Func_02002a64(void)
     Motion_SetModeAndWaitAnimation(23, 4);
     Func_02005764_(0x6017, 0);
     Actor_Turn(7, 0, 0);
-    Func_0200578c_(7, 257, 40);
+    Func_0200578c_ArgsFirst(7, 257, 40);
     Func_02005764_(0x6017, 0);
     Motion_SetModeAndWaitAnimation(7, 3);
-    Func_0200578c_(23, 265, 20);
+    Func_0200578c_ArgsFirst(23, 265, 20);
     Func_02005764_(0x6017, 0);
     Func_02005764_(0x4007, 0);
-    Func_0200578c_(7, 256, 40);
+    Func_0200578c_ArgsFirst(7, 256, 40);
     Func_02005764_(0x4007, 0);
     Object_SetModeById(23, 3);
     Func_02005764_(0x4017, 0);
-    Func_0200578c_(7, 265, 10);
+    Func_0200578c_ArgsFirst(7, 265, 10);
     Func_02005764_(0x4007, 0);
     Actor_SetSpeed(6, 0xcccc, 0x6666);
     Actor_Walk(6, 440, 296);
@@ -204,11 +214,11 @@ void Func_02002a64(void)
     Motion_SetModeAndWaitAnimation(6, 3);
     Func_02005764_(0x4006, 0);
     Actor_Turn(7, 0xe000, 0);
-    Func_0200578c_(7, 261, 0);
+    Func_0200578c_ArgsFirst(7, 261, 0);
     Actor_Turn(6, 0x2000, 0);
     Actor_Turn(5, 0xa000, 0);
     Actor_Turn(gPartyState.current_owner, 0, 80);
-    Func_0200578c_(7, 261, 40);
+    Func_0200578c_ArgsFirst(7, 261, 40);
     Func_02005774_(7, 0);
     Func_02005764_(0x4007, 0);
     Actor_Turn(5, 0x8000, 0);
@@ -220,7 +230,7 @@ void Func_02002a64(void)
     Motion_SetModeAndWaitAnimation(7, 3);
     Func_02005774_(23, 0xb000);
     Func_02005764_(23, 0);
-    Func_0200578c_(23, 257, 0);
+    Func_0200578c_ArgsFirst(23, 257, 0);
     Actor_Turn(23, 0xd000, 20);
     Func_02005774_(23, 0xb000);
     Func_02005764_(23, 0);

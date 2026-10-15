@@ -5636,10 +5636,6 @@ Resource_Data0CA:
 	.incbin "baserom.gba", 0x008a80be, 0x00000002
 	.section .rom.008a840a, "ax"
 	.incbin "baserom.gba", 0x008a840a, 0x00000002
-	.section .rom.008a840c, "ax"
-	.global Resource_Data0FD
-Resource_Data0FD:
-	.incbin "baserom.gba", 0x008a840c, 0x0000076c
 	.section .rom.008a91bb, "ax"
 	.incbin "baserom.gba", 0x008a91bb, 0x00000001
 	.section .rom.008a9263, "ax"

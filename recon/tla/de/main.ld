@@ -2882,7 +2882,7 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.008a823e)
     "*/games/tla/src/graphics/battle_fx/sheet_0fc.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.008a858a)
-    "*/recon/tla/de/rom.o"(.rom.008a858c)
+    "*/games/tla/src/graphics/battle_fx/sheet_0fd.o"(.rodata)
     "*/games/tla/src/graphics/battle_fx/arc_fragments.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.008a933b)
     "*/games/tla/src/graphics/battle_fx/sheet_0ff.o"(.rodata)

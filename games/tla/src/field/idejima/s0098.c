@@ -1,6 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
@@ -49,6 +50,11 @@ void Func_02003228();
 void Func_02003298();
 void Motion_SetVarCbAndRefresh();
 void UiText_ShowPositionedMessageAndWait();
+s32 UiText_OpenMessageAtObject();
+s32 Inventory_PromptAndSetObjectMode();
+void Event_PrepareObjectAndApplyValue();
+void Motion_SetModeAndWaitAnimation();
+void ObjectMotion_Launch();
 
 // A scene of actor 8 and the leader that ends by setting flag 0x863.
 void Func_020000f0(void)
@@ -104,5 +110,65 @@ void Func_020000f0(void)
     Call3(Func_02003228, 8, 0, 0);
     UiText_ShowPositionedMessageAndWait(message + 8, 1);
     Call1(GameFlag_SetBit, 0x863);
+    Engine_EventEnd();
+}
+
+// A scene of actor 5 and the leader that ends by setting flag 0x864.
+void Func_020002b4(void)
+{
+    struct ObjectRuntime *actor;
+    struct ObjectRuntime *leader;
+
+    Engine_EventBegin();
+    Func_02003310(0);
+    Motion_SetVarCbAndRefresh(5, 1);
+    Battle_WaitMode0(40);
+    Motion_SetVarCbAndRefresh(5, 2);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage(MsgIdejimaAwakeningExclamation);
+    Func_02003298(5, 0, 40);
+    Value3(Engine_ActorShowEmote, 5, 0x101, 20);
+    Engine_EventShowMessage(5, 0);
+    Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
+    actor = Object_GetById(5);
+    Engine_ActorSetAnimation(5, 1);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
+    Task_Wait(1);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(5), 1);
+    actor->velocity_y = 0x40000;
+    actor->motion_flags = 3;
+    Task_Wait(40);
+    Engine_ActorShowEmote(5, 0x100, 20);
+    Engine_EventShowMessage(5, 0);
+    Call3(ObjectMotion_ArmCallback, 5, 0x6000, 20);
+    Call3(ObjectMotion_ArmCallback, 5, 0xa000, 20);
+    Call3(ObjectMotion_ArmCallback, 5, 0x8000, 40);
+    ObjectMotion_Launch(5, 4, 20);
+    Engine_EventShowMessage(5, 0);
+    ObjectMotion_SetAngleToward(5, gPartyState.current_owner, 0);
+    Battle_WaitMode0(20);
+    ObjectMotion_SetAngleToward(gPartyState.current_owner, 5, 0);
+    Engine_ActorShowEmote(5, 0x108, 0);
+    Engine_EventShowMessage(5, 0);
+    Motion_SetModeAndWaitAnimation(gPartyState.current_owner, 3);
+    Battle_WaitMode0(40);
+    Value3(Engine_ActorShowEmote, 5, 0x101, 0);
+    Value2(UiText_OpenMessageAtObject, 5, 0);
+    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+        Engine_ActorSetAnimation(5, 3);
+        Engine_EventShowMessage(5, 0);
+    } else {
+        *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x1c4) += 2;
+        Engine_EventShowMessage(5, 0);
+    }
+    Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
+    Engine_ActorSetAnimation(5, 2);
+    leader = Object_GetById(gPartyState.current_owner);
+    if (leader != 0)
+        ObjectMotion_ResetAndSetPosition(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    ObjectMotion_CommitCurrentPositionAndActivate(5);
+    Func_02003228(5, 0, 0);
+    Event_PrepareObjectAndApplyValue(5, 1);
+    GameFlag_SetBit(0x864);
     Engine_EventEnd();
 }

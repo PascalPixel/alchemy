@@ -5,7 +5,6 @@ SECTIONS
         "*/games/tla/src/field/idejima/entry.o"(.text)
         "*/games/tla/src/field/idejima/scene_tables.o"(.text)
         "*/games/tla/src/field/idejima/s0098.o"(.text)
-        "*/resource_650_overlay.o"(.text.x020082b4)
         "*/games/tla/src/field/idejima/s049c.o"(.text)
         "*/resource_650_overlay.o"(.text.x020086a8)
         "*/games/tla/src/field/idejima/depart.o"(.text)

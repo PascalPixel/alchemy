@@ -9,7 +9,6 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x020082c4)
         "*/games/tla/src/field/world_map/story_actor.o"(.text)
         "*/games/tla/src/field/world_map/tile_sprite_b.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x020083b4)
         "*/games/tla/src/field/world_map/s03f8.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200850c)
         "*/resource_64b_overlay.o"(.text.x02008574)

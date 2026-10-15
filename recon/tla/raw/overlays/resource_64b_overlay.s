@@ -72,44 +72,6 @@ WorldMap_UpdateBobbingMarker:
 	.4byte IwramMulQ16
 .L_02008348:
 	.4byte 0x20a40000
-	.section .text.x020083b4,"ax",%progbits
-	.balign 4
-	.global Func_020003b4
-	.thumb_func
-Func_020003b4:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020083c8
-	movs r0, #1
-	b .L_020083f0
-.L_020083c8:
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r1, [r5, #8]
-	ldr r0, .L_020083f4
-	movs r3, #128
-	lsls r3, r3, #5
-	str r3, [r5, #52]
-	str r3, [r5, #48]
-	ldr r3, [r5, #16]
-	adds r1, r1, r0
-	movs r0, #128
-	lsls r0, r0, #12
-	adds r3, r3, r0
-	ldr r2, [r5, #12]
-	adds r0, r5, #0
-	bl Func_02004b50
-	movs r0, #0
-.L_020083f0:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020083f4:
-	.4byte 0xffe20000
 	.section .text.x0200850c,"ax",%progbits
 	.global Func_0200050c
 	.thumb_func

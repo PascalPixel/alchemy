@@ -9,7 +9,6 @@ SECTIONS
         "*/resource_676_overlay.o"(.text.x0200814c)
         "*/games/tla/src/field/overlay_676/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_676/s0218.o"(.text)
-        "*/resource_676_overlay.o"(.text.x02008270)
         "*/games/tla/src/field/overlay_676/script0.o"(.text)
         "*/games/tla/src/field/overlay_676/script1.o"(.text)
         "*/games/tla/src/field/overlay_676/script2.o"(.text)

@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_65a/s0d54.o"(.text)
         "*/games/tla/src/field/overlay_65a/prepare.o"(.text)
         "*/games/tla/src/field/overlay_65a/events_e.o"(.text)
-        "*/resource_65a_overlay.o"(.text.x0200902c)
+        "*/games/tla/src/field/overlay_65a/s102c.o"(.text)
         "*/games/tla/src/field/overlay_65a/import.o"(.text)
         "*/games/tla/src/field/overlay_65a/data.o"(.data)
     }

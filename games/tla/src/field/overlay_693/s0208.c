@@ -3,17 +3,17 @@
 #include "text/msg_ids.h"
 #include "call.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
+s32                   GameFlag_Test(s32 flag);
+void                  GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
-void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
-void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
-void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void Battle_WaitMode0(s32 frames);
-void WaitFrames(s32 frames);
+void                  Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void                  ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void                  ObjectMotion_Launch(s32 id, s32 height, s32 frames);
+void                  ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void                  ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
+void                  ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
+void                  Battle_WaitMode0(s32 frames);
+void                  WaitFrames(s32 frames);
 void Func_02000ff8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Func_02001010(void);
 void Func_02001018(void);
@@ -21,14 +21,15 @@ void Func_02001068(s32 id, s32 x, s32 z, s32 angle);
 void Func_02001098(s32 message);
 void Func_020010a8(s32 id, s32 value);
 void Func_020010b8(s32 id, s32 value);
-s32 Func_020010c8(s32 id, s32 emote, s32 frames);
+s32  Func_020010c8(s32 id, s32 emote, s32 frames);
 void Func_02001108(s32 value);
 
 // Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
 // placed, jump in and talk, four cells of the map change and flag 0x9b0 is set.
 void Func_02000208(void)
 {
-    if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
+    if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2))
+    {
         Func_02001010();
         Call1(Func_02001108, 0);
         Call4(Motion_CamBounds, 96 << 16, -1, 308 << 16, 1);

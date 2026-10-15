@@ -1,4 +1,4 @@
-/* Near miss, differ 129 of 456.
+/* Near miss, differ 42 of 456.
  *
  * Twin: The Broken Seal's BattleFx_RunIceFleckBurst, reached from the
  * scenes through the far-call table (table_47.s). It sets up its own heap
@@ -7,12 +7,11 @@
  * unused GetBattleObjectSlotFar call, works out the glow's picture again for
  * the mirrored half, and reads the strength from the argument.
  *
- * Left: allocation. The native keeps the first loop's counter in r8 (four
- * more moves than here, where it takes r6), the fleck loop's point and
- * position in r7 and r6 with its counter in r8 (here the point lands in
- * r8), and the mirrored half copies the pillar index before it divides it.
- * Seven instructions short in all, with a long branch over the pillar the
- * native needs and this does not.
+ * Left: order only; the allocation matches. Single rows where the native
+ * builds a constant or issues a load one slot earlier (the heap base and the
+ * work fields after the allocations, BLDALPHA's value, the pillar's sheet
+ * offsets, the fleck's y and step constants), and the pool offsets they
+ * move.
  *
  * Tried:
  *   the twin as ported (its two FAKEMATCH devices dropped)      261
@@ -22,6 +21,11 @@
  *   alchemy permute, 10 minutes: a one-pass block after the
  *     left half's pillar (tagged)                              129
  *   the one-pass block around the whole left half              133
+ *   the pillar's picture as frame / 2 % 4 in each half, with no
+ *     shared index: i had held frame / 2, so the loops' counter
+ *     shared the pillar's register (129 -> 42; a step local of
+ *     its own gives 56)                                         42
+ *   the same without the one-pass block                        259
  */
 #include "types.h"
 #include "ram_buffer.h"
@@ -172,17 +176,16 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     if (frame <= 55) {
       s32 n;
 
-      i = frame / 2;
-      n = i % 4;
+      n = frame / 2 % 4; // a pillar picture every 2 frames
       Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
       /* FAKEMATCH: the native works out the pillar's and the glow's
        * pictures again for the mirrored half. The one-pass block ends CSE's
-       * block, so they are not carried over (differ 257 without it, 129 with
+       * block, so they are not carried over (differ 259 without it, 42 with
        * it; found by alchemy permute). */
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
-        n = frame / 4 % 3;
+        n = frame / 4 % 3; // a glow picture every 4 frames
       } while (0);
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
@@ -190,7 +193,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
       Func_081963ec(SLOT_BLITTER_ALTERNATE,
                     BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-      n = i % 4;
+      n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,

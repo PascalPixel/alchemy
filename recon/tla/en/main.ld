@@ -1416,7 +1416,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/d00f0b7c.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f0bfc)
         "*/games/tla/src/battle/effect/cyclepat.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f0ec4)
+        "*/games/tla/src/battle/effect/fxtables.o"(.rodata)
         "*/games/tla/src/battle/effect/d00f1100.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f1120)
         "*/games/tla/src/field/scenes.o"(.rodata)

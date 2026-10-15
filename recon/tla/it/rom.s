@@ -3888,7 +3888,12 @@ Func_080dd950:
 	.type Func_080ddbd8, %function
 	.thumb_func
 Func_080ddbd8:
-	.incbin "baserom.gba", 0x000ddbcc, 0x0000063c
+	.incbin "baserom.gba", 0x000ddbcc, 0x0000057c
+	.global Func_080de154
+	.type Func_080de154, %function
+	.thumb_func
+Func_080de154:
+	.incbin "baserom.gba", 0x000de148, 0x000000c0
 	.section .rom.000de210, "ax"
 	.global Func_080de21c
 	.type Func_080de21c, %function
@@ -4278,18 +4283,6 @@ Data_080f0e78:
 	.global Data_080f0e9c
 Data_080f0e9c:
 	.incbin "baserom.gba", 0x000f0e90, 0x00000008
-	.section .rom.000f0eb8, "ax"
-	.global BattleFx_EightWayHeadingWords
-BattleFx_EightWayHeadingWords:
-	.incbin "baserom.gba", 0x000f0eb8, 0x00000024
-	.section .rom.000f0edc, "ax"
-	.global Data_080f0ee8
-Data_080f0ee8:
-	.incbin "baserom.gba", 0x000f0edc, 0x00000044
-	.section .rom.000f0f20, "ax"
-	.global BattleFx_RandomChildValues
-BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x000f0f20, 0x000001d4
 	.section .rom.000f1114, "ax"
 	.incbin "baserom.gba", 0x000f1114, 0x00000020
 	.section .rom.000f1134, "ax"

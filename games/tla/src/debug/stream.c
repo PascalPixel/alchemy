@@ -11,7 +11,6 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 
-
 u32 Stream_ReadU16(u8 **cursor)
 {
     u32 low = *(*cursor)++;
@@ -32,7 +31,7 @@ s16 Stream_ReadS16(u8 **cursor)
 void BattleMap_ApplySceneEntranceView(void)
 {
     struct EventWork *event = Ram_HeapSlots->eventWork;
-    s32 done;
+    s32               done;
 
     /* FAKEMATCH: the native issues the event work load before the argument. */
     __asm__("");

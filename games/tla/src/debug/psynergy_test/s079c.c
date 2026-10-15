@@ -5,15 +5,15 @@
 #include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 Item_AdjustCounter(s32 item, s32 delta);
-void Func_02000dac(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000dc4(struct ObjectRuntime *object, s32 value);
-void Func_02000e74(s32 actor, s32 x, s32 z);
-void Func_02000ed4(s32 actor, s32 angle);
-void Func_02000edc(s32 actor, s32 angle, s32 frames);
-void Func_02000f04(s32 actor);
-void Func_02000f0c(s32 actor);
+s32                   GameFlag_Test(s32 flag);
+s32                   Item_AdjustCounter(s32 item, s32 delta);
+void                  Func_02000dac(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void                  Func_02000dc4(struct ObjectRuntime *object, s32 value);
+void                  Func_02000e74(s32 actor, s32 x, s32 z);
+void                  Func_02000ed4(s32 actor, s32 angle);
+void                  Func_02000edc(s32 actor, s32 angle, s32 frames);
+void                  Func_02000f04(s32 actor);
+void                  Func_02000f0c(s32 actor);
 
 s32 Func_0200079c(void)
 {
@@ -55,7 +55,8 @@ s32 Func_0200079c(void)
 
         if (party->entrance == 6)
             Func_02000f04(party->currentOwner);
-        do {
+        do
+        {
         } while (0);
         if (party->entrance == 8)
             Func_02000f0c(party->currentOwner);

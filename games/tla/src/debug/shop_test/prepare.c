@@ -14,7 +14,7 @@ s32 Func_02000688(void)
 {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     /* FAKEMATCH: the effect's address pinned to r3 and an empty asm holding gPartyState's address load it before the screen effect is stored, as the native does; plain, sched2 ranks the store's value above the address load (differ 2). */
-    register s32 *effect asm("r3") = &work->screenEffect;
+    register s32      *effect asm("r3") = &work->screenEffect;
     struct PartyState *party = &gPartyState;
 
     asm volatile("" : "+r"(party));

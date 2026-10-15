@@ -14,30 +14,30 @@
 
 extern u8 gData_02001300[];
 
-void Func_02000f34(s32 *, s32 *);
-void Func_02000e04(s32);
-void *Func_02000dec(s32, s32, s32, s32);
-void Func_02000df4(s32, s32);
-void Func_02000f1c(s32, s32);
-void Func_02000f2c(s32, s32);
-s32 Func_02000eac(s32, s32, s32);
-void Func_02000e94(s32);
-void Func_02000e9c(s32, s32);
-void Func_02000dac(s32, s32, s32, s32, s32, s32);
-void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
-void UiWork_FinalizePendingCore(void);
-void UiText_OpenMessageWindow(s32, s32, s32, s32);
-s32 UiWork_IsComplete(void);
-void UiText_ShowPositionedMessageAndWait(s32, s32);
-void UnitCalc(s32);
-s32 UnitPpAdd(s32, s32);
-void GameFlag_SetBit(s32);
+void                  Func_02000f34(s32 *, s32 *);
+void                  Func_02000e04(s32);
+void                 *Func_02000dec(s32, s32, s32, s32);
+void                  Func_02000df4(s32, s32);
+void                  Func_02000f1c(s32, s32);
+void                  Func_02000f2c(s32, s32);
+s32                   Func_02000eac(s32, s32, s32);
+void                  Func_02000e94(s32);
+void                  Func_02000e9c(s32, s32);
+void                  Func_02000dac(s32, s32, s32, s32, s32, s32);
+void                  Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
+void                  UiWork_FinalizePendingCore(void);
+void                  UiText_OpenMessageWindow(s32, s32, s32, s32);
+s32                   UiWork_IsComplete(void);
+void                  UiText_ShowPositionedMessageAndWait(s32, s32);
+void                  UnitCalc(s32);
+s32                   UnitPpAdd(s32, s32);
+void                  GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
-void ObjectMotion_Launch(s32, s32, s32);
-void Battle_WaitMode0(s32);
-void ObjectMotion_SetPositionAndReset(s32, s32, s32);
-void ObjectMotion_ArmCallback(s32, s32, s32);
-void ObjectMotion_SetAngleToward(s32, s32, s32);
+void                  ObjectMotion_Launch(s32, s32, s32);
+void                  Battle_WaitMode0(s32);
+void                  ObjectMotion_SetPositionAndReset(s32, s32, s32);
+void                  ObjectMotion_ArmCallback(s32, s32, s32);
+void                  ObjectMotion_SetAngleToward(s32, s32, s32);
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
 
@@ -92,11 +92,12 @@ void Func_02000078(s32 message)
 
 void Func_020000a4(s32 message, s32 count)
 {
-    s32 i;
+    s32   i;
     void *window;
 
     window = Func_02000dec(206, 0, 0, 0);
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; i++)
+    {
         Func_02000df4(1, 1);
         Func_02000df4(5, 2);
         Func_02000df4(0x1e240, 5);
@@ -109,7 +110,8 @@ void Func_020000a4(s32 message, s32 count)
     check:
         if (INPUT_HELD & 2)
             goto done;
-        if ((INPUT_HELD & 1) || (INPUT_HELD & 0x80)) {
+        if ((INPUT_HELD & 1) || (INPUT_HELD & 0x80))
+        {
             message++;
             goto next;
         }
@@ -186,7 +188,8 @@ void Func_02000224(void)
 
     UiText_ShowPositionedMessageAndWait((s32)MsgYouGotTreasure, 1);
     gPartyState.coins = 777777;
-    for (i = 9; i >= 0; i--) {
+    for (i = 9; i >= 0; i--)
+    {
         Inventory_AddItem(4, 228);
         Inventory_AddItem(4, 229);
     }
@@ -294,13 +297,16 @@ void Func_02000464(s32 unused, s32 actor)
     ObjectMotion_Launch(actor, 6, 15);
     ObjectMotion_Launch(actor, 6, 15);
     Battle_WaitMode0(10);
-    if (GameFlag_TestBit(0x200) == 0) {
+    if (GameFlag_TestBit(0x200) == 0)
+    {
         Func_02000e94((s32)MsgDailaInteriorsGah);
         Func_02000e9c(actor, 0);
         ObjectMotion_SetPosition(actor, 360, 72);
         ObjectMotion_ArmCallback(actor, 0x4000, 0);
         GameFlag_SetBit(0x200);
-    } else {
+    }
+    else
+    {
         Func_02000e94((s32)MsgDailaInteriorsYarg);
         Func_02000e9c(actor, 0);
         ObjectMotion_SetPosition(actor, 392, 104);
@@ -353,7 +359,8 @@ void Func_020005dc(s32 value)
     s32 frames;
     s32 flags;
 
-    if (value == 1) {
+    if (value == 1)
+    {
         Object_SetModeById(21, 2);
         frames = 25;
         flags = 0;

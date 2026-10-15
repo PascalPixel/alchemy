@@ -190,7 +190,7 @@ void UiWork_DrainPending(s32 unused);
 void UiWindow_StepSwellEffect(struct UiChannelSlot *ch);
 void UiWork_ClearValueNameTables(void);
 void UiWork_PushValueSlot(u32 value, u32 kind);
-u32 UiRender_LookupNamedValue(u32 kind, u32 clear);
+u32 UiText_LookupArgument(u32 kind, u32 clear);
 s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch);
 s32 UiText_CheckTextDismissed(struct UiChannelSlot *ch);
 void UiWork_FinalizePendingCore(void);
@@ -245,23 +245,23 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 void UiGlyph_ReservedNoOp(void);
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
+void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined);
 
 void UiGlyph_ResetWorkState(void);
 void Resource_ClearOwnerListAndCounters(void);
 void Resource_PushPendingPair(u32 first, u32 second);
 void MenuSelection_BuildEntries(u32 unused);
 void UiWork_ReservedNoOp(void);
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
+struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind);
 void Resource_ScheduleOwnerResetDelayed(void);
 void Resource_ScheduleOwnerReset(void);
-void MenuSelection_DrawFrame(void);
-void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
+void SelectionScreen_Draw(void);
+void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 index);
 void Menu_OpenSelectionWindow(s32 mode, u32 count);
 void Resource_ResetOwnerEntries(void);
 void Menu_SetNodeCoordinates(u32 first, u32 second);
 void Menu_SetupSelectionBothSides(void);
-void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index);
+void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index);
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st);
 s32 Menu_SelectionLoop(s32 mode);
 u32 Menu_WaitForSelectionInput(u32 mode);
@@ -269,14 +269,14 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen);
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen);
 void Menu_StepRight(struct SelectionScreen *state);
 void Menu_StepLeft(struct SelectionScreen *state);
-void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
-void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
+void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 index);
+void SelectionScreen_HighlightIcon(struct SelectionScreen *state, u32 index);
 void Menu_SendNodeCountList(struct SelectionScreen *screen);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
 s32 Resource_LoadByMode(s32 mode, s32 value);
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
-                              s32 reuse);
+void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
+                               s32 reuse);
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void UiTextResource_NoOpCallback(void);
 void UiTextResource_NoOpCallbackBank(void);
@@ -287,13 +287,13 @@ void UiTextResource_NoOpCallback4(void);
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot);
 void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
-void Menu_LoadSelectedResource(void);
+void SelectionScreen_LoadLargeIcon(void);
 void Resource_ResetPendingTransfer(void);
 s32 Menu_RunTopSelection(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
 /* UiWork_CloseAndRelease is called before its definition with no prototype in
  * scope. */
-void Ui_ClearWorkStateAndWaitFrame(void);
+void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 
 void UiTimedNotice_Create(void);
@@ -301,9 +301,9 @@ void UiTimedNotice_Tick(void);
 void UiTimedNotice_CloseIfActive(void);
 s32 Item_CallHandler48(s32 arg0, s32 arg1);
 s32 Item_ReturnTrue(void);
-void Party_AdjustPaletteGlowPhase(s32 arg0);
+void OptionMenu_StepWindowHue(s32 arg0);
 void Debug_SelectAbilityPair(void);
-s32 Object_CollectResources(struct AbilityListEntry *output);
+s32 Party_ListPsynergy(struct AbilityListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries);
 void Menu_RunSelectionHook(void);
@@ -313,28 +313,28 @@ void Ui_FinalizeWorkAndReleaseHeap13(void);
 void GraphicsPalette_ReservedNoOpC9BC(void);
 void GraphicsPalette_ReservedNoOpC9C0(void);
 void GraphicsPalette_ReservedNoOpC9C4(void);
-void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work);
-void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work);
-void Palette_WriteBlendedBank15Entries(struct WorkspaceWork *work);
-u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r,
-                              s32 scale_g, s32 scale_b);
+void OptionMenu_ResetEntries(struct WorkspaceWork *work);
+void WindowColor_ComputeTint(struct WorkspaceWork *work);
+void WindowColor_WritePalette(struct WorkspaceWork *work);
+u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
+                          s32 scale_b);
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
                           s32 blue_scale);
 void PaletteGlow_Update(s32 phase, s32 brightness);
-void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work);
-void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work);
-void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work);
-void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work);
+void OptionMenu_PreviousRow(struct WorkspaceWork *work);
+void OptionMenu_NextRow(struct WorkspaceWork *work);
+void OptionMenu_LowerSetting(struct WorkspaceWork *work);
+void OptionMenu_RaiseSetting(struct WorkspaceWork *work);
 void GraphicsPalette_SelectionNoOp(void);
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
+void OptionMenu_AnimateCursors(void);
 void OptionMenu_InitializeWork(void);
-void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
-struct RenderInput *Menu_OpenWorkspaceOptions(void);
+void OptionMenu_Release(void);
+struct RenderInput *OptionMenu_Open(void);
 s32 Menu_RunWorkspaceOptions(void);
-void Menu_RunSelectedWorkspaceEntry(void);
-void Menu_InitializeSelectedWorkspace(void);
-void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
-struct RenderInput *Menu_CreateWorkspaceWindows(void);
+void SystemMenu_AnimateCursor(void);
+void SystemMenu_Initialize(void);
+void SystemMenu_Release(void);
+struct RenderInput *SystemMenu_Open(void);
 s32 Menu_RunWorkspaceSelectionLoop(void);
 
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
@@ -349,18 +349,17 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
                               u32 y2);
 void UiWork_SetParamNibble(s32 param);
 void UiWork_SetRenderWord(u16 value);
-void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
+void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
                                   u32 offsetX, u32 offsetY);
-void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
+void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                                s32 offsetY);
-void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
-void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2,
-                               s32 arg3, s32 arg4);
-void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
-                               s32 arg4);
+void UiText_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
+void UiText_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
+                               s32 x, s32 y);
+void UiText_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y);
 /* UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no
  * prototype in scope: in one file its definition would come before
  * PartyStatusDraw, and PartyStatusDraw changes (2 of 435 instructions in

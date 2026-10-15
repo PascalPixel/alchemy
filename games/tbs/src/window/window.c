@@ -118,6 +118,18 @@ enum {
   UI_TILE_FRAME_RIGHT = UI_TILE(0x17),
   UI_TILE_FRAME_ROUND_CORNER = UI_TILE(0x1c),
   UI_TILE_WINDOW_FILL = UI_TILE(0x20),
+  // Divider lines (UiWindow_DrawDividerLine) and their joins.
+  UI_TILE_DIVIDER_TEE_DOWN = UI_TILE(0x09),  // a vertical line leaving below
+  UI_TILE_DIVIDER_TEE_UP = UI_TILE(0x0a),    // a vertical line leaving above
+  UI_TILE_DIVIDER_TEE_RIGHT = UI_TILE(0x0b), // a horizontal line leaving right
+  UI_TILE_DIVIDER_TEE_LEFT = UI_TILE(0x0c),  // a horizontal line leaving left
+  UI_TILE_DIVIDER_CROSS = UI_TILE(0x0d),
+  UI_TILE_DIVIDER_HORIZONTAL = UI_TILE(0x0e),
+  UI_TILE_DIVIDER_VERTICAL = UI_TILE(0x0f),
+  UI_TILE_FRAME_TOP_TEE = UI_TILE(0x18),    // the top edge meeting a line
+  UI_TILE_FRAME_BOTTOM_TEE = UI_TILE(0x19), // the bottom edge meeting a line
+  UI_TILE_FRAME_LEFT_TEE = UI_TILE(0x1a),   // the left edge meeting a line
+  UI_TILE_FRAME_RIGHT_TEE = UI_TILE(0x1b),  // the right edge meeting a line
 };
 
 // The tilemap entry flip bits.
@@ -1031,7 +1043,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         UiText_ApplyChannelStyle(ch);
 #endif
         Resource_ResetEntry(work->glyphResource);
-        work->glyphResource = 99;
+        work->glyphResource = NO_GLYPH_RESOURCE;
         break;
 
       case TEXT_WAIT_KEY:
@@ -2600,7 +2612,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           switch (ch) {
           case MSG_ARGUMENT_CLASS_NAME:
             decode(&st);
-            UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
+            UiText_LookupArgument(MSG_ARG_CLASS, clear);
             break;
           case MSG_END:
           case MSG_END_WAIT:
@@ -2608,17 +2620,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             running = 0;
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
-            UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
+            UiText_LookupArgument(MSG_ARG_NUMBER, clear);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
             decode(&st);
-            UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
+            UiText_LookupArgument(MSG_ARG_ITEM, clear);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
+            UiText_LookupArgument(MSG_ARG_ABILITY, clear);
             break;
           case MSG_ARGUMENT_LOCATION_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear);
+            UiText_LookupArgument(MSG_ARG_LOCATION, clear);
             break;
           case MSG_TEXT_COLOR:
           case MSG_TEXT_EFFECT:
@@ -2723,7 +2735,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
-            value = (s32)UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
+            value = (s32)UiText_LookupArgument(MSG_ARG_NUMBER, clear);
             mag = value;
             if (value < 0)
               mag = -value;
@@ -2740,7 +2752,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_ARGUMENT_CLASS_NAME:
             no = decode(&st) - 1;
-            tmp = UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_CLASS, clear);
             UiText_DecodeMessage(tmp + MsgClassName, name, 24);
             pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                            &suffix);
@@ -2750,7 +2762,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if defined(TBS_EDITION_ES)
             form = no & 7;
 #endif
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_ITEM, clear);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             tmp &= RENDER_ENTRY_MASK;
@@ -2770,7 +2782,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                                            &suffix);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
             UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
             p = name;
             next = pos;
@@ -2784,7 +2796,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MSG_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
-                    UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear), 1) +
+                    UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
                     MsgDebugEntryName,
                 name, 24);
             p = name;
@@ -2810,8 +2822,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
             no = decode(&st) - 1;
-            src = UnitGetFar(UiRender_LookupNamedValue(MSG_ARG_ACTOR, clear))
-                      ->name;
+            src = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear))->name;
             dst = name;
             j = 0;
             do {
@@ -2902,11 +2913,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
           case MSG_PLURAL_SUFFIX:
 #if defined(TBS_EDITION_ES)
-            UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
+            UiText_LookupArgument(MSG_ARG_ITEM, 0);
             possessives = gUiText_ItemPossessives;
             word = possessives.text[plural];
 #else
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
+            tmp = UiText_LookupArgument(MSG_ARG_ITEM, 0);
             tmp &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[tmp];
@@ -2929,13 +2940,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
           case MSG_PLURAL_SUFFIX:
 #if defined(TBS_EDITION_DE)
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
+            tmp = UiText_LookupArgument(MSG_ARG_ITEM, 0);
             tmp &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[tmp];
             word = possessives.text[kind & 3];
 #else
-            UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
+            UiText_LookupArgument(MSG_ARG_ITEM, 0);
             word = gUiText_ItemPronoun;
 #endif
             for (i = 0; i < 16; i++) {
@@ -3095,7 +3106,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         if (ch < 32) {
           switch (ch) {
           case MSG_ARGUMENT_CLASS_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
+            UiText_LookupArgument(MSG_ARG_CLASS, clear);
             break;
           case MSG_END:
           case MSG_END_WAIT:
@@ -3107,16 +3118,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             decode(&st);
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
-            UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
+            UiText_LookupArgument(MSG_ARG_NUMBER, clear);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
+            UiText_LookupArgument(MSG_ARG_ITEM, clear);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
+            UiText_LookupArgument(MSG_ARG_ABILITY, clear);
             break;
           case MSG_ARGUMENT_LOCATION_NAME:
-            UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear);
+            UiText_LookupArgument(MSG_ARG_LOCATION, clear);
             break;
           case MSG_ACTOR_NAME:
             decode(&st);
@@ -3187,7 +3198,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
-            value = UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
+            value = UiText_LookupArgument(MSG_ARG_NUMBER, clear);
             num = UiText_FormatNumber(numbuf, value, 0);
             i = num - numbuf;
             while (i != 16 && numbuf[i] != 0) {
@@ -3197,24 +3208,24 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             break;
           case MSG_ARGUMENT_CLASS_NAME:
-            tmp = UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_CLASS, clear);
             UiText_DecodeMessage(tmp + MsgClassName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_ITEM, clear);
             UiText_DecodeMessage((tmp & 511) + MsgItemName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            tmp = UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
+            tmp = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
             UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
-                    UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear), 1) +
+                    UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
                     MsgDebugEntryName,
                 name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
@@ -3232,7 +3243,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
-            actor = UnitGetFar(UiRender_LookupNamedValue(MSG_ARG_ACTOR, clear));
+            actor = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear));
             if (work->menuState != 0 &&
                 (actor->classId == 122 || actor->classId == 125)) {
               message = MsgMysteryPersonName;
@@ -3975,6 +3986,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #else
 
+// The Japanese UiWindow_PutGlyph, which also places the kana marks.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
   /* FAKEMATCH: needed to match: this XOR pair changes no pointer bits and folds
@@ -4027,8 +4039,8 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   } else if (tile <= 0xff) {
     if (tile - TEXT_VOICED_MARK <= 1) {
       // A kana mark goes in the tile above the character before it. Over the
-      // frame's top edge, or over tile 0x0e, it takes the mark tile drawn
-      // over that background.
+      // frame's top edge or a divider line, it takes the mark tile drawn over
+      // that background.
       u32 line;
 
       line = (win->y + y) * 32;
@@ -4037,7 +4049,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
       case UI_TILE_FRAME_TOP:
         tile -= 0xc0;
         break;
-      case UI_TILE(0x0e):
+      case UI_TILE_DIVIDER_HORIZONTAL:
         tile -= 0xd0;
         break;
       }
@@ -4525,7 +4537,7 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
 
 // Returns the value of the first message argument of kind (MSG_ARG_), or 0
 // when there is none. With clear set the argument is removed from the table.
-u32 UiRender_LookupNamedValue(u32 kind, u32 clear) {
+u32 UiText_LookupArgument(u32 kind, u32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 i;
   u32 value = 0;
@@ -4889,11 +4901,11 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
   work->encoded = gUiIcon_FramePointerTable[no1];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, 0);
+  UiIcon_Decode(work, 0);
   work->encoded = gUiIcon_OverlayPointerTable[no0];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, 1);
+  UiIcon_Decode(work, 1);
   if (flag == 0) {
     *slot = Resource_FindFreeEntry();
   }
@@ -4927,14 +4939,14 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
     work->encoded = gUiIcon_FramePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    UiIcon_Decode(work, 0);
     slot = 1;
   }
 
   work->encoded = gUiIcon_ItemIconPointers[glyph];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, slot);
+  UiIcon_Decode(work, slot);
 
   if (reuse == 0)
     *src = Resource_FindFreeEntry();
@@ -4973,31 +4985,31 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     work->encoded = gUiIcon_FramePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    UiIcon_Decode(work, 0);
     overlay = 1;
   }
   work->encoded = gUiIcon_ItemIconPointers[item->icon];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, overlay);
+  UiIcon_Decode(work, overlay);
   if ((layers & ICON_EQUIPPED) && (code & 0x400)) {
     work->encoded = gUiIcon_MarkPointers[1];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    UiIcon_Decode(work, 1);
   }
   if ((layers & ICON_BROKEN) && (code & 0x200)) {
     work->encoded = gUiIcon_MarkPointers[0];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    UiIcon_Decode(work, 1);
   }
   if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) &&
       (item->flags & 2)) {
     work->encoded = gUiIcon_MarkPointers[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    UiIcon_Decode(work, 1);
   }
   if (layers & ICON_COUNT_ABOVE_ONE) {
     count = (code & 0xf800) >> 11;
@@ -5015,12 +5027,12 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     work->encoded = gUiIcon_DigitPointers[ones];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 1);
+    UiIcon_Decode(work, 1);
     if (count / 10 != 0) {
       work->encoded = gUiIcon_DigitPointers[count / 10 + 9];
       work->width = 2;
       work->height = 2;
-      UiGlyph_DecodeWithHeapRoutines(work, 1);
+      UiIcon_Decode(work, 1);
     }
   }
   return 256;
@@ -5090,7 +5102,7 @@ void Ui_PrepareTransferForItem(s32 code) {
   }
   state->width = 2;
   state->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(state, 0);
+  UiIcon_Decode(state, 0);
 }
 
 // Builds the Psynergy icon of a battle action, as
@@ -5121,14 +5133,14 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
     work->encoded = gUiIcon_FramePointerTable[2];
     work->width = 2;
     work->height = 2;
-    UiGlyph_DecodeWithHeapRoutines(work, 0);
+    UiIcon_Decode(work, 0);
     slot = 1;
   }
 
   work->encoded = gUiIcon_PsynergyIconPointers[glyph];
   work->width = 2;
   work->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(work, slot);
+  UiIcon_Decode(work, slot);
 
   if (reuse == 0)
     *src = Resource_FindFreeEntry();
@@ -5144,7 +5156,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index) {
   state->encoded = gUiIcon_MiscIconPointers[index];
   state->width = 2;
   state->height = 2;
-  UiGlyph_DecodeWithHeapRoutines(state, 0);
+  UiIcon_Decode(state, 0);
 }
 
 // Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
@@ -5167,7 +5179,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   work->encoded = entry + 32;
   work->width = 4;
   work->height = 4;
-  UiGlyph_DecodeWithHeapRoutines(work, 0);
+  UiIcon_Decode(work, 0);
   if (reuse == 0)
     *slot = Resource_FindFreeEntry();
   *tile = VramBlock_LoadCached(*slot, 0x200, work->tiles);
@@ -5180,7 +5192,7 @@ void UiGlyph_ReservedNoOp(void) {}
 
 // Decodes a compressed icon into the glyph buffer and expands it to tiles,
 // opaque for the first layer or masked over what is there when overlay is set.
-void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
+void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))gWorkSlot[ROUTINE_BLOCK])(glyph->encoded,
@@ -5202,6 +5214,7 @@ struct GlyphCursor {
   u16 cursor;
 };
 
+// Clears a selection record's cursor.
 static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   /* FAKEMATCH: the helper takes the node's base field as its record, so each
    * row store forms base + 372 and stores the cursor at #2, as the native does.
@@ -5300,10 +5313,10 @@ void MenuSelection_BuildEntries(u32 unused) {
     s32 base = screen->bases[index];
     u32 kind = screen->kinds[index];
 
-    node = Resource_FindFreeTransferEntry(0);
+    node = SelectionScreen_FindFreeIcon(0);
     if (node == 0)
       break;
-    MenuSelection_SetupEntry(kind, base, node, 0);
+    SelectionScreen_SetupIcon(kind, base, node, 0);
     if (screen->head == 0) {
       screen->head = node;
       node->prev = 0;
@@ -5338,7 +5351,7 @@ void MenuSelection_BuildEntries(u32 unused) {
     prev->dy = 0;
     cnt += 16;
   }
-  Menu_LoadSelectedResource();
+  SelectionScreen_LoadLargeIcon();
 }
 
 // Does nothing.
@@ -5346,7 +5359,7 @@ void UiWork_ReservedNoOp(void) {}
 
 // Returns a free selection icon record: one of the seven row icons (kind 0) or
 // of the five chosen icons (otherwise), or NULL.
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind) {
+struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   struct SelectionScreen *state = gResQueueWork;
   s32 i;
 
@@ -5366,18 +5379,18 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind) {
 
 // Starts drawing the selection screen each frame.
 void Resource_ScheduleOwnerResetDelayed(void) {
-  Scheduler_AddOrUpdateCallback(MenuSelection_DrawFrame, 0xC80);
+  Scheduler_AddOrUpdateCallback(SelectionScreen_Draw, 0xC80);
 }
 
 // Stops drawing the selection screen.
 void Resource_ScheduleOwnerReset(void) {
-  Scheduler_RemoveCallback(MenuSelection_DrawFrame);
+  Scheduler_RemoveCallback(SelectionScreen_Draw);
 }
 
 // The selection screen's per-frame callback: slides and draws the row of
 // icons, the large icon over the chosen one, the end arrows, the icons already
 // chosen and the pointing hand.
-void MenuSelection_DrawFrame(void) {
+void SelectionScreen_Draw(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
   struct SelectionNode *cursor = &state->records[14];
@@ -5475,8 +5488,8 @@ void MenuSelection_DrawFrame(void) {
     }
     Runtime_PushSlotEntry((s32 *)te, 248);
   }
-  MenuSelection_DrawSideMarker(state, 0);
-  MenuSelection_DrawSideMarker(state, 1);
+  SelectionScreen_DrawArrow(state, 0);
+  SelectionScreen_DrawArrow(state, 1);
   node = state->path;
   while (node != 0) {
     e = &node->sprite;
@@ -5554,7 +5567,7 @@ void MenuSelection_DrawFrame(void) {
 
 // Draws the selection screen's left (index 0) or right (1) arrow, nudged
 // outwards while it flashes after a scroll.
-void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index) {
+void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 index) {
   u32 frame = (gFrameTick >> 2) & 7;
   struct SelectionSprite *entry;
   u8 *frames;
@@ -5693,13 +5706,13 @@ void Menu_SetupSelectionBothSides(void) {
   struct SelectionScreen *state;
 
   state = gResQueueWork;
-  Menu_SetupSelectionSide(state, 0);
-  Menu_SetupSelectionSide(state, 1);
+  SelectionScreen_SetupArrow(state, 0);
+  SelectionScreen_SetupArrow(state, 1);
 }
 
 // Sets up the left (index 0) or right (1) arrow of the selection row, shown
 // when there are entries beyond that end.
-void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index) {
+void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
   struct SelectionSprite *entry = &state->records[index].sprite;
   u8 *frames = 0;
   u32 count;
@@ -5771,7 +5784,7 @@ struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
 s32 Menu_SelectionLoop(s32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
 
-  Menu_LoadSelectionNodeResource(screen, 0);
+  SelectionScreen_HighlightIcon(screen, 0);
   for (;;) {
     WaitFrames(1);
     if (screen->verticalScroll != 0) {
@@ -5840,7 +5853,7 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   if (end == screen->count) {
     return;
   }
-  Menu_ReloadNodeResource(screen, screen->cursorIndex);
+  SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   screen->cursorIndex++;
@@ -5855,7 +5868,7 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
     screen->records[0].kind = TRUE;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource(screen, screen->cursorIndex);
+  SelectionScreen_HighlightIcon(screen, screen->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(screen->head->kind, 0);
   WaitFrames(1);
@@ -5868,7 +5881,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   if (screen->top == 0 && screen->cursorIndex == 0) {
     return;
   }
-  Menu_ReloadNodeResource(screen, screen->cursorIndex);
+  SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   cursor = screen->cursorIndex;
@@ -5884,7 +5897,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
     screen->cursorIndex--;
   }
   screen->status = NODE_STATUS_SHOWN;
-  Menu_LoadSelectionNodeResource(screen, screen->cursorIndex);
+  SelectionScreen_HighlightIcon(screen, screen->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(screen->head->kind, 0);
   WaitFrames(1);
@@ -5898,7 +5911,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
   s32 y;
   u32 end;
 
-  Menu_ReloadNodeResource(state, state->cursorIndex);
+  SelectionScreen_RedrawIcon(state, state->cursorIndex);
   state->status = 33;
   WaitFrames(1);
   state->cursorIndex++;
@@ -5922,7 +5935,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
       if (node != NULL) {
         ids = state->kinds;
         do {
-          MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
+          SelectionScreen_SetupIcon(ids[0], ids[16], node, 1);
           node = node->next;
           ids++;
         } while (node != NULL);
@@ -5952,7 +5965,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
     state->cursorIndex = 0;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource(state, state->cursorIndex);
+  SelectionScreen_HighlightIcon(state, state->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
   WaitFrames(1);
@@ -5964,7 +5977,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   struct SelectionNode *node;
   s32 i;
 
-  Menu_ReloadNodeResource(state, state->cursorIndex);
+  SelectionScreen_RedrawIcon(state, state->cursorIndex);
   state->status = 33;
   WaitFrames(1);
   if (state->count > 5) {
@@ -6008,7 +6021,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
       state->top = i;
       state->cursorIndex = 4;
       while (node != NULL) {
-        MenuSelection_SetupEntry(state->kinds[i], state->bases[i], node, 1);
+        SelectionScreen_SetupIcon(state->kinds[i], state->bases[i], node, 1);
         node = node->next;
         i++;
       }
@@ -6028,14 +6041,14 @@ void Menu_StepLeft(struct SelectionScreen *state) {
     state->cursorIndex = state->count - 1;
   }
   state->status = 1;
-  Menu_LoadSelectionNodeResource(state, state->cursorIndex);
+  SelectionScreen_HighlightIcon(state, state->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
   WaitFrames(1);
 }
 
 // Redraws the command icon at row place index in its plain state.
-void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index) {
+void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 index) {
   struct SelectionNode *node = state->head;
   u32 output;
   u32 value;
@@ -6053,7 +6066,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index) {
 }
 
 // Redraws the command icon at row place index and loads its large icon.
-void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index) {
+void SelectionScreen_HighlightIcon(struct SelectionScreen *state, u32 index) {
   struct SelectionNode *node = state->head;
   u32 res;
   u32 value;
@@ -6067,7 +6080,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index) {
 
     value = node->slot;
     Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);
-    Menu_LoadSelectedResource();
+    SelectionScreen_LoadLargeIcon();
   }
 }
 
@@ -6101,10 +6114,10 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     index = screen->top + SELECTION_ROWS;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = Resource_FindFreeTransferEntry(0);
+    p = SelectionScreen_FindFreeIcon(0);
     if (p == NULL)
       return;
-    MenuSelection_SetupEntry(kind, base, p, 0);
+    SelectionScreen_SetupIcon(kind, base, p, 0);
     y = screen->baseX;
     p->x = y + 80;
     z = screen->baseY;
@@ -6142,10 +6155,10 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     index = screen->top;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = Resource_FindFreeTransferEntry(0);
+    p = SelectionScreen_FindFreeIcon(0);
     if (p == NULL)
       return;
-    MenuSelection_SetupEntry(kind, base, p, 0);
+    SelectionScreen_SetupIcon(kind, base, p, 0);
     p->x = screen->baseX - 16;
     p->y = screen->baseY;
     p->targetY = p->y;
@@ -6253,8 +6266,8 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 
 // Sets up a selection icon for an entry: its icon tiles (in its old slot when
 // reuse is set), its name message and its sprite.
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
-                              s32 reuse) {
+void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
+                               s32 reuse) {
   s32 src;
   s32 tile;
   struct SelectionSprite *obj;
@@ -6312,7 +6325,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
 
   index = screen->top + screen->cursorIndex;
   Menu_SendNodeCountList(screen);
-  Menu_ReloadNodeResource(screen, screen->cursorIndex);
+  SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
   screen->status = 33;
   WaitFrames(1);
   screen->records[0].kind = 0;
@@ -6354,7 +6367,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->unk39a = 0;
   screen->cursorIndex |= 0x80;
   WaitFrames(2);
-  other = Resource_FindFreeTransferEntry(1);
+  other = SelectionScreen_FindFreeIcon(1);
   other->kind = node->kind;
   other->message = node->message;
   other->base = node->base;
@@ -6395,17 +6408,12 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return index;
 }
 
-// Does nothing.
+// Six empty functions.
 void UiTextResource_NoOpCallback(void) {}
-
 void UiTextResource_NoOpCallbackBank(void) {}
-
 void UiTextResource_NoOpCallback1(void) {}
-
 void UiTextResource_NoOpCallback2(void) {}
-
 void UiTextResource_NoOpCallback3(void) {}
-
 void UiTextResource_NoOpCallback4(void) {}
 
 // Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
@@ -6437,7 +6445,7 @@ void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y) {
 void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 
 // Loads the large icon of the command under the cursor, zooming in.
-void Menu_LoadSelectedResource(void) {
+void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
   struct SelectionNode *transfer;
@@ -6558,7 +6566,7 @@ void UiWindow_OpenMode1AndWaitFrame(void) {
 void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
 
 // Sets up an empty selection screen and waits a frame.
-void Ui_ClearWorkStateAndWaitFrame(void) {
+void SelectionScreen_CreateEmpty(void) {
   UiGlyph_ResetWorkState();
   Resource_ClearOwnerListAndCounters();
   WaitFrames(1);
@@ -6581,8 +6589,9 @@ u32 Menu_RunSelectionForValue(u32 value) {
   return result;
 }
 
+// The area name notice's fields, which live in the event work block.
 struct TimedNoticeWork {
-  u8 unk000[0x230];
+  u8 eventWork[0x230]; // the event work's other fields
   struct UiWindow *window;
   u16 countdown;
 };
@@ -6647,7 +6656,7 @@ s32 Item_ReturnTrue(void) { return 1; }
 
 // Steps the window hue one step: back when arg0 has LEFT (0x20), on
 // otherwise.
-void Party_AdjustPaletteGlowPhase(s32 arg0) {
+void OptionMenu_StepWindowHue(s32 arg0) {
   u8 value = gGameState.paletteGlow[0];
   if (arg0 & 0x20)
     value += 0xff;
@@ -6693,7 +6702,7 @@ void Debug_SelectAbilityPair(void) {
   OwnerAction_AddFar(5, 140);
   second = 0;
   first = 0;
-  count = Object_CollectResources(list);
+  count = Party_ListPsynergy(list);
   if (count != 0) {
     Menu_FindShortcutEntries(&first, &second, list);
     win = UiWindow_Create(4, 6, 20, 7, 2);
@@ -6797,7 +6806,7 @@ void Debug_SelectAbilityPair(void) {
 
 // Lists every Psynergy of the party's active members as (owner, Psynergy)
 // pairs in output and returns how many.
-s32 Object_CollectResources(struct AbilityListEntry *output) {
+s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 objectIds[14];
   s32 outputCount = 0;
   s32 objectCount = Party_ListActiveOwnersFar(objectIds);
@@ -6827,7 +6836,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output) {
   return outputCount;
 }
 
-// Finds the two Psynergy shortcuts in a list from Object_CollectResources, and
+// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
 // returns their indexes (0 for one not found).
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
@@ -6856,6 +6865,8 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 // Runs the Psynergy shortcut picker.
 void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
 
+// The work block of heap slot 19: two icon flags and resources and a window,
+// among fields nothing here uses.
 struct SelectionWorkspace {
   u8 unk000[0x46];
   u16 firstActive;
@@ -6898,19 +6909,22 @@ void Ui_FinalizeWorkAndReleaseHeap13(void) {
   Runtime_ReleaseHeapBlock(0x13);
 }
 
+// Three empty functions.
 void GraphicsPalette_ReservedNoOpC9BC(void) {}
-
 void GraphicsPalette_ReservedNoOpC9C0(void) {}
-
 void GraphicsPalette_ReservedNoOpC9C4(void) {}
 
+// One of the seven entries of the option screen's work from offset 0x400;
+// only its state is known.
 struct MenuWorkspaceEntry {
   u8 unk00[10];
   u16 state;
   u8 unk0c[40];
 };
 
-void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work) {
+// Clears the option screen's seven entry states, its row, its tint and its
+// cursor animation.
+void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
   struct MenuWorkspaceEntry *entry =
       (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
   u16 zero = 0;
@@ -6935,7 +6949,10 @@ void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work) {
   work->cursorFrame = zero;
 }
 
-void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work) {
+// Works out the window tint (red, green and blue, 0 to 31) from the window
+// colour settings: the hue picks a point on the colour wheel and the
+// brightness shifts all three channels.
+void WindowColor_ComputeTint(struct WorkspaceWork *work) {
   s16 phase;
   s32 bias;
   s32 blue;
@@ -6967,21 +6984,22 @@ void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work) {
   work->tint[2] = blue;
 }
 
-void Palette_WriteBlendedBank15Entries(struct WorkspaceWork *work) {
-  *(s16 *)0x050001E8 = Palette_ScaleTintChannels(work, 0xEEEE, 0xCCCC, 0x11110);
-  *(s16 *)0x050001EA = Palette_ScaleTintChannels(work, 0xD555, 0xBBBB, 0xEEEE);
-  *(s16 *)0x050001EC = Palette_ScaleTintChannels(work, 0xBBBB, 0xAAAA, 0xCCCC);
-  *(s16 *)0x050001EE = Palette_ScaleTintChannels(work, 0xA221, 0x9999, 0xAAAA);
-  *(s16 *)0x050001F0 =
-      Palette_ScaleTintChannels(work, 0x10888, 0xDDDD, 0x13333);
-  *(s16 *)0x050001F2 =
-      Palette_ScaleTintChannels(work, 0x12221, 0xEEEE, 0x15555);
-  *(s16 *)0x050001F4 =
-      Palette_ScaleTintChannels(work, 0x13BBB, 0x10000, 0x17777);
+// Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
+// window tint.
+void WindowColor_WritePalette(struct WorkspaceWork *work) {
+  *(s16 *)0x050001E8 = WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
+  *(s16 *)0x050001EA = WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
+  *(s16 *)0x050001EC = WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
+  *(s16 *)0x050001EE = WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
+  *(s16 *)0x050001F0 = WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
+  *(s16 *)0x050001F2 = WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
+  *(s16 *)0x050001F4 = WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
 }
 
-u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r,
-                              s32 scale_g, s32 scale_b) {
+// Returns the window tint with each channel scaled (16.16 fixed point) and
+// clamped to 0 to 31, as a BGR555 colour.
+u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
+                          s32 scale_b) {
   s32 r;
   s32 g;
   s32 b;
@@ -7004,6 +7022,8 @@ u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r,
   return r + ((b << 10) + (g << 5));
 }
 
+// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
+// 31, as a BGR555 colour.
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
                           s32 blue_scale) {
   s32 red;
@@ -7028,6 +7048,8 @@ u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
   return red + ((blue << 10) + (green << 5));
 }
 
+// Sets the window colours (BG palette 15, colours 4 to 10) for a window hue
+// (0 to 23) and brightness (0 to 14, 7 neutral).
 void PaletteGlow_Update(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -7065,19 +7087,23 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
   BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
-void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work) {
+// Moves the three-row settings cursor up, wrapping to the bottom.
+void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
   if (work->page == 0)
     work->page = 2;
   else
     work->page--;
 }
 
-void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work) {
+// Moves the three-row settings cursor down, wrapping to the top.
+void OptionMenu_NextRow(struct WorkspaceWork *work) {
   if (++work->page > 2)
     work->page = 0;
 }
 
-void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work) {
+// Lowers the setting on the three-row cursor's row: message speed, window hue
+// or window brightness.
+void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
     if (gGameState.messageSpeed != 0)
@@ -7094,7 +7120,9 @@ void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work) {
   }
 }
 
-void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work) {
+// Raises the setting on the three-row cursor's row: message speed, window hue
+// or window brightness.
+void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
     if (gGameState.messageSpeed <= 1)
@@ -7111,9 +7139,13 @@ void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work) {
   }
 }
 
+// Does nothing.
 void GraphicsPalette_SelectionNoOp(void) {}
 
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
+// The option screen's per-frame callback: moves the cursor and the two slider
+// markers, animates the marker of the slider in use, and pulses the chosen
+// setting's icon.
+void OptionMenu_AnimateCursors(void) {
   s32 src0;
   s32 src1;
   s32 selection;
@@ -7147,6 +7179,8 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   work->cursorFrame++;
 }
 
+// Allocates the option screen's work block, copies the settings into it with
+// how many values each takes, and starts its per-frame callback.
 void OptionMenu_InitializeWork(void) {
   struct WorkspaceWork *work;
 
@@ -7162,19 +7196,22 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gGameState.savedOptions;
   work->optionCount[4] = 2;
-  Scheduler_AddOrUpdateCallback(
-      GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
+  Scheduler_AddOrUpdateCallback(OptionMenu_AnimateCursors, 0xc80);
 }
 
-void Runtime_ScheduleCallbackAndReleaseBlock20B(void) {
-  Scheduler_RemoveCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance);
+// Stops the option screen's per-frame callback and frees its work block.
+void OptionMenu_Release(void) {
+  Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
   Runtime_ReleaseHeapBlock(0x14);
 }
 
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
-struct RenderInput *Menu_OpenWorkspaceOptions(void) {
+// Opens the option screen's window: the labels, the hue and brightness
+// sliders with their markers, the cursor and the setting icons. Returns the
+// window.
+struct RenderInput *OptionMenu_Open(void) {
   /* FAKEMATCH: the shared cursor union keeps pointer stores before window
    * reads; an equal-size struct reorders these moves in all six editions. */
   struct WorkspaceWork *work;
@@ -7278,6 +7315,9 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   return win;
 }
 
+// Runs the option screen (window colour and brightness, message speed,
+// speech, auto-sleep) until A or START keeps the settings (returns 0) or B
+// drops them (returns -1). SELECT cycles through the colour presets.
 s32 Menu_RunWorkspaceOptions(void) {
   struct WorkspaceWork *work;
   struct RenderInput *icon;
@@ -7300,7 +7340,7 @@ s32 Menu_RunWorkspaceOptions(void) {
   OptionMenu_InitializeWork();
   work = gSelectionWork;
   win = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
-  icon = Menu_OpenWorkspaceOptions();
+  icon = OptionMenu_Open();
   pair = RenderResource_CreatePair(7, icon, 64, -48);
   WaitFrames(1);
   pA = &work->option[0];
@@ -7435,7 +7475,7 @@ s32 Menu_RunWorkspaceOptions(void) {
   } else {
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   }
-  Runtime_ScheduleCallbackAndReleaseBlock20B();
+  OptionMenu_Release();
   WaitFrames(1);
   return result;
 }
@@ -7446,7 +7486,9 @@ s32 Menu_RunWorkspaceOptions(void) {
 #define WORKSPACE_ROW_HEIGHT 24
 #define WORKSPACE_TEXT_X 48
 
-void Menu_RunSelectedWorkspaceEntry(void) {
+// The system menu's per-frame callback: moves the cursor and pulses the
+// chosen entry's icon.
+void SystemMenu_AnimateCursor(void) {
   struct WorkspaceWork *work = gSelectionWork;
   u32 index;
 
@@ -7455,19 +7497,24 @@ void Menu_RunSelectedWorkspaceEntry(void) {
   Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
-void Menu_InitializeSelectedWorkspace(void) {
+// Allocates the system menu's work block and starts its per-frame callback.
+void SystemMenu_Initialize(void) {
   void *work;
   work = Runtime_AllocateBlock(20, 0x628);
   Dma_Fill32(0, work, 0x628);
-  Scheduler_AddOrUpdateCallback(Menu_RunSelectedWorkspaceEntry, 3200);
+  Scheduler_AddOrUpdateCallback(SystemMenu_AnimateCursor, 3200);
 }
 
-void Runtime_ScheduleCallbackAndReleaseBlock20A(void) {
-  Scheduler_RemoveCallback(&Menu_RunSelectedWorkspaceEntry);
+// Stops the system menu's per-frame callback and frees its work block.
+void SystemMenu_Release(void) {
+  Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
   Runtime_ReleaseHeapBlock(0x14);
 }
 
-struct RenderInput *Menu_CreateWorkspaceWindows(void) {
+// Opens the system menu's window with its entries (Save your quest, Sleep,
+// Change settings, and the debug entries in debug mode; only Change settings
+// while flag 0x17e is set), their icons and the cursor. Returns the window.
+struct RenderInput *SystemMenu_Open(void) {
   struct WorkspaceWork *work;
   s32 rows;
   s32 first;
@@ -7536,6 +7583,8 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void) {
   return win;
 }
 
+// Runs the system menu until the player picks an entry (its number, counting
+// Save your quest as 0) or cancels with B or START (-1).
 s32 Menu_RunWorkspaceSelectionLoop(void) {
   struct RenderInput *window;
   s32 redraw;
@@ -7560,9 +7609,9 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   rows = 3;
   settingsOnly = GameFlag_TestFar(0x17E);
   first = 0;
-  Menu_InitializeSelectedWorkspace();
+  SystemMenu_Initialize();
   work = gSelectionWork;
-  window = Menu_CreateWorkspaceWindows();
+  window = SystemMenu_Open();
 #if EDITION_INTERNATIONAL
   y = -0x18;
   if (gDebugMode != 0) {
@@ -7632,7 +7681,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     break;
   }
   UiWork_Finalize(window, 2);
-  Runtime_ScheduleCallbackAndReleaseBlock20A();
+  SystemMenu_Release();
   WaitFrames(1);
   if (result >= 0) {
     result += first;
@@ -7640,6 +7689,9 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   return result;
 }
 
+// Draws window tile pattern over the tile of tilemap entry *entry, with its
+// colours mapped through remap (0 leaves a pixel as it was). A shared tile
+// first gets a free tile of its own, which entry and mirror then point to.
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                  u8 *remap) {
   struct UiRenderWork *work = UI_WORK;
@@ -7704,6 +7756,10 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
 }
 
+// Draws a string of 16-bit character codes with the window font into tiles
+// of their own, starting x pixels into the first tile, and points tiles (and
+// the same entries in mirror) at them. Colour codes change the text colour.
+// Returns how many tiles the text covers.
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's
    * extra bytes (the frame is 36 bytes without it). */
@@ -7889,6 +7945,8 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   return count;
 }
 
+// Marks the text tiles under a tilemap rectangle (x, y, width and height in
+// tiles) as no longer shown, for reuse.
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
@@ -7911,6 +7969,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
+// Marks the text tiles the tilemap shows, and frees those it no longer shows.
 void UiWindow_MarkVisibleTileAttributes(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
@@ -7938,6 +7997,8 @@ void UiWindow_MarkVisibleTileAttributes(void) {
   }
 }
 
+// Frees every text tile, and with flag set lets text tiles take the second
+// tile range (0x200 to 0x27f) too.
 void UiWork_SetAltFlagAndClearTable(s32 flag) {
   s32 i;
   s32 j;
@@ -7968,8 +8029,12 @@ void UiWork_SetAltFlagAndClearTable(s32 flag) {
   } while (j >= 0);
 }
 
+// Does nothing.
 void UiRender_ReservedNoOp(void) {}
 
+// Draws a straight divider line inside a window from tile (x1, y1) to
+// (x2, y2), horizontal or vertical: its ends join the frame or the lines they
+// meet, and it crosses the lines it passes over.
 void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
                               u32 y2) {
   struct UiRenderWork *work = UI_WORK;
@@ -7992,59 +8057,59 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
       tile = *cursor;
       if (pos == y1) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf018:
+        case UI_TILE_DIVIDER_TEE_DOWN:
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+        case UI_TILE_DIVIDER_TEE_LEFT:
+        case UI_TILE_DIVIDER_CROSS:
+        case UI_TILE_FRAME_TOP_TEE:
           break;
-        case 0xf011:
-          tile = 0xf018;
+        case UI_TILE_FRAME_TOP:
+          tile = UI_TILE_FRAME_TOP_TEE;
           break;
-        case 0xf00a:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_UP:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00e:
-          tile = 0xf009;
+        case UI_TILE_DIVIDER_HORIZONTAL:
+          tile = UI_TILE_DIVIDER_TEE_DOWN;
           break;
         default:
-          tile = 0xf00f;
+          tile = UI_TILE_DIVIDER_VERTICAL;
           break;
         }
       } else if (pos == y2) {
         switch (tile) {
-        case 0xf00a:
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf019:
+        case UI_TILE_DIVIDER_TEE_UP:
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+        case UI_TILE_DIVIDER_TEE_LEFT:
+        case UI_TILE_DIVIDER_CROSS:
+        case UI_TILE_FRAME_BOTTOM_TEE:
           break;
-        case 0xf014:
-          tile = 0xf019;
+        case UI_TILE_FRAME_BOTTOM:
+          tile = UI_TILE_FRAME_BOTTOM_TEE;
           break;
-        case 0xf009:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_DOWN:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00e:
-          tile = 0xf00a;
+        case UI_TILE_DIVIDER_HORIZONTAL:
+          tile = UI_TILE_DIVIDER_TEE_UP;
           break;
         default:
-          tile = 0xf00f;
+          tile = UI_TILE_DIVIDER_VERTICAL;
           break;
         }
       } else {
         switch (tile) {
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00d:
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+        case UI_TILE_DIVIDER_TEE_LEFT:
+        case UI_TILE_DIVIDER_CROSS:
           break;
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00e:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_DOWN:
+        case UI_TILE_DIVIDER_TEE_UP:
+        case UI_TILE_DIVIDER_HORIZONTAL:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
         default:
-          tile = 0xf00f;
+          tile = UI_TILE_DIVIDER_VERTICAL;
           break;
         }
       }
@@ -8066,59 +8131,59 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
       tile = *cursor;
       if (pos == x1) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00b:
-        case 0xf00d:
-        case 0xf01a:
+        case UI_TILE_DIVIDER_TEE_DOWN:
+        case UI_TILE_DIVIDER_TEE_UP:
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+        case UI_TILE_DIVIDER_CROSS:
+        case UI_TILE_FRAME_LEFT_TEE:
           break;
-        case 0xf016:
-          tile = 0xf01a;
+        case UI_TILE_FRAME_LEFT:
+          tile = UI_TILE_FRAME_LEFT_TEE;
           break;
-        case 0xf00c:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_LEFT:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00f:
-          tile = 0xf00b;
+        case UI_TILE_DIVIDER_VERTICAL:
+          tile = UI_TILE_DIVIDER_TEE_RIGHT;
           break;
         default:
-          tile = 0xf00e;
+          tile = UI_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       } else if (pos == x2) {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00c:
-        case 0xf00d:
-        case 0xf01b:
+        case UI_TILE_DIVIDER_TEE_DOWN:
+        case UI_TILE_DIVIDER_TEE_UP:
+        case UI_TILE_DIVIDER_TEE_LEFT:
+        case UI_TILE_DIVIDER_CROSS:
+        case UI_TILE_FRAME_RIGHT_TEE:
           break;
-        case 0xf017:
-          tile = 0xf01b;
+        case UI_TILE_FRAME_RIGHT:
+          tile = UI_TILE_FRAME_RIGHT_TEE;
           break;
-        case 0xf00b:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
-        case 0xf00f:
-          tile = 0xf00c;
+        case UI_TILE_DIVIDER_VERTICAL:
+          tile = UI_TILE_DIVIDER_TEE_LEFT;
           break;
         default:
-          tile = 0xf00e;
+          tile = UI_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       } else {
         switch (tile) {
-        case 0xf009:
-        case 0xf00a:
-        case 0xf00d:
+        case UI_TILE_DIVIDER_TEE_DOWN:
+        case UI_TILE_DIVIDER_TEE_UP:
+        case UI_TILE_DIVIDER_CROSS:
           break;
-        case 0xf00b:
-        case 0xf00c:
-        case 0xf00f:
-          tile = 0xf00d;
+        case UI_TILE_DIVIDER_TEE_RIGHT:
+        case UI_TILE_DIVIDER_TEE_LEFT:
+        case UI_TILE_DIVIDER_VERTICAL:
+          tile = UI_TILE_DIVIDER_CROSS;
           break;
         default:
-          tile = 0xf00e;
+          tile = UI_TILE_DIVIDER_HORIZONTAL;
           break;
         }
       }
@@ -8128,32 +8193,38 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
+// Sets the text colour (0 to 15) of drawn text.
 void UiWork_SetParamNibble(s32 param) {
   struct UiRenderWork *work = UI_WORK;
 
   work->colour = param & 15;
 }
 
+// Sets the text style (UiRenderWork.outline) of drawn text.
 void UiWork_SetRenderWord(u16 value) {
   struct UiRenderWork *work = UI_WORK;
 
   work->outline = value;
 }
 
-void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+// Decodes a message and draws it into a text canvas window (passed as an
+// integer) at pixel (x, y).
+void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *counter = &canvas->count;
   s32 zero = 0;
 
   *counter = zero;
-  UiText_BuildRenderEntries(arg0, 1);
+  UiText_BuildRenderEntries(message, 1);
   canvas->entries[*counter] = zero;
   *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-  UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)arg1,
-                                  arg2, arg3);
+  UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)window, x,
+                                  y);
 }
 
-void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
+// Decodes a message and draws it as tiles in a window at pixel (offsetX,
+// offsetY) of its interior.
+void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
                                   u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
@@ -8167,23 +8238,25 @@ void UiText_DrawCharacterAtOffset(s32 character, struct RenderInput *position,
   counter = &canvas->count;
   zero = 0;
   *counter = zero;
-  UiText_BuildRenderEntries(character, 1);
+  UiText_BuildRenderEntries(message, 1);
 
   canvas->entries[*counter] = zero;
   *counter = (*counter + 1) & RENDER_ENTRY_MASK;
 
-  cell = ((position->y + (offsetY >> 3) + 1) << 5) +
-         (position->x + (offsetX >> 3)) + 1;
-  if (cell < 0x280U) {
+  cell = ((window->y + (offsetY >> 3) + 1) << 5) +
+         (window->x + (offsetX >> 3)) + 1;
+  if (cell < 32 * 20) { // inside the tilemap
     byteOffset = cell * 2;
-    vramAddress = byteOffset + 0x06002000;
+    vramAddress = byteOffset + (s32)UI_TILEMAP_VRAM;
     text = canvas->entries;
     UiText_RenderStringTiles(text, (u16 *)((u8 *)canvas->tilemap + byteOffset),
                              (u16 *)vramAddress, 7 & offsetX);
   }
 }
 
-void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
+// Draws a byte string into a text canvas window (passed as an integer) at
+// pixel (x, y).
+void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y) {
   s16 *buffer;
   s16 *output;
   u8 *input;
@@ -8199,11 +8272,13 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
     } while (*input != 0);
   }
   *output = 0;
-  UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)arg1, arg2,
-                                  arg3);
+  UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)window, x,
+                                  y);
   MemFree(buffer);
 }
 
+// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
+// its interior.
 void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                                s32 offsetY) {
   s16 *buffer;
@@ -8229,8 +8304,8 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
 
   cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
          (work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 0x280) {
-    vram = 0x06002000;
+  if (cell < 32 * 20) { // inside the tilemap
+    vram = (s32)UI_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;
@@ -8240,7 +8315,9 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   }
 }
 
-void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
+// Draws a byte string into a window's tilemap at pixel (x, y) of its
+// interior, rounded down to tiles.
+void UiText_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
   u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
   u16 *output = buffer;
 
@@ -8252,32 +8329,41 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   *output = 0;
   x >>= 3;
   y >>= 3;
-  UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)arg1, x, y);
+  UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)window, x,
+                                  y);
   MemFree(buffer);
 }
 
-void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+// Draws a number (width as UiText_FormatNumber) into a text canvas window at
+// pixel (x, y).
+void UiText_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
   u8 data[16];
 
-  UiText_DrawString(UiText_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
+  UiText_DrawString(UiText_FormatNumber(data, value, width), window, x, y);
 }
 
-void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2,
-                               s32 arg3, s32 arg4) {
+// Draws a number (width as UiText_FormatNumber) as tiles in a window at pixel
+// (x, y) of its interior.
+void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
+                               s32 x, s32 y) {
   u8 data[16];
 
-  UiText_DrawStringAtOffset(UiText_FormatNumber(data, arg0, arg1), arg2, arg3,
-                            arg4);
+  UiText_DrawStringAtOffset(UiText_FormatNumber(data, value, width), window, x,
+                            y);
 }
 
-void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
-                               s32 arg4) {
+// Draws a number (width as UiText_FormatNumber) into a window's tilemap at
+// pixel (x, y) of its interior.
+void UiText_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
   u8 data[16];
 
-  UiText_DrawStringInWindow(UiText_FormatNumber(data, arg0, arg1), arg2, arg3,
-                            arg4);
+  UiText_DrawStringInWindow(UiText_FormatNumber(data, value, width), window, x,
+                            y);
 }
 
+// Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
+// 0x1e, or 0x1f and 0x1e with variant set) as tiles in window work at pixel
+// (offsetX, offsetY) of its interior.
 void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[16];
@@ -8317,8 +8403,8 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
 
   cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
          (work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 0x280) {
-    vram = 0x06002000;
+  if (cell < 32 * 20) { // inside the tilemap
+    vram = (s32)UI_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;

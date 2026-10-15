@@ -2057,41 +2057,46 @@ void ObjectSystem_UpdateCameraFixed(void) {
 // Object script commands that move the cursor and set byte54.
 
 // SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc) {
+s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
-  sc->script = sc->script + sc->cursor + 1;
+  interpreter->script = interpreter->script + interpreter->cursor + 1;
   zero = 0;
-  sc->cursor = zero;
+  interpreter->cursor = zero;
   return 1;
 }
 
 // SC_B54_OFF: clears byte54 and moves on to the next command.
-s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
-  sc->byte54 = 0;
-  sc->cursor++;
+s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
+  interpreter->byte54 = 0;
+  interpreter->cursor++;
   return 1;
 }
 
 // SC_B54_ON: sets byte54 and moves on to the next command.
-s32 Script_SetByte54(struct ScriptInterpreter *sc) {
-  sc->byte54 = 1;
-  sc->cursor++;
+s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
+  interpreter->byte54 = 1;
+  interpreter->cursor++;
   return 1;
 }
 
-void Script_WaitForEventTimeout(s32 arg0) {
-  s32 cnt;
+// Waits until the object has arrived at its target (Object_IsTargetUnset),
+// at most 600 frames.
+void Script_WaitForEventTimeout(s32 object) {
+  s32 frames;
 
-  cnt = 0;
-  while (cnt <= 0x257 &&
-         Object_IsTargetUnset((struct ObjectRuntime *)arg0) == 0) {
+  frames = 0;
+  while (frames <= 0x257 &&
+         Object_IsTargetUnset((struct ObjectRuntime *)object) == 0) {
     WaitFrames(1);
-    cnt++;
+    frames++;
   }
 }
 
+// Returns 1 when the object has no movement target: none of its target
+// coordinates set, or for an object moved by the ground (any motion flag)
+// neither its target x nor z.
 s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 first;
   s32 second;
@@ -2118,15 +2123,18 @@ extern ScriptCommandFn gScriptObject_CommandTable[];
 
 static __inline__ s32 Square(s32 value) { return value * value; }
 
+// Advances all 64 field objects by one frame, as Object_UpdateAll does for
+// the eight script objects, with the field's extras: free flight in 3D,
+// terrain following, floating, and solid objects that refuse to overlap.
 void Object_UpdateAllThumb(void) {
   struct ScriptMotionObject *obj;
   const struct ScriptMotionWords *script;
-  s32 cnt;
-  s32 px;
-  s32 py;
-  s32 pz;
+  s32 i;
+  s32 x;
+  s32 y;
+  s32 z;
   s32 ground;
-  s32 reached;
+  s32 arrived;
   s32 pos[3];
   s32 dx;
   s32 dy;
@@ -2137,15 +2145,15 @@ void Object_UpdateAllThumb(void) {
   s32 dist;
   s32 len;
   s32 ratio;
-  s32 rem;
-  s32 half;
-  s32 work;
-  u32 cmd;
+  s32 slowed;
+  s32 maxClimb;
+  s32 turn;
+  u32 command;
   u32 phase;
 
   obj = gObjectSlots;
-  for (cnt = 63; cnt >= 0; cnt--, obj++) {
-    reached = 0;
+  for (i = 63; i >= 0; i--, obj++) {
+    arrived = 0;
 
     script = obj->script;
     if (script == NULL)
@@ -2160,13 +2168,14 @@ void Object_UpdateAllThumb(void) {
     if (obj->paused != 0)
       continue;
 
+    // Count down a wait, or run commands until one yields for this frame.
     if (obj->wait != 0) {
       obj->wait--;
     } else {
       for (;;) {
-        cmd = script->word[(s16)obj->scriptCursor];
-        if (cmd <= 63) {
-          if (gScriptObject_CommandTable[cmd](obj) == 0)
+        command = script->word[(s16)obj->scriptCursor];
+        if (command <= 63) {
+          if (gScriptObject_CommandTable[command](obj) == 0)
             break;
         } else {
           obj->scriptCursor++;
@@ -2177,21 +2186,23 @@ void Object_UpdateAllThumb(void) {
         continue;
     }
 
-    px = obj->x;
-    py = obj->y;
-    pz = obj->z;
+    x = obj->x;
+    y = obj->y;
+    z = obj->z;
 
     if (obj->frozen == 0) {
+      // Free flight (no motion flags): steer in 3D towards the target,
+      // capped at the speed limit, or brake when there is none.
       if (obj->motionFlags == 0) {
         if (obj->targetX != TARGET_UNSET) {
-          dx = (obj->targetX - px) / 65536;
-          dy = (obj->targetY - py) / 65536;
-          dz = (obj->targetZ - pz) / 65536;
+          dx = (obj->targetX - x) / 65536;
+          dy = (obj->targetY - y) / 65536;
+          dz = (obj->targetZ - z) / 65536;
           dist = Iwram_Sqrt(Square(dx) + Square(dy) + Square(dz));
           if (dist == 0) {
-            px = obj->targetX;
-            py = obj->targetY;
-            pz = obj->targetZ;
+            x = obj->targetX;
+            y = obj->targetY;
+            z = obj->targetZ;
           } else {
             ratio = Iwram_RatioMulQ14(dist << 16, obj->acceleration);
             obj->velocityX += dx * ratio;
@@ -2216,10 +2227,10 @@ void Object_UpdateAllThumb(void) {
           len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                           Iwram_MulQ16(dz, dz));
           if (len != 0) {
-            rem = len - obj->acceleration;
-            if (rem < 0)
-              rem = 0;
-            ratio = Iwram_RatioMulQ14(len, rem);
+            slowed = len - obj->acceleration;
+            if (slowed < 0)
+              slowed = 0;
+            ratio = Iwram_RatioMulQ14(len, slowed);
             obj->velocityX = Iwram_MulQ16(dx, ratio);
             obj->velocityY = Iwram_MulQ16(dy, ratio);
             obj->velocityZ = Iwram_MulQ16(dz, ratio);
@@ -2230,18 +2241,19 @@ void Object_UpdateAllThumb(void) {
           }
         }
       } else {
+        // On the ground: steer in the XZ plane the same way.
         if (obj->targetX != TARGET_UNSET) {
-          dx = (obj->targetX - px) / 65536;
-          dz = (obj->targetZ - pz) / 65536;
+          dx = (obj->targetX - x) / 65536;
+          dz = (obj->targetZ - z) / 65536;
           dist = Iwram_Sqrt(Square(dx) + Square(dz)) << 16;
           if (dist <= 0x00ffffff) {
-            dx = obj->targetX - px;
-            dz = obj->targetZ - pz;
+            dx = obj->targetX - x;
+            dz = obj->targetZ - z;
             dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
           }
           if (dist == 0) {
-            px = obj->targetX;
-            pz = obj->targetZ;
+            x = obj->targetX;
+            z = obj->targetZ;
           } else {
             ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
             obj->velocityX += Iwram_MulQ16(dx, ratio);
@@ -2260,10 +2272,10 @@ void Object_UpdateAllThumb(void) {
           dz = obj->velocityZ;
           len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
           if (len != 0) {
-            rem = len - obj->acceleration;
-            if (rem < 0)
-              rem = 0;
-            ratio = Iwram_RatioMulQ14(len, rem);
+            slowed = len - obj->acceleration;
+            if (slowed < 0)
+              slowed = 0;
+            ratio = Iwram_RatioMulQ14(len, slowed);
             obj->velocityX = Iwram_MulQ16(dx, ratio);
             obj->velocityZ = Iwram_MulQ16(dz, ratio);
           } else {
@@ -2272,18 +2284,23 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
+        // Follow the terrain: take the ground height where the object is
+        // going and move with its change, unless the object is 4 or more
+        // pixels above the ground. Unless bit 4 is set, a climb or drop also
+        // slows it, by three times the change (at most half its
+        // acceleration).
         if ((obj->motionFlags & 1) != 0) {
-          vx = px + obj->velocityX;
-          vz = pz + obj->velocityZ;
+          vx = x + obj->velocityX;
+          vz = z + obj->velocityZ;
           ground = Map_GetTerrainHeight(obj->terrainId, vx, vz);
           vy = ground - obj->terrainHeight;
-          if (ground - py > -0x40000)
-            py += vy;
+          if (ground - y > -0x40000)
+            y += vy;
           if (vy < 0)
             vy = -vy;
-          half = obj->acceleration / 2;
-          if (vy > half)
-            vy = half;
+          maxClimb = obj->acceleration / 2;
+          if (vy > maxClimb)
+            vy = maxClimb;
           vy *= 3;
           if (vy != 0 && (obj->motionFlags & 0x10) == 0) {
             dx = obj->velocityX;
@@ -2292,10 +2309,10 @@ void Object_UpdateAllThumb(void) {
             len = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                             Iwram_MulQ16(dz, dz));
             if (len != 0) {
-              rem = len - vy;
-              if (rem < 0)
-                rem = 0;
-              ratio = Iwram_RatioMulQ14(len, rem);
+              slowed = len - vy;
+              if (slowed < 0)
+                slowed = 0;
+              ratio = Iwram_RatioMulQ14(len, slowed);
               obj->velocityX = Iwram_MulQ16(dx, ratio);
               obj->velocityY = Iwram_MulQ16(dy, ratio);
               obj->velocityZ = Iwram_MulQ16(dz, ratio);
@@ -2304,12 +2321,13 @@ void Object_UpdateAllThumb(void) {
           obj->terrainHeight = ground;
         }
 
+        // Gravity, and a bounce that loses energy on landing.
         if ((obj->motionFlags & 2) != 0) {
           ground = obj->terrainHeight;
-          if (py > ground) {
+          if (y > ground) {
             obj->velocityY -= obj->gravity;
           } else if (obj->velocityY < 0) {
-            py = ground;
+            y = ground;
             obj->velocityY =
                 -Iwram_MulQ16(obj->velocityY, obj->vertical.bounce);
             if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY) <=
@@ -2318,6 +2336,7 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
+        // Float: bob up and down on a triangle wave (bit 3 makes it bigger).
         if ((obj->motionFlags & 4) != 0) {
           phase = (obj->vertical.phase & 0x3f);
           if ((obj->motionFlags & 8) != 0)
@@ -2331,14 +2350,15 @@ void Object_UpdateAllThumb(void) {
       }
     }
 
-    px += obj->velocityX;
-    py += obj->velocityY;
-    pz += obj->velocityZ;
+    x += obj->velocityX;
+    y += obj->velocityY;
+    z += obj->velocityZ;
 
+    // A solid object does not move into another; count the refusals.
     if ((obj->collisionFlags & 0x80) != 0) {
-      pos[0] = px;
-      pos[1] = py;
-      pos[2] = pz;
+      pos[0] = x;
+      pos[1] = y;
+      pos[2] = z;
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)obj, pos) !=
           0) {
         obj->refused++;
@@ -2347,34 +2367,35 @@ void Object_UpdateAllThumb(void) {
       obj->refused = 0;
     }
 
+    // Arrived: the watched axis reached the target, or crossed it.
     switch (obj->arrivalAxis) {
-    case 16:
-      if (px == obj->targetX ||
-          ((obj->x - obj->targetX) ^ (px - obj->targetX)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_X:
+      if (x == obj->targetX ||
+          ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
+        arrived = 1;
       break;
-    case 17:
-      if (py == obj->targetY ||
-          ((obj->y - obj->targetY) ^ (py - obj->targetY)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_Y:
+      if (y == obj->targetY ||
+          ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
+        arrived = 1;
       break;
-    case 18:
-      if (pz == obj->targetZ ||
-          ((obj->z - obj->targetZ) ^ (pz - obj->targetZ)) < 0)
-        reached = 1;
+    case ARRIVAL_AXIS_Z:
+      if (z == obj->targetZ ||
+          ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
+        arrived = 1;
       break;
     default:
       break;
     }
 
-    if (reached != 0) {
+    if (arrived != 0) {
       if (obj->snapToTarget != 0) {
-        px = obj->targetX;
+        x = obj->targetX;
         obj->velocityX = 0;
-        pz = obj->targetZ;
+        z = obj->targetZ;
         obj->velocityZ = 0;
         if (obj->motionFlags == 0) {
-          py = obj->targetY;
+          y = obj->targetY;
           obj->velocityY = 0;
         }
       }
@@ -2384,24 +2405,25 @@ void Object_UpdateAllThumb(void) {
       obj->arrivalAxis = 0;
     }
 
-    obj->x = px;
-    obj->y = py;
-    obj->z = pz;
+    obj->x = x;
+    obj->y = y;
+    obj->z = z;
 
+    // Turn to face the direction of travel, at most 0x1000 a frame.
     if ((obj->steeringFlags & 1) != 0) {
-      px = obj->velocityX;
-      pz = obj->velocityZ;
-      if (px != 0 || pz != 0) {
+      x = obj->velocityX;
+      z = obj->velocityZ;
+      if (x != 0 || z != 0) {
         s32 limit;
 
-        work = (s16)(ArcTan2(pz, px) - obj->facing);
+        turn = (s16)(ArcTan2(z, x) - obj->facing);
         limit = 0x1000;
-        if (work > limit)
-          work = limit;
+        if (turn > limit)
+          turn = limit;
         limit = -0x1000;
-        if (work < limit)
-          work = limit;
-        obj->facing += work;
+        if (turn < limit)
+          turn = limit;
+        obj->facing += turn;
       }
     }
   }
@@ -2412,9 +2434,9 @@ void Object_UpdateAllThumb(void) {
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
                                       s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // no target
-  obj->targetY = 0x80000000;
-  obj->targetZ = 0x80000000;
+  obj->targetX = TARGET_UNSET;
+  obj->targetY = TARGET_UNSET;
+  obj->targetZ = TARGET_UNSET;
   obj->x = x;
   obj->y = y;
   obj->velocityX = 0;
@@ -2422,6 +2444,12 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
   obj->velocityZ = 0;
 }
 
+// Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
+// arrives at once. Unless it snaps to its target, the target is pulled in
+// by half its braking distance (speed limit squared over acceleration), or
+// to halfway when that is further, as the object coasts on. Picks the
+// axis to watch for arrival: the one with the furthest to go (y only for a
+// free-flying object).
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 dist;
@@ -2445,9 +2473,9 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
     object->x = x;
     object->y = y;
     object->z = z;
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     return;
   }
   if (object->snapToTarget == 0) {
@@ -2472,16 +2500,16 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   dist = y - object->y;
   dz = z - object->z;
   axis = &object->arrivalAxis;
-  *axis = 16;
+  *axis = ARRIVAL_AXIS_X;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
-    *axis = 18;
+    *axis = ARRIVAL_AXIS_Z;
     dx = dz;
   }
   if (object->flags == 0) {
     if (dx < 0)
       dx = -dx;
     if (dx < (dist < 0 ? -dist : dist))
-      *axis = 17;
+      *axis = ARRIVAL_AXIS_Y;
   }
 }
 

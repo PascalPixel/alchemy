@@ -2,6 +2,8 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "call.h"
+#include "party_state.h"
+#include "owner_state.h"
 s32 Func_020059c4();
 s32 Object_GetById();
 s32 Func_020059dc();
@@ -23,3 +25,44 @@ void Func_02001ac4(s32 a0, s32 a1)
     Call2(Object_SetModeById, a1, 1);
 }
 
+
+// Restores each active member's HP to its maximum and recomputes both
+// gauges, as ☀️'s Owner_RefreshActiveRatios does with HP and PP; with
+// clearStatus 1 it also clears poison and haunt. Nested inside
+// Func_02001bc4, which calls it with its frame in r9.
+void Func_02001b04(s32 clearStatus)
+{
+    /* FAKEMATCH: a nested function's static chain spill. Func_02001bc4 passes its frame base in r9, and function.c stores it to the first frame slot before the parameters are copied; read through the two pins, r9 is stored before r0 is copied, as the native does (a plain clearStatus copies r0 between the chain's load and its store: differ 2). The pins go when the parent is adopted with it. */
+    register s32 incoming asm("r0");
+    register u32 chain asm("r9");
+    volatile u32 frame;
+    s32 clear;
+    s32 count;
+    s32 n;
+    struct BtlUnit *member;
+    s16 maxHp;
+
+    frame = chain;
+    clear = incoming;
+    count = Party_CountActiveOwners();
+    for (n = 0; n < count; n++) {
+        {
+            struct PartyState *party = &gPartyState;
+
+            /* FAKEMATCH: the barrier loads the party state before the owner list's offset, as in the main image's Func_080ae16c (differ 2 without). */
+            asm volatile("");
+            member = UnitGet(party->active_owners[n]);
+        }
+        maxHp = member->hp = member->max_hp;
+        member->hp_gauge = Vitals_Clamp((maxHp << 14) / maxHp);
+        if (member->hp_gauge == 0 && member->hp != 0)
+            member->hp_gauge = 1;
+        member->ep_gauge = Vitals_Clamp((member->ep << 14) / member->max_ep);
+        if (member->ep_gauge == 0 && member->ep != 0)
+            member->ep_gauge = 1;
+        if (clear == 1) {
+            member->doku = 0;
+            member->akuryo = 0;
+        }
+    }
+}

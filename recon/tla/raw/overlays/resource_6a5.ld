@@ -19,7 +19,6 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x02009388)
         "*/resource_6a5_overlay.o"(.text.x020096e8)
         "*/games/tla/src/field/overlay_6a5/s1ac4.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x02009b04)
         "*/resource_6a5_overlay.o"(.text.x02009bc4)
         "*/resource_6a5_overlay.o"(.text.x0200aae4)
         "*/games/tla/src/field/overlay_6a5/scene_events.o"(.text)

@@ -1410,14 +1410,6 @@ Trade_ListFlaggedEntries:
 	.thumb_func
 Owner_GetDigitValues:
 	.incbin "baserom.gba", 0x000bcfac, 0x0000007c
-	.section .rom.000bd05a, "ax"
-	.incbin "baserom.gba", 0x000bd05a, 0x00000002
-	.section .rom.000bd05c, "ax"
-	.global Owner_GetDefaultElement
-	.type Owner_GetDefaultElement, %function
-	.thumb_func
-Owner_GetDefaultElement:
-	.incbin "baserom.gba", 0x000bd05c, 0x00000028
 	.section .rom.000bd084, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

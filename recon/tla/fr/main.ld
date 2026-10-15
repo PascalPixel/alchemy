@@ -778,8 +778,6 @@ SECTIONS
     "*/games/tla/src/game/djinn/get_definition.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b4fac)
     "*/games/tla/src/game/character/resist.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b505a)
-    "*/recon/tla/fr/rom.o"(.rom.000b505c)
     "*/recon/tla/fr/rom.o"(.rom.000b5084)
     "*/recon/tla/fr/rom.o"(.rom.000b5144)
     "*/games/tla/src/game/character/get_record_stride84.o"(.text)

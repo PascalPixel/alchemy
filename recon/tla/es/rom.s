@@ -1825,14 +1825,6 @@ Owner_LevelUp:
 	.thumb_func
 Owner_GetDigitValues:
 	.incbin "baserom.gba", 0x000b8fb8, 0x0000007c
-	.section .rom.000b9066, "ax"
-	.incbin "baserom.gba", 0x000b9066, 0x00000002
-	.section .rom.000b9068, "ax"
-	.global Owner_GetDefaultElement
-	.type Owner_GetDefaultElement, %function
-	.thumb_func
-Owner_GetDefaultElement:
-	.incbin "baserom.gba", 0x000b9068, 0x00000028
 	.section .rom.000b9090, "ax"
 	.global Owner_CalculateBaseElements
 	.type Owner_CalculateBaseElements, %function

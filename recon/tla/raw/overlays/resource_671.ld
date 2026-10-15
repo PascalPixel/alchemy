@@ -42,7 +42,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_671/s22d0.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200a394)
-        "*/resource_671_overlay.o"(.text.x0200a53c)
+        "*/games/tla/src/field/overlay_671/s253c.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200a7cc)
         "*/resource_671_overlay.o"(.text.x0200aa64)
         "*/games/tla/src/field/overlay_671/gabomba.o"(.text)

@@ -977,7 +977,6 @@ SECTIONS
         "*/games/tla/src/battle/effect/palette.o"(.text)
         "*/recon/tla/raw/080d183e.o"(.text)
         "*/recon/tla/raw/080d1840.o"(.text)
-        "*/recon/tla/raw/080d1a18.o"(.text)
         "*/games/tla/src/battle/effect/d1ac4.o"(.text)
         "*/recon/tla/raw/080d1ae4.o"(.text)
         "*/games/tla/src/battle/effect/d1cc0.o"(.text)

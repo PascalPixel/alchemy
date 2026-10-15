@@ -1091,7 +1091,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/palette.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d181e)
     "*/recon/tla/ja/rom.o"(.rom.000d1820)
-    "*/recon/tla/ja/rom.o"(.rom.000d19f8)
     "*/games/tla/src/battle/effect/d1ac4.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1ac4)
     "*/games/tla/src/battle/effect/d1cc0.o"(.text)

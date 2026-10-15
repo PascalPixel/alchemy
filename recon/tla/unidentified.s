@@ -2569,39 +2569,6 @@ Data_081ba30c:
 	.global Data_081c3430
 Data_081c3430:
 	.incbin "baserom.gba", 0x001c3430, 0x0000000c
-	.global Sound_CommandTableTemplate
-Sound_CommandTableTemplate:
-	.incbin "baserom.gba", 0x001c343c, 0x00000090
-	.global Sound_PcmPitchCodes
-Sound_PcmPitchCodes:
-	.incbin "baserom.gba", 0x001c34cc, 0x000000b4
-	.global Sound_PcmFrequencySteps
-Sound_PcmFrequencySteps:
-	.incbin "baserom.gba", 0x001c3580, 0x00000030
-	.global Sound_FrameLengths
-Sound_FrameLengths:
-	.incbin "baserom.gba", 0x001c35b0, 0x00000018
-	.global Sound_CgbPitchCodes
-Sound_CgbPitchCodes:
-	.incbin "baserom.gba", 0x001c35c8, 0x00000084
-	.global Sound_CgbFrequencySteps
-Sound_CgbFrequencySteps:
-	.incbin "baserom.gba", 0x001c364c, 0x00000018
-	.global Sound_NoisePitchCodes
-Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x001c3664, 0x0000003c
-	.global Sound_Cgb3LevelCodes
-Sound_Cgb3LevelCodes:
-	.incbin "baserom.gba", 0x001c36a0, 0x00000010
-	.global Sound_ClockLengths
-Sound_ClockLengths:
-	.incbin "baserom.gba", 0x001c36b0, 0x00000031
-	.global Data_081c36e1
-Data_081c36e1:
-	.incbin "baserom.gba", 0x001c36e1, 0x00000003
-	.global Sound_ExtendedCommandTable
-Sound_ExtendedCommandTable:
-	.incbin "baserom.gba", 0x001c36e4, 0x00000030
 	.section .unidentified.081c43b0,"a"
 	.incbin "baserom.gba", 0x001c43b0, 0x00000090
 	.section .unidentified.081c44d0,"a"

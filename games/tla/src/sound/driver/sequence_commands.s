@@ -45,6 +45,9 @@ AlchemyUncredited_081c175a:
 	.2byte	0x0000
 .L_081c175c:
 AlchemyUncreditedEnd_081c175a:
+	.global MusicTrack_Goto
+	.thumb_func
+MusicTrack_Goto:
 	push	{lr}
 .L_081c175e:
 	ldr	r2, [r1, #64]
@@ -61,6 +64,9 @@ AlchemyUncreditedEnd_081c175a:
 	str	r0, [r1, #64]
 	pop	{r0}
 	bx	r0
+	.global MusicTrack_CallPattern
+	.thumb_func
+MusicTrack_CallPattern:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #3
 	bcs.n	.L_081c1794
@@ -78,6 +84,9 @@ AlchemyUncreditedEnd_081c175a:
 AlchemyUncredited_081c1796:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1796:
+	.global MusicTrack_ReturnFromPattern
+	.thumb_func
+MusicTrack_ReturnFromPattern:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
 	beq.n	.L_081c17aa
@@ -89,6 +98,9 @@ AlchemyUncreditedEnd_081c1796:
 	str	r2, [r1, #64]
 .L_081c17aa:
 	bx	lr
+	.global MusicTrack_Repeat
+	.thumb_func
+MusicTrack_Repeat:
 	push	{lr}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -116,6 +128,9 @@ AlchemyUncreditedEnd_081c1796:
 AlchemyUncredited_081c17da:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c17da:
+	.global MusicTrack_SetPriorityFromCommand
+	.thumb_func
+MusicTrack_SetPriorityFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #29]
@@ -123,6 +138,9 @@ AlchemyUncreditedEnd_081c17da:
 AlchemyUncredited_081c17e6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c17e6:
+	.global MusicPlayer_SetTempoFromCommand
+	.thumb_func
+MusicPlayer_SetTempoFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	lsls	r3, r3, #1
@@ -132,6 +150,9 @@ AlchemyUncreditedEnd_081c17e6:
 	lsrs	r3, r3, #8
 	strh	r3, [r0, #32]
 	bx	ip
+	.global MusicTrack_SetKeyOffsetFromCommand
+	.thumb_func
+MusicTrack_SetKeyOffsetFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #10]
@@ -143,6 +164,9 @@ AlchemyUncreditedEnd_081c17e6:
 AlchemyUncredited_081c180e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c180e:
+	.global MusicTrack_SetVoiceFromCommand
+	.thumb_func
+MusicTrack_SetVoiceFromCommand:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -166,6 +190,9 @@ AlchemyUncreditedEnd_081c180e:
 AlchemyUncredited_081c183e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c183e:
+	.global MusicTrack_SetVolumeFromCommand
+	.thumb_func
+MusicTrack_SetVolumeFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #18]
@@ -177,6 +204,9 @@ AlchemyUncreditedEnd_081c183e:
 AlchemyUncredited_081c1852:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1852:
+	.global MusicTrack_SetPanFromCommand
+	.thumb_func
+MusicTrack_SetPanFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -186,6 +216,9 @@ AlchemyUncreditedEnd_081c1852:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
+	.global MusicTrack_SetBendFromCommand
+	.thumb_func
+MusicTrack_SetBendFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -195,6 +228,9 @@ AlchemyUncreditedEnd_081c1852:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
+	.global MusicTrack_SetBendRangeFromCommand
+	.thumb_func
+MusicTrack_SetBendRangeFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #15]
@@ -206,6 +242,9 @@ AlchemyUncreditedEnd_081c1852:
 AlchemyUncredited_081c188e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c188e:
+	.global MusicTrack_SetLfoDelayFromCommand
+	.thumb_func
+MusicTrack_SetLfoDelayFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #27]
@@ -213,6 +252,9 @@ AlchemyUncreditedEnd_081c188e:
 AlchemyUncredited_081c189a:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c189a:
+	.global MusicTrack_SetModulationTargetFromCommand
+	.thumb_func
+MusicTrack_SetModulationTargetFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	ldrb	r0, [r1, #24]
@@ -225,6 +267,9 @@ AlchemyUncreditedEnd_081c189a:
 	strb	r3, [r1, #0]
 .L_081c18b2:
 	bx	ip
+	.global MusicTrack_SetTuneFromCommand
+	.thumb_func
+MusicTrack_SetTuneFromCommand:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -234,6 +279,9 @@ AlchemyUncreditedEnd_081c189a:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
+	.global MusicTrack_WriteSoundRegisterFromCommand
+	.thumb_func
+MusicTrack_WriteSoundRegisterFromCommand:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]

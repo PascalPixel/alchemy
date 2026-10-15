@@ -2327,7 +2327,7 @@ SECTIONS
         "*/recon/tla/raw/081b3ed8.o"(.text)
         "*/recon/tla/raw/081b3fb0.o"(.text)
         "*/recon/tla/raw/081b3ff4.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.081b4888)
+        "*/games/tla/src/graphics/slots/reel_game.o"(.rodata)
         . = ABSOLUTE(0x081b8000);
         "*/games/tla/src/system/far_call/resource_f.o"(.text)
         "*/games/tla/src/field/common/camera/camera.o"(.text)

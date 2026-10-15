@@ -1021,7 +1021,7 @@ Func_081b34a8:
 .L_081b3c98:
 	.4byte 0x007fffff
 .L_081b3c9c:
-	.4byte Data_081b4888
+	.4byte ReelGame_SparkCellOffsets
 .L_081b3ca0:
 	mov r3, r11
 	mov r0, r8

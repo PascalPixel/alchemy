@@ -2102,6 +2102,7 @@ SECTIONS
     "*/games/tla/src/sound/reset_slot_buckets.o"(.text)
     "*/games/tla/src/sound/track_slot_buffer.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001b3d90)
+    "*/games/tla/src/graphics/slots/reel_game.o"(.rodata)
     . = ABSOLUTE(0x081b8000);
     "*/games/tla/src/system/far_call/resource_f.o"(.text)
     "*/games/tla/src/field/common/camera/camera.o"(.text)

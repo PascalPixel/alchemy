@@ -2472,25 +2472,6 @@ Data_0819a140:
 	.global Data_0819a160
 Data_0819a160:
 	.incbin "baserom.gba", 0x0019a160, 0x00000048
-	.section .unidentified.081b4888,"a"
-	.global Data_081b4888
-Data_081b4888:
-	.incbin "baserom.gba", 0x001b4888, 0x00000014
-	.global Data_081b489c
-Data_081b489c:
-	.incbin "baserom.gba", 0x001b489c, 0x00000006
-	.global Data_081b48a2
-Data_081b48a2:
-	.incbin "baserom.gba", 0x001b48a2, 0x00000008
-	.global Data_081b48aa
-Data_081b48aa:
-	.incbin "baserom.gba", 0x001b48aa, 0x0000000e
-	.global Data_081b48b8
-Data_081b48b8:
-	.incbin "baserom.gba", 0x001b48b8, 0x0000000e
-	.global ReelGame_TitleLetterWidths
-ReelGame_TitleLetterWidths:
-	.incbin "baserom.gba", 0x001b48c6, 0x0000000a
 	.section .unidentified.081ba30c,"a"
 	.global Data_081ba30c
 Data_081ba30c:

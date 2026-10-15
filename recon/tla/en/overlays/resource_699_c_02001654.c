@@ -1,4 +1,4 @@
-/* Draft, differ 2 of 49: the native loads the leader x between building the 64 mask and copying it (movs r2, #64; ldr r6, [r0, #8]; adds r3, r2); this form copies the mask first. A one-pass block after the x shift is differ 4. Each coordinate written as three statements (x = leader->x; x >>= 20; x |= the masked cell) is the same differ 2. */
+/* Draft, differ 2 of 49: the native loads the leader x between building the 64 mask and copying it (movs r2, #64; ldr r6, [r0, #8]; adds r3, r2); this form copies the mask first. A one-pass block after the x shift is differ 4. Each coordinate written as three statements (x = leader->x; x >>= 20; x |= the masked cell) is the same differ 2. Also tried: the leader passed through an asm reading the mask (6), the mask through an asm reading the leader x or the reverse (20, registers swap), the leader x pinned to r6 (2). */
 #include "types.h"
 
 #include "ram_buffer.h"

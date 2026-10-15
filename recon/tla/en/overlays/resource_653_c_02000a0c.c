@@ -4,7 +4,12 @@
  * Func_02001f90 form (and Func_02000864's) with both barriers leaves differ 4:
  * the second barrier keeps the call's first argument and the zero in r5 from
  * rising into the block. With the first barrier only, differ 2; plain,
- * differ 2. A 6-minute permute of this form found nothing better. */
+ * differ 2. A 6-minute permute of this form found nothing better. Also
+ * tried: a one-pass block around the scale_y store (differ 8) or the
+ * rotation (15), a volatile scale_y store (2), the action's address or a
+ * copy of the object through an asm reading scale_y (12), the object
+ * through an asm reading the new scale_y (6: the call's first argument then
+ * follows it), a copy through it (20). */
 #include "../../../../games/tla/src/field/overlay_653/local.h"
 
 s32 Func_02000824(struct ObjectRuntime *a, struct ObjectRuntime *b);

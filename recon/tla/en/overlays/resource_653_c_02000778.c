@@ -1,7 +1,12 @@
 /* Near miss, differ 2 of 78 (one reordered pair): the native lowers the
  * stack (sub sp, #12) after it loads the object's x; the draft lowers it
  * one instruction earlier. One-pass blocks after the focus load or the
- * first store leave differ 8 and 4. */
+ * first store leave differ 8 and 4. Also tried: the array declared first,
+ * a struct for the position, braces around the first three stores, the
+ * focus pinned to r8 (differ 17), x read first with the array pointer pinned
+ * to r5 (2); a 5-minute permute found nothing better. In sched2 the stack
+ * adjustment and the focus copy tie at priority 47 and the adjustment has
+ * more dependents. */
 #include "../../../../games/tla/src/field/overlay_653/local.h"
 
 struct EventWork1cc {

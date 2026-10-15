@@ -1066,7 +1066,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000d36a4)
     "*/recon/tla/es/rom.o"(.rom.000d36e8)
     "*/recon/tla/es/rom.o"(.rom.000d39cc)
-    "*/recon/tla/es/rom.o"(.rom.000d3a2c)
+    "*/games/tla/src/field/common/object/destroy_at_index.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d3a4c)
         "*/games/tla/src/field/common/object/last_active.o"(.text)
         "*/games/tla/src/battle/effect/viewflag.o"(.text)

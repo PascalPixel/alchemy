@@ -924,7 +924,7 @@ SECTIONS
     "*/games/tla/src/field/common/event/spawn.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000cf6e8)
     "*/recon/tla/fr/rom.o"(.rom.000cf9cc)
-    "*/recon/tla/fr/rom.o"(.rom.000cfa2c)
+    "*/games/tla/src/field/common/object/destroy_at_index.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000cfa4c)
         "*/games/tla/src/field/common/object/last_active.o"(.text)
     "*/games/tla/src/battle/effect/viewflag.o"(.text)

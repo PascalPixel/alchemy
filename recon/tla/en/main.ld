@@ -898,7 +898,7 @@ SECTIONS
         "*/games/tla/src/field/common/event/spawn.o"(.text)
         "*/recon/tla/raw/080ca6e8.o"(.text)
         "*/recon/tla/raw/080ca9cc.o"(.text)
-        "*/recon/tla/raw/080caa2c.o"(.text)
+        "*/games/tla/src/field/common/object/destroy_at_index.o"(.text)
         "*/recon/tla/raw/080caa4c.o"(.text)
         "*/games/tla/src/field/common/object/last_active.o"(.text)
         "*/games/tla/src/battle/effect/viewflag.o"(.text)

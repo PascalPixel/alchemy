@@ -2126,12 +2126,6 @@ Event_SpawnObjectTable:
 	.thumb_func
 Func_080ca9cc:
 	.incbin "baserom.gba", 0x000cf9cc, 0x00000060
-	.section .rom.000cfa2c, "ax"
-	.global Func_080caa2c
-	.type Func_080caa2c, %function
-	.thumb_func
-Func_080caa2c:
-	.incbin "baserom.gba", 0x000cfa2c, 0x00000020
 	.section .rom.000cfa4c, "ax"
 	.global Func_080caa4c
 	.type Func_080caa4c, %function

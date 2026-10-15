@@ -410,7 +410,6 @@ SECTIONS
     "*/games/tla/src/graphics/window/counters.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0003a50c)
     "*/games/tla/src/graphics/window/msgwait.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.0003a5cc)
     "*/games/tla/src/graphics/window/set_busy_flags.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0003a65c)
     "*/games/tla/src/graphics/text/process_all.o"(.text)

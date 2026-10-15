@@ -428,7 +428,6 @@ SECTIONS
         "*/games/tla/src/graphics/window/counters.o"(.text)
         "*/recon/tla/raw/0803a54c.o"(.text)
         "*/games/tla/src/graphics/window/msgwait.o"(.text)
-        "*/recon/tla/raw/0803a60c.o"(.text)
         "*/games/tla/src/graphics/window/set_busy_flags.o"(.text)
         "*/recon/tla/raw/0803a69c.o"(.text)
         "*/games/tla/src/graphics/text/process_all.o"(.text)

@@ -583,6 +583,10 @@ UiWindow_ClearInteriorTiles:
 	.incbin "baserom.gba", 0x00039448, 0x00000094
 	.section .rom.00039540, "ax"
 	.balign 4
+	.global UiText_QueueRenderEntries
+	.type UiText_QueueRenderEntries, %function
+	.thumb_func
+UiText_QueueRenderEntries:
 	.incbin "baserom.gba", 0x00039540, 0x00000154
 	.section .rom.0003971e, "ax"
 	.incbin "baserom.gba", 0x0003971e, 0x0000002a
@@ -612,12 +616,6 @@ Func_08039f94:
 	.thumb_func
 UiMessage_Show:
 	.incbin "baserom.gba", 0x0003a4e0, 0x00000094
-	.section .rom.0003a5a0, "ax"
-	.global Func_0803a60c
-	.type Func_0803a60c, %function
-	.thumb_func
-Func_0803a60c:
-	.incbin "baserom.gba", 0x0003a5a0, 0x0000005c
 	.section .rom.0003a630, "ax"
 	.global UiText_OpenMessageWindow
 	.type UiText_OpenMessageWindow, %function

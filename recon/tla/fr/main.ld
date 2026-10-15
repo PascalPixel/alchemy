@@ -1203,7 +1203,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000e3210)
     "*/games/tla/src/battle/effect/update_orbiting_particle_main.o"(.text)
     "*/games/tla/src/battle/effect/sway.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000e3858)
     "*/recon/tla/fr/rom.o"(.rom.000e38c4)
     "*/games/tla/src/battle/effect/effect03_stop.o"(.text)
     "*/games/tla/src/battle/effect/check_owner_tile.o"(.text)

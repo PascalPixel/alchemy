@@ -1221,7 +1221,6 @@ SECTIONS
         "*/recon/tla/raw/080de21c.o"(.text)
         "*/games/tla/src/battle/effect/update_orbiting_particle_main.o"(.text)
         "*/games/tla/src/battle/effect/sway.o"(.text)
-        "*/recon/tla/raw/080de864.o"(.text)
         "*/recon/tla/raw/080de8d0.o"(.text)
         "*/games/tla/src/battle/effect/effect03_stop.o"(.text)
         "*/games/tla/src/battle/effect/check_owner_tile.o"(.text)

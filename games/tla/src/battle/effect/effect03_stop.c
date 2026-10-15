@@ -19,7 +19,7 @@ void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, u32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 s32 Resource_ResetEntry(u32 entry);
-void Func_080de864(struct ObjectRuntime *particle);
+void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
 void Func_080de8d0(struct ObjectRuntime *object);
 
 void Func_080de9ec(void)
@@ -47,7 +47,7 @@ void Func_080de9f8(void)
         if (object != 0) {
             object->scale_y = 0xb333;
             object->scale_x = 0xb333;
-            object->update = (void (*)(void))Func_080de864;
+            object->update = (void (*)(void))BattleFx_UpdateShrinkingOrbitObject;
             object->action = 120;
             object->unknown_66 = i << 13;
             object->motion_flags = 4;

@@ -1,4 +1,4 @@
-/* Draft, differ 12 of 29: through the scene layer's inline the object stays in r0 and the owner in r2, as the native has them. Left: the native passes the angle as a copy of the value it stored (adds r1, r3), where this form reads it back (ldrh r1, [r0, #6]), and three loads are scheduled one step apart. An s32 or u16 angle variable builds it in r1 and drops the copy (differ 19); four minutes of permuter reached differ 10. */
+/* Draft, differ 10 of 29: through the scene layer's inline the object stays in r0 and the owner in r2, as the native has them, and the angle argument repeats the stored expression, so CSE passes the stored value (adds r1, r3) as the native does. Left: the native builds the phase byte's address (adds r5, r0) and the position (adds r2, r0) one load earlier, filling each load's delay. Tried: an s32 or u16 angle variable (19), the phase pointer declared later (12), permuter 4 minutes (10). */
 #include "types.h"
 
 #include "ram_buffer.h"
@@ -99,14 +99,13 @@ s32 Func_0200047c(struct ObjectRuntime *object)
     struct ObjectRuntime *owner = object->linked_object;
 
     if (owner != NULL) {
-        u8 *phase;
+        u8 *phase = &OBJECT_BYTE(object, 98);
 
         object->x = owner->x;
         object->y = owner->y + 0x100000;
-        phase = &OBJECT_BYTE(object, 98);
         object->z = owner->z;
         object->angle = *phase << 8;
-        Vector_AddPolar(0x60000, object->angle, &object->x);
+        Vector_AddPolar(0x60000, *phase << 8, &object->x);
         *phase += 16;
     }
     return 1;

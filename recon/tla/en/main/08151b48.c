@@ -1,4 +1,4 @@
-/* Draft of Func_08151b48, effect kind 17.
+/* Near miss of Func_08151b48, effect kind 17.
  *
  * Twin: The Broken Seal's BattleFx_RunClosingBolts (effect.c), call for
  * call, with The Lost Age's changes: on its own side the canvas begins
@@ -10,6 +10,15 @@
  * work->effect, the only place this effect does. ResourceId_LightningBolt-
  * Sheet is row 0x188 of directory.s (asset BattleFx_LightningBoltSheet),
  * not yet named there.
+ *
+ * Near miss: differ 53 of 519 (draft 520), order residue: the native
+ * loads BG2PA's value before it builds the register's address in both
+ * branches (so their common tail is merged differently and one more
+ * instruction lands here), sets r1 before r0 for Func_081963ec, and
+ * issues the sheet offset and the work load one slot apart from agscc.
+ *
+ * Tried (2026-10-15):
+ *   - a separate counter for the frame loop: no change.
  */
 #include "types.h"
 #include "battle_effect.h"

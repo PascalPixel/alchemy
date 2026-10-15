@@ -1,29 +1,29 @@
-/* Near miss: listing 529 instructions, draft 529, differ 18. ☀️ twin:
+/* Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
  * BattleFx_RunFireSwirlCharge (effect.c, structure 0.800): the same swirl and
  * spark burst, with a second variant ⚓️ added at the target.
  * Statements, allocation and frame all match (effect r10, work r11, canvas at
  * sp+16, the two blitters at sp+20, the position at sp+28 and its address in
- * r9, frame and frame - 8 spilled); what is left is sched2 order in five
- * places: the frame loop's preheader (the native clears frame and builds -8
- * before it starts the position's address), the second side's cell blit (the
- * native loads biasX's table before 0x700 and stores the width before it
- * negates biasX), the spark spawn's entry test (the native builds -16 before
- * it loads the variant) and the spark height test (the native loads y before
- * 0x680000). Each is the native issuing a store or a load sooner than agscc's
- * arm9tdmi costs rank it.
- * Measured: the BLDALPHA and BG2PA stores take f18284c.c's blend pin (each
- * differ 2 without); the timer clear through &sparks->variant, i before the
- * pixel pointer, the pixels indexed and the sparks as &sparks[i] (as in
- * BattleFx_RunFireSwirlCharge) are the source's forms (38 to 22); a one-pass
- * block on y fixes the height test but moves the IntegrateVector2 arguments
- * (18); an asm barrier on y relays out the function (105).
- * 2026-10-15 (fx-n3): rewritten for reading on struct BattleEffectWork, with
- * the resource ids and ☀️'s table names (effect_table.s: gData_08199d40
- * CellSourceOffsets, 08199d4e CellBiasX, 08199d55 CellBiasY, 08199d31
- * CellWidths, 08199d38 CellHeights); BLDALPHA's pin as one macro, BG2PA's pin
- * alone (with the barrier too: 26, its estimated four bytes move the next
- * literal pool); still 18. alchemy permute (10 min, 2 jobs, 2,732
- * candidates): nothing below 18. */
+ * r9, frame and frame - 8 spilled); what is left (12 rows) is sched2 order in
+ * four places: the frame loop's preheader (the native clears frame and builds
+ * -8 before it starts the position's address), the second side's cell blit
+ * (the native loads biasX's table before 0x700), the spark spawn's entry test
+ * (the native builds -16 before it loads the variant) and the spark height test
+ * (the native loads y before 0x680000). Each is the native issuing a store or a
+ * load sooner than agscc's arm9tdmi costs rank it. Measured: the BLDALPHA and
+ * BG2PA stores take f18284c.c's blend pin (each differ 2 without); the timer
+ * clear through &sparks->variant, i before the pixel pointer, the pixels
+ * indexed and the sparks as &sparks[i] (as in BattleFx_RunFireSwirlCharge) are
+ * the source's forms (38 to 22); a one-pass block on y fixes the height test
+ * but moves the IntegrateVector2 arguments (18); an asm barrier on y relays out
+ * the function (105). 2026-10-15 (fx-n3): rewritten for reading on struct
+ * BattleEffectWork, with the resource ids and ☀️'s table names (effect_table.s:
+ * gData_08199d40 CellSourceOffsets, 08199d4e CellBiasX, 08199d55 CellBiasY,
+ * 08199d31 CellWidths, 08199d38 CellHeights); BLDALPHA's pin as one macro,
+ * BG2PA's pin alone (with the barrier too: 26, its estimated four bytes move
+ * the next literal pool); still 18. alchemy permute (10 min, 2 jobs, 2,732
+ * candidates): nothing below 18. The tables extern without const, as
+ * ☀️'s readers declare them: 18 to 12 (the native reloads the cell tables
+ * after each call). */
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -55,12 +55,13 @@ extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SkullSheet;
 extern char ResourceId_BlueFlameSheet;
 
-// The swirl's seven growth frames, cut from one sheet.
-extern const u16 gFireSwirl_CellSourceOffsets[];
-extern const s8 gFireSwirl_CellBiasX[];
-extern const s8 gFireSwirl_CellBiasY[];
-extern const u8 gFireSwirl_CellWidths[];
-extern const u8 gFireSwirl_CellHeights[];
+// The swirl's seven growth frames, cut from one sheet. Not const: the native
+// reloads them after every call.
+extern u16 gFireSwirl_CellSourceOffsets[];
+extern s8 gFireSwirl_CellBiasX[];
+extern s8 gFireSwirl_CellBiasY[];
+extern u8 gFireSwirl_CellWidths[];
+extern u8 gFireSwirl_CellHeights[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);

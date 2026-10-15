@@ -1295,7 +1295,6 @@ SECTIONS
         "*/games/tla/src/battle/effect/screen_sprite.o"(.text)
         "*/games/tla/src/battle/effect/step_vector.o"(.text)
         "*/games/tla/src/battle/effect/plot_canvas_pixel.o"(.text)
-        "*/recon/tla/raw/080eb318.o"(.text)
         "*/recon/tla/raw/080eb3d0.o"(.text)
         "*/games/tla/src/battle/effect/color_fade_map.o"(.text)
         "*/recon/tla/raw/080eb594.o"(.text)

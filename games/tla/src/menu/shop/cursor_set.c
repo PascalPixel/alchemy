@@ -69,3 +69,27 @@ void Shop_SetCursor(
     cursor->kind = kind;
     cursor->active = 0;
 }
+
+// Puts the cursor at x, y at once: both its position and its target, and its
+// sprite with them. The Broken Seal's ShopCursor_SetPositionImmediate.
+void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y)
+{
+    {
+        struct ShopCursorSprite3 *sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+
+        cursor->target_x = x;
+        cursor->kind = 1;
+        cursor->active = 0;
+        cursor->x = x;
+        sprite->oam.x = sprite->x = x;
+    }
+    {
+        struct ShopCursorSprite3 *sprite;
+
+        cursor->target_y = y;
+        /* FAKEMATCH: the volatile store of y and reload of the anchor keep the reload after the store, as native; plain, the reload is scheduled ahead of it (one reordered pair, differ 2). */
+        *(volatile u16 *)&cursor->y = y;
+        sprite = *(struct ShopCursorSprite3 *volatile *)&cursor->anchor;
+        sprite->oam.y = sprite->y = y;
+    }
+}

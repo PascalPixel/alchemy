@@ -1464,7 +1464,6 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.00110948)
     "*/recon/tla/de/rom.o"(.rom.001109e4)
     "*/games/tla/src/menu/shop/cursor_set.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.00110aa8)
     "*/games/tla/src/menu/shop/cursor_place.o"(.text)
     "*/games/tla/src/system/resource/load_resource_to_block.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00110b70)

@@ -1701,7 +1701,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.00108948)
     "*/recon/tla/it/rom.o"(.rom.001089e4)
     "*/games/tla/src/menu/shop/cursor_set.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00108aa8)
     "*/games/tla/src/menu/shop/cursor_place.o"(.text)
     "*/games/tla/src/system/resource/load_resource_to_block.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00108b70)

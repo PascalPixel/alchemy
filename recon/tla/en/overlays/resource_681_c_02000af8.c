@@ -3,7 +3,12 @@
  * instructions later. Tried: the state assigned before or after the call (6),
  * a u16 direction (9), the mode as a local (8), asm barriers and a one-pass
  * block after the state (6 to 16), a minute of alchemy permute; the state
- * through an asm operand alone or with the direction (16), pinned to r8 (2). */
+ * through an asm operand alone or with the direction (16), pinned to r8 (2).
+ * sched2 ranks the mask's movs (priority 9) above the state's load (8, its
+ * chain ends in an anti dependence of cost 0). Also measured: the state
+ * pinned to r3 (2; with a one-pass block or empty asm before it, the load
+ * moves ahead of movs but the direction's copy too: 4), the call's result
+ * pinned to r0 (4), four minutes of alchemy permute on the r3 form (5). */
 #include "../../../../games/tla/include/types.h"
 #include "../../../../games/tla/include/object_runtime.h"
 

@@ -3,7 +3,12 @@
  * against count at entry; agscc strength-reduces and reverses every for,
  * while and guarded do/while tried, with u16 or s16 elements; a goto loop keeps
  * the native's shape (differ 20) but holds sp and delta in r7 and r8. An s8,
- * u8, s16, u16 or u32 index measures 29, 24, 33, 29 and 26. */
+ * u8, s16, u16 or u32 index measures 29, 24, 33, 29 and 26. The index
+ * pinned to r5 gives the native's loop (the entry test of 0 against count,
+ * no strength reduction) at differ 20: GCSE replaces the loop's array base
+ * with the call argument's, kept in r7, where the native rebuilds it
+ * (mov r3, sp) each pass; pinning count and delta as well gives r7 to two
+ * values at once (13), a form that does not hold delta. */
 #include "../../../../games/tla/include/types.h"
 #include "../../../../games/tla/include/party_state.h"
 

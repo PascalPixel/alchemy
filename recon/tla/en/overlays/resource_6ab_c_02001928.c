@@ -1,6 +1,9 @@
 /* Near miss of Func_02001928 (30 instructions, 4 differ): the native builds the mask 3 before it
  * loads the sprite attributes and masks the priority before it loads their byte; the draft
- * loads both first. */
+ * loads both first. Also measured: the priority masked first (12), the byte
+ * written by hand (12, 22), a one-pass block before or after the sprite's
+ * load (4), five minutes of alchemy permute (4). Its copy group is led by
+ * 6AA's Func_02001e1c in another lane. */
 #include "types.h"
 #include "object_runtime.h"
 #include "call.h"

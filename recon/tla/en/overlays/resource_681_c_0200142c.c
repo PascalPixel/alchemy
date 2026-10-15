@@ -5,7 +5,11 @@
  * below the call but then the angle is read before the speed (differ 2 at
  * another place); reading the speed into a local first changes the load
  * (ldrsh, or r0 for the pointer); an in-out asm on the cosine result does
- * not hold the load. */
+ * not hold the load. An empty asm between the cosine call (into its own
+ * local) and the first multiply holds the load (differ 2: the angle is then
+ * read before the speed); the angle sum written six ways, five minutes of
+ * alchemy permute on that form, no better. Its copy group is led by 664's
+ * Func_02003f94 in another lane. */
 #include "types.h"
 #include "iwram_call.h"
 #include "frame.h"

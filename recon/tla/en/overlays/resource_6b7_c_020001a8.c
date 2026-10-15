@@ -2,7 +2,12 @@
  * Left: the native loads gInput's address into r1 for the first key test and
  * again into r5 after it; this C (like ☀️'s native) loads it once into r5.
  * Tried: a plain read in either test, a local input pointer, a goto or
- * while (1) loop, three minutes of alchemy permute (12 at best). */
+ * while (1) loop, three minutes of alchemy permute (12 at best). The RTL
+ * dumps show the cause: CSE leaves two loads of the address, and GCSE's PRE
+ * merges the third test's into the first's (a copy at the end of the first
+ * test's body); a one-pass block before the third test and an asm in-out
+ * pointer for the last two tests (its input is PRE'd the same way) leave
+ * differ 11. */
 #include "types.h"
 #include "input.h"
 #include "party_state.h"

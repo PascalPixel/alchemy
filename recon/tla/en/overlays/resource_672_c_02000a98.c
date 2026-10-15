@@ -4,7 +4,10 @@
  * offset chain one higher (122 against 121) and builds 532 first. Tried:
  * separate declarations, in either order, &gPartyState as a local before or
  * after the work, the heap slots as a local; permute, 8 minutes, finds
- * nothing better than 4. */
+ * nothing better than 4. Also measured: one-pass blocks around either
+ * declaration (8 to 10), a volatile view of the heap slots or of the work
+ * pointer (5, 11), an owner pointer local (5). Its copy group is led by
+ * 671's Func_020011bc in another lane. */
 #include "../../../../games/tla/src/field/overlay_672/ov672.h"
 
 void Object_RefreshSelectorById(u32 id);

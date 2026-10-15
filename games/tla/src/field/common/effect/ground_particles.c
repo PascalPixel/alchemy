@@ -50,6 +50,7 @@ void Func_080d690c(void)
     u32 *words;
     u32 i;
 
+    /* FAKEMATCH: as in The Broken Seal, one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all in r6 as the native keeps them; a plain zero for the fill differs 6. */
     work = Runtime_AllocateBlock(116, sizeof(struct GroundParticleWork));
     leader = Ram_HeapSlots->map_work->origin;
     Func_080d2c64(170);

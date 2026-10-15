@@ -13297,12 +13297,12 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
   REG_BLDALPHA = 0x1010;
 }
 
-// projectile_volley.c
-// バトル効果：BattleFx_RunProjectileVolley の型ごとの入り口
+// The projectile volley in each of its modes.
 
 #define ARG(e) ((struct BattleEffectArgument *)(e))
 
-#define STEP_FAST 0x30 // 絵のアニメの step（ふだんは 0x10）
+// The user's animation speed while it fires (normally STEP_NORMAL).
+#define STEP_FAST 0x30
 #define STEP_NORMAL 0x10
 
 void BattleFx_RunMode0(void *effect) {
@@ -13329,23 +13329,24 @@ void BattleFx_RunMode4(void *effect) {
   BattleFx_RunProjectileVolley(effect, 4);
 }
 
-// 使う者を mode 2 にし、アニメを速めているあいだに型 mode の弾を放つ
+// Puts the user into its action pose (2) and fires the volley in this mode
+// while its animation runs fast.
 static __inline__ void RunVolleyWithAction(void *effect, s32 mode) {
-  s32 obj;
+  s32 user;
 
-  obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
-  ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FAST);
+  user = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
+  ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
+  ObjectDispatch_ApplyValueToChildrenFar(user, STEP_FAST);
   BattleFx_RunProjectileVolley(effect, mode);
-  ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_NORMAL);
+  ObjectDispatch_ApplyValueToChildrenFar(user, STEP_NORMAL);
 }
 
-// 型 5 : 使う者を mode 2 にし、アニメを速めているあいだに放つ
+// Volley mode 5, fired from the user's action pose.
 void BattleEffect_RunMode5WithAction(void *effect) {
   RunVolleyWithAction(effect, 5);
 }
 
-// 型 6 : 型 5 と同じく、アニメを速めて放つ
+// Volley mode 6, fired from the user's action pose.
 void BattleFx_RunMode6WithAction(void *effect) {
   RunVolleyWithAction(effect, 6);
 }
@@ -13358,18 +13359,15 @@ void BattleFx_RunMode10(void *effect) {
   BattleFx_RunProjectileVolley(effect, 10);
 }
 
-// 型 9 : 型 5 と同じく、アニメを速めて放つ
+// Volley mode 9, fired from the user's action pose.
 void BattleFx_RunMode9WithAction(void *effect) {
   RunVolleyWithAction(effect, 9);
 }
 
-// approach.c
-// バトル効果：対象へ飛ぶ弾の一斉射撃と、キャラの移動
-// mode ごとの表
+// Projectile volleys, and moving battlers about.
 extern u8 gVolley_CometHeights[];
-extern u8 gVolley_Modes
-    []; // 5
-        // バイトずつ：弾の数、届くまでのフレーム、弾の間隔、対象の間隔、火花の数
+// Five bytes for each mode; see VolleyField.
+extern u8 gVolley_Modes[];
 extern u8 gVolley_FlashWidths[];
 extern u8 gVolley_FlashHeights[];
 extern u8 gVolley_FlashSteps[];
@@ -13377,17 +13375,42 @@ extern u8 gVolley_FlashRises[];
 extern u16 gVolley_FlashOffsets[];
 extern u16 gVolley_PelletOffsets[];
 
-// 粒の表：0- 当たりの光、100- 火花、512- 火の玉の尾
+// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
+// fireball trails from 512.
 #define PTCL_MAX 1024
 
-// 使う者から対象へ弾を飛ばし、当たったら光と火花を出す
-// mode : 弾の絵と飛び方 (0-11)
+// The bytes of a gVolley_Modes row.
+enum VolleyField {
+  VOLLEY_SHOTS,   // shots at each target
+  VOLLEY_STEPS,   // frames a shot takes to reach its target
+  VOLLEY_STAGGER, // frames between shots
+  VOLLEY_DELAY,   // frames between targets
+  VOLLEY_SPARKS   // sparks thrown on each hit
+};
+
+// The value of one field of this volley's gVolley_Modes row.
+#define VOLLEY_VALUE(field) (gVolley_Modes[mode * 5 + (field)])
+
+// Where the volley's pictures sit in the sheet.
+#define VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each
+#define VOLLEY_STREAK_CELLS 0x2000 // wind streaks
+#define VOLLEY_FLASH_TURNED 0x128a // the hit flashes turned on their side
+#define VOLLEY_DJINNI_CELLS 0x65c0 // the small Mercury djinni
+
+// Projectile volley: shots fly from the user to each target and burst
+// into a flash and sparks when they pass it.
+//
+// effect: the user and the targets. variant picks the comet in modes 0
+//         and 8; with prelude 1 a Mercury djinni enters first.
+// mode: the shot and its flight (0 to 11): 0, 5 and 8 comets (5 in the
+//       ice palette), 1 shurikens, 2 bouncing pellets, 3, 4 and 11
+//       yellow sparks, 6 fireballs with trails, 7, 9 and 10 ice chips.
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition position;
   s32 screenX;
   s32 screenY;
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -13397,27 +13420,29 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   BlitterPair draw;
   struct BattleCamera *camera;
   u8 *sheet;
-  s32 seWait;
+  s32 soundCooldown;
   s32 total;
   s32 kind;
   s32 shots;
   s32 steps;
   struct MotionObject *user;
   s32 k;
-  s32 shift;
+  // The trail particles placed, and later the sparks' speed shift: one
+  // local for both, as separate locals change the register allocation.
+  s32 trailsOrShift;
   s32 hit;
   s32 x;
 
-  // ワーク、キャンバス、カメラ
-  heap = gBattleFxWork;
-  cursor = heap;
+  // The work, the canvas and the camera.
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = *(struct BattleCamera **)((u8 *)heap - (HEAP_SLOT_BATTLE_EFFECT -
-                                                   HEAP_SLOT_CAMERA) *
-                                                      sizeof(void *));
-  sheet = heap[2];
-  seWait = 0;
+  camera = *(struct BattleCamera **)((u8 *)slots - (HEAP_SLOT_BATTLE_EFFECT -
+                                                    HEAP_SLOT_CAMERA) *
+                                                       sizeof(void *));
+  sheet = slots[2];
+  soundCooldown = 0;
   work->effect = effect;
   kind = effect->variant;
   if (mode == 10)
@@ -13428,7 +13453,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screenX,
                                  &screenY);
 
-  // 128x128 の合成。向こう側なら左右を反転する
+  // 128x128 drawing, mirrored on side 1.
   if (mode == 5) {
     if (work->effect->side == 1)
       BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
@@ -13444,7 +13469,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 
-  // 弾の絵
+  // The shot pictures.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == 0 || mode == 5 || mode == 8) {
     if (mode == 5)
@@ -13453,13 +13478,13 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       kind = 0;
     if (kind == 0)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
     else if (kind == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + VOLLEY_COMET_CELLS, 1, 1);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       {
@@ -13467,7 +13492,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
-                               work->sheet + 0x2000, 1, 0);
+                               work->sheet + VOLLEY_STREAK_CELLS, 1, 0);
     if (mode == 5) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       {
@@ -13499,23 +13524,23 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               work->sheet + 0x65c0, 1, 0);
+                               work->sheet + VOLLEY_DJINNI_CELLS, 1, 0);
     work->transferMode = 2;
     work->transferValue = 50;
   }
   Scheduler_AddOrUpdateCallback(
       (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 弾の出る位置と速さ
+  // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
-  shots = gVolley_Modes[mode * 5];
-  steps = gVolley_Modes[mode * 5 + 1];
+  shots = VOLLEY_VALUE(VOLLEY_SHOTS);
+  steps = VOLLEY_VALUE(VOLLEY_STEPS);
   {
-    s32 stagger = gVolley_Modes[mode * 5 + 2];
-    s32 delay = gVolley_Modes[mode * 5 + 3];
+    s32 stagger = VOLLEY_VALUE(VOLLEY_STAGGER);
+    s32 delay = VOLLEY_VALUE(VOLLEY_DELAY);
     s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
 
-    if (work->effect->count * shots > 63) // particles[64] に収める
+    if (work->effect->count * shots > 63) // keep within particles[64]
       work->effect->count = 1;
 
     for (i = 0; i != work->effect->count; i++) {
@@ -13582,15 +13607,13 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     else
       total = work->effect->count * delay + shots * stagger + 16;
 
-    //------------------------------------------------------------------
-    // 毎フレームの動きと描画
-    //------------------------------------------------------------------
+    // Each frame: move and draw.
     for (frame = 0; frame != total; frame++) {
       s32 index;
 
-      // 結果の再生を始める
-      if (seWait > 0)
-        seWait--;
+      // Start playing the results.
+      if (soundCooldown > 0)
+        soundCooldown--;
       if (mode == 6) {
         if (frame == 4)
           AudioCommand_PlayFar(136);
@@ -13604,7 +13627,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           BattleEventRuntime_BeginPhaseFar(133);
       }
 
-      // 前置き：ジンの小さな絵が円を描き、70 フレームから上へ去る
+      // Prelude: the small djinni circles, and from frame 70 rises away.
       if (work->effect->prelude == 1) {
         s32 x = (-Trig_Sin(frame << 11) << 2 >> 16) + screenX / 2 - 10;
         s32 y = (Trig_Cos(frame << 11) << 1 >> 16) + screenY - 24;
@@ -13619,12 +13642,12 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                 COMPOSITE_ADDITIVE);
         draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (frame <= 3)
-          draw[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
-        draw[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+          draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
+        draw[1](canvas, work->sheet + VOLLEY_DJINNI_CELLS, x, y, 20, 40);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
 
-      // 弾
+      // The shots.
       Render_ResetTransformState();
       Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
       index = 0;
@@ -13637,32 +13660,33 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             struct EffectStep *shot = &work->particles[i * shots + j];
             struct EffectPosition *pos = &position;
 
-            // 画面の位置 (キャンバスの横は半分)
+            // The screen position (half across, on the canvas).
             EffectPosition_ApplyBaseAndYOffset((s32 *)shot, pos);
             pos->x >>= 1;
             shot->x += shot->velocityX;
             shot->y += shot->velocityY;
             shot->z += shot->velocityZ;
             if (mode == 6) {
-              // 火の玉の尾を二つ出す
-              shift = 0;
+              // Leave two trail particles behind the fireball.
+              trailsOrShift = 0;
               for (k = 512; k != PTCL_MAX; k++) {
-                struct EffectStep *p = &PARTICLES[k];
+                struct EffectStep *particle = &PARTICLES[k];
 
-                if (p->variant == 0) {
-                  p->x = position.x << 16;
-                  p->y = position.y << 16;
-                  p->velocityX = ((Random16() & 255) - 128) << 11;
-                  p->velocityY = ((Random16() & 255) - 128) << 11;
-                  p->variant = (Random16() & 7) + 32;
-                  shift++;
-                  if (shift == 2)
+                if (particle->variant == 0) {
+                  particle->x = position.x << 16;
+                  particle->y = position.y << 16;
+                  particle->velocityX = ((Random16() & 255) - 128) << 11;
+                  particle->velocityY = ((Random16() & 255) - 128) << 11;
+                  particle->variant = (Random16() & 7) + 32;
+                  trailsOrShift++;
+                  if (trailsOrShift == 2)
                     break;
                 }
               }
             }
             if (shot->variant == 0) {
-              // 対象の側に入り、対象の x を越えたら当たり
+              // A shot hits once it is on the target's side of the field and
+              // past the target's x.
               x = shot->x;
               if (target->x < 0) {
                 hit = x < 0;
@@ -13698,12 +13722,12 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 shot->variant = 1;
                 if (mode == 5) {
                   BattleEventRuntime_BeginPhaseFar(134);
-                } else if (mode != 6 && seWait == 0) {
-                  seWait = 8;
+                } else if (mode != 6 && soundCooldown == 0) {
+                  soundCooldown = 8;
                   AudioCommand_PlayFar(132);
                 }
                 if (mode == 2) {
-                  // はね返る
+                  // Bounce off.
                   s32 kick = ((Random16() & 31) + 32) << 12;
 
                   if (Random16() & 1)
@@ -13727,19 +13751,21 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
                                                        5);
                 }
-                // 火花
-                shift = mode == 5 ? 12 : 11;
+                // Sparks.
+                trailsOrShift = mode == 5 ? 12 : 11;
                 for (k = 100; k != 512; k++) {
-                  struct EffectStep *p = &PARTICLES[k];
+                  struct EffectStep *particle = &PARTICLES[k];
 
-                  if (p->variant == 0) {
-                    p->x = position.x << 16;
-                    p->y = position.y << 16;
-                    p->velocityX = ((Random16() & 255) - 128) << shift;
-                    p->velocityY = ((Random16() & 255) - 128) << shift;
-                    p->variant = (Random16() & 7) + 16;
+                  if (particle->variant == 0) {
+                    particle->x = position.x << 16;
+                    particle->y = position.y << 16;
+                    particle->velocityX = ((Random16() & 255) - 128)
+                                          << trailsOrShift;
+                    particle->velocityY = ((Random16() & 255) - 128)
+                                          << trailsOrShift;
+                    particle->variant = (Random16() & 7) + 16;
                     spawned++;
-                    if (spawned == gVolley_Modes[mode * 5 + 4])
+                    if (spawned == VOLLEY_VALUE(VOLLEY_SPARKS))
                       break;
                   }
                 }
@@ -13747,7 +13773,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             }
           draw_shot:
             if (mode == 0 || mode == 5 || mode == 8) {
-              // 絵は上半分だけで、下半分は上下を反転して描く
+              // The picture holds the top half; the bottom half is drawn
+              // flipped.
               if (work->effect->side == 1)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                                       CLIP | COMPOSITE_FLIP_X, COMPOSITE_MAX);
@@ -13755,7 +13782,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
                                       COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + 0x1000, pos->x - 16,
+                  canvas, work->sheet + VOLLEY_COMET_CELLS, pos->x - 16,
                   pos->y - gVolley_CometHeights[kind], 32,
                   gVolley_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -13766,8 +13793,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                                       CLIP | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + 0x1000, pos->x - 16, pos->y, 32,
-                  gVolley_CometHeights[kind]);
+                  canvas, work->sheet + VOLLEY_COMET_CELLS, pos->x - 16, pos->y,
+                  32, gVolley_CometHeights[kind]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             } else if (mode == 1) {
               if (ABS(shot->x) <= ABS(target->x))
@@ -13783,19 +13810,19 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             } else if (mode == 3) {
               draw[0](canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
             } else if (mode == 4) {
-              draw[0](canvas, work, pos->x - 6, pos->y - 4, 12, 8);
+              draw[0](canvas, work->sheet, pos->x - 6, pos->y - 4, 12, 8);
             } else if (mode == 11) {
               draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
                       23);
             } else {
-              draw[0](canvas, work, pos->x - 20, pos->y - 32, 40, 64);
+              draw[0](canvas, work->sheet, pos->x - 20, pos->y - 32, 40, 64);
             }
           }
         }
       }
 
-      // 当たりの光：12 フレーム。半分の絵を、反転してもう半分描く
-      // (奇数は縦横を入れ替えた絵)
+      // Hit flashes, 12 frames: half a picture, drawn again flipped for the
+      // other half (odd flashes use the pictures turned on their side).
       if (mode == 0 || mode == 5 || mode == 8) {
         for (i = 0; i != work->effect->count * shots; i++) {
           struct EffectStep *flash = &PARTICLES[i];
@@ -13824,7 +13851,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP,
                                     COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gVolley_FlashOffsets[step] + 0x128a,
+                  canvas,
+                  work->sheet + gVolley_FlashOffsets[step] +
+                      VOLLEY_FLASH_TURNED,
                   flash->x - gVolley_FlashRises[step],
                   flash->y - gVolley_FlashWidths[step],
                   gVolley_FlashHeights[step], gVolley_FlashWidths[step]);
@@ -13832,7 +13861,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
                                     CLIP | COMPOSITE_FLIP, COMPOSITE_MAX);
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
-                  canvas, work->sheet + gVolley_FlashOffsets[step] + 0x128a,
+                  canvas,
+                  work->sheet + gVolley_FlashOffsets[step] +
+                      VOLLEY_FLASH_TURNED,
                   flash->x + gVolley_FlashSteps[step] -
                       gVolley_FlashRises[step],
                   flash->y, gVolley_FlashHeights[step],
@@ -13846,33 +13877,35 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         }
       }
 
-      // 火花：落ちて、下 (y 112) ではね返る
+      // Sparks fall and bounce off the bottom (y 112).
       for (i = 100; i != 512; i++) {
-        struct EffectStep *p = &PARTICLES[i];
+        struct EffectStep *particle = &PARTICLES[i];
 
-        if (p->variant > 0) {
-          s32 size = (p->variant >> 3) + 1;
+        if (particle->variant > 0) {
+          s32 size = (particle->variant >> 3) + 1;
 
           draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
-                  HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
-          EffectStep_AdvanceWithGravity2D(p, 60, 0x1000);
-          if (p->y > 0x700000)
-            p->velocityY = -p->velocityY / 2;
-          p->variant--;
+                  HI(particle->x) - size / 2, HI(particle->y) - size, size,
+                  size * 2);
+          EffectStep_AdvanceWithGravity2D(particle, 60, 0x1000);
+          if (particle->y > 0x700000)
+            particle->velocityY = -particle->velocityY / 2;
+          particle->variant--;
         }
       }
 
-      // 火の玉の尾：上へ昇る
+      // Fireball trails rise.
       for (i = 512; i != PTCL_MAX; i++) {
-        struct EffectStep *p = &PARTICLES[i];
+        struct EffectStep *particle = &PARTICLES[i];
 
-        if (p->variant > 0) {
-          s32 size = (p->variant >> 4) + 1;
+        if (particle->variant > 0) {
+          s32 size = (particle->variant >> 4) + 1;
 
           draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
-                  HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
-          EffectStep_AdvanceWithGravity2D(p, 60, -0x4000);
-          p->variant--;
+                  HI(particle->x) - size / 2, HI(particle->y) - size, size,
+                  size * 2);
+          EffectStep_AdvanceWithGravity2D(particle, 60, -0x4000);
+          particle->variant--;
         }
       }
       Camera_ApplyShake(4, 4);
@@ -13888,21 +13921,23 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
-// キャラを、上へはずみをつけて元の位置 (anchor) へ戻す
+// Sends a battler back to its place (its anchor) with a hop.
+//
+// id: the battler.
 void BattleFx_InitializeRisingObject(s32 id) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
-  struct MotionObject *obj = slot->object;
+  struct MotionObject *object = slot->object;
 
-  obj->acceleration = 0x20000;
-  obj->speedLimit = 0x80000; // 8 ドット/フレーム
-  obj->velocityY = 0x40000;
-  obj->verticalMotionStrength = 0xab85;
-  obj->verticalMotionPhase = 0;
-  obj->autoFaceMotion = 0;
-  obj->snapToTarget = 1;
-  ObjectDispatch_InitFromTable6Far(obj);
-  Object_SetMoveTargetFar(obj, slot->anchorX, 0, slot->anchorZ);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x80000; // 8 pixels a frame
+  object->velocityY = 0x40000;
+  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  object->snapToTarget = 1;
+  ObjectDispatch_InitFromTable6Far(object);
+  Object_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
+  ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 }
 
 // キャラを、相手までの 8 割の位置へ frames フレームで動かす

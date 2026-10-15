@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a0/wait.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02008194)
         "*/games/tla/src/field/overlay_6a0/s0290.o"(.text)
-        "*/resource_6a0_overlay.o"(.text.x020082f0)
+        "*/games/tla/src/field/overlay_6a0/s02f0.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x020085a0)
         "*/resource_6a0_overlay.o"(.text.x020085e8)
         "*/games/tla/src/field/overlay_6a0/marker.o"(.text)

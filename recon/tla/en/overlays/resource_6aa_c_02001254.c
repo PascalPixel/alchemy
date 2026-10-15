@@ -1,5 +1,4 @@
-/* Near misses of overlay 6aa: Func_02000df0 differ 16 (the fill pointer and the count swap r1 and r2; the entry
- * load and the callback load come a row early), Func_02001254 differ 36 (the listing keeps one counter address in
+/* Near misses of overlay 6aa: Func_02001254 differ 36 (the listing keeps one counter address in
  * r5 and loads the other twice), Func_020012e4 differ 22 (the listing reloads the counter sign-extended for the
  * last test and builds its zero in r4 before the first). */
 #include "../../../../games/tla/src/field/overlay_6aa/room.h"
@@ -46,33 +45,6 @@ void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
-
-void Func_02000df0(void)
-{
-    u32 *buffer = MemAlloc(0x100);
-    void (*callback)(void);
-    s32 entry;
-    u32 *word;
-    s32 count;
-
-    word = buffer;
-    count = 63;
-    /* FAKEMATCH: a goto loop, which GCC does not treat as a loop: ⚓️ loads the fill word inside it */
-fill:
-    *word++ = 0x11111111;
-    if (--count >= 0)
-        goto fill;
-    Data_020068a2 = Resource_FindFreeEntry();
-    entry = Data_020068a2;
-    /* FAKEMATCH: ⚓️ loads the entry after the other arguments */
-    asm("" : "+l"(entry));
-    VramBlock_LoadCached(entry, 0x100, buffer);
-    MemFree(buffer);
-    callback = Func_02000d18;
-    /* FAKEMATCH: ⚓️ loads the callback after its priority */
-    asm("" : "+l"(callback));
-    Scheduler_AddOrUpdateCallback(callback, 0x480);
-}
 
 void Func_02001254(void)
 {

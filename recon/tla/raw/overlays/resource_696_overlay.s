@@ -15,22 +15,17 @@
 	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 384
 	.set SHAMAN_GRAPHIC4_LARGE_SCALE, 512
 	.endif
-	.set SHAMAN_PALETTE_ROWS, 5
 	.set SHAMAN_GRAPHIC7_PALETTE, (2 * 32)
 	.ifdef TLA_EDITION_DE
-	.set SHAMAN_PALETTE_ROWS, 6
 	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
 	.endif
 	.ifdef TLA_EDITION_ES
-	.set SHAMAN_PALETTE_ROWS, 6
 	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
 	.endif
 	.ifdef TLA_EDITION_FR
-	.set SHAMAN_PALETTE_ROWS, 6
 	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
 	.endif
 	.ifdef TLA_EDITION_IT
-	.set SHAMAN_PALETTE_ROWS, 6
 	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
 	.endif
 .syntax unified
@@ -337,70 +332,6 @@ Func_02000488:
 	.4byte IwramMulQ16
 .L_02008504:
 	.4byte gFrameCount
-	.section .text.x02008508,"ax",%progbits
-	.global Func_02000508
-	.thumb_func
-Func_02000508:
-	push {r5, lr}
-	adds r5, r0, #0
-	ldr r3, [r5, #12]
-	ldr r2, [r5, #72]
-	ldr r1, [r5, #8]
-	adds r3, r3, r2
-	ldr r0, [r5, #68]
-	str r3, [r5, #12]
-	ldr r2, [r5, #76]
-	ldr r3, [r5, #16]
-	adds r1, r1, r0
-	str r1, [r5, #8]
-	adds r3, r3, r2
-	asrs r1, r1, #16
-	str r3, [r5, #16]
-	cmp r1, #167
-	bgt .L_0200853c
-	movs r1, #192
-	lsls r1, r1, #9
-	adds r3, r0, r1
-	str r3, [r5, #68]
-	movs r2, #192
-	ldr r3, [r5, #24]
-	lsls r2, r2, #4
-	adds r2, #204
-	b .L_02008546
-.L_0200853c:
-	ldr r1, .L_02008574
-	ldr r2, .L_02008578
-	adds r3, r0, r1
-	str r3, [r5, #68]
-	ldr r3, [r5, #24]
-.L_02008546:
-	adds r3, r3, r2
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-	ldr r3, [r5, #68]
-	cmp r3, #0
-	ble .L_0200855c
-	adds r0, r5, #0
-	movs r1, #1
-	bl Object_SetSpritePriority
-	b .L_02008564
-.L_0200855c:
-	adds r0, r5, #0
-	movs r1, #2
-	bl Object_SetSpritePriority
-.L_02008564:
-	ldr r2, [r5, #80]
-	movs r1, #192
-	ldrh r3, [r2, #18]
-	lsls r1, r1, #5
-	adds r3, r3, r1
-	strh r3, [r2, #18]
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008574:
-	.4byte 0xfffe8000
-.L_02008578:
-	.4byte 0xfffffae2
 	.section .text.x0200857c,"ax",%progbits
 	.global Func_0200057c
 	.thumb_func
@@ -2202,79 +2133,6 @@ Func_02002f20:
 .L_0200afac:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x0200afb0,"ax",%progbits
-	.global Func_02002fb0
-	.thumb_func
-Func_02002fb0:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r0, #0
-	movs r0, #(224 + SHAMAN_PALETTE_ROWS)
-	lsls r0, r0, #5
-	bl Runtime_BumpAllocateAlternatePool
-	ldr r7, .L_0200b030
-	adds r6, r0, #0
-	movs r2, #0
-	ldrsh r3, [r7, r2]
-	movs r2, #1
-	negs r2, r2
-	cmp r3, r2
-	bne .L_0200afd6
-	bl Resource_FindFreeEntry
-	strh r0, [r7]
-.L_0200afd6:
-	ldr r3, .L_0200b034
-	ldrb r3, [r3, r5]
-	mov r8, r3
-	cmp r5, #8
-	bne .L_0200afe2
-	movs r5, #4
-.L_0200afe2:
-	ldr r0, .L_0200b038
-	bl Resource_GetTableEntry
-	adds r1, r6, #0
-	bl Func_0200479c
-	mov r2, r8
-	adds r0, r6, r2
-	movs r3, #128
-	movs r2, #132
-	lsls r3, r3, #19
-	lsls r2, r2, #24
-	adds r3, #212
-	ldr r1, .L_0200b03c
-	adds r2, #8
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	lsls r2, r5, #10
-	adds r2, r2, r6
-	movs r1, #128
-	adds r2, #(32 * SHAMAN_PALETTE_ROWS)
-	movs r3, #0
-	ldrsh r0, [r7, r3]
-	lsls r1, r1, #3
-	bl VramBlock_LoadCached
-	movs r2, #128
-	lsls r2, r2, #19
-	adds r2, #212
-.L_0200b01c:
-	ldr r3, [r2, #8]
-	cmp r3, #0
-	blt .L_0200b01c
-	adds r0, r6, #0
-	bl MemFree
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200b030:
-	.4byte Data_02005158
-.L_0200b034:
-	.4byte Data_02004bfe
-.L_0200b038:
-	.4byte 0x000001cc
-.L_0200b03c:
-	.4byte 0x050003e0
 	.section .bss,"aw",%nobits
 	.space 0x00000004
 	.global Data_02006350

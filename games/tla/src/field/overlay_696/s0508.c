@@ -1,12 +1,10 @@
-/* Near miss of Func_02000508 of overlay 696 (51 instructions, 4 differ): in the first arm the
- * native loads the scale between `movs r2, #192` and its shift; the draft loads it after the
- * shift. Measured: a one-pass block with the step as a local, and the scale behind a "+l"
- * barrier, both load it before the first byte (2 differ). The chained store in each arm is
- * what lets the two arms share their tail as the native does. */
-#include "../../../../games/tla/src/field/overlay_696/ov696.h"
+#include "ov696.h"
 
 void Object_SetSpritePriority(struct Ov696Object *object, s32 priority);
 
+// Swings an object about x = 168: left of it the object speeds up rightward and
+// grows, right of it leftward and shrinks. It takes sprite priority 1 while it
+// moves right, 2 otherwise, and spins.
 void Func_02000508(struct Ov696Object *object)
 {
     object->x += object->field_44;
@@ -14,6 +12,8 @@ void Func_02000508(struct Ov696Object *object)
     object->z += *(s32 *)((u8 *)object + 76);
     if (object->x >> 16 < 168) {
         object->field_44 += 0x18000;
+        /* FAKEMATCH: ⚓️ builds the 0xccc step around the scale load, its first byte before it; without the barrier sched2 builds the step ahead of the velocity store (differ 4). Measured against it: the scale and its step in locals, the step added after the branch, one-pass blocks (2 to 23). */
+        asm("");
         object->scale_y = object->scale_x += 0xccc;
     } else {
         object->field_44 -= 0x18000;

@@ -3,7 +3,10 @@
  * cmp; adds r3, #3), which the stepped edge variable gives (as one condition they are hoisted,
  * differ 56), and it counts in r0 with the output in r5, which returning the count gives
  * (differ 48 as void). Left: the native keeps the row in r4 and the object list in r1 and
- * loads x into r3 and z into r2; this has them the other way round. */
+ * loads x into r3 and z into r2; this has them the other way round. Tried 2026-10-15: the ☀️ twin
+ * MakyuriChojo_CollectBandSlots as written, K&R parameters included (52: its y + 8 and y + 11
+ * are hoisted out of the loop), the twin's table indexing with the stepped edge (40), and the
+ * list pinned to r1 (42). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

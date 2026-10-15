@@ -1,5 +1,8 @@
 /* Near miss: Func_02001e1c differs 4, as overlay 6ad's Func_0200215c does: the part mask is built before the
- * sprite is loaded. */
+ * sprite is loaded. sched2 ranks the sprite load (priority 72) above the mask constant, a QImode 3
+ * (71), and they would tie on insn order anyway. Tried 2026-10-15: FieldSprite's priority bitfield
+ * (same 4), u32 or u8 part, the part masked first in a local, the byte masked by hand four ways (9 to
+ * 15), one-pass blocks and empty asm barriers around the stores (4 to 8); alchemy permute 3 minutes. */
 #include "../../../../games/tla/src/field/overlay_6aa/room.h"
 
 extern const u8 Data_020056a0[];

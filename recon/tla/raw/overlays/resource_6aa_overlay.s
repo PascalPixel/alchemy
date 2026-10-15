@@ -548,44 +548,6 @@ Func_02000d18:
 	.4byte Data_020068a4
 .L_02008dec:
 	.4byte 0x80008800
-	.section .text.x02008df0,"ax",%progbits
-	.global Func_02000df0
-	.thumb_func
-Func_02000df0:
-	push {r5, r6, lr}
-	movs r0, #128
-	lsls r0, r0, #1
-	bl MemAlloc
-	adds r6, r0, #0
-	adds r1, r6, #0
-	movs r2, #63
-.L_02008e00:
-	ldr r3, .L_02008e30
-	subs r2, #1
-	stmia r1!, {r3}
-	cmp r2, #0
-	bge .L_02008e00
-	ldr r5, .L_02008e34
-	bl Resource_FindFreeEntry
-	strh r0, [r5]
-	movs r1, #128
-	lsls r1, r1, #1
-	adds r2, r6, #0
-	ldrh r0, [r5]
-	bl VramBlock_LoadCached
-	adds r0, r6, #0
-	bl MemFree
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_02008e38
-	bl Scheduler_AddOrUpdateCallback
-	pop {r5, r6, pc}
-.L_02008e30:
-	.4byte 0x11111111
-.L_02008e34:
-	.4byte Data_020068a2
-.L_02008e38:
-	.4byte Func_02000d18
 	.section .text.x02008e3c,"ax",%progbits
 	.global Func_02000e3c
 	.thumb_func
@@ -3237,61 +3199,6 @@ Func_020024c0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a5a8:
-	.4byte gPartyState
-	.section .text.x0200a5ac,"ax",%progbits
-	.global Func_020025ac
-	.thumb_func
-Func_020025ac:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_0200a610
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r3, r1
-	adds r6, r0, #0
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_0200a5ea
-	adds r3, #15
-.L_0200a5ea:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	movs r1, #128
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	lsls r1, r1, #5
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	ldr r2, [r6, #80]
-	ldrh r3, [r2, #18]
-	adds r3, r3, r1
-	strh r3, [r2, #18]
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200a610:
 	.4byte gPartyState
 	.section .text.x0200a63c,"ax",%progbits
 	.balign 4

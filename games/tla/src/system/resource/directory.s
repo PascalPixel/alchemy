@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource CommandIcons, Ui_CommandIcons
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9
-	resource , Resource_Data1DA
+	resource , FieldFx_RingOrb
 	resource , FieldFx_RingArcs
 	resource , FieldFx_RedFlameBurst
 	resource , FieldFx_VioletFlameBurst

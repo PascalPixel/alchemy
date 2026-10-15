@@ -1,10 +1,7 @@
-#include "types.h"
+#include "local.h"
+
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
-#include "call.h"
-#include "party_state.h"
-#include "ram_buffer.h"
-#include "eventwrk.h"
 s32 Func_02004464();
 s32 Func_020045ec();
 s32 Motion_CamBounds();
@@ -22,11 +19,9 @@ s32 Func_02004534();
 s32 Object_SetModeById();
 s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_ArmCallback();
-s32 Func_0200455c();
 s32 Func_0200454c();
 s32 Func_02004564();
 s32 Func_0200452c();
-s32 UiText_OpenMessageAtObject();
 s32 Inventory_PromptAndSetObjectMode();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_SetPositionAndReset();
@@ -40,20 +35,6 @@ s32 GameFlag_ClearBit();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
 extern u8 MsgScene6A8No80[];
-
-#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->event_work)
-
-static inline void Ov6a8_MesOpen(s32 actor, s32 flags)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer; through Call2 the actor 0x4000 is finished after the flags (differ 4). */
-    UiText_OpenMessageAtObject(actor, flags);
-}
-
-static inline void Ov6a8_Jump(s32 actor, s32 height, s32 frames)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer, which sets the actor last as the native does (differ 38 through Call3). */
-    Func_0200455c(actor, height, frames);
-}
 
 void Func_02001cf0(void)
 {

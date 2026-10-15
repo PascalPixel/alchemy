@@ -2082,7 +2082,6 @@ SECTIONS
         "*/recon/tla/raw/08164a4c.o"(.text)
         "*/recon/tla/raw/08164abc.o"(.text)
         "*/recon/tla/raw/08164b2c.o"(.text)
-        "*/recon/tla/raw/08164bb4.o"(.text)
         "*/games/tla/src/battle/effect/particle_stream_modes.o"(.text)
         "*/recon/tla/raw/08164c0a.o"(.text)
         "*/recon/tla/raw/08164c0c.o"(.text)

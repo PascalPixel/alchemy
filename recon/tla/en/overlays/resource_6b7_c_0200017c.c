@@ -1,7 +1,9 @@
 /* Draft, differ 22 of 19: the native keeps the index in r5 and reloads the
  * array base each pass (lsls, mov r3 sp, ldrh [r3, r2]) and tests i = 0
  * against count at entry; agscc strength-reduces and reverses every for,
- * while and guarded do/while tried, with u16 or s16 elements. */
+ * while and guarded do/while tried, with u16 or s16 elements; a goto loop keeps
+ * the native's shape (differ 20) but holds sp and delta in r7 and r8. An s8,
+ * u8, s16, u16 or u32 index measures 29, 24, 33, 29 and 26. */
 #include "../../../../games/tla/include/types.h"
 #include "../../../../games/tla/include/party_state.h"
 
@@ -11,7 +13,7 @@ void Func_0200017c(s32 delta)
 {
     u16 owners[16];
     s32 count;
-    s8 i;
+    s32 i;
 
     count = Party_ListActiveOwners((s16 *)owners);
     for (i = 0; i < count; i++)

@@ -1339,7 +1339,6 @@ SECTIONS
         "*/games/tla/src/battle/effect/psyfx_09.o"(.text)
         "*/recon/tla/raw/080e9af4.o"(.text)
         "*/recon/tla/raw/080e9db4.o"(.text)
-        "*/recon/tla/raw/080e9e8c.o"(.text)
         "*/games/tla/src/battle/effect/chase.o"(.text)
         "*/recon/tla/raw/080e9f68.o"(.text)
         "*/recon/tla/raw/080ea14c.o"(.text)

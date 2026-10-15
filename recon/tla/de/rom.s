@@ -2723,7 +2723,7 @@ Func_080e87c4:
 	.type Func_080e9db4, %function
 	.thumb_func
 Func_080e9db4:
-	.incbin "baserom.gba", 0x000f6db4, 0x00000130
+	.incbin "baserom.gba", 0x000f6db4, 0x000000d8
 	.section .rom.000f6f68, "ax"
 	.incbin "baserom.gba", 0x000f6f68, 0x000001e4
 	.section .rom.000f714c, "ax"

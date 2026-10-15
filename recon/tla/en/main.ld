@@ -1624,7 +1624,6 @@ SECTIONS
         "*/recon/tla/raw/08109ad8.o"(.text)
         "*/recon/tla/raw/08109cac.o"(.text)
         "*/games/tla/src/menu/shop/itemcnt.o"(.text)
-        "*/recon/tla/raw/0810a03c.o"(.text)
         "*/recon/tla/raw/0810a108.o"(.text)
         "*/games/tla/src/menu/shop/price.o"(.text)
         "*/recon/tla/raw/0810a2d8.o"(.text)

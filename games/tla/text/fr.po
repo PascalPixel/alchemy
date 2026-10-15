@@ -20655,7 +20655,7 @@ msgctxt "message"
 msgid "05161"
 msgstr "Mille excuses, mais nous{line_break}n'achetons pas cela.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "05162"
 msgstr "Combien en vendez-vous?{end_now}"
 

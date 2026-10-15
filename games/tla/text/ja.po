@@ -18759,7 +18759,7 @@ msgctxt "message"
 msgid "04687"
 msgstr "わるいけど ウチでは{line_break}あつかってないんだ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "04688"
 msgstr "いくつ 売ってくれるんだい?{end_now}"
 

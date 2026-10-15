@@ -20683,7 +20683,7 @@ msgctxt "message"
 msgid "05168"
 msgstr "Lo siento, pero no{line_break}compramos de eso.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "05169"
 msgstr "¿Qué cantidad vendes?{end_now}"
 

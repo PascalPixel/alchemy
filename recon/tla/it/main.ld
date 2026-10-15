@@ -1713,7 +1713,6 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.00109ad8)
     "*/recon/tla/it/rom.o"(.rom.00109cac)
     "*/games/tla/src/menu/shop/itemcnt.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0010a040)
     "*/recon/tla/it/rom.o"(.rom.0010a10c)
     "*/games/tla/src/menu/shop/price.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010a2dc)

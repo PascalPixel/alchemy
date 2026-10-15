@@ -4645,7 +4645,7 @@ Func_08109cac:
 	.type Shop_DrawItemCount, %function
 	.thumb_func
 Shop_DrawItemCount:
-	.incbin "baserom.gba", 0x0010e008, 0x00000104
+	.incbin "baserom.gba", 0x0010e008, 0x00000038
 	.section .rom.0010e10c, "ax"
 	.global Func_0810a108
 	.type Func_0810a108, %function

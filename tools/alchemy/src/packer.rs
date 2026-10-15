@@ -14,11 +14,12 @@ the 1-3 bytes between a resource stream's end and the next resource, prints
 its address, size, whether it is the whole piece or its head, its bytes, the
 stream and offset it follows, the verdict and the object before it. The
 verdict is `left` with the earlier resource that wrote those buffer bytes,
-`zero` for zeros no earlier resource explains, or `unexplained`. The buffer
-model takes the resources in directory order, each one's extent up to the
-next resource in the ROM. --rows prints instead, for each explained piece,
-the object before it, the piece's section, whole or head, its size and the
-source row with its PACKER tag.";
+`fill` for bytes all 00 or all ff that no earlier resource explains (zero
+and 0xff fill, as ☀️ has), or `unexplained`. The buffer model takes the
+resources in directory order, each one's extent up to the next resource in
+the ROM. --rows prints instead, for each explained piece, the object before
+it, the piece's section, whole or head, its size and the source row with
+its PACKER tag.";
 
 /// One resource of the directory: where it starts and where the next
 /// resource in the ROM starts, so its stream rounded up to four bytes.
@@ -34,8 +35,8 @@ pub enum Verdict {
     /// The bytes equal `provider`'s at the same offset: the most recent
     /// earlier resource that reached that far in the buffer.
     Left { provider: usize },
-    /// Zeros that no earlier resource left there.
-    Zero,
+    /// Bytes all 0x00 or all 0xff that no earlier resource left there.
+    Fill(u8),
     Unexplained,
 }
 
@@ -95,7 +96,7 @@ pub fn explain(streams: &[Stream], address: u32, bytes: &[u8], read: &dyn Fn(u32
     let provider = streams[..stream].iter().rposition(|s| s.end - s.start > offset);
     let verdict = match provider {
         Some(p) if read(streams[p].start + offset, bytes.len()) == bytes => Verdict::Left { provider: p },
-        _ if bytes.iter().all(|&b| b == 0) => Verdict::Zero,
+        _ if [0x00, 0xff].iter().any(|&f| bytes.iter().all(|&b| b == f)) => Verdict::Fill(bytes[0]),
         _ => Verdict::Unexplained,
     };
     Some(Finding { stream, offset, verdict })
@@ -170,10 +171,15 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 let by = format!("{}+{:#x}", streams[provider].name, finding.offset);
                 (0, format!("left\t{by}"), Some(format!(".byte {list}\t@ PACKER: left in the buffer by {by}")))
             }
-            Verdict::Zero => (
+            Verdict::Fill(0) => (
                 1,
-                "zero\t-".to_string(),
+                "fill\t-".to_string(),
                 Some(".balign 4, 0\t@ PACKER: zero fill, not an earlier stream's bytes".to_string()),
+            ),
+            Verdict::Fill(byte) => (
+                1,
+                "fill\t-".to_string(),
+                Some(format!(".balign 4, {byte:#04x}\t@ PACKER: {byte:#04x} fill, not an earlier stream's bytes")),
             ),
             Verdict::Unexplained => (2, "unexplained\t-".to_string(), None),
         };
@@ -189,10 +195,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             println!("{after}\t{}\t{part}\t{size}\t{row}", placed.name);
         }
     }
-    let [left, zero, unexplained] = counts;
+    let [left, fill, unexplained] = counts;
     eprintln!(
-        "{edition}: {} left ({} bytes), {} zero ({} bytes), {} unexplained ({} bytes)",
-        left.0, left.1, zero.0, zero.1, unexplained.0, unexplained.1
+        "{edition}: {} left ({} bytes), {} fill ({} bytes), {} unexplained ({} bytes)",
+        left.0, left.1, fill.0, fill.1, unexplained.0, unexplained.1
     );
     Ok(())
 }
@@ -250,7 +256,9 @@ mod tests {
         // Resource 1 is the most recent long enough: its bytes 1-3 are
         // a1 a2 a3, not zeros.
         let zero = explain(&sample(), 0x0800_0015, &[0, 0, 0], &read).unwrap();
-        assert_eq!(zero.verdict, Verdict::Zero);
+        assert_eq!(zero.verdict, Verdict::Fill(0));
+        let ff = explain(&sample(), 0x0800_0015, &[0xff, 0xff, 0xff], &read).unwrap();
+        assert_eq!(ff.verdict, Verdict::Fill(0xff));
         let other = explain(&sample(), 0x0800_0015, &[9, 9, 9], &read).unwrap();
         assert_eq!(other.verdict, Verdict::Unexplained);
         // Not at a stream's end.

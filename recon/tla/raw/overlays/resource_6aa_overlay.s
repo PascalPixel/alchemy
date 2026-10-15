@@ -548,44 +548,6 @@ Func_02000d18:
 	.4byte Data_020068a4
 .L_02008dec:
 	.4byte 0x80008800
-	.section .text.x02008df0,"ax",%progbits
-	.global Func_02000df0
-	.thumb_func
-Func_02000df0:
-	push {r5, r6, lr}
-	movs r0, #128
-	lsls r0, r0, #1
-	bl MemAlloc
-	adds r6, r0, #0
-	adds r1, r6, #0
-	movs r2, #63
-.L_02008e00:
-	ldr r3, .L_02008e30
-	subs r2, #1
-	stmia r1!, {r3}
-	cmp r2, #0
-	bge .L_02008e00
-	ldr r5, .L_02008e34
-	bl Resource_FindFreeEntry
-	strh r0, [r5]
-	movs r1, #128
-	lsls r1, r1, #1
-	adds r2, r6, #0
-	ldrh r0, [r5]
-	bl VramBlock_LoadCached
-	adds r0, r6, #0
-	bl MemFree
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_02008e38
-	bl Scheduler_AddOrUpdateCallback
-	pop {r5, r6, pc}
-.L_02008e30:
-	.4byte 0x11111111
-.L_02008e34:
-	.4byte Data_020068a2
-.L_02008e38:
-	.4byte Func_02000d18
 	.section .text.x02008e3c,"ax",%progbits
 	.global Func_02000e3c
 	.thumb_func

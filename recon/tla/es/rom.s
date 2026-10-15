@@ -3961,7 +3961,7 @@ Func_080d3a10:
 Func_080eb01c:
 	.incbin "baserom.gba", 0x000f4010, 0x0000027c
 	.section .rom.000f430c, "ax"
-	.incbin "baserom.gba", 0x000f430c, 0x00000204
+	.incbin "baserom.gba", 0x000f430c, 0x00000188
 	.section .rom.000f4588, "ax"
 	.global Func_080eb594
 	.type Func_080eb594, %function

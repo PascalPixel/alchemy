@@ -61,9 +61,9 @@ Func_081693d0:
 .L_08169448:
 	.4byte gMapCellBuffer
 .L_0816944c:
-	.4byte Func_081693b0
+	.4byte Graphics_ResetBg2Pa
 .L_08169450:
-	.4byte Func_081693c0
+	.4byte Graphics_SetBg2AffineScaleHalf
 .L_08169454:
 	.4byte Func_08143000
 .L_08169458:
@@ -859,7 +859,7 @@ Func_081693d0:
 .L_08169a78:
 	.4byte gMapCellBuffer
 .L_08169a7c:
-	.4byte Func_081693c0
+	.4byte Graphics_SetBg2AffineScaleHalf
 .L_08169a80:
 	.4byte Data_08197424
 .L_08169a84:
@@ -1427,7 +1427,7 @@ Func_081693d0:
 .L_08169eb4:
 	.4byte 0x050001e8
 .L_08169eb8:
-	.4byte Func_081693b0
+	.4byte Graphics_ResetBg2Pa
 .L_08169ebc:
 	.4byte Data_02010018
 .L_08169ec0:

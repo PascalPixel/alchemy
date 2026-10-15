@@ -5487,7 +5487,9 @@ BattleEffect_RunParticleStreams:
 	.type Func_08166b10, %function
 	.thumb_func
 Func_08166b10:
-	.incbin "baserom.gba", 0x00166b10, 0x00003708
+	.incbin "baserom.gba", 0x00166b10, 0x000028a0
+	.section .rom.001693d0, "ax"
+	.incbin "baserom.gba", 0x001693d0, 0x00000e48
 	.section .rom.0016a2d8, "ax"
 	.balign 4
 	.global Func_0816a2d8

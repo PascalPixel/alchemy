@@ -1959,6 +1959,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00164cc4)
     "*/games/tla/src/battle/effect/series_h.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00166b10)
+    "*/games/tla/src/battle/effect/mode6.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.001693d0)
     "*/games/tla/src/battle/effect/wait_then_set_field.o"(.text)
     "*/games/tla/src/battle/effect/wait_then_set_field_to_5.o"(.text)
     "*/games/tla/src/battle/effect/wait_twelve_frames_then_set_field.o"(.text)

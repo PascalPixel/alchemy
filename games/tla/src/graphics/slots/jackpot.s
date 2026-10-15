@@ -14,3 +14,12 @@ Slots_JackpotBanner:
 	.incbin "games/tla/src/graphics/slots/jackpot.4bpp32x32.lz"
 	.endif
 	.endif
+	.ifdef TLA_EDITION_JA
+	.byte 0xa2	@ PACKER: left in the buffer by Slots_Icons+0x66b
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x39	@ PACKER: left in the buffer by Slots_Icons+0x64b
+	.else
+	.byte 0x75	@ PACKER: left in the buffer by Slots_Icons+0x61b
+	.endif
+	.endif

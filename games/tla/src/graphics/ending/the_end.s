@@ -29,3 +29,22 @@ Ending_TheEndPicture:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0xc5, 0x19	@ PACKER: left in the buffer by Ending_SunsetPlainPicture+0x5d1e
+	.else
+	.ifdef TLA_EDITION_DE
+	.byte 0x00, 0x00	@ PACKER: left in the buffer by Ending_SunsetPlainPicture+0x59b6
+	.else
+	.ifdef TLA_EDITION_ES
+	.else
+	.ifdef TLA_EDITION_FR
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0x50, 0x45	@ PACKER: left in the buffer by Ending_SunsetPlainPicture+0x5d42
+	.else
+	.byte 0x88, 0x0e	@ PACKER: left in the buffer by Ending_SunsetPlainPicture+0x5cd2
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif

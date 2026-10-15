@@ -6,4 +6,6 @@ Battle_ToretoHeyaBackdrop:
 	.incbin "games/common/src/graphics/backdrop/toreto_heya.bitmap.d7"
 	.ifeq GAME_TLA
 	.byte 0x58, 0xe7	@ PACKER: left in the buffer by Battle_KorimaMoriBackdrop+0x49fa
+	.else
+	.byte 0x58, 0xe7	@ PACKER: left in the buffer by Battle_KorimaMoriBackdrop+0x49fa
 	.endif

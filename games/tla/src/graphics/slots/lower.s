@@ -29,3 +29,22 @@ Slots_LowerBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_EN
+	.else
+	.ifdef TLA_EDITION_DE
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x90, 0xb8, 0x94	@ PACKER: left in the buffer by Slots_HigherBanner+0x2bd
+	.else
+	.ifdef TLA_EDITION_FR
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0x3a	@ PACKER: left in the buffer by Slots_HigherBanner+0x257
+	.else
+	.byte 0x13	@ PACKER: left in the buffer by Slots_HigherBanner+0x23b
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif

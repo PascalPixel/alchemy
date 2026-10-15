@@ -29,3 +29,22 @@ Slots_CashOutBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x0f	@ PACKER: left in the buffer by Slots_DoubleUpBanner+0x48f
+	.else
+	.ifdef TLA_EDITION_DE
+	.byte 0x80, 0x4e	@ PACKER: left in the buffer by Slots_DoubleUpBanner+0x3a2
+	.else
+	.ifdef TLA_EDITION_ES
+	.else
+	.ifdef TLA_EDITION_FR
+	.else
+	.ifdef TLA_EDITION_IT
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
+	.byte 0x9f, 0x7a, 0xe0	@ PACKER: left in the buffer by Slots_DoubleUpBanner+0x305
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif

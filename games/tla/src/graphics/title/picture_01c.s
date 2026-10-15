@@ -5,8 +5,9 @@
 @ from blurred (01C) to sharp (01F, in picture_01e.s), in Resource_Data01B's
 @ colours.
 @ Streams are rounded to four bytes; PACKER rows name the buffer's last writer.
-@ The bytes after 01D in Spanish, French and Italian are neither their last
-@ writer's nor provable residue, and stay on those editions' scaffolds.
+@ After 01D, French and Italian end with zero fill no earlier stream left;
+@ Spanish's bytes are neither its last writer's nor zeros, and stay on its
+@ scaffold.
 	.ifeq EDITION_INTERNATIONAL
 
 	.global Resource_Data01C
@@ -72,6 +73,15 @@ Resource_Data01D:
 	.byte 0x1c, 0x07, 0x40	@ PACKER: left in the buffer by Title_IntroGullSprites+0x981
 
 	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.ifndef TLA_EDITION_JA
+	.ifndef TLA_EDITION_EN
+	.ifndef TLA_EDITION_DE
+	.ifndef TLA_EDITION_ES
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif
 	.endif
 	.endif

@@ -18,3 +18,18 @@ Lettering_Banner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_DE
+	.byte 0x29, 0x3b	@ PACKER: left in the buffer by Field_WalkPathD+0xdfa
+	.else
+	.ifdef TLA_EDITION_ES
+	.else
+	.ifdef TLA_EDITION_FR
+	.byte 0x2d	@ PACKER: left in the buffer by Field_WalkPathD+0xdb3
+	.else
+	.ifdef TLA_EDITION_IT
+	.else
+	.byte 0x7c, 0xfe	@ PACKER: left in the buffer by Field_WalkPathD+0xf02
+	.endif
+	.endif
+	.endif
+	.endif

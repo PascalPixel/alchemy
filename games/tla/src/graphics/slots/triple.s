@@ -29,3 +29,21 @@ Slots_TripleBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x1d, 0xe9	@ PACKER: left in the buffer by Slots_TwoPairBanner+0x396
+	.else
+	.ifdef TLA_EDITION_DE
+	.else
+	.ifdef TLA_EDITION_ES
+	.else
+	.ifdef TLA_EDITION_FR
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0x44	@ PACKER: left in the buffer by Slots_TwoPairBanner+0x393
+	.else
+	.byte 0x7c, 0x2e, 0xbc	@ PACKER: left in the buffer by Slots_GreenDigits+0x3e1
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif

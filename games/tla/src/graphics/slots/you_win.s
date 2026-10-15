@@ -23,3 +23,20 @@ Slots_YouWinBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_DE
+	.byte 0x21	@ PACKER: left in the buffer by Resource_Data087+0x613
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0xa4, 0x62	@ PACKER: left in the buffer by Resource_Data087+0x61e
+	.else
+	.ifdef TLA_EDITION_FR
+	.byte 0x17	@ PACKER: left in the buffer by Resource_Data087+0x5e7
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0xa1, 0x82	@ PACKER: left in the buffer by Resource_Data087+0x582
+	.else
+	.byte 0x78, 0x00, 0xd2	@ PACKER: left in the buffer by Resource_Data087+0x455
+	.endif
+	.endif
+	.endif
+	.endif

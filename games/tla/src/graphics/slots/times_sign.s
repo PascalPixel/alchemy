@@ -23,3 +23,20 @@ Slots_TimesSign:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_DE
+	.byte 0x26	@ PACKER: left in the buffer by Slots_GreenDigits+0x10b
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x00, 0x81, 0xc2	@ PACKER: left in the buffer by Slots_GreenDigits+0xc9
+	.else
+	.ifdef TLA_EDITION_FR
+	.byte 0x45, 0x8a	@ PACKER: left in the buffer by Slots_GreenDigits+0xf2
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0xd3	@ PACKER: left in the buffer by Slots_GreenDigits+0xbf
+	.else
+	.byte 0x91, 0x4c, 0x7b	@ PACKER: left in the buffer by Slots_GreenDigits+0xdd
+	.endif
+	.endif
+	.endif
+	.endif

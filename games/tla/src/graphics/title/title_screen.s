@@ -29,3 +29,8 @@ Title_ScreenPicture:
 	.endif
 	.endif
 	.endif
+	.ifndef TLA_EDITION_ES
+	.ifndef TLA_EDITION_FR
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif
+	.endif

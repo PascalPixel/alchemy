@@ -27,7 +27,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_671/push.o"(.text)
         "*/resource_671_overlay.o"(.text.x02008cf0)
         "*/games/tla/src/field/overlay_671/setup.o"(.text)
-        "*/resource_671_overlay.o"(.text.x02008fc0)
         "*/games/tla/src/field/overlay_671/s1124.o"(.text)
         "*/resource_671_overlay.o"(.text.x020091bc)
         "*/games/tla/src/field/overlay_671/warp.o"(.text)

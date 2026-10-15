@@ -57,20 +57,19 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void);
 s32 SaveState_CopySlotPair(void);
 s32 SaveState_DeleteSelectedSlot(void);
 void PaletteGlow_UpdateSine(void);
-void Scheduler_ScheduleCallbackAAfterFrames(void);
-void Scheduler_ScheduleCallbackA(void);
+void PaletteGlow_Start(void);
+void PaletteGlow_Stop(void);
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height);
-void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
-                                 struct SaveSummary *descriptor);
-void Menu_ClearFirstObjectRowAndScheduleUpdate(void);
-void Menu_UpdateFirstObjectRowPositions(void);
-void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y);
-void Menu_ClearSecondObjectRowAndScheduleUpdate(void);
-void Menu_UpdateSecondObjectRowPositions(void);
-void UiText_DrawFourNumbersInRow(struct RenderInput *win,
-                                 struct SaveSummary *row);
-void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec);
+void SaveMenu_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
+                               struct SaveSummary *descriptor);
+void SaveMenu_HidePartySprites(void);
+void SaveMenu_PlacePartySprites(void);
+void SaveMenu_ShowDjinnSprites(struct RenderInput *origin, s32 x, s32 y);
+void SaveMenu_HideDjinnSprites(void);
+void SaveMenu_PlaceDjinnSprites(void);
+void SaveMenu_DrawDjinnCounts(struct RenderInput *win, struct SaveSummary *row);
+void SaveMenu_DrawFileSummary(s32 win, struct SaveSummary *rec);
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode);
 s32 Save_WriteSelectedSlot(void);
 s32 SaveState_LoadRecordIntoWork(s32 arg);

@@ -1196,53 +1196,48 @@ s32 SaveState_DeleteSelectedSlot(void) {
   return result;
 }
 
-//--------------------------------------------------------------------------
-// glow_update_sine.c
-// パレット：BG パレット 14 の色 8〜11 を sin で明滅させる
-//--------------------------------------------------------------------------
-
 #if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
 
-//--------------------------------------------------------------------------
-// スケジューラから呼ばれ、4 色を位相をずらした sin で明滅させる
-// s = sin / 16384 として RGB555 で 赤 22 + 2s・緑 16 + s・青 20 + s
-//--------------------------------------------------------------------------
+// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
+// follows a sine wave of the frame counter, eight frames behind the one
+// before. With s the sine from -1 to 1, the colour is red 22 + 2s, green
+// 16 + s and blue 20 + s (of 31).
 void PaletteGlow_UpdateSine(void) {
   s32 *tick;
-  volatile u16 *pal;
-  s32 col;
-  s32 s;
+  volatile u16 *palette;
+  s32 colour;
+  s32 sine;
   s32 i;
 
   tick = (s32 *)&gFrameTick;
-  pal = (volatile u16 *)0x050001D0; // BG パレット 14 の色 8
+  palette = &BG_PLTT_COLOR(14, 8);
   i = 0;
   do {
-    s = Trig_Sin((*tick + i * 8) * 0x300); // 1 色ごとに 8 フレームずらす
-    col = s / 16384;
+    sine = Trig_Sin((*tick + i * 8) * 0x300);
+    colour = sine / 16384;
     {
-      u32 r = col << 1;
-      u32 g = col;
+      u32 red = colour << 1;
+      u32 green = colour;
 
-      r += 22;
-      g += 16;
-      col += 20;
+      red += 22;
+      green += 16;
+      colour += 20;
       /* FAKEMATCH: the one-pass block keeps the blue shift after the three
        * adds, in source order. Measured: without it the scheduler moves the
        * red add below the shifts (differ 6); the colour as one expression
        * differs 25, and r, g, b locals in place of col differ 6, as a do
        * or a for loop. */
       do {
-        col <<= 10;
+        colour <<= 10;
       } while (0);
-      g <<= 5;
-      col |= g;
-      col |= r;
+      green <<= 5;
+      colour |= green;
+      colour |= red;
     }
     /* FAKEMATCH: the one-pass block keeps the store ahead of the loop
      * index's increment. Measured: without it, differ 2. */
     do {
-      *pal++ = col;
+      *palette++ = colour;
     } while (0);
   } while (++i <= 3);
 }
@@ -1251,17 +1246,22 @@ void PaletteGlow_UpdateSine(void) {
 
 #if EDITION_INTERNATIONAL
 
-void Scheduler_ScheduleCallbackAAfterFrames(void) {
+// Starts the palette glow (PaletteGlow_UpdateSine) in the scheduler.
+void PaletteGlow_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteGlow_UpdateSine, 0xC80);
 }
 
-void Scheduler_ScheduleCallbackA(void) {
+// Stops the palette glow.
+void PaletteGlow_Stop(void) {
   Scheduler_RemoveCallback(PaletteGlow_UpdateSine);
 }
 
+// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
+// clipped to the screen as UiWindow_SetTileAttributeBitRect clips, with the
+// blank tile entry 0xe006 of the UI tilemap.
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height) {
-  u16 *map = (u16 *)gWindowWork[0];
+  u16 *tilemap = (u16 *)gWindowWork[0];
   s32 sum;
 
   sum = x + window->x;
@@ -1284,12 +1284,13 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
     height = 20 - y;
 
   if (width > 0 && height > 0) {
+    // Byte offsets: 32 entries of 2 bytes a row.
     s32 yOffset = y << 6;
     s32 xOffset = x << 1;
     s32 offset = yOffset + xOffset;
     do {
       s32 remaining = width;
-      u16 *cell = (u16 *)(offset + (s32)map);
+      u16 *cell = (u16 *)(offset + (s32)tilemap);
       if (remaining != 0) {
         do {
           remaining--;
@@ -1299,70 +1300,86 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
       height--;
       offset += 64;
     } while (height != 0);
-    ((struct UiRenderWork *)map)->dirty = 1;
+    ((struct UiRenderWork *)tilemap)->dirty = 1;
   }
 }
 
 #endif
 
-void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
-                                 struct SaveSummary *descriptor) {
-  struct ShopRuntime *state = gMenuWork;
-  s32 i;
-  s32 duration;
+// The save file menu shows the chosen file's party as walking sprites in a
+// row, and four Djinn sprites, one for each element, over the file's Djinn
+// counts. Each sprite stands three tiles (24 pixels) from the one before.
+#define SAVE_MENU_SPRITE_SPACING 3
+// Scheduler priority of the callbacks that place the sprites every frame.
+#define SAVE_MENU_SPRITE_PRIORITY (200 << 4)
 
-  for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
-    struct AnimationObject *object =
+// Shows the party of save file `summary` (up to four members) as sprites in
+// a row from tile (x, y) inside `window`, and starts placing them every
+// frame (SaveMenu_PlacePartySprites).
+void SaveMenu_ShowPartySprites(struct RenderInput *window, s32 x, s32 y,
+                               struct SaveSummary *summary) {
+  struct ShopRuntime *menu = gMenuWork;
+  s32 i;
+  s32 priority;
+
+  for (i = 0; i < 4 && summary->party[i] != -1; i++) {
+    struct AnimationObject *sprite =
         ResourceObject_CreateFar(Party_RemapCharacterIdIfEnabledFar(
-            descriptor->party[i], (s8)descriptor->hasFlag20));
+            summary->party[i], (s8)summary->hasFlag20));
 
-    if (object != 0) {
-      AnimationObjects_SelectAnimationFar(object, 1);
-      ((struct FieldSprite *)object)->flags = 0;
-      ((struct FieldSprite *)object)->priority = 0;
+    if (sprite != NULL) {
+      AnimationObjects_SelectAnimationFar(sprite, 1);
+      ((struct FieldSprite *)sprite)->flags = 0;
+      ((struct FieldSprite *)sprite)->priority = 0;
     }
 
-    state->partyMemberIcons[i] = object;
-    state->partyMemberX[i] = (x + origin->x + i * 3) * 8 + 0x10;
-    state->partyMemberY[i] = (y + origin->y) * 8 + 0x10;
-    state->partyMemberScale[i] = 0x10000;
+    menu->partyMemberIcons[i] = sprite;
+    menu->partyMemberX[i] =
+        (x + window->x + i * SAVE_MENU_SPRITE_SPACING) * 8 + 16;
+    menu->partyMemberY[i] = (y + window->y) * 8 + 16;
+    menu->partyMemberScale[i] = 0x10000;
   }
 
-  duration = 200;
-  duration <<= 4;
-  Scheduler_AddOrUpdateCallback(Menu_UpdateFirstObjectRowPositions, duration);
+  priority = 200;
+  priority <<= 4;
+  Scheduler_AddOrUpdateCallback(SaveMenu_PlacePartySprites, priority);
 }
 
-void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
-  struct ShopRuntime *state = gMenuWork;
+// Stops placing the party sprites of the save file menu and releases them.
+void SaveMenu_HidePartySprites(void) {
+  struct ShopRuntime *menu = gMenuWork;
   s32 i;
 
-  Scheduler_RemoveCallback(Menu_UpdateFirstObjectRowPositions);
+  Scheduler_RemoveCallback(SaveMenu_PlacePartySprites);
   for (i = 0; i < 4; i++) {
-    if (state->partyMemberIcons[i] != 0) {
-      ResourceObject_ReleaseFar(state->partyMemberIcons[i]);
-      state->partyMemberIcons[i] = 0;
+    if (menu->partyMemberIcons[i] != NULL) {
+      ResourceObject_ReleaseFar(menu->partyMemberIcons[i]);
+      menu->partyMemberIcons[i] = NULL;
     }
   }
 }
 
-void Menu_UpdateFirstObjectRowPositions(void) {
-  struct ShopRuntime *state = gMenuWork;
-  s32 source[2];
-  s32 request[4];
+// A scheduler callback: draws each party sprite of the save file menu at its
+// place and scale for this frame.
+void SaveMenu_PlacePartySprites(void) {
+  struct ShopRuntime *menu = gMenuWork;
+  s32 scale[2];
+  s32 position[4];
   s32 index = 0;
-  s32 handle;
+  s32 sprite;
 
   while (1) {
-    handle = (s32)state->partyMemberIcons[index];
-    if (handle != 0) {
-      source[0] = state->partyMemberScale[index];
-      source[1] = state->partyMemberScale[index];
-      request[0] = state->partyMemberX[index] << 16;
-      request[1] = 0x01F40000;
-      request[2] = (state->partyMemberY[index] << 16) + 0x01F40000;
-      request[3] = 0;
-      Object_ApplyProjectedPlacementFar(handle, request, source, 0x4000);
+    sprite = (s32)menu->partyMemberIcons[index];
+    if (sprite != 0) {
+      // The position is 16.16 fixed point, at depth 500.
+      scale[0] = menu->partyMemberScale[index];
+      scale[1] = menu->partyMemberScale[index];
+      position[0] = menu->partyMemberX[index] << 16;
+      position[1] = 500 << 16;
+      position[2] = (menu->partyMemberY[index] << 16) + (500 << 16);
+      position[3] = 0;
+      Object_ApplyProjectedPlacementFar((struct AnimationObject *)sprite,
+                                        position, scale, 0x4000);
     }
     index += 1;
     if (index > 3) {
@@ -1371,94 +1388,93 @@ void Menu_UpdateFirstObjectRowPositions(void) {
   }
 }
 
-void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y) {
-  struct FourObjectMotionState *state = gMenuWork;
+// Shows the four Djinn sprites, one for each element, in a row from tile
+// (x, y) inside `window`, and starts placing them every frame
+// (SaveMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
+void SaveMenu_ShowDjinnSprites(struct RenderInput *window, s32 x, s32 y) {
+  struct FourObjectMotionState *menu = gMenuWork;
   s32 i;
 
-  if (origin != 0) {
+  if (window != NULL) {
     for (i = 0; i < 4; i++) {
-      struct AnimationObject *object =
+      struct AnimationObject *sprite =
           (struct AnimationObject *)ResourceObject_CreateFar(
               gMenu_PartySpriteResourceIds[i]);
 
-      if (object != 0) {
-        AnimationObjects_SelectAnimationFar(object, 2);
-        ((struct FieldSprite *)object)->flags = 0;
-        ((struct FieldSprite *)object)->priority = 0;
+      if (sprite != NULL) {
+        AnimationObjects_SelectAnimationFar(sprite, 2);
+        ((struct FieldSprite *)sprite)->flags = 0;
+        ((struct FieldSprite *)sprite)->priority = 0;
       }
 
-      state->objects[i] = object;
-      state->positionsX[i] = (origin->x + x + i * 3) * 8 + 0x10;
-      state->positionsY[i] = (origin->y + y) * 8 + 0x10;
+      menu->objects[i] = sprite;
+      menu->positionsX[i] =
+          (window->x + x + i * SAVE_MENU_SPRITE_SPACING) * 8 + 16;
+      menu->positionsY[i] = (window->y + y) * 8 + 16;
     }
 
-    Scheduler_AddOrUpdateCallback(Menu_UpdateSecondObjectRowPositions,
-                                  200 << 4);
+    Scheduler_AddOrUpdateCallback(SaveMenu_PlaceDjinnSprites,
+                                  SAVE_MENU_SPRITE_PRIORITY);
   }
 }
 
-void Menu_ClearSecondObjectRowAndScheduleUpdate(void) {
-  struct FourObjectMotionState *state = gMenuWork;
+// Stops placing the Djinn sprites of the save file menu and releases them.
+void SaveMenu_HideDjinnSprites(void) {
+  struct FourObjectMotionState *menu = gMenuWork;
   s32 i;
 
-  Scheduler_RemoveCallback(Menu_UpdateSecondObjectRowPositions);
+  Scheduler_RemoveCallback(SaveMenu_PlaceDjinnSprites);
   for (i = 0; i < 4; i++) {
-    if (state->objects[i] != 0) {
-      ResourceObject_ReleaseFar(state->objects[i]);
-      state->objects[i] = 0;
+    if (menu->objects[i] != NULL) {
+      ResourceObject_ReleaseFar(menu->objects[i]);
+      menu->objects[i] = NULL;
     }
   }
 }
 
-void Menu_UpdateSecondObjectRowPositions(void) {
-  struct FourObjectMotionState *root = gMenuWork;
+// A scheduler callback: draws each Djinn sprite of the save file menu at its
+// place, at scale 1.0, for this frame.
+void SaveMenu_PlaceDjinnSprites(void) {
+  struct FourObjectMotionState *menu = gMenuWork;
   s32 scale[2];
   s32 position[4];
   s32 index;
 
   index = 0;
   do {
-    void *object = root->objects[index];
+    void *sprite = menu->objects[index];
 
-    if (object != 0) {
-      s32 unit = 0x10000;
-      s32 bias = 0x1f40000;
+    if (sprite != NULL) {
+      s32 one = 0x10000;
+      s32 depth = 500 << 16;
 
-      scale[0] = unit;
-      scale[1] = unit;
-      position[0] = root->positionsX[index] << 16;
-      position[1] = bias;
-      position[2] = (root->positionsY[index] << 16) + bias;
+      scale[0] = one;
+      scale[1] = one;
+      position[0] = menu->positionsX[index] << 16;
+      position[1] = depth;
+      position[2] = (menu->positionsY[index] << 16) + depth;
       position[3] = 0;
-      Object_ApplyProjectedPlacementFar((s32)object, position, scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(sprite, position, scale, 0x4000);
     }
     index++;
   } while (index <= 3);
 }
 
-//--------------------------------------------------------------------------
-// draw_four_numbers_in_row.c
-// セーブ：記録のジンの数を属性ごとに横に並べて書く
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// 4 つの数を 2 けたで、24 ドットおきに y 16 に書く
-// win : 書き込み先（0 なら何もしない）
-//--------------------------------------------------------------------------
-void UiText_DrawFourNumbersInRow(struct RenderInput *win,
-                                 struct SaveSummary *row) {
+// Draws the Djinn counts of save file `summary`, one for each element, two
+// digits each, 24 pixels apart on row 16 of `window`, under the Djinn
+// sprites. Does nothing when `window` is NULL.
+void SaveMenu_DrawDjinnCounts(struct RenderInput *window,
+                              struct SaveSummary *summary) {
   s32 i;
 
-  if (win != 0) {
+  if (window != NULL) {
     for (i = 0; i < 4; i++)
-      UiText_DrawNumberAtOffset((s8)row->djinn[i], 2, win, i * 24, 16);
+      UiText_DrawNumberAtOffset((s8)summary->djinn[i], 2, window,
+                                i * SAVE_MENU_SPRITE_SPACING * 8, 16);
   }
 }
 
-//--------------------------------------------------------------------------
-// draw_character_summary.c
-// セーブ：記録の名前・レベル・クラス・コイン・プレイ時間を書く
-//--------------------------------------------------------------------------
-// 版ごとの「Lv」と「コイン」の x（ドット）
+// Where each edition draws the "Lv" label and the coin label, in pixels.
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
@@ -1469,49 +1485,54 @@ void UiText_DrawFourNumbersInRow(struct RenderInput *win,
 #define SUMMARY_COINS_X 48
 #endif
 
-//--------------------------------------------------------------------------
-// win : 書き込み先（0 なら何もしない）
-// rec : セーブの記録
-//--------------------------------------------------------------------------
-void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec) {
-  u32 buf[4]; // プレイ時間の文字列
+// Draws the summary of save file `summary` into `window`: the leader's name,
+// level and class, the play time and the coins. Does nothing when `window`
+// is 0.
+void SaveMenu_DrawFileSummary(s32 window, struct SaveSummary *summary) {
+  u32 playTime[4]; // the play time text
   s32 y;
 
-  if (win != 0) {
-    RenderOutput_PrepareForRedraw((struct UiWindow *)win);
-    UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
-    UiText_DrawStringAtOffset(rec->name, win, 0, 0);
+  if (window != 0) {
+    RenderOutput_PrepareForRedraw((struct UiWindow *)window);
+    UiWindow_DrawDividerLine(window, 0, 4, 13, 4);
+    UiText_DrawStringAtOffset(summary->name, window, 0, 0);
     y = 0;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR)
-    UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, win,
+    UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, window,
                               SUMMARY_LEVEL_X, 0);
 #else
-    UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, win, 72, 0);
+    UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, window, 72,
+                              0);
 #endif
-    UiText_DrawNumberAtOffset(rec->level, 2, win, 80, y);
-    UiText_DrawCharacterAtOffset(rec->classId + MsgClassName, win, 0, 16);
+    UiText_DrawNumberAtOffset(summary->level, 2, window, 80, y);
+    UiText_DrawCharacterAtOffset(summary->classId + MsgClassName, window, 0,
+                                 16);
 #if !EDITION_INTERNATIONAL
+    // Coins on the third row, then "Play Time:" and the time.
     y = 32;
-    UiText_DrawNumberInWindow(rec->coins, 6, win, 24, y);
-    UiText_DrawCharacterAtOffset(MsgCoins, win, 72, 32);
-    UiText_DrawCharacterAtOffset(MsgStatusLabel, win, 0, 48);
+    UiText_DrawNumberInWindow(summary->coins, 6, window, 24, y);
+    UiText_DrawCharacterAtOffset(MsgCoins, window, 72, 32);
+    UiText_DrawCharacterAtOffset(MsgStatusLabel, window, 0, 48);
     UiText_DrawStringInWindow(
-        (s32)Text_FormatPlayTime(rec->playTime, (u8 *)buf), win, 48, 48);
+        (s32)Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48,
+        48);
 #else
-    UiText_DrawCharacterAtOffset(MsgStatusLabel, win, 0, 32);
+    // "Play Time:" with the time under it, then the coins.
+    UiText_DrawCharacterAtOffset(MsgStatusLabel, window, 0, 32);
     UiText_DrawStringInWindow(
-        (s32)Text_FormatPlayTime(rec->playTime, (u8 *)buf), win, 48, 40);
+        (s32)Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48,
+        40);
     y = 48;
-    UiText_DrawNumberInWindow(rec->coins, 6, win, 0, y);
+    UiText_DrawNumberInWindow(summary->coins, 6, window, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
-    // フランス語版は 1 枚以下なら単数形
-    if (rec->coins > 1)
-      UiText_DrawCharacterAtOffset(MsgCoins, win, SUMMARY_COINS_X, 48);
+    // French takes the singular "Pièce" for one coin or none.
+    if (summary->coins > 1)
+      UiText_DrawCharacterAtOffset(MsgCoins, window, SUMMARY_COINS_X, 48);
     else
-      UiText_DrawCharacterAtOffset(MsgPiece, win, SUMMARY_COINS_X, 48);
+      UiText_DrawCharacterAtOffset(MsgPiece, window, SUMMARY_COINS_X, 48);
 #else
-    UiText_DrawCharacterAtOffset(MsgCoins, win, SUMMARY_COINS_X, 48);
+    UiText_DrawCharacterAtOffset(MsgCoins, window, SUMMARY_COINS_X, 48);
 #endif
 #endif
   }
@@ -1594,7 +1615,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
   }
 
   Dma_Fill32(0, work, 0xa70);
-  Scheduler_ScheduleCallbackAAfterFrames();
+  PaletteGlow_Start();
   list = UiWindow_Create(1, 2, 28, 7, 2);
   summary = save->summary;
   y = 0;
@@ -1625,12 +1646,12 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
                            save->summary[slot].paletteGlowSub);
         if (status == NULL)
           status = UiWindow_Create(1, 10, 14, 9, 2);
-        StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
+        SaveMenu_DrawFileSummary(status, &save->summary[slot]);
         WaitFrames(1);
         if (djinn == NULL)
           djinn = UiWindow_Create(16, 10, 13, 3, 2);
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
-        ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
+        SaveMenu_HidePartySprites();
+        SaveMenu_ShowPartySprites(djinn, 0, 0, &save->summary[slot]);
         WaitFrames(1);
         if ((s8)save->summary[slot].djinn[0] +
                 (s8)save->summary[slot].djinn[1] +
@@ -1639,19 +1660,19 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
             0) {
           if (counts == NULL)
             counts = UiWindow_Create(16, 14, 13, 5, 2);
-          UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
-          Menu_ClearSecondObjectRowAndScheduleUpdate();
-          Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+          SaveMenu_DrawDjinnCounts(counts, &save->summary[slot]);
+          SaveMenu_HideDjinnSprites();
+          SaveMenu_ShowDjinnSprites(counts, 0, 0);
         } else {
-          Menu_ClearSecondObjectRowAndScheduleUpdate();
+          SaveMenu_HideDjinnSprites();
           UiWork_Finalize(counts, 2);
           counts = NULL;
         }
       } else {
         PaletteGlow_Update(gGameState.paletteGlow[0],
                            gGameState.paletteGlow[1]);
-        Menu_ClearSecondObjectRowAndScheduleUpdate();
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
+        SaveMenu_HideDjinnSprites();
+        SaveMenu_HidePartySprites();
         UiWork_Finalize(counts, 2);
         UiWork_Finalize(djinn, 2);
         UiWork_Finalize(status, 2);
@@ -1698,13 +1719,13 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
       break;
     }
   }
-  Menu_ClearSecondObjectRowAndScheduleUpdate();
-  Menu_ClearFirstObjectRowAndScheduleUpdate();
+  SaveMenu_HideDjinnSprites();
+  SaveMenu_HidePartySprites();
   UiWork_Finalize(counts, 2);
   UiWork_Finalize(djinn, 2);
   UiWork_Finalize(status, 2);
   UiWork_Finalize(list, 2);
-  Scheduler_ScheduleCallbackA();
+  PaletteGlow_Stop();
   Runtime_ReleaseHeapBlock(55);
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   WaitFrames(1);
@@ -1832,12 +1853,12 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
                            save->summary[slot].paletteGlowSub);
         if (status == NULL)
           status = UiWindow_Create(1, 10, 14, 9, 2);
-        StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
+        SaveMenu_DrawFileSummary(status, &save->summary[slot]);
         WaitFrames(1);
         if (djinn == NULL)
           djinn = UiWindow_Create(16, 10, 13, 3, 2);
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
-        ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
+        SaveMenu_HidePartySprites();
+        SaveMenu_ShowPartySprites(djinn, 0, 0, &save->summary[slot]);
         WaitFrames(1);
         if ((s8)save->summary[slot].djinn[0] +
                 (s8)save->summary[slot].djinn[1] +
@@ -1846,19 +1867,19 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
             0) {
           if (counts == NULL)
             counts = UiWindow_Create(16, 14, 13, 5, 2);
-          UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
-          Menu_ClearSecondObjectRowAndScheduleUpdate();
-          Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+          SaveMenu_DrawDjinnCounts(counts, &save->summary[slot]);
+          SaveMenu_HideDjinnSprites();
+          SaveMenu_ShowDjinnSprites(counts, 0, 0);
         } else {
-          Menu_ClearSecondObjectRowAndScheduleUpdate();
+          SaveMenu_HideDjinnSprites();
           UiWork_Finalize(counts, 2);
           counts = NULL;
         }
       } else {
         PaletteGlow_Update(gGameState.paletteGlow[0],
                            gGameState.paletteGlow[1]);
-        Menu_ClearSecondObjectRowAndScheduleUpdate();
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
+        SaveMenu_HideDjinnSprites();
+        SaveMenu_HidePartySprites();
         UiWork_Finalize(counts, 2);
         UiWork_Finalize(djinn, 2);
         UiWork_Finalize(status, 2);
@@ -1906,8 +1927,8 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode) {
       break;
     }
   }
-  Menu_ClearSecondObjectRowAndScheduleUpdate();
-  Menu_ClearFirstObjectRowAndScheduleUpdate();
+  SaveMenu_HideDjinnSprites();
+  SaveMenu_HidePartySprites();
   UiWork_Finalize(counts, 2);
   UiWork_Finalize(djinn, 2);
   UiWork_Finalize(status, 2);

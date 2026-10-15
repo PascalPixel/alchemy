@@ -2369,7 +2369,7 @@ SECTIONS
         "*/recon/tla/raw/081c1014.o"(.text)
         "*/games/tla/src/sound/update_toggle_mask.o"(.text)
         "*/games/tla/src/sound/song_flag.o"(.text)
-        "*/recon/tla/raw/081c11ec.o"(.text)
+        "*/games/tla/src/sound/pcm_rate.o"(.text)
         "*/games/tla/src/sound/driver/umul_high.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/mixer_entry.o"(.text .rodata .data .padding)
     } > ROM

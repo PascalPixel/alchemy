@@ -2231,7 +2231,7 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.001c1014)
     "*/games/tla/src/sound/update_toggle_mask.o"(.text)
     "*/games/tla/src/sound/song_flag.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.001c11ec)
+    "*/games/tla/src/sound/pcm_rate.o"(.text)
     "*/games/tla/src/sound/driver/umul_high.o"(.text .rodata .data .padding)
     "*/games/tla/src/sound/driver/mixer_entry.o"(.text .rodata .data .padding)
 } > ROM

@@ -5193,12 +5193,6 @@ MusicPlayer_Tick:
 	.thumb_func
 Func_081c1014:
 	.incbin "baserom.gba", 0x001c1014, 0x00000144
-	.section .rom.001c11ec, "ax"
-	.global Func_081c11ec
-	.type Func_081c11ec, %function
-	.thumb_func
-Func_081c11ec:
-	.incbin "baserom.gba", 0x001c11ec, 0x00000090
 	.section .rom.001c342a, "ax"
 	.incbin "baserom.gba", 0x001c342a, 0x00000002
 	.section .rom.001c342c, "ax"

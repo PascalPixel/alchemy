@@ -10,7 +10,7 @@ extern u8 Data_02005804;
 extern s16 Data_02005820[8];
 
 void Audio_Initialize(void);
-void Func_081c11ec(u32 mode);
+void AudioEngine_SetFixedPcmRate(u32 mode);
 
 void Func_081c0c18(void)
 {
@@ -44,5 +44,5 @@ void Audio_InitializeRuntimeDefaults(void)
         *player_volume = 0;
         player_volume += 1;
     } while (remaining >= 0);
-    Func_081c11ec(0x90000);
+    AudioEngine_SetFixedPcmRate(0x90000);
 }

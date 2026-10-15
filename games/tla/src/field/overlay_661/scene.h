@@ -149,6 +149,12 @@ static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle)
     Func_02004098(actor, x, z, angle);
 }
 
+static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004000(a, b, c, d, e, f);
+}
+
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */

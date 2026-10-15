@@ -19,7 +19,7 @@ SECTIONS
         "*/resource_6ae_overlay.o"(.text.x02009f10)
         "*/games/tla/src/field/overlay_6ae/events_c.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200b210)
-        "*/resource_6ae_overlay.o"(.text.x0200b26c)
+        "*/games/tla/src/field/overlay_6ae/orbit.o"(.text)
         "*/games/tla/src/field/common/object/park_record.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200b370)
         "*/games/tla/src/field/overlay_6ae/events_d.o"(.text)

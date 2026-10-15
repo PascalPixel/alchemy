@@ -201,3 +201,32 @@ s32 Func_02000a7c(void)
         return 17;
     /* 残りの組み合わせは無い: the native falls off the end without a value. */
 }
+
+s32 Func_02000b60(s32 group)
+{
+    s32 i = 17;
+
+    /* FAKEMATCH: taking group's address keeps GCSE from hoisting group * 20 out of the loop, which the native rebuilds on every pass (differ 10 without it). */
+    (void)&group;
+loop:
+    {
+        s32 flag = group * 20 + i + 48;
+
+        if (group == 0) {
+            if (i == 7)
+                goto next;
+        }
+        if (group == 1) {
+            if (i == 9)
+                goto next;
+            if (i == 10)
+                goto next;
+        }
+        if (GameFlag_Test(flag))
+            return i + 1;
+    }
+next:
+    if (--i > 6)
+        goto loop;
+    return -1;
+}

@@ -814,48 +814,8 @@ Func_02000390:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.endif
-	.section .text.x02008b60,"ax",%progbits
-	.balign 4
-	.global Func_02000b60
-	.thumb_func
-Func_02000b60:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r5, #17
-.L_02008b66:
-	lsls r3, r6, #2
-	adds r3, r3, r6
-	lsls r3, r3, #2
-	adds r3, r3, r5
-	adds r0, r3, #0
-	adds r0, #48
-	cmp r6, #0
-	bne .L_02008b7a
-	cmp r5, #7
-	beq .L_02008b92
-.L_02008b7a:
-	cmp r6, #1
-	bne .L_02008b86
-	cmp r5, #9
-	beq .L_02008b92
-	cmp r5, #10
-	beq .L_02008b92
-.L_02008b86:
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008b92
-	adds r0, r5, #1
-	b .L_02008b9c
-.L_02008b92:
-	subs r5, #1
-	cmp r5, #6
-	bgt .L_02008b66
-	movs r0, #1
-	negs r0, r0
-.L_02008b9c:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02008ba0,"ax",%progbits
+	.balign 4
 	.global Func_02000ba0
 	.thumb_func
 Func_02000ba0:

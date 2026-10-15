@@ -9,7 +9,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_66e/fortune.o"(.text)
         "*/resource_66e_overlay.o"(.text.x02008390)
         "*/games/tla/src/field/overlay_66e/reading.o"(.text)
-        "*/resource_66e_overlay.o"(.text.x02008b60)
         "*/resource_66e_overlay.o"(.text.x02008ba0)
         "*/resource_66e_overlay.o"(.text.x02008c04)
         "*/resource_66e_overlay.o"(.text.x02008f28)

@@ -1,5 +1,11 @@
 /* Near miss, differ 2 of 104: the listing loads the party state address two instructions
- * earlier, before it builds 0x204. Barriers on that address change the allocation. */
+ * earlier, before it builds 0x204. Barriers on that address change the allocation.
+ * Tried 2026-10-15: sched2 ranks the pool load 47 against 48 for movs r2, #129 and
+ * 47 for adds r3, r3, r1, so the native order needs the load one step higher, which
+ * an operand asm cannot give (it only lowers a load's chain); 0x1ac pinned to r1 with
+ * a barrier after the address (differ 29, the address no longer shared with the later
+ * party reads), the address pinned to r5 (22), a one-pass block between the store and
+ * its address (4 to 6); permute 3 minutes: nothing below 11. */
 #include "../../../../games/tla/src/field/overlay_67f/ov67f.h"
 
 s32 Func_020012dc(void)

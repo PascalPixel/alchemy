@@ -1,8 +1,41 @@
 #include "types.h"
 
-// The Japanese edition's form of this function (kana, with the dakuten mark
-// in the high byte) stays on its listing in recon/tla/raw/overlays (S4).
-#if !defined(TLA_EDITION_JA)
+#if defined(TLA_EDITION_JA)
+// The character a cell of the password grid stands for, in the Japanese
+// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
+void Func_02000a70(s32 cell, u16 *text)
+{
+    /* FAKEMATCH: the dakuten mark is pinned to r2 as a halfword: the native loads it before it copies the cell for the add, where plainly the copy comes first (differ 4). */
+    register u16 mark asm("r2");
+
+    text[1] = 0;
+    text[2] = 0;
+    if (cell <= 14)
+        text[0] = cell + 145;
+    else if (cell <= 43)
+        text[0] = cell + 209;
+    else if (cell == 45)
+        text[0] = 0x86;
+    else if (cell == 44)
+        text[0] = 0xfd;
+    else if (cell <= 55)
+    {
+        mark = 0x4000;
+        text[0] = (cell + 104) | mark;
+    }
+    else if (cell == 56)
+        text[0] = 0xe0 | 0x4000;
+    else if (cell == 57)
+        text[0] = 0xe3 | 0x4000;
+    else if (cell == 58)
+        text[0] = 0xe4 | 0x4000;
+    else
+    {
+        mark = 0x4000;
+        text[0] = (cell + 175) | mark;
+    }
+}
+#else
 // The character a cell of the password grid stands for, in the font's
 // codes: capitals without I and O, the digits 2 to 9, small letters without
 // l and o, then symbols.

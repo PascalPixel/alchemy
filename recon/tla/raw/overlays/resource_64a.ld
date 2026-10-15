@@ -11,7 +11,6 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x02008328)
         "*/games/tla/src/field/overlay_64a/prepare.o"(.text)
         "*/games/tla/src/field/overlay_64a/s0a70.o"(.text)
-        "*/resource_64a_overlay.o"(.text.x02008a70)
         "*/resource_64a_overlay.o"(.text.x02008b24)
         "*/resource_64a_overlay.o"(.text.x02008db4)
         "*/resource_64a_overlay.o"(.text.x02008e44)

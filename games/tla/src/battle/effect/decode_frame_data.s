@@ -14,3 +14,5 @@ BattleFx_DecodeFrameCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0
+	.global BattleFx_DecodeFrameEnd
+BattleFx_DecodeFrameEnd:

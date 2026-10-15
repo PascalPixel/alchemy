@@ -11,16 +11,15 @@
 #include "iwram_call.h"
 
 // Mirrors the first 64 background colours, keeping the backdrop colour.
-void Func_0815b634(void)
-{
-    u16 saved[64];
-    u16 flipped[64];
-    s32 i;
+void Func_0815b634(void) {
+  u16 saved[64];
+  u16 flipped[64];
+  s32 i;
 
-    Iwram_CopyWords(saved, (void *)BG_PLTT, 128);
-    for (i = 1; i != 64; i++)
-        flipped[i] = saved[64 - i];
-    flipped[0] = saved[0];
-    Iwram_CopyWords((void *)BG_PLTT, flipped, 128);
-    REG_BLDALPHA = 0x810;
+  Iwram_CopyWords(saved, (void *)BG_PLTT, 128);
+  for (i = 1; i != 64; i++)
+    flipped[i] = saved[64 - i];
+  flipped[0] = saved[0];
+  Iwram_CopyWords((void *)BG_PLTT, flipped, 128);
+  REG_BLDALPHA = 0x810;
 }

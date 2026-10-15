@@ -1,7 +1,10 @@
 #include "types.h"
 
-void Func_08196404(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
 
-void Func_081963ec(s32 a0, s32 value) {
-  Func_08196404(a0, 7, 7, value & 0xf, (u32)value >> 4);
+// BattleEffect_LoadWork(slot, 7, 7, flags, mode) for a 128 by 128 canvas,
+// with the flags and the mode packed into one word: mode << 4 | flags.
+s32 Func_081963ec(s32 slot, s32 modeAndFlags) {
+  return Func_08196404(slot, 7, 7, modeAndFlags & 0xf, (u32)modeAndFlags >> 4);
 }

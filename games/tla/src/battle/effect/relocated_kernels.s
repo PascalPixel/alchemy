@@ -148,6 +148,8 @@ AlchemyUncreditedEnd_08138fca:
 .L_081391c0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
+	.global Data_08138fc8CodeSize
+	.set Data_08138fc8CodeSize, . - Data_08138fc8
 	.thumb
 	.global Data_081391c8
 Data_081391c8:
@@ -301,6 +303,8 @@ AlchemyUncreditedEnd_081391ca:
 .L_081393d0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
+	.global Data_081391c8CodeSize
+	.set Data_081391c8CodeSize, . - Data_081391c8
 	.thumb
 	.global Data_081393d8
 Data_081393d8:
@@ -458,3 +462,5 @@ AlchemyUncreditedEnd_081393da:
 .L_081395f0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
+	.global Data_081393d8CodeSize
+	.set Data_081393d8CodeSize, . - Data_081393d8

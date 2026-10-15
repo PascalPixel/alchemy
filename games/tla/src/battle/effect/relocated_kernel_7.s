@@ -334,3 +334,5 @@ AlchemyUncreditedEnd_0813a90c:
 .L_0813a91c:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
+	.global Data_0813a444CodeSize
+	.set Data_0813a444CodeSize, . - Data_0813a444

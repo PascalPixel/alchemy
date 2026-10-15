@@ -333,3 +333,7 @@ AlchemyUncreditedEnd_0813b2d4:
 .L_0813b2e4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
+	.global Data_0813ae14CodeSize
+	.set Data_0813ae14CodeSize, . - Data_0813ae14
+	.global Data_0813ae14CodeWords
+	.set Data_0813ae14CodeWords, Data_0813ae14CodeSize / 4

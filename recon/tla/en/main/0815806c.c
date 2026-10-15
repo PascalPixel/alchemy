@@ -1,9 +1,35 @@
-/* Draft of Func_0815806c, ported from The Broken Seal's
- * BattleFx_RunMarsDjinnPuffs (listing 421 instructions, draft 421,
- * differ 68): the canvas and effect work trade registers (r9 and fp)
- * through the whole function, and the effect work is read before the
- * canvas where the native reads the canvas first; the rest are reordered
- * loads. */
+/* Draft of Func_0815806c, effect kind 282: the Mars Djinn's puffs.
+ *
+ * On screen: a glowing orb swells over the targets for 24 frames; at frame
+ * 20 a small Mars Djinn appears in it, and from frame 24 it dives down and
+ * to the left, 4 pixels across and 8 down a frame. As it lands (frame 32,
+ * cue 0x91, an eight-frame shake) nine fiery puffs bloom in an oval around
+ * the targets, two frames apart, each a six-cel ember animation. From frame
+ * 40 a column of sixteen sparks rises from under each puff, wobbling as it
+ * climbs. At frame 38 every target flashes for 16 frames and recoils.
+ *
+ * Setup: the battle effect canvas and the max and additive blitter pair,
+ * the dot sheet in the sheet block, the Djinn sheet and the orb sheet in
+ * the effect work, then the canvas transfer callback; the puff positions
+ * and the 144 sparks are placed before the first frame.
+ * Frame loop, 112 frames, as above. At frame 56 the battle resumes and
+ * resolves the targets.
+ * Teardown: the callback and both blitters are released and the canvas
+ * layer is closed.
+ *
+ * Port of The Broken Seal's BattleFx_RunMarsDjinnPuffs (kind 252 there),
+ * with The Lost Age's heap slots and callback order and no work->effect
+ * store.
+ *
+ * Listing 421 instructions, draft 421, differ 22 (trial 0, 2026-10-15).
+ * Left: single rows one place apart, the native issuing pool and stack
+ * loads and call constants one slot earlier.
+ *
+ * Tried:
+ *   ☀️'s body with The Lost Age's names, canvas read first   68
+ *   the effect work read before the canvas, as Venus found   68 -> 22
+ *   alchemy permute, 5 minutes                                24 at best
+ */
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
@@ -14,11 +40,26 @@
 #include "ram_buffer.h"
 #include "resource.h"
 
-extern char ResourceId_Data134;
+// Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
+#define HEAP_BLITTER 104
+#define HEAP_BLITTER_ALTERNATE 188
+
+// The sparks live in the map cell buffer: sixteen under each of nine puffs.
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+#define PUFF_COUNT 9
+#define SPARKS_PER_PUFF 16
+
+// The pixel half of a 16.16 value.
+#define HI(v) (((s16 *)&(v))[1])
+
+extern char ResourceId_ParticleSpritesA;
 extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
+// Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern u16 gData_08197410[];
+// The ember puff's six cels: ☀️'s gPuffArc_CellWidths, _CellHeights,
+// _CellBiasY and _CellSourceOffsets.
 extern u8 gData_08197467[];
 extern u8 gData_0819746d[];
 extern u8 gData_08197473[];
@@ -27,152 +68,180 @@ extern u16 gData_0819747a[];
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void BattleFx_BeginCanvasLayer(s32 bg_control);
+void BattleFx_BeginCanvasLayer(s32 bgControl);
+// Closes the canvas layer.
 void Func_08143bb8(void);
+// Copies the canvas to VRAM when a transfer is pending.
 void Func_08143000(void);
+// Counts down the actors' flash timers.
 void Func_081434f8(void);
+// Fetches the max and additive blitters, flipped or not.
 void Func_08144aac(s32 flip, DrawRectangle *out);
-void Func_081180e8(s32 phase);
-void Func_08118088(s32 actor, s32 variant);
-void Func_0814cd48(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
-void Func_08158ce0(s32 random_mask, u32 shake_range);
-void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal);
+// BattleEventRuntime_BeginPhase through its far call.
+void Func_081180e8(s32 hitCue);
+// An actor's recoil motion, through a far call.
+void Func_08118088(s32 actor, s32 motion);
+// Flashes an actor in a palette for some frames.
+void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                   s32 frames);
+// Shakes the camera while work->shakeFrames lasts.
+void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
+                                s32 copyPalette);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping, s32 gravity);
+void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                      s32 gravity);
 
-#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
-#define HI(v) (((s16 *)&(v))[1])
+void Func_0815806c(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  u8 *sheet;
+  DrawRectangle blit[2];
+  DrawRectangle *draw;
+  struct EffectStep *puff;
+  struct EffectStep *spark;
+  s32 member;
+  s32 frame;
+  s32 i;
+  s32 diveY;
 
-void Func_0815806c(struct BattleEffectArgument *effect)
-{
-    struct BattleEffectWork *work;
-    void *canvas;
-    u8 *sheet;
-    DrawRectangle callbacks[2];
-    DrawRectangle *draw;
-    struct EffectStep *step;
-    struct EffectStep *mote;
-    s32 member;
-    s32 frame;
-    s32 i;
-    s32 curtainY;
+  // Setup: the canvas, the blitter pair, the sheets.
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  sheet = Ram_HeapSlots->unk64[0];
+  BattleFx_BeginCanvasLayer(0);
+  draw = blit;
+  Func_08144aac(0, draw);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
+                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
+                             1, 1);
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
-    canvas = Ram_HeapSlots->battleFxWork[1];
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    sheet = Ram_HeapSlots->unk64[0];
-    BattleFx_BeginCanvasLayer(0);
-    draw = callbacks;
-    Func_08144aac(0, draw);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
-    work->transferMode = 2;
-    work->transferValue = 75;
-    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  // The puffs sit on an oval, alternately left and right of the middle,
+  // each two frames behind the last; sixteen sparks wait under each one.
+  member = 0;
+  puff = work->particles;
+  do {
+    s32 angle = member << 11;
 
-    member = 0;
-    step = work->particles;
-    do {
-        s32 angle = member << 11;
+    puff->x = (Trig_Sin(angle) * 24) >> 16;
+    puff->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+    if (member & 1)
+      puff->x = 32 - puff->x;
+    else
+      puff->x += 32;
+    puff->variant = -(member * 2);
+    for (i = 0; i != SPARKS_PER_PUFF; i++) {
+      spark = &SPARKS[member * SPARKS_PER_PUFF + i];
+      spark->x = (((Random16() & 15) + puff->x) - 8) << 16;
+      spark->y = ((Random16() & 7) + 96) << 16;
+      spark->velocityX = ((Random16() & 127) - 64) << 11;
+      spark->velocityY = ((Random16() & 127) - 64) << 10;
+      spark->z = Random16() & 0xffff;
+      spark->velocityZ = Random16() & 0xffff;
+    }
+    puff++;
+    member++;
+  } while (member != PUFF_COUNT);
 
-        step->x = (Trig_Sin(angle) * 24) >> 16;
-        step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
-        if (member & 1)
-            step->x = 32 - step->x;
-        else
-            step->x += 32;
-        step->variant = -(member * 2);
-        for (i = 0; i != 16; i++) {
-            mote = &PARTICLES[member * 16 + i];
-            mote->x = (((Random16() & 15) + step->x) - 8) << 16;
-            mote->y = ((Random16() & 7) + 96) << 16;
-            mote->velocityX = ((Random16() & 127) - 64) << 11;
-            mote->velocityY = ((Random16() & 127) - 64) << 10;
-            mote->z = Random16() & 0xffff;
-            mote->velocityZ = Random16() & 0xffff;
+  Audio_PlayCue(0x88);
+  frame = 0;
+  diveY = -172;
+  do {
+    // The battle resumes and resolves the targets, hit cue 0x85.
+    if (frame == 56)
+      Func_081180e8(0x85);
+
+    // The orb swells, a cel every four frames.
+    if (frame <= 23)
+      blit[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,
+              40);
+    // The Djinn appears in the orb, then dives down to the left.
+    if (frame == 20)
+      Iwram_CopyWords(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+    if (frame >= 20 && frame <= 31) {
+      if (frame > 23)
+        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
+      else
+        blit[0](canvas, work->sheet, 50, 20, 20, 40);
+    }
+    // It lands: the ember sheet replaces the Djinn's.
+    if (frame == 32) {
+      Audio_PlayCue(0x91);
+      work->shakeFrames = 8;
+      Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
+                                 1, 1);
+    }
+    // Each puff plays its six cels, eight frames each, once its delay ends.
+    if (frame > 31) {
+      member = 0;
+      puff = work->particles;
+      do {
+        if (puff->variant >= 0 && puff->variant <= 47) {
+          s32 cel = puff->variant / 8;
+          u32 width;
+
+          blit[0](canvas, work->sheet + gData_0819747a[cel],
+                  puff->x - ((width = gData_08197467[cel]) >> 1),
+                  puff->y + gData_08197473[cel], width, gData_0819746d[cel]);
         }
-        step++;
         member++;
-    } while (member != 9);
+        puff->variant++;
+        puff++;
+      } while (member != PUFF_COUNT);
+    }
 
-    Audio_PlayCue(0x88);
-    frame = 0;
-    curtainY = -172;
+    // The sparks rise from frame 40, a puff's column two frames after the
+    // last, wobbling four pixels either way.
+    spark = SPARKS;
+    member = 0;
     do {
-        if (frame == 56)
-            Func_081180e8(0x85);
-        if (frame <= 23)
-            callbacks[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
-        if (frame == 20)
-            Iwram_CopyWords(
-                (void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
-        if (frame >= 20 && frame <= 31) {
-            if (frame > 23)
-                draw[1](canvas, work->sheet, 146 - frame * 4, curtainY, 20, 40);
-            else
-                callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
-        }
-        if (frame == 32) {
-            Audio_PlayCue(0x91);
-            work->shakeFrames = 8;
-            Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
-        }
-        if (frame > 31) {
-            member = 0;
-            step = work->particles;
-            do {
-                if (step->variant >= 0 && step->variant <= 47) {
-                    s32 cell = step->variant / 8;
-                    u32 width;
+      if (frame >= (member / SPARKS_PER_PUFF) * 2 + 40) {
+        s32 size;
+        s32 x;
+        s32 wobble;
 
-                    callbacks[0](canvas, work->sheet + gData_0819747a[cell],
-                        step->x - ((width = gData_08197467[cell]) >> 1),
-                        step->y + gData_08197473[cell], width, gData_0819746d[cell]);
-                }
-                member++;
-                step->variant++;
-                step++;
-            } while (member != 9);
-        }
-        step = PARTICLES;
-        member = 0;
-        do {
-            if (frame >= (member / 16) * 2 + 40) {
-                s32 size;
-                s32 x;
-                s32 angle;
+        size = (member & 1) + 3;
+        x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
+        draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
+                HI(spark->y) - size, size, size * 2);
+        BattleFxKernels_IntegrateVector2(spark, 64, -0x2000);
+        wobble = spark->z;
+        spark->z = wobble + 0x800;
+        if (spark->z > 0xffff)
+          spark->z = wobble + 0x800 - 0xffff;
+      }
+      member++;
+      spark++;
+    } while (member != PUFF_COUNT * SPARKS_PER_PUFF);
 
-                size = (member & 1) + 3;
-                x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-                draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
-                    HI(step->y) - size, size, size * 2);
-                BattleFxKernels_IntegrateVector2(step, 64, -0x2000);
-                angle = step->z;
-                step->z = angle + 0x800;
-                if (step->z > 0xffff)
-                    step->z = angle + 0x800 - 0xffff;
-            }
-            member++;
-            step++;
-        } while (member != 144);
+    // Every target flashes for sixteen frames and recoils.
+    if (frame == 38) {
+      for (member = 0; member != effect->count; member++) {
+        Func_0814cd48(effect->actors[member], 7, 5, member, 16);
+        Func_08118088(effect->actors[member], 6);
+      }
+    }
 
-        if (frame == 38) {
-            for (member = 0; member != effect->count; member++) {
-                Func_0814cd48(effect->actors[member], 7, 5, member, 16);
-                Func_08118088(effect->actors[member], 6);
-            }
-        }
-        Func_08158ce0(8, 8);
-        Func_081434f8();
-        work->transferPending = 1;
-        WaitFrames(1);
-        curtainY += 8;
-        frame++;
-    } while (frame != 112);
-    Scheduler_RemoveCallback(Func_08143000);
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
-    Func_08143bb8();
+    Func_08158ce0(8, 8);
+    Func_081434f8();
+    work->transferPending = 1;
+    WaitFrames(1);
+    diveY += 8;
+    frame++;
+  } while (frame != 112);
+
+  // Teardown.
+  Scheduler_RemoveCallback(Func_08143000);
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  Func_08143bb8();
 }

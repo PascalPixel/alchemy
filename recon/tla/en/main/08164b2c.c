@@ -14,33 +14,32 @@
 #include "types.h"
 #include "battle_work.h"
 
-void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta)
-{
-    u16 *color = (u16 *)0x050000c0;
-    u16 *source = Ram_HeapSlots->battleWork->palette;
-    s32 i;
+void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
+  u16 *color = (u16 *)0x050000c0;
+  u16 *source = Ram_HeapSlots->battleWork->palette;
+  s32 i;
 
-    for (i = 0; i != 128; i++) {
-        s32 blue = (*source >> 10) & 0x1f;
-        s32 green = (*source >> 5) & 0x1f;
-        s32 red = *source & 0x1f;
+  for (i = 0; i != 128; i++) {
+    s32 blue = (*source >> 10) & 0x1f;
+    s32 green = (*source >> 5) & 0x1f;
+    s32 red = *source & 0x1f;
 
-        red += redDelta;
-        green += greenDelta;
-        blue += blueDelta;
-        if (red > 31)
-            red = 31;
-        if (green > 31)
-            green = 31;
-        if (blue > 31)
-            blue = 31;
-        if (red < 0)
-            red = 0;
-        if (green < 0)
-            green = 0;
-        if (blue < 0)
-            blue = 0;
-        *color++ = (blue << 10) | (green << 5) | red;
-        source++;
-    }
+    red += redDelta;
+    green += greenDelta;
+    blue += blueDelta;
+    if (red > 31)
+      red = 31;
+    if (green > 31)
+      green = 31;
+    if (blue > 31)
+      blue = 31;
+    if (red < 0)
+      red = 0;
+    if (green < 0)
+      green = 0;
+    if (blue < 0)
+      blue = 0;
+    *color++ = (blue << 10) | (green << 5) | red;
+    source++;
+  }
 }

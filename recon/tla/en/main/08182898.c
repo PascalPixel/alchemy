@@ -1,35 +1,56 @@
-/* Near miss: listing 225 instructions, draft 225, differ 8. Statements, registers, stores and
- * the frame (canvas sp+20, the blitter pair sp+12/sp+16, frame sp+8) all match; four places are
- * left where the native loads first and this build does not: Func_08143000's address before
- * work in the prologue, the particle base before the reload pair that clears i in both loop
- * preheaders (after the hoisted heights in the second), and the spilled frame before i * 8 is
- * built. sched2 ties each on priority and takes the other insn for its dependent or its class
- * against the last call. Measured: an empty asm after the spawn pointer fixes the first
- * preheader (differ 6); one-pass blocks or asm operands on i or frame in the actor loop: 25 to
- * 167; a particle-array pointer variable, an inline blitter loader, a volatile pad, copied
- * effect, work through a slot pointer: no gain. Widths and heights are read once each, in
- * argument order, and the tables are not const (the native rereads the heights after the
- * call). Resource ids 0x190 and 0xfd need names in directory.s. */
-#include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
+/* Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
+ * Written from the listing; called only by Func_0818284c (f18284c.c), which
+ * opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
+ * shapes are BattleFx_RunPuffArc (0.55) and BattleFx_RunFallingCrystals.
+ * Statements, registers, stores and the frame (canvas sp+20, the blitter pair
+ * sp+12/sp+16, frame sp+8) all match; four places are left where the native
+ * loads first and this build does not: Func_08143000's address before work
+ * in the prologue, the particle base before the reload pair that clears i in
+ * both loop preheaders (after the hoisted heights in the second), and the
+ * spilled frame before i * 8 is built. sched2 ties each on priority and takes
+ * the other insn for its dependent or its class against the last call.
+ * Measured: an empty asm after the spawn pointer fixes the first preheader
+ * (differ 6); one-pass blocks or asm operands on i or frame in the actor
+ * loop: 25 to 167; a particle-array pointer variable, an inline blitter
+ * loader, a volatile pad, copied effect, work through a slot pointer: no
+ * gain. Widths and heights are read once each, in argument order, and the
+ * tables are not const (the native rereads the heights after the call).
+ * 2026-10-15 (lane N2): rewritten with the work struct and named constants;
+ * the same 225 instructions and differ 8. alchemy permute, 8 minutes, two
+ * jobs: nothing below differ 15.
+ * Resource ids 0x190 (BattleFx_BlueBeamSheet) and 0xfd (Resource_Data0FD)
+ * need their names in system/resource/directory.s when this is adopted. */
+#include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "io_reg.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+#include "types.h"
 
-struct BubbleParticle {
-    s32 x;
-    s32 y;
-    s32 size;
-    s32 velocityX;
-    s32 velocityY;
-    s32 unk14;
-    s32 timer;
-};
+// The blitter heap slots, by byte offset into Ram_HeapSlots.
+#define HEAP_SLOT_BLITTER 104 // unk64[1]
 
-typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width, s32 height);
+// The Lost Age numbers its blitter modes from the other end of The Broken
+// Seal's: additive 0, max 1, transparent 2, copy 3.
+#define BLITTER_MAX 1
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-extern struct BubbleParticle gData_02015000[];
+// The pixel half of a 16.16 value.
+#define HI(v) (((s16 *)&(v))[1])
+
+#define BUBBLE_COUNT 256
+#define BUBBLE_FRAMES 60
+#define BUBBLE_HIT_CUE 126
+
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_Data0FD;
+
+// 256 bubbles past the map cells. Each is an EffectStep with its cel in z
+// and its life in variant (-1 once it has left the top of the canvas).
+extern struct EffectStep gData_02015000[];
+
+// The fifteen cels of Resource_Data0FD, a glowing oval from 16x32 down to
+// 3x4: their widths, heights and byte offsets into the sheet.
 extern u8 gData_0819966f[];
 extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
@@ -37,95 +58,107 @@ extern u16 gData_0819968e[];
 void Func_08143000(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_081963ec(s32 slot, s32 value);
+void Func_081963ec(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 id);
-void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 u32 Random16(void);
-void BattleFxKernels_IntegrateVector2(void *particle, s32 mask, s32 gravity);
-void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_081180e8(s32 cue);
+void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                      s32 gravity);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
+                   s32 frames);
+void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Func_081434f8(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Func_08143bb8(void);
 
-void Func_08182898(struct BattleEffectArgument *effect)
-{
-    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
-    u8 *work = Ram_HeapSlots->battleFxWork[0];
-    /* The blitter pair, of which this effect uses the first: as a two-word array it is one
-       DImode pseudo, and its spill takes sp+12 and the unused sp+16 the native frame has. */
-    CanvasBlitFunc blit[2];
-    s32 frame;
-    s32 i;
-    struct BubbleParticle *particle;
+// A column of bubbles. On the first frame 256 glowing ovals of random size
+// appear over the bottom left of the canvas; for 60 frames they float up
+// and drift sideways, drawn with the max blitter in the blue beam's palette,
+// and each one is gone once it has risen past the top. From frame 18 the
+// targets flash one by one, eight frames apart, each with the hit sound.
+void Func_08182898(struct BattleEffectArgument *effect) {
+  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  /* FAKEMATCH: frame local. The blitter pair, of which this effect uses the
+   * first: as a two-word array it is one DImode pseudo, and its spill takes
+   * sp+12 and the unused sp+16 the native frame has. */
+  DrawRectangle draw[2];
+  s32 frame;
+  s32 i;
+  struct EffectStep *bubble;
 
-    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-    *(s32 *)(work + 0x7780) = 2;
-    *(s32 *)(work + 0x7784) = 50;
-    Func_081963ec(104, 19);
-    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unk64[1];
-    Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work + 0x700, 0, 0);
-    for (frame = 0; frame != 60; frame++)
-    {
-        if (frame == 0)
-        {
-            struct BubbleParticle *spawn = gData_02015000;
+  // Each frame the transfer callback copies the canvas and clears it.
+  Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Func_081963ec(HEAP_SLOT_BLITTER,
+                BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
-            for (i = 0; i != 256; i++)
-            {
-                spawn->x = (Random16() & 127) << 16;
-                spawn->y = ((Random16() & 127) + 120) << 16;
-                spawn->velocityX = ((Random16() & 31) - 16) << 13;
-                spawn->velocityY = (8 - (Random16() & 31)) << 12;
-                spawn->size = (Random16() & 7) + 5;
-                spawn->timer = 32;
-                spawn++;
-            }
-        }
-        particle = gData_02015000;
-        for (i = 0; i != 256; i++)
-        {
-            if (particle->timer >= 0)
-            {
-                s32 size = particle->size;
-                u32 width;
-                u32 height;
+  // The blue beam's palette colours the bubble cels.
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work->sheet, 0, 0);
 
-                blit[0](canvas, work + gData_0819968e[size] + 0x700,
-                     *(s16 *)((u8 *)&particle->x + 2) - ((width = gData_0819966f[size]) >> 1),
-                     *(s16 *)((u8 *)&particle->y + 2) - ((height = gData_0819967e[size]) >> 1),
-                     width, height);
-                BattleFxKernels_IntegrateVector2(particle, 63, -0x4000);
-                if (particle->y < -(gData_0819967e[size] << 16))
-                    particle->timer = -1;
-            }
-            particle++;
-        }
-        for (i = 0; i != effect->count; i++)
-        {
-            if (frame == i * 8 + 18)
-            {
-                if (i == 0)
-                {
-                    Func_0814cd48(effect->actors[i], 7, -1, i, 16);
-                    Func_081180e8(126);
-                    Audio_PlayCue(126);
-                }
-                else
-                {
-                    Audio_PlayCue(126);
-                    Func_0814cd48(effect->actors[i], 7, -1, i, 16);
-                }
-            }
-        }
-        Func_081434f8();
-        *(s32 *)(work + 0x78e8) = 1;
-        WaitFrames(1);
+  for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
+    // The first frame scatters every bubble below the bottom left.
+    if (frame == 0) {
+      struct EffectStep *spawn = gData_02015000;
+
+      for (i = 0; i != BUBBLE_COUNT; i++) {
+        spawn->x = (Random16() & 127) << 16;
+        spawn->y = ((Random16() & 127) + 120) << 16;
+        spawn->velocityX = ((Random16() & 31) - 16) << 13;
+        spawn->velocityY = (8 - (Random16() & 31)) << 12;
+        spawn->z = (Random16() & 7) + 5;
+        spawn->variant = 32;
+        spawn++;
+      }
     }
-    Runtime_ReleaseHeapBlock(104);
-    Scheduler_RemoveCallback(Func_08143000);
-    Func_08143bb8();
+
+    // Draw each bubble centred on its place, let it rise, and drop it once
+    // it is wholly above the canvas.
+    bubble = gData_02015000;
+    for (i = 0; i != BUBBLE_COUNT; i++) {
+      if (bubble->variant >= 0) {
+        s32 cel = bubble->z;
+        u32 width;
+        u32 height;
+
+        draw[0](canvas, work->sheet + gData_0819968e[cel],
+                HI(bubble->x) - ((width = gData_0819966f[cel]) >> 1),
+                HI(bubble->y) - ((height = gData_0819967e[cel]) >> 1), width,
+                height);
+        BattleFxKernels_IntegrateVector2(bubble, 63, -0x4000);
+        if (bubble->y < -(gData_0819967e[cel] << 16))
+          bubble->variant = -1;
+      }
+      bubble++;
+    }
+
+    // The targets flash in turn from frame 18; the first hit also starts
+    // battle phase 126.
+    for (i = 0; i != effect->count; i++) {
+      if (frame == i * 8 + 18) {
+        if (i == 0) {
+          Func_0814cd48(effect->actors[i], 7, -1, i, 16);
+          Func_081180e8(BUBBLE_HIT_CUE);
+          Audio_PlayCue(BUBBLE_HIT_CUE);
+        } else {
+          Audio_PlayCue(BUBBLE_HIT_CUE);
+          Func_0814cd48(effect->actors[i], 7, -1, i, 16);
+        }
+      }
+    }
+
+    Func_081434f8();
+    work->transferPending = 1;
+    WaitFrames(1);
+  }
+
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  Scheduler_RemoveCallback(Func_08143000);
+  Func_08143bb8();
 }

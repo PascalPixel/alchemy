@@ -27,6 +27,9 @@
 #define Iwram_UnsignedDivideEntry                                              \
   FIXED_ADDRESS((u32 (*)(u32 dividend, u32 divisor)), 0x03000534,              \
                 IwramUnsignedDivide)
+#define Iwram_DecompressEntry                                                  \
+  FIXED_ADDRESS((void *(*)(const void *source, void *destination)),            \
+                0x03000694, IwramDecompress)
 #define Iwram_CopyWordsEntry                                                   \
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03000730, IwramCopyWords)
@@ -41,5 +44,6 @@
 #define Iwram_SignedDivide Iwram_SignedDivideEntry
 #define Iwram_UnsignedDivide Iwram_UnsignedDivideEntry
 #define Iwram_CopyWords Iwram_CopyWordsEntry
+#define Iwram_Decompress Iwram_DecompressEntry
 
 #endif

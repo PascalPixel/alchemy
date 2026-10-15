@@ -1,12 +1,29 @@
-/* Near miss, differ 66 of 429: The Broken Seal's BattleFx_RunTornado as ⚓️ has
-   it: the effect argument read directly, the tornado sheet (resource 0x192)
-   unpacked after the particles, blitters from Func_081963ec(104, 0x13) and
-   (188, 0x17), the callback at 0xc80, the shape, glint offset and size tables
-   as gData_081979ae, gData_08197486, gData_08197492 and gData_08197498 (not const),
-   Func_081180e8(133) and Func_08118088 for the struck members, and the release
-   before the callback is removed. Same frame and registers; what is left is
-   order, each a load (pool word, work slot, argument) the native issues one
-   instruction earlier, and the literal pools that move with them. */
+/* Near miss, differ 64 of 429 (effect kind 20, the tornado).
+
+   ☀️ twin: BattleFx_RunTornado (games/tbs/src/effect/effect.c), shape 0.835,
+   structure 0.941. Ported with ⚓️'s checklist: the effect argument read
+   directly, the tornado sheet unpacked into the work with
+   Resource_LoadAndDecompress, max blitters from Func_081963ec(104, 0x13)
+   and (188, 0x17), the transfer callback at 0xc80, the shape table
+   gData_081979ae (☀️ gTornado_Shapes) and the glint cell tables
+   gData_08197486/92/98, Func_08118088 for the struck targets, and the two
+   blitters released before the callback is removed, as ☀️ does.
+
+   Same frame, registers and instruction count. What is left is order: each
+   row a load (pool word, work slot, the argument spill) that the native
+   issues one instruction earlier than agscc, and the literal pools that
+   move with them (each pool load's offset differs by 4). The prologue's
+   first row is the argument spill (str r0) that the native issues before
+   the 0x03000000 base; the glint loop's cell offset load and the funnel's
+   segment sums account for most of the rest.
+
+   Tried (differ):
+     the repository draft (local copy of the work struct)                66
+     the shared struct BattleEffectWork                                  66
+     Func_081963ec declared returning s32 (plan 0c)                      64
+     greedy declaration-order scan, every local through every place     64 */
+
+
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -15,146 +32,168 @@
 #include "callback_scheduler.h"
 #include "mem.h"
 #include "effect_step.h"
-#include "battle_effect_work.h"
 #include "battle_effect.h"
+#include "battle_effect_work.h"
 #include "fixed_math.h"
 
-// The battle effect work as the canvas effects use it.
-struct CanvasEffectWork
-{
-    struct EffectStep particles[64];
-    u8 sheet[0x6980];
-    s32 bg2X[160];
-    u8 unk7300[0x480];
-    s32 transferMode;
-    s32 transferValue;
-    u8 unk7788[0x20];
-    s32 shakeFrames;
-    u8 unk77ac[0x13c];
-    s32 transferPending;
-};
+// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
+#define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
+#define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
+
+// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
+// order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
+enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
+
+#define CALLBACK_ORDER 0xc80
+#define TORNADO_FRAMES 80
+#define GLINT_COUNT 16 // four glints for each of up to four funnels
+#define GLINT_CELS 6   // three cels of two frames each
 
 extern char ResourceId_TornadoSheet;
+
+// ☀️ gTornado_Shapes: funnels, sway radius and shake, for each variant.
 extern u8 gData_081979ae[];
+// ☀️ gBattleFx_GlintCellOffsets, Widths and Heights.
 extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143000(void);
-void Func_08143bb8(void);
-void Func_081434f8(void);
-void Func_08158ce0(s32 x, s32 y);
-void Func_081180e8(s32 phase);
-void Func_08118088(s32 id, s32 variant);
-void Func_081963ec(s32 slot, s32 flags);
-void Func_0814cd48(s32 id, s32 objectValue, s32 groupValue, s32 stateSlot, s32 stateValue);
+void Func_08143bb8(void);           // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);           // ☀️ ProcessPendingGraphicsTransfer
+void Func_081434f8(void);           // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);   // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);      // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
+s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
+void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
+                   s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Audio_PlayCue(s32 cue);
 
-void Func_08148e9c(struct BattleEffectArgument *effect)
-{
-    DrawRectangle draw[2];
-    struct CanvasEffectWork *work;
-    void *canvas;
-    s32 wave;
-    struct EffectStep *point;
-    s32 frame;
-    s32 x;
-    s32 y;
-    s32 segment;
-    s32 cell;
-    s32 i;
-    s32 j;
+// One to four funnels of wind sway across the targets for 80 frames, each
+// drawn as three stacked segments with glints swirling around it; the canvas
+// is wiped every eight frames, and each target is struck seven times.
+void Func_08148e9c(struct BattleEffectArgument *effect) {
+  DrawRectangle draw[2];
+  struct BattleEffectWork *work;
+  void *canvas;
+  s32 wave;
+  struct EffectStep *glint;
+  s32 frame;
+  s32 x;
+  s32 y;
+  s32 segment;
+  s32 cell;
+  s32 i;
+  s32 j;
 
-    work = (struct CanvasEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    canvas = Ram_HeapSlots->battleFxWork[1];
-    BattleFx_BeginCanvasLayer(1);
-    REG_BLDALPHA = 0x1010;
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
-    Func_081963ec(104, 0x13);
-    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Func_081963ec(188, 0x17);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-    for (j = 0; j != 16; j++)
-    {
-        point = &work->particles[j];
-        point->x = Random16() & 31;
-        point->y = (Random16() & 63) + 16;
-        point->variant = -(Random16() & 15);
+  // Set up: the canvas layer, the tornado sheet and two max blitters, the
+  // second mirrored.
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  BattleFx_BeginCanvasLayer(1);
+  REG_BLDALPHA = 0x1010;
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 1);
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+                                            COMPOSITE_CLIP_Y |
+                                            COMPOSITE_FLIP_X);
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+
+  // The glints start at random places in their funnel, staggered in time.
+  for (j = 0; j != GLINT_COUNT; j++) {
+    glint = &work->particles[j];
+    glint->x = Random16() & 31;
+    glint->y = (Random16() & 63) + 16;
+    glint->variant = -(Random16() & 15);
+  }
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
+  REG_BLDALPHA = 0x1000;
+  WaitFrames(1);
+  Audio_PlayCue(141);
+
+  for (frame = 0; frame != TORNADO_FRAMES; frame++) {
+    wave = Trig_Sin(frame << 10) << 4;
+    if (frame == 32)
+      Func_081180e8(133);
+
+    // Wipe the canvas every eight frames from frame 16, leaving a trail.
+    for (i = 0; i != 7; i++) {
+      if (frame == i * 8 + 16)
+        Iwram_FillWords(canvas, 0x4000, 0x08080808);
     }
-    work->transferMode = 2;
-    work->transferValue = 50;
-    Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
-    REG_BLDALPHA = 0x1000;
+
+    // Sway toward the targets' side; fade in over 16 frames and out over the
+    // last 16.
+    if (effect->side == 1)
+      wave += 0x200000;
+    else
+      wave -= 0x200000;
+    if (frame <= 16)
+      REG_BLDALPHA = frame | 0x1000;
+    if (frame > 63)
+      REG_BLDALPHA = (0x4f - frame) | 0x1000;
+
+    for (i = 0; i != gData_081979ae[effect->variant * 3]; i++) {
+      // Each funnel circles its own phase, a quarter turn from the next.
+      x = ((gData_081979ae[effect->variant * 3 + 1] *
+                Trig_Sin((frame << 11) + i * 0x4000) +
+            wave) >>
+           16) +
+          40;
+      y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+      segment = (frame / 2) % 3;
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
+      draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,
+              32);
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40,
+              32);
+
+      // Its four glints, the second of each pair mirrored; each restarts at
+      // a new place when its cels run out.
+      for (j = 0; j != 4; j++) {
+        glint = &work->particles[i * 4 + j];
+        if (glint->variant >= 0) {
+          cell = glint->variant / 2 + (j / 2) * 3;
+          draw[j & 1](canvas, work->sheet + gData_08197486[cell],
+                      glint->x + x, glint->y + y, gData_08197492[cell],
+                      gData_08197498[cell]);
+        }
+        glint->variant++;
+        if (glint->variant == GLINT_CELS) {
+          glint->x = Random16() & 31;
+          glint->y = (Random16() & 63) + 16;
+          glint->variant = 0;
+        }
+      }
+    }
+
+    // Strike each target seven times, every eight frames, three frames
+    // after the target before it.
+    for (j = 0; j != effect->count; j++) {
+      for (i = 0; i != 7; i++) {
+        if (frame == i * 8 + j * 3 + 16) {
+          Func_0814cd48(effect->actors[j], 7, 5, j, 4);
+          Func_08118088(effect->actors[j], 6);
+        }
+      }
+    }
+
+    work->shakeFrames = 1;
+    Func_08158ce0(gData_081979ae[effect->variant * 3 + 2],
+                  gData_081979ae[effect->variant * 3 + 2] * 2);
+    Func_081434f8();
+    work->transferPending = 1;
     WaitFrames(1);
-    Audio_PlayCue(141);
+  }
 
-    for (frame = 0; frame != 80; frame++)
-    {
-        wave = Trig_Sin(frame << 10) << 4;
-        if (frame == 32)
-            Func_081180e8(133);
-        for (i = 0; i != 7; i++)
-        {
-            if (frame == i * 8 + 16)
-                Iwram_FillWords(canvas, 0x4000, 0x08080808);
-        }
-        if (effect->side == 1)
-            wave += 0x200000;
-        else
-            wave -= 0x200000;
-        if (frame <= 16)
-            REG_BLDALPHA = frame | 0x1000;
-        if (frame > 63)
-            REG_BLDALPHA = (0x4f - frame) | 0x1000;
-        for (i = 0; i != gData_081979ae[effect->variant * 3]; i++)
-        {
-            x = ((gData_081979ae[effect->variant * 3 + 1] * Trig_Sin((frame << 11) + i * 0x4000) + wave)
-                    >> 16)
-                + 40;
-            y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
-            segment = (frame / 2) % 3;
-            draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-            draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
-            draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
-            for (j = 0; j != 4; j++)
-            {
-                point = &work->particles[i * 4 + j];
-                if (point->variant >= 0)
-                {
-                    cell = point->variant / 2 + (j / 2) * 3;
-                    draw[j & 1](canvas, work->sheet + gData_08197486[cell], point->x + x,
-                        point->y + y, gData_08197492[cell], gData_08197498[cell]);
-                }
-                point->variant++;
-                if (point->variant == 6)
-                {
-                    point->x = Random16() & 31;
-                    point->y = (Random16() & 63) + 16;
-                    point->variant = 0;
-                }
-            }
-        }
-        for (j = 0; j != effect->count; j++)
-        {
-            for (i = 0; i != 7; i++)
-            {
-                if (frame == i * 8 + j * 3 + 16)
-                {
-                    Func_0814cd48(effect->actors[j], 7, 5, j, 4);
-                    Func_08118088(effect->actors[j], 6);
-                }
-            }
-        }
-        work->shakeFrames = 1;
-        Func_08158ce0(gData_081979ae[effect->variant * 3 + 2], gData_081979ae[effect->variant * 3 + 2] * 2);
-        Func_081434f8();
-        work->transferPending = 1;
-        WaitFrames(1);
-    }
-
-    Runtime_ReleaseHeapBlock(188);
-    Runtime_ReleaseHeapBlock(104);
-    Scheduler_RemoveCallback(Func_08143000);
-    Func_08143bb8();
+  // Tear down.
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  Scheduler_RemoveCallback(Func_08143000);
+  Func_08143bb8();
 }

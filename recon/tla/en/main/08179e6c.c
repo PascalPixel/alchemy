@@ -22,39 +22,38 @@
 
 void Func_0815b410(void);
 
-void Func_08179e6c(void)
-{
-    u8 *canvas = Ram_HeapSlots->battleFxWork[1];
-    s32 y;
-    s32 x;
+void Func_08179e6c(void) {
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  s32 y;
+  s32 x;
 
-    Func_0815b410();
-    {
-        register u16 control __asm__("r3") = 0x784;
+  Func_0815b410();
+  {
+    register u16 control __asm__("r3") = 0x784;
 
-        __asm__("" : "+l"(control) : : "r2");
-        REG_BG2CNT = control;
+    __asm__("" : "+l"(control) : : "r2");
+    REG_BG2CNT = control;
+  }
+  PLTT_BACKDROP = 0;
+  {
+    register u16 scale __asm__("r3") = 0x4e;
+
+    __asm__("" : "+l"(scale) : : "r2");
+    REG_BG2PA = scale;
+  }
+  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT = 0x3f44;
+  for (y = 0; y != 128; y++) {
+    for (x = 0; x != 128; x++) {
+      s32 level;
+
+      if (y < 32)
+        level = y * 2;
+      else if (y > 95)
+        level = 255 - y * 2;
+      else
+        level = 63;
+      canvas[(((x / 8) * 16 + y / 8) * 8 + (x & 7)) * 8 + (y & 7)] = level;
     }
-    PLTT_BACKDROP = 0;
-    {
-        register u16 scale __asm__("r3") = 0x4e;
-
-        __asm__("" : "+l"(scale) : : "r2");
-        REG_BG2PA = scale;
-    }
-    REG_BLDALPHA = 0x1010;
-    REG_BLDCNT = 0x3f44;
-    for (y = 0; y != 128; y++) {
-        for (x = 0; x != 128; x++) {
-            s32 level;
-
-            if (y < 32)
-                level = y * 2;
-            else if (y > 95)
-                level = 255 - y * 2;
-            else
-                level = 63;
-            canvas[(((x / 8) * 16 + y / 8) * 8 + (x & 7)) * 8 + (y & 7)] = level;
-        }
-    }
+  }
 }

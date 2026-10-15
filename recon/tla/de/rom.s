@@ -10,34 +10,6 @@ SoundDriver_EnterFrameUpdate:
 	.thumb_func
 Render_BuildOamList:
 	.incbin "baserom.gba", 0x000019f4, 0x00000020
-	.section .rom.00001c90, "ax"
-	.global ColorBuffer_ScaleThreeQuarters
-	.type ColorBuffer_ScaleThreeQuarters, %function
-	.thumb_func
-ColorBuffer_ScaleThreeQuarters:
-	.incbin "baserom.gba", 0x00001c90, 0x00000020
-	.size ColorBuffer_ScaleThreeQuarters, .-ColorBuffer_ScaleThreeQuarters
-	.section .rom.00001cb0, "ax"
-	.global ColorBuffer_Halve
-	.type ColorBuffer_Halve, %function
-	.thumb_func
-ColorBuffer_Halve:
-	.incbin "baserom.gba", 0x00001cb0, 0x00000020
-	.size ColorBuffer_Halve, .-ColorBuffer_Halve
-	.section .rom.00001cd0, "ax"
-	.global ColorBuffer_Brighten
-	.type ColorBuffer_Brighten, %function
-	.thumb_func
-ColorBuffer_Brighten:
-	.incbin "baserom.gba", 0x00001cd0, 0x00000020
-	.size ColorBuffer_Brighten, .-ColorBuffer_Brighten
-	.section .rom.00001cf0, "ax"
-	.global ColorBuffer_Darken
-	.type ColorBuffer_Darken, %function
-	.thumb_func
-ColorBuffer_Darken:
-	.incbin "baserom.gba", 0x00001cf0, 0x00000020
-	.size ColorBuffer_Darken, .-ColorBuffer_Darken
 	.section .rom.00013164, "ax"
 	.global MemFree
 	.type MemFree, %function
@@ -2349,9 +2321,8 @@ Func_080e37e0:
 	.thumb_func
 Func_080e4244:
 	.incbin "baserom.gba", 0x000f1244, 0x00000090
-	.section .rom.000f13a4, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000f13a4, 0x000001fc
+	.section .rom.000f146c, "ax"
+	.incbin "baserom.gba", 0x000f146c, 0x00000134
 	.section .rom.000f15a8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000f15a8, 0x00000188
@@ -2397,13 +2368,30 @@ Func_080e781c:
 	.type Func_080e87c4, %function
 	.thumb_func
 Func_080e87c4:
-	.incbin "baserom.gba", 0x000f57c4, 0x00000538
+	.incbin "baserom.gba", 0x000f57c4, 0x00000220
+	.global Func_080e89e4
+	.type Func_080e89e4, %function
+	.thumb_func
+Func_080e89e4:
+	.incbin "baserom.gba", 0x000f59e4, 0x00000160
+	.global Func_080e8b44
+	.type Func_080e8b44, %function
+	.thumb_func
+Func_080e8b44:
+	.incbin "baserom.gba", 0x000f5b44, 0x00000158
+	.global Func_080e8c9c
+	.type Func_080e8c9c, %function
+	.thumb_func
+Func_080e8c9c:
+	.incbin "baserom.gba", 0x000f5c9c, 0x00000060
 	.section .rom.000f5db0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000f5db0, 0x000004a0
 	.section .rom.000f62b4, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000f62b4, 0x00000b00
+	.incbin "baserom.gba", 0x000f62b4, 0x00000514
+	.section .rom.000f689c, "ax"
+	.incbin "baserom.gba", 0x000f689c, 0x00000518
 	.section .rom.000f6db4, "ax"
 	.global Func_080e9db4
 	.type Func_080e9db4, %function
@@ -3059,13 +3047,9 @@ Func_08118158:
 	.section .rom.00118244, "ax"
 	.incbin "baserom.gba", 0x00118244, 0x00000040
 	.section .rom.00118394, "ax"
+	.global ColorBuffer_ScaleKernelCode
+ColorBuffer_ScaleKernelCode:
 	.incbin "baserom.gba", 0x00118394, 0x0000007c
-	.section .rom.00118410, "ax"
-	.global ColorBuffer_Scale
-	.type ColorBuffer_Scale, %function
-	.thumb_func
-ColorBuffer_Scale:
-	.incbin "baserom.gba", 0x00118410, 0x00000020
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011843c, 0x000002fc
@@ -3133,13 +3117,6 @@ Func_0811b75c:
 	.section .rom.0011bf30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011bf30, 0x00000088
-	.section .rom.0011c08c, "ax"
-	.balign 4
-	.global Func_0811c074
-	.type Func_0811c074, %function
-	.thumb_func
-Func_0811c074:
-	.incbin "baserom.gba", 0x0011c08c, 0x000000ac
 	.section .rom.0011c3d4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011c3d4, 0x000001d8
@@ -4233,8 +4210,6 @@ Func_08192c9c:
 	.thumb_func
 Func_08196404:
 	.incbin "baserom.gba", 0x00196404, 0x00000554
-	.section .rom.00196a7c, "ax"
-	.incbin "baserom.gba", 0x00196a7c, 0x0000035c
 	.section .rom.001a052c, "ax"
 	.incbin "baserom.gba", 0x001a052c, 0x00000148
 	.section .rom.001a06e0, "ax"

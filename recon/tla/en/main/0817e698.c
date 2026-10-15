@@ -1,4 +1,8 @@
 /* Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
+ * The body of effect kinds 348, 353, 389 and 431 (Func_0817e668 to
+ * Func_0817e68c in variant_k.c pass modes 0 to 3). Written from the
+ * listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
+ * and shape (0.55) but is not its twin.
  * The shape matches, including the three mirrored copies as indexed loops
  * (written with walking pointers loop.c makes outer givs of them: differ
  * 206). Left: in each copy's inner loop the native steps the left pointer
@@ -15,67 +19,99 @@
  * the second copy (differ 278), a volatile load or store (the address
  * givs no longer combine: 166 to 267), an asm with an unused output
  * (deleted), and walking pointers per row (206).
- * Resources 316, 328, 297 and 336 need their names in
- * system/resource/directory.s when this is adopted.
- */
-#include "types.h"
-#include "io_reg.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "effect_step.h"
+ * 2026-10-15 (lane N2): rewritten with the work struct, one mirroring macro
+ * for the three copies and named constants; the same 386 instructions and
+ * differ 24.
+ * Resources 0x13c (BattleFx_EarthWallSheet), 0x148 (BattleFx_OrangePaletteB),
+ * 0x129 (BattleFx_FireballSheet) and 0x150 (BattleFx_MarsDjinnSheet) need
+ * their names in system/resource/directory.s when this is adopted. */
 #include "battle_effect_work.h"
+#include "effect_step.h"
+#include "io_reg.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+#include "types.h"
 
-struct FxWork {
-    u8 canvas[0x7780];
-    s32 transferMode;
-    s32 transferValue;
-    u8 unk7788[0x20];
-    s32 shakeFrames;
-    u8 unk77ac[0x78e8 - 0x77ac];
-    s32 transferPending;
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
+
+// The Lost Age's blitter modes run the other way from The Broken Seal's:
+// additive 0, max 1, transparent 2, copy 3.
+#define BLITTER_MAX 1
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+#define CLIP_XY 3
+
+#define BURST_FRAMES 48
+#define BURST_DRAW_FRAMES 28
+
+// The three 64x64 cels of the burst, built in the sheet's first 0x3000
+// bytes; the picture loads behind them.
+#define CEL_SIZE 0x1000
+#define PICTURE_OFFSET 0x4000
+
+// Copies a half-picture of width by height pixels into the bottom middle of
+// a 64x64 cel, once as it is and once mirrored, so the cel is symmetrical.
+#define MIRROR_HALF(cel, half, width, height)                                  \
+  for (y = 0; y != (height); y++) {                                            \
+    for (x = 0; x != (width); x++) {                                           \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 32 -           \
+                  (width) + x] = work->sheet[(half) + y * (width) + x];        \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 31 +           \
+                  (width) - x] = work->sheet[(half) + y * (width) + x];        \
+    }                                                                          \
+  }
+
+// A burst cel's texture: log2 of its width and height in the first word
+// (64x64 here), then its pixels.
+struct BurstTexture {
+  u32 size;
+  void *pixels;
 };
 
-struct SpriteSource {
-    u32 bits;
-    void *pixels;
-};
-
-struct RenderModel {
-    s32 kind;
-    s32 unk04;
-    const void *mesh;
-    void *vertices;
-    struct SpriteSource *source;
-    s32 unk14;
+// One entry of the list Func_08196a7c draws; kind 6 is a textured quad.
+struct RenderPrimitive {
+  s32 kind;
+  s32 unk04;
+  const void *faces;
+  void *vertices;
+  struct BurstTexture *texture;
+  s32 unk14;
 };
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_FireballSheet;
 extern char ResourceId_MarsDjinnSheet;
+
+// The burst quad: its face list and its four corners, 64x64 pixels standing
+// on its base.
 extern const u8 gData_08199340[];
-extern const s32 gData_081994e0[];
-extern const s32 gData_081994d0[];
 extern const u8 gData_081991f0[];
 
-void BattleFx_BeginCanvasLayer(s32 bg_control);
-void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack, s32 wait);
+// Per mode: the quad's scale (16.16, doubled when used) and its unk14.
+extern const s32 gData_081994d0[];
+extern const s32 gData_081994e0[];
+
+void BattleFx_BeginCanvasLayer(s32 bgControl);
+void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
+                                s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+void EffectPosition_ApplyAlternateStepAndYOffset(
+    s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 cue);
-void Func_081963ec(s32 slot, s32 value);
-void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
+void Func_081180e8(s32 phase);
+void Func_081963ec(s32 slot, s32 blitter);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
+                   s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-struct RenderModel *Func_081969f8(s32 kind);
+struct RenderPrimitive *Func_081969f8(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
-void Func_08196958(const void *mesh, void *vertices, s32 count);
-void Func_08196a7c(struct RenderModel *model);
+void Func_08196958(const void *corners, void *vertices, s32 count);
+void Func_08196a7c(struct RenderPrimitive *list);
 void MemFree(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void Func_081434f8(void);
@@ -83,108 +119,111 @@ void WaitFrames(s32 frames);
 void Func_08143000(void);
 void Func_08143bb8(void);
 
-void Func_0817e698(struct BattleEffectArgument *effect, s32 mode)
-{
-    struct FxWork *work = (struct FxWork *)Ram_HeapSlots->battleFxWork[0];
-    struct SpriteSource sprite;
-    struct EffectPosition pos;
-    struct RenderModel *model;
-    void *vertices;
-    s32 frame;
-    s32 cell;
-    s32 y;
-    s32 x;
-    u8 *src;
-    u8 *left;
-    u8 *right;
+// A symmetrical burst over the target. Three half-pictures of the earth
+// wall sheet are mirrored into three 64x64 cels; the burst grows through
+// them in its first twelve frames, flickers between the last two until
+// frame 28 and is gone, while the screen shakes for all 48 frames. The
+// mode picks the palette (Mars Djinn, Mars Djinn, fireball, orange), the
+// scale, how hard the screen shakes and the target's flash colour.
+void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BurstTexture texture;
+  struct EffectPosition target;
+  struct RenderPrimitive *quad;
+  void *vertices;
+  s32 frame;
+  s32 cel;
+  s32 y;
+  s32 x;
 
-    BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->canvas + 0x4700, 1, 1);
-    Iwram_ClearWords(work->canvas + 0x700, 0x4000);
-    for (y = 0; y != 49; y++) {
-        for (x = 0; x != 17; x++) {
-            work->canvas[0x700 + (y + 15) * 64 + 15 + x] = work->canvas[0x518e + y * 17 + x];
-            work->canvas[0x700 + (y + 15) * 64 + 48 - x] = work->canvas[0x518e + y * 17 + x];
-        }
+  // Build the three cels from their halves.
+  BattleFx_BeginCanvasLayer(0);
+  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
+                             work->sheet + PICTURE_OFFSET, 1, 1);
+  Iwram_ClearWords(work->sheet, 0x4000);
+  MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
+  MIRROR_HALF(1, PICTURE_OFFSET + 0xdcf, 19, 55)
+  MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
+  if (mode == 3)
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    128);
+  else if (mode == 2)
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_FireballSheet),
+                    128);
+  else
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                    128);
+
+  // Centre the canvas's x 64 on the target.
+  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &target);
+  REG_BG2PA = 0x100;
+  REG_BG2X = (64 - target.x) << 8;
+  Func_081963ec(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
+  if (mode == 2) {
+    work->shakeFrames = 0;
+    Audio_PlayCue(212);
+  } else if (mode == 1 || mode == 3) {
+    work->shakeFrames = 8;
+    Audio_PlayCue(212);
+  } else {
+    work->shakeFrames = 32;
+  }
+
+  for (frame = 0; frame != BURST_FRAMES; frame++) {
+    if (frame == 0) {
+      if (mode == 2)
+        Func_0814cd48(effect->actors[0], 7, -1, 0, 32);
+      else
+        Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
     }
-    for (y = 0; y != 55; y++) {
-        for (x = 0; x != 19; x++) {
-            work->canvas[0x1700 + (y + 9) * 64 + 13 + x] = work->canvas[0x54cf + y * 19 + x];
-            work->canvas[0x1700 + (y + 9) * 64 + 50 - x] = work->canvas[0x54cf + y * 19 + x];
-        }
+    if (frame == 24)
+      Func_081180e8(0);
+    if (frame == 8 && mode == 0)
+      Audio_PlayCue(126);
+
+    // Cels 0, 1 and 2 four frames each, then 1 and 2 by turns.
+    if (frame < 32) {
+      cel = frame / 4;
+      if (cel > 2)
+        cel = (cel & 1) + 1;
+      if (frame < BURST_DRAW_FRAMES) {
+        vertices = Runtime_BumpAllocateAlternatePool(32);
+        quad = Func_081969f8(1);
+        texture.size = (texture.size & ~0xff) | 6;
+        texture.size = (texture.size & ~0xff00) | 6 << 8;
+        texture.pixels = work->sheet + cel * CEL_SIZE;
+        quad->kind = 6;
+        quad->faces = gData_08199340;
+        quad->texture = &texture;
+        quad->unk14 = gData_081994e0[mode];
+        quad->vertices = vertices;
+        Render_ResetTransformState();
+        Func_08015160(0, (target.y - 58) << 16, 0);
+        Func_0801521c(gData_081994d0[mode] << 1);
+        Func_08196958(gData_081991f0, vertices, 4);
+        Func_08196a7c(quad);
+        MemFree(quad);
+        MemFree(vertices);
+      }
     }
-    for (y = 0; y != 64; y++) {
-        for (x = 0; x != 20; x++) {
-            work->canvas[0x2700 + y * 64 + 12 + x] = work->canvas[0x58e4 + y * 20 + x];
-            work->canvas[0x2700 + y * 64 + 51 - x] = work->canvas[0x58e4 + y * 20 + x];
-        }
-    }
-    if (mode == 3)
-        Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
-    else if (mode == 2)
-        Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_FireballSheet), 128);
+
+    if (mode == 0)
+      Func_08158ce0(4, 4);
     else
-        Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
-    EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &pos);
-    REG_BG2PA = 0x100;
-    REG_BG2X = (64 - pos.x) << 8;
-    Func_081963ec(104, 19);
-    work->transferMode = 2;
-    work->transferValue = 50;
-    Scheduler_AddOrUpdateCallback((s32)Func_08143000, 0xc80);
-    if (mode == 2) {
-        work->shakeFrames = 0;
-        Audio_PlayCue(212);
-    } else if (mode == 1 || mode == 3) {
-        work->shakeFrames = 8;
-        Audio_PlayCue(212);
-    } else {
-        work->shakeFrames = 32;
-    }
-    for (frame = 0; frame != 48; frame++) {
-        if (frame == 0) {
-            if (mode == 2)
-                Func_0814cd48(effect->actors[0], 7, -1, 0, 32);
-            else
-                Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
-        }
-        if (frame == 24)
-            Func_081180e8(0);
-        if (frame == 8 && mode == 0)
-            Audio_PlayCue(126);
-        if (frame < 32) {
-            cell = frame / 4;
-            if (cell > 2)
-                cell = (cell & 1) + 1;
-            if (frame < 28) {
-                vertices = Runtime_BumpAllocateAlternatePool(32);
-                model = Func_081969f8(1);
-                sprite.bits = (sprite.bits & ~0xff) | 6;
-                sprite.bits = (sprite.bits & ~0xff00) | 0x600;
-                sprite.pixels = work->canvas + (cell << 12) + 0x700;
-                model->kind = 6;
-                model->mesh = gData_08199340;
-                model->source = &sprite;
-                model->unk14 = gData_081994e0[mode];
-                model->vertices = vertices;
-                Render_ResetTransformState();
-                Func_08015160(0, (pos.y - 58) << 16, 0);
-                Func_0801521c(gData_081994d0[mode] << 1);
-                Func_08196958(gData_081991f0, vertices, 4);
-                Func_08196a7c(model);
-                MemFree(model);
-                MemFree(vertices);
-            }
-        }
-        if (mode == 0)
-            Func_08158ce0(4, 4);
-        else
-            Func_08158ce0(16, 16);
-        Func_081434f8();
-        work->transferPending = 1;
-        WaitFrames(1);
-    }
-    Scheduler_RemoveCallback((s32)Func_08143000);
-    Runtime_ReleaseHeapBlock(104);
-    Func_08143bb8();
+      Func_08158ce0(16, 16);
+    Func_081434f8();
+    work->transferPending = 1;
+    WaitFrames(1);
+  }
+
+  Scheduler_RemoveCallback((s32)Func_08143000);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  Func_08143bb8();
 }

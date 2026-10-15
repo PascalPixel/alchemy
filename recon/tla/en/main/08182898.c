@@ -1,18 +1,15 @@
-/* Near miss: listing 225 instructions, draft 225, differ 16. Every statement, store and register
- * matches; left are the frame and four load-first orders. The native frame is 24 with canvas at
- * sp+20, an unused slot at sp+16, blit at sp+12 and frame at sp+8; here the same three spills
- * take sp+16, sp+12 and sp+8 (frame 20), so a fourth pseudo numbered between canvas and blit was
- * given a slot it never used. The native also loads before the reload pair that clears a high
- * counter (the spawn and draw loop preheaders), loads the spilled frame before i * 8 + 18 is
- * built, and loads Func_08143000 before work in the prologue; sched2 ties these on priority and
- * takes the zero first for its dependent (rank_for_schedule). Measured: an empty asm after the
- * spawn pointer fixes that preheader (differ 14); the draw preheader cannot take one, as the
- * hoisted heights load must still come first. A volatile pad local, a copied effect, work read
- * through a slot pointer, blit through a kernel pointer, unused locals, both counters shared or
- * not: no fourth spill slot. Widths and heights are read once each, in argument order, and the
- * tables are not const (the native rereads the heights after the call). permute (18 min):
- * nothing below 16 without a volatile pad. Resource ids 0x190 and 0xfd need names in
- * directory.s. */
+/* Near miss: listing 225 instructions, draft 225, differ 8. Statements, registers, stores and
+ * the frame (canvas sp+20, the blitter pair sp+12/sp+16, frame sp+8) all match; four places are
+ * left where the native loads first and this build does not: Func_08143000's address before
+ * work in the prologue, the particle base before the reload pair that clears i in both loop
+ * preheaders (after the hoisted heights in the second), and the spilled frame before i * 8 is
+ * built. sched2 ties each on priority and takes the other insn for its dependent or its class
+ * against the last call. Measured: an empty asm after the spawn pointer fixes the first
+ * preheader (differ 6); one-pass blocks or asm operands on i or frame in the actor loop: 25 to
+ * 167; a particle-array pointer variable, an inline blitter loader, a volatile pad, copied
+ * effect, work through a slot pointer: no gain. Widths and heights are read once each, in
+ * argument order, and the tables are not const (the native rereads the heights after the
+ * call). Resource ids 0x190 and 0xfd need names in directory.s. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -57,7 +54,9 @@ void Func_08182898(struct BattleEffectArgument *effect)
 {
     u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
     u8 *work = Ram_HeapSlots->battle_fx_work[0];
-    CanvasBlitFunc blit;
+    /* The blitter pair, of which this effect uses the first: as a two-word array it is one
+       DImode pseudo, and its spill takes sp+12 and the unused sp+16 the native frame has. */
+    CanvasBlitFunc blit[2];
     s32 frame;
     s32 i;
     struct BubbleParticle *particle;
@@ -66,7 +65,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
     *(s32 *)(work + 0x7780) = 2;
     *(s32 *)(work + 0x7784) = 50;
     Func_081963ec(104, 19);
-    blit = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work + 0x700, 0, 0);
     for (frame = 0; frame != 60; frame++)
@@ -95,7 +94,7 @@ void Func_08182898(struct BattleEffectArgument *effect)
                 u32 width;
                 u32 height;
 
-                blit(canvas, work + Data_0819968e[size] + 0x700,
+                blit[0](canvas, work + Data_0819968e[size] + 0x700,
                      *(s16 *)((u8 *)&particle->x + 2) - ((width = Data_0819966f[size]) >> 1),
                      *(s16 *)((u8 *)&particle->y + 2) - ((height = Data_0819967e[size]) >> 1),
                      width, height);

@@ -1,12 +1,13 @@
-/* Draft: listing 434 instructions, draft 429, differ 463 (the alignment drifts from the first
+/* Draft: listing 434 instructions, draft 425, differ 411 (the alignment drifts from the first
  * spill). Written from the listing: the bursts at the three frames of Data_08199d94, their
  * flattened model drawn through Func_08196958/Func_08196a7c, and the particles blitted twice per
  * frame. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame 48, an unused
  * slot at 44, blit 40, graphics 36, the vertices 32, the model 28, the texture's and the
  * position's addresses at 24 and 20, the speed (120 + 20 * j) at 16 and the burst's particle
- * offset at 12; the texture is at sp+64 and the position at sp+72. Here graphics, blit and
- * frame take other slots, so the declaration order and the unused slot (as in Func_08182898,
- * just above blit) are what to look at next. */
+ * offset at 12; the texture is at sp+64 and the position at sp+72. The slot above blit is the
+ * blitter pair's second word (a two-word array is one DImode pseudo, as in Func_08182898 and
+ * Func_0818c7b8; 463 to 411). Here graphics and frame still take other slots, so the
+ * declaration order is what to look at next. */
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -79,7 +80,7 @@ void Func_0818b868(struct BattleEffectArgument *effect)
     u8 *work = Ram_HeapSlots->battle_fx_work[0];
     void *canvas = Ram_HeapSlots->battle_fx_work[1];
     u8 *graphics = Ram_HeapSlots->unknown_64[0];
-    DrawRectangle blit;
+    DrawRectangle blit[2];
     struct ModelTexture texture;
     struct EffectPosition position;
     struct Model *model;
@@ -98,7 +99,7 @@ void Func_0818b868(struct BattleEffectArgument *effect)
     Func_08157530(effect->actor, effect->actors[0], 8, 80);
     WaitFrames(8);
     Func_081963ec(104, 23);
-    blit = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
+    blit[0] = (DrawRectangle)Ram_HeapSlots->unknown_64[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
@@ -186,11 +187,11 @@ void Func_0818b868(struct BattleEffectArgument *effect)
             if (size >= 0)
             {
                 size = (size >> 2) + 3;
-                blit(canvas, graphics + Data_08197410[size - 1],
+                blit[0](canvas, graphics + Data_08197410[size - 1],
                     *(s16 *)((u8 *)&step->x + 2) - size / 2, *(s16 *)((u8 *)&step->y + 2) - size,
                     size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 62, 0);
-                blit(canvas, graphics + Data_08197410[size - 1],
+                blit[0](canvas, graphics + Data_08197410[size - 1],
                     *(s16 *)((u8 *)&step->x + 2) - size / 2, *(s16 *)((u8 *)&step->y + 2) - size,
                     size, size * 2);
                 BattleFxKernels_IntegrateVector2(step, 62, 0);

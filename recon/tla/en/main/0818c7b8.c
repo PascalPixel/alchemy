@@ -1,14 +1,12 @@
-/* Near miss: listing 303 instructions, draft 297, differ 162. The statements, the two jump
- * tables and their cross-jumped cases match (the second switch lists case 1 before case 0, as the
- * native's block order shows); what is left is allocation. The native spills effect to sp+8
- * (frame 24: effect below the 12-byte position at sp+12) and pushes r7 without using it, so
- * effect was given r7 and lost it to reload; blit is r6, canvas r8, work r10, frame r9, mode r11.
- * Here effect ranks last (11 refs over 264 insns against canvas's 21) and keeps r11, so there is
- * no spill and the frame is 20. Measured: effect made addressable with (void)&effect: no change
- * (addressof gives the register back); referenced from an inline nested function: effect moves to
- * sp+8 but is reached through a pointer in r11, differ 179; a pointer to position taken once: 161,
- * taken in the loop: 183. Resource ids 0x10b, 0x10c and 0x150 need names in directory.s.
- * permute (10 min): nothing below 162 by differ. */
+/* Near miss: listing 303 instructions, draft 303, differ 24. Allocation and frame match (effect
+ * spilled to sp+8 because the blitter pair holds r6 and r7; the cell buffer through a pointer
+ * the build rematerializes, so case 2 loads it last and is not cross-jumped with case 3). Left
+ * are load and store orders: effect's spill before the heap base in the prologue, the slot 104
+ * argument last before Func_08196404, both BLDALPHA words before their register address, and
+ * the fill's IwramFillWords address before 0x4000. Measured: f18284c.c's blend pin with its
+ * empty asm on both stores: 16, but the asm's estimated four bytes move the pool after
+ * BattleMotion_ApproachTargetFar one instruction early; the pins alone, or one-pass blocks:
+ * 24 to 58. Resource ids 0x10b, 0x10c and 0x150 need names in directory.s. */
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -46,7 +44,10 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
 {
     u8 *work = Ram_HeapSlots->battle_fx_work[0];
     u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
-    CanvasBlitFunc blit;
+    u8 *cells = Ram_MapCellBuffer;
+    /* The blitter pair, as a two-word array one DImode pseudo: it takes r6 and r7, the second
+       unused, which is why the native pushes r7 and spills effect. */
+    CanvasBlitFunc blit[2];
     s32 kernel;
     s32 frame;
     s32 position[3];
@@ -65,8 +66,8 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
             kernel = 15;
     }
     Func_08196404(104, 7, 7, kernel, 1);
-    blit = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
-    Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, Ram_MapCellBuffer, 1, 1);
+    blit[0] = (CanvasBlitFunc)Ram_HeapSlots->unknown_64[1];
+    Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work + 0x700, 1, 0);
     if (mode == 0)
     {
@@ -113,19 +114,19 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                 switch (step)
                 {
                 case 0:
-                    blit(canvas, work + 0x700, x, y, 120, 120);
+                    blit[0](canvas, work + 0x700, x, y, 120, 120);
                     break;
                 case 1:
                     Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
                     break;
                 case 2:
-                    blit(canvas, Ram_MapCellBuffer, x - 4, y, 128, 128);
+                    blit[0](canvas, cells, x - 4, y, 128, 128);
                     break;
                 case 3:
-                    blit(canvas, Data_02014000, x - 4, y, 128, 128);
+                    blit[0](canvas, Data_02014000, x - 4, y, 128, 128);
                     break;
                 case 4:
-                    blit(canvas, work + 0x3f40, x, y, 120, 120);
+                    blit[0](canvas, work + 0x3f40, x, y, 120, 120);
                     break;
                 }
             }
@@ -137,16 +138,16 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode)
                     Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
                     break;
                 case 0:
-                    blit(canvas, work + 0x700, x, y, 120, 120);
+                    blit[0](canvas, work + 0x700, x, y, 120, 120);
                     break;
                 case 2:
-                    blit(canvas, Ram_MapCellBuffer, x - 4, y - 8, 128, 128);
+                    blit[0](canvas, cells, x - 4, y - 8, 128, 128);
                     break;
                 case 3:
-                    blit(canvas, Data_02014000, x - 4, y - 8, 128, 128);
+                    blit[0](canvas, Data_02014000, x - 4, y - 8, 128, 128);
                     break;
                 case 4:
-                    blit(canvas, work + 0x3f40, x, y, 120, 120);
+                    blit[0](canvas, work + 0x3f40, x, y, 120, 120);
                     break;
                 }
             }

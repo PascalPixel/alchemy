@@ -24,7 +24,9 @@
      the sheep in the gMapCellBuffer symbol (extern)                    56
      the sheep through Ram_MapCellBuffer, a constant, as the tree's
        ram_buffer.h writes the buffer                                   20
-     greedy declaration-order scan, every local through every place     20 */
+     greedy declaration-order scan, every local through every place     20
+     alchemy permute, 10 minutes, 2 jobs: nothing below 20 (its best
+       weighted candidate, an added integer mask, is 21)                   */
 
 
 #include "types.h"

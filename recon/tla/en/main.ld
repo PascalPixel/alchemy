@@ -869,7 +869,6 @@ SECTIONS
         "*/recon/tla/raw/080ccd76.o"(.text)
         "*/recon/tla/raw/080ccd78.o"(.text)
         "*/games/tla/src/system/overlay_call.o"(.text)
-        "*/recon/tla/raw/080cce94.o"(.text)
         "*/recon/tla/raw/080ccec8.o"(.text)
         "*/games/tla/src/battle/effect/run_descriptor_handler.o"(.text)
         "*/recon/tla/raw/080cd5bc.o"(.text)

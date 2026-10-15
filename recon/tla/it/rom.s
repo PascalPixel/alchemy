@@ -2868,9 +2868,6 @@ BattleAction_FindDescriptor:
 	.thumb_func
 Func_080ccd78:
 	.incbin "baserom.gba", 0x000ccd78, 0x0000010c
-	.section .rom.000cce94, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000cce94, 0x00000034
 	.section .rom.000ccec8, "ax"
 	.global Func_080d0520
 	.type Func_080d0520, %function

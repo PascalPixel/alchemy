@@ -1022,7 +1022,6 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.000d5d76)
     "*/recon/tla/es/rom.o"(.rom.000d5d78)
     "*/games/tla/src/system/overlay_call.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000d5e94)
     "*/recon/tla/es/rom.o"(.rom.000d5ec8)
     "*/recon/tla/es/rom.o"(.rom.000d6584)
     "*/recon/tla/es/rom.o"(.rom.000d691c)

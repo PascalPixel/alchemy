@@ -881,7 +881,6 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.000d1d76)
     "*/recon/tla/fr/rom.o"(.rom.000d1d78)
     "*/games/tla/src/system/overlay_call.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d1e94)
     "*/recon/tla/fr/rom.o"(.rom.000d1ec8)
     "*/games/tla/src/battle/effect/run_descriptor_handler.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d25bc)

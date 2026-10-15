@@ -979,7 +979,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ccd6e)
     "*/recon/tla/ja/rom.o"(.rom.000ccd70)
     "*/games/tla/src/system/overlay_call.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000cce8c)
+    "*/recon/tla/ja/rom.o"(.rom.000ccec0)
     "*/games/tla/src/battle/effect/run_descriptor_handler.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cd5b4)
     "*/recon/tla/ja/rom.o"(.rom.000cd914)

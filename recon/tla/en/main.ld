@@ -3572,7 +3572,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.08969212)
         "*/games/tla/src/graphics/field_fx/dust_puff.o"(.rodata)
         "*/games/tla/src/graphics/field_fx/dust_puff_b.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.089696f4)
+        "*/games/tla/src/graphics/field_fx/r1e3.o"(.rodata)
         "*/games/tla/src/graphics/field_fx/gold_star.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.089697bf)
         "*/games/tla/src/graphics/field_fx/gold_crystal.o"(.rodata)

@@ -3420,7 +3420,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.009695e2)
     "*/games/tla/src/graphics/field_fx/dust_puff.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/dust_puff_b.o"(.rodata)
-    "*/recon/tla/es/rom.o"(.rom.00969ac4)
+    "*/games/tla/src/graphics/field_fx/r1e3.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/gold_star.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.00969b8f)
     "*/games/tla/src/graphics/field_fx/gold_crystal.o"(.rodata)

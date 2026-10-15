@@ -21,10 +21,13 @@ struct Ov670Object {
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
-    u8 unknown_2c[0x18];
+    u8 unknown_2c[0x0c];
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
     s32 field_44;
     s32 field_48;
-    u8 unknown_4c[4];
+    s32 field_4c;
     struct FieldSprite *sprite;
     u8 unknown_54;
     u8 motion_flags;

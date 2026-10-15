@@ -792,6 +792,11 @@ void UiWork_ShiftPanelRowsLeft(s32 step) {
   }
 }
 
+// The window effect a message can start (TEXT_WINDOW_STATE): the window's
+// frame grows by a tile and its text sprites pulse, for the channel's
+// countdown.
+#define UI_WINDOW_EFFECT_SWELL 4
+
 // What UiWork_StepChannelScript reports.
 enum {
   CHANNEL_STEP_RUNNING = 0, // the text goes on next frame
@@ -1555,9 +1560,11 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
   return result;
 }
 
-// Sets the text effects the next message is decoded with: flags bit 0 sets
-// spacingBefore and bit 1 spacingAfter (see UiText_BuildRenderEntries).
-// UiText_OpenMessageWindow clears both.
+// Sets the effects the next message is decoded with
+// (UiText_BuildRenderEntries): flags bit 0 (spacingBefore) makes it halting
+// speech, a short pause before each character, broken off with an ellipsis
+// after the first word; bit 1 (spacingAfter) puts code 222 after certain
+// characters in English and Japanese. UiText_OpenMessageWindow clears both.
 void UiWork_SetBusyFlags(s32 flags) {
   struct UiRenderWork *work;
 
@@ -1703,208 +1710,222 @@ void UiWork_ProcessAll(void) {
   UiWork_AnimateSpriteSlots();
 }
 
+// UiText_RenderGlyphPair draws its glyphs into a buffer of one byte per pixel
+// (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 24
+// bytes apart, then packs it into 4bpp tiles.
+
 #if EDITION_INTERNATIONAL
+// Draws a character, and a second one when the code carries it in bits 8 to
+// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
+// over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
+// the width of the text drawn in pixels.
 s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
-  u8 buf[384];
+  u8 pixels[384];
   struct UiRenderWork *work;
-  const u8 *input;
-  s32 length;
+  const u8 *glyph;
+  s32 width;
   s32 colour;
-  s32 transparent;
+  s32 shadowColour;
   s32 firstIndex;
   s32 secondIndex;
   u16 secondWidth;
-  u8 *digits;
-  s32 group;
-  s32 row;
-  s32 column;
-  s32 nibble;
-  u32 value;
+  u8 *pixel;
+  s32 tileColumn;
+  s32 tileRow;
+  s32 line;
+  s32 pixelsLeft;
+  u32 tileLine;
 
   work = UI_WORK;
   secondIndex = (code << 8) >> 16;
   code &= 255;
-  Iwram_ClearWords(buf, 384);
+  Iwram_ClearWords(pixels, 384);
+  // While UiRenderWork.mode is set, the text is colour 8 with no shadow.
   if (work->mode != 0) {
-    transparent = 0;
+    shadowColour = 0;
     colour = 8;
   } else {
-    transparent = 1;
+    shadowColour = 1;
     colour = work->colour;
   }
   firstIndex = code - 32;
-  input = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
-  length = ((const struct FontGlyph *)input)->width;
-  input = (const u8 *)((const struct FontGlyph *)input)->rows;
+  glyph = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
+  width = ((const struct FontGlyph *)glyph)->width;
+  glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   if (work->outline == 1) {
-    Iwram_ExpandBitRuns(input, buf + 49, transparent);
-    Iwram_ExpandBitRuns(input, buf + 50, transparent);
-    Iwram_ExpandBitRuns(input, buf + 32, colour);
-    Iwram_ExpandBitRuns(input, buf + 33, colour);
-    length++;
+    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
+    width++;
   } else {
-    Iwram_ExpandBitRuns(input, buf + 49, transparent);
-    Iwram_ExpandBitRuns(input, buf + 32, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
   }
+  // The second character follows the first.
   if ((u16)secondIndex != 0) {
-    input = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
-    secondWidth = *(const u16 *)input;
-    input += 2;
+    glyph = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
+    secondWidth = *(const u16 *)glyph;
+    glyph += 2;
     if (work->outline == 1) {
-      u8 *dst = buf + length;
-      Iwram_ExpandBitRuns(input, dst + 49, transparent);
-      Iwram_ExpandBitRuns(input, dst + 50, transparent);
-      Iwram_ExpandBitRuns(input, dst + 32, colour);
-      Iwram_ExpandBitRuns(input, dst + 33, colour);
+      u8 *dst = pixels + width;
+      Iwram_ExpandBitRuns(glyph, dst + 49, shadowColour);
+      Iwram_ExpandBitRuns(glyph, dst + 50, shadowColour);
+      Iwram_ExpandBitRuns(glyph, dst + 32, colour);
+      Iwram_ExpandBitRuns(glyph, dst + 33, colour);
       secondWidth += 1;
     } else {
-      u8 *dst = buf + length;
+      u8 *dst = pixels + width;
       u8 *p;
       p = dst + 49;
-      Iwram_ExpandBitRuns(input, p, transparent);
+      Iwram_ExpandBitRuns(glyph, p, shadowColour);
       p = dst + 32;
-      Iwram_ExpandBitRuns(input, p, colour);
+      Iwram_ExpandBitRuns(glyph, p, colour);
     }
-    length += secondWidth;
+    width += secondWidth;
   }
 
-  digits = buf + 7;
-  group = 0;
+  // Pack the cell into four tiles, eight pixels to a word, the leftmost in
+  // the lowest nibble.
+  pixel = pixels + 7;
+  tileColumn = 0;
   do {
-    row = 0;
+    tileRow = 0;
     do {
-      column = 0;
+      line = 0;
       do {
-        value = 0;
-        nibble = 7;
+        tileLine = 0;
+        pixelsLeft = 7;
         do {
-          value = (value << 4) + *digits--;
-          nibble--;
-        } while (nibble >= 0);
-        *out++ = value;
-        column++;
-        digits += 24;
-      } while (column <= 7);
-      row++;
-      digits -= 120;
-    } while (row <= 1);
-    group++;
-    digits += 112;
-  } while (group <= 1);
-  return length;
+          tileLine = (tileLine << 4) + *pixel--;
+          pixelsLeft--;
+        } while (pixelsLeft >= 0);
+        *out++ = tileLine;
+        line++;
+        pixel += 24;
+      } while (line <= 7);
+      tileRow++;
+      pixel -= 120;
+    } while (tileRow <= 1);
+    tileColumn++;
+    pixel += 112;
+  } while (tileColumn <= 1);
+  return width;
 }
 #else
+// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
+// text colour over a shadow, or with an outline when UiRenderWork.outline is
+// 1, with the kana mark in the code's top two bits above its top right.
+// Codes from 256 are kanji. Returns the character's width in pixels.
 s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
-  u8 buf[256];
+  u8 pixels[256];
   struct UiRenderWork *work;
-  const u8 *input;
-  const u8 *mark;
-  s32 length;
+  const u8 *glyph;
+  const u8 *markGlyph;
+  s32 width;
   s32 colour;
-  s32 transparent;
+  s32 shadowColour;
   u32 markCode;
-  u8 *digits;
-  s32 group;
-  s32 row;
-  s32 column;
-  s32 nibble;
-  u32 value;
+  u8 *pixel;
+  s32 tileColumn;
+  s32 tileRow;
+  s32 line;
+  s32 pixelsLeft;
+  u32 tileLine;
 
   /* FAKEMATCH: the empty one-pass block ends a scheduling region, keeping the
    * spill of out ahead of the work-address load. Without it the load is
    * scheduled first (differ 2 in tbs-ja, the only edition with this body);
-   * assigning work after mark = 0 instead moves the zero too (differ 6). */
+   * assigning work after markGlyph = 0 instead moves the zero too (differ 6).
+   */
   do {
   } while (0);
   work = UI_WORK;
-  mark = 0;
-  markCode = gUiText_MarkGlyphCodes[code >> 14];
+  markGlyph = 0;
+  markCode = gUiText_MarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
   if (markCode != 0)
-    mark =
+    markGlyph =
         (const u8 *)((const struct FontGlyph *)((const u8 *)gUiText_Glyphs +
                                                 (markCode - 32) *
                                                     sizeof(struct FontGlyph)))
             ->rows;
-  code &= 0x3fff;
+  code &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
   if (code <= 0xff) {
-    input = (const u8 *)gUiText_Glyphs + (code - 32) * sizeof(struct FontGlyph);
-    length = ((const struct FontGlyph *)input)->width;
-    input = (const u8 *)((const struct FontGlyph *)input)->rows;
+    glyph = (const u8 *)gUiText_Glyphs + (code - 32) * sizeof(struct FontGlyph);
+    width = ((const struct FontGlyph *)glyph)->width;
+    glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   } else {
-    input = gUiText_KanjiGlyphs + (code - 256) * 24;
-    length = 10;
+    glyph = gUiText_KanjiGlyphs + (code - 256) * 24;
+    width = 10;
   }
-  Iwram_ClearWords(buf, 256);
+  Iwram_ClearWords(pixels, 256);
   if (work->mode != 0) {
-    transparent = 0;
+    shadowColour = 0;
     colour = 8;
   } else {
-    transparent = 1;
+    shadowColour = 1;
     colour = work->colour;
   }
   if (work->outline == 1) {
-    Iwram_ExpandBitRuns(input, buf + 49, transparent);
-    Iwram_ExpandBitRuns(input, buf + 50, transparent);
-    if (mark != 0) {
-      Iwram_ExpandBitRuns(mark, buf + 24, transparent);
-      Iwram_ExpandBitRuns(mark, buf + 25, transparent);
+    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
+    if (markGlyph != 0) {
+      Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
+      Iwram_ExpandBitRuns(markGlyph, pixels + 25, shadowColour);
     }
-    Iwram_ExpandBitRuns(input, buf + 32, colour);
-    Iwram_ExpandBitRuns(input, buf + 33, colour);
-    if (mark != 0) {
-      /* FAKEMATCH: assigning digits in the mark argument computes buf + 7 in r1
-       * and makes the loop's copy in r5, as the native does. A plain buf + 7
-       * argument computes it in r5 and makes the copy in r1 (differ 6 in
-       * tbs-ja, the only edition with this body). */
-      Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
-      Iwram_ExpandBitRuns(mark, buf + 8, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
+    if (markGlyph != 0) {
+      /* FAKEMATCH: assigning pixel in the markGlyph argument computes pixels +
+       * 7 in r1 and makes the loop's copy in r5, as the native does. A plain
+       * pixels + 7 argument computes it in r5 and makes the copy in r1 (differ
+       * 6 in tbs-ja, the only edition with this body). */
+      Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
+      Iwram_ExpandBitRuns(markGlyph, pixels + 8, colour);
     }
-    length++;
+    width++;
   } else {
-    Iwram_ExpandBitRuns(input, buf + 49, transparent);
-    if (mark != 0)
-      Iwram_ExpandBitRuns(mark, buf + 24, transparent);
-    Iwram_ExpandBitRuns(input, buf + 32, colour);
-    if (mark != 0) {
+    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    if (markGlyph != 0)
+      Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+    if (markGlyph != 0) {
       /* FAKEMATCH: the same assignment in the argument as the outlined path
-       * above; a plain buf + 7 argument differs the same way (differ 6 in
+       * above; a plain pixels + 7 argument differs the same way (differ 6 in
        * tbs-ja). */
-      Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
+      Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
     }
   }
 
-  digits = buf + 7;
-  group = 0;
+  pixel = pixels + 7;
+  tileColumn = 0;
   do {
-    row = 0;
+    tileRow = 0;
     do {
-      column = 0;
+      line = 0;
       do {
-        value = 0;
-        nibble = 7;
+        tileLine = 0;
+        pixelsLeft = 7;
         do {
-          value = (value << 4) + *digits--;
-          nibble--;
-        } while (nibble >= 0);
-        *out++ = value;
-        column++;
-        digits += 24;
-      } while (column <= 7);
-      row++;
-      digits -= 120;
-    } while (row <= 1);
-    group++;
-    digits += 112;
-  } while (group <= 1);
-  return length;
+          tileLine = (tileLine << 4) + *pixel--;
+          pixelsLeft--;
+        } while (pixelsLeft >= 0);
+        *out++ = tileLine;
+        line++;
+        pixel += 24;
+      } while (line <= 7);
+      tileRow++;
+      pixel -= 120;
+    } while (tileRow <= 1);
+    tileColumn++;
+    pixel += 112;
+  } while (tileColumn <= 1);
+  return width;
 }
 #endif
 
-//--------------------------------------------------------------------------
-// get_wide_string_width.c
-// 文字：16 ビット文字列の表示幅（ドット）を求める
-//--------------------------------------------------------------------------
-// 独・西・仏・伊版は 0xff 以下の文字をすべて 10 ドット、それより上を 0 で数える
+// The German, Spanish, French and Italian editions count every character up
+// to 0xff as 10 pixels, and those above as nothing.
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                      \
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
@@ -1912,15 +1933,15 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 #define WIDE_WIDTH_FIXED 1
 #endif
 
-// フォントの n 番目の文字
+// The main font's glyph n, counted from the space character.
 #define FONT_GLYPH(n)                                                          \
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
                               (const u8 *)gUiText_Glyphs))
 
-//--------------------------------------------------------------------------
-// 空白は 4 ドット、0xff 以下の文字はフォントの幅、それより上は 10 ドット
-// 0xde・0xdf（濁点・半濁点）は幅に数えない
-//--------------------------------------------------------------------------
+// Returns the width in pixels of a zero-terminated string of 16-bit character
+// codes: 4 for a space, the font width for other codes up to 0xff (in German,
+// Spanish, French and Italian a flat 10) and 10 for a kanji. The kana marks
+// take no width.
 s32 UiText_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *p;
@@ -1940,9 +1961,9 @@ s32 UiText_GetWideStringWidth(u16 *text) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
-        idx = c - 0xde;
+        idx = c - TEXT_VOICED_MARK;
         if (idx > 1U) {
-          idx += 0xbe; // フォントは 0x20 から
+          idx += TEXT_VOICED_MARK - TEXT_SPACE; // the font starts at the space
           width += FONT_GLYPH(idx)->width;
         }
       } else {
@@ -1956,6 +1977,10 @@ s32 UiText_GetWideStringWidth(u16 *text) {
   return width;
 }
 
+// Draws a zero-terminated string of 16-bit character codes into a text canvas
+// window at pixel (x, y), running its colour, outline, line spacing and new
+// line codes; other control codes are skipped with their arguments. A NULL
+// text draws the decoded text in UiRenderWork.entries.
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   u8 *base;
@@ -1986,24 +2011,24 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
     if (c == 0)
       break;
 #endif
-    if (c <= 30) {
+    if (c <= TEXT_END_ALT) {
       switch (c) {
-      case 8:
+      case TEXT_COLOUR:
         work->colour = *text;
         text++;
         break;
-      case 9:
+      case TEXT_OUTLINE:
         work->outline = *text;
         text++;
         break;
-      case 10:
+      case TEXT_LINE_SPACING:
         work->lineSpacing = *text;
         text++;
         break;
-      case 7:
+      case TEXT_COLOURS_RESET:
         UiWork_ResetCounters();
         break;
-      case 3:
+      case TEXT_NEWLINE:
         x = start;
         y += 15;
         break;
@@ -2022,7 +2047,9 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       }
     } else {
 #if EDITION_INTERNATIONAL
-      if ((window->flags & 8) == 0) {
+      // Pair two narrow characters into one cell, as UiWork_StepChannelScript
+      // does.
+      if ((window->flags & UI_WINDOW_TEXT_CANVAS) == 0) {
         next = *text;
 #if defined(TBS_EDITION_ES)
         if (c > 32 && next > 32) {
@@ -2049,11 +2076,11 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
 #endif
       }
 #else
-      if (*text == 0xde) {
-        c |= 0x4000;
+      if (*text == TEXT_VOICED_MARK) {
+        c |= TEXT_CODE_VOICED;
         text++;
-      } else if (*text == 0xdf) {
-        c |= 0x8000;
+      } else if (*text == TEXT_SEMIVOICED_MARK) {
+        c |= TEXT_CODE_SEMIVOICED;
         text++;
       }
 #endif
@@ -2062,6 +2089,10 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
   }
 }
 
+// Draws a string of 16-bit character codes straight into the UI tilemap, as
+// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
+// both the work block's copy and VRAM. A NULL buffer draws the decoded text
+// in UiRenderWork.entries.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
                                         const struct RenderInput *work,
                                         s32 offsetX, s32 offsetY) {
@@ -2077,18 +2108,22 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
   }
 
   cell = ((work->y + offsetY + 1) << 5) + (work->x + offsetX) + 1;
-  if (cell < 0x280) {
+  if (cell < 32 * 20) { // inside the tilemap
     s32 src;
     s32 dst;
 
     cell *= 2;
-    dst = 0x06002000 + cell;
+    dst = (s32)UI_TILEMAP_VRAM + cell;
     src = (s32)canvas->tilemap + cell;
 
-    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, 0x06002000);
+    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst,
+                             (s32)UI_TILEMAP_VRAM);
   }
 }
 
+// Draws a zero-terminated string of 16-bit character codes into a window's
+// tilemap at tile (x, y) of its interior, one tile per character, skipping
+// control codes; a NULL text draws the decoded text in UiRenderWork.entries.
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   struct UiRenderWork *work;
@@ -2105,9 +2140,9 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
   c = *text++;
   if (c != 0)
     do {
-      if (c <= 30) {
+      if (c <= TEXT_END_ALT) {
         switch (c) {
-        case 3:
+        case TEXT_NEWLINE:
           x = start;
           y++;
           break;
@@ -2134,7 +2169,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         x++;
 #else
-        if ((u16)(c - 0xde) > 1)
+        if ((u16)(c - TEXT_VOICED_MARK) > 1) // the kana marks share a tile
           x++;
 #endif
       }
@@ -2143,6 +2178,10 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
   work->dirty = 1;
 }
 
+// Writes value as decimal text into buffer (14 bytes) and returns where the
+// text starts. With width 0 the number has no padding and a minus sign when
+// negative; otherwise it is right-aligned in width characters (up to 12) and
+// unsigned.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
@@ -2160,6 +2199,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
     value = 0U - value;
   }
 
+  // Twelve digits, then spaces for the leading zeros and the sign in front.
   buffer[0] = ' ';
   for (offset = 12; offset != 0; offset--) {
     buffer[offset] = value % 10 + '0';
@@ -2219,8 +2259,21 @@ struct ArticleTable {
 
 #endif
 
+// UiText_AppendArticleName copies a name into the decoded text at pos and
+// returns the position after it. A name may start with an article class
+// ({article_class:N}, MSG_ARTICLE_CLASS and its class), which picks the article
+// written before it. no is the article form the message asks for (its
+// argument code's operand); plural says the last number shown was not 1;
+// suffix tracks what the text last ended with, for the suffix codes (1: an s,
+// or in German s or z; 2: the end of a sentence, so the next word is
+// capitalised; 0: anything else). With mode set (battle messages) the name is
+// set off with spaces and the style codes around it.
+
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
+// the others the class's article (in Spanish, form bit 3 asks for the
+// indefinite article), capitalised at the start of a sentence.
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                              s32 plural, s32 *suffix) {
   struct ArticleTable table;
@@ -2312,6 +2365,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
 #endif
 
 #if defined(TBS_EDITION_EN)
+// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
+// name's first letter unless its class says otherwise), and form 2 (or 3 with
+// several) adds the plural "s" or "es".
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                              s32 plural, s32 *suffix) {
   struct ArticleTable table;
@@ -2386,14 +2442,46 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
 }
 #endif
 
+// The control codes of a message as stored (the PO catalogs' names), which
+// UiText_BuildRenderEntries expands into decoded text.
+enum {
+  MSG_END = 0,
+  MSG_PAGE_BREAK = 1,
+  MSG_END_WAIT = 2,
+  MSG_LINE_BREAK = 3,
+  MSG_TEXT_COLOR = 8,
+  MSG_TEXT_EFFECT = 9,
+  // German: a counted noun; Italian: a gender ending; Spanish and French: the
+  // plural suffix
+  MSG_LOCALIZED_WORD = 13,
+  MSG_PROTAGONIST_NAME = 16,
+  MSG_ACTOR_NAME = 17,
+  MSG_ARGUMENT_ACTOR_NAME = 18,
+  MSG_ARGUMENT_CLASS_NAME = 19,
+  MSG_ARGUMENT_ITEM_NAME = 20,
+  MSG_ARGUMENT_ABILITY_NAME = 21,
+  MSG_ARGUMENT_SIGNED_NUMBER = 22,
+  MSG_ARGUMENT_LOCATION_NAME = 23,
+  MSG_EM_DASH = 24,
+  // English: the plural suffix; German, Spanish, French and Italian: the
+  // item's possessive
+  MSG_PLURAL_SUFFIX = 25,
+  MSG_BUTTON_ICON = 26,
+  MSG_POSSESSIVE_SUFFIX = 27,
+  MSG_ARTICLE_CLASS = 29,
+  MSG_END_NOW = 30,
+};
+
+// What halting speech (UiWork_SetBusyFlags) puts between characters.
+#define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
+#define ENTRY_WIDE_GAP TEXT_VOICED_MARK
+
+// The heap block the message decoder routine is copied into to run.
+#define TEXT_WORK_BLOCK 50
+
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
     defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
-
-#define ENTRY_NARROW_GAP 5
-#define ENTRY_WIDE_GAP 222
-
-#define TEXT_WORK_BLOCK 50
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -2413,6 +2501,12 @@ extern u8 *gUiText_NumberWords[];
 #endif
 #endif
 
+// Decodes message script into the ring of decoded text (UiRenderWork.entries)
+// and returns where it starts; script -1 returns the last message's start
+// again. Argument codes take their values from the argument table
+// (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
+// numbers and articles are written out; style codes are kept with their
+// operands for the message channel to run.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 ch = 0;
@@ -2483,9 +2577,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(50, size), 0x84000000 | (size >> 2),
-              REG_DMA3);
+              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
+              DMA_COPY32(size >> 2), REG_DMA3);
     }
+    // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
         struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
     UiText_LookupMessage(&st, script);
@@ -2498,49 +2593,51 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       if (ch > 255)
         ch = 64;
 
+      // Once halting speech has broken off, the rest of the message is
+      // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
         if (ch < 32) {
           switch (ch) {
-          case 19:
+          case MSG_ARGUMENT_CLASS_NAME:
             decode(&st);
-            UiRender_LookupNamedValue(3, clear);
+            UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
             break;
-          case 0:
-          case 2:
-          case 30:
+          case MSG_END:
+          case MSG_END_WAIT:
+          case MSG_END_NOW:
             running = 0;
             break;
-          case 22:
-            UiRender_LookupNamedValue(5, clear);
+          case MSG_ARGUMENT_SIGNED_NUMBER:
+            UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
             break;
-          case 20:
+          case MSG_ARGUMENT_ITEM_NAME:
             decode(&st);
-            UiRender_LookupNamedValue(2, clear);
+            UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
             break;
-          case 21:
-            UiRender_LookupNamedValue(4, clear);
+          case MSG_ARGUMENT_ABILITY_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
             break;
-          case 23:
-            UiRender_LookupNamedValue(6, clear);
+          case MSG_ARGUMENT_LOCATION_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear);
             break;
-          case 8:
-          case 9:
-            decode(&st);
-            break;
-          case 17:
+          case MSG_TEXT_COLOR:
+          case MSG_TEXT_EFFECT:
             decode(&st);
             break;
-          case 18:
+          case MSG_ACTOR_NAME:
             decode(&st);
             break;
-          case 29:
+          case MSG_ARGUMENT_ACTOR_NAME:
             decode(&st);
             break;
-          case 1:
+          case MSG_ARTICLE_CLASS:
+            decode(&st);
+            break;
+          case MSG_PAGE_BREAK:
             running = 0;
             ch = 2;
             break;
-          case 16:
+          case MSG_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -2549,6 +2646,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
         }
       } else {
+        // Halting speech pauses before each character.
         if (work->spacingBefore != 0
 #if defined(TBS_EDITION_EN)
             && head == 0 && ch != 222 && ch != 223
@@ -2567,6 +2665,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         }
 
 #endif
+        // A character. Halting speech breaks off with an ellipsis at the
+        // first space or after 11 characters.
         if (ch > 31) {
           if (work->spacingBefore != 0 && (ch == 32 || cnt > 10)) {
             entry[pos] = '.';
@@ -2606,22 +2706,24 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
 #endif
         } else {
+          // A control code: write out names, numbers and articles, and keep
+          // style codes with their operands.
           switch (ch) {
-          case 0:
-          case 2:
-          case 30:
+          case MSG_END:
+          case MSG_END_WAIT:
+          case MSG_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
-          case 29:
+          case MSG_TEXT_COLOR:
+          case MSG_TEXT_EFFECT:
+          case MSG_ARTICLE_CLASS:
             entry[pos] = (u16)ch;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             entry[pos] = decode(&st) + 0xFFFFU;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
-          case 22:
-            value = (s32)UiRender_LookupNamedValue(5, clear);
+          case MSG_ARGUMENT_SIGNED_NUMBER:
+            value = (s32)UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
             mag = value;
             if (value < 0)
               mag = -value;
@@ -2636,19 +2738,19 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               i++;
             }
             break;
-          case 19:
+          case MSG_ARGUMENT_CLASS_NAME:
             no = decode(&st) - 1;
-            tmp = UiRender_LookupNamedValue(3, clear);
+            tmp = UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
             UiText_DecodeMessage(tmp + MsgClassName, name, 24);
             pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                            &suffix);
             break;
-          case 20:
+          case MSG_ARGUMENT_ITEM_NAME:
             no = decode(&st) - 1;
 #if defined(TBS_EDITION_ES)
             form = no & 7;
 #endif
-            tmp = UiRender_LookupNamedValue(2, clear);
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             tmp &= RENDER_ENTRY_MASK;
@@ -2667,8 +2769,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                            &suffix);
             break;
-          case 21:
-            tmp = UiRender_LookupNamedValue(4, clear);
+          case MSG_ARGUMENT_ABILITY_NAME:
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
             UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
             p = name;
             next = pos;
@@ -2679,11 +2781,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             pos = next;
             break;
-          case 23:
-            UiText_DecodeMessage(Scene_GetAreaNameIndexFar(
-                                     UiRender_LookupNamedValue(6, clear), 1) +
-                                     MsgDebugEntryName,
-                                 name, 24);
+          case MSG_ARGUMENT_LOCATION_NAME:
+            UiText_DecodeMessage(
+                Scene_GetAreaNameIndexFar(
+                    UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear), 1) +
+                    MsgDebugEntryName,
+                name, 24);
             p = name;
             next = pos;
             while (*p != 0) {
@@ -2693,7 +2796,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             pos = next;
             break;
-          case 16:
+          case MSG_PROTAGONIST_NAME:
             src = UnitGetFar(gGameState.selectedActor)->name;
             dst = name;
             i = 0;
@@ -2705,9 +2808,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             } while (i <= 14);
             pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0, &suffix);
             break;
-          case 18:
+          case MSG_ARGUMENT_ACTOR_NAME:
             no = decode(&st) - 1;
-            src = UnitGetFar(UiRender_LookupNamedValue(1, clear))->name;
+            src = UnitGetFar(UiRender_LookupNamedValue(MSG_ARG_ACTOR, clear))
+                      ->name;
             dst = name;
             j = 0;
             do {
@@ -2719,7 +2823,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                            &suffix);
             break;
-          case 17:
+          case MSG_ACTOR_NAME:
             tmp = decode(&st) - 1;
             src = UnitGetFar(tmp)->name;
             dst = name;
@@ -2732,14 +2836,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             } while (j <= 14);
             pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0, &suffix);
             break;
-          case 26:
+          case MSG_BUTTON_ICON:
             tmp = ((decode(&st) - 1) << 1) + 128;
             entry[pos] = tmp;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             entry[pos] = tmp + 1;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
-          case 24:
+          case MSG_EM_DASH:
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             entry[pos] = ' ';
@@ -2756,7 +2860,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #endif
             break;
 #if defined(TBS_EDITION_DE)
-          case 13:
+          case MSG_LOCALIZED_WORD:
             no = decode(&st) - 1;
             src = gUiText_NumberWords[(no & 7) * 2 + plural];
             while (*src != 0) {
@@ -2766,7 +2870,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if defined(TBS_EDITION_IT)
-          case 13:
+          case MSG_LOCALIZED_WORD:
             ending = decode(&st) - 1;
             if (ending == 0) {
               if (plural == 0)
@@ -2780,9 +2884,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-          case 13:
+          case MSG_LOCALIZED_WORD:
 #elif defined(TBS_EDITION_EN)
-          case 25:
+          case MSG_PLURAL_SUFFIX:
 #endif
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_IT)
             if (plural != 0) {
@@ -2796,13 +2900,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-          case 25:
+          case MSG_PLURAL_SUFFIX:
 #if defined(TBS_EDITION_ES)
-            UiRender_LookupNamedValue(2, 0);
+            UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
             possessives = gUiText_ItemPossessives;
             word = possessives.text[plural];
 #else
-            tmp = UiRender_LookupNamedValue(2, 0);
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
             tmp &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[tmp];
@@ -2823,15 +2927,15 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
-          case 25:
+          case MSG_PLURAL_SUFFIX:
 #if defined(TBS_EDITION_DE)
-            tmp = UiRender_LookupNamedValue(2, 0);
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
             tmp &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
             kind = gUiText_ItemGenders[tmp];
             word = possessives.text[kind & 3];
 #else
-            UiRender_LookupNamedValue(2, 0);
+            UiRender_LookupNamedValue(MSG_ARG_ITEM, 0);
             word = gUiText_ItemPronoun;
 #endif
             for (i = 0; i < 16; i++) {
@@ -2845,7 +2949,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             suffix = 0;
             break;
 #endif
-          case 27:
+          case MSG_POSSESSIVE_SUFFIX:
 #if defined(TBS_EDITION_DE)
             if (suffix == 1)
               entry[pos] = '\'';
@@ -2863,8 +2967,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case 1:
-          case 3:
+          case MSG_PAGE_BREAK:
+          case MSG_LINE_BREAK:
 #if defined(TBS_EDITION_EN)
             head = 1;
 #endif
@@ -2903,6 +3007,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 
 #if defined(TBS_EDITION_JA)
 
+// The Japanese form: Japanese has no articles, so the name is copied as it is.
 extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos,
                                                u16 *entry, s32 no, s32 plural,
                                                s32 *suffix) {
@@ -2932,6 +3037,8 @@ extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos,
   return pos;
 }
 
+// The Japanese UiText_BuildRenderEntries, as above with no articles or
+// plurals.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 ch = 0;
@@ -2972,51 +3079,55 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(50, size), 0x84000000 | (size >> 2),
-              REG_DMA3);
+              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
+              DMA_COPY32(size >> 2), REG_DMA3);
     }
-    decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
+    // The decoder runs from a copy in RAM, one symbol at a time.
+    decode = (s32 (*)(
+        struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
     UiText_LookupMessage(&st, script);
     do {
       prev = ch;
       ch = (u32)decode(&st);
+      // Once halting speech has broken off, the rest of the message is
+      // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
         if (ch < 32) {
           switch (ch) {
-          case 19:
-            UiRender_LookupNamedValue(3, clear);
+          case MSG_ARGUMENT_CLASS_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
             break;
-          case 0:
-          case 2:
-          case 30:
+          case MSG_END:
+          case MSG_END_WAIT:
+          case MSG_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
+          case MSG_TEXT_COLOR:
+          case MSG_TEXT_EFFECT:
             decode(&st);
             break;
-          case 22:
-            UiRender_LookupNamedValue(5, clear);
+          case MSG_ARGUMENT_SIGNED_NUMBER:
+            UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
             break;
-          case 20:
-            UiRender_LookupNamedValue(2, clear);
+          case MSG_ARGUMENT_ITEM_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
             break;
-          case 21:
-            UiRender_LookupNamedValue(4, clear);
+          case MSG_ARGUMENT_ABILITY_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
             break;
-          case 23:
-            UiRender_LookupNamedValue(6, clear);
+          case MSG_ARGUMENT_LOCATION_NAME:
+            UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear);
             break;
-          case 17:
+          case MSG_ACTOR_NAME:
             decode(&st);
             break;
-          case 18:
+          case MSG_ARGUMENT_ACTOR_NAME:
             break;
-          case 1:
+          case MSG_PAGE_BREAK:
             running = 0;
             ch = 2;
             break;
-          case 16:
+          case MSG_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -3025,6 +3136,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
         }
       } else {
+        // Halting speech pauses before each character.
         if (work->spacingBefore != 0 && head == 0 && ch != 222 && ch != 223) {
           entry[pos] = 5;
           pos = (pos + 1) & RENDER_ENTRY_MASK;
@@ -3035,6 +3147,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           entry[pos] = 222;
           pos = (pos + 1) & RENDER_ENTRY_MASK;
         }
+        // A character. Halting speech breaks off with an ellipsis at the
+        // first space or after 11 characters.
         if (ch > 31) {
           if (mode != 0 && ch == ' ') {
             entry[pos] = ch;
@@ -3057,21 +3171,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           pos = (pos + 1) & RENDER_ENTRY_MASK;
           head = 0;
         } else {
+          // A control code: write out names and numbers, and keep style
+          // codes with their operands.
           switch (ch) {
-          case 0:
-          case 2:
-          case 30:
+          case MSG_END:
+          case MSG_END_WAIT:
+          case MSG_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
+          case MSG_TEXT_COLOR:
+          case MSG_TEXT_EFFECT:
             entry[pos] = (u16)ch;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             entry[pos] = decode(&st) + 0xffffU;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
-          case 22:
-            value = UiRender_LookupNamedValue(5, clear);
+          case MSG_ARGUMENT_SIGNED_NUMBER:
+            value = UiRender_LookupNamedValue(MSG_ARG_NUMBER, clear);
             num = UiText_FormatNumber(numbuf, value, 0);
             i = num - numbuf;
             while (i != 16 && numbuf[i] != 0) {
@@ -3080,29 +3196,30 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               i++;
             }
             break;
-          case 19:
-            tmp = UiRender_LookupNamedValue(3, clear);
+          case MSG_ARGUMENT_CLASS_NAME:
+            tmp = UiRender_LookupNamedValue(MSG_ARG_CLASS, clear);
             UiText_DecodeMessage(tmp + MsgClassName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
-          case 20:
-            tmp = UiRender_LookupNamedValue(2, clear);
+          case MSG_ARGUMENT_ITEM_NAME:
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ITEM, clear);
             UiText_DecodeMessage((tmp & 511) + MsgItemName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
-          case 21:
-            tmp = UiRender_LookupNamedValue(4, clear);
+          case MSG_ARGUMENT_ABILITY_NAME:
+            tmp = UiRender_LookupNamedValue(MSG_ARG_ABILITY, clear);
             UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
-          case 23:
-            UiText_DecodeMessage(Scene_GetAreaNameIndexFar(
-                                     UiRender_LookupNamedValue(6, clear), 1) +
-                                     MsgDebugEntryName,
-                                 name, 24);
+          case MSG_ARGUMENT_LOCATION_NAME:
+            UiText_DecodeMessage(
+                Scene_GetAreaNameIndexFar(
+                    UiRender_LookupNamedValue(MSG_ARG_LOCATION, clear), 1) +
+                    MsgDebugEntryName,
+                name, 24);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
-          case 16:
+          case MSG_PROTAGONIST_NAME:
             src = UnitGetFar(gGameState.selectedActor)->name;
             dst = name;
             i = 0;
@@ -3114,8 +3231,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             } while (i <= 14);
             pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             break;
-          case 18:
-            actor = UnitGetFar(UiRender_LookupNamedValue(1, clear));
+          case MSG_ARGUMENT_ACTOR_NAME:
+            actor = UnitGetFar(UiRender_LookupNamedValue(MSG_ARG_ACTOR, clear));
             if (work->menuState != 0 &&
                 (actor->classId == 122 || actor->classId == 125)) {
               message = MsgMysteryPersonName;
@@ -3136,7 +3253,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
             }
             break;
-          case 17:
+          case MSG_ACTOR_NAME:
             tmp = decode(&st) - 1;
             src = UnitGetFar(tmp)->name;
             dst = name;
@@ -3151,8 +3268,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case 1:
-          case 3:
+          case MSG_PAGE_BREAK:
+          case MSG_LINE_BREAK:
             head = 1;
           default:
             entry[pos] = (u16)ch;
@@ -3168,7 +3285,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     entry[pos] = 0;
     next = (pos + 1) & RENDER_ENTRY_MASK;
     work->count = (u16)next;
-    Runtime_ReleaseHeapBlock(50);
+    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
     work->messageStart = (u16)start;
   }
   if (clear != 0)
@@ -3184,6 +3301,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #define FIT_FIXED_LIMIT 1
 #endif
 
+// Sizes a window for decoded text no and moves (*px, *py) so the window fits
+// on the screen. flags: bit 0 measures every page (UiText_MeasureStringVariant)
+// rather than the first; bit 1 takes the size in *pw and *ph as given, in
+// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
+// *ph and fills spacing with each line's extra character gap.
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                           u16 *spacing, u32 flags) {
 #if !defined(FIT_FIXED_LIMIT)
@@ -3214,6 +3336,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   if (*pw == 0 && *ph == 0)
     return;
 
+  // Pixels to tiles, with room for the frame and a margin.
   if (!(flags & 2)) {
     *pw = (*pw + 19) >> 3;
     *ph = (*ph + 15) >> 3;
@@ -3225,6 +3348,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 #endif
   }
 
+  // Slide the window back onto the screen (limit tiles by 20).
   right = x + *pw;
   if (right > limit) {
     over = right - limit;
@@ -3255,6 +3379,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   *py = y;
 }
 
+// Decodes message no and returns its text's width and height in pixels.
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y) {
   UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x,
                                 (u32 *)y, 0);
@@ -3263,6 +3388,10 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y) {
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 
+// Measures decoded text from pos to its first page's end: returns the width of
+// the longest line and the height (15 pixels a line) in pixels. With spacing
+// set, fills one entry per line with the extra gap between characters, in
+// 1/256 pixel, that spreads the line to fill the window.
 void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
                                    u16 *spacing) {
   struct UiRenderWork *work;
@@ -3294,6 +3423,8 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
   for (;;) {
     c = work->entries[pos];
     pos = (pos + 1) & RENDER_ENTRY_MASK;
+    // A character adds its width. Spaces (in Japanese every character) are
+    // counted as the points the line can be stretched at.
     if (c > 31) {
 #if EDITION_INTERNATIONAL
       if (c == 32) {
@@ -3307,10 +3438,11 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
         lineWidth += glyph;
       }
 #else
-      if (c != 0xde && c != 0xdf) {
+      if (c != TEXT_VOICED_MARK && c != TEXT_SEMIVOICED_MARK) {
         if (c == 32) {
           lineWidth += 7;
         } else {
+          // Punctuation at the end of a line takes less room than its cell.
           if (c == 0xa5)
             trailing = -1;
           else if (c == 0x21)
@@ -3333,13 +3465,13 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
       continue;
     }
     switch (c) {
-    case 0:
+    case TEXT_END:
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) &&                    \
     !defined(TBS_EDITION_IT)
-    case 1:
+    case TEXT_PAGE:
 #endif
       goto done;
-    case 3:
+    case TEXT_NEWLINE:
 #if EDITION_INTERNATIONAL
       count++;
 #else
@@ -3357,20 +3489,20 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
       break;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
-    case 1:
+    case TEXT_PAGE:
       work->outline = 0;
       goto done;
 #endif
     case 14:
     case 28:
       pos = (pos + 1) & RENDER_ENTRY_MASK;
-    case 8:
-    case 10:
-    case 15:
+    case TEXT_COLOUR:
+    case TEXT_LINE_SPACING:
+    case TEXT_WINDOW_STATE:
     case 17:
       pos = (pos + 1) & RENDER_ENTRY_MASK;
       break;
-    case 9:
+    case TEXT_OUTLINE:
       work->outline = work->entries[pos];
       pos = (pos + 1) & RENDER_ENTRY_MASK;
       break;
@@ -3392,6 +3524,8 @@ done:
 #endif
   *outWidth = width;
   *outHeight = height;
+  // Each line's extra gap between characters, in 1/256 pixel, to spread it
+  // across the window's inner width.
   width = (width + 19) >> 3;
   width = (width << 3) - 16;
   if (spacing != NULL) {
@@ -3421,9 +3555,12 @@ done:
   }
 }
 
+// Measures decoded text from start over all its pages: the width of the first
+// page's longest line and the height of its tallest page, in pixels, with each
+// line's extra character gap in spacing as UiText_MeasureEntryDimensions.
 void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
                                  u16 *spacing) {
-  u32 heights[16];
+  u32 pageHeights[16];
   u16 counts[4];
   u16 widths[4];
   struct UiRenderWork *work;
@@ -3431,7 +3568,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
   u32 line;
   u32 width;
   u32 count;
-  u32 variant;
+  u32 page;
   u32 code;
   u32 glyph;
   u32 outline;
@@ -3444,27 +3581,27 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
   trailing = 0;
 #endif
   work = UI_WORK;
-  heights[0] = 15;
-  heights[1] = 15;
-  heights[2] = 15;
-  heights[3] = 15;
-  heights[4] = 15;
-  heights[5] = 15;
-  heights[6] = 15;
-  heights[7] = 15;
-  heights[8] = 15;
-  heights[9] = 15;
-  heights[10] = 15;
-  heights[11] = 15;
-  heights[12] = 15;
+  pageHeights[0] = 15;
+  pageHeights[1] = 15;
+  pageHeights[2] = 15;
+  pageHeights[3] = 15;
+  pageHeights[4] = 15;
+  pageHeights[5] = 15;
+  pageHeights[6] = 15;
+  pageHeights[7] = 15;
+  pageHeights[8] = 15;
+  pageHeights[9] = 15;
+  pageHeights[10] = 15;
+  pageHeights[11] = 15;
+  pageHeights[12] = 15;
   maxWidth = 0;
-  heights[13] = 15;
-  heights[14] = 15;
-  heights[15] = 15;
+  pageHeights[13] = 15;
+  pageHeights[14] = 15;
+  pageHeights[15] = 15;
   line = 0;
   width = 0;
   count = 0;
-  variant = 0;
+  page = 0;
   for (;;) {
     code = work->entries[start];
     start = (start + 1) & RENDER_ENTRY_MASK;
@@ -3481,7 +3618,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
         width += glyph;
       }
 #else
-      if (code != 0xde && code != 0xdf) {
+      if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
         if (code == 32) {
           width += 7;
         } else {
@@ -3507,7 +3644,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
       continue;
     }
     switch (code) {
-    case 3:
+    case TEXT_NEWLINE:
 #if EDITION_INTERNATIONAL
       counts[line] = ++count;
 #else
@@ -3515,13 +3652,13 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
       counts[line] = count;
 #endif
       widths[line] = width;
-      if (variant == 0 && maxWidth < width)
+      if (page == 0 && maxWidth < width)
         maxWidth = width;
       if (line < 3)
         line++;
       count = 0;
       width = 0;
-      heights[variant] += 15;
+      pageHeights[page] += 15;
       break;
     case 0:
 #if EDITION_INTERNATIONAL
@@ -3531,11 +3668,11 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
       counts[line] = count;
 #endif
       widths[line] = width;
-      if (variant == 0 && maxWidth < width)
+      if (page == 0 && maxWidth < width)
         maxWidth = width;
-      variant++;
+      page++;
       goto done;
-    case 1:
+    case TEXT_PAGE:
 #if EDITION_INTERNATIONAL
       counts[line] = ++count;
 #else
@@ -3543,24 +3680,24 @@ void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight,
       counts[line] = count;
 #endif
       widths[line] = width;
-      if (variant == 0 && maxWidth < width)
+      if (page == 0 && maxWidth < width)
         maxWidth = width;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
       work->outline = 0;
 #endif
-      variant++;
+      page++;
       break;
     case 14:
     case 28:
       start = (start + 1) & RENDER_ENTRY_MASK;
-    case 8:
-    case 10:
-    case 15:
+    case TEXT_COLOUR:
+    case TEXT_LINE_SPACING:
+    case TEXT_WINDOW_STATE:
     case 17:
       start = (start + 1) & RENDER_ENTRY_MASK;
       break;
-    case 9:
+    case TEXT_OUTLINE:
       work->outline = work->entries[start];
       start = (start + 1) & RENDER_ENTRY_MASK;
       break;
@@ -3571,11 +3708,11 @@ done:
   if (work->mode != 0)
     maxWidth += 2;
 #endif
-  for (i = 0; i < variant; i++) {
+  for (i = 0; i < page; i++) {
     if (i == 0)
-      *outHeight = heights[0];
-    else if (*outHeight < heights[i])
-      *outHeight = heights[i];
+      *outHeight = pageHeights[0];
+    else if (*outHeight < pageHeights[i])
+      *outHeight = pageHeights[i];
   }
   *outWidth = maxWidth;
   maxWidth = (((maxWidth + 19) >> 3) << 3) - 16;
@@ -3603,10 +3740,14 @@ done:
 
 typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
 
-// RenderOutput の 0x10 からの 12 バイト：リンクと OAM
-// の属性（スプライトのセル）
+// A render output's sprite cell: the link and OAM attributes in its 12 bytes
+// from offset 0x10.
 #define SPRITE_CELL(output) ((struct CursorSprite *)(output)->unk10)
 
+// Draws a character of a window's text with its top-left corner at pixel
+// (x, y) of the window's interior and returns how far the text advances. A
+// text canvas window draws it into the canvas; other windows show it as a
+// sprite carried by the window. mode 1 shows the next-page arrow instead.
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -3614,7 +3755,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
   s32 width;
   u32 spacingY = work->lineSpacing;
 
-  if (mode != 1 && (window->flags & 8) != 0) {
+  // A text canvas window draws the glyph into its canvas.
+  if (mode != 1 && (window->flags & UI_WINDOW_TEXT_CANVAS) != 0) {
     u8 *font;
     GlyphRoutine draw;
     s32 result;
@@ -3630,8 +3772,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       if (character == ' ')
         goto done;
     }
-    mark = (s16)gUiText_MarkGlyphCodes[(u32)character >> 14];
-    character &= 0x3fff;
+    mark = (s16)gUiText_MarkGlyphCodes[(u32)character >> TEXT_CODE_MARK_SHIFT];
+    character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
     width = 4;
 #else
     if (((struct BattleDisplayWork *)
@@ -3663,6 +3805,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     width = 5;
 #endif
   } else {
+    // Other windows show each glyph as a 16x16 sprite, animated by the text
+    // style (UiRenderWork.outline 2 to 5) or, in mode 1, as the page arrow.
     u32 tiles[32];
     struct RenderOutput *output;
     struct CursorSprite *sprite;
@@ -3672,26 +3816,26 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     if (output == NULL)
       return 0;
     index = (output - work->outputs) * 4;
-    output->active = 1;
+    output->active = UI_SPRITE_STILL;
     output->kind = 0;
     if (mode == 1) {
       width = 1;
-      output->active = 2;
+      output->active = UI_SPRITE_PAGE_ARROW;
     } else {
       switch (work->outline) {
       case 3:
-        output->active = 5;
+        output->active = UI_SPRITE_SHAKE;
         break;
       case 4:
-        output->active = 6;
+        output->active = UI_SPRITE_POP;
         output->animStep = 8;
         break;
       case 5:
-        output->active = 7;
+        output->active = UI_SPRITE_SPIN;
         output->animStep = 0;
         break;
       case 2:
-        output->active = 4;
+        output->active = UI_SPRITE_WOBBLE;
         output->animStep = 0;
         break;
       }
@@ -3708,9 +3852,10 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
 #endif
     }
 
-    if ((u8)output->active == 2) {
+    if ((u8)output->active == UI_SPRITE_PAGE_ARROW) {
+      // The page arrow sits in the window's bottom-right corner.
       sprite = SPRITE_CELL(output);
-      if (work->glyphResource == 99)
+      if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = Resource_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
 #if !EDITION_INTERNATIONAL
@@ -3719,8 +3864,9 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) - 1;
 #endif
     } else {
+      // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it.
       Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-              0x84000020, REG_DMA3);
+              DMA_COPY32(32), REG_DMA3);
 #if !EDITION_INTERNATIONAL
       ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8;
 #else
@@ -3742,9 +3888,9 @@ done:
   return width;
 }
 
-// RenderOutput の見方：0x10 からのスプライトのセルをメンバー attr として持つ。
-// RenderOutput の unk10 をキャストして読むと UiWork_AnimateSpriteSlots
-// が合わない (578 -> 605 命令)
+// A view of struct RenderOutput with its sprite cell (from offset 0x10) as the
+// member attr. Read through a cast of RenderOutput.unk10 instead,
+// UiWork_AnimateSpriteSlots does not match (578 instructions become 605).
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
@@ -3773,6 +3919,9 @@ LAYOUT_OFFSET_GUARD(SpriteOutput_Attr, struct SpriteOutput, attr,
 
 #if EDITION_INTERNATIONAL
 
+// Puts a character into a window's tilemap as a tile at tile (x, y) of its
+// interior. mode 1 shows the next-page arrow sprite in the window's corner
+// instead.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -3796,10 +3945,10 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     idx =
         ((struct RenderOutput *)out - ((struct UiRenderWork *)base)->outputs) *
         4;
-    out->active = 2;
+    out->active = UI_SPRITE_PAGE_ARROW;
     attr = &out->attr;
     slot = &((struct UiRenderWork *)base)->glyphResource;
-    if (*slot == 99)
+    if (*slot == NO_GLYPH_RESOURCE)
       *slot = Resource_FindFreeEntry();
     column = 0xfffe;
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
@@ -3819,8 +3968,8 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     x++;
     y++;
     pos = (win->y + y) * 32 + (win->x + x);
-    if (pos < 640)
-      ((struct UiRenderWork *)work)->tilemap[pos] = tile | 0xf000;
+    if (pos < 32 * 20)
+      ((struct UiRenderWork *)work)->tilemap[pos] = UI_TILE(tile);
   }
 }
 
@@ -3855,10 +4004,10 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     idx =
         ((struct RenderOutput *)out - ((struct UiRenderWork *)base)->outputs) *
         4;
-    out->active = 2;
+    out->active = UI_SPRITE_PAGE_ARROW;
     attr = &out->attr;
     slot = &((struct UiRenderWork *)base)->glyphResource;
-    if (*slot == 99)
+    if (*slot == NO_GLYPH_RESOURCE)
       *slot = Resource_FindFreeEntry();
     column = 0xfffe;
     left = win->x;
@@ -3876,16 +4025,19 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
       out->active = mode;
     RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
   } else if (tile <= 0xff) {
-    if (tile - 0xde <= 1) {
+    if (tile - TEXT_VOICED_MARK <= 1) {
+      // A kana mark goes in the tile above the character before it. Over the
+      // frame's top edge, or over tile 0x0e, it takes the mark tile drawn
+      // over that background.
       u32 line;
 
       line = (win->y + y) * 32;
       switch (
           *(((struct UiRenderWork *)base)->tilemap + (line + (win->x + x)))) {
-      case 0xf011:
+      case UI_TILE_FRAME_TOP:
         tile -= 0xc0;
         break;
-      case 0xf00e:
+      case UI_TILE(0x0e):
         tile -= 0xd0;
         break;
       }
@@ -3894,8 +4046,8 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
       y++;
     }
     pos = (win->y + y) * 32 + (win->x + x);
-    if (pos < 640)
-      ((struct UiRenderWork *)work)->tilemap[pos] = tile | 0xf000;
+    if (pos < 32 * 20)
+      ((struct UiRenderWork *)work)->tilemap[pos] = UI_TILE(tile);
   }
 }
 
@@ -3912,6 +4064,9 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
+// Writes value into a window's tilemap at tile (x, y) of its interior, with
+// the palette mode names (TILEMAP_ENTRY_), or as it is for
+// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -3961,23 +4116,25 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
   }
 }
 
+// Steps a scaling sprite's animation (UI_SPRITE_SWELL to
+// UI_SPRITE_SHRINK_HALF) and sets its affine scale for this frame.
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
   s32 scale = 256;
   struct CursorSprite *sprite = SPRITE_CELL(output);
   struct AffineTransform effect;
 
   switch ((u8)output->active) {
-  case 9:
+  case UI_SPRITE_SWELL:
     scale = gUi_BounceScales[output->animStep++ & 31];
     break;
-  case 10:
+  case UI_SPRITE_SWELL_HALF:
     scale = gUi_BounceScales[output->animStep++ & 31] >> 1;
     break;
-  case 11:
+  case UI_SPRITE_SHRINK:
     if (output->animStep <= 7)
       scale = gUi_BounceScales[output->animStep++ * 2 + 16];
     break;
-  case 12:
+  case UI_SPRITE_SHRINK_HALF:
     if (output->animStep <= 7)
       scale = gUi_BounceScales[output->animStep++ * 2 + 16] >> 1;
     break;
@@ -4006,6 +4163,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
   }
 }
 
+// The per-frame sprite update: moves each sprite that an open window carries
+// by its animation mode (UI_SPRITE_) and queues it for drawing.
 void UiWork_AnimateSpriteSlots(void) {
   struct UiRenderWork *work = UI_WORK;
   struct UiWindow *window = work->windows;
@@ -4016,19 +4175,19 @@ void UiWork_AnimateSpriteSlots(void) {
     struct SpriteOutput *output;
     u32 phase;
 
-    if (!(window->flags & 1))
+    if (!(window->flags & UI_WINDOW_OPEN))
       continue;
     output = (struct SpriteOutput *)window->output.head;
     phase = (gFrameTick >> 2) & 7;
     while (output != NULL) {
       struct CursorSprite *sprite = &output->attr;
 
-      if (window->effect == 4) {
+      if (window->effect == UI_WINDOW_EFFECT_SWELL) {
         output->animStep = 2;
-        output->active = 8;
+        output->active = UI_SPRITE_PULSE;
       }
       switch (output->active) {
-      case 2:
+      case UI_SPRITE_PAGE_ARROW:
         if (work->glyphResource != 0x60) {
           const u8 *tiles = &gUiSprite_CursorFrameTiles[phase * 128];
 
@@ -4045,7 +4204,7 @@ void UiWork_AnimateSpriteSlots(void) {
           sprite->affineIndex = 0;
         }
         break;
-      case 5:
+      case UI_SPRITE_SHAKE:
         if (gFrameTick & 1) {
           sprite->x =
               output->x +
@@ -4055,7 +4214,7 @@ void UiWork_AnimateSpriteSlots(void) {
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
         }
         break;
-      case 6:
+      case UI_SPRITE_POP:
         if (output->animStep == 0) {
           sprite->affineIndex = 0;
           sprite->affine = 0;
@@ -4072,7 +4231,7 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->y = output->y - 5;
         output->animStep--;
         break;
-      case 7:
+      case UI_SPRITE_SPIN:
         effect.scaleX = 256;
         effect.scaleY = 256;
         output->animStep += 768;
@@ -4082,7 +4241,7 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
         sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
         break;
-      case 4:
+      case UI_SPRITE_WOBBLE:
         if (gFrameTick & 1)
           output->animStep++;
         sprite->x =
@@ -4090,22 +4249,22 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->y =
             output->y + gUiSprite_WobbleOffsets[output->animStep % 20][1] - 2;
         break;
-      case 17:
+      case UI_SPRITE_HOP_UP:
         output->animStep++;
         sprite->y = output->y - gUiSprite_BounceOffsets[output->animStep & 15];
         break;
-      case 14:
-      case 15:
-      case 16:
+      case UI_SPRITE_HOP_DOWN:
+      case UI_SPRITE_HOP_DOWN + 1:
+      case UI_SPRITE_HOP_DOWN + 2:
         output->animStep++;
         sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
         break;
-      case 18:
+      case UI_SPRITE_HOP_DOWN_LEFT:
         output->animStep++;
         sprite->x = output->x - gUiSprite_BounceOffsets[output->animStep & 15];
         sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
         break;
-      case 8:
+      case UI_SPRITE_PULSE:
         if (output->animStep != 0) {
           effect.scaleX = 320;
           effect.scaleY = 320;
@@ -4122,17 +4281,17 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->x = output->x;
         sprite->y = output->y;
         break;
-      case 9:
-      case 10:
-      case 11:
-      case 12:
+      case UI_SPRITE_SWELL:
+      case UI_SPRITE_SWELL_HALF:
+      case UI_SPRITE_SHRINK:
+      case UI_SPRITE_SHRINK_HALF:
         RenderOutput_UpdateScaleAnimation((struct RenderOutput *)output);
         break;
       }
-      if (output->active == 2) {
+      if (output->active == UI_SPRITE_PAGE_ARROW) {
         if (work->glyphResource != 0x60)
           Runtime_PushSlotEntry(sprite, output->sentinel);
-      } else if (output->active != 13) {
+      } else if (output->active != UI_SPRITE_HIDDEN) {
         Runtime_PushSlotEntry(sprite, output->sentinel);
       }
       output = output->next;
@@ -4141,17 +4300,13 @@ void UiWork_AnimateSpriteSlots(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// adjust_value_without_limit.c
-// ウィンドウ：メッセージを長さの制限なしに文字列にする
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// メッセージ message を buf に展開する（長さの上限なし）
-//--------------------------------------------------------------------------
+// Decodes message into buf (a u16 string) with no length limit.
 void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
   UiText_DecodeMessage(message, buf, 0x7fffffff);
 }
 
+// Decodes message key into destination as a zero-terminated string of at most
+// capacity entries, and returns its length.
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
   struct UiRenderWork *work;
   u32 count;
@@ -4172,6 +4327,8 @@ s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
 #define DECODE_EUROPEAN
 #endif
 
+// Decodes message into text as a zero-terminated string of 16-bit codes, with
+// at most capacity entries, keeping style codes with their operands.
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;
@@ -4231,17 +4388,11 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    Runtime_ReleaseHeapBlock(50);
+    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
   *text = 0;
 }
 
-//--------------------------------------------------------------------------
-// clear_word_if_set.c
-// メモリ：0 でないワードを 0 にする
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// *p が 0 でなければ 0 にして、p を返す
-//--------------------------------------------------------------------------
+// Clears *p if it is set, and returns p.
 s32 *Runtime_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;
@@ -4249,18 +4400,12 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
   return p;
 }
 
-//--------------------------------------------------------------------------
-// uiwork.c
-// ウィンドウ：メッセージのチャンネルの後始末と、メッセージに埋める値の表
-//--------------------------------------------------------------------------
+// Closing the message channels' windows, and the message argument table.
 
 #if !GAME_TLA
 
-//--------------------------------------------------------------------------
-// ウィンドウをすべて閉じる
-// 3 つのチャンネルのウィンドウを閉じ、開閉の動きが終わるまで待ってから、
-// 直接開いたウィンドウを閉じる
-//--------------------------------------------------------------------------
+// Closes every window: first the message channels' windows, waiting until
+// they have closed, then the windows opened directly.
 void UiWork_DrainPending(s32 unused) {
   struct UiRenderWork *uw;
   struct UiChannelSlot *ch;
@@ -4283,7 +4428,8 @@ void UiWork_DrainPending(s32 unused) {
     ch++;
   } while (i != 3);
 
-  // 閉じ終えたチャンネルを空ける。動いているものがあれば 1 フレーム待つ
+  // Free each channel whose window has closed; while one is still closing,
+  // wait a frame.
   for (;;) {
     done = 1;
     ch = uw->channels;
@@ -4291,7 +4437,7 @@ void UiWork_DrainPending(s32 unused) {
     do {
       poll_work = ch->work;
       if (poll_work != 0) {
-        if ((*(s32 *)&poll_work->frame) == 0) // frame と duration がともに 0
+        if ((*(s32 *)&poll_work->frame) == 0) // frame and duration both 0
         {
           flag = poll_work->flags;
           if (flag == 0)
@@ -4311,7 +4457,7 @@ void UiWork_DrainPending(s32 unused) {
     WaitFrames(1);
   }
 
-  // 直接開いたウィンドウ
+  // Then the windows opened directly.
   for (;;) {
     if (i == WINDOW_COUNT)
       break;
@@ -4322,10 +4468,8 @@ void UiWork_DrainPending(s32 unused) {
   }
 }
 
-//--------------------------------------------------------------------------
-// チャンネルのウィンドウの効果 4 を 1 フレーム進める
-// countdown のあいだ 1 タイル大きい枠を描き、終わったら元の枠に戻す
-//--------------------------------------------------------------------------
+// Steps a channel's window effect (UI_WINDOW_EFFECT_SWELL): the frame is drawn
+// a tile bigger on every side until the countdown ends, then back to normal.
 void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch) {
   struct UiWindow *work = ch->work;
   s32 effect = work->effect;
@@ -4334,7 +4478,7 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch) {
   s32 w = work->width;
   s32 h = work->height;
 
-  if (effect != 4)
+  if (effect != UI_WINDOW_EFFECT_SWELL)
     return;
 
   UiWindow_DrawFrame(x - 1, y - 1, w + 2, h + 2);
@@ -4347,9 +4491,7 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *ch) {
   UiWindow_DrawFrame(x, y, w, h);
 }
 
-//--------------------------------------------------------------------------
-// メッセージに埋める値の表（8 つ）を空にする
-//--------------------------------------------------------------------------
+// Empties the table of message arguments.
 void UiWork_ClearValueNameTables(void) {
   s32 no;
   struct UiRenderWork *work;
@@ -4364,10 +4506,8 @@ void UiWork_ClearValueNameTables(void) {
   } while (no != 8);
 }
 
-//--------------------------------------------------------------------------
-// 表のあいているところに、種類 kind の値 value を入れる
-// （いっぱいなら入れない）
-//--------------------------------------------------------------------------
+// Adds a message argument of kind (MSG_ARG_) with value to the first free
+// place of the argument table; when all eight are in use it is dropped.
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = UI_WORK;
   u32 no = 0;
@@ -4383,10 +4523,8 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
   } while (no != limit);
 }
 
-//--------------------------------------------------------------------------
-// 表から種類 kind の値をさがす（なければ 0）
-// clear : 0 でなければ、見つけたものを表から消す
-//--------------------------------------------------------------------------
+// Returns the value of the first message argument of kind (MSG_ARG_), or 0
+// when there is none. With clear set the argument is removed from the table.
 u32 UiRender_LookupNamedValue(u32 kind, u32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 i;
@@ -4405,11 +4543,9 @@ u32 UiRender_LookupNamedValue(u32 kind, u32 clear) {
   return value;
 }
 
-//--------------------------------------------------------------------------
-// メッセージの待ちを打ち切るか
-// busy で音の状態が 0 のとき、または A・B・L・R を押しているとき、
-// countdown を 0 にして 1 を返す
-//--------------------------------------------------------------------------
+// Ends a channel's pause early: when the message waits on a sound that has
+// finished (busy), or while A, B, L or R is held. Clears the countdown and
+// returns 1 if it ended.
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   struct UiRenderWork *work = UI_WORK;
   s32 cancel = 0;
@@ -4427,10 +4563,9 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   return zero;
 }
 
-//--------------------------------------------------------------------------
-// メッセージの待ちを打ち切るか（押したキーで見る）
-// mode が 0 でなければ、ためておいたキーで見る
-//--------------------------------------------------------------------------
+// As UiWork_CheckCancelByInput, but on a newly pressed button: the latched
+// presses while UiRenderWork.mode is set. Returns 1 when the player has
+// dismissed the text.
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
   struct UiRenderWork *work = UI_WORK;
   s32 key;
@@ -4452,9 +4587,8 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
   return 0;
 }
 
-//--------------------------------------------------------------------------
-// 書き終えたチャンネルのウィンドウを閉じ、10 フレーム待つ
-//--------------------------------------------------------------------------
+// Closes each message channel's window whose text has ended, then waits ten
+// frames.
 void UiWork_FinalizePendingCore(void) {
   s32 i;
   struct UiChannelSlot *ch;
@@ -4466,7 +4600,7 @@ void UiWork_FinalizePendingCore(void) {
     work = ch->work;
     if (work != NULL && (*(s32 *)&work->frame) == 0 && work->flags != 0 &&
         work->state != 0) {
-      UiWork_Finalize(work, 2 & work->flags);
+      UiWork_Finalize(work, UI_WINDOW_INSTANT & work->flags);
     }
     i++;
     ch++;
@@ -5534,13 +5668,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index) {
   }
 }
 
-//--------------------------------------------------------------------------
-// get_node_at_count.c
-// メニュー：つながったノードの count 番目をさがす
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// st->node から next を st->count 回たどったノードを返す
-//--------------------------------------------------------------------------
+// Returns the node st->count links on from st->node.
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
   struct NodeChainNode *node = st->node;
   s32 i;
@@ -6314,13 +6442,7 @@ void UiWindow_OpenMode1AndWaitFrame(void) {
   WaitFrames(1);
 }
 
-//--------------------------------------------------------------------------
-// runtime_close_and_release.c
-// ウィンドウ：ヒープ 16 番のウィンドウを閉じてブロックを返す
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// ヒープ 16 番のウィンドウを閉じ、ブロックを返す
-//--------------------------------------------------------------------------
+// Closes the window kept in heap block 16 and frees the block.
 void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
 
 void Ui_ClearWorkStateAndWaitFrame(void) {

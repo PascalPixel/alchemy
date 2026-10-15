@@ -49,6 +49,37 @@ enum {
 #define UI_CANVAS_SIZE 0xf00
 #define UI_CANVAS_FIRST_TILE 0x128
 
+// How a render output's sprite moves (struct RenderOutput.active), run each
+// frame by UiWork_AnimateSpriteSlots. 0 is a free output.
+enum {
+  UI_SPRITE_STILL = 1,
+  UI_SPRITE_PAGE_ARROW = 2,   // the animated next-page arrow, bobbing
+  UI_SPRITE_WOBBLE = 4,       // swings along a small arc
+  UI_SPRITE_SHAKE = 5,        // jitters by a pixel every other frame
+  UI_SPRITE_POP = 6,          // shown at double size, then normal size
+  UI_SPRITE_SPIN = 7,         // turns while circling its place
+  UI_SPRITE_PULSE = 8,        // shown at 1.25 times, then normal size
+  UI_SPRITE_SWELL = 9,        // pulses between 1 and 1.5 times its size
+  UI_SPRITE_SWELL_HALF = 10,  // the same at half the scale
+  UI_SPRITE_SHRINK = 11,      // shrinks from 1.5 times to its size, once
+  UI_SPRITE_SHRINK_HALF = 12, // the same at half the scale
+  UI_SPRITE_HIDDEN = 13,      // not drawn
+  UI_SPRITE_HOP_DOWN = 14,    // 14 to 16: hops down and back
+  UI_SPRITE_HOP_UP = 17,
+  UI_SPRITE_HOP_DOWN_LEFT = 18,
+};
+
+// The kinds of message argument (UiWork_PushValueSlot), which the message
+// codes such as {argument_item_name} read.
+enum {
+  MSG_ARG_ACTOR = 1,
+  MSG_ARG_ITEM = 2,
+  MSG_ARG_CLASS = 3,
+  MSG_ARG_ABILITY = 4,
+  MSG_ARG_NUMBER = 5,
+  MSG_ARG_LOCATION = 6,
+};
+
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_ReleaseFree(struct RenderOutput *out);
 void UiWork_InitFreeList(void);
@@ -176,8 +207,9 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
 
 #define ACTION_ID_MASK 0x3fff
 
-// no の表示エントリを作り、UiWindow_FitOnScreen に flags をつけてわたす。
-// エントリがなければ 0 を返す
+// Defines name(no, x, y, width, height): decodes message no and fits a window
+// for it on the screen near tile (x, y) (UiWindow_FitOnScreen with flags),
+// returning its place and size in tiles. Returns 0 for an empty message.
 #define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
   s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
     struct UiRenderWork *work;                                                 \

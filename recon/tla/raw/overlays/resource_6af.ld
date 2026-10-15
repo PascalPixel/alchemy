@@ -4,12 +4,9 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_6af/entry.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/common/object/prepare_object.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x020080ce)
         "*/games/tla/src/field/overlay_6af/s00d0.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x0200815a)
         "*/resource_6af_overlay.o"(.text.x0200815c)
         "*/games/tla/src/field/overlay_6af/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_6af/s0350.o"(.text)

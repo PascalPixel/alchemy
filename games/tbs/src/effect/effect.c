@@ -13940,47 +13940,54 @@ void BattleFx_InitializeRisingObject(s32 id) {
   ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 }
 
-// キャラを、相手までの 8 割の位置へ frames フレームで動かす
+// Moves a battler 80% of the way to another one over a number of frames,
+// in its action pose.
+//
+// id: the battler that moves.
+// targetId: the battler it moves towards.
+// frames: how long the move takes.
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
-  struct MotionObject *obj = slot->object;
+  struct MotionObject *object = slot->object;
   struct MotionObject *target = targetSlot->object;
-  s32 rate = 80; // %
-  s32 diffX = target->x - obj->x;
-  s32 startX = obj->x;
+  s32 rate = 80; // percent of the way
+  s32 diffX = target->x - object->x;
+  s32 startX = object->x;
   s32 dx = rate * diffX / 100;
-  s32 diffZ = target->z - obj->z;
-  s32 startZ = obj->z;
+  s32 diffZ = target->z - object->z;
+  s32 startZ = object->z;
   s32 dz = rate * diffZ / 100;
   s32 x = startX + dx;
   s32 z = startZ + dz;
-  s32 sx = dx >> 8; // 1/256 ドットで距離を求める
-  s32 sz = dz >> 8;
-  s32 dist;
+  s32 stepX = dx >> 8; // the distance is measured in 1/256 pixels
+  s32 stepZ = dz >> 8;
+  s32 speed;
 
-  dist = Iwram_Sqrt(sx * sx + sz * sz);
-  dist = (dist << 8) / frames;
-  obj->acceleration = dist;
-  obj->speedLimit = dist;
-  obj->snapToTarget = 1;
-  obj->verticalMotionStrength = 0xab85;
-  obj->velocityY = 0;
-  obj->verticalMotionPhase = 0;
-  obj->autoFaceMotion = 1;
-  ObjectDispatch_InitFromTable6Far(obj);
-  Object_SetMoveTargetFar(obj, x, 0, z);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+  speed = Iwram_Sqrt(stepX * stepX + stepZ * stepZ);
+  speed = (speed << 8) / frames;
+  object->acceleration = speed;
+  object->speedLimit = speed;
+  object->snapToTarget = 1;
+  object->verticalMotionStrength = 0xab85;
+  object->velocityY = 0;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 1;
+  ObjectDispatch_InitFromTable6Far(object);
+  Object_SetMoveTargetFar(object, x, 0, z);
+  ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 }
 
-// pack_rows.c
-// タイル：横 2 バイトを 1 バイトに詰める
-// 1 行 40 バイトを 288 行、横に 2 バイトずつ 1 バイトに詰めて写す
-// （あとの奇数列のバイトが残る）
-// stride : src の 1 行のバイト数（dst はその半分）
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused) {
-  s32 y = 0;
-  s32 h = 288;
+// Packs 288 rows of 40 bytes to half width, keeping every second byte
+// (the bytes of the odd columns win).
+//
+// src: the rows to pack.
+// dst: receives the packed rows, half the stride apart.
+// stride: the bytes in one row of src.
+// rowCount: ignored; 288 rows are always packed.
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
+  s32 row = 0;
+  s32 rows = 288;
   s32 offset = 0;
 
   do {
@@ -13990,14 +13997,14 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
-    y++;
-  } while (y != h);
+    row++;
+  } while (row != rows);
 }
 
-#define PARTICLE_MAX 64 // 粒の数
-#define RING_SIZE 0x3c0 // 輪の一枚 (20x48)
+#define PARTICLE_MAX 64 // sparks
+#define RING_SIZE 0x3c0 // one 20x48 ring picture
 
-// 四種の入口
+// The rushing strike in each of its four palettes.
 void BattleFx_RunParticleFieldVariant0(s32 effect) {
   BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 0);
 }
@@ -14014,47 +14021,50 @@ void BattleFx_RunParticleFieldVariant3(s32 effect) {
   BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 3);
 }
 
-// 使う者が最初の対象へ寄り、10 フレーム目に当てる
-// 対象の位置に輪を出し、粒を 64 個飛び散らせる。全部で 60 フレーム
-// variant : 色 (パレットの元の絵 0-3)
+// Rushing strike: the user rushes at the first target and strikes it on
+// frame 10; a ring flares where it hits and 64 sparks scatter, over 60
+// frames in all.
+//
+// effect: the user and the targets.
+// variant: the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect,
                                       s32 variant) {
   /* FAKEMATCH: needed to match: the blitter/camera declarations and independent
    * store order preserve spill slots and loop preheader order 2026-10-11: the
    * camera read is the plain slot now; Ram_MapCellBuffer at the two uses of
    * cells differs 2 (its load moves ahead of lsls r3 at the packing call). */
-  void **heap;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
   u8 *sheet;
-  struct EffectStep *p;
-  struct EffectStep *step;
+  struct EffectStep *spark;
+  struct EffectStep *newSpark;
   struct EffectPosition origin;
   struct EffectPosition screen;
-  struct EffectPosition pos;
+  struct EffectPosition sparkScreen;
   struct MotionObject *target;
   s32 frame;
-  s32 n;
+  s32 i;
   s32 size;
-  s32 t;
-  s32 pal;
+  s32 ringFrame;
+  s32 paletteId;
   u8 *cells;
 
-  // ワーク、キャンバス、カメラ
+  // The work, the canvas and the camera.
   cells = Ram_MapCellBuffer;
-  heap = gBattleFxWork;
-  cursor = heap;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  camera = heap[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
-  sheet = heap[2];
+  camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // 上半分と、上下を反転した下半分。向こう側なら左右も反転する
+  // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, COMPOSITE_MAX);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
@@ -14068,87 +14078,89 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect,
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
-  // 絵と色
+  // Pictures and palette: the ring is the yellow orb packed to half width.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
-  Graphics_PackTileRows((u8 *)work, (u8 *)cells, 40, 288);
+  Graphics_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1,
                              1);
   switch (variant) {
   case 0:
-    pal = (s32)&ResourceId_FirePillarSheetB;
+    paletteId = (s32)&ResourceId_FirePillarSheetB;
     break;
   case 1:
-    pal = (s32)&ResourceId_IceBlockSheet;
+    paletteId = (s32)&ResourceId_IceBlockSheet;
     break;
   case 2:
-    pal = (s32)&ResourceId_PinkBurstSheet;
+    paletteId = (s32)&ResourceId_PinkBurstSheet;
     break;
   default:
-    pal = (s32)&ResourceId_BlastSheet;
+    paletteId = (s32)&ResourceId_BlastSheet;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(pal), 128);
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 使う者を寄せ、対象の位置に粒を用意する (x は画面の中央の側へ飛ぶ)
+  // Send the user in and ready the sparks at the target (they fly towards
+  // the middle of the field).
   BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  for (n = 0; n != PARTICLE_MAX; n++) {
-    step = &work->particles[n];
-    step->x = target->x;
-    step->y = target->y + 0xa0000; // 10 ドット上
-    step->z = target->z;
-    step->velocityX = (Random16() & 0x1ff) << 11;
-    step->velocityY = ((Random16() & 255) - 64) << 11;
-    step->velocityZ = ((Random16() & 255) - 128) << 11;
-    if (step->x > 0)
-      step->velocityX = -step->velocityX;
-    step->variant = n / 2 + 16; // 残りのフレーム
+  for (i = 0; i != PARTICLE_MAX; i++) {
+    newSpark = &work->particles[i];
+    newSpark->x = target->x;
+    newSpark->y = target->y + 0xa0000; // 10 pixels up
+    newSpark->z = target->z;
+    newSpark->velocityX = (Random16() & 0x1ff) << 11;
+    newSpark->velocityY = ((Random16() & 255) - 64) << 11;
+    newSpark->velocityZ = ((Random16() & 255) - 128) << 11;
+    if (newSpark->x > 0)
+      newSpark->velocityX = -newSpark->velocityX;
+    newSpark->variant = i / 2 + 16; // frames left
   }
   EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
 
   for (frame = 0; frame != 60; frame++) {
-    // 15 フレームのあいだ、使う者の位置に絵を上下二つに分けて描く
+    // For 15 frames, draw the burst at the user in two halves.
     if (frame <= 14) {
       EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &screen);
-      draw[0](canvas, work, screen.x / 2 - 16, screen.y - 48, 40, 32);
-      draw[1](canvas, work, screen.x / 2 - 16, screen.y - 16, 40, 32);
+      draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
+      draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
-    // 当たり
+    // The strike.
     if (frame == 10) {
       ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
       BattleEventRuntime_BeginPhaseFar(134);
       work->shakeFrames = 8;
     }
-    // 輪：8 フレーム目から 2 フレームずつ 6 枚
-    t = frame - 8;
-    if (t >= 0 && t <= 11) {
-      s32 ring = t / 2;
+    // The ring: six pictures, 2 frames each, from frame 8.
+    ringFrame = frame - 8;
+    if (ringFrame >= 0 && ringFrame <= 11) {
+      s32 ring = ringFrame / 2;
       draw[0](canvas, cells + ring * RING_SIZE, origin.x / 2 - 16,
               screen.y - 40, 20, 48);
     }
-    // 粒
-    if (t >= 0 && t <= 55) {
+    // The sparks.
+    if (ringFrame >= 0 && ringFrame <= 55) {
       Render_ResetTransformState();
       Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
-      for (n = 0; n != PARTICLE_MAX; n++) {
-        p = &work->particles[n];
-        size = p->variant;
+      for (i = 0; i != PARTICLE_MAX; i++) {
+        spark = &work->particles[i];
+        size = spark->variant;
         if (size > 0) {
-          EffectPosition_ApplyBaseAndYOffset(&p->x, &pos);
+          EffectPosition_ApplyBaseAndYOffset(&spark->x, &sparkScreen);
           size >>= 4;
           size += 2;
-          pos.x >>= 1;
+          sparkScreen.x >>= 1;
           draw[0](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
-                  pos.x - size / 2, pos.y - size, size, size * 2);
-          EffectStep_AdvanceWithGravity3D(p, 60, -0x200);
-          p->variant--;
+                  sparkScreen.x - size / 2, sparkScreen.y - size, size,
+                  size * 2);
+          EffectStep_AdvanceWithGravity3D(spark, 60, -0x200);
+          spark->variant--;
         }
       }
     }
@@ -14163,45 +14175,46 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
-// transpose_copy.c
-// タイル：バイトの絵を右に 90 度回して写す
-// 幅 w・高さ h の src を、幅 h・高さ w の dst に右へ 90 度回して写す
-// （src のいちばん上の行が dst のいちばん右の列になる）
+// Copies a w x h byte picture into an h x w one turned 90 degrees
+// clockwise: the top row of src becomes the right column of dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
   s32 x;
-  s32 col;
+  s32 column;
   s32 offset;
-  u8 *d;
-  const u8 *s;
+  u8 *to;
+  const u8 *from;
 
   y = 0;
   if (h != 0) {
     offset = 0;
-    col = h;
+    column = h;
     do {
       x = 0;
       if (w != 0) {
-        d = (u8 *)(col + (u32)dst - 1);
-        s = (const u8 *)(offset + (u32)src);
+        to = (u8 *)(column + (u32)dst - 1);
+        from = (const u8 *)(offset + (u32)src);
         do {
           x++;
-          *d = *s;
-          s++;
-          d += h;
+          *to = *from;
+          from++;
+          to += h;
         } while (x != w);
       }
       y++;
       offset += w;
-      col--;
+      column--;
     } while (y != h);
   }
 }
 
-// 水星のジン：(96, 60) のまわりを渦を巻いて回りながら、青い炎を 5 発左へ撃つ
-// 炎は 5 フレーム進むと 32 個の粒に砕ける
+// Mercury djinni flames: the small Mercury djinni spirals around (96, 60)
+// and fires five blue flames to the left; each flame shatters into 32
+// motes after 5 frames, hitting every target.
+//
+// effect: the targets.
 void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -14215,17 +14228,17 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   draw = blit;
   BattleFx_FetchRectangleBlitters(0, draw);
 
-  // 炎の絵は BlueFlame を転置して写す
+  // The flame pictures are the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -14234,7 +14247,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
   Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
   Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   work->transferMode = 2;
-  work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
+  work->transferValue = 75; // each transfer fades the canvas to 3/4
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   for (i = 0; i != 8; i++)
@@ -14247,7 +14260,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
     if (frame == 56)
       BattleEventRuntime_BeginPhaseFar(133);
 
-    // 炎：1 フレームに 12 ドット左へ進み、5 フレーム目で砕ける
+    // Flames move 12 pixels left a frame and shatter on their 5th frame.
     for (i = 0; i != 5; i++) {
       flame = &work->particles[i];
       if (flame->variant != -1) {
@@ -14259,32 +14272,33 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
           AudioCommand_PlayFar(133);
           work->shakeFrames = 4;
           for (j = 0; j != 32; j++) {
-            s32 dir;
+            s32 angle;
             s32 speed;
 
             mote = &PARTICLES[i * 32 + j];
-            dir = Random16() & 0xffff;
+            angle = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = flame->x << 16;
             mote->y = flame->y << 16;
-            mote->velocityX = (Trig_Sin(dir) * speed) >> 8;
-            mote->velocityY = (Trig_Cos(dir) * speed) >> 7;
-            mote->variant = (Random16() & 15) + 32; // 寿命 32〜47 フレーム
+            mote->velocityX = (Trig_Sin(angle) * speed) >> 8;
+            mote->velocityY = (Trig_Cos(angle) * speed) >> 7;
+            mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
         }
       }
     }
 
-    // ジン：32 フレームで 1 周する。半径 64 - 2 × frame (横はその半分) は
-    // 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
+    // The djinni turns once every 32 frames. Its radius, 64 - 2 * frame
+    // (half that across), reaches 0 at frame 32, passing through the
+    // centre, and then grows on the other side.
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
       s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
 
-      draw[1](canvas, work, x - 10, y - 17, 20, 34);
+      draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
       for (i = 0; i != 5; i++) {
-        // 決まったフレームに炎を撃ち、その 6 フレーム後に対象のパレットを
-        // 6 フレーム 7 番に替えてアニメ 5 にし、動き 6 を与える
+        // Fire a flame on each launch frame; 6 frames later the targets take
+        // palette 7 and animation 5 for 6 frames, and motion 6.
         if (frame == gMercuryDjinnFlames_LaunchFrames[i]) {
           struct EffectStep *shot = &work->particles[i];
 
@@ -14305,7 +14319,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 粒：寿命に応じて小さくなり、落ちながら減速する
+    // Motes shrink as they age and slow as they fall.
     for (i = 0; i != 256; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -14329,10 +14343,13 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// 木星のジン：回りながら、右上から左下へ火の玉を 8 つ落とす
-// 火の玉は y が 95 を越えると 32 個の粒に砕ける
+// Jupiter djinni fall: the small Jupiter djinni spirals while eight
+// flameballs fall from the top right to the bottom left, 4 frames apart;
+// each shatters into 32 motes below line 95, hitting every target.
+//
+// effect: the targets.
 void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
@@ -14346,11 +14363,11 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
   s32 j;
   s32 angle;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -14362,11 +14379,11 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + 0x320, 1, 0);
   work->transferMode = 2;
-  work->transferValue = 75; // 転送のたびに 3/4 へ減らして残像にする
+  work->transferValue = 75; // each transfer fades the canvas to 3/4
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  // 火の玉の出だし：x 64〜127、y -80〜-17
+  // The flameballs start at x 64 to 127, y -80 to -17.
   for (i = 0; i != 32; i++) {
     ball = &work->particles[i];
     ball->x = (Random16() & 63) + 64;
@@ -14376,21 +14393,23 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
     PARTICLES[i].variant = -1;
   AudioCommand_PlayFar(171);
   frame = 0;
-  angle = 0x8000; // 180°
+  angle = 0x8000; // 180 degrees
   do {
     if (frame == 56)
       BattleEventRuntime_BeginPhaseFar(133);
 
-    // ジン：1 フレームに 11.25° 回る。半径 64 - 2 × frame (横はその半分) は
-    // 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
+    // The djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
+    // (half that across), reaches 0 at frame 32, passing through the
+    // centre, and then grows on the other side.
     if (frame <= 95) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
       s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
 
-      blit[0](canvas, work, x + 86, y + 28, 20, 40);
+      blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
     }
 
-    // 火の玉：4 フレームおきに 1 つずつ、1 フレームに左へ 6、下へ 12 ドット
+    // Flameballs: one every 4 frames, moving 6 pixels left and 12 down a
+    // frame.
     for (i = 0; i != 8; i++) {
       ball = &work->particles[i];
       if (frame >= i * 4 + 8 && ball->y <= 95) {
@@ -14400,17 +14419,17 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
         ball->y += 12;
         if (ball->y > 95) {
           for (j = 0; j != 32; j++) {
-            s32 dir;
+            s32 direction;
             s32 speed;
 
             mote = &PARTICLES[i * 32 + j];
-            dir = Random16() & 0xffff;
+            direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = ball->x << 16;
             mote->y = ball->y << 16;
-            mote->velocityX = (Trig_Sin(dir) * speed) >> 7;
-            mote->velocityY = (Trig_Cos(dir) * speed) >> 6;
-            mote->variant = (Random16() & 15) + 32; // 寿命 32〜47 フレーム
+            mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
+            mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
+            mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
           AudioCommand_PlayFar(133);
           work->shakeFrames = 4;
@@ -14422,7 +14441,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
       }
     }
 
-    // 粒：寿命に応じて小さくなり、落ちながら減速する
+    // Motes shrink as they age and slow as they fall.
     for (i = 0; i != 512; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -14438,7 +14457,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
-    angle -= 0x800; // 11.25°
+    angle -= 0x800; // 11.25 degrees
     frame++;
   } while (frame != 96);
   Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
@@ -14447,18 +14466,21 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// load_and_decompress.c
-// リソース：パレットつきのリソースを展開する
-// リソース id を dst に展開する。先頭 128 バイトがパレットのとき、
-// copy_pal なら BG パレットの先頭に写し、skip_pal ならとばして展開する
-void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
-  u8 *res = Resource_GetTableEntry(id);
+// Decompresses a resource whose first 128 bytes may be a palette.
+//
+// id: the resource.
+// dst: receives the decompressed data.
+// skipPalette: the resource starts with a palette to skip.
+// copyPalette: copy that palette to the start of background palette RAM.
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
+                                s32 copyPalette) {
+  u8 *data = Resource_GetTableEntry(id);
 
-  if (copy_pal != 0)
-    Iwram_CopyWords((void *)0x05000000, res, 128);
-  if (skip_pal != 0)
-    res += 128;
-  Resource_DecodeType01(res, dst);
+  if (copyPalette != 0)
+    Iwram_CopyWords((void *)BG_PLTT, data, 128);
+  if (skipPalette != 0)
+    data += 128;
+  Resource_DecodeType01(data, dst);
 }
 
 void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {

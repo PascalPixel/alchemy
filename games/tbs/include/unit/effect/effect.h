@@ -249,7 +249,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode);
 void BattleFx_InitializeRisingObject(s32 id);
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames);
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused);
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
 void BattleFx_RunParticleFieldVariant0(s32 effect);
 void BattleFx_RunParticleFieldVariant1(s32 effect);
 void BattleFx_RunParticleFieldVariant2(s32 effect);
@@ -259,7 +259,8 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect,
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
 void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect);
 void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect);
-void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal);
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
+                                s32 copyPalette);
 void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect);
 void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect);
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect);

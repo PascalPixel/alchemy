@@ -15,7 +15,44 @@ s32 Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-void Func_020004d4(struct FieldActor *object);
+u32 Random16Far(void);
+
+// On most frames, moves the object to a random spot: x 176 to 431 pixels, y and
+// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
+// previous one and sets mode 9 after action 212, mode 10 otherwise.
+void Func_020004d4(struct FieldActor *object)
+{
+    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *self = (struct ObjectRuntime *)object;
+
+    if (Random16Far() & 0xff)
+    {
+        object->x = ((Random16Far() & 0xff) << 16) + (176 << 16);
+        {
+            s32 r = Random16Far();
+            /* FAKEMATCH: the native loads the leader's y into r3 before it builds the mask; pinned and held behind the barrier it does (differ 4 without both). */
+            register s32 y asm("r3") = leader->y;
+
+            /* FAKEMATCH: the barrier keeps the mask after the load (with the pin above). */
+            __asm__ volatile("");
+            object->y = y + ((r & 31) << 16);
+        }
+        {
+            s32 r = Random16Far();
+            /* FAKEMATCH: as for y, the leader's z loads into r3 before the mask (differ 4 without both). */
+            register s32 z asm("r3") = leader->z;
+
+            /* FAKEMATCH: the barrier keeps the mask after the load (with the pin above). */
+            __asm__ volatile("");
+            object->z = z + ((r & 127) << 16);
+        }
+    }
+    self->unknown_66 = self->action;
+    if (self->action == 212)
+        Func_02005d5c(object, 9);
+    else
+        Func_02005d5c(object, 10);
+}
 
 void Func_02000550(struct FieldActor *object)
 {

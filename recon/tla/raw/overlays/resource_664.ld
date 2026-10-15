@@ -14,7 +14,6 @@ SECTIONS
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_664_overlay.o"(.text.x020082f2)
         "*/resource_664_overlay.o"(.text.x020082f4)
-        "*/resource_664_overlay.o"(.text.x020084d4)
         "*/games/tla/src/field/overlay_664/s0550.o"(.text)
         "*/games/tla/src/field/overlay_664/mapcell.o"(.text)
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)

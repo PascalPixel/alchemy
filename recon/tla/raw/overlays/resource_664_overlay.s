@@ -379,68 +379,6 @@ Func_020002f4:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_020084d0:
 	.4byte 0xffff0000
-	.section .text.x020084d4,"ax",%progbits
-	.global Func_020004d4
-	.thumb_func
-Func_020004d4:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_0200854c
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r3, r1
-	adds r5, r0, #0
-	ldr r0, [r3]
-	bl Object_GetById
-	adds r7, r0, #0
-	bl Random16Far
-	movs r6, #255
-	ands r0, r6
-	cmp r0, #0
-	beq .L_02008524
-	bl Random16Far
-	movs r2, #176
-	ands r0, r6
-	lsls r2, r2, #16
-	lsls r0, r0, #16
-	adds r0, r0, r2
-	str r0, [r5, #8]
-	bl Random16Far
-	ldr r3, [r7, #12]
-	movs r2, #31
-	ands r2, r0
-	lsls r2, r2, #16
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	bl Random16Far
-	ldr r3, [r7, #16]
-	movs r2, #127
-	ands r2, r0
-	lsls r2, r2, #16
-	adds r3, r3, r2
-	str r3, [r5, #16]
-.L_02008524:
-	adds r2, r5, #0
-	adds r2, #100
-	ldrh r3, [r2]
-	adds r1, r5, #0
-	adds r1, #102
-	strh r3, [r1]
-	movs r1, #0
-	ldrsh r3, [r2, r1]
-	cmp r3, #212
-	bne .L_02008542
-	adds r0, r5, #0
-	movs r1, #9
-	bl Func_02005d5c
-	b .L_0200854a
-.L_02008542:
-	adds r0, r5, #0
-	movs r1, #10
-	bl Func_02005d5c
-.L_0200854a:
-	pop {r5, r6, r7, pc}
-.L_0200854c:
-	.4byte gPartyState
 	.section .text.x0200868e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020086cc,"ax",%progbits

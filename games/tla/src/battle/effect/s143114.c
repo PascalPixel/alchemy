@@ -95,3 +95,89 @@ void Func_08143114(void)
         IRQ_UNLOCK(ime);
     }
 }
+
+// The same callback for the 0x7800-byte canvas in the map cell buffer, copied to
+// BG character block 2.
+void Func_08143174(void)
+{
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
+    void *source = Ram_MapCellBuffer;
+    u32 ime;
+
+    IRQ_LOCK(ime);
+    if (work->transferPending == 1)
+    {
+        work->transferPending = 0;
+        IRQ_UNLOCK(ime);
+        switch (work->transferMode)
+        {
+        case 0:
+            CopyWords_((void *)0x06008000, source, 0x7800);
+            break;
+        case 1:
+            CopyWords_((void *)0x06008000, source, 0x7800);
+            FillWords_(source, 0x7800, work->transferValue);
+            break;
+        case 2:
+            if (work->transferValue == 50)
+                ColorBuffer_Halve(source, (void *)0x06008000, 0x7800);
+            else
+                ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x7800);
+            break;
+        case 3:
+            ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000, 0x7800);
+            break;
+        }
+        /* FAKEMATCH: the dead read before the counter is set to 1, as in Func_08143000. */
+        (void)*(volatile s32 *)&work->framesSinceTransfer;
+        work->framesSinceTransfer = 1;
+    }
+    else
+    {
+        IRQ_UNLOCK(ime);
+        work->framesSinceTransfer++;
+    }
+}
+
+// The same for the canvas in the second effect work block.
+void Func_08143264(void)
+{
+    struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
+    void *source;
+    u32 ime;
+
+    IRQ_LOCK(ime);
+    if (work->transferPending == 1)
+    {
+        source = Ram_HeapSlots->battle_fx_work[1];
+        work->transferPending = 0;
+        IRQ_UNLOCK(ime);
+        switch (work->transferMode)
+        {
+        case 0:
+            CopyWords_((void *)0x06008000, source, 0x7800);
+            break;
+        case 1:
+            CopyWords_((void *)0x06008000, source, 0x7800);
+            FillWords_(source, 0x3c00, work->transferValue);
+            break;
+        case 2:
+            if (work->transferValue == 50)
+                ColorBuffer_Halve(source, (void *)0x06008000, 0x3c00);
+            else
+                ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x3c00);
+            break;
+        case 3:
+            ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000, 0x3c00);
+            break;
+        }
+        /* FAKEMATCH: the dead read before the counter is set to 1, as in Func_08143000. */
+        (void)*(volatile s32 *)&work->framesSinceTransfer;
+        work->framesSinceTransfer = 1;
+    }
+    else
+    {
+        IRQ_UNLOCK(ime);
+        work->framesSinceTransfer++;
+    }
+}

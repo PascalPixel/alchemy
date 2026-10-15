@@ -1962,7 +1962,7 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.0013fd84)
     "*/recon/tla/it/rom.o"(.rom.00142944)
     "*/games/tla/src/battle/effect/s143114.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00143174)
+    "*/recon/tla/it/rom.o"(.rom.00143354)
     "*/games/tla/src/battle/effect/s143488.o"(.text)
     "*/games/tla/src/battle/effect/canvas_clear.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0014355c)

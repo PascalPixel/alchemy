@@ -3512,67 +3512,6 @@ Func_020021c0:
 .L_0200a314:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200a364,"ax",%progbits
-	.balign 4
-	.global Func_02002364
-	.thumb_func
-Func_02002364:
-	push {r5, lr}
-	bl Func_02004d40
-	movs r0, #0
-	bl Func_02004e90
-	ldr r5, .L_0200a3e0
-	movs r1, #1
-	adds r0, r5, #0
-	adds r5, #1
-	bl UiText_ShowPositionedMessageAndWait
-	adds r0, r5, #0
-	bl Func_02004dd0
-	movs r1, #0
-	movs r0, #12
-	bl UiText_OpenMessageAtObject
-	ldr r3, .L_0200a3e4
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_0200a3da
-	movs r0, #230
-	movs r1, #0
-	lsls r0, r0, #1
-	bl PartyInventory_GiveItem
-	movs r0, #230
-	lsls r0, r0, #1
-	bl PartyInventory_FindOwner
-	movs r3, #1
-	negs r3, r3
-	cmp r0, r3
-	bne .L_0200a3be
-	bl Func_02004d48
-	b .L_0200a3de
-.L_0200a3be:
-	movs r0, #230
-	lsls r0, r0, #1
-	movs r1, #3
-	bl Func_02004e58
-	movs r0, #12
-	movs r1, #2
-	bl Object_SetModeById
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #249
-	bl GameFlag_SetBit
-.L_0200a3da:
-	bl Func_02004d48
-.L_0200a3de:
-	pop {r5, pc}
-.L_0200a3e0:
-	.4byte MsgBlazeStoneEmber
-.L_0200a3e4:
-	.4byte gPartyState
 	.section .text.x0200a4ac,"ax",%progbits
 	.global Func_020024ac
 	.thumb_func

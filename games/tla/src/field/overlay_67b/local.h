@@ -85,6 +85,7 @@ void Func_02002a18(s32 a);
 void Func_02002a48(s32 a);
 void Func_02002a60(void);
 void Func_02002a70(s32 cue);
+void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 s32 Func_02002030(struct ObjectRuntime *object);
 
 void Func_02000468(struct ObjectRuntime *object);
@@ -303,6 +304,12 @@ static __inline__ void Func_02002a20_(s32 a, s32 b)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02002a20(a, b);
+}
+
+static __inline__ void ObjectMotion_ResetAndSetPosition_(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_ResetAndSetPosition(id, x, z);
 }
 
 static __inline__ void *MemAlloc_(s32 size)

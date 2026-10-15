@@ -4828,10 +4828,8 @@ Resource_Data0B2:
 	.incbin "baserom.gba", 0x008857ad, 0x00000003
 	.section .rom.0088687a, "ax"
 	.incbin "baserom.gba", 0x0088687a, 0x00000002
-	.section .rom.0088687c, "ax"
-	.global Resource_Data0C3
-Resource_Data0C3:
-	.incbin "baserom.gba", 0x0088687c, 0x000002e8
+	.section .rom.00886b62, "ax"
+	.incbin "baserom.gba", 0x00886b62, 0x00000002
 	.section .rom.00886cb6, "ax"
 	.incbin "baserom.gba", 0x00886cb6, 0x00000002
 	.section .rom.008891c3, "ax"

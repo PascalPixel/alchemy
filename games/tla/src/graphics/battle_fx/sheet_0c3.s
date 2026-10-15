@@ -1,0 +1,7 @@
+	.section .rodata
+@ A 64x64 ring with no palette of its own: Func_08175f74 maps it as a 64 by
+@ 64 texture. That effect colours it with a ramp it computes; the PNG carries
+@ BattleFx_BoltSheet's palette, the one it loads most often
+	.global Resource_Data0C3
+Resource_Data0C3:
+	.incbin "games/tla/src/graphics/battle_fx/sheet_0c3.bitmap.lz"

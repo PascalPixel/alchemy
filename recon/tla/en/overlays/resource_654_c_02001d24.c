@@ -3,7 +3,7 @@
  * draft r2/r3), the fall speed's register stored as the motion flags byte
  * (native strb of 0xffff0000, draft the known zero in r6), and the order of
  * one ldr against a speed constant. Destined for the end of event6.c. */
-#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
+#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
 
 extern const u8 Data_02003c58[];

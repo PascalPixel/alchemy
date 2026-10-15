@@ -7,7 +7,7 @@
  * to r5 (2); a 5-minute permute found nothing better. In sched2 the stack
  * adjustment and the focus copy tie at priority 47 and the adjustment has
  * more dependents. */
-#include "../../../../games/tla/src/field/overlay_653/local.h"
+#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 struct EventWork1cc {
     u8 unknown_000[0x1cc];

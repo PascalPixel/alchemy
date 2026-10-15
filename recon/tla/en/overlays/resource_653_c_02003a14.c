@@ -2,7 +2,7 @@
  * Data_02006294 first and sets the call argument (movs r0, #0) between the
  * mask and the and; a one-pass block before the bit-field store leaves
  * differ 4. */
-#include "../../../../games/tla/src/field/overlay_653/local.h"
+#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 struct MapWork17 {
     u8 unknown_00[0x17];

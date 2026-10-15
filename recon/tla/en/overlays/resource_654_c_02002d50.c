@@ -5,7 +5,7 @@
  * forms the state pointer (adds r0, #98) in the jump-table block after the
  * range check; formed before the switch it comes ahead of the check, and
  * formed in each case it stays there (differ 58). */
-#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
+#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 
 void Func_020027f8(void);
 void Func_02002830(void);

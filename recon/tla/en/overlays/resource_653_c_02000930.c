@@ -3,7 +3,7 @@
  * the attribute byte; the draft loads the sprite first. A direct
  * object->animation cast, a one-pass block and a masked temporary were
  * tried (differ 4, 4 and 15). */
-#include "../../../../games/tla/src/field/overlay_653/local.h"
+#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 void Func_02000930(struct ObjectRuntime *object, s32 priority)
 {

@@ -6,7 +6,7 @@
  * and the load comes first in insn order). Measured: Call2 and Value2 (2), r1
  * pinned (2), the 1 held by an empty asm (fixes it, but the rectangle copy's
  * arguments before it reorder: 4), a second barrier anywhere (4). */
-#include "../../../../games/tla/src/field/overlay_654/shrine_of_the_sea_god.h"
+#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "iowrite.h"
 #include "call.h"

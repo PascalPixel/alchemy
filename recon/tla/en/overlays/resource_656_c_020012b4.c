@@ -1,10 +1,10 @@
 // near miss: differ 22 (listing 68 instructions, draft 68); registers: the native keeps the owner's address in r5 and the leader in r6; the draft swaps them
-#include "../../../../games/tla/src/field/overlay_656/ov656.h"
+#include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
 
 void Func_020012b4(void)
 {
-    struct Ov656Object *leader = Object_GetById(gPartyState.current_owner);
-    struct Ov656Object *object;
+    struct LemurianShipObject *leader = Object_GetById(gPartyState.current_owner);
+    struct LemurianShipObject *object;
 
     Func_02002c68();
     Func_02002da8(0);
@@ -16,7 +16,7 @@ void Func_020012b4(void)
     WaitFrames(10);
     Object_AttachWorkTargetToObject(gPartyState.current_owner, 0);
     WaitFrames(1);
-    Ov656_BlendStart(6, 0, 1, 2, 6, 4);
+    LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
     Func_02002c10();
     WaitFrames(1);
     GameFlag_SetBit(0x9e4);

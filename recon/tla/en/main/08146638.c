@@ -1,4 +1,4 @@
-/* Near miss, differ 36 of 480.
+/* Near miss, differ 34 of 480.
  *
  * Twin: The Broken Seal's BattleFx_RunRingBolts (effect kind 68 there and
  * here), ported call for call. The Lost Age's changes: the effect argument is
@@ -9,7 +9,10 @@
  * Object_ResetMotion and Object_SetPosition. The tables are not const (see
  * Func_08146a6c).
  *
- * Left: order only. Same frame, registers and instructions; at about sixteen
+ * Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+ * returns its store-flag and The Broken Seal's returns s32: void it is 36.
+ *
+ * Left: order only. Same frame, registers and instructions; at about fifteen
  * rows the native issues a memory access (the argument's spill, a work slot,
  * a spill reload or a field read) one instruction ahead of the constant or
  * move beside it.
@@ -46,7 +49,7 @@ void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
 void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
 void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);     // ObjectGroup_UpdateMembers
 void Func_080150e4(s32 angle);      // SceneTransform_ApplyRoll

@@ -1,4 +1,4 @@
-/* Near miss, differ 32 of 410.
+/* Near miss, differ 30 of 410.
  *
  * Twin: The Broken Seal's BattleFx_RunSpinningStars (effect kind 62 there and
  * here), ported call for call. The Lost Age's changes: the effect argument is
@@ -9,7 +9,11 @@
  * The two tables are not const: as const arrays loop.c hoists the cell offset
  * out of the draw loops and spills it (differ 182).
  *
- * Left: order only. Same frame, registers and instructions; at eleven rows
+ * Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+ * returns its store-flag and The Broken Seal's returns s32: void it is 32
+ * (alchemy permute, 12 minutes, found this and nothing else).
+ *
+ * Left: order only. Same frame, registers and instructions; at ten rows
  * the native issues a load (the argument's spill, a work slot, a spill reload,
  * a sine operand) one instruction before the constant or store beside it,
  * starting with the prologue's str r0, [sp, #52], which agscc places after
@@ -46,7 +50,7 @@ void Func_08143000(void);           // ..ProcessPendingGraphicsTransfer
 void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
 void Func_081180e8(s32 phase);      // BattleEventRuntime_BeginPhaseFar
-void Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
+s32 Func_081963ec(s32 slot, s32 modeAndFlags); // BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames);     // ObjectGroup_UpdateMembers
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,

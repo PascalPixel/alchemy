@@ -4030,12 +4030,6 @@ Func_08126978:
 	.section .rom.00126a10, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00126a10, 0x000000ec
-	.section .rom.00126afc, "ax"
-	.global BattlePres_SetActorRecordMode
-	.type BattlePres_SetActorRecordMode, %function
-	.thumb_func
-BattlePres_SetActorRecordMode:
-	.incbin "baserom.gba", 0x00126afc, 0x00000080
 	.section .rom.00126be4, "ax"
 	.global Graphics_AdvancePaletteCycle
 	.type Graphics_AdvancePaletteCycle, %function

@@ -1840,7 +1840,6 @@ SECTIONS
         "*/games/tla/src/battle/presentation/init_transition_entries.o"(.text)
         "*/games/tla/src/battle/presentation/divide16.o"(.text)
         "*/recon/tla/raw/081269f8.o"(.text)
-        "*/recon/tla/raw/08126ae4.o"(.text)
         "*/games/tla/src/battle/presentation/present.o"(.text)
         "*/recon/tla/raw/08126bcc.o"(.text)
         "*/games/tla/src/battle/presentation/actor_modes.o"(.text)

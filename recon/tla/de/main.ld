@@ -1680,7 +1680,6 @@ SECTIONS
     "*/games/tla/src/battle/presentation/init_transition_entries.o"(.text)
     "*/games/tla/src/battle/presentation/divide16.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00126a10)
-    "*/recon/tla/de/rom.o"(.rom.00126afc)
     "*/games/tla/src/battle/presentation/present.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00126be4)
     "*/games/tla/src/battle/presentation/actor_modes.o"(.text)

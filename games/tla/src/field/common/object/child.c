@@ -10,7 +10,7 @@
 #include "object_lookup.h"
 #include "object_dispatch.h"
 
-#define Object_SetPartAttribute ((void (*)(struct DispatchObject*,s32))Object_SetPartAttribute)
+#define Object_SetPartAttribute ((void (*)(struct DispatchObject *, s32))Object_SetPartAttribute)
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *);
 
@@ -19,8 +19,10 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 value)
     struct DispatchObject *object;
 
     object = ObjectTable_Get(objectId);
-    if (object != NULL) {
-        if (value & 0x100) {
+    if (object != NULL)
+    {
+        if (value & 0x100)
+        {
             object->update = ObjectGroup_ApplyIndexedChildValue;
             return;
         }

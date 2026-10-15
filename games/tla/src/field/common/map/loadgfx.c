@@ -10,7 +10,7 @@
 
 void MapAnimation_PresentFrame(void)
 {
-    s32 control;
+    s32           control;
     volatile u32 *dma;
 
     control = 0xa80b;
@@ -29,17 +29,17 @@ extern void (*gData_030011f8)(void);
 extern u8 gData_02038000[];
 extern u8 gData_0203a000[];
 extern u8 gData_0201c000[];
-void MapAnimation_Update(void);
-void MapAnimation_PresentFrame(void);
-void Func_0802dd08(void *source, void *destination);
+void      MapAnimation_Update(void);
+void      MapAnimation_PresentFrame(void);
+void      Func_0802dd08(void *source, void *destination);
 
 void MapAnimation_Start(void)
 {
-    u8 *pages = Ram_HeapSlots->unk1c[0];
+    u8                 *pages = Ram_HeapSlots->unk1c[0];
     struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
-    u32 *resources;
-    s32 one;
-    s8 *active;
+    u32                *resources;
+    s32                 one;
+    s8                 *active;
 
     active = &work->animationActive;
     one = 1;
@@ -64,7 +64,7 @@ extern u8 gData_02038000[];
 
 void Map_ShowBg1FromBuffer(void)
 {
-    s32 control;
+    s32           control;
     volatile u32 *dma;
 
     control = 0xa80a;

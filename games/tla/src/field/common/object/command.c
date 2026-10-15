@@ -4,15 +4,15 @@ void ObjectDispatch_WaitForCommandEnd(struct DispatchObject *object)
 {
     s32 cnt = 0;
 
-    if (object->value00 != 0 &&
-        ((const s32 *)object->value00)[object->value04] != 17) {
-        do {
+    if (object->value00 != 0 && ((const s32 *)object->value00)[object->value04] != 17)
+    {
+        do
+        {
             WaitFrames(1);
             cnt++;
             if (cnt > 599)
                 break;
-        } while (object->value00 != 0 &&
-                 ((const s32 *)object->value00)[object->value04] != 17);
+        } while (object->value00 != 0 && ((const s32 *)object->value00)[object->value04] != 17);
     }
 }
 

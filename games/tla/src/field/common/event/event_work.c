@@ -40,24 +40,24 @@ void EventRuntime_WaitDelay(void)
 
 void EventRuntime_SetDestination(s32 scene, s32 entrance)
 {
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+    struct EventWork  *event = Ram_HeapSlots->eventWork;
     struct PartyState *party;
 
     event->countdown = 999;
     /* FAKEMATCH: materialize the party pointer before building the scene offset. */
-    asm volatile ("" : "=r" (party) : "0" (&gPartyState));
+    asm volatile("" : "=r"(party) : "0"(&gPartyState));
     party->scene = scene;
     party->entrance = entrance;
 }
 
 void EventRuntime_SetSavedDestination(s32 scene, s32 entrance)
 {
-    struct EventWork *event = Ram_HeapSlots->eventWork;
+    struct EventWork  *event = Ram_HeapSlots->eventWork;
     struct PartyState *party;
 
     event->countdown = 999;
     /* FAKEMATCH: materialize the party pointer before building the saved-scene offset. */
-    asm volatile ("" : "=r" (party) : "0" (&gPartyState));
+    asm volatile("" : "=r"(party) : "0"(&gPartyState));
     party->savedScene = scene;
     party->savedEntrance = entrance;
 }
@@ -68,7 +68,6 @@ void EventRuntime_SetCountdown(u16 frames)
 
     event->countdown = frames;
 }
-
 
 void BattleFx_SetWeightedResult(s32 row, s32 column)
 {

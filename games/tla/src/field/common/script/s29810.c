@@ -16,7 +16,8 @@ void Func_08029810(struct FieldActor *object)
     second = Random16();
     x = object->x;
     /* FAKEMATCH: a one-pass block keeps the position load ahead of the two halvings; as one statement the first halving comes before the load (2 differ). */
-    do {
+    do
+    {
     } while (0);
     second >>= 1;
     first >>= 1;

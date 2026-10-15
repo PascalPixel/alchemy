@@ -12,9 +12,9 @@
 #include "system.h"
 #include "ram_buffer.h"
 
-
-struct EventWordWork {
-    u8 unk00[0x10];
+struct EventWordWork
+{
+    u8  unk00[0x10];
     s32 word10;
 };
 

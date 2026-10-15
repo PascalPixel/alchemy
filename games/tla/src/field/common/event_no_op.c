@@ -14,7 +14,8 @@ void Func_080d2c9c(void)
 {
     u8 *work = Ram_HeapSlots->eventWork;
 
-    if (work != 0) {
+    if (work != 0)
+    {
         s16 cue = *(s16 *)(work + 0xcb8);
 
         if (cue != -1)
@@ -28,8 +29,9 @@ void GameFlag_ClearBit(s32 flag);
 
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-struct EventWork15a {
-    u8 unk000[0x15a];
+struct EventWork15a
+{
+    u8  unk000[0x15a];
     u16 flag;
 };
 
@@ -44,15 +46,17 @@ void Func_080d2cc4(s32 message)
         ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
 
-struct CueObject {
-    u8 unk00[8];
+struct CueObject
+{
+    u8  unk00[8];
     s32 x;
     s32 base;
     s32 top;
 };
 
-struct EventWork1cc {
-    u8 unk000[0x1cc];
+struct EventWork1cc
+{
+    u8                unk000[0x1cc];
     struct CueObject *focus;
 };
 

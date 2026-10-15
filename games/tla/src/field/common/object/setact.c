@@ -19,7 +19,8 @@ extern const u8 gData_080f34f4[];
 
 void Object_SetActionCallback(struct ObjectRuntime *object, s32 kind)
 {
-    switch (kind) {
+    switch (kind)
+    {
     case 1:
         kind = (s32)gData_080f34e4;
         break;

@@ -32,34 +32,34 @@ void BattleFx_ApplyColorToSourceBufferFar(s32);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-	u16 dispcnt;
+    u16 dispcnt;
 
-	Scheduler_EnableCallbacks(Func_0802386c);
-	Scheduler_EnableCallbacks(Func_08023e18);
+    Scheduler_EnableCallbacks(Func_0802386c);
+    Scheduler_EnableCallbacks(Func_08023e18);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-	Func_080c8368(0x10000, 1);
-	BattleFx_ApplyColorToSourceBufferFar(1);
+    Func_080c8368(0x10000, 1);
+    BattleFx_ApplyColorToSourceBufferFar(1);
 #else
-	BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
-	BattleFx_StartBufferInterpolationFar(1);
+    BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
+    BattleFx_StartBufferInterpolationFar(1);
 #endif
-	WaitFrames(1);
-	dispcnt = REG_DISPCNT;
-	/* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain statement starts the mask first (one pair of instructions swapped). */
-	asm volatile("");
-	REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
+    WaitFrames(1);
+    dispcnt = REG_DISPCNT;
+    /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain statement starts the mask first (one pair of instructions swapped). */
+    asm volatile("");
+    REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-	u16 dispcnt;
+    u16 dispcnt;
 
-	Scheduler_DisableCallbacks(Func_0802386c);
-	Scheduler_DisableCallbacks(Func_08023e18);
-	dispcnt = REG_DISPCNT;
-	/* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain statement starts the mask first (one pair of instructions swapped). */
-	asm volatile("");
-	REG_DISPCNT = dispcnt & 0xe1ff;
+    Scheduler_DisableCallbacks(Func_0802386c);
+    Scheduler_DisableCallbacks(Func_08023e18);
+    dispcnt = REG_DISPCNT;
+    /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain statement starts the mask first (one pair of instructions swapped). */
+    asm volatile("");
+    REG_DISPCNT = dispcnt & 0xe1ff;
 }
 
 s32 ObjectDispatch_ReturnTrue(void)

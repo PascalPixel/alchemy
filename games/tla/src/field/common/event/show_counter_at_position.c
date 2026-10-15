@@ -12,7 +12,6 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 
-
 void Event_ShowCounterAtPosition();
 
 void EventRuntime_ShowCounter(s32 a, s32 b, s32 c, s32 d)
@@ -22,13 +21,13 @@ void EventRuntime_ShowCounter(s32 a, s32 b, s32 c, s32 d)
 
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
-    s32 x0 = x;
+    s32               x0 = x;
     struct EventWork *state = Ram_HeapSlots->eventWork;
-    s32 py = y;
-    s32 px = x0;
-    s32 minX = 8;
-    s32 minY = 20;
-    s32 ret;
+    s32               py = y;
+    s32               px = x0;
+    s32               minX = 8;
+    s32               minY = 20;
+    s32               ret;
 
     if (py > 119)
         py += 32;

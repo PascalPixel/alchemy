@@ -32,7 +32,7 @@ void EventRuntime_ResolvePendingActions(s32 skip)
 s32 EventRuntime_GetControlledOwner(void)
 {
     struct PartyState *state = &gPartyState;
-    s32 actor;
+    s32                actor;
 
     /* FAKEMATCH: load the party state's address before the default owner. */
     asm("");

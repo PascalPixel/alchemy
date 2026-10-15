@@ -19,7 +19,8 @@ void Object_LinkPair(s32 firstId, s32 secondId, s32 wait)
     void *first = ObjectTable_Get(firstId);
     void *second = ObjectTable_Get(secondId);
 
-    if (first != NULL && second != NULL) {
+    if (first != NULL && second != NULL)
+    {
         FacingObject_TurnPairToFaceEachOther(first, second);
         EventRuntime_Wait(wait);
     }
@@ -35,29 +36,36 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct Fac
 
     if (first == NULL || second == NULL)
         return;
-    toward = (u16)ArcTan2(second->positionZ - first->positionZ,
-        second->positionX - first->positionX);
+    toward =
+        (u16)ArcTan2(second->positionZ - first->positionZ, second->positionX - first->positionX);
     away = toward + 0x8000;
-    for (frame = 0; frame < 60; frame++) {
+    for (frame = 0; frame < 60; frame++)
+    {
         delta = (s16)(toward - first->facing);
         turning = 2;
-        if (delta != 0) {
+        if (delta != 0)
+        {
             if (delta > 0x1000)
                 delta = 0x1000;
             if (delta < -0x1000)
                 delta = -0x1000;
             first->facing += delta;
-        } else {
+        }
+        else
+        {
             turning = 1;
         }
         delta = (s16)(away - second->facing);
-        if (delta != 0) {
+        if (delta != 0)
+        {
             if (delta > 0x1000)
                 delta = 0x1000;
             if (delta < -0x1000)
                 delta = -0x1000;
             second->facing += delta;
-        } else {
+        }
+        else
+        {
             turning--;
         }
         if (turning == 0)
@@ -68,10 +76,11 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct Fac
 
 void ObjectTable_DestroyById(s32 id)
 {
-    void *object = ObjectTable_Get(id);
+    void             *object = ObjectTable_Get(id);
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    if (object != NULL) {
+    if (object != NULL)
+    {
         Object_Destroy(object);
         work->objects[id] = NULL;
     }

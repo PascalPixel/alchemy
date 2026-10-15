@@ -1,7 +1,7 @@
 #include "script.h"
 
-s32 GameFlag_Test(s32);
-s32 GameFlag_SetBit(s32);
+s32  GameFlag_Test(s32);
+s32  GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)

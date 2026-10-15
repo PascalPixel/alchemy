@@ -10,8 +10,8 @@ struct ObjectRuntime *Object_FindInCell(s32 *position, struct ObjectRuntime *sel
 {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     /* FAKEMATCH: the counter pinned to r4; without the pin global allocation gives r4 to the object pointer first (differ 12). */
-    register u32 i asm("r4");
-    void **objects;
+    register u32          i asm("r4");
+    void                **objects;
     struct ObjectRuntime *object;
 
     i = 8;
@@ -20,8 +20,7 @@ struct ObjectRuntime *Object_FindInCell(s32 *position, struct ObjectRuntime *sel
 next:
     object = *objects++;
     if (*(volatile s32 *)&position[0] >> 20 == object->x >> 20
-        && position[1] >> 20 == object->y >> 20
-        && position[2] >> 20 == object->z >> 20)
+        && position[1] >> 20 == object->y >> 20 && position[2] >> 20 == object->z >> 20)
         return object;
     i++;
     if (i < 64)

@@ -9,13 +9,16 @@ s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter)
 
 u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
 {
-    s32 index = interpreter->cursor;
+    s32        index = interpreter->cursor;
     const s32 *table = interpreter->script;
-    u32 value = table[index + 1];
+    u32        value = table[index + 1];
 
-    if (interpreter->conditionResult != 0) {
+    if (interpreter->conditionResult != 0)
+    {
         interpreter->cursor = Script_FindLabel(interpreter, value);
-    } else {
+    }
+    else
+    {
         interpreter->cursor += 2;
     }
     return 1;
@@ -23,13 +26,16 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter)
 
 u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
 {
-    s32 index = interpreter->cursor;
+    s32        index = interpreter->cursor;
     const s32 *table = interpreter->script;
-    u32 value = table[index + 1];
+    u32        value = table[index + 1];
 
-    if (interpreter->conditionResult == 0) {
+    if (interpreter->conditionResult == 0)
+    {
         interpreter->cursor = Script_FindLabel(interpreter, value);
-    } else {
+    }
+    else
+    {
         interpreter->cursor += 2;
     }
     return 1;

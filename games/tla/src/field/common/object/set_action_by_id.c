@@ -12,10 +12,10 @@
 #include "objdisp.h"
 #include "system.h"
 
-#define ObjectDispatch_ApplyValueToChildrenFar ((void (*)(struct ObjectRuntime*,s32))ObjectDispatch_ApplyValueToChildrenFar)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+    ((void (*)(struct ObjectRuntime *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-
 
 struct ObjectRuntime *Object_GetById(u32 objectId);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);

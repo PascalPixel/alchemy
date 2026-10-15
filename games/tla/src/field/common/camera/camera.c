@@ -20,7 +20,6 @@ void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2);
 
-
 s32 Runtime_BlankDisplayAndRunScene(void)
 {
     REG_DISPCNT = 0x40;
@@ -31,12 +30,12 @@ s32 Runtime_BlankDisplayAndRunScene(void)
 // The Broken Seal's Camera_ResetSceneDefaults, with the camera tilted to 147.
 void Camera_ResetSceneDefaultsB(void)
 {
-    struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+    struct BattleCamera      *state = Ram_HeapSlots->cameraWork;
     struct FixedPointPosition local;
     /* FAKEMATCH: the result pointer pinned to r1 is copied from the camera where it is set, ahead of the distance's one-pass block; plain, or with the block alone, the copy waits for the call and the distance load comes first (differ 2). */
     register s32 *result asm("r1");
-    u32 ratio;
-    u32 param;
+    u32           ratio;
+    u32           param;
 
     state->pitch = 147 << 8;
     state->distance = 255 << 17;
@@ -59,7 +58,8 @@ void Camera_ResetSceneDefaultsB(void)
     local.y = 0;
     result = (s32 *)state;
     /* FAKEMATCH: a one-pass block keeps the distance load behind the pinned copy; without it the load is scheduled first (differ 2). */
-    do {
+    do
+    {
         local.z = state->distance;
     } while (0);
     Iwram_TransformVector((s32 *)&local, result);

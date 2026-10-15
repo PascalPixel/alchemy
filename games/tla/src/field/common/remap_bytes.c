@@ -8,7 +8,6 @@
 #include "system.h"
 #include "types.h"
 
-
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
     s32 n;
@@ -18,8 +17,10 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
     p = buf;
     table = gRuntime_ByteRemapTable;
     n = cnt - 1;
-    if (n != -1) {
-        do {
+    if (n != -1)
+    {
+        do
+        {
             u32 index = *p;
 
             n -= 1;

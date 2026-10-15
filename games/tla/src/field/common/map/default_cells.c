@@ -19,7 +19,8 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
     work->windowTop = 0;
     work->windowBottom = 0x9f;
     WaitFrames(1);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
+    Resource_DecodeType01(
+        Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), Ram_MapCellBuffer);
     Map_UpdateCurrentTileBlock();
     Scheduler_DisableCallbacks(MapAnimation_Update);
     WaitFrames(1);

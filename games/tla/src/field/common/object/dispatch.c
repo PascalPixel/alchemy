@@ -4,18 +4,21 @@
 void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 argument)
 {
     struct DispatchChild **items;
-    struct DispatchChild *item;
-    s32 count;
+    struct DispatchChild  *item;
+    s32                    count;
 
-    if (object != 0) {
-        switch (object->kind & 0xf) {
+    if (object != 0)
+    {
+        switch (object->kind & 0xf)
+        {
         case 1:
             Animation_ApplyChildArgument(object->target.child, argument);
             break;
         case 2:
             items = object->target.children;
             count = 3;
-            do {
+            do
+            {
                 item = *items++;
                 if (item != 0)
                     Animation_ApplyChildArgument(item, argument);
@@ -28,19 +31,22 @@ void ObjectDispatch_ApplyArgumentToChildren(struct DispatchObject *object, s32 a
 
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 value)
 {
-    s32 count;
-    struct DispatchChild *child;
+    s32                    count;
+    struct DispatchChild  *child;
     struct DispatchChild **children;
 
-    if (object != 0) {
-        switch (object->kind & 0xf) {
+    if (object != 0)
+    {
+        switch (object->kind & 0xf)
+        {
         case 1:
             Animation_ApplyChildValue(object->target.child, value);
             return;
         case 2:
             children = object->target.children;
             count = 3;
-            do {
+            do
+            {
                 child = *children++;
                 if (child != 0)
                     Animation_ApplyChildValue(child, value);
@@ -54,20 +60,24 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
 void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 argument, s32 value)
 {
     struct DispatchChild **items;
-    struct DispatchChild *item;
-    s32 count;
+    struct DispatchChild  *item;
+    s32                    count;
 
-    if (object != 0) {
-        switch (object->kind & 0xf) {
+    if (object != 0)
+    {
+        switch (object->kind & 0xf)
+        {
         case 1:
             Animation_ApplyChildArgument(object->target.child, argument);
             Animation_ApplyChildValue(object->target.child, value);
             break;
         case 2:
             items = object->target.children;
-            for (count = 3; count >= 0; count--) {
+            for (count = 3; count >= 0; count--)
+            {
                 item = *items++;
-                if (item != 0) {
+                if (item != 0)
+                {
                     Animation_ApplyChildArgument(item, argument);
                     Animation_ApplyChildValue(item, value);
                 }
@@ -87,9 +97,11 @@ void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
 {
     struct DispatchChild *child;
 
-    if (object != NULL && (object->kind & 0xf) == 1) {
+    if (object != NULL && (object->kind & 0xf) == 1)
+    {
         child = object->target.child;
-        if (index >= 0) {
+        if (index >= 0)
+        {
             child->entries[0]->animId = index;
             InitializeAnimationObjects(child);
         }
@@ -98,7 +110,8 @@ void Animation_SetIndexAndInitObjects(struct DispatchObject *object, s32 index)
 
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value)
 {
-    if (object != 0 && (object->kind & 0xf) == 1) {
+    if (object != 0 && (object->kind & 0xf) == 1)
+    {
         struct DispatchChild *child = object->target.child;
         if (value >= 0)
             ResourceMetadata_Register(child, value);

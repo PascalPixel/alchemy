@@ -8,8 +8,8 @@ extern u8 gMapCellBuffer[];
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    u8 *cell;
-    s32 old;
+    u8             *cell;
+    s32             old;
 
     if (map == NULL)
         return 0;

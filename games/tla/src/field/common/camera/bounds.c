@@ -9,9 +9,9 @@
 #include "iwram_call.h"
 #include "callback_scheduler.h"
 
-void WaitFrames(s32);
-void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter);
-s32 __divsi3(s32, s32);
+void       WaitFrames(s32);
+void       Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter);
+s32        __divsi3(s32, s32);
 extern u32 gData_03001144;
 
 void Func_080d450c(s32 id, s32 use_setter)
@@ -46,10 +46,12 @@ void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition)
     struct ObjectRuntime *object;
 
     object = ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter;
-    if (target != NULL) {
+    if (target != NULL)
+    {
         ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
         object->linkedObject = target;
-        if (keepCurrentPosition == 0) {
+        if (keepCurrentPosition == 0)
+        {
             object->x = target->x;
             object->y = target->y;
             object->z = target->z;
@@ -70,11 +72,11 @@ void Func_080d45b8(s32 minX, s32 minZ, s32 maxX, s32 maxZ)
 void Func_080d45d8(void)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    s16 *duration;
-    s32 *from;
-    s16 *step;
-    s32 offset;
-    s32 delta;
+    s16            *duration;
+    s32            *from;
+    s16            *step;
+    s32             offset;
+    s32             delta;
 
     if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter->movementState != 0)
         return;
@@ -88,7 +90,8 @@ void Func_080d45d8(void)
     offset = *from + __divsi3(delta * *step, *duration);
     map->zoom = Iwram_MulQ16(map->farPlane, offset);
     gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
-    if (*step == *duration) {
+    if (*step == *duration)
+    {
         *duration = 0;
         Scheduler_RemoveCallback(Func_080d45d8);
     }
@@ -97,7 +100,7 @@ void Func_080d45d8(void)
 void Func_080d46a4(s32 zoom, s32 frames)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    s32 result;
+    s32             result;
 
     if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->controlMode != 3)
         return;
@@ -115,12 +118,15 @@ void Func_080d46a4(s32 zoom, s32 frames)
 void Func_080d4714(void)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    s32 frames;
+    s32             frames;
 
-    if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->controlMode == 3) {
+    if (((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->controlMode == 3)
+    {
         frames = 0;
-        if (map->zoomFrames != 0) {
-            do {
+        if (map->zoomFrames != 0)
+        {
+            do
+            {
                 WaitFrames(1);
                 frames++;
             } while (frames <= 0x12b && map->zoomFrames != 0);

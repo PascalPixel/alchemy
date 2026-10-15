@@ -1,13 +1,14 @@
 #include "types.h"
 
-struct ResourceSprite {
+struct ResourceSprite
+{
     u8 unk00[0x10];
     u8 vramBlock;
     u8 flags;
 };
 
 extern u8 gResourceBlockOwners[];
-void Resource_ResetEntry(s32 block);
+void      Resource_ResetEntry(s32 block);
 
 s32 ResourceTable_CountFreeBlocks(void)
 {
@@ -19,8 +20,10 @@ s32 ResourceTable_CountFreeBlocks(void)
     asm volatile("");
     freeCount = 0;
     remaining = 0x200;
-    do {
-        if (*marker++ == 0xff) {
+    do
+    {
+        if (*marker++ == 0xff)
+        {
             freeCount++;
         }
         remaining--;
@@ -30,15 +33,19 @@ s32 ResourceTable_CountFreeBlocks(void)
 
 void *Object_ReplaceResourceEntry(void *src, void *alt)
 {
-    void *ret;
+    void                  *ret;
     struct ResourceSprite *obj;
 
     obj = src;
     ret = NULL;
-    if (obj != NULL) {
-        if (alt == NULL) {
+    if (obj != NULL)
+    {
+        if (alt == NULL)
+        {
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
-        } else {
+        }
+        else
+        {
             Resource_ResetEntry(obj->vramBlock);
             obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
             *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);

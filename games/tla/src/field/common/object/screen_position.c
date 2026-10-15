@@ -10,11 +10,11 @@
 s32 Func_080d5bec(s32 objectId, s32 *position)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
-    s32 *camera;
-    s32 cameraX;
-    s32 cameraZ;
-    s32 x;
-    s32 z;
+    s32                  *camera;
+    s32                   cameraX;
+    s32                   cameraZ;
+    s32                   x;
+    s32                   z;
 
     if (object == 0)
         return -1;
@@ -28,6 +28,7 @@ s32 Func_080d5bec(s32 objectId, s32 *position)
     *position = z / 0x10000;
     if ((object->animationKind & 15) == 1)
         *position -= (s8)Resource_GetMetadataRecordFarFar(
-            *((struct BattleAnimationState *)object->animation)->value28)->boxX;
+            *((struct BattleAnimationState *)object->animation)->value28)
+                         ->boxX;
     return 0;
 }

@@ -22,12 +22,12 @@ void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 //--------------------------------------------------------------------------
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability)
 {
-	// 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
-	OwnerAction_AddFar();
+    // 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
+    OwnerAction_AddFar();
 #if GAME_TLA
-	Audio_PlayCue(83);
-	UiText_DrawQuantity(unit, 1);
-	UiText_DrawQuantity(ability, 4);
+    Audio_PlayCue(83);
+    UiText_DrawQuantity(unit, 1);
+    UiText_DrawQuantity(ability, 4);
 #endif
-	UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
+    UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }

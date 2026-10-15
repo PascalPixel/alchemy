@@ -2,7 +2,8 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct ObjectLayerAnimation {
+struct ObjectLayerAnimation
+{
     u8 unk00[9];
     u8 unused09 : 2;
     u8 layer : 2;
@@ -15,9 +16,10 @@ struct ObjectLayerAnimation {
 s32 Func_080d4ab4(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
-    s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
+    s32                   layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
 
-    if ((object->animationKind & 0xf) == 1) {
+    if ((object->animationKind & 0xf) == 1)
+    {
         struct ObjectLayerAnimation *animation = object->animation;
 
         animation->layer = layer;

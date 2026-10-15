@@ -10,7 +10,6 @@
 #include "types.h"
 #include "effect_step.h"
 
-
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
     s32 vx = step->velocityX;

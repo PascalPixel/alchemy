@@ -2,8 +2,9 @@
 #include "object_lookup.h"
 #include "types.h"
 
-struct ObjectPairPosition {
-    u8 unk00[6];
+struct ObjectPairPosition
+{
+    u8  unk00[6];
     s16 angle;
     s32 x;
     s32 y;
@@ -19,9 +20,9 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait)
 
     first = ObjectTable_Get(firstId);
     second = ObjectTable_Get(secondId);
-    if (first != 0 && second != 0) {
-        first->angle = ArcTan2(second->z - first->z,
-            second->x - first->x);
+    if (first != 0 && second != 0)
+    {
+        first->angle = ArcTan2(second->z - first->z, second->x - first->x);
         EventRuntime_Wait(wait);
     }
 }

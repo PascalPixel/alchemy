@@ -11,9 +11,9 @@ void *Object_GetById(s32 id);
 void Effect_AdvanceMotionAndSpin(union FieldObject *object)
 {
     struct FieldEffect *effect = &object->effect;
-    s32 velocityX;
-    s32 velocityZ;
-    s32 scaleRateX;
+    s32                 velocityX;
+    s32                 velocityZ;
+    s32                 scaleRateX;
 
     Object_GetById(gPartyState.currentOwner);
     velocityX = effect->velocityX;

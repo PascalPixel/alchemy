@@ -16,7 +16,7 @@ void BattleEffect_CleanupSceneObjects(void);
 
 s32 EventRuntime_ExecutePackedAction(u32 packed)
 {
-    s32 action, mode, kind, selector, target;
+    s32                  action, mode, kind, selector, target;
     struct PendingEvent *first, *second;
 
     action = packed & 0x3ff;
@@ -26,7 +26,8 @@ s32 EventRuntime_ExecutePackedAction(u32 packed)
     first = Func_080ce458(0x30000005, kind, selector);
     second = Func_080ce458(0x20000005, kind, selector);
     target = -1;
-    if (first != NULL || second != NULL) {
+    if (first != NULL || second != NULL)
+    {
         if (selector != -1 && (selector & 0x100))
             target = selector & 255;
     }

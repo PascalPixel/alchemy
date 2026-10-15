@@ -14,9 +14,9 @@ s32 ObjectTable_ReadActiveValue();
 //--------------------------------------------------------------------------
 void ObjectTable_RunIfActive(s32 id)
 {
-	s32 no;
+    s32 no;
 
-	no = ObjectTable_ReadActiveValue(id);
-	if (no != -1)
-		UiWork_FinalizeEntityMatchingLocalizedIdFar(no);
+    no = ObjectTable_ReadActiveValue(id);
+    if (no != -1)
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(no);
 }

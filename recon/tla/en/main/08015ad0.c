@@ -1,40 +1,15 @@
+/* Draft, differ 2 of 39: the native loads the save workspace pointer before
+ * the prologue's sub sp, #60, this adjusts the stack first. Measured: the
+ * slot read plainly, in a one-pass block, before a barrier (differ 10) or
+ * through an operand barrier (all differ 2 or worse). The Lost Age checks
+ * every third of its 15 slots and answers 15 for none. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
-#include "dma.h"
-#include "flash.h"
-
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
-
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define DMA3_BUSY 0x80000000
-
-#define START_DMA(source_, destination_, control_) \
-    Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
-
-static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
-{
-    while ((channel->control & DMA3_BUSY) != 0) {}
-}
-
-#define WAIT_DMA() WaitDma(DMA3)
-
-extern u16 (*Flash_Handler0)(u16 sector, u8 *source);
-extern const u8 Save_Signature[];
-extern const u8 Save_HeaderTemplate[];
 
 u32 Random16(void);
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-s32 SaveState_ChecksumWorkspace(void);
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
-u32 SaveState_WriteWorkspaceSlot(s32 sector);
-s32 SaveState_InvalidateSlot(s32 index);
 
-u32 SaveState_SelectWriteSlot(s32 record_id)
+u32 SaveState_SelectWriteSlot(s32 mode)
 {
     u32 empty[15];
     s32 count;
@@ -56,7 +31,7 @@ u32 SaveState_SelectWriteSlot(s32 record_id)
     if (count != 0) {
         if (count == 1) {
             index = empty[0];
-            if (SaveState_FindLatestSlot(record_id) == 15)
+            if (SaveState_FindLatestSlot(mode) == 15)
                 index = 15;
         } else {
             index = Random16() % count;

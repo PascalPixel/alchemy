@@ -1,50 +1,50 @@
-#include "mem.h"
+/* Draft, differ 2 of 83: before the item icon's store the native loads the
+ * table address between the first two instructions of the split offset 0x604
+ * (movs r3, #192; ldr r2, =table; lsls r3, r3, #3), this finishes the shift
+ * first. As in Resource_InitializeTable, the native behaves as if the split
+ * constant's first instruction had a load's two-cycle latency under
+ * -mtune=arm9tdmi; agscc gives it one, and sched2 ranks the shift (45) above
+ * the load (44). Measured: block temporaries for the table, the entry or the
+ * field (2 to 20), an operand barrier on the table (12). */
 #include "types.h"
-#include "scene.h"
-#include "resource.h"
+#include "glyph.h"
+#include "mem.h"
 
-typedef struct {
-    u8 pad0[0x400];
-    u8 f400;
-    u8 pad401[0x600 - 0x401];
-    s16 f600;
-    s16 f602;
-    s32 f604;
-} FontTransfer;
+extern u8 *UiIcon_BaseGlyphPointers[];
+extern u8 *UiIcon_ItemIconPointers[];
 
-extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
+void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
+s32 Ui_CountIconTableEntries(void);
+s32 Resource_FindFreeEntry(void);
+s32 VramBlock_LoadCached(s32 slot, s32 size, const void *data);
 
-extern s32 UiIcon_FramePointerTable[];
-extern s32 UiIcon_ItemIconPointers[];
-
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
-                   s32 *dst, s32 reuse)
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse)
 {
-    FontTransfer *work;
+    GlyphTransfer *work;
     s32 slot;
 
     slot = 0;
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
+    work = Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
 
     if (glyph >= Ui_CountIconTableEntries())
         glyph = 0;
 
     if (with_base != 0) {
-        work->f604 = UiIcon_FramePointerTable[2];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_BaseGlyphPointers[2];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);
         slot = 1;
     }
 
-    work->f604 = UiIcon_ItemIconPointers[glyph];
-    work->f600 = 2;
-    work->f602 = 2;
+    work->encoded = UiIcon_ItemIconPointers[glyph];
+    work->width = 2;
+    work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, slot);
 
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
-    Runtime_ReleaseHeapBlock(0x11);
+    *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
+    Runtime_ReleaseHeapBlock(68);
 }

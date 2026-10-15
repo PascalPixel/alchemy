@@ -1,11 +1,15 @@
-/* Draft, differ 4 of 32: The Broken Seal's Map_RenderPaletteMappedColumn with the colour table as
- * the fixed address Ram_MapCellBuffer; the loop matches. Left, as in Map_RenderPaletteMappedRow
- * (0802c174): the native loads 0x06004000 into r5 before the map address is added (ldr r5; adds
- * r4, r3, r2; ... adds r1, r3, r5), this form into r2 two rows later. */
+/* Draft, differ 4 of 32: The Broken Seal's Map_RenderPaletteMappedColumn
+ * with the colour table at the fixed Ram_MapCellBuffer, as in the row
+ * draft 0802c174 (as the symbol: differ 36). Left, as there: the native loads
+ * 0x06004000 into r5, the register the loop then uses for the colour table,
+ * between the map offset's shift and add; this loads it into r2 just before
+ * its add. A pin of the base to r5 with an operand barrier gives r5 (differ
+ * 2), but the load still follows the map address. */
 #include "types.h"
 #include "ram_buffer.h"
 
 extern u8 gMapBlocks[];
+extern u8 gMapCellBuffer[];
 
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {

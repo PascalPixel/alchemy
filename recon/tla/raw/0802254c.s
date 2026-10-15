@@ -146,7 +146,7 @@ Func_0802254c:
 	ldrh r0, [r7, #18]
 	asrs r1, r6, #8
 	asrs r2, r5, #8
-	bl Func_0801440c
+	bl AffineMatrix_Build
 	mov r8, r0
 	b .L_08022666
 .L_08022660:

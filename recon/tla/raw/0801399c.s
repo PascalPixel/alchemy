@@ -69,7 +69,7 @@ Func_0801399c:
 	adds r1, #16
 	ldmia r0!, {r2, r3, r4, r5}
 	stmia r1!, {r2, r3, r4, r5}
-	bl Func_08013d84
+	bl IoWriteQueue_FlushPending
 .L_08013a26:
 	ldr r1, .L_08013a88
 	ldr r2, [r1]

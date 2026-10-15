@@ -3,6 +3,7 @@
 #include "io_write_queue.h"
 #include "system.h"
 #include "frame.h"
+#include "dma.h"
 
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
     void name(u32 address, u32 value)                                       \
@@ -86,3 +87,33 @@ DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 0x90000)
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 0xa0000)
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native order, as above. */
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 0xb0000)
+
+typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
+
+extern u8 Resource_ExecuteTransferCode[];
+extern u8 Resource_ExecuteTransferSize[];
+
+// Runs the queued I/O writes with the transfer routine copied to the stack.
+void IoWriteQueue_FlushPending(void)
+{
+    struct IoWriteQueue *queue;
+    u32 count;
+
+    queue = &gIoWriteQueue;
+    count = queue->count;
+    if (count != 0)
+    {
+        QueueFlushRoutine routine;
+        u32 control = 0x84;
+
+        control <<= 24;
+        {
+            u8 routine_bytes[(u32)Resource_ExecuteTransferSize];
+
+            routine = (QueueFlushRoutine)routine_bytes;
+            Dma_Set(Resource_ExecuteTransferCode, (void *)routine, (sizeof(routine_bytes) >> 2) | control, REG_DMA3);
+            routine(queue, count);
+            queue->count = 0;
+        }
+    }
+}

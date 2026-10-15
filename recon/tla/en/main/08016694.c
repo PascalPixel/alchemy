@@ -1,43 +1,45 @@
-#include "types.h"
+/* Draft, differ 2 of 121: at the end the native loads the halfword constant
+ * 0x80 from the pool before the volatile read of SIOCNT (ldr r2, =0x80; ldrh
+ * r3, [r1]), this reads SIOCNT first. Measured for that: the operands either
+ * way round, a cast, a u16 or u32 temporary (differ 16, a movs or an extra
+ * extension), barriers before or after the timer store, the register through
+ * a pinned pointer (all differ 2 or worse); three minutes of permuter found
+ * nothing. Fixed so far: sio_control set before the data read (the permuter's
+ * form, differ 6 to 4) and the send index read into a temporary before a
+ * barrier, so it loads before the is_parent store (differ 4 to 2). */
 #include "serial_runtime.h"
+#include "io_reg.h"
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
-    /* FAKEMATCH: one runtime view holds the pointer in r4 across all
-       stages and removes the send-index reload and loop-carry move:
-       268 bytes, score 885. Separate stage-view lifetimes retain the
-       reference register allocation and reloads at 280 bytes, score 120. */
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
-    /* FAKEMATCH: the plain TLA union snapshot scores 430 at 276 bytes;
-       it delays stack allocation and the snapshot pointer in lr, uses
-       SP-relative stores, and reverses indexed halfword operands.
-       This volatile local/restricted view retains the closer order and
-       register choices: score 120 at the complete 280-byte extent. */
-    volatile union SerialDataRegisters serial_data;
-    union SerialDataRegisters *const __restrict serial_snapshot =
-        (union SerialDataRegisters *)&serial_data;
+    u16 recv[4];
     volatile u32 *sio_control;
     s32 channel;
 
-    sio_control = (volatile u32 *)0x04000128;
-    *serial_snapshot =
-        *(volatile union SerialDataRegisters *)REG_SIODATA32;
+    sio_control = &REG_SIOCNT;
+    *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
     send_state = &gSerialRuntime;
-    send_state->is_parent = (*sio_control << 25) >> 31;
+    {
+        s32 index;
+        u8 is_parent = (*sio_control << 25) >> 31;
 
-    if (send_state->send_index == -1) {
-        u32 idle_word = 0xfefe;
-        u16 *swap;
+        index = send_state->send_index;
+        asm volatile("");
+        send_state->is_parent = is_parent;
+        if (index == -1) {
+            u32 idle_word = 0xfefe;
+            u16 *swap;
 
-        ((volatile u16 *)sio_control)[1] = idle_word;
-        swap = send_state->send_buffer[1];
-        send_state->send_buffer[1] = send_state->send_buffer[0];
-        send_state->send_buffer[0] = swap;
-    } else if (send_state->send_index >= 0) {
-        ((volatile u16 *)sio_control)[1] =
-            send_state->send_buffer[1][send_state->send_index];
+            ((volatile u16 *)sio_control)[1] = idle_word;
+            swap = send_state->send_buffer[1];
+            send_state->send_buffer[1] = send_state->send_buffer[0];
+            send_state->send_buffer[0] = swap;
+        } else if (index >= 0) {
+            ((volatile u16 *)sio_control)[1] = send_state->send_buffer[1][index];
+        }
     }
     receive_state = &gSerialRuntime;
     if (receive_state->send_index <= 14)
@@ -49,14 +51,12 @@ receive_loop:
         s32 receive_index;
         u16 *incoming;
 
-        if (serial_snapshot->halfwords[channel] == 0xfefe &&
-            receive_state->receive_index[channel] > 13) {
+        if (recv[channel] == 0xfefe && receive_state->receive_index[channel] > 13) {
             receive_state->receive_index[channel] = -1;
         } else {
             receive_index = receive_state->receive_index[channel];
             incoming = receive_state->incoming_buffer[channel];
-            incoming[receive_index] =
-                serial_snapshot->halfwords[channel];
+            incoming[receive_index] = recv[channel];
             if (receive_index == 13) {
                 u16 *swap = receive_state->ready_buffer[channel];
 
@@ -73,11 +73,13 @@ receive_loop:
         tail_state->receive_index[channel]++;
     channel++;
     receive_state = tail_state;
-    if (channel <= 1) goto receive_loop;
+    if (channel <= 1)
+        goto receive_loop;
 
     if (tail_state->mode == 8) {
         REG_TM3CNT_H = 0;
-        REG_SIOCNT16 = REG_SIOCNT16 | 0x80;
+        asm volatile("");
+        REG_SIOCNT16 |= 0x80;
         REG_TM3CNT_H = 0xc0;
     }
 }

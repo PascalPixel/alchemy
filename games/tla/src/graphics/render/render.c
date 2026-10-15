@@ -28,16 +28,9 @@
 
 #define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // 行列 1 つ分の DMA
 
-typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
-
-#if GAME_TLA
 // ⚓️ は余弦を正弦の 90 度先で引く
 #define COS(a) Trig_Sin((a) + 0x4000)
-#else
-#define COS(a) Trig_Cos(a)
-#endif
 
-#if GAME_TLA
 #include "ram_buffer.h"
 
 //--------------------------------------------------------------------------
@@ -66,22 +59,6 @@ void SceneTransform_RewindStack(void)
 	gTransformStackTop = Ram_HeapSlots->transform_stack;
 	gTransformStackDepth = 0;
 }
-
-#else
-
-
-//--------------------------------------------------------------------------
-// 行列の退避先を確保し、今の行列を単位行列にする
-//--------------------------------------------------------------------------
-void Render_ResetTransformState(void)
-{
-	gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
-	gTransformStackDepth = 0;
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_ResetCurrent();
-}
-
-#endif
 
 //--------------------------------------------------------------------------
 // 今の行列を退避する（1 段まで）
@@ -144,10 +121,8 @@ void SceneTransform_ApplyRotation(s32 *ang)
 	s32 m[12];
 
 	sx = Trig_Sin(ang[0]);
-#if GAME_TLA
 	/* FAKEMATCH: a one-pass block ends the scheduling block after the first sine: ⚓️ saves it and loads the angle before it builds 0x4000 (plainly the constant is built first, one reordered row). */
 	do {} while (0);
-#endif
 	cx = COS(ang[0]);
 	sy = Trig_Sin(ang[1]);
 	cy = COS(ang[1]);
@@ -168,94 +143,158 @@ void SceneTransform_ApplyRotation(s32 *ang)
 	Iwram_TransformMatrix(m);
 }
 
-#if !GAME_TLA
+// The identity store of transform.h's Transform_SetIdentity in ⚓️'s order,
+// the 1.0 built before the zeros, as ⚓️'s Transform_ResetCurrent builds it.
+static __inline__ void Render_SetIdentity(void *matrix)
+{
+	CAMELOT_ASM("three stmia no C store or copy compiles to")
+	__asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
+					 "mov r3, #0\n\tmov r4, #0\n\t"
+					 "stmia r0!, {r1, r2, r3, r4}\n\t"
+					 "stmia r0!, {r1, r2, r3, r4}\n\t"
+					 "stmia r0!, {r1, r2, r3, r4}"
+		: : "r"(matrix) : "r0", "r1", "r2", "r3", "r4", "memory");
+}
 
-//--------------------------------------------------------------------------
-// X 軸のまわりの回転をかける
-//--------------------------------------------------------------------------
+// Applies a rotation about the X axis.
 void SceneTransform_ApplyPitch(s32 ang)
 {
 	s32 m[12];
-	s32 sin = Trig_Sin(ang);
-	s32 cos = Trig_Cos(ang);
+	s32 sin, cos;
 
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(m);
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	cos = COS(ang);
 	m[4] = cos;
+	m[8] = cos;
+	sin = Trig_Sin(ang);
 	m[5] = sin;
 	m[7] = -sin;
-	m[8] = cos;
 	Iwram_TransformMatrix(m);
 }
 
-//--------------------------------------------------------------------------
-// Y 軸のまわりの回転をかける
-//--------------------------------------------------------------------------
+// Applies a rotation about the Y axis.
 void SceneTransform_ApplyYaw(s32 ang)
 {
 	s32 m[12];
-	s32 sin = Trig_Sin(ang);
-	s32 cos = Trig_Cos(ang);
+	s32 sin, cos;
 
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(m);
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	cos = COS(ang);
 	m[0] = cos;
+	m[8] = cos;
+	sin = Trig_Sin(ang);
 	m[2] = -sin;
 	m[6] = sin;
-	m[8] = cos;
 	Iwram_TransformMatrix(m);
 }
 
-//--------------------------------------------------------------------------
-// Z 軸のまわりの回転をかける
-//--------------------------------------------------------------------------
-void SceneTransform_ApplyRoll(s32 ang)
+// Makes the current matrix a rotation about the Y axis.
+void Func_080150ac(s32 ang)
+{
+	s32 *m = gTransform;
+	s32 sin, cos;
+
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	cos = COS(ang);
+	m[0] = cos;
+	m[8] = cos;
+	sin = Trig_Sin(ang);
+	m[2] = -sin;
+	m[6] = sin;
+}
+
+// Applies a rotation about the Z axis.
+void Func_080150e4(s32 ang)
 {
 	s32 m[12];
-	s32 sin = Trig_Sin(ang);
-	s32 cos = Trig_Cos(ang);
+	s32 sin, cos;
 
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(m);
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	cos = COS(ang);
 	m[0] = cos;
+	m[4] = cos;
+	sin = Trig_Sin(ang);
 	m[1] = sin;
 	m[3] = -sin;
-	m[4] = cos;
 	Iwram_TransformMatrix(m);
 }
 
-//--------------------------------------------------------------------------
-// 平行移動をかける
-// pos : X・Y・Z（Q16）
-//--------------------------------------------------------------------------
+// Applies a translation by pos, X, Y and Z in Q16.
 void SceneTransform_ApplyPosition(const s32 *pos)
 {
 	s32 m[12];
 
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(m);
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
 	m[9] = pos[0];
 	m[10] = pos[1];
 	m[11] = pos[2];
 	Iwram_TransformMatrix(m);
 }
 
-//--------------------------------------------------------------------------
-// 拡大縮小をかける
-// scale : X・Y・Z の倍率（Q16）
-//--------------------------------------------------------------------------
-void SceneTransform_ApplyScale(const s32 *scale)
+// Applies a translation by x, y and z in Q16.
+void Func_08015160(s32 x, s32 y, s32 z)
 {
 	s32 m[12];
 
-	CAMELOT_ASM("the fixed-register identity store of transform.h")
-	Transform_SetIdentity(m);
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	m[9] = x;
+	m[10] = y;
+	m[11] = z;
+	Iwram_TransformMatrix(m);
+}
+
+// Sets the current matrix's translation to pos.
+void SceneTransform_SetPosition(const s32 *pos)
+{
+	gTransform[9] = pos[0];
+	gTransform[10] = pos[1];
+	gTransform[11] = pos[2];
+}
+
+// Applies a scale by scale's X, Y and Z factors in Q16.
+void Func_080151ac(const s32 *scale)
+{
+	s32 m[12];
+
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
 	m[0] = scale[0];
 	m[4] = scale[1];
 	m[8] = scale[2];
 	Iwram_TransformMatrix(m);
 }
 
+// Applies a scale by x, y and z in Q16.
+void Func_080151e4(s32 x, s32 y, s32 z)
+{
+	s32 m[12];
+
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	m[0] = x;
+	m[4] = y;
+	m[8] = z;
+	Iwram_TransformMatrix(m);
+}
+
+// Applies the same scale on all three axes.
+void Func_0801521c(s32 scale)
+{
+	s32 m[12];
+
+	CAMELOT_ASM("the fixed-register identity store above")
+	Render_SetIdentity(m);
+	m[0] = scale;
+	m[4] = scale;
+	m[8] = scale;
+	Iwram_TransformMatrix(m);
+}
 //--------------------------------------------------------------------------
 // 回転と平行移動をまとめてかける
 //--------------------------------------------------------------------------
@@ -265,6 +304,8 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos)
 	s32 m[12];
 
 	sx = Trig_Sin(ang[0]);
+	/* FAKEMATCH: a one-pass block ends the scheduling block after the first sine: ⚓️ saves it and loads the angle before it builds 0x4000 (plainly the constant is built first, one reordered row). */
+	do {} while (0);
 	cx = COS(ang[0]);
 	sy = Trig_Sin(ang[1]);
 	cy = COS(ang[1]);
@@ -296,7 +337,14 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale)
 	s32 m[12];
 
 	sx = Trig_Sin(ang[0]);
-	cx = COS(ang[0]);
+	{
+		s32 quarter;
+
+		/* FAKEMATCH: a one-pass block and a forced temporary for 0x4000: ⚓️ starts the constant before it loads the angle (plainly the load comes first, one reordered row). */
+		do {} while (0);
+		quarter = 0x4000;
+		cx = Trig_Sin(ang[0] + quarter);
+	}
 	sy = Trig_Sin(ang[1]);
 	cy = COS(ang[1]);
 	sz = Trig_Sin(ang[2]);
@@ -318,81 +366,3 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale)
 	m[11] = pos[2];
 	Iwram_TransformMatrix(m);
 }
-
-//--------------------------------------------------------------------------
-// eye から target を見るカメラの行列を out につくる
-// 横の軸は水平（Y 成分 0）にとる
-//--------------------------------------------------------------------------
-void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
-{
-	u32 code[7];
-	s32 dx, dy, dz;
-	s32 ux;
-	s32 zero = 0;
-	s32 ex;
-	Dot3Fn		 dot;
-	s32			 ey;
-	s32 uz;
-	s32			 vx, vy, vz;
-	s32			 scale;
-	s32			 ez;
-	s32			 t;
-	u32			 num = 0x80000000; // 逆数を求めるときの被除数 2^31
-	u32 (*divide)(u32 dividend, u32 divisor);
-
-	// 内積のルーチンをスタックに写して、そこで呼ぶ
-	dot = (Dot3Fn)code;
-	Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 7, REG_DMA3);
-
-	// 視線の向き d（target から eye へ、長さ 1）
-	dx = target[0] - eye[0];
-	dy = target[1] - eye[1];
-	dz = target[2] - eye[2];
-	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
-	divide = Iwram_UnsignedDivideEntry;
-	scale = divide(num, t) >> 15;
-	scale = -scale;
-	dx = Iwram_MulQ16(dx, scale);
-	dy = Iwram_MulQ16(dy, scale);
-	t = Iwram_MulQ16(dz, scale);
-	uz = -dx;
-	dz = t;
-
-	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
-	t = Iwram_MulQ16(dy, dy);
-	scale = 0x10000;
-	if (scale - t > 0)
-		scale = divide(num, FixedSqrt(scale - t)) << 1;
-	ux = Iwram_MulQ16(dz, scale);
-	uz = Iwram_MulQ16(uz, scale);
-
-	// 上の軸 v = d と u の外積
-	vx = Iwram_MulQ16(dy, uz);
-	vy = Iwram_MulQ16(dz, ux) - Iwram_MulQ16(dx, uz);
-	vz = -Iwram_MulQ16(dy, ux);
-	scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
-	vx = Iwram_MulQ16(vx, scale);
-	vy = Iwram_MulQ16(vy, scale);
-	vz = Iwram_MulQ16(vz, scale);
-
-	// 3 つの軸を列に置き、移動は eye との内積
-	ex = eye[0];
-	ey = eye[1];
-	ez = eye[2];
-	{
-		out[0] = ux;
-		out[3] = zero;
-		out[6] = uz;
-		out[9] = -dot(ex, ux, ez, uz, zero, zero);
-	}
-	out[4] = vy;
-	out[7] = vz;
-	out[1] = vx;
-	out[10] = -dot(ex, vx, ey, vy, ez, vz);
-	out[2] = dx;
-	out[5] = dy;
-	out[8] = dz;
-	out[11] = -dot(ex, dx, ey, dy, ez, dz);
-}
-#endif

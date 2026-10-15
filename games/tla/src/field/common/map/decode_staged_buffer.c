@@ -6,6 +6,9 @@
 #include "types.h"
 extern u32 gMapBlocks[];
 #include "ram_buffer.h"
+#include "mem.h"
+#include "ramcode.h"
+#include "iwram_call.h"
 extern u8 gMapCellBuffer[];
 
 //--------------------------------------------------------------------------
@@ -61,4 +64,32 @@ void Tilemap_DecodeStagedBuffer(s32 size)
 		}
 		}
 	}
+}
+
+typedef void (*ConvertFn)(void *destination, void *source, void *saved);
+
+extern u8 Render_ConvertMapCode[];
+extern u8 Render_ConvertMapCodeSize[];
+
+static inline s32 CopyWords(void *destination, const void *source, s32 size)
+{
+    /* FAKEMATCH: through an inline, as ☀️'s IWRAM call layer, the map cell buffer's address is loaded again for the conversion; called directly its constant is kept in a saved register (differ 20). */
+    return Iwram_CopyWordsEntry(destination, source, size);
+}
+
+// Converts the map cell buffer's 32 KB in place with the ARM routine copied
+// to RAM, keeping a copy of the buffer for it to read.
+void Tilemap_ConvertBuffer(void)
+{
+    u8 *saved;
+    ConvertFn routine;
+    u32 size;
+
+    size = 0x8000;
+    saved = Runtime_BumpAllocateAlternatePool(size);
+    CopyWords(saved, Ram_MapCellBuffer, size);
+    RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
+    routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+    MemFree(routine);
+    MemFree(saved);
 }

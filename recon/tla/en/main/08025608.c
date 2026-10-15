@@ -1,46 +1,48 @@
+/* Draft, differ 2 of 65: The Broken Seal's Object_ApproachLinkedObject with
+ * the square root through the IWRAM entry. The native loads object->x before
+ * link->x (ldr r3, [r6, #8]; ldr r1, [r2, #8]), this loads link->x first.
+ * Measured: the operands either way round (2), dz before dx (16), object->x
+ * in a temporary, behind a barrier or in a one-pass block (9 to 15, the
+ * temporary stays live for the move target); two minutes of permuter found
+ * nothing. */
 #include "types.h"
-#include "scene.h"
-#include "fixed_math.h"
-extern u8 IwramSqrt[];
-s32 _call_via_r3(s32, s32, s32, s32);
-s32 Object_SetMoveTarget(void *, s32, s32, s32);
-void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
+#include "object_runtime.h"
+#include "iwram_call.h"
 
-s32 Object_ApproachLinkedObject(void *arg0)
+void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object, s32 argument);
+
+s32 Object_ApproachLinkedObject(struct ObjectRuntime *object)
 {
-  s32 len;
-  s32 mz;
-  s32 dx;
-  s32 dz;
-  u8 *p;
-  s32 dzh;
-  s32 dxh;
-  s32 n;
-  s32 mx;
-  s32 dx2;
-  u8 *base;
-  void *link;
-  base = (u8 *)arg0;
-  p = base;
-  link = *((void **)(p + 0x68));
-  *((s32 *)(p + 0x30)) = (s32)(*((s32 *)(((u8 *)link) + 0x30)));
-  *((s32 *)(p + 0x34)) = (s32)(*((s32 *)(((u8 *)link) + 0x34)));
-  dx = (*((s32 *)(((u8 *)link) + 8))) - (*((s32 *)(p + 8)));
-  dz = (*((s32 *)(((u8 *)link) + 0x10))) - (*((s32 *)(p + 0x10)));
-  dxh = dx >> 0x10;
-  dzh = dz >> 0x10;
-  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, (u32)IwramSqrt);
-  if (len > 0x10)
-  {
-    dx2 = dx;
-    n = len - 0x10;
-    mx = __divsi3(dx2 *n, len);
-    mz = __divsi3(dz *n, len);
-    Object_SetMoveTarget(arg0, (*((s32 *)(p + 8))) + mx, *((s32 *)(p + 0xC)), (*((s32 *)(p + 0x10))) + mz);
-    ObjectDispatch_ApplyArgumentToChildren(arg0, 2);
-    *((u16 *)(p + 4)) = (u16)((*((u16 *)(p + 4))) + 1);
-    return 1;
-  }
-  ObjectDispatch_ApplyArgumentToChildren(arg0, 1);
-  return 0;
+    s32 len;
+    s32 mz;
+    s32 dx;
+    s32 dz;
+    s32 dzh;
+    s32 dxh;
+    s32 n;
+    s32 mx;
+    s32 dx2;
+    struct ObjectRuntime *link;
+
+    link = object->linked_object;
+    object->speed_limit = link->speed_limit;
+    object->acceleration = link->acceleration;
+    dx = link->x - object->x;
+    dz = link->z - object->z;
+    dxh = dx >> 0x10;
+    dzh = dz >> 0x10;
+    len = Iwram_Sqrt((dxh * dxh) + (dzh * dzh));
+    if (len > 0x10) {
+        dx2 = dx;
+        n = len - 0x10;
+        mx = dx2 * n / len;
+        mz = dz * n / len;
+        Object_SetMoveTarget(object, object->x + mx, object->y, object->z + mz);
+        ObjectDispatch_ApplyArgumentToChildren(object, 2);
+        object->step = (object->step + 1);
+        return 1;
+    }
+    ObjectDispatch_ApplyArgumentToChildren(object, 1);
+    return 0;
 }

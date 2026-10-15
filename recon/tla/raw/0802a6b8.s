@@ -67,7 +67,7 @@ Func_0802a6b8:
 	ldr r1, .L_0802a910
 	adds r0, r7, r3
 	bl Resource_DecodeType01
-	bl Func_0802a5e4
+	bl Tilemap_ConvertBuffer
 	ldr r3, [r7, #48]
 	ldr r1, .L_0802a914
 	adds r0, r7, r3

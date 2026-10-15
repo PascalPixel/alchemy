@@ -15,7 +15,7 @@ struct ScriptOperands;
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation, s32 value);
 
 s32 Script_StoreLookupResult();
-s32 Func_08024c70();
+s32 Script_WaitForEvent();
 s32 Func_08024fe0();
 s32 Func_08025038();
 s32 Func_08025078();
@@ -219,7 +219,7 @@ const s32 ObjectDispatch_Table6[] =
 const ScriptCommandFn Data_0802f204[54] =
 {
     Script_StoreLookupResult,                   // 0x00 SC_WAIT
-    Func_08024c70,                              // 0x01 SC_SYNC
+    Script_WaitForEvent,                        // 0x01 SC_SYNC
     Func_08024fe0,                              // 0x02 SC_POS
     Func_08025038,                              // 0x03 SC_CMD_03
     Func_08025078,                              // 0x04 SC_MOVE

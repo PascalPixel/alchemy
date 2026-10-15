@@ -1,25 +1,24 @@
-/* Near miss: differ 2 of 130 with y as long (differ 4 as s32: the permuter found it). Left: sub sp, #36 comes before lsls r3, r3, #18 where the native has the shift first; a one-pass block on the work load forces both parameter stores ahead (differ 10). The permuter (8 minutes in all) found nothing nearer. */
-#include "render_input.h"
-
-struct MessageWindowWork {
-    s32 records[0xf40 / 4];
-    u16 entries[(0x1384 - 0xf40) / 2];
-    u16 cursor;
-    u16 scroll;
-    u16 unknown_12f8;
-    u8 busy;
-    u8 pending;
-};
-
+/* Draft, differ 4 of 130: the prologue's sub sp, #36 is scheduled one
+ * instruction early (before lsls r3, r3, #18 of the heap slot base) and the
+ * store of y before the load of the render work; sched2 ties the stack
+ * adjustment and the shift at priority 50 and takes the adjustment, which has
+ * more dependants. Measured: the statement order of the first six lines, a
+ * one-pass block or barrier after the work load (differ 8 to 32), the result
+ * as a mask or u16 cast (4), other types for x, y, message and packed (4 to
+ * 6); the permuter's only gain in three minutes was y declared long beside an
+ * s32 x (differ 2, the store of y then follows the load). */
+#include "types.h"
+#include "window.h"
 #include "ram_buffer.h"
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
+#define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
 
-struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, long y, u32 packed)
+s32 UiText_BuildRenderEntries(s32 key, s32 mode);
+void UiWindow_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height, u16 *bounds, s32 mode);
+struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *bounds, s32 mode);
+
+struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 {
     s32 entry;
     u32 height;
@@ -27,20 +26,19 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, long y, u32 pac
     u16 bounds[4];
     s32 flags;
     u16 *out;
-    struct RenderInput *window;
-    struct MessageWindowWork *work;
+    struct UiWindow *window;
+    struct UiRenderWork *work;
 
-    work = (struct MessageWindowWork *)Ram_HeapSlots->window_tiles;
-    work->cursor = (packed << 4) >> 20;
-    /* FAKEMATCH: retain the null window as the scroll and layout zero. */
+    work = UI_WORK;
+    work->result[0] = (packed << 4) >> 20;
     window = NULL;
-    work->scroll = (u32)window;
+    work->result[1] = 0;
     packed &= 0xffff;
     flags = 0;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] == 0)
         return NULL;
-    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (s32)(out = bounds), (u32)window);
+    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
     if (width == 0 && height == 0)
         return NULL;
     if (!(packed & 1))
@@ -58,7 +56,7 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, long y, u32 pac
         UiWork_Finalize(window, 1);
         return NULL;
     }
-    work->busy = 0;
-    work->pending = 0;
+    work->unknown_1388[2] = 0;
+    work->unknown_1388[3] = 0;
     return window;
 }

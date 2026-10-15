@@ -1,3 +1,7 @@
+/* Draft of overlay 674's Func_02003164, differ 91 of 134 (13 more instructions): a room's
+ * setup written from the listing. The native keeps the map work in r5, a zero for the
+ * motion flags in r6 and object 10 in r7, and reuses the flag result as the zero in the
+ * else branch; this draft keeps the zero in r8. alchemy permute (5 minutes) did not close it. */
 #include "../../../../games/tla/src/field/overlay_674/ov674.h"
 
 void Func_02003f4c(s32 actor);

@@ -1,5 +1,7 @@
 /* Draft of overlay 674's Func_020034fc, its palette queue step: the main image's
- * PaletteQueue_StepCycles behind three event-work checks. */
+ * PaletteQueue_StepCycles behind three event-work checks, differ 128 of 145. The native keeps
+ * the count as (count & 3) << 16 in r11 and rebuilds it each pass, and reads the position
+ * and length with ldrsh; alchemy permute (6 minutes) found nothing closer. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

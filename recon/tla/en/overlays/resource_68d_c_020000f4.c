@@ -1,25 +1,27 @@
+/* Draft of Func_020000f4 of overlay 68D, a palette rotation, differ 16 of 35 (8 register):
+ * goto loops as overlay 689's Func_020002f8, and the frame count's modulo through an inline
+ * (alchemy permute; plain, the address of gFrameCount is kept in a callee-saved register,
+ * differ 32). Left: the native gives the loop index r0 and the saved colour r1 (this draft
+ * the other way round), and loads colour 15's entry into r1 (here r2). Tried: the index
+ * set before the saved colour, the declarations swapped, an s32 or u32 index, a table
+ * pointer. */
 #include "types.h"
 #include "frame.h"
-#include "ram_buffer.h"
-#include "object_runtime.h"
-#include "party_state.h"
-#include "call.h"
 
 extern s16 Data_02002608[];
 
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-s32 GameFlag_Test(s32 flag);
-struct ObjectRuntime *Object_GetById(s32 id);
-void Func_02002024(s32 actor, s32 a, s32 b);
+static __inline__ u32 Frame_Mod6(u32 frame)
+{
+    return frame % 6;
+}
 
 // Every sixth frame rotates colours 1-14 of background palette 12 by one place; every
-// frame sets its colour 15 from a twelve-step cycle. The loop is written with goto, as
-// overlay 689's Func_020002f8: the bytes rebuild the palette address on every pass.
+// frame sets its colour 15 from a twelve-step cycle.
 void Func_020000f4(void)
 {
     s32 color;
 
-    if (gFrameCount % 6 == 0) {
+    if (Frame_Mod6(gFrameCount) == 0) {
         volatile u16 *palette;
         s16 saved;
         s32 index;

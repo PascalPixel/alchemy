@@ -1,4 +1,6 @@
 // near miss: differ 24 (listing 71 instructions, draft 71); as Func_02000d74's wait loop
+// trial: the loop as an if around a label and a backward goto keeps the address and constant loads in the loop (differ 2): the native then still starts 0x240000 before it loads y ahead of the loop; comparing as 0x240000 < y, a one-pass block or an empty asm before the test change nothing. Not adopted: a goto that only forces a layout (S2)
+// trial: Func_02004294 (overlay 670) waits in the same loop, there not rotated (b to the test); pins on the slot address do not keep it in the loop (differ 24 and 27)
 #include "../../../../games/tla/src/field/overlay_670/ov670.h"
 
 void Func_020047e4(void)

@@ -1,3 +1,9 @@
+/* Near miss, differ 2 of 194: the native loads gPartyState's address (ldr r5) between the
+ * screen effect's offset and the store of 0x100 (adds r3, r3, r2; ldr r5; subs r2, #172); this
+ * loads it after the store. The entrance store written through a plain pointer fixed the second
+ * pair (was differ 4): as FIELD_AT the two halfword stores do not alias and the entrance store is
+ * scheduled ahead of the call's argument. Tried for the first: an empty asm after the store, the
+ * effect store as a plain pointer or one FIELD_AT, the owner read as a plain pointer (16). */
 #include "types.h"
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
@@ -68,7 +74,7 @@ s32 Func_02000128(void)
     }
     if (FIELD_AT(gPartyState, s16, 482) == 0x62) {
         FIELD_AT(gPartyState, u16, 490) = 1;
-        FIELD_AT(gPartyState, u16, 482) = 1;
+        *(u16 *)(gPartyState + 482) = 1;
         Call1(Func_020028a4, 1);
         Func_02001c30();
     }

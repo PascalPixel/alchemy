@@ -4,7 +4,7 @@
 	.balign 4
 	.global Data_02002504
 Data_02002504:
-	.incbin "games/tla/src/field/overlay_64a/tilemap.table.lz"
+	.incbin "games/tla/src/menu/clear/tilemap.table.lz"
 
 	.global Data_0200265e
 Data_0200265e:

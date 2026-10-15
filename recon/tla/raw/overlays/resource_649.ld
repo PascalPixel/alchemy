@@ -2,13 +2,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/field/overlay_649/entry.o"(.text)
-        "*/games/tla/src/field/overlay_649/scene_tables.o"(.text)
-        "*/games/tla/src/field/overlay_649/prepare.o"(.text)
-        "*/games/tla/src/field/overlay_649/s031c.o"(.text)
-        "*/games/tla/src/field/overlay_649/s0490.o"(.text)
-        "*/games/tla/src/field/overlay_649/import.o"(.text)
-        "*/games/tla/src/field/overlay_649/data.o"(.data)
+        "*/games/tla/src/menu/title/entry.o"(.text)
+        "*/games/tla/src/menu/title/scene_tables.o"(.text)
+        "*/games/tla/src/menu/title/prepare.o"(.text)
+        "*/games/tla/src/menu/title/s031c.o"(.text)
+        "*/games/tla/src/menu/title/s0490.o"(.text)
+        "*/games/tla/src/menu/title/import.o"(.text)
+        "*/games/tla/src/menu/title/data.o"(.data)
     }
     .bss : { "*/resource_649_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

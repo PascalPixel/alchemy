@@ -2,7 +2,7 @@
  * Func_0200029c (83, 84): the same calls, constants and stores. The draft hoists the address of
  * tile_base and the tile mask out of the 64-spark loops and counts in r7; the native builds them
  * inside the loop, keeps the work in r7 and counts in r8. Count-up and count-down loops measured
- * the same. Func_02000358 is adopted in games/tla/src/field/overlay_6b9/sparks.c. */
+ * the same. Func_02000358 is adopted in games/tla/src/debug/psynergy_test_2/sparks.c. */
 #include "types.h"
 #include "ram_buffer.h"
 

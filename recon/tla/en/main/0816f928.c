@@ -17,6 +17,8 @@
  *   the streak loop as nested ifs instead of continue                 218
  *   splash as PARTICLES + i, and the splash fields written
  *     PARTICLES[i].field with no pointer                                218
+ *   the streak loop, and the splash loop, indexed (&work->particles[i])
+ *     rather than stepped                                               218
  *   HI through an inline helper (Func_0816d3d8's device)               212
  */
 #include "types.h"

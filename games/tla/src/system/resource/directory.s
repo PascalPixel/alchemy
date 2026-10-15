@@ -391,7 +391,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_BlueArcSheetB
 	resource , BattleFx_GlowOrbSheet
 	resource , BattleFx_IceChipSheet
-	resource , BattleFx_IceBlockSheet
+	resource IceBlockSheet, BattleFx_IceBlockSheet
 	resource , BattleFx_SparkleDots
 	resource , BattleFx_PinkBurstSheet
 	resource , BattleFx_LightFanSheet

@@ -7,7 +7,8 @@
  * before Trig_Sin: 62 (the native computes the address after the call returns); the 15 in a
  * variable: 42; the triangle as &triangles[index * 2]: 8 (base + mult, where the native adds
  * mult + base); both triangles indexed directly: 96; segments as u8, s8, u16, s16: 11, 102,
- * 135, 7; the index as i + ring * segments: 10. permute (6 min): nothing below 6. */
+ * 135, 7; the index as i + ring * segments: 10. permute (6 min, then 18 more with seed 7): nothing
+ * below 6. */
 #include "types.h"
 #include "fixed_math.h"
 

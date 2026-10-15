@@ -3220,7 +3220,7 @@ SECTIONS
     "*/games/tla/src/graphics/lettering/banner.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.0095b02e)
     "*/games/common/src/graphics/shop/cursor.o"(.rodata)
-    "*/recon/tla/de/rom.o"(.rom.0095b830)
+    "*/games/tla/src/graphics/ui/window_frame_flash.o"(.rodata)
     "*/games/tla/src/graphics/ui/icons.o"(.rodata)
     "*/games/tla/src/graphics/ui/command_icons.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.00967fea)

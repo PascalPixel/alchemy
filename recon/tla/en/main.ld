@@ -3551,7 +3551,7 @@ SECTIONS
         "*/games/tla/src/graphics/lettering/banner.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0895af56)
         "*/games/common/src/graphics/shop/cursor.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0895b758)
+        "*/games/tla/src/graphics/ui/window_frame_flash.o"(.rodata)
         "*/games/tla/src/graphics/ui/icons.o"(.rodata)
         "*/games/tla/src/graphics/ui/command_icons.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08967f12)

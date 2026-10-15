@@ -1,5 +1,5 @@
-#ifndef SUHARA_GATE_LOCAL_H
-#define SUHARA_GATE_LOCAL_H
+#ifndef SUHALLA_GATE_LOCAL_H
+#define SUHALLA_GATE_LOCAL_H
 
 #include "types.h"
 #include "ram_buffer.h"

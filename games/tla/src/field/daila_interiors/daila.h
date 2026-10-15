@@ -1,5 +1,5 @@
-#ifndef TLA_DERI_HEYA_DAILA_H
-#define TLA_DERI_HEYA_DAILA_H
+#ifndef TLA_DAILA_INTERIORS_DAILA_H
+#define TLA_DAILA_INTERIORS_DAILA_H
 
 #include "types.h"
 

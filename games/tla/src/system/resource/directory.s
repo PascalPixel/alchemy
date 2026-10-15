@@ -44,7 +44,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01F
 	resource , Title_NintendoLogo
 	resource , Title_CamelotLogo
-	resource , Title_LogoOnBlackPicture
+	resource LogoOnBlack, Title_LogoOnBlackPicture
 	resource , Resource_Data023
 	resource , Resource_Data024
 	resource IntroTilesB, Resource_Data025

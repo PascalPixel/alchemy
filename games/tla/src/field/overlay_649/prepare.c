@@ -13,7 +13,7 @@ s32 Scene_PrepareMap(void)
     return 0;
 }
 
-void Title_LoadSprites(void)
+void Title_LoadSprites(s32 unused)
 {
     u8 *buffer;
     volatile s32 *dma;

@@ -1,14 +1,14 @@
-/* Draft, differ 292 of 699 (701 here): The Broken Seal's
- * BattleEffect_RunEmberColumns, ported: the palette goes by DMA 3, the
- * blitters come from Func_08144aac(0, draw), the effect stays an argument
- * (its count and actors are read from it; only Func_0814cc4c reads the
- * work's copy), formation resource 649, callback Func_08143000 at 0xc80,
- * byte column table. Left is register allocation: the native keeps frame
- * in r9 and every loop counter in r8 and spills frame - 32 to sp+8; here
- * frame is spilled, frame - 32 takes fp and the counters move between r8
- * and sl, so most rows differ by register. Tried: the block's locals at
- * the top (332), k before frame (292), focus and velocity as scalars
- * (435), frame and k pinned to r9 and r8 (339 to 629). */
+/* Draft, differ 68 of 699: The Broken Seal's BattleEffect_RunEmberColumns,
+ * ported: the palette goes by DMA 3, the blitters come from
+ * Func_08144aac(0, draw), the effect stays an argument (its count and
+ * actors are read from it; only Func_0814cc4c reads the work's copy),
+ * formation resource 649, callback Func_08143000 at 0xc80. The column
+ * table is not const: the native reads it again after each draw call, and
+ * as const data the reuse moved every register (differ 292). Everything
+ * left is reordered rows where the native puts a load or a store ahead of
+ * an independent constant (the argument's store before 0x03000000, the
+ * work's reloads, the pooled values, the 58 multiply), the kind
+ * Func_08164b2c's header traces to a load costing 3 and a store 2. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -29,7 +29,7 @@
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;
-extern const u8 Data_0819896a[];
+extern u8 Data_0819896a[];
 extern const u16 Data_08197410[];
 extern const s32 Data_08198974[];
 

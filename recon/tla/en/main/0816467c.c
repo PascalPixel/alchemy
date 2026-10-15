@@ -1,4 +1,4 @@
-/* Draft, differ 48 of 430: The Broken Seal's BattleEffect_RunImpactBurst
+/* Draft, differ 46 of 430: The Broken Seal's BattleEffect_RunImpactBurst
  * with The Lost Age's blitter loads (Func_081963ec(104, 19) and (188, 3),
  * read back from the heap slots at 0x68 and 0xbc), its resources (0x134,
  * 0x120, 0x121) and callback (Func_08143000 at 0xc80). Everything matches but reordered rows,
@@ -8,7 +8,7 @@
  * angle mask after the particle stores, the pooled sheet offsets), and the
  * shifted literal pools follow. The empty asm at the start and the BG2PA
  * halfword pinned in a one-pass block (as Func_0816a730) take it from 54
- * to 48. */
+ * to 48, and the tables declared without const to 46. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -27,10 +27,10 @@
 extern char ResourceId_Data134;
 extern char ResourceId_FlareSheet;
 extern char ResourceId_FlareImage;
-extern const u16 Data_081989f2[];
-extern const u8 Data_081989e2[];
-extern const u8 Data_081989ea[];
-extern const u16 Data_08197410[];
+extern u16 Data_081989f2[];
+extern u8 Data_081989e2[];
+extern u8 Data_081989ea[];
+extern u16 Data_08197410[];
 
 void Func_08143000(void);
 void Func_081963ec(s32 slot, s32 kind);

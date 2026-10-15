@@ -33,3 +33,4 @@ Resource_Data60D:
 	.balign 4, 0
 .LResource_Data60D_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.parts.lz"
+	.balign 4, 0

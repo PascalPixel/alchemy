@@ -350,7 +350,7 @@ extern u32				 Colosso_ModeTaskSprites[];
 #endif
 #ifndef OWN_VaultInteriors_PairScriptR
 #endif
-extern u16 KuupuappuHeya_StopTimer;
+extern u16 VaultInteriors_StopTimer;
 #ifndef OWN_Mercury_PillarScript
 #endif
 extern u8		Object_UpdateAllCodeSize[];

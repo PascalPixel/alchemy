@@ -2897,12 +2897,12 @@ static void VaultInteriors_UpdateActorStops(void)
 	}
 	if (blocked != 0)
 	{
-		if (++KuupuappuHeya_StopTimer > 29)
+		if (++VaultInteriors_StopTimer > 29)
 			work->raised_trigger = blocked + 200;
 	}
 	else
 	{
-		KuupuappuHeya_StopTimer = blocked;
+		VaultInteriors_StopTimer = blocked;
 	}
 }
 
@@ -2930,7 +2930,7 @@ static void VaultInteriors_StartActorStops(void)
 	Actor_SetSpeed(2, 0xc000, 0x6000);
 	Actor_SetSpeed(24, 0x10000, 0x13333);
 	Actor_SetSpeed(25, 0x18000, 0x18000);
-	KuupuappuHeya_StopTimer = 0;
+	VaultInteriors_StopTimer = 0;
 	FieldScheduler_AddOrUpdateCallback((s32)VaultInteriors_UpdateActorStops, 0xc94);
 	GameFlag_Clear(0x1ff);
 	Engine_EventEnd();
@@ -3544,4 +3544,4 @@ s32 *VaultInteriors_ResponseScripts[] = {
 	VaultInteriors_PairScriptR,
 };
 
-u16 KuupuappuHeya_StopTimer;
+u16 VaultInteriors_StopTimer;

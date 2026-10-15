@@ -1039,7 +1039,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000d1d8c)
     "*/games/tla/src/battle/effect/d1df0.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1df8)
-    "*/recon/tla/ja/rom.o"(.rom.000d1e40)
     "*/games/tla/src/battle/effect/setup.o"(.text)
     "*/games/tla/src/battle/effect/definition_flags.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1ec8)

@@ -932,7 +932,6 @@ SECTIONS
         "*/recon/tla/raw/080d1dac.o"(.text)
         "*/games/tla/src/battle/effect/d1df0.o"(.text)
         "*/recon/tla/raw/080d1e18.o"(.text)
-        "*/recon/tla/raw/080d1e60.o"(.text)
         "*/games/tla/src/battle/effect/setup.o"(.text)
         "*/games/tla/src/battle/effect/definition_flags.o"(.text)
         "*/recon/tla/raw/080d1ee8.o"(.text)

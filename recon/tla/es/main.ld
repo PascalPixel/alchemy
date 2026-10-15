@@ -2084,6 +2084,7 @@ SECTIONS
     "*/recon/tla/es/rom.o"(.rom.00196404)
     "*/games/tla/src/battle/effect/project_vertices.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00196a7c)
+    "*/games/tla/src/battle/effect/fxconst.o"(.rodata)
     "*/games/tla/src/battle/effect/sentou_kouka_gousei.o"(.text)
     "*/games/tla/src/battle/effect/sentou_kouka_gousei_iro.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/patch_template.o"(.text .rodata .data .padding)

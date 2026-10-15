@@ -5081,61 +5081,8 @@ Func_02003c8c:
 .L_0200be30:
 	.4byte gPartyState
 	.endif
-	.section .text.x0200be34,"ax",%progbits
-	.global Func_02003e34
-	.thumb_func
-Func_02003e34:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	movs r5, #0
-	adds r7, r0, #0
-	mov r8, r2
-	cmp r5, r6
-	bcs .L_0200be58
-.L_0200be46:
-	ldrh r3, [r7, #18]
-	movs r0, #1
-	add r3, r8
-	strh r3, [r7, #18]
-	adds r5, #1
-	bl Battle_WaitMode0
-	cmp r5, r6
-	bcc .L_0200be46
-.L_0200be58:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.section .text.x0200be60,"ax",%progbits
-	.global Func_02003e60
-	.thumb_func
-Func_02003e60:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	movs r5, #0
-	adds r7, r0, #0
-	mov r8, r2
-	cmp r5, r6
-	bcs .L_0200be84
-.L_0200be72:
-	ldr r3, [r7, #8]
-	movs r0, #1
-	add r3, r8
-	str r3, [r7, #8]
-	adds r5, #1
-	bl Battle_WaitMode0
-	cmp r5, r6
-	bcc .L_0200be72
-.L_0200be84:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x0200be8c,"ax",%progbits
+	.balign 4
 	.global Func_02003e8c
 	.thumb_func
 Func_02003e8c:

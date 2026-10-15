@@ -2513,6 +2513,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   }
 }
 
+// Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
 void Object_RunUpdateAllFromHeap(void) {
   void (*routine)(void);
 
@@ -2521,6 +2522,9 @@ void Object_RunUpdateAllFromHeap(void) {
   MemFree(routine);
 }
 
+// Advances the first 14 objects' motion by one frame, without running their
+// scripts: steering towards a target or braking, gravity and bouncing,
+// arrival, and turning to face the direction of travel.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *obj;
   s32 cnt;
@@ -2656,6 +2660,8 @@ void Object_UpdateAllMotion(void) {
   }
 }
 
+// SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
+// end the object's commands for this frame.
 s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
   s16 cursor = interpreter->cursor;
 
@@ -2664,6 +2670,9 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
+// SC_SYNC: waits until the object arrives at its target, or until a solid
+// object has blocked it for 60 frames (delay is the blocked count, which
+// the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
   if (interpreter->delay > 0x3B) {
     interpreter->delay = 0;
@@ -2677,6 +2686,9 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
+// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
+// it again next frame; zero moves on, past the command unless fn moved the
+// cursor itself.
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initial = interpreter->cursor;
   ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
@@ -2688,6 +2700,9 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
+// matched without the bit that tells them apart), searching its first 1024
+// words, or 0 (the start) when key is 0 or not found. Clears the wait.
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   u32 *entries;
   s32 index;
@@ -2711,6 +2726,8 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key) {
   return 0;
 }
 
+// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
+// moves on; with n = SC_FOREVER it always jumps.
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
@@ -2737,12 +2754,14 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_JUMP(to): jumps to label to.
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
   interpreter->cursor = Script_FindLabel(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   return 1;
 }
 
+// SC_IF(to): jumps to label to when the last test was true.
 u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
@@ -2756,6 +2775,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_IFNOT(to): jumps to label to when the last test was false.
 u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
@@ -2769,6 +2789,7 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_END: hands the object back to the idle script. Returns 0.
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
   s32 result;
 
@@ -2777,6 +2798,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter) {
   return result;
 }
 
+// SC_FLAG_CHECK(f): tests game flag f.
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   interpreter->conditionResult =
       GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
@@ -2800,6 +2822,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
 DEFINE_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
 DEFINE_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
+// SC_FLAG_REV(f): tests game flag f, then flips it.
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
   s32 result;
@@ -2816,6 +2839,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_ARG(v): switches the object's sprites to animation v.
 s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_ApplyArgumentToChildren(
       interpreter, interpreter->script[interpreter->cursor + 1]);
@@ -2823,22 +2847,27 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+// SC_FREE: releases the object. Returns 0.
 s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
 }
 
+// SC_NOP(v): does nothing with its operand.
 s32 Script_SkipCommand(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
 
+// SC_SE(n): sends sound command n (a sound effect).
 s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter) {
   AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
 
+// Returns -1 when an object at position values would overlap a solid
+// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0.
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   s32 index;
   u8 *flags;
@@ -2858,6 +2887,8 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
 }
 
 struct ScriptObjectEntry *
+// Returns the first solid object that an object at position values would
+// overlap, as ScriptObject_CheckOverlap tests, or NULL.
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
   s32 index;
@@ -2898,14 +2929,17 @@ static __inline__ s32 ApplyPosition(struct ScriptInterpreter *interpreter,
   return 1;
 }
 
+// SC_POS(x, y, z): places the object at (x, y, z) and stops it.
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter) {
   return ApplyPosition(interpreter, Object_SetPositionAndResetMotion);
 }
 
+// SC_MOVE(x, y, z): sends the object towards (x, y, z).
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter) {
   return ApplyPosition(interpreter, Object_SetMoveTarget);
 }
 
+// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
   u8 *entry = (u8 *)(object->script + (s16)object->scriptCursor);
   s32 *cursor = (s32 *)(entry + 4);
@@ -2919,6 +2953,8 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_FACE_LINK: stores the angle from the object to its linked object in
+// scriptValue.
 s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
   struct ScriptObjectRuntime *target;
 
@@ -2929,6 +2965,7 @@ s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_MOVE_LINK: sends the object towards its linked object.
 s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
   struct ScriptObjectRuntime *target;
 
@@ -2939,9 +2976,16 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
   return 1;
 }
 
+// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
+// that is never filled in; the operands are skipped unread.
 s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object) {
   s32 offset[3];
 
+  // BUG: offset is never set, so the target is the position plus whatever
+  // the stack held.
+#ifdef UBFIX
+  offset[0] = offset[1] = offset[2] = 0;
+#endif
   Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + offset[0],
                        object->y + offset[1], object->z + offset[2]);
   object->scriptCursor += 3;

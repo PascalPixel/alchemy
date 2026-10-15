@@ -1424,10 +1424,9 @@ SECTIONS
         "*/games/tla/src/field/scnitem.o"(.rodata)
         "*/games/tla/src/field/common/object/d00f2e9c.o"(.rodata)
         "*/games/tla/src/field/common/object/scripts.o"(.rodata)
-        "*/games/tla/src/field/common/object/d00f3798.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f385e)
-        "*/games/tla/src/field/common/object/d00f38b2.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f3901)
+        "*/games/tla/src/field/common/effect/particles.o"(.rodata)
+        "*/games/tla/src/field/common/effect/fxdata.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.080f3984)
         "*/games/tla/src/battle/effect/fademap.o"(.rodata)
         . = ABSOLUTE(0x080f8000);
         "*/games/tla/src/system/far_call/table_38.o"(.text .rodata .data .padding)

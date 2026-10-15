@@ -366,41 +366,7 @@ Data_080f1120:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f1140, 0x00000668
-	.section .unidentified.080f385e,"a"
-	.global Data_080f385e
-Data_080f385e:
-	.incbin "baserom.gba", 0x000f385e, 0x00000054
-	.section .unidentified.080f3901,"a"
-	.global Data_080f3901
-Data_080f3901:
-	.incbin "baserom.gba", 0x000f3901, 0x0000003b
-	.global Data_080f393c
-Data_080f393c:
-	.incbin "baserom.gba", 0x000f393c, 0x00000004
-	.global Data_080f3940
-Data_080f3940:
-	.incbin "baserom.gba", 0x000f3940, 0x00000004
-	.global Data_080f3944
-Data_080f3944:
-	.incbin "baserom.gba", 0x000f3944, 0x00000004
-	.global Data_080f3948
-Data_080f3948:
-	.incbin "baserom.gba", 0x000f3948, 0x00000004
-	.global Data_080f394c
-Data_080f394c:
-	.incbin "baserom.gba", 0x000f394c, 0x00000004
-	.global Data_080f3950
-Data_080f3950:
-	.incbin "baserom.gba", 0x000f3950, 0x00000004
-	.global Data_080f3954
-Data_080f3954:
-	.incbin "baserom.gba", 0x000f3954, 0x00000020
-	.global BattleFx_UntargetedObjectScript
-BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x000f3974, 0x00000004
-	.global Data_080f3978
-Data_080f3978:
-	.incbin "baserom.gba", 0x000f3978, 0x0000000c
+	.section .unidentified.080f3984,"a"
 	.global Data_080f3984
 Data_080f3984:
 	.incbin "baserom.gba", 0x000f3984, 0x00000040

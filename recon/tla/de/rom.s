@@ -2920,22 +2920,10 @@ BattleFx_RandomChildValues:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000fe140, 0x00000668
-	.section .rom.0010085e, "ax"
-	.incbin "baserom.gba", 0x0010085e, 0x00000054
-	.section .rom.00100901, "ax"
-	.incbin "baserom.gba", 0x00100901, 0x00000043
-	.section .rom.00100944, "ax"
-	.global Data_080f3944
-Data_080f3944:
-	.incbin "baserom.gba", 0x00100944, 0x0000000c
-	.section .rom.00100950, "ax"
-	.global Data_080f3950
-Data_080f3950:
-	.incbin "baserom.gba", 0x00100950, 0x00000024
-	.section .rom.00100974, "ax"
-	.global BattleFx_UntargetedObjectScript
-BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x00100974, 0x00000050
+	.section .rom.00100984, "ax"
+	.global Data_080f3984
+Data_080f3984:
+	.incbin "baserom.gba", 0x00100984, 0x00000040
 	.section .rom.00102028, "ax"
 	.global UiIcon_PrepareObjectFar
 	.type UiIcon_PrepareObjectFar, %function

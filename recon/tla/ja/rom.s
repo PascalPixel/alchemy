@@ -3824,22 +3824,10 @@ BattleFx_RandomChildValues:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f104c, 0x00000668
-	.section .rom.000f376a, "ax"
-	.incbin "baserom.gba", 0x000f376a, 0x00000054
-	.section .rom.000f380d, "ax"
-	.incbin "baserom.gba", 0x000f380d, 0x00000043
-	.section .rom.000f3850, "ax"
-	.global Data_080f3944
-Data_080f3944:
-	.incbin "baserom.gba", 0x000f3850, 0x0000000c
-	.section .rom.000f385c, "ax"
-	.global Data_080f3950
-Data_080f3950:
-	.incbin "baserom.gba", 0x000f385c, 0x00000024
-	.section .rom.000f3880, "ax"
-	.global BattleFx_UntargetedObjectScript
-BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x000f3880, 0x00000050
+	.section .rom.000f3890, "ax"
+	.global Data_080f3984
+Data_080f3984:
+	.incbin "baserom.gba", 0x000f3890, 0x00000040
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x00000498
 	.section .rom.000f8830, "ax"

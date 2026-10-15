@@ -668,7 +668,7 @@ Func_08049154:
 .L_08049664:
 	.4byte 0xfffffe00
 .L_08049668:
-	.4byte Data_080597f8
+	.4byte Resource_FixedBlockBTiles
 .L_0804966c:
 	.4byte gFrameCount
 .L_08049670:

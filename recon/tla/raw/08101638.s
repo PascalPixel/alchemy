@@ -203,7 +203,7 @@ Func_08101638:
 .L_081017d8:
 	.4byte 0x06005000
 .L_081017dc:
-	.4byte Data_081059b4
+	.4byte Menu_BackdropFrameTile
 .L_081017e0:
 	.4byte 0x060052c0
 .L_081017e4:

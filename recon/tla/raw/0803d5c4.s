@@ -91,6 +91,6 @@ Func_0803d5c4:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0803d678:
-	.4byte UiIcon_BaseGlyphPointers
+	.4byte UiIcon_FramePointerTable
 .L_0803d67c:
 	.4byte UiIcon_ItemIconPointers

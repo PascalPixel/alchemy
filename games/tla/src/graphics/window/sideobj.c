@@ -3,8 +3,8 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-extern const s16 Data_0805eb58[];
-extern const s16 Data_0805eb7c[];
+extern const s16 Portrait_CharacterMap[];
+extern const s16 Portrait_SpriteMap[];
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x, s32 y);
@@ -42,26 +42,26 @@ s32 Localization_LookupEntryId(u32 value)
     }
     if (value < 16) {
         for (;;) {
-            s32 key = Data_0805eb58[i];
+            s32 key = Portrait_CharacterMap[i];
 
             if (key == -1)
                 break;
             if (key == value) {
                 i++;
-                result = Data_0805eb58[i];
+                result = Portrait_CharacterMap[i];
                 break;
             }
             i += 2;
         }
     } else {
         for (;;) {
-            s32 key = Data_0805eb7c[i];
+            s32 key = Portrait_SpriteMap[i];
 
             if (key == -1)
                 break;
             if (key == value) {
                 i++;
-                result = Data_0805eb7c[i];
+                result = Portrait_SpriteMap[i];
                 result += 128;
                 break;
             }

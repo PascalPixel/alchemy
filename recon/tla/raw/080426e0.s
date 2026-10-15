@@ -93,7 +93,7 @@ Func_080426e0:
 	strh r3, [r2]
 	b .L_08042790
 .L_08042788:
-	.4byte Data_0805f574
+	.4byte UiWindow_PartyColumnOffsets
 .L_0804278c:
 	mov r7, lr
 	strh r7, [r2]
@@ -151,7 +151,7 @@ Func_080426e0:
 .L_080427ec:
 	.4byte 0x0000f082
 .L_080427f0:
-	.4byte Data_0805f574
+	.4byte UiWindow_PartyColumnOffsets
 .L_080427f4:
 	movs r3, #1
 	mov r1, r12

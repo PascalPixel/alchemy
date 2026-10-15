@@ -67,7 +67,7 @@ main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/window/window	.text
 main	rom_main_02	games/tbs/src/window/btlcmd	.text
 main	rom_main_02	games/tbs/src/window/slider	.rodata
-main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
+main	rom_main_02	games/common/src/graphics/ui/marks	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
 main	rom_main_02	games/tbs/src/window/fixblk	.rodata
 main	rom_main_02	games/tbs/src/graphics/render/labels	.rodata

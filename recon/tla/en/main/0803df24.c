@@ -17,7 +17,7 @@ struct EffectPosition
 };
 
 extern u32 gFrameTick;
-extern s8  Data_0805ea0c[];
+extern s8  Menu_CursorBobOffsets[];
 extern u8  Data_0805c9c4[];
 
 s32	 BattleMotion_ProjectScaledPositionFar(s32 id, struct EffectPosition *projected);
@@ -110,7 +110,7 @@ void MenuSelection_DrawFrame(void)
         te->priority = 0;
         te->tile = transfer->tile;
         te->x = node->x - 4;
-        te->y = node->y + (Data_0805ea0c[(gFrameTick >> 1) & 15] >> 1) - 4;
+        te->y = node->y + (Menu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
         if (transfer->scale != transfer->scale_end) {
             state->matrix[0] = transfer->scale;
             state->matrix[1] = transfer->scale;
@@ -187,7 +187,7 @@ void MenuSelection_DrawFrame(void)
                 cursor->y = cursor->target_y;
             }
         }
-        cursor_entry->y = cursor->y + Data_0805ea0c[(gFrameTick >> 2) & 15] - 32;
+        cursor_entry->y = cursor->y + Menu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
         cursor_entry->x = cursor->x - 4;
         if (GameFlag_Test(0x103) != 0) {
             if (state->records[14].kind == 1) {

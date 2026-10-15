@@ -195,7 +195,7 @@ UiWork_AnimateSpriteSlots:
 .L_0803c6dc:
 	.4byte 0x000001ff
 .L_0803c6e0:
-	.4byte Data_0805c12c
+	.4byte UiSprite_CursorBobOffsets
 .L_0803c6e4:
 	.4byte 0xfffffe00
 .L_0803c6e8:
@@ -390,7 +390,7 @@ UiWork_AnimateSpriteSlots:
 .L_0803c864:
 	.4byte 0x000001ff
 .L_0803c868:
-	.4byte Data_0805c17c
+	.4byte UiSprite_WobbleOffsets
 .L_0803c86c:
 	.4byte 0xfffffe00
 .L_0803c870:
@@ -451,7 +451,7 @@ UiWork_AnimateSpriteSlots:
 .L_0803c8d4:
 	.4byte 0x000001ff
 .L_0803c8d8:
-	.4byte Data_0805c1b4
+	.4byte UiSprite_BounceOffsets
 .L_0803c8dc:
 	.4byte 0xfffffe00
 .L_0803c8e0:
@@ -482,7 +482,7 @@ UiWork_AnimateSpriteSlots:
 .L_0803c910:
 	.4byte 0x000001ff
 .L_0803c914:
-	.4byte Data_0805c1b4
+	.4byte UiSprite_BounceOffsets
 .L_0803c918:
 	.4byte 0xfffffe00
 .L_0803c91c:

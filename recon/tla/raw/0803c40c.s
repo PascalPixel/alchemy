@@ -137,7 +137,7 @@ Func_0803c40c:
 .L_0803c504:
 	.4byte 0x000001ff
 .L_0803c508:
-	.4byte Data_0805e9c4
+	.4byte Ui_BounceScales
 .L_0803c50c:
 	.4byte 0xffff0000
 .L_0803c510:

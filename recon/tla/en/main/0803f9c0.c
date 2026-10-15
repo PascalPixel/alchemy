@@ -11,7 +11,7 @@
 #include "types.h"
 #include "io_reg.h"
 
-extern const u8 Data_0805ea1c[];
+extern const u8 PaletteGlow_WaveTable[];
 
 u16 Func_0803f974(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
 
@@ -33,9 +33,9 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
 	step = ((phase + 12) % 24) * 4;
 	offset = brightness - 7;
-	red = Data_0805ea1c[(step % 96)] + offset;
-	green = Data_0805ea1c[(step + 32) % 96] + offset;
-	blue = Data_0805ea1c[(step + 64) % 96] + offset;
+	red = PaletteGlow_WaveTable[(step % 96)] + offset;
+	green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
+	blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
 	if (red < 0)
 		red = 0;
 	if (red > 31)

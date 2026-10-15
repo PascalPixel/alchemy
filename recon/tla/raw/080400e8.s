@@ -544,11 +544,11 @@ Func_080400e8:
 	bl Audio_PlayCue
 	b .L_080404a0
 .L_08040540:
-	.4byte Data_0805ea7c
+	.4byte OptionMenu_SpeedFrames
 .L_08040544:
-	.4byte Data_0805ea7f
+	.4byte OptionMenu_SpeechFrames
 .L_08040548:
-	.4byte Data_0805ea81
+	.4byte OptionMenu_SleepFrames
 .L_0804054c:
 	.4byte 0x0000113b
 .L_08040550:
@@ -560,9 +560,9 @@ Func_080400e8:
 .L_0804055c:
 	.4byte gInput
 .L_08040560:
-	.4byte Data_0805ea83
+	.4byte OptionMenu_FirstColorPresets
 .L_08040564:
-	.4byte Data_0805ea89
+	.4byte OptionMenu_SecondColorPresets
 .L_08040568:
 	.4byte gPartyState
 .L_0804056c:

@@ -206,7 +206,7 @@ Func_080fbe6c:
 .L_080fc01c:
 	.4byte 0x0000100d
 .L_080fc020:
-	.4byte Data_08105838
+	.4byte Menu_QuantityTiles
 .L_080fc024:
 	.4byte 0x0000025f
 .L_080fc028:

@@ -4,8 +4,8 @@
 #include "window.h"
 #include "ram_buffer.h"
 
-extern const s16 Data_0805eb58[];
-extern const s16 Data_0805eb7c[];
+extern const s16 Portrait_CharacterMap[];
+extern const s16 Portrait_SpriteMap[];
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x, s32 y);

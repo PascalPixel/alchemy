@@ -22,11 +22,11 @@ Shop_DownArrowTiles:
 	.incbin "games/common/src/menu/djinn/arrowdn.4bpp16x16"
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
-	.incbin "games/tbs/src/graphics/ui/menuspr/digits.4bpp"
+	.incbin "games/common/src/graphics/ui/menuspr/digits.4bpp"
 	.global Shop_PriceTiles
 Shop_PriceTiles:
-	.incbin "games/tbs/src/graphics/ui/menuspr/price.4bpp"
+	.incbin "games/common/src/graphics/ui/menuspr/price.4bpp"
 	.global Shop_QuantityTiles
 Shop_QuantityTiles:
-	.incbin "games/tbs/src/graphics/ui/menuspr/quantity.4bpp"
+	.incbin "games/common/src/graphics/ui/menuspr/quantity.4bpp"
 	.incbin "games/common/src/graphics/ui/menuspr/sprite_c.4bpp16x16"

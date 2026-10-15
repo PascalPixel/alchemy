@@ -7,7 +7,7 @@ struct BarPatternRow {
     u32 word1;
 };
 
-extern const struct BarPatternRow Data_0805f700[];
+extern const struct BarPatternRow Menu_BarPatternRows[];
 
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
@@ -37,8 +37,8 @@ s32 Menu_BuildLocalizedPatternTiles(void)
                         mi = 0;
                     }
                 }
-                tile[x] = XorWord(tile[x], Data_0805f700[mi].word0);
-                tile[x + 8] = XorWord(tile[x + 8], Data_0805f700[mi].word1);
+                tile[x] = XorWord(tile[x], Menu_BarPatternRows[mi].word0);
+                tile[x + 8] = XorWord(tile[x + 8], Menu_BarPatternRows[mi].word1);
             }
         }
     }

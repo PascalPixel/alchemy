@@ -27,4 +27,4 @@ Func_08045018:
 .L_08045040:
 	.4byte gFrameTick
 .L_08045044:
-	.4byte Data_0805f6d6
+	.4byte Ui_PairBobOffsets

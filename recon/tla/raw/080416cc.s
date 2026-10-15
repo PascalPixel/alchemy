@@ -395,7 +395,7 @@ UiText_RenderStringTiles:
 .L_080419d0:
 	.4byte IwramClearWords
 .L_080419d4:
-	.4byte Data_0805f564
+	.4byte UiText_ColourPens
 .L_080419d8:
 	.4byte IwramFillWords
 .L_080419dc:
@@ -405,7 +405,7 @@ UiText_RenderStringTiles:
 .L_080419e4:
 	.4byte .L_08041788
 .L_080419e8:
-	.4byte Data_0805f484
+	.4byte UiText_GlyphWidths
 .L_080419ec:
 	.4byte 0x0ff00ff0
 .L_080419f0:

@@ -109,4 +109,4 @@ Menu_SelectSaveSlotAction:
 .L_0804d670:
 	.4byte Data_02005350
 .L_0804d674:
-	.4byte Data_0805f8bf
+	.4byte Menu_SaveSlotActionByPosition

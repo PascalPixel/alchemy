@@ -972,11 +972,11 @@ Func_08046b08:
 	bl Ui_SetRectHighlight
 	b .L_080472da
 .L_08047280:
-	.4byte Data_0805f7d8
+	.4byte OwnerStatus_StatCursors
 .L_08047284:
-	.4byte Data_0805f858
+	.4byte OwnerStatus_EquipmentCursors
 .L_08047288:
-	.4byte Data_0805f868
+	.4byte OwnerStatus_ConditionCursors
 .L_0804728c:
 	mov r3, r8
 	movs r6, #4
@@ -1116,7 +1116,7 @@ Func_08046b08:
 .L_080473a0:
 	.4byte 0x40000400
 .L_080473a4:
-	.4byte Data_080597f8
+	.4byte Resource_FixedBlockBTiles
 .L_080473a8:
 	ldr r1, [sp, #32]
 	ands r0, r3
@@ -2729,15 +2729,15 @@ Func_08046b08:
 .L_08048050:
 	.4byte 0x00000d1f
 .L_08048054:
-	.4byte Data_0805f888
+	.4byte OwnerStatus_LevelString
 .L_08048058:
 	.4byte 0x00000d1a
 .L_0804805c:
-	.4byte Data_0805f88c
+	.4byte OwnerStatus_HpString
 .L_08048060:
-	.4byte Data_0805f890
+	.4byte OwnerStatus_SlashString
 .L_08048064:
-	.4byte Data_0805f894
+	.4byte OwnerStatus_PpString
 .L_08048068:
 	.4byte 0x00000b63
 .L_0804806c:

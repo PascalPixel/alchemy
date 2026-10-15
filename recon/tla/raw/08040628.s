@@ -183,4 +183,4 @@ Func_08040628:
 .L_08040790:
 	.4byte 0x00001158
 .L_08040794:
-	.4byte Data_0805ea8f
+	.4byte Menu_WorkspaceIconFrames

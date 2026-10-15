@@ -74,7 +74,7 @@ Func_080ff850:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ff8d0:
-	.4byte Data_08105984
+	.4byte Menu_PatternRowMasks
 .L_080ff8d4:
 	.4byte IwramFillWords
 .L_080ff8d8:

@@ -1169,11 +1169,11 @@ Func_0804a85c:
 .L_0804b10c:
 	.4byte 0x00000d0c
 .L_0804b110:
-	.4byte Data_0805f88c
+	.4byte OwnerStatus_HpString
 .L_0804b114:
-	.4byte Data_0805f890
+	.4byte OwnerStatus_SlashString
 .L_0804b118:
-	.4byte Data_0805f894
+	.4byte OwnerStatus_PpString
 .L_0804b11c:
 	.4byte 0x00000d0b
 .L_0804b120:

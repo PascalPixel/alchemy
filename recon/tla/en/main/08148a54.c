@@ -8,7 +8,11 @@
    the native issues one instruction earlier (the second argument before the
    first for Func_081963ec(104), the BLDALPHA value and the second blitter
    slot after the second call, the flags base, the point's y and z before the
-   target's, a frame reload). */
+   target's, a frame reload). Tried: the second argument pinned to r1 fixes the
+   first row (differ 22); the BLDALPHA value pinned behind a barrier, the
+   second blitter read first, or an empty barrier after the second call leave
+   that block as it is or break the call before (differ 22 to 24); alchemy
+   permute for 6 minutes (no better). */
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"

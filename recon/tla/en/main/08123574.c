@@ -1,3 +1,11 @@
+/* Near miss, differ 2 of 103 (4 plainly): The Broken Seal's
+ * BattlePlacement_CountValidEntries. An empty barrier on the entry's timer
+ * puts its load before the -1 it is compared with, as the native. Left: the
+ * native stores the spilled count address to its stack slot (str r2, [sp])
+ * first in the loop's preheader, this draft after the zero for lr; sched2
+ * gives that zero's chain priority 2 and the store 1. Measured: i set inside
+ * the count test (differ 17), found set later (91), four minutes of permute
+ * (no gain). */
 #include "types.h"
 #include "btlpty.h"
 
@@ -33,7 +41,10 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     i = 0;
     if (list->count != 0) {
         do {
-            if (list->entries[i].timer == -1) {
+            s32 timer = list->entries[i].timer;
+
+            __asm__ volatile("" : "+l"(timer));
+            if (timer == -1) {
                 for (j = 0; j < total; j++)
                     if (values[j] == list->entries[i].id)
                         break;

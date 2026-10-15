@@ -21,7 +21,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_69b/scene_events.o"(.text)
         "*/games/tla/src/field/overlay_69b/s0720.o"(.text)
         "*/resource_69b_overlay.o"(.text.x020087d0)
-        "*/resource_69b_overlay.o"(.text.x02008854)
         "*/games/tla/src/field/overlay_69b/s099c.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_69b_overlay.o"(.text.x020089da)

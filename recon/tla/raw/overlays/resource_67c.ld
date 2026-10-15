@@ -38,7 +38,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_67c/s101c.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200907c)
         "*/games/tla/src/field/overlay_67c/s10d0.o"(.text)
-        "*/resource_67c_overlay.o"(.text.x02009170)
         "*/games/tla/src/field/overlay_67c/s11d4.o"(.text)
         "*/games/tla/src/field/overlay_67c/s124c.o"(.text)
         "*/games/tla/src/field/overlay_67c/s1328.o"(.text)

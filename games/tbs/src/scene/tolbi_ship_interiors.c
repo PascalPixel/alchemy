@@ -1224,7 +1224,10 @@ static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
   Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3b1SequenceC(void) {
+// The travelling priest. From in front of him (the leader facing roughly east)
+// he opens his sanctum; otherwise he talks by the voyage's stage. Under sail,
+// until the ship is docked, he is actor 17, else actor 15.
+static void TolbiShipInteriors_TalkToPriest(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(0);
@@ -1256,7 +1259,10 @@ static void FieldScene_RunScene3b1SequenceC(void) {
   }
 }
 
-static void TolbiShipInteriors_RunFlagBranchSequence(void) {
+// Talking to one of the monsters in the hold (actors 36 to 38) starts the
+// battle with them: group 62, its variant and the entrance the party comes back
+// to chosen by how far the voyage has gone.
+static void TolbiShipInteriors_FightMonstersInHold(void) {
 
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -1279,7 +1285,9 @@ static void TolbiShipInteriors_RunFlagBranchSequence(void) {
   Engine_EventEnd();
 }
 
-static void EV04_TOUCH(void) {
+// While the monsters are aboard (flag 0x301): "Where are you going, Isaac? Slay
+// the beasts and save my mates!" The leader is walked back from the stairs.
+static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(0x301) != 0) {
     Engine_EventBegin();
     Ui_SetRenderResultFromObject(8);
@@ -1291,7 +1299,9 @@ static void EV04_TOUCH(void) {
   }
 }
 
-static void EV10_TOUCH(void) {
+// Once the warriors have gone to the captain (flag 0x922): the three crewmen
+// wonder what could have happened to the replacement ship. Sets flag 0x920.
+static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   if (Engine_GameFlagIsSet(0x922) == 0)
     return;
 
@@ -1323,12 +1333,16 @@ static void EV10_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void EV11_TOUCH(void) {
+// Once the party has heard of the delay (flag 0x911): a passenger threatens to
+// go ashore if the ship doesn't sail, and actor 12 storms off past the party.
+// Sets flag 0x922.
+static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 requestA;
   s32 requestB;
   s32 action;
 
   if (GameFlag_IsSet(0x911) == 0) {
+    // Not yet: the party has not heard of the delay.
   } else {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
@@ -4092,7 +4106,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable04[] = {
 struct SceneEvent gTolbiShipInteriors_SceneTable05[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(EV11_TOUCH) },
+    { EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingPassenger8) },
     { EVENT_TALK, 9, 0x925, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },
@@ -4100,7 +4114,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable05[] = {
     { EVENT_TALK, 11, 0x925, MSGNO(MsgTolbiShipInteriorsYoureGoingToTolbiToSee) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsINeverThoughtIdGetTo) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouAllAgreedToHelpOf) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgTolbiShipInteriorsMaybeIShouldJustForgetAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x925, MSGNO(MsgTolbiShipInteriorsTheyreJustTakingAdvantageOfUs) },
@@ -4120,7 +4134,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable05[] = {
 struct SceneEvent gTolbiShipInteriors_SceneTable06[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsThisCruelOrdealPartOf) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_AskPassenger8ToRow) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_AskPassenger10ToRow) },
@@ -4156,7 +4170,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable06[] = {
 struct SceneEvent gTolbiShipInteriors_SceneTable07[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsInAPerfectWorldThereWouldnt) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCantGoOntoTheIsland) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsButThereWereMonstersAtSea) },
@@ -4200,7 +4214,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable08[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
-    { EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(EV10_TOUCH) },
+    { EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
     { 0xe814, 8, 0x925, EVENT_SCRIPT(EV08_SCRIPT) },
     { 0xc423, 102, 0xf94, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
@@ -4262,10 +4276,10 @@ struct SceneEvent gTolbiShipInteriors_SceneTable11[] = {
 };
 
 struct SceneEvent gTolbiShipInteriors_SceneTable12[] = {
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-    { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
-    { EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
-    { EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_RunFlagBranchSequence) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
+    { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightMonstersInHold) },
+    { EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightMonstersInHold) },
+    { EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightMonstersInHold) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsMonstersFromTheDeepAreAttacking) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCurseThoseBeastsTheyGotOne) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsFightingOffTheMonstersIsYour) },

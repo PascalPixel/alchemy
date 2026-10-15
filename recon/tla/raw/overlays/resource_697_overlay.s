@@ -1373,36 +1373,6 @@ Func_020014e4:
 	.4byte 0xffff0000
 .L_020095a4:
 	.4byte 0xffff8000
-	.section .text.x0200985c,"ax",%progbits
-	.balign 4
-	.global Func_0200185c
-	.thumb_func
-Func_0200185c:
-	push {r5, lr}
-	adds r0, r1, #0
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #8
-	bne .L_02009888
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #252
-	bl GameFlag_SetBit
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	ldr r2, .L_0200988c
-	ldr r3, [r5, #12]
-	adds r3, r3, r2
-	str r3, [r5, #12]
-.L_02009888:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200988c:
-	.4byte 0xffff0000
 	.section .text.x02009bec,"ax",%progbits
 	.balign 4
 	.global Func_02001bec

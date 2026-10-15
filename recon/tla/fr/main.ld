@@ -1333,7 +1333,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/d00f0246.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f0286.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f02c6.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.000f52fa)
     "*/games/tla/src/field/common/object/varmot.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f0890.o"(.rodata)
     "*/games/tla/src/battle/effect/d00f08b0.o"(.rodata)

@@ -30,6 +30,10 @@ void Func_02004db0(void);
 void Func_02004db8(s32 value);
 void Func_02004df8(s32 value, s32 mode);
 void Func_02004e30(s32 cue);
+struct ObjectRuntime *Object_GetById(s32 id);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_0200050c(void);
 
 // 主人公の位置へ集まる
 static __inline__ void Actor_JoinLeader(s32 actor)
@@ -78,6 +82,33 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02004d08(actor, value, frames);
+}
+
+// Back to the map: actor 8's position is kept in the party state.
+void Func_02000918(void)
+{
+    struct EventDestination *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *leader = Object_GetById(8);
+
+    Func_02004c20();
+    Func_02004db8(0);
+    do {
+        /* FAKEMATCH: the loop note keeps gPartyState's load ahead of the 0x212 offset, as in the native (differ 4 without). */
+    } while (0);
+    if (gPartyState.render_mode == 8)
+        Func_0200050c();
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    do {
+        /* FAKEMATCH: inside a one-pass block the z offset starts before z is loaded, as in the native (alchemy permute; differ 2 without). */
+        gPartyState.saved_x = leader->x;
+        gPartyState.saved_z = leader->z;
+    } while (0);
+    gPartyState.unknown_280 = 0;
+    gPartyState.owner_override = 0;
+    GameFlag_ClearBit(0x176);
+    Func_02004e30(123);
+    Func_02004d40(work->scene);
 }
 
 void Func_02000994(void)

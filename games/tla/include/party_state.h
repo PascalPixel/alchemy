@@ -57,7 +57,10 @@ struct PartyState {
     u8 counter_274;
     u8 unknown_275;
     s16 owner_override;
-    u8 unknown_278[0x44];
+    s32 saved_x;
+    s32 saved_z;
+    s32 unknown_280;
+    u8 unknown_284[0x38];
     u16 forge_item;
     u8 unknown_2be[4];
     u8 unknown_2c2;

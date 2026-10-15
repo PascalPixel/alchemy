@@ -3314,36 +3314,6 @@ Resource_Data1F7:
 	.global Resource_Data1F8
 Resource_Data1F8:
 	.incbin "baserom.gba", 0x0096abfc, 0x000000b0
-	.global Resource_Data1F9
-Resource_Data1F9:
-	.incbin "baserom.gba", 0x0096acac, 0x00000560
-	.global Resource_Data1FA
-Resource_Data1FA:
-	.incbin "baserom.gba", 0x0096b20c, 0x00000074
-	.global Resource_Data1FB
-Resource_Data1FB:
-	.incbin "baserom.gba", 0x0096b280, 0x00000048
-	.global Resource_Data1FC
-Resource_Data1FC:
-	.incbin "baserom.gba", 0x0096b2c8, 0x00000050
-	.global Resource_Data1FD
-Resource_Data1FD:
-	.incbin "baserom.gba", 0x0096b318, 0x00000050
-	.global Resource_Data1FE
-Resource_Data1FE:
-	.incbin "baserom.gba", 0x0096b368, 0x00000058
-	.global Resource_Data1FF
-Resource_Data1FF:
-	.incbin "baserom.gba", 0x0096b3c0, 0x00000058
-	.global Resource_Data200
-Resource_Data200:
-	.incbin "baserom.gba", 0x0096b418, 0x00000040
-	.global Resource_Data201
-Resource_Data201:
-	.incbin "baserom.gba", 0x0096b458, 0x00000044
-	.global Resource_Data202
-Resource_Data202:
-	.incbin "baserom.gba", 0x0096b49c, 0x00000054
 	.section .unidentified.08970727,"a"
 	.incbin "baserom.gba", 0x00970727, 0x00000001
 	.section .unidentified.08973672,"a"

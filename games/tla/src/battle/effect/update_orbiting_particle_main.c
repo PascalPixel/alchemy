@@ -121,3 +121,89 @@ void BattleFx_StartOrbitingParticles(void)
         BattleFx_RunOrbitingParticles();
     }
 }
+
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+
+// Sixteen particles, one every three frames, orbit points scattered 2 to 6
+// pixels around the effect; the target then flashes eight times, takes the
+// orbiting particles' main update and runs its pending event.
+void BattleFx_RunOrbitingParticles(void)
+{
+    struct OrbitingParticleVector pos;
+    struct OrbitingParticleVector *p;
+    struct BattleFxScene *scene;
+    struct ObjectRuntime *tgt;
+    struct ObjectRuntime *particle;
+    struct PendingEvent *ev;
+    s32 cnt;
+
+    scene = Ram_HeapSlots->effect_work;
+    tgt = scene->child;
+    BattleEffect_InitializeSharedScene();
+    Audio_PlayCue(115);
+
+    p = &pos;
+    cnt = 15;
+    do {
+        particle = Object_Spawn(681, 0, 0, 0);
+        if (particle != NULL) {
+            u32 scale;
+            s32 dist;
+
+            scale = (Random16() >> 1) + 0x8000;
+            particle->scale_y = scale;
+            particle->scale_x = scale;
+            if ((Random16() & 1) != 0)
+                particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleLeft;
+            else
+                particle->update = (void (*)(void))BattleFx_UpdateOrbitingParticleRight;
+
+            particle->angle = Random16();
+            particle->action = 60;
+            particle->unknown_66 = Random16();
+            Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
+
+            p->x = scene->x;
+            p->y = scene->y;
+            p->z = scene->z;
+            dist = (Random16() << 2) + (2 << 16);
+            Vector_AddPolarOffset(dist, Random16(), p);
+            particle->target_x = p->x;
+            particle->target_y = p->y;
+            particle->target_z = p->z;
+        }
+
+        WaitFrames(3);
+        cnt--;
+    } while (cnt >= 0);
+
+    WaitFrames(10);
+    Audio_PlayCue(115);
+    WaitFrames(50);
+
+    if (tgt != NULL && scene->enabled == 0) {
+        Audio_PlayCue(212);
+
+        cnt = 7;
+        do {
+            Animation_ApplyChildValuesFar((struct DispatchObject *)tgt, 7);
+            WaitFrames(1);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)tgt, 0);
+            WaitFrames(4);
+            cnt--;
+        } while (cnt >= 0);
+
+        if (scene->child_option == 0) {
+            Audio_PlayCue(220);
+            Object_SetMode(tgt, 2);
+        }
+
+        tgt->update = (void (*)(void))BattleFx_UpdateOrbitingParticleMain;
+        ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
+        if (ev != NULL)
+            EventRuntime_RunPendingEvent(ev, scene->first_object_id, scene->second_object_id);
+        WaitFrames(20);
+    }
+
+    BattleFx_PrepareBufferInterpolation();
+}

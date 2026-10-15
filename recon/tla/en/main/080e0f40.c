@@ -4,7 +4,9 @@
  * loads source->x first. Measured: without the party pointer and its one-pass block, differ 4
  * (particle->terrain_height is also loaded after 0x1fa is built); the floor in a local, the
  * -0x20000 in a local, and an empty asm barrier before the x store, each the same 2. No
- * statement order in the tail moved the pair. 080e0fb0 is the same function with the signs
+ * statement order in the tail moved the pair. A forced -0x20000 through an empty asm
+ * after the scale stores loads first, but reallocates the tail (differ 16 pinned to r4,
+ * more unpinned; 2026-10-15). 080e0fb0 is the same function with the signs
  * turned. */
 #include "types.h"
 #include "object_runtime.h"

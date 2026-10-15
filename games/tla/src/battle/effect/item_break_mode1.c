@@ -1,25 +1,21 @@
-/* Near miss, differ 2. The first scale test matches with an empty asm barrier after the
- * load. In the loop the native starts the 0xffff limit (movs r2, #255), loads the scale,
- * then shifts and adds; this draft shifts before the load. Measured in the sched2 dump:
- * the load and the shift tie at priority 3 and the scheduler prefers the insn that
- * depends on the last one scheduled; a load-use latency of 3 instead of ARM9TDMI's 2
- * gives the native order in both tests. Tried: while and do forms, an inline accessor,
- * a non-volatile register-use asm (cost 0, lowers the load), a one-pass block (load
- * first), a limit started before a barrier (registers swap). */
 #include "types.h"
+#include "system.h"
 #include "object_runtime.h"
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void WaitFrames(s32 frames);
 
-struct ObjectRuntime *Func_080df820(s32 x, s32 y, s32 z, s32 angle)
+// Spawns object 278 and grows it from a quarter to full size, an eighth of a
+// turn a frame, then faces it to angle.
+struct ObjectRuntime *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
 {
     struct ObjectRuntime *object;
     s32 scale;
+    /* FAKEMATCH: the limit's first byte is pinned to the r2 the native builds it in; as a free temporary it takes r3 and the scale r2 (differ 30). */
+    register s32 limit asm("r2");
 
     Audio_PlayCue(138);
     object = Object_Spawn(278, x, y, z);
-    if (object != 0) {
+    if (object != NULL) {
         object->scale_y = 0x4000;
         object->scale_x = 0x4000;
         object->speed_limit = 0x30000;
@@ -36,8 +32,11 @@ struct ObjectRuntime *Func_080df820(s32 x, s32 y, s32 z, s32 angle)
                 object->scale_x = scale;
                 object->angle += 0x2000;
                 WaitFrames(1);
+                limit = 255;
                 scale = object->scale_x;
-            } while (scale <= 0xffff);
+                /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then finishes the limit; as a constant the load comes after its shift (differ 2). */
+                asm volatile("" : "+l"(limit));
+            } while (scale <= (limit << 8) + 255);
         }
         object->angle = angle;
     }

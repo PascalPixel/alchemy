@@ -50,7 +50,7 @@ Func_080df1fc:
 	adds r0, r0, r3
 	movs r3, #128
 	lsls r3, r3, #8
-	bl Func_080df820
+	bl BattleFx_SpawnItemBreakMode1
 	mov r1, r10
 	adds r6, r0, #0
 	ldr r2, .L_080df538
@@ -61,7 +61,7 @@ Func_080df1fc:
 	ldr r2, [r3, #8]
 	movs r3, #0
 	str r6, [sp, #20]
-	bl Func_080df820
+	bl BattleFx_SpawnItemBreakMode1
 	adds r5, r0, #0
 	ldr r0, [sp, #20]
 	str r5, [sp, #24]

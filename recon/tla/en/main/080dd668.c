@@ -1,68 +1,56 @@
-/* Pin-free trial (tla-en): listing 95 instructions, draft 97, common 81, differ 30.
- * Earlier register-allocation notes describe the prior pinned form.
- */
+/* Near miss, differ 4 of 95 (2026-10-15), ported from ☀️'s UpdateRisingParticleBurst
+ * with ⚓️'s object 673 (☀️'s 285). Two loads come one slot later than the
+ * listing's: the 0xfffff800 literal before the first Audio_PlayCue argument, and
+ * the angle (ldrh r3, [r7, #6]) before the 0x2000 step is started. ☀️'s block-local
+ * 1.0 is still needed. Single and paired barriers after each statement measured no
+ * better. */
 #include "types.h"
 #include "system.h"
-#include "ram_buffer.h"
-#include "motobj.h"
 #include "objdisp.h"
-#include "object_efx.h"
+#include "object_runtime.h"
 
-struct BattleFxScene { u8 pad00[16]; void *volatile main_object; };
+extern const s32 Data_080f0e78[];
 
-void BattleEffect_InitializeSharedScene(void);
-void *BattleFx_StartItemBreak(void *object);
-void BattleFx_SnapScaleToFull(struct MotionObject *object);
-void Object_SetMode(void *object, s32 mode);
-void BattleFx_PrepareBufferInterpolation(void);
-void UpdateRisingParticleBurst(void *object);
-extern void *Object_Spawn(s32, s32, s32, s32);
-extern void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude, s32 angle);
-extern void BattleFx_UpdateItemBreakFragment(void *);
-extern void Audio_PlayCue(s32);
-s32 Object_CommitPosition();
-extern void Object_Destroy(void *object);
-#define SOUND_ITEM_BREAK 138
-void UpdateRisingParticleBurst(void *source)
+struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
+void Object_Destroy(struct ObjectRuntime *object);
+
+void UpdateRisingParticleBurst(void *object)
 {
-    s32 count;
+    struct ObjectRuntime *src = object;
+    struct ObjectRuntime *child;
+    s32 i;
     s32 dist;
-    u32 vel;
-    void *child;
-    /* FAKEMATCH: holds 0x10000 in sl across the burst loop as the ROM does */
-    s32 unit;
+    u32 spread;
 
     Audio_PlayCue(154);
-    for (count = 30; count >= 0; count--) {
-        ((struct MotionObject *)source)->y += 0x10000;
-        ((struct MotionObject *)source)->angle += 0x2000;
-        ((struct MotionObject *)source)->scale_x += -0x800;
-        ((struct MotionObject *)source)->scale_y += -0x800;
+    for (i = 30; i >= 0; i--) {
+        src->y += 1 << 16;
+        src->angle += 0x2000;
+        src->scale_x += -0x800;
+        src->scale_y += -0x800;
         WaitFrames(1);
     }
-    count = 7;
-    unit = 0x10000;
-    for (; count >= 0; count--) {
-        child = Object_Spawn(0x2a1, *(s32 *)((s8 *)source + 8),
-                             ((struct MotionObject *)source)->y,
-                             *(s32 *)((s8 *)source + 16));
+    for (i = 7; i >= 0; i--) {
+        child = Object_Spawn(673, src->x, src->y, src->z);
         if (child != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
-            {
-                s32 speed = Random16();
+            s32 speed;
+            /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps 0x10000 in one register that loop.c hoists for both uses, as in ☀️'s UpdateRisingParticleBurst. */
+            s32 unit = 0x10000;
 
-                *(s32 *)((s8 *)child + 0x34) = unit;
-                *(s32 *)((s8 *)child + 0x30) = speed + unit;
-            }
-            *(s8 *)((s8 *)child + 0x55) = 2;
-            *(s32 *)((s8 *)child + 0x48) = 0xa3d;
-            vel = Random16();
-            *(s32 *)((s8 *)child + 0x28) = vel - Random16();
-            dist = Random16() * 0x18;
-            dist += 0x80000;
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, Data_080f0e78);
+            speed = Random16();
+            child->acceleration = unit;
+            child->speed_limit = speed + unit;
+            child->motion_flags = 2;
+            child->gravity = 0xa3d;
+            spread = Random16();
+            child->velocity_y = spread - Random16();
+            dist = Random16() * 24;
+            dist += 8 << 16;
             Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
         }
     }
     Audio_PlayCue(131);
-    Object_Destroy(source);
+    Object_Destroy(src);
 }

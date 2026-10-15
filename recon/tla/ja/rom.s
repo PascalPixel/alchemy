@@ -3178,13 +3178,8 @@ Func_080dd054:
 	.thumb_func
 BattleFx_StartItemBreak:
 	.incbin "baserom.gba", 0x000dd4e4, 0x00000114
-	.section .rom.000dd5f8, "ax"
-	.global BattleFx_SnapScaleToFull
-	.type BattleFx_SnapScaleToFull, %function
-	.thumb_func
-BattleFx_SnapScaleToFull:
-	.incbin "baserom.gba", 0x000dd5f8, 0x0000002c
 	.section .rom.000dd624, "ax"
+	.balign 4
 	.global UpdateRisingParticleBurst
 	.type UpdateRisingParticleBurst, %function
 	.thumb_func
@@ -3203,7 +3198,14 @@ Func_080dd950:
 	.type Func_080ddbd8, %function
 	.thumb_func
 Func_080ddbd8:
-	.incbin "baserom.gba", 0x000ddb94, 0x0000057c
+	.incbin "baserom.gba", 0x000ddb94, 0x000003fc
+	.section .rom.000de01c, "ax"
+	.balign 4
+	.global Func_080de060
+	.type Func_080de060, %function
+	.thumb_func
+Func_080de060:
+	.incbin "baserom.gba", 0x000de01c, 0x000000f4
 	.global Func_080de154
 	.type Func_080de154, %function
 	.thumb_func
@@ -3215,20 +3217,12 @@ Func_080de154:
 	.thumb_func
 Func_080de21c:
 	.incbin "baserom.gba", 0x000de1d8, 0x00000334
-	.section .rom.000de644, "ax"
-	.global BattleFx_RunOrbitingParticles
-	.type BattleFx_RunOrbitingParticles, %function
+	.section .rom.000de88c, "ax"
+	.global Func_080de8d0
+	.type Func_080de8d0, %function
 	.thumb_func
-BattleFx_RunOrbitingParticles:
-	.incbin "baserom.gba", 0x000de644, 0x00000190
-	.section .rom.000de820, "ax"
-	.incbin "baserom.gba", 0x000de820, 0x00000188
-	.section .rom.000de9b4, "ax"
-	.global Func_080de9f8
-	.type Func_080de9f8, %function
-	.thumb_func
-Func_080de9f8:
-	.incbin "baserom.gba", 0x000de9b4, 0x000001ac
+Func_080de8d0:
+	.incbin "baserom.gba", 0x000de88c, 0x0000011c
 	.section .rom.000deb94, "ax"
 	.balign 4
 	.global Func_080debd8
@@ -3245,7 +3239,13 @@ Func_080decb8:
 	.section .rom.000deda4, "ax"
 	.global RunBattleEffect05
 RunBattleEffect05:
-	.incbin "baserom.gba", 0x000deda4, 0x00000ac0
+	.incbin "baserom.gba", 0x000deda4, 0x0000038c
+	.section .rom.000df1b8, "ax"
+	.global Func_080df1fc
+	.type Func_080df1fc, %function
+	.thumb_func
+Func_080df1fc:
+	.incbin "baserom.gba", 0x000df1b8, 0x00000624
 	.section .rom.000df89a, "ax"
 	.incbin "baserom.gba", 0x000df89a, 0x00000002
 	.section .rom.000df89c, "ax"
@@ -3469,7 +3469,7 @@ Func_080e9af4:
 	.type Func_080e9db4, %function
 	.thumb_func
 Func_080e9db4:
-	.incbin "baserom.gba", 0x000e9cf8, 0x00000130
+	.incbin "baserom.gba", 0x000e9cf8, 0x000000d8
 	.section .rom.000e9eac, "ax"
 	.incbin "baserom.gba", 0x000e9eac, 0x00000940
 	.section .rom.000ea818, "ax"

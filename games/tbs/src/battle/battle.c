@@ -90,7 +90,7 @@
 struct DebugPartyEntry {
   s8 owner;
   u8 level;
-  s8 djinnCounts[4];
+  s8 djinnCounts[NUM_ELEMENTS];
   u16 items[4];
   u16 abilities[2];
   u16 unused; // 0 in every row
@@ -112,7 +112,8 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 // Returns 1 when the table ends before that preset, 0 otherwise.
 //--------------------------------------------------------------------------
 s32 DebugParty_LoadPreset(s32 preset) {
-  s32 nextDjinn[4]; // the next djinn number of each element to hand out
+  s32 nextDjinn[NUM_ELEMENTS]; // the next djinn number of each element to hand
+                               // out
   struct BattleUnit *member;
   s32 owner;
   s32 notFound;
@@ -129,7 +130,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   Party_RemoveActiveOwnerFar(5);
 
   currentPreset = 0;
-  for (i = 0; i < 4; i++)
+  for (i = 0; i < NUM_ELEMENTS; i++)
     nextDjinn[i] = 0;
 
   for (row = 0;; row++) {
@@ -152,7 +153,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
     // Start from no djinn and no abilities.
     member = (struct BattleUnit *)UnitGetFar(owner);
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < NUM_ELEMENTS; i++) {
       member->djinnOwnedCounts[i] = 0;
       member->djinnActiveCounts[i] = 0;
       member->djinnAvailable[i] = 0;
@@ -172,7 +173,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
         OwnerAction_AddFar(owner, gDebug_PartyPresets[row].abilities[i]);
     }
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < NUM_ELEMENTS; i++) {
       for (j = 0; j < gDebug_PartyPresets[row].djinnCounts[i]; j++) {
         Djinn_AddToOwnerFar(owner, i, nextDjinn[i]);
         Djinn_ActivateFar(owner, i, nextDjinn[i]);
@@ -674,7 +675,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 
   for (i = 0; i < count; i++) {
     owner = owners[i];
-    for (element = 0; element < 4; element++) {
+    for (element = 0; element < NUM_ELEMENTS; element++) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
         if (Trade_CanOfferDjinnFar(owner, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
@@ -736,7 +737,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 // returns the state that holds it.
 //--------------------------------------------------------------------------
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
-  u8 totals[4];
+  u8 totals[NUM_ELEMENTS];
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
@@ -759,7 +760,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       }
     }
     element++;
-  } while (element < 4);
+  } while (element < NUM_ELEMENTS);
 
   // A summon is available when all four elements meet its requirement.
   element = 0;
@@ -783,7 +784,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
         } while (*total >= *required);
       }
 
-      if (elementsMet == 4)
+      if (elementsMet == NUM_ELEMENTS)
         availableMask |= 1u << element;
     }
     element++;
@@ -1190,32 +1191,63 @@ s32 Battle_ClearSerialTransferPayload(void) {
     gBattleRandomSeed = 0;                                                     \
   } while (0)
 
+// BattleWork.partyStatus: how the party status window draws, with the
+// Summon command offered or not.
+#define PARTY_STATUS_NO_SUMMONS 1
+#define PARTY_STATUS_SUMMONS 3
+
+// Battle_RunEncounter's results besides the number of enemies defeated.
+#define ENCOUNTER_PARTY_LOST -1
+#define ENCOUNTER_FLED 999
+
+// BattleWork.defeatState: whether the last enemy fell alone, or with others
+// before it ("has been downed!" or "'s party goes down!"); 3 when a party
+// member's action ended the battle with a single defeat.
+#define DEFEAT_ONE 0
+#define DEFEAT_SEVERAL 1
+#define DEFEAT_BY_PARTY_MEMBER 3
+
+// The size of the block a link battle copies its field state into.
+#define LINK_OWNER_STATES_SIZE 0x7c8
+
+//--------------------------------------------------------------------------
+// Fights the battle against the enemy formation enemyGroup, from the
+// opening transition to the end, and returns how it ended: the number of
+// enemies defeated when the party won (or the link broke), ENCOUNTER_FLED
+// when the party ran, or ENCOUNTER_PARTY_LOST.
+//
+// Each round, the party's commands are chosen (or chosen automatically
+// under FLAG_AUTO_BATTLE), every unit acts in turn order, and the round ends
+// with the turn-end effects; the Djinn tutorial adds its two messages
+// after each round.
+//--------------------------------------------------------------------------
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
-  s32 *target;
+  s32 *focus;
   struct BattleWork *battle;
   u8 *ownerStates;
   struct BattlePresentationTransition *transition;
   struct BattleDisplayWork *display;
-  s32 object;
+  s32 enemyCount;
   u8 *dest;
-  s32 count;
+  s32 actionCount;
   s32 i;
   s32 result;
-  s32 handle;
+  s32 window;
   s32 wait;
   u32 pos;
   u32 actor;
   s16 cue;
-  u8 unused[48];
+  u8 unused[48]; // never used: the native frame keeps these 48 bytes
   volatile u32 fill;
 
+  // The battle's work areas.
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-  ownerStates = Runtime_AllocateBlock(54, 0x7c8);
+  ownerStates = Runtime_AllocateBlock(54, LINK_OWNER_STATES_SIZE);
   transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   Runtime_AllocateBlock(11, 0x280);
-  target = camera->pos;
+  focus = camera->pos;
   /* FAKEMATCH: needed to match: result starts at 0 and is never read before
    * each exit sets it; CSE takes the setup zeros from its register, r7 as
    * listed (without it 262). 2026-10-13: initialised at its declaration 130;
@@ -1223,7 +1255,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
    * matches, handle and result swap r5/r7); in wait 120, pos 113, actor 121, i
    * 323, count 363. */
   result = 0;
-  Iwram_ClearWords(ownerStates, 0x7c8);
+  Iwram_ClearWords(ownerStates, LINK_OWNER_STATES_SIZE);
   Scheduler_ResetTaskTable();
   transition->frames = 0;
   transition->targetYaw = 0x2000;
@@ -1250,17 +1282,20 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   else
     UiWork_InitializeFar(0);
 
-  target[0] = 0;
-  target[1] = 0x400000;
-  target[2] = 0;
+  // The camera's starting view, and the enemies.
+  focus[0] = 0;
+  focus[1] = 0x400000;
+  focus[2] = 0;
   camera->eye[0] = 0;
   camera->eye[1] = 0xb40000;
   camera->eye[2] = 0x400000;
   camera->yaw = 0x2800;
   camera->pitch = 0x5000;
   camera->distance = 0x1000000;
-  object = BattleFormation_BuildEnemyList(battle->enemyGroup);
+  enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
+  // A link battle: wait for the connection, take this console's side, keep
+  // a copy of the field state, and fight as the formation's first type.
   if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
     Battle_SetStart(4);
@@ -1268,25 +1303,26 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (battle->twoSided != 0) {
     BattleRandom_ClearSeed();
     for (wait = 0;;) {
-      if ((gLinkStatus & 3) == 3)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
       WaitFrames(1);
       wait++;
-      if (wait > 24) {
+      if (wait > LINK_MAX_MISSED_FRAMES) {
         battle->linkPaused = 1;
         break;
       }
     }
-    battle->linkSide = (REG_SIOCNT << 26) >> 30;
+    battle->linkSide = SIO_MULTI_PLAYER_ID();
     dest = gBattleOwnerStates;
-    for (pos = 0; pos <= 0x7c7; pos++)
+    for (pos = 0; pos < LINK_OWNER_STATES_SIZE; pos++)
       *dest++ = gActorSpriteSlots[pos];
-    object = GameFlag_GetByteFar(0x3f0);
+    enemyCount = GameFlag_GetByteFar(0x3f0);
     BattleParty_AssignMemberSlots();
-    battle->battleType = 0;
+    battle->battleType = FORMATION_SHUFFLED;
   }
   Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
 
+  // The battle music: the scene's own cue, or the usual battle songs.
   cue = gGameState.sceneCue;
   if (cue != 0) {
     AudioCommand_PlayFar(cue);
@@ -1299,15 +1335,16 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     AudioCommand_PlayFar(76);
   }
 
+  // The units, the windows and the background.
   BattleParty_CollectUnitList();
   BattleUnit_RefreshPlacement();
   BattleParty_ReconcileDjinnRecovery();
   BattleSummon_UpdateAvailability();
-  if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->availableMask !=
-      0)
-    battle->partyStatus = 3;
+  if (((struct BattleSummonState *)Trade_GetOfferStateFar(DJINN_RECOVERY_PARTY))
+          ->availableMask != 0)
+    battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
-    battle->partyStatus = 1;
+    battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
   UiWindow_CreateWithLayoutBoundsFar(9);
   Camera_InitDefaultTransform();
   BattleObjPut();
@@ -1319,58 +1356,66 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   REG_BLDCNT = 0;
   Summon_ClearWorkFields();
   battle->promptSlot = Resource_LoadIntoFreeSlot(128);
-  battle->encounterMode = 0;
+
+  // A random encounter may open with a first strike (1 in 16) or a
+  // surprise (1 in 32 of the rest); the Djinn tutorial always strikes first.
+  battle->encounterMode = BATTLE_ENCOUNTER_NORMAL;
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
-    battle->encounterMode = 1;
+    battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
   } else if (gGameState.battleStart == 0) {
     if ((BattleRandomFar() & 15) == 0)
-      battle->encounterMode = 1;
+      battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
     else if ((BattleRandomFar() & 31) == 0)
-      battle->encounterMode = 2;
+      battle->encounterMode = BATTLE_ENCOUNTER_ENEMIES_FIRST;
   }
-  BattlePres_RunEntryTransition(object, enemyGroup);
+  BattlePres_RunEntryTransition(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Scheduler_AddOrUpdateCallback(BattleActor_UpdateSpritePriorities, 0xc80);
 
+  // The rounds.
   for (;;) {
     Battle_ReservedNoOp9B2C();
     BattleSummon_UpdateAvailability();
-    if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))
+    if (((struct BattleSummonState *)Trade_GetOfferStateFar(
+             DJINN_RECOVERY_PARTY))
             ->availableMask != 0)
-      battle->partyStatus = 3;
+      battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
-      battle->partyStatus = 1;
+      battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
     transition->targetYaw = 0x2800;
     transition->frames = 60;
     PartyStatusDrawFar(battle->partyStatus);
-    Iwram_ClearWords(battle->actions, 0x140);
+
+    // Every unit's action for the round, in turn order.
+    Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     Resource_ResetEntry(battle->promptSlot);
     if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
-      count = BattlePresentation_BuildActions(battle->actions);
+      actionCount = BattlePresentation_BuildActions(battle->actions);
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
     } else {
-      count = BattlePresentation_BuildSortedUnitEntries(battle->actions);
+      actionCount = BattlePresentation_BuildSortedUnitEntries(battle->actions);
     }
     battle->promptSlot = Resource_LoadIntoFreeSlot(128);
     PartyStatusDrawFar(battle->partyStatus);
-    if (count < 0)
+    if (actionCount < 0)
       goto aborted;
 
-    for (i = 0; i < count; i++) {
+    // Each action, until one side is down or the party runs.
+    for (i = 0; i < actionCount; i++) {
       actor = battle->actions[i].unitId;
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
       if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
         if (BattlePresentation_DispatchAction(&battle->actions[i],
                                               i == 0 ? 10 : 0) == 1)
-          goto interrupted;
+          goto fled;
       } else {
         if (BattlePres_RunAction(&battle->actions[i]) == 1)
-          goto interrupted;
+          goto fled;
       }
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
@@ -1378,14 +1423,15 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         goto party_lost;
       if (BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) == 0) {
         if (actor <= 7 && battle->spoils.defeated == 1)
-          battle->defeatState = 3;
-        goto resolved;
+          battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
+        goto won;
       }
       if (BattlePres_SyncTurn() < 0)
         goto aborted;
     }
 
-    battle->encounterMode = 0;
+    // The end of the round.
+    battle->encounterMode = BATTLE_ENCOUNTER_NORMAL;
     Battle_ReservedNoOpF674();
     Battle_ProcessRoundEnd();
     BattleMotion_DestroyAllSlotObjects();
@@ -1398,28 +1444,32 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0)
       continue;
 
-    handle = UiText_OpenMessageWindowFar(MsgTutorialUnleashed, 0, 4, 1);
+    // The Djinn tutorial explains unleashing and standby.
+    window = UiText_OpenMessageWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (UiWork_IsCompleteFar() == 0)
       WaitFrames(1);
-    UiWork_FinalizeFar(handle, 1);
+    UiWork_FinalizeFar(window, 1);
     WaitFrames(1);
-    handle = UiText_OpenMessageWindowFar(MsgTutorialStandby, 10, 4, 1);
+    window = UiText_OpenMessageWindowFar(MsgTutorialStandby, 10, 4, 1);
     BattlePresentation_WaitForPromptAt(92, 24);
-    UiWork_FinalizeFar(handle, 1);
+    UiWork_FinalizeFar(window, 1);
     WaitFrames(1);
   }
 
-resolved:
+won:
+  // Name the defeat ("X has been downed!" or "X's party goes down!") after
+  // the first enemy class to fall, then hand out the spoils.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0) {
     if (battle->twoSided != 0)
       AudioCommand_PlayFar(58);
     if (battle->spoils.defeated != 0) {
       AudioCommand_PlayFar(58);
-      if (battle->defeatState <= 1) {
-        BattleUnitSetFar(128, battle->enemyClasses[battle->firstDefeated], 26);
+      if (battle->defeatState <= DEFEAT_SEVERAL) {
+        BattleUnitSetFar(FIRST_ENEMY_UNIT,
+                         battle->enemyClasses[battle->firstDefeated], 26);
         UiWork_ClearValueNameTablesFar();
-        UiWork_PushValueSlotFar(128, 1);
+        UiWork_PushValueSlotFar(FIRST_ENEMY_UNIT, 1);
         UiText_ShowMessageAndWaitCoreFar(battle->defeatState + MsgDowned);
         BattlePresentation_WaitForAdvance();
       }
@@ -1433,6 +1483,7 @@ resolved:
   goto finished;
 
 aborted:
+  // The link broke, or no actions could be gathered.
   Battle_ClearSerialTransferPayload();
   Scheduler_EnableCallbacks(0);
   REG_DISPCNT = 1;
@@ -1441,6 +1492,8 @@ aborted:
   goto finished;
 
 party_lost:
+  // "X goes down in defeat..." for a lone member, else "X's party has been
+  // defeated!".
   Battle_ClearSerialTransferPayload();
   AudioCommand_PlayFar(59);
   UiWork_ClearValueNameTablesFar();
@@ -1452,15 +1505,15 @@ party_lost:
   BattlePresentation_WaitForAdvance();
   AudioCommand_PlayFar(17);
   Blend_SetDarkenTarget16(30);
-  result = -1;
+  result = ENCOUNTER_PARTY_LOST;
   Blend_WaitForTransition();
   goto finished;
 
-interrupted:
+fled:
   AudioCommand_PlayFar(17);
   Blend_SetDarkenTarget16(30);
   Blend_WaitForTransition();
-  result = 0x3e7;
+  result = ENCOUNTER_FLED;
 
 finished:
   BattleParty_ResetActiveRuntimeFields();

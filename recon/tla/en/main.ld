@@ -252,8 +252,6 @@ SECTIONS
         "*/games/tla/src/field/common/object/collect_active.o"(.text)
         "*/recon/tla/raw/0802493c.o"(.text)
         "*/games/tla/src/field/common/script/interpreter_control.o"(.text)
-        "*/recon/tla/raw/08024c6e.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08024c70.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/common/script/interpreter.o"(.text)
         "*/games/tla/src/field/common/script/jump.o"(.text)
         "*/games/tla/src/field/common/script/load_main_script.o"(.text)

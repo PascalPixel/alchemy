@@ -252,7 +252,6 @@ SECTIONS
     "*/games/tla/src/field/common/object/collect_active.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002493c)
     "*/games/tla/src/field/common/script/interpreter_control.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00024c6e)
     "*/games/tla/src/field/common/script/interpreter.o"(.text)
     "*/games/tla/src/field/common/script/jump.o"(.text)
     "*/games/tla/src/field/common/script/load_main_script.o"(.text)

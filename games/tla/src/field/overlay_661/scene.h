@@ -166,4 +166,10 @@ static inline void Scene_Call4178(s32 a, s32 b, s32 c)
     Func_02004178(a, b, c);
 }
 
+static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndReset(id, x, z);
+}
+
 #endif

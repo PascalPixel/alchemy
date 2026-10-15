@@ -1,4 +1,9 @@
-/* Near miss: listing 57 instructions, draft 57, common 48, differ 18; the rest differs in instruction order. */
+/* Near miss: listing 57 instructions, draft 57, common 48, differ 18; the rest differs in instruction order.
+   Tried (fresh from The Broken Seal's BattleEffect_SetupBlendedDisplay): the two
+   pool values pinned behind barriers and the fills through a forwarder, still
+   differ 18: the native loads the battle work before the canvas and the fill
+   routine's entry before the first size; the entry in a local behind a
+   one-pass block shares the size (differ 41). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

@@ -15,15 +15,21 @@
 #include "text/msg_ids.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Lunpa, the town under Dodonpa's fortress, on two maps: the town itself
+// (Lunpa 1), with its well, its hidden passage to the jail and Reveal's
+// secrets, and the gate below the fortress (Lunpa 2), where two guards turn
+// the party away until Cloak gets them past.
+
 static void Guards_Watch(void);
 
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared scene code, included where the ROM places it.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
+// frames, then it moves away and is freed.
 s32 gShortEffectScript[] = {
     SCRIPT_WAIT(1), SCRIPT_REPEAT(22, 0),
     SCRIPT_WAIT(1), SCRIPT_SET_POSITION(0, 0, 0),
@@ -48,6 +54,7 @@ const s32 *gEffectScripts[] = {
     gLongEffectScript,
 };
 
+// The town's entrances, or the gate's.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 scene = gGameState.scene;
 
@@ -60,8 +67,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLunpaEntrances;
 }
 
+// Lunpa has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
+// Where each exit of the town or the gate leads.
 const u32 *Scene_GetExits(void) {
   s32 scene = gGameState.scene;
 
@@ -74,6 +83,7 @@ const u32 *Scene_GetExits(void) {
   return gLunpaExits;
 }
 
+// The townsfolk, or the gate's guards.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -86,7 +96,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gLunpaPlacements;
 }
 
-static void EV20_PSYNERGY(void) {
+// Catch on the nut floating over the town: the party gets it.
+static void FloatingNut_Catch(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_LUNPA_NUT_CAUGHT);
@@ -95,6 +106,8 @@ static void EV20_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Frost on the puddle Reveal shows: it freezes into a pillar the party can
+// stand on.
 static void HiddenPuddle_Freeze(void) {
   struct FieldActor *pillar;
 
@@ -111,6 +124,8 @@ static void HiddenPuddle_Freeze(void) {
   GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
+// Every frame while the pillar stands: draw it under the leader once the
+// leader is on top.
 static void IcePillar_UpdateDrawOrder(void) {
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
     Object_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags |=
@@ -121,6 +136,8 @@ static void IcePillar_UpdateDrawOrder(void) {
   }
 }
 
+// Reveal: the psynergy stone's spot, the hidden switch's glint, the
+// puddle and, once opened, the passage show.
 static void Reveal_ShowSecrets(void) {
   struct FieldActor *actor;
   s32 cellX;
@@ -167,6 +184,7 @@ static void Reveal_ShowSecrets(void) {
   GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
+// Reveal's end, and every entry to the town: the secrets hide again.
 static void Reveal_HideSecrets(void) {
   struct FieldActor *puddle;
 
@@ -188,13 +206,15 @@ static void Reveal_HideSecrets(void) {
   GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-static void EV90_SEARCH(void) {
+// Searching the well.
+static void Well_Search(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgLunpaWellFrogs, 1);
   Engine_EventEnd();
 }
 
+// The gate's events, or the town's before and after trade reopens.
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
@@ -209,7 +229,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gLunpaSealedEvents;
 }
 
-static void EV17_TALK(void) {
+// The west guard of the town asks whether the party wants in.
+static void WestGuard_Talk(void) {
   Engine_EventBegin();
   Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
   Engine_EventSetMessage(MsgLunpaWestGuardAsksAboutEntering);
@@ -217,7 +238,9 @@ static void EV17_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV18_TALK(void) {
+// The east guard: wants authorization, or once the guards suspect Kalay,
+// asks twice whether the party came from there.
+static void EastGuard_Talk(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventSetMessage(MsgLunpaEastGuardDemandsAuthorization);
@@ -237,7 +260,8 @@ static void EV18_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV18_PSYNERGY(void) {
+// Mind Read on the east guard.
+static void EastGuard_MindRead(void) {
   s32 thoughts;
 
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) == 0) {
@@ -255,6 +279,7 @@ static void EV18_PSYNERGY(void) {
   }
 }
 
+// The townsfolk's questions and remarks.
 static void VillagerA_Talk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerAAsksHowLong);
@@ -262,21 +287,21 @@ static void VillagerA_Talk(void) {
   Engine_EventEnd();
 }
 
-static void EV11_TALK(void) {
+static void VillagerC_Talk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
   Engine_EventAskYesNo(ACTOR_VILLAGER_C, 0);
   Engine_EventEnd();
 }
 
-static void EV15_TALK(void) {
+static void VillagerG_Talk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
   Engine_EventAskYesNo(ACTOR_VILLAGER_G, 0);
   Engine_EventEnd();
 }
 
-static void EV10_TALK(void) {
+static void VillagerB_Talk(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
   Engine_EventSetMessage(MsgLunpaVillagerBShivers);
@@ -284,14 +309,16 @@ static void EV10_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV12_TALK(void) {
+static void VillagerD_Talk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
   Engine_EventAskYesNo(ACTOR_VILLAGER_D, 0);
   Engine_EventEnd();
 }
 
-static void EV08_TALK(void) {
+// The gate's left guard: hears someone while the party is cloaked; after
+// trade reopens, nearly recognizes Hammet with the party.
+static void LeftGuard_Talk(void) {
   s32 recognition;
 
   if (gGameState.cloaked != 0) {
@@ -311,6 +338,7 @@ static void EV08_TALK(void) {
   Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
+// The gate's right guard.
 static void RightGuard_Talk(void) {
   if (gGameState.cloaked != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardFeelsCreepy);
@@ -322,6 +350,9 @@ static void RightGuard_Talk(void) {
   Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
+// Mind Read on the left guard: before the cave reunion he thinks the man
+// with the party looks like that merchant, and Mind Read is cut short the
+// first time as he turns to look.
 static void LeftGuard_MindRead(void) {
   s32 seen;
 
@@ -348,7 +379,8 @@ static void LeftGuard_MindRead(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-static void EV09_PSYNERGY(void) {
+// Mind Read on the right guard.
+static void RightGuard_MindRead(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardReopenedThoughts);
   } else {
@@ -357,6 +389,8 @@ static void EV09_PSYNERGY(void) {
   Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
+// Every frame at the gate after trade reopens: stepping up to row 10
+// raises Garet's warning (trigger TRIGGER_FORTRESS_APPROACH).
 static void Party_WatchForFortress(void) {
   s32 cellZ = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
@@ -366,7 +400,9 @@ static void Party_WatchForFortress(void) {
   }
 }
 
-static void EV20_TOUCH(void) {
+// Garet reminds the leader they cannot go into the fortress, and the
+// leader steps back.
+static void Garet_TurnsBack(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventSetMessage(MsgLunpaGaretRefusesToReturn);
@@ -380,6 +416,7 @@ static void EV20_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// The leader walks into a doorway: the door opens and the leader goes in.
 static void Door_Enter(void) {
   struct EventWork *work;
   struct FieldActor *actor;
@@ -411,7 +448,8 @@ static void Door_Enter(void) {
   Engine_EventEnd();
 }
 
-static void EV12_TOUCH(void) {
+// The hidden passage to the jail, once opened and while Reveal shows it.
+static void HiddenPassage_Enter(void) {
   if (GameFlag_IsSet(FLAG_LUNPA_PASSAGE_OPEN) != 0) {
     if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
@@ -424,7 +462,8 @@ static void EV12_TOUCH(void) {
   }
 }
 
-static void EV01_TOUCH(void) {
+// Through the fortress door, out of the gate's top.
+static void Fortress_Enter(void) {
   GameFlag_Set(FLAG_GATE_FORTRESS_ENTERED);
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
@@ -442,15 +481,18 @@ static void EV01_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// The leader looks at what is ahead.
 static void Party_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
+// Reveal's sound when it uncovers something.
 static void Reveal_PlayTreasureCue(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
     Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
   }
 }
 
-static void EV20_SEARCH(void) {
+// Searching the switch Reveal shows: the passage opens in five steps.
+static void HiddenSwitch_Press(void) {
   if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) != 0) {
     return;
   }
@@ -483,7 +525,9 @@ static void EV20_SEARCH(void) {
   GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
-static void EV10_TOUCH(void) {
+// Coming close uncloaked, the guards step in front of the fortress door
+// and the gateway closes.
+static void Guards_BlockGate(void) {
   if (gGameState.cloaked == 0) {
     Engine_EventBegin();
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 0, 2);
@@ -509,8 +553,10 @@ static void EV10_TOUCH(void) {
   }
 }
 
+// A trigger that does nothing.
 static void Scene_DoNothing(void) {}
 
+// Cloak: the gateway closes behind the guards.
 static void Cloak_Begin(void) {
   Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
   Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
@@ -518,7 +564,9 @@ static void Cloak_Begin(void) {
   Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
-static void EV91_RAISED(void) {
+// Raised when the guards spot the party: they recognize the man with them,
+// and march the party back down to the gate's foot.
+static void Guards_CatchParty(void) {
   struct FieldActor *leader;
   s32 warning;
 
@@ -573,12 +621,14 @@ static void EV91_RAISED(void) {
   FieldScheduler_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 }
 
+// The gateway opens again.
 static void Gateway_Reopen(void) {
   Map_CopyCellAttributes(7, 12, 1, 1, 7, 11);
   Map_CopyCellAttributes(7, 12, 1, 1, 8, 11);
   Map_CopyCellAttributes(7, 12, 1, 1, 9, 11);
 }
 
+// Cloak fades: if the leader is still among the guards, they are caught.
 static void Cloak_End(void) {
   struct EventWork *work;
   struct FieldActor *leader;
@@ -593,13 +643,15 @@ static void Cloak_End(void) {
 #if EDITION_INTERNATIONAL
     work->raisedTrigger = TRIGGER_PARTY_SPOTTED;
 #else
-    EV91_RAISED();
+    Guards_CatchParty();
 #endif
   }
   Gateway_Reopen();
   Engine_GameFlagClear(FLAG_GATE_PARTY_CAUGHT);
 }
 
+// Every frame at the gate: an uncloaked leader in front of the guards is
+// spotted.
 static void Guards_Watch(void) {
   struct EventWork *work;
   struct FieldActor *leader;
@@ -614,6 +666,7 @@ static void Guards_Watch(void) {
   }
 }
 
+// Every 16 frames while the leader is thrown: a puff of dust.
 static void Leader_KickUpDust(void) {
   struct FieldActor *leader;
   s32 angle;
@@ -630,6 +683,8 @@ static void Leader_KickUpDust(void) {
   }
 }
 
+// Entering the gate after being caught inside: the guards throw the
+// leader out and down the steps.
 static void Party_ThrownOut(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
@@ -705,6 +760,8 @@ static void Party_ThrownOut(void) {
   Engine_EventEnd();
 }
 
+// Entering the gate after sneaking out of the fortress: the leader casts
+// Cloak and slips around the guards.
 static void Leader_SneaksOut(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -731,6 +788,9 @@ static void Leader_SneaksOut(void) {
   Engine_EventEnd();
 }
 
+// Sets either map up: Reveal's secrets hidden and the floating nut in the
+// town; at the gate, the thrown-out or sneaking-out scene, the watchers
+// and the fortress visit flags cleared.
 s32 Scene_Initialize(void) {
   struct FieldActor *puddle;
 
@@ -780,7 +840,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared scene code, included where the ROM places it.
 #include "common/object_orbit.h"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
@@ -904,7 +964,7 @@ struct ScenePlacement gGatePlacements[] = {
       DOOR(TRIGGER_ITEM_SHOP_DOOR), DOOR(TRIGGER_INN_DOOR),                    \
       DOOR(TRIGGER_TEMPLE_DOOR), DOOR(TRIGGER_EIGHTH_ROOM_DOOR), {             \
     TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_HIDDEN_PASSAGE,                  \
-        CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH)                             \
+        CONDITION_ALWAYS, EVENT_SCRIPT(HiddenPassage_Enter)                    \
   }
 
 #define LUNPA_SECRETS                                                          \
@@ -915,7 +975,7 @@ struct ScenePlacement gGatePlacements[] = {
       {PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_FADED), 0, CONDITION_ALWAYS,    \
        EVENT_SCRIPT(Reveal_HideSecrets)},                                      \
       {SEARCH(SEARCH_UNNAMED), TRIGGER_HIDDEN_SWITCH,                          \
-       FLAG_LUNPA_SECRETS_HIDDEN, EVENT_SCRIPT(EV20_SEARCH)},                  \
+       FLAG_LUNPA_SECRETS_HIDDEN, EVENT_SCRIPT(HiddenSwitch_Press)},           \
       {SEARCH(SEARCH_UNNAMED), TRIGGER_PSYNERGY_STONE,                         \
        FLAG_LUNPA_PSYNERGY_STONE, FIND_PSYNERGY_STONE},                        \
       {SEARCH(SEARCH_GRAVE), TRIGGER_GRAVE_SLEEP_BOMB,                         \
@@ -923,9 +983,9 @@ struct ScenePlacement gGatePlacements[] = {
       {SEARCH(SEARCH_BARREL), TRIGGER_BARREL_NUT, FLAG_LUNPA_BARREL_NUT,       \
        FIND_ITEM(ITEM_NUT)},                                                   \
       {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT,                   \
-       FLAG_LUNPA_NUT_CAUGHT, EVENT_SCRIPT(EV20_PSYNERGY)},                    \
+       FLAG_LUNPA_NUT_CAUGHT, EVENT_SCRIPT(FloatingNut_Catch)},                \
       {SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS,                 \
-       EVENT_SCRIPT(EV90_SEARCH)},                                             \
+       EVENT_SCRIPT(Well_Search)},                                             \
   {                                                                            \
     SCENE_EVENTS_END                                                           \
   }
@@ -934,14 +994,14 @@ struct SceneEvent gLunpaSealedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
     TALK(ACTOR_VILLAGER_A, EVENT_SCRIPT(VillagerA_Talk)),
     TALK(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealed)),
-    TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(EV11_TALK)),
+    TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(VillagerC_Talk)),
     TALK(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDSealed)),
     TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerESealed)),
     TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFSealed)),
-    TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(EV15_TALK)),
+    TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(VillagerG_Talk)),
     TALK(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealed)),
-    TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(EV17_TALK)),
-    TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_TALK)),
+    TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(WestGuard_Talk)),
+    TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_Talk)),
     MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerASealedThoughts)),
     MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealedThoughts)),
     MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCSealedThoughts)),
@@ -951,16 +1011,16 @@ struct SceneEvent gLunpaSealedEvents[] = {
     MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGSealedThoughts)),
     MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealedThoughts)),
     MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardSealedThoughts)),
-    MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
+    MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
     LUNPA_SECRETS,
 };
 
 struct SceneEvent gLunpaReopenedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
     TALK(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerAReopened)),
-    TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(EV10_TALK)),
+    TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(VillagerB_Talk)),
     TALK(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCReopened)),
-    TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(EV12_TALK)),
+    TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(VillagerD_Talk)),
     TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerEReopened)),
     TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFReopened)),
     TALK(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGReopened)),
@@ -985,7 +1045,7 @@ struct SceneEvent gLunpaReopenedEvents[] = {
               MSGNO(MsgLunpaVillageVillagerHReopenedThoughts)),
     MIND_READ(ACTOR_WEST_GUARD,
               MSGNO(MsgLunpaVillageWestGuardReopenedThoughts)),
-    MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
+    MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
     LUNPA_SECRETS,
 };
 
@@ -996,17 +1056,17 @@ struct SceneEvent gGateEvents[] = {
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Cloak_Begin) },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_FADED), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Cloak_End) },
     { EVENT_TOUCH, TRIGGER_FORTRESS_DOOR, FLAG_GATE_FORTRESS_ENTERED,
-      EVENT_SCRIPT(EV01_TOUCH) },
+      EVENT_SCRIPT(Fortress_Enter) },
     { EVENT_TOUCH, TRIGGER_GUARDED_GROUND, FLAG_GATE_GUARDS_BLOCKING,
-      EVENT_SCRIPT(EV10_TOUCH) },
+      EVENT_SCRIPT(Guards_BlockGate) },
     { EVENT_TOUCH, TRIGGER_FORTRESS_APPROACH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV20_TOUCH) },
-    { EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_RAISED) },
-    TALK(ACTOR_LEFT_GUARD, EVENT_SCRIPT(EV08_TALK)),
+      EVENT_SCRIPT(Garet_TurnsBack) },
+    { EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Guards_CatchParty) },
+    TALK(ACTOR_LEFT_GUARD, EVENT_SCRIPT(LeftGuard_Talk)),
     TALK(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(RightGuard_Talk)),
     MIND_READ(ACTOR_LEFT_GUARD, EVENT_SCRIPT(LeftGuard_MindRead)),
-    MIND_READ(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(EV09_PSYNERGY)),
-    { SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
+    MIND_READ(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(RightGuard_MindRead)),
+    { SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(Well_Search) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

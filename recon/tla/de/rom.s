@@ -5282,10 +5282,6 @@ Resource_Data1E3:
 	.global Resource_Data1F7
 Resource_Data1F7:
 	.incbin "baserom.gba", 0x0096a8d4, 0x00000400
-	.section .rom.0096acd4, "ax"
-	.global Resource_Data1F8
-Resource_Data1F8:
-	.incbin "baserom.gba", 0x0096acd4, 0x000000b0
 	.section .rom.009707ff, "ax"
 	.incbin "baserom.gba", 0x009707ff, 0x00000001
 	.section .rom.0097374a, "ax"

@@ -3481,7 +3481,7 @@ SECTIONS
     "*/recon/tla/it/rom.o"(.rom.0096a12f)
     "*/games/tla/src/graphics/field_fx/golden_trident.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.0096a194)
-    "*/recon/tla/it/rom.o"(.rom.0096a594)
+    "*/games/tla/src/graphics/field/green_panel.o"(.rodata)
     "*/games/tla/src/graphics/ui/menuspr.o"(.rodata)
     "*/games/tla/src/graphics/monster/blue_devil.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.009700bf)

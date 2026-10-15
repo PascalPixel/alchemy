@@ -95,7 +95,7 @@ Func_0812381c:
 	movs r1, #192
 	adds r0, r5, #0
 	lsls r1, r1, #24
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_081238f2
 	movs r0, #8

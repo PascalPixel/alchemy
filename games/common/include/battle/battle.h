@@ -94,7 +94,7 @@ void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object,
                                             s32 value);
-void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
+void Unit_SetHpFar(struct BattleUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 #endif

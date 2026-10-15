@@ -1633,7 +1633,7 @@ power_end:
                 break;
             BattleEvPush(BATTLE_EVENT_NUM, dmg);
             MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
-            UnitPpAddFar(aid, dmg);
+            Unit_AddPpFar(aid, dmg);
             break;
 
         case 84:
@@ -1644,7 +1644,7 @@ power_end:
                 break;
             BattleEvPush(BATTLE_EVENT_NUM, dmg);
             MESSAGE_SIDE(MsgMorePpLossP, MsgMorePpLossE);
-            UnitPpAddFar(tid, -dmg);
+            Unit_AddPpFar(tid, -dmg);
             break;
 
         case 33:

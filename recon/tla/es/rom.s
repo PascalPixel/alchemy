@@ -1291,16 +1291,16 @@ Func_080ad0a0:
 Func_080ad0a8:
 	.incbin "baserom.gba", 0x000b60a8, 0x00000008
 	.section .rom.000b60c0, "ax"
-	.global Owner_AdjustFirstValueFar
-	.type Owner_AdjustFirstValueFar, %function
+	.global Unit_AddHpFar
+	.type Unit_AddHpFar, %function
 	.thumb_func
-Owner_AdjustFirstValueFar:
+Unit_AddHpFar:
 	.incbin "baserom.gba", 0x000b60c0, 0x00000008
 	.section .rom.000b60c8, "ax"
-	.global UnitPpAddFar
-	.type UnitPpAddFar, %function
+	.global Unit_AddPpFar
+	.type Unit_AddPpFar, %function
 	.thumb_func
-UnitPpAddFar:
+Unit_AddPpFar:
 	.incbin "baserom.gba", 0x000b60c8, 0x00000008
 	.section .rom.000b60d0, "ax"
 	.global UnitRatioFar
@@ -1309,16 +1309,16 @@ UnitPpAddFar:
 UnitRatioFar:
 	.incbin "baserom.gba", 0x000b60d0, 0x00000008
 	.section .rom.000b60d8, "ax"
-	.global Owner_UpdateRatioPairFar
-	.type Owner_UpdateRatioPairFar, %function
+	.global Unit_SetHpFar
+	.type Unit_SetHpFar, %function
 	.thumb_func
-Owner_UpdateRatioPairFar:
+Unit_SetHpFar:
 	.incbin "baserom.gba", 0x000b60d8, 0x00000008
 	.section .rom.000b60e0, "ax"
-	.global Owner_UpdateSecondInputAndRatiosFar
-	.type Owner_UpdateSecondInputAndRatiosFar, %function
+	.global Unit_SetPpFar
+	.type Unit_SetPpFar, %function
 	.thumb_func
-Owner_UpdateSecondInputAndRatiosFar:
+Unit_SetPpFar:
 	.incbin "baserom.gba", 0x000b60e0, 0x00000008
 	.section .rom.000b60e8, "ax"
 	.global BattleUnitSetFar

@@ -1,26 +1,26 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Owner_AdjustFirstValueFar
+	.global Unit_AddHpFar
 	.thumb_func
-Owner_AdjustFirstValueFar:
-	overlay_veneer Owner_AdjustFirstValue
-	.global UnitPpAddFar
+Unit_AddHpFar:
+	overlay_veneer Unit_AddHp
+	.global Unit_AddPpFar
 	.thumb_func
-UnitPpAddFar:
-	overlay_veneer UnitPpAdd
+Unit_AddPpFar:
+	overlay_veneer Unit_AddPp
 	.global UnitRatioFar
 	.thumb_func
 UnitRatioFar:
 	overlay_veneer UnitRatio
-	.global Owner_UpdateRatioPairFar
+	.global Unit_SetHpFar
 	.thumb_func
-Owner_UpdateRatioPairFar:
-	overlay_veneer Owner_UpdateRatioPair
-	.global Owner_UpdateSecondInputAndRatiosFar
+Unit_SetHpFar:
+	overlay_veneer Unit_SetHp
+	.global Unit_SetPpFar
 	.thumb_func
-Owner_UpdateSecondInputAndRatiosFar:
-	overlay_veneer Owner_UpdateSecondInputAndRatios
+Unit_SetPpFar:
+	overlay_veneer Unit_SetPp
 	.global BattleUnitSetFar
 	.thumb_func
 BattleUnitSetFar:

@@ -1543,7 +1543,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
   s32 i;
 
   for (i = 0; i < targetCount; i++)
-    UnitPpAddFar(gGameState.activeOwners[i], amount);
+    Unit_AddPpFar(gGameState.activeOwners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
@@ -1576,7 +1576,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Owner_AdjustFirstValueFar(gGameState.activeOwners[i], value);
+    Unit_AddHpFar(gGameState.activeOwners[i], value);
   }
 }
 
@@ -1608,7 +1608,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
       amount = 0;
       break;
     }
-    Owner_AdjustFirstValueFar(gGameState.activeOwners[i], amount);
+    Unit_AddHpFar(gGameState.activeOwners[i], amount);
   }
 
   if (result != 0) {
@@ -3425,7 +3425,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code) {
         work->exit = 0;
       return 0;
     }
-    UnitPpAddFar(aid, -cost);
+    Unit_AddPpFar(aid, -cost);
   }
 
   // マップのイベントを探し、演出の方法を決める

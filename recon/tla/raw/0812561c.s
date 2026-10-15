@@ -349,7 +349,7 @@ Func_0812561c:
 	ldr r1, [r0, #96]
 	mov r0, r8
 	negs r1, r1
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_0812591c
 	mov r0, r8
@@ -358,7 +358,7 @@ Func_0812561c:
 	beq .L_081258f8
 	movs r1, #1
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	movs r0, #11
 	mov r1, r8
 	bl BattleEvPush
@@ -437,7 +437,7 @@ Func_0812561c:
 	strh r3, [r2]
 	negs r1, r7
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_081259dc
 	mov r0, r8
@@ -446,7 +446,7 @@ Func_0812561c:
 	beq .L_081259b8
 	movs r1, #1
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	movs r0, #11
 	mov r1, r8
 	bl BattleEvPush
@@ -496,7 +496,7 @@ Func_0812561c:
 	movs r1, #192
 	lsls r1, r1, #24
 	mov r0, r8
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	cmp r0, #0
 	bne .L_08125a60
 	movs r0, #0

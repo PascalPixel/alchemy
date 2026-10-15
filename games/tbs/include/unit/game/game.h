@@ -28,10 +28,10 @@ void Owner_RefreshActiveRatios(s32 arg0);
 void Owner_RefreshRatiosOnFlag(void);
 void Owner_RatioNoOp(void);
 void UnitRatio(s32 owner_id);
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input);
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp);
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta);
-s16 UnitPpAdd(s32 owner, s32 delta);
+void Unit_SetHp(struct BattleUnit *unit, s32 hp);
+void Unit_SetPp(struct BattleUnit *unit, s32 pp);
+s32 Unit_AddHp(s32 owner, s32 delta);
+s16 Unit_AddPp(s32 owner, s32 delta);
 s32 Party_AdjustSixDigitCounterB(s32 amount);
 s32 Party_AdjustCounterCappedAt28(s32 amount);
 

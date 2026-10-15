@@ -22,7 +22,7 @@ s32 Battle_WaitMode0();
 s32 Func_020058ec();
 s32 ObjectMotion_OffsetPositionAndReset();
 s32 ObjectMotion_ArmCallback();
-s32 Owner_AdjustFirstValue();
+s32 Unit_AddHp();
 s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
 s32 GameFlag_ClearBit();
@@ -160,7 +160,7 @@ void Func_020016e8(void)
     FIELD_AT(t81, s32, 40) = 0x40000;
     Call1(Battle_WaitMode0, 4);
     if (FIELD_AT(gPartyState, s16, 598) == -1) {
-        Call2(Owner_AdjustFirstValue, 4, -10);
+        Call2(Unit_AddHp, 4, -10);
     }
     FIELD_AT(gPartyState, u8, 587) = 2;
     Call2(Party_SetFields1eeAnd1f0, (s32)MsgShield, 0xc);

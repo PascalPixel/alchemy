@@ -21,7 +21,7 @@ void BattleParty_ApplyDrain(s32 amount) {
   s32 i;
 
   for (i = 0; i < targetCount; i++)
-    UnitPpAddFar(gPartyState.activeOwners[i], amount);
+    Unit_AddPpFar(gPartyState.activeOwners[i], amount);
 }
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
@@ -52,7 +52,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Owner_AdjustFirstValueFar(gPartyState.activeOwners[i], value);
+    Unit_AddHpFar(gPartyState.activeOwners[i], value);
   }
 }
 
@@ -94,7 +94,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
       }
 
       remaining--;
-      Owner_AdjustFirstValueFar(*entry, amount);
+      Unit_AddHpFar(*entry, amount);
       entry++;
     } while (remaining != 0);
   }

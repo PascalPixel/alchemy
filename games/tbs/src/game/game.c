@@ -726,46 +726,42 @@ void UnitRatio(s32 owner_id) {
   Unit_UpdateGauges(owner);
 }
 
-void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input) {
-  s32 value;
+// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+// gauges.
+void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
+  s32 clamped;
 
-  if (input > state->maxHp) {
-    value = state->maxHp;
+  if (hp > unit->maxHp) {
+    clamped = unit->maxHp;
   } else {
-    value = 0;
-    if (input >= 0) {
-      value = input;
+    clamped = 0;
+    if (hp >= 0) {
+      clamped = hp;
     }
   }
-  state->hp = value;
-  Unit_UpdateGauges(state);
-}
-
-//--------------------------------------------------------------------------
-// ratios_second_input.c
-// キャラクタ：PP の設定とゲージの計算
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-// PP を 0 から最大 PP の間で設定し、HP と PP のゲージを計算し直す
-// ゲージは 0x4000 で満タン。残っていれば最低 1 にする
-// unit : ユニット
-// pp   : 新しい PP
-//--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp) {
-  s32 cur;
-
-  if (pp > unit->maxPp) {
-    cur = unit->maxPp;
-  } else {
-    cur = 0;
-    if (pp >= 0)
-      cur = pp;
-  }
-  unit->pp = cur;
+  unit->hp = clamped;
   Unit_UpdateGauges(unit);
 }
 
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta) {
+// Sets the unit's PP, clamped to 0..maxPp, and recomputes its HP and PP
+// gauges.
+void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
+  s32 clamped;
+
+  if (pp > unit->maxPp) {
+    clamped = unit->maxPp;
+  } else {
+    clamped = 0;
+    if (pp >= 0)
+      clamped = pp;
+  }
+  unit->pp = clamped;
+  Unit_UpdateGauges(unit);
+}
+
+// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
+// gauges and returns the new HP.
+s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->hp;
   s32 max = state->maxHp;
@@ -784,7 +780,9 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta) {
   return state->hp;
 }
 
-s16 UnitPpAdd(s32 owner, s32 delta) {
+// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
+// gauges and returns the new PP.
+s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->pp;
   s32 max = state->maxPp;

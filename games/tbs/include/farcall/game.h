@@ -43,13 +43,11 @@ FAR_SLOT(GameFlag_DecrementByte)
 FAR_SLOT(GameFlag_GetNibble)
 FAR_SLOT(GameFlag_SetNibble)
 FAR_SLOT(Owner_RefreshAndResetZero)
-FAR_CALL(Owner_AdjustFirstValueFar, Owner_AdjustFirstValue, s32,
-         (s32 owner, s32 delta))
-FAR_CALL(UnitPpAddFar, UnitPpAdd, s16, (s32 owner, s32 delta))
+FAR_CALL(Unit_AddHpFar, Unit_AddHp, s32, (s32 owner, s32 delta))
+FAR_CALL(Unit_AddPpFar, Unit_AddPp, s16, (s32 owner, s32 delta))
 FAR_CALL(UnitRatioFar, UnitRatio, void, (s32 owner_id))
-FAR_CALL(Owner_UpdateRatioPairFar, Owner_UpdateRatioPair, void,
-         (struct BattleUnit * state, s32 input))
-FAR_SLOT(Owner_UpdateSecondInputAndRatios)
+FAR_CALL(Unit_SetHpFar, Unit_SetHp, void, (struct BattleUnit * unit, s32 hp))
+FAR_SLOT(Unit_SetPp)
 FAR_CALL(BattleUnitSetFar, BattleUnitSet, s32,
          (s32 unitId, s32 enemyId, s32 suffix))
 FAR_CALL(Party_CountActiveOwnersFar, Party_CountActiveOwners, s32, (void))

@@ -3,7 +3,9 @@
 
 void UnitRatio(s32);
 
-s32 Owner_AdjustFirstValue(s32 owner, s32 delta) {
+// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
+// gauges and returns the new HP.
+s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->hp;
   s32 max = state->maxHp;

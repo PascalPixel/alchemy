@@ -262,14 +262,14 @@ PartyInventory_Remove:
 	.thumb_func
 Func_020047a4:
 	overlay_veneer Inventory_EquipFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitPpAdd
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
+	.global Unit_AddPp
 	.thumb_func
-UnitPpAdd:
-	overlay_veneer UnitPpAddFar
+Unit_AddPp:
+	overlay_veneer Unit_AddPpFar
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:

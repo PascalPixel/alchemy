@@ -73,8 +73,8 @@ static inline s32 FieldParty_ListActiveOwners(s16 *owners) {
   return Party_ListActiveOwners(owners);
 }
 
-static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta) {
-  return Owner_AdjustFirstValue(owner, delta);
+static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
+  return Unit_AddHp(owner, delta);
 }
 
 // 型 01

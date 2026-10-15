@@ -4027,7 +4027,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       }
       if (result != -1) {
         action = BattleActGet(work->paneAction[0] & OWNER_ACTION_ID_MASK);
-        UnitPpAddFar(work->ownerIds[0], -action->ppCost);
+        Unit_AddPpFar(work->ownerIds[0], -action->ppCost);
       }
       UnitCalcFar(work->ownerIds[0]);
       if (result != -1) {

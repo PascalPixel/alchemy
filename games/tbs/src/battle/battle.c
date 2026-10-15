@@ -5449,7 +5449,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
 
   creature = UnitGetFar(arg0);
   if (creature->side == 1) {
-    Owner_UpdateRatioPairFar(creature, 0);
+    Unit_SetHpFar(creature, 0);
     BattleActor_RemoveFromLists(arg0);
     ActivateBattleObjectSlot(arg0);
     runtime = BattleObjGet(arg0);
@@ -6527,7 +6527,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       BattleEvPush(BATTLE_EVENT_NUM, dmg);
       MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
-      UnitPpAddFar(aid, dmg);
+      Unit_AddPpFar(aid, dmg);
       break;
 
     case 33: /* つよさがもどる */
@@ -7534,7 +7534,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         break;
       if (id == BATTLE_UNIT_REMOVED)
         continue;
-      if (Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+      if (Unit_AddHpFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
       }
@@ -8337,7 +8337,7 @@ s32 Battle_ProcessRoundEnd(void) {
             if (unit->hp + hpAmount > unit->maxHp) {
               hpAmount = unit->maxHp - unit->hp;
             }
-            Owner_AdjustFirstValueFar(id, hpAmount);
+            Unit_AddHpFar(id, hpAmount);
             UiWork_PushValueSlotFar(id, 1);
             UiWork_PushValueSlotFar(hpAmount, 5);
             if (unit->hp == unit->maxHp) {
@@ -8353,7 +8353,7 @@ s32 Battle_ProcessRoundEnd(void) {
             if (unit->pp + ppAmount > unit->maxPp) {
               ppAmount = unit->maxPp - unit->pp;
             }
-            UnitPpAddFar(id, ppAmount);
+            Unit_AddPpFar(id, ppAmount);
             UiWork_PushValueSlotFar(id, 1);
             UiWork_PushValueSlotFar(ppAmount, 5);
             if (unit->pp == unit->maxPp) {
@@ -8558,7 +8558,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_UNIT, id);
       BattleEvPush(BATTLE_EVENT_NUM, plan->hauntDmg);
       MESSAGE_PUSH(MsgCurseDamage);
-      if (Owner_AdjustFirstValueFar(id, -plan->hauntDmg) == 0) {
+      if (Unit_AddHpFar(id, -plan->hauntDmg) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);
@@ -8587,7 +8587,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       } else {
         state->events.pendingCue = 133;
       }
-      if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
+      if (Unit_AddHpFar(id, -damage) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);
@@ -8604,8 +8604,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     BattleEv_DispatchQueued();
     BattleEventRuntime_Reset();
     if (unit->grimReaper != 0) {
-      if (--unit->grimReaper == 0 &&
-          Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+      if (--unit->grimReaper == 0 && Unit_AddHpFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_UNIT, id);
         MESSAGE_PUSH(MsgReaperCalls);
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);

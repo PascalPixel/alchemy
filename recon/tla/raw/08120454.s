@@ -3692,7 +3692,7 @@ BattleTargetExec:
 .L_08122162:
 	ldr r0, [sp, #76]
 	adds r1, r5, #0
-	bl UnitPpAddFar
+	bl Unit_AddPpFar
 	b .L_081223ba
 .L_0812216c:
 	mov r3, r8
@@ -3730,7 +3730,7 @@ BattleTargetExec:
 .L_081221ae:
 	negs r1, r5
 	mov r0, r10
-	bl UnitPpAddFar
+	bl Unit_AddPpFar
 	b .L_081223ba
 .L_081221b8:
 	movs r2, #52

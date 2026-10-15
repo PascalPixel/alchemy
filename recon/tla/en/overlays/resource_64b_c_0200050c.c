@@ -6,7 +6,7 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
-s32 UnitPpAdd();
+s32 Unit_AddPp();
 void Func_02003c3c(void);
 void Func_02004a1c(void);
 
@@ -31,5 +31,5 @@ void Func_0200050c(void)
             goto loop;
     }
     if (pp == 0)
-        UnitPpAdd(gPartyState.currentOwner, 1);
+        Unit_AddPp(gPartyState.currentOwner, 1);
 }

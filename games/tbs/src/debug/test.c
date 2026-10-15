@@ -463,14 +463,14 @@ static void EV10_TALK(void) {
   u8 *record;
 
   UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
-  FieldOwner_AdjustFirstValue(0, -100);
-  FieldOwner_AdjustFirstValue(1, -100);
-  FieldOwner_AdjustFirstValue(2, -33);
-  FieldOwner_AdjustFirstValue(3, -100);
-  UnitPpAdd(0, -50);
-  UnitPpAdd(1, -40);
-  UnitPpAdd(2, -35);
-  UnitPpAdd(3, -20);
+  FieldUnit_AddHp(0, -100);
+  FieldUnit_AddHp(1, -100);
+  FieldUnit_AddHp(2, -33);
+  FieldUnit_AddHp(3, -100);
+  Unit_AddPp(0, -50);
+  Unit_AddPp(1, -40);
+  Unit_AddPp(2, -35);
+  Unit_AddPp(3, -20);
   record = UnitGet(0);
   record[0x131] = 1;
   record += 0x140;

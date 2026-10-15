@@ -33,8 +33,8 @@
 	.set import.Engine_DebugGetItem, 1
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_Add, 1
-	.set import.Owner_AdjustFirstValue, 1
-	.set import.UnitPpAdd, 1
+	.set import.Unit_AddHp, 1
+	.set import.Unit_AddPp, 1
 	.set import.Party_AddActiveOwner, 1
 	.set import.Party_RemoveActiveOwner, 1
 	.set import.Djinn_AddToOwner, 1

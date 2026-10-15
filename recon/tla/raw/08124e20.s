@@ -303,7 +303,7 @@ Func_08124e20:
 .L_08125084:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Owner_AdjustFirstValueFar
+	bl Unit_AddHpFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl UnitPpAddFar
+	bl Unit_AddPpFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity

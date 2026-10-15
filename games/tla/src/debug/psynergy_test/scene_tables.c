@@ -30,7 +30,7 @@ void UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 void UnitCalc(s32);
-s32 UnitPpAdd(s32, s32);
+s32 Unit_AddPp(s32, s32);
 void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 void ObjectMotion_Launch(s32, s32, s32);
@@ -154,22 +154,22 @@ void Func_02000224(void) {
   UnitCalc(6);
 }
 
-static __inline__ void Owner_AdjustFirstValueBy(s32 owner, s32 delta) {
+static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
   /* FAKEMATCH: a direct call keeps -100 in r5 for the next call; ⚓️ builds it
    * again before each. */
-  Owner_AdjustFirstValue(owner, delta);
+  Unit_AddHp(owner, delta);
 }
 
 void Func_0200026c(void) {
   u8 *state;
 
   UiText_ShowPositionedMessageAndWait((s32)MsgTheBodyIs, 1);
-  Owner_AdjustFirstValueBy(4, -100);
-  Owner_AdjustFirstValueBy(5, -100);
-  Owner_AdjustFirstValue(6, -33);
-  UnitPpAdd(4, -50);
-  UnitPpAdd(5, -40);
-  UnitPpAdd(6, -35);
+  Unit_AddHpBy(4, -100);
+  Unit_AddHpBy(5, -100);
+  Unit_AddHp(6, -33);
+  Unit_AddPp(4, -50);
+  Unit_AddPp(5, -40);
+  Unit_AddPp(6, -35);
   state = UnitGet(4);
   state[0x131] = 1;
   state += 0x140;

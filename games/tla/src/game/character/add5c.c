@@ -1,7 +1,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-s32 UnitPpAdd();
+s32 Unit_AddPp();
 
 static __inline__ s32 Owner_GetPpRatio(s32 owner) {
   struct BattleUnit *unit = UnitGet(owner);
@@ -48,7 +48,7 @@ s32 Func_080adcec(void) {
   }
   if (bestOwner == -1)
     return 0;
-  return UnitPpAdd(bestOwner, -1);
+  return Unit_AddPp(bestOwner, -1);
 }
 
 void Func_080add5c(s32 count) {

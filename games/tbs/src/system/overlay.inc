@@ -215,8 +215,8 @@
 	import GameFlag_ClearBit, GameFlag_ClearBitFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
-	import Owner_AdjustFirstValue, Owner_AdjustFirstValueFar
-	import UnitPpAdd, UnitPpAddFar
+	import Unit_AddHp, Unit_AddHpFar
+	import Unit_AddPp, Unit_AddPpFar
 	import Engine_OwnerRecalculateRatios, UnitRatioFar
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_CountActiveOwners, Party_CountActiveOwnersFar

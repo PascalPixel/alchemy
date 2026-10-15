@@ -150,14 +150,14 @@ PartyInventory_Add:
 	.thumb_func
 Inventory_Break:
 	overlay_veneer Inventory_BreakFar
-	.global Owner_AdjustFirstValue
+	.global Unit_AddHp
 	.thumb_func
-Owner_AdjustFirstValue:
-	overlay_veneer Owner_AdjustFirstValueFar
-	.global UnitPpAdd
+Unit_AddHp:
+	overlay_veneer Unit_AddHpFar
+	.global Unit_AddPp
 	.thumb_func
-UnitPpAdd:
-	overlay_veneer UnitPpAddFar
+Unit_AddPp:
+	overlay_veneer Unit_AddPpFar
 	.global Party_ListActiveOwners
 	.thumb_func
 Party_ListActiveOwners:

@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_693/s00e0.o"(.text)
         "*/games/tla/src/field/overlay_693/s0120.o"(.text)
         "*/games/tla/src/field/overlay_693/s0208.o"(.text)
-        "*/resource_693_overlay.o"(.text.x020083e4)
+        "*/games/tla/src/field/overlay_693/s03e4.o"(.text)
         "*/resource_693_overlay.o"(.text.x02008640)
         "*/games/tla/src/field/overlay_693/gate.o"(.text)
         "*/resource_693_overlay.o"(.text.x0200897c)

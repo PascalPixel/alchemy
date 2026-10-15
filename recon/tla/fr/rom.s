@@ -3716,9 +3716,8 @@ Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a710, 0x0000003c
 	.section .rom.0010a8f0, "ax"
 	.incbin "baserom.gba", 0x0010a8f0, 0x00000074
-	.section .rom.0010aa00, "ax"
-	.incbin "baserom.gba", 0x0010aa00, 0x00000084
 	.section .rom.0010aa84, "ax"
+	.balign 4
 	.global Func_0810aa80
 	.type Func_0810aa80, %function
 	.thumb_func

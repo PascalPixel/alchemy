@@ -55,3 +55,34 @@ void Func_0810a9ac(s32 value)
         WaitFrames(1);
     WaitFrames(1);
 }
+
+struct ShopRuntime {
+    u8 unknown_000[0x4dc];
+    u8 *cursor_anchor;
+    u8 unknown_4e0[0x1a];
+    u16 keeper_resource;
+};
+
+// As Func_0810a9ac, with the cursor's anchor object set to state 13 while the
+// message shows and restored after. The Broken Seal's
+// UiMessage_ShowResolvedAndRestoreState.
+void Func_0810a9fc(s32 message)
+{
+    struct ShopRuntime *shop;
+    u8 **anchor;
+    s32 portrait;
+    u8 saved;
+
+    shop = Ram_HeapSlots->menu_runtime;
+    anchor = &shop->cursor_anchor;
+    saved = (*anchor)[5];
+    portrait = BattleFx_GetResourceIdFar(shop->keeper_resource);
+    message = Shop_MsgByMode(message);
+    (*anchor)[5] = 13;
+    UiWork_FinalizePendingCoreFar();
+    UiText_OpenMessageWindowFar(message, 5, 0, (portrait << 16) | 0x22);
+    while (UiWork_IsCompleteFar() == 0)
+        WaitFrames(1);
+    WaitFrames(1);
+    shop->cursor_anchor[5] = saved;
+}

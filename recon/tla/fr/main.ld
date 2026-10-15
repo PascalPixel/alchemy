@@ -1551,7 +1551,6 @@ SECTIONS
     "*/games/tla/src/menu/shop/service.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0010a8f0)
     "*/games/tla/src/menu/shop/f10a960.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.0010aa00)
     "*/recon/tla/fr/rom.o"(.rom.0010aa84)
     "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0010af28)

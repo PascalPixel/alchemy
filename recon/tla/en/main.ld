@@ -1645,7 +1645,6 @@ SECTIONS
         "*/games/tla/src/menu/shop/service.o"(.text)
         "*/recon/tla/raw/0810a8ec.o"(.text)
         "*/games/tla/src/menu/shop/f10a960.o"(.text)
-        "*/recon/tla/raw/0810a9fc.o"(.text)
         "*/recon/tla/raw/0810aa80.o"(.text)
         "*/recon/tla/raw/0810abf0.o"(.text)
         "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)

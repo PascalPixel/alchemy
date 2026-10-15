@@ -7,6 +7,16 @@
  * with phase 133 (132). ResourceId_IceChipSheet and ResourceId_SparkleDots
  * are rows 0x17c and 0x17e of directory.s (assets BattleFx_IceChipSheet and
  * BattleFx_SparkleDots), not yet named there.
+ *
+ * Draft: differ 114 of 753 (draft 755).
+ *
+ * Left: the pillar loop (12 rows) and the frame loop's test (11) differ in
+ * allocation, and two extra instructions sit in the frame loop's setup;
+ * the rest is order residue in the three draws.
+ *
+ * Tried (2026-10-15):
+ *   - greedy declaration-order sweep, two passes: no gain.
+ *   - a separate counter for the frame loop: 288.
  */
 #include "types.h"
 #include "battle_effect.h"

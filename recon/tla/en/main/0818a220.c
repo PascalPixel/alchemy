@@ -1,4 +1,4 @@
-/* Draft: listing 1235 instructions, draft 1253, differ 890. No close ☀️ twin
+/* Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
  * (call order BattleFx_RunFallingSword 0.459): ⚓️'s own effect on ☀️'s frame,
  * its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
  * in Triple Chomp (Func_0818b868) and Legend (Func_08189b14). The native frame
@@ -418,8 +418,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
     // The Bramble and Thunder cards spread four pictures from the card's
     // corners for 64 frames; the Thunder Card's fade from frame 96.
-    if ((mode == CARD_THUNDER || mode == CARD_BRAMBLE) && frame >= 48 &&
-        frame <= 111) {
+    if ((mode == CARD_THUNDER || mode == CARD_BRAMBLE) &&
+        (frame >= 48 && frame <= 111)) {
       s32 alpha = 0;
 
       if (mode == CARD_THUNDER && frame > 95)

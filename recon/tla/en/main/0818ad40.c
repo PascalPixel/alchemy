@@ -1,4 +1,4 @@
-/* Draft: listing 1246 instructions, draft 1254, differ 864. No close ☀️ twin
+/* Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
  * (call order BattleFx_InitializeMode10 0.468): ⚓️'s own effect on ☀️'s frame, a
  * sibling of the four cards of Func_0818a220. The card itself scrolls on a
  * tiled background; its picture is a textured quad by ⚓️'s model kernels.
@@ -12,7 +12,9 @@
  * as the native loads it into r6 before the first call: the prologue then
  * matches but the rest scores 864, kept as the native's form. Left: this
  * frame is 88, one slot more than the native's, so every spill sits 4
- * higher, and work takes r9 for r10. */
+ * higher, and work takes r9 for r10. The smoke's window grouped as (frame
+ * >= 40 && frame <= 47), so that it folds into the native's one unsigned
+ * compare: 864 to 796. */
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -299,8 +301,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         // The background steps to the smoke's colours, then the picture's;
         // from frame 48 the card dissolves in 16 random steps.
-        if ((mode == CARD_DEATH || mode == CARD_SWORD) && frame >= 40 &&
-            frame <= 47)
+        if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
+            (frame >= 40 && frame <= 47))
           Func_0815f0a0((s32)&ResourceId_SmokeSheet);
         if (frame > 51) {
           if (mode == CARD_DEATH)

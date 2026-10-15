@@ -6,7 +6,7 @@
  * Func_08196404 (BattleEffect_LoadWork) itself; and the sparks wait for
  * the columns.
  *
- * Listing 471 instructions, draft 474, differ 197.
+ * Listing 471 instructions, draft 469, differ 164.
  * Left: allocation and one loop invariant. The native keeps the level's
  * stagger (variant * 4) in r6 and builds the frame count from it after
  * the position calls; here it lands in r8 with extra moves. This draft
@@ -18,6 +18,8 @@
  *   last position declared before first (their stack slots), and the
  *     stagger kept in a local for the frame count                      197
  *   the frame count as sinkFrame + 22                                   206
+ *   alchemy permute 8 minutes, 2 jobs: the two positions as one array
+ *     (ends[2]; the native reads the last x at first + 12)              164
  */
 #include "types.h"
 #include "io_reg.h"
@@ -97,8 +99,7 @@ void Func_0816ec58(struct BattleEffectArgument *effect) {
   s32 stagger;
   s32 sinkFrame;
   DrawRectangle draw[2];
-  struct EffectPosition last;
-  struct EffectPosition first;
+  struct EffectPosition ends[2];
   struct EffectStep *spark;
   s32 frame;
   s32 i;
@@ -120,11 +121,11 @@ void Func_0816ec58(struct BattleEffectArgument *effect) {
   sinkFrame = stagger + 32;
 
   // Centre the canvas between the first and the last target.
-  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &first);
+  EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[0], &ends[0]);
   EffectPosition_ApplyAlternateStepAndYOffset(effect->actors[effect->count - 1],
-                                              &last);
-  first.x += (last.x - first.x) / 2;
-  REG_BG2X = (64 - first.x) << 8;
+                                              &ends[1]);
+  ends[0].x += (ends[1].x - ends[0].x) / 2;
+  REG_BG2X = (64 - ends[0].x) << 8;
 
   for (frame = 0; frame != stagger + 54; frame++) {
     // Frame 0: 16 sparks leave the ground in random directions.

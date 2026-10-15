@@ -40,7 +40,6 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x02009350)
         "*/resource_692_overlay.o"(.text.x02009828)
         "*/games/tla/src/field/overlay_692/s1ca0.o"(.text)
-        "*/resource_692_overlay.o"(.text.x02009d04)
         "*/resource_692_overlay.o"(.text.x02009d64)
         "*/games/tla/src/field/overlay_692/s2128.o"(.text)
         "*/games/tla/src/field/overlay_692/s217c.o"(.text)

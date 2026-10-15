@@ -2872,60 +2872,6 @@ Func_02001828:
 	.4byte 0x000000e3
 .L_02009c9c:
 	.4byte 0xfff00000
-	.section .text.x02009d04,"ax",%progbits
-	.balign 4
-	.global Func_02001d04
-	.thumb_func
-Func_02001d04:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #100
-	ldrh r3, [r1]
-	movs r2, #128
-	adds r3, #1
-	strh r3, [r1]
-	lsls r2, r2, #15
-	lsls r3, r3, #16
-	sub sp, #56
-	cmp r3, r2
-	ble .L_02009d22
-	movs r3, #0
-	str r3, [r5, #108]
-.L_02009d22:
-	ldrh r3, [r1]
-	movs r6, #1
-	ands r6, r3
-	cmp r6, #0
-	bne .L_02009d5c
-	movs r3, #148
-	add r4, sp, #16
-	adds r3, #255
-	strh r3, [r4, #24]
-	movs r3, #2
-	str r3, [r4]
-	movs r3, #10
-	str r3, [r4, #4]
-	ldr r3, .L_02009d60
-	ldr r0, [r5, #8]
-	str r3, [r4, #28]
-	movs r3, #128
-	lsls r3, r3, #5
-	str r3, [sp, #0]
-	movs r3, #204
-	lsls r3, r3, #14
-	str r3, [sp, #8]
-	ldr r1, [r5, #12]
-	ldr r2, [r5, #16]
-	movs r3, #0
-	str r6, [sp, #4]
-	str r4, [sp, #12]
-	bl Func_0200015c
-.L_02009d5c:
-	add sp, #56
-	pop {r5, r6, pc}
-.L_02009d60:
-	.4byte Data_0200502c
 	.section .text.x02009d64,"ax",%progbits
 	.global Func_02001d64
 	.thumb_func

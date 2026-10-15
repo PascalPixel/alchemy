@@ -3252,7 +3252,7 @@ SECTIONS
     "*/games/tla/src/graphics/ui/command_icons.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.00967f32)
     "*/recon/tla/fr/rom.o"(.rom.00967f34)
-    "*/recon/tla/fr/rom.o"(.rom.00968034)
+    "*/games/tla/src/graphics/field_fx/glow_disc.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_orb.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/ring_arcs.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/red_flame_burst.o"(.rodata)

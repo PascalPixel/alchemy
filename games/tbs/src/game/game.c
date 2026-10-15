@@ -100,10 +100,10 @@ u32 Party_GetAverageLevel(void)
 	return total;
 }
 
-struct BtlUnit *UnitGet(u32 owner)
+struct BattleUnit *UnitGet(u32 owner)
 {
-	struct BtlUnit *states;
-	struct BtlUnit *unit;
+	struct BattleUnit *states;
+	struct BattleUnit *unit;
 
 	{
 		void *caller = __builtin_return_address(0);
@@ -125,7 +125,7 @@ struct BtlUnit *UnitGet(u32 owner)
 	}
 	if (owner - 0x80 < 6 && gBattleOwnerStates != NULL)
 	{
-		unit = &((struct BtlUnit *)gBattleOwnerStates)[owner - 0x80];
+		unit = &((struct BattleUnit *)gBattleOwnerStates)[owner - 0x80];
 		return unit;
 	}
 	return NULL;
@@ -173,7 +173,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 directio
 void UnitCalc(s32 owner)
 {
 	struct StatWork *work;
-	struct BtlUnit	*st;
+	struct BattleUnit	*st;
 	s32				 i, j, el;
 	s32				 value;
 	s32				 flag;
@@ -194,7 +194,7 @@ void UnitCalc(s32 owner)
 	work->hp_regen = st->base_hp_regen;
 	work->pp_regen = st->base_pp_regen;
 	{
-		s16 *src = &st->base_elm[0].pow;
+		s16 *src = &st->base_element[0].power;
 		s32 *dst = work->element[0];
 		for (i = 0; i < 4; i++)
 		{
@@ -387,7 +387,7 @@ void UnitCalc(s32 owner)
 	work->def = work->def * (st->def_lv + 8) / 8;
 	work->agi = work->agi * (st->agi_lv + 8) / 8;
 	for (i = 0; i < 4; i++)
-		work->element[i][0] += (st->elm_lv[i] * st->elm_lv[i] + st->elm_lv[i]) * 5;
+		work->element[i][0] += (st->element_levels[i] * st->element_levels[i] + st->element_levels[i]) * 5;
 	for (i = 0; i < 4; i++)
 		work->element[i][1] += st->res_lv * 20;
 
@@ -465,8 +465,8 @@ void UnitCalc(s32 owner)
 	st->pp_regen = work->pp_regen;
 	for (i = 0; i < 4; i++)
 	{
-		st->elm[i].pow = work->element[i][0];
-		st->elm[i].res = work->element[i][1];
+		st->element[i].power = work->element[i][0];
+		st->element[i].res = work->element[i][1];
 	}
 
 	cap = 9999;
@@ -521,7 +521,7 @@ void GameFlag_RefreshLureCap(void)
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
 	{
-		struct BtlUnit *owner;
+		struct BattleUnit *owner;
 		s32				i;
 
 		owner = UnitGet(gGameState.active_owners[n]);
@@ -682,7 +682,7 @@ void Party_ApplyStatePreset(void)
 
 	for (id = 0; id <= 1; id++)
 	{
-		struct BtlUnit *unit = UnitGet(id);
+		struct BattleUnit *unit = UnitGet(id);
 		s32				slot;
 
 		unit->hp = unit->max_hp;
@@ -715,7 +715,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 {
 	s32				count;
 	s32				n;
-	struct BtlUnit *obj;
+	struct BattleUnit *obj;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -741,7 +741,7 @@ void Owner_RefreshRatiosOnFlag(void)
 	u8				ownerId;
 	s32				group;
 	s32				doRefresh;
-	struct BtlUnit *obj;
+	struct BattleUnit *obj;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -779,15 +779,15 @@ void Owner_RatioNoOp(void)
 {
 }
 
-void UnitRatio(s32 owner_no)
+void UnitRatio(s32 owner_id)
 {
-	struct BtlUnit *owner;
+	struct BattleUnit *owner;
 
-	owner = UnitGet(owner_no);
+	owner = UnitGet(owner_id);
 	Unit_UpdateGauges(owner);
 }
 
-void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
+void Owner_UpdateRatioPair(struct BattleUnit *state, s32 input)
 {
 	s32 value;
 
@@ -817,7 +817,7 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 // unit : ユニット
 // pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 pp)
+void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp)
 {
 	s32 cur;
 
@@ -837,7 +837,7 @@ void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 pp)
 
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	s32				cur = state->hp;
 	s32				max = state->max_hp;
 	s32				value = cur + delta;
@@ -858,7 +858,7 @@ s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 
 s16 UnitPpAdd(s32 owner, s32 delta)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	s32				cur = state->pp;
 	s32				max = state->max_pp;
 	s32				value = cur + delta;
@@ -897,7 +897,7 @@ struct ItemDefinition *Item_GetDirect(s32 item)
 //--------------------------------------------------------------------------
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 {
-	struct BtlUnit		  *st = UnitGet(unit);
+	struct BattleUnit		  *st = UnitGet(unit);
 	struct ItemDefinition *def = Item_GetDirect(item);
 	s32					   mask = def->equip_mask;
 
@@ -960,7 +960,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 
 s32 Inventory_Count(s32 owner)
 {
-	struct BtlUnit *inv = UnitGet(owner);
+	struct BattleUnit *inv = UnitGet(owner);
 	s32				count = 0;
 
 	if (inv->inventory[count] != 0)
@@ -1021,7 +1021,7 @@ s32 PartyInventory_CountFreeSlots(void)
 
 s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
-	struct BtlUnit		  *inv = UnitGet(owner_id);
+	struct BattleUnit		  *inv = UnitGet(owner_id);
 	struct ItemDefinition *item = Item_GetDirect(item_id);
 	s32					   slot;
 
@@ -1094,7 +1094,7 @@ s32 PartyInventory_Add(s32 item_id)
 
 s32 Inventory_Find(s32 owner, s32 item_id)
 {
-	struct BtlUnit *inv = UnitGet(owner);
+	struct BattleUnit *inv = UnitGet(owner);
 	s32				slot = 0;
 	u16			   *entry = inv->inventory;
 
@@ -1137,7 +1137,7 @@ s32 PartyInventory_FindOwner(s32 item_id)
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
-	struct BtlUnit		  *inv = UnitGet(owner);
+	struct BattleUnit		  *inv = UnitGet(owner);
 	u32					   item_id = inv->inventory[slot];
 	struct ItemDefinition *item;
 	u8					   type;
@@ -1177,7 +1177,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
 s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
-	struct BtlUnit		  *base = UnitGet(owner);
+	struct BattleUnit		  *base = UnitGet(owner);
 	s32					   index;
 	struct ItemDefinition *item;
 
@@ -1195,7 +1195,7 @@ s32 Inventory_FindEquipped(s32 owner, s32 type)
 	return index;
 }
 
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct BtlUnit *inv, s32 type)
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *inv, s32 type)
 {
 	s32					   slot;
 	struct ItemDefinition *item;
@@ -1214,7 +1214,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BtlUnit *inv, s32 
 	return 0;
 }
 
-s32 Inventory_GetEquippedItem(struct BtlUnit *inv, s32 type)
+s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type)
 {
 	s32 slot;
 
@@ -1235,7 +1235,7 @@ s32 Inventory_GetEquippedItem(struct BtlUnit *inv, s32 type)
 
 s32 Inventory_Remove(s32 owner, s32 slot)
 {
-	struct BtlUnit *inv = UnitGet(owner);
+	struct BattleUnit *inv = UnitGet(owner);
 	u16				item = inv->inventory[slot];
 	s32				result = -1;
 
@@ -1284,7 +1284,7 @@ s32 Inventory_Discard(s32 owner, s32 slot)
 
 s32 Inventory_CheckDiscard(s32 owner, s32 slot)
 {
-	struct BtlUnit		  *inv = UnitGet(owner);
+	struct BattleUnit		  *inv = UnitGet(owner);
 	s32					   item_id = inv->inventory[slot] & ITEM_ID_MASK;
 	struct ItemDefinition *item = Item_GetDirect(item_id);
 
@@ -1326,7 +1326,7 @@ s32 PartyInventory_Discard(s32 item_id)
 
 s32 Inventory_Break(s32 owner, s32 slot)
 {
-	struct BtlUnit *inv = UnitGet(owner);
+	struct BattleUnit *inv = UnitGet(owner);
 	if (inv->inventory[slot] == 0)
 	{
 		return -1;
@@ -1337,7 +1337,7 @@ s32 Inventory_Break(s32 owner, s32 slot)
 
 s32 Inventory_Repair(s32 owner, s32 slot)
 {
-	struct BtlUnit *inv = UnitGet(owner);
+	struct BattleUnit *inv = UnitGet(owner);
 	if (inv->inventory[slot] == 0)
 	{
 		return -1;
@@ -1397,7 +1397,7 @@ s32 Item_AdjustCounter(s32 item_id, s32 delta)
 
 s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
-	struct BtlUnit *base = UnitGet(owner);
+	struct BattleUnit *base = UnitGet(owner);
 	s32				count = 0;
 	s32				target = item_id & ITEM_ID_MASK;
 	s32				index = 0;
@@ -1440,7 +1440,7 @@ s32 PartyInventory_CountItem(s32 item_id)
 	return item_count;
 }
 
-struct BtlAct *BattleAction_GetDirect(s32 action_id)
+struct BattleAct *BattleAction_GetDirect(s32 action_id)
 {
 	u32 entry_index;
 
@@ -1454,7 +1454,7 @@ struct BtlAct *BattleAction_GetDirect(s32 action_id)
 
 s32 Equipment_HasValue(s32 owner, s32 value)
 {
-	struct BtlUnit		   *unit = UnitGet(owner);
+	struct BattleUnit		   *unit = UnitGet(owner);
 	struct OwnerActionSlot *entry;
 	s32						mask = 0x3fff;
 	s32						index = 0;
@@ -1483,8 +1483,8 @@ enum
 
 s32 Owner_RefreshClassActions(s32 owner)
 {
-	struct BtlUnit		   *st;
-	u16					   *abil;
+	struct BattleUnit		   *st;
+	u16					   *ability;
 	struct ClassDefinition *cls;
 	struct ItemDefinition  *def;
 	s32						i;
@@ -1493,37 +1493,37 @@ s32 Owner_RefreshClassActions(s32 owner)
 	struct ClassAbility	   *cg;
 
 	st = UnitGet(owner);
-	abil = (u16 *)st->action_slots;
+	ability = (u16 *)st->action_slots;
 	cls = Owner_GetRecordStride84(st->class_index);
 	if (st->class_index == 0)
 		return 0;
 	mask = 0x8000;
 	for (j = 0; j < 32; j++)
 	{
-		if (abil[j * 2] & mask)
-			abil[j * 2] = 0;
+		if (ability[j * 2] & mask)
+			ability[j * 2] = 0;
 	}
 	mask = 0x4000;
 	for (j = 0; j < 32; j++)
 	{
-		if (abil[j * 2] & mask)
-			abil[j * 2] = 0;
+		if (ability[j * 2] & mask)
+			ability[j * 2] = 0;
 	}
 	for (i = 31, j = 31; i >= 0;)
 	{
-		if (abil[i * 2] == 0)
+		if (ability[i * 2] == 0)
 		{
 			i--;
 		}
 		else
 		{
-			abil[j * 2] = abil[i * 2];
+			ability[j * 2] = ability[i * 2];
 			i--;
 			j--;
 		}
 	}
 	for (; j >= 0; j--)
-		abil[j * 2] = 0;
+		ability[j * 2] = 0;
 
 	mask = OWNER_ACTION_CLASS;
 	for (j = 0; j < 16; j++)
@@ -1534,15 +1534,15 @@ s32 Owner_RefreshClassActions(s32 owner)
 		if (st->level < cls->abilities[j].level)
 			continue;
 		i = 0;
-		while (i < 32 && abil[i * 2] != cls->abilities[j].ability)
+		while (i < 32 && ability[i * 2] != cls->abilities[j].ability)
 			i++;
 		if (i != 32)
 			continue;
 		for (i = 0; i < 32; i++)
 		{
-			if (abil[i * 2] == 0)
+			if (ability[i * 2] == 0)
 			{
-				abil[i * 2] = cg->ability | mask;
+				ability[i * 2] = cg->ability | mask;
 				break;
 			}
 		}
@@ -1561,16 +1561,16 @@ s32 Owner_RefreshClassActions(s32 owner)
 			continue;
 		for (i = 0; i < 32; i++)
 		{
-			if ((abil[i * 2] & OWNER_ACTION_ID_MASK) == def->action_id)
+			if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->action_id)
 				break;
 		}
 		if (i != 32)
 			continue;
 		for (i = 0; i < 32; i++)
 		{
-			if (abil[i * 2] == 0)
+			if (ability[i * 2] == 0)
 			{
-				abil[i * 2] = def->action_id | OWNER_ACTION_ITEM;
+				ability[i * 2] = def->action_id | OWNER_ACTION_ITEM;
 				break;
 			}
 		}
@@ -1580,19 +1580,19 @@ s32 Owner_RefreshClassActions(s32 owner)
 
 	for (i = 0, j = 0; i < 32;)
 	{
-		if (abil[i * 2] == 0)
+		if (ability[i * 2] == 0)
 		{
 			i++;
 		}
 		else
 		{
-			abil[j * 2] = abil[i * 2];
+			ability[j * 2] = ability[i * 2];
 			i++;
 			j++;
 		}
 	}
 	for (; j < 32; j++)
-		abil[j * 2] = 0;
+		ability[j * 2] = 0;
 	return 0;
 }
 
@@ -1606,7 +1606,7 @@ struct LevelUpWork
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-	struct BtlUnit *state = UnitGet(state_index);
+	struct BattleUnit *state = UnitGet(state_index);
 	s32				key = value & OWNER_ACTION_ID_MASK;
 	s32				found = -1;
 	s32				index;
@@ -1629,7 +1629,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
 		for (index = 0; index <= 30; index++)
 		{
 			s32 offset = index * sizeof(state->action_slots[0]) + (s32)
-						 & ((struct BtlUnit *)0)->action_slots;
+						 & ((struct BattleUnit *)0)->action_slots;
 
 			if (*(u16 *)((u8 *)state + offset) == 0)
 			{
@@ -1670,7 +1670,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index)
 
 void Owner_InitRecords(void)
 {
-	struct BtlUnit			   *state;
+	struct BattleUnit			   *state;
 	struct CharacterDefinition *tmpl;
 	u16							name_buf[16];
 	s32							owner;
@@ -1735,7 +1735,7 @@ void Owner_LevelNoOp(void)
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 
 	if (state->class_index != 0)
 	{
@@ -1753,7 +1753,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 {
-	struct BtlUnit	   *st;
+	struct BattleUnit	   *st;
 	struct LevelUpWork *work;
 	u32					threshold;
 	s16					band;
@@ -1824,13 +1824,13 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 }
 
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(
-	s32 owner_no, struct LevelUpResult *value)
+	s32 owner_id, struct LevelUpResult *value)
 {
-	struct BtlUnit *owner;
+	struct BattleUnit *owner;
 
-	owner = UnitGet(owner_no);
-	if ((owner->experience >= Owner_GetLevelThreshold(owner_no, owner->level + 1))
-		&& (Owner_LevelUp(owner_no, value) != NULL))
+	owner = UnitGet(owner_id);
+	if ((owner->experience >= Owner_GetLevelThreshold(owner_id, owner->level + 1))
+		&& (Owner_LevelUp(owner_id, value) != NULL))
 	{
 		return value;
 	}
@@ -1984,9 +1984,9 @@ void GameFlag_SetNibble(s32 flag, s32 value)
 #define ENEMY_SUFFIX_LAST 25
 #endif
 
-s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
+s32 BattleUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 {
-	struct BtlUnit				 *unit;
+	struct BattleUnit				 *unit;
 	const struct EnemyDefinition *enemy;
 	u16							  name[15];
 	s32							  i;
@@ -2047,7 +2047,7 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 	unit->rewards = enemy->rewards;
 	unit->class_index = 0;
 	unit->class_id = enemy_id;
-	Owner_CalculateBaseElements(unit_id, (s16(*)[2])unit->base_elm);
+	Owner_CalculateBaseElements(unit_id, (s16(*)[2])unit->base_element);
 	UnitCalc(unit_id);
 	unit->side = 1;
 	switch (unit->class_id)
@@ -2175,7 +2175,7 @@ struct TradeFlags
 
 struct ElementLevelBonus
 {
-	u16 pow;
+	u16 power;
 	u16 res;
 };
 
@@ -2253,8 +2253,8 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 	else
 	{
 		cursor = output;
-		source += (u8 *)&((struct BtlUnit *)0)->djinn_active_counts
-				  - (u8 *)&((struct BtlUnit *)0)->djinn_available;
+		source += (u8 *)&((struct BattleUnit *)0)->djinn_active_counts
+				  - (u8 *)&((struct BattleUnit *)0)->djinn_available;
 		for (i = 3; i >= 0; i--)
 		{
 			u32 value = *source;
@@ -2277,7 +2277,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	s32				values[4];
 	s32				result = 0;
 
@@ -2289,7 +2289,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 	return result;
 }
 
-s32 Owner_GetDefaultElement(struct BtlUnit *state)
+s32 Owner_GetDefaultElement(struct BattleUnit *state)
 {
 	const struct EnemyDefinition *record =
 		(const struct EnemyDefinition *)Owner_GetRecord(state->class_id);
@@ -2302,7 +2302,7 @@ s32 Owner_GetDefaultElement(struct BtlUnit *state)
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	u32				index;
 	s32				values[4];
 	s32				i;
@@ -2339,7 +2339,7 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 		if (tens < 0)
 			tens = 0;
 
-		destination[i][0] = Element_PowerResistByLevel[tens].pow + ones;
+		destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
 		destination[i][1] = Element_PowerResistByLevel[tens].res + ones;
 	}
 	// 戻り値なし（r0 には表のアドレスが残る）
@@ -2416,13 +2416,13 @@ struct ClassDefinition *Owner_GetRecordStride84(s32 arg0)
 	return &Class_DefinitionTable[arg0];
 }
 
-void Owner_RefreshDerivedData(s32 owner_no)
+void Owner_RefreshDerivedData(s32 owner_id)
 {
-	struct BtlUnit *owner = UnitGet(owner_no);
+	struct BattleUnit *owner = UnitGet(owner_id);
 
 	owner->class_index = Owner_DetermineClass(owner->class_id, (u8 *)owner->djinn_available);
-	Owner_RefreshClassActions(owner_no);
-	Owner_CalculateBaseElements(owner_no, (s16(*)[2])owner->base_elm);
+	Owner_RefreshClassActions(owner_id);
+	Owner_CalculateBaseElements(owner_id, (s16(*)[2])owner->base_element);
 }
 
 s32 Curve_LookupScaledValue(s32 input, s32 halve)
@@ -2475,7 +2475,7 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
 //--------------------------------------------------------------------------
 // バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
 //--------------------------------------------------------------------------
-s32 BtlRnd(void)
+s32 BattleRandom(void)
 {
 	s32 seed;
 
@@ -2489,13 +2489,13 @@ s32 BtlRnd(void)
 //--------------------------------------------------------------------------
 u32 BattleRandomPercent(void)
 {
-	return ((u32)BtlRnd() * 100) >> 16;
+	return ((u32)BattleRandom() * 100) >> 16;
 }
 
 //--------------------------------------------------------------------------
-// こうげきのダメージ（BtlAtkCalc）
+// こうげきのダメージ（BattleAtkCalc）
 // (atk - def + add * 2) / 2 に、属性の差による倍率をかける
-// 倍率は 256 で 1 倍。差の効きは BtlPowCalc の半分（128 から 384）
+// 倍率は 256 で 1 倍。差の効きは BattlePowerCalc の半分（128 から 384）
 // atk   : こうげき
 // def   : ぼうぎょ（atk - def が負なら 0 にする）
 // add   : わざの威力
@@ -2520,36 +2520,36 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus)
 }
 
 //--------------------------------------------------------------------------
-// エナジーの威力（BtlPowCalc）
-// pow に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
-// pow   : 威力
+// エナジーの威力（BattlePowerCalc）
+// power に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
+// power   : 威力
 // bonus : 属性の差（力 - たいせい）
 // rate  : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByCurve(s32 pow, s32 bonus, s32 rate)
+s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate)
 {
 	s32 val;
 
-	val = Curve_LookupScaledValue(bonus, 0) * pow * rate;
+	val = Curve_LookupScaledValue(bonus, 0) * power * rate;
 	if (val < 0)
 		val = val + 0xffff;
 	return val >> 16;
 }
 
 //--------------------------------------------------------------------------
-// かいふくの量（BtlRcvCalc）
+// かいふくの量（BattleRecoveryCalc）
 // 属性の力が 100 をこえた分の 2 倍で倍率（256 で 1 倍）を引き、
-// pow と rate にかける
-// pow  : 威力
-// elm  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
+// power と rate にかける
+// power  : 威力
+// element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
 // rate : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByOffsetCurve(s32 pow, s32 elm, s32 rate)
+s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate)
 {
 	s32 val;
 	u32 prod;
 
-	prod = Curve_LookupScaledValue(elm * 2 - 200, 0) * pow;
+	prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
 	prod = rate * prod;
 	val = prod;
 	if (val < 0)
@@ -2565,7 +2565,7 @@ s32 Owner_ScaleValueByOffsetCurve(s32 pow, s32 elm, s32 rate)
 s32 Item_GetEquippedElement(s32 id)
 {
 	struct ItemDefinition *item;
-	struct BtlUnit		  *unit;
+	struct BattleUnit		  *unit;
 
 	unit = UnitGet(id);
 	if (unit->class_index == 0)
@@ -2576,7 +2576,7 @@ s32 Item_GetEquippedElement(s32 id)
 	return 4;
 }
 
-s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
 	s32					   sum;
 	s32					   i;
@@ -2601,7 +2601,7 @@ s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
 	return sum;
 }
 
-s32 RollWeaponUnleash(struct BtlUnit *owner)
+s32 RollWeaponUnleash(struct BattleUnit *owner)
 {
 	struct ItemDefinition *item;
 	s32					   rate;
@@ -2620,7 +2620,7 @@ s32 RollWeaponUnleash(struct BtlUnit *owner)
 		return 1;
 	}
 	rate = ((Equipment_GetUnleashRateBonus(owner) + (item->secondary_flags * 5)) << 0x10) / 100;
-	if (rate > (BtlRnd() & 0xFFFF))
+	if (rate > (BattleRandom() & 0xFFFF))
 	{
 		return item->description_message;
 	}
@@ -2681,7 +2681,7 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 	return 0 - battle_result;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BtlUnit *target, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 {
 	const u8 *entries;
 	s32		  i;
@@ -2708,7 +2708,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BtlUnit *target, s32 effect_id)
 	return 0;
 }
 
-s32 BtlEfxRevChk(s32 effect_id)
+s32 BattleEffectRevCheck(s32 effect_id)
 {
 	if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39))
 	{
@@ -2722,7 +2722,7 @@ s32 BattleFx_RollSuccess(
 {
 	/* FAKEMATCH: three status reads (psy_seal after the effect 4 test, confusion in it, haunt for effect 0x40) go through the byte view state[offset], so each builds its address from a fresh offset constant as the native does; read as unit fields, CSE reuses a neighbouring address. All eleven reads as fields differ 120 (184 instructions for 204); every other read is a field at no cost. */
 	u8			   *state = (u8 *)UnitGet(target);
-	struct BtlUnit *unit = (struct BtlUnit *)state;
+	struct BattleUnit *unit = (struct BattleUnit *)state;
 	s32				attempts = 1;
 	s32				score;
 	s32				attempt;
@@ -2733,7 +2733,7 @@ s32 BattleFx_RollSuccess(
 	u8			   *stun;
 	u8			   *sleep;
 
-	if (BtlEfxRevChk(effect_id) != 0 && unit->hp != 0)
+	if (BattleEffectRevCheck(effect_id) != 0 && unit->hp != 0)
 	{
 		return 0;
 	}
@@ -2745,7 +2745,7 @@ s32 BattleFx_RollSuccess(
 
 	goto action4_check;
 action4_tail:
-	if (unit->stun == 0 && unit->sleep == 0 && state[(u32) & ((struct BtlUnit *)0)->psy_seal] == 0
+	if (unit->stun == 0 && unit->sleep == 0 && state[(u32) & ((struct BattleUnit *)0)->psy_seal] == 0
 		&& unit->grim_reaper == 0)
 	{
 		return 0;
@@ -2754,7 +2754,7 @@ action4_tail:
 action4_check:
 	if (effect_id == 4)
 	{
-		if (unit->delusion == 0 && state[(u32) & ((struct BtlUnit *)0)->confusion] == 0
+		if (unit->delusion == 0 && state[(u32) & ((struct BattleUnit *)0)->confusion] == 0
 			&& unit->charm == 0)
 		{
 			goto action4_tail;
@@ -2770,7 +2770,7 @@ action4_done:
 	sleep = &unit->sleep;
 	if (effect_id == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
 		&& *stun == 0 && *sleep == 0 && unit->psy_seal == 0 && unit->grim_reaper == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->haunt] == 0)
+		&& state[(u32) & ((struct BattleUnit *)0)->haunt] == 0)
 	{
 		return 0;
 	}
@@ -2839,7 +2839,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 	count = Party_CountActiveOwners();
 	for (i = 0; i < count; i++)
 	{
-		struct BtlUnit *unit = UnitGet(gGameState.active_owners[i]);
+		struct BattleUnit *unit = UnitGet(gGameState.active_owners[i]);
 
 		if (unit->djinn_owned_counts[index] <= 9)
 		{
@@ -2866,7 +2866,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 
 	if (state->djinn_owned_counts[index] > 9)
 		return -1;
@@ -2879,7 +2879,7 @@ s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
-	struct BtlUnit			 *state = UnitGet(owner);
+	struct BattleUnit			 *state = UnitGet(owner);
 	struct DjinnRecoveryList *table;
 	s32						  i;
 	s32						  status;
@@ -2916,7 +2916,7 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	s32				result = Trade_CanOfferDjinn(owner, index, bit);
 
 	if (result != 0)
@@ -2937,7 +2937,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	u32				present = Djinn_IsActive(owner, index, bit);
 
 	if (present != 0)
@@ -2990,7 +2990,7 @@ u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
-	struct BtlUnit *state = UnitGet(source);
+	struct BattleUnit *state = UnitGet(source);
 	u32				present;
 
 	if ((state->djinn_available[index] & (1 << bit)) != 0)
@@ -3072,7 +3072,7 @@ s32 Party_SumDjinnCounts(s32 index)
 
 		do
 		{
-			struct BtlUnit *state = UnitGet(*owner++);
+			struct BattleUnit *state = UnitGet(*owner++);
 
 			if (index == -1)
 			{
@@ -3093,7 +3093,7 @@ s32 Party_SumDjinnCounts(s32 index)
 
 void Inventory_AddAndEquip(s32 owner, s32 target)
 {
-	struct BtlUnit *state = UnitGet(owner);
+	struct BattleUnit *state = UnitGet(owner);
 	u16			   *entry;
 	s32				index;
 
@@ -3113,7 +3113,7 @@ void Inventory_AddAndEquip(s32 owner, s32 target)
 void InventorySnapshot_Save(void)
 {
 	u16			   *save;
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s16			   *inventory;
 	s32				owner;
 	s32				i;

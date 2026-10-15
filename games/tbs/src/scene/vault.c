@@ -63,7 +63,7 @@ static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 		return 0;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFS] != 0)
+	if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFFSET] != 0)
 	{
 		selector = 26;
 		flag = 1;

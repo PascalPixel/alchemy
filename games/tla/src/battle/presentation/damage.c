@@ -24,8 +24,8 @@
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];
-    struct BtlUnit *character;
-    struct BtlObj *slot;
+    struct BattleUnit *character;
+    struct BattleObj *slot;
 
     if (context == 0) {
         context = local_context;
@@ -40,9 +40,9 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     if (character->hp < 0)
         character->hp = 0;
 
-    slot = BtlObjGet(unit_id);
+    slot = BattleObjGet(unit_id);
     Object_SetMode(slot->object, 5);
-    PtyStDrawFar(0);
+    PartyStatusDrawFar(0);
     UiWork_ClearValueNameTablesFar();
 
     if (unit_id <= 7) {
@@ -71,7 +71,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
     }
 
-    slot = BtlObjGet(unit_id);
+    slot = BattleObjGet(unit_id);
     Object_SetMode(slot->object, 1);
 }
 
@@ -87,8 +87,8 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
     struct BattleObjectAnimation *animation;
     struct AnimationEntry *entry;
 
-    if (((struct BtlUnit *)UnitGet(unit_id))->hp <= 0) {
-        animation = BtlObjGet(unit_id)->object->records;
+    if (((struct BattleUnit *)UnitGet(unit_id))->hp <= 0) {
+        animation = BattleObjGet(unit_id)->object->records;
         Animation_ApplyChildArgumentFar(animation, 5);
         entry = animation->entry;
         entry->param = 6;
@@ -106,7 +106,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
     s32 living_count;
 
     target_id = action->target;
-    if (((struct BtlUnit *)UnitGet(target_id))->hp != 0) {
+    if (((struct BattleUnit *)UnitGet(target_id))->hp != 0) {
         return target_id;
     }
 

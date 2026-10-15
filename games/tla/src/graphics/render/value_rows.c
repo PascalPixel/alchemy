@@ -30,7 +30,7 @@ s32	 UiWork_SetParamNibbleFar(s32 color);
 // unit : キャラクター
 // win  : 書き込み先のウィンドウ
 //--------------------------------------------------------------------------
-void Ui_DrawValuePairRows(struct BtlUnit *unit, s32 win)
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 win)
 {
 	s16 val;
 

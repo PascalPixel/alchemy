@@ -1893,13 +1893,13 @@ static void FieldScene_RunScene3a4SequenceG(void)
 static void SceneState_ForwardByRuntimeSelector(s32 arg)
 {
 
-	s32 sel = gFrameCount & 7;
+	s32 selection = gFrameCount & 7;
 
-	if (sel == 0)
+	if (selection == 0)
 	{
 		ObjectGroup_SetChildValue(arg, 2);
 	}
-	else if (sel == 2)
+	else if (selection == 2)
 	{
 		ObjectGroup_SetChildValue(arg, 0);
 	}

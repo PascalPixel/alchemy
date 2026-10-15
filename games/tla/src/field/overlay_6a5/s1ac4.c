@@ -39,7 +39,7 @@ void Func_02001b04(s32 clearStatus)
     s32 clear;
     s32 count;
     s32 n;
-    struct BtlUnit *member;
+    struct BattleUnit *member;
     s16 maxHp;
 
     frame = chain;

@@ -29,7 +29,7 @@ struct ActorSpriteRecord
 // Sets the OBJ mode of both sprite parts of each of the actor's records.
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
-    struct BtlObj *slot = BtlObjGet(actor_id);
+    struct BattleObj *slot = BattleObjGet(actor_id);
     struct MotionObject *object;
     struct ActorSpriteRecord *record;
     struct ActorSpriteRecord **records;

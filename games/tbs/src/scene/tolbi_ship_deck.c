@@ -45,12 +45,12 @@ static void TolbiShipDeck_RunJumpScene(void);
 static void FieldScene_ConfigureLeadActors(void);
 static void FieldScene_ConfigureThreeActors(void);
 static void FieldScene_RunPartyRosterScene(void);
-static s32 SceneState_FindFirstSetFlagOfGroup(u32 sel);
+static s32 SceneState_FindFirstSetFlagOfGroup(u32 selection);
 static void TolbiShipDeck_RockDeck(void);
 static void SceneEffect_InitSlotsEightToNineteen(void);
 static void OverlayObject_ActivateSlotWithMode3(s32 a);
 static void TolbiShipDeck_ChooseSlotModes(void);
-static s32 SceneData_SelectTableEntryByFlagGroup(u32 sel);
+static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection);
 static void SceneState_ConfigureEntries8Through19(void);
 static void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);
 static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags);
@@ -2109,13 +2109,13 @@ static void FieldScene_RunPartyRosterScene(void)
 	Engine_EventEnd();
 }
 
-static s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
+static s32 SceneState_FindFirstSetFlagOfGroup(u32 selection)
 {
 	s32 v = 0;
 	s32 id = 23;
 	u32 i;
 
-	switch (sel)
+	switch (selection)
 	{
 	case 0:
 		v = 0x92C;
@@ -2269,12 +2269,12 @@ static void TolbiShipDeck_ChooseSlotModes(void)
 	FuneKanpan_SlotMode[7] = 3;
 }
 
-static s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
+static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection)
 {
 	s32 base = 0;
 	u32 i;
 
-	switch (sel)
+	switch (selection)
 	{
 	case 0:
 		base = 0x92C;

@@ -285,7 +285,7 @@ Func_080fcbd8:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r3, [r5]
 	ldrb r1, [r0, #9]
 	adds r0, r3, #0

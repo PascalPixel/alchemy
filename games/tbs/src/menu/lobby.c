@@ -655,7 +655,7 @@ static s32 EV10_TOUCH(void)
 	u8				 *buf;
 	u8				 *src;
 	u8				 *dst;
-	u16				 *tbl;
+	u16				 *table;
 	u32				  i;
 
 	failed = 0;
@@ -774,11 +774,11 @@ static s32 EV10_TOUCH(void)
 		}
 		Battle_SetStart(4);
 		BattleFx_SetWeightedResult(1, 1);
-		tbl = (u16 *)gSerialTransfer.payload;
-		tbl[0] = 0x45;
-		tbl[1] = 0x58;
-		tbl[2] = 0x45;
-		tbl[3] = 0x43;
+		table = (u16 *)gSerialTransfer.payload;
+		table[0] = 0x45;
+		table[1] = 0x58;
+		table[2] = 0x45;
+		table[3] = 0x43;
 		i = 0;
 		src = buf;
 		dst = (u8 *)gMapCellBuffer + 0x8000;

@@ -97,7 +97,7 @@ s32 Func_020003d0(s32 *a, s32 *b);
 void Func_0200141c(s32 x, s32 z, s32 actor);
 void Func_020018a8(s32 x, s32 z, s32 actor);
 
-static inline s32 Ov687_FlagChk(s32 flag)
+static inline s32 Ov687_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);

@@ -14,7 +14,7 @@
 // (2 回のテストがそれぞれアドレスを読み直す。シンボルでは 1 回にまとまる)
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
-struct BtlWork;
+struct BattleWork;
 struct BattlePresentationTransition;
 struct MapWork;
 struct ObjectSystemWork;
@@ -29,7 +29,7 @@ struct HeapSlots {
     struct ObjectSystemWork *object_system;
     void *unknown_1c[1];
     struct MapWork *map_work;
-    struct BtlWork *battle_work;
+    struct BattleWork *battle_work;
     void *unknown_28[2];
     void *camera_work;
     void *unknown_34[2];

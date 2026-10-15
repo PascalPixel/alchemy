@@ -263,7 +263,7 @@ static void FieldScene_CopyActorPosition(void)
 	struct FieldActor *dst;
 	struct FieldActor *src;
 	s32				   idx;
-	s32				   tbl;
+	s32				   table;
 	s32				   idx4;
 	struct EventWork  *work;
 
@@ -280,10 +280,10 @@ static void FieldScene_CopyActorPosition(void)
 			src = Object_GetById(0);
 			dst->acceleration = src->speed;
 			idx -= 30;
-			tbl = (s32)CrossbonePlatform_ActorFifteenWalkTargets;
+			table = (s32)CrossbonePlatform_ActorFifteenWalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
-			Engine_ActorWalkTo(15, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
+			Engine_ActorWalkTo(15, *(s32 *)(table + idx), *(s32 *)(table + idx4));
 		}
 	}
 }

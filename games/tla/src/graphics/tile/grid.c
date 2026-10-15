@@ -126,7 +126,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u8 *actor = Ram_HeapSlots->unknown_0c[1];
     u32 kind = (*(u8 **)(actor + 40))[4];
     struct Vec2 scale;
-    u8 *tbl;
+    u8 *table;
     u16 angle;
     u16 step;
     u16 odd = 0;
@@ -134,7 +134,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    tbl = (u8 *)Ram_HeapSlots->battle_work;
+    table = (u8 *)Ram_HeapSlots->battle_work;
 
     switch (kind) {
     case 3:
@@ -170,7 +170,7 @@ void Battle_PlaceActorsByFormationKind(void)
     }
 
     for (i = 0; i < cnt; i++) {
-        Render_ApplyProjectedPlacement(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
+        Render_ApplyProjectedPlacement(actor, (s32 *)(table + i * 16), (s32 *)&scale, angle);
         actor += 56;
         angle += step;
         if (i & 1)

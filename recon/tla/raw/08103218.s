@@ -837,7 +837,7 @@ Func_08103218:
 	bl UiText_DrawCharacterAtOffsetFar
 	mov r2, r8
 	ldrh r0, [r2]
-	bl BtlActGet
+	bl BattleActGet
 	ldr r3, [sp, #16]
 	ldrb r0, [r0, #9]
 	movs r1, #2

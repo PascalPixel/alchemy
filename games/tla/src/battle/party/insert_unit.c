@@ -4,7 +4,7 @@
 
 s32 BattleUnit_KeepsOneHp(s32 unit_id)
 {
-    struct BtlUnit *unit = UnitGet(unit_id);
+    struct BattleUnit *unit = UnitGet(unit_id);
 
     if (unit->enemy_id == 110 || unit->enemy_id == 113)
         return 1;

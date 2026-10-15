@@ -335,7 +335,7 @@ static void FieldScene_RunEarlySequence(void)
 	struct EventWork  *work;
 	struct FieldActor *record;
 	s32				   idx;
-	u8				  *tbl;
+	u8				  *table;
 	s32				   off;
 	s32				   o4;
 	s32				   a;
@@ -352,12 +352,12 @@ static void FieldScene_RunEarlySequence(void)
 			record->motion_flags = 0;
 		}
 	}
-	tbl = (u8 *)Altin_TriggerTable;
+	table = (u8 *)Altin_TriggerTable;
 	idx = ((*(u16 *)&work->touched_trigger - 2) << 16) >> 16;
 	off = idx << 3;
 	o4 = off + 4;
-	a = *(s16 *)(tbl + o4);
-	b = *(s16 *)(tbl + o4 + 2);
+	a = *(s16 *)(table + o4);
+	b = *(s16 *)(table + o4 + 2);
 	if (idx == 1)
 	{
 		Event_PlayCue(188);
@@ -376,7 +376,7 @@ static void FieldScene_RunEarlySequence(void)
 		{
 			Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
 		}
-		Map_AnimateCells(*(s32 *)(tbl + off), a, b);
+		Map_AnimateCells(*(s32 *)(table + off), a, b);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

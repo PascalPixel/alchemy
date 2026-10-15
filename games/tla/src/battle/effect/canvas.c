@@ -46,12 +46,12 @@ static __inline__ s32 ClearWords_(void *destination, s32 size)
 void BattleFx_OpenCanvasLayer(s32 bgControl)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct BtlWork *btl = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battle_work;
     void *canvas = Ram_HeapSlots->battle_fx_work[1];
     struct BattleBackgroundView *display = (struct BattleBackgroundView *)Ram_HeapSlots->transition_work;
     s32 row;
     s32 col;
-    s32 ofs;
+    s32 offset;
 
     Func_081434d8();
     display->second_mode = 1;
@@ -85,7 +85,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl)
     }
     gBgScroll[1].y = 32;
     WaitFrames(1);
-    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)btl->unknown_670, 128);
+    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unknown_670, 128);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Scheduler_AddOrUpdateCallback(Func_08143488, 0x480);
@@ -110,17 +110,17 @@ void BattleFx_OpenCanvasLayer(s32 bgControl)
     WaitFrames(1);
 
     // The canvas map: 16 rows of 8 character pairs.
-    ofs = 0;
+    offset = 0;
     for (row = 0; row != 16; row++)
     {
-        for (col = 0; col != 8; col++, ofs += 2)
+        for (col = 0; col != 8; col++, offset += 2)
         {
             s32 chr;
             s16 pair;
 
             chr = row * 16 + col * 2;
             pair = ((chr + 1) << 8) | chr;
-            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+            *(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
         }
     }
 
@@ -184,7 +184,7 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control)
 void Func_08143bb8(void)
 {
     struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battle_fx_work[0];
-    struct BtlWork *btl = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battle_work;
     s32 i;
 
     Audio_PlayCue(390);
@@ -209,11 +209,11 @@ void Func_08143bb8(void)
     REG_BLDCNT = 0;
     WaitFrames(1);
 
-    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)btl->unknown_670, 7);
+    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unknown_670, 7);
     WaitFrames(1);
     for (i = 0; i != 8; i++)
     {
-        BattlePresentation_SetPaletteLevelFar(*(u16 *)btl->unknown_670, 21 - i * 3);
+        BattlePresentation_SetPaletteLevelFar(*(u16 *)battle->unknown_670, 21 - i * 3);
         WaitFrames(1);
     }
 
@@ -225,15 +225,15 @@ void Func_08143bb8(void)
 // fades the background palette back and queues BG1's control word.
 void Func_08143d04(void)
 {
-    struct BtlWork *btl;
+    struct BattleWork *battle;
     s32 *flag;
 
     flag = &((struct BattleBackgroundView *)Ram_HeapSlots->transition_work)->second_mode;
-    btl = Ram_HeapSlots->battle_work;
+    battle = Ram_HeapSlots->battle_work;
     *flag = 1;
     QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
     WaitFrames(1);
-    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)btl->unknown_670, 0);
+    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)battle->unknown_670, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f83, 0x20000);
     WaitFrames(1);
 }

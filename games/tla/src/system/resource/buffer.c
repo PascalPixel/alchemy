@@ -15,15 +15,15 @@
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
     s32 bank = 0;
-    s32 pal_ofs = 0;
+    s32 pal_offset = 0;
     s32 dst_bank = 0;
 
     do {
         s32 row = 0;
-        s32 dst_ofs = (dst_bank + bank) << 6;
+        s32 dst_offset = (dst_bank + bank) << 6;
 
         do {
-            u16 *out = (u16 *)((u8 *)dst + dst_ofs);
+            u16 *out = (u16 *)((u8 *)dst + dst_offset);
             u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
             s32 col = 0;
 
@@ -34,7 +34,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
                 do {
                     u32 color = Graphics_ExpandNibbleTable[
-                        (packed & 15) + pal_ofs
+                        (packed & 15) + pal_offset
                     ] << (nibble * 4);
                     nibble++;
                     packed >>= 4;
@@ -46,10 +46,10 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
             } while (col <= 15);
 
             row++;
-            dst_ofs += 32;
+            dst_offset += 32;
         } while (row <= 9);
 
-        pal_ofs += 16;
+        pal_offset += 16;
         dst_bank += 4;
         bank++;
     } while (bank <= 1);

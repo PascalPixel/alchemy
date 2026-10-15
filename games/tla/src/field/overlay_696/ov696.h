@@ -121,7 +121,7 @@ static inline void Ov696_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
     Func_0200484c(a, b, c, d, e, f);
 }
 
-static inline s32 Ov696_FlagChk(s32 flag)
+static inline s32 Ov696_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -224,13 +224,13 @@ static inline void Ov696_TaskAdd(void (*callback)(void), s32 priority)
     Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-static inline void Ov696_MesPut(s32 speaker, s32 flags)
+static inline void Ov696_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_020049a4(speaker, flags);
 }
 
-static inline void Ov696_MesOpen(s32 speaker, s32 flags)
+static inline void Ov696_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);
@@ -285,7 +285,7 @@ static inline void Ov696_ObjPut(s32 actor, s32 x, s32 z, s32 angle)
     Func_0200493c(actor, x, z, angle);
 }
 
-static inline void Ov696_MesWait(s32 speaker, s32 a, s32 frames)
+static inline void Ov696_MessageWait(s32 speaker, s32 a, s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_0200499c(speaker, a, frames);

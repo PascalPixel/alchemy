@@ -5,9 +5,9 @@
 	.thumb_func
 Inventory_GetEquippedItemFar:
 	overlay_veneer Inventory_GetEquippedItem
-	.global BtlActGet
+	.global BattleActGet
 	.thumb_func
-BtlActGet:
+BattleActGet:
 	overlay_veneer BattleAction_GetDirect
 	.global OwnerAction_AddFar
 	.thumb_func

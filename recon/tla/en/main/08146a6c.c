@@ -61,7 +61,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-void Func_08146a6c(struct BattleEffectArgument *efx)
+void Func_08146a6c(struct BattleEffectArgument *effect)
 {
     struct CanvasEffectWork *work;
     void *canvas;
@@ -93,8 +93,8 @@ void Func_08146a6c(struct BattleEffectArgument *efx)
     work->transferValue = 50;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
 
-    source = GetBattleObjectSlotFar(efx->actor)->object;
-    target = GetBattleObjectSlotFar(efx->actors[0])->object;
+    source = GetBattleObjectSlotFar(effect->actor)->object;
+    target = GetBattleObjectSlotFar(effect->actors[0])->object;
     for (i = 0, point = work->particles; i != 8; i++)
     {
         s32 delay = i * 8;
@@ -171,8 +171,8 @@ void Func_08146a6c(struct BattleEffectArgument *efx)
                     step->velocity_z /= 2;
                     work->shakeFrames = 4;
                     Audio_PlayCue(134);
-                    for (j = 0; j != efx->count; j++)
-                        Func_0814cd48(efx->actors[j], 7, 5, j, 8);
+                    for (j = 0; j != effect->count; j++)
+                        Func_0814cd48(effect->actors[j], 7, 5, j, 8);
                 }
                 step->x += step->velocity_x;
                 step->y += step->velocity_y;

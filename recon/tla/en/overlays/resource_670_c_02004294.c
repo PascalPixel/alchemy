@@ -32,7 +32,7 @@ void Func_02004294(void)
     Ov670_ObjEmoteWait(17, 0x102);
     Ov670_Wait(20);
     Func_02005b4c((s32)MsgYouAreStill);
-    Ov670_MesPut(17, 0);
+    Ov670_MessagePut(17, 0);
     if (Data_02007950 != 0) {
         Data_02007950->motion_flags = 0;
         while (Data_02007950->y > 0x240000) {
@@ -42,9 +42,9 @@ void Func_02004294(void)
         }
     }
     Motion_SetModeAndWaitAnimation(17, 4);
-    Ov670_MesPut(17, 0);
+    Ov670_MessagePut(17, 0);
     Ov670_ObjTurn(17, 0x3000);
-    Ov670_MesPut(0x4000 + 17, 0);
+    Ov670_MessagePut(0x4000 + 17, 0);
     GameFlag_ClearBit(0x8f7);
     Ov670_SePlay(11);
     Ov670_Wait(80);

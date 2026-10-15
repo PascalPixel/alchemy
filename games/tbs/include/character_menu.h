@@ -10,7 +10,7 @@
 #include "animspr.h"
 #include "window.h"
 
-struct BtlUnit;
+struct BattleUnit;
 struct OwnerActionSlot;
 
 struct CharacterMenuState

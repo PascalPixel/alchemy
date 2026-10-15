@@ -38,13 +38,13 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
         struct BattleActionRecord *entry = &entries[i];
 
         if (entry->command == 5) {
-            struct BtlAct *action;
+            struct BattleAct *action;
 
             UnitGet(entry->unit_id);
-            action = BtlActGet(Djinn_GetDefinitionHeaderFar(
+            action = BattleActGet(Djinn_GetDefinitionHeaderFar(
                 (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
-            if (action->efx == 72 || action->efx == 76 || action->efx == 79 || action->efx == 74
-                || action->efx == 46 || action->efx == 47 || action->efx == 88 || action->efx == 53) {
+            if (action->effect == 72 || action->effect == 76 || action->effect == 79 || action->effect == 74
+                || action->effect == 46 || action->effect == 47 || action->effect == 88 || action->effect == 53) {
                 u32 priority = entry->priority;
 
                 /* FAKEMATCH: the barrier keeps the priority's load ahead of its bonus; added plainly the bonus is started first (differ 2). */

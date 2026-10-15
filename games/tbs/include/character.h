@@ -6,7 +6,7 @@
 #include "owner_value.h"
 #include "layout_guard.h"
 
-struct BtlUnit;
+struct BattleUnit;
 
 struct CharacterDefinition
 {

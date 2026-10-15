@@ -29,10 +29,10 @@ UiText_DrawQuantity:
 	.thumb_func
 UiWindow_CreateWithLayoutBoundsFar:
 	overlay_veneer UiWindow_CreateWithLayoutBounds
-	.global PtyStDrawFar
+	.global PartyStatusDrawFar
 	.thumb_func
-PtyStDrawFar:
-	overlay_veneer PtyStDraw
+PartyStatusDrawFar:
+	overlay_veneer PartyStatusDraw
 	.global UiWork_FinalizeAndReleaseBlock16Far
 	.thumb_func
 UiWork_FinalizeAndReleaseBlock16Far:

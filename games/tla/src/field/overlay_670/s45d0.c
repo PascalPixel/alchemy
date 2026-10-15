@@ -20,10 +20,10 @@ void Func_020045d0(void)
     ObjectMotion_Launch(25, 6, 40);
     Ov670_ObjTurn(20, 0x5000);
     ObjectMotion_Launch(20, 2, 0);
-    Ov670_MesPut(0x4000 + 20, 0);
+    Ov670_MessagePut(0x4000 + 20, 0);
     Ov670_ObjTurn(23, 0x3000);
     ObjectMotion_Launch(23, 2, 0);
-    Ov670_MesPut(0x4000 + 23, 0);
+    Ov670_MessagePut(0x4000 + 23, 0);
     ObjectMotion_EnableActionAndSetCallback(18, Data_020061a8);
     ObjectMotion_EnableActionAndSetCallback(19, Data_020061a8);
     ObjectMotion_EnableActionAndSetCallback(20, Data_020061a8);
@@ -36,7 +36,7 @@ void Func_020045d0(void)
     Ov670_ObjTurn(17, 0x3000);
     ObjectMotion_Launch(17, 2, 10);
     ObjectMotion_Launch(17, 4, 10);
-    Ov670_MesPut(17, 0);
+    Ov670_MessagePut(17, 0);
     ObjectMotion_EnableActionAndResetMotion(18);
     ObjectMotion_EnableActionAndResetMotion(19);
     ObjectMotion_EnableActionAndResetMotion(20);
@@ -55,10 +55,10 @@ void Func_020045d0(void)
     Ov670_ObjArm(24, 0xb000, 0);
     Ov670_ObjArm(25, 0xb000, 0);
     Func_02005b94(17, 0x107, 0);
-    Ov670_MesPut(0x8000 + 17, 0);
-    Ov670_MesPut(0x8000 + 17, 0);
+    Ov670_MessagePut(0x8000 + 17, 0);
+    Ov670_MessagePut(0x8000 + 17, 0);
     Motion_SetModeAndWaitAnimation(17, 3);
-    Ov670_MesPut(0x8000 + 17, 0);
+    Ov670_MessagePut(0x8000 + 17, 0);
     ObjectMotion_Launch(17, 4, 10);
-    Ov670_MesPut(0x8000 + 17, 0);
+    Ov670_MessagePut(0x8000 + 17, 0);
 }

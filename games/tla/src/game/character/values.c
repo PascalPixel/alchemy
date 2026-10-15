@@ -5,7 +5,7 @@ void UnitRatio(s32);
 
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
-    struct BtlUnit *state = UnitGet(owner);
+    struct BattleUnit *state = UnitGet(owner);
     s32 cur = state->hp;
     s32 max = state->max_hp;
     s32 value = cur + delta;

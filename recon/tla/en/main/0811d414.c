@@ -49,7 +49,7 @@ struct BattleLinkedActionState {
 
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
-    struct BtlWork *battle = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battle_work;
     s32 result = 0;
     s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
     struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
@@ -163,7 +163,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             u32 saved;
 
             state->count = count;
-            state->check = BtlRndFar();
+            state->check = BattleRandomFar();
             /* FAKEMATCH: the one-pass IME scope keeps the seed copy between writes and reloads state after the first write. */
             do {
                 ime = &REG_IME;
@@ -184,7 +184,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             state->count = count;
             if (BattleLink_SendActions() < 0)
                 goto fail;
-            if (BtlRndFar() != state->check)
+            if (BattleRandomFar() != state->check)
                 goto fail;
             gBattleRandomSeed = state->seed;
         }

@@ -10,19 +10,19 @@
 
 void BattleUnit_Recalculate(s32 unit_id);
 #if GAME_TLA
-struct BtlAct *BattleAction_GetDirect(s32 action_id);
+struct BattleAct *BattleAction_GetDirect(s32 action_id);
 #endif
 #if GAME_TLA
-struct BtlUnit *UnitGetFar(s32 unit_id);
-struct BtlAct  *BtlActGet(s32 action_id);
+struct BattleUnit *UnitGetFar(s32 unit_id);
+struct BattleAct  *BattleActGet(s32 action_id);
 s32				GameFlag_TestFar(s32 flag_id);
 void			UnitRatioFar(s32 unit_id);
-s32				BtlRndFar(void);
-s32				BtlEfxRevChkFar(s32 effect_id);
+s32				BattleRandomFar(void);
+s32				BattleEffectRevCheckFar(s32 effect_id);
 #endif
 #if GAME_TLA
 u32 Ability_CheckStatusOrSpecialId(s32 action_id);
-s32 Battle_ClassifyEntryKind(const struct BtlAct *entry);
+s32 Battle_ClassifyEntryKind(const struct BattleAct *entry);
 #endif
 
 #endif

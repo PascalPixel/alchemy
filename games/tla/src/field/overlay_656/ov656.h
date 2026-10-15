@@ -116,7 +116,7 @@ static inline void Ov656_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
     Func_02002c38(a, b, c, d, e, f);
 }
 
-static inline s32 Ov656_FlagChk(s32 flag)
+static inline s32 Ov656_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -218,13 +218,13 @@ static inline void Ov656_TaskAdd(void (*callback)(void), s32 priority)
     Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-static inline void Ov656_MesPut(s32 speaker, s32 flags)
+static inline void Ov656_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02002d20(speaker, flags);
 }
 
-static inline void Ov656_MesOpen(s32 speaker, s32 flags)
+static inline void Ov656_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);

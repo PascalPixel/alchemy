@@ -4,7 +4,7 @@
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
                              s32 no, s32 plural, s32 *suffix)
 {
-    struct ArticleTable tbl;
+    struct ArticleTable table;
     s32 kind;
     u16 head;
     u16 c;
@@ -22,7 +22,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     }
     if (no == 1 || (no == 3 && plural == 0)) {
         kind = 0;
-        tbl = Data_08033e40;
+        table = Data_08033e40;
         head = name[0];
         if (head == 29) {
             kind = name[1] - 1;
@@ -34,7 +34,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
             else
                 kind = 1;
         }
-        p = tbl.text[kind & 7];
+        p = table.text[kind & 7];
         for (cnt = 0; cnt < 8; cnt++) {
             if ((c8 = *p++) == 0)
                 break;

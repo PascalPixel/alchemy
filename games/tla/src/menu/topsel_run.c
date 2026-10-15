@@ -15,18 +15,18 @@ void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_RunTopSelection(void)
 {
     s32 ret;
-    s32 sel;
+    s32 selection;
     u8 *state;
 
     state = Ram_HeapSlots->event_work;
-    sel = 0;
+    selection = 0;
 
 loop:
     UiWindow_OpenMode1AndWaitFrame();
-    sel = Menu_SelectTopEntry(sel);
+    selection = Menu_SelectTopEntry(selection);
     ret = UiWork_CloseAndRelease();
 
-    switch (sel) {
+    switch (selection) {
     case 0:
         ret = Object_GetTriggerTileAheadOfCurrentFar();
         if (ret == 0)

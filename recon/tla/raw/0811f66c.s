@@ -653,7 +653,7 @@ Func_0811f66c:
 	lsls r3, r1, #16
 	cmp r3, #0
 	bne .L_0811fbb0
-	bl BtlEfxRevChkFar
+	bl BattleEffectRevCheckFar
 	cmp r0, #0
 	bne .L_0811fbb0
 	movs r6, #0

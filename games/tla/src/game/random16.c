@@ -17,7 +17,7 @@
 //--------------------------------------------------------------------------
 // バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
 //--------------------------------------------------------------------------
-u32 BtlRnd(void)
+u32 BattleRandom(void)
 {
 	s32 seed;
 
@@ -31,13 +31,13 @@ u32 BtlRnd(void)
 //--------------------------------------------------------------------------
 u32 BattleRandomPercent(void)
 {
-	return (BtlRnd() * 100) >> 16;
+	return (BattleRandom() * 100) >> 16;
 }
 
 //--------------------------------------------------------------------------
-// こうげきのダメージ（BtlAtkCalc）
+// こうげきのダメージ（BattleAtkCalc）
 // (atk - def + add * 2) / 2 に、属性の差による倍率をかける
-// 倍率は 256 で 1 倍。差の効きは BtlPowCalc の半分（128 から 384）
+// 倍率は 256 で 1 倍。差の効きは BattlePowerCalc の半分（128 から 384）
 // atk   : こうげき
 // def   : ぼうぎょ（atk - def が負なら 0 にする）
 // add   : わざの威力
@@ -62,36 +62,36 @@ s32 Owner_ScaleAdjustedAmount(s32 atk, s32 def, s32 add, s32 bonus)
 }
 
 //--------------------------------------------------------------------------
-// エナジーの威力（BtlPowCalc）
-// pow に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
-// pow   : 威力
+// エナジーの威力（BattlePowerCalc）
+// power に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
+// power   : 威力
 // bonus : 属性の差（力 - たいせい）
 // rate  : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByCurve(s32 pow, s32 bonus, s32 rate)
+s32 Owner_ScaleValueByCurve(s32 power, s32 bonus, s32 rate)
 {
 	s32 val;
 
-	val = Curve_LookupScaledValue(bonus, 0) * pow * rate;
+	val = Curve_LookupScaledValue(bonus, 0) * power * rate;
 	if (val < 0)
 		val = val + 0xffff;
 	return val >> 16;
 }
 
 //--------------------------------------------------------------------------
-// かいふくの量（BtlRcvCalc）
+// かいふくの量（BattleRecoveryCalc）
 // 属性の力が 100 をこえた分の 2 倍で倍率（256 で 1 倍）を引き、
-// pow と rate にかける
-// pow  : 威力
-// elm  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
+// power と rate にかける
+// power  : 威力
+// element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
 // rate : 倍率（256 で 1 倍）
 //--------------------------------------------------------------------------
-s32 Owner_ScaleValueByOffsetCurve(s32 pow, s32 elm, s32 rate)
+s32 Owner_ScaleValueByOffsetCurve(s32 power, s32 element, s32 rate)
 {
 	s32 val;
 	u32 prod;
 
-	prod = Curve_LookupScaledValue(elm * 2 - 200, 0) * pow;
+	prod = Curve_LookupScaledValue(element * 2 - 200, 0) * power;
 	prod = rate * prod;
 	val = prod;
 	if (val < 0)
@@ -109,7 +109,7 @@ s32 Owner_GetDefaultElement(void *state);
 s32 Item_GetEquippedElement(s32 id)
 {
 	struct ItemDefinition *item;
-	struct BtlUnit		  *unit;
+	struct BattleUnit		  *unit;
 
 	unit = UnitGet(id);
 	if (unit->class_index == 0)

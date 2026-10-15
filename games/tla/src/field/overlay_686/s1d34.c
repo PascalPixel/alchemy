@@ -2,7 +2,7 @@
 
 void Func_02001d34(void)
 {
-    s32 done = Ov686_FlagChk(0x202);
+    s32 done = Ov686_FlagCheck(0x202);
 
     if (done == 0) {
         Func_02002edc(0);
@@ -25,7 +25,7 @@ void Func_02001d34(void)
 
 void Func_02001ddc(void)
 {
-    if (Ov686_FlagChk(0x9e2) == 0) {
+    if (Ov686_FlagCheck(0x9e2) == 0) {
         Ov686_FlagSet(0x9e2);
         Func_02002eec(584);
         Func_02002e44();
@@ -41,7 +41,7 @@ void Func_02001ddc(void)
 
 void Func_02001e54(void)
 {
-    s32 done = Ov686_FlagChk(0x203);
+    s32 done = Ov686_FlagCheck(0x203);
 
     if (done == 0) {
         Func_02002edc(0);
@@ -64,7 +64,7 @@ void Func_02001e54(void)
 
 void Func_02001f04(void)
 {
-    if (Ov686_FlagChk(0x9e3) == 0) {
+    if (Ov686_FlagCheck(0x9e3) == 0) {
         Ov686_FlagSet(0x9e3);
         Func_02002eec(584);
         Func_02002e44();

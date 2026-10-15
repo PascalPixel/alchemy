@@ -19,7 +19,7 @@ void Graphics_AdvancePaletteCycle(void);
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
     s16 activeActors[14];
-    struct BtlWork *battle = Ram_HeapSlots->battle_work;
+    struct BattleWork *battle = Ram_HeapSlots->battle_work;
     u32 count;
     u32 i;
 

@@ -4,7 +4,7 @@
 #include "inventory.h"
 #include "battle_random.h"
 
-s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
     s32 sum;
     s32 i;
@@ -26,7 +26,7 @@ s32 Equipment_GetUnleashRateBonus(struct BtlUnit *owner)
     return sum;
 }
 
-s32 RollWeaponUnleash(struct BtlUnit *owner)
+s32 RollWeaponUnleash(struct BattleUnit *owner)
 {
     struct ItemDefinition *item;
     s32 rate;
@@ -43,7 +43,7 @@ s32 RollWeaponUnleash(struct BtlUnit *owner)
     }
     rate = ((Equipment_GetUnleashRateBonus(owner) +
          (item->secondary_flags * 5)) << 0x10) / 100;
-    if (rate > (s32)(BtlRnd() & 0xFFFF)) {
+    if (rate > (s32)(BattleRandom() & 0xFFFF)) {
         return item->description_message;
     }
     return 1;

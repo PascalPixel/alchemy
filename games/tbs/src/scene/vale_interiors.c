@@ -55,22 +55,22 @@ void *ValeInteriors_SelectExits(void)
 
 void *SceneData_SelectFlaggedTable(void)
 {
-	void *tbl;
+	void *table;
 
 	if (Engine_GameFlagIsSet(0x87a))
 	{
-		tbl = gValeHouseReturnPlacements;
+		table = gValeHouseReturnPlacements;
 	}
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE))
 	{
-		tbl = gValeHousePlacementsAfterLeaving;
+		table = gValeHousePlacementsAfterLeaving;
 	}
 	else
 	{
-		tbl = gValeHousePlacements;
+		table = gValeHousePlacements;
 	}
-	SceneEvents_UpdateInView(tbl);
-	return tbl;
+	SceneEvents_UpdateInView(table);
+	return table;
 }
 
 void *ValeInteriors_SelectEvents(void)

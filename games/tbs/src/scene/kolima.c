@@ -343,7 +343,7 @@ s32 Scene_Initialize(void)
 {
 	s16 scene;
 	u32 actor;
-	u8 *tbl;
+	u8 *table;
 
 	scene = gGameState.scene;
 
@@ -364,11 +364,11 @@ s32 Scene_Initialize(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(25), 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 
-	tbl = Kolima_EntryActions;
-	Engine_ActorEnableActionCallback(23, tbl);
-	Engine_ActorEnableActionCallback(24, tbl);
-	Engine_ActorEnableActionCallback(25, tbl);
-	Engine_ActorEnableActionCallback(26, tbl);
+	table = Kolima_EntryActions;
+	Engine_ActorEnableActionCallback(23, table);
+	Engine_ActorEnableActionCallback(24, table);
+	Engine_ActorEnableActionCallback(25, table);
+	Engine_ActorEnableActionCallback(26, table);
 
 	if (Engine_GameFlagIsSet(0x845) == 0)
 	{

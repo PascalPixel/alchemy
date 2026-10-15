@@ -244,7 +244,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 	s32 x;
 	s32 y;
 	s32 tmp;
-	u32 ofs;
+	u32 offset;
 
 	if (ABS(dx) < ABS(dy))
 	{
@@ -264,10 +264,10 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		x = x0;
 		for (i = y0; i != y1; i++)
 		{
-			ofs = (((((u32)i >> 3) << 5) + ((u32)x >> 3)) << 3) + (i & 7);
-			ofs = (ofs << 3) + (x & 7);
-			if (canvas[ofs] < color)
-				canvas[ofs] = color;
+			offset = (((((u32)i >> 3) << 5) + ((u32)x >> 3)) << 3) + (i & 7);
+			offset = (offset << 3) + (x & 7);
+			if (canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if (frac & 0x100)
 			{
@@ -297,10 +297,10 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		y = y0;
 		for (i = x0; i != x1; i++)
 		{
-			ofs = (((((u32)y >> 3) << 5) + ((u32)i >> 3)) << 3) + (y & 7);
-			ofs = (ofs << 3) + (i & 7);
-			if (canvas[ofs] < color)
-				canvas[ofs] = color;
+			offset = (((((u32)y >> 3) << 5) + ((u32)i >> 3)) << 3) + (y & 7);
+			offset = (offset << 3) + (i & 7);
+			if (canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if (frac & 0x100)
 			{
@@ -1540,7 +1540,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 				}
 				if (Flash_Handler3->match_len < len)
 				{
-					Flash_Handler3->match_ofs = dist;
+					Flash_Handler3->match_offset = dist;
 					Flash_Handler3->match_len = len;
 					if (len == MATCH_MAX)
 					{
@@ -1569,7 +1569,7 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
 				}
 				if (Flash_Handler3->match_len < len)
 				{
-					Flash_Handler3->match_ofs = dist;
+					Flash_Handler3->match_offset = dist;
 					Flash_Handler3->match_len = len;
 					if (len == MATCH_MAX)
 					{
@@ -1586,7 +1586,7 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 {
 	s32 defer;
 	s32 len;
-	s32 save_ofs;
+	s32 save_offset;
 	s32 save_len;
 	s32 reach[2];
 	s16 code;
@@ -1611,7 +1611,7 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 			len = Flash_Handler3->match_len;
 			if (Flash_Handler3->match_len > 1)
 			{
-				save_ofs = Flash_Handler3->match_ofs;
+				save_offset = Flash_Handler3->match_offset;
 				save_len = len;
 				AudioTrack_FindWindowMatch((Flash_Handler3->pos + 1) & WINDOW_MASK);
 				if (Flash_Handler3->match_len > 2)
@@ -1625,7 +1625,7 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 						defer = 1;
 					}
 				}
-				Flash_Handler3->match_ofs = save_ofs;
+				Flash_Handler3->match_offset = save_offset;
 				Flash_Handler3->match_len = save_len;
 			}
 		}
@@ -1636,16 +1636,16 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 			Flash_Handler3->out_buf[0] |= Flash_Handler3->flag_mask;
 			if (Flash_Handler3->match_len <= 16)
 			{
-				code = ((Flash_Handler3->match_ofs << 4) & ~0xfff)
-					   | (Flash_Handler3->match_ofs & 0xff)
+				code = ((Flash_Handler3->match_offset << 4) & ~0xfff)
+					   | (Flash_Handler3->match_offset & 0xff)
 					   | (((Flash_Handler3->match_len - 1) << 8) & 0xf00);
 				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
 				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
 			}
 			else
 			{
-				code = ((Flash_Handler3->match_ofs << 4) & ~0xfff)
-					   | (Flash_Handler3->match_ofs & 0xff);
+				code = ((Flash_Handler3->match_offset << 4) & ~0xfff)
+					   | (Flash_Handler3->match_offset & 0xff);
 				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = (u16)code >> 8;
 				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = code;
 				Flash_Handler3->out_buf[Flash_Handler3->out_cnt++] = Flash_Handler3->match_len - 17;

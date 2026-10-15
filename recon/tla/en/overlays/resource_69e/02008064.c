@@ -115,7 +115,7 @@ void Func_02000148(struct FieldActor *object)
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-static inline s32 FlagChk(s32 flag)
+static inline s32 FlagCheck(s32 flag)
 {
     /* FAKEMATCH: as in ☀️'s scene layer, the inline parameter keeps each flag's constant */
     return GameFlag_Test(flag);
@@ -130,10 +130,10 @@ void Func_020001a4(void)
     struct FieldSprite *sprite;
     s32 angle;
 
-    if (!FlagChk(0x201) && gFrameCount % 3 != 0)
+    if (!FlagCheck(0x201) && gFrameCount % 3 != 0)
         return;
     center = Object_GetById(23);
-    if (FlagChk(0x201))
+    if (FlagCheck(0x201))
         spark = Func_02002828(672, center->x, (s32)((u32)(Random16Far() << 8) >> 16 << 16) + center->y - 0x1c0000, center->z);
     else
         spark = Func_02002828(672, center->x, (s32)((u32)(Random16Far() << 6) >> 16 << 16) + center->y - 0x1c0000, center->z);

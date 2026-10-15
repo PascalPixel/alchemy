@@ -29,7 +29,7 @@ void Func_0200113c(void)
 {
     Func_020048c4();
     Func_02004a24(0);
-    if (Ov696_FlagChk(0x9ed)) {
+    if (Ov696_FlagCheck(0x9ed)) {
         Func_0200498c((s32)MsgShamanMoapaNeverForgetsVictor);
         Func_020049a4(11, 0);
     } else {
@@ -136,18 +136,18 @@ void Func_02001380(void)
         Ov696_ObjTurn(17, 0x8000);
         Motion_SetModeAndWaitAnimation(15, 3);
         Func_0200498c((s32)MsgShamanListenCarefully);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Ov696_ObjTurn(15, 0xc000);
         Func_020049e4(0x33333, 0x6666);
         Ov696_CamMove(0xe00000, -1, 0xb60000, 1);
         Func_020049f4();
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Ov696_ObjEmoteWait(15, 0x102);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Ov696_CamMove(0xe00000, -1, 0x1180000, 1);
         Func_020049f4();
         Ov696_ObjTurn(15, 0x8000);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Ov696_CamMove(0xb20000, -1, 0xdc0000, 1);
         Func_020049f4();
         Battle_WaitMode0(10);
@@ -158,10 +158,10 @@ void Func_02001380(void)
         Ov696_CamMove(0xe20000, -1, 0x1180000, 1);
         Func_020049f4();
         Ov696_ObjTurn(15, 0x8000);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
     }
     Ov696_ObjTurn(15, 0xc000);
-    Ov696_MesPut(0x200f, 0);
+    Ov696_MessagePut(0x200f, 0);
     Motion_SetModeAndWaitAnimation(15, 3);
     Ov696_ObjArm(16, 0x2000, 0);
     Ov696_ObjTurn(17, 0x6000);
@@ -230,16 +230,16 @@ void Func_02001764(void)
     Ov696_ObjArm(17, 0x8000, 0);
     Ov696_ObjTurn(15, 0x8000);
     Func_0200498c((s32)MsgShamanChallengeTrialRoadPrompt);
-    Ov696_MesOpen(0x200f, 0);
+    Ov696_MessageOpen(0x200f, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1) {
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Func_0200289c();
     } else {
         ((struct Ov696EventWork *)Ram_HeapSlots->event_work)->field_1c4++;
-        Ov696_MesOpen(0x200f, 0);
+        Ov696_MessageOpen(0x200f, 0);
         if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
             Engine_AudioPlayCue(76);
-            Ov696_MesPut(0x200f, 0);
+            Ov696_MessagePut(0x200f, 0);
             GameFlag_SetBit(0x200);
             Func_02001380();
         } else {

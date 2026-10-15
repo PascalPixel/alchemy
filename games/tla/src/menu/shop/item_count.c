@@ -65,7 +65,7 @@ void UiIcon_PrepareObjectFar(struct RenderOutput *object);
 
 // Asks how many of a stackable item to sell, when the unit holds more than
 // one, and returns the count; 1 otherwise. The Broken Seal's
-// Shop_SelSellNum.
+// Shop_SelectSellNum.
 s32 Func_0810a03c(s32 unit_id, s32 slot)
 {
     s32 result;

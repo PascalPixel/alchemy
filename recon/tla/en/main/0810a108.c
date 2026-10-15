@@ -17,7 +17,7 @@ void Party_AdjustCoinsFar(s32 amount);
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct BtlUnit *unit = UnitGetFar(unit_id);
+    struct BattleUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);
     u8 rare = item->flags & 4;

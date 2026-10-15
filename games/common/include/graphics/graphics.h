@@ -56,7 +56,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 s32	 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
-void PtyStDraw(s32 flags);
+void PartyStatusDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 #ifndef OWN_UiWindow_SetTilemapEntry
@@ -75,7 +75,7 @@ void UiWork_UploadDirtyBlocks(void);
 #if !GAME_TLA
 struct AnimationObject;
 struct ArticleTable;
-struct BtlUnit;
+struct BattleUnit;
 struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
@@ -306,7 +306,7 @@ void UiWindow_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void UiWork_AnimateSpriteSlots(void);
 void UiWork_InitCountersAndScheduleRefresh(s32 kind);
 s32	 UiWork_SetParamNibbleFar(s32 color);
-void VramBlock_LoadResourceFar(s32 entry_no, s32 mode, s32 resource_id);
+void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resource_id);
 #endif
 
 #endif

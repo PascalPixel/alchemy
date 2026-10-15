@@ -10,7 +10,7 @@ struct UiWindow;
 
 void Effect_SoundAndFlash(void);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode);
-void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
+void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 element, void *djinn);
 void Engine_BattleFxSetWeightedResult(s32 zone_no, s32 slot_no);
 struct UiWindow *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 void Engine_DebugFinalizeWindow(struct UiWindow *work, s32 release);
@@ -18,7 +18,7 @@ void Engine_DisplayScrollStartHBlankDma(s32 mode, s32 freq_x, s32 step_x, s32 am
 s32 Engine_InnCheckIn(s32 mode, s32 object_id);
 void Engine_InventorySnapshotRestore(void);
 void Engine_MapSetWorkFlagBits9To11(u32 v);
-void Engine_OwnerRecalculateRatios(s32 owner_no);
+void Engine_OwnerRecalculateRatios(s32 owner_id);
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
 void Engine_PartySetFields1ceAnd1d0(s32 first, s32 second);
 void Engine_ResetSceneEffectCounter(void);

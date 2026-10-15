@@ -33,13 +33,13 @@ void Func_02000524(void)
 
     if (Func_020004e0())
         Ov677_FlagSet(0x10f);
-    else if (!Ov677_FlagChk(0x301) && !Func_02000a90())
+    else if (!Ov677_FlagCheck(0x301) && !Func_02000a90())
         GameFlag_ClearBit(0x10f);
 
-    if (!Ov677_FlagChk(0x10f)) {
+    if (!Ov677_FlagCheck(0x10f)) {
         message = (s32)MsgAhSoYou;
         Func_02000a18(message);
-        Ov677_MesOpen(14, 0);
+        Ov677_MessageOpen(14, 0);
         if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
             Ov677_Wait(10);
             Func_02000a18(message + 1);
@@ -47,20 +47,20 @@ void Func_02000524(void)
             Ov677_Wait(20);
             Func_02000a18(message + 2);
         }
-        Ov677_MesPut(14, 0);
-    } else if (Ov677_FlagChk(0x301)) {
+        Ov677_MessagePut(14, 0);
+    } else if (Ov677_FlagCheck(0x301)) {
         Func_02000a18((s32)MsgICanTWait);
-        Ov677_MesPut(14, 0);
+        Ov677_MessagePut(14, 0);
     } else if (Func_02000a90()) {
         Func_02000a18((s32)MsgMyWifeHas);
-        Ov677_MesPut(14, 0);
+        Ov677_MessagePut(14, 0);
     } else {
         message = (s32)MsgYouWantMe;
         Func_02000a18(message);
-        Ov677_MesOpen(14, 0);
+        Ov677_MessageOpen(14, 0);
         if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
             Func_02000a18(message + 1);
-            Ov677_MesPut(14, 0);
+            Ov677_MessagePut(14, 0);
             Call2((void (*)())Func_02000a60, 14, 0xc000);
             ObjectDispatch_SetSingleChildFlags(Object_GetById(14), 1);
             Call3((void (*)())ObjectMotion_ResetAndSetPosition, gPartyState.current_owner, 488, 408);
@@ -100,7 +100,7 @@ void Func_02000524(void)
             }
         } else {
             Func_02000a18(message + 2);
-            Ov677_MesPut(14, 0);
+            Ov677_MessagePut(14, 0);
         }
     }
 }

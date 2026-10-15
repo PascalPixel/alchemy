@@ -28,7 +28,7 @@ void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 // 借りたバッファを返し、モーションの絵の枠を放す
 void Func_0811e7dc(struct Work0811e7dc *work)
 {
-    struct MotionObject *object = BtlObjGet(work->object_id)->object;
+    struct MotionObject *object = BattleObjGet(work->object_id)->object;
 
     if (work->buffer != NULL) {
         Func_080219ccFar(GetMotionRecord(object, 0));

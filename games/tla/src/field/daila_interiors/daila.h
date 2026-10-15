@@ -16,7 +16,7 @@ void Func_02000d4c(s32 actor, s32 x, s32 z);
 void Func_02000d94(s32 actor, s32 jump, s32 frames);
 void Func_02000cac(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 
-static inline s32 Daila_FlagChk(s32 flag)
+static inline s32 Daila_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -40,13 +40,13 @@ static inline void Daila_Wait(s32 frames)
     Battle_WaitMode0(frames);
 }
 
-static inline void Daila_MesSet(s32 message)
+static inline void Daila_MessageSet(s32 message)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Engine_EventSetMessage(message);
 }
 
-static inline void Daila_MesPut(s32 actor, s32 flags)
+static inline void Daila_MessagePut(s32 actor, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Engine_EventShowMessage(actor, flags);

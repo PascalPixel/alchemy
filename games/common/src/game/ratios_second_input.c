@@ -11,7 +11,7 @@
 // unit : ユニット
 // pp   : 新しい PP
 //--------------------------------------------------------------------------
-void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 pp)
+void Owner_UpdateSecondInputAndRatios(struct BattleUnit *unit, s32 pp)
 {
 	s32 cur;
 

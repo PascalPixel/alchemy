@@ -19,7 +19,7 @@ struct EnemyRecord *Owner_GetRecordFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
-u32 BtlRndFar(void);
+u32 BattleRandomFar(void);
 s32 Item_EncodeBankedId(s32);
 
 void Battle_AwardSpoils(void)
@@ -42,7 +42,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = &BtlWk->spoils;
+    spoils = &gBattleWork->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);

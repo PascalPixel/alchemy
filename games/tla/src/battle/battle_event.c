@@ -18,9 +18,9 @@ void BattleMotion_RunValueSequence(u32 unit_id, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleActor_ResetRuntimeFields(u32 unit_id);
 void BattleMotion_InitializeActorRecords(u32 unit_id);
-void PtyStDrawFar(s32 state);
-struct BtlObj *BtlObjGet(s32 object_id);
-void BattleUnit_BuildStatusFlags(u32 unit_id, struct BtlObj *slot);
+void PartyStatusDrawFar(s32 state);
+struct BattleObj *BattleObjGet(s32 object_id);
+void BattleUnit_BuildStatusFlags(u32 unit_id, struct BattleObj *slot);
 s32 BattlePres_SetActorModeAndAction(s32 id);
 s32 BattleActor_RemoveFromLists(s32 unit_id);
 u32 BattleEventRuntime_Reset(void);
@@ -28,7 +28,7 @@ u32 BattleEventRuntime_Reset(void);
 // Runs the queued battle events in order, then resets the queue.
 u32 BattleEv_DispatchQueued(void)
 {
-    struct BtlWork *work;
+    struct BattleWork *work;
     struct BattleEventState *runtime;
     struct BattleEventQueue *queue;
     s32 i;
@@ -47,56 +47,56 @@ u32 BattleEv_DispatchQueued(void)
         if (opcode <= 15)
             switch (opcode)
             {
-            case BEV_SCR:
+            case BATTLE_EVENT_SCR:
                 Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]);
                 break;
-            case BEV_OBJ_EFX:
+            case BATTLE_EVENT_OBJ_EFFECT:
                 BattleActor_DestroyTemporaryObject(queue->operands[i]);
                 break;
-            case BEV_UNIT:
+            case BATTLE_EVENT_UNIT:
                 UiText_DrawQuantity(queue->operands[i], 1);
                 break;
-            case BEV_NUM:
+            case BATTLE_EVENT_NUM:
                 UiText_DrawQuantity(queue->operands[i], 5);
                 break;
-            case BEV_ITEM:
+            case BATTLE_EVENT_ITEM:
                 UiText_DrawQuantity(queue->operands[i] & 0x1ff, 2);
                 break;
-            case BEV_ACT:
+            case BATTLE_EVENT_ACT:
                 UiText_DrawQuantity(queue->operands[i] & 0x3fff, 4);
                 break;
-            case BEV_MARK:
+            case BATTLE_EVENT_MARK:
                 ((struct BattleDisplayFlags *)Ram_HeapSlots->unknown_84[4])->marked = 1;
                 break;
-            case BEV_CLR:
+            case BATTLE_EVENT_CLEAR:
                 UiWork_ClearValueNameTablesFar();
                 break;
-            case BEV_MES:
+            case BATTLE_EVENT_MESSAGE:
                 if ((s32)queue->operands[i] >= 0)
                     UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
                 BattlePresentation_WaitForAdvance();
                 UiWork_ClearValueNameTablesFar();
                 break;
-            case BEV_MES_ADD:
+            case BATTLE_EVENT_MESSAGE_ADD:
                 if ((s32)queue->operands[i] >= 0)
                     UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
                 UiWork_ClearValueNameTablesFar();
                 break;
-            case BEV_OBJ_BGN:
+            case BATTLE_EVENT_OBJ_BEGIN:
                 if (runtime->pending_cue > 0)
                     Audio_PlayCue(runtime->pending_cue);
                 BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
                 break;
-            case BEV_OBJ_RES:
+            case BATTLE_EVENT_OBJ_RESET:
                 Func_0812824c(queue->operands[i], runtime->flags);
                 BattleActor_ResetRuntimeFields(queue->operands[i]);
                 BattleMotion_InitializeActorRecords(queue->operands[i]);
                 break;
-            case BEV_REDRAW:
-                PtyStDrawFar(Ram_HeapSlots->battle_work->pty_st);
+            case BATTLE_EVENT_REDRAW:
+                PartyStatusDrawFar(Ram_HeapSlots->battle_work->party_status);
                 break;
-            case BEV_OBJ_END:
-                BattleUnit_BuildStatusFlags(queue->operands[i], BtlObjGet(queue->operands[i]));
+            case BATTLE_EVENT_OBJ_END:
+                BattleUnit_BuildStatusFlags(queue->operands[i], BattleObjGet(queue->operands[i]));
                 BattlePres_SetActorModeAndAction(queue->operands[i]);
                 break;
             case 15:
@@ -107,7 +107,7 @@ u32 BattleEv_DispatchQueued(void)
     return BattleEventRuntime_Reset();
 }
 
-void BtlEvPush(u32 opcode, u32 operand)
+void BattleEvPush(u32 opcode, u32 operand)
 {
     struct BattleEventQueue *queue = &Ram_HeapSlots->battle_work->events.queue;
     u32 index = queue->count;

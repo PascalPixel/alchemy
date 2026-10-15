@@ -5,7 +5,7 @@
 
 s32 UiText_OpenMessageAtObject();
 
-static __inline__ void Ov682_MesOpen(s32 speaker, s32 flags)
+static __inline__ void Ov682_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     UiText_OpenMessageAtObject(speaker, flags);
@@ -123,7 +123,7 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 7, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
     OV682_EMOTE(0x19, 0x101, 0x1e)
-    Ov682_MesOpen(0x2019, 0);
+    Ov682_MessageOpen(0x2019, 0);
     t42 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
     if (t42 == 0) {
         Call1(Battle_WaitMode0, 0xf);

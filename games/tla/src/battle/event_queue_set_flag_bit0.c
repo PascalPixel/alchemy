@@ -13,21 +13,21 @@
 #include "battle_session.h"
 #include "owner_state.h"
 
-struct BtlObj *BtlObjGet(s32 arg0);
+struct BattleObj *BattleObjGet(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
     /* FAKEMATCH: the shared discard-only result type preserves the epilogue register choice. */
-    struct BtlUnit *creature;
-    struct BtlObj *runtime;
+    struct BattleUnit *creature;
+    struct BattleObj *runtime;
 
     creature = UnitGet(arg0);
     if (creature->side == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
-        runtime = BtlObjGet(arg0);
+        runtime = BattleObjGet(arg0);
         Object_Destroy((struct DispatchObject *)runtime->object);
         runtime->object = 0;
         runtime->active = 0;

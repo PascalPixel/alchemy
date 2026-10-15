@@ -161,7 +161,7 @@ void SoundDriver_EnterMixer(void);
 #endif
 
 #if GAME_TLA
-struct BtlObj;
+struct BattleObj;
 struct ObjectRuntime;
 
 struct ParticleChild
@@ -188,7 +188,7 @@ void BattleMotion_ApproachTarget(
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
 void BattleMotion_InterpolatePosition(
-	struct BtlObj *start_slot, struct BtlObj *end_slot, s32 progress);
+	struct BattleObj *start_slot, struct BattleObj *end_slot, s32 progress);
 #endif
 s32	 LuckyDice_Run(void);
 void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);

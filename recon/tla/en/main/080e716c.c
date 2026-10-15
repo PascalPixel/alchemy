@@ -38,7 +38,7 @@ void Func_080e716c(void)
     struct AnchorWork *work = (struct AnchorWork *)Ram_HeapSlots->battle_fx_work[0];
     struct ObjectRuntime *anchor;
     struct EventWork *event;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
     struct ObjectRuntime *object;
     s32 item;
     s32 id = 79;

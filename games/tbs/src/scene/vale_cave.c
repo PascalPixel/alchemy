@@ -329,7 +329,7 @@ static void FieldScene_RunScene3a6SequenceC(void)
 	struct FieldActor *rec8;
 	struct FieldActor *record;
 	s32				   idx;
-	s32				   tbl;
+	s32				   table;
 	s32				   idx4;
 	s32				   off24a;
 	struct EventWork  *p5;
@@ -348,10 +348,10 @@ static void FieldScene_RunScene3a6SequenceC(void)
 			record = Object_GetById(ACTOR_PARTY_LEADER);
 			rec8->acceleration = record->acceleration;
 			idx -= 45;
-			tbl = (s32)ValeCave_WalkTargets;
+			table = (s32)ValeCave_WalkTargets;
 			idx <<= 3;
 			idx4 = idx + 4;
-			Engine_ActorWalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
+			Engine_ActorWalkTo(8, *(s32 *)(table + idx), *(s32 *)(table + idx4));
 		}
 	}
 }

@@ -34,7 +34,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     s32 priority_range;
     s32 index;
     struct BattleSortedUnitEntry *entry;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
     for (index = 0; index != 4; index++)

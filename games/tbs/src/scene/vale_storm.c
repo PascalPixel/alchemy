@@ -322,7 +322,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	if (Engine_GameFlagIsSet(0x841) != 0)
 	{
 		s32 h2;
-		u8 *tbl;
+		u8 *table;
 		FieldScene_BuildPlacementGrid();
 		Actor_SetPosition(9, 0xA50000, 0x4CD0000);
 		{
@@ -332,9 +332,9 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			h2 = 0xE000;
 			actor->facing = h2;
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-			tbl = ValeStorm_ActorEightScript;
+			table = ValeStorm_ActorEightScript;
 			actor->work = 1;
-			Engine_ActorEnableActionCallback(9, tbl);
+			Engine_ActorEnableActionCallback(9, table);
 		}
 		Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
 		{
@@ -344,7 +344,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor->facing = h2;
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 			actor->work = 2;
-			Engine_ActorEnableActionCallback(26, tbl);
+			Engine_ActorEnableActionCallback(26, table);
 		}
 		Engine_ActorSetPosition(22, 0x980000, 0x5050000);
 		{
@@ -354,7 +354,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor->facing = h2;
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 			actor->work = 3;
-			Engine_ActorEnableActionCallback(22, tbl);
+			Engine_ActorEnableActionCallback(22, table);
 		}
 		Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
 		{
@@ -364,7 +364,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor->facing = h2;
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 			actor->work = 4;
-			Engine_ActorEnableActionCallback(8, tbl);
+			Engine_ActorEnableActionCallback(8, table);
 		}
 		Engine_ActorSetAnimation(8, 6);
 		Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -381,7 +381,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	}
 	else if (Engine_GameFlagIsSet(0x83a) != 0)
 	{
-		u8 *tbl;
+		u8 *table;
 		Actor_SetPosition(10, 0xC00000, 0x4BE0000);
 		Actor_FaceDirection(10, 0x2000, 0);
 		Engine_ActorSetAnimation(10, 5);
@@ -391,8 +391,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor = Object_GetById(10);
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 		}
-		tbl = ValeStorm_ActorEightScript;
-		Engine_ActorEnableActionCallback(10, tbl);
+		table = ValeStorm_ActorEightScript;
+		Engine_ActorEnableActionCallback(10, table);
 		Actor_SetPosition(24, 0xE30000, 0x4BE0000);
 		Actor_FaceDirection(24, 0x4000, 0);
 		Engine_ActorSetAnimation(24, 6);
@@ -402,7 +402,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor = Object_GetById(24);
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 		}
-		Engine_ActorEnableActionCallback(24, tbl);
+		Engine_ActorEnableActionCallback(24, table);
 		Actor_SetPosition(25, 0xF70000, 0x4BE0000);
 		Actor_FaceDirection(25, 0x4000, 0);
 		Engine_ActorSetAnimation(25, 6);
@@ -412,7 +412,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 			actor = Object_GetById(25);
 			actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
 		}
-		Engine_ActorEnableActionCallback(25, tbl);
+		Engine_ActorEnableActionCallback(25, table);
 		Actor_SetPosition(23, 0xF30000, 0x4FD0000);
 		Engine_ActorFaceDirection(23, FACING_NORTH, 0);
 		Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
@@ -1354,7 +1354,7 @@ static void ActorPresentation_SetFourActorsModeByBit(void)
 
 static void EV35_TOUCH(void)
 {
-	u8 *tbl;
+	u8 *table;
 
 	if (GameFlag_IsSet(0x83a) != 0)
 	{
@@ -1369,9 +1369,9 @@ static void EV35_TOUCH(void)
 		s32				   v;
 		o = Object_GetById(10);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		tbl = ValeStorm_ActorEightScript;
+		table = ValeStorm_ActorEightScript;
 		o->timer = v;
-		Engine_ActorEnableActionCallback(10, (s32)tbl);
+		Engine_ActorEnableActionCallback(10, (s32)table);
 	}
 	Actor_SetPosition(9, 0xC00000, 0x4A50000);
 	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
@@ -1384,7 +1384,7 @@ static void EV35_TOUCH(void)
 		o = Object_GetById(24);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
 		o->timer = v;
-		Engine_ActorEnableActionCallback(24, (s32)tbl);
+		Engine_ActorEnableActionCallback(24, (s32)table);
 	}
 	Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
 	Actor_FaceDirection(25, FACING_SOUTH, 0);
@@ -1395,7 +1395,7 @@ static void EV35_TOUCH(void)
 		o = Object_GetById(25);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
 		o->timer = v;
-		Engine_ActorEnableActionCallback(25, (s32)tbl);
+		Engine_ActorEnableActionCallback(25, (s32)table);
 	}
 	Actor_SetPosition(26, 0xE30000, 0x4A50000);
 	Actor_FaceDirection(26, 0x3000, 0);
@@ -1744,7 +1744,7 @@ static void ValeStorm_RunRiverSearch(void)
 static void EV10_TALK(void)
 {
 	s32 v2000 = 0x2000;
-	u8 *tbl;
+	u8 *table;
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(10, 1);
@@ -1771,9 +1771,9 @@ static void EV10_TALK(void)
 		s32				   v;
 		rec = Object_GetById(10);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		tbl = ValeStorm_ActorEightScript;
+		table = ValeStorm_ActorEightScript;
 		rec->timer = v;
-		Engine_ActorEnableActionCallback(10, tbl);
+		Engine_ActorEnableActionCallback(10, table);
 	}
 	Engine_EventWait(20);
 	Engine_GameFlagSet(0x30d);

@@ -28,7 +28,7 @@ struct OrbitEffect {
 
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
-void Func_080dfc3c(struct OrbitEffect *efx)
+void Func_080dfc3c(struct OrbitEffect *effect)
 {
     struct OrbitEffect *anchor;
     s32 angle;
@@ -36,20 +36,20 @@ void Func_080dfc3c(struct OrbitEffect *efx)
     s32 dx;
     s32 dz;
 
-    anchor = efx->anchor;
+    anchor = effect->anchor;
     r = 0x80000;
-    angle = efx->angle;
+    angle = effect->angle;
     dx = Iwram_MulQ16(r, Trig_Cos(angle));
     dz = Iwram_MulQ16(r, Trig_Sin(angle));
-    efx->x = anchor->x + dx;
-    efx->z = anchor->z + dz;
-    efx->angle += 0x800;
-    if (++efx->timer == 121) {
-        efx->update = BattleFx_WanderAroundAnchor;
-        efx->timer = 0;
-        efx->pause = 0;
-        efx->speed = 0x1999;
-        efx->scale = 0x30000;
-        efx->angle = Random16();
+    effect->x = anchor->x + dx;
+    effect->z = anchor->z + dz;
+    effect->angle += 0x800;
+    if (++effect->timer == 121) {
+        effect->update = BattleFx_WanderAroundAnchor;
+        effect->timer = 0;
+        effect->pause = 0;
+        effect->speed = 0x1999;
+        effect->scale = 0x30000;
+        effect->angle = Random16();
     }
 }

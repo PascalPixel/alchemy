@@ -21,7 +21,7 @@ void Func_020040cc(void)
     Ov670_ObjTurn(17, 0x3000);
     Motion_SetModeAndWaitAnimation(17, 3);
     Func_02005b4c((s32)MsgLetUsNow);
-    Ov670_MesPut(0x4000 + 17, 0);
+    Ov670_MessagePut(0x4000 + 17, 0);
     Ov670_SePlay(26);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(27), 0);
     Object_GetById(27)->motion_flags = 0;
@@ -36,7 +36,7 @@ void Func_020040cc(void)
     Scheduler_RemoveCallbackFar(Func_02002ccc);
     Func_020032e0();
     Ov670_TaskAdd(Func_02002ccc, 0x480);
-    Ov670_MesPut(17, 0);
+    Ov670_MessagePut(17, 0);
     Ov670_SePlay(11);
     Func_02003610();
     Ov670_Wait(160);

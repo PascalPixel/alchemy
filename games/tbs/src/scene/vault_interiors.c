@@ -855,14 +855,14 @@ static void EV02_TALK(void)
 
 static void Scene_JoinRodSearch(void)
 {
-	s32 mes;
+	s32 message;
 
 	Engine_EventWait(20);
 	Object_GetById(2)->paused = 0;
 	Engine_ActorJump(2, 4, 0);
 	Engine_EventWait(40);
-	mes = MsgVaultThankHelpBelieve;
-	Engine_EventSetMessage(mes);
+	message = MsgVaultThankHelpBelieve;
+	Engine_EventSetMessage(message);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Actor_ShowEmote(2, 0x101, 0);
@@ -909,8 +909,8 @@ static void Scene_JoinRodSearch(void)
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
 	Actor_WalkToAndWait(2, 0x180, 0x198);
 	Engine_EventWait(10);
-	Engine_MessageShowCentered(mes + 5, 1);
-	Engine_EventSetMessage(mes + 6);
+	Engine_MessageShowCentered(message + 5, 1);
+	Engine_EventSetMessage(message + 6);
 	Engine_ActorFaceEachOther(2, 1, 0);
 	FieldScene_RunSplitTripleSteps(0, 1, 20);
 	Actor_ShowEmote(1, 0x102, 0);
@@ -958,8 +958,8 @@ static void Scene_JoinRodSearch(void)
 	Engine_EventShowMessage(2, 0);
 	Actor_ShowEmote(1, 0x102, 0);
 	Engine_EventWait(60);
-	Engine_MessageShowCentered(mes + 13, 1);
-	Engine_EventSetMessage(mes + 14);
+	Engine_MessageShowCentered(message + 13, 1);
+	Engine_EventSetMessage(message + 14);
 	Engine_ActorFaceEachOther(2, 0, 0);
 	Engine_ActorFaceActor(1, 0, 0);
 	Engine_ActorShowEmote(0, 0x102, 0);
@@ -1006,7 +1006,7 @@ static void Scene_JoinRodSearch(void)
 	Engine_ActorSetAnimation(0, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
 	Event_PrepareObjectAndApplyValue(2, 1);
-	Engine_EventSetMessage(mes + 22);
+	Engine_EventSetMessage(message + 22);
 	Engine_ActorRunRepeatedMotion(2, 1);
 	Engine_EventShowMessage(2, 0);
 }

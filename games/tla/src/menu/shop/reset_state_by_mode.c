@@ -16,7 +16,7 @@
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     unit = UnitGet(id);
     if (mode == 0) {

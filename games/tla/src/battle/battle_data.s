@@ -64,7 +64,7 @@ Data_08128868:
 	.global Data_08128960
 Data_08128960:
 	.2byte 0xda, 0xdb, 0xdc, 0, 0, 0
-@ A second hit rate by distance, the same as HitTbl
+@ A second hit rate by distance, the same as HitTable
 	.global Data_0812896c
 Data_0812896c:
 	.byte 100, 60, 30, 30, 30, 30

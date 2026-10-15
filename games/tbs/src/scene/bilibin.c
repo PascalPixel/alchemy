@@ -211,8 +211,8 @@ static void FieldScene_RunEarlySequence(void)
 	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
-	u8				  *tbl;
-	u8				  *tbl2;
+	u8				  *table;
+	u8				  *table2;
 	s32				   off;
 	s32				   off2;
 	s32				   a1;
@@ -239,12 +239,12 @@ static void FieldScene_RunEarlySequence(void)
 		Engine_AudioPlayCue(158);
 	}
 	off = v5 << 2;
-	tbl = (u8 *)Village_DoorCellOrigins;
-	a1 = *(s16 *)(tbl + off);
+	table = (u8 *)Village_DoorCellOrigins;
+	a1 = *(s16 *)(table + off);
 	off2 = off + 2;
-	a2 = *(s16 *)(tbl + off2);
-	tbl2 = (u8 *)Village_DoorCellSteps;
-	Engine_MapAnimateCells(*(s32 *)(tbl2 + off), a1, a2);
+	a2 = *(s16 *)(table + off2);
+	table2 = (u8 *)Village_DoorCellSteps;
+	Engine_MapAnimateCells(*(s32 *)(table2 + off), a1, a2);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Object_GetById(0)->motion_flags = 0;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

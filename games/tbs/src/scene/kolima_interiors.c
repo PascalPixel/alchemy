@@ -167,8 +167,8 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
 	struct EventWork *work = gEventWork;
 	s32				  id;
-	s16				 *sel_p;
-	u32				  sel;
+	s16				 *selection_p;
+	u32				  selection;
 
 	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
@@ -186,11 +186,11 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
 	{
 		s32 off = 450;
-		sel_p = (s16 *)((u8 *)&gGameState + off);
-		sel = *(u16 *)sel_p;
+		selection_p = (s16 *)((u8 *)&gGameState + off);
+		selection = *(u16 *)selection_p;
 	}
 
-	if ((s16)sel == 7)
+	if ((s16)selection == 7)
 	{
 		s32 arg5;
 		s32 arg4;
@@ -200,7 +200,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 		Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
 		Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
 	}
-	else if (((sel - 8) << 16) <= (128 << 9))
+	else if (((selection - 8) << 16) <= (128 << 9))
 	{
 		s32 arg5;
 		s32 arg4;

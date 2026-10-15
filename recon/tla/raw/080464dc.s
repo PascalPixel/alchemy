@@ -316,7 +316,7 @@ Func_080464dc:
 	mov r11, r3
 .L_08046772:
 	ldrh r0, [r6]
-	bl BtlActGet
+	bl BattleActGet
 	adds r5, r0, #0
 	ldrb r3, [r5, #2]
 	cmp r3, #4
@@ -418,7 +418,7 @@ Func_080464dc:
 	mov r3, r9
 	bl UiWindow_SetTilemapEntry
 	ldrh r0, [r6]
-	bl BtlActGet
+	bl BattleActGet
 	mov r4, r11
 	ldr r2, [r7]
 	ldrb r0, [r0, #9]

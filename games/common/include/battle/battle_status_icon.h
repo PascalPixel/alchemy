@@ -5,8 +5,8 @@
 #include "battle_session.h"
 
 #if GAME_TLA
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot);
-s32 BattleStatusIcon_Cycle(struct BtlObj *slot);
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
+s32 BattleStatusIcon_Cycle(struct BattleObj *slot);
 #endif
 
 #endif

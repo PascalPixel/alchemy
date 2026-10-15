@@ -10,18 +10,18 @@ void Func_02000570(void)
 {
     void *event;
 
-    if (!FlagChk(0x8ab)) {
+    if (!FlagCheck(0x8ab)) {
         do {
             event = Ram_HeapSlots->event_work;
         } while (0);
         FIELD_AT(event, u16, 0xd4c) = 3;
-        if (!FlagChk(0x911)) {
+        if (!FlagCheck(0x911)) {
             Func_020007dc();
         } else {
             ActorPlace(9, 0, 0);
             ActorPlace(10, 0, 0);
         }
-    } else if (FlagChk(0x8ff)) {
+    } else if (FlagCheck(0x8ff)) {
         ActorPlaceFacing(9, 0x2000000, 0x3490000, 0xe000);
         ActorPlaceFacing(10, 0x1d80000, 0x36d0000, 0xc000);
         ActorPlace(8, 0, 0);

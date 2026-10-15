@@ -111,7 +111,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
 s32 LinkBattle_SendParty(void)
 {
 	u8					  *buffer;
-	struct BtlWork		  *work;
+	struct BattleWork		  *work;
 	s32					   j;
 	struct LinkOfferList *list;
 	s32					   size;

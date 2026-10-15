@@ -51,7 +51,7 @@ void Func_081963ec(s32 slot, s32 flags);
 void Func_0814cd48(s32 id, s32 objectValue, s32 groupValue, s32 stateSlot, s32 stateValue);
 void Audio_PlayCue(s32 cue);
 
-void Func_08148e9c(struct BattleEffectArgument *efx)
+void Func_08148e9c(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];
     struct CanvasEffectWork *work;
@@ -99,7 +99,7 @@ void Func_08148e9c(struct BattleEffectArgument *efx)
             if (frame == i * 8 + 16)
                 Iwram_FillWords(canvas, 0x4000, 0x08080808);
         }
-        if (efx->side == 1)
+        if (effect->side == 1)
             wave += 0x200000;
         else
             wave -= 0x200000;
@@ -107,9 +107,9 @@ void Func_08148e9c(struct BattleEffectArgument *efx)
             REG_BLDALPHA = frame | 0x1000;
         if (frame > 63)
             REG_BLDALPHA = (0x4f - frame) | 0x1000;
-        for (i = 0; i != Data_081979ae[efx->variant * 3]; i++)
+        for (i = 0; i != Data_081979ae[effect->variant * 3]; i++)
         {
-            x = ((Data_081979ae[efx->variant * 3 + 1] * Trig_Sin((frame << 11) + i * 0x4000) + wave)
+            x = ((Data_081979ae[effect->variant * 3 + 1] * Trig_Sin((frame << 11) + i * 0x4000) + wave)
                     >> 16)
                 + 40;
             y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
@@ -135,19 +135,19 @@ void Func_08148e9c(struct BattleEffectArgument *efx)
                 }
             }
         }
-        for (j = 0; j != efx->count; j++)
+        for (j = 0; j != effect->count; j++)
         {
             for (i = 0; i != 7; i++)
             {
                 if (frame == i * 8 + j * 3 + 16)
                 {
-                    Func_0814cd48(efx->actors[j], 7, 5, j, 4);
-                    Func_08118088(efx->actors[j], 6);
+                    Func_0814cd48(effect->actors[j], 7, 5, j, 4);
+                    Func_08118088(effect->actors[j], 6);
                 }
             }
         }
         work->shakeFrames = 1;
-        Func_08158ce0(Data_081979ae[efx->variant * 3 + 2], Data_081979ae[efx->variant * 3 + 2] * 2);
+        Func_08158ce0(Data_081979ae[effect->variant * 3 + 2], Data_081979ae[effect->variant * 3 + 2] * 2);
         Func_081434f8();
         work->transferPending = 1;
         WaitFrames(1);

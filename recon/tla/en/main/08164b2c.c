@@ -1,5 +1,5 @@
 /* Draft, differ 8 of 65: as Func_08164abc from the battle work's saved
- * palette (BtlWork.palette) into BG palette entries 96 to 223. The loop
+ * palette (BattleWork.palette) into BG palette entries 96 to 223. The loop
  * matches; the destination set first takes the prologue from 12 to 8.
  * Left is the prologue's order: the native starts 0x03000000, copies the
  * first and third deltas, loads the battle work, starts 0x56c, loads the

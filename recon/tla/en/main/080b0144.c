@@ -25,7 +25,7 @@ struct TradeFlags {
 };
 
 struct ElementLevelBonus {
-    u16 pow;
+    u16 power;
     u16 res;
 };
 

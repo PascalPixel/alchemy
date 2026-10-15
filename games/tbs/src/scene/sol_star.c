@@ -118,7 +118,7 @@ static void EV02_SEARCH(void)
 {
 	u32 i;
 	s32 obj;
-	s32 mes;
+	s32 message;
 
 	Engine_EventBegin();
 	Engine_AudioPlayCue(141);
@@ -187,8 +187,8 @@ static void EV02_SEARCH(void)
 	obj = Scene_PresentItem(220, 0x2c80000, 0x100000, 0x1d00000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(obj, 1);
-	mes = MsgSolVenusStarBagged;
-	Engine_MessageShowCentered(mes, 1);
+	message = MsgSolVenusStarBagged;
+	Engine_MessageShowCentered(message, 1);
 	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
 	Actor_FaceDirection(5, FACING_SOUTHEAST, 20);
 	Engine_EventCloseScreen();
@@ -200,7 +200,7 @@ static void EV02_SEARCH(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
 	Engine_ActorJump(9, 4, 30);
-	Engine_EventSetMessage(mes - 1);
+	Engine_EventSetMessage(message - 1);
 	Event_SayThenWait(9, 20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -217,7 +217,7 @@ static void EV03_SEARCH(void)
 {
 	u32 i;
 	s32 obj;
-	s32 mes;
+	s32 message;
 
 	Engine_EventBegin();
 	Event_PlayCue(141);
@@ -287,8 +287,8 @@ static void EV03_SEARCH(void)
 	obj = Scene_PresentItem(221, 0x2c80000, 0x100000, 0x900000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(obj, 1);
-	mes = MsgSolPutMercuryStar;
-	Engine_MessageShowCentered(mes, 1);
+	message = MsgSolPutMercuryStar;
+	Engine_MessageShowCentered(message, 1);
 	Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
 	Actor_FaceDirection(JENNA, FACING_NORTHEAST, 20);
 	Engine_EventCloseScreen();
@@ -300,7 +300,7 @@ static void EV03_SEARCH(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
 	Engine_ActorJump(ACTOR_KRADEN, 4, 30);
-	Engine_EventSetMessage(mes - 2);
+	Engine_EventSetMessage(message - 2);
 	Event_SayThenWait(9, 20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -725,11 +725,11 @@ static void Scene_UnmaskFelix(void)
 {
 	struct FieldActor *obj;
 	struct FieldActor *other;
-	u16				  *tbl;
+	u16				  *table;
 	s32				   left;
 	s32				   cnt;
-	s32				   mes_a;
-	s32				   mes_b;
+	s32				   message_a;
+	s32				   message_b;
 
 	Event_PlayCue(161);
 	Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
@@ -823,12 +823,12 @@ static void Scene_UnmaskFelix(void)
 	Engine_ActorSetAnimationAndWait(GARET, 4);
 	Engine_EventWait(20);
 	cnt = 0;
-	tbl = UnitGet(1)->inventory;
+	table = UnitGet(1)->inventory;
 	left = 14;
 	do
 	{
-		u32 id = *tbl & 0x1ff;
-		tbl++;
+		u32 id = *table & 0x1ff;
+		table++;
 		if (id == 220 || id == 221 || id == 223)
 			cnt++;
 		left--;
@@ -836,8 +836,8 @@ static void Scene_UnmaskFelix(void)
 	Event_OpenMessage(GARET, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		mes_a = MsgSolGuessTakeElemental;
-		Engine_EventSetMessage(mes_a);
+		message_a = MsgSolGuessTakeElemental;
+		Engine_EventSetMessage(message_a);
 		Engine_ActorSetAnimationAndWait(GARET, 3);
 		Engine_EventWait(10);
 		if (cnt <= 2)
@@ -846,7 +846,7 @@ static void Scene_UnmaskFelix(void)
 			Actor_WalkToAndWait(GARET, 252, 0x1e6);
 			Engine_ActorRunRepeatedMotion(GARET, 2);
 			Engine_EventWait(10);
-			UiText_ShowCenteredMessage((mes_a + 1), 1, 0);
+			UiText_ShowCenteredMessage((message_a + 1), 1, 0);
 		}
 		else
 		{
@@ -858,8 +858,8 @@ static void Scene_UnmaskFelix(void)
 	{
 		if (cnt <= 2)
 		{
-			mes_b = MsgSolDontHandOver;
-			Engine_EventSetMessage(mes_b);
+			message_b = MsgSolDontHandOver;
+			Engine_EventSetMessage(message_b);
 			Engine_ActorRunRepeatedMotion(GARET, 3);
 			Engine_ActorSetAnimationAndWait(GARET, 4);
 			Event_SayThenWait(1, 10);
@@ -873,7 +873,7 @@ static void Scene_UnmaskFelix(void)
 			Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
 			Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 0x1d7);
 			Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-			UiText_ShowCenteredMessage((mes_b + 1), 1, 0);
+			UiText_ShowCenteredMessage((message_b + 1), 1, 0);
 			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
 			obj->steering_flags |= ACTOR_FACES_MOTION;

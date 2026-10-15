@@ -85,18 +85,18 @@ s32 ValeBabi_SelectExits(void)
 
 s32 ValeBabi_SelectPlacements(void)
 {
-	s32 *tbl;
+	s32 *table;
 
 	if (gGameState.entrance == 19)
 		return (s32)gValeBabiPlacements4;
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		tbl = gValeBabiPlacements3;
+		table = gValeBabiPlacements3;
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		tbl = gValeBabiPlacements2;
+		table = gValeBabiPlacements2;
 	else
-		tbl = gValeBabiPlacements;
-	FieldScene_PrepareActors((s32)tbl);
-	return (s32)tbl;
+		table = gValeBabiPlacements;
+	FieldScene_PrepareActors((s32)table);
+	return (s32)table;
 }
 
 static void EV09_TALK(s32 object)

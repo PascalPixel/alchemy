@@ -15,7 +15,7 @@
 #include "motobj.h"
 #include "animspr.h"
 
-struct BtlUnit *UnitGet(s32);
+struct BattleUnit *UnitGet(s32);
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 
@@ -26,7 +26,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 //--------------------------------------------------------------------------
 s32 BattleActor_RemoveFromLists(s32 id)
 {
-	struct BtlWork *work;
+	struct BattleWork *work;
 	s32				i;
 	u32				j;
 	s32				unit;
@@ -49,10 +49,10 @@ s32 BattleActor_RemoveFromLists(s32 id)
 	// 敵の並び
 	for (j = 0;; j++)
 	{
-		unit = work->enm_no[j];
+		unit = work->enemy_ids[j];
 		if (unit == id)
 		{
-			work->enm_no[j] = BATTLE_UNIT_REMOVED;
+			work->enemy_ids[j] = BATTLE_UNIT_REMOVED;
 			goto removed;
 		}
 		if (unit == BATTLE_UNIT_LIST_END)
@@ -61,7 +61,7 @@ s32 BattleActor_RemoveFromLists(s32 id)
 	return -1;
 
 removed:
-	EnmCntRel(id);
+	EnemyCountRelease(id);
 	for (j = 0; j < 20; j++)
 	{
 		if (work->actions[j].unit_id == id)
@@ -78,14 +78,14 @@ removed:
 void BattleMotion_InitializeActorRecords(s32 id)
 {
 	void				   *recs[4];
-	struct BtlUnit		   *unit;
+	struct BattleUnit		   *unit;
 	struct AnimationObject *rec;
 	struct AnimationEntry *ent;
 	s32 n;
 
 	unit = UnitGet(id);
 	n = 0;
-	while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+	while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0)
 	{
 		if (unit->side != BATTLE_UNIT_ENEMY)
 			Animation_ApplyChildArgumentFar(rec, 4);
@@ -97,7 +97,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 	if (unit->side == BATTLE_UNIT_ENEMY)
 	{
 		n = 0;
-		while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+		while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0)
 		{
 			/* FAKEMATCH: the native CSE block ends after the child lookup; a one-pass block
 			   keeps its load before the index shift, which a straight assignment reverses. */

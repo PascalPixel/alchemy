@@ -29,10 +29,10 @@ Func_080ad270:
 	.thumb_func
 Inventory_DiscardFar:
 	overlay_veneer Inventory_Discard
-	.global BtlEfxRevChkFar
+	.global BattleEffectRevCheckFar
 	.thumb_func
-BtlEfxRevChkFar:
-	overlay_veneer BtlEfxRevChk
+BattleEffectRevCheckFar:
+	overlay_veneer BattleEffectRevCheck
 	.global Owner_RefreshClassActionsFar
 	.thumb_func
 Owner_RefreshClassActionsFar:

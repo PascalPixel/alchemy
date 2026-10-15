@@ -1654,7 +1654,7 @@ Func_08046b08:
 	adds r0, r5, #0
 	str r1, [sp, #12]
 	str r4, [sp, #4]
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2
@@ -1793,7 +1793,7 @@ Func_08046b08:
 	mov r9, r4
 .L_080478d6:
 	adds r0, r5, #0
-	bl BtlActGet
+	bl BattleActGet
 	movs r1, #240
 	adds r6, r0, #0
 	lsls r1, r1, #8
@@ -3524,7 +3524,7 @@ Func_08046b08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PtyStDraw
+	bl PartyStatusDraw
 	ldr r2, [r5]
 	movs r3, #0
 	str r3, [r2, #72]

@@ -23,16 +23,16 @@
 // （あきがなければ何もしない）
 // input : 置く先のウィンドウ
 // x, y  : ウィンドウの中の位置（ドット）
-// abil  : わざの番号
+// ability  : わざの番号
 //--------------------------------------------------------------------------
-s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y, s32 abil)
+s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y, s32 ability)
 {
 	s32 slot;
 
 	slot = Resource_FindFreeEntry();
 	if (slot != VRAM_CACHE_ENTRY_COUNT)
 	{
-		Resource_LoadIndexedEntryToBuffer(abil, slot);
+		Resource_LoadIndexedEntryToBuffer(ability, slot);
 		RenderOutput_Create(slot, 0x40000000, input, x, y); // OBJ サイズ 16x16
 	}
 }

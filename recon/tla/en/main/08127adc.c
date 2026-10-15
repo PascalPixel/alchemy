@@ -12,7 +12,7 @@ struct SummonChargeState {
     u8 count;
 };
 
-s32 EnmCntDec(s32 no, s32 n)
+s32 EnemyCountDecrement(s32 no, s32 n)
 {
     struct SummonChargeState *w;
     s32 num;

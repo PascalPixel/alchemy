@@ -26,7 +26,7 @@ s32 Battle_SelectWeightedIndex(u8 *weights)
         __asm__("" : "+r"(arg) : "r"(chain));
         weights = arg;
     }
-    value = BtlRndFar() & 0xFF;
+    value = BattleRandomFar() & 0xFF;
     total = weights[0];
     result = 0;
     index = 0;

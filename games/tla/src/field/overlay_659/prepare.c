@@ -82,14 +82,14 @@ s32 Func_02000624(void)
             event = Ram_HeapSlots->event_work;
         } while (0);
         FIELD_AT(event, u16, 0xd4c) = 3;
-        if (!FlagChk(0x821)) {
+        if (!FlagCheck(0x821)) {
             ActorPlace(29, 0, 0);
             ActorPlace(30, 0, 0);
         } else {
             Object_SetPartAttribute(Object_GetById(29), 3);
             Object_SetPartAttribute(Object_GetById(30), 5);
         }
-        if (FlagChk(0x8ab)) {
+        if (FlagCheck(0x8ab)) {
             Func_02001d28(2, 110, 16, 10, 16, 64);
             Func_02001d20(2, 46, 16, 10, 16, 0);
         }
@@ -97,7 +97,7 @@ s32 Func_02000624(void)
     if (gPartyState.entrance == 20)
         Func_02000570();
     if (gPartyState.scene == (s32)&SceneId_Ov659Room2) {
-        if (FlagChk(0x8ab)) {
+        if (FlagCheck(0x8ab)) {
             ActorPlace(10, 0, 0);
         } else {
             Func_02001ef0(10, 0xc000);
@@ -109,7 +109,7 @@ s32 Func_02000624(void)
         }
     }
     Func_02000534();
-    if (FlagChk(0x8ff))
+    if (FlagCheck(0x8ff))
         Object_SetPartAttribute(Object_GetById(33), 2);
     else
         Object_SetPartAttribute(Object_GetById(28), 2);

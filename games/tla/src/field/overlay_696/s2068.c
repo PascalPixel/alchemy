@@ -38,7 +38,7 @@ void Func_02002068(void)
     Ov696_ObjWalk(15, 120, 242);
     Engine_AudioPlayCue(29);
     Func_0200498c((s32)MsgShamanRecognizeShamanRod);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Battle_WaitMode0(20);
     if (rod != NULL)
         Func_0200481c(rod);
@@ -61,18 +61,18 @@ void Func_02002068(void)
     OV696_EMOTE(17, 256, 0)
     Ov696_ObjSpeed(17, 0x13333, 0x9999);
     Ov696_ObjWalk(17, 136, 232);
-    Ov696_MesPut(17, 0);
+    Ov696_MessagePut(17, 0);
     Ov696_ObjSpeed(16, 0x13333, 0x9999);
     Ov696_ObjWalk(16, 104, 232);
-    Ov696_MesPut(16, 0);
+    Ov696_MessagePut(16, 0);
     Motion_SetModeAndWaitAnimation(15, 3);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 257, 20)
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Ov696_ObjEmoteWait(18, 258);
     Battle_WaitMode0(20);
-    Ov696_MesPut(18, 0);
+    Ov696_MessagePut(18, 0);
     Ov696_ObjSpeed(15, 0xcccc, 0x6666);
     Ov696_ObjWalk(15, 120, 252);
     Battle_WaitMode0(40);
@@ -98,7 +98,7 @@ void Func_02002068(void)
     Ov696_ObjWalk(15, 120, 242);
     Ov696_ObjTurn(15, 0x4000);
     Object_SetModeById(15, 4);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Ov696_ObjArm(6, 0, 0);
     Ov696_ObjArm(5, 0x8000, 0);
     Ov696_ObjArm(gPartyState.current_owner, 0, 0);
@@ -106,44 +106,44 @@ void Func_02002068(void)
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(18, 256, 20)
     ObjectMotion_Launch(18, 4, 0);
-    Ov696_MesPut(18, 0);
+    Ov696_MessagePut(18, 0);
     Ov696_ObjArm(15, 0x2000, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 265, 20)
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Ov696_ObjArm(6, 0xc000, 0);
     Ov696_ObjArm(5, 0xc000, 0);
     Ov696_ObjArm(gPartyState.current_owner, 0xc000, 0);
     Ov696_ObjArm(7, 0xc000, 0);
     Ov696_ObjTurn(15, 0x4000);
     Motion_SetModeAndWaitAnimation(15, 4);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(6, 259, 0)
-    Ov696_MesPut(6, 0);
+    Ov696_MessagePut(6, 0);
     Ov696_ObjArm(15, 0x6000, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(5, 257, 0)
-    Ov696_MesPut(5, 0);
+    Ov696_MessagePut(5, 0);
     Motion_SetModeAndWaitAnimation(15, 3);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(7, 265, 20)
-    Ov696_MesPut(7, 0);
+    Ov696_MessagePut(7, 0);
     Ov696_ObjArm(15, 0x2000, 0);
     Ov696_ObjEmoteWait(18, 258);
-    Ov696_MesPut(18, 0);
+    Ov696_MessagePut(18, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 265, 40)
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(17, 262, 20)
     Ov696_ObjTurn(17, 0x6000);
-    Ov696_MesPut(17, 0);
+    Ov696_MessagePut(17, 0);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(15, 257, 0)
     Ov696_ObjArm(15, 0xe000, 20);
     Object_SetModeById(17, 3);
-    Ov696_MesPut(17, 0);
+    Ov696_MessagePut(17, 0);
     {
         s32 y = 0x500000;
         s32 z = 0xf20000;
@@ -155,7 +155,7 @@ void Func_02002068(void)
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
     OV696_EMOTE(16, 262, 20)
     Ov696_ObjTurn(16, 0);
-    Ov696_MesPut(16, 0);
+    Ov696_MessagePut(16, 0);
     Ov696_ObjTurn(17, 0x8000);
     Motion_SetModeAndWaitAnimation(17, 3);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
@@ -164,9 +164,9 @@ void Func_02002068(void)
     Ov696_ObjArm(17, 0x4000, 0);
     Ov696_ObjArm(16, 0x4000, 0);
     Ov696_ObjTurn(15, 0x4000);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Object_SetModeById(15, 3);
-    Ov696_MesPut(15, 0);
+    Ov696_MessagePut(15, 0);
     Ov696_CamSpeed(0x6666, 0xccc);
         Ov696_CamMove(0xb40000, 0x200000, z, 1);
     }
@@ -202,12 +202,12 @@ void Func_02002068(void)
     Func_02004934(17, 0, 0);
     Func_02004934(16, 0, 0);
     Ov696_ObjTurn(6, 0);
-    Ov696_MesPut(6, 0);
+    Ov696_MessagePut(6, 0);
     Ov696_ObjTurn(5, 0x8000);
-    Ov696_MesPut(0x2005, 0);
-    Ov696_MesPut(18, 0);
+    Ov696_MessagePut(0x2005, 0);
+    Ov696_MessagePut(18, 0);
     Ov696_ObjTurn(18, 0x8000);
-    Ov696_MesPut(18, 0);
+    Ov696_MessagePut(18, 0);
     Ov696_ObjArm(7, 0, 0);
     Ov696_ObjArm(5, 0, 0);
     Ov696_ObjTurn(gPartyState.current_owner, 0);

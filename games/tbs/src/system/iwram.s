@@ -196,8 +196,8 @@ gMapAnimationPages:
 	.global gMapWork
 gMapWork:
 	.space 0x00000004
-	.global BtlWk
-BtlWk:
+	.global gBattleWork
+gBattleWork:
 	.space 0x0000000c
 	.global gCameraWork
 gCameraWork:

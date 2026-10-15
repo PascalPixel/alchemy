@@ -87,7 +87,7 @@ struct GameState
 	u8			   unknown_2b4[4];
 	u32			   start_stamp;
 	u8			   unknown_2bc[4];
-	struct BtlUnit owners[8];
+	struct BattleUnit owners[8];
 };
 
 LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, build_stamp, 0);

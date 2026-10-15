@@ -31,7 +31,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     s32 count;
     s32 i;
     s32 value;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
     if (amount < 0) {
         BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleFx_StartBufferInterpolation(4);
@@ -74,7 +74,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            struct BtlUnit *object = UnitGet(*entry);
+            struct BattleUnit *object = UnitGet(*entry);
             s32 amount;
 
             switch (object->poison) {

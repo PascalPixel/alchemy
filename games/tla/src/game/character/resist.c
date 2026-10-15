@@ -80,7 +80,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 // table's end reads the first preset.
 s32 Owner_GetDefaultElement(void *state)
 {
-    struct BtlUnit *unit = state;
+    struct BattleUnit *unit = state;
     u8 preset = Owner_GetRecord(unit->enemy_id)[42];
     const struct ElementPreset *table;
     u32 offset;

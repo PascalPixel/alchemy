@@ -24,7 +24,7 @@ void Func_02000154(void)
 {
     struct Ov69fObject *object = Object_GetById(12);
 
-    if (!Ov69f_FlagChk(0xa19) && object->x >> 20 == 4 && object->z >> 20 == 37) {
+    if (!Ov69f_FlagCheck(0xa19) && object->x >> 20 == 4 && object->z >> 20 == 37) {
         Ov69f_FlagSet(0xa19);
         Func_020000b4(1);
     }

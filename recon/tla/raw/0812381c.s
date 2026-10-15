@@ -100,10 +100,10 @@ Func_0812381c:
 	bne .L_081238f2
 	movs r0, #8
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #9
 	adds r1, r5, #0
-	bl BtlEvPush
+	bl BattleEvPush
 .L_081238f2:
 	adds r6, #2
 .L_081238f4:
@@ -189,7 +189,7 @@ Func_0812381c:
 	beq .L_081239c8
 	cmp r4, #3
 	beq .L_081239c8
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #3
 	ands r0, r3
 	cmp r0, #0
@@ -478,7 +478,7 @@ Func_0812381c:
 	movs r0, #8
 	ldrsh r7, [r3, r0]
 	adds r0, r7, #0
-	bl BtlActGet
+	bl BattleActGet
 	add r1, sp, #40
 	adds r6, r0, #0
 	mov r9, r1
@@ -742,7 +742,7 @@ Func_0812381c:
 	movs r1, #4
 	bl UiText_DrawQuantity
 	adds r0, r7, #0
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r2, [r0, #1]
 	movs r3, #15
 	ands r3, r2
@@ -992,7 +992,7 @@ Func_0812381c:
 	b .L_08124182
 .L_08124086:
 	adds r0, r7, #0
-	bl BtlActGet
+	bl BattleActGet
 	movs r0, #0
 	movs r1, #0
 	bl BattlePres_SetActorModes
@@ -1031,7 +1031,7 @@ Func_0812381c:
 	movs r0, #0
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r4, r10
 	ldr r3, [r4]
 	movs r0, #150
@@ -1048,29 +1048,29 @@ Func_0812381c:
 	adds r1, r1, r3
 	adds r1, r1, r0
 	movs r0, #3
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #14
 	movs r1, #175
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #10
 	movs r1, #0
-	bl BtlEvPush
+	bl BattleEvPush
 	ldr r1, .L_08124434
 	movs r0, #4
-	bl BtlEvPush
+	bl BattleEvPush
 	mov r1, r10
 	ldr r3, [r1]
 	movs r0, #11
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl BtlEvPush
+	bl BattleEvPush
 	movs r0, #212
 	bl Audio_PlayCue
 	mov r4, r10
 	ldr r3, [r4]
 	movs r1, #0
 	ldrsh r0, [r3, r1]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #3
 	ldr r0, [r0]
 	bl Object_SetMode
@@ -1078,7 +1078,7 @@ Func_0812381c:
 	ldr r3, [r2]
 	movs r4, #0
 	ldrsh r0, [r3, r4]
-	bl BtlObjGet
+	bl BattleObjGet
 	movs r1, #32
 	ldr r0, [r0]
 	bl ObjectDispatch_ApplyValueToChildrenFar
@@ -1141,7 +1141,7 @@ Func_0812381c:
 	ands r1, r6
 	bl Trade_AddOfferFar
 	adds r0, r7, #0
-	bl BtlActGet
+	bl BattleActGet
 	adds r5, r0, #0
 	mov r0, r10
 	ldr r3, [r0]
@@ -1416,7 +1416,7 @@ Func_0812381c:
 	ldrb r3, [r3]
 	cmp r3, #0
 	beq .L_0812441e
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #255
 	ands r0, r3
 	cmp r0, #152
@@ -1425,7 +1425,7 @@ Func_0812381c:
 	ldr r3, [r2]
 	strb r5, [r3, #31]
 .L_0812441e:
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -1493,7 +1493,7 @@ Func_0812381c:
 	bne .L_081244a2
 	b .L_081247be
 .L_081244a2:
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -1509,7 +1509,7 @@ Func_0812381c:
 	lsls r0, r0, #16
 	bl __divsi3
 	adds r5, r0, #0
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255
@@ -1527,7 +1527,7 @@ Func_0812381c:
 	b .L_081247be
 .L_081244e4:
 	adds r0, r7, #0
-	bl BtlActGet
+	bl BattleActGet
 	mov r4, r11
 	ldr r3, [r4]
 	ldrb r2, [r0, #2]
@@ -1556,7 +1556,7 @@ Func_0812381c:
 	adds r3, r2, #0
 	cmp r3, #89
 	bne .L_0812455e
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #255
 	ands r0, r3
 	cmp r0, #178
@@ -1621,7 +1621,7 @@ Func_0812381c:
 .L_0812458c:
 	movs r5, #1
 .L_0812458e:
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #255
 	ands r0, r3
 	cmp r0, r6
@@ -1688,7 +1688,7 @@ Func_0812381c:
 .L_08124608:
 	movs r5, #3
 .L_0812460a:
-	bl BtlRndFar
+	bl BattleRandomFar
 	ands r0, r5
 	cmp r0, #0
 	bne .L_081246b0
@@ -1764,7 +1764,7 @@ Func_0812381c:
 	ldrb r2, [r3, #2]
 	ldrb r3, [r3, #3]
 	str r4, [sp, #0]
-	bl BtlHitChk
+	bl BattleHitCheck
 	ldr r1, [r6]
 	adds r2, r5, #0
 	adds r2, #56
@@ -1883,7 +1883,7 @@ Func_0812381c:
 	str r3, [r2, #84]
 	mov r1, r8
 	ldrb r0, [r1, #3]
-	bl BtlEfxRevChkFar
+	bl BattleEffectRevCheckFar
 	cmp r0, #0
 	beq .L_0812478e
 	mov r2, r11

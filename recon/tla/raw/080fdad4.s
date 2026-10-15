@@ -334,7 +334,7 @@ Func_080fdad4:
 	ldr r0, .L_080fdd7c
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0
@@ -462,7 +462,7 @@ Func_080fdad4:
 	ldr r0, .L_080fde88
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldr r1, [sp, #48]
 	ldrb r2, [r0, #9]
 	movs r0, #58
@@ -667,7 +667,7 @@ Func_080fdad4:
 	ldr r0, .L_080fe020
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0
@@ -726,7 +726,7 @@ Func_080fdad4:
 	ldr r0, .L_080fe094
 	str r4, [sp, #8]
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r3, [r0, #6]
 	ldr r4, [sp, #8]
 	cmp r3, #0

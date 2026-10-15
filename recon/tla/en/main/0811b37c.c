@@ -9,11 +9,11 @@
 #include "battle_session.h"
 
 extern const s8 BattlePlacement_StepPairs[];
-void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y);
+void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 s32 BattleParty_PrepareReserveOwners(u16 *ids);
 void Func_0811b180(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-struct BtlObj *BtlObjGet(s32 id);
+struct BattleObj *BattleObjGet(s32 id);
 
 void BattleUnit_RefreshPlacement(void)
 {
@@ -27,7 +27,7 @@ void BattleUnit_RefreshPlacement(void)
     s32 n;
     s32 value;
     u8 *p;
-    struct BtlWork *work;
+    struct BattleWork *work;
 
     place = 0;
     stand = 0;
@@ -43,17 +43,17 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = ids[i];
 
         work->placement[id] = place;
-        BtlObjMake(BtlObjGet(id), id, BattlePlacement_StepPairs[place * 2],
+        BattleObjMake(BattleObjGet(id), id, BattlePlacement_StepPairs[place * 2],
             BattlePlacement_StepPairs[place * 2 + 1]);
     }
-    for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
-        ids[i] = work->enm_no[i];
+    for (i = 0; i < 6 && work->enemy_ids[i] != 0xff; i++)
+        ids[i] = work->enemy_ids[i];
     count = i;
     Func_0811b180(ids, count, x, z);
     for (i = 0; i < count; i++, stand++) {
-        s32 id = work->enm_no[i];
+        s32 id = work->enemy_ids[i];
 
         if (id != 0xfe)
-            BtlObjMake(BtlObjGet(id), id, x[stand], z[stand]);
+            BattleObjMake(BattleObjGet(id), id, x[stand], z[stand]);
     }
 }

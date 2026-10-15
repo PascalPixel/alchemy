@@ -7,26 +7,26 @@
 #include "farcall.h"
 #endif
 
-extern u8  HitTbl[];
-extern s32 PpLossTbl[];
-extern s32 HpRcvTbl[];
-extern s32 PpDmgTbl[];
-extern s32 HpDmgTbl5[];
-extern s32 HpDmgTbl8[];
-extern s32 HpDmgTbl6[];
-extern s32 PpRcvTbl[];
-extern s32 HpDmgTbl[];
+extern u8  HitTable[];
+extern s32 PpLossTable[];
+extern s32 HpRecoveryTable[];
+extern s32 PpDmgTable[];
+extern s32 HpDmgTable5[];
+extern s32 HpDmgTable8[];
+extern s32 HpDmgTable6[];
+extern s32 PpRecoveryTable[];
+extern s32 HpDmgTable[];
 
 #if GAME_TLA
-s32 BtlHitChk(s32 actor, s32 target, s32 range, s32 effect, s32 table);
-s32 BtlAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);
-s32 BtlPowCalc(s32 value, s32 selector, s32 multiplier);
-s32 BtlRcvCalc(s32 value, s32 selector, s32 multiplier);
+s32 BattleHitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);
+s32 BattleAtkCalc(s32 amount, s32 reduction, s32 adjustment, s32 selector);
+s32 BattlePowerCalc(s32 value, s32 selector, s32 multiplier);
+s32 BattleRecoveryCalc(s32 value, s32 selector, s32 multiplier);
 s16 UnitPpAddFar(s32 unit, s32 amount);
-s32 BtlUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
 #endif
 #if GAME_TLA
-s32 BtlEfxDeadChk(s32 effect);
+s32 BattleEffectDeadCheck(s32 effect);
 #endif
 
 #endif

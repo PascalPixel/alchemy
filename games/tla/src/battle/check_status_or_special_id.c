@@ -7,14 +7,14 @@
 
 //--------------------------------------------------------------------------
 // PP を使うわざなら 1 を返す。エナジードレインは PP に関係なく 1
-// act_no : わざ番号
+// ability_id : わざ番号
 //--------------------------------------------------------------------------
-u32 Ability_CheckStatusOrSpecialId(s32 act_no)
+u32 Ability_CheckStatusOrSpecialId(s32 ability_id)
 {
 	u8 pp;
 
-	if (act_no == 126) // エナジードレイン
+	if (ability_id == 126) // エナジードレイン
 		return 1;
-	pp = BtlActGet(act_no)->pp_cost;
+	pp = BattleActGet(ability_id)->pp_cost;
 	return (u32)((0 - pp) | pp) >> 31; // pp が 0 でなければ 1
 }

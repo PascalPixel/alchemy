@@ -21,7 +21,7 @@ struct SummonTransition {
 };
 
 extern u32 gCameraSceneParameters[];
-struct BtlObj *GetBattleObjectSlotFar(s32 object_id);
+struct BattleObj *GetBattleObjectSlotFar(s32 object_id);
 void Func_08118088(s32 actor, s32 mode);
 void PaletteDma_LoadBlock(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 mode);

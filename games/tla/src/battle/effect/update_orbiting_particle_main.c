@@ -132,13 +132,13 @@ void BattleFx_RunOrbitingParticles(void)
     struct OrbitingParticleVector pos;
     struct OrbitingParticleVector *p;
     struct BattleFxScene *scene;
-    struct ObjectRuntime *tgt;
+    struct ObjectRuntime *target;
     struct ObjectRuntime *particle;
     struct PendingEvent *ev;
     s32 cnt;
 
     scene = Ram_HeapSlots->effect_work;
-    tgt = scene->child;
+    target = scene->child;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(115);
 
@@ -181,24 +181,24 @@ void BattleFx_RunOrbitingParticles(void)
     Audio_PlayCue(115);
     WaitFrames(50);
 
-    if (tgt != NULL && scene->enabled == 0) {
+    if (target != NULL && scene->enabled == 0) {
         Audio_PlayCue(212);
 
         cnt = 7;
         do {
-            Animation_ApplyChildValuesFar((struct DispatchObject *)tgt, 7);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
             WaitFrames(1);
-            Animation_ApplyChildValuesFar((struct DispatchObject *)tgt, 0);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)target, 0);
             WaitFrames(4);
             cnt--;
         } while (cnt >= 0);
 
         if (scene->child_option == 0) {
             Audio_PlayCue(220);
-            Object_SetMode(tgt, 2);
+            Object_SetMode(target, 2);
         }
 
-        tgt->update = (void (*)(void))BattleFx_UpdateOrbitingParticleMain;
+        target->update = (void (*)(void))BattleFx_UpdateOrbitingParticleMain;
         ev = Func_080ce458(0x50000005, 6, Func_080ce31c(6));
         if (ev != NULL)
             EventRuntime_RunPendingEvent(ev, scene->first_object_id, scene->second_object_id);

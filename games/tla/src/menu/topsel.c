@@ -27,7 +27,7 @@ void Menu_LoadSelectedResource(void)
     struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
     struct SelectionNode *transfer;
     GlyphTransfer *buffer;
-    u8 *tbl;
+    u8 *table;
     void *resource;
     s32 no;
 
@@ -37,11 +37,11 @@ void Menu_LoadSelectedResource(void)
     buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(GlyphTransfer));
     transfer = &state->records[15];
     no = selection->base;
-    tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+    table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     {
         u8 **destination = &buffer->encoded;
-        resource = tbl
-            + *(u16 *)(tbl + selection->base * 2);
+        resource = table
+            + *(u16 *)(table + selection->base * 2);
         *destination = resource;
     }
     Resource_DecodeByteLzInRam(resource, buffer);

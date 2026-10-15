@@ -7,7 +7,7 @@
 #include "farcall.h"
 #endif
 
-struct BtlUnit;
+struct BattleUnit;
 
 enum InventoryEncoding
 {
@@ -98,12 +98,12 @@ LAYOUT_OFFSET_GUARD(ItemDefinition_ActionId, struct ItemDefinition, action_id, 0
 struct ItemDefinition *Item_Get(s32 item);
 #if GAME_TLA
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32					   Equipment_GetUnleashRateBonus(struct BtlUnit *owner);
-s32					   RollWeaponUnleash(struct BtlUnit *owner);
+s32					   Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
+s32					   RollWeaponUnleash(struct BattleUnit *owner);
 #endif
 
 #if GAME_TLA
-s32 RollWeaponUnleashFar(struct BtlUnit *owner);
+s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 #endif
 #if GAME_TLA

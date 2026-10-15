@@ -61,7 +61,7 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 #if !GAME_TLA
 struct AbilityListEntry;
 struct BattleEffectArgument;
-struct BtlUnit;
+struct BattleUnit;
 struct BurstParticle;
 struct DispatchObject;
 struct FieldEffectObject;

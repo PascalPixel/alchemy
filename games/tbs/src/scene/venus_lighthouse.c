@@ -448,7 +448,7 @@ static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor 
 	s32					 y;
 	s32					 a;
 	s32					 b;
-	s32					 rnd;
+	s32					 random;
 
 	if ((gFrameCount & 3) != 0)
 	{
@@ -467,10 +467,10 @@ static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor 
 	params.start_scale_y = 0x10000;
 	params.target_scale_x = -327;
 	params.target_scale_y = -327;
-	rnd = Engine_RandomNext();
-	a = Math_Divide(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
-	rnd = Engine_RandomNext();
-	b = Math_Divide(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
+	random = Engine_RandomNext();
+	a = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
+	random = Engine_RandomNext();
+	b = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
 	Effect_Spawn(obj->x.fixed, obj->y.fixed, obj->z.fixed - 0x10000, a, y, b, 0x001c0001, &params);
 	return 0;
 }
@@ -1617,7 +1617,7 @@ static void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
 	struct FieldActor *cand;
 	s32				   highest = 0xffb00000;
-	struct FieldActor *sel = 0;
+	struct FieldActor *selection = 0;
 	u32				   i;
 
 	for (i = 0; i <= 5; i++)
@@ -1631,10 +1631,10 @@ static void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 		}
 
 		cand = Object_GetById(no);
-		sel = Object_GetById(selector);
+		selection = Object_GetById(selector);
 
-		if ((cand->x.fixed >> 20) != (sel->x.fixed >> 20)
-			|| (cand->z.fixed >> 20) != (sel->z.fixed >> 20))
+		if ((cand->x.fixed >> 20) != (selection->x.fixed >> 20)
+			|| (cand->z.fixed >> 20) != (selection->z.fixed >> 20))
 		{
 			continue;
 		}
@@ -1642,13 +1642,13 @@ static void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 		cand_y = cand->y.fixed + 0x100000;
 		if (highest <= cand_y)
 		{
-			sel->timer = no;
+			selection->timer = no;
 			highest = cand_y;
 		}
 	}
 
 	Engine_ActorSetSpeed(selector, 0x40000, 0x20000);
-	Engine_ObjectSetPosition(sel, sel->x.fixed, highest, sel->z.fixed);
+	Engine_ObjectSetPosition(selection, selection->x.fixed, highest, selection->z.fixed);
 	Engine_ActorWaitForMove(selector);
 	Engine_AudioPlayCue(188);
 	SceneEffect_SpawnNineRadialEffects(selector);

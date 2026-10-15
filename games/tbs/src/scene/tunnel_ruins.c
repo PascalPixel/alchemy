@@ -318,18 +318,18 @@ u8 *TunnelRuins_GetExits(void)
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
 {
-	u8 *tbl;
+	u8 *table;
 
 	if (gGameState.scene == (s32)&SceneId_TunnelRuins1)
 	{
-		tbl = gTunnelRuinsPlacements1;
+		table = gTunnelRuinsPlacements1;
 	}
 	else
 	{
-		tbl = gTunnelRuinsPlacementsOther;
+		table = gTunnelRuinsPlacementsOther;
 	}
-	FieldScene_PrepareActors((struct SceneRegionEntry *)tbl);
-	return tbl;
+	FieldScene_PrepareActors((struct SceneRegionEntry *)table);
+	return table;
 }
 
 static void EV24_SCRIPT(void)

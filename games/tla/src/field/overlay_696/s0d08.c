@@ -39,7 +39,7 @@ void Func_02000d68(void)
         Ov696_ObjWalk(gPartyState.current_owner, 204, 292);
         Ov696_ObjWalk(gPartyState.current_owner, 182, 280);
         Ov696_ObjTurn(gPartyState.current_owner, 0);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         GameFlag_SetBit(0x200);
         Func_02001380();
     } else {
@@ -62,7 +62,7 @@ void Func_02000e3c(void)
         Ov696_ObjSpeed(gPartyState.current_owner, 0x19999, 0xcccc);
         Ov696_ObjWalk(gPartyState.current_owner, 182, 280);
         Ov696_ObjTurn(gPartyState.current_owner, 0);
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         GameFlag_SetBit(0x200);
         Func_02001380();
     } else {

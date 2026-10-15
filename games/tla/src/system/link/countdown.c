@@ -44,7 +44,7 @@ struct LinkRuntimeState {
 };
 
 extern struct LinkCountdownState *gLinkCountdownWork;
-extern struct LinkRuntimeState *BtlWk;
+extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);

@@ -14,11 +14,11 @@
 #include "iwram_call.h"
 
 #if EDITION_INTERNATIONAL
-#define UI_TEXT_MODE_OFS 0x138c
-#define UI_PALETTE_OWNER_OFS 0x1360
+#define UI_TEXT_MODE_OFFSET 0x138c
+#define UI_PALETTE_OWNER_OFFSET 0x1360
 #else
-#define UI_TEXT_MODE_OFS 0x118c
-#define UI_PALETTE_OWNER_OFS 0x1160
+#define UI_TEXT_MODE_OFFSET 0x118c
+#define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
@@ -47,7 +47,7 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 ent
         found->ended = 0;
         found->flags = flags;
         found->unknown_26 = 0;
-        if (*(s8 *)(work + UI_TEXT_MODE_OFS) != 0 && spacing != NULL)
+        if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
             found->unknown_26 = spacing[3];
         if (spacing != NULL) {
             for (i = 0; i < 4; i++)

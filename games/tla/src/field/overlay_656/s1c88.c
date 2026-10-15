@@ -7,9 +7,9 @@ void Func_02001c88(void)
 {
     s32 flag;
 
-    if (Ov656_FlagChk(0x930))
+    if (Ov656_FlagCheck(0x930))
     {
-        flag = Ov656_FlagChk(0x220);
+        flag = Ov656_FlagCheck(0x220);
         if (flag != 0)
         {
             Ov656_BlendStart(0, 25, 1, 3, 6, 25);
@@ -25,9 +25,9 @@ void Func_02001c88(void)
         }
         Ov656_WaitFrames(1);
     }
-    if (Ov656_FlagChk(0x931))
+    if (Ov656_FlagCheck(0x931))
     {
-        if (Ov656_FlagChk(0x221))
+        if (Ov656_FlagCheck(0x221))
             ObjectMotion_SetActionVariant(9, 1);
         else
             Ov656_ObjPlace(9, 0, 0);
@@ -37,12 +37,12 @@ void Func_02001c88(void)
         Ov656_WaitFrames(1);
     }
     Func_02002db8(Data_02003014);
-    if (Ov656_FlagChk(0x220))
+    if (Ov656_FlagCheck(0x220))
     {
         Func_02001944(8, 10);
         GameFlag_ClearBit(0x220);
     }
-    else if (Ov656_FlagChk(0x221))
+    else if (Ov656_FlagCheck(0x221))
     {
         Func_02001944(9, 11);
         GameFlag_ClearBit(0x221);

@@ -25,7 +25,7 @@ void Func_0200050c(void)
     i = 0;
     if (i < count) {
     loop:
-        pp += ((struct BtlUnit *)UnitGet(gPartyState.active_owners[i]))->pp;
+        pp += ((struct BattleUnit *)UnitGet(gPartyState.active_owners[i]))->pp;
         i++;
         if (i < count)
             goto loop;

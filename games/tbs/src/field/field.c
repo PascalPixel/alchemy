@@ -1341,7 +1341,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	u16 *dst;
 	s32	 cnt;
 	u32	 n;
-	u8	*tbl;
+	u8	*table;
 	u32	 high_mask;
 	u32	 index_mask;
 	u8	 offset_mask;
@@ -1354,7 +1354,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 
 	if (n < cnt)
 	{
-		tbl = Map_TileDissolveOrder;
+		table = Map_TileDissolveOrder;
 		high_mask = 0xff00;
 		index_mask = 0x3f;
 		offset_mask = 0x3e;
@@ -1368,7 +1368,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 				u32	 odd;
 
 				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = tbl[(pos + n * 16) & index_mask];
+				dot = table[(pos + n * 16) & index_mask];
 				cell = (u16 *)((u8 *)dst + (dot & offset_mask));
 				odd = 1;
 				odd &= dot;
@@ -1403,10 +1403,10 @@ void Map_RenderAnimatedTileFramesForObject(u8 *obj)
 
 //--------------------------------------------------------------------------
 // いくつもの絵を、いっしょに 1 ドットずつ消す（32 フレーム）
-// tbl : 絵の並び
+// table : 絵の並び
 // cnt : 絵の数
 //--------------------------------------------------------------------------
-void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
+void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt)
 {
 	u8 **top;
 	u8 **p;
@@ -1416,7 +1416,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
 	u32	 pos2;
 	u32	 pos3;
 
-	top = tbl;
+	top = table;
 	pos = 0;
 	do
 	{
@@ -2162,7 +2162,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 	struct FixedCamera		*cam;
 	struct ObjectSystemWork *sync;
 	struct CameraPoint		*eye;
-	struct CameraPoint		*tgt;
+	struct CameraPoint		*target;
 	struct CameraObject		*obj;
 	s32						 angle;
 	s32						 part;
@@ -2182,23 +2182,23 @@ void ObjectSystem_UpdateCameraFixed(void)
 	sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	eye = &cam->eye;
-	tgt = &cam->target;
+	target = &cam->target;
 	if (cam->eye_override != NULL)
 		eye = cam->eye_override;
 	if (cam->target_override != NULL)
-		tgt = cam->target_override;
-	angle = (s16)ArcTan2((eye->x - tgt->x) >> 16, (eye->z - tgt->z) >> 16);
+		target = cam->target_override;
+	angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
 	sync->used = 0;
 	Render_ResetTransformState();
 	if (GameFlag_TestFar(363))
 	{
 		angle += 0xffffe000;
 		Iwram_TransformMatrix(Camera_FixedViewMatrix);
-		Graphics_PrepareTransferAndRun(eye, tgt);
+		Graphics_PrepareTransferAndRun(eye, target);
 	}
 	else
 	{
-		Graphics_PrepareTransferInIwramWork(eye, tgt);
+		Graphics_PrepareTransferInIwramWork(eye, target);
 	}
 	obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
 	obj += 63;
@@ -4631,17 +4631,17 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
 	s32 n;
 	u8 *p;
-	u8 *tbl;
+	u8 *table;
 
 	p = buf;
-	tbl = Runtime_ByteRemapTable;
+	table = Runtime_ByteRemapTable;
 	n = cnt - 1;
 	if (n != -1)
 	{
 		do
 		{
 			n -= 1;
-			*p = tbl[*p];
+			*p = table[*p];
 			p += 1;
 		} while (n != -1);
 	}
@@ -7167,7 +7167,7 @@ void Ui_RunIconMonitor(void)
 {
 	struct IconColumn		  ent[4];
 	struct AnimationMetadata *metadata;
-	struct AnimationObject	 *tbl;
+	struct AnimationObject	 *table;
 	volatile s32			  zero;
 	s32						  no;
 	s32						  x;
@@ -7307,12 +7307,12 @@ next:
 
 		if ((gKeyState & KEY_START) != 0)
 		{
-			tbl = gSpriteObjects;
+			table = gSpriteObjects;
 			flag ^= 1;
 			for (i = 0; i <= 9; i++)
 			{
-				tbl->flags = flag;
-				tbl++;
+				table->flags = flag;
+				table++;
 			}
 		}
 

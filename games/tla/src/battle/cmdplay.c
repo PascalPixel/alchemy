@@ -31,7 +31,7 @@ void BattleEventRuntime_BeginPhase(s32 cue)
 
 s32 BattleEventRuntime_SchedulePhase(s32 frames)
 {
-    struct BtlWork *work;
+    struct BattleWork *work;
     struct BattleEventState *ev;
 
     /* FAKEMATCH: the one-pass block loads the battle work before the events offset is built (differ 2 without it), as in BattleEventRuntime_Reset. */

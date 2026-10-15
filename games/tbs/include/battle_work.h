@@ -54,9 +54,9 @@ struct BattleEventState
 	s32						  flags;
 };
 
-struct BtlWork
+struct BattleWork
 {
-	s32						  enm_grp;
+	s32						  enemy_group;
 	s16						  sprite_slots[6];
 	u16						  enemy_classes[6];
 	u32						  summon_masks[6];
@@ -65,9 +65,9 @@ struct BtlWork
 	u16						  first_defeated;
 	u16						  defeat_state;
 	u8						  summon_count;
-	u8						  pty_st;
+	u8						  party_status;
 	u8						  battle_type;
-	u8						  challenge_flg;
+	u8						  challenge_flag;
 	u8						  two_sided;
 	u8						  encounter_mode;
 	u8						  escape_failures;
@@ -79,8 +79,8 @@ struct BtlWork
 	u8						  unknown_053;
 	s32						  prompt_slot;
 	s16						  party_units[7];
-	s16						  enm_no[7];
-	struct BtlObj			  slots[14];
+	s16						  enemy_ids[7];
+	struct BattleObj			  slots[14];
 	u8						  placement[14];
 	u8						  unknown_2ea[2];
 	struct BattleActionRecord actions[20];
@@ -93,29 +93,29 @@ struct BtlWork
 	u16						  highlight_step;
 	u16						  highlight_mode;
 	u8						  unknown_652[2];
-	struct BtlPlan			  plan;
+	struct BattlePlan			  plan;
 	struct BattleEventState	  events;
 	s32						  debug_value;
 };
 
-LAYOUT_SIZE_GUARD(BattleSession_Size, struct BtlWork, 0x82c);
+LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleWork, 0x82c);
 
-LAYOUT_OFFSET_GUARD(BattleSession_PartyStatusMode, struct BtlWork, pty_st, 0x041);
-LAYOUT_OFFSET_GUARD(BtlWork_ChallengeFlg, struct BtlWork, challenge_flg, 0x043);
-LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BtlWork, party_units, 0x058);
-LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BtlWork, enm_no, 0x066);
-LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BtlWork, slots, 0x074);
-LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BtlWork, placement, 0x2dc);
-LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BtlWork, actions, 0x2ec);
-LAYOUT_OFFSET_GUARD(BattleSession_Spoils, struct BtlWork, spoils, 0x530);
-LAYOUT_OFFSET_GUARD(BattleSession_Palette, struct BtlWork, palette, 0x544);
-LAYOUT_OFFSET_GUARD(BattleSession_Brightness, struct BtlWork, brightness, 0x644);
-LAYOUT_OFFSET_GUARD(BattleSession_Background, struct BtlWork, background, 0x648);
-LAYOUT_OFFSET_GUARD(BattleSession_Plan, struct BtlWork, plan, 0x654);
-LAYOUT_OFFSET_GUARD(BattleSession_Events, struct BtlWork, events, 0x6b8);
+LAYOUT_OFFSET_GUARD(BattleSession_PartyStatusMode, struct BattleWork, party_status, 0x041);
+LAYOUT_OFFSET_GUARD(BattleWork_ChallengeFlag, struct BattleWork, challenge_flag, 0x043);
+LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleWork, party_units, 0x058);
+LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleWork, enemy_ids, 0x066);
+LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleWork, slots, 0x074);
+LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleWork, placement, 0x2dc);
+LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleWork, actions, 0x2ec);
+LAYOUT_OFFSET_GUARD(BattleSession_Spoils, struct BattleWork, spoils, 0x530);
+LAYOUT_OFFSET_GUARD(BattleSession_Palette, struct BattleWork, palette, 0x544);
+LAYOUT_OFFSET_GUARD(BattleSession_Brightness, struct BattleWork, brightness, 0x644);
+LAYOUT_OFFSET_GUARD(BattleSession_Background, struct BattleWork, background, 0x648);
+LAYOUT_OFFSET_GUARD(BattleSession_Plan, struct BattleWork, plan, 0x654);
+LAYOUT_OFFSET_GUARD(BattleSession_Events, struct BattleWork, events, 0x6b8);
 LAYOUT_OFFSET_GUARD(BattleEventState_Phase, struct BattleEventState, phase, 0x148);
 LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags, 0x16c);
 
-extern struct BtlWork *BtlWk;
+extern struct BattleWork *gBattleWork;
 
 #endif

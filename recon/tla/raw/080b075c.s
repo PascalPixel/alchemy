@@ -42,7 +42,7 @@ Func_080b075c:
 	b .L_080b0a82
 .L_080b07a8:
 	mov r0, r8
-	bl BtlEfxRevChk
+	bl BattleEffectRevCheck
 	cmp r0, #0
 	beq .L_080b07be
 	movs r7, #56

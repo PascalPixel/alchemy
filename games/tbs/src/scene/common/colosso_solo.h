@@ -52,7 +52,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 
 void Colosso_SelectSoloCompetitor(s32 id)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s32				v;
 	s32				t;
 
@@ -100,9 +100,9 @@ void Colosso_SelectSoloCompetitor(s32 id)
 void SceneState_RaiseTriggerOnPsynergyTarget(void)
 {
 	struct EventWork *work = gEventWork;
-	s32				  sel = gGameState.selected_actor;
+	s32				  selection = gGameState.selected_actor;
 
-	if (sel != 0 && (work->psynergy_request >> 10) == sel && Engine_GameFlagIsSet(321) != 0)
+	if (selection != 0 && (work->psynergy_request >> 10) == selection && Engine_GameFlagIsSet(321) != 0)
 	{
 		u16 *p = (u16 *)&work->raised_trigger;
 		s32	 val = 99;

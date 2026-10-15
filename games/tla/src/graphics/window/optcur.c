@@ -41,7 +41,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
 	s32				   src0;
 	s32				   src1;
-	s32				   sel;
+	s32				   selection;
 	struct OptionWork *work;
 
 	/* FAKEMATCH: the one-pass block loads the option work before the page and cursor offsets are started; assigned directly both offsets are started first (differ 2). */
@@ -49,12 +49,12 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 	{
 		work = Ram_HeapSlots->unknown_d0[0];
 	} while (0);
-	sel = work->page;
+	selection = work->page;
 	Func_08108030(&work->cursor);
 	Func_08108038(&work->marker[0]);
 	Func_08108038(&work->marker[1]);
 
-	if (sel == 0)
+	if (selection == 0)
 	{
 		src0 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
@@ -64,7 +64,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 	}
 	VramBlock_LoadCached((u8)work->marker[0].output->index, 0x100, Resource_GetTableEntry(src0));
 
-	if (sel == 1)
+	if (selection == 1)
 	{
 		src1 = (work->cursor_frame & 7) + (s32)&ResourceId_ShopCursorFrames;
 	}
@@ -74,7 +74,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 	}
 	VramBlock_LoadCached((u8)work->marker[1].output->index, 0x100, Resource_GetTableEntry(src1));
 
-	if (sel > 1)
-		Func_080450fc(work->frame[sel - 2][work->option[sel]]);
+	if (selection > 1)
+		Func_080450fc(work->frame[selection - 2][work->option[selection]]);
 	work->cursor_frame++;
 }

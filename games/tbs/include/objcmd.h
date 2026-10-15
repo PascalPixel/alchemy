@@ -29,7 +29,7 @@
 #define SC_IF(to) 0x0e, (to)	// 結果が真なら
 #define SC_IFNOT(to) 0x0f, (to) // 結果が偽なら
 #define SC_END 0x10				// 本スクリプトへ戻る
-#define SC_FLAG_CHK(f) 0x11, (f)
+#define SC_FLAG_CHECK(f) 0x11, (f)
 #define SC_FLAG_ON(f) 0x12, (f)
 #define SC_FLAG_OFF(f) 0x13, (f)
 #define SC_FLAG_REV(f) 0x14, (f)

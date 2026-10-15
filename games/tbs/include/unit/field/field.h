@@ -43,7 +43,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work);
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt);
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
 void Map_RenderAnimatedTileFramesForObject(u8 *obj);
-void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt);
+void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt);
 void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no);
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val);
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter);

@@ -46,7 +46,7 @@ void Func_020024e4(void)
 
 void Func_020025fc(void)
 {
-    s32 done = ShrineOfTheSeaGod_FlagChk(0x876);
+    s32 done = ShrineOfTheSeaGod_FlagCheck(0x876);
 
     if (done == 0) {
         Func_020039d8();

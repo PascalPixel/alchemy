@@ -14,14 +14,14 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 	s32		  y;
 	s32		  x;
 	s32		  col;
-	s32		  ofs;
+	s32		  offset;
 	u8		 *d;
 	const u8 *s;
 
 	y = 0;
 	if (h != 0)
 	{
-		ofs = 0;
+		offset = 0;
 		col = h;
 		do
 		{
@@ -29,7 +29,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 			if (w != 0)
 			{
 				d = (u8 *)(col + (u32)dst - 1);
-				s = (const u8 *)(ofs + (u32)src);
+				s = (const u8 *)(offset + (u32)src);
 				do
 				{
 					x++;
@@ -39,7 +39,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 				} while (x != w);
 			}
 			y++;
-			ofs += w;
+			offset += w;
 			col--;
 		} while (y != h);
 	}

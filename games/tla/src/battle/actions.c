@@ -26,9 +26,9 @@ void GameFlag_ClearBitFar(s32 flag);
 
 //--------------------------------------------------------------------------
 // BG パレットのバンク 15 を 14 へ、5 を 4 へ、明るさを変えて写す
-// ofs : RGB 各成分に足す値（0 から 31 におさめる）
+// offset : RGB 各成分に足す値（0 から 31 におさめる）
 //--------------------------------------------------------------------------
-void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
+void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 {
 	s32 n;
 	s32 bank;
@@ -54,9 +54,9 @@ void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 			b = (color >> 10) & mask;
 			g = (color >> 5) & mask;
 			r = color & mask;
-			b += ofs;
-			g += ofs;
-			r += ofs;
+			b += offset;
+			g += offset;
+			r += offset;
 			if (b > 31)
 				b = 31;
 			if (g > 31)
@@ -87,8 +87,8 @@ void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 //--------------------------------------------------------------------------
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 {
-	struct BtlUnit *unit;
-	struct BtlWork *work;
+	struct BattleUnit *unit;
+	struct BattleWork *work;
 	u8			   *mode;
 	s32				cnt;
 	s32				add;
@@ -195,11 +195,11 @@ finish:
 s16 Battle_GetTaggedSlotValue(s32 slot)
 {
 #if GAME_TLA
-	struct BtlWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battle_work;
 #endif
 
 	if ((slot & 0x80) != 0)
-		return work->enm_no[slot & 0xf];
+		return work->enemy_ids[slot & 0xf];
 	return work->party_units[slot & 0xf];
 }
 
@@ -211,7 +211,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 s32 Battle_FindTaggedSlotByValue(u32 id)
 {
 #if GAME_TLA
-	struct BtlWork *work = Ram_HeapSlots->battle_work;
+	struct BattleWork *work = Ram_HeapSlots->battle_work;
 #endif
 	s32 i;
 	s16 unit;
@@ -229,7 +229,7 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 	}
 	for (i = 0;; i++)
 	{
-		unit = work->enm_no[i];
+		unit = work->enemy_ids[i];
 		if (unit == BATTLE_UNIT_LIST_END)
 			return -1;
 		if (unit != BATTLE_UNIT_REMOVED && unit == id)

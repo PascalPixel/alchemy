@@ -135,13 +135,13 @@ static inline void Ov694_ObjModeWait(s32 actor, s32 mode)
     Motion_SetModeAndWaitAnimation(actor, mode);
 }
 
-static inline void Ov694_MesSet(s32 message)
+static inline void Ov694_MessageSet(s32 message)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_0200412c(message);
 }
 
-static inline void Ov694_MesPut(s32 speaker, s32 flags)
+static inline void Ov694_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02004144(speaker, flags);
@@ -195,7 +195,7 @@ static inline void Ov694_ObjShake(s32 actor, s32 a, s32 b)
     Func_0200413c(actor, a, b);
 }
 
-static inline s32 Ov694_MesOpen(s32 speaker, s32 flags)
+static inline s32 Ov694_MessageOpen(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return UiText_OpenMessageAtObject(speaker, flags);

@@ -2,7 +2,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-s32 Shop_CanServe(s32 entry_no, s32 kind);
+s32 Shop_CanServe(s32 entry_id, s32 kind);
 
 s32 Shop_CountUnits(void)
 {

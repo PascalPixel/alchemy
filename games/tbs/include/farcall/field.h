@@ -52,7 +52,7 @@ FAR_CALL(render_animated_tile_frameFar, Map_RenderAnimatedTileFrame, void, (u8 *
 FAR_CALL(Map_RenderAnimatedTileFramesForObjectFar, Map_RenderAnimatedTileFramesForObject, void,
 	(u8 * obj))
 FAR_CALL(
-	Map_RenderAllAnimatedTileFramesFar, Map_RenderAllAnimatedTileFrames, void, (u8 * *tbl, s32 cnt))
+	Map_RenderAllAnimatedTileFramesFar, Map_RenderAllAnimatedTileFrames, void, (u8 * *table, s32 cnt))
 FAR_CALL(Map_LoadLayeredSceneFar, Map_LoadLayeredScene, s32, (s32 index))
 FAR_CALL(Map_InitializePerspectiveSceneFar, Map_InitializePerspectiveScene, s32, (void))
 FAR_SLOT(Map_SetCameraCenter)

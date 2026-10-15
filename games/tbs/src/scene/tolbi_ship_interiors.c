@@ -412,8 +412,8 @@ s32 TolbiShipInteriors_GetStepScript(void)
 
 u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 {
-	s16 *tbl = (s16 *)&gGameState;
-	s32	 scene = tbl[225];
+	s16 *table = (s16 *)&gGameState;
+	s32	 scene = table[225];
 
 	switch (scene)
 	{
@@ -1111,9 +1111,9 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
 static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
 	struct FieldActor *obj = Object_GetById(0);
-	u32				   ofs = TolbiShipInteriors_TurnSteps[bucket];
-	s32				   x = obj->x.part.pixel + ((s32)ofs >> 16);
-	s32				   z = obj->z.part.pixel + (s16)ofs;
+	u32				   offset = TolbiShipInteriors_TurnSteps[bucket];
+	s32				   x = obj->x.part.pixel + ((s32)offset >> 16);
+	s32				   z = obj->z.part.pixel + (s16)offset;
 
 	if (FindActorNearPosition(x, z) != 0)
 	{

@@ -272,15 +272,15 @@ static void AltmillerCave_ApplyRoomVisuals(void)
 static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 {
 	u8	*work = gEffectWork;
-	s16 *tbl;
+	s16 *table;
 
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
 		SceneEffect_SetupBlendByFlag201();
 		work[0x34] = 1;
 	}
-	tbl = (s16 *)&gGameState;
-	if (tbl[0xe0] == (s32)&SceneId_AltmillerCave6)
+	table = (s16 *)&gGameState;
+	if (table[0xe0] == (s32)&SceneId_AltmillerCave6)
 	{
 		Engine_ActorSetChildValue(16, 6);
 		Engine_ActorSetChildValue(17, 6);

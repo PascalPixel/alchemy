@@ -341,7 +341,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     s32 scale;
     void *matrix;
     struct Model *model;
-    const u8 *tbl;
+    const u8 *table;
     u8 *src;
     u8 *dst;
     s32 v;
@@ -1492,10 +1492,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     work->unk77a8 = 8;
                     BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
                     p = SPARKS;
-                    tbl = Data_081977f8;
+                    table = Data_081977f8;
                     for (i = 0; i != 16; i++, p++) {
-                        p->x = (*tbl++ + x - 40) << 16;
-                        p->y = *tbl++ << 16;
+                        p->x = (*table++ + x - 40) << 16;
+                        p->y = *table++ << 16;
                         p->vx = ((Random16() & 127) - 64) << 11;
                         p->vy = -(Random16() & 127) << 11;
                         p->z = 32;

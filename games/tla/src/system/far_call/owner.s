@@ -21,9 +21,9 @@ Owner_UpdateRatioPairFar:
 	.thumb_func
 Owner_UpdateSecondInputAndRatiosFar:
 	overlay_veneer Owner_UpdateSecondInputAndRatios
-	.global BtlUnitSetFar
+	.global BattleUnitSetFar
 	.thumb_func
-BtlUnitSetFar:
+BattleUnitSetFar:
 	overlay_veneer Func_080afbec
 	.global Party_CountActiveOwnersFar
 	.thumb_func
@@ -49,30 +49,30 @@ Party_RemoveActiveOwnerFar:
 	.thumb_func
 Item_GetEquippedElementFar:
 	overlay_veneer Item_GetEquippedElement
-	.global BtlHitChk
+	.global BattleHitCheck
 	.thumb_func
-BtlHitChk:
+BattleHitCheck:
 	overlay_veneer Func_080b075c
-	.global BtlAtkCalc
+	.global BattleAtkCalc
 	.thumb_func
-BtlAtkCalc:
+BattleAtkCalc:
 	overlay_veneer Owner_ScaleAdjustedAmount
-	.global BtlPowCalc
+	.global BattlePowerCalc
 	.thumb_func
-BtlPowCalc:
+BattlePowerCalc:
 	overlay_veneer Owner_ScaleValueByCurve
-	.global BtlRcvCalc
+	.global BattleRecoveryCalc
 	.thumb_func
-BtlRcvCalc:
+BattleRecoveryCalc:
 	overlay_veneer Owner_ScaleValueByOffsetCurve
 	.global Owner_GetRecordFar
 	.thumb_func
 Owner_GetRecordFar:
 	overlay_veneer Owner_GetRecord
-	.global BtlRndFar
+	.global BattleRandomFar
 	.thumb_func
-BtlRndFar:
-	overlay_veneer BtlRnd
+BattleRandomFar:
+	overlay_veneer BattleRandom
 	.global Djinn_AddToOwnerFar
 	.thumb_func
 Djinn_AddToOwnerFar:

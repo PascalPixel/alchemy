@@ -493,7 +493,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // FiveMode_Records は mode ごとに 4 バイト
 #define REC(mode, n) FiveMode_Records[(mode) * 4 + (n)]
-#define REC_ANIME 0	 // 0 でなければ筋の絵を 3 枚で回す
+#define REC_ANIMATE 0	 // 0 でなければ筋の絵を 3 枚で回す
 #define REC_HIT 1	 // 0 でなければ当たりの音とパレット
 #define REC_MOTION 2 // 当たったときののけぞり (-1 ならなし)
 #define REC_SHAKE 3	 // 0 でなければ当たった対象を震わせる
@@ -660,7 +660,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 							step = streak->variant / 8;
 							if (step > 5)
 								step = 5;
-							if (REC(mode, REC_ANIME))
+							if (REC(mode, REC_ANIMATE))
 							{
 								u8 *cell = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
 
@@ -1335,8 +1335,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	   the pair. Measured (2026-10-13): with draw[1] the frame is 80 bytes
 	   for 84 (differ 14, stack offsets only). */
 	BlitterPair				 draw;
-	struct BtlObj			*first;
-	struct BtlObj			*second;
+	struct BattleObj			*first;
+	struct BattleObj			*second;
 	struct MotionObject		*user;
 	struct MotionObject		*target;
 	s32						 x;
@@ -1786,7 +1786,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	void						*canvas;
 	s32							 frame;
 	BlitterPair					 draw;
-	struct BtlWork				*battle;
+	struct BattleWork				*battle;
 	struct BattleBackgroundView *view;
 	void					   **slots;
 	void					   **cache;
@@ -2379,17 +2379,17 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx)
+void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *effect)
 {
-	BattleFx_RunTwoResource(efx, 0);
+	BattleFx_RunTwoResource(effect, 0);
 }
 
-void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
+void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *effect)
 {
-	BattleFx_RunTwoResource(efx, 1);
+	BattleFx_RunTwoResource(effect, 1);
 }
 
-void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
+void BattleFx_RunTwoResource(struct BattleEffectArgument *effect, s32 mode)
 {
 	struct BattleEffectWork *work;
 	void					*canvas;
@@ -2407,7 +2407,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	p = heap;
 	work = *p++;
 	canvas = *p;
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	REG_BG2PA = 0x100;
 	if (work->effect->side == 1)
@@ -2493,7 +2493,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
+void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect)
 {
 	struct EffectPosition	 first;
 	struct EffectPosition	 last;
@@ -2511,7 +2511,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 	size = (s32)&Ram_WorkSlot[HEAP_SLOT_BATTLE_CANVAS];
 	canvas = *(void **)size;
 	work = *(struct BattleEffectWork **)(size - 4);
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(2);
 	step = 0x04000052;
 	REG_BG2PA = 0x100;
@@ -2749,7 +2749,7 @@ void Display_ApplyBg2Reference(void)
 
 void Palette_StepFadeTransfer(void)
 {
-	struct BtlWork			*battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+	struct BattleWork			*battle = WORK_SLOT(HEAP_SLOT_BATTLE);
 	struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
 	if (work->fade_frames > 0)
@@ -2811,12 +2811,12 @@ void ObjectGroup_TickMemberTimers(void)
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	struct BattleWork				*battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
 	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
 	s32							 row;
 	s32							 col;
-	s32							 ofs;
+	s32							 offset;
 
 	BattleFx_ClearActorTimers();
 	display->second_mode = 1;
@@ -2827,7 +2827,7 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 	WaitFrames(1);
 
 	// 背景パレットのフェードを始める
-	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 0);
+	BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
 	work->fade_frames = 0;
 	work->fade_step = 0;
 	Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
@@ -2858,17 +2858,17 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 
 	// スクリーン：16x16 キャラクタを順に並べる（1 キャラ 1 バイトなので 2 個ずつ書く）
-	ofs = 0;
+	offset = 0;
 	for (row = 0; row != 16; row++)
 	{
-		for (col = 0; col != 8; col++, ofs += 2)
+		for (col = 0; col != 8; col++, offset += 2)
 		{
 			s32 chr;
 			s16 pair;
 
 			chr = row * 16 + col * 2;
 			pair = ((chr + 1) << 8) | chr;
-			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
 		}
 	}
 
@@ -2887,12 +2887,12 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
 	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	struct BattleWork				*battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
 	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
 	s32							 row;
 	s32							 col;
-	s32							 ofs;
+	s32							 offset;
 
 	BattleFx_ClearActorTimers();
 	display->second_mode = 1;
@@ -2901,7 +2901,7 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
 	gBgScroll[1].y = 32;
 	WaitFrames(1);
-	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 128);
+	BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
 	work->fade_frames = 24;
 	work->fade_step = 0;
 	Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
@@ -2930,17 +2930,17 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 	WaitFrames(1);
 
-	ofs = 0;
+	offset = 0;
 	for (row = 0; row != 16; row++)
 	{
-		for (col = 0; col != 8; col++, ofs += 2)
+		for (col = 0; col != 8; col++, offset += 2)
 		{
 			s32 chr;
 			s16 pair;
 
 			chr = row * 16 + col * 2;
 			pair = ((chr + 1) << 8) | chr;
-			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
 		}
 	}
 
@@ -2958,25 +2958,25 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 {
 	s32 row;
 	s32 col;
-	s32 ofs;
+	s32 offset;
 
 	BattleFx_BeginCanvasLayer(bg_control);
 	REG_BG2CNT = bg_control | 0x6784;
-	ofs = 0;
+	offset = 0;
 	for (row = 0; row != 16; row++)
 	{
-		for (col = 0; col != 8; col++, ofs += 2)
+		for (col = 0; col != 8; col++, offset += 2)
 		{
 			s32 chr;
 			s16 pair;
 
 			chr = row * 16 + col * 2;
 			pair = ((chr + 1) << 8) | chr;
-			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + offset) = pair;
 		}
-		for (col = 0; col != 8; col++, ofs += 2)
+		for (col = 0; col != 8; col++, offset += 2)
 		{
-			*(volatile u16 *)((u8 *)BG_CANVAS_MAP + ofs) = 0;
+			*(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
 		}
 	}
 }
@@ -2987,7 +2987,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
 void BattleFx_EndCanvasLayer(void)
 {
 	struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-	struct BtlWork			*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	struct BattleWork			*battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
 	s32						 i;
 
 	AudioCommand_PlayFar(289);
@@ -3003,11 +3003,11 @@ void BattleFx_EndCanvasLayer(void)
 	REG_BLDCNT = 0;
 	WaitFrames(1);
 
-	BattlePresentation_ConfigurePaletteFadeFar(2, btl->background, 7);
+	BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 7);
 	WaitFrames(1);
 	for (i = 0; i != 8; i++)
 	{
-		BattlePresentation_SetPaletteLevelFar(btl->background, 21 - i * 3);
+		BattlePresentation_SetPaletteLevelFar(battle->background, 21 - i * 3);
 		WaitFrames(1);
 	}
 
@@ -3020,23 +3020,23 @@ void BattleFx_EndCanvasLayer(void)
 //--------------------------------------------------------------------------
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {
-	struct BtlWork *btl;
+	struct BattleWork *battle;
 	s32			   *flag;
 
 	flag = &((struct BattleBackgroundView *)Ram_WorkSlot[HEAP_SLOT_BATTLE_BACKGROUND])->second_mode;
-	btl = Ram_WorkSlot[HEAP_SLOT_BATTLE];
+	battle = Ram_WorkSlot[HEAP_SLOT_BATTLE];
 	*flag = 1;
 	QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
 	WaitFrames(1);
-	BattlePresentation_ConfigurePaletteFadeFar(2, btl->background, 0);
+	BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
 	WaitFrames(1);
 }
 
 void BattleFx_SetupCanvasTileMap(void)
 {
-	u8						   **cells = (u8 **)&BtlWk;
+	u8						   **cells = (u8 **)&gBattleWork;
 	void						*canvas = cells[31];
-	struct BtlWork				*screen = (struct BtlWork *)cells[0];
+	struct BattleWork				*screen = (struct BattleWork *)cells[0];
 	struct BattleBackgroundView *layer = (struct BattleBackgroundView *)cells[35];
 	s32							 row;
 	s32							 col;
@@ -3099,7 +3099,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 	s32 x;
 	s32 y;
 	s32 tmp;
-	u32 ofs;
+	u32 offset;
 
 	if (y0 < 0)
 		y0 = 0;
@@ -3128,10 +3128,10 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		x = x0;
 		for (i = y0; i != y1; i++)
 		{
-			ofs = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
-			ofs = (ofs << 3) + (x & 7);
-			if (canvas[ofs] < color)
-				canvas[ofs] = color;
+			offset = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
+			offset = (offset << 3) + (x & 7);
+			if (canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if (frac & 0x100)
 			{
@@ -3161,10 +3161,10 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		y = y0;
 		for (i = x0; i != x1; i++)
 		{
-			ofs = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
-			ofs = (ofs << 3) + (i & 7);
-			if (canvas[ofs] < color)
-				canvas[ofs] = color;
+			offset = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
+			offset = (offset << 3) + (i & 7);
+			if (canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if (frac & 0x100)
 			{
@@ -3522,7 +3522,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	s32						 point[3];
 	struct EffectPosition	 screen;
 	s32						 member;
-	s32						 ofs_x;
+	s32						 offset_x;
 	s32						 frame;
 
 	heap = gBattleFxWork;
@@ -3546,11 +3546,11 @@ void BattleFx_RunMemberOrbit(void *effect)
 	if (work->effect->side == 1)
 	{
 		REG_BG2X = -0x6800;
-		ofs_x = -112;
+		offset_x = -112;
 	}
 	else
 	{
-		ofs_x = 0;
+		offset_x = 0;
 	}
 	for (frame = 0; frame != (work->effect->count * 16) + 48; frame++)
 	{
@@ -3613,7 +3613,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 						s32 half;
 
 						spin = (frame << 9) + (i << 14);
-						x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + ofs_x;
+						x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offset_x;
 						y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
 						half = frame / 16;
 						draw[half & 1](canvas, work->sheet + (((frame / 4) - (half * 4)) << 10),
@@ -4003,7 +4003,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	s32						 ofs_x;
+	s32						 offset_x;
 	u8						*palette;
 	s32						 i;
 	s32						 k;
@@ -4046,16 +4046,16 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 	if (work->effect->count == 1)
 	{
 		EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &one);
-		ofs_x = 64 - one.x;
+		offset_x = 64 - one.x;
 	}
 	else
 	{
 		if (work->effect->side == 1)
-			ofs_x = -112;
+			offset_x = -112;
 		else
-			ofs_x = 0;
+			offset_x = 0;
 	}
-	REG_BG2X = ofs_x << 8;
+	REG_BG2X = offset_x << 8;
 	work->transfer_mode = 2;
 	work->transfer_value = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -4074,7 +4074,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 		if (k == 1)
 		{
 			s32 angle = frame << 11;
-			s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn_x + ofs_x - 20;
+			s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn_x + offset_x - 20;
 			s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn_y - 24;
 
 			BattleFx_FetchRectangleBlitters(work->effect->side ^ k, draw);
@@ -4115,7 +4115,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 						s32 sway;
 
 						EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &pos);
-						pos.x += ofs_x;
+						pos.x += offset_x;
 						sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
 						if (i & 1)
 							pos.x -= sway;
@@ -4153,7 +4153,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 				ground[1] = 0;
 				ground[2] = target->z;
 				EffectPosition_ApplyBaseAndYOffset(ground, &pos);
-				pos.x += ofs_x;
+				pos.x += offset_x;
 				if (frame < start + 104)
 				{
 					s32 pic = frame / 4;
@@ -4709,7 +4709,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	}
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-	BattleBackground_LoadFar(1, BtlWk->background, 24);
+	BattleBackground_LoadFar(1, gBattleWork->background, 24);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 	BattleFx_EndCanvasLayer();
@@ -5417,11 +5417,11 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	struct Point2D			 wave;
 	struct Point2D			 drift;
 	struct MotionObject		*object;
-	struct BtlObj			*context;
+	struct BattleObj			*context;
 	struct EffectStep		*point;
 	struct EffectStep		*spark;
 	struct EffectStep		*mark;
-	u8						*tbl;
+	u8						*table;
 	u8						*src;
 	s32						 index;
 	s32						 slot;
@@ -5454,10 +5454,10 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
 	draw[1] = (DrawRectangle)cells[7];
 
-	tbl = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
-	Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
-	tbl += 0x80;
-	Resource_DecodeType01(tbl, runtime);
+	table = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
+	Iwram_CopyWords((void *)0x05000000, table, 0x80);
+	table += 0x80;
+	Resource_DecodeType01(table, runtime);
 	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 
 	runtime->transfer_mode = 2;
@@ -5652,10 +5652,10 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			BattleFx_SelectLivingTargets(runtime->effect);
 			BattleFx_SpawnObjects(9, 376, 2);
 
-			tbl = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
-			Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
-			tbl += 0x80;
-			Resource_DecodeType01(tbl, (u8 *)runtime + 0x3600);
+			table = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
+			Iwram_CopyWords((void *)0x05000000, table, 0x80);
+			table += 0x80;
+			Resource_DecodeType01(table, (u8 *)runtime + 0x3600);
 
 			index = 0;
 			do
@@ -8121,7 +8121,7 @@ void BattleFx_RunBouncingSheep(void *object)
 	BattleFx_EndCanvasLayer();
 }
 
-void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
+void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect)
 {
 	void				   **slot;
 	struct BattleEffectWork *work;
@@ -8139,7 +8139,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 	slot = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
 	canvas = slot[0];
 	work = slot[-1];
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(1);
 	REG_BG2PA = 0x100;
 	REG_BLDCNT = 0;
@@ -8583,28 +8583,28 @@ void BattleFx_DispatchMode(s32 *arg)
 void BattleFx_BuildWindowEdgeTable(void)
 {
 	u16 *base;
-	u16 *tbl;
-	u8	*ofs;
+	u16 *table;
+	u8	*offset;
 	s32	 i;
 	s32	 x;
 
 	base = (u16 *)gMapCellBuffer;
-	tbl = (u16 *)(Ram_MapCellBuffer + 0x82);
-	ofs = Ram_MapCellBuffer + 2;
+	table = (u16 *)(Ram_MapCellBuffer + 0x82);
+	offset = Ram_MapCellBuffer + 2;
 	for (i = 0; i != 160; i++)
 	{
 		if (i >= 8 && i <= 135)
 		{
-			x = *base - ofs[i - 8];
+			x = *base - offset[i - 8];
 			if (x < 0)
 				x = 0;
 			if (x > 240)
 				x = 240;
-			tbl[i] = x;
+			table[i] = x;
 		}
 		else
 		{
-			tbl[i] = 0xfff1;
+			table[i] = 0xfff1;
 		}
 	}
 	{
@@ -8657,7 +8657,7 @@ void BattleEffect_SetupBlendedDisplay(void)
 {
 	void		  **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
 	u8			   *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-	struct BtlWork *battle = slots[0];
+	struct BattleWork *battle = slots[0];
 	volatile u32	zero;
 
 	REG_DISPCNT = 1;
@@ -8677,7 +8677,7 @@ void BattleEffect_SetupBlendedDisplay(void)
 void ObjectGroup_UpdateMembers(
 	s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value)
 {
-	struct BtlObj			*set;
+	struct BattleObj			*set;
 	struct AnimationObject	*group;
 	struct BattleEffectWork *state;
 	s32						 group_index;
@@ -9123,7 +9123,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 			{
 				if (frame > i * 8 + 160)
 				{
-					struct BtlObj		*slot = GetBattleObjectSlotFar(work->effect->actors[i]);
+					struct BattleObj		*slot = GetBattleObjectSlotFar(work->effect->actors[i]);
 					struct MotionObject *object = slot->object;
 					void				*record;
 					s32					 n;
@@ -10084,7 +10084,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // PARTICLES : 光の粒 (対象ごとに 64)
 
-#define DJINNI_OFS 0x1000 // sheet の中のジンの絵
+#define DJINNI_OFFSET 0x1000 // sheet の中のジンの絵
 
 //--------------------------------------------------------------------------
 // mode ごとの入口
@@ -10233,7 +10233,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 			palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
 	}
 	palette += 128;
-	Resource_DecodeType01(palette, work->sheet + DJINNI_OFS);
+	Resource_DecodeType01(palette, work->sheet + DJINNI_OFFSET);
 	BattleFx_FetchRectangleBlitters(work->effect->side, draw = blit); // [0] 比較、[1] 加算
 
 	// 光の粒を中心のまわりに散らす
@@ -10339,9 +10339,9 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
 				if (frame > 32)
 					y = y - frame * 2 + 64;
-				blit[0](canvas, work->sheet + DJINNI_OFS, x, y, 40, 40);
+				blit[0](canvas, work->sheet + DJINNI_OFFSET, x, y, 40, 40);
 				if (frame <= 3)
-					draw[1](canvas, work->sheet + DJINNI_OFS, x, y, 40, 40);
+					draw[1](canvas, work->sheet + DJINNI_OFFSET, x, y, 40, 40);
 			}
 			else
 			{
@@ -10350,9 +10350,9 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
 				if (frame > 32)
 					y = y - frame * 2 + 64;
-				blit[0](canvas, work->sheet + DJINNI_OFS, x, y, 20, 40);
+				blit[0](canvas, work->sheet + DJINNI_OFFSET, x, y, 20, 40);
 				if (frame <= 3)
-					draw[1](canvas, work->sheet + DJINNI_OFS, x, y, 20, 40);
+					draw[1](canvas, work->sheet + DJINNI_OFFSET, x, y, 20, 40);
 			}
 		}
 
@@ -11052,7 +11052,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 // variant 1 なら 16 ドット上にもうひとつ、variant 2 なら 32 ドット上にも
 // 対象は 16 フレーム目から 8 フレームおきに当たる
 //--------------------------------------------------------------------------
-void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
+void BattleFx_RunPuffArc(struct BattleEffectArgument *effect)
 {
 	u32						*heap;
 	u32						*cursor;
@@ -11075,7 +11075,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 	cursor = heap;
 	work = (struct BattleEffectWork *)*cursor++;
 	canvas = (void *)*cursor;
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	REG_BLDCNT = 0x3f46;
 	REG_BLDALPHA = 0x100e;
@@ -11222,7 +11222,7 @@ struct RockWallHeights
 };
 
 #define PILLAR_W 40   // 柱の幅 (ドット)
-#define ROCK_OFS 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
+#define ROCK_OFFSET 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
 
 // 横 32 キャラの 8bpp キャラ並びの中で、(x, y) のドットの位置
 #define BG_DOT(x, y) (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
@@ -11260,7 +11260,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	BattleFx_BeginCanvasLayer(1);
 	REG_BG2PA = 0x100; // 横も等倍
 	REG_BLDCNT = 0;	   // 半透明にしない
-	Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + ROCK_OFS, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + ROCK_OFFSET, 1, 1);
 
 	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
 	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
@@ -11322,7 +11322,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 				if (height < 0)
 					height = -height;
 				top = 112 - height;
-				draw(canvas, work->sheet + ROCK_OFS, column * PILLAR_W + 8, top, PILLAR_W, height);
+				draw(canvas, work->sheet + ROCK_OFFSET, column * PILLAR_W + 8, top, PILLAR_W, height);
 				draw(canvas, work, column * PILLAR_W + 8, 96 - height, PILLAR_W, 16);
 
 				// 柱の上にいる対象を打ち上げる
@@ -12260,7 +12260,7 @@ void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect)
 	BattleEffect_RunBurstShower(effect, 4);
 }
 
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *efx, s32 mode)
+void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode)
 {
 	u32						*cache;
 	struct BattleEffectWork *work;
@@ -12283,7 +12283,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *efx, s32 mode)
 	dst = (void *)cache[0];
 	work = (struct BattleEffectWork *)cache[-1];
 	aux = (u8 *)cache[1];
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	REG_BLDALPHA = 0x1010;
 
@@ -13518,7 +13518,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 	BlitterPair				 draw;
 	s32						 origin_x, origin_y;
 	struct EffectPosition	 first, last;
-	s32						 i, frame, cell, height, ofs, middle;
+	s32						 i, frame, cell, height, offset, middle;
 	struct EffectStep		*column;
 
 	cache = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
@@ -13571,19 +13571,19 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 				work->shake_frames = 2;
 
 			// 1 フレームに 4 ドット伸びて 32 で止まり、i * 2 + 32 フレーム目から縮む
-			ofs = i * 2;
-			if (frame > ofs + 4)
+			offset = i * 2;
+			if (frame > offset + 4)
 			{
 				cell = (frame / 4 + i) % 5; // 32x32 を 5 コマ
-				if (frame < ofs + 32)
+				if (frame < offset + 32)
 				{
-					height = (frame - ofs) * 4 - 16;
+					height = (frame - offset) * 4 - 16;
 					if (height > 32)
 						height = 32;
 				}
 				else
 				{
-					height = 160 - (frame - ofs) * 4;
+					height = 160 - (frame - offset) * 4;
 				}
 				if (height > 0)
 					draw[i & 1](canvas, work->sheet + (cell << 10), column->x - 16,
@@ -14458,8 +14458,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 
 		for (i = 0; i != work->effect->count; i++)
 		{
-			struct MotionObject *tgt = GetBattleObjectSlotFar(work->effect->actors[i])->object;
-			s32 tgt_height = Battle_GetObjectTableValueFar(work->effect->actors[i]);
+			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[i])->object;
+			s32 target_height = Battle_GetObjectTableValueFar(work->effect->actors[i]);
 
 			for (j = 0; j != shots; j++)
 			{
@@ -14483,29 +14483,29 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 				else
 					shot->y = user->y + height;
 				shot->z = user->z;
-				shot->velocity_x = (tgt->x - shot->x) / steps;
+				shot->velocity_x = (target->x - shot->x) / steps;
 				if (mode == 7)
 					shot->velocity_y =
-						(s32)(tgt->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) / steps;
+						(s32)(target->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) / steps;
 				else if (mode == 8)
 					shot->velocity_y =
-						(s32)(tgt->y + ((Random16() & 7) << 16) - shot->y + 0x160000) / steps;
+						(s32)(target->y + ((Random16() & 7) << 16) - shot->y + 0x160000) / steps;
 				else if (mode == 9)
 					shot->velocity_y =
-						(s32)(tgt->y + ((64 - (Random16() & 63)) << 16) - shot->y) / steps;
+						(s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) / steps;
 				else if (mode == 10)
 					shot->velocity_y =
-						(s32)(tgt->y + ((Random16() & 31) << 16) - shot->y + 0x40000) / steps;
+						(s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) / steps;
 				else if ((u32)(mode - 3) <= 1 || mode == 11 || mode == 5)
 					shot->velocity_y = 0;
 				else if (mode == 6)
 					shot->velocity_y =
-						(s32)(tgt->y + tgt_height / 2 + ((Random16() & 15) << 16) - shot->y)
+						(s32)(target->y + target_height / 2 + ((Random16() & 15) << 16) - shot->y)
 						/ steps;
 				else
 					shot->velocity_y =
-						(s32)(tgt->y + tgt_height - ((Random16() & 15) << 16) - shot->y) / steps;
-				shot->velocity_z = (tgt->z - shot->z) / steps;
+						(s32)(target->y + target_height - ((Random16() & 15) << 16) - shot->y) / steps;
+				shot->velocity_z = (target->z - shot->z) / steps;
 				shot->variant = 0;
 			}
 		}
@@ -14570,7 +14570,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 			index = 0;
 			for (i = 0; i != work->effect->count; i++)
 			{
-				struct MotionObject *tgt = GetBattleObjectSlotFar(work->effect->actors[i])->object;
+				struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
 				for (j = 0; j != shots; j++, index++)
 				{
@@ -14610,11 +14610,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						{
 							// 対象の側に入り、対象の x を越えたら当たり
 							x = shot->x;
-							if (tgt->x < 0)
+							if (target->x < 0)
 							{
 								hit = x < 0;
-								/* FAKEMATCH: cancelling updates under if (tgt) end CSE before the hit test and emit nothing, keeping the native sign result and duplicated side check (per-side test, goto native); unguarded 77 (3 English insns lost), one test after an if/else 65, ?: of both sign tests 65 (77 tested whole), hit preset 0 then nested ifs 53, tests on shot->x 65, these guards plus one test after the if/else 55. */
-								if (tgt)
+								/* FAKEMATCH: cancelling updates under if (target) end CSE before the hit test and emit nothing, keeping the native sign result and duplicated side check (per-side test, goto native); unguarded 77 (3 English insns lost), one test after an if/else 65, ?: of both sign tests 65 (77 tested whole), hit preset 0 then nested ifs 53, tests on shot->x 65, these guards plus one test after the if/else 55. */
+								if (target)
 								{
 									hit ^= x;
 									hit ^= x;
@@ -14628,7 +14628,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								/* FAKEMATCH: the same CSE block end keeps the
 								 * opposite sign result before its side check;
 								 * the cancelling updates emit no instructions. */
-								if (tgt)
+								if (target)
 								{
 									hit ^= x;
 									hit ^= x;
@@ -14636,7 +14636,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								if (!hit)
 									goto draw_shot;
 							}
-							if (ABS(x) >= ABS(tgt->x))
+							if (ABS(x) >= ABS(target->x))
 							{
 								s32				   spawned = 0;
 								struct EffectStep *flash = &PARTICLES[index];
@@ -14725,7 +14725,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						}
 						else if (mode == 1)
 						{
-							if (ABS(shot->x) <= ABS(tgt->x))
+							if (ABS(shot->x) <= ABS(target->x))
 								draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
 									pos->y - 12, 32, 24);
 						}
@@ -14864,7 +14864,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 //--------------------------------------------------------------------------
 void BattleFx_InitializeRisingObject(s32 id)
 {
-	struct BtlObj		*slot = GetBattleObjectSlotFar(id);
+	struct BattleObj		*slot = GetBattleObjectSlotFar(id);
 	struct MotionObject *obj = slot->object;
 
 	obj->acceleration = 0x20000;
@@ -14882,17 +14882,17 @@ void BattleFx_InitializeRisingObject(s32 id)
 //--------------------------------------------------------------------------
 // キャラを、相手までの 8 割の位置へ frames フレームで動かす
 //--------------------------------------------------------------------------
-void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames)
+void BattleFx_SetApproachMotion(s32 id, s32 target_id, s32 frames)
 {
-	struct BtlObj		*slot = GetBattleObjectSlotFar(id);
-	struct BtlObj		*tgt_slot = GetBattleObjectSlotFar(tgt_id);
+	struct BattleObj		*slot = GetBattleObjectSlotFar(id);
+	struct BattleObj		*target_slot = GetBattleObjectSlotFar(target_id);
 	struct MotionObject *obj = slot->object;
-	struct MotionObject *tgt = tgt_slot->object;
+	struct MotionObject *target = target_slot->object;
 	s32					 rate = 80; // %
-	s32					 diff_x = tgt->x - obj->x;
+	s32					 diff_x = target->x - obj->x;
 	s32					 start_x = obj->x;
 	s32					 dx = rate * diff_x / 100;
-	s32					 diff_z = tgt->z - obj->z;
+	s32					 diff_z = target->z - obj->z;
 	s32					 start_z = obj->z;
 	s32					 dz = rate * diff_z / 100;
 	s32					 x = start_x + dx;
@@ -14928,7 +14928,7 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused)
 {
 	s32 y = 0;
 	s32 h = 288;
-	s32 ofs = 0;
+	s32 offset = 0;
 
 	do
 	{
@@ -14936,9 +14936,9 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 unused)
 
 		for (x = 0; x != 40; x++)
 		{
-			dst[ofs / 2 + x / 2] = src[ofs + x];
+			dst[offset / 2 + x / 2] = src[offset + x];
 		}
-		ofs += stride;
+		offset += stride;
 		y++;
 	} while (y != h);
 }
@@ -14989,7 +14989,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	struct EffectPosition	 origin;
 	struct EffectPosition	 screen;
 	struct EffectPosition	 pos;
-	struct MotionObject		*tgt;
+	struct MotionObject		*target;
 	s32						 frame;
 	s32						 n;
 	s32						 size;
@@ -15050,13 +15050,13 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 
 	// 使う者を寄せ、対象の位置に粒を用意する (x は画面の中央の側へ飛ぶ)
 	BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
-	tgt = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
 	for (n = 0; n != PARTICLE_MAX; n++)
 	{
 		step = &work->particles[n];
-		step->x = tgt->x;
-		step->y = tgt->y + 0xa0000; // 10 ドット上
-		step->z = tgt->z;
+		step->x = target->x;
+		step->y = target->y + 0xa0000; // 10 ドット上
+		step->z = target->z;
 		step->velocity_x = (Random16() & 0x1ff) << 11;
 		step->velocity_y = ((Random16() & 255) - 64) << 11;
 		step->velocity_z = ((Random16() & 255) - 128) << 11;
@@ -15136,14 +15136,14 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 	s32		  y;
 	s32		  x;
 	s32		  col;
-	s32		  ofs;
+	s32		  offset;
 	u8		 *d;
 	const u8 *s;
 
 	y = 0;
 	if (h != 0)
 	{
-		ofs = 0;
+		offset = 0;
 		col = h;
 		do
 		{
@@ -15151,7 +15151,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 			if (w != 0)
 			{
 				d = (u8 *)(col + (u32)dst - 1);
-				s = (const u8 *)(ofs + (u32)src);
+				s = (const u8 *)(offset + (u32)src);
 				do
 				{
 					x++;
@@ -15161,7 +15161,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
 				} while (x != w);
 			}
 			y++;
-			ofs += w;
+			offset += w;
 			col--;
 		} while (y != h);
 	}
@@ -16059,7 +16059,7 @@ extern u8  Mode12_SmokeFlips[];
 // Ram_MapCellBuffer + 0xc58 から 910 個（その前には絵を読み込む）
 #define MODE12_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 
-void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
+void BattleFx_InitializeMode12(struct BattleEffectArgument *effect)
 {
 	u8						 ramp[32];
 	s32						 vec[3];
@@ -16090,7 +16090,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	work = slots[-5];
 	dst = slots[-4];
 	aux = slots[-3];
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2000);
 	REG_BG2PA = 0x100;
 	Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
@@ -17536,7 +17536,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	u8						*sheet;
 	struct BattleCamera		*camera;
 	s32						 kind;
-	struct BtlUnit			*unit;
+	struct BattleUnit			*unit;
 	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*target;
@@ -17980,7 +17980,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 	gBgScroll[1].y = 32;
-	for (frame = 0, background = &BtlWk->background; frame != 7; frame++)
+	for (frame = 0, background = &gBattleWork->background; frame != 7; frame++)
 	{
 		BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
 		WaitFrames(1);
@@ -18079,7 +18079,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	void					 **slots;
 	void					 **slot;
 	s32						   alive;
-	s32						   cell_ofs;
+	s32						   cell_offset;
 	struct EffectPosition	   caster_pos;
 	struct EffectPosition	   target_pos;
 	struct FixedPointPosition  djinn_pos;
@@ -18928,11 +18928,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				strip_x = target_screen->x / 2 - 20;
 				image = frame / 2 % 3;
-				cell_ofs = image * 2560;
-				blitters[0](canvas, Ram_MapCellBuffer + 0xc56 + cell_ofs, strip_x, 16, 40, 32);
+				cell_offset = image * 2560;
+				blitters[0](canvas, Ram_MapCellBuffer + 0xc56 + cell_offset, strip_x, 16, 40, 32);
 				blitters[0](
 					canvas, image * 1280 + (Ram_MapCellBuffer + 0x2a56), strip_x, 48, 40, 32);
-				blitters[0](canvas, cell_ofs + (Ram_MapCellBuffer + 0x1156), strip_x, 80, 40, 32);
+				blitters[0](canvas, cell_offset + (Ram_MapCellBuffer + 0x1156), strip_x, 80, 40, 32);
 			}
 		}
 		else if (kind == 5 || kind == 23)
@@ -19917,17 +19917,17 @@ void BattleFx_ArmPaletteHBlankDma(void)
 //--------------------------------------------------------------------------
 // 粒子の流れをモード 0 で走らせる
 //--------------------------------------------------------------------------
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *efx)
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect)
 {
-	BattleEffect_RunParticleStreams(efx, 0);
+	BattleEffect_RunParticleStreams(effect, 0);
 }
 
 //--------------------------------------------------------------------------
 // 粒子の流れをモード 1 で走らせる
 //--------------------------------------------------------------------------
-void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
+void BattleFx_InitializeMode1(struct BattleEffectArgument *effect)
 {
-	BattleEffect_RunParticleStreams(efx, 1);
+	BattleEffect_RunParticleStreams(effect, 1);
 }
 
 extern const struct Scale CirclingScene_UnitScale;
@@ -23265,7 +23265,7 @@ void Graphics_SetBg2AffineScaleHalf(void)
 	REG_BG2PA = 0x80;
 }
 
-void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
+void BattleFx_InitializeMode6(struct BattleEffectArgument *effect)
 {
 	s32						 pos[4];
 	s32						 seat[3];
@@ -23300,7 +23300,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	dst = (void *)cache[40 - 40];
 	work = (struct BattleEffectWork *)cache[39 - 40];
 	aux = (u8 *)cache[41 - 40];
-	work->effect = efx;
+	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	BattlePres_ConfigureEffectDisplay();
 	PLTT_BACKDROP = 0;

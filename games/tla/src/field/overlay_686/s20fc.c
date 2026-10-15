@@ -4,7 +4,7 @@ void Func_020020fc(void)
 {
     s32 z = Object_GetById(9)->z >> 20;
 
-    if (Ov686_FlagChk(0x9dd) != 0 && z == 24) {
+    if (Ov686_FlagCheck(0x9dd) != 0 && z == 24) {
         s32 found = Func_02002dcc(Func_02001f7c);
 
         if (found == -1) {
@@ -32,7 +32,7 @@ void Func_020021d4(void)
 {
     s32 z = Object_GetById(9)->z >> 20;
 
-    if (Ov686_FlagChk(0x9dd) != 0 && z == 24) {
+    if (Ov686_FlagCheck(0x9dd) != 0 && z == 24) {
         /* FAKEMATCH: the callback pinned to r5 leaves the z cell in r6; plain, the two swap (differ 12). */
         register void (*callback)(void) asm("r5") = Func_02001f7c;
 

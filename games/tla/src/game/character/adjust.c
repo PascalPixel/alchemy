@@ -4,7 +4,7 @@ void UnitRatio(s32);
 
 s16 UnitPpAdd(s32 owner, s32 delta)
 {
-    struct BtlUnit *state = UnitGet(owner);
+    struct BattleUnit *state = UnitGet(owner);
     s32 cur = state->pp;
     s32 max = state->max_pp;
     s32 value = cur + delta;

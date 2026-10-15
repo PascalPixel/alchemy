@@ -4,15 +4,15 @@
 #include "scene.h"
 #include "battle_unit.h"
 
-s32 BtlRndFar(void);
+s32 BattleRandomFar(void);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
 
     if (turns <= 5) {
         s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-        if (threshold >= (BtlRndFar() & 0xffff))
+        if (threshold >= (BattleRandomFar() & 0xffff))
             return 1;
     }
     return 0;
@@ -20,7 +20,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 
 s32 BattleUnit_TickAttackModifier(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
 
     if (state->atk_cnt != 0) {
         s32 zero;
@@ -43,7 +43,7 @@ s32 BattleUnit_TickAttackModifier(s32 unit_id)
 
 s32 BattleUnit_TickDefenseModifier(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
 
     if (state->def_cnt != 0) {
         state->def_cnt--;
@@ -63,7 +63,7 @@ s32 BattleUnit_TickDefenseModifier(s32 unit_id)
 
 s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
 
     if (state->res_cnt != 0) {
         state->res_cnt--;
@@ -83,7 +83,7 @@ s32 BattleUnit_TickResistanceModifier(s32 unit_id)
 
 s32 BattleUnit_TickDelusion(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
     if (state->delusion != 0) {
         state->delusion--;
         if (state->delusion == 0)
@@ -98,7 +98,7 @@ s32 BattleUnit_TickDelusion(s32 unit_id)
 
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
     if ((u8)state->confusion != 0) {
         (*(u8 *)&state->confusion)--;
         if (state->confusion == 0)
@@ -113,7 +113,7 @@ s32 BattleUnit_TickConfusion(s32 unit_id)
 
 s32 BattleUnit_TickCharm(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
     if (state->charm != 0) {
         state->charm--;
         if (state->charm == 0)
@@ -128,7 +128,7 @@ s32 BattleUnit_TickCharm(s32 unit_id)
 
 s32 BattleUnit_TickStun(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
     if (state->stun != 0) {
         state->stun--;
         if (state->stun == 0)
@@ -143,7 +143,7 @@ s32 BattleUnit_TickStun(s32 unit_id)
 
 s32 BattleUnit_TickSleep(s32 unit_id)
 {
-    struct BtlUnit *state = UnitGet(unit_id);
+    struct BattleUnit *state = UnitGet(unit_id);
     if (state->sleep != 0) {
         state->sleep--;
         if (state->sleep == 0)
@@ -163,7 +163,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
     u8 remaining;
     s32 turns;
     s32 packed;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     unit = UnitGet(id);
     packed = unit->psy_seal;

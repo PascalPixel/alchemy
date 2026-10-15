@@ -3,7 +3,7 @@
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    struct BtlUnit *state;
+    struct BattleUnit *state;
     s32 i;
     s32 zero;
     s32 count;

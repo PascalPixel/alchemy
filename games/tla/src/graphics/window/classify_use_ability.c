@@ -11,7 +11,7 @@
 #include "graphics.h"
 #include "uiwindow.h"
 
-#define BATTLE_OK 0x80 // tgt_flg：戦闘で使える
+#define BATTLE_OK 0x80 // target_flag：戦闘で使える
 
 //--------------------------------------------------------------------------
 // 戦闘でアイテムを使えるか
@@ -44,7 +44,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item)
 	{
 		return ret;
 	}
-	if ((BATTLE_OK & BtlActGet(def->action_id)->tgt_flg) == 0)
+	if ((BATTLE_OK & BattleActGet(def->action_id)->target_flag) == 0)
 	{
 		return 2;
 	}

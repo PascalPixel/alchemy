@@ -283,7 +283,7 @@ Func_0812824c:
 	movs r5, #128
 	lsls r5, r5, #10
 	asrs r5, r0
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

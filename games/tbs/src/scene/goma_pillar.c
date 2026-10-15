@@ -108,7 +108,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	struct FieldActor  *leader;
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
-	u32					sel;
+	u32					selection;
 
 	leader = Object_GetById(0);
 	table = *(struct ScriptTable *)GomaPillar_PillarScripts;
@@ -125,8 +125,8 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	obj->speed = a3;
 	obj->acceleration = a4;
 	obj->work = *(u16 *)&layer;
-	sel = (u32)layer >> 16;
-	switch (sel)
+	selection = (u32)layer >> 16;
+	switch (selection)
 	{
 	case 0:
 		((struct FieldSpritePriority *)spr)->priority =
@@ -136,7 +136,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s3
 	case 2:
 	case 3:
 		obj->priority_flags &= 0xfe;
-		((struct FieldSpritePriority *)spr)->priority = sel;
+		((struct FieldSpritePriority *)spr)->priority = selection;
 		break;
 	}
 }

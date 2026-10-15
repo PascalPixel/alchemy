@@ -22,7 +22,7 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
     s32 x;
     s32 y;
     s32 tmp;
-    u32 ofs;
+    u32 offset;
 
     if (y0 < 0)
         y0 = 0;
@@ -55,10 +55,10 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
             dx = 1;
         for (i = y0; i != y1; i++)
         {
-            ofs = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
-            ofs = (ofs << 3) + (x & 7);
-            if (canvas[ofs] < color)
-                canvas[ofs] = color;
+            offset = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
+            offset = (offset << 3) + (x & 7);
+            if (canvas[offset] < color)
+                canvas[offset] = color;
             frac += step;
             if (frac < 0)
             {
@@ -89,10 +89,10 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
             dy = 1;
         for (i = x0; i != x1; i++)
         {
-            ofs = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
-            ofs = (ofs << 3) + (i & 7);
-            if (canvas[ofs] < color)
-                canvas[ofs] = color;
+            offset = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
+            offset = (offset << 3) + (i & 7);
+            if (canvas[offset] < color)
+                canvas[offset] = color;
             frac += step;
             if (frac < 0)
             {

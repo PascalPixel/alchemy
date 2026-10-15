@@ -84,7 +84,7 @@ const ScriptCommandFn ScriptObject_CommandTable[47] =
 	(ScriptCommandFn)Script_JumpIfTrue,		// 0x0e SC_IF
 	(ScriptCommandFn)Script_JumpIfFalse,	// 0x0f SC_IFNOT
 	Script_LoadMainScript,					// 0x10 SC_END
-	Script_TestFlag,						// 0x11 SC_FLAG_CHK
+	Script_TestFlag,						// 0x11 SC_FLAG_CHECK
 	Script_SetFlagAndTest,					// 0x12 SC_FLAG_ON
 	Script_ClearFlagAndTest,				// 0x13 SC_FLAG_OFF
 	Script_ToggleFlagAndTest,				// 0x14 SC_FLAG_REV

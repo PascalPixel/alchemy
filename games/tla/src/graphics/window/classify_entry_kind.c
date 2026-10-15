@@ -13,28 +13,28 @@
 // 5 ふっき、6 状態異常をすべてなおす
 // act : わざのデータ
 //--------------------------------------------------------------------------
-s32 Battle_ClassifyEntryKind(const struct BtlAct *act)
+s32 Battle_ClassifyEntryKind(const struct BattleAct *act)
 {
 	s32 val;
 	s32 type;
 	s32 kind;
-	u8	efx;
+	u8	effect;
 
 	kind = 0;
-	type = act->tgt_flg & 15;
+	type = act->target_flag & 15;
 	if (type == 1) // HPかいふく
 		kind = 1;
 	if (type == 11) // PPかいふく
 		kind = 2;
-	val = (s8)act->efx;
-	efx = val;
-	if (efx == 3) // 毒がきえる
+	val = (s8)act->effect;
+	effect = val;
+	if (effect == 3) // 毒がきえる
 		kind = 3;
-	if (efx == 4) // 状態異常をなおす
+	if (effect == 4) // 状態異常をなおす
 		kind = 4;
-	if (efx == 64) // 状態異常をすべてなおす
+	if (effect == 64) // 状態異常をすべてなおす
 		kind = 6;
-	if (BtlEfxRevChkFar(act->efx) != 0) // ふっき
+	if (BattleEffectRevCheckFar(act->effect) != 0) // ふっき
 		kind = 5;
 	return kind;
 }

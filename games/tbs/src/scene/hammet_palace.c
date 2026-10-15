@@ -223,7 +223,7 @@ static void RunEventScript01(void)
 
 	struct EventWork *work;
 	s32				  v5;
-	s32				  tbl;
+	s32				  table;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -678,10 +678,10 @@ static void RunEventScript01(void)
 	Actor_SetSpeed(GARET, 0x10000, 0x8000);
 	Actor_SetSpeed(IVAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MIA, 0x10000, 0x8000);
-	tbl = (s32)HammetPalace_PartyActions;
-	Engine_ActorEnableActionCallback(GARET, tbl);
-	Engine_ActorEnableActionCallback(2, tbl);
-	Object_SetActionCallbackAndRefreshById(3, tbl);
+	table = (s32)HammetPalace_PartyActions;
+	Engine_ActorEnableActionCallback(GARET, table);
+	Engine_ActorEnableActionCallback(2, table);
+	Object_SetActionCallbackAndRefreshById(3, table);
 	work = gEventWork;
 	work->transition_frames = 16;
 	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -720,7 +720,7 @@ static void Scene_RunPartySequence(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   v5;
-	s32				   tbl;
+	s32				   table;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -878,10 +878,10 @@ static void Scene_RunPartySequence(void)
 	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimationAndWait(MIA, 3);
 	Engine_EventWait(20);
-	tbl = (s32)HammetPalace_PartyActions;
-	Engine_ActorEnableActionCallback(GARET, tbl);
-	Engine_ActorEnableActionCallback(2, tbl);
-	Object_SetActionCallbackAndRefreshById(3, tbl);
+	table = (s32)HammetPalace_PartyActions;
+	Engine_ActorEnableActionCallback(GARET, table);
+	Engine_ActorEnableActionCallback(2, table);
+	Object_SetActionCallbackAndRefreshById(3, table);
 	work = gEventWork;
 	work->transition_frames = 16;
 	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

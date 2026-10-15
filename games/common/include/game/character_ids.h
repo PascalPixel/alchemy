@@ -13,7 +13,7 @@
 #define SHEBA 6	   /* シバ */
 #define PIERS 7  /* ピカード */
 
-#define BTL_CHARACTER(no) (300 + (no)) /* 戦闘キャラ */
+#define BATTLE_CHARACTER(no) (300 + (no)) /* 戦闘キャラ */
 
 /* 子供のころの絵 (フラグ 32 のあいだ); 仲間 8 人の絵の番号はキャラ番号と同じ */
 #define ISAAC_CHILD 18	 /* ロビン(こ) */

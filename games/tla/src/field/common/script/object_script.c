@@ -236,7 +236,7 @@ const ScriptCommandFn Data_0802f204[54] =
     (ScriptCommandFn)Script_JumpIfTrue,         // 0x0f SC_IF
     (ScriptCommandFn)Script_JumpIfFalse,        // 0x10 SC_IFNOT
     Script_LoadMainScript,                      // 0x11 SC_END
-    Script_TestFlag,                            // 0x12 SC_FLAG_CHK
+    Script_TestFlag,                            // 0x12 SC_FLAG_CHECK
     Script_SetFlagAndTest,                      // 0x13 SC_FLAG_ON
     Script_ClearFlagAndTest,                    // 0x14 SC_FLAG_OFF
     Script_ToggleFlag,                          // 0x15 SC_FLAG_REV

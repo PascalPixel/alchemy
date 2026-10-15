@@ -32,21 +32,21 @@ LAYOUT_OFFSET_GUARD(BattleEventQueue_Count, struct BattleEventQueue, count, 0x14
 
 enum BattleEventOpcode
 {
-	BEV_UNIT = 0,
-	BEV_NUM = 1,
-	BEV_ITEM = 2,
-	BEV_ACT = 3,
-	BEV_MES = 4,
-	BEV_MES_ADD = 5,
-	BEV_MARK = 6,
-	BEV_CLR = 7,
-	BEV_OBJ_BGN = 8,
-	BEV_OBJ_RES = 9,
-	BEV_REDRAW = 10,
-	BEV_OBJ_END = 11,
-	BEV_OBJ_EFX = 12,
-	BEV_SCR = 13,
-	BEV_SE = 14
+	BATTLE_EVENT_UNIT = 0,
+	BATTLE_EVENT_NUM = 1,
+	BATTLE_EVENT_ITEM = 2,
+	BATTLE_EVENT_ACT = 3,
+	BATTLE_EVENT_MESSAGE = 4,
+	BATTLE_EVENT_MESSAGE_ADD = 5,
+	BATTLE_EVENT_MARK = 6,
+	BATTLE_EVENT_CLEAR = 7,
+	BATTLE_EVENT_OBJ_BEGIN = 8,
+	BATTLE_EVENT_OBJ_RESET = 9,
+	BATTLE_EVENT_REDRAW = 10,
+	BATTLE_EVENT_OBJ_END = 11,
+	BATTLE_EVENT_OBJ_EFFECT = 12,
+	BATTLE_EVENT_SCR = 13,
+	BATTLE_EVENT_SE = 14
 };
 
 #if GAME_TLA
@@ -54,7 +54,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
 #endif
 
 #if GAME_TLA
-void BtlEvPush(u32 opcode, u32 operand);
+void BattleEvPush(u32 opcode, u32 operand);
 #else
 #endif
 #if GAME_TLA

@@ -451,8 +451,8 @@ Func_0811d9cc:
 	adds r0, #124
 	add r0, r10
 	bl Func_0812561c
-	bl BtlObjPut
-	bl EnmUpd
+	bl BattleObjPut
+	bl EnemyUpdate
 	bl Func_0811d9a4
 	movs r3, #255
 	mov r1, r11

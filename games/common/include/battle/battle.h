@@ -14,8 +14,8 @@
 
 struct BattleActionRecord;
 struct BattleEffectArgument;
-struct BtlPlan;
-struct BtlUnit;
+struct BattlePlan;
+struct BattleUnit;
 struct DispatchObject;
 struct EffectSlot;
 struct ObjectRuntime;
@@ -30,12 +30,12 @@ extern u8 Encounter_AreaEntryTable[];
 extern u8  gPlayerObjectId[];
 extern u16 Resource_SlotAssignments[];
 #if GAME_TLA
-s32 BtlTgtExec(struct BtlPlan *plan, s32 slot);
+s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
 #endif
-struct BtlObj;
+struct BattleObj;
 #ifndef OWN_BattlePresentation_SpawnActorObject
 #if GAME_TLA
-void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y);
+void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 #endif
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
@@ -90,7 +90,7 @@ void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
-void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
+void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
 #endif
@@ -104,18 +104,18 @@ struct AnimationObject;
 struct ArcEffectObject;
 struct ArcObject;
 struct ArcParticle;
-struct BtlAct;
+struct BattleAct;
 struct BattleActionRecord;
 struct BattleEffectArgument;
 struct BattleEffectEntry;
 struct BattleEventState;
 struct BattleGroupOrder;
 struct BattleLocationRule;
-struct BtlObj;
-struct BtlPlan;
+struct BattleObj;
+struct BattlePlan;
 struct BattlePresentationTransition;
 struct BattleSummonState;
-struct BtlUnit;
+struct BattleUnit;
 struct DescendingOrbitObject;
 struct EffectDescriptor;
 struct EffectSlot;
@@ -541,7 +541,7 @@ s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
 struct AnimationObject;
 struct BattleActionRecord;
 struct BattleEffectBuffers;
-struct BtlObj;
+struct BattleObj;
 struct DispatchObject;
 struct ParticleChild;
 struct PendingEvent;
@@ -592,7 +592,7 @@ void							 BattleLayout_HighlightPartyPanelsFar(u16 *);
 void							 BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void							 BattleMotion_DestroyAllSlotObjects(void);
 void							 BattleMotion_ReleaseObjectSlotByValue(s32 object_id);
-void							 BattleMotion_SetObjectPosition(struct BtlObj *slot);
+void							 BattleMotion_SetObjectPosition(struct BattleObj *slot);
 void							 BattleMotion_SetRecordChildValues(void *, s32);
 void							 BattlePalette_UpdateBlend(void);
 s32								 BattleParty_PrepareReserveOwners(u16 *owners);
@@ -628,7 +628,7 @@ struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 s32					   Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 void				   UiText_DrawQuantity(s32, s32);
 void				   UiText_ShowMessageAndWaitCoreFar(s32 message_id);
-void				   PtyStDrawFar(s32 mode);
+void				   PartyStatusDrawFar(s32 mode);
 #endif
 
 #endif

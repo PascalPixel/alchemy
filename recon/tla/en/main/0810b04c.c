@@ -1,4 +1,4 @@
-/* Draft, differ 2 of 45 (2026-10-15), ported from The Broken Seal's Shop_DrawSelMsg: the native
+/* Draft, differ 2 of 45 (2026-10-15), ported from The Broken Seal's Shop_DrawSelectMsg: the native
  * loads the menu work before it starts the 0x507 offset (ldr r3, [r3]; movs r2, #129); here the
  * offset starts first. A one-pass block or a barrier after the load also keeps the two parameter
  * copies above it (differ 6), where the native moves them below the party_action load. */
@@ -12,7 +12,7 @@ struct ShopRuntime {
 };
 
 s32 Shop_ServicePrice(s32 selection, s32 variant);
-s32 Shop_CanServe(s32 entry_no, s32 kind);
+s32 Shop_CanServe(s32 entry_id, s32 kind);
 s32 Shop_MsgByMode(s32 value);
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void UiText_DrawQuantity(s32 value, s32 slot);

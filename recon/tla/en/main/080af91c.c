@@ -9,7 +9,7 @@
  * input barrier on the work pointer puts the copy ahead of the shift
  * (differ 2); with the doubled band as a second operand the shift is
  * emitted twice (differ 9); five minutes of alchemy permute, 8,200
- * candidates, none better. The unit is common's struct BtlUnit; its
+ * candidates, none better. The unit is common's struct BattleUnit; its
  * neighbour Owner_GetLevelThreshold is C in level_hook.c. */
 #include "owner_state.h"
 #include "mem.h"

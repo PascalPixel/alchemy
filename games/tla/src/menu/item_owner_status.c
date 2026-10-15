@@ -25,13 +25,13 @@ void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 color);
-struct BtlUnit *UnitGet(s32 owner);
+struct BattleUnit *UnitGet(s32 owner);
 void WaitFrames(s32 frames);
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
     struct ItemMenuState *menu;
-    struct BtlUnit *unit;
+    struct BattleUnit *unit;
 
     menu = Ram_HeapSlots->menu_runtime;
     unit = UnitGet(owner);

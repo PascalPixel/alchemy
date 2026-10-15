@@ -795,7 +795,7 @@ s32 Imil_ApplyEntryState(void)
 static void FieldScene_RunPrimaryScriptChoreography(void)
 {
 	struct FieldActor *leader;
-	s32				   tbl;
+	s32				   table;
 	struct EventWork  *work;
 
 	Engine_EventBegin();
@@ -830,15 +830,15 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	FieldObject_SetTargetAndCallback(1, 0x10003, Imil_PrimaryScript);
 	FieldObject_SetTargetAndCallback(2, 0x10003, Imil_PrimaryScript);
 	Engine_CameraWaitForMove();
-	tbl = (s32)Imil_TurnScript;
-	Engine_ActorEnableActionCallback(9, tbl);
+	table = (s32)Imil_TurnScript;
+	Engine_ActorEnableActionCallback(9, table);
 	Engine_EventWait(40);
 	Actor_SetAttachedEffect(MIA, 0x102);
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(MIA, 1);
 	Engine_EventSetMessage(MSGNO(MsgImilHowFeeling));
 	Event_ShowMessageAndWait(MIA, 0, 20);
-	Engine_ActorEnableActionCallback(9, tbl);
+	Engine_ActorEnableActionCallback(9, table);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_FaceDirection(MIA, 0x8000, 20);
 	Actor_FaceDirection(8, 0, 10);
@@ -849,7 +849,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Actor_FaceDirection(MIA, 0x4000, 0);
 	Actor_FaceDirection(8, 0x3000, 20);
 	Event_ShowMessageAndWait(MIA, 0, 10);
-	Engine_ActorEnableActionCallback(9, tbl);
+	Engine_ActorEnableActionCallback(9, table);
 
 	Imil_CastPsynergyAtActorNine();
 	Actor_ShowEmote(MIA, 0x101, 60);
@@ -950,9 +950,9 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_SetSpeed(GARET, 0xcccc, 0x6666);
 	Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-	tbl = (s32)Imil_PrimaryScript2;
-	Engine_ActorEnableActionCallback(GARET, tbl);
-	Object_SetActionCallbackAndRefreshById(2, tbl);
+	table = (s32)Imil_PrimaryScript2;
+	Engine_ActorEnableActionCallback(GARET, table);
+	Object_SetActionCallbackAndRefreshById(2, table);
 	Engine_EventWait(20);
 	work = gEventWork;
 	work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

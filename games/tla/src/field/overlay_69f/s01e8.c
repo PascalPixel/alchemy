@@ -23,7 +23,7 @@ s32 Func_020001e8(void)
     struct Ov69fEventWork *work = Ram_HeapSlots->event_work;
 
     work->screen_effect = 0x204;
-    if (Ov69f_FlagChk(0xa19)) {
+    if (Ov69f_FlagCheck(0xa19)) {
         Func_02001b6c(12, 0x480000, 0x2580000);
         Func_020000b4(0);
     }

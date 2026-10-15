@@ -14,15 +14,15 @@ u32					  Owner_GetLevelThreshold(s32 owner, s32 level);
 
 // Levels the owner up once its experience reaches the next level's threshold;
 // returns the result record then, and 0 otherwise.
-struct LevelUpResult *Func_080afb80(s32 owner_no, struct LevelUpResult *value)
+struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value)
 {
-	struct BtlUnit *owner;
+	struct BattleUnit *owner;
 
-	owner = (struct BtlUnit *)UnitGet(owner_no);
+	owner = (struct BattleUnit *)UnitGet(owner_id);
 	/* FAKEMATCH: the barrier loads the level before the experience field's offset is started; plain, the offset comes first (one reordered pair, differ 2). */
 	asm("");
-	if ((owner->experience >= Owner_GetLevelThreshold(owner_no, owner->level + 1))
-		&& (Owner_LevelUp(owner_no, value) != NULL))
+	if ((owner->experience >= Owner_GetLevelThreshold(owner_id, owner->level + 1))
+		&& (Owner_LevelUp(owner_id, value) != NULL))
 	{
 		return value;
 	}
@@ -37,7 +37,7 @@ struct LevelUpResult *Func_080afb80(s32 owner_no, struct LevelUpResult *value)
 void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv)
 {
 	u8	res[16]; // struct LevelUpResult の受け取り（使わない）
-	s32 cur = ((struct BtlUnit *)UnitGet(unit))->level;
+	s32 cur = ((struct BattleUnit *)UnitGet(unit))->level;
 
 	while (cur < lv)
 	{

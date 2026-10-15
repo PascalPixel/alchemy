@@ -187,7 +187,7 @@ static inline void ShrineOfTheSeaGod_ObjLaunch(s32 actor, s32 speed, s32 frames)
     ObjectMotion_Launch(actor, speed, frames);
 }
 
-static inline void ShrineOfTheSeaGod_MesPut(s32 speaker, s32 flags)
+static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02003a80(speaker, flags);
@@ -242,7 +242,7 @@ static inline void ShrineOfTheSeaGod_TaskAdd(void (*callback)(void), s32 priorit
         Scheduler_AddOrUpdateCallback((callback), priority_); \
     } while (0)
 
-static inline s32 ShrineOfTheSeaGod_FlagChk(s32 flag)
+static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);

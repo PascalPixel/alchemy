@@ -14,11 +14,11 @@
 #include "iwram_call.h"
 
 #if EDITION_INTERNATIONAL
-#define UI_TEXT_MODE_OFS 0x138c
-#define UI_PALETTE_OWNER_OFS 0x1360
+#define UI_TEXT_MODE_OFFSET 0x138c
+#define UI_PALETTE_OWNER_OFFSET 0x1360
 #else
-#define UI_TEXT_MODE_OFS 0x118c
-#define UI_PALETTE_OWNER_OFS 0x1160
+#define UI_TEXT_MODE_OFFSET 0x118c
+#define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
 struct UiChannelSlot *Func_080395fc(struct UiWindow *work, s32 value, s32 preserve)

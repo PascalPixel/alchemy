@@ -27,7 +27,7 @@ static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)
 
 	player = Object_GetById(ACTOR_PARTY_LEADER);
 
-	if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFS] != 0)
+	if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFFSET] != 0)
 	{
 		range = 26;
 		if ((*flags & 2) != 0)

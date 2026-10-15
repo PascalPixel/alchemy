@@ -24,7 +24,7 @@ s32 UiText_CopyMessageString(s32, s16 *, s32);
 #endif
 
 extern u8 gGameState[];
-extern void *BtlWk;
+extern void *gBattleWork;
 extern volatile s32 gKeyState;
 extern void *gLinkCountdownWork;
 extern char MsgNoTimeToRun;

@@ -40,15 +40,15 @@ void Func_02003d30(void)
     Ov696_ObjArm(gPartyState.current_owner, 0, 0);
     Func_020049f4();
     Func_0200498c((s32)MsgShamanMustFinishTrialRoad);
-    Ov696_MesPut(0x200f, 0);
+    Ov696_MessagePut(0x200f, 0);
     Object_SetModeById(15, 3);
-    Ov696_MesOpen(0x200f, 0);
+    Ov696_MessageOpen(0x200f, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1) {
-        Ov696_MesOpen(0x200f, 0);
+        Ov696_MessageOpen(0x200f, 0);
         if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
             Motion_SetModeAndWaitAnimation(15, 3);
             Engine_AudioPlayCue(76);
-            Ov696_MesPut(0x200f, 0);
+            Ov696_MessagePut(0x200f, 0);
             GameFlag_SetBit(0x200);
             Func_02001380();
             return;
@@ -57,13 +57,13 @@ void Func_02003d30(void)
     } else {
         EVENT_WORK->field_1c4 += 2;
     }
-    Ov696_MesOpen(0x200f, 0);
+    Ov696_MessageOpen(0x200f, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1) {
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Func_0200289c();
     } else {
         EVENT_WORK->field_1c4++;
-        Ov696_MesPut(0x200f, 0);
+        Ov696_MessagePut(0x200f, 0);
         Func_0200290c();
     }
     Func_02004a2c();

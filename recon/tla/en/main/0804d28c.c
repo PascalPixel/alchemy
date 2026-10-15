@@ -32,7 +32,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     s32 pos;
     s32 step;
     s32 delay;
-    const u8 *tbl;
+    const u8 *table;
     struct MenuSelectionState *state;
 
     state = gMenuSelectWork;
@@ -54,10 +54,10 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
 
         cur = state->selection;
-        tbl = Menu_SelectionStepDelays;
+        table = Menu_SelectionStepDelays;
         diff = cur - goal;
         dist = AbsoluteDifference(diff, cur, goal);
-        WaitFrames(tbl[dist] + delay);
+        WaitFrames(table[dist] + delay);
 
         if (pos == goal)
             break;

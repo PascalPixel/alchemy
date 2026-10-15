@@ -120,6 +120,6 @@ enum ItemMenuCommand
 	ITEM_COMMAND_DROP
 };
 
-struct BtlUnit;
+struct BattleUnit;
 
 #endif

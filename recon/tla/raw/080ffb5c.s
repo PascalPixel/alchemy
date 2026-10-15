@@ -75,7 +75,7 @@ PsynergyMenu_DrawListPage:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl BtlActGet
+	bl BattleActGet
 	mov r1, r11
 	ldrh r3, [r7, r1]
 	adds r6, r0, #0

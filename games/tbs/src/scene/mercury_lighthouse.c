@@ -87,7 +87,7 @@ struct WorkPointers
 struct SceneLookupRecord
 {
 	u8	pad00[216];
-	u16 tbl[1];
+	u16 table[1];
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -2648,7 +2648,7 @@ static void SceneState_SetRecordTableValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			((struct SceneLookupRecord *)UnitGet(slot))->tbl[index] = value;
+			((struct SceneLookupRecord *)UnitGet(slot))->table[index] = value;
 		}
 	}
 }

@@ -97,7 +97,7 @@ extern struct DebugPartyEntry Debug_PartyPresets[];
 s32 DebugParty_LoadPreset(s32 preset)
 {
 	s32				next_djinn[4];
-	struct BtlUnit *state;
+	struct BattleUnit *state;
 	s32				owner;
 	s32				done;
 	s32				row;
@@ -136,7 +136,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
 		Party_AddActiveOwnerFar(owner);
 		Party_AdvanceOwnerCountToTargetFar(owner, Debug_PartyPresets[row].level);
-		state = (struct BtlUnit *)UnitGetFar(owner);
+		state = (struct BattleUnit *)UnitGetFar(owner);
 		for (i = 0; i < 4; i++)
 		{
 			state->djinn_owned_counts[i] = 0;
@@ -194,7 +194,7 @@ void DebugBattle_ViewMessages(void)
 {
 	u16				text[64];
 	s32				second = 0;
-	struct BtlUnit *unit = UnitGetFar(0);
+	struct BattleUnit *unit = UnitGetFar(0);
 	s32				i;
 	s32				index;
 	s32				window;
@@ -365,7 +365,7 @@ void BattlePresentation_UpdateCamera(void)
 	struct BattleCamera					*state = slot[0];
 	struct BattlePresentationTransition *transition =
 		slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-	struct BtlWork			 *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+	struct BattleWork			 *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
 	struct FixedPointPosition local;
 	s32						 *pos;
 	s16						  delta;
@@ -425,13 +425,13 @@ void BattlePresentation_UpdateCamera(void)
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
 	s16				enemies[8];
-	struct BtlWork *battle;
+	struct BattleWork *battle;
 	s16			   *enemy;
 	s32				announced;
 
-	battle = BtlWk;
+	battle = gBattleWork;
 	UiWork_ClearValueNameTablesFar();
-	BtlEnmList(enemies);
+	BattleEnemyList(enemies);
 
 	announced = 0;
 	if (enemy_count != 0)
@@ -469,36 +469,36 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 void BattleParty_CollectUnitList(void)
 {
 	u16				buf[14];
-	struct BtlWork *battle;
+	struct BattleWork *battle;
 	s32				count;
 	s32				i;
 	s32				index;
 	s32				kind;
 
-	battle = BtlWk;
+	battle = gBattleWork;
 	count = BattleParty_PrepareActiveOwners(buf);
 	for (i = 0; i < count; i++)
 		battle->party_units[i] = buf[i];
 	battle->party_units[count] = 0xff;
 
-	count = BtlEnmList(buf);
+	count = BattleEnemyList(buf);
 	kind = battle->battle_type;
 	if (kind >= 0)
 	{
 		if (kind <= 1)
 		{
 			for (i = 0; i < count; i++)
-				battle->enm_no[i] = buf[i];
+				battle->enemy_ids[i] = buf[i];
 			goto done;
 		}
 	}
 	for (i = 0; i < count; i++)
 	{
 		index = BattleParty_CenterOrderOffsets[i] + count / 2;
-		battle->enm_no[index] = buf[i];
+		battle->enemy_ids[index] = buf[i];
 	}
 done:
-	battle->enm_no[count] = 0xff;
+	battle->enemy_ids[count] = 0xff;
 }
 
 //--------------------------------------------------------------------------
@@ -543,14 +543,14 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 	i = 0;
 	if (i < count)
 	{
-		struct BtlUnit *unit;
+		struct BattleUnit *unit;
 		u8			   *cursor;
 		s32				remaining;
 
 		do
 		{
 			unit = UnitGetFar(owners[i]);
-			cursor = (u8 *)&unit->elm_lv[3];
+			cursor = (u8 *)&unit->element_levels[3];
 			remaining = 3;
 
 			do
@@ -642,7 +642,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 			entry = list->entries;
 			do
 			{
-				if (entry->turns == permanent_timer && BtlObjGet(entry->unit_id) == 0)
+				if (entry->turns == permanent_timer && BattleObjGet(entry->unit_id) == 0)
 				{
 					u8 id = entry->unit_id;
 					u8 element = entry->element;
@@ -678,7 +678,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 
 			for (party_slot = 0; party_slot < party_size; party_slot++)
 			{
-				struct BtlUnit *member = UnitGetFar(party_members[party_slot]);
+				struct BattleUnit *member = UnitGetFar(party_members[party_slot]);
 
 				totals[element] += member->djinn_owned_counts[element];
 			}
@@ -747,7 +747,7 @@ s32 UpdateNameEntries(void)
 {
 	u16				name_text[24];
 	void		   *buffer;
-	struct BtlUnit *name_entry;
+	struct BattleUnit *name_entry;
 	s32				named_count;
 	s32				index;
 	s32				len;
@@ -812,7 +812,7 @@ s32 UpdateNameEntries(void)
 s32 LinkBattle_SendParty(void)
 {
 	u8						 *buffer;
-	struct BtlWork			 *work;
+	struct BattleWork			 *work;
 	s32						  j;
 	struct DjinnRecoveryList *list;
 	s32						  size;
@@ -824,14 +824,14 @@ s32 LinkBattle_SendParty(void)
 	size = LINK_PARTY_UNIT_BYTES;
 	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
 	mark = 0xff;
-	work = BtlWk;
+	work = gBattleWork;
 	for (i = 7; i >= 0; i--)
 		work->owner_slots[i] = mark;
 	count = BattleParty_PrepareActiveOwners(owners);
 	for (i = 0; i < count; i++)
 	{
 		Iwram_CopyWords(buffer, UnitGetFar(owners[i]), size);
-		((struct BtlUnit *)buffer)->side = 2;
+		((struct BattleUnit *)buffer)->side = 2;
 		work->owner_slots[owners[i]] = i - 128;
 		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
 			break;
@@ -840,7 +840,7 @@ s32 LinkBattle_SendParty(void)
 	}
 	for (; i <= 2; i++)
 	{
-		((struct BtlUnit *)buffer)->side = 0;
+		((struct BattleUnit *)buffer)->side = 0;
 		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
 			break;
 		SerialRuntime_WaitForTransferA();
@@ -902,7 +902,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 //--------------------------------------------------------------------------
 s32 BattlePres_WaitSync(void)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 	u16			   *peer;
 	u16			   *sig;
 	s32				lost = 0;
@@ -951,7 +951,7 @@ s32 BattlePres_WaitSync(void)
 //--------------------------------------------------------------------------
 s32 BattlePres_SyncTurn(void)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 	u16			   *peer;
 	u16			   *sig;
 	s32				lost = 0;
@@ -1082,7 +1082,7 @@ s32 BattlePres_SyncTurn(void)
 s32 BattleParty_AssignMemberSlots(void)
 {
 	u16				active_members[8];
-	struct BtlWork *battle_state = BtlWk;
+	struct BattleWork *battle_state = gBattleWork;
 	s32				party_size = BattleParty_PrepareActiveOwners(active_members);
 	s32				member_slot;
 	s32				unit_id;
@@ -1110,7 +1110,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 {
 	struct BattleCamera					*camera;
 	s32									*target;
-	struct BtlWork						*battle;
+	struct BattleWork						*battle;
 	u8									*owner_states;
 	struct BattlePresentationTransition *transition;
 	struct BattleDisplayWork			*display;
@@ -1128,7 +1128,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	volatile u32						 fill;
 
 	camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-	battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BtlWork));
+	battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
 	owner_states = Runtime_AllocateBlock(54, 0x7c8);
 	transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
 	Runtime_AllocateBlock(11, 0x280);
@@ -1148,9 +1148,9 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	Render_ResetTransformState();
 
 	Dma_Fill32Cell(fill, 0, camera, sizeof(struct BattleCamera));
-	Dma_Fill32Cell(fill, 0, battle, sizeof(struct BtlWork));
+	Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
 	battle->prompt_slot = -1;
-	battle->enm_grp = enemy_group;
+	battle->enemy_group = enemy_group;
 	display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));
 	Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleDisplayWork));
 	battle->background = Event_GetSpecialValueFar();
@@ -1171,7 +1171,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	camera->yaw = 0x2800;
 	camera->pitch = 0x5000;
 	camera->distance = 0x1000000;
-	object = BattleFormation_BuildEnemyList(battle->enm_grp);
+	object = BattleFormation_BuildEnemyList(battle->enemy_group);
 
 	if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0)
 	{
@@ -1224,12 +1224,12 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleParty_ReconcileDjinnRecovery();
 	BattleSummon_UpdateAvailability();
 	if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->available_mask != 0)
-		battle->pty_st = 3;
+		battle->party_status = 3;
 	else
-		battle->pty_st = 1;
+		battle->party_status = 1;
 	UiWindow_CreateWithLayoutBoundsFar(9);
 	Camera_InitDefaultTransform();
-	BtlObjPut();
+	BattleObjPut();
 	BattlePresentation_InitializeWorkAndResetState();
 	BattleBackground_Load(1, battle->background, 0);
 	BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
@@ -1245,9 +1245,9 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	}
 	else if (gGameState.battle_start == 0)
 	{
-		if ((BtlRndFar() & 15) == 0)
+		if ((BattleRandomFar() & 15) == 0)
 			battle->encounter_mode = 1;
-		else if ((BtlRndFar() & 31) == 0)
+		else if ((BattleRandomFar() & 31) == 0)
 			battle->encounter_mode = 2;
 	}
 	BattlePres_RunEntryTransition(object, enemy_group);
@@ -1260,12 +1260,12 @@ s32 Battle_RunEncounter(s32 enemy_group)
 		Battle_ReservedNoOp9B2C();
 		BattleSummon_UpdateAvailability();
 		if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->available_mask != 0)
-			battle->pty_st = 3;
+			battle->party_status = 3;
 		else
-			battle->pty_st = 1;
+			battle->party_status = 1;
 		transition->target_yaw = 0x2800;
 		transition->frames = 60;
-		PtyStDrawFar(battle->pty_st);
+		PartyStatusDrawFar(battle->party_status);
 		Iwram_ClearWords(battle->actions, 0x140);
 		Resource_ResetEntry(battle->prompt_slot);
 		if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0)
@@ -1281,7 +1281,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 			count = BattlePresentation_BuildSortedUnitEntries(battle->actions);
 		}
 		battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
-		PtyStDrawFar(battle->pty_st);
+		PartyStatusDrawFar(battle->party_status);
 		if (count < 0)
 			goto aborted;
 
@@ -1352,7 +1352,7 @@ resolved:
 			AudioCommand_PlayFar(58);
 			if (battle->defeat_state <= 1)
 			{
-				BtlUnitSetFar(128, battle->enemy_classes[battle->first_defeated], 26);
+				BattleUnitSetFar(128, battle->enemy_classes[battle->first_defeated], 26);
 				UiWork_ClearValueNameTablesFar();
 				UiWork_PushValueSlotFar(128, 1);
 				UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + MsgDowned);
@@ -1414,7 +1414,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 	s32 index;
 
 	limit = 4;
-	if (BtlWk->two_sided != 0)
+	if (gBattleWork->two_sided != 0)
 		limit = 3;
 
 	count = Party_CountActiveOwnersFar();
@@ -1435,7 +1435,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 	return count;
 }
 
-s32 BtlEnmList(s16 *unit_ids)
+s32 BattleEnemyList(s16 *unit_ids)
 {
 	s16 *output;
 	s32	 battle_result;
@@ -1483,7 +1483,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 	s32				unit_id;
 	s16				hp;
 	s32				active_count;
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 
 	output = unit_ids;
 	living_count = 0;
@@ -1549,11 +1549,11 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
-	struct BtlWork *order;
+	struct BattleWork *order;
 	s32				count;
 	s32				i;
 
-	order = BtlWk;
+	order = gBattleWork;
 	count = 0;
 	if (groups & BATTLE_SIDE_PARTY)
 	{
@@ -1569,12 +1569,12 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 	}
 	if (groups & BATTLE_SIDE_ENEMIES)
 	{
-		for (i = 0; order->enm_no[i] != BATTLE_UNIT_LIST_END; i++)
+		for (i = 0; order->enemy_ids[i] != BATTLE_UNIT_LIST_END; i++)
 		{
-			if (order->enm_no[i] != BATTLE_UNIT_REMOVED)
+			if (order->enemy_ids[i] != BATTLE_UNIT_REMOVED)
 			{
 				if (dst != NULL)
-					*dst++ = order->enm_no[i];
+					*dst++ = order->enemy_ids[i];
 				count++;
 			}
 		}
@@ -1592,7 +1592,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 // 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、
 // 全員の表示モードと動作を設定し直す
 //--------------------------------------------------------------------------
-void BtlObjPut(void)
+void BattleObjPut(void)
 {
 	s16 list[14];
 
@@ -1617,17 +1617,17 @@ void BattleParty_ListAllUnitsAndSubmit(void)
 
 s32 BattleMotion_GetSlotPalette(s32 id)
 {
-	return BtlObjGet(id)->palette;
+	return BattleObjGet(id)->palette;
 }
 
-s32 EnmChk(s32 summon)
+s32 EnemyCheck(s32 summon)
 {
-	struct BtlWork *ptr;
+	struct BattleWork *ptr;
 	s32				retval;
 	s32				i;
 
 	retval = Summon_IsEntryFlagged(summon);
-	ptr = BtlWk;
+	ptr = gBattleWork;
 	for (i = 0; i <= 5; i++)
 	{
 		if (ptr->sprite_slots[i] != 0)
@@ -1643,8 +1643,8 @@ s32 EnmChk(s32 summon)
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
 	s32				pass;
-	struct BtlWork *table = BtlWk;
-	struct BtlUnit *actor = UnitGetFar(unit);
+	struct BattleWork *table = gBattleWork;
+	struct BattleUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
 	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass = 0, differs 2 of 114; pass = result = 0 differs 6, result = pass = 0 19. */
 	union
@@ -1709,7 +1709,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 	s32				index;
 
 	for (index = 0; index <= 5; index++)
@@ -1754,7 +1754,7 @@ s32 Resource_FindFreeSlot(s32 key)
 
 s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 {
-	struct BtlUnit *state;
+	struct BattleUnit *state;
 	s32				entry;
 	s32				result;
 
@@ -1763,41 +1763,41 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 	result = 0;
 	if (entry >= 0)
 	{
-		s32 sel;
+		s32 selection;
 
-		sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
+		selection = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
 		switch (state->class_id)
 		{
 		case ISAAC:
-			result = BattleUnit_WeaponAnimsClass0[sel];
+			result = BattleUnit_WeaponAnimsClass0[selection];
 			break;
 		case GARET:
-			result = BattleUnit_WeaponAnimsClass1[sel];
+			result = BattleUnit_WeaponAnimsClass1[selection];
 			break;
 		case IVAN:
-			result = BattleUnit_WeaponAnimsClass2[sel];
+			result = BattleUnit_WeaponAnimsClass2[selection];
 			break;
 		case MIA:
-			result = BattleUnit_WeaponAnimsClass3[sel];
+			result = BattleUnit_WeaponAnimsClass3[selection];
 			break;
 		case FELIX:
 			break;
 		case JENNA:
-			result = BattleUnit_WeaponAnimsClass5[sel];
+			result = BattleUnit_WeaponAnimsClass5[selection];
 			break;
 		}
 	}
 	return result;
 }
 
-void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
+void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 {
 	s32					 fixed_x;
 	s32					 fixed_y;
 	s32					 actor_flag;
 	s32					 sprite;
 	s32					 existing_sprite;
-	struct BtlUnit		*unit_record;
+	struct BattleUnit		*unit_record;
 	struct MotionObject *object;
 	s32					 position;
 	s32					 anim;
@@ -1823,20 +1823,20 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
 		switch (unit_record->class_id)
 		{
 		case GARET:
-			sprite = BTL_CHARACTER(GARET);
+			sprite = BATTLE_CHARACTER(GARET);
 			break;
 		case MIA:
-			sprite = BTL_CHARACTER(MIA);
+			sprite = BATTLE_CHARACTER(MIA);
 			break;
 		case IVAN:
-			sprite = BTL_CHARACTER(IVAN);
+			sprite = BATTLE_CHARACTER(IVAN);
 			break;
 		case JENNA:
-			sprite = BTL_CHARACTER(JENNA);
+			sprite = BATTLE_CHARACTER(JENNA);
 			break;
 		case ISAAC:
 		default:
-			sprite = BTL_CHARACTER(ISAAC);
+			sprite = BATTLE_CHARACTER(ISAAC);
 			break;
 		}
 		if (unit < 0 || unit > 7)
@@ -2051,7 +2051,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 		x_positions[index] = -80;
 		if (index != 0)
 		{
-			struct BtlUnit *actor;
+			struct BattleUnit *actor;
 
 			spacing = 25;
 			if ((u16)(actor_ids[index] - 254) > 1)
@@ -2069,7 +2069,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 		spacing = 25;
 		if ((u16)(actor_ids[index] - 254) > 1)
 		{
-			struct BtlUnit *actor = UnitGetFar(actor_ids[index]);
+			struct BattleUnit *actor = UnitGetFar(actor_ids[index]);
 
 			spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
 		}
@@ -2077,7 +2077,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 	}
 }
 
-s32 EnmSlotGet(void)
+s32 EnemySlotGet(void)
 {
 	s32 i;
 	s32 id;
@@ -2093,26 +2093,26 @@ s32 EnmSlotGet(void)
 	return id;
 }
 
-s32 EnmUpd(void)
+s32 EnemyUpdate(void)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 	u16				unit_ids[14];
 	s32				x[6];
 	s32				z[6];
 	s32				count;
 	s32				i;
 
-	for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
-		unit_ids[i] = work->enm_no[i];
+	for (i = 0; i < 6 && work->enemy_ids[i] != 0xff; i++)
+		unit_ids[i] = work->enemy_ids[i];
 	count = i;
 	Summon_LayoutPositions(unit_ids, count, x, z);
 	for (i = 0; i < count; i++)
 	{
-		s32 id = work->enm_no[i];
+		s32 id = work->enemy_ids[i];
 
 		if (id != 0xfe)
 		{
-			struct BtlObj *object = BtlObjGet(id);
+			struct BattleObj *object = BattleObjGet(id);
 
 			object->anchor_x = x[i] << 16;
 			object->anchor_z = z[i] << 16;
@@ -2122,7 +2122,7 @@ s32 EnmUpd(void)
 
 void BattleUnit_RefreshPlacement(void)
 {
-	struct BtlWork *work;
+	struct BattleWork *work;
 	u16				ids[14];
 	s32				x[6];
 	s32				z[6];
@@ -2136,7 +2136,7 @@ void BattleUnit_RefreshPlacement(void)
 
 	place = 0;
 	stand = 0;
-	work = BtlWk;
+	work = gBattleWork;
 	count = BattleParty_PrepareActiveOwners(ids);
 	value = 0xff;
 	for (i = 13; i >= 0; i--)
@@ -2149,19 +2149,19 @@ void BattleUnit_RefreshPlacement(void)
 		s32 id = ids[i];
 
 		work->placement[id] = place;
-		BtlObjMake(BtlObjGet(id), id, BattlePlacement_StepPairs[place * 2],
+		BattleObjMake(BattleObjGet(id), id, BattlePlacement_StepPairs[place * 2],
 			BattlePlacement_StepPairs[place * 2 + 1]);
 	}
-	for (i = 0; i < 6 && work->enm_no[i] != 0xff; i++)
-		ids[i] = work->enm_no[i];
+	for (i = 0; i < 6 && work->enemy_ids[i] != 0xff; i++)
+		ids[i] = work->enemy_ids[i];
 	count = i;
 	Summon_LayoutPositions(ids, count, x, z);
 	for (i = 0; i < count; i++, stand++)
 	{
-		s32 id = work->enm_no[i];
+		s32 id = work->enemy_ids[i];
 
 		if (id != 0xfe)
-			BtlObjMake(BtlObjGet(id), id, x[stand], z[stand]);
+			BattleObjMake(BattleObjGet(id), id, x[stand], z[stand]);
 	}
 }
 
@@ -2221,7 +2221,7 @@ void BattleActor_UpdateSpritePriorities(void)
 	{
 		for (;;)
 		{
-			struct BtlObj *slot = BtlObjGet(ids[i]);
+			struct BattleObj *slot = BattleObjGet(ids[i]);
 
 			if (slot != 0)
 			{
@@ -2234,15 +2234,15 @@ void BattleActor_UpdateSpritePriorities(void)
 
 					if (rec != 0)
 					{
-						struct SpriteEntry *efx;
+						struct SpriteEntry *effect;
 						s32					p = 0;
 
 						if (obj->y != 0) // 高さがあれば
 							p = 9;
-						efx = slot->effect_entry;
-						if (efx->priority != p)
+						effect = slot->effect_entry;
+						if (effect->priority != p)
 						{
-							efx->priority = p;
+							effect->priority = p;
 							rec->dirty = 1;
 						}
 					}
@@ -2271,7 +2271,7 @@ void BattleActor_UpdateSpritePriorities(void)
 		count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
 		for (i = 0; i < count; i++)
 		{
-			struct BtlObj *slot = BtlObjGet(ids[i]);
+			struct BattleObj *slot = BattleObjGet(ids[i]);
 
 			if (slot != 0)
 			{
@@ -2306,7 +2306,7 @@ void BattleActor_UpdateSpritePriorities(void)
 		count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
 		for (i = 0; i < count; i++)
 		{
-			struct BtlObj *slot = BtlObjGet(ids[i]);
+			struct BattleObj *slot = BattleObjGet(ids[i]);
 
 			if (slot != 0)
 			{
@@ -2354,9 +2354,9 @@ void BattleActor_UpdateSpritePriorities(void)
 //--------------------------------------------------------------------------
 // 状態異常から状態アイコンのビットを作る
 //--------------------------------------------------------------------------
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot)
+s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot)
 {
-	struct BtlUnit *unit = UnitGetFar(id);
+	struct BattleUnit *unit = UnitGetFar(id);
 	s8				poison = unit->poison;
 	u32				flags = 0;
 
@@ -2388,7 +2388,7 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BtlObj *slot)
 //--------------------------------------------------------------------------
 // 状態アイコンを 80 フレームごとに次の状態へ切り替える
 //--------------------------------------------------------------------------
-s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
+s32 BattleStatusIcon_Cycle(struct BattleObj *slot)
 {
 	struct AnimationEntry  *old;
 	struct AnimationEntry  *icon;
@@ -2481,7 +2481,7 @@ s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
 //--------------------------------------------------------------------------
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s32				mode;
 
 	unit = UnitGetFar(id);
@@ -2498,8 +2498,8 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
 		mode = 5 - mode;
 	}
 
-	ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, mode);
-	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(id)->object, (id & 3) + 14);
+	ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, mode);
+	ObjectDispatch_ApplyValueToChildrenFar(BattleObjGet(id)->object, (id & 3) + 14);
 }
 
 //--------------------------------------------------------------------------
@@ -2512,12 +2512,12 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
 //--------------------------------------------------------------------------
 void ReleaseBattleObjectRecords(s32 no)
 {
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *obj;
 	s32					 i;
 	void				*rec;
 
-	slot = BtlObjGet(no);
+	slot = BattleObjGet(no);
 	if (slot != NULL)
 	{
 		obj = slot->object;
@@ -2541,7 +2541,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
 	s32						 i;
 	s32						 id;
-	struct BtlObj			*slot;
+	struct BattleObj			*slot;
 	struct MotionObject		*object;
 	struct AnimationObject	*res;
 	struct SpriteEntry		*entry;
@@ -2565,7 +2565,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 	{
 		if (id == 254)
 			continue;
-		slot = BtlObjGet(id);
+		slot = BattleObjGet(id);
 		if (slot == 0)
 			continue;
 		BattleUnit_BuildStatusFlags(id, slot);
@@ -2641,7 +2641,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 		{
 			for (;;)
 			{
-				if (list[i] != 254 && (slot = BtlObjGet(resource)) != 0
+				if (list[i] != 254 && (slot = BattleObjGet(resource)) != 0
 					&& (object = slot->object) != 0)
 					BattlePres_SetActorModeAndAction(resource);
 				i++;
@@ -2652,10 +2652,10 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 	}
 }
 
-struct BtlObj *BtlObjGet(s32 object_id)
+struct BattleObj *BattleObjGet(s32 object_id)
 {
-	struct BtlWork *work = BtlWk;
-	struct BtlObj  *slots = work->slots;
+	struct BattleWork *work = gBattleWork;
+	struct BattleObj  *slots = work->slots;
 	s32				index;
 	if (object_id > 7)
 	{
@@ -2718,9 +2718,9 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
-	struct BtlObj *slot;
+	struct BattleObj *slot;
 	BattleMotion_ReleaseObjectSlotByValue(object_id);
-	slot = BtlObjGet(object_id);
+	slot = BattleObjGet(object_id);
 	slot->active = 1;
 	return 0;
 }
@@ -2730,7 +2730,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
 	// 戻り値の型はポインタだが return 文は無い（pop {r1}; bx r1）
 	s32			   no;
 	s32			   i;
-	struct BtlObj *slot;
+	struct BattleObj *slot;
 
 	i = 0;
 	do
@@ -2740,7 +2740,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
 		{
 			no = i;
 		}
-		slot = BtlObjGet(no);
+		slot = BattleObjGet(no);
 		if ((slot != NULL) && (slot->active != 0))
 		{
 			ObjectDispatch_ReleaseFar((s32)slot->object);
@@ -2753,7 +2753,7 @@ void *BattleMotion_DestroyAllSlotObjects(void)
 
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
 {
-	struct BtlWork *state = BtlWk;
+	struct BattleWork *state = gBattleWork;
 
 	out->x = state->slots[no].anchor_x;
 	out->y = 0;
@@ -2778,7 +2778,7 @@ s32 Camera_ApplyTransformByFlag(void)
 
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 {
-	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct MotionObject	   *object = BattleObjGet(id)->object;
 	struct AnimationObject *record = GetMotionRecord(object, 0);
 	s32						position[3];
 	s32						scaled;
@@ -2838,10 +2838,10 @@ void ObjMotRst(s32 slot_id)
 {
 	s32					 z;
 	s32					 zero;
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *object;
 
-	slot = BtlObjGet(slot_id);
+	slot = BattleObjGet(slot_id);
 	object = slot->object;
 	zero = 0;
 	object->acceleration = 0x20000;
@@ -2861,10 +2861,10 @@ void ObjMotRst(s32 slot_id)
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
 {
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *object;
 
-	slot = BtlObjGet(object_id);
+	slot = BattleObjGet(object_id);
 	object = slot->object;
 	object->acceleration = 0x20000;
 	object->speed_limit = 0x80000;
@@ -2878,7 +2878,7 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
 }
 
 void BattleMotion_InterpolatePosition(
-	struct BtlObj *start_slot, struct BtlObj *end_slot, s32 progress)
+	struct BattleObj *start_slot, struct BattleObj *end_slot, s32 progress)
 {
 	s32					 z_step;
 	s32					 start_x;
@@ -2906,7 +2906,7 @@ void BattleMotion_InterpolatePosition(
 	ObjectDispatch_ApplyArgumentToChildrenFar(start, 2);
 }
 
-void BattleMotion_SetObjectPosition(struct BtlObj *slot)
+void BattleMotion_SetObjectPosition(struct BattleObj *slot)
 {
 	struct MotionObject *object = slot->object;
 
@@ -2921,10 +2921,10 @@ void BattleMotion_SetObjectPosition(struct BtlObj *slot)
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 {
 	u32					 scaled_x;
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *object;
 
-	slot = BtlObjGet(object_id);
+	slot = BattleObjGet(object_id);
 	object = slot->object;
 	object->acceleration = 0x10000;
 	object->speed_limit = 0x40000;
@@ -2939,7 +2939,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)
 
 void BattleMotion_InitializeObject(s32 id)
 {
-	struct BtlObj		*slot = BtlObjGet(id);
+	struct BattleObj		*slot = BattleObjGet(id);
 	struct MotionObject *object = slot->object;
 
 	object->acceleration = 128 << 9;
@@ -2955,12 +2955,12 @@ void BattleMotion_InitializeObject(s32 id)
 
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
-	struct BtlObj		*slot;
+	struct BattleObj		*slot;
 	struct MotionObject *object;
 	s32					 x;
 	s32					 scale;
 
-	slot = BtlObjGet(id);
+	slot = BattleObjGet(id);
 	object = slot->object;
 	if (UnitGetFar(id)->class_id != 0x94)
 	{
@@ -2982,8 +2982,8 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 void BattleMotion_ApproachTarget(
 	s32 actor_id, s32 target_id, s32 travel_divisor, s32 initial_velocity_y)
 {
-	struct BtlObj		*actor_slot = BtlObjGet(actor_id);
-	struct BtlObj		*target_slot = BtlObjGet(target_id);
+	struct BattleObj		*actor_slot = BattleObjGet(actor_id);
+	struct BattleObj		*target_slot = BattleObjGet(target_id);
 	struct MotionObject *object = actor_slot->object;
 	struct MotionObject *target = target_slot->object;
 	s32					 scale = 75;
@@ -3019,7 +3019,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
 {
 	struct MotionObject *object;
 
-	object = BtlObjGet(id)->object;
+	object = BattleObjGet(id)->object;
 	ObjectDispatch_InitFromTable6Far(object);
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 }
@@ -3030,7 +3030,7 @@ void BattleMotion_ReservedNoOp83B0()
 
 void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 {
-	struct BtlObj			 *second_slot;
+	struct BattleObj			 *second_slot;
 	struct MotionObject		 *first;
 	struct MotionObject		 *second;
 	s32						  x1;
@@ -3039,8 +3039,8 @@ void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 	s32						  z2;
 	struct FixedPointPosition pos;
 
-	first = BtlObjGet(first_id)->object;
-	second_slot = BtlObjGet(second_id);
+	first = BattleObjGet(first_id)->object;
+	second_slot = BattleObjGet(second_id);
 	second = second_slot->object;
 
 	x1 = first->target_x;
@@ -3077,7 +3077,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 	struct AnimationEntry *effect;
 	s32					   entry;
 
-	object = BtlObjGet(id)->object;
+	object = BattleObjGet(id)->object;
 	if ((object != NULL) && ((0xF & object->record_storage_kind) == 1))
 	{
 		entry = ResourceMetadata_RegisterFar(object->records, 0x11b);
@@ -3093,7 +3093,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {
-	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct MotionObject	   *object = BattleObjGet(id)->object;
 	struct AnimationObject *record = GetMotionRecord(object, 0);
 	s32						scaled;
 	s32						factor;
@@ -3110,7 +3110,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 
 s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 {
-	struct MotionObject	   *object = BtlObjGet(id)->object;
+	struct MotionObject	   *object = BattleObjGet(id)->object;
 	struct AnimationObject *record = GetMotionRecord(object, 0);
 	s32						scaled;
 	s32						factor;
@@ -3158,7 +3158,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries
 	s32						   priority_range;
 	s32						   index;
 	struct BattleActionRecord *entry;
-	struct BtlUnit			  *unit;
+	struct BattleUnit			  *unit;
 
 	first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
 	for (index = 0; index != 4; index++)
@@ -3222,7 +3222,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 	struct BattlePresentationTransition *transition;
 	s32									 actor_id;
 	s32									 battle_mode;
-	struct BtlUnit						*actor;
+	struct BattleUnit						*actor;
 
 	actor_id = action->unit_id;
 	actor = UnitGetFar(actor_id);
@@ -3319,7 +3319,7 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action)
 {
 	s32				object_id;
 	s32				result;
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 
 	object_id = action->unit_id;
 	unit = UnitGetFar(object_id);
@@ -3369,7 +3369,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 	}
 	WaitFrames(10);
 	Random16();
-	actor_record = BtlObjGet(actor_id)->object;
+	actor_record = BattleObjGet(actor_id)->object;
 
 	if (target_id >= 0 && target_id <= 7)
 	{
@@ -3401,7 +3401,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 		REG_BLDALPHA = (16 - index) | 0x1000;
 		WaitFrames(1);
 	}
-	PtyStDrawFar(9);
+	PartyStatusDrawFar(9);
 
 	if (target_id > 0x7f)
 	{
@@ -3447,7 +3447,7 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 	BattleFx_InitializeModeFar((s32 *)&context);
 
 	WaitFrames(10);
-	BtlObjPut();
+	BattleObjPut();
 	REG_BLDCNT = 0x3f40;
 	for (index = 0; index != side_count; index++)
 	{
@@ -3496,8 +3496,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
 	UiWork_PushValueSlotFar(work.actor, 1);
 	UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
 	BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
-	BtlObjGet(work.actors[0]);
+	ObjectDispatch_ApplyValueToChildrenFar(BattleObjGet(work.actor)->object, 16);
+	BattleObjGet(work.actors[0]);
 
 	work.count = 1;
 	if ((u16)work.actors[0] <= 7)
@@ -3537,7 +3537,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 		WaitFrames(40);
 	}
 	work.kind = action->parameter;
-	work.initial_value = action->rng;
+	work.initial_value = action->range;
 	work.actor = action->unit_id;
 	work.first_target = action->target;
 	if (BattleObject_IsValidId(work.actor) < 0)
@@ -3546,8 +3546,8 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 		work.count = BattleParty_ListLivingUnits(2, work.actors);
 	else
 		work.count = BattleParty_ListLivingUnits(1, work.actors);
-	PtyStDrawFar(BtlWk->pty_st & ~1);
-	object = BtlObjGet(work.actor)->object;
+	PartyStatusDrawFar(gBattleWork->party_status & ~1);
+	object = BattleObjGet(work.actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
 	ObjectDispatch_ApplyValueToChildrenFar(object, 16);
 	if ((u16)action->target <= 7)
@@ -3564,7 +3564,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 	}
 	for (i = 0; i != work.count; i++)
 	{
-		struct AnimationObject *animation = BtlObjGet(work.actors[i])->object->records;
+		struct AnimationObject *animation = BattleObjGet(work.actors[i])->object->records;
 		s32						j;
 
 		for (j = 0; j != animation->count - 1; j++)
@@ -3595,8 +3595,8 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
 	u8				local_context[4];
-	struct BtlUnit *character;
-	struct BtlObj  *slot;
+	struct BattleUnit *character;
+	struct BattleObj  *slot;
 
 	if (context == 0)
 	{
@@ -3612,9 +3612,9 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 	if (character->hp < 0)
 		character->hp = 0;
 
-	slot = BtlObjGet(unit_id);
+	slot = BattleObjGet(unit_id);
 	ObjectDispatch_ApplyArgumentToChildrenFar(slot->object, 5);
-	PtyStDrawFar(0);
+	PartyStatusDrawFar(0);
 	UiWork_ClearValueNameTablesFar();
 
 	if (unit_id <= 7)
@@ -3650,7 +3650,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 		UiText_ShowMessageAndWaitCoreFar(MsgDowned);
 	}
 
-	slot = BtlObjGet(unit_id);
+	slot = BattleObjGet(unit_id);
 	ObjectDispatch_ApplyArgumentToChildrenFar(slot->object, 1);
 }
 
@@ -3660,7 +3660,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 	struct AnimationObject *object;
 	if (UnitGetFar(unit_id)->hp <= 0)
 	{
-		object = BtlObjGet(unit_id)->object->records;
+		object = BattleObjGet(unit_id)->object->records;
 		AnimationObjects_SelectAnimationFar(object, 5);
 		actor_data = object->entries[0];
 		actor_data->param = 6;
@@ -3791,7 +3791,7 @@ void BattleUnit_ResetGuardLevels(void)
 	count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
 	for (index = 0; index < count; index++)
 	{
-		struct BtlUnit *actor;
+		struct BattleUnit *actor;
 
 		actor = UnitGetFar(ids[index]);
 		actor->guard_lv = 0;
@@ -3808,10 +3808,10 @@ s32 BattleEscape_CheckSuccess(void)
 	s32				level_total;
 	s32				unit_index;
 	s32				chance;
-	struct BtlWork *escape_state;
+	struct BattleWork *escape_state;
 
 	escaped = 0;
-	escape_state = BtlWk;
+	escape_state = gBattleWork;
 	if (escape_state->encounter_mode == 1)
 	{
 		escaped = 1;
@@ -3858,7 +3858,7 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 
 	for (unit_index = 0; unit_index < unit_count; unit_index++)
 	{
-		struct BtlUnit *unit = UnitGetFar(unit_ids[unit_index]);
+		struct BattleUnit *unit = UnitGetFar(unit_ids[unit_index]);
 		s32				copy_index;
 
 		for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++)
@@ -3903,7 +3903,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 {
 	u16				unit_ids[14];
 	s32				entry_count = 0;
-	struct BtlWork *battle = BtlWk;
+	struct BattleWork *battle = gBattleWork;
 	s32				unit_count;
 	s32				i;
 
@@ -3944,7 +3944,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 	for (i = 0; i < unit_count; i++)
 	{
 		s32				unit_id = unit_ids[i];
-		struct BtlUnit *unit = UnitGetFar(unit_id);
+		struct BattleUnit *unit = UnitGetFar(unit_id);
 		s32				copy_index;
 
 		for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++)
@@ -3995,12 +3995,12 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
 		if (entry->command == 5)
 		{
-			struct BtlAct *action;
+			struct BattleAct *action;
 
 			UnitGetFar(entry->unit_id);
-			action = BtlActGet(
+			action = BattleActGet(
 				Djinn_GetDefinitionHeaderFar(entry->parameter >> 8 & 15, entry->parameter & 0xff));
-			if (action->efx == 46 || action->efx == 47 || action->efx == 53)
+			if (action->effect == 46 || action->effect == 47 || action->effect == 53)
 			{
 				entry->priority += 10000;
 			}
@@ -4035,7 +4035,7 @@ struct BattleLinkedActionState
 
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
-	struct BtlWork				   *battle = BtlWk;
+	struct BattleWork				   *battle = gBattleWork;
 	s32								result = 0;
 	s32								allocation_size = (u32)(count * 16 + 19) / 20 * 20;
 	struct BattleLinkedActionState *state =
@@ -4174,7 +4174,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 			u32 saved;
 
 			state->count = count;
-			state->check = BtlRndFar();
+			state->check = BattleRandomFar();
 			IRQ_LOCK(saved);
 			gBattleRandomSeed = state->seed = gRandomSeed;
 			IRQ_UNLOCK(saved);
@@ -4188,7 +4188,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 				goto fail;
 			result = state->count;
 			state->count = count;
-			if (BattleLink_SendActions() < 0 || BtlRndFar() != state->check)
+			if (BattleLink_SendActions() < 0 || BattleRandomFar() != state->check)
 				goto fail;
 			gBattleRandomSeed = state->seed;
 		}
@@ -4218,9 +4218,9 @@ fail:
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // BG パレットのバンク 15 を 14 へ、5 を 4 へ、明るさを変えて写す
-// ofs : RGB 各成分に足す値（0 から 31 におさめる）
+// offset : RGB 各成分に足す値（0 から 31 におさめる）
 //--------------------------------------------------------------------------
-void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
+void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 {
 	s32 n;
 	s32 bank;
@@ -4246,9 +4246,9 @@ void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 			b = (color >> 10) & mask;
 			g = (color >> 5) & mask;
 			r = color & mask;
-			b += ofs;
-			g += ofs;
-			r += ofs;
+			b += offset;
+			g += offset;
+			r += offset;
 			if (b > 31)
 				b = 31;
 			if (g > 31)
@@ -4279,14 +4279,14 @@ void Palette_CopyBanksWithBrightnessOffset(s32 ofs)
 //--------------------------------------------------------------------------
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 {
-	struct BtlUnit *unit;
-	struct BtlWork *work;
+	struct BattleUnit *unit;
+	struct BattleWork *work;
 	u8			   *mode;
 	s32				cnt;
 	s32				add;
 	s32				i;
 
-	work = BtlWk;
+	work = gBattleWork;
 	{
 		struct BattleActionRecord *rec = work->actions;
 		u32						   n;
@@ -4322,7 +4322,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 	}
 
 	// 通信対戦の相手か、敵の行動
-	if (BtlWk->two_sided != 0)
+	if (gBattleWork->two_sided != 0)
 	{
 		add = BattlePresentation_AppendLinkedActions(acts, cnt);
 		if (BattlePres_WaitSync() < 0)
@@ -4374,10 +4374,10 @@ finish:
 //--------------------------------------------------------------------------
 s32 Battle_GetTaggedSlotValue(s32 slot)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 
 	if ((slot & 0x80) != 0)
-		return work->enm_no[slot & 0xf];
+		return work->enemy_ids[slot & 0xf];
 	return work->party_units[slot & 0xf];
 }
 
@@ -4388,7 +4388,7 @@ s32 Battle_GetTaggedSlotValue(s32 slot)
 //--------------------------------------------------------------------------
 s32 Battle_FindTaggedSlotByValue(u32 id)
 {
-	struct BtlWork *work = BtlWk;
+	struct BattleWork *work = gBattleWork;
 	s32				i;
 	s16				unit;
 
@@ -4405,7 +4405,7 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 	}
 	for (i = 0;; i++)
 	{
-		unit = work->enm_no[i];
+		unit = work->enemy_ids[i];
 		if (unit == BATTLE_UNIT_LIST_END)
 			return -1;
 		if (unit != BATTLE_UNIT_REMOVED && unit == id)
@@ -4422,9 +4422,9 @@ void Battle_ReservedNoOp9B2C(void)
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay)
 {
 	struct BattlePresentationTransition *view;
-	struct BtlWork						*battle;
+	struct BattleWork						*battle;
 	struct BattleCamera					*camera;
-	struct BtlUnit						*unit;
+	struct BattleUnit						*unit;
 	u16									 actor[2];
 	u16									 ids[14];
 	s32									 kept;
@@ -4505,17 +4505,17 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
 	}
 	BattleMotion_DestroyAllSlotObjects();
 	BattleUnit_ProcessTurnEnd(&battle->plan);
-	BtlObjPut();
+	BattleObjPut();
 	count = BattleParty_ListActorIds(3, ids);
 	for (i = 0; i < count; i++)
 		ObjMotRst(ids[i]);
 	request->unit_id = 0xff;
 finish:
-	BattlePresentation_ConfigurePaletteFade(2, BtlWk->background, 0);
+	BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
 	return kept;
 }
 
-s32 BattlePres_BuildTargetList(struct BtlPlan *plan, struct BattlePresentationWork *work)
+s32 BattlePres_BuildTargetList(struct BattlePlan *plan, struct BattlePresentationWork *work)
 {
 	s16 *dst;
 	u32	 flags;
@@ -4532,7 +4532,7 @@ s32 BattlePres_BuildTargetList(struct BtlPlan *plan, struct BattlePresentationWo
 	i = 0;
 	if (i < plan->target_count)
 	{
-		target = plan->tgt_no;
+		target = plan->target_ids;
 		dst = work->actors;
 		do
 		{
@@ -4547,18 +4547,18 @@ s32 BattlePres_BuildTargetList(struct BtlPlan *plan, struct BattlePresentationWo
 	}
 	if (count == 0)
 	{
-		work->actors[0] = plan->tgt_no[0];
+		work->actors[0] = plan->target_ids[0];
 		count = 1;
 	}
-	work->first_target = plan->tgt_no[0];
+	work->first_target = plan->target_ids[0];
 	work->count = count;
 	work->initial_value = 1;
 }
 
-s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
+s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 {
 	struct BattlePresentationTransition *presentation = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-	struct BtlWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
+	struct BattleWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
 	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). 2026-10-13: completed as an s32 set to 0, with party_mode = completed or party_mode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7, #0). */
 	union
 	{
@@ -4594,7 +4594,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 
 			while (index != -1)
 			{
-				struct BtlUnit *unit = UnitGetFar(unit_ids[index]);
+				struct BattleUnit *unit = UnitGetFar(unit_ids[index]);
 
 				if (unit->stun == 0 && unit->sleep == 0)
 				{
@@ -4628,7 +4628,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 	return completed.value;
 }
 
-s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
+s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode)
 {
 	u16							  units[14];
 	struct BattlePresentationWork work;
@@ -4639,11 +4639,11 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 	s32							  n;
 	u32							  kept;
 	struct MotionObject			 *object;
-	void						**slots = (void **)&BtlWk;
+	void						**slots = (void **)&gBattleWork;
 
 	BattlePres_BuildTargetList(plan, &work);
 	actor = plan->aid;
-	target = plan->tgt_no[0];
+	target = plan->target_ids[0];
 	if (plan->presentation_flags & 0x8000)
 	{
 		struct BattlePresentationTransition *transition;
@@ -4667,8 +4667,8 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 			transition->target_yaw = yaw;
 	}
 	BattlePres_SetActorModes(0, 0);
-	PtyStDrawFar(BtlWk->pty_st & ~1);
-	object = BtlObjGet(actor)->object;
+	PartyStatusDrawFar(gBattleWork->party_status & ~1);
+	object = BattleObjGet(actor)->object;
 	REG_BLDCNT = 0x3f40;
 	count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
 	for (i = 0; i != count; i++)
@@ -4686,7 +4686,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		}
 	}
 	AudioCommand_PlayFar(0x9a);
-	BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
+	BattleFx_PlayUnitElementEffect(work.actor, plan->element, 0, 0);
 	if (mode & 1)
 		BattlePres_SetActorRecordMode(actor, 1);
 	for (i = 0; i != 16; i++)
@@ -4698,12 +4698,12 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 	{
 		if (plan->failure == 1)
 		{
-			BtlEvPush(0, plan->aid);
-			BtlEvPush(4, MsgPsynergyBlocked);
+			BattleEvPush(0, plan->aid);
+			BattleEvPush(4, MsgPsynergyBlocked);
 		}
 		else
 		{
-			BtlEvPush(4, MsgCastLacksPp);
+			BattleEvPush(4, MsgCastLacksPp);
 		}
 		BattleEv_DispatchQueued();
 		BattlePres_RunWithZeroArguments();
@@ -4727,14 +4727,14 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		units[kept] = BATTLE_UNIT_LIST_END;
 		BattleActor_SpawnObjectsForList(units, 0);
 		for (n = 0; n < plan->target_count; n++)
-			units[n] = plan->tgt_no[n];
+			units[n] = plan->target_ids[n];
 		units[n] = BATTLE_UNIT_LIST_END;
 		for (i = 0; i != work.count; i++)
 		{
 			struct AnimationObject *animation;
 			u32						child;
 
-			animation = GetMotionRecord(BtlObjGet(work.actors[i])->object, 0);
+			animation = GetMotionRecord(BattleObjGet(work.actors[i])->object, 0);
 			for (child = 0; child != animation->count - 1; child++)
 				work.params[i][child] = animation->entries[child]->param;
 		}
@@ -4747,7 +4747,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		}
 		else
 		{
-			if (plan->tgt_no[0] <= 7)
+			if (plan->target_ids[0] <= 7)
 				work.side = 1;
 			else
 				work.side = 0;
@@ -4763,7 +4763,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 			BattleFx_DispatchModeFar((s32 *)&work);
 		BattleEventRuntime_WaitForReady();
 	}
-	BtlObjPut();
+	BattleObjPut();
 	count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
 	REG_BLDCNT = 0x3f40;
 	for (i = 0; i != count; i++)
@@ -4794,7 +4794,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 // 対象がいなければ、メッセージの送りを待つだけ
 // plan : 行動と対象の情報
 //--------------------------------------------------------------------------
-s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
+s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {
 	s32 i;
 
@@ -4807,19 +4807,19 @@ s32 BattlePres_RunActorEntries(struct BtlPlan *plan, s32 unused)
 	{
 		for (i = 0; i < plan->target_count; i++)
 		{
-			BtlTgtExec(plan, i);
+			BattleTargetExec(plan, i);
 			BattleEv_DispatchQueued();
 		}
 	}
 	WaitFrames(1);
 }
 
-s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
+s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {
 	struct BattlePresentationWork		 work;
 	struct MotionObject					*object;
 	struct AnimationObject				*animation;
-	struct BtlUnit						*unit;
+	struct BattleUnit						*unit;
 	s16									 position[3];
 	s32									 scripted;
 	struct BattlePresentationTransition *transition;
@@ -4835,7 +4835,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 
 	transition = gTransitionWork;
 	{
-		struct BtlPlan *saved_plan = plan;
+		struct BattlePlan *saved_plan = plan;
 
 		/* FAKEMATCH: the temporary null assignment and restoration end the
 		 * native first CSE block, so the first plan read reloads its stack
@@ -4846,7 +4846,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 		if (transition)
 			plan = saved_plan;
 	}
-	object = BtlObjGet(plan->aid)->object;
+	object = BattleObjGet(plan->aid)->object;
 	z = object->z;
 	x = object->x;
 	angle = (u16)ArcTan2(x, z);
@@ -4870,20 +4870,20 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 	BattlePres_SetActorModes(0, 0);
 	BattlePres_BuildTargetList(plan, &work);
 	if (work.kind == 0x87)
-		PtyStDrawFar(BtlWk->pty_st & ~1);
+		PartyStatusDrawFar(gBattleWork->party_status & ~1);
 
 	unit = UnitGetFar(work.actor);
 	UnitGetFar(work.actors[0]);
-	scripted = plan->tgt_crit[0];
-	direct = plan->tgt_adj[0] == 0;
+	scripted = plan->target_crit[0];
+	direct = plan->target_adj[0] == 0;
 
-	animation = GetMotionRecord(BtlObjGet(plan->aid)->object, 0);
+	animation = GetMotionRecord(BattleObjGet(plan->aid)->object, 0);
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
 	BattleMotion_ApproachTarget(
 		work.actor, work.actors[0], divisor, Battle_GetSpriteFlagHighBits(unit->class_id) << 16);
 	ObjectDispatch_ApplyValueToChildrenFar(
-		(struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
-	BtlObjGet(work.actors[0]);
+		(struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
+	BattleObjGet(work.actors[0]);
 
 	if ((u16)work.actors[0] <= 7)
 		work.side = 1;
@@ -4905,8 +4905,8 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 		WaitFrames(2);
 		WaitFrames(4);
 		WaitFrames(10);
-		BtlEvPush(0, plan->tgt_no[0]);
-		BtlEvPush(4, MsgNimblyDodgesBlow);
+		BattleEvPush(0, plan->target_ids[0]);
+		BattleEvPush(4, MsgNimblyDodgesBlow);
 		BattleEv_DispatchQueued();
 		ObjMotRst(work.actors[0]);
 	}
@@ -4969,10 +4969,10 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 	return 0;
 }
 
-s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
+s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 {
 	struct BattlePresentationWork		 work;
-	struct BtlPlan						*saved_input;
+	struct BattlePlan						*saved_input;
 	struct MotionObject					*object;
 	struct AnimationObject				*animation;
 	struct BattlePresentationTransition *transition;
@@ -4986,7 +4986,7 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 
 	transition = gTransitionWork;
 	saved_input = input;
-	object = BtlObjGet(saved_input->aid)->object;
+	object = BattleObjGet(saved_input->aid)->object;
 	z = object->z;
 	x = object->x;
 	angle = (u16)ArcTan2(x, z);
@@ -5010,46 +5010,46 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 	BattlePres_SetActorModes(0, 0);
 	BattlePres_BuildTargetList(saved_input, &work);
 	UnitGetFar(work.actor);
-	UnitGetFar(saved_input->tgt_no[0]);
+	UnitGetFar(saved_input->target_ids[0]);
 
 	scripted = flags & 2;
-	animation = GetMotionRecord(BtlObjGet(saved_input->aid)->object, 0);
+	animation = GetMotionRecord(BattleObjGet(saved_input->aid)->object, 0);
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
-	BattleMotion_ApproachTarget(work.actor, saved_input->tgt_no[0], divisor, 0);
+	BattleMotion_ApproachTarget(work.actor, saved_input->target_ids[0], divisor, 0);
 	ObjectDispatch_ApplyValueToChildrenFar(
-		(struct DispatchObject *)BtlObjGet(work.actor)->object, 16);
-	BtlObjGet(saved_input->tgt_no[0]);
+		(struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
+	BattleObjGet(saved_input->target_ids[0]);
 
-	if (saved_input->tgt_no[0] <= 7)
+	if (saved_input->target_ids[0] <= 7)
 		work.side = 1;
 	else
 		work.side = 0;
 	if (scripted != 0)
 	{
 		WaitFrames(10);
-		BattleMotion_ResetObjectAtScaledAnchor(saved_input->tgt_no[0]);
+		BattleMotion_ResetObjectAtScaledAnchor(saved_input->target_ids[0]);
 		WaitFrames(2);
 		WaitFrames(4);
 		WaitFrames(10);
-		ObjMotRst(saved_input->tgt_no[0]);
+		ObjMotRst(saved_input->target_ids[0]);
 	}
 	else
 	{
 		BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 		BattleEv_DispatchQueued();
-		ObjMotRst(saved_input->tgt_no[0]);
+		ObjMotRst(saved_input->target_ids[0]);
 	}
 	ObjMotRst(work.actor);
 	return 0;
 }
 
-s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionRecord *selection)
+s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused, struct BattleActionRecord *selection)
 {
 	struct BattlePresentationWork		 work;
 	struct MotionObject					*object;
 	s32									 i;
 	s32									 item;
-	struct BtlUnit						*unit;
+	struct BattleUnit						*unit;
 	struct ItemDefinition				*def;
 	struct BattlePresentationTransition *transition = gTransitionWork;
 	s32									 facing;
@@ -5062,17 +5062,17 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 		transition->target_yaw = facing;
 	BattlePres_BuildTargetList(plan, &work);
 	BattlePres_SetActorModes(0, 0);
-	object = BtlObjGet(work.actor)->object;
+	object = BattleObjGet(work.actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
 	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
-	if (plan->tgt_no[0] <= 7)
+	if (plan->target_ids[0] <= 7)
 		work.side = 1;
 	else
 		work.side = 0;
 
 	for (i = 0; i != work.count; i++)
 	{
-		struct AnimationObject *animation = GetMotionRecord(BtlObjGet(work.actors[i])->object, 0);
+		struct AnimationObject *animation = GetMotionRecord(BattleObjGet(work.actors[i])->object, 0);
 		s32						j;
 
 		for (j = 0; j != animation->count - 1; j++)
@@ -5088,7 +5088,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 		fade = 0;
 		do
 		{
-			struct BtlWork *battle = BtlWk;
+			struct BattleWork *battle = gBattleWork;
 
 			if (i < 20)
 			{
@@ -5125,7 +5125,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 		s32 index = selection->parameter;
 		if (result == 2)
 		{
-			struct BtlWork *battle = BtlWk;
+			struct BattleWork *battle = gBattleWork;
 			u32				row;
 
 			for (row = 0; row < 20; row++)
@@ -5143,10 +5143,10 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 	}
 	else if (def->use_type == 2)
 	{
-		if ((BtlRndFar() & 7) == 0)
+		if ((BattleRandomFar() & 7) == 0)
 		{
-			BtlEvPush(BEV_ITEM, unit->inventory[selection->parameter]);
-			BtlEvPush(BEV_MES, MsgUsedItemBroke);
+			BattleEvPush(BATTLE_EVENT_ITEM, unit->inventory[selection->parameter]);
+			BattleEvPush(BATTLE_EVENT_MESSAGE, MsgUsedItemBroke);
 			Inventory_BreakFar(selection->unit_id, selection->parameter);
 			BattleEv_DispatchQueued();
 		}
@@ -5190,7 +5190,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 	}
 }
 
-s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
+s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode)
 {
 	struct BattlePresentationWork		 work;
 	struct BattlePresentationTransition *transition = gTransitionWork;
@@ -5205,7 +5205,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	}
 	else
 	{
-		struct MotionObject *actor = BtlObjGet(plan->aid)->object;
+		struct MotionObject *actor = BattleObjGet(plan->aid)->object;
 		s32					 angle = (u16)ArcTan2(actor->x, actor->z);
 		s32					 current;
 
@@ -5215,7 +5215,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 			current = angle + 0x1800;
 		current = (s16)current;
 		current += ((plan->aid <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-		if (!((plan->aid <= 7) ^ (plan->tgt_no[0] <= 7)))
+		if (!((plan->aid <= 7) ^ (plan->target_ids[0] <= 7)))
 			current = plan->aid <= 7 ? 0x2400 : -0x2400;
 		if (transition->target_yaw != current)
 			transition->target_yaw = current;
@@ -5231,23 +5231,23 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	if (scripted)
 		work.flags = 1;
 	BattlePres_SetActorModes(0, 0);
-	PtyStDrawFar(BtlWk->pty_st & ~1);
-	object = BtlObjGet(work.actor)->object;
+	PartyStatusDrawFar(gBattleWork->party_status & ~1);
+	object = BattleObjGet(work.actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
 	ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
 	AudioCommand_PlayFar(0x9a);
 	if (mode & 2)
-		BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 1, 0);
+		BattleFx_PlayUnitElementEffect(work.actor, plan->element, 1, 0);
 	else if (!scripted)
-		BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
-	if (plan->tgt_no[0] <= 7)
+		BattleFx_PlayUnitElementEffect(work.actor, plan->element, 0, 0);
+	if (plan->target_ids[0] <= 7)
 		work.side = 1;
 	else
 		work.side = 0;
 
 	for (i = 0; i != work.count; i++)
 	{
-		struct AnimationObject *animation = GetMotionRecord(BtlObjGet(work.actors[i])->object, 0);
+		struct AnimationObject *animation = GetMotionRecord(BattleObjGet(work.actors[i])->object, 0);
 		s32						j;
 
 		for (j = 0; j != animation->count - 1; j++)
@@ -5257,12 +5257,12 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 	{
 		if (plan->failure == 1)
 		{
-			BtlEvPush(0, plan->aid);
-			BtlEvPush(4, MsgPsynergyBlocked);
+			BattleEvPush(0, plan->aid);
+			BattleEvPush(4, MsgPsynergyBlocked);
 		}
 		else
 		{
-			BtlEvPush(4, MsgCastLacksPp);
+			BattleEvPush(4, MsgCastLacksPp);
 		}
 		BattleEv_DispatchQueued();
 		BattlePres_RunWithZeroArguments();
@@ -5292,32 +5292,32 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 void BattleMotion_RunValueSequence(s32 id, s32 unused0, s32 unused1)
 {
 	u16	 selection[2];
-	u16 *sel;
+	u16 *selected;
 	s32	 target;
 	s32	 remaining;
 
 	UnitGetFar(id);
-	ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 5);
+	ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, 5);
 
-	sel = selection;
+	selected = selection;
 	remaining = 1;
 	do
 	{
 		target = 0xff;
-		sel[1] = target;
-		sel[0] = id;
-		BattleLayout_HighlightPartyPanelsFar(sel);
-		BattleMotion_SetRecordChildValues(BtlObjGet(id)->object, 7);
+		selected[1] = target;
+		selected[0] = id;
+		BattleLayout_HighlightPartyPanelsFar(selected);
+		BattleMotion_SetRecordChildValues(BattleObjGet(id)->object, 7);
 		WaitFrames(2);
 
-		sel[0] = id;
-		BattleLayout_HighlightPartyPanelsFar(sel);
-		BattleMotion_SetRecordChildValues(BtlObjGet(id)->object, BattleMotion_GetSlotPalette(id));
+		selected[0] = id;
+		BattleLayout_HighlightPartyPanelsFar(selected);
+		BattleMotion_SetRecordChildValues(BattleObjGet(id)->object, BattleMotion_GetSlotPalette(id));
 		WaitFrames(2);
 		remaining--;
 	} while (remaining >= 0);
 
-	PtyStDrawFar(BtlWk->pty_st);
+	PartyStatusDrawFar(gBattleWork->party_status);
 }
 
 //--------------------------------------------------------------------------
@@ -5330,13 +5330,13 @@ void BattleMotion_RunValueSequence(s32 id, s32 unused0, s32 unused1)
 //--------------------------------------------------------------------------
 void BattleActor_RemoveFromLists(s32 id)
 {
-	struct BtlWork *work;
+	struct BattleWork *work;
 	s32				i;
 	u32				j;
 	s32				unit;
 
 	// 味方の並び
-	work = BtlWk;
+	work = gBattleWork;
 	UnitGetFar(id)->side = BATTLE_UNIT_ABSENT;
 	for (i = 0;; i++)
 	{
@@ -5359,10 +5359,10 @@ void BattleActor_RemoveFromLists(s32 id)
 	{
 		j = 0;
 	again:
-		unit = work->enm_no[j];
+		unit = work->enemy_ids[j];
 		if (unit == id)
 		{
-			work->enm_no[j] = BATTLE_UNIT_REMOVED;
+			work->enemy_ids[j] = BATTLE_UNIT_REMOVED;
 			goto removed;
 		}
 		j++;
@@ -5372,7 +5372,7 @@ void BattleActor_RemoveFromLists(s32 id)
 	} while (0);
 
 removed:
-	EnmCntRel(id);
+	EnemyCountRelease(id);
 	for (j = 0; j < 20; j++)
 	{
 		if (work->actions[j].unit_id == id)
@@ -5388,14 +5388,14 @@ removed:
 void BattleMotion_InitializeActorRecords(s32 id)
 {
 	void				   *recs[4];
-	struct BtlUnit		   *unit;
+	struct BattleUnit		   *unit;
 	struct AnimationObject *rec;
 	struct AnimationEntry  *ent;
 	s32						n;
 
 	unit = UnitGetFar(id);
 	n = 0;
-	while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+	while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0)
 	{
 		if (unit->side != BATTLE_UNIT_ENEMY)
 			AnimationObjects_SelectAnimationFar(rec, 4);
@@ -5407,7 +5407,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 	if (unit->side == BATTLE_UNIT_ENEMY)
 	{
 		n = 0;
-		while ((rec = GetMotionRecord(BtlObjGet(id)->object, n)) != 0)
+		while ((rec = GetMotionRecord(BattleObjGet(id)->object, n)) != 0)
 		{
 			ent = rec->entries[0];
 			recs[n] = rec;
@@ -5442,7 +5442,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 	s32				  offset;
 
 	count = 0;
-	order = (struct SlotArray *)BtlWk;
+	order = (struct SlotArray *)gBattleWork;
 
 	if (require_living_unit != 0)
 	{
@@ -5450,7 +5450,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 		for (;;)
 		{
 			index = 0;
-			slot = (u32) & ((struct BtlWork *)0)->party_units / sizeof(s16);
+			slot = (u32) & ((struct BattleWork *)0)->party_units / sizeof(s16);
 			if (order->items[slot] != 255)
 			{
 				entry = order->items;
@@ -5475,8 +5475,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 	else
 	{
 		index = 0;
-		slot = (u32) & ((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
-		tail = (u32) & ((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
+		slot = (u32) & ((struct BattleWork *)0)->enemy_ids / sizeof(s16) - 1;
+		tail = (u32) & ((struct BattleWork *)0)->enemy_ids / sizeof(s16) - 1;
 		offset = tail * 2;
 		entry = (order->items + 1);
 		if (*(s16 *)((char *)entry + offset) != 255)
@@ -5534,108 +5534,108 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 			(count)++;                        \
 		if ((unit)->res_lv > 0)               \
 			(count)++;                        \
-		if ((unit)->elm_lv[0] > 0)            \
+		if ((unit)->element_levels[0] > 0)            \
 			(count)++;                        \
-		if ((unit)->elm_lv[1] > 0)            \
+		if ((unit)->element_levels[1] > 0)            \
 			(count)++;                        \
-		if ((unit)->elm_lv[2] > 0)            \
+		if ((unit)->element_levels[2] > 0)            \
 			(count)++;                        \
-		if ((unit)->elm_lv[3] > 0)            \
+		if ((unit)->element_levels[3] > 0)            \
 			(count)++;                        \
 	}
 
 #define CHECK_EFFECT_TARGET(unit, action, applies, damage_class)    \
 	{                                                               \
 		(applies) = 0;                                              \
-		switch ((action)->efx)                                      \
+		switch ((action)->effect)                                      \
 		{                                                           \
-		case EFX_ATK_UP2:                                           \
-		case EFX_ATK_UP1:                                           \
+		case EFFECT_ATK_UP2:                                           \
+		case EFFECT_ATK_UP1:                                           \
 			if ((unit)->atk_lv + 1 <= 4)                            \
 				(applies) = 1;                                      \
 			if ((unit)->atk_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_ATK_DOWN2:                                         \
-		case EFX_ATK_DOWN1:                                         \
+		case EFFECT_ATK_DOWN2:                                         \
+		case EFFECT_ATK_DOWN1:                                         \
 			if ((unit)->atk_lv - 1 >= -4)                           \
 				(applies) = 1;                                      \
 			if ((unit)->atk_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_DEF_UP2:                                           \
-		case EFX_DEF_UP1:                                           \
+		case EFFECT_DEF_UP2:                                           \
+		case EFFECT_DEF_UP1:                                           \
 			if ((unit)->def_lv + 1 <= 4)                            \
 				(applies) = 1;                                      \
 			if ((unit)->def_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_DEF_DOWN2:                                         \
-		case EFX_DEF_DOWN1:                                         \
+		case EFFECT_DEF_DOWN2:                                         \
+		case EFFECT_DEF_DOWN1:                                         \
 			if ((unit)->def_lv - 1 >= -4)                           \
 				(applies) = 1;                                      \
 			if ((unit)->def_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_RES_UP2:                                           \
-		case EFX_RES_UP1:                                           \
+		case EFFECT_RES_UP2:                                           \
+		case EFFECT_RES_UP1:                                           \
 			if ((unit)->res_lv + 1 <= 4)                            \
 				(applies) = 1;                                      \
 			if ((unit)->res_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_RES_DOWN2:                                         \
-		case EFX_RES_DOWN1:                                         \
+		case EFFECT_RES_DOWN2:                                         \
+		case EFFECT_RES_DOWN1:                                         \
 			if ((unit)->res_lv - 1 >= -4)                           \
 				(applies) = 1;                                      \
 			if ((unit)->res_cnt == 1)                               \
 				(applies)++;                                        \
 			break;                                                  \
-		case EFX_CURE_POISON:                                       \
+		case EFFECT_CURE_POISON:                                       \
 			if ((unit)->poison != 0)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_CURE_PART:                                         \
+		case EFFECT_CURE_PART:                                         \
 			COUNT_PARTIAL_CURES((unit), (applies));                 \
 			break;                                                  \
-		case EFX_HEAL_60:                                           \
-		case EFX_HEAL_30:                                           \
+		case EFFECT_HEAL_60:                                           \
+		case EFFECT_HEAL_30:                                           \
 			if ((unit)->hp < (unit)->max_hp)                        \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_BUFF_CLEAR:                                        \
+		case EFFECT_BUFF_CLEAR:                                        \
 			COUNT_POSITIVE_MODIFIERS((unit), (applies));            \
 			break;                                                  \
-		case EFX_CURE_ALL:                                          \
+		case EFFECT_CURE_ALL:                                          \
 			COUNT_ALL_CURES((unit), (applies));                     \
 			break;                                                  \
-		case EFX_DEATH_CURSE:                                       \
+		case EFFECT_DEATH_CURSE:                                       \
 			if ((unit)->grim_reaper == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_POISON:                                            \
+		case EFFECT_POISON:                                            \
 			if ((unit)->poison == 0)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_VENOM:                                             \
+		case EFFECT_VENOM:                                             \
 			if ((unit)->poison <= 1)                                  \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_STUN:                                              \
+		case EFFECT_STUN:                                              \
 			if ((unit)->stun == 0)                               \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_SLEEP:                                             \
+		case EFFECT_SLEEP:                                             \
 			if ((unit)->sleep == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_EVIL_SPIRIT:                                       \
+		case EFFECT_EVIL_SPIRIT:                                       \
 			if ((unit)->haunt == 0)                                \
 				(applies) = 1;                                      \
 			break;                                                  \
-		case EFX_REVIVE_FULL:                                       \
-		case EFX_REVIVE_HALF:                                       \
-		case EFX_REVIVE_80:                                         \
+		case EFFECT_REVIVE_FULL:                                       \
+		case EFFECT_REVIVE_HALF:                                       \
+		case EFFECT_REVIVE_80:                                         \
 			if ((unit)->hp == 0)                                    \
 				(applies) = 100;                                    \
 			break;                                                  \
@@ -5647,11 +5647,11 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 			(applies) = 1;                                          \
 			break;                                                  \
 		}                                                           \
-		if ((unit)->hp == 0 && BtlEfxRevChkFar((action)->efx) == 0) \
+		if ((unit)->hp == 0 && BattleEffectRevCheckFar((action)->effect) == 0) \
 			(applies) = 0;                                          \
 		if ((applies) == 0)                                         \
 		{                                                           \
-			(damage_class) = ((action)->tgt_flg & 0x0f) - 1;        \
+			(damage_class) = ((action)->target_flag & 0x0f) - 1;        \
 			switch (damage_class)                                   \
 			{                                                       \
 			case 2:                                                 \
@@ -5661,7 +5661,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 				break;                                              \
 			case 7:                                                 \
 			case 8:                                                 \
-				if ((action)->pow != 0 && (unit)->hp != 0)          \
+				if ((action)->power != 0 && (unit)->hp != 0)          \
 					(applies)++;                                    \
 				break;                                              \
 			case 9:                                                 \
@@ -5675,22 +5675,22 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 			case 1:                                                 \
 			case 4:                                                 \
 			case 5:                                                 \
-				if ((action)->pow != 0 && (unit)->hp != 0)          \
+				if ((action)->power != 0 && (unit)->hp != 0)          \
 					(applies)++;                                    \
 				break;                                              \
 			}                                                       \
 		}                                                           \
 	}
 
-s32 BattleTarget_SelectForAction(s32 actor_id, struct BtlAct *action)
+s32 BattleTarget_SelectForAction(s32 actor_id, struct BattleAct *action)
 {
 	u16				order_positions[6];
 	s32				unit_ids[6];
 	s32				target_positions[6];
-	struct BtlWork *turn_order;
-	struct BtlUnit *unit;
-	struct BtlUnit *next_unit;
-	struct BtlUnit *this_unit;
+	struct BattleWork *turn_order;
+	struct BattleUnit *unit;
+	struct BattleUnit *next_unit;
+	struct BattleUnit *this_unit;
 	s32				candidate_count;
 	s32				target_index;
 	s32				target_count;
@@ -5706,7 +5706,7 @@ s32 BattleTarget_SelectForAction(s32 actor_id, struct BtlAct *action)
 	u32				roll;
 	s16			   *slot;
 
-	turn_order = BtlWk;
+	turn_order = gBattleWork;
 	target_count = 0;
 	candidate_count = 0;
 
@@ -5747,9 +5747,9 @@ s32 BattleTarget_SelectForAction(s32 actor_id, struct BtlAct *action)
 
 	scan_mirrored_order:
 		target_index = 0;
-		while (turn_order->enm_no[target_index] != 255)
+		while (turn_order->enemy_ids[target_index] != 255)
 		{
-			unit_id = turn_order->enm_no[target_index];
+			unit_id = turn_order->enemy_ids[target_index];
 			if (unit_id != 254)
 			{
 				if (action->target_mode != 4 || unit_id == actor_id)
@@ -5784,11 +5784,11 @@ scan_complete:
 	if (target_count == 0)
 		return -1;
 
-	if (action->target_mode == 1 && action->rng == 1
+	if (action->target_mode == 1 && action->range == 1
 		&& ((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))
 				   ->target_strategy
 			   != 2
-		&& (u32)((action->tgt_flg & 0x0f) - 3) <= 2)
+		&& (u32)((action->target_flag & 0x0f) - 3) <= 2)
 	{
 		selected = -1;
 		for (target_index = 0; target_index < target_count; target_index++)
@@ -5870,7 +5870,7 @@ scan_complete:
 //--------------------------------------------------------------------------
 s32 BattleActor_ResetRuntimeFields(s32 id)
 {
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 	s8			   *lv;
 	s32				n;
 	u8				zero;
@@ -5878,7 +5878,7 @@ s32 BattleActor_ResetRuntimeFields(s32 id)
 	unit = UnitGetFar(id);
 	n = 3;
 	zero = 0;
-	lv = &unit->elm_lv[3];
+	lv = &unit->element_levels[3];
 	do
 	{
 		n--;
@@ -5911,7 +5911,7 @@ s32 BattleActor_ResetRuntimeFields(s32 id)
 	unit->challenge = 0;
 
 	UnitCalcFar(id);
-	return BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+	return BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 }
 
 //--------------------------------------------------------------------------
@@ -6033,8 +6033,8 @@ void BattleEv_MarkDisplay(void)
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
 	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
-	struct BtlUnit *creature;
-	struct BtlObj  *runtime;
+	struct BattleUnit *creature;
+	struct BattleObj  *runtime;
 
 	creature = UnitGetFar(arg0);
 	if (creature->side == 1)
@@ -6042,7 +6042,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 		Owner_UpdateRatioPairFar(creature, 0);
 		BattleActor_RemoveFromLists(arg0);
 		ActivateBattleObjectSlot(arg0);
-		runtime = BtlObjGet(arg0);
+		runtime = BattleObjGet(arg0);
 		ObjectDispatch_ReleaseFar((struct DispatchObject *)runtime->object);
 		runtime->object = 0;
 		runtime->active = 0;
@@ -6056,66 +6056,66 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 
 u32 BattleEv_DispatchQueued(void)
 {
-	struct BattleEventState *runtime = &BtlWk->events;
+	struct BattleEventState *runtime = &gBattleWork->events;
 	struct BattleEventQueue *queue = &runtime->queue;
 	s32						 i;
 
 	for (i = 0; i < queue->count; i++)
 	{
 		u8 opcode = queue->opcodes[i];
-		if (opcode <= BEV_SCR)
+		if (opcode <= BATTLE_EVENT_SCR)
 			switch (opcode)
 			{
-			case BEV_SCR:
+			case BATTLE_EVENT_SCR:
 				Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]);
 				break;
-			case BEV_OBJ_EFX:
+			case BATTLE_EVENT_OBJ_EFFECT:
 				BattleActor_DestroyTemporaryObject(queue->operands[i]);
 				break;
-			case BEV_UNIT:
+			case BATTLE_EVENT_UNIT:
 				UiWork_PushValueSlotFar(queue->operands[i], 1);
 				break;
-			case BEV_NUM:
+			case BATTLE_EVENT_NUM:
 				UiWork_PushValueSlotFar(queue->operands[i], 5);
 				break;
-			case BEV_ITEM:
+			case BATTLE_EVENT_ITEM:
 				UiWork_PushValueSlotFar(queue->operands[i] & ITEM_ID_MASK, 2);
 				break;
-			case BEV_ACT:
+			case BATTLE_EVENT_ACT:
 				UiWork_PushValueSlotFar(queue->operands[i] & OWNER_ACTION_ID_MASK, 4);
 				break;
-			case BEV_MARK:
+			case BATTLE_EVENT_MARK:
 				gBattleDisplayWork->marked = 1;
 				break;
-			case BEV_CLR:
+			case BATTLE_EVENT_CLEAR:
 				UiWork_ClearValueNameTablesFar();
 				break;
-			case BEV_MES:
+			case BATTLE_EVENT_MESSAGE:
 				if ((s32)queue->operands[i] >= 0)
 					UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
 				BattlePresentation_WaitForAdvance();
 				UiWork_ClearValueNameTablesFar();
 				break;
-			case BEV_MES_ADD:
+			case BATTLE_EVENT_MESSAGE_ADD:
 				if ((s32)queue->operands[i] >= 0)
 					UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
 				UiWork_ClearValueNameTablesFar();
 				break;
-			case BEV_OBJ_BGN:
+			case BATTLE_EVENT_OBJ_BEGIN:
 				if (runtime->pending_cue > 0)
 					AudioCommand_PlayFar(runtime->pending_cue);
 				BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
 				break;
-			case BEV_OBJ_RES:
+			case BATTLE_EVENT_OBJ_RESET:
 				BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
 				BattleActor_ResetRuntimeFields(queue->operands[i]);
 				BattleMotion_InitializeActorRecords(queue->operands[i]);
 				break;
-			case BEV_REDRAW:
-				PtyStDrawFar(BtlWk->pty_st);
+			case BATTLE_EVENT_REDRAW:
+				PartyStatusDrawFar(gBattleWork->party_status);
 				break;
-			case BEV_OBJ_END:
-				BattleUnit_BuildStatusFlags(queue->operands[i], BtlObjGet(queue->operands[i]));
+			case BATTLE_EVENT_OBJ_END:
+				BattleUnit_BuildStatusFlags(queue->operands[i], BattleObjGet(queue->operands[i]));
 				BattlePres_SetActorModeAndAction(queue->operands[i]);
 				break;
 			}
@@ -6123,9 +6123,9 @@ u32 BattleEv_DispatchQueued(void)
 	return BattleEventRuntime_Reset();
 }
 
-u32 BtlEvPush(u32 opcode, u32 operand)
+u32 BattleEvPush(u32 opcode, u32 operand)
 {
-	struct BattleEventQueue *queue = &BtlWk->events.queue;
+	struct BattleEventQueue *queue = &gBattleWork->events.queue;
 	u32						 index = queue->count;
 
 	queue->opcodes[index] = opcode;
@@ -6141,11 +6141,11 @@ u32 BtlEvPush(u32 opcode, u32 operand)
 //--------------------------------------------------------------------------
 // 対象が倒れていても追加効果を出す効果なら 1 を返す
 // うばう効果は、与えたダメージを行動側に戻すため
-// efx : 効果番号
+// effect : 効果番号
 //--------------------------------------------------------------------------
-s32 BtlEfxDeadChk(s32 efx)
+s32 BattleEffectDeadCheck(s32 effect)
 {
-	switch (efx)
+	switch (effect)
 	{
 	case 31: // HPをうばう
 	case 32: // PPをうばう
@@ -6162,7 +6162,7 @@ s32 BtlEfxDeadChk(s32 efx)
 //--------------------------------------------------------------------------
 #define ALLY 2 // 味方
 
-#define ALLY_CHK(id) ((id) >= 0 && (id) < 8)
+#define ALLY_CHECK(id) ((id) >= 0 && (id) < 8)
 
 #define STEP_LIM(v)   \
 	{                 \
@@ -6172,18 +6172,18 @@ s32 BtlEfxDeadChk(s32 efx)
 			(v) = 4;  \
 	}
 
-#define ELM_BONUS()                             \
+#define ELEMENT_BONUS()                             \
 	{                                           \
-		if (elm != 4)                           \
-			bonus = pow - target->elm[elm].res; \
+		if (element != 4)                           \
+			bonus = power - target->element[element].res; \
 	}
 
-#define MES_SIDE(m, e)       \
+#define MESSAGE_SIDE(m, e)       \
 	{                        \
-		if (ALLY_CHK(tid)) \
-			MES_PUSH(m);     \
+		if (ALLY_CHECK(tid)) \
+			MESSAGE_PUSH(m);     \
 		else                 \
-			MES_PUSH(e);     \
+			MESSAGE_PUSH(e);     \
 	}
 
 #define GUARD_CUT()               \
@@ -6202,14 +6202,14 @@ s32 BtlEfxDeadChk(s32 efx)
 	{                             \
 		target->res_lv += (d);    \
 		STEP_LIM(target->res_lv); \
-		BtlEvPush(BEV_NUM, (v));  \
-		MES_PUSH(m);              \
+		BattleEvPush(BATTLE_EVENT_NUM, (v));  \
+		MESSAGE_PUSH(m);              \
 		target->res_cnt = 7;      \
 	}
 
 #define STAT_SET(f, m) \
 	{                  \
-		MES_PUSH(m);   \
+		MESSAGE_PUSH(m);   \
 		(f) = 7;       \
 	}
 
@@ -6218,15 +6218,15 @@ s32 BtlEfxDeadChk(s32 efx)
 // plan : 行動と対象の情報
 // slot : 対象配列の位置
 //--------------------------------------------------------------------------
-s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
+s32 BattleTargetExec(struct BattlePlan *plan, s32 slot)
 {
 	s32				dist;
-	struct BtlAct  *action;
-	struct BtlUnit *actor;
+	struct BattleAct  *action;
+	struct BattleUnit *actor;
 	s32				aid;
-	s32				act_no;
+	s32				ability_id;
 	s32				bonus;
-	struct BtlWork *work;
+	struct BattleWork *work;
 	s32				half;
 	s32				adj;
 	s32				dealt;
@@ -6236,14 +6236,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	s32				skip;
 	s32				type;
 	s32				aff;
-	struct BtlUnit *bak;
-	s32				pow;
+	struct BattleUnit *bak;
+	s32				power;
 	s32				hp;
 	s32				rate;
 	s16			   *cmd;
 	s32				tid;
-	s32				elm;
-	struct BtlUnit *target;
+	s32				element;
+	struct BattleUnit *target;
 	u32				n;
 	s32				value;
 	s32				dmg;
@@ -6257,31 +6257,31 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 	// 変化量の計算用に、対象の状態を保存する
 	bonus = 0;
-	work = BtlWk;
+	work = gBattleWork;
 	half = 0;
 	dealt = 0;
 	crush = 0;
 	skip = 0;
 	aff = 0;
-	size = sizeof(struct BtlUnit);
+	size = sizeof(struct BattleUnit);
 	bak = MemAlloc(size);
 
 	aid = plan->aid;
-	tid = plan->tgt_no[slot];
-	act_no = plan->act_no;
-	elm = plan->elm;
-	adj = plan->tgt_adj[slot];
-	crit = plan->tgt_crit[slot];
+	tid = plan->target_ids[slot];
+	ability_id = plan->ability_id;
+	element = plan->element;
+	adj = plan->target_adj[slot];
+	crit = plan->target_crit[slot];
 
-	action = BtlActGet(act_no);
+	action = BattleActGet(ability_id);
 	actor = UnitGetFar(aid);
 	target = UnitGetFar(tid);
 	Iwram_CopyWords(bak, target, size);
 
 	// 範囲内での距離と属性の相性
-	if (action->rng != 255)
+	if (action->range != 255)
 	{
-		dist = plan->tgt_dist[slot];
+		dist = plan->target_dist[slot];
 		if (dist < 0)
 			dist = -dist;
 	}
@@ -6290,119 +6290,119 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		dist = 0;
 	}
 
-	if (elm != 4)
+	if (element != 4)
 	{
 		s32 i;
 
-		value = target->base_elm[elm].res;
-		for (i = 0; i < 4 && value >= target->base_elm[i].res; i++)
+		value = target->base_element[element].res;
+		for (i = 0; i < 4 && value >= target->base_element[i].res; i++)
 			;
 		if (i == 4)
 			aff = -1;
 
-		for (i = 0; i < 4 && value <= target->base_elm[i].res; i++)
+		for (i = 0; i < 4 && value <= target->base_element[i].res; i++)
 			;
 		if (i == 4)
 			aff = 1;
 	}
 
-	if (plan->elm >= 0 && plan->elm <= 3 && plan->cmd != 2)
-		pow = actor->elm[plan->elm].pow;
+	if (plan->element >= 0 && plan->element <= 3 && plan->cmd != 2)
+		power = actor->element[plan->element].power;
 	else
-		pow = 100;
+		power = 100;
 	cmd = &plan->cmd;
 
-	if (plan->cmd == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0)
+	if (plan->cmd == 5 && (plan->element >= 0 && plan->element <= 3) && aff > 0)
 	{
 		s32 chance;
 
-		chance = pow - target->elm[plan->elm].res;
+		chance = power - target->element[plan->element].res;
 		chance += 30;
 		chance *= 65536 / 100;
-		if (chance > (BtlRndFar() & 0xffff))
-			BtlEvPush(BEV_SCR, 5);
+		if (chance > (BattleRandomFar() & 0xffff))
+			BattleEvPush(BATTLE_EVENT_SCR, 5);
 	}
 
 	// 命中判定と、効果に応じた事前処理
-	type = action->tgt_flg & 15;
+	type = action->target_flag & 15;
 	{
 		s32 res;
 
-		res = plan->tgt_hit[slot];
+		res = plan->target_hit[slot];
 		if (res == -1)
-			hit = BtlHitChk(aid, tid, elm, action->efx, HitTbl[dist]);
+			hit = BattleHitCheck(aid, tid, element, action->effect, HitTable[dist]);
 		else
 			hit = res;
 	}
-	if (action->efx == 50 || action->efx == 51)
+	if (action->effect == 50 || action->effect == 51)
 	{ /* なかまをよぶ */
 		s32 cls;
 		s32 ent;
 
 		cls = actor->class_id;
-		ent = EnmSlotGet();
-		if (action->efx == 51)
-			cls = BtlGrpRnd(work->enm_grp);
-		if (hit != 0 && EnmChk(cls) != 0 && ent >= 0)
+		ent = EnemySlotGet();
+		if (action->effect == 51)
+			cls = BattleGroupRandom(work->enemy_group);
+		if (hit != 0 && EnemyCheck(cls) != 0 && ent >= 0)
 		{
 			s32 chg;
 
-			chg = EnmCntDec(cls, 1);
+			chg = EnemyCountDecrement(cls, 1);
 			if (chg & 0x8000)
-				EnmCntClr(cls);
-			BtlUnitSetFar(ent, cls, chg & 0x7fff);
+				EnemyCountClear(cls);
+			BattleUnitSetFar(ent, cls, chg & 0x7fff);
 			{
 				s32 i;
 
 				for (i = 0; i < 6; i++)
 				{
-					if (work->enm_no[i] == 254)
+					if (work->enemy_ids[i] == 254)
 					{
-						work->enm_no[i] = ent;
+						work->enemy_ids[i] = ent;
 						break;
 					}
-					if (work->enm_no[i] == 255)
+					if (work->enemy_ids[i] == 255)
 					{
-						work->enm_no[i] = ent;
-						work->enm_no[i + 1] = 255;
+						work->enemy_ids[i] = ent;
+						work->enemy_ids[i + 1] = 255;
 						break;
 					}
 				}
 			}
-			EnmUpd();
+			EnemyUpdate();
 			{
-				struct BtlObj *obj;
+				struct BattleObj *obj;
 
-				obj = BtlObjGet(ent);
-				BtlObjMake(obj, ent, obj->anchor_x / 0x10000, obj->anchor_z / 0x10000);
+				obj = BattleObjGet(ent);
+				BattleObjMake(obj, ent, obj->anchor_x / 0x10000, obj->anchor_z / 0x10000);
 			}
-			BtlObjPut();
+			BattleObjPut();
 			{
 				s32 num;
 
-				num = BtlEnmList(list);
+				num = BattleEnemyList(list);
 				for (cnt = 0; cnt < num; cnt++)
 					ObjMotRst((u16)list[cnt]);
 			}
-			BtlEvPush(BEV_UNIT, ent);
-			if (act_no != 503)
-				MES_PUSH(MsgAppears);
+			BattleEvPush(BATTLE_EVENT_UNIT, ent);
+			if (ability_id != 503)
+				MESSAGE_PUSH(MsgAppears);
 			else
-				MES_PUSH(MsgSplitOff);
+				MESSAGE_PUSH(MsgSplitOff);
 		}
-		else if (act_no == 503)
+		else if (ability_id == 503)
 		{
-			MES_PUSH(MsgSplitFail);
+			MESSAGE_PUSH(MsgSplitFail);
 		}
 		else
 		{
-			MES_PUSH(MsgNoOneCame);
+			MESSAGE_PUSH(MsgNoOneCame);
 		}
 	}
 
 	if (hit != 0)
 	{
-		if (action->efx == 53)
+		if (action->effect == 53)
 		{
 			hit = 0;
 			for (n = 0; n < 20; n++)
@@ -6414,24 +6414,24 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				}
 			}
 		}
-		else if (action->efx == 35)
+		else if (action->effect == 35)
 		{
 			half = 1;
 		}
-		else if (action->efx == 34)
+		else if (action->effect == 34)
 		{
 			crush = 1;
 		}
-		else if (action->efx == 27)
+		else if (action->effect == 27)
 		{
 			skip = 1;
 		}
-		else if (action->efx == 55)
+		else if (action->effect == 55)
 		{
 			if (actor->hp != 0)
-				BtlEvPush(BEV_OBJ_EFX, aid);
+				BattleEvPush(BATTLE_EVENT_OBJ_EFFECT, aid);
 		}
-		else if (action->efx == 32)
+		else if (action->effect == 32)
 		{
 			if (target->pp != 0)
 				type = 10;
@@ -6443,7 +6443,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	//------------------------------------------------------------------
 	// ダメージ・回復
 	//------------------------------------------------------------------
-	if (skip == 0 && (target->hp != 0 || BtlEfxRevChkFar(action->efx) != 0))
+	if (skip == 0 && (target->hp != 0 || BattleEffectRevCheckFar(action->effect) != 0))
 	{
 		s32 pp;
 		s32 cur;
@@ -6464,14 +6464,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			pass = 1;
 			do
 			{
-				ELM_BONUS();
+				ELEMENT_BONUS();
 				if (pass == 0)
 					bonus = 0;
-				ap = action->pow;
+				ap = action->power;
 				if (type == 4)
-					dmg = BtlAtkCalc(actor->atk, scale, 0, bonus) * ap / 10;
+					dmg = BattleAtkCalc(actor->atk, scale, 0, bonus) * ap / 10;
 				else
-					dmg = BtlAtkCalc(actor->atk, scale, ap, bonus);
+					dmg = BattleAtkCalc(actor->atk, scale, ap, bonus);
 				dmg *= adj;
 				if (crit != 0)
 				{
@@ -6482,18 +6482,18 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 					dmg += (target->level / 5) + 6;
 					if (pass == 0)
 					{
-						BtlEvPush(BEV_MARK, 0);
+						BattleEvPush(BATTLE_EVENT_MARK, 0);
 						{
-							s32 mes;
+							s32 message;
 
-							mes = MsgCritical;
-							if (ALLY_CHK(tid))
-								mes += 1;
-							BtlEvPush(BEV_MES_ADD, mes);
+							message = MsgCritical;
+							if (ALLY_CHECK(tid))
+								message += 1;
+							BattleEvPush(BATTLE_EVENT_MESSAGE_ADD, message);
 						}
 					}
 				}
-				dmg += BtlRndFar() & 3;
+				dmg += BattleRandomFar() & 3;
 				GUARD_CUT();
 				if (dmg <= 0)
 					dmg = 1;
@@ -6513,20 +6513,20 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				pass++;
 			} while (pass <= 1);
 			hp -= dmg;
-			BtlEvPush(BEV_OBJ_BGN, tid);
-			BtlEvPush(BEV_UNIT, tid);
-			BtlEvPush(BEV_NUM, dmg);
-			MES_PUSH((ALLY_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			BattleEvPush(BATTLE_EVENT_NUM, dmg);
+			MESSAGE_PUSH((ALLY_CHECK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 
 			if (hp <= 0)
 			{
-				BtlEvPush(BEV_OBJ_RES, tid);
-				BtlEvPush(BEV_UNIT, tid);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 				hp = 0;
-				MES_SIDE(MsgGoesDown, MsgFelled);
+				MESSAGE_SIDE(MsgGoesDown, MsgFelled);
 			}
 			else
-				BtlEvPush(BEV_OBJ_END, tid);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 			dealt = target->hp - hp;
 			target->hp = hp;
 			UnitRatioFar(tid);
@@ -6535,26 +6535,26 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 		case 10: /* PPダメージ */
 		{
-			if (action->pow == 0)
+			if (action->power == 0)
 				break;
 			pp = target->pp;
-			ELM_BONUS();
-			ap = action->pow;
-			dmg = BtlPowCalc(ap, bonus, 256);
-			dmg = dmg * PpLossTbl[dist] / 100;
+			ELEMENT_BONUS();
+			ap = action->power;
+			dmg = BattlePowerCalc(ap, bonus, 256);
+			dmg = dmg * PpLossTable[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
-			if (action->efx == 32 && dmg > pp)
+			if (action->effect == 32 && dmg > pp)
 				dmg = pp;
 
-			BtlEvPush(BEV_OBJ_BGN, tid);
-			BtlEvPush(BEV_NUM, dmg);
-			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(ALLY_CHK(tid) ? MsgPpLossP : MsgPpLossE);
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
+			BattleEvPush(BATTLE_EVENT_NUM, dmg);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgPpLossP : MsgPpLossE);
 			pp -= dmg;
 			if (pp <= 0)
 				pp = 0;
-			BtlEvPush(BEV_OBJ_END, tid);
+			BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 			dealt = target->pp - pp;
 			target->pp = pp;
 			UnitRatioFar(tid);
@@ -6563,28 +6563,28 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 		case 1: /* HPかいふく */
 		{
-			if (action->pow == 0)
+			if (action->power == 0)
 				break;
 			cur = target->hp;
 
-			ap = action->pow;
-			dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
-			dmg = dmg * HpRcvTbl[dist] / 100;
+			ap = action->power;
+			dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
+			dmg = dmg * HpRecoveryTable[dist] / 100;
 			dmg *= adj;
-			dmg += BtlRndFar() & 3;
+			dmg += BattleRandomFar() & 3;
 			cur += dmg;
 			if (cur > target->max_hp)
 			{
 				cur = target->max_hp;
 				dmg = cur - target->hp;
 			}
-			BtlEvPush(BEV_UNIT, tid);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			if (cur == target->max_hp)
-				MES_PUSH(MsgHpFull);
+				MESSAGE_PUSH(MsgHpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, dmg);
-				MES_PUSH(MsgHpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, dmg);
+				MESSAGE_PUSH(MsgHpRecover);
 			}
 			dealt = target->hp - cur;
 			target->hp = cur;
@@ -6594,23 +6594,23 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 		case -1:
 		{
-			if (action->pow == 0)
+			if (action->power == 0)
 				break;
 			pp = target->pp;
-			ELM_BONUS();
-			ap = action->pow;
-			dmg = BtlPowCalc(ap, bonus, 256);
-			dmg = dmg * PpDmgTbl[dist] / 100;
+			ELEMENT_BONUS();
+			ap = action->power;
+			dmg = BattlePowerCalc(ap, bonus, 256);
+			dmg = dmg * PpDmgTable[dist] / 100;
 			dmg *= adj;
 			GUARD_CUT();
-			BtlEvPush(BEV_OBJ_BGN, tid);
-			BtlEvPush(BEV_NUM, dmg);
-			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(ALLY_CHK(tid) ? MsgDmgP : MsgDmgE);
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
+			BattleEvPush(BATTLE_EVENT_NUM, dmg);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgDmgP : MsgDmgE);
 			pp -= dmg;
 			if (pp <= 0)
 				pp = 0;
-			BtlEvPush(BEV_OBJ_END, tid);
+			BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 			target->pp = pp;
 			UnitRatioFar(tid);
 			break;
@@ -6622,21 +6622,21 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		{
 			s32 round;
 
-			if (action->pow == 0)
+			if (action->power == 0)
 				break;
 			cur = target->hp;
 			round = 1;
 			do
 			{
-				ELM_BONUS();
+				ELEMENT_BONUS();
 				if (round == 0)
 					bonus = 0;
-				ap = action->pow;
+				ap = action->power;
 				if (*cmd == 6)
 				{
 					s32 item;
 
-					item = act_no - 380;
+					item = ability_id - 380;
 					if (item >= 0 && item <= 21)
 					{
 						switch (item)
@@ -6669,21 +6669,21 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 					}
 					ap += target->max_hp * rate / 100;
 				}
-				dmg = BtlPowCalc(ap, bonus, 256);
+				dmg = BattlePowerCalc(ap, bonus, 256);
 				dmg *= adj;
 				switch (type & 15)
 				{
 				case 5:
-					dmg = HpDmgTbl5[dist] * dmg / 100;
+					dmg = HpDmgTable5[dist] * dmg / 100;
 					break;
 				case 8:
-					dmg = dmg * HpDmgTbl8[dist] / 100;
+					dmg = dmg * HpDmgTable8[dist] / 100;
 					break;
 				case 6:
-					dmg = dmg * HpDmgTbl6[dist] / 100;
+					dmg = dmg * HpDmgTable6[dist] / 100;
 					break;
 				}
-				dmg += BtlRndFar() & 3;
+				dmg += BattleRandomFar() & 3;
 				GUARD_CUT();
 				if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg)
 				{
@@ -6691,21 +6691,21 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				}
 				round++;
 			} while (round <= 1);
-			BtlEvPush(BEV_OBJ_BGN, tid);
-			BtlEvPush(BEV_NUM, dmg);
-			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH((ALLY_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
+			BattleEvPush(BATTLE_EVENT_NUM, dmg);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			MESSAGE_PUSH((ALLY_CHECK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 			cur -= dmg;
 
 			if (cur <= 0)
 			{
-				BtlEvPush(BEV_OBJ_RES, tid);
-				BtlEvPush(BEV_UNIT, tid);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 				cur = 0;
-				MES_PUSH(ALLY_CHK(tid) ? MsgGoesDown : MsgFelled);
+				MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgGoesDown : MsgFelled);
 			}
 			else
-				BtlEvPush(BEV_OBJ_END, tid);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 			dealt = target->hp - cur;
 			target->hp = cur;
 			UnitRatioFar(tid);
@@ -6714,12 +6714,12 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 		case 11: /* PPかいふく */
 		{
-			if (action->pow == 0)
+			if (action->power == 0)
 				break;
 			pp = target->pp;
-			ap = action->pow;
-			dmg = BtlRcvCalc(ap, elm == 4 ? 100 : pow, 256);
-			dmg = dmg * PpRcvTbl[dist] / 100;
+			ap = action->power;
+			dmg = BattleRecoveryCalc(ap, element == 4 ? 100 : power, 256);
+			dmg = dmg * PpRecoveryTable[dist] / 100;
 			dmg *= adj;
 			pp += dmg;
 			if (pp > target->max_pp)
@@ -6727,13 +6727,13 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				pp = target->max_pp;
 				dmg = pp - target->pp;
 			}
-			BtlEvPush(BEV_UNIT, tid);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			if (pp == target->max_pp)
-				MES_PUSH(MsgPpFull);
+				MESSAGE_PUSH(MsgPpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, dmg);
-				MES_PUSH(MsgPpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, dmg);
+				MESSAGE_PUSH(MsgPpRecover);
 			}
 			target->pp = pp;
 			UnitRatioFar(tid);
@@ -6748,38 +6748,38 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		case 2:
 			if (hit != 0)
 			{
-				if (action->pow == 0)
+				if (action->power == 0)
 					break;
 				cur = target->hp;
-				ELM_BONUS();
-				ap = action->pow;
-				dmg = BtlPowCalc(ap, bonus, 256);
+				ELEMENT_BONUS();
+				ap = action->power;
+				dmg = BattlePowerCalc(ap, bonus, 256);
 				dmg *= adj;
-				dmg = dmg * HpDmgTbl[dist] / 100;
+				dmg = dmg * HpDmgTable[dist] / 100;
 				GUARD_CUT();
-				BtlEvPush(BEV_OBJ_BGN, tid);
-				BtlEvPush(BEV_NUM, dmg);
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(ALLY_CHK(tid) ? MsgDmgP : MsgDmgE);
+				BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, tid);
+				BattleEvPush(BATTLE_EVENT_NUM, dmg);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(ALLY_CHECK(tid) ? MsgDmgP : MsgDmgE);
 				cur -= dmg;
 
 				if (cur <= 0)
 				{
-					BtlEvPush(BEV_OBJ_RES, tid);
-					BtlEvPush(BEV_UNIT, tid);
+					BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
+					BattleEvPush(BATTLE_EVENT_UNIT, tid);
 					cur = 0;
-					MES_SIDE(MsgGoesDown, MsgFelled);
+					MESSAGE_SIDE(MsgGoesDown, MsgFelled);
 				}
 				else
-					BtlEvPush(BEV_OBJ_END, tid);
+					BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 				dealt = target->hp - cur;
 				target->hp = cur;
 				UnitRatioFar(tid);
 				break;
 			}
-			BtlEvPush(BEV_OBJ_END, tid);
-			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(MsgNoEffect);
+			BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			MESSAGE_PUSH(MsgNoEffect);
 			break;
 		}
 	}
@@ -6787,83 +6787,83 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	//------------------------------------------------------------------
 	// 状態異常・能力変化などの追加効果
 	//------------------------------------------------------------------
-	BtlEvPush(BEV_UNIT, tid);
-	if ((BtlEfxRevChkFar(action->efx) != 0 || target->hp != 0 || BtlEfxDeadChk(action->efx) != 0)
+	BattleEvPush(BATTLE_EVENT_UNIT, tid);
+	if ((BattleEffectRevCheckFar(action->effect) != 0 || target->hp != 0 || BattleEffectDeadCheck(action->effect) != 0)
 		&& hit != 0)
 	{
-		switch (action->efx)
+		switch (action->effect)
 		{
 
 		case 64: /* 状態異常をすべてなおす */
 			if (target->delusion != 0)
 			{
 				target->delusion = 0;
-				MES_PUSH(MsgCureDelusion);
-				BtlEvPush(BEV_UNIT, tid);
+				MESSAGE_PUSH(MsgCureDelusion);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			}
 			if (target->stun != 0)
 			{
 				target->stun = 0;
-				BtlEvPush(BEV_CLR, 0);
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MsgCureStun);
+				BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(MsgCureStun);
 			}
 			target->sleep = 0;
 			if (target->psy_seal != 0)
 			{
 				target->psy_seal = 0;
-				MES_PUSH(MsgCureSeal);
-				BtlEvPush(BEV_UNIT, tid);
+				MESSAGE_PUSH(MsgCureSeal);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			}
 			if (target->grim_reaper != 0)
 			{
 				target->grim_reaper = 0;
-				MES_PUSH(MsgCureCurse);
-				BtlEvPush(BEV_UNIT, tid);
+				MESSAGE_PUSH(MsgCureCurse);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			}
 			if (target->haunt != 0)
 			{
 				target->haunt = 0;
-				MES_PUSH(MsgCureSpirit);
-				BtlEvPush(BEV_UNIT, tid);
+				MESSAGE_PUSH(MsgCureSpirit);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
 			}
 			if (target->poison != 0)
 			{
-				MES_PUSH(MsgCurePoison);
+				MESSAGE_PUSH(MsgCurePoison);
 				target->poison = 0;
 			}
-			BtlEvPush(BEV_CLR, 0);
+			BattleEvPush(BATTLE_EVENT_CLEAR, 0);
 			break;
 
 		case 4: /* 状態異常をなおす */
 			if (target->delusion != 0)
 			{
 				target->delusion = 0;
-				BtlEvPush(BEV_CLR, 0);
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MsgCureDelusion);
+				BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(MsgCureDelusion);
 			}
 			if (target->stun != 0)
 			{
 				target->stun = 0;
-				BtlEvPush(BEV_CLR, 0);
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MsgCureStun);
+				BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(MsgCureStun);
 			}
 			target->sleep = 0;
 			if (target->psy_seal != 0)
 			{
 				target->psy_seal = 0;
-				BtlEvPush(BEV_CLR, 0);
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MsgCureSeal);
+				BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(MsgCureSeal);
 			}
 			if (target->grim_reaper == 0)
 				break;
 			target->grim_reaper = 0;
-			BtlEvPush(BEV_CLR, 0);
-			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH(MsgCureCurse);
+			BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+			BattleEvPush(BATTLE_EVENT_UNIT, tid);
+			MESSAGE_PUSH(MsgCureCurse);
 			break;
 
 		case 61: /* HPかいふく */
@@ -6882,7 +6882,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			pt--;
 			maxu = *pt--;
 			maxv = *(s16 *)(pt + 1);
-			if (action->efx == 61)
+			if (action->effect == 61)
 				heal += maxv * 60 / 100;
 			else
 				heal += maxv * 30 / 100;
@@ -6892,11 +6892,11 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			if (tmp == 0 && type != 1)
 				break;
 			if (heal == (s16)maxu)
-				MES_PUSH(MsgHpFull);
+				MESSAGE_PUSH(MsgHpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, tmp);
-				MES_PUSH(MsgHpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, tmp);
+				MESSAGE_PUSH(MsgHpRecover);
 			}
 			target->hp = heal;
 			UnitRatioFar(tid);
@@ -6919,11 +6919,11 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			if (tmp == 0 && type != 11)
 				break;
 			if (heal == maxv)
-				MES_PUSH(MsgPpFull);
+				MESSAGE_PUSH(MsgPpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, tmp);
-				MES_PUSH(MsgPpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, tmp);
+				MESSAGE_PUSH(MsgPpRecover);
 			}
 			target->pp = heal;
 			UnitRatioFar(tid);
@@ -6934,24 +6934,24 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->agi_lv = 8;
 			target->agi_cnt = 5;
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, target->agi - bak->agi);
-			MES_PUSH(MsgAgiUp);
+			BattleEvPush(BATTLE_EVENT_NUM, target->agi - bak->agi);
+			MESSAGE_PUSH(MsgAgiUp);
 			break;
 
 		case 58: /* すばやさダウン */
 			target->agi_lv = -4;
 			target->agi_cnt = 5;
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, bak->agi - target->agi);
-			MES_PUSH(MsgAgiDown);
+			BattleEvPush(BATTLE_EVENT_NUM, bak->agi - target->agi);
+			MESSAGE_PUSH(MsgAgiDown);
 			break;
 
 		case 9: /* こうげき下がる */
 			target->atk_lv -= 1;
 			STEP_LIM(target->atk_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, bak->atk - target->atk);
-			MES_PUSH(MsgAtkDown);
+			BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
+			MESSAGE_PUSH(MsgAtkDown);
 			target->atk_cnt = 7;
 			break;
 
@@ -6959,8 +6959,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->atk_lv -= 2;
 			STEP_LIM(target->atk_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, bak->atk - target->atk);
-			MES_PUSH(MsgAtkDown);
+			BattleEvPush(BATTLE_EVENT_NUM, bak->atk - target->atk);
+			MESSAGE_PUSH(MsgAtkDown);
 			target->atk_cnt = 7;
 			break;
 
@@ -6968,8 +6968,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->atk_lv += 1;
 			STEP_LIM(target->atk_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, target->atk - bak->atk);
-			MES_PUSH(MsgAtkUp);
+			BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
+			MESSAGE_PUSH(MsgAtkUp);
 			target->atk_cnt = 7;
 			break;
 
@@ -6977,8 +6977,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->atk_lv += 2;
 			STEP_LIM(target->atk_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, target->atk - bak->atk);
-			MES_PUSH(MsgAtkUp);
+			BattleEvPush(BATTLE_EVENT_NUM, target->atk - bak->atk);
+			MESSAGE_PUSH(MsgAtkUp);
 			target->atk_cnt = 7;
 			break;
 
@@ -6986,8 +6986,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->def_lv -= 1;
 			STEP_LIM(target->def_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, bak->def - target->def);
-			MES_PUSH(MsgDefDown);
+			BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
+			MESSAGE_PUSH(MsgDefDown);
 			target->def_cnt = 7;
 			break;
 
@@ -6995,8 +6995,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->def_lv -= 2;
 			STEP_LIM(target->def_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, bak->def - target->def);
-			MES_PUSH(MsgDefDown);
+			BattleEvPush(BATTLE_EVENT_NUM, bak->def - target->def);
+			MESSAGE_PUSH(MsgDefDown);
 			target->def_cnt = 7;
 			break;
 
@@ -7004,8 +7004,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->def_lv += 1;
 			STEP_LIM(target->def_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, target->def - bak->def);
-			MES_PUSH(MsgDefUp);
+			BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
+			MESSAGE_PUSH(MsgDefUp);
 			target->def_cnt = 7;
 			break;
 
@@ -7013,15 +7013,15 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			target->def_lv += 2;
 			STEP_LIM(target->def_lv);
 			UnitCalcFar(tid);
-			BtlEvPush(BEV_NUM, target->def - bak->def);
-			MES_PUSH(MsgDefUp);
+			BattleEvPush(BATTLE_EVENT_NUM, target->def - bak->def);
+			MESSAGE_PUSH(MsgDefUp);
 			target->def_cnt = 7;
 			break;
 
 		case 5: /* ふっき */
 			if (target->hp != 0)
 				break;
-			MES_PUSH(MsgRevived);
+			MESSAGE_PUSH(MsgRevived);
 			target->hp = target->max_hp;
 			UnitRatioFar(tid);
 			break;
@@ -7029,7 +7029,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		case 56: /* ふっき */
 			if (target->hp != 0)
 				break;
-			MES_PUSH(MsgRevived);
+			MESSAGE_PUSH(MsgRevived);
 			target->hp = target->max_hp / 2;
 			UnitRatioFar(tid);
 			break;
@@ -7037,14 +7037,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		case 57: /* ふっき */
 			if (target->hp != 0)
 				break;
-			MES_PUSH(MsgRevived);
+			MESSAGE_PUSH(MsgRevived);
 			target->hp = target->max_hp * 8 / 10;
 			UnitRatioFar(tid);
 			break;
 
 		case 3: /* 毒がきえる */
 			if (target->poison != 0)
-				MES_PUSH(MsgCurePoison);
+				MESSAGE_PUSH(MsgCurePoison);
 			target->poison = 0;
 			break;
 
@@ -7067,14 +7067,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 		case 18: /* 毒 */
 			if (target->poison != 0)
 				break;
-			MES_PUSH(MsgPoisoned);
+			MESSAGE_PUSH(MsgPoisoned);
 			target->poison = 1;
 			break;
 
 		case 19: /* もう毒 */
 			if (target->poison > 1)
 				break;
-			MES_PUSH(MsgVenom);
+			MESSAGE_PUSH(MsgVenom);
 			target->poison = 2;
 			break;
 
@@ -7099,23 +7099,23 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			break;
 
 		case 25: /* エナジーふうじ */
-			MES_SIDE(MsgPsyBlock, MsgPsySeal);
+			MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
 			target->psy_seal |= 7;
 			break;
 
 		case 67: /* エナジーふうじ */
-			MES_SIDE(MsgPsyBlock, MsgPsySeal);
+			MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
 			target->psy_seal |= 16;
 			break;
 
 		case 27: /* せんとうふのう */
-			BtlEvPush(BEV_OBJ_RES, tid);
+			BattleEvPush(BATTLE_EVENT_OBJ_RESET, tid);
 			if (target->side == ALLY)
-				MES_PUSH(MsgKoDown);
-			else if (act_no == 219)
-				MES_PUSH(MsgSuffocate);
+				MESSAGE_PUSH(MsgKoDown);
+			else if (ability_id == 219)
+				MESSAGE_PUSH(MsgSuffocate);
 			else
-				MES_PUSH(MsgSpiritDrain);
+				MESSAGE_PUSH(MsgSpiritDrain);
 			target->hp = 0;
 			UnitRatioFar(tid);
 			break;
@@ -7135,7 +7135,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 
 			heal = actor->hp;
 			dmg = dealt;
-			if (action->efx == 60)
+			if (action->effect == 60)
 				dmg /= 2;
 			heal += dmg;
 			if (heal > actor->max_hp)
@@ -7143,14 +7143,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				heal = actor->max_hp;
 				dmg = heal - actor->hp;
 			}
-			BtlEvPush(BEV_CLR, 0);
-			BtlEvPush(BEV_UNIT, aid);
+			BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+			BattleEvPush(BATTLE_EVENT_UNIT, aid);
 			if (heal == actor->max_hp)
-				MES_PUSH(MsgHpFull);
+				MESSAGE_PUSH(MsgHpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, dmg);
-				MES_PUSH(MsgHpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, dmg);
+				MESSAGE_PUSH(MsgHpRecover);
 			}
 			actor->hp = heal;
 			UnitRatioFar(aid);
@@ -7170,14 +7170,14 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				heal = actor->max_pp;
 				amt = heal - actor->pp;
 			}
-			BtlEvPush(BEV_CLR, 0);
-			BtlEvPush(BEV_UNIT, aid);
+			BattleEvPush(BATTLE_EVENT_CLEAR, 0);
+			BattleEvPush(BATTLE_EVENT_UNIT, aid);
 			if (heal == actor->max_pp)
-				MES_PUSH(MsgPpFull);
+				MESSAGE_PUSH(MsgPpFull);
 			else
 			{
-				BtlEvPush(BEV_NUM, amt);
-				MES_PUSH(MsgPpRecover);
+				BattleEvPush(BATTLE_EVENT_NUM, amt);
+				MESSAGE_PUSH(MsgPpRecover);
 			}
 			actor->pp = heal;
 			UnitRatioFar(aid);
@@ -7192,8 +7192,8 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 				dmg = actor->max_pp - actor->pp;
 			if (dmg == 0)
 				break;
-			BtlEvPush(BEV_NUM, dmg);
-			MES_SIDE(MsgLeechTake, MsgLeechGain);
+			BattleEvPush(BATTLE_EVENT_NUM, dmg);
+			MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
 			UnitPpAddFar(aid, dmg);
 			break;
 
@@ -7215,65 +7215,65 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			}
 			if (target->agi_lv > 0)
 				target->agi_lv = 0;
-			target->elm_lv[0] = 0;
-			target->elm_lv[1] = 0;
-			target->elm_lv[2] = 0;
-			target->elm_lv[3] = 0;
-			MES_PUSH(MsgBuffsReset);
+			target->element_levels[0] = 0;
+			target->element_levels[1] = 0;
+			target->element_levels[2] = 0;
+			target->element_levels[3] = 0;
+			MESSAGE_PUSH(MsgBuffsReset);
 			break;
 
 		case 26: /* あくりょう */
-			MES_PUSH(MsgEvilSpirit);
+			MESSAGE_PUSH(MsgEvilSpirit);
 			target->haunt = 1;
 			break;
 
 		case 28: /* しりょう */
 			if (target->grim_reaper == 0)
 			{
-				MES_PUSH(MsgDeathCurse);
+				MESSAGE_PUSH(MsgDeathCurse);
 				target->grim_reaper = 7;
 				break;
 			}
 			if (target->grim_reaper <= 1)
 				break;
 			target->grim_reaper -= 1;
-			BtlEvPush(BEV_NUM, target->grim_reaper);
-			MES_PUSH(MsgDeathCount);
+			BattleEvPush(BATTLE_EVENT_NUM, target->grim_reaper);
+			MESSAGE_PUSH(MsgDeathCount);
 			break;
 
 		case 66: /* そなえ */
-			MES_PUSH(MsgReadies);
+			MESSAGE_PUSH(MsgReadies);
 			target->ready = 2;
 			break;
 
 		case 54: /* ちょうはつ */
-			MES_PUSH(MsgChallenge);
+			MESSAGE_PUSH(MsgChallenge);
 			target->challenge = 1;
-			if (ALLY_CHK(tid))
-				work->challenge_flg |= 2;
+			if (ALLY_CHECK(tid))
+				work->challenge_flag |= 2;
 			break;
 
 		case 53: /* みうごき */
-			MES_PUSH(MsgImmobile);
+			MESSAGE_PUSH(MsgImmobile);
 			target->immobile = 1;
 			break;
 
 		case 46: /* まもりのオーラ */
-			MES_PUSH(MsgAura);
+			MESSAGE_PUSH(MsgAura);
 			if (target->guard_lv > 0)
 				break;
 			target->guard_lv = 1;
 			break;
 
 		case 47: /* まもりのオーラ */
-			MES_PUSH(MsgAura2);
+			MESSAGE_PUSH(MsgAura2);
 			if (target->guard_lv > 1)
 				break;
 			target->guard_lv = 2;
 			break;
 
 		case 45:
-			BtlEvPush(BEV_MES, -1);
+			BattleEvPush(BATTLE_EVENT_MESSAGE, -1);
 			break;
 
 		default:
@@ -7284,25 +7284,25 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 	//------------------------------------------------------------------
 	// ダメージによる目覚めと、能力・表示の更新
 	//------------------------------------------------------------------
-	BtlEvPush(BEV_CLR, 0);
+	BattleEvPush(BATTLE_EVENT_CLEAR, 0);
 
 	if (target->hp != 0)
 	{
 		if (target->sleep != 0)
-			if (target->sleep <= 6 && dealt > 0 && (3 & BtlRndFar()) == 0)
+			if (target->sleep <= 6 && dealt > 0 && (3 & BattleRandomFar()) == 0)
 			{
 				target->sleep = 0;
-				BtlEvPush(BEV_UNIT, tid);
-				MES_PUSH(MsgWakes);
+				BattleEvPush(BATTLE_EVENT_UNIT, tid);
+				MESSAGE_PUSH(MsgWakes);
 			}
 	}
 	MemFree(bak);
 	UnitCalcFar(tid);
-	PtyStDrawFar(BtlWk->pty_st);
+	PartyStatusDrawFar(gBattleWork->party_status);
 	if (target->hp != 0)
-		BtlEvPush(BEV_OBJ_END, tid);
+		BattleEvPush(BATTLE_EVENT_OBJ_END, tid);
 	// あくりょうによる反動を行動側に加算する
-	if (actor->haunt != 0 && (BtlRndFar() & 3) == 0 && dealt > 0)
+	if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && dealt > 0)
 	{
 		s32 share;
 
@@ -7319,15 +7319,15 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // PP を使うわざなら 1 を返す。エナジードレインは PP に関係なく 1
-// act_no : わざ番号
+// ability_id : わざ番号
 //--------------------------------------------------------------------------
-u32 Ability_CheckStatusOrSpecialId(s32 act_no)
+u32 Ability_CheckStatusOrSpecialId(s32 ability_id)
 {
 	u8 pp;
 
-	if (act_no == 126) // エナジードレイン
+	if (ability_id == 126) // エナジードレイン
 		return 1;
-	pp = BtlActGet(act_no)->pp_cost;
+	pp = BattleActGet(ability_id)->pp_cost;
 	return (u32)((0 - pp) | pp) >> 31; // pp が 0 でなければ 1
 }
 
@@ -7349,7 +7349,7 @@ u32 Ability_CheckStatusOrSpecialId(s32 act_no)
 #define ABILITY_ATTACK 1 // わざ番号：こうげき
 #define ALLY_MAX 7   // 仲間の番号の上限
 
-// 敵の行動の記録 (BtlUnit の rewards を使う)
+// 敵の行動の記録 (BattleUnit の rewards を使う)
 struct BattleAutomaticState
 {
 	unsigned initialized : 1;
@@ -7363,48 +7363,48 @@ struct BattleAutomaticState
 //--------------------------------------------------------------------------
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 {
-	u32							 sel;
+	u32							 selection;
 	struct BattleAutomaticState *memo;
-	struct EnemyDefinition		*enm;
+	struct EnemyDefinition		*enemy;
 	s32							 item_ok;
 	s32							 tries;
 	s32							 keep_going;
 	s8							*strategy;
 	u8							*item_mask;
 	s16							 cmd;
-	s32							 tgt;
-	s32							 tgt2;
+	s32							 target;
+	s32							 target2;
 	s32							 side;
 	s32							 side2;
 	struct ItemDefinition		*item;
 	s32							 use_item;
 	s8							 mode;
-	struct BtlAct				*item_act;
-	struct BtlAct				*act;
-	struct BtlUnit				*unit;
-	s32							 act_no;
-	s32							 tgt_flg;
-	u8							 efx;
-	u8							 tgt_mode;
+	struct BattleAct				*item_act;
+	struct BattleAct				*act;
+	struct BattleUnit				*unit;
+	s32							 ability_id;
+	s32							 target_flag;
+	u8							 effect;
+	u8							 target_mode;
 
 	// 0-255 の乱数で、重みの表から行動表の番号を引く
-	s32 WeightRnd(u8 * weights)
+	s32 WeightRandom(u8 * weights)
 	{
-		s32 rnd;
+		s32 random;
 		s32 total;
 		s32 no;
 		s32 n;
 
-		rnd = BtlRndFar() & 0xff;
+		random = BattleRandomFar() & 0xff;
 		total = weights[0];
 		no = 0;
 		n = 0;
-		if (rnd >= total)
+		if (random >= total)
 		{
 			while (++n <= 7)
 			{
 				total += weights[n];
-				if (rnd < total)
+				if (random < total)
 				{
 					no = n;
 					break;
@@ -7417,16 +7417,16 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	unit = UnitGetFar(req->unit_id);
 	keep_going = item_ok = 1;
 	tries = 0;
-	sel = -1U;
+	selection = -1U;
 	if (unit->class_index != 0) // 仲間は選ばない
 		return;
 	if (retry != 0 && req->command != CMD_ABILITY)
 		return;
 
-	enm = Owner_GetRecordFar(unit->class_id);
+	enemy = Owner_GetRecordFar(unit->class_id);
 	memo = (struct BattleAutomaticState *)&unit->rewards;
-	strategy = &enm->action_strategy;
-	item_mask = &enm->item_actions;
+	strategy = &enemy->action_strategy;
+	item_mask = &enemy->item_actions;
 
 	// 行動表の番号を選ぶ
 select_again:
@@ -7434,46 +7434,46 @@ select_again:
 	switch (mode)
 	{
 	case 0: // 重みの表から
-		sel = WeightRnd(BattleCommand_SelectionWeights[0]);
+		selection = WeightRandom(BattleCommand_SelectionWeights[0]);
 		break;
 	case 1:
-		sel = WeightRnd(BattleCommand_SelectionWeights[1]);
+		selection = WeightRandom(BattleCommand_SelectionWeights[1]);
 		break;
 	case 2:
-		sel = WeightRnd(BattleCommand_SelectionWeights[2]);
+		selection = WeightRandom(BattleCommand_SelectionWeights[2]);
 		break;
 	case 3: // 乱数で始め、順に進む
 		if (memo->initialized == 0)
 		{
-			memo->selection = BtlRndFar();
+			memo->selection = BattleRandomFar();
 			memo->initialized = 1;
 		}
 		// fall through
 	case 4: // 記録した番号から順に進む
-		sel = memo->selection;
+		selection = memo->selection;
 		if (retry != 0)
 		{
-			memo->selection = sel + 1;
+			memo->selection = selection + 1;
 		}
 		break;
 	case 5: // 選び直すたびに次へ
-		sel++;
+		selection++;
 		break;
 	case 6: // 選び直さない
 		break;
 	}
 
 	// アイテムを使う番号なら、持っている道具を確かめる
-	use_item = (*item_mask >> sel) & 1;
+	use_item = (*item_mask >> selection) & 1;
 	use_item &= item_ok;
-	act_no = enm->actions[sel];
+	ability_id = enemy->actions[selection];
 	req->command = CMD_ABILITY;
 	if (use_item != 0 && retry != 0)
 	{
 		if (!(0x1ff & unit->inventory[0]))
 		{
 			use_item = 0;
-			if (enm->target_strategy == 0)
+			if (enemy->target_strategy == 0)
 			{
 				req->command = CMD_ITEM;
 				req->parameter = 0x1fd;
@@ -7485,12 +7485,12 @@ select_again:
 			item = Item_GetDirectFar(unit->inventory[0]);
 			if (item->use_type == 1)
 			{
-				item_act = BtlActGet(item->action_id);
-				act_no = item->action_id;
+				item_act = BattleActGet(item->action_id);
+				ability_id = item->action_id;
 				req->command = CMD_ITEM;
-				tgt_flg = item_act->tgt_flg;
+				target_flag = item_act->target_flag;
 				req->parameter = 0;
-				switch (tgt_flg)
+				switch (target_flag)
 				{
 				case 1:
 				case 2:
@@ -7512,9 +7512,9 @@ select_again:
 	if (keep_going != 0)
 	{
 		// ぼうぎょ・にげるのわざは、自分を対象にする
-		act = BtlActGet(act_no);
-		efx = act->efx;
-		switch (efx)
+		act = BattleActGet(ability_id);
+		effect = act->effect;
+		switch (effect)
 		{
 		case 46:
 			req->command = CMD_DEFEND;
@@ -7544,13 +7544,13 @@ select_again:
 
 		// エナジーならPPとふうじを確かめる
 		// target_strategy が 0 でなければPP不足を、2 ならふうじも避ける
-		if (req->command != CMD_ITEM && Ability_CheckStatusOrSpecialId(act_no) != 0)
+		if (req->command != CMD_ITEM && Ability_CheckStatusOrSpecialId(ability_id) != 0)
 		{
 			req->command = CMD_PSYNERGY;
-			req->parameter = act_no;
-			if (act->pp_cost > unit->pp && enm->target_strategy != 0)
+			req->parameter = ability_id;
+			if (act->pp_cost > unit->pp && enemy->target_strategy != 0)
 				goto next_candidate;
-			if (unit->psy_seal != 0 && enm->target_strategy == 2)
+			if (unit->psy_seal != 0 && enemy->target_strategy == 2)
 				goto next_candidate;
 		}
 		cmd = req->command;
@@ -7561,44 +7561,44 @@ select_again:
 
 		if (cmd == CMD_ABILITY)
 		{
-			req->parameter = act_no;
-			if (act_no == ABILITY_ATTACK)
+			req->parameter = ability_id;
+			if (ability_id == ABILITY_ATTACK)
 				req->command = CMD_ATTACK;
 		}
 
 		// 対象を選ぶ
-		req->rng = act->rng;
-		tgt_mode = act->target_mode;
-		switch (tgt_mode)
+		req->range = act->range;
+		target_mode = act->target_mode;
+		switch (target_mode)
 		{
 		case 2:
 		case 4:
-			tgt = BattleTarget_SelectForAction(req->unit_id, act);
-			if (tgt == -2)
+			target = BattleTarget_SelectForAction(req->unit_id, act);
+			if (target == -2)
 			{
 				side = 0;
 				if (req->unit_id <= (u32)ALLY_MAX)
 					side = 1;
-				tgt = BattleTarget_SelectRandomPosition(side);
+				target = BattleTarget_SelectRandomPosition(side);
 			}
-			if (tgt != -1)
+			if (target != -1)
 			{
-				req->target = tgt;
+				req->target = target;
 				keep_going = 0;
 			}
 			break;
 		case 1:
-			tgt2 = BattleTarget_SelectForAction(req->unit_id, act);
-			if (tgt2 == -2)
+			target2 = BattleTarget_SelectForAction(req->unit_id, act);
+			if (target2 == -2)
 			{
 				side2 = 0;
 				if (req->unit_id <= (u32)ALLY_MAX)
 					side2 = 1;
-				tgt2 = BattleTarget_SelectRandomPosition(side2);
+				target2 = BattleTarget_SelectRandomPosition(side2);
 			}
-			if (tgt2 != -1)
+			if (target2 != -1)
 			{
-				req->target = tgt2;
+				req->target = target2;
 				keep_going = 0;
 			}
 			break;
@@ -7606,8 +7606,8 @@ select_again:
 			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
 			break;
 		default:
-			tgt2 = Battle_FindTaggedSlotByValue(req->unit_id);
-			req->target = tgt2;
+			target2 = Battle_FindTaggedSlotByValue(req->unit_id);
+			req->target = target2;
 			keep_going = 0;
 			break;
 		}
@@ -7647,7 +7647,7 @@ void BattleEventRuntime_BeginPhase(s32 cue)
 {
 	struct BattleEventState *ev;
 
-	ev = &BtlWk->events;
+	ev = &gBattleWork->events;
 	if (ev->phase == BATTLE_PLAYBACK_IDLE)
 	{
 		ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
@@ -7666,23 +7666,23 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 {
 	struct BattleEventState *ev;
 
-	ev = &BtlWk->events;
+	ev = &gBattleWork->events;
 	ev->queue.count = 0;
 	ev->event_index = 0;
 	ev->timer = frames;
 	ev->phase = BATTLE_PLAYBACK_DISPATCH;
-	BtlWk->plan.target_count = 0;
+	gBattleWork->plan.target_count = 0;
 	return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
 }
 
 //--------------------------------------------------------------------------
 // バトルイベントの再生
 //--------------------------------------------------------------------------
-#define PLAY_MES 3		// メッセージの表示を待つ
+#define PLAY_MESSAGE 3		// メッセージの表示を待つ
 #define PLAY_ADVANCE 5	// 送りのキーを待つ
 #define PLAY_HIT 10		// 当たった者を点滅させる
 #define PLAY_FELLED 11	// 倒れた敵を消す
-#define PLAY_MES_ADD 13 // 続きのメッセージ (キーを待たない)
+#define PLAY_MESSAGE_ADD 13 // 続きのメッセージ (キーを待たない)
 
 #define POSE_DAMAGE 5 // ダメージを受けたポーズ
 #define PAL_HIT 7	  // 点滅の色
@@ -7692,13 +7692,13 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
 #define OBJ_VRAM 0x06010000
 
 //--------------------------------------------------------------------------
-// スケジューラから呼ばれ、BtlTgtExec が積んだイベントを順に実行する
+// スケジューラから呼ばれ、BattleTargetExec が積んだイベントを順に実行する
 //--------------------------------------------------------------------------
 void BattleEvent_Playback(void)
 {
-	u16						 sel[8];
+	u16						 selection[8];
 	struct AnimationObject	*recs[4];
-	struct BtlWork			*work = BtlWk;
+	struct BattleWork			*work = gBattleWork;
 	struct BattleEventState *ev = &work->events;
 
 	// キャラのタイルを消す
@@ -7723,7 +7723,7 @@ void BattleEvent_Playback(void)
 				ev->queue.count = 0;
 				ev->event_index = 0;
 				ev->timer = 0;
-				BtlTgtExec(&work->plan, ev->queue.target_index);
+				BattleTargetExec(&work->plan, ev->queue.target_index);
 				ev->queue.target_index++;
 				ev->phase = BATTLE_PLAYBACK_DISPATCH;
 			}
@@ -7749,56 +7749,56 @@ void BattleEvent_Playback(void)
 					}
 					switch (ev->queue.opcodes[i])
 					{
-					case BEV_SE: // 効果音
+					case BATTLE_EVENT_SE: // 効果音
 						AudioCommand_PlayFar(ev->queue.operands[i]);
 						break;
-					case BEV_SCR:
+					case BATTLE_EVENT_SCR:
 						Battle_SetRuntimeFlagBit0(ev, ev->queue.operands[i]);
 						break;
-					case BEV_UNIT: // メッセージに入れる名前
+					case BATTLE_EVENT_UNIT: // メッセージに入れる名前
 						UiWork_PushValueSlotFar(ev->queue.operands[i], 1);
 						break;
-					case BEV_NUM: // メッセージに入れる数
+					case BATTLE_EVENT_NUM: // メッセージに入れる数
 						UiWork_PushValueSlotFar(ev->queue.operands[i], 5);
 						break;
-					case BEV_ITEM: // メッセージに入れるアイテム名
+					case BATTLE_EVENT_ITEM: // メッセージに入れるアイテム名
 						UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x1ff, 2);
 						break;
-					case BEV_ACT: // メッセージに入れるわざ名
+					case BATTLE_EVENT_ACT: // メッセージに入れるわざ名
 						UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x3fff, 4);
 						break;
-					case BEV_MARK:
+					case BATTLE_EVENT_MARK:
 						gBattleDisplayWork->marked = 1;
 						break;
-					case BEV_MES: // メッセージを出し、送りを待つ
+					case BATTLE_EVENT_MESSAGE: // メッセージを出し、送りを待つ
 						if ((s32)ev->queue.operands[i] >= 0)
 							UiText_PrepareMessageWorkFar(ev->queue.operands[i]);
-						ev->phase = PLAY_MES;
+						ev->phase = PLAY_MESSAGE;
 						gKeysPressedLatch = 0;
 						break;
-					case BEV_MES_ADD: // メッセージを出し、送りを待たない
+					case BATTLE_EVENT_MESSAGE_ADD: // メッセージを出し、送りを待たない
 						if ((s32)ev->queue.operands[i] >= 0)
 							UiText_PrepareMessageWorkFar(ev->queue.operands[i]);
-						ev->phase = PLAY_MES_ADD;
+						ev->phase = PLAY_MESSAGE_ADD;
 						break;
-					case BEV_CLR: // メッセージに入れたものを消す
+					case BATTLE_EVENT_CLEAR: // メッセージに入れたものを消す
 						UiWork_ClearValueNameTablesFar();
 						break;
-					case BEV_OBJ_EFX:
+					case BATTLE_EVENT_OBJ_EFFECT:
 						BattleActor_DestroyTemporaryObject(ev->queue.operands[i]);
 						break;
-					case BEV_OBJ_BGN: // 当たった
+					case BATTLE_EVENT_OBJ_BEGIN: // 当たった
 						if (ev->pending_cue > 0)
 							AudioCommand_PlayFar(ev->pending_cue);
 						ev->actor_id = ev->queue.operands[i];
 						ObjectDispatch_ApplyArgumentToChildrenFar(
-							BtlObjGet(ev->actor_id)->object, POSE_DAMAGE);
+							BattleObjGet(ev->actor_id)->object, POSE_DAMAGE);
 						ev->phase = PLAY_HIT;
 						ev->timer = 0;
 						break;
-					case BEV_OBJ_RES: // 倒れた
+					case BATTLE_EVENT_OBJ_RESET: // 倒れた
 					{
-						struct BtlUnit		   *unit;
+						struct BattleUnit		   *unit;
 						struct AnimationObject *rec;
 						s32						n;
 
@@ -7807,7 +7807,7 @@ void BattleEvent_Playback(void)
 						BattleActor_ResetRuntimeFields(ev->actor_id);
 						unit = UnitGetFar(ev->actor_id);
 						for (n = 0;
-							(rec = GetMotionRecord(BtlObjGet(ev->actor_id)->object, n)) != 0; n++)
+							(rec = GetMotionRecord(BattleObjGet(ev->actor_id)->object, n)) != 0; n++)
 						{
 							if (unit->side != BATTLE_UNIT_ENEMY)
 								AnimationObjects_SelectAnimationFar(rec, 4);
@@ -7821,16 +7821,16 @@ void BattleEvent_Playback(void)
 						}
 						break;
 					}
-					case BEV_REDRAW: // 仲間の状態を描き直す
-						PtyStDrawFar(BtlWk->pty_st);
+					case BATTLE_EVENT_REDRAW: // 仲間の状態を描き直す
+						PartyStatusDrawFar(gBattleWork->party_status);
 						break;
-					case BEV_OBJ_END: // 状態アイコン・色・ポーズを今の状態に合わせる
+					case BATTLE_EVENT_OBJ_END: // 状態アイコン・色・ポーズを今の状態に合わせる
 					{
-						struct BtlObj *slot;
+						struct BattleObj *slot;
 
 						BattleUnit_BuildStatusFlags(
-							ev->queue.operands[i], BtlObjGet(ev->queue.operands[i]));
-						slot = BtlObjGet(ev->queue.operands[i]);
+							ev->queue.operands[i], BattleObjGet(ev->queue.operands[i]));
+						slot = BattleObjGet(ev->queue.operands[i]);
 						BattleMotion_SetRecordChildValues(
 							slot->object, BattleMotion_GetSlotPalette(ev->queue.operands[i]));
 						BattlePres_SetActorModeAndAction(ev->queue.operands[i]);
@@ -7843,12 +7843,12 @@ void BattleEvent_Playback(void)
 			if (ev->phase == BATTLE_PLAYBACK_DISPATCH)
 				ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
 		}
-		else if (ev->phase == PLAY_MES || ev->phase == PLAY_MES_ADD)
+		else if (ev->phase == PLAY_MESSAGE || ev->phase == PLAY_MESSAGE_ADD)
 		{
 			// メッセージが出きるまで待つ
 			if (UiWork_IsCompleteFar() == 0)
 				return;
-			if (ev->phase == PLAY_MES_ADD)
+			if (ev->phase == PLAY_MESSAGE_ADD)
 			{
 				ev->phase = BATTLE_PLAYBACK_DISPATCH;
 				ev->timer = 0;
@@ -7903,20 +7903,20 @@ void BattleEvent_Playback(void)
 			{
 				if (ev->timer & 2)
 				{
-					struct BtlObj *slot;
+					struct BattleObj *slot;
 
-					sel[0] = 0xff;
-					slot = BtlObjGet(ev->actor_id);
+					selection[0] = 0xff;
+					slot = BattleObjGet(ev->actor_id);
 					BattleMotion_SetRecordChildValues(
 						slot->object, BattleMotion_GetSlotPalette(ev->actor_id));
 				}
 				else
 				{
-					sel[0] = ev->actor_id;
-					sel[1] = 0xff;
-					BattleMotion_SetRecordChildValues(BtlObjGet(ev->actor_id)->object, PAL_HIT);
+					selection[0] = ev->actor_id;
+					selection[1] = 0xff;
+					BattleMotion_SetRecordChildValues(BattleObjGet(ev->actor_id)->object, PAL_HIT);
 				}
-				BattleLayout_HighlightPartyPanelsFar(sel);
+				BattleLayout_HighlightPartyPanelsFar(selection);
 			}
 			ev->timer++;
 			if (ev->timer <= 8)
@@ -7963,7 +7963,7 @@ void BattleEvent_Playback(void)
 					s32						 none;
 
 					for (n = 0, slot = recs, none = 0xff;
-						(rec = GetMotionRecord(BtlObjGet(ev->actor_id)->object, n)) != 0; n++)
+						(rec = GetMotionRecord(BattleObjGet(ev->actor_id)->object, n)) != 0; n++)
 					{
 						struct AnimationEntry *child;
 						u8					   old;
@@ -7987,13 +7987,13 @@ void BattleEvent_Playback(void)
 			if (ev->timer > 4)
 			{
 				// タイルを順に描き換えて消す
-				struct BtlObj		   *slot;
+				struct BattleObj		   *slot;
 				struct AnimationObject *rec;
 				s32						count;
 				s32						frame;
 				s32						base;
 
-				slot = BtlObjGet(ev->actor_id);
+				slot = BattleObjGet(ev->actor_id);
 				slot->fading = 1;
 				for (count = 0; (rec = GetMotionRecord(slot->object, count)) != 0; count++)
 					recs[count] = rec;
@@ -8034,7 +8034,7 @@ u32 BattleEventRuntime_Reset(void)
 {
 	struct BattleEventState *events;
 
-	events = &BtlWk->events;
+	events = &gBattleWork->events;
 	events->phase = BATTLE_PLAYBACK_IDLE;
 	events->queue.count = 0;
 	events->event_index = 0;
@@ -8049,7 +8049,7 @@ s32 BattleEventRuntime_WaitForReady(void)
 	s32						 state;
 	struct BattleEventState *events;
 
-	events = &BtlWk->events;
+	events = &gBattleWork->events;
 	state = events->phase;
 	if (state == BATTLE_PLAYBACK_IDLE)
 	{
@@ -8152,37 +8152,37 @@ s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 #define CMD_DJINN 5	  // ジン
 #define CMD_SUMMON 6 // しょうかん
 #define CMD_NONE 8	  // 何もしない
-#define TGT_MAX 14
+#define TARGET_MAX 14
 
 //--------------------------------------------------------------------------
 // 行動を宣言し、対象と効果の計画を作る
 // 返り値 : 0 = 実行する、-1 = 失敗 (メッセージ済み)、-2 = 何もしない
 //--------------------------------------------------------------------------
-s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan)
+s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *plan)
 {
-	struct BtlUnit *unit = UnitGetFar(req->unit_id);
-	struct BtlWork *work = BtlWk;
+	struct BattleUnit *unit = UnitGetFar(req->unit_id);
+	struct BattleWork *work = gBattleWork;
 	s32				tid;
-	s32				act_no;
+	s32				ability_id;
 
 	//----------------------------------------------------------------------
 	// わざの範囲にいる者を対象に並べる
 	// 誰もいなければ、身を守って -1
 	//----------------------------------------------------------------------
-	s32 TgtSet(s32 no)
+	s32 TargetSet(s32 no)
 	{
-		struct BtlAct *act = BtlActGet(no);
+		struct BattleAct *act = BattleActGet(no);
 		s32			   mode = act->target_mode;
 		s32			   dead_ok = 0;
 		s32			   cnt;
-		s32			   pty_cnt;
-		s32			   enm_cnt;
+		s32			   party_count;
+		s32			   enemy_count;
 		s32			   center;
-		s32			   rng;
+		s32			   range;
 		s32			   pos;
 		s32			   id;
 
-		switch (act->efx)
+		switch (act->effect)
 		{
 		case 5: // ふっき
 		case 56:
@@ -8193,31 +8193,31 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		switch (mode)
 		{
 		case 0: // ひとり
-			plan->tgt_dist[0] = mode;
+			plan->target_dist[0] = mode;
 			plan->target_count = 1;
-			plan->tgt_no[0] = tid;
-			plan->tgt_adj[0] = 1;
+			plan->target_ids[0] = tid;
+			plan->target_adj[0] = 1;
 			break;
 		case 4:
-			plan->tgt_dist[0] = 0;
+			plan->target_dist[0] = 0;
 			plan->target_count = 1;
-			plan->tgt_no[0] = tid;
-			plan->tgt_adj[0] = 1;
+			plan->target_ids[0] = tid;
+			plan->target_adj[0] = 1;
 			break;
 		default:
-			// 狙った位置から rng - 1 までの並び
+			// 狙った位置から range - 1 までの並び
 			cnt = 0;
 			for (pos = 0; work->party_units[pos] != BATTLE_UNIT_LIST_END; pos++)
 				;
-			pty_cnt = pos;
-			for (pos = 0; work->enm_no[pos] != BATTLE_UNIT_LIST_END; pos++)
+			party_count = pos;
+			for (pos = 0; work->enemy_ids[pos] != BATTLE_UNIT_LIST_END; pos++)
 				;
-			enm_cnt = pos;
+			enemy_count = pos;
 			center = req->target & 15;
-			rng = req->rng;
+			range = req->range;
 			{
-				s32 first = center - rng + 1;
-				s32 last = center + rng - 1;
+				s32 first = center - range + 1;
+				s32 last = center + range - 1;
 
 				for (pos = first; pos <= last; pos++)
 				{
@@ -8225,30 +8225,30 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 						continue;
 					if (req->target & 128) // 敵の側
 					{
-						if (pos >= enm_cnt)
+						if (pos >= enemy_count)
 							continue;
-						id = work->enm_no[pos];
+						id = work->enemy_ids[pos];
 						if (id == BATTLE_UNIT_REMOVED)
 							continue;
 						if (!dead_ok && UnitGetFar(id)->hp == 0)
 							continue;
-						plan->tgt_adj[cnt] = 1;
-						plan->tgt_dist[cnt] = pos - center;
-						plan->tgt_no[cnt] = id;
+						plan->target_adj[cnt] = 1;
+						plan->target_dist[cnt] = pos - center;
+						plan->target_ids[cnt] = id;
 						cnt++;
 					}
 					else
 					{
-						if (pos >= pty_cnt)
+						if (pos >= party_count)
 							continue;
 						id = work->party_units[pos];
 						if (id == BATTLE_UNIT_REMOVED)
 							continue;
 						if (!dead_ok && UnitGetFar(id)->hp == 0)
 							continue;
-						plan->tgt_adj[cnt] = 1;
-						plan->tgt_dist[cnt] = pos - center;
-						plan->tgt_no[cnt] = id;
+						plan->target_adj[cnt] = 1;
+						plan->target_dist[cnt] = pos - center;
+						plan->target_ids[cnt] = id;
 						cnt++;
 					}
 				}
@@ -8272,7 +8272,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	plan->target_count = 0;
 	plan->presentation_flags = 0;
 	plan->failure = 0;
-	plan->elm = 4;
+	plan->element = 4;
 	UiWork_ClearValueNameTablesFar();
 	if (unit->hp == 0)
 		return -2;
@@ -8289,7 +8289,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		for (i = 0;; i++)
 		{
 			if (enemy)
-				id = work->enm_no[i];
+				id = work->enemy_ids[i];
 			else
 				id = work->party_units[i];
 			if (id == BATTLE_UNIT_LIST_END)
@@ -8298,8 +8298,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				continue;
 			if (Owner_AdjustFirstValueFar(id, 0xc0000000) == 0)
 			{
-				BtlEvPush(BEV_OBJ_BGN, id);
-				BtlEvPush(BEV_OBJ_RES, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
 			}
 		}
 		BattleEv_DispatchQueued();
@@ -8328,7 +8328,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		return -1;
 	}
 	// かなしばりは 1/4 で動けない
-	if ((unit->restraint & 1) && req->command != CMD_DEFEND && (BtlRndFar() & 3) == 0)
+	if ((unit->restraint & 1) && req->command != CMD_DEFEND && (BattleRandomFar() & 3) == 0)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
@@ -8336,14 +8336,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	}
 	if (req->command == CMD_NONE)
 		return -2;
-	act_no = ABILITY_ATTACK;
+	ability_id = ABILITY_ATTACK;
 	{
 		s32 i;
 
-		for (i = 0; i < TGT_MAX; i++)
-			plan->tgt_crit[i] = 0;
-		for (i = 0; i < TGT_MAX; i++)
-			plan->tgt_hit[i] = -1;
+		for (i = 0; i < TARGET_MAX; i++)
+			plan->target_crit[i] = 0;
+		for (i = 0; i < TARGET_MAX; i++)
+			plan->target_hit[i] = -1;
 	}
 
 	//----------------------------------------------------------------------
@@ -8367,31 +8367,31 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	case CMD_ATTACK:
 		// 武器の力が発動すれば、そのわざになる
-		act_no = RollWeaponUnleashFar(unit);
-		if (TgtSet(act_no) == -1)
+		ability_id = RollWeaponUnleashFar(unit);
+		if (TargetSet(ability_id) == -1)
 			return -1;
-		if (act_no != ABILITY_ATTACK)
+		if (ability_id != ABILITY_ATTACK)
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(unit, 1), 2);
 			UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls);
 			BattleEv_MarkDisplay();
-			UiWork_PushValueSlotFar(act_no, 4);
+			UiWork_PushValueSlotFar(ability_id, 4);
 			UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls + 1);
 		}
 		break;
 
 	case CMD_PSYNERGY:
 	{
-		struct BtlAct *act;
+		struct BattleAct *act;
 		s32			   ok = 1;
 
-		act_no = req->parameter;
-		act = BtlActGet(act_no);
-		if (TgtSet(act_no) == -1)
+		ability_id = req->parameter;
+		act = BattleActGet(ability_id);
+		if (TargetSet(ability_id) == -1)
 			return -1;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiWork_PushValueSlotFar(act_no, 4);
+		UiWork_PushValueSlotFar(ability_id, 4);
 		UiText_ShowMessageAndWaitCoreFar(MsgActorCasts);
 		// PPが足りないか、ふうじなら失敗
 		if (unit->pp < act->pp_cost)
@@ -8428,8 +8428,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			return -1;
 		}
 		item = Item_GetDirectFar(unit->inventory[req->parameter]);
-		act_no = item->action_id;
-		if (act_no == 0 || (unit->inventory[req->parameter] & 0x400))
+		ability_id = item->action_id;
+		if (ability_id == 0 || (unit->inventory[req->parameter] & 0x400))
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
@@ -8437,7 +8437,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				unit->guard_lv = 1;
 			return -1;
 		}
-		if (TgtSet(act_no) == -1)
+		if (TargetSet(ability_id) == -1)
 			return -1;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiWork_PushValueSlotFar(unit->inventory[req->parameter], 2);
@@ -8475,80 +8475,80 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 	case CMD_ABILITY:
 	{
-		s32 mes;
+		s32 message;
 
-		act_no = req->parameter;
-		if (TgtSet(act_no) == -1)
+		ability_id = req->parameter;
+		if (TargetSet(ability_id) == -1)
 			return -1;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiWork_PushValueSlotFar(act_no, 4);
-		if ((BtlActGet(act_no)->tgt_flg & 15) == 6)
-			mes = MsgActorUnleashesAbility;
+		UiWork_PushValueSlotFar(ability_id, 4);
+		if ((BattleActGet(ability_id)->target_flag & 15) == 6)
+			message = MsgActorUnleashesAbility;
 		else
-			mes = MsgActorUsesAbility;
+			message = MsgActorUsesAbility;
 		// わざごとの言い方
-		switch (act_no)
+		switch (ability_id)
 		{
 		case 435: // ちょうおんぱ
 		case 436:
-			mes = MsgEmitsUltrasonicWaves;
+			message = MsgEmitsUltrasonicWaves;
 			break;
 		case 224: // ヒートミラージュ
-			mes = MsgActorCasts;
+			message = MsgActorCasts;
 			break;
 		case 500: // おどし
-			mes = MsgGlowersFerociously;
+			message = MsgGlowersFerociously;
 			break;
 		case 501: // てがふるえている
-			mes = MsgIsIntimidated;
+			message = MsgIsIntimidated;
 			break;
 		case 499: // けんせい
-			mes = MsgBalefulGaze;
+			message = MsgBalefulGaze;
 			break;
 		case 494: // ミミズをたべる
-			mes = MsgEatsWorms;
+			message = MsgEatsWorms;
 			break;
 		case 437: // スクウィールロアー ～ じごくのとおぼえ
 		case 438:
 		case 439:
 		case 440:
 		case 441:
-			mes = MsgLetsOutAbility;
+			message = MsgLetsOutAbility;
 			break;
 		case 442: // ウイングビート ～ ウイングストローク
 		case 443:
 		case 444:
-			mes = MsgActorUsesAbility;
+			message = MsgActorUsesAbility;
 			break;
 		case 472: // くさったたいえき
-			mes = MsgEnemyUnleashesAbility;
+			message = MsgEnemyUnleashesAbility;
 			break;
 		case 488: // せつないひとみ
-			mes = MsgGlowersMiserably;
+			message = MsgGlowersMiserably;
 			break;
 		case 492: // ふらんしゅう
-			mes = MsgSmellOfDecay;
+			message = MsgSmellOfDecay;
 			break;
 		case 495: // きょうぼうか
-			mes = MsgFuriousRage;
+			message = MsgFuriousRage;
 			break;
 		case 503: // ぞうしょくうんどう
-			mes = MsgAttemptsToDivide;
+			message = MsgAttemptsToDivide;
 			break;
 		case 504: // なかまをさがす
-			mes = MsgLooksForAllies;
+			message = MsgLooksForAllies;
 			break;
 		case 508: // たすけをさがす
-			mes = MsgLooksForHelp;
+			message = MsgLooksForHelp;
 			break;
 		}
-		UiText_ShowMessageAndWaitCoreFar(mes);
+		UiText_ShowMessageAndWaitCoreFar(message);
 	}
 	break;
 
 	case CMD_DJINN:
 		// セットされていなければ、スタンバイのジンをセットし直す
-		act_no = Djinn_GetDefinitionHeaderFar(
+		ability_id = Djinn_GetDefinitionHeaderFar(
 			DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
 		if (!Djinn_IsActiveFar(
 				req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter)))
@@ -8556,7 +8556,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if (Trade_CanOfferDjinnFar(
 					req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter)))
 			{
-				BtlActGet(act_no);
+				BattleActGet(ability_id);
 				BattlePres_SetActorModes(0, 0);
 				Djinn_ActivateFar(
 					req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
@@ -8565,24 +8565,24 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				UnitCalcFar(req->unit_id);
 				BattleEventRuntime_Reset();
 				BattleEventRuntime_SchedulePhase(30);
-				BtlEvPush(BEV_UNIT, req->unit_id);
-				BtlEvPush(BEV_ACT,
+				BattleEvPush(BATTLE_EVENT_UNIT, req->unit_id);
+				BattleEvPush(BATTLE_EVENT_ACT,
 					DJINN_ELEMENT(req->parameter) * 20 + DJINN_INDEX(req->parameter) + 300);
-				BtlEvPush(BEV_SE, 175);
-				BtlEvPush(BEV_REDRAW, 0);
-				BtlEvPush(BEV_MES, MsgDjinnSet);
-				BtlEvPush(BEV_OBJ_END, req->unit_id);
+				BattleEvPush(BATTLE_EVENT_SE, 175);
+				BattleEvPush(BATTLE_EVENT_REDRAW, 0);
+				BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, req->unit_id);
 				AudioCommand_PlayFar(212);
-				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(req->unit_id)->object, 3);
+				ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(req->unit_id)->object, 3);
 				ObjectDispatch_ApplyValueToChildrenFar(
-					(struct DispatchObject *)BtlObjGet(req->unit_id)->object, 32);
+					(struct DispatchObject *)BattleObjGet(req->unit_id)->object, 32);
 				BattleFx_PlayUnitElementEffect(req->unit_id, DJINN_ELEMENT(req->parameter), 3, 0);
 				BattleEventRuntime_WaitForReady();
 				return -2;
 			}
 			// リカバリー中
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiWork_PushValueSlotFar(act_no, 4);
+			UiWork_PushValueSlotFar(ability_id, 4);
 			AudioCommand_PlayFar(114);
 			UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
 			WaitFrames(60);
@@ -8590,17 +8590,17 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		// セットされたジンを解き放つ
 		{
-			struct BtlAct *act;
+			struct BattleAct *act;
 
-			if (TgtSet(act_no) == -1)
+			if (TargetSet(ability_id) == -1)
 				return -1;
 			Trade_AddOfferFar(
 				req->unit_id, DJINN_ELEMENT(req->parameter), DJINN_INDEX(req->parameter));
-			act = BtlActGet(act_no);
+			act = BattleActGet(ability_id);
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiWork_PushValueSlotFar(act_no, 4);
+			UiWork_PushValueSlotFar(ability_id, 4);
 			UiText_ShowMessageAndWaitCoreFar(MsgActorUnleashesDjinn);
-			plan->elm = act->damage_class;
+			plan->element = act->damage_class;
 		}
 		break;
 
@@ -8623,18 +8623,18 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(side))->list;
 		for (i = 0; i < 4 && counts[i] >= summon->djinn_required[i]; i++)
 			counts[i] = summon->djinn_required[i];
-		act_no = summon->name_message_id;
-		if (TgtSet(act_no) == -1)
+		ability_id = summon->name_message_id;
+		if (TargetSet(ability_id) == -1)
 			return -1;
 		if (i != 4)
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiWork_PushValueSlotFar(act_no, 4);
+			UiWork_PushValueSlotFar(ability_id, 4);
 			UiText_ShowMessageAndWaitCoreFar(MsgSummonLacksDjinn);
 			return -1;
 		}
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiWork_PushValueSlotFar(act_no, 4);
+		UiWork_PushValueSlotFar(ability_id, 4);
 		UiText_ShowMessageAndWaitCoreFar(MsgActorSummons);
 		// 使うスタンバイのジンに印 (-2) をつける
 		for (i = 0; i != list->count; i++)
@@ -8655,12 +8655,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	// こうげきの計画
 	//----------------------------------------------------------------------
-	if (act_no == ABILITY_ATTACK)
+	if (ability_id == ABILITY_ATTACK)
 	{
-		struct BtlUnit *tgt = UnitGetFar(plan->tgt_no[0]);
+		struct BattleUnit *target = UnitGetFar(plan->target_ids[0]);
 
-		plan->act_no = ABILITY_ATTACK;
-		plan->elm = Item_GetEquippedElementFar(req->unit_id);
+		plan->ability_id = ABILITY_ATTACK;
+		plan->element = Item_GetEquippedElementFar(req->unit_id);
 		plan->outcome = 2;
 		if (unit->class_index == 0) // 敵
 		{
@@ -8698,23 +8698,23 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		 * first (differ 105 in tbs-en). */
 		do
 		{
-			if (tgt->hp == 0 || tgt->sleep != 0 || tgt->stun != 0 || tgt->immobile != 0
-				|| tgt->charm != 0)
+			if (target->hp == 0 || target->sleep != 0 || target->stun != 0 || target->immobile != 0
+				|| target->charm != 0)
 				break;
-			if (unit->delusion != 0 && (BtlRndFar() & 255) <= 152)
-				plan->tgt_adj[0] = 0;
-			if ((BtlRndFar() & 31) == 0)
-				plan->tgt_adj[0] = 0;
+			if (unit->delusion != 0 && (BattleRandomFar() & 255) <= 152)
+				plan->target_adj[0] = 0;
+			if ((BattleRandomFar() & 31) == 0)
+				plan->target_adj[0] = 0;
 		} while (0);
 		if (GameFlag_TestFar(366))
-			plan->tgt_adj[0] = 0;
+			plan->target_adj[0] = 0;
 		// 会心：1/32、または装備による確率
-		if (tgt->hp != 0)
+		if (target->hp != 0)
 		{
-			if ((BtlRndFar() & 31) == 0)
-				plan->tgt_crit[0] = 1;
-			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (BtlRndFar() & 0xffff))
-				plan->tgt_crit[0] = 1;
+			if ((BattleRandomFar() & 31) == 0)
+				plan->target_crit[0] = 1;
+			else if ((Equipment_GetUnleashRateBonusFar(unit) << 16) / 200 > (BattleRandomFar() & 0xffff))
+				plan->target_crit[0] = 1;
 		}
 	}
 
@@ -8723,42 +8723,42 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	//----------------------------------------------------------------------
 	else
 	{
-		struct BtlAct *act = BtlActGet(act_no);
+		struct BattleAct *act = BattleActGet(ability_id);
 
-		plan->elm = act->damage_class;
+		plan->element = act->damage_class;
 		plan->presentation_flags = 0;
-		plan->act_no = act_no;
-		if (act->efx == 65 || act->efx == 41 || act->efx == 42 || act->efx == 43 || act->efx == 44
-			|| act->efx == 68)
+		plan->ability_id = ability_id;
+		if (act->effect == 65 || act->effect == 41 || act->effect == 42 || act->effect == 43 || act->effect == 44
+			|| act->effect == 68)
 		{
 			// ある確率で、ダメージの倍率を上げる
 			s32 chance;
 			s32 amount;
 
-			if (act->efx == 65 || act->efx == 68)
+			if (act->effect == 65 || act->effect == 68)
 				chance = 153;
-			else if (act->efx == 41 || act->efx == 43)
+			else if (act->effect == 41 || act->effect == 43)
 				chance = 32;
 			else
 				chance = 64;
-			if (act->efx == 65 || act->efx == 41 || act->efx == 42)
+			if (act->effect == 65 || act->effect == 41 || act->effect == 42)
 				amount = 1;
 			else
 				amount = 2;
-			if ((BtlRndFar() & 255) < chance)
+			if ((BattleRandomFar() & 255) < chance)
 			{
 				s32 i;
 
 				for (i = 0; i < plan->target_count; i++)
-					plan->tgt_adj[i] += amount;
+					plan->target_adj[i] += amount;
 			}
 		}
-		else if (act->efx >= 36 && act->efx <= 40)
+		else if (act->effect >= 36 && act->effect <= 40)
 		{
 			// 会心の確率 1/64 ～ 1/4
 			s32 mask;
 
-			switch (act->efx)
+			switch (act->effect)
 			{
 			case 36:
 				mask = 63;
@@ -8777,32 +8777,32 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 				mask = 3;
 				break;
 			}
-			if ((BtlRndFar() & mask) == 0)
+			if ((BattleRandomFar() & mask) == 0)
 			{
 				s32 i;
 
 				for (i = 0; i < plan->target_count; i++)
-					plan->tgt_crit[i] = 2;
+					plan->target_crit[i] = 2;
 			}
 		}
-		else if (act_no == 178) // めっさつのじゅつ：命中を先に決める
+		else if (ability_id == 178) // めっさつのじゅつ：命中を先に決める
 		{
 			s32 i;
 
 			for (i = 0; i < plan->target_count; i++)
-				plan->tgt_hit[i] =
-					BtlHitChk(req->unit_id, plan->tgt_no[i], act->damage_class, act->efx, 100);
+				plan->target_hit[i] =
+					BattleHitCheck(req->unit_id, plan->target_ids[i], act->damage_class, act->effect, 100);
 		}
-		if (act_no >= 0 && act_no <= 518)
+		if (ability_id >= 0 && ability_id <= 518)
 		{
-			plan->presentation_flags = Battle_ActionFlags[act_no];
-			if (plan->tgt_adj[0] > 1)
+			plan->presentation_flags = Battle_ActionFlags[ability_id];
+			if (plan->target_adj[0] > 1)
 				plan->presentation_flags =
-					Battle_ActionFlags[act_no] + (plan->tgt_adj[0] << 12) - 0x1000;
+					Battle_ActionFlags[ability_id] + (plan->target_adj[0] << 12) - 0x1000;
 		}
-		if ((act_no >= 0 && act_no <= 517) && Battle_ActionStatus[act_no] != 0)
-			plan->outcome = Battle_ActionStatus[act_no];
-		else if (Ability_CheckStatusOrSpecialId(act_no))
+		if ((ability_id >= 0 && ability_id <= 517) && Battle_ActionStatus[ability_id] != 0)
+			plan->outcome = Battle_ActionStatus[ability_id];
+		else if (Ability_CheckStatusOrSpecialId(ability_id))
 			plan->outcome = 3;
 		else if (plan->presentation_flags != 0)
 		{
@@ -8813,9 +8813,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		}
 		else
 			plan->outcome = 1;
-		if (BtlEfxRevChkFar(act->efx))
+		if (BattleEffectRevCheckFar(act->effect))
 			plan->presentation_flags |= 0x10000;
-		if (act_no == 178 && plan->tgt_hit[0] != 0)
+		if (ability_id == 178 && plan->target_hit[0] != 0)
 			plan->presentation_flags |= 0x1000;
 	}
 	if (req->command == CMD_ITEM && plan->outcome != 5 && plan->outcome != 9)
@@ -8826,12 +8826,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 {
-	struct BtlUnit *state = UnitGetFar(unit_id);
+	struct BattleUnit *state = UnitGetFar(unit_id);
 
 	if (turns <= 5)
 	{
 		s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-		if (threshold >= (BtlRndFar() & 0xffff))
+		if (threshold >= (BattleRandomFar() & 0xffff))
 			return 1;
 	}
 	return 0;
@@ -8839,7 +8839,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias)
 
 s32 BattleUnit_TickAttackModifier(s32 unit_id)
 {
-	struct BtlUnit *state = UnitGetFar(unit_id);
+	struct BattleUnit *state = UnitGetFar(unit_id);
 
 	if (state->atk_cnt != 0)
 	{
@@ -8869,7 +8869,7 @@ s32 BattleUnit_TickAttackModifier(s32 unit_id)
 #define DEFINE_TICK_MODIFIER(name, counter, level)                                   \
 	s32 name(s32 unit_id)                                                            \
 	{                                                                                \
-		struct BtlUnit *state = UnitGetFar(unit_id);                                 \
+		struct BattleUnit *state = UnitGetFar(unit_id);                                 \
                                                                                      \
 		if (state->counter != 0)                                                     \
 		{                                                                            \
@@ -8898,7 +8898,7 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, res_cnt, res_lv)
 #define DEFINE_TICK_STATUS(name, counter, bias)                                     \
 	s32 name(s32 unit_id)                                                           \
 	{                                                                               \
-		struct BtlUnit *state = UnitGetFar(unit_id);                                \
+		struct BattleUnit *state = UnitGetFar(unit_id);                                \
 		if (state->counter != 0)                                                    \
 		{                                                                           \
 			state->counter--;                                                       \
@@ -8917,7 +8917,7 @@ DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
-	struct BtlUnit *state = UnitGetFar(unit_id);
+	struct BattleUnit *state = UnitGetFar(unit_id);
 	if ((u8)state->confusion != 0)
 	{
 		(*(u8 *)&state->confusion)--;
@@ -8942,7 +8942,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 	u8				remaining;
 	s32				turns;
 	s32				packed;
-	struct BtlUnit *unit;
+	struct BattleUnit *unit;
 
 	unit = UnitGetFar(id);
 	packed = unit->psy_seal;
@@ -9003,7 +9003,7 @@ s32 BattleUnit_TickReflect(s32 id)
 
 s32 BattleUnit_TickAgilityModifier(s32 id)
 {
-	struct BtlUnit *unit = UnitGetFar(id);
+	struct BattleUnit *unit = UnitGetFar(id);
 	u8			   *value = &unit->agi_cnt;
 	if (*value != 0)
 	{
@@ -9092,7 +9092,7 @@ struct BattleGroupOrder
 
 s32 Battle_ProcessRoundEnd(void)
 {
-	struct BtlWork			  *work;
+	struct BattleWork			  *work;
 	s32						   side;
 	s32						   sides;
 	s32						   count;
@@ -9101,7 +9101,7 @@ s32 Battle_ProcessRoundEnd(void)
 	struct DjinnRecoveryEntry *timed_entry;
 	struct DjinnRecoveryEntry *expired_entry;
 
-	work = BtlWk;
+	work = gBattleWork;
 	sides = (work->two_sided != 0) + 1;
 	for (side = 0; side < sides; side++)
 	{
@@ -9112,7 +9112,7 @@ s32 Battle_ProcessRoundEnd(void)
 			timed_entry = list->entries;
 			do
 			{
-				if (timed_entry->turns > 0 && BtlObjGet(timed_entry->unit_id) != 0
+				if (timed_entry->turns > 0 && BattleObjGet(timed_entry->unit_id) != 0
 					&& UnitGetFar(timed_entry->unit_id)->hp != 0)
 				{
 					timed_entry->turns--;
@@ -9132,21 +9132,21 @@ s32 Battle_ProcessRoundEnd(void)
 					u8	id = expired_entry->unit_id;
 					s32 element;
 
-					if (BtlObjGet(id) != 0)
+					if (BattleObjGet(id) != 0)
 					{
 						BattleEventRuntime_Reset();
 						BattleEventRuntime_SchedulePhase(30);
-						BtlEvPush(BEV_UNIT, id);
-						BtlEvPush(
-							BEV_ACT, expired_entry->element * 20 + expired_entry->index + 300);
-						BtlEvPush(BEV_SE, 175);
-						BtlEvPush(BEV_REDRAW, 0);
-						MES_PUSH(MsgDjinnSet);
-						BtlEvPush(BEV_OBJ_END, id);
+						BattleEvPush(BATTLE_EVENT_UNIT, id);
+						BattleEvPush(
+							BATTLE_EVENT_ACT, expired_entry->element * 20 + expired_entry->index + 300);
+						BattleEvPush(BATTLE_EVENT_SE, 175);
+						BattleEvPush(BATTLE_EVENT_REDRAW, 0);
+						MESSAGE_PUSH(MsgDjinnSet);
+						BattleEvPush(BATTLE_EVENT_OBJ_END, id);
 						AudioCommand_PlayFar(212);
-						ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
+						ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, 3);
 						ObjectDispatch_ApplyValueToChildrenFar(
-							(struct DispatchObject *)BtlObjGet(id)->object, 32);
+							(struct DispatchObject *)BattleObjGet(id)->object, 32);
 						element = expired_entry->element;
 						Djinn_ActivateFar(id, element, expired_entry->index);
 						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
@@ -9163,7 +9163,7 @@ s32 Battle_ProcessRoundEnd(void)
 			} while (i < list->count);
 		}
 	}
-	BattlePresentation_ConfigurePaletteFade(2, BtlWk->background, 0);
+	BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
 	{
 		s32					   *group_list;
 		struct BattleGroupOrder order = BattleParty_RoundEndGroupOrder;
@@ -9185,7 +9185,7 @@ s32 Battle_ProcessRoundEnd(void)
 				s32				hp_amount;
 				s32				pp_amount;
 				s32				id = ids[j];
-				struct BtlUnit *unit = UnitGetFar(id);
+				struct BattleUnit *unit = UnitGetFar(id);
 
 				if (unit->ready != 0)
 				{
@@ -9238,56 +9238,56 @@ s32 Battle_ProcessRoundEnd(void)
 				}
 				if (BattleUnit_TickAgilityModifier(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgAgiNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickAttackModifier(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgAtkNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickDefenseModifier(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgDefNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickResistanceModifier(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgResNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickDelusion(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgCureDelusion);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickConfusion(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgConscious);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickCharm(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgConscious2);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickStun(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					BattlePres_SetActorModeAndAction(id);
 					UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
@@ -9295,7 +9295,7 @@ s32 Battle_ProcessRoundEnd(void)
 				}
 				if (BattleUnit_TickSleep(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					BattlePres_SetActorModeAndAction(id);
 					UiText_ShowMessageAndWaitCoreFar(MsgWakes);
@@ -9303,21 +9303,21 @@ s32 Battle_ProcessRoundEnd(void)
 				}
 				if (Battle_AdvanceCounterAndCheckChance(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgCureSeal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickRefrain(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgRefrainEnd);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickReflect(id) != 0)
 				{
-					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
+					BattleUnit_BuildStatusFlags(id, BattleObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					UiText_ShowMessageAndWaitCoreFar(MsgReflectEnd);
 					BattlePresentation_WaitForAdvance();
@@ -9327,10 +9327,10 @@ s32 Battle_ProcessRoundEnd(void)
 	}
 }
 
-s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
+s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
 	s32						  id;
-	struct BtlUnit			 *unit;
+	struct BattleUnit			 *unit;
 	s32						  both_sides;
 	s32						  counts[4];
 	struct DjinnRecoveryList *list;
@@ -9403,12 +9403,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 	}
 	if (both_sides != 0)
 	{
-		struct BtlUnit *before;
+		struct BattleUnit *before;
 		s32				most;
 		s32				i;
 		most = 0;
-		before = Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
-		Iwram_CopyWords(before, unit, sizeof(struct BtlUnit));
+		before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+		Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
 		best = -1;
 		for (i = 0; i <= 3; i++)
 		{
@@ -9418,28 +9418,28 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				best = i;
 			}
 		}
-		if (best >= 0 && unit->elm_lv[best] < most)
+		if (best >= 0 && unit->element_levels[best] < most)
 		{
-			unit->elm_lv[best] = most;
+			unit->element_levels[best] = most;
 		}
 		UnitCalcFar(id);
 		for (i = 0; i <= 3; i++)
 		{
-			s32 gain = unit->elm[i].pow - before->elm[i].pow;
+			s32 gain = unit->element[i].power - before->element[i].power;
 
 			if (gain > 0)
 			{
 				BattleEventRuntime_Reset();
 				BattleEventRuntime_SchedulePhase(25);
-				BtlEvPush(BEV_UNIT, id);
-				BtlEvPush(BEV_NUM, gain);
-				BtlEvPush(BEV_SE, 175);
-				MES_PUSH(MsgEarthPowerUp + i);
-				BtlEvPush(BEV_OBJ_END, id);
+				BattleEvPush(BATTLE_EVENT_UNIT, id);
+				BattleEvPush(BATTLE_EVENT_NUM, gain);
+				BattleEvPush(BATTLE_EVENT_SE, 175);
+				MESSAGE_PUSH(MsgEarthPowerUp + i);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, id);
 				AudioCommand_PlayFar(212);
-				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
+				ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, 3);
 				ObjectDispatch_ApplyValueToChildrenFar(
-					(struct DispatchObject *)BtlObjGet(id)->object, 32);
+					(struct DispatchObject *)BattleObjGet(id)->object, 32);
 				BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
 				BattleEventRuntime_WaitForReady();
 			}
@@ -9452,15 +9452,15 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		BattleEventRuntime_Reset();
 		if (plan->haunt_dmg != 0)
 		{
-			BtlEvPush(BEV_OBJ_BGN, id);
-			BtlEvPush(BEV_UNIT, id);
-			BtlEvPush(BEV_NUM, plan->haunt_dmg);
-			MES_PUSH(MsgCurseDamage);
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
+			BattleEvPush(BATTLE_EVENT_UNIT, id);
+			BattleEvPush(BATTLE_EVENT_NUM, plan->haunt_dmg);
+			MESSAGE_PUSH(MsgCurseDamage);
 			if (Owner_AdjustFirstValueFar(id, -plan->haunt_dmg) == 0)
 			{
 				s32 text;
-				BtlEvPush(BEV_OBJ_RES, id);
-				BtlEvPush(BEV_UNIT, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
+				BattleEvPush(BATTLE_EVENT_UNIT, id);
 				if (id >= 0 && id <= 7)
 				{
 					text = MsgGoesDown;
@@ -9469,11 +9469,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				{
 					text = MsgStrengthExhausted;
 				}
-				MES_PUSH(text);
+				MESSAGE_PUSH(text);
 			}
 			else
 			{
-				BtlEvPush(BEV_OBJ_END, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, id);
 			}
 		}
 		BattleEv_DispatchQueued();
@@ -9482,11 +9482,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		if (*poison != 0)
 		{
 			s32				damage = unit->max_hp * *poison / 10;
-			struct BtlWork *state = BtlWk;
-			BtlEvPush(BEV_OBJ_BGN, id);
-			BtlEvPush(BEV_UNIT, id);
-			BtlEvPush(BEV_NUM, damage);
-			MES_PUSH(MsgPoisonDamage);
+			struct BattleWork *state = gBattleWork;
+			BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
+			BattleEvPush(BATTLE_EVENT_UNIT, id);
+			BattleEvPush(BATTLE_EVENT_NUM, damage);
+			MESSAGE_PUSH(MsgPoisonDamage);
 			if (*poison != 0)
 			{
 				state->events.pending_cue = SOUND_HEAVY_IMPACT;
@@ -9498,8 +9498,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 			if (Owner_AdjustFirstValueFar(id, -damage) == 0)
 			{
 				s32 text;
-				BtlEvPush(BEV_OBJ_RES, id);
-				BtlEvPush(BEV_UNIT, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
+				BattleEvPush(BATTLE_EVENT_UNIT, id);
 				if (id >= 0 && id <= 7)
 				{
 					text = MsgGoesDown;
@@ -9508,11 +9508,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				{
 					text = MsgStrengthExhausted;
 				}
-				MES_PUSH(text);
+				MESSAGE_PUSH(text);
 			}
 			else
 			{
-				BtlEvPush(BEV_OBJ_END, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_END, id);
 			}
 		}
 		BattleEv_DispatchQueued();
@@ -9521,18 +9521,18 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 		{
 			if (--unit->grim_reaper == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0)
 			{
-				BtlEvPush(BEV_UNIT, id);
-				MES_PUSH(MsgReaperCalls);
-				BtlEvPush(BEV_OBJ_BGN, id);
-				BtlEvPush(BEV_OBJ_RES, id);
-				BtlEvPush(BEV_UNIT, id);
+				BattleEvPush(BATTLE_EVENT_UNIT, id);
+				MESSAGE_PUSH(MsgReaperCalls);
+				BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
+				BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
+				BattleEvPush(BATTLE_EVENT_UNIT, id);
 				if (id >= 0 && id <= 7)
 				{
-					MES_PUSH(MsgReaperCalls - 3);
+					MESSAGE_PUSH(MsgReaperCalls - 3);
 				}
 				else
 				{
-					MES_PUSH(MsgReaperCalls + 3);
+					MESSAGE_PUSH(MsgReaperCalls + 3);
 				}
 			}
 		}
@@ -9771,8 +9771,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 	u32							  j;
 	s32							  count;
 	s32							  id;
-	struct BtlObj				 *object;
-	struct BtlWork				 *session;
+	struct BattleObj				 *object;
+	struct BattleWork				 *session;
 	u16							 *ids;
 	s32							  n;
 
@@ -9835,7 +9835,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 			Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
 			gBgScroll[0].y = 32;
 			WaitFrames(1);
-			UiWindow_CreateWithLayoutBoundsFar(BtlWk->pty_st);
+			UiWindow_CreateWithLayoutBoundsFar(gBattleWork->party_status);
 			WaitFrames(20);
 			QueueIoWriteDelay10(0x04000008, 2);
 			QueueIoWriteDelay6(0x04000008, 0);
@@ -9857,7 +9857,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 			id = i + 120;
 			if ((s32)i <= 7)
 				id = i;
-			object = BtlObjGet(id);
+			object = BattleObjGet(id);
 			if (UnitGetFar(id)->class_id != 148)
 				object->scale = 0xb333;
 		}
@@ -9877,7 +9877,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 		Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
 		WaitFrames(1);
 		WaitFrames(20);
-		UiWindow_CreateWithLayoutBoundsFar(BtlWk->pty_st);
+		UiWindow_CreateWithLayoutBoundsFar(gBattleWork->party_status);
 		QueueIoWriteDelay10(0x04000008, 2);
 		QueueIoWriteDelay6(0x04000008, 0);
 		REG_BLDCNT = 0x3f40;
@@ -9912,7 +9912,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-	struct BtlWork *screen = BtlWk;
+	struct BattleWork *screen = gBattleWork;
 	u16			   *palette = screen->palette;
 	u32				ime;
 	u32			   *slot = &ime;
@@ -9966,11 +9966,11 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 fade)
 
 	if (fade == 0x80)
 	{
-		Dma_Set(BtlWk->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
+		Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, REG_DMA3);
 	}
 	else if (fade != 0)
 	{
-		u16 *source = BtlWk->palette;
+		u16 *source = gBattleWork->palette;
 		u16 *destination = (u16 *)0x050000c0;
 		s32	 i;
 
@@ -10033,7 +10033,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
 	struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	u8							*data = Resource_GetTableEntry(resource);
-	struct BtlWork				*session = WORK_SLOT(HEAP_SLOT_BATTLE);
+	struct BattleWork				*session = WORK_SLOT(HEAP_SLOT_BATTLE);
 	u16							*palette;
 
 	RamCode_LoadSlot(49, BitDecoder_DecodeImage, BitDecoder_Size);
@@ -10240,8 +10240,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 //--------------------------------------------------------------------------
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom)
 {
-	struct MotionObject *obj_a = BtlObjGet(a)->object;
-	struct MotionObject *obj_b = BtlObjGet(b)->object;
+	struct MotionObject *obj_a = BattleObjGet(a)->object;
+	struct MotionObject *obj_b = BattleObjGet(b)->object;
 	s32					 ax = obj_a->x;
 	s32					 bx = obj_b->x;
 	s32					 az = obj_a->z;
@@ -10311,13 +10311,13 @@ s32 BattlePres_DivideBy16(s32 value)
 
 s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 {
-	struct BtlWork *battle;
+	struct BattleWork *battle;
 
 	if (gKeysHeld & KEY_START)
 	{
 		for (;;)
 		{
-			battle = BtlWk;
+			battle = gBattleWork;
 			if (gKeysRepeat & 0x20)
 				battle->debug_value -= 1;
 			if (gKeysRepeat & 0x10)
@@ -10343,7 +10343,7 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
-	struct BtlObj			*slot = BtlObjGet(actor_id);
+	struct BattleObj			*slot = BattleObjGet(actor_id);
 	struct MotionObject		*object;
 	struct AnimationObject	*record;
 	struct AnimationObject **records;
@@ -10417,7 +10417,7 @@ void BattlePres_ClearAllActorRecordModes(void)
 
 void Graphics_AdvancePaletteCycle(void)
 {
-	struct BtlWork *battle = BtlWk;
+	struct BattleWork *battle = gBattleWork;
 	s8			   *table;
 	u16				step;
 	s32				next;
@@ -10439,7 +10439,7 @@ void Graphics_AdvancePaletteCycle(void)
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
 	s16				active_actors[14];
-	struct BtlWork *battle = BtlWk;
+	struct BattleWork *battle = gBattleWork;
 	u32				count;
 	u32				i;
 
@@ -10794,7 +10794,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	 * ime set only in the loop differs 124 (247 instructions for 249);
 	 * with IO_WRITE_QUEUE_PUSH in the loop as well, 140. */
 	volatile u16		  *ime = (volatile u16 *)&gWorkSlot[12];
-	struct BtlWork		  *session = *(struct BtlWork **)((u8 *)ime - 12);
+	struct BattleWork		  *session = *(struct BattleWork **)((u8 *)ime - 12);
 	struct SparkWork	  *work;
 	s32					   frame;
 	s32					  *brightness;
@@ -10943,7 +10943,7 @@ struct BattleBaseStats
 	u8						  hp_regen;
 	u8						  pp_regen;
 	u8						  unknown_12[2];
-	struct BattleElementStats elm[4];
+	struct BattleElementStats element[4];
 };
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
@@ -11039,7 +11039,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
 	struct BattleBaseStats *base;
-	struct BtlUnit		   *state;
+	struct BattleUnit		   *state;
 	s32						value;
 	s32						floor;
 	s32						i;
@@ -11098,13 +11098,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
 	for (i = 0; i < 4; i++)
 	{
-		value = state->base_elm[i].pow + levels * 15;
-		floor = base->elm[i].pow * 7 / 10;
+		value = state->base_element[i].power + levels * 15;
+		floor = base->element[i].power * 7 / 10;
 		if (value < floor)
 			value = floor;
 		if (value > 200)
 			value = 200;
-		state->base_elm[i].pow = value;
+		state->base_element[i].power = value;
 	}
 
 	state->level += levels;
@@ -11118,15 +11118,15 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 #define CH_CNT 26
 #endif
 
-s32 EnmCntDec(s32 no, s32 n)
+s32 EnemyCountDecrement(s32 no, s32 n)
 {
-	struct BtlWork *w;
+	struct BattleWork *w;
 	s32				num;
 	s32				i;
 	s32				retry;
 	s32				ch;
 
-	w = BtlWk;
+	w = gBattleWork;
 	num = w->summon_count;
 	for (i = 0; i < num; i++)
 	{
@@ -11163,10 +11163,10 @@ s32 EnmCntDec(s32 no, s32 n)
 	return -1;
 }
 
-s32 EnmCntRel(s32 actor_id)
+s32 EnemyCountRelease(s32 actor_id)
 {
-	struct BtlWork *state = BtlWk;
-	struct BtlUnit *actor;
+	struct BattleWork *state = gBattleWork;
+	struct BattleUnit *actor;
 	s32				count = state->summon_count;
 	s32				index;
 	s32				name_length;
@@ -11198,9 +11198,9 @@ s32 EnmCntRel(s32 actor_id)
 	state->summon_masks[index] &= ~(1 << bit);
 }
 
-s32 EnmCntClr(s32 class_id)
+s32 EnemyCountClear(s32 class_id)
 {
-	struct BtlUnit *summon;
+	struct BattleUnit *summon;
 	s32				object_index;
 	s32				slot;
 	s32				next_slot;
@@ -11238,7 +11238,7 @@ s32 EnmCntClr(s32 class_id)
 	}
 }
 
-s32 BtlGrpRnd(s32 record_id)
+s32 BattleGroupRandom(s32 record_id)
 {
 	s32							  choices[5];
 	struct BattleFormationRecord *record;
@@ -11276,7 +11276,7 @@ s32 BtlGrpRnd(s32 record_id)
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {
 	u16							 *list;
-	struct BtlWork				 *work;
+	struct BattleWork				 *work;
 	struct BattleFormationRecord *record;
 	s32							  count;
 	s32							  margin;
@@ -11296,7 +11296,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
 	u32							  i;
 	s32							  j;
 
-	work = BtlWk;
+	work = gBattleWork;
 	margin = 0;
 	work->summon_count = 0;
 	list = list_buffer;
@@ -11429,11 +11429,11 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
 		goto assigned;
 assign_enemy:
 	{
-		s32 charge = EnmCntDec(list[i], 1);
+		s32 charge = EnemyCountDecrement(list[i], 1);
 
 		if (charge & 0x8000)
-			EnmCntClr(list[i]);
-		BtlUnitSetFar(i + 128, list[i], charge & 0x7fff);
+			EnemyCountClear(list[i]);
+		BattleUnitSetFar(i + 128, list[i], charge & 0x7fff);
 		UnitGetFar(i + 128);
 		if (margin != 0)
 			Owner_ApplyLevelGains(i + 128, margin);
@@ -11538,7 +11538,7 @@ u32 Item_EncodeBankedId(u32 value)
 
 void Summon_ClearWorkFields(void)
 {
-	struct BtlWork		*work = BtlWk;
+	struct BattleWork		*work = gBattleWork;
 	struct BattleSpoils *spoils = &work->spoils;
 	u16					*items;
 	s32					 index;
@@ -11552,7 +11552,7 @@ void Summon_ClearWorkFields(void)
 		items[index] = 0;
 }
 
-static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BtlUnit *unit, u16 *reward)
+static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit, u16 *reward)
 {
 	s32 i;
 	s32 bonus = 0;
@@ -11568,7 +11568,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BtlUnit *unit, u16 
 	return bonus + base;
 }
 
-static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct BtlUnit *unit, u16 *reward)
+static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward)
 {
 	s32 i;
 	s32 bonus = 0;
@@ -11586,9 +11586,9 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct BtlUnit *unit
 
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
-	struct BtlUnit		   *unit;
+	struct BattleUnit		   *unit;
 	struct EnemyDefinition *rec;
-	struct BtlWork		   *formation;
+	struct BattleWork		   *formation;
 	struct BattleSpoils	   *spoils;
 	s32						i;
 	s32						chance;
@@ -11598,7 +11598,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 	s32						value;
 
 	unit = UnitGetFar(unit_id);
-	formation = BtlWk;
+	formation = gBattleWork;
 	spoils = &formation->spoils;
 	if (unit_id >= 0 && unit_id < 8)
 		return -1;
@@ -11658,7 +11658,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 		chance -= 2;
 	if (chance < 0)
 		chance = 0;
-	if ((0x20000 >> chance) > (BtlRndFar() & 0xffff))
+	if ((0x20000 >> chance) > (BattleRandomFar() & 0xffff))
 	{
 		lowest_slot = -1;
 		lowest = 0x40000000;
@@ -11684,8 +11684,8 @@ void Battle_AwardSpoils(void)
 	u16					*list;
 	s32					 i;
 	s32					 unit_id;
-	struct BtlUnit		*unit;
-	struct BtlUnit		*backup;
+	struct BattleUnit		*unit;
+	struct BattleUnit		*backup;
 	s32					 cnt;
 	u32					 learned;
 	s32					 j;
@@ -11697,7 +11697,7 @@ void Battle_AwardSpoils(void)
 	struct LevelUpResult gains; // 上がった分は符号つきで読む
 	u16					 units[8];
 
-	spoils = &BtlWk->spoils;
+	spoils = &gBattleWork->spoils;
 	if (spoils->experience != 0)
 	{
 		UiWork_PushValueSlotFar(spoils->experience, 5);
@@ -11706,13 +11706,13 @@ void Battle_AwardSpoils(void)
 	}
 	list = units;
 	count = BattleParty_ListLivingUnits(1, list);
-	backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
+	backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
 	for (i = 0; i < count; i++)
 	{
 		unit_id = list[i];
 		unit = UnitGetFar(unit_id);
 		unit->experience += spoils->experience;
-		while (Iwram_CopyWords(backup, unit, sizeof(struct BtlUnit)),
+		while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
 			Owner_GetValueIfLevelThresholdReachedFar(unit_id, &gains) != 0)
 		{
 			AudioCommand_PlayFar(0x59);

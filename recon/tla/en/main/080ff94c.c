@@ -7,7 +7,7 @@ void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
     struct PsynergyListWork *menu;
-    struct BtlAct *ability;
+    struct BattleAct *ability;
     s32 row;
     s32 base;
 
@@ -19,13 +19,13 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
         UiText_DrawCharacterAtOffsetFar((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
-        ability = BtlActGet(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
+        ability = BattleActGet(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
         UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
         row = 0;
-        if (ability->type_0c != 0 || (ability->tgt_flg & 0x40) != 0) {
+        if (ability->type_0c != 0 || (ability->target_flag & 0x40) != 0) {
             row = 2;
         }
-        if ((ability->tgt_flg & 0x80) != 0) {
+        if ((ability->target_flag & 0x80) != 0) {
             row |= 1;
         }
         if (row == 3) {
@@ -40,7 +40,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     base = state->page * 5;
     for (row = 0; row <= 4; row++) {
         if (row == state->row) {
-            ability = BtlActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BattleActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 0);
                 Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 14);
@@ -49,7 +49,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
                 Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 14);
             }
         } else {
-            ability = BtlActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BattleActGet(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 4);
                 Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);

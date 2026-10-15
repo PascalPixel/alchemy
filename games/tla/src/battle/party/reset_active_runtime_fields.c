@@ -25,14 +25,14 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 
     i = 0;
     if (i < count) {
-        struct BtlUnit *unit;
+        struct BattleUnit *unit;
         u8 *cursor;
         s32 remaining;
 
         do {
             unit = UnitGet(owners[i]);
             remaining = 3;
-            cursor = (u8 *)&unit->elm_lv[3];
+            cursor = (u8 *)&unit->element_levels[3];
 
             do {
                 remaining--;

@@ -26,9 +26,9 @@ void WaitFrames(s32 frames);
 u32 Random16(void);
 void BattleActor_RemoveFromLists(s32 unit_id);
 void ActivateBattleObjectSlot(s32 object_id);
-struct BtlUnit *UnitGet(s32 id);
+struct BattleUnit *UnitGet(s32 id);
 
-s32 Func_0811de78(struct BtlPlan *plan)
+s32 Func_0811de78(struct BattlePlan *plan)
 {
     /* FAKEMATCH: as in The Broken Seal, the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero. */
     union {
@@ -37,7 +37,7 @@ s32 Func_0811de78(struct BtlPlan *plan)
     } completed;
     struct EscapeTransition *presentation = (struct EscapeTransition *)Ram_HeapSlots->transition_work;
     u32 aid = plan->aid;
-    struct BtlWork *scene = Ram_HeapSlots->battle_work;
+    struct BattleWork *scene = Ram_HeapSlots->battle_work;
     s32 party_mode;
 
     completed.halves[0] = 0;
@@ -59,7 +59,7 @@ s32 Func_0811de78(struct BtlPlan *plan)
             s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
 
             while (index != -1) {
-                struct BtlUnit *unit = UnitGet(unit_ids[index]);
+                struct BattleUnit *unit = UnitGet(unit_ids[index]);
 
                 if (unit->stun == 0 && unit->sleep == 0) {
                     BattleMotion_SetupEscapeObject(unit_ids[index]);

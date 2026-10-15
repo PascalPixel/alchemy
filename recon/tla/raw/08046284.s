@@ -32,7 +32,7 @@ Func_08046284:
 	subs r6, #2
 .L_080462ba:
 	ldrh r0, [r5]
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2
@@ -108,7 +108,7 @@ Func_08046284:
 	mov r11, r2
 .L_08046348:
 	ldrh r0, [r5]
-	bl BtlActGet
+	bl BattleActGet
 	ldrb r2, [r0, #1]
 	movs r3, #128
 	ands r3, r2

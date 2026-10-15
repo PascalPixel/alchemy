@@ -23,7 +23,7 @@ void Party_AdjustCoinsFar(s32 amount);
 void Shop_RepairItem(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct BtlUnit *unit = UnitGetFar(unit_id);
+    struct BattleUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);
     s32 equipped = Inventory_FindEquippedFar(unit_id, item->type);

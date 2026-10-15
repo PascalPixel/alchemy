@@ -133,7 +133,7 @@ void Func_02001cf0(void)
     Call3(Func_0200452c, 0x1a, 0, 0x14);
     Call2(Func_0200454c, 0, 0);
     Ov6a8_Jump(0, 0x108, 0);
-    Ov6a8_MesOpen(0x4000, 0);
+    Ov6a8_MessageOpen(0x4000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
     t83 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
     if (t83 == 0) {
@@ -199,7 +199,7 @@ void Func_02001cf0(void)
     Call2(Func_0200454c, 0x1b, 0x5000);
     Call2(Func_02004534, 0x401b, 0);
     Call2(Func_0200454c, 0, 0);
-    Ov6a8_MesOpen(0x4000, 0);
+    Ov6a8_MessageOpen(0x4000, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.current_owner, 0x8000, 0);
     t144 = Value2(Inventory_PromptAndSetObjectMode, gPartyState.current_owner, 0);
     if (t144 == 0) {

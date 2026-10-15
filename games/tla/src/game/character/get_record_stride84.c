@@ -10,26 +10,26 @@
 #include "types.h"
 #include "owner_state.h"
 
-s32 Inventory_GetEquippedItem(struct BtlUnit *owner, s32 type);
+s32 Inventory_GetEquippedItem(struct BattleUnit *owner, s32 type);
 
 struct ClassDefinition *Owner_GetRecordStride84(s32 class_id)
 {
     return &Class_DefinitionTable[class_id];
 }
 
-void Owner_RefreshDerivedData(s32 owner_no)
+void Owner_RefreshDerivedData(s32 owner_id)
 {
-    struct BtlUnit *owner = UnitGet(owner_no);
+    struct BattleUnit *owner = UnitGet(owner_id);
 
     owner->class_index = Owner_DetermineClass(owner->enemy_id,
         owner->djinn_available, Inventory_GetEquippedItem(owner, 10));
-    Owner_UpdateClassActions(owner_no);
-    Owner_CalculateBaseElements(owner_no, owner->base_elm);
+    Owner_UpdateClassActions(owner_id);
+    Owner_CalculateBaseElements(owner_id, owner->base_element);
 }
 
-void Owner_RefreshClassActions(s32 owner_no)
+void Owner_RefreshClassActions(s32 owner_id)
 {
-    Owner_RefreshDerivedData(owner_no);
+    Owner_RefreshDerivedData(owner_id);
 }
 
 extern const s16 Element_PowerResistCurve[5][2];

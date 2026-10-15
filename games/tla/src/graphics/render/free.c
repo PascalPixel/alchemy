@@ -29,24 +29,24 @@ void UiWork_ResetFreeChannel(void)
 {
     struct UiChannelSlot *slot =
         ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
-    struct UiChannelSlot *sel = 0;
+    struct UiChannelSlot *selection = 0;
     s32 i;
 
     for (i = 0; i != 3; slot++, i++) {
         if (slot->work == 0 || slot->work->state != 0) {
-            sel = slot;
+            selection = slot;
             break;
         }
     }
-    if (sel != 0) {
-        if (sel->work != 0) {
+    if (selection != 0) {
+        if (selection->work != 0) {
             Ui_ClearVramBlock();
-            sel->y = 0;
+            selection->y = 0;
         }
-        sel->x = 0;
-        sel->countdown = 0;
-        sel->colour = 0xF;
-        sel->outline = 0;
-        sel->line_spacing = 0xA;
+        selection->x = 0;
+        selection->countdown = 0;
+        selection->colour = 0xF;
+        selection->outline = 0;
+        selection->line_spacing = 0xA;
     }
 }

@@ -170,7 +170,7 @@ void Func_020003f8(void)
 
 void Func_0200042c(void)
 {
-    if (Ov670_FlagChk(0x9df)) {
+    if (Ov670_FlagCheck(0x9df)) {
         Func_02005a9c();
         Func_02005c3c(0);
         ObjectMotion_SetAngleToward(36, gPartyState.current_owner, 0);

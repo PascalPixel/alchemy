@@ -12,9 +12,9 @@
 #include "character_ids.h"
 
 
-struct BtlSpriteSlots
+struct BattleSpriteSlots
 {
-	s32 enm_grp;
+	s32 enemy_group;
 	s16 sprite_slots[6];
 };
 
@@ -22,7 +22,7 @@ s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 void BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-	struct BtlSpriteSlots *work = (struct BtlSpriteSlots *)Ram_HeapSlots->battle_work;
+	struct BattleSpriteSlots *work = (struct BattleSpriteSlots *)Ram_HeapSlots->battle_work;
 	s32					   index;
 
 	for (index = 0; index <= 5; index++)

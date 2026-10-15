@@ -64,7 +64,7 @@ void Func_02001c34(s32 actor, s32 height, s32 frames);
 void Func_02001cbc(void);
 s32 Func_020005a8(struct VenusActor *object);
 
-static inline s32 Venus_FlagChk(s32 flag)
+static inline s32 Venus_FlagCheck(s32 flag)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     return GameFlag_Test(flag);
@@ -147,7 +147,7 @@ void Func_0200078c(void)
         leader->motion_flags |= 1;
         leader->terrain_height = 0;
         leader->y = 0;
-    } else if (!Venus_FlagChk(0x201)) {
+    } else if (!Venus_FlagCheck(0x201)) {
         Engine_EventBegin();
         Engine_EventResolvePendingActions(0);
         Engine_EventWait(5);

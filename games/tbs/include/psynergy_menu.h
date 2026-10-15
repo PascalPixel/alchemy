@@ -10,7 +10,7 @@
 
 struct AnimationObject;
 
-struct BtlUnit;
+struct BattleUnit;
 
 struct PsynergyMenuState
 {

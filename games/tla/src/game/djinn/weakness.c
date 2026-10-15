@@ -97,7 +97,7 @@ s32 Battle_IsEffect91Class(s32 class_id)
     return 0;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BtlUnit *target, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 {
     const u8 *entries;
     s32 i;
@@ -119,7 +119,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BtlUnit *target, s32 effect_id)
     return 0;
 }
 
-s32 BtlEfxRevChk(s32 effect_id)
+s32 BattleEffectRevCheck(s32 effect_id)
 {
     if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)
         || (effect_id == 0x49)) {

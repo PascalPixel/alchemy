@@ -15,7 +15,7 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
 {
 	s32 y = 0;
 	s32 h = 288;
-	s32 ofs = 0;
+	s32 offset = 0;
 
 	do
 	{
@@ -23,9 +23,9 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
 
 		for (x = 0; x != 40; x++)
 		{
-			dst[ofs / 2 + x / 2] = src[ofs + x];
+			dst[offset / 2 + x / 2] = src[offset + x];
 		}
-		ofs += stride;
+		offset += stride;
 		y++;
 	} while (y != h);
 }

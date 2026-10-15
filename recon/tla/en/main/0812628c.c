@@ -39,7 +39,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
 
     if (fade == 0x80)
     {
-        struct BtlWork *work;
+        struct BattleWork *work;
         u16 *palette;
 
         do
@@ -52,7 +52,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade)
     }
     else if (fade != 0)
     {
-        struct BtlWork *work;
+        struct BattleWork *work;
         u16 *source;
         u16 *destination;
         s32 i;

@@ -9,9 +9,9 @@ void Func_020001b8(s32 actor)
         if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
             Func_02001f00(actor);
         } else {
-            if (FlagChk(0x8ff))
+            if (FlagCheck(0x8ff))
                 Func_02001e18((s32)MsgScene659No149);
-            else if (FlagChk(0x8ab))
+            else if (FlagCheck(0x8ab))
                 Func_02001e18((s32)MsgScene659No81);
             else
                 Func_02001e18((s32)MsgScene659No33);
@@ -37,15 +37,15 @@ void Func_0200028c(void)
 {
     s32 msg;
 
-    if (FlagChk(0x98a)) {
-        if (FlagChk(0x310))
+    if (FlagCheck(0x98a)) {
+        if (FlagCheck(0x310))
             msg = (s32)MsgScene659No111;
         else
             msg = (s32)MsgScene659No118;
         Func_02001e18(msg);
         Func_02001e30(10, 0);
     } else {
-        if (FlagChk(0x210)) {
+        if (FlagCheck(0x210)) {
             Func_02001e18((s32)MsgScene659No116);
             Func_02001e30(10, 0);
         } else {
@@ -58,15 +58,15 @@ void Func_0200028c(void)
 
 void Func_02000308(void)
 {
-    if (FlagChk(0x98a)) {
-        if (FlagChk(0x310)) {
+    if (FlagCheck(0x98a)) {
+        if (FlagCheck(0x310)) {
             Func_02001e18((s32)MsgScene659No112);
             Func_02001e30(11, 0);
         } else {
             Func_02001e18((s32)MsgScene659No119);
             Func_02001e30(11, 0);
         }
-    } else if (FlagChk(0x210)) {
+    } else if (FlagCheck(0x210)) {
         Func_02001e18((s32)MsgScene659No117);
         Func_02001e30(11, 0);
     } else {
@@ -77,8 +77,8 @@ void Func_02000308(void)
 
 void Func_02000368(void)
 {
-    if (FlagChk(0x98a)) {
-        if (FlagChk(0x310)) {
+    if (FlagCheck(0x98a)) {
+        if (FlagCheck(0x310)) {
             Func_02001e18((s32)MsgScene659No113);
             Func_02001e30(10, 0);
         } else {
@@ -86,7 +86,7 @@ void Func_02000368(void)
             Func_02001e30(10, 0);
         }
     } else {
-        s32 flag = FlagChk(0x210);
+        s32 flag = FlagCheck(0x210);
         s32 msg = (s32)MsgScene659No108;
 
         if (flag) {
@@ -101,8 +101,8 @@ void Func_02000368(void)
 
 void Func_020003c8(void)
 {
-    if (FlagChk(0x98a)) {
-        if (FlagChk(0x310)) {
+    if (FlagCheck(0x98a)) {
+        if (FlagCheck(0x310)) {
             Func_02001e18((s32)MsgScene659No114);
             Func_02001e30(11, 0);
         } else {
@@ -110,7 +110,7 @@ void Func_020003c8(void)
             Func_02001e30(11, 0);
         }
     } else {
-        s32 flag = FlagChk(0x210);
+        s32 flag = FlagCheck(0x210);
         s32 msg = (s32)MsgScene659No109;
 
         if (flag) {
@@ -125,7 +125,7 @@ void Func_020003c8(void)
 
 void Func_02000428(void)
 {
-    if (!FlagChk(0x211)) {
+    if (!FlagCheck(0x211)) {
         FlagSet(0x211);
         Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
         ObjectMotion_CommitPositionAndActivate(14, -12, 0);
@@ -151,16 +151,16 @@ const u8 *Func_020004c4(void)
         return Data_02002c9c;
     if (gPartyState.entrance == 20)
         return Data_02002bb8;
-    if (FlagChk(0x8ff))
+    if (FlagCheck(0x8ff))
         return Data_0200308c;
-    if (FlagChk(0x8ab))
+    if (FlagCheck(0x8ab))
         return Data_02002da4;
     return Data_020028a0;
 }
 
 void Func_02000534(void)
 {
-    if (FlagChk(0x8ab)) {
+    if (FlagCheck(0x8ab)) {
         ActorPlace(26, 0x3780000, 0x80000);
     } else {
         Func_02001d38(Object_GetById(26), 242);

@@ -11,7 +11,7 @@
 #include "battle_unit.h"
 
 struct BattleSummonState *Trade_GetOfferStateFar(s32 owner);
-struct BtlUnit *UnitGet(s32 unit_id);
+struct BattleUnit *UnitGet(s32 unit_id);
 
 void Func_08118f6c(void)
 {
@@ -31,7 +31,7 @@ void Func_08118f6c(void)
             s32 party_slot;
 
             for (party_slot = 0; party_slot < party_size; party_slot++) {
-                struct BtlUnit *member = UnitGet(party_members[party_slot]);
+                struct BattleUnit *member = UnitGet(party_members[party_slot]);
 
                 totals[element] += member->djinn_owned_counts[element];
             }

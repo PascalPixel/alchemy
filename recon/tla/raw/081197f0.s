@@ -272,7 +272,7 @@ Func_081197f0:
 	movs r0, #9
 	bl UiWindow_CreateWithLayoutBoundsFar
 	bl Camera_InitDefaultTransform
-	bl BtlObjPut
+	bl BattleObjPut
 	bl Func_081263c4
 	movs r3, #206
 	lsls r3, r3, #3
@@ -347,7 +347,7 @@ Func_081197f0:
 	ldrb r3, [r3]
 	cmp r3, #0
 	bne .L_08119b08
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #15
 	ands r0, r3
 	cmp r0, #0
@@ -357,7 +357,7 @@ Func_081197f0:
 	strb r3, [r0]
 	b .L_08119b12
 .L_08119af4:
-	bl BtlRndFar
+	bl BattleRandomFar
 	movs r3, #31
 	ands r0, r3
 	cmp r0, #0
@@ -422,7 +422,7 @@ Func_081197f0:
 	movs r5, #187
 	ldrb r0, [r3]
 	lsls r5, r5, #2
-	bl PtyStDrawFar
+	bl PartyStatusDrawFar
 	add r5, r9
 	movs r1, #160
 	ldr r3, .L_08119cd4
@@ -459,7 +459,7 @@ Func_081197f0:
 	str r0, [r3, #84]
 	ldr r5, [sp, #20]
 	ldrb r0, [r5]
-	bl PtyStDrawFar
+	bl PartyStatusDrawFar
 	ldr r0, [sp, #28]
 	cmp r0, #0
 	bge .L_08119bd6
@@ -869,7 +869,7 @@ Func_081197f0:
 	adds r3, #16
 	ldrh r1, [r1, r3]
 	movs r0, #128
-	bl BtlUnitSetFar
+	bl BattleUnitSetFar
 	bl UiWork_ClearValueNameTablesFar
 	movs r0, #128
 	movs r1, #1

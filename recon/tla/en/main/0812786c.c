@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 
 struct OwnerElementStats {
-    s16 pow;
+    s16 power;
     s16 res;
 };
 
@@ -17,7 +17,7 @@ struct OwnerStats {
     u16 agi;
     u8 luck;
     u8 unknown_0f[5];
-    struct OwnerElementStats elm[4];
+    struct OwnerElementStats element[4];
 };
 
 struct OwnerState {
@@ -93,13 +93,13 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     state->stats.agi = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->stats.elm[i].pow + levels * 15;
-        floor = __divsi3(base->elm[i].pow * 7, 10);
+        value = state->stats.element[i].power + levels * 15;
+        floor = __divsi3(base->element[i].power * 7, 10);
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->stats.elm[i].pow = value;
+        state->stats.element[i].power = value;
     }
 
     state->level += levels;

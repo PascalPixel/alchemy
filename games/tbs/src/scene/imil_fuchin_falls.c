@@ -45,7 +45,7 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void SceneActor_StepSubjectAlongHeading(void);
 
-s32 ImiruFuchin_TrackLeader;
+s32 ImilFuchinFalls_TrackLeader;
 
 struct CaveEffectScripts
 {
@@ -1237,7 +1237,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 
 static void EV15_TOUCH_7(void)
 {
-	if (ImiruFuchin_TrackLeader != 0)
+	if (ImilFuchinFalls_TrackLeader != 0)
 	{
 		struct TrackingWork *work = *(gWorkSlot + 36);
 
@@ -1247,7 +1247,7 @@ static void EV15_TOUCH_7(void)
 
 static void EV16_TOUCH_7(void)
 {
-	if (ImiruFuchin_TrackLeader != 0)
+	if (ImilFuchinFalls_TrackLeader != 0)
 	{
 		struct TrackingWork *work = *(gWorkSlot + 36);
 
@@ -1306,7 +1306,7 @@ static void ImilFuchinFalls_ApplyEntrySetup(void)
 	{
 		value = 0;
 		actor = Actor_Get(8);
-		ImiruFuchin_TrackLeader = value;
+		ImilFuchinFalls_TrackLeader = value;
 		actor->motion_flags = value;
 		actor->y.fixed = value;
 		Engine_ActorSetSpritePriority(8, 1);
@@ -1316,11 +1316,11 @@ static void ImilFuchinFalls_ApplyEntrySetup(void)
 		case 1:
 		case 2:
 			BattleFx_StartFadeOverlay(0);
-			ImiruFuchin_TrackLeader = 1;
+			ImilFuchinFalls_TrackLeader = 1;
 			break;
 		case 5:
 			BattleFx_StartFadeOverlay(0);
-			ImiruFuchin_TrackLeader = 1;
+			ImilFuchinFalls_TrackLeader = 1;
 			value = *(s32 *)(gWorkSlot + 36);
 			((struct TrackingWork *)value)->actor = NULL;
 			break;

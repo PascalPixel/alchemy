@@ -9,7 +9,7 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-extern s32 ImiruFuchin_TrackLeader;
+extern s32 ImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 *ImilFuchinFalls_GetExits(void);

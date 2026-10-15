@@ -30,3 +30,18 @@ Resource_Data018:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_JA
+	.byte 0x08, 0x04	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x56ae
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x08, 0x71	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x531e
+	.else
+	.ifdef TLA_EDITION_FR
+	.byte 0x52, 0x62, 0x04	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x50fd
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0xee, 0xac	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x519a
+	.endif
+	.endif
+	.endif
+	.endif

@@ -7,3 +7,6 @@ Tileset_Set46TilesD:
 	.else
 	.incbin "games/tla/src/graphics/tileset/set_46/tiles_d.4bpp.mtf"
 	.endif
+	.ifdef TLA_EDITION_JA
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set46TilesC+0x13f
+	.endif

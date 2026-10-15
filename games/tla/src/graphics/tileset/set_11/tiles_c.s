@@ -2,3 +2,4 @@
 	.global Tileset_Set11TilesC
 Tileset_Set11TilesC:
 	.incbin "games/tla/src/graphics/tileset/set_11/tiles_c.4bpp.mtf"
+	.byte 0xc6	@ PACKER: left in the buffer by Tileset_Set11TilesA+0x2287

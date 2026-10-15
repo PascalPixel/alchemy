@@ -10,3 +10,4 @@
 Summon_PurpleArmourTiles:
 	.incbin "games/tla/src/graphics/summon/purple_armour.gbapal"
 	.incbin "games/tla/src/graphics/summon/purple_armour.parts.lz"
+	.byte 0x75, 0x72	@ PACKER: left in the buffer by Summon_ChainedDemonTiles+0x592

@@ -26,4 +26,6 @@ BattleFx_TileAnimationMask:
 	.endif
 	.endif
 	.endif
+	.else
+	.byte 0x38, 0xfa, 0x06	@ PACKER: left in the buffer by BattleFx_CloudPuffSheet+0x845
 	.endif

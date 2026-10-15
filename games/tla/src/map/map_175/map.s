@@ -68,3 +68,4 @@ Field_Map175:
 .LField_Map175_SCENE:
 	.incbin "games/tla/src/map/map_175/scene.parts.lz"
 	.endif
+	.balign 4, 0

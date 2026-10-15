@@ -8,3 +8,6 @@ Slots_OrangeDigits:
 	.incbin "games/tla/src/graphics/slots/orange_digits.gbapal"
 	.incbin "games/tla/src/graphics/slots/orange_digits.4bpp16x32.lz"
 	.endif
+	.ifdef TLA_EDITION_ES
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif

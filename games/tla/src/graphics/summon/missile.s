@@ -10,3 +10,4 @@
 Summon_MissileTiles:
 	.incbin "games/tla/src/graphics/summon/missile.gbapal"
 	.incbin "games/tla/src/graphics/summon/missile.parts.lz"
+	.byte 0x79, 0x10, 0x8d	@ PACKER: left in the buffer by Summon_BronzeAutomatonTiles+0x2b1

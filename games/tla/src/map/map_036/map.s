@@ -33,3 +33,4 @@ Field_Map036:
 	.balign 4, 0
 .LField_Map036_SCENE:
 	.incbin "games/tla/src/map/map_036/scene.parts.lz"
+	.balign 4, 0

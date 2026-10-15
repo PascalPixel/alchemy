@@ -29,3 +29,22 @@ Title_LogoOnBlackPicture:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_JA
+	.byte 0x0e, 0x44, 0xc0	@ PACKER: left in the buffer by Title_CamelotLogo+0x153d
+	.else
+	.ifdef TLA_EDITION_EN
+	.byte 0x08	@ PACKER: left in the buffer by Title_CamelotLogo+0x15b7
+	.else
+	.ifdef TLA_EDITION_DE
+	.byte 0x5e, 0x8b	@ PACKER: left in the buffer by Title_CamelotLogo+0x156e
+	.else
+	.ifdef TLA_EDITION_FR
+	.byte 0x3d	@ PACKER: left in the buffer by Title_CamelotLogo+0x1537
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0x5d	@ PACKER: left in the buffer by Title_CamelotLogo+0x1527
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif

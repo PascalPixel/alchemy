@@ -5,4 +5,6 @@ Monster_TrollSprites:
 	.incbin "games/common/src/graphics/monster/troll.frames.lz"
 	.ifeq GAME_TLA
 	.byte 0x2b, 0x00	@ PACKER: left in the buffer by Ui_CommandIcons+0x3222
+	.else
+	.byte 0x3c, 0x86	@ PACKER: left in the buffer by Monster_GreenMageSprites+0x3222
 	.endif

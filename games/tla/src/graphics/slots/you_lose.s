@@ -23,3 +23,14 @@ Slots_YouLoseBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_DE
+	.byte 0x10	@ PACKER: left in the buffer by Slots_YouWinBanner+0x41f
+	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x90	@ PACKER: left in the buffer by Slots_YouWinBanner+0x577
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0xcd, 0xe4, 0x07	@ PACKER: left in the buffer by Slots_YouWinBanner+0x4d5
+	.endif
+	.endif
+	.endif

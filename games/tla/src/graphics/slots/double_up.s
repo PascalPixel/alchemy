@@ -29,3 +29,18 @@ Slots_DoubleUpBanner:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_JA
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
+	.ifdef TLA_EDITION_EN
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
+	.ifdef TLA_EDITION_ES
+	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes
+	.else
+	.ifdef TLA_EDITION_IT
+	.byte 0xbe	@ PACKER: left in the buffer by Slots_YouLoseBanner+0x48f
+	.endif
+	.endif
+	.endif
+	.endif

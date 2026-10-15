@@ -5,7 +5,7 @@
  * 0x4000 still end in callee-saved registers shared between calls (here r6
  * and r5), which moves gPartyState out of r6 and its owner address out of
  * r5. Four minutes of alchemy permute: 28, by a char temporary. */
-#include "../../../../games/tla/src/field/suhalla_gate/local.h"
+#include "../../../../games/tla/src/scene/suhalla_gate/local.h"
 
 extern char SceneId_SuhallaGate2;
 extern char SceneId_VenusEntrance;

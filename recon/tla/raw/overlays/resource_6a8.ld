@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_6a8_overlay.o"(.text.x020080b8)
         "*/games/tla/src/field/overlay_6a8/s0280.o"(.text)
         "*/games/tla/src/field/overlay_6a8/s0290.o"(.text)
-        "*/games/tla/src/field/venus_lighthouse/distance.o"(.text)
+        "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x020082d8)
         "*/resource_6a8_overlay.o"(.text.x020083bc)
         "*/games/tla/src/field/overlay_6a8/scene_tables.o"(.text)

@@ -12,16 +12,16 @@
 	.section .rodata
 	.global Data_020020bc
 Data_020020bc:
-	.incbin "games/tla/src/field/overlay_64c/pal_a.gbapal"
+	.incbin "games/tla/src/scene/staff_credit/pal_a.gbapal"
 	.global Data_0200213c
 Data_0200213c:
-	.incbin "games/tla/src/field/overlay_64c/pal_b.gbapal"
+	.incbin "games/tla/src/scene/staff_credit/pal_b.gbapal"
 	.global Data_0200215c
 Data_0200215c:
-	.incbin "games/tla/src/field/overlay_64c/pal_c.gbapal"
+	.incbin "games/tla/src/scene/staff_credit/pal_c.gbapal"
 	.global Data_0200217c
 Data_0200217c:
-	.incbin "games/tla/src/field/overlay_64c/beams_map.table.lz"
+	.incbin "games/tla/src/scene/staff_credit/beams_map.table.lz"
 	.global Data_02002469
 Data_02002469:
-	.incbin "games/tla/src/field/overlay_64c/beams.parts.lz"
+	.incbin "games/tla/src/scene/staff_credit/beams.parts.lz"

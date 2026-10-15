@@ -1,4 +1,4 @@
-@ Unlinked overlay field data from the removed games/tla/src/field/daila_interiors/field_data.inc, kept as a GNU as draft (S4); nothing includes it.
+@ Unlinked overlay field data from the removed games/tla/src/scene/daila_interiors/field_data.inc, kept as a GNU as draft (S4); nothing includes it.
 
 FieldFlaggedIds_02000e04:
 	field_flagged_id 0x000a, 0x220

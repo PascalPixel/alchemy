@@ -779,19 +779,13 @@ UiText_FormatNumber:
 	.type UiText_BuildRenderEntries, %function
 	.thumb_func
 UiText_BuildRenderEntries:
-	.incbin "baserom.gba", 0x0003b024, 0x0000084c
-	.section .rom.0003b888, "ax"
-	.global UiText_GetResourceDimensions
-	.type UiText_GetResourceDimensions, %function
+	.incbin "baserom.gba", 0x0003b024, 0x00000778
+	.section .rom.0003b79c, "ax"
+	.global UiWindow_FitOnScreen
+	.type UiWindow_FitOnScreen, %function
 	.thumb_func
-UiText_GetResourceDimensions:
-	.incbin "baserom.gba", 0x0003b888, 0x0000004c
-	.section .rom.0003b8d4, "ax"
-	.global UiText_GetResourceDimensionsAlt
-	.type UiText_GetResourceDimensionsAlt, %function
-	.thumb_func
-UiText_GetResourceDimensionsAlt:
-	.incbin "baserom.gba", 0x0003b8d4, 0x0000004c
+UiWindow_FitOnScreen:
+	.incbin "baserom.gba", 0x0003b79c, 0x000000d4
 	.section .rom.0003b920, "ax"
 	.global UiText_MeasureEntryDimensions
 	.type UiText_MeasureEntryDimensions, %function

@@ -447,8 +447,6 @@ SECTIONS
         "*/recon/tla/raw/0803b094.o"(.text)
         "*/recon/tla/raw/0803b794.o"(.text)
         "*/games/tla/src/graphics/text/resource_measure.o"(.text)
-        "*/recon/tla/raw/0803b880.o"(.text)
-        "*/recon/tla/raw/0803b8cc.o"(.text)
         "*/recon/tla/raw/0803b918.o"(.text)
         "*/recon/tla/raw/0803bb58.o"(.text)
         "*/recon/tla/raw/0803bde4.o"(.text)

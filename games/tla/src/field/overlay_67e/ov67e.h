@@ -23,6 +23,7 @@ extern u8 MsgLadyUzumeAnd[];
 extern u8 MsgWouldYouBe[];
 extern u8 MsgTheLegendSays[];
 extern u8 MsgWait2[];
+extern u8 MsgThisTokenIsn[];
 
 struct FieldActor *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -38,6 +39,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

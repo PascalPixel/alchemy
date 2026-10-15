@@ -1,4 +1,7 @@
-// near miss: differ 8 (listing 17 instructions, draft 23); the native builds the zero inside the loop; the draft hoists it to r8
+// near miss: differ 8 (listing 17 instructions, draft 23); the native builds the zero inside the loop; the draft's loop.c hoists it to r8
+// trial: an empty one-pass block before the store, a do/while, a while (1) with break, i < 2 with i + 26 written at each call, and a pointer to motion_flags taken before the call all differ 8
+// trial: a label and a backward goto in place of the loop matches (differ 0), but a goto that only forces layout is not allowed (S2); it was adopted that way and returned here
+// trial: alchemy permute, 4 minutes: differ 0 only with a long long zero shared by i's start and the store, an invented type and no form the bytes prove (S2), not adopted
 #include "../../../../games/tla/src/field/overlay_670/ov670.h"
 
 extern struct Ov670Object *Data_02007950;
@@ -50,7 +53,6 @@ void Func_02003288(void)
         struct Ov670Object *object = Object_GetById(id);
 
         Func_020031f0(id);
-        do { } while (0);
         object->motion_flags = 0;
     }
     Func_02003220();

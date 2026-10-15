@@ -1,4 +1,7 @@
-// near miss: differ 17 (listing 25 instructions, draft 32); the native builds the zero inside the loop in r6 and reuses it after the loop; the draft hoists it to r8
+// near miss: differ 17 (listing 25 instructions, draft 32); the native builds the zero inside the loop in r6 and reuses it after the loop; the draft's loop.c hoists it to r8
+// trial: an empty one-pass block before the store changes nothing (differ 17)
+// trial: a label and a backward goto in place of the loop matches (differ 0), but a goto that only forces layout is not allowed (S2); it was adopted that way and returned here
+// trial: a long long zero shared by i's start and the store, differ 11 (an invented type, not adoptable)
 #include "../../../../games/tla/src/field/overlay_670/ov670.h"
 
 extern struct Ov670Object *Data_02007950;
@@ -50,7 +53,6 @@ void Func_0200324c(void)
         struct Ov670Object *object = Object_GetById(id);
 
         Func_020031f0(id);
-        do { } while (0);
         object->motion_flags = 0;
     }
     Object_GetById(15)->y = 0x200000;

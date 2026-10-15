@@ -1,7 +1,6 @@
 /* Near misses of overlay 6ad, measured with alchemy diff --symbol:
  * Func_02000170 differ 6: three loads sit one row from the listing (object->y twice, the position argument).
- * Func_02000280 differ 2 and Func_020002b8 differ 6: the listing loads the table address before it scales the id;
- *   a barrier or a pointer local changes the addressing instead.
+ * (Func_02000280 is C in s01f4.c; Func_020002b8 has its own draft.)
  * Func_020002ec differ 16: the listing keeps z in r0 where this draft uses r3. */
 #include "../../../../games/tla/src/field/overlay_6ad/room.h"
 
@@ -14,7 +13,6 @@ extern const u8 Data_02006530[];
 extern const u8 Data_02006710[];
 extern const u8 Data_02006890[];
 extern const u8 Data_02006a0c[];
-extern const s16 Data_02005b5c[];
 
 void Func_02000170(void)
 {
@@ -37,22 +35,6 @@ void Func_02000170(void)
             return;
     }
     Func_02005688();
-}
-
-void Func_02000280(s32 unused, s32 id)
-{
-    struct ObjectRuntime *object = Object_GetById(id);
-
-    Func_02005598(Data_02005b5c[id - 18], S16_AT(object, 100) << 16, (S16_AT(object, 102) << 16) + 0xfff80000);
-}
-
-void Func_020002b8(s32 unused, s32 id)
-{
-    struct ObjectRuntime *object = Object_GetById(id);
-    s32 target = Data_02005b5c[id - 18];
-
-    if (object->x >> 20 == (U16_AT(object, 100) << 16) >> 20)
-        Func_02005598(target, 0, 0);
 }
 
 void Func_020002ec(void)

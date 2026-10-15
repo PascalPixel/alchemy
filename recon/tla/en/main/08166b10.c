@@ -1,7 +1,7 @@
 /* Draft, differ 149 of 863 (864 here): The Broken Seal's
  * BattleFx_RunFallingSword with The Lost Age's mode argument (Func_08166af8
  * and Func_08166b04 pass 0 and 1): mode 2 skips the sword sheet, mode 1
- * swaps each BG colour's red and green-blue fields first and at frame 61
+ * rotates each BG colour's three fields first and at frame 61
  * copies resource 0x188's palette and calls Func_0815b634, mode 0 steps the
  * palette toward the blast sheet on frames 41 to 63; frame 60 starts phase
  * 144 or 145; frame 9 also flashes the first target. The blitters come from

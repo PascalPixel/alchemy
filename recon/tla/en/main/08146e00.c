@@ -26,21 +26,21 @@
  * fixed), 854, and 808 after a declaration scan of that form.
  */
 #include "battle.h"
-#include "battle_effect.h"
-#include "battle_effect_work.h"
-#include "effect_step.h"
 #include "graphics.h"
-#include "input.h"
-#include "io_reg.h"
-#include "iwram_call.h"
 #include "lib.h"
-#include "motobj.h"
-#include "ram_buffer.h"
 #include "resource.h"
 #include "sound.h"
 #include "system.h"
-#include "transform.h"
 #include "types.h"
+#include "battle_effect.h"
+#include "battle_effect_work.h"
+#include "effect_step.h"
+#include "input.h"
+#include "io_reg.h"
+#include "iwram_call.h"
+#include "motobj.h"
+#include "ram_buffer.h"
+#include "transform.h"
 
 // The comet sparks live in the map buffer, 128 for each of four comets.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

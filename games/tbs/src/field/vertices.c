@@ -4,9 +4,10 @@
 #include "mulq16.h"
 #include "project.h"
 
-#define LINES 160
+#define LINES 160 // visible scanlines
 
-// 8 バイトの中継: ldr r4 / bx r4 と飛び先
+// An 8-byte far-call stub (ldr r4 / bx r4) followed by its target. This code
+// runs from a RAM copy, so it calls the runtime through the stubs' targets.
 struct FarCallEntry {
   u32 stub;
   void *target;
@@ -26,7 +27,9 @@ struct Position {
   s32 z;
 };
 
-// 走査線 1 本の地面の点
+// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
+// fills x (the line's width scale) and z (its depth); the rest caches the
+// rotation terms this routine computes from them for the current angle.
 struct ScanVertex {
   s32 x;
   s32 z;
@@ -36,7 +39,7 @@ struct ScanVertex {
   s16 v;
 };
 
-// BG2PA ... BG2Y
+// One background's affine registers, BG2PA to BG2Y.
 struct BgAffine {
   s16 pa;
   s16 pb;
@@ -46,11 +49,18 @@ struct BgAffine {
   s32 y;
 };
 
+// Builds the world map's per-scanline affine table for one frame: the ground
+// plane seen from eye towards target. line points at the 160 scanlines'
+// ground terms, whose rotation terms stay cached while the yaw
+// (gScanlineAngle) is unchanged;
+// affine receives each line's parameters twice, for BG2 and then BG3, as the
+// HBlank DMA writes both. Copied to RAM and run from there.
 void Transform_UpdateVertices(struct Position *eye, struct Position *target,
-                              struct ScanVertex *vtx, struct BgAffine *out) {
+                              struct ScanVertex *line,
+                              struct BgAffine *affine) {
   u32 angle;
-  s32 px;
-  s32 pz;
+  s32 originX;
+  s32 originZ;
   s32 sin;
   s32 cos;
   s32 nsin;
@@ -67,67 +77,70 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
     tx -= ex;
     angle = (u16)ArcTan2(tx >> 4, z >> 4);
   }
-  px = MulQ16(target->x, 0x8000);
-  pz = MulQ16(target->z, 0x8000);
+  // The texture origin: the target at half scale.
+  originX = MulQ16(target->x, 0x8000);
+  originZ = MulQ16(target->z, 0x8000);
   if (angle != gScanlineAngle) {
-    // 角度が変わった
+    // The camera turned: recompute every scanline's rotation terms.
     gScanlineAngle = angle;
     sin = Sin(angle);
     cos = Cos(angle);
     nsin = -sin;
     for (i = LINES - 1; i >= 0; i--) {
-      s32 x = vtx->x;
+      s32 x = line->x;
       s32 cx;
       s32 a;
       s32 b;
       s32 u;
       s32 v;
 
-      z = vtx->z;
+      z = line->z;
       u = -(MulQ16(x, cos) / 256);
       a = (s16)u;
-      vtx->u = u;
-      out->pa = u;
+      line->u = u;
+      affine->pa = u;
       v = MulQ16(x, sin) / 256;
-      vtx->v = v;
-      out->pc = v;
+      line->v = v;
+      affine->pc = v;
       /* FAKEMATCH: the centre is read through its own address, so the native
        * single literal for it is built; member access loads gProjection and
        * reads at offset 12 (differ 2). */
       cx = *&gProjection.centerX;
       a = (a << 8) * cx;
       b = ((s16)v << 8) * -cx;
-      vtx->dx = -(a + MulQ16(nsin, z));
-      vtx->dz = b + MulQ16(cos, z);
-      out->x = (px + vtx->dx) >> 8;
-      out->y = (pz + vtx->dz) >> 8;
-      out[1] = out[0];
-      vtx++;
-      out += 2;
+      line->dx = -(a + MulQ16(nsin, z));
+      line->dz = b + MulQ16(cos, z);
+      affine->x = (originX + line->dx) >> 8;
+      affine->y = (originZ + line->dz) >> 8;
+      affine[1] = affine[0];
+      line++;
+      affine += 2;
     }
   } else {
-    // 角度が同じ
+    // Same angle: the cached terms stand and only the position moves.
     for (i = LINES - 1; i >= 0; i--) {
       if (gFrameCount & 1) {
-        // 奇数フレーム
+        // On odd frames the sample point shifts by half a pixel step along
+        // the line and a quarter step across it, so alternate frames sample
+        // between each other's texels.
         /* FAKEMATCH: one scratch variable holds the x sum and then u, as the
          * native keeps both in r3; with separate values three instructions of
-         * out->y come in another order (differ 6). */
+         * affine->y come in another order (differ 6). */
         s32 work;
 
-        work = ((px + vtx->dx) >> 8) + vtx->v / 4 + vtx->u / 2;
-        out->x = work;
-        work = vtx->u;
-        out->y = ((pz + vtx->dz) >> 8) + work / 4 + vtx->v / 2;
+        work = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;
+        affine->x = work;
+        work = line->u;
+        affine->y = ((originZ + line->dz) >> 8) + work / 4 + line->v / 2;
       } else {
-        out->x = (px + vtx->dx) >> 8;
-        out->y = (pz + vtx->dz) >> 8;
+        affine->x = (originX + line->dx) >> 8;
+        affine->y = (originZ + line->dz) >> 8;
       }
-      out->pa = vtx->u;
-      out->pc = vtx->v;
-      out[1] = out[0];
-      vtx++;
-      out += 2;
+      affine->pa = line->u;
+      affine->pc = line->v;
+      affine[1] = affine[0];
+      line++;
+      affine += 2;
     }
   }
 }

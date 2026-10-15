@@ -64,16 +64,15 @@
 #include "unit/field/curve_data.h"
 #include "unit/field/griddata.h"
 
-//--------------------------------------------------------------------------
-// source を destination に展開して destination を返す
-// source[0・1] : コマンドの列までのオフセット（0 なら圧縮なしで source + 2
-// を返す） source + 2   : そのまま写すバイトの列 コマンドの列 :
-// 制御バイトを下位ビットから 1 ビットずつ読む
-//   1 : そのまま写すバイトを 1 つ写す
-//   0 : 2 バイト（上位・下位）を読む。0 なら終わり。
-//       下位 12 ビットが距離、上位 4 ビット + 2 が長さ（4 ビットが 0
-//       なら次のバイト + 18） source + 2 から距離だけ前のところから写す
-//--------------------------------------------------------------------------
+// Decompresses an LZ stream from source into destination and returns
+// destination. The stream starts with a little-endian halfword: the offset of
+// its command bytes, or 0 for an uncompressed block, whose data (source + 2)
+// is returned as it is. The literal bytes follow that halfword. Each command
+// byte gives eight flags, low bit first: 1 copies the next literal byte; 0
+// reads a big-endian halfword whose low 12 bits are a distance and high 4
+// bits a length - 2 (or, when 0, the next byte + 16 + 2), and copies that many
+// bytes from the literals' start minus the distance. A zero halfword ends the
+// stream.
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
@@ -93,10 +92,10 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   base = literal;
   start = destination;
   command++;
-  control |= 0x100; // 8 ビット読み終えたしるし
+  control |= 0x100; // a marker bit, shifted down as the flags are read
   for (;;) {
     if ((control & 1) != 0) {
-      if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
+      if (control != 1) // only the marker is left: read the next command
         *destination++ = *literal++;
     } else {
       token = *command++ << 8;

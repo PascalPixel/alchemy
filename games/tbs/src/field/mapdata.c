@@ -4,13 +4,13 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 地形の高さと振る舞い
 // Map terrain: the height curve of each cell kind and the world map's terrain
 // behaviour.
 //--------------------------------------------------------------------------
 
-// 地形の高さ関数: セルの当たりの最初のバイトの下位 4 ビットで選び、
-// (残りの標本, セル内の x, セル内の y) で呼ぶ。それぞれ要る引数だけを読む。
+// Terrain height functions, chosen by the low four bits of a cell's first
+// collision byte and called with (the remaining samples, x within the cell,
+// y within the cell). Each reads only the arguments it needs.
 const TerrainHeightFn gMap_TerrainHeightFunctions[16] = {
     Curve_GetFirstSampleA,
     Curve_LerpTwoSamples,
@@ -30,24 +30,24 @@ const TerrainHeightFn gMap_TerrainHeightFunctions[16] = {
     Curve_GetFirstSampleC,
 };
 
-// ワールドマップの地形の振る舞い: 当たりの値に、ブロックの語の最上位ビットが
-// 立っていれば 0x10 を、地形の種類が 21 なら (最上位ビットによらず) 0x20 を
-// 足して引く
+// World map terrain behaviour, indexed by the collision value plus 0x10 when
+// the block word's top bit is set, or plus 0x20 (whatever that bit) for
+// terrain kind 21.
 // clang-format off
 const u8 gWorldMap_TerrainBehaviorTable[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
     0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 0x10
-    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20 種類 21
+    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20: terrain kind 21
 };
 // clang-format on
 
-// 半径 40 の 8 方向 (x, y)
+// The eight compass directions as (x, y) offsets of radius 40.
 const s8 gWorldMap_DirectionOffsets[8][2] = {
     {0, -40}, {28, -28}, {40, 0},  {28, 28},
     {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
-// 1.0 (Q16) が 2 つ
+// Two 1.0s (Q16); battle effects read them as a unit scale.
 const u32 gWorldMap_UnitScale[2] = {
     0x10000,
     0x10000,

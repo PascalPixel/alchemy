@@ -3,11 +3,10 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 作業値の代入、加算と比較
 // Script work values: the handler SC_SET, SC_ADD and SC_CMP call for each.
 //--------------------------------------------------------------------------
 
-// 作業値の番号 (enum ScriptWork) ごとの処理
+// The handler for each work value number (enum ScriptWork).
 const OperandFunc gScript_OperandHandlerTable[41] = {
     Script_SetOrCompareAddress,          // 0x00 SW_SCRIPT
     Script_SetOrCompareCursor,           // 0x01 SW_CURSOR

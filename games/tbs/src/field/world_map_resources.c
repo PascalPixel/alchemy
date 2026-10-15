@@ -3,12 +3,12 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// ワールドマップの資源
 // World map graphics: a palette and five tile sets for each of its two looks.
 //--------------------------------------------------------------------------
 
-// パレットとタイル 5 枚。読み込む位置のセルの種類が 21 なら 2 組目を使う。
-// 読む側が u32 * で持つので const にしない。
+// Each set is a palette and five tile sets; the loader takes the second set
+// when the cell it loads at has terrain kind 21. Not const: the loader reads
+// it through a u32 *.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,

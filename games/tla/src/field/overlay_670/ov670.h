@@ -199,6 +199,14 @@ static inline void Ov670_ObjWalk(s32 actor, s32 x, s32 z)
     ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
+void Func_02005b14(s32 actor, s32 x, s32 z, s32 angle);
+
+static inline void Ov670_ObjPlaceFacing(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b14(actor, x, z, angle);
+}
+
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 static inline void Ov670_ObjPlace(s32 actor, s32 x, s32 z)

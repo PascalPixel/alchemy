@@ -1,10 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
+	.balign 4
 	.global Func_020000b8
 	.thumb_func
 Func_020000b8:
@@ -1336,9 +1333,8 @@ Func_02000e38:
 	.4byte gPartyState
 .L_02008f14:
 	.4byte 0xffff8000
-	.section .text.x0200933e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009340,"ax",%progbits
+	.balign 4
 	.global Func_02001340
 	.thumb_func
 Func_02001340:
@@ -2361,127 +2357,6 @@ Func_02001d24:
 	.4byte 0x00013333
 .L_0200a380:
 	.4byte Data_02003c58
-	.section .text.x0200a4e4,"ax",%progbits
-	.balign 4
-	.global Func_020024e4
-	.thumb_func
-Func_020024e4:
-	push {r5, r6, lr}
-	movs r0, #13
-	bl Object_GetById
-	adds r6, r0, #0
-	bl Func_020039d8
-	movs r0, #0
-	bl Func_02003b08
-	ldr r5, .L_0200a5f4
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #0
-	ldr r0, [r5]
-	bl Func_02003aa8
-	bl Func_02003ad0
-	movs r3, #0
-	adds r0, #85
-	strb r3, [r0]
-	movs r1, #128
-	movs r0, #164
-	movs r2, #138
-	lsls r0, r0, #17
-	lsls r1, r1, #14
-	lsls r2, r2, #18
-	movs r3, #1
-	bl Motion_CamBounds
-	bl Func_02003ac8
-	movs r3, #192
-	movs r1, #164
-	movs r2, #156
-	lsls r3, r3, #8
-	lsls r2, r2, #18
-	lsls r1, r1, #17
-	movs r0, #14
-	bl Func_02003a38
-	movs r0, #1
-	bl WaitFrames
-	adds r6, #35
-	ldr r0, [r5]
-	movs r1, #14
-	bl Object_LinkObjectAndSetCallback
-	ldrb r2, [r6]
-	movs r3, #253
-	ands r3, r2
-	strb r3, [r6]
-	movs r0, #14
-	movs r1, #3
-	bl ObjectMotion_SetActionVariant
-	movs r2, #204
-	lsls r2, r2, #8
-	movs r0, #14
-	ldr r1, .L_0200a5f8
-	adds r2, #204
-	bl ObjectMotion_SetSpeedParameters
-	movs r1, #164
-	movs r2, #142
-	movs r0, #14
-	lsls r1, r1, #1
-	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #164
-	movs r2, #248
-	movs r0, #14
-	lsls r1, r1, #1
-	lsls r2, r2, #1
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #140
-	movs r2, #216
-	lsls r1, r1, #1
-	lsls r2, r2, #1
-	movs r0, #14
-	bl ObjectMotion_SetPositionAndReset
-	ldr r0, [r5]
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r0, #1
-	bl WaitFrames
-	movs r3, #128
-	movs r1, #140
-	movs r2, #164
-	lsls r3, r3, #7
-	lsls r2, r2, #17
-	movs r0, #14
-	lsls r1, r1, #17
-	bl Func_02003a38
-	movs r1, #2
-	movs r0, #14
-	bl ObjectMotion_SetActionVariant
-	movs r0, #14
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #1
-	orrs r3, r2
-	strb r3, [r0]
-	movs r3, #2
-	ldrb r2, [r6]
-	movs r0, #1
-	orrs r3, r2
-	strb r3, [r6]
-	bl WaitFrames
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #118
-	bl GameFlag_SetBit
-	movs r0, #239
-	lsls r0, r0, #3
-	adds r0, #255
-	bl GameFlag_SetBit
-	bl Func_020039e0
-	pop {r5, r6, pc}
-.L_0200a5f4:
-	.4byte gPartyState
-.L_0200a5f8:
-	.4byte 0x00019999
 	.section .text.x0200ad50,"ax",%progbits
 	.balign 4
 	.global Func_02002d50

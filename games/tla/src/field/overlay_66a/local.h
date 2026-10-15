@@ -22,7 +22,11 @@ struct Ov66aMapLayer {
 };
 
 struct Ov66aMapWork {
-    u8 unknown_000[0x138];
+    u8 unknown_000[0x17];
+    u8 low_17 : 2;
+    u8 mode_17 : 2;
+    u8 high_17 : 4;
+    u8 unknown_018[0x120];
     struct Ov66aMapLayer layers[1];
 };
 
@@ -31,6 +35,7 @@ struct Ov66aEventWork {
     s32 value_1ac;
     u8 unknown_1b0[0xb9a];
     u16 value_d4a;
+    u16 value_d4c;
 };
 
 struct Ov66aEffectWork {

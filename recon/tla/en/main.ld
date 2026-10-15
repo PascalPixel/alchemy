@@ -1745,7 +1745,6 @@ SECTIONS
         "*/games/tla/src/battle/motion/objects.o"(.text)
         "*/recon/tla/raw/0811b9fc.o"(.text)
         "*/games/tla/src/battle/motion/reset_battle_object_record_groups.o"(.text)
-        "*/recon/tla/raw/0811bcec.o"(.text)
         "*/games/tla/src/battle/motion/camera_flag.o"(.text)
         "*/recon/tla/raw/0811bd50.o"(.text)
         "*/games/tla/src/battle/motion/get_motion_record.o"(.text)

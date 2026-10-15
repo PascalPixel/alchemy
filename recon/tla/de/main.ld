@@ -1605,7 +1605,6 @@ SECTIONS
     "*/games/tla/src/battle/motion/objects.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011ba14)
     "*/games/tla/src/battle/motion/reset_battle_object_record_groups.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.0011bd04)
     "*/games/tla/src/battle/motion/camera_flag.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0011bd68)
     "*/games/tla/src/battle/motion/get_motion_record.o"(.text)

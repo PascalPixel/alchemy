@@ -12,6 +12,7 @@
 #include "battle_session.h"
 #include "btlwork.h"
 #include "ram_buffer.h"
+#include "fixed_point_position.h"
 
 #define Object_Destroy ((void (*)(void*))Object_Destroy)
 
@@ -88,4 +89,20 @@ void BattleMotion_DestroyAllSlotObjects(void)
         }
         i += 1;
     } while (i <= 0xD);
+}
+
+// Writes a battle object's anchor to out, at height 0.
+s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out)
+{
+    struct BtlWork *state = Ram_HeapSlots->battle_work;
+    /* FAKEMATCH: the native sets the return value between the two stores and the last load; plainly the load comes first (one reordered row, differ 2). The value is pinned to the r0 it returns in, and the barrier, which also orders memory, holds the load until it is set. Measured against it: the anchor read into a local, the pin without the memory clobber and the memory clobber alone (differ 4). */
+    register s32 result asm("r0");
+
+    out->x = state->slots[no].anchor_x;
+    out->y = 0;
+    result = 0;
+    /* FAKEMATCH: the barrier of the pin above. */
+    __asm__("" : "+l"(result) : : "memory");
+    out->z = state->slots[no].anchor_z;
+    return result;
 }

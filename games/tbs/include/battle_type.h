@@ -6,6 +6,17 @@
 
 enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 0x64 };
 
+// BattlePlan.targetCrit: the critical hit rolled for each target.
+enum BattleCritical {
+  CRITICAL_NONE,
+  CRITICAL_HIT,   // an attack's: a quarter more damage
+  CRITICAL_STRONG // an ability's (effects 36 to 40): half as much again
+};
+
+// BattlePlan.targetHit while the hit is still to be rolled, as the ability
+// lands; BattleCommand_BuildPlan rolls it ahead only for Annihilation.
+#define HIT_NOT_ROLLED -1
+
 struct BattlePlan {
   u8 aid;
   s8 targetCount;

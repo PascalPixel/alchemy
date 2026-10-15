@@ -25,21 +25,45 @@ struct UiChannelSlot;
 struct UiWindow;
 struct WorkspaceWork;
 
+// The flags of a UI window (struct UiWindow.flags), which UiWindow_Create takes
+// as its attributes.
+enum {
+  UI_WINDOW_OPEN = 0x1,    // the window slot is in use
+  UI_WINDOW_INSTANT = 0x2, // opens and closes at once, with no zoom
+  // text is drawn into a canvas of bitmap tiles (UiWindow_MapTextCanvasTiles)
+  UI_WINDOW_TEXT_CANVAS = 0x8,
+  // the canvas has a frame and a filled background; without it the canvas is
+  // transparent and frameless
+  UI_WINDOW_FRAMED_CANVAS = 0x20,
+  UI_WINDOW_OUTLINED_TEXT = 0x40, // the canvas text gets an outline
+  // when a new page resizes the window, its bottom edge stays put
+  UI_WINDOW_ANCHOR_BOTTOM = 0x80,
+  // when a new page resizes the window, its left edge stays put
+  UI_WINDOW_FIXED_X = 0x100,
+};
+
+// The text canvas tiles in VRAM: 120 4bpp tiles from tile 0x128, enough for
+// the interior of a full-width window six tiles tall. The tiles run down
+// columns, each as tall as the window's interior.
+#define UI_CANVAS_VRAM ((void *)0x06002500)
+#define UI_CANVAS_SIZE 0xf00
+#define UI_CANVAS_FIRST_TILE 0x128
+
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void RenderOutput_ReleaseFree(struct RenderOutput *out);
 void UiWork_InitFreeList(void);
 void UiWork_InitializeWithResourceCounters(void);
-void UiWork_Initialize(s32 kind);
+void UiWork_Initialize(s32 loadGlyphTiles);
 void UiWork_UploadDirtyBlocks(void);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs);
 void UiWork_WaitWindowDuration(struct UiWindow *window);
-void UiWork_Finalize(struct UiWindow *work, s32 release);
+void UiWork_Finalize(struct UiWindow *window, s32 instant);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void RenderOutput_ClearList(void *work);
+void RenderOutput_ClearList(void *outputs);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
 void UiWork_UpdateListTail(struct RenderOutputList *list);
@@ -53,8 +77,8 @@ void RenderOutput_Release(struct RenderOutput *entry);
  * Djinn_ShowJoinedMessage pass five of its six arguments, and in one file, with
  * its definition first, they would not compile. Split evidence for
  * window|battle_command. */
-struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value,
-                                             s32 preserve);
+struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *window, s32 entry,
+                                             s32 keepPosition);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
 void UiWork_ResetFreeChannel(void);
@@ -64,16 +88,16 @@ void UiWork_ShiftPanelRowsLeft(s32 step);
 void UiWork_ProcessRenderChannels(void);
 s32 UiWork_StepChannelScript(struct UiChannelSlot *ch);
 void UiWork_ProcessDirectWork(void);
-void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position);
+void UiWindow_UpdateInterpolatedGeometry(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
-                                 s32 full_width);
+                                 s32 fullWidth);
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ResetCounters();
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
-void UiWork_InitCountersAndScheduleRefresh(s32 initialize);
+void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles);
 void UiWork_FinalizeSharedSlot(void);
 void UiText_PrepareMessageWork(s32 argument);
 void UiText_ShowMessageAndWaitCore(s32 argument);

@@ -1829,7 +1829,6 @@ SECTIONS
         "*/recon/tla/raw/08125bb8.o"(.text)
         "*/recon/tla/raw/08125c0c.o"(.text)
         "*/games/tla/src/battle/presentation/f125c5c.o"(.text)
-        "*/recon/tla/raw/08125cfc.o"(.text)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/raw/08125d74.o"(.text)
         "*/games/tla/src/battle/presentation/pallevel.o"(.text)

@@ -284,7 +284,7 @@ Func_08125d74:
 .L_08125fb0:
 	.4byte BattlePres_AdvanceTransitionTimer
 .L_08125fb4:
-	.4byte Func_08125cfc
+	.4byte BattlePres_DrawTransitionRows
 .L_08125fb8:
 	.4byte Func_08125d68
 .L_08125fbc:

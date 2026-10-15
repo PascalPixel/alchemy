@@ -1785,7 +1785,6 @@ SECTIONS
     "*/games/tla/src/battle/build_sequential_table.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00125bb4)
     "*/games/tla/src/battle/presentation/f125c5c.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00125cf8)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/ja/rom.o"(.rom.00125d70)
     "*/games/tla/src/battle/presentation/pallevel.o"(.text)

@@ -16,7 +16,6 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x02009ee0)
         "*/resource_650_overlay.o"(.text.x0200a304)
         "*/games/tla/src/field/idejima/wake.o"(.text)
-        "*/resource_650_overlay.o"(.text.x0200ac64)
         "*/resource_650_overlay.o"(.text.x0200aec8)
         "*/games/tla/src/field/idejima/prepare.o"(.text)
         "*/resource_650_overlay.o"(.text.x0200af88)

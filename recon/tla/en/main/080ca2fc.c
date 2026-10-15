@@ -1,22 +1,34 @@
+/* Near miss, differ 2 of 49 (ported from The Broken Seal's
+   Party_ResolveTablePair; rows here are eight halfwords): the native reads
+   the scene, starts the entrance's offset, loads the table and then finishes
+   the offset (movs, ldr, lsls); with the block below the offset is finished
+   before the table's load. Plain, the offset starts before the scene read
+   (differ 4); the table loaded first or the block around the read differ 2
+   or 45; permute (3 min) found nothing. */
 #include "types.h"
-#include "scene.h"
+#include "party_state.h"
 
-extern s16 gGameState[];
 extern const s16 Party_PairResolveRules[];
 
-void Party_ResolveTablePair(void)
+void Func_080ca2fc(void)
 {
-    s16 first = gGameState[224];
-    s16 second = gGameState[225];
-    const s16 *entry = Party_PairResolveRules;
+    struct PartyState *party = &gPartyState;
+    s16 first;
+    s16 second;
+    const s16 *entry;
+
+    first = party->scene;
+    do {
+    } while (0);
+    second = party->entrance;
+    entry = Party_PairResolveRules;
 
     while (entry[0] != -1) {
-        if (entry[0] == first &&
-            (entry[1] == -1 || entry[1] == second)) {
-            gGameState[226] = entry[2];
-            gGameState[227] = entry[3];
+        if (entry[0] == first && (entry[1] == -1 || entry[1] == second)) {
+            party->saved_scene = entry[2];
+            party->saved_entrance = entry[3];
             return;
         }
-        entry += 4;
+        entry += 8;
     }
 }

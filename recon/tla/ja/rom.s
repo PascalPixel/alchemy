@@ -1699,19 +1699,9 @@ Owner_CalculateBaseElements:
 	.thumb_func
 Owner_DetermineClass:
 	.incbin "baserom.gba", 0x000ab140, 0x00000144
-	.section .rom.000ab510, "ax"
-	.incbin "baserom.gba", 0x000ab510, 0x00000194
 	.section .rom.000ab758, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000ab758, 0x00000338
-	.section .rom.000abbb2, "ax"
-	.incbin "baserom.gba", 0x000abbb2, 0x00000002
-	.section .rom.000abbb4, "ax"
-	.global Trade_CanOfferDjinn
-	.type Trade_CanOfferDjinn, %function
-	.thumb_func
-Trade_CanOfferDjinn:
-	.incbin "baserom.gba", 0x000abbb4, 0x000000c0
 	.section .rom.000abd54, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function
@@ -2544,7 +2534,7 @@ Encounter_SelectEnemyGroup:
 	.section .rom.000ca2fc, "ax"
 	.incbin "baserom.gba", 0x000ca2fc, 0x00000198
 	.section .rom.000ca4a8, "ax"
-	.incbin "baserom.gba", 0x000ca4a8, 0x00000130
+	.incbin "baserom.gba", 0x000ca4a8, 0x0000006c
 	.section .rom.000ca5d8, "ax"
 	.global BattleFx_SelectBattleCue
 	.type BattleFx_SelectBattleCue, %function
@@ -2564,12 +2554,6 @@ Event_SpawnObjectTable:
 	.thumb_func
 Func_080ca9cc:
 	.incbin "baserom.gba", 0x000ca9cc, 0x00000060
-	.section .rom.000caa2c, "ax"
-	.global Func_080caa2c
-	.type Func_080caa2c, %function
-	.thumb_func
-Func_080caa2c:
-	.incbin "baserom.gba", 0x000caa2c, 0x00000020
 	.section .rom.000caa4c, "ax"
 	.global Func_080caa4c
 	.type Func_080caa4c, %function
@@ -2722,16 +2706,8 @@ DisplayTransition_Start:
 	.thumb_func
 DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d0500, 0x0000020c
-	.section .rom.000d0768, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d0768, 0x000001cc
-	.section .rom.000d0934, "ax"
-	.global Func_080d0954
-	.type Func_080d0954, %function
-	.thumb_func
-Func_080d0954:
-	.incbin "baserom.gba", 0x000d0934, 0x000000d4
 	.section .rom.000d0a08, "ax"
+	.balign 4
 	.global DisplayTransition_UpdateFrame
 	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
@@ -2770,12 +2746,6 @@ Func_080d1760:
 	.thumb_func
 Func_080d1840:
 	.incbin "baserom.gba", 0x000d1820, 0x000001d8
-	.section .rom.000d19f8, "ax"
-	.global Func_080d1a18
-	.type Func_080d1a18, %function
-	.thumb_func
-Func_080d1a18:
-	.incbin "baserom.gba", 0x000d19f8, 0x000000ac
 	.section .rom.000d1ac4, "ax"
 	.global Func_080d1ae4
 	.type Func_080d1ae4, %function
@@ -2894,19 +2864,6 @@ Func_080d3b28:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d3c68, 0x00000328
-	.section .rom.000d3f90, "ax"
-	.global Func_080d3fb0
-	.type Func_080d3fb0, %function
-	.thumb_func
-Func_080d3fb0:
-	.incbin "baserom.gba", 0x000d3f90, 0x000000bc
-	.section .rom.000d40bc, "ax"
-	.balign 4
-	.global Func_080d40dc
-	.type Func_080d40dc, %function
-	.thumb_func
-Func_080d40dc:
-	.incbin "baserom.gba", 0x000d40bc, 0x0000009c
 	.section .rom.000d41c6, "ax"
 	.incbin "baserom.gba", 0x000d41c6, 0x00000002
 	.section .rom.000d41dc, "ax"
@@ -2962,12 +2919,8 @@ Func_080d50f8:
 	.thumb_func
 Func_080d53b8:
 	.incbin "baserom.gba", 0x000d5398, 0x00000834
-	.section .rom.000d5bcc, "ax"
-	.global Func_080d5bec
-	.type Func_080d5bec, %function
-	.thumb_func
-Func_080d5bec:
-	.incbin "baserom.gba", 0x000d5bcc, 0x00000184
+	.section .rom.000d5c50, "ax"
+	.incbin "baserom.gba", 0x000d5c50, 0x00000100
 	.section .rom.000d5d50, "ax"
 	.global Func_080d5d70
 	.type Func_080d5d70, %function
@@ -2994,6 +2947,10 @@ ObjectEffect_EndContextEffect:
 Func_080d607c:
 	.incbin "baserom.gba", 0x000d605c, 0x0000038c
 	.section .rom.000d64d0, "ax"
+	.global Func_080d64f0
+	.type Func_080d64f0, %function
+	.thumb_func
+Func_080d64f0:
 	.incbin "baserom.gba", 0x000d64d0, 0x00000184
 	.section .rom.000d6654, "ax"
 	.global Func_080d6674
@@ -3007,12 +2964,8 @@ Func_080d6674:
 	.thumb_func
 Func_080d67e8:
 	.incbin "baserom.gba", 0x000d67c8, 0x00000124
-	.section .rom.000d68ec, "ax"
-	.global Func_080d690c
-	.type Func_080d690c, %function
-	.thumb_func
-Func_080d690c:
-	.incbin "baserom.gba", 0x000d68ec, 0x00000284
+	.section .rom.000d69d4, "ax"
+	.incbin "baserom.gba", 0x000d69d4, 0x0000019c
 	.section .rom.000d6b70, "ax"
 	.global Func_080d6b90
 	.type Func_080d6b90, %function

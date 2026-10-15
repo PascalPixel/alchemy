@@ -1,3 +1,9 @@
+/* Near miss, differ 2 of 71 (The Broken Seal's BattleAction_FindDescriptor,
+   ported as is): the native loads the event work (ldr r7, [r3, #108]) before
+   it starts the -1 and 0 the loops keep in lr and ip; this draft loads it
+   after them. The work in a local, declared first, or the table pointer
+   stepped by hand change nothing; a one-pass block around the load differs
+   8. */
 #include "types.h"
 #include "ram_buffer.h"
 

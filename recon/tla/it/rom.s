@@ -1841,19 +1841,9 @@ Owner_CalculateBaseElements:
 	.thumb_func
 Owner_DetermineClass:
 	.incbin "baserom.gba", 0x000b0150, 0x00000144
-	.section .rom.000b0520, "ax"
-	.incbin "baserom.gba", 0x000b0520, 0x00000194
 	.section .rom.000b0768, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b0768, 0x00000338
-	.section .rom.000b0bc2, "ax"
-	.incbin "baserom.gba", 0x000b0bc2, 0x00000002
-	.section .rom.000b0bc4, "ax"
-	.global Trade_CanOfferDjinn
-	.type Trade_CanOfferDjinn, %function
-	.thumb_func
-Trade_CanOfferDjinn:
-	.incbin "baserom.gba", 0x000b0bc4, 0x000000c0
 	.section .rom.000b0d64, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function
@@ -2813,7 +2803,7 @@ Encounter_SelectEnemyGroup:
 	.section .rom.000ca2fc, "ax"
 	.incbin "baserom.gba", 0x000ca2fc, 0x00000198
 	.section .rom.000ca4a8, "ax"
-	.incbin "baserom.gba", 0x000ca4a8, 0x000000f8
+	.incbin "baserom.gba", 0x000ca4a8, 0x0000006c
 	.section .rom.000ca5d8, "ax"
 	.global BattleFx_SelectBattleCue
 	.type BattleFx_SelectBattleCue, %function
@@ -2838,10 +2828,6 @@ Event_SpawnObjectTable:
 	.thumb_func
 Func_080ca9cc:
 	.incbin "baserom.gba", 0x000ca9cc, 0x00000060
-	.section .rom.000caa2c, "ax"
-	.global Func_080caa2c
-Func_080caa2c:
-	.incbin "baserom.gba", 0x000caa2c, 0x00000020
 	.section .rom.000caa4c, "ax"
 	.global Func_080caa4c
 Func_080caa4c:
@@ -3000,16 +2986,8 @@ DisplayTransition_Start:
 	.thumb_func
 DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d0520, 0x0000020c
-	.section .rom.000d0788, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d0788, 0x000001cc
-	.section .rom.000d0954, "ax"
-	.global Func_080d0954
-	.type Func_080d0954, %function
-	.thumb_func
-Func_080d0954:
-	.incbin "baserom.gba", 0x000d0954, 0x000000d4
 	.section .rom.000d0a28, "ax"
+	.balign 4
 	.global DisplayTransition_UpdateFrame
 	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
@@ -3078,7 +3056,7 @@ Func_080d1760:
 	.type Func_080d1840, %function
 	.thumb_func
 Func_080d1840:
-	.incbin "baserom.gba", 0x000d1840, 0x00000284
+	.incbin "baserom.gba", 0x000d1840, 0x000001d8
 	.section .rom.000d1ae4, "ax"
 	.global Func_080d1ae4
 	.type Func_080d1ae4, %function
@@ -3234,19 +3212,6 @@ Func_080dbe08:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d3c7c, 0x00000328
-	.section .rom.000d3fa4, "ax"
-	.global Func_080d3fb0
-	.type Func_080d3fb0, %function
-	.thumb_func
-Func_080d3fb0:
-	.incbin "baserom.gba", 0x000d3fa4, 0x000000bc
-	.section .rom.000d40d0, "ax"
-	.balign 4
-	.global Func_080d40dc
-	.type Func_080d40dc, %function
-	.thumb_func
-Func_080d40dc:
-	.incbin "baserom.gba", 0x000d40d0, 0x0000009c
 	.section .rom.000d41da, "ax"
 	.incbin "baserom.gba", 0x000d41da, 0x00000002
 	.section .rom.000d41f0, "ax"
@@ -3299,7 +3264,9 @@ Func_080dd054:
 	.type Func_080d4d08, %function
 	.thumb_func
 Func_080d4d08:
-	.incbin "baserom.gba", 0x000d53ac, 0x000009b8
+	.incbin "baserom.gba", 0x000d53ac, 0x00000834
+	.section .rom.000d5c64, "ax"
+	.incbin "baserom.gba", 0x000d5c64, 0x00000100
 	.section .rom.000d5d64, "ax"
 	.global Func_080daecc
 	.type Func_080daecc, %function
@@ -3326,6 +3293,10 @@ ObjectEffect_EndContextEffect:
 Func_080d607c:
 	.incbin "baserom.gba", 0x000d6070, 0x0000038c
 	.section .rom.000d64e4, "ax"
+	.global Func_080d64f0
+	.type Func_080d64f0, %function
+	.thumb_func
+Func_080d64f0:
 	.incbin "baserom.gba", 0x000d64e4, 0x00000184
 	.section .rom.000d6668, "ax"
 	.global Func_080d6674
@@ -3339,12 +3310,8 @@ Func_080d6674:
 	.thumb_func
 Func_080d67e8:
 	.incbin "baserom.gba", 0x000d67dc, 0x00000124
-	.section .rom.000d6900, "ax"
-	.global Func_080d53b8
-	.type Func_080d53b8, %function
-	.thumb_func
-Func_080d53b8:
-	.incbin "baserom.gba", 0x000d6900, 0x00000284
+	.section .rom.000d69e8, "ax"
+	.incbin "baserom.gba", 0x000d69e8, 0x0000019c
 	.section .rom.000d6b84, "ax"
 	.global Func_080d7408
 	.type Func_080d7408, %function

@@ -72,7 +72,15 @@ Func_080c82e8:
 	.global Func_080c82f0
 	.thumb_func
 Func_080c82f0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d690c
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d690c
+.else
 	overlay_veneer Func_080d53b8
+.endif
+.endif
 	.global EventRuntime_PrepareCurrentObjectFar
 	.thumb_func
 EventRuntime_PrepareCurrentObjectFar:

@@ -1828,19 +1828,9 @@ Owner_CalculateBaseElements:
 	.thumb_func
 Owner_DetermineClass:
 	.incbin "baserom.gba", 0x000b5144, 0x00000144
-	.section .rom.000b5514, "ax"
-	.incbin "baserom.gba", 0x000b5514, 0x00000194
 	.section .rom.000b575c, "ax"
 	.align 2, 0
 	.incbin "baserom.gba", 0x000b575c, 0x00000338
-	.section .rom.000b5bb6, "ax"
-	.incbin "baserom.gba", 0x000b5bb6, 0x00000002
-	.section .rom.000b5bb8, "ax"
-	.global Trade_CanOfferDjinn
-	.type Trade_CanOfferDjinn, %function
-	.thumb_func
-Trade_CanOfferDjinn:
-	.incbin "baserom.gba", 0x000b5bb8, 0x000000c0
 	.section .rom.000b5d58, "ax"
 	.global Trade_RemoveOffer
 	.type Trade_RemoveOffer, %function
@@ -1912,7 +1902,7 @@ Func_080ca368:
 Func_080ca3f4:
 	.incbin "baserom.gba", 0x000cf3f4, 0x000000a0
 	.section .rom.000cf4a8, "ax"
-	.incbin "baserom.gba", 0x000cf4a8, 0x000000f8
+	.incbin "baserom.gba", 0x000cf4a8, 0x0000006c
 	.section .rom.000cf5d8, "ax"
 	.global BattleFx_SelectBattleCue
 	.type BattleFx_SelectBattleCue, %function
@@ -1938,12 +1928,6 @@ Event_SpawnObjectTable:
 	.thumb_func
 Func_080ca9cc:
 	.incbin "baserom.gba", 0x000cf9cc, 0x00000060
-	.section .rom.000cfa2c, "ax"
-	.global Func_080caa2c
-	.type Func_080caa2c, %function
-	.thumb_func
-Func_080caa2c:
-	.incbin "baserom.gba", 0x000cfa2c, 0x00000020
 	.section .rom.000cfa4c, "ax"
 	.global Func_080caa4c
 	.type Func_080caa4c, %function
@@ -2108,16 +2092,8 @@ DisplayTransition_Start:
 	.thumb_func
 DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d5520, 0x0000020c
-	.section .rom.000d5788, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d5788, 0x000001cc
-	.section .rom.000d5954, "ax"
-	.global Func_080d0954
-	.type Func_080d0954, %function
-	.thumb_func
-Func_080d0954:
-	.incbin "baserom.gba", 0x000d5954, 0x000000d4
 	.section .rom.000d5a28, "ax"
+	.balign 4
 	.global DisplayTransition_UpdateFrame
 	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
@@ -2156,12 +2132,6 @@ Func_080d1760:
 	.thumb_func
 Func_080d1840:
 	.incbin "baserom.gba", 0x000d6840, 0x000001d8
-	.section .rom.000d6a18, "ax"
-	.global Func_080d1a18
-	.type Func_080d1a18, %function
-	.thumb_func
-Func_080d1a18:
-	.incbin "baserom.gba", 0x000d6a18, 0x000000ac
 	.section .rom.000d6ae4, "ax"
 	.global Func_080d1ae4
 	.type Func_080d1ae4, %function
@@ -2306,19 +2276,6 @@ Func_080d3b28:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d8c7c, 0x00000328
-	.section .rom.000d8fa4, "ax"
-	.global Func_080d3fb0
-	.type Func_080d3fb0, %function
-	.thumb_func
-Func_080d3fb0:
-	.incbin "baserom.gba", 0x000d8fa4, 0x000000bc
-	.section .rom.000d90d0, "ax"
-	.balign 4
-	.global Func_080d40dc
-	.type Func_080d40dc, %function
-	.thumb_func
-Func_080d40dc:
-	.incbin "baserom.gba", 0x000d90d0, 0x0000009c
 	.section .rom.000d91da, "ax"
 	.incbin "baserom.gba", 0x000d91da, 0x00000002
 	.section .rom.000d91f0, "ax"
@@ -2374,12 +2331,8 @@ Func_080d50f8:
 	.thumb_func
 Func_080d53b8:
 	.incbin "baserom.gba", 0x000da3ac, 0x00000834
-	.section .rom.000dabe0, "ax"
-	.global Func_080d5bec
-	.type Func_080d5bec, %function
-	.thumb_func
-Func_080d5bec:
-	.incbin "baserom.gba", 0x000dabe0, 0x00000184
+	.section .rom.000dac64, "ax"
+	.incbin "baserom.gba", 0x000dac64, 0x00000100
 	.section .rom.000dad64, "ax"
 	.global Func_080d5d70
 	.type Func_080d5d70, %function
@@ -2406,6 +2359,10 @@ ObjectEffect_EndContextEffect:
 Func_080d607c:
 	.incbin "baserom.gba", 0x000db070, 0x0000038c
 	.section .rom.000db4e4, "ax"
+	.global Func_080d64f0
+	.type Func_080d64f0, %function
+	.thumb_func
+Func_080d64f0:
 	.incbin "baserom.gba", 0x000db4e4, 0x00000184
 	.section .rom.000db668, "ax"
 	.global Func_080d6674
@@ -2419,12 +2376,8 @@ Func_080d6674:
 	.thumb_func
 Func_080d67e8:
 	.incbin "baserom.gba", 0x000db7dc, 0x00000124
-	.section .rom.000db900, "ax"
-	.global Func_080d690c
-	.type Func_080d690c, %function
-	.thumb_func
-Func_080d690c:
-	.incbin "baserom.gba", 0x000db900, 0x00000284
+	.section .rom.000db9e8, "ax"
+	.incbin "baserom.gba", 0x000db9e8, 0x0000019c
 	.section .rom.000dbb84, "ax"
 	.global Func_080d6b90
 	.type Func_080d6b90, %function

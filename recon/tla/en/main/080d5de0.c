@@ -1,44 +1,48 @@
-/* Near miss, differ 2 of 47 (one reordered pair): the native loads the 0xfff00000 mask before
- * the object's x (ldr r2, =mask; ldr r3, [r5, #8]); this loads x first. Measured: without the
- * barrier after the sprite's store, differ 4 (the effect's 15 is also loaded before that
- * store); the 15 in a u8 local, before or after the barrier, the same 2; a second barrier
- * after the effect's store, the same 2; the mask in a local, alone or ahead of a one-pass
- * block, differ 22 (the zero and the mask trade r1 and r2). The earlier form of this draft,
- * with its own structs and gGameState[125] for the owner, measured differ 12. */
+/* Near miss, differ 2 of 47 (ported from The Broken Seal's
+   ObjectEffect_PrepareContextEffect, with one tagged one-pass block): the
+   native loads the party state's address before it copies the argument to
+   r8 (mov r8, r0); this draft copies first. */
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
-#include "field_sprite.h"
 
-u8 *ResourceMetadata_RegisterFar(void *sprite, s32 resource);
+struct ContextAnimation {
+    u8 unknown_00[0x1a];
+    u8 flags;
+};
+
+struct ContextEffect {
+    u8 unknown_00[5];
+    u8 param;
+};
+
+struct ContextEffect *ResourceMetadata_RegisterFar(void *context, s32 id);
 void WaitFrames(s32 frames);
 
-void ObjectEffect_PrepareContextEffect(s32 mode)
+void ObjectEffect_PrepareContextEffect(s32 value)
 {
-    struct PartyState *party = &gPartyState;
-    struct ObjectRuntime *object;
-    struct FieldSprite *sprite;
-    u8 *effect;
     u32 zero;
+    u8 kind;
+    struct ObjectRuntime *object;
+    struct ContextAnimation *context;
+    struct ContextEffect *effect;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+    object = ObjectTable_Get(gPartyState.current_owner);
+    context = object->animation;
+    effect = ResourceMetadata_RegisterFar(context, 267);
+    zero = 0;
+    context->flags = zero;
+    /* FAKEMATCH: the one-pass block stores the cleared flags before the kind is loaded (differ 6 without it). */
     do {
     } while (0);
-    object = ObjectTable_Get(party->current_owner);
-    sprite = object->animation;
-    effect = ResourceMetadata_RegisterFar(sprite, 267);
-    zero = 0;
-
-    sprite->next_frame = zero;
-    /* FAKEMATCH: the barrier keeps the sprite's store ahead of the effect's 15, as in its sibling 080d5d70 (differ 2 more without it). */
-    __asm__("");
-    effect[5] = 15;
-    object->x = (object->x & 0xfff00000) + 0x80000;
-    object->z = (object->z & 0xfff00000) + 0x100000;
+    kind = 15;
+    effect->param = kind;
+    object->x = (object->x & 0xFFF00000) + 0x80000;
+    object->z = (object->z & 0xFFF00000) + 0x100000;
     object->velocity_x = zero;
     object->velocity_z = zero;
     object->target_x = 0x80000000;
     object->target_z = 0x80000000;
-    Object_SetMode(object, mode);
+    Object_SetMode(object, value);
     WaitFrames(18);
 }

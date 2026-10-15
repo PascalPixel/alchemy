@@ -250,8 +250,8 @@ DisplayTransition_Finish:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_080d0720:
-	.4byte Func_080d0788
+	.4byte DisplayTransition_Update
 .L_080d0724:
-	.4byte Func_080d0954
+	.4byte DisplayTransition_UpdateScanline
 .L_080d0728:
-	.4byte Func_080d085c
+	.4byte DisplayTransition_UpdateFromCentre

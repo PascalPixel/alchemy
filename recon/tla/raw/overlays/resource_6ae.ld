@@ -29,7 +29,6 @@ SECTIONS
         "*/resource_6ae_overlay.o"(.text.x0200b658)
         "*/resource_6ae_overlay.o"(.text.x0200bff4)
         "*/games/tla/src/field/overlay_6ae/s4bc4.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x0200cc94)
         "*/games/tla/src/field/overlay_6ae/events_f.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200cd50)
         "*/games/tla/src/field/overlay_6ae/events_g.o"(.text)

@@ -7776,62 +7776,6 @@ Func_02003ff4:
 	.4byte 0x00033333
 .L_0200cbc0:
 	.4byte 0x00019999
-	.section .text.x0200cc94,"ax",%progbits
-	.balign 4
-	.global Func_02004c94
-	.thumb_func
-Func_02004c94:
-	push {lr}
-	bl Func_0200560c
-	movs r0, #0
-	bl Func_02005784
-	movs r1, #128
-	movs r2, #232
-	lsls r2, r2, #16
-	lsls r1, r1, #18
-	movs r0, #18
-	bl Func_0200567c
-	movs r0, #1
-	bl WaitFrames
-	ldr r0, .L_0200cd0c
-	bl Func_020056dc
-	movs r1, #0
-	movs r0, #18
-	bl UiText_OpenMessageAtObject
-	ldr r3, .L_0200cd10
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_0200ccea
-	movs r0, #18
-	movs r1, #0
-	movs r2, #0
-	bl Func_0200567c
-	movs r0, #1
-	bl WaitFrames
-	bl Func_02003658
-.L_0200ccea:
-	movs r1, #0
-	movs r2, #0
-	movs r0, #18
-	bl Func_0200567c
-	movs r0, #1
-	bl WaitFrames
-	movs r0, #128
-	lsls r0, r0, #2
-	adds r0, #2
-	bl GameFlag_SetBit
-	bl Func_02005614
-	pop {pc}
-	.2byte 0x0000
-.L_0200cd0c:
-	.4byte MsgWillYouCast
-.L_0200cd10:
-	.4byte gPartyState
 	.section .text.x0200cd50,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.else

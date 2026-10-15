@@ -1,3 +1,5 @@
+/* Draft: listing 3921 instructions, draft 4018, differ 4689 (2026-10-15: it compiles again with
+ * the common dma.h and resource.h's ResourceObject_ReleaseFar; not worked on since). */
 #include "resource.h"
 #include "mem.h"
 #include "types.h"
@@ -166,7 +168,6 @@ void Func_08013164(void *);
 void Func_081434f8(void);
 void Scheduler_RemoveCallback(void *);
 void Func_0814cca8(void);
-void ResourceObject_ReleaseFar(Sprite *);
 s32 Func_080143e0(s32);
 void PaletteDma_LoadBlock(void);
 void Func_08152404(s32, s32, s32);
@@ -178,7 +179,7 @@ void Func_08143000(void);
 void Func_0813baec(void);
 
 #define ALCHEMY_TYPES_H
-#include "../../../../games/tbs/include/dma.h"
+#include "dma.h"
 
 void BattleSummon_RunUlysses(struct SummonArgument *arg)
 {

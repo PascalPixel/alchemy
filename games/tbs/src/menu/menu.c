@@ -5528,22 +5528,29 @@ s32 PsynergyMenu_RunList(s32 pane) {
   return result;
 }
 
+// Returns 1 when Psynergy no (an action slot entry) cannot be used from the
+// menu: it has no field effect and its target flags lack 0x40 or 0x80.
 s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  struct BattleAct *action = BattleActGet((u32)(no << 18) >> 18);
+  struct BattleAct *action =
+      BattleActGet((u32)(no << 18) >> 18) /* & OWNER_ACTION_ID_MASK */;
 
   if (action->type0c != 0 || (action->targetFlag & 0xc0) == 0xc0)
     return 0;
   return 1;
 }
 
+// How many party figure rows Menu_OpenCharacterSelector resets.
 #if EDITION_INTERNATIONAL
 #define ROW_CNT 8
 #else
 #define ROW_CNT 4
 #endif
 
+// Lets the player choose one party member, over the field (the Colosso scenes
+// use it). Returns the chosen member's id, or -1 when the player backs out.
 s32 Menu_OpenCharacterSelector(void) {
-  struct CharacterMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
+  struct CharacterMenuState *state =
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
   s32 result;
   s32 index;
 
@@ -5557,7 +5564,7 @@ s32 Menu_OpenCharacterSelector(void) {
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < ROW_CNT; index++)
     state->ownerY[index] = 30;
-  state->page = 3;
+  state->page = 3; // the member chooser
 
   result = CharacterSelector_Run();
 
@@ -5565,10 +5572,11 @@ s32 Menu_OpenCharacterSelector(void) {
   ItemMenu_Close();
   gMenuCtrlWork->suspended = 0;
   WaitFrames(1);
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   return result;
 }
 
+// The member chooser's loop. Returns the chosen member's id, or -1.
 s32 CharacterSelector_Run(void) {
   struct CharacterMenuState *work = gMenuWork;
   s32 result = 0;
@@ -5588,14 +5596,20 @@ s32 CharacterSelector_Run(void) {
   return result;
 }
 
+// The window tiles from 0x06004000 the Status menu saves and restores.
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
 #else
 #define SAVED_TILE_BYTES 0x800
 #endif
 
+// The Status menu an event opens (window command 4) over the field: saves the
+// first two background palettes and the window tiles it draws over, sets up
+// the party row and, when the party has Djinn, the four Djinn sprites, runs
+// the status pages, then puts everything back. Returns their result.
 s32 ActionMenu_Open(void) {
-  struct CharacterMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
+  struct CharacterMenuState *state =
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
   void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
   s32 result;
@@ -5614,6 +5628,8 @@ s32 ActionMenu_Open(void) {
   Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
   Palette_LightenBankHighlight(14);
+  // The first sprite palette into background palettes 0 and 1, each with a
+  // colour of palette 15 as its colour 14.
   Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
@@ -5630,14 +5646,16 @@ s32 ActionMenu_Open(void) {
     FourObjectMotion_InitializeTopRow(state->selectorWindow, 0);
   for (index = 0; index < 4; index++) {
     state->rowX[index] = 130 + index * 32;
-    state->rowY[index] = 0x80;
+    state->rowY[index] = 128;
   }
   Link_DrawShiftedTilePairFar(0x06002500);
+  // Run the pages.
   Menu_CancelSoundReset();
   state->page = 0;
 
   result = Menu_RunActionFlow();
 
+  // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
   RenderOutput_ClearListFar(state->statusWindow);
   FourObjectMotion_ClearSlotsAndSchedule();
@@ -5656,7 +5674,7 @@ s32 ActionMenu_Open(void) {
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 1;
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
@@ -5664,6 +5682,10 @@ s32 ActionMenu_Open(void) {
   return result;
 }
 
+// The Status menu's pages: choose a party member, then their status page, A
+// for their Psynergy page and A again for their equipment page; B steps back.
+// Returns the last page's result, or -1 when the player backs out or presses
+// Start.
 s32 Menu_RunActionFlow(void) {
   struct CharacterMenuState *state = gMenuWork;
   s32 step = 0;
@@ -5673,7 +5695,7 @@ s32 Menu_RunActionFlow(void) {
 
   while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
-    case 0:
+    case 0: // choose a member
       state->selectedSlots[0] = finished;
       if (CharacterMenu_SelectOwner(0) == -1) {
         result = -1;
@@ -5681,21 +5703,22 @@ s32 Menu_RunActionFlow(void) {
       }
       step = 1;
       break;
-    case 1:
+    case 1: // their status
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = CharacterMenu_SelectCommand();
       step = result == -1 ? 0 : 2;
       break;
-    case 2:
+    case 2: // their Psynergy
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = PsynergyMenu_SelectAction();
       step = 0;
       if (result != -1)
         step = 3;
       break;
-    case 3:
+    case 3: // their equipment; back to the member after it
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
+      // step 1 for -1, step 0 otherwise.
       changed = ~result;
       step = (-changed | changed) >> 31;
       break;
@@ -5711,6 +5734,10 @@ s32 Menu_RunActionFlow(void) {
   return result;
 }
 
+// Lets the player choose a party member in slot, from the one chosen last: the
+// member chooser when the menu is on page 3, else the Status menu's party row.
+// Game flag 0x172 adds a divider to the party window. Returns the chooser's
+// result.
 s32 CharacterMenu_SelectOwner(s32 slot) {
   struct CharacterMenuState *menu;
   struct RenderOutput *cursor;
@@ -5740,11 +5767,13 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   return result;
 }
 
+// Shows every Djinn the party has found, a column of seven for each element,
+// until A, B or Select, then puts the Djinn menu back.
 s32 DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu;
   s32 window;
-  s32 row;
-  s32 col;
+  s32 element;
+  s32 djinn;
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
@@ -5767,15 +5796,16 @@ s32 DjinnMenu_ShowCurrentList(void) {
   RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
   UiText_DrawResourceFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  for (row = 0; row < 4; row++) {
-    for (col = 0; col < 7; col++) {
-      s32 id = row * 20 + col;
+  for (element = 0; element < 4; element++) {
+    for (djinn = 0; djinn < 7; djinn++) {
+      s32 id = element * 20 + djinn;
 
+      // Game flags 48 on: one per Djinn found, 20 to an element.
       if (GameFlag_TestFar(48 + id)) {
-        UiWindow_SetTilemapEntryFar(window, 0x1001 + row, row * 7 + 1, col + 3,
-                                    0);
+        UiWindow_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
+                                    djinn + 3, 0);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnName + id, window,
-                                        row * 56 + 16, col * 8 + 24);
+                                        element * 56 + 16, djinn * 8 + 24);
       }
     }
   }
@@ -5800,12 +5830,16 @@ s32 DjinnMenu_ShowCurrentList(void) {
   menu->cursor->active = ICON_SHOWN;
   menu->secondCursor->active = ICON_SHOWN;
   AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-  /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) after this
-   * void call. */
+  // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
+  // this void call.
 }
 
 struct InventoryMenuState;
 
+// The Status menu's party row: Left and Right choose a member, showing their
+// status; L and R move the member one place along the party order; Select
+// lists the Djinn found (once the first is found, game flag 48); A chooses the
+// member and B backs out. Returns 1 or -1.
 s32 CharacterSelector_RunRearrange(void) {
   struct CharacterMenuState *work;
   s32 cursor;
@@ -5824,8 +5858,10 @@ s32 CharacterSelector_RunRearrange(void) {
   UnitGetFar(work->ownerIds[cursor]);
   for (i = 0; i < 4; i++) {
     work->rowX[i] = 130 + i * 32;
-    work->rowY[i] = 0x80;
+    work->rowY[i] = 128;
   }
+  // The highlight palette, and the first sprite palette into background
+  // palettes 0 and 1.
   Palette_LightenBankHighlight(14);
   Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
@@ -5834,13 +5870,14 @@ s32 CharacterSelector_RunRearrange(void) {
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
+      // The help lines, and the member's status and figure.
       RenderOutput_RedrawSavedRectFar((s32)work->selectorWindow);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp,
                                       (s32)work->selectorWindow, 0, 0);
       if (GameFlag_TestFar(48))
         UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp,
                                         (s32)work->selectorWindow, 0, 16);
-      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3,
+      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
                                       (s32)work->selectorWindow, 0, 8);
       cursor = (cursor + count) % count;
       UnitGetFar(work->ownerIds[cursor]);
@@ -5854,18 +5891,19 @@ s32 CharacterSelector_RunRearrange(void) {
     UiMenu_PositionCursor(cursor * 24 - 10, 16);
     WaitFrames(1);
     if (gKeyState & KEY_A) {
-      AudioCommand_PlayFar(0x70);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (gKeyState & KEY_B) {
-      AudioCommand_PlayFar(0x71);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       result = -1;
       break;
     }
+    // L and R move the member along the party order.
     if (gKeysRepeat & KEY_R) {
       if (CharacterSelector_MoveEntry(cursor, 1)) {
-        AudioCommand_PlayFar(0x70);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         cursor++;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(work->ownerWindow, 2, 2, 8, 0);
@@ -5873,12 +5911,12 @@ s32 CharacterSelector_RunRearrange(void) {
           work->ownerY[i] = 30;
         work->ownerY[cursor] = 26;
       } else {
-        AudioCommand_PlayFar(0x72);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
       WaitFrames(1);
     } else if (gKeysRepeat & KEY_L) {
       if (CharacterSelector_MoveEntry(cursor, 0)) {
-        AudioCommand_PlayFar(0x70);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
         cursor--;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(work->ownerWindow, 2, 2, 8, 0);
@@ -5886,7 +5924,7 @@ s32 CharacterSelector_RunRearrange(void) {
           work->ownerY[i] = 30;
         work->ownerY[cursor] = 26;
       } else {
-        AudioCommand_PlayFar(0x72);
+        AudioCommand_PlayFar(SOUND_MENU_ERROR);
       }
       WaitFrames(1);
     } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
@@ -5894,14 +5932,14 @@ s32 CharacterSelector_RunRearrange(void) {
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(0x6f);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           cursor--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(0x6f);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           redraw = 1;
           cursor++;
@@ -5915,12 +5953,15 @@ s32 CharacterSelector_RunRearrange(void) {
   return result;
 }
 
+// The member chooser (menu page 3): Left and Right choose a party member,
+// showing their status and Psynergy icons; A chooses and B backs out. Returns
+// 1 or -1.
 s32 PsynergyMenu_SelectOwner(void) {
   struct PsynergyMenuState *menu = gMenuWork;
   s32 selection = menu->tabIndex[0];
   s32 count = menu->tabCounts[0];
-  s32 pending = 1;
-  s32 frame = menu->flags;
+  s32 redraw = 1;
+  s32 page = menu->flags;
   s32 result;
   s32 i;
 
@@ -5931,12 +5972,12 @@ s32 PsynergyMenu_SelectOwner(void) {
   UiText_DrawCharacterAtOffsetFar(MsgChooseCharacter + 1, menu->messageWindow,
                                   0, 16);
   for (;;) {
-    if (pending) {
-      pending = 0;
+    if (redraw) {
+      redraw = 0;
       selection = (selection + count) % count;
       UnitGetFar(menu->ownerTable[selection]);
-      frame = (frame + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerTable[selection], frame);
+      page = (page + 3) % 3;
+      Menu_CreateWindowAndEntryObjects(menu->ownerTable[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[selection]);
       for (i = 0; i < MENU_ROW_COUNT; i++)
         menu->rowPositions[i] = 30;
@@ -5960,18 +6001,18 @@ s32 PsynergyMenu_SelectOwner(void) {
       break;
     }
     {
-      if (gKeysRepeat & 32) {
+      if (gKeysRepeat & KEY_LEFT) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection--;
-          pending = 1;
+          redraw = 1;
         }
       }
-      if (gKeysRepeat & 16) {
+      if (gKeysRepeat & KEY_RIGHT) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (count > 1) {
           selection++;
-          pending = 1;
+          redraw = 1;
         }
       }
     }
@@ -5982,16 +6023,18 @@ s32 PsynergyMenu_SelectOwner(void) {
   return result;
 }
 
+// Moves the party member at selectedIndex one place later (direction 1) or
+// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
 s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
-  struct CharacterMenuState *state = gMenuWork;
+  struct CharacterMenuState *menu = gMenuWork;
   u32 reordered[14];
   s32 index;
 
-  if (state->partyCount <= 1) {
+  if (menu->partyCount <= 1) {
     return 0;
   }
   if (direction == 1) {
-    if (selectedIndex == state->partyCount - 1) {
+    if (selectedIndex == menu->partyCount - 1) {
       return 0;
     }
   } else {
@@ -6009,8 +6052,8 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
       clear--;
     } while ((s32)clear >= (s32)reordered);
   }
-  for (index = 0; index < state->partyCount; index++) {
-    reordered[index] = state->ownerIds[index];
+  for (index = 0; index < menu->partyCount; index++) {
+    reordered[index] = menu->ownerIds[index];
   }
 
   if (direction == 1) {
@@ -6023,16 +6066,20 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
     reordered[selectedIndex - 1] = index;
   }
 
-  for (index = 0; index < state->partyCount; index++) {
-    Party_RemoveActiveOwnerFar(state->ownerIds[index]);
+  // Rebuild the party in the new order.
+  for (index = 0; index < menu->partyCount; index++) {
+    Party_RemoveActiveOwnerFar(menu->ownerIds[index]);
   }
-  for (index = 0; index < state->partyCount; index++) {
+  for (index = 0; index < menu->partyCount; index++) {
     Party_AddActiveOwnerFar(reordered[index]);
   }
-  state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
+  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
   return 1;
 }
 
+// Sets up the Status menu's first screen: the cursor window with the party's
+// figures, no other windows yet, and an 8 by 2 cursor grid. The parameters are
+// not used.
 void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
                                        s32 unused3) {
   struct CharacterMenuState *state;
@@ -6049,6 +6096,9 @@ void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
   state->rowCount = 2;
 }
 
+// Shows member resource's status in the status window (0, 5, 30 by 15),
+// opening it first with the member's portrait, the item icons on the chooser
+// page, and the eight stat sprites; then draws the status and ailments.
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
@@ -6059,8 +6109,8 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   created = 0;
   handle = (s32)state->statusWindow;
   if (handle == 0) {
-    created = UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 0x1E,
-                                      0xF, 2);
+    created =
+        UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 30, 15, 2);
     handle = (s32)state->statusWindow;
   }
   if (created != 0) {

@@ -618,7 +618,7 @@ s32 Data_02005fc4[] = {
 	(s32)Func_02002014,
 	499,
 	(s32)0xffff00c8,
-	0x00400000 | MSGNO(MsgScene653No13),
+	0x00400000 | MSGNO(MsgKandoreanTemple13),
 	2,
 	0x2300014,
 	(s32)Func_020004a8,

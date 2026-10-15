@@ -17,7 +17,7 @@ void Func_02000244(void)
 
     Func_020009b0();
     Func_02000a50(0);
-    msg = (s32)MsgScene677No10;
+    msg = (s32)MsgYallamInteriors10;
     Func_02000a18(msg);
     UiText_OpenMessageAtObject(9, 0);
     if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {
@@ -41,7 +41,7 @@ void Func_0200029c(s32 actor)
     } else {
         Func_020009b0();
         Func_02000a50(0);
-        Func_02000a18((s32)MsgScene677No21);
+        Func_02000a18((s32)MsgYallamInteriors21);
         Func_02000a28(actor, 0);
         Func_020009b8();
     }
@@ -57,7 +57,7 @@ void Func_020002fc(s32 actor)
     } else {
         Func_020009b0();
         Func_02000a50(0);
-        Func_02000a18((s32)MsgScene677No23);
+        Func_02000a18((s32)MsgYallamInteriors23);
         Func_02000a28(actor, 0);
         Func_020009b8();
     }
@@ -73,7 +73,7 @@ void Func_0200035c(s32 actor)
     } else {
         Func_020009b0();
         Func_02000a50(0);
-        Func_02000a18((s32)MsgScene677No25);
+        Func_02000a18((s32)MsgYallamInteriors25);
         Func_02000a28(actor, 0);
         Func_020009b8();
     }
@@ -90,7 +90,7 @@ void Func_020003bc(s32 actor)
     } else {
         Func_020009b0();
         Func_02000a50(0);
-        Func_02000a18((s32)MsgScene677No27);
+        Func_02000a18((s32)MsgYallamInteriors27);
         Func_02000a28(actor, 0);
         Func_020009b8();
     }
@@ -106,7 +106,7 @@ void Func_02000424(s32 actor)
     } else {
         Func_020009b0();
         Func_02000a50(0);
-        Func_02000a18((s32)MsgScene65ENo27);
+        Func_02000a18((s32)MsgMikasallaInteriors27);
         Func_02000a28(actor, 0);
         Func_020009b8();
     }
@@ -119,7 +119,7 @@ void Func_02000480(void)
     Func_020009b0();
     Func_02000a50(0);
     ObjectMotion_SetVariantCallback(14, 2);
-    msg = (s32)MsgScene677No31;
+    msg = (s32)MsgYallamInteriors31;
     Func_02000a18(msg);
     UiText_OpenMessageAtObject(14, 0);
     if (Inventory_PromptAndSetObjectMode(Func_02000a58(), 0) == 0) {

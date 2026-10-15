@@ -2,10 +2,10 @@
 #include "object_runtime.h"
 #include "party_state.h"
 
-extern char MsgScene6A6No17;
-extern char MsgScene6A6No19;
-extern char MsgScene6A6No51;
-extern char MsgScene6A6No53;
+extern char MsgLoho17;
+extern char MsgLoho19;
+extern char MsgLoho51;
+extern char MsgLoho53;
 
 s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
@@ -21,9 +21,9 @@ void Func_02000d4c(void)
         Func_02001430(30, 8);
     } else {
         if (GameFlag_Test(0xa5f))
-            Func_02001380((s32)&MsgScene6A6No51);
+            Func_02001380((s32)&MsgLoho51);
         else
-            Func_02001380((s32)&MsgScene6A6No17);
+            Func_02001380((s32)&MsgLoho17);
         Func_02001390(8, 0);
     }
 }
@@ -40,9 +40,9 @@ void Func_02000da4(s32 actor)
         Func_02001438(actor);
     } else {
         if (GameFlag_Test(0xa5f))
-            Func_02001380((s32)&MsgScene6A6No53);
+            Func_02001380((s32)&MsgLoho53);
         else
-            Func_02001380((s32)&MsgScene6A6No19);
+            Func_02001380((s32)&MsgLoho19);
         Func_02001390(actor, 0);
         }
     } while (0);

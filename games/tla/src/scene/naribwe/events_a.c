@@ -29,7 +29,7 @@ void Func_020000d8(void)
     s32 msg;
 
     if (GameFlag_Test_(0x85d) == 0) {
-        msg = (s32)&MsgScene66DNo02;
+        msg = (s32)&MsgNaribwe02;
         Func_02000584(msg);
         UiText_OpenMessageAtObject(14, 0);
         if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
@@ -40,7 +40,7 @@ void Func_020000d8(void)
         }
         Func_02000594(14, 0);
     } else {
-        Func_02000584((s32)&MsgScene66DNo03);
+        Func_02000584((s32)&MsgNaribwe03);
         Func_02000594(14, 0);
     }
 }
@@ -50,7 +50,7 @@ void Func_02000140(void)
     s32 msg;
 
     if (GameFlag_Test(0x85e) == 0) {
-        msg = (s32)&MsgScene66DNo07;
+        msg = (s32)&MsgNaribwe07;
         Func_02000584(msg);
         UiText_OpenMessageAtObject(18, 0);
         if (Inventory_PromptAndSetObjectMode(Func_020005dc(), 0) == 0) {
@@ -61,14 +61,14 @@ void Func_02000140(void)
         }
         Func_02000594(18, 0);
     } else {
-        Func_02000584((s32)&MsgScene66DNo08);
+        Func_02000584((s32)&MsgNaribwe08);
         Func_02000594(14, 0);
     }
 }
 
 void Func_020001a8(void)
 {
-    s32 msg = (s32)&MsgScene66DNo09;
+    s32 msg = (s32)&MsgNaribwe09;
 
     Func_02000584(msg);
     UiText_OpenMessageAtObject(19, 0);
@@ -94,7 +94,7 @@ void Func_020001f0(s32 actor)
     }
     Func_0200054c();
     Func_020005c4(0);
-    Func_02000584((s32)&MsgScene66DNo21);
+    Func_02000584((s32)&MsgNaribwe21);
     Func_02000594(actor, 0);
     Func_02000554();
 }
@@ -111,7 +111,7 @@ void Func_02000250(s32 actor)
     }
     Func_0200054c();
     Func_020005c4(0);
-    Func_02000584((s32)&MsgScene66DNo43);
+    Func_02000584((s32)&MsgNaribwe43);
     Func_02000594(actor, 0);
     Func_02000554();
 }
@@ -128,7 +128,7 @@ void Func_020002b0(s32 actor)
     }
     Func_0200054c();
     Func_020005c4(0);
-    Func_02000584((s32)&MsgScene66DNo23);
+    Func_02000584((s32)&MsgNaribwe23);
     Func_02000594(26, 0);
     Func_02000554();
 }
@@ -145,7 +145,7 @@ void Func_0200030c(s32 actor)
     }
     Func_0200054c();
     Func_020005c4(0);
-    Func_02000584((s32)&MsgScene66DNo45);
+    Func_02000584((s32)&MsgNaribwe45);
     Func_02000594(26, 0);
     Func_02000554();
 }

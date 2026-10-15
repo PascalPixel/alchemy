@@ -17,7 +17,7 @@ void Func_02001938(s32 spoken)
     Func_0200422c();
     if (spoken == 0)
     {
-        s32 message = (s32)MsgScene694No10;
+        s32 message = (s32)MsgContigo10;
 
         Func_0200412c(message);
         Func_02004144(18, 0);
@@ -47,7 +47,7 @@ void Func_02001938(s32 spoken)
         }
         if (room <= 6 && Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 1)
         {
-            Func_0200412c((s32)MsgScene694No12);
+            Func_0200412c((s32)MsgContigo12);
             Func_02004144(18, 0);
             return;
         }
@@ -56,20 +56,20 @@ void Func_02001938(s32 spoken)
     {
         if (tickets == 0)
         {
-            Func_0200412c((s32)MsgScene694No18);
+            Func_0200412c((s32)MsgContigo18);
             Func_02004144(18, 0);
             return;
         }
-        Func_0200412c((s32)MsgScene694No19);
+        Func_0200412c((s32)MsgContigo19);
         UiText_OpenMessageAtObject(18, 0);
         if (Inventory_PromptAndSetObjectMode(0, 0) == 1)
         {
-            Func_0200412c((s32)MsgScene694No17);
+            Func_0200412c((s32)MsgContigo17);
             Func_02004144(18, 0);
             return;
         }
     }
-    Func_0200412c((s32)MsgScene694No13);
+    Func_0200412c((s32)MsgContigo13);
     Func_02004144(18, 0);
     GameFlag_SetBit(265);
     GameFlag_SetBit(0x9e5);

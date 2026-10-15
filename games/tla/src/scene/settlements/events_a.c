@@ -18,7 +18,7 @@ void Func_02000404(void)
 
 void Func_0200043c(s32 actor)
 {
-    s32 msg = (s32)&MsgScene690No01;
+    s32 msg = (s32)&MsgSettlements01;
 
     Func_020020e0(msg);
     UiText_OpenMessageAtObject(actor, 0);

@@ -10,7 +10,7 @@ s32 Func_02002bb4(void);
 
 void Func_02000590(s32 actor)
 {
-    s32 msg = (s32)&MsgScene682No11;
+    s32 msg = (s32)&MsgChampa11;
 
     Func_02002adc(msg);
     UiText_OpenMessageAtObject(actor, 0);

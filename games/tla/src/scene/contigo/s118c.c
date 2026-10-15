@@ -27,14 +27,14 @@ void Func_0200118c(void)
     if (*(s16 *)(event + 358) == 0) {
         ObjectMotion_SetAngleToward(15, gPartyState.current_owner, 0);
         if (GameFlag_Test(0x9b2) != 0)
-            Func_0200412c((s32)MsgScene694No143);
+            Func_0200412c((s32)MsgContigo143);
         else
-            Func_0200412c((s32)MsgScene694No42);
+            Func_0200412c((s32)MsgContigo42);
     } else {
         if (GameFlag_Test(0x9b2) != 0)
-            Func_0200412c((s32)MsgScene694No149);
+            Func_0200412c((s32)MsgContigo149);
         else
-            Func_0200412c((s32)MsgScene694No50);
+            Func_0200412c((s32)MsgContigo50);
     }
     Func_02004144(15, 0);
     if (*(s16 *)(event + 358) == 0)

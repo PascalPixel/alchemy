@@ -30,7 +30,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
-extern u8 MsgScene690No01;
+extern u8 MsgSettlements01;
 
 void Func_02002018(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002030(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

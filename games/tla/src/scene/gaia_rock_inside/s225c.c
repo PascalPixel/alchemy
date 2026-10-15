@@ -43,7 +43,7 @@ void Func_0200225c(void)
     partner = Object_GetById(12);
     Func_02004e5c();
     Func_02004fcc(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene681No01, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
     Func_02004ec4(12, gPartyState.current_owner);
@@ -143,7 +143,7 @@ void Func_020024b8(void)
     partner = Object_GetById(12);
     Func_02004e5c();
     Func_02004fcc(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene681No01, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
     Func_02004ec4(12, gPartyState.current_owner);
@@ -243,7 +243,7 @@ void Func_02002718(void)
     partner = Object_GetById(14);
     Func_02004e5c();
     Func_02004fcc(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene681No01, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgGaiaRockInside01, 1);
     Func_02005014(193);
     Func_02004e3c(partner, 1);
     Func_02004ec4(14, gPartyState.current_owner);

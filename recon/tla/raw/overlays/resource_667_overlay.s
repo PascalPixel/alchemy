@@ -145,7 +145,7 @@ Func_02000514:
 .L_02008644:
 	.4byte gPartyState
 .L_02008648:
-	.4byte MsgScene667No10
+	.4byte MsgAlhafraManor10
 .L_0200864c:
 	.4byte gInput
 .L_02008650:
@@ -566,7 +566,7 @@ Func_02000658:
 	movs r0, #9
 	b .L_02008a68
 .L_02008a64:
-	.4byte MsgScene667No29
+	.4byte MsgAlhafraManor29
 .L_02008a68:
 	adds r1, #204
 	adds r2, #102

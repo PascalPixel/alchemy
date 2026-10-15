@@ -38,7 +38,7 @@ void Func_02001d00(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    UiText_ShowPositionedMessageAndWait((s32)&MsgScene653No10, 1);
+    UiText_ShowPositionedMessageAndWait((s32)&MsgKandoreanTemple10, 1);
     Func_020051c8();
 }
 
@@ -46,7 +46,7 @@ void Func_02001d20(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    UiText_ShowPositionedMessageAndWait((s32)&MsgScene653No01, 1);
+    UiText_ShowPositionedMessageAndWait((s32)&MsgKandoreanTemple01, 1);
     Func_020051c8();
 }
 
@@ -57,7 +57,7 @@ void Func_02001d40(void)
     ObjectMotion_EnableActionAndResetMotion(9);
     WaitFrames(1);
     ObjectMotion_SetAngleToward(9, gPartyState.current_owner, 0);
-    Func_02005280((s32)&MsgScene653No02);
+    Func_02005280((s32)&MsgKandoreanTemple02);
     Func_020052a0(9, 0);
     Object_GetById(9)->angle = 0x3000;
     WaitFrames(1);
@@ -72,7 +72,7 @@ void Func_02001db4(void)
     Func_020051c0();
     Func_02005370(0);
     ObjectMotion_SetAngleToward(10, gPartyState.current_owner, 0);
-    Func_02005280((s32)&MsgScene653No03);
+    Func_02005280((s32)&MsgKandoreanTemple03);
     Func_02005298(10, 0);
     Object_GetById(10)->angle = 0x5000;
     WaitFrames(1);
@@ -84,7 +84,7 @@ void Func_02001e0c(void)
 {
     Func_020051c0();
     Func_02005370(0);
-    Func_02005280((s32)&MsgScene653No09);
+    Func_02005280((s32)&MsgKandoreanTemple09);
     Func_020052a0(13, 0);
     Func_020051c8();
 }

@@ -15,7 +15,7 @@ void ObjectMotion_Launch(s32 a, s32 b, s32 c);
 void Func_02000398(s32 a);
 void ObjectMotion_ArmCallback(s32 a, s32 b, s32 c);
 void Func_02001bec(void);
-extern u8 MsgScene665No69[];
+extern u8 MsgAlhafra69[];
 extern u8 gPartyState[];
 
 void Func_020002f8(void)
@@ -24,7 +24,7 @@ void Func_020002f8(void)
     Call1(PartyInventory_Remove, 0x1c9);
     Func_02001be4();
     Call1(Func_02001cfc, 0);
-    Call1(Func_02001c74, (s32)MsgScene665No69);
+    Call1(Func_02001c74, (s32)MsgAlhafra69);
     Call1(Battle_WaitMode0, 0xa);
     Call3(ObjectMotion_SetAngleToward, 0x1b, FIELD_AT(gPartyState, s32, 532), 0);
     Call1(Battle_WaitMode0, 0xa);

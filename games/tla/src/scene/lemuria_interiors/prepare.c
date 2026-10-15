@@ -82,7 +82,7 @@ void Func_0200031c(void)
     Call1((void (*)())Party_RemoveActiveOwner, 7);
     ((void (*)())Func_0200282c)();
     Call1((void (*)())Func_020028fc, 0);
-    Call1((void (*)())Func_020028ac, (s32)MsgScene68CNo07);
+    Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors07);
     Value1((s32 (*)())Battle_WaitMode0, 20);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x3000, 0);
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 112, 128);

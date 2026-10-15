@@ -31,9 +31,9 @@ void Func_020011c8(void)
     {
         if (GameFlag_Test(0x9bc) || GameFlag_Test(0x9bd) || GameFlag_Test(0x9be)
             || GameFlag_Test(0x9bf))
-            Func_02004f0c((s32)MsgScene681No10);
+            Func_02004f0c((s32)MsgGaiaRockInside10);
         else
-            Func_02004f0c((s32)MsgScene681No06);
+            Func_02004f0c((s32)MsgGaiaRockInside06);
         Func_02004f14(10, 0);
     }
     else
@@ -41,7 +41,7 @@ void Func_020011c8(void)
         if (Object_GetById(9)->script == Data_02005610)
             Object_RefreshSelectorById(9);
         Func_02000f00();
-        Func_02004f0c((s32)MsgScene681No03);
+        Func_02004f0c((s32)MsgGaiaRockInside03);
         ObjectMotion_SetAngleToward(10, gPartyState.current_owner, 0);
         Battle_WaitMode0(10);
         Func_02004f14(10, 0);

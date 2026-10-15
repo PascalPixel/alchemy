@@ -19,7 +19,7 @@ void Func_02000e50(void)
 
     Func_020042dc();
     Func_0200444c(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene6ABNo07, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgMarsStar07, 1);
     ((struct EventNote *)work)->unknown_15a = 1;
     Func_020042e4();
 }

@@ -58,14 +58,14 @@ void Func_02003a8c(void)
             else
                 Func_020042b4(91);
             Battle_WaitMode0(20);
-            Func_0200412c((s32)MsgScene694No15);
+            Func_0200412c((s32)MsgContigo15);
             Func_0200403c(diff, 5);
             Func_02004144(14, 0);
             AudioCommand_WaitForStateByteClear();
         }
         else if (diff < 0)
         {
-            Func_0200412c((s32)MsgScene694No16);
+            Func_0200412c((s32)MsgContigo16);
             Func_0200403c(-diff, 5);
             Func_02004144(14, 0);
         }
@@ -87,14 +87,14 @@ void Func_02003a8c(void)
             else
                 Func_020042b4(91);
             Battle_WaitMode0(20);
-            Func_0200412c((s32)MsgScene694No15);
+            Func_0200412c((s32)MsgContigo15);
             Func_0200403c(diff, 5);
             Func_02004144(14, 0);
             AudioCommand_WaitForStateByteClear();
         }
         else if (diff < 0)
         {
-            Func_0200412c((s32)MsgScene694No16);
+            Func_0200412c((s32)MsgContigo16);
             Func_0200403c(-diff, 5);
             Func_02004144(14, 0);
         }
@@ -114,21 +114,21 @@ void Func_02003a8c(void)
         }
         else if (list[0] == -2)
         {
-            Func_0200412c((s32)MsgScene694No04);
+            Func_0200412c((s32)MsgContigo04);
             Func_02004144(18, 0);
         }
         else
         {
-            Func_0200412c((s32)MsgScene694No05);
+            Func_0200412c((s32)MsgContigo05);
             Func_02004144(18, 0);
             if (list[0] != -1)
             {
                 prize = list;
             next:
                     if (prize == list)
-                        Func_0200412c((s32)MsgScene694No11);
+                        Func_0200412c((s32)MsgContigo11);
                     else
-                        Func_0200412c((s32)MsgScene694No14);
+                        Func_0200412c((s32)MsgContigo14);
                     item = Func_02001a60(*prize);
                     Func_0200403c(item, 2);
                     Func_02004144(18, 0);
@@ -140,7 +140,7 @@ void Func_02003a8c(void)
                     goto next;
             }
             ((struct ContigoPrizes *)&gPartyState)->list[0] = -2;
-            Func_0200412c((s32)MsgScene694No17);
+            Func_0200412c((s32)MsgContigo17);
             Func_02004144(18, 0);
         }
         Func_02004074();

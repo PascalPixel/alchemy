@@ -19,21 +19,21 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 void Func_02001c74(const u8 *message);
 void Func_02001c84(s32 id, s32 a, s32 b);
 void Func_02001c8c(s32 id, s32 a);
-extern const u8 MsgScene665No65[];
-extern const u8 MsgScene665No70[];
-extern const u8 MsgScene665No71[];
+extern const u8 MsgAlhafra65[];
+extern const u8 MsgAlhafra70[];
+extern const u8 MsgAlhafra71[];
 
 void Func_02000398(s32 id)
 {
     if (!GameFlag_Test(0x8b5)) {
         ((struct AlhafraEventWork *)Ram_HeapSlots->event_work)->value_15a = 1;
-        Func_02001c74(MsgScene665No65);
+        Func_02001c74(MsgAlhafra65);
         Func_02001c8c(id, 0);
     } else if (Value1(GameFlag_Test, 0x8b6)) {
-        Func_02001c74(MsgScene665No71);
+        Func_02001c74(MsgAlhafra71);
         Func_02001c8c(id, 0);
     } else {
-        Func_02001c74(MsgScene665No70);
+        Func_02001c74(MsgAlhafra70);
         Battle_WaitMode0(10);
         Motion_SetModeAndWaitAnimation(id, 3);
         Func_02001c84(id, 0, 10);

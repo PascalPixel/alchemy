@@ -2208,7 +2208,7 @@ Func_020023e8:
 .L_0200a5a4:
 	.4byte gPartyState
 .L_0200a5a8:
-	.4byte MsgScene653No08
+	.4byte MsgKandoreanTemple08
 .L_0200a5ac:
 	.4byte Data_020062ac
 .L_0200a5b0:
@@ -4111,7 +4111,7 @@ Func_02003e8c:
 .L_0200c26c:
 	.4byte 0x0004cccc
 .L_0200c270:
-	.4byte MsgScene653No04
+	.4byte MsgKandoreanTemple04
 .L_0200c274:
 	.4byte 0x00013333
 .L_0200c278:
@@ -5521,7 +5521,7 @@ Func_0200482c:
 .L_0200cb54:
 	.4byte 0x00013333
 .L_0200cb58:
-	.4byte MsgScene653No07
+	.4byte MsgKandoreanTemple07
 .L_0200cb5c:
 	.4byte Data_02005564
 .L_0200cb60:

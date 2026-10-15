@@ -17,7 +17,7 @@ void Func_020000a4(void)
 
     Func_02001d50();
     Func_02001eb8(0);
-    msg = (s32)MsgScene659No06;
+    msg = (s32)MsgMadraInteriors06;
     Func_02001e18(msg);
     UiText_OpenMessageAtObject(9, 0);
     if (Inventory_PromptAndSetObjectMode(Func_02001ee8(), 0) == 0) {
@@ -43,15 +43,15 @@ void Func_020000fc(void)
 #ifdef TLA_EDITION_JA
         // 日本語版は選択肢なし
         if (FlagCheck(0x8ff))
-            Func_02001e18((s32)MsgScene659No155);
+            Func_02001e18((s32)MsgMadraInteriors155);
         else if (FlagCheck(0x8ab))
-            Func_02001e18((s32)MsgScene659No87);
+            Func_02001e18((s32)MsgMadraInteriors87);
         else
-            Func_02001e18((s32)MsgScene659No39);
+            Func_02001e18((s32)MsgMadraInteriors39);
         Func_02001e30(22, 0);
 #else
         if (FlagCheck(0x8ff)) {
-            s32 msg = (s32)MsgScene659No155;
+            s32 msg = (s32)MsgMadraInteriors155;
 
             Func_02001e18(msg);
             UiText_OpenMessageAtObject(22, 0);
@@ -65,9 +65,9 @@ void Func_020000fc(void)
             Func_02001e30(22, 0);
         } else {
             if (FlagCheck(0x8ab))
-                Func_02001e18((s32)MsgScene659No87);
+                Func_02001e18((s32)MsgMadraInteriors87);
             else
-                Func_02001e18((s32)MsgScene659No39);
+                Func_02001e18((s32)MsgMadraInteriors39);
             Func_02001e30(22, 0);
         }
 #endif

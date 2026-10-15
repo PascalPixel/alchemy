@@ -22,7 +22,7 @@ void Func_020044d4(void)
     ObjectMotion_SetPositionAndReset_(gPartyState.current_owner, 376, 408);
     Battle_WaitMode0_(20);
     Motion_SetVarCbAndRefresh(12, 1);
-    Func_02005280((s32)&MsgScene653No05);
+    Func_02005280((s32)&MsgKandoreanTemple05);
     Func_02005298(12, 0);
     ObjectMotion_ArmCallback_(12, 0x8000, 20);
     Func_020052c8(12, 256, 0);
@@ -77,7 +77,7 @@ void Func_020046d8(void)
     Motion_CamBounds_(0x1c80000, 0x280000, 0x2980000, 1);
     Func_020052e8();
     Battle_WaitMode0_(40);
-    Func_02005280((s32)&MsgScene653No06);
+    Func_02005280((s32)&MsgKandoreanTemple06);
     Func_02005298(0x800c, 0);
     ObjectMotion_SetPositionAndReset_(12, 472, 648);
     Event_FinishScreenTransition();

@@ -41,7 +41,7 @@ void Func_02001048(void)
 
     Func_02004e5c();
     Func_02004fcc(0);
-    Func_02004f0c((s32)MsgScene681No02);
+    Func_02004f0c((s32)MsgGaiaRockInside02);
     Object_AttachWorkTargetToObject(10, 1);
     if (object->script == Data_02005610 || object->script == Data_0200559c)
         Object_RefreshSelectorById(9);

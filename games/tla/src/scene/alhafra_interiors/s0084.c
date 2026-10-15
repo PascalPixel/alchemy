@@ -18,7 +18,7 @@ void Motion_SetModeAndWaitAnimation(s32 a, s32 b);
 void Motion_SetVarCbAndRefresh(s32 a, s32 b);
 void Object_AttachWorkTargetToObject(s32 a, s32 b);
 void Func_02000a9c(void);
-extern u8 MsgScene666No31[];
+extern u8 MsgAlhafraInteriors31[];
 extern u8 gPartyState[];
 
 void Func_02000084(void)
@@ -26,7 +26,7 @@ void Func_02000084(void)
     Call1(GameFlag_SetBit, 0x8b2);
     Func_02000a94();
     Call1(Func_02000b8c, 0);
-    Call1(Func_02000b24, (s32)MsgScene666No31);
+    Call1(Func_02000b24, (s32)MsgAlhafraInteriors31);
     Call2(Func_02000b84, 0x1f, 1);
     Call3(ObjectMotion_SetPositionAndReset, 4, 0x1c4, 0x14f);
     Call3(ObjectMotion_ArmCallback, 4, 0x8000, 0);

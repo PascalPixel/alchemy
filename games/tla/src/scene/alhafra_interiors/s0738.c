@@ -31,7 +31,7 @@ s32 ObjectMotion_EnableActionAndResetMotion();
 s32 Func_02000aec();
 s32 Func_02000bdc();
 s32 Func_02000a9c();
-extern u8 MsgScene666No120[];
+extern u8 MsgAlhafraInteriors120[];
 extern u8 Data_02000be4[];
 
 void Func_02000738(void)
@@ -51,7 +51,7 @@ void Func_02000738(void)
             Call1(GameFlag_SetBit, 0x903);
             Func_02000a94();
             Call1(Func_02000b8c, 0);
-            Call1(Func_02000b24, (s32)MsgScene666No120);
+            Call1(Func_02000b24, (s32)MsgAlhafraInteriors120);
             Call3(ObjectMotion_SetPositionAndReset, 4, 0x1f8, 0x148);
             Call2(Func_02000b4c, 4, 0x8000);
             Call4(Motion_CamBounds, 0x1980000, -1, 0x1480000, 1);

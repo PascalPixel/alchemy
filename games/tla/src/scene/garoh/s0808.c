@@ -1,7 +1,7 @@
 #include "garoh.h"
 #include "call.h"
 
-extern u8 MsgScene65FNo12[];
+extern u8 MsgGaroh12[];
 
 void Field_DispatchTypeHandler(s32 type);
 void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
@@ -56,7 +56,7 @@ void Func_02000808(void)
         Call4(Func_02005214, 21, 180 << 17, 199 << 16, speed);
         ObjectMotion_CommitPositionAndActivate(21, 0, 16);
         Func_020007d4(22);
-        Func_0200524c((s32)MsgScene65FNo12);
+        Func_0200524c((s32)MsgGaroh12);
         Call2((void (*)())Func_02005274, 21, 160 << 7);
         Motion_SetVarCbAndRefresh(21, 2);
         Battle_WaitMode0(20);

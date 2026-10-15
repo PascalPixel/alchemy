@@ -10,8 +10,8 @@ s32 GameFlag_Test();
 s32 Func_0200451c();
 s32 Func_02004534();
 s32 Func_0200446c();
-extern u8 MsgScene6A8No135[];
-extern u8 MsgScene6A8No56[];
+extern u8 MsgProx135[];
+extern u8 MsgProx56[];
 
 void Func_02000674(void)
 {
@@ -26,9 +26,9 @@ void Func_02000674(void)
         Call1(Func_020045ec, 0);
         t4 = Value1(GameFlag_Test, 0xa3d);
         if (t4 != 0) {
-            Call1(Func_0200451c, (s32)MsgScene6A8No135);
+            Call1(Func_0200451c, (s32)MsgProx135);
         } else {
-            Call1(Func_0200451c, (s32)MsgScene6A8No56);
+            Call1(Func_0200451c, (s32)MsgProx56);
         }
         Call2(Func_02004534, 0x16, 0);
         Func_0200446c();

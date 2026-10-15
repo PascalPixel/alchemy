@@ -12,9 +12,9 @@ s32 Object_RefreshSelectorById();
 s32 Func_02000f00();
 s32 Func_02000fac();
 s32 Func_02004e64();
-extern u8 MsgScene681No07[];
+extern u8 MsgGaiaRockInside07[];
 extern u8 Data_02005610[];
-extern u8 MsgScene681No04[];
+extern u8 MsgGaiaRockInside04[];
 
 void Func_020012ac(void)
 {
@@ -25,7 +25,7 @@ void Func_020012ac(void)
     Call1(Func_02004fcc, 0);
     t2 = Value1(PartyInventory_FindOwner, 0x1c3);
     if (t2 != -1) {
-        Call1(Func_02004f0c, (s32)MsgScene681No07);
+        Call1(Func_02004f0c, (s32)MsgGaiaRockInside07);
         Call2(Func_02004f14, 0xa, 0);
     } else {
         t5 = Value1(Object_GetById, 9);
@@ -33,7 +33,7 @@ void Func_020012ac(void)
             Call1(Object_RefreshSelectorById, 9);
         }
         Func_02000f00();
-        Call1(Func_02004f0c, (s32)MsgScene681No04);
+        Call1(Func_02004f0c, (s32)MsgGaiaRockInside04);
         Call2(Func_02004f14, 0xa, 0);
         Func_02000fac();
     }

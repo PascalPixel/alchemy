@@ -11,12 +11,12 @@ void Func_0200451c(s32 message);
 void Func_02004534(s32 id, s32 flags);
 void Func_020045ec(s32 value);
 
-extern u8 MsgScene6A8No113[];
-extern u8 MsgScene6A8No114[];
-extern u8 MsgScene6A8No115[];
-extern u8 MsgScene6A8No117[];
-extern u8 MsgScene6A8No118[];
-extern u8 MsgScene6A8No119[];
+extern u8 MsgProx113[];
+extern u8 MsgProx114[];
+extern u8 MsgProx115[];
+extern u8 MsgProx117[];
+extern u8 MsgProx118[];
+extern u8 MsgProx119[];
 
 void Func_02000764(void)
 {
@@ -29,9 +29,9 @@ void Func_02000764(void)
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
         ObjectMotion_SetAngleToward(16, gPartyState.current_owner, 0);
-        Func_0200451c((s32)MsgScene6A8No113);
+        Func_0200451c((s32)MsgProx113);
     } else {
-        Func_0200451c((s32)MsgScene6A8No117);
+        Func_0200451c((s32)MsgProx117);
     }
     Func_02004534(16, 0);
     if (*(s16 *)(work + 358) == 0)
@@ -51,9 +51,9 @@ void Func_020007f4(void)
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
         ObjectMotion_SetAngleToward(17, gPartyState.current_owner, 0);
-        Func_0200451c((s32)MsgScene6A8No114);
+        Func_0200451c((s32)MsgProx114);
     } else {
-        Func_0200451c((s32)MsgScene6A8No118);
+        Func_0200451c((s32)MsgProx118);
     }
     Func_02004534(17, 0);
     if (*(s16 *)(work + 358) == 0)
@@ -73,9 +73,9 @@ void Func_02000884(void)
     ((u8 *)object)[99] = 1;
     if (*(s16 *)(work + 358) == 0) {
         ObjectMotion_SetAngleToward(18, gPartyState.current_owner, 0);
-        Func_0200451c((s32)MsgScene6A8No115);
+        Func_0200451c((s32)MsgProx115);
     } else {
-        Func_0200451c((s32)MsgScene6A8No119);
+        Func_0200451c((s32)MsgProx119);
     }
     Func_02004534(18, 0);
     if (*(s16 *)(work + 358) == 0)

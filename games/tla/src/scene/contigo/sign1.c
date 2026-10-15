@@ -12,7 +12,7 @@ void Func_02000eb8(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    Func_0200412c((s32)MsgScene694No26);
+    Func_0200412c((s32)MsgContigo26);
     Func_0200414c(10, 0);
     Func_02004074();
 }
@@ -23,7 +23,7 @@ void Func_02000edc(void)
 
     Func_0200406c();
     Func_02004204(0);
-    msg = (s32)MsgScene694No25;
+    msg = (s32)MsgContigo25;
     UiText_ShowPositionedMessageAndWait(msg, 1);
     UiText_ShowPositionedMessageAndWait(msg + 1, 1);
     UiText_ShowPositionedMessageAndWait(msg + 2, 1);
@@ -42,7 +42,7 @@ void Func_02000f40(void)
 
     Func_0200406c();
     Func_02004204(0);
-    msg = (s32)MsgScene694No06;
+    msg = (s32)MsgContigo06;
     UiText_ShowPositionedMessageAndWait(msg, 1);
     UiText_ShowPositionedMessageAndWait(msg + 1, 1);
     UiText_ShowPositionedMessageAndWait(msg + 2, 1);
@@ -56,7 +56,7 @@ void Func_02000f7c(void)
 
     Func_0200406c();
     Func_02004204(0);
-    msg = (s32)MsgScene694No07;
+    msg = (s32)MsgContigo07;
     UiText_ShowPositionedMessageAndWait(msg, 1);
     UiText_ShowPositionedMessageAndWait(msg + 1, 1);
     UiText_ShowPositionedMessageAndWait(msg + 2, 1);

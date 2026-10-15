@@ -168,7 +168,7 @@ void Func_020007dc(void)
     ((void (*)())Event_StartScreenTransition)();
     ((void (*)())Event_WaitTransitionFrames)();
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 7, 0xcccc, 0x6666);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No28);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors28);
     Call3((void (*)())Func_02001e28, 10, 0, 10);
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x18c, 0x365);
     Call4((void (*)())Func_02001ec8, 11, 25, 19, 0xc000);
@@ -379,7 +379,7 @@ void Func_02000ed8(void)
 {
     ((void (*)())Func_02001d50)();
     Call1((void (*)())Func_02001eb8, 0);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No29);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors29);
     Call3((void (*)())ObjectMotion_ArmCallback, 11, 0x4000, 0);
     Call3((void (*)())Func_02001e28, 7, 0, 10);
     ((void (*)())Func_02001d58)();
@@ -390,7 +390,7 @@ void Func_02000f0c(void)
 {
     ((void (*)())Func_02001d50)();
     Call1((void (*)())Func_02001eb8, 0);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No30);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors30);
     Call3((void (*)())Func_02001e28, 7, 0, 10);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 7, 2);
     Call1((void (*)())Battle_WaitMode0, 20);

@@ -12,7 +12,7 @@ void Func_020008ec(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene694No110, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgContigo110, 1);
     Func_02004074();
 }
 
@@ -20,7 +20,7 @@ void Func_0200090c(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene694No111, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgContigo111, 1);
     Func_02004074();
 }
 
@@ -28,7 +28,7 @@ void Func_0200092c(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene694No112, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgContigo112, 1);
     Func_02004074();
 }
 
@@ -36,7 +36,7 @@ void Func_0200094c(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene694No113, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgContigo113, 1);
     Func_02004074();
 }
 
@@ -44,7 +44,7 @@ void Func_0200096c(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    UiText_ShowPositionedMessageAndWait((s32)MsgScene694No114, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgContigo114, 1);
     Func_02004074();
 }
 
@@ -60,7 +60,7 @@ void Func_020009ac(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    Func_0200412c((s32)MsgScene694No35);
+    Func_0200412c((s32)MsgContigo35);
     Func_0200414c(8, 0);
     Func_02004074();
 }

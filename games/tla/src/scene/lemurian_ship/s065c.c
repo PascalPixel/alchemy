@@ -34,7 +34,7 @@ void Func_0200065c(void)
     }
     else
     {
-        UiText_ShowPositionedMessageAndWait((s32)MsgScene656No02, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgLemurianShip02, 1);
     }
     Func_02002c70();
 }

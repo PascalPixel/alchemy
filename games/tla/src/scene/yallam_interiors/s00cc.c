@@ -8,8 +8,8 @@ s32 GameFlag_Test(s32 a);
 void Func_02000a18(s32 a);
 void Func_02000a28(s32 a, s32 b);
 void Func_020009b8(void);
-extern u8 MsgScene677No38[];
-extern u8 MsgScene677No34[];
+extern u8 MsgYallamInteriors38[];
+extern u8 MsgYallamInteriors34[];
 
 s32 Func_020000cc(void)
 {
@@ -19,9 +19,9 @@ s32 Func_020000cc(void)
     Call1(Func_02000a50, 0);
     t2 = Value1(GameFlag_Test, 0x301);
     if (t2 != 0) {
-        Call1(Func_02000a18, (s32)MsgScene677No38);
+        Call1(Func_02000a18, (s32)MsgYallamInteriors38);
     } else {
-        Call1(Func_02000a18, (s32)MsgScene677No34);
+        Call1(Func_02000a18, (s32)MsgYallamInteriors34);
     }
     Call2(Func_02000a28, 0xf, 0);
     Func_020009b8();

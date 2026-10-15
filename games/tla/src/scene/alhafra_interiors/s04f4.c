@@ -2,7 +2,7 @@
 
 void Func_020004f4(s32 actor)
 {
-    s32 msg = (s32)MsgScene666No74;
+    s32 msg = (s32)MsgAlhafraInteriors74;
 
     Func_02000b24(msg);
     UiText_OpenMessageAtObject(actor, 0);

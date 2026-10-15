@@ -32,7 +32,7 @@ s32 Object_GetById();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_02002a9c();
 s32 Func_02002a4c();
-extern u8 MsgScene682No52[];
+extern u8 MsgChampa52[];
 
 void Func_02000638(void)
 {
@@ -56,7 +56,7 @@ void Func_02000638(void)
             Call1(GameFlag_SetBit, 0xa75);
             Func_02002a44();
             Call1(Func_02002b64, 0);
-            Call1(Func_02002adc, (s32)MsgScene682No52);
+            Call1(Func_02002adc, (s32)MsgChampa52);
             {
                 s32 angle = 0xc000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
 

@@ -167,7 +167,7 @@ void Func_02002314(void)
     Func_02005378(14, 16, 16, 0xa000);
     ObjectMotion_CommitCurrentPositionAndActivate(14);
     Battle_WaitMode0(20);
-    Func_02005280((s32)&MsgScene653No12);
+    Func_02005280((s32)&MsgKandoreanTemple12);
     Func_02005298(14, 0);
     Battle_WaitMode0(30);
     Object_SetModeById(14, 3);

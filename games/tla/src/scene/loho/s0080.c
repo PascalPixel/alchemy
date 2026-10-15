@@ -3,8 +3,8 @@
 #include "party_state.h"
 
 extern char SceneId_Ov6A6Room2;
-extern char MsgScene6A6No23;
-extern char MsgScene6A6No27;
+extern char MsgLoho23;
+extern char MsgLoho27;
 extern const u8 Data_02001900[];
 extern const u8 Data_02001a80[];
 
@@ -42,7 +42,7 @@ void Func_020000ac(void)
 
 void Func_0200012c(s32 actor)
 {
-    s32 msg = (s32)&MsgScene6A6No23;
+    s32 msg = (s32)&MsgLoho23;
 
     Func_02001380(msg);
     UiText_OpenMessageAtObject(actor, 0);
@@ -58,6 +58,6 @@ void Func_0200012c(s32 actor)
 
 void Func_02000178(void)
 {
-    UiText_ShowPositionedMessageAndWait((s32)&MsgScene6A6No27, 1);
+    UiText_ShowPositionedMessageAndWait((s32)&MsgLoho27, 1);
     ((struct EventWork15a *)Ram_HeapSlots->event_work)->flag = 1;
 }

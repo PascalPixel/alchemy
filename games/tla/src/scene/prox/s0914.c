@@ -23,7 +23,7 @@ s32 Func_02004534();
 s32 Func_0200455c();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Func_0200446c();
-extern u8 MsgScene6A8No47[];
+extern u8 MsgProx47[];
 
 void Func_02000914(void)
 {
@@ -54,7 +54,7 @@ void Func_02000914(void)
         Call3(ObjectMotion_SetPositionAndReset, 8, 0x21c, 0x184);
         Call2(Func_0200454c, 8, 0);
         Call2(Object_SetModeById, 8, 4);
-        Call1(Func_0200451c, (s32)MsgScene6A8No47);
+        Call1(Func_0200451c, (s32)MsgProx47);
         Call2(Func_02004534, 0x4008, 0);
         Func_0200455c(9, 0x101, 0);
         Call2(Func_02004534, 9, 0);

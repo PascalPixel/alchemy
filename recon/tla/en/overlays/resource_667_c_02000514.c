@@ -42,7 +42,7 @@ s32 Func_02000514(void)
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Battle_WaitMode0(10);
-        Func_02001538((s32)&MsgScene667No10);
+        Func_02001538((s32)&MsgAlhafraManor10);
         Func_02001550(14, 0);
         GameFlag_ClearBit(0x12f);
     }

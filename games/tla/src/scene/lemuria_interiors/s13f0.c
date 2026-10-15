@@ -55,7 +55,7 @@ void Func_020013f0(void)
     Call1((void (*)())GameFlag_SetBit, 0x969);
     Func_0200282c();
     Call1((void (*)())Func_020028fc, 0);
-    Call1((void (*)())Func_020028ac, (s32)MsgScene68CNo26);
+    Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors26);
     Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x4000, 0);
     Call3((void (*)())ObjectMotion_SetSpeedParameters, 18, 0x10000, 0x8000);
     Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 18, 32, 0);

@@ -30,7 +30,7 @@ void Func_020004b0(void)
     ((void (*)())Func_020004dc)();
     goto L_020084d4;
 L_020084c6:
-    Call1((void (*)())Func_02000604, (s32)MsgScene65ENo22);
+    Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors22);
     Call2((void (*)())Func_02000614, 18, 0);
 L_020084d4:
     return;
@@ -42,7 +42,7 @@ void Func_020004dc(void)
 
     ((void (*)())Func_020005c4)();
     Call1((void (*)())Func_0200062c, 0);
-    Call1((void (*)())Func_02000604, (s32)MsgScene65ENo19);
+    Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors19);
     Value3((s32 (*)())Func_02000624, 18, 0x100, 60);
     Call3((void (*)())ObjectMotion_SetAngleToward, 18, gPartyState.current_owner, 0);
     Call2((void (*)())Func_02000614, 18, 0);

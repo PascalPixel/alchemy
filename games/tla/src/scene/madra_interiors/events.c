@@ -54,7 +54,7 @@ void Func_02001310(void)
         Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, object0->x / 0x10000, 95);
     Call3((void (*)())ObjectMotion_SetPositionAndReset, 4, 0x16a, 95);
     Call2((void (*)())Func_02001e40, 4, 0x4000);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No110);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors110);
     Call3((void (*)())ObjectMotion_SetAngleToward, 10, 4, 0);
     Call1((void (*)())Battle_WaitMode0, 30);
     Value3((s32 (*)())Func_02001e48, 10, 0x102, 30);
@@ -63,7 +63,7 @@ void Func_02001310(void)
     Call3((void (*)())ObjectMotion_SetAngleToward, 11, 4, 0);
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 11, 0, 5);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No115);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors115);
     Value3((s32 (*)())Func_02001e48, 10, 0x100, 30);
     Call2((void (*)())Func_02001e40, 10, 0);
     Call1((void (*)())Battle_WaitMode0, 10);
@@ -95,7 +95,7 @@ void Func_02001450(void)
 
     ((void (*)())Func_02001d50)();
     Call1((void (*)())Func_02001eb8, 0);
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No126);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors126);
     Value3((s32 (*)())Func_02001e48, 28, 0x100, 30);
     Call3((void (*)())ObjectMotion_SetAngleToward, 28, 4, 0);
     Call3((void (*)())Func_02001e28, 28, 0, 10);
@@ -240,7 +240,7 @@ L_020098ec:
 
 void Func_02001910(void)
 {
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No127);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors127);
     Call3((void (*)())Func_02001e28, 28, 0, 10);
     Call3((void (*)())Object_LinkPair, 4, 31, 0);
     Call1((void (*)())Battle_WaitMode0, 40);
@@ -275,7 +275,7 @@ void Func_02001910(void)
 
 void Func_02001a20(void)
 {
-    Call1((void (*)())Func_02001e18, (s32)MsgScene659No128);
+    Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors128);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
     Call1((void (*)())Battle_WaitMode0, 20);
     Call3((void (*)())Func_02001e28, 17, 0, 10);

@@ -56,7 +56,7 @@ s32 Func_02000d4c();
 s32 Func_02000e04();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_02002a4c();
-extern u8 MsgScene682No25[];
+extern u8 MsgChampa25[];
 extern u8 gPartyState[];
 
 void Func_02000e30(void)
@@ -83,7 +83,7 @@ void Func_02000e30(void)
     Call1(GameFlag_SetBit, 0x971);
     Func_02002a44();
     Call1(Func_02002b64, 0);
-    Call1(Func_02002adc, (s32)MsgScene682No25);
+    Call1(Func_02002adc, (s32)MsgChampa25);
     Call3(ObjectMotion_SetSpeedParameters, 0x19, 0xcccc, 0x6666);
     Call3(ObjectMotion_SetSpeedParameters, 0x1a, 0x10000, 0x8000);
     Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x10000, 0x8000);

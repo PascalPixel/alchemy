@@ -17,7 +17,7 @@ void Func_02000430(s32 actor)
 
     object[7] = 0x10000;
     object[6] = 0x10000;
-    Func_02002adc((s32)MsgScene682No07);
+    Func_02002adc((s32)MsgChampa07);
     Func_02002af4(actor, 0);
     Func_02002b04(actor, 0);
     Object_SetActionCallback(object, 8);
@@ -25,7 +25,7 @@ void Func_02000430(s32 actor)
 
 void Func_02000468(s32 actor)
 {
-    s32 msg = (s32)&MsgScene682No29;
+    s32 msg = (s32)&MsgChampa29;
 
     Func_02002adc(msg);
     UiText_OpenMessageAtObject(actor, 0);

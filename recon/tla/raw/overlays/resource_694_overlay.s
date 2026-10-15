@@ -1358,13 +1358,13 @@ Func_02003a8c:
 .L_es_0200bcb8:
 	.4byte 0x0000155b
 .L_es_0200bcbc:
-	.4byte MsgScene694No04
+	.4byte MsgContigo04
 .L_es_0200bcc0:
-	.4byte MsgScene694No05
+	.4byte MsgContigo05
 .L_es_0200bcc4:
-	.4byte MsgScene694No11
+	.4byte MsgContigo11
 .L_es_0200bcc8:
-	.4byte MsgScene694No14
+	.4byte MsgContigo14
 .L_es_0200bccc:
 	.4byte 0x00001580
 	.else
@@ -1614,19 +1614,19 @@ Func_02003a8c:
 .L_0200bcb8:
 	.4byte gSceneState
 .L_0200bcbc:
-	.4byte MsgScene694No04
+	.4byte MsgContigo04
 .L_0200bcc0:
-	.4byte MsgScene694No05
+	.4byte MsgContigo05
 .L_0200bcc4:
-	.4byte MsgScene694No11
+	.4byte MsgContigo11
 .L_0200bcc8:
-	.4byte MsgScene694No14
+	.4byte MsgContigo14
 .L_0200bccc:
-	.4byte MsgScene694No15
+	.4byte MsgContigo15
 .L_0200bcd0:
-	.4byte MsgScene694No16
+	.4byte MsgContigo16
 .L_0200bcd4:
-	.4byte MsgScene694No17
+	.4byte MsgContigo17
 	.endif
 	.section .text.x0200bcd8,"ax",%progbits
 	.global Func_02003cd8

@@ -45,7 +45,7 @@ extern u8 Data_0200617c[];
 extern u8 Data_020061fc[];
 extern u8 Data_0200622c[];
 extern u8 Data_02006268[];
-extern u8 MsgScene6A8No153[];
+extern u8 MsgProx153[];
 
 void Func_02002a8c(void)
 {
@@ -57,7 +57,7 @@ void Func_02002a8c(void)
         Call1(Func_0200463c, 0x4e);
         Call3(ObjectMotion_Launch, 5, 2, 0xa);
         Call3(ObjectMotion_Launch, 5, 4, 0xa);
-        Call1(Func_0200451c, (s32)MsgScene6A8No153);
+        Call1(Func_0200451c, (s32)MsgProx153);
         Call2(Func_02004534, 5, 0);
         Call2(Func_0200456c, 0x33333, 0x6666);
         Call4(Motion_CamBounds, 0x900000, -1, 0xe40000, 1);

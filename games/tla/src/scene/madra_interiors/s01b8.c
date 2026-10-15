@@ -10,11 +10,11 @@ void Func_020001b8(s32 actor)
             Func_02001f00(actor);
         } else {
             if (FlagCheck(0x8ff))
-                Func_02001e18((s32)MsgScene659No149);
+                Func_02001e18((s32)MsgMadraInteriors149);
             else if (FlagCheck(0x8ab))
-                Func_02001e18((s32)MsgScene659No81);
+                Func_02001e18((s32)MsgMadraInteriors81);
             else
-                Func_02001e18((s32)MsgScene659No33);
+                Func_02001e18((s32)MsgMadraInteriors33);
             Func_02001e30(actor, 0);
         }
     } while (0);
@@ -27,7 +27,7 @@ void Func_0200023c(void)
     ObjectMotion_SetAngleToward(14, 4, 0);
     ObjectMotion_Launch(14, 6, 20);
     ObjectMotion_SetAngleToward(4, 14, 0);
-    Func_02001e18((s32)MsgScene659No18);
+    Func_02001e18((s32)MsgMadraInteriors18);
     Func_02001e30(14, 0);
     ActorTurn(14, 0x2000, 0);
     Func_02001d58();
@@ -39,17 +39,17 @@ void Func_0200028c(void)
 
     if (FlagCheck(0x98a)) {
         if (FlagCheck(0x310))
-            msg = (s32)MsgScene659No111;
+            msg = (s32)MsgMadraInteriors111;
         else
-            msg = (s32)MsgScene659No118;
+            msg = (s32)MsgMadraInteriors118;
         Func_02001e18(msg);
         Func_02001e30(10, 0);
     } else {
         if (FlagCheck(0x210)) {
-            Func_02001e18((s32)MsgScene659No116);
+            Func_02001e18((s32)MsgMadraInteriors116);
             Func_02001e30(10, 0);
         } else {
-            Func_02001e18((s32)MsgScene659No106);
+            Func_02001e18((s32)MsgMadraInteriors106);
             Func_02001e30(10, 0);
         }
         FIELD_AT(Ram_HeapSlots->event_work, u16, 346) = 1;
@@ -60,17 +60,17 @@ void Func_02000308(void)
 {
     if (FlagCheck(0x98a)) {
         if (FlagCheck(0x310)) {
-            Func_02001e18((s32)MsgScene659No112);
+            Func_02001e18((s32)MsgMadraInteriors112);
             Func_02001e30(11, 0);
         } else {
-            Func_02001e18((s32)MsgScene659No119);
+            Func_02001e18((s32)MsgMadraInteriors119);
             Func_02001e30(11, 0);
         }
     } else if (FlagCheck(0x210)) {
-        Func_02001e18((s32)MsgScene659No117);
+        Func_02001e18((s32)MsgMadraInteriors117);
         Func_02001e30(11, 0);
     } else {
-        Func_02001e18((s32)MsgScene659No107);
+        Func_02001e18((s32)MsgMadraInteriors107);
         Func_02001e30(11, 0);
     }
 }
@@ -79,15 +79,15 @@ void Func_02000368(void)
 {
     if (FlagCheck(0x98a)) {
         if (FlagCheck(0x310)) {
-            Func_02001e18((s32)MsgScene659No113);
+            Func_02001e18((s32)MsgMadraInteriors113);
             Func_02001e30(10, 0);
         } else {
-            Func_02001e18((s32)MsgScene659No120);
+            Func_02001e18((s32)MsgMadraInteriors120);
             Func_02001e30(10, 0);
         }
     } else {
         s32 flag = FlagCheck(0x210);
-        s32 msg = (s32)MsgScene659No108;
+        s32 msg = (s32)MsgMadraInteriors108;
 
         if (flag) {
             Func_02001e18(msg);
@@ -103,15 +103,15 @@ void Func_020003c8(void)
 {
     if (FlagCheck(0x98a)) {
         if (FlagCheck(0x310)) {
-            Func_02001e18((s32)MsgScene659No114);
+            Func_02001e18((s32)MsgMadraInteriors114);
             Func_02001e30(11, 0);
         } else {
-            Func_02001e18((s32)MsgScene659No121);
+            Func_02001e18((s32)MsgMadraInteriors121);
             Func_02001e30(11, 0);
         }
     } else {
         s32 flag = FlagCheck(0x210);
-        s32 msg = (s32)MsgScene659No109;
+        s32 msg = (s32)MsgMadraInteriors109;
 
         if (flag) {
             Func_02001e18(msg);
@@ -139,7 +139,7 @@ void Func_02000428(void)
         ObjectMotion_SetAngleToward(14, 4, 0);
         Func_02001e30(14, 0);
     } else {
-        Func_02001e18((s32)MsgScene659No97);
+        Func_02001e18((s32)MsgMadraInteriors97);
         ObjectMotion_SetAngleToward(14, 4, 0);
         Func_02001e30(14, 0);
     }

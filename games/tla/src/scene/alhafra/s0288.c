@@ -9,11 +9,11 @@ s32 Battle_WaitMode0();
 s32 Func_02001ca4();
 s32 ObjectMotion_SetVariantCallback();
 s32 Func_02001cac();
-extern u8 MsgScene665No50[];
+extern u8 MsgAlhafra50[];
 
 void Func_02000288(void)
 {
-    Call1(Func_02001c74, (s32)MsgScene665No50);
+    Call1(Func_02001c74, (s32)MsgAlhafra50);
     Call3(Func_02001c84, 0x18, 0, 0xa);
     Call3(ObjectMotion_ArmCallback, 0x13, -256, 0);
     Call1(Battle_WaitMode0, 0xa);

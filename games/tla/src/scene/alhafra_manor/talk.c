@@ -29,7 +29,7 @@ s32 Func_020015e0(void);
 
 void Func_0200006c(s32 actor)
 {
-    s32 msg = (s32)&MsgScene667No02;
+    s32 msg = (s32)&MsgAlhafraManor02;
 
     Func_02001538(msg);
     UiText_OpenMessageAtObject(actor, 0);
@@ -45,7 +45,7 @@ void Func_0200006c(s32 actor)
 
 void Func_020000b8(s32 actor)
 {
-    s32 msg = (s32)&MsgScene667No09;
+    s32 msg = (s32)&MsgAlhafraManor09;
 
     Func_020014b8();
     Func_020015b8(0);
@@ -68,7 +68,7 @@ void Func_020000b8(s32 actor)
 
 void Func_02000150(s32 actor)
 {
-    s32 msg = (s32)&MsgScene667No14;
+    s32 msg = (s32)&MsgAlhafraManor14;
 
     Func_02001538(msg);
     UiText_OpenMessageAtObject(actor, 0);
@@ -89,7 +89,7 @@ void Func_0200019c(void)
     GameFlag_SetBit(0x8ba);
     Func_020014b8();
     Func_020015b8(0);
-    Func_02001538((s32)&MsgScene667No18);
+    Func_02001538((s32)&MsgAlhafraManor18);
     if (*(s16 *)((u8 *)work + 0x166) != 0)
         Call3((void (*)())Func_02001560, 18, 256, 60);
     ObjectMotion_SetAngleToward(18, gPartyState.current_owner, 0);
@@ -110,7 +110,7 @@ void Func_02000238(void)
     GameFlag_SetBit(0x8bb);
     Func_020014b8();
     Func_020015b8(0);
-    Func_02001538((s32)&MsgScene667No23);
+    Func_02001538((s32)&MsgAlhafraManor23);
     if (*(s16 *)((u8 *)work + 0x166) != 0)
         Call3((void (*)())Func_02001560, 8, 256, 30);
     Object_LinkObjectAndSetCallback(8, gPartyState.current_owner);
@@ -151,7 +151,7 @@ void Func_02000370(void)
     GameFlag_SetBit(0x8bc);
     Func_020014b8();
     Func_020015b8(0);
-    Func_02001538((s32)&MsgScene667No24);
+    Func_02001538((s32)&MsgAlhafraManor24);
     Battle_WaitMode0(20);
     Motion_SetVarCbAndRefresh(9, 2);
     Battle_WaitMode0(10);

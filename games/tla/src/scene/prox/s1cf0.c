@@ -34,7 +34,7 @@ s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 GameFlag_ClearBit();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
-extern u8 MsgScene6A8No80[];
+extern u8 MsgProx80[];
 
 void Func_02001cf0(void)
 {
@@ -70,7 +70,7 @@ void Func_02001cf0(void)
     Call4(Motion_CamBounds, 0xb80000, -1, 0x1c00000, 1);
     Func_0200457c();
     Call1(Battle_WaitMode0, 0x14);
-    Call1(Func_0200451c, (s32)MsgScene6A8No80);
+    Call1(Func_0200451c, (s32)MsgProx80);
     Call2(Func_02004534, 0x1a, 0);
     Call2(Object_SetModeById, 0, 3);
     Call2(Object_SetModeById, 0x1b, 3);

@@ -25,7 +25,7 @@ s32 ObjectMotion_SetVariantCallback();
 s32 Object_AttachWorkTargetToObject();
 s32 Object_GetById();
 s32 Object_SetModeById();
-extern u8 MsgScene65FNo13[];
+extern u8 MsgGaroh13[];
 extern u8 gPartyState[];
 
 void Func_020022f4(void)
@@ -39,7 +39,7 @@ void Func_020022f4(void)
     Call1(GameFlag_SetBit, 0x91d);
     Func_020051ac();
     Call1(Func_02005324, 0);
-    Call1(Func_0200524c, ((s32)MsgScene65FNo13));
+    Call1(Func_0200524c, ((s32)MsgGaroh13));
     Call3(Func_0200520c, 8, 0x900000, 0x2f00000);
     Call3(ObjectMotion_SetPositionAndReset, 4, 0x118, 0x308);
     Call3(ObjectMotion_ArmCallback, 4, 0xc000, 0);

@@ -11,7 +11,7 @@ void Func_02001070(void)
 {
     Func_0200406c();
     Func_02004204(0);
-    Func_0200412c((s32)MsgScene694No102);
+    Func_0200412c((s32)MsgContigo102);
     Func_0200414c(14, 0);
     Func_02004074();
 }

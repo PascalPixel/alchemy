@@ -20,7 +20,7 @@ s32 Motion_SetModeAndWaitAnimation();
 s32 Func_02001ca4();
 s32 Object_AttachWorkTargetToObject();
 s32 Func_02001bec();
-extern u8 MsgScene665No74[];
+extern u8 MsgAlhafra74[];
 extern u8 gPartyState[];
 
 void Func_0200047c(void)
@@ -28,7 +28,7 @@ void Func_0200047c(void)
     Call1(GameFlag_SetBit, 0x8b7);
     Func_02001be4();
     Call1(Func_02001cfc, 0);
-    Call1(Func_02001c74, (s32)MsgScene665No74);
+    Call1(Func_02001c74, (s32)MsgAlhafra74);
     Call4(Motion_CamBounds, 0x2300000, -1, 0x1f00000, 1);
     Func_02001ccc();
     Call1(Battle_WaitMode0, 0xa);

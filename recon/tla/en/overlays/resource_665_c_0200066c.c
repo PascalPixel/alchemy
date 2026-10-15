@@ -14,7 +14,7 @@ s32 ObjectMotion_SetPositionAndReset();
 s32 ObjectMotion_ArmCallback();
 s32 ObjectMotion_SetSpeedParameters();
 s32 Motion_SetModeAndWaitAnimation();
-extern u8 MsgScene665No92[];
+extern u8 MsgAlhafra92[];
 extern u8 gPartyState[];
 
 void Func_0200066c(s32 a0)
@@ -27,7 +27,7 @@ void Func_0200066c(s32 a0)
         Call1(Func_02001c74, 0x1ca9);
         Call2(UiText_OpenMessageAtObject, a0, 0);
     } else {
-        Call1(Func_02001c74, (s32)MsgScene665No92);
+        Call1(Func_02001c74, (s32)MsgAlhafra92);
         Call2(UiText_OpenMessageAtObject, a0, 0);
         t6 = Value2(Inventory_PromptAndSetObjectMode, Func_02001d34(), 0);
         if (t6 != 0) {

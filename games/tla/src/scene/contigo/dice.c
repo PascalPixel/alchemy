@@ -34,11 +34,11 @@ void Func_02001abc(void)
     Func_0200406c();
     Func_02004204(0);
     if ((u32)gPartyState.coins < price) {
-        Func_0200412c((s32)MsgScene694No03);
+        Func_0200412c((s32)MsgContigo03);
         UiText_OpenMessageAtObject(14, 0);
         return;
     }
-    Func_0200412c((s32)MsgScene694No01);
+    Func_0200412c((s32)MsgContigo01);
     Func_0200403c(price, 5);
     UiText_OpenMessageAtObject(14, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
@@ -68,11 +68,11 @@ void Func_02001b84(void)
     Func_0200406c();
     Func_02004204(0);
     if ((u32)gPartyState.coins < price) {
-        Func_0200412c((s32)MsgScene694No34);
+        Func_0200412c((s32)MsgContigo34);
         UiText_OpenMessageAtObject(14, 0);
         return;
     }
-    Func_0200412c((s32)MsgScene694No23);
+    Func_0200412c((s32)MsgContigo23);
     UiText_OpenMessageAtObject(8, 0);
     if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
         /* FAKEMATCH: the native loads the scene state's address into r3 before the coins; stored plainly the two registers swap (6 differ), and with the coins in a temporary the two loads come in the other order (2 differ); pointer locals and one-pass blocks measured 2 or 6. */

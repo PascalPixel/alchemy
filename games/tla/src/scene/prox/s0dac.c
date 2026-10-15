@@ -24,7 +24,7 @@ s32 Inventory_PromptAndSetObjectMode();
 s32 ObjectMotion_CommitCurrentPositionAndActivate();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
-extern u8 MsgScene6A8No75[];
+extern u8 MsgProx75[];
 extern u8 Data_020049c4[];
 extern u8 Data_02004980[];
 extern u8 Data_02004a08[];
@@ -44,7 +44,7 @@ void Func_02000dac(void)
     Call2(Func_0200454c, gPartyState.current_owner, 0xc000);
     Prox_Jump(0xb, 0x100, 0x14);
     Call2(Func_0200454c, 0xb, 0x5000);
-    Call1(Func_0200451c, (s32)MsgScene6A8No75);
+    Call1(Func_0200451c, (s32)MsgProx75);
     Call2(Func_02004534, 0xb, 0);
     Prox_Jump(0xa, 0x100, 0);
     Call3(ObjectMotion_ArmCallback, 0xa, 0x8000, 0x28);

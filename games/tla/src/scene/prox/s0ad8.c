@@ -20,7 +20,7 @@ s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_Launch();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
-extern u8 MsgScene6A8No62[];
+extern u8 MsgProx62[];
 
 void Func_02000ad8(void)
 {
@@ -32,7 +32,7 @@ void Func_02000ad8(void)
     Call1(Battle_WaitMode0, 0x28);
     Call2(Motion_SetVarCbAndRefresh, 0xa, 1);
     Call2(Func_0200454c, 0xa, 0xb000);
-    Call1(Func_0200451c, (s32)MsgScene6A8No62);
+    Call1(Func_0200451c, (s32)MsgProx62);
     Call2(Func_02004534, 0xa, 0);
     Call2(Func_02004564, 0xc, 0x102);
     Call2(Func_02004564, 0xd, 0x102);

@@ -13,7 +13,7 @@ void Func_02001650(void)
 {
     Func_02002c68();
     Func_02002da8(0);
-    Func_02002d18((s32)MsgScene656No01);
+    Func_02002d18((s32)MsgLemurianShip01);
     LemurianShip_SePlay(78);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();

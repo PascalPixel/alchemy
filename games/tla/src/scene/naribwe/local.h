@@ -55,15 +55,15 @@ extern const u8 Data_02000b4c[];
 extern const u8 Data_02000cfc[];
 extern const struct WarpEntry Data_0200064c[];
 
-extern u8 MsgScene66DNo02;
-extern u8 MsgScene66DNo03;
-extern u8 MsgScene66DNo07;
-extern u8 MsgScene66DNo08;
-extern u8 MsgScene66DNo09;
-extern u8 MsgScene66DNo21;
-extern u8 MsgScene66DNo43;
-extern u8 MsgScene66DNo23;
-extern u8 MsgScene66DNo45;
+extern u8 MsgNaribwe02;
+extern u8 MsgNaribwe03;
+extern u8 MsgNaribwe07;
+extern u8 MsgNaribwe08;
+extern u8 MsgNaribwe09;
+extern u8 MsgNaribwe21;
+extern u8 MsgNaribwe43;
+extern u8 MsgNaribwe23;
+extern u8 MsgNaribwe45;
 
 static __inline__ s32 GameFlag_Test_(s32 flag)
 {

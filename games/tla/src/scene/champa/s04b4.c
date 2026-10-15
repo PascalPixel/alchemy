@@ -1,7 +1,7 @@
 #include "types.h"
 
-extern u8 MsgScene682No30[];
-extern u8 MsgScene682No05[];
+extern u8 MsgChampa30[];
+extern u8 MsgChampa05[];
 
 s32 GameFlag_Test(s32 flag);
 void Func_02002adc(s32 message);
@@ -14,25 +14,25 @@ void Func_02002af4(s32 speaker, s32 flags);
 void Func_020004b4(s32 actor)
 {
     if (GameFlag_Test(0x97f)) {
-        Func_02002adc((s32)MsgScene682No30);
+        Func_02002adc((s32)MsgChampa30);
         UiText_OpenMessageAtObject(actor, 0);
         if (Inventory_PromptAndSetObjectMode(Func_02002bb4(), 0) == 0) {
             Battle_WaitMode0(10);
-            Func_02002adc((s32)MsgScene682No30 + 1);
+            Func_02002adc((s32)MsgChampa30 + 1);
         } else {
             Battle_WaitMode0(20);
-            Func_02002adc((s32)MsgScene682No30 + 2);
+            Func_02002adc((s32)MsgChampa30 + 2);
         }
         Func_02002af4(actor, 0);
     } else {
-        Func_02002adc((s32)MsgScene682No05);
+        Func_02002adc((s32)MsgChampa05);
         UiText_OpenMessageAtObject(actor, 0);
         if (Inventory_PromptAndSetObjectMode(Func_02002bb4(), 0) == 0) {
             Battle_WaitMode0(10);
-            Func_02002adc((s32)MsgScene682No05 + 1);
+            Func_02002adc((s32)MsgChampa05 + 1);
         } else {
             Battle_WaitMode0(20);
-            Func_02002adc((s32)MsgScene682No05 + 2);
+            Func_02002adc((s32)MsgChampa05 + 2);
         }
         Func_02002af4(actor, 0);
     }

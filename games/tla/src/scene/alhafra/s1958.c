@@ -21,7 +21,7 @@ void UiText_OpenMessageAtObject(s32 a, s32 b);
 s32 Inventory_PromptAndSetObjectMode(s32 a, s32 b);
 void Func_02001c3c(s32 a, s32 b, s32 c);
 void Func_02001bec(void);
-extern u8 MsgScene665No28[];
+extern u8 MsgAlhafra28[];
 extern u8 gPartyState[];
 
 void Func_02001958(s32 a0)
@@ -35,7 +35,7 @@ void Func_02001958(s32 a0)
     Call1(GameFlag_SetBit, 0x8b4);
     Func_02001be4();
     Call1(Func_02001cfc, 0);
-    Call1(Func_02001c74, (s32)MsgScene665No28);
+    Call1(Func_02001c74, (s32)MsgAlhafra28);
     if (a0 == 1) {
         Call1(Battle_WaitMode0, 0xa);
         Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gPartyState, s32, 532), 0xa8, 0x2e0);

@@ -25,9 +25,9 @@ void Func_0200009c(s32 actor)
             Func_0200089c(10, actor);
         } else {
             if (GameFlag_Test(0x91b))
-                Func_02000844((s32)MsgScene660No52);
+                Func_02000844((s32)MsgGarohInteriors52);
             else
-                Func_02000844((s32)MsgScene660No17);
+                Func_02000844((s32)MsgGarohInteriors17);
             Func_0200085c(actor, 0);
         }
     } while (0);
@@ -45,9 +45,9 @@ void Func_02000114(s32 actor)
             Func_0200089c(11, actor);
         } else {
             if (GameFlag_Test(0x91b))
-                Func_02000844((s32)MsgScene660No54);
+                Func_02000844((s32)MsgGarohInteriors54);
             else
-                Func_02000844((s32)MsgScene660No19);
+                Func_02000844((s32)MsgGarohInteriors19);
             Func_0200085c(actor, 0);
         }
     } while (0);
@@ -64,10 +64,10 @@ void Func_0200018c(s32 actor)
         if (facing == 0xc000) {
             Func_0200089c(12, actor);
         } else if (GameFlag_Test(0x91b)) {
-            Func_02000844((s32)MsgScene660No56);
+            Func_02000844((s32)MsgGarohInteriors56);
             Func_0200085c(actor, 0);
         } else {
-            s32 message = (s32)MsgScene660No21;
+            s32 message = (s32)MsgGarohInteriors21;
 
             Func_02000844(message);
             UiText_OpenMessageAtObject(actor, 0);
@@ -95,9 +95,9 @@ void Func_02000230(s32 actor)
             Func_020008ac(3, actor);
         } else {
             if (GameFlag_Test(0x91b))
-                Func_02000844((s32)MsgScene660No58);
+                Func_02000844((s32)MsgGarohInteriors58);
             else
-                Func_02000844((s32)MsgScene660No23);
+                Func_02000844((s32)MsgGarohInteriors23);
             Func_0200085c(actor, 0);
         }
     } while (0);
@@ -126,9 +126,9 @@ void Func_02000298(void)
         Func_020008a4(8);
     } else {
         if (GameFlag_Test(0x91b))
-            Func_02000844((s32)MsgScene660No66);
+            Func_02000844((s32)MsgGarohInteriors66);
         else
-            Func_02000844((s32)MsgScene660No31);
+            Func_02000844((s32)MsgGarohInteriors31);
         Func_0200085c(8, 0);
     }
     Actor_Turn(8, 0x4000, 0);

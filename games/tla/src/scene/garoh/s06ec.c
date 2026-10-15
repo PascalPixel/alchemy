@@ -1,7 +1,7 @@
 #include "garoh.h"
 
-extern u8 MsgScene65FNo20[];
-extern u8 MsgScene65FNo21[];
+extern u8 MsgGaroh20[];
+extern u8 MsgGaroh21[];
 
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
@@ -18,9 +18,9 @@ void Func_020006ec(void)
     Battle_WaitMode0(10);
     ObjectMotion_SetAngleToward(13, 4, 0);
     if (GameFlag_Test(0x301)) {
-        Func_0200524c((s32)MsgScene65FNo21);
+        Func_0200524c((s32)MsgGaroh21);
     } else {
-        Func_0200524c((s32)MsgScene65FNo20);
+        Func_0200524c((s32)MsgGaroh20);
         Func_0200525c(13, 0, 10);
         {
             s32 a = 0x101;

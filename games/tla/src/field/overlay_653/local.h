@@ -110,6 +110,7 @@ void Func_02003b2c(void);
 void Func_02003c8c(void);
 extern u8 MsgScene653No12;
 extern u8 MsgScene653No06;
+extern u8 MsgScene653No05;
 extern char SceneId_Ov653Room1;
 extern char SceneId_Ov653Room2;
 extern char SceneId_Ov653Room3;
@@ -125,6 +126,7 @@ void Func_02005390(void);
 void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
 void Func_02005238(s32 id, s32 x, s32 z, s32 angle);
 void Func_020051b0(s32 a);
+void Func_02005240(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void VramBlock_LoadCached(s32 block, s32 count, const void *data);
@@ -323,6 +325,18 @@ static __inline__ void Motion_CamBounds_(s32 x, s32 y, s32 z, s32 mode)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Motion_CamBounds(x, y, z, mode);
+}
+
+static __inline__ void Func_020052d8_(s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_020052d8(speed, acceleration);
+}
+
+static __inline__ void Func_020052d0_(s32 id, s32 value)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_020052d0(id, value);
 }
 
 /* FAKEMATCH: the native schedules this call as a value-returning one (the variant is loaded before the actor: one reordered pair with the shared void prototype). The routine is not C yet, so its return type is unproven. */

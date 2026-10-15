@@ -1,8 +1,10 @@
-/* Near miss of overlay 662 Func_02000754: the six-entry loop only. Inside it the native reloads
- * hit->animation, its value pointer, the value and the table address on every pass and indexes the table
- * (lsls r3, r4, #1; ldrh r3, [r2, r3]); the draft hoists them all and walks the table. Tried: a one-pass
- * block around the test, the loop written with a goto. The quarter turn needs one variable assigned
- * twice (the shifted angle, then the rounded turn): as one expression or three locals it stays in r1. */
+/* Near miss, differ 2 of 61 (one reordered row): overlay 662's Func_02000754, the representative of its copies in 668, 674, 69c,
+ * 6a1 and 6ad. The native reloads hit->animation, its value and the table address on every pass and indexes the table: a goto
+ * loop and a memory barrier at its head give exactly that (as a for loop loop.c hoists them and walks the table, 18; as a goto
+ * loop without the barrier GCSE hoists them, 30). Left: the native loads object->x before the frame's sub sp; here sched2 ranks
+ * the two equal (priority 40) and takes sub sp, the anti-dependent load losing to it. Tried: the angle and the position in
+ * either order, the angle in two statements, the locals reordered, an unused local, barriers and one-pass blocks after each
+ * statement (alchemy permute-style scan, singly and in pairs). */
 #include "types.h"
 #include "object_runtime.h"
 
@@ -26,10 +28,14 @@ void Func_02000754(struct ObjectRuntime *object)
     Vector_AddPolarOffsetFar(0x100000, angle, position);
     hit = Func_02001948(position, 1);
     if (hit != 0) {
-        for (i = 0; i <= 5; i++) {
-            if (*((struct BattleAnimationState *)hit->animation)->value_28 == Data_02001968[i])
-                return;
-        }
+        i = 0;
+    next:
+        __asm__("" : : : "memory");
+        if (*((struct BattleAnimationState *)hit->animation)->value_28 == Data_02001968[i])
+            return;
+        i++;
+        if (i <= 5)
+            goto next;
         Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
     }
     position[0] = object->x;

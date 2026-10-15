@@ -3,7 +3,12 @@
  * those registers again after it; the draft's loop pass moves both out in front of the loop.
  * Measured: a plain and a volatile u16 store of the constants load them from the literal pool
  * (the native builds 0x1000 with a shift), so the stores take an s32 through the inline; with
- * it the constants are right and only the loop invariants differ. A do-while form is untried. */
+ * it the constants are right and only the loop invariants differ.
+ * Trials: a do-while loop and a while (1) loop with a break differ 39 too. Written as goto
+ * loops (no loop notes, so the loop pass leaves the constants and CSE carries both registers
+ * past the exit), with every write through a do/while (0) statement macro, both functions
+ * match all twelve editions (commit 3e896829de; differ 4 and 2 with the plain inline), but
+ * S2's goto count may only fall, so that form is not adopted. */
 #include "types.h"
 
 extern u8 Data_0200308c;

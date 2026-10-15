@@ -10,11 +10,14 @@
 #define SLEEP_IDLE_FRAMES 10800
 #define RGB_WHITE 0x7fff
 
-#define Io_Write16(value_, reg_) do { \
-    /* FAKEMATCH: plain halfword stores pool the sleep constants; a word-valued temporary preserves their measured register construction. */ \
-    u32 word_ = (u16)(value_); \
-    *(reg_) = word_; \
-} while (0)
+#define Io_Write16(value_, reg_)                                                                 \
+    do                                                                                           \
+    {                                                                                            \
+        /* FAKEMATCH: plain halfword stores pool the sleep constants; a word-valued temporary */ \
+        /* preserves their measured register construction. */                                    \
+        u32 word_ = (u16)(value_);                                                               \
+        *(reg_) = word_;                                                                         \
+    } while (0)
 
 static __inline__ void System_Reset(void)
 {
@@ -42,41 +45,57 @@ void WaitFrames(s32 frames)
     s16 display;
     s16 backdrop;
 
-    for (i = 0; i < (u32)frames; i++) {
+    for (i = 0; i < (u32)frames; i++)
+    {
         gSchedulerStatus = 1;
         Scheduler_RunCallbacksByKey(0x480);
         gSchedulerStatus = 0;
-        if (gRenderOamEnabled) {
+        if (gRenderOamEnabled)
+        {
             Render_BuildOamList(Runtime_AllocateHeapBlock(80, 0x400));
-        } else {
+        }
+        else
+        {
             gOamUsage.used = 0;
             gOamUsage.limit = 256;
         }
         gFrameRenderPending = 1;
-        if (gCpuLoadDisplayEnabled) {
+        if (gCpuLoadDisplayEnabled)
+        {
             line = *(u16 *)&REG_VCOUNT;
-            if (line >= 160) line -= 160;
-            else line += 68;
+            if (line >= 160)
+                line -= 160;
+            else
+                line += 68;
             line += (gLagFrameCount - 1) << 8;
-            if (gCpuLoadTimer == 0) gCpuLoadPeak = 0;
-            else gCpuLoadTimer--;
-            if (gCpuLoadPeak < line) {
+            if (gCpuLoadTimer == 0)
+                gCpuLoadPeak = 0;
+            else
+                gCpuLoadTimer--;
+            if (gCpuLoadPeak < line)
+            {
                 gCpuLoadPeak = line;
                 gCpuLoadTimer = 30;
             }
         }
-        if (gSleepDisabled == 0) {
-            if (gAutoSleepEnabled) {
-                if (gInput.held) gIdleFrameCount = 0;
-                else {
+        if (gSleepDisabled == 0)
+        {
+            if (gAutoSleepEnabled)
+            {
+                if (gInput.held)
+                    gIdleFrameCount = 0;
+                else
+                {
                     gIdleFrameCount++;
                     {
-                        u32 idle; u32 limit;
+                        u32 idle;
+                        u32 limit;
                         limit = SLEEP_IDLE_FRAMES >> 6;
                         idle = gIdleFrameCount;
                         /* FAKEMATCH: under the ARM9TDMI load schedule plain source shifts the idle limit before the volatile counter reload; finish the reload before the limit's shift, with neither value changed. */
-                        __asm__ ("" : "+r"(idle) : "r"(limit));
-                        if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63)) gSleepRequested = 1;
+                        __asm__("" : "+r"(idle) : "r"(limit));
+                        if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63))
+                            gSleepRequested = 1;
                     }
                 }
             }
@@ -85,22 +104,36 @@ void WaitFrames(s32 frames)
                 held = gInput.held;
                 /* FAKEMATCH: plain source starts the sleep-button comparison constant before loading held buttons; leave held unchanged while the load goes first. */
                 __asm__ volatile("" : : "r"(held));
-                if (held == (KEYS_SHOULDERS | KEY_SELECT)) gSleepRequested = 1;
+                if (held == (KEYS_SHOULDERS | KEY_SELECT))
+                    gSleepRequested = 1;
             }
         }
-        if (gDebugMode) {
-            for (;;) {
-                if (gDebugPaused) {
-                    if (gInput.repeat & (KEY_A | KEY_B | KEY_SELECT)) break;
-                    if (gInput.held & KEYS_DPAD) break;
-                    if (gInput.repeat & KEY_START) { gDebugPaused = 0; break; }
-                } else {
-                    if (gInput.held != (KEY_START | KEY_SELECT)) break;
+        if (gDebugMode)
+        {
+            for (;;)
+            {
+                if (gDebugPaused)
+                {
+                    if (gInput.repeat & (KEY_A | KEY_B | KEY_SELECT))
+                        break;
+                    if (gInput.held & KEYS_DPAD)
+                        break;
+                    if (gInput.repeat & KEY_START)
+                    {
+                        gDebugPaused = 0;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (gInput.held != (KEY_START | KEY_SELECT))
+                        break;
                     gDebugPaused = 1;
                 }
                 System_WaitForFrameInterrupt();
                 Input_UpdateKeyRepeatAndDirection();
-                if (gResetRequested) {
+                if (gResetRequested)
+                {
                     gResetRequested = 0;
                     System_Reset();
                 }
@@ -114,21 +147,28 @@ void WaitFrames(s32 frames)
         gFrameCount++;
         gFrameWaitCount++;
         Input_UpdateKeyRepeatAndDirection();
-        if (gSerialExchangeActive) {
+        if (gSerialExchangeActive)
+        {
             SerialRuntime_PollStatus();
-            if (gSerialRuntime.mode) gSerialRuntime.transferEnabled = 1;
+            if (gSerialRuntime.mode)
+                gSerialRuntime.transferEnabled = 1;
         }
-        if (gSleepRequested && gSleepDisabled == 0) {
+        if (gSleepRequested && gSleepDisabled == 0)
+        {
             display = REG_DISPCNT;
             backdrop = PLTT_BACKDROP;
-            if (gSleepRequested == 1) {
+            if (gSleepRequested == 1)
+            {
                 Io_Write16(0, &REG_DISPCNT);
                 Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
-                for (j = 9; j >= 0; j--) System_WaitForFrameInterrupt();
-                while (gInput.held) System_WaitForFrameInterrupt();
+                for (j = 9; j >= 0; j--)
+                    System_WaitForFrameInterrupt();
+                while (gInput.held)
+                    System_WaitForFrameInterrupt();
                 gSleepActive = 1;
                 {
-                    u32 high; volatile u16 *key;
+                    u32           high;
+                    volatile u16 *key;
                     /* FAKEMATCH: the prior direct form loads the wake address before the genuine flag store; end its scratch-register reuse first. */
                     __asm__ volatile("" : : : "r5");
                     high = KEYCNT_SLEEP_WAKE >> 8;
@@ -140,15 +180,20 @@ void WaitFrames(s32 frames)
                 Bios_SoundBiasOn();
                 Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
                 Io_Write16(0, &gSleepActive);
-                for (j = 9; j >= 0; j--) System_WaitForFrameInterrupt();
-                while (gInput.held) System_WaitForFrameInterrupt();
+                for (j = 9; j >= 0; j--)
+                    System_WaitForFrameInterrupt();
+                while (gInput.held)
+                    System_WaitForFrameInterrupt();
                 Io_Write16(display, &REG_DISPCNT);
                 Io_Write16(backdrop, &PLTT_BACKDROP);
                 gSleepRequested = 0;
                 gIdleFrameCount = 0;
-            } else gSleepRequested--;
+            }
+            else
+                gSleepRequested--;
         }
-        if (gResetRequested) {
+        if (gResetRequested)
+        {
             gResetRequested = 0;
             System_Reset();
         }

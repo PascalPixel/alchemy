@@ -9,14 +9,14 @@ extern u8 MsgSaveFailed;
 extern u8 MsgGameSaved;
 extern u8 MsgSaving;
 
-extern u8 gData_02000000[];
+extern u8  gData_02000000[];
 extern s16 gData_020036d0;
 
-s32 Func_0801596c(void);
-s32 SaveState_LoadSummaryRecords(void);
+s32  Func_0801596c(void);
+s32  SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
-s32 SaveState_BuildSummaryHeader(void);
-s32 Func_08042f10(s32 slot, void *buffer);
+s32  SaveState_BuildSummaryHeader(void);
+s32  Func_08042f10(s32 slot, void *buffer);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Audio_PlayCue(s32 cue);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
@@ -26,7 +26,7 @@ void Object_BuildRecordSnapshotFar(void);
 #else
 void ObjectTable_SnapshotFar(void);
 #endif
-s32 UiWork_IsComplete(void);
+s32  UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
 // 番号で指定したファイルへ記録する
@@ -37,10 +37,13 @@ s32 SaveState_SaveToSlot(u32 slot)
 
     if (slot > 2)
         slot = 2;
-    if (Func_0801596c() != 0) {
+    if (Func_0801596c() != 0)
+    {
         UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
-    } else {
+    }
+    else
+    {
         SaveState_LoadSummaryRecords();
         gData_020036d0 = slot;
         Audio_PlayCue(85);
@@ -51,10 +54,13 @@ s32 SaveState_SaveToSlot(u32 slot)
         while (UiWork_IsComplete() == 0)
             WaitFrames(1);
         UiWork_FinalizePendingCore();
-        if (found != 0) {
+        if (found != 0)
+        {
             UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
             result = -3;
-        } else {
+        }
+        else
+        {
             UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 9);
         }
     }

@@ -5,38 +5,42 @@
 #include "fixed_math.h"
 void Camera_ConfigureSceneFar(s32 offset);
 void Link_DrawShiftedTilePair(s32 destination);
-s32 Link_CreateCountdownLabelWindow(void);
+s32  Link_CreateCountdownLabelWindow(void);
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
-struct CountdownDisplayEntry {
+struct CountdownDisplayEntry
+{
     u8 data[12];
 };
 
-struct LinkSignature {
-    u8 padding000[8];
+struct LinkSignature
+{
+    u8  padding000[8];
     u16 e;
     u16 d;
     u16 v;
     u16 s;
-    u8 padding010[8];
+    u8  padding010[8];
 };
 
-struct LinkCountdownState {
+struct LinkCountdownState
+{
     struct CountdownDisplayEntry entries[3];
-    u8 entryActive[3];
-    u8 padding027;
-    s32 targetOffset;
-    s32 currentOffset;
-    u8 padding030[20];
-    s32 displayHandle;
-    s32 secondaryHandle;
-    s32 timer;
-    s32 enabled;
+    u8                           entryActive[3];
+    u8                           padding027;
+    s32                          targetOffset;
+    s32                          currentOffset;
+    u8                           padding030[20];
+    s32                          displayHandle;
+    s32                          secondaryHandle;
+    s32                          timer;
+    s32                          enabled;
 };
 
-struct LinkRuntimeState {
+struct LinkRuntimeState
+{
     u8 padding000[80];
     u8 side;
     u8 padding051;
@@ -44,8 +48,8 @@ struct LinkRuntimeState {
 };
 
 extern struct LinkCountdownState *gLinkCountdownWork;
-extern struct LinkRuntimeState *gBattleWork;
-extern struct LinkSignature gLinkPeerSignatures[];
+extern struct LinkRuntimeState   *gBattleWork;
+extern struct LinkSignature       gLinkPeerSignatures[];
 
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 
@@ -53,28 +57,31 @@ void Audio_PlayCue(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
-    struct LinkCountdownState *state = ((struct LinkCountdownState **)Ram_HeapSlots)[57];
-    struct LinkRuntimeState *runtime;
+    struct LinkCountdownState    *state = ((struct LinkCountdownState **)Ram_HeapSlots)[57];
+    struct LinkRuntimeState      *runtime;
     struct CountdownDisplayEntry *entry;
-    u8 *active;
-    struct LinkSignature *signature;
-    s32 target;
-    s32 current;
-    s32 difference;
-    s32 step;
-    s32 newOffset;
-    s32 timer;
-    s32 nextTimer;
-    s32 seconds;
-    s32 i;
+    u8                           *active;
+    struct LinkSignature         *signature;
+    s32                           target;
+    s32                           current;
+    s32                           difference;
+    s32                           step;
+    s32                           newOffset;
+    s32                           timer;
+    s32                           nextTimer;
+    s32                           seconds;
+    s32                           i;
 
-    if (state != 0) {
+    if (state != 0)
+    {
         target = state->targetOffset;
         current = state->currentOffset;
-        if (target != current) {
+        if (target != current)
+        {
             difference = target - current;
             step = __divsi3(difference, 3);
-            if (step == 0) {
+            if (step == 0)
+            {
                 step--;
                 if (difference >= 0)
                     step = 1;
@@ -87,7 +94,8 @@ void UpdateLinkSessionCountdown(void)
         entry = state->entries;
         active = state->entryActive;
         i = 2;
-        do {
+        do
+        {
             if (*active++ != 0)
                 Runtime_PushSlotEntry(entry, 240);
             i--;
@@ -104,7 +112,7 @@ void UpdateLinkSessionCountdown(void)
         state->timer = 0;
         goto done;
 
-signature_tail:
+    signature_tail:
         if (signature->v != 'V')
             goto signature_done;
         if (signature->s != 'S')
@@ -113,7 +121,7 @@ signature_tail:
         timer = state->timer;
         goto signature_done;
 
-load_timer:
+    load_timer:
         timer = state->timer;
         if (timer >= 0)
             goto timer_ready;
@@ -123,17 +131,19 @@ load_timer:
         if (signature->d == 'D')
             goto signature_tail;
 
-signature_done:
+    signature_done:
         if (timer < 0)
             goto done;
 
-timer_ready:
-        if (state->displayHandle == 0 && state->secondaryHandle == 0) {
+    timer_ready:
+        if (state->displayHandle == 0 && state->secondaryHandle == 0)
+        {
             state->displayHandle = Link_CreateCountdownLabelWindow();
             timer = state->timer;
         }
 
-        if (timer > 0) {
+        if (timer > 0)
+        {
             nextTimer = timer - 1;
             state->timer = nextTimer;
             timer = nextTimer;
@@ -142,7 +152,7 @@ timer_ready:
             goto done;
 
         seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
-        if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
+        if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
             Audio_PlayCue(108);
 
         if (state->displayHandle != 0)

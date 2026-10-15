@@ -9,7 +9,8 @@ void System_Halt(void)
 {
     volatile struct InputState *input = &gInput;
 
-    for (;;) {
+    for (;;)
+    {
         input->pressed;
         WaitFrames(1);
     }

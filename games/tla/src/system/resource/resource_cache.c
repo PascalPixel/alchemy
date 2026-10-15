@@ -21,7 +21,7 @@
 s32 Resource_GetBuffer(s32 no, s32 src)
 {
 #if GAME_TLA
-	return VramBlock_LoadCached(no, gResourceTableEntries[no].size, (const void *)src);
+    return VramBlock_LoadCached(no, gResourceTableEntries[no].size, (const void *)src);
 #endif
 }
 
@@ -31,8 +31,8 @@ s32 Resource_GetBuffer(s32 no, s32 src)
 s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale)
 {
     union AffineMatrix *matrix;
-    s16 *coefficient;
-    u8 index;
+    s16                *coefficient;
+    u8                  index;
 
     index = gObjAffineCount;
     if (index > 31)

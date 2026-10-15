@@ -10,15 +10,17 @@ typedef s32 (*KeyCallbackFn)(void);
 s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 {
     struct SchedulerTask *task;
-    u32 saved_interrupt_master;
-    s32 result;
-    s32 i;
+    u32                   saved_interrupt_master;
+    s32                   result;
+    s32                   i;
 
     task = gSchedulerTaskTable;
     result = -1;
     IRQ_LOCK(saved_interrupt_master);
-    for (i = 0; i <= 23; i++, task++) {
-        if (callback == 0 || task->callback == (u32)callback) {
+    for (i = 0; i <= 23; i++, task++)
+    {
+        if (callback == 0 || task->callback == (u32)callback)
+        {
             TASK_STATE_HIGH(task) &= (u8)~1;
             result = i;
         }
@@ -30,15 +32,17 @@ s32 Scheduler_DisableCallbacks(SchedulerCallback callback)
 s32 Scheduler_DisableOverlayCallbacks(void)
 {
     struct SchedulerTask *task;
-    u32 saved_interrupt_master;
-    s32 result;
-    s32 i;
+    u32                   saved_interrupt_master;
+    s32                   result;
+    s32                   i;
 
     task = gSchedulerTaskTable;
     result = -1;
     IRQ_LOCK(saved_interrupt_master);
-    for (i = 0; i <= 23; i++, task++) {
-        if ((task->callback >> 24) == 2) {
+    for (i = 0; i <= 23; i++, task++)
+    {
+        if ((task->callback >> 24) == 2)
+        {
             TASK_STATE_HIGH(task) &= (u8)~1;
             result = i;
         }
@@ -50,17 +54,20 @@ s32 Scheduler_DisableOverlayCallbacks(void)
 void Scheduler_RunCallbacksByKey(s32 key)
 {
     struct SchedulerTask *task = gSchedulerTaskTable;
-    s32 remaining;
+    s32                   remaining;
 
     key >>= 8;
-    if (gSchedulerTaskCount == 1) {
+    if (gSchedulerTaskCount == 1)
+    {
         remaining = SCHEDULER_TLA_TASK_COUNT + 1;
         task--;
-next_task:
+    next_task:
         remaining--;
-        if (remaining != 0) {
+        if (remaining != 0)
+        {
             task++;
-            if (TASK_STATE_HIGH(task) == key) {
+            if (TASK_STATE_HIGH(task) == key)
+            {
                 KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
                 callback();
@@ -73,32 +80,35 @@ next_task:
 s32 Scheduler_CountCallbacksByKey(s32 key)
 {
     /* FAKEMATCH: plain typed scans use bottom-tested loops. The native preincrement countdown uses an unsigned cursor so no before-array C pointer is formed. */
-    u32 cursor;
+    u32                   cursor;
     struct SchedulerTask *task;
-    s32 count;
-    s32 i;
-    u8 *status = &gSchedulerTaskCount;
-    u32 observed;
+    s32                   count;
+    s32                   i;
+    u8                   *status = &gSchedulerTaskCount;
+    u32                   observed;
 
     count = 0;
     observed = *status;
     cursor = (u32)gSchedulerTaskTable;
     key >>= 8;
-    if (observed == 1) {
+    if (observed == 1)
+    {
         i = 25;
         cursor -= sizeof(*task);
-next_task:
+    next_task:
         i--;
-        if (i != 0) {
+        if (i != 0)
+        {
             goto count_task;
         }
         key = count;
         goto finish;
-count_task:
+    count_task:
         {
             cursor += sizeof(*task);
             task = (struct SchedulerTask *)cursor;
-            if (TASK_STATE_HIGH(task) == key) {
+            if (TASK_STATE_HIGH(task) == key)
+            {
                 count++;
             }
             goto next_task;
@@ -111,20 +121,24 @@ finish:
 void Scheduler_RunCallbacksBeforeBoundary(s32 key)
 {
     struct SchedulerTask *task = gSchedulerTaskTable;
-    s32 remaining;
+    s32                   remaining;
 
     key >>= 8;
-    if (gSchedulerTaskCount == 1) {
+    if (gSchedulerTaskCount == 1)
+    {
         remaining = SCHEDULER_TLA_TASK_COUNT + 1;
         task--;
-next_task:
+    next_task:
         remaining--;
-        if (remaining != 0) {
+        if (remaining != 0)
+        {
             task++;
-            if (TASK_STATE_HIGH(task) == 4) {
+            if (TASK_STATE_HIGH(task) == 4)
+            {
                 return;
             }
-            if (TASK_STATE_HIGH(task) == key) {
+            if (TASK_STATE_HIGH(task) == key)
+            {
                 KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
                 callback();

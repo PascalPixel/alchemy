@@ -1,6 +1,7 @@
 #include "types.h"
 
-struct ResourceMetadataRecord {
+struct ResourceMetadataRecord
+{
     u8 unk00[20];
 };
 

@@ -1287,7 +1287,7 @@ SECTIONS
     "*/recon/tla/de/rom.o"(.rom.000fe120)
     "*/recon/tla/de/rom.o"(.rom.000fe140)
         "*/games/tla/src/field/scenes.o"(.rodata)
-        "*/recon/tla/de/rom.o"(.rom.000ff1d0)
+        "*/games/tla/src/field/common/object/placement.o"(.rodata)
         "*/games/tla/src/field/scnitem.o"(.rodata)
         "*/games/tla/src/field/common/object/d00f2e9c.o"(.rodata)
         "*/recon/tla/de/rom.o"(.rom.0010021c)

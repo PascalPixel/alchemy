@@ -366,11 +366,6 @@ Data_080f1120:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f1140, 0x00000668
-	.section .unidentified.080f21d0,"a"
-	.incbin "baserom.gba", 0x000f21d0, 0x00000004
-	.global Data_080f21d4
-Data_080f21d4:
-	.incbin "baserom.gba", 0x000f21d4, 0x00000030
 	.section .unidentified.080f321c,"a"
 	.incbin "baserom.gba", 0x000f321c, 0x0000000c
 	.global Data_080f3228

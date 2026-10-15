@@ -1420,7 +1420,7 @@ SECTIONS
         "*/games/tla/src/battle/effect/d00f1100.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f1120)
         "*/games/tla/src/field/scenes.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080f21d0)
+        "*/games/tla/src/field/common/object/placement.o"(.rodata)
         "*/games/tla/src/field/scnitem.o"(.rodata)
         "*/games/tla/src/field/common/object/d00f2e9c.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f321c)

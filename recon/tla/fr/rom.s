@@ -3322,8 +3322,6 @@ BattleFx_RandomChildValues:
 	.global Data_080f1140
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f6134, 0x00000668
-	.section .rom.000f71c4, "ax"
-	.incbin "baserom.gba", 0x000f71c4, 0x00000034
 	.section .rom.000f8210, "ax"
 	.incbin "baserom.gba", 0x000f8210, 0x000000b4
 	.section .rom.000f82c4, "ax"

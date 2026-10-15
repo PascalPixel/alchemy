@@ -1,5 +1,9 @@
 /* Near miss: differ 2 of 34. The sentinel's shift is scheduled before the table load; the listing loads
- * first (movs, ldrh, lsls, adds). Func_020010cc has the same remaining difference. */
+ * first (movs, ldrh, lsls, adds). Func_020010cc has the same remaining difference.
+ * In sched2 the load and the shift tie at priority 3, and the shift has two
+ * dependents to the load's one. A for loop hoists the 0xffff out (differ 8),
+ * while loops are laid out differently (36), and reading the id before the
+ * sentinel test costs 15. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

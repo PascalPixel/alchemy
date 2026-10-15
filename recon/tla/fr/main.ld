@@ -3254,7 +3254,7 @@ SECTIONS
     "*/recon/tla/fr/rom.o"(.rom.00967f34)
     "*/recon/tla/fr/rom.o"(.rom.00968034)
     "*/recon/tla/fr/rom.o"(.rom.009684fc)
-    "*/recon/tla/fr/rom.o"(.rom.00968764)
+    "*/games/tla/src/graphics/field_fx/ring_arcs.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/red_flame_burst.o"(.rodata)
     "*/games/tla/src/graphics/field_fx/violet_flame_burst.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.00968d93)

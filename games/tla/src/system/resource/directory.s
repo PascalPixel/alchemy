@@ -485,7 +485,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9
 	resource , Resource_Data1DA
-	resource , Resource_Data1DB
+	resource , FieldFx_RingArcs
 	resource , FieldFx_RedFlameBurst
 	resource , FieldFx_VioletFlameBurst
 	resource , FieldFx_YellowFlameBurst

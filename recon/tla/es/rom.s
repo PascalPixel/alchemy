@@ -6441,10 +6441,6 @@ Resource_Data1D9:
 	.global Resource_Data1DA
 Resource_Data1DA:
 	.incbin "baserom.gba", 0x009688ac, 0x00000268
-	.section .rom.00968b14, "ax"
-	.global Resource_Data1DB
-Resource_Data1DB:
-	.incbin "baserom.gba", 0x00968b14, 0x000001c8
 	.section .rom.00969143, "ax"
 	.incbin "baserom.gba", 0x00969143, 0x00000001
 	.section .rom.0096934f, "ax"

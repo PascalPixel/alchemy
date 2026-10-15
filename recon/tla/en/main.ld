@@ -2049,7 +2049,7 @@ SECTIONS
         "*/games/tla/src/field/common/effect/animalt.o"(.text)
         "*/recon/tla/raw/0815a110.o"(.text)
         "*/recon/tla/raw/0815a9e4.o"(.text)
-        "*/recon/tla/raw/0815b24c.o"(.text)
+        "*/games/tla/src/battle/effect/animation_entry.o"(.text)
         "*/recon/tla/raw/0815b290.o"(.text)
         "*/recon/tla/raw/0815b3b0.o"(.text)
         "*/games/tla/src/battle/effect/greyramp.o"(.text)

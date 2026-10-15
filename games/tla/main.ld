@@ -1937,6 +1937,8 @@ SECTIONS
     "*/games/tla/src/battle/effect/animation_modes.o"(.text)
     "*/games/tla/src/field/common/effect/animalt.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0015a110)
+    "*/games/tla/src/battle/effect/animation_entry.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0015b290)
     "*/games/tla/src/battle/effect/greyramp.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0015b434)
     "*/games/tla/src/battle/effect/fxmodee.o"(.text)

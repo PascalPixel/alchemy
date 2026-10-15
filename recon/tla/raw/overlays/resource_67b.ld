@@ -29,7 +29,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/s0f8c.o"(.text)
         "*/games/tla/src/field/overlay_67b/s1010.o"(.text)
         "*/games/tla/src/field/overlay_67b/events_d.o"(.text)
-        "*/resource_67b_overlay.o"(.text.x02009224)
+        "*/games/tla/src/field/overlay_67b/s1224.o"(.text)
         "*/games/tla/src/field/overlay_67b/events_e.o"(.text)
         "*/resource_67b_overlay.o"(.text.x020093f8)
         "*/games/tla/src/field/overlay_67b/s1460.o"(.text)

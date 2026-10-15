@@ -12,7 +12,7 @@
  * 0x165 of directory.s (assets BattleFx_BlastSheet and
  * BattleFx_VioletPaletteC), not yet named there.
  *
- * Draft: differ 282 of 479 (draft 481).
+ * Draft: differ 246 of 479 (draft 481).
  *
  * Left: register allocation in the member loops. The native keeps the
  * mote counter in r8 and spills the member's buffer offset (sp+8), with
@@ -32,6 +32,8 @@
  *     next counter: 424;
  *   - a separate counter (j) for the frame loop's motes: 282 (the setup
  *     loop's counter alone: 413; both: 415).
+ *   - greedy declaration-order sweep from there, two passes: 246 (the
+ *     declarations as they stand).
  */
 #include "types.h"
 #include "battle_display.h"
@@ -92,14 +94,14 @@ extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
  * out within 16 pixels of it across. The user glows from frame 40 until 20
  * frames before the end. */
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
-  void *canvas;
   struct BattleEffectWork *work;
-  DrawRectangle draw;
+  void *canvas;
   struct BattleCamera *camera;
-  u8 *sheet;
   struct EffectPosition screen;
   s32 palette;
+  DrawRectangle draw;
   s32 member;
+  u8 *sheet;
   s32 frame;
   s32 i;
   s32 j;

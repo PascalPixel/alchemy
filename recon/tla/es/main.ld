@@ -2687,7 +2687,7 @@ SECTIONS
     "*/games/tla/src/system/resource/directory.o"(.rodata)
     "*/games/common/src/graphics/ui/window_tiles.o"(.rodata)
     "*/games/common/src/graphics/ui/small_font.o"(.rodata)
-    "*/recon/tla/es/rom.o"(.rom.006848d0)
+    "*/games/tla/src/graphics/field/clock_digits.o"(.rodata)
     "*/games/tla/src/graphics/title/title_screen.o"(.rodata)
     "*/games/common/src/graphics/title/intro_peak.o"(.rodata)
     "*/games/tla/src/graphics/title/intro_018.o"(.rodata)

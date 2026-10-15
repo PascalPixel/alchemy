@@ -325,7 +325,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_GreenPalette
 	resource , BattleFx_CrossedDaggersSheet
 	resource , BattleFx_RuneSheet
-	resource , BattleFx_FlameColumnSheet
+	resource FlameColumnSheet, BattleFx_FlameColumnSheet
 	resource , BattleFx_EarthWallSheet
 	resource , BattleFx_OrangePaletteA
 	resource , BattleFx_FlashBurstSheet

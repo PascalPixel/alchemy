@@ -1,6 +1,10 @@
-/* Draft of Func_02000fb8 (overlay 679, 61 instructions), differ 12: the overlay's
+/* Draft of Func_02000fb8 (overlay 679, 61 instructions), differ 2: the overlay's
  * entry, written from the listing (scene ids 0x9a to 0x9c are the linker symbols
- * SceneId_Ov679Room1 to Room3). Scheduling only: the native runs its statements
+ * SceneId_Ov679Room1 to Room3). Three tagged empty asm, one after each store, take
+ * it from 12 to 2. Left: the native loads gPartyState's address before the 0x202
+ * store, which the first asm now holds below it; with a party pointer taken before
+ * the store the order matches but the event work and the party swap r0 and r1
+ * (12), and pinning either to its register gives 4 or 6. Before, the native ran its statements
  * more nearly in order: it loads the event work ([r0, #108]) before it starts 428,
  * stores 0x202 before it starts 480 for the scene's address, and stores 0x100
  * before it starts 482; here each constant is started first (sched2: equal
@@ -34,8 +38,12 @@ s32 Func_02000fb8(void)
     s16 scene;
 
     ((struct MapFlags *)Ram_HeapSlots->map_work)->mode = 1;
+    /* FAKEMATCH: as below. */
+    asm("");
     transition = (s32 *)((u8 *)Ram_HeapSlots->event_work + 428);
     *transition = 0x202;
+    /* FAKEMATCH: each empty asm keeps the native's statement order: the store ahead of the next statement's constant (sched2 starts the constant first otherwise). */
+    asm("");
     scene = gPartyState.scene;
     if (scene == (s32)&SceneId_Ov679Room2) {
         Func_02001054();
@@ -45,6 +53,8 @@ s32 Func_02000fb8(void)
             Func_02000974();
     } else if (scene == (s32)&SceneId_Ov679Room3) {
         *transition = 0x100;
+        /* FAKEMATCH: as above. */
+        asm("");
         if (gPartyState.entrance == 6)
             Func_020010b4();
     }

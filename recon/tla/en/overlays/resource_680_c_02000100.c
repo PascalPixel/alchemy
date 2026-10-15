@@ -1,4 +1,9 @@
-/* Near miss: differ 14 of 32 in English, 12 of 22 in Japanese. The object and the frame counter swap r5 and r6. */
+/* Near miss: differ 2 of 32 in English, 0 of 22 in Japanese. Unpinned, the object and the frame
+ * counter swap r5 and r6 (differ 14 and 12); the frame counter pinned to r6 fixes both. Left in
+ * English: the native copies the motion flags' address to r8 after it starts the counter (strb;
+ * movs r6, #60; mov r8, r2), here before the store. Measured with the pin: the flags address
+ * as a local, an empty asm after the store or after the counter, a one-pass block around the
+ * counter (2 each); alchemy permute, 4 minutes: nothing closer. */
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -22,7 +27,7 @@ extern const u8 Data_020012cc[];
 void Func_02000100(s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 frames;
+    register s32 frames asm("r6"); /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native (12 differ unpinned). */
 
     object->motion_flags = 3;
     for (frames = 60; frames != 0; frames--) {
@@ -37,7 +42,7 @@ void Func_02000100(s32 id)
 void Func_02000100(s32 id, s32 cue)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    s32 frames;
+    register s32 frames asm("r6"); /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native (14 differ unpinned). */
 
     object->motion_flags = 3;
     frames = 60;

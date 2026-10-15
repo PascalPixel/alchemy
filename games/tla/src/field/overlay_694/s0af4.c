@@ -1,11 +1,4 @@
-/* Draft, differ 2 of 174: the glow that grows over actor 17 and sinks away, written from the
- * listing. Its loops are goto loops: as for loops loop.c hoists their steps into r7 (40 differ).
- * The grow loop's one-pass block keeps the scale load ahead of the 0x666 step, as the native has
- * (4 to 2). Left: the sink loop loads y before it builds the 0x8000 step (ldr r3, [r6, #12];
- * movs r2, #128); the draft builds the step first. A one-pass block around the y load fixes it but
- * holds back the WaitFrames argument and the counter, which the native schedules early (4); an
- * "+l" barrier on y (4), a step variable (2) and alchemy permute 3 minutes (2) did not. */
-#include "../../../../games/tla/src/field/overlay_694/ov694.h"
+#include "ov694.h"
 
 struct Ov694Glow {
     u8 unknown_00[0x0c];
@@ -35,9 +28,11 @@ void Func_02000a80(void);
 
 static inline struct Ov694Glow *Ov694_Create(s32 type, s32 x, s32 y, s32 z)
 {
+    /* FAKEMATCH: scene calls reach the engine through one inline layer (direct, differ 2). */
     return Func_02003fec(type, x, y, z);
 }
 
+// The glow that grows over actor 17 and sinks away again, then the scene goes on.
 void Func_02000af4(void)
 {
     struct Ov694Glow *effect;
@@ -68,6 +63,8 @@ void Func_02000af4(void)
         {
             s32 x;
 
+            /* FAKEMATCH: the one-pass block keeps the scale load ahead of the 0x666 step, as the
+             * native has it (differ 2 without). */
             do {
                 x = effect->scale_x;
             } while (0);
@@ -87,8 +84,11 @@ void Func_02000af4(void)
         i = 0;
     shrink:
         effect->scale_x += 0xfffff99a;
-        effect->scale_y += 0xfffff99a;
-        effect->y += 0x8000;
+        /* FAKEMATCH: two volatile accesses, so the y load depends on the Y scale store and is
+         * issued before the 0x8000 step is built, as the native does; plain, the scheduler builds
+         * the step first (differ 2). */
+        *(volatile s32 *)&effect->scale_y += 0xfffff99a;
+        *(volatile s32 *)&effect->y += 0x8000;
         WaitFrames(1);
         i++;
         if (i < 28)

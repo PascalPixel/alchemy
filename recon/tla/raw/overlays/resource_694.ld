@@ -23,7 +23,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_694/sign0.o"(.text)
         "*/games/tla/src/field/overlay_694/s09d0.o"(.text)
         "*/games/tla/src/field/overlay_694/s0a80.o"(.text)
-        "*/resource_694_overlay.o"(.text.x02008af4)
+        "*/games/tla/src/field/overlay_694/s0af4.o"(.text)
         "*/games/tla/src/field/overlay_694/facing.o"(.text)
         "*/games/tla/src/field/overlay_694/sign1.o"(.text)
         "*/games/tla/src/field/overlay_694/event2.o"(.text)

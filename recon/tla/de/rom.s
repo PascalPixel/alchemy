@@ -1373,12 +1373,6 @@ Func_0804e1d8:
 	.thumb_func
 Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e600, 0x00000190
-	.section .rom.000b74c0, "ax"
-	.incbin "baserom.gba", 0x000b74c0, 0x000002b4
-	.section .rom.000b7774, "ax"
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x000b7774, 0x00000004
 	.section .rom.000ba0b0, "ax"
 	.global Func_080ad0b0
 	.type Func_080ad0b0, %function

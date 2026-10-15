@@ -680,8 +680,7 @@ SECTIONS
     "*/games/tla/src/graphics/text/genders.o"(.rodata)
     "*/games/tla/src/graphics/window/textspd.o"(.rodata)
     "*/games/tla/src/menu/d00aa0e8.o"(.rodata)
-    "*/recon/tla/it/rom.o"(.rom.000a328e)
-    "*/recon/tla/it/rom.o"(.rom.000a3544)
+    "*/games/tla/src/graphics/window/keyboard.o"(.rodata)
     . = ABSOLUTE(0x080ad000);
     "*/games/tla/src/system/far_call/inventor.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/far_call/inventor_2.o"(.text .rodata .data .padding)

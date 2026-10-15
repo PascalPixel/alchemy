@@ -1241,12 +1241,6 @@ Func_0804e1d8:
 	.thumb_func
 Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e5f4, 0x00000190
-	.section .rom.0009d11c, "ax"
-	.incbin "baserom.gba", 0x0009d11c, 0x00000548
-	.section .rom.0009d664, "ax"
-	.global Ui_FixedTileBlocks
-Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x0009d664, 0x00000004
 	.section .rom.000a8070, "ax"
 	.global Inventory_GetEquippedItemFar
 	.type Inventory_GetEquippedItemFar, %function

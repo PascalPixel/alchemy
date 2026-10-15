@@ -43,7 +43,7 @@ OptionMenu_SecondColorPresets:
 Menu_WorkspaceIconFrames:
 	.byte 0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00
 	.balign 4, 0
-@ The sound test's starting state and labels
+@ The sound test's starting state and labels, then the debug warp presets' names
 	.global Data_0805ea98
 Data_0805ea98:
 	.4byte 0, 80, 100, 2
@@ -63,40 +63,40 @@ SoundTest_SeString:
 SoundTest_FxString:
 	.asciz "FX"
 	.balign 4, 0
-	.global SoundTest_FxName8
-SoundTest_FxName8:
+	.global DebugWarp_Name8
+DebugWarp_Name8:
 	.asciz "8:Kaoru Special1"
 	.balign 4, 0
-	.global SoundTest_FxName7
-SoundTest_FxName7:
+	.global DebugWarp_Name7
+DebugWarp_Name7:
 	.asciz "7:Kaoru Special2"
 	.balign 4, 0
-	.global SoundTest_FxName6
-SoundTest_FxName6:
+	.global DebugWarp_Name6
+DebugWarp_Name6:
 	.asciz "6:Kaoru Special3"
 	.balign 4, 0
-	.global SoundTest_FxName5
-SoundTest_FxName5:
+	.global DebugWarp_Name5
+DebugWarp_Name5:
 	.asciz "5:Kaoru Special4"
 	.balign 4, 0
-	.global SoundTest_FxName4
-SoundTest_FxName4:
+	.global DebugWarp_Name4
+DebugWarp_Name4:
 	.asciz "4:CHAMPA2"
 	.balign 4, 0
-	.global SoundTest_FxName3
-SoundTest_FxName3:
+	.global DebugWarp_Name3
+DebugWarp_Name3:
 	.asciz "3:Arafura3"
 	.balign 4, 0
-	.global SoundTest_FxName2
-SoundTest_FxName2:
+	.global DebugWarp_Name2
+DebugWarp_Name2:
 	.asciz "2:Energy Sample"
 	.balign 4, 0
-	.global SoundTest_FxName1
-SoundTest_FxName1:
+	.global DebugWarp_Name1
+DebugWarp_Name1:
 	.asciz "1:Arafura2"
 	.balign 4, 0
-	.global SoundTest_FxName0
-SoundTest_FxName0:
+	.global DebugWarp_Name0
+DebugWarp_Name0:
 	.asciz "0:Jupiter"
 	.balign 4, 0
 @ An empty ability's name

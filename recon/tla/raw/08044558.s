@@ -197,7 +197,7 @@ Func_08044558:
 .L_080446f4:
 	.4byte gPartyState
 .L_080446f8:
-	.4byte Data_080aa2d8
+	.4byte NameEntry_KeyboardTilemap
 .L_080446fc:
 	.4byte 0x000001fa
 .L_08044700:

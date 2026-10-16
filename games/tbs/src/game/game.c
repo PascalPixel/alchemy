@@ -44,6 +44,7 @@
 #include "unit/game/starting_equipment.h"
 #include "flags.h"
 #include "character_ids.h"
+#include "ability_ids.h"
 
 // The running totals UnitCalc builds a unit's stats in.
 struct StatWork {
@@ -73,10 +74,11 @@ void Game_Restart(void) {
   Game_ResetForNewGameFar(0);
 }
 
-// Returns the trade offer record: for 0 the one kept in the game state, for
-// anything else battle unit 0x83's.
-void *Djinn_GetRecoveryTable(s32 arg0) {
-  if (arg0 != 0) {
+// Returns the party recovery bank, or battle unit 0x83 as the enemy-side
+// recovery bank. The bank also stores the summon flags read by
+// Summon_ListLearned.
+void *Djinn_GetRecoveryTable(s32 enemySide) {
+  if (enemySide != 0) {
     return UnitGet(0x83);
   }
   return &gGameState.unk008[4];
@@ -85,20 +87,20 @@ void *Djinn_GetRecoveryTable(s32 arg0) {
 // Returns the average level of the party members, rounded down (0 with no
 // members).
 u32 Party_GetAverageLevel(void) {
-  s32 count;
-  s32 total;
-  s32 i;
+  s32 partySize;
+  s32 totalLevels;
+  s32 partyIndex;
 
-  total = 0;
-  count = Party_CountActiveOwners();
-  if (count == 0) {
+  totalLevels = 0;
+  partySize = Party_CountActiveOwners();
+  if (partySize == 0) {
     return 0;
   }
-  for (i = 0; i < count; i++) {
-    total += UnitGet(gGameState.activeOwners[i])->level;
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    totalLevels += UnitGet(gGameState.activeOwners[partyIndex])->level;
   }
-  total = total / count;
-  return total;
+  totalLevels = totalLevels / partySize;
+  return totalLevels;
 }
 
 // Returns the unit record of `owner`: 0 to 7 are the playable characters in
@@ -175,355 +177,356 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 // and battle stat levels, and clamps each to its range. A change of maximum
 // HP or PP keeps the unit's current HP and PP at the same fraction of it.
 void UnitCalc(s32 owner) {
-  struct StatWork *work;
-  struct BattleUnit *st;
-  s32 i, j, el;
+  struct StatWork *stats;
+  struct BattleUnit *unit;
+  s32 index, effectIndex, elementIndex;
   s32 value;
-  s32 flag;
-  s32 kind;
-  s32 amount;
-  s32 cap;
-  s16 old;
+  s32 lighthouseLit;
+  s32 effectKind;
+  s32 effectAmount;
+  s32 statLimit;
+  s16 previousMaximum;
 
-  work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
-  st = UnitGet(owner);
-  work->hp = st->baseHp;
-  work->pp = st->basePp;
-  work->atk = st->baseAttack;
-  work->def = st->baseDefense;
-  work->agi = st->baseAgility;
-  work->luck = st->baseLuck;
-  work->turns = st->baseActionCount & 15;
-  work->hpRegen = st->baseHpRegen;
-  work->ppRegen = st->basePpRegen;
-  {
-    s16 *src = &st->baseElement[0].power;
-    s32 *dst = work->element[0];
-    for (i = 0; i < 4; i++) {
-      dst[0] = src[0];
-      dst[1] = src[1];
-      src += 2;
-      dst += 2;
-    }
+  // Start with the unit's base stats and elemental power/resistance.
+  stats = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+  unit = UnitGet(owner);
+  stats->hp = unit->baseHp;
+  stats->pp = unit->basePp;
+  stats->atk = unit->baseAttack;
+  stats->def = unit->baseDefense;
+  stats->agi = unit->baseAgility;
+  stats->luck = unit->baseLuck;
+  stats->turns = unit->baseActionCount & 15;
+  stats->hpRegen = unit->baseHpRegen;
+  stats->ppRegen = unit->basePpRegen;
+  for (index = 0; index < 4; index++) {
+    stats->element[index][0] = unit->baseElement[index].power;
+    stats->element[index][1] = unit->baseElement[index].resistance;
   }
 
-  if (STAT_DIFF(st->maxHp * st->hpGauge / 0x4000, st->hp) > 1 ||
-      STAT_DIFF(st->maxPp * st->ppGauge / 0x4000, st->pp) > 1) {
-    st->hpGauge = 0x4000;
-    st->ppGauge = 0x4000;
-    st->hp = st->maxHp;
-    st->pp = st->maxPp;
+  // Repair stale gauges before preserving their fractions of the new maxima.
+  if (STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
+      STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
+    unit->hpGauge = 0x4000;
+    unit->ppGauge = 0x4000;
+    unit->hp = unit->maxHp;
+    unit->pp = unit->maxPp;
   }
 
-  st->restraint &= ~3;
-  if (st->restraint & 4)
-    st->restraint |= 1;
-  if (st->ready)
-    work->turns++;
-  st->equipBonus[0] = 0;
-  st->equipBonus[1] = 0;
+  unit->restraint &= ~3;
+  if (unit->restraint & 4)
+    unit->restraint |= 1;
+  if (unit->ready)
+    stats->turns++;
+  unit->equipBonus[0] = 0;
+  unit->equipBonus[1] = 0;
 
-  if (st->classIndex) {
-    for (i = 0; i < 15; i++) {
-      if (!(st->inventory[i] & INVENTORY_EQUIPPED))
+  // Apply additive equipment and set-Djinn bonuses before class scaling.
+  if (unit->classIndex) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
-      work->item = Item_GetDirect(st->inventory[i]);
-      if (work->item->flags & ITEM_CURSED)
-        st->restraint |= 3;
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      if (stats->item->flags & ITEM_CURSED)
+        unit->restraint |= 3;
       /* FAKEMATCH: the one-pass block keeps the defense load after the
        * item's second bonus load, as the ROM schedules it. Measured:
-       * plain, the scheduler lifts work->def above that load (differ 2). */
+       * plain, the scheduler lifts stats->def above that load (differ 2). */
       do {
-        work->atk += work->item->primaryBonus;
+        stats->atk += stats->item->primaryBonus;
       } while (0);
-      work->def += work->item->secondaryBonus;
-      for (j = 0; j < 4; j++) {
-        kind = work->item->effects[j].kind;
-        amount = work->item->effects[j].amount;
-        work->kind = kind;
-        work->amount = amount;
-        switch (work->kind) {
+      stats->def += stats->item->secondaryBonus;
+      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        stats->amount = effectAmount;
+        switch (stats->kind) {
         case ITEM_EFFECT_NONE:
           break;
         case ITEM_EFFECT_ADD_HP:
-          work->hp += work->amount;
+          stats->hp += stats->amount;
           break;
         case ITEM_EFFECT_ADD_HP_REGEN:
-          work->hpRegen += work->amount;
+          stats->hpRegen += stats->amount;
           break;
         case ITEM_EFFECT_ADD_PP:
-          work->pp += work->amount;
+          stats->pp += stats->amount;
           break;
         case ITEM_EFFECT_ADD_PP_REGEN:
-          work->ppRegen += work->amount;
+          stats->ppRegen += stats->amount;
           break;
         case ITEM_EFFECT_ADD_AGILITY:
-          work->agi += work->amount;
+          stats->agi += stats->amount;
           break;
         case ITEM_EFFECT_ADD_LUCK:
-          work->luck += work->amount;
+          stats->luck += stats->amount;
           break;
         case ITEM_EFFECT_ADD_VENUS_POWER:
-          work->element[0][0] += work->amount;
+          stats->element[0][0] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_MERCURY_POWER:
-          work->element[1][0] += work->amount;
+          stats->element[1][0] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_MARS_POWER:
-          work->element[2][0] += work->amount;
+          stats->element[2][0] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_JUPITER_POWER:
-          work->element[3][0] += work->amount;
+          stats->element[3][0] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_VENUS_RESIST:
-          work->element[0][1] += work->amount;
+          stats->element[0][1] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_MERCURY_RESIST:
-          work->element[1][1] += work->amount;
+          stats->element[1][1] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_MARS_RESIST:
-          work->element[2][1] += work->amount;
+          stats->element[2][1] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_JUPITER_RESIST:
-          work->element[3][1] += work->amount;
+          stats->element[3][1] += stats->amount;
           break;
         case ITEM_EFFECT_ADD_UNLEASH_CHANCE:
-          st->equipBonus[0] += work->amount;
+          unit->equipBonus[0] += stats->amount;
           break;
         case ITEM_EFFECT_24:
-          st->equipBonus[1] += work->amount;
+          unit->equipBonus[1] += stats->amount;
           break;
         case ITEM_EFFECT_25:
-          st->restraint |= 8;
+          unit->restraint |= 8;
           break;
         case ITEM_EFFECT_ADD_TURNS:
-          work->turns += work->amount;
+          stats->turns += stats->amount;
           break;
         }
       }
     }
-    if (st->restraint & 8)
-      st->restraint &= ~9;
+    if (unit->restraint & 8)
+      unit->restraint &= ~9;
 
-    for (el = 0; el < 4; el++) {
-      u32 bits = st->djinnActive[el];
+    // Only set Djinn contribute their stat bonuses.
+    for (elementIndex = 0; elementIndex < 4; elementIndex++) {
+      u32 activeDjinn = unit->djinnActive[elementIndex];
 
-      for (i = 0; i < 20; i++) {
-        if (bits & (1 << i)) {
-          const struct DjinnDefinition *djinn = Djinn_GetDefinition(el, i);
+      for (index = 0; index < 20; index++) {
+        if (activeDjinn & (1 << index)) {
+          const struct DjinnDefinition *djinn =
+              Djinn_GetDefinition(elementIndex, index);
 
-          work->hp += djinn->hp;
-          work->pp += djinn->pp;
-          work->atk += djinn->atk;
-          work->def += djinn->def;
-          work->agi += djinn->agi;
-          work->luck += djinn->luck;
+          stats->hp += djinn->hp;
+          stats->pp += djinn->pp;
+          stats->atk += djinn->atk;
+          stats->def += djinn->def;
+          stats->agi += djinn->agi;
+          stats->luck += djinn->luck;
         }
       }
     }
 
     {
-      struct ClassDefinition *class = Class_GetDefinition(st->classIndex);
+      struct ClassDefinition *classDefinition =
+          Class_GetDefinition(unit->classIndex);
 
-      work->hp = work->hp * class->hp / 10;
-      work->pp = work->pp * class->pp / 10;
-      work->atk = work->atk * class->atk / 10;
-      work->def = work->def * class->def / 10;
-      work->agi = work->agi * class->agi / 10;
-      work->luck = work->luck * class->luck / 10;
+      stats->hp = stats->hp * classDefinition->hp / 10;
+      stats->pp = stats->pp * classDefinition->pp / 10;
+      stats->atk = stats->atk * classDefinition->atk / 10;
+      stats->def = stats->def * classDefinition->def / 10;
+      stats->agi = stats->agi * classDefinition->agi / 10;
+      stats->luck = stats->luck * classDefinition->luck / 10;
     }
 
-    for (i = 0; i < 15; i++) {
-      if (!(st->inventory[i] & INVENTORY_EQUIPPED))
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
-      work->item = Item_GetDirect(st->inventory[i]);
-      for (j = 0; j < 4; j++) {
-        kind = work->item->effects[j].kind;
-        amount = work->item->effects[j].amount;
-        work->kind = kind;
-        kind -= ITEM_EFFECT_SCALE_HP;
-        work->amount = amount;
-        switch (kind) {
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        effectKind -= ITEM_EFFECT_SCALE_HP;
+        stats->amount = effectAmount;
+        switch (effectKind) {
         case 0:
-          work->hp = work->hp * work->amount / 10;
+          stats->hp = stats->hp * stats->amount / 10;
           break;
         case 1:
-          work->hpRegen = work->hpRegen * work->amount / 10;
+          stats->hpRegen = stats->hpRegen * stats->amount / 10;
           break;
         case 2:
-          work->pp = work->pp * work->amount / 10;
+          stats->pp = stats->pp * stats->amount / 10;
           break;
         case 3:
-          work->ppRegen = work->ppRegen * work->amount / 10;
+          stats->ppRegen = stats->ppRegen * stats->amount / 10;
           break;
         case 4:
-          work->atk = work->atk * work->amount / 10;
+          stats->atk = stats->atk * stats->amount / 10;
           break;
         case 5:
-          work->def = work->def * work->amount / 10;
+          stats->def = stats->def * stats->amount / 10;
           break;
         case 6:
-          work->agi = work->agi * work->amount / 10;
+          stats->agi = stats->agi * stats->amount / 10;
           break;
         case 7:
-          work->luck = work->luck * work->amount / 10;
+          stats->luck = stats->luck * stats->amount / 10;
           break;
         }
       }
     }
   }
 
-  work->atk = work->atk * (st->attackStage + 8) / 8;
-  work->def = work->def * (st->defenseStage + 8) / 8;
-  work->agi = work->agi * (st->agilityStage + 8) / 8;
-  for (i = 0; i < 4; i++)
-    work->element[i][0] +=
-        (st->elementLevels[i] * st->elementLevels[i] + st->elementLevels[i]) *
+  stats->atk = stats->atk * (unit->attackStage + 8) / 8;
+  stats->def = stats->def * (unit->defenseStage + 8) / 8;
+  stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
+  for (index = 0; index < 4; index++)
+    stats->element[index][0] +=
+        (unit->elementLevels[index] * unit->elementLevels[index] +
+         unit->elementLevels[index]) *
         5;
-  for (i = 0; i < 4; i++)
-    work->element[i][1] += st->resistanceStage * 20;
+  for (index = 0; index < 4; index++)
+    stats->element[index][1] += unit->resistanceStage * 20;
 
-  if (st->classIndex) {
-    flag = 0;
+  if (unit->classIndex) {
+    lighthouseLit = 0;
     // Faster PP recovery once the character's own element's lighthouse is lit
-    switch (st->classId) {
+    switch (unit->classId) {
     case ISAAC:
-      flag = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
     case GARET:
-      flag = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     case IVAN:
-      flag = GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT);
       break;
     case MIA:
-      flag = GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
     case JENNA:
-      flag = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     }
-    if (flag)
-      work->ppRegen += 4;
+    if (lighthouseLit)
+      stats->ppRegen += 4;
   }
 
-  if (work->atk < 0)
-    work->atk = 0;
-  if (work->atk > 999)
-    work->atk = 999;
-  if (work->def < 0)
-    work->def = 0;
-  if (work->def > 999)
-    work->def = 999;
-  if (work->agi < 0)
-    work->agi = 0;
-  if (work->agi > 999)
-    work->agi = 999;
-  if (work->luck < 0)
-    work->luck = 0;
-  if (work->luck > 99)
-    work->luck = 99;
-  if (work->turns < 0)
-    work->turns = 0;
-  if (work->turns > 2)
-    work->turns = 2;
-  if (work->hpRegen < 0)
-    work->hpRegen = 0;
-  if (work->hpRegen > 10000)
-    work->hpRegen = 10000;
-  if (work->ppRegen < 0)
-    work->ppRegen = 0;
-  if (work->ppRegen > 200)
-    work->ppRegen = 200;
-  for (i = 0; i < 4; i++) {
-    if (work->element[i][0] < 0)
-      work->element[i][0] = 0;
-    if (work->element[i][0] > 200)
-      work->element[i][0] = 200;
-    if (work->element[i][1] < 0)
-      work->element[i][1] = 0;
-    if (work->element[i][1] > 200)
-      work->element[i][1] = 200;
+  if (stats->atk < 0)
+    stats->atk = 0;
+  if (stats->atk > 999)
+    stats->atk = 999;
+  if (stats->def < 0)
+    stats->def = 0;
+  if (stats->def > 999)
+    stats->def = 999;
+  if (stats->agi < 0)
+    stats->agi = 0;
+  if (stats->agi > 999)
+    stats->agi = 999;
+  if (stats->luck < 0)
+    stats->luck = 0;
+  if (stats->luck > 99)
+    stats->luck = 99;
+  if (stats->turns < 0)
+    stats->turns = 0;
+  if (stats->turns > 2)
+    stats->turns = 2;
+  if (stats->hpRegen < 0)
+    stats->hpRegen = 0;
+  if (stats->hpRegen > 10000)
+    stats->hpRegen = 10000;
+  if (stats->ppRegen < 0)
+    stats->ppRegen = 0;
+  if (stats->ppRegen > 200)
+    stats->ppRegen = 200;
+  for (index = 0; index < 4; index++) {
+    if (stats->element[index][0] < 0)
+      stats->element[index][0] = 0;
+    if (stats->element[index][0] > 200)
+      stats->element[index][0] = 200;
+    if (stats->element[index][1] < 0)
+      stats->element[index][1] = 0;
+    if (stats->element[index][1] > 200)
+      stats->element[index][1] = 200;
   }
 
-  st->atk = work->atk;
-  st->def = work->def;
-  st->agi = work->agi;
-  st->luck = work->luck;
-  st->actionEntryCount = work->turns;
-  st->hpRegen = work->hpRegen;
-  st->ppRegen = work->ppRegen;
-  for (i = 0; i < 4; i++) {
-    st->element[i].power = work->element[i][0];
-    st->element[i].resistance = work->element[i][1];
+  unit->atk = stats->atk;
+  unit->def = stats->def;
+  unit->agi = stats->agi;
+  unit->luck = stats->luck;
+  unit->actionEntryCount = stats->turns;
+  unit->hpRegen = stats->hpRegen;
+  unit->ppRegen = stats->ppRegen;
+  for (index = 0; index < 4; index++) {
+    unit->element[index].power = stats->element[index][0];
+    unit->element[index].resistance = stats->element[index][1];
   }
 
-  cap = 9999;
-  if (st->classIndex)
-    cap = 1999;
+  statLimit = 9999;
+  if (unit->classIndex)
+    statLimit = 1999;
 
-  old = st->maxHp;
-  if (work->hp < 0)
-    work->hp = 0;
-  if (work->hp > cap)
-    work->hp = cap;
-  st->maxHp = work->hp;
-  if (old != st->maxHp) {
-    value = work->hp * st->hpGauge / 0x4000;
+  previousMaximum = unit->maxHp;
+  if (stats->hp < 0)
+    stats->hp = 0;
+  if (stats->hp > statLimit)
+    stats->hp = statLimit;
+  unit->maxHp = stats->hp;
+  if (previousMaximum != unit->maxHp) {
+    value = stats->hp * unit->hpGauge / 0x4000;
     if (value < 0)
       value = 0;
-    if (value > cap)
-      value = cap;
-    if (st->hp != 0 && value == 0)
+    if (value > statLimit)
+      value = statLimit;
+    if (unit->hp != 0 && value == 0)
       value = 1;
-    st->hp = value;
+    unit->hp = value;
   }
 
-  old = st->maxPp;
-  if (work->pp < 0)
-    work->pp = 0;
-  if (work->pp > cap)
-    work->pp = cap;
-  st->maxPp = work->pp;
-  if (old != st->maxPp) {
-    value = work->pp * st->ppGauge / 0x4000;
+  previousMaximum = unit->maxPp;
+  if (stats->pp < 0)
+    stats->pp = 0;
+  if (stats->pp > statLimit)
+    stats->pp = statLimit;
+  unit->maxPp = stats->pp;
+  if (previousMaximum != unit->maxPp) {
+    value = stats->pp * unit->ppGauge / 0x4000;
     if (value < 0)
       value = 0;
-    if (value > cap)
-      value = cap;
-    if (st->pp != 0 && value == 0)
+    if (value > statLimit)
+      value = statLimit;
+    if (unit->pp != 0 && value == 0)
       value = 1;
-    st->pp = value;
+    unit->pp = value;
   }
 
-  MemFree(work);
+  MemFree(stats);
 }
 
 // Sets flag 0x167 when any party member has an item with equipment effect 27
 // equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
-  s32 count;
-  s32 n;
+  s32 partySize;
+  s32 partyIndex;
 
   GameFlag_ClearBit(0x167);
-  count = Party_CountActiveOwners();
-  for (n = 0; n < count; n++) {
-    struct BattleUnit *owner;
-    s32 i;
+  partySize = Party_CountActiveOwners();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    struct BattleUnit *unit;
+    s32 inventorySlot;
 
-    owner = UnitGet(gGameState.activeOwners[n]);
-    for (i = 0; i < 15; i++) {
-      if (owner->inventory[i] & INVENTORY_EQUIPPED) {
+    unit = UnitGet(gGameState.activeOwners[partyIndex]);
+    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct ItemEffect *effect;
-        s32 j;
+        s32 effectIndex;
 
-        effect = Item_GetDirect(owner->inventory[i])->effects;
-        for (j = 0; j < 4; j++) {
-          u8 kind;
+        effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
+        for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+          u8 effectKind;
 
-          kind = effect->kind;
+          effectKind = effect->kind;
           effect++;
-          if (kind == ITEM_EFFECT_27) {
+          if (effectKind == ITEM_EFFECT_27) {
             GameFlag_SetBit(0x167);
           }
         }
@@ -532,9 +535,9 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
-// Packs the time of day in the build stamp (hhmmss) into a halfword: bit 15
-// set, then hours, minutes and seconds in 4, 6 and 6 bits. Debug builds also
-// set every bit above. A new game stores it as the save's start stamp.
+// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
+// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
+// A new game stores this value as its start stamp.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
   s32 hourTens;
@@ -584,12 +587,13 @@ struct SceneStateTail {
   u8 unk104;
 };
 
-// Clears the game state, scene state, flags and save stamp and sets a new
+// Clears the game-state header, scene state, flags and save stamp; sets a new
 // game's defaults: Isaac alone in the party, the standard button layout,
 // the message speed, the play time clock and the slot machine prize odds.
 void GameState_InitDefaults(void) {
   volatile s32 zero;
 
+  // Clear the state header, scene work, flags and save metadata in DMA order.
   zero = 0;
   START_DMA(&zero, &gGameState, 0x850000b0);
   zero = 0;
@@ -600,6 +604,7 @@ void GameState_InitDefaults(void) {
   ((struct SceneStateTail *)gSceneState)->unk104 = 0xff;
   zero = 0;
   START_DMA(&zero, gSaveStamp + 0x1c, 0x85000298);
+  // Build the characters, then install input and message defaults.
   Party_InitCharacters();
   gGameState.aKeys = KEY_A;
   gGameState.bKeys = KEY_B;
@@ -626,6 +631,7 @@ void GameState_InitDefaults(void) {
   gGameState.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
+  // Three prizes share each successive slot-machine weight.
   gGameState.prizeWeights[0] = 4;
   gGameState.prizeWeights[1] = 4;
   gGameState.prizeWeights[2] = 4;
@@ -657,9 +663,10 @@ void Party_BeginChildhood(void) {
 
 // The party set-up after the prologue: flags, Jenna recomputed, Isaac and
 // Garet healed with item 15 in their inventories replaced by item 16 and
-// equipped, three Psynergy given, and 300 coins.
+// equipped, four Psynergy entries taught across Isaac, Garet and Ivan, and
+// 300 coins.
 void Party_EndChildhood(void) {
-  s32 id;
+  s32 owner;
 
   GameFlag_ClearBit(FLAG_CHILDHOOD);
   GameFlag_ClearBit(33);
@@ -669,8 +676,8 @@ void Party_EndChildhood(void) {
   GameFlag_ClearBit(0x11b);
   GameFlag_SetBit(282);
 
-  for (id = 0; id <= 1; id++) {
-    struct BattleUnit *unit = UnitGet(id);
+  for (owner = 0; owner <= 1; owner++) {
+    struct BattleUnit *unit = UnitGet(owner);
     s32 slot;
 
     unit->hp = unit->maxHp;
@@ -680,41 +687,41 @@ void Party_EndChildhood(void) {
     for (slot = 0; slot <= 14; slot++) {
       if ((unit->inventory[slot] & ITEM_ID_MASK) == 15) {
         unit->inventory[slot] = 16;
-        Inventory_Equip(id, slot);
+        Inventory_Equip(owner, slot);
         break;
       }
     }
 
-    Unit_UpdateClass(id);
-    UnitCalc(id);
+    Unit_UpdateClass(owner);
+    UnitCalc(owner);
   }
 
-  Unit_LearnPsynergy(0, 140);
-  Unit_LearnPsynergy(0, 149);
-  Unit_LearnPsynergy(1, 140);
-  Unit_LearnPsynergy(2, 141);
+  Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
+  Unit_LearnPsynergy(ISAAC, ABILITY_RETREAT);
+  Unit_LearnPsynergy(GARET, ABILITY_MOVE);
+  Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
   gGameState.coins += 300;
 }
 
-// Restores every party member's HP and PP; with `arg0` 1 it also cures
+// Restores every party member's HP and PP; with `cureConditions` 1 it cures
 // poison and haunting.
-void Party_RestoreHpPp(s32 arg0) {
-  s32 count;
-  s32 n;
-  struct BattleUnit *obj;
+void Party_RestoreHpPp(s32 cureConditions) {
+  s32 partySize;
+  s32 partyIndex;
+  struct BattleUnit *unit;
 
-  count = Party_CountActiveOwners();
-  for (n = 0; n < count; n++) {
-    obj = UnitGet(gGameState.activeOwners[n]);
+  partySize = Party_CountActiveOwners();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    unit = UnitGet(gGameState.activeOwners[partyIndex]);
 
-    obj->hp = obj->maxHp;
-    obj->pp = obj->maxPp;
-    Unit_UpdateGauges(obj);
+    unit->hp = unit->maxHp;
+    unit->pp = unit->maxPp;
+    Unit_UpdateGauges(unit);
 
-    if (arg0 == 1) {
-      obj->poison = 0;
-      obj->haunt = 0;
+    if (cureConditions == 1) {
+      unit->poison = 0;
+      unit->haunt = 0;
     }
   }
 }
@@ -722,49 +729,63 @@ void Party_RestoreHpPp(s32 arg0) {
 // Restores the PP of each party member whose element group has one of its
 // flags set (0x110 or 0x112 for group 0, 0x111 or 0x113 for the others).
 void Party_RestorePpOfLitElements(void) {
-  s32 count;
-  s32 n;
+  s32 partySize;
+  s32 partyIndex;
   u8 ownerId;
-  s32 group;
-  s32 doRefresh;
-  struct BattleUnit *obj;
+  s32 elementGroup;
+  s32 restorePp;
+  struct BattleUnit *unit;
 
-  count = Party_CountActiveOwners();
-  for (n = 0; n < count; n++) {
-    ownerId = gGameState.activeOwners[n];
-    group = gCharacter_ElementGroupTable[ownerId];
-    doRefresh = 0;
-    if (group == 0) {
+  partySize = Party_CountActiveOwners();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    ownerId = gGameState.activeOwners[partyIndex];
+    elementGroup = gCharacter_ElementGroupTable[ownerId];
+    restorePp = 0;
+    if (elementGroup == 0) {
       if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT) ||
           GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT)) {
-        doRefresh = 1;
+        restorePp = 1;
       }
     } else {
       if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
           GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
-        doRefresh = 1;
+        restorePp = 1;
       }
     }
 
-    if (doRefresh == 0) {
+    if (restorePp == 0) {
       continue;
     }
 
-    obj = UnitGet(ownerId);
-    obj->pp = obj->maxPp;
-    Unit_UpdateGauges(obj);
+    unit = UnitGet(ownerId);
+    unit->pp = unit->maxPp;
+    Unit_UpdateGauges(unit);
   }
 }
 
-// An empty routine.
-void Owner_RatioNoOp(void) {}
+// Unused reserved entry; keep its place in the far-call table.
+UNUSED void Owner_RatioNoOp(void) {}
 
-// Recomputes the HP and PP gauges of `owner_id` from its current values.
-void UnitRatio(s32 owner_id) {
-  struct BattleUnit *owner;
+// Recomputes the HP and PP gauges of the selected unit from its current values.
+void UnitRatio(s32 owner) {
+  struct BattleUnit *unit;
 
-  owner = UnitGet(owner_id);
-  Unit_UpdateGauges(owner);
+  unit = UnitGet(owner);
+  Unit_UpdateGauges(unit);
+}
+
+// Restricts an HP or PP value to the unit's current maximum.
+static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
+  s32 result;
+
+  if (value > maximum)
+    result = maximum;
+  else {
+    result = 0;
+    if (value >= 0)
+      result = value;
+  }
+  return result;
 }
 
 // Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
@@ -772,14 +793,7 @@ void UnitRatio(s32 owner_id) {
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 
-  if (hp > unit->maxHp) {
-    clamped = unit->maxHp;
-  } else {
-    clamped = 0;
-    if (hp >= 0) {
-      clamped = hp;
-    }
-  }
+  clamped = Unit_ClampGaugeValue(hp, unit->maxHp);
   unit->hp = clamped;
   Unit_UpdateGauges(unit);
 }
@@ -789,13 +803,7 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
 void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   s32 clamped;
 
-  if (pp > unit->maxPp) {
-    clamped = unit->maxPp;
-  } else {
-    clamped = 0;
-    if (pp >= 0)
-      clamped = pp;
-  }
+  clamped = Unit_ClampGaugeValue(pp, unit->maxPp);
   unit->pp = clamped;
   Unit_UpdateGauges(unit);
 }
@@ -803,43 +811,31 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
 // Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
 // gauges and returns the new HP.
 s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct BattleUnit *state = UnitGet(owner);
-  s32 cur = state->hp;
-  s32 max = state->maxHp;
-  s32 value = cur + delta;
+  struct BattleUnit *unit = UnitGet(owner);
+  s32 currentHp = unit->hp;
+  s32 maximumHp = unit->maxHp;
+  s32 value = currentHp + delta;
   s32 result;
 
-  if (value > max)
-    result = max;
-  else {
-    result = 0;
-    if (value >= 0)
-      result = value;
-  }
-  state->hp = result;
+  result = Unit_ClampGaugeValue(value, maximumHp);
+  unit->hp = result;
   UnitRatio(owner);
-  return state->hp;
+  return unit->hp;
 }
 
 // Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
 // gauges and returns the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *state = UnitGet(owner);
-  s32 cur = state->pp;
-  s32 max = state->maxPp;
-  s32 value = cur + delta;
+  struct BattleUnit *unit = UnitGet(owner);
+  s32 currentPp = unit->pp;
+  s32 maximumPp = unit->maxPp;
+  s32 value = currentPp + delta;
   s32 result;
 
-  if (value > max)
-    result = max;
-  else {
-    result = 0;
-    if (value >= 0)
-      result = value;
-  }
-  state->pp = result;
+  result = Unit_ClampGaugeValue(value, maximumPp);
+  unit->pp = result;
   UnitRatio(owner);
-  return state->pp;
+  return unit->pp;
 }
 
 // Returns item `item`'s definition; an inventory entry may be passed, its
@@ -850,15 +846,15 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 
 // Returns whether the character can equip `item`: bit classId of the item's
 // equipMask. Units past the eight characters cannot.
-s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
-  struct BattleUnit *st = UnitGet(unit);
-  struct ItemDefinition *def = Item_GetDirect(item);
-  s32 mask = def->equipMask;
+s32 Item_CanOwnerEquipDirect(s32 owner, s32 item) {
+  struct BattleUnit *unit = UnitGet(owner);
+  struct ItemDefinition *itemDefinition = Item_GetDirect(item);
+  s32 equipMask = itemDefinition->equipMask;
 
-  if (st->classId >= 8) {
+  if (unit->classId >= 8) {
     return 0;
   }
-  return (mask >> st->classId) & 1;
+  return (equipMask >> unit->classId) & 1;
 }
 
 // Returns 1 for an item that is not equipment, and for equipment whether the
@@ -872,11 +868,11 @@ s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
 
 // Returns what kind of thing an item is: 1 a weapon, 2 armor (types 2 to 5
 // and 9), 0 anything else.
-s32 Item_GetEquipmentGroup(s32 item_id) {
+s32 Item_GetEquipmentGroup(s32 itemId) {
   s32 group;
   struct ItemDefinition *item;
 
-  item = Item_GetDirect(item_id);
+  item = Item_GetDirect(itemId);
   group = 0;
   if (item->type == 1)
     group = 1;
@@ -896,30 +892,30 @@ s32 Item_GetEquipmentGroup(s32 item_id) {
 // Returns how many of the item in `slot` the unit carries (0 for an empty
 // slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 owner, s32 slot) {
-  s32 item_id;
+  s32 itemId;
 
   owner = UnitGet(owner)->inventory[slot];
-  item_id = ITEM_ID_MASK;
-  item_id &= owner;
+  itemId = ITEM_ID_MASK;
+  itemId &= owner;
   owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
   owner++;
-  if (item_id == 0) {
+  if (itemId == 0) {
     owner = 0;
   }
   return owner;
 }
 
-// Returns how many inventory slots the unit has filled.
+// Counts filled inventory slots up to the first empty slot.
 s32 Inventory_Count(s32 owner) {
-  struct BattleUnit *inv = UnitGet(owner);
+  struct BattleUnit *unit = UnitGet(owner);
   s32 count = 0;
 
-  if (inv->inventory[count] != 0) {
+  if (unit->inventory[count] != 0) {
     do {
       count++;
       if (count > 14)
         break;
-    } while (inv->inventory[count] != 0);
+    } while (unit->inventory[count] != 0);
   }
   return count;
 }
@@ -932,14 +928,14 @@ s32 PartyInventory_HasSpace(void) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  if (Inventory_Count(gGameState.selectedActor) != 15)
+  if (Inventory_Count(gGameState.selectedActor) != INVENTORY_SLOTS)
     return 1;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
     do {
-      if (Inventory_Count(*ownerCursor++) != 15)
+      if (Inventory_Count(*ownerCursor++) != INVENTORY_SLOTS)
         return 1;
       ownerIndex++;
     } while (ownerIndex < ownerCount);
@@ -951,39 +947,39 @@ s32 PartyInventory_HasSpace(void) {
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
   s32 ownerCount = Party_ListActiveOwners(owners);
-  s32 cnt = 0;
+  s32 freeSlots = 0;
   s16 *ownerCursor = owners;
 
-  if (cnt < ownerCount) {
-    s32 n = ownerCount;
+  if (freeSlots < ownerCount) {
+    s32 remainingOwners = ownerCount;
 
     do {
-      cnt = cnt - Inventory_Count(*ownerCursor++) + 15;
-      n--;
-    } while (n != 0);
+      freeSlots = freeSlots - Inventory_Count(*ownerCursor++) + 15;
+      remainingOwners--;
+    } while (remainingOwners != 0);
   }
-  return cnt;
+  return freeSlots;
 }
 
-// Gives a unit one of `item_id`: a stackable item joins a stack it already
-// has (up to 30), anything else takes the first free slot. Returns the slot,
-// or -1 when there was no room.
-s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
-  struct BattleUnit *inv = UnitGet(owner_id);
-  struct ItemDefinition *item = Item_GetDirect(item_id);
+// Gives a unit one item, joining its first matching stack (up to 30) or
+// taking the first free slot. A full matching stack fails immediately, even
+// if another slot is free. Returns the slot, or -1 when there was no room.
+s32 Inventory_AddItem(s32 owner, s32 itemId) {
+  struct BattleUnit *unit = UnitGet(owner);
+  struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
   if ((item->flags & ITEM_STACKABLE) != 0) {
     slot = 0;
-    if (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0) {
+    if (((unit->inventory[slot] ^ itemId) & ITEM_ID_MASK) != 0) {
       do {
         slot++;
         if (slot >= INVENTORY_SLOTS)
           break;
-      } while (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0);
+      } while (((unit->inventory[slot] ^ itemId) & ITEM_ID_MASK) != 0);
     }
     if (slot != INVENTORY_SLOTS) {
-      s32 entry = inv->inventory[slot];
+      s32 entry = unit->inventory[slot];
       u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
       if (count > 29)
@@ -993,7 +989,7 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
 
         value &= entry;
         value |= count << INVENTORY_QUANTITY_SHIFT;
-        inv->inventory[slot] = value;
+        unit->inventory[slot] = value;
       }
       return slot;
     }
@@ -1001,8 +997,8 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
 
   slot = 0;
   do {
-    if (inv->inventory[slot] == 0) {
-      inv->inventory[slot] = item_id;
+    if (unit->inventory[slot] == 0) {
+      unit->inventory[slot] = itemId;
       return slot;
     }
     slot++;
@@ -1033,14 +1029,14 @@ s32 PartyInventory_Add(s32 itemId) {
   return -1;
 }
 
-// Returns the first slot holding `item_id`, or -1.
-s32 Inventory_Find(s32 owner, s32 item_id) {
+// Returns the first slot holding `itemId`, or -1.
+s32 Inventory_Find(s32 owner, s32 itemId) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 slot = 0;
   u16 *entry = inv->inventory;
 
   do {
-    if (((*entry++) & ITEM_ID_MASK) == item_id) {
+    if (((*entry++) & ITEM_ID_MASK) == itemId) {
       return slot;
     }
     slot++;
@@ -1072,40 +1068,40 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   return -1;
 }
 
-// Equips the item in `slot`, unequipping the item of the same type (rings,
-// type 6, may be worn together). Returns 0, -1 when the unit cannot equip
-// it, or -2 when the item it would replace is cursed on.
+// Equips the item in `slot`, replacing equipment of the same type. Type 6
+// items grant Psynergy and may coexist. Returns 0, -1 when the unit cannot
+// equip it, or -2 when the item it would replace is cursed on.
 s32 Inventory_Equip(s32 owner, s32 slot) {
-  struct BattleUnit *inv = UnitGet(owner);
-  u32 item_id = inv->inventory[slot];
+  struct BattleUnit *unit = UnitGet(owner);
+  u32 inventoryEntry = unit->inventory[slot];
   struct ItemDefinition *item;
   u8 type;
-  s32 other;
+  s32 equippedSlot;
 
-  if (Item_CanOwnerEquipDirect(owner, item_id) == 0)
+  if (Item_CanOwnerEquipDirect(owner, inventoryEntry) == 0)
     return -1;
-  if (item_id & INVENTORY_EQUIPPED)
+  if (inventoryEntry & INVENTORY_EQUIPPED)
     return 0;
 
-  item = Item_GetDirect(item_id);
+  item = Item_GetDirect(inventoryEntry);
   type = item->type;
   if (type != 6) {
-    for (other = 0; other <= 14; other++) {
-      if ((inv->inventory[other] & INVENTORY_EQUIPPED) == 0)
+    for (equippedSlot = 0; equippedSlot <= 14; equippedSlot++) {
+      if ((unit->inventory[equippedSlot] & INVENTORY_EQUIPPED) == 0)
         continue;
-      if (Item_GetDirect(inv->inventory[other])->type == type)
+      if (Item_GetDirect(unit->inventory[equippedSlot])->type == type)
         break;
     }
 
-    if (other != 15) {
-      item = Item_GetDirect(inv->inventory[other]);
+    if (equippedSlot != INVENTORY_SLOTS) {
+      item = Item_GetDirect(unit->inventory[equippedSlot]);
       if (item->flags & ITEM_CANNOT_UNEQUIP)
         return -2;
-      inv->inventory[other] &= 0xfdff;
+      unit->inventory[equippedSlot] &= 0xfdff;
     }
   }
 
-  inv->inventory[slot] |= INVENTORY_EQUIPPED;
+  unit->inventory[slot] |= INVENTORY_EQUIPPED;
   Unit_RefreshPsynergy(owner);
   UnitCalc(owner);
   return 0;
@@ -1130,14 +1126,14 @@ s32 Inventory_FindEquipped(s32 owner, s32 type) {
 }
 
 // Returns the definition of the equipped item of `type`, or NULL.
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *inv,
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
                                                        s32 type) {
   s32 slot;
   struct ItemDefinition *item;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-    if (inv->inventory[slot] & INVENTORY_EQUIPPED) {
-      item = Item_GetDirect(inv->inventory[slot]);
+    if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
+      item = Item_GetDirect(unit->inventory[slot]);
       if (item->type == type) {
         return item;
       }
@@ -1147,47 +1143,49 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *inv,
 }
 
 // Returns the id of the equipped item of `type`, or 0.
-s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type) {
+s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-    if (inv->inventory[slot] & INVENTORY_EQUIPPED) {
-      struct ItemDefinition *item = Item_GetDirect(inv->inventory[slot]);
+    if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
+      struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
       if (item->type == type) {
-        return inv->inventory[slot] & ITEM_ID_MASK;
+        return unit->inventory[slot] & ITEM_ID_MASK;
       }
     }
   }
   return 0;
 }
 
+// Keeps occupied slots in order and clears the unused inventory tail.
+static inline void Inventory_CompactSlots(s16 *inventory) {
+  s32 usedSlots = 0;
+  s32 slot;
+
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (inventory[slot] != 0)
+      inventory[usedSlots++] = inventory[slot];
+  }
+  for (; usedSlots < INVENTORY_SLOTS; usedSlots++)
+    inventory[usedSlots] = 0;
+}
+
 // Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
 // item empties the slot and the inventory closes up (returns 2). Returns -1
 // for an empty slot. The unit's stats are recomputed either way.
 s32 Inventory_Remove(s32 owner, s32 slot) {
-  struct BattleUnit *inv = UnitGet(owner);
-  u16 item = inv->inventory[slot];
+  struct BattleUnit *unit = UnitGet(owner);
+  u16 item = unit->inventory[slot];
   s32 result = -1;
 
   if (item != 0) {
     if (item & INVENTORY_QUANTITY_MASK) {
-      inv->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
+      unit->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
       result = 1;
     } else {
-      s16 *list;
-      s32 count;
-      s32 i;
-
-      inv->inventory[slot] = 0;
-      list = inv->inventory;
-      count = 0;
-      for (i = 0; i < 15; i++) {
-        if (list[i] != 0)
-          list[count++] = list[i];
-      }
-      for (; count < 15; count++)
-        list[count] = 0;
+      unit->inventory[slot] = 0;
+      Inventory_CompactSlots(unit->inventory);
       result = 2;
     }
   }
@@ -1199,52 +1197,52 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
 // circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = UnitGet(owner)->inventory[slot];
-  s32 removed_slot = Inventory_Remove(owner, slot);
+  s32 removalResult = Inventory_Remove(owner, slot);
 
-  if (removed_slot != -1) {
+  if (removalResult != -1) {
     Item_AdjustCounter(item, 1);
     Event_ClearInvalidPackedValuesFar();
   }
-  return removed_slot;
+  return removalResult;
 }
 
 // Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
 // empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
-  struct BattleUnit *inv = UnitGet(owner);
-  s32 item_id = inv->inventory[slot] & ITEM_ID_MASK;
-  struct ItemDefinition *item = Item_GetDirect(item_id);
+  struct BattleUnit *unit = UnitGet(owner);
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  struct ItemDefinition *item = Item_GetDirect(itemId);
 
-  if (item_id == 0) {
+  if (itemId == 0) {
     return -1;
   }
   if ((item->flags & ITEM_INDISPENSABLE) != 0) {
     return -4;
   }
-  if ((inv->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
       (item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
     return -3;
   }
   return 0;
 }
 
-// Removes one `item_id` from whoever in the party carries it.
-s32 PartyInventory_Remove(s32 item_id) {
-  s32 owner = PartyInventory_FindOwner(item_id);
+// Removes one `itemId` from whoever in the party carries it.
+s32 PartyInventory_Remove(s32 itemId) {
+  s32 owner = PartyInventory_FindOwner(itemId);
 
   if (owner == -1)
     return 0;
-  Inventory_Remove(owner, Inventory_Find(owner, item_id));
+  Inventory_Remove(owner, Inventory_Find(owner, itemId));
   return 0;
 }
 
-// Discards one `item_id` from whoever in the party carries it.
-s32 PartyInventory_Discard(s32 item_id) {
-  s32 owner = PartyInventory_FindOwner(item_id);
+// Discards one `itemId` from whoever in the party carries it.
+s32 PartyInventory_Discard(s32 itemId) {
+  s32 owner = PartyInventory_FindOwner(itemId);
 
   if (owner == -1)
     return 0;
-  Inventory_Discard(owner, Inventory_Find(owner, item_id));
+  Inventory_Discard(owner, Inventory_Find(owner, itemId));
   return 0;
 }
 
@@ -1312,25 +1310,26 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   return result;
 }
 
-// Returns how many of `item_id` the unit carries.
-s32 Inventory_CountItem(s32 owner, s32 item_id) {
-  struct BattleUnit *base = UnitGet(owner);
+// Counts matching nonstackable items, or the quantity in the first matching
+// stack.
+s32 Inventory_CountItem(s32 owner, s32 itemId) {
+  struct BattleUnit *unit = UnitGet(owner);
   s32 count = 0;
-  s32 target = item_id & ITEM_ID_MASK;
-  s32 index = 0;
+  s32 itemIdOnly = itemId & ITEM_ID_MASK;
+  s32 slot = 0;
 
   do {
-    if ((base->inventory[index] & ITEM_ID_MASK) == target) {
-      struct ItemDefinition *item = Item_GetDirect(target);
+    if ((unit->inventory[slot] & ITEM_ID_MASK) == itemIdOnly) {
+      struct ItemDefinition *item = Item_GetDirect(itemIdOnly);
 
       if (item->flags & ITEM_STACKABLE) {
-        count = (base->inventory[index] >> INVENTORY_QUANTITY_SHIFT) + 1;
+        count = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
         break;
       }
       count++;
     }
-    index++;
-  } while (index < INVENTORY_SLOTS);
+    slot++;
+  } while (slot < INVENTORY_SLOTS);
   return count;
 }
 
@@ -1342,12 +1341,12 @@ s32 PartyInventory_CountItem(s32 itemId) {
 
   if (itemCount < ownerCount) {
     u16 *ownerCursor = owners;
-    s32 n = ownerCount;
+    s32 remainingOwners = ownerCount;
 
     do {
       itemCount += Inventory_CountItem(*ownerCursor++, itemId);
-      n--;
-    } while (n != 0);
+      remainingOwners--;
+    } while (remainingOwners != 0);
   }
   return itemCount;
 }
@@ -1357,27 +1356,27 @@ s32 PartyInventory_CountItem(s32 itemId) {
 struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex;
 
-  entryIndex = actionId & 0x3fff;
+  entryIndex = actionId & OWNER_ACTION_ID_MASK;
   if (entryIndex >= 0x208U) {
     entryIndex = 0;
   }
   return &gBattleAction_DefinitionTable[entryIndex];
 }
 
-// Returns 1 when action `value` is in the unit's action list.
-s32 Unit_KnowsAction(s32 owner, s32 value) {
+// Returns 1 when `actionId` is in the unit's action list.
+s32 Unit_KnowsAction(s32 owner, s32 actionId) {
   struct BattleUnit *unit = UnitGet(owner);
   struct OwnerActionSlot *entry;
-  s32 mask = 0x3fff;
+  s32 actionMask = OWNER_ACTION_ID_MASK;
   s32 index = 0;
 
   entry = unit->actionSlots;
   do {
-    s32 current = entry->encodedAction;
+    s32 currentAction = entry->encodedAction;
 
-    current &= mask;
+    currentAction &= actionMask;
     entry++;
-    if (current == value) {
+    if (currentAction == actionId) {
       return 1;
     }
     index++;
@@ -1389,103 +1388,122 @@ s32 Unit_KnowsAction(s32 owner, s32 value) {
 // equipped item. Plain entries were taught for good.
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
+// Slots are four-byte records, not a flat halfword array. The native view
+// preserves load scheduling; the typed view shortens the English object by
+// 52 bytes. UBFIX accesses each record through its actual declared type.
+#ifdef UBFIX
+#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
+#else
+#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
+#endif
+
 // Rebuilds a character's Psynergy list: drops the actions its class and items
 // gave, closes up the list, adds every class action learned by its level and
 // the action of each equipped item that grants one, and closes it up again.
 s32 Unit_RefreshPsynergy(s32 owner) {
-  struct BattleUnit *st;
-  u16 *ability;
-  struct ClassDefinition *cls;
-  struct ItemDefinition *def;
-  s32 i;
-  s32 j;
-  u16 mask;
-  struct ClassAbility *cg;
+  struct BattleUnit *unit;
+  struct OwnerActionSlot *abilities;
+  struct ClassDefinition *classDefinition;
+  struct ItemDefinition *itemDefinition;
+  s32 slot;
+  s32 sourceIndex;
+  u16 originFlag;
+  struct ClassAbility *classAbility;
 
-  st = UnitGet(owner);
-  ability = (u16 *)st->actionSlots;
-  cls = Class_GetDefinition(st->classIndex);
-  if (st->classIndex == 0)
+  unit = UnitGet(owner);
+  abilities = unit->actionSlots;
+  classDefinition = Class_GetDefinition(unit->classIndex);
+  if (unit->classIndex == 0)
     return 0;
-  mask = 0x8000;
-  for (j = 0; j < 32; j++) {
-    if (ability[j * 2] & mask)
-      ability[j * 2] = 0;
+  // Remove actions inherited from the previous class and equipment.
+  originFlag = OWNER_ACTION_CLASS;
+  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+    if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
+      PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
-  mask = 0x4000;
-  for (j = 0; j < 32; j++) {
-    if (ability[j * 2] & mask)
-      ability[j * 2] = 0;
+  originFlag = OWNER_ACTION_ITEM;
+  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+    if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
+      PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
-  for (i = 31, j = 31; i >= 0;) {
-    if (ability[i * 2] == 0) {
-      i--;
+  // Pack permanent actions at the end to leave room for class abilities.
+  for (slot = 31, sourceIndex = 31; slot >= 0;) {
+    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+      slot--;
     } else {
-      ability[j * 2] = ability[i * 2];
-      i--;
-      j--;
+      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
+          PSYNERGY_ACTION_AT(abilities, slot);
+      slot--;
+      sourceIndex--;
     }
   }
-  for (; j >= 0; j--)
-    ability[j * 2] = 0;
+  for (; sourceIndex >= 0; sourceIndex--)
+    PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
 
-  mask = OWNER_ACTION_CLASS;
-  for (j = 0; j < 16; j++) {
-    cg = &cls->abilities[j];
-    if (cls->abilities[j].ability == 0)
+  // Add level-eligible class abilities, followed by equipped-item abilities.
+  originFlag = OWNER_ACTION_CLASS;
+  for (sourceIndex = 0; sourceIndex < 16; sourceIndex++) {
+    classAbility = &classDefinition->abilities[sourceIndex];
+    if (classDefinition->abilities[sourceIndex].ability == 0)
       continue;
-    if (st->level < cls->abilities[j].level)
+    if (unit->level < classDefinition->abilities[sourceIndex].level)
       continue;
-    i = 0;
-    while (i < 32 && ability[i * 2] != cls->abilities[j].ability)
-      i++;
-    if (i != 32)
+    slot = 0;
+    while (slot < 32 && PSYNERGY_ACTION_AT(abilities, slot) !=
+                            classDefinition->abilities[sourceIndex].ability)
+      slot++;
+    if (slot != 32)
       continue;
-    for (i = 0; i < 32; i++) {
-      if (ability[i * 2] == 0) {
-        ability[i * 2] = cg->ability | mask;
+    for (slot = 0; slot < 32; slot++) {
+      if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+        PSYNERGY_ACTION_AT(abilities, slot) =
+            classAbility->ability | originFlag;
         break;
       }
     }
-    if (i == 32)
+    if (slot == 32)
       break;
   }
 
-  for (j = 0; j < 15; j++) {
-    if (st->inventory[j] == 0)
+  for (sourceIndex = 0; sourceIndex < INVENTORY_SLOTS; sourceIndex++) {
+    if (unit->inventory[sourceIndex] == 0)
       continue;
-    if (!(st->inventory[j] & INVENTORY_EQUIPPED))
+    if (!(unit->inventory[sourceIndex] & INVENTORY_EQUIPPED))
       continue;
-    def = Item_GetDirect(st->inventory[j]);
-    if (def->useType != 3)
+    itemDefinition = Item_GetDirect(unit->inventory[sourceIndex]);
+    if (itemDefinition->useType != 3)
       continue;
-    for (i = 0; i < 32; i++) {
-      if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->actionId)
+    for (slot = 0; slot < 32; slot++) {
+      if ((PSYNERGY_ACTION_AT(abilities, slot) & OWNER_ACTION_ID_MASK) ==
+          itemDefinition->actionId)
         break;
     }
-    if (i != 32)
+    if (slot != 32)
       continue;
-    for (i = 0; i < 32; i++) {
-      if (ability[i * 2] == 0) {
-        ability[i * 2] = def->actionId | OWNER_ACTION_ITEM;
+    for (slot = 0; slot < 32; slot++) {
+      if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+        PSYNERGY_ACTION_AT(abilities, slot) =
+            itemDefinition->actionId | OWNER_ACTION_ITEM;
         break;
       }
     }
-    if (i == 32)
+    if (slot == 32)
       break;
   }
 
-  for (i = 0, j = 0; i < 32;) {
-    if (ability[i * 2] == 0) {
-      i++;
+  // Restore a dense display list with empty slots at the end.
+  for (slot = 0, sourceIndex = 0; slot < 32;) {
+    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+      slot++;
     } else {
-      ability[j * 2] = ability[i * 2];
-      i++;
-      j++;
+      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
+          PSYNERGY_ACTION_AT(abilities, slot);
+      slot++;
+      sourceIndex++;
     }
   }
-  for (; j < 32; j++)
-    ability[j * 2] = 0;
+  for (; sourceIndex < 32; sourceIndex++)
+    PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   return 0;
 }
 
@@ -1547,11 +1565,11 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   return index;
 }
 
-struct LevelUpResult *
-// Levels the character up once if it has the experience. Returns `value`
+// Levels the character up once if it has the experience. Returns `gains`
 // filled with the gains, or NULL.
-Unit_CheckLevelUp(s32 owner, struct LevelUpResult *value) {
-  return Unit_TryLevelUp(owner, value);
+struct LevelUpResult *Unit_CheckLevelUp(s32 owner,
+                                        struct LevelUpResult *gains) {
+  return Unit_TryLevelUp(owner, gains);
 }
 
 // Returns character `index`'s definition: growth curves, starting level and
@@ -1567,19 +1585,19 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
 // starting equipment equipped, class and elements worked out, and levels
 // raised to their starting level.
 void Party_InitCharacters(void) {
-  struct BattleUnit *state;
-  struct CharacterDefinition *tmpl;
+  struct BattleUnit *unit;
+  struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 owner;
-  const s32 *remote = gCharacter_StartingEquipOwnerIds;
+  const s32 *startingOwner = gCharacter_StartingEquipOwnerIds;
   s32 i;
   s32 slot;
   u8 *name;
 
   for (owner = 0; owner <= 7; owner++) {
-    state = UnitGet(owner);
+    unit = UnitGet(owner);
     Ui_AdjustValueWithoutLimitFar(owner + MsgCharacterName, nameBuf);
-    name = state->name;
+    name = unit->name;
     name[0] = nameBuf[0];
     i = 0;
     if (nameBuf[0] != 0) {
@@ -1590,49 +1608,50 @@ void Party_InitCharacters(void) {
         name[i] = nameBuf[i];
       } while (nameBuf[i] != 0);
     }
-    state->name[14] = 0;
+    unit->name[14] = 0;
   }
 
-  if (*remote != -1) {
+  if (*startingOwner != -1) {
     do {
-      state = UnitGet(*remote);
-      if (state != 0) {
-        state->classId = *remote;
-        tmpl = Character_GetDefinition(state->classId);
+      unit = UnitGet(*startingOwner);
+      if (unit != 0) {
+        unit->classId = *startingOwner;
+        character = Character_GetDefinition(unit->classId);
 
         for (i = 14; i >= 0; i--)
-          state->inventory[i] = 0;
+          unit->inventory[i] = 0;
 
-        for (i = 0; i < sizeof(tmpl->items) / sizeof(tmpl->items[0]); i++) {
-          slot = Inventory_AddItem(*remote, tmpl->items[i] & 0x1ff);
-          Inventory_Equip(*remote, slot);
+        for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
+             i++) {
+          slot = Inventory_AddItem(*startingOwner, character->items[i] & 0x1ff);
+          Inventory_Equip(*startingOwner, slot);
         }
 
-        Unit_UpdateClass(*remote);
-        state->ppGauge = 0x4000;
-        state->hpGauge = 0x4000;
-        Unit_LevelUpTo(*remote, tmpl->startingLevel);
-        UnitCalc(*remote);
+        Unit_UpdateClass(*startingOwner);
+        unit->ppGauge = 0x4000;
+        unit->hpGauge = 0x4000;
+        Unit_LevelUpTo(*startingOwner, character->startingLevel);
+        UnitCalc(*startingOwner);
       }
-      remote++;
-    } while (*remote != -1);
+      startingOwner++;
+    } while (*startingOwner != -1);
   }
 }
 
-// An empty routine.
-void Owner_LevelNoOp(void) {}
+// Unused reserved entry; keep its place in the far-call table.
+UNUSED void Owner_LevelNoOp(void) {}
 
 // Returns the experience a character needs for `level` (0 for level 0 and
 // below); -1 for an enemy or a level above 99.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
-  struct BattleUnit *state = UnitGet(owner);
+  struct BattleUnit *unit = UnitGet(owner);
 
-  if (state->classIndex != 0) {
+  if (unit->classIndex != 0) {
     if (level <= 0) {
       return 0;
     }
-    if (level <= 99 && state->classId <= 7) {
-      return gCharacter_LevelExpTable[state->classId * 99 + level - 1];
+    if (level <= 99 && unit->classId <= 7) {
+      return gCharacter_LevelExpTable[unit->classId * 99 + level - 1];
     }
   }
   return -1;
@@ -1641,102 +1660,111 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
 // Raises a character one level (up to 99), adding to each base stat the
 // growth between the two points of its growth curve around the new level
 // (one point every 20 levels), a twentieth of it per level with a random
-// part. The gains go to `res`, which is returned.
-struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
-  struct BattleUnit *st;
+// part. The gains go to `gains`, which is returned.
+struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
+  struct BattleUnit *unit;
   struct LevelUpWork *work;
-  u32 threshold;
-  s16 band;
-  s32 diff;
+  u32 requiredExperience;
+  s16 growthBand;
+  s32 growthDifference;
   s32 level;
 
-  st = UnitGet(owner);
+  unit = UnitGet(owner);
   work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
-  work->classIndex = st->classIndex;
-  level = st->level;
+  work->classIndex = unit->classIndex;
+  level = unit->level;
   work->level = level;
-  res->level = level;
-  res->ability = 0xffff;
-  res->hp = 0;
-  res->pp = 0;
-  res->atk = 0;
-  res->def = 0;
-  res->agi = 0;
-  res->luck = 0;
+  gains->level = level;
+  gains->ability = 0xffff;
+  gains->hp = 0;
+  gains->pp = 0;
+  gains->atk = 0;
+  gains->def = 0;
+  gains->agi = 0;
+  gains->luck = 0;
   if (level < 99) {
-    st->level++;
-    res->level = level + 1;
-    threshold = Unit_GetExperienceForLevel(owner, st->level);
-    if (threshold != -1 && st->experience < threshold)
-      st->experience = threshold;
+    unit->level++;
+    gains->level = level + 1;
+    requiredExperience = Unit_GetExperienceForLevel(owner, unit->level);
+    if (requiredExperience != -1 && unit->experience < requiredExperience)
+      unit->experience = requiredExperience;
     work->growth = Character_GetDefinition(owner);
-    if (res->level == 1) {
-      res->hp += work->growth->hp[0];
-      res->pp += work->growth->pp[0];
-      res->atk += work->growth->atk[0];
-      res->def += work->growth->def[0];
-      res->agi += work->growth->agi[0];
-      res->luck += work->growth->luck[0];
+    if (gains->level == 1) {
+      gains->hp += work->growth->hp[0];
+      gains->pp += work->growth->pp[0];
+      gains->atk += work->growth->atk[0];
+      gains->def += work->growth->def[0];
+      gains->agi += work->growth->agi[0];
+      gains->luck += work->growth->luck[0];
     }
-    band = res->level / 20;
-    if (band < 0)
-      band = 0;
-    if (band > 4)
-      band = 4;
-    diff = work->growth->hp[band + 1] - work->growth->hp[band];
-    res->hp += ((Random16() * 20 >> 16) + diff) / 20;
-    diff = work->growth->pp[band + 1] - work->growth->pp[band];
-    res->pp += ((Random16() * 20 >> 16) + diff) / 20;
-    diff = work->growth->atk[band + 1] - work->growth->atk[band];
-    res->atk += ((Random16() * 20 >> 16) + diff) / 20;
-    diff = work->growth->def[band + 1] - work->growth->def[band];
-    res->def += ((Random16() * 20 >> 16) + diff) / 20;
-    diff = work->growth->agi[band + 1] - work->growth->agi[band];
-    res->agi += ((Random16() * 20 >> 16) + diff) / 20;
-    diff = work->growth->luck[band + 1] - work->growth->luck[band];
-    res->luck += ((Random16() * 20 >> 16) + diff) / 20;
-    st->baseHp += res->hp;
-    st->basePp += res->pp;
-    st->baseAttack += res->atk;
-    st->baseDefense += res->def;
-    st->baseAgility += res->agi;
-    st->baseLuck += res->luck;
-    st->baseActionCount = 1;
-    st->baseHpRegen = 0;
-    st->basePpRegen = 0;
+    // Each twenty-level band interpolates between adjacent growth points.
+    // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
+    // order.
+    growthBand = gains->level / 20;
+    if (growthBand < 0)
+      growthBand = 0;
+    if (growthBand > 4)
+      growthBand = 4;
+    growthDifference =
+        work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
+    gains->hp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    growthDifference =
+        work->growth->pp[growthBand + 1] - work->growth->pp[growthBand];
+    gains->pp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    growthDifference =
+        work->growth->atk[growthBand + 1] - work->growth->atk[growthBand];
+    gains->atk += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    growthDifference =
+        work->growth->def[growthBand + 1] - work->growth->def[growthBand];
+    gains->def += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    growthDifference =
+        work->growth->agi[growthBand + 1] - work->growth->agi[growthBand];
+    gains->agi += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    growthDifference =
+        work->growth->luck[growthBand + 1] - work->growth->luck[growthBand];
+    gains->luck += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    // Commit the six gains before rebuilding Psynergy and derived stats.
+    unit->baseHp += gains->hp;
+    unit->basePp += gains->pp;
+    unit->baseAttack += gains->atk;
+    unit->baseDefense += gains->def;
+    unit->baseAgility += gains->agi;
+    unit->baseLuck += gains->luck;
+    unit->baseActionCount = 1;
+    unit->baseHpRegen = 0;
+    unit->basePpRegen = 0;
     Unit_RefreshPsynergy(owner);
     UnitCalc(owner);
   }
   MemFree(work);
-  return res;
+  return gains;
 }
 
-struct LevelUpResult *
 // Levels the character up once if its experience reaches the next level.
-// Returns `value` filled with the gains, or NULL.
-Unit_TryLevelUp(s32 owner_id, struct LevelUpResult *value) {
-  struct BattleUnit *owner;
+// Returns `gains` filled with the gains, or NULL.
+struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
+  struct BattleUnit *unit;
 
-  owner = UnitGet(owner_id);
-  if ((owner->experience >=
-       Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&
-      (Owner_LevelUp(owner_id, value) != NULL)) {
-    return value;
+  unit = UnitGet(owner);
+  if ((unit->experience >=
+       Unit_GetExperienceForLevel(owner, unit->level + 1)) &&
+      (Owner_LevelUp(owner, gains) != NULL)) {
+    return gains;
   }
   return 0;
 }
 
-// Levels character `unit` up one level at a time until it reaches `lv`, then
+// Levels character `owner` up one level at a time until `targetLevel`, then
 // recomputes its stats.
-void Unit_LevelUpTo(s32 unit, s32 lv) {
-  u8 res[16]; // the gains of each level, which are not used
-  s32 cur = UnitGet(unit)->level;
+void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
+  struct LevelUpResult gains; // Each level's gains are discarded.
+  s32 currentLevel = UnitGet(owner)->level;
 
-  while (cur < lv) {
-    Owner_LevelUp(unit, (struct LevelUpResult *)res);
-    cur++;
+  while (currentLevel < targetLevel) {
+    Owner_LevelUp(owner, &gains);
+    currentLevel++;
   }
-  UnitCalc(unit);
+  UnitCalc(owner);
 }
 
 // The game flags: 4096 bits in gGameFlagBytes. A flag number's low three bits
@@ -1797,14 +1825,14 @@ u32 GameFlag_Toggle(s32 flag) {
 s32 GameFlag_GetByte(s32 flag) {
   u32 byteIndex;
 
-  byteIndex = flag << 20;
+  byteIndex = (u32)flag << 20;
   flag = byteIndex >> 23;
   return gGameFlagBytes[flag];
 }
 
 // Sets the whole byte `flag` is in.
 void GameFlag_SetByte(s32 flag, s32 value) {
-  u32 shifted = flag << 20;
+  u32 shifted = (u32)flag << 20;
   flag = shifted >> 23;
   gGameFlagBytes[flag] = value;
 }
@@ -1835,7 +1863,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
 
 // Returns the four bits `flag` is in (bit 2 of the number picks the half).
 s32 GameFlag_GetNibble(u32 flag) {
-  u32 shifted = flag << 20;
+  u32 shifted = (u32)flag << 20;
   u32 shift;
   u32 mask;
   s32 result;
@@ -1976,35 +2004,36 @@ s32 Party_CountActiveOwners(void) {
   return count;
 }
 
-// Adds character `value` to the end of the party. Returns the party size.
-s32 Party_AddActiveOwner(s32 value) {
-  s32 count = Party_CountActiveOwners();
-  s32 index;
+// Adds character `owner` to the end of the party. Returns the party size.
+s32 Party_AddActiveOwner(s32 owner) {
+  s32 partySize = Party_CountActiveOwners();
+  s32 partyIndex;
 
-  GameFlag_SetBit(value);
-  index = 0;
-  while (index < count) {
-    if (gGameState.activeOwners[index] == value)
-      return count;
-    index++;
+  GameFlag_SetBit(owner);
+  partyIndex = 0;
+  while (partyIndex < partySize) {
+    if (gGameState.activeOwners[partyIndex] == owner)
+      return partySize;
+    partyIndex++;
   }
-  gGameState.activeOwners[index] = value;
-  return count + 1;
+  gGameState.activeOwners[partyIndex] = owner;
+  return partySize + 1;
 }
 
-// Takes character `value` out of the party. Returns the party size.
-s32 Party_RemoveActiveOwner(s32 value) {
-  s32 count = Party_CountActiveOwners();
-  s32 i;
-  s32 j;
+// Takes character `owner` out of the party. Returns the party size.
+s32 Party_RemoveActiveOwner(s32 owner) {
+  s32 partySize = Party_CountActiveOwners();
+  s32 removedIndex;
+  s32 partyIndex;
 
-  GameFlag_ClearBit(value);
-  for (i = 0; i < count; i++) {
-    if (gGameState.activeOwners[i] == value)
+  GameFlag_ClearBit(owner);
+  for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
+    if (gGameState.activeOwners[removedIndex] == owner)
       break;
   }
-  for (j = i; j < count - 1; j++)
-    gGameState.activeOwners[j] = gGameState.activeOwners[j + 1];
+  for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
+    gGameState.activeOwners[partyIndex] =
+        gGameState.activeOwners[partyIndex + 1];
   return Party_CountActiveOwners();
 }
 
@@ -2040,8 +2069,8 @@ s32 Party_AdjustCoins(s32 amount) {
   value = work->coins;
   value += amount;
   store = work;
-  if (value > 0xF423F) {
-    value = 0xF423F;
+  if (value > 999999) {
+    value = 999999;
   }
   if (value < 0) {
     value = 0;
@@ -2079,7 +2108,7 @@ extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
     return value;                                                              \
   }
 
-DEFINE_PARTY_ADJUST(Party_AdjustShopCredit, shopCredit, 0xf423f)
+DEFINE_PARTY_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
 DEFINE_PARTY_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 // Writes the summons whose bit is set in the first word of the party's Djinn
@@ -2108,10 +2137,9 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   return &gSummon_DefinitionTable[summonId];
 }
 
-// Returns the class series for a character's strongest element `row` and
-// second strongest `column`.
-s32 Class_GetSeries(s32 row, s32 column) {
-  return gOwner_FourColumnValues[(row * 4) + column];
+// Returns the class series selected by the primary and secondary elements.
+s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
+  return gOwner_FourColumnValues[(primaryElement * 4) + secondaryElement];
 }
 
 // Writes ten times each element level to `output`: an enemy's from its
@@ -2154,28 +2182,29 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-// Returns a unit's level in element `index` (0 to 3).
-s32 Unit_GetElementLevel(s32 owner, s32 index) {
-  struct BattleUnit *state = UnitGet(owner);
-  s32 values[4];
+// Returns a unit's level in `element` (0 to 3).
+s32 Unit_GetElementLevel(s32 owner, s32 element) {
+  struct BattleUnit *unit = UnitGet(owner);
+  s32 elementLevels[4];
   s32 result = 0;
 
-  if (index <= 3) {
-    Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
-    result = values[index] / 10;
+  if (element <= 3) {
+    Unit_GetElementLevels(unit->classId, (u8 *)unit->djinnAvailable,
+                          elementLevels);
+    result = elementLevels[element] / 10;
   }
   return result;
 }
 
 // Returns the element an enemy attacks with, from its element preset.
-s32 Enemy_GetAttackElement(struct BattleUnit *state) {
-  const struct EnemyDefinition *record =
-      (const struct EnemyDefinition *)Enemy_GetDefinition(state->classId);
-  u8 value = record->elementPreset;
+s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
+  const struct EnemyDefinition *enemy =
+      (const struct EnemyDefinition *)Enemy_GetDefinition(unit->classId);
+  u8 presetIndex = enemy->elementPreset;
 
-  if (value > 43)
-    value = 0;
-  return gEnemy_ElementPresetTable[value].first;
+  if (presetIndex > 43)
+    presetIndex = 0;
+  return gEnemy_ElementPresetTable[presetIndex].first;
 }
 
 // Writes a unit's base power and resistance in each element: an enemy's come
@@ -2304,9 +2333,9 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   return result;
 }
 
-// Returns class `arg0`'s definition.
-struct ClassDefinition *Class_GetDefinition(s32 arg0) {
-  return &gClass_DefinitionTable[arg0];
+// Returns the definition of class `classId`.
+struct ClassDefinition *Class_GetDefinition(s32 classId) {
+  return &gClass_DefinitionTable[classId];
 }
 
 // Works out a character's class again after its Djinn change, then its
@@ -2327,114 +2356,118 @@ void Unit_UpdateClass(s32 ownerId) {
 // Returns the multiplier (256 = 1x) for an element difference `input`, read
 // from a five-point line; with `halve` the effect of the difference is half.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
-  s32 min;
-  s32 max;
-  s32 n;
-  s32 i;
-  s32 value;
-  s32 dx;
-  s32 dy;
+  s32 minimumDifference;
+  s32 maximumDifference;
+  s32 pointCount;
+  s32 pointIndex;
+  s32 multiplier;
+  s32 differenceSpan;
+  s32 multiplierSpan;
 
-  max = gElement_PowerResistCurve[0][0];
-  min = gElement_PowerResistCurve[4][0];
-  n = 5;
-  if (input > max)
-    input = max;
-  else if (input < min)
-    input = min;
-  for (i = 0; i < n; i++) {
-    if (input > gElement_PowerResistCurve[i][0])
+  maximumDifference = gElement_PowerResistCurve[0][0];
+  minimumDifference = gElement_PowerResistCurve[4][0];
+  pointCount = 5;
+  if (input > maximumDifference)
+    input = maximumDifference;
+  else if (input < minimumDifference)
+    input = minimumDifference;
+  for (pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+    if (input > gElement_PowerResistCurve[pointIndex][0])
       break;
   }
-  if (i == n) {
-    value = gElement_PowerResistCurve[i - 1][1];
+  if (pointIndex == pointCount) {
+    multiplier = gElement_PowerResistCurve[pointIndex - 1][1];
   } else {
-    dx = gElement_PowerResistCurve[i - 1][0] - gElement_PowerResistCurve[i][0];
-    dy = gElement_PowerResistCurve[i - 1][1] - gElement_PowerResistCurve[i][1];
-    value = (input - gElement_PowerResistCurve[i][0]) * dy / dx +
-            gElement_PowerResistCurve[i][1];
+    differenceSpan = gElement_PowerResistCurve[pointIndex - 1][0] -
+                     gElement_PowerResistCurve[pointIndex][0];
+    multiplierSpan = gElement_PowerResistCurve[pointIndex - 1][1] -
+                     gElement_PowerResistCurve[pointIndex][1];
+    multiplier = (input - gElement_PowerResistCurve[pointIndex][0]) *
+                     multiplierSpan / differenceSpan +
+                 gElement_PowerResistCurve[pointIndex][1];
   }
   switch (halve) {
   case 0:
     break;
   case 1:
-    value /= 2;
+    multiplier /= 2;
     break;
   }
-  return value + 0x100;
+  return multiplier + 0x100;
 }
 
 // The battle's random number generator, the same linear congruential one as
 // Random16 with its own seed. Returns bits 8 to 23 of the new seed.
 s32 BattleRandom(void) {
-  s32 seed;
+  u32 seed;
 
-  seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
+  seed = ((u32)gBattleRandomSeed * 0x41c64e6dU) + 0x3039U;
   gBattleRandomSeed = seed;
-  return (u32)(seed << 8) >> 16;
+  return (seed << 8) >> 16;
 }
 
 // Returns a battle random number from 0 to 99.
 u32 BattleRandomPercent(void) { return ((u32)BattleRandom() * 100) >> 16; }
 
-// The damage of an attack: (atk - def + add * 2) / 2 times the multiplier
-// for the element difference, whose effect here is half Psynergy's (128 to
-// 384 of 256).
-//   atk   : the attacker's attack
-//   def   : the target's defense (a negative atk - def counts as 0)
-//   add   : the action's power
-//   bonus : the element difference (power less resistance)
-s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
-  s32 dmg;
-  s32 val;
+// Scales max(attack - defense, 0) + twice the action's added power by the
+// elemental multiplier, then halves it. ElementDifference is power minus
+// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
+s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
+                            s32 elementDifference) {
+  s32 damage;
+  s32 scaledDamage;
 
-  atk -= def;
-  dmg = bonus;
-  if (atk < 0)
-    atk = 0;
-  val = Battle_GetElementMultiplier(dmg, 1) * (atk + (add * 2));
-  if (val < 0)
-    val += 0x1ff;
-  dmg = val >> 9;
-  if (dmg < 0)
-    dmg = 0;
-  return dmg;
+  attack -= defense;
+  damage = elementDifference;
+  if (attack < 0)
+    attack = 0;
+  scaledDamage =
+      Battle_GetElementMultiplier(damage, 1) * (attack + (addedPower * 2));
+  if (scaledDamage < 0)
+    scaledDamage += 0x1ff;
+  damage = scaledDamage >> 9;
+  if (damage < 0)
+    damage = 0;
+  return damage;
 }
 
 // The power of Psynergy: `power` times the multiplier for the element
-// difference (0 to 512 of 256) and `rate` (256 is 1x).
-//   bonus : the element difference (power less resistance)
-s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
-  s32 val;
+// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
+// powerMultiplier (also 256 = 1x).
+s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
+                             s32 powerMultiplier) {
+  s32 scaledPower;
 
-  val = Battle_GetElementMultiplier(bonus, 0) * power * rate;
-  if (val < 0)
-    val = val + 0xffff;
-  return val >> 16;
+  scaledPower = Battle_GetElementMultiplier(elementDifference, 0) * power *
+                powerMultiplier;
+  if (scaledPower < 0)
+    scaledPower = scaledPower + 0xffff;
+  return scaledPower >> 16;
 }
 
 // The amount healed: `power` and `rate` (256 is 1x) times the multiplier for
 // twice the healer's element power above 100.
 //   element : the healer's power in the element (100 is 1x)
-s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
-  s32 val;
-  u32 prod;
+s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
+  s32 signedProduct;
+  u32 scaledRecovery;
 
-  prod = Battle_GetElementMultiplier(element * 2 - 200, 0) * power;
-  prod = rate * prod;
-  val = prod;
-  if (val < 0)
-    val = val + 0xffff;
-  return val >> 16;
+  scaledRecovery =
+      Battle_GetElementMultiplier(elementPower * 2 - 200, 0) * power;
+  scaledRecovery = powerMultiplier * scaledRecovery;
+  signedProduct = scaledRecovery;
+  if (signedProduct < 0)
+    signedProduct = signedProduct + 0xffff;
+  return signedProduct >> 16;
 }
 
-// Returns the element unit `id` attacks with (4 for none): an enemy's comes
+// Returns the element the unit attacks with (4 for none): an enemy's comes
 // from its kind, a character's from its equipped weapon.
-s32 Item_GetEquippedElement(s32 id) {
+s32 Item_GetEquippedElement(s32 owner) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;
 
-  unit = UnitGet(id);
+  unit = UnitGet(owner);
   if (unit->classIndex == 0)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition(unit, 1); // 1: weapon
@@ -2445,25 +2478,25 @@ s32 Item_GetEquippedElement(s32 id) {
 
 // Returns the unleash chance, in percent, that a unit's equipment adds
 // (equipment effect 23).
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner) {
-  s32 sum;
-  s32 i;
-  s32 j;
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
+  s32 chanceBonus;
+  s32 inventorySlot;
+  s32 effectIndex;
   struct ItemDefinition *item;
 
-  sum = 0;
-  for (i = 0; i < 15; i++) {
-    if (owner->inventory[i] & INVENTORY_EQUIPPED) {
-      item = Item_GetDirect(owner->inventory[i]);
-      for (j = 0; j < 4; j++) {
-        if (item->effects[j].kind == ITEM_EFFECT_ADD_UNLEASH_CHANCE)
-          sum += item->effects[j].amount;
+  chanceBonus = 0;
+  for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+    if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+      item = Item_GetDirect(unit->inventory[inventorySlot]);
+      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+        if (item->effects[effectIndex].kind == ITEM_EFFECT_ADD_UNLEASH_CHANCE)
+          chanceBonus += item->effects[effectIndex].amount;
       }
     }
   }
-  if (sum < 0)
-    sum = 0;
-  return sum;
+  if (chanceBonus < 0)
+    chanceBonus = 0;
+  return chanceBonus;
 }
 
 // Rolls whether a character's weapon unleashes. Returns the unleash action,
@@ -2491,77 +2524,77 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   return 1;
 }
 
-// Returns the base chance, in percent, of effect `effect_id`. A negative
+// Returns the base chance, in percent, of effect `effectId`. A negative
 // value is a fixed chance that elements and luck do not change.
-s32 BattleFx_GetBaseSuccessRate(s32 effect_id) {
-  s32 battle_result;
-  u32 entry_index;
+s32 BattleFx_GetBaseSuccessRate(s32 effectId) {
+  s32 fixedChance;
+  u32 effectIndex;
 
-  entry_index = effect_id - 8;
-  switch (entry_index) {
+  effectIndex = effectId - 8;
+  switch (effectIndex) {
   case 4:
   case 5:
-    return 0x46;
+    return 70;
   case 8:
   case 9:
-    return 0x4B;
+    return 75;
   case 14:
-    return 0x1E;
+    return 30;
   case 15:
-    return 0x28;
+    return 40;
   case 16:
-    return 0x2D;
+    return 45;
   case 10:
   case 11:
   case 17:
-    return 0x37;
+    return 55;
   case 18:
-    return 0x19;
+    return 25;
   case 19:
-    return 0x14;
+    return 20;
   case 12:
   case 23:
-    return 0x41;
+    return 65;
   case 13:
   case 26:
-    return 0x23;
+    return 35;
   case 27:
-    return 0x32;
+    return 50;
   case 48:
-    battle_result = 0x3C;
+    fixedChance = 60;
     break;
   case 49:
-    battle_result = 0x5A;
+    fixedChance = 90;
     break;
   case 0:
   case 1:
   case 20:
   case 24:
-    return 0x3C;
+    return 60;
   default:
-    battle_result = 0x64;
+    fixedChance = 100;
     break;
   }
-  return 0 - battle_result;
+  return 0 - fixedChance;
 }
 
 // Returns 1 when the unit is weak to effect `effectId`: one of three listed
 // for its enemy kind or class.
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
-  const u8 *entries;
-  s32 i;
+  const u8 *weakEffects;
+  s32 weaknessIndex;
 
   if (target->classIndex == 0) {
-    entries = Enemy_GetDefinition(target->classId) + 0x48;
-    for (i = 0; i < 3; i++) {
-      if (*entries == effectId)
+    weakEffects = Enemy_GetDefinition(target->classId) + 0x48;
+    for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
+      if (*weakEffects == effectId)
         return 1;
-      entries++;
+      weakEffects++;
     }
   } else {
-    entries = Class_GetDefinition(target->classIndex)->unk50;
-    for (i = 0; i < 3; i++) {
-      if (*entries++ == effectId)
+    weakEffects = Class_GetDefinition(target->classIndex)->unk50;
+    for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
+      if (*weakEffects++ == effectId)
         return 1;
     }
   }
@@ -2569,8 +2602,8 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
 }
 
 // Returns 1 for the revive effects, which only work on a downed unit.
-s32 Battle_IsReviveEffect(s32 effect_id) {
-  if ((effect_id == 5) || (effect_id == 0x38) || (effect_id == 0x39)) {
+s32 Battle_IsReviveEffect(s32 effectId) {
+  if ((effectId == 5) || (effectId == 0x38) || (effectId == 0x39)) {
     return 1;
   }
   return 0;
@@ -2686,184 +2719,187 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 // Returns who got it, -1 if it was found before or -2 when nobody has room.
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
   s32 flag = djinn + element * 20 + FLAG_DJINNI_0;
-  s32 bestNo = 0;
-  s32 bestVal = 999;
-  s32 count;
-  s32 i;
-  s32 j;
+  s32 leastLoadedOwner = 0;
+  s32 fewestDjinn = 999;
+  s32 partySize;
+  s32 partyIndex;
+  s32 elementIndex;
 
   if (GameFlag_Test(flag) != 0)
     return -1;
 
-  count = Party_CountActiveOwners();
-  for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = UnitGet(gGameState.activeOwners[i]);
+  partySize = Party_CountActiveOwners();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    struct BattleUnit *unit = UnitGet(gGameState.activeOwners[partyIndex]);
 
     if (unit->djinnOwnedCounts[element] <= 9) {
-      s32 value = 0;
+      s32 ownedDjinn = 0;
 
-      for (j = 0; j < 4; j++)
-        value += unit->djinnOwnedCounts[j];
-      if (bestVal > value) {
-        bestVal = value;
-        bestNo = gGameState.activeOwners[i];
+      for (elementIndex = 0; elementIndex < 4; elementIndex++)
+        ownedDjinn += unit->djinnOwnedCounts[elementIndex];
+      if (fewestDjinn > ownedDjinn) {
+        fewestDjinn = ownedDjinn;
+        leastLoadedOwner = gGameState.activeOwners[partyIndex];
       }
     }
   }
 
-  if (bestVal == 999)
+  if (fewestDjinn == 999)
     return -2;
 
-  Djinn_AddToOwner(bestNo, element, djinn);
-  DjinnRecovery_AddStandby(bestNo, element, djinn);
+  Djinn_AddToOwner(leastLoadedOwner, element, djinn);
+  DjinnRecovery_AddStandby(leastLoadedOwner, element, djinn);
   GameFlag_SetBit(flag);
-  return bestNo;
+  return leastLoadedOwner;
 }
 
-// Gives Djinn `bit` of element `index` to a unit. Returns -1 when the unit
+// Gives Djinn `djinnIndex` of `element` to a unit. Returns -1 when the unit
 // holds ten of the element or has it already.
-s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
-  struct BattleUnit *state = UnitGet(owner);
+s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = UnitGet(owner);
 
-  if (state->djinnOwnedCounts[index] > 9)
+  if (unit->djinnOwnedCounts[element] > 9)
     return -1;
-  if ((state->djinnAvailable[index] & (1 << bit)) != 0)
+  if ((unit->djinnAvailable[element] & (1 << djinnIndex)) != 0)
     return -1;
-  state->djinnOwnedCounts[index]++;
-  state->djinnAvailable[index] |= 1 << bit;
+  unit->djinnOwnedCounts[element]++;
+  unit->djinnAvailable[element] |= 1 << djinnIndex;
   return 0;
 }
 
 // Returns 1 when the unit holds the Djinn and it is neither set nor waiting
 // on the standby and recovery list.
-s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
-  struct BattleUnit *state = UnitGet(owner);
-  struct DjinnRecoveryList *table;
-  s32 i;
-  s32 status;
+s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = UnitGet(owner);
+  struct DjinnRecoveryList *recoveryList;
+  s32 entryIndex;
+  s32 recoveryTurns;
 
-  if (state->djinnOwnedCounts[index] == 0)
+  if (unit->djinnOwnedCounts[element] == 0)
     return 0;
-  if (state->djinnActiveCounts[index] > 9) {
-    state->djinnActiveCounts[index] = 10;
+  if (unit->djinnActiveCounts[element] > 9) {
+    unit->djinnActiveCounts[element] = 10;
     return 0;
   }
-  if ((state->djinnAvailable[index] & (1 << bit)) == 0)
+  if ((unit->djinnAvailable[element] & (1 << djinnIndex)) == 0)
     return 0;
-  if ((state->djinnActive[index] & (1 << bit)) != 0)
+  if ((unit->djinnActive[element] & (1 << djinnIndex)) != 0)
     return 0;
 
-  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                (owner < 0 || owner > 7)))
-               ->list;
-  for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].index)
+  recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
+                       (owner < 0 || owner > 7)))
+                      ->list;
+  for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
+    if (element == recoveryList->entries[entryIndex].element &&
+        djinnIndex == recoveryList->entries[entryIndex].index)
       break;
   }
-  if (i == table->count ||
-      ((status = table->entries[i].turns) <= 0 && status != -2))
+  if (entryIndex == recoveryList->count ||
+      ((recoveryTurns = recoveryList->entries[entryIndex].turns) <= 0 &&
+       recoveryTurns != -2))
     return 1;
   return 0;
 }
 
 // Returns 1 when the Djinn is set on the unit.
-u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
-  s32 value = UnitGet(owner)->djinnActive[index] & (1 << bit);
+u32 Djinn_IsActive(s32 owner, s32 element, s32 djinnIndex) {
+  s32 activeBit = UnitGet(owner)->djinnActive[element] & (1 << djinnIndex);
 
-  return (u32)(-value | value) >> 31;
+  return (u32)(-activeBit | activeBit) >> 31;
 }
 
 // Sets a ready Djinn on the unit and works out its class again. Returns 1
 // when it was set.
-s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
-  struct BattleUnit *state = UnitGet(owner);
-  s32 result = Djinn_IsReady(owner, index, bit);
+s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = UnitGet(owner);
+  s32 isReady = Djinn_IsReady(owner, element, djinnIndex);
 
-  if (result != 0) {
-    if (state->djinnAvailable[index] & (1 << bit)) {
-      state->djinnActive[index] |= 1 << bit;
+  if (isReady != 0) {
+    if (unit->djinnAvailable[element] & (1 << djinnIndex)) {
+      unit->djinnActive[element] |= 1 << djinnIndex;
     } else {
       return 0;
     }
-    state->djinnActiveCounts[index]++;
+    unit->djinnActiveCounts[element]++;
     Unit_UpdateClass(owner);
   }
-  return result;
+  return isReady;
 }
 
 // Takes a set Djinn off the unit and works out its class again. Returns 1
 // when it was set.
-u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
-  struct BattleUnit *state = UnitGet(owner);
-  u32 present = Djinn_IsActive(owner, index, bit);
+u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex) {
+  struct BattleUnit *unit = UnitGet(owner);
+  u32 wasActive = Djinn_IsActive(owner, element, djinnIndex);
 
-  if (present != 0) {
-    state->djinnActiveCounts[index]--;
-    state->djinnActive[index] &= ~(1 << bit);
+  if (wasActive != 0) {
+    unit->djinnActiveCounts[element]--;
+    unit->djinnActive[element] &= ~(1 << djinnIndex);
     Unit_UpdateClass(owner);
   }
-  return present;
+  return wasActive;
 }
 
 // Takes the Djinn off its side's standby and recovery list. Returns 1 when
 // it was there.
-s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
-  struct DjinnRecoveryList *table;
-  s32 found = 0;
-  s32 i;
+s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
+  struct DjinnRecoveryList *recoveryList;
+  s32 removed = 0;
+  s32 entryIndex;
 
-  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                (owner < 0 || owner > 7)))
-               ->list;
-  for (i = 0; i < table->count; i++) {
-    if (index == table->entries[i].element && bit == table->entries[i].index) {
-      table->count--;
-      found = 1;
+  recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
+                       (owner < 0 || owner > 7)))
+                      ->list;
+  for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
+    if (element == recoveryList->entries[entryIndex].element &&
+        djinnIndex == recoveryList->entries[entryIndex].index) {
+      recoveryList->count--;
+      removed = 1;
       break;
     }
   }
-  for (; i < table->count; i++) {
-    table->entries[i] = table->entries[i + 1];
+  for (; entryIndex < recoveryList->count; entryIndex++) {
+    recoveryList->entries[entryIndex] = recoveryList->entries[entryIndex + 1];
   }
-  return found;
+  return removed;
 }
 
-// Puts Djinn `second` of element `first`, held by unit `kind`, at the end of
+// Puts the owner's Djinn at the end of
 // its side's list on standby (turns -1). Returns the list.
-u32 *DjinnRecovery_AddStandby(u32 kind, u32 first, u32 second) {
-  struct DjinnRecoveryList *table;
-  s32 count;
+u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
+  struct DjinnRecoveryList *recoveryList;
+  s32 entryIndex;
 
-  DjinnRecovery_Remove(kind, first, second);
-  table =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(kind > 7))->list;
-  count = table->count;
-  table->entries[count].element = first;
-  table->entries[count].index = second;
-  table->entries[count].unitId = kind;
-  table->entries[count].turns = -1;
-  table->count = count + 1;
-  return (u32 *)&table->count;
+  DjinnRecovery_Remove(owner, element, djinnIndex);
+  recoveryList =
+      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > 7))->list;
+  entryIndex = recoveryList->count;
+  recoveryList->entries[entryIndex].element = element;
+  recoveryList->entries[entryIndex].index = djinnIndex;
+  recoveryList->entries[entryIndex].unitId = owner;
+  recoveryList->entries[entryIndex].turns = -1;
+  recoveryList->count = entryIndex + 1;
+  return (u32 *)&recoveryList->count;
 }
 
 // Moves a Djinn from one unit to another, keeping it set or on standby.
 // Returns -1 when the source lacks it or the target has no room.
-s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
-  struct BattleUnit *state = UnitGet(source);
-  u32 present;
+s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
+  struct BattleUnit *sourceUnit = UnitGet(source);
+  u32 wasActive;
 
-  if ((state->djinnAvailable[index] & (1 << bit)) != 0) {
-    present = Djinn_IsActive(source, index, bit);
-    if (Djinn_AddToOwner(target, index, bit) == 0) {
-      Djinn_Deactivate(source, index, bit);
-      state->djinnAvailable[index] &= ~(1 << bit);
-      state->djinnOwnedCounts[index]--;
+  if ((sourceUnit->djinnAvailable[element] & (1 << djinnIndex)) != 0) {
+    wasActive = Djinn_IsActive(source, element, djinnIndex);
+    if (Djinn_AddToOwner(target, element, djinnIndex) == 0) {
+      Djinn_Deactivate(source, element, djinnIndex);
+      sourceUnit->djinnAvailable[element] &= ~(1 << djinnIndex);
+      sourceUnit->djinnOwnedCounts[element]--;
 
-      if (present != 0) {
-        Djinn_Activate(target, index, bit);
+      if (wasActive != 0) {
+        Djinn_Activate(target, element, djinnIndex);
       } else {
-        DjinnRecovery_Remove(source, index, bit);
-        DjinnRecovery_AddStandby(target, index, bit);
+        DjinnRecovery_Remove(source, element, djinnIndex);
+        DjinnRecovery_AddStandby(target, element, djinnIndex);
       }
       return 0;
     }
@@ -2874,35 +2910,35 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
 // Counts the party's Djinn on standby, by element into `counts` when it is
 // given. Returns the total.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
-  s32 found = 0;
-  struct DjinnRecoveryTable *base = Djinn_GetRecoveryTable(0);
-  struct DjinnRecoveryEntry *entry = base->list.entries;
-  s32 index;
+  s32 standbyCount = 0;
+  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
+  s32 entryIndex;
 
   if (counts != 0) {
     u8 *slot;
 
     slot = counts + 3;
-    *slot = found;
+    *slot = standbyCount;
     slot = counts + 2;
-    *slot = found;
+    *slot = standbyCount;
     slot = counts + 1;
-    *slot = found;
-    counts[0] = found;
+    *slot = standbyCount;
+    counts[0] = standbyCount;
   }
-  index = 0;
-  if (base->list.count != 0) {
+  entryIndex = 0;
+  if (recoveryTable->list.count != 0) {
     do {
       if (entry->turns == -1) {
         if (counts != 0)
           counts[entry->element]++;
-        found++;
+        standbyCount++;
       }
-      index++;
+      entryIndex++;
       entry++;
-    } while (index != base->list.count);
+    } while (entryIndex != recoveryTable->list.count);
   }
-  return found;
+  return standbyCount;
 }
 
 // Returns the ability ID used when the Djinni is unleashed.
@@ -2910,48 +2946,48 @@ s32 Djinn_GetAbilityId(u32 group, u32 index) {
   return Djinn_GetDefinition(group, index)->abilityId;
 }
 
-// Returns how many Djinn of element `index` the party holds, or of all
+// Returns how many Djinn of `element` the party holds, or of all
 // elements for -1.
-s32 Party_SumDjinnCounts(s32 index) {
+s32 Party_SumDjinnCounts(s32 element) {
   u16 owners[16];
-  s32 result = 0;
-  s32 count = Party_ListActiveOwners(owners);
+  s32 djinnCount = 0;
+  s32 partySize = Party_ListActiveOwners(owners);
 
-  if (result < count) {
-    u16 *owner = owners;
-    s32 remaining = count;
+  if (djinnCount < partySize) {
+    u16 *ownerCursor = owners;
+    s32 remainingOwners = partySize;
 
     do {
-      struct BattleUnit *state = UnitGet(*owner++);
+      struct BattleUnit *unit = UnitGet(*ownerCursor++);
 
-      if (index == -1) {
-        result += state->djinnOwnedCounts[0];
-        result += state->djinnOwnedCounts[1];
-        result += state->djinnOwnedCounts[2];
-        result += state->djinnOwnedCounts[3];
+      if (element == -1) {
+        djinnCount += unit->djinnOwnedCounts[0];
+        djinnCount += unit->djinnOwnedCounts[1];
+        djinnCount += unit->djinnOwnedCounts[2];
+        djinnCount += unit->djinnOwnedCounts[3];
       } else {
-        result += state->djinnOwnedCounts[index];
+        djinnCount += unit->djinnOwnedCounts[element];
       }
-      remaining--;
-    } while (remaining != 0);
+      remainingOwners--;
+    } while (remainingOwners != 0);
   }
-  return result;
+  return djinnCount;
 }
 
-// Gives a unit item `target` and equips it.
-void Inventory_AddAndEquip(s32 owner, s32 target) {
-  struct BattleUnit *state = UnitGet(owner);
+// Gives a unit `itemId` and equips every exactly matching inventory entry.
+void Inventory_AddAndEquip(s32 owner, s32 itemId) {
+  struct BattleUnit *unit = UnitGet(owner);
   u16 *entry;
-  s32 index;
+  s32 slot;
 
-  Inventory_AddItem(owner, target);
-  index = 0;
-  entry = state->inventory;
+  Inventory_AddItem(owner, itemId);
+  slot = 0;
+  entry = unit->inventory;
   do {
-    if (*entry++ == target)
-      Inventory_Equip(owner, index);
-    index++;
-  } while (index < INVENTORY_SLOTS);
+    if (*entry++ == itemId)
+      Inventory_Equip(owner, slot);
+    slot++;
+  } while (slot < INVENTORY_SLOTS);
 }
 
 // The party's equipment, put aside while the Colosso takes it away; the
@@ -2959,7 +2995,7 @@ void Inventory_AddAndEquip(s32 owner, s32 target) {
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 // Saves the first four characters' inventories, shortcuts and party order,
-// then strips everything but rings (type 6), gives Isaac item 16 to wear,
+// then keeps only the Psynergy-granting items (type 6), gives Isaac item 16,
 // sets flag 0x952 and restores everyone. Nothing happens when a snapshot is
 // already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
@@ -2967,40 +3003,41 @@ void InventorySnapshot_Save(void) {
   struct BattleUnit *unit;
   s16 *inventory;
   s32 owner;
-  s32 i;
-  s32 n;
-  s16 first;
-  s16 second;
+  s32 slot;
+  s16 firstShortcut;
+  s16 secondShortcut;
 
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    first = gGameState.firstShortcut;
-    second = gGameState.secondShortcut;
+    firstShortcut = gGameState.firstShortcut;
+    secondShortcut = gGameState.secondShortcut;
+    // Save each inventory before retaining its Psynergy-granting items.
     for (owner = 0; owner < 4; owner++) {
       unit = UnitGet(owner);
-      for (n = 0; n < 15; n++)
-        *save++ = unit->inventory[n];
-      for (n = 0; n < 15; n++) {
-        if (Item_GetDirect(unit->inventory[n])->type != 6)
-          unit->inventory[n] = 0;
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++)
+        *save++ = unit->inventory[slot];
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        if (Item_GetDirect(unit->inventory[slot])->type != 6)
+          unit->inventory[slot] = 0;
       }
-      n = 0;
       inventory = unit->inventory;
-      for (i = 0; i < 15; i++) {
-        if (inventory[i] != 0)
-          inventory[n++] = inventory[i];
-      }
-      for (; n < 15; n++)
-        inventory[n] = 0;
+      Inventory_CompactSlots(inventory);
       Unit_UpdateClass(owner);
       UnitCalc(owner);
     }
-    *save++ = first;
-    *save++ = second;
+    // Keep shortcuts and party order with the inventory snapshot.
+    *save++ = firstShortcut;
+    *save++ = secondShortcut;
+#ifdef UBFIX
+    // Party order is a byte array; pack its two saved halfwords explicitly.
+    save[0] = gGameState.activeOwners[0] | (gGameState.activeOwners[1] << 8);
+    save[1] = gGameState.activeOwners[2] | (gGameState.activeOwners[3] << 8);
+#else
     inventory = (s16 *)gGameState.activeOwners;
     save[0] = inventory[0];
     save[1] = inventory[1];
+#endif
     Inventory_AddAndEquip(0, 16);
     GameFlag_SetBit(0x952);
   }
@@ -3030,8 +3067,16 @@ void InventorySnapshot_Restore(void) {
 
     gGameState.firstShortcut = *source++;
     gGameState.secondShortcut = *source++;
+#ifdef UBFIX
+    gGameState.activeOwners[0] = source[0];
+    gGameState.activeOwners[1] = source[0] >> 8;
+    gGameState.activeOwners[2] = source[1];
+    gGameState.activeOwners[3] = source[1] >> 8;
+    source++;
+#else
     *(u16 *)gGameState.activeOwners = *source++;
     *(u16 *)((u8 *)gGameState.activeOwners + 2) = *source;
+#endif
     source = gInventorySnapshot;
     *source = 0;
     GameFlag_ClearBit(0x952);

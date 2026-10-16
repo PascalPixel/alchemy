@@ -499,3 +499,8 @@ round	lane	source	old_name	new_name	evidence
 1	03	games/tbs/src/window/battle_command.c	DrawPartyPanels	BattleMenu_ClearPartyHighlights	Nested helper passes empty0xff actor list to dim party strip and updates actor modes. W7 git log --all -S new name found no collision.
 1	03	games/tbs/src/window/battle_command.c	DrawLocalizedResource	Link_DrawWaitingForOpponent	Nested helper copies MsgWaitingForOpponent into captured link display window. W7 no collision.
 1	03	games/tbs/src/window/battle_command.c	TableGet	ResourceMenu_ReadCommandPosition	Private inline reads signed gMenu_TopEntryPositionByCommand mapping. W7 no collision; no emitted symbol.
+1	02	games/tbs/src/field/field.c	ApplyOperand	ApplyScriptOperandCommand	reads work-value selector/value and invokes its operand handler; git log --all -S new-name collision check empty
+1	02	games/tbs/src/field/field.c	ApplyPosition	ApplyScriptPositionCommand	reads three coordinate words and invokes selected positioning operation; git log --all -S new-name collision check empty
+1	02	games/tbs/src/field/field.c	CopyBlock	CopyMetatileHalfColumn	copies top/bottom metatile entries for a selected half column; git log --all -S new-name collision check empty
+1	02	games/tbs/src/field/field.c	CopyCameraCell	CopyMetatileToScreen	copies both words of a metatile to its screen-map rows; git log --all -S new-name collision check empty
+1	02	games/tbs/src/field/field.c	CopyEntry	CopyWorldMapTileColumn	expands palette-mapped world-map metatile entries into one screen tile column; git log --all -S new-name collision check empty

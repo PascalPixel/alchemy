@@ -321,7 +321,7 @@ extern u32 gStagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 Transform_UpdateVerticesSize;
-extern const u8 gWorldMap_FootprintActions[];
+extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 CalculateFacingAngle(s32, s32);
 void Engine_ActorFollow(s32 actor, s32 leader);

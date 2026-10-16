@@ -3592,19 +3592,19 @@ u32 Field_StoreAssignedKeyValue(u32 value) {
 // flag in the event work and return 1; the two shortcut keys pass on their
 // assignment (Field_StoreAssignedKeyValue). Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
-  struct EventRuntime *work = gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 result = 0;
 
   if (work == NULL)
     return 0;
   if (gKeysPressed & gGameState.selectKeys) {
-    work->unk172[0] = 1;
+    work->menu = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.aKeys) {
-    work->unk172[1] = 1;
+    work->examine = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.startKeys) {
-    work->unk172[2] = 1;
+    work->start = 1;
     result = 1;
   } else if (gKeysPressed & gGameState.firstShortcutKeys) {
     result = Field_StoreAssignedKeyValue(gGameState.firstShortcut);

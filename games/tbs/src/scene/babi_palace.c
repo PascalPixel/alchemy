@@ -27,6 +27,8 @@
 #include "field_event.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "global_cells.h"
+#include "display_transition.h"
 
 struct OwnerState {
   u8 unk00[0x34];
@@ -880,7 +882,7 @@ static void FieldScene_RunBranchingActorSequence(void) {
   s32 step;
   s32 pick;
   struct EventWork *event;
-  u8 *work;
+  struct DisplayTransitionState *work;
 
   Event_Begin();
   Event_SetMessage(MsgTolbiCallsName);
@@ -898,24 +900,30 @@ static void FieldScene_RunBranchingActorSequence(void) {
   event->transitionFrames = 12;
   Task_Wait(1);
   DisplayTransition_InitializeBattleEffectState(9);
-  work = ((u8 **)&gEventWork)[4];
-  SetHalf((u16 *)(work + 0x52a), 0);
-  SetHalf((u16 *)(work + 0x534), 0x1f1f);
-  SetHalf((u16 *)(work + 0x536), 1);
+  // UB: slot 31 lies past scalar gEventWork. Its named load adds four
+  // bytes in the native EN trial (0x82c to 0x830).
+#ifdef UBFIX
+  work = gDisplayTransition;
+#else
+  work = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
+#endif
+  SetHalf(&work->value, 0);
+  work->mask = 0x1f1f;
+  work->active = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   for (step = 1; step <= 5; step++) {
     Task_Wait(3);
-    *(u16 *)(work + 0x52a) = step;
+    work->value = step;
   }
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
   for (step = 5; step <= 31; step++) {
     Task_Wait(3);
-    *(u16 *)(work + 0x52a) = step;
+    work->value = step;
   }
-  SetHalf((u16 *)(work + 0x536), 31);
+  work->active = 31;
   event = (struct EventWork *)((u8 **)&gEventWork)[0];
   event->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   event->transitionFrames = 24;

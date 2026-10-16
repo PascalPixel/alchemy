@@ -1257,7 +1257,7 @@ void ObjectTable_Snapshot(void) {
   u32 flags;
   u32 priority;
 
-  if (((struct EventRuntime *)gEventWork)->mode19e == MODE_WORLD_MAP)
+  if (((struct FieldWork *)gEventWork)->mode == MODE_WORLD_MAP)
     limit = 8;
   for (i = 0; i < limit; i++) {
     object = ObjectTable_Get(i);
@@ -1407,7 +1407,7 @@ s32 Field_CountRequests(void) {
 // Returns the collision code of the map cell 16 pixels ahead of the party
 // leader (a world map block on the world map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
-  struct EventRuntime *runtime;
+  struct FieldWork *runtime;
   struct ObjectRuntime *object;
   struct MapState *map;
   struct FieldPosition position;
@@ -1428,7 +1428,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.z = object->z;
   Vector_AddPolarOffset(0x100000, object->angle, &position);
 
-  if (runtime->mode19e == MODE_WORLD_MAP) {
+  if (runtime->mode == MODE_WORLD_MAP) {
     // World map blocks are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
@@ -1754,11 +1754,11 @@ s32 BattleParty_ApplyStatusDamage(void) {
 // in progress, sets the camera's movement state to 1 and resumes the map's
 // animation. Elsewhere it does nothing.
 void Battle_SetObjectFlag5bWhenMode3(void) {
-  struct EventRuntime *work;
+  struct FieldWork *work;
   struct DisplayTransitionState *transition;
 
   work = Runtime_AllocateBlock(0x1B, 0xCCC);
-  if (work->mode19e == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     transition = Runtime_AllocateBlock(0x1F, 0x540);
     if ((transition != NULL) && (transition->step != 0)) {
       transition->start = 0;
@@ -1775,10 +1775,10 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
 // Ends what Battle_SetObjectFlag5bWhenMode3 started: on the world map, reloads
 // the area's graphics and sets the camera's movement state back to 0.
 void Battle_ClearObjectFlag5bWhenMode3(void) {
-  struct EventRuntime *work;
+  struct FieldWork *work;
 
   work = Runtime_AllocateBlock(0x1B, 0xCCC);
-  if (work->mode19e == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     Map_LoadAreaGraphicsFar();
     ((struct ObjectRuntime *)((struct EventWork *)work)->viewCenter)
         ->movementState = 0;

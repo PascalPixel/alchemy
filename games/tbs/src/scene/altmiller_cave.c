@@ -149,7 +149,7 @@ static void EV65_TOUCH(void) { AltmillerCave_SetFadeLevel(5); }
 
 static void SceneEffect_SetupBlendByFlag201(void) {
   u8 **base = (u8 **)&gEventWork;
-  u8 *state;
+  struct DisplayTransitionState *state;
 
   {
     u8 *tmp = *base;
@@ -158,20 +158,26 @@ static void SceneEffect_SetupBlendByFlag201(void) {
   }
   Engine_TaskWait(1);
   DisplayTransition_InitializeBattleEffectState(0x4d);
-  state = base[4];
+  // UB: slot 31 lies past scalar gEventWork. Its named load adds eight
+  // bytes in the native EN trial (0x98 to 0xa0).
+#ifdef UBFIX
+  state = gDisplayTransition;
+#else
+  state = (struct DisplayTransitionState *)base[4];
+#endif
   {
-    u16 *slot = (u16 *)(state + 0x52a);
+    u16 *slot = &state->value;
     s32 c = 5;
     *slot = c;
   }
   if (Engine_GameFlagIsSet(0x201) != 0) {
     {
-      u16 *slot = (u16 *)(state + 0x534);
+      s16 *slot = &state->mask;
       s32 c = 0x1d1d;
       *slot = c;
     }
     {
-      u16 *slot = (u16 *)(state + 0x536);
+      s16 *slot = &state->active;
       s32 c = 0x3f;
       *slot = c;
     }
@@ -179,12 +185,12 @@ static void SceneEffect_SetupBlendByFlag201(void) {
     return;
   }
   {
-    u16 *slot = (u16 *)(state + 0x534);
+    s16 *slot = &state->mask;
     s32 c = 0x3f3f;
     *slot = c;
   }
   {
-    u16 *slot = (u16 *)(state + 0x536);
+    s16 *slot = &state->active;
     s32 c = 31;
     *slot = c;
   }

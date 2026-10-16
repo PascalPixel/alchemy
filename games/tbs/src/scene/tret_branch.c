@@ -25,6 +25,7 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
+#include "display_transition.h"
 
 // 前方宣言
 static void TretBranch_StartBg3Split(void);
@@ -158,7 +159,7 @@ static void TretBranch_ExchangeInputPacket(void) {
 s32 TretBranch_InitializeBackdropTransition(void) {
   u8 **base = (u8 **)&gEventWork;
   u8 *work;
-  u8 *disp;
+  struct DisplayTransitionState *disp;
   s32 off = 224;
   s32 *scene;
 
@@ -173,19 +174,25 @@ s32 TretBranch_InitializeBackdropTransition(void) {
   REG_BLDCNT = 0x3f42;
   REG_BLDALPHA = 0x0c04;
 
-  disp = base[4];
+  // UB: slot 31 lies past scalar gEventWork. Its named load adds six
+  // bytes in the native EN trial (0x6a to 0x70).
+#ifdef UBFIX
+  disp = gDisplayTransition;
+#else
+  disp = (struct DisplayTransitionState *)base[4];
+#endif
   {
-    u16 *slot = (u16 *)(disp + 0x534);
+    s16 *slot = &disp->mask;
     int value = 0x3f3f;
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)(disp + 0x536);
+    s16 *slot = &disp->active;
     int value = 31;
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)(disp + 0x52a);
+    u16 *slot = &disp->value;
     int value = 10;
     *slot = value;
   }

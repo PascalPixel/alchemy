@@ -400,13 +400,20 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 }
 
 void Shop_RestoreSceneTiles(s32 layer) {
+  // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
+  // bytes in the native EN trial (0x54 to 0x5c).
+#ifdef UBFIX
+  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  u8 *map = (u8 *)gEventWork;
+#else
   u32 *scene = (u32 *)&gEventWork;
-  u8 *work = (u8 *)scene[5];
+  struct BattleEffectBuffers *work = (struct BattleEffectBuffers *)scene[5];
   u8 *map = (u8 *)scene[0];
-  u8 *saved = work + 0xe00;
+#endif
+  u16 *saved = work->target;
 
   Dma_Set(saved, map + 0x236, 0x84000150, REG_DMA3);
-  Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
+  Dma_Set(saved, work->current, 0x840002a0, REG_DMA3);
   BattleFx_ApplyColorToTargetBufferFar(layer, 1);
   BattleFx_StartBufferInterpolationFar(16);
 }

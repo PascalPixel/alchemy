@@ -1285,7 +1285,7 @@ static void SetSolSanctumActorStep(s32 actor_step, s32 wait_frames) {
 
 static void SolLunaRooms_RunLightScene(void) {
   struct FieldActor *leader;
-  u8 *field;
+  struct BattleEffectBuffers *field;
 
   Engine_EventBegin();
   Camera_MoveTo(0x11e0000, -1, 0x860000, 0);
@@ -1297,7 +1297,7 @@ static void SolLunaRooms_RunLightScene(void) {
   Engine_TaskWait(1);
   Actor_SetPosition(1, PIXELS(280), PIXELS(134));
   Actor_FaceDirection(1, FACING_NORTHWEST, 0);
-  ((struct EventGlobals *)&gEventWork)->event->transitionFrames = 1;
+  gEventWork->transitionFrames = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1358,18 +1358,24 @@ static void SolLunaRooms_RunLightScene(void) {
   }
   Engine_ActorWaitForMove(1);
   Engine_ActorSetPosition(1, 0, 0);
-  field = ((struct EventGlobals *)&gEventWork)->field;
-  *(u16 *)(field + 0xe00) = 0;
-  *(u16 *)(field + 0xe02) = 0;
-  *(u16 *)(field + 0xe04) = 0;
-  field[0x2a00] = 0;
-  field[0x2a01] = 1;
-  field[0x2a02] = 1;
-  field[0x2a03] = 1;
+  // UB: EventGlobals traverses beyond scalar gEventWork to slot 32. Its
+  // named load keeps native EN size 0x310 but changes address setup.
+#ifdef UBFIX
+  field = gPaletteBufferWork;
+#else
+  field =
+      (struct BattleEffectBuffers *)((struct EventGlobals *)&gEventWork)->field;
+#endif
+  field->target[0] = 0;
+  field->target[1] = 0;
+  field->target[2] = 0;
+  field->page = 0;
+  field->duration = 1;
+  field->step = 1;
+  field->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct EventGlobals *)&gEventWork)->event->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  ((struct EventGlobals *)&gEventWork)->event->transitionFrames = 16;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->transitionFrames = 16;
   Engine_EventEnd();
 }
 

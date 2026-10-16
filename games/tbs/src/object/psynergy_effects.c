@@ -517,23 +517,23 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 
 // The event command "open screen": starts the event's screen transition.
 void Event_StartScreenTransition(void) {
-  struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
-  DisplayTransition_Start(runtime->value1c0, runtime->value1c8);
-  runtime->status1c6 = 1;
+  DisplayTransition_Start(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 1;
 }
 
 // The event command "close screen": finishes the event's screen transition.
 void Event_FinishScreenTransition(void) {
-  struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
-  DisplayTransition_Finish(runtime->value1c0, runtime->value1c8);
-  runtime->status1c6 = 0;
+  DisplayTransition_Finish(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 0;
 }
 
 // The event command "wait for screen": waits as long as the transition runs.
 void Event_WaitTransitionFrames(void) {
-  WaitFrames(((struct EventRuntime *)gEventWork)->value1c8);
+  WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
 }
 
 // Makes the event leave for entrance entrance of scene scene.
@@ -2814,18 +2814,18 @@ void ObjectEffect_ReservedNoOp941DC(void) {}
 // and the encounter sounds, closes the screen and flashes the backdrop white,
 // fading it to black over 16 frames.
 s32 Field_StartEncounterTransition(s32 unused) {
-  struct EventRuntime *work = gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 i;
   s32 level;
 
   AudioCommand_PlayFar(gGameState.sceneCue);
   AudioCommand_PlayFar(288);
   AudioCommand_PlayFar(147);
-  if (work->mode19e == 3) {
+  if (work->mode == 3) {
     // On the world map the flash colours BG palette colour 243 instead.
     Io_Write16(0x7fff, (u16 *)0x050001e6);
     DisplayTransition_Finish(0x401, 16);
-    work->status1c6 = 0;
+    work->transitionActive = 0;
     WaitFrames(16);
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
@@ -2835,7 +2835,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   } else {
     Io_Write16(0x7fff, &PLTT_BACKDROP);
     DisplayTransition_Finish(0x207, 16);
-    work->status1c6 = 0;
+    work->transitionActive = 0;
     WaitFrames(16);
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;

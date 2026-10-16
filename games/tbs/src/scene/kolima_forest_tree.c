@@ -813,7 +813,9 @@ static void KolimaForestTree_PlayGesture(s32 actor, s32 gesture) {
   Engine_TaskWait(12);
 }
 
-static void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect) {
+static void PaletteScene_AdvanceOrbit(union FieldObject *fieldObject) {
+  struct OrbitingPaletteEffect *effect =
+      (struct OrbitingPaletteEffect *)fieldObject;
   s32 position[3];
   s32 step = effect->step;
   s32 heading;
@@ -865,8 +867,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
         spark->targetY = gKolimaForestTreeSparkOrigin[1];
         spark->targetZ = gKolimaForestTreeSparkOrigin[2];
         spark->speed = 0x19999;
-        spark->update =
-            (void (*)(union FieldObject *))PaletteScene_AdvanceOrbit;
+        spark->update = PaletteScene_AdvanceOrbit;
       }
     }
     break;

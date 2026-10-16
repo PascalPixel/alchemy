@@ -1,7 +1,15 @@
 #include "types.h"
 #include "field_obj.h"
 
-static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self) {
+// UB: update hooks return void. In tbs-en vault_revisit, plain
+// void differs in 13 bytes of the 152-byte function. Keep the unused
+// native result in matching builds.
+#ifdef UBFIX
+static void SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
+#else
+static s32 SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *self = (struct FieldActor *)fieldObject;
   u8 **globals = gWindowWork;
   u8 *scene = globals[0];
   u8 *workspace = globals[12];
@@ -17,7 +25,11 @@ static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self) {
     partner = Object_GetById(14);
   }
   if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0) {
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   }
 
   player = Object_GetById(ACTOR_PARTY_LEADER);
@@ -30,5 +42,9 @@ static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self) {
   }
 
   SceneActor_CheckFacingAndRange(self, player, range, force);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }

@@ -238,7 +238,16 @@ VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-static s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 6 bytes of the 56-byte function. Keep the unused
+// native result in matching builds.
+#ifdef UBFIX
+static void
+OverlayObject_UpdateEveryFourFrames(union FieldObject *fieldObject) {
+#else
+static s32 OverlayObject_UpdateEveryFourFrames(union FieldObject *fieldObject) {
+#endif
+  void *obj = (void *)fieldObject;
   if ((gFrameCount & 3) == 0)
     ObjectGroup_SetChildValue(obj, 7);
   else
@@ -246,10 +255,24 @@ static s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
 
   if ((gFrameCount & 7) == 0)
     Engine_AudioPlayCue(138);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
-static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 14 bytes of the 172-byte function. Keep the unused
+// native result in matching builds.
+#ifdef UBFIX
+static void
+SceneEffect_SpawnRandomEveryEightFramesB(union FieldObject *fieldObject) {
+#else
+static s32
+SceneEffect_SpawnRandomEveryEightFramesB(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct EffectOptions params;
   s32 phase, x, y, speed;
   phase = gFrameCount & 7;
@@ -265,7 +288,11 @@ static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object) {
         (((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
     Effect_Spawn(x, y, object->z.fixed, 0, speed, phase, 0x000b0000, &params);
   }
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static s32 OverlayObject_ApplyZero(struct ScriptInterpreter *interpreter) {
@@ -274,7 +301,17 @@ static s32 OverlayObject_ApplyZero(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-static s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 14 bytes of the 180-byte function. Keep the unused
+// native result in matching builds.
+#ifdef UBFIX
+static void
+SceneEffect_SpawnTwoRandomizedParticles(union FieldObject *fieldObject) {
+#else
+static s32
+SceneEffect_SpawnTwoRandomizedParticles(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct EffectOptions params;
   s32 speed;
   s32 phase;
@@ -297,8 +334,13 @@ static s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj) {
                      ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
                  obj->y.fixed, obj->z.fixed, 0, 0, 0, 0x000a0000, &params);
   }
+#ifdef UBFIX
+
+  return;
+#else
 
   return 0;
+#endif
 }
 
 static void SceneEffect_RunObjectZeroColorSequence(void) {
@@ -309,8 +351,12 @@ static void SceneEffect_RunObjectZeroColorSequence(void) {
   obj = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
   Engine_AudioPlayCue(228);
+#ifdef UBFIX
+  obj->update = SceneEffect_SpawnTwoRandomizedParticles;
+#else
   obj->update =
       (void (*)(union FieldObject *))SceneEffect_SpawnTwoRandomizedParticles;
+#endif
   obj->speed = 0x3333;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
@@ -340,8 +386,12 @@ static void FieldScene_RunOpeningAuxiliarySequence(void) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Event_PlayCue(228);
+#ifdef UBFIX
+    leader->update = SceneEffect_SpawnTwoRandomizedParticles;
+#else
     leader->update =
         (void (*)(union FieldObject *))SceneEffect_SpawnTwoRandomizedParticles;
+#endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
@@ -417,8 +467,17 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_radial.h"
 
-static s32
-SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 172 bytes (extent 196 to 192 bytes). Keep the
+// unused native result in matching builds.
+#ifdef UBFIX
+static void SceneEffect_SpawnRandomizedParticleEveryFourFrames(
+    union FieldObject *fieldObject) {
+#else
+static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(
+    union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct EffectOptions params;
   s32 y;
   s32 a;
@@ -426,7 +485,11 @@ SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj) {
   s32 random;
 
   if ((gFrameCount & 3) != 0) {
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   }
   if ((u32)(Engine_RandomNext() * 6) >> 16 == 0) {
     if (obj->targetX != ACTOR_NO_TARGET || obj->targetZ != ACTOR_NO_TARGET) {
@@ -445,7 +508,11 @@ SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj) {
   b = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   Effect_Spawn(obj->x.fixed, obj->y.fixed, obj->z.fixed - 0x10000, a, y, b,
                0x001c0001, &params);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z,
@@ -468,8 +535,12 @@ static struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z,
   obj->y.fixed = 0;
   obj->collisionFlags = 0;
   obj->priorityFlags = 2;
+#ifdef UBFIX
+  obj->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#else
   obj->update = (void (*)(
       union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#endif
   obj->riseEnabled = 0;
   Engine_ObjectSetScript(obj, arg2);
   return obj;
@@ -731,8 +802,12 @@ static void EV45_TOUCH(void) {
   Engine_EventWait(1);
   SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags, 1);
   Engine_EventWait(20);
+#ifdef UBFIX
+  actor->update = SceneEffect_SpawnRandomEveryEightFramesB;
+#else
   actor->update =
       (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
+#endif
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
@@ -1425,12 +1500,26 @@ static void EV35_SCRIPT(void) {
   VenusLighthouse_SettlePushedBlocks();
 }
 
-static s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 7 bytes (extent 34 to 32 bytes). Keep the
+// unused native result in matching builds.
+#ifdef UBFIX
+static void
+SceneActor_SetHeightAboveLinkedRecord(union FieldObject *fieldObject) {
+#else
+static s32
+SceneActor_SetHeightAboveLinkedRecord(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *rec;
 
   rec = Object_GetById(obj->timer);
   obj->y.fixed = rec->y.fixed + 0x100000;
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void VenusLighthouse_LowerFloatingBlocks(s32 wait) {
@@ -1595,8 +1684,12 @@ static void VenusLighthouse_ResolveFloatingBlock(void) {
         Object_GetById(8)->timer--;
         Object_GetById(9)->timer++;
       }
+#ifdef UBFIX
+      Object_GetById(slot + 10)->update = SceneActor_SetHeightAboveLinkedRecord;
+#else
       Object_GetById(slot + 10)->update =
           (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
+#endif
       VenusLighthouse_LowerFloatingBlocks(40);
       Object_GetById(slot + 10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       GameFlag_Set(slot + 0x200);
@@ -2147,8 +2240,12 @@ s32 Scene_RunEntrySetup(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = 2;
         Actor_SetPosition(10, 0x2e70000, 174 << 18);
+#ifdef UBFIX
+        actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#else
         actor->update = (void (*)(union FieldObject *))
             SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#endif
       }
       EV09_PSYNERGY();
       break;
@@ -2275,8 +2372,12 @@ s32 Scene_RunEntrySetup(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = 2;
         Actor_SetPosition(12, 0x2d70000, 158 << 18);
+#ifdef UBFIX
+        actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#else
         actor->update = (void (*)(union FieldObject *))
             SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#endif
       }
       VenusLighthouse_SettlePushedBlocks();
       break;
@@ -2429,8 +2530,12 @@ s32 Scene_RunEntrySetup(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = 2;
         Actor_SetPosition(19, 215 << 16, 150 << 18);
+#ifdef UBFIX
+        actor->update = SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#else
         actor->update = (void (*)(union FieldObject *))
             SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+#endif
       }
       Scene_RunScene3c8SequenceA();
       break;
@@ -2757,7 +2862,15 @@ static void Scene_RunEastParticleWaveSequence(void) {
   Engine_EventEnd();
 }
 
-static s32 VenusLighthouse_UpdateRisingSpray(struct FieldActor *actor) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 14 bytes of the 196-byte function. Keep the unused
+// native result in matching builds.
+#ifdef UBFIX
+static void VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
+#else
+static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
   struct EffectOptions *o = &options;
   s32 phase;
@@ -2778,7 +2891,11 @@ static s32 VenusLighthouse_UpdateRisingSpray(struct FieldActor *actor) {
     rise = (((u32)(Engine_RandomNext() * 4) >> 16) << 15) + 0x8000;
     Effect_Spawn(x, y, z, 0, rise, phase, 0x330000, o);
   }
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void FieldScene_RunLeaderDropSequence(void) {
@@ -2829,7 +2946,11 @@ static void FieldScene_RunLeaderDropSequence(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_EventWait(40);
+#ifdef UBFIX
+  leader->update = VenusLighthouse_UpdateRisingSpray;
+#else
   leader->update = (void *)VenusLighthouse_UpdateRisingSpray;
+#endif
   Engine_EventWait(60);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Engine_ActorSetSpritePriority(20, 1);

@@ -729,7 +729,15 @@ static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front,
   return result;
 }
 
-static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 320 to 316 bytes in tbs-en.
+#ifdef UBFIX
+static void
+CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
+#else
+static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(0);
   s32 hit;
   u32 id;
@@ -737,7 +745,11 @@ static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor) {
   if (((s8 *)gEventWork)[0xcc7] == 1) {
     actor->sprite->priority = leader->sprite->priority;
     actor->collisionFlags |= 1;
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   }
   hit = CrossbonePillar_SyncPriorityIfBehind(actor, leader);
   for (id = 8; id <= 11; id++) {
@@ -764,7 +776,11 @@ static s32 CrossbonePillar_UpdateActorPriority(struct FieldActor *actor) {
   if (hit == 0) {
     actor->priorityFlags |= 1;
   }
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void CrossbonePillar_SortPillarActors(void) {
@@ -954,7 +970,16 @@ static void EV41_TOUCH(void) {
   obj->riseCounter = 0;
 }
 
-static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 54 to 52 bytes in tbs-en.
+#ifdef UBFIX
+static void
+SceneActor_UpdateBit1ByPositionToSlotZero(union FieldObject *fieldObject) {
+#else
+static s32
+SceneActor_UpdateBit1ByPositionToSlotZero(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (actor->z.fixed > ref->z.fixed) {
@@ -963,7 +988,11 @@ static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
 
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void CrossbonePillar_RunActorAction(s32 id) {
@@ -971,8 +1000,12 @@ static void CrossbonePillar_RunActorAction(s32 id) {
 
   actor = Object_GetById(id);
   Engine_EventBegin();
+#ifdef UBFIX
+  actor->update = SceneActor_UpdateBit1ByPositionToSlotZero;
+#else
   actor->update =
       (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+#endif
   Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                          actor->z.fixed >> 20);
   GameFlag_Set(id + 0x1f5);
@@ -1054,8 +1087,16 @@ static void SceneEffect_SpawnRandomizedParticle(void) {
                d);
 }
 
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 172 to 168 bytes in tbs-en.
+#ifdef UBFIX
+static void
+SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
+#else
 static s32
-SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor) {
+SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
   struct EffectOptions *p;
   u32 phase = gFrameCount & 7;
@@ -1065,7 +1106,11 @@ SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor) {
   s32 scale;
 
   if (phase != 0)
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
 
   p = &options;
   p->palette = 7;
@@ -1080,7 +1125,11 @@ SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor) {
 
   Effect_Spawn(x, y, z, 0, scale, phase,
                EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, p);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void EV13_PSYNERGY(void) {
@@ -1099,8 +1148,13 @@ static void EV13_PSYNERGY(void) {
     FieldScheduler_AddCallback(SceneEffect_SpawnRandomizedParticle, 0xc80);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x201) != 0) {
+#ifdef UBFIX
+      Object_GetById(12)->update =
+          SceneEffect_SpawnRandomEffectEveryEightFrames;
+#else
       Object_GetById(12)->update = (void (*)(
           union FieldObject *))SceneEffect_SpawnRandomEffectEveryEightFrames;
+#endif
       Engine_ActorSetAnimation(12, 6);
       ObjectMotion_WaitForAnimationChange(12);
       Object_GetById(12)->update = (void (*)(union FieldObject *))set;
@@ -1206,8 +1260,12 @@ static void CrossbonePillar_RestoreFlaggedPillar(s32 a0) {
   actor = Object_GetById(a0);
   if (GameFlag_IsSet(a0 + 0x1f5) != 0) {
     Object_SetMode(actor, 5);
+#ifdef UBFIX
+    actor->update = SceneActor_UpdateBit1ByPositionToSlotZero;
+#else
     actor->update = (void (*)(
         union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+#endif
     Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                            actor->z.fixed >> 20);
     Actor_SetActionScript(a0, gCrossbonePillar_ActionTable);
@@ -1219,8 +1277,12 @@ static void OverlayObject_SetCallbackAndMode2(s32 id) {
 
   actor->terrainId = 2;
   actor->motionFlags = 0;
+#ifdef UBFIX
+  actor->update = CrossbonePillar_UpdateActorPriority;
+#else
   actor->update =
       (void (*)(union FieldObject *))CrossbonePillar_UpdateActorPriority;
+#endif
 }
 
 static void SceneActor_CheckActors8To11NearSlotZero(void) {

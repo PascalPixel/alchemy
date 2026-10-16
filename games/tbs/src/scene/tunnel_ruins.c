@@ -34,7 +34,11 @@
 #include "objcmd.h"
 
 // 前方宣言
-static s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner);
+#ifdef UBFIX
+static void OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject);
+#else
+static s32 OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject);
+#endif
 static void FieldScene_PlaceAndPinSlots8And9(void);
 static void FieldScene_PlaceAndPinSlots10And11(void);
 static void TunnelRuins_RestorePlatformCells(void);
@@ -161,7 +165,14 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_depth.h"
 
-static s32 TunnelRuins_UpdateFlickerEffect(struct FieldActor *object) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 156 to 152 bytes in tbs-en.
+#ifdef UBFIX
+static void TunnelRuins_UpdateFlickerEffect(union FieldObject *fieldObject) {
+#else
+static s32 TunnelRuins_UpdateFlickerEffect(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *object = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
   s32 x;
   s32 z;
@@ -171,17 +182,34 @@ static s32 TunnelRuins_UpdateFlickerEffect(struct FieldActor *object) {
   else
     Object_SetMode(object, 2);
   if (gFrameCount & 3)
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   options.startScaleX = 0x4ccc;
   options.startScaleY = 0x4ccc;
   options.palette = 5;
   x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   Effect_Spawn(x, object->y.fixed + 0x100000, z, 0, 0, 0, 0x90001, &options);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
-static s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void removes its zero result; its aligned extent stays 80 bytes.
+#ifdef UBFIX
+static void
+SceneActor_CopyActor8PositionWhenAtRow10(union FieldObject *fieldObject) {
+#else
+static s32
+SceneActor_CopyActor8PositionWhenAtRow10(union FieldObject *fieldObject) {
+#endif
+  Record *record = (Record *)fieldObject;
   Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (ref->w12 > -0x300000 && (Object_GetById(8)->z.fixed >> 20) == 10) {
@@ -193,7 +221,11 @@ static s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record) {
     record->w12 = 0;
     record->w16 = 0;
   }
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void SceneActor_WaitValueBelowLimit(struct FieldActor *track) {
@@ -262,10 +294,18 @@ static void TunnelRuins_RunLeaderSpray(void) {
   Engine_EventEnd();
 }
 
+#ifdef UBFIX
+#define ACTOR_UPDATE_IDLE SceneActor_SetFlagBitByRelativeDepth
+#else
 #define ACTOR_UPDATE_IDLE                                                      \
   ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
+#endif
+#ifdef UBFIX
+#define ACTOR_UPDATE_PANEL OverlayObject_SetYAboveLinkedActor
+#else
 #define ACTOR_UPDATE_PANEL                                                     \
   ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
+#endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_radial.h"
@@ -610,8 +650,12 @@ static void EV08_SCRIPT(void) {
   Actor_SetActionScript(8, gTunnelRuins_FlickerScript);
   Engine_GameFlagSet(0x203);
   owner = Object_GetById(9);
+#ifdef UBFIX
+  owner->update = SceneActor_CopyActor8PositionWhenAtRow10;
+#else
   owner->update =
       (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
+#endif
 }
 
 static void EV09_PSYNERGY(void) {
@@ -645,12 +689,23 @@ static void EV09_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 34 to 32 bytes in tbs-en.
+#ifdef UBFIX
+static void OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject) {
+#else
+static s32 OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *owner = (struct FieldActor *)fieldObject;
   s16 *id = &owner->timer;
   struct FieldActor *actor = Object_GetById(*id);
 
   owner->y.fixed = actor->y.fixed + 0x100000;
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void TunnelRuins_SettleSteps(s32 wait) {
@@ -784,8 +839,12 @@ static void FieldScene_RunMiddleSequence(void) {
         (Object_GetById(10)->timer)--;
         Object_GetById(11)->timer++;
       }
+#ifdef UBFIX
+      Actor_Get(found + 12)->update = OverlayObject_SetYAboveLinkedActor;
+#else
       Actor_Get(found + 12)->update =
           (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
+#endif
       TunnelRuins_SettleSteps(40);
       Actor_Get(found + 12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       GameFlag_Set(0x200 + found);

@@ -50,7 +50,11 @@ static void FieldScene_RunStep9(void);
 static void FieldScene_RunStep17(void);
 static void SceneState_SetValue24ThenCall(void);
 static void SceneState_SetValue25ThenCall(void);
-static s32 SceneActor_RunStep18WhenTargetSet(s32 *p);
+#ifdef UBFIX
+static void SceneActor_RunStep18WhenTargetSet(union FieldObject *fieldObject);
+#else
+static s32 SceneActor_RunStep18WhenTargetSet(union FieldObject *fieldObject);
+#endif
 static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject);
 static void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter);
 static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x,
@@ -484,8 +488,12 @@ static void EV50_TOUCH(void) {
   Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
   Event_AskYesNo(22, 0);
   record = Actor_Get(22);
+#ifdef UBFIX
+  record->update = SceneActor_RunStep18WhenTargetSet;
+#else
   record->update =
       (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
+#endif
   Actor_SetActionScript(22, gValeActor22Actions);
   GameFlag_Set(0x823);
   Engine_EventEnd();
@@ -529,8 +537,12 @@ static void Vale_AskAboutSneakingToAleph(const s32 *a0, const s32 *a1) {
   Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
   Event_AskYesNo(22, 0);
   record = Actor_Get(22);
+#ifdef UBFIX
+  record->update = SceneActor_RunStep18WhenTargetSet;
+#else
   record->update =
       (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
+#endif
   Actor_SetActionScript(22, gValeActor22Actions);
   Engine_EventEnd();
 }
@@ -1168,8 +1180,12 @@ s32 Vale_ApplyEntryState(void) {
         if (!Engine_GameFlagIsSet(0x109)) {
           if (Engine_GameFlagIsSet(0x823)) {
             Actor_SetPosition(22, 0x1000000, 0x1c80000);
+#ifdef UBFIX
+            Object_GetById(22)->update = SceneActor_RunStep18WhenTargetSet;
+#else
             Object_GetById(22)->update =
                 (void *)SceneActor_RunStep18WhenTargetSet;
+#endif
             Actor_SetActionScript(22, gValeActor22Actions);
           }
         } else {
@@ -2511,12 +2527,27 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target,
   return result;
 }
 
-static s32 SceneActor_RunStep18WhenTargetSet(s32 *p) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 48 to 44 bytes in tbs-en.
+#ifdef UBFIX
+static void SceneActor_RunStep18WhenTargetSet(union FieldObject *fieldObject) {
+#else
+static s32 SceneActor_RunStep18WhenTargetSet(union FieldObject *fieldObject) {
+#endif
+  s32 *p = (s32 *)fieldObject;
   struct FieldActor *t = Object_GetById(ACTOR_PARTY_LEADER);
   if (p[14] == 0x80000000 && p[16] == 0x80000000)
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   Vale_TestFacing((struct FieldActor *)p, t, 18, 0);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {

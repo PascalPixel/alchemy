@@ -153,12 +153,23 @@ static s32 SceneActor_UpdateTracking(struct MapActor *actor,
   return result;
 }
 
-static s32 Xian_WatchGateTrigger(struct FieldActor *self) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 154 to 150 bytes in tbs-en.
+#ifdef UBFIX
+static void Xian_WatchGateTrigger(union FieldObject *fieldObject) {
+#else
+static s32 Xian_WatchGateTrigger(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *self = (struct FieldActor *)fieldObject;
   struct FieldActor *leader;
   s32 near = 0;
 
   if (self->targetX == ACTOR_NO_TARGET && self->targetZ == ACTOR_NO_TARGET)
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   leader = Object_GetById(0);
   if ((u32)((leader->x.fixed >> 20) - 17) <= 1 && leader->z.fixed >> 20 == 14 &&
       self->x.fixed >> 20 <= 19 && self->velocityX <= 0) {
@@ -174,7 +185,11 @@ static s32 Xian_WatchGateTrigger(struct FieldActor *self) {
     self->riseCounter = 0;
   }
   SceneActor_UpdateTracking(self, leader, 18, near);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 u8 *SceneEffect_GetPrimaryData(void) { return gXianEntrances; }
@@ -231,7 +246,11 @@ static void EV18_TALK(void) {
       Actor_FaceDirection(18, 0x8000, 20);
     }
     record = Actor_Get(18);
+#ifdef UBFIX
+    record->update = Xian_WatchGateTrigger;
+#else
     record->update = (void *)Xian_WatchGateTrigger;
+#endif
     Engine_EventEnd();
     return;
   }

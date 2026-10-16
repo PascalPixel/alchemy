@@ -1,7 +1,17 @@
 #include "types.h"
 #include "field_obj.h"
 
-static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor) {
+// UB: update hooks return void. In tbs-en venus_lighthouse, plain
+// void differs in 7 bytes (extent 70 to 68 bytes). Keep the
+// unused native result in matching builds.
+#ifdef UBFIX
+static void
+SceneActor_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+#else
+static s32
+SceneActor_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *ref;
   u8 *fp;
   u8 flag;
@@ -20,7 +30,11 @@ static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor) {
       *fp = flag;
     }
   }
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void SceneActor_SwapPositionsByDepth(s32 first, s32 second) {

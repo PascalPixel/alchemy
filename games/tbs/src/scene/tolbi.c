@@ -75,7 +75,14 @@ static s32 Tolbi_KidStopForTarget(struct TolbiKid *kid, struct TolbiKid *target,
 // it runs up behind the other, and otherwise when the party leader is in its
 // way. While a window is up (the range widens to 26 pixels) the child the
 // party is talking to stops whatever the direction.
-static s32 Tolbi_UpdateKid(struct TolbiKid *self) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void removes its zero result; its aligned extent stays 152 bytes.
+#ifdef UBFIX
+static void Tolbi_UpdateKid(union FieldObject *fieldObject) {
+#else
+static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
+#endif
+  struct TolbiKid *self = (struct TolbiKid *)fieldObject;
   u8 **workAreas = (u8 **)gWindowWork;
   struct TolbiUiWork *ui = (struct TolbiUiWork *)workAreas[0];
   u8 *work12 = workAreas[12];
@@ -91,7 +98,11 @@ static s32 Tolbi_UpdateKid(struct TolbiKid *self) {
     other = Object_GetById(TOLBI_OLDER_BROTHER);
   }
   if (Tolbi_KidStopForTarget(self, other, 32, 0) != 0) {
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   }
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -105,7 +116,11 @@ static s32 Tolbi_UpdateKid(struct TolbiKid *self) {
   }
 
   Tolbi_KidStopForTarget(self, leader, range, force);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 // The scene's entrances.
@@ -380,7 +395,11 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
   Actor_SetActionScript(TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Object_GetById(TOLBI_OLDER_BROTHER);
+#ifdef UBFIX
+  kidUpdate = Tolbi_UpdateKid;
+#else
   kidUpdate = (void (*)(union FieldObject *))Tolbi_UpdateKid;
+#endif
   ((struct TolbiKid *)actor)->kidFlags = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;

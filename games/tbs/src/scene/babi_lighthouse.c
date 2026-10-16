@@ -1040,7 +1040,7 @@ static void SceneState_ApplyRectsAtActors8And9(void) {
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-static void BabiLighthouse_MatchLeaderPriority(void) {
+static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct FieldSprite *sprite;
   struct FieldActor *actor;
   s32 priority;
@@ -1118,9 +1118,9 @@ s32 BabiLighthouse_SetupScene(void) {
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     ((union FieldObject *)Object_GetById(8))->actor.update =
-        (void (*)(union FieldObject *))BabiLighthouse_MatchLeaderPriority;
+        BabiLighthouse_MatchLeaderPriority;
     ((union FieldObject *)Object_GetById(9))->actor.update =
-        (void (*)(union FieldObject *))BabiLighthouse_MatchLeaderPriority;
+        BabiLighthouse_MatchLeaderPriority;
 #endif
     if (state->entrance == 5 && GameFlag_IsSet(0x109) == 0) {
       Actor_SetPosition(9, 0x1380000, 0x1480000);

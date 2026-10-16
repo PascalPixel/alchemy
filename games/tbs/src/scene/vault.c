@@ -50,7 +50,16 @@ union DriftingObject {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/vault_nearby.h"
 
-static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 108 to 104 bytes in tbs-en.
+#ifdef UBFIX
+static void
+ActorPresentation_UpdateEntityFromLeader(union FieldObject *fieldObject) {
+#else
+static s32
+ActorPresentation_UpdateEntityFromLeader(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *entity = (struct FieldActor *)fieldObject;
   u8 *base = gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
@@ -58,7 +67,11 @@ static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity) {
   struct FieldActor *leader;
 
   if (entity->targetX == 0x80000000)
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (*(s16 *)(workspace + 376) != 0 || base[RENDER_MODE_OFFSET] != 0) {
@@ -66,7 +79,11 @@ static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity) {
     flag = 1;
   }
   SceneActor_CheckFacingAndRange(entity, leader, selector, flag);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 void *SceneData_GetScriptTable(void) { return gVault_Scripts; }
@@ -660,12 +677,20 @@ s32 Vault_RestoreEntryState(void) {
   zero = 0;
   record = Object_GetById(14);
   record->timer = v7;
+#ifdef UBFIX
+  record->update = SceneActor_UpdateProximityToLeader;
+#else
   record->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+#endif
   record = Object_GetById(15);
   record->timer = zero;
+#ifdef UBFIX
+  record->update = SceneActor_UpdateProximityToLeader;
+#else
   record->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+#endif
   if (Engine_GameFlagIsSet(0x858) != 0) {
     Actor_SetPosition(19, 0xd80000, 0x1880000);
   }
@@ -673,8 +698,12 @@ s32 Vault_RestoreEntryState(void) {
   if (Engine_GameFlagIsSet(0x855) == 0) {
     if ((v7 & rec7) != 0) {
       record = Object_GetById(21);
+#ifdef UBFIX
+      record->update = ActorPresentation_UpdateEntityFromLeader;
+#else
       record->update = (void (*)(
           union FieldObject *))ActorPresentation_UpdateEntityFromLeader;
+#endif
     }
   }
   if (gGameState.entrance <= 2) {

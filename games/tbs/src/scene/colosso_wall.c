@@ -1307,7 +1307,8 @@ static void SceneState_WaitUntilStatusNine(void) {
   }
 }
 
-static void ColossoWall_SpawnRandomSceneEffect(SparkSource *a) {
+static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
+  SparkSource *a = (SparkSource *)fieldObject;
   s32 t[3];
   u32 n;
 

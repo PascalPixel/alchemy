@@ -448,8 +448,12 @@ s32 SceneSetup_InitializeActorsAndFlags(void) {
   Map_CopyCellsTo(45, 41, 8, 45, 3, 3);
   Engine_TaskWait(1);
   actor = Object_GetById(14);
+#ifdef UBFIX
+  actor->update = SceneActor_UpdateProximityToLeader;
+#else
   actor->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+#endif
   {
     struct FieldActor *actor = Object_GetById(14);
     s32 mode = 1;
@@ -457,8 +461,12 @@ s32 SceneSetup_InitializeActorsAndFlags(void) {
   }
   mode = 0;
   actor = Object_GetById(15);
+#ifdef UBFIX
+  actor->update = SceneActor_UpdateProximityToLeader;
+#else
   actor->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+#endif
   Object_GetById(15)->timer = mode;
   if (Engine_GameFlagIsSet(0x858))
     Actor_SetPosition(18, 0xd80000, 0x1880000);

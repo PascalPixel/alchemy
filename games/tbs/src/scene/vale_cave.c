@@ -55,13 +55,24 @@ static void SceneActor_WaitActorDescent(struct FieldActor *actor) {
   actor->y.fixed = actor->terrainHeight;
 }
 
-static s32 SceneActor_FaceActorZero(struct FieldActor *obj) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 38 to 36 bytes in tbs-en.
+#ifdef UBFIX
+static void SceneActor_FaceActorZero(union FieldObject *fieldObject) {
+#else
+static s32 SceneActor_FaceActorZero(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
   s32 dz = target->z.fixed - obj->z.fixed;
   s32 dx = target->x.fixed - obj->x.fixed;
 
   obj->facing = ArcTan2(dz, dx);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -285,7 +296,11 @@ static void EV41_TOUCH(void) {
       Engine_EventWait(10);
       Actor_FaceDirection(8, 0xc000, 20);
       record = Actor_Get(8);
+#ifdef UBFIX
+      record->update = SceneActor_FaceActorZero;
+#else
       record->update = (void (*)(union FieldObject *))SceneActor_FaceActorZero;
+#endif
       Engine_EventEnd();
     }
   }

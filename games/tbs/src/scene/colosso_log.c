@@ -1848,7 +1848,9 @@ static void ColossoLogRollingStage_WaitForBalanceState(void) {
   }
 }
 
-static void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source) {
+static void
+ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
+  StageEffect *source = (StageEffect *)fieldObject;
 
   s32 position[3];
   u32 randomValue;

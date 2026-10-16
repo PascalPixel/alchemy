@@ -104,12 +104,23 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 static void Resource3b4_EmptyHookB(void) {}
 
-static s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 38 to 36 bytes in tbs-en.
+#ifdef UBFIX
+static void SceneActor_FaceTowardActorZero(union FieldObject *fieldObject) {
+#else
+static s32 SceneActor_FaceTowardActorZero(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *leader = Object_GetById(0);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                           leader->x.fixed - actor->x.fixed);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void EV20_TOUCH(void) {
@@ -219,8 +230,12 @@ static void EV22_TOUCH(void) {
     Actor_FaceDirection(15, 0xc000, 20);
     Actor_SetAttachedEffect(15, 0x100);
     record = Object_GetById(15);
+#ifdef UBFIX
+    record->update = SceneActor_FaceTowardActorZero;
+#else
     record->update =
         (void (*)(union FieldObject *))SceneActor_FaceTowardActorZero;
+#endif
     Engine_EventEnd();
   }
 }

@@ -63,7 +63,9 @@ static void EV12_TALK(void) {
   BattleFx_SetPhaseRequest(12, 40);
 }
 
-static void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect) {
+static void
+SceneEffect_AdvancePositionByAxisMode(union FieldObject *fieldObject) {
+  struct PillarEffect *effect = (struct PillarEffect *)fieldObject;
   s16 plane = effect->plane;
 
   switch (plane) {
@@ -113,8 +115,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4,
   ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
   obj->motionFlags = 0;
   spr->flags = 0;
-  obj->update =
-      (void (*)(union FieldObject *))SceneEffect_AdvancePositionByAxisMode;
+  obj->update = SceneEffect_AdvancePositionByAxisMode;
   obj->speed = a3;
   obj->acceleration = a4;
   obj->work = *(u16 *)&layer;

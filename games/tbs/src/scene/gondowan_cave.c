@@ -257,7 +257,9 @@ static void EV09_PSYNERGY_3(void) {
 
 static void StagedActorPairScene_NoopActorCallback(void) {}
 
-static void StagedActorPairScene_RotateActorPart(u8 *actor) {
+static void
+StagedActorPairScene_RotateActorPart(union FieldObject *fieldObject) {
+  u8 *actor = (u8 *)fieldObject;
   u8 *sprite_part = *(u8 **)(actor + 80);
 
   *(u16 *)(sprite_part + 30) -= 0x400;
@@ -292,8 +294,7 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
         Engine_MathCos(work->object.actor.sprite->rotation) / 2;
     work->staged.targetX = 0x80000000;
   }
-  work->object.actor.update =
-      (void (*)(union FieldObject *))StagedActorPairScene_RotateActorPart;
+  work->object.actor.update = StagedActorPairScene_RotateActorPart;
   Engine_AudioPlayCue(136);
   Actor_SetSpeed(id, 0x20000, 0x10000);
   Actor_SetDestination(id, 472, 288);

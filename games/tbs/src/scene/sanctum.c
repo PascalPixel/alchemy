@@ -59,13 +59,24 @@ struct ShrineWork {
   u8 lamps[4];
 };
 
-static s32 UpdateFacingFromResolvedObject(struct FacingObject *object) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 44 to 42 bytes in tbs-en.
+#ifdef UBFIX
+static void UpdateFacingFromResolvedObject(union FieldObject *fieldObject) {
+#else
+static s32 UpdateFacingFromResolvedObject(union FieldObject *fieldObject) {
+#endif
+  struct FacingObject *object = (struct FacingObject *)fieldObject;
   struct FacingObject *target;
 
   target = Object_GetById(object->unk64);
   object->facing = CalculateFacingAngle(target->positionZ - object->positionZ,
                                         target->positionX - object->positionX);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 void *Sanctum_GetEntrances(void) { return &gSanctum_TableA; }
@@ -351,10 +362,21 @@ static void EV01_TOUCH(void) {
   }
 }
 
-static s32 Sanctum_MatchLeaderPriority(struct FieldActor *actor) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 66 to 64 bytes in tbs-en.
+#ifdef UBFIX
+static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+#else
+static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   actor->sprite->priority = Object_GetById(0)->sprite->priority;
   actor->sprite->secondPriority = Object_GetById(0)->sprite->priority;
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 static void FieldScene_RunScriptedSceneSequence(void) {
@@ -865,8 +887,12 @@ static void FieldScene_RunScriptedSceneSequence(void) {
     Event_ShowMessage(0xc, 0);
     Engine_EventWait(0x14);
     Object_GetById(0xa)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+#ifdef UBFIX
+    Object_GetById(0xa)->update = Sanctum_MatchLeaderPriority;
+#else
     Object_GetById(0xa)->update =
         (void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
+#endif
   }
   Engine_EventEnd();
 }
@@ -1553,11 +1579,19 @@ static void FieldScene_RunPairedActorChoreography(void) {
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(10);
   Object_GetById(8)->timer = 1;
+#ifdef UBFIX
+  Object_GetById(8)->update = UpdateFacingFromResolvedObject;
+#else
   Object_GetById(8)->update =
       (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
+#endif
   Object_GetById(12)->timer = 1;
+#ifdef UBFIX
+  Object_GetById(12)->update = UpdateFacingFromResolvedObject;
+#else
   Object_GetById(12)->update =
       (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
+#endif
   Engine_ActorWalkToAndWait(1, 196, 180);
   Engine_ActorWalkToAndWait(GARET, 184, 184);
   Engine_ActorWalkToAndWait(GARET, 180, 180);

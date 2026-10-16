@@ -173,7 +173,8 @@ static s32 TolbiShipInteriors_HasArrived(struct FieldActor *o) {
 // The update of a crewman who paces between two spots in the cabin, looking
 // about at each, and signals actor 9 through riseEnabled at three points of the
 // round. While actor 8 is paused he sends no signals. work holds the step.
-static void TolbiShipInteriors_PaceCabin(struct FieldActor *obj) {
+static void TolbiShipInteriors_PaceCabin(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *leader;
 
   leader = Object_GetById(8);
@@ -244,7 +245,8 @@ static void TolbiShipInteriors_PaceCabin(struct FieldActor *obj) {
 // The update of the actor who watches the pacing crewman: turns north-northeast
 // at the first signal, shrugs at the second if still turned, and faces east at
 // the third. Does nothing while paused.
-static void TolbiShipInteriors_WatchPacer(struct FieldActor *record) {
+static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
+  struct FieldActor *record = (struct FieldActor *)fieldObject;
   struct FieldActor *actor;
 
   actor = Object_GetById(9);
@@ -2128,12 +2130,10 @@ static void TolbiShipInteriors_ApplyFlaggedLayout(void) {
     zero.v = 0;
     actor->riseEnabled = zero.v;
     actor->collisionFlags |= 128;
-    actor->update =
-        (void (*)(union FieldObject *))&TolbiShipInteriors_PaceCabin;
+    actor->update = TolbiShipInteriors_PaceCabin;
     other = Object_GetById(8);
     other->riseCounter = zero.v;
-    other->update =
-        (void (*)(union FieldObject *))&TolbiShipInteriors_WatchPacer;
+    other->update = TolbiShipInteriors_WatchPacer;
     if (Engine_GameFlagIsSet(0x109)) {
       OverlayObject_SetPositionAndHeading(0, x, 0x29a, 0xa000);
     }

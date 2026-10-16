@@ -88,7 +88,14 @@ static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
 
 // The update a leader dragged into a pit runs: sand sounds every 8 frames
 // and a spray of sand every 16.
-static s32 Leader_SpraySand(struct FieldActor *actor) {
+// UB: calling this s32 function through a void update hook is incompatible.
+// Plain void changes 104 to 100 bytes in tbs-en.
+#ifdef UBFIX
+static void Leader_SpraySand(union FieldObject *fieldObject) {
+#else
+static s32 Leader_SpraySand(union FieldObject *fieldObject) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions params;
   s32 phase;
 
@@ -97,14 +104,22 @@ static s32 Leader_SpraySand(struct FieldActor *actor) {
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
+#ifdef UBFIX
+    return;
+#else
     return 0;
+#endif
   }
   params.startScaleX = 0xcccc;
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
   Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
                0x00880001, &params);
+#ifdef UBFIX
+  return;
+#else
   return 0;
+#endif
 }
 
 // Where the party can enter each of the four maps.
@@ -640,7 +655,11 @@ static void FallIntoPit(void) {
   Object_SetActionById(0, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
   record = Object_GetById(ACTOR_PARTY_LEADER);
+#ifdef UBFIX
+  record->update = Leader_SpraySand;
+#else
   record->update = (void (*)(union FieldObject *))Leader_SpraySand;
+#endif
   record = Actor_Get(best);
   if (record != 0) {
     Engine_ActorSetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,

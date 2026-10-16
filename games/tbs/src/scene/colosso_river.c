@@ -1132,7 +1132,9 @@ static void ColossoRiver_WaitForStageReady(void) {
   }
 }
 
-static void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a) {
+static void
+SceneEffect_SpawnKind285AtRandomChance(union FieldObject *fieldObject) {
+  struct FieldActor *a = (struct FieldActor *)fieldObject;
   s32 t[3];
   u32 n;
 

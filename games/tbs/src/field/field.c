@@ -6115,6 +6115,8 @@ void Map_DisableUpdateCallback(void) {
 // Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
 // any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
 // halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
+// A for (;;) retry loop with continue hoists the blendControl address and
+// changes 118 text bytes in tbs-en (2026-10-16); keep the retry edges for now.
 void DisplayBlend_RunScript(void) {
   struct MapState *work = gMapWork[0];
   struct BlendScriptState *state;
@@ -6847,11 +6849,9 @@ void Map_WaitWorkValuesBelow256(void) {
 
   work = gMapWork[0];
   frames = 0;
-  if (work->shakeX > 255 || work->shakeY > 255) {
-  wait:
+  while (frames < 300 && (work->shakeX > 255 || work->shakeY > 255)) {
     WaitFrames(1);
-    if (++frames < 300 && (work->shakeX > 255 || work->shakeY > 255))
-      goto wait;
+    frames++;
   }
   work->shakeDecay = 0;
 }

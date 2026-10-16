@@ -21,7 +21,11 @@ static void Mercury_ArriveWithSparks(void) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_AudioPlayCue(228);
+#ifdef UBFIX
+    actor->update = Mercury_TrailSparks;
+#else
     actor->update = (void (*)(union FieldObject *))Mercury_TrailSparks;
+#endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);

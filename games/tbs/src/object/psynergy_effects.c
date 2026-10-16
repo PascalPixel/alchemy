@@ -6257,7 +6257,8 @@ void BattleFx_RunItemBreakSequence(void) {
 
   /* FAKEMATCH: the one-pass block keeps the mainObject load below the
    * frame's sub sp. Measured: plain, the scheduler lifts the load
-   * above it (differ 2). */
+   * above it (differ 2). Initializing scene and object at declaration with
+   * a plain call also swaps that load and sub sp (2 instructions in EN). */
   do {
     BattleEffect_InitializeSharedScene();
   } while (0);

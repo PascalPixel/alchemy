@@ -35,7 +35,7 @@ s32 Func_080cdc74(void)
         return 0;
     if (BYTE_AT(target, 98) != 0)
         return 0;
-    id = *(s16 *)gPartyState.unk26a;
+    id = gPartyState.pausedObject;
     if (id != 1 && target == Object_GetById(id))
         return 0;
     position[0] = target->x;

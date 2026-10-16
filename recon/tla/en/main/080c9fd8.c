@@ -51,7 +51,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
     if (GameFlag_Test(351) == 0) {
         if (GameFlag_Test(352) != 0 || GameFlag_Test(353) != 0 || zone == 0)
             return 0;
-        if ((s8)party->unk26d[0] != 0)
+        if (party->cloaked != 0)
             return 0;
         entry = gEncounter_EnemyGroupTable + zone;
         rate = entry->rate;

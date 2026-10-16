@@ -54,7 +54,7 @@ void *Func_080cce94(s32 id) {
   /* FAKEMATCH: the barrier loads the party state's address before the
      field offset is built (differ 2 without it) */
   asm volatile("");
-  stopped = *(s16 *)party->unk26a;
+  stopped = party->pausedObject;
   event = found;
   if (stopped == id) {
     void *alt = Func_080ccd78(7, stopped);

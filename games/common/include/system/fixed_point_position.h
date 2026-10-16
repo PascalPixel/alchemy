@@ -2,6 +2,7 @@
 #define ALCHEMY_FIXED_POINT_POSITION_H
 
 #include "types.h"
+#include "layout_guard.h"
 
 struct FixedPointPosition {
   s32 x;
@@ -9,19 +10,12 @@ struct FixedPointPosition {
   s32 z;
 };
 
-#define FIXED_POINT_POSITION_OFFSET(field)                                     \
-  ((u32)&(((struct FixedPointPosition *)0)->field))
-typedef char
-    FixedPointPosition_size[sizeof(struct FixedPointPosition) == 0x0c ? 1 : -1];
-typedef char FixedPointPosition_x_offset[FIXED_POINT_POSITION_OFFSET(x) == 0x00
-                                             ? 1
-                                             : -1];
-typedef char FixedPointPosition_y_offset[FIXED_POINT_POSITION_OFFSET(y) == 0x04
-                                             ? 1
-                                             : -1];
-typedef char FixedPointPosition_z_offset[FIXED_POINT_POSITION_OFFSET(z) == 0x08
-                                             ? 1
-                                             : -1];
-#undef FIXED_POINT_POSITION_OFFSET
+LAYOUT_SIZE_GUARD(FixedPointPosition_size, struct FixedPointPosition, 0x0c);
+LAYOUT_OFFSET_GUARD(FixedPointPosition_x_offset, struct FixedPointPosition, x,
+                    0x00);
+LAYOUT_OFFSET_GUARD(FixedPointPosition_y_offset, struct FixedPointPosition, y,
+                    0x04);
+LAYOUT_OFFSET_GUARD(FixedPointPosition_z_offset, struct FixedPointPosition, z,
+                    0x08);
 
 #endif

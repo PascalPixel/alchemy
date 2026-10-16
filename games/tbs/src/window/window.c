@@ -94,6 +94,14 @@
 #include "display_transition.h"
 #include "frame.h"
 
+#ifdef MODERN
+// In the matching build these calls precede their declarations. Prototypes
+// reorder three argument moves for ClearTileAttributesInRect and two for
+// PutGlyph in the English image.
+void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
+void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+#endif
+
 // The UI tilemap in VRAM (BG screen block 4), which UiWork_UploadDirtyBlocks
 // copies the work block's tilemap to.
 #define UI_TILEMAP_VRAM ((u8 *)0x06002000)
@@ -5569,8 +5577,8 @@ void SelectionScreen_Draw(void) {
 void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 index) {
   u32 frame = (gFrameTick >> 2) & 7;
   struct SelectionSprite *entry;
-  u8 *frames;
-  u8 *tmp;
+  const u8 *frames;
+  const u8 *tmp;
 
   if (state->records[index].kind == 0)
     return;
@@ -5713,7 +5721,7 @@ void Menu_SetupSelectionBothSides(void) {
 // when there are entries beyond that end.
 void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
   struct SelectionSprite *entry = &state->records[index].sprite;
-  u8 *frames = 0;
+  const u8 *frames = 0;
   u32 count;
 
   state->records[index].kind = 0;
@@ -5722,7 +5730,7 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
      * makes its copy late, as the native does. Assigning
      * gMenu_CursorObjectTiles directly where right is read: differ 42; the same
      * at the top of the branch: differ 16 (tbs-en). */
-    u8 *right = gMenu_CursorObjectTiles;
+    const u8 *right = gMenu_CursorObjectTiles;
 
     count = state->count;
     if (state->top != 0)

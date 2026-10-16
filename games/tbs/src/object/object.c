@@ -1101,22 +1101,9 @@ void *ObjectTable_GetSlotAddress(u32 index) {
 
 #define PLACED_MAX 58 // actor slots 8 to 65
 
-// A row of a scene's placement table, as struct ScenePlacement.
-struct SceneRegionEntry {
-  s16 sprite; // -1 ends the table
-  s16 condition;
-  s32 behavior;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 facing;
-  u8 talkFacing;
-  u8 flags;
-};
-
 // Gives each placement with condition 0 a condition saying whether it lies
 // within the map's view bounds, so that only those inside appear.
-void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
+void Scene_AssignViewFlags(struct ScenePlacement *entry) {
   struct MapScrollWork *view = gMapWork[0];
 
   GameFlag_ClearBitFar(FLAG_IN_VIEW);

@@ -44,7 +44,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
   if (scene == (s32)&SceneId_KalayInteriors1) {
     s32 entrance = gGameState.entrance;
-    const struct ScenePlacement *table;
+    struct ScenePlacement *table;
 
     switch (entrance) {
     case 9:

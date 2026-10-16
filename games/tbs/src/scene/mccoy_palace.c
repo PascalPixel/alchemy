@@ -54,10 +54,10 @@ s32 SceneData_ReturnZero(void) { return 0; }
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  u8 *p;
+  struct ScenePlacement *p;
 
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
-    p = (u8 *)gMcCoyPalacePlacements;
+    p = gMcCoyPalacePlacements;
     FieldScene_PrepareActors(p);
 
     if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
@@ -69,7 +69,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
       rec->field238 = 1;
     }
 
-    return (const struct ScenePlacement *)p;
+    return p;
   }
   return gMcCoyPalacePlacementsOther;
 }

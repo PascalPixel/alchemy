@@ -52,7 +52,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSolEntrance_Exits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  s32 table;
+  struct ScenePlacement *table;
   s32 lo = 11;
 
   if (gGameState.scene == (s32)&SceneId_SolEntrance1) {
@@ -65,9 +65,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
         return gSolEntrancePlacements1Entrances11To13;
       }
     }
-    table = (s32)gSolEntrancePlacements1;
+    table = gSolEntrancePlacements1;
     FieldScene_PrepareActors(table);
-    return (const struct ScenePlacement *)table;
+    return table;
   }
   if (gGameState.scene == (s32)&SceneId_SolEntrance2) {
     return gSolEntrancePlacements2;

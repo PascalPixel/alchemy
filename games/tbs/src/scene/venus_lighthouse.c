@@ -638,7 +638,7 @@ s32 SceneData_ReturnZero(void) { return 0; }
 u8 *SceneData_GetPrimaryTable(void) { return gVenusLighthousePrimaryTable; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  u8 *ret;
+  struct ScenePlacement *ret;
   s16 v;
 
   v = gGameState.scene;
@@ -647,28 +647,28 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   }
   if (v == (s32)&SceneId_VenusLighthouse2) {
     ret = gVenusLighthousePlacements2;
-    FieldScene_PrepareActors((void *)ret);
-    return (const struct ScenePlacement *)ret;
+    FieldScene_PrepareActors(ret);
+    return ret;
   }
   if (v == (s32)&SceneId_VenusLighthouse3) {
     ret = gVenusLighthousePlacements3;
-    FieldScene_PrepareActors((void *)ret);
-    return (const struct ScenePlacement *)ret;
+    FieldScene_PrepareActors(ret);
+    return ret;
   }
   if (v == (s32)&SceneId_VenusLighthouse4) {
     ret = gVenusLighthousePlacements4;
-    FieldScene_PrepareActors((void *)ret);
-    return (const struct ScenePlacement *)ret;
+    FieldScene_PrepareActors(ret);
+    return ret;
   }
   if (v == (s32)&SceneId_VenusLighthouse5) {
     ret = gVenusLighthousePlacements5;
-    FieldScene_PrepareActors((void *)ret);
-    return (const struct ScenePlacement *)ret;
+    FieldScene_PrepareActors(ret);
+    return ret;
   }
   if (v == (s32)&SceneId_VenusLighthouse6) {
     ret = gVenusLighthousePlacements6;
-    FieldScene_PrepareActors((void *)ret);
-    return (const struct ScenePlacement *)ret;
+    FieldScene_PrepareActors(ret);
+    return ret;
   }
   return gVenusLighthousePlacementsOther;
 }

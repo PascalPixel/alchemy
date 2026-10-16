@@ -75,7 +75,7 @@ s32 ValeBabi_SelectExits(void) {
 }
 
 s32 ValeBabi_SelectPlacements(void) {
-  s32 *table;
+  struct ScenePlacement *table;
 
   if (gGameState.entrance == 19)
     return (s32)gValeBabiPlacements4;
@@ -85,7 +85,7 @@ s32 ValeBabi_SelectPlacements(void) {
     table = gValeBabiPlacements2;
   else
     table = gValeBabiPlacements;
-  FieldScene_PrepareActors((s32)table);
+  FieldScene_PrepareActors(table);
   return (s32)table;
 }
 

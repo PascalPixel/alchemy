@@ -47,7 +47,6 @@ struct RenderOutput;
 struct ResourceObject;
 struct ResourceObjectWork;
 struct ScenePlacement;
-struct SceneRegionEntry;
 struct ScriptObjectEntry;
 struct ShopCursor;
 struct SummonDefinition;

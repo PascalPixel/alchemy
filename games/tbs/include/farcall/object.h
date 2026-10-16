@@ -8,7 +8,7 @@ FAR_SLOT(Event_RunObjectHookAndWait)
 FAR_CALL(Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId,
          void, (struct ScenePlacement * table))
 FAR_CALL(Scene_AssignViewFlagsFar, Scene_AssignViewFlags, void,
-         (struct SceneRegionEntry * entry))
+         (struct ScenePlacement * entry))
 FAR_CALL(Event_SetSceneEventsFar, Event_SetSceneEvents, void, (s32 value))
 FAR_CALL(Event_PrepareObjectAndApplyValueFar, Event_PrepareObjectAndApplyValue,
          void, (s32 event_id, s32 value))

@@ -332,15 +332,15 @@ const struct SceneRegion *Scene_GetRegions(void) {
 u8 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void) {
-  u8 *table;
+  struct ScenePlacement *table;
 
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     table = gTunnelRuinsPlacements1;
   } else {
     table = gTunnelRuinsPlacementsOther;
   }
-  FieldScene_PrepareActors((struct SceneRegionEntry *)table);
-  return table;
+  FieldScene_PrepareActors(table);
+  return (u8 *)table;
 }
 
 static void EV24_SCRIPT(void) {

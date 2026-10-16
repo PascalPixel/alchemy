@@ -111,18 +111,19 @@ s32 SceneData_ReturnZero(void) { return 0; }
 u8 *Imil_GetExits(void) { return (u8 *)gImil_SceneTable; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  u8 *script;
+  struct ScenePlacement *script;
 
   if (gGameState.scene == ((s32)&SceneId_Imil2)) {
     script = gImilPlacements2;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(0x881) != 0) {
-      script[262] = 0;
-      *(s32 *)(script + 0x50) = 182 << 16;
-      *(s32 *)(script + 0x58) = 564 << 16;
-      *(s32 *)(script + 0x4c) = 2;
+      // Row 10's talk-facing byte (10 * 24 + 22).
+      ((u8 *)script)[262] = 0;
+      script[3].x = PIXELS(182);
+      script[3].z = PIXELS(564);
+      script[3].behavior = 2;
     }
-    return (const struct ScenePlacement *)script;
+    return script;
   }
 
   if (Engine_GameFlagIsSet(0x881) != 0) {

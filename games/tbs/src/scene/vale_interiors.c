@@ -49,7 +49,7 @@ void *ValeInteriors_SelectExits(void) {
 }
 
 void *SceneData_SelectFlaggedTable(void) {
-  void *table;
+  struct ScenePlacement *table;
 
   if (Engine_GameFlagIsSet(0x87a)) {
     table = gValeHouseReturnPlacements;

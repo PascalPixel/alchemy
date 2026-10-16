@@ -55,15 +55,15 @@ u8 *SceneData_GetSecondaryTable(void) {
 }
 
 u8 *SceneData_GetPreparedRecords(void) {
-  u8 *buf;
+  struct ScenePlacement *buf;
 
   if (Engine_GameFlagIsSet(0x845) == 0) {
     SceneData_InitRecordTable(
         (struct Resource390TableEntry *)gEntryLayout_Records);
   }
-  buf = (u8 *)gEntryLayout_Records;
+  buf = gEntryLayout_Records;
   FieldScene_PrepareActors(buf);
-  return buf;
+  return (u8 *)buf;
 }
 
 static void EV16_TALK(void) {

@@ -87,7 +87,6 @@ struct SceneEvent;
 struct FieldSceneObject;
 struct ScenePlacement;
 struct SceneRegion;
-struct SceneRegionEntry;
 struct ScriptTable;
 struct SparkleFrame;
 struct Sub;
@@ -387,7 +386,7 @@ s32 FarCall_BlankRunTable(s32 entrance);
 #ifndef OWN_FieldScene_BuildSceneDescriptorAndInstallTask
 #endif
 #ifndef OWN_FieldScene_PrepareActors
-void FieldScene_PrepareActors(struct SceneRegionEntry *entry);
+void FieldScene_PrepareActors(struct ScenePlacement *entry);
 #endif
 #ifndef OWN_FourObjectMotion_InitializeBottomRow
 #endif
@@ -439,8 +438,8 @@ void Object_Destroy(struct DispatchObject *work);
 #endif
 #ifndef OWN_SceneEffect_SpawnRandomizedParticleEveryFourFrames
 #endif
-void ScenePlacement_ClipToView(s32 placements);
-void SceneTable_Prepare(void *);
+void ScenePlacement_ClipToView(struct ScenePlacement *placements);
+void SceneTable_Prepare(struct ScenePlacement *placements);
 #ifndef OWN_StagedActor_CountdownUntilPositionUnset
 #endif
 #ifndef OWN_StoryActor_ConfigureSpawnedObject

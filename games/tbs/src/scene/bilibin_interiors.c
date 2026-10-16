@@ -29,7 +29,7 @@ u8 *SceneData_GetSecondaryTable(void) {
 }
 
 s32 BilibinInteriors_PreparePlacements(void) {
-  ScenePlacement_ClipToView((s32)gBilibinInteriorsPlacements);
+  ScenePlacement_ClipToView(gBilibinInteriorsPlacements);
   return (s32)gBilibinInteriorsPlacements;
 }
 

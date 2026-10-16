@@ -33,10 +33,10 @@ s32 SceneData_ReturnZero(void) { return 0; }
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
 u8 *SceneData_GetPreparedActors(void) {
-  u8 *slot = (u8 *)gPlacement_Actors;
+  struct ScenePlacement *slot = gPlacement_Actors;
 
   FieldScene_PrepareActors(slot);
-  return slot;
+  return (u8 *)slot;
 }
 
 static void SceneActor_RunActorStep(s32 arg0) {

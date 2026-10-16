@@ -61,7 +61,7 @@ u8 *SceneData_GetRegionTable(void) { return gVaultInteriors_Regions; }
 u8 *SceneData_GetMessageTable(void) { return gVaultInteriors_Messages; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  const struct ScenePlacement *table;
+  struct ScenePlacement *table;
 
   switch (gGameState.entrance) {
   case 15:

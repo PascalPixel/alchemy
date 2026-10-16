@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "tbs_edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "farcall.h"
 
 struct UiWork {
@@ -30,8 +30,8 @@ struct OwnerStatusCursor {
   u8 unk03;
 };
 
-LAYOUT_SIZE_GUARD(OwnerStatusStatCursor_Size, struct OwnerStatusStatCursor, 8);
-LAYOUT_SIZE_GUARD(OwnerStatusCursor_Size, struct OwnerStatusCursor, 4);
+STATIC_ASSERT(sizeof(struct OwnerStatusStatCursor) == 8);
+STATIC_ASSERT(sizeof(struct OwnerStatusCursor) == 4);
 
 extern const struct OwnerStatusStatCursor gOwnerStatus_StatCursors[];
 extern const struct OwnerStatusCursor gOwnerStatus_EquipmentCursors[];

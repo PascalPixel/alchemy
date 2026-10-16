@@ -2,7 +2,7 @@
 #define ALCHEMY_RESOURCE_3A8_EFFECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct Resource3a8Effect {
   u8 unk00[0x06];
@@ -11,10 +11,8 @@ struct Resource3a8Effect {
   s16 actionTimer;
 };
 
-LAYOUT_OFFSET_GUARD(Resource3a8Effect_unknown_06_offset,
-                    struct Resource3a8Effect, unk06, 0x06);
-LAYOUT_OFFSET_GUARD(Resource3a8Effect_action_timer_offset,
-                    struct Resource3a8Effect, actionTimer, 0x66);
-LAYOUT_SIZE_GUARD(Resource3a8Effect_size, struct Resource3a8Effect, 0x68);
+STATIC_ASSERT(offsetof(struct Resource3a8Effect, unk06) == 0x06);
+STATIC_ASSERT(offsetof(struct Resource3a8Effect, actionTimer) == 0x66);
+STATIC_ASSERT(sizeof(struct Resource3a8Effect) == 0x68);
 
 #endif

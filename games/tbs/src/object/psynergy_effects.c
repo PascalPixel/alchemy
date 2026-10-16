@@ -58,7 +58,7 @@
 #include "object_effect.h"
 #include "item.h"
 #include "motobj.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "frame.h"
 #include "io_write_queue.h"
 #include "palbuf.h"
@@ -1278,7 +1278,7 @@ struct ObjectSlotTable {
   struct ObjectRuntime *slots[0];
 };
 
-LAYOUT_OFFSET_GUARD(ObjectSlotTable_Slots, struct ObjectSlotTable, slots, 0x14);
+STATIC_ASSERT(offsetof(struct ObjectSlotTable, slots) == 0x14);
 #endif
 
 // The event command "destroy actor": releases the actor and frees its slot.
@@ -3175,8 +3175,8 @@ struct GroundParticle {
   u16 timer; // frames left; 0 frees the particle
 };
 
-LAYOUT_OFFSET_GUARD(GroundParticle_PosX, struct GroundParticle, posX, 0x0c);
-LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
+STATIC_ASSERT(offsetof(struct GroundParticle, posX) == 0x0c);
+STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
 
 // Work slot 29 while a field weather effect runs.
 struct GroundParticleWork {
@@ -3187,7 +3187,7 @@ struct GroundParticleWork {
   s32 stopped; // sparkles: no new bursts while set
 };
 
-LAYOUT_SIZE_GUARD(GroundParticleWork_Size, struct GroundParticleWork, 0x410);
+STATIC_ASSERT(sizeof(struct GroundParticleWork) == 0x410);
 
 // Scheduler callback: animates the ground particles. Each plays a 16-frame
 // animation (gFieldFx_GroundParticleFrames, 5 halfwords a frame: x and y
@@ -7978,7 +7978,7 @@ void RunBattleEffect05(void) {
 // Particles falling round a lifted object.
 //--------------------------------------------------------------------------
 
-LAYOUT_SIZE_GUARD(FallPos_Size, struct EffectVector, 0x0c);
+STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
 // Per-frame update: drops one particle round the lifted object, 8 to 24
 // pixels above it and 0 to 48 pixels away in a random direction.

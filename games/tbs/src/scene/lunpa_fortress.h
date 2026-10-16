@@ -5,7 +5,7 @@
 #include "mapcopy.h"
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "field_scene.h"
 #include "system.h"
 

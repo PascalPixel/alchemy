@@ -33,13 +33,12 @@ struct FieldEffect {
   void (*update)(union FieldObject *object);
 };
 
-LAYOUT_OFFSET_GUARD(FieldEffect_ScaleRateX, struct FieldEffect, scaleRateX,
-                    0x30);
-LAYOUT_OFFSET_GUARD(FieldEffect_VelocityX, struct FieldEffect, velocityX, 0x44);
-LAYOUT_OFFSET_GUARD(FieldEffect_Sprite, struct FieldEffect, sprite, 0x50);
-LAYOUT_OFFSET_GUARD(FieldEffect_Spin, struct FieldEffect, spin, 0x64);
-LAYOUT_OFFSET_GUARD(FieldEffect_Countdown, struct FieldEffect, countdown, 0x68);
-LAYOUT_OFFSET_GUARD(FieldEffect_Update, struct FieldEffect, update, 0x6c);
+STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
+STATIC_ASSERT(offsetof(struct FieldEffect, velocityX) == 0x44);
+STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 0x50);
+STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
+STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
+STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 union FieldObject {
   struct FieldActor actor;
@@ -78,8 +77,8 @@ struct EffectOptions {
   void (*update)(union FieldObject *object);
 };
 
-LAYOUT_OFFSET_GUARD(EffectOptions_Type, struct EffectOptions, type, 0x18);
-LAYOUT_OFFSET_GUARD(EffectOptions_Update, struct EffectOptions, update, 0x24);
+STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);
+STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
 
 #if GAME_TLA
 void Effect_SetPriority(struct FieldEffect *effect, s32 priority);

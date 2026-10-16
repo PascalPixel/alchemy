@@ -2,7 +2,7 @@
 #define ALCHEMY_FX_SCENE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "effect_slot.h"
 
 struct AnimationObject;
@@ -58,21 +58,15 @@ struct BattleFxScene {
   u8 unk71d[3];
 };
 
-LAYOUT_SIZE_GUARD(BattleFxScene_Size, struct BattleFxScene, 0x720);
-LAYOUT_OFFSET_GUARD(BattleFxScene_MainObject, struct BattleFxScene, mainObject,
-                    0x10);
-LAYOUT_OFFSET_GUARD(BattleFxScene_Action, struct BattleFxScene, action, 0x1c);
-LAYOUT_OFFSET_GUARD(BattleFxScene_SavedCallback, struct BattleFxScene,
-                    savedCallback, 0x38);
-LAYOUT_OFFSET_GUARD(BattleFxScene_TileSlot, struct BattleFxScene, tileSlot,
-                    0x46);
-LAYOUT_OFFSET_GUARD(BattleFxScene_SavedShakeX, struct BattleFxScene,
-                    savedShakeX, 0x4c);
-LAYOUT_OFFSET_GUARD(BattleFxScene_Slots, struct BattleFxScene, slots, 0x58);
-LAYOUT_OFFSET_GUARD(BattleFxScene_ArcTileSlot, struct BattleFxScene,
-                    arcTileSlot, 0x71a);
-LAYOUT_OFFSET_GUARD(BattleFxScene_MessageMode, struct BattleFxScene,
-                    messageMode, 0x71c);
+STATIC_ASSERT(sizeof(struct BattleFxScene) == 0x720);
+STATIC_ASSERT(offsetof(struct BattleFxScene, mainObject) == 0x10);
+STATIC_ASSERT(offsetof(struct BattleFxScene, action) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleFxScene, savedCallback) == 0x38);
+STATIC_ASSERT(offsetof(struct BattleFxScene, tileSlot) == 0x46);
+STATIC_ASSERT(offsetof(struct BattleFxScene, savedShakeX) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattleFxScene, slots) == 0x58);
+STATIC_ASSERT(offsetof(struct BattleFxScene, arcTileSlot) == 0x71a);
+STATIC_ASSERT(offsetof(struct BattleFxScene, messageMode) == 0x71c);
 
 static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;

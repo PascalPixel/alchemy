@@ -5,7 +5,7 @@
 // The Broken Seal's input state is declared separately in keystate.h.
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct InputState {
   u32 held;
@@ -23,11 +23,11 @@ struct InputState {
   s32 repeatTimer;
 };
 
-LAYOUT_SIZE_GUARD(InputState_Size, struct InputState, 0x24);
-LAYOUT_OFFSET_GUARD(InputState_Held, struct InputState, held, 0);
-LAYOUT_OFFSET_GUARD(InputState_Pressed, struct InputState, pressed, 4);
-LAYOUT_OFFSET_GUARD(InputState_Repeat, struct InputState, repeat, 12);
-LAYOUT_OFFSET_GUARD(InputState_RepeatTimer, struct InputState, repeatTimer, 32);
+STATIC_ASSERT(sizeof(struct InputState) == 0x24);
+STATIC_ASSERT(offsetof(struct InputState, held) == 0);
+STATIC_ASSERT(offsetof(struct InputState, pressed) == 4);
+STATIC_ASSERT(offsetof(struct InputState, repeat) == 12);
+STATIC_ASSERT(offsetof(struct InputState, repeatTimer) == 32);
 
 extern struct InputState gInput;
 void Input_UpdateKeyRepeatAndDirection(void);

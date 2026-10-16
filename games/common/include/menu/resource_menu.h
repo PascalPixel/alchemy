@@ -2,7 +2,7 @@
 #define ALCHEMY_RESOURCE_MENU_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "window.h"
 
 struct ResourceMenuEntry {
@@ -29,18 +29,13 @@ struct ResourceMenuWork {
   s16 previousMode;
 };
 
-LAYOUT_SIZE_GUARD(ResourceMenuEntry_Size, struct ResourceMenuEntry, 0x14);
-LAYOUT_OFFSET_GUARD(ResourceMenuEntry_Slot, struct ResourceMenuEntry, slot,
-                    0x12);
-LAYOUT_SIZE_GUARD(ResourceMenuWork_Size, struct ResourceMenuWork, 0x98);
-LAYOUT_OFFSET_GUARD(ResourceMenuWork_Window, struct ResourceMenuWork, window,
-                    0x78);
-LAYOUT_OFFSET_GUARD(ResourceMenuWork_Selection, struct ResourceMenuWork,
-                    selection, 0x8c);
-LAYOUT_OFFSET_GUARD(ResourceMenuWork_ResourceBase, struct ResourceMenuWork,
-                    resourceBase, 0x92);
-LAYOUT_OFFSET_GUARD(ResourceMenuWork_PreviousMode, struct ResourceMenuWork,
-                    previousMode, 0x96);
+STATIC_ASSERT(sizeof(struct ResourceMenuEntry) == 0x14);
+STATIC_ASSERT(offsetof(struct ResourceMenuEntry, slot) == 0x12);
+STATIC_ASSERT(sizeof(struct ResourceMenuWork) == 0x98);
+STATIC_ASSERT(offsetof(struct ResourceMenuWork, window) == 0x78);
+STATIC_ASSERT(offsetof(struct ResourceMenuWork, selection) == 0x8c);
+STATIC_ASSERT(offsetof(struct ResourceMenuWork, resourceBase) == 0x92);
+STATIC_ASSERT(offsetof(struct ResourceMenuWork, previousMode) == 0x96);
 
 extern struct ResourceMenuWork *gMenuSelectWork;
 

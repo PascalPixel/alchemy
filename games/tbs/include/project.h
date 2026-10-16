@@ -2,7 +2,7 @@
 #define ALCHEMY_PROJECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct Projection {
   s32 focal;
@@ -12,9 +12,9 @@ struct Projection {
   s32 centerY;
 };
 
-LAYOUT_SIZE_GUARD(Projection_Size, struct Projection, 0x14);
-LAYOUT_OFFSET_GUARD(Projection_CenterX, struct Projection, centerX, 0x0c);
-LAYOUT_OFFSET_GUARD(Projection_CenterY, struct Projection, centerY, 0x10);
+STATIC_ASSERT(sizeof(struct Projection) == 0x14);
+STATIC_ASSERT(offsetof(struct Projection, centerX) == 0x0c);
+STATIC_ASSERT(offsetof(struct Projection, centerY) == 0x10);
 
 extern struct Projection gProjection;
 

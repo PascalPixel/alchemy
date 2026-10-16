@@ -2,7 +2,7 @@
 #define ALCHEMY_HEAP_STATE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 extern void *gWorkSlot[64];
 
@@ -19,9 +19,9 @@ union HeapState {
   void *slots[64];
 };
 
-LAYOUT_SIZE_GUARD(HeapState_Size, union HeapState, 0x100);
-LAYOUT_OFFSET_GUARD(HeapState_Iwram, union HeapState, heap.nextIwram, 4);
-LAYOUT_OFFSET_GUARD(HeapState_Blocks, union HeapState, heap.blocks, 8);
+STATIC_ASSERT(sizeof(union HeapState) == 0x100);
+STATIC_ASSERT(offsetof(union HeapState, heap.nextIwram) == 4);
+STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
 enum HeapSlot {
   HEAP_SLOT_MENU_CONTROL = 6,

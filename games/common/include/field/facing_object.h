@@ -2,7 +2,7 @@
 #define ALCHEMY_FACING_OBJECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct FacingObject {
   u8 unk00[6];
@@ -17,18 +17,12 @@ struct FacingObject {
   struct FacingObject *facingTarget;
 };
 
-LAYOUT_SIZE_GUARD(FacingObject_size, struct FacingObject, 0x6c);
-LAYOUT_OFFSET_GUARD(FacingObject_facing_offset, struct FacingObject, facing,
-                    0x06);
-LAYOUT_OFFSET_GUARD(FacingObject_position_x_offset, struct FacingObject,
-                    positionX, 0x08);
-LAYOUT_OFFSET_GUARD(FacingObject_position_z_offset, struct FacingObject,
-                    positionZ, 0x10);
-LAYOUT_OFFSET_GUARD(FacingObject_facing_flags_offset, struct FacingObject,
-                    facingFlags, 0x5a);
-LAYOUT_OFFSET_GUARD(FacingObject_unknown_64_offset, struct FacingObject, unk64,
-                    0x64);
-LAYOUT_OFFSET_GUARD(FacingObject_facing_target_offset, struct FacingObject,
-                    facingTarget, 0x68);
+STATIC_ASSERT(sizeof(struct FacingObject) == 0x6c);
+STATIC_ASSERT(offsetof(struct FacingObject, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct FacingObject, positionX) == 0x08);
+STATIC_ASSERT(offsetof(struct FacingObject, positionZ) == 0x10);
+STATIC_ASSERT(offsetof(struct FacingObject, facingFlags) == 0x5a);
+STATIC_ASSERT(offsetof(struct FacingObject, unk64) == 0x64);
+STATIC_ASSERT(offsetof(struct FacingObject, facingTarget) == 0x68);
 
 #endif

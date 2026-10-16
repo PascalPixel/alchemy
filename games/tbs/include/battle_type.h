@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_TYPE_H
 #define ALCHEMY_BATTLE_TYPE_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_unit.h"
 
 enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 0x64 };
@@ -40,12 +40,10 @@ struct BattlePlan {
   u32 hauntDamage;
 };
 
-LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, targetIds, 0x02);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetMultiplier, struct BattlePlan,
-                    targetMultiplier, 0x1e);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, abilityId, 0x4c);
-LAYOUT_OFFSET_GUARD(BattlePlan_HauntDamage, struct BattlePlan, hauntDamage,
-                    0x60);
+STATIC_ASSERT(sizeof(struct BattlePlan) == BATTLE_PLAN_SIZE);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 0x02);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetMultiplier) == 0x1e);
+STATIC_ASSERT(offsetof(struct BattlePlan, abilityId) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattlePlan, hauntDamage) == 0x60);
 
 #endif

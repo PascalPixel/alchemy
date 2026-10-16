@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_SPRITE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct FieldSprite {
   u8 unk00[4];
@@ -35,10 +35,10 @@ struct FieldSprite {
   u8 partCount;
 };
 
-LAYOUT_OFFSET_GUARD(FieldSprite_Scale, struct FieldSprite, scale, 0x18);
-LAYOUT_OFFSET_GUARD(FieldSprite_VramBlock, struct FieldSprite, vramBlock, 0x1c);
-LAYOUT_OFFSET_GUARD(FieldSprite_Rotation, struct FieldSprite, rotation, 0x1e);
-LAYOUT_OFFSET_GUARD(FieldSprite_PartCount, struct FieldSprite, partCount, 0x27);
+STATIC_ASSERT(offsetof(struct FieldSprite, scale) == 0x18);
+STATIC_ASSERT(offsetof(struct FieldSprite, vramBlock) == 0x1c);
+STATIC_ASSERT(offsetof(struct FieldSprite, rotation) == 0x1e);
+STATIC_ASSERT(offsetof(struct FieldSprite, partCount) == 0x27);
 
 struct FieldSpritePriority {
   u8 unk00[9];

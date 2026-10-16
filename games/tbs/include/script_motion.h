@@ -2,7 +2,7 @@
 #define ALCHEMY_SCRIPT_MOTION_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 union FieldObject;
 
@@ -58,22 +58,14 @@ struct ScriptMotionObject {
   void (*hook)(union FieldObject *object);
 };
 
-LAYOUT_SIZE_GUARD(ScriptMotionObject_size, struct ScriptMotionObject, 0x70);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_script_offset, struct ScriptMotionObject,
-                    script, 0x00);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_script_cursor_offset,
-                    struct ScriptMotionObject, scriptCursor, 0x04);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_facing_offset, struct ScriptMotionObject,
-                    facing, 0x06);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_vertical_offset,
-                    struct ScriptMotionObject, vertical, 0x44);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_arrival_axis_offset,
-                    struct ScriptMotionObject, arrivalAxis, 0x56);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_wait_offset, struct ScriptMotionObject,
-                    wait, 0x5e);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_frozen_offset, struct ScriptMotionObject,
-                    frozen, 0x61);
-LAYOUT_OFFSET_GUARD(ScriptMotionObject_hook_offset, struct ScriptMotionObject,
-                    hook, 0x6c);
+STATIC_ASSERT(sizeof(struct ScriptMotionObject) == 0x70);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, scriptCursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, vertical) == 0x44);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, frozen) == 0x61);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, hook) == 0x6c);
 
 #endif

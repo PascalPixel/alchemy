@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_FX_WORK_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "effect_step.h"
 
 struct BattleEffectArgument;
@@ -39,16 +39,12 @@ struct BattleFxWork {
   struct BattleEffectArgument *effect;
 };
 
-LAYOUT_OFFSET_GUARD(BattleFxWork_Sheet, struct BattleFxWork, sheet, 0x700);
-LAYOUT_OFFSET_GUARD(BattleFxWork_TransferMode, struct BattleFxWork,
-                    transferMode, 0x7780);
-LAYOUT_OFFSET_GUARD(BattleFxWork_ShakeFrames, struct BattleFxWork, shakeFrames,
-                    0x77a8);
-LAYOUT_OFFSET_GUARD(BattleFxWork_Objects, struct BattleFxWork, objects, 0x77dc);
-LAYOUT_OFFSET_GUARD(BattleFxWork_ActorTimers, struct BattleFxWork, actorTimers,
-                    0x78dc);
-LAYOUT_OFFSET_GUARD(BattleFxWork_TransferPending, struct BattleFxWork,
-                    transferPending, 0x78e8);
-LAYOUT_OFFSET_GUARD(BattleFxWork_Effect, struct BattleFxWork, effect, 0x78f0);
+STATIC_ASSERT(offsetof(struct BattleFxWork, sheet) == 0x700);
+STATIC_ASSERT(offsetof(struct BattleFxWork, transferMode) == 0x7780);
+STATIC_ASSERT(offsetof(struct BattleFxWork, shakeFrames) == 0x77a8);
+STATIC_ASSERT(offsetof(struct BattleFxWork, objects) == 0x77dc);
+STATIC_ASSERT(offsetof(struct BattleFxWork, actorTimers) == 0x78dc);
+STATIC_ASSERT(offsetof(struct BattleFxWork, transferPending) == 0x78e8);
+STATIC_ASSERT(offsetof(struct BattleFxWork, effect) == 0x78f0);
 
 #endif

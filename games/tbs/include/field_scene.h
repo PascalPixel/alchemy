@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_FIELD_SCENE_H
 #define ALCHEMY_FIELD_SCENE_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "scene_ids.h"
 #include "character_ids.h"
 
@@ -60,9 +60,8 @@ struct SceneEntrance {
   s16 unused2;
 };
 
-LAYOUT_SIZE_GUARD(SceneEntrance_Size, struct SceneEntrance, 24);
-LAYOUT_OFFSET_GUARD(SceneEntrance_CameraLeft, struct SceneEntrance, cameraLeft,
-                    14);
+STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
+STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 
 #define SCENE_EXITS(scene) ((u32)(scene))
 #define SCENE_EXIT(exit, scene, entrance)                                      \
@@ -83,9 +82,8 @@ struct ScenePlacement {
   u8 flags;
 };
 
-LAYOUT_SIZE_GUARD(ScenePlacement_Size, struct ScenePlacement, 24);
-LAYOUT_OFFSET_GUARD(ScenePlacement_TalkFacing, struct ScenePlacement,
-                    talkFacing, 22);
+STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
+STATIC_ASSERT(offsetof(struct ScenePlacement, talkFacing) == 22);
 
 enum ActorBehavior { ACTOR_STAND = 1, ACTOR_WANDER = 2 };
 
@@ -108,7 +106,7 @@ struct SceneEvent {
   u32 value;
 };
 
-LAYOUT_SIZE_GUARD(SceneEvent_Size, struct SceneEvent, 12);
+STATIC_ASSERT(sizeof(struct SceneEvent) == 12);
 
 enum SceneEventKind {
   EVENT_TALK = 0,

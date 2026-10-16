@@ -23,7 +23,7 @@
 #include "resource_ids.h"
 #include "edition.h"
 #include "iwram_call.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_party.h"
 #include "battle_system.h"
 #include "frame.h"

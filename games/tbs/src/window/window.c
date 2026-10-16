@@ -62,7 +62,7 @@
 #include "select.h"
 #include "text/msg_ids.h"
 #include "sound_ids.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "field_event.h"
 #include "b5_context.h"
 #include "battle_type.h"
@@ -4001,18 +4001,18 @@ struct SpriteOutput {
   struct CursorSprite attr;
 };
 
-LAYOUT_OFFSET_GUARD(SpriteOutput_X, struct SpriteOutput, x,
-                    LAYOUT_OFFSET(struct RenderOutput, x));
-LAYOUT_OFFSET_GUARD(SpriteOutput_Y, struct SpriteOutput, y,
-                    LAYOUT_OFFSET(struct RenderOutput, y));
-LAYOUT_OFFSET_GUARD(SpriteOutput_Active, struct SpriteOutput, active,
-                    LAYOUT_OFFSET(struct RenderOutput, active));
-LAYOUT_OFFSET_GUARD(SpriteOutput_AnimStep, struct SpriteOutput, animStep,
-                    LAYOUT_OFFSET(struct RenderOutput, animStep));
-LAYOUT_OFFSET_GUARD(SpriteOutput_Index, struct SpriteOutput, index,
-                    LAYOUT_OFFSET(struct RenderOutput, index));
-LAYOUT_OFFSET_GUARD(SpriteOutput_Attr, struct SpriteOutput, attr,
-                    LAYOUT_OFFSET(struct RenderOutput, unk10));
+STATIC_ASSERT(offsetof(struct SpriteOutput, x) ==
+              offsetof(struct RenderOutput, x));
+STATIC_ASSERT(offsetof(struct SpriteOutput, y) ==
+              offsetof(struct RenderOutput, y));
+STATIC_ASSERT(offsetof(struct SpriteOutput, active) ==
+              offsetof(struct RenderOutput, active));
+STATIC_ASSERT(offsetof(struct SpriteOutput, animStep) ==
+              offsetof(struct RenderOutput, animStep));
+STATIC_ASSERT(offsetof(struct SpriteOutput, index) ==
+              offsetof(struct RenderOutput, index));
+STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
+              offsetof(struct RenderOutput, unk10));
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 

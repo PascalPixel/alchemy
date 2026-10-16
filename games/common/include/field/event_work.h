@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ScenePlacement;
 struct SceneEvent;
@@ -54,24 +54,18 @@ struct EventWork {
   s16 cueState;
 };
 
-LAYOUT_OFFSET_GUARD(EventWork_Objects, struct EventWork, objects, 0x14);
-LAYOUT_OFFSET_GUARD(EventWork_Exit, struct EventWork, exit, 0x154);
-LAYOUT_OFFSET_GUARD(EventWork_Countdown, struct EventWork, countdown, 0x158);
-LAYOUT_OFFSET_GUARD(EventWork_EncounterEnemyGroup, struct EventWork,
-                    encounterEnemyGroup, 0x164);
-LAYOUT_OFFSET_GUARD(EventWork_ControlMode, struct EventWork, controlMode,
-                    0x18a);
-LAYOUT_OFFSET_GUARD(EventWork_ScreenEffect, struct EventWork, screenEffect,
-                    0x1ac);
-LAYOUT_OFFSET_GUARD(EventWork_Delay, struct EventWork, delay, 0x1b4);
-LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, messageId, 0x1c4);
-LAYOUT_OFFSET_GUARD(EventWork_CurrentOwner, struct EventWork, currentOwner,
-                    0x1e0);
-LAYOUT_OFFSET_GUARD(EventWork_ActionCounter, struct EventWork, actionCounter,
-                    0xca2);
-LAYOUT_OFFSET_GUARD(EventWork_PendingSecond, struct EventWork, pendingSecond,
-                    0xcac);
-LAYOUT_OFFSET_GUARD(EventWork_CueState, struct EventWork, cueState, 0xcb8);
+STATIC_ASSERT(offsetof(struct EventWork, objects) == 0x14);
+STATIC_ASSERT(offsetof(struct EventWork, exit) == 0x154);
+STATIC_ASSERT(offsetof(struct EventWork, countdown) == 0x158);
+STATIC_ASSERT(offsetof(struct EventWork, encounterEnemyGroup) == 0x164);
+STATIC_ASSERT(offsetof(struct EventWork, controlMode) == 0x18a);
+STATIC_ASSERT(offsetof(struct EventWork, screenEffect) == 0x1ac);
+STATIC_ASSERT(offsetof(struct EventWork, delay) == 0x1b4);
+STATIC_ASSERT(offsetof(struct EventWork, messageId) == 0x1c4);
+STATIC_ASSERT(offsetof(struct EventWork, currentOwner) == 0x1e0);
+STATIC_ASSERT(offsetof(struct EventWork, actionCounter) == 0xca2);
+STATIC_ASSERT(offsetof(struct EventWork, pendingSecond) == 0xcac);
+STATIC_ASSERT(offsetof(struct EventWork, cueState) == 0xcb8);
 #else
 struct EventWork {
   struct ScenePlacement *tables[4];
@@ -108,37 +102,23 @@ struct EventWork {
   u16 unkcc4;
 };
 
-LAYOUT_OFFSET_GUARD(EventWork_PlacedActors, struct EventWork, placedActors,
-                    0x34);
-LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touchedTrigger,
-                    0x16c);
-LAYOUT_OFFSET_GUARD(EventWork_RequestedExit, struct EventWork, requestedExit,
-                    0x170);
-LAYOUT_OFFSET_GUARD(EventWork_FacingTrigger, struct EventWork, facingTrigger,
-                    0x17a);
-LAYOUT_OFFSET_GUARD(EventWork_EncounterEnemyGroup, struct EventWork,
-                    encounterEnemyGroup, 0x17c);
-LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork,
-                    psynergyRequest, 0x17e);
-LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raisedTrigger,
-                    0x182);
-LAYOUT_OFFSET_GUARD(EventWork_BlockedSteps, struct EventWork, blockedSteps,
-                    0x19c);
-LAYOUT_OFFSET_GUARD(EventWork_Mode, struct EventWork, mode, 0x19e);
-LAYOUT_OFFSET_GUARD(EventWork_EncounterGroups, struct EventWork,
-                    encounterGroups, 0x1a0);
-LAYOUT_OFFSET_GUARD(EventWork_EncounterBias, struct EventWork, encounterBias,
-                    0x1a8);
-LAYOUT_OFFSET_GUARD(EventWork_EncounterThreshold, struct EventWork,
-                    encounterThreshold, 0x1ac);
-LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork,
-                    startTransition, 0x1c0);
-LAYOUT_OFFSET_GUARD(EventWork_TransitionFrames, struct EventWork,
-                    transitionFrames, 0x1c8);
-LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);
-LAYOUT_OFFSET_GUARD(EventWork_ViewCenter, struct EventWork, viewCenter, 0x1e0);
-LAYOUT_OFFSET_GUARD(EventWork_ChoiceMessage, struct EventWork, choiceMessage,
-                    0xcc2);
+STATIC_ASSERT(offsetof(struct EventWork, placedActors) == 0x34);
+STATIC_ASSERT(offsetof(struct EventWork, touchedTrigger) == 0x16c);
+STATIC_ASSERT(offsetof(struct EventWork, requestedExit) == 0x170);
+STATIC_ASSERT(offsetof(struct EventWork, facingTrigger) == 0x17a);
+STATIC_ASSERT(offsetof(struct EventWork, encounterEnemyGroup) == 0x17c);
+STATIC_ASSERT(offsetof(struct EventWork, psynergyRequest) == 0x17e);
+STATIC_ASSERT(offsetof(struct EventWork, raisedTrigger) == 0x182);
+STATIC_ASSERT(offsetof(struct EventWork, blockedSteps) == 0x19c);
+STATIC_ASSERT(offsetof(struct EventWork, mode) == 0x19e);
+STATIC_ASSERT(offsetof(struct EventWork, encounterGroups) == 0x1a0);
+STATIC_ASSERT(offsetof(struct EventWork, encounterBias) == 0x1a8);
+STATIC_ASSERT(offsetof(struct EventWork, encounterThreshold) == 0x1ac);
+STATIC_ASSERT(offsetof(struct EventWork, startTransition) == 0x1c0);
+STATIC_ASSERT(offsetof(struct EventWork, transitionFrames) == 0x1c8);
+STATIC_ASSERT(offsetof(struct EventWork, message) == 0x1d8);
+STATIC_ASSERT(offsetof(struct EventWork, viewCenter) == 0x1e0);
+STATIC_ASSERT(offsetof(struct EventWork, choiceMessage) == 0xcc2);
 #endif
 
 #endif

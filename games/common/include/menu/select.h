@@ -2,7 +2,7 @@
 #define ALCHEMY_SELECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "window.h"
 
 struct SelectionSprite {
@@ -65,17 +65,14 @@ struct SelectionScreen {
   u8 unk3ba[42];
 };
 
-LAYOUT_SIZE_GUARD(SelectionSprite_Size, struct SelectionSprite, 0x0c);
-LAYOUT_SIZE_GUARD(SelectionNode_Size, struct SelectionNode, 0x34);
-LAYOUT_OFFSET_GUARD(SelectionNode_Message, struct SelectionNode, message, 0x20);
-LAYOUT_OFFSET_GUARD(SelectionNode_Sprite, struct SelectionNode, sprite, 0x28);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Head, struct SelectionScreen, head, 0x348);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds,
-                    0x354);
-LAYOUT_OFFSET_GUARD(SelectionScreen_CursorIndex, struct SelectionScreen,
-                    cursorIndex, 0x39e);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Locked, struct SelectionScreen, locked,
-                    0x3b8);
-LAYOUT_SIZE_GUARD(SelectionScreen_Size, struct SelectionScreen, 0x3e4);
+STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
+STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);
+STATIC_ASSERT(offsetof(struct SelectionNode, message) == 0x20);
+STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 0x28);
+STATIC_ASSERT(offsetof(struct SelectionScreen, head) == 0x348);
+STATIC_ASSERT(offsetof(struct SelectionScreen, kinds) == 0x354);
+STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 0x39e);
+STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 0x3b8);
+STATIC_ASSERT(sizeof(struct SelectionScreen) == 0x3e4);
 
 #endif

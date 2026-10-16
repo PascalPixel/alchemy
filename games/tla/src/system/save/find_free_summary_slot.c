@@ -1,5 +1,5 @@
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "ram_buffer.h"
 #include "battle_party.h"
 #include "b5_context.h"

@@ -3,15 +3,15 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct OamUsage {
   u16 used;
   u16 limit;
 };
 
-LAYOUT_SIZE_GUARD(OamUsage_Size, struct OamUsage, 4);
-LAYOUT_OFFSET_GUARD(OamUsage_Limit, struct OamUsage, limit, 2);
+STATIC_ASSERT(sizeof(struct OamUsage) == 4);
+STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 
 extern struct OamUsage gOamUsage;
 #if GAME_TLA

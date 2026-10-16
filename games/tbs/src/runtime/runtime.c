@@ -38,7 +38,7 @@
 #include "string.h"
 #include "low_runtime.h"
 #include "vram_tab.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "edition.h"
 #include "transform.h"
 #include "project.h"

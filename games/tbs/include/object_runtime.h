@@ -4,7 +4,7 @@
 #include "unit/field/field.h"
 #include "object_lookup.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ObjectRuntime {
   s32 *script;
@@ -47,10 +47,8 @@ struct ObjectRuntime {
 
 extern struct ObjectRuntime gObjectSnapshots[32];
 
-LAYOUT_SIZE_GUARD(ObjectRuntime_size, struct ObjectRuntime, 0x70);
-LAYOUT_OFFSET_GUARD(ObjectRuntime_arrival_axis_offset, struct ObjectRuntime,
-                    arrivalAxis, 0x56);
-LAYOUT_OFFSET_GUARD(ObjectRuntime_snap_to_target_offset, struct ObjectRuntime,
-                    snapToTarget, 0x58);
+STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, snapToTarget) == 0x58);
 
 #endif

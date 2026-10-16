@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "battle_unit.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct OwnerInventoryState {
   u8 unk000[0xd8];
@@ -61,19 +61,14 @@ struct ClassDefinition {
 
 extern struct ClassDefinition gClass_DefinitionTable[];
 
-LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
-LAYOUT_OFFSET_GUARD(OwnerDjinn_Owned, struct OwnerDjinnState, flags.banks.owned,
-                    0xf8);
-LAYOUT_OFFSET_GUARD(OwnerDjinn_Active, struct OwnerDjinnState,
-                    flags.banks.active, 0x108);
-LAYOUT_OFFSET_GUARD(OwnerDjinn_OwnedCounts, struct OwnerDjinnState,
-                    counts.banks.owned, 0x118);
-LAYOUT_OFFSET_GUARD(OwnerDjinn_ActiveCounts, struct OwnerDjinnState,
-                    counts.banks.active, 0x11c);
-LAYOUT_SIZE_GUARD(TradeOffer_Size, struct TradeOffer, 4);
-LAYOUT_OFFSET_GUARD(TradeOfferState_Offers, struct TradeOfferState, offers, 8);
-LAYOUT_OFFSET_GUARD(TradeOfferState_Count, struct TradeOfferState, count,
-                    0x128);
+STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
+STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.owned) == 0xf8);
+STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.active) == 0x108);
+STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.owned) == 0x118);
+STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.active) == 0x11c);
+STATIC_ASSERT(sizeof(struct TradeOffer) == 4);
+STATIC_ASSERT(offsetof(struct TradeOfferState, offers) == 8);
+STATIC_ASSERT(offsetof(struct TradeOfferState, count) == 0x128);
 
 void *UnitGet(s32 owner);
 void Unit_UpdateClass(s32 owner);

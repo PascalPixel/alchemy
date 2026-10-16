@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ScriptInterpreter;
 
@@ -23,21 +23,14 @@ struct ScriptInterpreter {
   u8 delay;
 };
 
-LAYOUT_SIZE_GUARD(ScriptInterpreter_size, struct ScriptInterpreter, 0x64);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_script_offset, struct ScriptInterpreter,
-                    script, 0x00);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_cursor_offset, struct ScriptInterpreter,
-                    cursor, 0x04);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_byte_54_offset, struct ScriptInterpreter,
-                    byte54, 0x54);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_condition_result_offset,
-                    struct ScriptInterpreter, conditionResult, 0x57);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_repeat_count_offset,
-                    struct ScriptInterpreter, repeatCount, 0x5d);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_lookup_result_offset,
-                    struct ScriptInterpreter, lookupResult, 0x5e);
-LAYOUT_OFFSET_GUARD(ScriptInterpreter_delay_offset, struct ScriptInterpreter,
-                    delay, 0x60);
+STATIC_ASSERT(sizeof(struct ScriptInterpreter) == 0x64);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, cursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, byte54) == 0x54);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, conditionResult) == 0x57);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, repeatCount) == 0x5d);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, lookupResult) == 0x5e);
+STATIC_ASSERT(offsetof(struct ScriptInterpreter, delay) == 0x60);
 
 // Raw fields of the full slot, addressed by the set/add/compare commands.
 struct ScriptOperands {
@@ -85,29 +78,18 @@ struct ScriptOperands {
   u32 word6c;
 };
 
-LAYOUT_OFFSET_GUARD(ScriptOperands_script_address_offset, struct ScriptOperands,
-                    scriptAddress, 0x00);
-LAYOUT_OFFSET_GUARD(ScriptOperands_cursor_offset, struct ScriptOperands, cursor,
-                    0x04);
-LAYOUT_OFFSET_GUARD(ScriptOperands_unsigned_halfword_offset,
-                    struct ScriptOperands, unsignedHalfword, 0x06);
-LAYOUT_OFFSET_GUARD(ScriptOperands_byte_54_offset, struct ScriptOperands,
-                    byte54, 0x54);
-LAYOUT_OFFSET_GUARD(ScriptOperands_byte_5d_offset, struct ScriptOperands,
-                    byte5d, 0x5d);
-LAYOUT_OFFSET_GUARD(ScriptOperands_byte_60_offset, struct ScriptOperands,
-                    byte60, 0x60);
-LAYOUT_OFFSET_GUARD(ScriptOperands_comparison_result_offset,
-                    struct ScriptOperands, comparisonResult, 0x57);
-LAYOUT_OFFSET_GUARD(ScriptOperands_halfword_5e_offset, struct ScriptOperands,
-                    halfword5e, 0x5e);
-LAYOUT_OFFSET_GUARD(ScriptOperands_signed_halfword_64_offset,
-                    struct ScriptOperands, signedHalfword64, 0x64);
-LAYOUT_OFFSET_GUARD(ScriptOperands_word_68_offset, struct ScriptOperands,
-                    word68, 0x68);
-LAYOUT_OFFSET_GUARD(ScriptOperands_word_6c_offset, struct ScriptOperands,
-                    word6c, 0x6c);
-LAYOUT_SIZE_GUARD(ScriptOperands_size, struct ScriptOperands, 0x70);
+STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0x00);
+STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ScriptOperands, unsignedHalfword) == 0x06);
+STATIC_ASSERT(offsetof(struct ScriptOperands, byte54) == 0x54);
+STATIC_ASSERT(offsetof(struct ScriptOperands, byte5d) == 0x5d);
+STATIC_ASSERT(offsetof(struct ScriptOperands, byte60) == 0x60);
+STATIC_ASSERT(offsetof(struct ScriptOperands, comparisonResult) == 0x57);
+STATIC_ASSERT(offsetof(struct ScriptOperands, halfword5e) == 0x5e);
+STATIC_ASSERT(offsetof(struct ScriptOperands, signedHalfword64) == 0x64);
+STATIC_ASSERT(offsetof(struct ScriptOperands, word68) == 0x68);
+STATIC_ASSERT(offsetof(struct ScriptOperands, word6c) == 0x6c);
+STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
 
 #if GAME_TLA
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter);

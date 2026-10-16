@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct PaletteSnapshot {
   u16 *source;
@@ -19,16 +19,13 @@ struct PaletteSnapshotWork {
   u16 count;
 };
 
-LAYOUT_SIZE_GUARD(PaletteSnapshot_Size, struct PaletteSnapshot, 0x2c);
-LAYOUT_OFFSET_GUARD(PaletteSnapshot_Position, struct PaletteSnapshot, position,
-                    4);
-LAYOUT_OFFSET_GUARD(PaletteSnapshot_Timer, struct PaletteSnapshot, timer, 6);
-LAYOUT_OFFSET_GUARD(PaletteSnapshot_Delay, struct PaletteSnapshot, delay, 8);
-LAYOUT_OFFSET_GUARD(PaletteSnapshot_Colors, struct PaletteSnapshot, colors,
-                    0xc);
-LAYOUT_SIZE_GUARD(PaletteSnapshotWork_Size, struct PaletteSnapshotWork, 0xb4);
-LAYOUT_OFFSET_GUARD(PaletteSnapshotWork_Count, struct PaletteSnapshotWork,
-                    count, 0xb0);
+STATIC_ASSERT(sizeof(struct PaletteSnapshot) == 0x2c);
+STATIC_ASSERT(offsetof(struct PaletteSnapshot, position) == 4);
+STATIC_ASSERT(offsetof(struct PaletteSnapshot, timer) == 6);
+STATIC_ASSERT(offsetof(struct PaletteSnapshot, delay) == 8);
+STATIC_ASSERT(offsetof(struct PaletteSnapshot, colors) == 0xc);
+STATIC_ASSERT(sizeof(struct PaletteSnapshotWork) == 0xb4);
+STATIC_ASSERT(offsetof(struct PaletteSnapshotWork, count) == 0xb0);
 
 #if GAME_TLA
 void Runtime_AllocateAndClearQueue(void);

@@ -2,7 +2,7 @@
 #define ALCHEMY_OVERLAY_OBJECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct OverlayObjectRecord {
   u8 unk00[9];
@@ -34,25 +34,18 @@ struct OverlayObject {
   struct OverlayObject *linkedObject;
 };
 
-LAYOUT_OFFSET_GUARD(OverlayObjectRecord_flags_offset,
-                    struct OverlayObjectRecord, flags, 0x09);
-LAYOUT_OFFSET_GUARD(OvObj_record_offset, struct OverlayObject, record, 0x50);
-LAYOUT_OFFSET_GUARD(OvObj_angle_offset, struct OverlayObject, angle, 0x06);
-LAYOUT_OFFSET_GUARD(OvObj_coordinate_08_offset, struct OverlayObject,
-                    coordinate08, 0x08);
-LAYOUT_OFFSET_GUARD(OvObj_coordinate_10_offset, struct OverlayObject,
-                    coordinate10, 0x10);
-LAYOUT_OFFSET_GUARD(OvObj_field_30_offset, struct OverlayObject, field30, 0x30);
-LAYOUT_OFFSET_GUARD(OvObj_coordinate_38_offset, struct OverlayObject,
-                    coordinate38, 0x38);
-LAYOUT_OFFSET_GUARD(OvObj_coordinate_40_offset, struct OverlayObject,
-                    coordinate40, 0x40);
-LAYOUT_OFFSET_GUARD(OvObj_unknown_55_offset, struct OverlayObject, unk55, 0x55);
-LAYOUT_OFFSET_GUARD(OvObj_unknown_59_offset, struct OverlayObject, unk59, 0x59);
-LAYOUT_OFFSET_GUARD(OvObj_steering_flags_offset, struct OverlayObject,
-                    steeringFlags, 0x5a);
-LAYOUT_OFFSET_GUARD(OvObj_angle_64_offset, struct OverlayObject, angle64, 0x64);
-LAYOUT_OFFSET_GUARD(OvObj_linked_object_offset, struct OverlayObject,
-                    linkedObject, 0x68);
+STATIC_ASSERT(offsetof(struct OverlayObjectRecord, flags) == 0x09);
+STATIC_ASSERT(offsetof(struct OverlayObject, record) == 0x50);
+STATIC_ASSERT(offsetof(struct OverlayObject, angle) == 0x06);
+STATIC_ASSERT(offsetof(struct OverlayObject, coordinate08) == 0x08);
+STATIC_ASSERT(offsetof(struct OverlayObject, coordinate10) == 0x10);
+STATIC_ASSERT(offsetof(struct OverlayObject, field30) == 0x30);
+STATIC_ASSERT(offsetof(struct OverlayObject, coordinate38) == 0x38);
+STATIC_ASSERT(offsetof(struct OverlayObject, coordinate40) == 0x40);
+STATIC_ASSERT(offsetof(struct OverlayObject, unk55) == 0x55);
+STATIC_ASSERT(offsetof(struct OverlayObject, unk59) == 0x59);
+STATIC_ASSERT(offsetof(struct OverlayObject, steeringFlags) == 0x5a);
+STATIC_ASSERT(offsetof(struct OverlayObject, angle64) == 0x64);
+STATIC_ASSERT(offsetof(struct OverlayObject, linkedObject) == 0x68);
 
 #endif

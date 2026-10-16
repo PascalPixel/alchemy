@@ -21,11 +21,10 @@ struct UiWindow {
   u16 previousHeight;
 };
 
-LAYOUT_SIZE_GUARD(UiWindow_Size, struct UiWindow, 0x24);
-LAYOUT_OFFSET_GUARD(UiWindow_Width, struct UiWindow, width, 8);
-LAYOUT_OFFSET_GUARD(UiWindow_Frame, struct UiWindow, frame, 0x18);
-LAYOUT_OFFSET_GUARD(UiWindow_PreviousHeight, struct UiWindow, previousHeight,
-                    0x22);
+STATIC_ASSERT(sizeof(struct UiWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct UiWindow, width) == 8);
+STATIC_ASSERT(offsetof(struct UiWindow, frame) == 0x18);
+STATIC_ASSERT(offsetof(struct UiWindow, previousHeight) == 0x22);
 
 struct UiChannelSlot {
   struct UiWindow *work;
@@ -46,13 +45,11 @@ struct UiChannelSlot {
   u16 unk26;
 };
 
-LAYOUT_SIZE_GUARD(UiChannelSlot_Size, struct UiChannelSlot, 0x28);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Entry, struct UiChannelSlot, entry, 0x12);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Countdown, struct UiChannelSlot, countdown,
-                    0x14);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Transition, struct UiChannelSlot, transition,
-                    0x1c);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
+STATIC_ASSERT(sizeof(struct UiChannelSlot) == 0x28);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, entry) == 0x12);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, countdown) == 0x14);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, transition) == 0x1c);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, flags) == 0x24);
 
 // Requests transfer of the four-row tilemap band containing window row y.
 // A statement macro (S2: a layer, 10 sites): the dirty-row store stays where it

@@ -4,7 +4,7 @@
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "dma.h"
 #include "global_cells.h"
 #include "fixed_math.h"
@@ -52,22 +52,19 @@ struct SaveWorkspace {
   struct SaveSummary summary[3];
 };
 
-LAYOUT_SIZE_GUARD(SaveSummary_Size, struct SaveSummary, 64);
-LAYOUT_OFFSET_GUARD(SaveSummary_Level, struct SaveSummary, level, 0x1c);
-LAYOUT_OFFSET_GUARD(SaveSummary_SendFlag, struct SaveSummary, sendFlag, 0x31);
-LAYOUT_OFFSET_GUARD(SaveSummary_Checksum, struct SaveSummary, checksum, 0x3c);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Slot, struct SaveWorkspace, slot, 0x40);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Summary, struct SaveWorkspace, summary,
-                    0x1040);
+STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
+STATIC_ASSERT(offsetof(struct SaveSummary, level) == 0x1c);
+STATIC_ASSERT(offsetof(struct SaveSummary, sendFlag) == 0x31);
+STATIC_ASSERT(offsetof(struct SaveSummary, checksum) == 0x3c);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, slot) == 0x40);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x1040);
 
-LAYOUT_SIZE_GUARD(SaveSlotHeader_Size, struct SaveSlotHeader, 0x10);
-LAYOUT_SIZE_GUARD(SaveWorkspace_Size, struct SaveWorkspace, 0x1100);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Records, struct SaveWorkspace, recordId,
-                    0x10);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Sequences, struct SaveWorkspace, sequence,
-                    0x20);
-LAYOUT_OFFSET_GUARD(SaveSummary_FlagCount, struct SaveSummary, flagCount, 0x32);
-LAYOUT_OFFSET_GUARD(SaveSummary_Unknown38, struct SaveSummary, unk38, 0x38);
+STATIC_ASSERT(sizeof(struct SaveSlotHeader) == 0x10);
+STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x1100);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, recordId) == 0x10);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, sequence) == 0x20);
+STATIC_ASSERT(offsetof(struct SaveSummary, flagCount) == 0x32);
+STATIC_ASSERT(offsetof(struct SaveSummary, unk38) == 0x38);
 
 extern struct SaveWorkspace *gSaveWorkspace;
 

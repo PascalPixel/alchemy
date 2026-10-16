@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #define EFFECT_NO_TARGET ((s32)0x80000000)
 
@@ -41,10 +41,9 @@ struct EffectSlot {
   u8 flags;
 };
 
-LAYOUT_SIZE_GUARD(EffectSlot_Size, struct EffectSlot, 0x48);
-LAYOUT_OFFSET_GUARD(EffectSlot_OrbitRadius, struct EffectSlot, orbitRadius,
-                    0x3c);
-LAYOUT_OFFSET_GUARD(EffectSlot_State, struct EffectSlot, state, 0x40);
+STATIC_ASSERT(sizeof(struct EffectSlot) == 0x48);
+STATIC_ASSERT(offsetof(struct EffectSlot, orbitRadius) == 0x3c);
+STATIC_ASSERT(offsetof(struct EffectSlot, state) == 0x40);
 
 #if GAME_TLA
 u32 EffectSlot_HasPendingTarget(struct EffectSlot *);

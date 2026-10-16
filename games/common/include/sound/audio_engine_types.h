@@ -2,7 +2,7 @@
 #define ALCHEMY_AUDIO_ENGINE_TYPES_H
 
 #include "types.h"
-#include "../lib/layout_guard.h"
+#include "../lib/static_assert.h"
 
 #define SOUND_LOCK 0x68736D53
 
@@ -300,17 +300,17 @@ struct SongEntry {
   u16 unk06;
 };
 
-LAYOUT_SIZE_GUARD(SoundVoice_Size, struct SoundVoice, 12);
-LAYOUT_SIZE_GUARD(SoundNote_Size, struct SoundNote, 64);
-LAYOUT_SIZE_GUARD(CgbNote_Size, struct CgbNote, 64);
-LAYOUT_OFFSET_GUARD(CgbNote_Frequency, struct CgbNote, frequency, 0x20);
-LAYOUT_OFFSET_GUARD(CgbNote_Wave, struct CgbNote, wave, 0x24);
-LAYOUT_SIZE_GUARD(SoundTrack_Size, struct SoundTrack, 80);
-LAYOUT_OFFSET_GUARD(SoundTrack_Voice, struct SoundTrack, voice, 0x24);
-LAYOUT_OFFSET_GUARD(SoundTrack_Cursor, struct SoundTrack, cursor, 0x40);
-LAYOUT_SIZE_GUARD(SoundPlayer_Size, struct SoundPlayer, 64);
-LAYOUT_OFFSET_GUARD(SoundWork_CgbNotes, struct SoundWork, cgbNotes, 0x1c);
-LAYOUT_SIZE_GUARD(SoundWork_Size, struct SoundWork, 0xfb0);
+STATIC_ASSERT(sizeof(struct SoundVoice) == 12);
+STATIC_ASSERT(sizeof(struct SoundNote) == 64);
+STATIC_ASSERT(sizeof(struct CgbNote) == 64);
+STATIC_ASSERT(offsetof(struct CgbNote, frequency) == 0x20);
+STATIC_ASSERT(offsetof(struct CgbNote, wave) == 0x24);
+STATIC_ASSERT(sizeof(struct SoundTrack) == 80);
+STATIC_ASSERT(offsetof(struct SoundTrack, voice) == 0x24);
+STATIC_ASSERT(offsetof(struct SoundTrack, cursor) == 0x40);
+STATIC_ASSERT(sizeof(struct SoundPlayer) == 64);
+STATIC_ASSERT(offsetof(struct SoundWork, cgbNotes) == 0x1c);
+STATIC_ASSERT(sizeof(struct SoundWork) == 0xfb0);
 
 void CgbAudio_Initialize(struct CgbNote *notes);
 void CgbNote_UpdatePanEnvelope(struct CgbNote *note);

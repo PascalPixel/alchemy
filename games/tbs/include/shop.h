@@ -4,7 +4,7 @@
 #include "unit/shop/shop.h"
 #include "global_cells.h"
 #include "item.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "render_input.h"
 #include "effect_slot.h"
 #include "animspr.h"
@@ -45,35 +45,22 @@ struct ShopRuntime {
   struct EffectSlot effects[24];
 };
 
-LAYOUT_SIZE_GUARD(ShopRuntime_Size, struct ShopRuntime, 0xa70);
-LAYOUT_OFFSET_GUARD(ShopRuntime_MoneyWindow, struct ShopRuntime, moneyWindow,
-                    0x00c);
-LAYOUT_OFFSET_GUARD(ShopRuntime_ItemWindow, struct ShopRuntime, itemWindow,
-                    0x020);
-LAYOUT_OFFSET_GUARD(ShopRuntime_PartyMemberIcons, struct ShopRuntime,
-                    partyMemberIcons, 0x114);
-LAYOUT_OFFSET_GUARD(ShopRuntime_PartyMemberScale, struct ShopRuntime,
-                    partyMemberScale, 0x154);
-LAYOUT_OFFSET_GUARD(ShopRuntime_StockItems, struct ShopRuntime, stockItemIds,
-                    0x26c);
-LAYOUT_OFFSET_GUARD(ShopRuntime_PartyMembers, struct ShopRuntime,
-                    partyMemberIds, 0x36e);
-LAYOUT_OFFSET_GUARD(ShopRuntime_Cursor, struct ShopRuntime, cursor, 0x380);
-LAYOUT_OFFSET_GUARD(ShopRuntime_StockCount, struct ShopRuntime, stockCount,
-                    0x3a6);
-LAYOUT_OFFSET_GUARD(ShopRuntime_PartyMemberCount, struct ShopRuntime,
-                    partyMemberCount, 0x3a7);
-LAYOUT_OFFSET_GUARD(ShopRuntime_PartyAction, struct ShopRuntime, partyAction,
-                    0x3aa);
-LAYOUT_OFFSET_GUARD(ShopRuntime_MemberX, struct ShopRuntime, partyMemberX,
-                    0x134);
-LAYOUT_OFFSET_GUARD(ShopRuntime_MemberY, struct ShopRuntime, partyMemberY,
-                    0x144);
-LAYOUT_OFFSET_GUARD(ShopRuntime_BurstMember, struct ShopRuntime, burstMember,
-                    0x3ab);
-LAYOUT_OFFSET_GUARD(ShopRuntime_WarriorShop, struct ShopRuntime, warriorShop,
-                    0x3ac);
-LAYOUT_OFFSET_GUARD(ShopRuntime_Effects, struct ShopRuntime, effects, 0x3b0);
+STATIC_ASSERT(sizeof(struct ShopRuntime) == 0xa70);
+STATIC_ASSERT(offsetof(struct ShopRuntime, moneyWindow) == 0x00c);
+STATIC_ASSERT(offsetof(struct ShopRuntime, itemWindow) == 0x020);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberIcons) == 0x114);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberScale) == 0x154);
+STATIC_ASSERT(offsetof(struct ShopRuntime, stockItemIds) == 0x26c);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberIds) == 0x36e);
+STATIC_ASSERT(offsetof(struct ShopRuntime, cursor) == 0x380);
+STATIC_ASSERT(offsetof(struct ShopRuntime, stockCount) == 0x3a6);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberCount) == 0x3a7);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyAction) == 0x3aa);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberX) == 0x134);
+STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberY) == 0x144);
+STATIC_ASSERT(offsetof(struct ShopRuntime, burstMember) == 0x3ab);
+STATIC_ASSERT(offsetof(struct ShopRuntime, warriorShop) == 0x3ac);
+STATIC_ASSERT(offsetof(struct ShopRuntime, effects) == 0x3b0);
 
 extern const u8 gShop_HandTiles[];
 extern const u8 gShop_GemTiles[];

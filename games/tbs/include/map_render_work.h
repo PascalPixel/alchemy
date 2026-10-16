@@ -3,7 +3,7 @@
 #define ALCHEMY_MAP_RENDER_WORK_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct MapRenderWork {
   u8 unk000[0xfc];
@@ -15,9 +15,8 @@ struct MapRenderWork {
   u16 rotation;
 };
 
-LAYOUT_OFFSET_GUARD(MapRenderWork_Active, struct MapRenderWork, active, 0xfc);
-LAYOUT_OFFSET_GUARD(MapRenderWork_Window, struct MapRenderWork, first, 0x100);
-LAYOUT_OFFSET_GUARD(MapRenderWork_Rotation, struct MapRenderWork, rotation,
-                    0x11a);
+STATIC_ASSERT(offsetof(struct MapRenderWork, active) == 0xfc);
+STATIC_ASSERT(offsetof(struct MapRenderWork, first) == 0x100);
+STATIC_ASSERT(offsetof(struct MapRenderWork, rotation) == 0x11a);
 
 #endif

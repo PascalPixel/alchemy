@@ -4,7 +4,7 @@
 #include "unit/object/object.h"
 #include "object_lookup.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "palbuf.h"
 
 struct BattleAnimationState {

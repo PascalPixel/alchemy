@@ -4,7 +4,7 @@
 #include "unit/game/game.h"
 #include "types.h"
 #include "owner_value.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct BattleUnit;
 
@@ -95,36 +95,26 @@ struct LevelUpResult {
   u16 luck;
 };
 
-LAYOUT_SIZE_GUARD(CharacterDefinition_Size, struct CharacterDefinition, 0xb4);
-LAYOUT_OFFSET_GUARD(CharacterDefinition_Hp, struct CharacterDefinition, hp,
-                    0x50);
-LAYOUT_OFFSET_GUARD(CharacterDefinition_StartingLevel,
-                    struct CharacterDefinition, startingLevel, 0x96);
-LAYOUT_OFFSET_GUARD(CharacterDefinition_Items, struct CharacterDefinition,
-                    items, 0x98);
-LAYOUT_SIZE_GUARD(ClassDefinition_Size, struct ClassDefinition, 0x54);
-LAYOUT_OFFSET_GUARD(ClassDefinition_Hp, struct ClassDefinition, hp, 8);
-LAYOUT_SIZE_GUARD(ClassAbility_Size, struct ClassAbility, 4);
-LAYOUT_OFFSET_GUARD(ClassDefinition_Abilities, struct ClassDefinition,
-                    abilities, 0x10);
-LAYOUT_SIZE_GUARD(DjinnDefinition_Size, struct DjinnDefinition, 0xc);
-LAYOUT_OFFSET_GUARD(DjinnDefinition_AbilityId, struct DjinnDefinition,
-                    abilityId, 0);
-LAYOUT_OFFSET_GUARD(DjinnDefinition_Unk02, struct DjinnDefinition, unk02, 2);
-LAYOUT_OFFSET_GUARD(DjinnDefinition_Hp, struct DjinnDefinition, hp, 4);
-LAYOUT_SIZE_GUARD(EnemyDefinition_Size, struct EnemyDefinition, 0x54);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_Rewards, struct EnemyDefinition, rewards,
-                    0x20);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_ActionStrategy, struct EnemyDefinition,
-                    actionStrategy, 0x36);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_ItemActions, struct EnemyDefinition,
-                    itemActions, 0x37);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_Actions, struct EnemyDefinition, actions,
-                    0x38);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_Coins, struct EnemyDefinition, coins, 0x4c);
-LAYOUT_OFFSET_GUARD(EnemyDefinition_Experience, struct EnemyDefinition,
-                    experience, 0x52);
-LAYOUT_SIZE_GUARD(LevelUpResult_Size, struct LevelUpResult, 0x10);
+STATIC_ASSERT(sizeof(struct CharacterDefinition) == 0xb4);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, hp) == 0x50);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, startingLevel) == 0x96);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, items) == 0x98);
+STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
+STATIC_ASSERT(offsetof(struct ClassDefinition, hp) == 8);
+STATIC_ASSERT(sizeof(struct ClassAbility) == 4);
+STATIC_ASSERT(offsetof(struct ClassDefinition, abilities) == 0x10);
+STATIC_ASSERT(sizeof(struct DjinnDefinition) == 0xc);
+STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
+STATIC_ASSERT(offsetof(struct DjinnDefinition, unk02) == 2);
+STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
+STATIC_ASSERT(sizeof(struct EnemyDefinition) == 0x54);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, rewards) == 0x20);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 0x36);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, itemActions) == 0x37);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, actions) == 0x38);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
+STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);
 
 extern struct CharacterDefinition gCharacter_DefinitionTable[];
 extern struct ClassDefinition gClass_DefinitionTable[];

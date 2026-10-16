@@ -3,7 +3,7 @@
 
 #include "unit/field/field.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ScriptObjectEntry {
   void *data;
@@ -15,12 +15,9 @@ struct ScriptObjectEntry {
   u8 unk5a[0x16];
 };
 
-LAYOUT_OFFSET_GUARD(ScriptObjectEntry_values_08_offset,
-                    struct ScriptObjectEntry, values08, 0x08);
-LAYOUT_OFFSET_GUARD(ScriptObjectEntry_value_20_offset, struct ScriptObjectEntry,
-                    value20, 0x20);
-LAYOUT_OFFSET_GUARD(ScriptObjectEntry_flags_59_offset, struct ScriptObjectEntry,
-                    flags59, 0x59);
-LAYOUT_SIZE_GUARD(ScriptObjectEntry_size, struct ScriptObjectEntry, 0x70);
+STATIC_ASSERT(offsetof(struct ScriptObjectEntry, values08) == 0x08);
+STATIC_ASSERT(offsetof(struct ScriptObjectEntry, value20) == 0x20);
+STATIC_ASSERT(offsetof(struct ScriptObjectEntry, flags59) == 0x59);
+STATIC_ASSERT(sizeof(struct ScriptObjectEntry) == 0x70);
 
 #endif

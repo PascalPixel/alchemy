@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_COORDINATE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 union FieldCoordinate {
   s32 fixed;
@@ -12,8 +12,7 @@ union FieldCoordinate {
   } part;
 };
 
-LAYOUT_SIZE_GUARD(FieldCoordinate_Size, union FieldCoordinate, 4);
-LAYOUT_OFFSET_GUARD(FieldCoordinate_Pixel, union FieldCoordinate, part.pixel,
-                    2);
+STATIC_ASSERT(sizeof(union FieldCoordinate) == 4);
+STATIC_ASSERT(offsetof(union FieldCoordinate, part.pixel) == 2);
 
 #endif

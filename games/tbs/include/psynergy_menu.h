@@ -3,7 +3,7 @@
 
 #include "unit/menu/menu.h"
 #include "global_cells.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "menu_result.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
@@ -59,40 +59,24 @@ struct PsynergyMenuState {
   u8 mode;
 };
 
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_AuxiliaryWindow, struct PsynergyMenuState,
-                    auxiliaryWindow, 0x010);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_PsynergyWindow, struct PsynergyMenuState,
-                    psynergyWindow, 0x020);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_EntryGridCursor, struct PsynergyMenuState,
-                    entryGridCursor, 0x044);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_EntryIcons, struct PsynergyMenuState,
-                    entryIcons, 0x048);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_MessageWindow, struct PsynergyMenuState,
-                    messageWindow, 0x10c);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedColumn, struct PsynergyMenuState,
-                    selectedColumn, 0x110);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedRow, struct PsynergyMenuState,
-                    selectedRow, 0x111);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_ColumnCount, struct PsynergyMenuState,
-                    columnCount, 0x112);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_RowCount, struct PsynergyMenuState,
-                    rowCount, 0x113);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedPsynergy,
-                    struct PsynergyMenuState, paneAction[0], 0x178);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_Psynergies, struct PsynergyMenuState,
-                    psynergies, 0x1c8);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_PsynergyCount, struct PsynergyMenuState,
-                    psynergyCount, 0x218);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerIds, struct PsynergyMenuState,
-                    ownerIds, 0x21a);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SelectedIndexByOwner,
-                    struct PsynergyMenuState, selectedIndexByOwner, 0x260);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, auxiliaryWindow) == 0x010);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergyWindow) == 0x020);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, entryGridCursor) == 0x044);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, entryIcons) == 0x048);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, messageWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedRow) == 0x111);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, columnCount) == 0x112);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, rowCount) == 0x113);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, paneAction[0]) == 0x178);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergies) == 0x1c8);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, psynergyCount) == 0x218);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, ownerIds) == 0x21a);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, selectedIndexByOwner) ==
+              0x260);
 
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState,
-                    skipSlide, 0x222);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState,
-                    tabObjects, 0x114);
-LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState,
-                    ownerScale, 0x154);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, skipSlide) == 0x222);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, tabObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct PsynergyMenuState, ownerScale) == 0x154);
 
 #endif

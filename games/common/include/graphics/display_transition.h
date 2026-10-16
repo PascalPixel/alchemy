@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct DisplayTransitionFrame {
   u8 unk000[0x508];
@@ -46,38 +46,22 @@ struct DisplayTransitionState {
   s8 nextMode;
 };
 
-LAYOUT_OFFSET_GUARD(DisplayTransitionFrame_Value, struct DisplayTransitionFrame,
-                    value, 0x52a);
-LAYOUT_OFFSET_GUARD(DisplayTransitionFrame_Start, struct DisplayTransitionFrame,
-                    start, 0x53a);
-LAYOUT_SIZE_GUARD(DisplayTransitionFrame_Size, struct DisplayTransitionFrame,
-                  0x540);
-LAYOUT_OFFSET_GUARD(DisplayTransitionWindow_Control,
-                    struct DisplayTransitionWindow, dispcnt, 0x14);
-LAYOUT_OFFSET_GUARD(DisplayTransitionWindow_FirstLine,
-                    struct DisplayTransitionWindow, firstLine, 0x100);
-LAYOUT_OFFSET_GUARD(DisplayTransitionWindow_IrqPhase,
-                    struct DisplayTransitionWindow, irqPhase, 0x108);
-LAYOUT_SIZE_GUARD(DisplayTransitionWindow_PrefixSize,
-                  struct DisplayTransitionWindow, 0x10c);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Pages, struct DisplayTransitionState,
-                    pages, 0);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_SolidTile,
-                    struct DisplayTransitionState, solidTile, 0x508);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Page, struct DisplayTransitionState,
-                    page, 0x539);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Mode, struct DisplayTransitionState,
-                    mode, 0x528);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Centre,
-                    struct DisplayTransitionState, centreX, 0x52c);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Mask, struct DisplayTransitionState,
-                    mask, 0x534);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_NextMode,
-                    struct DisplayTransitionState, nextMode, 0x53e);
-LAYOUT_OFFSET_GUARD(DisplayTransitionState_Duration,
-                    struct DisplayTransitionState, duration, 0x53c);
-LAYOUT_SIZE_GUARD(DisplayTransitionState_Size, struct DisplayTransitionState,
-                  0x540);
+STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, value) == 0x52a);
+STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, start) == 0x53a);
+STATIC_ASSERT(sizeof(struct DisplayTransitionFrame) == 0x540);
+STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, dispcnt) == 0x14);
+STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, firstLine) == 0x100);
+STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, irqPhase) == 0x108);
+STATIC_ASSERT(sizeof(struct DisplayTransitionWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, pages) == 0);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, solidTile) == 0x508);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, page) == 0x539);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, mode) == 0x528);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, centreX) == 0x52c);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, mask) == 0x534);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, nextMode) == 0x53e);
+STATIC_ASSERT(offsetof(struct DisplayTransitionState, duration) == 0x53c);
+STATIC_ASSERT(sizeof(struct DisplayTransitionState) == 0x540);
 
 #if GAME_TLA
 void DisplayTransition_InitializeBattleEffectState(s32 mode);

@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_UNIT_H
 
 #include "edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum {
   BATTLE_ACTION_SIZE = 0x10,
@@ -227,39 +227,33 @@ struct BattleUnit {
   u16 enemyId;
 };
 
-LAYOUT_SIZE_GUARD(BattleAction_Size, struct BattleAct, BATTLE_ACTION_SIZE);
-LAYOUT_OFFSET_GUARD(BattleAction_Effect, struct BattleAct, effect, 0x03);
-LAYOUT_OFFSET_GUARD(BattleAction_Power, struct BattleAct, power, 0x0a);
-LAYOUT_OFFSET_GUARD(BattleAction_Type, struct BattleAct, type0c, 0x0c);
+STATIC_ASSERT(sizeof(struct BattleAct) == BATTLE_ACTION_SIZE);
+STATIC_ASSERT(offsetof(struct BattleAct, effect) == 0x03);
+STATIC_ASSERT(offsetof(struct BattleAct, power) == 0x0a);
+STATIC_ASSERT(offsetof(struct BattleAct, type0c) == 0x0c);
 
-LAYOUT_SIZE_GUARD(OwnerActionSlot_Size, struct OwnerActionSlot, 4);
-LAYOUT_SIZE_GUARD(BattleElementStats_Size, struct BattleElementStats, 4);
-LAYOUT_SIZE_GUARD(BattleUnit_Size, struct BattleUnit, BATTLE_UNIT_SIZE);
-LAYOUT_OFFSET_GUARD(BattleUnit_BaseHp, struct BattleUnit, baseHp, 0x10);
-LAYOUT_OFFSET_GUARD(BattleUnit_BaseAttack, struct BattleUnit, baseAttack, 0x18);
-LAYOUT_OFFSET_GUARD(BattleUnit_Actions, struct BattleUnit, actionSlots, 0x58);
-LAYOUT_OFFSET_GUARD(BattleUnit_AvailableDjinn, struct BattleUnit,
-                    djinnAvailable, 0xf8);
-LAYOUT_OFFSET_GUARD(BattleUnit_ActiveDjinn, struct BattleUnit, djinnActive,
-                    0x108);
-LAYOUT_OFFSET_GUARD(BattleUnit_Rewards, struct BattleUnit, rewards, 0x120);
-LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BattleUnit, hp, 0x038);
-LAYOUT_OFFSET_GUARD(BattleUnit_BaseElements, struct BattleUnit, baseElement,
-                    0x024);
-LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BattleUnit, level, 0x00f);
-LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BattleUnit, element, 0x048);
-LAYOUT_OFFSET_GUARD(BattleUnit_ReadyPose, struct BattleUnit, ready, 0x144);
-LAYOUT_OFFSET_GUARD(BattleUnit_Inventory, struct BattleUnit, inventory, 0x0d8);
-LAYOUT_OFFSET_GUARD(BattleUnit_DjinnOwnedCounts, struct BattleUnit,
-                    djinnOwnedCounts, 0x118);
-LAYOUT_OFFSET_GUARD(BattleUnit_DjinnActiveCounts, struct BattleUnit,
-                    djinnActiveCounts, 0x11c);
-LAYOUT_OFFSET_GUARD(BattleUnit_GuardLevel, struct BattleUnit, guardLevel,
-                    0x12b);
-LAYOUT_OFFSET_GUARD(BattleUnit_Status13a, struct BattleUnit, charm, 0x13a);
-LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BattleUnit, haunt, 0x140);
+STATIC_ASSERT(sizeof(struct OwnerActionSlot) == 4);
+STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);
+STATIC_ASSERT(sizeof(struct BattleUnit) == BATTLE_UNIT_SIZE);
+STATIC_ASSERT(offsetof(struct BattleUnit, baseHp) == 0x10);
+STATIC_ASSERT(offsetof(struct BattleUnit, baseAttack) == 0x18);
+STATIC_ASSERT(offsetof(struct BattleUnit, actionSlots) == 0x58);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnAvailable) == 0xf8);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnActive) == 0x108);
+STATIC_ASSERT(offsetof(struct BattleUnit, rewards) == 0x120);
+STATIC_ASSERT(offsetof(struct BattleUnit, hp) == 0x038);
+STATIC_ASSERT(offsetof(struct BattleUnit, baseElement) == 0x024);
+STATIC_ASSERT(offsetof(struct BattleUnit, level) == 0x00f);
+STATIC_ASSERT(offsetof(struct BattleUnit, element) == 0x048);
+STATIC_ASSERT(offsetof(struct BattleUnit, ready) == 0x144);
+STATIC_ASSERT(offsetof(struct BattleUnit, inventory) == 0x0d8);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnOwnedCounts) == 0x118);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnActiveCounts) == 0x11c);
+STATIC_ASSERT(offsetof(struct BattleUnit, guardLevel) == 0x12b);
+STATIC_ASSERT(offsetof(struct BattleUnit, charm) == 0x13a);
+STATIC_ASSERT(offsetof(struct BattleUnit, haunt) == 0x140);
 
-LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BattleUnit, enemyId, 0x14a);
+STATIC_ASSERT(offsetof(struct BattleUnit, enemyId) == 0x14a);
 
 // Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
 static __inline__ s32 Vitals_Clamp(s32 ratio) {

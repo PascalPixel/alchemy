@@ -2,7 +2,7 @@
 #define ALCHEMY_VIEW_MOVE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ObjectRuntime;
 
@@ -34,9 +34,9 @@ struct ViewMoveWork {
   s32 count;
 };
 
-LAYOUT_OFFSET_GUARD(ViewMoveWork_EdgeX, struct ViewMoveWork, edgeX, 0x1c);
-LAYOUT_OFFSET_GUARD(ViewMoveWork_Objects, struct ViewMoveWork, objects, 0x20);
-LAYOUT_OFFSET_GUARD(ViewMoveWork_Count, struct ViewMoveWork, count, 0x50);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, edgeX) == 0x1c);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 0x20);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 0x50);
 
 void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);

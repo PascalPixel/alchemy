@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_RUNTIME_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "object_runtime.h"
 #include "field_scene.h"
 
@@ -17,12 +17,16 @@ struct SceneRecord {
   u16 reserved;
 };
 
+STATIC_ASSERT(sizeof(struct SceneRecord) == 8);
+
 struct SceneRegion {
   s16 minX, minY, minZ;
   s16 maxX, maxY, maxZ;
   s16 condition;
   s16 value;
 };
+
+STATIC_ASSERT(sizeof(struct SceneRegion) == 16);
 
 struct SceneEntries {
   u32 initializeVeneer;
@@ -38,6 +42,10 @@ struct SceneEntries {
   u32 regionsVeneer;
   const struct SceneRegion *(*regions)(void);
 };
+
+STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
+STATIC_ASSERT(offsetof(struct SceneEntries, exits) == 0x14);
+STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
 
 struct FieldStepWork {
   const struct ScenePlacement *tables[4];
@@ -63,6 +71,16 @@ struct FieldStepWork {
   struct MapCell *previousTile;
 };
 
+STATIC_ASSERT(sizeof(struct FieldStepWork) == 0x1c0);
+STATIC_ASSERT(offsetof(struct FieldStepWork, events) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldStepWork, actors) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldStepWork, stepEvent) == 0x16c);
+STATIC_ASSERT(offsetof(struct FieldStepWork, encounterEnemyGroup) == 0x17c);
+STATIC_ASSERT(offsetof(struct FieldStepWork, mode) == 0x19e);
+STATIC_ASSERT(offsetof(struct FieldStepWork, walkingDistanceScale) == 0x1b0);
+STATIC_ASSERT(offsetof(struct FieldStepWork, walkingDistance) == 0x1b4);
+STATIC_ASSERT(offsetof(struct FieldStepWork, tile) == 0x1b8);
+
 // A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
   struct ObjectRuntime *object;
@@ -71,6 +89,11 @@ struct MarkerSlot {
   u8 column; // its 16-pixel cell
   u8 row;
 };
+
+STATIC_ASSERT(sizeof(struct MarkerSlot) == 8);
+STATIC_ASSERT(offsetof(struct MarkerSlot, id) == 4);
+STATIC_ASSERT(offsetof(struct MarkerSlot, column) == 6);
+STATIC_ASSERT(offsetof(struct MarkerSlot, row) == 7);
 
 // Full event work allocated by Field_RunScene (heap slot 27). The twelve
 // requests from action to event are handled by the field loop.
@@ -135,91 +158,51 @@ struct FieldWork {
   s16 queuedSound;
 };
 
+STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
+STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
+STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldWork, markers) == 0x11c);
+STATIC_ASSERT(offsetof(struct FieldWork, action) == 0x16c);
+STATIC_ASSERT(offsetof(struct FieldWork, descriptor) == 0x178);
+STATIC_ASSERT(offsetof(struct FieldWork, battle) == 0x17c);
+STATIC_ASSERT(offsetof(struct FieldWork, event) == 0x182);
+STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 0x19c);
+STATIC_ASSERT(offsetof(struct FieldWork, mode) == 0x19e);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterGroups) == 0x1a0);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterBias) == 0x1a8);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterThreshold) == 0x1ac);
+STATIC_ASSERT(offsetof(struct FieldWork, walkingDistanceScale) == 0x1b0);
+STATIC_ASSERT(offsetof(struct FieldWork, walkingDistance) == 0x1b4);
+STATIC_ASSERT(offsetof(struct FieldWork, transition) == 0x1c0);
+STATIC_ASSERT(offsetof(struct FieldWork, transitionActive) == 0x1c6);
+STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 0x1c8);
+STATIC_ASSERT(offsetof(struct FieldWork, fastForward) == 0x1cc);
+STATIC_ASSERT(offsetof(struct FieldWork, message) == 0x1d8);
+STATIC_ASSERT(offsetof(struct FieldWork, camera) == 0x1e0);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1da) == 0x1da);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1dc) == 0x1dc);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1de) == 0x1de);
+STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 0x1f4);
+STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 0x1f8);
+STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 0x1fc);
+STATIC_ASSERT(offsetof(struct FieldWork, busy) == 0xcb6);
+STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 0xcb8);
+STATIC_ASSERT(offsetof(struct FieldWork, revealFrames) == 0xcba);
+STATIC_ASSERT(offsetof(struct FieldWork, revealCenterX) == 0xcbc);
+STATIC_ASSERT(offsetof(struct FieldWork, revealCenterY) == 0xcbe);
+STATIC_ASSERT(offsetof(struct FieldWork, effectTimerRunning) == 0xcc0);
+STATIC_ASSERT(offsetof(struct FieldWork, nameMessage) == 0xcc2);
+STATIC_ASSERT(offsetof(struct FieldWork, nameWidth) == 0xcc4);
+STATIC_ASSERT(offsetof(struct FieldWork, resolvingAction) == 0xcc6);
+STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
+STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
+
 struct FieldPosition {
   s32 x, y, z;
 };
 
-LAYOUT_SIZE_GUARD(SceneRecord_Size, struct SceneRecord, 8);
-LAYOUT_SIZE_GUARD(SceneRegion_Size, struct SceneRegion, 16);
-LAYOUT_SIZE_GUARD(SceneEntries_Size, struct SceneEntries, 48);
-LAYOUT_OFFSET_GUARD(SceneEntries_Exits, struct SceneEntries, exits, 0x14);
-LAYOUT_OFFSET_GUARD(SceneEntries_Regions, struct SceneEntries, regions, 0x2c);
-LAYOUT_SIZE_GUARD(FieldStepWork_Size, struct FieldStepWork, 0x1c0);
-LAYOUT_OFFSET_GUARD(FieldStepWork_Events, struct FieldStepWork, events, 0x10);
-LAYOUT_OFFSET_GUARD(FieldStepWork_Actors, struct FieldStepWork, actors, 0x14);
-LAYOUT_OFFSET_GUARD(FieldStepWork_StepEvent, struct FieldStepWork, stepEvent,
-                    0x16c);
-LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterEnemyGroup, struct FieldStepWork,
-                    encounterEnemyGroup, 0x17c);
-LAYOUT_OFFSET_GUARD(FieldStepWork_Mode, struct FieldStepWork, mode, 0x19e);
-LAYOUT_OFFSET_GUARD(FieldStepWork_WalkingDistanceScale, struct FieldStepWork,
-                    walkingDistanceScale, 0x1b0);
-LAYOUT_OFFSET_GUARD(FieldStepWork_WalkingDistance, struct FieldStepWork,
-                    walkingDistance, 0x1b4);
-LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
-LAYOUT_SIZE_GUARD(FieldWork_Size, struct FieldWork, 0xccc);
-LAYOUT_OFFSET_GUARD(FieldWork_Tables, struct FieldWork, tables, 0);
-LAYOUT_OFFSET_GUARD(FieldWork_Events, struct FieldWork, events, 0x10);
-LAYOUT_SIZE_GUARD(MarkerSlot_Size, struct MarkerSlot, 8);
-LAYOUT_OFFSET_GUARD(MarkerSlot_Id, struct MarkerSlot, id, 4);
-LAYOUT_OFFSET_GUARD(MarkerSlot_Column, struct MarkerSlot, column, 6);
-LAYOUT_OFFSET_GUARD(MarkerSlot_Row, struct MarkerSlot, row, 7);
-LAYOUT_OFFSET_GUARD(FieldWork_Actors, struct FieldWork, actors, 0x14);
-LAYOUT_OFFSET_GUARD(FieldWork_Markers, struct FieldWork, markers, 0x11c);
-LAYOUT_OFFSET_GUARD(FieldWork_Action, struct FieldWork, action, 0x16c);
-LAYOUT_OFFSET_GUARD(FieldWork_Descriptor, struct FieldWork, descriptor, 0x178);
-LAYOUT_OFFSET_GUARD(FieldWork_Battle, struct FieldWork, battle, 0x17c);
-LAYOUT_OFFSET_GUARD(FieldWork_Event, struct FieldWork, event, 0x182);
-LAYOUT_OFFSET_GUARD(FieldWork_BlockedSteps, struct FieldWork, blockedSteps,
-                    0x19c);
-LAYOUT_OFFSET_GUARD(FieldWork_Mode, struct FieldWork, mode, 0x19e);
-LAYOUT_OFFSET_GUARD(FieldWork_EncounterGroups, struct FieldWork,
-                    encounterGroups, 0x1a0);
-LAYOUT_OFFSET_GUARD(FieldWork_EncounterBias, struct FieldWork, encounterBias,
-                    0x1a8);
-LAYOUT_OFFSET_GUARD(FieldWork_EncounterThreshold, struct FieldWork,
-                    encounterThreshold, 0x1ac);
-LAYOUT_OFFSET_GUARD(FieldWork_WalkingDistanceScale, struct FieldWork,
-                    walkingDistanceScale, 0x1b0);
-LAYOUT_OFFSET_GUARD(FieldWork_WalkingDistance, struct FieldWork,
-                    walkingDistance, 0x1b4);
-LAYOUT_OFFSET_GUARD(FieldWork_Transition, struct FieldWork, transition, 0x1c0);
-LAYOUT_OFFSET_GUARD(FieldWork_TransitionActive, struct FieldWork,
-                    transitionActive, 0x1c6);
-LAYOUT_OFFSET_GUARD(FieldWork_TransitionFrames, struct FieldWork,
-                    transitionFrames, 0x1c8);
-LAYOUT_OFFSET_GUARD(FieldWork_FastForward, struct FieldWork, fastForward,
-                    0x1cc);
-LAYOUT_OFFSET_GUARD(FieldWork_Message, struct FieldWork, message, 0x1d8);
-LAYOUT_OFFSET_GUARD(FieldWork_Camera, struct FieldWork, camera, 0x1e0);
-LAYOUT_OFFSET_GUARD(FieldWork_Unk1da, struct FieldWork, unk1da, 0x1da);
-LAYOUT_OFFSET_GUARD(FieldWork_Unk1dc, struct FieldWork, unk1dc, 0x1dc);
-LAYOUT_OFFSET_GUARD(FieldWork_Unk1de, struct FieldWork, unk1de, 0x1de);
-LAYOUT_OFFSET_GUARD(FieldWork_Speaker, struct FieldWork, speaker, 0x1f4);
-LAYOUT_OFFSET_GUARD(FieldWork_MessageWindow, struct FieldWork, messageWindow,
-                    0x1f8);
-LAYOUT_OFFSET_GUARD(FieldWork_SideWindow, struct FieldWork, sideWindow, 0x1fc);
-LAYOUT_OFFSET_GUARD(FieldWork_Busy, struct FieldWork, busy, 0xcb6);
-LAYOUT_OFFSET_GUARD(FieldWork_RevealActive, struct FieldWork, revealActive,
-                    0xcb8);
-LAYOUT_OFFSET_GUARD(FieldWork_RevealFrames, struct FieldWork, revealFrames,
-                    0xcba);
-LAYOUT_OFFSET_GUARD(FieldWork_RevealCenterX, struct FieldWork, revealCenterX,
-                    0xcbc);
-LAYOUT_OFFSET_GUARD(FieldWork_RevealCenterY, struct FieldWork, revealCenterY,
-                    0xcbe);
-LAYOUT_OFFSET_GUARD(FieldWork_EffectTimerRunning, struct FieldWork,
-                    effectTimerRunning, 0xcc0);
-LAYOUT_OFFSET_GUARD(FieldWork_NameMessage, struct FieldWork, nameMessage,
-                    0xcc2);
-LAYOUT_OFFSET_GUARD(FieldWork_NameWidth, struct FieldWork, nameWidth, 0xcc4);
-LAYOUT_OFFSET_GUARD(FieldWork_ResolvingAction, struct FieldWork,
-                    resolvingAction, 0xcc6);
-LAYOUT_OFFSET_GUARD(FieldWork_CastStarted, struct FieldWork, castStarted,
-                    0xcc7);
-LAYOUT_OFFSET_GUARD(FieldWork_QueuedSound, struct FieldWork, queuedSound,
-                    0xcc8);
-LAYOUT_SIZE_GUARD(FieldPosition_Size, struct FieldPosition, 12);
+STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 extern const struct SceneRecord gField_SceneTable[];
 extern struct SceneEntries gOverlayArea;

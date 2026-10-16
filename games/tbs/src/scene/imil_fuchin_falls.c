@@ -63,20 +63,18 @@ struct CaveDustOptions {
   s32 targetScaleY;
 };
 
-LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
-                    LAYOUT_OFFSET(struct EffectOptions, priority));
-LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
-                    LAYOUT_OFFSET(struct EffectOptions, palette));
-LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, startScaleX,
-                    LAYOUT_OFFSET(struct EffectOptions, startScaleX));
-LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, startScaleY,
-                    LAYOUT_OFFSET(struct EffectOptions, startScaleY));
-LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions,
-                    targetScaleX,
-                    LAYOUT_OFFSET(struct EffectOptions, targetScaleX));
-LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions,
-                    targetScaleY,
-                    LAYOUT_OFFSET(struct EffectOptions, targetScaleY));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, priority) ==
+              offsetof(struct EffectOptions, priority));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, palette) ==
+              offsetof(struct EffectOptions, palette));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, startScaleX) ==
+              offsetof(struct EffectOptions, startScaleX));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, startScaleY) ==
+              offsetof(struct EffectOptions, startScaleY));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleX) ==
+              offsetof(struct EffectOptions, targetScaleX));
+STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
+              offsetof(struct EffectOptions, targetScaleY));
 
 static void EV08_TALK(void) { Djinn_JoinParty(8, 2, 1); }
 

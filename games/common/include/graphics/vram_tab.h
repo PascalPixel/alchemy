@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum VramBlockLimits {
   VRAM_CACHE_ENTRY_COUNT = 96,
@@ -20,9 +20,8 @@ struct VramBlockCacheEntry {
   u16 offset;
 };
 
-LAYOUT_SIZE_GUARD(VramBlockCacheEntry_Size, struct VramBlockCacheEntry, 4);
-LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry,
-                    offset, 2);
+STATIC_ASSERT(sizeof(struct VramBlockCacheEntry) == 4);
+STATIC_ASSERT(offsetof(struct VramBlockCacheEntry, offset) == 2);
 
 #if GAME_TLA
 extern struct VramBlockCacheEntry gResourceTableEntries[];

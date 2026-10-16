@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_OBJ_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #include "event_work.h"
 
@@ -62,31 +62,25 @@ struct FieldActor {
   void (*update)(union FieldObject *object);
 };
 
-LAYOUT_OFFSET_GUARD(FieldActor_Facing, struct FieldActor, facing, 0x06);
-LAYOUT_OFFSET_GUARD(FieldActor_X, struct FieldActor, x, 0x08);
-LAYOUT_OFFSET_GUARD(FieldActor_Z, struct FieldActor, z, 0x10);
-LAYOUT_OFFSET_GUARD(FieldActor_TerrainHeight, struct FieldActor, terrainHeight,
-                    0x14);
-LAYOUT_OFFSET_GUARD(FieldActor_ScaleY, struct FieldActor, scaleY, 0x1c);
-LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priorityFlags,
-                    0x23);
-LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motionFlags,
-                    0x55);
-LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor,
-                    collisionFlags, 0x59);
-LAYOUT_OFFSET_GUARD(FieldActor_SteeringFlags, struct FieldActor, steeringFlags,
-                    0x5a);
-LAYOUT_OFFSET_GUARD(FieldActor_Paused, struct FieldActor, paused, 0x5b);
-LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, riseEnabled,
-                    0x63);
-LAYOUT_OFFSET_GUARD(FieldActor_Bounce, struct FieldActor, bounce, 0x44);
-LAYOUT_OFFSET_GUARD(FieldActor_Gravity, struct FieldActor, gravity, 0x48);
-LAYOUT_OFFSET_GUARD(FieldActor_RiseBaseY, struct FieldActor, riseBaseY, 0x4c);
-LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocityY, 0x28);
-LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);
-LAYOUT_OFFSET_GUARD(FieldActor_TargetX, struct FieldActor, targetX, 0x38);
-LAYOUT_OFFSET_GUARD(FieldActor_Sprite, struct FieldActor, sprite, 0x50);
-LAYOUT_OFFSET_GUARD(FieldActor_Update, struct FieldActor, update, 0x6c);
+STATIC_ASSERT(offsetof(struct FieldActor, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct FieldActor, x) == 0x08);
+STATIC_ASSERT(offsetof(struct FieldActor, z) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldActor, terrainHeight) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldActor, scaleY) == 0x1c);
+STATIC_ASSERT(offsetof(struct FieldActor, priorityFlags) == 0x23);
+STATIC_ASSERT(offsetof(struct FieldActor, motionFlags) == 0x55);
+STATIC_ASSERT(offsetof(struct FieldActor, collisionFlags) == 0x59);
+STATIC_ASSERT(offsetof(struct FieldActor, steeringFlags) == 0x5a);
+STATIC_ASSERT(offsetof(struct FieldActor, paused) == 0x5b);
+STATIC_ASSERT(offsetof(struct FieldActor, riseEnabled) == 0x63);
+STATIC_ASSERT(offsetof(struct FieldActor, bounce) == 0x44);
+STATIC_ASSERT(offsetof(struct FieldActor, gravity) == 0x48);
+STATIC_ASSERT(offsetof(struct FieldActor, riseBaseY) == 0x4c);
+STATIC_ASSERT(offsetof(struct FieldActor, velocityY) == 0x28);
+STATIC_ASSERT(offsetof(struct FieldActor, speed) == 0x30);
+STATIC_ASSERT(offsetof(struct FieldActor, targetX) == 0x38);
+STATIC_ASSERT(offsetof(struct FieldActor, sprite) == 0x50);
+STATIC_ASSERT(offsetof(struct FieldActor, update) == 0x6c);
 
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 

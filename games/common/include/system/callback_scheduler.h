@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum SchedulerTaskLimits {
   SCHEDULER_TBS_TASK_COUNT = 20,
@@ -19,9 +19,9 @@ struct SchedulerTask {
   u8 reserved;
 };
 
-LAYOUT_SIZE_GUARD(SchedulerTask_Size, struct SchedulerTask, 8);
-LAYOUT_OFFSET_GUARD(SchedulerTask_State, struct SchedulerTask, state, 4);
-LAYOUT_OFFSET_GUARD(SchedulerTask_Mask, struct SchedulerTask, mask, 6);
+STATIC_ASSERT(sizeof(struct SchedulerTask) == 8);
+STATIC_ASSERT(offsetof(struct SchedulerTask, state) == 4);
+STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
 
 // A task's order: the high byte picks the pass that runs it, the low byte
 // ranks it within the pass (higher runs first). An odd high byte means the

@@ -6,7 +6,7 @@
 // reference point, 64 object slots and one more word before the effect.
 
 #include "effect_step.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "types.h"
 
 struct BattleEffectArgument;
@@ -66,33 +66,19 @@ struct BattleEffectArgument {
   s16 actors[8];
 };
 
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Sheet, struct BattleEffectWork, sheet,
-                    0x700);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Bg2X, struct BattleEffectWork, bg2X,
-                    0x7080);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferMode, struct BattleEffectWork,
-                    transferMode, 0x7780);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_ShakeFrames, struct BattleEffectWork,
-                    shakeFrames, 0x77a8);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_FadeStep, struct BattleEffectWork,
-                    fadeStep, 0x77b8);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Win0H, struct BattleEffectWork, win0h,
-                    0x77bc);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Bg2RefX, struct BattleEffectWork, bg2x,
-                    0x77d0);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Bg2Pa, struct BattleEffectWork, bg2pa,
-                    0x77d8);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Objects, struct BattleEffectWork, objects,
-                    0x77dc);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_ActorTimers, struct BattleEffectWork,
-                    actorTimers, 0x78dc);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferPending, struct BattleEffectWork,
-                    transferPending, 0x78e8);
-LAYOUT_OFFSET_GUARD(BattleEffectWork_Effect, struct BattleEffectWork, effect,
-                    0x78f0);
-LAYOUT_OFFSET_GUARD(BattleEffectArgument_Count, struct BattleEffectArgument,
-                    count, 0x14);
-LAYOUT_OFFSET_GUARD(BattleEffectArgument_Actors, struct BattleEffectArgument,
-                    actors, 0x24);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x7080);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2pa) == 0x77d8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, objects) == 0x77dc);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x78dc);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x78e8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x78f0);
+STATIC_ASSERT(offsetof(struct BattleEffectArgument, count) == 0x14);
+STATIC_ASSERT(offsetof(struct BattleEffectArgument, actors) == 0x24);
 
 #endif

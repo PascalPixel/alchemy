@@ -51,7 +51,7 @@
 #include "equipment_menu.h"
 #include "owner_state.h"
 #include "inventory.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_type.h"
 #include "battle_calc.h"
 #include "event_work.h"

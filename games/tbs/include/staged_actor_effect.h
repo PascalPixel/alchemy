@@ -2,7 +2,7 @@
 #define ALCHEMY_STAGED_ACTOR_EFFECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct StagedActorEffect {
   u8 unk00[0x0c];
@@ -25,15 +25,10 @@ struct StagedActorEffectRequest {
   s16 cellZ;
 };
 
-LAYOUT_OFFSET_GUARD(StagedActorEffect_position_x_offset,
-                    struct StagedActorEffect, positionX, 0x0c);
-LAYOUT_OFFSET_GUARD(StagedActorEffect_elevation_rate_offset,
-                    struct StagedActorEffect, elevationRate, 0x28);
-LAYOUT_OFFSET_GUARD(StagedActorEffect_motion_flags_offset,
-                    struct StagedActorEffect, motionFlags, 0x55);
-LAYOUT_OFFSET_GUARD(StagedActorEffectRequest_cell_x_offset,
-                    struct StagedActorEffectRequest, cellX, 0x02);
-LAYOUT_OFFSET_GUARD(StagedActorEffectRequest_cell_z_offset,
-                    struct StagedActorEffectRequest, cellZ, 0x0a);
+STATIC_ASSERT(offsetof(struct StagedActorEffect, positionX) == 0x0c);
+STATIC_ASSERT(offsetof(struct StagedActorEffect, elevationRate) == 0x28);
+STATIC_ASSERT(offsetof(struct StagedActorEffect, motionFlags) == 0x55);
+STATIC_ASSERT(offsetof(struct StagedActorEffectRequest, cellX) == 0x02);
+STATIC_ASSERT(offsetof(struct StagedActorEffectRequest, cellZ) == 0x0a);
 
 #endif

@@ -6,7 +6,7 @@
 #include "unit/menu/menu.h"
 #include "types.h"
 #include "global_cells.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "animspr.h"
 #include "window.h"
 
@@ -55,38 +55,22 @@ struct CharacterMenuState {
   s16 rowY[4];
 };
 
-LAYOUT_OFFSET_GUARD(CharacterMenuState_OwnerWindow, struct CharacterMenuState,
-                    ownerWindow, 0x10);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_OwnerCursors, struct CharacterMenuState,
-                    ownerCursors, 0x14);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_StatusWindow, struct CharacterMenuState,
-                    statusWindow, 0x24);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_EntryIcons, struct CharacterMenuState,
-                    entryIcons, 0x48);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_SelectorWindow,
-                    struct CharacterMenuState, selectorWindow, 0x10c);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_SelectedColumn,
-                    struct CharacterMenuState, selectedColumn, 0x110);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_OwnerObjects, struct CharacterMenuState,
-                    ownerObjects, 0x114);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_OwnerY, struct CharacterMenuState,
-                    ownerY, 0x144);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_SelectedSlots, struct CharacterMenuState,
-                    selectedSlots, 0x174);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_StatusCursor, struct CharacterMenuState,
-                    statusCursor, 0x17c);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_OwnerIds, struct CharacterMenuState,
-                    ownerIds, 0x208);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_SelectedIds, struct CharacterMenuState,
-                    selectedIds, 0x21a);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_Page, struct CharacterMenuState, page,
-                    0x220);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_RowObjects, struct CharacterMenuState,
-                    rowObjects, 0x224);
-LAYOUT_OFFSET_GUARD(CharacterMenuState_RowX, struct CharacterMenuState, rowX,
-                    0x234);
-LAYOUT_SIZE_GUARD(CharacterMenuState_PrefixSize, struct CharacterMenuState,
-                  0x244);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerCursors) == 0x14);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, statusWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, entryIcons) == 0x48);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, selectorWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedSlots) == 0x174);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, statusCursor) == 0x17c);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedIds) == 0x21a);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, page) == 0x220);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, rowObjects) == 0x224);
+STATIC_ASSERT(offsetof(struct CharacterMenuState, rowX) == 0x234);
+STATIC_ASSERT(sizeof(struct CharacterMenuState) == 0x244);
 
 enum CharacterAilment {
   CHARACTER_DOWN,

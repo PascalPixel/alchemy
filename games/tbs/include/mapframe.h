@@ -3,7 +3,7 @@
 
 #include "unit/field/field.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct MapScanline {
   s32 scale, depth;
@@ -26,13 +26,12 @@ struct MapFrameWork {
   u8 unk3480[4];
 };
 
-LAYOUT_SIZE_GUARD(MapScanline_Size, struct MapScanline, 20);
-LAYOUT_OFFSET_GUARD(MapScanline_Coefficients, struct MapScanline, pa, 16);
-LAYOUT_SIZE_GUARD(MapAffineLine_Size, struct MapAffineLine, 16);
-LAYOUT_SIZE_GUARD(MapAffinePair_Size, struct MapAffinePair, 32);
-LAYOUT_OFFSET_GUARD(MapFrameWork_Pages, struct MapFrameWork, pages, 0xc80);
-LAYOUT_OFFSET_GUARD(MapFrameWork_UnknownTail, struct MapFrameWork, unk3480,
-                    0x3480);
-LAYOUT_SIZE_GUARD(MapFrameWork_Size, struct MapFrameWork, 0x3484);
+STATIC_ASSERT(sizeof(struct MapScanline) == 20);
+STATIC_ASSERT(offsetof(struct MapScanline, pa) == 16);
+STATIC_ASSERT(sizeof(struct MapAffineLine) == 16);
+STATIC_ASSERT(sizeof(struct MapAffinePair) == 32);
+STATIC_ASSERT(offsetof(struct MapFrameWork, pages) == 0xc80);
+STATIC_ASSERT(offsetof(struct MapFrameWork, unk3480) == 0x3480);
+STATIC_ASSERT(sizeof(struct MapFrameWork) == 0x3484);
 
 #endif

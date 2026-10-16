@@ -3,7 +3,7 @@
 
 #include "unit/battle/battle.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_type.h"
 #include "battle_event.h"
 #include "battle_session.h"
@@ -33,10 +33,9 @@ struct BattleDisplayWork {
   s32 marked;
 };
 
-LAYOUT_SIZE_GUARD(BattleDisplayOffset_Size, struct BattleDisplayOffset, 8);
-LAYOUT_SIZE_GUARD(BattleDisplayWork_Size, struct BattleDisplayWork, 12);
-LAYOUT_OFFSET_GUARD(BattleDisplayWork_Marked, struct BattleDisplayWork, marked,
-                    8);
+STATIC_ASSERT(sizeof(struct BattleDisplayOffset) == 8);
+STATIC_ASSERT(sizeof(struct BattleDisplayWork) == 12);
+STATIC_ASSERT(offsetof(struct BattleDisplayWork, marked) == 8);
 extern struct BattleDisplayWork *gBattleDisplayWork;
 
 struct BattleEventState {
@@ -97,32 +96,23 @@ struct BattleWork {
   s32 debugValue;
 };
 
-LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleWork, 0x82c);
+STATIC_ASSERT(sizeof(struct BattleWork) == 0x82c);
 
-LAYOUT_OFFSET_GUARD(BattleSession_PartyStatusMode, struct BattleWork,
-                    partyStatus, 0x041);
-LAYOUT_OFFSET_GUARD(BattleWork_ChallengeFlag, struct BattleWork, challengeFlag,
-                    0x043);
-LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleWork, partyUnits,
-                    0x058);
-LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleWork, enemyIds,
-                    0x066);
-LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleWork, slots, 0x074);
-LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleWork, placement,
-                    0x2dc);
-LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleWork, actions, 0x2ec);
-LAYOUT_OFFSET_GUARD(BattleSession_Spoils, struct BattleWork, spoils, 0x530);
-LAYOUT_OFFSET_GUARD(BattleSession_Palette, struct BattleWork, palette, 0x544);
-LAYOUT_OFFSET_GUARD(BattleSession_Brightness, struct BattleWork, brightness,
-                    0x644);
-LAYOUT_OFFSET_GUARD(BattleSession_Background, struct BattleWork, background,
-                    0x648);
-LAYOUT_OFFSET_GUARD(BattleSession_Plan, struct BattleWork, plan, 0x654);
-LAYOUT_OFFSET_GUARD(BattleSession_Events, struct BattleWork, events, 0x6b8);
-LAYOUT_OFFSET_GUARD(BattleEventState_Phase, struct BattleEventState, phase,
-                    0x148);
-LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags,
-                    0x16c);
+STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
+STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 0x043);
+STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 0x058);
+STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 0x066);
+STATIC_ASSERT(offsetof(struct BattleWork, slots) == 0x074);
+STATIC_ASSERT(offsetof(struct BattleWork, placement) == 0x2dc);
+STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x530);
+STATIC_ASSERT(offsetof(struct BattleWork, palette) == 0x544);
+STATIC_ASSERT(offsetof(struct BattleWork, brightness) == 0x644);
+STATIC_ASSERT(offsetof(struct BattleWork, background) == 0x648);
+STATIC_ASSERT(offsetof(struct BattleWork, plan) == 0x654);
+STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6b8);
+STATIC_ASSERT(offsetof(struct BattleEventState, phase) == 0x148);
+STATIC_ASSERT(offsetof(struct BattleEventState, flags) == 0x16c);
 
 extern struct BattleWork *gBattleWork;
 

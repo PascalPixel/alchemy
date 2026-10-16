@@ -2,7 +2,7 @@
 #define ALCHEMY_SCRIPT_OBJECT_RUNTIME_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct ScriptObjectRuntime {
   const s32 *script;
@@ -40,18 +40,12 @@ struct ScriptObjectRuntime {
   u8 unk6c[0x04];
 };
 
-LAYOUT_SIZE_GUARD(ScriptObjectRuntime_size, struct ScriptObjectRuntime, 0x70);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_offset,
-                    struct ScriptObjectRuntime, script, 0x00);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_cursor_offset,
-                    struct ScriptObjectRuntime, scriptCursor, 0x04);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_value_offset,
-                    struct ScriptObjectRuntime, scriptValue, 0x06);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_x_offset, struct ScriptObjectRuntime, x,
-                    0x08);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_speed_limit_offset,
-                    struct ScriptObjectRuntime, speedLimit, 0x30);
-LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_linked_object_offset,
-                    struct ScriptObjectRuntime, linkedObject, 0x68);
+STATIC_ASSERT(sizeof(struct ScriptObjectRuntime) == 0x70);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptCursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, scriptValue) == 0x06);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, x) == 0x08);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, speedLimit) == 0x30);
+STATIC_ASSERT(offsetof(struct ScriptObjectRuntime, linkedObject) == 0x68);
 
 #endif

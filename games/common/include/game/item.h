@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_ITEM_H
 #define ALCHEMY_ITEM_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "edition.h"
 #if !GAME_TLA
 #include "farcall.h"
@@ -66,9 +66,9 @@ struct ItemEffect {
   u8 reserved02[2];
 };
 
-LAYOUT_SIZE_GUARD(ItemEffect_Size, struct ItemEffect, 0x04);
-LAYOUT_OFFSET_GUARD(ItemEffect_Kind, struct ItemEffect, kind, 0x00);
-LAYOUT_OFFSET_GUARD(ItemEffect_Amount, struct ItemEffect, amount, 0x01);
+STATIC_ASSERT(sizeof(struct ItemEffect) == 0x04);
+STATIC_ASSERT(offsetof(struct ItemEffect, kind) == 0x00);
+STATIC_ASSERT(offsetof(struct ItemEffect, amount) == 0x01);
 
 struct ItemDefinition {
   s16 price;
@@ -90,29 +90,20 @@ struct ItemDefinition {
   u8 reserved2a[2];
 };
 
-LAYOUT_SIZE_GUARD(ItemDefinition_Size, struct ItemDefinition, 0x2c);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Price, struct ItemDefinition, price, 0x00);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Type, struct ItemDefinition, type, 0x02);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Flags, struct ItemDefinition, flags, 0x03);
-LAYOUT_OFFSET_GUARD(ItemDefinition_EquipMask, struct ItemDefinition, equipMask,
-                    0x04);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Icon, struct ItemDefinition, icon, 0x06);
-LAYOUT_OFFSET_GUARD(ItemDefinition_PrimaryBonus, struct ItemDefinition,
-                    primaryBonus, 0x08);
-LAYOUT_OFFSET_GUARD(ItemDefinition_SecondaryBonus, struct ItemDefinition,
-                    secondaryBonus, 0x0a);
-LAYOUT_OFFSET_GUARD(ItemDefinition_UnleashChance, struct ItemDefinition,
-                    unleashChance, 0x0b);
-LAYOUT_OFFSET_GUARD(ItemDefinition_UseType, struct ItemDefinition, useType,
-                    0x0c);
-LAYOUT_OFFSET_GUARD(ItemDefinition_UnleashAction, struct ItemDefinition,
-                    unleashAction, 0x0e);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Element, struct ItemDefinition, element,
-                    0x14);
-LAYOUT_OFFSET_GUARD(ItemDefinition_Effects, struct ItemDefinition, effects,
-                    0x18);
-LAYOUT_OFFSET_GUARD(ItemDefinition_ActionId, struct ItemDefinition, actionId,
-                    0x28);
+STATIC_ASSERT(sizeof(struct ItemDefinition) == 0x2c);
+STATIC_ASSERT(offsetof(struct ItemDefinition, price) == 0x00);
+STATIC_ASSERT(offsetof(struct ItemDefinition, type) == 0x02);
+STATIC_ASSERT(offsetof(struct ItemDefinition, flags) == 0x03);
+STATIC_ASSERT(offsetof(struct ItemDefinition, equipMask) == 0x04);
+STATIC_ASSERT(offsetof(struct ItemDefinition, icon) == 0x06);
+STATIC_ASSERT(offsetof(struct ItemDefinition, primaryBonus) == 0x08);
+STATIC_ASSERT(offsetof(struct ItemDefinition, secondaryBonus) == 0x0a);
+STATIC_ASSERT(offsetof(struct ItemDefinition, unleashChance) == 0x0b);
+STATIC_ASSERT(offsetof(struct ItemDefinition, useType) == 0x0c);
+STATIC_ASSERT(offsetof(struct ItemDefinition, unleashAction) == 0x0e);
+STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
+STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
+STATIC_ASSERT(offsetof(struct ItemDefinition, actionId) == 0x28);
 
 struct ItemDefinition *Item_Get(s32 item);
 #if GAME_TLA

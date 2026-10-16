@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct PaletteFade {
   u16 palette[512];
@@ -17,12 +17,12 @@ struct PaletteFade {
   u8 padding3003;
 };
 
-LAYOUT_SIZE_GUARD(PaletteFade_Size, struct PaletteFade, 0x3004);
-LAYOUT_OFFSET_GUARD(PaletteFade_Current, struct PaletteFade, current, 0x400);
-LAYOUT_OFFSET_GUARD(PaletteFade_Target, struct PaletteFade, target, 0x1000);
-LAYOUT_OFFSET_GUARD(PaletteFade_Delta, struct PaletteFade, delta, 0x1c00);
-LAYOUT_OFFSET_GUARD(PaletteFade_Packed, struct PaletteFade, packed, 0x2800);
-LAYOUT_OFFSET_GUARD(PaletteFade_Page, struct PaletteFade, page, 0x3000);
+STATIC_ASSERT(sizeof(struct PaletteFade) == 0x3004);
+STATIC_ASSERT(offsetof(struct PaletteFade, current) == 0x400);
+STATIC_ASSERT(offsetof(struct PaletteFade, target) == 0x1000);
+STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1c00);
+STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2800);
+STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 
 struct BattleEffectBuffers {
   u16 palette[0x1c0];
@@ -36,17 +36,12 @@ struct BattleEffectBuffers {
   u8 padding2a03;
 };
 
-LAYOUT_SIZE_GUARD(BattleEffectBuffers_Size, struct BattleEffectBuffers, 0x2a04);
-LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Current, struct BattleEffectBuffers,
-                    current, 0x380);
-LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Target, struct BattleEffectBuffers,
-                    target, 0xe00);
-LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers,
-                    delta, 0x1880);
-LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers,
-                    packed, 0x2300);
-LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page,
-                    0x2a00);
+STATIC_ASSERT(sizeof(struct BattleEffectBuffers) == 0x2a04);
+STATIC_ASSERT(offsetof(struct BattleEffectBuffers, current) == 0x380);
+STATIC_ASSERT(offsetof(struct BattleEffectBuffers, target) == 0xe00);
+STATIC_ASSERT(offsetof(struct BattleEffectBuffers, delta) == 0x1880);
+STATIC_ASSERT(offsetof(struct BattleEffectBuffers, packed) == 0x2300);
+STATIC_ASSERT(offsetof(struct BattleEffectBuffers, page) == 0x2a00);
 
 extern u16 gPalette_ChannelCurve[32];
 extern u16 gPalette_ChannelCurveLight[32];

@@ -2,7 +2,7 @@
 #define TLA_SAVE_STATE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct SaveSummary {
   u8 slotHeader[16];
@@ -44,14 +44,12 @@ struct SaveSlotHeader {
   u8 reserved[4];
 };
 
-LAYOUT_SIZE_GUARD(SaveSummary_Size, struct SaveSummary, 64);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Sequences, struct SaveWorkspace, sequence,
-                    0x1e);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Summary, struct SaveWorkspace, summary,
-                    0x303c);
-LAYOUT_OFFSET_GUARD(SaveWorkspace_Extra, struct SaveWorkspace, extra, 0x30fc);
-LAYOUT_SIZE_GUARD(SaveWorkspace_Size, struct SaveWorkspace, 0x3144);
-LAYOUT_SIZE_GUARD(SaveSlotHeader_Size, struct SaveSlotHeader, 0x10);
+STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, sequence) == 0x1e);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x303c);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 0x30fc);
+STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x3144);
+STATIC_ASSERT(sizeof(struct SaveSlotHeader) == 0x10);
 
 u32 SaveState_FindLatestSlot(s32 recordId);
 

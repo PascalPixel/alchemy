@@ -2,7 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_session.h"
 #include "edition.h"
 #if !GAME_TLA
@@ -56,25 +56,18 @@ void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 #endif
 
-LAYOUT_SIZE_GUARD(MotionObject_size, struct MotionObject, 0x70);
-LAYOUT_OFFSET_GUARD(MotionObject_scale_x_offset, struct MotionObject, scaleX,
-                    0x18);
-LAYOUT_OFFSET_GUARD(MotionObject_x_offset, struct MotionObject, x, 0x08);
-LAYOUT_OFFSET_GUARD(MotionObject_velocity_x_offset, struct MotionObject,
-                    velocityX, 0x24);
-LAYOUT_OFFSET_GUARD(MotionObject_target_x_offset, struct MotionObject, targetX,
-                    0x38);
-LAYOUT_OFFSET_GUARD(MotionObject_motion_flags_offset, struct MotionObject,
-                    motionFlags, 0x55);
-LAYOUT_OFFSET_GUARD(MotionObject_records_offset, struct MotionObject, records,
-                    0x50);
-LAYOUT_OFFSET_GUARD(MotionObject_record_storage_kind_offset,
-                    struct MotionObject, recordStorageKind, 0x54);
-LAYOUT_OFFSET_GUARD(MotionObject_update_offset, struct MotionObject, update,
-                    0x6c);
-LAYOUT_SIZE_GUARD(SpriteEntry_PrefixSize, struct SpriteEntry, 0x08);
-LAYOUT_OFFSET_GUARD(SpriteEntry_Palette, struct SpriteEntry, palette, 0x05);
-LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
+STATIC_ASSERT(sizeof(struct MotionObject) == 0x70);
+STATIC_ASSERT(offsetof(struct MotionObject, scaleX) == 0x18);
+STATIC_ASSERT(offsetof(struct MotionObject, x) == 0x08);
+STATIC_ASSERT(offsetof(struct MotionObject, velocityX) == 0x24);
+STATIC_ASSERT(offsetof(struct MotionObject, targetX) == 0x38);
+STATIC_ASSERT(offsetof(struct MotionObject, motionFlags) == 0x55);
+STATIC_ASSERT(offsetof(struct MotionObject, records) == 0x50);
+STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 0x54);
+STATIC_ASSERT(offsetof(struct MotionObject, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct SpriteEntry) == 0x08);
+STATIC_ASSERT(offsetof(struct SpriteEntry, palette) == 0x05);
+STATIC_ASSERT(offsetof(struct SpriteEntry, priority) == 0x06);
 
 #if GAME_TLA
 s32 ActivateBattleObjectSlot(s32 objectId);

@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct AnimationEntry {
   s16 animId;
@@ -37,13 +37,10 @@ struct ObjectSystemWork {
   struct ResourceSlot slots[8];
 };
 
-LAYOUT_OFFSET_GUARD(ObjectSystemWork_Suspended, struct ObjectSystemWork,
-                    suspended, 4);
-LAYOUT_OFFSET_GUARD(ObjectSystemWork_Count, struct ObjectSystemWork, count,
-                    0x18);
-LAYOUT_OFFSET_GUARD(ObjectSystemWork_Slots, struct ObjectSystemWork, slots,
-                    0x1c);
-LAYOUT_SIZE_GUARD(ObjectSystemWork_Size, struct ObjectSystemWork, 0x5c);
+STATIC_ASSERT(offsetof(struct ObjectSystemWork, suspended) == 4);
+STATIC_ASSERT(offsetof(struct ObjectSystemWork, count) == 0x18);
+STATIC_ASSERT(offsetof(struct ObjectSystemWork, slots) == 0x1c);
+STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
 
 struct AnimationPosition {
   s32 x;
@@ -52,9 +49,8 @@ struct AnimationPosition {
   s32 ground;
 };
 
-LAYOUT_SIZE_GUARD(AnimationPosition_Size, struct AnimationPosition, 0x10);
-LAYOUT_OFFSET_GUARD(AnimationPosition_Ground, struct AnimationPosition, ground,
-                    0x0c);
+STATIC_ASSERT(sizeof(struct AnimationPosition) == 0x10);
+STATIC_ASSERT(offsetof(struct AnimationPosition, ground) == 0x0c);
 
 #if GAME_TLA
 void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *points);
@@ -94,14 +90,12 @@ struct AnimationObject {
   struct AnimationEntry *entries[4];
 };
 
-LAYOUT_SIZE_GUARD(AnimationEntry_Size, struct AnimationEntry, 0x18);
-LAYOUT_SIZE_GUARD(AnimationSpritePart_Size, struct AnimationSpritePart, 0x0c);
-LAYOUT_OFFSET_GUARD(AnimationObject_Scale, struct AnimationObject, scale, 0x18);
-LAYOUT_OFFSET_GUARD(AnimationObject_Rotation, struct AnimationObject, rotation,
-                    0x1e);
-LAYOUT_OFFSET_GUARD(AnimationObject_Width, struct AnimationObject, width, 0x20);
-LAYOUT_SIZE_GUARD(AnimationObject_Size, struct AnimationObject, 0x38);
-LAYOUT_OFFSET_GUARD(AnimationObject_Entries, struct AnimationObject, entries,
-                    0x28);
+STATIC_ASSERT(sizeof(struct AnimationEntry) == 0x18);
+STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
+STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x18);
+STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x1e);
+STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x20);
+STATIC_ASSERT(sizeof(struct AnimationObject) == 0x38);
+STATIC_ASSERT(offsetof(struct AnimationObject, entries) == 0x28);
 
 #endif

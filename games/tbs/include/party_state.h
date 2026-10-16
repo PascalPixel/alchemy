@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_PARTY_STATE_H
 #define ALCHEMY_PARTY_STATE_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #include "game_state.h"
 

@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct BlendScriptState {
   u16 *script;
@@ -84,15 +84,15 @@ struct WorldPosition {
 
 s32 GetWorldMapCollision(struct WorldPosition *position);
 
-LAYOUT_SIZE_GUARD(MapLayer_Size, struct MapLayer, 56);
-LAYOUT_OFFSET_GUARD(MapWork_Layers, struct MapWork, layers, 0x108);
+STATIC_ASSERT(sizeof(struct MapLayer) == 56);
+STATIC_ASSERT(offsetof(struct MapWork, layers) == 0x108);
 
-LAYOUT_SIZE_GUARD(MapAnimation_Size, struct MapAnimation, 12);
-LAYOUT_OFFSET_GUARD(MapWork_Animation, struct MapWork, anim, 0x18);
-LAYOUT_OFFSET_GUARD(MapWork_Blend, struct MapWork, blend, 0xd8);
-LAYOUT_OFFSET_GUARD(MapWork_BlendControl, struct MapWork, blendControl, 0x107);
-LAYOUT_OFFSET_GUARD(MapWork_MinX, struct MapWork, minX, 0xec);
-LAYOUT_OFFSET_GUARD(MapWork_FarPlane, struct MapWork, farPlane, 0x95c);
-LAYOUT_OFFSET_GUARD(MapWork_ZoomStep, struct MapWork, zoomStep, 0x96e);
+STATIC_ASSERT(sizeof(struct MapAnimation) == 12);
+STATIC_ASSERT(offsetof(struct MapWork, anim) == 0x18);
+STATIC_ASSERT(offsetof(struct MapWork, blend) == 0xd8);
+STATIC_ASSERT(offsetof(struct MapWork, blendControl) == 0x107);
+STATIC_ASSERT(offsetof(struct MapWork, minX) == 0xec);
+STATIC_ASSERT(offsetof(struct MapWork, farPlane) == 0x95c);
+STATIC_ASSERT(offsetof(struct MapWork, zoomStep) == 0x96e);
 
 #endif

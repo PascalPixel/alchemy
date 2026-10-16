@@ -2,7 +2,7 @@
 #define ALCHEMY_PERSPECTIVE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct PerspectiveWork {
   s32 *origin;
@@ -41,26 +41,17 @@ struct PerspectiveWork {
   s16 zoomTransitionStep;
 };
 
-LAYOUT_SIZE_GUARD(PerspectiveWork_Size, struct PerspectiveWork, 0x35c);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_View, struct PerspectiveWork, viewX, 0xe4);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_Pitch, struct PerspectiveWork, pitch,
-                    0x118);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_Active, struct PerspectiveWork,
-                    animationActive, 0xfc);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_Resources, struct PerspectiveWork,
-                    resources, 0x11c);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_TileIds, struct PerspectiveWork, tileIds,
-                    0x138);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_QuarterTiles, struct PerspectiveWork,
-                    quarterTiles, 0x338);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_FarPlane, struct PerspectiveWork, farPlane,
-                    0x348);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_Zoom, struct PerspectiveWork, zoom, 0x354);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_PreviousZoom, struct PerspectiveWork,
-                    previousZoom, 0x350);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_TransitionFrames, struct PerspectiveWork,
-                    zoomTransitionFrames, 0x358);
-LAYOUT_OFFSET_GUARD(PerspectiveWork_TransitionStep, struct PerspectiveWork,
-                    zoomTransitionStep, 0x35a);
+STATIC_ASSERT(sizeof(struct PerspectiveWork) == 0x35c);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, viewX) == 0xe4);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, pitch) == 0x118);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, animationActive) == 0xfc);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, resources) == 0x11c);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, tileIds) == 0x138);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, quarterTiles) == 0x338);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, farPlane) == 0x348);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, zoom) == 0x354);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, previousZoom) == 0x350);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, zoomTransitionFrames) == 0x358);
+STATIC_ASSERT(offsetof(struct PerspectiveWork, zoomTransitionStep) == 0x35a);
 
 #endif

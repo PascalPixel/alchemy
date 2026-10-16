@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_TYPE_H
 #define ALCHEMY_BATTLE_TYPE_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "../../common/include/battle/battle_unit.h"
 
 enum { BATTLE_TARGET_CAPACITY = 13, BATTLE_PLAN_SIZE = 0x64 };
@@ -33,15 +33,13 @@ struct ActionDefinition {
   u8 unk00[12];
 };
 
-LAYOUT_SIZE_GUARD(ActionDefinition_Size, struct ActionDefinition, 12);
-LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActorId2, struct BattlePlan, actorId2, 0x02);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetIds, struct BattlePlan, targetIds, 0x03);
-LAYOUT_OFFSET_GUARD(BattlePlan_TargetMultiplier, struct BattlePlan,
-                    targetMultiplier, 0x1f);
-LAYOUT_OFFSET_GUARD(BattlePlan_Command, struct BattlePlan, command, 0x4a);
-LAYOUT_OFFSET_GUARD(BattlePlan_ActionId, struct BattlePlan, abilityId, 0x4c);
-LAYOUT_OFFSET_GUARD(BattlePlan_HauntDamage, struct BattlePlan, hauntDamage,
-                    0x60);
+STATIC_ASSERT(sizeof(struct ActionDefinition) == 12);
+STATIC_ASSERT(sizeof(struct BattlePlan) == BATTLE_PLAN_SIZE);
+STATIC_ASSERT(offsetof(struct BattlePlan, actorId2) == 0x02);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 0x03);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetMultiplier) == 0x1f);
+STATIC_ASSERT(offsetof(struct BattlePlan, command) == 0x4a);
+STATIC_ASSERT(offsetof(struct BattlePlan, abilityId) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattlePlan, hauntDamage) == 0x60);
 
 #endif

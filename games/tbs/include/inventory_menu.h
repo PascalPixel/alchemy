@@ -3,7 +3,7 @@
 
 #include "unit/menu/menu.h"
 #include "global_cells.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "menu_result.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
@@ -66,67 +66,38 @@ struct InventoryMenuState {
   s16 resourceSlots[2];
 };
 
-LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneIcons, struct InventoryMenuState,
-                    paneIcons, 0x14);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneIndex, struct InventoryMenuState,
-                    paneIndex, 0x1c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneCount, struct InventoryMenuState,
-                    paneCount, 0x1e);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_ItemWindow, struct InventoryMenuState,
-                    itemWindow, 0x20);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_InfoWindow, struct InventoryMenuState,
-                    infoWindow, 0x2c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_GridCursor, struct InventoryMenuState,
-                    gridCursor, 0x44);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_EntryIcons, struct InventoryMenuState,
-                    entryIcons, 0x48);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_CategoryIcons, struct InventoryMenuState,
-                    categoryIcons, 0xc8);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageWindow, struct InventoryMenuState,
-                    messageWindow, 0x10c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedColumn,
-                    struct InventoryMenuState, selectedColumn, 0x110);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedRow, struct InventoryMenuState,
-                    selectedRow, 0x111);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_ColumnCount, struct InventoryMenuState,
-                    columnCount, 0x112);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_RowCount, struct InventoryMenuState,
-                    rowCount, 0x113);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerObjects, struct InventoryMenuState,
-                    ownerObjects, 0x114);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerX, struct InventoryMenuState,
-                    ownerX, 0x134);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerY, struct InventoryMenuState,
-                    ownerY, 0x144);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerScale, struct InventoryMenuState,
-                    ownerScale, 0x154);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedSlots, struct InventoryMenuState,
-                    selectedSlots, 0x174);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedItems, struct InventoryMenuState,
-                    selectedItems, 0x178);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_Cursor, struct InventoryMenuState,
-                    cursor, 0x17c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_Items, struct InventoryMenuState, items,
-                    0x1c8);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerIds, struct InventoryMenuState,
-                    ownerIds, 0x208);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_ItemCount, struct InventoryMenuState,
-                    itemCount, 0x218);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneOwner, struct InventoryMenuState,
-                    paneOwner, 0x21a);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedItemIcon,
-                    struct InventoryMenuState, selectedItemIcon, 0x21c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageOffset, struct InventoryMenuState,
-                    messageOffset, 0x25a);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_EquipPreview, struct InventoryMenuState,
-                    equipPreview, 0x25c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedIndex, struct InventoryMenuState,
-                    selectedIndexByOwner, 0x260);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_Mode, struct InventoryMenuState, mode,
-                    0x268);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_ResourceSlots, struct InventoryMenuState,
-                    resourceSlots, 0x392);
-LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x398);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, paneIcons) == 0x14);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, paneIndex) == 0x1c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, paneCount) == 0x1e);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, itemWindow) == 0x20);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, infoWindow) == 0x2c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, gridCursor) == 0x44);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, entryIcons) == 0x48);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, categoryIcons) == 0xc8);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, messageWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedRow) == 0x111);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, columnCount) == 0x112);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, rowCount) == 0x113);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerX) == 0x134);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerScale) == 0x154);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedSlots) == 0x174);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedItems) == 0x178);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, cursor) == 0x17c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, items) == 0x1c8);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, itemCount) == 0x218);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, paneOwner) == 0x21a);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedItemIcon) == 0x21c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, messageOffset) == 0x25a);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, equipPreview) == 0x25c);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedIndexByOwner) ==
+              0x260);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, mode) == 0x268);
+STATIC_ASSERT(offsetof(struct InventoryMenuState, resourceSlots) == 0x392);
+STATIC_ASSERT(sizeof(struct InventoryMenuState) == 0x398);
 
 enum ItemMenuCommand {
   ITEM_COMMAND_USE,

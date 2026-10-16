@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "output.h"
 #include "uiflow.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
@@ -52,38 +52,31 @@ struct UiRenderWork {
   u8 unk138d[3];
 };
 
-LAYOUT_OFFSET_GUARD(UiRenderWork_Tilemap, struct UiRenderWork, tilemap, 8);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Windows, struct UiRenderWork, windows, 0x508);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Channels, struct UiRenderWork, channels,
-                    0x6b8);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs, 0x730);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork,
-                    freeOutputs.head, 0xe30);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork,
-                    freeOutputs.tailLink, 0xe34);
+STATIC_ASSERT(offsetof(struct UiRenderWork, tilemap) == 8);
+STATIC_ASSERT(offsetof(struct UiRenderWork, windows) == 0x508);
+STATIC_ASSERT(offsetof(struct UiRenderWork, channels) == 0x6b8);
+STATIC_ASSERT(offsetof(struct UiRenderWork, outputs) == 0x730);
+STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.head) == 0xe30);
+STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.tailLink) == 0xe34);
 
-LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, lineSpacing,
-                    0xf38);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour, 0xf3e);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, 0xf40);
-LAYOUT_OFFSET_GUARD(UiRenderWork_MenuState, struct UiRenderWork, menuState, 5);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Level, struct UiRenderWork, level, 7);
-LAYOUT_OFFSET_GUARD(UiRenderWork_TileAttributes, struct UiRenderWork,
-                    tileAttributes, 0xe38);
+STATIC_ASSERT(offsetof(struct UiRenderWork, lineSpacing) == 0xf38);
+STATIC_ASSERT(offsetof(struct UiRenderWork, colour) == 0xf3e);
+STATIC_ASSERT(offsetof(struct UiRenderWork, entries) == 0xf40);
+STATIC_ASSERT(offsetof(struct UiRenderWork, menuState) == 5);
+STATIC_ASSERT(offsetof(struct UiRenderWork, level) == 7);
+STATIC_ASSERT(offsetof(struct UiRenderWork, tileAttributes) == 0xe38);
 #if EDITION_INTERNATIONAL
-LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, 0x1342);
-LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphResource, struct UiRenderWork,
-                    glyphResource, 0x1346);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, 0x134c);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, 0x136c);
-LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, 0x1390);
+STATIC_ASSERT(offsetof(struct UiRenderWork, count) == 0x1342);
+STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) == 0x1346);
+STATIC_ASSERT(offsetof(struct UiRenderWork, values) == 0x134c);
+STATIC_ASSERT(offsetof(struct UiRenderWork, names) == 0x136c);
+STATIC_ASSERT(sizeof(struct UiRenderWork) == 0x1390);
 #else
-LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, 0x1142);
-LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphResource, struct UiRenderWork,
-                    glyphResource, 0x1146);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, 0x114c);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, 0x116c);
-LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, 0x1190);
+STATIC_ASSERT(offsetof(struct UiRenderWork, count) == 0x1142);
+STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) == 0x1146);
+STATIC_ASSERT(offsetof(struct UiRenderWork, values) == 0x114c);
+STATIC_ASSERT(offsetof(struct UiRenderWork, names) == 0x116c);
+STATIC_ASSERT(sizeof(struct UiRenderWork) == 0x1190);
 #endif
 
 void UiWork_InitFreeList(void);

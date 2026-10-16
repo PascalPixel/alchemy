@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_SESSION_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct MotionObject;
 struct SpriteEntry;
@@ -59,23 +59,17 @@ struct BattleSpoils {
   u16 items[4];
 };
 
-LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BattleObj, 0x2c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObj, anchorX, 0x0c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BattleObj,
-                    activeConditions, 0x1c);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObj, cycleTimer,
-                    0x1f);
-LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObj, active, 0x28);
+STATIC_ASSERT(sizeof(struct BattleObj) == 0x2c);
+STATIC_ASSERT(offsetof(struct BattleObj, anchorX) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleObj, activeConditions) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleObj, cycleTimer) == 0x1f);
+STATIC_ASSERT(offsetof(struct BattleObj, active) == 0x28);
 
-LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);
-LAYOUT_OFFSET_GUARD(BattleActionRecord_Priority, struct BattleActionRecord,
-                    priority, 0x04);
-LAYOUT_OFFSET_GUARD(BattleActionRecord_Command, struct BattleActionRecord,
-                    command, 0x06);
-LAYOUT_OFFSET_GUARD(BattleActionRecord_Parameter, struct BattleActionRecord,
-                    parameter, 0x08);
-LAYOUT_OFFSET_GUARD(BattleActionRecord_Target, struct BattleActionRecord,
-                    target, 0x0a);
-LAYOUT_SIZE_GUARD(BattleSpoils_Size, struct BattleSpoils, 0x14);
+STATIC_ASSERT(sizeof(struct BattleActionRecord) == 0x10);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, command) == 0x06);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
+STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
 
 #endif

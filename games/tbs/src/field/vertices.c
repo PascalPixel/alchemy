@@ -3,7 +3,7 @@
 #include "frame.h"
 #include "mulq16.h"
 #include "project.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #define VISIBLE_SCANLINES 160 // visible scanlines
 
@@ -34,13 +34,12 @@ struct RuntimeMathTable {
   struct RuntimeMathUnaryEntry cos;
 };
 
-LAYOUT_SIZE_GUARD(RuntimeUnusedEntry_Size, struct RuntimeUnusedEntry, 8);
-LAYOUT_SIZE_GUARD(RuntimeMathBinaryEntry_Size, struct RuntimeMathBinaryEntry,
-                  8);
-LAYOUT_SIZE_GUARD(RuntimeMathUnaryEntry_Size, struct RuntimeMathUnaryEntry, 8);
-LAYOUT_OFFSET_GUARD(RuntimeMathTable_Atan2, struct RuntimeMathTable, atan2, 64);
-LAYOUT_OFFSET_GUARD(RuntimeMathTable_Sin, struct RuntimeMathTable, sin, 88);
-LAYOUT_OFFSET_GUARD(RuntimeMathTable_Cos, struct RuntimeMathTable, cos, 96);
+STATIC_ASSERT(sizeof(struct RuntimeUnusedEntry) == 8);
+STATIC_ASSERT(sizeof(struct RuntimeMathBinaryEntry) == 8);
+STATIC_ASSERT(sizeof(struct RuntimeMathUnaryEntry) == 8);
+STATIC_ASSERT(offsetof(struct RuntimeMathTable, atan2) == 64);
+STATIC_ASSERT(offsetof(struct RuntimeMathTable, sin) == 88);
+STATIC_ASSERT(offsetof(struct RuntimeMathTable, cos) == 96);
 
 extern const struct RuntimeMathTable FarCall_RuntimeTable;
 extern u32 gScanlineAngle;

@@ -5,7 +5,7 @@
 #include "unit/object/psynergy_effects.h"
 #include "mapcopy.h"
 
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #include "game_state.h"
 

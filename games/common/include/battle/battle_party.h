@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_PARTY_H
 
 #include "edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum BattleUnitPresence {
   BATTLE_UNIT_ABSENT = 0,
@@ -28,7 +28,7 @@ struct DjinnRecoveryEntry {
   s8 turns;
 };
 
-LAYOUT_SIZE_GUARD(DjinnRecoveryEntry_Size, struct DjinnRecoveryEntry, 4);
+STATIC_ASSERT(sizeof(struct DjinnRecoveryEntry) == 4);
 
 struct DjinnRecoveryList {
   struct DjinnRecoveryEntry entries[64];

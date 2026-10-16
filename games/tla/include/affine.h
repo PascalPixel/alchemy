@@ -2,7 +2,7 @@
 #define ALCHEMY_AFFINE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct AffineTransform {
   u16 scaleX;
@@ -16,10 +16,10 @@ union AffineMatrix {
   u32 rows[2];
 };
 
-LAYOUT_SIZE_GUARD(AffineTransform_Size, struct AffineTransform, 8);
-LAYOUT_OFFSET_GUARD(AffineTransform_ScaleY, struct AffineTransform, scaleY, 2);
-LAYOUT_OFFSET_GUARD(AffineTransform_Angle, struct AffineTransform, angle, 4);
-LAYOUT_SIZE_GUARD(AffineMatrix_Size, union AffineMatrix, 8);
+STATIC_ASSERT(sizeof(struct AffineTransform) == 8);
+STATIC_ASSERT(offsetof(struct AffineTransform, scaleY) == 2);
+STATIC_ASSERT(offsetof(struct AffineTransform, angle) == 4);
+STATIC_ASSERT(sizeof(union AffineMatrix) == 8);
 
 extern u8 gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];

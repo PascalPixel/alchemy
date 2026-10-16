@@ -60,7 +60,7 @@
 #include "object_effect.h"
 #include "item.h"
 #include "motobj.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "frame.h"
 #include "io_write_queue.h"
 #include "palbuf.h"
@@ -1383,7 +1383,7 @@ union PolarOffsetPosition {
   s32 coordinates[3];
 };
 
-LAYOUT_SIZE_GUARD(PolarOffsetPosition_Size, union PolarOffsetPosition, 12);
+STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
 // A scene region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
@@ -3937,12 +3937,9 @@ void Marker_SetActorPosition(s32 id, s32 x, s32 z) {
 // hidden things, and the windows' HBlank DMA.
 //--------------------------------------------------------------------------
 
-LAYOUT_OFFSET_GUARD(ParticleEmitter_travel_offset_offset, struct ObjectRuntime,
-                    velocityY, 0x28);
-LAYOUT_OFFSET_GUARD(ParticleEmitter_active_offset, struct ObjectRuntime, flags,
-                    0x55);
-LAYOUT_OFFSET_GUARD(ParticleEffectObject_child_offset, struct ObjectRuntime,
-                    animation, 0x50);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, velocityY) == 0x28);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, flags) == 0x55);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, animation) == 0x50);
 
 // An actor as these effects see it.
 struct EffectObj {
@@ -3957,8 +3954,8 @@ struct EffectObj {
   void (*updateHook)(union FieldObject *object); // frame hook at offset 0x6c
 };
 
-LAYOUT_SIZE_GUARD(EffectObj_Size, struct EffectObj, 0x70);
-LAYOUT_OFFSET_GUARD(EffectObj_UpdateHook, struct EffectObj, updateHook, 0x6c);
+STATIC_ASSERT(sizeof(struct EffectObj) == 0x70);
+STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 
 // ObjectSystem_Initialize allocates 64 ObjectRuntime records in heap slot 5.
 #define EFFECT_OBJECT_COUNT 64
@@ -5703,7 +5700,7 @@ struct FadeWork {
   struct ObjectRuntime *actor;
 };
 
-LAYOUT_SIZE_GUARD(FadeWork_Size, struct FadeWork, 28);
+STATIC_ASSERT(sizeof(struct FadeWork) == 28);
 
 #ifndef UBFIX
 struct FadeView {

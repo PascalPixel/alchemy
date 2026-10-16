@@ -69,21 +69,14 @@ struct DjinnMenuWork {
   u8 pairOwner[2];
 };
 
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_StatusWindow, struct DjinnMenuWork,
-                    statusWindow, 0x10);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_SelectedColumn, struct DjinnMenuWork,
-                    selectedColumn, 0x1c);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_OwnerX, struct DjinnMenuWork, ownerX, 0x134);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_OwnerY, struct DjinnMenuWork, ownerY, 0x144);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_Selection, struct DjinnMenuWork, selection,
-                    0x174);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_Pending, struct DjinnMenuWork, pending,
-                    0x220);
-LAYOUT_OFFSET_GUARD(DjinnMenuWork_PairIndex, struct DjinnMenuWork, pairIndex,
-                    0x254);
-LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialTimer, struct DjinnMenuBackdrop,
-                    tutorialTimer, 0x2128);
-LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialStep, struct DjinnMenuBackdrop,
-                    tutorialStep, 0x212c);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, statusWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, selectedColumn) == 0x1c);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, ownerX) == 0x134);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, selection) == 0x174);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, pending) == 0x220);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairIndex) == 0x254);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 0x2128);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialStep) == 0x212c);
 
 #endif

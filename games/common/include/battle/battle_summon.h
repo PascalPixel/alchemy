@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_SUMMON_H
 #define ALCHEMY_BATTLE_SUMMON_H
 
-#include "layout_guard.h"
+#include "static_assert.h"
 
 #include "types.h"
 #include "edition.h"
@@ -20,8 +20,7 @@ struct BattleSpriteDefinition {
   u8 unk04[4];
 };
 
-LAYOUT_SIZE_GUARD(BattleSpriteDefinition_Size, struct BattleSpriteDefinition,
-                  8);
+STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
 extern struct BattleSpriteDefinition gSummon_EntryTable[];
 
 struct SummonDefinition {

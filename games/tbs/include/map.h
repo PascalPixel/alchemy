@@ -3,7 +3,7 @@
 
 #include "unit/field/field.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct MapCell {
   u16 metatileAndFlags;
@@ -43,12 +43,12 @@ struct MapState {
   struct MapLayer layers[4];
 };
 
-LAYOUT_SIZE_GUARD(MapAnimation_Size, struct MapAnimation, 12);
-LAYOUT_OFFSET_GUARD(MapState_Flags, struct MapState, flags, 0x14);
-LAYOUT_OFFSET_GUARD(MapState_WideTiles, struct MapState, wideTiles, 0x16);
-LAYOUT_OFFSET_GUARD(MapState_Animation, struct MapState, anim, 0x18);
-LAYOUT_OFFSET_GUARD(MapState_Blend, struct MapState, blend, 0xd8);
-LAYOUT_OFFSET_GUARD(MapState_Cells, struct MapState, layers, 0x130);
+STATIC_ASSERT(sizeof(struct MapAnimation) == 12);
+STATIC_ASSERT(offsetof(struct MapState, flags) == 0x14);
+STATIC_ASSERT(offsetof(struct MapState, wideTiles) == 0x16);
+STATIC_ASSERT(offsetof(struct MapState, anim) == 0x18);
+STATIC_ASSERT(offsetof(struct MapState, blend) == 0xd8);
+STATIC_ASSERT(offsetof(struct MapState, layers) == 0x130);
 
 struct WorldPosition {
   s32 x;

@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "audio_engine_symbols.h"
 
 struct AudioSlotNode {
@@ -27,12 +27,10 @@ struct AudioTrackSlotWork {
   u32 inputLimit;
 };
 
-LAYOUT_SIZE_GUARD(AudioSlotNode_Size, struct AudioSlotNode, 12);
-LAYOUT_SIZE_GUARD(AudioTrackSlotWork_Size, struct AudioTrackSlotWork, 0x4444);
-LAYOUT_OFFSET_GUARD(AudioTrackSlotWork_Buckets, struct AudioTrackSlotWork,
-                    bucket, 0x3000);
-LAYOUT_OFFSET_GUARD(AudioTrackSlotWork_InputCursor, struct AudioTrackSlotWork,
-                    inputCursor, 0x4438);
+STATIC_ASSERT(sizeof(struct AudioSlotNode) == 12);
+STATIC_ASSERT(sizeof(struct AudioTrackSlotWork) == 0x4444);
+STATIC_ASSERT(offsetof(struct AudioTrackSlotWork, bucket) == 0x3000);
+STATIC_ASSERT(offsetof(struct AudioTrackSlotWork, inputCursor) == 0x4438);
 
 #if GAME_TLA
 void AudioTrack_ResetSlotBuckets(void);

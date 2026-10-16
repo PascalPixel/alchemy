@@ -2,7 +2,7 @@
 #define ALCHEMY_CANVAS_SPRITE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "effect_sprite.h"
 
 // The canvas sprite of the field Psynergy scenes: a 64x64 sprite whose
@@ -51,10 +51,9 @@ struct CanvasSpriteWork {
   u8 unkc2[2];
 };
 
-LAYOUT_SIZE_GUARD(CanvasSpriteWork_Size, struct CanvasSpriteWork, 0xc4);
-LAYOUT_OFFSET_GUARD(CanvasSpriteWork_Frame, struct CanvasSpriteWork, frame,
-                    0xa4);
-LAYOUT_OFFSET_GUARD(CanvasSpriteWork_Tile, struct CanvasSpriteWork, tile, 0xbc);
+STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 0xc4);
+STATIC_ASSERT(offsetof(struct CanvasSpriteWork, frame) == 0xa4);
+STATIC_ASSERT(offsetof(struct CanvasSpriteWork, tile) == 0xbc);
 
 void Func_080eb594(void);
 void Func_080eb6a0(void);

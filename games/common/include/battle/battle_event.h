@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EVENT_H
 
 #include "edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 enum { BATTLE_EVENT_CAPACITY = 64 };
 
@@ -20,13 +20,10 @@ struct BattleEventQueue {
   s32 count;
 };
 
-LAYOUT_SIZE_GUARD(BattleEventQueue_Size, struct BattleEventQueue, 0x148);
-LAYOUT_OFFSET_GUARD(BattleEventQueue_Operands, struct BattleEventQueue,
-                    operands, 0x040);
-LAYOUT_OFFSET_GUARD(BattleEventQueue_TargetIndex, struct BattleEventQueue,
-                    targetIndex, 0x140);
-LAYOUT_OFFSET_GUARD(BattleEventQueue_Count, struct BattleEventQueue, count,
-                    0x144);
+STATIC_ASSERT(sizeof(struct BattleEventQueue) == 0x148);
+STATIC_ASSERT(offsetof(struct BattleEventQueue, operands) == 0x040);
+STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
+STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
 
 // The battle events BattleEvPush queues, each with one operand, for
 // BattleEvent_Playback (or BattleEv_DispatchQueued) to play in order. The

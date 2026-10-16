@@ -2,7 +2,7 @@
 #define ALCHEMY_CURSOR_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "render_input.h"
 
 // Cursor that approaches its target, shared by shop, name entry and settings.
@@ -16,9 +16,9 @@ struct ShopCursor {
   s8 kind;
 };
 
-LAYOUT_SIZE_GUARD(ShopCursor_Size, struct ShopCursor, 0x10);
-LAYOUT_OFFSET_GUARD(ShopCursor_TargetX, struct ShopCursor, targetX, 0x08);
-LAYOUT_OFFSET_GUARD(ShopCursor_Active, struct ShopCursor, active, 0x0c);
+STATIC_ASSERT(sizeof(struct ShopCursor) == 0x10);
+STATIC_ASSERT(offsetof(struct ShopCursor, targetX) == 0x08);
+STATIC_ASSERT(offsetof(struct ShopCursor, active) == 0x0c);
 
 // Screens that write only the image pointer use the union to retain store
 // order.

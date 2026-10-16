@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct NodeChainNode {
   u8 padding00[4];
@@ -17,11 +17,9 @@ struct NodeChainState {
   u16 count;
 };
 
-LAYOUT_SIZE_GUARD(NodeChainNode_Size, struct NodeChainNode, 8);
-LAYOUT_OFFSET_GUARD(NodeChainState_NodeOffset, struct NodeChainState, node,
-                    0x348);
-LAYOUT_OFFSET_GUARD(NodeChainState_CountOffset, struct NodeChainState, count,
-                    0x39e);
+STATIC_ASSERT(sizeof(struct NodeChainNode) == 8);
+STATIC_ASSERT(offsetof(struct NodeChainState, node) == 0x348);
+STATIC_ASSERT(offsetof(struct NodeChainState, count) == 0x39e);
 
 #if GAME_TLA
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state);

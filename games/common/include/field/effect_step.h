@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct EffectStep {
   s32 x;
@@ -30,18 +30,14 @@ void EffectPosition_ApplyStepAndYOffset(s32 id,
                                         struct EffectPosition *position);
 #endif
 
-LAYOUT_OFFSET_GUARD(EffectStep_x_offset, struct EffectStep, x, 0x00);
-LAYOUT_OFFSET_GUARD(EffectStep_y_offset, struct EffectStep, y, 0x04);
-LAYOUT_OFFSET_GUARD(EffectStep_z_offset, struct EffectStep, z, 0x08);
-LAYOUT_OFFSET_GUARD(EffectStep_velocity_x_offset, struct EffectStep, velocityX,
-                    0x0c);
-LAYOUT_OFFSET_GUARD(EffectStep_velocity_y_offset, struct EffectStep, velocityY,
-                    0x10);
-LAYOUT_OFFSET_GUARD(EffectStep_velocity_z_offset, struct EffectStep, velocityZ,
-                    0x14);
-LAYOUT_OFFSET_GUARD(EffectStep_variant_offset, struct EffectStep, variant,
-                    0x18);
-LAYOUT_SIZE_GUARD(EffectStep_size, struct EffectStep, 0x1c);
-LAYOUT_SIZE_GUARD(EffectPosition_size, struct EffectPosition, 0x0c);
+STATIC_ASSERT(offsetof(struct EffectStep, x) == 0x00);
+STATIC_ASSERT(offsetof(struct EffectStep, y) == 0x04);
+STATIC_ASSERT(offsetof(struct EffectStep, z) == 0x08);
+STATIC_ASSERT(offsetof(struct EffectStep, velocityX) == 0x0c);
+STATIC_ASSERT(offsetof(struct EffectStep, velocityY) == 0x10);
+STATIC_ASSERT(offsetof(struct EffectStep, velocityZ) == 0x14);
+STATIC_ASSERT(offsetof(struct EffectStep, variant) == 0x18);
+STATIC_ASSERT(sizeof(struct EffectStep) == 0x1c);
+STATIC_ASSERT(sizeof(struct EffectPosition) == 0x0c);
 
 #endif

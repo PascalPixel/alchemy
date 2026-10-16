@@ -2,7 +2,7 @@
 #define ALCHEMY_GAME_STATE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_unit.h"
 
 struct GameState {
@@ -89,45 +89,34 @@ struct GameState {
   struct BattleUnit owners[8];
 };
 
-LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, buildStamp, 0);
-LAYOUT_OFFSET_GUARD(GameState_PlayTime, struct GameState, playTime, 4);
-LAYOUT_OFFSET_GUARD(GameState_SavedOptions, struct GameState, idleSleepEnabled,
-                    0x22a);
-LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
-LAYOUT_OFFSET_GUARD(GameState_ShopCredit, struct GameState, shopCredit, 0x118);
-LAYOUT_OFFSET_GUARD(GameState_ShopGifts, struct GameState, shopGifts, 0x11c);
-LAYOUT_OFFSET_GUARD(GameState_Owners, struct GameState, owners, 0x2c0);
-LAYOUT_SIZE_GUARD(GameState_Size, struct GameState, 0xd20);
-LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, wonPrizes, 0x12c);
-LAYOUT_OFFSET_GUARD(GameState_SceneGroup, struct GameState, sceneGroup, 0x1cc);
-LAYOUT_OFFSET_GUARD(GameState_DashKeys, struct GameState, dashKeys, 0x21c);
-LAYOUT_OFFSET_GUARD(GameState_AvoidDistance, struct GameState, avoidDistance,
-                    0x244);
-LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
-LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
-LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
-LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movementMode,
-                    0x1f2);
-LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selectedActor,
-                    0x1f4);
-LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, activeOwners,
-                    0x1f8);
-LAYOUT_OFFSET_GUARD(GameState_Speech, struct GameState, speech, 0x20a);
-LAYOUT_OFFSET_GUARD(GameState_MessageSpeed, struct GameState, messageSpeed,
-                    0x20c);
-LAYOUT_OFFSET_GUARD(GameState_AKeys, struct GameState, aKeys, 0x210);
-LAYOUT_OFFSET_GUARD(GameState_FirstShortcutKeys, struct GameState,
-                    firstShortcutKeys, 0x218);
-LAYOUT_OFFSET_GUARD(GameState_SecondShortcutKeys, struct GameState,
-                    secondShortcutKeys, 0x21a);
-LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, firstShortcut,
-                    0x220);
-LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState,
-                    retreatEntrance, 0x242);
-LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
-LAYOUT_OFFSET_GUARD(GameState_LinkTallies, struct GameState, linkTallies,
-                    0x2a4);
-LAYOUT_OFFSET_GUARD(GameState_StartStamp, struct GameState, startStamp, 0x2b8);
+STATIC_ASSERT(offsetof(struct GameState, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct GameState, playTime) == 4);
+STATIC_ASSERT(offsetof(struct GameState, idleSleepEnabled) == 0x22a);
+STATIC_ASSERT(offsetof(struct GameState, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct GameState, shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct GameState, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct GameState, owners) == 0x2c0);
+STATIC_ASSERT(sizeof(struct GameState) == 0xd20);
+STATIC_ASSERT(offsetof(struct GameState, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct GameState, sceneGroup) == 0x1cc);
+STATIC_ASSERT(offsetof(struct GameState, dashKeys) == 0x21c);
+STATIC_ASSERT(offsetof(struct GameState, avoidDistance) == 0x244);
+STATIC_ASSERT(offsetof(struct GameState, entrance) == 0x1c2);
+STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
+STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
+STATIC_ASSERT(offsetof(struct GameState, selectedActor) == 0x1f4);
+STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
+STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
+STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);
+STATIC_ASSERT(offsetof(struct GameState, aKeys) == 0x210);
+STATIC_ASSERT(offsetof(struct GameState, firstShortcutKeys) == 0x218);
+STATIC_ASSERT(offsetof(struct GameState, secondShortcutKeys) == 0x21a);
+STATIC_ASSERT(offsetof(struct GameState, firstShortcut) == 0x220);
+STATIC_ASSERT(offsetof(struct GameState, retreatEntrance) == 0x242);
+STATIC_ASSERT(offsetof(struct GameState, cloaked) == 0x24c);
+STATIC_ASSERT(offsetof(struct GameState, linkTallies) == 0x2a4);
+STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);
 
 #ifndef OWN_gGameState
 extern struct GameState gGameState;

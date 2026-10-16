@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_WORK_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "battle_type.h"
 #include "battle_event.h"
 #include "ram_buffer.h"
@@ -19,9 +19,8 @@ struct BattleEventState {
   s32 flags;
 };
 
-LAYOUT_SIZE_GUARD(BattleEventState_Size, struct BattleEventState, 0x170);
-LAYOUT_OFFSET_GUARD(BattleEventState_PendingCue, struct BattleEventState,
-                    pendingCue, 0x168);
+STATIC_ASSERT(sizeof(struct BattleEventState) == 0x170);
+STATIC_ASSERT(offsetof(struct BattleEventState, pendingCue) == 0x168);
 
 struct BattleWork {
   s32 enemyGroup;
@@ -61,30 +60,20 @@ struct BattleWork {
   u8 unk868;
 };
 
-LAYOUT_OFFSET_GUARD(BattleSession_PartyStatusMode, struct BattleWork,
-                    partyStatus, 0x041);
-LAYOUT_OFFSET_GUARD(BattleWork_ChallengeFlag, struct BattleWork, challengeFlag,
-                    0x043);
-LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BattleWork, twoSided, 0x044);
-LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BattleWork,
-                    encounterMode, 0x045);
-LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleWork, partyUnits,
-                    0x058);
-LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleWork, enemyIds,
-                    0x066);
-LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleWork, placement,
-                    0x074);
-LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleWork, slots, 0x084);
-LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleWork, actions, 0x2ec);
-LAYOUT_OFFSET_GUARD(BattleSession_QueuedSummons, struct BattleWork,
-                    queuedSummons, 0x564);
-LAYOUT_OFFSET_GUARD(BattleSession_QueueCount, struct BattleWork, queueCount,
-                    0x56b);
-LAYOUT_OFFSET_GUARD(BattleSession_HighlightStep, struct BattleWork,
-                    highlightStep, 0x676);
-LAYOUT_OFFSET_GUARD(BattleSession_HighlightMode, struct BattleWork,
-                    highlightMode, 0x678);
-LAYOUT_OFFSET_GUARD(BattleSession_Events, struct BattleWork, events, 0x6e4);
-LAYOUT_OFFSET_GUARD(BattleSession_Unknown868, struct BattleWork, unk868, 0x868);
+STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
+STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 0x043);
+STATIC_ASSERT(offsetof(struct BattleWork, twoSided) == 0x044);
+STATIC_ASSERT(offsetof(struct BattleWork, encounterMode) == 0x045);
+STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 0x058);
+STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 0x066);
+STATIC_ASSERT(offsetof(struct BattleWork, placement) == 0x074);
+STATIC_ASSERT(offsetof(struct BattleWork, slots) == 0x084);
+STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
+STATIC_ASSERT(offsetof(struct BattleWork, queuedSummons) == 0x564);
+STATIC_ASSERT(offsetof(struct BattleWork, queueCount) == 0x56b);
+STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);
+STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
+STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);
+STATIC_ASSERT(offsetof(struct BattleWork, unk868) == 0x868);
 
 #endif

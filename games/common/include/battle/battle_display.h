@@ -4,7 +4,7 @@
 #include "battle_session.h"
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "edition.h"
 #if !GAME_TLA
 #include "farcall.h"
@@ -22,12 +22,11 @@ struct BattleCamera {
   u8 unk38[20];
 };
 
-LAYOUT_SIZE_GUARD(BattleCamera_Size, struct BattleCamera, 0x4c);
-LAYOUT_OFFSET_GUARD(BattleCamera_Position, struct BattleCamera, pos, 0x0c);
-LAYOUT_OFFSET_GUARD(BattleCamera_FollowPosition, struct BattleCamera, followPos,
-                    0x1c);
-LAYOUT_OFFSET_GUARD(BattleCamera_Pitch, struct BattleCamera, pitch, 0x34);
-LAYOUT_OFFSET_GUARD(BattleCamera_Yaw, struct BattleCamera, yaw, 0x36);
+STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattleCamera, pos) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleCamera, followPos) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
+STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 extern struct BattleCamera *gCameraWork;
 
@@ -55,14 +54,10 @@ struct BattlePresentationWork {
   u8 params[8][4];
 };
 
-LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size,
-                  struct BattlePresentationTransition, 0x20);
-LAYOUT_OFFSET_GUARD(BattlePresentationTransition_Active,
-                    struct BattlePresentationTransition, active, 0x10);
-LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork,
-                  0x54);
-LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors,
-                    struct BattlePresentationWork, actors, 0x24);
+STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
+STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
+STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
+STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 
 struct BattleBackgroundView {
   u8 unk00[8];
@@ -83,14 +78,11 @@ struct BattleAffineHdma {
   u16 lines[2][160];
 };
 
-LAYOUT_SIZE_GUARD(BattleBackgroundView_Size, struct BattleBackgroundView, 0x14);
-LAYOUT_OFFSET_GUARD(BattleBackgroundView_Mode, struct BattleBackgroundView,
-                    mode, 0x08);
-LAYOUT_SIZE_GUARD(BattleAffineHdma_Size, struct BattleAffineHdma, 0x2a0);
-LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine,
-                    0x10);
-LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines,
-                    0x20);
+STATIC_ASSERT(sizeof(struct BattleBackgroundView) == 0x14);
+STATIC_ASSERT(offsetof(struct BattleBackgroundView, mode) == 0x08);
+STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
 struct BattlePlan;
 #if GAME_TLA

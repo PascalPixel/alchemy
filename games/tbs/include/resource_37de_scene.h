@@ -2,7 +2,7 @@
 #define ALCHEMY_RESOURCE_37DE_SCENE_H
 
 #include "global_cells.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct Resource37deSceneRuntime {
   u8 padding000[0x1c0];
@@ -11,10 +11,10 @@ struct Resource37deSceneRuntime {
   s32 sceneSetupWord1c8;
 };
 
-LAYOUT_OFFSET_GUARD(Resource37deSceneRuntime_scene_request_offset,
-                    struct Resource37deSceneRuntime, sceneRequest1c0, 0x1c0);
-LAYOUT_OFFSET_GUARD(Resource37deSceneRuntime_scene_setup_word_offset,
-                    struct Resource37deSceneRuntime, sceneSetupWord1c8, 0x1c8);
+STATIC_ASSERT(offsetof(struct Resource37deSceneRuntime, sceneRequest1c0) ==
+              0x1c0);
+STATIC_ASSERT(offsetof(struct Resource37deSceneRuntime, sceneSetupWord1c8) ==
+              0x1c8);
 
 void QueueSceneSound(s32);
 void InitializeSceneRecordBuffer(void);

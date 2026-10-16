@@ -84,8 +84,8 @@ struct WorldMapOam {
 s32 Math_RemainderUnsigned();
 void Engine_ActorSetSpriteFlags();
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
+STATIC_ASSERT(offsetof(struct PairSprite, detail) == 0x28);
 
-LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
+STATIC_ASSERT(offsetof(union PairObject, link.parent) == 0x68);
 
 #endif

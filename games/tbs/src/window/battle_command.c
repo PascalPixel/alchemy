@@ -51,7 +51,7 @@
 #include "text/msg_ids.h"
 #include "sound_ids.h"
 #include "flags.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "field_event.h"
 #include "b5_context.h"
 #include "battle_type.h"

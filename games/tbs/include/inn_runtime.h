@@ -2,7 +2,7 @@
 #define ALCHEMY_INN_RUNTIME_H
 
 #include "global_cells.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "types.h"
 
 struct InnRuntimeState {
@@ -18,15 +18,10 @@ struct InnRuntimeState {
   u8 specialActive;
 };
 
-LAYOUT_OFFSET_GUARD(InnRuntimeState_Window, struct InnRuntimeState, window,
-                    0x0c);
-LAYOUT_OFFSET_GUARD(InnRuntimeState_ResourceEntries, struct InnRuntimeState,
-                    resourceEntries, 0x390);
-LAYOUT_OFFSET_GUARD(InnRuntimeState_ResourceId, struct InnRuntimeState,
-                    resourceId, 0x3a4);
-LAYOUT_OFFSET_GUARD(InnRuntimeState_Active, struct InnRuntimeState, active,
-                    0x3a9);
-LAYOUT_OFFSET_GUARD(InnRuntimeState_SpecialActive, struct InnRuntimeState,
-                    specialActive, 0x3ac);
+STATIC_ASSERT(offsetof(struct InnRuntimeState, window) == 0x0c);
+STATIC_ASSERT(offsetof(struct InnRuntimeState, resourceEntries) == 0x390);
+STATIC_ASSERT(offsetof(struct InnRuntimeState, resourceId) == 0x3a4);
+STATIC_ASSERT(offsetof(struct InnRuntimeState, active) == 0x3a9);
+STATIC_ASSERT(offsetof(struct InnRuntimeState, specialActive) == 0x3ac);
 
 #endif

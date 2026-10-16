@@ -2,7 +2,7 @@
 #define ALCHEMY_EFFECT_SPRITE_H
 
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "render_input.h"
 
 // A field effect's sprite, drawn by Func_080eb01c: an OAM entry linked into
@@ -24,10 +24,10 @@ struct EffectSprite {
   s16 pivotY;
 };
 
-LAYOUT_SIZE_GUARD(EffectSprite_Size, struct EffectSprite, 0x28);
-LAYOUT_OFFSET_GUARD(EffectSprite_X, struct EffectSprite, x, 0x0c);
-LAYOUT_OFFSET_GUARD(EffectSprite_Angle, struct EffectSprite, angle, 0x1c);
-LAYOUT_OFFSET_GUARD(EffectSprite_PivotX, struct EffectSprite, pivotX, 0x24);
+STATIC_ASSERT(sizeof(struct EffectSprite) == 0x28);
+STATIC_ASSERT(offsetof(struct EffectSprite, x) == 0x0c);
+STATIC_ASSERT(offsetof(struct EffectSprite, angle) == 0x1c);
+STATIC_ASSERT(offsetof(struct EffectSprite, pivotX) == 0x24);
 
 #define EFFECT_SPRITE_HIDDEN (-1)
 

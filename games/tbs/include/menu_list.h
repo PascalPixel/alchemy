@@ -9,7 +9,7 @@
 #include "tbs_edition.h"
 #include "text_render_runtime.h"
 #include "window.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "keystate.h"
 #include "farcall.h"
 #include "frame.h"
@@ -82,9 +82,8 @@ struct PartyStatusWindow {
   u16 flags;
 };
 
-LAYOUT_SIZE_GUARD(PartyStatusWindow_Size, struct PartyStatusWindow, 16);
-LAYOUT_OFFSET_GUARD(PartyStatusWindow_Flags, struct PartyStatusWindow, flags,
-                    12);
+STATIC_ASSERT(sizeof(struct PartyStatusWindow) == 16);
+STATIC_ASSERT(offsetof(struct PartyStatusWindow, flags) == 12);
 
 struct MenuPoint {
   s32 x;
@@ -108,16 +107,15 @@ struct MenuCell {
   s32 autoMode;
 };
 
-LAYOUT_OFFSET_GUARD(MenuCell_Slide, struct MenuCell, slideOffset, 0x28);
-LAYOUT_OFFSET_GUARD(MenuCell_Row, struct MenuCell, row, 0x30);
-LAYOUT_OFFSET_GUARD(MenuCell_CommandSelection, struct MenuCell,
-                    commandSelection, 0x3c);
-LAYOUT_OFFSET_GUARD(MenuCell_Work, struct MenuCell, work, 0x44);
-LAYOUT_OFFSET_GUARD(MenuCell_Busy, struct MenuCell, busy, 0x48);
-LAYOUT_OFFSET_GUARD(MenuCell_Active, struct MenuCell, active, 0x4c);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, autoEnabled, 0xd8);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, autoDelay, 0xdc);
-LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, autoMode, 0xe0);
+STATIC_ASSERT(offsetof(struct MenuCell, slideOffset) == 0x28);
+STATIC_ASSERT(offsetof(struct MenuCell, row) == 0x30);
+STATIC_ASSERT(offsetof(struct MenuCell, commandSelection) == 0x3c);
+STATIC_ASSERT(offsetof(struct MenuCell, work) == 0x44);
+STATIC_ASSERT(offsetof(struct MenuCell, busy) == 0x48);
+STATIC_ASSERT(offsetof(struct MenuCell, active) == 0x4c);
+STATIC_ASSERT(offsetof(struct MenuCell, autoEnabled) == 0xd8);
+STATIC_ASSERT(offsetof(struct MenuCell, autoDelay) == 0xdc);
+STATIC_ASSERT(offsetof(struct MenuCell, autoMode) == 0xe0);
 
 // Restore the previous selection: page, row and return row.
 // A statement macro (S2: a layer, 4 sites): the three cursor reads stay

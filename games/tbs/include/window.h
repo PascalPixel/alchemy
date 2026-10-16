@@ -5,7 +5,7 @@
 #include "unit/window/battle_command.h"
 #include "types.h"
 #include "tbs_edition.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "uiflow.h"
 #include "output.h"
 
@@ -48,58 +48,48 @@ struct UiRenderWork {
   u8 spacingAfter;
 };
 
-LAYOUT_OFFSET_GUARD(UiRenderWork_Windows, struct UiRenderWork, windows, 0x500);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Channels, struct UiRenderWork, channels,
-                    RENDER_CHANNEL_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs,
-                    RENDER_OUTPUT_TABLE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork,
-                    freeOutputs.head, RENDER_FREE_HEAD_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork,
-                    freeOutputs.tailLink, RENDER_FREE_TAIL_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_TileAttributes, struct UiRenderWork,
-                    tileAttributes, RENDER_TILE_ATTR_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_TileCursor, struct UiRenderWork, tileCursor,
-                    RENDER_ALT_OFFSET - 2);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Alt, struct UiRenderWork, alt,
-                    RENDER_ALT_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Dirty, struct UiRenderWork, dirty,
-                    RENDER_DIRTY_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, lineSpacing,
-                    RENDER_WORD2_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Outline, struct UiRenderWork, outline,
-                    RENDER_WORD_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour,
-                    RENDER_PARAM_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries,
-                    RENDER_ENTRY_TABLE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_MessageStart, struct UiRenderWork,
-                    messageStart, RENDER_ENTRY_COUNT_OFFSET + 2);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count,
-                    RENDER_ENTRY_COUNT_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphResource, struct UiRenderWork,
-                    glyphResource, RENDER_COUNTER_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphTiles, struct UiRenderWork, glyphTiles,
-                    RENDER_COUNTER_OFFSET + 2);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values,
-                    RENDER_VALUE_TABLE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names,
-                    RENDER_NAME_TABLE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_ResourceIds, struct UiRenderWork, resourceIds,
-                    RENDER_SLOT_ID_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_OutputIds, struct UiRenderWork, outputIds,
-                    RENDER_SLOT_VALUE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_SpeakerVoiceSound, struct UiRenderWork,
-                    speakerVoiceSound, RENDER_RESULT_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_SpeakerVoiceCountdown, struct UiRenderWork,
-                    speakerVoiceCountdown, RENDER_RESULT_OFFSET + 2);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy,
-                    RENDER_BUSY_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingBefore, struct UiRenderWork,
-                    spacingBefore, RENDER_BUSY_OFFSET + 1);
-LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingAfter, struct UiRenderWork,
-                    spacingAfter, RENDER_BUSY_OFFSET + 2);
-LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
+STATIC_ASSERT(offsetof(struct UiRenderWork, windows) == 0x500);
+STATIC_ASSERT(offsetof(struct UiRenderWork, channels) == RENDER_CHANNEL_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, outputs) ==
+              RENDER_OUTPUT_TABLE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.head) ==
+              RENDER_FREE_HEAD_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, freeOutputs.tailLink) ==
+              RENDER_FREE_TAIL_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, tileAttributes) ==
+              RENDER_TILE_ATTR_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, tileCursor) ==
+              (RENDER_ALT_OFFSET - 2));
+STATIC_ASSERT(offsetof(struct UiRenderWork, alt) == RENDER_ALT_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, dirty) == RENDER_DIRTY_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, lineSpacing) ==
+              RENDER_WORD2_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, outline) == RENDER_WORD_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, colour) == RENDER_PARAM_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, entries) ==
+              RENDER_ENTRY_TABLE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, messageStart) ==
+              (RENDER_ENTRY_COUNT_OFFSET + 2));
+STATIC_ASSERT(offsetof(struct UiRenderWork, count) == RENDER_ENTRY_COUNT_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, glyphResource) ==
+              RENDER_COUNTER_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, glyphTiles) ==
+              (RENDER_COUNTER_OFFSET + 2));
+STATIC_ASSERT(offsetof(struct UiRenderWork, values) == RENDER_VALUE_TABLE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, names) == RENDER_NAME_TABLE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, resourceIds) == RENDER_SLOT_ID_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, outputIds) ==
+              RENDER_SLOT_VALUE_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, speakerVoiceSound) ==
+              RENDER_RESULT_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, speakerVoiceCountdown) ==
+              (RENDER_RESULT_OFFSET + 2));
+STATIC_ASSERT(offsetof(struct UiRenderWork, busy) == RENDER_BUSY_OFFSET);
+STATIC_ASSERT(offsetof(struct UiRenderWork, spacingBefore) ==
+              (RENDER_BUSY_OFFSET + 1));
+STATIC_ASSERT(offsetof(struct UiRenderWork, spacingAfter) ==
+              (RENDER_BUSY_OFFSET + 2));
+STATIC_ASSERT(sizeof(struct UiRenderWork) == RENDER_WORK_SIZE);
 
 extern u8 *gWindowWork[];
 

@@ -2,7 +2,7 @@
 #define ALCHEMY_SCROLL_H
 
 #include "map_scroll.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 
 struct DisplayScrollWork {
   struct BgScroll rows[2][160][3];
@@ -18,11 +18,9 @@ struct DisplayScrollWork {
   s32 ampY;
 };
 
-LAYOUT_SIZE_GUARD(DisplayScrollWork_Size, struct DisplayScrollWork, 0xf20);
-LAYOUT_OFFSET_GUARD(DisplayScrollWork_Page, struct DisplayScrollWork, page,
-                    0xf00);
-LAYOUT_OFFSET_GUARD(DisplayScrollWork_Frequency, struct DisplayScrollWork,
-                    freqX, 0xf08);
+STATIC_ASSERT(sizeof(struct DisplayScrollWork) == 0xf20);
+STATIC_ASSERT(offsetof(struct DisplayScrollWork, page) == 0xf00);
+STATIC_ASSERT(offsetof(struct DisplayScrollWork, freqX) == 0xf08);
 
 extern struct DisplayScrollWork *gHBlankScrollWork;
 extern const s16 gDisplayScroll_WaveSine[];

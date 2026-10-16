@@ -3,7 +3,7 @@
 
 #include "edition.h"
 #include "types.h"
-#include "layout_guard.h"
+#include "static_assert.h"
 #include "system.h"
 #include "io_reg.h"
 #include "irq.h"
@@ -17,14 +17,12 @@ struct SerialPacket {
   u8 reservedTail[4];
 };
 
-LAYOUT_SIZE_GUARD(SerialPacket_Size, struct SerialPacket, 32);
-LAYOUT_OFFSET_GUARD(SerialPacket_Sequence, struct SerialPacket, sequence, 0);
-LAYOUT_OFFSET_GUARD(SerialPacket_MissingMask, struct SerialPacket, missingMask,
-                    1);
-LAYOUT_OFFSET_GUARD(SerialPacket_Checksum, struct SerialPacket, checksum, 2);
-LAYOUT_OFFSET_GUARD(SerialPacket_Payload, struct SerialPacket, payload, 4);
-LAYOUT_OFFSET_GUARD(SerialPacket_ReservedTail, struct SerialPacket,
-                    reservedTail, 28);
+STATIC_ASSERT(sizeof(struct SerialPacket) == 32);
+STATIC_ASSERT(offsetof(struct SerialPacket, sequence) == 0);
+STATIC_ASSERT(offsetof(struct SerialPacket, missingMask) == 1);
+STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
+STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
+STATIC_ASSERT(offsetof(struct SerialPacket, reservedTail) == 28);
 
 union SerialDataRegisters {
   u32 words[2];
@@ -52,13 +50,11 @@ struct SerialRuntime {
   u8 storage[0x100];
 };
 
-LAYOUT_SIZE_GUARD(SerialRuntime_Size, struct SerialRuntime, 0x160);
-LAYOUT_OFFSET_GUARD(SerialRuntime_Mode, struct SerialRuntime, mode, 0);
-LAYOUT_OFFSET_GUARD(SerialRuntime_TransferEnabled, struct SerialRuntime,
-                    transferEnabled, 8);
-LAYOUT_OFFSET_GUARD(SerialRuntime_SendIndex, struct SerialRuntime, sendIndex,
-                    0x14);
-LAYOUT_OFFSET_GUARD(SerialRuntime_Storage, struct SerialRuntime, storage, 0x60);
+STATIC_ASSERT(sizeof(struct SerialRuntime) == 0x160);
+STATIC_ASSERT(offsetof(struct SerialRuntime, mode) == 0);
+STATIC_ASSERT(offsetof(struct SerialRuntime, transferEnabled) == 8);
+STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
+STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
 
 struct SerialTransferState {
   u8 active;
@@ -68,17 +64,12 @@ struct SerialTransferState {
   u8 payload[20];
 };
 
-LAYOUT_SIZE_GUARD(SerialTransferState_Size, struct SerialTransferState, 24);
-LAYOUT_OFFSET_GUARD(SerialTransferState_Active, struct SerialTransferState,
-                    active, 0);
-LAYOUT_OFFSET_GUARD(SerialTransferState_Status, struct SerialTransferState,
-                    status, 1);
-LAYOUT_OFFSET_GUARD(SerialTransferState_Flags, struct SerialTransferState,
-                    flags, 2);
-LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState,
-                    peerFlags, 3);
-LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState,
-                    payload, 4);
+STATIC_ASSERT(sizeof(struct SerialTransferState) == 24);
+STATIC_ASSERT(offsetof(struct SerialTransferState, active) == 0);
+STATIC_ASSERT(offsetof(struct SerialTransferState, status) == 1);
+STATIC_ASSERT(offsetof(struct SerialTransferState, flags) == 2);
+STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
+STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)

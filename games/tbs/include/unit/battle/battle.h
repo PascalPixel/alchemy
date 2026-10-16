@@ -249,8 +249,12 @@ s32 BattleFx_InitializeStarField(s32 mode);
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
-// BattleFx_PlayUnitElementEffect is called before its definition with no
-// prototype in scope.
+// The native implicit-int declaration disagrees with the later void definition.
+// A plain prototype keeps EN size but changes its first caller at .text+0x4c62.
+#ifdef UBFIX
+void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
+                                    s32 variant);
+#endif
 void BattlePres_RunWithZeroArguments(void);
 void Runtime_RemoveIrqHandlerSlot2(void);
 

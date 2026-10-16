@@ -14,6 +14,6 @@
 
 #include "global_cells.h"
 
-u8 Engine_TaskWait();
+void Engine_TaskWait(s32 frames);
 
 #endif

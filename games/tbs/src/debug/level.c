@@ -29,6 +29,7 @@
 #include "uiflow.h"
 #include "text/msg_ids.h"
 #include "field_scene.h"
+#include "fx_scene.h"
 
 // Edition-specific text and window layout values.
 #if TBS_PATCH_1
@@ -43,101 +44,116 @@ void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
 #define ITEM_COUNT 270
 #define ABILITY_COUNT 270
+#define BROWSER_ROW_STEP 10
+#define BROWSER_PAGE_STEP 30
 
+// Returns the level-test room entrance table.
 u8 *ItemLevel_GetEntrances(void) { return (u8 *)gItemLevelEntrances; }
 
+// Returns zero from this scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the packed level-test exit table.
 u8 *ItemLevel_GetExits(void) { return (u8 *)gItemLevelExits; }
 
+// Returns the level-test actor placements.
 u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
 #if TBS_PATCH_1
-static void FieldScene_RunActor13Mode102Step(void) {
+// Sets the test message before displaying the first emote on actor 13.
+// The emote's actual type remains unnamed.
+static void ItemLevel_ShowMessageThenEmote(void) {
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Actor_ShowEmote(13, 0x102, 0);
   Engine_EventShowMessage(13, 0);
 }
 
-static void FieldScene_RunActor13Mode105Step(void) {
+// Displays the other test emote before setting actor 13's message.
+static void ItemLevel_ShowEmoteThenMessage(void) {
   Actor_ShowEmote(13, 0x105, 0);
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Engine_EventShowMessage(13, 0);
 }
 #endif
 
+// Returns the room's event table through the scene entry ABI.
 u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
-static void SceneState_AddToRecordCount(s32 id, s32 amount) {
-  u8 *entry = UnitGet(id);
+// Raises one owner's level by amount, then recalculates that unit.
+static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
+  struct BattleUnit *unit = UnitGet(ownerId);
 
-  Unit_LevelUpTo(id, entry[15] + amount);
-  UnitCalc(id);
+  Unit_LevelUpTo(ownerId, unit->level + amount);
+  UnitCalc(ownerId);
 }
 
-static void Scene_AddToListedRecordCounts(s32 amount) {
-  u16 list[16];
-  u16 *p;
-  s32 n;
+// Applies the level change to the owners returned by the active-party service.
+static void ItemLevel_AdjustPartyLevels(s32 amount) {
+  u16 ownerIds[16];
+  u16 *owner;
+  s32 ownerCount;
 
-  n = FieldParty_ListActiveOwners(list);
-  if (n > 0) {
-    s32 count;
-    p = list;
-    count = n;
+  ownerCount = FieldParty_ListActiveOwners(ownerIds);
+  if (ownerCount > 0) {
+    s32 remaining;
+    owner = ownerIds;
+    remaining = ownerCount;
     do {
-      SceneState_AddToRecordCount(*p++, amount);
-    } while (--count != 0);
+      ItemLevel_AdjustOwnerLevel(*owner++, amount);
+    } while (--remaining != 0);
   }
 }
 
-static void EV11_TALK(void) {
-  u8 *record;
-  struct UiWindow *win;
-  s32 flag;
-  s32 msg;
+// Displays the selected owner's level and changes all active owners.
+// B closes the window and recalculates the original four heroes.
+static void ItemLevel_RunLevelEditor(void) {
+  struct BattleUnit *unit;
+  struct UiWindow *window;
+  s32 redraw;
+  s32 messageId;
 
-  record = UnitGet(gGameState.selectedActor);
-  win = UiWindow_Create(0, 0, 30, 9, 2);
+  unit = UnitGet(gGameState.selectedActor);
+  window = UiWindow_Create(0, 0, 30, 9, 2);
 
-  msg = MsgDebugRaiseEveryonesLevel;
-  UiText_DrawResource(msg, win, 0, 0);
-  UiText_DrawResource(msg + 1, win, 0, 16);
-  msg += 2;
-  flag = 1;
-  UiText_DrawResource(msg, win, 0, 32);
+  messageId = MsgDebugRaiseEveryonesLevel;
+  UiText_DrawResource(messageId, window, 0, 0);
+  UiText_DrawResource(messageId + 1, window, 0, 16);
+  messageId += 2;
+  redraw = 1;
+  UiText_DrawResource(messageId, window, 0, 32);
 
   for (;;) {
-    if (flag != 0) {
-      RenderOutput_RedrawSavedRect(win);
-      UiText_DrawStringAtOffset(record, win, 0, 48);
-      UiText_DrawStringInWindow(gItemLevelLvLabel, win, 48, 48);
-      flag = 0;
-      UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
+    if (redraw != 0) {
+      RenderOutput_RedrawSavedRect(window);
+      UiText_DrawStringAtOffset(unit->name, window, 0, 48);
+      UiText_DrawStringInWindow(gItemLevelLvLabel, window, 48, 48);
+      redraw = 0;
+      UiText_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
-    if ((gKeysPressed & 8) != 0 || (gKeysPressed & 4) != 0) {
-      Scene_AddToListedRecordCounts(5);
+    // Start/Select add five levels; A adds one. Tests remain independent.
+    if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
+      ItemLevel_AdjustPartyLevels(5);
       Engine_AudioPlayCue(93);
-      flag = 1;
+      redraw = 1;
     }
 
-    if ((gKeysPressed & 1) != 0) {
-      Scene_AddToListedRecordCounts(1);
+    if ((gKeysPressed & KEY_A) != 0) {
+      ItemLevel_AdjustPartyLevels(1);
       Engine_AudioPlayCue(91);
-      flag = 1;
+      redraw = 1;
     }
 
-    if ((gKeysPressed & 2) != 0) {
+    if ((gKeysPressed & KEY_B) != 0) {
       Engine_AudioPlayCue(113);
-      RenderOutput_RedrawSavedRect(win);
+      RenderOutput_RedrawSavedRect(window);
       Engine_TaskWait(1);
-      UiWork_Finalize(win, 1);
+      UiWork_Finalize(window, 1);
 
-      UnitCalc(0);
-      UnitCalc(1);
-      UnitCalc(3);
-      UnitCalc(2);
+      UnitCalc(ISAAC);
+      UnitCalc(GARET);
+      UnitCalc(MIA);
+      UnitCalc(IVAN);
       return;
     }
 
@@ -145,47 +161,54 @@ static void EV11_TALK(void) {
   }
 }
 
-static void EV08_TALK(void) {
+// Browses nonempty item definitions and gives the selected item to the party.
+// Preserve independent key tests and the direction-specific empty-icon scans.
+// Ordinary while scans grow the native function from 0x29c to 0x2a0;
+// retain its current polling edges.
+static void ItemLevel_SelectItem(void) {
   struct UiWindow *window;
   struct UiWindow *details;
-  s32 item;
+  s32 selectedItemId;
   s32 redraw;
-  s32 index;
-  s32 count;
-  s8 step;
+  s32 messageOrDefinitionId;
+  s32 entryCount;
+  s8 seekDirection;
 
-  count = ITEM_COUNT;
-  step = 0;
-  item = 1;
+  entryCount = ITEM_COUNT;
+  seekDirection = 0;
+  selectedItemId = 1;
   Engine_AudioPlayCue(112);
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 7, 2);
   details = UiWindow_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
+  // Copy the existing sprite palette into the debug window palettes.
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
   Engine_TaskWait(1);
   while (1) {
     if (redraw) {
       redraw = 0;
-      item = (item + ITEM_COUNT) % count;
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       RenderOutput_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
       UiText_DrawStringInWindow(gItemLevelItemPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
+      UiText_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         UiText_DrawStringInWindow(gItemLevelItemHelp, window, 0, 32);
-        index = item & 0x1ff;
-        Engine_DebugGetItem(index);
-        UiText_DrawCharacterAtOffset(index + MsgItemName, window, 120, 0);
-        ITEM_DEBUG_DRAW_ITEM_NAME(index + MsgItemPlainName, window, 0, 16);
+        messageOrDefinitionId = selectedItemId & 0x1ff;
+        Engine_DebugGetItem(messageOrDefinitionId);
+        UiText_DrawCharacterAtOffset(messageOrDefinitionId + MsgItemName,
+                                     window, 120, 0);
+        ITEM_DEBUG_DRAW_ITEM_NAME(messageOrDefinitionId + MsgItemPlainName,
+                                  window, 0, 16);
         RenderOutput_RedrawSavedRect(details);
-        Engine_DebugDrawItemDetails(details, item);
+        Engine_DebugDrawItemDetails(details, selectedItemId);
       } else {
         UiText_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
       }
     }
     if (gKeysPressed & KEY_A) {
-      if (PartyInventory_Add(item) == -1) {
+      if (PartyInventory_Add(selectedItemId) == -1) {
         Engine_AudioPlayCue(113);
         break;
       }
@@ -196,60 +219,61 @@ static void EV08_TALK(void) {
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      step = -1;
-      item--;
+      seekDirection = -1;
+      selectedItemId--;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_DOWN) {
-      step = 1;
-      item++;
+      seekDirection = 1;
+      selectedItemId++;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      step = 1;
-      item += 10;
+      seekDirection = 1;
+      selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_LEFT) {
-      step = -1;
-      item -= 10;
+      seekDirection = -1;
+      selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_R) {
-      step = 1;
-      item += 30;
+      seekDirection = 1;
+      selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_L) {
-      step = -1;
-      item -= 30;
+      seekDirection = -1;
+      selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
-    if (step == -1) {
-      item = (item + ITEM_COUNT) % count;
+    // Skip definitions with no icon/availability byte in the chosen direction.
+    if (seekDirection == -1) {
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_back;
     back:
-      item = (item + ITEM_COUNT - 1) % count;
+      selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     check_back:
-      if (Engine_DebugGetItem(item & 0x1ff)->icon == 0)
+      if (Engine_DebugGetItem(selectedItemId & 0x1ff)->icon == 0)
         goto back;
     }
-    if (step == 1) {
-      item = (item + ITEM_COUNT) % count;
+    if (seekDirection == 1) {
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_ahead;
     ahead:
-      item = (item + ITEM_COUNT + 1) % count;
+      selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     check_ahead:
-      if (Engine_DebugGetItem(item & 0x1ff)->icon == 0)
+      if (Engine_DebugGetItem(selectedItemId & 0x1ff)->icon == 0)
         goto ahead;
     }
-    step = 0;
+    seekDirection = 0;
     Engine_TaskWait(1);
   }
   RenderOutput_RedrawSavedRect(window);
@@ -259,115 +283,131 @@ static void EV08_TALK(void) {
 }
 
 #if TBS_PATCH_1
+// Browses ability names and descriptions, skipping unavailable entries.
+// B closes the sole window created by this browser.
+// Ordinary while scans grow the native function from 0x248 to 0x260;
+// retain the original polling edges.
 static void ItemLevel_SelectAbility(void) {
   struct UiWindow *window;
+#ifndef UBFIX
   struct UiWindow *details;
-  s32 ability;
+#endif
+  s32 selectedAbilityId;
   s32 redraw;
-  s32 index;
-  s32 count;
-  s8 step;
+  s32 messageOrDefinitionId;
+  s32 entryCount;
+  s8 seekDirection;
 
-  count = ABILITY_COUNT;
-  step = 0;
-  ability = 1;
+  entryCount = ABILITY_COUNT;
+  seekDirection = 0;
+  selectedAbilityId = 1;
   Engine_AudioPlayCue(112);
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 12, 2);
+  // Copy the existing sprite palette into the debug window palettes.
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
   Engine_TaskWait(1);
   while (1) {
     if (redraw) {
       redraw = 0;
-      ability = (ability + ABILITY_COUNT) % count;
+      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       RenderOutput_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
       UiText_DrawStringInWindow(gItemLevelPsyPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(ability, 0, window, 80, 0);
+      UiText_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
       UiText_DrawStringInWindow(gItemLevelPsyHelp, window, 0, 72);
-      index = ability & 0x3fff;
-      UiText_DrawCharacterAtOffset(index + MsgAbilityName, window, 120, 0);
-      index += MsgAbilityDescription;
-      UiText_DrawCharacterAtOffset(index, window, 0, 24);
-      UiText_DrawResource(index, window, 0, 48);
+      messageOrDefinitionId = selectedAbilityId & 0x3fff;
+      UiText_DrawCharacterAtOffset(messageOrDefinitionId + MsgAbilityName,
+                                   window, 120, 0);
+      messageOrDefinitionId += MsgAbilityDescription;
+      UiText_DrawCharacterAtOffset(messageOrDefinitionId, window, 0, 24);
+      UiText_DrawResource(messageOrDefinitionId, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(113);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      step = -1;
-      ability--;
+      seekDirection = -1;
+      selectedAbilityId--;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_DOWN) {
-      step = 1;
-      ability++;
+      seekDirection = 1;
+      selectedAbilityId++;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      step = 1;
-      ability += 10;
+      seekDirection = 1;
+      selectedAbilityId += BROWSER_ROW_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_LEFT) {
-      step = -1;
-      ability -= 10;
+      seekDirection = -1;
+      selectedAbilityId -= BROWSER_ROW_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_R) {
-      step = 1;
-      ability += 30;
+      seekDirection = 1;
+      selectedAbilityId += BROWSER_PAGE_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
     if (gKeysRepeat & KEY_L) {
-      step = -1;
-      ability -= 30;
+      seekDirection = -1;
+      selectedAbilityId -= BROWSER_PAGE_STEP;
       redraw = 1;
       Engine_AudioPlayCue(111);
     }
-    if (step == -1) {
-      ability = (ability + ABILITY_COUNT) % count;
+    // Skip definitions with no icon/availability byte in the chosen direction.
+    if (seekDirection == -1) {
+      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_back;
     back:
-      ability = (ability + ABILITY_COUNT - 1) % count;
+      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT - 1) % entryCount;
     check_back:
-      if (Engine_DebugGetAbility(ability & 0x3fff)[4] == 0)
+      if (Engine_DebugGetAbility(selectedAbilityId & 0x3fff)[4] == 0)
         goto back;
     }
-    if (step == 1) {
-      ability = (ability + ABILITY_COUNT) % count;
+    if (seekDirection == 1) {
+      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_ahead;
     ahead:
-      ability = (ability + ABILITY_COUNT + 1) % count;
+      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT + 1) % entryCount;
     check_ahead:
-      if (Engine_DebugGetAbility(ability & 0x3fff)[4] == 0)
+      if (Engine_DebugGetAbility(selectedAbilityId & 0x3fff)[4] == 0)
         goto ahead;
     }
-    step = 0;
+    seekDirection = 0;
     Engine_TaskWait(1);
   }
   RenderOutput_RedrawSavedRect(window);
   Engine_TaskWait(1);
   UiWork_Finalize(window, 1);
+#ifndef UBFIX
+  // The original never initializes details or creates a second window.
+  // Reading this indeterminate pointer is UB; modern builds omit that call.
   UiWork_Finalize(details, 1);
+#endif
 }
 #endif
 
-static void SceneState_SetWorkWords1c0And1c8(void) {
-  gEventWork->startTransition = 0x201;
+// Requests a window-style exit with variant one over 24 frames.
+UNUSED static void ItemLevel_RequestExit(void) {
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gEventWork->transitionFrames = 24;
   Engine_EventRequestExit();
 }
 
+// Starts the window transition and edition-specific actor scale/animation
+// setup. Returns zero through the exported scene entry.
 s32 FieldScene_RunEntrySetup(void) {
-  gEventWork->startTransition = 516;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gEventWork->transitionFrames = 24;
 #if TBS_PATCH_1
   Object_GetById(11)->scaleY = 0x19999;
@@ -382,39 +422,46 @@ s32 FieldScene_RunEntrySetup(void) {
 }
 
 #if !TBS_PATCH_1
+// Runs the Japanese animation test, then moves actor 11 to its test position.
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 2);
   Engine_ActorSetAnimation(11, 4);
   ObjectMotion_WaitForAnimationChange(10);
-  Actor_SetPosition(11, 312 << 16, 416 << 16);
+  Actor_SetPosition(11, PIXELS(312), PIXELS(416));
   Engine_EventEnd();
 }
 #endif
 
 #if TBS_PATCH_1
-static void FieldScene_DrawThreeCaptionWindow(void) {
+// Displays the three character-set caption rows in a debug window.
+static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
   /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
    * bytes. Without it: differ 4 (sp moves 4 for 36). */
   u8 text[32];
 
-  window = (struct UiWindow *)UiWindow_Create(0, 13, 30, 6, 2);
+  window = UiWindow_Create(0, 13, 30, 6, 2);
   UiText_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
   UiText_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
   UiText_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);
 }
 #endif
 
-static void EV10_SCRIPT(void) {
-  u8 *record = gEffectWork;
+// Sets the effect work's child-mode byte to one.
+static void ItemLevel_EnableEffectChildMode(void) {
+  struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
 
-  record[53] = 1;
+  effect->childMode = 1;
 }
 
-static int EV09_TALK(void) { return DebugMenu_BrowseIcons(); }
+// Returns the icon browser's status to the event dispatcher.
+static int ItemLevel_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
-static int EV10_TALK(void) { return DebugMenu_BrowseEntryGlyphs(); }
+// Returns the entry-glyph browser's status to the event dispatcher.
+static int ItemLevel_OpenGlyphBrowser(void) {
+  return DebugMenu_BrowseEntryGlyphs();
+}
 
 char gItemLevelLvLabel[4] = "Lv";
 
@@ -488,10 +535,11 @@ struct ScenePlacement gItemLevelPlacements[] = {
 // clang-format on
 
 struct SceneEvent gItemLevelEvents[] = {
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectItem)},
+    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_OpenIconBrowser)},
+    {EVENT_TALK, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ItemLevel_OpenGlyphBrowser)},
+    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
     {PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_RunMotionTest)},
@@ -500,12 +548,13 @@ struct SceneEvent gItemLevelEvents[] = {
     {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectAbility)},
 #endif
     {EVENT_TALK, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},
+     EVENT_SCRIPT(ItemLevel_ShowMessageThenEmote)},
     {EVENT_TALK, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_RunActor13Mode105Step)},
+     EVENT_SCRIPT(ItemLevel_ShowEmoteThenMessage)},
     {PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_DrawThreeCaptionWindow)},
+     EVENT_SCRIPT(ItemLevel_ShowGlyphCaptions)},
 #endif
-    {0x10008e15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+    {0x10008e15, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ItemLevel_EnableEffectChildMode)},
     {SCENE_EVENTS_END},
 };

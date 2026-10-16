@@ -14,37 +14,52 @@
 #include "scene.h"
 #include "field_event.h"
 #include "field_scene.h"
+#include "battle_unit.h"
+#include "flags.h"
 
+// Expose the test-room entrance table to the scene loader.
 u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }
 
+// The test rooms need no additional scene data.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Expose the links to the other test rooms.
 u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
 
+// Place one Djinni of each element in the test room.
 u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
-static void EV08_TALK(void) {
-  Djinn_JoinParty(8, 0, 0);
-  Engine_GameFlagClear(0x30);
+// Grant the first Djinni of an element, then clear its found flag for testing.
+static __inline__ void TestRooms_GiveDjinniForTesting(s32 actorId,
+                                                      s32 element) {
+  Djinn_JoinParty(actorId, element, 0);
+  Engine_GameFlagClear(FLAG_DJINNI_0 + element * 20);
 }
 
-static void EV09_TALK(void) {
-  Djinn_JoinParty(9, 1, 0);
-  Engine_GameFlagClear(0x44);
+// Receive Flint from the corresponding test-room actor.
+static void TestRooms_ReceiveFlint(void) {
+  TestRooms_GiveDjinniForTesting(8, ELEMENT_VENUS);
 }
 
-static void EV10_TALK(void) {
-  Djinn_JoinParty(0xA, 2, 0);
-  Engine_GameFlagClear(0x58);
+// Receive Fizz from the corresponding test-room actor.
+static void TestRooms_ReceiveFizz(void) {
+  TestRooms_GiveDjinniForTesting(9, ELEMENT_MERCURY);
 }
 
-static void EV11_TALK(void) {
-  Djinn_JoinParty(0xB, 3, 0);
-  Engine_GameFlagClear(0x6C);
+// Receive Forge from the corresponding test-room actor.
+static void TestRooms_ReceiveForge(void) {
+  TestRooms_GiveDjinniForTesting(10, ELEMENT_MARS);
 }
 
+// Receive Gust from the corresponding test-room actor.
+static void TestRooms_ReceiveGust(void) {
+  TestRooms_GiveDjinniForTesting(11, ELEMENT_JUPITER);
+}
+
+// Bind each Djinni actor to its test grant callback.
 u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
+// The test room needs no scripted scene initialization.
 s32 Scene_RunEmptyScene(void) { return 0; }
 
 u32 gTestRooms_EntrancesHead[] = {
@@ -81,9 +96,9 @@ struct ScenePlacement gTestRooms_Placements[] = {
 };
 
 struct SceneEvent gTestRooms_Events[] = {
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveFlint)},
+    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveFizz)},
+    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveForge)},
+    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveGust)},
     {SCENE_EVENTS_END},
 };

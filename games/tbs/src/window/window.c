@@ -186,6 +186,14 @@ enum {
 #define UI_PALETTE_SLOT_FREE 999
 #define UI_CANVAS_BACKGROUND_WORD 0x44444444
 
+// Scratch capacities are in bytes unless the name says halfwords.
+#define UI_NUMBER_BUFFER_SIZE 16
+#define UI_BYTE_STRING_BUFFER_SIZE 0x200
+#define UI_MESSAGE_NAME_HALFWORDS 24
+#define UI_ARGUMENT_SLOT_COUNT 8
+#define UI_SELECTION_ENTRY_LIMIT 16
+#define UI_AREA_NOTICE_FRAMES 90
+
 // Takes the first render output from the free list, or returns NULL when every
 // output is in use.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
@@ -880,7 +888,7 @@ void UiWork_ProcessRenderChannels(void) {
   do {
     struct UiWindow *current = channel->work;
 
-    if (current != 0 && *(s32 *)&current->frame == 0) {
+    if (current != NULL && current->frame == 0 && current->duration == 0) {
       u16 flags = current->flags;
 
       if (flags == 0) {
@@ -952,13 +960,14 @@ enum {
 // Types one frame's share of a channel's text: runs control codes (new line,
 // new page, pauses, colours) and draws characters, playing the speaker's voice
 // blips. Returns a CHANNEL_STEP_ result.
-s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
+s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
+  // Preserve the native's initial volatile sample, separate from later reads.
   u32 keys = gKeysHeld;
   s32 glyphsLeft = gUiText_SpeedSteps[gGameState.messageSpeed];
   s32 lag;
   u32 code;
-  u32 next;
+  u32 nextCode;
   struct UiWindow *window;
   s32 x;
   s32 y;
@@ -966,13 +975,13 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
   u32 newHeight;
   s32 oldWidth;
   s32 oldHeight;
-  s32 entry;
-  s32 nextEntry;
+  s32 entryIndex;
+  s32 nextEntryIndex;
   s32 pixelX;
   s32 pixelY;
   s32 voiceGap;
-  s32 advance;
-  s32 advanceX;
+  s32 glyphWidth;
+  s32 glyphAdvance;
 
   // In battle, text runs at 3 glyphs a frame, and 5 more for each frame the
   // game is running behind (up to two).
@@ -986,51 +995,51 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
   }
 
   // Finish scrolling the canvas up a line before any more text.
-  if (ch->transition != 0) {
+  if (channel->transition != 0) {
     UiText_ScrollCanvasUp(1);
-    ch->transition = (s16)ch->transition - 1;
+    channel->transition = (s16)channel->transition - 1;
     return CHANNEL_STEP_RUNNING;
   }
   // With no button held, wait out the delay after the last glyph.
-  if (gKeysHeld == 0 && ch->glyphDelay != 0) {
-    ch->glyphDelay--;
+  if (gKeysHeld == 0 && channel->glyphDelay != 0) {
+    channel->glyphDelay--;
     return CHANNEL_STEP_RUNNING;
   }
 
   // Run control codes and draw characters until this frame's share is done.
   do {
     code = TEXT_END;
-    if (ch->ended == 0)
-      code = work->entries[ch->entry];
+    if (channel->ended == 0)
+      code = work->entries[channel->entry];
 
     if (code < TEXT_COMMANDS) {
       switch (code) {
       case TEXT_NEWLINE:
         // Canvas lines are 13 pixels apart, and from the second line on the
         // canvas scrolls up instead; other windows' lines are 15 apart.
-        ch->x = ch->startX;
-        if (ch->work->flags & UI_WINDOW_TEXT_CANVAS) {
-          if (ch->y >= 13 << 8) {
-            UiText_StartCanvasScroll(ch);
+        channel->x = channel->startX;
+        if (channel->work->flags & UI_WINDOW_TEXT_CANVAS) {
+          if (channel->y >= 13 << 8) {
+            UiText_StartCanvasScroll(channel);
             glyphsLeft = 1;
           } else {
-            ch->y += 13 << 8;
+            channel->y += 13 << 8;
           }
         } else {
-          ch->y += 15 << 8;
-          if (ch->line <= 2)
-            ch->line++;
+          channel->y += 15 << 8;
+          if (channel->line <= 2)
+            channel->line++;
         }
         break;
 
       case TEXT_PAGE:
-        if (work->mode != 0 && ch->countdown < 900)
+        if (work->mode != 0 && channel->countdown < 900)
           gKeysPressedLatch = 0;
-        ch->countdown = 919;
-        if (UiText_CheckTextDismissed(ch) == 0) {
+        channel->countdown = 919;
+        if (UiText_CheckTextDismissed(channel) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
           // corner.
-          struct UiWindow *pane = ch->work;
+          struct UiWindow *pane = channel->work;
 
 #if TBS_PATCH_1
           if (pane->width == 0 || pane->height == 0 ||
@@ -1046,26 +1055,26 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
           break;
         }
         // Clear the window, and refit it to the next page's text.
-        window = ch->work;
+        window = channel->work;
         x = window->x;
         y = window->y;
         oldWidth = window->width;
         oldHeight = window->height;
-        entry = ch->entry;
+        entryIndex = channel->entry;
         work->pageArrowShown = 0;
         RenderOutput_PrepareForRedraw(window);
-        if (ch->flags == 0 && (window->width | window->height) != 0)
+        if (channel->flags == 0 && (window->width | window->height) != 0)
           UiWindow_EraseBorderRect(window->x, window->y, window->width,
                                    window->height);
-        entry = (entry + 1) & RENDER_ENTRY_MASK;
-        if (work->entries[entry] != 0 &&
+        entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+        if (work->entries[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
-          if (ch->flags != 0) {
+          if (channel->flags != 0) {
             UiWindow_EraseBorderRect(window->x, window->y, window->width,
                                      window->height);
           } else {
-            UiWindow_FitOnScreen(entry, &x, &y, &newWidth, &newHeight,
-                                 ch->spacing, 0);
+            UiWindow_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
+                                 channel->spacing, 0);
             if (window->flags & UI_WINDOW_ANCHOR_BOTTOM) {
               if (oldHeight != newHeight)
                 y -= newHeight - oldHeight;
@@ -1075,8 +1084,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
             if (!(window->flags & UI_WINDOW_FIXED_X)) {
               // Keep the window centred where it was.
               x += (s32)(oldWidth - newWidth) / 4;
-              UiWindow_FitOnScreen(entry, &x, &y, &newWidth, &newHeight,
-                                   ch->spacing, 2);
+              UiWindow_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
+                                   channel->spacing, 2);
             }
             window->x = x;
             window->y = y;
@@ -1086,82 +1095,82 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
           UiWindow_DrawFrame(window->x, window->y, window->width,
                              window->height);
         }
-        ch->x = ch->startX;
-        ch->y = 0;
-        ch->line = 0;
+        channel->x = channel->startX;
+        channel->y = 0;
+        channel->line = 0;
 #if TBS_PATCH_3
-        ch->colour = 15;
-        ch->outline = 0;
-        ch->lineSpacing = 10;
-        UiText_ApplyChannelStyle(ch);
+        channel->colour = 15;
+        channel->outline = 0;
+        channel->lineSpacing = 10;
+        UiText_ApplyChannelStyle(channel);
 #endif
         Resource_ResetEntry(work->glyphResource);
         work->glyphResource = NO_GLYPH_RESOURCE;
         break;
 
       case TEXT_WAIT_KEY:
-        if (work->mode != 0 && ch->countdown < 900)
+        if (work->mode != 0 && channel->countdown < 900)
           gKeysPressedLatch = 0;
-        if (UiText_CheckTextDismissed(ch) != 0)
+        if (UiText_CheckTextDismissed(channel) != 0)
           return CHANNEL_STEP_CLOSE;
-        ch->countdown = 919;
+        channel->countdown = 919;
         break;
 
       case TEXT_PAUSE_SHORT:
-        if (ch->countdown == 0)
-          ch->countdown = 20;
+        if (channel->countdown == 0)
+          channel->countdown = 20;
         work->result[1] = 0;
-        UiText_CheckPauseSkipped(ch);
+        UiText_CheckPauseSkipped(channel);
         break;
 
       case TEXT_PAUSE_LONGEST:
-        if (ch->countdown == 0)
-          ch->countdown = 120;
+        if (channel->countdown == 0)
+          channel->countdown = 120;
         work->result[1] = 0;
-        UiText_CheckPauseSkipped(ch);
+        UiText_CheckPauseSkipped(channel);
         break;
 
       case TEXT_PAUSE_LONG:
-        if (ch->countdown == 0)
-          ch->countdown = 60;
+        if (channel->countdown == 0)
+          channel->countdown = 60;
         work->result[1] = 0;
         break;
 
       case TEXT_COLOUR:
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-        ch->colour = work->entries[ch->entry];
-        UiText_ApplyChannelStyle(ch);
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
+        channel->colour = work->entries[channel->entry];
+        UiText_ApplyChannelStyle(channel);
         break;
 
       case TEXT_OUTLINE:
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-        ch->outline = work->entries[ch->entry];
-        UiText_ApplyChannelStyle(ch);
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
+        channel->outline = work->entries[channel->entry];
+        UiText_ApplyChannelStyle(channel);
         break;
 
       case TEXT_LINE_SPACING:
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-        ch->lineSpacing = work->entries[ch->entry];
-        UiText_ApplyChannelStyle(ch);
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
+        channel->lineSpacing = work->entries[channel->entry];
+        UiText_ApplyChannelStyle(channel);
         break;
 
       case TEXT_COLOURS_RESET:
-        ch->colour = 15;
-        ch->outline = 0;
-        ch->lineSpacing = 10;
-        UiText_ApplyChannelStyle(ch);
+        channel->colour = 15;
+        channel->outline = 0;
+        channel->lineSpacing = 10;
+        UiText_ApplyChannelStyle(channel);
         break;
 
       case TEXT_WINDOW_STATE:
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-        ch->work->effect = work->entries[ch->entry];
-        ch->countdown = 10;
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
+        channel->work->effect = work->entries[channel->entry];
+        channel->countdown = 10;
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
         break;
 
       case TEXT_END:
       case TEXT_END_ALT:
-        ch->ended = 1;
+        channel->ended = 1;
         return CHANNEL_STEP_ENDED;
       }
 
@@ -1169,58 +1178,58 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         glyphsLeft = 1;
     } else {
       // A character: draw it at the pen position, rounded to whole pixels.
-      pixelX = (ch->x + 128) / 256;
-      pixelY = (ch->y + 128) / 256;
+      pixelX = (channel->x + 128) / 256;
+      pixelY = (channel->y + 128) / 256;
       voiceGap = gUiText_SpeedCueGaps[gGameState.messageSpeed];
-      nextEntry = ch->entry;
+      nextEntryIndex = channel->entry;
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       if (work->mode != 0)
         pixelX += 8;
 #endif
-      nextEntry = (nextEntry + 1) & RENDER_ENTRY_MASK;
-      next = work->entries[nextEntry];
+      nextEntryIndex = (nextEntryIndex + 1) & RENDER_ENTRY_MASK;
+      nextCode = work->entries[nextEntryIndex];
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       // A kana mark after the character is drawn with it.
-      if (next == TEXT_VOICED_MARK) {
+      if (nextCode == TEXT_VOICED_MARK) {
         code |= TEXT_CODE_VOICED;
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
-      } else if (next == TEXT_SEMIVOICED_MARK) {
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
+      } else if (nextCode == TEXT_SEMIVOICED_MARK) {
         code |= TEXT_CODE_SEMIVOICED;
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
       }
 #endif
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       // Two narrow characters that fit in one 16-pixel cell together are drawn
       // as one pair, the second in the code's high byte.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-      if (!(ch->work->flags & UI_WINDOW_TEXT_CANVAS) && code > TEXT_SPACE &&
-          next > TEXT_SPACE) {
+      if (!(channel->work->flags & UI_WINDOW_TEXT_CANVAS) &&
+          code > TEXT_SPACE && nextCode > TEXT_SPACE) {
         s16 pair = gUiText_Glyphs[code - TEXT_SPACE].width +
-                   gUiText_Glyphs[next - TEXT_SPACE].width;
+                   gUiText_Glyphs[nextCode - TEXT_SPACE].width;
 
         if (work->outline == 1) {
           if ((u16)pair <= 14) {
-            code |= next << 8;
-            ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+            code |= nextCode << 8;
+            channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
           }
         } else if ((u16)pair <= 15) {
-          code |= next << 8;
-          ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+          code |= nextCode << 8;
+          channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
         }
       }
 #else
-      if (!(ch->work->flags & UI_WINDOW_TEXT_CANVAS) && code > TEXT_SPACE &&
-          next > TEXT_SPACE &&
+      if (!(channel->work->flags & UI_WINDOW_TEXT_CANVAS) &&
+          code > TEXT_SPACE && nextCode > TEXT_SPACE &&
           (u16)(gUiText_Glyphs[code - TEXT_SPACE].width +
-                gUiText_Glyphs[next - TEXT_SPACE].width) <= 15) {
-        code |= next << 8;
-        ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+                gUiText_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
+        code |= nextCode << 8;
+        channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
       }
 #endif
 #endif
-      advance = UiText_DrawGlyph(ch->work, code, pixelX, pixelY, 0);
-      ch->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
-      if (advance != 0) {
+      glyphWidth = UiText_DrawGlyph(channel->work, code, pixelX, pixelY, 0);
+      channel->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
+      if (glyphWidth != 0) {
         // The speaker's voice blip (result[0], the first of four sounds) every
         // few characters, and the pen moves on by the glyph's width.
         if (work->result[0] != 0) {
@@ -1233,14 +1242,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
             work->result[1]--;
           }
         }
-        advanceX = advance << 8;
+        glyphAdvance = glyphWidth << 8;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         if (code == TEXT_SPACE)
-          advanceX += ch->spacing[ch->line];
+          glyphAdvance += channel->spacing[channel->line];
 #else
-        advanceX += ch->spacing[ch->line];
+        glyphAdvance += channel->spacing[channel->line];
 #endif
-        ch->x += advanceX;
+        channel->x += glyphAdvance;
       }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       else
@@ -1251,12 +1260,12 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
     }
 
     // A pause holds the channel on this entry until its countdown ends.
-    if (ch->countdown != 0) {
-      ch->countdown--;
-      if (ch->countdown != 0)
+    if (channel->countdown != 0) {
+      channel->countdown--;
+      if (channel->countdown != 0)
         continue;
     }
-    ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
+    channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
   } while (--glyphsLeft != 0);
 
   return CHANNEL_STEP_RUNNING;
@@ -1513,7 +1522,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   state->count = 0;
   priority = 200;
   priority <<= 4;
-  Scheduler_AddOrUpdateCallback((void *)UiWork_ProcessAll, priority);
+  Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, priority);
 }
 
 // Resets the text style and starts the per-frame window update
@@ -1551,10 +1560,10 @@ enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
 // Shows a message in the battle message window, opening the window (a
 // full-width text canvas along the bottom of the screen) if it is not open.
 void UiText_PrepareMessageWork(s32 argument) {
-  s32 index;
-  struct UiChannelSlot *result;
-  struct UiWindow *existing;
-  struct UiWindow *work;
+  s32 entryIndex;
+  struct UiChannelSlot *channel;
+  struct UiWindow *previousWindow;
+  struct UiWindow *messageWindow;
   struct UiRenderWork *state;
   struct BattleDisplayWork *control;
 
@@ -1563,28 +1572,29 @@ void UiText_PrepareMessageWork(s32 argument) {
       gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW];
   // result starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
-  result = NULL;
+  channel = NULL;
   state->menuState = 2;
-  index = UiText_BuildRenderEntries(argument, 1);
+  entryIndex = UiText_BuildRenderEntries(argument, 1);
   state->menuState = 1;
 
-  if (state->entries[index] != 0) {
-    existing = control->window;
-    if (existing == NULL) {
-      work = UiWindow_Create(0, 15, 30, 6,
-                             UI_WINDOW_INSTANT | UI_WINDOW_TEXT_CANVAS);
-      control->window = work;
+  if (state->entries[entryIndex] != 0) {
+    previousWindow = control->window;
+    if (previousWindow == NULL) {
+      messageWindow = UiWindow_Create(
+          0, 15, 30, 6, UI_WINDOW_INSTANT | UI_WINDOW_TEXT_CANVAS);
+      control->window = messageWindow;
       UiWindow_MapTextCanvasTiles(0, 15, 30, 6, 1);
       control->marked = 0;
     } else {
-      work = existing;
+      messageWindow = previousWindow;
     }
-    if (work != NULL) {
-      result = UiText_StartBattleMessage(work, index, control->marked);
-      control->offset = (struct BattleDisplayOffset *)result;
+    if (messageWindow != NULL) {
+      channel =
+          UiText_StartBattleMessage(messageWindow, entryIndex, control->marked);
+      control->offset = (struct BattleDisplayOffset *)channel;
       control->marked = 0;
-      if (result == NULL) {
-        UiWork_Finalize(work, 1);
+      if (channel == NULL) {
+        UiWork_Finalize(messageWindow, 1);
       }
     }
   }
@@ -1601,27 +1611,28 @@ void UiText_ShowMessageAndWaitCore(s32 argument) {
 
 // Types a message into an open window from its top
 // left. Returns the channel typing it (as an integer), or 0 when the message
-// is empty, window is 0 or no channel is free.
-s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 argument) {
+// is empty, window is NULL or no channel is free. The result is the channel
+// pointer encoded as a word, not a message-completion status.
+s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
   struct UiRenderWork *work = UI_WORK;
   s32 entry;
-  s32 result = 0;
+  s32 channel = 0;
   /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two
    * outgoing arguments, exactly these four slots; without them the frame is 8
    * bytes, not 16 (differ 4 in tbs-en). */
-  u16 entries[4];
+  u16 frameReserve[4];
 
   work->result[0] = 0;
   work->result[1] = 0;
-  entry = UiText_BuildRenderEntries(argument, 1);
+  entry = UiText_BuildRenderEntries(message, 1);
   if (work->entries[entry] == 0)
     return 0;
   if (window == 0)
     return 0;
-  result = (s32)UiText_QueueRenderEntries(window, entry, 0, 0, 0, 1);
-  if (result == 0)
+  channel = (s32)UiText_QueueRenderEntries(window, entry, 0, 0, 0, 1);
+  if (channel == 0)
     return 0;
-  return result;
+  return channel;
 }
 
 // Sets the effects the next message is decoded with
@@ -1700,25 +1711,25 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
 // holds the tilemap upload off afterwards, bit 6 puts it 12 tiles lower.
 // Without bit 3 or 6 the window goes above or below the player's character,
 // away from where it stands on screen.
-void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
+void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
   struct UiRenderWork *state = UI_WORK;
-  s32 release;
-  s32 pos[2] = {0, 0};
+  s32 zoom;
+  s32 actorPosition[2] = {0, 0};
   s32 height;
   s32 width;
   s32 y;
   s32 x;
-  struct UiWindow *work = NULL;
+  struct UiWindow *window = NULL;
   s32 zero;
 
   y = x = 0;
-  release = flags & 1;
+  zoom = flags & 1;
 
   if (flags & 2) {
     state->busy = 1;
   }
 
-  UiText_GetResourceDimensions(no, &x, &y, (u32 *)&width, (u32 *)&height);
+  UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width, (u32 *)&height);
 
   // Centre the window across the screen, and in the top 12 rows.
   x = (30 - width) >> 1;
@@ -1729,20 +1740,20 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   } else if (flags & 0x40) {
     y += 12;
   } else {
-    s32 dy;
+    s32 actorTileY;
 
-    Object_GetScreenPositionFar(gGameState.selectedActor, pos);
-    dy = pos[1] >> 3;
-    if (dy > 9) {
-      y = dy - 5;
+    Object_GetScreenPositionFar(gGameState.selectedActor, actorPosition);
+    actorTileY = actorPosition[1] >> 3;
+    if (actorTileY > 9) {
+      y = actorTileY - 5;
     } else {
-      y = dy + 4;
+      y = actorTileY + 4;
     }
   }
 
-  work = UiText_OpenMessageWindow(no, x, y, release);
+  window = UiText_OpenMessageWindow(message, x, y, zoom);
 
-  if (work != NULL) {
+  if (window != NULL) {
     while (UiWork_IsComplete() == 0) {
       WaitFrames(1);
     }
@@ -1752,8 +1763,8 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
     }
 
     if (!(flags & 4)) {
-      UiWork_Finalize(work, release);
-      while (UiWork_IsIdle(work) == 0) {
+      UiWork_Finalize(window, zoom);
+      while (UiWork_IsIdle(window) == 0) {
         WaitFrames(1);
       }
     }
@@ -1783,6 +1794,7 @@ void UiWork_ProcessAll(void) {
 // 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 // over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
 // the width of the text drawn in pixels.
+// The caller supplies 32 words for four tiles; the returned width is in pixels.
 s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   u8 pixels[384];
   struct UiRenderWork *work;
@@ -1828,7 +1840,14 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   }
   // The second character follows the first.
   if ((u16)secondIndex != 0) {
+#ifdef UBFIX
+    // Form only the actual glyph address: &glyphs[-32] is already outside
+    // the array before the later byte offset is added. The direct index
+    // changes native instruction selection (EN: text grows by 8 bytes).
+    glyph = (const u8 *)&gUiText_Glyphs[(u16)secondIndex - 32];
+#else
     glyph = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
+#endif
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
     if (work->outline == 1) {
@@ -1854,6 +1873,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
 // text colour over a shadow, or with an outline when UiRenderWork.outline is
 // 1, with the kana mark in the code's top two bits above its top right.
 // Codes from 256 are kanji. Returns the character's width in pixels.
+// The caller supplies 32 words for four tiles; the returned width is in pixels.
 s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   u8 pixels[256];
   struct UiRenderWork *work;
@@ -1982,35 +2002,36 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 // take no width.
 s32 UiText_GetWideStringWidth(u16 *text) {
   s32 width;
-  u16 *p;
-  u32 c;
+  u16 *cursor;
+  u32 code;
 #if !defined(WIDE_WIDTH_FIXED)
-  u32 idx;
+  u32 glyphIndex;
 #endif
 
-  c = *text;
+  code = *text;
   width = 0;
-  p = text + 1;
-  if (c != 0) {
+  cursor = text + 1;
+  if (code != 0) {
     do {
-      if (c == 0x20) {
+      if (code == 0x20) {
         width += 4;
-      } else if (c <= 0xffU) {
+      } else if (code <= 0xffU) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
-        idx = c - TEXT_VOICED_MARK;
-        if (idx > 1U) {
-          idx += TEXT_VOICED_MARK - TEXT_SPACE; // the font starts at the space
-          width += FONT_GLYPH(idx)->width;
+        glyphIndex = code - TEXT_VOICED_MARK;
+        if (glyphIndex > 1U) {
+          glyphIndex +=
+              TEXT_VOICED_MARK - TEXT_SPACE; // the font starts at the space
+          width += FONT_GLYPH(glyphIndex)->width;
         }
       } else {
         width += 10;
 #endif
       }
-      c = *p;
-      p += 1;
-    } while (c != 0);
+      code = *cursor;
+      cursor += 1;
+    } while (code != 0);
   }
   return width;
 }
@@ -2023,34 +2044,34 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   u8 *base;
   struct UiRenderWork *work;
-  u32 c;
-  u32 next;
-  s16 start;
+  u32 code;
+  u32 nextCode;
+  s16 lineStartX;
 
   base = gWindowWork[0];
   work = (struct UiRenderWork *)base;
-  c = 0;
-  start = x;
+  code = 0;
+  lineStartX = x;
   if (text == NULL) {
     text = work->entries;
-    work->entries[work->count] = c;
+    work->entries[work->count] = code;
     work->count = (work->count + 1) & RENDER_ENTRY_MASK;
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   for (;;)
 #else
-  while ((c = *text++) != 0)
+  while ((code = *text++) != 0)
 #endif
   {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    c = *text++;
-    if (c > 0xff)
-      c = 0x40;
-    if (c == 0)
+    code = *text++;
+    if (code > 0xff)
+      code = 0x40;
+    if (code == 0)
       break;
 #endif
-    if (c <= TEXT_END_ALT) {
-      switch (c) {
+    if (code <= TEXT_END_ALT) {
+      switch (code) {
       case TEXT_COLOUR:
         work->colour = *text;
         text++;
@@ -2067,13 +2088,14 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         UiWork_ResetCounters();
         break;
       case TEXT_NEWLINE:
-        x = start;
+        x = lineStartX;
         y += 15;
         break;
       case 14:
       case 15:
       case 28:
         text++;
+        // Fall through: skip the second operand too.
       case 11:
       case 12:
       case 17:
@@ -2088,41 +2110,41 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       // Pair two narrow characters into one cell, as UiWork_StepChannelScript
       // does.
       if ((window->flags & UI_WINDOW_TEXT_CANVAS) == 0) {
-        next = *text;
+        nextCode = *text;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-        if (c > 32 && next > 32) {
-          s16 width =
-              gUiText_Glyphs[c - 32].width + gUiText_Glyphs[next - 32].width;
+        if (code > 32 && nextCode > 32) {
+          s16 width = gUiText_Glyphs[code - 32].width +
+                      gUiText_Glyphs[nextCode - 32].width;
 
           if (work->outline == 1) {
             if ((u16)width <= 14) {
-              c |= next << 8;
+              code |= nextCode << 8;
               text++;
             }
           } else if ((u16)width <= 15) {
-            c |= next << 8;
+            code |= nextCode << 8;
             text++;
           }
         }
 #else
-        if (c > 32 && next > 32 &&
-            (u16)(gUiText_Glyphs[c - 32].width +
-                  gUiText_Glyphs[next - 32].width) <= 15) {
-          c |= next << 8;
+        if (code > 32 && nextCode > 32 &&
+            (u16)(gUiText_Glyphs[code - 32].width +
+                  gUiText_Glyphs[nextCode - 32].width) <= 15) {
+          code |= nextCode << 8;
           text++;
         }
 #endif
       }
 #else
       if (*text == TEXT_VOICED_MARK) {
-        c |= TEXT_CODE_VOICED;
+        code |= TEXT_CODE_VOICED;
         text++;
       } else if (*text == TEXT_SEMIVOICED_MARK) {
-        c |= TEXT_CODE_SEMIVOICED;
+        code |= TEXT_CODE_SEMIVOICED;
         text++;
       }
 #endif
-      x += UiText_DrawGlyph(window, c, x, y, 0);
+      x += UiText_DrawGlyph(window, code, x, y, 0);
     }
   }
 }
@@ -2162,32 +2184,34 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
 // Draws a zero-terminated string of 16-bit character codes into a window's
 // tilemap at tile (x, y) of its interior, one tile per character, skipping
 // control codes; a NULL text draws the decoded text in UiRenderWork.entries.
+// Control operands are skipped, not rendered as glyphs; the input is read only.
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   struct UiRenderWork *work;
-  u16 c;
-  s16 start;
+  u16 code;
+  s16 lineStartX;
 
   work = UI_WORK;
-  start = x;
+  lineStartX = x;
   if (text == NULL) {
     text = work->entries;
     work->entries[work->count] = 0;
     work->count = (work->count + 1) & RENDER_ENTRY_MASK;
   }
-  c = *text++;
-  if (c != 0)
+  code = *text++;
+  if (code != 0)
     do {
-      if (c <= TEXT_END_ALT) {
-        switch (c) {
+      if (code <= TEXT_END_ALT) {
+        switch (code) {
         case TEXT_NEWLINE:
-          x = start;
+          x = lineStartX;
           y++;
           break;
         case 14:
         case 15:
         case 28:
           text++;
+          // Fall through: skip the second operand too.
         case 7:
         case 8:
         case 9:
@@ -2202,17 +2226,17 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
           break;
         }
       } else {
-        UiWindow_PutGlyph(window, c, x, y, 0);
+        UiWindow_PutGlyph(window, code, x, y, 0);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
-        if ((u16)(c - TEXT_VOICED_MARK) > 1) // the kana marks share a tile
+        if ((u16)(code - TEXT_VOICED_MARK) > 1) // the kana marks share a tile
           x++;
 #endif
       }
-      c = *text++;
-    } while (c != 0);
+      code = *text++;
+    } while (code != 0);
   work->dirty = 1;
 }
 
@@ -2220,12 +2244,13 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
 // text starts. With width 0 the number has no padding and a minus sign when
 // negative; otherwise it is right-aligned in width characters (up to 12) and
 // unsigned.
+// The caller supplies at least 14 bytes; fixed-width output omits the sign.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
   s32 negative;
-  s32 space;
-  s32 minus;
+  s32 spaceCharacter;
+  s32 minusCharacter;
   u8 *leading;
   u8 *trim;
 
@@ -2246,16 +2271,16 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
 
   offset = 0;
   buffer[13] = offset;
-  space = ' ';
+  spaceCharacter = ' ';
   offset = 1;
-  minus = '-';
+  minusCharacter = '-';
   for (leading = buffer; offset != 13; leading++, offset++) {
     if (leading[1] == '0') {
       if (offset != 12)
-        leading[1] = space;
+        leading[1] = spaceCharacter;
     } else {
       if (negative != 0)
-        leading[0] = minus;
+        leading[0] = minusCharacter;
       break;
     }
   }
@@ -2312,8 +2337,11 @@ struct ArticleTable {
 // The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 // the others the class's article (in Spanish, form bit 3 asks for the
 // indefinite article), capitalised at the start of a sentence.
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
-                             s32 plural, s32 *suffix) {
+// The write position wraps in the decoded-text ring; language grammar remains
+// separate.
+u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+                             u16 *entries, s32 articleForm, s32 plural,
+                             s32 *suffix) {
   struct ArticleTable table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
   struct ArticleTable indefiniteTable;
@@ -2322,27 +2350,27 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
 #endif
   s32 kind;
   u16 head;
-  u16 c;
+  u16 code;
   s8 *p;
   s8 c8;
   s32 cnt;
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
-  count = no & 7;
-  indefinite = no & 8;
+  count = articleForm & 7;
+  indefinite = articleForm & 8;
 #endif
   if (mode != 0) {
-    entry[pos] = ' ';
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
   }
 #if (LANGUAGE == LANGUAGE_SPANISH)
   if (count == 0 || count == 4) {
 #else
-  if (no == 0 || no == 4) {
+  if (articleForm == 0 || articleForm == 4) {
 #endif
     head = name[0];
     if (head == 29)
@@ -2370,35 +2398,35 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
         break;
       if (cnt == 0 && *suffix == 2)
         c8 -= 0x20;
-      entry[pos] = c8;
-      pos = (pos + 1) & 0x1ff;
+      entries[writePosition] = c8;
+      writePosition = (writePosition + 1) & 0x1ff;
     }
   }
   while (*name != 0) {
-    c = *name++;
-    entry[pos] = c;
-    pos = (pos + 1) & 0x1ff;
+    code = *name++;
+    entries[writePosition] = code;
+    writePosition = (writePosition + 1) & 0x1ff;
 #if (LANGUAGE == LANGUAGE_GERMAN)
-    if (c == 's' || c == 'S' || c == 'z' || c == 'Z')
+    if (code == 's' || code == 'S' || code == 'z' || code == 'Z')
       *suffix = 1;
     else
       *suffix = 0;
 #elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
-    if (c == 's' || c == 'S')
+    if (code == 's' || code == 'S')
       *suffix = 1;
     else
       *suffix = 0;
 #endif
   }
   if (mode != 0) {
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x08;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = ' ';
-    pos = (pos + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x08;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & 0x1ff;
   }
-  return pos;
+  return writePosition;
 }
 #endif
 
@@ -2406,25 +2434,28 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
 // The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 // name's first letter unless its class says otherwise), and form 2 (or 3 with
 // several) adds the plural "s" or "es".
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
-                             s32 plural, s32 *suffix) {
+// The write position wraps in the decoded-text ring; language grammar remains
+// separate.
+u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+                             u16 *entries, s32 articleForm, s32 plural,
+                             s32 *suffix) {
   struct ArticleTable table;
   s32 kind;
   u16 head;
-  u16 c;
+  u16 code;
   u8 *p;
   s8 c8;
   s32 cnt;
 
   if (mode != 0) {
-    entry[pos] = ' ';
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
   }
-  if (no == 1 || (no == 3 && plural == 0)) {
+  if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
     table = gUiText_ArticleTable;
     head = name[0];
@@ -2443,8 +2474,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
     for (cnt = 0; cnt < 8; cnt++) {
       if ((c8 = *p++) == 0)
         break;
-      entry[pos] = c8;
-      pos = (pos + 1) & 0x1ff;
+      entries[writePosition] = c8;
+      writePosition = (writePosition + 1) & 0x1ff;
     }
   } else {
     head = name[0];
@@ -2452,31 +2483,31 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
       name += 2;
   }
   while (*name != 0) {
-    c = *name++;
-    entry[pos] = c;
-    pos = (pos + 1) & 0x1ff;
-    if (c == 'S' || c == 's')
+    code = *name++;
+    entries[writePosition] = code;
+    writePosition = (writePosition + 1) & 0x1ff;
+    if (code == 'S' || code == 's')
       *suffix = 1;
     else
       *suffix = 0;
   }
-  if (no == 2 || (no == 3 && plural != 0)) {
+  if (articleForm == 2 || (articleForm == 3 && plural != 0)) {
     if (*suffix != 0) {
-      entry[pos] = 'e';
-      pos = (pos + 1) & 0x1ff;
+      entries[writePosition] = 'e';
+      writePosition = (writePosition + 1) & 0x1ff;
     }
-    entry[pos] = 's';
-    pos = (pos + 1) & 0x1ff;
+    entries[writePosition] = 's';
+    writePosition = (writePosition + 1) & 0x1ff;
   }
   if (mode != 0) {
-    entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = 0x08;
-    pos = (pos + 1) & 0x1ff;
-    entry[pos] = ' ';
-    pos = (pos + 1) & 0x1ff;
+    entries[writePosition] = 0x0a;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = 0x08;
+    writePosition = (writePosition + 1) & 0x1ff;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & 0x1ff;
   }
-  return pos;
+  return writePosition;
 }
 #endif
 
@@ -2541,22 +2572,23 @@ extern u8 *gUiText_NumberWords[];
 // (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
 // numbers and articles are written out; style codes are kept with their
 // operands for the message channel to run.
+// script -1 reuses messageStart; clear consumes argument slots after decoding.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
-  u32 ch = 0;
+  u32 code = 0;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-  s32 head = 1;
+  s32 lineStart = 1;
 #endif
   s32 quote = 0;
   u32 start = work->count;
-  u32 cnt = 0;
+  u32 decodedCount = 0;
   s32 plural = 0;
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
   s32 running = 1;
 #endif
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-  u32 pos = start;
-  u32 prev;
+  u32 writePosition = start;
+  u32 previousCode;
   s32 suffix = 0;
 #else
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -2569,28 +2601,32 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #endif
   s8 *word;
   s8 c8;
-  u32 pos = start;
+  u32 writePosition = start;
 #endif
   u16 *entry = work->entries;
   s32 overflow = 0;
   s32 (*decode)(struct TextReader *);
-  u32 next;
+  u32 nextPosition;
   s32 no;
   u32 j;
   u32 i;
   s32 value;
-  s32 tmp;
+  s32 argument;
 #if (LANGUAGE == LANGUAGE_ITALIAN)
   s32 ending;
 #endif
-  s32 mag;
-  u8 *num;
-  u8 *src;
-  u16 *dst;
+#ifdef UBFIX
+  u32 magnitude;
+#else
+  s32 magnitude;
+#endif
+  u8 *numberText;
+  u8 *nameBytes;
+  u16 *nameOutput;
   u16 *p;
-  u16 name[24];
-  u8 numbuf[16];
-  struct TextReader st;
+  u16 name[UI_MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
+  struct TextReader reader;
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
   struct ItemPossessiveTable possessives;
   s32 kind;
@@ -2617,23 +2653,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
         struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
-    UiText_LookupMessage(&st, script);
+    UiText_LookupMessage(&reader, script);
 
     do {
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-      prev = ch;
+      previousCode = code;
 #endif
-      ch = (u32)decode(&st);
-      if (ch > 255)
-        ch = 64;
+      code = (u32)decode(&reader);
+      if (code > 255)
+        code = 64;
 
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
-        if (ch < 32) {
-          switch (ch) {
+        if (code < 32) {
+          switch (code) {
           case MSG_ARGUMENT_CLASS_NAME:
-            decode(&st);
+            decode(&reader);
             UiText_LookupArgument(MSG_ARG_CLASS, clear);
             break;
           case MSG_END:
@@ -2645,7 +2681,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             UiText_LookupArgument(MSG_ARG_NUMBER, clear);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
-            decode(&st);
+            decode(&reader);
             UiText_LookupArgument(MSG_ARG_ITEM, clear);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
@@ -2656,20 +2692,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_TEXT_COLOR:
           case MSG_TEXT_EFFECT:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_ACTOR_NAME:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_ARTICLE_CLASS:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_PAGE_BREAK:
             running = 0;
-            ch = 2;
+            code = 2;
             break;
           case MSG_PROTAGONIST_NAME:
             break;
@@ -2683,57 +2719,58 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         // Halting speech pauses before each character.
         if (work->spacingBefore != 0
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-            && head == 0 && ch != 222 && ch != 223
+            && lineStart == 0 && code != 222 && code != 223
 #endif
         ) {
-          entry[pos] = ENTRY_NARROW_GAP;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
+          entry[writePosition] = ENTRY_NARROW_GAP;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
         }
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-        if (work->spacingAfter != 0 && head == 0 && ch != 222 && ch != 223 &&
-            prev <= 256 && prev > 127 && prev != 222 && prev != 223 &&
-            prev != 32 && prev != 165 && prev != 161 && prev != 164) {
-          entry[pos] = ENTRY_WIDE_GAP;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (work->spacingAfter != 0 && lineStart == 0 && code != 222 &&
+            code != 223 && previousCode <= 256 && previousCode > 127 &&
+            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
+            previousCode != 165 && previousCode != 161 && previousCode != 164) {
+          entry[writePosition] = ENTRY_WIDE_GAP;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
         }
 
 #endif
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
-        if (ch > 31) {
-          if (work->spacingBefore != 0 && (ch == 32 || cnt > 10)) {
-            entry[pos] = '.';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = '.';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = '.';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (code > 31) {
+          if (work->spacingBefore != 0 && (code == 32 || decodedCount > 10)) {
+            entry[writePosition] = '.';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = '.';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = '.';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             overflow = 1;
-            if (cnt > 10)
-              ch = 32;
+            if (decodedCount > 10)
+              code = 32;
           }
-          if (ch == 34) {
+          if (code == 34) {
             quote ^= 1;
             if (quote != 0)
-              ch = 142;
+              code = 142;
           }
-          entry[pos] = (u16)ch;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
+          entry[writePosition] = (u16)code;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-          head = 0;
+          lineStart = 0;
 #else
-          if (ch != ' '
+          if (code != ' '
 #if (LANGUAGE == LANGUAGE_SPANISH)
-              && ch != 161 && ch != 191
+              && code != 161 && code != 191
 #endif
           ) {
             suffix = 0;
-            if (ch == '.' || ch == '!' || ch == '?')
+            if (code == '.' || code == '!' || code == '?')
               suffix = 2;
-            if (ch == 's' || ch == 'S'
+            if (code == 's' || code == 'S'
 #if (LANGUAGE == LANGUAGE_GERMAN)
-                || ch == 'z' || ch == 'Z'
+                || code == 'z' || code == 'Z'
 #endif
             )
               suffix = 1;
@@ -2742,7 +2779,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         } else {
           // A control code: write out names, numbers and articles, and keep
           // style codes with their operands.
-          switch (ch) {
+          switch (code) {
           case MSG_END:
           case MSG_END_WAIT:
           case MSG_END_NOW:
@@ -2751,165 +2788,178 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MSG_TEXT_COLOR:
           case MSG_TEXT_EFFECT:
           case MSG_ARTICLE_CLASS:
-            entry[pos] = (u16)ch;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = decode(&st) + 0xFFFFU;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = (u16)code;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = decode(&reader) + 0xFFFFU;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
             value = (s32)UiText_LookupArgument(MSG_ARG_NUMBER, clear);
-            mag = value;
+            magnitude = value;
             if (value < 0)
-              mag = -value;
+#ifdef UBFIX
+              // Signed -value overflows for INT_MIN; its unsigned magnitude
+              // still gives the correct singular/plural comparison.
+              magnitude = 0U - (u32)value;
+#else
+              magnitude = -value;
+#endif
             plural = 1;
-            if (mag <= 1)
+            if (magnitude <= 1)
               plural = 0;
-            num = UiText_FormatNumber(numbuf, value, 0);
-            i = num - numbuf;
-            while (i != 16 && numbuf[i] != 0) {
-              entry[pos] = numbuf[i];
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+            numberText = UiText_FormatNumber(numberBuffer, value, 0);
+            i = numberText - numberBuffer;
+            while (i != 16 && numberBuffer[i] != 0) {
+              entry[writePosition] = numberBuffer[i];
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
               i++;
             }
             break;
           case MSG_ARGUMENT_CLASS_NAME:
-            no = decode(&st) - 1;
-            tmp = UiText_LookupArgument(MSG_ARG_CLASS, clear);
-            UiText_DecodeMessage(tmp + MsgClassName, name, 24);
-            pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
-                                           &suffix);
+            no = decode(&reader) - 1;
+            argument = UiText_LookupArgument(MSG_ARG_CLASS, clear);
+            UiText_DecodeMessage(argument + MsgClassName, name,
+                                 UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = UiText_AppendArticleName(
+                0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
-            no = decode(&st) - 1;
+            no = decode(&reader) - 1;
 #if (LANGUAGE == LANGUAGE_SPANISH)
             form = no & 7;
 #endif
-            tmp = UiText_LookupArgument(MSG_ARG_ITEM, clear);
+            argument = UiText_LookupArgument(MSG_ARG_ITEM, clear);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-            tmp &= RENDER_ENTRY_MASK;
+            argument &= RENDER_ENTRY_MASK;
 #if (LANGUAGE == LANGUAGE_SPANISH)
             if (form == 2 || (form == 3 && plural != 0) || form == 4)
 #else
             if (no == 2 || (no == 3 && plural != 0) || no == 4)
 #endif
-              UiText_DecodeMessage(tmp + MsgItemPluralName, name, 24);
+              UiText_DecodeMessage(argument + MsgItemPluralName, name,
+                                   UI_MESSAGE_NAME_HALFWORDS);
             else
-              UiText_DecodeMessage(tmp + MsgItemName, name, 24);
+              UiText_DecodeMessage(argument + MsgItemName, name,
+                                   UI_MESSAGE_NAME_HALFWORDS);
 #else
-            UiText_DecodeMessage((tmp & RENDER_ENTRY_MASK) + MsgItemName, name,
-                                 24);
+            UiText_DecodeMessage((argument & RENDER_ENTRY_MASK) + MsgItemName,
+                                 name, 24);
 #endif
-            pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
-                                           &suffix);
+            writePosition = UiText_AppendArticleName(
+                0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            tmp = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
-            UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
+            argument = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+            UiText_DecodeMessage(argument + MsgAbilityName, name,
+                                 UI_MESSAGE_NAME_HALFWORDS);
             p = name;
-            next = pos;
+            nextPosition = writePosition;
             while (*p != 0) {
-              entry[next] = *p;
+              entry[nextPosition] = *p;
               p++;
-              next = (next + 1) & RENDER_ENTRY_MASK;
+              nextPosition = (nextPosition + 1) & RENDER_ENTRY_MASK;
             }
-            pos = next;
+            writePosition = nextPosition;
             break;
           case MSG_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
                     UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
                     MsgDebugEntryName,
-                name, 24);
+                name, UI_MESSAGE_NAME_HALFWORDS);
             p = name;
-            next = pos;
+            nextPosition = writePosition;
             while (*p != 0) {
-              entry[next] = *p;
+              entry[nextPosition] = *p;
               p++;
-              next = (next + 1) & RENDER_ENTRY_MASK;
+              nextPosition = (nextPosition + 1) & RENDER_ENTRY_MASK;
             }
-            pos = next;
+            writePosition = nextPosition;
             break;
           case MSG_PROTAGONIST_NAME:
-            src = UnitGetFar(gGameState.selectedActor)->name;
-            dst = name;
+            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+            nameOutput = name;
             i = 0;
             do {
-              *dst = *src;
+              *nameOutput = *nameBytes;
               i++;
-              src++;
-              dst++;
+              nameBytes++;
+              nameOutput++;
             } while (i <= 14);
-            pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0, &suffix);
+            writePosition = UiText_AppendArticleName(0, name, writePosition,
+                                                     entry, 0, 0, &suffix);
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
-            no = decode(&st) - 1;
-            src = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear))->name;
-            dst = name;
+            no = decode(&reader) - 1;
+            nameBytes =
+                UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear))->name;
+            nameOutput = name;
             j = 0;
             do {
-              *dst = *src;
+              *nameOutput = *nameBytes;
               j++;
-              src++;
-              dst++;
+              nameBytes++;
+              nameOutput++;
             } while (j <= 14);
-            pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
-                                           &suffix);
+            writePosition = UiText_AppendArticleName(
+                0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MSG_ACTOR_NAME:
-            tmp = decode(&st) - 1;
-            src = UnitGetFar(tmp)->name;
-            dst = name;
+            argument = decode(&reader) - 1;
+            nameBytes = UnitGetFar(argument)->name;
+            nameOutput = name;
             j = 0;
             do {
-              *dst = *src;
+              *nameOutput = *nameBytes;
               j++;
-              src++;
-              dst++;
+              nameBytes++;
+              nameOutput++;
             } while (j <= 14);
-            pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0, &suffix);
+            writePosition = UiText_AppendArticleName(0, name, writePosition,
+                                                     entry, 0, 0, &suffix);
             break;
           case MSG_BUTTON_ICON:
-            tmp = ((decode(&st) - 1) << 1) + 128;
-            entry[pos] = tmp;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = tmp + 1;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            argument = ((decode(&reader) - 1) << 1) + 128;
+            entry[writePosition] = argument;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = argument + 1;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_EM_DASH:
-            entry[pos] = TEXT_ARGUMENT_SPACE;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = '-';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = TEXT_ARGUMENT_SPACE;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = '-';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-            entry[pos] = ' ';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = ' ';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
 #endif
             break;
 #if (LANGUAGE == LANGUAGE_GERMAN)
           case MSG_LOCALIZED_WORD:
-            no = decode(&st) - 1;
-            src = gUiText_NumberWords[(no & 7) * 2 + plural];
-            while (*src != 0) {
-              entry[pos] = *src++;
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+            no = decode(&reader) - 1;
+            nameBytes = gUiText_NumberWords[(no & 7) * 2 + plural];
+            while (*nameBytes != 0) {
+              entry[writePosition] = *nameBytes++;
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             }
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_ITALIAN)
           case MSG_LOCALIZED_WORD:
-            ending = decode(&st) - 1;
+            ending = decode(&reader) - 1;
             if (ending == 0) {
               if (plural == 0)
-                entry[pos] = 'o';
+                entry[writePosition] = 'o';
               else
-                entry[pos] = 'i';
+                entry[writePosition] = 'i';
             } else if (plural == 0)
-              entry[pos] = 'a';
+              entry[writePosition] = 'a';
             else
-              entry[pos] = 'e';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = 'e';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
 #elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
           case MSG_LOCALIZED_WORD:
@@ -2919,11 +2969,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
             if (plural != 0) {
               if (suffix != 0) {
-                entry[pos] = 'e';
-                pos = (pos + 1) & RENDER_ENTRY_MASK;
+                entry[writePosition] = 'e';
+                writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
               }
-              entry[pos] = 's';
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = 's';
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             }
             break;
 #endif
@@ -2934,10 +2984,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             possessives = gUiText_ItemPossessives;
             word = possessives.text[plural];
 #else
-            tmp = UiText_LookupArgument(MSG_ARG_ITEM, 0);
-            tmp &= RENDER_ENTRY_MASK;
+            argument = UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            argument &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
-            kind = gUiText_ItemGenders[tmp];
+            kind = gUiText_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #endif
             /* FAKEMATCH: value counts the letters, compared unsigned, keeping
@@ -2949,18 +2999,18 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                 break;
               if (value == 0 && suffix == 2)
                 c8 -= 0x20;
-              entry[pos] = c8;
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = c8;
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             }
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
           case MSG_PLURAL_SUFFIX:
 #if (LANGUAGE == LANGUAGE_GERMAN)
-            tmp = UiText_LookupArgument(MSG_ARG_ITEM, 0);
-            tmp &= RENDER_ENTRY_MASK;
+            argument = UiText_LookupArgument(MSG_ARG_ITEM, 0);
+            argument &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
-            kind = gUiText_ItemGenders[tmp];
+            kind = gUiText_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #else
             UiText_LookupArgument(MSG_ARG_ITEM, 0);
@@ -2971,8 +3021,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                 break;
               if (i == 0 && suffix == 2)
                 c8 -= 0x20;
-              entry[pos] = c8;
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = c8;
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             }
             suffix = 0;
             break;
@@ -2980,16 +3030,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MSG_POSSESSIVE_SUFFIX:
 #if (LANGUAGE == LANGUAGE_GERMAN)
             if (suffix == 1)
-              entry[pos] = '\'';
+              entry[writePosition] = '\'';
             else
-              entry[pos] = 's';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = 's';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
-            entry[pos] = '\'';
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = '\'';
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             if (suffix == 0) {
-              entry[pos] = 's';
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+              entry[writePosition] = 's';
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             }
 #endif
             break;
@@ -2998,13 +3048,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MSG_PAGE_BREAK:
           case MSG_LINE_BREAK:
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-            head = 1;
+            lineStart = 1;
 #endif
+            // Fall through: keep the break in the decoded text.
           default:
-            entry[pos] = (u16)ch;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = (u16)code;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-            if (ch == 's' || ch == 'S')
+            if (code == 's' || code == 'S')
               suffix = 1;
             else
               suffix = 0;
@@ -3013,14 +3064,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
         }
       }
-      cnt++;
-    } while (running != 0 && cnt <= RENDER_ENTRY_MASK);
+      decodedCount++;
+    } while (running != 0 && decodedCount <= RENDER_ENTRY_MASK);
 
-    entry[pos] = (u16)ch;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = 0;
-    next = (pos + 1) & RENDER_ENTRY_MASK;
-    work->count = (u16)next;
+    entry[writePosition] = (u16)code;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entry[writePosition] = 0;
+    nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    work->count = (u16)nextPosition;
     Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
     work->messageStart = (u16)start;
   }
@@ -3036,63 +3087,67 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
 // The Japanese form: Japanese has no articles, so the name is copied as it is.
-extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos,
-                                               u16 *entry, s32 no, s32 plural,
+// The write position wraps in the decoded-text ring; language grammar remains
+// separate.
+extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
+                                               u32 writePosition, u16 *entries,
+                                               s32 articleForm, s32 plural,
                                                s32 *suffix) {
-  u16 c;
+  u16 code;
 
   if (mode != 0) {
-    entry[pos] = ' ';
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = 10;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = 10;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = 10;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = 10;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
   }
   while (*name != 0) {
-    c = *name++;
-    entry[pos] = c;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
+    code = *name++;
+    entries[writePosition] = code;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
   }
   if (mode != 0) {
-    entry[pos] = 10;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = 8;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = ' ';
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = 10;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = 8;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entries[writePosition] = ' ';
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
   }
-  return pos;
+  return writePosition;
 }
 
 // The Japanese UiText_BuildRenderEntries, as above with no articles or
 // plurals.
+// script -1 reuses messageStart; clear consumes argument slots after decoding.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
-  u32 ch = 0;
-  s32 head = 1;
+  u32 code = 0;
+  s32 lineStart = 1;
   u32 start = work->count;
-  u32 cnt = 0;
+  u32 decodedCount = 0;
   s32 running = 1;
-  u32 pos = start;
+  u32 writePosition = start;
   u16 *entry = work->entries;
   u8 mode = work->menuState & 2;
   s32 (*decode)(struct TextReader *);
   s32 overflow = 0;
-  u32 prev;
-  u32 next;
+  u32 previousCode;
+  u32 nextPosition;
   u32 i;
   u32 j;
-  s32 tmp;
+  s32 argument;
   s32 message;
   s32 value;
-  u8 *num;
-  u8 *src;
-  u16 *dst;
-  struct BattleUnit *actor;
-  u16 name[24];
-  u8 numbuf[16];
-  struct TextReader st;
+  u8 *numberText;
+  u8 *nameBytes;
+  u16 *nameOutput;
+  struct BattleUnit *unit;
+  u16 name[UI_MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
+  struct TextReader reader;
 
   if (script == -1) {
     start = work->messageStart;
@@ -3113,15 +3168,15 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
         struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
-    UiText_LookupMessage(&st, script);
+    UiText_LookupMessage(&reader, script);
     do {
-      prev = ch;
-      ch = (u32)decode(&st);
+      previousCode = code;
+      code = (u32)decode(&reader);
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
-        if (ch < 32) {
-          switch (ch) {
+        if (code < 32) {
+          switch (code) {
           case MSG_ARGUMENT_CLASS_NAME:
             UiText_LookupArgument(MSG_ARG_CLASS, clear);
             break;
@@ -3132,7 +3187,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_TEXT_COLOR:
           case MSG_TEXT_EFFECT:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
             UiText_LookupArgument(MSG_ARG_NUMBER, clear);
@@ -3147,13 +3202,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             UiText_LookupArgument(MSG_ARG_LOCATION, clear);
             break;
           case MSG_ACTOR_NAME:
-            decode(&st);
+            decode(&reader);
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
             break;
           case MSG_PAGE_BREAK:
             running = 0;
-            ch = 2;
+            code = 2;
             break;
           case MSG_PROTAGONIST_NAME:
             break;
@@ -3165,43 +3220,45 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         }
       } else {
         // Halting speech pauses before each character.
-        if (work->spacingBefore != 0 && head == 0 && ch != 222 && ch != 223) {
-          entry[pos] = 5;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (work->spacingBefore != 0 && lineStart == 0 && code != 222 &&
+            code != 223) {
+          entry[writePosition] = 5;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
         }
-        if (work->spacingAfter != 0 && head == 0 && ch != 222 && ch != 223 &&
-            prev <= 256 && prev > 127 && prev != 222 && prev != 223 &&
-            prev != 32 && prev != 165 && prev != 161 && prev != 164) {
-          entry[pos] = 222;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (work->spacingAfter != 0 && lineStart == 0 && code != 222 &&
+            code != 223 && previousCode <= 256 && previousCode > 127 &&
+            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
+            previousCode != 165 && previousCode != 161 && previousCode != 164) {
+          entry[writePosition] = 222;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
         }
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
-        if (ch > 31) {
-          if (mode != 0 && ch == ' ') {
-            entry[pos] = ch;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+        if (code > 31) {
+          if (mode != 0 && code == ' ') {
+            entry[writePosition] = code;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
           }
-          if (work->spacingBefore != 0 && (ch == 32 || cnt > 10)) {
-            entry[pos] = 165;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = 165;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = 165;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = 161;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+          if (work->spacingBefore != 0 && (code == 32 || decodedCount > 10)) {
+            entry[writePosition] = 165;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = 165;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = 165;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = 161;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             overflow = 1;
-            if (cnt > 10)
-              ch = 32;
+            if (decodedCount > 10)
+              code = 32;
           }
-          entry[pos] = (u16)ch;
-          pos = (pos + 1) & RENDER_ENTRY_MASK;
-          head = 0;
+          entry[writePosition] = (u16)code;
+          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          lineStart = 0;
         } else {
           // A control code: write out names and numbers, and keep style
           // codes with their operands.
-          switch (ch) {
+          switch (code) {
           case MSG_END:
           case MSG_END_WAIT:
           case MSG_END_NOW:
@@ -3209,110 +3266,121 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_TEXT_COLOR:
           case MSG_TEXT_EFFECT:
-            entry[pos] = (u16)ch;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
-            entry[pos] = decode(&st) + 0xffffU;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = (u16)code;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = decode(&reader) + 0xffffU;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_ARGUMENT_SIGNED_NUMBER:
             value = UiText_LookupArgument(MSG_ARG_NUMBER, clear);
-            num = UiText_FormatNumber(numbuf, value, 0);
-            i = num - numbuf;
-            while (i != 16 && numbuf[i] != 0) {
-              entry[pos] = numbuf[i];
-              pos = (pos + 1) & RENDER_ENTRY_MASK;
+            numberText = UiText_FormatNumber(numberBuffer, value, 0);
+            i = numberText - numberBuffer;
+            while (i != 16 && numberBuffer[i] != 0) {
+              entry[writePosition] = numberBuffer[i];
+              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
               i++;
             }
             break;
           case MSG_ARGUMENT_CLASS_NAME:
-            tmp = UiText_LookupArgument(MSG_ARG_CLASS, clear);
-            UiText_DecodeMessage(tmp + MsgClassName, name, 24);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+            argument = UiText_LookupArgument(MSG_ARG_CLASS, clear);
+            UiText_DecodeMessage(argument + MsgClassName, name,
+                                 UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ITEM_NAME:
-            tmp = UiText_LookupArgument(MSG_ARG_ITEM, clear);
-            UiText_DecodeMessage((tmp & 511) + MsgItemName, name, 24);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+            argument = UiText_LookupArgument(MSG_ARG_ITEM, clear);
+            UiText_DecodeMessage((argument & 511) + MsgItemName, name,
+                                 UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ABILITY_NAME:
-            tmp = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
-            UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+            argument = UiText_LookupArgument(MSG_ARG_ABILITY, clear);
+            UiText_DecodeMessage(argument + MsgAbilityName, name,
+                                 UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_LOCATION_NAME:
             UiText_DecodeMessage(
                 Scene_GetAreaNameIndexFar(
                     UiText_LookupArgument(MSG_ARG_LOCATION, clear), 1) +
                     MsgDebugEntryName,
-                name, 24);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+                name, UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case MSG_PROTAGONIST_NAME:
-            src = UnitGetFar(gGameState.selectedActor)->name;
-            dst = name;
+            nameBytes = UnitGetFar(gGameState.selectedActor)->name;
+            nameOutput = name;
             i = 0;
             do {
-              *dst = *src;
+              *nameOutput = *nameBytes;
               i++;
-              src++;
-              dst++;
+              nameBytes++;
+              nameOutput++;
             } while (i <= 14);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
-            actor = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear));
+            unit = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear));
             if (work->menuState != 0 &&
-                (actor->classId == 122 || actor->classId == 125)) {
+                (unit->classId == 122 || unit->classId == 125)) {
               message = MsgMysteryPersonName;
-              if (actor->classId == 125)
+              if (unit->classId == 125)
                 message++;
               UiText_DecodeMessage(message, name, 10);
-              pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+              writePosition = UiText_AppendArticleName(
+                  mode, name, writePosition, entry, 0, 0, 0);
             } else {
-              src = actor->name;
-              dst = name;
+              nameBytes = unit->name;
+              nameOutput = name;
               j = 0;
               do {
-                *dst = *src;
+                *nameOutput = *nameBytes;
                 j++;
-                src++;
-                dst++;
+                nameBytes++;
+                nameOutput++;
               } while (j <= 14);
-              pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+              writePosition = UiText_AppendArticleName(
+                  mode, name, writePosition, entry, 0, 0, 0);
             }
             break;
           case MSG_ACTOR_NAME:
-            tmp = decode(&st) - 1;
-            src = UnitGetFar(tmp)->name;
-            dst = name;
+            argument = decode(&reader) - 1;
+            nameBytes = UnitGetFar(argument)->name;
+            nameOutput = name;
             j = 0;
             do {
-              *dst = *src;
+              *nameOutput = *nameBytes;
               j++;
-              src++;
-              dst++;
+              nameBytes++;
+              nameOutput++;
             } while (j <= 14);
-            pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
+            writePosition = UiText_AppendArticleName(mode, name, writePosition,
+                                                     entry, 0, 0, 0);
             break;
           case -1:
             break;
           case MSG_PAGE_BREAK:
           case MSG_LINE_BREAK:
-            head = 1;
+            lineStart = 1;
           default:
-            entry[pos] = (u16)ch;
-            pos = (pos + 1) & RENDER_ENTRY_MASK;
+            entry[writePosition] = (u16)code;
+            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
             break;
           }
         }
       }
-      cnt++;
-    } while (running != 0 && cnt <= RENDER_ENTRY_MASK);
-    entry[pos] = (u16)ch;
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
-    entry[pos] = 0;
-    next = (pos + 1) & RENDER_ENTRY_MASK;
-    work->count = (u16)next;
+      decodedCount++;
+    } while (running != 0 && decodedCount <= RENDER_ENTRY_MASK);
+    entry[writePosition] = (u16)code;
+    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    entry[writePosition] = 0;
+    nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    work->count = (u16)nextPosition;
     Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
     work->messageStart = (u16)start;
   }
@@ -3333,64 +3401,66 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 // rather than the first; bit 1 takes the size in *pw and *ph as given, in
 // tiles, instead of measuring. Measuring returns the size in tiles in *pw and
 // *ph and fills spacing with each line's extra character gap.
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                          u16 *spacing, u32 flags) {
+void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
+                          u32 *windowWidth, u32 *windowHeight, u16 *spacing,
+                          u32 flags) {
 #if !defined(FIT_FIXED_LIMIT)
   u8 *base;
 #endif
   s32 x;
   s32 y;
-  s32 limit;
+  s32 rightLimit;
   s32 right;
   s32 bottom;
-  s32 over;
-  s32 pos;
+  s32 overflow;
+  s32 fittedPosition;
 
 #if !defined(FIT_FIXED_LIMIT)
   base = gWindowWork[0];
 #endif
-  x = *px;
-  y = *py;
-  limit = 30;
+  x = *windowX;
+  y = *windowY;
+  rightLimit = 30;
 
   if (!(flags & 2)) {
     if (flags & 1)
-      UiText_MeasureAllPages(no, pw, ph, spacing);
+      UiText_MeasureAllPages(entryIndex, windowWidth, windowHeight, spacing);
     else
-      UiText_MeasureEntryDimensions(no, pw, ph, spacing);
+      UiText_MeasureEntryDimensions(entryIndex, windowWidth, windowHeight,
+                                    spacing);
   }
 
-  if (*pw == 0 && *ph == 0)
+  if (*windowWidth == 0 && *windowHeight == 0)
     return;
 
   // Pixels to tiles, with room for the frame and a margin.
   if (!(flags & 2)) {
-    *pw = (*pw + 19) >> 3;
-    *ph = (*ph + 15) >> 3;
+    *windowWidth = (*windowWidth + 19) >> 3;
+    *windowHeight = (*windowHeight + 15) >> 3;
 #if !defined(FIT_FIXED_LIMIT)
     if (((struct UiRenderWork *)base)->mode != 0) {
-      *pw += 2;
-      limit = 29;
+      *windowWidth += 2;
+      rightLimit = 29;
     }
 #endif
   }
 
   // Slide the window back onto the screen (limit tiles by 20).
-  right = x + *pw;
-  if (right > limit) {
-    over = right - limit;
-    pos = x - over;
-    if (pos >= 0)
-      x = pos;
+  right = x + *windowWidth;
+  if (right > rightLimit) {
+    overflow = right - rightLimit;
+    fittedPosition = x - overflow;
+    if (fittedPosition >= 0)
+      x = fittedPosition;
     else
       x = 0;
   }
-  bottom = y + *ph;
+  bottom = y + *windowHeight;
   if (bottom > 20) {
-    over = bottom - 20;
-    pos = y - over;
-    if (pos >= 0)
-      y = pos;
+    overflow = bottom - 20;
+    fittedPosition = y - overflow;
+    if (fittedPosition >= 0)
+      y = fittedPosition;
     else
       y = 0;
   }
@@ -3398,40 +3468,41 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
     x = 0;
   if (y < 0)
     y = 0;
-  if (x > limit - *pw)
-    x = limit - *pw;
-  if (y > 20 - *ph)
-    y = 20 - *ph;
-  *px = x;
-  *py = y;
+  if (x > rightLimit - *windowWidth)
+    x = rightLimit - *windowWidth;
+  if (y > 20 - *windowHeight)
+    y = 20 - *windowHeight;
+  *windowX = x;
+  *windowY = y;
 }
 
 // Decodes message no and returns its text's width and height in pixels.
-void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y) {
-  UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x,
+void UiText_MeasureResourceEntries(s32 message, s32 *x, s32 *y) {
+  UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(message, 0), (u32 *)x,
                                 (u32 *)y, 0);
 }
 
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 
-// Measures decoded text from pos to its first page's end: returns the width of
-// the longest line and the height (15 pixels a line) in pixels. With spacing
-// set, fills one entry per line with the extra gap between characters, in
-// 1/256 pixel, that spreads the line to fill the window.
-void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
-                                   u16 *spacing) {
+// Measures decoded text from entryIndex to its first page's end: returns the
+// width of the longest line and the height (15 pixels a line) in pixels. With
+// spacing set, fills one entry per line with the extra gap between characters,
+// in 1/256 pixel, that spreads the line to fill the window. spacing, when
+// non-NULL, has room for four line entries.
+void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
+                                   u32 *outHeight, u16 *spacing) {
   struct UiRenderWork *work;
   u32 lines;
   u32 width;
   u32 height;
   u32 lineWidth;
   u32 count;
-  u32 c;
+  u32 code;
   u32 glyph;
-  u32 i;
-  u16 counts[4];
-  u16 widths[4];
+  u32 lineIndex;
+  u16 lineSpacingCounts[4];
+  u16 lineWidths[4];
   s32 gap;
   u32 style;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -3448,39 +3519,39 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
   lineWidth = 0;
   count = 0;
   for (;;) {
-    c = work->entries[pos];
-    pos = (pos + 1) & RENDER_ENTRY_MASK;
+    code = work->entries[entryIndex];
+    entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
     // A character adds its width. Spaces (in Japanese every character) are
     // counted as the points the line can be stretched at.
-    if (c > 31) {
+    if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      if (c == 32) {
+      if (code == 32) {
         lineWidth += 5;
         count++;
       } else {
-        glyph = gUiText_Glyphs[c - 32].width;
+        glyph = gUiText_Glyphs[code - 32].width;
         style = work->outline;
         if (style == 1 || style == 5)
           glyph++;
         lineWidth += glyph;
       }
 #else
-      if (c != TEXT_VOICED_MARK && c != TEXT_SEMIVOICED_MARK) {
-        if (c == 32) {
+      if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
+        if (code == 32) {
           lineWidth += 7;
         } else {
           // Punctuation at the end of a line takes less room than its cell.
-          if (c == 0xa5)
+          if (code == 0xa5)
             trailing = -1;
-          else if (c == 0x21)
+          else if (code == 0x21)
             trailing = -3;
-          else if (c == 0xa1 || c == 0xa4)
+          else if (code == 0xa1 || code == 0xa4)
             trailing = -6;
           else
             trailing = 0;
           glyph = 10;
-          if (c <= 0xff)
-            glyph = gUiText_Glyphs[c - 32].width;
+          if (code <= 0xff)
+            glyph = gUiText_Glyphs[code - 32].width;
           style = work->outline;
           if (style == 1 || style == 5)
             glyph++;
@@ -3491,7 +3562,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
 #endif
       continue;
     }
-    switch (c) {
+    switch (code) {
     case TEXT_END:
 #if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_FRENCH) &&       \
     !(LANGUAGE == LANGUAGE_ITALIAN)
@@ -3504,8 +3575,8 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
 #else
       lineWidth += trailing;
 #endif
-      counts[lines] = count;
-      widths[lines] = lineWidth;
+      lineSpacingCounts[lines] = count;
+      lineWidths[lines] = lineWidth;
       if (width < lineWidth)
         width = lineWidth;
       if (lines < 3)
@@ -3521,16 +3592,17 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
 #endif
     case 14:
     case 28:
-      pos = (pos + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      // Fall through: skip the second operand too.
     case TEXT_COLOUR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case 17:
-      pos = (pos + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->entries[pos];
-      pos = (pos + 1) & RENDER_ENTRY_MASK;
+      work->outline = work->entries[entryIndex];
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
       break;
     }
   }
@@ -3540,8 +3612,8 @@ done:
 #else
   lineWidth += trailing;
 #endif
-  counts[lines] = count;
-  widths[lines] = lineWidth;
+  lineSpacingCounts[lines] = count;
+  lineWidths[lines] = lineWidth;
   if (width < lineWidth)
     width = lineWidth;
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
@@ -3555,16 +3627,16 @@ done:
   width = (width + 19) >> 3;
   width = (width << 3) - 16;
   if (spacing != NULL) {
-    i = 0;
-    while (i <= lines) {
-      if (counts[i] <= 1) {
+    lineIndex = 0;
+    while (lineIndex <= lines) {
+      if (lineSpacingCounts[lineIndex] <= 1) {
         *spacing++ = 0;
       } else {
-        gap = width - widths[i];
+        gap = width - lineWidths[lineIndex];
         gap -= 4;
         if (gap < 0)
           gap = 0;
-        gap = ((gap << 8) / (counts[i] - 1));
+        gap = ((gap << 8) / (lineSpacingCounts[lineIndex] - 1));
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         if (gap < 0 || gap > 0xc00)
           gap = 0x200;
@@ -3576,7 +3648,7 @@ done:
 #endif
         *spacing++ = gap;
       }
-      i++;
+      lineIndex++;
     }
   }
 }
@@ -3584,11 +3656,13 @@ done:
 // Measures decoded text from start over all its pages: the width of the first
 // page's longest line and the height of its tallest page, in pixels, with each
 // line's extra character gap in spacing as UiText_MeasureEntryDimensions.
-void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
+// The text must fit 16 page-height slots; this routine does not clamp the page
+// count.
+void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                             u16 *spacing) {
   u32 pageHeights[16];
-  u16 counts[4];
-  u16 widths[4];
+  u16 lineSpacingCounts[4];
+  u16 lineWidths[4];
   struct UiRenderWork *work;
   u32 maxWidth;
   u32 line;
@@ -3598,8 +3672,8 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
   u32 code;
   u32 glyph;
   u32 outline;
-  u32 i;
-  u32 j;
+  u32 pageIndex;
+  u32 lineIndex;
   s32 gap;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   s32 trailing;
@@ -3629,8 +3703,8 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
   count = 0;
   page = 0;
   for (;;) {
-    code = work->entries[start];
-    start = (start + 1) & RENDER_ENTRY_MASK;
+    code = work->entries[entryIndex];
+    entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
     if (code >= 32) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
@@ -3672,12 +3746,12 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
     switch (code) {
     case TEXT_NEWLINE:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      counts[line] = ++count;
+      lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
-      counts[line] = count;
+      lineSpacingCounts[line] = count;
 #endif
-      widths[line] = width;
+      lineWidths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
       if (line < 3)
@@ -3688,24 +3762,24 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
       break;
     case 0:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      counts[line] = ++count;
+      lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
-      counts[line] = count;
+      lineSpacingCounts[line] = count;
 #endif
-      widths[line] = width;
+      lineWidths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
       page++;
       goto done;
     case TEXT_PAGE:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      counts[line] = ++count;
+      lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
-      counts[line] = count;
+      lineSpacingCounts[line] = count;
 #endif
-      widths[line] = width;
+      lineWidths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
 #if TBS_PATCH_3
@@ -3715,16 +3789,17 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
       break;
     case 14:
     case 28:
-      start = (start + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      // Fall through: skip the second operand too.
     case TEXT_COLOUR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case 17:
-      start = (start + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->entries[start];
-      start = (start + 1) & RENDER_ENTRY_MASK;
+      work->outline = work->entries[entryIndex];
+      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
       break;
     }
   }
@@ -3733,24 +3808,24 @@ done:
   if (work->mode != 0)
     maxWidth += 2;
 #endif
-  for (i = 0; i < page; i++) {
-    if (i == 0)
+  for (pageIndex = 0; pageIndex < page; pageIndex++) {
+    if (pageIndex == 0)
       *outHeight = pageHeights[0];
-    else if (*outHeight < pageHeights[i])
-      *outHeight = pageHeights[i];
+    else if (*outHeight < pageHeights[pageIndex])
+      *outHeight = pageHeights[pageIndex];
   }
   *outWidth = maxWidth;
   maxWidth = (((maxWidth + 19) >> 3) << 3) - 16;
   if (spacing != NULL) {
-    for (j = 0; j <= line; j++) {
-      if (counts[j] <= 1) {
+    for (lineIndex = 0; lineIndex <= line; lineIndex++) {
+      if (lineSpacingCounts[lineIndex] <= 1) {
         *spacing++ = 0;
       } else {
-        gap = maxWidth - widths[j];
+        gap = maxWidth - lineWidths[lineIndex];
         gap -= 4;
         if (gap < 0)
           gap = 0;
-        gap = (gap << 8) / (counts[j] - 1);
+        gap = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
         if (gap < 0 || gap > 0x800)
           gap = 0;
@@ -3973,7 +4048,14 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
       *slot = Resource_FindFreeEntry();
     column = 0xfffe;
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
+#ifdef UBFIX
+    // Sequence the two writes to row. Combining them in one expression has
+    // no intervening sequence point; plain stores reorder native EN code.
+    row = (u8)win->height + 254;
+    row = (u8)win->y + row;
+#else
     row = (u8)win->y + (row = (u8)win->height + 254);
+#endif
     attr->y = row * 8 - 1;
     /* FAKEMATCH: needed to match: the embedded OAM view preserves
      * packed/logical position store order changed by byte-span and scalar
@@ -4034,7 +4116,13 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     column = 0xfffe;
     left = win->x;
     attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
+#ifdef UBFIX
+    // As above, the original writes row twice without a sequence point.
+    row = (u8)win->height + 254;
+    row = (u8)win->y + row;
+#else
     row = (u8)win->y + (row = (u8)win->height + 254);
+#endif
     attr->y = row * 8 + 1;
     /* FAKEMATCH: needed to match: the embedded OAM view preserves
      * packed/logical position store order changed by byte-span and scalar
@@ -4323,19 +4411,20 @@ void UiWork_AnimateSpriteSlots(void) {
 }
 
 // Decodes message into buf (a u16 string) with no length limit.
-void Ui_AdjustValueWithoutLimit(s32 message, u16 *buf) {
-  UiText_DecodeMessage(message, buf, 0x7fffffff);
+void Ui_AdjustValueWithoutLimit(s32 message, u16 *text) {
+  UiText_DecodeMessage(message, text, 0x7fffffff);
 }
 
 // Decodes message key into destination as a zero-terminated string of at most
 // capacity entries, and returns its length.
-s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
+// capacity counts halfwords including the terminator and must be at least 1.
+s32 UiText_CopyMessageString(s32 message, u16 *destination, u32 capacity) {
   struct UiRenderWork *work;
   u32 count;
 
   work = UI_WORK;
   work->count = 0;
-  UiText_BuildRenderEntries(key, 1);
+  UiText_BuildRenderEntries(message, 1);
   for (count = 0;
        count < capacity - 1 && (destination[count] = work->entries[count]) != 0;
        count++) {
@@ -4351,6 +4440,8 @@ s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
 
 // Decodes message into text as a zero-terminated string of 16-bit codes, with
 // at most capacity entries, keeping style codes with their operands.
+// capacity includes the terminating halfword; the unbounded wrapper supplies
+// -1.
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;
@@ -4428,6 +4519,7 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 
 // Closes every window: first the message channels' windows, waiting until
 // they have closed, then the windows opened directly.
+// Channel references are cleared only after their windows finish closing.
 void UiWork_DrainPending(s32 unused) {
   struct UiRenderWork *uw;
   struct UiChannelSlot *ch;
@@ -4459,8 +4551,7 @@ void UiWork_DrainPending(s32 unused) {
     do {
       poll_work = ch->work;
       if (poll_work != 0) {
-        if ((*(s32 *)&poll_work->frame) == 0) // frame and duration both 0
-        {
+        if (poll_work->frame == 0 && poll_work->duration == 0) {
           flag = poll_work->flags;
           if (flag == 0)
             ch->work = (struct UiWindow *)(u32)flag;
@@ -4492,25 +4583,25 @@ void UiWork_DrainPending(s32 unused) {
 
 // Steps a channel's window effect (UI_WINDOW_EFFECT_SWELL): the frame is drawn
 // a tile bigger on every side until the countdown ends, then back to normal.
-void UiWindow_StepSwellEffect(struct UiChannelSlot *ch) {
-  struct UiWindow *work = ch->work;
-  s32 effect = work->effect;
-  s32 x = work->x;
-  s32 y = work->y;
-  s32 w = work->width;
-  s32 h = work->height;
+void UiWindow_StepSwellEffect(struct UiChannelSlot *channel) {
+  struct UiWindow *window = channel->work;
+  s32 effect = window->effect;
+  s32 x = window->x;
+  s32 y = window->y;
+  s32 width = window->width;
+  s32 height = window->height;
 
   if (effect != UI_WINDOW_EFFECT_SWELL)
     return;
 
-  UiWindow_DrawFrame(x - 1, y - 1, w + 2, h + 2);
-  ch->countdown--;
-  if (ch->countdown != 0)
+  UiWindow_DrawFrame(x - 1, y - 1, width + 2, height + 2);
+  channel->countdown--;
+  if (channel->countdown != 0)
     return;
 
-  ch->work->effect = 0;
-  UiWindow_EraseBorderRect(x - 1, y - 1, w + 2, h + 2);
-  UiWindow_DrawFrame(x, y, w, h);
+  channel->work->effect = 0;
+  UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
+  UiWindow_DrawFrame(x, y, width, height);
 }
 
 // Empties the table of message arguments.
@@ -4525,15 +4616,16 @@ void UiWork_ClearValueNameTables(void) {
     work->values[no] = 0;
     work->names[no] = 0;
     no++;
-  } while (no != 8);
+  } while (no != UI_ARGUMENT_SLOT_COUNT);
 }
 
 // Adds a message argument of kind (MSG_ARG_) with value to the first free
 // place of the argument table; when all eight are in use it is dropped.
+// Kind 0 denotes an empty slot; a full table drops the new value.
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = UI_WORK;
   u32 no = 0;
-  u32 limit = 8;
+  u32 limit = UI_ARGUMENT_SLOT_COUNT;
 
   do {
     if (work->names[no] == 0) {
@@ -4547,12 +4639,13 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
 
 // Returns the value of the first message argument of kind (MSG_ARG_), or 0
 // when there is none. With clear set the argument is removed from the table.
+// Repeated kinds are allowed: only the first matching slot is read or consumed.
 u32 UiText_LookupArgument(u32 kind, u32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 i;
   u32 value = 0;
 
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < UI_ARGUMENT_SLOT_COUNT; i++) {
     if (work->names[i] == kind) {
       value = work->values[i];
       if (clear != 0) {
@@ -4568,18 +4661,19 @@ u32 UiText_LookupArgument(u32 kind, u32 clear) {
 // Ends a channel's pause early: when the message waits on a sound that has
 // finished (busy), or while A, B, L or R is held. Clears the countdown and
 // returns 1 if it ended.
-s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch) {
+// This path uses held keys; dismissal below uses newly pressed keys instead.
+s32 UiText_CheckPauseSkipped(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
-  s32 cancel = 0;
+  s32 cancelKeys = 0;
   s32 zero;
 
   if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
-    cancel = 1;
+    cancelKeys = 1;
   zero = 0;
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
-    cancel = 1;
-  if (cancel != zero) {
-    ch->countdown = zero;
+    cancelKeys = 1;
+  if (cancelKeys != zero) {
+    channel->countdown = zero;
     return 1;
   }
   return zero;
@@ -4588,22 +4682,23 @@ s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch) {
 // As UiText_CheckPauseSkipped, but on a newly pressed button: the latched
 // presses while UiRenderWork.mode is set. Returns 1 when the player has
 // dismissed the text.
-s32 UiText_CheckTextDismissed(struct UiChannelSlot *ch) {
+// Mode chooses latched presses rather than changing which buttons dismiss text.
+s32 UiText_CheckTextDismissed(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
-  s32 key;
-  s32 cancel = 0;
+  s32 pressedKeys;
+  s32 cancelKeys = 0;
   u8 zero;
 
   if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
-    cancel = 1;
-  key = gKeysPressed;
+    cancelKeys = 1;
+  pressedKeys = gKeysPressed;
   zero = 0;
   if (work->mode != zero)
-    key = gKeysPressedLatch;
-  if (key & (KEY_A | KEY_B | KEYS_SHOULDERS))
-    cancel = 1;
-  if (cancel != 0) {
-    ch->countdown = zero;
+    pressedKeys = gKeysPressedLatch;
+  if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
+    cancelKeys = 1;
+  if (cancelKeys != 0) {
+    channel->countdown = zero;
     return 1;
   }
   return 0;
@@ -4620,8 +4715,8 @@ void UiWork_FinalizePendingCore(void) {
   i = 0;
   do {
     work = ch->work;
-    if (work != NULL && (*(s32 *)&work->frame) == 0 && work->flags != 0 &&
-        work->state != 0) {
+    if (work != NULL && work->frame == 0 && work->duration == 0 &&
+        work->flags != 0 && work->state != 0) {
       UiWork_Finalize(work, UI_WINDOW_INSTANT & work->flags);
     }
     i++;
@@ -4636,58 +4731,59 @@ void UiWork_FinalizePendingCore(void) {
 // size and opens and closes at once; otherwise it is a zooming window sized
 // to the message.
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
-  struct UiRenderWork *work;
-  struct UiWindow *window;
+  struct UiRenderWork *render;
+  struct UiWindow *messageWindow;
   s32 x;
   s32 y;
   s32 width;
   s32 height;
-  s32 entry;
+  s32 entryIndex;
 
-  work = UI_WORK;
+  render = UI_WORK;
   x = 8;
   y = 8;
   // the window starts as NULL, though every path that reads it assigns it
   // first; the same zero is the style argument below
-  window = NULL;
-  entry = UiText_BuildRenderEntries(message, 1);
-  if (work->entries[entry] != 0) {
+  messageWindow = NULL;
+  entryIndex = UiText_BuildRenderEntries(message, 1);
+  if (render->entries[entryIndex] != 0) {
     UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width,
                                  (u32 *)&height);
     x = (30 - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
     if (mode != 0)
-      window = UiWindow_Create(x, y, width, height, 0);
+      messageWindow = UiWindow_Create(x, y, width, height, 0);
     else {
-      window = UiWindow_Create(x, y, 0, 0, 2);
-      window->width = mode;
-      window->height = mode;
+      messageWindow = UiWindow_Create(x, y, 0, 0, 2);
+      messageWindow->width = mode;
+      messageWindow->height = mode;
     }
-    if (UiText_QueueRenderEntries(window, entry, 0, 0, 0, 0) == 0)
-      UiWork_Finalize(window, 1);
+    if (UiText_QueueRenderEntries(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
+      UiWork_Finalize(messageWindow, 1);
     else {
       while (UiWork_IsComplete() == 0)
         WaitFrames(1);
       if (mode != 0) {
-        UiWork_Finalize(window, 0);
-        while (UiWork_IsIdle(window) == 0)
+        UiWork_Finalize(messageWindow, 0);
+        while (UiWork_IsIdle(messageWindow) == 0)
           WaitFrames(1);
       } else
-        UiWork_Finalize(window, 1);
-      work->result[0] = 0;
-      work->result[1] = 0;
+        UiWork_Finalize(messageWindow, 1);
+      render->result[0] = 0;
+      render->result[1] = 0;
     }
   }
 }
 
-// Decodes message arg0 and empties the argument table; returns where its
+// Decodes message and empties the argument table; returns where its
 // decoded text starts.
-s32 UiText_BuildRenderEntriesMode1(s32 arg0) {
-  return UiText_BuildRenderEntries(arg0, 1);
+s32 UiText_BuildRenderEntriesMode1(s32 message) {
+  return UiText_BuildRenderEntries(message, 1);
 }
 
 // Points reader at the start of message (its compressed bits and first
 // context), running the ARM lookup routine from a RAM copy.
+// The RAM routine initializes reader state; symbols are decoded separately.
 void UiText_LookupMessage(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
 
@@ -4702,9 +4798,11 @@ extern const void *const Text_MessageContexts[][2];
 // tree per previous symbol: the previous code picks the tree, the message's
 // bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
 // becomes the next context.
+// Tree traversal consumes bytes; reader->words retains that byte position
+// between calls.
 s32 UiText_DecodeSymbol(struct TextReader *reader) {
   u32 code;
-  u32 hi;
+  u32 contextBank;
   const u8 *base;
   const u8 *tree;
   const u8 *leaves;
@@ -4715,16 +4813,16 @@ s32 UiText_DecodeSymbol(struct TextReader *reader) {
   s32 depth;
   s32 bit;
   u32 index;
-  u32 half;
+  u32 leafNibble;
 
   code = reader->previousCode;
   text = (const u8 *)reader->words;
   textBits = reader->bits;
   treeBits = 1;
-  hi = code >> 8;
+  contextBank = code >> 8;
   code &= 0xff;
-  base = Text_MessageContexts[hi][0];
-  base += ((const u16 *)Text_MessageContexts[hi][1])[code];
+  base = Text_MessageContexts[contextBank][0];
+  base += ((const u16 *)Text_MessageContexts[contextBank][1])[code];
   tree = base;
   leaves = base - 1;
   rank = 0;
@@ -4771,9 +4869,9 @@ s32 UiText_DecodeSymbol(struct TextReader *reader) {
     bit = leaves[-(index >> 1) - 1];
     code |= (u32)bit >> 4;
   } else {
-    half = leaves[-(index >> 1)];
-    half &= 0xf;
-    code = leaves[-(index >> 1) - 1] | (half << 8);
+    leafNibble = leaves[-(index >> 1)];
+    leafNibble &= 0xf;
+    code = leaves[-(index >> 1) - 1] | (leafNibble << 8);
   }
   reader->bits = textBits;
   reader->previousCode = code;
@@ -4796,96 +4894,107 @@ void UiWork_SetTwoEntriesTo999(void) {
 // sprite (128 and up for those), or -1 when it has none.
 s32 Localization_LookupEntryId(u32 value) {
   s32 result = -1;
-  s32 i = 0;
+  s32 portraitIndex = 0;
 
   if (value < 20) {
     for (;;) {
-      s32 key = gPortrait_CharacterMap[i];
+      s32 speakerId = gPortrait_CharacterMap[portraitIndex];
 
-      if (key == -1)
+      if (speakerId == -1)
         break;
-      if (key == value) {
-        i++;
-        result = gPortrait_CharacterMap[i];
+      if (speakerId == value) {
+        portraitIndex++;
+        result = gPortrait_CharacterMap[portraitIndex];
         break;
       }
-      i += 2;
+      portraitIndex += 2;
     }
   } else {
     for (;;) {
-      s32 key = gPortrait_SpriteMap[i];
+      s32 speakerId = gPortrait_SpriteMap[portraitIndex];
 
-      if (key == -1)
+      if (speakerId == -1)
         break;
-      if (key == value) {
-        i++;
-        result = gPortrait_SpriteMap[i];
+      if (speakerId == value) {
+        portraitIndex++;
+        result = gPortrait_SpriteMap[portraitIndex];
         result += 128;
         break;
       }
-      i += 2;
+      portraitIndex += 2;
     }
   }
   return result;
 }
 
-// Opens a portrait window at tile (x, y) showing the portrait of speaker arg0
-// (arg1 is passed on to the portrait object), and returns it,
+// Opens a portrait window at tile (x, y) showing the speaker's portrait.
+// portraitOption is passed on to the portrait object. Returns the window,
 // or 0 when the speaker has no portrait.
-struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
-                                               s32 y) {
-  struct UiWindow *win;
-  s32 minus_four;
+// Portrait offsets are in pixels; the enclosing window bounds are in tiles.
+struct UiWindow *UiWindow_CreateWithSideObject(s32 speaker, s32 portraitOption,
+                                               s32 x, s32 y) {
+  struct UiWindow *window;
+  s32 negativeFour;
   s32 offset;
   void *work;
 
   work = gWindowWork[0];
-  if (Localization_LookupEntryId(arg0) == -1) {
+  if (Localization_LookupEntryId(speaker) == -1) {
     return 0;
   }
-  minus_four = -4;
-  offset = minus_four;
+  negativeFour = -4;
+  offset = negativeFour;
   if (((struct UiRenderWork *)work)->mode != 0) {
-    win = UiWindow_Create(x, y, 6, 5, 2);
+    window = UiWindow_Create(x, y, 6, 5, 2);
     offset = 0;
   } else {
-    win = UiWindow_Create(x, y, 5, 5, 2);
+    window = UiWindow_Create(x, y, 5, 5, 2);
   }
-  if (win != 0) {
-    CreateSideObject(arg0, arg1, -1, win, offset, minus_four);
+  if (window != 0) {
+    CreateSideObject(speaker, portraitOption, -1, window, offset, negativeFour);
   }
-  return win;
+  return window;
 }
 
 // Closes the portrait window showing speaker entry, if one is open.
-void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry) {
+// resourceIds selects the portrait slot, then outputIds identifies its render
+// output.
+void UiWork_FinalizeEntityMatchingLocalizedId(u32 speaker) {
   struct UiRenderWork *state;
-  struct UiWindow *work;
-  s32 id;
-  s32 index;
-  s32 i;
-  struct RenderOutput *entity;
+  struct UiWindow *window;
+  s32 resourceId;
+  s32 portraitSlot;
+  s32 windowIndex;
+  struct RenderOutput *portraitOutput;
 
   state = UI_WORK;
-  work = state->windows;
-  id = Localization_LookupEntryId(entry);
-  if (id == -1)
+  window = state->windows;
+  resourceId = Localization_LookupEntryId(speaker);
+  if (resourceId == -1)
     return;
 
-  if (state->resourceIds[1] == id) {
-    index = 1;
-  } else if (state->resourceIds[0] == id) {
-    index = 0;
+  if (state->resourceIds[1] == resourceId) {
+    portraitSlot = 1;
+  } else if (state->resourceIds[0] == resourceId) {
+    portraitSlot = 0;
   } else {
     return;
   }
 
-  id = state->outputIds[index];
+  resourceId = state->outputIds[portraitSlot];
 
-  for (i = 0; i != WINDOW_COUNT; i++, work++) {
-    entity = work->output.head;
-    if ((u8)entity->kind == 2 && (u8)entity->index == id) {
-      UiWork_Finalize(work, 2);
+  for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
+    portraitOutput = window->output.head;
+#ifdef UBFIX
+    // UiWindow_Create and the closing update leave empty heads NULL. Skip
+    // them before reading kind: dereferencing that NULL pointer is undefined.
+    // The plain guard adds four bytes to the native English object.
+    if (portraitOutput == NULL)
+      continue;
+#endif
+    if ((u8)portraitOutput->kind == 2 &&
+        (u8)portraitOutput->index == resourceId) {
+      UiWork_Finalize(window, 2);
       return;
     }
   }
@@ -4904,23 +5013,25 @@ s32 UiIcon_CountPsynergyIcons(void) {
 // Builds a command icon (overlay no0 over frame no1) and loads it into a
 // sprite tile slot: *slot, or a free one when flag is 0. Returns the tile in
 // *ret.
-void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
-                                  s32 flag) {
+// Frame decode is opaque; the command layer is then composited with
+// transparency.
+void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
+                                  s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
-  work->encoded = gUiIcon_FramePointerTable[no1];
+  work->encoded = gUiIcon_FramePointerTable[frameIcon];
   work->width = 2;
   work->height = 2;
   UiIcon_Decode(work, 0);
-  work->encoded = gUiIcon_OverlayPointerTable[no0];
+  work->encoded = gUiIcon_OverlayPointerTable[overlayIcon];
   work->width = 2;
   work->height = 2;
   UiIcon_Decode(work, 1);
-  if (flag == 0) {
+  if (reuse == 0) {
     *slot = Resource_FindFreeEntry();
   }
-  *ret = VramCache_Load(*slot, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*slot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
@@ -4933,14 +5044,15 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 }
 
 // Builds item icon glyph, over the icon frame when withBase is set, and loads
-// it into sprite tile slot *src (a free slot unless reuse is set). Returns the
-// tile in *dst.
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
-                               s32 reuse) {
+// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
+// *tileOut.
+// The optional frame is decoded first and selects masked icon expansion.
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
+                               s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
-  s32 slot;
+  s32 overlay;
 
-  slot = 0;
+  overlay = 0;
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
 
   if (glyph >= UiIcon_CountItemIcons())
@@ -4951,18 +5063,18 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
     work->width = 2;
     work->height = 2;
     UiIcon_Decode(work, 0);
-    slot = 1;
+    overlay = 1;
   }
 
   work->encoded = gUiIcon_ItemIconPointers[glyph];
   work->width = 2;
   work->height = 2;
-  UiIcon_Decode(work, slot);
+  UiIcon_Decode(work, overlay);
 
   if (reuse == 0)
-    *src = Resource_FindFreeEntry();
+    *cacheSlot = Resource_FindFreeEntry();
 
-  *dst = VramCache_Load(*src, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
@@ -5049,25 +5161,25 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
-// Composes an item's icon (inventory code arg0, layers arg1) and loads it into
-// sprite tile slot arg2.
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
+// Composes an inventory icon with the requested layers and loads it into
+// cacheSlot. The temporary glyph block is released after the upload.
+s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
-  ItemIcon_Compose(arg0, arg1);
-  VramCache_Load(arg2, 0x80, work->tiles);
+  ItemIcon_Compose(inventoryCode, layers);
+  VramCache_Load(cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return 1;
 }
 
 // Builds one of the other icons and loads it into sprite tile slot slot.
-s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot) {
+s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   Ui_PrepareTransferFromTableEntry(icon);
-  VramCache_Load(slot, 0x80, work->tiles);
+  VramCache_Load(cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
   return 1;
 }
@@ -5103,17 +5215,17 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
 
 // Draws an item's icon from its inventory code into the glyph work buffer.
 void Ui_PrepareTransferForItem(s32 code) {
-  GlyphTransfer *state = gGlyphWork;
+  GlyphTransfer *glyph = gGlyphWork;
   struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
 
   if (code != 0) {
-    state->encoded = gUiIcon_ItemIconPointers[item->icon];
+    glyph->encoded = gUiIcon_ItemIconPointers[item->icon];
   } else {
-    state->encoded = gUiIcon_ItemIconPointers[0];
+    glyph->encoded = gUiIcon_ItemIconPointers[0];
   }
-  state->width = 2;
-  state->height = 2;
-  UiIcon_Decode(state, 0);
+  glyph->width = 2;
+  glyph->height = 2;
+  UiIcon_Decode(glyph, 0);
 }
 
 // Builds the Psynergy icon of a battle action, as
@@ -5127,15 +5239,16 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 #define ROUTINE_BLOCK 49
 
 // Builds Psynergy icon glyph, over the icon frame when withBase is set, and
-// loads it into sprite tile slot *src (a free slot unless reuse is set).
-// Returns the tile in *dst.
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
-                                  s32 reuse) {
+// loads it into *cacheSlot (a free slot unless reuse is set).
+// Returns the tile in *tileOut.
+// The optional frame is decoded first and selects masked icon expansion.
+void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
+                                  s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
-  s32 slot;
+  s32 overlay;
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
-  slot = 0;
+  overlay = 0;
 
   if (glyph >= UiIcon_CountPsynergyIcons())
     glyph = 0;
@@ -5145,49 +5258,50 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst,
     work->width = 2;
     work->height = 2;
     UiIcon_Decode(work, 0);
-    slot = 1;
+    overlay = 1;
   }
 
   work->encoded = gUiIcon_PsynergyIconPointers[glyph];
   work->width = 2;
   work->height = 2;
-  UiIcon_Decode(work, slot);
+  UiIcon_Decode(work, overlay);
 
   if (reuse == 0)
-    *src = Resource_FindFreeEntry();
+    *cacheSlot = Resource_FindFreeEntry();
 
-  *dst = VramCache_Load(*src, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(0x11);
 }
 
 // Draws one of the other icons into the glyph work buffer.
-void Ui_PrepareTransferFromTableEntry(u32 index) {
-  GlyphTransfer *state = gGlyphWork;
+void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
+  GlyphTransfer *glyph = gGlyphWork;
 
-  state->encoded = gUiIcon_MiscIconPointers[index];
-  state->width = 2;
-  state->height = 2;
-  UiIcon_Decode(state, 0);
+  glyph->encoded = gUiIcon_MiscIconPointers[iconIndex];
+  glyph->width = 2;
+  glyph->height = 2;
+  UiIcon_Decode(glyph, 0);
 }
 
 // Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
 // free slot unless reuse is set) and its colours into sprite palette palette.
 // Returns the tile in *tile.
+// This resource stores its palette before the encoded tile payload.
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
   GlyphTransfer *work;
-  u16 *table;
-  u8 *entry;
+  u16 *offsets;
+  u8 *encodedEntry;
   u32 index;
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
-  table = Resource_GetTableEntry((s32)&ResourceId_Icons);
+  offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
   if (icon <= 127)
     index = icon;
   else
     index = icon - 112;
-  entry = (u8 *)table + table[index];
-  work->encoded = entry + 32;
+  encodedEntry = (u8 *)offsets + offsets[index];
+  work->encoded = encodedEntry + 32;
   work->width = 4;
   work->height = 4;
   UiIcon_Decode(work, 0);
@@ -5195,7 +5309,8 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = Resource_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   Runtime_ReleaseHeapBlock(17);
-  Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(palette, 0), 0x80000010, REG_DMA3);
+  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), 0x80000010,
+          REG_DMA3);
 }
 
 // Does nothing.
@@ -5203,6 +5318,8 @@ void UiGlyph_ReservedNoOp(void) {}
 
 // Decodes a compressed icon into the glyph buffer and expands it to tiles,
 // opaque for the first layer or masked over what is there when overlay is set.
+// Release each copied decoder before loading the next routine into the same
+// slot.
 void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
@@ -5283,6 +5400,7 @@ void UiGlyph_ResetWorkState(void) {
 }
 
 // Empties the selection screen's list of entries.
+// The high cursor bit requests resetting both the list origin and cursor.
 void Resource_ClearOwnerListAndCounters(void) {
   struct SelectionScreen *screen;
 
@@ -5298,30 +5416,33 @@ void Resource_ClearOwnerListAndCounters(void) {
 }
 
 // Adds an entry (kind and id) to the selection screen's list, up to 16.
-void Resource_PushPendingPair(u32 first, u32 second) {
+// The constructor and clear routine establish the count's 0-to-16 invariant.
+void Resource_PushPendingPair(u32 kind, u32 base) {
   struct SelectionScreen *state = gResQueueWork;
-  u16 cnt = state->count;
+  u16 entryCount = state->count;
 
-  if (cnt != 16) {
-    state->kinds[cnt] = first;
-    state->bases[cnt] = second;
+  if (entryCount != UI_SELECTION_ENTRY_LIMIT) {
+    state->kinds[entryCount] = kind;
+    state->bases[entryCount] = base;
     state->count++;
   }
 }
 
 // Creates icons for the first five listed entries in a row along the bottom of
 // the screen.
+// Build the linked row before placing the visible icons and loading the
+// preview.
 void MenuSelection_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 count = screen->count;
-  u32 index = screen->top;
-  struct SelectionNode *prev = 0;
+  u32 entryIndex = screen->top;
+  struct SelectionNode *previous = 0;
   struct SelectionNode *node;
-  s32 cnt = 0;
+  s32 rowPosition = 0;
 
-  while (index < count) {
-    s32 base = screen->bases[index];
-    u32 kind = screen->kinds[index];
+  while (entryIndex < count) {
+    s32 base = screen->bases[entryIndex];
+    u32 kind = screen->kinds[entryIndex];
 
     node = SelectionScreen_FindFreeIcon(0);
     if (node == 0)
@@ -5331,35 +5452,38 @@ void MenuSelection_BuildEntries(u32 unused) {
       screen->head = node;
       node->prev = 0;
     } else {
-      prev->next = node;
-      node->prev = prev;
+      previous->next = node;
+      node->prev = previous;
     }
     node->next = 0;
-    cnt++;
-    prev = node;
-    if (cnt == 5)
+    rowPosition++;
+    previous = node;
+    if (rowPosition == 5)
       break;
-    index++;
+    entryIndex++;
   }
 
-  screen->baseX = 100 - cnt * 8;
+  screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
-  for (prev = screen->head, cnt = 0; prev != 0; prev = prev->next) {
-    s32 x = screen->baseX + cnt;
+  // Reuse the count as a pixel offset while placing the completed row.
+  // Separate count/offset locals change the native English object.
+  for (previous = screen->head, rowPosition = 0; previous != 0;
+       previous = previous->next) {
+    s32 x = screen->baseX + rowPosition;
     s32 y;
 
-    prev->x = x;
+    previous->x = x;
     y = screen->baseY;
-    prev->y = y;
-    prev->targetX = x;
-    prev->targetY = y;
-    if (prev->kind == 6 && screen->locked == 0) {
-      prev->y = 6;
-      prev->targetY = 6;
+    previous->y = y;
+    previous->targetX = x;
+    previous->targetY = y;
+    if (previous->kind == 6 && screen->locked == 0) {
+      previous->y = 6;
+      previous->targetY = 6;
     }
-    prev->dx = 0;
-    prev->dy = 0;
-    cnt += 16;
+    previous->dx = 0;
+    previous->dy = 0;
+    rowPosition += 16;
   }
   SelectionScreen_LoadLargeIcon();
 }
@@ -5414,6 +5538,7 @@ void SelectionScreen_Draw(void) {
   struct EffectPosition pos;
 
   node = state->head;
+  // Move and queue the visible row before drawing its overlays.
   while (node != 0) {
     e = &node->sprite;
     e->affine = 0;
@@ -5468,6 +5593,7 @@ void SelectionScreen_Draw(void) {
     node = node->next;
     cnt++;
   }
+  // The selected command's large icon owns a separate cached tile block.
   if (transfer->kind != 0) {
     node = Selection_GetCursorNode(state);
     te = &transfer->sprite;
@@ -5500,6 +5626,7 @@ void SelectionScreen_Draw(void) {
   }
   SelectionScreen_DrawArrow(state, 0);
   SelectionScreen_DrawArrow(state, 1);
+  // Chosen entries gather at the top-left independently of the scrolling row.
   node = state->path;
   while (node != 0) {
     e = &node->sprite;
@@ -5538,6 +5665,7 @@ void SelectionScreen_Draw(void) {
     Runtime_PushSlotEntry((s32 *)e, 240);
     node = node->next;
   }
+  // Point at the selected battle target, smoothing each axis separately.
   if (cursor->kind != 0) {
     cnt = (s32)gMenu_AnimatedCursorTiles;
     {
@@ -5577,37 +5705,37 @@ void SelectionScreen_Draw(void) {
 
 // Draws the selection screen's left (index 0) or right (1) arrow, nudged
 // outwards while it flashes after a scroll.
-void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 index) {
-  u32 frame = (gFrameTick >> 2) & 7;
-  struct SelectionSprite *entry;
-  const u8 *frames;
+void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
+  u32 animationStep = (gFrameTick >> 2) & 7;
+  struct SelectionSprite *arrow;
+  const u8 *arrowTiles;
   const u8 *tmp;
 
-  if (state->records[index].kind == 0)
+  if (state->records[side].kind == 0)
     return;
-  entry = &state->records[index].sprite;
-  entry->x = state->records[index].x;
-  entry->y = state->records[index].y;
-  if (index != 0) {
-    frames = gMenu_CursorObjectTiles;
+  arrow = &state->records[side].sprite;
+  arrow->x = state->records[side].x;
+  arrow->y = state->records[side].y;
+  if (side != 0) {
+    arrowTiles = gMenu_CursorObjectTiles;
     if (state->records[1].base != 0)
-      entry->x = entry->x + state->records[1].base;
+      arrow->x = arrow->x + state->records[1].base;
   } else {
-    frames = gMenu_CursorLeftObjectTiles;
+    arrowTiles = gMenu_CursorLeftObjectTiles;
     if (state->records[0].base != 0)
-      entry->x = entry->x - state->records[0].base;
+      arrow->x = arrow->x - state->records[0].base;
   }
-  tmp = frames + frame * 128;
-  entry->tile = VramCache_Load(state->records[index].slot, 128, tmp);
+  tmp = arrowTiles + animationStep * 128;
+  arrow->tile = VramCache_Load(state->records[side].slot, 128, tmp);
   if (GameFlag_TestFar(0x103)) {
     if (state->records[14].kind == 1)
-      entry->mode = 1;
+      arrow->mode = 1;
     else
-      entry->mode = 0;
+      arrow->mode = 0;
   }
-  Runtime_PushSlotEntry((s32 *)entry, 238);
-  if (state->records[index].base != 0)
-    state->records[index].base--;
+  Runtime_PushSlotEntry((s32 *)arrow, 238);
+  if (state->records[side].base != 0)
+    state->records[side].base--;
 }
 
 // Opens or refits the name window above the selection row and writes the name
@@ -5693,21 +5821,21 @@ void Resource_ResetOwnerEntries(void) {
   Runtime_ReleaseHeapBlock(18);
 }
 
-// Moves the row of icons to start at (first, second), 16 pixels apart.
-void Menu_SetNodeCoordinates(u32 first, u32 second) {
-  struct SelectionScreen *state = gResQueueWork;
+// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
+void Menu_SetNodeCoordinates(u32 x, u32 y) {
+  struct SelectionScreen *screen = gResQueueWork;
   struct SelectionNode *node;
 
-  state->baseX = first;
-  state->baseY = second;
-  node = state->head;
+  screen->baseX = x;
+  screen->baseY = y;
+  node = screen->head;
   while (node != 0) {
-    node->x = first;
-    node->targetX = first;
-    node->y = second;
-    node->targetY = second;
+    node->x = x;
+    node->targetX = x;
+    node->y = y;
+    node->targetY = y;
     node = node->next;
-    first += 16;
+    x += 16;
   }
 }
 
@@ -5722,13 +5850,13 @@ void Menu_SetupSelectionBothSides(void) {
 
 // Sets up the left (index 0) or right (1) arrow of the selection row, shown
 // when there are entries beyond that end.
-void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
-  struct SelectionSprite *entry = &state->records[index].sprite;
-  const u8 *frames = 0;
+void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
+  struct SelectionSprite *arrow = &state->records[side].sprite;
+  const u8 *arrowTiles = 0;
   u32 count;
 
-  state->records[index].kind = 0;
-  if (index != 0) {
+  state->records[side].kind = 0;
+  if (side != 0) {
     /* FAKEMATCH: the separate local loads the tile pointer early into r5 and
      * makes its copy late, as the native does. Assigning
      * gMenu_CursorObjectTiles directly where right is read: differ 42; the same
@@ -5739,35 +5867,36 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index) {
     if (state->top != 0)
       count -= state->top;
     if (count > 5) {
-      state->records[index].kind = 1;
+      state->records[side].kind = 1;
       count = 5;
     }
-    frames = right;
+    arrowTiles = right;
     state->records[1].x = state->baseX + 16 * (count - 1) + 17;
   } else {
-    frames = gMenu_CursorLeftObjectTiles;
+    arrowTiles = gMenu_CursorLeftObjectTiles;
     state->records[0].x = state->baseX - 9;
     if (state->top != 0)
       state->records[0].kind = 1;
   }
-  if (state->records[index].y == 0) {
-    state->records[index].slot = Resource_FindFreeEntry();
-    state->records[index].tile =
-        VramCache_Load(state->records[index].slot, 128, frames);
-    state->records[index].y = state->baseY;
-    state->records[index].base = 0;
-    entry->mode = 0;
-    entry->mosaic = 0;
-    entry->colors = 1;
-    entry->affine = 0;
-    entry->param = 0;
-    entry->size = 0;
-    entry->shape = 2;
-    entry->priority = 0;
+  if (state->records[side].y == 0) {
+    state->records[side].slot = Resource_FindFreeEntry();
+    state->records[side].tile =
+        VramCache_Load(state->records[side].slot, 128, arrowTiles);
+    state->records[side].y = state->baseY;
+    state->records[side].base = 0;
+    arrow->mode = 0;
+    arrow->mosaic = 0;
+    arrow->colors = 1;
+    arrow->affine = 0;
+    arrow->param = 0;
+    arrow->size = 0;
+    arrow->shape = 2;
+    arrow->priority = 0;
   }
 }
 
 // Returns the node at the selection screen's cursor index.
+// cursorIndex is relative to head, not the number of queued entries.
 struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
   struct SelectionNode *node = screen->head;
   s32 i;
@@ -5857,17 +5986,18 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 }
 
 // Moves the cursor one entry right, scrolling the row at its fourth place.
+// This variant stops at the end; Menu_StepRight also wraps around.
 void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
-  u32 end = screen->top + screen->cursorIndex + 1;
+  u32 nextEntry = screen->top + screen->cursorIndex + 1;
 
-  if (end == screen->count) {
+  if (nextEntry == screen->count) {
     return;
   }
   SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   screen->cursorIndex++;
-  if (screen->cursorIndex == SELECTION_ROWS && end + 1 < screen->count) {
+  if (screen->cursorIndex == SELECTION_ROWS && nextEntry + 1 < screen->count) {
     screen->cursorIndex--;
     screen->records[1].base = ARROW_SCROLL_FRAMES;
     screen->top++;
@@ -5885,8 +6015,9 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
 }
 
 // Moves the cursor one entry left, scrolling the row at its second place.
+// This variant stops at the beginning; Menu_StepLeft also wraps around.
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
-  u32 cursor;
+  u32 cursorIndex;
 
   if (screen->top == 0 && screen->cursorIndex == 0) {
     return;
@@ -5894,15 +6025,15 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
-  cursor = screen->cursorIndex;
-  if (cursor == 1 && screen->top != 0) {
+  cursorIndex = screen->cursorIndex;
+  if (cursorIndex == 1 && screen->top != 0) {
     screen->records[0].base = ARROW_SCROLL_FRAMES;
     screen->top--;
     Menu_ScrollSelectionList(screen, FALSE);
     if (screen->top == 0) {
       screen->records[0].kind = FALSE;
     }
-    screen->records[1].kind = cursor;
+    screen->records[1].kind = cursorIndex;
   } else {
     screen->cursorIndex--;
   }
@@ -5917,12 +6048,12 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
 // wrapping from the last entry to the first.
 void Menu_StepRight(struct SelectionScreen *state) {
   struct SelectionNode *node;
-  u16 *ids;
+  u32 entryIndex;
   s32 y;
   u32 end;
 
   SelectionScreen_RedrawIcon(state, state->cursorIndex);
-  state->status = 33;
+  state->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   state->cursorIndex++;
   if (state->count > 5) {
@@ -5943,11 +6074,12 @@ void Menu_StepRight(struct SelectionScreen *state) {
         WaitFrames(1);
       node = state->head;
       if (node != NULL) {
-        ids = state->kinds;
+        entryIndex = 0;
         do {
-          SelectionScreen_SetupIcon(ids[0], ids[16], node, 1);
+          SelectionScreen_SetupIcon(state->kinds[entryIndex],
+                                    state->bases[entryIndex], node, 1);
           node = node->next;
-          ids++;
+          entryIndex++;
         } while (node != NULL);
       }
       state->cursorIndex = 0;
@@ -5974,7 +6106,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
   }
-  state->status = 1;
+  state->status = NODE_STATUS_SHOWN;
   SelectionScreen_HighlightIcon(state, state->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
@@ -5988,7 +6120,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   s32 i;
 
   SelectionScreen_RedrawIcon(state, state->cursorIndex);
-  state->status = 33;
+  state->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   if (state->count > 5) {
     if ((state->cursorIndex | state->top) != 0) {
@@ -6024,6 +6156,8 @@ void Menu_StepLeft(struct SelectionScreen *state) {
       node = state->head;
       while (node->x != node->targetX)
         WaitFrames(1);
+      // Keep the native count-up: assigning count - 5 directly removes
+      // 20 bytes from the English object.
       i = 0;
       while (i != state->count - 5)
         i++;
@@ -6050,7 +6184,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   } else {
     state->cursorIndex = state->count - 1;
   }
-  state->status = 1;
+  state->status = NODE_STATUS_SHOWN;
   SelectionScreen_HighlightIcon(state, state->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);
@@ -6058,38 +6192,39 @@ void Menu_StepLeft(struct SelectionScreen *state) {
 }
 
 // Redraws the command icon at row place index in its plain state.
-void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 index) {
+void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   struct SelectionNode *node = state->head;
-  u32 output;
+  u32 tile;
   u32 value;
 
-  while (index != 0) {
-    index--;
+  while (rowIndex != 0) {
+    rowIndex--;
     node = node->next;
   }
   if (node->kind == 1 || node->kind == 6) {
     u32 first = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
+    Ui_BuildPairedPatternsToSlot(first, 0, &value, &tile, 1);
   }
 }
 
 // Redraws the command icon at row place index and loads its large icon.
-void SelectionScreen_HighlightIcon(struct SelectionScreen *state, u32 index) {
+void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
+                                   u32 rowIndex) {
   struct SelectionNode *node = state->head;
-  u32 res;
+  u32 tile;
   u32 value;
 
-  while (index != 0) {
-    index--;
+  while (rowIndex != 0) {
+    rowIndex--;
     node = node->next;
   }
   if (node->kind == 1 || node->kind == 6) {
-    u32 id = node->message - MsgCommandName;
+    u32 resource = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);
+    Ui_BuildPairedPatternsToSlot(resource, 0, &value, &tile, 1);
     SelectionScreen_LoadLargeIcon();
   }
 }
@@ -6110,98 +6245,99 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
 
 // Scrolls the row one entry: forward brings an icon in from the right as the
 // leftmost shrinks away, and back the reverse; waits until it has moved.
+// Release the departing cache slot only after its shrinking animation finishes.
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
-  struct SelectionNode *p;
+  struct SelectionNode *node;
   struct SelectionNode *last;
   struct SelectionNode *first;
   s32 base;
   s32 kind;
-  u32 index;
-  s32 y;
-  s32 z;
+  u32 entryIndex;
+  s32 rowX;
+  s32 rowY;
 
   if (forward != 0) {
-    index = screen->top + SELECTION_ROWS;
-    base = screen->bases[index];
-    kind = screen->kinds[index];
-    p = SelectionScreen_FindFreeIcon(0);
-    if (p == NULL)
+    entryIndex = screen->top + SELECTION_ROWS;
+    base = screen->bases[entryIndex];
+    kind = screen->kinds[entryIndex];
+    node = SelectionScreen_FindFreeIcon(0);
+    if (node == NULL)
       return;
-    SelectionScreen_SetupIcon(kind, base, p, 0);
-    y = screen->baseX;
-    p->x = y + 80;
-    z = screen->baseY;
-    p->targetX = y + 64;
-    p->y = z;
-    p->targetY = z;
-    p->scaleStep = 32;
-    p->scale = 32;
-    p->scaleEnd = 256;
-    p->dx = -2;
-    last = p;
-    p = screen->head;
-    p->scaleStep = -32;
-    p->scaleEnd = 0;
+    SelectionScreen_SetupIcon(kind, base, node, 0);
+    rowX = screen->baseX;
+    node->x = rowX + 80;
+    rowY = screen->baseY;
+    node->targetX = rowX + 64;
+    node->y = rowY;
+    node->targetY = rowY;
+    node->scaleStep = 32;
+    node->scale = 32;
+    node->scaleEnd = 256;
+    node->dx = -2;
+    last = node;
+    node = screen->head;
+    node->scaleStep = -32;
+    node->scaleEnd = 0;
     for (;;) {
-      p->targetX = p->x - 16;
-      p->dx = -2;
-      if (p->next == NULL)
+      node->targetX = node->x - 16;
+      node->dx = -2;
+      if (node->next == NULL)
         break;
-      p = p->next;
+      node = node->next;
     }
-    p->next = last;
+    node->next = last;
     last->next = NULL;
-    last->prev = p;
-    p = screen->head;
+    last->prev = node;
+    node = screen->head;
     do {
       WaitFrames(1);
-    } while (p->scale != 0);
-    screen->head = p->next;
-    Resource_ResetEntry(p->slot);
-    p->kind = 0;
-    p = p->next;
-    p->prev = NULL;
+    } while (node->scale != 0);
+    screen->head = node->next;
+    Resource_ResetEntry(node->slot);
+    node->kind = 0;
+    node = node->next;
+    node->prev = NULL;
   } else {
-    index = screen->top;
-    base = screen->bases[index];
-    kind = screen->kinds[index];
-    p = SelectionScreen_FindFreeIcon(0);
-    if (p == NULL)
+    entryIndex = screen->top;
+    base = screen->bases[entryIndex];
+    kind = screen->kinds[entryIndex];
+    node = SelectionScreen_FindFreeIcon(0);
+    if (node == NULL)
       return;
-    SelectionScreen_SetupIcon(kind, base, p, 0);
-    p->x = screen->baseX - 16;
-    p->y = screen->baseY;
-    p->targetY = p->y;
-    p->dx = 2;
-    p->scale = 32;
-    p->scaleStep = 32;
-    p->targetX = p->x + 16;
-    p->scaleEnd = 256;
-    first = p;
-    p = screen->head;
-    p->prev = first;
-    first->next = p;
+    SelectionScreen_SetupIcon(kind, base, node, 0);
+    node->x = screen->baseX - 16;
+    node->y = screen->baseY;
+    node->targetY = node->y;
+    node->dx = 2;
+    node->scale = 32;
+    node->scaleStep = 32;
+    node->targetX = node->x + 16;
+    node->scaleEnd = 256;
+    first = node;
+    node = screen->head;
+    node->prev = first;
+    first->next = node;
     first->prev = NULL;
     screen->head = first;
-    p = first;
+    node = first;
     for (;;) {
-      p->targetX = p->x + 16;
-      p->dx = 2;
-      if (p->next == NULL)
+      node->targetX = node->x + 16;
+      node->dx = 2;
+      if (node->next == NULL)
         break;
-      p = p->next;
+      node = node->next;
     }
-    p->scaleEnd = 0;
-    p->scaleStep = -32;
-    p = screen->head;
+    node->scaleEnd = 0;
+    node->scaleStep = -32;
+    node = screen->head;
     do {
       WaitFrames(1);
-    } while (p->scale != 256);
-    while (p->next != NULL)
-      p = p->next;
-    Resource_ResetEntry(p->slot);
-    p->kind = 0;
-    p->prev->next = NULL;
+    } while (node->scale != 256);
+    while (node->next != NULL)
+      node = node->next;
+    Resource_ResetEntry(node->slot);
+    node->kind = 0;
+    node->prev->next = NULL;
   }
 }
 
@@ -6276,67 +6412,70 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 
 // Sets up a selection icon for an entry: its icon tiles (in its old slot when
 // reuse is set), its name message and its sprite.
+// kind must select a command, item or Psynergy with the matching base ID.
 void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                                s32 reuse) {
-  s32 src;
+  s32 cacheSlot;
   s32 tile;
-  struct SelectionSprite *obj;
+  struct SelectionSprite *sprite;
 
   switch (kind) {
   case 1:
   case 6:
     if (reuse != 0)
-      src = node->slot;
-    Ui_BuildPairedPatternsToSlot(base, 0, &src, &tile, reuse);
+      cacheSlot = node->slot;
+    Ui_BuildPairedPatternsToSlot(base, 0, &cacheSlot, &tile, reuse);
     node->message = base + MsgCommandName;
     break;
   case 2:
     if (reuse != 0)
-      src = node->slot;
-    UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
+      cacheSlot = node->slot;
+    UiIcon_BuildItemIconTiles(base, 1, &cacheSlot, &tile, reuse);
     node->message = base + MsgItemName;
     break;
   case 4:
     if (reuse != 0)
-      src = node->slot;
-    Ability_LoadGlyph(base, 1, &src, &tile, reuse);
+      cacheSlot = node->slot;
+    Ability_LoadGlyph(base, 1, &cacheSlot, &tile, reuse);
     node->message = base + MsgAbilityName;
     break;
   }
 
   node->base = base;
-  node->slot = src;
+  node->slot = cacheSlot;
   node->tile = tile;
   node->kind = kind;
   node->scale = 0x100;
   node->scaleEnd = 0x100;
 
-  obj = &node->sprite;
-  obj->mode = 0;
-  obj->colors = 0;
-  obj->mosaic = 0;
+  sprite = &node->sprite;
+  sprite->mode = 0;
+  sprite->colors = 0;
+  sprite->mosaic = 0;
 
-  obj->size = 1;
-  obj->shape = 0;
-  obj->palette = 0;
-  obj->tile = tile;
-  obj->priority = 0;
+  sprite->size = 1;
+  sprite->shape = 0;
+  sprite->palette = 0;
+  sprite->tile = tile;
+  sprite->priority = 0;
 }
 
 // Chooses the entry under the cursor: the other icons gather into it and
 // vanish, and it joins the chosen icons at the top left. Returns the entry's
 // index.
+// The selected row node and a free chosen-icon record must exist before
+// confirming.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
-  u32 cnt = 0;
-  u32 index;
+  u32 nodeIndex = 0;
+  u32 chosenIndex;
   struct SelectionSprite *sprite;
 
-  index = screen->top + screen->cursorIndex;
+  chosenIndex = screen->top + screen->cursorIndex;
   Menu_SendNodeCountList(screen);
   SelectionScreen_RedrawIcon(screen, screen->cursorIndex);
-  screen->status = 33;
+  screen->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   screen->records[0].kind = 0;
   screen->records[1].kind = 0;
@@ -6344,9 +6483,9 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->records[14].scale = 0;
   Resource_ResetPendingTransfer();
   node = screen->head;
-  while (node != NULL && screen->cursorIndex != cnt) {
+  while (node != NULL && screen->cursorIndex != nodeIndex) {
     node = node->next;
-    cnt++;
+    nodeIndex++;
   }
   node->homeX = node->x;
   node->homeY = node->y;
@@ -6367,12 +6506,13 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   node->prev = NULL;
   node->next = NULL;
   node->targetX = 4;
-  for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
+  for (other = screen->path, nodeIndex = 0; other != NULL;
+       other = other->next) {
     node->targetX += 16;
-    cnt++;
+    nodeIndex++;
   }
-  screen->pathTop[cnt] = screen->top;
-  screen->pathCursor[cnt] = screen->cursorIndex;
+  screen->pathTop[nodeIndex] = screen->top;
+  screen->pathCursor[nodeIndex] = screen->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
   screen->unk39a = 0;
   screen->cursorIndex |= 0x80;
@@ -6415,7 +6555,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
     other->prev = NULL;
     other->next = NULL;
   }
-  return index;
+  return chosenIndex;
 }
 
 // Six empty functions.
@@ -6428,27 +6568,29 @@ void UiTextResource_NoOpCallback4(void) {}
 
 // Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
 // in *slot).
-void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot) {
+// The caller owns the cache slot and releases it through
+// UiTextResource_Release.
+void UiTextResource_Initialize(struct MenuSprite *sprite, s32 *slot) {
   const void *data = gMenu_CursorObjectTiles;
-  s32 value = Resource_FindFreeEntry();
+  s32 cacheSlot = Resource_FindFreeEntry();
 
-  *slot = value;
-  object->oam.f.tile = VramCache_Load(value, 0x80, data);
-  object->oam.f.mode = 0;
-  object->oam.f.mosaic = 0;
-  object->oam.f.colors = 1;
-  object->oam.f.affine = 0;
-  object->oam.f.affineIndex = 0;
-  object->oam.f.size = 0;
-  object->oam.f.shape = 2;
-  object->oam.f.priority = 0;
+  *slot = cacheSlot;
+  sprite->oam.f.tile = VramCache_Load(cacheSlot, 0x80, data);
+  sprite->oam.f.mode = 0;
+  sprite->oam.f.mosaic = 0;
+  sprite->oam.f.colors = 1;
+  sprite->oam.f.affine = 0;
+  sprite->oam.f.affineIndex = 0;
+  sprite->oam.f.size = 0;
+  sprite->oam.f.shape = 2;
+  sprite->oam.f.priority = 0;
 }
 
 // Places an arrow sprite at (x, y) and queues it for drawing.
-void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y) {
-  obj->oam.f.x = x;
-  obj->oam.f.y = y;
-  Runtime_PushSlotEntry((s32 *)obj, 0xFC);
+void UiTextResource_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
+  sprite->oam.f.x = x;
+  sprite->oam.f.y = y;
+  Runtime_PushSlotEntry((s32 *)sprite, 0xFC);
 }
 
 // Frees an arrow sprite's tile slot.
@@ -6457,24 +6599,24 @@ void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 // Loads the large icon of the command under the cursor, zooming in.
 void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
-  struct SelectionNode *selection = Selection_GetCursorNode(state);
+  struct SelectionNode *selected = Selection_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;
   void *resource;
-  s32 no;
+  s32 resourceId;
 
-  if (selection->kind != 1 && selection->kind != 6)
+  if (selected->kind != 1 && selected->kind != 6)
     return;
 
   buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   transfer = &state->records[15];
-  no = selection->base;
+  resourceId = selected->base;
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   {
-    u8 **destination = &buffer->encoded;
-    resource = table + *(u16 *)(table + selection->base * 2);
-    *destination = resource;
+    u8 **tiles = &buffer->encoded;
+    resource = table + *(u16 *)(table + selected->base * 2);
+    *tiles = resource;
   }
   Resource_DecodeByteLz(resource, buffer);
 
@@ -6482,7 +6624,7 @@ void SelectionScreen_LoadLargeIcon(void) {
     transfer->slot = Resource_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = 1;
-  transfer->base = no;
+  transfer->base = resourceId;
   transfer->scale = 40;
   transfer->scaleStep = 40;
   transfer->scaleEnd = 240;
@@ -6490,12 +6632,13 @@ void SelectionScreen_LoadLargeIcon(void) {
 }
 
 // Frees the large command icon, if it is shown.
+// The large preview owns a cache slot independently of the visible row icons.
 void Resource_ResetPendingTransfer(void) {
-  struct SelectionNode *transfer = &gResQueueWork->records[15];
+  struct SelectionNode *largeIcon = &gResQueueWork->records[15];
 
-  if (transfer->kind != 0) {
-    Resource_ResetEntry(transfer->slot);
-    transfer->kind = 0;
+  if (largeIcon->kind != 0) {
+    Resource_ResetEntry(largeIcon->slot);
+    largeIcon->kind = 0;
   }
 }
 
@@ -6590,13 +6733,15 @@ void SelectionScreen_CreateEmpty(void) {
 
 // Runs a selection row with the cursor on entry value, cancellable, and
 // returns the entry chosen or -1.
-u32 Menu_RunSelectionForValue(u32 value) {
-  struct SelectionScreen *state = gResQueueWork;
+// The parameter is an initial row index; cancellation returns -1 encoded as
+// u32.
+u32 Menu_RunSelectionForValue(u32 initialIndex) {
+  struct SelectionScreen *screen = gResQueueWork;
   u32 result;
 
-  state->cursorIndex = value;
-  state->locked = 1;
-  MenuSelection_BuildEntries(value);
+  screen->cursorIndex = initialIndex;
+  screen->locked = 1;
+  MenuSelection_BuildEntries(initialIndex);
   Menu_SetupSelectionBothSides();
   Menu_OpenSelectionWindow(0, 5);
   Resource_ScheduleOwnerResetDelayed();
@@ -6613,39 +6758,41 @@ struct TimedNoticeWork {
 };
 
 // Shows the area's name in a window near the top of the screen for 90 frames.
+// The event work owns the window and countdown until the scheduler closes it.
 void UiTimedNotice_Create(void) {
-  struct TimedNoticeWork *work;
+  struct TimedNoticeWork *notice;
   s32 height;
   s32 width;
   s32 y;
   s32 x;
-  s32 resource;
-  struct UiWindow *window;
+  s32 areaMessage;
+  struct UiWindow *nameWindow;
 
-  work = (struct TimedNoticeWork *)gEventWork;
+  notice = (struct TimedNoticeWork *)gEventWork;
   x = 8;
   y = 8;
-  resource = Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance) +
-             RENDER_RESOURCE_BASE;
-  UiText_GetResourceDimensions(resource, &x, &y, &width, &height);
+  areaMessage =
+      Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance) +
+      RENDER_RESOURCE_BASE;
+  UiText_GetResourceDimensions(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
-  window = UiWindow_Create(x, y, width, height, 2);
-  work->window = window;
-  UiText_DrawResource(resource, window, 0, 0);
-  work->countdown = 90;
+  nameWindow = UiWindow_Create(x, y, width, height, 2);
+  notice->window = nameWindow;
+  UiText_DrawResource(areaMessage, nameWindow, 0, 0);
+  notice->countdown = UI_AREA_NOTICE_FRAMES;
   Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 
 // Counts the area name down, and closes it at 0.
 void UiTimedNotice_Tick(void) {
-  struct TimedNoticeWork *work;
-  u16 count;
+  struct TimedNoticeWork *notice;
+  u16 framesLeft;
 
-  work = (struct TimedNoticeWork *)gEventWork;
-  work->countdown = (count = work->countdown + 0xffff);
-  if ((count << 16) == 0) {
-    UiWork_Finalize(work->window, 2);
+  notice = (struct TimedNoticeWork *)gEventWork;
+  notice->countdown = (framesLeft = notice->countdown + 0xffff);
+  if ((framesLeft << 16) == 0) {
+    UiWork_Finalize(notice->window, 2);
     Scheduler_RemoveCallback(UiTimedNotice_Tick);
   }
 }
@@ -6661,24 +6808,24 @@ void UiTimedNotice_CloseIfActive(void) {
   }
 }
 
-// Removes inventory entry arg1 and returns 0.
-s32 Item_CallHandler48(s32 arg0, s32 arg1) {
-  PartyInventory_RemoveFar(arg1);
+// Removes the inventory entry and returns 0; the first argument is unused.
+s32 Item_CallHandler48(s32 unused, s32 entry) {
+  PartyInventory_RemoveFar(entry);
   return 0;
 }
 
 // Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
-// Steps the window hue one step: back when arg0 has LEFT (0x20), on
+// Steps the window hue one step: back when keys contains LEFT, on
 // otherwise.
-void OptionMenu_StepWindowHue(s32 arg0) {
-  u8 value = gGameState.paletteGlow[0];
-  if (arg0 & 0x20)
-    value += 0xff;
+void OptionMenu_StepWindowHue(s32 keys) {
+  u8 hue = gGameState.paletteGlow[0];
+  if (keys & KEY_LEFT)
+    hue += 0xff;
   else
-    value += 1;
-  gGameState.paletteGlow[0] = value;
+    hue += 1;
+  gGameState.paletteGlow[0] = hue;
 }
 
 struct AbilityListEntry {
@@ -6689,6 +6836,8 @@ struct AbilityListEntry {
 // Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 // showing each one's cost and description, and stores them in
 // gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
+// This debug path seeds extra Psynergy before enumerating the party's
+// shortcuts.
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
   struct UiWindow *win;
@@ -6708,6 +6857,7 @@ void Debug_SelectAbilityPair(void) {
 
   cursor = NULL;
   redraw = 1;
+  // Build the debug shortcut candidates before creating their three windows.
   list = MemAlloc(0x700);
   Unit_LearnPsynergyFar(0, 140);
   Unit_LearnPsynergyFar(1, 140);
@@ -6733,6 +6883,7 @@ void Debug_SelectAbilityPair(void) {
      * The message id passed directly: differ 23. */
     slot = MsgPanelHpMaxLabel;
     UiText_DrawCharacterAtOffset(slot, title, 16, 0);
+    // Redraw both shortcut rows and the selected ability's detail pane.
     for (;;) {
       if (redraw != 0) {
         redraw = 0;
@@ -6770,7 +6921,7 @@ void Debug_SelectAbilityPair(void) {
       }
       WaitFrames(1);
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (row != 0)
           second--;
         else
@@ -6778,7 +6929,7 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         if (row != 0)
           second++;
         else
@@ -6786,21 +6937,21 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         row--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(111);
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         row++;
         redraw = 1;
       }
       if (gKeysPressed & KEY_A)
-        AudioCommand_PlayFar(112);
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       else if (gKeysPressed & KEY_B)
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       else if (gKeysPressed & KEY_START)
-        AudioCommand_PlayFar(113);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       else
         continue;
       /* FAKEMATCH: the unread flag forces fresh zeros for both entries and the
@@ -6809,6 +6960,7 @@ void Debug_SelectAbilityPair(void) {
       done = 1;
       break;
     }
+    // Persist both owner/ability pairs before releasing the picker resources.
     gGameState.firstShortcut = (list[first].owner << 10) | list[first].ability;
     gGameState.secondShortcut =
         (list[second].owner << 10) | list[second].ability;
@@ -6822,29 +6974,31 @@ void Debug_SelectAbilityPair(void) {
 
 // Lists every Psynergy of the party's active members as (owner, Psynergy)
 // pairs in output and returns how many.
+// output must hold every owner's nonzero action slots; there is no capacity
+// argument.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
-  u16 objectIds[14];
+  u16 ownerIds[14];
   s32 outputCount = 0;
-  s32 objectCount = Party_ListActiveOwnersFar(objectIds);
+  s32 ownerCount = Party_ListActiveOwnersFar(ownerIds);
   s32 i;
 
-  for (i = 0; i < objectCount; i++) {
-    struct BattleUnit *object;
-    u32 id;
-    s32 index;
-    u32 resourceId;
+  for (i = 0; i < ownerCount; i++) {
+    struct BattleUnit *unit;
+    u32 owner;
+    s32 slotIndex;
+    u32 ability;
 
-    id = objectIds[i];
-    object = UnitGetFar(id);
-    for (index = 0; index < (s32)(sizeof(object->actionSlots) /
-                                  sizeof(object->actionSlots[0]));
-         index++) {
-      resourceId = object->actionSlots[index].encodedAction & ACTION_ID_MASK;
-      if (resourceId == 0)
+    owner = ownerIds[i];
+    unit = UnitGetFar(owner);
+    for (slotIndex = 0; slotIndex < (s32)(sizeof(unit->actionSlots) /
+                                          sizeof(unit->actionSlots[0]));
+         slotIndex++) {
+      ability = unit->actionSlots[slotIndex].encodedAction & ACTION_ID_MASK;
+      if (ability == 0)
         break;
-      BattleActGet(resourceId);
-      output[outputCount].owner = id;
-      output[outputCount].ability = resourceId;
+      BattleActGet(ability);
+      output[outputCount].owner = owner;
+      output[outputCount].ability = ability;
       outputCount++;
     }
   }
@@ -6854,25 +7008,26 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
 
 // Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
 // returns their indexes (0 for one not found).
+// A shortcut absent from the list falls back to entry 0.
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
-  s32 i;
+  s32 entryIndex;
 
   *firstIndex = 0;
   *secondIndex = 0;
 
-  for (i = 0; i <= 447; i++) {
-    if (entries[i].ability == (gGameState.firstShortcut & 0x3ff) &&
-        entries[i].owner == (gGameState.firstShortcut >> 10)) {
-      *firstIndex = i;
+  for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
+    if (entries[entryIndex].ability == (gGameState.firstShortcut & 0x3ff) &&
+        entries[entryIndex].owner == (gGameState.firstShortcut >> 10)) {
+      *firstIndex = entryIndex;
       break;
     }
   }
 
-  for (i = 0; i <= 447; i++) {
-    if (entries[i].ability == (gGameState.secondShortcut & 0x3ff) &&
-        entries[i].owner == (gGameState.secondShortcut >> 10)) {
-      *secondIndex = i;
+  for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
+    if (entries[entryIndex].ability == (gGameState.secondShortcut & 0x3ff) &&
+        entries[entryIndex].owner == (gGameState.secondShortcut >> 10)) {
+      *secondIndex = entryIndex;
       break;
     }
   }
@@ -6968,6 +7123,7 @@ void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
 // Works out the window tint (red, green and blue, 0 to 31) from the window
 // colour settings: the hue picks a point on the colour wheel and the
 // brightness shifts all three channels.
+// The three wave samples are one third of the 96-step colour cycle apart.
 void WindowColor_ComputeTint(struct WorkspaceWork *work) {
   s16 phase;
   s32 bias;
@@ -7014,41 +7170,43 @@ void WindowColor_WritePalette(struct WorkspaceWork *work) {
 
 // Returns the window tint with each channel scaled (16.16 fixed point) and
 // clamped to 0 to 31, as a BGR555 colour.
-u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
-                          s32 scale_b) {
-  s32 r;
-  s32 g;
-  s32 b;
-
-  r = Iwram_MulQ16(work->tint[0] << 16, scale_r) >> 16;
-  g = Iwram_MulQ16(work->tint[1] << 16, scale_g) >> 16;
-  b = Iwram_MulQ16(work->tint[2] << 16, scale_b) >> 16;
-  if (r < 0)
-    r = 0;
-  if (g < 0)
-    g = 0;
-  if (b < 0)
-    b = 0;
-  if (r > 31)
-    r = 31;
-  if (g > 31)
-    g = 31;
-  if (b > 31)
-    b = 31;
-  return r + ((b << 10) + (g << 5));
-}
-
-// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
-// 31, as a BGR555 colour.
-u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
-                          s32 blue_scale) {
+// Multipliers use 16.16 fixed point; clamped components pack into BGR555.
+u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 redScale,
+                          s32 greenScale, s32 blueScale) {
   s32 red;
   s32 green;
   s32 blue;
 
-  red = Iwram_MulQ16(rgb[0] << 16, red_scale) >> 16;
-  green = Iwram_MulQ16(rgb[1] << 16, green_scale) >> 16;
-  blue = Iwram_MulQ16(rgb[2] << 16, blue_scale) >> 16;
+  red = Iwram_MulQ16(work->tint[0] << 16, redScale) >> 16;
+  green = Iwram_MulQ16(work->tint[1] << 16, greenScale) >> 16;
+  blue = Iwram_MulQ16(work->tint[2] << 16, blueScale) >> 16;
+  if (red < 0)
+    red = 0;
+  if (green < 0)
+    green = 0;
+  if (blue < 0)
+    blue = 0;
+  if (red > 31)
+    red = 31;
+  if (green > 31)
+    green = 31;
+  if (blue > 31)
+    blue = 31;
+  return red + ((blue << 10) + (green << 5));
+}
+
+// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
+// 31, as a BGR555 colour.
+// rgb holds three components, not an already packed palette word.
+u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
+                          s32 blueScale) {
+  s32 red;
+  s32 green;
+  s32 blue;
+
+  red = Iwram_MulQ16(rgb[0] << 16, redScale) >> 16;
+  green = Iwram_MulQ16(rgb[1] << 16, greenScale) >> 16;
+  blue = Iwram_MulQ16(rgb[2] << 16, blueScale) >> 16;
   if (red < 0)
     red = 0;
   if (red > 31)
@@ -7066,6 +7224,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
 
 // Sets the window colours (BG palette 15, colours 4 to 10) for a window hue
 // (0 to 23) and brightness (0 to 14, 7 neutral).
+// The live palette path leaves the saved colour settings untouched.
 void PaletteGlow_Update(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -7162,41 +7321,44 @@ void GraphicsPalette_SelectionNoOp(void) {}
 // markers, animates the marker of the slider in use, and pulses the chosen
 // setting's icon.
 void OptionMenu_AnimateCursors(void) {
-  s32 src0;
-  s32 src1;
-  s32 selection;
+  s32 cursorResource;
+  s32 markerResource;
+  s32 selectedOption;
   struct WorkspaceWork *work;
 
   work = gSelectionWork;
-  selection = work->page;
+  selectedOption = work->page;
   ShopCursor_AdvanceFar(&work->cursor.cursor);
   ShopCursor_MoveTowardTargetFar(&work->marker[0].cursor);
   ShopCursor_MoveTowardTargetFar(&work->marker[1].cursor);
 
-  if (selection == 0) {
-    src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+  if (selectedOption == 0) {
+    cursorResource =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
   } else {
-    src0 = (s32)&ResourceId_ShopCursorFrames;
+    cursorResource = (s32)&ResourceId_ShopCursorFrames;
   }
   VramCache_Load((u8)work->marker[0].output->index, 0x100,
-                 Resource_GetTableEntry(src0));
+                 Resource_GetTableEntry(cursorResource));
 
-  if (selection == 1) {
-    src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+  if (selectedOption == 1) {
+    markerResource =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
   } else {
-    src1 = (s32)&ResourceId_ShopCursorFrames;
+    markerResource = (s32)&ResourceId_ShopCursorFrames;
   }
   VramCache_Load((u8)work->marker[1].output->index, 0x100,
-                 Resource_GetTableEntry(src1));
+                 Resource_GetTableEntry(markerResource));
 
-  if (selection > 1)
+  if (selectedOption > 1)
     Ui_ApplyTableScaleToObject(
-        work->frame[selection - 2][work->option[selection]]);
+        work->frame[selectedOption - 2][work->option[selectedOption]]);
   work->cursorFrame++;
 }
 
 // Allocates the option screen's work block, copies the settings into it with
 // how many values each takes, and starts its per-frame callback.
+// Copy settings into scratch so cancelling can discard the edits.
 void OptionMenu_InitializeWork(void) {
   struct WorkspaceWork *work;
 
@@ -7216,6 +7378,7 @@ void OptionMenu_InitializeWork(void) {
 }
 
 // Stops the option screen's per-frame callback and frees its work block.
+// Remove the frame callback before releasing the workspace it reads.
 void OptionMenu_Release(void) {
   Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
   Runtime_ReleaseHeapBlock(0x14);
@@ -7231,40 +7394,40 @@ struct UiWindow *OptionMenu_Open(void) {
   /* FAKEMATCH: the shared cursor union keeps pointer stores before window
    * reads; an equal-size struct reorders these moves in all six editions. */
   struct WorkspaceWork *work;
-  struct UiWindow *win;
-  struct RenderOutput *out;
+  struct UiWindow *window;
+  struct RenderOutput *marker;
   s32 x;
   s32 y;
-  s32 msg;
+  s32 labelMessage;
 
   work = gSelectionWork;
-  win = UiWindow_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
-  UiWindow_DrawDividerLine(win, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
-  UiWindow_DrawDividerLine(win, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
-  UiWindow_DrawDividerLine(win, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
-  UiWindow_DrawDividerLine(win, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
-  msg = MsgWindowColorLabel;
-  UiText_DrawCharacterAtOffset(msg, win, 8, 0);
-  msg++;
-  UiText_DrawCharacterAtOffset(msg, win, 8, 16);
+  window = UiWindow_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
+  UiWindow_DrawDividerLine(window, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
+  UiWindow_DrawDividerLine(window, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
+  UiWindow_DrawDividerLine(window, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
+  UiWindow_DrawDividerLine(window, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
+  labelMessage = MsgWindowColorLabel;
+  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 0);
+  labelMessage++;
+  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 16);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-  msg = MsgMessageSpeedLabel;
-  UiText_DrawCharacterAtOffset(msg, win, 8, 32);
-  msg++;
-  UiText_DrawCharacterAtOffset(msg, win, 32, 40);
+  labelMessage = MsgMessageSpeedLabel;
+  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 32);
+  labelMessage++;
+  UiText_DrawCharacterAtOffset(labelMessage, window, 32, 40);
 #else
-  UiText_DrawCharacterAtOffset(MsgMessageSpeedLabel, win, 8, 40);
+  UiText_DrawCharacterAtOffset(MsgMessageSpeedLabel, window, 8, 40);
 #endif
-  UiText_DrawCharacterAtOffset(MsgSpeechLabel, win, 8, 64);
-  UiText_DrawCharacterAtOffset(MsgAutoSleepLabel, win, 8, 88);
+  UiText_DrawCharacterAtOffset(MsgSpeechLabel, window, 8, 64);
+  UiText_DrawCharacterAtOffset(MsgAutoSleepLabel, window, 8, 88);
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gResource_FixedBlockBTiles);
-    out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-    work->cursor.output = out;
-    x = win->x * 8;
-    y = win->y * 8 + 12;
+    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    work->cursor.output = marker;
+    x = window->x * 8;
+    y = window->y * 8 + 12;
     ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
   }
 
@@ -7274,101 +7437,105 @@ struct UiWindow *OptionMenu_Open(void) {
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
     VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
     y = 0;
-    out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-    out->oam.palette = SLIDER_PALETTE;
-    out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-    out->oam.index += 4;
-    out->oam.palette = SLIDER_PALETTE;
+    marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker->oam.palette = SLIDER_PALETTE;
+    marker =
+        RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+    marker->oam.index += 4;
+    marker->oam.palette = SLIDER_PALETTE;
     y = 16;
-    out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-    out->oam.palette = 15;
-    out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-    out->oam.index += 4;
-    out->oam.palette = 15;
+    marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker->oam.palette = 15;
+    marker =
+        RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+    marker->oam.index += 4;
+    marker->oam.palette = 15;
   }
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-    out->oam.palette256 = 1;
-    work->marker[0].output = out;
-    x = win->x * 8 + OPTION_SLIDER_X;
+    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    marker->oam.palette256 = 1;
+    work->marker[0].output = marker;
+    x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[0] * 60 / work->optionCount[0];
-    y = win->y * 8 + 4;
+    y = window->y * 8 + 4;
     ShopCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
   }
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-    out->oam.palette256 = 1;
-    work->marker[1].output = out;
-    x = win->x * 8 + OPTION_SLIDER_X;
+    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    marker->oam.palette256 = 1;
+    work->marker[1].output = marker;
+    x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[1] * 60 / work->optionCount[1];
-    y = win->y * 8 + 20;
+    y = window->y * 8 + 20;
     ShopCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
   }
 
   y = 28;
   work->frame[0][0] = RenderResource_CreateFrame(gOptionMenu_SpeedFrames[0], 0,
-                                                 win, OPTION_FRAME_X, y);
-  work->frame[0][1] = RenderResource_CreateFrame(gOptionMenu_SpeedFrames[1], 0,
-                                                 win, OPTION_FRAME_X + 24, y);
-  work->frame[0][2] = RenderResource_CreateFrame(gOptionMenu_SpeedFrames[2], 0,
-                                                 win, OPTION_FRAME_X + 48, y);
+                                                 window, OPTION_FRAME_X, y);
+  work->frame[0][1] = RenderResource_CreateFrame(
+      gOptionMenu_SpeedFrames[1], 0, window, OPTION_FRAME_X + 24, y);
+  work->frame[0][2] = RenderResource_CreateFrame(
+      gOptionMenu_SpeedFrames[2], 0, window, OPTION_FRAME_X + 48, y);
   y = 52;
-  work->frame[1][0] =
-      RenderResource_CreateFrame(gOptionMenu_SpeechFrames[0], 0, win, 100, y);
-  work->frame[1][1] =
-      RenderResource_CreateFrame(gOptionMenu_SpeechFrames[1], 0, win, 124, y);
+  work->frame[1][0] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[0], 0,
+                                                 window, 100, y);
+  work->frame[1][1] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[1], 0,
+                                                 window, 124, y);
   y = 76;
   work->frame[2][0] =
-      RenderResource_CreateFrame(gOptionMenu_SleepFrames[0], 0, win, 100, y);
+      RenderResource_CreateFrame(gOptionMenu_SleepFrames[0], 0, window, 100, y);
   work->frame[2][1] =
-      RenderResource_CreateFrame(gOptionMenu_SleepFrames[1], 0, win, 124, y);
-  return win;
+      RenderResource_CreateFrame(gOptionMenu_SleepFrames[1], 0, window, 124, y);
+  return window;
 }
 
 // Runs the option screen (window colour and brightness, message speed,
 // speech, auto-sleep) until A or START keeps the settings (returns 0) or B
 // drops them (returns -1). SELECT cycles through the colour presets.
+// Preview edits affect the live palette; only confirmation saves the settings.
 s32 Menu_RunWorkspaceOptions(void) {
   struct WorkspaceWork *work;
-  struct UiWindow *icon;
-  struct UiWindow *win;
+  struct UiWindow *settingsWindow;
+  struct UiWindow *helpWindow;
   struct RenderOutput *pair;
-  s8 *pA;
-  s8 *pB;
+  s8 *hue;
+  s8 *brightness;
   s32 redraw;
-  s32 page;
+  s32 selectedOption;
   s32 i;
-  s32 dim;
-  s32 index;
+  s32 dimmed;
+  s32 resourceIndex;
   s32 x;
   s32 y;
   s32 result;
   struct RenderOutput *frame;
 
   redraw = 1;
-  page = 0;
+  selectedOption = 0;
   OptionMenu_InitializeWork();
   work = gSelectionWork;
-  win = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
-  icon = OptionMenu_Open();
-  pair = RenderResource_CreatePair(7, icon, 64, -48);
+  helpWindow = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
+  settingsWindow = OptionMenu_Open();
+  pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
   WaitFrames(1);
-  pA = &work->option[0];
-  pB = &work->option[1];
+  hue = &work->option[0];
+  brightness = &work->option[1];
 
   for (;;) {
     if (redraw != 0) {
       redraw = 0;
-      page = (page + 5) % 5;
-      work->option[page] = (work->option[page] + work->optionCount[page]) %
-                           work->optionCount[page];
-      work->page = page;
+      selectedOption = (selectedOption + 5) % 5;
+      work->option[selectedOption] =
+          (work->option[selectedOption] + work->optionCount[selectedOption]) %
+          work->optionCount[selectedOption];
+      work->page = selectedOption;
       if (gSleepDisabled != 0)
         work->option[4] = 0;
 
@@ -7376,111 +7543,114 @@ s32 Menu_RunWorkspaceOptions(void) {
         frame = work->frame[0][i];
         frame->sentinel = 0xfb;
         UiIcon_PrepareObjectFar(frame);
-        index = (u8)work->frame[0][i]->index;
-        dim = 0;
+        resourceIndex = (u8)work->frame[0][i]->index;
+        dimmed = 0;
         if (i != work->option[2])
-          dim = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeedFrames[i], index, dim);
+          dimmed = 1;
+        RenderResource_LoadFrame(gOptionMenu_SpeedFrames[i], resourceIndex,
+                                 dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[1][i];
         frame->sentinel = 0xfb;
         UiIcon_PrepareObjectFar(frame);
-        index = (u8)work->frame[1][i]->index;
-        dim = 0;
+        resourceIndex = (u8)work->frame[1][i]->index;
+        dimmed = 0;
         if (i != work->option[3])
-          dim = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeechFrames[i], index, dim);
+          dimmed = 1;
+        RenderResource_LoadFrame(gOptionMenu_SpeechFrames[i], resourceIndex,
+                                 dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[2][i];
         frame->sentinel = 0xfb;
         UiIcon_PrepareObjectFar(frame);
-        index = (u8)work->frame[2][i]->index;
-        dim = 0;
+        resourceIndex = (u8)work->frame[2][i]->index;
+        dimmed = 0;
         if (i != work->option[4])
-          dim = 1;
-        RenderResource_LoadFrame(gOptionMenu_SleepFrames[i], index, dim);
+          dimmed = 1;
+        RenderResource_LoadFrame(gOptionMenu_SleepFrames[i], resourceIndex,
+                                 dimmed);
       }
 
-      x = icon->x * 8 + OPTION_SLIDER_X;
-      x += (*pA * 60) / work->optionCount[0];
-      y = icon->y * 8 + 4;
+      x = settingsWindow->x * 8 + OPTION_SLIDER_X;
+      x += (*hue * 60) / work->optionCount[0];
+      y = settingsWindow->y * 8 + 4;
       Shop_SetCursorFar(&work->marker[0].cursor, x, y, 1);
-      x = icon->x * 8 + OPTION_SLIDER_X;
-      x += (*pB * 60) / work->optionCount[1];
-      y = icon->y * 8 + 20;
+      x = settingsWindow->x * 8 + OPTION_SLIDER_X;
+      x += (*brightness * 60) / work->optionCount[1];
+      y = settingsWindow->y * 8 + 20;
       Shop_SetCursorFar(&work->marker[1].cursor, x, y, 1);
 
       x = work->option[2] + MsgMessageSpeedSetting;
-      UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END,
-                                  48);
-      UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 40);
+      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 40,
+                                  OPTION_SPEED_END, 48);
+      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 40);
       x = work->option[3] + MsgSpeechSetting;
-      UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 64,
+      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 64,
                                   OPTION_SETTING_END, 72);
-      UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 64);
+      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 64);
       x = work->option[4] + MsgAutoSleepSetting;
-      UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 88,
+      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 88,
                                   OPTION_SETTING_END, 96);
-      UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 88);
-      PaletteGlow_Update(*pA, *pB);
+      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 88);
+      PaletteGlow_Update(*hue, *brightness);
 
-      x = icon->x * 8;
-      y = (page * 3 + icon->y) * 8 + 4;
-      if (page == 0)
+      x = settingsWindow->x * 8;
+      y = (selectedOption * 3 + settingsWindow->y) * 8 + 4;
+      if (selectedOption == 0)
         y += 8;
       Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
-      RenderOutput_ClearList(win);
-      UiText_DrawResource(page + MsgOptionHelp, win, 0, 0);
+      RenderOutput_ClearList(helpWindow);
+      UiText_DrawResource(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
     }
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
 
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
-      *pA = gOptionMenu_HuePresets[work->preset];
-      *pB = gOptionMenu_BrightnessPresets[work->preset];
+      *hue = gOptionMenu_HuePresets[work->preset];
+      *brightness = gOptionMenu_BrightnessPresets[work->preset];
       continue;
     }
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = 0;
-      AudioCommand_PlayFar(112);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
       result = -1;
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(111);
-      page--;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      selectedOption--;
       redraw = 1;
     } else if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(111);
-      page++;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      selectedOption++;
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(111);
-        work->option[page]--;
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        work->option[selectedOption]--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(111);
-        work->option[page]++;
+        AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+        work->option[selectedOption]++;
         redraw = 1;
       }
     }
   }
 
-  UiWork_Finalize(win, 2);
-  UiWork_Finalize(icon, 2);
+  UiWork_Finalize(helpWindow, 2);
+  UiWork_Finalize(settingsWindow, 2);
   if (result == 0) {
     gGameState.paletteGlow[0] = work->option[0];
     gGameState.paletteGlow[1] = work->option[1];
@@ -7514,6 +7684,7 @@ void SystemMenu_AnimateCursor(void) {
 }
 
 // Allocates the system menu's work block and starts its per-frame callback.
+// The system menu shares the option workspace slot and cannot run concurrently.
 void SystemMenu_Initialize(void) {
   void *work;
   work = Runtime_AllocateBlock(20, 0x628);
@@ -7522,6 +7693,7 @@ void SystemMenu_Initialize(void) {
 }
 
 // Stops the system menu's per-frame callback and frees its work block.
+// Remove the frame callback before releasing its workspace.
 void SystemMenu_Release(void) {
   Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
   Runtime_ReleaseHeapBlock(0x14);
@@ -7537,10 +7709,10 @@ struct UiWindow *SystemMenu_Open(void) {
   s32 settingsOnly;
   s32 top;
   s32 height;
-  struct UiWindow *win;
+  struct UiWindow *window;
   s32 y;
-  s32 slot;
-  s32 msg;
+  s32 cacheSlot;
+  s32 labelMessage;
   s32 i;
   s32 x;
 
@@ -7560,47 +7732,50 @@ struct UiWindow *SystemMenu_Open(void) {
     top = 1;
     height = 19;
   }
-  win = UiWindow_Create(5, top, 20, height, 2);
+  window = UiWindow_Create(5, top, 20, height, 2);
   for (i = 1; i < rows; i++)
-    UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
+    UiWindow_DrawDividerLine(window, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
-    msg = MsgWorkspaceSaveQuest;
-    UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4);
-    msg++;
-    UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4 + WORKSPACE_ROW_HEIGHT);
+    labelMessage = MsgWorkspaceSaveQuest;
+    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, 4);
+    labelMessage++;
+    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X,
+                        4 + WORKSPACE_ROW_HEIGHT);
     y = 4 + 2 * WORKSPACE_ROW_HEIGHT;
   }
-  UiText_DrawResource(MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
+  UiText_DrawResource(MsgWorkspaceChangeSettings, window, WORKSPACE_TEXT_X, y);
   y += WORKSPACE_ROW_HEIGHT;
   if (gDebugMode != 0) {
-    msg = MsgWorkspaceRoughMenu;
-    UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
+    labelMessage = MsgWorkspaceRoughMenu;
+    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, y);
     y += WORKSPACE_ROW_HEIGHT;
-    UiText_DrawResource(msg + 1, win, WORKSPACE_TEXT_X, y);
+    UiText_DrawResource(labelMessage + 1, window, WORKSPACE_TEXT_X, y);
     y += WORKSPACE_ROW_HEIGHT;
-    msg += 2;
-    UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
+    labelMessage += 2;
+    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, y);
   }
-  slot = Resource_FindFreeEntry();
-  if (slot < RESOURCE_SLOTS) {
-    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
-    work->cursor.output = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
-    x = win->x * 8;
-    y = win->y * 8 + 16;
+  cacheSlot = Resource_FindFreeEntry();
+  if (cacheSlot < RESOURCE_SLOTS) {
+    VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
+    work->cursor.output =
+        RenderOutput_Create(cacheSlot, 0x40000000, window, 0, 0);
+    x = window->x * 8;
+    y = window->y * 8 + 16;
     ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
   }
   y = -4;
   for (i = 0; i < rows; i++) {
     work->icon[i] = RenderResource_CreateFrame(
-        gMenu_WorkspaceIconFrames[first + i], 0, win, 12, y);
+        gMenu_WorkspaceIconFrames[first + i], 0, window, 12, y);
     y += WORKSPACE_ROW_HEIGHT;
   }
-  return win;
+  return window;
 }
 
 // Runs the system menu until the player picks an entry (its number, counting
 // Save your quest as 0) or cancels with B or START (-1).
+// Adjust the result to the full entry table when only settings is visible.
 s32 Menu_RunWorkspaceSelectionLoop(void) {
   struct UiWindow *window;
   s32 redraw;
@@ -7610,14 +7785,14 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   s32 j;
   s32 rows;
   s32 settingsOnly;
-  s32 dim;
+  s32 dimmed;
   s32 y;
   s32 result;
-  s32 page;
-  s32 index;
+  s32 selectedEntry;
+  s32 resourceIndex;
   s32 x;
   s32 top;
-  s8 *table;
+  const s8 *iconFrames;
   struct RenderOutput *icon;
   struct WorkspaceWork *work;
 
@@ -7638,7 +7813,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   pair = RenderResource_CreatePair(6, window, 0x28, -0x18);
 #endif
   WaitFrames(1);
-  page = work->page;
+  selectedEntry = work->page;
   if (settingsOnly != 0) {
     rows = 1;
     first = 2;
@@ -7649,35 +7824,36 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   for (;;) {
     if (redraw != 0) {
       redraw = 0;
-      page = (page + rows) % rows;
-      work->page = page;
+      selectedEntry = (selectedEntry + rows) % rows;
+      work->page = selectedEntry;
       i = 0;
       if (i < rows) {
         j = first;
-        table = gMenu_WorkspaceIconFrames;
+        iconFrames = gMenu_WorkspaceIconFrames;
         do {
           icon = work->icon[i];
           icon->sentinel = 0xFB;
           UiIcon_PrepareObjectFar(icon);
-          index = (u8)icon->index;
-          dim = 0;
+          resourceIndex = (u8)icon->index;
+          dimmed = 0;
           if (i != work->page) {
-            dim = 1;
+            dimmed = 1;
           }
-          RenderResource_LoadFrame(*(s8 *)(j + (s32)table), index, dim);
+          RenderResource_LoadFrame(*(s8 *)(j + (s32)iconFrames), resourceIndex,
+                                   dimmed);
           i++;
           j++;
         } while (i < rows);
       }
       top = window->y;
       x = window->x * 8;
-      y = (((page * 3) + top) * 8) + 0x10;
+      y = (((selectedEntry * 3) + top) * 8) + 0x10;
       Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
     }
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      result = page;
+      result = selectedEntry;
       AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
     } else if (gKeysPressed & (KEY_B | KEY_START)) {
       result = -1;
@@ -7685,11 +7861,11 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     } else {
       if (gKeysRepeat & KEY_UP) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        page -= 1;
+        selectedEntry -= 1;
         redraw = 1;
       } else if (gKeysRepeat & KEY_DOWN) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        page += 1;
+        selectedEntry += 1;
         redraw = 1;
       }
       continue;
@@ -7708,19 +7884,21 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
 // Draws window tile pattern over the tile of tilemap entry *entry, with its
 // colours mapped through remap (0 leaves a pixel as it was). A shared tile
 // first gets a free tile of its own, which entry and mirror then point to.
+// Only nonzero remap entries replace pixels; shared tiles become private before
+// upload.
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                  u8 *remap) {
   struct UiRenderWork *work = UI_WORK;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
-  u32 slot = *(u8 *)entry;
+  u32 tile = *(u8 *)entry;
   u8 *src;
   u8 *dst;
   u32 n;
   u32 i;
 
   dst = pixels;
-  src = (u8 *)(0x06000000 + 32 * slot);
+  src = (u8 *)(0x06000000 + 32 * tile);
   for (i = 0; i < 32; i++) {
     n = *src++;
     *dst++ = n & 15;
@@ -7754,29 +7932,30 @@ void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     }
   }
 
-  if ((s8)slot >= 0) {
+  if ((s8)tile >= 0) {
     for (n = 0; n < 128; n++) {
       u32 value = work->tileCursor;
       u32 following = (value + 1) % 128;
 
-      slot = (u8)value;
+      tile = (u8)value;
       work->tileCursor = following;
-      if (work->tileAttributes[slot] == 0)
+      if (work->tileAttributes[tile] == 0)
         break;
     }
-    work->tileAttributes[slot] = 1;
-    slot |= 0x80;
-    *entry = slot | 0xf000;
-    *mirror = slot | 0xf000;
+    work->tileAttributes[tile] = 1;
+    tile |= 0x80;
+    *entry = tile | 0xf000;
+    *mirror = tile | 0xf000;
   }
-  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
+  Dma_Set(pixels, (void *)(0x06000000 + tile * 32), 0x84000008, REG_DMA3);
 }
 
 // Draws a string of 16-bit character codes with the window font into tiles
 // of their own, starting x pixels into the first tile, and points tiles (and
 // the same entries in mirror) at them. Colour codes change the text colour.
 // Returns how many tiles the text covers.
-s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
+// The canvas is eight rows of 256 pixels; the pen must stay within each row.
+s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's
    * extra bytes (the frame is 36 bytes without it). */
   u32 reserve[8];
@@ -7784,23 +7963,23 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   struct UiRenderWork *work;
   u8 *canvas;
   u8 *glyphs;
-  u32 attr;
+  u32 paletteBits;
   u32 *src;
   u8 *dst;
-  u32 c;
+  u32 glyphCode;
   u32 code;
-  s32 count;
-  u32 w;
-  s32 i;
-  s32 j;
+  s32 tileCount;
+  u32 glyphWidth;
+  s32 index;
+  s32 column;
   u32 bits;
 
   work = UI_WORK;
   canvas = MemAlloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
-  attr = work->level << 12;
+  paletteBits = work->level << 12;
   Iwram_ClearWords(pens, 16);
-  if (attr == 0xF000) {
+  if (paletteBits == 0xF000) {
     pens[1] = gUiText_ColourPens[work->colour & 15];
     pens[3] = 3;
     Iwram_FillWords(canvas, 0x800, 0x04040404);
@@ -7809,16 +7988,17 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
     pens[3] = 1;
     Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
   }
-  if (script != 0) {
+  // Expand glyph pixels and control-code colour changes into a byte canvas.
+  if (text != 0) {
     for (;;) {
-      c = *script++;
-      code = c;
-      if (c == 0)
+      glyphCode = *text++;
+      code = glyphCode;
+      if (glyphCode == 0)
         break;
-      if (c <= 30) {
-        switch (c) {
+      if (glyphCode <= 30) {
+        switch (glyphCode) {
         case 8:
-          work->colour = *script++;
+          work->colour = *text++;
           pens[1] = gUiText_ColourPens[work->colour & 15];
           break;
         case 7:
@@ -7837,29 +8017,30 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         case 14:
         case 15:
         case 28:
-          script++;
+          text++;
+          // Fall through: skip the second operand too.
         case 11:
         case 12:
         case 17:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         case 29:
 #endif
-          script++;
+          text++;
           break;
         }
       } else {
-        c &= 0xFF;
+        glyphCode &= 0xFF;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-        if (c == 222 || c == 223) {
+        if (glyphCode == 222 || glyphCode == 223) {
           x -= 3;
-          c += 32;
+          glyphCode += 32;
         }
 #endif
-        src = (u32 *)(glyphs + c * 32);
+        src = (u32 *)(glyphs + glyphCode * 32);
         dst = canvas + x;
-        for (i = 0; i < 8; i++) {
+        for (index = 0; index < 8; index++) {
           bits = *src++;
-          for (j = 0; j < 4; j++) {
+          for (column = 0; column < 4; column++) {
             u8 pen = pens[bits & 15];
 
             if (pen != 0)
@@ -7885,48 +8066,50 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           x += 3;
         else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-          if (c > 128) {
-            if (c == 254 || c == 255)
-              w = 3;
+          if (glyphCode > 128) {
+            if (glyphCode == 254 || glyphCode == 255)
+              glyphWidth = 3;
             else
-              w = 8;
+              glyphWidth = 8;
           } else
 #endif
-              if (c > 31)
-            w = gUiText_GlyphWidths[c - 32];
+              if (glyphCode > 31)
+            glyphWidth = gUiText_GlyphWidths[glyphCode - 32];
           else
-            w = 1;
-          x += w;
+            glyphWidth = 1;
+          x += glyphWidth;
         }
       }
     }
   }
 
-  count = (u32)(x + 7) >> 3;
+  // Pack each eight-pixel span back into the tile's four-bit colour fields.
+  tileCount = (u32)(x + 7) >> 3;
   src = (u32 *)canvas;
   dst = canvas;
-  for (i = 0; i < 8; i++) {
-    for (j = 0; j < count; j++) {
-      c = src[0];
+  for (index = 0; index < 8; index++) {
+    for (column = 0; column < tileCount; column++) {
+      glyphCode = src[0];
       bits = src[1];
-      c |= c << 4;
+      glyphCode |= glyphCode << 4;
       bits |= bits >> 4;
-      c &= 0x0FF00FF0;
+      glyphCode &= 0x0FF00FF0;
       bits &= 0x00FF00FF;
-      c |= c << 8;
+      glyphCode |= glyphCode << 8;
       bits |= bits >> 8;
       src += 2;
-      *(u32 *)dst = (c << 4) >> 16 | bits << 16;
+      *(u32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
       dst += 4;
     }
-    dst = dst - count * 4 + 0x100;
-    src = (u32 *)((u8 *)src - count * 8 + 0x100);
+    dst = dst - tileCount * 4 + 0x100;
+    src = (u32 *)((u8 *)src - tileCount * 8 + 0x100);
   }
 
-  for (i = 0; i < count; i++) {
+  // Reuse private text tiles, allocate any new ones, then upload each tile.
+  for (index = 0; index < tileCount; index++) {
     u32 mask = 127;
     u32 tile;
-    u32 *p;
+    u32 *vramTile;
 
     if (work->alt != 0)
       mask = 255;
@@ -7934,7 +8117,8 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
     if ((tile < 0x80 || tile > 0xFF) &&
         (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
       tile = work->tileCursor & mask;
-      for (j = 0; j <= mask && work->tileAttributes[tile] != 0; j++)
+      for (column = 0; column <= mask && work->tileAttributes[tile] != 0;
+           column++)
         tile = (tile + 1) & mask;
       work->tileCursor = (tile + 1) & mask;
       work->tileAttributes[tile] = 1;
@@ -7942,43 +8126,44 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         tile += 0x180;
       else
         tile |= 0x80;
-      *tiles = attr | tile;
-      *mirror = attr | tile;
+      *tiles = paletteBits | tile;
+      *mirror = paletteBits | tile;
     }
-    p = (u32 *)(0x06000000 + tile * 32);
-    *p++ = ((u32 *)canvas)[i];
-    *p++ = ((u32 *)canvas)[i + 0x40];
-    *p++ = ((u32 *)canvas)[i + 0x80];
-    *p++ = ((u32 *)canvas)[i + 0xC0];
-    *p++ = ((u32 *)canvas)[i + 0x100];
-    *p++ = ((u32 *)canvas)[i + 0x140];
-    *p++ = ((u32 *)canvas)[i + 0x180];
-    *p++ = ((u32 *)canvas)[i + 0x1C0];
+    vramTile = (u32 *)(0x06000000 + tile * 32);
+    *vramTile++ = ((u32 *)canvas)[index];
+    *vramTile++ = ((u32 *)canvas)[index + 0x40];
+    *vramTile++ = ((u32 *)canvas)[index + 0x80];
+    *vramTile++ = ((u32 *)canvas)[index + 0xC0];
+    *vramTile++ = ((u32 *)canvas)[index + 0x100];
+    *vramTile++ = ((u32 *)canvas)[index + 0x140];
+    *vramTile++ = ((u32 *)canvas)[index + 0x180];
+    *vramTile++ = ((u32 *)canvas)[index + 0x1C0];
     tiles++;
     mirror++;
   }
   MemFree(canvas);
-  return count;
+  return tileCount;
 }
 
 // Marks the text tiles under a tilemap rectangle (x, y, width and height in
 // tiles) as no longer shown, for reuse.
+// Only the dynamic text-tile ranges have allocation attributes to clear.
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
-  u32 alternate = ((struct UiRenderWork *)base)->alt;
+  u32 alternateTiles = ((struct UiRenderWork *)base)->alt;
   u32 row;
 
   for (row = 0; row < height; row++) {
     u32 column;
 
     for (column = 0; column < width; column++) {
-      u32 tile = *cursor++ & 0x3FF;
+      u32 tileId = *cursor++ & 0x3FF;
 
-      if ((tile - 0x80) <= 0x7F ||
-          (alternate != 0 && tile > 0x1FF && tile <= 0x27F)) {
-        u32 index = ((tile & 0xFF) ^ 0x80);
-        ((struct UiRenderWork *)base)->tileAttributes[index] &= 0xFC;
+      if ((tileId - 0x80) <= 0x7F ||
+          (alternateTiles != 0 && tileId > 0x1FF && tileId <= 0x27F)) {
+        u32 attributeIndex = ((tileId & 0xFF) ^ 0x80);
+        ((struct UiRenderWork *)base)->tileAttributes[attributeIndex] &= 0xFC;
       }
     }
     cursor += 32 - width;
@@ -7990,19 +8175,19 @@ void UiWindow_MarkVisibleTileAttributes(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
   s32 width = 30;
-  u32 alternate = ((struct UiRenderWork *)base)->alt;
+  u32 alternateTiles = ((struct UiRenderWork *)base)->alt;
   s32 row;
   s32 x;
 
   for (row = 20; row != 0; row--) {
     for (x = 0; x < width; x++) {
-      u32 tile = *cursor++ & 0x3ff;
+      u32 tileId = *cursor++ & 0x3ff;
 
-      if ((tile - 0x80) <= 0x7f ||
-          (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
-        u32 index = ((tile & 0xff) ^ 0x80);
+      if ((tileId - 0x80) <= 0x7f ||
+          (alternateTiles != 0 && tileId > 0x1ff && tileId <= 0x27f)) {
+        u32 attributeIndex = ((tileId & 0xff) ^ 0x80);
 
-        ((struct UiRenderWork *)base)->tileAttributes[index] |= 2;
+        ((struct UiRenderWork *)base)->tileAttributes[attributeIndex] |= 2;
       }
     }
   }
@@ -8015,33 +8200,34 @@ void UiWindow_MarkVisibleTileAttributes(void) {
 
 // Frees every text tile, and with flag set lets text tiles take the second
 // tile range (0x200 to 0x27f) too.
-void UiWork_SetAltFlagAndClearTable(s32 flag) {
+// The second range extends text capacity from 128 to 256 tiles.
+void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   s32 i;
   s32 j;
-  s8 *p;
-  s8 *q;
+  s8 *attributes;
+  s8 *tileAttributes;
   u8 *work;
 
   work = gWindowWork[0];
-  if (flag != 0) {
+  if (allowAlternateTiles != 0) {
     ((struct UiRenderWork *)work)->alt = 1;
-    flag = 0;
+    allowAlternateTiles = 0;
     for (i = 0x80,
-        p = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80;
+        attributes = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80;
          i <= 0xFF; i += 1) {
-      *p = flag;
-      p += 1;
+      *attributes = allowAlternateTiles;
+      attributes += 1;
     }
     return;
   }
   ((struct UiRenderWork *)work)->alt = 0;
-  flag = 0;
-  q = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80;
+  allowAlternateTiles = 0;
+  tileAttributes = (s8 *)((struct UiRenderWork *)work)->tileAttributes + 0x80;
   j = 0x7F;
   do {
     j -= 1;
-    *q = flag;
-    q += 1;
+    *tileAttributes = allowAlternateTiles;
+    tileAttributes += 1;
   } while (j >= 0);
 }
 
@@ -8268,15 +8454,9 @@ void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
   }
 }
 
-// Draws a byte string into a text canvas window at pixel (x, y).
-void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
-  s16 *buffer;
-  s16 *output;
-  const u8 *input;
-
-  input = text;
-  buffer = Runtime_BumpAllocateAlternatePool(0x200);
-  output = buffer;
+// Copies a zero-terminated byte string into the text renderer's halfwords.
+// The destination needs one halfword per input byte, including the terminator.
+static __inline__ void UiText_WidenByteString(const u8 *input, u16 *output) {
   if (*input != 0) {
     do {
       *output = *input;
@@ -8285,16 +8465,29 @@ void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
     } while (*input != 0);
   }
   *output = 0;
+}
+
+// Draws a byte string into a text canvas window at pixel (x, y).
+// The 256-halfword scratch requires at most 255 input bytes before the
+// terminator.
+void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
+  s16 *buffer;
+  const u8 *input;
+
+  input = text;
+  buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
+  UiText_WidenByteString(input, (u16 *)buffer);
   UiText_RenderWideStringAtOffset((u16 *)buffer, window, x, y);
   MemFree(buffer);
 }
 
 // Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
 // its interior.
+// The conversion scratch has the same 255-byte input limit as
+// UiText_DrawString.
 void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
                                s32 offsetX, s32 offsetY) {
   s16 *buffer;
-  s16 *output;
   struct UiRenderWork *canvas;
   u32 cell;
   s32 vram;
@@ -8302,17 +8495,9 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
   s32 dst;
   s32 phase;
 
-  buffer = Runtime_BumpAllocateAlternatePool(0x200);
+  buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
   canvas = UI_WORK;
-  output = buffer;
-  if (*text != 0) {
-    do {
-      *output = *text;
-      text++;
-      output++;
-    } while (*text != 0);
-  }
-  *output = 0;
+  UiText_WidenByteString(text, (u16 *)buffer);
 
   cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
          (work->x + ((u32)offsetX >> 3)) + 1;
@@ -8329,17 +8514,12 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
 
 // Draws a byte string into a window's tilemap at pixel (x, y) of its
 // interior, rounded down to tiles.
+// Bytes widen to character codes; pixel coordinates round down to tile
+// coordinates.
 void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
                                u32 y) {
-  u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
-  u16 *output = buffer;
-
-  while (*text != 0) {
-    *output = *text;
-    text++;
-    output++;
-  }
-  *output = 0;
+  u16 *buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
+  UiText_WidenByteString(text, buffer);
   x >>= 3;
   y >>= 3;
   UiText_RenderWideStringInWindow((s16 *)buffer, window, x, y);
@@ -8350,29 +8530,30 @@ void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
 // pixel (x, y).
 void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
                        s32 y) {
-  u8 data[16];
+  u8 numberText[UI_NUMBER_BUFFER_SIZE];
 
-  UiText_DrawString(UiText_FormatNumber(data, value, width), window, x, y);
+  UiText_DrawString(UiText_FormatNumber(numberText, value, width), window, x,
+                    y);
 }
 
 // Draws a number (width as UiText_FormatNumber) as tiles in a window at pixel
 // (x, y) of its interior.
 void UiText_DrawNumberAtOffset(s32 value, s32 width,
                                const struct UiWindow *window, s32 x, s32 y) {
-  u8 data[16];
+  u8 numberText[UI_NUMBER_BUFFER_SIZE];
 
-  UiText_DrawStringAtOffset(UiText_FormatNumber(data, value, width), window, x,
-                            y);
+  UiText_DrawStringAtOffset(UiText_FormatNumber(numberText, value, width),
+                            window, x, y);
 }
 
 // Draws a number (width as UiText_FormatNumber) into a window's tilemap at
 // pixel (x, y) of its interior.
 void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                                s32 x, s32 y) {
-  u8 data[16];
+  u8 numberText[UI_NUMBER_BUFFER_SIZE];
 
-  UiText_DrawStringInWindow(UiText_FormatNumber(data, value, width), window, x,
-                            y);
+  UiText_DrawStringInWindow(UiText_FormatNumber(numberText, value, width),
+                            window, x, y);
 }
 
 // Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
@@ -8380,7 +8561,7 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
 // (offsetX, offsetY) of its interior.
 void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
-  u8 formatted[16];
+  u8 formatted[UI_NUMBER_BUFFER_SIZE];
   s16 output[8];
   u8 *text;
   s32 index;

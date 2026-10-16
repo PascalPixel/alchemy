@@ -86,7 +86,6 @@
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
-#define FIELD_WEATHER_PARTICLE_COUNT 32
 
 // Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -3156,44 +3155,6 @@ void DisplayScroll_DisarmHBlankDma(void) {
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];
   (void)dma0[5];
 }
-
-// One small sprite of a field weather effect (ground particles, motes or
-// sparkles): its OAM attributes, then its place in the world.
-struct GroundParticle {
-  u8 unk00[4]; // cleared with the attributes; never read here
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 attr3[2]; // OAM attribute 3, cleared with the others
-  s32 posX;    // world position, 16.16 pixels
-  s32 posY;    // the ground's height there
-  s32 posZ;
-  s32 delay; // motes: how far it has risen; sparkles: its place in a burst
-  u16 timer; // frames left; 0 frees the particle
-};
-
-STATIC_ASSERT(offsetof(struct GroundParticle, posX) == 0x0c);
-STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
-
-// Work slot 29 while a field weather effect runs.
-struct GroundParticleWork {
-  s32 entry;    // the resource entry holding the effect's tiles
-  s32 tileBase; // their first tile in VRAM
-  struct GroundParticle particles[FIELD_WEATHER_PARTICLE_COUNT];
-  s32 unk408;  // never used here
-  s32 stopped; // sparkles: no new bursts while set
-};
-
-STATIC_ASSERT(sizeof(struct GroundParticleWork) == 0x410);
 
 // Scheduler callback: animates the ground particles. Each plays a 16-frame
 // animation (gFieldFx_GroundParticleFrames, 5 halfwords a frame: x and y

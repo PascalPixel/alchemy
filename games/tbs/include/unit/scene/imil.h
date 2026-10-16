@@ -8,22 +8,12 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-typedef struct {
-  u8 filler0[8];
-  s32 unk8;
-  s32 unkC;
-  s32 unk10;
-  u8 filler14[80];
-  u16 unk64;
-  s16 unk66;
-} CountdownArcObject;
-
-const struct SceneEntrance *Scene_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *Imil_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Imil_ApplyEntryState(void);
+const struct SceneEntrance *Imil_GetEntrances(void);
+struct SceneRegion *Imil_GetRegions(void);
+u32 *Imil_GetExits(void);
+const struct ScenePlacement *Imil_GetPlacements(void);
+const struct SceneEvent *Imil_GetEvents(void);
+s32 Imil_Initialize(void);
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
 extern s32 gImilPlacementData[];
@@ -38,7 +28,7 @@ extern s32 gImil_PrimaryScript[];
 extern s32 gImil_PrimaryScript2[];
 extern struct SceneEntrance gImilEntrancesOther[];
 extern struct SceneEntrance gImilEntrances2[];
-extern u32 gImil_SceneTable[];
+extern u32 gImil_Exits[];
 extern struct ScenePlacement gImilPlacements[];
 extern struct ScenePlacement gImilPlacementsFlag881[];
 extern struct ScenePlacement gImilPlacements2[];

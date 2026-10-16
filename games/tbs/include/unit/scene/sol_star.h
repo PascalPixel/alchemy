@@ -24,7 +24,7 @@ extern u16 gSolStar_StarCells[];
 extern u8 gSol_RingDrift[][3];
 extern u8 gSol_RingSwing[][3];
 extern s8 gSol_RingDirection[][3];
-extern s32 gSol_RingOffsetX[];
-extern s32 gSol_RingOffsetZ[];
+extern s32 gSolRing_MaxScales[];
+extern s32 gSolRing_ScaleSteps[];
 
 #endif

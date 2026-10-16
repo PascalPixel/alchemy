@@ -11,6 +11,7 @@
 #include "dma.h"
 #include "io_reg.h"
 
+// Legacy actor view used only while setting up the sprite flags.
 struct SolRingObject {
   u8 pad00[8];
   s32 x;
@@ -30,7 +31,7 @@ struct SolRingObject {
 };
 
 struct SolRingEntry {
-  struct SolRingObject *obj;
+  struct FieldActor *obj;
   s32 x;
   s32 y;
   s32 z;
@@ -49,6 +50,7 @@ struct SolRingList {
   u16 count;
 };
 
+// Pulse each Elemental Star's scale and move it through its drifting orbit.
 static void Sol_UpdateRing(void) {
   struct SolRingList *list = Runtime_AllocateBlock(33, 404);
   struct SolRingEntry *entry = list->entries;
@@ -56,7 +58,7 @@ static void Sol_UpdateRing(void) {
 
   i = 0;
   while (i != list->count) {
-    struct SolRingObject *obj;
+    struct FieldActor *obj;
     s32 speedX;
     s32 speedY;
     s32 speedZ;
@@ -89,18 +91,18 @@ static void Sol_UpdateRing(void) {
       timer = 3;
       if (hold == 0) {
         scale += step;
-        if (scale >= gSol_RingOffsetX[i]) {
-          step = -gSol_RingOffsetZ[i];
+        if (scale >= gSolRing_MaxScales[i]) {
+          step = -gSolRing_ScaleSteps[i];
         } else if (scale <= 0x1999) {
-          step = gSol_RingOffsetZ[i];
+          step = gSolRing_ScaleSteps[i];
           scale = 0x1999;
           hold = 24;
-          x = obj->x;
-          y = obj->y;
-          z = obj->z;
-          obj->x = 0;
-          obj->y = 0;
-          obj->z = 0;
+          x = obj->x.fixed;
+          y = obj->y.fixed;
+          z = obj->z.fixed;
+          obj->x.fixed = 0;
+          obj->y.fixed = 0;
+          obj->z.fixed = 0;
         }
         obj->scaleX = scale;
         obj->scaleY = scale;
@@ -139,24 +141,24 @@ static void Sol_UpdateRing(void) {
           y += dy;
           z += dz;
           if (--hold == 0) {
-            obj->x = x;
-            obj->baseX = x;
+            obj->x.fixed = x;
+            obj->targetX = x;
             if (ry != 0) {
-              obj->y = y;
-              obj->baseY = y;
+              obj->y.fixed = y;
+              obj->targetY = y;
             }
-            obj->z = z;
-            obj->baseZ = z;
+            obj->z.fixed = z;
+            obj->targetZ = z;
           }
         } else {
-          obj->x += dx;
-          obj->baseX = obj->x;
+          obj->x.fixed += dx;
+          obj->targetX = obj->x.fixed;
           if (ry != 0) {
-            obj->y += dy;
-            obj->baseY = obj->y;
+            obj->y.fixed += dy;
+            obj->targetY = obj->y.fixed;
           }
-          obj->z += dz;
-          obj->baseZ = obj->z;
+          obj->z.fixed += dz;
+          obj->targetZ = obj->z.fixed;
         }
       }
     }
@@ -175,7 +177,12 @@ static void Sol_UpdateRing(void) {
   }
 }
 
+// Start the shared floating-star animation for a consecutive group of actors.
 void SolStar_SetupElementalRings(s32 first, u32 count) {
+  /* FAKEMATCH: the legacy scalar setup view keeps the sprite-flags address
+   * calculation before the ring-entry store. Using FieldActor and
+   * AnimationObject directly swaps those two instructions. The animation
+   * callback uses FieldActor normally. */
   struct SolRingList *list;
   struct SolRingEntry *entry;
   struct SolRingObject *obj;
@@ -197,13 +204,13 @@ void SolStar_SetupElementalRings(s32 first, u32 count) {
       {
         u8 *frame = &obj->anim[38];
 
-        entry->obj = obj;
+        entry->obj = (struct FieldActor *)obj;
         *frame = cleared;
       }
       obj->state = cleared;
       Engine_ObjectSetBlendMode(Object_GetById(first), 1);
-      entry->scale = gSol_RingOffsetX[i];
-      entry->scaleStep = -gSol_RingOffsetZ[i];
+      entry->scale = gSolRing_MaxScales[i];
+      entry->scaleStep = -gSolRing_ScaleSteps[i];
       entry->timer = 3;
       i++;
       entry++;

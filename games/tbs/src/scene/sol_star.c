@@ -2294,12 +2294,12 @@ s8 gSol_RingDirection[][3] = {
     { -1, 0, -1 },
 };
 
-s32 gSol_RingOffsetX[] = {
+s32 gSolRing_MaxScales[] = {
     0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
     0x9999, 0xb333,
 };
 
-s32 gSol_RingOffsetZ[] = {
+s32 gSolRing_ScaleSteps[] = {
     655, 458, 655, 458, 655, 458, 655, 655,
     524, 655,
 };

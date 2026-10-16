@@ -4,24 +4,24 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetActorTable(void);
-u8 *SceneData_GetEffectTable(void);
-s32 SolEruption_RunHostageSceneOnEntranceTen(void);
+struct SceneEntrance *SolEruption_GetEntrances(void);
+struct SceneRegion *SolEruption_GetRegions(void);
+u32 *SolEruption_GetExits(void);
+struct ScenePlacement *SolEruption_GetPlacements(void);
+struct SceneEvent *SolEruption_GetEvents(void);
+s32 SolEruption_Initialize(void);
 extern s32 gEruption_ArcOriginsHead[];
 extern s32 gEruption_ArcOrigins[];
-extern struct SceneEntrance gPlacement_Scripts[];
-extern u32 gPlacement_Messages[];
-extern struct ScenePlacement gPlacement_Actors[];
-extern struct SceneEvent gPlacement_Effects[];
+extern struct SceneEntrance gSolEruption_Entrances[];
+extern u32 gSolEruption_Exits[];
+extern struct ScenePlacement gSolEruption_Placements[];
+extern struct SceneEvent gSolEruption_Events[];
 extern u16 gSolEruption_StarCells[];
 extern s32 gEruption_EmberScript[];
 extern u8 gSol_RingDrift[][3];
 extern u8 gSol_RingSwing[][3];
 extern s8 gSol_RingDirection[][3];
-extern s32 gSol_RingOffsetX[];
-extern s32 gSol_RingOffsetZ[];
+extern s32 gSolRing_MaxScales[];
+extern s32 gSolRing_ScaleSteps[];
 
 #endif

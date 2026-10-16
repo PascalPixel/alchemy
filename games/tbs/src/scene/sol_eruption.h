@@ -15,22 +15,7 @@ enum CollapseActor {
 
 #include "facing_object.h"
 
-typedef struct {
-  u8 filler0[8];
-  s32 unk8;
-  u8 fillerC[4];
-  s32 unk10;
-  u8 filler14[16];
-  s32 unk24;
-  u8 filler28[4];
-  s32 unk2C;
-  u8 filler30[8];
-  s32 unk38;
-  u8 filler3C[4];
-  s32 unk40;
-} ViewCenter;
-
-extern u8 *gParticleWork[];
+#include "object_effect.h"
 
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;

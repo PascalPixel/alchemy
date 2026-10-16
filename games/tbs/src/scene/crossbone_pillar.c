@@ -40,17 +40,14 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "heap_state.h"
+#include "field_runtime.h"
+#include "object_effect.h"
+#include "fixed_math.h"
+#include "flags.h"
 
-#define NULL ((void *)0)
-#define REC_ID 16
-#define QUERY_FLAG 0x200
-
-struct PillarWork {
-  u8 unk00[24];
-  struct FieldActor *rider;
-};
-
-#define PILLAR_WORK (*(struct PillarWork **)&gWorkSlot[36])
+#define WATER_ACTOR 16
+// Room 3: the water has been raised.
+#define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
 
 struct MapCellFields {
   u32 tile : 12;
@@ -58,11 +55,6 @@ struct MapCellFields {
   u8 kind : 2;
   u8 height;
   u8 event;
-};
-
-struct MapLayer_2 {
-  struct MapCellFields *cells;
-  u8 pad04[44];
 };
 
 // Shared source is included here in ROM order.
@@ -73,58 +65,64 @@ struct MapLayer_2 {
 // Shared source is included here in ROM order.
 #include "common/map_panel.h"
 
-static void OverlayObject_WaitUntilSettledAndReset(u8 *obj) {
-  s32 cnt = 60;
+// Wait up to sixty frames for landing, then stop vertical movement on the
+// ground.
+static void CrossbonePillar_SettleActorOnGround(struct FieldActor *actor) {
+  s32 remainingFrames = 60;
 
   for (;;) {
-    if (cnt == 0) {
+    if (remainingFrames == 0) {
       break;
     }
     Engine_TaskWait(1);
-    if (*(u32 *)(obj + 12) == *(u32 *)(obj + 20)) {
+    if ((u32)actor->y.fixed == (u32)actor->terrainHeight) {
       break;
     }
-    cnt--;
+    remainingFrames--;
   }
 
-  *(u32 *)(obj + 0x28) = 0;
-  *(u32 *)(obj + 0x3c) = 0x80000000;
-  *(u32 *)(obj + 12) = *(u32 *)(obj + 20);
+  actor->velocityY = 0;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->y.fixed = actor->terrainHeight;
 }
 
-static void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit) {
-  s32 cnt = 60;
+// Wait until the actor reaches the ground or height limit, then stop its
+// descent.
+static void CrossbonePillar_StopAtGroundOrHeight(struct FieldActor *actor,
+                                                 s32 limit) {
+  s32 remainingFrames = 60;
 
   for (;;) {
-    if (cnt == 0) {
+    if (remainingFrames == 0) {
       break;
     }
     Engine_TaskWait(1);
-    if (obj->y.fixed <= obj->terrainHeight) {
+    if (actor->y.fixed <= actor->terrainHeight) {
       break;
     }
-    if (obj->y.fixed <= limit) {
+    if (actor->y.fixed <= limit) {
       break;
     }
-    cnt--;
+    remainingFrames--;
   }
 
-  obj->velocityY = 0;
-  obj->targetY = 0x80000000;
+  actor->velocityY = 0;
+  actor->targetY = ACTOR_NO_TARGET;
 }
 
-static s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth,
+// Find the actor's footprint dimensions, grid position, and map-layer origin.
+static s32 CrossbonePillar_QueryFootprint(s32 id, u32 *width, u32 *depth,
                                           struct StagedActorProbe *probe,
-                                          s32 *left, s32 *top) {
-  u8 *map = gMapWork[0];
-  struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);
+                                          s32 *layerOriginX,
+                                          s32 *layerOriginZ) {
+  struct MapScrollWork *map = gMapWork[0];
+  struct FieldActor *actor = Object_GetById(id);
   u32 i;
-  s32 a;
-  s32 b;
+  s32 coordinate;
+  s32 farExtent;
 
   for (i = 0; i <= 5; i++) {
-    if (actor->animation->entries[0]->animId ==
-        gStagedActor_FootprintKinds[i]) {
+    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[i]) {
       probe->footprintIndex = i;
       break;
     }
@@ -133,100 +131,122 @@ static s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth,
   if ((u32)probe->footprintIndex > 6) {
     return 0;
   }
-  probe->positionX = actor->x.value;
-  probe->positionY = actor->y;
-  probe->positionZ = actor->z.value;
-  a = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
-  if (a < 0) {
-    a = -a;
+  // Bounds are pixel offsets; dimensions and origins below are 16-pixel cells.
+  probe->positionX = actor->x.fixed;
+  probe->positionY = actor->y.fixed;
+  probe->positionZ = actor->z.fixed;
+  coordinate = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
+  if (coordinate < 0) {
+    coordinate = -coordinate;
   }
-  b = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
-  if (b < 0) {
-    b = -b;
+  farExtent = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
+  if (farExtent < 0) {
+    farExtent = -farExtent;
   }
-  *depth = (a + b) >> 4;
-  a = gStagedActor_FootprintBounds[probe->footprintIndex * 4];
-  if (a < 0) {
-    a = -a;
+  *depth = (coordinate + farExtent) >> 4;
+  coordinate = gStagedActor_FootprintBounds[probe->footprintIndex * 4];
+  if (coordinate < 0) {
+    coordinate = -coordinate;
   }
-  b = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
-  if (b < 0) {
-    b = -b;
+  farExtent = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
+  if (farExtent < 0) {
+    farExtent = -farExtent;
   }
-  *width = (a + b) >> 4;
-  probe->positionX += gStagedActor_FootprintBounds[probe->footprintIndex * 4]
-                      << 16;
+  *width = (coordinate + farExtent) >> 4;
+  // Move from the actor's center to the footprint's top-left cell.
+  probe->positionX +=
+      gStagedActor_FootprintBounds[probe->footprintIndex * 4] * PIXELS(1);
   {
-    s32 step = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1]
-               << 16;
+    s32 offsetZ =
+        gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] * PIXELS(1);
 
-    a = probe->positionZ;
-    a += step;
-    a >>= 20;
-    probe->positionZ = a;
+    coordinate = probe->positionZ;
+    coordinate += offsetZ;
+    coordinate >>= 20;
+    probe->positionZ = coordinate;
   }
   probe->positionX >>= 20;
-  *left = *(s32 *)(map + 0x13c) >> 20;
-  *top = *(s32 *)(map + 0x140) >> 20;
+  *layerOriginX = map->layers[1].offsetX >> 20;
+  *layerOriginZ = map->layers[1].offsetY >> 20;
   return 1;
 }
 
-static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no) {
-  struct FieldActor *obj = Object_GetById(no);
-  u32 out20, out16;
-  s32 out12, out8;
-  s32 rec[6];
-  s32 r2, r4;
+// Draw the raised pillar's footprint and put its actor under the leader.
+static s32 CrossbonePillar_DrawRaisedFootprint(s32 actorId) {
+  struct FieldActor *actor = Object_GetById(actorId);
+  u32 width, depth;
+  s32 layerOriginX, layerOriginZ;
+  struct StagedActorProbe probe;
+  s32 cellX, cellZ;
   u8 mask;
 
-  if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) ==
-      0) {
+  if (CrossbonePillar_QueryFootprint(actorId, &width, &depth, &probe,
+                                     &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
-  r2 = rec[2];
-  r4 = rec[4];
-  Map_CopyCellAttributes(2, 2, out20, out16, r2, r4);
+  cellX = probe.positionX;
+  cellZ = probe.positionZ;
+  Map_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  Object_SetMode(obj, 4);
+  Object_SetMode(actor, 4);
   mask = 2;
-  obj->priorityFlags |= mask;
+  actor->priorityFlags |= mask;
 
-  if (out20 > out16) {
-    Map_CopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+  if (width > depth) {
+    Map_CopyCellsTo(70, 40, probe.positionX + 32, probe.positionZ + 2, width,
+                    depth);
   } else {
-    Map_CopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+    Map_CopyCellsTo(68, 40, probe.positionX + 32, probe.positionZ + 2, width,
+                    depth);
   }
 
   return 1;
 }
 
-static s32 SceneActor_ApplyPlacementQuery(u8 *no) {
-  struct FieldActor *obj = Object_GetById(no);
-  s32 out20, out16, out12, out8;
-  s32 rec[6];
+// Redraw all seven pillars at the raised water level.
+static inline void CrossbonePillar_DrawRaisedPillars(void) {
+  CrossbonePillar_DrawRaisedFootprint(9);
+  CrossbonePillar_DrawRaisedFootprint(10);
+  CrossbonePillar_DrawRaisedFootprint(11);
+  CrossbonePillar_DrawRaisedFootprint(12);
+  CrossbonePillar_DrawRaisedFootprint(13);
+  CrossbonePillar_DrawRaisedFootprint(14);
+  CrossbonePillar_DrawRaisedFootprint(15);
+}
 
-  if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) ==
-      0) {
+// Restore the ground tiles and collision attributes under the actor's
+// footprint.
+static s32 CrossbonePillar_RestoreGroundFootprint(s32 actorId) {
+  struct FieldActor *actor = Object_GetById(actorId);
+  u32 width, depth;
+  s32 layerOriginX, layerOriginZ;
+  struct StagedActorProbe probe;
+
+  if (CrossbonePillar_QueryFootprint(actorId, &width, &depth, &probe,
+                                     &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
   {
-    s32 x = out12 + rec[2];
-    s32 z = out8 + rec[4];
+    s32 sourceCellX = layerOriginX + probe.positionX;
+    s32 sourceCellZ = layerOriginZ + probe.positionZ;
 
-    Map_CopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
-    StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16,
-                                           255);
+    Map_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
+                           probe.positionX, probe.positionZ);
+    StagedActor_FillGridAttributeRectangle(0, probe.positionX, probe.positionZ,
+                                           width, depth, 255);
   }
 
-  Object_SetMode(obj, 1);
-  obj->priorityFlags &= 0xfd;
+  Object_SetMode(actor, 1);
+  actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 
   return 1;
 }
 
-static void CrossbonePillar_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst) {
+// Read one map cell through DMA, waiting until the transfer finishes.
+static void CrossbonePillar_ReadMapCell(s32 layer, s32 x, s32 y,
+                                        struct MapCellFields *dst) {
   struct MapState *map = gMapWork[0];
 
   if (map != 0) {
@@ -243,6 +263,7 @@ static void CrossbonePillar_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst) {
   }
 }
 
+// Copy the cell's layer, kind, height, and event without replacing its tile.
 static void CrossbonePillar_SetCellAttributes(s32 layer, s32 x, s32 y,
                                               struct MapCell *source) {
   struct MapCellFields *src = (struct MapCellFields *)source;
@@ -261,10 +282,12 @@ static void CrossbonePillar_SetCellAttributes(s32 layer, s32 x, s32 y,
   }
 }
 
+// Find the next terrain ledge and stop the falling actor at its projected
+// height.
 static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far) {
   struct FieldActor *actor = Object_GetById(id);
   s32 found;
-  s32 object;
+  struct FieldActor *temporaryActor;
   s32 height;
   s32 level;
   s32 top;
@@ -276,10 +299,10 @@ static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far) {
   s32 kind;
 
   found = 0;
-  object = found;
+  temporaryActor = NULL;
   Engine_ActorSetSpriteFlags(actor, found);
   height = Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
-  level = height / 0x100000;
+  level = height / PIXELS(16);
   rows = level;
   if (level < 0) {
     rows = -level;
@@ -288,17 +311,17 @@ static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far) {
   for (row = 0; row <= rows; row++) {
     top = Map_GetTerrainHeight(actor->terrainId, actor->x.fixed,
                                (row << 20) + actor->z.fixed);
-    top /= 0x100000;
+    top /= PIXELS(16);
     if (level < top) {
-      x = ((actor->x.fixed >> 20) << 20) + 0x80000;
+      x = ((actor->x.fixed >> 20) << 20) + PIXELS(8);
       if (far == 0) {
         row += 2;
-        z = ((row + (actor->z.fixed >> 20)) << 20) + 0x20000;
+        z = ((row + (actor->z.fixed >> 20)) << 20) + PIXELS(2);
         y = top << 20;
         kind = 223;
       } else {
         row += 3;
-        z = ((row + (actor->z.fixed >> 20)) << 20) - 0x20000;
+        z = ((row + (actor->z.fixed >> 20)) << 20) - PIXELS(2);
         y = top << 20;
         kind = 253;
       }
@@ -307,139 +330,145 @@ static s32 CrossbonePillar_LowerActorToLedge(s32 id, s32 far) {
        * differ 2; with height computed before the call it reallocates the
        * function (differ 99, tbs-en). */
       do {
-        object = OverlayObject_PrepareObject(x, y, z, kind);
+        temporaryActor = OverlayObject_PrepareObject(x, y, z, kind);
         height = actor->z.fixed - z + y;
       } while (0);
       found = 1;
       break;
     }
   }
-  SceneActor_WaitHeightBelowLimit(actor, height);
+  CrossbonePillar_StopAtGroundOrHeight(actor, height);
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
-  if (object != 0) {
-    Engine_ObjectDispatchRelease((void *)object);
+  if (temporaryActor != 0) {
+    Engine_ObjectDispatchRelease(temporaryActor);
   }
   return found;
 }
 
-static void StagedActor_StepDownUntilClamp(s32 index) {
-  struct FieldActor *obj = Object_GetById(index);
-  u32 cnt;
+// Shrink the pillar and lower its height for up to thirty-two frames.
+static void CrossbonePillar_ShrinkPillar(s32 index) {
+  struct FieldActor *actor = Object_GetById(index);
+  u32 elapsedFrames;
 
-  obj->motionFlags = 0;
+  actor->motionFlags = 0;
 
-  cnt = 0;
+  elapsedFrames = 0;
   for (;;) {
-    if (cnt > 31)
+    if (elapsedFrames > 31)
       return;
     Engine_TaskWait(1);
-    obj->scaleY += -0x1999;
-    obj->y.fixed += -0xcccc;
-    cnt++;
-    if (obj->scaleY <= 0x1998) {
-      obj->scaleY = 0x1999;
+    actor->scaleY += -Q16_ONE / 10;
+    actor->y.fixed += -PIXELS(4) / 5;
+    elapsedFrames++;
+    if (actor->scaleY <= Q16_ONE / 10 - 1) {
+      actor->scaleY = Q16_ONE / 10;
       return;
     }
   }
 }
 
-UNUSED static void FieldScene_RunPrimarySequence(void) {
+// Spawn the unused particle near the leader once every four frames.
+UNUSED static void CrossbonePillar_SpawnUnusedLeaderParticle(void) {
 
-  struct FieldActor *rec;
-  s32 flag;
-  s32 p6;
-  s32 p5;
-  s32 record;
-  s32 v1;
-  s32 v2;
-  s32 v3;
-  u8 *base;
-  u8 slot16[40];
+  struct FieldActor *leader;
+  s32 cycleFrame;
+  s32 x;
+  s32 z;
+  s32 velocityY;
+  s32 drawX;
+  s32 drawZ;
+  s32 drawY;
+  struct EffectOptions *settings;
+  struct EffectOptions options;
 
-  rec = Object_GetById(ACTOR_PARTY_LEADER);
-  flag = gFrameCount & 3;
-  if (flag == 0) {
-    base = slot16;
-    *(s32 *)(base + 4) = 10;
-    *(s32 *)(base + 8) = 0xb333;
-    *(s32 *)(base + 12) = 0xb333;
-    v1 = Engine_RandomNext();
-    p6 = rec->x.fixed + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
-    v2 = Engine_RandomNext();
-    p5 = rec->z.fixed + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
-    v3 = Engine_RandomNext();
-    record = Math_Divide((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
-    Effect_Spawn(p6, rec->y.fixed, p5, 0, record, flag, 0x90001, (s32)base);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  cycleFrame = gFrameCount & 3;
+  if (cycleFrame == 0) {
+    settings = &options;
+    settings->palette = 10;
+    settings->startScaleX = 7 * Q16_ONE / 10;
+    settings->startScaleY = 7 * Q16_ONE / 10;
+    drawX = Engine_RandomNext();
+    x = leader->x.fixed + ((((u32)((drawX << 4) + drawX) >> 16) - 8) << 16);
+    drawZ = Engine_RandomNext();
+    z = leader->z.fixed + ((((u32)((drawZ << 4) + drawZ) >> 16) - 8) << 16);
+    drawY = Engine_RandomNext();
+    velocityY = Math_Divide(
+        (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
+    Effect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
+                 EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
   }
 }
 
-static s32 FieldScene_RunScene3b3SequenceD(void) {
+// Jump two cells forward when both the intervening and landing cells permit it.
+static s32 CrossbonePillar_TryJumpAcrossPillar(void) {
   struct FieldActor *leader;
   u8 *flags;
-  s32 saved;
-  s32 mode;
+  s32 savedMotionFlags;
+  s32 jumpDirection;
 #if !TBS_PATCH_1
   s32 step;
 #endif
-  s32 *p;
-  s32 buf[3];
+  s32 *position;
+  s32 destination[3];
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
-  saved = *flags;
+  savedMotionFlags = *flags;
 #if TBS_PATCH_1
-  mode = (leader->facing + 0x2000) & 0xc000;
+  jumpDirection = (leader->facing + 0x2000) & 0xc000;
 #endif
   if (gGameState.movementMode != 0) {
     return 0;
   }
-  p = buf;
+  position = destination;
 #if TBS_PATCH_1
-  p[0] = (leader->x.fixed & -0x100000) + 0x80000;
-  p[1] = leader->y.fixed;
-  p[2] = (leader->z.fixed & -0x100000) + 0x80000;
-  Vector_AddPolarOffset(0x100000, mode, p);
+  position[0] = (leader->x.fixed & -0x100000) + PIXELS(8);
+  position[1] = leader->y.fixed;
+  position[2] = (leader->z.fixed & -0x100000) + PIXELS(8);
+  Vector_AddPolarOffset(PIXELS(16), jumpDirection, position);
 #else
-  mode = leader->facing >> 12;
-  step = gStagedActor_DirectionSteps[mode];
-  p[0] = leader->x.fixed + (step & 0xffff0000);
-  p[1] = leader->y.fixed;
+  jumpDirection = leader->facing >> 12;
+  step = gStagedActor_DirectionSteps[jumpDirection];
+  position[0] = leader->x.fixed + (step & 0xffff0000);
+  position[1] = leader->y.fixed;
   step <<= 16;
-  p[2] = leader->z.fixed + step;
+  position[2] = leader->z.fixed + step;
 #endif
-  if (FieldObject_CheckMovementCollision(leader, p) != 1 &&
-      StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0) {
+  // Require a free intervening cell before testing the two-cell landing.
+  if (FieldObject_CheckMovementCollision(leader, position) != 1 &&
+      StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0) {
 #if TBS_PATCH_1
-    p[0] = (leader->x.fixed & -0x100000) + 0x80000;
-    p[1] = leader->y.fixed;
-    p[2] = (leader->z.fixed & -0x100000) + 0x80000;
-    Vector_AddPolarOffset(0x200000, mode, p);
+    position[0] = (leader->x.fixed & -0x100000) + PIXELS(8);
+    position[1] = leader->y.fixed;
+    position[2] = (leader->z.fixed & -0x100000) + PIXELS(8);
+    Vector_AddPolarOffset(PIXELS(32), jumpDirection, position);
 #else
-    step = gStagedActor_DirectionSteps[mode];
-    p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
-    p[1] = leader->y.fixed;
+    step = gStagedActor_DirectionSteps[jumpDirection];
+    position[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
+    position[1] = leader->y.fixed;
     step <<= 17;
-    p[2] = leader->z.fixed + step;
+    position[2] = leader->z.fixed + step;
 #endif
-    if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0 &&
-        FieldObject_CheckMovementCollision(leader, p) == 0) {
+    if (StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0 &&
+        FieldObject_CheckMovementCollision(leader, position) == 0) {
       Engine_EventBegin();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(152);
       Object_SetMode(leader, 7);
-      leader->speed = 0x30000;
-      leader->acceleration = 0x20000;
-      leader->velocityY = 0x40000;
+      leader->speed = PIXELS(3);
+      leader->acceleration = PIXELS(2);
+      leader->velocityY = PIXELS(4);
       *flags &= 126;
       Engine_ActorSetSpriteFlags(leader, 0);
-      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1],
-                                ((s16 *)p)[5]);
+      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)position)[1],
+                                ((s16 *)position)[5]);
       Object_SetMode(leader, 6);
       Engine_ActorSetSpriteFlags(leader, 1);
-      *flags = saved;
+      *flags = savedMotionFlags;
       Engine_EventEnd();
       return 1;
     }
@@ -447,7 +476,9 @@ static s32 FieldScene_RunScene3b3SequenceD(void) {
   return 0;
 }
 
-static void FieldScene_RunScene3b3SequenceE(union FieldObject *object) {
+// Move the particle while damping its velocity, growing it, and advancing
+// rotation.
+static void CrossbonePillar_UpdateDampedParticle(union FieldObject *object) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
@@ -466,14 +497,16 @@ static void FieldScene_RunScene3b3SequenceE(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
+// Apply the actor timer's low four bits to its child sprite value.
 static s32
-SceneActor_ApplyCounterLowBitsAsMode(struct ScriptInterpreter *interpreter) {
-  u8 *actor = (u8 *)interpreter;
-  ObjectGroup_SetChildValue(actor, *(u16 *)(actor + 100) & 15);
+CrossbonePillar_SetChildValueFromTimer(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  ObjectGroup_SetChildValue(actor, actor->timer & 15);
   return 0;
 }
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
+// Select the entrance table for the current pillar room.
+const struct SceneEntrance *CrossbonePillar_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossbonePillar1) {
@@ -494,11 +527,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCrossbonePillarEntrancesOther;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+// These rooms have no separate region table.
+const struct SceneRegion *CrossbonePillar_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gCrossbonePillarExits; }
+// Return the shared exits for the pillar rooms.
+const u32 *CrossbonePillar_GetExits(void) { return gCrossbonePillarExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+// Select the actor placements for the current pillar room.
+const struct ScenePlacement *CrossbonePillar_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossbonePillar1) {
@@ -516,14 +552,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossbonePillarPlacementsOther;
 }
 
-static void EV10_SCRIPT_1(void) {
+// Try the two-cell jump before advancing the pushed actor pair.
+static void CrossbonePillar_JumpOrPushPillar(void) {
   Engine_EventBegin();
-  if (FieldScene_RunScene3b3SequenceD() == 0)
+  if (CrossbonePillar_TryJumpAcrossPillar() == 0)
     StagedActor_AdvancePair();
   Engine_EventEnd();
 }
 
-static void EV10_SCRIPT_2(void) {
+// Move the leader and redraw the selected pillar when a clear position exists.
+static void CrossbonePillar_MoveToClearPillar(void) {
   struct StagedActorProbe out;
 
   Engine_EventBegin();
@@ -531,6 +569,13 @@ static void EV10_SCRIPT_2(void) {
     SceneActor_MoveAndRedraw(out);
   Engine_EventEnd();
 }
+
+struct PillarPlacement {
+  s32 x;
+  s32 y;
+  s32 z;
+  struct MapCellFields cell;
+};
 
 struct PillarSlot {
   s32 x;
@@ -545,6 +590,8 @@ static s32 sProbePosition[3];
 static u8 sShakenScroll[12];
 static s32 sShakeChance;
 
+// Randomly substitute the shifted background scroll during the water
+// transition.
 static void CrossbonePillar_JitterBackgroundScroll(void) {
   u32 line = REG_VCOUNT;
   u32 *src = &((u32 *)gBgScroll)[1];
@@ -561,15 +608,17 @@ static void CrossbonePillar_JitterBackgroundScroll(void) {
   *reg = *src;
 }
 
-
 #define DMA3 ((volatile u32 *)0x040000d4)
 
+// Wait until the DMA channel clears its enable bit.
 static __inline__ void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & 0x80000000)
     ;
 }
 
-static void CopyAndOffsetCoordinatePreset(void) {
+// Copy the three background scroll pairs and shift their vertical offsets by
+// 192 pixels.
+static void CrossbonePillar_PrepareWaterScroll(void) {
   u32 *destination;
   const u32 *source;
   u16 *coordinates;
@@ -585,12 +634,14 @@ static void CopyAndOffsetCoordinatePreset(void) {
   coordinates[5] += 0xc0;
 }
 
-static void FieldScene_RunScene3b3SequenceA(void) {
-  s32 record;
+// Reveal the alternate water tiles through a gradually randomized scroll
+// transition.
+static void CrossbonePillar_AnimateWaterLevel(void) {
+  s32 waterRaised;
 
-  record = Engine_GameFlagIsSet(0x200);
-  if (record == 0) {
-    Map_DrawCellPanel(10, 19, 16, 5, record, 10, 31);
+  waterRaised = Engine_GameFlagIsSet(0x200);
+  if (waterRaised == 0) {
+    Map_DrawCellPanel(10, 19, 16, 5, waterRaised, 10, 31);
     Map_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
     Map_DrawCellPanel(42, 51, 16, 5, 2, 10, 31);
   } else {
@@ -598,8 +649,9 @@ static void FieldScene_RunScene3b3SequenceA(void) {
     Map_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
     Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
   }
+  // Increase the chance of showing the alternate scroll on each scanline.
   sShakeChance = 0;
-  FieldScheduler_AddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
+  FieldScheduler_AddCallback(CrossbonePillar_PrepareWaterScroll, 0xc80);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, CrossbonePillar_JitterBackgroundScroll);
   Engine_AudioPlayCue(231);
@@ -607,6 +659,7 @@ static void FieldScene_RunScene3b3SequenceA(void) {
   do {
     Engine_TaskWait(1);
   } while (++sShakeChance <= 100);
+  // Commit the water tiles, then remove both scroll callbacks.
   Engine_AudioPlayCue(0x121);
   if (Engine_GameFlagIsSet(0x200) == 0) {
     Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
@@ -618,71 +671,68 @@ static void FieldScene_RunScene3b3SequenceA(void) {
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
   Engine_TaskWait(1);
-  Engine_TaskRemoveCallback(CopyAndOffsetCoordinatePreset);
+  Engine_TaskRemoveCallback(CrossbonePillar_PrepareWaterScroll);
   Engine_MapRedraw();
   Engine_TaskWait(30);
 }
 
-static void EV20_SEARCH(void) {
-  u8 *queried;
-  struct FieldActor *record;
+// Toggle the room's water level and update the seven pillar footprints.
+static void CrossbonePillar_FlipWaterSwitch(void) {
+  s32 waterRaised;
+  struct FieldActor *water;
 
   Engine_EventBegin();
-  Camera_SetSpeed(0x10000, 0x2000);
-  Camera_MoveTo(0x1190000, -1, 0x1b00000, 1);
+  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  Camera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-  queried = GameFlag_IsSet(QUERY_FLAG);
-  if (queried == 0) {
+  waterRaised = GameFlag_IsSet(WATER_RAISED_FLAG);
+  // Raise or drain the water before updating the pillar collision footprints.
+  if (waterRaised == 0) {
     Event_PlayCue(232);
     Map_AnimateCells(gCrossbonePillar_ShiftSteps1, 84, 24);
     Engine_EventWait(30);
     Event_PlayCue(240);
-    Engine_ActorSetSpritePriority(REC_ID, 1);
-    Object_GetById(REC_ID)->motionFlags = queried;
-    record = Actor_Get(REC_ID);
-    record->y.fixed = -0x200000;
-    Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
-    Engine_ActorSetAnimation(REC_ID, 1);
+    Engine_ActorSetSpritePriority(WATER_ACTOR, 1);
+    Object_GetById(WATER_ACTOR)->motionFlags = waterRaised;
+    water = Actor_Get(WATER_ACTOR);
+    water->y.fixed = -PIXELS(32);
+    Actor_SetPosition(WATER_ACTOR, PIXELS(272), PIXELS(416));
+    Engine_ActorSetAnimation(WATER_ACTOR, 1);
     Map_AnimateCells(gCrossbonePillar_ShiftSteps3, 80, 24);
     Map_AnimateCells(gCrossbonePillar_ShiftSteps5, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
-    FieldScene_RunScene3b3SequenceA();
-    SceneActor_ApplyPlacementQueryAndTag(9);
-    SceneActor_ApplyPlacementQueryAndTag(10);
-    SceneActor_ApplyPlacementQueryAndTag(11);
-    SceneActor_ApplyPlacementQueryAndTag(12);
-    SceneActor_ApplyPlacementQueryAndTag(13);
-    SceneActor_ApplyPlacementQueryAndTag(14);
-    SceneActor_ApplyPlacementQueryAndTag(15);
+    CrossbonePillar_AnimateWaterLevel();
+    CrossbonePillar_DrawRaisedPillars();
     Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
-    GameFlag_Set(QUERY_FLAG);
+    GameFlag_Set(WATER_RAISED_FLAG);
   } else {
     Event_PlayCue(232);
     Map_AnimateCells(gCrossbonePillar_ShiftSteps2, 84, 24);
     Engine_EventWait(30);
     Event_PlayCue(230);
-    Object_GetById(REC_ID)->motionFlags = 0;
-    record = Actor_Get(REC_ID);
-    record->y.fixed = -0x200000;
-    Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
-    Engine_ActorSetAnimation(REC_ID, 2);
+    Object_GetById(WATER_ACTOR)->motionFlags = 0;
+    water = Actor_Get(WATER_ACTOR);
+    water->y.fixed = -PIXELS(32);
+    Actor_SetPosition(WATER_ACTOR, PIXELS(272), PIXELS(436));
+    Engine_ActorSetAnimation(WATER_ACTOR, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
     Map_AnimateCells(gCrossbonePillar_ShiftSteps4, 80, 24);
-    FieldScene_RunScene3b3SequenceA();
-    SceneActor_ApplyPlacementQuery(9);
-    SceneActor_ApplyPlacementQuery(10);
-    SceneActor_ApplyPlacementQuery(11);
-    SceneActor_ApplyPlacementQuery(12);
-    SceneActor_ApplyPlacementQuery(13);
-    SceneActor_ApplyPlacementQuery(14);
-    SceneActor_ApplyPlacementQuery(15);
+    CrossbonePillar_AnimateWaterLevel();
+    CrossbonePillar_RestoreGroundFootprint(9);
+    CrossbonePillar_RestoreGroundFootprint(10);
+    CrossbonePillar_RestoreGroundFootprint(11);
+    CrossbonePillar_RestoreGroundFootprint(12);
+    CrossbonePillar_RestoreGroundFootprint(13);
+    CrossbonePillar_RestoreGroundFootprint(14);
+    CrossbonePillar_RestoreGroundFootprint(15);
     Map_CopyCellAttributes(24, 4, 1, 1, 24, 8);
-    GameFlag_Clear(QUERY_FLAG);
+    GameFlag_Clear(WATER_RAISED_FLAG);
   }
   Engine_EventEnd();
 }
 
+// Match a nearby actor's draw priority when it is behind the comparison actor.
 static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor,
                                                 struct FieldActor *front) {
   s32 result = 0;
@@ -691,13 +741,13 @@ static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor,
       front->z.fixed == actor->z.fixed) {
     return result;
   }
-  if (front->x.fixed - 0x100000 < actor->x.fixed &&
-      actor->x.fixed < front->x.fixed + 0x100000 &&
-      front->y.fixed / 0x10000 == actor->y.fixed / 0x10000 &&
+  if (front->x.fixed - PIXELS(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + PIXELS(16) &&
+      front->y.fixed / PIXELS(1) == actor->y.fixed / PIXELS(1) &&
       front->z.fixed > actor->z.fixed &&
-      front->z.fixed - 0x200000 < actor->z.fixed) {
+      front->z.fixed - PIXELS(32) < actor->z.fixed) {
     if (actor->sprite->image.priority < front->sprite->image.priority) {
-      actor->priorityFlags &= ~1;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       actor->sprite->image.priority = front->sprite->image.priority;
       actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
@@ -706,6 +756,8 @@ static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor,
   return result;
 }
 
+// Match the comparison actor's draw priority when it overlaps the actor in
+// front.
 static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front,
                                                struct FieldActor *actor) {
   s32 result = 0;
@@ -714,13 +766,13 @@ static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front,
       actor->z.fixed == front->z.fixed) {
     return result;
   }
-  if (front->x.fixed - 0x100000 < actor->x.fixed &&
-      actor->x.fixed < front->x.fixed + 0x100000 &&
-      actor->y.fixed / 0x10000 == front->y.fixed / 0x10000 &&
+  if (front->x.fixed - PIXELS(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + PIXELS(16) &&
+      actor->y.fixed / PIXELS(1) == front->y.fixed / PIXELS(1) &&
       front->z.fixed > actor->z.fixed &&
-      front->z.fixed - 0x200000 < actor->z.fixed) {
+      front->z.fixed - PIXELS(32) < actor->z.fixed) {
     if (front->sprite->image.priority > actor->sprite->image.priority) {
-      actor->priorityFlags &= ~1;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       actor->sprite->image.priority = front->sprite->image.priority;
       actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
@@ -732,9 +784,13 @@ static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 320 to 316 bytes in tbs-en.
 #ifdef UBFIX
+// Keep each moving pillar's priority and collision flags consistent with the
+// leader.
 static void
 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
 #else
+// Keep each moving pillar's priority and collision flags consistent with the
+// leader.
 static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -742,7 +798,7 @@ static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
   s32 hit;
   u32 id;
 
-  if (((s8 *)gEventWork)[0xcc7] == 1) {
+  if (((struct FieldWork *)gEventWork)->castStarted == 1) {
     actor->sprite->image.priority = leader->sprite->image.priority;
     actor->collisionFlags |= 1;
 #ifdef UBFIX
@@ -761,20 +817,20 @@ static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
     }
   }
   if (actor->y.fixed < leader->y.fixed) {
-    actor->priorityFlags |= 2;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->collisionFlags &= 254;
     if (actor->sprite->image.priority < leader->sprite->image.priority) {
-      actor->priorityFlags &= 254;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       actor->sprite->image.priority = leader->sprite->image.priority;
       actor->sprite->shadow.priority = leader->sprite->shadow.priority;
       hit = 1;
     }
   } else {
-    actor->priorityFlags &= 253;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
     actor->collisionFlags |= 1;
   }
   if (hit == 0) {
-    actor->priorityFlags |= 1;
+    actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
 #ifdef UBFIX
   return;
@@ -783,32 +839,41 @@ static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
 #endif
 }
 
+// Sort the four pillars by height and depth, carrying their saved cell state
+// with them.
 static void CrossbonePillar_SortPillarActors(void) {
   u32 i;
   u32 j;
-  struct FieldActor *a;
-  struct FieldActor *b;
-  u8 actor[112];
-  s32 slot[3];
+  struct FieldActor *firstActor;
+  struct FieldActor *secondActor;
+  struct FieldActor savedActor;
+#ifdef UBFIX
+  struct PillarPlacement savedPlacement;
+#else
+  // UB: the original 12-byte scratch receives a 16-byte DMA transfer.
+  // A complete placement record adds four native stack bytes.
+  s32 savedPlacement[3];
+#endif
 
   for (i = 0; i <= 2; i++) {
-    a = Object_GetById(i + 8);
+    firstActor = Object_GetById(i + 8);
     for (j = i; j <= 3; j++) {
-      b = Object_GetById(j + 8);
-      if (a->y.fixed <= b->y.fixed && a->z.fixed < b->z.fixed) {
+      secondActor = Object_GetById(j + 8);
+      if (firstActor->y.fixed <= secondActor->y.fixed &&
+          firstActor->z.fixed < secondActor->z.fixed) {
         continue;
       }
-      Dma_Set(b, actor, 0x8400001c, DMA3);
+      Dma_Set(secondActor, &savedActor, 0x8400001c, DMA3);
       Dma_Wait(DMA3);
-      Dma_Set(a, b, 0x8400001c, DMA3);
+      Dma_Set(firstActor, secondActor, 0x8400001c, DMA3);
       Dma_Wait(DMA3);
-      Dma_Set(actor, a, 0x8400001c, DMA3);
+      Dma_Set(&savedActor, firstActor, 0x8400001c, DMA3);
       Dma_Wait(DMA3);
-      Dma_Set(&sPillarSlots[j], slot, 0x84000004, DMA3);
+      Dma_Set(&sPillarSlots[j], &savedPlacement, 0x84000004, DMA3);
       Dma_Wait(DMA3);
       Dma_Set(&sPillarSlots[i], &sPillarSlots[j], 0x84000004, DMA3);
       Dma_Wait(DMA3);
-      Dma_Set(slot, &sPillarSlots[i], 0x84000004, DMA3);
+      Dma_Set(&savedPlacement, &sPillarSlots[i], 0x84000004, DMA3);
       Dma_Wait(DMA3);
       if (Engine_GameFlagIsSet(sPillarSlots[i].flag) &&
           !Engine_GameFlagIsSet(sPillarSlots[j].flag)) {
@@ -829,7 +894,7 @@ struct PillarActor {
   s32 y;
   s32 z;
   u8 unk14[14];
-  u8 unk22;
+  u8 terrainId;
   u8 priorityFlags;
   s32 velocityX;
   s32 velocityY;
@@ -837,6 +902,7 @@ struct PillarActor {
   u8 motionFlags;
 };
 
+// Settle moved pillars, restore their old cells, and record their new overlaps.
 static void CrossbonePillar_UpdatePillarActors(void) {
   u32 id;
   struct PillarActor *actor;
@@ -848,7 +914,7 @@ static void CrossbonePillar_UpdatePillarActors(void) {
 
   for (id = 8; id <= 11; id++) {
     actor = (struct PillarActor *)Object_GetById(id);
-    actor->unk22 = 2;
+    actor->terrainId = 2;
     i = id - 8;
     if ((actor->x >> 20) == sPillarSlots[i].x &&
         (actor->z >> 20) == sPillarSlots[i].z && actor->velocityY == 0) {
@@ -864,6 +930,7 @@ static void CrossbonePillar_UpdatePillarActors(void) {
                                       (struct MapCell *)&sPillarSlots[i].cell);
     CrossbonePillar_SetCellAttributes(2, sPillarSlots[i].x, sPillarSlots[i].z,
                                       (struct MapCell *)&sPillarSlots[i].cell);
+    // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
       if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
         Engine_AudioPlayCue(189);
@@ -874,24 +941,25 @@ static void CrossbonePillar_UpdatePillarActors(void) {
          * differ 217), a priority bit-field differs 65, the record as struct
          * FieldActor with the view kept 2 (it matches once FieldActor's x, y
          * and z are s32; then this PillarActor view can go). */
-        *(u8 *)&actor->priorityFlags &= 254;
+        *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossbonePillar_LowerActorToLedge(id, 1);
-        *(u8 *)&actor->priorityFlags |= 1;
+        *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
-        SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
+        CrossbonePillar_StopAtGroundOrHeight((struct FieldActor *)actor, 0);
         Engine_AudioPlayCue(189);
         actor->y = 0;
-        actor->priorityFlags &= 254;
-        StagedActor_StepDownUntilClamp(id);
+        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        CrossbonePillar_ShrinkPillar(id);
         actor->x = 0;
         actor->y = 0;
         actor->z = 0;
-        actor->priorityFlags |= 1;
+        actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else {
-        OverlayObject_WaitUntilSettledAndReset((struct FieldActor *)actor);
+        CrossbonePillar_SettleActorOnGround((struct FieldActor *)actor);
       }
       *flags = 0;
     }
+    // Save the new ground cell before applying the pillar's height attributes.
     CrossbonePillar_ReadMapCell(0, actor->x >> 20, actor->z >> 20,
                                 &sPillarSlots[i].cell);
     if (actor->y >= 0) {
@@ -905,6 +973,7 @@ static void CrossbonePillar_UpdatePillarActors(void) {
     sPillarSlots[i].x = actor->x >> 20;
     sPillarSlots[i].y = actor->y >> 20;
     sPillarSlots[i].z = actor->z >> 20;
+    // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
         continue;
@@ -920,6 +989,8 @@ static void CrossbonePillar_UpdatePillarActors(void) {
   CrossbonePillar_SortPillarActors();
 }
 
+// Try jumping first; otherwise push, settle the pillars, and restore the
+// leader's flags.
 static void CrossbonePillar_PushPillar(void) {
   Engine_EventBegin();
 #if TBS_PATCH_3
@@ -927,9 +998,9 @@ static void CrossbonePillar_PushPillar(void) {
       Object_GetById(0)->terrainId, Object_GetById(0)->x.fixed,
       Object_GetById(0)->z.fixed);
 #endif
-  if (FieldScene_RunScene3b3SequenceD() == 0) {
+  if (CrossbonePillar_TryJumpAcrossPillar() == 0) {
     Object_GetById(0)->motionFlags &= 254;
-    Object_GetById(0)->priorityFlags &= 254;
+    Object_GetById(0)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     StagedActor_AdvancePair();
     CrossbonePillar_UpdatePillarActors();
     Object_GetById(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
@@ -939,44 +1010,51 @@ static void CrossbonePillar_PushPillar(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunSingleStep(void) { Field_ClimbUp(); }
+// Climb upward at the pillar-room ladder trigger.
+static void CrossbonePillar_ClimbUp(void) { Field_ClimbUp(); }
 
-static void CrossbonePillar_RunStagedCellScene(void) {
+// Push the pillar ahead, or try jumping before climbing downward.
+static void CrossbonePillar_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 pos[3];
   s32 *p = pos;
 
   p[0] = leader->x.fixed;
   p[1] = leader->y.fixed;
-  p[2] = leader->z.fixed + 0x100000;
+  p[2] = leader->z.fixed + PIXELS(16);
   if (StagedActor_FindAtTile(p, leader) != NULL) {
     CrossbonePillar_PushPillar();
-  } else if (FieldScene_RunScene3b3SequenceD() == 0) {
+  } else if (CrossbonePillar_TryJumpAcrossPillar() == 0) {
     Field_ClimbDown();
   }
 }
 
-static void EV40_TOUCH(void) {
-  struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
-  PILLAR_WORK->rider = obj;
-  obj->riseCounter = 1;
+// Track the leader in the fade overlay and enable the pillar riding counter.
+static void CrossbonePillar_StartRidingPillar(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = leader;
+  leader->riseCounter = 1;
 }
 
-static void EV41_TOUCH(void) {
-  struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
+// Stop tracking the leader in the fade overlay and clear the riding counter.
+static void CrossbonePillar_StopRidingPillar(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  PILLAR_WORK->rider = NULL;
-  obj->riseCounter = 0;
+  ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = NULL;
+  leader->riseCounter = 0;
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 54 to 52 bytes in tbs-en.
 #ifdef UBFIX
+// Keep the frozen pool's underfoot flag consistent with the leader's height and
+// depth.
 static void
-SceneActor_UpdateBit1ByPositionToSlotZero(union FieldObject *fieldObject) {
+CrossbonePillar_UpdateFrozenPoolPriority(union FieldObject *fieldObject) {
 #else
+// Put the frozen pool under the leader when it is behind and below the leader.
 static s32
-SceneActor_UpdateBit1ByPositionToSlotZero(union FieldObject *fieldObject) {
+CrossbonePillar_UpdateFrozenPoolPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
@@ -994,16 +1072,18 @@ SceneActor_UpdateBit1ByPositionToSlotZero(union FieldObject *fieldObject) {
 #endif
 }
 
-static void CrossbonePillar_RunActorAction(s32 id) {
+// Remember the frozen pool, install its priority callback, and start its
+// flicker script.
+static void CrossbonePillar_FreezePool(s32 id) {
   struct FieldActor *actor;
 
   actor = Object_GetById(id);
   Engine_EventBegin();
 #ifdef UBFIX
-  actor->update = SceneActor_UpdateBit1ByPositionToSlotZero;
+  actor->update = CrossbonePillar_UpdateFrozenPoolPriority;
 #else
   actor->update =
-      (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+      (void (*)(union FieldObject *))CrossbonePillar_UpdateFrozenPoolPriority;
 #endif
   Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                          actor->z.fixed >> 20);
@@ -1012,10 +1092,17 @@ static void CrossbonePillar_RunActorAction(s32 id) {
   Engine_EventEnd();
 }
 
-static void EV11_PSYNERGY(void) { CrossbonePillar_RunActorAction(11); }
+// Apply Frost to the first pool in room 5.
+static void CrossbonePillar_FreezeFirstPool(void) {
+  CrossbonePillar_FreezePool(11);
+}
 
-static void EV12_PSYNERGY(void) { CrossbonePillar_RunActorAction(12); }
+// Apply Frost to the second pool in room 5.
+static void CrossbonePillar_FreezeSecondPool(void) {
+  CrossbonePillar_FreezePool(12);
+}
 
+// Record whether the leader shares pillar 13's cell before its effect proceeds.
 static void CrossbonePillar_CheckLeaderOnPillar(void) {
   struct FieldActor *leader;
   struct FieldActor *pillar;
@@ -1033,26 +1120,28 @@ static void CrossbonePillar_CheckLeaderOnPillar(void) {
   }
 }
 
+// Restore pillar 13's scale and raise pillar 14 to a height of 32 pixels.
 static void CrossbonePillar_RaiseActorFourteen(void) {
   struct FieldActor *pillar;
 
   pillar = Object_GetById(14);
-  Object_GetById(13)->scaleX = 0x10000;
-  Object_GetById(13)->scaleY = 0x10000;
-  ((struct AnimationObject *)Object_GetById(13)->sprite)->image.priority = 2;
-  ((struct AnimationObject *)pillar->sprite)->image.priority = 2;
-  pillar->acceleration = 0x6666;
-  pillar->speed = 0xcccc;
-  FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
+  Object_GetById(13)->scaleX = Q16_ONE;
+  Object_GetById(13)->scaleY = Q16_ONE;
+  (Object_GetById(13)->sprite)->image.priority = 2;
+  pillar->sprite->image.priority = 2;
+  pillar->acceleration = PIXELS(2) / 5;
+  pillar->speed = PIXELS(4) / 5;
+  FieldObject_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
   Engine_ActorWaitForMove(14);
   Map_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
-static void SceneEffect_SpawnRandomizedParticle(void) {
+// Emit growing, rotating particles during the third pool's Frost sequence.
+static void CrossbonePillar_SpawnFrostParticle(void) {
   struct EffectOptions options;
-  struct EffectOptions *d;
-  s32 spread;
-  s32 secondary;
+  struct EffectOptions *settings;
+  s32 velocityX;
+  s32 velocityY;
   u32 draw;
   u32 mask;
 
@@ -1061,43 +1150,43 @@ static void SceneEffect_SpawnRandomizedParticle(void) {
   if ((gFrameCount & 7) == 0)
     Engine_AudioPlayCue(136);
 
-  d = &options;
-  d->palette = 10;
-  d->startScaleX = 0x8000;
-  d->startScaleY = 0x8000;
-  d->targetScaleX = 0x19999;
-  d->targetScaleY = 0x19999;
+  settings = &options;
+  settings->palette = 10;
+  settings->startScaleX = Q16_ONE / 2;
+  settings->startScaleY = Q16_ONE / 2;
+  settings->targetScaleX = 8 * Q16_ONE / 5;
+  settings->targetScaleY = 8 * Q16_ONE / 5;
   draw = Engine_RandomNext();
   mask = 0x0ffff000;
   mask &= draw;
-  d->rotation = mask;
-  d->update = FieldScene_RunScene3b3SequenceE;
+  settings->rotation = mask;
+  settings->update = CrossbonePillar_UpdateDampedParticle;
 
   draw = Engine_RandomNext();
-  spread = -(((draw * 5) >> 16) * 0x10000 + 0x60000);
-  spread /= 2;
+  velocityX = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(6));
+  velocityX /= 2;
   draw = Engine_RandomNext();
-  secondary = -(((draw * 5) >> 16) * 0x10000 + 0x50000);
+  velocityY = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(5));
 
-  Effect_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), spread, secondary, 0,
+  Effect_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
                EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
                    EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
                    EFFECT_USE_PALETTE,
-               d);
+               settings);
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
-static void
-SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
+// Emit a randomized particle from the thawing pool every eight frames.
+static void CrossbonePillar_SpawnThawParticle(union FieldObject *fieldObject) {
 #else
-static s32
-SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
+// Emit a randomized particle from the thawing pool every eight frames.
+static s32 CrossbonePillar_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct EffectOptions options;
-  struct EffectOptions *p;
+  struct EffectOptions *settings;
   u32 phase = gFrameCount & 7;
   s32 x;
   s32 y;
@@ -1111,19 +1200,19 @@ SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
     return 0;
 #endif
 
-  p = &options;
-  p->palette = 7;
-  p->startScaleX = 0xb333;
-  p->startScaleY = 0xb333;
+  settings = &options;
+  settings->palette = 7;
+  settings->startScaleX = 7 * Q16_ONE / 10;
+  settings->startScaleY = 7 * Q16_ONE / 10;
 
   x = actor->x.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
   y = actor->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
   z = actor->z.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
   scale = Math_Divide(
-      (((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
+      (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
   Effect_Spawn(x, y, z, 0, scale, phase,
-               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, p);
+               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
 #ifdef UBFIX
   return;
 #else
@@ -1131,28 +1220,30 @@ SceneEffect_SpawnRandomEffectEveryEightFrames(union FieldObject *fieldObject) {
 #endif
 }
 
-static void EV13_PSYNERGY(void) {
+// Freeze the third pool and thaw the second one unless the leader occupies the
+// pillar.
+static void CrossbonePillar_FreezeThirdPool(void) {
   s32 set;
 
   set = Engine_GameFlagIsSet(0x203);
   if (set == 0) {
     Engine_GameFlagSet(0x202);
     Engine_EventBegin();
-    Engine_CameraSetSpeed(0x9999, 0x1333);
-    Engine_CameraMoveTo(0x1380000, -1, 0xb80000, 1);
+    Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+    Engine_CameraMoveTo(PIXELS(312), -1, PIXELS(184), 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
     Engine_EventWait(20);
-    FieldScheduler_AddCallback(SceneEffect_SpawnRandomizedParticle, 0xc80);
+    // The third pool freezes while the previously frozen second pool thaws.
+    FieldScheduler_AddCallback(CrossbonePillar_SpawnFrostParticle, 0xc80);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x201) != 0) {
 #ifdef UBFIX
-      Object_GetById(12)->update =
-          SceneEffect_SpawnRandomEffectEveryEightFrames;
+      Object_GetById(12)->update = CrossbonePillar_SpawnThawParticle;
 #else
-      Object_GetById(12)->update = (void (*)(
-          union FieldObject *))SceneEffect_SpawnRandomEffectEveryEightFrames;
+      Object_GetById(12)->update =
+          (void (*)(union FieldObject *))CrossbonePillar_SpawnThawParticle;
 #endif
       Engine_ActorSetAnimation(12, 6);
       ObjectMotion_WaitForAnimationChange(12);
@@ -1164,7 +1255,7 @@ static void EV13_PSYNERGY(void) {
     } else {
       Engine_EventWait(60);
     }
-    Engine_TaskRemoveCallback(SceneEffect_SpawnRandomizedParticle);
+    Engine_TaskRemoveCallback(CrossbonePillar_SpawnFrostParticle);
     Engine_EventWait(20);
     Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
     Engine_EventWait(20);
@@ -1172,42 +1263,45 @@ static void EV13_PSYNERGY(void) {
   }
 }
 
-static void StagedActor_PlaceAtObjectTenCell(void) {
-  struct FieldActor *obj = Object_GetById(10);
+// Clear the layer-2 grid attribute at actor 10's current cell.
+static void CrossbonePillar_ClearActorTenCell(void) {
+  struct FieldActor *pillar = Object_GetById(10);
   s32 x;
   s32 z;
 
   Engine_EventBegin();
 
-  x = obj->x.fixed >> 20;
-  z = obj->z.fixed >> 20;
+  x = pillar->x.fixed >> 20;
+  z = pillar->z.fixed >> 20;
 
   StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
   Engine_EventEnd();
 }
 
-static void EV10_PSYNERGY(void) {
-  struct FieldActor *rec7;
-  s32 rec8;
+// Restore collision under pillar 10 and lower it once it reaches column 16.
+static void CrossbonePillar_SettleMovedPillar(void) {
+  struct FieldActor *pillar;
+  s32 alreadyLowered;
 
-  rec7 = Object_GetById(10);
+  pillar = Object_GetById(10);
   Engine_EventBegin();
-  StagedActor_FillGridAttributeRectangle(2, (rec7->x.fixed >> 20),
-                                         (rec7->z.fixed >> 20), 1, 1, 255);
-  if ((rec7->x.fixed >> 20) == 16) {
-    rec8 = GameFlag_IsSet(0x204);
-    if (rec8 == 0) {
+  StagedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
+                                         (pillar->z.fixed >> 20), 1, 1, 255);
+  if ((pillar->x.fixed >> 20) == 16) {
+    alreadyLowered = GameFlag_IsSet(0x204);
+    if (alreadyLowered == 0) {
       Engine_EventWait(10);
       Engine_AudioPlayCue(159);
-      rec7->motionFlags = rec8;
-      rec7->terrainHeight = -0x20000;
-      rec7->y.fixed = -0x20000;
+      pillar->motionFlags = alreadyLowered;
+      pillar->terrainHeight = -PIXELS(2);
+      pillar->y.fixed = -PIXELS(2);
       Engine_GameFlagSet(0x204);
     }
   }
   Engine_EventEnd();
 }
 
+// Move to a clear pillar position or push and settle pillar 10.
 static void CrossbonePillar_RunPushScene(void) {
   struct StagedActorProbe probe;
 
@@ -1215,14 +1309,15 @@ static void CrossbonePillar_RunPushScene(void) {
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   } else {
-    StagedActor_PlaceAtObjectTenCell();
+    CrossbonePillar_ClearActorTenCell();
     StagedActor_AdvancePair();
-    EV10_PSYNERGY();
+    CrossbonePillar_SettleMovedPillar();
   }
   Engine_EventEnd();
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
+// Select the event table for the current pillar room.
+const struct SceneEvent *CrossbonePillar_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossbonePillar1) {
@@ -1243,35 +1338,39 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossbonePillarEventsOther;
 }
 
+// Prepare the lowered actor's collision and draw priority below the leader.
 static void CrossbonePillar_PrepLoweredActor(s32 id) {
   struct FieldActor *actor = Object_GetById(id);
 
   actor->collisionFlags &= 254;
-  actor->priorityFlags |= 2;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   actor->motionFlags = 0;
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->sprite->image.priority = 2;
 }
 
-static void CrossbonePillar_RestoreFlaggedPillar(s32 a0) {
+// Restore a previously frozen pillar's mode, map cell, priority hook, and
+// script.
+static void CrossbonePillar_RestoreFlaggedPillar(s32 actorId) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(a0);
-  if (GameFlag_IsSet(a0 + 0x1f5) != 0) {
+  actor = Object_GetById(actorId);
+  if (GameFlag_IsSet(actorId + 0x1f5) != 0) {
     Object_SetMode(actor, 5);
 #ifdef UBFIX
-    actor->update = SceneActor_UpdateBit1ByPositionToSlotZero;
+    actor->update = CrossbonePillar_UpdateFrozenPoolPriority;
 #else
-    actor->update = (void (*)(
-        union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+    actor->update =
+        (void (*)(union FieldObject *))CrossbonePillar_UpdateFrozenPoolPriority;
 #endif
     Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                            actor->z.fixed >> 20);
-    Actor_SetActionScript(a0, gCrossbonePillar_ActionTable);
+    Actor_SetActionScript(actorId, gCrossbonePillar_ActionTable);
   }
 }
 
-static void OverlayObject_SetCallbackAndMode2(s32 id) {
+// Use terrain layer 2 and install the moving pillar's priority callback.
+static void CrossbonePillar_InitializePillarPriority(s32 id) {
   struct FieldActor *actor = Object_GetById(id);
 
   actor->terrainId = 2;
@@ -1284,21 +1383,21 @@ static void OverlayObject_SetCallbackAndMode2(s32 id) {
 #endif
 }
 
-static void SceneActor_CheckActors8To11NearSlotZero(void) {
+// Match the leader's draw priority to a nearby pillar in front.
+static void CrossbonePillar_UpdateLeaderPriority(void) {
   struct FieldActor *hero = Object_GetById(ACTOR_PARTY_LEADER);
   u32 selector;
   struct FieldActor *actor;
 
   for (selector = 8; selector <= 11; selector++) {
     actor = Object_GetById(selector);
-    if (hero->y.fixed / 0x10000 == actor->y.fixed / 0x10000 &&
-        hero->z.fixed <= actor->z.fixed - 0x80000 &&
-        hero->z.fixed > actor->z.fixed - 0x180000) {
-      if (hero->x.fixed - 0x100000 <= actor->x.fixed &&
-          actor->x.fixed < hero->x.fixed + 0x100000) {
-        Engine_ActorSetSpritePriority(
-            ACTOR_PARTY_LEADER,
-            ((struct AnimationObject *)actor->sprite)->image.priority);
+    if (hero->y.fixed / PIXELS(1) == actor->y.fixed / PIXELS(1) &&
+        hero->z.fixed <= actor->z.fixed - PIXELS(8) &&
+        hero->z.fixed > actor->z.fixed - PIXELS(24)) {
+      if (hero->x.fixed - PIXELS(16) <= actor->x.fixed &&
+          actor->x.fixed < hero->x.fixed + PIXELS(16)) {
+        Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER,
+                                      actor->sprite->image.priority);
         return;
       }
     } else {
@@ -1308,7 +1407,9 @@ static void SceneActor_CheckActors8To11NearSlotZero(void) {
   }
 }
 
-s32 CrossbonePillar_SetupArea(void) {
+// Restore each room's pillar footprints, water state, and persistent puzzle
+// state.
+s32 CrossbonePillar_Initialize(void) {
   struct FieldActor *actor;
   u32 i;
   u32 id;
@@ -1323,6 +1424,7 @@ s32 CrossbonePillar_SetupArea(void) {
     FieldScene_RedrawActorFootprint(11);
     FieldScene_RedrawActorFootprint(12);
   } else if (gGameState.scene == (s32)&SceneId_CrossbonePillar3) {
+    // Rebuild the water room and restore raised pillars when its flag persists.
     Map_CopyCells(32, 0, 64, 32, 0, 64);
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
@@ -1336,28 +1438,23 @@ s32 CrossbonePillar_SetupArea(void) {
       Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
       Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
       Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
-      SceneActor_ApplyPlacementQueryAndTag(9);
-      SceneActor_ApplyPlacementQueryAndTag(10);
-      SceneActor_ApplyPlacementQueryAndTag(11);
-      SceneActor_ApplyPlacementQueryAndTag(12);
-      SceneActor_ApplyPlacementQueryAndTag(13);
-      SceneActor_ApplyPlacementQueryAndTag(14);
-      SceneActor_ApplyPlacementQueryAndTag(15);
+      CrossbonePillar_DrawRaisedPillars();
       Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
   } else if (gGameState.scene == (s32)&SceneId_CrossbonePillar4) {
+    // Restore the four movable pillars and the leader's riding overlay.
     OverlayObject_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
     if (Engine_GameFlagIsSet(0x109) == 0) {
       Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
     BattleFx_StartFadeOverlay(0);
     if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
-      EV41_TOUCH();
+      CrossbonePillar_StopRidingPillar();
     }
-    OverlayObject_SetCallbackAndMode2(8);
-    OverlayObject_SetCallbackAndMode2(9);
-    OverlayObject_SetCallbackAndMode2(10);
-    OverlayObject_SetCallbackAndMode2(11);
+    CrossbonePillar_InitializePillarPriority(8);
+    CrossbonePillar_InitializePillarPriority(9);
+    CrossbonePillar_InitializePillarPriority(10);
+    CrossbonePillar_InitializePillarPriority(11);
     {
       s32 *entry = (s32 *)sPillarSlots;
 
@@ -1371,7 +1468,7 @@ s32 CrossbonePillar_SetupArea(void) {
     }
     CrossbonePillar_UpdatePillarActors();
     Engine_EventWait(1);
-    FieldScheduler_AddCallback(SceneActor_CheckActors8To11NearSlotZero,
+    FieldScheduler_AddCallback(CrossbonePillar_UpdateLeaderPriority,
                                TASK_PRIORITY_SCENE);
     if (Engine_GameFlagIsSet(0x109) != 0) {
       for (id = 8; id < 12; id++) {
@@ -1387,6 +1484,7 @@ s32 CrossbonePillar_SetupArea(void) {
       }
     }
   } else if (gGameState.scene == (s32)&SceneId_CrossbonePillar5) {
+    // Restore room 5's moved pillar, frozen pools, and raised pillar pair.
     Engine_ActorSetAnimation(10, 2);
     Engine_ActorSetChildValue(10, 6);
     FieldScene_RedrawActorFootprint(8);
@@ -1395,7 +1493,7 @@ s32 CrossbonePillar_SetupArea(void) {
     Object_GetById(8)->motionFlags = 0;
     Object_GetById(9)->motionFlags = 0;
 #endif
-    EV10_PSYNERGY();
+    CrossbonePillar_SettleMovedPillar();
     CrossbonePillar_PrepLoweredActor(11);
     CrossbonePillar_PrepLoweredActor(12);
     CrossbonePillar_PrepLoweredActor(13);
@@ -1407,10 +1505,10 @@ s32 CrossbonePillar_SetupArea(void) {
     CrossbonePillar_PrepLoweredActor(14);
     Object_GetById(14)->collisionFlags |= 8;
     if (Engine_GameFlagIsSet(0x202) == 0) {
-      Object_GetById(13)->scaleX = 0x18000;
-      Object_GetById(13)->scaleY = 0x18000;
-      ((u8 *)Object_GetById(13)->sprite)[9] |= 12;
-      ((u8 *)Object_GetById(14)->sprite)[9] |= 12;
+      Object_GetById(13)->scaleX = 3 * Q16_ONE / 2;
+      Object_GetById(13)->scaleY = 3 * Q16_ONE / 2;
+      Object_GetById(13)->sprite->image.priority = 3;
+      Object_GetById(14)->sprite->image.priority = 3;
       Map_CopyCellAttributes(26, 12, 1, 1, 22, 16);
     }
   }
@@ -1466,10 +1564,10 @@ const s32 *gEffectScripts[] = {
 
 s32 gCrossbonePillar_ActionTable[] = {
     SC_SET(0x23, 2),
-    SC_CALL(SceneActor_ApplyCounterLowBitsAsMode),
+    SC_CALL(CrossbonePillar_SetChildValueFromTimer),
     SC_WAIT(2),
     SC_SET(0x23, 0),
-    SC_CALL(SceneActor_ApplyCounterLowBitsAsMode),
+    SC_CALL(CrossbonePillar_SetChildValueFromTimer),
     SC_WAIT(6),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -1637,7 +1735,7 @@ struct SceneEvent gCrossbonePillarEventsOther[] = {
 struct SceneEvent gCrossbonePillarEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_1) },
+    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_JumpOrPushPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xec2, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_CHEST), 101, 0xec3, FIND_ITEM(ITEM_NUT) },
     { SEARCH(SEARCH_CHEST), 102, 0xec4, FIND_COINS(111) },
@@ -1652,7 +1750,7 @@ struct SceneEvent gCrossbonePillarEvents1[] = {
 struct SceneEvent gCrossbonePillarEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
+    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_MoveToClearPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xec6, FIND_ITEM(0xc4) },
     { SEARCH(SEARCH_CHEST), 101, 0xec7, FIND_ITEM(0x18) },
     { SEARCH(SEARCH_CHEST), 102, 0xec8, FIND_COINS(222) },
@@ -1663,14 +1761,14 @@ struct SceneEvent gCrossbonePillarEvents2[] = {
 struct SceneEvent gCrossbonePillarEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
+    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_MoveToClearPillar) },
     { 0x413, 100, 0xed2, FIND_COINS(555) },
     { 0xc413, 100, 0xed2, FIND_COINS(555) },
     { 0x413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { 0xe413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 102, 0xed4, FIND_ITEM(0xb7) },
     { SEARCH(SEARCH_CHEST), 103, 0xed5, FIND_ITEM(0x62) },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
+    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_FlipWaterSwitch) },
     { SCENE_EVENTS_END },
 };
 
@@ -1678,11 +1776,11 @@ struct SceneEvent gCrossbonePillarEvents4[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { 0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_PushPillar) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_RunStagedCellScene) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_ClimbUp) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_PushOrClimbDown) },
     { 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_PushPillar) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
-    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
+    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_StartRidingPillar) },
+    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePillar_StopRidingPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xeda, FIND_COINS(777) },
     { SEARCH(SEARCH_CHEST), 101, 0xedb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { 0x413, 102, 0xedc, FIND_ITEM(0xba) },
@@ -1707,12 +1805,16 @@ struct SceneEvent gCrossbonePillarEvents5[] = {
     {SEARCH(SEARCH_CHEST), 101, 0xedf, FIND_ITEM(0xb7)},
     {SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(0x10c)},
     {SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB)},
-    {0x10008c15, 10, 0x204, EVENT_SCRIPT(StagedActor_PlaceAtObjectTenCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, 0x204, EVENT_SCRIPT(EV10_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200, EVENT_SCRIPT(EV11_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT_SCRIPT(EV12_PSYNERGY)},
+    {0x10008c15, 10, 0x204, EVENT_SCRIPT(CrossbonePillar_ClearActorTenCell)},
+    {PSYNERGY_ON_ACTOR(0x8c), 10, 0x204,
+     EVENT_SCRIPT(CrossbonePillar_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200,
+     EVENT_SCRIPT(CrossbonePillar_FreezeFirstPool)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201,
+     EVENT_SCRIPT(CrossbonePillar_FreezeSecondPool)},
     {0x10001815, 13, 0x202, EVENT_SCRIPT(CrossbonePillar_CheckLeaderOnPillar)},
     {0x50001815, 13, 0x202, EVENT_SCRIPT(CrossbonePillar_RaiseActorFourteen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT_SCRIPT(EV13_PSYNERGY)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202,
+     EVENT_SCRIPT(CrossbonePillar_FreezeThirdPool)},
     {SCENE_EVENTS_END},
 };

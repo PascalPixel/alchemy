@@ -9,12 +9,12 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 CrossbonePillar_SetupArea(void);
+const struct SceneEntrance *CrossbonePillar_GetEntrances(void);
+const struct SceneRegion *CrossbonePillar_GetRegions(void);
+const u32 *CrossbonePillar_GetExits(void);
+const struct ScenePlacement *CrossbonePillar_GetPlacements(void);
+const struct SceneEvent *CrossbonePillar_GetEvents(void);
+s32 CrossbonePillar_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];

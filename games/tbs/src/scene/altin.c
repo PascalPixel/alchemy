@@ -123,6 +123,28 @@ enum {
 
 enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
 
+#define WATER_BEAST_HOP_PERIOD 60
+#define WATER_SPRAY_LIFETIME 20
+#define WATER_SPRAY_START_SCALE 0x4ccc
+
+// UB: the native facing test overflows a signed left shift for many headings.
+#ifdef UBFIX
+#define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
+#else
+#define ALTIN_FACES_COUNTER(facing)                                            \
+  ((u32)(((facing) + 0x5fff) << 16) <= 0x3ffe0000)
+#endif
+
+// UB: the random wobble can be negative. Both factors fit in signed32 bits
+// for the actor's signed16-bit timer and wobble values.
+#ifdef UBFIX
+#define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
+  ((timer) * 0x1000 + (wobble) * 0x8000)
+#else
+#define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
+  (((timer) << 12) + ((wobble) << 15))
+#endif
+
 // Touching a trigger while facing the given way.
 #define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
 
@@ -305,7 +327,7 @@ static void Houses_AskAboutMineBeasts(void) {
 static s32 Leader_FacesCounter(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((u32)((leader->facing + 0x5FFF) << 16) <= 0x3FFE0000) {
+  if (ALTIN_FACES_COUNTER(leader->facing)) {
     return 1;
   }
   return 0;
@@ -396,7 +418,7 @@ static void Houses_TalkToInnkeeper(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((u32)((leader->facing + 0x5fff) << 16) <= 0x3ffe0000) {
+  if (ALTIN_FACES_COUNTER(leader->facing)) {
     Engine_InnOpen(INN_ALTIN, ACTOR_INNKEEPER);
     return;
   }
@@ -418,21 +440,21 @@ static void Houses_TalkToInnkeeper(void) {
 // opens and the party leader walks in. The mine's wide door is redrawn in
 // two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
-  u32 i;
-  struct EventWork *work;
+  u32 actorId;
+  struct EventWork *event;
   struct FieldActor *actor;
-  s32 door;
-  u8 *table;
-  s32 offset;
-  s32 positionOffset;
-  s32 x;
-  s32 y;
-  s32 rightX;
+  s32 doorIndex;
+  u8 *doorBytes;
+  s32 doorByteOffset;
+  s32 coordinatesByteOffset;
+  s32 column;
+  s32 row;
+  s32 rightColumn;
 
-  work = gEventWork;
+  event = gEventWork;
   Engine_EventBegin();
-  for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_PLACED; i++) {
-    actor = Object_GetById(i);
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_PLACED; actorId++) {
+    actor = Object_GetById(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;
     }
@@ -440,27 +462,28 @@ static void Village_EnterDoor(void) {
 
   // The bytes read the entry through byte offsets and sign-extend the door
   // number by shifts; indexing the structs loads the fields differently.
-  table = (u8 *)gAltinVillage_Doors;
-  door = ((*(u16 *)&work->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
-  offset = door << 3;
-  positionOffset = offset + 4;
-  x = *(s16 *)(table + positionOffset);
-  y = *(s16 *)(table + positionOffset + 2);
-  if (door == DOOR_MINE) {
+  doorBytes = (u8 *)gAltinVillage_Doors;
+  doorIndex =
+      ((*(u16 *)&event->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
+  doorByteOffset = doorIndex << 3;
+  coordinatesByteOffset = doorByteOffset + 4;
+  column = *(s16 *)(doorBytes + coordinatesByteOffset);
+  row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
+  if (doorIndex == DOOR_MINE) {
     Event_PlayCue(SE_MINE_DOOR);
-    Map_CopyCellsTo(42, 33, x, y, 2, 2);
-    rightX = x + 2;
-    Map_CopyCellsTo(42, 35, rightX, y, 2, 2);
+    Map_CopyCellsTo(42, 33, column, row, 2, 2);
+    rightColumn = column + 2;
+    Map_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
     Engine_EventWait(4);
-    Map_CopyCellsTo(40, 33, x, y, 2, 2);
-    Map_CopyCellsTo(40, 35, rightX, y, 2, 2);
+    Map_CopyCellsTo(40, 33, column, row, 2, 2);
+    Map_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Engine_EventWait(4);
   } else {
     Event_PlayCue(SOUND_DOOR_OPEN);
-    if (door == DOOR_WITH_WINDOW) {
+    if (doorIndex == DOOR_WITH_WINDOW) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
-    Map_AnimateCells(*(s32 *)(table + offset), x, y);
+    Map_AnimateCells(*(s32 *)(doorBytes + doorByteOffset), column, row);
   }
 
   // Walk the leader through.
@@ -468,10 +491,10 @@ static void Village_EnterDoor(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (door == DOOR_STRAIGHT_IN) {
+  if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
-    if (door != DOOR_MINE) {
+    if (doorIndex != DOOR_MINE) {
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
     } else {
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -479,7 +502,7 @@ static void Village_EnterDoor(void) {
     }
   }
   Engine_EventWait(10);
-  Engine_EventRequestExit(work->touchedTrigger);
+  Engine_EventRequestExit(event->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -531,7 +554,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     Object_SetMode(beast, 2);
     beast->velocityY = 0x30000;
   }
-  if (++beast->timer == 60)
+  if (++beast->timer == WATER_BEAST_HOP_PERIOD)
     beast->timer = 0;
 }
 
@@ -605,6 +628,7 @@ static void Village_ApplyWaterLevel(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
+  // Select the water-level map and remove villagers whose areas are flooded.
   if (GameFlag_IsSet(FLAG_WATER_DRAINED) != 0) {
     Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
     Map_CopyCellAttributes(64, 32, 32, 32, 0, 0);
@@ -628,6 +652,7 @@ static void Village_ApplyWaterLevel(void) {
     Engine_ActorDestroy(ACTOR_RETURNING_VILLAGER_B);
     Engine_ActorDestroy(ACTOR_RETURNING_VILLAGER_C);
   }
+  // Restore the remaining beast and its scheduled water spray.
   if (GameFlag_IsSet(FLAG_WATER_BEAST_LEFT) != 0) {
     Engine_ActorDestroy(ACTOR_WATER_BEAST);
   } else {
@@ -644,6 +669,7 @@ static void Village_ApplyWaterLevel(void) {
     Actor_SetPosition(ACTOR_MOVABLE_BLOCK, PIXELS(360), PIXELS(168));
   }
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVABLE_BLOCK), 0);
+  // Keep the three ground sprites below the party before redrawing.
   Actor_SetChildValue(ACTOR_FIRST_GROUND_SPRITE, 15);
   Engine_ActorSetChildValue(ACTOR_SECOND_GROUND_SPRITE, 15);
   Actor_SetChildValue(ACTOR_THIRD_GROUND_SPRITE, 15);
@@ -659,6 +685,7 @@ static void Village_ApplyWaterLevel(void) {
   Engine_ActorSetSpritePriority(ACTOR_FIRST_GROUND_SPRITE, 1);
   Engine_ActorSetSpritePriority(ACTOR_SECOND_GROUND_SPRITE, 1);
   Engine_ActorSetSpritePriority(ACTOR_THIRD_GROUND_SPRITE, 1);
+  // Redraw at the leader after the map and object state are ready.
   Engine_TaskWait(1);
   Engine_EventBegin();
   Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
@@ -688,14 +715,8 @@ static void Houses_PlaceSheltering(void) {
     Object_GetById(ACTOR_WEAPON_SELLER)->facing =
         FACING_NORTHWEST + FACING_STEP;
   } else {
-    u8 flags;
-
-    // The bytes build the flag byte in a register of its own; a plain |=
-    // allocates differently.|= keeps the actor pointer in r0 and drops a move.
     actor = Object_GetById(ACTOR_WEAPON_SELLER);
-    flags = 4;
-    flags |= actor->collisionFlags;
-    actor->collisionFlags = flags;
+    actor->collisionFlags |= 4;
   }
   actor = Object_GetById(ACTOR_ARMOR_SELLER);
   if (actor != 0) {
@@ -714,8 +735,8 @@ static void Spray_Initialize(struct SprayActor *spray) {
   spray->sprite->priority = 1;
   ObjectGroup_SetChildValue(spray, 3);
   Engine_ActorSetSpriteFlags((struct FieldActor *)spray, 0);
-  spray->scaleX = 0x4CCC;
-  spray->scaleY = 0x4CCC;
+  spray->scaleX = WATER_SPRAY_START_SCALE;
+  spray->scaleY = WATER_SPRAY_START_SCALE;
 }
 
 // Update callback of a spray particle: it drifts sideways with a random
@@ -723,8 +744,8 @@ static void Spray_Initialize(struct SprayActor *spray) {
 // growing, sometimes changing frame, until its life runs out.
 static void Spray_Drift(union FieldObject *fieldObject) {
   struct WaterActor *spray = (struct WaterActor *)fieldObject;
-  spray->x += (spray->timer << 12) +
-              ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
+  spray->x += WATER_SPRAY_LATERAL_STEP(
+      spray->timer, (s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
     spray->z += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
     spray->scaleX += 0x2666;
@@ -754,9 +775,9 @@ static void Beast_SpawnSpray(void) {
     spray = ((struct WaterActor *)Object_Create(SPRITE_SPRAY, PIXELS(64), 0,
                                                 PIXELS(400)));
     if (spray != 0) {
-      spray->timer = 20;
+      spray->timer = WATER_SPRAY_LIFETIME;
       spray->shakeFrames = 0;
-      spray->counter = 20;
+      spray->counter = WATER_SPRAY_LIFETIME;
       Spray_Initialize(spray);
       spray->update = Spray_Drift;
       Object_SetMode(spray, 1);

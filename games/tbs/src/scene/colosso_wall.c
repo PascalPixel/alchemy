@@ -47,6 +47,23 @@
 #include "field_obj.h"
 #include "global_cells.h"
 #include "heap_state.h"
+#include "flags.h"
+#include "sound_ids.h"
+
+#define COLOSSO_WALL_FIRST_PLATFORM 22
+#define COLOSSO_WALL_LAST_PLATFORM 25
+#define COLOSSO_WALL_PLATFORM_CYCLE_FRAMES 120
+#define COLOSSO_WALL_PLATFORM_CROSSING_FRAME 75
+#define COLOSSO_WALL_DEMONSTRATION_TIMEOUT_FRAMES 600
+#define COLOSSO_WALL_LOG_TRAVEL_PIXELS 64
+
+// UB: westward log travel passes -64, which cannot be shifted left as signed C.
+// Both callers supply only -64, 0 or 64, so fixed-point multiplication fits.
+#ifdef UBFIX
+#define COLOSSO_WALL_OFFSET_FIXED(value) ((value) * 0x10000)
+#else
+#define COLOSSO_WALL_OFFSET_FIXED(value) ((value) << 16)
+#endif
 
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 #define COLOSSO_WALL_ALTERNATE_PORTRAIT_PALETTE_OFFSET 64
@@ -76,41 +93,31 @@
 
 #ifdef UBFIX
 #define COLOSSO_WALL_SHOW_MESSAGE Engine_EventShowMessage
-#define COLOSSO_WALL_MOVE_ACTOR_PAIR SceneActor_MovePairByTileOffset
-#define COLOSSO_WALL_START_MODE_TASK ColossoWall_InitializeModeTask
+#define COLOSSO_WALL_MOVE_ACTOR_PAIR ColossoWall_MovePusherAndLog
+#define COLOSSO_WALL_START_MODE_TASK ColossoWall_StartLetteringAnimation
 #define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
   SceneActor_ApplyValueAndMatchingSlots
 #else
 #define COLOSSO_WALL_SHOW_MESSAGE ((s32 (*)())Engine_EventShowMessage)
-#define COLOSSO_WALL_MOVE_ACTOR_PAIR                                           \
-  ((s32 (*)())SceneActor_MovePairByTileOffset)
-#define COLOSSO_WALL_START_MODE_TASK ((s32 (*)())ColossoWall_InitializeModeTask)
+#define COLOSSO_WALL_MOVE_ACTOR_PAIR ((s32 (*)())ColossoWall_MovePusherAndLog)
+#define COLOSSO_WALL_START_MODE_TASK                                           \
+  ((s32 (*)())ColossoWall_StartLetteringAnimation)
 #define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
   ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)
 #endif
 
 // Forward declarations.
-static void Colosso_RunGreetScene(s32 a0);
-static void ColossoWall_RunScriptedTransition(s32 mode);
-static void FieldScene_RunLateSequence(s32 a0);
+static void ColossoWall_IntroduceSecondFinals(s32 attendantId);
+static void ColossoWall_ShowRoundStartLettering(s32 mode);
+static void ColossoWall_ShowBattleResultLettering(s32 result);
 static void SceneState_EmptyHook(void);
-static void SceneState_WaitUntilStatusNine(void);
-static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
-static void SceneState_InitControlRecordAndStartTask(s32 resource);
-static void StagedActor_PushActorAhead(void);
+static void ColossoWall_WaitForRivalFinish(void);
+static s32 ColossoWall_ApproachFinishAndTakeItem(s32 finishItemActorA,
+                                                 s32 finishItemActorB);
+static void ColossoWall_StartRivalPath(s32 pathResource);
+static void ColossoWall_PushAdjacentObstacle(void);
 
 #define WORK_SLOT_STAGE 59
-
-typedef struct MovedObject {
-  s32 f00;
-  s32 f04;
-  s32 f08;
-  s32 f0c;
-  s32 f10;
-  u8 f14[28];
-  s32 f30;
-  s32 f34;
-} MovedObject;
 
 typedef struct PartyInteractionRecord {
   u8 padding00[10];
@@ -151,155 +158,173 @@ struct StageControl {
   s16 f8;
 };
 
+// Set the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
+// Set the specified actor's walking speed and acceleration.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-// Battle-start kinds, as in battle/party/party.c.
-// Function from another file; its callers use no declaration (implicit int).
-
+// Return the entrance rows for the second Colosso finals course.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColossoWallEntrances;
 }
 
+// This course has no placement-clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
+// Return the packed course and battle-result exits.
 const u32 *Scene_GetExits(void) { return gColossoWallExits; }
 
+// Return the course's competitors, obstacles and attendants.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gColossoWallPlacements;
 }
 
-static void SceneData_NoOpHandler(void) {}
+// Leave these actors unchanged when Move targets them.
+static void ColossoWall_IgnoreMove(void) {}
 
-static void FieldScene_RunSingleStep(void) { StagedActor_PushActorAhead(); }
+// Push the obstacle immediately ahead of the selected actor.
+static void ColossoWall_PushObstacleAhead(void) {
+  ColossoWall_PushAdjacentObstacle();
+}
 
-static void EV11_PSYNERGY(void) {
-  struct FieldActor *work;
-  s32 v0;
-  s32 v1;
+// Update the first movable obstacle's collision after Move.
+static void ColossoWall_UpdateMovedObstacleCollision(void) {
+  struct FieldActor *obstacle;
+  s32 column;
+  s32 row;
 
-  work = Object_GetById(11);
-  if ((work->x.fixed >> 20) == 36) {
+  obstacle = Object_GetById(11);
+  if ((obstacle->x.fixed >> 20) == 36) {
     Engine_GameFlagSet(0x335);
-    v0 = 0x23;
-    v1 = 0x4D;
-    Map_CopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
+    column = 0x23;
+    row = 0x4D;
+    Map_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
   } else {
     Engine_GameFlagClear(0x335);
-    v0 = 0x23;
-    v1 = 0x4D;
-    Map_CopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
+    column = 0x23;
+    row = 0x4D;
+    Map_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
   }
 }
 
-static void FieldScene_RunTwoStepSequence(void) {
-  StagedActor_PushActorAhead();
-  EV11_PSYNERGY();
+// Push an obstacle, then restore the first obstacle's collision cell.
+static void ColossoWall_PushAndUpdateObstacleCollision(void) {
+  ColossoWall_PushAdjacentObstacle();
+  ColossoWall_UpdateMovedObstacleCollision();
 }
 
-static void SceneState_StoreSlotTileXToWork832To848(void) {
+// Save the movable obstacles' columns and rebuild their collision cells.
+static void ColossoWall_SaveMovedObstacleColumns(void) {
 
-  s32 *record;
-  s32 value;
+  struct FieldActor *obstacle;
+  s32 column;
 
   Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  record = (s32 *)Object_GetById(12);
-  value = record[2] >> 20;
-  FieldGameFlag_SetByte(832, value);
-  Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+  obstacle = Object_GetById(12);
+  column = obstacle->x.fixed >> 20;
+  FieldGameFlag_SetByte(832, column);
+  Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  record = (s32 *)Object_GetById(13);
-  value = record[2] >> 20;
-  FieldGameFlag_SetByte(840, value);
-  Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+  obstacle = Object_GetById(13);
+  column = obstacle->x.fixed >> 20;
+  FieldGameFlag_SetByte(840, column);
+  Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  record = (s32 *)Object_GetById(14);
-  value = record[2] >> 20;
-  FieldGameFlag_SetByte(848, value);
-  Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+  obstacle = Object_GetById(14);
+  column = obstacle->x.fixed >> 20;
+  FieldGameFlag_SetByte(848, column);
+  Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
-static void EV18_SCRIPT(void) {
-  u8 *record = gEffectWork;
+// Enable the child effect for Force on the course obstacle.
+static void ColossoWall_EnableForceChildEffect(void) {
+  u8 *effectWork = gEffectWork;
 
-  ((struct BattleFxScene *)record)->childMode = 1;
+  ((struct BattleFxScene *)effectWork)->childMode = 1;
 }
 
-static void EV18_PSYNERGY(void) {
-  struct FieldActor *rec2;
-  s32 frames;
-  s32 spin;
-  s32 frames2;
-  s32 spin2;
-  u8 *p6;
+// Spin the Force obstacle down into place and open its collision cells.
+static void ColossoWall_KnockDownForceObstacle(void) {
+  struct FieldActor *obstacle;
+  s32 fallFrames;
+  s32 rotationStep;
+  s32 settleFrames;
+  s32 settleRotationStep;
+  struct FieldSprite *sprite;
 
-  rec2 = Object_GetById(30);
-  p6 = (u8 *)rec2->sprite;
+  obstacle = Object_GetById(30);
+  sprite = obstacle->sprite;
   GameFlag_Set(0x330);
-  rec2->acceleration = 0x1999;
-  rec2->speed = 0x13333;
+  obstacle->acceleration = 0x1999;
+  obstacle->speed = 0x13333;
   Engine_AudioPlayCue(227);
-  FieldObject_SetPosition(rec2, 0x1500000, 0xa0000, 0x1080000);
-  for (spin = 0, frames = 9; frames >= 0; frames--) {
-    ((struct FieldSprite *)p6)->rotation -= spin;
+  // Spin through the fall, then settle the obstacle at its final height.
+  FieldObject_SetPosition(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
+  for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
+    sprite->rotation -= rotationStep;
     Engine_TaskWait(1);
-    spin += 36;
+    rotationStep += 36;
   }
-  FieldObject_SetPosition(rec2, 0x14a0000, -0x100000, 0x1080000);
-  for (spin2 = 0x168, frames2 = 21; frames2 >= 0; frames2--) {
-    ((struct FieldSprite *)p6)->rotation -= spin2;
+  FieldObject_SetPosition(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
+  for (settleRotationStep = 0x168, settleFrames = 21; settleFrames >= 0;
+       settleFrames--) {
+    sprite->rotation -= settleRotationStep;
     Engine_TaskWait(1);
-    spin2 += 36;
+    settleRotationStep += 36;
   }
-  Object_CommitPosition(rec2);
+  Object_CommitPosition(obstacle);
   Engine_EventWait(2);
   Engine_AudioPlayCue(240);
   {
-    s32 shown = 0;
+    s32 rotation = 0;
 
-    ((struct FieldSprite *)p6)->rotation = shown;
+    sprite->rotation = rotation;
   }
   Engine_ActorSetAnimation(30, 4);
-  rec2->x.fixed = 0x1500000;
-  rec2->y.fixed = -0x80000;
-  rec2->z.fixed = 0x1080000;
-  rec2->velocityY = 0;
-  rec2->velocityX = 0;
+  obstacle->x.fixed = 0x1500000;
+  obstacle->y.fixed = -0x80000;
+  obstacle->z.fixed = 0x1080000;
+  obstacle->velocityY = 0;
+  obstacle->velocityX = 0;
+  // Keep both the course and its saved collision strip in the new state.
   Map_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   Map_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
 
-static void EV20_SCRIPT(void) {
-  u8 *p;
+// Stop the western Frost obstacle and update the frozen crossing.
+static void ColossoWall_FreezeWestWaterObstacle(void) {
+  struct FieldActor *obstacle;
 
   Engine_GameFlagSet(0x331);
-  p = (u8 *)Object_GetById(20) + 85;
-  *p = 0;
+  obstacle = Object_GetById(20);
+  obstacle->motionFlags = 0;
   {
 
     Map_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
 }
 
-static void FieldScene_SetFlag332AndDrawTiles(void) {
-  u8 *slot;
+// Stop the eastern Frost obstacle and update the frozen crossing.
+static void ColossoWall_FreezeEastWaterObstacle(void) {
+  struct FieldActor *obstacle;
 
   Engine_GameFlagSet(0x332);
-  slot = (u8 *)Object_GetById(21) + 85;
-  *slot = 0;
+  obstacle = Object_GetById(21);
+  obstacle->motionFlags = 0;
   {
 
     Map_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
 }
 
-static void EV19_PSYNERGY(void) {
+// Record Growth on the obstacle and restore its climbable collision strip.
+static void ColossoWall_UpdateGrowthObstacleCollision(void) {
   Engine_GameFlagSet(0x333);
   {
 
@@ -307,97 +332,112 @@ static void EV19_PSYNERGY(void) {
   }
 }
 
+// Run the rising-object sequence for the actor touching the obstacle.
 static void ColossoWall_RunSelectedActorRisingEffect(void) {
   FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
 }
 
+// Let the field engine check the obstacle ahead of the leader.
 static void ColossoWall_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
 
-static void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2) {
+// Move a riding log and its pusher to aligned cell centers.
+static void ColossoWall_MovePusherAndLog(s32 logId, s32 offsetX, s32 offsetZ) {
 
-  MovedObject *p;
-  MovedObject *q;
-  s32 x;
-  s32 y;
+  struct FieldActor *pusher;
+  struct FieldActor *log;
+  s32 destinationX;
+  s32 destinationZ;
 
-  p = (MovedObject *)Object_GetById(gGameState.selectedActor);
-  q = (MovedObject *)Object_GetById(a0);
+  pusher = Object_GetById(gGameState.selectedActor);
+  log = Object_GetById(logId);
   Engine_EventBegin();
   {
-    x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-    y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+    destinationX =
+        ((pusher->x.fixed + COLOSSO_WALL_OFFSET_FIXED(offsetX)) & 0xFFF00000) +
+        0x80000;
+    destinationZ =
+        ((pusher->z.fixed + COLOSSO_WALL_OFFSET_FIXED(offsetZ)) & 0xFFF00000) +
+        0x80000;
 
-    p->f30 = 0x10000;
-    p->f34 = 0x8000;
-    Engine_ObjectSetPosition(p, x, p->f0c, y);
+    pusher->speed = 0x10000;
+    pusher->acceleration = 0x8000;
+    Engine_ObjectSetPosition(pusher, destinationX, pusher->y.fixed,
+                             destinationZ);
   }
-  Object_SetMode(p, 27);
+  Object_SetMode(pusher, 27);
   {
-    x = ((q->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-    y = ((q->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+    destinationX =
+        ((log->x.fixed + COLOSSO_WALL_OFFSET_FIXED(offsetX)) & 0xFFF00000) +
+        0x80000;
+    destinationZ =
+        ((log->z.fixed + COLOSSO_WALL_OFFSET_FIXED(offsetZ)) & 0xFFF00000) +
+        0x80000;
 
-    q->f30 = 0x10000;
-    q->f34 = 0x8000;
-    Engine_ObjectSetPosition(q, x, q->f0c, y);
+    log->speed = 0x10000;
+    log->acceleration = 0x8000;
+    Engine_ObjectSetPosition(log, destinationX, log->y.fixed, destinationZ);
   }
-  if (a1 < 0 || a2 < 0) {
-    Object_SetMode(q, 4);
+  if (offsetX < 0 || offsetZ < 0) {
+    Object_SetMode(log, 4);
   } else {
-    Object_SetMode(q, 3);
+    Object_SetMode(log, 3);
   }
   Engine_AudioPlayCue(226);
-  Object_CommitPosition(p);
+  Object_CommitPosition(pusher);
   Engine_AudioPlayCue(288);
-  Object_SetMode(q, 2);
+  Object_SetMode(log, 2);
   Engine_EventEnd();
 }
 
-static void EV22_SCRIPT(void) {
-  struct FieldActor *leader = Object_GetById(gGameState.selectedActor);
-  s32 x = leader->x.fixed >> 20;
-  s32 push = 0;
-  s32 block = 32;
+// Move the aligned riding log in the direction the player holds.
+static void ColossoWall_PushAlignedRidingLog(void) {
+  struct FieldActor *pusher = Object_GetById(gGameState.selectedActor);
+  s32 column = pusher->x.fixed >> 20;
+  s32 offsetX = 0;
+  s32 logId = 32;
 
-  if (leader->z.fixed >> 20 > 12) {
-    block = 33;
+  if (pusher->z.fixed >> 20 > 12) {
+    logId = 33;
   }
-  if (Object_GetById(block)->x.fixed >> 20 != x) {
+  if (Object_GetById(logId)->x.fixed >> 20 != column) {
     return;
   }
-  if (x > 51) {
+  if (column > 51) {
     if (gKeysHeld & KEY_LEFT) {
-      push = -64;
+      offsetX = -COLOSSO_WALL_LOG_TRAVEL_PIXELS;
     }
   } else if (gKeysHeld & KEY_RIGHT) {
-    push = 64;
+    offsetX = COLOSSO_WALL_LOG_TRAVEL_PIXELS;
   }
-  if (push != 0) {
-    SceneActor_MovePairByTileOffset(block, push, 0);
+  if (offsetX != 0) {
+    ColossoWall_MovePusherAndLog(logId, offsetX, 0);
+    // Replace both log footprints after the moving pair has stopped.
     Map_CopyCellAttributes(120, 10, 5, 6, 48, 10);
-    x = Object_GetById(32)->x.fixed >> 20;
-    Map_CopyCellAttributes(52, 28, 1, 3, x, 10);
-    x = Object_GetById(33)->x.fixed >> 20;
-    Map_CopyCellAttributes(52, 28, 1, 3, x, 13);
+    column = Object_GetById(32)->x.fixed >> 20;
+    Map_CopyCellAttributes(52, 28, 1, 3, column, 10);
+    column = Object_GetById(33)->x.fixed >> 20;
+    Map_CopyCellAttributes(52, 28, 1, 3, column, 13);
   }
 }
 
-static void ColossoWall_RollLogToCell(s32 id, s32 column, s32 row) {
+// Roll a log to half-cell coordinates while its pusher follows halfway.
+static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   s32 pusher = gGameState.selectedActor;
-  struct FieldActor *leader = Object_GetById(pusher);
-  struct FieldActor *log = Object_GetById(id);
-  s32 heading = (leader->facing + 0x1000) & 0xe000;
-  s32 alongX = (log->x.fixed >> 20) != column / 2;
-  s32 dx;
-  s32 dz;
+  struct FieldActor *pusherActor = Object_GetById(pusher);
+  struct FieldActor *log = Object_GetById(logId);
+  s32 heading = (pusherActor->facing + 0x1000) & 0xe000;
+  s32 alongX = (log->x.fixed >> 20) != halfCellX / 2;
+  s32 offsetX;
+  s32 offsetZ;
 
-  column <<= 19;
-  row <<= 19;
+  halfCellX <<= 19;
+  halfCellZ <<= 19;
   if (alongX) {
-    dx = (column - log->x.fixed) / 2;
-    dz = 0;
+    offsetX = (halfCellX - log->x.fixed) / 2;
+    offsetZ = 0;
   } else {
-    dx = 0;
-    dz = (row - log->z.fixed) / 2;
+    offsetX = 0;
+    offsetZ = (halfCellZ - log->z.fixed) / 2;
   }
   Engine_EventBegin();
   Engine_ActorSetAnimation(pusher, 8);
@@ -405,19 +445,20 @@ static void ColossoWall_RollLogToCell(s32 id, s32 column, s32 row) {
   log->speed = 0x8000;
   log->acceleration = 0x3333;
   Object_SetMode(log, gColossoWall_RollLogScript[heading / 0x4000]);
-  Engine_ObjectSetPosition(log, column, 0, row);
+  Engine_ObjectSetPosition(log, halfCellX, 0, halfCellZ);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(pusher, 2);
+  // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_InitFromTable4WithArgument(
       *(struct DispatchObject **)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480),
       (s32)log);
   Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
-  Object_SetMode(leader, 2);
-  Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0,
-                           leader->z.fixed + dz);
+  Object_SetMode(pusherActor, 2);
+  Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
+                           pusherActor->z.fixed + offsetZ);
   Engine_AudioPlayCue(239);
-  Object_CommitPosition(leader);
-  Object_SetMode(leader, 1);
+  Object_CommitPosition(pusherActor);
+  Object_SetMode(pusherActor, 1);
   Object_CommitPosition(log);
   Engine_AudioPlayCue(288);
   Engine_AudioPlayCue(213);
@@ -426,103 +467,115 @@ static void ColossoWall_RollLogToCell(s32 id, s32 column, s32 row) {
   Engine_EventEnd();
 }
 
-static void SceneState_ApplyRectsForActors15To17(void) {
-  s32 field;
+// Rebuild the three rolling logs' collision rectangles at their positions.
+static void ColossoWall_UpdateRollingLogCollision(void) {
+  s32 cell;
 
   Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  field = Object_GetById(15)->x.fixed >> 20;
-  Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
+  cell = Object_GetById(15)->x.fixed >> 20;
+  Map_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  field = Object_GetById(16)->x.fixed >> 20;
-  Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
+  cell = Object_GetById(16)->x.fixed >> 20;
+  Map_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  field = Object_GetById(17)->z.fixed >> 20;
-  Map_CopyCellAttributes(13, 28, 4, 1, 18, field);
+  cell = Object_GetById(17)->z.fixed >> 20;
+  Map_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
-static void EV24_TOUCH(void) {
+// Roll the western log toward its western stopping point.
+static void ColossoWall_RollWestLogWest(void) {
   ColossoWall_RollLogToCell(15, 29, 26);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void EV25_TOUCH(void) {
+// Roll the western log toward its eastern stopping point.
+static void ColossoWall_RollWestLogEast(void) {
   ColossoWall_RollLogToCell(15, 33, 26);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void EV28_TOUCH(void) {
+// Roll the eastern log toward its western stopping point.
+static void ColossoWall_RollEastLogWest(void) {
   ColossoWall_RollLogToCell(16, 45, 26);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void EV27_TOUCH(void) {
+// Roll the eastern log toward its eastern stopping point.
+static void ColossoWall_RollEastLogEast(void) {
   ColossoWall_RollLogToCell(16, 49, 26);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void FieldScene_RunStep17At40By23(void) {
+// Roll the center log north and rebuild the log collision rectangles.
+static UNUSED void ColossoWall_RollCenterLogNorth(void) {
   ColossoWall_RollLogToCell(17, 40, 23);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void FieldScene_RunStep17At40By25(void) {
+// Roll the center log south and rebuild the log collision rectangles.
+static UNUSED void ColossoWall_RollCenterLogSouth(void) {
   ColossoWall_RollLogToCell(17, 40, 25);
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
 }
 
-static void FieldScene_RunSupplementalSequenceOne(void) {
-  s32 i;
-  struct FieldActor *rec8;
-  struct FieldActor *rec7;
-  s32 xa;
-  s32 xb;
-  s32 xd;
-  s32 ya;
-  s32 yb;
-  s32 yd;
-  struct FieldActor *record;
+// Carry the selected actor on the moving platforms and alternate their routes.
+static void ColossoWall_UpdateMovingPlatforms(void) {
+  s32 platformId;
+  struct FieldActor *rider;
+  struct FieldActor *platform;
+  s32 platformX;
+  s32 riderX;
+  s32 deltaX;
+  s32 platformZ;
+  s32 riderZ;
+  s32 deltaZ;
+  struct FieldActor *platformActor;
 
-  rec8 = Object_GetById(gGameState.selectedActor);
-  for (i = 22; i <= 25; i++) {
-    rec7 = Object_GetById(i);
-    rec7->paused = 0;
-    xa = rec7->x.fixed;
-    xb = rec8->x.fixed;
-    xd = xa - xb;
-    if (xd >= 0) {
-      if (xd > 0x9ffff) {
+  rider = Object_GetById(gGameState.selectedActor);
+  // Carry a rider only while both horizontal distances are less than ten
+  // pixels.
+  for (platformId = COLOSSO_WALL_FIRST_PLATFORM;
+       platformId <= COLOSSO_WALL_LAST_PLATFORM; platformId++) {
+    platform = Object_GetById(platformId);
+    platform->paused = 0;
+    platformX = platform->x.fixed;
+    riderX = rider->x.fixed;
+    deltaX = platformX - riderX;
+    if (deltaX >= 0) {
+      if (deltaX > 0x9ffff) {
         continue;
       }
     } else {
-      xb -= xa;
-      if (xb > 0x9ffff) {
+      riderX -= platformX;
+      if (riderX > 0x9ffff) {
         continue;
       }
     }
-    ya = rec7->z.fixed;
-    yb = rec8->z.fixed;
-    yd = ya - yb;
-    if (yd >= 0) {
-      if (yd > 0x9ffff) {
+    platformZ = platform->z.fixed;
+    riderZ = rider->z.fixed;
+    deltaZ = platformZ - riderZ;
+    if (deltaZ >= 0) {
+      if (deltaZ > 0x9ffff) {
         continue;
       }
     } else {
-      yb -= ya;
-      if (yb > 0x9ffff) {
+      riderZ -= platformZ;
+      if (riderZ > 0x9ffff) {
         continue;
       }
     }
     if (GameFlag_IsSet(0x104) != 0) {
-      yb = rec7->z.fixed;
+      riderZ = platform->z.fixed;
     } else {
-      yb = rec8->z.fixed;
-      yd = rec7->velocityZ;
-      yb += yd;
+      riderZ = rider->z.fixed;
+      deltaZ = platform->velocityZ;
+      riderZ += deltaZ;
     }
-    rec8->z.fixed = yb;
+    rider->z.fixed = riderZ;
   }
-  if (gColossoWall_SpectatorTimer != 0 && rec7->targetX == 0x80000000) {
+  // The final platform's destination selects the collision tiles for the row.
+  if (gColossoWall_SpectatorTimer != 0 && platform->targetX == 0x80000000) {
     if (gColossoWall_SpectatorPhase == 0) {
       Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
     } else {
@@ -532,42 +585,44 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
     Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
     Map_CopyCellAttributes(58, 14, 7, 1, 58, 13);
   }
+  // Start the next alternating route when the two-second cycle wraps.
   if (gColossoWall_SpectatorTimer == 0) {
     gColossoWall_SpectatorPhase ^= 1;
     if (gColossoWall_SpectatorPhase != 0) {
-      record = Object_GetById(22);
-      FieldObject_SetPosition(record, 0x3a80000, 0, 0xb80000);
-      record = Object_GetById(23);
-      FieldObject_SetPosition(record, 0x3c80000, 0, 0xf80000);
-      record = Object_GetById(24);
-      FieldObject_SetPosition(record, 0x3e80000, 0, 0xb80000);
-      record = Object_GetById(25);
-      FieldObject_SetPosition(record, 0x4080000, 0, 0xf80000);
+      platformActor = Object_GetById(22);
+      FieldObject_SetPosition(platformActor, 0x3a80000, 0, 0xb80000);
+      platformActor = Object_GetById(23);
+      FieldObject_SetPosition(platformActor, 0x3c80000, 0, 0xf80000);
+      platformActor = Object_GetById(24);
+      FieldObject_SetPosition(platformActor, 0x3e80000, 0, 0xb80000);
+      platformActor = Object_GetById(25);
+      FieldObject_SetPosition(platformActor, 0x4080000, 0, 0xf80000);
       Engine_ActorSetAnimation(31, 11);
     } else {
-      record = Object_GetById(22);
-      FieldObject_SetPosition(record, 0x3a80000, 0, 0xd80000);
-      record = Object_GetById(23);
-      FieldObject_SetPosition(record, 0x3c80000, 0, 0xd80000);
-      record = Object_GetById(24);
-      FieldObject_SetPosition(record, 0x3e80000, 0, 0xd80000);
-      record = Object_GetById(25);
-      FieldObject_SetPosition(record, 0x4080000, 0, 0xd80000);
+      platformActor = Object_GetById(22);
+      FieldObject_SetPosition(platformActor, 0x3a80000, 0, 0xd80000);
+      platformActor = Object_GetById(23);
+      FieldObject_SetPosition(platformActor, 0x3c80000, 0, 0xd80000);
+      platformActor = Object_GetById(24);
+      FieldObject_SetPosition(platformActor, 0x3e80000, 0, 0xd80000);
+      platformActor = Object_GetById(25);
+      FieldObject_SetPosition(platformActor, 0x4080000, 0, 0xd80000);
       Engine_ActorSetAnimation(31, 10);
     }
   }
   gColossoWall_SpectatorTimer++;
-  if ((u32)gColossoWall_SpectatorTimer > 119) {
+  if ((u32)gColossoWall_SpectatorTimer >= COLOSSO_WALL_PLATFORM_CYCLE_FRAMES) {
     if (GameFlag_IsSet(0x104) == 0) {
       gColossoWall_SpectatorTimer = 0;
     }
   }
 }
 
-static void FieldScene_PlaceSpectatorRow(void) {
+// Stop the moving-platform task and restore its starting row.
+static void ColossoWall_ResetMovingPlatforms(void) {
   gColossoWall_SpectatorTimer = 0;
   gColossoWall_SpectatorPhase = 0;
-  Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
+  Engine_TaskRemoveCallback(ColossoWall_UpdateMovingPlatforms);
   Actor_SetPosition(22, 0x3a80000, 0xd80000);
   Actor_SetPosition(23, 0x3c80000, 0xd80000);
   Actor_SetPosition(24, 0x3e80000, 0xd80000);
@@ -575,28 +630,31 @@ static void FieldScene_PlaceSpectatorRow(void) {
   Engine_ActorSetAnimation(31, 10);
 }
 
-static void ColossoWall_StartSupplementalSceneTask(void) {
-  FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
+// Start the moving-platform task and release its pause flag.
+static void ColossoWall_StartMovingPlatforms(void) {
+  FieldScheduler_AddCallback(ColossoWall_UpdateMovingPlatforms, 0xC85);
   Engine_GameFlagClear(0x104);
 }
 
-static void SceneState_WaitForStatusWords(void) {
-  s32 cnt;
+// Wait for the demonstration's crossing phase, with a ten-second timeout.
+static void ColossoWall_WaitForPlatformCrossingPhase(void) {
+  s32 elapsedFrames;
 
   Engine_TaskWait(10);
 
-  cnt = 0;
+  elapsedFrames = 0;
   while (gColossoWall_SpectatorPhase != 0 ||
-         gColossoWall_SpectatorTimer != 75) {
+         gColossoWall_SpectatorTimer != COLOSSO_WALL_PLATFORM_CROSSING_FRAME) {
     Engine_TaskWait(1);
-    cnt++;
-    if (cnt >= 600) {
+    elapsedFrames++;
+    if (elapsedFrames >= COLOSSO_WALL_DEMONSTRATION_TIMEOUT_FRAMES) {
       return;
     }
   }
 }
 
-static void EV31_PSYNERGY(void) {
+// Halt the platform controller and leave a fixed crossing behind.
+static void ColossoWall_HaltMovingPlatforms(void) {
   BattleEffect_PauseObject(31);
   Engine_GameFlagSet(820);
 
@@ -607,27 +665,30 @@ static void EV31_PSYNERGY(void) {
   Engine_TaskWait(30);
   Engine_TaskWait(1);
 
-  Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
+  Engine_TaskRemoveCallback(ColossoWall_UpdateMovingPlatforms);
 
   Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
   Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
-static void EV50_TOUCH(void) {
-  s32 rec8;
-  s32 v5;
-  s32 base;
+// Take the finish item, wait for the rival and begin the finals battle.
+static void ColossoWall_StartFinalsBattle(void) {
+  s32 rivalFinishedFirst;
+  s32 refreshCount;
+  s32 resultBase;
 
-  base = 2;
+  resultBase = 2;
   SceneState_EmptyHook();
   Engine_EventBegin();
-  rec8 = FieldScene_RunFlag211ApproachScene(77, 89);
-  SceneState_WaitUntilStatusNine();
-  v5 = 9;
+  // Collect the finish item and let the recorded rival finish its approach.
+  rivalFinishedFirst = ColossoWall_ApproachFinishAndTakeItem(77, 89);
+  ColossoWall_WaitForRivalFinish();
+  refreshCount = 9;
   do {
     Object_RefreshSelectorById(8);
-    v5 = (v5 - 1);
-  } while (v5 >= 0);
+    refreshCount = (refreshCount - 1);
+  } while (refreshCount >= 0);
+  // Bring the competitors together before selecting the battle's result bias.
   Actor_SetSpeed(8, 0x10000, 0x8000);
   Actor_WalkTo(8, 88, 0x100);
   Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -645,19 +706,22 @@ static void EV50_TOUCH(void) {
   Engine_ActorSetAnimation(0, 16);
   Engine_ActorSetAnimation(8, 9);
   Engine_EventWait(10);
-  /* FAKEMATCH: base is set to 2 at the top of the function, so base - rec8 + 1
-   * is not folded; written 3 - rec8 or 2 - rec8 + 1 it differs 10 on tbs-en,
-   * two instructions fewer. */
-  BattleFx_SetWeightedResult(72, base - rec8 + 1);
+  /* FAKEMATCH: resultBase is set to 2 at the top of the function, so resultBase
+   * - rivalFinishedFirst + 1 is not folded; written 3 - rivalFinishedFirst or 2
+   * - rivalFinishedFirst + 1 it differs 10 on tbs-en, two instructions fewer.
+   */
+  BattleFx_SetWeightedResult(72, resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoWall, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoWall, 5);
   Engine_GameFlagSet(0x11a);
 }
 
+// Return the course's obstacle interactions and attendant dialogue.
 const struct SceneEvent *Scene_GetEvents(void) { return gColossoWallEvents; }
 
-static void FieldScene_RunPairedEntranceWalk(s32 a0) {
+// Stage the competitors and show the battle-result lettering.
+static void ColossoWall_StageBattleResult(s32 result) {
 
   Engine_ActorDestroy(40);
   Engine_ActorDestroy(41);
@@ -667,7 +731,7 @@ static void FieldScene_RunPairedEntranceWalk(s32 a0) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x780000, 0x1000000);
   Actor_FaceActor(8, 0x4000, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
-  if (a0 < 0) {
+  if (result < 0) {
     Engine_ActorSetAnimation(8, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
   } else {
@@ -676,26 +740,28 @@ static void FieldScene_RunPairedEntranceWalk(s32 a0) {
   }
   Engine_TaskWait(1);
   Camera_MoveTo(0x680000, 0, 0xc00000, 0);
-  FieldScene_RunLateSequence(a0);
+  ColossoWall_ShowBattleResultLettering(result);
   Engine_EventEnd();
 }
 
+// Restore obstacle progress and set up the selected course entrance.
 s32 ColossoWall_ApplyEntryState(void) {
   struct FieldActor *actor;
   s32 x;
-  s32 i;
-  s32 col;
-  s32 k;
-  s32 pos;
+  s32 obstacleId;
+  s32 column;
+  s32 platformId;
+  s32 columnOffset;
   s32 row;
   s32 zero;
 
   gEventWork->startTransition = 0;
+  // Restore the collision templates before applying saved puzzle progress.
   Engine_GameFlagSet(0x144);
   Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
-  for (i = 26; i <= 30; i++) {
-    actor = Object_GetById(i);
+  for (obstacleId = 26; obstacleId <= 30; obstacleId++) {
+    actor = Object_GetById(obstacleId);
     Object_SetMode(actor, 4);
     actor->motionFlags = 0;
     actor->y.fixed = 0;
@@ -736,16 +802,17 @@ s32 ColossoWall_ApplyEntryState(void) {
     Map_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
   actor = Object_GetById(32);
-  col = actor->x.fixed >> 20;
+  column = actor->x.fixed >> 20;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
-  Map_CopyCellAttributes(52, 28, 1, 3, col, 10);
+  Map_CopyCellAttributes(52, 28, 1, 3, column, 10);
   actor = Object_GetById(33);
-  col = actor->x.fixed >> 20;
+  column = actor->x.fixed >> 20;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
-  Map_CopyCellAttributes(52, 28, 1, 3, col, 13);
+  Map_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
+  // Each movable obstacle stores its last occupied column in the scene flags.
   x = FieldGameFlag_GetByte(0x340);
   if (x == 0) {
     x = 73;
@@ -774,33 +841,38 @@ s32 ColossoWall_ApplyEntryState(void) {
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
-  SceneState_ApplyRectsForActors15To17();
+  ColossoWall_UpdateRollingLogCollision();
+  // A Halted controller leaves stationary platforms; otherwise resume the task.
   Engine_ActorSetAnimation(31, 10);
   if (Engine_GameFlagIsSet(0x334)) {
-    for (k = 22, row = 13, pos = 58; k <= 25; k++, pos += 2) {
-      actor = Object_GetById(k);
+    for (platformId = COLOSSO_WALL_FIRST_PLATFORM, row = 13, columnOffset = 58;
+         platformId <= COLOSSO_WALL_LAST_PLATFORM;
+         platformId++, columnOffset += 2) {
+      actor = Object_GetById(platformId);
       actor->priorityFlags = 2;
       Object_SetMode(actor, 4);
-      Map_CopyCellAttributes(56, 13, 1, 1, pos, row);
+      Map_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Engine_ActorSetAnimation(31, 10);
     BattleEffect_PauseObject(31);
   } else {
-    for (k = 22; k <= 25; k++) {
-      actor = Object_GetById(k);
+    for (platformId = COLOSSO_WALL_FIRST_PLATFORM;
+         platformId <= COLOSSO_WALL_LAST_PLATFORM; platformId++) {
+      actor = Object_GetById(platformId);
       actor->priorityFlags = 2;
       Object_SetMode(actor, 4);
       actor->speed = 0x8000;
       actor->acceleration = 0x3333;
     }
-    FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
-    Scheduler_SetTaskFlags((u32)FieldScene_RunSupplementalSequenceOne, 1);
+    FieldScheduler_AddCallback(ColossoWall_UpdateMovingPlatforms, 0xc85);
+    Scheduler_SetTaskFlags((u32)ColossoWall_UpdateMovingPlatforms, 1);
   }
   Engine_ActorSetAnimation(8, 9);
   gGameState.movementMode = 0;
   Colosso_ShowItemIcon(41, 89);
   Colosso_ShowItemIcon(40, 77);
   Engine_ActorSetChildValue(8, 1);
+  // Entrances distinguish the race, solo practice, briefing and battle results.
   switch (gGameState.entrance) {
   case 1:
     FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40,
@@ -812,109 +884,117 @@ s32 ColossoWall_ApplyEntryState(void) {
     Engine_ActorDestroy(37);
     Engine_ActorDestroy(38);
     Engine_ActorDestroy(39);
-    if (!Engine_GameFlagIsSet(0x109)) {
+    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(17);
       Colosso_SelectSoloCompetitor(0);
       SceneActor_PlacePartyAtSavedTiles();
-      ColossoWall_RunScriptedTransition(2);
+      ColossoWall_ShowRoundStartLettering(2);
     }
     Object_LinkObjectAndSetCallback(1, 0);
     Object_LinkObjectAndSetCallback(2, 0);
     Object_LinkObjectAndSetCallback(3, 0);
-    SceneState_InitControlRecordAndStartTask((s32)&ResourceId_RivalPathB);
+    ColossoWall_StartRivalPath((s32)&ResourceId_RivalPathB);
     break;
   case 2:
     FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
     Engine_ActorDestroy(40);
     Engine_ActorDestroy(41);
-    if (!Engine_GameFlagIsSet(0x109)) {
+    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       SceneActor_PlacePartyAtSavedTiles();
       Colosso_SelectSoloCompetitor(1);
-      ColossoWall_RunScriptedTransition(0);
+      ColossoWall_ShowRoundStartLettering(0);
     }
     break;
   case 3:
-    if (!Engine_GameFlagIsSet(0x109)) {
-      Colosso_RunGreetScene(34);
+    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      ColossoWall_IntroduceSecondFinals(34);
       Colosso_ClearSavedActorPositions();
     }
     break;
   case 4:
-    FieldScene_RunPairedEntranceWalk(2);
+    ColossoWall_StageBattleResult(2);
     Engine_EventRequestExit(4);
     break;
   case 5:
-    FieldScene_RunPairedEntranceWalk(-2);
+    ColossoWall_StageBattleResult(-2);
     Engine_EventRequestExit(5);
     break;
   }
   return 0;
 }
 
-static void Colosso_RunGreetScene(s32 a0) {
-  s32 p10;
-  s32 p9;
-  struct FieldActor *record;
+// Introduce the second finals course, then gather the party behind Isaac.
+static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
+  s32 attendantZ;
+  s32 attendantX;
+  struct FieldActor *actor;
 
-  record = Object_GetById(a0);
-  p9 = record->x.part.pixel;
-  p10 = record->z.part.pixel;
+  actor = Object_GetById(attendantId);
+  attendantX = actor->x.part.pixel;
+  attendantZ = actor->z.part.pixel;
   Engine_EventBegin();
-  Actor_SetSpeed(a0, 0x10000, 0x8000);
+  Actor_SetSpeed(attendantId, 0x10000, 0x8000);
   Actor_SetSpeed(0, 0x10000, 0x8000);
   Actor_SetSpeed(1, 0x10000, 0x8000);
   Actor_SetSpeed(2, 0x10000, 0x8000);
   Actor_SetSpeed(3, 0x10000, 0x8000);
-  Engine_ActorSetPosition(0, (p9 << 16), ((p10 << 16) - 0x300000));
-  Engine_ActorSetPosition(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
-  Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
-  Engine_ActorSetPosition(3, (p9 << 16), ((p10 << 16) - 0x200000));
-  Engine_ActorSetPosition(a0, (p9 << 16), ((p10 << 16) - 0x500000));
-  record = Object_GetById(0);
-  record->facing = 0xc000;
+  Engine_ActorSetPosition(0, (attendantX << 16),
+                          ((attendantZ << 16) - 0x300000));
+  Engine_ActorSetPosition(1, (attendantX << 16) - 0x100000,
+                          (attendantZ << 16) - 0x280000);
+  Engine_ActorSetPosition(2, (attendantX << 16) + 0x100000,
+                          (attendantZ << 16) - 0x280000);
+  Engine_ActorSetPosition(3, (attendantX << 16),
+                          ((attendantZ << 16) - 0x200000));
+  Engine_ActorSetPosition(attendantId, (attendantX << 16),
+                          ((attendantZ << 16) - 0x500000));
+  actor = Object_GetById(0);
+  actor->facing = 0xc000;
   Engine_CameraFollowActor(0, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteSecondFinals);
-  Engine_ActorSetAnimationAndWait(a0, 3);
-  Engine_EventShowMessage(a0, 0);
-  Engine_ActorRunRepeatedMotion(a0, 2);
-  Engine_EventShowMessage(a0, 0);
-  Engine_ActorRunRepeatedMotion(a0, 2);
-  Engine_EventShowMessage(a0, 0);
-  Engine_ActorRunRepeatedMotion(a0, 2);
-  Engine_EventShowMessage(a0, 0);
+  Engine_ActorSetAnimationAndWait(attendantId, 3);
+  Engine_EventShowMessage(attendantId, 0);
+  Engine_ActorRunRepeatedMotion(attendantId, 2);
+  Engine_EventShowMessage(attendantId, 0);
+  Engine_ActorRunRepeatedMotion(attendantId, 2);
+  Engine_EventShowMessage(attendantId, 0);
+  Engine_ActorRunRepeatedMotion(attendantId, 2);
+  Engine_EventShowMessage(attendantId, 0);
+  // Gather the companions into Isaac before the attendant returns to his post.
   Engine_ActorSetAnimation(3, 3);
   Engine_ActorSetAnimation(1, 3);
   Engine_ActorSetAnimation(2, 3);
   Engine_ActorSetAnimationAndWait(0, 3);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(1, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
+  actor = Object_GetById(0);
+  if (actor != 0) {
+    Engine_ActorSetDestination(1, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(2, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
+  actor = Object_GetById(0);
+  if (actor != 0) {
+    Engine_ActorSetDestination(2, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(3, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
+  actor = Object_GetById(0);
+  if (actor != 0) {
+    Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 64));
+  Engine_ActorWalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 64));
   Engine_ActorSetPosition(1, 0, 0);
   Engine_ActorSetPosition(2, 0, 0);
   Engine_ActorSetPosition(3, 0, 0);
-  Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 16));
-  Engine_ActorWalkToAndWait(a0, p9, p10);
-  Engine_ActorFaceDirection(a0, 0xc000, 10);
+  Engine_ActorWalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 16));
+  Engine_ActorWalkToAndWait(attendantId, attendantX, attendantZ);
+  Engine_ActorFaceDirection(attendantId, 0xc000, 10);
   Engine_EventEnd();
 }
 
-static void EV35_TALK(s32 speaker) {
+// Explain and demonstrate the Mini-Maze, or finish the solo round.
+static void ColossoWall_ExplainMiniMaze(s32 speaker) {
   s32 result;
   struct FieldActor *actor;
 
@@ -956,17 +1036,18 @@ static void EV35_TALK(s32 speaker) {
   }
 }
 
-static void EV36_TALK(s32 a0) {
-  s32 rec;
+// Explain and demonstrate the shifting floor, or finish the solo round.
+static void ColossoWall_ExplainShiftingFloor(s32 speaker) {
+  s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(a0);
+    Colosso_FinishSoloRound(speaker);
   } else {
     Engine_EventBegin();
-    rec = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
-    if (rec == 0) {
+    result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 2);
+    if (result == 0) {
       Engine_EventSetMessage(MsgColossoShiftingFloorStage);
-      FieldScene_PlaceSpectatorRow();
+      ColossoWall_ResetMovingPlatforms();
       Camera_SetSpeed(0x30000, 0x6000);
       Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
       Engine_CameraWaitForMove();
@@ -976,41 +1057,42 @@ static void EV36_TALK(s32 a0) {
        * directly or through Call2 it differs 2 on tbs-en.
        * Direct prototype rechecked 2026-10-16: 2 argument instructions
        * differ in tbs-en. */
-      COLOSSO_WALL_SHOW_MESSAGE(a0, 0);
-      ColossoWall_StartSupplementalSceneTask();
-      Event_ShowMessage(a0, 0);
+      COLOSSO_WALL_SHOW_MESSAGE(speaker, 0);
+      ColossoWall_StartMovingPlatforms();
+      Event_ShowMessage(speaker, 0);
       Colosso_FadeInCompetitor(0, 0x438, 0x108);
       Engine_EventWait(15);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
       OverlayObject_PlaceWithScale14000(0, 0x438, 216);
       OverlayObject_PlaceWithScale14000(0, 0x428, 216);
-      SceneState_WaitForStatusWords();
+      ColossoWall_WaitForPlatformCrossingPhase();
       Engine_LeaderCheckAhead();
       Camera_MoveTo(-1, -1, -1, 0);
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(speaker, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Colosso_ShowFollowUpPrompt(a0, 2);
+      Colosso_ShowFollowUpPrompt(speaker, 2);
     } else {
-      if (rec == 1) {
+      if (result == 1) {
         Engine_EventSetMessage(MsgColossoOperatorLiftsWillCheerFor);
-        Event_ShowMessage(a0, 0);
+        Event_ShowMessage(speaker, 0);
       }
     }
-    FieldScene_RunMiddleSequence(rec, a0, 2);
+    FieldScene_RunMiddleSequence(result, speaker, 2);
     Engine_EventEnd();
   }
 }
 
-static void EV37_TALK(s32 a0) {
-  s32 rec2;
+// Explain and demonstrate riding logs, or finish the solo round.
+static void ColossoWall_ExplainLogRolling(s32 speaker) {
+  s32 result;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(a0);
+    Colosso_FinishSoloRound(speaker);
   } else {
     Engine_EventBegin();
-    rec2 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
-    if (rec2 == 0) {
+    result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 3);
+    if (result == 0) {
       Engine_EventSetMessage(MsgColossoLogRollingStage);
       Camera_SetSpeed(0x30000, 0x6000);
       Camera_MoveTo(0x2f00000, -1, 0xc00000, 1);
@@ -1019,13 +1101,13 @@ static void EV37_TALK(s32 a0) {
       Camera_SetSpeed(0x10000, 0x2000);
       Camera_MoveTo(0x2f00000, -1, 0xe00000, 1);
       Engine_CameraWaitForMove();
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(speaker, 0);
       Colosso_FadeInCompetitor(0, 0x358, 0x108);
       Engine_EventWait(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
       OverlayObject_PlaceWithScale14000(0, 0x358, 0x108);
       OverlayObject_PlaceWithScale14000(0, 0x358, 232);
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(speaker, 0);
       OverlayObject_PlaceWithScale14000(0, 0x348, 232);
       Engine_EventWait(10);
       // UB: the void target is called through an incompatible return type.
@@ -1042,21 +1124,22 @@ static void EV37_TALK(s32 a0) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x2f8, 232);
       Engine_EventWait(10);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(speaker, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(33, 0x3480000, 0xe80000);
-      Colosso_ShowFollowUpPrompt(a0, 3);
-    } else if (rec2 == 1) {
+      Colosso_ShowFollowUpPrompt(speaker, 3);
+    } else if (result == 1) {
       Engine_EventSetMessage(MsgColossoHereYourObjectiveRideLogs);
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(speaker, 0);
     }
-    FieldScene_RunMiddleSequence(rec2, a0, 3);
+    FieldScene_RunMiddleSequence(result, speaker, 3);
     Engine_EventEnd();
   }
 }
 
-static void EV38_TALK(s32 speaker) {
+// Explain and demonstrate scaling the Wall, or finish the solo round.
+static void ColossoWall_ExplainWallClimb(s32 speaker) {
   s32 z;
   struct FieldActor *actor;
   s32 result;
@@ -1111,46 +1194,48 @@ static void EV38_TALK(s32 speaker) {
   Engine_EventEnd();
 }
 
-static void ColossoWall_PushBlockToCell(s32 id, s32 column, s32 row) {
+// Move a demonstration obstacle to pixel coordinates while its pusher follows.
+static void ColossoWall_PushBlockToCell(s32 obstacleId, s32 column, s32 row) {
   s32 pusher = gGameState.selectedActor;
-  struct FieldActor *leader = Object_GetById(pusher);
-  struct FieldActor *block = Object_GetById(id);
-  s32 alongX = (block->x.fixed >> 20) != column / 2;
-  s32 dx;
-  s32 dz;
+  struct FieldActor *pusherActor = Object_GetById(pusher);
+  struct FieldActor *obstacle = Object_GetById(obstacleId);
+  s32 alongX = (obstacle->x.fixed >> 20) != column / 2;
+  s32 offsetX;
+  s32 offsetZ;
 
   column <<= 16;
   row <<= 16;
   if (alongX) {
-    dx = (column - block->x.fixed) / 2;
-    dz = 0;
+    offsetX = (column - obstacle->x.fixed) / 2;
+    offsetZ = 0;
   } else {
-    dx = 0;
-    dz = (row - block->z.fixed) / 2;
+    offsetX = 0;
+    offsetZ = (row - obstacle->z.fixed) / 2;
   }
   Engine_ActorSetAnimation(pusher, 8);
   Engine_EventWait(6);
-  block->speed = 0x8000;
-  block->acceleration = 0x3333;
+  obstacle->speed = 0x8000;
+  obstacle->acceleration = 0x3333;
   Engine_AudioPlayCue(239);
-  Object_SetMode(block, 3);
-  Engine_ObjectSetPosition(block, column, 0, row);
+  Object_SetMode(obstacle, 3);
+  Engine_ObjectSetPosition(obstacle, column, 0, row);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(pusher, 2);
   Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
-  Object_SetMode(leader, 2);
-  Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0,
-                           leader->z.fixed + dz);
-  Object_CommitPosition(leader);
-  Object_SetMode(leader, 1);
-  Object_CommitPosition(block);
-  Object_SetMode(block, 1);
+  Object_SetMode(pusherActor, 2);
+  Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
+                           pusherActor->z.fixed + offsetZ);
+  Object_CommitPosition(pusherActor);
+  Object_SetMode(pusherActor, 1);
+  Object_CommitPosition(obstacle);
+  Object_SetMode(obstacle, 1);
   Engine_AudioPlayCue(288);
   Engine_AudioPlayCue(213);
   Engine_EventWait(15);
 }
 
-static void EV39_TALK(s32 speaker) {
+// Explain and demonstrate the Board Walk, or finish the solo round.
+static void ColossoWall_ExplainBoardWalk(s32 speaker) {
   s32 result;
 
   if (gGameState.entrance == 2) {
@@ -1198,40 +1283,42 @@ static void EV39_TALK(s32 speaker) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-static void ColossoWall_InitializeModeTask(u32 mode, u32 param) {
-  s32 handler;
+// Choose the lettering animation script and reset its task state.
+static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
+  s32 script;
 
   gColosso_ModeTaskMode = mode;
-  gColosso_ModeTaskParam = (param << 4);
+  gColosso_ModeTaskParam = (tileVariant << 4);
 
   {
-    s32 budget = 0xc80;
-    FieldScheduler_AddCallback(Colosso_UpdateModeTask, budget);
+    s32 priority = 0xc80;
+    FieldScheduler_AddCallback(Colosso_UpdateModeTask, priority);
   }
 
-  handler = (s32)gColossoWall_ModeRecordDefault;
+  script = (s32)gColossoWall_ModeRecordDefault;
   if (mode == 2) {
-    handler = (s32)gColossoWall_ModeRecordTwo;
+    script = (s32)gColossoWall_ModeRecordTwo;
   }
   if (mode == 4) {
-    handler = (s32)gColossoWall_ModeRecordFour;
+    script = (s32)gColossoWall_ModeRecordFour;
   }
   if (mode == 3) {
-    if (param != 0) {
-      handler = (s32)gColossoWall_ModeRecordThreeAlt;
+    if (tileVariant != 0) {
+      script = (s32)gColossoWall_ModeRecordThreeAlt;
     } else {
-      handler = (s32)gColossoWall_ModeRecordThree;
+      script = (s32)gColossoWall_ModeRecordThree;
     }
   }
 
   gColosso_ModeTaskTimer = 0;
-  gColosso_ModeTaskScript = (s16 *)handler;
+  gColosso_ModeTaskScript = (s16 *)script;
   gColosso_ModeMoveTarget = 0;
   gColosso_ModeMoveDuration = 0;
   gColosso_ModeTaskPosition = 0;
 }
 
-static void ColossoWall_RunScriptedTransition(s32 mode) {
+// Show the course-opening lettering and play its timed audio cues.
+static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
@@ -1239,7 +1326,7 @@ static void ColossoWall_RunScriptedTransition(s32 mode) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(0x59);
     Colosso_LoadPortrait(0);
-    ColossoWall_InitializeModeTask(1, 0);
+    ColossoWall_StartLetteringAnimation(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
     return;
@@ -1250,49 +1337,52 @@ static void ColossoWall_RunScriptedTransition(s32 mode) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   {
-    s16 *base = gColossoWall_ModeRecordDefault;
-    *(s16 *)((u8 *)base + 30) = (mode * 60);
+    s16 *openingScript = gColossoWall_ModeRecordDefault;
+    *(s16 *)((u8 *)openingScript + 30) = (mode * 60);
   }
   Engine_EventWait(30);
   Engine_AudioPlayCue(mode + 0x5a);
   Colosso_LoadPortrait(mode);
-  ColossoWall_InitializeModeTask(1, 0);
+  ColossoWall_StartLetteringAnimation(1, 0);
   Engine_EventWait(120);
 
+  // Finish the opening cue before the final lettering pulses and start signal.
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
 
   Engine_AudioPlayCue(0x121);
   Colosso_LoadPortrait(5);
-  ColossoWall_InitializeModeTask(2, 0);
+  ColossoWall_StartLetteringAnimation(2, 0);
   Engine_AudioPlayCue(0xec);
   Engine_EventWait(60);
-  ColossoWall_InitializeModeTask(2, 1);
+  ColossoWall_StartLetteringAnimation(2, 1);
   Engine_AudioPlayCue(0xec);
   Engine_EventWait(60);
   Colosso_LoadPortrait(6);
-  ColossoWall_InitializeModeTask(2, 0);
+  ColossoWall_StartLetteringAnimation(2, 0);
   Engine_AudioPlayCue(0xec);
   Engine_EventWait(60);
   Colosso_LoadPortrait(7);
-  ColossoWall_InitializeModeTask(4, 0);
+  ColossoWall_StartLetteringAnimation(4, 0);
   Engine_AudioPlayCue(0xed);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
   Engine_GameFlagSet(0x123);
 }
 
-static void FieldScene_RunLateSequence(s32 a0) {
+// Show the win-or-loss lettering and the appropriate competitor's reaction.
+static void ColossoWall_ShowBattleResultLettering(s32 result) {
 
-  s32 kind;
+  s32 reactingActor;
 
   Engine_AudioPlayCue(247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  gColossoWall_ModeRecordThree[13] = a0 * 60;
-  STORE_CONST(gColossoWall_ModeRecordThreeAlt[13]) = (a0 < 0 ? -a0 : a0) * 60;
-  if (a0 < 0) {
+  gColossoWall_ModeRecordThree[13] = result * 60;
+  STORE_CONST(gColossoWall_ModeRecordThreeAlt[13]) =
+      (result < 0 ? -result : result) * 60;
+  if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(86);
     Colosso_LoadPortrait(8);
@@ -1303,11 +1393,11 @@ static void FieldScene_RunLateSequence(s32 a0) {
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
     COLOSSO_WALL_START_MODE_TASK(3, 1);
-    Engine_EventWait(-a0 * 60 + 60);
-    kind = 0;
+    Engine_EventWait(-result * 60 + 60);
+    reactingActor = 0;
   } else {
     Engine_EventWait(30);
-    Engine_AudioPlayCue(a0 + 90);
+    Engine_AudioPlayCue(result + 90);
     Colosso_LoadPortrait(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through the s32 cast like the call above; called
@@ -1315,10 +1405,10 @@ static void FieldScene_RunLateSequence(s32 a0) {
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
     COLOSSO_WALL_START_MODE_TASK(3, 0);
-    Engine_EventWait(a0 * 60 + 60);
-    kind = 8;
+    Engine_EventWait(result * 60 + 60);
+    reactingActor = 8;
   }
-  Engine_ActorShowEmote(kind, 0x105, 0);
+  Engine_ActorShowEmote(reactingActor, 0x105, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
@@ -1333,26 +1423,30 @@ static void FieldScene_RunLateSequence(s32 a0) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-static void Text_WriteU32AsHex(u8 *buf, u32 value) {
-  s32 i;
+// Write eight uppercase hexadecimal digits followed by a terminator.
+static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
+  s32 digit;
 
-  buf += 8;
-  *buf = 0;
-  buf--;
-  for (i = 7; i >= 0; i--) {
-    *buf = gHexDigits[value & 15];
+  destination += 8;
+  *destination = 0;
+  destination--;
+  for (digit = 7; digit >= 0; digit--) {
+    *destination = gHexDigits[value & 15];
     value >>= 4;
-    buf--;
+    destination--;
   }
 }
 
+// Retain the empty hook called before the finish sequence.
 static void SceneState_EmptyHook(void) {}
 
-static void ColossoWall_MarkStageReady(void) {
+// Mark the rival's path state as finished.
+static UNUSED void ColossoWall_MarkRivalFinished(void) {
   ((struct StageControl *)gSceneState)->status = 9;
 }
 
-static void SceneState_WaitUntilStatusNine(void) {
+// Wait until the rival's path state reaches its finish marker.
+static void ColossoWall_WaitForRivalFinish(void) {
   s16 *status = &((struct StageControl *)gSceneState)->status;
 
   while (*status != 9) {
@@ -1360,180 +1454,193 @@ static void SceneState_WaitUntilStatusNine(void) {
   }
 }
 
+// Occasionally spawn a falling particle around the linked finish effect.
 static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
-  SparkSource *a = (SparkSource *)fieldObject;
-  s32 t[3];
-  u32 n;
+  SparkSource *source = (SparkSource *)fieldObject;
+  s32 position[3];
+  u32 chance;
 
-  if (a->f28 >= -255 && a->f28 <= 255) {
-    a->f55 = 0;
+  if (source->f28 >= -255 && source->f28 <= 255) {
+    source->f55 = 0;
   }
-  n = Engine_RandomNext();
-  if (n * 100 >> 16 <= 9) {
-    SparkSource *o;
-    s32 u;
-    s32 w;
+  chance = Engine_RandomNext();
+  if (chance * 100 >> 16 <= 9) {
+    SparkSource *particle;
+    s32 radius;
+    s32 angle;
 
-    t[0] = a->f08;
-    t[1] = a->f0c;
-    t[2] = a->f10;
-    u = Engine_RandomNext();
-    w = Engine_RandomNext();
-    Vector_AddPolarOffset(u << 4, w, t);
+    position[0] = source->f08;
+    position[1] = source->f0c;
+    position[2] = source->f10;
+    radius = Engine_RandomNext();
+    angle = Engine_RandomNext();
+    Vector_AddPolarOffset(radius << 4, angle, position);
     {
-      s32 x = t[0];
-      s32 y = t[1];
-      s32 z = t[2];
+      s32 x = position[0];
+      s32 y = position[1];
+      s32 z = position[2];
 
-      o = (SparkSource *)Engine_ObjectCreate(285, x, y, z);
+      particle = (SparkSource *)Engine_ObjectCreate(285, x, y, z);
     }
-    if (o != 0) {
-      o->f55 = 0;
-      Engine_ActorSetSpriteFlags(o, 0);
-      Engine_ObjectSetScript(o, gColossoWall_SparkScript);
-      Object_SetMode(o, 1);
-      Object_SetMode(o, 0);
+    if (particle != 0) {
+      particle->f55 = 0;
+      Engine_ActorSetSpriteFlags(particle, 0);
+      Engine_ObjectSetScript(particle, gColossoWall_SparkScript);
+      Object_SetMode(particle, 1);
+      Object_SetMode(particle, 0);
     }
   }
 }
 
+// Raise the linked finish effect, start its script and clear the link.
 static s32
 ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
-  RaisedEffect *a = (RaisedEffect *)interpreter;
-  RaisedEffect *o = (RaisedEffect *)Object_GetById(a->f64);
+  RaisedEffect *source = (RaisedEffect *)interpreter;
+  RaisedEffect *effect = (RaisedEffect *)Object_GetById(source->f64);
 
-  Engine_ObjectSetPosition(o, a->f08, a->f0c + 0x240000, a->f10);
-  o->f55 = 0;
-  Engine_ObjectSetScript(o, gColossoWall_RaiseScript);
-  Engine_AudioPlayCue(83);
-  a->f64 = 0;
+  Engine_ObjectSetPosition(effect, source->f08, source->f0c + 0x240000,
+                           source->f10);
+  effect->f55 = 0;
+  Engine_ObjectSetScript(effect, gColossoWall_RaiseScript);
+  Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
+  source->f64 = 0;
   return 0;
 }
 
-static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
-  u8 *workspace = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
-  u8 *shared;
-  struct FieldActor *record;
-  s32 flag;
+// Approach the finish item on the unused side and show the item message.
+static s32 ColossoWall_ApproachFinishAndTakeItem(s32 finishItemActorA,
+                                                 s32 finishItemActorB) {
+  u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
+  u8 *gameState;
+  struct FieldActor *competitor;
+  s32 finishAlreadyReached;
   s32 x;
   s32 z;
-  u16 *cuep;
-  s16 *waitp;
+  u16 *itemActor;
+  s16 *timer;
 
-  flag = Engine_GameFlagIsSet(0x211);
+  finishAlreadyReached = Engine_GameFlagIsSet(0x211);
 
-  shared = (u8 *)&gGameState;
-  record = Object_GetById(((struct GameState *)shared)->selectedActor);
+  gameState = (u8 *)&gGameState;
+  competitor = Object_GetById(((struct GameState *)gameState)->selectedActor);
 
-  if (*(s32 *)(workspace + 232) < record->x.fixed) {
-    x = *(s32 *)(workspace + 232) + 0xc0000;
+  if (*(s32 *)(raceWork + 232) < competitor->x.fixed) {
+    x = *(s32 *)(raceWork + 232) + 0xc0000;
   } else {
-    x = *(s32 *)(workspace + 232) - 0xc0000;
+    x = *(s32 *)(raceWork + 232) - 0xc0000;
   }
 
-  if (flag != 0) {
-    z = *(s32 *)(workspace + 236) + 0x100000;
-    cuep = (u16 *)(workspace + 228);
+  if (finishAlreadyReached != 0) {
+    z = *(s32 *)(raceWork + 236) + 0x100000;
+    itemActor = (u16 *)(raceWork + 228);
   } else {
-    z = *(s32 *)(workspace + 236) - 0x100000;
-    cuep = (u16 *)(workspace + 226);
+    z = *(s32 *)(raceWork + 236) - 0x100000;
+    itemActor = (u16 *)(raceWork + 226);
   }
 
-  waitp = (s16 *)&record->timer;
-  *waitp = *cuep;
-  record->acceleration = 0x4000;
-  record->speed = 0x10000;
+  timer = (s16 *)&competitor->timer;
+  *timer = *itemActor;
+  competitor->acceleration = 0x4000;
+  competitor->speed = 0x10000;
 
-  Engine_ObjectSetPosition(record, x, 0, z);
+  Engine_ObjectSetPosition(competitor, x, 0, z);
   Engine_GameFlagSet(0x211);
-  Engine_ObjectSetScript(record, gColossoWall_ApproachScript);
+  Engine_ObjectSetScript(competitor, gColossoWall_ApproachScript);
 
-  while (*waitp != 0) {
+  while (*timer != 0) {
     Engine_TaskWait(1);
   }
 
-  if (flag == 0) {
+  // Assign the item on the side this competitor reached first.
+  if (finishAlreadyReached == 0) {
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show;
      * called by its void prototype the argument moves are ordered differently:
      * differ 2 on tbs-en, 4 with the call below.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, handleA);
-    UiWork_PushValueSlot(handleA, 2);
+    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, finishItemActorA);
+    UiWork_PushValueSlot(finishItemActorA, 2);
   } else {
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: the same cast as above; by its prototype differ 2 on tbs-en.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, handleB);
-    UiWork_PushValueSlot(handleB, 2);
+    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, finishItemActorB);
+    UiWork_PushValueSlot(finishItemActorB, 2);
   }
 
-  shared = (u8 *)&gGameState;
-  UiWork_PushValueSlot(((struct GameState *)shared)->selectedActor, 1);
+  gameState = (u8 *)&gGameState;
+  UiWork_PushValueSlot(((struct GameState *)gameState)->selectedActor, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
-  ObjectDispatch_WaitForValue16(record);
+  ObjectDispatch_WaitForValue16(competitor);
 
-  return flag;
+  return finishAlreadyReached;
 }
 
 // Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 
-void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode,
-                                              s32 centre, s32 extra, s32 third,
-                                              s32 fourth) {
-  u8 *descriptor;
-  struct FieldActor *firstRecord;
-  struct FieldActor *secondRecord;
-  s32 handle;
-  s32 extent;
+// Allocate the race work, record both competitors and install the gauge task.
+void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
+                                              s32 raceMode, s32 finishX,
+                                              s32 finishZ, s32 finishItemActorA,
+                                              s32 finishItemActorB) {
+  u8 *raceWork;
+  struct FieldActor *leader;
+  struct FieldActor *rival;
+  void *graphics;
+  s32 vramSlot;
 
-  descriptor = Runtime_AllocateBlock(59, 0x7170);
-  handle = (s32)Runtime_BumpAllocateAlternatePool(512);
+  raceWork = Runtime_AllocateBlock(59, 0x7170);
+  graphics = Runtime_BumpAllocateAlternatePool(512);
 
-  *(u16 *)(descriptor + 222) = first;
-  *(u16 *)(descriptor + 224) = second;
-  *(u16 *)(descriptor + 226) = third;
-  *(u16 *)(descriptor + 228) = fourth;
-  *(u16 *)(descriptor + 230) = mode;
-  *(s32 *)(descriptor + 232) = centre;
-  *(s32 *)(descriptor + 236) = extra;
+  *(u16 *)(raceWork + 222) = leaderId;
+  *(u16 *)(raceWork + 224) = rivalId;
+  *(u16 *)(raceWork + 226) = finishItemActorA;
+  *(u16 *)(raceWork + 228) = finishItemActorB;
+  *(u16 *)(raceWork + 230) = raceMode;
+  *(s32 *)(raceWork + 232) = finishX;
+  *(s32 *)(raceWork + 236) = finishZ;
 
-  firstRecord = Object_GetById(first);
-  secondRecord = Object_GetById(second);
+  leader = Object_GetById(leaderId);
+  rival = Object_GetById(rivalId);
 
-  if (Engine_GameFlagIsSet(0x109) == 0) {
-    secondRecord->x.fixed = (centre << 1) - firstRecord->x.fixed;
-    secondRecord->z.fixed = firstRecord->z.fixed;
+  // Mirror the recorded rival start when this is a fresh race entrance.
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    rival->x.fixed = (finishX << 1) - leader->x.fixed;
+    rival->z.fixed = leader->z.fixed;
   }
 
-  *(u16 *)(descriptor + 218) = 0;
-  *(u16 *)(descriptor + 220) = 0;
+  *(u16 *)(raceWork + 218) = 0;
+  *(u16 *)(raceWork + 220) = 0;
 
-  FieldResource_DecodeType01(gColosso_GaugeGraphics, handle);
+  // Upload the gauge graphics and keep only its VRAM slot after freeing
+  // scratch.
+  FieldResource_DecodeType01(gColosso_GaugeGraphics, graphics);
 
-  extent = Resource_FindFreeEntry();
-  *(u16 *)(descriptor + 216) = extent;
-  Engine_VramLoad((s16)extent, 512, handle);
+  vramSlot = Resource_FindFreeEntry();
+  *(u16 *)(raceWork + 216) = vramSlot;
+  Engine_VramLoad((s16)vramSlot, 512, graphics);
 
   FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
 
-  Runtime_BumpFree(handle);
+  Runtime_BumpFree(graphics);
 }
 
-static void SceneState_InitControlRecordAndStartTask(s32 resource) {
-  u8 *state = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
-  struct StageControl *m = (struct StageControl *)gSceneState;
+// Decode the rival's recorded path and start its playback task.
+static void ColossoWall_StartRivalPath(s32 pathResource) {
+  u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
+  struct StageControl *pathState = (struct StageControl *)gSceneState;
 
-  FieldResource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
-  if (Engine_GameFlagIsSet(0x109) == 0) {
-    m->status = 1;
-    m->f2 = 1;
-    m->f4 = *(u16 *)(state + 224);
-    m->f8 = 0;
-    m->f6 = 0;
+  FieldResource_DecodeType01(Resource_GetTableEntry(pathResource),
+                             raceWork + 240);
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    pathState->status = 1;
+    pathState->f2 = 1;
+    pathState->f4 = *(u16 *)(raceWork + 224);
+    pathState->f8 = 0;
+    pathState->f6 = 0;
   }
   FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
 }
@@ -1542,88 +1649,92 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-static void StagedActor_PushActorAhead(void) {
+// Push the adjacent obstacle only when the destination and space above are
+// clear.
+static void ColossoWall_PushAdjacentObstacle(void) {
 
-  ColossoWallSceneRecord *subject;
-  ColossoWallSceneRecord *target;
+  ColossoWallSceneRecord *pusher;
+  ColossoWallSceneRecord *obstacle;
   ColossoWallSceneRecord *blocker;
-  u32 step;
-  u32 dir;
-  Position3 pos;
-  u32 idx = 250;
+  u32 packedOffset;
+  u32 direction;
+  Position3 destination;
   s32 zero;
-  s32 handle;
+  s32 actorId;
 
-  handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
-  subject = (ColossoWallSceneRecord *)Object_GetById(handle);
+  actorId = gGameState.selectedActor;
+  pusher = (ColossoWallSceneRecord *)Object_GetById(actorId);
 
-  dir = subject->facing >> 12;
+  direction = pusher->facing >> 12;
 
-  step = gColossoWall_DirectionSteps[dir];
-  pos.x = subject->x + (step & 0xffff0000);
-  pos.y = subject->y;
-  step <<= 16;
-  pos.z = subject->z + step;
+  packedOffset = gColossoWall_DirectionSteps[direction];
+  destination.x = pusher->x + (packedOffset & 0xffff0000);
+  destination.y = pusher->y;
+  packedOffset <<= 16;
+  destination.z = pusher->z + packedOffset;
 
-  target = SceneData_FindSlotAtPosition((s32 *)&pos, subject);
-  if (target == 0) {
+  obstacle = SceneData_FindSlotAtPosition((s32 *)&destination, pusher);
+  if (obstacle == 0) {
     return;
   }
 
-  step = gColossoWall_DirectionSteps[dir];
-  pos.x = target->x + (step & 0xffff0000);
-  pos.y = target->y;
-  step <<= 16;
-  pos.z = target->z + step;
+  // Require a free destination cell and free space immediately above the block.
+  packedOffset = gColossoWall_DirectionSteps[direction];
+  destination.x = obstacle->x + (packedOffset & 0xffff0000);
+  destination.y = obstacle->y;
+  packedOffset <<= 16;
+  destination.z = obstacle->z + packedOffset;
 
-  blocker = SceneData_FindSlotAtPosition((s32 *)&pos, target);
+  blocker = SceneData_FindSlotAtPosition((s32 *)&destination, obstacle);
   if (blocker != 0 && (blocker->flags & 1) != 0) {
     return;
   }
 
-  pos.x = target->x;
-  pos.y = target->y + 0x100000;
-  pos.z = target->z;
+  destination.x = obstacle->x;
+  destination.y = obstacle->y + 0x100000;
+  destination.z = obstacle->z;
 
-  blocker = SceneData_FindSlotAtPosition((s32 *)&pos, target);
+  blocker = SceneData_FindSlotAtPosition((s32 *)&destination, obstacle);
   if (blocker != 0 && (blocker->flags & 1) != 0) {
     return;
   }
 
-  target->state = 2;
+  obstacle->state = 2;
   zero = 0;
 
-  step = gColossoWall_DirectionSteps[dir];
-  pos.x = target->x + (step & 0xffff0000);
-  pos.y = target->y;
-  step <<= 16;
-  pos.z = target->z + step;
+  packedOffset = gColossoWall_DirectionSteps[direction];
+  destination.x = obstacle->x + (packedOffset & 0xffff0000);
+  destination.y = obstacle->y;
+  packedOffset <<= 16;
+  destination.z = obstacle->z + packedOffset;
 
-  if (FieldObject_CheckMovementCollision(target, &pos) > 0) {
+  if (FieldObject_CheckMovementCollision(obstacle, &destination) > 0) {
     return;
   }
 
-  Object_SetMode(subject, 8);
+  // Start the push only after all occupancy and terrain checks have passed.
+  Object_SetMode(pusher, 8);
   Engine_TaskWait(15);
 
-  target->rateX = 0x3333;
-  target->rateZ = 0x3333;
-  Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
+  obstacle->rateX = 0x3333;
+  obstacle->rateZ = 0x3333;
+  Engine_ObjectSetPosition(obstacle, destination.x, destination.y,
+                           destination.z);
 
-  subject->rateX = 0x3333;
-  subject->rateZ = 0x3333;
-  Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
+  pusher->rateX = 0x3333;
+  pusher->rateZ = 0x3333;
+  Engine_ObjectSetPosition(pusher, destination.x, destination.y, destination.z);
 
   Engine_AudioPlayCue(0xee);
-  Object_CommitPosition(target);
+  Object_CommitPosition(obstacle);
   Engine_AudioPlayCue(0x120);
 
-  target->x = pos.x;
-  target->z = pos.z;
-  target->motion24 = zero;
-  target->motion2c = zero;
+  obstacle->x = destination.x;
+  obstacle->z = destination.z;
+  obstacle->motion24 = zero;
+  obstacle->motion2c = zero;
 
-  Object_SetMode(subject, 1);
+  Object_SetMode(pusher, 1);
 }
 
 // Shared source is included here in ROM order.
@@ -1822,36 +1933,36 @@ s32 gColossoWall_SpectatorTimer = 0;
 struct SceneEvent gColossoWallEvents[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_RunSelectedActorRisingEffect) },
     { TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH) },
-    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT) },
-    { 0x202, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoStepSequence) },
-    { 0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoStepSequence) },
-    { EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(EV50_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_RollEastLogWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_RollEastLogEast) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_RollWestLogWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_RollWestLogEast) },
+    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_PushAlignedRidingLog) },
+    { 0x202, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_PushObstacleAhead) },
+    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_PushAndUpdateObstacleCollision) },
+    { 0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_PushAndUpdateObstacleCollision) },
+    { EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(ColossoWall_StartFinalsBattle) },
     { SEARCH(SEARCH_CHEST), 101, 0x338, FIND_ITEM(ITEM_NUT) },
     { 0x8413, 102, 0x339, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_CHEST), 104, 0x33b, FIND_ITEM(ITEM_NUT) },
-    { 0x50001815, 20, 0x331, EVENT_SCRIPT(EV20_SCRIPT) },
-    { 0x50001815, 21, 0x332, EVENT_SCRIPT(FieldScene_SetFlag332AndDrawTiles) },
-    { 0x10008e15, 18, 0x330, EVENT_SCRIPT(EV18_SCRIPT) },
-    { PSYNERGY_ON_ACTOR(0x8e), 18, 0x330, EVENT_SCRIPT(EV18_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0xc), 19, 0x333, EVENT_SCRIPT(EV19_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneData_NoOpHandler) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneData_NoOpHandler) },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
-    { PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
-    { PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
-    { PSYNERGY_ON_ACTOR(0x91), 31, 0x334, EVENT_SCRIPT(EV31_PSYNERGY) },
+    { 0x50001815, 20, 0x331, EVENT_SCRIPT(ColossoWall_FreezeWestWaterObstacle) },
+    { 0x50001815, 21, 0x332, EVENT_SCRIPT(ColossoWall_FreezeEastWaterObstacle) },
+    { 0x10008e15, 18, 0x330, EVENT_SCRIPT(ColossoWall_EnableForceChildEffect) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), 18, 0x330, EVENT_SCRIPT(ColossoWall_KnockDownForceObstacle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 19, 0x333, EVENT_SCRIPT(ColossoWall_UpdateGrowthObstacleCollision) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_UpdateMovedObstacleCollision) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_SaveMovedObstacleColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_SaveMovedObstacleColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_SaveMovedObstacleColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 31, 0x334, EVENT_SCRIPT(ColossoWall_HaltMovingPlatforms) },
     { EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-    { EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TALK) },
-    { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TALK) },
-    { EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(EV37_TALK) },
-    { EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(EV38_TALK) },
-    { EVENT_TALK, 39, CONDITION_ALWAYS, EVENT_SCRIPT(EV39_TALK) },
+    { EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_ExplainMiniMaze) },
+    { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_ExplainShiftingFloor) },
+    { EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_ExplainLogRolling) },
+    { EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_ExplainWallClimb) },
+    { EVENT_TALK, 39, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoWall_ExplainBoardWalk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgColossoWallICantBelieveAnybodyEverGets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgColossoWallHowDoTheyMakeThatFloor) },

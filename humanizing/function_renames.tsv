@@ -212,3 +212,119 @@ round	lane	source	old_name	new_name	evidence
 1	10	games/tbs/src/scene/xian.c	EV21_PSYNERGY	Xian_StrikeTrainingTreeWithForce	Let Force strike the training tree and surprise the student.
 1	10	games/tbs/src/scene/xian.c	EV200_RAISED	Xian_MoveAsideForWaterCarrier	Move the party and carrier aside, then restart the carrier's route.
 1	10	games/tbs/src/scene/xian.c	Xian_WatchGateTrigger	Xian_WatchWaterCarrierPath	Checks whether the party blocks the water carrier route and raises the move-aside trigger after120 frames
+1	10	games/tbs/src/scene/vale_cave.c	EV08_SCRIPT	ValeCave_RecruitDjinni	Djinn_JoinParty(8,3,4); keep elemental/name identity neutral until table proof
+1	10	games/tbs/src/scene/vale_cave.c	SceneActor_WaitActorDescent	ValeCave_WaitForActorLanding	At most60 frame waits until y<=terrainHeight, then snaps to terrain height
+1	10	games/tbs/src/scene/vale_cave.c	SceneActor_FaceActorZero	ValeCave_FaceActorTowardLeader	ArcTan2 to ACTOR_PARTY_LEADER; preserve existing UBFIX result split
+1	10	games/tbs/src/scene/vale_cave.c	FieldScene_ConfigureRegionAtRow15	ValeCave_RestoreRevealTile	Reveal phase4 copies cell16,15 to15,15
+1	10	games/tbs/src/scene/vale_cave.c	FieldScene_ConfigureRegionAtRow17	ValeCave_ShowRevealTile	Reveal phase5 copies cell16,17 to15,15
+1	10	games/tbs/src/scene/vale_cave.c	EV09_PSYNERGY	ValeCave_SinkWesternMovedObject	Move actor9 when column23; lower68times, terrain update and temp00; western relative actor10column27
+1	10	games/tbs/src/scene/vale_cave.c	EV10_PSYNERGY	ValeCave_SinkEasternMovedObject	Move actor10 when column27; same broad sink sequence, different placements/terrain widths; existing actor9 motionFlags write must not be assumed a bug
+1	10	games/tbs/src/scene/vale_cave.c	EV24_SCRIPT	ValeCave_MoveAndSinkEasternObject	StagedActor_AdvancePair then eastern sink callback
+1	10	games/tbs/src/scene/vale_cave.c	FieldScene_RunPrimarySequence	ValeCave_HopLeaderSouth	Two-cell positiveZ hop; PATCH_1 cell centering must remain; unused parameter contract retained
+1	10	games/tbs/src/scene/vale_cave.c	EV40_TOUCH	ValeCave_StartDjinniEscape	Follows actor8 and has it hop from232 to280 Z; temp00 remembers first sequence
+1	10	games/tbs/src/scene/vale_cave.c	EV41_TOUCH	ValeCave_FinishDjinniEscape	Actor8 walks around to792,312 and faces player; temp01 and flag302
+1	10	games/tbs/src/scene/vale_cave.c	FieldScene_RunScene3a6SequenceC	ValeCave_GuideDjinniAlongTouchedRoute	After flag302, trigger45..56 indexes WalkTargets coordinate pairs; copies leader speed/acceleration; rawGameState24a needs canonical owner audit
+1	10	games/tbs/src/scene/vale_cave.c	EV08_PSYNERGY	ValeCave_HaltDjinni	ABILITY_HALT event sets actor8 animation0
+1	10	games/tbs/src/scene/vale_cave.c	EV20_SCRIPT	ValeCave_DropMovedObjectAndClearTerrain	Move probe then, at column17, slide/fall and clear footprint rectangles; temp03
+1	10	games/tbs/src/scene/vale_cave.c	EV21_TOUCH_3	ValeCave_PushObjectAndClearTerrain	Stages leader pushing actor9, drops it and updates traversable terrain; temp02
+1	10	games/tbs/src/scene/vale_cave.c	EV22_SCRIPT	ValeCave_SlideMovedObjectAndClearTerrain	Move probe, slide actor11 north, clear terrain; temp04/05 by target row
+1	10	games/tbs/src/scene/vale_cave.c	DialogueLayout_ConfigureRowsByFlag301	ValeCave_UpdateSlidingObjectPassage	Terrain13x3 restoration and object11 cell23/35 chosen by flag301; no dialogue operations
+1	10	games/tbs/src/scene/vale_cave.c	EV20_TOUCH	ValeCave_ShiftSlidingObjectEast	Pair offsets+112,+80 and flag301; then terrain refresh
+1	10	games/tbs/src/scene/vale_cave.c	FieldScene_RunActor11Transition301	ValeCave_ShiftSlidingObjectWest	Pair offsets-112,-80 and flag301 clear; same distinct getter/service order
+1	10	games/tbs/src/scene/vale_cave.c	SceneActor_PlaceAtTile	ValeCave_CenterActorOnCell	x/z cell<<20 plushalf-cell; priority3 terrain2 underfoot; argsx/y actuallycolumn/row
+1	10	games/tbs/src/scene/vale_cave.c	ActorPresentation_AdvanceActorElevenStates	ValeCave_RestartSlidingObjectAnimation	Actor11 animation1 then2
+1	11	games/tbs/src/scene/colosso_wall.c	ColossoWall_InitializeModeTask	ColossoWall_StartLetteringAnimation	Shared colosso_task renderer loads ResourceId_Lettering and adds tileVariant shifted4 to sprite tile attributes
+1	11	games/tbs/src/scene/colosso_wall.c	ColossoWall_MarkStageReady	ColossoWall_MarkRivalFinished	Shared path rival marks state9 on end-of-path; paired wait polls the same status
+1	11	games/tbs/src/scene/colosso_wall.c	ColossoWall_RunScriptedTransition	ColossoWall_ShowRoundStartLettering	Resource_Lettering renderer called with ready/start-related mode scripts; exact words need resource evidence
+1	11	games/tbs/src/scene/colosso_wall.c	ColossoWall_StartSupplementalSceneTask	ColossoWall_StartMovingPlatforms	Schedules moving-floor update and clears scene freeze flag
+1	11	games/tbs/src/scene/colosso_wall.c	Colosso_RunGreetScene	ColossoWall_IntroduceSecondFinals	MsgColossoSiteSecondFinals followed by party merging and camera setup
+1	11	games/tbs/src/scene/colosso_wall.c	EV11_PSYNERGY	ColossoWall_UpdateMovedObstacleCollision	MOVE callback selects replacement collision cell based on actor11 column
+1	11	games/tbs/src/scene/colosso_wall.c	EV18_PSYNERGY	ColossoWall_KnockDownForceObstacle	FORCE event rotates actor30 down and restores its resting position/collision
+1	11	games/tbs/src/scene/colosso_wall.c	EV18_SCRIPT	ColossoWall_EnableForceChildEffect	FORCE event on18 writes BattleFxScene.childMode1
+1	11	games/tbs/src/scene/colosso_wall.c	EV19_PSYNERGY	ColossoWall_UpdateGrowthObstacleCollision	GROWTH row actor19 sets persistent state and four collision rows
+1	11	games/tbs/src/scene/colosso_wall.c	EV20_SCRIPT	ColossoWall_FreezeWestWaterObstacle	FROST event row actor20; clears motion flags and changes west collision cell
+1	11	games/tbs/src/scene/colosso_wall.c	EV22_SCRIPT	ColossoWall_PushAlignedRidingLog	Selects log32/33 by row, requires same column, tests left/right then moves64pixels
+1	11	games/tbs/src/scene/colosso_wall.c	EV24_TOUCH	ColossoWall_RollWestLogWest	Actor15 destination halfcell29 vs33
+1	11	games/tbs/src/scene/colosso_wall.c	EV25_TOUCH	ColossoWall_RollWestLogEast	Actor15 destination halfcell33 vs29
+1	11	games/tbs/src/scene/colosso_wall.c	EV27_TOUCH	ColossoWall_RollEastLogEast	Actor16 destination halfcell49 vs45
+1	11	games/tbs/src/scene/colosso_wall.c	EV28_TOUCH	ColossoWall_RollEastLogWest	Actor16 destination halfcell45 vs49
+1	11	games/tbs/src/scene/colosso_wall.c	EV31_PSYNERGY	ColossoWall_HaltMovingPlatforms	HALT row31 pauses controller, removes scheduler and fixes collision
+1	11	games/tbs/src/scene/colosso_wall.c	EV35_TALK	ColossoWall_ExplainMiniMaze	English message8350 names Mini-Maze; entrance2 uses shared round-finish branch
+1	11	games/tbs/src/scene/colosso_wall.c	EV36_TALK	ColossoWall_ExplainShiftingFloor	English message8354 and platform demonstration
+1	11	games/tbs/src/scene/colosso_wall.c	EV37_TALK	ColossoWall_ExplainLogRolling	English message8358 and paired log-riding demonstration
+1	11	games/tbs/src/scene/colosso_wall.c	EV38_TALK	ColossoWall_ExplainWallClimb	English message8362 and climb/jump demonstration
+1	11	games/tbs/src/scene/colosso_wall.c	EV39_TALK	ColossoWall_ExplainBoardWalk	English message8366 and log-moving demonstration
+1	11	games/tbs/src/scene/colosso_wall.c	EV50_TOUCH	ColossoWall_StartFinalsBattle	Collects finish item, waits rival, stages competitors then Battle_SetStart3 and destinations
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_PlaceSpectatorRow	ColossoWall_ResetMovingPlatforms	Resets same actors22..25 and removes moving-floor callback
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunFlag211ApproachScene	ColossoWall_ApproachFinishAndTakeItem	Uses finish coordinates and alternating item actor then MsgColossoIsaacGotItem
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunLateSequence	ColossoWall_ShowBattleResultLettering	Signed result controls mode3 script and winner/loser animation; Resource_Lettering renderer
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunPairedEntranceWalk	ColossoWall_StageBattleResult	RestoresHP/PP and stages leader/rival win-or-loss animations before result lettering
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunSingleStep	ColossoWall_PushObstacleAhead	Only forwards to collision-checked pushing routine
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunStep17At40By23	ColossoWall_RollCenterLogNorth	Actor17 row23 vs25
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunStep17At40By25	ColossoWall_RollCenterLogSouth	Actor17 row25 vs23
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunSupplementalSequenceOne	ColossoWall_UpdateMovingPlatforms	Actors22..25 alternate rows, carry nearby selected actor; shifting-floor demo owns scheduler
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_RunTwoStepSequence	ColossoWall_PushAndUpdateObstacleCollision	Push helper then updates actor11 collision
+1	11	games/tbs/src/scene/colosso_wall.c	FieldScene_SetFlag332AndDrawTiles	ColossoWall_FreezeEastWaterObstacle	FROST event row actor21; matching collision at x50 versus x44
+1	11	games/tbs/src/scene/colosso_wall.c	SceneActor_MovePairByTileOffset	ColossoWall_MovePusherAndLog	Moves selected actor and target together, centers destinations on cells; dialogue says ride logs
+1	11	games/tbs/src/scene/colosso_wall.c	SceneData_NoOpHandler	ColossoWall_IgnoreMove	Event rows attach MOVE no-op to actors9 and10; preserve neutral actor identity in final name if spectator inference insufficient
+1	11	games/tbs/src/scene/colosso_wall.c	SceneState_ApplyRectsForActors15To17	ColossoWall_UpdateRollingLogCollision	Copies three log collision rectangles using current actor coordinates
+1	11	games/tbs/src/scene/colosso_wall.c	SceneState_InitControlRecordAndStartTask	ColossoWall_StartRivalPath	Decodes resource to path, sets actor mirror/position/status and schedules shared path rival update
+1	11	games/tbs/src/scene/colosso_wall.c	SceneState_StoreSlotTileXToWork832To848	ColossoWall_SaveMovedObstacleColumns	Reads actors12..14 columns, saves flag bytes, redraws their collision
+1	11	games/tbs/src/scene/colosso_wall.c	SceneState_WaitForStatusWords	ColossoWall_WaitForPlatformCrossingPhase	Waits phase0/timer75, bounded600frames; used by shifting-floor demonstration
+1	11	games/tbs/src/scene/colosso_wall.c	SceneState_WaitUntilStatusNine	ColossoWall_WaitForRivalFinish	Shared Colosso_UpdatePathRival sets mode9 at end-of-path marker
+1	11	games/tbs/src/scene/colosso_wall.c	StagedActor_PushActorAhead	ColossoWall_PushAdjacentObstacle	Searches front cell, rejects occupied destination/above cell/collision, moves selected actor and target
+1	12	games/tbs/src/scene/bilibin.c	EV09_TALK_2	Bilibin_RecruitJupiterDjinni	Djinn_JoinParty actor9,element3,id0.
+1	12	games/tbs/src/scene/bilibin.c	EV90_SEARCH	Bilibin_InspectWell	Shows PeeredWell then BottomNotVisible.
+1	12	games/tbs/src/scene/bilibin.c	EV11_SEARCH	Bilibin_ReadRestrictedAreaSign	MsgBilibinAreaOffLimitsThoseWithout.
+1	12	games/tbs/src/scene/bilibin.c	EV10_SEARCH	Bilibin_ReadWarehouseSign	MsgBilibinMccoysHiddenWarehouseDoNot.
+1	12	games/tbs/src/scene/bilibin.c	SceneDialogue_RunLine1470	Bilibin_InspectHumanShapedTree	MsgBilibinThereTreeLooksLikePerson; reused four tree events.
+1	12	games/tbs/src/scene/bilibin.c	EV09_TALK_1	Bilibin_ExamineTreeResemblingMan	MsgBilibinItsTreeButAlmostLooks;301 selects subsequent line.
+1	12	games/tbs/src/scene/bilibin.c	EV12_TALK	Bilibin_AskAboutEntranceTree	Question explicitly asks DidSeeTreeAtEntrance.
+1	12	games/tbs/src/scene/bilibin.c	EV14_TALK	Bilibin_AskAboutSoutheastRoute	Question explicitly asks HaveTriedHeadingSoutheastFrom.
+1	12	games/tbs/src/scene/bilibin.c	EV21_TALK	Bilibin_AskAboutTreeTransformation	Question explicitly asks WasTurnedIntoTreeFor.
+1	12	games/tbs/src/scene/bilibin.c	EV16_TALK	Bilibin_AskAboutCurseBreakers	Question asks whether party are three warriors who broke curse.
+1	12	games/tbs/src/scene/bilibin.c	EV18_TALK	Bilibin_AskAboutImil	Question explicitly asks HaveEverBeenVillageImil.
+1	12	games/tbs/src/scene/bilibin.c	FieldScene_RunEarlySequence	Bilibin_AnimateExitCells	Triggers3..9 index7cell animations, then walk/request same exit.
+1	12	games/tbs/src/scene/bilibin.c	EV11_PSYNERGY	Bilibin_RescueVillagerFromRiver	MOVE0x8c actor11; thanks for saving from being washed downstream.
+1	12	games/tbs/src/scene/bilibin.c	EV13_TOUCH	Bilibin_ReceiveJillsHardNut	Message names Jill; actor14 gives ITEM_HARD_NUT;849 records reward.
+1	12	games/tbs/src/scene/bilibin.c	EV20_PSYNERGY	Bilibin_UpdateVillageBlockCells	Restores block collision footprint and moves leader clear of cell16,13.
+1	12	games/tbs/src/scene/bilibin.c	FieldScene_RunScene38bSequenceA	Bilibin_RestoreRiverActors	Bilibin3 initialization restores river rescue actors/cells according845/881/848/849.
+1	12	games/tbs/src/scene/bilibin.c	EV08_PSYNERGY_3	Bilibin_UpdateRiverBlockCells	Repaint10coordinate pairs then clear current actor8cell.
+1	12	games/tbs/src/scene/bilibin.c	OverlayObject_SpawnKind24AtActor	Bilibin_SpawnTransientCornerEffect	Objectkind24 installs30frame wait/free script; blending/priority applied.
+1	12	games/tbs/src/scene/bilibin.c	EV08_PSYNERGY_2	Bilibin_UpdateRaisedBlockCells	Actor8row6/9 selects collision templates at fixedcolumn14.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV14_TALK	KalayTolbiDocks_RecruitVenusDjinni	Djinn_JoinParty actor14,element0,id5; elemental owner is Venus.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV20_TOUCH	KalayTolbiDocks_MeetDocksideSpeaker	Leader walks to392,296 and actor8 approaches408,296;8aa records encounter.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV08_TALK_1	KalayTolbiDocks_AskAboutTolbiCrossing	MsgKalayWantGoToTolbi question.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV11_TALK	KalayTolbiDocks_AcceptParentsMessage	MsgKalayPassMessageDaughter asks party to carry message after boarding question.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	SceneDialogue_RunActor12Event	KalayTolbiDocks_HandleBoardingGate	Checks ticket inventory, discards boarding ticket, moves gate actor aside and permits boarding or shore leave.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV13_TALK	KalayTolbiDocks_ExplainBoardingTickets	Three lines explain handing over ticket, boarding and waiting.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV08_TALK_2	KalayTolbiDocks_BuyCrossingTicket	Creates coin window, offers600coin ticket, gives item235 and subtracts price.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV08_TALK_3	KalayTolbiDocks_AskAboutRoughCrossing	MsgKalayHearScaryTrip asks about monster attack.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV10_TALK	KalayTolbiDocks_AskAboutSeasickTourists	MsgKalayTouristsLookUpset asks if tourists got seasick.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV10_TOUCH	KalayTolbiDocks_AnimateExitPassage	Animates current port exit cells, walks leader and requests exit3.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	FieldScene_ConfigureFlaggedActors	KalayTolbiDocks_RestoreArrivalPortActors	Scene3 entry restores remembered encounter/refund-dispute actors.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	FieldScene_PlaceSlots14And15	KalayTolbiDocks_UpdateDockBlockCells	MOVE events for actors14/15 update their collision cells.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	SceneActor_SetMode3AndFlagBit1	KalayTolbiDocks_ConfigureMovableBlock	Sets sprite priority3, stops motion, sets underfoot priority; does not set object mode3.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	FieldScene_RunScene3aeSequenceA	KalayTolbiDocks_ShowGaretSeeingOcean	Garet's dialogue begins MsgKalayIncredibleOcean and rejoins leader at end.
+1	12	games/tbs/src/scene/kalay_tolbi_docks.c	EV50_TOUCH	KalayTolbiDocks_RunTicketRefundDispute	MsgKalayReturnedTicketCost begins extended passenger argument;8ab records staging.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV15_TALK	SuhallaDesert_StartDjinnBattle	Starts the Djinn battle associated with actor 15.
+1	13	games/tbs/src/scene/suhalla_desert.c	SuhallaDesert_SyncSelectedActorProgress	SuhallaDesert_UpdateCaptureTimer	Rotates the captured actor and counts down until the sandstorm raises event 99.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunMiddleAuxiliarySequence	SuhallaDesert_BeginSandstormCapture	Pulls the selected actor into a sandstorm and starts its capture timer.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunActor8Step	SuhallaDesert_EnterFirstSandstorm	Starts capture by the first sandstorm in either room's placement table.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunActor9Step	SuhallaDesert_EnterSecondSandstorm	Starts capture by the second sandstorm in either room's placement table.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunActor10Step	SuhallaDesert_EnterThirdSandstorm	Starts capture by the third sandstorm in either room's placement table.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunActor11Step	SuhallaDesert_EnterFourthSandstorm	Starts capture by the fourth sandstorm in the placement table.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunActor12Step	SuhallaDesert_EnterFifthSandstorm	Starts capture by the fifth sandstorm, also used by the following storm.
+1	13	games/tbs/src/scene/suhalla_desert.c	SuhallaDesert_RestoreActorScaleAndBlend	SuhallaDesert_RestoreSandstormAppearance	Restores a sandstorm's scale and alpha, then gives the first sandstorm warning when needed.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunLateActor8Step	SuhallaDesert_RestoreFirstSandstorm	Restores the first sandstorm after its remembered encounter flag is set.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunLateActor9Step	SuhallaDesert_RestoreSecondSandstorm	Restores the second sandstorm after its remembered encounter flag is set.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunLateActor10Step	SuhallaDesert_RestoreThirdSandstorm	Restores the third sandstorm after its remembered encounter flag is set.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV64_TOUCH	SuhallaDesert_RestoreFourthSandstorm	Restores the fourth sandstorm after its remembered encounter flag is set.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV65_TOUCH	SuhallaDesert_RestoreFifthSandstorm	Restores the fifth sandstorm after its remembered encounter flag is set.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV09_TOUCH	SuhallaDesert_DiscussContinuingToLalivero	Discusses the missing captive and whether to search again or continue to Lalivero.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV81_TOUCH	SuhallaDesert_StartFollowingSandstorm	Places the fifth storm and starts its following script when its encounter remains available.
+1	13	games/tbs/src/scene/suhalla_desert.c	SuhallaDesert_MeetActor	SuhallaDesert_DouseSandstormAndStartBattle	Ends sandstorm capture after Douse and selects the corresponding battle.
+1	13	games/tbs/src/scene/suhalla_desert.c	EV99_RAISED	SuhallaDesert_RideSandstormToWorldMap	Carries the selected actor upward with its storm, then returns to the world map.
+1	13	games/tbs/src/scene/suhalla_desert.c	EncounterPalette_Pulse	SuhallaDesert_PulseRevealPalette	Pulses the Reveal palette color with a triangular frame-based brightness ramp.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunOpeningAuxiliarySequence	SuhallaDesert_HideRevealObjects	Hides the Reveal objects in the second room and restores the saved palette color.
+1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunScene3c0SequenceA	SuhallaDesert_ShowRevealObjects	Shows the hidden actor and stone in the second room and starts their palette pulse.

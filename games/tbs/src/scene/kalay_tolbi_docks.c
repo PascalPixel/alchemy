@@ -1,3 +1,6 @@
+// The Kalay and Tolbi docks: tickets, boarding, the crossing's aftermath,
+// and the passengers waiting for the ship to leave again.
+
 #include "game_state.h"
 #include "version.h"
 #include "unit/scene/kalay_tolbi_docks.h"
@@ -28,16 +31,23 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
+// The ticket bought here is handed over at the boarding gate.
+#define DOCKS_BOARDING_TICKET 235
+
 // Forward declarations.
 static void KalayTolbiDocks_PreparePort(void);
-static void FieldScene_ConfigureFlaggedActors(void);
+static void KalayTolbiDocks_RestoreArrivalPortActors(void);
 static void KalayTolbiDocks_PrepareWindowTransition(void);
-static void FieldScene_PlaceSlots14And15(void);
-static void SceneActor_SetMode3AndFlagBit1(s32 no);
-static void FieldScene_RunScene3aeSequenceA(void);
+static void KalayTolbiDocks_UpdateDockBlockCells(void);
+static void KalayTolbiDocks_ConfigureMovableBlock(s32 no);
+static void KalayTolbiDocks_ShowGaretSeeingOcean(void);
 
-static void EV14_TALK(void) { Djinn_JoinParty(0xE, 0, 5); }
+// Adds the Venus Djinni waiting at the Kalay docks.
+static void KalayTolbiDocks_RecruitVenusDjinni(void) {
+  Djinn_JoinParty(14, ELEMENT_VENUS, 5);
+}
 
+// Selects the entrance positions for the departure, arrival or ticket office.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -53,28 +63,31 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKalayTolbiDocksEntrancesOther;
 }
 
+// These port maps supply no exit-region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the packed destinations of all three dock maps.
 u8 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_SceneTable; }
 
+// Selects the port population for the current voyage state.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  s16 room = gGameState.scene;
+  s16 scene = gGameState.scene;
 
-  if (room == (s32)&SceneId_KalayTolbiDocks1) {
+  if (scene == (s32)&SceneId_KalayTolbiDocks1) {
     if (Engine_GameFlagIsSet(0x93e) != 0) {
       return gKalayTolbiDocksPlacements1Flag93e;
     }
     return gKalayTolbiDocksPlacements1;
   }
 
-  if (room == (s32)&SceneId_KalayTolbiDocks3) {
+  if (scene == (s32)&SceneId_KalayTolbiDocks3) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
       return gKalayTolbiDocksPlacements3Flag950;
     }
     return gKalayTolbiDocksPlacements3;
   }
 
-  if (room == (s32)&SceneId_KalayTolbiDocks2) {
+  if (scene == (s32)&SceneId_KalayTolbiDocks2) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
       return gKalayTolbiDocksPlacements2Flag950;
     }
@@ -87,17 +100,19 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gKalayTolbiDocksPlacementsOther;
 }
 
-static void EV20_TOUCH(void) {
+// Moves the leader and the waiting speaker together after disembarking.
+static void KalayTolbiDocks_MeetDocksideSpeaker(void) {
   Engine_EventBegin();
   GameFlag_Set(0x8aa);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x128);
   Actor_SetSpeed(8, 0x13333, 0x9999);
   Actor_WalkToAndWait(8, 0x198, 0x128);
-  Actor_FaceDirection(8, 0x8000, 0);
+  Actor_FaceDirection(8, FACING_WEST, 0);
   Engine_EventWait(20);
   Engine_EventEnd();
 }
 
+// Selects dialogue and interactions for the current port and voyage state.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -128,14 +143,16 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gKalayTolbiDocksEventsOther;
 }
 
-static void EV08_TALK_1(void) {
+// Asks whether the party wants to cross to Tolbi.
+static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayWantGoToTolbi);
   Engine_EventAskYesNo(8, 0);
   Engine_EventEnd();
 }
 
-static void EV11_TALK(void) {
+// Accepts the parents' request to carry a message to their daughter in Tolbi.
+static void KalayTolbiDocks_AcceptParentsMessage(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x8a6) == 0) {
     Engine_EventSetMessage(MsgKalayGoingTakeShip);
@@ -154,6 +171,7 @@ static void EV11_TALK(void) {
   Engine_EventEnd();
 }
 
+// Reminds ticket holders to board once their shore visit is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
   ((void)Object_GetById(0));
@@ -166,7 +184,7 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 #endif
       Engine_EventSetMessage(MsgKalayFinishedOutHereBoardShip);
       Event_OpenMessage(12, 0);
-      Actor_FaceDirection(12, 0x4000, 0);
+      Actor_FaceDirection(12, FACING_SOUTH, 0);
 #if TBS_PATCH_3
       Engine_EventEnd();
 #endif
@@ -174,14 +192,15 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
   }
 }
 
-static void SceneDialogue_RunActor12Event(void) {
-  s32 owner;
-  s32 slot;
-  struct FieldActor *record;
-  s16 angle;
+// Checks boarding tickets or lets the party go ashore after handing them over.
+static void KalayTolbiDocks_HandleBoardingGate(void) {
+  s32 ticketOwner;
+  s32 ticketSlot;
+  struct FieldActor *leader;
+  s16 cardinalFacing;
 
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  angle = ((record->facing + 0x2000) & ~0x3fff);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  cardinalFacing = ((leader->facing + 0x2000) & ~0x3fff);
   Engine_EventBegin();
   if (GameFlag_IsSet(0x8a7) != 0) {
     if (GameFlag_IsSet(0x8a9) != 0) {
@@ -195,7 +214,7 @@ static void SceneDialogue_RunActor12Event(void) {
         Engine_EventSetMessage(MsgKalayWantGoAshore + 1);
         Event_ShowMessage(12, 0);
         Actor_WalkToAndWait(12, 88, 0x508);
-        Actor_FaceDirection(12, 0x4000, 0);
+        Actor_FaceDirection(12, FACING_SOUTH, 0);
         Engine_EventWait(20);
         GameFlag_Set(0x8a9);
       } else {
@@ -204,26 +223,27 @@ static void SceneDialogue_RunActor12Event(void) {
       }
     }
   } else {
-    if ((u16)angle != 0x8000) {
+    if ((u16)cardinalFacing != 0x8000) {
       return;
     }
     Engine_EventSetMessage(MsgKalayTicketsPlease);
     Event_ShowMessage(12, 0);
+    // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_IsSet(0x8a5) != 0) {
-      owner = PartyInventory_FindOwner(235);
-      slot = Inventory_Find(owner, 235);
-      Engine_ActorSetAnimationAndWait(12, 3);
+      ticketOwner = PartyInventory_FindOwner(DOCKS_BOARDING_TICKET);
+      ticketSlot = Inventory_Find(ticketOwner, DOCKS_BOARDING_TICKET);
+      Engine_ActorSetAnimationAndWait(12, ANIM_NOD);
       Actor_WalkToAndWait(12, 88, 0x508);
-      Actor_FaceDirection(12, 0x4000, 0);
+      Actor_FaceDirection(12, FACING_SOUTH, 0);
       gEventWork->message++;
       Event_ShowMessage(12, 0);
-      Inventory_Discard(owner, slot);
+      Inventory_Discard(ticketOwner, ticketSlot);
       GameFlag_Set(0x8a7);
-      record = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, record->x.part.pixel, 0x518);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 0x518);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 0x518);
       Actor_WalkToAndWait(12, 88, 0x518);
-      Actor_FaceDirection(12, 0, 0);
+      Actor_FaceDirection(12, FACING_EAST, 0);
     } else {
       Event_ShowMessage(12, 0);
     }
@@ -231,7 +251,8 @@ static void SceneDialogue_RunActor12Event(void) {
   Engine_EventEnd();
 }
 
-static void EV13_TALK(void) {
+// Explains whether to buy a ticket, hand it over or wait aboard.
+static void KalayTolbiDocks_ExplainBoardingTickets(void) {
   Engine_EventBegin();
 
   if (Engine_GameFlagIsSet(0x8A7) != 0) {
@@ -248,19 +269,20 @@ static void EV13_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV08_TALK_2(void) {
-  struct UiWindow *rec7;
+// Offers the crossing ticket for 600 coins and shows the party's balance.
+static void KalayTolbiDocks_BuyCrossingTicket(void) {
+  struct UiWindow *coinsWindow;
   struct GameState *state;
-  s32 six00;
+  s32 ticketPrice;
 
 #if !TBS_PATCH_1
   /* FAKEMATCH: needed to match: one coin-label selector preserves its saved
    * register; separate arguments shorten the Japanese callback by twelve bytes.
    * Measured again: differ 72 in tbs-ja. */
-  s32 msg;
+  s32 coinLabel;
 #endif
 
-  six00 = 0x258;
+  ticketPrice = 600;
   Engine_EventBegin();
   if (GameFlag_IsSet(0x8a5) != 0) {
     Engine_EventSetMessage(MsgKalayHandInTicketPlank);
@@ -272,65 +294,71 @@ static void EV08_TALK_2(void) {
       Event_ShowMessageAndWait(8, 0, 10);
     } else {
       gEventWork->message++;
-      UiWork_PushValueSlot(six00, 5);
+      UiWork_PushValueSlot(ticketPrice, 5);
       Event_OpenMessage(8, 0);
-      rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH,
-                             4, 2);
+      // Keep the balance visible while the player confirms the purchase.
+      coinsWindow = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8,
+                                    TICKET_COUNTER_WIDTH, 4, 2);
 #if TBS_PATCH_1
-      UiText_DrawCharacterAtOffset(MSGNO(MsgYourCoins), rec7, 0, 0);
+      UiText_DrawCharacterAtOffset(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
 #else
-      msg = MSGNO(MsgYourCoins);
-      UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
+      coinLabel = MSGNO(MsgYourCoins);
+      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 0, 0);
 #endif
       state = &gGameState;
 #if LANGUAGE == LANGUAGE_JAPANESE
-      msg += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
+      coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
-      UiText_DrawNumberInWindow(state->coins, 6, rec7, TICKET_COUNTER_X, 8);
+      UiText_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
+                                8);
 #if LANGUAGE == LANGUAGE_JAPANESE
-      UiText_DrawCharacterAtOffset(msg, rec7, 48, 8);
+      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 48, 8);
 #endif
       if (Engine_EventChooseYesNo(-1, 0) == 1) {
-        UiWork_Finalize(rec7, 2);
+        UiWork_Finalize(coinsWindow, 2);
         Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
         Engine_EventWait(10);
         Event_ShowMessage(8, 0);
-      } else if ((u32)six00 > (u32)state->coins) {
-        UiWork_Finalize(rec7, 2);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+      } else if ((u32)ticketPrice > (u32)state->coins) {
+        UiWork_Finalize(coinsWindow, 2);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Engine_EventWait(10);
         gEventWork->message++;
         Event_PlayCue(113);
         Event_ShowMessage(8, 0);
       } else {
-        UiWork_Finalize(rec7, 2);
-        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        UiWork_Finalize(coinsWindow, 2);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Engine_EventWait(10);
         gEventWork->message += 3;
         Event_ShowMessage(8, 0);
-        Engine_PartyGiveItem(235, 0);
+        // Complete both inventory and coin changes only after confirmation.
+        Engine_PartyGiveItem(DOCKS_BOARDING_TICKET, 0);
         GameFlag_Set(0x8a5);
-        Party_AdjustCoins(-six00);
+        Party_AdjustCoins(-ticketPrice);
       }
     }
     Engine_EventEnd();
   }
 }
 
-static void EV08_TALK_3(void) {
+// Asks about the monster attack during the crossing.
+static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayHearScaryTrip);
   Engine_EventAskYesNo(8, 0);
   Engine_EventEnd();
 }
 
-static void EV10_TALK(void) {
+// Asks whether the upset tourists became seasick.
+static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayTouristsLookUpset);
   Engine_EventAskYesNo(10, 0);
   Engine_EventEnd();
 }
 
+// Delivers the family message in Tolbi, then remembers that it was passed on.
 static void KalayTolbiDocks_DeliverParentsMessage(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x8a8) != 0) {
@@ -341,7 +369,7 @@ static void KalayTolbiDocks_DeliverParentsMessage(void) {
     Engine_EventEnd();
   } else {
     Engine_EventWait(20);
-    Actor_ShowEmote(11, 0x100, 50);
+    Actor_ShowEmote(11, EMOTE_IN_FRONT, 50);
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgKalaySilkRoadBlocked);
@@ -359,19 +387,20 @@ static void KalayTolbiDocks_DeliverParentsMessage(void) {
         gEventWork->message++;
         Event_ShowMessage(11, 0);
         Engine_EventWait(10);
-        Actor_FaceDirection(11, 0, 0);
+        Actor_FaceDirection(11, FACING_EAST, 0);
         Engine_EventWait(30);
       }
     } else {
       Engine_EventWait(10);
-      Actor_FaceDirection(11, 0, 0);
+      Actor_FaceDirection(11, FACING_EAST, 0);
       Engine_EventWait(30);
     }
     Engine_EventEnd();
   }
 }
 
-static void EV10_TOUCH(void) {
+// Walks the leader through the animated port exit.
+static void KalayTolbiDocks_AnimateExitPassage(void) {
   Engine_EventBegin();
   Event_PlayCue(158);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -390,29 +419,27 @@ static void EV10_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// Restores the current port, marking the special arrival when appropriate.
 s32 Scene_Initialize(void) {
   if (gGameState.entrance == 90) {
     Engine_GameFlagSet(0x950);
   }
   if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1) {
     KalayTolbiDocks_PreparePort();
-  } else {
-    if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3) {
-      FieldScene_ConfigureFlaggedActors();
-    } else {
-      if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks2) {
-        KalayTolbiDocks_PrepareWindowTransition();
-      }
-    }
+  } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3) {
+    KalayTolbiDocks_RestoreArrivalPortActors();
+  } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks2) {
+    KalayTolbiDocks_PrepareWindowTransition();
   }
   return 0;
 }
 
+// Restores the departure port and starts Garet's first view of the ocean once.
 static void KalayTolbiDocks_PreparePort(void) {
   if (gGameState.entrance == 1) {
     if (GameFlag_IsSet(0x8ac) == 0) {
       GameFlag_Set(0x8ac);
-      FieldScene_RunScene3aeSequenceA();
+      KalayTolbiDocks_ShowGaretSeeingOcean();
     }
   }
   if (gGameState.entrance == 2) {
@@ -423,16 +450,18 @@ static void KalayTolbiDocks_PreparePort(void) {
   if (GameFlag_IsSet(0x911) != 0) {
     if (GameFlag_IsSet(0x8a9) == 0) {
       Actor_SetPosition(12, 0x580000, 0x5180000);
-      Actor_FaceDirection(12, 0, 0);
+      Actor_FaceDirection(12, FACING_EAST, 0);
     }
   }
 }
 
-static void FieldScene_ConfigureFlaggedActors(void) {
+// Restores dock actors and collision cells after the arrival or passenger
+// dispute.
+static void KalayTolbiDocks_RestoreArrivalPortActors(void) {
   struct FieldActor *actor;
   u8 zero;
 
-  FieldScene_PlaceSlots14And15();
+  KalayTolbiDocks_UpdateDockBlockCells();
   if (GameFlag_IsSet(0x950)) {
     Engine_ActorSetChildValue(12, 2);
   }
@@ -444,17 +473,17 @@ static void FieldScene_ConfigureFlaggedActors(void) {
   }
   if (Engine_GameFlagIsSet(0x8aa)) {
     Actor_SetPosition(8, 0x1980000, 0x1280000);
-    Actor_FaceDirection(8, 0x8000, 0);
+    Actor_FaceDirection(8, FACING_WEST, 0);
   }
   if (Engine_GameFlagIsSet(0x8ab)) {
     Actor_SetPosition(13, 0x1180000, 0x1280000);
-    Actor_FaceDirection(13, 0xc000, 0);
+    Actor_FaceDirection(13, FACING_NORTH, 0);
     Actor_SetPosition(16, 0x1200000, 0x1180000);
-    Actor_FaceDirection(16, 0xe000, 0);
+    Actor_FaceDirection(16, FACING_NORTHEAST, 0);
     Actor_SetPosition(10, 0xe80000, 0x1300000);
-    Actor_FaceDirection(10, 0x4000, 0);
+    Actor_FaceDirection(10, FACING_SOUTH, 0);
     Actor_SetPosition(11, 0xf00000, 0x1380000);
-    Actor_FaceDirection(11, 0xc000, 0);
+    Actor_FaceDirection(11, FACING_NORTH, 0);
     actor = Object_GetById(10);
     actor->collisionFlags = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -473,37 +502,41 @@ static void FieldScene_ConfigureFlaggedActors(void) {
   }
 }
 
+// Sets the ticket-office transition and clears the arrival event latch.
 static void KalayTolbiDocks_PrepareWindowTransition(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_GameFlagClear(0x12F);
 }
 
-static void FieldScene_PlaceSlots14And15(void) {
-  s32 pos14;
-  s32 pos15;
+// Updates collision cells beneath the two movable dock blocks.
+static void KalayTolbiDocks_UpdateDockBlockCells(void) {
+  s32 blockColumn;
+  s32 otherBlockColumn;
 
-  pos14 = Object_GetById(14)->x.fixed >> 20;
-  pos15 = Object_GetById(15)->x.fixed >> 20;
+  blockColumn = Object_GetById(14)->x.fixed >> 20;
+  otherBlockColumn = Object_GetById(15)->x.fixed >> 20;
 
   Map_CopyCellAttributes(5, 12, 5, 1, 5, 11);
-  Map_CopyCellAttributes(1, 0, 1, 1, pos15, 11);
-  Map_CopyCellAttributes(1, 0, 1, 1, pos14, 11);
+  Map_CopyCellAttributes(1, 0, 1, 1, otherBlockColumn, 11);
+  Map_CopyCellAttributes(1, 0, 1, 1, blockColumn, 11);
 
-  SceneActor_SetMode3AndFlagBit1(14);
-  SceneActor_SetMode3AndFlagBit1(15);
+  KalayTolbiDocks_ConfigureMovableBlock(14);
+  KalayTolbiDocks_ConfigureMovableBlock(15);
 }
 
-static void SceneActor_SetMode3AndFlagBit1(s32 no) {
-  struct FieldActor *actor = Object_GetById(no);
+// Stops a dock block's idle motion and sets its sprite priority.
+static void KalayTolbiDocks_ConfigureMovableBlock(s32 actorId) {
+  struct FieldActor *actor = Object_GetById(actorId);
 
-  Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
-  Engine_ActorSetSpritePriority(no, 3);
+  Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
+  Engine_ActorSetSpritePriority(actorId, 3);
   actor->motionFlags = 0;
-  actor->priorityFlags |= 2;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-static void FieldScene_RunScene3aeSequenceA(void) {
-  struct FieldActor *record;
+// Shows Garet's first excited look at the ocean before he rejoins the leader.
+static void KalayTolbiDocks_ShowGaretSeeingOcean(void) {
+  struct FieldActor *actor;
 
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -514,13 +547,14 @@ static void FieldScene_RunScene3aeSequenceA(void) {
   Engine_EventWait(20);
   FieldMotion_LaunchFromFocusedObject(1, -16, 0, 0x8000);
   Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventWait(20);
+  // Follow Garet to the water before the dockside speaker joins him.
   Engine_EventSetMessage(MsgKalayIncredibleOcean);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_SetSpeed(GARET, 0x19999, 0xcccc);
   Actor_WalkToAndWait(GARET, 232, 0x590);
-  Actor_FaceDirection(GARET, 0x8000, 0);
+  Actor_FaceDirection(GARET, FACING_WEST, 0);
   Camera_MoveTo(0xb80000, -1, 0x5a00000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
@@ -531,12 +565,12 @@ static void FieldScene_RunScene3aeSequenceA(void) {
   Camera_MoveTo(0x1080000, -1, 0x5a80000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(8, 0x100, 50);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT, 50);
   Actor_SetSpeed(8, 0x13333, 0x9999);
   Actor_WalkToAndWait(8, 0x108, 0x590);
-  Actor_FaceDirection(8, 0x8000, 0);
+  Actor_FaceDirection(8, FACING_WEST, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(GARET, 0, 0);
+  Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(8, 4);
@@ -545,55 +579,58 @@ static void FieldScene_RunScene3aeSequenceA(void) {
   Engine_EventWait(20);
   Actor_ShowEmote(GARET, 0x102, 40);
   Engine_EventWait(30);
-  Actor_FaceDirection(GARET, 0x8000, 0);
+  Actor_FaceDirection(GARET, FACING_WEST, 0);
   Engine_EventWait(50);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(GARET, 0x2000, 0);
+  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Engine_EventWait(30);
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_WalkToAndWait(GARET, 0x108, 0x5b8);
-  Actor_FaceDirection(GARET, 0, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
-  Actor_FaceDirection(8, 0x4000, 0);
+  Actor_FaceDirection(GARET, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(30);
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
+  // Rejoin the leader and restore the speaker's idle movement.
+  actor = Object_GetById(0);
+  if (actor != 0) {
+    Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Engine_EventWait(20);
   Object_GetById(8)->paused = 0;
   Actor_SetBuiltinAction(8, 2);
-  record = Object_GetById(8);
+  actor = Object_GetById(8);
   {
-    s32 shown = record->x.fixed / 0x10000;
+    s32 pixelX = actor->x.fixed / 0x10000;
 
-    record->timer = shown;
+    actor->timer = pixelX;
   }
   {
-    s32 shown = record->z.fixed / 0x10000;
+    s32 pixelZ = actor->z.fixed / 0x10000;
 
-    record->work = shown;
+    actor->work = pixelZ;
   }
   Engine_EventEnd();
 }
 
-static void EV50_TOUCH(void) {
+// Stages the passengers' argument after the cost of a ticket was returned.
+static void KalayTolbiDocks_RunTicketRefundDispute(void) {
   struct FieldActor *actor;
 
   GameFlag_Set(0x8ab);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
+  // The refund announcement starts the passengers' confrontation.
   Engine_EventSetMessage(MsgKalayReturnedTicketCost);
   actor = Object_GetById(11);
   actor->priorityFlags = 0;
@@ -633,7 +670,7 @@ static void EV50_TOUCH(void) {
   Actor_SetSpeed(13, 0x26666, 0x13333);
   Actor_WalkByAndWait(13, 16, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(10, 1);
+  Engine_ActorSetAnimation(10, ANIM_STAND);
   Object_GetById(10)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(13, 0x102);
   Engine_ActorStartRepeatedMotion(13, 2);
@@ -728,6 +765,7 @@ static void EV50_TOUCH(void) {
   Actor_WalkByAndWait(10, 24, 0);
   Event_PlayCue(133);
   Engine_ActorJump(16, 6, 0);
+  // Finish the confrontation and leave the passengers in their restored poses.
   Actor_SetActionScript(16, gKalayTolbiDocks_ActorSixteenScript);
   Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorJump(10, 6, 0);
@@ -764,9 +802,9 @@ static void EV50_TOUCH(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Engine_ActorSetAnimationAndWait(13, ANIM_NOD);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Engine_ActorSetAnimationAndWait(13, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventWait(10);
   Actor_SetSpeed(16, 0x10000, 0x8000);
@@ -980,22 +1018,22 @@ struct SceneEvent gKalayTolbiDocksEventsOther[] = {
 struct SceneEvent gKalayTolbiDocksEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AnimateExitPassage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_1) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AcceptParentsMessage) },
     { EVENT_TALK, 12, 0x911, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
     { EVENT_TALK, 13, 0x911, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
-    { 0x400, 12, 0x8a9, EVENT_SCRIPT(SceneDialogue_RunActor12Event) },
-    { 0x8400, 12, 0x8a9, EVENT_SCRIPT(SceneDialogue_RunActor12Event) },
+    { 0x400, 12, 0x8a9, EVENT_SCRIPT(KalayTolbiDocks_HandleBoardingGate) },
+    { 0x8400, 12, 0x8a9, EVENT_SCRIPT(KalayTolbiDocks_HandleBoardingGate) },
 #if !TBS_PATCH_3
     { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #else
     { 0xc400, 12, IF_FLAG_SET(0x8a9), EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #endif
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_ExplainBoardingTickets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
@@ -1004,31 +1042,31 @@ struct SceneEvent gKalayTolbiDocksEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x911, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMoodThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_RecruitVenusDjinni) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocksEvents1Flag93e[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AnimateExitPassage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_RecruitVenusDjinni) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocksEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
-    { EVENT_TOUCH, 20, 0x8aa, EVENT_SCRIPT(EV20_TOUCH) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_3) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AnimateExitPassage) },
+    { EVENT_TOUCH, 20, 0x8aa, EVENT_SCRIPT(KalayTolbiDocks_MeetDocksideSpeaker) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutRoughCrossing) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_DeliverParentsMessage) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
@@ -1039,8 +1077,8 @@ struct SceneEvent gKalayTolbiDocksEvents3[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
-    { PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
-    { PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateDockBlockCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateDockBlockCells) },
     { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(0xb7) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
     { SCENE_EVENTS_END },
@@ -1049,8 +1087,8 @@ struct SceneEvent gKalayTolbiDocksEvents3[] = {
 struct SceneEvent gKalayTolbiDocksEvents3Flag950[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
-    { EVENT_TOUCH, 50, 0x8ab, EVENT_SCRIPT(EV50_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AnimateExitPassage) },
+    { EVENT_TOUCH, 50, 0x8ab, EVENT_SCRIPT(KalayTolbiDocks_RunTicketRefundDispute) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
@@ -1067,8 +1105,8 @@ struct SceneEvent gKalayTolbiDocksEvents3Flag950[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
-    { PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
-    { PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceSlots14And15) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateDockBlockCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateDockBlockCells) },
     { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(0xb7) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
     { SCENE_EVENTS_END },
@@ -1077,7 +1115,7 @@ struct SceneEvent gKalayTolbiDocksEvents3Flag950[] = {
 struct SceneEvent gKalayTolbiDocksEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_BuyCrossingTicket) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a5, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },

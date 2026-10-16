@@ -24,7 +24,7 @@ struct WaterActor {
   s16 timer;
   s16 shakeFrames; // frames until a landing's screen shake is calmed
   s32 counter;     // the beast: 1 while airborne; a spray: frames to live
-  void (*update)(struct WaterActor *);
+  void (*update)(union FieldObject *);
 };
 
 // The few fields of a spray particle set up when it spawns.

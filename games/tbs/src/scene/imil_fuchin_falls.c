@@ -63,19 +63,19 @@ struct CaveDustOptions {
 };
 
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
-                    (u32)&((struct EffectOptions *)0)->priority);
+                    LAYOUT_OFFSET(struct EffectOptions, priority));
 LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
-                    (u32)&((struct EffectOptions *)0)->palette);
+                    LAYOUT_OFFSET(struct EffectOptions, palette));
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, startScaleX,
-                    (u32)&((struct EffectOptions *)0)->startScaleX);
+                    LAYOUT_OFFSET(struct EffectOptions, startScaleX));
 LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, startScaleY,
-                    (u32)&((struct EffectOptions *)0)->startScaleY);
+                    LAYOUT_OFFSET(struct EffectOptions, startScaleY));
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions,
                     targetScaleX,
-                    (u32)&((struct EffectOptions *)0)->targetScaleX);
+                    LAYOUT_OFFSET(struct EffectOptions, targetScaleX));
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions,
                     targetScaleY,
-                    (u32)&((struct EffectOptions *)0)->targetScaleY);
+                    LAYOUT_OFFSET(struct EffectOptions, targetScaleY));
 
 static void EV08_TALK(void) { Djinn_JoinParty(8, 2, 1); }
 

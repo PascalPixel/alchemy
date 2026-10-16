@@ -44,7 +44,8 @@ struct ClassDefinition {
 };
 
 struct DjinnDefinition {
-  u8 unk00[4];
+  u16 abilityId;
+  u8 unk02[2];
   s8 hp;
   s8 pp;
   s8 atk;
@@ -107,6 +108,10 @@ LAYOUT_SIZE_GUARD(ClassAbility_Size, struct ClassAbility, 4);
 LAYOUT_OFFSET_GUARD(ClassDefinition_Abilities, struct ClassDefinition,
                     abilities, 0x10);
 LAYOUT_SIZE_GUARD(DjinnDefinition_Size, struct DjinnDefinition, 0xc);
+LAYOUT_OFFSET_GUARD(DjinnDefinition_AbilityId, struct DjinnDefinition, abilityId,
+                    0);
+LAYOUT_OFFSET_GUARD(DjinnDefinition_Unk02, struct DjinnDefinition, unk02, 2);
+LAYOUT_OFFSET_GUARD(DjinnDefinition_Hp, struct DjinnDefinition, hp, 4);
 LAYOUT_SIZE_GUARD(EnemyDefinition_Size, struct EnemyDefinition, 0x54);
 LAYOUT_OFFSET_GUARD(EnemyDefinition_Rewards, struct EnemyDefinition, rewards,
                     0x20);

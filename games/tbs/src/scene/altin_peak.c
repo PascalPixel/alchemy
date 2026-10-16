@@ -41,7 +41,7 @@
 
 #include "battle_effect_runtime.h"
 #include "ability_ids.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "irq.h"

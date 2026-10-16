@@ -7998,7 +7998,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         element = (param >> 8) & 15;
         index = param & 255;
         if (Djinn_IsActiveFar(actorId, element, index) != 0) {
-          ability = BattleActGet(Djinn_GetDefinitionHeaderFar(element, index));
+          ability = BattleActGet(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           win = UiWindow_Create(11, 17, 10, 3, 6);
           state->entries[0].oam.f.x = 64;

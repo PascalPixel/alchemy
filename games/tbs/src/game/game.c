@@ -42,7 +42,7 @@
 #include "battle_party.h"
 #include "field_event.h"
 #include "unit/game/starting_equipment.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "character_ids.h"
 
 // The running totals UnitCalc builds a unit's stats in.
@@ -310,7 +310,7 @@ void UnitCalc(s32 owner) {
 
       for (i = 0; i < 20; i++) {
         if (bits & (1 << i)) {
-          struct DjinnDefinition *djinn = Djinn_GetDefinition(el, i);
+          const struct DjinnDefinition *djinn = Djinn_GetDefinition(el, i);
 
           work->hp += djinn->hp;
           work->pp += djinn->pp;
@@ -1571,7 +1571,7 @@ void Party_InitCharacters(void) {
   struct CharacterDefinition *tmpl;
   u16 nameBuf[16];
   s32 owner;
-  s32 *remote = gCharacter_StartingEquipOwnerIds;
+  const s32 *remote = gCharacter_StartingEquipOwnerIds;
   s32 i;
   s32 slot;
   u8 *name;
@@ -2643,35 +2643,35 @@ action4_done:
 
 // Returns the definition of Djinn `index` (0 to 19) of element `group` (0 to
 // 3); anything out of range gives the first.
-const u16 *Djinn_GetDefinition(u32 group, u32 index) {
+const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
   entry = 0;
   if ((group <= 3U) && (index <= 0x13U)) {
     entry = (group * 0x14) + index;
   }
-  return (const u16 *)((u8 *)gDjinn_DefinitionTable + entry * 0xC);
+  return &gDjinn_DefinitionTable[entry];
 }
 
 // Gives a newly found Djinn to the party member holding the fewest Djinn who
 // has room in that element, puts it on standby and sets its found flag.
 // Returns who got it, -1 if it was found before or -2 when nobody has room.
-s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state) {
-  void *entry = state + index * 20 + 48;
+s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
+  s32 flag = djinn + element * 20 + FLAG_DJINNI_0;
   s32 bestNo = 0;
   s32 bestVal = 999;
   s32 count;
   s32 i;
   s32 j;
 
-  if (GameFlag_Test(entry) != 0)
+  if (GameFlag_Test(flag) != 0)
     return -1;
 
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = UnitGet(gGameState.activeOwners[i]);
 
-    if (unit->djinnOwnedCounts[index] <= 9) {
+    if (unit->djinnOwnedCounts[element] <= 9) {
       s32 value = 0;
 
       for (j = 0; j < 4; j++)
@@ -2686,9 +2686,9 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state) {
   if (bestVal == 999)
     return -2;
 
-  Djinn_AddToOwner(bestNo, index, (s32)state);
-  DjinnRecovery_AddStandby(bestNo, index, (u32)state);
-  GameFlag_SetBit((u32)entry);
+  Djinn_AddToOwner(bestNo, element, djinn);
+  DjinnRecovery_AddStandby(bestNo, element, djinn);
+  GameFlag_SetBit(flag);
   return bestNo;
 }
 
@@ -2877,9 +2877,9 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return found;
 }
 
-// Returns the first halfword of a Djinn's definition.
-s32 Djinn_GetDefinitionHeader(u32 group, u32 index) {
-  return *Djinn_GetDefinition(group, index);
+// Returns the ability ID used when the Djinni is unleashed.
+s32 Djinn_GetAbilityId(u32 group, u32 index) {
+  return Djinn_GetDefinition(group, index)->abilityId;
 }
 
 // Returns how many Djinn of element `index` the party holds, or of all

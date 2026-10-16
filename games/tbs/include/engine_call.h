@@ -41,7 +41,7 @@ static inline void FieldUiTextResource_SetPosition(struct MenuSprite *cursor,
   UiTextResource_SetPosition(cursor, x, y);
 }
 
-static inline void FieldUi_AdjustValueWithoutLimit(s32 message, s32 buffer) {
+static inline void FieldUi_AdjustValueWithoutLimit(s32 message, u16 *buffer) {
   Ui_AdjustValueWithoutLimit(message, buffer);
 }
 

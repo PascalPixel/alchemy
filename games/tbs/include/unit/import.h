@@ -11,7 +11,7 @@ struct UiWindow;
 void Effect_SoundAndFlash(void);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
                                                   s32 mode);
-void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 element, void *djinn);
+void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 element, s32 djinn);
 void Engine_BattleFxSetWeightedResult(s32 zone_no, s32 slot_no);
 struct UiWindow *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height,
                                           s32 attrs);

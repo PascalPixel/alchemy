@@ -3924,17 +3924,17 @@ struct SpriteOutput {
 };
 
 LAYOUT_OFFSET_GUARD(SpriteOutput_X, struct SpriteOutput, x,
-                    (u32)&((struct RenderOutput *)0)->x);
+                    LAYOUT_OFFSET(struct RenderOutput, x));
 LAYOUT_OFFSET_GUARD(SpriteOutput_Y, struct SpriteOutput, y,
-                    (u32)&((struct RenderOutput *)0)->y);
+                    LAYOUT_OFFSET(struct RenderOutput, y));
 LAYOUT_OFFSET_GUARD(SpriteOutput_Active, struct SpriteOutput, active,
-                    (u32)&((struct RenderOutput *)0)->active);
+                    LAYOUT_OFFSET(struct RenderOutput, active));
 LAYOUT_OFFSET_GUARD(SpriteOutput_AnimStep, struct SpriteOutput, animStep,
-                    (u32)&((struct RenderOutput *)0)->animStep);
+                    LAYOUT_OFFSET(struct RenderOutput, animStep));
 LAYOUT_OFFSET_GUARD(SpriteOutput_Index, struct SpriteOutput, index,
-                    (u32)&((struct RenderOutput *)0)->index);
+                    LAYOUT_OFFSET(struct RenderOutput, index));
 LAYOUT_OFFSET_GUARD(SpriteOutput_Attr, struct SpriteOutput, attr,
-                    (u32)&((struct RenderOutput *)0)->unk10);
+                    LAYOUT_OFFSET(struct RenderOutput, unk10));
 
 #if EDITION_INTERNATIONAL
 
@@ -4321,7 +4321,7 @@ void UiWork_AnimateSpriteSlots(void) {
 }
 
 // Decodes message into buf (a u16 string) with no length limit.
-void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
+void Ui_AdjustValueWithoutLimit(s32 message, u16 *buf) {
   UiText_DecodeMessage(message, buf, 0x7fffffff);
 }
 
@@ -6522,7 +6522,14 @@ s32 Menu_RunTopSelection(void) {
       WaitFrames(1);
     }
 #endif
+#ifdef UBFIX
+    // UB: the original reads a void return. The default result is ignored by
+    // the only caller, so give it a defined value after closing the window.
+    UiWork_CloseAndRelease();
+    ret = 0;
+#else
     ret = UiWork_CloseAndRelease();
+#endif
 
     switch (selection) {
     case 0:

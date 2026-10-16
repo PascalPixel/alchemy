@@ -36,7 +36,7 @@
 #include "system.h"
 #include "mem.h"
 #include "field_service.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "text/msg_ids.h"
 #include "battle_unit.h"
 #include "resource.h"

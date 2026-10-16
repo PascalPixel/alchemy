@@ -182,7 +182,7 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode);
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output);
 void UiWork_AnimateSpriteSlots(void);
-void Ui_AdjustValueWithoutLimit(s32 message, s32 buf);
+void Ui_AdjustValueWithoutLimit(s32 message, u16 *buf);
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
 s32 *Runtime_ClearWordIfSet(s32 *p);
@@ -291,8 +291,11 @@ void SelectionScreen_LoadLargeIcon(void);
 void Resource_ResetPendingTransfer(void);
 s32 Menu_RunTopSelection(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
-/* UiWork_CloseAndRelease is called before its definition with no prototype in
- * scope. */
+/* The matching build calls this before its void definition and uses the
+ * result. Menu_RunTopSelection keeps that form outside UBFIX. */
+#ifdef UBFIX
+void UiWork_CloseAndRelease(void);
+#endif
 void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 

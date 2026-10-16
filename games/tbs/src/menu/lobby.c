@@ -284,7 +284,7 @@ test1:
     result++;
   }
   Engine_TaskWait(2);
-  FieldUi_AdjustValueWithoutLimit(MsgEnemyLabel, (s32)buf);
+  FieldUi_AdjustValueWithoutLimit(MsgEnemyLabel, buf);
   i = 0;
   if (buf[i] != 0) {
     do {

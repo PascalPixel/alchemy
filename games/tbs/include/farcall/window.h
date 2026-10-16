@@ -9,7 +9,7 @@ FAR_CALL(UiWindow_CreateFar, UiWindow_Create, struct UiWindow *,
 FAR_CALL(UiWork_FinalizeFar, UiWork_Finalize, void,
          (struct UiWindow * work, s32 release))
 FAR_CALL(Ui_AdjustValueWithoutLimitFar, Ui_AdjustValueWithoutLimit, void,
-         (s32 message, s32 buf))
+         (s32 message, u16 *buf))
 FAR_CALL(UiText_DecodeMessageFar, UiText_DecodeMessage, void,
          (s32 message, u16 *text, s32 capacity))
 FAR_CALL(UiText_CopyMessageStringFar, UiText_CopyMessageString, s32,

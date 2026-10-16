@@ -7,7 +7,7 @@
 #include "field_effect.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "item_ids.h"
 #include "sound_ids.h"
 

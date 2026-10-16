@@ -262,7 +262,7 @@ FAR_SLOT(BattleFx_GetPhaseResult)
 FAR_CALL(Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork, void,
          (void))
 FAR_CALL(Djinn_JoinPartyFar, Djinn_JoinParty, void,
-         (s32 slot, s32 element, void *djinn))
+         (s32 slot, s32 element, s32 djinn))
 FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void,
          (struct EffectSlot * effect))
 FAR_CALL(BattleFx_HasReachedTargetFar, BattleFx_HasReachedTarget, u32,

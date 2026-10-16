@@ -30,7 +30,7 @@
 #include "altin.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "item_ids.h"
 #include "sound_ids.h"
 #include "objcmd.h"

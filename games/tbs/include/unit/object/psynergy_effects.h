@@ -187,7 +187,7 @@ struct MotionObject;
 
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
 void Djinn_RunBattleStartHop(s32 id);
-void Djinn_JoinParty(s32 slot, s32 element, void *djinn);
+void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldObject_PlaceSceneActors(void);
 /* Djinn_ResolvePendingEvent is called from object.c with no prototype in scope:
  * Field_RunScene calls it, and object.c comes before this unit in ROM order, so

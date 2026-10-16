@@ -39,7 +39,7 @@ extern const u8 gCharacter_ElementGroupTable[];
 extern u32 gCharacter_LevelExpTable[];
 extern s16 gDjinn_ElementSprites[];
 extern s32 gOwner_FourColumnValues[];
-extern const u16 gDjinn_DefinitionTable[];
+extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 extern const s16 gElement_PowerResistCurve[5][2];
 extern const struct EnemyDefinition gEnemy_Definitions[];
 extern struct PresetValues gEnemy_ElementPresetTable[];

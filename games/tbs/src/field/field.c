@@ -46,7 +46,7 @@
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "resource_ids.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "mapcopy.h"
 #include "fixed_point_position.h"
 #include "mapframe.h"

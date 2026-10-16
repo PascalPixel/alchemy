@@ -23,7 +23,7 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "objcmd.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "facing_object.h"
 
 // The garden before Lord McCoy's palace in Bilibin. Two guards keep the

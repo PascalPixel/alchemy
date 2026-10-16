@@ -7,6 +7,7 @@ struct BattleAct;
 struct BattleUnit;
 struct CharacterDefinition;
 struct ClassDefinition;
+struct DjinnDefinition;
 struct ItemDefinition;
 struct LevelUpResult;
 struct SummonDefinition;
@@ -122,8 +123,8 @@ s32 Battle_IsReviveEffect(s32 effect_id);
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistance_category,
                          s32 effect_id, s32 success_scale);
 
-const u16 *Djinn_GetDefinition(u32 group, u32 index);
-s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state);
+const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
+s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 s32 Djinn_IsReady(s32 owner, s32 index, s32 bit);
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit);
@@ -133,7 +134,7 @@ s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit);
 u32 *DjinnRecovery_AddStandby(u32 kind, u32 first, u32 second);
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target);
 s32 DjinnRecovery_CountStandby(u8 *counts);
-s32 Djinn_GetDefinitionHeader(u32 group, u32 index);
+s32 Djinn_GetAbilityId(u32 group, u32 index);
 s32 Party_SumDjinnCounts(s32 index);
 
 void Inventory_AddAndEquip(s32 owner, s32 target);

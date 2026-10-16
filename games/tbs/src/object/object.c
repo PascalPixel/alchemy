@@ -27,7 +27,7 @@
 #include "iowrite.h"
 #include "irq.h"
 #include "callback_scheduler.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "iwram_call.h"
 #include "event_work.h"
 #include "resource_ids.h"

@@ -83,7 +83,7 @@ FAR_CALL(Djinn_TransferFar, Djinn_Transfer, s32,
 FAR_CALL(Summon_ListLearnedFar, Summon_ListLearned, s32, (u8 *output))
 FAR_CALL(SummonDefinition_Get, SummonDefinition_GetNear,
          const struct SummonDefinition *, (u32 summon_id))
-FAR_CALL(Djinn_GetDefinitionHeaderFar, Djinn_GetDefinitionHeader, s32,
+FAR_CALL(Djinn_GetAbilityIdFar, Djinn_GetAbilityId, s32,
          (u32 group, u32 index))
 FAR_CALL(Unit_LevelUpToFar, Unit_LevelUpTo, void, (s32 unit, s32 lv))
 FAR_CALL(Unit_GetElementLevelFar, Unit_GetElementLevel, s32,
@@ -113,7 +113,7 @@ FAR_CALL(Party_BeginChildhoodFar, Party_BeginChildhood, void, (void))
 FAR_CALL(Party_EndChildhoodFar, Party_EndChildhood, void, (void))
 FAR_SLOT(Owner_RatioNoOp)
 FAR_CALL(Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner, s32,
-         (s32 index, u8 *state))
+         (s32 element, s32 djinn))
 FAR_CALL(Party_SumDjinnCountsFar, Party_SumDjinnCounts, s32, (s32 index))
 FAR_CALL(Party_AdjustShopCreditFar, Party_AdjustShopCredit, s32, (s32 amount))
 FAR_CALL(Party_AdjustShopGiftsFar, Party_AdjustShopGifts, s32, (s32 amount))

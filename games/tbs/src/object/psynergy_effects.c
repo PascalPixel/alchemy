@@ -25,7 +25,7 @@
 #include "iowrite.h"
 #include "irq.h"
 #include "callback_scheduler.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "iwram_call.h"
 #include "event_work.h"
 #include "resource_ids.h"
@@ -3643,7 +3643,6 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
 //--------------------------------------------------------------------------
 
 #define CLONE_MAX 8      // afterimages of the leaping Djinni
-#define FLAG_DJINNI_0 48 // the flag of Djinni 0, set once it is caught
 
 // A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 // the leader, hops back 16 pixels three times, then leaps 64 pixels at the
@@ -3755,14 +3754,14 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 // is set. Unless slot is -1, the Djinni's actor slot first plays its
 // element's capture effect and is freed. Ends with "<Djinni> joined
 // <member>.".
-void Djinn_JoinParty(s32 slot, s32 element, void *djinn) {
+void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
 
   work = (struct FieldWork *)gEventWork;
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
     owner = 0;
-    GameFlag_SetBitFar((u8 *)djinn + element * 20 + FLAG_DJINNI_0);
+    GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINNI_0);
   } else {
     owner = Djinn_AddToLeastLoadedOwnerFar(element, djinn);
   }
@@ -3877,7 +3876,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
           if (found != 0 &&
               found->condition - FLAG_DJINNI_0 == flag - DJINNI_0) {
             WaitFrames(40);
-            Djinn_JoinParty(actor, element, (void *)index);
+            Djinn_JoinParty(actor, element, index);
             break;
           }
         }

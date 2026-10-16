@@ -44,7 +44,7 @@
 #include "battle_command.h"
 #include "resource.h"
 #include "heap_state.h"
-#include "flag_ids.h"
+#include "flags.h"
 #include "ability_ids.h"
 #include "menu_list.h"
 #include "audio_engine_symbols.h"
@@ -4264,7 +4264,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
       UnitGetFar(entry->unitId);
-      action = BattleActGet(Djinn_GetDefinitionHeaderFar(
+      action = BattleActGet(Djinn_GetAbilityIdFar(
           entry->parameter >> 8 & 15, entry->parameter & 0xff));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
@@ -8793,8 +8793,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
 
   case CMD_DJINN:
     // セットされていなければ、スタンバイのジンをセットし直す
-    abilityId = Djinn_GetDefinitionHeaderFar(DJINN_ELEMENT(req->parameter),
-                                             DJINN_INDEX(req->parameter));
+    abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(req->parameter),
+                                     DJINN_INDEX(req->parameter));
     if (!Djinn_IsActiveFar(req->unitId, DJINN_ELEMENT(req->parameter),
                            DJINN_INDEX(req->parameter))) {
       if (Djinn_IsReadyFar(req->unitId, DJINN_ELEMENT(req->parameter),

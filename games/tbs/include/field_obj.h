@@ -18,7 +18,7 @@ enum SceneTransitionStyle {
 
 #include "field_coordinate.h"
 
-#include "field_sprite.h"
+#include "animspr.h"
 
 union FieldObject;
 
@@ -45,15 +45,22 @@ struct FieldActor {
   s32 bounce;
   s32 gravity;
   s32 riseBaseY;
-  struct FieldSprite *sprite;
-  u8 active;
+  union {
+    struct AnimationObject *sprite;
+    void **sprites;
+  };
+  // Zero hides sprites; one draws a single sprite, two draws a group.
+  u8 spriteStorageKind;
   u8 motionFlags;
   u8 unk56[3];
   u8 collisionFlags;
   u8 steeringFlags;
   u8 paused;
   u8 unk5c;
-  u8 unk5d[5];
+  u8 unk5d;
+  u16 unk5e;
+  u8 unk60;
+  u8 unk61;
   u8 riseCounter;
   u8 riseEnabled;
   s16 timer;
@@ -72,6 +79,7 @@ STATIC_ASSERT(offsetof(struct FieldActor, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct FieldActor, collisionFlags) == 0x59);
 STATIC_ASSERT(offsetof(struct FieldActor, steeringFlags) == 0x5a);
 STATIC_ASSERT(offsetof(struct FieldActor, paused) == 0x5b);
+STATIC_ASSERT(offsetof(struct FieldActor, unk5e) == 0x5e);
 STATIC_ASSERT(offsetof(struct FieldActor, riseEnabled) == 0x63);
 STATIC_ASSERT(offsetof(struct FieldActor, bounce) == 0x44);
 STATIC_ASSERT(offsetof(struct FieldActor, gravity) == 0x48);

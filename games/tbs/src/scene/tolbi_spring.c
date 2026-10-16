@@ -800,7 +800,7 @@ static void TolbiSpring_SetActorActive(s32 arg0, s32 arg1) {
   struct FieldActor *entry = Object_GetById(arg0);
 
   if (entry != 0) {
-    u8 *field = &entry->active;
+    u8 *field = &entry->spriteStorageKind;
 
     *field = arg1;
   }

@@ -60,6 +60,6 @@
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Object_ReplaceResourceEntry, 1
+	.set import.Sprite_ShareVramCache, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

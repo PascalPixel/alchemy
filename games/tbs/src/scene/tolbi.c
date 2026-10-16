@@ -379,11 +379,10 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
   s32 priority;
 
   if (object != NULL) {
-    priority = Object_GetById(ACTOR_PARTY_LEADER)->sprite->priority;
+    priority = Object_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
     object->actor.priorityFlags = 0;
-    object->actor.sprite->priority = priority;
-    ((struct TolbiSpritePriorityByte *)object->actor.sprite)->secondPriority =
-        priority;
+    object->actor.sprite->image.priority = priority;
+    object->actor.sprite->shadow.priority = priority;
   }
 }
 

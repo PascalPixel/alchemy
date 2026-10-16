@@ -10,7 +10,7 @@ struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetSceneTable(void);
+u32 *SceneData_GetSceneTable(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);

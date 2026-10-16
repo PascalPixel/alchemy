@@ -254,7 +254,7 @@ static void AltmillerCave_RespawnActorObject(void) {
             REG_DMA3);
     old->update = 0;
     *(struct FieldActor **)(work + 16) = copy;
-    old->active = 0;
+    old->spriteStorageKind = 0;
   }
 }
 
@@ -547,9 +547,9 @@ static void AltmillerCave_TurnRock(s32 action) {
       }
       AltmillerCave_Wheel->phase = 2;
       AltmillerCave_Wheel->ticks = 0;
-      Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+      Map_SetShake(0x20000, 0x20000, 0x10000);
       Engine_EventWait(20);
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      Map_SetShake(0x40000, 0x40000, 0x10000);
       AltmillerCave_Wheel->phase = 99;
       Event_PlayCue(190);
       reach = 0x180000;
@@ -628,9 +628,9 @@ static void FieldScene_RunExtendedActorPresentation(void) {
   actor->sprite->rotation = 0;
   Engine_ActorJump(8, 10, 70);
   for (i = 0; i < 30; i++) {
-    actor->sprite->priority = 0;
+    actor->sprite->image.priority = 0;
     Engine_EventWait(2);
-    actor->sprite->priority = 2;
+    actor->sprite->image.priority = 2;
     Engine_EventWait(2);
   }
   Engine_EventWait(40);
@@ -1691,7 +1691,8 @@ static void AltmillerCave_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor != NULL) {
     actor->priorityFlags = 0;
-    actor->sprite->priority = Object_GetById(0)->sprite->priority;
+    actor->sprite->image.priority =
+        Object_GetById(0)->sprite->image.priority;
   }
 }
 
@@ -1812,8 +1813,8 @@ s32 AltmillerCave_ApplyEntryState(void) {
     Engine_ActorSetChildValue(18, 6);
     Engine_ActorSetChildValue(19, 6);
     Engine_ActorSetChildValue(20, 6);
-    Object_GetById(16)->sprite->priority = 3;
-    Object_GetById(20)->sprite->priority = 3;
+    Object_GetById(16)->sprite->image.priority = 3;
+    Object_GetById(20)->sprite->image.priority = 3;
     Object_GetById(16)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Object_GetById(20)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
@@ -1899,7 +1900,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   Map_CopyCellsLayered(41, 55, 3, 2, 30, 55);
   Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
   Engine_TaskWait(50);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_TaskWait(30);
   {
     s32 mode = 2;

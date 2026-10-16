@@ -2,7 +2,8 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-static void EV41_SEARCH(void) {
+// Find the bone, or explain why the party cannot carry another item.
+static void Vault_FindBone(void) {
   Engine_EventBegin();
   if (PartyInventory_HasSpace() == 0) {
     Engine_ActorSetAnimationAndWait(18, 4);

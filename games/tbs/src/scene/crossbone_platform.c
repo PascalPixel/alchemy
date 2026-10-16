@@ -38,6 +38,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
+#include "field_effect.h"
+#include "fixed_math.h"
 
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16
@@ -48,35 +50,46 @@
 #endif
 
 // Forward declarations.
-static void SceneActor_BranchOnSlotZeroAtTile38(void);
-static void ActorPresentation_PlaceActorFourteenOnActorNine(void);
-static void SceneActor_PassActorNinePositionWithId107(void);
+static void CrossbonePlatform_ClimbOrMoveFirstBlock(void);
+static void CrossbonePlatform_FollowSecondBlock(void);
+static void CrossbonePlatform_PositionSecondBlockMapObject(void);
 static void CrossbonePlatform_InitializeScene1(void);
 static void CrossbonePlatform_InitializeScene2(void);
 static void CrossbonePlatform_InitializeScene3(void);
 
 enum { ITEM_RED_KEY = 243, ITEM_BLUE_KEY = 244 };
 
+enum { ACTOR_DJINNI = 15 };
+
+enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
+
+// Publish the next raised-event trigger.
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step) {
   *field = step;
 }
 
-static __inline__ void LiftBlock(s32 column, u8 lowered) {
+// Lift the first block and clear the terrain beneath its column.
+static __inline__ void LiftBlock(s32 column, u8 motionFlags) {
   {
-    s32 fifth = column;
-    Map_CopyCellAttributes(61, 36, 1, 1, fifth, 42);
+    s32 destinationColumn = column;
+    Map_CopyCellAttributes(61, 36, 1, 1, destinationColumn, 42);
   }
-  Object_GetById(8)->motionFlags = lowered;
-  Object_GetById(8)->y.fixed = 0x200000;
+  Object_GetById(8)->motionFlags = motionFlags;
+  Object_GetById(8)->y.fixed = PIXELS(32);
 }
 
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-static void EV15_SCRIPT(void) { Djinn_JoinParty(15, 0, 6); }
+// Add the caught Djinni to the party.
+static void CrossbonePlatform_JoinDjinni(void) {
+  Djinn_JoinParty(ACTOR_DJINNI, 0, 6);
+}
 
+// Unused scene callback with no behavior.
 UNUSED static void Resource3b4_EmptyHookA(void) {}
 
+// Select entrances for the current platform room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -92,10 +105,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCrossbonePlatformEntrancesOther;
 }
 
+// Return the scene protocol default.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-u8 *SceneData_GetSceneTable(void) { return gCrossbonePlatform_SceneTable; }
+// Return the shared exit table.
+u32 *SceneData_GetSceneTable(void) { return gCrossbonePlatform_SceneTable; }
 
+// Select actor placements for the current platform room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -111,16 +127,20 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossbonePlatformPlacementsOther;
 }
 
+// Leave Halt interactions with the pursuers unchanged.
 static void Resource3b4_EmptyHookB(void) {}
 
+// Turn the Djinni toward the party leader each frame.
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
-static void SceneActor_FaceTowardActorZero(union FieldObject *fieldObject) {
+static void
+CrossbonePlatform_FaceDjinniTowardLeader(union FieldObject *fieldObject) {
 #else
-static s32 SceneActor_FaceTowardActorZero(union FieldObject *fieldObject) {
+static s32
+CrossbonePlatform_FaceDjinniTowardLeader(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *actor = (struct FieldActor *)fieldObject;
+  struct FieldActor *actor = &fieldObject->actor;
   struct FieldActor *leader = Object_GetById(0);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
@@ -132,156 +152,173 @@ static s32 SceneActor_FaceTowardActorZero(union FieldObject *fieldObject) {
 #endif
 }
 
-static void EV20_TOUCH(void) {
-  struct FieldActor *record;
+// Make the Djinni jump away on the first approach.
+static void CrossbonePlatform_DjinniFirstEscape(void) {
+  struct FieldActor *djinni;
 
   if (GameFlag_IsSet(0x9c8) == 0) {
     GameFlag_Set(0x9c8);
     Engine_EventBegin();
-    Camera_SetSpeed(0x20000, 0x4000);
-    Engine_CameraMoveToActor(15, 1);
+    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    Engine_CameraMoveToActor(ACTOR_DJINNI, 1);
     Engine_CameraWaitForMove();
-    Actor_FaceDirection(15, 0, 20);
-    Actor_SetAttachedEffect(15, 0x102);
+    Actor_FaceDirection(ACTOR_DJINNI, 0, 20);
+    Actor_SetAttachedEffect(ACTOR_DJINNI, 0x102);
     Engine_ActorRunRepeatedMotion(15, 2);
     Engine_EventWait(20);
-    Actor_SetSpeed(15, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_DJINNI, PIXELS(1), PIXELS(1) / 2);
     Event_PlayCue(152);
-    record = Object_GetById(15);
-    record->velocityY = 0x80000;
-    Actor_WalkToAndWait(15, 0x248, 0x2a8);
-    Actor_FaceDirection(15, 0x4000, 20);
+    djinni = Object_GetById(ACTOR_DJINNI);
+    djinni->velocityY = PIXELS(8);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 584, 680);
+    Actor_FaceDirection(ACTOR_DJINNI, FACING_SOUTH, 20);
     Engine_EventEnd();
   }
 }
 
-static void EV21_TOUCH(void) {
-  struct FieldActor *rec7;
-  s32 rec8;
-  struct FieldActor *record;
+// Send the Djinni across the room and start its stretched pose.
+static void CrossbonePlatform_DjinniLongEscape(void) {
+  struct FieldActor *spinningDjinni;
+  s32 escapeComplete;
+  struct FieldActor *jumpingDjinni;
 
   if (GameFlag_IsSet(0x9c8) != 0) {
-    rec8 = GameFlag_IsSet(0x9c9);
-    if (rec8 == 0) {
+    escapeComplete = GameFlag_IsSet(0x9c9);
+    if (escapeComplete == 0) {
       GameFlag_Set(0x9c9);
       Engine_EventBegin();
-      Camera_SetSpeed(0x20000, 0x4000);
-      Engine_CameraMoveToActor(15, 1);
+
+      // Focus on the Djinni before its next jump away.
+      Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+      Engine_CameraMoveToActor(ACTOR_DJINNI, 1);
       Engine_CameraWaitForMove();
-      Actor_FaceDirection(15, 0x4000, 20);
-      Actor_SetAttachedEffect(15, 0x102);
+      Actor_FaceDirection(ACTOR_DJINNI, FACING_SOUTH, 20);
+      Actor_SetAttachedEffect(ACTOR_DJINNI, 0x102);
       Engine_ActorRunRepeatedMotion(15, 2);
       Engine_EventWait(20);
-      Actor_SetSpeed(15, 0x10000, 0x8000);
+      Actor_SetSpeed(ACTOR_DJINNI, PIXELS(1), PIXELS(1) / 2);
       Event_PlayCue(152);
-      record = Object_GetById(15);
-      record->velocityY = 0xa0000;
-      Actor_WalkToAndWait(15, 0x248, 0x298);
-      Actor_FaceDirection(15, 0x4000, 20);
-      Actor_SetAttachedEffect(15, 0x102);
+      jumpingDjinni = Object_GetById(ACTOR_DJINNI);
+      jumpingDjinni->velocityY = PIXELS(10);
+      Actor_WalkToAndWait(ACTOR_DJINNI, 584, 664);
+      Actor_FaceDirection(ACTOR_DJINNI, FACING_SOUTH, 20);
+      Actor_SetAttachedEffect(ACTOR_DJINNI, 0x102);
       Engine_EventWait(30);
-      Actor_SetSpeed(15, 0x80000, 0x4000);
-      Actor_WalkToAndWait(15, 0x298, 0x298);
-      Actor_WalkToAndWait(15, 0x2e8, 0x298);
-      Actor_WalkToAndWait(15, 0x338, 0x298);
+
+      // Dash across the platforms, then shake the room on landing.
+      Actor_SetSpeed(ACTOR_DJINNI, PIXELS(8), PIXELS(1) / 4);
+      Actor_WalkToAndWait(ACTOR_DJINNI, 664, 664);
+      Actor_WalkToAndWait(ACTOR_DJINNI, 744, 664);
+      Actor_WalkToAndWait(ACTOR_DJINNI, 824, 664);
       Engine_EventWait(10);
       Event_PlayCue(208);
-      Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
+      Map_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
       Engine_EventWait(20);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_EventWait(30);
-      Actor_SetPosition(15, 0x3780000, 0x2980000);
-      rec7 = Object_GetById(15);
-      rec7->sprite->rotation = 0xf800;
-      rec7->facing = 0;
-      ObjectDispatch_ApplyValueToChildren(rec7, 0);
-      Engine_ObjectSetScript(rec7, gCrossbonePlatform_ActorFifteenMotionScript);
+
+      // Leave the Djinni tilted while its scale animation continues.
+      Actor_SetPosition(ACTOR_DJINNI, PIXELS(888), PIXELS(664));
+      spinningDjinni = Object_GetById(ACTOR_DJINNI);
+      spinningDjinni->sprite->rotation = 0xf800;
+      spinningDjinni->facing = 0;
+      ObjectDispatch_ApplyValueToChildren(spinningDjinni, 0);
+      Engine_ObjectSetScript(spinningDjinni,
+                             gCrossbonePlatform_ActorFifteenMotionScript);
       Engine_EventEnd();
     }
   }
 }
 
-static void EV22_TOUCH(void) {
-  struct FieldActor *record;
+// Bring the Djinni to its final position and have it watch the leader.
+static void CrossbonePlatform_DjinniFinalEscape(void) {
+  struct FieldActor *djinni;
 
   if (GameFlag_IsSet(0x9c9) != 0 && GameFlag_IsSet(0x9ca) == 0) {
     GameFlag_Set(0x9ca);
     Engine_EventBegin();
-    record = Object_GetById(15);
-    record->sprite->rotation = 0;
-    ObjectDispatch_ApplyValueToChildren(record, 16);
+
+    // Restore the sprite before the last jump and winding escape path.
+    djinni = Object_GetById(ACTOR_DJINNI);
+    djinni->sprite->rotation = 0;
+    ObjectDispatch_ApplyValueToChildren(djinni, 16);
     Event_PlayCue(152);
-    record = Object_GetById(15);
-    record->velocityY = 0x80000;
-    Actor_FaceDirection(15, 0x8000, 30);
-    Actor_SetAttachedEffect(15, 0x102);
+    djinni = Object_GetById(ACTOR_DJINNI);
+    djinni->velocityY = PIXELS(8);
+    Actor_FaceDirection(ACTOR_DJINNI, FACING_WEST, 30);
+    Actor_SetAttachedEffect(ACTOR_DJINNI, 0x102);
     Engine_ActorRunRepeatedMotion(15, 2);
     Engine_EventWait(20);
-    Actor_SetSpeed(15, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_DJINNI, PIXELS(1), PIXELS(1) / 2);
     Event_PlayCue(152);
-    record = Object_GetById(15);
-    record->velocityY = 0x40000;
-    Actor_WalkToAndWait(15, 0x370, 0x2a8);
+    djinni = Object_GetById(ACTOR_DJINNI);
+    djinni->velocityY = PIXELS(4);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 680);
     Engine_EventWait(10);
-    Actor_SetAttachedEffect(15, 0x101);
-    Actor_SetSpeed(15, 0x20000, 0x10000);
-    Actor_WalkToAndWait(15, 0x370, 0x2b8);
-    Actor_WalkToAndWait(15, 0x372, 0x2c0);
-    Actor_WalkToAndWait(15, 0x370, 0x2c8);
-    Actor_WalkToAndWait(15, 0x36e, 0x2d0);
-    Actor_WalkToAndWait(15, 0x370, 0x2d8);
-    Actor_WalkToAndWait(15, 0x372, 0x2e0);
-    Actor_WalkToAndWait(15, 0x370, 0x2e8);
-    Actor_WalkToAndWait(15, 0x36e, 0x2f0);
-    Actor_WalkToAndWait(15, 0x370, 0x2f8);
-    Actor_SetPosition(15, 0x3580000, 0x3380000);
+    Actor_SetAttachedEffect(ACTOR_DJINNI, 0x101);
+    Actor_SetSpeed(ACTOR_DJINNI, PIXELS(2), PIXELS(1));
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 696);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 882, 704);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 712);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 878, 720);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 728);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 882, 736);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 744);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 878, 752);
+    Actor_WalkToAndWait(ACTOR_DJINNI, 880, 760);
+    Actor_SetPosition(ACTOR_DJINNI, PIXELS(856), PIXELS(824));
     Engine_EventWait(10);
-    Actor_FaceDirection(15, 0xc000, 20);
-    Actor_SetAttachedEffect(15, 0x100);
-    record = Object_GetById(15);
+    Actor_FaceDirection(ACTOR_DJINNI, FACING_NORTH, 20);
+    Actor_SetAttachedEffect(ACTOR_DJINNI, 0x100);
+    djinni = Object_GetById(ACTOR_DJINNI);
 #ifdef UBFIX
-    record->update = SceneActor_FaceTowardActorZero;
+    djinni->update = CrossbonePlatform_FaceDjinniTowardLeader;
 #else
-    record->update =
-        (void (*)(union FieldObject *))SceneActor_FaceTowardActorZero;
+    djinni->update =
+        (void (*)(union FieldObject *))CrossbonePlatform_FaceDjinniTowardLeader;
 #endif
     Engine_EventEnd();
   }
 }
 
-static void FieldScene_CopyActorPosition(void) {
-  struct FieldActor *dst;
-  struct FieldActor *src;
-  s32 idx;
-  s32 table;
-  s32 idx4;
+// Move the Djinni around the target ring at the speed of the leader.
+static void CrossbonePlatform_MoveDjinniToTouchedTarget(void) {
+  struct FieldActor *djinni;
+  struct FieldActor *leader;
+  s32 targetByteOffset;
+  const u8 *targets;
+  s32 zByteOffset;
   struct EventWork *work;
 
   work = gEventWork;
   if (Engine_GameFlagIsSet(0x9ca) != 0) {
-    if (gGameState.pausedObject != 15) {
-      idx = work->touchedTrigger;
-      dst = Object_GetById(15);
-      src = Object_GetById(0);
-      dst->speed = src->speed;
-      dst = Object_GetById(15);
-      src = Object_GetById(0);
-      dst->acceleration = src->speed;
-      idx -= 30;
-      table = (s32)gCrossbonePlatform_ActorFifteenWalkTargets;
-      idx <<= 3;
-      idx4 = idx + 4;
-      Engine_ActorWalkTo(15, *(s32 *)(table + idx), *(s32 *)(table + idx4));
+    if (gGameState.pausedObject != ACTOR_DJINNI) {
+      targetByteOffset = work->touchedTrigger;
+      djinni = Object_GetById(ACTOR_DJINNI);
+      leader = Object_GetById(0);
+      djinni->speed = leader->speed;
+      djinni = Object_GetById(ACTOR_DJINNI);
+      leader = Object_GetById(0);
+      djinni->acceleration = leader->speed;
+      targetByteOffset -= 30;
+      targets = (const u8 *)gCrossbonePlatform_ActorFifteenWalkTargets;
+      // The table stores consecutive signed X/Z pixel pairs.
+      targetByteOffset *= 2 * sizeof(s32);
+      zByteOffset = targetByteOffset + sizeof(s32);
+      Engine_ActorWalkTo(15, *(const s32 *)(targets + targetByteOffset),
+                         *(const s32 *)(targets + zByteOffset));
     }
   }
 }
 
-static void EV15_PSYNERGY(void) {
+// Stop the Djinni animation when Halt reaches it.
+static void CrossbonePlatform_HaltDjinni(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(15, 0);
   Engine_EventEnd();
 }
 
+// Select events for the current platform room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 selector = gGameState.scene;
 
@@ -297,32 +334,35 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossbonePlatformEventsOther;
 }
 
+// Recheck the obstacle directly ahead of the leader.
 static void CrossbonePlatform_CheckLeaderAhead(void) {
   Engine_LeaderCheckAhead();
 }
 
-static void CrossbonePlatform_OpenPassage(s32 arg) {
-  s32 step = (arg & 0xff) * 4;
-  s32 dest = step + 77;
-  s32 column = step + 13;
+// Open the selected blue-key passage, optionally playing its opening.
+static void CrossbonePlatform_OpenPassage(s32 passageInfo) {
+  s32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
+  s32 tileColumn = columnOffset + 77;
+  s32 collisionColumn = columnOffset + 13;
 
-  if (arg & 0x100) {
+  if (passageInfo & PASSAGE_PLAY_OPENING) {
     Engine_AudioPlayCue(157);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Map_CopyCells(79, 29, 1, 3, dest, 40);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    Map_CopyCells(79, 29, 1, 3, tileColumn, 40);
     Engine_TaskWait(40);
   }
-  Map_CopyCells(80, 29, 1, 3, dest, 40);
-  Map_CopyCellAttributes(column, 40, 1, 1, column, 41);
-  Map_CopyCellAttributes(column, 40, 1, 1, column, 42);
+  Map_CopyCells(80, 29, 1, 3, tileColumn, 40);
+  Map_CopyCellAttributes(collisionColumn, 40, 1, 1, collisionColumn, 41);
+  Map_CopyCellAttributes(collisionColumn, 40, 1, 1, collisionColumn, 42);
 }
 
-static void CrossbonePlatform_OpenPlatformPassage(s32 a0) {
-  if ((a0 & 0x100) != 0) {
+// Open the red-key passage, optionally playing its opening.
+static void CrossbonePlatform_OpenPlatformPassage(s32 passageInfo) {
+  if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
     Event_PlayCue(157);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Map_CopyCells(84, 29, 1, 3, 70, 49);
     Engine_TaskWait(60);
   }
@@ -331,158 +371,167 @@ static void CrossbonePlatform_OpenPlatformPassage(s32 a0) {
   Map_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-static void EV50_TOUCH(void) {
-  struct FieldActor *record;
+// Consume the red key when the leader faces the locked passage.
+static void CrossbonePlatform_UseRedKey(void) {
+  struct FieldActor *leader;
 
-  record = Object_GetById(0);
-  if (record->facing == 0xc000) {
+  leader = Object_GetById(0);
+  if (leader->facing == FACING_NORTH) {
     if (GameFlag_IsSet(0x9c4) == 0) {
-      if (PartyInventory_FindOwner(243) != -1) {
+      if (PartyInventory_FindOwner(ITEM_RED_KEY) != -1) {
         GameFlag_Set(0x9c4);
-        CrossbonePlatform_OpenPlatformPassage(0x100);
-        PartyInventory_Remove(243);
+        CrossbonePlatform_OpenPlatformPassage(PASSAGE_PLAY_OPENING);
+        PartyInventory_Remove(ITEM_RED_KEY);
       }
     }
   }
 }
 
-static void SceneState_SetSelectorFlagWhenFacingC000(s32 selector) {
-  struct FieldActor *slot = Object_GetById(0);
+// Consume a blue key and record which door was opened.
+static void CrossbonePlatform_UseBlueKey(s32 doorIndex) {
+  struct FieldActor *leader = Object_GetById(0);
   s32 flag;
 
-  if (slot->facing != 0xC000) {
+  if (leader->facing != FACING_NORTH) {
     return;
   }
-  flag = selector + 2496;
+  flag = doorIndex + 2496;
   if (Engine_GameFlagIsSet(flag) != 0) {
     return;
   }
-  if (PartyInventory_FindOwner(244) == -1) {
+  if (PartyInventory_FindOwner(ITEM_BLUE_KEY) == -1) {
     return;
   }
   Engine_GameFlagSet(flag);
-  CrossbonePlatform_OpenPassage(0x100 | selector);
-  PartyInventory_Remove(244);
+  CrossbonePlatform_OpenPassage(PASSAGE_PLAY_OPENING | doorIndex);
+  PartyInventory_Remove(ITEM_BLUE_KEY);
 }
 
-static void EV51_TOUCH(void) { SceneState_SetSelectorFlagWhenFacingC000(0); }
+// Try the first blue-key door.
+static void CrossbonePlatform_OpenFirstBlueDoor(void) {
+  CrossbonePlatform_UseBlueKey(0);
+}
 
-static void EV52_TOUCH(void) { SceneState_SetSelectorFlagWhenFacingC000(1); }
+// Try the second blue-key door.
+static void CrossbonePlatform_OpenSecondBlueDoor(void) {
+  CrossbonePlatform_UseBlueKey(1);
+}
 
-static void EV53_TOUCH_1(void) {
-  struct FieldActor *slot;
-  s16 *cnt;
-  s32 reset;
+// Try the third blue-key door and periodically recheck its other side.
+static void CrossbonePlatform_OpenThirdBlueDoor(void) {
+  struct FieldActor *leader;
+  s16 *blockedSteps;
+  s32 resetSteps;
 
-  SceneState_SetSelectorFlagWhenFacingC000(2);
-  slot = Object_GetById(0);
-  if (slot->facing == 0x4000) {
-    cnt = &gEventWork->blockedSteps;
-    if (*cnt > 12) {
+  CrossbonePlatform_UseBlueKey(2);
+  leader = Object_GetById(0);
+  if (leader->facing == FACING_SOUTH) {
+    blockedSteps = &gEventWork->blockedSteps;
+    if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
-      reset = 0;
-      *cnt = reset;
+      resetSteps = 0;
+      *blockedSteps = resetSteps;
     }
   }
 }
 
-static void EV54_TOUCH_1(void) {
-  struct FieldActor *p;
-  s16 *cnt;
-  s32 zero;
+// Try the fourth blue-key door and periodically recheck its other side.
+static void CrossbonePlatform_OpenFourthBlueDoor(void) {
+  struct FieldActor *leader;
+  s16 *blockedSteps;
+  s32 resetSteps;
 
-  SceneState_SetSelectorFlagWhenFacingC000(3);
-  p = Object_GetById(0);
-  if (p->facing == 0x4000) {
-    cnt = &gEventWork->blockedSteps;
-    if (*cnt > 12) {
+  CrossbonePlatform_UseBlueKey(3);
+  leader = Object_GetById(0);
+  if (leader->facing == FACING_SOUTH) {
+    blockedSteps = &gEventWork->blockedSteps;
+    if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
-      zero = 0;
-      *cnt = zero;
+      resetSteps = 0;
+      *blockedSteps = resetSteps;
     }
   }
 }
 
-static void SceneState_ApplyRectAndPlaceSlot12(void) {
-  s32 slot = 12;
-  s32 x = 0x1980000;
-  s32 z = 0x3080000;
+// Reveal the red-key tile and its uncollected actor.
+static void CrossbonePlatform_ShowRedKey(void) {
+  s32 keyActorId = 12;
+  s32 x = PIXELS(408);
+  s32 z = PIXELS(776);
 
   Map_CopyCells(25, 45, 1, 2, 25, 48);
   if (Engine_GameFlagIsSet(0xeeb) == 0)
-    Engine_ActorSetPosition(slot, x, z);
+    Engine_ActorSetPosition(keyActorId, x, z);
   Engine_EventWait(1);
 }
 
-static void ConfigureAndPlaceActorTwelve(void) {
+// Restore the unrevealed tile and move the red key out of view.
+static void CrossbonePlatform_HideRedKey(void) {
   Map_CopyCells(24, 48, 1, 2, 25, 48);
-  Actor_SetPosition(12, 0x00080000, 0x00080000);
+  Actor_SetPosition(12, PIXELS(8), PIXELS(8));
 }
 
-static void EV08_PSYNERGY_1(void) {
-  Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
+// Collect the selected key, hide its actor and remember it was taken.
+static inline void CrossbonePlatform_CollectKey(s32 actorId, s32 itemId,
+                                                s32 collectedFlag) {
+  Engine_ItemShowFound(itemId, 3);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-  Engine_ActorSetPosition(8, 0, 0);
-  Engine_GameFlagSet(0xEE7);
+  Engine_PartyGiveItem(itemId, 0);
+  Engine_ActorSetPosition(actorId, 0, 0);
+  Engine_GameFlagSet(collectedFlag);
 }
 
-static void EV09_PSYNERGY_1(void) {
-  Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-  Engine_ActorSetPosition(9, 0, 0);
-  Engine_GameFlagSet(0xEE8);
+// Collect the first blue key with Catch.
+static void CrossbonePlatform_CatchFirstBlueKey(void) {
+  CrossbonePlatform_CollectKey(8, ITEM_BLUE_KEY, 0xee7);
 }
 
-static void EV10_PSYNERGY_1(void) {
-  Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-  Engine_ActorSetPosition(0xA, 0, 0);
-  Engine_GameFlagSet(0xEE9);
+// Collect the second blue key with Catch.
+static void CrossbonePlatform_CatchSecondBlueKey(void) {
+  CrossbonePlatform_CollectKey(9, ITEM_BLUE_KEY, 0xee8);
 }
 
-static void EV11_PSYNERGY_1(void) {
-  Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-  Engine_ActorSetPosition(0xB, 0, 0);
-  Engine_GameFlagSet(0xEEA);
+// Collect the third blue key with Catch.
+static void CrossbonePlatform_CatchThirdBlueKey(void) {
+  CrossbonePlatform_CollectKey(10, ITEM_BLUE_KEY, 0xee9);
 }
 
-static void EV12_PSYNERGY_1(void) {
-  Engine_ItemShowFound(ITEM_RED_KEY, 3);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_PartyGiveItem(ITEM_RED_KEY, 0);
-  Engine_ActorSetPosition(0xC, 0, 0);
-  Engine_GameFlagSet(0xEEB);
+// Collect the fourth blue key with Catch.
+static void CrossbonePlatform_CatchFourthBlueKey(void) {
+  CrossbonePlatform_CollectKey(11, ITEM_BLUE_KEY, 0xeea);
 }
 
-static void CrossbonePlatform_RaiseTriggerOnStand(void) {
+// Collect the red key with Catch.
+static void CrossbonePlatform_CatchRedKey(void) {
+  CrossbonePlatform_CollectKey(12, ITEM_RED_KEY, 0xeeb);
+}
+
+// Start the first chase when an uncloaked leader enters its area.
+static void CrossbonePlatform_CheckFirstPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 x = leader->x.fixed / 0x100000;
-  s32 z = leader->z.fixed / 0x100000;
+  s32 column = leader->x.fixed / PIXELS(16);
+  s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *event = gEventWork;
 
   if (!GameFlag_IsSet(0x220) && gGameState.cloaked == 0 &&
-      gGameState.pausedObject != 8 && (u32)(x - 21) <= 2 && z >= 10 &&
-      z <= 11) {
+      gGameState.pausedObject != 8 && (u32)(column - 21) <= 2 && row >= 10 &&
+      row <= 11) {
     Engine_GameFlagSet(0x220);
     event->raisedTrigger = 91;
   }
 }
 
-static void EV91_RAISED(void) {
-  struct FieldActor *record;
+// Let the first pursuer follow the leader, then return it home.
+static void CrossbonePlatform_DodgeFirstPursuer(void) {
+  struct FieldActor *leader;
 
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
-  Actor_SetSpeed(8, 0x1e666, 0xf333);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  Actor_SetSpeed(8, PIXELS(19) / 10, PIXELS(19) / 20);
   Event_PlayCue(188);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(8, record->x.part.pixel, record->z.part.pixel);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetDestination(8, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(8);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
@@ -490,35 +539,37 @@ static void EV91_RAISED(void) {
   Event_PlayCue(188);
   Actor_SetDestinationOffset(8, 0, CROSSBONE_PURSUER_STEP_Z);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(8, 0x168, 152);
+  Actor_SetDestination(8, 360, 152);
   Engine_ActorWaitForMove(8);
   Engine_EventEnd();
   GameFlag_Clear(0x220);
 }
 
-static void SceneState_TriggerColumnTen(void) {
+// Start the second chase when the leader enters column ten.
+static void CrossbonePlatform_CheckSecondPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 x = leader->x.fixed / 0x100000;
-  s32 z = leader->z.fixed / 0x100000;
+  s32 column = leader->x.fixed / PIXELS(16);
+  s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *work = gEventWork;
 
   if (GameFlag_IsSet(0x220) == 0 && gGameState.cloaked == 0 &&
-      gGameState.pausedObject != 9 && x == 10 && (u32)(z - 16) <= 2) {
+      gGameState.pausedObject != 9 && column == 10 && (u32)(row - 16) <= 2) {
     GameFlag_Set(0x220);
     SceneState_StoreStep(&work->raisedTrigger, 92);
   }
 }
 
-static void EV92_RAISED(void) {
-  struct FieldActor *record;
+// Let the second pursuer follow the leader, then return it home.
+static void CrossbonePlatform_DodgeSecondPursuer(void) {
+  struct FieldActor *leader;
 
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
-  Actor_SetSpeed(9, 0x1b333, 0xd999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  Actor_SetSpeed(9, PIXELS(17) / 10, PIXELS(17) / 20);
   Event_PlayCue(188);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetDestination(9, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(9);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -526,29 +577,30 @@ static void EV92_RAISED(void) {
   Engine_EventWait(4);
   Actor_SetDestinationOffset(9, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(9, 168, 0x108);
+  Actor_SetDestination(9, 168, 264);
   Engine_ActorWaitForMove(9);
   Engine_EventEnd();
   GameFlag_Clear(0x220);
 }
 
-static void SceneActor_TrackOriginColumnForSlot(s32 no) {
+// Move a pursuer to the leader column and remember its last column.
+static void CrossbonePlatform_TrackPursuerColumn(s32 pursuerIndex) {
 
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 col = leader->x.fixed / 0x100000;
-  s32 row = leader->z.fixed / 0x100000;
-  s32 slot = no + 10;
+  s32 column = leader->x.fixed / PIXELS(16);
+  s32 row = leader->z.fixed / PIXELS(16);
+  s32 pursuerId = pursuerIndex + 10;
 
-  if (gGameState.pausedObject == slot)
+  if (gGameState.pausedObject == pursuerId)
     return;
-  if (col == gCrossbonePlatform_SlotColumns[no])
+  if (column == gCrossbonePlatform_SlotColumns[pursuerIndex])
     return;
 
-  Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
+  Engine_ActorSetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
   Engine_AudioPlayCue(188);
-  Engine_ActorSetDestination(slot, (col << 4) + 8, 360);
+  Engine_ActorSetDestination(pursuerId, (column << 4) + 8, 360);
 
-  gCrossbonePlatform_SlotColumns[no] = col;
+  gCrossbonePlatform_SlotColumns[pursuerIndex] = column;
 
   if (row <= 22) {
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -556,25 +608,33 @@ static void SceneActor_TrackOriginColumnForSlot(s32 no) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
-static void EV53_TOUCH_2(void) { SceneActor_TrackOriginColumnForSlot(0); }
-
-static void EV54_TOUCH_2(void) { SceneActor_TrackOriginColumnForSlot(1); }
-
-UNUSED static void FieldScene_RunLateIndexedStep2(void) {
-  SceneActor_TrackOriginColumnForSlot(2);
+// Align the third actor with the leader column.
+static void CrossbonePlatform_TrackThirdPursuerColumn(void) {
+  CrossbonePlatform_TrackPursuerColumn(0);
 }
 
-static void EV61_TOUCH(void) {
-  struct FieldActor *record;
+// Align the fourth actor with the leader column.
+static void CrossbonePlatform_TrackFourthPursuerColumn(void) {
+  CrossbonePlatform_TrackPursuerColumn(1);
+}
+
+// Unused callback that aligns the fifth actor with the leader column.
+UNUSED static void CrossbonePlatform_TrackFifthPursuerColumn(void) {
+  CrossbonePlatform_TrackPursuerColumn(2);
+}
+
+// Let the third pursuer follow the leader, then return it home.
+static void CrossbonePlatform_DodgeThirdPursuer(void) {
+  struct FieldActor *leader;
 
   if (gGameState.pausedObject != 10) {
     Engine_EventBegin();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
-    Actor_SetSpeed(10, 0x1b333, 0xd999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+    Actor_SetSpeed(10, PIXELS(17) / 10, PIXELS(17) / 20);
     Event_PlayCue(188);
-    record = Object_GetById(0);
-    if (record != 0) {
-      Actor_SetDestination(10, record->x.part.pixel, record->z.part.pixel);
+    leader = Object_GetById(0);
+    if (leader != 0) {
+      Actor_SetDestination(10, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(10);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -582,35 +642,36 @@ static void EV61_TOUCH(void) {
     Event_PlayCue(188);
     Actor_SetDestinationOffset(10, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetDestination(10, 0x108, 0x168);
+    Actor_SetDestination(10, 264, 360);
     Engine_ActorWaitForMove(10);
     Engine_EventWait(10);
     Engine_EventEnd();
   }
 }
 
-static void EV62_TOUCH(void) {
-  struct FieldActor *record;
-  s32 v3;
+// Align the fourth pursuer before sending it after the leader.
+static void CrossbonePlatform_DodgeFourthPursuer(void) {
+  struct FieldActor *leader;
+  s32 leaderColumn;
 
   if (gGameState.pausedObject != 11) {
     Engine_EventBegin();
-    Actor_SetSpeed(0, 0x1b333, 0xd999);
-    Engine_ActorSetSpeed(11, 0x1b333, 0xd999);
+    Actor_SetSpeed(0, PIXELS(17) / 10, PIXELS(17) / 20);
+    Engine_ActorSetSpeed(11, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_AudioPlayCue(188);
-    v3 = Object_GetById(0)->x.fixed / 0x100000;
-    if (v3 > Object_GetById(11)->x.fixed / 0x100000) {
+    leaderColumn = Object_GetById(0)->x.fixed / PIXELS(16);
+    if (leaderColumn > Object_GetById(11)->x.fixed / PIXELS(16)) {
       Engine_ActorSetDestinationOffset(11, 8, 0);
     }
-    v3 = Object_GetById(0)->x.fixed / 0x100000;
-    if (v3 < Object_GetById(11)->x.fixed / 0x100000) {
+    leaderColumn = Object_GetById(0)->x.fixed / PIXELS(16);
+    if (leaderColumn < Object_GetById(11)->x.fixed / PIXELS(16)) {
       FieldObjectMotion_OffsetPositionAndResetMotion(11, -8, 0);
     }
     Engine_ActorWaitForMove(11);
-    record = Object_GetById(0);
-    if (record != 0) {
-      Engine_ActorSetDestination(11, record->x.part.pixel,
-                                 record->z.part.pixel);
+    leader = Object_GetById(0);
+    if (leader != 0) {
+      Engine_ActorSetDestination(11, leader->x.part.pixel,
+                                 leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
     Engine_ActorSetDestinationOffset(0, 0, CROSSBONE_LEADER_STEP_Z);
@@ -618,123 +679,132 @@ static void EV62_TOUCH(void) {
     Engine_AudioPlayCue(188);
     Engine_ActorSetDestinationOffset(11, 0, 16);
     Engine_ActorWaitForMove(0);
-    Engine_ActorSetDestination(11, 0x158, 0x168);
+    Engine_ActorSetDestination(11, 344, 360);
     Engine_ActorWaitForMove(11);
     Engine_EventWait(10);
     Engine_EventEnd();
   }
 }
 
-static void SceneState_TriggerColumnNineteen(void) {
+// Start the fifth chase when the leader enters column nineteen.
+static void CrossbonePlatform_CheckFifthPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 x = leader->x.fixed / 0x100000;
-  s32 z = leader->z.fixed / 0x100000;
+  s32 column = leader->x.fixed / PIXELS(16);
+  s32 row = leader->z.fixed / PIXELS(16);
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != 12 && GameFlag_IsSet(0x220) == 0 &&
-      state->cloaked == 0 && x == 19 && (u32)(z - 15) <= 1) {
+      state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
     GameFlag_Set(0x220);
     SceneState_StoreStep(&work->raisedTrigger, 96);
   }
 }
 
-static void EV96_RAISED(void) {
-  struct FieldActor *record;
+// Let the fifth pursuer follow the leader, then return it home.
+static void CrossbonePlatform_DodgeFifthPursuer(void) {
+  struct FieldActor *leader;
 
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
-  Actor_SetSpeed(12, 0x1b333, 0xd999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  Actor_SetSpeed(12, PIXELS(17) / 10, PIXELS(17) / 20);
   Event_PlayCue(188);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetDestination(12, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(12);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   Event_PlayCue(188);
   Actor_SetDestinationOffset(12, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(12, 0x138, 232);
+  Actor_SetDestination(12, 312, 232);
   Engine_ActorWaitForMove(12);
   Engine_EventEnd();
   GameFlag_Clear(0x220);
 }
 
-static void SetBlendAlphaCoefficients(void) {
+// Apply the blend used while Reveal exposes the room.
+static void CrossbonePlatform_BeginRevealBlend(void) {
   u32 coefficient = 208;
 
   coefficient <<= 4;
   REG_BLDALPHA = coefficient;
 }
 
-static void SceneEffect_SetBlendAlpha0607(void) {
+// Restore the blend after Reveal ends.
+static void CrossbonePlatform_EndRevealBlend(void) {
   u16 value = 0x0607;
 
   REG_BLDALPHA = value;
 }
 
-static void EV60_SCRIPT(void) {
-  struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
-  u16 facing = slot->facing;
+// Choose climbing or block movement from the leader direction.
+static void CrossbonePlatform_UseLadder(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  u16 facing = leader->facing;
 
-  if (facing == 0xc000) {
+  if (facing == FACING_NORTH) {
     if (Engine_GameFlagIsSet(0x206) != 0) {
       {
-        s32 fifth = 45;
-        s32 last = 43;
-        Map_CopyCellAttributes(46, 43, 1, 1, fifth, last);
+        s32 destinationColumn = 45;
+        s32 destinationRow = 43;
+        Map_CopyCellAttributes(46, 43, 1, 1, destinationColumn, destinationRow);
       }
     }
     Engine_GameFlagClear(0x207);
     Field_ClimbUp();
-  } else if (facing == 0x4000) {
+  } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
   } else if (facing == 0) {
     if (Engine_GameFlagIsSet(0x206) != 0) {
       {
-        s32 fifth = 45;
-        s32 last = 43;
-        Map_CopyCellAttributes(58, 36, 1, 1, fifth, last);
+        s32 destinationColumn = 45;
+        s32 destinationRow = 43;
+        Map_CopyCellAttributes(58, 36, 1, 1, destinationColumn, destinationRow);
       }
     }
     Engine_GameFlagSet(0x207);
     Engine_LeaderCheckAhead();
-  } else if (facing == 0x8000) {
-    if (slot->y.fixed == 0) {
-      SceneActor_BranchOnSlotZeroAtTile38();
+  } else if (facing == FACING_WEST) {
+    if (leader->y.fixed == 0) {
+      CrossbonePlatform_ClimbOrMoveFirstBlock();
     } else {
       Engine_LeaderCheckAhead();
     }
   }
 }
 
+// Unused scene callback with no behavior.
 UNUSED static void FieldScene_NoOpCallback(void) {}
 
-static void EV13_PSYNERGY(void) {
-  struct FieldActor *slot = Object_GetById(13);
+// Stop the frozen puddle and update its supporting terrain.
+static void CrossbonePlatform_FreezePuddle(void) {
+  struct FieldActor *puddle = Object_GetById(13);
 
   Map_CopyCellAttributes(40, 54, 1, 1, 40, 55);
-  if (slot != 0) {
-    u8 *other = &Object_GetById(13)->motionFlags;
-    u8 *flags = &slot->priorityFlags;
+  if (puddle != 0) {
+    u8 *motionFlags = &Object_GetById(13)->motionFlags;
+    u8 *priorityFlags = &puddle->priorityFlags;
 
-    *other = 0;
-    *flags = 2;
+    *motionFlags = 0;
+    *priorityFlags = 2;
   }
   Engine_GameFlagSet(512);
 }
 
-static void EV70_SCRIPT(void) {
-  struct Slot *slot = Object_GetById(0);
+// Check the eastern obstacle or route the interaction to the first block.
+static void CrossbonePlatform_ChooseClimbOrPush(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (slot->f06 == 0) {
+  if (leader->facing == 0) {
     Engine_LeaderCheckAhead();
   } else {
-    SceneActor_BranchOnSlotZeroAtTile38();
+    CrossbonePlatform_ClimbOrMoveFirstBlock();
   }
 }
 
+// Restore the first block row before applying its current footprint.
 static void CrossbonePlatform_RestoreActorEightTerrain(void) {
   Map_CopyCellAttributes(57, 42, 1, 1, 40, 42);
   Map_CopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -744,29 +814,33 @@ static void CrossbonePlatform_RestoreActorEightTerrain(void) {
   Object_GetById(8)->motionFlags = 1;
 }
 
+// Restore support under the first block at the eastern cell.
 static void ActorPresentation_SetSceneCell58AndMarkActorEight(void) {
 
   Map_CopyCellAttributes(58, 41, 1, 1, 42, 42);
   Object_GetById(8)->priorityFlags = 2;
 }
 
+// Restore support under the first block at the middle cell.
 static void CrossbonePlatform_RestoreRightUnderfootCell(void) {
 
   Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Object_GetById(8)->priorityFlags = 2;
 }
 
+// Restore support under the first block at the western cell.
 static void CrossbonePlatform_RestoreLeftUnderfootCell(void) {
 
   Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Object_GetById(8)->priorityFlags = 2;
 }
 
-static void EV08_PSYNERGY_3(void) {
+// Rebuild the first block support cells from its height and column.
+static void CrossbonePlatform_UpdateFirstBlockTerrain(void) {
   struct FieldActor *actor = Object_GetById(8);
   s32 x = actor->x.fixed;
   s32 height = actor->y.fixed;
-  s32 column = x / 0x100000;
+  s32 column = x / PIXELS(16);
   u8 lowered;
 
   if (height == 0) {
@@ -790,20 +864,21 @@ static void EV08_PSYNERGY_3(void) {
   }
 }
 
-static void SceneActor_BranchOnSlotZeroAtTile38(void) {
-  s32 *slot0 = Object_GetById(0);
-  s32 *slot8 = Object_GetById(8);
-  s32 x0 = slot0[2] / 0x100000;
-  s32 x8 = slot8[2] / 0x100000;
+// Use the ladder at column thirty-eight or move the first block.
+static void CrossbonePlatform_ClimbOrMoveFirstBlock(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldActor *block = Object_GetById(8);
+  s32 leaderColumn = leader->x.fixed / PIXELS(16);
+  s32 blockColumn = block->x.fixed / PIXELS(16);
 
-  if (x0 == 38 && x8 != 38) {
-    u16 facing = ((u16 *)slot0)[3];
+  if (leaderColumn == 38 && blockColumn != 38) {
+    u16 facing = leader->facing;
 
-    if (facing == 0xc000) {
+    if (facing == FACING_NORTH) {
       Field_ClimbUp();
       return;
     }
-    if (facing == 0x4000) {
+    if (facing == FACING_SOUTH) {
       Field_ClimbDown();
       return;
     }
@@ -811,94 +886,103 @@ static void SceneActor_BranchOnSlotZeroAtTile38(void) {
 
   CrossbonePlatform_RestoreActorEightTerrain();
   StagedActor_AdvancePair();
-  EV08_PSYNERGY_3();
+  CrossbonePlatform_UpdateFirstBlockTerrain();
 }
 
+// Detach the second block follower and restore the ladder cell.
 static void CrossbonePlatform_ReleaseActorNinePlatform(void) {
-  Scheduler_RemoveCallback(
-      (s32)ActorPresentation_PlaceActorFourteenOnActorNine);
+  Scheduler_RemoveCallback(CrossbonePlatform_FollowSecondBlock);
   Actor_SetPosition(14, 0, 0);
   if (GameFlag_IsSet(0x207) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     Map_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
-  SceneActor_PassActorNinePositionWithId107();
+  CrossbonePlatform_PositionSecondBlockMapObject();
   GameFlag_Set(0x206);
 }
 
-static void EV09_PSYNERGY_3(void) {
-  s32 *slot = Object_GetById(9);
-  s32 x = slot[2] / 0x100000;
-  s32 z = slot[4] / 0x100000;
+// Release the second block platform when it reaches the ladder cell.
+static void CrossbonePlatform_UpdateSecondBlockTerrain(void) {
+  struct FieldActor *block = Object_GetById(9);
+  s32 column = block->x.fixed / PIXELS(16);
+  s32 row = block->z.fixed / PIXELS(16);
 
-  if (x == 45 && z == 43) {
+  if (column == 45 && row == 43) {
     CrossbonePlatform_ReleaseActorNinePlatform();
   }
 }
 
-static void EV52_SCRIPT(void) {
+// Move the second block and check whether its platform is released.
+static void CrossbonePlatform_MoveSecondBlock(void) {
   StagedActor_AdvancePair();
-  EV09_PSYNERGY_3();
+  CrossbonePlatform_UpdateSecondBlockTerrain();
 }
 
-static void SceneState_ApplyTwoRectsAtRow56(void) {
+// Restore the terrain at both ends of the third block row.
+static void CrossbonePlatform_RestoreThirdBlockTerrain(void) {
 
   Map_CopyCellAttributes(38, 56, 1, 1, 38, 55);
   Map_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
+// Restore the third block support at the western end.
 static void CrossbonePlatform_RestoreActorTenLeftCell(void) {
 
   Map_CopyCellAttributes(40, 54, 1, 1, 38, 55);
   Object_GetById(10)->motionFlags = 0;
 }
 
+// Restore the third block support at the eastern end.
 static void CrossbonePlatform_RestoreActorTenRightCell(void) {
 
   Map_CopyCellAttributes(40, 54, 1, 1, 42, 55);
   Object_GetById(10)->motionFlags = 0;
 }
 
-static void EV10_PSYNERGY_3(void) {
+// Rebuild support for the third block from its height and destination.
+static void CrossbonePlatform_UpdateThirdBlockTerrain(void) {
   struct FieldActor *block = Object_GetById(10);
-  s32 y = block->y.fixed / 0x100000;
-  s32 x = block->x.fixed / 0x100000;
-  s32 z = block->z.fixed / 0x100000;
+  s32 heightCells = block->y.fixed / PIXELS(16);
+  s32 column = block->x.fixed / PIXELS(16);
+  s32 row = block->z.fixed / PIXELS(16);
 
-  if (!GameFlag_IsSet(0x300) && y <= 2) {
+  if (!GameFlag_IsSet(0x300) && heightCells <= 2) {
     CrossbonePlatform_RestoreActorTenLeftCell();
     Engine_GameFlagSet(0x300);
   }
-  if (z == 55) {
-    if (x == 42) {
+  if (row == 55) {
+    if (column == 42) {
       CrossbonePlatform_RestoreActorTenRightCell();
     }
-    if (x == 38) {
+    if (column == 38) {
       CrossbonePlatform_RestoreActorTenLeftCell();
     }
   } else {
-    SceneState_ApplyTwoRectsAtRow56();
+    CrossbonePlatform_RestoreThirdBlockTerrain();
   }
 }
 
-static void EV50_SCRIPT(void) {
-  SceneState_ApplyTwoRectsAtRow56();
+// Move the third block and refresh its supporting terrain.
+static void CrossbonePlatform_MoveThirdBlock(void) {
+  CrossbonePlatform_RestoreThirdBlockTerrain();
   StagedActor_AdvancePair();
-  EV10_PSYNERGY_3();
+  CrossbonePlatform_UpdateThirdBlockTerrain();
 }
 
-static void EV54_SCRIPT(void) {
-  struct Slot *slot = Object_GetById(0);
+// Use the rising-object sequence from the south, otherwise move the block.
+static void CrossbonePlatform_ChooseThirdBlockMotion(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (slot->f06 == 0x4000) {
+  if (leader->facing == FACING_SOUTH) {
     FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
   } else {
-    EV50_SCRIPT();
+    CrossbonePlatform_MoveThirdBlock();
   }
 }
 
-static void SceneState_ApplyFourRectsAt48_55(void) {
+// Clear the support row before repainting the fourth and fifth blocks.
+static void CrossbonePlatform_RestoreFourthAndFifthBlockTerrain(void) {
 
   Map_CopyCellAttributes(48, 55, 1, 1, 49, 55);
   Map_CopyCellAttributes(48, 55, 1, 1, 50, 55);
@@ -906,60 +990,68 @@ static void SceneState_ApplyFourRectsAt48_55(void) {
   Map_CopyCellAttributes(48, 55, 1, 1, 52, 55);
 }
 
+// Place support cells beneath the fourth and fifth blocks.
 static void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void) {
-  s32 *slot;
-  s32 tile;
+  struct FieldActor *block;
+  s32 column;
 
-  SceneState_ApplyFourRectsAt48_55();
+  CrossbonePlatform_RestoreFourthAndFifthBlockTerrain();
 
-  slot = Object_GetById(11);
-  tile = slot[2] / 0x100000;
-  Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
-  slot = Object_GetById(12);
-  tile = slot[2] / 0x100000;
-  Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
+  block = Object_GetById(11);
+  column = block->x.fixed / PIXELS(16);
+  Map_CopyCellAttributes(53, 55, 1, 1, column, 55);
+  block = Object_GetById(12);
+  column = block->x.fixed / PIXELS(16);
+  Map_CopyCellAttributes(53, 55, 1, 1, column, 55);
 }
 
-static void EV11_PSYNERGY_3(void) {
+// Refresh the shared support row after the fourth block moves.
+static void CrossbonePlatform_UpdateFourthBlockTerrain(void) {
   ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-static void EV53_SCRIPT(void) {
-  SceneState_ApplyFourRectsAt48_55();
+// Move the fourth block and refresh its supporting terrain.
+static void CrossbonePlatform_MoveFourthBlock(void) {
+  CrossbonePlatform_RestoreFourthAndFifthBlockTerrain();
   StagedActor_AdvancePair();
-  EV11_PSYNERGY_3();
+  CrossbonePlatform_UpdateFourthBlockTerrain();
 }
 
-static void EV12_PSYNERGY_3(void) {
+// Refresh the shared support row after the fifth block moves.
+static void CrossbonePlatform_UpdateFifthBlockTerrain(void) {
   ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-UNUSED static void FieldScene_RunThreeStepSequence(void) {
-  SceneState_ApplyFourRectsAt48_55();
+// Unused callback that moves the fifth block and refreshes its terrain.
+UNUSED static void CrossbonePlatform_MoveFifthBlock(void) {
+  CrossbonePlatform_RestoreFourthAndFifthBlockTerrain();
   StagedActor_AdvancePair();
-  EV12_PSYNERGY_3();
+  CrossbonePlatform_UpdateFifthBlockTerrain();
 }
 
-static void ActorPresentation_PlaceActorFourteenOnActorNine(void) {
+// Keep actor fourteen just above and behind the second block.
+static void CrossbonePlatform_FollowSecondBlock(void) {
   struct FieldActor *target = Object_GetById(14);
   struct FieldActor *source = Object_GetById(9);
 
-  target->y.fixed = 0x200000;
+  target->y.fixed = PIXELS(32);
   target->x.fixed = source->x.fixed;
-  target->z.fixed = source->z.fixed + 0x10000;
+  target->z.fixed = source->z.fixed + PIXELS(1);
 }
 
-static void SceneActor_PassActorNinePositionWithId107(void) {
+// Align map object 107 with the second block.
+static void CrossbonePlatform_PositionSecondBlockMapObject(void) {
   struct FieldActor *frame = Object_GetById(9);
 
-  Engine_MapObjectSetPosition(107, frame->x.fixed, frame->z.fixed + 0x10000);
+  Engine_MapObjectSetPosition(107, frame->x.fixed, frame->z.fixed + PIXELS(1));
 }
 
-static void SceneActor_PublishMarkerBySlotZeroHeight(void) {
+// Choose block drawing priorities from the leader height and row.
+static void CrossbonePlatform_UpdateBlockPriorities(void) {
   struct FieldActor *leader = Object_GetById(0);
   u8 priority;
 
-  if (leader->y.fixed > 0x100000) {
+  if (leader->y.fixed > PIXELS(16)) {
     priority = ACTOR_PRIORITY_UNDERFOOT;
     Object_GetById(8)->priorityFlags = priority;
     if (Object_GetById(10)->y.fixed == 0)
@@ -967,7 +1059,7 @@ static void SceneActor_PublishMarkerBySlotZeroHeight(void) {
     Object_GetById(11)->priorityFlags = priority;
   } else {
     if (Object_GetById(10)->y.fixed == 0 &&
-        Object_GetById(0)->z.fixed / 0x100000 > 56) {
+        Object_GetById(0)->z.fixed / PIXELS(16) > 56) {
       Engine_ActorSetSpritePriority(10, 3);
     } else {
       Engine_ActorSetSpritePriority(10, 1);
@@ -979,6 +1071,7 @@ static void SceneActor_PublishMarkerBySlotZeroHeight(void) {
   Object_GetById(12)->priorityFlags = priority;
 }
 
+// Initialize the key, pursuer or movable-block room.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_CrossbonePlatform1) {
@@ -993,6 +1086,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+// Unused callback that cycles key icon displays.
 UNUSED static void CrossbonePlatform_UpdateItemIcons(void) {
   if (++gCrossbonePlatform_IconTimer > 16) {
     gCrossbonePlatform_IconTimer = 0;
@@ -1000,16 +1094,16 @@ UNUSED static void CrossbonePlatform_UpdateItemIcons(void) {
   switch (gCrossbonePlatform_IconTimer) {
   case 12:
     if (Engine_GameFlagIsSet(0xee7) == 0) {
-      Actor_SetPosition(8, 0xe80000, 0x3680000);
+      Actor_SetPosition(8, PIXELS(232), PIXELS(872));
     }
     if (Engine_GameFlagIsSet(0xee8) == 0) {
-      Actor_SetPosition(9, 0x1280000, 0x3380000);
+      Actor_SetPosition(9, PIXELS(296), PIXELS(824));
     }
     if (Engine_GameFlagIsSet(0xee9) == 0) {
-      Actor_SetPosition(10, 0x1480000, 0x2f80000);
+      Actor_SetPosition(10, PIXELS(328), PIXELS(760));
     }
     if (Engine_GameFlagIsSet(0xeea) == 0) {
-      Actor_SetPosition(11, 0x1680000, 0x3680000);
+      Actor_SetPosition(11, PIXELS(360), PIXELS(872));
     }
     break;
   case 10:
@@ -1033,24 +1127,25 @@ UNUSED static void CrossbonePlatform_UpdateItemIcons(void) {
 // Shared source is included here in ROM order.
 #include "common/colosso_item_icon.h"
 
+// Restore collected keys and already opened passages.
 static void CrossbonePlatform_InitializeScene1(void) {
   Engine_TaskWait(1);
-  Colosso_ShowItemIcon(12, 243);
-  Colosso_ShowItemIcon(11, 244);
-  Colosso_ShowItemIcon(10, 244);
-  Colosso_ShowItemIcon(9, 244);
-  Colosso_ShowItemIcon(8, 244);
+  Colosso_ShowItemIcon(12, ITEM_RED_KEY);
+  Colosso_ShowItemIcon(11, ITEM_BLUE_KEY);
+  Colosso_ShowItemIcon(10, ITEM_BLUE_KEY);
+  Colosso_ShowItemIcon(9, ITEM_BLUE_KEY);
+  Colosso_ShowItemIcon(8, ITEM_BLUE_KEY);
   if (GameFlag_IsSet(0xee7) == 0) {
-    Actor_SetPosition(8, 0xe80000, 0x3680000);
+    Actor_SetPosition(8, PIXELS(232), PIXELS(872));
   }
   if (GameFlag_IsSet(0xee8) == 0) {
-    Actor_SetPosition(9, 0x1280000, 0x3380000);
+    Actor_SetPosition(9, PIXELS(296), PIXELS(824));
   }
   if (GameFlag_IsSet(0xee9) == 0) {
-    Actor_SetPosition(10, 0x1480000, 0x2f80000);
+    Actor_SetPosition(10, PIXELS(328), PIXELS(760));
   }
   if (GameFlag_IsSet(0xeea) == 0) {
-    Actor_SetPosition(11, 0x1680000, 0x3680000);
+    Actor_SetPosition(11, PIXELS(360), PIXELS(872));
   }
   if (GameFlag_IsSet(0x9c0) != 0) {
     CrossbonePlatform_OpenPassage(0);
@@ -1069,39 +1164,44 @@ static void CrossbonePlatform_InitializeScene1(void) {
   }
 }
 
+// Configure the pursuers, their chase triggers and blending.
 static void CrossbonePlatform_InitializeScene2(void) {
   Object_GetById(8)->collisionFlags = 1;
   Object_GetById(9)->collisionFlags = 1;
   Object_GetById(10)->collisionFlags = 1;
   Object_GetById(11)->collisionFlags = 1;
-  Object_GetById(8)->scaleX = 0xb333;
-  Object_GetById(9)->scaleX = 0xb333;
-  Object_GetById(10)->scaleX = 0xb333;
-  Object_GetById(11)->scaleX = 0xb333;
-  Object_GetById(12)->scaleX = 0xb333;
-  FieldScheduler_AddOrUpdateCallback(SceneState_TriggerColumnNineteen, 0xc80);
-  FieldScheduler_AddOrUpdateCallback(SceneState_TriggerColumnTen, 0xc80);
-  FieldScheduler_AddCallback(CrossbonePlatform_RaiseTriggerOnStand, 0xc80);
+  Object_GetById(8)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(9)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(10)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(11)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(12)->scaleX = 7 * Q16_ONE / 10;
+  FieldScheduler_AddOrUpdateCallback(CrossbonePlatform_CheckFifthPursuerTrigger,
+                                     0xc80);
+  FieldScheduler_AddOrUpdateCallback(
+      CrossbonePlatform_CheckSecondPursuerTrigger, 0xc80);
+  FieldScheduler_AddCallback(CrossbonePlatform_CheckFirstPursuerTrigger, 0xc80);
   Io_Write16(0x3f42, &REG_BLDCNT);
   Io_Write16(0x607, &REG_BLDALPHA);
 }
 
+// Restore movable blocks, terrain and the Djinni escape progress.
 static void CrossbonePlatform_InitializeScene3(void) {
-  s32 record;
+  struct FieldActor *djinni;
 
+  // Reattach the second block follower and rebuild all block support cells.
   Object_GetById(14)->motionFlags = 0;
-  FieldScheduler_AddOrUpdateCallback(
-      ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
-  FieldScheduler_AddCallback(SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
+  FieldScheduler_AddOrUpdateCallback(CrossbonePlatform_FollowSecondBlock,
+                                     0xc80);
+  FieldScheduler_AddCallback(CrossbonePlatform_UpdateBlockPriorities, 0xc80);
   MapObject_SetPosition(107, 0, 0);
   if (GameFlag_IsSet(0xed9) != 0) {
     Engine_ActorSetAnimation(14, 2);
   }
-  EV08_PSYNERGY_3();
-  EV09_PSYNERGY_3();
-  EV10_PSYNERGY_3();
-  EV11_PSYNERGY_3();
-  EV12_PSYNERGY_3();
+  CrossbonePlatform_UpdateFirstBlockTerrain();
+  CrossbonePlatform_UpdateSecondBlockTerrain();
+  CrossbonePlatform_UpdateThirdBlockTerrain();
+  CrossbonePlatform_UpdateFourthBlockTerrain();
+  CrossbonePlatform_UpdateFifthBlockTerrain();
 #if TBS_PATCH_1
   Engine_ActorSetSpritePriority(8, 3);
 #endif
@@ -1109,29 +1209,36 @@ static void CrossbonePlatform_InitializeScene3(void) {
   Object_GetById(12)->motionFlags = 0;
   ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
   if (GameFlag_IsSet(0x200) != 0) {
-    EV13_PSYNERGY();
+    CrossbonePlatform_FreezePuddle();
     Engine_ActorSetAnimation(13, 5);
   }
+
+  // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_IsSet(0x109) == 0) {
     if (GameFlag_IsSet(0x9ca) != 0) {
-      Actor_SetPosition(15, 0x3580000, 0x3380000);
-      record = Object_GetById(15);
-      *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
+      Actor_SetPosition(ACTOR_DJINNI, PIXELS(856), PIXELS(824));
+      djinni = Object_GetById(ACTOR_DJINNI);
+#ifdef UBFIX
+      djinni->update = CrossbonePlatform_FaceDjinniTowardLeader;
+#else
+      djinni->update = (void (*)(
+          union FieldObject *))CrossbonePlatform_FaceDjinniTowardLeader;
+#endif
     } else if (GameFlag_IsSet(0x9c9) != 0) {
-      Actor_SetPosition(15, 0x3780000, 0x2980000);
-      record = Object_GetById(15);
-      *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
-      ObjectDispatch_ApplyValueToChildren(record, 16);
+      Actor_SetPosition(ACTOR_DJINNI, PIXELS(888), PIXELS(664));
+      djinni = Object_GetById(ACTOR_DJINNI);
+      djinni->sprite->rotation = 0;
+      ObjectDispatch_ApplyValueToChildren(djinni, 16);
     } else if (GameFlag_IsSet(0x9c8) != 0) {
-      Actor_SetPosition(15, 0x2480000, 0x2a80000);
+      Actor_SetPosition(ACTOR_DJINNI, PIXELS(584), PIXELS(680));
     } else {
-      Actor_SetPosition(15, 0x2480000, 0x2980000);
+      Actor_SetPosition(ACTOR_DJINNI, PIXELS(584), PIXELS(664));
     }
   }
 }
 
 // Pixel step by direction: X in the upper halfword, Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
@@ -1157,46 +1264,46 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 
 s32 gCrossbonePlatform_ActorFifteenMotionScript[] = {
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(64),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gCrossbonePlatform_ActorFifteenWalkTargets[] = {
-    0x378, 0x358,
-    0x368, 0x358,
-    0x358, 0x358,
-    0x348, 0x358,
-    0x338, 0x358,
-    0x338, 0x348,
-    0x338, 0x338,
-    0x348, 0x338,
-    0x358, 0x338,
-    0x368, 0x338,
-    0x378, 0x338,
-    0x378, 0x348,
+    888, 856,
+    872, 856,
+    856, 856,
+    840, 856,
+    824, 856,
+    824, 840,
+    824, 824,
+    840, 824,
+    856, 824,
+    872, 824,
+    888, 824,
+    888, 840,
 };
 
 struct SceneEntrance gCrossbonePlatformEntrancesOther[] = {
@@ -1294,18 +1401,18 @@ struct SceneEvent gCrossbonePlatformEventsOther[] = {
 struct SceneEvent gCrossbonePlatformEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndPlaceSlot12) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorTwelve) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY_1) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_1) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_PSYNERGY_1) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY_1) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY_1) },
-    { EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_TOUCH) },
-    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
-    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
-    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_1) },
-    { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH_1) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_ShowRedKey) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_HideRedKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CatchFirstBlueKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CatchSecondBlueKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CatchThirdBlueKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CatchFourthBlueKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CatchRedKey) },
+    { EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_UseRedKey) },
+    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_OpenFirstBlueDoor) },
+    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_OpenSecondBlueDoor) },
+    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_OpenThirdBlueDoor) },
+    { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_OpenFourthBlueDoor) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CheckLeaderAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_CheckLeaderAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
@@ -1318,20 +1425,20 @@ struct SceneEvent gCrossbonePlatformEvents1[] = {
 struct SceneEvent gCrossbonePlatformEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_2) },
-    { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH_2) },
-    { EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EV61_TOUCH) },
-    { EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(EV62_TOUCH) },
-    { EVENT_RAISED, 96, CONDITION_ALWAYS, EVENT_SCRIPT(EV96_RAISED) },
-    { EVENT_RAISED, 92, CONDITION_ALWAYS, EVENT_SCRIPT(EV92_RAISED) },
-    { EVENT_RAISED, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_RAISED) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SetBlendAlphaCoefficients) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_SetBlendAlpha0607) },
-    { PSYNERGY_ON_ACTOR(0x91), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
-    { PSYNERGY_ON_ACTOR(0x91), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
-    { PSYNERGY_ON_ACTOR(0x91), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
-    { PSYNERGY_ON_ACTOR(0x91), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
-    { PSYNERGY_ON_ACTOR(0x91), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
+    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_TrackThirdPursuerColumn) },
+    { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_TrackFourthPursuerColumn) },
+    { EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_DodgeThirdPursuer) },
+    { EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_DodgeFourthPursuer) },
+    { EVENT_RAISED, 96, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_DodgeFifthPursuer) },
+    { EVENT_RAISED, 92, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_DodgeSecondPursuer) },
+    { EVENT_RAISED, 91, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_DodgeFirstPursuer) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_BeginRevealBlend) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_EndRevealBlend) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
     { SEARCH(SEARCH_CHEST), 100, 0xece, FIND_COINS(444) },
     { SEARCH(SEARCH_CHEST), 101, 0xecf, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_CHEST), 102, 0xed0, FIND_ITEM(0x60) },
@@ -1343,42 +1450,65 @@ struct SceneEvent gCrossbonePlatformEvents2[] = {
 struct SceneEvent gCrossbonePlatformEvents3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT)},
+    {0x202, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_MoveThirdBlock)},
     {0x202, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38)},
-    {0x202, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_SCRIPT)},
-    {0x202, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_SCRIPT)},
+     EVENT_SCRIPT(CrossbonePlatform_ClimbOrMoveFirstBlock)},
+    {0x202, 52, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_MoveSecondBlock)},
+    {0x202, 53, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_MoveFourthBlock)},
 #if TBS_PATCH_1
     {0x202, 61, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38)},
+     EVENT_SCRIPT(CrossbonePlatform_ClimbOrMoveFirstBlock)},
 #endif
-    {0x202, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_SCRIPT)},
-    {0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SCRIPT)},
-    {0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EV70_SCRIPT)},
-    {EVENT_TOUCH, 20, 0x36, EVENT_SCRIPT(EV20_TOUCH)},
-    {EVENT_TOUCH, 21, 0x36, EVENT_SCRIPT(EV21_TOUCH)},
-    {EVENT_TOUCH, 22, 0x36, EVENT_SCRIPT(EV22_TOUCH)},
-    {EVENT_TOUCH, 30, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 31, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 32, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 33, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 34, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 35, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 36, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 37, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 38, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 39, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 40, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {EVENT_TOUCH, 41, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition)},
-    {0x7, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_SCRIPT)},
-    {PSYNERGY_ON_ACTOR(0x91), 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV15_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x200, EVENT_SCRIPT(EV13_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x8c), 8, 0x201, EVENT_SCRIPT(EV08_PSYNERGY_3)},
-    {PSYNERGY_ON_ACTOR(0x8c), 9, 0x206, EVENT_SCRIPT(EV09_PSYNERGY_3)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, 0x203, EVENT_SCRIPT(EV10_PSYNERGY_3)},
-    {PSYNERGY_ON_ACTOR(0x8c), 11, 0x204, EVENT_SCRIPT(EV11_PSYNERGY_3)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, 0x205, EVENT_SCRIPT(EV12_PSYNERGY_3)},
+    {0x202, 54, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_ChooseThirdBlockMotion)},
+    {0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_UseLadder)},
+    {0x202, 70, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_ChooseClimbOrPush)},
+    {EVENT_TOUCH, 20, 0x36, EVENT_SCRIPT(CrossbonePlatform_DjinniFirstEscape)},
+    {EVENT_TOUCH, 21, 0x36, EVENT_SCRIPT(CrossbonePlatform_DjinniLongEscape)},
+    {EVENT_TOUCH, 22, 0x36, EVENT_SCRIPT(CrossbonePlatform_DjinniFinalEscape)},
+    {EVENT_TOUCH, 30, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 31, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 32, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 33, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 34, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 35, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 36, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 37, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 38, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 39, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 40, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {EVENT_TOUCH, 41, 0x36,
+     EVENT_SCRIPT(CrossbonePlatform_MoveDjinniToTouchedTarget)},
+    {0x7, 15, CONDITION_ALWAYS, EVENT_SCRIPT(CrossbonePlatform_JoinDjinni)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 15, CONDITION_ALWAYS,
+     EVENT_SCRIPT(CrossbonePlatform_HaltDjinni)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x200,
+     EVENT_SCRIPT(CrossbonePlatform_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x201,
+     EVENT_SCRIPT(CrossbonePlatform_UpdateFirstBlockTerrain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x206,
+     EVENT_SCRIPT(CrossbonePlatform_UpdateSecondBlockTerrain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x203,
+     EVENT_SCRIPT(CrossbonePlatform_UpdateThirdBlockTerrain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x204,
+     EVENT_SCRIPT(CrossbonePlatform_UpdateFourthBlockTerrain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x205,
+     EVENT_SCRIPT(CrossbonePlatform_UpdateFifthBlockTerrain)},
     {SEARCH(SEARCH_CHEST), 104, 0xed6, FIND_COINS(666)},
     {SEARCH(SEARCH_CHEST), 105, 0xed7, FIND_ITEM(ITEM_WATER_OF_LIFE)},
     {SEARCH(SEARCH_CHEST), 106, 0xed8, FIND_ITEM(ITEM_ELIXIR)},

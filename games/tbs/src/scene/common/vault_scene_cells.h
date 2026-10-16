@@ -10,21 +10,32 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-static void ActorDraw_SetupActorSceneCells(void) {
+enum {
+  VAULT_DOOR_OPENING_FRAME_COLUMN = 42,
+  VAULT_DOOR_OPEN_FRAME_COLUMN = 40,
+  VAULT_DOOR_HALF_SIZE = 2
+};
+
+// The two square halves are stacked in the source map and drawn side by side.
+static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
+  Map_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
+                  VAULT_DOOR_HALF_SIZE);
+  Map_CopyCellsTo(sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE,
+                  VAULT_DOOR_HALF_SIZE);
+}
+
+// Open the doorway, copy its passable cells, and walk the leader inside.
+static void Vault_OpenDoorwayAndEnter(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldSprite *sprite = actor->sprite;
+  struct AnimationObject *sprite = actor->sprite;
 
   Engine_AudioPlayCue(188);
-  Map_CopyCellsTo(42, 33, 34, 16, 2, 2);
-  Map_CopyCellsTo(42, 35, 36, 16, 2, 2);
+  Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
   Engine_EventWait(4);
-  Map_CopyCellsTo(40, 33, 34, 16, 2, 2);
-  Map_CopyCellsTo(40, 35, 36, 16, 2, 2);
+  Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
   Engine_EventWait(4);
-  {
-    Map_CopyCellAttributes(33, 21, 2, 2, 3, 16);
-  }
-  actor->priorityFlags &= ~1;
-  sprite->priority = 3;
-  SceneActor_PlaceAndSetSceneDelay(64, 272, 11);
+  Map_CopyCellAttributes(33, 21, 2, 2, 3, 16);
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  sprite->image.priority = 3;
+  Vault_WalkThroughExit(64, 272, 11);
 }

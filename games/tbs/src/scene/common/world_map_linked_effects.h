@@ -1,89 +1,61 @@
 #include "resource.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_effect.h"
 #include "vram_block.h"
 #include "b5_context.h"
-
-struct PairDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
-struct PairSprite {
-  struct FieldSprite sprite;
-  struct PairDetail *detail;
-};
-
-union PairObject {
-  union FieldObject object;
-  s32 words[28];
-  struct {
-    u8 unk00[0x68];
-    union PairObject *parent;
-  } link;
-};
 
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;
 };
 
-struct WorldMapOam {
-  u8 unk00[4];
-  u16 attr0;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
 void WorldMap_CreateLinkedEffects(void *object) {
-  union PairObject *parent = object;
-  union PairObject *pair[2];
-  union PairObject *child;
-  struct PairSprite *part;
-  struct FieldSprite *sprite;
+  struct FieldActor *parent = object;
+  struct FieldActor *pair[2];
+  struct FieldActor *child;
+  struct AnimationObject *sprite;
   struct PairWork *work = (struct PairWork *)gEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (union PairObject *)Engine_ObjectCreate(
-        26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-        parent->object.actor.z.fixed);
+    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
+                                parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->words[5] = parent->words[5];
-      part = (struct PairSprite *)child->object.actor.sprite;
-      child->object.actor.motionFlags = 0;
-      child->object.effect.spin = 0;
-      child->link.parent = parent;
-      if (part != NULL) {
-        sprite = &part->sprite;
+      child->terrainHeight = parent->terrainHeight;
+      sprite = child->sprite;
+      child->motionFlags = 0;
+      child->timer = 0;
+      child->linkedObject = parent;
+      if (sprite != NULL) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        sprite->unk1d0 = 1;
-        sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct WorldMapOam *)sprite)->size = 2;
-        part->detail->field16 = 0;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        sprite->entries[0]->frame = 0;
       }
     }
   }
   {
-    union PairObject *p = pair[0];
-    struct FieldSprite *sp = p->object.actor.sprite;
+    struct FieldActor *effect = pair[0];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    p->object.actor.update = (void *)Effect_AnimateVerticalNegative;
-    sp->priority = 1;
+    effect->update = Effect_AnimateVerticalNegative;
+    effectSprite->image.priority = 1;
   }
   {
-    struct FieldActor *p = &pair[1]->object.actor;
-    struct FieldSprite *sp = p->sprite;
+    struct FieldActor *effect = pair[1];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    sp->priority = 1;
-    p->update = (void *)Effect_AnimateVerticalPositive;
-    p->priorityFlags = 2;
+    effectSprite->image.priority = 1;
+    effect->update = Effect_AnimateVerticalPositive;
+    effect->priorityFlags = 2;
   }
 }

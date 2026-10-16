@@ -25,7 +25,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
 
   obj = Object_GetById(id);
   if (obj != 0) {
-    one = obj->active;
+    one = obj->spriteStorageKind;
     if (one == 1) {
       spr = (struct AnimationObject *)obj->sprite;
       base = (s32)Runtime_AllocateHeapBlock(17, 0x608);
@@ -39,8 +39,8 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       ResourceMetadata_ClearRecord(spr->entries[0]);
       spr->entries[0] = (void *)none;
       spr->count = none;
-      spr->part[0].fullColor = none;
-      spr->part[0].tile = tile;
+      spr->image.fullColor = none;
+      spr->image.tile = tile;
       spr->dirty = none;
       spr->flags = none;
     }

@@ -378,7 +378,7 @@
 	import RunSceneTransitionEffect, RunSceneTransitionEffectFar
 	import Engine_PsynergyCancel, BattleFx_FinishSceneAndReleaseHeapBlockFar
 	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
-	import Object_ReplaceResourceEntry, Object_ReplaceResourceEntryFar
+	import Sprite_ShareVramCache, Sprite_ShareVramCacheFar
 	import BattleParty_ApplyDrain, BattleParty_ApplyDrainFar
 	import Menu_AskYesNo, Menu_AskYesNoFar
 	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar

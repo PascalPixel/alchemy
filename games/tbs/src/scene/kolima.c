@@ -292,11 +292,11 @@ static void EV10_TOUCH(void) {
   }
   Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
   Map_CopyCellAttributes(23, 11, 5, 7, 8, 11);
-  Work_SetValuesIfNonNegative(0, 0x40000, 0x10000);
+  Map_SetShake(0, 0x40000, 0x10000);
   Engine_EventWait(10);
   Engine_ActorJump(0, 6, 0);
   Engine_EventWait(20);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   FieldObject_SetTargetAndCallback(8, 0x10000, gKolima_Actor8Path);
   Engine_EventWait(60);
   Engine_ActorShowEmote(0, 0x102, 60);

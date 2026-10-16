@@ -5,7 +5,8 @@
 static void Mercury_ArriveWithSparks(void) {
   struct FieldActor *actor;
   s32 flag;
-  s32 record;
+  struct FieldActor *record;
+  struct AnimationObject *sprite;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   flag = GameFlag_IsSet(0x109);
@@ -31,7 +32,8 @@ static void Mercury_ArriveWithSparks(void) {
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     record = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_ActorSetSpriteFlags(record, 1);
-    actor->sprite->priority = 1;
+    sprite = actor->sprite;
+    sprite->image.priority = 1;
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
     actor->motionFlags = 3;
     actor->update = NULL;

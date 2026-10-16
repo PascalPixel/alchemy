@@ -177,7 +177,7 @@ static void StoryActor_ConfigureSpawnedObject(union FieldObject *fieldObject) {
   if (spark == 0)
     return;
   spark->motionFlags = 0;
-  ((struct AnimationObject *)spark->sprite)->part[0].priority = 1;
+  ((struct AnimationObject *)spark->sprite)->image.priority = 1;
   Engine_ActorSetSpriteFlags(spark, 0);
   Object_SetMode(spark, 1);
   spark->timer = 0;
@@ -239,7 +239,7 @@ static s32 StoryActor_ApplyFlaggedMode(struct ScriptInterpreter *interpreter) {
 static s32 StoryActor_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
-  struct FieldSprite *sprite = actor->sprite;
+  struct AnimationObject *sprite = actor->sprite;
 
   sprite->rotation = work->rotation;
   sprite->flags = 0;
@@ -250,7 +250,7 @@ static s32 StoryActor_ApplyMapRotationWithCollision(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
-  struct FieldSprite *sprite = actor->sprite;
+  struct AnimationObject *sprite = actor->sprite;
 
   actor->collisionFlags |= 1;
   sprite->rotation = work->rotation;
@@ -272,8 +272,8 @@ static s32 StoryActor_ResetPosition(struct ScriptInterpreter *interpreter) {
 
 static s32 StoryActor_ClearActiveFlag(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  if ((actor->active & 1) && (gFrameCount & 1))
-    actor->active ^= 1;
+  if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
+    actor->spriteStorageKind ^= 1;
   return 1;
 }
 
@@ -403,10 +403,10 @@ static void MapActor_UpdateContact(void) {
     x = actor->x.fixed;
     z = actor->z.fixed;
     if (x < left || x > right || z < top || z > bottom) {
-      actor->active = 0;
+      actor->spriteStorageKind = 0;
       continue;
     }
-    actor->active = 1;
+    actor->spriteStorageKind = 1;
     if (gDebugMode != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0) {
       continue;
     }
@@ -1560,7 +1560,7 @@ static void EV96_SCRIPT(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 message;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 *buffer;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1598,9 +1598,9 @@ static void EV96_SCRIPT(void) {
     orb->motionFlags = 0;
     sprite = orb->sprite;
     sprite->flags = 0;
-    sprite->partCount = 0;
-    sprite->fullColor = 0;
-    sprite->palette = 0;
+    sprite->count = 0;
+    sprite->image.fullColor = 0;
+    sprite->image.palette = 0;
     /* FAKEMATCH: a second clear of motionFlags through a byte pointer.
      * Post-reload cse removes it as a no-op (the sprite stores are in
      * another alias set, so the first store's value is still known),
@@ -1617,7 +1617,7 @@ static void EV96_SCRIPT(void) {
     *motion = 0;
     buffer = Heap_Allocate(17, 0x608);
     Item_LoadIcon(ITEM_BLACK_ORB);
-    Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+    Vram_Load(sprite->slot, 128, buffer + 0x400);
     Heap_Release(17);
     Event_Wait(20);
     orb->update = StoryActor_ConfigureSpawnedObject;
@@ -1857,11 +1857,11 @@ static void StoryScene_UpdateTransitionEffect(void) {
                                PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
                                PIXELS(z) + PIXELS(TRANSITION_EFFECT_TOP));
   if (object != NULL) {
-    struct FieldSprite *sprite = object->sprite;
+    struct AnimationObject *sprite = object->sprite;
     s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 0x13333;
 
     sprite->flags = 0;
-    sprite->priority = 2;
+    sprite->image.priority = 2;
     object->motionFlags = 0;
     object->scaleX = scale;
     object->scaleY = scale;
@@ -1962,7 +1962,7 @@ static s32 StoryReward_LookupBySelection(u32 selection) {
 static void WorldMap_SpawnActorEightPuff(void) {
   struct FieldActor *leader;
   struct FieldActor *obj;
-  struct FieldSprite *spr;
+  struct AnimationObject *spr;
   u32 value;
 
   if ((*(s32 *)&gFrameCount & 15) != 0)
@@ -1987,7 +1987,7 @@ static void WorldMap_SpawnActorEightPuff(void) {
     obj->z.fixed += value;
   }
   spr->flags = 0;
-  spr->priority = leader->sprite->priority;
+  spr->image.priority = leader->sprite->image.priority;
   obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
   ObjectGroup_SetChildValue(obj, 9);
@@ -2119,8 +2119,8 @@ static void EV99_RAISED(void) {
   other->motionFlags = 0;
   actor->motionFlags = 0;
   actor->velocityY = 0;
-  actor->unk5d[4] = 1;
-  other->unk5d[4] = 1;
+  actor->unk61 = 1;
+  other->unk61 = 1;
   for (frames = 59; frames >= 0; --frames) {
     actor->velocityY += 0x3333;
     other->velocityY += 0x3333;
@@ -2186,7 +2186,7 @@ static void Scene_RunScene371SequenceA(s32 palette) {
   FieldScheduler_AddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
   Engine_EventBegin();
   QueueFrame(buffer, 0x3a80);
-  Object_GetById(gGameState.selectedActor)->active = 0;
+  Object_GetById(gGameState.selectedActor)->spriteStorageKind = 0;
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();

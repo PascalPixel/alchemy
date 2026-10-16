@@ -33,7 +33,6 @@
 #include "lib.h"
 #include "psynergy_menu.h"
 #include "animspr.h"
-#include "field_sprite.h"
 #include "scene.h"
 #include "m7_interfaces.h"
 #include "global_cells.h"
@@ -645,7 +644,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
       menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
-      figure->part[0].priority = 0;
+      figure->image.priority = 0;
       figure->flags = 0;
       AnimationObjects_SelectAnimationFar(figure, 1);
     }
@@ -702,7 +701,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
     s32 placeY = 0x01e20000 - (menu->rowPositions[i] << 16);
 
     if (figure != 0) {
-      figure->part[0].priority = 0;
+      figure->image.priority = 0;
       scale.x = menu->ownerScale[i];
       scale.y = menu->ownerScale[i];
       position.x = menu->tabX[i] << 16;
@@ -9920,7 +9919,7 @@ void FourObjectMotion_UpdateAllPositions(void) {
     if (object != 0) {
       u32 vertical =
           VERTICAL_ORIGIN - ((s32)state->verticalOrigins[index] << 16);
-      object->part[0].priority = 0;
+      object->image.priority = 0;
       scale.x = FIXED_ONE;
       scale.y = FIXED_ONE;
       placement.x = (s32)state->positionsX[index] << 16;
@@ -9965,7 +9964,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
        * as u8, s8 or u16 differs 130 to 140, as s16 82. */
       register s32 rowY asm("r2");
 
-      object->part[0].priority = 0;
+      object->image.priority = 0;
       phase = menu->phases[objectIndex];
       if (phase < 0) {
         scale.x = -phase;

@@ -151,7 +151,7 @@ FarCall_ObjectTable:
 	export Ui_SetBank15PaletteAndClearRenderModeFar, Ui_SetBank15PaletteAndClearRenderMode
 	export BattleFx_HasMatchingEvent5Far, BattleFx_HasMatchingEvent5
 	export BattleFx_HasTriggerFar, BattleFx_HasTrigger
-	export Object_ReplaceResourceEntryFar, Object_ReplaceResourceEntry
+	export Sprite_ShareVramCacheFar, Sprite_ShareVramCache
 	export Event_GetSpecialValueFar, Event_GetSpecialValue
 	overlay_veneer BattleFx_StartItemBreak
 	overlay_veneer BattleFx_SnapScaleToFull

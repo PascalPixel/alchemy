@@ -126,7 +126,8 @@ void BattleFx_FinishSceneAndReleaseHeapBlockFar(void);
 void Ui_SetBank15PaletteAndClearRenderModeFar(void);
 s32 BattleFx_HasMatchingEvent5Far(s32 group);
 u32 BattleFx_HasTriggerFar(u16 item);
-void *Object_ReplaceResourceEntryFar(void *src, void *alt);
+struct AnimationObject *Sprite_ShareVramCacheFar(
+    struct AnimationObject *sourceSprite, struct AnimationObject *sharedSprite);
 s16 Event_GetSpecialValueFar(void);
 void BattleParty_ApplyDrainFar(s32 amount, s32 unused);
 s32 Menu_AskYesNoFar(s32 value);

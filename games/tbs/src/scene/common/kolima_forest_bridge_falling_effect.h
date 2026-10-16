@@ -27,7 +27,7 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 void FieldScene_UpdateFallingEffect(void) {
   struct FieldActor *object = NULL;
   struct SceneEffectOrigin *origin;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 x, z;
 
   switch (gFallingEffectState) {
@@ -73,7 +73,7 @@ void FieldScene_UpdateFallingEffect(void) {
     object->z.fixed = z;
     sprite->flags = 0;
     object->priorityFlags &= ~1;
-    sprite->priority = 1;
+    sprite->image.priority = 1;
     Object_SetMode(object, 1);
     Engine_ObjectSetScript(object, gFallingEffectScript);
   }

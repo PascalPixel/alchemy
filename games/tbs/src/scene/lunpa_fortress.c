@@ -172,8 +172,8 @@ static void LunpaFortress_SettleMovedColumn(void) {
 
   columnActor = Actor_Get(12);
   if ((columnActor->z.fixed >> 20) > 22) {
-    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x40000, 0x40000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     SE(144);
     Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
     Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
@@ -219,8 +219,8 @@ static void LunpaFortress_UnlockRescueRoomDoor(void) {
     if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) == 0 || doorIndex != 4) {
       LunpaFortress_OpenRescueRoomDoor(doorIndex);
       SE(157);
-      Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(0x30000, 0x30000, 0x10000);
+      Map_SetShake(-1, -1, 0xe666);
       FLAG_SET(doorTrigger + 0x328);
     }
   }
@@ -256,8 +256,8 @@ static void LunpaFortress_UnlockColumnRoomDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenColumnRoomDoor(doorTrigger - 40);
     SE(157);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x30000, 0x30000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     FLAG_SET(doorTrigger + 0x32d);
   }
 }
@@ -284,8 +284,8 @@ static void LunpaFortress_UnlockGuardRoomDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenGuardRoomDoor(doorTrigger - 40);
     SE(157);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x30000, 0x30000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     FLAG_SET(doorTrigger + 0x330);
   }
 }
@@ -315,8 +315,8 @@ static void LunpaFortress_UnlockOuterFortressDoor(void) {
     doorTrigger = fieldWork->touchedTrigger;
     LunpaFortress_OpenOuterFortressDoor(doorTrigger - 40);
     SE(157);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x30000, 0x30000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     FLAG_SET(doorTrigger + 0x332);
   }
 }
@@ -1355,14 +1355,14 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 
 // Shake room and open Dodonpa's trap before party reactions.
 static void LunpaFortress_ActivateLeverTrap(void) {
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   SE(141);
   WAIT(80);
   SE(0x120);
   WAIT(5);
   SE(145);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT, 0);

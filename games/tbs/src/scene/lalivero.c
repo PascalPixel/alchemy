@@ -728,7 +728,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 // after Venus Lighthouse.
 s32 Scene_Initialize(void) {
   union FieldObject *object;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
@@ -761,12 +761,12 @@ s32 Scene_Initialize(void) {
   object->actor.motionFlags = 0;
   sprite = object->actor.sprite;
   object->actor.y.fixed = PIXELS(10);
-  sprite->partCount = 0;
-  sprite->fullColor = 0;
-  sprite->palette = 0;
+  sprite->count = 0;
+  sprite->image.fullColor = 0;
+  sprite->image.palette = 0;
   icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
   Engine_ItemLoadIcon(ITEM_BLACK_ORB);
-  Engine_VramLoad(sprite->vramBlock, ITEM_ICON_TILE_BYTES,
+  Engine_VramLoad(sprite->slot, ITEM_ICON_TILE_BYTES,
                   &icon[ITEM_ICON_TILES]);
   Engine_HeapRelease(HEAP_ITEM_ICON);
 

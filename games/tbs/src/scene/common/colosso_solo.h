@@ -104,66 +104,68 @@ void SceneState_RaiseTriggerOnPsynergyTarget(void) {
   }
 }
 
-static void EV99_RAISED(void) {
-
-  u8 *state = (u8 *)gEventWork;
-  s32 best = 8;
-  s32 bestd = 0x100000;
-  s32 n = gGameState.selectedActor;
-  struct FieldActor *p = Object_GetById(n);
-  s32 i;
-  s32 *q;
-  s32 base;
+// Remember this supporter's position and advance to the next party member.
+static void Colosso_RememberSupportPosition(void) {
+  struct EventWork *work = gEventWork;
+  s32 speakerId = 8;
+  s32 nearestDistance = 0x100000;
+  s32 supporterId = gGameState.selectedActor;
+  struct FieldActor *supporter = Object_GetById(supporterId);
+  s32 actorId;
+  s32 *transition;
+  s32 flagBase;
 
   Engine_EventBegin();
-  for (i = 8; i <= 66; i++) {
-    struct FieldActor *o = Object_GetById(i);
+  // Choose the nearest matching speaker whose Z is at least the supporter's.
+  for (actorId = 8; actorId <= 66; actorId++) {
+    struct FieldActor *actor = Object_GetById(actorId);
 
-    if (o != 0 && o->active == 1 &&
-        ((struct AnimationObject *)o->sprite)->entries[0]->animId == 165) {
-      s32 dx = (p->x.fixed - o->x.fixed) / 65536;
-      s32 dy = (p->z.fixed - o->z.fixed) / 65536;
+    if (actor != 0 && actor->spriteStorageKind == 1 &&
+        actor->sprite->entries[0]->animId == 165) {
+      s32 distanceX = (supporter->x.fixed - actor->x.fixed) / PIXELS(1);
+      s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / PIXELS(1);
 
-      if (dy <= 0) {
-        s32 a = dx;
-        s32 d;
+      if (distanceZ <= 0) {
+        s32 horizontalDistance = distanceX;
+        s32 distance;
 
-        if (a < 0)
-          a = -a;
-        if (dy < 0)
-          dy = -dy;
-        d = a + dy;
-        if (d < bestd) {
-          best = i;
-          bestd = d;
+        if (horizontalDistance < 0)
+          horizontalDistance = -horizontalDistance;
+        if (distanceZ < 0)
+          distanceZ = -distanceZ;
+        distance = horizontalDistance + distanceZ;
+        if (distance < nearestDistance) {
+          speakerId = actorId;
+          nearestDistance = distance;
         }
       }
     }
   }
   Engine_EventSetMessage(MsgColossoMatchAboutBeginPleaseTake);
-  Engine_EventShowMessage(best, 0);
-  q = &((struct EventWork *)state)->startTransition;
-  *q = 512;
-  ((struct EventWork *)state)->transitionFrames = 15;
+  Engine_EventShowMessage(speakerId, 0);
+  transition = &work->startTransition;
+  *transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  work->transitionFrames = 15;
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  base = n << 4;
-  FieldGameFlag_SetByte(base + 880, p->x.fixed >> 20);
+  // Each supporter has one saved map cell in the scene flags.
+  flagBase = supporterId << 4;
+  FieldGameFlag_SetByte(flagBase + 880, supporter->x.fixed >> 20);
   {
-    s32 v = p->z.fixed >> 20;
+    s32 cellRow = supporter->z.fixed >> 20;
 
-    FieldGameFlag_SetByte(base + 888, v);
+    FieldGameFlag_SetByte(flagBase + 888, cellRow);
   }
-  n++;
-  if (n > 3) {
+  supporterId++;
+  if (supporterId > 3) {
     Engine_EventRequestExit(10);
     Engine_GameFlagSet(282);
   } else {
-    Colosso_SelectSoloCompetitor(n);
+    Colosso_SelectSoloCompetitor(supporterId);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    *q = 0;
+    *transition = 0;
   }
   Engine_EventEnd();
 }
@@ -214,14 +216,15 @@ void Colosso_FinishSoloRound(s32 id) {
   Engine_EventEnd();
 }
 
+// Ask Isaac to choose this support position when his companions have split up.
 static void RunPartyCountInteraction(s32 actorId) {
-  PartyInteractionRecord *record;
+  struct FieldActor *actor;
   s32 x;
-  s32 y;
+  s32 z;
 
-  record = (PartyInteractionRecord *)Object_GetById(actorId);
-  x = record->x;
-  y = record->y;
+  actor = Object_GetById(actorId);
+  x = actor->x.part.pixel;
+  z = actor->z.part.pixel;
   Engine_EventBegin();
 
   if (GetPartyMemberCount() <= 1) {
@@ -229,10 +232,10 @@ static void RunPartyCountInteraction(s32 actorId) {
     if (Engine_EventAskYesNo(actorId, 0) == 0) {
       InitializeActorZero();
       InitializeSelectedActor(actorId);
-      Engine_ActorWalkTo(actorId, x, y + 0x40);
+      Engine_ActorWalkTo(actorId, x, z + 64);
       Engine_EventWait(15);
-      Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-      Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+      Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, z);
+      Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, z + 32);
       Engine_EventCloseScreen();
       Engine_EventWaitForScreen();
       Engine_EventRequestExit(11);

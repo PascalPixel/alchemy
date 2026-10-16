@@ -856,9 +856,9 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
                                   gKolimaForestTreeSparkOrigin[1],
                                   gKolimaForestTreeSparkOrigin[2]);
       if (spark != 0) {
-        previous = Object_ReplaceResourceEntry(spark->sprite, previous);
+        previous = Sprite_ShareVramCache(spark->sprite, previous);
         spark->motionFlags = 0;
-        spark->sprite->priority = 1;
+        spark->sprite->image.priority = 1;
         Engine_ActorSetSpriteFlags(spark, 0);
         Object_SetMode(spark, 1);
         spark->timer = 0;

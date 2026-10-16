@@ -66,7 +66,6 @@
 #include "character_menu.h"
 #include "animspr.h"
 #include "four_object_motion.h"
-#include "field_sprite.h"
 #include "uiwindow.h"
 #include "io_write_queue.h"
 #include "map_scroll.h"
@@ -1520,7 +1519,7 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
     if (sprite != NULL) {
       AnimationObjects_SelectAnimationFar(sprite, 1);
       sprite->flags = 0;
-      sprite->part[0].priority = 0;
+      sprite->image.priority = 0;
     }
 
     menu->partyMemberIcons[i] = sprite;
@@ -1592,7 +1591,7 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
       if (sprite != NULL) {
         AnimationObjects_SelectAnimationFar(sprite, 2);
         sprite->flags = 0;
-        sprite->part[0].priority = 0;
+        sprite->image.priority = 0;
       }
 
       menu->objects[i] = sprite;
@@ -2478,7 +2477,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.output = output;
     output->sentinel = 255;
-    ((struct FieldSprite *)output->unk10)->priority = 0;
+    output->oam.priority = 0;
     ShopCursor_SetPositionImmediateFar(
         &nameCaret.cursor, UiText_SetRenderString(editedName) + 70, 22);
   }
@@ -2520,9 +2519,9 @@ s32 NameEntry_EditOwnerName(s32 member) {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      ((struct FieldSprite *)output->unk10)->x =
+      output->oam.x =
           output->x + gNameEntry_CaretWave[frame];
-      ((struct FieldSprite *)output->unk10)->y =
+      output->oam.y =
           output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
@@ -2739,7 +2738,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.output = output;
     output->sentinel = 255;
-    ((struct FieldSprite *)output->unk10)->priority = 0;
+    output->oam.priority = 0;
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     ShopCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
@@ -2782,9 +2781,9 @@ s32 NameEntry_EditOwnerName(s32 member) {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      ((struct FieldSprite *)output->unk10)->x =
+      output->oam.x =
           output->x + gNameEntry_CaretWave[frame];
-      ((struct FieldSprite *)output->unk10)->y =
+      output->oam.y =
           output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and

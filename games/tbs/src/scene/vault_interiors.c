@@ -33,42 +33,50 @@
 #include "field_service.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 #if TBS_PATCH_3
-#define VAULT_INTERIORS_ENTRY_ACTOR_Z 0x1c30000
+#define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(451)
 #else
-#define VAULT_INTERIORS_ENTRY_ACTOR_Z 0x1d00000
+#define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(464)
 #endif
 
 // Forward declarations.
-static void Scene_JoinRodSearch(void);
-static void VaultInteriors_RunBranchingDialogueScene(void);
-static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
-                                                   s32 next, const s32 *desc);
-static void SceneActor_FaceActors24And25TowardActorZero(void);
-static void FieldScene_RunLateSequence(void);
-static void VaultInteriors_RunVaultEvent(void);
-static void RunEventScript01(void);
-static void RunDialoguePromptScene(void);
+static void VaultInteriors_JoinRodSearch(void);
+static void VaultInteriors_DiscussMindReading(void);
+static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
+                                               s32 next, const s32 *actions);
+static void VaultInteriors_FaceSuspectsTowardLeader(void);
+static void VaultInteriors_LoseToThieves(void);
+static void VaultInteriors_ConfrontThievesAgain(void);
+static void VaultInteriors_DefeatThieves(void);
+static void VaultInteriors_ReturnStolenGoods(void);
 static void VaultInteriors_OpenWindowTransition(void);
-static void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
-static void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
-static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
-static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
-static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
-static void SceneState_SetValue2ThenFinish(void);
+static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames);
+static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
+                                            s32 waitFrames);
+static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
+                                                s32 waitFrames);
+static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
+                                                s32 waitFrames);
+static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId);
+static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-// Battle-start kinds, as in battle/party/party.c.
+// Return the entrances for the Vault interiors overlay.
+struct SceneEntrance *VaultInteriors_GetEntrances(void) {
+  return gVaultInteriors_Scripts;
+}
 
-u8 *SceneData_GetScriptTable(void) { return gVaultInteriors_Scripts; }
+// Return the trigger regions for the Vault interiors overlay.
+s16 *VaultInteriors_GetRegions(void) { return gVaultInteriors_Regions; }
 
-u8 *SceneData_GetRegionTable(void) { return gVaultInteriors_Regions; }
+// Return the exits for the Vault interiors overlay.
+u32 *VaultInteriors_GetExits(void) { return gVaultInteriors_Messages; }
 
-u8 *SceneData_GetMessageTable(void) { return gVaultInteriors_Messages; }
-
-const struct ScenePlacement *Scene_GetPlacements(void) {
+// Select the attic placements for entrances 15–17 and prepare the actors.
+const struct ScenePlacement *VaultInteriors_GetPlacements(void) {
   struct ScenePlacement *table;
 
   switch (gGameState.entrance) {
@@ -86,31 +94,32 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 #if !TBS_PATCH_1
+// Jump to the requested destination when its collision check succeeds.
 static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
-  struct FieldActor *obj;
+  struct FieldActor *leader;
   u8 *flags;
-  u8 saved;
+  u8 savedMotionFlags;
 
-  obj = Object_GetById(0);
-  flags = &obj->motionFlags;
-  saved = *flags;
-  if (FieldObject_CheckMovementCollision(obj, pos) == 0) {
+  leader = Object_GetById(0);
+  flags = &leader->motionFlags;
+  savedMotionFlags = *flags;
+  if (FieldObject_CheckMovementCollision(leader, pos) == 0) {
     Engine_EventBegin();
-    Object_SetMode(obj, 6);
+    Object_SetMode(leader, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(152);
-    Object_SetMode(obj, 7);
-    obj->speed = 0x30000;
-    obj->acceleration = 0x20000;
-    obj->velocityY = 0x40000;
+    Object_SetMode(leader, 7);
+    leader->speed = PIXELS(3);
+    leader->acceleration = PIXELS(2);
+    leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
-    Engine_ActorSetSpriteFlags(obj, 0);
+    Engine_ActorSetSpriteFlags(leader, 0);
     Engine_ActorMoveToAndWait(0, ((union FieldCoordinate *)&pos->x)->part.pixel,
                               ((union FieldCoordinate *)&pos->z)->part.pixel);
-    Object_SetMode(obj, 6);
-    Engine_ActorSetSpriteFlags(obj, 1);
+    Object_SetMode(leader, 6);
+    Engine_ActorSetSpriteFlags(leader, 1);
     Engine_TaskWait(6);
-    *flags = saved;
+    *flags = savedMotionFlags;
     Engine_EventEnd();
     return 1;
   }
@@ -118,13 +127,14 @@ static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
 }
 #endif
 
-static void EV40_SCRIPT(void) {
+// Jump across the roof gap and copy the landing side's cell attributes.
+static void VaultInteriors_JumpAcrossRoofGap(void) {
   s32 x;
   s32 z;
 #if !TBS_PATCH_1
   struct FixedPointPosition target;
   struct FixedPointPosition *pos;
-  struct FieldActor *obj;
+  struct FieldActor *leader;
 #endif
 
   if (Object_GetById(0)->facing >= 0xa000 &&
@@ -132,11 +142,11 @@ static void EV40_SCRIPT(void) {
 #if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
-    obj = Object_GetById(0);
+    leader = Object_GetById(0);
     pos = &target;
-    pos->x = obj->x.fixed;
+    pos->x = leader->x.fixed;
     pos->y = Object_GetById(0)->y.fixed;
-    pos->z = Object_GetById(0)->z.fixed - 0x1e0000;
+    pos->z = Object_GetById(0)->z.fixed - PIXELS(30);
     VaultInteriors_TryJumpTo(pos);
 #endif
     x = 42;
@@ -147,11 +157,11 @@ static void EV40_SCRIPT(void) {
 #if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
-    obj = Object_GetById(0);
+    leader = Object_GetById(0);
     pos = &target;
-    pos->x = obj->x.fixed;
+    pos->x = leader->x.fixed;
     pos->y = Object_GetById(0)->y.fixed;
-    pos->z = Object_GetById(0)->z.fixed + 0x1e0000;
+    pos->z = Object_GetById(0)->z.fixed + PIXELS(30);
     VaultInteriors_TryJumpTo(pos);
 #endif
     x = 42;
@@ -160,25 +170,25 @@ static void EV40_SCRIPT(void) {
   }
 }
 
-static void EV26_PSYNERGY(void) {
-  struct FieldActor *obj;
-  s32 x;
+// Open the passage once crate 26 reaches column 42.
+static void VaultInteriors_OpenMovedCratePassage(void) {
+  struct FieldActor *crate;
 
   Engine_EventBegin();
-  obj = Object_GetById(26);
-  if ((obj->x.fixed >> 20) == 42) {
-    x = 41;
+  crate = Object_GetById(26);
+  if ((crate->x.fixed >> 20) == 42) {
     Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     Engine_GameFlagSet(0x859);
   }
   Engine_EventEnd();
 }
 
-static void EV19_TALK(void) {
-  s32 v = Object_GetById(0)->facing;
+// Open the weapon shop from the counter or speak to its owner.
+static void VaultInteriors_TalkToWeaponShopkeeper(void) {
+  s32 leaderFacing = Object_GetById(0)->facing;
 
   Engine_EventBegin();
-  if (v >= 0xa001 && v <= 0xdfff) {
+  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Engine_ShopOpen(4, 19);
   } else {
     if (Engine_GameFlagIsSet(0x855) == 0) {
@@ -191,11 +201,12 @@ static void EV19_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV20_TALK(void) {
-  s32 v = Object_GetById(0)->facing;
+// Open the armor shop from the counter or speak to its owner.
+static void VaultInteriors_TalkToArmorShopkeeper(void) {
+  s32 leaderFacing = Object_GetById(0)->facing;
 
   Engine_EventBegin();
-  if (v >= 0xa001 && v <= 0xdfff) {
+  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Engine_ShopOpen(5, 20);
   } else {
     if (Engine_GameFlagIsSet(0x855) == 0) {
@@ -208,11 +219,12 @@ static void EV20_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV23_TALK(void) {
-  s32 v = Object_GetById(0)->facing;
+// Open the inn from the counter or speak to its owner.
+static void VaultInteriors_TalkToInnkeeper(void) {
+  s32 leaderFacing = Object_GetById(0)->facing;
 
   Engine_EventBegin();
-  if (v >= 0xa001 && v <= 0xdfff) {
+  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Engine_InnOpen(1, 23);
   } else {
     if (Engine_GameFlagIsSet(0x855) == 0) {
@@ -228,7 +240,8 @@ static void EV23_TALK(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_bone.h"
 
-static void EV250_RAISED(void) {
+// Have Garet remind the leader to finish the search.
+static void VaultInteriors_RefuseToLeaveSearch(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
 #endif
@@ -236,21 +249,24 @@ static void EV250_RAISED(void) {
   Engine_EventShowMessage(GARET, 0);
 }
 
-static void SceneDialogue_ShowEmptyBarrel(void) {
+// Show the two messages for searching an empty barrel.
+static void VaultInteriors_SearchEmptyBarrel(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedBarrel, 1);
   Engine_MessageShowCentered(MsgVaultButDidntFindAnything, 1);
   Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowEmptyChest(void) {
+// Show the two messages for searching an empty chest.
+static void VaultInteriors_SearchEmptyChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedChest, 1);
   Engine_MessageShowCentered(MsgVaultButChestWasEmpty, 1);
   Engine_EventEnd();
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
+// Choose the attic events or the town events before and after the theft.
+const struct SceneEvent *VaultInteriors_GetEvents(void) {
   switch (gGameState.entrance) {
   case 15:
   case 16:
@@ -263,17 +279,19 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriorsEvents;
 }
 
-static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x) {
+// Stand the speaker, face the leader, and show the selected message.
+static void VaultInteriors_StandAndShowMessage(s32 x) {
   Engine_ActorSetAnimation(x, 1);
-  SceneActor_SetPairZeroAndValue(x, 0, 2);
+  VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
   Engine_EventShowMessage(x, 0);
 }
 
 // Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
-static void SceneDialogue_PromptAndCountSkip(s32 x) {
-  SceneActor_SetPairZeroAndValue(x, 0, 2);
+// Face the leader and select the next reply when the answer is no.
+static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
+  VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
   Engine_EventOpenMessage(x, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
@@ -281,31 +299,34 @@ static void SceneDialogue_PromptAndCountSkip(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-static void SceneDialogue_RunActorElevenDialogue(void) {
+// Ask whether Ivan's unusual powers are fun.
+static void VaultInteriors_AskAboutIvansPowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
   Engine_ActorSetAnimation(11, 1);
-  SceneDialogue_PromptAndCountSkip(11);
+  VaultInteriors_AskYesNoAndShowReply(11);
   Engine_EventEnd();
 }
 
-static void EV15_TALK(void) {
+// Ask the leader to help Ivan and restore the speaker's facing.
+static void VaultInteriors_AskToHelpIvan(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
-  SceneDialogue_PromptAndCountSkip(15);
+  VaultInteriors_AskYesNoAndShowReply(15);
   Actor_FaceDirection(15, 0x8000, 0);
   Engine_EventEnd();
 }
 
-static void EV21_TALK(void) {
-  s32 value = Object_GetById(0)->facing;
+// Open the item shop or discuss arriving in town and the broken bridge.
+static void VaultInteriors_TalkToItemShopkeeper(void) {
+  s32 leaderFacing = Object_GetById(0)->facing;
 
   Engine_EventBegin();
-  if (value >= 0xa001 && value <= 0xdfff) {
+  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Engine_ShopOpen(6, 21);
   } else if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultDidJustArriveInTown);
-    SceneDialogue_PromptAndCountSkip(21);
+    VaultInteriors_AskYesNoAndShowReply(21);
   } else {
     Engine_EventSetMessage(MsgVaultWithBridgeOutWillQuite);
     Engine_EventShowMessage(21, 0);
@@ -313,123 +334,132 @@ static void EV21_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV09_TALK(void) {
+// Discuss the rocks before the theft is solved and the captured thieves
+// afterward.
+static void VaultInteriors_TalkAboutRocks(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultIfOnlyTheseRocksWere);
   } else {
     Engine_EventSetMessage(MsgVaultThankGoodnessThoseThievesWere);
   }
-  ActorPresentation_RunActorModeOneThenZeroWithStep(9);
+  VaultInteriors_StandAndShowMessage(9);
   Engine_EventEnd();
 }
 
-static void EV12_TALK(void) {
+// Discuss missing possessions or where the thieves hid the treasure.
+static void VaultInteriors_TalkAboutMissingTreasure(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) != 0) {
     Engine_EventSetMessage(MsgVaultThievesHidStolenTreasureIn);
   } else {
     Engine_EventSetMessage(MsgVaultJustMeOrAmMissing);
   }
-  ActorPresentation_RunActorModeOneThenZeroWithStep(12);
+  VaultInteriors_StandAndShowMessage(12);
   Engine_EventEnd();
 }
 
-static void FieldScene_RunFlag856DialogueBranch(void) {
-  s32 g;
-  g = 0x851;
+// Remember the host's first thanks for agreeing to help Ivan.
+static void VaultInteriors_TalkToIvansHost(void) {
+  s32 thankedForHelpingFlag;
+  thankedForHelpingFlag = 0x851;
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x856) != 0) {
-    if (Engine_GameFlagIsSet(g) == 0) {
+    if (Engine_GameFlagIsSet(thankedForHelpingFlag) == 0) {
       Engine_EventSetMessage(MsgVaultYoureGoingHelpIvan);
-      ActorPresentation_RunActorModeOneThenZeroWithStep(16);
+      VaultInteriors_StandAndShowMessage(16);
       Engine_EventWait(10);
-      SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
-      Engine_GameFlagSet(g);
+      VaultInteriors_PlayAnimationAndWait(16, 3, 20);
+      Engine_GameFlagSet(thankedForHelpingFlag);
     } else {
       Engine_EventSetMessage(MsgVaultPleaseLookAfterIvan);
     }
   } else {
     Engine_EventSetMessage(MsgVaultCouldSomeonePleaseHelpIvan);
   }
-  ActorPresentation_RunActorModeOneThenZeroWithStep(16);
+  VaultInteriors_StandAndShowMessage(16);
   Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine128E(void) {
+// Show the villager's suspicions about the three strangers.
+static void VaultInteriors_TalkAboutThreeStrangers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseThreeStrangersSureHave);
-  ActorPresentation_RunActorModeOneThenZeroWithStep(18);
+  VaultInteriors_StandAndShowMessage(18);
   Engine_EventEnd();
 }
 
-static void SceneActor_StepActor24AnimationByFacing(void) {
-  struct FieldActor *p;
-  s16 *q;
-  s32 v;
-  s32 n;
+// Choose the first suspect's next route from his facing and six route states.
+static void VaultInteriors_MoveFirstSuspectAside(void) {
+  struct FieldActor *suspect;
+  s16 *routeState;
+  s32 routeIndex;
+  s32 nextRoute;
 
-  p = Object_GetById(24);
+  suspect = Object_GetById(24);
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(24, 2);
   Engine_EventSetMessage(MsgVaultOwStop);
   Engine_EventShowMessage(24, 0);
-  Engine_ActorSetSpeed(24, 0x40000, 0x20000);
-  if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
-    q = (s16 *)&p->timer;
-    v = *q;
-    if (v <= 2) {
-      Actor_SetActionScript(24, gVaultInteriors_StepActions[v]);
-      *(u16 *)q = *(u16 *)q + 1;
+  Engine_ActorSetSpeed(24, PIXELS(4), PIXELS(2));
+  if ((u32)((suspect->facing & 0xf000) - 0x5000) <= 0x6000) {
+    routeState = (s16 *)&suspect->timer;
+    routeIndex = *routeState;
+    if (routeIndex <= 2) {
+      Actor_SetActionScript(24, gVaultInteriors_StepActions[routeIndex]);
+      *(u16 *)routeState = *(u16 *)routeState + 1;
     } else {
-      Actor_SetActionScript(24, gVaultInteriors_IdleActions[v]);
-      n = *(u16 *)q - 1;
-      *(u16 *)q = n;
+      Actor_SetActionScript(24, gVaultInteriors_IdleActions[routeIndex]);
+      nextRoute = *(u16 *)routeState - 1;
+      *(u16 *)routeState = nextRoute;
     }
   } else {
-    q = (s16 *)&p->timer;
-    v = *q;
-    if (v > 2) {
-      Actor_SetActionScript(24, gVaultInteriors_StepActions[v]);
-      *(u16 *)q = *(u16 *)q + 1;
+    routeState = (s16 *)&suspect->timer;
+    routeIndex = *routeState;
+    if (routeIndex > 2) {
+      Actor_SetActionScript(24, gVaultInteriors_StepActions[routeIndex]);
+      *(u16 *)routeState = *(u16 *)routeState + 1;
     } else {
-      Actor_SetActionScript(24, gVaultInteriors_IdleActions[v]);
-      n = *(u16 *)q - 1;
-      *(u16 *)q = n;
+      Actor_SetActionScript(24, gVaultInteriors_IdleActions[routeIndex]);
+      nextRoute = *(u16 *)routeState - 1;
+      *(u16 *)routeState = nextRoute;
     }
   }
-  if (*q > 5) {
-    n = 0;
-    *(u16 *)q = n;
+  if (*routeState > 5) {
+    nextRoute = 0;
+    *(u16 *)routeState = nextRoute;
   }
-  if (*q < 0) {
-    n = 5;
-    *(u16 *)q = n;
+  if (*routeState < 0) {
+    nextRoute = 5;
+    *(u16 *)routeState = nextRoute;
   }
   Object_RefreshSelectorById(24);
   Engine_EventEnd();
 }
 
-static inline void VaultInteriors_WalkOn(struct FieldActor *actor, s32 row,
-                                         s32 half, u16 turn) {
+// Select a response script and advance the second suspect's route state.
+static inline void
+VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
+                                       s32 routePair, u16 routeDelta) {
   Actor_SetActionScript(
-      25, gVaultInteriors_ResponseScripts[row * 4 + actor->timer]);
-  actor->timer = actor->timer - half * 2 + turn;
+      25, gVaultInteriors_ResponseScripts[scriptRow * 4 + actor->timer]);
+  actor->timer = actor->timer - routePair * 2 + routeDelta;
 }
 
-static void VaultInteriors_RunActor25Response(void) {
+// Choose the second suspect's escape route from his facing and route state.
+static void VaultInteriors_MoveSecondSuspectAside(void) {
   struct FieldActor *actor;
   u32 facing;
-  s32 half;
+  s32 routePair;
 
   actor = Object_GetById(25);
   facing = actor->facing & 0xf000;
-  half = actor->timer >> 1;
+  routePair = actor->timer >> 1;
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(25, 2);
   Engine_EventSetMessage(MsgVaultNoLeaveAlone);
   Engine_EventShowMessage(25, 0);
-  Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
+  Engine_ActorSetSpeed(25, PIXELS(7) / 2, PIXELS(7) / 4);
   switch (actor->timer) {
   case 4:
     if (facing > 0x2000 && facing < 0xa000) {
@@ -443,17 +473,19 @@ static void VaultInteriors_RunActor25Response(void) {
   case 0:
   case 2:
     if (facing > 0x2000 && facing < 0xa000) {
-      VaultInteriors_WalkOn(actor, half, half, 1);
+      VaultInteriors_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
     } else {
-      VaultInteriors_WalkOn(actor, half ^ 1, half, -1);
+      VaultInteriors_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair,
+                                             -1);
     }
     break;
   case 1:
   case 3:
     if (facing > 0x6000 && facing < 0xe000) {
-      VaultInteriors_WalkOn(actor, half, half, 1);
+      VaultInteriors_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
     } else {
-      VaultInteriors_WalkOn(actor, half ^ 1, half, -1);
+      VaultInteriors_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair,
+                                             -1);
     }
     break;
   }
@@ -462,62 +494,48 @@ static void VaultInteriors_RunActor25Response(void) {
   Engine_EventEnd();
 }
 
-#define RATIO_HI 52428
-#define RATIO_LO 26214
-
-struct Stop {
-  u8 id;
-  u8 pos;
-  u8 unk02[2];
-};
-
-struct StopSet {
-  u8 unk00[4];
-  struct Stop stops[3];
-};
-
-struct StopRecord {
-  u8 unk00[16];
-};
-
-static void EV10_TALK(void) {
+// Ask the villager where the thieves came from.
+static void VaultInteriors_AskWhereThievesCameFrom(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultDidThoseThievesComeFrom);
-  SceneDialogue_PromptAndCountSkip(10);
+  VaultInteriors_AskYesNoAndShowReply(10);
   Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor11Line(void) {
+// Show the child's concern about the worried father.
+static void VaultInteriors_TalkAboutWorriedFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
-  ActorPresentation_RunActorModeOneThenZeroWithStep(11);
+  VaultInteriors_StandAndShowMessage(11);
   Engine_EventEnd();
 }
 
-static void EV14_TALK(void) {
+// Ask whether the party defeated the thieves.
+static void VaultInteriors_AskAboutDefeatingThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
-  SceneDialogue_PromptAndCountSkip(14);
+  VaultInteriors_AskYesNoAndShowReply(14);
   Engine_EventEnd();
 }
 
-static void FieldScene_RunScene383SequenceC(void) {
+// Give the one-time Water of Life reward when inventory space permits.
+static void VaultInteriors_ReceiveWaterOfLife(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x857) == 0) {
     Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp);
-    SceneActor_SetModeZeroAndValue(16, 20);
-    SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
-    SceneActor_SetModeZeroAndValue(16, 30);
+    VaultInteriors_ShowMessageAndWait(16, 20);
+    VaultInteriors_PlayAnimationAndWait(16, 3, 20);
+    VaultInteriors_ShowMessageAndWait(16, 30);
     Actor_FaceDirection(16, 0, 0);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(16, 2);
     Engine_EventWait(30);
-    SceneActor_SetPairZeroAndValue(0, 16, 20);
-    SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
+    VaultInteriors_FaceEachOtherAndWait(0, 16, 20);
+    VaultInteriors_PlayAnimationAndWait(16, 3, 20);
     gEventWork->message++;
     if (PartyInventory_HasSpace() == 0) {
       Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
-      SceneActor_SetModeZeroAndValue(16, 20);
+      VaultInteriors_ShowMessageAndWait(16, 20);
       Engine_EventEnd();
       return;
     }
@@ -534,9 +552,10 @@ static void FieldScene_RunScene383SequenceC(void) {
   Engine_EventEnd();
 }
 
+// Offer another bone and give it only when the player accepts and has room.
 static void VaultInteriors_OfferBone(void) {
   Engine_EventBegin();
-  SceneActor_SetPairZeroAndValue(18, 0, 2);
+  VaultInteriors_FaceEachOtherAndWait(18, 0, 2);
   if (GameFlag_IsSet(0x85b) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
     Event_OpenMessage(18, 0);
@@ -571,7 +590,8 @@ static void VaultInteriors_OfferBone(void) {
   Engine_EventEnd();
 }
 
-static void EV09_PSYNERGY(void) {
+// Read the rock seeker's thoughts before or after the theft is solved.
+static void VaultInteriors_ReadRockSeekersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultOkMisterLetMeSee);
@@ -582,7 +602,8 @@ static void EV09_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV11_PSYNERGY(void) {
+// Read the child's thoughts about the outside world or worried father.
+static void VaultInteriors_ReadChildsMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultWonderOutsideWorldLike);
@@ -593,7 +614,8 @@ static void EV11_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV12_PSYNERGY(void) {
+// Read the villager's thoughts about the thieves and missing goods.
+static void VaultInteriors_ReadTreasureSeekersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultCouldTheyThievesGoodDont);
@@ -604,7 +626,8 @@ static void EV12_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV16_PSYNERGY(void) {
+// Read the host's thoughts about Ivan or the dangerous cave.
+static void VaultInteriors_ReadIvansHostsMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultTicklesBeingTickledByBoy);
@@ -615,7 +638,8 @@ static void EV16_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV18_PSYNERGY(void) {
+// Read the bone owner's thoughts, including whether a bone has been taken.
+static void VaultInteriors_ReadBoneOwnersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultMasterHisWifeBlindedBy);
@@ -628,62 +652,64 @@ static void EV18_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV02_TALK(void) {
+// Introduce Ivan's powers and ask the party to help find the stolen rod.
+static void VaultInteriors_MeetIvan(void) {
 
-  struct FieldActor *record;
+  struct FieldActor *actor;
 
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Event_PlayCue(19);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x180, 0x198);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-  Actor_SetPosition(GARET, 0x1800000, 0x1980000);
-  Actor_WalkToAndWait(GARET, 0x170, 0x198);
+  Actor_SetPosition(GARET, PIXELS(384), PIXELS(408));
+  Actor_WalkToAndWait(GARET, 368, 408);
   Actor_FaceDirection(GARET, 0xd000, 20);
+  // Introduce Ivan's ability only on the first meeting.
   if (GameFlag_IsSet(0x850) == 0) {
     GameFlag_Set(0x850);
-    SceneEffect_ApplyPairWithValue141(2, 0);
+    VaultInteriors_BeginMindRead(2, 0);
     Engine_EventWait(40);
-    SceneState_SetValue2ThenFinish();
+    VaultInteriors_EndMindRead();
     Engine_EventSetMessage(MsgVaultDoPossessStrangePowers);
     Event_PlayCue(60);
     Engine_EventWait(30);
-    SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
-    SceneActor_SetModeZeroAndValue(2, 30);
+    VaultInteriors_PlayAnimationAndWait(2, 3, 30);
+    VaultInteriors_ShowMessageAndWait(2, 30);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(20);
-    SceneEffect_ApplyPairWithValue141(2, 0);
+    VaultInteriors_BeginMindRead(2, 0);
     Engine_EventWait(40);
-    SceneState_SetValue2ThenFinish();
-    SceneActor_SetModeZeroAndValue(2, 30);
-    SceneActor_SetPairZeroAndValue(0, 1, 50);
+    VaultInteriors_EndMindRead();
+    VaultInteriors_ShowMessageAndWait(2, 30);
+    VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(GARET, 0xd000, 0);
     Engine_EventWait(20);
-    SceneEffect_ApplyPairWithValue141(2, 0);
+    VaultInteriors_BeginMindRead(2, 0);
     Engine_EventWait(40);
-    SceneState_SetValue2ThenFinish();
+    VaultInteriors_EndMindRead();
     Engine_ActorRunRepeatedMotion(IVAN, 1);
-    SceneActor_SetModeZeroAndValue(2, 50);
+    VaultInteriors_ShowMessageAndWait(2, 50);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-    SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-    SceneActor_SetModeZeroAndValue(2, 40);
+    VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+    VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+    VaultInteriors_ShowMessageAndWait(2, 40);
     Engine_ActorRunRepeatedMotion(IVAN, 1);
     Engine_EventWait(30);
     Actor_FaceDirection(2, 0xc000, 0);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(IVAN, 0x178, 0x178);
+    Actor_WalkToAndWait(IVAN, 376, 376);
     Engine_EventWait(40);
-    SceneActor_SetPairZeroAndValue(0, 1, 50);
+    VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(GARET, 0xd000, 0);
     Engine_ActorRunRepeatedMotion(IVAN, 1);
     Engine_EventWait(50);
-    SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
+    VaultInteriors_PlayAnimationAndWait(2, 3, 30);
     Actor_FaceDirection(IVAN, 0x4000, 0);
     Engine_EventWait(10);
     Event_ShowMessage(IVAN, 0);
@@ -693,13 +719,14 @@ static void EV02_TALK(void) {
     Engine_EventSetMessage(MsgVaultWouldReallyWouldHelpMe);
     Event_OpenMessage(IVAN, 0);
   }
+  // Accepting the search lets Ivan merge into the leader's position.
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Scene_JoinRodSearch();
+    VaultInteriors_JoinRodSearch();
     GameFlag_Set(0x856);
     Engine_ActorSetAnimation(IVAN, 2);
-    record = Object_GetById(0);
-    if (record != 0) {
-      Actor_SetDestination(IVAN, record->x.part.pixel, record->z.part.pixel);
+    actor = Object_GetById(0);
+    if (actor != 0) {
+      Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorWaitForMove(IVAN);
     Actor_SetPosition(IVAN, 0, 0);
@@ -707,9 +734,9 @@ static void EV02_TALK(void) {
     Event_ShowMessage(IVAN, 0);
   }
   Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
+  actor = Object_GetById(0);
+  if (actor != 0) {
+    Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
@@ -717,7 +744,8 @@ static void EV02_TALK(void) {
   Engine_EventEnd();
 }
 
-static void Scene_JoinRodSearch(void) {
+// Have Ivan join the search and demonstrate Mind Read to the party.
+static void VaultInteriors_JoinRodSearch(void) {
   s32 message;
 
   Engine_EventWait(20);
@@ -727,38 +755,39 @@ static void Scene_JoinRodSearch(void) {
   message = MsgVaultThankHelpBelieve;
   Engine_EventSetMessage(message);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(2, 0x101, 0);
   Engine_EventWait(50);
-  SceneActor_SetModeZeroAndValue(2, 30);
-  Actor_WalkToAndWait(2, 0x178, 0x188);
-  SceneEffect_ApplyPairWithValue141(2, 0);
+  VaultInteriors_ShowMessageAndWait(2, 30);
+  Actor_WalkToAndWait(2, 376, 392);
+  VaultInteriors_BeginMindRead(2, 0);
   Engine_EventWait(40);
-  SceneState_SetValue2ThenFinish();
+  VaultInteriors_EndMindRead();
   Engine_ActorRunRepeatedMotion(0, 1);
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(0, 0x180, 0x1a8);
+  Actor_WalkToAndWait(0, 384, 424);
   Engine_EventWait(1);
   Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(30);
   Engine_EventShowMessage(2, 0);
+  // Demonstrate Mind Read and let Garet and Isaac react to Ivan's explanation.
   Actor_SetAttachedEffect(0, 0x102);
   Actor_SetAttachedEffect(1, 0x102);
   Engine_EventWait(60);
   Engine_ActorSetAnimation(0, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 30);
   Actor_ShowEmote(2, 0x101, 0);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(2, 1);
   Engine_EventWait(10);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
   Engine_EventShowMessage(2, 0);
   Engine_ActorRunRepeatedMotion(1, 2);
   Engine_EventWait(10);
-  FieldScene_RunSplitTripleSteps(1, 0, 30);
+  VaultInteriors_FaceActorAndWait(1, 0, 30);
   Engine_ActorRunRepeatedMotion(0, 2);
   Engine_EventWait(10);
-  FieldScene_RunSplitTripleSteps(0, 1, 40);
+  VaultInteriors_FaceActorAndWait(0, 1, 40);
   Actor_ShowEmote(0, 0x102, 0);
   Actor_ShowEmote(1, 0x102, 0);
   Engine_EventWait(60);
@@ -769,52 +798,52 @@ static void Scene_JoinRodSearch(void) {
   Engine_ActorFaceActor(1, 2, 0);
   Engine_EventChooseYesNo(0, 0);
   Engine_EventWait(30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
-  Actor_WalkToAndWait(2, 0x180, 0x198);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
+  Actor_WalkToAndWait(2, 384, 408);
   Engine_EventWait(10);
   Engine_MessageShowCentered(message + 5, 1);
   Engine_EventSetMessage(message + 6);
   Engine_ActorFaceEachOther(2, 1, 0);
-  FieldScene_RunSplitTripleSteps(0, 1, 20);
+  VaultInteriors_FaceActorAndWait(0, 1, 20);
   Actor_ShowEmote(1, 0x102, 0);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(1, 1);
   Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(1, 0x160, 0x198);
+  Actor_WalkToAndWait(1, 352, 408);
   Engine_EventWait(1);
   Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(10);
-  Actor_WalkTo(2, 0x170, 0x198);
+  Actor_WalkTo(2, 368, 408);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(0, 0x170, 0x1a8);
+  Actor_WalkToAndWait(0, 368, 424);
   Engine_ActorFaceActor(0, 1, 0);
   Engine_ActorWaitForMove(2);
-  SceneEffect_ApplyPairWithValue141(2, 1);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 4, 10);
+  VaultInteriors_BeginMindRead(2, 1);
+  VaultInteriors_PlayAnimationAndWait(1, 4, 10);
   Engine_EventShowMessage(1, 0);
-  SceneState_SetValue2ThenFinish();
-  SceneActor_SetPairZeroAndValue(2, 0, 30);
+  VaultInteriors_EndMindRead();
+  VaultInteriors_FaceEachOtherAndWait(2, 0, 30);
   Engine_EventShowMessage(2, 0);
   Engine_ActorRunRepeatedMotion(0, 1);
   Engine_EventWait(30);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
   Engine_EventShowMessage(2, 0);
   Engine_ActorRunRepeatedMotion(1, 2);
   Engine_ActorFaceActor(1, 0, 0);
   Engine_EventShowMessage(1, 0);
   Engine_ActorFaceActor(0, 1, 0);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 40);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 40);
   Engine_ActorFaceActor(0, 2, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
   Actor_ShowEmote(0, 0x101, 0);
   Actor_ShowEmote(1, 0x101, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
   Engine_EventShowMessage(2, 0);
   Engine_ActorShowEmote(1, 0x103, 0);
   Engine_EventWait(60);
-  FieldScene_RunSplitTripleSteps(1, 0, 10);
+  VaultInteriors_FaceActorAndWait(1, 0, 10);
   Engine_EventShowMessage(1, 0);
   Engine_ActorShowEmote(2, 0x100, 0);
   Engine_EventWait(60);
@@ -827,60 +856,61 @@ static void Scene_JoinRodSearch(void) {
   Engine_ActorFaceActor(1, 0, 0);
   Engine_ActorShowEmote(0, 0x102, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyPairWithValue141(2, 0);
+  VaultInteriors_BeginMindRead(2, 0);
   Ui_SetBank15PaletteAndClearRenderMode();
-  SceneActor_SetModeZeroAndValue(1, 30);
-  SceneState_SetValue2ThenFinish();
+  VaultInteriors_ShowMessageAndWait(1, 30);
+  VaultInteriors_EndMindRead();
   Engine_ActorFaceEachOther(2, 1, 0);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Engine_ActorFaceEachOther(2, 0, 0);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 20);
   Engine_ActorRunRepeatedMotion(1, 1);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 4, 10);
-  SceneActor_SetModeZeroAndValue(1, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 4, 10);
+  VaultInteriors_ShowMessageAndWait(1, 30);
   Engine_ActorFaceActor(2, 1, 0);
   Actor_ShowEmote(2, 0x101, 0);
   Engine_EventWait(30);
-  SceneActor_SetPairZeroAndValue(0, 1, 10);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 10);
   Engine_ActorSetAnimation(0, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 30);
   Engine_ActorFaceActor(0, 2, 0);
   Engine_ActorFaceActor(1, 2, 0);
   Engine_ActorFaceActor(2, 0, 0);
   Engine_ActorShowEmote(2, 0x106, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(2, 10);
+  VaultInteriors_ShowMessageAndWait(2, 10);
   Engine_ActorSetAnimation(0, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(0, 0x101, 0);
   Engine_ActorShowEmote(1, 0x101, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
-  SceneActor_SetModeZeroAndValue(2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
+  VaultInteriors_ShowMessageAndWait(2, 30);
   Engine_ActorShowEmote(0, 0x105, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 10);
-  SceneActor_SetModeZeroAndValue(2, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 10);
+  VaultInteriors_ShowMessageAndWait(2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
   Engine_ActorSetAnimation(0, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
   Event_PrepareObjectAndApplyValue(2, 1);
   Engine_EventSetMessage(message + 22);
   Engine_ActorRunRepeatedMotion(2, 1);
   Engine_EventShowMessage(2, 0);
 }
 
-static void EV08_TALK(void) {
+// Free the captive, confront the three thieves, and start their battle.
+static void VaultInteriors_FreeCaptiveAndConfrontThieves(void) {
   s32 base;
 
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
-  Actor_SetSpeed(GARET, 52428, 26214);
-  Actor_SetSpeed(IVAN, 52428, 26214);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorRunRepeatedMotion(0, 3);
   Engine_EventWait(20);
   base = MsgVaultVaultCutFree;
@@ -890,31 +920,31 @@ static void EV08_TALK(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimation(8, 1);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(8, 3, 40);
+  VaultInteriors_PlayAnimationAndWait(8, 3, 40);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 440);
-  FieldScene_RunSplitTripleSteps(0, 8, 20);
-  Actor_SetPosition(GARET, 51904512, 28835840);
-  Actor_SetPosition(IVAN, 51904512, 28835840);
+  VaultInteriors_FaceActorAndWait(0, 8, 20);
+  Actor_SetPosition(GARET, PIXELS(792), PIXELS(440));
+  Actor_SetPosition(IVAN, PIXELS(792), PIXELS(440));
   Actor_WalkTo(GARET, 808, 432);
   Actor_WalkTo(IVAN, 792, 456);
   Engine_ActorWaitForMove(1);
   Engine_ActorFaceActor(1, 8, 0);
   Engine_ActorWaitForMove(2);
-  FieldScene_RunSplitTripleSteps(2, 8, 60);
+  VaultInteriors_FaceActorAndWait(2, 8, 60);
   Actor_ShowEmote(8, 258, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Engine_ActorSetAnimation(2, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 30);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Actor_ShowEmote(IVAN, 258, 0);
   Actor_ShowEmote(GARET, 258, 0);
   Engine_EventWait(60);
   Actor_FaceDirection(8, 12288, 0);
   Engine_EventWait(10);
-  SceneActor_SetModeZeroAndValue(8, 30);
+  VaultInteriors_ShowMessageAndWait(8, 30);
   Actor_FaceDirection(8, 53248, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(8, 256, 0);
@@ -923,14 +953,15 @@ static void EV08_TALK(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(8, 53248, 0);
   Engine_EventWait(40);
-  FieldScene_RunSplitTripleSteps(8, 0, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(8, 4, 30);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_FaceActorAndWait(8, 0, 20);
+  VaultInteriors_PlayAnimationAndWait(8, 4, 30);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Engine_ActorRunRepeatedMotion(2, 1);
-  SceneActor_SetModeZeroAndValue(2, 40);
-  Actor_SetPosition(10, 48758784, 26738688);
+  VaultInteriors_ShowMessageAndWait(2, 40);
+  // Bring the thieves into the attic confrontation.
+  Actor_SetPosition(10, PIXELS(744), PIXELS(408));
   Engine_AudioPlayCue(61);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Engine_ActorStartRepeatedMotion(0, 1);
   Engine_ActorStartRepeatedMotion(1, 1);
   Engine_ActorStartRepeatedMotion(2, 1);
@@ -939,12 +970,12 @@ static void EV08_TALK(void) {
   Engine_ActorFaceActor(0, 10, 0);
   Engine_ActorFaceActor(1, 10, 0);
   Engine_ActorFaceActor(2, 10, 0);
-  FieldScene_RunSplitTripleSteps(8, 10, 40);
-  Actor_SetSpeed(10, 52428, 26214);
-  Actor_SetSpeed(11, 98304, 49152);
-  Actor_SetSpeed(12, 98304, 49152);
-  Actor_SetPosition(11, 48758784, 26738688);
-  Actor_SetPosition(12, 48758784, 26738688);
+  VaultInteriors_FaceActorAndWait(8, 10, 40);
+  Actor_SetSpeed(10, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(11, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(12, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetPosition(11, PIXELS(744), PIXELS(408));
+  Actor_SetPosition(12, PIXELS(744), PIXELS(408));
   Actor_WalkToAndWait(10, 792, 416);
   Actor_FaceDirection(10, 12288, 0);
   Engine_EventWait(70);
@@ -959,18 +990,18 @@ static void EV08_TALK(void) {
   Actor_FaceDirection(11, 8192, 0);
   Actor_FaceDirection(12, 8192, 0);
   Engine_EventWait(40);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 4, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(10);
-  SceneActor_SetModeZeroAndValue(11, 20);
+  VaultInteriors_ShowMessageAndWait(11, 20);
   Engine_ActorRunRepeatedMotion(12, 1);
   Engine_EventWait(10);
-  SceneActor_SetModeZeroAndValue(12, 40);
+  VaultInteriors_ShowMessageAndWait(12, 40);
   Actor_ShowEmote(IVAN, 257, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 4, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
   Actor_ShowEmote(GARET, 257, 0);
   Engine_EventWait(60);
@@ -978,39 +1009,39 @@ static void EV08_TALK(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
   Engine_ActorFaceActor(1, 8, 0);
-  FieldScene_RunSplitTripleSteps(2, 8, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(8, 4, 30);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_FaceActorAndWait(2, 8, 20);
+  VaultInteriors_PlayAnimationAndWait(8, 4, 30);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Engine_ActorRunRepeatedMotion(2, 2);
   Engine_EventWait(20);
   Engine_ActorFaceActor(0, 2, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
-  SceneActor_SetModeZeroAndValue(1, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
+  VaultInteriors_ShowMessageAndWait(1, 20);
   Actor_ShowEmote(8, 258, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(8, 20);
+  VaultInteriors_ShowMessageAndWait(8, 20);
   Engine_ActorRunRepeatedMotion(10, 1);
   Engine_EventWait(10);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Engine_ActorFaceActor(0, 10, 0);
   Actor_FaceActor(GARET, 10, 0);
-  FieldScene_RunSplitTripleSteps(2, 10, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(11, 3, 20);
-  SceneActor_SetModeZeroAndValue(11, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(12, 4, 20);
-  SceneActor_SetModeZeroAndValue(12, 20);
+  VaultInteriors_FaceActorAndWait(2, 10, 20);
+  VaultInteriors_PlayAnimationAndWait(11, 3, 20);
+  VaultInteriors_ShowMessageAndWait(11, 20);
+  VaultInteriors_PlayAnimationAndWait(12, 4, 20);
+  VaultInteriors_ShowMessageAndWait(12, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
   Actor_ShowEmote(GARET, 258, 0);
   Actor_ShowEmote(IVAN, 258, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 3, 20);
   Engine_EventOpenMessage(10, 0);
   Engine_EventWait(50);
   Engine_ActorFaceActor(2, 0, 0);
-  FieldScene_RunSplitTripleSteps(1, 0, 30);
+  VaultInteriors_FaceActorAndWait(1, 0, 30);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(40);
     Engine_ActorFaceActor(1, 10, 0);
@@ -1032,21 +1063,22 @@ static void EV08_TALK(void) {
   }
   Actor_ShowEmote(11, 259, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(11, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(12, 4, 20);
-  SceneActor_SetModeZeroAndValue(12, 30);
-  SceneActor_SetPairZeroAndValue(10, 11, 30);
+  VaultInteriors_ShowMessageAndWait(11, 20);
+  VaultInteriors_PlayAnimationAndWait(12, 4, 20);
+  VaultInteriors_ShowMessageAndWait(12, 30);
+  VaultInteriors_FaceEachOtherAndWait(10, 11, 30);
   Engine_ActorSetAnimation(10, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(11, 3, 30);
-  SceneActor_SetPairZeroAndValue(10, 12, 30);
+  VaultInteriors_PlayAnimationAndWait(11, 3, 30);
+  VaultInteriors_FaceEachOtherAndWait(10, 12, 30);
   Engine_ActorSetAnimation(10, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(12, 3, 40);
+  VaultInteriors_PlayAnimationAndWait(12, 3, 40);
   Actor_FaceDirection(10, 12288, 0);
   Actor_FaceDirection(11, 12288, 0);
   Actor_FaceDirection(12, 12288, 0);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 4, 20);
   Engine_EventShowMessage(10, 0);
+  // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(2132);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   base = (s32)&SceneId_VaultInteriors;
@@ -1057,21 +1089,24 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV07_TOUCH(void) {
+// Play the door cue and request exit 11.
+static void VaultInteriors_LeaveThroughExit11(void) {
   Engine_AudioPlayCue(123);
   Engine_EventRequestExit(11);
 }
 
-static void EV26_TOUCH(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+// Walk through the doorway and request exit 15 with a short transition.
+static void VaultInteriors_EnterThroughExit15(void) {
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
   gEventWork->transitionFrames = 16;
   Event_PlayCue(123);
   Engine_EventRequestExit(15);
 }
 
-static void EV27_TOUCH(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
+// Walk through the doorway, hear the captive if needed, and request exit 14.
+static void VaultInteriors_EnterThroughExit14(void) {
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
   if (GameFlag_IsSet(0x854) == 0) {
     Engine_EventBegin();
@@ -1084,7 +1119,8 @@ static void EV27_TOUCH(void) {
   Engine_EventRequestExit(14);
 }
 
-static void EV10_TOUCH(void) {
+// Approach the two suspects and start their evasive routes.
+static void VaultInteriors_ApproachSuspects(void) {
 
   struct FieldActor *actor24;
   struct FieldActor *actor25;
@@ -1092,40 +1128,41 @@ static void EV10_TOUCH(void) {
   actor24 = Object_GetById(24);
   actor25 = Object_GetById(25);
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, RATIO_HI, RATIO_LO);
-  Actor_SetSpeed(GARET, RATIO_HI, RATIO_LO);
-  Actor_SetSpeed(IVAN, RATIO_HI, RATIO_LO);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 696);
   Engine_EventWait(10);
   Actor_ShowEmote(25, 256, 0);
   Actor_ShowEmote(24, 256, 0);
   Engine_EventWait(60);
-  FieldScene_RunSplitTripleSteps(25, 0, 10);
+  VaultInteriors_FaceActorAndWait(25, 0, 10);
   Engine_ActorRunRepeatedMotion(24, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultWant);
-  SceneActor_SetModeZeroAndValue(24, 20);
+  VaultInteriors_ShowMessageAndWait(24, 20);
   Actor_SetAttachedEffect(25, 258);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(25, 20);
+  VaultInteriors_ShowMessageAndWait(25, 20);
   Engine_ActorRunRepeatedMotion(24, 1);
-  SceneActor_SetModeZeroAndValue(24, 30);
-  Actor_SetSpeed(24, 262144, 131072);
-  Actor_SetSpeed(25, 229376, 114688);
+  VaultInteriors_ShowMessageAndWait(24, 30);
+  Actor_SetSpeed(24, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(25, PIXELS(7) / 2, PIXELS(7) / 4);
   Actor_SetActionScript(25, gVaultInteriors_PairScriptO);
   Actor_SetActionScript(24, gVaultInteriors_PairScriptB);
   Object_RefreshSelectorById(24);
   Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(2130);
   GameFlag_Set(768);
-  FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
+  FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader, 3200);
   actor24->timer = 1;
   actor25->timer = 3;
   Engine_EventEnd();
 }
 
-static void EV20_TOUCH(void) {
+// Move the party aside to discuss the suspects, then reset their positions.
+static void VaultInteriors_DiscussSuspiciousGuests(void) {
   struct FieldActor *actor24;
   struct FieldActor *actor25;
   s32 base;
@@ -1133,7 +1170,7 @@ static void EV20_TOUCH(void) {
   actor24 = Object_GetById(24);
   actor25 = Object_GetById(25);
   Engine_EventBegin();
-  Scheduler_RemoveCallback(((s32)SceneActor_FaceActors24And25TowardActorZero));
+  Scheduler_RemoveCallback(VaultInteriors_FaceSuspectsTowardLeader);
   GameFlag_Clear(0x300);
   if (actor24->timer <= 3) {
     Actor_SetActionScript(24, gVaultInteriors_PairScriptG);
@@ -1145,112 +1182,132 @@ static void EV20_TOUCH(void) {
   } else {
     Actor_SetActionScript(25, gVaultInteriors_PairScriptF);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 0x2d8);
-  Actor_SetPosition(IVAN, 0xf80000, 0x2d80000);
-  Actor_SetPosition(GARET, 0xf80000, 0x2d80000);
-  Actor_WalkTo(IVAN, 0x108, 0x2e8);
-  Actor_WalkToAndWait(GARET, 232, 0x2e8);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 728);
+  Actor_SetPosition(IVAN, PIXELS(248), PIXELS(728));
+  Actor_SetPosition(GARET, PIXELS(248), PIXELS(728));
+  Actor_WalkTo(IVAN, 264, 744);
+  Actor_WalkToAndWait(GARET, 232, 744);
   Engine_ActorWaitForMove(IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
-  FieldScene_RunSplitTripleSteps(2, 0, 30);
+  VaultInteriors_FaceActorAndWait(2, 0, 30);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   base = MsgVaultTheyreActingSuspiciousSomethingsNot;
   Engine_EventSetMessage(base);
   Event_ShowMessage(IVAN, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 10);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 10);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
-  SceneActor_SetModeZeroAndValue(1, 30);
+  VaultInteriors_ShowMessageAndWait(1, 30);
   Engine_EventSetMessage((base + 4));
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 50);
+  VaultInteriors_FaceActorAndWait(1, 2, 50);
   Actor_ShowEmote(IVAN, 0x100, 0);
   Engine_EventWait(60);
-  SceneActor_SetPairZeroAndValue(0, 1, 50);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
   Actor_ShowEmote(GARET, 0x102, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 30);
   Engine_EventSetMessage(MsgVaultIsaacTakeLead);
   Event_ShowMessage(GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
   Engine_EventWait(40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
-  Actor_WalkTo(IVAN, 248, 0x2d8);
-  Actor_WalkToAndWait(GARET, 248, 0x2d8);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 50);
+  Actor_WalkTo(IVAN, 248, 728);
+  Actor_WalkToAndWait(GARET, 248, 728);
   Actor_SetPosition(GARET, 0, 0);
   Actor_SetPosition(IVAN, 0, 0);
-  Actor_SetPosition(24, 0x680000, 0x2b80000);
-  Actor_SetPosition(25, 0x780000, 0x2b80000);
+  Actor_SetPosition(24, PIXELS(104), PIXELS(696));
+  Actor_SetPosition(25, PIXELS(120), PIXELS(696));
   Actor_FaceDirection(24, 0, 0);
   Actor_FaceDirection(25, 0x8000, 0);
   Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
   Engine_EventEnd();
 }
 
-static void EV21_TOUCH(void) {
+// Enable the chase flags and start the movement callback.
+static void VaultInteriors_BeginCorneringSuspects(void) {
   Engine_GameFlagSet(0x107);
   Engine_GameFlagSet(0x250);
   VaultInteriors_StartActorStops();
 }
 
-static void FieldScene_ConfigurePairedActors(void) {
+// Have the suspects react to the party's return and reset their route states.
+static void VaultInteriors_ResetSuspectRoutes(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(24, 1);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultTheyreBack);
-  SceneActor_SetModeZeroAndValue(24, 20);
+  VaultInteriors_ShowMessageAndWait(24, 20);
   Actor_FaceDirection(25, 0, 20);
   Actor_SetAttachedEffect(25, 0x102);
   Engine_ActorRunRepeatedMotion(25, 2);
-  SceneActor_SetModeZeroAndValue(25, 20);
+  VaultInteriors_ShowMessageAndWait(25, 20);
   Engine_ActorSetAnimationAndWait(24, 4);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(24, 20);
-  Actor_SetSpeed(24, 0x40000, 0x20000);
-  Actor_SetSpeed(25, 0x38000, 0x1c000);
+  VaultInteriors_ShowMessageAndWait(24, 20);
+  Actor_SetSpeed(24, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(25, PIXELS(7) / 2, PIXELS(7) / 4);
   Actor_SetActionScript(25, gVaultInteriors_PairScriptO);
   Actor_SetActionScript(24, gVaultInteriors_PairScriptB);
   Object_RefreshSelectorById(24);
   {
-    struct FieldActor *record = Object_GetById(24);
-    u16 shown = 1;
+    struct FieldActor *suspect = Object_GetById(24);
+    u16 routeIndex = 1;
 
-    record->timer = shown;
+    suspect->timer = routeIndex;
   }
   {
-    struct FieldActor *record = Object_GetById(25);
-    u16 shown = 3;
+    struct FieldActor *suspect = Object_GetById(25);
+    u16 routeIndex = 3;
 
-    record->timer = shown;
+    suspect->timer = routeIndex;
   }
   Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
-static void FieldScene_SelectActorPair(void) {
+// Set the three party images to the priority used during the mind-reading
+// scene.
+static inline void VaultInteriors_SetPartyImagePriority(void) {
+  {
+    struct AnimationObject *sprite = Object_GetById(0)->sprite;
+    sprite->image.priority = 1;
+  }
+  {
+    struct AnimationObject *sprite = Object_GetById(1)->sprite;
+    sprite->image.priority = 1;
+  }
+  {
+    struct AnimationObject *sprite = Object_GetById(2)->sprite;
+    sprite->image.priority = 1;
+  }
+}
+
+// Select the cornered suspect, cast Mind Read, and discuss the result.
+static void VaultInteriors_ReadCorneredSuspectsMinds(void) {
   s32 actor;
   struct EventWork *work;
 
   work = gEventWork;
   Engine_EventBegin();
-  Scheduler_RemoveCallback(((s32)VaultInteriors_UpdateActorStops));
+  Scheduler_RemoveCallback(VaultInteriors_UpdateActorStops);
   GameFlag_Clear(0x107);
   GameFlag_Clear(0x250);
   Engine_ActorSetAnimation(24, 1);
@@ -1264,23 +1321,26 @@ static void FieldScene_SelectActorPair(void) {
   Actor_FaceActor(25, IVAN, 0);
   Engine_EventWait(10);
   actor = 24;
+  // The movement callback reports which suspect remained blocked.
   switch (work->raisedTrigger) {
   case 202:
   case 203:
     Engine_EventSetMessage(MsgVaultImSurrounded);
     Actor_SetAttachedEffect(25, 0x102);
     Engine_ActorRunRepeatedMotion(25, 2);
-    SceneActor_SetModeZeroAndValue(25, 20);
+    VaultInteriors_ShowMessageAndWait(25, 20);
     if (work->raisedTrigger == 202) {
       actor = 25;
       break;
     }
+    // Fall through to the first suspect when trigger 203 selects both.
+    // fall through
   case 201:
     Engine_EventSetMessage(MsgVaultTheresNowhereRun);
     Actor_SetAttachedEffect(24, 0x102);
     Engine_ActorRunRepeatedMotion(24, 2);
     actor = 24;
-    SceneActor_SetModeZeroAndValue(24, 20);
+    VaultInteriors_ShowMessageAndWait(24, 20);
     break;
   }
   Engine_ActorSetAnimation(IVAN, 1);
@@ -1289,113 +1349,86 @@ static void FieldScene_SelectActorPair(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgVaultNowIvan);
-  SceneActor_SetModeZeroAndValue(1, 20);
+  VaultInteriors_ShowMessageAndWait(1, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(2, 20);
-  SceneEffect_ApplyPairWithValue141(2, actor);
+  VaultInteriors_ShowMessageAndWait(2, 20);
+  VaultInteriors_BeginMindRead(2, actor);
   Ui_SetBank15PaletteAndClearRenderMode();
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(24, 2);
-  SceneActor_SetModeZeroAndValue(24, 20);
+  VaultInteriors_ShowMessageAndWait(24, 20);
   Engine_ActorRunRepeatedMotion(25, 2);
-  SceneActor_SetModeZeroAndValue(25, 20);
+  VaultInteriors_ShowMessageAndWait(25, 20);
   Actor_ShowEmote(IVAN, 0x100, 60);
-  SceneState_SetValue2ThenFinish();
+  VaultInteriors_EndMindRead();
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(1, 20);
+  VaultInteriors_ShowMessageAndWait(1, 20);
   Actor_FaceActor(IVAN, GARET, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Engine_EventWait(40);
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(0)->sprite;
-    sprite->part[0].priority = 1;
-  }
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(1)->sprite;
-    sprite->part[0].priority = 1;
-  }
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(2)->sprite;
-    sprite->part[0].priority = 1;
-  }
+  VaultInteriors_SetPartyImagePriority();
   gEventWork->transitionFrames = 24;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  VaultInteriors_RunBranchingDialogueScene();
+  // Move the discussion away from the suspects while the screen is closed.
+  VaultInteriors_DiscussMindReading();
   Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(0x853);
   {
-    u8 *record = (u8 *)Object_GetById(24);
-    s32 shown = 5;
+    struct FieldActor *suspect = Object_GetById(24);
+    s32 routeIndex = 5;
 
-    ((struct FieldActor *)record)->timer = shown;
+    suspect->timer = routeIndex;
   }
   {
-    u8 *record = (u8 *)Object_GetById(25);
-    s32 shown = 4;
+    struct FieldActor *suspect = Object_GetById(25);
+    s32 routeIndex = 4;
 
-    ((struct FieldActor *)record)->timer = shown;
+    suspect->timer = routeIndex;
   }
-  FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero,
-                             0xc80);
+  FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader, 0xc80);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_EventEnd();
 }
 
-static void VaultInteriors_RunBranchingDialogueScene(void) {
-  s32 v5;
+// Show the party's branching conversation about what Ivan learned.
+static void VaultInteriors_DiscussMindReading(void) {
+  s32 persistedWithQuestions;
 
   Audio_PlayCueFromEventWork();
   Engine_ActorSetSpritePriority(0, 1);
   {
-    struct FieldActor *record = Object_GetById(0);
+    struct FieldActor *leader = Object_GetById(0);
 
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
+    leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
   }
-  FieldMap_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
-  Actor_SetSpeed(2, 0xcccc, 0x6666);
-  Actor_SetPosition(0, 0xf80000, 0x2d80000);
-  Actor_SetPosition(2, 0x1080000, 0x2e80000);
-  Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(0)->sprite;
-    sprite->part[0].priority = 1;
-  }
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(1)->sprite;
-    sprite->part[0].priority = 1;
-  }
-  {
-    struct AnimationObject *sprite =
-        (struct AnimationObject *)Object_GetById(2)->sprite;
-    sprite->part[0].priority = 1;
-  }
+  FieldMap_SetViewBounds(PIXELS(32), PIXELS(576), PIXELS(400), PIXELS(936));
+  Actor_SetSpeed(0, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(1, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(2, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetPosition(0, PIXELS(248), PIXELS(728));
+  Actor_SetPosition(2, PIXELS(264), PIXELS(744));
+  Engine_ActorSetPosition(1, PIXELS(232), PIXELS(744));
+  VaultInteriors_SetPartyImagePriority();
   Engine_ActorFaceEachOther(0, 2, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
-  Actor_SetPosition(24, 0x680000, 0x2b80000);
-  Actor_SetPosition(25, 0x780000, 0x2b80000);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
+  Actor_SetPosition(24, PIXELS(104), PIXELS(696));
+  Actor_SetPosition(25, PIXELS(120), PIXELS(696));
   Engine_ActorFaceEachOther(24, 25, 0);
   Engine_CameraFollowActor(0, 0);
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
   Engine_EventWait(30);
   {
-    u8 *work = *(u8 **)&gEventWork;
+    struct EventWork *work = gEventWork;
 
-    ((struct EventWork *)work)->transitionFrames = 24;
-    ((struct EventWork *)work)->startTransition = 0x201;
+    work->transitionFrames = 24;
+    work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   }
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1403,156 +1436,139 @@ static void VaultInteriors_RunBranchingDialogueScene(void) {
   Engine_ActorRunRepeatedMotion(1, 1);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgVaultLearn);
-  SceneActor_SetModeZeroAndValue(1, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 50);
+  VaultInteriors_ShowMessageAndWait(1, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
   Engine_ActorFaceActor(0, 2, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 20);
   Engine_EventShowMessage(2, 0);
   Actor_ShowEmote(0, 0x102, 0);
   Actor_ShowEmote(1, 0x102, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 30);
   Engine_ActorRunRepeatedMotion(1, 1);
   Engine_EventWait(20);
-  SceneActor_SetPairZeroAndValue(0, 1, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 20);
   Engine_EventOpenMessage(1, 0);
-  v5 = 0;
+  persistedWithQuestions = 0;
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(2, 2);
-    SceneEffect_ApplyThreeValuesAndFinish(1, 4, 30);
+    VaultInteriors_PlayAnimationAndWait(1, 4, 30);
     Engine_EventOpenMessage(1, 0);
-    v5 = 0;
+    persistedWithQuestions = 0;
     if (Engine_EventChooseYesNo(0, 0) != 0) {
       Engine_EventWait(20);
       Engine_ActorShowEmote(2, 0x102, 0);
       Engine_EventWait(60);
       Engine_ActorRunRepeatedMotion(2, 2);
-      SceneActor_SetPairZeroAndValue(0, 2, 20);
+      VaultInteriors_FaceEachOtherAndWait(0, 2, 20);
       Engine_EventOpenMessage(2, 0);
-      v5 = 0;
+      persistedWithQuestions = 0;
       if (Engine_EventChooseYesNo(2, 0) != 0) {
         Engine_EventWait(20);
         Engine_ActorShowEmote(2, 0x105, 0);
         Engine_EventWait(60);
-        SceneActor_SetModeZeroAndValue(2, 20);
-        FieldScene_RunSplitTripleSteps(1, 2, 10);
+        VaultInteriors_ShowMessageAndWait(2, 20);
+        VaultInteriors_FaceActorAndWait(1, 2, 10);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
-        SceneActor_SetModeZeroAndValue(1, 10);
-        FieldScene_RunSplitTripleSteps(2, 1, 20);
+        VaultInteriors_ShowMessageAndWait(1, 10);
+        VaultInteriors_FaceActorAndWait(2, 1, 20);
         Engine_ActorShowEmote(2, 0x101, 0);
         Engine_EventWait(60);
-        SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-        SceneActor_SetModeZeroAndValue(1, 10);
-        SceneActor_SetPairZeroAndValue(1, 0, 20);
-        SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-        v5 = 1;
-        SceneActor_SetModeZeroAndValue(1, 20);
+        VaultInteriors_PlayAnimationAndWait(2, 4, 20);
+        VaultInteriors_ShowMessageAndWait(1, 10);
+        VaultInteriors_FaceEachOtherAndWait(1, 0, 20);
+        VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+        persistedWithQuestions = 1;
+        VaultInteriors_ShowMessageAndWait(1, 20);
       }
     }
   }
-  if (v5 == 0) {
+  if (persistedWithQuestions == 0) {
     Engine_EventSetMessage(MsgVaultLeave);
-    SceneActor_SetModeZeroAndValue(1, 20);
-    SceneActor_SetPairZeroAndValue(1, 0, 20);
-    SceneActor_SetModeZeroAndValue(1, 20);
+    VaultInteriors_ShowMessageAndWait(1, 20);
+    VaultInteriors_FaceEachOtherAndWait(1, 0, 20);
+    VaultInteriors_ShowMessageAndWait(1, 20);
   }
   Engine_ActorShowEmote(0, 0x105, 0);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(1, 1);
-  SceneActor_SetModeZeroAndValue(1, 10);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 10);
+  VaultInteriors_ShowMessageAndWait(1, 10);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 10);
   Engine_ActorFaceEachOther(1, 2, 0);
-  SceneActor_SetPairZeroAndValue(0, 2, 10);
+  VaultInteriors_FaceEachOtherAndWait(0, 2, 10);
   Engine_EventShowMessage(1, 0);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
-  Actor_WalkTo(2, 248, 0x2d8);
-  Actor_WalkToAndWait(1, 248, 0x2d8);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 10);
+  Actor_WalkTo(2, 248, 728);
+  Actor_WalkToAndWait(1, 248, 728);
   Engine_ActorSetPosition(1, 0, 0);
   Engine_ActorSetPosition(2, 0, 0);
 }
 
+// Advance suspect routes when the leader touches each route trigger.
 static void VaultInteriors_PoseDialogueActors(void) {
   switch (gEventWork->touchedTrigger) {
   case 11:
-    SceneActor_UpdateAnimationOnStateMatch(24, 1, 2,
-                                           gVaultInteriors_PairScriptC);
-    SceneActor_UpdateAnimationOnStateMatch(25, 3, 4,
-                                           gVaultInteriors_PairScriptR);
+    VaultInteriors_AdvanceSuspectRoute(24, 1, 2, gVaultInteriors_PairScriptC);
+    VaultInteriors_AdvanceSuspectRoute(25, 3, 4, gVaultInteriors_PairScriptR);
     break;
   case 12:
-    SceneActor_UpdateAnimationOnStateMatch(24, 1, 4,
-                                           gVaultInteriors_PairScriptG);
-    SceneActor_UpdateAnimationOnStateMatch(24, 2, 3,
-                                           gVaultInteriors_PairScriptD);
-    SceneActor_UpdateAnimationOnStateMatch(25, 1, 3,
-                                           gVaultInteriors_PairScriptO);
+    VaultInteriors_AdvanceSuspectRoute(24, 1, 4, gVaultInteriors_PairScriptG);
+    VaultInteriors_AdvanceSuspectRoute(24, 2, 3, gVaultInteriors_PairScriptD);
+    VaultInteriors_AdvanceSuspectRoute(25, 1, 3, gVaultInteriors_PairScriptO);
     break;
   case 13:
-    SceneActor_UpdateAnimationOnStateMatch(24, 2, 1,
-                                           gVaultInteriors_PairScriptA);
-    SceneActor_UpdateAnimationOnStateMatch(24, 3, 6,
-                                           gVaultInteriors_PairScriptJ);
-    SceneActor_UpdateAnimationOnStateMatch(25, 2, 4,
-                                           gVaultInteriors_PairScriptQ);
+    VaultInteriors_AdvanceSuspectRoute(24, 2, 1, gVaultInteriors_PairScriptA);
+    VaultInteriors_AdvanceSuspectRoute(24, 3, 6, gVaultInteriors_PairScriptJ);
+    VaultInteriors_AdvanceSuspectRoute(25, 2, 4, gVaultInteriors_PairScriptQ);
     break;
   case 14:
-    SceneActor_UpdateAnimationOnStateMatch(24, 3, 2,
-                                           gVaultInteriors_PairScriptC);
-    SceneActor_UpdateAnimationOnStateMatch(25, 4, 3,
-                                           gVaultInteriors_PairScriptP);
+    VaultInteriors_AdvanceSuspectRoute(24, 3, 2, gVaultInteriors_PairScriptC);
+    VaultInteriors_AdvanceSuspectRoute(25, 4, 3, gVaultInteriors_PairScriptP);
     break;
   case 15:
-    SceneActor_UpdateAnimationOnStateMatch(24, 4, 5,
-                                           gVaultInteriors_PairScriptH);
-    SceneActor_UpdateAnimationOnStateMatch(25, 1, 2,
-                                           gVaultInteriors_PairScriptM);
+    VaultInteriors_AdvanceSuspectRoute(24, 4, 5, gVaultInteriors_PairScriptH);
+    VaultInteriors_AdvanceSuspectRoute(25, 1, 2, gVaultInteriors_PairScriptM);
     break;
   case 16:
-    SceneActor_UpdateAnimationOnStateMatch(24, 4, 1,
-                                           gVaultInteriors_PairScriptB);
-    SceneActor_UpdateAnimationOnStateMatch(24, 5, 6,
-                                           gVaultInteriors_PairScriptI);
-    SceneActor_UpdateAnimationOnStateMatch(25, 3, 1,
-                                           gVaultInteriors_PairScriptL);
+    VaultInteriors_AdvanceSuspectRoute(24, 4, 1, gVaultInteriors_PairScriptB);
+    VaultInteriors_AdvanceSuspectRoute(24, 5, 6, gVaultInteriors_PairScriptI);
+    VaultInteriors_AdvanceSuspectRoute(25, 3, 1, gVaultInteriors_PairScriptL);
     break;
   case 17:
-    SceneActor_UpdateAnimationOnStateMatch(24, 5, 4,
-                                           gVaultInteriors_PairScriptF);
-    SceneActor_UpdateAnimationOnStateMatch(24, 6, 3,
-                                           gVaultInteriors_PairScriptE);
-    SceneActor_UpdateAnimationOnStateMatch(25, 4, 2,
-                                           gVaultInteriors_PairScriptN);
+    VaultInteriors_AdvanceSuspectRoute(24, 5, 4, gVaultInteriors_PairScriptF);
+    VaultInteriors_AdvanceSuspectRoute(24, 6, 3, gVaultInteriors_PairScriptE);
+    VaultInteriors_AdvanceSuspectRoute(25, 4, 2, gVaultInteriors_PairScriptN);
     break;
   case 18:
-    SceneActor_UpdateAnimationOnStateMatch(24, 6, 5,
-                                           gVaultInteriors_PairScriptH);
-    SceneActor_UpdateAnimationOnStateMatch(25, 2, 1,
-                                           gVaultInteriors_PairScriptK);
+    VaultInteriors_AdvanceSuspectRoute(24, 6, 5, gVaultInteriors_PairScriptH);
+    VaultInteriors_AdvanceSuspectRoute(25, 2, 1, gVaultInteriors_PairScriptK);
     break;
   }
 }
 
-static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
-                                                   s32 next, const s32 *desc) {
-  struct FieldActor *rec = Object_GetById(actor);
+// Install a route script only when the suspect is in its expected state.
+static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
+                                               s32 next, const s32 *actions) {
+  struct FieldActor *suspect = Object_GetById(actor);
 
-  if (rec->timer == expected) {
-    Actor_SetActionScript(actor, desc);
-    rec->timer = next;
+  if (suspect->timer == expected) {
+    Actor_SetActionScript(actor, actions);
+    suspect->timer = next;
   }
 }
 
 // Shared source is included here in ROM order.
 #include "common/vault_spotflag.h"
 
-s32 VaultInteriors_ApplyEntryState(void) {
-  gEventWork->startTransition = 0x209;
+// Restore room actors, passages, and the appropriate theft-story sequence.
+s32 VaultInteriors_Initialize(void) {
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   switch (gGameState.entrance) {
   case 5: {
     s32 zero = 0;
@@ -1563,14 +1579,14 @@ s32 VaultInteriors_ApplyEntryState(void) {
   } break;
   case 10:
     if (Engine_GameFlagIsSet(0x850) != 0) {
-      Actor_SetPosition(2, 0x1780000, 0x1780000);
+      Actor_SetPosition(2, PIXELS(376), PIXELS(376));
       Actor_FaceDirection(2, 0x4000, 0);
     }
     if (Engine_GameFlagIsSet(0x856) != 0) {
       Engine_ActorSetPosition(2, 0, 0);
     }
     if (Engine_GameFlagIsSet(0x855) != 0) {
-      Actor_SetPosition(16, 0x2180000, VAULT_INTERIORS_ENTRY_ACTOR_Z);
+      Actor_SetPosition(16, PIXELS(536), VAULT_INTERIORS_ENTRY_ACTOR_Z);
       Actor_SetBuiltinAction(16, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(16, 0x5000, 0);
     }
@@ -1578,11 +1594,11 @@ s32 VaultInteriors_ApplyEntryState(void) {
   case 7:
   case 11:
     if (Engine_GameFlagIsSet(0x855) != 0) {
-      Actor_SetPosition(18, 0x2380000, 0x2880000);
+      Actor_SetPosition(18, PIXELS(568), PIXELS(648));
       Actor_SetBuiltinAction(18, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(18, 0x4000, 0);
-      OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000,
-                                                    0x2a00000);
+      OverlayObject_ConfigureObject22WithResource17(231, PIXELS(568),
+                                                    PIXELS(16), PIXELS(672));
       Task_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
     } else if (Engine_GameFlagIsSet(0x853) != 0) {
       Engine_ActorSetPosition(18, 0, 0);
@@ -1592,11 +1608,11 @@ s32 VaultInteriors_ApplyEntryState(void) {
     if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x852) != 0 &&
         Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0) {
       Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      Task_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+      Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader, 0xc80);
       break;
     }
     if (Engine_GameFlagIsSet(0x856) != 0) {
-      Actor_SetPosition(25, 0x780000, 0x2b80000);
+      Actor_SetPosition(25, PIXELS(120), PIXELS(696));
       Actor_FaceDirection(25, 0x8000, 0);
     }
     if (Engine_GameFlagIsSet(0x852) != 0) {
@@ -1607,7 +1623,7 @@ s32 VaultInteriors_ApplyEntryState(void) {
       }
       Object_GetById(24)->timer = 5;
       Object_GetById(25)->timer = 4;
-      FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero,
+      FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                                  0xc80);
     }
     break;
@@ -1622,7 +1638,7 @@ s32 VaultInteriors_ApplyEntryState(void) {
     Object_GetById(26)->collisionFlags |= 4;
     Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
     if (Engine_GameFlagIsSet(0x859) != 0) {
-      Actor_SetPosition(26, 0x2a40000, 0x19b0000);
+      Actor_SetPosition(26, PIXELS(676), PIXELS(411));
       Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     }
     break;
@@ -1638,9 +1654,9 @@ s32 VaultInteriors_ApplyEntryState(void) {
       Engine_ActorSetAnimation(17, 2);
       break;
     }
-    Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
+    Engine_ActorSetPosition(8, PIXELS(824), PIXELS(456));
     if (Engine_GameFlagIsSet(0x854) != 0) {
-      VaultInteriors_RunVaultEvent();
+      VaultInteriors_ConfrontThievesAgain();
       Engine_EventEnd();
       break;
     }
@@ -1648,23 +1664,23 @@ s32 VaultInteriors_ApplyEntryState(void) {
     VaultInteriors_OpenWindowTransition();
     Engine_AudioPlayCue(17);
     Engine_EventSetMessage(MsgVaultUhnnUhnn);
-    SceneActor_SetModeZeroAndValue(8, 10);
+    VaultInteriors_ShowMessageAndWait(8, 10);
     Engine_EventEnd();
     break;
   case 16:
     Map_CopyCells(54, 2, 2, 8, 44, 21);
     Map_CopyCells(54, 2, 2, 8, 44, 81);
-    Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
-    FieldScene_RunLateSequence();
+    Engine_ActorSetPosition(8, PIXELS(824), PIXELS(456));
+    VaultInteriors_LoseToThieves();
     Engine_EventRequestExit(16);
     break;
   case 17:
     Map_CopyCells(54, 2, 2, 8, 44, 21);
     Map_CopyCells(54, 2, 2, 8, 44, 81);
     if (Engine_GameFlagIsSet(0x109) == 0) {
-      Actor_SetPosition(8, 0x3380000, 0x1c80000);
-      RunEventScript01();
-      RunDialoguePromptScene();
+      Actor_SetPosition(8, PIXELS(824), PIXELS(456));
+      VaultInteriors_DefeatThieves();
+      VaultInteriors_ReturnStolenGoods();
       break;
     }
     Engine_ActorSetAnimation(15, 2);
@@ -1676,7 +1692,8 @@ s32 VaultInteriors_ApplyEntryState(void) {
   return 0;
 }
 
-static void SceneActor_FaceActors24And25TowardActorZero(void) {
+// Keep both suspects facing the leader while they evade the party.
+static void VaultInteriors_FaceSuspectsTowardLeader(void) {
   struct FieldActor *origin = Object_GetById(0);
   struct FieldActor *first = Object_GetById(24);
   struct FieldActor *second = Object_GetById(25);
@@ -1687,35 +1704,36 @@ static void SceneActor_FaceActors24And25TowardActorZero(void) {
                            origin->x.fixed - second->x.fixed);
 }
 
-static void FieldScene_RunLateSequence(void) {
-  struct FieldActor *record;
-  s32 v5;
+// Show the thieves' reaction after the party loses their battle.
+static void VaultInteriors_LoseToThieves(void) {
+  struct FieldActor *actor;
+  s32 priorityFlags;
 
   Engine_EventBegin();
-  Actor_SetPosition(10, 0x3180000, 0x1a00000);
-  Actor_SetPosition(11, 0x3200000, 0x1900000);
-  Actor_SetPosition(12, 0x3080000, 0x1a00000);
+  Actor_SetPosition(10, PIXELS(792), PIXELS(416));
+  Actor_SetPosition(11, PIXELS(800), PIXELS(400));
+  Actor_SetPosition(12, PIXELS(776), PIXELS(416));
   Actor_FaceDirection(10, 0x3000, 0);
   Actor_FaceDirection(11, 0x3000, 0);
   Actor_FaceDirection(12, 0x3000, 0);
-  Actor_SetSpeed(11, 0xcccc, 0x6666);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3100000, 0x1c00000);
-  Actor_SetPosition(GARET, 0x3280000, 0x1b00000);
-  Actor_SetPosition(IVAN, 0x3080000, 0x1b00000);
+  Actor_SetSpeed(11, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(12, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(784), PIXELS(448));
+  Actor_SetPosition(GARET, PIXELS(808), PIXELS(432));
+  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(432));
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
   Engine_ActorSetAnimation(GARET, 19);
   Engine_ActorSetAnimation(IVAN, 19);
-  v5 = 2;
-  Object_GetById(0)->priorityFlags = v5;
-  Object_GetById(1)->priorityFlags = v5;
-  Object_GetById(2)->priorityFlags = v5;
-  record = Object_GetById(0);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Object_GetById(2);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Object_GetById(1);
-  Engine_ActorSetSpriteFlags(record, 0);
+  priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(0)->priorityFlags = priorityFlags;
+  Object_GetById(1)->priorityFlags = priorityFlags;
+  Object_GetById(2)->priorityFlags = priorityFlags;
+  actor = Object_GetById(0);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(2);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(1);
+  Engine_ActorSetSpriteFlags(actor, 0);
   Actor_FaceDirection(8, 0xb000, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1723,35 +1741,36 @@ static void FieldScene_RunLateSequence(void) {
   Engine_MapRedraw();
   VaultInteriors_OpenWindowTransition();
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 3, 20);
   Engine_EventSetMessage(MsgVaultTheseKidsNothingWorryAbout);
-  SceneActor_SetModeZeroAndValue(10, 30);
-  SceneActor_SetModeZeroAndValue(8, 30);
-  Actor_WalkTo(11, 0x328, 0x1c8);
-  Actor_WalkTo(12, 0x318, 0x1c8);
+  VaultInteriors_ShowMessageAndWait(10, 30);
+  VaultInteriors_ShowMessageAndWait(8, 30);
+  Actor_WalkTo(11, 808, 456);
+  Actor_WalkTo(12, 792, 456);
   Engine_ActorWaitForMove(12);
   Actor_FaceDirection(12, 0, 0);
   Engine_ActorWaitForMove(11);
   Actor_FaceDirection(11, 0, 0);
   Engine_EventWait(30);
-  SceneEffect_ApplyThreeValuesAndFinish(11, 3, 20);
-  SceneActor_SetModeZeroAndValue(11, 20);
-  FieldScene_RunSplitTripleSteps(12, 0, 30);
-  SceneActor_SetModeZeroAndValue(12, 60);
+  VaultInteriors_PlayAnimationAndWait(11, 3, 20);
+  VaultInteriors_ShowMessageAndWait(11, 20);
+  VaultInteriors_FaceActorAndWait(12, 0, 30);
+  VaultInteriors_ShowMessageAndWait(12, 60);
   Engine_EventEnd();
 }
 
-static void VaultInteriors_RunVaultEvent(void) {
+// Arrange the attic confrontation and restart the thieves' battle.
+static void VaultInteriors_ConfrontThievesAgain(void) {
 
-  Actor_SetPosition(10, 0x3180000, 0x1a00000);
-  Actor_SetPosition(11, 0x3200000, 0x1900000);
-  Actor_SetPosition(12, 0x3080000, 0x1a00000);
+  Actor_SetPosition(10, PIXELS(792), PIXELS(416));
+  Actor_SetPosition(11, PIXELS(800), PIXELS(400));
+  Actor_SetPosition(12, PIXELS(776), PIXELS(416));
   Actor_FaceDirection(10, 0x3000, 0);
   Actor_FaceDirection(11, 0x3000, 0);
   Actor_FaceDirection(12, 0x3000, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
-  Actor_SetPosition(1, 0x3280000, 0x1b00000);
-  Actor_SetPosition(2, 0x3180000, 0x1c80000);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  Actor_SetPosition(1, PIXELS(808), PIXELS(432));
+  Actor_SetPosition(2, PIXELS(792), PIXELS(456));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
   Actor_FaceDirection(1, 0xb000, 0);
   Actor_FaceDirection(2, 0xb000, 0);
@@ -1767,21 +1786,21 @@ static void VaultInteriors_RunVaultEvent(void) {
   Engine_EventSetMessage(MsgVaultWontGoAway);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(11, 30);
+  VaultInteriors_ShowMessageAndWait(11, 30);
   Engine_ActorRunRepeatedMotion(12, 1);
   Engine_EventWait(20);
   Event_ShowMessage(12, 0);
-  SceneActor_SetPairZeroAndValue(10, 11, 30);
+  VaultInteriors_FaceEachOtherAndWait(10, 11, 30);
   Engine_ActorSetAnimation(10, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(11, 3, 30);
-  SceneActor_SetPairZeroAndValue(10, 12, 30);
+  VaultInteriors_PlayAnimationAndWait(11, 3, 30);
+  VaultInteriors_FaceEachOtherAndWait(10, 12, 30);
   Engine_ActorSetAnimation(10, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(12, 3, 40);
+  VaultInteriors_PlayAnimationAndWait(12, 3, 40);
   Actor_FaceDirection(10, 0x3000, 0);
   Actor_FaceDirection(11, 0x3000, 0);
   Actor_FaceDirection(12, 0x3000, 0);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
+  VaultInteriors_PlayAnimationAndWait(10, 4, 20);
   Event_ShowMessage(10, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   Event_SetNextDestination((s32)&SceneId_VaultInteriors, 17);
@@ -1790,6 +1809,7 @@ static void VaultInteriors_RunVaultEvent(void) {
   Field_RequestBattleFromEncounterTable(12, 5);
 }
 
+// Read Ivan's owned Venus Djinn count for the shared dialogue.
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
   return UnitGet(2)->djinnOwnedCounts[0];
 }
@@ -1797,38 +1817,39 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
-static void RunEventScript01(void) {
-  struct FieldActor *record;
+// Stage the defeated thieves and gather the townspeople in the attic.
+static void VaultInteriors_DefeatThieves(void) {
+  struct FieldActor *actor;
   struct EventWork *work;
   const s32 *actions;
-  u8 *actor12Record;
+  struct AnimationObject *thirdThiefSprite;
 
-  record = Object_GetById(12);
-  actor12Record = (u8 *)record->sprite;
+  actor = Object_GetById(12);
+  thirdThiefSprite = actor->sprite;
   Engine_EventBegin();
-  Actor_SetPosition(10, 0x3180000, 0x1a00000);
-  Actor_SetPosition(11, 0x3200000, 0x1900000);
-  Actor_SetPosition(12, 0x3080000, 0x1880000);
-  record = Object_GetById(10);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Object_GetById(11);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Object_GetById(12);
-  Engine_ActorSetSpriteFlags(record, 0);
+  Actor_SetPosition(10, PIXELS(792), PIXELS(416));
+  Actor_SetPosition(11, PIXELS(800), PIXELS(400));
+  Actor_SetPosition(12, PIXELS(776), PIXELS(392));
+  actor = Object_GetById(10);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(11);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(12);
+  Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(10, 9);
   Engine_ActorSetAnimation(11, 9);
   Engine_ActorSetAnimation(12, 9);
   Object_GetById(12)->priorityFlags &= 254;
-  actor12Record[9] |= 12;
+  thirdThiefSprite->image.priority = 3;
   actions = gVaultInteriors_ActionTable;
   Actor_SetActionScript(10, actions);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
-  Actor_SetPosition(GARET, 0x3280000, 0x1b00000);
-  Actor_SetPosition(IVAN, 0x3080000, 0x1b80000);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  Actor_SetPosition(GARET, PIXELS(808), PIXELS(432));
+  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(440));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
   Actor_FaceDirection(GARET, 0xb000, 0);
   Actor_FaceDirection(IVAN, 0xb000, 0);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_FaceDirection(8, 0xb000, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1840,161 +1861,161 @@ static void RunEventScript01(void) {
   Actor_SetActionScript(12, actions);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgVaultTheyTheyGotUs);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Actor_ShowEmote(8, 0x102, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(8, 20);
-  Actor_WalkToAndWait(8, 0x328, 0x1c8);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(GARET, 0x318, 0x1b0);
+  VaultInteriors_ShowMessageAndWait(8, 20);
+  Actor_WalkToAndWait(8, 808, 456);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(GARET, 792, 432);
   Actor_FaceDirection(GARET, 0, 0);
-  Actor_WalkToAndWait(8, 0x328, 0x198);
+  Actor_WalkToAndWait(8, 808, 408);
   Actor_FaceDirection(8, 0x8000, 0);
-  Actor_WalkToAndWait(GARET, 0x328, 0x1b0);
+  Actor_WalkToAndWait(GARET, 808, 432);
   Actor_FaceDirection(GARET, 0xc000, 0);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(8, 3, 20);
-  SceneActor_SetModeZeroAndValue(8, 20);
-  Actor_WalkToAndWait(8, 0x300, 0x198);
+  VaultInteriors_PlayAnimationAndWait(8, 3, 20);
+  VaultInteriors_ShowMessageAndWait(8, 20);
+  Actor_WalkToAndWait(8, 768, 408);
   Engine_EventWait(20);
   Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
   Actor_FaceActor(GARET, 8, 0);
-  FieldScene_RunSplitTripleSteps(2, 8, 40);
-  SceneActor_SetModeZeroAndValue(8, 30);
+  VaultInteriors_FaceActorAndWait(2, 8, 40);
+  VaultInteriors_ShowMessageAndWait(8, 30);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  Actor_WalkToAndWait(8, 0x2e8, 0x198);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  Actor_WalkToAndWait(8, 744, 408);
   Engine_EventWait(50);
   Engine_ActorRunRepeatedMotion(11, 2);
-  SceneActor_SetModeZeroAndValue(11, 20);
+  VaultInteriors_ShowMessageAndWait(11, 20);
   Actor_SetActionScript(11, actions);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
   Actor_FaceActor(GARET, 11, 0);
-  FieldScene_RunSplitTripleSteps(2, 11, 20);
-  SceneActor_SetModeZeroAndValue(1, 20);
+  VaultInteriors_FaceActorAndWait(2, 11, 20);
+  VaultInteriors_ShowMessageAndWait(1, 20);
   Engine_ActorRunRepeatedMotion(12, 2);
-  SceneActor_SetModeZeroAndValue(12, 30);
+  VaultInteriors_ShowMessageAndWait(12, 30);
   Actor_SetActionScript(12, actions);
   Actor_ShowEmote(GARET, 0x103, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(1, 30);
-  FieldScene_RunSplitTripleSteps(2, 0, 30);
-  FieldScene_RunSplitTripleSteps(0, 2, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 30);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(1, 30);
+  VaultInteriors_FaceActorAndWait(2, 0, 30);
+  VaultInteriors_FaceActorAndWait(0, 2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 30);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(GARET, 0x100, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(1, 30);
+  VaultInteriors_ShowMessageAndWait(1, 30);
   Actor_ShowEmote(IVAN, 0x101, 0);
   Engine_EventWait(60);
-  SceneActor_SetPairZeroAndValue(0, 1, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-  SceneEffect_ApplyPairWithValue141(2, 0);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+  VaultInteriors_BeginMindRead(2, 0);
   Ui_SetBank15PaletteAndClearRenderMode();
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 10);
+  VaultInteriors_FaceActorAndWait(1, 2, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(60);
-  FieldScene_RunSplitTripleSteps(0, 1, 10);
+  VaultInteriors_FaceActorAndWait(0, 1, 10);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-    FieldScene_RunSplitTripleSteps(1, 2, 20);
-    SceneState_SetValue2ThenFinish();
+    VaultInteriors_FaceActorAndWait(1, 2, 20);
+    VaultInteriors_EndMindRead();
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(20);
-    SceneActor_SetModeZeroAndValue(1, 20);
+    VaultInteriors_ShowMessageAndWait(1, 20);
   } else {
     gEventWork->message++;
     Actor_ShowEmote(GARET, 0x102, 0);
     Engine_EventWait(60);
-    SceneActor_SetModeZeroAndValue(1, 20);
+    VaultInteriors_ShowMessageAndWait(1, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-    FieldScene_RunSplitTripleSteps(1, 2, 20);
-    SceneState_SetValue2ThenFinish();
+    VaultInteriors_FaceActorAndWait(1, 2, 20);
+    VaultInteriors_EndMindRead();
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(20);
   }
   Actor_ShowEmote(IVAN, 0x102, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 20);
   Engine_EventSetMessage(MsgVaultSeeThatsHappened);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 40);
-  Actor_WalkToAndWait(8, 0x328, 0x198);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 40);
+  Actor_WalkToAndWait(8, 808, 408);
   Actor_FaceDirection(8, 0x8000, 0);
   Engine_EventWait(30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
   Actor_FaceActor(GARET, 8, 0);
-  FieldScene_RunSplitTripleSteps(2, 8, 20);
+  VaultInteriors_FaceActorAndWait(2, 8, 20);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(8, 20);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_SetSpeed(13, 0xcccc, 0x6666);
-  Actor_SetSpeed(14, 0xcccc, 0x6666);
-  Actor_SetPosition(9, 0x2e80000, 0x1980000);
-  Actor_WalkToAndWait(9, 0x300, 0x198);
-  FieldScene_RunSplitTripleSteps(9, 10, 30);
-  Actor_SetPosition(13, 0x2e80000, 0x1980000);
-  Actor_WalkToAndWait(13, 0x300, 0x198);
-  Actor_SetPosition(14, 0x2e80000, 0x1980000);
-  Actor_WalkTo(14, 0x310, 0x190);
-  Actor_WalkToAndWait(13, 0x308, 0x1a8);
+  VaultInteriors_ShowMessageAndWait(8, 20);
+  Actor_SetSpeed(9, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(13, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(14, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetPosition(9, PIXELS(744), PIXELS(408));
+  Actor_WalkToAndWait(9, 768, 408);
+  VaultInteriors_FaceActorAndWait(9, 10, 30);
+  Actor_SetPosition(13, PIXELS(744), PIXELS(408));
+  Actor_WalkToAndWait(13, 768, 408);
+  Actor_SetPosition(14, PIXELS(744), PIXELS(408));
+  Actor_WalkTo(14, 784, 400);
+  Actor_WalkToAndWait(13, 776, 424);
   Engine_ActorWaitForMove(14);
   Actor_FaceActor(13, 10, 0);
-  FieldScene_RunSplitTripleSteps(14, 10, 20);
+  VaultInteriors_FaceActorAndWait(14, 10, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
   Actor_FaceActor(GARET, 9, 0);
-  FieldScene_RunSplitTripleSteps(2, 9, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  SceneActor_SetModeZeroAndValue(11, 20);
-  SceneActor_SetModeZeroAndValue(12, 30);
-  SceneActor_SetPairZeroAndValue(9, 13, 20);
+  VaultInteriors_FaceActorAndWait(2, 9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  VaultInteriors_ShowMessageAndWait(11, 20);
+  VaultInteriors_ShowMessageAndWait(12, 30);
+  VaultInteriors_FaceEachOtherAndWait(9, 13, 20);
   Engine_ActorRunRepeatedMotion(13, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(13, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 30);
-  SceneActor_SetPairZeroAndValue(9, 14, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 30);
-  FieldScene_RunSplitTripleSteps(9, 10, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_ShowMessageAndWait(13, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 30);
+  VaultInteriors_FaceEachOtherAndWait(9, 14, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 30);
+  VaultInteriors_FaceActorAndWait(9, 10, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorSetAnimation(13, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(14, 3, 20);
-  SceneActor_SetPairZeroAndValue(13, 14, 20);
+  VaultInteriors_PlayAnimationAndWait(14, 3, 20);
+  VaultInteriors_FaceEachOtherAndWait(13, 14, 20);
   Engine_ActorSetAnimation(13, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(14, 3, 20);
-  Actor_WalkTo(14, 0x318, 0x188);
-  Actor_WalkToAndWait(13, 0x310, 0x190);
+  VaultInteriors_PlayAnimationAndWait(14, 3, 20);
+  Actor_WalkTo(14, 792, 392);
+  Actor_WalkToAndWait(13, 784, 400);
   Actor_FaceActor(13, 12, 0);
   Engine_ActorWaitForMove(14);
-  FieldScene_RunSplitTripleSteps(14, 11, 20);
+  VaultInteriors_FaceActorAndWait(14, 11, 20);
   Engine_ActorRunRepeatedMotion(13, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(13, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(14, 4, 20);
-  SceneActor_SetModeZeroAndValue(14, 30);
-  SceneActor_SetPairZeroAndValue(13, 0, 20);
-  SceneActor_SetModeZeroAndValue(13, 20);
+  VaultInteriors_ShowMessageAndWait(13, 20);
+  VaultInteriors_PlayAnimationAndWait(14, 4, 20);
+  VaultInteriors_ShowMessageAndWait(14, 30);
+  VaultInteriors_FaceEachOtherAndWait(13, 0, 20);
+  VaultInteriors_ShowMessageAndWait(13, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 50);
   work = gEventWork;
   work->transitionFrames = 30;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -2004,8 +2025,9 @@ static void RunEventScript01(void) {
   Engine_EventEnd();
 }
 
-static void RunDialoguePromptScene(void) {
-  struct FieldActor *obj;
+// Return the stolen goods and rod, thank the party, and clear the attic.
+static void VaultInteriors_ReturnStolenGoods(void) {
+  struct FieldActor *temporaryActor;
   struct FieldActor *actor;
   s32 aftermath;
   s32 rod;
@@ -2019,12 +2041,12 @@ static void RunDialoguePromptScene(void) {
 
     actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | actor->priorityFlags;
   }
-  Actor_MoveToAndWait(15, 0x368, 0x1a9);
-  Actor_MoveToAndWait(16, 0x368, 0x199);
-  Actor_MoveToAndWait(17, 0x368, 0x179);
-  Actor_SetPosition(11, 0x3080000, 0x1880000);
-  Actor_SetPosition(10, 0x3180000, 0x1880000);
-  Actor_SetPosition(12, 0x3280000, 0x1880000);
+  Actor_MoveToAndWait(15, 872, 425);
+  Actor_MoveToAndWait(16, 872, 409);
+  Actor_MoveToAndWait(17, 872, 377);
+  Actor_SetPosition(11, PIXELS(776), PIXELS(392));
+  Actor_SetPosition(10, PIXELS(792), PIXELS(392));
+  Actor_SetPosition(12, PIXELS(808), PIXELS(392));
   Engine_ActorSetAnimation(10, 5);
   Engine_ActorSetAnimation(11, 5);
   Engine_ActorSetAnimation(12, 5);
@@ -2037,17 +2059,17 @@ static void RunDialoguePromptScene(void) {
   Engine_ActorSetSpriteFlags(actor, 1);
   actor = Object_GetById(12);
   Engine_ActorSetSpriteFlags(actor, 1);
-  Actor_SetPosition(13, 0x3000000, 0x1980000);
-  Actor_SetPosition(14, 0x3000000, 0x1a80000);
-  Actor_MoveToAndWait(9, 0x310, 0x1a8);
-  Actor_SetPosition(8, 0x3280000, 0x1980000);
+  Actor_SetPosition(13, PIXELS(768), PIXELS(408));
+  Actor_SetPosition(14, PIXELS(768), PIXELS(424));
+  Actor_MoveToAndWait(9, 784, 424);
+  Actor_SetPosition(8, PIXELS(808), PIXELS(408));
   Actor_FaceActor(13, 9, 0);
   Actor_FaceActor(8, 9, 0);
   Actor_FaceActor(14, 10, 0);
   Actor_FaceActor(9, 10, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
-  Actor_SetPosition(GARET, 0x3280000, 0x1b80000);
-  Actor_SetPosition(IVAN, 0x3080000, 0x1b80000);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  Actor_SetPosition(GARET, PIXELS(808), PIXELS(440));
+  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(440));
   Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
   Actor_FaceActor(GARET, 10, 0);
   Actor_FaceActor(IVAN, 10, 0);
@@ -2059,18 +2081,18 @@ static void RunDialoguePromptScene(void) {
   Engine_ActorRunRepeatedMotion(10, 2);
   aftermath = MsgVaultYouIsaacRightWontForget;
   Engine_EventSetMessage(aftermath);
-  SceneActor_SetModeZeroAndValue(10, 20);
+  VaultInteriors_ShowMessageAndWait(10, 20);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorSetAnimation(13, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(8, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(8, 3, 20);
   Engine_ActorStartRepeatedMotion(11, 2);
   Engine_ActorStartRepeatedMotion(12, 2);
   Engine_EventWait(60);
-  Actor_SetSpeed(13, 0xcccc, 0x6666);
-  Actor_WalkTo(13, 0x2ea, 0x198);
+  Actor_SetSpeed(13, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkTo(13, 746, 408);
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_FaceDirection(14, 0xb000, 0);
   Actor_SetActionScript(11, gVaultInteriors_VaultScriptB);
@@ -2084,52 +2106,52 @@ static void RunDialoguePromptScene(void) {
   Engine_ActorWaitForMove(13);
   Actor_SetPosition(13, 0, 0);
   Engine_EventWait(40);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_SetSpeed(14, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(9, 0x310, 0x198);
+  Actor_SetSpeed(9, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(14, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(9, 784, 408);
   Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
-  Actor_WalkToAndWait(14, 0x300, 0x198);
-  FieldScene_RunSplitTripleSteps(14, 0, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(14, 3, 20);
+  Actor_WalkToAndWait(14, 768, 408);
+  VaultInteriors_FaceActorAndWait(14, 0, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  VaultInteriors_PlayAnimationAndWait(14, 3, 20);
   Actor_FaceDirection(14, 0x2000, 10);
-  SceneActor_SetModeZeroAndValue(14, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 50);
-  SceneActor_SetPairZeroAndValue(0, 2, 50);
+  VaultInteriors_ShowMessageAndWait(14, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
+  VaultInteriors_FaceEachOtherAndWait(0, 2, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
   Actor_FaceActor(GARET, 9, 0);
-  FieldScene_RunSplitTripleSteps(2, 9, 20);
+  VaultInteriors_FaceActorAndWait(2, 9, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 50);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 50);
   Engine_ActorFaceEachOther(9, 14, 0);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Actor_SetActionScript(14, gVaultInteriors_VaultScriptC);
   Engine_EventWait(50);
   Actor_SetActionScript(9, gVaultInteriors_VaultScriptD);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(GARET, 0x318, 0x1c8);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(GARET, 792, 456);
   Actor_FaceDirection(GARET, 0xd000, 0);
   Engine_EventWait(30);
-  Actor_WalkToAndWait(IVAN, 0x318, 0x198);
+  Actor_WalkToAndWait(IVAN, 792, 408);
   Actor_FaceDirection(IVAN, 0, 0);
-  Actor_WalkToAndWait(GARET, 0x328, 0x1c8);
+  Actor_WalkToAndWait(GARET, 808, 456);
   Actor_FaceDirection(GARET, 0xd000, 0);
   Engine_EventWait(100);
-  FieldScene_RunSplitTripleSteps(14, 9, 60);
-  FieldScene_RunSplitTripleSteps(9, 14, 40);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 40);
+  VaultInteriors_FaceActorAndWait(14, 9, 60);
+  VaultInteriors_FaceActorAndWait(9, 14, 40);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 40);
   Actor_FaceDirection(9, 0, 0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Event_PlayCue(124);
   Engine_ActorSetAnimation(15, 4);
-  Actor_SetPosition(18, 0x3680000, 0x1a80000);
+  Actor_SetPosition(18, PIXELS(872), PIXELS(424));
   Engine_ActorSetSpritePriority(18, 1);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
+  Actor_SetSpeed(18, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetDestinationOffset(18, 0, -8);
   Engine_ActorWaitForMove(18);
   Engine_ActorRunRepeatedMotion(18, 2);
@@ -2139,13 +2161,13 @@ static void RunDialoguePromptScene(void) {
   Actor_SetPosition(18, 0, 0);
   gEventWork->message++;
   Engine_ActorRunRepeatedMotion(14, 1);
-  SceneActor_SetModeZeroAndValue(14, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 40);
-  FieldScene_RunSplitTripleSteps(9, 14, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 30);
+  VaultInteriors_ShowMessageAndWait(14, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 40);
+  VaultInteriors_FaceActorAndWait(9, 14, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
-  FieldScene_RunSplitTripleSteps(1, 14, 40);
+  VaultInteriors_FaceActorAndWait(1, 14, 40);
   Actor_FaceDirection(14, 0, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(14, 2);
@@ -2153,8 +2175,8 @@ static void RunDialoguePromptScene(void) {
   Engine_ActorSetAnimation(16, 4);
   Object_GetById(19)->motionFlags = 0;
   Engine_ActorSetSpritePriority(19, 1);
-  Actor_SetPosition(19, 0x3680000, 0x1980000);
-  Actor_SetSpeed(19, 0xcccc, 0x6666);
+  Actor_SetPosition(19, PIXELS(872), PIXELS(408));
+  Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetDestinationOffset(19, 0, -8);
   Engine_ActorWaitForMove(19);
   Engine_ActorRunRepeatedMotion(19, 2);
@@ -2165,228 +2187,229 @@ static void RunDialoguePromptScene(void) {
   gEventWork->message++;
   Actor_ShowEmote(9, 0x102, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(14, 3, 50);
-  FieldScene_RunSplitTripleSteps(9, 0, 20);
-  SceneActor_SetModeZeroAndValue(9, 30);
+  VaultInteriors_PlayAnimationAndWait(14, 3, 50);
+  VaultInteriors_FaceActorAndWait(9, 0, 20);
+  VaultInteriors_ShowMessageAndWait(9, 30);
   Actor_FaceDirection(14, 0xd000, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(14, 0x100, 0);
   Engine_EventWait(60);
-  Actor_WalkToAndWait(14, 0x358, 0x178);
+  Actor_WalkToAndWait(14, 856, 376);
   Engine_EventWait(20);
-  FieldScene_RunSplitTripleSteps(14, 9, 20);
-  SceneActor_SetModeZeroAndValue(14, 20);
+  VaultInteriors_FaceActorAndWait(14, 9, 20);
+  VaultInteriors_ShowMessageAndWait(14, 20);
   Actor_FaceActor(9, 14, 0);
   Actor_ShowEmote(IVAN, 0x100, 0);
   Engine_EventWait(60);
-  FieldScene_RunSplitTripleSteps(2, 14, 30);
-  FieldScene_RunSplitTripleSteps(9, 2, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
+  VaultInteriors_FaceActorAndWait(2, 14, 30);
+  VaultInteriors_FaceActorAndWait(9, 2, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(14, 0x5000, 0);
   Engine_EventWait(30);
-  FieldScene_RunSplitTripleSteps(2, 9, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_FaceActorAndWait(2, 9, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 40);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 40);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 30);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
   Actor_FaceActor(GARET, 9, 0);
-  FieldScene_RunSplitTripleSteps(2, 9, 20);
+  VaultInteriors_FaceActorAndWait(2, 9, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Actor_ShowEmote(IVAN, 0x102, 0);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(2, 40);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 40);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
   Engine_ActorSetAnimationAndWait(GARET, 4);
   Engine_ActorRunRepeatedMotion(IVAN, 3);
   Engine_EventWait(30);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 30);
-  Actor_SetSpeed(IVAN, 0x18000, 0xc000);
-  Actor_WalkToAndWait(IVAN, 0x320, 0x198);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 30);
+  Actor_SetSpeed(IVAN, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_WalkToAndWait(IVAN, 800, 408);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Event_ShowMessage(IVAN, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-  FieldScene_RunSplitTripleSteps(1, 9, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_FaceActorAndWait(1, 9, 30);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(60);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
   Actor_ShowEmote(GARET, 0x101, 0);
   Actor_ShowEmote(IVAN, 0x101, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 4, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 4, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 40);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 40);
   Actor_ShowEmote(IVAN, 0x105, 0);
   Engine_EventWait(60);
-  Actor_WalkToAndWait(9, 0x348, 0x1a8);
-  SceneActor_SetPairZeroAndValue(9, 0, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
+  Actor_WalkToAndWait(9, 840, 424);
+  VaultInteriors_FaceEachOtherAndWait(9, 0, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 20);
   Actor_FaceDirection(9, 0x5000, 0);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(9, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(1, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  SceneActor_SetModeZeroAndValue(9, 30);
-  SceneActor_SetPairZeroAndValue(9, 14, 20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  Actor_WalkToAndWait(14, 0x358, 0x198);
+  VaultInteriors_ShowMessageAndWait(1, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  VaultInteriors_ShowMessageAndWait(9, 30);
+  VaultInteriors_FaceEachOtherAndWait(9, 14, 20);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  Actor_WalkToAndWait(14, 856, 408);
   Actor_SetActionScript(9, gVaultInteriors_VaultScriptE);
   Actor_SetActionScript(14, gVaultInteriors_VaultScriptE);
-  Actor_WalkTo(GARET, 0x318, 0x1c8);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_WalkTo(IVAN, 0x308, 0x1b0);
+  Actor_WalkTo(GARET, 792, 456);
+  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkTo(IVAN, 776, 432);
   Engine_ActorWaitForMove(GARET);
   Actor_FaceDirection(GARET, 0xd000, 0);
   Engine_ActorWaitForMove(IVAN);
   Actor_FaceDirection(IVAN, 0xd000, 0);
   Object_RefreshSelectorById(9);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-  obj = Object_GetById(14);
+  temporaryActor = Object_GetById(14);
   {
-    u8 *target = &obj->paused;
-    u8 shown = 1;
+    u8 *pauseFlag = &temporaryActor->paused;
+    u8 paused = 1;
 
-    *target = shown;
+    *pauseFlag = paused;
   }
-  obj->targetX = ACTOR_NO_TARGET;
-  obj->targetY = ACTOR_NO_TARGET;
-  obj->targetZ = ACTOR_NO_TARGET;
+  temporaryActor->targetX = ACTOR_NO_TARGET;
+  temporaryActor->targetY = ACTOR_NO_TARGET;
+  temporaryActor->targetZ = ACTOR_NO_TARGET;
   Actor_ShowEmote(9, 0x100, 0);
   Engine_ActorSetAnimation(14, 1);
   Engine_EventWait(50);
   Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
-  Actor_WalkToAndWait(GARET, 0x328, 0x1b8);
+  Actor_WalkToAndWait(GARET, 808, 440);
   Actor_FaceDirection(GARET, 0xb000, 0);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(9, 20);
-  SceneActor_SetPairZeroAndValue(0, 1, 50);
+  VaultInteriors_ShowMessageAndWait(9, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-  FieldScene_RunSplitTripleSteps(1, 9, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
-  Actor_WalkTo(9, 0x2e8, 0x198);
-  Actor_WalkTo(14, 0x2e8, 0x198);
+  VaultInteriors_FaceActorAndWait(1, 9, 20);
+  VaultInteriors_PlayAnimationAndWait(9, 3, 20);
+  Actor_WalkTo(9, 744, 408);
+  Actor_WalkTo(14, 744, 408);
   Engine_ActorWaitForMove(9);
   Engine_ActorWaitForMove(14);
   Engine_EventWait(30);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x318, 0x198);
-  SceneActor_SetPairZeroAndValue(0, 1, 30);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 408);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 30);
   Actor_ShowEmote(IVAN, 0x105, 0);
   Engine_EventWait(50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(1, 40);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
-  SceneActor_SetPairZeroAndValue(0, 1, 40);
+  VaultInteriors_ShowMessageAndWait(1, 40);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 30);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 4, 30);
+  VaultInteriors_PlayAnimationAndWait(1, 4, 30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(1, 40);
+  VaultInteriors_ShowMessageAndWait(1, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
   Actor_ShowEmote(GARET, 0x101, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
   Actor_ShowEmote(GARET, 0x100, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
   Actor_ShowEmote(GARET, 0x102, 0);
   Engine_EventWait(60);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-  SceneActor_SetModeZeroAndValue(2, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-  SceneActor_SetModeZeroAndValue(1, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 4, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 20);
+  VaultInteriors_ShowMessageAndWait(1, 30);
   Event_OpenMessage(IVAN, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(20);
-    SceneActor_SetModeZeroAndValue(1, 20);
-    SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-    SceneActor_SetModeZeroAndValue(2, 20);
+    VaultInteriors_ShowMessageAndWait(1, 20);
+    VaultInteriors_PlayAnimationAndWait(2, 4, 20);
+    VaultInteriors_ShowMessageAndWait(2, 20);
   }
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
-  Actor_WalkToAndWait(IVAN, 0x320, 0x1c8);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 30);
+  Actor_WalkToAndWait(IVAN, 800, 456);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 0x358, 0x1c8);
+  Actor_WalkToAndWait(IVAN, 856, 456);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 0x358, 0x178);
+  Actor_WalkToAndWait(IVAN, 856, 376);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
   Actor_FaceDirection(IVAN, 0, 0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  obj = (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
+  temporaryActor =
+      (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
   Engine_EventWait(60);
   rod = MsgVaultIvanGotShamansRod;
   Engine_MessageShowCentered(rod, 1);
-  Engine_ObjectDispatchRelease(obj);
+  Engine_ObjectDispatchRelease(temporaryActor);
   Engine_ActorSetAnimation(17, 2);
   Engine_EventWait(20);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
-  Actor_WalkToAndWait(IVAN, 0x358, 0x1c8);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
+  Actor_WalkToAndWait(IVAN, 856, 456);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 0x320, 0x1c8);
+  Actor_WalkToAndWait(IVAN, 800, 456);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 0x308, 0x1a8);
+  Actor_WalkToAndWait(IVAN, 776, 424);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  FieldScene_RunSplitTripleSteps(1, 2, 30);
-  SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
+  VaultInteriors_FaceActorAndWait(1, 2, 30);
+  VaultInteriors_PlayAnimationAndWait(2, 3, 20);
   Engine_EventSetMessage((rod + 1));
-  SceneActor_SetModeZeroAndValue(2, 20);
+  VaultInteriors_ShowMessageAndWait(2, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   {
     u16 *slot = &event->message;
@@ -2400,17 +2423,17 @@ static void RunDialoguePromptScene(void) {
     Party_RemoveOwnerRestored(2);
     *slot = saved;
   }
-  SceneEffect_ApplyThreeValuesAndFinish(1, 3, 50);
-  Actor_WalkToAndWait(IVAN, 0x308, 0x198);
+  VaultInteriors_PlayAnimationAndWait(1, 3, 50);
+  Actor_WalkToAndWait(IVAN, 776, 408);
   Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
   Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 0x2e8, 0x198);
+  Actor_WalkToAndWait(IVAN, 744, 408);
   Engine_EventWait(40);
-  SceneActor_SetPairZeroAndValue(0, 1, 20);
+  VaultInteriors_FaceEachOtherAndWait(0, 1, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
-  SceneActor_SetModeZeroAndValue(1, 20);
-  SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
+  VaultInteriors_ShowMessageAndWait(1, 20);
+  VaultInteriors_PlayAnimationAndWait(0, 3, 20);
   Engine_ActorSetAnimation(GARET, 2);
   actor = Object_GetById(0);
   if (actor != NULL) {
@@ -2431,6 +2454,7 @@ static void RunDialoguePromptScene(void) {
   Engine_EventEnd();
 }
 
+// Open the window transition and wait one frame after it finishes.
 static void VaultInteriors_OpenWindowTransition(void) {
   struct EventWork *state;
 
@@ -2441,36 +2465,45 @@ static void VaultInteriors_OpenWindowTransition(void) {
   Engine_EventWait(1);
 }
 
-static void SceneActor_SetModeZeroAndValue(s32 a, s32 b) {
-  Engine_EventShowMessage(a, 0);
-  Engine_EventWait(b);
+// Show the selected actor message, then pause for the requested frames.
+static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
+  Engine_EventShowMessage(actorId, 0);
+  Engine_EventWait(waitFrames);
 }
 
-static void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c) {
-  Engine_ActorFaceActor(a, b, 0);
-  Engine_EventWait(c);
+// Face one actor toward another, then pause for the requested frames.
+static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
+                                            s32 waitFrames) {
+  Engine_ActorFaceActor(actorId, targetId, 0);
+  Engine_EventWait(waitFrames);
 }
 
-static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c) {
-  Engine_ActorFaceEachOther(a, b, 0);
-  Engine_EventWait(c);
+// Have two actors face each other, then pause for the requested frames.
+static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
+                                                s32 waitFrames) {
+  Engine_ActorFaceEachOther(firstId, secondId, 0);
+  Engine_EventWait(waitFrames);
 }
 
-static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c) {
-  Engine_ActorSetAnimation(a, b, c);
-  ObjectMotion_WaitForAnimationChange(a);
-  Engine_EventWait(c);
+// Wait for the animation to change before the following pause.
+static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
+                                                s32 waitFrames) {
+  Engine_ActorSetAnimation(actorId, animation, waitFrames);
+  ObjectMotion_WaitForAnimationChange(actorId);
+  Engine_EventWait(waitFrames);
 }
 
-static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b) {
-  Engine_PsynergyBegin(141, 1);
-  Engine_PsynergySetTarget(a, b);
+// Begin Mind Read, choose its target, and show its opening effect.
+static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
+  Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
+  Engine_PsynergySetTarget(casterId, targetId);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_TaskWait(1);
 }
 
-static void SceneState_SetValue2ThenFinish(void) {
+// Finish Mind Read and release its scene effect objects.
+static void VaultInteriors_EndMindRead(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
   BattleEffect_CleanupSceneObjects();
@@ -2479,85 +2512,95 @@ static void SceneState_SetValue2ThenFinish(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_itemobj.h"
 
-static u8 *SceneData_FindEntryAtPosition(s32 *o) {
-  s32 x = (o[0] - 0x400000) >> 19;
-  s32 y = (o[2] - 0x2700000) >> 19;
-  u8 *e = gVaultInteriors_Stops;
-  u8 *ret = 0;
+// Find the route node containing the actor's position on the eight-pixel grid.
+static struct VaultInteriorsStop *
+VaultInteriors_FindStopAtPosition(s32 *position) {
+  s32 gridX = (position[0] - PIXELS(64)) >> 19;
+  s32 gridZ = (position[2] - PIXELS(624)) >> 19;
+  struct VaultInteriorsStop *stop = gVaultInteriors_Stops;
+  struct VaultInteriorsStop *result = NULL;
   u32 i;
 
-  for (i = 0; i <= 36; i++, e += 16) {
-    s32 a = e[0];
+  for (i = 0; i <= 36; i++, stop++) {
+    s32 stopX = stop->gridX;
 
-    if (a == x || a + 1 == x) {
-      s32 b = e[1];
+    if (stopX == gridX || stopX + 1 == gridX) {
+      s32 stopZ = stop->gridZ;
 
-      if (b == y || b + 1 == y) {
-        ret = e;
+      if (stopZ == gridZ || stopZ + 1 == gridZ) {
+        result = stop;
         break;
       }
     }
   }
-  return ret;
+  return result;
 }
 
-static struct StopRecord *VaultInteriors_SnapToNearestStop(struct StopSet *set,
-                                                           s16 *pos) {
-  struct Stop *stop;
-  s32 id;
-  s32 best;
-  s32 at;
-  s32 d;
-  u32 i;
-  u16 p;
+// Choose the outgoing connection nearest the requested facing.
+static struct VaultInteriorsStop *
+VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
+                                 s16 *requestedFacing) {
+  struct VaultInteriorsStopConnection *connection;
+  s32 stopIndex;
+  s32 nearestDifference;
+  s32 chosenFacing;
+  s32 angleDifference;
+  u32 connectionIndex;
+  u16 connectionFacing;
 
-  id = -1;
-  at = *pos;
-  stop = set->stops;
-  best = 0x8000;
-  for (i = 0; i <= 2; i++, stop++) {
-    p = stop->pos << 8;
-    d = (s16)(p - *pos);
-    if (d < 0)
-      d = -d;
-    /* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so
-     * the id is loaded again for the result. 2026-10-13: the plain test
-     * reuses its load (48 instructions for 49, differ 9); set->stops[i].id
-     * in the arm reloads it through a second strength-reduced pointer
-     * (differ 54). */
-    if (*(volatile u8 *)&stop->id != 0xff && d < best) {
-      best = d;
-      id = stop->id;
-      at = (s16)p;
+  stopIndex = -1;
+  chosenFacing = *requestedFacing;
+  connection = node->connections;
+  nearestDifference = 0x8000;
+  for (connectionIndex = 0; connectionIndex <= 2;
+       connectionIndex++, connection++) {
+    connectionFacing = connection->facing << 8;
+    angleDifference = (s16)(connectionFacing - *requestedFacing);
+    if (angleDifference < 0)
+      angleDifference = -angleDifference;
+    /* FAKEMATCH: the used-stop test reads the stopIndex through a volatile
+     * lvalue, so the stopIndex is loaded again for the result. 2026-10-13: the
+     * plain test reuses its load (48 instructions for 49, differ 9);
+     * node->connections[connectionIndex].stopIndex in the arm reloads it
+     * through a second strength-reduced pointer (differ 54). */
+    if (*(volatile u8 *)&connection->stopIndex != 0xff &&
+        angleDifference < nearestDifference) {
+      nearestDifference = angleDifference;
+      stopIndex = connection->stopIndex;
+      chosenFacing = (s16)connectionFacing;
     }
   }
-  if (id == -1)
+  if (stopIndex == -1)
     return 0;
-  *pos = at;
-  return &((struct StopRecord *)gVaultInteriors_Stops)[id];
+  *requestedFacing = chosenFacing;
+  return &gVaultInteriors_Stops[stopIndex];
 }
 
-static s32 VaultInteriors_IsRecordNearPoint(s32 x, s32 y, s32 id) {
-  struct FieldActor *rec = Engine_ActorLookup(id);
-  s32 targetX = rec->targetX;
-  s32 targetY;
+// Check whether an actor's destination or current position lies within eight
+// pixels.
+static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
+  struct FieldActor *actor = Engine_ActorLookup(id);
+  s32 targetX = actor->targetX;
+  s32 targetZ;
 
-  if (targetX == 0x80000000) {
-    targetX = rec->x.fixed;
+  if (targetX == ACTOR_NO_TARGET) {
+    targetX = actor->x.fixed;
   }
-  targetY = rec->targetZ;
-  if (targetY == 0x80000000) {
-    targetY = rec->z.fixed;
+  targetZ = actor->targetZ;
+  if (targetZ == ACTOR_NO_TARGET) {
+    targetZ = actor->z.fixed;
   }
 
   targetX = (targetX - x) >> 16;
-  targetY = (targetY - y) >> 16;
-  if (targetX * targetX + targetY * targetY <= 64)
+  targetZ = (targetZ - z) >> 16;
+  if (targetX * targetX + targetZ * targetZ <= 64)
     return 1;
   return 0;
 }
 
-static s32 VaultInteriors_IsActorNearPoint(s32 x, s32 z, s32 id) {
+// Check whether an actor's destination or current position lies within sixteen
+// pixels.
+static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
   struct FieldActor *actor = Engine_ActorLookup(id);
   s32 ax;
   s32 az;
@@ -2575,47 +2618,52 @@ static s32 VaultInteriors_IsActorNearPoint(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-static s32 SceneActor_CheckTileFreeOfKinds(u8 *p) {
+// Reject route stops occupied by the leader, Ivan, or either suspect.
+static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   s32 x;
-  s32 y;
+  s32 z;
 
-  if (p == 0) {
+  if (stop == NULL) {
     return 1;
   }
-  x = (p[0] << 19) + 0x480000;
-  y = (p[1] << 19) + 0x2780000;
-  if (VaultInteriors_IsActorNearPoint(x, y, 0) != 0 ||
-      VaultInteriors_IsRecordNearPoint(x, y, 2) != 0 ||
-      VaultInteriors_IsRecordNearPoint(x, y, 24) != 0 ||
-      VaultInteriors_IsRecordNearPoint(x, y, 25) != 0) {
+  x = (stop->gridX << 19) + PIXELS(72);
+  z = (stop->gridZ << 19) + PIXELS(632);
+  if (VaultInteriors_IsActorWithinSixteenPixels(x, z, 0) != 0 ||
+      VaultInteriors_IsActorWithinEightPixels(x, z, 2) != 0 ||
+      VaultInteriors_IsActorWithinEightPixels(x, z, 24) != 0 ||
+      VaultInteriors_IsActorWithinEightPixels(x, z, 25) != 0) {
     return -1;
   }
   return 0;
 }
 
-static void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p) {
-  Engine_ObjectSetPosition(a, (p[0] << 19) + 0x480000, 0,
-                           (p[1] << 19) + 0x2780000);
+// Set the actor's destination to the route stop's cell center.
+static void VaultInteriors_MoveActorToStop(struct FieldActor *actor,
+                                           struct VaultInteriorsStop *stop) {
+  Engine_ObjectSetPosition(actor, (stop->gridX << 19) + PIXELS(72), 0,
+                           (stop->gridZ << 19) + PIXELS(632));
 }
 
+// Steer Ivan and both suspects through the graph and detect a sustained
+// cornering.
 static void VaultInteriors_UpdateActorStops(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   struct EventWork *work;
-  u8 *entry;
-  u8 *dest;
+  struct VaultInteriorsStop *entry;
+  struct VaultInteriorsStop *destination;
   s32 dx;
   s32 dz;
   s32 blocked;
   u16 angle;
   s16 facing;
-  s16 d;
+  s16 facingDifference;
 
   leader = Engine_ActorLookup(0);
   blocked = 0;
   work = gEventWork;
   actor = Engine_ActorLookup(2);
-  entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
     dx = actor->x.fixed - leader->x.fixed;
     dz = actor->z.fixed - leader->z.fixed;
@@ -2624,13 +2672,14 @@ static void VaultInteriors_UpdateActorStops(void) {
     dx >>= 16;
     dz >>= 16;
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
-        (d = (u16)facing - angle) > -0x1000 && d < 0x1000) {
+        (facingDifference = (u16)facing - angle) > -0x1000 &&
+        facingDifference < 0x1000) {
       /* FAKEMATCH: a dead store keeps this empty branch through the first jump
        * optimization, as the native lays out its jumps (bge to the else, then b
        * past it). Measured: an empty branch, an empty statement, the negated
        * test with || and a self-assignment all give the inverted blt (tbs-en 4
        * differ); Japanese matches all of them. */
-      d = 0;
+      facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {
 #else
@@ -2638,32 +2687,31 @@ static void VaultInteriors_UpdateActorStops(void) {
 #endif
       facing = actor->facing;
     }
-    dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry,
-                                                  &facing);
-    if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
-      SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+    destination = VaultInteriors_SnapToNearestStop(entry, &facing);
+    if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
+      VaultInteriors_MoveActorToStop(actor, destination);
       Object_SetMode(actor, 2);
     } else {
       Object_SetMode(actor, 1);
     }
   }
 
+  // Each suspect tries a random turn, then reverses when that route is
+  // occupied.
   actor = Engine_ActorLookup(24);
-  entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 2 >> 16;
-    s32 f;
+    s32 currentFacing;
 
     turn *= 0x60000000;
-    f = actor->facing;
-    facing = (turn - 0x30000000 >> 16) + f;
-    dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry,
-                                                  &facing);
-    if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
+    currentFacing = actor->facing;
+    facing = ((turn - 0x30000000) >> 16) + currentFacing;
+    destination = VaultInteriors_SnapToNearestStop(entry, &facing);
+    if (VaultInteriors_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + 0x8000;
-      dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry,
-                                                    &facing);
-      if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
+      destination = VaultInteriors_SnapToNearestStop(entry, &facing);
+      if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
         Engine_ActorSetAttachedEffect(24, 2);
         goto move_first;
       }
@@ -2671,27 +2719,25 @@ static void VaultInteriors_UpdateActorStops(void) {
       blocked = 1;
     } else {
     move_first:
-      SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+      VaultInteriors_MoveActorToStop(actor, destination);
       Object_SetMode(actor, 2);
     }
   }
 
   actor = Engine_ActorLookup(25);
-  entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
+  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 3 >> 16;
-    s32 f;
+    s32 currentFacing;
 
     turn *= 0x30000000;
-    f = actor->facing;
-    facing = (turn - 0x30000000 >> 16) + f;
-    dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry,
-                                                  &facing);
-    if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
+    currentFacing = actor->facing;
+    facing = ((turn - 0x30000000) >> 16) + currentFacing;
+    destination = VaultInteriors_SnapToNearestStop(entry, &facing);
+    if (VaultInteriors_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + 0x8000;
-      dest = (u8 *)VaultInteriors_SnapToNearestStop((struct StopSet *)entry,
-                                                    &facing);
-      if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
+      destination = VaultInteriors_SnapToNearestStop(entry, &facing);
+      if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
         Engine_ActorSetAttachedEffect(25, 2);
         goto move_second;
       }
@@ -2699,10 +2745,11 @@ static void VaultInteriors_UpdateActorStops(void) {
       blocked += 2;
     } else {
     move_second:
-      SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+      VaultInteriors_MoveActorToStop(actor, destination);
       Object_SetMode(actor, 2);
     }
   }
+  // Require thirty blocked frames before raising the cornered-suspect event.
   if (blocked != 0) {
     if (++gVaultInteriors_StopTimer > 29)
       work->raisedTrigger = blocked + 200;
@@ -2711,29 +2758,30 @@ static void VaultInteriors_UpdateActorStops(void) {
   }
 }
 
+// Arrange the chase, constrain its camera, and start the route callback.
 static void VaultInteriors_StartActorStops(void) {
   Engine_EventBegin();
-  Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
-  Actor_SetSpeed(2, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(0, 248, 0x2b8);
-  Actor_SetPosition(1, 0xf80000, 0x2b80000);
-  Actor_SetPosition(2, 0xf80000, 0x2b80000);
-  Actor_WalkTo(0, 200, 0x2b8);
-  Actor_WalkTo(1, 248, 0x2c8);
-  Actor_WalkToAndWait(2, 232, 0x2b8);
+  Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
+  Actor_SetSpeed(0, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(1, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(2, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(0, 248, 696);
+  Actor_SetPosition(1, PIXELS(248), PIXELS(696));
+  Actor_SetPosition(2, PIXELS(248), PIXELS(696));
+  Actor_WalkTo(0, 200, 696);
+  Actor_WalkTo(1, 248, 712);
+  Actor_WalkToAndWait(2, 232, 696);
   Engine_ActorWaitForMove(1);
   Actor_FaceDirection(1, 0xc000, 0);
   Actor_FaceDirection(2, 0x8000, 0);
   Engine_ActorWaitForMove(0);
   Engine_ActorSetAnimation(1, 12);
-  FieldScene_ConfigurePairedActors();
-  FieldMap_SetViewBounds(0x300000, 0x2400000, 0x1200000, 0x2e00000);
-  Actor_SetSpeed(1, 0x10000, 0x8000);
-  Actor_SetSpeed(2, 0xc000, 0x6000);
-  Actor_SetSpeed(24, 0x10000, 0x13333);
-  Actor_SetSpeed(25, 0x18000, 0x18000);
+  VaultInteriors_ResetSuspectRoutes();
+  FieldMap_SetViewBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
+  Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(2, PIXELS(3) / 4, PIXELS(3) / 8);
+  Actor_SetSpeed(24, PIXELS(1), PIXELS(6) / 5);
+  Actor_SetSpeed(25, PIXELS(3) / 2, PIXELS(3) / 2);
   gVaultInteriors_StopTimer = 0;
   FieldScheduler_AddOrUpdateCallback(VaultInteriors_UpdateActorStops, 0xc94);
   GameFlag_Clear(0x1ff);
@@ -2742,46 +2790,107 @@ static void VaultInteriors_StartActorStops(void) {
 }
 
 // clang-format off
-u32 gVaultInteriors_Stops[] = {
-    4, 1, 0x801e, 0xffff, 6, 2, 0x8000, 0xffff,
-    8, 3, 0x8001, 0x401f, 10, 4, 0x8002, 0xffff,
-    12, 5, 0x8003, 0xffff, 14, 6, 0x8004, 0xffff,
-    16, 7, 0x8005, 0x4022, 18, 8, 0x8006, 0xffff,
-    20, 9, 0x8007, 0xffff, 22, 10, 0x8008, 0xffff,
-    24, 0x400b, 0x8009, 0xffff, 536, 0x400c, 0xc00a, 0xffff,
-    1048, 0x400d, 0xc00b, 0xffff, 1560, 0x400e, 0xc00c, 0xffff,
-    2072, 0x800f, 0xc00d, 0xffff, 2070, 0x8010, 14, 0xffff,
-    2068, 0x8011, 15, 0xffff, 2066, 0x8012, 16, 0xffff,
-    2064, 0x8013, 17, 0xc024, 2062, 0x8014, 18, 0xffff,
-    2060, 0x8015, 19, 0xffff, 2058, 0x8016, 20, 0xffff,
-    2056, 0x8017, 21, 0xc021, 2054, 0x8018, 22, 0xffff,
-    2052, 0x8019, 23, 0xffff, 2050, 0x801a, 24, 0xffff,
-    2048, 0xc01b, 25, 0xffff, 1536, 0xc01c, 0x401a, 0xffff,
-    1024, 0xc01d, 0x401b, 0xffff, 512, 30, 0x401c, 0xffff,
-    258, 0, 0x801d, 0xffff, 520, 0x4020, 0xc002, 0xffff,
-    1032, 0x4021, 0xc01f, 0xffff, 1544, 0x4016, 0xc020, 0xffff,
-    528, 0x4023, 0xc006, 0xffff, 1040, 0x4024, 0xc022, 0xffff,
-    1552, 0x4012, 0xc023, 0xffff,
+// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
+#define NO_CONNECTION {255, 0xff, {0, 0}}
+#define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
+struct VaultInteriorsStop gVaultInteriors_Stops[] = {
+    {4, 0, {0},
+     {CONNECTION(1, FACING_EAST), CONNECTION(30, FACING_WEST), NO_CONNECTION}},
+    {6, 0, {0},
+     {CONNECTION(2, FACING_EAST), CONNECTION(0, FACING_WEST), NO_CONNECTION}},
+    {8, 0, {0},
+     {CONNECTION(3, FACING_EAST), CONNECTION(1, FACING_WEST), CONNECTION(31, FACING_SOUTH)}},
+    {10, 0, {0},
+     {CONNECTION(4, FACING_EAST), CONNECTION(2, FACING_WEST), NO_CONNECTION}},
+    {12, 0, {0},
+     {CONNECTION(5, FACING_EAST), CONNECTION(3, FACING_WEST), NO_CONNECTION}},
+    {14, 0, {0},
+     {CONNECTION(6, FACING_EAST), CONNECTION(4, FACING_WEST), NO_CONNECTION}},
+    {16, 0, {0},
+     {CONNECTION(7, FACING_EAST), CONNECTION(5, FACING_WEST), CONNECTION(34, FACING_SOUTH)}},
+    {18, 0, {0},
+     {CONNECTION(8, FACING_EAST), CONNECTION(6, FACING_WEST), NO_CONNECTION}},
+    {20, 0, {0},
+     {CONNECTION(9, FACING_EAST), CONNECTION(7, FACING_WEST), NO_CONNECTION}},
+    {22, 0, {0},
+     {CONNECTION(10, FACING_EAST), CONNECTION(8, FACING_WEST), NO_CONNECTION}},
+    {24, 0, {0},
+     {CONNECTION(11, FACING_SOUTH), CONNECTION(9, FACING_WEST), NO_CONNECTION}},
+    {24, 2, {0},
+     {CONNECTION(12, FACING_SOUTH), CONNECTION(10, FACING_NORTH), NO_CONNECTION}},
+    {24, 4, {0},
+     {CONNECTION(13, FACING_SOUTH), CONNECTION(11, FACING_NORTH), NO_CONNECTION}},
+    {24, 6, {0},
+     {CONNECTION(14, FACING_SOUTH), CONNECTION(12, FACING_NORTH), NO_CONNECTION}},
+    {24, 8, {0},
+     {CONNECTION(15, FACING_WEST), CONNECTION(13, FACING_NORTH), NO_CONNECTION}},
+    {22, 8, {0},
+     {CONNECTION(16, FACING_WEST), CONNECTION(14, FACING_EAST), NO_CONNECTION}},
+    {20, 8, {0},
+     {CONNECTION(17, FACING_WEST), CONNECTION(15, FACING_EAST), NO_CONNECTION}},
+    {18, 8, {0},
+     {CONNECTION(18, FACING_WEST), CONNECTION(16, FACING_EAST), NO_CONNECTION}},
+    {16, 8, {0},
+     {CONNECTION(19, FACING_WEST), CONNECTION(17, FACING_EAST), CONNECTION(36, FACING_NORTH)}},
+    {14, 8, {0},
+     {CONNECTION(20, FACING_WEST), CONNECTION(18, FACING_EAST), NO_CONNECTION}},
+    {12, 8, {0},
+     {CONNECTION(21, FACING_WEST), CONNECTION(19, FACING_EAST), NO_CONNECTION}},
+    {10, 8, {0},
+     {CONNECTION(22, FACING_WEST), CONNECTION(20, FACING_EAST), NO_CONNECTION}},
+    {8, 8, {0},
+     {CONNECTION(23, FACING_WEST), CONNECTION(21, FACING_EAST), CONNECTION(33, FACING_NORTH)}},
+    {6, 8, {0},
+     {CONNECTION(24, FACING_WEST), CONNECTION(22, FACING_EAST), NO_CONNECTION}},
+    {4, 8, {0},
+     {CONNECTION(25, FACING_WEST), CONNECTION(23, FACING_EAST), NO_CONNECTION}},
+    {2, 8, {0},
+     {CONNECTION(26, FACING_WEST), CONNECTION(24, FACING_EAST), NO_CONNECTION}},
+    {0, 8, {0},
+     {CONNECTION(27, FACING_NORTH), CONNECTION(25, FACING_EAST), NO_CONNECTION}},
+    {0, 6, {0},
+     {CONNECTION(28, FACING_NORTH), CONNECTION(26, FACING_SOUTH), NO_CONNECTION}},
+    {0, 4, {0},
+     {CONNECTION(29, FACING_NORTH), CONNECTION(27, FACING_SOUTH), NO_CONNECTION}},
+    {0, 2, {0},
+     {CONNECTION(30, FACING_EAST), CONNECTION(28, FACING_SOUTH), NO_CONNECTION}},
+    {2, 1, {0},
+     {CONNECTION(0, FACING_EAST), CONNECTION(29, FACING_WEST), NO_CONNECTION}},
+    {8, 2, {0},
+     {CONNECTION(32, FACING_SOUTH), CONNECTION(2, FACING_NORTH), NO_CONNECTION}},
+    {8, 4, {0},
+     {CONNECTION(33, FACING_SOUTH), CONNECTION(31, FACING_NORTH), NO_CONNECTION}},
+    {8, 6, {0},
+     {CONNECTION(22, FACING_SOUTH), CONNECTION(32, FACING_NORTH), NO_CONNECTION}},
+    {16, 2, {0},
+     {CONNECTION(35, FACING_SOUTH), CONNECTION(6, FACING_NORTH), NO_CONNECTION}},
+    {16, 4, {0},
+     {CONNECTION(36, FACING_SOUTH), CONNECTION(34, FACING_NORTH), NO_CONNECTION}},
+    {16, 6, {0},
+     {CONNECTION(18, FACING_SOUTH), CONNECTION(35, FACING_NORTH), NO_CONNECTION}},
 };
 
+#undef CONNECTION
+#undef NO_CONNECTION
+
 s32 gVaultInteriors_ActionTable[] = {
-    SC_ADD(SW_SCALE_Y, -0x1000),
-    SC_ADD(SW_SCALE_X, -256),
+    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (-Q16_ONE / 256)),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -0x1000),
-    SC_ADD(SW_SCALE_X, 256),
+    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (Q16_ONE / 256)),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, Q16_ONE),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_Y, -0x1000),
-    SC_ADD(SW_SCALE_X, -256),
+    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (-Q16_ONE / 256)),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -0x1000),
-    SC_ADD(SW_SCALE_X, 256),
+    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (Q16_ONE / 256)),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, Q16_ONE),
     SC_WAIT(180),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2813,7 +2922,7 @@ s32 gVaultInteriors_Villager12ExitScript[] = {
 };
 
 s32 gVaultInteriors_VaultScriptA[] = {
-    SC_SET(SW_SPEED, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
@@ -2825,7 +2934,7 @@ s32 gVaultInteriors_VaultScriptA[] = {
 };
 
 s32 gVaultInteriors_VaultScriptB[] = {
-    SC_SET(SW_SPEED, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_ARG(6),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
@@ -2837,7 +2946,7 @@ s32 gVaultInteriors_VaultScriptB[] = {
 };
 
 s32 gVaultInteriors_VaultScriptC[] = {
-    SC_SET(SW_SPEED, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(792), 0, PIXELS(408)),
     SC_SYNC,
@@ -2856,7 +2965,7 @@ s32 gVaultInteriors_VaultScriptC[] = {
 };
 
 s32 gVaultInteriors_VaultScriptD[] = {
-    SC_SET(SW_SPEED, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(408)),
     SC_SYNC,
@@ -2873,7 +2982,7 @@ s32 gVaultInteriors_VaultScriptD[] = {
 };
 
 s32 gVaultInteriors_VaultScriptE[] = {
-    SC_SET(SW_SPEED, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(840), 0, PIXELS(456)),
     SC_SYNC,
@@ -3180,9 +3289,9 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_LeaveThroughExit11) },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
-    { EVENT_TOUCH, 10, IF_FLAG_SET(0x856), EVENT_SCRIPT(EV10_TOUCH) },
+    { EVENT_TOUCH, 10, IF_FLAG_SET(0x856), EVENT_SCRIPT(VaultInteriors_ApproachSuspects) },
     { EVENT_TOUCH, 11, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
     { EVENT_TOUCH, 12, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
     { EVENT_TOUCH, 13, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
@@ -3191,63 +3300,63 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { EVENT_TOUCH, 16, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
     { EVENT_TOUCH, 17, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
     { EVENT_TOUCH, 18, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_PoseDialogueActors) },
-    { EVENT_TOUCH, 20, IF_FLAG_SET(0x300), EVENT_SCRIPT(EV20_TOUCH) },
-    { EVENT_TOUCH, 21, IF_FLAG_SET(0x852), EVENT_SCRIPT(EV21_TOUCH) },
-    { EVENT_RAISED, 201, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SelectActorPair) },
-    { EVENT_RAISED, 202, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SelectActorPair) },
-    { EVENT_RAISED, 203, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SelectActorPair) },
-    { EVENT_RAISED, 250, CONDITION_ALWAYS, EVENT_SCRIPT(EV250_RAISED) },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH) },
-    { 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SCRIPT) },
+    { EVENT_TOUCH, 20, IF_FLAG_SET(0x300), EVENT_SCRIPT(VaultInteriors_DiscussSuspiciousGuests) },
+    { EVENT_TOUCH, 21, IF_FLAG_SET(0x852), EVENT_SCRIPT(VaultInteriors_BeginCorneringSuspects) },
+    { EVENT_RAISED, 201, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadCorneredSuspectsMinds) },
+    { EVENT_RAISED, 202, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadCorneredSuspectsMinds) },
+    { EVENT_RAISED, 203, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadCorneredSuspectsMinds) },
+    { EVENT_RAISED, 250, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RefuseToLeaveSearch) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_EnterThroughExit15) },
+    { 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_JumpAcrossRoofGap) },
     { EVENT_TALK, 2, IF_FLAG_SET(0x250), 0 },
-    { EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TALK) },
+    { EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MeetIvan) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutRocks) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultMyNeighborCreepsMeOutHe) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorElevenDialogue) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_AskAboutIvansPowers) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutMissingTreasure) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultEverSinceTheEruptionGrandpaKeeps) },
     { EVENT_TALK, 14, 0x856, MSGNO(MsgVaultICouldHelpIvanIfI) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
-    { EVENT_TALK, 15, 0x856, EVENT_SCRIPT(EV15_TALK) },
+    { EVENT_TALK, 15, 0x856, EVENT_SCRIPT(VaultInteriors_AskToHelpIvan) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag856DialogueBranch) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToIvansHost) },
     { EVENT_TALK, 17, 0x856, MSGNO(MsgVaultMyHusbandTheMayorCantBelieve) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultReallyYoureGoingToHelpIvan) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine128E) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutThreeStrangers) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToInnkeeper) },
     { EVENT_TALK, 24, IF_FLAG_SET(0x250), 0 },
     { EVENT_TALK, 25, IF_FLAG_SET(0x250), 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, IF_FLAG_SET(0x250), 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, IF_FLAG_SET(0x250), 0 },
     { EVENT_TALK, 24, 0x853, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
     { EVENT_TALK, 25, 0x853, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_StepActor24AnimationByFacing) },
-    { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RunActor25Response) },
+    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveFirstSuspectAside) },
+    { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveSecondSuspectAside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadRockSeekersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadChildsMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadTreasureSeekersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadIvansHostsMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultMaybeTheyllFindOurStolenFamily) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadBoneOwnersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultAllOurBestWeaponsWereStolen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderIfTheyLeftUs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultHahhWereSureToSeeA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultItWouldBeAwfulIfOur) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultThatVolcanoCostUsALot) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x418, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_StepActor24AnimationByFacing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x419, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RunActor25Response) },
-    { PSYNERGY_ON_ACTOR(0x8c), 26, 0x859, EVENT_SCRIPT(EV26_PSYNERGY) },
-    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyBarrel) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x418, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveFirstSuspectAside) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x419, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveSecondSuspectAside) },
+    { PSYNERGY_ON_ACTOR(0x8c), 26, 0x859, EVENT_SCRIPT(VaultInteriors_OpenMovedCratePassage) },
+    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_SearchEmptyBarrel) },
     { SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
     { SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
     { SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
@@ -3258,17 +3367,17 @@ struct SceneEvent gVaultInteriorsEvents[] = {
 };
 
 struct SceneEvent gVaultInteriorsEventsEntrances15To17[] = {
-    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowEmptyChest) },
+    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_EnterThroughExit14) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_FreeCaptiveAndConfrontThieves) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_SearchEmptyChest) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_SearchEmptyChest) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_SearchEmptyChest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultAhhHelpMe) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gVaultInteriorsEventsFlag855[] = {
-    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
+    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 7 },
@@ -3277,35 +3386,35 @@ struct SceneEvent gVaultInteriorsEventsFlag855[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH) },
-    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_EnterThroughExit15) },
+    { EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_EnterThroughExit14) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11Line) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutRocks) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_AskWhereThievesCameFrom) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutWorriedFather) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutMissingTreasure) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultJustAsIThoughtNothingWas) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_AskAboutDefeatingThieves) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene383SequenceC) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReceiveWaterOfLife) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
     { EVENT_TALK, 18, 0x250, EVENT_SCRIPT(VaultInteriors_OfferBone) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgVaultImShockedThoseGuestsOfOurs) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadRockSeekersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadChildsMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadTreasureSeekersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadIvansHostsMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultImSoRelievedNowThatWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReadBoneOwnersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultMyWeaponsWereFoundInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultItMustBeSnowingUpIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },

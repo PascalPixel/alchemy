@@ -9496,7 +9496,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
     scale = gBattleFx10_UnitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
-        work->objects[i]->part[0].priority = 0;
+        work->objects[i]->image.priority = 0;
       }
     }
     if (frame > 208) {
@@ -12181,7 +12181,7 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
     if (object != 0) {
       object->flags = 0;
       AnimationObjects_SelectAnimationFar(object, entryIndex);
-      work->objects[entryIndex]->part[0].priority = variant;
+      work->objects[entryIndex]->image.priority = variant;
     }
     entryIndex++;
   } while (entryIndex != entryCount);
@@ -17152,7 +17152,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
     if (rock != 0) {
       rock->flags = 0;
       AnimationObjects_SelectAnimationFar(rock, i / 4);
-      work->objects[i]->part[0].priority = 1;
+      work->objects[i]->image.priority = 1;
     }
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -19840,7 +19840,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       if (object != 0) {
         object->flags = 0;
         AnimationObjects_SelectAnimationFar(object, 2);
-        work->objects[i]->part[0].priority = 3;
+        work->objects[i]->image.priority = 3;
       }
     }
   } else {
@@ -20340,7 +20340,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
     if (object != 0) {
       object->flags = 0;
       AnimationObjects_SelectAnimationFar(object, i % 3);
-      work->objects[9 + i]->part[0].priority = 1;
+      work->objects[9 + i]->image.priority = 1;
     }
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -21907,7 +21907,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
     if (obj != 0) {
       obj->flags = 0;
       AnimationObjects_SelectAnimationFar(obj, (i % 3));
-      work->objects[i]->part[0].priority = 0;
+      work->objects[i]->image.priority = 0;
     }
   }
 
@@ -22638,7 +22638,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   do {
     struct AnimationObject *object = work->objects[i];
 
-    ((u8 *)&object->part[0])[9] |= 12;
+    object->image.priority = 3;
     i++;
   } while (i != 9);
 

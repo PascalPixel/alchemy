@@ -8,14 +8,14 @@ void Effect_AdvanceMotion(union FieldObject *object) {
   s32 scaleRateX;
   struct FieldSprite *sprite;
 
-  velocityX = effect->velocityX;
+  velocityX = effect->velocity.x;
   effect->x += velocityX;
-  effect->y += effect->velocityY;
-  velocityZ = effect->velocityZ;
+  effect->y += effect->velocity.y;
+  velocityZ = effect->velocity.z;
   effect->z += velocityZ;
 
-  effect->velocityX = velocityX - velocityX / 18;
-  effect->velocityZ = velocityZ - velocityZ / 16;
+  effect->velocity.x = velocityX - velocityX / 18;
+  effect->velocity.z = velocityZ - velocityZ / 16;
   /* FAKEMATCH: the ARM9 scheduling would load the scale rate before storing the
    * Z velocity. */
   __asm__("");

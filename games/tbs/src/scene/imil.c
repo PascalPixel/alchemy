@@ -865,7 +865,7 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
     Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
     spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
-      spark->sprite->priority = 0;
+      spark->sprite->image.priority = 0;
       Engine_ActorSetSpriteFlags(spark, 0);
       Object_SetMode(spark, 1);
       spark->scaleX = 0x9999;
@@ -904,7 +904,7 @@ static void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work) {
   work->priorityFlags &= ~1;
 
   sprite = (struct AnimationObject *)work->sprite;
-  sprite->part[0].priority = 1;
+  sprite->image.priority = 1;
 
   ObjectGroup_SetChildValue(work, 9);
   Engine_ActorSetSpriteFlags(work, 0);

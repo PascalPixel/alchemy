@@ -507,9 +507,9 @@ static void UpdateStatueLight1(void) {
   }
   if (gSolLunaRooms_FlashState != 0) {
     if (gSolLunaRooms_FlashState == 2) {
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
     } else if (gSolLunaRooms_FlashState == 1) {
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
     }
     gSolLunaRooms_FlashState--;
   }
@@ -980,7 +980,7 @@ static void FieldScene_RunActorPositionTransition(void) {
 static void EV20_SEARCH(void) {
   struct FieldActor *actor;
   s32 base5_0;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
 
   if (Engine_GameFlagIsSet(0x811) == 0) {
   } else {
@@ -1255,7 +1255,7 @@ s32 SolLunaRooms_RestoreEntryState(void) {
   } else {
     if (Engine_GameFlagIsSet(0x814) != 0) {
       BattleFx_SetQueuedSoundAndPlay(141);
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
       InitializeSceneRecordBuffer();
       Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
     }
@@ -1318,11 +1318,11 @@ static void SolLunaRooms_RunLightScene(void) {
   Actor_FaceDirection(1, FACING_SOUTH + FACING_STEP, 80);
   Actor_FaceDirection(0, FACING_WEST, 10);
   Actor_FaceDirection(1, FACING_EAST + FACING_STEP, 60);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Engine_EventWait(20);
   Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 20);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(1, 2);
   Engine_EventSetMessage(MsgSolFloatingEyeThing);
@@ -1331,7 +1331,7 @@ static void SolLunaRooms_RunLightScene(void) {
   Engine_ActorSetAnimation(0, ANIM_STAND);
   Engine_EventWait(40);
   Engine_AudioPlayCue(107);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   Engine_EventWait(40);
   InitializeSceneRecordBuffer();
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1345,7 +1345,7 @@ static void SolLunaRooms_RunLightScene(void) {
   Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
   Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
   BattleFx_SetQueuedSoundAndPlay(141);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(1, 2);
   SetSolSanctumActorStep(1, 10);

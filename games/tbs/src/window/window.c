@@ -76,7 +76,6 @@
 #include "character_menu.h"
 #include "animspr.h"
 #include "four_object_motion.h"
-#include "field_sprite.h"
 #include "uiwindow.h"
 #include "io_write_queue.h"
 #include "map_scroll.h"

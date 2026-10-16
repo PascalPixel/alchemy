@@ -129,8 +129,8 @@ enum { MAP_OBJECT_PASSAGE = 100 };
 static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
   union FieldObject *object = (union FieldObject *)interpreter;
   object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->actor.sprite->priority = 3;
-  object->actor.sprite->secondPriority = 3;
+  object->actor.sprite->image.priority = 3;
+  object->actor.sprite->shadow.priority = 3;
   return 0;
 }
 

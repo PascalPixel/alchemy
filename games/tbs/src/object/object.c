@@ -44,7 +44,6 @@
 #include "field_obj.h"
 #include "object_dispatch.h"
 #include "field_event.h"
-#include "field_sprite.h"
 #include "heap_state.h"
 #include "keystate.h"
 #include "owner_value.h"
@@ -1160,7 +1159,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
   s32 top;
   s32 bottom;
   struct FieldActor **actorSlot;
-  s32 visibleMask;
+  s32 releaseCacheMask;
   s32 remainingSlots;
 
   camera = work->camera;
@@ -1171,7 +1170,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
   top = centerZ - 0xc80000;
   bottom = centerZ + 0x640000;
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
-  visibleMask = ~1;
+  releaseCacheMask = ~1;
 
   for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
     struct FieldActor *actor = *actorSlot;
@@ -1184,14 +1183,14 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
         if (actorX < left || actorX > right || actorZ < top ||
             actorZ > bottom) {
           u8 *sprite;
-          u8 *removed = &actor->active;
+          u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // Hide the sprite, then destroy the actor.
+          // Release the sprite's retained cache entry when destroying the actor.
           *removed = 1;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
-          sprite[29] = flags & visibleMask;
+          sprite[29] = flags & releaseCacheMask;
           ObjectDispatch_ReleaseFar(actor);
           sprite = NULL;
           *actorSlot = (struct FieldActor *)sprite;
@@ -1214,8 +1213,8 @@ void BattleEffect_ClearAllObjects(void) {
     struct FieldActor *actor = work->actors[ACTOR_FIRST_PLACED + slotIndex];
 
     if (actor != 0) {
-      actor->active = 1;
-      actor->sprite->unk1d0 = 0;
+      actor->spriteStorageKind = 1;
+      actor->sprite->retainCacheEntry = 0;
       ObjectDispatch_ReleaseFar(actor);
       work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
@@ -1293,9 +1292,10 @@ void ObjectTable_Snapshot(void) {
     Dma_Set(object, snapshot, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
             REG_DMA3);
     if (object->animationKind == 1) {
-      animation = ((struct AnimationObject *)object->animation)->lastNo;
-      spriteFlagBits = ((struct FieldSprite *)object->animation)->flags;
-      priority = ((struct FieldSprite *)object->animation)->priority;
+      struct AnimationObject *sprite = object->animation;
+      animation = sprite->lastNo;
+      spriteFlagBits = sprite->flags;
+      priority = sprite->image.priority;
     } else {
       animation = 0;
       spriteFlagBits = 0;
@@ -1323,7 +1323,7 @@ void ObjectTable_Restore(void) {
   u8 *priorities = animations + 64;
   s32 restoredCount;
   struct ObjectRuntime *object;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct ObjectRuntime *camera;
   s32 *cameraPosition;
   s32 actorIndex;
@@ -1347,8 +1347,8 @@ void ObjectTable_Restore(void) {
         ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
       ObjectDispatch_SetSingleChildFlagsFar(object, *spriteFlags);
       priority = *priorities;
-      sprite->priority = priority;
-      sprite->secondPriority = priority;
+      sprite->image.priority = priority;
+      sprite->shadow.priority = priority;
       object->animation = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == *leaderId) {
@@ -4016,7 +4016,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_ParticleScript);
     ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    ((struct AnimationObject *)obj->animation)->part[0].priority = 1;
+    ((struct AnimationObject *)obj->animation)->image.priority = 1;
   }
 }
 
@@ -4103,9 +4103,9 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
 
     sprite->flags = 0;
     sprite->count = 0;
-    sprite->part[0].fullColor = 0;
-    sprite->part[0].palette = 0;
-    sprite->part[0].priority = 1;
+    sprite->image.fullColor = 0;
+    sprite->image.palette = 0;
+    sprite->image.priority = 1;
 
     picture->velocityY = 0x20000;
     picture->gravity = 0x4000;
@@ -4115,7 +4115,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
-    sprite->part[0].tile =
+    sprite->image.tile =
         VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
 
     Runtime_ReleaseHeapBlock(17);
@@ -4192,9 +4192,9 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 
     sprite->flags = 0;
     sprite->count = 0;
-    sprite->part[0].fullColor = 0;
-    sprite->part[0].palette = 0;
-    sprite->part[0].priority = 1;
+    sprite->image.fullColor = 0;
+    sprite->image.palette = 0;
+    sprite->image.priority = 1;
 
     Ui_PrepareTransferForItemFar(item);
     VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
@@ -5691,13 +5691,6 @@ s32 BattleFx_ClampRgb555Component(s32 value) {
   return value;
 }
 
-struct FadeWork {
-  struct AnimationSpritePart marks[2];
-  struct ObjectRuntime *actor;
-};
-
-STATIC_ASSERT(sizeof(struct FadeWork) == 28);
-
 #ifndef UBFIX
 struct FadeView {
   u8 unk00[228];
@@ -5710,7 +5703,7 @@ struct FadeView {
 // the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 // at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeWork *work = WORK_SLOT(36);
+  struct FadeOverlayWork *work = WORK_SLOT(36);
 #ifdef UBFIX
   struct MapScrollWork *map = WORK_SLOT(8);
   s32 cameraX = map->viewX >> 16;
@@ -5724,7 +5717,7 @@ void FadeOverlay_DrawMarks(void) {
   s32 cameraZ = camera[3];
 #endif
   struct AnimationSpritePart *mark = work->marks;
-  struct ObjectRuntime *actor = work->actor;
+  struct FieldActor *actor = work->actor;
   s32 x;
   s32 z;
   s32 terrainFloor;
@@ -5740,8 +5733,8 @@ void FadeOverlay_DrawMarks(void) {
 
   if (actor == 0)
     return;
-  x = actor->x;
-  z = actor->z;
+  x = actor->x.fixed;
+  z = actor->z.fixed;
   terrainFloor = actor->terrainHeight >> 16;
   terrainLayer = actor->terrainId;
   tile = gVramBlockCache[94].offset >> 5;
@@ -5788,7 +5781,7 @@ void FadeOverlay_DrawMarks(void) {
 // Starts the fade overlay on object (the party leader when NULL): loads its
 // solid tiles, sets the blending and draws it each frame.
 void BattleFx_StartFadeOverlay(void *object) {
-  struct FadeWork *work;
+  struct FadeOverlayWork *work;
   u8 *tiles;
   volatile u32 fill;
 

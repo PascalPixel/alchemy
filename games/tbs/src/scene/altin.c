@@ -530,7 +530,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   struct WaterActor *beast = (struct WaterActor *)fieldObject;
   if (beast->shakeFrames != 0) {
     if (--beast->shakeFrames == 1)
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
     Object_SetMode(beast, 1);
@@ -540,7 +540,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
         Event_PlayCue(SE_BEAST_SPLASH);
         beast->counter = 0;
         beast->shakeFrames = 4;
-        Work_SetValuesIfNonNegative(0, 0x10000, 0x10000);
+        Map_SetShake(0, 0x10000, 0x10000);
       }
       beast->y = beast->ground;
     }
@@ -572,9 +572,9 @@ static void Beast_HopAway(void) {
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
   Event_PlayCue(SE_BEAST_SPLASH);
   Engine_ActorDestroy(ACTOR_WATER_BEAST);
-  Work_SetValuesIfNonNegative(0, 0x10000, 0x10000);
+  Map_SetShake(0, 0x10000, 0x10000);
   Engine_EventWait(4);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(40);
   Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
@@ -732,7 +732,7 @@ static void Houses_PlaceSheltering(void) {
 // priority 1 and at 0.3 scale.
 static void Spray_Initialize(struct SprayActor *spray) {
   spray->motionFlags = 0;
-  spray->sprite->part[0].priority = 1;
+  spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, 3);
   Engine_ActorSetSpriteFlags((struct FieldActor *)spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;

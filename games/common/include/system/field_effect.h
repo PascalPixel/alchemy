@@ -3,6 +3,7 @@
 
 #include "edition.h"
 #include "field_event.h"
+#include "vector3.h"
 
 struct FieldEffect {
   u8 unk00[8];
@@ -18,10 +19,12 @@ struct FieldEffect {
   s32 scaleRateX;
   s32 scaleRateY;
   u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  struct Vector3 velocity;
+#if GAME_TLA
   struct FieldSprite *sprite;
+#else
+  struct AnimationObject *sprite;
+#endif
   u8 unk54;
   u8 motionFlags;
   u8 unk56[3];
@@ -34,7 +37,7 @@ struct FieldEffect {
 };
 
 STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
-STATIC_ASSERT(offsetof(struct FieldEffect, velocityX) == 0x44);
+STATIC_ASSERT(offsetof(struct FieldEffect, velocity) == 0x44);
 STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 0x50);
 STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);

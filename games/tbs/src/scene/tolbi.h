@@ -57,15 +57,6 @@ struct TolbiUiWork {
   u8 renderMode;
 };
 
-// The byte holding the second sprite part's priority bits, as the code
-// stores it.
-struct TolbiSpritePriorityByte {
-  u8 unknown[0x15];
-  u8 : 2;
-  u8 secondPriority : 2;
-  u8 : 4;
-};
-
 // A running child, as its update reads it: the field actor's facing,
 // position, paused byte and the word the scene keeps the child's flags in.
 struct TolbiKid {

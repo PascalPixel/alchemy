@@ -19,210 +19,153 @@
 #include "field_runtime.h"
 #include "heap_state.h"
 #include "keystate.h"
+#include "fixed_math.h"
 
-struct FollowDetail {
-  u8 unk00[5];
-  u8 shade;
-};
-
-struct FollowSprite {
-  u8 unk00[37];
-  u8 visible;
-  u8 unk26[2];
-  struct FollowDetail *detail;
-};
-
-struct SpawnPoint {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 value;
-};
-
-struct EventSpawns {
-  u8 unk00[20];
-  struct SpawnPoint *points[1];
-};
-
-struct Sprite39b {
-  u8 pad[9];
-  u8 lo : 2;
-  u8 layer : 2;
-  u8 hi : 4;
-};
-
-struct Work {
-  u8 pad[20];
-  u8 *actors[1];
-};
-
-struct Obj {
-  u8 pad00[12];
-  s32 y;
-  u8 pad10[69];
-  u8 f85;
-  u8 pad56[18];
-  u8 *owner;
-};
-
-struct PillarState {
-  s32 step;
-  u8 pad04[8];
-  s32 x;
-  s32 z;
-  u8 *pillar;
-};
-
-struct EffectAnchor {
-  u8 pad00[8];
-  s32 f8;
-  u8 pad0c[4];
-  s32 f16;
-};
-
-struct AnchoredEffect {
-  u8 pad00[8];
-  s32 f8;
-  s32 f12;
-  s32 f16;
-  u8 pad14[4];
-  s32 f24;
-  s32 f28;
-  u8 pad20[68];
-  s16 f100;
-  u8 pad66[2];
-  struct EffectAnchor *f104;
-};
-
+// Raise the spark while its scale follows a half-sine pulse.
 static s32
 SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
-  struct AnchoredEffect *work = (struct AnchoredEffect *)interpreter;
-  struct EffectAnchor *src = work->f104;
-  s16 step = ++work->f100;
-  s32 seed;
+  struct FieldActor *effect = (struct FieldActor *)interpreter;
+  struct FieldActor *anchor = effect->linkedObject;
+  s16 step = ++effect->timer;
+  s32 scale;
 
   if (step > 31) {
     return 0;
   }
 
-  seed = Engine_MathSin(step << 10);
-  work->f24 = seed;
-  work->f28 = seed;
-  work->f8 = src->f8;
-  work->f12 += 0x10000;
-  work->f16 = src->f16;
+  scale = Engine_MathSin(step << 10);
+  effect->scaleX = scale;
+  effect->scaleY = scale;
+  effect->x.fixed = anchor->x.fixed;
+  effect->y.fixed += PIXELS(1);
+  effect->z.fixed = anchor->z.fixed;
   return 1;
 }
 
+// Grow the moving light over the first sixteen script frames.
 static s32 OverlayObject_RampWords24And28Over16Frames(
     struct ScriptInterpreter *interpreter) {
-  struct FieldActor *o = (struct FieldActor *)interpreter;
-  u16 *c = &o->timer;
-  s16 n;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  s16 frame;
 
-  *c = *c + 1;
-  n = *c;
-  if (n > 16) {
+  frame = ++actor->timer;
+  if (frame > 16) {
     return 0;
   }
-  o->scaleX = (n * 3) << 10;
-  o->scaleY = (n * 3) << 10;
+  actor->scaleX = (frame * 3) << 10;
+  actor->scaleY = (frame * 3) << 10;
   return 1;
 }
 
+// Expand the released light before its script removes it.
 static s32
 OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *o = (struct FieldActor *)interpreter;
-  u16 *c = &o->timer;
-  s16 n;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  s16 frame;
 
-  *c = *c + 1;
-  n = *c;
-  if (n > 16) {
+  frame = ++actor->timer;
+  if (frame > 16) {
     return 0;
   }
-  o->scaleX = (n << 11) + 0x10000;
-  o->scaleY = (n << 11) + 0x10000;
+  actor->scaleX = (frame << 11) + Q16_ONE;
+  actor->scaleY = (frame << 11) + Q16_ONE;
   return 1;
 }
 
+// Follow the linked actor and alternate the light's animation parameter.
 static s32 Mercury_FollowLeader(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct FieldActor *leader;
-  struct FollowSprite *sprite;
-  s32 tz;
-  s32 tx;
-  s32 dx;
-  s32 dz;
-  s32 dist;
-  s32 step;
+  s32 targetZ;
+  s32 targetX;
+  s32 deltaX;
+  s32 deltaZ;
+  s32 distance;
+  s32 moveDistance;
 
-  actor->speed = 0x20000;
+  actor->speed = PIXELS(2);
   leader = actor->linkedObject;
-  actor->acceleration = 0x10000;
-  tx = leader->x.fixed;
-  tz = leader->z.fixed;
+  actor->acceleration = PIXELS(1);
+  targetX = leader->x.fixed;
+  targetZ = leader->z.fixed;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
-  dx = (tx - actor->x.fixed) / 0x10000;
-  dz = (tz - actor->z.fixed) / 0x10000;
-  dist = (u16)Iwram_Sqrt(dx * dx + dz * dz);
-  dx = tx - actor->x.fixed;
-  dz = tz - actor->z.fixed;
-  dist <<= 16;
-  if (dist < 0x400000)
-    dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-  step = dist / 8;
-  if (step > actor->speed)
-    step = actor->speed;
-  if (dist < 0x4000) {
-    actor->x.fixed = tx;
-    actor->z.fixed = tz;
+
+  // Measure in whole pixels first; use fixed-point precision near the leader.
+  deltaX = (targetX - actor->x.fixed) / PIXELS(1);
+  deltaZ = (targetZ - actor->z.fixed) / PIXELS(1);
+  distance = (u16)Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
+  deltaX = targetX - actor->x.fixed;
+  deltaZ = targetZ - actor->z.fixed;
+  distance <<= 16;
+  if (distance < PIXELS(64))
+    distance =
+        FixedSqrt(Iwram_MulQ16(deltaX, deltaX) + Iwram_MulQ16(deltaZ, deltaZ));
+  moveDistance = distance / 8;
+  if (moveDistance > actor->speed)
+    moveDistance = actor->speed;
+
+  // Snap within a quarter pixel; otherwise ease toward the leader.
+  if (distance < PIXELS(1) / 4) {
+    actor->x.fixed = targetX;
+    actor->z.fixed = targetZ;
   } else {
-    if (dist > step) {
-      dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
-      dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
+    if (distance > moveDistance) {
+      deltaX = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaX), moveDistance);
+      deltaZ = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaZ), moveDistance);
     }
-    actor->x.fixed += dx;
-    actor->z.fixed += dz;
+    actor->x.fixed += deltaX;
+    actor->z.fixed += deltaZ;
   }
-  sprite = (struct FollowSprite *)actor->sprite;
-  sprite->detail->shade = ((gFrameCount >> 1) & 1) * 7;
-  sprite->visible = 1;
+
+  // Alternate the light's draw parameter every two frames and redraw it.
+  /* FAKEMATCH: retain the scalar sprite-slot access while FieldActor exposes
+   * the single/group union. Plain actor->sprite swaps the movs r0, #1 and
+   * sprite load at tbs-en 0x531e; the typed scalar slot keeps their order. */
+  {
+    struct AnimationObject *sprite =
+        *(struct AnimationObject **)((u8 *)actor +
+                                     offsetof(struct FieldActor, sprite));
+    struct AnimationEntry *entry = sprite->entries[0];
+
+    entry->param = ((gFrameCount >> 1) & 1) * 7;
+    sprite->dirty = 1;
+  }
   return 1;
 }
 
+// Place the two spark animations on the selected actor.
 static void MercuryLighthouse_SpawnSparkPair(void) {
-  struct SpawnPoint *point;
+  struct FieldActor *point;
   struct FieldActor *spark;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
 
-  point =
-      (*(struct EventSpawns **)&gEventWork)->points[gGameState.selectedActor];
-  spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
+  point = gEventWork->actors[gGameState.selectedActor];
+  spark =
+      Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
-    spark->terrainHeight = point->value;
+    spark->terrainHeight = point->terrainHeight;
     sprite = spark->sprite;
     Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedObject = (struct FieldActor *)point;
+    spark->linkedObject = point;
     if (sprite != NULL) {
       AnimationObjects_SelectAnimation(sprite, 2);
       sprite->flags = 0;
-      sprite->priority = 1;
+      sprite->image.priority = 1;
     }
   }
-  spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
+  spark =
+      Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
-    spark->terrainHeight = point->value;
+    spark->terrainHeight = point->terrainHeight;
     sprite = spark->sprite;
     Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedObject = (struct FieldActor *)point;
+    spark->linkedObject = point;
     spark->priorityFlags = 2;
     if (sprite != NULL) {
       AnimationObjects_SelectAnimation(sprite, 1);
@@ -232,100 +175,91 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   Engine_AudioPlayCue(130);
 }
 
+// Raise the pillar one stage for each spark pair, then mark it complete.
 void MercuryEntrance_RaisePillar(void) {
-  struct PillarState *state;
-  u8 *leader;
-  u8 *pillar;
-  u8 *obj;
-  struct Sprite39b *spr;
+  struct MercuryLights *state;
+  struct FieldActor *leader;
+  struct FieldActor *pillar;
+  struct FieldActor *obj;
   s32 step;
 
-  state = *(struct PillarState **)WORK_SLOT(35);
-  leader = ((struct Work *)WORK_SLOT(HEAP_SLOT_EVENT))
+  state = *(struct MercuryLights **)WORK_SLOT(35);
+  leader = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
                ->actors[gGameState.selectedActor];
-  if ((u32)state->step > 2)
+  if ((u32)state->levels > 2)
     return;
   Engine_EventBegin();
   pillar = state->pillar;
   if (pillar == 0) {
-    obj = Engine_ObjectCreate(26, *(s32 *)(leader + 8),
-                              *(s32 *)(leader + 12) + 0x180000,
-                              *(s32 *)(leader + 16));
+    obj = Engine_ObjectCreate(26, leader->x.fixed, leader->y.fixed + 0x180000,
+                              leader->z.fixed);
     if (obj != 0) {
-      spr = *(struct Sprite39b **)(obj + 80);
-      *(s32 *)(obj + 20) = *(s32 *)(leader + 20);
+      struct AnimationObject *sprite = obj->sprite;
+
+      obj->terrainHeight = leader->terrainHeight;
       Engine_ObjectSetScript(obj, gMercury_PillarScript);
-      ((struct Obj *)obj)->owner = leader;
-      ((struct Obj *)obj)->f85 = 4;
-      ((struct Obj *)obj)->y += -0x8000;
-      if (spr != 0) {
-        ((u8 *)spr)[38] = 0;
-        spr->layer = 1;
+      obj->linkedObject = leader;
+      obj->motionFlags = 4;
+      /* FAKEMATCH: retain the scalar height access. Plain obj->y.fixed
+       * subtraction moves the saved sprite reload after the height add/store
+       * at tbs-en 0x5498; the scalar coordinate keeps its original order. */
+      *(s32 *)((u8 *)obj + offsetof(struct FieldActor, y)) += -PIXELS(1) / 2;
+      if (sprite != 0) {
+        sprite->flags = 0;
+        sprite->image.priority = 1;
       }
-      obj[84] = 0;
+      obj->spriteStorageKind = 0;
       state->pillar = obj;
       pillar = obj;
     } else {
       pillar = state->pillar;
     }
   }
-  for (step = state->step; step <= 2; step++) {
+  for (step = state->levels; step <= 2; step++) {
     MercuryLighthouse_SpawnSparkPair();
     Engine_TaskWait(30);
-    pillar[84] = 1;
+    pillar->spriteStorageKind = 1;
     Object_SetMode(pillar, 5 - step);
   }
-  state->step = 3;
-  state->x = (*(s32 *)(pillar + 8) & -0x100000) + 0x80000;
-  state->z = (*(s32 *)(pillar + 16) & -0x100000) + 0x80000;
+  state->levels = 3;
+  state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
+  state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
   Engine_GameFlagSet(0x161);
   Engine_EventEnd();
 }
 
-struct PushState {
-  s32 count;
-  s32 level;
-  s32 active;
-  s32 targetX;
-  s32 targetZ;
-  struct FieldActor *source;
-  struct FieldActor *effect;
-};
-
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
+// Reset the published light count and start the attached actor's release
+// script.
 void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
-  s32 *record = *(s32 **)WORK_SLOT(35);
-  s32 *target;
+  struct MercuryLights *state = *(struct MercuryLights **)WORK_SLOT(35);
+  struct FieldActor *target;
 
-  if (record[0] == 0) {
+  if (state->levels == 0) {
     return;
   }
 
-  record[0] = 0;
+  state->levels = 0;
   Engine_GameFlagClear(0x161);
 
-  target = (s32 *)record[5];
+  target = state->pillar;
   if (target != 0) {
-    *(short *)((u8 *)target + 0x64) = 0;
-    Engine_ObjectSetScript(target, (s32)gMercury_ScaleCounterScript);
+    target->timer = 0;
+    Engine_ObjectSetScript(target, gMercury_ScaleCounterScript);
     Object_SetMode(target, 7);
-    record[5] = 0;
+    state->pillar = NULL;
   }
 }
 
-struct SceneTimer {
-  u8 unk00[8];
-  s32 count;
-};
-
+// Move between adjacent cells, spending a light when crossing into its region.
 void Mercury_RunActorMove(void) {
   struct FieldWork *work;
-  struct PushState *state;
+  struct MercuryLights *state;
   struct FieldActor *actor;
   struct FieldActor *source;
   struct FieldActor *obj;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct MapCell *from;
   struct MapCell *to;
   u8 saved;
@@ -337,7 +271,7 @@ void Mercury_RunActorMove(void) {
   u8 zero;
   union FieldCoordinate pos[3];
 
-  state = *(struct PushState **)WORK_SLOT(35);
+  state = *(struct MercuryLights **)WORK_SLOT(35);
   work = WORK_SLOT(HEAP_SLOT_EVENT);
   actor = work->actors[gGameState.selectedActor];
   flags = &actor->motionFlags;
@@ -347,37 +281,36 @@ void Mercury_RunActorMove(void) {
   if ((s16)gMercury_MoveAngles[(keys >> 4) & 15] == -1)
     return;
   pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
-  pos[1].fixed = ((struct ObjectRuntime *)actor)->terrainHeight;
+  pos[1].fixed = actor->terrainHeight;
   pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
   from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
   Vector_AddPolarOffset(0x200000, angle, &pos[0].fixed);
   to = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
-  if (from->collisionCode != state->level &&
-      to->collisionCode == state->level && state->count == 0)
+  if (from->collisionCode != state->terrainCode &&
+      to->collisionCode == state->terrainCode && state->levels == 0)
     return;
 
   Engine_EventBegin();
   if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) !=
       0)
     return;
-  obj = state->effect;
+  obj = state->stepEffect;
   if (obj != NULL) {
-    ((union FieldObject *)obj)->effect.spin = 0;
+    obj->timer = 0;
     Engine_ObjectSetScript(obj, gMercury_ScaleCounterScript);
     Object_SetMode(obj, 7);
-    state->effect = NULL;
+    state->stepEffect = NULL;
   }
-  if (to->collisionCode == state->level && state->count != 0) {
-    source = state->source;
+  if (to->collisionCode == state->terrainCode && state->levels != 0) {
+    source = state->pillar;
     obj = Engine_ObjectCreate(26, source->x.fixed, source->y.fixed,
                               source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
-      ((struct ObjectRuntime *)obj)->terrainHeight =
-          ((struct ObjectRuntime *)source)->terrainHeight;
+      obj->terrainHeight = source->terrainHeight;
       Engine_ObjectSetScript(obj, gMercury_RampScript);
       obj->motionFlags = 0;
-      ((union FieldObject *)obj)->effect.spin = 0;
+      obj->timer = 0;
       obj->priorityFlags = 2;
       obj->speed = 0x40000;
       obj->acceleration = 0x20000;
@@ -387,16 +320,16 @@ void Mercury_RunActorMove(void) {
         zero = 0;
         sprite->flags = zero;
       }
-      state->effect = obj;
+      state->stepEffect = obj;
     }
-    n = state->count - 1;
-    state->count = n;
+    n = state->levels - 1;
+    state->levels = n;
     if (n == 0) {
-      Engine_ObjectDispatchRelease(state->source);
-      state->source = NULL;
+      Engine_ObjectDispatchRelease(state->pillar);
+      state->pillar = NULL;
       Engine_GameFlagClear(0x161);
-    } else if (state->source != NULL) {
-      Object_SetMode(state->source, 6 - n);
+    } else if (state->pillar != NULL) {
+      Object_SetMode(state->pillar, 6 - n);
     }
   }
   Object_SetMode(actor, 6);
@@ -411,13 +344,13 @@ void Mercury_RunActorMove(void) {
   Engine_ActorMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
   Object_SetMode(actor, 6);
   Engine_TaskWait(2);
-  if (to->collisionCode != state->level)
+  if (to->collisionCode != state->terrainCode)
     Engine_ActorSetSpriteFlags(actor, 1);
   else
     Engine_AudioPlayCue(215);
   Engine_TaskWait(1);
   *flags = saved;
-  if (to->collisionCode == state->level && state->effect == NULL) {
+  if (to->collisionCode == state->terrainCode && state->stepEffect == NULL) {
     Object_SetMode(actor, 18);
     Engine_AudioPlayCue(241);
     for (i = 0;; i++) {
@@ -433,37 +366,39 @@ void Mercury_RunActorMove(void) {
     actor->z.fixed = state->targetZ;
     Engine_ActorSetSpriteFlags(actor, 1);
   }
-  state->active = 0;
+  state->sparkTimer = 0;
   Engine_EventEnd();
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
+// Emit an effect at the selected actor after a randomized delay.
 void Mercury_TickSpawnTimer(void) {
-  struct SceneTimer *timer;
+  struct MercuryLights *state;
   struct FieldActor *point;
 
-  timer = *(struct SceneTimer **)WORK_SLOT(35);
+  state = *(struct MercuryLights **)WORK_SLOT(35);
   point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
               ->actors[gGameState.selectedActor];
-  if (timer->count != 0) {
-    timer->count--;
+  if (state->sparkTimer != 0) {
+    state->sparkTimer--;
   } else {
     OverlayObject_SpawnKind24AtObject(point);
-    timer->count = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
+    state->sparkTimer = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
   }
 }
 
+// Remove the actor stored in the scene's published attachment slot.
 static void OverlayObject_ReleasePublishedAttachment(void) {
-  u8 **pub = Runtime_AllocateBlock(35, 4);
-  u8 *state;
-  u8 *obj;
+  struct MercuryLights **published = Runtime_AllocateBlock(35, 4);
+  struct MercuryLights *state;
+  struct FieldActor *pillar;
 
-  if (pub == 0)
+  if (published == NULL)
     return;
-  state = *pub;
-  obj = *(u8 **)(state + 20);
-  if (obj == 0)
+  state = *published;
+  pillar = state->pillar;
+  if (pillar == NULL)
     return;
-  Engine_ObjectDispatchRelease(obj);
-  *(u8 **)(state + 20) = 0;
+  Engine_ObjectDispatchRelease(pillar);
+  state->pillar = NULL;
 }

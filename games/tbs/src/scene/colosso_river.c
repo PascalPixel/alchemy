@@ -48,55 +48,57 @@
 #include "objcmd.h"
 #include "field_obj.h"
 #include "heap_state.h"
+#include "fixed_math.h"
+#include "colosso_gauge.h"
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
 #define COLOSSO_RIVER_FACE_DIRECTION Engine_ActorFaceDirection
-#define COLOSSO_RIVER_PLACE_STAGED_PAIR StagedActor_PlacePairAtOffsetAndRun
-#define COLOSSO_RIVER_SELECT_MODE_BLOCK SceneData_SelectBlockAndResetCounters
+#define COLOSSO_RIVER_PLACE_STAGED_PAIR ColossoRiver_MoveActorPairByOffset
+#define COLOSSO_RIVER_SELECT_MODE_BLOCK ColossoRiver_SelectPresentationScript
 #define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES                               \
   SceneActor_ApplyValueAndMatchingSlots
 #else
 #define COLOSSO_RIVER_FACE_DIRECTION ((s32 (*)())Engine_ActorFaceDirection)
 #define COLOSSO_RIVER_PLACE_STAGED_PAIR                                        \
-  ((s32 (*)())StagedActor_PlacePairAtOffsetAndRun)
+  ((s32 (*)())ColossoRiver_MoveActorPairByOffset)
 #define COLOSSO_RIVER_SELECT_MODE_BLOCK                                        \
-  ((s32 (*)())SceneData_SelectBlockAndResetCounters)
+  ((s32 (*)())ColossoRiver_SelectPresentationScript)
 #define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES                               \
   ((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)
 #endif
 
 // Forward declarations.
-static void FieldScene_RunCommandSequence(s32 a0);
-static void FieldScene_RunTwoArmSequence(s32 a);
-static void FieldScene_RunLateSequence(s32 a0);
-static void Resource3ba_NoOpCallback(void);
+static void ColossoRiver_ExplainFinalsRules(s32 guide);
+static void ColossoRiver_ShowRoundIntroduction(s32 round);
+static void ColossoRiver_ShowMatchResult(s32 result);
+static void ColossoRiver_NoOp(void);
 static void ColossoRiver_WaitForStageReady(void);
-static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
-static void StagedActor_PushActorAhead(void);
-
-typedef struct PartyInteractionRecord {
-  u8 padding00[10];
-  s16 x;
-  u8 padding0c[6];
-  s16 y;
-} PartyInteractionRecord;
+static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem);
+static void ColossoRiver_PushObjectAhead(void);
 
 typedef void (*SceneTask)(void);
 
-#define KEYS_HELD gKeysHeld // Written during VBlank.
-
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-u8 *ColossoRiver_GetEntrances(void) { return (u8 *)gColossoRiver_SceneTableA; }
+// Return the course entrance table.
+struct SceneEntrance *ColossoRiver_GetEntrances(void) {
+  return gColossoRiver_Entrances;
+}
 
+// Supply the scene entry table's default result.
 s32 get_default_result(void) { return 0; }
 
-u8 *ColossoRiver_GetExits(void) { return (u8 *)gColossoRiver_SceneTableB; }
+// Return the course exit table.
+u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
 
-u8 *ColossoRiver_GetPlacements(void) { return (u8 *)gColossoRiver_SceneTableC; }
+// Return the course actor placements.
+struct ScenePlacement *ColossoRiver_GetPlacements(void) {
+  return gColossoRiver_Placements;
+}
 
-static void FieldScene_RunOpeningAuxiliarySequence(void) {
+// Advance the bridge animation and its walkable collision cells.
+static void ColossoRiver_UpdateBrokenBridge(void) {
   switch ((u32)gColossoRiver_Countdown) {
   case 66:
     Engine_MapCopyCellsLayered(92, 31, 2, 2, 50, 38);
@@ -125,21 +127,24 @@ static void FieldScene_RunOpeningAuxiliarySequence(void) {
   gColossoRiver_Countdown--;
 }
 
-static void SceneState_ResetCounterAndStartTask(void) {
+// Stop the bridge task and restore its closed frame.
+static void ColossoRiver_ResetBrokenBridge(void) {
   SceneTask task;
 
   gColossoRiver_Countdown = 0;
-  task = (SceneTask)FieldScene_RunOpeningAuxiliarySequence;
+  task = ColossoRiver_UpdateBrokenBridge;
   Engine_TaskRemoveCallback(task);
   task();
 }
 
-static void SceneState_SetMode66AndPassOpeningSequence(void) {
+// Start the bridge's repeating opening sequence.
+static void ColossoRiver_StartBrokenBridge(void) {
   gColossoRiver_Countdown = 66;
-  FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xC80);
+  FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xC80);
 }
 
-static void ColossoRiver_WaitForCountdown(void) {
+// Wait for the crossing window, bounded by one bridge cycle.
+static void ColossoRiver_WaitForBridgeOpening(void) {
   s32 i;
 
   Engine_TaskWait(10);
@@ -155,7 +160,8 @@ static void ColossoRiver_WaitForCountdown(void) {
   }
 }
 
-static void SceneState_ApplyRectsForActorsNineAndTen(void) {
+// Rebuild collision cells beneath the movable course objects.
+static void ColossoRiver_RestorePushableObjectCells(void) {
 
   struct FieldActor *actor;
   s32 blocked;
@@ -187,13 +193,15 @@ static void SceneState_ApplyRectsForActorsNineAndTen(void) {
   }
 }
 
-static void FieldScene_RunTwoCallSequence(void) {
+// Push the object ahead and refresh its collision cells.
+static void ColossoRiver_PushObjectAndUpdateCells(void) {
 
-  StagedActor_PushActorAhead();
-  SceneState_ApplyRectsForActorsNineAndTen();
+  ColossoRiver_PushObjectAhead();
+  ColossoRiver_RestorePushableObjectCells();
 }
 
-static void EV15_PSYNERGY(void) {
+// Make the Growth crossing walkable.
+static void ColossoRiver_GrowCrossing(void) {
   {
 
     Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
@@ -201,36 +209,36 @@ static void EV15_PSYNERGY(void) {
   Engine_GameFlagSet(0x303);
 }
 
-static void EV13_PSYNERGY(void) {
-  u8 *rec7;
+// Raise the pipe platforms when Douse fills the waterway.
+static void ColossoRiver_FillPipeworks(void) {
+  struct FieldActor *actor;
   s32 none;
 
   GameFlag_Set(0x301);
-  rec7 = Object_GetById(13);
+  actor = Object_GetById(13);
   Engine_EventBegin();
-  Camera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
-  Object_SetMode((s32)rec7, 3);
+  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  Camera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
+  Object_SetMode(actor, 3);
   Engine_CameraWaitForMove();
   none = 0;
-  ((struct FieldActor *)rec7)->motionFlags = none;
-  ((struct FieldActor *)rec7)->acceleration = 0x6666;
-  ((struct FieldActor *)rec7)->speed = 0xcccc;
-  FieldObject_SetMoveTarget((s32)rec7, ((struct FieldActor *)rec7)->x.fixed,
-                            0x80000, ((struct FieldActor *)rec7)->z.fixed);
-  rec7 = Actor_Get(14);
-  ((struct FieldActor *)rec7)->motionFlags = none;
-  ((struct FieldActor *)rec7)->acceleration = 0x6666;
-  ((struct FieldActor *)rec7)->speed = 0xcccc;
-  Engine_ObjectSetPosition((s32)rec7, ((struct FieldActor *)rec7)->x.fixed,
-                           0x200000, ((struct FieldActor *)rec7)->z.fixed);
-  Object_CommitPosition((s32)rec7);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  FieldObject_SetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
+  actor = Actor_Get(14);
+  actor->motionFlags = none;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
+  Object_CommitPosition((s32)actor);
   Engine_EventWait(45);
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   Engine_EventEnd();
 }
 
-static void StagedActor_PlacePairAtOffsetAndRun(s32 actorId, s32 dx, s32 dz) {
+// Move the leader and a course object together between cell centers.
+static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 x;
@@ -240,20 +248,20 @@ static void StagedActor_PlacePairAtOffsetAndRun(s32 actorId, s32 dx, s32 dz) {
   actor = Object_GetById(actorId);
   Engine_EventBegin();
   {
-    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
+    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    leader->speed = 0x10000;
-    leader->acceleration = 0x8000;
+    leader->speed = PIXELS(1);
+    leader->acceleration = PIXELS(1) / 2;
     Engine_ObjectSetPosition(leader, x, leader->y.fixed, z);
   }
   Object_SetMode(leader, 27);
   {
-    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
-    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
+    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
+    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
 
-    actor->speed = 0x10000;
-    actor->acceleration = 0x8000;
+    actor->speed = PIXELS(1);
+    actor->acceleration = PIXELS(1) / 2;
     Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
@@ -262,13 +270,14 @@ static void StagedActor_PlacePairAtOffsetAndRun(s32 actorId, s32 dx, s32 dz) {
     Object_SetMode(actor, 3);
   }
   Engine_AudioPlayCue(226);
-  Object_CommitPosition(leader);
+  Object_CommitPosition((s32)leader);
   Object_SetMode(actor, 2);
   Engine_AudioPlayCue(288);
   Engine_EventEnd();
 }
 
-static void EV20_TOUCH(void) {
+// Roll the north-south log to its opposite bank.
+static void ColossoRiver_MoveLogNorthSouth(void) {
   struct FieldActor *actor;
   s32 row;
   s32 offset;
@@ -280,13 +289,14 @@ static void EV20_TOUCH(void) {
     offset = 48;
   }
   Map_CopyCellAttributes(67, 8, 3, 1, 64, row);
-  StagedActor_PlacePairAtOffsetAndRun(17, 0, offset);
+  ColossoRiver_MoveActorPairByOffset(17, 0, offset);
   actor = Object_GetById(17);
   row = actor->z.fixed >> 20;
   Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-static void EV21_TOUCH(void) {
+// Roll the east-west log in the player's chosen direction.
+static void ColossoRiver_MoveLogEastWest(void) {
   struct FieldActor *actor;
   s32 column;
   s32 offset;
@@ -294,10 +304,10 @@ static void EV21_TOUCH(void) {
 
   actor = Object_GetById(gGameState.selectedActor);
   column = actor->x.fixed >> 20;
-  if ((KEYS_HELD & 32) != 0) {
+  if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
   }
-  if ((KEYS_HELD & 16) != 0) {
+  if ((gKeysHeld & KEY_RIGHT) != 0) {
     direction = 1;
   }
   actor = Object_GetById(17);
@@ -321,13 +331,27 @@ static void EV21_TOUCH(void) {
     offset = -offset;
   }
   Map_CopyCellAttributes(72, 9, 1, 3, column, 9);
-  StagedActor_PlacePairAtOffsetAndRun(18, offset, 0);
+  ColossoRiver_MoveActorPairByOffset(18, offset, 0);
   actor = Object_GetById(18);
   column = actor->x.fixed >> 20;
   Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
-static void EV12_TOUCH(void) {
+// Run the five frames that show water entering the Pipeworks channel.
+static inline void ColossoRiver_AnimatePipeworksWater(void) {
+  Map_CopyCells(96, 29, 1, 3, 34, 38);
+  Engine_EventWait(3);
+  Map_CopyCells(97, 29, 1, 3, 34, 38);
+  Engine_EventWait(3);
+  Map_CopyCells(98, 29, 1, 3, 34, 38);
+  Engine_EventWait(3);
+  Map_CopyCells(99, 29, 1, 3, 34, 38);
+  Engine_EventWait(3);
+  Map_CopyCells(100, 29, 1, 3, 34, 38);
+}
+
+// Push the waterway object and animate the resulting flow.
+static void ColossoRiver_PushPipeworksObject(void) {
   s32 leaderId;
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -340,22 +364,23 @@ static void EV12_TOUCH(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(leaderId, 8);
   Engine_EventWait(6);
-  actor->speed = 0x8000;
-  actor->acceleration = 0x3333;
+  actor->speed = PIXELS(1) / 2;
+  actor->acceleration = PIXELS(1) / 5;
   Event_PlayCue(239);
   Object_SetMode(actor, 2);
-  Engine_ObjectSetPosition(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
+  Engine_ObjectSetPosition(actor, actor->x.fixed - PIXELS(48), 0,
+                           actor->z.fixed);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(leaderId, 2);
   ObjectDispatch_InitFromTable4WithArgument(
       *(struct DispatchObject **)(Runtime_AllocateBlock(27, 0xccc) + 480),
       (s32)actor);
-  Actor_SetSpeed(leaderId, 0x4ccc, 0x3333);
-  Engine_ObjectSetPosition(leader, leader->x.fixed - 0x180000, 0,
+  Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
+  Engine_ObjectSetPosition(leader, leader->x.fixed - PIXELS(24), 0,
                            leader->z.fixed);
   Engine_ActorWaitForMove(leaderId);
   Engine_ActorSetAnimation(leaderId, 1);
-  Object_CommitPosition(actor);
+  Object_CommitPosition((s32)actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(288);
   Event_PlayCue(213);
@@ -366,84 +391,70 @@ static void EV12_TOUCH(void) {
   none = GameFlag_IsSet(0x301);
   if (none != 0) {
     Engine_EventBegin();
-    Camera_SetSpeed(0x20000, 0x4000);
-    Camera_MoveTo(0x2280000, -1, 0xc80000, 1);
+    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    Camera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
     Engine_CameraWaitForMove();
-    Map_CopyCells(96, 29, 1, 3, 34, 38);
-    Engine_EventWait(3);
-    Map_CopyCells(97, 29, 1, 3, 34, 38);
-    Engine_EventWait(3);
-    Map_CopyCells(98, 29, 1, 3, 34, 38);
-    Engine_EventWait(3);
-    Map_CopyCells(99, 29, 1, 3, 34, 38);
-    Engine_EventWait(3);
-    Map_CopyCells(100, 29, 1, 3, 34, 38);
+    ColossoRiver_AnimatePipeworksWater();
     Engine_EventWait(15);
     Engine_EventEnd();
     return;
   }
   GameFlag_Set(0x301);
   Engine_EventBegin();
-  Camera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
+  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  Camera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   Engine_CameraWaitForMove();
   actor = Object_GetById(13);
   actor->motionFlags = none;
-  actor->acceleration = 0x6666;
-  actor->speed = 0xcccc;
-  Engine_ObjectSetPosition(actor, actor->x.fixed, 0x80000, actor->z.fixed);
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
   Object_SetMode(actor, 3);
-  Map_CopyCells(96, 29, 1, 3, 34, 38);
-  Engine_EventWait(3);
-  Map_CopyCells(97, 29, 1, 3, 34, 38);
-  Engine_EventWait(3);
-  Map_CopyCells(98, 29, 1, 3, 34, 38);
-  Engine_EventWait(3);
-  Map_CopyCells(99, 29, 1, 3, 34, 38);
-  Engine_EventWait(3);
-  Map_CopyCells(100, 29, 1, 3, 34, 38);
+  ColossoRiver_AnimatePipeworksWater();
   actor = Object_GetById(14);
   actor->motionFlags = none;
-  actor->acceleration = 0x6666;
-  actor->speed = 0xcccc;
-  Engine_ObjectSetPosition(actor, actor->x.fixed, 0x200000, actor->z.fixed);
-  Object_CommitPosition(actor);
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
+  Object_CommitPosition((s32)actor);
   Engine_EventWait(15);
   Engine_EventEnd();
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-UNUSED static void SceneState_ApplyValue768(void) { Engine_GameFlagSet(768); }
+// Mark the course flag used by this unused event.
+UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
-static void EV50_TOUCH(void) {
+// Collect the finish items and stage the finals battle.
+static void ColossoRiver_StartFinalsBattle(void) {
   s32 approach;
   s32 n;
   s32 base;
 
   base = 0;
-  Resource3ba_NoOpCallback();
+  ColossoRiver_NoOp();
   Engine_EventBegin();
-  approach = FieldScene_RunFlag211ApproachScene(120, 127);
+  approach = ColossoRiver_CollectFinishItem(120, 127);
   ColossoRiver_WaitForStageReady();
   n = 9;
   do {
     Object_RefreshSelectorById(8);
     n = n - 1;
   } while (n >= 0);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_WalkTo(8, 0x528, 192);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x508, 192);
+  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(8, 1320, 192);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
   Engine_ActorSetAnimation(8, 1);
   Engine_ActorFaceEachOther(0, 8, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(8, 3);
   Engine_ActorSetAnimationAndWait(0, 3);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-  Actor_SetSpeed(8, 0x20000, 0x10000);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x510, 192);
-  Actor_WalkToAndWait(8, 0x520, 192);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(8, PIXELS(2), PIXELS(1));
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
+  Actor_WalkToAndWait(8, 1312, 192);
   Engine_ActorSetAnimation(0, 16);
   Engine_ActorSetAnimation(8, 9);
   Engine_EventWait(10);
@@ -457,28 +468,31 @@ static void EV50_TOUCH(void) {
   GameFlag_Set(0x11a);
 }
 
-static void EV90_SCRIPT(void) {
+// Handle the course's push action or the ordinary action ahead.
+static void ColossoRiver_TryPushObjectAhead(void) {
 
   if (SceneActor_FindOccupantAheadOfSubject() == 0) {
     Engine_LeaderCheckAhead();
   } else {
-    FieldScene_RunTwoCallSequence();
+    ColossoRiver_PushObjectAndUpdateCells();
   }
 }
 
-u8 *ColossoRiver_GetEvents(void) { return (u8 *)gColossoRiver_SceneTableD; }
+// Return the course event table.
+struct SceneEvent *ColossoRiver_GetEvents(void) { return gColossoRiver_Events; }
 
-static void ColossoRiver_RunPostMatchScene(s32 a0) {
+// Restore the contestants and resume the post-battle presentation.
+static void ColossoRiver_RestoreMatchResult(s32 result) {
 
   Engine_ActorDestroy(24);
   Engine_ActorDestroy(25);
   Party_RestoreHpPp(1);
   Engine_EventBegin();
-  Actor_SetPosition(8, 0x5280000, 0xc00000);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5080000, 0xc00000);
+  Actor_SetPosition(8, PIXELS(1320), PIXELS(192));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
   Actor_FaceActor(8, 0x4000, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
-  if (a0 < 0) {
+  if (result < 0) {
     Engine_ActorSetAnimation(8, 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
   } else {
@@ -486,31 +500,32 @@ static void ColossoRiver_RunPostMatchScene(s32 a0) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
   }
   Engine_TaskWait(1);
-  Camera_MoveTo(0x5180000, 0, 0x800000, 0);
-  FieldScene_RunLateSequence(a0);
+  Camera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
+  ColossoRiver_ShowMatchResult(result);
   Engine_EventEnd();
 }
 
-static void SceneActor_MarkObjectAtTiles94To95(s32 actor) {
-  struct FieldActor *o;
-  s32 x;
-  s32 y;
+// Mark actors standing in the course's finish terrain.
+static void ColossoRiver_MarkCourseTerrain(s32 actor) {
+  struct FieldActor *courseActor;
+  s32 column;
+  s32 row;
 
-  o = Object_GetById(actor);
-  if (o != 0) {
-    x = o->x.fixed >> 19;
-    y = o->z.fixed >> 19;
-    if (x >= 94 && x <= 95 && y > 23 && y <= 26) {
-      o->terrainId = 1;
+  courseActor = Object_GetById(actor);
+  if (courseActor != 0) {
+    column = courseActor->x.fixed >> 19;
+    row = courseActor->z.fixed >> 19;
+    if (column >= 94 && column <= 95 && row > 23 && row <= 26) {
+      courseActor->terrainId = 1;
     }
   }
 }
 
+// Restore obstacle state and select the arrival or match sequence.
 s32 ColossoRiver_ApplyEntryState(void) {
   struct FieldActor *actor;
   s32 hit;
   s32 x;
-  s32 z;
   u8 zero;
   s32 col;
 
@@ -529,11 +544,11 @@ s32 ColossoRiver_ApplyEntryState(void) {
     x = 25;
   }
   actor = Object_GetById(10);
-  actor->x.fixed = (x << 20) + 0x80000;
+  actor->x.fixed = (x << 20) + PIXELS(8);
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-  FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+  FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xc80);
   actor = Object_GetById(15);
   actor->terrainId = 1;
   zero = 0;
@@ -563,9 +578,9 @@ s32 ColossoRiver_ApplyEntryState(void) {
   if (Engine_GameFlagIsSet(0x301)) {
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     actor->motionFlags = zero;
-    actor->acceleration = 0x6666;
-    actor->speed = 0xcccc;
-    actor->y.fixed = 0x80000;
+    actor->acceleration = PIXELS(2) / 5;
+    actor->speed = PIXELS(4) / 5;
+    actor->y.fixed = PIXELS(8);
     Object_SetMode(actor, 3);
   } else {
     Object_SetMode(actor, 2);
@@ -573,10 +588,11 @@ s32 ColossoRiver_ApplyEntryState(void) {
   Object_GetById(14)->priorityFlags = 2;
   Colosso_ShowItemIcon(24, 120);
   Colosso_ShowItemIcon(25, 127);
+  // Select competition, support, explanation, or post-battle arrival.
   switch (gGameState.entrance) {
   case 1:
-    FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, 0x5180000, 0xc00000,
-                                                  24, 25);
+    FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, PIXELS(1304),
+                                                  PIXELS(192), 24, 25);
     Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
     Engine_ActorDestroy(19);
     Engine_ActorDestroy(20);
@@ -587,10 +603,10 @@ s32 ColossoRiver_ApplyEntryState(void) {
       Engine_AudioPlayCue(17);
       Colosso_SelectSoloCompetitor(0);
       SceneActor_PlacePartyAtSavedTiles();
-      SceneActor_MarkObjectAtTiles94To95(1);
-      SceneActor_MarkObjectAtTiles94To95(2);
-      SceneActor_MarkObjectAtTiles94To95(3);
-      FieldScene_RunTwoArmSequence(1);
+      ColossoRiver_MarkCourseTerrain(1);
+      ColossoRiver_MarkCourseTerrain(2);
+      ColossoRiver_MarkCourseTerrain(3);
+      ColossoRiver_ShowRoundIntroduction(1);
     }
     Object_LinkObjectAndSetCallback(1, 0);
     Object_LinkObjectAndSetCallback(2, 0);
@@ -604,69 +620,71 @@ s32 ColossoRiver_ApplyEntryState(void) {
     if (!Engine_GameFlagIsSet(0x109)) {
       SceneActor_PlacePartyAtSavedTiles();
       Colosso_SelectSoloCompetitor(1);
-      FieldScene_RunTwoArmSequence(0);
+      ColossoRiver_ShowRoundIntroduction(0);
     }
     break;
   case 3:
     if (!Engine_GameFlagIsSet(0x109)) {
-      FieldScene_RunCommandSequence(19);
+      ColossoRiver_ExplainFinalsRules(19);
       Colosso_ClearSavedActorPositions();
     }
     break;
   case 4:
-    ColossoRiver_RunPostMatchScene(1);
+    ColossoRiver_RestoreMatchResult(1);
     Engine_EventRequestExit(4);
     break;
   case 5:
-    ColossoRiver_RunPostMatchScene(-1);
+    ColossoRiver_RestoreMatchResult(-1);
     Engine_EventRequestExit(5);
     break;
   }
   return 0;
 }
 
-static void FieldScene_RunCommandSequence(s32 a0) {
+// Arrange the party and let the guide explain the finals course.
+static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   struct FieldActor *actor;
   s32 x;
   s32 z;
 
-  actor = Object_GetById(a0);
+  actor = Object_GetById(guide);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
   Engine_EventBegin();
-  Actor_SetSpeed(a0, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  Engine_ActorSetPosition(0, x << 16, (z << 16) - 0x300000);
-  Actor_SetPosition(GARET, (x << 16) - 0x100000, (z << 16) - 0x280000);
-  Actor_SetPosition(IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
-  Actor_SetPosition(MIA, x << 16, (z << 16) - 0x200000);
-  Actor_SetPosition(a0, x << 16, (z << 16) - 0x500000);
+  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  Engine_ActorSetPosition(0, x << 16, (z << 16) - PIXELS(48));
+  Actor_SetPosition(GARET, (x << 16) - PIXELS(16), (z << 16) - PIXELS(40));
+  Actor_SetPosition(IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
+  Actor_SetPosition(MIA, x << 16, (z << 16) - PIXELS(32));
+  Actor_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
   actor = Object_GetById(0);
   actor->facing = 0xc000;
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteFirstFinalsBattle);
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(guide, 0);
   Actor_ShowEmote(MIA, 0x101, 60);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorStartRepeatedMotion(a0, 3);
-  Event_ShowMessage(a0, 0);
+  Engine_ActorStartRepeatedMotion(guide, 3);
+  Event_ShowMessage(guide, 0);
   Actor_ShowEmote(IVAN, 0x101, 60);
   Event_ShowMessage(IVAN, 0);
-  Actor_FaceActor(a0, IVAN, 0);
+  Actor_FaceActor(guide, IVAN, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(a0, 3);
-  Event_ShowMessage(a0, 0);
+  Engine_ActorSetAnimationAndWait(guide, 3);
+  Event_ShowMessage(guide, 0);
   Actor_ShowEmote(GARET, 0x101, 60);
   Event_ShowMessage(GARET, 0);
   Actor_ShowEmote(MIA, 0x101, 60);
   Event_ShowMessage(MIA, 0);
-  Actor_ShowEmote(a0, 0x102, 60);
-  if (Event_AskYesNo(a0, 0) == 0) {
+  Actor_ShowEmote(guide, 0x102, 60);
+  // Pan over each stage while the guide explains the finals rules.
+  if (Event_AskYesNo(guide, 0) == 0) {
     do {
       Engine_EventSetMessage(MsgColossoWarriorsEnterFinalsWithoutAny);
       Engine_ActorSetAnimation(IVAN, 3);
@@ -676,44 +694,45 @@ static void FieldScene_RunCommandSequence(s32 a0) {
       Engine_ActorSetAnimation(MIA, 3);
       Engine_EventWait(1);
       Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-      Engine_ActorSetAnimationAndWait(a0, 3);
-      Event_ShowMessage(a0, 0);
-      Actor_FaceDirection(a0, 0xa000, 0);
+      Engine_ActorSetAnimationAndWait(guide, 3);
+      Event_ShowMessage(guide, 0);
+      Actor_FaceDirection(guide, 0xa000, 0);
       Engine_EventWait(20);
-      Event_ShowMessage(a0, 0);
-      Camera_SetSpeed(0x30000, 0x6000);
-      Camera_MoveTo(0x1380000, -1, 0x680000, 1);
+      Event_ShowMessage(guide, 0);
+      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      Camera_MoveTo(PIXELS(312), -1, PIXELS(104), 1);
       Engine_CameraWaitForMove();
-      Event_ShowMessage(a0, 0);
-      Camera_SetSpeed(0x18000, 0x3000);
-      Camera_MoveTo(0x3080000, -1, 0x680000, 1);
-      Event_ShowMessage(a0, 0);
+      Event_ShowMessage(guide, 0);
+      Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+      Camera_MoveTo(PIXELS(776), -1, PIXELS(104), 1);
+      Event_ShowMessage(guide, 0);
       Engine_CameraWaitForMove();
-      Event_ShowMessage(a0, 0);
-      Camera_SetSpeed(0x30000, 0x6000);
-      Camera_MoveTo(0x4d80000, -1, 0xa80000, 1);
+      Event_ShowMessage(guide, 0);
+      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      Camera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
-      Actor_FaceActor(a0, 0x6000, 0);
-      Event_ShowMessage(a0, 0);
-      Camera_MoveTo(0x5180000, -1, 0xa80000, 1);
+      Actor_FaceActor(guide, 0x6000, 0);
+      Event_ShowMessage(guide, 0);
+      Camera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
-      Actor_FaceActor(a0, ACTOR_PARTY_LEADER, 0);
-      Event_ShowMessage(a0, 0);
-      Event_ShowMessage(a0, 0);
-      Event_ShowMessage(a0, 0);
+      Actor_FaceActor(guide, ACTOR_PARTY_LEADER, 0);
+      Event_ShowMessage(guide, 0);
+      Event_ShowMessage(guide, 0);
+      Event_ShowMessage(guide, 0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Engine_ActorRunRepeatedMotion(a0, 2);
-    } while (Event_AskYesNo(a0, 0) != 0);
-    Engine_ActorRunRepeatedMotion(a0, 2);
+      Engine_ActorRunRepeatedMotion(guide, 2);
+    } while (Event_AskYesNo(guide, 0) != 0);
+    Engine_ActorRunRepeatedMotion(guide, 2);
     Engine_EventSetMessage(MsgColossoAskAttendantsForExplanationsStages);
-    Event_ShowMessage(a0, 0);
+    Event_ShowMessage(guide, 0);
   }
+  // Explain the party's support role, then gather them behind Isaac.
   Engine_EventSetMessage(MsgColossoIsaacYoureContestantInFinals);
-  Engine_ActorRunRepeatedMotion(a0, 2);
-  Event_ShowMessage(a0, 0);
+  Engine_ActorRunRepeatedMotion(guide, 2);
+  Event_ShowMessage(guide, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
   Actor_FaceDirection(GARET, 0, 0);
-  Actor_FaceDirection(IVAN, 0x8000, 0);
+  Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessage(GARET, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -743,17 +762,18 @@ static void FieldScene_RunCommandSequence(s32 a0) {
   if (actor != 0) {
     Actor_SetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Actor_WalkToAndWait(a0, x - 16, z - 64);
+  Actor_WalkToAndWait(guide, x - 16, z - 64);
   Actor_SetPosition(GARET, 0, 0);
   Actor_SetPosition(IVAN, 0, 0);
   Actor_SetPosition(MIA, 0, 0);
-  Actor_WalkToAndWait(a0, x - 16, z - 16);
-  Actor_WalkToAndWait(a0, x, z);
-  Actor_FaceDirection(a0, 0xc000, 10);
+  Actor_WalkToAndWait(guide, x - 16, z - 16);
+  Actor_WalkToAndWait(guide, x, z);
+  Actor_FaceDirection(guide, 0xc000, 10);
   Engine_EventEnd();
 }
 
-static void EV20_TALK(s32 scene) {
+// Demonstrate the rock challenge or repeat its objective.
+static void ColossoRiver_ExplainRockChallenge(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
@@ -763,12 +783,12 @@ static void EV20_TALK(s32 scene) {
     path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoCallRockChallenge);
-      Camera_SetSpeed(0x30000, 0x6000);
+      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_EventShowMessage(scene, 0);
       Colosso_FadeInCompetitor(0, 280, 200);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Engine_EventWait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
@@ -777,29 +797,29 @@ static void EV20_TALK(s32 scene) {
       Engine_EventWait(30);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       OverlayObject_PlaceWithScale14000(0, 296, 184);
       OverlayObject_PlaceWithScale14000(0, 296, 152);
       OverlayObject_PlaceWithScale14000(0, 312, 152);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
-      StagedActor_PushActorAhead();
+      ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
-      StagedActor_PushActorAhead();
+      ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
       Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 15);
-      StagedActor_PushActorAhead();
+      ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
-      StagedActor_PushActorAhead();
+      ColossoRiver_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
       Engine_EventShowMessage(scene, 0);
       Colosso_RestoreCompetitor(0);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-      Actor_SetPosition(9, 0x1380000, 0xa80000);
+      Actor_SetPosition(9, PIXELS(312), PIXELS(168));
       Colosso_ShowFollowUpPrompt(scene, 1);
     } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoObjectiveStageClear);
@@ -810,80 +830,78 @@ static void EV20_TALK(s32 scene) {
   }
 }
 
-static void EV21_TALK(s32 a0) {
-  s32 rec4;
+// Move a Pipeworks actor with the speed used throughout its demonstration.
+static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
+                                              s32 height) {
+  actor->motionFlags = 0;
+  actor->acceleration = PIXELS(2) / 5;
+  actor->speed = PIXELS(4) / 5;
+  Engine_ObjectSetPosition(actor, actor->x.fixed, height, actor->z.fixed);
+}
+
+// Demonstrate the pipe platforms or repeat their objective.
+static void ColossoRiver_ExplainPipeworks(s32 attendant) {
+  s32 path;
   struct FieldActor *second;
   struct FieldActor *first;
 
   if (gGameState.entrance == 2) {
-    Colosso_FinishSoloRound(a0);
+    Colosso_FinishSoloRound(attendant);
   } else {
     Engine_EventBegin();
-    rec4 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
-    if (rec4 == 0) {
+    path = SceneDialogue_RunFlagGatedPromptInteraction(attendant, 2);
+    if (path == 0) {
       Engine_EventSetMessage(MsgColossoAreaCalledPipeworks);
-      Engine_CameraSetSpeed(0x30000, 0x6000);
-      Camera_MoveTo(0x2500000, -1, 0x780000, 1);
+      Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
+      Camera_MoveTo(PIXELS(592), -1, PIXELS(120), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(60);
-      Engine_CameraSetSpeed(0x18000, 0x3000);
-      Engine_CameraMoveTo(0x2600000, -1, 0xd80000, 1);
+      Engine_CameraSetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+      Engine_CameraMoveTo(PIXELS(608), -1, PIXELS(216), 1);
       Engine_CameraWaitForMove();
-      Engine_EventShowMessage(a0, 0);
+      Engine_EventShowMessage(attendant, 0);
       SceneEffect_SeedMarkerAndInstallTask(56, 64, 0);
       Engine_EventWait(60);
       SceneState_StartMarkerMove(160, 96, 10);
       Engine_EventWait(70);
-      Engine_EventShowMessage(a0, 0);
+      Engine_EventShowMessage(attendant, 0);
       SceneEffect_RemoveMarkerTask();
       Engine_TaskWait(2);
       first = Object_GetById(13);
-      first->motionFlags = 0;
-      first->acceleration = 0x6666;
-      first->speed = 0xcccc;
-      Engine_ObjectSetPosition(first, first->x.fixed, 0x80000, first->z.fixed);
+      ColossoRiver_SetPipeHeight(first, PIXELS(8));
       second = Object_GetById(14);
-      second->motionFlags = 0;
-      second->acceleration = 0x6666;
-      second->speed = 0xcccc;
-      Engine_ObjectSetPosition(second, second->x.fixed, 0x200000,
-                               second->z.fixed);
+      ColossoRiver_SetPipeHeight(second, PIXELS(32));
       Object_CommitPosition((s32)second);
       Engine_EventWait(45);
       first = Object_GetById(13);
-      first->motionFlags = 0;
-      first->acceleration = 0x6666;
-      first->speed = 0xcccc;
-      Engine_ObjectSetPosition(first, first->x.fixed, 0x180000, first->z.fixed);
+      ColossoRiver_SetPipeHeight(first, PIXELS(24));
       second = Actor_Get(14);
-      second->motionFlags = 0;
-      second->acceleration = 0x6666;
-      second->speed = 0xcccc;
-      Engine_ObjectSetPosition(second, second->x.fixed, 0, second->z.fixed);
+      ColossoRiver_SetPipeHeight(second, 0);
       Object_CommitPosition((s32)second);
       Engine_EventWait(15);
-      Engine_EventShowMessage(a0, 0);
+      Engine_EventShowMessage(attendant, 0);
       SceneEffect_SeedMarkerAndInstallTask(56, 64, 0);
       Engine_EventWait(30);
       SceneState_StartMarkerMove(160, 96, 10);
       Engine_EventWait(40);
       SceneState_StartMarkerMove(56, 64, 10);
       Engine_EventWait(70);
-      Engine_EventShowMessage(a0, 0);
+      Engine_EventShowMessage(attendant, 0);
       SceneEffect_RemoveMarkerTask();
       Engine_TaskWait(2);
       Engine_CameraFollowActor(0, 0);
-      Colosso_ShowFollowUpPrompt(a0, 2);
-    } else if (rec4 == 1) {
+      Colosso_ShowFollowUpPrompt(attendant, 2);
+    } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoObjectiveMakeGood);
-      Engine_EventShowMessage(a0, 0);
+      Engine_EventShowMessage(attendant, 0);
     }
-    FieldScene_RunMiddleSequence(rec4, a0, 2);
+    FieldScene_RunMiddleSequence(path, attendant, 2);
     Engine_EventEnd();
   }
 }
 
-static void EV22_TALK(s32 scene) {
+// Demonstrate crossing the bridge during its opening window.
+static void ColossoRiver_ExplainBrokenBridge(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
@@ -893,12 +911,12 @@ static void EV22_TALK(s32 scene) {
     path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoTheyCallBrokenBridge);
-      SceneState_ResetCounterAndStartTask();
-      Camera_SetSpeed(0x30000, 0x6000);
+      ColossoRiver_ResetBrokenBridge();
+      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
       Engine_CameraWaitForMove();
       Event_ShowMessage(scene, 0);
-      SceneState_SetMode66AndPassOpeningSequence();
+      ColossoRiver_StartBrokenBridge();
       Engine_EventWait(60);
       Event_ShowMessage(scene, 0);
       Colosso_FadeInCompetitor(0, 736, 200);
@@ -910,8 +928,8 @@ static void EV22_TALK(s32 scene) {
        * Direct prototype rechecked 2026-10-16: 3 argument instructions
        * differ in tbs-en. */
       COLOSSO_RIVER_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
-      ColossoRiver_WaitForCountdown();
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+      ColossoRiver_WaitForBridgeOpening();
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       Engine_EventWait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
@@ -928,7 +946,8 @@ static void EV22_TALK(s32 scene) {
   }
 }
 
-static void EV23_TALK(s32 scene) {
+// Demonstrate moving the logs to cross the water.
+static void ColossoRiver_ExplainLumberWater(s32 scene) {
   s32 path;
 
   if (gGameState.entrance == 2) {
@@ -939,7 +958,7 @@ static void EV23_TALK(s32 scene) {
   path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
   if (path == 0) {
     Engine_EventSetMessage(MsgColossoPlaceNormallyCalledLumberWater);
-    Camera_SetSpeed(0x30000, 0x6000);
+    Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Engine_CameraWaitForMove();
     Event_ShowMessage(scene, 0);
@@ -952,7 +971,7 @@ static void EV23_TALK(s32 scene) {
     Event_ShowMessage(scene, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     OverlayObject_PlaceWithScale14000(0, 1000, 192);
     OverlayObject_PlaceWithScale14000(0, 1000, 176);
     OverlayObject_PlaceWithScale14000(0, 1016, 168);
@@ -965,18 +984,18 @@ static void EV23_TALK(s32 scene) {
      * Direct prototype rechecked 2026-10-16: 3 argument instructions
      * differ in tbs-en. */
     COLOSSO_RIVER_PLACE_STAGED_PAIR(18, 160, 0);
-    Camera_MoveTo(0x4400000, -1, 0xa80000, 1);
+    Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(10);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 30);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Event_ShowMessage(scene, 0);
     Colosso_RestoreCompetitor(0);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-    Actor_SetPosition(18, 0x3f80000, 0xa80000);
+    Actor_SetPosition(18, PIXELS(1016), PIXELS(168));
     Colosso_ShowFollowUpPrompt(scene, 4);
   } else if (path == 1) {
     Engine_EventSetMessage(MsgColossoLogsKeyClearingStage);
@@ -986,14 +1005,17 @@ static void EV23_TALK(s32 scene) {
   Engine_EventEnd();
 }
 
+// Set the leader's movement speed for the shared Colosso dialogue.
 static inline void InitializeActorZero(void) {
-  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
+// Set an attendant's movement speed for the shared Colosso dialogue.
 static inline void InitializeSelectedActor(s32 actorId) {
-  Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
+  Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
+// Advance to the next message in the current explanation.
 static __inline__ void AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
@@ -1003,45 +1025,47 @@ static __inline__ void AdvanceMessage(s32 amount) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-static void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param) {
-  s32 handler;
+// Select a presentation script and reset its playback state.
+static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
+  const s16 *script;
 
   gColosso_ModeTaskMode = mode;
   gColosso_ModeTaskParam = (param << 4);
 
   FieldScheduler_AddCallback(Colosso_UpdateModeTask, 0xc80);
 
-  handler = (s32)gColossoRiver_RoundSpans;
+  script = gColossoRiver_RoundSpans;
   if (mode == 2) {
-    handler = (s32)gColossoRiver_ModeRecordTwo;
+    script = gColossoRiver_ModeRecordTwo;
   }
   if (mode == 4) {
-    handler = (s32)gColossoRiver_ModeRecordFour;
+    script = gColossoRiver_ModeRecordFour;
   }
   if (mode == 3) {
     if (param != 0) {
-      handler = (s32)gColossoRiver_SpanB;
+      script = gColossoRiver_SpanB;
     } else {
-      handler = (s32)gColossoRiver_SpanA;
+      script = gColossoRiver_SpanA;
     }
   }
 
   gColosso_ModeTaskTimer = 0;
-  gColosso_ModeTaskScript = (s16 *)handler;
+  gColosso_ModeTaskScript = (s16 *)script;
   gColosso_ModeMoveTarget = 0;
   gColosso_ModeMoveDuration = 0;
   gColosso_ModeTaskPosition = 0;
 }
 
-static void FieldScene_RunTwoArmSequence(s32 a) {
-  if (a == 0) {
+// Present the competitors and announce the round.
+static void ColossoRiver_ShowRoundIntroduction(s32 round) {
+  if (round == 0) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(89);
     Colosso_LoadPortrait(0);
-    SceneData_SelectBlockAndResetCounters(1, 0);
+    ColossoRiver_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
   } else {
@@ -1049,29 +1073,29 @@ static void FieldScene_RunTwoArmSequence(s32 a) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    gColossoRiver_RoundSpans[15] = a * 60;
+    gColossoRiver_RoundSpans[15] = round * 60;
     Engine_EventWait(30);
-    Engine_AudioPlayCue(a + 90);
-    Colosso_LoadPortrait(a);
-    SceneData_SelectBlockAndResetCounters(1, 0);
+    Engine_AudioPlayCue(round + 90);
+    Colosso_LoadPortrait(round);
+    ColossoRiver_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     while (AudioCommand_GetStateByte() != 0) {
       Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(0x121);
     Colosso_LoadPortrait(5);
-    SceneData_SelectBlockAndResetCounters(2, 0);
+    ColossoRiver_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(236);
     Engine_EventWait(60);
-    SceneData_SelectBlockAndResetCounters(2, 1);
+    ColossoRiver_SelectPresentationScript(2, 1);
     Engine_AudioPlayCue(236);
     Engine_EventWait(60);
     Colosso_LoadPortrait(6);
-    SceneData_SelectBlockAndResetCounters(2, 0);
+    ColossoRiver_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(236);
     Engine_EventWait(60);
     Colosso_LoadPortrait(7);
-    SceneData_SelectBlockAndResetCounters(4, 0);
+    ColossoRiver_SelectPresentationScript(4, 0);
     Engine_AudioPlayCue(237);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
@@ -1079,16 +1103,17 @@ static void FieldScene_RunTwoArmSequence(s32 a) {
   }
 }
 
-static void FieldScene_RunLateSequence(s32 a0) {
+// Present the winner or loser and leave the course.
+static void ColossoRiver_ShowMatchResult(s32 result) {
 
   s32 kind;
 
   Engine_AudioPlayCue(247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  gColossoRiver_SpanA[13] = a0 * 60;
-  STORE_CONST(gColossoRiver_SpanB[13]) = (a0 < 0 ? -a0 : a0) * 60;
-  if (a0 < 0) {
+  gColossoRiver_SpanA[13] = result * 60;
+  STORE_CONST(gColossoRiver_SpanB[13]) = (result < 0 ? -result : result) * 60;
+  if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(86);
     Colosso_LoadPortrait(8);
@@ -1100,11 +1125,11 @@ static void FieldScene_RunLateSequence(s32 a0) {
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
     COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 1);
-    Engine_EventWait(-a0 * 60 + 60);
+    Engine_EventWait(-result * 60 + 60);
     kind = 0;
   } else {
     Engine_EventWait(30);
-    Engine_AudioPlayCue(a0 + 90);
+    Engine_AudioPlayCue(result + 90);
     Colosso_LoadPortrait(4);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
@@ -1114,7 +1139,7 @@ static void FieldScene_RunLateSequence(s32 a0) {
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
     COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 0);
-    Engine_EventWait(a0 * 60 + 60);
+    Engine_EventWait(result * 60 + 60);
     kind = 8;
   }
   Engine_ActorShowEmote(kind, 0x105, 0);
@@ -1132,6 +1157,7 @@ static void FieldScene_RunLateSequence(s32 a0) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
+// Write eight hexadecimal digits and a terminating null.
 UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
@@ -1145,8 +1171,10 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   }
 }
 
-static void Resource3ba_NoOpCallback(void) {}
+// Provide the empty callback retained by the original event sequence.
+static void ColossoRiver_NoOp(void) {}
 
+// Mark the shared stage state ready for the waiting event.
 UNUSED static void ColossoRiver_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;
@@ -1154,6 +1182,7 @@ UNUSED static void ColossoRiver_MarkStageReady(void) {
   *ready = nine;
 }
 
+// Wait until the stage's setup task reports readiness.
 static void ColossoRiver_WaitForStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
 
@@ -1162,97 +1191,98 @@ static void ColossoRiver_WaitForStageReady(void) {
   }
 }
 
-static void
-SceneEffect_SpawnKind285AtRandomChance(union FieldObject *fieldObject) {
-  struct FieldActor *a = (struct FieldActor *)fieldObject;
-  s32 t[3];
-  u32 n;
+// Occasionally spawn an animated effect around the finish item.
+static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
+  s32 position[3];
+  u32 chance;
 
-  if (a->velocityY >= -255 && a->velocityY <= 255) {
-    a->motionFlags = 0;
+  if (actor->velocityY >= -255 && actor->velocityY <= 255) {
+    actor->motionFlags = 0;
   }
-  n = Engine_RandomNext();
-  if (n * 100 >> 16 <= 9) {
-    struct FieldActor *o;
-    s32 u;
-    s32 w;
+  chance = Engine_RandomNext();
+  if (chance * 100 >> 16 <= 9) {
+    struct FieldActor *effect;
+    s32 radius;
+    s32 angle;
 
-    t[0] = a->x.fixed;
-    t[1] = a->y.fixed;
-    t[2] = a->z.fixed;
-    u = Engine_RandomNext();
-    w = Engine_RandomNext();
-    Vector_AddPolarOffset(u << 4, w, t);
+    position[0] = actor->x.fixed;
+    position[1] = actor->y.fixed;
+    position[2] = actor->z.fixed;
+    radius = Engine_RandomNext();
+    angle = Engine_RandomNext();
+    Vector_AddPolarOffset(radius << 4, angle, position);
     {
-      s32 x = t[0];
-      s32 y = t[1];
-      s32 z = t[2];
+      s32 x = position[0];
+      s32 y = position[1];
+      s32 z = position[2];
 
-      o = Engine_ObjectCreate(285, x, y, z);
+      effect = Engine_ObjectCreate(285, x, y, z);
     }
-    if (o != 0) {
-      o->motionFlags = 0;
-      Engine_ActorSetSpriteFlags(o, 0);
-      Engine_ObjectSetScript(o, gColossoRiver_ScriptA);
-      Object_SetMode(o, 1);
-      Object_SetMode(o, 0);
+    if (effect != 0) {
+      effect->motionFlags = 0;
+      Engine_ActorSetSpriteFlags(effect, 0);
+      Engine_ObjectSetScript(effect, gColossoRiver_ScriptA);
+      Object_SetMode(effect, 1);
+      Object_SetMode(effect, 0);
     }
   }
 }
 
+// Present the collected item above its collector and signal completion.
 static s32
-SceneActor_PlaceLinkedActorAbove(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *a = (struct FieldActor *)interpreter;
-  struct FieldActor *o = Object_GetById(a->timer);
+ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *collector = (struct FieldActor *)interpreter;
+  struct FieldActor *itemActor = Object_GetById(collector->timer);
 
-  Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
-  o->motionFlags = 0;
-  Engine_ObjectSetScript(o, gColossoRiver_ScriptB);
+  Engine_ObjectSetPosition(itemActor, collector->x.fixed,
+                           collector->y.fixed + PIXELS(36), collector->z.fixed);
+  itemActor->motionFlags = 0;
+  Engine_ObjectSetScript(itemActor, gColossoRiver_ScriptB);
   Engine_AudioPlayCue(83);
-  a->timer = 0;
+  collector->timer = 0;
   return 0;
 }
 
-static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
+// Move to the selected finish item and present it to the party.
+static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 
-  u8 *work = gColossoWork;
-  u8 *shared;
-  struct FieldActor *rec;
+  struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
+  struct FieldActor *actor;
   s32 flag;
   s32 x;
   s32 z;
-  u16 *cuep;
-  s16 *waitp;
+  u16 *itemActor;
+  s16 *pendingItemActor;
 
   flag = Engine_GameFlagIsSet(0x211);
 
-  shared = (u8 *)&gGameState;
-  rec = Object_GetById(((struct GameState *)shared)->selectedActor);
+  actor = Object_GetById(gGameState.selectedActor);
 
-  if (*(s32 *)(work + 232) < rec->x.fixed) {
-    x = *(s32 *)(work + 232) + 0xc0000;
+  if (work->finishX < actor->x.fixed) {
+    x = work->finishX + PIXELS(12);
   } else {
-    x = *(s32 *)(work + 232) - 0xc0000;
+    x = work->finishX - PIXELS(12);
   }
 
   if (flag != 0) {
-    z = *(s32 *)(work + 236) + 0x100000;
-    cuep = (u16 *)(work + 228);
+    z = work->finishZ + PIXELS(16);
+    itemActor = &work->finishItemActorB;
   } else {
-    z = *(s32 *)(work + 236) - 0x100000;
-    cuep = (u16 *)(work + 226);
+    z = work->finishZ - PIXELS(16);
+    itemActor = &work->finishItemActorA;
   }
 
-  waitp = (s16 *)&rec->timer;
-  *waitp = *cuep;
-  rec->acceleration = 0x4000;
-  rec->speed = 0x10000;
+  pendingItemActor = &actor->timer;
+  *pendingItemActor = *itemActor;
+  actor->acceleration = PIXELS(1) / 4;
+  actor->speed = PIXELS(1);
 
-  Engine_ObjectSetPosition(rec, x, 0, z);
+  Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_GameFlagSet(0x211);
-  Engine_ObjectSetScript(rec, gColossoRiver_ApproachScript);
+  Engine_ObjectSetScript(actor, gColossoRiver_ApproachScript);
 
-  while (*waitp != 0) {
+  while (*pendingItemActor != 0) {
     Engine_TaskWait(1);
   }
 
@@ -1263,22 +1293,21 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
      * order (differ 2 in tbs-en).
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, handleA);
-    UiWork_PushValueSlot(handleA, 2);
+    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
+    UiWork_PushValueSlot(firstItem, 2);
   } else {
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: the same call as returning s32; by its prototype: differ 2 in
      * tbs-en.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, handleB);
-    UiWork_PushValueSlot(handleB, 2);
+    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
+    UiWork_PushValueSlot(secondItem, 2);
   }
 
-  shared = (u8 *)&gGameState;
-  UiWork_PushValueSlot(((struct GameState *)shared)->selectedActor, 1);
+  UiWork_PushValueSlot(gGameState.selectedActor, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
-  ObjectDispatch_WaitForValue16(rec);
+  ObjectDispatch_WaitForValue16(actor);
 
   return flag;
 }
@@ -1289,50 +1318,50 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-static void StagedActor_PushActorAhead(void) {
+// Check the next cell and push its object one step if clear.
+static void ColossoRiver_PushObjectAhead(void) {
 
   struct FieldActor *subject;
   struct FieldActor *target;
   struct FieldActor *blocker;
-  u32 step;
-  u32 dir;
-  Position3 pos;
-  u32 idx = 250;
+  u32 packedStep;
+  u32 direction;
+  Position3 position;
   s32 zero;
-  s32 handle;
+  s32 actorId;
 
-  handle = *(s32 *)((u8 *)&gGameState + (idx << 1));
-  subject = Object_GetById(handle);
+  actorId = gGameState.selectedActor;
+  subject = Object_GetById(actorId);
 
-  dir = subject->facing >> 12;
+  direction = subject->facing >> 12;
 
-  step = gColossoRiver_DirectionSteps[dir];
-  pos.x = subject->x.fixed + (step & 0xffff0000);
-  pos.y = subject->y.fixed;
-  step <<= 16;
-  pos.z = subject->z.fixed + step;
+  packedStep = gColossoRiver_DirectionSteps[direction];
+  position.x = subject->x.fixed + (packedStep & 0xffff0000);
+  position.y = subject->y.fixed;
+  packedStep <<= 16;
+  position.z = subject->z.fixed + packedStep;
 
-  target = SceneData_FindSlotAtPosition(&pos, subject);
+  target = SceneData_FindSlotAtPosition(&position, subject);
   if (target == 0) {
     return;
   }
 
-  step = gColossoRiver_DirectionSteps[dir];
-  pos.x = target->x.fixed + (step & 0xffff0000);
-  pos.y = target->y.fixed;
-  step <<= 16;
-  pos.z = target->z.fixed + step;
+  packedStep = gColossoRiver_DirectionSteps[direction];
+  position.x = target->x.fixed + (packedStep & 0xffff0000);
+  position.y = target->y.fixed;
+  packedStep <<= 16;
+  position.z = target->z.fixed + packedStep;
 
-  blocker = SceneData_FindSlotAtPosition(&pos, target);
+  blocker = SceneData_FindSlotAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
 
-  pos.x = target->x.fixed;
-  pos.y = target->y.fixed + 0x100000;
-  pos.z = target->z.fixed;
+  position.x = target->x.fixed;
+  position.y = target->y.fixed + PIXELS(16);
+  position.z = target->z.fixed;
 
-  blocker = SceneData_FindSlotAtPosition(&pos, target);
+  blocker = SceneData_FindSlotAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1340,33 +1369,33 @@ static void StagedActor_PushActorAhead(void) {
   target->terrainId = 2;
   zero = 0;
 
-  step = gColossoRiver_DirectionSteps[dir];
-  pos.x = target->x.fixed + (step & 0xffff0000);
-  pos.y = target->y.fixed;
-  step <<= 16;
-  pos.z = target->z.fixed + step;
+  packedStep = gColossoRiver_DirectionSteps[direction];
+  position.x = target->x.fixed + (packedStep & 0xffff0000);
+  position.y = target->y.fixed;
+  packedStep <<= 16;
+  position.z = target->z.fixed + packedStep;
 
-  if (FieldObject_CheckMovementCollision(target, &pos) > 0) {
+  if (FieldObject_CheckMovementCollision(target, &position) > 0) {
     return;
   }
 
   Object_SetMode(subject, 8);
   Engine_TaskWait(15);
 
-  target->speed = 0x3333;
-  target->acceleration = 0x3333;
-  Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
+  target->speed = PIXELS(1) / 5;
+  target->acceleration = PIXELS(1) / 5;
+  Engine_ObjectSetPosition(target, position.x, position.y, position.z);
 
-  subject->speed = 0x3333;
-  subject->acceleration = 0x3333;
-  Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
+  subject->speed = PIXELS(1) / 5;
+  subject->acceleration = PIXELS(1) / 5;
+  Engine_ObjectSetPosition(subject, position.x, position.y, position.z);
 
   Engine_AudioPlayCue(0xee);
-  Object_CommitPosition(target);
+  Object_CommitPosition((s32)target);
   Engine_AudioPlayCue(0x120);
 
-  target->x.fixed = pos.x;
-  target->z.fixed = pos.z;
+  target->x.fixed = position.x;
+  target->z.fixed = position.z;
   target->velocityX = zero;
   target->velocityZ = zero;
 
@@ -1405,39 +1434,39 @@ const s16 gColossoRiver_SpanB[] = {
 char gHexDigits[20] = "0123456789ABCDEF";
 
 s32 gColossoRiver_ScriptA[] = {
-    SC_ADD(SW_Y, -0x4000),
+    SC_ADD(SW_Y, -PIXELS(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_FREE,
 };
 
 s32 gColossoRiver_ScriptB[] = {
-    SC_SET(SW_HOOK, (s32)SceneEffect_SpawnKind285AtRandomChance),
+    SC_SET(SW_HOOK, (s32)ColossoRiver_SpawnRandomEffect),
     SC_LABEL(1),
     SC_WAIT(10),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, (11 * Q16_ONE) / 8),
+    SC_SET(SW_SCALE_Y, (11 * Q16_ONE) / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, (3 * Q16_ONE) / 2),
+    SC_SET(SW_SCALE_Y, (3 * Q16_ONE) / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, (9 * Q16_ONE) / 8),
+    SC_SET(SW_SCALE_Y, (9 * Q16_ONE) / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, (11 * Q16_ONE) / 8),
+    SC_SET(SW_SCALE_Y, (11 * Q16_ONE) / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, (3 * Q16_ONE) / 2),
+    SC_SET(SW_SCALE_Y, (3 * Q16_ONE) / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, (9 * Q16_ONE) / 8),
+    SC_SET(SW_SCALE_Y, (9 * Q16_ONE) / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(2, SC_TO(1)),
@@ -1446,7 +1475,7 @@ s32 gColossoRiver_ScriptB[] = {
     SC_END,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+// Pixel steps by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
 u32 gColossoRiver_DirectionSteps[] = {
@@ -1468,13 +1497,13 @@ u32 gColossoRiver_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct SceneEntrance gColossoRiver_SceneTableA[] = {
+struct SceneEntrance gColossoRiver_Entrances[] = {
     { 0, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-u32 gColossoRiver_SceneTableB[] = {
+u32 gColossoRiver_Exits[] = {
     SCENE_EXITS(143),
     SCENE_EXIT(10, 143, 1),
     SCENE_EXIT(11, 140, 12),
@@ -1483,7 +1512,7 @@ u32 gColossoRiver_SceneTableB[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gColossoRiver_SceneTableC[] = {
+struct ScenePlacement gColossoRiver_Placements[] = {
     { 0x0, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1533,35 +1562,35 @@ struct ScenePlacement gColossoRiver_SceneTableC[] = {
 
 s32 gColossoRiver_Countdown = 0;
 
-struct SceneEvent gColossoRiver_SceneTableD[] = {
-    { 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SCRIPT) },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
-    { 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(EV12_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
-    { EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(EV50_TOUCH) },
+struct SceneEvent gColossoRiver_Events[] = {
+    { 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_TryPushObjectAhead) },
+    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_PushObjectAndUpdateCells) },
+    { 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_PushObjectAndUpdateCells) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(ColossoRiver_PushPipeworksObject) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_MoveLogNorthSouth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_MoveLogNorthSouth) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_MoveLogEastWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_MoveLogEastWest) },
+    { EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(ColossoRiver_StartFinalsBattle) },
     { SEARCH(SEARCH_CHEST), 100, 0x308, FIND_ITEM(ITEM_NUT) },
     { SEARCH(SEARCH_CHEST), 101, 0x309, FIND_ITEM(0xee) },
     { 0x8413, 103, 0x30a, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
-    { PSYNERGY_ON_ACTOR(0xc), 15, 0x303, EVENT_SCRIPT(EV15_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x21), 13, 0x301, EVENT_SCRIPT(EV13_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_RestorePushableObjectCells) },
+    { PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_RestorePushableObjectCells) },
+    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_RestorePushableObjectCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 15, 0x303, EVENT_SCRIPT(ColossoRiver_GrowCrossing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 13, 0x301, EVENT_SCRIPT(ColossoRiver_FillPipeworks) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_ExplainRockChallenge) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_ExplainPipeworks) },
+    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_ExplainBrokenBridge) },
+    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoRiver_ExplainLumberWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgColossoRiverMovingSuchAHugeRockMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgColossoRiverTheresOnlyOneFinalAndThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgColossoRiverDidYouSeeHisMovesOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgColossoRiverHowManyWarriorsHaveSwallowedTheir) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
     { SCENE_EVENTS_END },
 };
 
@@ -1627,7 +1656,7 @@ s32 gColosso_RivalFinishScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(6),
-    SC_CALL(SceneActor_PlaceLinkedActorAbove),
+    SC_CALL(ColossoRiver_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ARG(10),
     SC_WAIT(150),
@@ -1641,7 +1670,7 @@ s32 gColossoRiver_ApproachScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(6),
-    SC_CALL(SceneActor_PlaceLinkedActorAbove),
+    SC_CALL(ColossoRiver_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ARG(28),
     SC_WAIT(150),

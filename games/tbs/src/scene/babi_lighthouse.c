@@ -104,8 +104,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   Engine_AudioPlayCue(188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
   Object_GetById(0)->gravity = 0x10000;
@@ -1071,16 +1071,16 @@ static void BabiLighthouse_RefreshMovableBlockTiles(void) {
 // Updates both movable blocks' sprite priorities relative to the leader's
 // depth.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct FieldActor *actor;
   s32 priority;
 
   sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
   actor = Object_GetById(8);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(8, sprite->priority);
+    Engine_ActorSetSpritePriority(8, sprite->image.priority);
   } else {
-    priority = sprite->priority;
+    priority = sprite->image.priority;
     if (priority != 1)
       priority--;
     Engine_ActorSetSpritePriority(8, priority);
@@ -1088,9 +1088,9 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   }
   actor = Object_GetById(9);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(9, sprite->priority);
+    Engine_ActorSetSpritePriority(9, sprite->image.priority);
   } else {
-    priority = sprite->priority;
+    priority = sprite->image.priority;
     if (priority != 1)
       priority--;
     Engine_ActorSetSpritePriority(9, priority);
@@ -1107,7 +1107,7 @@ struct RowActor {
   u8 unk14[0x0f];
   u8 priorityFlags;
   u8 unk24[0x2c];
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 unk54[5];
   u8 collisionFlags;
   u8 unk5a[4];

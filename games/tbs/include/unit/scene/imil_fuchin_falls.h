@@ -12,7 +12,7 @@ struct ScenePlacement;
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-s32 *ImilFuchinFalls_GetExits(void);
+u32 *ImilFuchinFalls_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 ImilFuchinFalls_ApplyEntryHook(void);
@@ -21,7 +21,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 extern s32 *gEffectScripts[];
 extern s16 gImilFuchinFallsKeyHeadings[];
 extern s16 gImilFuchinFallsHeadings[];
-extern s32 gImilFuchinFallsDragonsEye;
+extern struct FieldActor *gImilFuchinFallsDragonsEye;
 extern struct SceneEntrance gImilFuchinFallsEntrancesOther[];
 extern struct SceneEntrance gImilFuchinFallsEntrances1[];
 extern struct SceneEntrance gImilFuchinFallsEntrances2[];

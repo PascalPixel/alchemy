@@ -999,7 +999,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   }
   switch (gGameState.entrance) {
   case 4:
-    Object_GetById(0)->sprite->priority = 1;
+    Object_GetById(0)->sprite->image.priority = 1;
     break;
   case 10:
     if (Engine_GameFlagIsSet(0x928) != 0) {
@@ -1615,9 +1615,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 194, 624);
   Engine_AudioPlayCue(181);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   Engine_EventWait(20);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Object_GetById(25)->motionFlags = 0;

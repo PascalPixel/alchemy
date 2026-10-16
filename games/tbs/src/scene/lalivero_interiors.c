@@ -699,15 +699,15 @@ s32 Scene_Initialize(void) {
     actor = Object_GetById(SHOPKEEPER_34);
     actor->priorityFlags = 0;
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
-    actor->sprite->priority = 2;
+    actor->sprite->image.priority = 2;
     actor = Object_GetById(SHOPKEEPER_32);
     actor->priorityFlags = 0;
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
-    actor->sprite->priority = 2;
+    actor->sprite->image.priority = 2;
     actor = Object_GetById(SHOPKEEPER_33);
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
     actor->priorityFlags = 0;
-    actor->sprite->priority = 2;
+    actor->sprite->image.priority = 2;
     Engine_ActorSetAnimation(ACTOR_15, 6);
     entrance = gGameState.entrance;
     if (entrance == ENTRANCE_SANCTUM) {
@@ -719,7 +719,7 @@ s32 Scene_Initialize(void) {
     actor = Object_GetById(INNKEEPER);
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
     actor->priorityFlags = 0;
-    actor->sprite->priority = 2;
+    actor->sprite->image.priority = 2;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
       Actor_SetActionScript(MAID, gLaliveroMaidChores);
     }

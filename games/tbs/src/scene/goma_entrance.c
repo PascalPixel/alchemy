@@ -475,7 +475,7 @@ static void GomaEntrance_RunWhirlwindEffect(void) {
 // The leaping object's update hook turns its sprite a fixed amount per frame.
 static void GomaEntrance_RotateLeapingObject(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
-  struct FieldSprite *state = obj->sprite;
+  struct AnimationObject *state = obj->sprite;
   s32 v = state->rotation - 0x800;
 
   state->rotation = v;
@@ -513,9 +513,9 @@ static void GomaEntrance_RunSpinningLeap(s32 id) {
   Engine_ActorWaitForMove(id);
   SceneActor_WaitObjectBelowHeight(actor, 0x200000);
   Engine_AudioPlayCue(188);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
   Engine_AudioPlayCue(141);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   for (i = 0; i <= 16; i++) {
     v = &dir;
     v->x = Engine_MathCos(i << 12);

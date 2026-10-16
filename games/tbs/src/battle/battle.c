@@ -2405,7 +2405,7 @@ void BattleActor_UpdateSpritePriorities(void) {
         switch (object->recordStorageKind & RECORDS_KIND_MASK) {
         case RECORDS_SINGLE: {
           record = object->records;
-          record->part[0].priority = sidePriorities[0];
+          record->image.priority = sidePriorities[0];
           break;
         }
         case RECORDS_TABLE: {
@@ -2414,7 +2414,7 @@ void BattleActor_UpdateSpritePriorities(void) {
                recordIndex++) {
             record = *records++;
             if (record != 0)
-              record->part[0].priority = sidePriorities[0];
+              record->image.priority = sidePriorities[0];
           }
           break;
         }
@@ -2435,7 +2435,7 @@ void BattleActor_UpdateSpritePriorities(void) {
         switch (object->recordStorageKind & RECORDS_KIND_MASK) {
         case RECORDS_SINGLE: {
           record = object->records;
-          record->part[0].priority = sidePriorities[1];
+          record->image.priority = sidePriorities[1];
           break;
         }
         case RECORDS_TABLE: {
@@ -2444,7 +2444,7 @@ void BattleActor_UpdateSpritePriorities(void) {
                recordIndex++) {
             record = *records++;
             if (record != 0)
-              record->part[0].priority = sidePriorities[1];
+              record->image.priority = sidePriorities[1];
           }
           break;
         }
@@ -10339,8 +10339,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   switch (object->recordStorageKind & 15) {
   case 1: {
     record = object->records;
-    record->part[0].objectMode = mode;
-    record->part[1].objectMode = mode;
+    record->image.objectMode = mode;
+    record->shadow.objectMode = mode;
     break;
   }
   case 2: {
@@ -10350,8 +10350,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
       record = *records++;
       if (record == 0)
         break;
-      record->part[0].objectMode = mode;
-      record->part[1].objectMode = mode;
+      record->image.objectMode = mode;
+      record->shadow.objectMode = mode;
       recordIndex++;
     } while (recordIndex <= 3);
     break;

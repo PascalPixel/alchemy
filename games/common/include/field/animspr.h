@@ -65,7 +65,8 @@ struct AnimationSpritePart {
 };
 
 struct AnimationObject {
-  struct AnimationSpritePart part[2];
+  struct AnimationSpritePart image;
+  struct AnimationSpritePart shadow;
   s32 scale;
   u8 slot;
   u8 retainCacheEntry : 1;

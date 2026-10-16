@@ -111,13 +111,13 @@ static void EV02_SEARCH(void) {
       Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     }
   }
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(30);
   Engine_CameraSetSpeed(0x26666, 0x4ccc);
   Camera_MoveTo(0x2980000, -1, 0x1f10000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 96, 29);
   Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
@@ -127,7 +127,7 @@ static void EV02_SEARCH(void) {
   Engine_CameraSetSpeed(0x66666, 0xcccc);
   Camera_MoveTo(0x1370000, -1, 0x1f10000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 74, 29);
@@ -137,7 +137,7 @@ static void EV02_SEARCH(void) {
   Engine_WorkSetValuesIfNonNegative(0, 0, 0);
   Camera_MoveTo(0x2970000, -1, 0xc00000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 96, 10);
@@ -150,12 +150,12 @@ static void EV02_SEARCH(void) {
   Camera_MoveTo(0x2c60000, -1, 0x1da0000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+  Map_SetShake(0x20000, 0x10000, 0x10000);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Engine_AudioPlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
@@ -204,37 +204,37 @@ static void EV03_SEARCH(void) {
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (i == 1) {
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
     }
   }
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(30);
-  Work_SetValuesIfNonNegative(0, 0, 0);
+  Map_SetShake(0, 0, 0);
   Camera_SetSpeed(0x59999, 0xb333);
   Camera_MoveTo(0x1d80000, -1, 0x620000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 84, 4);
   Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
   Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
   Engine_EventWait(40);
-  Work_SetValuesIfNonNegative(0, 0, 0);
+  Map_SetShake(0, 0, 0);
   Camera_MoveTo(0x1570000, -1, 0x1710000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 76, 21);
   Map_CopyCellAttributes(0, 0, 1, 1, 21, 21);
   Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
   Engine_EventWait(40);
-  Work_SetValuesIfNonNegative(0, 0, 0);
+  Map_SetShake(0, 0, 0);
   Camera_SetSpeed(0x33333, 0x6666);
   Camera_MoveTo(0x1570000, -1, 0x1f10000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 76, 29);
@@ -247,12 +247,12 @@ static void EV03_SEARCH(void) {
   Camera_MoveTo(0x2c80000, -1, 0x980000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+  Map_SetShake(0x20000, 0x10000, 0x10000);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 43, 46, 3, 3);
@@ -312,37 +312,37 @@ static void Scene_BagJupiterStar(void) {
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (i == 1) {
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
     }
   }
-  Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+  Map_SetShake(0x20000, 0x10000, 0x10000);
   Engine_EventWait(30);
   Camera_SetSpeed(0x26666, 0x4ccc);
   Camera_MoveTo(0xa70000, -1, 0x2110000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 65, 31);
   Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
   Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
   Engine_EventWait(40);
-  Work_SetValuesIfNonNegative(0, 0, 0);
+  Map_SetShake(0, 0, 0);
   Camera_SetSpeed(0x66666, 0xcccc);
   Camera_MoveTo(0x1870000, -1, 0xb10000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 79, 9);
   Map_CopyCellAttributes(0, 0, 1, 1, 24, 9);
   Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
   Engine_EventWait(40);
-  Work_SetValuesIfNonNegative(0, 0, 0);
+  Map_SetShake(0, 0, 0);
   Camera_SetSpeed(0x26666, 0x4ccc);
   Camera_MoveTo(0x2470000, -1, 0xc10000, 1);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 91, 10);
@@ -355,12 +355,12 @@ static void Scene_BagJupiterStar(void) {
   Camera_MoveTo(0xe80000, -1, 0x1dd0000, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+  Map_SetShake(0x20000, 0x10000, 0x10000);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 13, 66, 3, 3);
@@ -1148,11 +1148,11 @@ static void EV05_SEARCH(void) {
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (pass == 1) {
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
     }
   }
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_EventWait(20);
   star = Scene_PresentItem(222, 0xe80000, 0x100000, 0x900000);
@@ -1176,23 +1176,23 @@ static void EV05_SEARCH(void) {
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
   Event_PlayCue(145);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   Engine_EventWait(20);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 50);
   Event_PlayCue(144);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 50);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
   Event_PlayCue(144);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Engine_EventWait(30);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Engine_ActorJump(GARET, 2, 20);
@@ -2010,7 +2010,7 @@ static void Event_SayThenWait(s32 speaker, s32 frames) {
 static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
   GlyphTransfer *glyph;
   struct FieldActor *actor;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 owner;
   s32 slot;
 
@@ -2023,14 +2023,14 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
   Engine_ObjectSetScript(actor, gSolStar_PresentItemScript);
   sprite = actor->sprite;
   sprite->flags = 0;
-  sprite->partCount = 0;
-  sprite->fullColor = 0;
-  sprite->palette = 0;
+  sprite->count = 0;
+  sprite->image.fullColor = 0;
+  sprite->image.palette = 0;
   actor->velocityY = 0x28000;
   actor->gravity = 0x4000;
   glyph = Engine_HeapAllocate(17, sizeof(*glyph));
   Engine_ItemLoadIcon(item);
-  Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
+  Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
   Engine_AudioPlayCue(83);
   Engine_RunRisingObjectSequence(actor, 3);

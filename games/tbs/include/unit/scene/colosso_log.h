@@ -45,12 +45,12 @@ typedef struct LinkedStageEffect {
   s16 linkedEffectSlot;
 } LinkedStageEffect;
 
-u8 *ColossoLogRollingStage_GetScriptData(void);
-s32 ColossoLogRollingStage_GetMessageData(void);
-u8 *ColossoLogRollingStage_GetActorData(void);
-u8 *ColossoLogRollingStage_GetEffectData(void);
-s32 ColossoLogRollingStage_GetSceneEventState(void);
-s32 StageSetup_BuildAndDispatch(void);
+struct SceneEntrance *ColossoLog_GetEntrances(void);
+s32 ColossoLog_ReturnZero(void);
+u32 *ColossoLog_GetExits(void);
+struct ScenePlacement *ColossoLog_GetPlacements(void);
+struct SceneEvent *ColossoLog_GetEvents(void);
+s32 ColossoLog_Initialize(void);
 extern const s32 gColossoLog_Record30Script[];
 extern const s8 gColossoLog_LogPattern[][6];
 extern const u16 gColossoEarlySequenceData[];

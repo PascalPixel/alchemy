@@ -264,9 +264,10 @@ static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
   Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
 
-static inline void Work_SetValuesIfNonNegative(s32 first, s32 second,
-                                               s32 third) {
-  Engine_WorkSetValuesIfNonNegative(first, second, third);
+// Set shake amplitudes in fixed-point pixels and the per-frame decay factor.
+// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
+static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
+  Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);
 }
 
 enum { FLAG_ARRIVAL_EVENT_PENDING = 0x12f };
@@ -344,10 +345,6 @@ static inline void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY,
 static inline void Map_CopyCellsLayered(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height) {
   Engine_MapCopyCellsLayered(srcX, srcY, destX, destY, width, height);
-}
-
-static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2) {
-  Engine_WorkSetValuesIfNonNegative(value0, value1, value2);
 }
 
 static inline void ColorBuffer_ApplySource(s32 value, s32 mode) {

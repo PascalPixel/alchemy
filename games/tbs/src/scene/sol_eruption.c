@@ -20,6 +20,7 @@
 #include "b5_context.h"
 #include "sol_eruption.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_service.h"
 #include "iwram_call.h"
@@ -32,7 +33,6 @@
 #include "vram_tab.h"
 
 // Forward declarations.
-union PairObject;
 static void SolEruption_RaiseAndShrinkActor(s32 a0);
 static void SolEruption_ThrowEruptionRing(void);
 static void SceneState_InitStateWordsAndSlots(void);
@@ -50,7 +50,7 @@ static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
 static void SceneState_ConfigureEightCornerRegions(void);
 static void FieldScene_RunVariantStep(s32 a, s32 b, s32 c);
 static void FieldScene_RunStepByRuntimeBits(s32 a);
-static void SolEruption_SpawnEffectPair(union PairObject *parent);
+static void SolEruption_SpawnEffectPair(struct FieldActor *parent);
 static void FieldScene_RunActor15TwoStep(void);
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
@@ -93,36 +93,9 @@ struct QuakeWork {
   s32 fading;
 };
 
-struct PairDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
-struct PairSprite {
-  struct FieldSprite sprite;
-  struct PairDetail *detail;
-};
-
-union PairObject {
-  union FieldObject object;
-  s32 words[28];
-  struct {
-    u8 unk00[0x68];
-    union PairObject *parent;
-  } link;
-};
-
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;
-};
-
-struct WorldMapOam {
-  u8 unk00[4];
-  u16 attr0;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
 };
 
 u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
@@ -150,7 +123,7 @@ static void Scene_SaturosTakesHostages(void) {
   Engine_EventBegin();
   *(s32 *)(((s32)p7 + 0x40c)) = 0;
   Event_PlayCue(141);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(156));
   Actor_SetPosition(GARET, PIXELS(218), PIXELS(172));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
@@ -220,7 +193,7 @@ static void Scene_SaturosTakesHostages(void) {
   record[85] = 5;
   *(s32 *)(((s32)p7 + 0x40c)) = 1;
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(150);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
@@ -257,11 +230,11 @@ static void Scene_SaturosTakesHostages(void) {
   FieldScene_RunVariantStep(1, 20, 0);
   *(s32 *)(((s32)p7 + 0x40c)) = 0;
   Event_PlayCue(141);
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   Engine_EventWait(80);
   *(s32 *)(((s32)p7 + 0x40c)) = 1;
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   FieldScene_RunVariantStep(0, 20, 60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
@@ -553,8 +526,8 @@ s32 SolEruption_RunHostageSceneOnEntranceTen(void) {
 
 static s32
 OverlayObject_SetRecordAngleFromHeading(struct ScriptInterpreter *interpreter) {
-  Ent *p = (Ent *)interpreter;
-  *(u16 *)(p->unk50 + 30) = p->unk6 + 0x4000;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  actor->sprite->rotation = actor->facing + 0x4000;
   return 1;
 }
 
@@ -563,7 +536,7 @@ static void SolEruption_ThrowEruptionRing(void) {
   struct FieldActor *spun;
   u32 i;
   s32 angle;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 dx;
   s32 dz;
 
@@ -572,7 +545,7 @@ static void SolEruption_ThrowEruptionRing(void) {
     Engine_ActorStop(i);
     Engine_ActorSetSpriteFlags(actor, 0);
     Object_SetMode(actor, 2);
-    actor->sprite->priority = 0;
+    actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
     actor->speed = 0x80000;
     actor->acceleration = 0xc000;
@@ -641,10 +614,10 @@ static void SolEruption_StepEmbers(void) {
   level = (u32)gEmberTimer / 10;
   if (level != 0) {
     *(s32 *)(work + 0x40c) = 0;
-    Work_SetValuesIfNonNegative(level << 16, level << 16, 0x10000);
+    Map_SetShake(level << 16, level << 16, 0x10000);
   } else {
     *(s32 *)(work + 0x40c) = 1;
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(-1, -1, 0xe666);
   }
   t = gEmberTimer;
   if (t != 0)
@@ -754,10 +727,10 @@ static void Scene_RunExtendedEffectPresentation(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   struct FieldActor *garet;
-  struct FieldSprite *leaderSprite;
-  struct FieldSprite *garetSprite;
+  struct AnimationObject *leaderSprite;
+  struct AnimationObject *garetSprite;
   struct FieldActor *star;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 *buf;
   u8 i;
   u32 cnt;
@@ -781,7 +754,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   SolEruption_PlaceBeforeStar(ACTOR_PARTY_LEADER);
   SolEruption_PlaceBeforeStar(GARET);
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventWait(80);
   SceneState_ConfigureEightCornerRegions();
   center = Engine_EventGetViewCenter();
@@ -944,7 +917,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Event_PlayCue(23);
   FieldScene_RunVariantStep(1, 4, 0);
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
   Engine_EventWait(10);
   FieldScene_RunVariantStep(0, 40, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
@@ -956,7 +929,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_EventWait(20);
   quake->fading = 1;
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventWait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
@@ -1027,7 +1000,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
 
   FieldScene_RunVariantStep(1, 20, 0);
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -1035,7 +1008,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   ColorBuffer_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(40);
   quake->fading = 1;
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(120);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(20);
@@ -1046,7 +1019,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_EventWait(20);
   FieldScene_RunVariantStep(1, 10, 0);
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
   Actor_SetSpeed(GARET, 0x20000, 0x10000);
@@ -1090,7 +1063,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(20);
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
@@ -1106,7 +1079,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_EventWait(30);
   Event_PlayCue(0x121);
   Engine_TaskRemoveCallback(FieldScene_RunRandomHalfBranch);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   wait = 16;
   while (wait--) {
     SceneState_ApplyRectsByCondition(0);
@@ -1116,7 +1089,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   }
   SceneState_ApplyRectsByCondition(0);
   quake->fading = 1;
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
   Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
@@ -1167,12 +1140,12 @@ static void Scene_RunExtendedEffectPresentation(void) {
     buf = Engine_HeapAllocate(17, 0x608);
     sprite = star->sprite;
     sprite->flags = 0;
-    sprite->partCount = 0;
-    sprite->fullColor = 0;
-    sprite->palette = 0;
-    sprite->priority = 1;
+    sprite->count = 0;
+    sprite->image.fullColor = 0;
+    sprite->image.palette = 0;
+    sprite->image.priority = 1;
     Engine_ItemLoadIcon(ITEM_MARS_STAR);
-    Engine_VramLoad(sprite->vramBlock, 128, buf + 0x400);
+    Engine_VramLoad(sprite->slot, 128, buf + 0x400);
     Engine_HeapRelease(17);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
     Engine_RunRisingObjectSequence(star, 3);
@@ -1236,7 +1209,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_EventWait(40);
 
   quake->fading = 0;
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
@@ -1271,7 +1244,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_EventWait(30);
   Event_PlayCue(0x121);
   Engine_TaskRemoveCallback(FieldScene_RunLateRandomHalfBranch);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   wait = 8;
   while (wait--) {
     SceneState_ApplyRectPairByFlag(0);
@@ -1280,14 +1253,14 @@ static void Scene_RunExtendedEffectPresentation(void) {
     Engine_TaskWait(wait);
   }
   SceneState_ApplyRectPairByFlag(0);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
   Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
   Engine_TaskWait(1);
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
   Engine_EventWait(60);
 
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
@@ -1309,7 +1282,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Event_PlayCue(0x121);
   Engine_EventWait(30);
   Engine_TaskRemoveCallback(FieldScene_RunRandomHalfBranch);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   wait = 8;
   while (wait--) {
     SceneState_ApplyRectsByCondition(0);
@@ -1318,10 +1291,10 @@ static void Scene_RunExtendedEffectPresentation(void) {
     Engine_TaskWait(wait);
   }
   SceneState_ApplyRectsByCondition(0);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Event_PlayCue(107);
   Event_PlayCue(63);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
@@ -1368,7 +1341,7 @@ static void Scene_RunExtendedEffectPresentation(void) {
   Engine_TaskWait(60);
   Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
   quake->fading = 1;
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   SceneEffect_CleanupSceneObjects();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
@@ -1440,7 +1413,6 @@ static void FieldScene_RunLateRandomHalfBranch(void) {
 }
 
 static void FieldScene_RunFourWayEffectSequence(u32 mode) {
-  extern u8 *gArcEffects[];
   void Actor_ShowEmote(s32, s32, s32);
   void ColorBuffer_ApplyTarget(s32, s32);
   void Event_PlayCue(s32);
@@ -1448,7 +1420,8 @@ static void FieldScene_RunFourWayEffectSequence(u32 mode) {
   u32 i, zero;
   s32 x, y, z;
   s32 *pos;
-  u8 *obj, *sprite;
+  struct FieldActor *actor;
+  struct AnimationObject *sprite;
 
   for (i = 0; i <= 15; i++)
     Engine_ActorDestroy(i + 16);
@@ -1493,13 +1466,13 @@ static void FieldScene_RunFourWayEffectSequence(u32 mode) {
       break;
     }
     gArcEffectTimers[i] = zero;
-    obj = (u8 *)Engine_ObjectCreate(284, x, y, z);
-    gArcEffects[i] = obj;
-    obj[85] = zero;
-    sprite = *(u8 **)(obj + 80);
-    sprite[38] = zero;
-    ((SpriteMode *)sprite)->mode = 1;
-    Object_SetMode(obj, 6);
+    actor = Engine_ObjectCreate(284, x, y, z);
+    gArcEffects[i] = actor;
+    actor->motionFlags = zero;
+    sprite = actor->sprite;
+    sprite->flags = zero;
+    sprite->image.priority = 1;
+    Object_SetMode(actor, 6);
     Engine_TaskWait(6);
   }
   if (mode == 0) {
@@ -1547,30 +1520,23 @@ static void FieldScene_RunFourWayEffectSequence(u32 mode) {
 }
 
 static void SceneEffect_AdvanceTenEntryTimers(void) {
-#ifdef MODERN
-  // modern GCC holds one type for a name in a file
-  extern Ent *gArcEffects_modern[] __asm__("gArcEffects");
-#define gArcEffects gArcEffects_modern
-#else
-  extern Ent *gArcEffects[];
-#endif
 
   u32 i;
   s32 v;
-  ArcEffect *p;
+  struct FieldActor *actor;
 
   for (i = 0; i <= 9; i++) {
     v = gArcEffectTimers[i];
     if (v != 0) {
-      p = gArcEffects[i];
+      actor = gArcEffects[i];
       if ((u32)v <= 8) {
-        p->unk18 += -0x1ccc;
-        p->unk1C += 0x8000;
-        p->unkC += 0x4ccc;
-        p->unk3C += 0x4ccc;
+        actor->scaleX += -0x1ccc;
+        actor->scaleY += 0x8000;
+        actor->y.fixed += 0x4ccc;
+        actor->targetY += 0x4ccc;
       } else {
-        p->unkC += 0x140000;
-        p->unk3C += 0x140000;
+        actor->y.fixed += 0x140000;
+        actor->targetY += 0x140000;
       }
       v = gArcEffectTimers[i] + 1;
       gArcEffectTimers[i] = v;
@@ -1580,9 +1546,6 @@ static void SceneEffect_AdvanceTenEntryTimers(void) {
     }
   }
 }
-#ifdef MODERN
-#undef gArcEffects
-#endif
 
 static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b) {
   ViewCenter *p;
@@ -1658,50 +1621,48 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-static void SolEruption_SpawnEffectPair(union PairObject *parent) {
-  union PairObject *pair[2];
-  union PairObject *child;
-  struct PairSprite *part;
-  struct FieldSprite *sprite;
+static void SolEruption_SpawnEffectPair(struct FieldActor *parent) {
+  struct FieldActor *pair[2];
+  struct FieldActor *child;
+  struct AnimationObject *sprite;
   struct PairWork *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(292);
   for (i = 0; i < 2; ++i) {
-    child = (union PairObject *)Engine_ObjectCreate(
-        26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-        parent->object.actor.z.fixed);
+    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
+                                parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->words[5] = parent->words[5];
-      part = (struct PairSprite *)child->object.actor.sprite;
-      child->object.actor.motionFlags = 0;
-      child->object.effect.spin = 0;
-      child->link.parent = parent;
-      if (part != NULL) {
-        sprite = &part->sprite;
+      child->terrainHeight = parent->terrainHeight;
+      sprite = child->sprite;
+      child->motionFlags = 0;
+      child->timer = 0;
+      child->linkedObject = parent;
+      if (sprite != NULL) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        sprite->unk1d0 = 1;
-        sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct WorldMapOam *)sprite)->size = 2;
-        part->detail->field16 = 0;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        sprite->entries[0]->frame = 0;
       }
     }
   }
-  pair[0]->object.actor.update =
-      (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
-  pair[0]->object.actor.sprite->priority = Object_GetById(15)->sprite->priority;
+  pair[0]->update = Effect_AnimateVerticalNegative;
+  pair[0]->sprite->image.priority =
+      Object_GetById(15)->sprite->image.priority;
   {
     struct FieldActor *q = Object_GetById(15);
-    struct FieldActor *p = &pair[1]->object.actor;
+    struct FieldActor *p = pair[1];
 
-    p->sprite->priority = q->sprite->priority;
-    p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
+    p->sprite->image.priority = q->sprite->image.priority;
+    p->update = Effect_AnimateVerticalPositive;
     p->priorityFlags = 2;
   }
 }

@@ -503,8 +503,8 @@ static void VaultCave_RunRumble(void) {
     layer->speedX = -1;
     layer->speedY = -1;
   }
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(-1, -1, 0xe666);
   Event_PlayCue(163);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
@@ -725,7 +725,7 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source) {
     puff->collisionFlags = 1;
     VaultCave_OffsetActorRadially(puff, 0x200000, Engine_RandomNext());
     {
-      u16 *timer = (u16 *)&puff->unk5d[1];
+      u16 *timer = &puff->unk5e;
       s32 frames = 8;
 
       *timer = frames;

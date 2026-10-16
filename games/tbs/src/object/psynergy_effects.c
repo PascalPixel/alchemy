@@ -42,7 +42,6 @@
 #include "field_obj.h"
 #include "object_dispatch.h"
 #include "field_event.h"
-#include "field_sprite.h"
 #include "heap_state.h"
 #include "keystate.h"
 #include "owner_value.h"
@@ -1107,7 +1106,7 @@ void BattleFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 // (ObjectGroup_SetChildValue).
 void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
-  struct FieldSprite *child;
+  struct AnimationObject *child;
   s32 speed;
 
   object = (struct FieldActor *)Object_CreateFar(
@@ -1140,7 +1139,7 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     object->timer = 0;
     object->update = BattleFx_UpdateParticleLinearMotion;
     child->flags = 0;
-    child->priority = source->sprite->priority;
+    child->image.priority = source->sprite->image.priority;
   }
 }
 
@@ -1455,10 +1454,10 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
   if (object != NULL && (object->animationKind & 0xF) == 1) {
-    struct FieldSprite *sprite = object->animation;
+    struct AnimationObject *sprite = object->animation;
 
-    sprite->priority = priority;
-    sprite->secondPriority = priority;
+    sprite->image.priority = priority;
+    sprite->shadow.priority = priority;
     object->unk23 &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
@@ -1467,19 +1466,19 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 // block and tile).
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   struct ObjectRuntime *object;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 vramBlock;
   u32 tile;
 
   object = Object_GetById(sourceId);
   sprite = object->animation;
-  vramBlock = sprite->vramBlock;
-  tile = sprite->tile;
+  vramBlock = sprite->slot;
+  tile = sprite->image.tile;
 
   object = Object_GetById(targetId);
   sprite = object->animation;
-  sprite->vramBlock = vramBlock;
-  sprite->tile = tile;
+  sprite->slot = vramBlock;
+  sprite->image.tile = tile;
 }
 
 // Does nothing.
@@ -2151,8 +2150,8 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
 // with an actor.
 //--------------------------------------------------------------------------
 
-// The high byte of a sprite's OAM attribute 2 (in a FieldSprite or an
-// AnimationObject's first part). Bits 2 and 3 are its priority.
+// The high byte of the first sprite part's OAM attribute 2.
+// Bits 2 and 3 are its priority.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
 // The event command "set view bounds": the camera keeps the screen inside
@@ -2305,30 +2304,33 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
         Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
+      struct AnimationObject *sprite;
+
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
                                    gBattleFx_LinkedObjectScript);
       ObjectDispatch_ApplyArgumentToChildrenFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = actor;
+      sprite = bubble->sprite;
 #ifdef UBFIX
       bubble->update = BattleFx_CopyLinkedObjectPosition;
 #else
       bubble->update =
           (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
 #endif
-      bubble->sprite->flags = 0;
+      sprite->flags = 0;
       bubble->linkedObject = target;
 
       // Replace the bubble's priority bits (2 and 3) with 1 or the actor's.
       if ((emote & 0x100) != 0) {
         s32 mask = 13;
-        u8 attr = SPRITE_ATTR2_HIGH(bubble->sprite);
+        u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
         mask = -mask;
         mask &= attr;
         mask |= 4;
-        SPRITE_ATTR2_HIGH(bubble->sprite) = mask;
+        SPRITE_ATTR2_HIGH(sprite) = mask;
       } else {
         s32 priority = 12;
         u8 src = SPRITE_ATTR2_HIGH(target->sprite);
@@ -2336,11 +2338,11 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
         s32 mask = 13;
 
         priority &= src;
-        dst = SPRITE_ATTR2_HIGH(bubble->sprite);
+        dst = SPRITE_ATTR2_HIGH(sprite);
         mask = -mask;
         mask &= dst;
         mask |= priority;
-        SPRITE_ATTR2_HIGH(bubble->sprite) = mask;
+        SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
     FieldEvent_WaitFrames(wait);
@@ -2355,7 +2357,7 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;
-  struct FieldSprite *visual;
+  struct AnimationObject *visual;
   s32 mode;
 
   effect = 0;
@@ -2638,7 +2640,7 @@ again:
   if (Map_CheckObjectStepFar(leader, pos) == 0) {
     // Crouch, then jump there.
     if (leader->animationKind == 1)
-      spriteFlags = ((struct FieldSprite *)leader->animation)->flags;
+      spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
     FieldEvent_Begin();
     ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
     WaitFrames(6);
@@ -2777,7 +2779,7 @@ s32 Field_ClimbUp(void) {
   FieldEvent_Begin();
 
   if (object->animationKind == 1)
-    spriteFlags = ((struct FieldSprite *)object->animation)->flags;
+    spriteFlags = ((struct AnimationObject *)object->animation)->flags;
 
   if (gGameState.movementMode == 0) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -3744,7 +3746,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   WaitFrames(20);
   ObjectMotion_ArmCallback(djinniId, back, 0);
   WaitFrames(10);
-  djinni->sprite->priority = 0;
+  djinni->sprite->image.priority = 0;
   djinni->facing = back;
   Object_GetById(djinniId)->steeringFlags &= ~1;
   djinni->motionFlags = 2;
@@ -3770,7 +3772,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Afterimages of the same sprite, each chasing the one before it, tinted
   // by the Djinni's sprite (90, 91 and 92).
-  sprite = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
+  sprite = djinni->sprite->entries[0]->animId;
   tint = 9;
   if (sprite == 90)
     tint = 2;
@@ -3792,11 +3794,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
-      copy->sprite->priority = 0;
+      copy->sprite->image.priority = 0;
       Animation_ApplyChildValuesFar(copy, tint);
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
-      sharedSprite = Object_ReplaceResourceEntry(copy->sprite, sharedSprite);
+      sharedSprite = Sprite_ShareVramCache(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
       prev = copy;
     }
@@ -3816,7 +3818,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetZ = ACTOR_NO_TARGET;
   djinni->targetY = ACTOR_NO_TARGET;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 0);
-  djinni->sprite->priority = 2;
+  djinni->sprite->image.priority = 2;
   FieldEvent_End();
 }
 
@@ -4250,15 +4252,15 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
-    ((struct AnimationObject *)effect->object)->part[0].priority =
-        owner->sprite->part[0].priority;
+    ((struct AnimationObject *)effect->object)->image.priority =
+        owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(134);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
-      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (EffectSlot_HasPendingTarget(effect) == 0)
@@ -4267,7 +4269,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if (EffectSlot_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;
@@ -4712,7 +4714,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
   struct FieldActor *previous;
-  struct FieldSprite *resource;
+  struct AnimationObject *resource;
   struct BattleFxScene *effectScene;
   struct FieldActor **cursor;
   struct FieldActor **list;
@@ -4751,7 +4753,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Eight afterimages of the same sprite, each closing half the distance to
   // the one before it every frame.
-  kind = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
+  kind = djinni->sprite->entries[0]->animId;
   resource = NULL;
   previous = djinni;
   cursor = copies;
@@ -4770,7 +4772,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       Animation_ApplyChildValuesFar(copy, 9);
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
-      resource = Object_ReplaceResourceEntry(copy->sprite, resource);
+      resource = Sprite_ShareVramCache(copy->sprite, resource);
       copy->linkedObject = previous;
       previous = copy;
     }
@@ -4778,7 +4780,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
   // afterimages (and their VRAM block, unless it is the shared block 96).
-  resourceId = resource->vramBlock;
+  resourceId = resource->slot;
   AudioCommand_PlayFar(153);
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
@@ -5157,23 +5159,24 @@ s32 ResourceTable_CountFreeBlocks(void) {
 }
 
 // Makes sourceSprite share sharedSprite's VRAM block, releasing its own;
-// with no sharedSprite it keeps its block. Marks the sprite for redrawing and
+// with no sharedSprite it keeps its block. Retains the shared cache entry and
 // returns the sprite whose block is shared from now on (sharedSprite, or
 // sourceSprite when there was none), or NULL for no sourceSprite. Chains of
 // afterimages pass one block along this way.
-void *Object_ReplaceResourceEntry(void *sourceSprite, void *sharedSprite) {
-  void *shared;
-  struct FieldSprite *sprite;
+struct AnimationObject *Sprite_ShareVramCache(
+    struct AnimationObject *sourceSprite, struct AnimationObject *sharedSprite) {
+  struct AnimationObject *shared;
+  struct AnimationObject *sprite;
 
   sprite = sourceSprite;
   shared = NULL;
   if (sprite != NULL) {
     if (sharedSprite == NULL) {
-      sprite->unk1d0 = 1;
+      sprite->retainCacheEntry = 1;
     } else {
-      Resource_ResetEntry(sprite->vramBlock);
-      sprite->vramBlock = ((struct FieldSprite *)sharedSprite)->vramBlock;
-      sprite->unk1d0 = 1;
+      Resource_ResetEntry(sprite->slot);
+      sprite->slot = sharedSprite->slot;
+      sprite->retainCacheEntry = 1;
       sprite = sharedSprite;
     }
     shared = sprite;
@@ -5198,7 +5201,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
         ((struct ObjectRuntime *)work->mainObject)->terrainHeight;
     object->flags = 4;
     object->unk23 = 4;
-    ((struct AnimationObject *)object->animation)->part[0].priority = 0;
+    ((struct AnimationObject *)object->animation)->image.priority = 0;
     ObjectDispatch_SetSingleChildFlagsFar(object, 0);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   }
@@ -5348,9 +5351,9 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   // BUG: allocation failures above leave a missing arc or sprite here.
   // The original does not define a partial-pair recovery path.
   arcs[0]->update = BattleFx_UpdateScaledArcObjectB;
-  arcs[0]->sprite->priority = 0;
+  arcs[0]->sprite->image.priority = 0;
   arcs[1]->update = BattleFx_UpdateScaledArcObjectA;
-  arcs[1]->sprite->priority = source->sprite->priority;
+  arcs[1]->sprite->image.priority = source->sprite->image.priority;
   arcs[1]->priorityFlags = 2;
 }
 
@@ -6912,7 +6915,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
-    ((struct FieldSprite *)fragment->records)->priority = 0;
+    ((struct AnimationObject *)fragment->records)->image.priority = 0;
     ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
@@ -7153,7 +7156,7 @@ void RunBattleEffect04(void) {
       copy->motionFlags = 0;
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
-      sharedAnimation = Object_ReplaceResourceEntry(
+      sharedAnimation = Sprite_ShareVramCache(
           (struct AnimationObject *)copy->sprite, sharedAnimation);
     }
   }
@@ -7490,7 +7493,7 @@ void RunBattleEffect03(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;
   struct FieldActor *object;
-  struct FieldSprite *last;
+  struct AnimationObject *last;
   u8 resourceSlot;
   s32 i;
 
@@ -7508,12 +7511,12 @@ void RunBattleEffect03(void) {
       object->timer = 120;
       object->work = i << 13;
       object->motionFlags = 4;
-      last = Object_ReplaceResourceEntry(object->sprite, last);
+      last = Sprite_ShareVramCache(object->sprite, last);
     }
     WaitFrames(1);
   }
 
-  resourceSlot = last->vramBlock;
+  resourceSlot = last->slot;
   AudioCommand_PlayFar(130);
   WaitFrames(110);
 
@@ -8318,11 +8321,11 @@ struct OrbitEffect {
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
-  effect->x += effect->velocityX;
-  effect->y += effect->velocityY;
-  effect->z += effect->velocityZ;
-  effect->velocityX -= effect->velocityX / 18;
-  effect->velocityZ -= effect->velocityZ / 16;
+  effect->x += effect->velocity.x;
+  effect->y += effect->velocity.y;
+  effect->z += effect->velocity.z;
+  effect->velocity.x -= effect->velocity.x / 18;
+  effect->velocity.z -= effect->velocity.z / 16;
   effect->scaleX += effect->scaleRateX;
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += effect->spin;
@@ -8670,8 +8673,8 @@ void BattleEffect_PauseObject(s32 actorId) {
   if (object != NULL) {
     gGameState.pausedUpdate = (u32)object->update;
     gGameState.pausedPose = 0;
-    if (object->active == 1) {
-      entry = ((struct AnimationObject *)object->sprite)->entries[0];
+    if (object->spriteStorageKind == 1) {
+      entry = object->sprite->entries[0];
       if (entry != NULL) {
         gGameState.pausedPose = entry->param;
       }
@@ -8840,7 +8843,7 @@ void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
   obj->y.fixed += 1 << 16;
   obj->scaleX = scale;
   if ((s32)scale < 0x3000)
-    obj->active = 0;
+    obj->spriteStorageKind = 0;
 }
 
 // Effect slot callback: a particle flies 120 pixels from the main object's
@@ -9374,7 +9377,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   object = ResourceObject_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
-    object->part[0].priority = 0;
+    object->image.priority = 0;
   EffectSlot_SetPosition(effect, x, z);
   /* FAKEMATCH: register choice only: 1.0 is held in a local set before
      maxSpeed, so it lives beside 2.0 and takes r2, which lets sched2

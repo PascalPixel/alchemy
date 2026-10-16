@@ -7,12 +7,12 @@ void Effect_MoveLocal(union FieldObject *object) {
   struct FieldSprite *sprite;
 
   x = object->effect.x;
-  velocityX = object->effect.velocityX;
+  velocityX = object->effect.velocity.x;
   sprite = object->effect.sprite;
 
   object->effect.x = x + velocityX;
-  object->effect.y += object->effect.velocityY;
-  object->effect.z += object->effect.velocityZ;
+  object->effect.y += object->effect.velocity.y;
+  object->effect.z += object->effect.velocity.z;
   object->effect.scaleX += object->effect.scaleRateX;
   object->effect.scaleY += object->effect.scaleRateY;
   sprite->rotation += object->effect.spin;

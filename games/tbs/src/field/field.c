@@ -46,7 +46,6 @@
 #include "map.h"
 #include "map_scroll.h"
 #include "ram_buffer.h"
-#include "field_sprite.h"
 #include "resource_ids.h"
 #include "flags.h"
 #include "mapcopy.h"
@@ -433,7 +432,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       ((UploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
                                                       obj->height, vram);
     }
-    obj->part[0].tile = tile;
+    obj->image.tile = tile;
     obj->dirty = 0;
     system->used += size;
     MemFree(pixels);
@@ -474,13 +473,13 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   x = (screenX >> 16) - halfWidth;
   y = ((screenY - height) >> 16) - halfHeight -
       ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
-  sprite->part[0].affine = affine;
-  sprite->part[0].x = x;
-  sprite->part[0].y = y;
+  sprite->image.affine = affine;
+  sprite->image.x = x;
+  sprite->image.y = y;
   // Place the shadow at ground height independently of the raised image.
   x = (screenX >> 16) - marginX;
   y = ((screenY - groundHeight) >> 16) - marginY;
-  shadow = &sprite->part[1];
+  shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
   shadow->y = y;
@@ -555,7 +554,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   y = ((screenY - groundHeight) >> 16) - shadowHalfHeight;
   if (sprite->flags & 1) {
     if (y < 160) {
-      part = &sprite->part[1];
+      part = &sprite->shadow;
       part->affine = affine;
       part->affineIndex = matrix;
       part->x = (screenX >> 16) - shadowHalfWidth;
@@ -567,7 +566,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   y = ((screenY - height) >> 16) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   if (x < 240 && y < 160) {
-    part = &sprite->part[0];
+    part = &sprite->image;
     part->x = x;
     part->y = y;
     part->affine = affine;
@@ -649,10 +648,14 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       } else {
         z = 0;
       }
-      sprite->part[0].x = screen[0] - halfWidth + offsetX;
-      sprite->part->y = screen[1] - halfHeight + offsetY;
-      sprite->part[0].affine = affine;
-      sprite->part[0].affineIndex = z;
+      {
+        struct AnimationSpritePart *image = &sprite->image;
+
+        image->x = screen[0] - halfWidth + offsetX;
+        image->y = screen[1] - halfHeight + offsetY;
+        image->affine = affine;
+        image->affineIndex = z;
+      }
       if (depth == 0) {
         slot = (0x200 - screen[2]) / 2 + 128;
         if (slot <= 0)
@@ -670,7 +673,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         ground[1] = 0;
         ground[2] = point[2];
         Render_ProjectPoint(ground, screen);
-        shadow = &sprite->part[1];
+        shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
         shadow->y = screen[1] - (size >> 1) + 2;
         shadow->affine = affine;
@@ -1244,7 +1247,7 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
 
   // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
   // 16x8, 256-colour sprite of the shadow tiles (VRAM cache 93), priority 2.
-  attribute = (u32 *)freeSprite->part;
+  attribute = (u32 *)freeSprite;
   *attribute++ = 0;
   *attribute++ = shape | 0x2000;
   *attribute++ = tile | 0x800;
@@ -1783,7 +1786,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == 1) {
     struct AnimationObject *sprite = object->target.child;
-    sprite->part[0].objectMode = mode;
+    sprite->image.objectMode = mode;
   }
 }
 
@@ -1831,34 +1834,6 @@ struct CameraTile {
   u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; // if not 0, the priority of an object standing on it
   u32 unk10 : 16;
-};
-
-// An object's sprite, with its OAM attributes, as the camera reads it.
-struct CameraSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 flipX : 1;
-  u16 flipY : 1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x0a];
-  u16 secondTile : 10;
-  u16 secondPriority : 2;
-  u16 secondPalette : 4;
-  u8 unk16[2];
-  s32 scale;
-  u8 resource; // its VRAM cache entry
-  u8 flags1d;
-  u8 unk1e[7];
-  u8 dirty; // redraw when next placed
 };
 
 // A field object, as the camera reads it.
@@ -1911,7 +1886,7 @@ void ObjectSystem_UpdateCamera(void) {
   s32 viewZ;
   struct ObjectSystemWork *system;
   struct CameraObject *object;
-  struct CameraSprite *sprite;
+  struct AnimationObject *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
 #endif
@@ -1961,9 +1936,9 @@ void ObjectSystem_UpdateCamera(void) {
       if (kind != 1)
         continue;
       if (system->suspended != 0 && object->held == 0) {
-        struct CameraSprite *frozen = object->sprite;
+        struct AnimationObject *frozen = object->sprite;
 
-        VramCache_ReleaseVram(frozen->resource);
+        VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
         continue;
       }
@@ -1979,8 +1954,8 @@ void ObjectSystem_UpdateCamera(void) {
         if (object->flags & 1) {
           priority = tile->priority;
           if (priority != 0) {
-            sprite->priority = priority;
-            sprite->secondPriority = priority;
+            sprite->image.priority = priority;
+            sprite->shadow.priority = priority;
           }
         }
         layerPlusOne = tile->layer;
@@ -2007,8 +1982,8 @@ void ObjectSystem_UpdateCamera(void) {
         continue;
       }
       if (object->held == 0) {
-        if (!(sprite->flags1d & 1)) {
-          VramCache_ReleaseVram(sprite->resource);
+        if (!sprite->retainCacheEntry) {
+          VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = 1;
         }
       }
@@ -2016,8 +1991,8 @@ void ObjectSystem_UpdateCamera(void) {
       kind = object->kind & 15;
       if (kind == 1) {
         sprite = object->sprite;
-        if (object->held == 0 && !(sprite->flags1d & 1)) {
-          VramCache_ReleaseVram(sprite->resource);
+        if (object->held == 0 && !sprite->retainCacheEntry) {
+          VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = kind;
         }
       }
@@ -3720,12 +3695,6 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
   return -1;
 }
 
-struct WorldMapSprite {
-  struct FieldSprite sprite;
-  u8 unk28[4];
-  u8 *shadow;
-};
-
 // SC_PLAYER: moves the player on the field by the direction pad: walking or
 // running, sliding around walls, pushing movable objects, turning, playing
 // the matching animation and leaving footprints. Also checks the configured
@@ -4044,7 +4013,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 
     effect = FieldObject_Create(25, object->x, object->y, object->z);
     if (effect != 0) {
-      struct FieldSprite *animation;
+      struct AnimationObject *animation;
 
       effect->terrainHeight = object->terrainHeight;
       animation = effect->animation;
@@ -4053,15 +4022,13 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       effect->unk23 = 2;
       effect->flags = collision;
       if (animation != 0) {
-        AnimationObjects_SelectAnimation((struct AnimationObject *)animation,
-                                         1);
+        AnimationObjects_SelectAnimation(animation, 1);
         animation->flags = collision;
         animation->rotation = footprintAngle + 0x4000;
-        animation->priority = 3;
+        animation->image.priority = 3;
       }
       if (object->unk66 == 2) {
-        AnimationObjects_SelectAnimation((struct AnimationObject *)animation,
-                                         2);
+        AnimationObjects_SelectAnimation(animation, 2);
         object->unk66 = collision;
       }
       if (object->unk66 != 0)
@@ -4111,9 +4078,9 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   s32 targetCameraYaw;
   struct PerspectiveWork *perspective;
   s32 yawStep;
-  struct FieldSprite *playerSprite;
+  struct AnimationObject *playerSprite;
   struct ObjectRuntime *ripple;
-  struct FieldSprite *rippleSprite;
+  struct AnimationObject *rippleSprite;
 
   movementAnimation = 2;
   collision = 0;
@@ -4344,10 +4311,10 @@ update_object:
     playerSprite = object->animation;
     terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9) {
-      ((struct WorldMapSprite *)playerSprite)->shadow[6] = 1;
+      playerSprite->entries[1]->priority = 1;
       playerSprite->flags = 0;
     } else {
-      ((struct WorldMapSprite *)playerSprite)->shadow[6] = 9;
+      playerSprite->entries[1]->priority = 9;
       playerSprite->flags = 1;
     }
     if (terrainCollision == 6 && object->action == 0 && collision == 0) {
@@ -4359,11 +4326,10 @@ update_object:
         ripple->flags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {
-          AnimationObjects_SelectAnimation(
-              (struct AnimationObject *)rippleSprite, 1);
+          AnimationObjects_SelectAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
-          rippleSprite->blendMode = 1;
-          rippleSprite->priority = 2;
+          rippleSprite->image.objectMode = 1;
+          rippleSprite->image.priority = 2;
         }
         object->action = 10;
       }

@@ -373,8 +373,8 @@ static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
-  actor->sprite->priority = Object_GetById(0)->sprite->priority;
-  actor->sprite->secondPriority = Object_GetById(0)->sprite->priority;
+  actor->sprite->image.priority = Object_GetById(0)->sprite->image.priority;
+  actor->sprite->shadow.priority = Object_GetById(0)->sprite->image.priority;
 #ifdef UBFIX
   return;
 #else
@@ -1328,7 +1328,7 @@ static void Sanctum_CopyActorPose(void) {
   record = Object_GetById(14);
   record->update = Sanctum_FollowLeaderOffset;
   record = Object_GetById(14);
-  p5 = (struct AnimationObject *)record->sprite;
+  p5 = record->sprite;
   {
     for (i = 0; i < p5->count; i++) {
       struct AnimationEntry *e = p5->entries[i];
@@ -1340,7 +1340,7 @@ static void Sanctum_CopyActorPose(void) {
   }
   p5->dirty = 1;
   Object_GetById(14)->priorityFlags &= 254;
-  ((struct FieldSprite *)p5)->priority = 2;
+  p5->image.priority = 2;
 }
 
 static void Sanctum_ResetActorUpdate(void) {
@@ -1398,7 +1398,8 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1) {
   s32 p8;
   struct FieldActor *rec;
   struct FieldActor *rec8;
-  struct FieldSprite *p5;
+  struct AnimationObject *p5;
+  struct AnimationObject *sourceSprite;
 
   p8 = a1;
   rec = Object_GetById(a0);
@@ -1420,8 +1421,9 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1) {
         u16 v = 0;
         p5->flags = v;
       }
+      sourceSprite = rec->sprite;
       rec8->linkedObject = rec;
-      p5->priority = rec->sprite->priority;
+      p5->image.priority = sourceSprite->image.priority;
     }
   }
 }
@@ -1719,7 +1721,7 @@ static void FieldScene_RunPairedActorChoreography(void) {
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct FieldActor *obj;
-  struct FieldSprite *spr;
+  struct AnimationObject *spr;
   u8 *buf;
   u32 i;
   u8 zero;
@@ -1730,14 +1732,14 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     Engine_ObjectSetScript((s32)obj, (s32)gSanctum_ItemIconGrowScript);
     spr = obj->sprite;
     spr->flags = zero;
-    spr->partCount = zero;
-    spr->fullColor = 0;
-    spr->palette = 0;
+    spr->count = zero;
+    spr->image.fullColor = 0;
+    spr->image.palette = 0;
     obj->velocityY = 0x20000;
     obj->gravity = 0x4000;
     buf = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItem(item);
-    Engine_VramLoad(spr->vramBlock, 128, buf + 0x400);
+    Engine_VramLoad(spr->slot, 128, buf + 0x400);
     Runtime_ReleaseHeapBlock(17);
     for (i = 0; i < 60; i++) {
       if ((u32)(obj->velocityY + 255) <= 0x1fe)
@@ -1779,7 +1781,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
 static void Sanctum_SpawnActorSpark(s32 id) {
   struct FieldActor *actor;
   struct FieldActor *obj;
-  struct FieldSprite *spr;
+  struct AnimationObject *spr;
   s32 x;
   s32 r;
 
@@ -1801,7 +1803,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   obj->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
   obj->update = Sanctum_UpdateRisingSpark;
   spr->flags = 0;
-  spr->priority = actor->sprite->priority;
+  spr->image.priority = actor->sprite->image.priority;
 }
 
 static void SceneState_ApplyTwoRects(void) {

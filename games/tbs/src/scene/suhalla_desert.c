@@ -86,11 +86,11 @@ static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(
   return 0;
 }
 
-// Toggles the scripted actor's active bit and reports completion.
+// Toggles the scripted actor's single-sprite visibility and reports completion.
 static s32
 SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
   u8 *actorBytes = (u8 *)interpreter;
-  ((struct FieldActor *)actorBytes)->active ^= 1;
+  ((struct FieldActor *)actorBytes)->spriteStorageKind ^= 1;
   return 1;
 }
 
@@ -404,7 +404,7 @@ SuhallaDesert_FollowLeaderWithSparks(struct ScriptInterpreter *interpreter) {
   actor->speed = 0x18000;
   actor->motionFlags = 0;
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor->active ^= 1;
+  actor->spriteStorageKind ^= 1;
   // Chase the selected actor unless the current state suppresses pursuit.
   if (Engine_GameFlagIsSet(0x104)) {
     actor->targetX = ACTOR_NO_TARGET;
@@ -515,8 +515,8 @@ static void SuhallaDesert_RideSandstormToWorldMap(void) {
   storm->motionFlags = 0;
   selectedActor->motionFlags = 0;
   selectedActor->velocityY = 0;
-  selectedActor->unk5d[4] = 1;
-  storm->unk5d[4] = 1;
+  selectedActor->unk61 = 1;
+  storm->unk61 = 1;
   // Accelerate both actors together for sixty frames before closing the screen.
   for (frame = 0; frame < 60; frame++) {
     selectedActor->velocityY += 0x3333;
@@ -672,7 +672,7 @@ static void SuhallaDesert_ApplyVisitFlagBlend(void) {
 // 0x14c bytes in tbs-en; retain the original body.
 static void SuhallaDesert_ApplyAltarFlagBlend(void) {
   struct FieldActor *actor;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 stormId;
   s32 stormAlpha = 0;
 
@@ -698,14 +698,14 @@ static void SuhallaDesert_ApplyAltarFlagBlend(void) {
   }
   actor = Object_GetById(11);
   if (actor != 0) {
-    u8 *part;
+    struct AnimationEntry *part;
 
     sprite = actor->sprite;
-    part = *(u8 **)((u8 *)sprite + 40);
+    part = sprite->entries[0];
     if (part != 0) {
-      part[5] = 10;
+      part->param = 10;
     }
-    sprite->unk20[5] = 1;
+    sprite->dirty = 1;
     sprite->flags = 0;
   }
   if (Engine_GameFlagIsSet(0x315)) {

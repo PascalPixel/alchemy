@@ -3,17 +3,35 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "static_assert.h"
 
 struct SceneEvent;
 struct ScenePlacement;
 
-u8 *SceneData_GetScriptTable(void);
-u8 *SceneData_GetRegionTable(void);
-u8 *SceneData_GetMessageTable(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 VaultInteriors_ApplyEntryState(void);
-extern u32 gVaultInteriors_Stops[];
+// Each stop links to up to three others, with a heading for each connection.
+struct VaultInteriorsStopConnection {
+  u8 stopIndex;
+  u8 facing;
+  u8 padding[2];
+};
+
+struct VaultInteriorsStop {
+  u8 gridX;
+  u8 gridZ;
+  u8 padding[2];
+  struct VaultInteriorsStopConnection connections[3];
+};
+
+STATIC_ASSERT(sizeof(struct VaultInteriorsStopConnection) == 4);
+STATIC_ASSERT(sizeof(struct VaultInteriorsStop) == 16);
+
+struct SceneEntrance *VaultInteriors_GetEntrances(void);
+s16 *VaultInteriors_GetRegions(void);
+u32 *VaultInteriors_GetExits(void);
+const struct ScenePlacement *VaultInteriors_GetPlacements(void);
+const struct SceneEvent *VaultInteriors_GetEvents(void);
+s32 VaultInteriors_Initialize(void);
+extern struct VaultInteriorsStop gVaultInteriors_Stops[];
 extern s32 gVaultInteriors_ActionTable[];
 extern s32 gVaultInteriors_Villager11ExitScript[];
 extern s32 gVaultInteriors_Villager12ExitScript[];

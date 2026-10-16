@@ -452,15 +452,15 @@ static void FieldScene_RunScene3b3SequenceE(union FieldObject *object) {
   s32 velocityY;
   s32 velocityZ;
 
-  object->effect.x += object->effect.velocityX;
-  object->effect.y += object->effect.velocityY;
-  object->effect.z += object->effect.velocityZ;
-  velocityX = object->effect.velocityX;
-  velocityY = object->effect.velocityY;
-  velocityZ = object->effect.velocityZ;
-  object->effect.velocityX = velocityX - Math_Divide(velocityX, 10);
-  object->effect.velocityY = velocityY - Math_Divide(velocityY, 3);
-  object->effect.velocityZ = velocityZ - Math_Divide(velocityZ, 10);
+  object->effect.x += object->effect.velocity.x;
+  object->effect.y += object->effect.velocity.y;
+  object->effect.z += object->effect.velocity.z;
+  velocityX = object->effect.velocity.x;
+  velocityY = object->effect.velocity.y;
+  velocityZ = object->effect.velocity.z;
+  object->effect.velocity.x = velocityX - Math_Divide(velocityX, 10);
+  object->effect.velocity.y = velocityY - Math_Divide(velocityY, 3);
+  object->effect.velocity.z = velocityZ - Math_Divide(velocityZ, 10);
   object->effect.scaleX += object->effect.scaleRateX;
   object->effect.scaleY += object->effect.scaleRateY;
   object->effect.sprite->rotation += object->effect.spin;
@@ -561,7 +561,6 @@ static void CrossbonePillar_JitterBackgroundScroll(void) {
   *reg = *src;
 }
 
-#define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
@@ -697,10 +696,10 @@ static s32 CrossbonePillar_SyncPriorityIfBehind(struct FieldActor *actor,
       front->y.fixed / 0x10000 == actor->y.fixed / 0x10000 &&
       front->z.fixed > actor->z.fixed &&
       front->z.fixed - 0x200000 < actor->z.fixed) {
-    if (SPRITE_OF(actor)->priority < SPRITE_OF(front)->priority) {
+    if (actor->sprite->image.priority < front->sprite->image.priority) {
       actor->priorityFlags &= ~1;
-      SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
-      SPRITE_OF(actor)->secondPriority = SPRITE_OF(front)->secondPriority;
+      actor->sprite->image.priority = front->sprite->image.priority;
+      actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
     result = 1;
   }
@@ -720,10 +719,10 @@ static s32 CrossbonePillar_SyncPriorityIfAhead(struct FieldActor *front,
       actor->y.fixed / 0x10000 == front->y.fixed / 0x10000 &&
       front->z.fixed > actor->z.fixed &&
       front->z.fixed - 0x200000 < actor->z.fixed) {
-    if (SPRITE_OF(front)->priority > SPRITE_OF(actor)->priority) {
+    if (front->sprite->image.priority > actor->sprite->image.priority) {
       actor->priorityFlags &= ~1;
-      SPRITE_OF(actor)->priority = SPRITE_OF(front)->priority;
-      SPRITE_OF(actor)->secondPriority = SPRITE_OF(front)->secondPriority;
+      actor->sprite->image.priority = front->sprite->image.priority;
+      actor->sprite->shadow.priority = front->sprite->shadow.priority;
     }
     result = 1;
   }
@@ -744,7 +743,7 @@ static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
   u32 id;
 
   if (((s8 *)gEventWork)[0xcc7] == 1) {
-    actor->sprite->priority = leader->sprite->priority;
+    actor->sprite->image.priority = leader->sprite->image.priority;
     actor->collisionFlags |= 1;
 #ifdef UBFIX
     return;
@@ -764,10 +763,10 @@ static s32 CrossbonePillar_UpdateActorPriority(union FieldObject *fieldObject) {
   if (actor->y.fixed < leader->y.fixed) {
     actor->priorityFlags |= 2;
     actor->collisionFlags &= 254;
-    if (actor->sprite->priority < leader->sprite->priority) {
+    if (actor->sprite->image.priority < leader->sprite->image.priority) {
       actor->priorityFlags &= 254;
-      SPRITE_OF(actor)->priority = SPRITE_OF(leader)->priority;
-      SPRITE_OF(actor)->secondPriority = SPRITE_OF(leader)->secondPriority;
+      actor->sprite->image.priority = leader->sprite->image.priority;
+      actor->sprite->shadow.priority = leader->sprite->shadow.priority;
       hit = 1;
     }
   } else {
@@ -1040,8 +1039,8 @@ static void CrossbonePillar_RaiseActorFourteen(void) {
   pillar = Object_GetById(14);
   Object_GetById(13)->scaleX = 0x10000;
   Object_GetById(13)->scaleY = 0x10000;
-  ((struct AnimationObject *)Object_GetById(13)->sprite)->part[0].priority = 2;
-  ((struct AnimationObject *)pillar->sprite)->part[0].priority = 2;
+  ((struct AnimationObject *)Object_GetById(13)->sprite)->image.priority = 2;
+  ((struct AnimationObject *)pillar->sprite)->image.priority = 2;
   pillar->acceleration = 0x6666;
   pillar->speed = 0xcccc;
   FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
@@ -1251,7 +1250,7 @@ static void CrossbonePillar_PrepLoweredActor(s32 id) {
   actor->priorityFlags |= 2;
   actor->motionFlags = 0;
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor->sprite->priority = 2;
+  actor->sprite->image.priority = 2;
 }
 
 static void CrossbonePillar_RestoreFlaggedPillar(s32 a0) {
@@ -1299,7 +1298,7 @@ static void SceneActor_CheckActors8To11NearSlotZero(void) {
           actor->x.fixed < hero->x.fixed + 0x100000) {
         Engine_ActorSetSpritePriority(
             ACTOR_PARTY_LEADER,
-            ((struct AnimationObject *)actor->sprite)->part[0].priority);
+            ((struct AnimationObject *)actor->sprite)->image.priority);
         return;
       }
     } else {

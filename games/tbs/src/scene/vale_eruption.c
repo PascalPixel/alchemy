@@ -73,17 +73,17 @@ static void RunEventScript01(void) {
   Camera_SetSpeed(0xcccc, 0x1999);
   Camera_MoveTo(0x1000000, -1, 0x1f40000, 1);
   Engine_EventWait(20);
-  Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+  Map_SetShake(0x10000, 0x20000, 0x10000);
   FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(30);
   FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_CameraWaitForMove();
-  Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
+  Map_SetShake(0x20000, 0x30000, 0x10000);
   FieldFx_LastLightning();
   Event_PlayCue(145);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(60);
   Engine_EventSetMessage(MsgValeMtAlephWasInactive);
@@ -116,7 +116,7 @@ static void RunEventScript01(void) {
   Engine_ActorSetAnimationAndWait(10, 4);
   Event_ShowMessage(10, 0);
   Engine_EventWait(60);
-  Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
+  Map_SetShake(0x20000, 0x30000, 0x10000);
   FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(60);
@@ -129,7 +129,7 @@ static void RunEventScript01(void) {
   Engine_ActorStartRepeatedMotion(11, 2);
   Engine_ActorStartRepeatedMotion(12, 2);
   Engine_ActorStartRepeatedMotion(13, 2);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Actor_SetSpeed(GARET, 0x8000, 0x4000);
@@ -335,7 +335,7 @@ static void RunEventScript01(void) {
   Actor_ShowEmote(11, 0x102, 0);
   Actor_ShowEmote(12, 0x102, 0);
   Engine_EventWait(40);
-  Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
+  Map_SetShake(0x20000, 0x30000, 0x10000);
   FieldFx_LastLightning();
   Event_PlayCue(145);
   Engine_EventWait(30);
@@ -343,7 +343,7 @@ static void RunEventScript01(void) {
   work->startTransition = 0;
   work->transitionFrames = 64;
   Engine_EventCloseScreen();
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   GameFlag_Set(0x879);

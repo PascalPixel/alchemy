@@ -166,10 +166,10 @@ static void EV1044_SCRIPT(void) {
       Map_CopyCellAttributes(0, 29, 3, 2, v6, v5);
       Map_CopyCellsTo(1, 109, 4, 81, v5, v5);
       Engine_MapRedraw();
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
       Engine_EventWait(20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-      Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+      Map_SetShake(0x20000, 0x20000, 0x10000);
       Engine_EventWait(20);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -177,7 +177,7 @@ static void EV1044_SCRIPT(void) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
       Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
       Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_EventWait(40);
       Engine_MessageShowCentered(id + 1, 1);
       GameFlag_Set(0x143);
@@ -228,10 +228,10 @@ static void EV1045_SCRIPT(void) {
     Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
     Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     Engine_MapRedraw();
-    Work_SetValuesIfNonNegative(65536, 65536, 65536);
+    Map_SetShake(65536, 65536, 65536);
     Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-    Work_SetValuesIfNonNegative(131072, 131072, 65536);
+    Map_SetShake(131072, 131072, 65536);
     Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -239,7 +239,7 @@ static void EV1045_SCRIPT(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
-    Work_SetValuesIfNonNegative(-1, -1, 58982);
+    Map_SetShake(-1, -1, 58982);
     Engine_EventWait(40);
     Engine_MessageShowCentered(message + 1, 1);
     GameFlag_Set(0x143);
@@ -489,7 +489,7 @@ static void FieldScene_RunSceneEntryHook(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(0x814) != 0) {
     BattleFx_SetQueuedSoundAndPlay(141);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Map_SetShake(0x10000, 0x10000, 0x10000);
     InitializeSceneRecordBuffer();
   }
 
@@ -995,13 +995,13 @@ static void Scene_UpdateCueTimer(void) {
     v3 = (*timer - 1);
     *timer = (*timer - 1);
     if (v3 == 40) {
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
     }
   } else {
     value = Engine_RandomNext();
     if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
       Event_PlayCue(138);
-      Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+      Map_SetShake(0x10000, 0x20000, 0x10000);
       *timer = 80;
     }
   }

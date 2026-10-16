@@ -737,7 +737,7 @@ s32 Scene_RunGuardSequenceB(void) {
   }
   if (GameFlag_IsSet(0x814) != 0) {
     BattleFx_SetQueuedSoundAndPlay(141);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Map_SetShake(0x10000, 0x10000, 0x10000);
     InitializeSceneRecordBuffer();
   }
   return 0;
@@ -903,23 +903,23 @@ static void EV17_PSYNERGY(void) {
         statue->velocityY = 0;
         statue->velocityZ = 0;
         Engine_ActorSetPosition(17, 0, 0);
-        Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+        Map_SetShake(0x10000, 0x10000, 0x10000);
         Engine_EventWait(10);
         Engine_AudioPlayCue(141);
-        Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+        Map_SetShake(0x30000, 0x30000, 0x10000);
         Engine_EventWait(10);
-        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+        Map_SetShake(0x50000, 0x50000, 0x10000);
         Engine_EventWait(35);
-        Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+        Map_SetShake(0x40000, 0x40000, 0x10000);
         Engine_EventWait(20);
-        Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+        Map_SetShake(0x30000, 0x30000, 0x10000);
         Engine_EventWait(30);
-        Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+        Map_SetShake(0x20000, 0x20000, 0x10000);
         Engine_EventWait(40);
         Engine_AudioPlayCue(0x121);
-        Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+        Map_SetShake(0x10000, 0x10000, 0x10000);
         Engine_EventWait(10);
-        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        Map_SetShake(-1, -1, 0xe666);
         Engine_EventWait(60);
         Engine_AudioPlayCue(188);
         if (Engine_GameFlagIsSet(0x80b) != 0 &&

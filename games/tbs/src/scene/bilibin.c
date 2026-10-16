@@ -676,7 +676,7 @@ static void Bilibin_UpdateCornerSpawn(void) {
 // frames.
 static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor) {
   struct FieldActor *effect;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
 
   effect =
       Engine_ObjectCreate(24, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -693,8 +693,8 @@ static void Bilibin_SpawnTransientCornerEffect(struct FieldActor *actor) {
 
   AnimationObjects_SelectAnimation(sprite, 2);
   sprite->flags = 0;
-  sprite->blendMode = 1;
-  sprite->priority = 3;
+  sprite->image.objectMode = 1;
+  sprite->image.priority = 3;
 }
 
 // Updates the two passage cells according to the movable block's current row.

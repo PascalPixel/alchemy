@@ -300,7 +300,7 @@ static void EV30_SEARCH(void) {
 }
 
 // Walk the leader into a doorway during the sixteen-frame exit delay.
-static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 z, s32 exitId) {
+static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   s32 zero = 0;
 
   Actor_SetSpeed(zero, 0x8000, 0x4000);
@@ -313,21 +313,21 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 z, s32 exitId) {
 static void EV05_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
-  SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
+  Vault_WalkThroughExit(408, 320, 5);
 }
 
 // Open the doorway at trigger 6 and walk through it.
 static void EV06_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
-  SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
+  Vault_WalkThroughExit(312, 304, 6);
 }
 
 // Open the doorway at trigger 7 and walk through it.
 static void EV07_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
-  SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
+  Vault_WalkThroughExit(216, 288, 7);
 }
 
 // Open trigger 8's doorway and update the leader's drawing flags for entry.
@@ -346,7 +346,7 @@ static void EV08_TOUCH(void) {
   flags = presentation->flags;
   flags |= 12;
   presentation->flags = flags;
-  SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
+  Vault_WalkThroughExit(376, 224, 8);
 }
 
 // Open trigger 9's doorway and update the leader's drawing flags for entry.
@@ -365,14 +365,14 @@ static void EV09_TOUCH(void) {
   flags = presentation->flags;
   flags |= 12;
   presentation->flags = flags;
-  SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
+  Vault_WalkThroughExit(296, 176, 9);
 }
 
 // Open the doorway at trigger 10 and walk through it.
 static void EV10_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
-  SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
+  Vault_WalkThroughExit(120, 144, 10);
 }
 
 // The remaining doorway helper retains its position in the overlay.
@@ -397,7 +397,7 @@ static void EV12_TOUCH(void) {
   flags = presentation->flags;
   flags |= 12;
   presentation->flags = flags;
-  SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
+  Vault_WalkThroughExit(72, 160, 12);
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
@@ -685,15 +685,15 @@ struct SceneEvent gVaultRevisit_Extras[] = {
     { EVENT_EXIT, 21, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 40, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 41, CONDITION_ALWAYS, 14 },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorDraw_SetupActorSceneCells) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },

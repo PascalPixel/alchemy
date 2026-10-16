@@ -21,13 +21,14 @@
 #include "field_obj.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
 // Forward declarations.
-static void FieldScene_DispatchBySelector(void);
-static void FieldScene_CallPairWith10(s32 no);
-static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1);
-static void SceneState_ApplyRectsByFlags2384And962(void);
-static void FieldScene_BuildActorPresentationSequence(void);
+static void ColosseumEntrance_ApplyArrivalState(void);
+static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
+static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing);
+static void ColosseumEntrance_UpdateEntranceCells(void);
+static void ColosseumEntrance_ExplainPartySupport(void);
 static void ColosseumEntrance_EscortToEastExit(void);
 static void ColosseumEntrance_AnnounceFinals(void);
 static void ColosseumEntrance_WalkToEastExit(void);
@@ -35,20 +36,22 @@ static void ColosseumEntrance_CelebrateAdvancement(void);
 static void ColosseumEntrance_EscortToWestExit(void);
 static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
-static void ActorPresentation_SetActorsTwelveToEighteen(void);
+static void ColosseumEntrance_InitializeContestants(void);
 
-// Turn over ten frames by calling SceneState_ForwardMaskedHalfwordWith10
+// Turn over ten frames by calling ColosseumEntrance_FaceDirection
 // through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
-  /* FAKEMATCH: forwarding inline for EV10_TOUCH's one call (call.h's Call2 did
-   * the same); called directly EV10_TOUCH's later message skip swaps r2 and r3
+  /* FAKEMATCH: forwarding inline for ColosseumEntrance_InvitePartyToFinals's
+   * one call (call.h's Call2 did the same); called directly
+   * ColosseumEntrance_InvitePartyToFinals's later message skip swaps r2 and r3
    * (7 halfwords differ in tbs-en, 2026-10-13). */
-  SceneState_ForwardMaskedHalfwordWith10(actor, facing);
+  ColosseumEntrance_FaceDirection(actor, facing);
 }
 
-#define RECORD_17 17
+#define TRIAL_ATTENDANT 17
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
+// Select the entrance table for this colosseum area.
+const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ColosseumEntrance1) {
@@ -60,11 +63,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumEntranceEntrancesOther;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+// This scene has no additional region table.
+const struct SceneRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gColosseumEntranceExits; }
+// Return the shared colosseum exits.
+const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+// Select actors for the current area and stage of Colosso.
+const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   const struct ScenePlacement *table;
 
   if (gGameState.scene == (s32)&SceneId_ColosseumEntrance1) {
@@ -110,7 +116,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return table;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
+// Select interactions for this area and arrival.
+const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ColosseumEntrance2) {
@@ -128,7 +135,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gColosseumEntranceEventsOther;
 }
 
-static void EV10_TALK(void) {
+// Discuss whether there is room to watch Colosso.
+static void ColosseumEntrance_DiscussSeating(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x962)) {
     Engine_EventSetMessage(MsgColosseumColosseumAlreadyFullIfReally);
@@ -140,7 +148,8 @@ static void EV10_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV13_TALK_3(void) {
+// Discuss betting on Colosso or finding a seat for the finals.
+static void ColosseumEntrance_DiscussLuckyGuessSeats(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x962)) {
     Engine_ActorShowEmote(13, 258, 40);
@@ -153,16 +162,17 @@ static void EV13_TALK_3(void) {
   Engine_EventEnd();
 }
 
-static void EV14_TALK_3(void) {
+// Discuss the bettor's hopes of winning big.
+static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x962) != 0) {
     Engine_ActorRunRepeatedMotion(14, 2);
     Engine_EventSetMessage(MsgColosseumHoldOnSecond);
-    FieldScene_CallPairWith10(14);
+    ColosseumEntrance_ShowMessageAndPause(14);
     Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Engine_EventAskYesNo(14, 0);
-    SceneState_ForwardMaskedHalfwordWith10(14, 0);
+    ColosseumEntrance_FaceDirection(14, 0);
   } else {
     Engine_EventSetMessage(MsgColosseumWantWinBigPutOn);
     Engine_EventShowMessage(14, 0);
@@ -170,7 +180,8 @@ static void EV14_TALK_3(void) {
   Engine_EventEnd();
 }
 
-static void EV16_TALK_3(void) {
+// Offer Lucky Guess and remember when the offer is accepted.
+static void ColosseumEntrance_OfferLuckyGuess(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x962) != 0) {
     if (GameFlag_IsSet(0x3c0) != 0) {
@@ -200,58 +211,62 @@ static void EV16_TALK_3(void) {
   Engine_EventEnd();
 }
 
-static void EV13_TALK(void) {
-  struct FieldActor *rec7;
+// Let the second-seeded contestant introduce himself and resume his action.
+static void ColosseumEntrance_TalkToSecondSeed(void) {
+  struct FieldActor *contestant;
 
-  rec7 = Object_GetById(13);
+  contestant = Object_GetById(13);
   Engine_EventBegin();
   Engine_ActorStop(13);
   Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumImRatedAsSecondBest);
-  FieldScene_CallPairWith10(13);
+  ColosseumEntrance_ShowMessageAndPause(13);
   Engine_ActorRunRepeatedMotion(13, 1);
   Engine_EventShowMessage(13, 0);
   {
-    u16 *target = (u16 *)&rec7->timer;
-    u16 shown = 0x2d0;
+    u16 *timer = (u16 *)&contestant->timer;
+    u16 duration = 720;
 
-    *target = shown;
+    *timer = duration;
   }
   {
-    u16 *target = (u16 *)&rec7->work;
-    u16 shown = 112;
+    u16 *work = &contestant->work;
+    u16 value = 112;
 
-    *target = shown;
+    *work = value;
   }
   Actor_SetBuiltinAction(13, 2);
   Engine_EventEnd();
 }
 
-static void EV14_TALK(void) {
+// Startle the waiting contestant.
+static void ColosseumEntrance_StartleContestant(void) {
   Engine_EventBegin();
   Actor_SetAttachedEffect(14, 0x102);
   Engine_ActorRunRepeatedMotion(14, 2);
   Engine_EventSetMessage(MsgColosseumWaahDontFrightenMe);
-  FieldScene_CallPairWith10(14);
+  ColosseumEntrance_ShowMessageAndPause(14);
   Actor_ShowEmote(14, 0x102, 40);
   Event_ShowMessage(14, 0);
   Engine_EventEnd();
 }
 
-static void EV15_TALK(void) {
+// Let the contestant respond to Isaac's questions.
+static void ColosseumEntrance_QuestionContestant(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgColosseumWhoHaveComeQuestionMe);
-  FieldScene_CallPairWith10(15);
+  ColosseumEntrance_ShowMessageAndPause(15);
   Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 20);
-  FieldScene_CallPairWith10(15);
+  ColosseumEntrance_ShowMessageAndPause(15);
   Engine_ActorSetAnimationAndWait(15, 3);
   Engine_ActorSetAnimation(15, 0);
-  FieldScene_CallPairWith10(15);
-  SceneState_ForwardMaskedHalfwordWith10(15, 20480);
+  ColosseumEntrance_ShowMessageAndPause(15);
+  ColosseumEntrance_FaceDirection(15, FACING_SOUTH + FACING_STEP);
   Engine_EventEnd();
 }
 
-static void EV16_TALK(void) {
+// Let the spectators cheer for Dekka and exchange remarks.
+static void ColosseumEntrance_CheerForDekka(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(16, 2);
   Engine_EventSetMessage(MsgColosseumDekkaMustWinFinalsDekka);
@@ -259,51 +274,54 @@ static void EV16_TALK(void) {
   if (GameFlag_IsSet(0x3c1) != 0) {
     Engine_EventWait(20);
   } else {
-    SceneState_ForwardMaskedHalfwordWith10(17, 0);
+    ColosseumEntrance_FaceDirection(17, 0);
     Engine_ActorRunRepeatedMotion(17, 1);
-    FieldScene_CallPairWith10(17);
+    ColosseumEntrance_ShowMessageAndPause(17);
     Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
     Engine_ActorSetAnimation(17, 4);
-    FieldScene_CallPairWith10(17);
+    ColosseumEntrance_ShowMessageAndPause(17);
     Actor_ShowEmote(17, 0x105, 40);
-    FieldScene_CallPairWith10(17);
-    SceneState_ForwardMaskedHalfwordWith10(17, 0x5000);
+    ColosseumEntrance_ShowMessageAndPause(17);
+    ColosseumEntrance_FaceDirection(17, FACING_SOUTH + FACING_STEP);
     GameFlag_Set(0x3c1);
   }
   Engine_EventEnd();
 }
 
-static void EV17_TALK(void) {
+// Let Navampa introduce himself before the finals.
+static void ColosseumEntrance_TalkToNavampa(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumAmNavampaGondowanSixthRanked);
-  FieldScene_CallPairWith10(17);
+  ColosseumEntrance_ShowMessageAndPause(17);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimationAndWait(17, 3);
-  FieldScene_CallPairWith10(17);
+  ColosseumEntrance_ShowMessageAndPause(17);
   Engine_ActorRunRepeatedMotion(17, 1);
-  FieldScene_CallPairWith10(17);
-  SceneState_ForwardMaskedHalfwordWith10(17, 20480);
+  ColosseumEntrance_ShowMessageAndPause(17);
+  ColosseumEntrance_FaceDirection(17, FACING_SOUTH + FACING_STEP);
   Engine_EventEnd();
 }
 
-static void EV18_TALK(void) {
+// Let Buford introduce himself before the finals.
+static void ColosseumEntrance_TalkToBuford(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumImBufordSeventhSeed);
-  FieldScene_CallPairWith10(18);
-  Actor_FaceDirection(18, 0xd000, 20);
-  Actor_FaceDirection(18, 0xb000, 20);
+  ColosseumEntrance_ShowMessageAndPause(18);
+  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_FaceDirection(18, FACING_WEST, 40);
   Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
-  FieldScene_CallPairWith10(18);
+  ColosseumEntrance_ShowMessageAndPause(18);
   Engine_ActorSetAnimationAndWait(18, 3);
-  FieldScene_CallPairWith10(18);
-  SceneState_ForwardMaskedHalfwordWith10(18, 0x5000);
+  ColosseumEntrance_ShowMessageAndPause(18);
+  ColosseumEntrance_FaceDirection(18, FACING_SOUTH + FACING_STEP);
   Engine_EventEnd();
 }
 
-static void EV08_TALK(void) {
+// Ask whether Isaac is ready for the finals.
+static void ColosseumEntrance_AskFinalsReadiness(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgColosseumYouReadyForFinals);
@@ -314,8 +332,10 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV10_TOUCH(void) {
-  s32 record;
+// Invite Isaac to the finals and arrange the party's response.
+static void ColosseumEntrance_InvitePartyToFinals(void) {
+  // The native sequence reuses this word for actor handles and the reply.
+  s32 actorOrAnswer;
 
   if (Engine_GameFlagIsSet(0x962) == 0) {
     return;
@@ -323,41 +343,42 @@ static void EV10_TOUCH(void) {
 
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(17, 1);
-  Actor_FaceDirection(17, 0x3000, 20);
+  Actor_FaceDirection(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorFaceDirection(17, FACING_EAST, 60);
   Actor_ShowEmote(17, 0x100, 40);
-  SceneState_ForwardMaskedHalfwordWith10(17, 0x3000);
+  ColosseumEntrance_FaceDirection(17, FACING_SOUTHEAST + FACING_STEP);
   Engine_EventSetMessage(MsgColosseumHeyYouRe);
   Engine_ActorStartRepeatedMotion(17, 2);
-  FieldScene_CallPairWith10(17);
-  Engine_ActorFaceDirection(18, 0x3000, 0);
-  Engine_ActorFaceDirection(19, 0x3000, 0);
-  Engine_ActorFaceDirection(20, 0x3000, 0);
+  ColosseumEntrance_ShowMessageAndPause(17);
+  Engine_ActorFaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(20, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Engine_CameraSetSpeed(0x19999, 0x3333);
-  Camera_MoveTo(0x1000000, -1, 0xac0000, 1);
+  Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  Camera_MoveTo(PIXELS(256), -1, PIXELS(172), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Actor_ShowEmote(18, 0x102, 40);
-  FieldScene_CallPairWith10(18);
+  ColosseumEntrance_ShowMessageAndPause(18);
   Engine_ActorSetAnimationAndWait(17, 3);
-  FieldScene_CallPairWith10(17);
+  ColosseumEntrance_ShowMessageAndPause(17);
   Actor_SetAttachedEffect(19, 0x102);
   Engine_EventWait(40);
-  SceneState_ForwardMaskedHalfwordWith10(19, 0);
-  FieldScene_CallPairWith10(19);
+  ColosseumEntrance_FaceDirection(19, 0);
+  ColosseumEntrance_ShowMessageAndPause(19);
   Actor_ShowEmote(20, 0x103, 40);
-  SceneState_ForwardMaskedHalfwordWith10(20, 0);
+  ColosseumEntrance_FaceDirection(20, 0);
   Engine_ActorStartRepeatedMotion(20, 2);
   Engine_EventShowMessageAndWait(20, 0, 20);
   Engine_ActorRunRepeatedMotion(17, 1);
   Engine_EventWait(10);
-  Actor_FaceDirection(17, 0xb000, 20);
+  Actor_FaceDirection(17, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_EventShowMessageAndWait(17, 0, 20);
   Engine_ActorRunRepeatedMotion(18, 1);
   Engine_ActorSetAnimationAndWait(18, 4);
   Engine_EventWait(20);
-  SceneState_ForwardMaskedHalfwordWith10(17, 0x8000);
+  // Gather Isaac and his companions for the invitation.
+  ColosseumEntrance_FaceDirection(17, FACING_WEST);
   Engine_EventShowMessageAndWait(17, 0, 20);
   Engine_ActorRunRepeatedMotion(19, 1);
   Engine_EventWait(40);
@@ -371,43 +392,43 @@ static void EV10_TOUCH(void) {
   Engine_ActorSetAnimation(18, 3);
   Engine_ActorSetAnimation(19, 3);
   Engine_ActorSetAnimationAndWait(20, 3);
-  Engine_ActorFaceDirection(17, 0x3000, 0);
-  Engine_ActorFaceDirection(18, 0x3000, 0);
-  Engine_ActorFaceDirection(19, 0x3000, 0);
-  SceneState_ForwardMaskedHalfwordWith10(20, 0x3000);
-  Actor_SetSpeed(17, 0x9999, 0x4ccc);
-  Actor_WalkToAndWait(17, 0x102, 172);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(0, 0x106, 188);
+  Engine_ActorFaceDirection(17, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 0);
+  ColosseumEntrance_FaceDirection(20, FACING_SOUTHEAST + FACING_STEP);
+  Actor_SetSpeed(17, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_WalkToAndWait(17, 258, 172);
+  Actor_SetSpeed(0, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(0, 262, 188);
   Actor_FaceDirection(0, FACING_NORTH, 0);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetPosition(1, ((struct FieldActor *)record)->x.fixed,
-                            ((struct FieldActor *)record)->z.fixed);
+  actorOrAnswer = (s32)Object_GetById(0);
+  if (actorOrAnswer != 0) {
+    Engine_ActorSetPosition(1, ((struct FieldActor *)actorOrAnswer)->x.fixed,
+                            ((struct FieldActor *)actorOrAnswer)->z.fixed);
   }
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetPosition(2, ((struct FieldActor *)record)->x.fixed,
-                            ((struct FieldActor *)record)->z.fixed);
+  actorOrAnswer = (s32)Object_GetById(0);
+  if (actorOrAnswer != 0) {
+    Engine_ActorSetPosition(2, ((struct FieldActor *)actorOrAnswer)->x.fixed,
+                            ((struct FieldActor *)actorOrAnswer)->z.fixed);
   }
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetPosition(3, ((struct FieldActor *)record)->x.fixed,
-                            ((struct FieldActor *)record)->z.fixed);
+  actorOrAnswer = (s32)Object_GetById(0);
+  if (actorOrAnswer != 0) {
+    Engine_ActorSetPosition(3, ((struct FieldActor *)actorOrAnswer)->x.fixed,
+                            ((struct FieldActor *)actorOrAnswer)->z.fixed);
   }
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
-  Actor_SetSpeed(2, 0xcccc, 0x6666);
-  Actor_SetSpeed(3, 0xcccc, 0x6666);
+  Actor_SetSpeed(1, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(2, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(3, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorWalkTo(1, 246, 200);
-  Actor_WalkTo(2, 0x106, 200);
-  Actor_WalkToAndWait(3, 0x116, 200);
+  Actor_WalkTo(2, 262, 200);
+  Actor_WalkToAndWait(3, 278, 200);
   Engine_ActorSetAnimation(2, 1);
   Engine_ActorSetAnimation(1, 1);
   Actor_FaceDirection(1, FACING_NORTH, 0);
   Actor_FaceDirection(2, FACING_NORTH, 0);
   Actor_FaceDirection(3, FACING_NORTH, 40);
   Engine_ActorRunRepeatedMotion(17, 1);
-  FieldScene_CallPairWith10(17);
+  ColosseumEntrance_ShowMessageAndPause(17);
   Engine_ActorStartRepeatedMotion(0, 2);
   Engine_ActorStartRepeatedMotion(1, 2);
   Engine_ActorStartRepeatedMotion(2, 2);
@@ -417,20 +438,21 @@ static void EV10_TOUCH(void) {
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirection(3, FACING_NORTHWEST, 0);
 
+  // Either leave with the guide or let the companions persuade Isaac.
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(17, 3);
-    FieldScene_CallPairWith10(17);
-    Actor_SetActionScript(1, gColosseumEntrance_ActionTable1);
-    Actor_SetActionScript(2, gColosseumEntrance_ActionTable1);
+    ColosseumEntrance_ShowMessageAndPause(17);
+    Actor_SetActionScript(1, gColosseumEntrance_GatherAtSpectatorLeaderScript);
+    Actor_SetActionScript(2, gColosseumEntrance_GatherAtSpectatorLeaderScript);
     Object_SetActionCallbackAndRefreshById(
-        3, (s32)gColosseumEntrance_ActionTable1);
-    Engine_CameraSetSpeed(0x6666, 0xccc);
-    Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
-    Actor_SetSpeed(17, 0x10000, 0x8000);
-    Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
+        3, (s32)gColosseumEntrance_GatherAtSpectatorLeaderScript);
+    Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+    Engine_CameraMoveTo(PIXELS(256), -1, PIXELS(100), 1);
+    Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetActionScript(17, gColosseumEntrance_LeaveSpectatorAreaScript);
     Engine_EventWait(10);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_SetActionScript(0, gColosseumEntrance_ActionTable4);
+    Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetActionScript(0, gColosseumEntrance_LeaveSpectatorAreaScript);
     Engine_EventWait(80);
     gEventWork->transitionFrames = 40;
     Engine_EventCloseScreen();
@@ -438,52 +460,54 @@ static void EV10_TOUCH(void) {
   } else {
     Event_SkipMessages(1);
     Actor_ShowEmote(17, 0x102, 40);
-    FieldScene_CallPairWith10(17);
+    ColosseumEntrance_ShowMessageAndPause(17);
     Actor_ShowEmote(18, 0x102, 40);
-    FieldScene_CallPairWith10(18);
+    ColosseumEntrance_ShowMessageAndPause(18);
     Actor_ShowEmote(19, 0x102, 40);
-    FieldScene_CallPairWith10(19);
+    ColosseumEntrance_ShowMessageAndPause(19);
     Actor_ShowEmote(20, 0x102, 40);
-    FieldScene_CallPairWith10(19);
+    ColosseumEntrance_ShowMessageAndPause(19);
     Engine_ActorSetAnimationAndWait(17, 4);
-    FieldScene_CallPairWith10(17);
+    ColosseumEntrance_ShowMessageAndPause(17);
     Engine_ActorRunRepeatedMotion(2, 1);
     Engine_EventWait(20);
-    FieldScene_CallPairWith10(2);
+    ColosseumEntrance_ShowMessageAndPause(2);
     Actor_ShowEmote(3, 0x102, 40);
-    FieldScene_CallPairWith10(3);
-    Actor_FaceDirection(17, 0xb000, 0);
+    ColosseumEntrance_ShowMessageAndPause(3);
+    Actor_FaceDirection(17, FACING_NORTHWEST + FACING_STEP, 0);
     Engine_ActorFaceDirection(19, FACING_WEST, 0);
     Engine_ActorFaceDirection(20, FACING_EAST, 60);
-    Engine_ActorFaceDirection(17, 0x3000, 0);
-    Engine_ActorFaceDirection(19, 0x3000, 0);
-    Engine_ActorFaceDirection(20, 0x3000, 20);
+    Engine_ActorFaceDirection(17, FACING_SOUTHEAST + FACING_STEP, 0);
+    Engine_ActorFaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 0);
+    Engine_ActorFaceDirection(20, FACING_SOUTHEAST + FACING_STEP, 20);
     Engine_ActorSetAnimation(17, 3);
     Engine_ActorSetAnimation(18, 3);
     Engine_ActorSetAnimation(19, 3);
     Engine_ActorSetAnimationAndWait(20, 3);
     Actor_ShowEmote(3, 0x100, 60);
-    ColosseumEntrance_Turn(3, 0xa000);
-    FieldScene_CallPairWith10(3);
+    ColosseumEntrance_Turn(3, FACING_NORTHWEST);
+    ColosseumEntrance_ShowMessageAndPause(3);
     Engine_ActorSetAnimation(1, 4);
     Engine_EventWait(20);
     Event_OpenMessage(1, 0);
 
-    record = Engine_EventChooseYesNo(0, 0);
-    if (record == 0) {
+    actorOrAnswer = Engine_EventChooseYesNo(0, 0);
+    if (actorOrAnswer == 0) {
       Engine_ActorSetAnimationAndWait(17, 3);
-      FieldScene_CallPairWith10(17);
-      Actor_SetActionScript(1, gColosseumEntrance_ActionTable1);
-      Actor_SetActionScript(2, gColosseumEntrance_ActionTable1);
+      ColosseumEntrance_ShowMessageAndPause(17);
+      Actor_SetActionScript(1,
+                            gColosseumEntrance_GatherAtSpectatorLeaderScript);
+      Actor_SetActionScript(2,
+                            gColosseumEntrance_GatherAtSpectatorLeaderScript);
       Object_SetActionCallbackAndRefreshById(
-          3, (s32)gColosseumEntrance_ActionTable1);
-      Engine_CameraSetSpeed(0x6666, 0xccc);
-      Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
-      Actor_SetSpeed(17, 0x10000, 0x8000);
-      Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
+          3, (s32)gColosseumEntrance_GatherAtSpectatorLeaderScript);
+      Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+      Engine_CameraMoveTo(PIXELS(256), -1, PIXELS(100), 1);
+      Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetActionScript(17, gColosseumEntrance_LeaveSpectatorAreaScript);
       Engine_EventWait(10);
-      Actor_SetSpeed(0, 0x10000, 0x8000);
-      Actor_SetActionScript(0, gColosseumEntrance_ActionTable4);
+      Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetActionScript(0, gColosseumEntrance_LeaveSpectatorAreaScript);
       Engine_EventWait(80);
       gEventWork->transitionFrames = 40;
       Engine_EventCloseScreen();
@@ -494,27 +518,27 @@ static void EV10_TOUCH(void) {
       Engine_ActorStartRepeatedMotion(1, 2);
       Engine_EventShowMessageAndWait(1, 0, 20);
       Engine_ActorShowEmote(2, 0x102, 60);
-      FieldScene_CallPairWith10(2);
-      SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
+      ColosseumEntrance_ShowMessageAndPause(2);
+      ColosseumEntrance_FaceDirection(3, FACING_WEST);
       Engine_ActorSetAnimation(3, 3);
-      FieldScene_CallPairWith10(3);
-      Actor_SetActionScript(2, gColosseumEntrance_ActionTable2);
+      ColosseumEntrance_ShowMessageAndPause(3);
+      Actor_SetActionScript(2, gColosseumEntrance_GatherAtSpectatorPartyScript);
       Object_SetActionCallbackAndRefreshById(
-          3, (s32)gColosseumEntrance_ActionTable2);
+          3, (s32)gColosseumEntrance_GatherAtSpectatorPartyScript);
       Engine_EventWait(20);
       Object_SetActionCallbackAndRefreshById(
-          0, (s32)gColosseumEntrance_ActionTable2);
-      Actor_WalkToAndWait(1, 0x106, 188);
-      SceneState_ForwardMaskedHalfwordWith10(1, 0xc000);
+          0, (s32)gColosseumEntrance_GatherAtSpectatorPartyScript);
+      Actor_WalkToAndWait(1, 262, 188);
+      ColosseumEntrance_FaceDirection(1, FACING_NORTH);
       Engine_ActorSetAnimationAndWait(1, 3);
-      FieldScene_CallPairWith10(1);
-      Engine_CameraSetSpeed(0x6666, 0xccc);
-      Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
-      Actor_SetSpeed(17, 0x10000, 0x8000);
-      Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
+      ColosseumEntrance_ShowMessageAndPause(1);
+      Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+      Engine_CameraMoveTo(PIXELS(256), -1, PIXELS(100), 1);
+      Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetActionScript(17, gColosseumEntrance_LeaveSpectatorAreaScript);
       Engine_EventWait(10);
-      Actor_SetSpeed(1, 0x10000, 0x8000);
-      Actor_SetActionScript(1, gColosseumEntrance_ActionTable4);
+      Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetActionScript(1, gColosseumEntrance_LeaveSpectatorAreaScript);
       Engine_EventWait(80);
       gEventWork->transitionFrames = 40;
       Engine_EventCloseScreen();
@@ -527,50 +551,51 @@ static void EV10_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void EV12_TOUCH(void) {
+// Call the contestants together and send them into the finals.
+static void ColosseumEntrance_SendContestantsToFinals(void) {
   struct FieldActor *actor;
   const s32 *script;
 
   if (Engine_GameFlagIsSet(0x234) != 0) {
     Engine_GameFlagSet(0x235);
     Engine_EventBegin();
-    Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 0x368, 120);
-    SceneState_ForwardMaskedHalfwordWith10(0, 0xa000);
-    Camera_SetSpeed(0x19999, 0x3333);
-    Camera_MoveTo(0x3300000, -1, 0x700000, 1);
+    Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
+    Actor_WalkToAndWait(0, 872, 120);
+    ColosseumEntrance_FaceDirection(0, FACING_NORTHWEST);
+    Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    Camera_MoveTo(PIXELS(816), -1, PIXELS(112), 1);
     Engine_CameraWaitForMove();
-    Actor_FaceDirection(8, 0x3000, 20);
+    Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventSetMessage(MsgColosseumYouReadyForFinals);
     Event_OpenMessage(0x8008, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventWait(20);
-      SceneState_ForwardMaskedHalfwordWith10(12, 0xd000);
+      ColosseumEntrance_FaceDirection(12, FACING_NORTH + FACING_STEP);
       Engine_ActorRunRepeatedMotion(12, 1);
       Engine_EventSetMessage(MsgColosseumDayTiredWaiting);
-      FieldScene_CallPairWith10(0x400c);
-      SceneState_ForwardMaskedHalfwordWith10(17, 0);
-      SceneState_ForwardMaskedHalfwordWith10(0, 0x8000);
+      ColosseumEntrance_ShowMessageAndPause(0x400c);
+      ColosseumEntrance_FaceDirection(17, 0);
+      ColosseumEntrance_FaceDirection(0, FACING_WEST);
       Engine_ActorSetAnimationAndWait(17, 3);
       Engine_ActorSetAnimationAndWait(0, 3);
       Engine_ActorSetAnimation(15, 1);
-      Engine_ActorFaceDirection(15, 0xd000, 20);
+      Engine_ActorFaceDirection(15, FACING_NORTH + FACING_STEP, 20);
       Engine_ActorRunRepeatedMotion(15, 1);
-      FieldScene_CallPairWith10(15);
-      SceneState_ForwardMaskedHalfwordWith10(16, 0x8000);
+      ColosseumEntrance_ShowMessageAndPause(15);
+      ColosseumEntrance_FaceDirection(16, FACING_WEST);
       Engine_ActorSetAnimationAndWait(16, 3);
       Engine_ActorRunRepeatedMotion(17, 2);
-      SceneState_ForwardMaskedHalfwordWith10(17, 0xa000);
-      FieldScene_CallPairWith10(0x4011);
-      SceneState_ForwardMaskedHalfwordWith10(18, 0xb000);
+      ColosseumEntrance_FaceDirection(17, FACING_NORTHWEST);
+      ColosseumEntrance_ShowMessageAndPause(0x4011);
+      ColosseumEntrance_FaceDirection(18, FACING_NORTHWEST + FACING_STEP);
       Engine_ActorStartRepeatedMotion(18, 2);
-      FieldScene_CallPairWith10(0x4012);
-      SceneState_ForwardMaskedHalfwordWith10(11, 0x3000);
+      ColosseumEntrance_ShowMessageAndPause(0x4012);
+      ColosseumEntrance_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP);
       Engine_ActorSetAttachedEffect(11, 0x102);
       Engine_EventWait(60);
       Engine_ActorStartRepeatedMotion(11, 2);
-      FieldScene_CallPairWith10(0x800b);
+      ColosseumEntrance_ShowMessageAndPause(0x800b);
       Engine_ActorStop(13);
       Engine_TaskWait(1);
       Engine_ActorStartRepeatedMotion(13, 2);
@@ -579,38 +604,39 @@ static void EV12_TOUCH(void) {
       Engine_EventWait(20);
       Engine_ActorFaceDirection(13, FACING_EAST, 0);
       Engine_ActorFaceDirection(14, FACING_WEST, 0);
-      Engine_ActorFaceDirection(16, 0xb000, 40);
+      Engine_ActorFaceDirection(16, FACING_NORTHWEST + FACING_STEP, 40);
       Engine_ActorSetAnimation(13, 3);
       Engine_ActorSetAnimation(14, 3);
       Engine_ActorSetAnimationAndWait(16, 3);
-      Actor_SetSpeed(13, 0x19999, 0xcccc);
-      Actor_SetSpeed(14, 0x19999, 0xcccc);
-      Actor_SetSpeed(16, 0x19999, 0xcccc);
-      Actor_SetActionScript(13, gColosseumEntrance_ActionTable5);
-      Actor_SetActionScript(16, gColosseumEntrance_ActionTable7);
+      Actor_SetSpeed(13, PIXELS(8) / 5, PIXELS(4) / 5);
+      Actor_SetSpeed(14, PIXELS(8) / 5, PIXELS(4) / 5);
+      Actor_SetSpeed(16, PIXELS(8) / 5, PIXELS(4) / 5);
+      Actor_SetActionScript(13, gColosseumEntrance_ApproachFinalsGroupScript);
+      Actor_SetActionScript(16, gColosseumEntrance_JoinFinalsFromSouthScript);
       Engine_EventWait(20);
-      Engine_ActorFaceDirection(15, 0xd000, 0);
-      Engine_ActorFaceDirection(17, 0xb000, 0);
+      Engine_ActorFaceDirection(15, FACING_NORTH + FACING_STEP, 0);
+      Engine_ActorFaceDirection(17, FACING_NORTHWEST + FACING_STEP, 0);
       Engine_ActorFaceDirection(0, FACING_NORTHWEST, 0);
-      Engine_ActorFaceDirection(12, 0xd000, 0);
-      Engine_ActorFaceDirection(18, 0xb000, 0);
+      Engine_ActorFaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+      Engine_ActorFaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
       Object_SetActionCallbackAndRefreshById(
-          14, (s32)gColosseumEntrance_ActionTable6);
+          14, (s32)gColosseumEntrance_JoinFinalsFromEastScript);
       Engine_EventWait(20);
       Engine_ActorFaceDirection(8, FACING_EAST, 0);
       Engine_ActorFaceDirection(11, FACING_WEST, 40);
       Engine_ActorSetAnimation(8, 3);
       Engine_ActorSetAnimationAndWait(11, 3);
-      Engine_CameraMoveTo(0x3280000, -1, 0x560000, 1);
+      Engine_CameraMoveTo(PIXELS(808), -1, PIXELS(86), 1);
       Engine_CameraWaitForMove();
       Engine_ActorRunRepeatedMotion(8, 2);
-      FieldScene_CallPairWith10(8);
-      Engine_ActorSetSpeed(8, 0x10000, 0x8000);
+      ColosseumEntrance_ShowMessageAndPause(8);
+      Engine_ActorSetSpeed(8, PIXELS(1), PIXELS(1) / 2);
       Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Engine_ActorWalkToAndWait(8, 0x318, 72);
+      Engine_ActorWalkToAndWait(8, 792, 72);
       Engine_EventWait(1);
       Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
-      SceneState_ForwardMaskedHalfwordWith10(8, 0);
+      ColosseumEntrance_FaceDirection(8, 0);
+      // Stop the second seed's waiting action before the procession.
       Engine_ActorStop(13);
       actor = Object_GetById(13);
       actor->update = NULL;
@@ -623,7 +649,8 @@ static void EV12_TOUCH(void) {
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;
       Engine_TaskWait(1);
-      script = gColosseumEntrance_ActionTable8;
+      // Send contestants through the gate at staggered intervals.
+      script = gColosseumEntrance_EnterFinalsScript;
       Actor_SetActionScript(15, script);
       Engine_EventWait(20);
       Actor_SetActionScript(13, script);
@@ -649,29 +676,31 @@ static void EV12_TOUCH(void) {
   }
 }
 
-static void EV13_TOUCH(void) {
+// Rearm the invitation after Isaac leaves its trigger.
+static void ColosseumEntrance_EnableFinalsInvitation(void) {
   Engine_GameFlagClear(0x235);
   Engine_GameFlagSet(564);
 }
 
-static void EV17_TALK_1(void) {
+// Discuss the trials or show the attendant's demonstration.
+static void ColosseumEntrance_DiscussQualifyingTrials(void) {
   s32 flag8a4;
 
   Engine_EventBegin();
   flag8a4 = GameFlag_IsSet(0x8a4);
   if (flag8a4 != 0) {
-    Engine_ActorFaceEachOther(RECORD_17, ACTOR_PARTY_LEADER, 40);
+    Engine_ActorFaceEachOther(TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
     Engine_EventSetMessage(MsgColosseumHavePerfectTechniquesLikeThose);
-    FieldScene_CallPairWith10(RECORD_17);
-    Actor_FaceDirection(RECORD_17, 0x3000, 20);
+    ColosseumEntrance_ShowMessageAndPause(TRIAL_ATTENDANT);
+    Actor_FaceDirection(TRIAL_ATTENDANT, FACING_SOUTHEAST + FACING_STEP, 20);
   } else {
-    Engine_ActorStartRepeatedMotion(RECORD_17, 2);
+    Engine_ActorStartRepeatedMotion(TRIAL_ATTENDANT, 2);
     Engine_EventSetMessage(MsgColosseumSilence);
-    Event_ShowMessage(RECORD_17, 0);
-    *(((u8 *)Engine_EventGetViewCenter()) + 85) = flag8a4;
+    Event_ShowMessage(TRIAL_ATTENDANT, 0);
+    Engine_EventGetViewCenter()->motionFlags = flag8a4;
     Engine_TaskWait(1);
-    Camera_SetSpeed(0x66666, 0xcccc);
-    Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);
+    Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+    Camera_MoveTo(PIXELS(540), -1, PIXELS(208), 1);
     Engine_CameraWaitForMove();
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gEventWork->transitionFrames = 32;
@@ -686,9 +715,10 @@ static void EV17_TALK_1(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_BuildActorPresentationGroup(void) {
-  struct FieldActor *rec2;
-  s32 shift;
+// Show a contestant completing the qualifying demonstration.
+static void ColosseumEntrance_ShowQualifyingDemonstration(void) {
+  struct FieldActor *actor;
+  s32 facing;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -704,12 +734,12 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_ActorSetAnimation(16, 0);
   Engine_ActorSetAnimation(17, 0);
   Engine_ActorSetAnimation(18, 0);
-  rec2 = Object_GetById(21);
-  Engine_ActorSetSpriteFlags(rec2, 0);
-  rec2 = Object_GetById(19);
-  rec2->scaleX = -0x10000;
-  rec2 = Object_GetById(20);
-  rec2->scaleX = -0x10000;
+  actor = Object_GetById(21);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(19);
+  actor->scaleX = -Q16_ONE;
+  actor = Object_GetById(20);
+  actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
@@ -720,8 +750,8 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(16, 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(16, 164, 0x388);
+  Actor_SetSpeed(16, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(16, 164, 904);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(16, 9);
   Engine_EventWait(40);
@@ -729,22 +759,22 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_EventWait(60);
   Engine_ActorSetAnimation(16, 1);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(16, 164, 0x398);
-  Actor_WalkToAndWait(16, 185, 0x398);
+  Actor_WalkToAndWait(16, 164, 920);
+  Actor_WalkToAndWait(16, 185, 920);
   Actor_FaceDirection(16, FACING_NORTH, 20);
-  Actor_WalkToAndWait(16, 185, 0x394);
+  Actor_WalkToAndWait(16, 185, 916);
   Engine_ActorSetAnimation(16, 11);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(16, 1);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(16, 3);
   Engine_EventWait(40);
-  Actor_SetActionScript(16, gColosseumEntrance_ActionTable9);
+  Actor_SetActionScript(16, gColosseumEntrance_PulseScaleScript);
   Engine_EventWait(80);
   Actor_SetAttachedEffect(16, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(14, 0xd000, 0);
-  Actor_FaceDirection(15, 0x5000, 0);
+  Actor_FaceDirection(14, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(15, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(17, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_WEST, 20);
   Actor_SetAttachedEffect(14, 0x102);
@@ -752,23 +782,23 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Actor_SetAttachedEffect(17, 0x102);
   Actor_SetAttachedEffect(18, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(14, 0x3000, 0);
-  Actor_FaceDirection(15, 0x3000, 0);
-  Actor_FaceDirection(17, 0x3000, 0);
-  shift = 0x3000;
-  SceneState_ForwardMaskedHalfwordWith10(18, shift);
+  Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(15, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(17, FACING_SOUTHEAST + FACING_STEP, 0);
+  facing = FACING_SOUTHEAST + FACING_STEP;
+  ColosseumEntrance_FaceDirection(18, facing);
   Engine_ActorStop(16);
-  rec2 = Object_GetById(16);
-  rec2->facing = 0xd000;
-  rec2->scaleX = 0x10000;
-  rec2->scaleY = 0x10000;
+  actor = Object_GetById(16);
+  actor->facing = FACING_NORTH + FACING_STEP;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   Engine_EventWait(20);
   Engine_ActorSetAnimation(16, 0);
   Engine_EventWait(40);
   Engine_ActorSetAnimation(19, 5);
   Engine_ActorSetAnimation(20, 5);
   Engine_EventWait(60);
-  Actor_FaceDirection(16, shift, 20);
+  Actor_FaceDirection(16, facing, 20);
   Engine_ActorSetAnimation(16, 8);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(14, 4);
@@ -778,13 +808,13 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(16, 4);
   Engine_EventWait(10);
-  Actor_SetSpeed(16, 0x20000, 0x10000);
-  Actor_WalkToAndWait(16, 162, 0x394);
-  Actor_WalkToAndWait(16, 162, 0x37a);
+  Actor_SetSpeed(16, PIXELS(2), PIXELS(1));
+  Actor_WalkToAndWait(16, 162, 916);
+  Actor_WalkToAndWait(16, 162, 890);
   Engine_ActorSetAnimation(19, 1);
   Engine_ActorSetAnimation(20, 1);
-  Actor_WalkToAndWait(16, 184, 0x35f);
-  Actor_WalkToAndWait(16, 184, 0x31c);
+  Actor_WalkToAndWait(16, 184, 863);
+  Actor_WalkToAndWait(16, 184, 796);
   Actor_SetPosition(16, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gEventWork->transitionFrames = 16;
@@ -795,6 +825,7 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_EventEnd();
 }
 
+// Explain how many matches contestants must win to qualify.
 static void ColosseumEntrance_ShowQualifyingTrialMessage(void) {
   Engine_EventBegin();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -803,24 +834,25 @@ static void ColosseumEntrance_ShowQualifyingTrialMessage(void) {
   Engine_EventWaitForScreen();
 
   Engine_EventWait(20);
-  SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
+  ColosseumEntrance_FaceDirection(17, 160 << 7);
   Engine_EventSetMessage(MsgColosseumHaveMakeThroughCountlessMatches);
 
   if (Engine_GameFlagIsSet(0x8a4) != 0) {
     gEventWork->message = (gEventWork->message + 1);
   }
 
-  FieldScene_CallPairWith10(17);
-  SceneState_ForwardMaskedHalfwordWith10(17, 192 << 6);
+  ColosseumEntrance_ShowMessageAndPause(17);
+  ColosseumEntrance_FaceDirection(17, 192 << 6);
   Engine_GameFlagSet(0x8a3);
 
   Engine_EventEnd();
 }
 
-static void FieldScene_RunMiddleSequence(void) {
+// Show the qualifying attempt that ends in a fall.
+static void ColosseumEntrance_ShowFailedQualifyingTrial(void) {
   u32 counter;
-  struct FieldActor *rec;
-  struct FieldActor *rec2;
+  struct FieldActor *trialEffect;
+  struct FieldActor *actor;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -836,12 +868,12 @@ static void FieldScene_RunMiddleSequence(void) {
   Actor_SetPosition(16, 0, 0);
   Engine_ActorSetAnimation(17, 0);
   Engine_ActorSetAnimation(18, 0);
-  rec2 = Object_GetById(21);
-  Engine_ActorSetSpriteFlags(rec2, 0);
-  rec2 = Object_GetById(19);
-  rec2->scaleX = -0x10000;
-  rec2 = Object_GetById(20);
-  rec2->scaleX = -0x10000;
+  actor = Object_GetById(21);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Object_GetById(19);
+  actor->scaleX = -Q16_ONE;
+  actor = Object_GetById(20);
+  actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
@@ -852,8 +884,8 @@ static void FieldScene_RunMiddleSequence(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(17, 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(17, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(17, 164, 0x388);
+  Actor_SetSpeed(17, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(17, 164, 904);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(17, 9);
   Engine_EventWait(40);
@@ -861,38 +893,39 @@ static void FieldScene_RunMiddleSequence(void) {
   Engine_EventWait(60);
   Engine_ActorSetAnimation(17, 1);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(17, 164, 0x398);
-  Actor_WalkToAndWait(17, 185, 0x398);
+  Actor_WalkToAndWait(17, 164, 920);
+  Actor_WalkToAndWait(17, 185, 920);
   Actor_FaceDirection(17, FACING_NORTH, 20);
-  Actor_WalkToAndWait(17, 185, 0x394);
+  Actor_WalkToAndWait(17, 185, 916);
   Engine_ActorSetAnimation(17, 11);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(17, 1);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(17, 3);
   Engine_EventWait(40);
-  Actor_SetActionScript(17, gColosseumEntrance_ActionTable9);
+  Actor_SetActionScript(17, gColosseumEntrance_PulseScaleScript);
   Engine_EventWait(80);
   Actor_SetAttachedEffect(17, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(14, 0xd000, 0);
-  Actor_FaceDirection(15, 0x5000, 0);
+  Actor_FaceDirection(14, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(15, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(18, FACING_WEST, 20);
   Actor_SetAttachedEffect(14, 0x102);
   Actor_SetAttachedEffect(15, 0x102);
   Actor_SetAttachedEffect(17, 0x102);
   Actor_SetAttachedEffect(18, 0x102);
   Engine_EventWait(60);
-  Actor_FaceDirection(14, 0x3000, 0);
-  Actor_FaceDirection(15, 0x3000, 0);
-  SceneState_ForwardMaskedHalfwordWith10(18, 0x3000);
+  Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(15, FACING_SOUTHEAST + FACING_STEP, 0);
+  ColosseumEntrance_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP);
   Actor_SetAttachedEffect(17, 0x101);
-  rec = Object_GetById(21);
-  rec->motionFlags = 0;
+  // Raise and lower the trial effect before the contestant's fall.
+  trialEffect = Object_GetById(21);
+  trialEffect->motionFlags = 0;
   for (counter = 0; counter < 20; counter++) {
-    rec->y.fixed += 0x9999;
+    trialEffect->y.fixed += PIXELS(3) / 5;
     Engine_TaskWait(4);
-    rec->y.fixed += -0x4ccc;
+    trialEffect->y.fixed += -PIXELS(3) / 10;
     Engine_TaskWait(4);
   }
   Engine_ActorSetAnimation(19, 6);
@@ -901,22 +934,22 @@ static void FieldScene_RunMiddleSequence(void) {
   Actor_SetAttachedEffect(17, 0x100);
   Engine_ActorStop(17);
   Engine_ActorSetAnimation(17, 1);
-  rec2 = Object_GetById(17);
-  rec2->facing = 0xd000;
-  rec->motionFlags = 3;
-  rec->scaleX = 0x10000;
-  rec->scaleY = 0x10000;
+  actor = Object_GetById(17);
+  actor->facing = FACING_NORTH + FACING_STEP;
+  trialEffect->motionFlags = 3;
+  trialEffect->scaleX = Q16_ONE;
+  trialEffect->scaleY = Q16_ONE;
   Engine_EventWait(10);
   Event_PlayCue(107);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(10);
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(17, 208, 0x3a0);
+  Actor_SetSpeed(17, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(17, 208, 928);
   Event_PlayCue(92);
-  Actor_FaceDirection(17, 0x3000, 20);
+  Actor_FaceDirection(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorSetAnimation(17, 9);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(17, 10);
@@ -934,23 +967,25 @@ static void FieldScene_RunMiddleSequence(void) {
   Engine_EventEnd();
 }
 
-s32 Scene_Initialize(void) {
+// Restore arrival state for the entrance or spectator area.
+s32 ColosseumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_ColosseumEntrance1) {
-    FieldScene_DispatchBySelector();
+    ColosseumEntrance_ApplyArrivalState();
   } else if (scene == (s32)&SceneId_ColosseumEntrance3) {
-    SceneState_ApplyRectsByFlags2384And962();
+    ColosseumEntrance_UpdateEntranceCells();
   }
   return 0;
 }
 
-static void FieldScene_DispatchBySelector(void) {
-  s32 no;
+// Dispatch the scene sequence selected by the arrival entrance.
+static void ColosseumEntrance_ApplyArrivalState(void) {
+  s32 entrance;
 
   Engine_TaskWait(1);
-  no = gGameState.entrance;
-  switch (no) {
+  entrance = gGameState.entrance;
+  switch (entrance) {
   case 5:
     Engine_ActorSetAnimation(8, 2);
     Engine_ActorSetAnimation(9, 2);
@@ -963,13 +998,13 @@ static void FieldScene_DispatchBySelector(void) {
     ColosseumEntrance_ShowQualifyingTrialMessage();
     break;
   case 7:
-    FieldScene_BuildActorPresentationGroup();
+    ColosseumEntrance_ShowQualifyingDemonstration();
     break;
   case 70:
-    FieldScene_RunMiddleSequence();
+    ColosseumEntrance_ShowFailedQualifyingTrial();
     break;
   case 64:
-    FieldScene_BuildActorPresentationSequence();
+    ColosseumEntrance_ExplainPartySupport();
     InventorySnapshot_Take();
     break;
   case 65:
@@ -980,7 +1015,7 @@ static void FieldScene_DispatchBySelector(void) {
     break;
   case 12:
     Engine_GameFlagSet(324);
-    ActorPresentation_SetActorsTwelveToEighteen();
+    ColosseumEntrance_InitializeContestants();
     if (Engine_GameFlagIsSet(0x109) != 0)
       break;
     ColosseumEntrance_AnnounceFinals();
@@ -1010,40 +1045,49 @@ static void FieldScene_DispatchBySelector(void) {
   }
 }
 
-static void FieldScene_CallPairWith10(s32 no) {
-  Engine_EventShowMessage(no, 0);
+// Show the current message and leave a short pause.
+static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
+  Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
-static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1) {
-  Engine_ActorFaceDirection(arg0, (u16)arg1, 10);
+// Turn an actor to the given facing over ten frames.
+static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing) {
+  Engine_ActorFaceDirection(actor, (u16)facing, 10);
 }
 
-static void SceneState_ApplyRectsByFlags2384And962(void) {
-  s32 a, b;
+// Update the entrance graphics and collision cells for Colosso's state.
+static void ColosseumEntrance_UpdateEntranceCells(void) {
+  s32 column, row;
 
-  if (Engine_GameFlagIsSet(2384) != 0) {
+  if (Engine_GameFlagIsSet(0x950) != 0) {
     Map_CopyCellsTo(64, 0, 48, 5, 2, 2);
-    a = 16;
-    b = 8;
-    Map_CopyCellAttributes(14, 8, 2, 1, a, b);
+    column = 16;
+    row = 8;
+    Map_CopyCellAttributes(14, 8, 2, 1, column, row);
   } else {
     Engine_ActorSetChildValue(16, 2);
     if (Engine_GameFlagIsSet(0x962) != 0) {
-      a = 14;
-      b = 11;
-      Map_CopyCellAttributes(30, 22, 1, 2, a, b);
+      column = 14;
+      row = 11;
+      Map_CopyCellAttributes(30, 22, 1, 2, column, row);
     }
   }
 }
 
-static void FieldScene_BuildActorPresentationSequence(void) {
+// Place the three companions behind Isaac for the officials' briefing.
+static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
+  Actor_SetPosition(GARET, PIXELS(792), PIXELS(136));
+  Actor_SetPosition(IVAN, PIXELS(824), PIXELS(136));
+  Actor_SetPosition(MIA, PIXELS(808), PIXELS(152));
+}
+
+// Explain why Isaac's companions support him from outside the course.
+static void ColosseumEntrance_ExplainPartySupport(void) {
   s32 flag;
 
   Engine_EventBegin();
-  Actor_SetPosition(GARET, 0x3180000, 0x880000);
-  Actor_SetPosition(IVAN, 0x3380000, 0x880000);
-  Actor_SetPosition(MIA, 0x3280000, 0x980000);
+  ColosseumEntrance_PositionPartyForBriefing();
   Engine_TaskWait(1);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ColorBufferApplySource(0, 0);
@@ -1062,7 +1106,7 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(40);
-  SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
+  ColosseumEntrance_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(20);
   ColorBuffer_ApplyTarget(0x10000, 0);
@@ -1071,45 +1115,46 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Actor_ShowEmote(IVAN, 0x100, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
+  // The officials explain Isaac's selection and the companions' role.
   Engine_EventSetMessage(MsgColosseumIsaacOnlyOneEnteringFinals);
-  FieldScene_CallPairWith10(2);
+  ColosseumEntrance_ShowMessageAndPause(2);
   Engine_ActorSetAnimationAndWait(8, 3);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Actor_ShowEmote(MIA, 0x102, 40);
-  FieldScene_CallPairWith10(3);
+  ColosseumEntrance_ShowMessageAndPause(3);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_EAST, 40);
-  Actor_FaceDirection(8, 0x5000, 0);
-  SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
+  Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 0);
+  ColosseumEntrance_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP);
   Actor_ShowEmote(9, 0x105, 20);
-  FieldScene_CallPairWith10(9);
+  ColosseumEntrance_ShowMessageAndPause(9);
   Actor_ShowEmote(GARET, 0x103, 20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  FieldScene_CallPairWith10(1);
+  ColosseumEntrance_ShowMessageAndPause(1);
   Actor_ShowEmote(10, 0x102, 40);
-  FieldScene_CallPairWith10(10);
+  ColosseumEntrance_ShowMessageAndPause(10);
   Engine_ActorSetAnimationAndWait(11, 3);
-  FieldScene_CallPairWith10(11);
-  SceneState_ForwardMaskedHalfwordWith10(2, 0xa000);
+  ColosseumEntrance_ShowMessageAndPause(11);
+  ColosseumEntrance_FaceDirection(2, FACING_NORTHWEST);
   Engine_ActorSetAnimationAndWait(IVAN, 4);
-  FieldScene_CallPairWith10(2);
+  ColosseumEntrance_ShowMessageAndPause(2);
   Engine_ActorRunRepeatedMotion(MIA, 1);
-  FieldScene_CallPairWith10(3);
+  ColosseumEntrance_ShowMessageAndPause(3);
   Actor_ShowEmote(GARET, 0x103, 20);
-  SceneState_ForwardMaskedHalfwordWith10(1, 0);
+  ColosseumEntrance_FaceDirection(1, 0);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  FieldScene_CallPairWith10(1);
-  SceneState_ForwardMaskedHalfwordWith10(0, 0x6000);
+  ColosseumEntrance_ShowMessageAndPause(1);
+  ColosseumEntrance_FaceDirection(0, FACING_SOUTHWEST);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
-  SceneState_ForwardMaskedHalfwordWith10(2, 0x8000);
-  FieldScene_CallPairWith10(2);
+  ColosseumEntrance_FaceDirection(2, FACING_WEST);
+  ColosseumEntrance_ShowMessageAndPause(2);
   Engine_ActorSetAnimation(MIA, 4);
   Engine_EventWait(20);
-  FieldScene_CallPairWith10(3);
+  ColosseumEntrance_ShowMessageAndPause(3);
   Engine_ActorRunRepeatedMotion(GARET, 1);
-  SceneState_ForwardMaskedHalfwordWith10(1, 0x2000);
-  FieldScene_CallPairWith10(1);
+  ColosseumEntrance_FaceDirection(1, FACING_SOUTHEAST);
+  ColosseumEntrance_ShowMessageAndPause(1);
   Actor_ShowEmote(IVAN, 0x105, 60);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
@@ -1119,31 +1164,31 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Actor_ShowEmote(MIA, 0x102, 80);
   Actor_ShowEmote(IVAN, 0x106, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
-  SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
-  FieldScene_CallPairWith10(2);
+  ColosseumEntrance_FaceDirection(2, FACING_NORTH);
+  ColosseumEntrance_ShowMessageAndPause(2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
+  ColosseumEntrance_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP);
   Engine_ActorSetAnimationAndWait(8, 3);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
   Actor_ShowEmote(GARET, 0x100, 0);
   Actor_ShowEmote(MIA, 0x100, 40);
   Engine_ActorRunRepeatedMotion(9, 1);
-  FieldScene_CallPairWith10(9);
+  ColosseumEntrance_ShowMessageAndPause(9);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
   Engine_ActorRunRepeatedMotion(10, 1);
-  FieldScene_CallPairWith10(10);
+  ColosseumEntrance_ShowMessageAndPause(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  SceneState_ForwardMaskedHalfwordWith10(3, 0xc000);
+  ColosseumEntrance_FaceDirection(3, FACING_NORTH);
   Engine_ActorSetAnimationAndWait(11, 3);
-  FieldScene_CallPairWith10(11);
+  ColosseumEntrance_ShowMessageAndPause(11);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
@@ -1153,8 +1198,8 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Actor_ShowEmote(MIA, 0x105, 80);
   Actor_ShowEmote(IVAN, 0x106, 0);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
-  SceneState_ForwardMaskedHalfwordWith10(2, 0xe000);
-  FieldScene_CallPairWith10(2);
+  ColosseumEntrance_FaceDirection(2, FACING_NORTHEAST);
+  ColosseumEntrance_ShowMessageAndPause(2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 20);
   Actor_ShowEmote(11, 0x101, 60);
@@ -1165,66 +1210,67 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   flag = 0;
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    FieldScene_CallPairWith10(2);
+    ColosseumEntrance_ShowMessageAndPause(2);
     flag = 1;
   } else {
     gEventWork->message++;
     Engine_ActorSetAnimationAndWait(IVAN, 3);
-    SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
-    FieldScene_CallPairWith10(2);
+    ColosseumEntrance_FaceDirection(2, FACING_NORTH);
+    ColosseumEntrance_ShowMessageAndPause(2);
   }
   if (flag != 0) {
     gEventWork->message++;
   }
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_EAST, 0);
-  Actor_FaceDirection(10, 0x3000, 0);
-  Actor_FaceDirection(11, 0xb000, 20);
+  Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_ShowEmote(8, 0x105, 0);
   Actor_ShowEmote(9, 0x105, 0);
   Actor_ShowEmote(10, 0x105, 0);
   Actor_ShowEmote(11, 0x105, 60);
   Engine_ActorRunRepeatedMotion(8, 1);
-  SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(9, 1);
-  SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
-  FieldScene_CallPairWith10(9);
+  ColosseumEntrance_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP);
+  ColosseumEntrance_ShowMessageAndPause(9);
   Engine_ActorRunRepeatedMotion(10, 1);
-  SceneState_ForwardMaskedHalfwordWith10(10, 0x5000);
-  FieldScene_CallPairWith10(10);
-  SceneState_ForwardMaskedHalfwordWith10(11, 0x8000);
+  ColosseumEntrance_FaceDirection(10, FACING_SOUTH + FACING_STEP);
+  ColosseumEntrance_ShowMessageAndPause(10);
+  ColosseumEntrance_FaceDirection(11, FACING_WEST);
   Engine_ActorSetAnimationAndWait(11, 3);
-  FieldScene_CallPairWith10(11);
+  ColosseumEntrance_ShowMessageAndPause(11);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  Actor_SetActionScript(GARET, gColosseumEntrance_ActionTable3);
-  Actor_SetActionScript(IVAN, gColosseumEntrance_ActionTable3);
-  Object_SetActionCallbackAndRefreshById(3,
-                                         (s32)gColosseumEntrance_ActionTable3);
+  // Rejoin the companions before the official leads Isaac onward.
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetActionScript(GARET, gColosseumEntrance_RejoinPartyScript);
+  Actor_SetActionScript(IVAN, gColosseumEntrance_RejoinPartyScript);
+  Object_SetActionCallbackAndRefreshById(
+      3, (s32)gColosseumEntrance_RejoinPartyScript);
   Engine_EventWait(20);
-  SceneState_ForwardMaskedHalfwordWith10(0, 0);
+  ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimationAndWait(11, 3);
-  Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(11, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetAnimation(11, 2);
   Actor_MoveToAndWait(11, 830, 152);
   Actor_MoveToAndWait(11, 808, 164);
   Actor_SetDestination(11, 808, 312);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(0x3280000, -1, 0x1380000, 1);
+  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  Camera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
   Engine_EventWait(60);
@@ -1235,8 +1281,9 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Engine_EventRequestExit(64);
 }
 
+// Have the official escort Isaac through the east passage.
 static void ColosseumEntrance_EscortToEastExit(void) {
-  struct FieldActor *record;
+  struct FieldActor *escort;
 
   if (GameFlag_IsSet(5) != 0) {
     GameFlag_Set(0x16d);
@@ -1244,22 +1291,22 @@ static void ColosseumEntrance_EscortToEastExit(void) {
     Party_AddActiveOwner(3);
   }
   Engine_EventBegin();
-  Actor_SetPosition(11, 0x2c80000, 0x24c0000);
+  Actor_SetPosition(11, PIXELS(712), PIXELS(588));
   Engine_TaskWait(1);
   Engine_CameraFollowActor(11, 1);
-  Actor_SetSpeed(11, 0x19999, 0xcccc);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-  record = Object_GetById(11);
-  record->facing = 0;
+  Actor_SetSpeed(11, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+  escort = Object_GetById(11);
+  escort->facing = 0;
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetAnimation(11, 2);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x30c, 0x24c);
-  Actor_MoveToAndWait(11, 0x32c, 0x24c);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x370, 0x24c);
-  Actor_MoveToAndWait(11, 0x390, 0x24c);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x3d4, 0x24c);
-  Actor_SetDestination(11, 0x3f4, 0x24c);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 780, 588);
+  Actor_MoveToAndWait(11, 812, 588);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 880, 588);
+  Actor_MoveToAndWait(11, 912, 588);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 980, 588);
+  Actor_SetDestination(11, 1012, 588);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   if (GameFlag_IsSet(0x90f) != 0) {
@@ -1269,10 +1316,11 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   }
 }
 
+// Announce the finals and prepare the waiting contestants.
 static void ColosseumEntrance_AnnounceFinals(void) {
-  struct FieldActor *rec7;
+  struct FieldActor *contestant;
 
-  rec7 = Object_GetById(13);
+  contestant = Object_GetById(13);
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1282,46 +1330,47 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Engine_TaskWait(1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Engine_ActorSetAnimation(13, 1);
-  Actor_FaceDirection(12, 0xd000, 0);
+  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(13, FACING_EAST, 0);
   Actor_FaceDirection(14, FACING_WEST, 0);
-  Actor_FaceDirection(15, 0xd000, 0);
+  Actor_FaceDirection(15, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(16, FACING_WEST, 0);
-  Actor_FaceDirection(17, 0xb000, 0);
-  Actor_FaceDirection(18, 0xb000, 0);
+  Actor_FaceDirection(17, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventSetMessage(MsgColosseumPrepareYourselvesContestantsFinalsWill);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   {
-    u16 *target = (u16 *)&rec7->timer;
-    u16 shown = 0x2d0;
+    u16 *timer = (u16 *)&contestant->timer;
+    u16 duration = 720;
 
-    *target = shown;
+    *timer = duration;
   }
   {
-    u16 *target = (u16 *)&rec7->work;
-    u16 shown = 112;
+    u16 *work = &contestant->work;
+    u16 value = 112;
 
-    *target = shown;
+    *work = value;
   }
   Actor_SetBuiltinAction(13, 2);
-  Actor_FaceDirection(12, 0x3000, 0);
-  Actor_FaceDirection(14, 0xb000, 0);
-  Actor_FaceDirection(15, 0x5000, 0);
+  Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(15, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
-  Actor_FaceDirection(17, 0x5000, 0);
-  Actor_FaceDirection(18, 0x5000, 0);
+  Actor_FaceDirection(17, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventEnd();
 }
 
+// Walk Isaac through the east passage.
 static void ColosseumEntrance_WalkToEastExit(void) {
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x30c, 0x1ac);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x370, 0x1ac);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x3d4, 0x1ac);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 780, 428);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 880, 428);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 980, 428);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   if (GameFlag_IsSet(0x90f) != 0) {
@@ -1331,59 +1380,59 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   }
 }
 
+// Congratulate Isaac on advancing and escort him to the next match.
 static void ColosseumEntrance_CelebrateAdvancement(void) {
   const s32 *actions;
 
   Engine_EventBegin();
-  Actor_SetPosition(GARET, 0x3180000, 0x880000);
-  Actor_SetPosition(IVAN, 0x3380000, 0x880000);
-  Actor_SetPosition(MIA, 0x3280000, 0x980000);
+  ColosseumEntrance_PositionPartyForBriefing();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_ActorSetAnimation(8, 3);
   Engine_EventSetMessage(MsgColosseumSeeYouveMadeThroughYour);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Engine_ActorRunRepeatedMotion(9, 1);
-  FieldScene_CallPairWith10(9);
+  ColosseumEntrance_ShowMessageAndPause(9);
   Engine_ActorRunRepeatedMotion(10, 1);
-  FieldScene_CallPairWith10(10);
+  ColosseumEntrance_ShowMessageAndPause(10);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_ActorSetAnimation(11, 3);
-  FieldScene_CallPairWith10(11);
+  ColosseumEntrance_ShowMessageAndPause(11);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  actions = gColosseumEntrance_ActionTable3;
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  actions = gColosseumEntrance_RejoinPartyScript;
   Actor_SetActionScript(GARET, actions);
   Actor_SetActionScript(2, actions);
   Object_SetActionCallbackAndRefreshById(3, (s32)actions);
   Engine_EventWait(20);
-  SceneState_ForwardMaskedHalfwordWith10(0, 0);
+  ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimationAndWait(11, 3);
-  Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(11, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetAnimation(11, 2);
-  Actor_MoveToAndWait(11, 0x33e, 152);
-  Actor_MoveToAndWait(11, 0x328, 164);
-  Actor_SetDestination(11, 0x328, 0x138);
+  Actor_MoveToAndWait(11, 830, 152);
+  Actor_MoveToAndWait(11, 808, 164);
+  Actor_SetDestination(11, 808, 312);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(0x3280000, -1, 0x1380000, 1);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x328, 164);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x328, 0x138);
+  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  Camera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
   Engine_EventWait(60);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(67);
 }
 
+// Have the official escort Isaac through the west passage.
 static void ColosseumEntrance_EscortToWestExit(void) {
-  struct FieldActor *record;
+  struct FieldActor *escort;
 
   if (GameFlag_IsSet(5) != 0) {
     GameFlag_Set(0x16d);
@@ -1391,92 +1440,93 @@ static void ColosseumEntrance_EscortToWestExit(void) {
     Party_AddActiveOwner(3);
   }
   Engine_EventBegin();
-  Actor_SetPosition(11, 0x3640000, 0x24c0000);
+  Actor_SetPosition(11, PIXELS(868), PIXELS(588));
   Engine_TaskWait(1);
   Engine_CameraFollowActor(11, 1);
-  Actor_SetSpeed(11, 0x19999, 0xcccc);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
-  record = Object_GetById(11);
-  record->facing = 0x8000;
+  Actor_SetSpeed(11, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+  escort = Object_GetById(11);
+  escort->facing = FACING_WEST;
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetAnimation(11, 2);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x320, 0x24c);
-  Actor_MoveToAndWait(11, 0x300, 0x24c);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x2bc, 0x24c);
-  Actor_MoveToAndWait(11, 0x29c, 0x24c);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x258, 0x24c);
-  Actor_SetDestination(11, 0x238, 0x24c);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 800, 588);
+  Actor_MoveToAndWait(11, 768, 588);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 700, 588);
+  Actor_MoveToAndWait(11, 668, 588);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 600, 588);
+  Actor_SetDestination(11, 568, 588);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(21);
 }
 
+// Walk Isaac through the west passage.
 static void ColosseumEntrance_WalkToWestExit(void) {
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Engine_EventOpenScreen();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x320, 0x1ac);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x2bc, 0x1ac);
-  Actor_SetDestination(ACTOR_PARTY_LEADER, 0x258, 0x1ac);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 800, 428);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 700, 428);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 600, 428);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(22);
 }
 
+// Congratulate Isaac on both wins and escort him onward.
 static void ColosseumEntrance_CelebrateBothWins(void) {
   const s32 *actions;
 
   Engine_EventBegin();
-  Actor_SetPosition(GARET, 0x3180000, 0x880000);
-  Actor_SetPosition(IVAN, 0x3380000, 0x880000);
-  Actor_SetPosition(MIA, 0x3280000, 0x980000);
+  ColosseumEntrance_PositionPartyForBriefing();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_ActorSetAnimation(8, 3);
   Engine_EventSetMessage(MsgColosseumWonBothMatches);
-  FieldScene_CallPairWith10(8);
+  ColosseumEntrance_ShowMessageAndPause(8);
   Engine_ActorRunRepeatedMotion(9, 1);
-  FieldScene_CallPairWith10(9);
+  ColosseumEntrance_ShowMessageAndPause(9);
   Engine_ActorRunRepeatedMotion(10, 1);
-  FieldScene_CallPairWith10(10);
+  ColosseumEntrance_ShowMessageAndPause(10);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_ActorSetAnimation(11, 3);
-  FieldScene_CallPairWith10(11);
+  ColosseumEntrance_ShowMessageAndPause(11);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  actions = gColosseumEntrance_ActionTable3;
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  actions = gColosseumEntrance_RejoinPartyScript;
   Actor_SetActionScript(GARET, actions);
   Actor_SetActionScript(2, actions);
   Object_SetActionCallbackAndRefreshById(3, (s32)actions);
   Engine_EventWait(20);
-  SceneState_ForwardMaskedHalfwordWith10(0, 0);
+  ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimationAndWait(11, 3);
-  Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(11, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetAnimation(11, 2);
-  Actor_MoveToAndWait(11, 0x33e, 152);
-  Actor_MoveToAndWait(11, 0x328, 164);
-  Actor_SetDestination(11, 0x328, 0x138);
+  Actor_MoveToAndWait(11, 830, 152);
+  Actor_MoveToAndWait(11, 808, 164);
+  Actor_SetDestination(11, 808, 312);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(0x3280000, -1, 0x1380000, 1);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x328, 164);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x328, 0x138);
+  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  Camera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
   Engine_EventWait(60);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(64);
 }
 
-static void ActorPresentation_SetActorsTwelveToEighteen(void) {
+// Assign the contestants' presentation values and waiting actions.
+static void ColosseumEntrance_InitializeContestants(void) {
   Engine_ActorSetChildValue(12, 3);
   Engine_ActorSetChildValue(13, 0);
   Engine_ActorSetChildValue(14, 4);
@@ -1492,42 +1542,38 @@ static void ActorPresentation_SetActorsTwelveToEighteen(void) {
   Object_SetActionById(18, 60);
 }
 
-s32 gColosseumEntrance_ActionTable1[] = {
+s32 gColosseumEntrance_GatherAtSpectatorLeaderScript[] = {
     SC_ARG(2),       SC_MOVE(PIXELS(262), 0, PIXELS(188)),
     SC_SYNC,         SC_ARG(1),
     SC_POS(0, 0, 0), SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable2[] = {
+s32 gColosseumEntrance_GatherAtSpectatorPartyScript[] = {
     SC_ARG(2),       SC_MOVE(PIXELS(246), 0, PIXELS(200)),
     SC_SYNC,         SC_ARG(1),
     SC_POS(0, 0, 0), SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable3[] = {
+s32 gColosseumEntrance_RejoinPartyScript[] = {
     SC_ARG(2),       SC_MOVE(PIXELS(808), 0, PIXELS(120)),
     SC_SYNC,         SC_ARG(1),
     SC_POS(0, 0, 0), SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable4[] = {
+s32 gColosseumEntrance_LeaveSpectatorAreaScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(268), 0, PIXELS(146)),
     SC_SYNC,   SC_MOVE(PIXELS(262), 0, PIXELS(24)),
     SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable5[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(776), 0, PIXELS(120)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, 0xd000),
-    SC_WAIT(20),
+s32 gColosseumEntrance_ApproachFinalsGroupScript[] = {
+    SC_ARG(2), SC_MOVE(PIXELS(776), 0, PIXELS(120)),          SC_SYNC,
+    SC_ARG(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP), SC_WAIT(20),
     SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable6[] = {
+s32 gColosseumEntrance_JoinFinalsFromEastScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(894), 0, PIXELS(106)),
     SC_SYNC,
@@ -1538,26 +1584,26 @@ s32 gColosseumEntrance_ActionTable6[] = {
     SC_MOVE(PIXELS(792), 0, PIXELS(152)),
     SC_SYNC,
     SC_ARG(1),
-    SC_SET(SW_FACING, 0xd000),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_WAIT(20),
     SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable7[] = {
+s32 gColosseumEntrance_JoinFinalsFromSouthScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(840), 0, PIXELS(136)),
     SC_SYNC,
     SC_MOVE(PIXELS(824), 0, PIXELS(152)),
     SC_SYNC,
     SC_ARG(1),
-    SC_SET(SW_FACING, 0xb000),
+    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_WAIT(20),
     SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable8[] = {
-    SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x6666),
+s32 gColosseumEntrance_EnterFinalsScript[] = {
+    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SET(SW_ACCEL, PIXELS(2) / 5),
     SC_ARG(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(88)),
     SC_SYNC,
@@ -1568,12 +1614,22 @@ s32 gColosseumEntrance_ActionTable8[] = {
     SC_END,
 };
 
-s32 gColosseumEntrance_ActionTable9[] = {
-    SC_SET(SW_SCALE_X, 0x10000), SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x2000), SC_ADD(SW_SCALE_Y, 0x2000),  SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 0x1000),  SC_ADD(SW_SCALE_Y, -0x1000), SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 2048),    SC_ADD(SW_SCALE_Y, -2048),   SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 2048),    SC_ADD(SW_SCALE_Y, -2048),   SC_WAIT(1),
+s32 gColosseumEntrance_PulseScaleScript[] = {
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(1),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1908,7 +1964,7 @@ struct SceneEvent gColosseumEntranceEvents1[] = {
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingTheTrialsMakesMeReally) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceIveWaitedAWholeYearTo) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK_1) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ColosseumEntrance_DiscussQualifyingTrials) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceEvenTheSmallerWarriorsCanWin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheseTrialsAreBasedOnPersonal) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatFantasticPhysiquesWhyIfI) },
@@ -1927,14 +1983,14 @@ struct SceneEvent gColosseumEntranceEvents3[] = {
     { EVENT_TALK, 9, 0x962, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
     { EVENT_TALK, 9, 0x950, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ColosseumEntrance_DiscussSeating) },
     { EVENT_TALK, 11, 0x962, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
     { EVENT_TALK, 12, 0x962, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK_3) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK_3) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK_3) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ColosseumEntrance_DiscussLuckyGuessSeats) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(ColosseumEntrance_DiscussLuckyGuessWinnings) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ColosseumEntrance_OfferLuckyGuess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x962, MSGNO(MsgColosseumEntranceIWonderWhichWarriorWillBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x950, MSGNO(MsgColosseumEntranceTheRealBattlesAreAboutTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhenTheColosseumGatesFinallyShut) },
@@ -1953,7 +2009,7 @@ struct SceneEvent gColosseumEntranceEvents3[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x962, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
-    { EVENT_TOUCH, 10, 0x950, EVENT_SCRIPT(EV10_TOUCH) },
+    { EVENT_TOUCH, 10, 0x950, EVENT_SCRIPT(ColosseumEntrance_InvitePartyToFinals) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -1961,20 +2017,29 @@ struct SceneEvent gColosseumEntranceEvents3[] = {
 struct SceneEvent gColosseumEntranceEvents1Entrance12[] = {
     {EVENT_TALK, 12, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceIAmMorganIAmThe)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK)},
-    {EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK)},
-    {EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
-    {EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK)},
-    {EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
-    {EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+    {EVENT_TALK, 13, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_TalkToSecondSeed)},
+    {EVENT_TALK, 14, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_StartleContestant)},
+    {EVENT_TALK, 15, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_QuestionContestant)},
+    {EVENT_TALK, 16, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_CheerForDekka)},
+    {EVENT_TALK, 17, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_TalkToNavampa)},
+    {EVENT_TALK, 18, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_TalkToBuford)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_AskFinalsReadiness)},
     {EVENT_TALK, 9, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceYouCannotLeaveUntilTheFinals)},
     {EVENT_TALK, 10, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceIFeelWeveBeenWaitingForever)},
     {EVENT_TALK, 11, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceWhenTheGongSoundsTheFinals)},
-    {EVENT_TOUCH, 12, 0x235, EVENT_SCRIPT(EV12_TOUCH)},
-    {EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH)},
+    {EVENT_TOUCH, 12, 0x235,
+     EVENT_SCRIPT(ColosseumEntrance_SendContestantsToFinals)},
+    {EVENT_TOUCH, 13, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ColosseumEntrance_EnableFinalsInvitation)},
     {SCENE_EVENTS_END},
 };

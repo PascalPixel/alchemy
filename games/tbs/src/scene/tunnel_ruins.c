@@ -33,18 +33,25 @@
 #include "system.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "fixed_math.h"
+#include "field_runtime.h"
+
+enum { TUNNEL_CALLBACK_PRIORITY = 3200 };
+#include "field_runtime.h"
 
 // Forward declarations.
 #ifdef UBFIX
-static void OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject);
+static void
+TunnelRuins_FollowSupportingPlatform(union FieldObject *fieldObject);
 #else
-static s32 OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject);
+static s32 TunnelRuins_FollowSupportingPlatform(union FieldObject *fieldObject);
 #endif
-static void FieldScene_PlaceAndPinSlots8And9(void);
-static void FieldScene_PlaceAndPinSlots10And11(void);
+static void TunnelRuins_RestoreFirstPairCells(void);
+static void TunnelRuins_RestoreSecondPairCells(void);
 static void TunnelRuins_RestorePlatformCells(void);
 static void TunnelRuins_MarkActorCells(void);
 
+// Position record used by the shared radial-effect source below.
 struct Vec {
   s32 x;
   s32 y;
@@ -58,26 +65,38 @@ struct Vec {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+// Refresh the actor presentation after its shrink script finishes.
 static s32
-SceneState_ApplyArgMode0AndReturnZero(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *no = (struct FieldActor *)interpreter;
-  Engine_ActorSetSpriteFlags(no, 0);
+TunnelRuins_RefreshActorAfterShrinking(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  Engine_ActorSetSpriteFlags(actor, 0);
   return 0;
 }
 
-static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target) {
+// Later patches land at the tile center; the base release uses the target
+// pixel.
+static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
+#if TBS_PATCH_1
+  return ((coordinate >> 20) << 4) + 8;
+#else
+  return (s16)(coordinate >> 16);
+#endif
+}
+
+// Jump to the target when both the adjacent tile and destination are clear.
+static s32 TunnelRuins_MoveLeaderToPoint(struct FieldPosition *target) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  u8 saved = actor->motionFlags;
-  struct FieldPosition probe;
+  u8 savedMotionFlags = actor->motionFlags;
+  struct FieldPosition adjacentTile;
 
-  probe.x = (actor->x.fixed & 0xfff00000) + 0x00080000;
-  probe.y = actor->y.fixed;
-  probe.z = (actor->z.fixed & 0xfff00000) + 0x00080000;
+  adjacentTile.x = (actor->x.fixed & 0xfff00000) + PIXELS(8);
+  adjacentTile.y = actor->y.fixed;
+  adjacentTile.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
 
-  FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000,
-                             &probe);
+  FieldVector_AddPolarOffset(PIXELS(16), (actor->facing + 0x2000) & 0xc000,
+                             &adjacentTile);
 
-  if (FieldObject_CheckMovementCollision(actor, &probe) != 1 &&
+  if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
     Engine_EventBegin();
     Object_SetMode(actor, 6);
@@ -85,81 +104,80 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target) {
     Engine_AudioPlayCue(152);
     Object_SetMode(actor, 7);
 
-    actor->speed = 0x00030000;
-    actor->acceleration = 0x00020000;
-    actor->velocityY = 0x00040000;
+    actor->speed = PIXELS(3);
+    actor->acceleration = PIXELS(2);
+    actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;
 
     Engine_ActorSetSpriteFlags(actor, 0);
-#if TBS_PATCH_1
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
-                              ((target->x.fixed >> 20) << 4) + 8,
-                              ((target->z.fixed >> 20) << 4) + 8);
-#else
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel,
-                              target->z.part.pixel);
-#endif
+                              TunnelRuins_GetLandingPixel(target->x),
+                              TunnelRuins_GetLandingPixel(target->z));
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     Engine_TaskWait(6);
 
-    actor->motionFlags = saved;
+    actor->motionFlags = savedMotionFlags;
     Engine_EventEnd();
     return 0;
   }
   return 1;
 }
 
-static void SceneActor_PassRaisedPointOfActorZero(void) {
-  s32 pos[3];
-  struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
+// Try to move the leader 32 pixels south.
+static void TunnelRuins_MoveLeaderSouth(void) {
+  struct FieldPosition target;
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  pos[0] = p->x.fixed;
-  pos[1] = p->y.fixed;
-  pos[2] = p->z.fixed + 0x200000;
-  SceneActor_MoveActorZeroToTarget(pos);
+  target.x = leader->x.fixed;
+  target.y = leader->y.fixed;
+  target.z = leader->z.fixed + PIXELS(32);
+  TunnelRuins_MoveLeaderToPoint(&target);
 }
 
-static void SceneActor_PassActorZeroOffsetPoint(void) {
-  s32 pos[3];
+// Try to move the leader 32 pixels north.
+static void TunnelRuins_MoveLeaderNorth(void) {
+  struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-  pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed + 0xFFE00000;
-  SceneActor_MoveActorZeroToTarget(pos);
+  target.x = actor->x.fixed;
+  target.y = actor->y.fixed;
+  target.z = actor->z.fixed - PIXELS(32);
+  TunnelRuins_MoveLeaderToPoint(&target);
 }
 
+// Track the leader only beyond the entrance-specific depth limit.
 static void TunnelRuins_UpdateTrackedActor(void) {
-  struct FieldActor *actor;
-  u8 *work;
-  s32 limit;
+  struct FieldActor *leader;
+  struct FadeOverlayWork *effectWork;
+  s32 depthLimit;
 
-  actor = Object_GetById(0);
-  work = gActorEffectWork;
-  limit = 0;
+  leader = Object_GetById(0);
+  effectWork = gActorEffectWork;
+  depthLimit = 0;
+  // Each tracked entrance measures depth in eight-pixel steps.
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     switch (gGameState.entrance) {
     case 3:
     case 4:
-      limit = 94;
+      depthLimit = 94;
       break;
     case 8:
     case 9:
-      limit = 74;
+      depthLimit = 74;
       break;
     case 12:
     case 13:
-      limit = 118;
+      depthLimit = 118;
       break;
     }
   } else if (gGameState.entrance == 12) {
-    limit = 93;
+    depthLimit = 93;
   }
-  if ((actor->z.fixed >> 19) <= limit) {
-    *(s32 *)(work + 24) = 0;
+  if ((leader->z.fixed >> 19) <= depthLimit) {
+    effectWork->actor = NULL;
   } else {
-    *(s32 *)(work + 24) = (s32)actor;
+    effectWork->actor = leader;
   }
 }
 
@@ -168,6 +186,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 156 to 152 bytes in tbs-en.
+// Alternate the actor mode and scatter small effects every four frames.
 #ifdef UBFIX
 static void TunnelRuins_UpdateFlickerEffect(union FieldObject *fieldObject) {
 #else
@@ -188,12 +207,12 @@ static s32 TunnelRuins_UpdateFlickerEffect(union FieldObject *fieldObject) {
 #else
     return 0;
 #endif
-  options.startScaleX = 0x4ccc;
-  options.startScaleY = 0x4ccc;
+  options.startScaleX = 3 * Q16_ONE / 10;
+  options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
   x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  Effect_Spawn(x, object->y.fixed + 0x100000, z, 0, 0, 0, 0x90001, &options);
+  Effect_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001, &options);
 #ifdef UBFIX
   return;
 #else
@@ -203,24 +222,24 @@ static s32 TunnelRuins_UpdateFlickerEffect(union FieldObject *fieldObject) {
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void removes its zero result; its aligned extent stays 80 bytes.
+// Track actor 8 at a lowered height while it occupies row 10.
 #ifdef UBFIX
-static void
-SceneActor_CopyActor8PositionWhenAtRow10(union FieldObject *fieldObject) {
+static void TunnelRuins_TrackActor8AtRow10(union FieldObject *fieldObject) {
 #else
-static s32
-SceneActor_CopyActor8PositionWhenAtRow10(union FieldObject *fieldObject) {
+static s32 TunnelRuins_TrackActor8AtRow10(union FieldObject *fieldObject) {
 #endif
-  Record *record = (Record *)fieldObject;
-  Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldActor *effect = (struct FieldActor *)fieldObject;
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (ref->w12 > -0x300000 && (Object_GetById(8)->z.fixed >> 20) == 10) {
-    record->w8 = Object_GetById(8)->x.fixed;
-    record->w12 = -0x200000;
-    record->w16 = Object_GetById(8)->z.fixed;
+  if (leader->y.fixed > -PIXELS(48) &&
+      (Object_GetById(8)->z.fixed >> 20) == 10) {
+    effect->x.fixed = Object_GetById(8)->x.fixed;
+    effect->y.fixed = -PIXELS(32);
+    effect->z.fixed = Object_GetById(8)->z.fixed;
   } else {
-    record->w8 = 0;
-    record->w12 = 0;
-    record->w16 = 0;
+    effect->x.fixed = 0;
+    effect->y.fixed = 0;
+    effect->z.fixed = 0;
   }
 #ifdef UBFIX
   return;
@@ -229,34 +248,36 @@ SceneActor_CopyActor8PositionWhenAtRow10(union FieldObject *fieldObject) {
 #endif
 }
 
-static void SceneActor_WaitValueBelowLimit(struct FieldActor *track) {
-  s32 cnt = 60;
-  s32 limit;
+// Wait up to 60 frames for landing, then stop vertical motion at the terrain.
+static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
+  s32 remainingFrames = 60;
+  s32 terrainHeight;
 
   for (;;) {
-    if (cnt != 0) {
-      s32 value;
+    if (remainingFrames != 0) {
+      s32 height;
 
       Engine_TaskWait(1);
-      value = track->y.fixed;
-      limit = track->terrainHeight;
-      cnt--;
-      if (value <= limit) {
+      height = actor->y.fixed;
+      terrainHeight = actor->terrainHeight;
+      remainingFrames--;
+      if (height <= terrainHeight) {
         break;
       }
       continue;
     }
-    limit = track->terrainHeight;
+    terrainHeight = actor->terrainHeight;
     break;
   }
-  track->velocityY = 0;
-  track->y.fixed = limit;
-  track->targetY = ACTOR_NO_TARGET;
+  actor->velocityY = 0;
+  actor->y.fixed = terrainHeight;
+  actor->targetY = ACTOR_NO_TARGET;
 }
 
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
+// Jump the leader down while spraying effects behind the landing.
 static void TunnelRuins_RunLeaderSpray(void) {
   struct FieldActor *leader = Object_GetById(0);
   struct EffectOptions options;
@@ -267,27 +288,28 @@ static void TunnelRuins_RunLeaderSpray(void) {
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
   Engine_ActorSetSpriteFlags(leader, 0);
-  leader->motionFlags |= 2;
+  leader->motionFlags |= ACTOR_FALLS;
   Engine_AudioPlayCue(152);
-  leader->velocityY = 0x40000;
+  leader->velocityY = PIXELS(4);
   Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed,
-                           leader->z.fixed + 0xc0000);
+                           leader->z.fixed + PIXELS(12));
   Engine_TaskWait(6);
   leader->motionFlags = 0;
+  // Emit particles on alternate frames while the leader descends.
   options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
   Engine_AudioPlayCue(127);
   for (i = 0; i < 8; i++) {
-    leader->y.fixed -= 0x20000;
+    leader->y.fixed -= PIXELS(2);
     leader->targetY = leader->y.fixed;
     Engine_TaskWait(1);
     if (i & 1) {
-      s32 m = (u32)Engine_RandomNext() % 10 - 5;
-      s32 vx = m * 0x3332;
-      s32 vz;
+      s32 horizontalRoll = (u32)Engine_RandomNext() % 10 - 5;
+      s32 velocityX = horizontalRoll * 0x3332;
+      s32 velocityZ;
 
-      vz = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
-      Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vx, 0, vz,
-                   0x1000001, &options);
+      velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
+      Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
+                   0, velocityZ, 0x1000001, &options);
     }
   }
   Engine_ActorSetSpriteFlags(leader, 1);
@@ -302,27 +324,29 @@ static void TunnelRuins_RunLeaderSpray(void) {
   ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
-#define ACTOR_UPDATE_PANEL OverlayObject_SetYAboveLinkedActor
+#define ACTOR_UPDATE_PANEL TunnelRuins_FollowSupportingPlatform
 #else
 #define ACTOR_UPDATE_PANEL                                                     \
-  ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
+  ((void (*)(union FieldObject *))TunnelRuins_FollowSupportingPlatform)
 #endif
 
 // Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
+// Select the entrance table for the current tunnel ruins scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 v = gGameState.scene;
+  s16 sceneId = gGameState.scene;
 
-  if (v == (s32)&SceneId_TunnelRuins1) {
+  if (sceneId == (s32)&SceneId_TunnelRuins1) {
     return gTunnelRuinsEntrances1;
   }
-  if (v == (s32)&SceneId_TunnelRuins2) {
+  if (sceneId == (s32)&SceneId_TunnelRuins2) {
     return gTunnelRuinsEntrances2;
   }
   return gTunnelRuinsEntrancesOther;
 }
 
+// Return the region table only for the second ruins scene.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins2) {
     return gTunnelRuinsRegions2;
@@ -330,9 +354,11 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-u8 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
+// Return the tunnel ruins exit table.
+u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
-u8 *SceneData_SelectAndApplyTableBySceneId(void) {
+// Select the actor placements and prepare their scene state.
+struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void) {
   struct ScenePlacement *table;
 
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
@@ -341,50 +367,56 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void) {
     table = gTunnelRuinsPlacementsOther;
   }
   FieldScene_PrepareActors(table);
-  return (u8 *)table;
+  return table;
 }
 
-static void EV24_SCRIPT(void) {
+// Move the first pair and rebuild its collision cells.
+static void TunnelRuins_MoveFirstActorPair(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   StagedActor_AdvancePair();
-  FieldScene_PlaceAndPinSlots8And9();
+  TunnelRuins_RestoreFirstPairCells();
   Engine_EventEnd();
 }
 
-static void SceneActor_ApplyPointLeftOfActorZero(void) {
-  s32 point[3];
+// Try to move the leader 32 pixels west.
+static void TunnelRuins_MoveLeaderWest(void) {
+  struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-  point[0] = actor->x.fixed + 0xFFE00000;
-  point[1] = actor->y.fixed;
-  point[2] = actor->z.fixed;
-  SceneActor_MoveActorZeroToTarget(point);
+  target.x = actor->x.fixed - PIXELS(32);
+  target.y = actor->y.fixed;
+  target.z = actor->z.fixed;
+  TunnelRuins_MoveLeaderToPoint(&target);
 }
 
-static void EV26_SCRIPT(void) {
+// Move the second pair and rebuild its collision cells.
+static void TunnelRuins_MoveSecondActorPair(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   StagedActor_AdvancePair();
-  FieldScene_PlaceAndPinSlots10And11();
+  TunnelRuins_RestoreSecondPairCells();
   Engine_EventEnd();
 }
 
-static void FieldScene_RunStepWith6(void) {
+// Run the leader ledge-jump sequence in mode 6.
+static void TunnelRuins_JumpLeaderDownLedge(void) {
   FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 }
 
-static void SceneActor_PassPointTwoRightOfActorZero(void) {
-  s32 pos[3];
+// Try to move the leader 32 pixels east.
+static void TunnelRuins_MoveLeaderEast(void) {
+  struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
-  pos[0] = actor->x.fixed + 0x200000;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed;
-  SceneActor_MoveActorZeroToTarget(pos);
+  target.x = actor->x.fixed + PIXELS(32);
+  target.y = actor->y.fixed;
+  target.z = actor->z.fixed;
+  TunnelRuins_MoveLeaderToPoint(&target);
 }
 
-static void EV28_SCRIPT(void) {
+// Move the platform group and restore its collision cells.
+static void TunnelRuins_MovePlatformGroup(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
@@ -393,19 +425,21 @@ static void EV28_SCRIPT(void) {
   Engine_EventEnd();
 }
 
-static void EV28_TOUCH(void) {
+// Try the southward jump before moving the platform group.
+static void TunnelRuins_EnterPlatformGroup(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  s32 target[3];
+  struct FieldPosition target;
 
-  target[0] = actor->x.fixed;
-  target[1] = actor->y.fixed;
-  target[2] = actor->z.fixed + 0x00200000;
-  if (SceneActor_MoveActorZeroToTarget(target) != 0) {
-    EV28_SCRIPT();
+  target.x = actor->x.fixed;
+  target.y = actor->y.fixed;
+  target.z = actor->z.fixed + PIXELS(32);
+  if (TunnelRuins_MoveLeaderToPoint(&target) != 0) {
+    TunnelRuins_MovePlatformGroup();
   }
 }
 
-static void EV15_PSYNERGY(void) {
+// Record switch 15 and update actor 14 for the two-switch state.
+static void TunnelRuins_ActivateWhirlwindSwitch15(void) {
   u8 *flags;
   u8 value;
 
@@ -415,17 +449,17 @@ static void EV15_PSYNERGY(void) {
     Object_GetById(14)->collisionFlags &= 0xf7;
   } else {
     Object_GetById(14)->riseCounter = 1;
-    flags = Object_GetById(14);
-    flags += 89;
+    flags = &Object_GetById(14)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
   }
 }
 
-static void EV16_PSYNERGY(void) {
-  u8 *p;
-  u8 val;
+// Record switch 16 and update actor 14 for the two-switch state.
+static void TunnelRuins_ActivateWhirlwindSwitch16(void) {
+  u8 *flags;
+  u8 value;
 
   Engine_GameFlagSet(0x201);
   if (Engine_GameFlagIsSet(0x200) != 0) {
@@ -433,83 +467,88 @@ static void EV16_PSYNERGY(void) {
     Object_GetById(14)->collisionFlags &= 0xf7;
   } else {
     Object_GetById(14)->riseCounter = 1;
-    p = Object_GetById(14);
-    p += 89;
-    val = 8;
-    val |= *p;
-    *p = val;
+    flags = &Object_GetById(14)->collisionFlags;
+    value = 8;
+    value |= *flags;
+    *flags = value;
   }
 }
 
-static void EV17_PSYNERGY(void) { Engine_GameFlagSet(0x970); }
+// Record completion of the Whirlwind interaction with actor 17.
+static void TunnelRuins_CompleteWhirlwind17(void) { Engine_GameFlagSet(0x970); }
 
-static void SceneState_RunUnlessActorZeroAtTile32x50(void) {
+// Try the westward jump unless the leader occupies tile 32, 50.
+static void TunnelRuins_MoveWestUnlessAtTile32x50(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
-    SceneActor_ApplyPointLeftOfActorZero();
+    TunnelRuins_MoveLeaderWest();
   }
 }
 
-static void SceneState_RunUnlessActorZeroAt30_52(void) {
+// Try the northward jump unless the leader occupies tile 30, 52.
+static void TunnelRuins_MoveNorthUnlessAtTile30x52(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
-    SceneActor_PassActorZeroOffsetPoint();
+    TunnelRuins_MoveLeaderNorth();
   }
 }
 
-static void EV18_PSYNERGY(void) {
+// Draw an impact frame of the passage and start a decaying vertical shake.
+static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
+                                                         s32 column, s32 row) {
+  Engine_AudioPlayCue(188);
+  Map_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
+  Map_SetShake(0, PIXELS(5), Q16_ONE);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+}
+
+// Lower actor 18 at column 46 and animate the resulting passage.
+static void TunnelRuins_LowerActor18(void) {
   u32 i;
-  s32 rec2;
-  s32 rec7;
+  struct FieldActor *temporaryActor;
+  s32 randomX;
   struct FieldActor *actor;
-  s32 value;
-  s32 v5;
-  s32 v6;
-  struct EffectOptions slot16;
-  struct EffectOptions *frame;
+  s32 randomZ;
+  struct EffectOptions options;
+  struct EffectOptions *effectOptions;
 
   Engine_EventBegin();
   actor = Object_GetById(18);
   if ((actor->x.fixed >> 20) == 46) {
     Engine_EventWait(30);
-    rec2 = OverlayObject_PrepareObject(0x2e80000, 0, 0xb80000, 253);
-    frame = &slot16;
-    frame->startScaleX = 0x9999;
-    frame->startScaleY = 0x9999;
-    frame->palette = 7;
+    temporaryActor =
+        OverlayObject_PrepareObject(PIXELS(744), 0, PIXELS(184), 253);
+    // Lower the actor one pixel at a time and scatter the surrounding effects.
+    effectOptions = &options;
+    effectOptions->startScaleX = 3 * Q16_ONE / 5;
+    effectOptions->startScaleY = 3 * Q16_ONE / 5;
+    effectOptions->palette = 7;
     Actor_Get(18)->motionFlags = 0;
     Engine_AudioPlayCue(185);
     for (i = 0; i < 16; i++) {
       Engine_TaskWait(3);
-      Actor_Get(18)->y.fixed -= 0x10000;
-      rec7 = Random_Next();
-      rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
-      value = Engine_RandomNext();
-      Effect_Spawn(
-          rec7, 0,
-          ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0,
-          0, 0x90000, frame);
+      Actor_Get(18)->y.fixed -= PIXELS(1);
+      randomX = Random_Next();
+      randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
+      randomZ = Engine_RandomNext();
+      Effect_Spawn(randomX, 0,
+                   ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
+                    PIXELS(128)),
+                   0, 0, 0, 0x90000, effectOptions);
     }
+    // Restore the passage in two impact frames.
     Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     Engine_EventWait(30);
     Actor_Get(18)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetAnimation(18, 3);
-    Engine_ObjectDispatchRelease(rec2);
+    Engine_ObjectDispatchRelease(temporaryActor);
     Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    Actor_SetPosition(20, 0x2e80000, 0x880000);
-    v5 = 1;
-    v6 = 3;
-    Engine_AudioPlayCue(188);
-    Map_CopyCellsTo(58, 8, 49, 8, v5, v6);
-    Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Actor_SetPosition(20, PIXELS(744), PIXELS(136));
+    TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     Engine_EventWait(20);
-    Engine_AudioPlayCue(188);
-    Map_CopyCellsTo(59, 8, 49, 8, v5, v6);
-    Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     Engine_MapRenderWaitForValues();
     Engine_EventWait(10);
     GameFlag_Set(0x971);
@@ -517,76 +556,74 @@ static void EV18_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-static void EV29_SCRIPT(void) {
+// Advance the movable pair, then test whether actor 18 can lower.
+static void TunnelRuins_MoveActor18AndCheckLowering(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   Engine_EventEnd();
-  EV18_PSYNERGY();
+  TunnelRuins_LowerActor18();
 }
 
-static void EV20_PSYNERGY(void) {
+// Freeze actor 20 and restore its normal depth handling.
+static void TunnelRuins_FreezeActor20(void) {
   u8 *flags;
 
   Engine_ActorSetAnimation(20, 1);
   Engine_ActorSetChildValue(20, 0);
   Engine_ActorSetAnimation(20, 2);
   flags = &Object_GetById(20)->priorityFlags;
-  *flags &= 0xFD;
+  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Engine_GameFlagSet(0x200);
 }
 
-static void FieldScene_RunSupplementalSequenceOne(void) {
+// Lower actor 19 after Douse when it occupies column 48.
+static void TunnelRuins_LowerActor19(void) {
   u32 i;
-  s32 rec2;
-  s32 rec7;
+  struct FieldActor *temporaryActor;
+  s32 randomX;
   struct FieldActor *actor;
-  s32 value;
-  s32 arg0;
-  s32 arg2;
-  s32 v5;
-  s32 v6;
-  struct EffectOptions slot16;
-  struct EffectOptions *slot;
+  s32 randomZ;
+  s32 effectX;
+  s32 effectZ;
+  struct EffectOptions options;
+  struct EffectOptions *effectOptions;
 
   Engine_EventBegin();
   actor = Object_GetById(19);
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_IsSet(0x202) != 0) {
       Engine_EventWait(30);
-      rec2 = OverlayObject_PrepareObject(0x3020000, 0, 0x1120000, 223);
-      slot = &slot16;
-      slot->startScaleX = 0x9999;
-      slot->startScaleY = 0x9999;
-      slot->palette = 7;
+      temporaryActor =
+          OverlayObject_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
+      // Lower the Doused actor and scatter effects before restoring the
+      // passage.
+      effectOptions = &options;
+      effectOptions->startScaleX = 3 * Q16_ONE / 5;
+      effectOptions->startScaleY = 3 * Q16_ONE / 5;
+      effectOptions->palette = 7;
       Actor_Get(19)->motionFlags = 0;
       Engine_AudioPlayCue(185);
       for (i = 0; i < 16; i++) {
         Engine_TaskWait(3);
-        Actor_Get(19)->y.fixed -= 0x10000;
-        rec7 = Engine_RandomNext();
-        arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
-        value = Engine_RandomNext();
-        arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
-        Effect_Spawn(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
+        Actor_Get(19)->y.fixed -= PIXELS(1);
+        randomX = Engine_RandomNext();
+        effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
+        randomZ = Engine_RandomNext();
+        effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
+                   PIXELS(224));
+        Effect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
       }
+      // Restore the passage in two impact frames.
       Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       Engine_EventWait(30);
       Actor_Get(19)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Engine_ActorSetAnimation(19, 3);
-      Engine_ObjectDispatchRelease(rec2);
+      Engine_ObjectDispatchRelease(temporaryActor);
       Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      Actor_SetPosition(21, 0x3080000, 0xe80000);
-      v5 = 1;
-      v6 = 3;
-      Engine_AudioPlayCue(188);
-      Map_CopyCellsTo(58, 8, 45, 14, v5, v6);
-      Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Actor_SetPosition(21, PIXELS(776), PIXELS(232));
+      TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       Engine_EventWait(20);
-      Engine_AudioPlayCue(188);
-      Map_CopyCellsTo(59, 8, 45, 14, v5, v6);
-      Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       Engine_MapRenderWaitForValues();
       Engine_EventWait(10);
       GameFlag_Set(0x972);
@@ -595,34 +632,39 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunFourStepSequenceA(void) {
+// Advance the movable pair, then test whether actor 19 can lower.
+static void TunnelRuins_MoveActor19AndCheckLowering(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   Engine_EventEnd();
-  FieldScene_RunSupplementalSequenceOne();
+  TunnelRuins_LowerActor19();
 }
 
-static void EV19_SCRIPT(void) {
+// Start the timed flicker script on actor 19.
+static void TunnelRuins_StartActor19Flicker(void) {
   Actor_SetActionScript(19, gTunnelRuins_FlickerScript);
 }
 
-static void SceneState_SetValue202ThenCall(void) {
+// Record Douse on actor 19 and test whether it can lower.
+static void TunnelRuins_DouseActor19(void) {
   Engine_GameFlagSet(0x202);
-  FieldScene_RunSupplementalSequenceOne();
+  TunnelRuins_LowerActor19();
 }
 
-static void EV21_PSYNERGY(void) {
+// Freeze actor 21 and restore its normal depth handling.
+static void TunnelRuins_FreezeActor21(void) {
   u8 *flags;
 
   Engine_ActorSetAnimation(21, 1);
   Engine_ActorSetChildValue(21, 0);
   Engine_ActorSetAnimation(21, 2);
   flags = &Object_GetById(21)->priorityFlags;
-  *flags &= 0xFD;
+  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Engine_GameFlagSet(0x201);
 }
 
-static void EV40_SEARCH(void) {
+// Show the first statue message for the current answer state.
+static void TunnelRuins_ReadFirstStatue(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0) {
@@ -633,35 +675,38 @@ static void EV40_SEARCH(void) {
   Engine_EventEnd();
 }
 
-static void EV08_PSYNERGY(void) {
+// Enter and leave the scene event after the actor 8 interaction.
+static void TunnelRuins_FinishActor8Move(void) {
   Engine_EventBegin();
   Engine_EventEnd();
 }
 
-static void EV25_SCRIPT(void) {
+// Advance the movable pair and finish the actor 8 interaction.
+static void TunnelRuins_MoveActor8Pair(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   Engine_EventEnd();
-  EV08_PSYNERGY();
+  TunnelRuins_FinishActor8Move();
 }
 
-static void EV08_SCRIPT(void) {
+// Start actor 8 flickering and let actor 9 track its position.
+static void TunnelRuins_StartActor8Flicker(void) {
   struct FieldActor *owner;
 
   Actor_SetActionScript(8, gTunnelRuins_FlickerScript);
   Engine_GameFlagSet(0x203);
   owner = Object_GetById(9);
 #ifdef UBFIX
-  owner->update = SceneActor_CopyActor8PositionWhenAtRow10;
+  owner->update = TunnelRuins_TrackActor8AtRow10;
 #else
-  owner->update =
-      (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
+  owner->update = (void (*)(union FieldObject *))TunnelRuins_TrackActor8AtRow10;
 #endif
 }
 
-static void EV09_PSYNERGY(void) {
-  struct FieldActor *desc;
-  s32 col;
+// Freeze actor 9 and restore both actors to the depth update callback.
+static void TunnelRuins_FreezeActor9(void) {
+  struct FieldActor *actor;
+  s32 column;
   s32 row;
 
   Engine_EventBegin();
@@ -672,36 +717,39 @@ static void EV09_PSYNERGY(void) {
 
   {
     u8 *flag = &Object_GetById(9)->priorityFlags;
-    *flag &= 0xfd;
+    *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
   }
 
   Engine_GameFlagSet(0x204);
 
-  col = Object_GetById(9)->x.fixed;
+  column = Object_GetById(9)->x.fixed;
   row = Object_GetById(9)->z.fixed >> 20;
-  Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
+  Map_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
-  desc = Object_GetById(9);
-  desc->update = ACTOR_UPDATE_IDLE;
+  actor = Object_GetById(9);
+  actor->update = ACTOR_UPDATE_IDLE;
 
-  desc = Object_GetById(8);
-  desc->update = ACTOR_UPDATE_IDLE;
+  actor = Object_GetById(8);
+  actor->update = ACTOR_UPDATE_IDLE;
 
   Engine_EventEnd();
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 34 to 32 bytes in tbs-en.
+// Keep this actor 16 pixels above the supporting actor saved in its timer.
 #ifdef UBFIX
-static void OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject) {
+static void
+TunnelRuins_FollowSupportingPlatform(union FieldObject *fieldObject) {
 #else
-static s32 OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject) {
+static s32
+TunnelRuins_FollowSupportingPlatform(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *owner = (struct FieldActor *)fieldObject;
-  s16 *id = &owner->timer;
-  struct FieldActor *actor = Object_GetById(*id);
+  struct FieldActor *supportedActor = (struct FieldActor *)fieldObject;
+  s16 *supportingActorId = &supportedActor->timer;
+  struct FieldActor *supportingActor = Object_GetById(*supportingActorId);
 
-  owner->y.fixed = actor->y.fixed + 0x100000;
+  supportedActor->y.fixed = supportingActor->y.fixed + PIXELS(16);
 #ifdef UBFIX
   return;
 #else
@@ -709,11 +757,12 @@ static s32 OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject) {
 #endif
 }
 
+// Move both steps to their indexed heights and restore shallow collision cells.
 static void TunnelRuins_SettleSteps(s32 wait) {
   u32 i;
 
-  Actor_SetSpeed(10, 0x8000, 0x4000);
-  Actor_SetSpeed(11, 0x8000, 0x4000);
+  Actor_SetSpeed(10, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(11, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
     Engine_AudioPlayCue(180);
   }
@@ -735,8 +784,8 @@ static void TunnelRuins_SettleSteps(s32 wait) {
     Engine_AudioPlayCue(0x121);
   }
   for (i = 0; i < 5; i++) {
-    if (Object_GetById(i + 10)->y.fixed / 0x10000 < 0 &&
-        Object_GetById(i + 10)->y.fixed / 0x10000 > -30) {
+    if (Object_GetById(i + 10)->y.fixed / Q16_ONE < 0 &&
+        Object_GetById(i + 10)->y.fixed / Q16_ONE > -30) {
       Engine_MapCopyCellAttributes(4, 9, 1, 1,
                                    Object_GetById(i + 10)->x.fixed >> 20,
                                    Object_GetById(i + 10)->z.fixed >> 20);
@@ -745,57 +794,59 @@ static void TunnelRuins_SettleSteps(s32 wait) {
   Engine_EventWait(wait);
 }
 
-static void SceneActor_LandOnHighestPlatform(s32 subject) {
-  s32 best = -0x500000;
+// Place the carried actor above the highest actor sharing its tile.
+static void TunnelRuins_StackActorOnHighestPlatform(s32 actorId) {
+  s32 highestHeight = -PIXELS(80);
   u32 i;
 
   for (i = 0; i <= 4; i++) {
-    s32 slot = i + 10;
+    s32 candidateId = i + 10;
 
-    if (slot == subject)
+    if (candidateId == actorId)
       continue;
 
-    if ((Object_GetById(slot)->x.fixed >> 20) !=
-        (Object_GetById(subject)->x.fixed >> 20))
+    if ((Object_GetById(candidateId)->x.fixed >> 20) !=
+        (Object_GetById(actorId)->x.fixed >> 20))
       continue;
-    if ((Object_GetById(slot)->z.fixed >> 20) !=
-        (Object_GetById(subject)->z.fixed >> 20))
-      continue;
-
-    if (best > Object_GetById(slot)->y.fixed + 0x100000)
+    if ((Object_GetById(candidateId)->z.fixed >> 20) !=
+        (Object_GetById(actorId)->z.fixed >> 20))
       continue;
 
-    best = Object_GetById(slot)->y.fixed + 0x100000;
-    Object_GetById(subject)->timer = slot;
+    if (highestHeight > Object_GetById(candidateId)->y.fixed + PIXELS(16))
+      continue;
+
+    highestHeight = Object_GetById(candidateId)->y.fixed + PIXELS(16);
+    Object_GetById(actorId)->timer = candidateId;
   }
 
-  Engine_ActorSetSpeed(subject, 0x40000, 0x20000);
+  Engine_ActorSetSpeed(actorId, PIXELS(4), PIXELS(2));
 
   {
-    struct FieldActor *target = Object_GetById(subject);
-    struct FieldActor *from = Object_GetById(subject);
-    s32 z = Object_GetById(subject)->z.fixed;
+    struct FieldActor *actor = Object_GetById(actorId);
+    struct FieldActor *sourceActor = Object_GetById(actorId);
+    s32 z = Object_GetById(actorId)->z.fixed;
 
-    Engine_ObjectSetPosition(target, from->x.fixed, best, z);
+    Engine_ObjectSetPosition(actor, sourceActor->x.fixed, highestHeight, z);
   }
 
-  Engine_ActorWaitForMove(subject);
+  Engine_ActorWaitForMove(actorId);
   Engine_AudioPlayCue(188);
-  SceneEffect_SpawnNineRadialEffects(subject);
+  SceneEffect_SpawnNineRadialEffects(actorId);
   Engine_EventWait(30);
 }
 
-static void FieldScene_RunMiddleSequence(void) {
-  struct FieldActor saved;
+// Settle a carried actor, stack it, and adjust the two step heights.
+static void TunnelRuins_PlaceCarriedActor(void) {
+  struct FieldActor savedPosition;
   s32 i;
   s32 j;
-  s32 found;
+  s32 settledIndex;
 
   Engine_EventBegin();
   for (i = 0; i <= 2; i++) {
-    if (Object_GetById(i + 12)->sprite->priority == 3 &&
+    if (Object_GetById(i + 12)->sprite->image.priority == 3 &&
         GameFlag_IsSet(i + 0x200) == 0) {
-      SceneActor_WaitValueBelowLimit(Actor_Get(i + 12));
+      TunnelRuins_WaitForActorToLand(Actor_Get(i + 12));
       Actor_SetPosition(i + 12, 0, 0);
       GameFlag_Set(i + 0x200);
       break;
@@ -807,33 +858,35 @@ static void FieldScene_RunMiddleSequence(void) {
       Object_GetById(i + 12)->targetY = ACTOR_NO_TARGET;
       Actor_Get(i + 12)->motionFlags = 0;
       Object_GetById(i + 12)->timer = 0;
-      found = i;
+      // Keep the first available actor slot at the carried object position.
+      settledIndex = i;
       for (j = 0; j < i; j++) {
         if (GameFlag_IsSet(0x200 + j) == 0) {
-          saved.x.fixed = Object_GetById(i + 12)->x.fixed;
-          saved.y.fixed = Object_GetById(i + 12)->y.fixed;
-          saved.z.fixed = Object_GetById(i + 12)->z.fixed;
+          savedPosition.x.fixed = Object_GetById(i + 12)->x.fixed;
+          savedPosition.y.fixed = Object_GetById(i + 12)->y.fixed;
+          savedPosition.z.fixed = Object_GetById(i + 12)->z.fixed;
           Actor_Get(i + 12)->x.fixed = Object_GetById(j + 12)->x.fixed;
           Object_GetById(i + 12)->y.fixed = Object_GetById(j + 12)->y.fixed;
           Object_GetById(i + 12)->z.fixed = Object_GetById(j + 12)->z.fixed;
-          Actor_Get(j + 12)->x.fixed = saved.x.fixed;
-          Actor_Get(j + 12)->y.fixed = saved.y.fixed;
-          Actor_Get(j + 12)->z.fixed = saved.z.fixed;
-          found = j;
+          Actor_Get(j + 12)->x.fixed = savedPosition.x.fixed;
+          Actor_Get(j + 12)->y.fixed = savedPosition.y.fixed;
+          Actor_Get(j + 12)->z.fixed = savedPosition.z.fixed;
+          settledIndex = j;
           break;
         }
       }
-      Object_GetById(found + 12)->terrainHeight = 0;
-      Actor_Get(found + 12)->velocityY = 0;
-      Object_GetById(found + 12)->targetY = ACTOR_NO_TARGET;
-      Actor_Get(found + 12)->motionFlags = 0;
-      Object_GetById(found + 12)->timer = 0;
-      Engine_CameraSetSpeed(0x30000, 0x6000);
+      Object_GetById(settledIndex + 12)->terrainHeight = 0;
+      Actor_Get(settledIndex + 12)->velocityY = 0;
+      Object_GetById(settledIndex + 12)->targetY = ACTOR_NO_TARGET;
+      Actor_Get(settledIndex + 12)->motionFlags = 0;
+      Object_GetById(settledIndex + 12)->timer = 0;
+      // Stack the actor, then rebalance the paired steps.
+      Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_GetEventObject()->motionFlags = 0;
-      Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
+      Camera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       Engine_CameraWaitForMove();
-      SceneActor_LandOnHighestPlatform(found + 12);
-      if ((Object_GetById(found + 12)->x.fixed >> 20) == 8) {
+      TunnelRuins_StackActorOnHighestPlatform(settledIndex + 12);
+      if ((Object_GetById(settledIndex + 12)->x.fixed >> 20) == 8) {
         Object_GetById(10)->timer++;
         (Object_GetById(11)->timer)--;
       } else {
@@ -841,27 +894,30 @@ static void FieldScene_RunMiddleSequence(void) {
         Object_GetById(11)->timer++;
       }
 #ifdef UBFIX
-      Actor_Get(found + 12)->update = OverlayObject_SetYAboveLinkedActor;
+      Actor_Get(settledIndex + 12)->update =
+          TunnelRuins_FollowSupportingPlatform;
 #else
-      Actor_Get(found + 12)->update =
-          (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
+      Actor_Get(settledIndex + 12)->update =
+          (void (*)(union FieldObject *))TunnelRuins_FollowSupportingPlatform;
 #endif
       TunnelRuins_SettleSteps(40);
-      Actor_Get(found + 12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      GameFlag_Set(0x200 + found);
+      Actor_Get(settledIndex + 12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      GameFlag_Set(0x200 + settledIndex);
       break;
     }
   }
   Engine_EventEnd();
 }
 
-static void FieldScene_RunThreeStepSequence(void) {
+// Advance the movable pair within a scene event.
+static void TunnelRuins_AdvanceMovablePair(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
   Engine_EventEnd();
 }
 
-static void SceneState_SetSlot17And18Selectors(void) {
+// Save the two movable actors column states and rebuild their grid cells.
+static void TunnelRuins_SaveActor17And18Positions(void) {
   Engine_EventBegin();
 
   if ((Object_GetById(17)->x.fixed >> 20) == 45) {
@@ -880,23 +936,26 @@ static void SceneState_SetSlot17And18Selectors(void) {
   Engine_EventEnd();
 }
 
-static void EV29_TOUCH(void) {
+// Advance the movable pair and save the resulting positions.
+static void TunnelRuins_MoveAndSaveActorPositions(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
-  SceneState_SetSlot17And18Selectors();
+  TunnelRuins_SaveActor17And18Positions();
   Engine_EventEnd();
 }
 
-static void FieldScene_RunLateSequenceHead(void) {
+// Show the Reveal objects and restore their collision cells.
+static void TunnelRuins_ShowRevealObjects(void) {
   Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  Actor_SetPosition(15, 8912896, 51904512);
-  Actor_SetPosition(16, 51904512, 45613056);
+  Actor_SetPosition(15, PIXELS(136), PIXELS(792));
+  Actor_SetPosition(16, PIXELS(792), PIXELS(696));
 }
 
-static void FieldScene_RunLateSequenceSecond(void) {
+// Hide the Reveal objects and restore the alternate collision cells.
+static void TunnelRuins_HideRevealObjects(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
   MapObject_SetPosition(100, -1, -1);
@@ -905,88 +964,91 @@ static void FieldScene_RunLateSequenceSecond(void) {
   Actor_SetPosition(16, 0, 0);
 }
 
-static void FieldScene_RunScene3c4SequenceA(void) {
-  struct FieldActor *record;
-  s32 v6;
-  s32 p5;
-  s32 q;
+// Open the door only while all five actors occupy their target tiles.
+static void TunnelRuins_UpdateFiveActorDoor(void) {
+  struct FieldActor *actor;
+  s32 correctPositions;
+  s32 column;
+  s32 row;
 
-  v6 = 0;
+  correctPositions = 0;
   Engine_EventBegin();
   Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  record = Object_GetById(19);
-  p5 = record->x.fixed;
-  q = Object_GetById(19)->z.fixed;
-  q >>= 20;
-  p5 >>= 20;
-  Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-  record = Object_GetById(20);
-  p5 = record->x.fixed;
-  q = Object_GetById(20)->z.fixed;
-  q >>= 20;
-  p5 >>= 20;
-  Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-  record = Object_GetById(21);
-  p5 = record->x.fixed;
-  q = Object_GetById(21)->z.fixed;
-  q >>= 20;
-  p5 >>= 20;
-  Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-  record = Object_GetById(22);
-  p5 = record->x.fixed;
-  q = Object_GetById(22)->z.fixed;
-  q >>= 20;
-  p5 >>= 20;
-  Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-  record = Object_GetById(23);
-  p5 = record->x.fixed;
-  q = Object_GetById(23)->z.fixed;
-  q >>= 20;
-  p5 >>= 20;
-  Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-  record = Object_GetById(19);
-  if ((record->x.fixed >> 20) == 25) {
-    record = Object_GetById(19);
-    if ((record->z.fixed >> 20) == 49) {
-      v6 = 1;
+  actor = Object_GetById(19);
+  column = actor->x.fixed;
+  row = Object_GetById(19)->z.fixed;
+  row >>= 20;
+  column >>= 20;
+  Map_CopyCellAttributes(20, 56, 1, 1, column, row);
+  actor = Object_GetById(20);
+  column = actor->x.fixed;
+  row = Object_GetById(20)->z.fixed;
+  row >>= 20;
+  column >>= 20;
+  Map_CopyCellAttributes(20, 56, 1, 1, column, row);
+  actor = Object_GetById(21);
+  column = actor->x.fixed;
+  row = Object_GetById(21)->z.fixed;
+  row >>= 20;
+  column >>= 20;
+  Map_CopyCellAttributes(20, 56, 1, 1, column, row);
+  actor = Object_GetById(22);
+  column = actor->x.fixed;
+  row = Object_GetById(22)->z.fixed;
+  row >>= 20;
+  column >>= 20;
+  Map_CopyCellAttributes(20, 56, 1, 1, column, row);
+  actor = Object_GetById(23);
+  column = actor->x.fixed;
+  row = Object_GetById(23)->z.fixed;
+  row >>= 20;
+  column >>= 20;
+  Map_CopyCellAttributes(20, 56, 1, 1, column, row);
+  // Count actors at the five required tile positions.
+  actor = Object_GetById(19);
+  if ((actor->x.fixed >> 20) == 25) {
+    actor = Object_GetById(19);
+    if ((actor->z.fixed >> 20) == 49) {
+      correctPositions = 1;
     }
   }
-  record = Object_GetById(20);
-  if ((record->x.fixed >> 20) == 23) {
-    record = Object_GetById(20);
-    if ((record->z.fixed >> 20) == 49) {
-      v6 = (v6 + 1);
+  actor = Object_GetById(20);
+  if ((actor->x.fixed >> 20) == 23) {
+    actor = Object_GetById(20);
+    if ((actor->z.fixed >> 20) == 49) {
+      correctPositions = (correctPositions + 1);
     }
   }
-  record = Object_GetById(21);
-  if ((record->x.fixed >> 20) == 25) {
-    record = Object_GetById(21);
-    if ((record->z.fixed >> 20) == 47) {
-      v6 = (v6 + 1);
+  actor = Object_GetById(21);
+  if ((actor->x.fixed >> 20) == 25) {
+    actor = Object_GetById(21);
+    if ((actor->z.fixed >> 20) == 47) {
+      correctPositions = (correctPositions + 1);
     }
   }
-  record = Object_GetById(22);
-  if ((record->x.fixed >> 20) == 23) {
-    record = Object_GetById(22);
-    if ((record->z.fixed >> 20) == 47) {
-      v6 = (v6 + 1);
+  actor = Object_GetById(22);
+  if ((actor->x.fixed >> 20) == 23) {
+    actor = Object_GetById(22);
+    if ((actor->z.fixed >> 20) == 47) {
+      correctPositions = (correctPositions + 1);
     }
   }
-  record = Object_GetById(23);
-  if ((record->x.fixed >> 20) == 24) {
-    record = Object_GetById(23);
-    if ((record->z.fixed >> 20) == 48) {
-      v6 = (v6 + 1);
+  actor = Object_GetById(23);
+  if ((actor->x.fixed >> 20) == 24) {
+    actor = Object_GetById(23);
+    if ((actor->z.fixed >> 20) == 48) {
+      correctPositions = (correctPositions + 1);
     }
   }
-  if (v6 == 5) {
+  // Animate the door only when the completed arrangement changes.
+  if (correctPositions == 5) {
     if (GameFlag_IsSet(0x984) != 0) {
       Engine_EventEnd();
       return;
     }
     Engine_EventWait(20);
-    Camera_SetSpeed(0xcccc, 0x1999);
-    Camera_MoveTo(0x1d80000, -1, 0x30c0000, 1);
+    Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     GameFlag_Set(0x984);
@@ -997,8 +1059,8 @@ static void FieldScene_RunScene3c4SequenceA(void) {
   } else {
     if (GameFlag_IsSet(0x984) != 0) {
       Engine_EventWait(20);
-      Camera_SetSpeed(0xcccc, 0x1999);
-      Camera_MoveTo(0x1d80000, -1, 0x30c0000, 1);
+      Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+      Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(30);
       GameFlag_Clear(0x984);
@@ -1011,30 +1073,33 @@ static void FieldScene_RunScene3c4SequenceA(void) {
   Engine_EventEnd();
 }
 
-static void EV41_SCRIPT(void) {
+// Move the selected actor and reevaluate the five-actor door puzzle.
+static void TunnelRuins_MoveDoorPuzzleActor(void) {
   Engine_EventBegin();
   {
-
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
   StagedActor_AdvancePair();
-  FieldScene_RunScene3c4SequenceA();
+  TunnelRuins_UpdateFiveActorDoor();
   Engine_EventEnd();
 }
 
-static void EV42_SEARCH(void) {
+// Show the second statue soul-reading message.
+static void TunnelRuins_ReadSecondStatue(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   Engine_EventEnd();
 }
 
-static void EV20_SEARCH(void) {
+// Show the tightly locked door message.
+static void TunnelRuins_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   Engine_EventEnd();
 }
 
+// Select the event bindings for the current tunnel ruins scene.
 s32 TunnelRuins_SelectEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     return (s32)gTunnelRuinsEvents1;
@@ -1042,7 +1107,8 @@ s32 TunnelRuins_SelectEvents(void) {
   return (s32)gTunnelRuinsEventsOther;
 }
 
-static void FieldScene_PlaceAndPinSlots8And9(void) {
+// Order actors 8 and 9 by depth and restore their collision cells.
+static void TunnelRuins_RestoreFirstPairCells(void) {
   s32 row;
 
   {
@@ -1063,7 +1129,8 @@ static void FieldScene_PlaceAndPinSlots8And9(void) {
   }
 }
 
-static void FieldScene_PlaceAndPinSlots10And11(void) {
+// Order actors 10 and 11 by depth and restore their collision cells.
+static void TunnelRuins_RestoreSecondPairCells(void) {
   s32 row;
 
   {
@@ -1072,42 +1139,44 @@ static void FieldScene_PlaceAndPinSlots10And11(void) {
   SceneActor_SwapPositionsByDepth(11, 10);
 
   {
-    s32 col20 = Object_GetById(10)->x.fixed >> 20;
+    s32 column = Object_GetById(10)->x.fixed >> 20;
     row = Object_GetById(10)->z.fixed >> 20;
-    Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+    Map_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 
   {
-    s32 col20 = Object_GetById(11)->x.fixed >> 20;
+    s32 column = Object_GetById(11)->x.fixed >> 20;
     row = Object_GetById(11)->z.fixed >> 20;
-    Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+    Map_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 }
 
+// Restore the platform group collision cells at each actor position.
 static void TunnelRuins_RestorePlatformCells(void) {
-  struct FieldActor *record;
-  s32 p5;
+  struct FieldActor *actor;
+  s32 column;
 
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   Object_GetById(14)->terrainId = 1;
-  record = Object_GetById(12);
-  p5 = record->x.fixed;
-  record = Object_GetById(12);
-  p5 >>= 20;
-  Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
-  record = Object_GetById(13);
-  p5 = record->x.fixed;
-  record = Object_GetById(13);
-  p5 >>= 20;
-  Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
-  record = Object_GetById(14);
-  p5 = record->x.fixed;
-  record = Object_GetById(14);
-  p5 >>= 20;
-  Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
+  actor = Object_GetById(12);
+  column = actor->x.fixed;
+  actor = Object_GetById(12);
+  column >>= 20;
+  Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
+  actor = Object_GetById(13);
+  column = actor->x.fixed;
+  actor = Object_GetById(13);
+  column >>= 20;
+  Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
+  actor = Object_GetById(14);
+  column = actor->x.fixed;
+  actor = Object_GetById(14);
+  column >>= 20;
+  Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
 
+// Restore the base grid and mark both movable actor footprints.
 static void TunnelRuins_MarkActorCells(void) {
   Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   StagedActor_FillGridAttributeRectangle(0, Object_GetById(17)->x.fixed >> 20,
@@ -1118,6 +1187,7 @@ static void TunnelRuins_MarkActorCells(void) {
                                          1, 0xff);
 }
 
+// Restore the current entrance puzzle state and actor callbacks.
 s32 FieldScene_InitializeActorGroups(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1 ||
@@ -1151,14 +1221,15 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 3:
     case 4:
-      FieldScene_PlaceAndPinSlots8And9();
+      TunnelRuins_RestoreFirstPairCells();
       Object_GetById(8)->motionFlags = 0;
       Object_GetById(9)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
       Object_GetById(8)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(9)->update = ACTOR_UPDATE_IDLE;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
+      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
+                                 TUNNEL_CALLBACK_PRIORITY);
       break;
     case 5:
     case 6:
@@ -1170,14 +1241,15 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 8:
     case 9:
-      FieldScene_PlaceAndPinSlots10And11();
+      TunnelRuins_RestoreSecondPairCells();
       Object_GetById(10)->motionFlags = 0;
       Object_GetById(11)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
       Object_GetById(10)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(11)->update = ACTOR_UPDATE_IDLE;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
+      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
+                                 TUNNEL_CALLBACK_PRIORITY);
       break;
     case 10:
     case 11:
@@ -1191,12 +1263,12 @@ s32 FieldScene_InitializeActorGroups(void) {
       if (Engine_GameFlagIsSet(0x971)) {
         Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-        Object_GetById(18)->priorityFlags |= 2;
+        Object_GetById(18)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetAnimation(18, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        Actor_SetPosition(18, 186 << 18, 136 << 16);
-        Object_GetById(18)->y.fixed = -0x100000;
-        Actor_SetPosition(20, 186 << 18, 136 << 16);
+        Actor_SetPosition(18, PIXELS(744), PIXELS(136));
+        Object_GetById(18)->y.fixed = -PIXELS(16);
+        Actor_SetPosition(20, PIXELS(744), PIXELS(136));
       }
       if (Engine_GameFlagIsSet(0x200)) {
         Engine_ActorSetChildValue(20, 0);
@@ -1207,12 +1279,12 @@ s32 FieldScene_InitializeActorGroups(void) {
       if (Engine_GameFlagIsSet(0x972)) {
         Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-        Object_GetById(19)->priorityFlags |= 2;
+        Object_GetById(19)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetAnimation(19, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        Actor_SetPosition(19, 194 << 18, 232 << 16);
-        Object_GetById(19)->y.fixed = -0x100000;
-        Engine_ActorSetPosition(21, 194 << 18, 232 << 16);
+        Actor_SetPosition(19, PIXELS(776), PIXELS(232));
+        Object_GetById(19)->y.fixed = -PIXELS(16);
+        Engine_ActorSetPosition(21, PIXELS(776), PIXELS(232));
         Engine_GameFlagSet(0x202);
       }
       if (Engine_GameFlagIsSet(0x201)) {
@@ -1234,7 +1306,8 @@ s32 FieldScene_InitializeActorGroups(void) {
       Object_GetById(12)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(13)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(14)->update = ACTOR_UPDATE_IDLE;
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
+      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
+                                 TUNNEL_CALLBACK_PRIORITY);
       break;
     }
   } else {
@@ -1250,9 +1323,9 @@ s32 FieldScene_InitializeActorGroups(void) {
       Engine_ActorSetChildValue(17, 6);
       Engine_ActorSetChildValue(18, 6);
       if (Engine_GameFlagIsSet(0x974))
-        Actor_SetPosition(17, 182 << 18, 156 << 17);
+        Actor_SetPosition(17, PIXELS(728), PIXELS(312));
       if (Engine_GameFlagIsSet(0x975))
-        Actor_SetPosition(18, 186 << 18, 156 << 17);
+        Actor_SetPosition(18, PIXELS(744), PIXELS(312));
       TunnelRuins_MarkActorCells();
       break;
     case 6:
@@ -1279,10 +1352,10 @@ s32 FieldScene_InitializeActorGroups(void) {
       if (!Engine_GameFlagIsSet(0x109)) {
         Object_GetById(10)->motionFlags = 0;
         Object_GetById(11)->motionFlags = 0;
-        Object_GetById(10)->y.fixed = -0x300000;
-        Object_GetById(11)->y.fixed = -0x300000;
-        Object_GetById(10)->priorityFlags |= 2;
-        Object_GetById(11)->priorityFlags |= 2;
+        Object_GetById(10)->y.fixed = -PIXELS(48);
+        Object_GetById(11)->y.fixed = -PIXELS(48);
+        Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(11)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Object_GetById(10)->collisionFlags &= 0xfe;
         Object_GetById(11)->collisionFlags &= 0xfe;
         Object_GetById(10)->timer = 3;
@@ -1300,22 +1373,22 @@ s32 FieldScene_InitializeActorGroups(void) {
         Object_GetById(14)->timer = 0;
         if (gGameState.entrance != 5)
           break;
-        Object_GetById(10)->y.fixed = -0x200000;
-        Object_GetById(11)->y.fixed = -0x400000;
+        Object_GetById(10)->y.fixed = -PIXELS(32);
+        Object_GetById(11)->y.fixed = -PIXELS(64);
         Object_GetById(10)->timer = 2;
         Object_GetById(11)->timer = 4;
-        Actor_SetPosition(12, 200 << 16, 152 << 16);
+        Actor_SetPosition(12, PIXELS(200), PIXELS(152));
         Object_GetById(12)->timer = 11;
         Object_GetById(12)->update = ACTOR_UPDATE_PANEL;
-        Object_GetById(12)->priorityFlags |= 2;
-        Actor_SetPosition(13, 200 << 16, 152 << 16);
+        Object_GetById(12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        Actor_SetPosition(13, PIXELS(200), PIXELS(152));
         Object_GetById(13)->timer = 12;
         Object_GetById(13)->update = ACTOR_UPDATE_PANEL;
-        Object_GetById(13)->priorityFlags |= 2;
-        Engine_ActorSetPosition(14, 136 << 16, 152 << 16);
+        Object_GetById(13)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        Engine_ActorSetPosition(14, PIXELS(136), PIXELS(152));
         Object_GetById(14)->timer = 10;
         Object_GetById(14)->update = ACTOR_UPDATE_PANEL;
-        Object_GetById(14)->priorityFlags |= 2;
+        Object_GetById(14)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Engine_EventWait(2);
         Engine_GameFlagSet(0x200);
         Engine_GameFlagSet(0x201);
@@ -1335,25 +1408,26 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 12:
       Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
-      FieldScene_RunLateSequenceHead();
-      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor, 0xc80);
+      TunnelRuins_ShowRevealObjects();
+      FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
+                                 TUNNEL_CALLBACK_PRIORITY);
       break;
     case 13:
     case 14:
       Engine_EventWait(1);
       if (Engine_GameFlagIsSet(0x984)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
-        Actor_SetPosition(19, 204 << 17, 198 << 18);
-        Actor_SetPosition(20, 188 << 17, 198 << 18);
-        Actor_SetPosition(21, 204 << 17, 190 << 18);
-        Actor_SetPosition(22, 188 << 17, 190 << 18);
-        Actor_SetPosition(23, 196 << 17, 194 << 18);
+        Actor_SetPosition(19, PIXELS(408), PIXELS(792));
+        Actor_SetPosition(20, PIXELS(376), PIXELS(792));
+        Actor_SetPosition(21, PIXELS(408), PIXELS(760));
+        Actor_SetPosition(22, PIXELS(376), PIXELS(760));
+        Actor_SetPosition(23, PIXELS(392), PIXELS(776));
       }
-      Object_GetById(19)->motionFlags &= 0xfe;
-      Object_GetById(20)->motionFlags &= 0xfe;
-      Object_GetById(21)->motionFlags &= 0xfe;
-      Object_GetById(22)->motionFlags &= 0xfe;
-      Object_GetById(23)->motionFlags &= 0xfe;
+      Object_GetById(19)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Object_GetById(20)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Object_GetById(21)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Object_GetById(22)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Object_GetById(23)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
       Engine_ActorSetChildValue(19, 4);
       Engine_ActorSetChildValue(20, 1);
       Engine_ActorSetChildValue(21, 4);
@@ -1379,7 +1453,7 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 17:
       Map_CopyCellAttributes(49, 43, 1, 1, 49, 107);
-      FieldScene_RunLateSequenceHead();
+      TunnelRuins_ShowRevealObjects();
       break;
     }
   }
@@ -1422,9 +1496,10 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
+// Step heights indexed by the supporting actor's timer.
 u32 gTunnelRuins_SettleHeights[] = {
-    0xfff00000, 0xfff00000, 0xffe00000, 0xffd00000,
-    0xffc00000, 0xffb00000, 0xffb00000,
+    -PIXELS(16), -PIXELS(16), -PIXELS(32), -PIXELS(48),
+    -PIXELS(64), -PIXELS(80), -PIXELS(80),
 };
 
 const s32 *gEffectScripts[] = {
@@ -1434,15 +1509,15 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 gTunnelRuins_ShrinkScript[] = {
-    SC_SET(SW_SCALE_X, 0x9999),
-    SC_SET(SW_SCALE_Y, 0x9999),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 5),
     SC_SET(SW_COLLISION, 0),
-    SC_CALL(SceneState_ApplyArgMode0AndReturnZero),
+    SC_CALL(TunnelRuins_RefreshActorAfterShrinking),
     SC_END,
 };
 
 s32 gTunnelRuins_StretchScript[] = {
-    SC_SET(SW_SCALE_Y, 0x19999),
+    SC_SET(SW_SCALE_Y, 8 * Q16_ONE / 5),
     SC_END,
 };
 
@@ -1572,41 +1647,39 @@ struct ScenePlacement gTunnelRuinsPlacements1[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gTunnelRuinsPlacementsOther[] = {
-    SCENE_EXITS(255),        SCENE_EXIT(0, 1, 0),    SCENE_EXIT(24, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(10, 0, 128), SCENE_EXIT(0, 0, 44),
-    SCENE_EXIT(0, 227, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(24, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(15, 0, 128), SCENE_EXIT(0, 0, 44),
-    SCENE_EXIT(0, 257, 0),   SCENE_EXIT(0, 7, 0),    SCENE_EXIT(8, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(9, 0, 128),  SCENE_EXIT(0, 0, 44),
-    SCENE_EXIT(0, 257, 0),   SCENE_EXIT(0, 7, 0),    SCENE_EXIT(12, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(9, 0, 128),  SCENE_EXIT(16, 0, 44),
-    SCENE_EXIT(0, 256, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(9, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(8, 0, 128),  SCENE_EXIT(0, 0, 44),
-    SCENE_EXIT(0, 256, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(11, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(8, 0, 128),  SCENE_EXIT(16, 0, 44),
-    SCENE_EXIT(0, 256, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(13, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(8, 0, 128),  SCENE_EXIT(16, 0, 44),
-    SCENE_EXIT(0, 258, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(8, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(49, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 258, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(49, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(43, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 253, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(46, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(19, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 253, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(47, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(19, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 500, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(21, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(47, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 500, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(27, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(47, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 500, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(21, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(50, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 500, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(27, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(50, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 500, 0),   SCENE_EXIT(0, 1, 0),    SCENE_EXIT(24, 0, 128),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(51, 0, 128), SCENE_EXIT(0, 0, 36),
-    SCENE_EXIT(0, 4095, 15), SCENE_EXIT(0, 0, 0),    SCENE_EXIT(0, 0, 0),
-    SCENE_EXIT(0, 0, 0),     SCENE_EXIT(0, 0, 0),    SCENE_EXIT(0, 0, 0),
+struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
+    {255, 0, ACTOR_STAND, PIXELS(392), 0, PIXELS(168), FACING_NORTH,
+     TALK_KEEP_FACING, 0},
+    {227, 0, ACTOR_STAND, PIXELS(392), 0, PIXELS(248), FACING_NORTH,
+     TALK_KEEP_FACING, 0},
+    {257, 0, 7, PIXELS(136), 0, PIXELS(152), FACING_NORTH, TALK_KEEP_FACING, 0},
+    {257, 0, 7, PIXELS(200), 0, PIXELS(152), FACING_NORTH, TALK_KEEP_FACING,
+     PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {256, 0, ACTOR_STAND, PIXELS(152), 0, PIXELS(136), FACING_NORTH,
+     TALK_KEEP_FACING, 0},
+    {256, 0, ACTOR_STAND, PIXELS(184), 0, PIXELS(136), FACING_NORTH,
+     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {256, 0, ACTOR_STAND, PIXELS(216), 0, PIXELS(136), FACING_NORTH,
+     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {258, 0, ACTOR_STAND, PIXELS(136), 0, PIXELS(792), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {258, 0, ACTOR_STAND, PIXELS(792), 0, PIXELS(696), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {253, 0, ACTOR_STAND, PIXELS(744), 0, PIXELS(312), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {253, 0, ACTOR_STAND, PIXELS(760), 0, PIXELS(312), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {500, 0, ACTOR_STAND, PIXELS(344), 0, PIXELS(760), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {500, 0, ACTOR_STAND, PIXELS(440), 0, PIXELS(760), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {500, 0, ACTOR_STAND, PIXELS(344), 0, PIXELS(808), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {500, 0, ACTOR_STAND, PIXELS(440), 0, PIXELS(808), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {500, 0, ACTOR_STAND, PIXELS(392), 0, PIXELS(824), FACING_SOUTH,
+     TALK_KEEP_FACING, 0},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1629,68 +1702,68 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
     {EVENT_EXIT, 16, CONDITION_ALWAYS, 16},
     {EVENT_EXIT, 17, CONDITION_ALWAYS, 17},
     {EVENT_EXIT, 18, CONDITION_ALWAYS, 18},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_JumpLeaderDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
-    {0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SCRIPT)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
+    {0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MoveFirstActorPair)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
         EVENT_SCRIPT(TunnelRuins_RunLeaderSpray)},
-    {0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_SCRIPT)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+    {0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MoveSecondActorPair)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_JumpLeaderDownLedge)},
     {TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
     {TOUCH_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneState_RunUnlessActorZeroAtTile32x50)},
+        EVENT_SCRIPT(TunnelRuins_MoveWestUnlessAtTile32x50)},
     {TOUCH_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneState_RunUnlessActorZeroAt30_52)},
+        EVENT_SCRIPT(TunnelRuins_MoveNorthUnlessAtTile30x52)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
-    {0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_SCRIPT)},
-    {0x202, 29, 0x971, EVENT_SCRIPT(EV29_SCRIPT)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderSouth)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_EnterPlatformGroup)},
+    {0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MovePlatformGroup)},
+    {0x202, 29, 0x971, EVENT_SCRIPT(TunnelRuins_MoveActor18AndCheckLowering)},
     {TOUCH_WALKING_INTO(FACING_EAST), 29, 0x200,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 29, 0x200,
-        EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 29, 0x200,
-        EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderNorth)},
     {TOUCH_WALKING_INTO(FACING_WEST), 31, 0x200,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
     {TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
-    {0x202, 30, 0x972, EVENT_SCRIPT(FieldScene_RunFourStepSequenceA)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
+    {0x202, 30, 0x972, EVENT_SCRIPT(TunnelRuins_MoveActor19AndCheckLowering)},
     {TOUCH_WALKING_INTO(FACING_WEST), 30, 0x201,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 30, 0x201,
-        EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 30, 0x201,
-        EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 32, 0x202, EVENT_SCRIPT(FieldScene_RunFourStepSequenceA)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderNorth)},
+    {TOUCH_WALKING_INTO(FACING_EAST), 32, 0x202, EVENT_SCRIPT(TunnelRuins_MoveActor19AndCheckLowering)},
     {TOUCH_WALKING_INTO(FACING_EAST), 32, 0x201,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
     {TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
-    {SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SEARCH)},
-    {PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
-    {PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS,
-        EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
-    {PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS,
-        EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
-    {PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
-    {PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
-    {PSYNERGY_ON_ACTOR(0x4e), 15, 0x200, EVENT_SCRIPT(EV15_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x4e), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x4e), 17, 0x970, EVENT_SCRIPT(EV17_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x8c), 18, 0x971, EVENT_SCRIPT(EV18_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x200, EVENT_SCRIPT(EV20_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x8c), 19, 0x972, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x201, EVENT_SCRIPT(EV21_PSYNERGY)},
-    {0x10002115, 19, 0x202, EVENT_SCRIPT(EV19_SCRIPT)},
-    {PSYNERGY_ON_ACTOR(0x21), 19, 0x202, EVENT_SCRIPT(SceneState_SetValue202ThenCall)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
+    {SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_ReadFirstStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestoreFirstPairCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestoreFirstPairCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS,
+        EVENT_SCRIPT(TunnelRuins_RestoreSecondPairCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS,
+        EVENT_SCRIPT(TunnelRuins_RestoreSecondPairCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_RestorePlatformCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, 0x200, EVENT_SCRIPT(TunnelRuins_ActivateWhirlwindSwitch15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, 0x201, EVENT_SCRIPT(TunnelRuins_ActivateWhirlwindSwitch16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x970, EVENT_SCRIPT(TunnelRuins_CompleteWhirlwind17)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x971, EVENT_SCRIPT(TunnelRuins_LowerActor18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x200, EVENT_SCRIPT(TunnelRuins_FreezeActor20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x972, EVENT_SCRIPT(TunnelRuins_LowerActor19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x201, EVENT_SCRIPT(TunnelRuins_FreezeActor21)},
+    {0x10002115, 19, 0x202, EVENT_SCRIPT(TunnelRuins_StartActor19Flicker)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 19, 0x202, EVENT_SCRIPT(TunnelRuins_DouseActor19)},
     {SCENE_EVENTS_END},
 };
 
@@ -1709,50 +1782,50 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {0x21, 14, CONDITION_ALWAYS, 14},
-    {0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SCRIPT)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+    {0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MoveActor8Pair)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_JumpLeaderDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
         EVENT_SCRIPT(TunnelRuins_RunLeaderSpray)},
-    {0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
+    {0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_AdvanceMovablePair)},
     {TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderEast)},
     {TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
-    {0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(EV29_TOUCH)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderWest)},
+    {0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_AdvanceMovablePair)},
+    {TOUCH_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MoveAndSaveActorPositions)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
-    {0x202, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SCRIPT)},
-    {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH)},
-    {SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_SEARCH)},
+        EVENT_SCRIPT(TunnelRuins_MoveLeaderNorth)},
+    {0x202, 41, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_MoveDoorPuzzleActor)},
+    {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_SearchLockedDoor)},
+    {SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_ReadSecondStatue)},
     {SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(0x71)},
     {SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(0x54)},
-    {PSYNERGY_ON_ACTOR(0x8c), 8, 0x204, EVENT_SCRIPT(EV08_PSYNERGY)},
-    {0x10002115, 8, 0x203, EVENT_SCRIPT(EV08_SCRIPT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x204, EVENT_SCRIPT(EV09_PSYNERGY)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
-    {PSYNERGY_ON_ACTOR(0x93), 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
-    {PSYNERGY_ON_ACTOR(0x93), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x204, EVENT_SCRIPT(TunnelRuins_FinishActor8Move)},
+    {0x10002115, 8, 0x203, EVENT_SCRIPT(TunnelRuins_StartActor8Flicker)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x204, EVENT_SCRIPT(TunnelRuins_FreezeActor9)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_PlaceCarriedActor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 13, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_PlaceCarriedActor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 14, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_PlaceCarriedActor)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(FieldScene_RunLateSequenceSecond)},
+        EVENT_SCRIPT(TunnelRuins_HideRevealObjects)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
-        EVENT_SCRIPT(FieldScene_RunLateSequenceHead)},
-    {PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneState_SetSlot17And18Selectors)},
-    {PSYNERGY_ON_ACTOR(0x8c), 18, CONDITION_ALWAYS,
-        EVENT_SCRIPT(SceneState_SetSlot17And18Selectors)},
-    {PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
-    {PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
-    {PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
-    {PSYNERGY_ON_ACTOR(0x8c), 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
-    {PSYNERGY_ON_ACTOR(0x8c), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+        EVENT_SCRIPT(TunnelRuins_ShowRevealObjects)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS,
+        EVENT_SCRIPT(TunnelRuins_SaveActor17And18Positions)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS,
+        EVENT_SCRIPT(TunnelRuins_SaveActor17And18Positions)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFiveActorDoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFiveActorDoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFiveActorDoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFiveActorDoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFiveActorDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesNorthwestOfMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,

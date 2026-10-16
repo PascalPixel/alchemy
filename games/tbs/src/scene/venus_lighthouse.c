@@ -112,7 +112,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   effect = Engine_ObjectCreate(type, x, y, z);
   if (effect != 0) {
-    ((struct AnimationObject *)effect->sprite)->part[0].priority = 0;
+    ((struct AnimationObject *)effect->sprite)->image.priority = 0;
     VenusLighthouse_ConfigurePassageEffect(effect, 14);
     Engine_ObjectSetBlendMode(effect, 1);
     return effect;
@@ -127,7 +127,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   object = Engine_ObjectCreate(type, x, y, z);
   if (object != 0) {
-    ((struct AnimationObject *)object->sprite)->part[0].priority = 1;
+    ((struct AnimationObject *)object->sprite)->image.priority = 1;
     VenusLighthouse_ConfigurePassageEffect(object, 15);
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     return object;
@@ -452,12 +452,12 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 
 // Allow the leader to be the current actor-effect target.
 static void VenusLighthouse_EnableLeaderEffectTarget(void) {
-  *(s32 *)(gActorEffectWork + 24) = Object_GetById(ACTOR_PARTY_LEADER);
+  gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
 // Clear the current actor-effect target as the leader leaves its region.
 static void VenusLighthouse_ClearLeaderEffectTarget(void) {
-  *(s32 *)(gActorEffectWork + 24) = 0;
+  gActorEffectWork->actor = NULL;
 }
 
 // Shared source is included here in ROM order.
@@ -505,8 +505,8 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_PlayCue(188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
   BattleFx_PlayQueuedSound();
@@ -1256,13 +1256,13 @@ static void VenusLighthouse_FixBlockAtDestination(struct FieldActor *block) {
 
 // Remove a fallen Carry block, or restore collision under the remaining blocks.
 static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 zero;
   struct FieldActor *passageEffect;
 
   sprite = block->sprite;
-  if (sprite->priority == 3) {
-    sprite->priority = 1;
+  if (sprite->image.priority == 3) {
+    sprite->image.priority = 1;
     zero = 0;
     block->bounce = zero;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
@@ -1323,7 +1323,7 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Engine_EventWait(30);
       Engine_AudioPlayCue(239);
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
       Engine_EventWait(20);
       dustX = 0x1200000;
       column = 29;
@@ -1362,7 +1362,7 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
       Map_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       Engine_AudioPlayCue(288);
       Engine_AudioPlayCue(188);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_EventRequestExit(11);
@@ -1514,7 +1514,7 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
     }
     // Preserve overlapping actors while the selected block sinks into its
     // socket.
-    savedPriority = leader->sprite->priority;
+    savedPriority = leader->sprite->image.priority;
     if (leader->z.fixed >> 20 <= gVenusSwitchCells[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
           block->x.fixed, block->y.fixed, block->z.fixed - 0x40000, 20);
@@ -1737,7 +1737,7 @@ static void VenusLighthouse_ResolveFloatingBlock(void) {
       Map_CopyCellAttributes(4, 19, 1, 1, column, row);
       break;
     }
-    if (block->sprite->priority == 3 &&
+    if (block->sprite->image.priority == 3 &&
         !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
       /* FAKEMATCH: forced temporary: the zero is the search counter's, set
        * before the priority call, so movs r5, #0 follows the call as the bytes
@@ -1842,7 +1842,7 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
       Engine_AudioPlayCue(161);
       Map_CopyCellsTo(44, 83, 44, 80, 3, 3);
       Engine_EventWait(30);
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
       Engine_AudioPlayCue(239);
       Engine_EventWait(20);
       dustX = 0x2680000;
@@ -1874,7 +1874,7 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
       Engine_AudioPlayCue(288);
       Engine_AudioPlayCue(188);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_EventRequestExit(18);
@@ -1906,7 +1906,7 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
       Map_CopyCellsTo(63, 29, 49, 20, 1, 1);
       Engine_AudioPlayCue(161);
       Engine_EventWait(30);
-      Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Map_SetShake(0x10000, 0x10000, 0x10000);
       Engine_AudioPlayCue(239);
       Engine_EventWait(20);
       dustX = 0x2c00000;
@@ -1938,7 +1938,7 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
       Engine_AudioPlayCue(288);
       Engine_AudioPlayCue(188);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_EventRequestExit(19);
@@ -2006,7 +2006,7 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
     if (switchIndex == 8)
       continue;
 
-    savedPriority = leader->sprite->priority;
+    savedPriority = leader->sprite->image.priority;
     if ((leader->z.fixed >> 20) <= gVenusPillarCells[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
           block->x.fixed, block->y.fixed, block->z.fixed - 0x40000, 20);
@@ -2023,8 +2023,8 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
     block->terrainId = 0;
     motionFlags = &block->motionFlags;
     *motionFlags = 3;
-    ((union FieldObject *)block)->effect.velocityY = 0x1999;
-    ((union FieldObject *)block)->effect.velocityX = 0;
+    ((union FieldObject *)block)->effect.velocity.y = 0x1999;
+    ((union FieldObject *)block)->effect.velocity.x = 0;
     Map_CopyCellAttributes(6, 44, 1, 1, gVenusPillarCells[switchIndex].x,
                            gVenusPillarCells[switchIndex].z);
     OverlayObject_WaitUntilIdle(block);

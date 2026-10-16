@@ -318,13 +318,13 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
   Engine_AudioPlayCue(136);
   Actor_SetSpeed(id, 0x20000, 0x10000);
   Actor_SetDestination(id, 472, 288);
-  work->object.effect.velocityY = 0xcccc;
+  work->object.effect.velocity.y = 0xcccc;
   work->object.actor.motionFlags = 3;
   work->object.actor.terrainId = 0;
   Engine_ActorWaitForMove(id);
   StagedActorPairScene_WaitForHeight(work, 0x200000);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
+  Map_SetShake(-1, -1, 0xe666);
   // Emit a complete particle fan, including its closing direction.
   for (cnt = 0; cnt < 17; cnt++) {
     angle = cnt << 12;

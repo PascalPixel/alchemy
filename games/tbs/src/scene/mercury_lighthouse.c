@@ -238,14 +238,14 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
       GameFlag_IsSet(0x312) != 0) {
     GameFlag_Set(0x876);
     Engine_EventWait(30);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Map_SetShake(0x10000, 0x10000, 0x10000);
     Engine_AudioPlayCue(141);
     Engine_EventWait(60);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_AudioPlayCue(0x121);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_EventRequestExit(13);
   } else {
@@ -442,8 +442,8 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
       Map_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
       Map_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
       if (delayFrames != 0) {
-        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        Map_SetShake(0x50000, 0x50000, 0x10000);
+        Map_SetShake(-1, -1, 0xe666);
         Engine_EventWait(delayFrames);
       }
       step++;
@@ -480,8 +480,8 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
      * 4: differ 20. */
     Engine_MapCopyCellsTo(105, 51, column, 32, copyWidth, stripHeight);
     if (delayFrames != 0) {
-      Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(0x50000, 0x50000, 0x10000);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_EventWait(delayFrames);
     }
     step++;
@@ -1515,7 +1515,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   } while ((u32)wave <= 15);
   Engine_EventWait(60);
   Engine_AudioPlayCue(141);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
   Engine_EventWait(60);
   effectOptions->palette = 7;
   effectOptions->startScaleX = 0xb333;
@@ -1546,7 +1546,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 3);
   Engine_AudioPlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   BattleFx_PlayQueuedSound();
   Engine_EventWait(30);
@@ -2179,8 +2179,8 @@ s32 Scene_Initialize(void) {
       Engine_EventWait(32);
       Engine_AudioPlayCue(188);
       SetEffectRecordMode(Object_GetById(8), 2);
-      Work_SetValuesIfNonNegative(192 << 10, 192 << 10, 128 << 9);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(192 << 10, 192 << 10, 128 << 9);
+      Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       Engine_EventWait(60);
       Engine_EventRequestExit(16);
@@ -2525,7 +2525,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   if (sprite != 0) {
     AnimationObjects_SelectAnimation(sprite, 2);
     sprite->flags = 0;
-    sprite->part[0].priority = 3;
+    sprite->image.priority = 3;
   }
 }
 

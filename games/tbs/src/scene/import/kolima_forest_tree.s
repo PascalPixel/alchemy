@@ -52,7 +52,7 @@
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Battle_ResetEffectCounter, 1
-	.set import.Object_ReplaceResourceEntry, 1
+	.set import.Sprite_ShareVramCache, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.Engine_AudioPlayCue, 1

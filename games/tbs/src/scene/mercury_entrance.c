@@ -352,8 +352,8 @@ s32 MercuryEntrance_ApplyEntryState(void) {
     Engine_AudioPlayCue(188);
     Actor_SetAttachedEffect(0, 0x101);
     Engine_ActorSetAnimation(0, 22);
-    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x50000, 0x50000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Actor_SetAttachedEffect(0, 0x100);
     Actor_Get(0)->gravity = 0x10000;
@@ -532,7 +532,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
     if (sprite != 0) {
       AnimationObjects_SelectAnimation(sprite, 2);
       sprite->flags = 0;
-      sprite->part[0].priority = 3;
+      sprite->image.priority = 3;
     }
   }
 }

@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *ValeHome_GetEntrances(void);
+struct SceneEntrance *ValeHome_GetEntrances(void);
 s32 ValeHome_GetDefaultResult(void);
-void *SceneData_SelectTableByFlag834(void);
-void *SceneData_SelectTableByFlags834And87a(void);
-void *SceneData_SelectTableByFlags87a_815_834(void);
+u32 *ValeHome_SelectExits(void);
+struct ScenePlacement *ValeHome_SelectPlacements(void);
+struct SceneEvent *ValeHome_SelectEvents(void);
 s32 ValeHome_RestoreEntryState(void);
 extern u32 gValeHome_Actor22ActionsHead[];
 extern s32 gValeHome_Actor22Actions[];

@@ -117,7 +117,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
   // Part 0: 256 colors, priority 2.
   // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
-  word = (u32 *)found->part;
+  word = (u32 *)found;
   *word++ = 0;
   *word++ = shape | 0x2000;
   *word++ = tile | 0x800;

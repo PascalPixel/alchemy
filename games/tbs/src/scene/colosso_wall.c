@@ -119,13 +119,6 @@ static void ColossoWall_PushAdjacentObstacle(void);
 
 #define WORK_SLOT_STAGE 59
 
-typedef struct PartyInteractionRecord {
-  u8 padding00[10];
-  s16 x;
-  u8 padding0c[6];
-  s16 y;
-} PartyInteractionRecord;
-
 typedef struct ColossoWallSceneRecord {
   u8 pad00[6];
   u16 facing;
@@ -256,7 +249,7 @@ static void ColossoWall_KnockDownForceObstacle(void) {
   s32 rotationStep;
   s32 settleFrames;
   s32 settleRotationStep;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
 
   obstacle = Object_GetById(30);
   sprite = obstacle->sprite;
@@ -1970,7 +1963,7 @@ struct SceneEvent gColossoWallEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 39, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
     { SCENE_EVENTS_END },
 };
 

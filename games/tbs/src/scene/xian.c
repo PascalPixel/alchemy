@@ -86,7 +86,7 @@ static void Xian_UpdateFrozenPuddleLayer(void) {
 // Rotate the log during the student's strike and Force animation.
 static void Xian_RotateTrainingTree(void) {
   struct FieldActor *tree = Object_GetById(TRAINING_TREE);
-  struct FieldSprite *sprite = tree->sprite;
+  struct AnimationObject *sprite = tree->sprite;
   sprite->rotation += 0x1400;
 }
 
@@ -663,7 +663,7 @@ s32 Xian_SetupScene(void) {
   for (decorationIndex = 0; decorationIndex <= 2; decorationIndex++) {
     struct FieldActor *actor;
     actor = Object_GetById(decorationIndex + 23);
-    actor->sprite->priority = 1;
+    actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
     actor->collisionFlags = 8;
     Engine_ActorSetSpriteFlags(actor, 0);

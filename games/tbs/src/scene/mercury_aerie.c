@@ -166,9 +166,9 @@ static void FieldScene_RunFourActorPresentation(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Event_PlayCue(141);
-  Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+  Map_SetShake(0x50000, 0x50000, 0x10000);
   Event_PlayCue(0x121);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1573,7 +1573,7 @@ struct LampSpark {
   u8 unk00[0x30];
   s32 swing;
   u8 unk34[0x1c];
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 unk54;
   u8 motionFlags;
   u8 unk56[0x0e];
@@ -1586,7 +1586,7 @@ struct LampSpark {
 static void MercuryAerie_FlickerActorEight(void) {
   struct FieldActor *lamp;
   struct LampSpark *spark;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct MapScrollWork *map;
   s32 height;
   s32 scale;
@@ -1639,7 +1639,7 @@ static void MercuryAerie_FlickerActorEight(void) {
    * field store lets the reload schedule first (score 210). Field store:
    * differ 2. */
   *(u8 *)&sprite->flags = 0;
-  sprite->priority = lamp->sprite->priority;
+  sprite->image.priority = lamp->sprite->image.priority;
 }
 
 s32 gEffectScript0[] = {

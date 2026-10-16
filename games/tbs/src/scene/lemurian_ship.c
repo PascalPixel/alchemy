@@ -76,10 +76,10 @@ enum { FLAG_SKIP_SCENE_MUSIC = 0x11a };
 // an s32, so each store reloads it as the native does; read as the field,
 // the two stores share one load.
 #define ACTOR_SPRITE(actor)                                                    \
-  ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
+  ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n)                                                 \
-  ((n) == 9 ? (ACTOR_SPRITE(actor)->priority = 1)                              \
-            : (ACTOR_SPRITE(actor)->secondPriority = 1))
+  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                              \
+            : (ACTOR_SPRITE(actor)->shadow.priority = 1))
 
 s32 Math_DivideUnsigned();
 
@@ -258,7 +258,7 @@ static void Ship_UpdateSwell(void) {
       actor->work = 1;
       actor->motionFlags = 0;
       actor->priorityFlags = 2;
-      actor->sprite->priority = 2;
+      actor->sprite->image.priority = 2;
       Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
       Object_SetMode(actor, 0);
     }
@@ -605,12 +605,12 @@ static void RaiseTheShip(void) {
   gSprayActive = 1;
   Event_Wait(20);
   Event_PlayCue(163);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Event_Wait(60);
   gSprayActive = 1;
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   Event_Wait(60);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   gOrbGlowFadeFrames = 0;
   FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PRIORITY_SCENE);
   // The ship rises 90 pixels, 0.2 pixels a frame.
@@ -637,7 +637,7 @@ static void RaiseTheShip(void) {
     Event_Wait(1);
   }
   Event_Wait(40);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   gShipHullY = map->layers[6].y;
   gShipDeckY = map->layers[7].y;
   gSwellActive = 1;

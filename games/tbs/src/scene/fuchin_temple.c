@@ -620,7 +620,7 @@ static void Xian_RepeatChiDemonstrationSetup(void) {
   tree->scaleX = 0xcccc;
   tree = Object_GetById(19);
   {
-    struct FieldSprite *sprite = tree->sprite;
+    struct AnimationObject *sprite = tree->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;
@@ -922,7 +922,7 @@ static void Xian_SummonObserversForChiDemonstration(void) {
   actor->scaleX = 0xcccc;
   actor = Actor_Get(19);
   {
-    struct FieldSprite *sprite = actor->sprite;
+    struct AnimationObject *sprite = actor->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;
@@ -1197,7 +1197,7 @@ static void Xian_DiscussChiAfterTreeFalls(void) {
   actor->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(19);
   {
-    struct FieldSprite *sprite = actor->sprite;
+    struct AnimationObject *sprite = actor->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;

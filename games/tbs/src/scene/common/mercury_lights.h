@@ -17,18 +17,10 @@
 #include "map.h"
 #include "io_reg.h"
 
-struct MercuryLights {
-  s32 lit;
-  s32 region;
-  s32 pad08[3];
-  struct FieldActor *lower;
-  struct FieldActor *upper;
-};
-
 void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st) {
-  struct ObjectRuntime *actor;
+  struct FieldActor *actor;
   struct FieldActor *obj;
-  struct FieldSprite *anim;
+  struct AnimationObject *anim;
   struct MapCell *cell;
   s32 z;
   s32 flag;
@@ -37,34 +29,35 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st) {
   flag = Engine_GameFlagIsSet(0x109);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));
-    st->region = region;
+    st->terrainCode = region;
     return;
   }
   actor = Engine_ActorLookup(gGameState.selectedActor);
-  z = actor->z;
+  z = actor->z.fixed;
   cell = (struct MapCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) +
-         actor->x / 0x100000;
-  if (st->lit != 0 && st->lower != 0) {
-    obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
+         actor->x.fixed / 0x100000;
+  if (st->levels != 0 && st->pillar != 0) {
+    obj = Engine_ObjectCreate(26, actor->x.fixed, actor->y.fixed + 0x180000, z);
     if (obj != 0) {
       obj->terrainHeight = actor->terrainHeight;
       anim = obj->sprite;
       Engine_ObjectSetScript(obj, gMercury_PillarScript);
-      obj->linkedObject = (struct FieldActor *)actor;
+      obj->linkedObject = actor;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (anim != 0) {
-        AnimationObjects_SelectAnimation(anim, 6 - st->lit);
+        AnimationObjects_SelectAnimation(anim, 6 - st->levels);
         anim->flags = 0;
-        anim->priority = 1;
+        anim->image.priority = 1;
       }
-      st->lower = obj;
+      st->pillar = obj;
     }
   } else {
-    st->lower = 0;
+    st->pillar = 0;
   }
-  if (cell->collisionCode == region && st->upper != 0) {
-    obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);
+  if (cell->collisionCode == region && st->stepEffect != 0) {
+    obj =
+        Engine_ObjectCreate(26, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     if (obj == 0)
       return;
     obj->terrainHeight = actor->terrainHeight;
@@ -78,8 +71,8 @@ void Mercury_SpawnLightObjects(s32 region, struct MercuryLights *st) {
       AnimationObjects_SelectAnimation(anim, 6);
       anim->flags = 0;
     }
-    st->upper = obj;
+    st->stepEffect = obj;
   } else {
-    st->upper = 0;
+    st->stepEffect = 0;
   }
 }

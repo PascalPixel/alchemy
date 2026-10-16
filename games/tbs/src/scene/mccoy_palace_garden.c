@@ -253,7 +253,7 @@ s32 Scene_Initialize(void) {
 
   actor = Object_GetById(WORKER_WEST);
   actor->priorityFlags = 0;
-  actor->sprite->priority = 1;
+  actor->sprite->image.priority = 1;
 
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
     Garden_ApplyProgress();

@@ -318,7 +318,7 @@ s32 ValeBabi_RestoreEntryState(void) {
 // Wake Isaac, lead him outside into the storm, and send him toward the exit.
 static void ValeBabi_RunIsaacsStormAwakening(void) {
   s32 firstMessage;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct MapScrollWork *mapWork;
   struct FieldActor *viewCenter;
   struct EventWork **eventSlot;
@@ -356,7 +356,7 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   firstMessage = MsgValeWake;
   UiText_ShowCenteredMessage(firstMessage, 1, 0);
   Engine_EventWait(40);
-  MapRender_SetValues(65536, 65536, 65536);
+  Map_SetShake(65536, 65536, 65536);
   Ui_SetMessageVoiceFromActor(8);
   UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
   ObjectDispatch_StopCallbacksAndHideLayers();
@@ -469,15 +469,6 @@ static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 // Set the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
-union PairObject {
-  union FieldObject object;
-  s32 words[28];
-  struct {
-    u8 unk00[0x68];
-    union PairObject *parent;
-  } link;
-};
-
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;
@@ -487,7 +478,7 @@ struct PairWork {
 // blending.
 static void ValeBabi_RunBoulderWarning(void) {
   struct FieldActor *actor;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u32 i;
   volatile u16 *alpha;
 
@@ -505,7 +496,7 @@ static void ValeBabi_RunBoulderWarning(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
-  sprite->priority = 1;
+  sprite->image.priority = 1;
   Actor_SetActionScript(10, gValeBabiRampActor10Action);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -802,7 +793,7 @@ static void ValeBabi_RestoreRoomPatch(void) {
 // Display the Mythril Bag icon while its actor lifts and examines it.
 static void ValeBabi_ShowMythrilBag(void) {
   struct FieldActor *actor;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   GlyphTransfer *glyph;
   u8 clear;
 
@@ -818,13 +809,13 @@ static void ValeBabi_ShowMythrilBag(void) {
   actor->motionFlags = clear;
   sprite = actor->sprite;
   actor->y.fixed = 0x50000;
-  sprite->partCount = clear;
-  sprite->fullColor = 0;
-  sprite->palette = 0;
+  sprite->count = clear;
+  sprite->image.fullColor = 0;
+  sprite->image.palette = 0;
   // Load the item icon into the temporary actor before animating the bag.
   glyph = Engine_HeapAllocate(17, sizeof(*glyph));
   Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
-  Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
+  Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
@@ -884,52 +875,51 @@ static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
 
 // Copy the parent's terrain height into two oppositely moving vertical effects.
 static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
-  union PairObject *parent = (union PairObject *)object;
-  union PairObject *pair[2];
-  union PairObject *child;
+  struct FieldActor *parent = &object->actor;
+  struct FieldActor *pair[2];
+  struct FieldActor *child;
   struct AnimationObject *part;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct PairWork *work = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = (union PairObject *)Engine_ObjectCreate(
-        26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-        parent->object.actor.z.fixed);
+    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
+                                parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
-      child->words[5] = parent->words[5];
-      part = (struct AnimationObject *)child->object.actor.sprite;
-      child->object.actor.motionFlags = 0;
-      child->object.effect.spin = 0;
-      child->link.parent = parent;
+      child->terrainHeight = parent->terrainHeight;
+      part = child->sprite;
+      child->motionFlags = 0;
+      child->timer = 0;
+      child->linkedObject = parent;
       if (part != NULL) {
-        sprite = (struct FieldSprite *)part;
+        sprite = part;
         Object_InitializeMode(part, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        sprite->unk1d0 = 1;
-        sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        part->part[0].size = 2;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        part->image.size = 2;
         part->entries[0]->frame = 0;
       }
     }
   }
   {
-    union PairObject *effectActor = pair[0];
-    struct FieldSprite *effectSprite = effectActor->object.actor.sprite;
+    struct FieldActor *effectActor = pair[0];
+    struct AnimationObject *effectSprite = effectActor->sprite;
 
-    effectActor->object.actor.update = Effect_AnimateVerticalNegative;
-    effectSprite->priority = 2;
+    effectActor->update = Effect_AnimateVerticalNegative;
+    effectSprite->image.priority = 2;
   }
   {
-    struct FieldActor *effectActor = &pair[1]->object.actor;
-    struct FieldSprite *effectSprite = effectActor->sprite;
+    struct FieldActor *effectActor = pair[1];
+    struct AnimationObject *effectSprite = effectActor->sprite;
 
-    effectSprite->priority = 2;
+    effectSprite->image.priority = 2;
     effectActor->update = Effect_AnimateVerticalPositive;
     effectActor->priorityFlags = 2;
   }

@@ -17,6 +17,7 @@
 #define NULL ((void *)0)
 #include "field_obj.h"
 #include "types.h"
+#include "animspr.h"
 #include "venus_aerie.h"
 #include "field_effect.h"
 #include "event.h"
@@ -52,12 +53,11 @@
 #include "objcmd.h"
 
 // Forward declarations.
-union PairObject;
 static void EV11_TOUCH(void);
 static void Scene_RunScriptedActorPresentation(void);
 static void VenusAerie_ShowPartyMember(s32 actor, s32 shown);
 static void SceneEffect_UpdateObjectByFrameParity(s32 a);
-static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent);
+static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent);
 static void FieldScene_RunStep6(void);
 static void Scene_RunPairedActorEffectSequence(void);
 static void VenusAerie_FlashScreen(void);
@@ -84,36 +84,9 @@ s32 Math_RemainderUnsigned(s32, s32);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-struct PairDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
-struct PairSprite {
-  struct FieldSprite sprite;
-  struct PairDetail *detail;
-};
-
-union PairObject {
-  union FieldObject object;
-  s32 words[28];
-  struct {
-    u8 unk00[0x68];
-    union PairObject *parent;
-  } link;
-};
-
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;
-};
-
-struct WorldMapOam {
-  u8 unk00[4];
-  u16 attr0;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
 };
 
 static s32
@@ -149,15 +122,15 @@ OverlayObject_StepScaleByCounter(struct ScriptInterpreter *interpreter) {
 }
 
 static void Effect_MoveWithDrag(union FieldObject *object) {
-  s32 velocityX = object->effect.velocityX;
+  s32 velocityX = object->effect.velocity.x;
   s32 velocityZ;
 
   object->effect.x += velocityX;
-  object->effect.y += object->effect.velocityY;
-  velocityZ = object->effect.velocityZ;
+  object->effect.y += object->effect.velocity.y;
+  velocityZ = object->effect.velocity.z;
   object->effect.z += velocityZ;
-  object->effect.velocityX = velocityX - velocityX / 22;
-  object->effect.velocityZ = velocityZ - velocityZ / 20;
+  object->effect.velocity.x = velocityX - velocityX / 22;
+  object->effect.velocity.z = velocityZ - velocityZ / 20;
   object->effect.scaleX += object->effect.scaleRateX;
   object->effect.scaleY += object->effect.scaleRateY;
   object->effect.sprite->rotation += object->effect.spin;
@@ -165,7 +138,7 @@ static void Effect_MoveWithDrag(union FieldObject *object) {
 
 static void VenusAerie_StepSpriteRotation(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
-  struct FieldSprite *sprite = actor->sprite;
+  struct AnimationObject *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
   if (((rotation + 0xffff) << 16) < 0) {
@@ -1092,56 +1065,53 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent) {
-  union PairObject *pair[2];
-  union PairObject *child;
-  struct PairSprite *part;
-  struct FieldSprite *sprite;
+static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
+  struct FieldActor *pair[2];
+  struct FieldActor *child;
+  struct AnimationObject *sprite;
   struct PairWork *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(131);
   for (i = 0; i < 2; ++i) {
-    child = (union PairObject *)Engine_ObjectCreate(
-        26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-        parent->object.actor.z.fixed);
+    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
+                                parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->words[5] = parent->words[5];
-      part = (struct PairSprite *)child->object.actor.sprite;
-      child->object.actor.motionFlags = 0;
-      child->object.effect.spin = 0;
-      child->link.parent = parent;
-      if (part != NULL) {
-        sprite = &part->sprite;
+      child->terrainHeight = parent->terrainHeight;
+      sprite = child->sprite;
+      child->motionFlags = 0;
+      child->timer = 0;
+      child->linkedObject = parent;
+      if (sprite != NULL) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        sprite->unk1d0 = 1;
-        sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct WorldMapOam *)sprite)->size = 2;
-        part->detail->field16 = 0;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        sprite->entries[0]->frame = 0;
       }
     }
   }
   {
-    union PairObject *p = pair[0];
-    struct FieldSprite *sp = p->object.actor.sprite;
+    struct FieldActor *effect = pair[0];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    p->object.actor.update =
-        (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
-    sp->priority = parent->object.actor.sprite->priority;
+    effect->update = Effect_AnimateVerticalNegative;
+    effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
-    struct FieldActor *p = &pair[1]->object.actor;
-    struct FieldSprite *sp = p->sprite;
+    struct FieldActor *effect = pair[1];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    sp->priority = parent->object.actor.sprite->priority;
-    p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
-    p->priorityFlags = 2;
+    effectSprite->image.priority = parent->sprite->image.priority;
+    effect->update = Effect_AnimateVerticalPositive;
+    effect->priorityFlags = 2;
   }
 }
 
@@ -1175,7 +1145,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
   struct FieldActor *first;
   union FieldObject *star = NULL;
   struct FieldActor *bird;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 *buffer;
   u32 i;
 
@@ -1350,10 +1320,10 @@ static void Scene_RunPairedActorEffectSequence(void) {
       22, actor->x.fixed, actor->y.fixed + PIXELS(8), actor->z.fixed);
   if (star != NULL) {
     sprite = star->actor.sprite;
-    sprite->partCount = 0;
-    sprite->fullColor = 0;
-    sprite->palette = 0;
-    sprite->priority = 0;
+    sprite->count = 0;
+    sprite->image.fullColor = 0;
+    sprite->image.palette = 0;
+    sprite->image.priority = 0;
     star->actor.priorityFlags &= ~1;
     star->actor.motionFlags = 0;
     star->actor.unk5c = 1;
@@ -1361,7 +1331,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
     star->actor.acceleration = 0xcccc;
     buffer = Heap_Allocate(17, 0x608);
     Item_LoadIcon(220);
-    Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+    Vram_Load(sprite->slot, 128, buffer + 0x400);
     Heap_Release(17);
   }
   Actor_SetSpritePriority(22, 1);
@@ -1376,8 +1346,8 @@ static void Scene_RunPairedActorEffectSequence(void) {
   bird->scaleY = 0xc000;
   if (star != NULL) {
     star->actor.motionFlags = 3;
-    star->effect.velocityY = 0x9999;
-    star->effect.velocityX = 0xcccc;
+    star->effect.velocity.y = 0x9999;
+    star->effect.velocity.x = 0xcccc;
     star->actor.velocityY = PIXELS(8);
     FieldObject_SetPosition(&star->actor, PIXELS(308), PIXELS(32), PIXELS(164));
   }
@@ -1391,7 +1361,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
     FieldObject_SetPosition(&star->actor, PIXELS(314), PIXELS(32), PIXELS(137));
     FieldObject_CommitPosition(&star->actor);
     Event_PlayCue(0x135);
-    star->actor.sprite->priority = 1;
+    star->actor.sprite->image.priority = 1;
     star->actor.velocityY = PIXELS(6);
     FieldObject_SetPosition(&star->actor, PIXELS(285), PIXELS(32), PIXELS(146));
     FieldObject_CommitPosition(&star->actor);
@@ -1483,7 +1453,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
   Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Event_PlayCue(145);
-  Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+  Map_SetShake(0x60000, 0x60000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(16);
   Task_Wait(20);
@@ -1492,22 +1462,22 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Task_Wait(60);
   Task_AddCallback(SceneEffect_SpawnParticlesAboveActor, TASK_PRIORITY_SCENE);
   Event_PlayCue(141);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(120);
   Actor_SetActionScript(24, gVenusAerie_BeamNarrowAction);
   Actor_SetActionScript(25, gVenusAerie_BeamNarrowAction);
   Task_Wait(120);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   ColorBuffer_ApplyTarget(0x203210, 0);
   ColorBuffer_Interpolate(120);
   Task_Wait(120);
   Event_PlayCue(63);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   ColorBuffer_ApplyTarget(0x10000, 0);
   ColorBuffer_Interpolate(120);
   Task_Wait(120);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
 
   Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 1);
   Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 0);
@@ -1784,7 +1754,7 @@ SceneEffect_UpdateCounterDrivenOrbit(union FieldObject *fieldObject) {
 static void SceneEffect_SpawnParticlesAboveActor(void) {
   struct FieldActor *center;
   union AerieOrbitEffect *effect;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 angle;
 
   if (GameFlag_IsSet(0x236) == 0 &&
@@ -1818,7 +1788,7 @@ static void SceneEffect_SpawnParticlesAboveActor(void) {
     effect->orbit.radius =
         Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
     sprite->flags = 0;
-    sprite->priority = 1;
+    sprite->image.priority = 1;
   }
 }
 
@@ -1968,7 +1938,7 @@ static void VenusAerie_RunLeapEntrance(void) {
   actor = Object_GetById(11);
   actor->x.fixed += PIXELS(16);
   SceneActor_ParkRecord(actor);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_ActorSetSpriteFlags(Actor_Get(PARTICLE_SOURCE_ACTOR), 0);
   Object_GetById(PARTICLE_SOURCE_ACTOR)->motionFlags = 4;
   Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
@@ -2035,7 +2005,7 @@ static void FieldScene_RunPairDefeat(void) {
   Engine_TaskWait(1);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -2208,7 +2178,7 @@ static void VenusAerie_RunActorTransition(void) {
 
   Engine_AudioPlayCue(19);
   Engine_AudioPlayCue(0x120);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
   Actor_ShowEmote(GARET, 0x100, 0);
   Actor_ShowEmote(IVAN, 0x100, 0);
@@ -2221,9 +2191,9 @@ static void VenusAerie_RunActorTransition(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 0);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   Engine_EventWait(10);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Object_GetById(24)->scaleX = 0x1999;
@@ -2231,7 +2201,7 @@ static void VenusAerie_RunActorTransition(void) {
   Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
   Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Engine_AudioPlayCue(145);
-  Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+  Map_SetShake(0x60000, 0x60000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   Engine_ColorBufferInterpolate(16);
   Engine_TaskWait(20);
@@ -2309,7 +2279,7 @@ static void VenusAerie_RunActorTransition(void) {
   Actor_SetPosition(6, PIXELS(188), PIXELS(316));
   Engine_ActorSetAnimation(6, 5);
   Engine_ActorSetSpriteFlags(Object_GetById(6), 0);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+  Map_SetShake(0x40000, 0x40000, 0x10000);
   Engine_ColorBufferApplyTarget(0x4063ff, 0);
   Engine_ColorBufferInterpolate(120);
   Actor_SetActionScript(24, gVenusAerie_BeamRiseAction);
@@ -2318,15 +2288,15 @@ static void VenusAerie_RunActorTransition(void) {
   Actor_SetActionScript(27, gVenusAerie_BeamRiseAction);
   Actor_SetActionScript(28, gVenusAerie_BeamRiseAction);
   Engine_TaskWait(120);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Engine_ColorBufferApplyTarget(0x203210, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   ColorBuffer_ApplyTarget(0x10000, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Object_GetById(24)->scaleY = 0x51e;
   Actor_SetActionScript(25, gVenusAerie_BeamCloseAction);
   Actor_SetActionScript(26, gVenusAerie_BeamCloseAction);
@@ -2415,7 +2385,7 @@ static void FieldScene_RestageParty(void) {
   Map_CopyCellAttributes(19, 6, 3, 7, 13, 6);
   Map_CopyCellAttributes(19, 6, 3, 7, 22, 13);
   Map_CopyCellAttributes(19, 6, 3, 7, 13, 13);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  Map_SetShake(0x20000, 0x20000, 0x10000);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorsRefresh();
   Engine_MapRedraw();
@@ -2480,7 +2450,7 @@ static void VenusAerie_TryToPreventFall(void) {
   Engine_EventSetMessage(MsgVenusNoooo);
   VenusAerie_ShowMessage(21);
   Event_PlayCue(62);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(0x10000, 0x10000, 0x10000);
   Camera_SetSpeed(0x4cccc, 0x9999);
   Camera_SetSpeed(0x40000, 0x8000);
   Camera_MoveTo(0xc00000, -0x400000, 0xee0000, 1);
@@ -2661,7 +2631,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_EventWait(60);
   VenusAerie_ShowMessage(MIA);
   Event_PlayCue(141);
-  Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+  Map_SetShake(0x60000, 0x60000, 0x10000);
   Engine_EventWait(40);
   Event_PlayCue(145);
   Map_CopyCellsTo(110, 105, 74, 4, 18, 23);
@@ -2704,9 +2674,9 @@ static void Scene_RunExtendedActorTransition(void) {
   Actor_SetActionScript(GARET, gVenusAerie_PartyHeadingAction);
   Actor_SetActionScript(IVAN, gVenusAerie_PartyHeadingAction);
   Actor_SetActionScript(MIA, gVenusAerie_PartyHeadingAction);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+  Map_SetShake(0x30000, 0x30000, 0x10000);
   Engine_EventWait(80);
-  Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+  Map_SetShake(0x60000, 0x60000, 0x10000);
   Engine_EventWait(40);
   Event_PlayCue(145);
   Map_CopyCellAttributes(110, 106, 18, 14, 10, 5);
@@ -2747,7 +2717,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
   Engine_ActorJump(MIA, 6, 0);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 0xe666);
   Engine_EventWait(80);
   Event_PlayCue(0x121);
   Engine_EventWait(40);
@@ -2818,7 +2788,7 @@ static void SceneActor_ParkRecord(struct FieldActor *actor) {
 static void VenusAerie_RunTransitionStep(void) {
   struct FieldActor *center;
   struct FieldActor *effect;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s32 spawn;
   u32 rise;
   s32 angle;
@@ -2828,7 +2798,7 @@ static void VenusAerie_RunTransitionStep(void) {
   switch (sTransitionStep) {
   case 0:
     Event_PlayCue(220);
-    Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
+    Map_SetShake(0x60000, 0x60000, 0x10000);
     ColorBuffer_ApplyTarget(0x2063ff, 1);
     Engine_ColorBufferInterpolate(8);
     break;
@@ -2837,7 +2807,7 @@ static void VenusAerie_RunTransitionStep(void) {
     Engine_ColorBufferInterpolate(8);
     break;
   case 16:
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Map_SetShake(0x10000, 0x10000, 0x10000);
     break;
   case 24:
     center->x.fixed = 152 << 17;
@@ -2918,7 +2888,7 @@ static void VenusAerie_RunTransitionStep(void) {
       effect->speed = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24;
       effect->speed = center->speed >> 16;
       sprite->flags = 0;
-      sprite->priority = 1;
+      sprite->image.priority = 1;
     }
   }
   sTransitionStep++;
@@ -2949,7 +2919,7 @@ static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor) {
 static void SceneEffect_SpawnParticlesBesideActor(void) {
   union FieldObject *center;
   struct FieldActor *effect;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct MapScrollWork *map;
   s32 drift;
   s32 phase;
@@ -2994,7 +2964,7 @@ static void SceneEffect_SpawnParticlesBesideActor(void) {
   effect->update = VenusAerie_UpdateOrbitingEffect;
   effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
   sprite->flags = 0;
-  sprite->priority = center->actor.sprite->priority;
+  sprite->image.priority = center->actor.sprite->image.priority;
 }
 
 static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object) {

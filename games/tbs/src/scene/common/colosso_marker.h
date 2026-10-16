@@ -48,8 +48,8 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   Engine_ActorSetPosition(id, x << 16, z << 16);
   Engine_ActorFaceActor(0, 0x4000, 0);
   IO_WRITE_QUEUE_PUSH(0x4000050, 0xf00, 0x20000);
-  sprite->part[0].objectMode = 1;
-  sprite->part[1].objectMode = 1;
+  sprite->image.objectMode = 1;
+  sprite->shadow.objectMode = 1;
   Engine_AudioPlayCue(252);
   for (i = 0; i <= 15; i += 2) {
     actor->scaleX = (i << 12) + 0x1000;
@@ -64,8 +64,8 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   actor->scaleX = 0x10000;
   actor->scaleY = 0x10000;
   Engine_EventWait(13);
-  sprite->part[0].objectMode = 0;
-  sprite->part[1].objectMode = 0;
+  sprite->image.objectMode = 0;
+  sprite->shadow.objectMode = 0;
   Engine_ActorSetAnimationAndWait(id, 3);
   Engine_EventWait(20);
 }

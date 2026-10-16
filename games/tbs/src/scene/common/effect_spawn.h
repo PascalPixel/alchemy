@@ -2,11 +2,13 @@
 #include "field_effect.h"
 #include "objdisp.h"
 #include "field_scene.h"
+#include "fixed_math.h"
 
+// Integrate linear motion, scale changes and rotation once per effect frame.
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
-  object->effect.x += object->effect.velocityX;
-  object->effect.y += object->effect.velocityY;
-  object->effect.z += object->effect.velocityZ;
+  object->effect.x += object->effect.velocity.x;
+  object->effect.y += object->effect.velocity.y;
+  object->effect.z += object->effect.velocity.z;
   object->effect.scaleX += object->effect.scaleRateX;
   object->effect.scaleY += object->effect.scaleRateY;
   object->effect.sprite->rotation += object->effect.spin;
@@ -19,17 +21,38 @@ extern const s32 *gEffectScripts[];
 
 enum {
   EFFECT_DEFAULT_TYPE = 222,
-  EFFECT_SCALE_ONE = 0x10000,
   EFFECT_OPTION_MASK = 0xffff0000,
   EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
+
+// Start with linear motion and the leader's draw order; options can override
+// it.
+static inline void Effect_InitializeMotion(struct FieldEffect *effect,
+                                           struct AnimationObject *sprite,
+                                           struct FieldActor *leader,
+                                           s32 velocityX, s32 velocityY,
+                                           s32 velocityZ) {
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  /* FAKEMATCH: read the sprite/group slot as its original scalar pointer.
+   * Plain leader->sprite moves the pointer reload after the velocity.z store
+   * instead of before it (two instructions differ in tbs-en, 2026-10-16). */
+  sprite->image.priority =
+      (*(struct AnimationObject **)((u8 *)leader +
+                                   offsetof(struct FieldActor, sprite)))
+          ->image.priority;
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+}
 
 #define EFFECT_SPAWN(name, create, set_mode, set_script)                       \
   void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,  \
             u32 flags, const struct EffectOptions *options) {                  \
     struct FieldActor *party = Actor_Get(ACTOR_PARTY_LEADER);                  \
     struct FieldEffect *effect;                                                \
-    struct FieldSprite *sprite;                                                \
+    struct AnimationObject *sprite;                                            \
     const s32 *script;                                                         \
                                                                                \
     if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)                        \
@@ -45,13 +68,8 @@ enum {
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;           \
-    effect->velocityX = velocityX;                                             \
-    effect->velocityY = velocityY;                                             \
-    effect->velocityZ = velocityZ;                                             \
-    sprite->priority = party->sprite->priority;                                \
-    effect->scaleRateX = 0;                                                    \
-    effect->scaleRateY = 0;                                                    \
-    effect->spin = 0;                                                          \
+    Effect_InitializeMotion(effect, sprite, party, velocityX, velocityY,       \
+                            velocityZ);                                        \
                                                                                \
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
       return;                                                                  \
@@ -60,7 +78,7 @@ enum {
                                 options->palette);                             \
     if ((flags & EFFECT_USE_PRIORITY) != 0) {                                  \
       effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                      \
-      sprite->priority = options->priority;                                    \
+      sprite->image.priority = options->priority;                              \
     }                                                                          \
     if ((flags & EFFECT_USE_START_SCALE) != 0) {                               \
       effect->scaleX = options->startScaleX;                                   \
@@ -74,9 +92,9 @@ enum {
         effect->scaleRateY = (options->targetScaleY - effect->scaleY) /        \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
       } else {                                                                 \
-        effect->scaleRateX = (options->targetScaleX - EFFECT_SCALE_ONE) /      \
+        effect->scaleRateX = (options->targetScaleX - Q16_ONE) /               \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
-        effect->scaleRateY = (options->targetScaleY - EFFECT_SCALE_ONE) /      \
+        effect->scaleRateY = (options->targetScaleY - Q16_ONE) /               \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
       }                                                                        \
     }                                                                          \

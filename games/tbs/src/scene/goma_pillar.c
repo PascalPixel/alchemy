@@ -129,14 +129,14 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
   selection = (u32)layer >> 16;
   switch (selection) {
   case 0:
-    sprite->part[0].priority =
-        ((struct AnimationObject *)leader->sprite)->part[0].priority;
+    sprite->image.priority =
+        ((struct AnimationObject *)leader->sprite)->image.priority;
     break;
   case 1:
   case 2:
   case 3:
     obj->priorityFlags &= 0xfe;
-    sprite->part[0].priority = selection;
+    sprite->image.priority = selection;
     break;
   }
 }
@@ -311,8 +311,8 @@ static void EV09_PSYNERGY(void) {
     Engine_EventWait(20);
     // Wait for the work-value transition before replacing the map cells.
     Engine_AudioPlayCue(154);
-    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Map_SetShake(0x50000, 0x50000, 0x10000);
+    Map_SetShake(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetPosition(9, 0, 0);
     Engine_ActorSetPosition(11, 0, 0);

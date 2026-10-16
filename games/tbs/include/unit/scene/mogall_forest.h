@@ -10,10 +10,10 @@ struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *MogallForest_GetExits(void);
+u32 *MogallForest_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
-s32 FieldScene_RunSceneEntryHook(void);
+s32 MogallForest_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];

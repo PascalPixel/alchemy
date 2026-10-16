@@ -4,24 +4,24 @@
 #include "types.h"
 #include "static_assert.h"
 
-struct SceneMotion {
+struct AltinPeakHopMotion {
   u8 unk00[12];
-  s32 y;
+  s32 height;
   u8 unk10[4];
-  s32 ground;
+  s32 terrainHeight;
   u8 unk18[16];
-  s32 velocity;
+  s32 velocityY;
   u8 unk2c[47];
-  u8 state;
+  u8 verticalStopped;
   u8 unk5c[8];
-  s16 timer, delay;
-  s32 active;
+  s16 hopTimer, shakeDelay;
+  s32 landingCuePending;
 };
 
-STATIC_ASSERT(offsetof(struct SceneMotion, velocity) == 0x28);
-STATIC_ASSERT(offsetof(struct SceneMotion, state) == 0x5b);
-STATIC_ASSERT(offsetof(struct SceneMotion, timer) == 0x64);
-STATIC_ASSERT(offsetof(struct SceneMotion, delay) == 0x66);
-STATIC_ASSERT(offsetof(struct SceneMotion, active) == 0x68);
+STATIC_ASSERT(offsetof(struct AltinPeakHopMotion, velocityY) == 0x28);
+STATIC_ASSERT(offsetof(struct AltinPeakHopMotion, verticalStopped) == 0x5b);
+STATIC_ASSERT(offsetof(struct AltinPeakHopMotion, hopTimer) == 0x64);
+STATIC_ASSERT(offsetof(struct AltinPeakHopMotion, shakeDelay) == 0x66);
+STATIC_ASSERT(offsetof(struct AltinPeakHopMotion, landingCuePending) == 0x68);
 
 #endif

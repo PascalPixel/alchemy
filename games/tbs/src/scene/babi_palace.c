@@ -323,14 +323,14 @@ static void BabiPalace_RunPostRestWakeUp(void) {
 
   Event_Begin();
   Event_SetMessage(MsgTolbiGetUp);
-  Actor_Get(ACTOR_PARTY_LEADER)->active = 0;
-  Actor_Get(10)->active = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
+  Actor_Get(10)->spriteStorageKind = 0;
   Task_Wait(1);
   REG_DISPCNT = 0x1140;
   Event_ShowMessage(-1, 0);
   REG_DISPCNT = 0x140;
-  Actor_Get(ACTOR_PARTY_LEADER)->active = 1;
-  Actor_Get(10)->active = 1;
+  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
+  Actor_Get(10)->spriteStorageKind = 1;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
@@ -2228,7 +2228,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 // Restores door layers, the Cloak Ball display and entrance-specific scenes.
 s32 BabiPalace_ApplyEntryState(void) {
   struct FieldActor *actor;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   u8 *buf;
   s32 set;
 
@@ -2256,12 +2256,12 @@ s32 BabiPalace_ApplyEntryState(void) {
         actor->motionFlags = set;
         sprite = actor->sprite;
         actor->y.fixed = 0x40000;
-        sprite->partCount = set;
-        sprite->fullColor = 0;
-        sprite->palette = 0;
+        sprite->count = set;
+        sprite->image.fullColor = 0;
+        sprite->image.palette = 0;
         buf = Heap_Allocate(17, 0x608);
         Item_LoadIcon(205);
-        Vram_Load(sprite->vramBlock, 128, buf + 0x400);
+        Vram_Load(sprite->slot, 128, buf + 0x400);
         Heap_Release(17);
       }
       if (gGameState.entrance == 33 && !GameFlag_IsSet(0x96f)) {

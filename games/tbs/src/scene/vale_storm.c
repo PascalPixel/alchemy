@@ -32,79 +32,85 @@
 #include "objcmd.h"
 #include "global_cells.h"
 #include "vram_tab.h"
+#include "fixed_math.h"
 
 // Forward declarations.
-union PairObject;
 static void Scene_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
-static void ActorPresentation_SetEightSceneCells(void);
-static void SceneState_ApplyFourRects(void);
-static void FieldScene_DrawFiveTileBlocks(void);
-static void FieldScene_RunScene372SequenceA(void);
+static void ValeStorm_ApplyRock12Collision(void);
+static void ValeStorm_ApplyRock13Collision(void);
+static void ValeStorm_ApplyRock14Collision(void);
+static void ValeStorm_MeetVillagerAtExit6(void);
 static void ValeStorm_RunCallOutSequence(void);
-static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
+static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y);
 static void ValeStorm_RunRiverSearch(void);
-static void Scene_RunActorGroupDepartureSequence(void);
+static void ValeStorm_ShowBoulderSweepingDownriver(void);
 static void ValeStorm_FlashLightning(void);
 static void ValeStorm_UpdatePulsingGlow(void);
-static void ActorPresentation_SelectActorTwentySevenState(void);
-static void FieldScene_ConfigureActorTwentyTwoScene(void);
-static void FieldScene_BuildPlacementGrid(void);
-static void SceneActor_SetModeByFrameBit1(s32 o);
-static void ValeStorm_SpawnEffectPair(union PairObject *parent);
-static void FieldScene_RunFourPairedSteps(void);
-static void SceneState_SetValue19ThenCall(void);
+static void ValeStorm_FlickerGlowOffset(void);
+static void ValeStorm_GaretLeavesIsaac(void);
+static void ValeStorm_RebuildRiverbank(void);
+static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor);
+static void ValeStorm_SpawnEffectPair(struct FieldActor *parent);
+static void ValeStorm_UpdateBoulderSceneEffects(void);
+static void ValeStorm_CycleBoulderPalette(void);
 static void ValeStorm_CopyLeaderSpritePriority(void);
 
 enum { FLAG_BOULDER_FELL = 0x838 };
 
+enum { STORM_CALLBACK_PRIORITY = 3200 };
+
 enum StormNightActor { ACTOR_DORA = ACTOR_FIRST_PLACED + 1, ACTOR_KYLE };
 
-#define ACTOR_ID 22
+#define ACTOR_GARET 22
 
 s32 Math_RemainderUnsigned(s32, s32);
-
-union PairObject;
 
 static s32 sShakeDone;
 static s32 sShakeShift;
 
+// Choose a new random heading whenever the actor countdown expires.
 static s32
 ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *object = (struct FieldActor *)interpreter;
-  s32 loaded = object->timer;
-  s32 counter = (s16)loaded;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  s32 timer = actor->timer;
+  s32 countdown = (s16)timer;
 
-  if (loaded == 0) {
-    object->facing = Engine_RandomNext();
-    counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-    object->timer = counter;
+  if (timer == 0) {
+    actor->facing = Engine_RandomNext();
+    countdown = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
+    actor->timer = countdown;
   }
-  object->timer = counter - 1;
+  actor->timer = countdown - 1;
   return 1;
 }
 
 // Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
+// Return the storm scene entrance table.
 u8 *ValeStorm_GetEntrances(void) { return gValeStorm_SceneTable0; }
 
+// Return the scene hook result without additional work.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Return the storm scene exit table.
 u8 *ValeStorm_GetExits(void) { return gValeStorm_SceneTable1; }
 
+// Return the storm scene actor placements.
 u8 *ValeStorm_GetPlacements(void) { return gValeStorm_SceneTable2; }
 
+// Return the storm scene event bindings.
 u8 *ValeStorm_GetEvents(void) { return gValeStorm_SceneTable3; }
 
-static void EV15_TOUCH(void) {
-
+// Remember and apply the alternate path collision cells.
+static void ValeStorm_SetPathCellOverride(void) {
   Engine_GameFlagSet(0x210);
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-static void EV14_TOUCH(void) {
-
+// Restore the path collision cells and clear the saved override.
+static void ValeStorm_ClearPathCellOverride(void) {
   Engine_GameFlagClear(0x210);
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
@@ -112,136 +118,147 @@ static void EV14_TOUCH(void) {
 // Shared source is included here in ROM order.
 #include "common/vale.h"
 
+// Animate the doorway before taking backdrop exit 11.
 UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_AudioPlayCue(0x9E);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
-  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(11);
 }
 
-static void EV02_TOUCH(void) {
-
+// Play the exit cue and take backdrop exit 1.
+static void ValeStorm_OpenExit1(void) {
   Engine_AudioPlayCue(0x7B);
   Vale_RequestBackdropExit(1);
 }
 
-static void EV03_TOUCH(void) {
-
+// Play the exit cue and take backdrop exit 3.
+static void ValeStorm_OpenExit3(void) {
   Engine_AudioPlayCue(0x7B);
   Vale_RequestBackdropExit(3);
 }
 
-static void EV04_TOUCH(void) {
-
+// Play the exit cue and take backdrop exit 4.
+static void ValeStorm_OpenExit4(void) {
   Engine_AudioPlayCue(0x7B);
   Vale_RequestBackdropExit(4);
 }
 
-static void EV05_TOUCH(void) {
+// Let Garet leave before taking backdrop exit 2.
+static void ValeStorm_OpenExit2(void) {
   Engine_AudioPlayCue(0x7B);
   if (Engine_GameFlagIsSet(0x841) != 0 && Engine_GameFlagIsSet(0x842) == 0) {
-    FieldScene_ConfigureActorTwentyTwoScene();
+    ValeStorm_GaretLeavesIsaac();
   }
   Vale_RequestBackdropExit(2);
 }
 
-static void EV06_TOUCH(void) {
+// Animate the doorway and take backdrop exit 5.
+static void ValeStorm_OpenExit5(void) {
   Engine_AudioPlayCue(0x9E);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
-  Engine_ActorWalkTo(0, 0x196, 0x2d7);
+  Engine_ActorWalkTo(0, 406, 727);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(5);
 }
 
-static void EV07_TOUCH(void) {
+// Meet the villager on the first visit, then allow backdrop exit 6.
+static void ValeStorm_OpenExit6(void) {
   if (GameFlag_IsSet(0x206) == 0) {
     Event_PlayCue(158);
     Map_AnimateCells(gValeStorm_CellSteps2, 45, 39);
   }
   if (GameFlag_IsSet(0x835) == 0 && GameFlag_IsSet(0x831) == 0) {
-    FieldScene_RunScene372SequenceA();
+    ValeStorm_MeetVillagerAtExit6();
     GameFlag_Set(0x206);
   } else {
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
     Engine_EventWait(3);
     Vale_RequestBackdropExit(6);
   }
 }
 
-static void EV08_TOUCH(void) {
+// Animate the doorway and take backdrop exit 7.
+static void ValeStorm_OpenExit7(void) {
   if (Engine_GameFlagIsSet(0x205) == 0) {
     Engine_AudioPlayCue(0x9E);
     Engine_MapAnimateCells(gValeStorm_CellSteps1, 50, 44);
   }
-  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(7);
 }
 
-static void EV09_TOUCH(void) {
+// Animate the doorway and take backdrop exit 8.
+static void ValeStorm_OpenExit8(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
-  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(8);
 }
 
-static void EV10_TOUCH(void) {
+// Animate the doorway and take backdrop exit 9.
+static void ValeStorm_OpenExit9(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
-  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(9);
 }
 
-static void EV11_TOUCH(void) {
+// Animate the doorway and take backdrop exit 10.
+static void ValeStorm_OpenExit10(void) {
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(10);
 }
 
-static void EV12_TOUCH(void) {
+// Animate the doorway and take backdrop exit 12.
+static void ValeStorm_OpenExit12(void) {
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(12);
 }
 
-static void EV13_TOUCH(void) {
+// Animate the doorway and take backdrop exit 13.
+static void ValeStorm_OpenExit13(void) {
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 1182);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(13);
 }
 
+// Restore storm damage and actors from the saved scene flags.
 s32 FieldScene_RunFlagGatedActorSetup(void) {
-
   BattleFx_SetQueuedSoundAndPlay(0xAA);
   Engine_ActorSetPosition(23, 0, 0);
   if (Engine_GameFlagIsSet(0x109) != 0) {
     Engine_GameFlagClear(0x205);
     Engine_GameFlagClear(0x206);
   }
+  // Restore the rocks that have already fallen.
   if (Engine_GameFlagIsSet(0x830) != 0) {
-    Actor_SetPosition(11, 0x14E0000, 0x3A40000);
+    Actor_SetPosition(11, PIXELS(334), PIXELS(932));
     ValeStorm_SetStormCellAttributes();
   }
   if (Engine_GameFlagIsSet(0x831) != 0) {
-    Actor_SetPosition(12, 0xE00000, 0x3680000);
-    ActorPresentation_SetEightSceneCells();
+    Actor_SetPosition(12, PIXELS(224), PIXELS(872));
+    ValeStorm_ApplyRock12Collision();
   }
   if (Engine_GameFlagIsSet(0x832) != 0) {
-    Actor_SetPosition(13, 0x400000, 0x2BF0000);
-    SceneState_ApplyFourRects();
+    Actor_SetPosition(13, PIXELS(64), PIXELS(703));
+    ValeStorm_ApplyRock13Collision();
   }
   if (Engine_GameFlagIsSet(0x833) != 0) {
-    Actor_SetPosition(14, 0x1B00000, 0x47B0000);
-    FieldScene_DrawFiveTileBlocks();
+    Actor_SetPosition(14, PIXELS(432), PIXELS(1147));
+    ValeStorm_ApplyRock14Collision();
   }
   Object_GetById(11)->collisionFlags |= 4;
   Object_GetById(12)->collisionFlags |= 4;
@@ -258,56 +275,57 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     struct FieldActor *actor;
 
     actor = Object_GetById(19);
-    actor->scaleX = 0x20000;
-    actor->scaleY = 0x20000;
+    actor->scaleX = 2 * Q16_ONE;
+    actor->scaleY = 2 * Q16_ONE;
   }
   if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
-    Actor_SetPosition(19, 0x720000, 0x14D0000);
+    Actor_SetPosition(19, PIXELS(114), PIXELS(333));
   } else {
     Actor_SetActionScript(19, gValeStorm_ActorNineteenScript);
   }
+  // Restore the riverbank cast at the saved stage of the storm.
   if (Engine_GameFlagIsSet(0x841) != 0) {
-    s32 h2;
+    s32 facing;
     const s32 *table;
-    FieldScene_BuildPlacementGrid();
-    Actor_SetPosition(9, 0xA50000, 0x4CD0000);
+    ValeStorm_RebuildRiverbank();
+    Actor_SetPosition(9, PIXELS(165), PIXELS(1229));
     {
       struct FieldActor *actor;
 
       actor = Object_GetById(9);
-      h2 = 0xE000;
-      actor->facing = h2;
+      facing = FACING_NORTHEAST;
+      actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       table = gValeStorm_ActorEightScript;
       actor->work = 1;
       Actor_SetActionScript(9, table);
     }
-    Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
+    Engine_ActorSetPosition(26, PIXELS(165), PIXELS(1254));
     {
       struct FieldActor *actor;
 
       actor = Object_GetById(26);
-      actor->facing = h2;
+      actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 2;
       Actor_SetActionScript(26, table);
     }
-    Engine_ActorSetPosition(22, 0x980000, 0x5050000);
+    Engine_ActorSetPosition(22, PIXELS(152), PIXELS(1285));
     {
       struct FieldActor *actor;
 
       actor = Object_GetById(22);
-      actor->facing = h2;
+      actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 3;
       Actor_SetActionScript(22, table);
     }
-    Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
+    Engine_ActorSetPosition(8, PIXELS(184), PIXELS(1304));
     {
       struct FieldActor *actor;
 
       actor = Object_GetById(8);
-      actor->facing = h2;
+      actor->facing = facing;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 4;
       Actor_SetActionScript(8, table);
@@ -315,7 +333,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     Engine_ActorSetAnimation(8, 6);
     Object_GetById(22)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Object_GetById(8)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority, 0xC80);
+    FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
+                               STORM_CALLBACK_PRIORITY);
     Engine_ActorSetPosition(24, 0, 0);
     Engine_ActorSetPosition(25, 0, 0);
     Engine_ActorSetPosition(23, 0, 0);
@@ -325,8 +344,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     }
   } else if (Engine_GameFlagIsSet(0x83a) != 0) {
     const s32 *table;
-    Actor_SetPosition(10, 0xC00000, 0x4BE0000);
-    Actor_FaceDirection(10, 0x2000, 0);
+    Actor_SetPosition(10, PIXELS(192), PIXELS(1214));
+    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
     Engine_ActorSetAnimation(10, 5);
     {
       struct FieldActor *actor;
@@ -336,8 +355,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     }
     table = gValeStorm_ActorEightScript;
     Actor_SetActionScript(10, table);
-    Actor_SetPosition(24, 0xE30000, 0x4BE0000);
-    Actor_FaceDirection(24, 0x4000, 0);
+    Actor_SetPosition(24, PIXELS(227), PIXELS(1214));
+    Actor_FaceDirection(24, FACING_SOUTH, 0);
     Engine_ActorSetAnimation(24, 6);
     {
       struct FieldActor *actor;
@@ -346,8 +365,8 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
     Actor_SetActionScript(24, table);
-    Actor_SetPosition(25, 0xF70000, 0x4BE0000);
-    Actor_FaceDirection(25, 0x4000, 0);
+    Actor_SetPosition(25, PIXELS(247), PIXELS(1214));
+    Actor_FaceDirection(25, FACING_SOUTH, 0);
     Engine_ActorSetAnimation(25, 6);
     {
       struct FieldActor *actor;
@@ -356,7 +375,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
     Actor_SetActionScript(25, table);
-    Actor_SetPosition(23, 0xF30000, 0x4FD0000);
+    Actor_SetPosition(23, PIXELS(243), PIXELS(1277));
     Engine_ActorFaceDirection(23, FACING_NORTH, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
     Engine_ActorSetPosition(17, 0, 0);
@@ -370,20 +389,20 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     FieldFx_StartLightning();
   }
   if (Engine_GameFlagIsSet(0x210) != 0) {
-    EV15_TOUCH();
+    ValeStorm_SetPathCellOverride();
   }
   Engine_GameFlagSet(0x834);
   Map_CopyCellAttributes(29, 24, 1, 2, 26, 46);
   Map_CopyCellAttributes(29, 25, 1, 1, 27, 46);
   Map_CopyCellAttributes(29, 25, 1, 1, 28, 46);
-  Map_CopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
-  Map_CopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
+  Map_CopyCellAttributes(19, 90, 1, 1, 20, 88);
+  Map_CopyCellAttributes(19, 90, 1, 1, 20, 89);
   {
     struct FieldActor *actor;
 
     actor = Object_GetById(21);
     actor->motionFlags = 0;
-    actor->y.fixed = 0xC00000;
+    actor->y.fixed = PIXELS(192);
     actor->collisionFlags = 8;
     Engine_ActorSetSpriteFlags(actor, 0);
   }
@@ -396,17 +415,17 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   if (Engine_GameFlagIsSet(0x837) == 0) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(22, 0x101);
-    Actor_SetPosition(22, 0x1900000, 0x2630000);
-    Actor_SetPosition(21, 0x1A80000, 0x2730000);
-    Actor_WalkTo(22, 0x190, 0x26B);
-    Actor_WalkToAndWait(21, 0x1A8, 0x26B);
+    Actor_SetPosition(22, PIXELS(400), PIXELS(611));
+    Actor_SetPosition(21, PIXELS(424), PIXELS(627));
+    Actor_WalkTo(22, 400, 619);
+    Actor_WalkToAndWait(21, 424, 619);
     Engine_ActorSetAnimation(21, 2);
     Engine_ActorSetAnimation(22, 5);
     Engine_EventEnd();
   } else {
     Engine_EventBegin();
-    Actor_SetPosition(21, 0x1A80000, 0x2730000);
-    Actor_WalkToAndWait(21, 0x1A8, 0x26B);
+    Actor_SetPosition(21, PIXELS(424), PIXELS(627));
+    Actor_WalkToAndWait(21, 424, 619);
     Engine_ActorSetAnimation(21, 3);
     Engine_EventEnd();
   }
@@ -418,6 +437,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   return 0;
 }
 
+// Play the opening conversation with Dora and Kyle.
 static void Scene_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -426,9 +446,9 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   FieldFx_StartLightning();
   FieldFx_LastLightning();
   Engine_TaskWait(60);
-  Camera_SetSpeed(0x4000, 0x800);
-  Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
-  Actor_SetPosition(ACTOR_KYLE, 0x1260000, 0x3640000);
+  Camera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
+  Camera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
+  Actor_SetPosition(ACTOR_KYLE, PIXELS(294), PIXELS(868));
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 16;
@@ -438,24 +458,24 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps1, 50, 44);
   Actor_SetAttachedEffect(22, 0x101);
-  Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_KYLE, 0xcccc, 0x6666);
-  Actor_SetPosition(ACTOR_DORA, 0x1560000, 0x37a0000);
-  Actor_WalkToAndWait(ACTOR_DORA, 0x156, 0x389);
+  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetPosition(ACTOR_DORA, PIXELS(342), PIXELS(890));
+  Actor_WalkToAndWait(ACTOR_DORA, 342, 905);
   BattleFx_PlayQueuedSound();
-  Actor_WalkTo(ACTOR_DORA, 0x128, 0x389);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1560000, 0x37a0000);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x156, 0x37a);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x156, 0x389);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x13e, 0x389);
+  Actor_WalkTo(ACTOR_DORA, 296, 905);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(342), PIXELS(890));
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 342, 890);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 342, 905);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 318, 905);
   Engine_ActorSetAnimation(ACTOR_DORA, 1);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
   message = MsgValeKyleAbleStop;
   Engine_EventSetMessage(message);
   Event_ShowMessage(ACTOR_DORA, 0);
-  Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
+  Actor_WalkToAndWait(ACTOR_KYLE, 294, 838);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
   Event_ShowMessage(ACTOR_KYLE, 0);
@@ -472,8 +492,8 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Engine_EventWait(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
-  Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
-  Actor_WalkToAndWait(ACTOR_DORA, 0x121, 0x373);
+  Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_WalkToAndWait(ACTOR_DORA, 289, 883);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
@@ -483,7 +503,7 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
   Engine_EventSetMessage((message + 8));
   Event_OpenMessage(ACTOR_DORA, 0);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x12e, 0x389);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 302, 905);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   while (Engine_EventChooseYesNo(0, 0) == 1) {
     Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
@@ -494,10 +514,10 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Engine_EventSetMessage(MsgValeKnowWayGo);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
-  Actor_WalkTo(ACTOR_KYLE, 0x129, 0x2ee);
+  Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_WalkTo(ACTOR_KYLE, 297, 750);
   Engine_EventWait(10);
-  Actor_WalkToAndWait(ACTOR_DORA, 0x129, 0x2ee);
+  Actor_WalkToAndWait(ACTOR_DORA, 297, 750);
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Engine_ActorSetAnimation(ACTOR_KYLE, 1);
@@ -509,38 +529,39 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Engine_EventEnd();
 }
 
-static void EV41_TOUCH(void) {
-  struct FieldActor *rec7;
-  struct FieldActor *record;
-  s32 v3;
-  s32 base5_396;
-  u8 *p6;
+// Drop rock 11 into place and let Garet comment on the blocked path.
+static void ValeStorm_DropRock11(void) {
+  struct FieldActor *rock;
+  struct FieldActor *leader;
+  s32 targetHeight;
+  s32 walkZ;
+  struct AnimationObject *rockSprite;
 
   if (GameFlag_IsSet(0x310) != 0) {
   } else {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x830) == 0) {
-      rec7 = Object_GetById(11);
-      p6 = (u8 *)rec7->sprite;
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      rock = Object_GetById(11);
+      rockSprite = rock->sprite;
+      Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Engine_AudioPlayCue(141);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(145);
-      rec7->priorityFlags &= 254;
-      ((struct Flags9 *)p6)->mode = 1;
-      Actor_SetPosition(11, 0x1d90000, 0x3a40000);
-      rec7->speed = 0x18000;
-      rec7->acceleration = 0x18000;
-      v3 = (rec7->y.fixed + 0xf00000);
-      rec7->y.fixed += 0xf00000;
-      rec7->targetY = v3;
-      rec7->bounce = 0x6666;
-      Actor_WalkToAndWait(11, 0x158, 0x3a4);
-      ((struct Flags9 *)p6)->mode = 3;
-      rec7->priorityFlags |= 1;
+      rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      rockSprite->image.priority = 1;
+      Actor_SetPosition(11, PIXELS(473), PIXELS(932));
+      rock->speed = PIXELS(3) / 2;
+      rock->acceleration = PIXELS(3) / 2;
+      targetHeight = (rock->y.fixed + PIXELS(240));
+      rock->y.fixed += PIXELS(240);
+      rock->targetY = targetHeight;
+      rock->bounce = 0x6666;
+      Actor_WalkToAndWait(11, 344, 932);
+      rockSprite->image.priority = 3;
+      rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       Engine_EventWait(40);
       Engine_AudioPlayCue(0x121);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
       Engine_GameFlagSet(0x830);
@@ -550,13 +571,13 @@ static void EV41_TOUCH(void) {
     if (Engine_GameFlagIsSet(0x837) != 0) {
       if (Engine_GameFlagIsSet(0x841) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
-          record = Object_GetById(0);
-          if (record->y.fixed > 0x800000) {
-            base5_396 = 0x396;
-            SceneActor_RunActor22PlacementSequence(0x146, base5_396);
-            Actor_WalkToAndWait(0, 0x123, base5_396);
+          leader = Object_GetById(0);
+          if (leader->y.fixed > PIXELS(128)) {
+            walkZ = 0x396;
+            ValeStorm_GaretCommentsOnBlockedPath(0x146, walkZ);
+            Actor_WalkToAndWait(0, 291, walkZ);
           } else {
-            SceneActor_RunActor22PlacementSequence(0x14f, 0x3bd);
+            ValeStorm_GaretCommentsOnBlockedPath(0x14f, 0x3bd);
           }
           Engine_GameFlagSet(0x30c);
         }
@@ -566,6 +587,7 @@ static void EV41_TOUCH(void) {
   }
 }
 
+// Apply the collision cells left by rock 11.
 static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
@@ -574,51 +596,52 @@ static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-static void EV42_TOUCH(void) {
-  struct FieldActor *rec7;
-  struct FieldActor *record;
-  s32 v3;
+// Drop rock 12 down the path and update its collision cells.
+static void ValeStorm_DropRock12(void) {
+  struct FieldActor *rock;
+  struct FieldActor *leader;
+  s32 targetHeight;
 
   if (GameFlag_IsSet(0x311) != 0) {
   } else {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x831) == 0) {
-      rec7 = Object_GetById(12);
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      rock = Object_GetById(12);
+      Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Engine_AudioPlayCue(141);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(145);
-      Actor_SetPosition(12, 0x17d0000, 0x3280000);
-      rec7->speed = 0x18000;
-      rec7->acceleration = 0x18000;
-      v3 = (rec7->y.fixed + 0x1000000);
-      rec7->y.fixed += 0x1000000;
-      rec7->targetY = v3;
-      rec7->bounce = 0x8000;
-      Actor_WalkToAndWait(12, 0x122, 0x341);
+      Actor_SetPosition(12, PIXELS(381), PIXELS(808));
+      rock->speed = PIXELS(3) / 2;
+      rock->acceleration = PIXELS(3) / 2;
+      targetHeight = (rock->y.fixed + PIXELS(256));
+      rock->y.fixed += PIXELS(256);
+      rock->targetY = targetHeight;
+      rock->bounce = 0x8000;
+      Actor_WalkToAndWait(12, 290, 833);
       Engine_ActorSetSpritePriority(12, 1);
-      Actor_WalkToAndWait(12, 0x102, 0x354);
+      Actor_WalkToAndWait(12, 258, 852);
       Engine_ActorSetSpritePriority(12, 2);
-      Actor_WalkToAndWait(12, 224, 0x368);
+      Actor_WalkToAndWait(12, 224, 872);
       Engine_EventWait(40);
       Engine_AudioPlayCue(0x121);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
       Engine_GameFlagSet(0x831);
     }
-    ActorPresentation_SetEightSceneCells();
+    ValeStorm_ApplyRock12Collision();
     Engine_GameFlagSet(0x311);
     if (Engine_GameFlagIsSet(0x837) != 0) {
       if (Engine_GameFlagIsSet(0x841) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
-          record = Object_GetById(0);
-          if (record->y.fixed > 0x800000) {
-            SceneActor_RunActor22PlacementSequence(219, 0x34b);
-            Actor_WalkToAndWait(0, 179, 0x33d);
+          leader = Object_GetById(0);
+          if (leader->y.fixed > PIXELS(128)) {
+            ValeStorm_GaretCommentsOnBlockedPath(219, 0x34b);
+            Actor_WalkToAndWait(0, 179, 829);
           } else {
-            SceneActor_RunActor22PlacementSequence(214, 0x38c);
-            Actor_WalkToAndWait(0, 219, 0x38f);
+            ValeStorm_GaretCommentsOnBlockedPath(214, 0x38c);
+            Actor_WalkToAndWait(0, 219, 911);
           }
           Engine_GameFlagSet(0x30c);
         }
@@ -628,43 +651,44 @@ static void EV42_TOUCH(void) {
   }
 }
 
-static void ActorPresentation_SetEightSceneCells(void) {
-
-  Map_CopyCellAttributes(29, 23, 1, 1, 15, 0x35);
-  Map_CopyCellAttributes(29, 23, 1, 1, 14, 0x35);
-  Map_CopyCellAttributes(29, 23, 1, 1, 13, 0x35);
-  Map_CopyCellAttributes(26, 20, 2, 1, 14, 0x34);
-  Map_CopyCellAttributes(25, 21, 1, 1, 13, 0x36);
-  Map_CopyCellAttributes(25, 21, 1, 1, 15, 0x36);
-  Map_CopyCellAttributes(14, 0x35, 1, 1, 14, 0x36);
-  Map_CopyCellAttributes(13, 0x37, 1, 1, 15, 0x37);
+// Apply the collision cells left by rock 12.
+static void ValeStorm_ApplyRock12Collision(void) {
+  Map_CopyCellAttributes(29, 23, 1, 1, 15, 53);
+  Map_CopyCellAttributes(29, 23, 1, 1, 14, 53);
+  Map_CopyCellAttributes(29, 23, 1, 1, 13, 53);
+  Map_CopyCellAttributes(26, 20, 2, 1, 14, 52);
+  Map_CopyCellAttributes(25, 21, 1, 1, 13, 54);
+  Map_CopyCellAttributes(25, 21, 1, 1, 15, 54);
+  Map_CopyCellAttributes(14, 53, 1, 1, 14, 54);
+  Map_CopyCellAttributes(13, 55, 1, 1, 15, 55);
 }
 
-static void EV43_TOUCH(void) {
+// Drop rock 13 while preserving the leader sprite priority.
+static void ValeStorm_DropRock13(void) {
   if (GameFlag_IsSet(0x312) == 0) {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x832) == 0) {
       struct FieldActor *actor = Actor_Get(13);
       struct FieldActor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-      u16 priority = leader->sprite->priority;
+      u16 priority = leader->sprite->image.priority;
       u8 flags = leader->priorityFlags;
 
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Event_PlayCue(141);
       Engine_TaskWait(40);
       Event_PlayCue(145);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SetPosition(13, 0, 0x2bf0000);
-      actor->speed = 0x18000;
-      actor->acceleration = 0x18000;
-      actor->y.fixed += 0x500000;
+      Actor_SetPosition(13, 0, PIXELS(703));
+      actor->speed = PIXELS(3) / 2;
+      actor->acceleration = PIXELS(3) / 2;
+      actor->y.fixed += PIXELS(80);
       actor->targetY = actor->y.fixed;
       actor->bounce = 0x8000;
-      Actor_WalkToAndWait(13, 64, 0x2bf);
+      Actor_WalkToAndWait(13, 64, 703);
       Engine_EventWait(40);
       Event_PlayCue(0x121);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
       GameFlag_Set(0x832);
@@ -672,17 +696,17 @@ static void EV43_TOUCH(void) {
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       leader->priorityFlags = flags;
     }
-    SceneState_ApplyFourRects();
+    ValeStorm_ApplyRock13Collision();
     GameFlag_Set(0x312);
     if (GameFlag_IsSet(0x837) != 0) {
       if (GameFlag_IsSet(0x841) == 0) {
         if (GameFlag_IsSet(0x30c) == 0) {
           if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
-            SceneActor_RunActor22PlacementSequence(62, 0x29d);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 0x273);
+            ValeStorm_GaretCommentsOnBlockedPath(62, 0x29d);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 627);
           } else {
-            SceneActor_RunActor22PlacementSequence(75, 0x2cb);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 0x2f5);
+            ValeStorm_GaretCommentsOnBlockedPath(75, 0x2cb);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 757);
           }
           GameFlag_Set(0x30c);
         }
@@ -692,55 +716,56 @@ static void EV43_TOUCH(void) {
   }
 }
 
-static void SceneState_ApplyFourRects(void) {
-
-  Map_CopyCellAttributes(29, 22, 1, 1, 3, 0x2a);
-  Map_CopyCellAttributes(29, 21, 1, 1, 2, 0x2a);
-  Map_CopyCellAttributes(29, 21, 1, 1, 4, 0x2a);
-  Map_CopyCellAttributes(23, 20, 3, 1, 2, 0x2b);
+// Apply the collision cells left by rock 13.
+static void ValeStorm_ApplyRock13Collision(void) {
+  Map_CopyCellAttributes(29, 22, 1, 1, 3, 42);
+  Map_CopyCellAttributes(29, 21, 1, 1, 2, 42);
+  Map_CopyCellAttributes(29, 21, 1, 1, 4, 42);
+  Map_CopyCellAttributes(23, 20, 3, 1, 2, 43);
 }
 
-static void EV44_TOUCH(void) {
-  struct FieldActor *rec7;
-  struct FieldActor *record;
-  s32 v3;
+// Drop rock 14 into place and update its collision cells.
+static void ValeStorm_DropRock14(void) {
+  struct FieldActor *rock;
+  struct FieldActor *leader;
+  s32 targetHeight;
 
   if (GameFlag_IsSet(0x313) != 0) {
   } else {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x833) == 0) {
-      rec7 = Object_GetById(14);
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      rock = Object_GetById(14);
+      Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Engine_AudioPlayCue(141);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(145);
-      Actor_SetPosition(14, 0x1da0000, 0x47b0000);
-      rec7->speed = 0x10000;
-      rec7->acceleration = 0x10000;
-      v3 = (rec7->y.fixed + 0x480000);
-      rec7->y.fixed += 0x480000;
-      rec7->targetY = v3;
-      rec7->bounce = 0x8000;
-      Engine_ActorWalkToAndWait(14, 0x1b0, 0x47b);
+      Actor_SetPosition(14, PIXELS(474), PIXELS(1147));
+      rock->speed = PIXELS(1);
+      rock->acceleration = PIXELS(1);
+      targetHeight = (rock->y.fixed + PIXELS(72));
+      rock->y.fixed += PIXELS(72);
+      rock->targetY = targetHeight;
+      rock->bounce = 0x8000;
+      Engine_ActorWalkToAndWait(14, 432, 1147);
       Engine_EventWait(40);
       Engine_AudioPlayCue(0x121);
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
       Engine_GameFlagSet(0x833);
     }
-    FieldScene_DrawFiveTileBlocks();
+    ValeStorm_ApplyRock14Collision();
     Engine_GameFlagSet(0x313);
     if (Engine_GameFlagIsSet(0x837) != 0) {
       if (Engine_GameFlagIsSet(0x841) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
-          record = Object_GetById(0);
-          if (record->z.fixed <= 0x479ffff) {
-            SceneActor_RunActor22PlacementSequence(0x19c, 0x460);
-            Actor_WalkToAndWait(0, 0x19e, 0x42c);
+          leader = Object_GetById(0);
+          if (leader->z.fixed <= 0x479ffff) {
+            ValeStorm_GaretCommentsOnBlockedPath(0x19c, 0x460);
+            Actor_WalkToAndWait(0, 414, 1068);
           } else {
-            SceneActor_RunActor22PlacementSequence(0x1bd, 0x494);
-            Actor_WalkToAndWait(0, 0x1bf, 0x4cb);
+            ValeStorm_GaretCommentsOnBlockedPath(0x1bd, 0x494);
+            Actor_WalkToAndWait(0, 447, 1227);
           }
           Engine_GameFlagSet(0x30c);
         }
@@ -750,25 +775,26 @@ static void EV44_TOUCH(void) {
   }
 }
 
-static void FieldScene_DrawFiveTileBlocks(void) {
-
-  Map_CopyCellAttributes(29, 20, 1, 1, 26, 0x47);
-  Map_CopyCellAttributes(29, 20, 1, 1, 26, 0x46);
-  Map_CopyCellAttributes(29, 20, 1, 1, 27, 0x46);
-  Map_CopyCellAttributes(28, 21, 1, 1, 28, 0x47);
-  Map_CopyCellAttributes(28, 22, 1, 1, 27, 0x48);
+// Apply the collision cells left by rock 14.
+static void ValeStorm_ApplyRock14Collision(void) {
+  Map_CopyCellAttributes(29, 20, 1, 1, 26, 71);
+  Map_CopyCellAttributes(29, 20, 1, 1, 26, 70);
+  Map_CopyCellAttributes(29, 20, 1, 1, 27, 70);
+  Map_CopyCellAttributes(28, 21, 1, 1, 28, 71);
+  Map_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-static void FieldScene_RunScene372SequenceA(void) {
-  s32 base;
+// Stop the leader at exit 6 for the first villager conversation.
+static void ValeStorm_MeetVillagerAtExit6(void) {
+  s32 message;
 
   Engine_EventBegin();
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x106, 0x32a);
-  Actor_SetPosition(20, 0x1060000, 0x3250000);
-  Actor_WalkTo(20, 0x106, 0x339);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 810);
+  Actor_SetPosition(20, PIXELS(262), PIXELS(805));
+  Actor_WalkTo(20, 262, 825);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x11a, 0x357);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 282, 855);
   Engine_ActorSetAnimation(20, 1);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 20, 0);
@@ -776,27 +802,28 @@ static void FieldScene_RunScene372SequenceA(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_ShowEmote(20, 0x100, 20);
-  base = MsgValeHuh;
-  Engine_EventSetMessage(base);
+  message = MsgValeHuh;
+  Engine_EventSetMessage(message);
   Event_ShowMessage(20, 0);
   Engine_EventWait(20);
   Event_AskYesNo(20, 0);
   Engine_ActorRunRepeatedMotion(20, 2);
-  Engine_EventSetMessage((base + 4));
+  Engine_EventSetMessage((message + 4));
   Event_ShowMessageAndWait(20, 0, 20);
   Object_SetActionCallbackAndRefreshById(20, (s32)gValeStorm_ActorTwentyScript);
   GameFlag_Set(0x835);
   Engine_EventEnd();
 }
 
-static void EV30_TOUCH(void) {
+// Draw attention to Garet struggling with his belongings.
+static void ValeStorm_HearGaretStruggling(void) {
   if (GameFlag_IsSet(0x836) == 0) {
     if (GameFlag_IsSet(0x837) == 0) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgValeUghHrnghhh);
       Event_ShowMessageAndWait(22, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x17e, 0x26b);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 382, 619);
       Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Engine_EventWait(30);
@@ -807,7 +834,8 @@ static void EV30_TOUCH(void) {
   }
 }
 
-static void EV31_TOUCH(void) {
+// Have Garet call after Isaac if the first conversation is unfinished.
+static void ValeStorm_GaretCallsAfterIsaac(void) {
   if (Engine_GameFlagIsSet(0x837) == 0 && Engine_GameFlagIsSet(0x836) != 0) {
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(22, 2);
@@ -818,7 +846,8 @@ static void EV31_TOUCH(void) {
   }
 }
 
-static void EV22_TALK(void) {
+// Discuss leaving belongings behind or the danger from the boulder.
+static void ValeStorm_TalkToGaret(void) {
   if (GameFlag_IsSet(0x841) != 0) {
     Engine_EventBegin();
     Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
@@ -837,16 +866,17 @@ static void EV22_TALK(void) {
   }
 }
 
+// Resolve the belongings conversation and bring Garet into the party.
 static void ValeStorm_RunCallOutSequence(void) {
-  struct FieldActor *record;
-  s32 v5;
+  struct FieldActor *leader;
+  s32 agreedToLeaveBelongings;
 
   Engine_EventOpenMessage(22, 0);
   Engine_ActorFaceEachOther(0, 22, 0);
-  v5 = 0;
+  agreedToLeaveBelongings = 0;
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgValeThinkForgetThings);
-    v5 = 1;
+    agreedToLeaveBelongings = 1;
   } else {
     Engine_EventSetMessage(MsgValeRockHitsLose);
   }
@@ -859,17 +889,16 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_ActorFaceActor(22, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(22, 3);
-  if (v5 != 0) {
-
+  if (agreedToLeaveBelongings != 0) {
     Engine_EventSetMessage(MsgValeKnowRightOk);
   } else {
     Engine_EventSetMessage(MsgValeRightDitchStuff);
   }
   Engine_EventShowMessage(22, 0);
   Engine_ActorSetAnimation(22, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Engine_ActorSetDestination(22, record->x.part.pixel, record->z.part.pixel);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Engine_ActorSetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(22);
   Engine_ActorSetPosition(22, 0, 0);
@@ -877,44 +906,45 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_GameFlagSet(0x837);
 }
 
-static void EV32_TOUCH(void) {
-  struct FieldActor *record;
-  s32 base;
+// Play the alternate conversation that brings Garet into the party.
+static void ValeStorm_GaretJoinsIsaac(void) {
+  struct FieldActor *actor;
+  s32 message;
 
   if (GameFlag_IsSet(0x837) == 0) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(22, 0x100);
-    base = MsgValeHey;
-    Engine_EventSetMessage(base);
+    message = MsgValeHey;
+    Engine_EventSetMessage(message);
     Event_ShowMessage(22, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Camera_SetSpeed(0x6666, 0xccc);
-    Camera_MoveTo(0x1000000, -1, 0x24c0000, 1);
-    Actor_SetSpeed(22, 0x20000, 0x10000);
+    Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+    Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
+    Actor_SetSpeed(22, PIXELS(2), PIXELS(1));
     Object_SetActionCallbackAndRefreshById(
         22, (s32)gValeStorm_ActorTwentyTwoScriptA);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(30);
     Actor_SetActionScript(22, gValeStorm_ActorTwentyTwoScriptB);
     Event_ShowMessage(22, 0);
-    record = Actor_Get(22);
-    record->scaleY = 0x10000;
+    actor = Actor_Get(22);
+    actor->scaleY = Q16_ONE;
     Engine_ActorRunRepeatedMotion(22, 1);
     Engine_EventWait(20);
     Event_AskYesNo(22, 0);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(22, 1);
-    Engine_EventSetMessage((base + 5));
+    Engine_EventSetMessage((message + 5));
     Event_ShowMessageAndWait(22, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(22, 3);
     Event_ShowMessage(22, 0);
-    Actor_SetSpeed(22, 0x10000, 0x8000);
+    Actor_SetSpeed(22, PIXELS(1), PIXELS(1) / 2);
     Engine_ActorSetAnimation(22, 2);
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if (record != 0) {
-      Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
+    if (actor != 0) {
+      Actor_SetDestination(22, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);
@@ -925,17 +955,18 @@ static void EV32_TOUCH(void) {
   }
 }
 
-static void EV33_TOUCH(void) {
-  struct FieldActor *record;
-  struct FieldActor *actor;
+// Have Garet warn Isaac about the path toward Mt. Aleph.
+static void ValeStorm_WarnAboutMtAleph(void) {
+  struct FieldActor *leader;
+  struct FieldActor *initialLeader;
 
   Engine_EventBegin();
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
+  initialLeader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (initialLeader != NULL) {
+    Actor_SetPosition(22, initialLeader->x.fixed, initialLeader->z.fixed);
   }
-  Actor_SetSpeed(22, 0x10000, 0x8000);
-  Actor_WalkToAndWait(22, 0x119, 0x1fb);
+  Actor_SetSpeed(22, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(22, 281, 507);
   Engine_ActorFaceEachOther(22, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgValeNorthLeadsToMtAleph);
@@ -947,27 +978,28 @@ static void EV33_TOUCH(void) {
   Actor_FaceDirection(22, FACING_SOUTH, 0);
   Event_ShowMessage(22, 0);
   Engine_ActorSetAnimation(22, 2);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(22);
   Actor_SetPosition(22, 0, 0);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x205);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 517);
   Engine_EventEnd();
 }
 
-static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y) {
-  struct FieldActor *a;
-  s32 w = 0x10000;
-  s32 h = 0x8000;
-  struct FieldActor *b;
+// Bring Garet out to discuss a blocked path, then return him to Isaac.
+static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
+  struct FieldActor *leaderAtStart;
+  s32 speed = PIXELS(1);
+  s32 acceleration = (PIXELS(1) / 2);
+  struct FieldActor *leaderAtEnd;
 
-  a = Object_GetById(ACTOR_PARTY_LEADER);
-  if (a != 0) {
-    Engine_ActorSetPosition(22, a->x.fixed, a->z.fixed);
+  leaderAtStart = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leaderAtStart != 0) {
+    Engine_ActorSetPosition(22, leaderAtStart->x.fixed, leaderAtStart->z.fixed);
   }
-  Engine_ActorSetSpeed(22, w, h);
+  Engine_ActorSetSpeed(22, speed, acceleration);
   Engine_ActorWalkToAndWait(22, x, y);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
   Engine_EventWait(20);
@@ -979,60 +1011,63 @@ static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y) {
   Engine_EventShowMessage(22, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(22, 2);
-  b = Object_GetById(ACTOR_PARTY_LEADER);
-  if (b != 0) {
-    Engine_ActorSetDestination(22, b->x.part.pixel, b->z.part.pixel);
+  leaderAtEnd = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leaderAtEnd != 0) {
+    Engine_ActorSetDestination(22, leaderAtEnd->x.part.pixel,
+                               leaderAtEnd->z.part.pixel);
   }
   Engine_ActorWaitForMove(22);
   Engine_ActorSetPosition(22, 0, 0);
 }
 
-static void EV34_TOUCH(void) {
+// Show the boulder falling while the actors below react.
+static void ValeStorm_WatchBoulderFall(void) {
   u32 i;
-  struct FieldActor *record;
-  s32 *phase;
+  struct FieldActor *movingActor;
+  s32 *shakeShift;
   struct FieldActor *actor;
-  SchedulerCallback steps;
-  SchedulerCallback callback;
-  s32 shifted;
+  SchedulerCallback updateEffects;
+  SchedulerCallback cycleBoulderPalette;
+  s32 boulderHeight;
 
   if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId((s32)gValeStorm_LastObjectCall);
+    Event_CallWithLastActiveObjectId(gValeStorm_LastObjectCall);
     SceneState_SetValue140Mode0();
     Engine_TaskWait(1);
     Event_PlayCue(141);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Engine_EventWait(30);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     Event_PlayCue(145);
     Engine_EventWait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetPosition(22, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Actor_SetSpeed(22, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(22, PIXELS(2), PIXELS(1));
     Actor_SetActionScript(0, gValeStorm_LeaderScript);
     Object_SetActionCallbackAndRefreshById(
         22, (s32)gValeStorm_ActorTwentyTwoScript);
     Object_RefreshSelectorById(0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(22, 0x100, 30);
-    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+    Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Event_PlayCue(145);
     Engine_EventWait(40);
-    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+    Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Event_PlayCue(145);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Actor_SetAttachedEffect(22, 0x102);
     Engine_EventWait(40);
+    // Show the actors holding back the boulder.
     Engine_ActorSetAnimation(32, 5);
     Engine_ActorSetAnimation(33, 5);
     Engine_ActorSetAnimation(30, 8);
     Engine_ActorSetAnimation(29, 8);
-    Actor_Get(30)->scaleX = -0x10000;
+    Actor_Get(30)->scaleX = -Q16_ONE;
     Engine_ActorSetSpritePriority(32, 2);
     Engine_ActorSetSpritePriority(33, 2);
     Engine_ActorSetSpritePriority(30, 3);
@@ -1041,62 +1076,63 @@ static void EV34_TOUCH(void) {
     Event_ShowMessageAndWait(28, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(22, FACING_NORTH, 20);
-    Camera_SetSpeed(0x40000, 0x8000);
-    Camera_MoveTo(0x700000, -1, 0x14b0000, 1);
+    Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+    Camera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
     Engine_CameraWaitForMove();
     for (i = 0; i < 40; i++) {
-      SceneActor_SetModeByFrameBit1(Actor_Get(32));
-      SceneActor_SetModeByFrameBit1(Actor_Get(33));
-      SceneActor_SetModeByFrameBit1(Actor_Get(30));
-      SceneActor_SetModeByFrameBit1(Actor_Get(29));
+      ValeStorm_FlashPaletteAndSpawnEffects(Actor_Get(32));
+      ValeStorm_FlashPaletteAndSpawnEffects(Actor_Get(33));
+      ValeStorm_FlashPaletteAndSpawnEffects(Actor_Get(30));
+      ValeStorm_FlashPaletteAndSpawnEffects(Actor_Get(29));
       Engine_TaskWait(1);
     }
-    phase = &sShakeShift;
-    steps = FieldScene_RunFourPairedSteps;
+    // Run the palette effects while the boulder rocks back and forth.
+    shakeShift = &sShakeShift;
+    updateEffects = ValeStorm_UpdateBoulderSceneEffects;
     sShakeDone = 0;
-    *phase = 0;
-    FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
-    callback = SceneState_SetValue19ThenCall;
-    FieldScheduler_AddCallback(callback, 0xc80);
+    *shakeShift = 0;
+    FieldScheduler_AddOrUpdateCallback(updateEffects, STORM_CALLBACK_PRIORITY);
+    cycleBoulderPalette = ValeStorm_CycleBoulderPalette;
+    FieldScheduler_AddCallback(cycleBoulderPalette, STORM_CALLBACK_PRIORITY);
     Engine_EventWait(40);
-    *phase = 1;
+    *shakeShift = 1;
     Engine_EventWait(30);
-    Actor_SetPosition(19, 0x720000, 0x1220000);
-    record = Actor_Get(19);
-    shifted = record->y.fixed + 0x400000;
-    record->y.fixed = shifted;
-    record->targetY = shifted;
-    Actor_SetSpeed(19, 0xcccc, 0x6666);
+    Actor_SetPosition(19, PIXELS(114), PIXELS(290));
+    movingActor = Actor_Get(19);
+    boulderHeight = movingActor->y.fixed + PIXELS(64);
+    movingActor->y.fixed = boulderHeight;
+    movingActor->targetY = boulderHeight;
+    Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
     Event_PlayCue(145);
-    Actor_MoveToAndWait(19, 114, 0x14d);
+    Actor_MoveToAndWait(19, 114, 333);
     Engine_ActorSetAnimation(19, 2);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Event_PlayCue(145);
-    *phase = 0;
-    Actor_SetSpeed(19, 0x6666, 0x3333);
-    Actor_MoveToAndWait(19, 114, 0x12c);
+    *shakeShift = 0;
+    Actor_SetSpeed(19, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_MoveToAndWait(19, 114, 300);
     Engine_ActorSetAnimation(19, 2);
-    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+    Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Event_PlayCue(145);
-    *phase = 2;
-    Actor_SetSpeed(19, 0xcccc, 0x6666);
-    Actor_MoveToAndWait(19, 114, 0x14d);
+    *shakeShift = 2;
+    Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_MoveToAndWait(19, 114, 333);
     Engine_ActorSetAnimation(19, 2);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Event_PlayCue(145);
-    *phase = 0;
-    Actor_SetSpeed(19, 0x6666, 0x3333);
-    Actor_MoveToAndWait(19, 114, 0x12c);
+    *shakeShift = 0;
+    Actor_SetSpeed(19, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_MoveToAndWait(19, 114, 300);
     Engine_ActorSetAnimation(19, 2);
-    Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+    Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Event_PlayCue(145);
-    *phase = 2;
-    Actor_SetSpeed(19, 0xcccc, 0x6666);
-    Actor_MoveToAndWait(19, 114, 0x14d);
+    *shakeShift = 2;
+    Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_MoveToAndWait(19, 114, 333);
     Engine_ActorSetAnimation(19, 2);
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Event_PlayCue(145);
-    *phase = 1;
+    *shakeShift = 1;
     Engine_EventWait(20);
     Actor_SetAttachedEffect(32, 0x102);
     Engine_ActorRunRepeatedMotion(32, 2);
@@ -1107,6 +1143,7 @@ static void EV34_TOUCH(void) {
     Actor_SetAttachedEffect(30, 0x102);
     Engine_ActorRunRepeatedMotion(30, 2);
     Event_ShowMessage(30, 0);
+    // Stop the final actor effect and return the camera to Isaac.
     sShakeDone = 1;
     Engine_ActorSetAnimation(29, 1);
     Engine_TaskWait(1);
@@ -1123,17 +1160,17 @@ static void EV34_TOUCH(void) {
     Engine_EventWait(10);
     Event_ShowMessageAndWait(29, 0, 20);
     Event_PlayCue(0x121);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Camera_SetSpeed(0x60000, 0xc000);
-    Camera_MoveTo(0x540000, -1, 0x2340000, 1);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
+    Camera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
     Engine_CameraWaitForMove();
     BattleFx_PlayQueuedSound();
     Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(22, 0x102);
     Engine_EventWait(30);
-    Scheduler_RemoveCallback(steps);
-    Scheduler_RemoveCallback(callback);
+    Scheduler_RemoveCallback(updateEffects);
+    Scheduler_RemoveCallback(cycleBoulderPalette);
     Event_ShowMessage(22, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(20);
@@ -1142,9 +1179,10 @@ static void EV34_TOUCH(void) {
     Engine_ActorSetAnimationAndWait(22, 3);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(22, 2);
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if (record != 0) {
-      Actor_SetDestination(22, record->x.part.pixel, record->z.part.pixel);
+    movingActor = Object_GetById(ACTOR_PARTY_LEADER);
+    if (movingActor != 0) {
+      Actor_SetDestination(22, movingActor->x.part.pixel,
+                           movingActor->z.part.pixel);
     }
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);
@@ -1159,31 +1197,35 @@ static void EV34_TOUCH(void) {
   }
 }
 
+// Apply an animation parameter to each active entry of a single sprite.
 static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
-  if ((actor->active & 15) == 1) {
-    struct AnimationObject *animation = (struct AnimationObject *)actor->sprite;
-    s32 param = mode - 1;
+  if ((actor->spriteStorageKind & 0xf) == 1) {
+    struct AnimationObject *animation = actor->sprite;
+    s32 animationParameter = mode - 1;
     u8 count;
     if (mode == 0) {
-      param = gValeStorm_FrameModes[(gFrameCount >> 1) & (actor->active & 15)];
+      animationParameter =
+          gValeStorm_FrameModes[(gFrameCount >> 1) &
+                                (actor->spriteStorageKind & 0xf)];
     }
     count = animation->count;
     if (count != 0) {
       struct AnimationEntry **entries = animation->entries;
-      s32 k = count;
+      s32 remainingEntries = count;
       do {
         struct AnimationEntry *entry = *entries++;
         if (entry != NULL && entry->script != NULL) {
-          entry->param = param;
+          entry->param = animationParameter;
         }
-        k--;
-      } while (k != 0);
+        remainingEntries--;
+      } while (remainingEntries != 0);
     }
     animation->dirty = 1;
   }
 }
 
-UNUSED static void ActorPresentation_SetFourActorsModeByBit(void) {
+// Alternate four actors between the normal and flashing parameters.
+UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
     Storm_SetActorFrameMode(Object_GetById(33), 1);
@@ -1197,73 +1239,74 @@ UNUSED static void ActorPresentation_SetFourActorsModeByBit(void) {
   }
 }
 
-static void EV35_TOUCH(void) {
-  const s32 *table;
+// Show the attempt to rescue Felix from the river.
+static void ValeStorm_WitnessRiverRescue(void) {
+  const s32 *pulseScript;
 
   if (GameFlag_IsSet(0x83a) != 0) {
     return;
   }
   Engine_EventBegin();
-  Actor_SetPosition(10, 0xC00000, 0x4BE0000);
+  Actor_SetPosition(10, PIXELS(192), PIXELS(1214));
   Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   Engine_ActorSetAnimation(10, 5);
   {
-    struct FieldActor *o;
-    s32 v;
-    o = Object_GetById(10);
-    v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-    table = gValeStorm_ActorEightScript;
-    o->timer = v;
-    Actor_SetActionScript(10, table);
+    struct FieldActor *actor;
+    s32 pulseDelay;
+    actor = Object_GetById(10);
+    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    pulseScript = gValeStorm_ActorEightScript;
+    actor->timer = pulseDelay;
+    Actor_SetActionScript(10, pulseScript);
   }
-  Actor_SetPosition(9, 0xC00000, 0x4A50000);
+  Actor_SetPosition(9, PIXELS(192), PIXELS(1189));
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-  Actor_SetPosition(24, 0xE30000, 0x4BE0000);
+  Actor_SetPosition(24, PIXELS(227), PIXELS(1214));
   Actor_FaceDirection(24, FACING_SOUTH, 0);
   Engine_ActorSetAnimation(24, 6);
   {
-    struct FieldActor *o;
-    s32 v;
-    o = Object_GetById(24);
-    v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-    o->timer = v;
-    Actor_SetActionScript(24, table);
+    struct FieldActor *actor;
+    s32 pulseDelay;
+    actor = Object_GetById(24);
+    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    actor->timer = pulseDelay;
+    Actor_SetActionScript(24, pulseScript);
   }
-  Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
+  Actor_SetPosition(25, PIXELS(250), PIXELS(1214));
   Actor_FaceDirection(25, FACING_SOUTH, 0);
   Engine_ActorSetAnimation(25, 6);
   {
-    struct FieldActor *o;
-    s32 v;
-    o = Object_GetById(25);
-    v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-    o->timer = v;
-    Actor_SetActionScript(25, table);
+    struct FieldActor *actor;
+    s32 pulseDelay;
+    actor = Object_GetById(25);
+    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    actor->timer = pulseDelay;
+    Actor_SetActionScript(25, pulseScript);
   }
-  Actor_SetPosition(26, 0xE30000, 0x4A50000);
+  Actor_SetPosition(26, PIXELS(227), PIXELS(1189));
   Actor_FaceDirection(26, 0x3000, 0);
-  Actor_SetPosition(23, 0xF30000, 0x4FD0000);
+  Actor_SetPosition(23, PIXELS(243), PIXELS(1277));
   Actor_FaceDirection(23, FACING_NORTH, 0);
   Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
   Engine_TaskWait(3);
   Engine_EventSetMessage(MsgValeNoBrother);
   Engine_EventShowMessage(0x201a, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 0x446);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 1094);
   {
-    struct FieldActor *p;
-    p = Object_GetById(ACTOR_PARTY_LEADER);
-    if (p != 0) {
-      Engine_ActorSetPosition(22, p->x.fixed, p->z.fixed);
+    struct FieldActor *leader;
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+      Engine_ActorSetPosition(22, leader->x.fixed, leader->z.fixed);
     }
   }
-  Actor_WalkToAndWait(22, 132, 0x446);
+  Actor_WalkToAndWait(22, 132, 1094);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(22, FACING_SOUTH, 20);
-  Camera_SetSpeed(0x40000, 0x8000);
-  Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
+  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  Camera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(10, 2);
@@ -1273,8 +1316,8 @@ static void EV35_TOUCH(void) {
   Engine_ActorSetAnimationAndWait(9, 3);
   Engine_EventShowMessageAndWait(9, 0, 10);
   Actor_FaceDirection(9, 0x3000, 10);
-  Camera_SetSpeed(0x30000, 0x6000);
-  Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
+  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  Camera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Engine_AudioPlayCue(134);
@@ -1286,32 +1329,32 @@ static void EV35_TOUCH(void) {
   BattleFx_PlayQueuedSound();
   Engine_ActorSetAnimation(10, 1);
   {
-    struct FieldActor *o;
-    o = Object_GetById(10);
-    o->scaleX = 0x10000;
-    o->scaleY = 0x10000;
+    struct FieldActor *actor;
+    actor = Object_GetById(10);
+    actor->scaleX = Q16_ONE;
+    actor->scaleY = Q16_ONE;
   }
   Engine_ActorSetAnimation(24, 1);
   {
-    struct FieldActor *o;
-    o = Object_GetById(24);
-    o->scaleX = 0x10000;
-    o->scaleY = 0x10000;
+    struct FieldActor *actor;
+    actor = Object_GetById(24);
+    actor->scaleX = Q16_ONE;
+    actor->scaleY = Q16_ONE;
   }
   Engine_ActorSetAnimation(25, 1);
   {
-    struct FieldActor *o;
-    o = Object_GetById(25);
-    o->scaleX = 0x10000;
-    o->scaleY = 0x10000;
+    struct FieldActor *actor;
+    actor = Object_GetById(25);
+    actor->scaleX = Q16_ONE;
+    actor->scaleY = Q16_ONE;
   }
   Engine_ActorStartRepeatedMotion(10, 2);
   Engine_ActorStartRepeatedMotion(9, 2);
   Engine_ActorStartRepeatedMotion(24, 2);
   Engine_ActorStartRepeatedMotion(25, 2);
   Engine_ActorRunRepeatedMotion(26, 2);
-  Camera_SetSpeed(0x9999, 0x1333);
-  Camera_MoveTo(0xD80000, -1, 0x4D00000, 1);
+  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  Camera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   Engine_CameraWaitForMove();
   Actor_SetAttachedEffect(26, 0x102);
   Engine_ActorSetAttachedEffect(9, 0x102);
@@ -1320,27 +1363,27 @@ static void EV35_TOUCH(void) {
   Engine_ActorStartRepeatedMotion(26, 3);
   Engine_EventShowMessage(26, 0);
   Engine_ActorJump(25, 2, 0);
-  Actor_SetDestination(25, 234, 0x4B5);
+  Actor_SetDestination(25, 234, 1205);
   Engine_ActorJump(26, 2, 0);
-  Actor_SetDestination(26, 227, 0x4B1);
+  Actor_SetDestination(26, 227, 1201);
   Engine_EventWait(90);
-  Camera_MoveTo(0xE80000, -1, 0x4E50000, 1);
+  Camera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetPosition(23, 0xF30000, 0x4FD0000);
+  Engine_ActorSetPosition(23, PIXELS(243), PIXELS(1277));
   Engine_TaskWait(1);
   Engine_AudioPlayCue(106);
   {
-    struct FieldActor *o;
-    o = Object_GetById(23);
-    o->velocityY = 0x20000;
+    struct FieldActor *actor;
+    actor = Object_GetById(23);
+    actor->velocityY = PIXELS(2);
   }
   Engine_EventWait(6);
   Engine_ActorSetAnimation(23, 7);
   Engine_EventWait(20);
   BattleFx_PlayQueuedSound();
   Engine_EventWait(20);
-  Engine_CameraSetSpeed(0x19999, 0x3333);
-  Engine_CameraMoveTo(0xD80000, -1, 0x4D00000, 1);
+  Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  Engine_CameraMoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   Engine_CameraWaitForMove();
   Engine_ActorRunRepeatedMotion(24, 2);
   Engine_EventWait(20);
@@ -1350,25 +1393,25 @@ static void EV35_TOUCH(void) {
   Engine_ActorRunRepeatedMotion(10, 2);
   Event_ShowMessage(0x800A, 0);
   {
-    struct FieldActor *o;
-    o = Object_GetById(25);
-    o->steeringFlags &= 0xFE;
+    struct FieldActor *actor;
+    actor = Object_GetById(25);
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   }
   {
-    struct FieldActor *o;
-    o = Object_GetById(26);
-    o->steeringFlags &= 0xFE;
+    struct FieldActor *actor;
+    actor = Object_GetById(26);
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   }
-  Actor_SetSpeed(25, 0x9999, 0x4CCC);
-  Actor_SetSpeed(26, 0x9999, 0x4CCC);
-  Actor_SetDestination(25, 247, 0x4BA);
-  Actor_MoveToAndWait(26, 227, 0x4A5);
+  Actor_SetSpeed(25, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(26, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetDestination(25, 247, 1210);
+  Actor_MoveToAndWait(26, 227, 1189);
   {
-    struct FieldActor *o;
-    o = Object_GetById(25);
-    o->steeringFlags |= 1;
+    struct FieldActor *actor;
+    actor = Object_GetById(25);
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
   }
-  Object_GetById(26)->steeringFlags |= 1;
+  Object_GetById(26)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(25, FACING_WEST, 10);
   Engine_ActorSetAnimation(24, 4);
@@ -1431,17 +1474,20 @@ static void EV35_TOUCH(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventShowMessageAndWait(9, 0, 10);
+  // Search both river paths before asking the children to help.
   ValeStorm_RunRiverSearch();
   Engine_GameFlagSet(0x83A);
   Engine_EventEnd();
 }
 
+// Send the searchers along the river and ask Isaac to help.
 static void ValeStorm_RunRiverSearch(void) {
-  struct FieldActor *entry;
-  s32 record;
+  struct FieldActor *villager;
+  s32 random;
   const s32 *script;
-  s32 north;
-  s32 suppose;
+  s32 northMessage;
+  s32 helpMessage;
+  struct FieldActor *leader;
 
   Actor_FaceDirection(26, 0x3000, 0);
   Actor_FaceDirection(24, 0xd000, 0);
@@ -1454,18 +1500,18 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_ActorSetAnimation(9, 3);
   Engine_ActorSetAnimationAndWait(25, 3);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x10000, 0x2000);
-  Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
-  Actor_SetSpeed(26, 0x19999, 0xcccc);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  Camera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
+  Actor_SetSpeed(26, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(9, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptA);
   Object_SetActionCallbackAndRefreshById(9, (s32)gValeStorm_ActorNineScriptA);
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
   Engine_EventWait(10);
-  Actor_WalkToAndWait(9, 149, 0x497);
+  Actor_WalkToAndWait(9, 149, 1175);
   Actor_SetPosition(9, 0, 0);
-  Actor_WalkToAndWait(25, 250, 0x4be);
+  Actor_WalkToAndWait(25, 250, 1214);
   BattleFx_PlayQueuedSound();
   Actor_FaceDirection(10, 0x3000, 0);
   Actor_FaceDirection(24, 0x3000, 0);
@@ -1473,15 +1519,15 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_ActorSetAnimation(10, 5);
   Engine_ActorSetAnimation(24, 6);
   Engine_ActorSetAnimation(25, 6);
-  entry = Actor_Get(10);
-  record = Engine_RandomNext();
-  entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-  entry = Actor_Get(24);
-  record = Engine_RandomNext();
-  entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-  entry = Actor_Get(25);
-  record = Engine_RandomNext();
-  entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
+  villager = Actor_Get(10);
+  random = Engine_RandomNext();
+  villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
+  villager = Actor_Get(24);
+  random = Engine_RandomNext();
+  villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
+  villager = Actor_Get(25);
+  random = Engine_RandomNext();
+  villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   script = gValeStorm_ActorEightScript;
   Actor_SetActionScript(10, script);
   Actor_SetActionScript(24, script);
@@ -1492,7 +1538,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Map_AnimateCells(gValeStorm_CellSteps5, 38, 72);
   Engine_EventWait(30);
   BattleFx_PlayQueuedSound();
-  Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
+  Camera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
   Engine_EventWait(20);
@@ -1506,8 +1552,8 @@ static void ValeStorm_RunRiverSearch(void) {
   Object_RefreshSelectorById(26);
   BattleFx_PlayQueuedSound();
   Engine_EventWait(40);
-  north = MsgValeGoLookNorth;
-  Engine_EventSetMessage(north);
+  northMessage = MsgValeGoLookNorth;
+  Engine_EventSetMessage(northMessage);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(26, 3);
   Event_ShowMessageAndWait(0x201a, 0, 40);
@@ -1517,34 +1563,34 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetActionScript(9, gValeStorm_ActorNineScriptC);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptC);
   Engine_EventWait(40);
-  Camera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
+  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  Camera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
   Object_RefreshSelectorById(9);
   Actor_FaceDirection(9, FACING_EAST, 0);
   Actor_ShowEmote(9, 0x100, 40);
   Event_ShowMessageAndWait(9, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(22, FACING_WEST, 10);
-  Actor_WalkToAndWait(9, 105, 0x43e);
+  Actor_WalkToAndWait(9, 105, 1086);
   Engine_ActorRunRepeatedMotion(9, 2);
   Event_OpenMessage(0x8009, 0);
   Actor_FaceDirection(22, FACING_EAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(9, 3);
-    Engine_EventSetMessage((north + 4));
+    Engine_EventSetMessage((northMessage + 4));
   } else {
     Engine_ActorRunRepeatedMotion(9, 2);
-    Engine_EventSetMessage((north + 5));
+    Engine_EventSetMessage((northMessage + 5));
   }
   Event_ShowMessage(0x8009, 0);
   Actor_FaceDirection(22, FACING_WEST, 40);
   Actor_ShowEmote(9, 0x100, 30);
-  suppose = MsgValeDontSupposeTwo;
-  Engine_EventSetMessage(suppose);
+  helpMessage = MsgValeDontSupposeTwo;
+  Engine_EventSetMessage(helpMessage);
   Event_OpenMessage(0x8009, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(9, 3);
-    Engine_EventSetMessage((suppose + 1));
+    Engine_EventSetMessage((helpMessage + 1));
     Event_ShowMessageAndWait(0x8009, 0, 30);
     Actor_FaceDirection(22, FACING_WEST, 20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -1555,7 +1601,7 @@ static void ValeStorm_RunRiverSearch(void) {
     Actor_ShowEmote(9, 0x105, 90);
     Actor_ShowEmote(9, 0x103, 40);
     Engine_ActorSetAnimation(9, 4);
-    Engine_EventSetMessage((suppose + 2));
+    Engine_EventSetMessage((helpMessage + 2));
     Event_ShowMessage(0x8009, 0);
   }
   Actor_SetActionScript(9, gValeStorm_ActorNineScriptD);
@@ -1566,18 +1612,18 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_ActorSetAnimationAndWait(22, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(22, 2);
-  record = (s32)Actor_Get(0);
-  if (record != 0) {
-    Actor_SetDestination(22, ((struct FieldActor *)record)->x.part.pixel,
-                         ((struct FieldActor *)record)->z.part.pixel);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Actor_SetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(22);
   Actor_SetPosition(22, 0, 0);
 }
 
-static void EV10_TALK(void) {
-  s32 v2000 = 0x2000;
-  const s32 *table;
+// Discuss the rescue attempt and resume the villager idle animation.
+static void ValeStorm_TalkAboutRescuingFelix(void) {
+  s32 facing = FACING_SOUTHEAST;
+  const s32 *pulseScript;
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 1);
@@ -1593,94 +1639,95 @@ static void EV10_TALK(void) {
     Engine_ActorStartRepeatedMotion(10, 2);
     Engine_EventShowMessageAndWait(10, 0, 10);
   }
-  Engine_ActorFaceDirection(10, v2000, 20);
+  Engine_ActorFaceDirection(10, facing, 20);
   Engine_ActorSetAnimation(10, 5);
   Engine_EventWait(10);
   {
-    struct FieldActor *rec;
-    s32 v;
-    rec = Object_GetById(10);
-    v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-    table = gValeStorm_ActorEightScript;
-    rec->timer = v;
-    Actor_SetActionScript(10, table);
+    struct FieldActor *villager;
+    s32 pulseDelay;
+    villager = Object_GetById(10);
+    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    pulseScript = gValeStorm_ActorEightScript;
+    villager->timer = pulseDelay;
+    Actor_SetActionScript(10, pulseScript);
   }
   Engine_EventWait(20);
   Engine_GameFlagSet(0x30d);
   Engine_EventEnd();
 }
 
-static void EV36_TOUCH(void) {
-  struct FieldActor *rec;
-  struct FieldActor *record;
-  s32 v5;
-  u8 *p4;
+// Gather the children after the rescue and show the next boulder scene.
+static void ValeStorm_GatherAfterRiverRescue(void) {
+  struct FieldActor *leader;
+  struct FieldActor *actor;
+  s32 automaticPriority;
+  struct AnimationObject *sprite;
 
   if (Engine_GameFlagIsSet(0x840) == 0) {
   } else {
     if (GameFlag_IsSet(0x841) != 0) {
     } else {
       Engine_EventBegin();
-      Actor_SetSpeed(0, 0x10000, 0x8000);
-      Actor_SetSpeed(22, 0x10000, 0x8000);
-      Actor_SetSpeed(26, 0x10000, 0x8000);
-      Actor_SetSpeed(8, 0x10000, 0x8000);
-      Actor_WalkToAndWait(0, 217, 0x557);
-      record = Object_GetById(0);
-      if (record != 0) {
-        Engine_ActorSetPosition(22, record->x.fixed, record->z.fixed);
+      Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(22, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(26, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
+      Actor_WalkToAndWait(0, 217, 1367);
+      actor = Object_GetById(0);
+      if (actor != 0) {
+        Engine_ActorSetPosition(22, actor->x.fixed, actor->z.fixed);
       }
-      Actor_WalkToAndWait(22, 235, 0x557);
+      Actor_WalkToAndWait(22, 235, 1367);
       Actor_FaceDirection(22, 0xb000, 0);
-      record = Object_GetById(0);
-      if (record != 0) {
-        Engine_ActorSetPosition(26, record->x.fixed, record->z.fixed);
+      actor = Object_GetById(0);
+      if (actor != 0) {
+        Engine_ActorSetPosition(26, actor->x.fixed, actor->z.fixed);
       }
-      Actor_WalkToAndWait(26, 199, 0x557);
+      Actor_WalkToAndWait(26, 199, 1367);
       Actor_FaceDirection(26, 0xd000, 0);
-      Actor_SetPosition(25, 0xf70000, 0x4ba0000);
+      Actor_SetPosition(25, PIXELS(247), PIXELS(1210));
       Engine_ActorFaceDirection(25, FACING_SOUTHWEST, 0);
-      record = Object_GetById(8);
-      p4 = (u8 *)record->sprite;
-      record->priorityFlags &= 254;
-      ((struct Flags9 *)p4)->mode = 1;
-      rec = Object_GetById(0);
-      p4 = (u8 *)rec->sprite;
-      rec->priorityFlags &= 254;
-      ((struct Flags9 *)p4)->mode = 2;
-      record = Object_GetById(0);
-      if (record != 0) {
-        Engine_ActorSetPosition(8, record->x.fixed, record->z.fixed);
+      actor = Object_GetById(8);
+      sprite = actor->sprite;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      sprite->image.priority = 1;
+      leader = Object_GetById(0);
+      sprite = leader->sprite;
+      leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      sprite->image.priority = 2;
+      actor = Object_GetById(0);
+      if (actor != 0) {
+        Engine_ActorSetPosition(8, actor->x.fixed, actor->z.fixed);
       }
-      Actor_WalkToAndWait(8, 221, 0x569);
+      Actor_WalkToAndWait(8, 221, 1385);
       Actor_FaceDirection(8, 0xb000, 60);
       Engine_ActorRunRepeatedMotion(26, 2);
       Engine_EventSetMessage(MsgValeMomDadBack);
       Engine_EventShowMessageAndWait(26, 0, 40);
-      Actor_SetPosition(9, 0x650000, 0x4ad0000);
+      Actor_SetPosition(9, PIXELS(101), PIXELS(1197));
       Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
       Engine_EventShowMessageAndWait(0x1009, 0, 10);
       Actor_FaceDirection(26, FACING_NORTHWEST, 0);
-      Engine_CameraSetSpeed(0x13333, 0x2666);
-      Camera_MoveTo(0x650000, -1, 0x4ad0000, 1);
-      Actor_SetSpeed(9, 0x16666, 0xb333);
+      Engine_CameraSetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+      Camera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
+      Actor_SetSpeed(9, PIXELS(7) / 5, PIXELS(7) / 10);
       Actor_SetActionScript(9, gValeStorm_StormRunActions);
       Engine_EventWait(60);
-      Engine_CameraSetSpeed(0x9999, 0x1333);
-      Camera_MoveTo(0xbb0000, -1, 0x5300000, 1);
+      Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+      Camera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(40);
       Engine_ActorRunRepeatedMotion(26, 2);
       Engine_EventShowMessageAndWait(26, 0, 20);
       Engine_ActorRunRepeatedMotion(9, 2);
       Engine_EventShowMessageAndWait(0x4009, 0, 20);
-      Engine_CameraSetSpeed(0x20000, 0x4000);
-      Camera_MoveTo(0xdd0000, -1, 0x5690000, 1);
+      Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
+      Camera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       Engine_ActorFaceActor(0, 8, 0);
       Engine_ActorFaceActor(22, 8, 0);
       Actor_FaceDirection(26, 0x3000, 80);
-      Engine_CameraMoveTo(0xb60000, -1, 0x5500000, 1);
-      Actor_WalkToAndWait(8, 182, 0x568);
+      Engine_CameraMoveTo(PIXELS(182), -1, PIXELS(1360), 1);
+      Actor_WalkToAndWait(8, 182, 1384);
       Engine_ActorFaceActor(8, 9, 0);
       Engine_EventWait(30);
       Engine_ActorSetAnimationAndWait(8, 3);
@@ -1709,53 +1756,65 @@ static void EV36_TOUCH(void) {
       Engine_ActorSetAnimation(0, 3);
       Engine_ActorSetAnimation(26, 3);
       Engine_ActorSetAnimation(22, 3);
-      v5 = 1;
+      automaticPriority = ACTOR_PRIORITY_AUTOMATIC;
       Engine_ActorSetAnimationAndWait(8, 3);
-      rec->priorityFlags |= v5;
-      record = Object_GetById(8);
-      record->priorityFlags |= v5;
-      Scene_RunActorGroupDepartureSequence();
+      leader->priorityFlags |= automaticPriority;
+      actor = Object_GetById(8);
+      actor->priorityFlags |= automaticPriority;
+      ValeStorm_ShowBoulderSweepingDownriver();
       Engine_GameFlagSet(0x841);
       Engine_EventEnd();
     }
   }
 }
 
-static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object, s32 pos,
-                                            s32 depth) {
-  object->x.fixed = pos;
-  object->y.fixed = pos;
-  object->targetX = pos;
-  object->targetY = pos;
-  object->z.fixed = depth;
-  object->targetZ = depth;
+// Place an actor and its motion targets at the supplied coordinates.
+static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
+                                            s32 horizontalPosition,
+                                            s32 groundPosition) {
+  object->x.fixed = horizontalPosition;
+  object->y.fixed = horizontalPosition;
+  object->targetX = horizontalPosition;
+  object->targetY = horizontalPosition;
+  object->z.fixed = groundPosition;
+  object->targetZ = groundPosition;
 }
 
-static void Scene_RunActorGroupDepartureSequence(void) {
-  struct FieldSprite *actorVisual;
-  struct FieldSprite *groupVisual;
+// Shake the scene at the impact cue and wait for the beat.
+static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
+                                                s32 frames) {
+  Map_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
+  Event_PlayCue(145);
+  Event_Wait(frames);
+}
+
+// Follow the boulder downriver, then restore the riverbank actors.
+static void ValeStorm_ShowBoulderSweepingDownriver(void) {
+  struct AnimationObject *actorVisual;
+  struct AnimationObject *groupVisual;
   struct FieldActor *actor;
-  struct FieldActor *fieldActor;
+  struct FieldActor *lookingActor;
   struct FieldActor *groupActor;
-  struct FieldActor *work;
+  struct FieldActor *currentActor;
   u32 random;
   const s32 *entryActions;
-  s32 zero;
-  u8 still;
-  const s32 *moveActions;
-  s32 phase;
+  s32 stoppedVelocity;
+  u8 stoppedMotion;
+  const s32 *lookAroundActions;
+  s32 resetValue;
   const s32 *departureActions;
 
   actor = Actor_Get(19);
   groupActor = Actor_Get(27);
   actorVisual = actor->sprite;
   groupVisual = groupActor->sprite;
-  Camera_SetSpeed(0x10000, 0x2000);
-  Camera_MoveTo(0x6e0000, -1, 0x58b0000, 1);
-  Actor_SetSpeed(8, 0x13333, 0x9999);
-  Actor_SetSpeed(26, 0x13333, 0x9999);
-  Actor_SetSpeed(0, 0x13333, 0x9999);
-  Actor_SetSpeed(22, 0x13333, 0x9999);
+  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  Camera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
+  Actor_SetSpeed(8, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(26, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(0, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(22, PIXELS(6) / 5, PIXELS(3) / 5);
+  // Bring the group to the riverbank as the lightning subsides.
   entryActions = gValeStorm_ArriveScript;
   Actor_SetActionScript(8, entryActions);
   Event_Wait(10);
@@ -1767,21 +1826,19 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   FieldFx_StopLightning();
   Actor_SetActionScript(22, entryActions);
   Event_Wait(128);
-  EV14_TOUCH();
-  Camera_MoveTo(0xae0000, -1, 0x5940000, 1);
+  ValeStorm_ClearPathCellOverride();
+  Camera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Event_Wait(104);
-  Camera_MoveTo(0x990000, -1, 0x52d0000, 1);
-  Actor_WalkToAndWait(9, 158, 0x4f8);
+  Camera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
+  Actor_WalkToAndWait(9, 158, 1272);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Object_RefreshSelectorById(8);
   Actor_SetActionScript(8, gValeStorm_GatherPath8);
   Actor_SetActionScript(26, gValeStorm_GatherPath26);
   Actor_SetActionScript(0, gValeStorm_GatherPath0);
   Object_SetActionCallbackAndRefreshById(22, gValeStorm_GatherPath22);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-  Event_PlayCue(145);
-  Event_Wait(20);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  ValeStorm_PlayImpactBeat(PIXELS(4), 20);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
   Actor_ShowEmote(0, 0x101, 0);
   Actor_ShowEmote(26, 0x101, 0);
@@ -1791,99 +1848,94 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Actor_FaceEachOther(26, 8, 0);
   Actor_FaceEachOther(22, 0, 0);
   Event_Wait(20);
-  fieldActor = Actor_Get(0);
+  lookingActor = Actor_Get(0);
   random = Random_Next();
   random = Math_RemainderUnsigned(random, 20) + 20;
-  fieldActor->timer = random;
-  zero = 0;
-  still = 0;
-  fieldActor = Actor_Get(22);
+  lookingActor->timer = random;
+  stoppedVelocity = 0;
+  stoppedMotion = 0;
+  lookingActor = Actor_Get(22);
   random = Random_Next();
-  fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  fieldActor = Actor_Get(26);
+  lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+  lookingActor = Actor_Get(26);
   random = Random_Next();
-  fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  fieldActor = Actor_Get(8);
+  lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+  lookingActor = Actor_Get(8);
   random = Random_Next();
-  fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  fieldActor = Actor_Get(9);
+  lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+  lookingActor = Actor_Get(9);
   random = Random_Next();
-  fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  moveActions = gValeStorm_LookAroundScript;
-  Actor_SetActionScript(9, moveActions);
+  lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
+  lookAroundActions = gValeStorm_LookAroundScript;
+  Actor_SetActionScript(9, lookAroundActions);
   Event_Wait(30);
-  Actor_SetActionScript(0, moveActions);
-  Actor_SetActionScript(26, moveActions);
-  Actor_SetActionScript(22, moveActions);
-  Actor_SetActionScript(8, moveActions);
+  Actor_SetActionScript(0, lookAroundActions);
+  Actor_SetActionScript(26, lookAroundActions);
+  Actor_SetActionScript(22, lookAroundActions);
+  Actor_SetActionScript(8, lookAroundActions);
   Event_Wait(10);
   Event_PlayCue(17);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-  Event_PlayCue(145);
-  Event_Wait(30);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  ValeStorm_PlayImpactBeat(PIXELS(3), 30);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(120);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-  Event_PlayCue(145);
-  Event_Wait(40);
-  Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+  ValeStorm_PlayImpactBeat(PIXELS(3), 40);
+  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_Wait(60);
-  Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
-  Event_PlayCue(145);
-  Event_Wait(20);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  ValeStorm_PlayImpactBeat(PIXELS(4), 20);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
-  Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-  Event_PlayCue(145);
-  Event_Wait(40);
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  ValeStorm_PlayImpactBeat(PIXELS(3), 40);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
   FieldFx_StopLightning();
-  Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(1);
-  Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-  Camera_SetSpeed(0x80000, 0x80000);
-  Camera_MoveTo(0xd90000, -1, 0x43c0000, 1);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  Camera_SetSpeed(PIXELS(8), PIXELS(8));
+  Camera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(40);
   Task_Wait(40);
+  // Stage the boulder and its glow for the downriver camera shot.
   Actor_SetChildValue(19, 0);
-  work = Actor_Get(19);
-  Actor_SetSpriteFlags(work, 0);
-  work = Actor_Get(27);
-  Actor_SetSpriteFlags(work, 0);
+  currentActor = Actor_Get(19);
+  Actor_SetSpriteFlags(currentActor, 0);
+  currentActor = Actor_Get(27);
+  Actor_SetSpriteFlags(currentActor, 0);
   groupActor->scaleX = 0xcccc;
   groupActor->scaleY = 0xcccc;
-  groupActor->priorityFlags &= 254;
-  groupVisual->priority = 1;
-  ValeStorm_PlaceActor(actor, 0xc80000, 0x3820000);
-  actor->motionFlags = still;
-  actor->priorityFlags &= 254;
-  actorVisual->priority = 0;
-  work = Camera_GetEventObject();
-  work->targetX = 0x80000000;
-  work = Camera_GetEventObject();
-  work->targetY = 0x80000000;
-  work = Camera_GetEventObject();
-  work->targetZ = 0x80000000;
-  work = Camera_GetEventObject();
-  work->velocityX = zero;
-  work = Camera_GetEventObject();
-  work->velocityY = zero;
-  work = Camera_GetEventObject();
-  work->velocityZ = zero;
+  groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  groupVisual->image.priority = 1;
+  ValeStorm_PlaceActor(actor, PIXELS(200), PIXELS(898));
+  actor->motionFlags = stoppedMotion;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actorVisual->image.priority = 0;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetX = ACTOR_NO_TARGET;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetY = ACTOR_NO_TARGET;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetZ = ACTOR_NO_TARGET;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityX = stoppedVelocity;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityY = stoppedVelocity;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityZ = stoppedVelocity;
   Task_Wait(1);
-  Camera_MoveTo(0xf70000, 0x800000, 0x3950000, 0);
+  Camera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
   Engine_MapRedraw();
   Task_Wait(1);
   ColorBuffer_ApplyTarget(0x10003, 1);
   ColorBuffer_ApplyTarget(0x10000, 2);
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
-  FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow, 0xc80);
+  // Follow the boulder script until its eighth movement phase.
+  FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow,
+                             STORM_CALLBACK_PRIORITY);
   Actor_SetActionScript(19, gValeStorm_ActorNineteenRiseScript);
-  Camera_SetSpeed(0x20000, 0x7ae);
-  Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
+  Camera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
+  Camera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
     Task_Wait(1);
   } while ((s16)actor->work != 8);
@@ -1891,103 +1943,104 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Engine_ColorBufferInterpolate(60);
   Task_Wait(60);
   Engine_MapWaitWorkValuesBelow256();
-  work = Camera_GetEventObject();
-  work->targetX = 0x80000000;
-  work = Camera_GetEventObject();
-  work->targetY = 0x80000000;
-  work = Camera_GetEventObject();
-  work->targetZ = 0x80000000;
-  phase = 0;
-  work = Camera_GetEventObject();
-  work->velocityX = phase;
-  work = Camera_GetEventObject();
-  work->velocityY = phase;
-  work = Camera_GetEventObject();
-  work->velocityZ = phase;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetX = ACTOR_NO_TARGET;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetY = ACTOR_NO_TARGET;
+  currentActor = Camera_GetEventObject();
+  currentActor->targetZ = ACTOR_NO_TARGET;
+  resetValue = 0;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityX = resetValue;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityY = resetValue;
+  currentActor = Camera_GetEventObject();
+  currentActor->velocityZ = resetValue;
   Scheduler_RemoveCallback(ValeStorm_UpdatePulsingGlow);
   Actor_Stop(19);
   Task_Wait(1);
   Actor_SetAnimation(19, 0);
   groupActor->scaleX = 0x14000;
   groupActor->scaleY = 0x14000;
-  groupVisual->unk20[3] = 2;
+  groupVisual->offsetY = 2;
   groupVisual->scale = 0x14000;
-  actor->scaleX = 0x20000;
-  actor->scaleY = 0x20000;
-  actor->x.fixed = phase;
-  actor->z.fixed = phase;
-  actor->targetX = phase;
-  actor->targetZ = phase;
+  actor->scaleX = 2 * Q16_ONE;
+  actor->scaleY = 2 * Q16_ONE;
+  actor->x.fixed = resetValue;
+  actor->z.fixed = resetValue;
+  actor->targetX = resetValue;
+  actor->targetZ = resetValue;
   Task_Wait(1);
+  // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(23, 8);
-  Actor_SetPosition(9, 0xa90000, 0x4f00000);
+  Actor_SetPosition(9, PIXELS(169), PIXELS(1264));
   Actor_FaceDirection(9, FACING_NORTH, 0);
   Actor_SetAnimation(9, 9);
-  Actor_SetPosition(26, 0x970000, 0x50c0000);
+  Actor_SetPosition(26, PIXELS(151), PIXELS(1292));
   Actor_FaceDirection(26, FACING_WEST, 0);
   Actor_SetAnimation(26, 5);
-  Actor_SetPosition(8, 0xaa0000, 0x5210000);
+  Actor_SetPosition(8, PIXELS(170), PIXELS(1313));
   Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
   Actor_SetAnimation(8, 5);
-  Actor_SetPosition(0, 0xb90000, 0x5350000);
+  Actor_SetPosition(0, PIXELS(185), PIXELS(1333));
   Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(0, 17);
-  Actor_SetPosition(22, 0xa90000, 0x5680000);
+  Actor_SetPosition(22, PIXELS(169), PIXELS(1384));
   Actor_FaceDirection(22, FACING_SOUTH, 0);
   Actor_SetAnimation(22, 0);
-  Camera_MoveTo(0xa60000, 0, 0x5390000, 0);
+  Camera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
   Engine_MapRedraw();
-  actor->motionFlags = phase;
-  actor->targetX = 0x80000000;
-  actor->targetY = 0x80000000;
-  actor->targetZ = 0x80000000;
+  actor->motionFlags = resetValue;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
   ValeStorm_FlashLightning();
-  Actor_SetPosition(27, 0xda0000, 0x4980000);
-  Camera_MoveTo(0xd20000, 0, 0x4ac0000, 0);
+  Actor_SetPosition(27, PIXELS(218), PIXELS(1176));
+  Camera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
   Engine_MapRedraw();
-  groupActor->scaleX = 0x20000;
-  groupActor->scaleY = 0x20000;
-  FieldScheduler_AddCallback(ActorPresentation_SelectActorTwentySevenState,
-                             0xc80);
+  groupActor->scaleX = 2 * Q16_ONE;
+  groupActor->scaleY = 2 * Q16_ONE;
+  FieldScheduler_AddCallback(ValeStorm_FlickerGlowOffset,
+                             STORM_CALLBACK_PRIORITY);
   Actor_Stop(10);
   Actor_Stop(24);
   Actor_Stop(25);
   Task_Wait(1);
   groupActor = Actor_Get(10);
   groupVisual = groupActor->sprite;
-  groupActor->priorityFlags &= 254;
-  groupActor->scaleX = 0x10000;
-  groupActor->scaleY = 0x10000;
+  groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  groupActor->scaleX = Q16_ONE;
+  groupActor->scaleY = Q16_ONE;
   groupActor->facing = 0xd000;
-  groupVisual->priority = 0;
+  groupVisual->image.priority = 0;
   Actor_SetAnimation(10, 0);
   groupActor = Actor_Get(24);
   groupVisual = groupActor->sprite;
-  groupActor->priorityFlags &= 254;
-  groupActor->scaleX = 0x10000;
-  groupActor->scaleY = 0x10000;
+  groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  groupActor->scaleX = Q16_ONE;
+  groupActor->scaleY = Q16_ONE;
   groupActor->facing = 0xb000;
-  groupVisual->priority = 0;
+  groupVisual->image.priority = 0;
   Actor_SetAnimation(24, 5);
   groupActor = Actor_Get(25);
   groupVisual = groupActor->sprite;
-  groupActor->priorityFlags &= 254;
-  groupActor->scaleX = 0x10000;
-  groupActor->scaleY = 0x10000;
+  groupActor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  groupActor->scaleX = Q16_ONE;
+  groupActor->scaleY = Q16_ONE;
   groupActor->facing = 0xb000;
-  groupVisual->priority = 0;
+  groupVisual->image.priority = 0;
   Actor_SetAnimation(25, 5);
   groupActor = Actor_Get(27);
   groupVisual = groupActor->sprite;
   ValeStorm_FlashLightning();
-  actor->y.fixed = 0x300000;
-  actor->x.fixed = 0xd60000;
-  actor->z.fixed = 0x4c00000;
-  actor->targetX = 0x80000000;
-  actor->targetY = 0x80000000;
-  actor->targetZ = 0x80000000;
-  groupVisual->priority = 1;
-  Actor_SetPosition(27, 0xd60000, 0x4c00000);
+  actor->y.fixed = PIXELS(48);
+  actor->x.fixed = PIXELS(214);
+  actor->z.fixed = PIXELS(1216);
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
+  groupVisual->image.priority = 1;
+  Actor_SetPosition(27, PIXELS(214), PIXELS(1216));
   Actor_FaceDirection(24, FACING_NORTH, 0);
   Actor_FaceDirection(25, FACING_NORTH, 20);
   GameFlag_Set(0x166);
@@ -2006,7 +2059,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Engine_ColorBufferInterpolate(80);
   Event_Wait(80);
   Event_Wait(100);
-  Scheduler_RemoveCallback(ActorPresentation_SelectActorTwentySevenState);
+  Scheduler_RemoveCallback(ValeStorm_FlickerGlowOffset);
   groupVisual->scale = groupActor->scaleX;
   GameFlag_Clear(0x166);
   Map_ClearLayerEntryFlag(0);
@@ -2015,48 +2068,50 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Map_ClearLayerEntryFlag(3);
   Map_ClearLayerEntryFlag(4);
   Map_ClearLayerEntryFlag(5);
-  FieldScene_BuildPlacementGrid();
-  Actor_SetPosition(9, 0xa50000, 0x4cd0000);
+  // Restore the riverbank and the idle actor scripts.
+  ValeStorm_RebuildRiverbank();
+  Actor_SetPosition(9, PIXELS(165), PIXELS(1229));
   Actor_SetAnimation(9, 1);
   actor = Actor_Get(9);
-  actor->facing = 0xe000;
+  actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   departureActions = gValeStorm_ActorEightScript;
   actor->work = 1;
   Actor_SetActionScript(9, departureActions);
-  Actor_SetPosition(26, 0xa50000, 0x4e60000);
+  Actor_SetPosition(26, PIXELS(165), PIXELS(1254));
   Actor_SetAnimation(26, 1);
   actor = Actor_Get(26);
-  actor->facing = 0xe000;
+  actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 2;
   Actor_SetActionScript(26, departureActions);
-  Actor_SetPosition(22, 0x980000, 0x5050000);
+  Actor_SetPosition(22, PIXELS(152), PIXELS(1285));
   Actor_SetAnimation(22, 1);
   actor = Actor_Get(22);
-  actor->facing = 0xe000;
+  actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 3;
   Actor_SetActionScript(22, departureActions);
-  Actor_SetPosition(8, 0xb40000, 0x51f0000);
+  Actor_SetPosition(8, PIXELS(180), PIXELS(1311));
   actor = Actor_Get(8);
-  actor->facing = 0xe000;
+  actor->facing = FACING_NORTHEAST;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 4;
   Actor_SetActionScript(8, departureActions);
   Actor_SetAnimation(8, 6);
-  Object_GetById(22)->priorityFlags &= 254;
-  Object_GetById(8)->priorityFlags &= 254;
-  FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority, 0xc80);
-  Actor_SetPosition(0, 0xb50000, 0x4f90000);
-  work = Actor_Get(0);
-  work->facing = 0xe000;
+  Object_GetById(22)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  Object_GetById(8)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
+                             STORM_CALLBACK_PRIORITY);
+  Actor_SetPosition(0, PIXELS(181), PIXELS(1273));
+  currentActor = Actor_Get(0);
+  currentActor->facing = FACING_NORTHEAST;
   Actor_SetAnimation(0, 1);
-  Camera_MoveTo(0xb50000, 0, 0x4f90000, 0);
+  Camera_MoveTo(PIXELS(181), 0, PIXELS(1273), 0);
   Engine_MapRedraw();
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(19, 0, 0);
@@ -2064,8 +2119,8 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Actor_SetPosition(25, 0, 0);
   Actor_SetPosition(23, 0, 0);
   Actor_SetPosition(27, 0, 0);
-  Actor_SetPosition(17, 0x900000, 0x42e0000);
-  Actor_SetPosition(18, 0x1140000, 0x4f60000);
+  Actor_SetPosition(17, PIXELS(144), PIXELS(1070));
+  Actor_SetPosition(18, PIXELS(276), PIXELS(1270));
   Task_Wait(60);
   ColorBuffer_ApplyTarget(0x10003, 1);
   ColorBuffer_ApplyTarget(0x10000, 2);
@@ -2077,44 +2132,12 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   FieldFx_ResumeLightning();
 }
 
-struct Pulse {
-  u8 unk00[0x64];
-  s16 timer;
-  s16 beat;
-};
-
-struct PairDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
-struct PairSprite {
-  struct FieldSprite sprite;
-  struct PairDetail *detail;
-};
-
-union PairObject {
-  union FieldObject object;
-  s32 words[28];
-  struct {
-    u8 unk00[0x68];
-    union PairObject *parent;
-  } link;
-};
-
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;
 };
 
-struct WorldMapOam {
-  u8 unk00[4];
-  u16 attr0;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
+// Flash the scene layers before fading back to the storm palette.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
   GameFlag_Set(0x166);
@@ -2140,37 +2163,38 @@ static void ValeStorm_FlashLightning(void) {
   Map_ClearLayerEntryFlag(5);
 }
 
+// Track the boulder and pulse its glow with the movement script phases.
 static void ValeStorm_UpdatePulsingGlow(void) {
   struct FieldActor *source;
   struct FieldActor *glow;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   s16 *timer;
 
   source = Object_GetById(19);
   glow = Object_GetById(27);
   sprite = glow->sprite;
-  timer = &((struct Pulse *)source)->timer;
+  timer = &source->timer;
   if (*timer != 0) {
     if (*timer == 60) {
-      Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+      Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     }
     if (*timer == 40) {
-      Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
+      Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     }
     if (*timer == 30) {
-      Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+      Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     }
     if (*timer == 20) {
-      Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     }
     (*timer)--;
   }
   glow->x.fixed = source->x.fixed;
   glow->z.fixed = source->z.fixed;
   glow->targetX = glow->x.fixed;
-  ((u8 *)sprite)[35] = 10;
+  sprite->offsetY = 10;
   if (gFrameCount & 1) {
-    switch (((struct Pulse *)source)->beat) {
+    switch ((s16)source->work) {
     case 1:
     case 5:
       glow->scaleX += 0xa3d;
@@ -2196,33 +2220,33 @@ static void ValeStorm_UpdatePulsingGlow(void) {
   }
 }
 
-static void ActorPresentation_SelectActorTwentySevenState(void) {
+// Alternate the glow vertical offset on successive frames.
+static void ValeStorm_FlickerGlowOffset(void) {
   struct FieldActor *actor = Object_GetById(27);
-  u32 flags = gFrameCount;
-  u8 *presentation = (u8 *)actor->sprite;
+  u32 frame = gFrameCount;
+  struct AnimationObject *sprite = actor->sprite;
 
-  if (flags & 1) {
-    u8 *state = presentation + 35;
-    *state = 2;
+  if (frame & 1) {
+    sprite->offsetY = 2;
   } else {
-    u8 *state = presentation + 35;
-    *state = 64;
+    sprite->offsetY = 64;
   }
 }
 
-static void EV08_TALK(void) {
-  struct FieldActor *rec7;
-  struct FieldActor *rec8;
+// Ask the immobilized villager to fetch help.
+static void ValeStorm_AskVillagerToGetHelp(void) {
+  struct FieldActor *villager;
+  struct FieldActor *leader;
 
-  rec8 = Object_GetById(ACTOR_PARTY_LEADER);
-  rec7 = Object_GetById(8);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  villager = Object_GetById(8);
   Engine_EventBegin();
   if (GameFlag_IsSet(0x305) != 0) {
     Engine_ActorStop(8);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
-    if ((s16)rec8->facing >= 0) {
+    if ((s16)leader->facing >= 0) {
       Engine_ActorSetAnimation(8, 7);
     } else {
       Engine_ActorSetAnimation(8, 8);
@@ -2235,10 +2259,10 @@ static void EV08_TALK(void) {
     Engine_ActorSetAnimation(8, 6);
   } else {
     Engine_ActorStop(8);
-    rec7->scaleX = 0x10000;
-    rec7->scaleY = 0x10000;
+    villager->scaleX = Q16_ONE;
+    villager->scaleY = Q16_ONE;
     Actor_FaceDirection(8, 0x1000, 0);
-    if ((s16)rec8->facing >= 0) {
+    if ((s16)leader->facing >= 0) {
       Engine_ActorSetAnimation(8, 7);
     } else {
       Engine_ActorSetAnimation(8, 8);
@@ -2251,7 +2275,7 @@ static void EV08_TALK(void) {
     Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
-    if ((s16)rec8->facing >= 0) {
+    if ((s16)leader->facing >= 0) {
       Engine_ActorSetAnimation(8, 7);
     } else {
       Engine_ActorSetAnimation(8, 8);
@@ -2269,39 +2293,41 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_ConfigureActorTwentyTwoScene(void) {
+// Have Garet leave Isaac at the restored riverbank.
+static void ValeStorm_GaretLeavesIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_ActorStop(ACTOR_ID);
-  Scheduler_RemoveCallback((s32)ValeStorm_CopyLeaderSpritePriority);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
+  Engine_ActorStop(ACTOR_GARET);
+  Scheduler_RemoveCallback(ValeStorm_CopyLeaderSpritePriority);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
-  Actor_Get(ACTOR_ID)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
+  Actor_FaceDirection(ACTOR_GARET, 0x3000, 20);
+  Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Actor_SetPosition(ACTOR_GARET, PIXELS(249), PIXELS(1240));
   Engine_TaskWait(1);
   Engine_EventSetMessage(MsgValeIsaac);
   Event_ShowMessage(0x1016, 0);
-  Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
+  Actor_SetPosition(ACTOR_GARET, PIXELS(172), PIXELS(1278));
   Engine_TaskWait(1);
-  Camera_SetSpeed(0x40000, 0x8000);
-  Camera_MoveTo(0xa20000, 0, 0x5050000, 1);
+  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  Camera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARET, 4);
   Event_ShowMessageAndWait(0x1016, 0, 10);
-  Actor_FaceDirection(ACTOR_ID, FACING_NORTH, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageAndWait(0x1016, 0, 10);
-  Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
-  Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
-  Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
-  Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
+  Actor_FaceDirection(ACTOR_GARET, 0x1000, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARET, 3);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
+  Actor_WalkToAndWait(ACTOR_GARET, 165, 1300);
+  Actor_WalkToAndWait(ACTOR_GARET, 195, 1432);
   GameFlag_Set(0x842);
 }
 
-static void FieldScene_BuildPlacementGrid(void) {
+// Redraw the riverbank cells after the boulder has passed.
+static void ValeStorm_RebuildRiverbank(void) {
   Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
   Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
   Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
@@ -2320,8 +2346,8 @@ static void FieldScene_BuildPlacementGrid(void) {
   Engine_MapRedraw();
 }
 
-static void EV16_TOUCH(void) {
-
+// Start encounter-table entry 2 with the scene battle transition.
+static void ValeStorm_StartEncounter2(void) {
   struct EventWork *state;
 
   Engine_EventBegin();
@@ -2334,8 +2360,8 @@ static void EV16_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void EV17_TOUCH(void) {
-
+// Start encounter-table entry 3 with the scene battle transition.
+static void ValeStorm_StartEncounter3(void) {
   struct EventWork *state;
 
   Engine_EventBegin();
@@ -2348,144 +2374,151 @@ static void EV17_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void SceneActor_SetModeByFrameBit1(s32 o) {
-  s32 v;
+// Flash the actor palette and emit paired effects at the shake interval.
+static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor) {
+  s32 spawnInterval;
 
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(o, 7);
+    Engine_ObjectSetPartPalettes(actor, 7);
   } else {
-    Engine_ObjectSetPartPalettes(o, 0);
+    Engine_ObjectSetPartPalettes(actor, 0);
   }
   {
     u32 *frame = &gFrameCount;
 
-    v = (sShakeShift << 3) + 16;
-    if (Math_RemainderUnsigned(*frame, v) == 0) {
-      ValeStorm_SpawnEffectPair((union PairObject *)o);
+    spawnInterval = (sShakeShift << 3) + 16;
+    if (Math_RemainderUnsigned(*frame, spawnInterval) == 0) {
+      ValeStorm_SpawnEffectPair(actor);
     }
   }
 }
 
-static void OverlayObject_UpdateRandomSlotByFrame(s32 obj) {
-  s32 t;
-  s32 n;
+// Cycle six palettes and emit paired effects at the shake interval.
+static void ValeStorm_CyclePaletteAndSpawnEffects(struct FieldActor *actor) {
+  s32 paletteFrame;
+  s32 spawnInterval;
 
   if ((gFrameCount & 1) != 0) {
-    t = (gFrameCount >> 1);
-    Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
+    paletteFrame = (gFrameCount >> 1);
+    Engine_ObjectSetPartPalettes(actor,
+                                 Math_RemainderUnsigned(paletteFrame, 6));
   }
-  n = (sShakeShift << 3) + 16;
-  if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
-    ValeStorm_SpawnEffectPair((union PairObject *)obj);
+  spawnInterval = (sShakeShift << 3) + 16;
+  if (Math_RemainderUnsigned(gFrameCount, spawnInterval) == 0) {
+    ValeStorm_SpawnEffectPair(actor);
   }
 }
 
-static void ValeStorm_CycleObjectPalettes(s32 o) {
-  s32 t;
+// Cycle six actor palettes on alternate frames.
+static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
+  s32 paletteFrame;
 
   if ((gFrameCount & 1) != 0) {
-    t = (gFrameCount >> 1);
-    Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
+    paletteFrame = (gFrameCount >> 1);
+    Engine_ObjectSetPartPalettes(actor,
+                                 Math_RemainderUnsigned(paletteFrame, 6));
   }
 }
 
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-static void ValeStorm_SpawnEffectPair(union PairObject *parent) {
-  union PairObject *pair[2];
-  union PairObject *child;
-  struct PairSprite *part;
-  struct FieldSprite *sprite;
+// Create the two linked effects that travel in opposite vertical directions.
+static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
+  struct FieldActor *pair[2];
+  struct FieldActor *child;
+  struct AnimationObject *sprite;
   struct PairWork *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(152);
   for (i = 0; i < 2; ++i) {
-    child = (union PairObject *)Engine_ObjectCreate(
-        26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
-        parent->object.actor.z.fixed);
+    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
+                                parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->words[5] = parent->words[5];
-      part = (struct PairSprite *)child->object.actor.sprite;
-      child->object.actor.motionFlags = 0;
-      child->object.effect.spin = 0;
-      child->link.parent = parent;
-      if (part != NULL) {
-        sprite = &part->sprite;
+      child->terrainHeight = parent->terrainHeight;
+      sprite = child->sprite;
+      child->motionFlags = 0;
+      child->timer = 0;
+      child->linkedObject = parent;
+      if (sprite != NULL) {
         Object_InitializeMode(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        sprite->unk1d0 = 1;
-        sprite->tile = (gVramBlockCache[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct WorldMapOam *)sprite)->size = 2;
-        part->detail->field16 = 0;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        sprite->entries[0]->frame = 0;
       }
     }
   }
   {
-    union PairObject *p = pair[0];
-    struct FieldSprite *sp = p->object.actor.sprite;
+    struct FieldActor *effect = pair[0];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    p->object.actor.update = Effect_AnimateVerticalNegative;
-    sp->priority = parent->object.actor.sprite->priority;
+    effect->update = Effect_AnimateVerticalNegative;
+    effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
-    struct FieldActor *p = &pair[1]->object.actor;
-    struct FieldSprite *sp = p->sprite;
+    struct FieldActor *effect = pair[1];
+    struct AnimationObject *effectSprite = effect->sprite;
 
-    sp->priority = parent->object.actor.sprite->priority;
-    p->update = Effect_AnimateVerticalPositive;
-    p->priorityFlags = 2;
+    effectSprite->image.priority = parent->sprite->image.priority;
+    effect->update = Effect_AnimateVerticalPositive;
+    effect->priorityFlags = 2;
   }
 }
 
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-static void FieldScene_RunFourPairedSteps(void) {
-  OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
-  OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
-  OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
+// Update the four boulder scene actors until the final reaction stops.
+static void ValeStorm_UpdateBoulderSceneEffects(void) {
+  ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(32));
+  ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(33));
+  ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(30));
   if (sShakeDone == 0) {
-    OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
+    ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(29));
   }
 }
 
-static void SceneState_SetValue19ThenCall(void) {
-
-  ValeStorm_CycleObjectPalettes((s32)Object_GetById(19));
+// Cycle the boulder sprite palette.
+static void ValeStorm_CycleBoulderPalette(void) {
+  ValeStorm_CycleObjectPalettes(Object_GetById(19));
 }
 
+// Keep Garet and actor 8 at the leader sprite priority.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
   struct AnimationObject *sourceSprite;
   struct AnimationObject *targetSprite;
   struct AnimationObject *secondTargetSprite;
 
-  sourceSprite = (struct AnimationObject *)Object_GetById(0)->sprite;
+  sourceSprite = Object_GetById(0)->sprite;
 #if TBS_PATCH_3
-  Engine_ActorSetSpritePriority(22, sourceSprite->part[0].priority);
-  Engine_ActorSetSpritePriority(8, sourceSprite->part[0].priority);
+  Engine_ActorSetSpritePriority(22, sourceSprite->image.priority);
+  Engine_ActorSetSpritePriority(8, sourceSprite->image.priority);
 #else
-  targetSprite = (struct AnimationObject *)Object_GetById(22)->sprite;
-  targetSprite->part[0].priority = sourceSprite->part[0].priority;
-  secondTargetSprite = (struct AnimationObject *)Object_GetById(8)->sprite;
-  secondTargetSprite->part[0].priority = sourceSprite->part[0].priority;
+  targetSprite = Object_GetById(22)->sprite;
+  targetSprite->image.priority = sourceSprite->image.priority;
+  secondTargetSprite = Object_GetById(8)->sprite;
+  secondTargetSprite->image.priority = sourceSprite->image.priority;
 #endif
 }
 
-static void EV24_SEARCH(void) {
-
+// Show the locked-door message.
+static void ValeStorm_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
 
-static void EV19_SEARCH(void) {
+// Show the description of the chest of valuables.
+static void ValeStorm_SearchValuablesChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);
   Engine_EventEnd();
@@ -2669,12 +2702,12 @@ s32 gValeStorm_ActorEightScript[] = {
 
 s32 gValeStorm_ActorNineteenRiseScript[] = {
     SC_ARG(2),
-    SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCEL, 0x10000),
+    SC_SET(SW_SPEED, PIXELS(3)),
+    SC_SET(SW_ACCEL, PIXELS(1)),
     SC_SET(0x23, 0),
     SC_SET(0x24, 1),
-    SC_SET(SW_SCALE_X, 0x20000),
-    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_SET(SW_SCALE_X, 2 * Q16_ONE),
+    SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
     SC_MOVE(PIXELS(256), PIXELS(128), PIXELS(931)),
     SC_SYNC,
     SC_SE(145),
@@ -2692,26 +2725,26 @@ s32 gValeStorm_ActorNineteenRiseScript[] = {
     SC_MOVE(PIXELS(146), PIXELS(96), PIXELS(1038)),
     SC_SYNC,
     SC_SE(145),
-    SC_SET(SW_SPEED, 0x18000),
-    SC_SET(SW_ACCEL, 0x8000),
+    SC_SET(SW_SPEED, PIXELS(3) / 2),
+    SC_SET(SW_ACCEL, PIXELS(1) / 2),
     SC_SET(0x23, 60),
     SC_SET(0x24, 6),
     SC_MOVE(PIXELS(161), PIXELS(107), PIXELS(1050)),
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x20000),
-    SC_SET(SW_ACCEL, 0x9999),
+    SC_SET(SW_SPEED, PIXELS(2)),
+    SC_SET(SW_ACCEL, PIXELS(3) / 5),
     SC_SET(0x24, 7),
     SC_MOVE(PIXELS(177), PIXELS(96), PIXELS(1062)),
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x28000),
-    SC_SET(SW_ACCEL, 0xcccc),
+    SC_SET(SW_SPEED, PIXELS(5) / 2),
+    SC_SET(SW_ACCEL, PIXELS(4) / 5),
     SC_SET(0x24, 8),
     SC_MOVE(PIXELS(201), PIXELS(74), PIXELS(1074)),
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCEL, 0x10000),
+    SC_SET(SW_SPEED, PIXELS(3)),
+    SC_SET(SW_ACCEL, PIXELS(1)),
     SC_SET(0x24, 9),
-    SC_MOVE(PIXELS(225), PIXELS(-64), PIXELS(1086)),
+    SC_MOVE(PIXELS(225), -PIXELS(64), PIXELS(1086)),
     SC_SYNC,
     SC_SET(0x23, 0),
     SC_SET(0x24, 0),
@@ -2810,34 +2843,36 @@ struct ScenePlacement gValeStorm_LastObjectCall[] = {
 // clang-format on
 
 struct SceneEvent gValeStorm_SceneTable3[] = {
-    {EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH)},
-    {EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH)},
-    {EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH)},
-    {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH)},
+    {EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit1)},
+    {EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit3)},
+    {EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit4)},
+    {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit2)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV06_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit5)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV07_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit6)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV08_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit7)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV09_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit8)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV10_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit9)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV11_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit10)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV12_TOUCH)},
+     EVENT_SCRIPT(ValeStorm_OpenExit12)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV13_TOUCH)},
-    {EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+     EVENT_SCRIPT(ValeStorm_OpenExit13)},
+    {EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_TalkToGaret)},
+    {EVENT_TALK, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_TalkAboutRescuingFelix)},
     {EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgValeHangOnFelixHelpIsOn)},
     {EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgValeDontLetGoFelix)},
     {EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeNoItCantBeKyleIt)},
     {EVENT_TALK, 26, CONDITION_ALWAYS,
      MSGNO(MsgValeMomDadFelixPleaseDontLeave)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_AskVillagerToGetHelp)},
     {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
@@ -2846,23 +2881,34 @@ struct SceneEvent gValeStorm_SceneTable3[] = {
     {EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
-    {EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH)},
-    {EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH)},
-    {EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH)},
-    {EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_TOUCH)},
-    {EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(EV43_TOUCH)},
-    {EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(EV44_TOUCH)},
-    {EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TOUCH)},
-    {EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH)},
-    {EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(EV33_TOUCH)},
-    {EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(EV34_TOUCH)},
-    {EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TOUCH)},
-    {EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TOUCH)},
-    {EVENT_TOUCH, 16, 0x87c, EVENT_SCRIPT(EV16_TOUCH)},
-    {EVENT_TOUCH, 17, 0x87f, EVENT_SCRIPT(EV17_TOUCH)},
-    {SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH)},
-    {SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_SEARCH)},
+    {EVENT_TOUCH, 15, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_SetPathCellOverride)},
+    {EVENT_TOUCH, 14, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_ClearPathCellOverride)},
+    {EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock11)},
+    {EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock12)},
+    {EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock13)},
+    {EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock14)},
+    {EVENT_TOUCH, 30, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_HearGaretStruggling)},
+    {EVENT_TOUCH, 31, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_GaretCallsAfterIsaac)},
+    {EVENT_TOUCH, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_GaretJoinsIsaac)},
+    {EVENT_TOUCH, 33, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_WarnAboutMtAleph)},
+    {EVENT_TOUCH, 34, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_WatchBoulderFall)},
+    {EVENT_TOUCH, 35, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_WitnessRiverRescue)},
+    {EVENT_TOUCH, 36, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_GatherAfterRiverRescue)},
+    {EVENT_TOUCH, 16, 0x87c, EVENT_SCRIPT(ValeStorm_StartEncounter2)},
+    {EVENT_TOUCH, 17, 0x87f, EVENT_SCRIPT(ValeStorm_StartEncounter3)},
+    {SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_SearchLockedDoor)},
+    {SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ValeStorm_SearchValuablesChest)},
     {SCENE_EVENTS_END},
 };
 

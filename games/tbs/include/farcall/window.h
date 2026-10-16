@@ -1,226 +1,142 @@
-// FarCall_WindowTable: one entry per 8-byte stub, in table order.
-FAR_CALL(UiWork_InitializeWithResourceCountersFar,
-         UiWork_InitializeWithResourceCounters, void, (void))
-FAR_CALL(UiWork_InitializeFar, UiWork_Initialize, void, (s32 kind))
+// Window construction, text drawing and selection interfaces.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/WINDOW.S.
+void UiWork_InitializeWithResourceCountersFar(void);
+void UiWork_InitializeFar(s32 kind);
 #ifndef OWN_UiWindow_CreateFar
-FAR_CALL(UiWindow_CreateFar, UiWindow_Create, struct UiWindow *,
-         (s32 x, s32 y, s32 width, s32 height, s32 attrs))
+struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
+                                    s32 attrs);
 #endif
-FAR_CALL(UiWork_FinalizeFar, UiWork_Finalize, void,
-         (struct UiWindow * work, s32 release))
-FAR_CALL(Ui_AdjustValueWithoutLimitFar, Ui_AdjustValueWithoutLimit, void,
-         (s32 message, u16 *buf))
-FAR_CALL(UiText_DecodeMessageFar, UiText_DecodeMessage, void,
-         (s32 message, u16 *text, s32 capacity))
-FAR_CALL(UiText_CopyMessageStringFar, UiText_CopyMessageString, s32,
-         (s32 key, u16 *destination, u32 capacity))
-FAR_CALL(UiText_OpenMessageWindowFar, UiText_OpenMessageWindow,
-         struct UiWindow *, (s32 message, s32 x, s32 y, u32 packed))
-FAR_CALL(UiText_ShowPositionedMessageAndWaitFar,
-         UiText_ShowPositionedMessageAndWait, void, (s32 no, s32 flags))
-FAR_CALL(UiWork_IsCompleteFar, UiWork_IsComplete, s32, (void))
-FAR_CALL(UiWork_IsIdleFar, UiWork_IsIdle, s32, (struct UiWindow * window))
-FAR_CALL(UiWork_SetBusyFlagsFar, UiWork_SetBusyFlags, void, (s32 flags))
-FAR_CALL(RenderOutput_PrepareForRedrawFar, RenderOutput_PrepareForRedraw, void,
-         (struct UiWindow * window))
-FAR_CALL(UiWindow_ClearInteriorTilesFar, UiWindow_ClearInteriorTiles, void,
-         (const struct UiWindow *window, u32 left, u32 top, u32 right,
-          u32 bottom))
-FAR_CALL(UiWindow_DrawDividerLineFar, UiWindow_DrawDividerLine, void,
-         (struct UiWindow * win, u32 x1, u32 y1, u32 x2, u32 y2))
-FAR_CALL(UiText_DrawResourceFar, UiText_DrawResource, void,
-         (s32 arg0, struct UiWindow *arg1, s32 arg2, s32 arg3))
+void UiWork_FinalizeFar(struct UiWindow *work, s32 release);
+void Ui_AdjustValueWithoutLimitFar(s32 message, u16 *buf);
+void UiText_DecodeMessageFar(s32 message, u16 *text, s32 capacity);
+s32 UiText_CopyMessageStringFar(s32 key, u16 *destination, u32 capacity);
+struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y,
+                                             u32 packed);
+void UiText_ShowPositionedMessageAndWaitFar(s32 no, s32 flags);
+s32 UiWork_IsCompleteFar(void);
+s32 UiWork_IsIdleFar(struct UiWindow *window);
+void UiWork_SetBusyFlagsFar(s32 flags);
+void RenderOutput_PrepareForRedrawFar(struct UiWindow *window);
+void UiWindow_ClearInteriorTilesFar(const struct UiWindow *window, u32 left,
+                                    u32 top, u32 right, u32 bottom);
+void UiWindow_DrawDividerLineFar(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
+                                 u32 y2);
+void UiText_DrawResourceFar(s32 arg0, struct UiWindow *arg1, s32 arg2,
+                            s32 arg3);
 #ifndef OWN_UiText_DrawCharacterAtOffsetFar
-FAR_CALL(UiText_DrawCharacterAtOffsetFar, UiText_DrawCharacterAtOffset, void,
-         (s32 character, const struct UiWindow *position, u32 offsetX,
-          u32 offsetY))
+void UiText_DrawCharacterAtOffsetFar(s32 character,
+                                     const struct UiWindow *position,
+                                     u32 offsetX, u32 offsetY);
 #endif
-FAR_CALL(UiText_DrawStringFar, UiText_DrawString, void,
-         (const u8 *text, struct UiWindow *arg1, s32 arg2, s32 arg3))
-FAR_CALL(UiText_DrawStringAtOffsetFar, UiText_DrawStringAtOffset, void,
-         (const u8 *text, const struct UiWindow *work, s32 offsetX,
-          s32 offsetY))
-FAR_CALL(UiText_DrawStringInWindowFar, UiText_DrawStringInWindow, void,
-         (const u8 *text, struct UiWindow *arg1, u32 x, u32 y))
-FAR_CALL(UiText_DrawNumberFar, UiText_DrawNumber, void,
-         (s32 arg0, s32 arg1, struct UiWindow *arg2, s32 arg3, s32 arg4))
-FAR_CALL(UiText_DrawNumberAtOffsetFar, UiText_DrawNumberAtOffset, void,
-         (s32 arg0, s32 arg1, const struct UiWindow *arg2, s32 arg3, s32 arg4))
-FAR_CALL(UiText_DrawNumberInWindowFar, UiText_DrawNumberInWindow, void,
-         (s32 arg0, s32 arg1, struct UiWindow *arg2, s32 arg3, s32 arg4))
-FAR_CALL(UiWork_SetParamNibbleFar, UiWork_SetParamNibble, void, (s32 param))
-FAR_SLOT(UiWork_SetRenderWord)
-FAR_CALL(RenderOutput_CreateFar, RenderOutput_Create, struct RenderOutput *,
-         (s32 slot, s32 flags, struct UiWindow *input, s32 offsetX,
-          s32 offsetY))
-FAR_CALL(RenderOutput_CreateFromResourceFar, RenderOutput_CreateFromResource,
-         struct RenderOutput *,
-         (s32 mode, s32 resource, struct UiWindow *input, s32 x, s32 y))
-FAR_CALL(SideObject_CreateFar, CreateSideObject, struct RenderOutput *,
-         (s32 object_kind, s32 position, s32 side, struct UiWindow *arg3,
-          s32 arg4, s32 arg5))
-FAR_CALL(Ui_LoadCharacterEntryForSlotFar, Ui_LoadCharacterEntryForSlot, void,
-         (u32 slot, s32 character, s32 value))
-FAR_SLOT(RenderOutput_SetAnimation)
-FAR_SLOT(RenderOutput_SetInvertedSentinel)
-FAR_CALL(UiWindow_CreateWithSideObjectFar, UiWindow_CreateWithSideObject,
-         struct UiWindow *, (s32 arg0, s32 arg1, s32 x, s32 y))
-FAR_CALL(UiWork_FinalizeEntityMatchingLocalizedIdFar,
-         UiWork_FinalizeEntityMatchingLocalizedId, void, (u32 entry))
-FAR_CALL(UiText_GetResourceDimensionsFar, UiText_GetResourceDimensions, s32,
-         (s32 no, s32 *x, s32 *y, u32 *width, u32 *height))
-FAR_CALL(UiText_GetResourceDimensionsAltFar, UiText_GetResourceDimensionsAlt,
-         s32, (s32 no, s32 *x, s32 *y, u32 *width, u32 *height))
-FAR_CALL(UiWork_ClearValueNameTablesFar, UiWork_ClearValueNameTables, void,
-         (void))
-FAR_CALL(UiWork_PushValueSlotFar, UiWork_PushValueSlot, void,
-         (u32 value, u32 kind))
-FAR_CALL(UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds,
-         void, (s32 flags))
-FAR_CALL(PartyStatusDrawFar, PartyStatusDraw, void, (s32 flags))
-FAR_CALL(UiWork_FinalizeAndReleaseBlock16Far, UiWork_FinalizeAndReleaseBlock16,
-         void, (void))
-FAR_CALL(UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore, void,
-         (void))
-FAR_CALL(UiWork_DrainPendingFar, UiWork_DrainPending, void, (s32 unused))
-FAR_SLOT(UiGlyph_ResetWorkState)
-FAR_SLOT(Resource_ClearOwnerListAndCounters)
-FAR_SLOT(Resource_PushPendingPair)
-FAR_SLOT(Resource_ScheduleOwnerResetDelayed)
-FAR_SLOT(Resource_ScheduleOwnerReset)
-FAR_SLOT(Menu_OpenSelectionWindow)
-FAR_SLOT(Resource_ResetOwnerEntries)
-FAR_SLOT(Menu_SetupSelectionBothSides)
-FAR_SLOT(Menu_SelectionLoop)
-FAR_SLOT(Menu_WaitForSelectionInput)
-FAR_SLOT(UiTextResource_NoOpCallbackBank)
-FAR_SLOT(UiTextResource_NoOpCallback1)
-FAR_SLOT(MenuSelection_BuildEntries)
-FAR_SLOT(UiWork_ReservedNoOp)
-FAR_CALL(Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands, s32,
-         (struct BattleActionRecord * out, u16 *in, s32 count))
-FAR_CALL(UiText_ShowMessageAndWaitCoreFar, UiText_ShowMessageAndWaitCore, void,
-         (s32 argument))
-FAR_CALL(UiText_PrepareMessageWorkFar, UiText_PrepareMessageWork, void,
-         (s32 argument))
-FAR_SLOT(UiTextResource_NoOpCallback4)
-FAR_CALL(Localization_LookupEntryIdFar, Localization_LookupEntryId, s32,
-         (u32 value))
-FAR_CALL(Menu_RunTopSelectionFar, Menu_RunTopSelection, s32, (void))
-FAR_CALL(Menu_SelectSaveSlotActionFar, Menu_SelectSaveSlotAction, s32, (void))
-FAR_CALL(Menu_SelectResourceLayoutFar, Menu_SelectResourceLayout, s32,
-         (s32 mode))
-FAR_CALL(UiTimedNotice_CreateFar, UiTimedNotice_Create, void, ())
-FAR_CALL(UiTimedNotice_CloseIfActiveFar, UiTimedNotice_CloseIfActive, void,
-         (void))
-FAR_CALL(UiText_ShowCenteredMessageFar, UiText_ShowCenteredMessage, void,
-         (s32 message, s32 mode, s32 yOffset))
-FAR_CALL(UiWork_FinalizeSharedSlotFar, UiWork_FinalizeSharedSlot, void, (void))
-FAR_CALL(UiWork_ResetFreeChannelFar, UiWork_ResetFreeChannel, void, (void))
-FAR_CALL(UiTextResource_InitializeFar, UiTextResource_Initialize, void,
-         (struct MenuSprite * object, s32 *slot))
-FAR_CALL(UiTextResource_SetPositionFar, UiTextResource_SetPosition, void,
-         (struct MenuSprite * obj, s32 x, s32 y))
-FAR_CALL(UiTextResource_ReleaseFar, UiTextResource_Release, void, (s32 value))
-FAR_SLOT(Menu_RunSelectionHook)
-FAR_SLOT(Item_CallHandler48)
-FAR_CALL(Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem, void,
-         (s32 code))
-FAR_CALL(UiText_RenderWideStringAtOffsetFar, UiText_RenderWideStringAtOffset,
-         void, (u16 *text, struct UiWindow *window, s32 x, s32 y))
-FAR_SLOT(GraphicsPalette_SelectionNoOp)
-FAR_CALL(UiWindow_FillFromSceneFar, UiWindow_FillFromScene, void, (void *dst))
-FAR_CALL(RenderOutput_RedrawSavedRectFar, RenderOutput_RedrawSavedRect, void,
-         (struct UiWindow * window))
-FAR_CALL(RenderOutput_ClearListFar, RenderOutput_ClearList, void, (void *work))
-FAR_CALL(UiWindow_SetTilemapEntryFar, UiWindow_SetTilemapEntry, void,
-         (struct UiWindow * window, s32 value, s32 x, s32 y, u32 mode))
+void UiText_DrawStringFar(const u8 *text, struct UiWindow *arg1, s32 arg2,
+                          s32 arg3);
+void UiText_DrawStringAtOffsetFar(const u8 *text, const struct UiWindow *work,
+                                  s32 offsetX, s32 offsetY);
+void UiText_DrawStringInWindowFar(const u8 *text, struct UiWindow *arg1, u32 x,
+                                  u32 y);
+void UiText_DrawNumberFar(s32 arg0, s32 arg1, struct UiWindow *arg2, s32 arg3,
+                          s32 arg4);
+void UiText_DrawNumberAtOffsetFar(s32 arg0, s32 arg1,
+                                  const struct UiWindow *arg2, s32 arg3,
+                                  s32 arg4);
+void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, struct UiWindow *arg2,
+                                  s32 arg3, s32 arg4);
+void UiWork_SetParamNibbleFar(s32 param);
+struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 flags,
+                                            struct UiWindow *input, s32 offsetX,
+                                            s32 offsetY);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 mode, s32 resource,
+                                                        struct UiWindow *input,
+                                                        s32 x, s32 y);
+struct RenderOutput *SideObject_CreateFar(s32 object_kind, s32 position,
+                                          s32 side, struct UiWindow *arg3,
+                                          s32 arg4, s32 arg5);
+void Ui_LoadCharacterEntryForSlotFar(u32 slot, s32 character, s32 value);
+struct UiWindow *UiWindow_CreateWithSideObjectFar(s32 arg0, s32 arg1, s32 x,
+                                                  s32 y);
+void UiWork_FinalizeEntityMatchingLocalizedIdFar(u32 entry);
+s32 UiText_GetResourceDimensionsFar(s32 no, s32 *x, s32 *y, u32 *width,
+                                    u32 *height);
+s32 UiText_GetResourceDimensionsAltFar(s32 no, s32 *x, s32 *y, u32 *width,
+                                       u32 *height);
+void UiWork_ClearValueNameTablesFar(void);
+void UiWork_PushValueSlotFar(u32 value, u32 kind);
+void UiWindow_CreateWithLayoutBoundsFar(s32 flags);
+void PartyStatusDrawFar(s32 flags);
+void UiWork_FinalizeAndReleaseBlock16Far(void);
+void UiWork_FinalizePendingCoreFar(void);
+void UiWork_DrainPendingFar(s32 unused);
+s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *out, u16 *in,
+                                   s32 count);
+void UiText_ShowMessageAndWaitCoreFar(s32 argument);
+void UiText_PrepareMessageWorkFar(s32 argument);
+s32 Localization_LookupEntryIdFar(u32 value);
+s32 Menu_RunTopSelectionFar(void);
+s32 Menu_SelectSaveSlotActionFar(void);
+s32 Menu_SelectResourceLayoutFar(s32 mode);
+void UiTimedNotice_CreateFar();
+void UiTimedNotice_CloseIfActiveFar(void);
+void UiText_ShowCenteredMessageFar(s32 message, s32 mode, s32 yOffset);
+void UiWork_FinalizeSharedSlotFar(void);
+void UiWork_ResetFreeChannelFar(void);
+void UiTextResource_InitializeFar(struct MenuSprite *object, s32 *slot);
+void UiTextResource_SetPositionFar(struct MenuSprite *obj, s32 x, s32 y);
+void UiTextResource_ReleaseFar(s32 value);
+void Ui_PrepareTransferForItemFar(s32 code);
+void UiText_RenderWideStringAtOffsetFar(u16 *text, struct UiWindow *window,
+                                        s32 x, s32 y);
+void UiWindow_FillFromSceneFar(void *dst);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
+void RenderOutput_ClearListFar(void *work);
+void UiWindow_SetTilemapEntryFar(struct UiWindow *window, s32 value, s32 x,
+                                 s32 y, u32 mode);
 #ifdef UBFIX
-FAR_CALL(Menu_RunSelectionFar, Menu_RunSelection, void, (void))
+void Menu_RunSelectionFar(void);
 #else
-FAR_CALL(Menu_RunSelectionFar, Menu_RunSelection, s16, (void))
+s16 Menu_RunSelectionFar(void);
 #endif
-FAR_CALL(Menu_RunSelectionWithCursorObjectFar,
-         Menu_RunSelectionWithCursorObject, s32, (void))
+s32 Menu_RunSelectionWithCursorObjectFar(void);
 #ifndef OWN_Resource_LoadByModeIntoSlotFar
-FAR_CALL(Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot, s32,
-         (s32 mode, s32 value, s32 result, s32 option))
+s32 Resource_LoadByModeIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
 #endif
-FAR_SLOT(Debug_SelectAbilityPair)
-FAR_CALL(UiWindow_MarkVisibleTileAttributesFar,
-         UiWindow_MarkVisibleTileAttributes, void, (void))
-FAR_SLOT(ItemIcon_Compose)
-FAR_CALL(BattleLayout_HighlightPartyPanelsFar,
-         BattleLayout_HighlightPartyPanels, s32, (u16 *ids))
-FAR_SLOT(UiIcon_BuildItemIconTiles)
-FAR_SLOT(UiIcon_BuildAbilityIconTiles)
-FAR_CALL(RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded,
-         struct RenderOutput *,
-         (s32 code, s32 layers, struct UiWindow *input, s32 x, s32 y))
-FAR_SLOT(RenderOutput_CreateFromTable)
-FAR_SLOT(SaveState_WriteCurrentSlotPair)
-FAR_CALL(Save_WriteSelectedSlotFar, Save_WriteSelectedSlot, s32, (void))
-FAR_CALL(SaveState_LoadRecordIntoWorkFar, SaveState_LoadRecordIntoWork, s32,
-         (s32 arg))
-FAR_CALL(SaveState_CopySlotPairFar, SaveState_CopySlotPair, s32, (void))
-FAR_CALL(SaveState_DeleteSelectedSlotFar, SaveState_DeleteSelectedSlot, s32,
-         (void))
-FAR_CALL(SaveState_ProcessSelectedSlotFar, SaveState_ProcessSelectedSlot, s32,
-         (void))
-FAR_SLOT(SaveState_WriteSlotPair)
-FAR_CALL(SaveState_ScanRecordFlagsFar, SaveState_ScanRecordFlags, s32, (void))
-FAR_CALL(NameEntry_EditOwnerNameFar, NameEntry_EditOwnerName, s32, (s32 entry))
-FAR_SLOT(Resource_CopyFixedBlockB)
-FAR_SLOT(Resource_CopyFixedBlockA)
-FAR_SLOT(Menu_SetNodeCoordinates)
-FAR_CALL(DebugMenu_BrowseIconsFar, DebugMenu_BrowseIcons, s32, (void))
-FAR_CALL(DebugMenu_BrowseEntryGlyphsFar, DebugMenu_BrowseEntryGlyphs, s32,
-         (void))
-FAR_SLOT(Item_ReturnTrue)
-FAR_CALL(Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage, void,
-         (s32 pc, s32 element, s32 djinn))
-FAR_CALL(PaletteGlow_UpdateFar, PaletteGlow_Update, void,
-         (s32 phase, s32 brightness))
-FAR_SLOT(Menu_RunWorkspaceOptions)
-FAR_CALL(Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop, s32, ())
-FAR_SLOT(UiWindow_FillScreenBlockRect)
-FAR_CALL(Menu_SelectEntry11To14Far, Menu_SelectEntry11To14, s32,
-         (s32 selection))
-FAR_CALL(Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c, s32,
-         (s32 selection))
-FAR_CALL(Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection, s32,
-         (s32 low, s32 message, s32 w, s32 selection))
-FAR_CALL(Menu_SelectEntry20To21Far, Menu_SelectEntry20To21, s32,
-         (s32 selection))
-FAR_CALL(PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose, s32, (s32 unused))
-FAR_SLOT(RenderResource_LoadTableEntry)
-FAR_CALL(Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt, s32,
-         (s32 x, s32 y, s32 selection))
-FAR_CALL(Resource_LoadFixedBlockBIntoFreeSlotFar,
-         Resource_LoadFixedBlockBIntoFreeSlot, s32, (void))
-FAR_CALL(UiText_MeasureResourceEntriesFar, UiText_MeasureResourceEntries, void,
-         (s32 no, s32 *x, s32 *y))
-FAR_CALL(UiWindow_SetPaletteBitRectFar, Ui_SetRectHighlight, void,
-         (s32 x, s32 y, s32 width, s32 height, s32 alt))
-FAR_CALL(Ability_LoadGlyphFar, Ability_LoadGlyph, void,
-         (s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse))
-FAR_CALL(Graphics_ExpandVramTilesByColorTableFar,
-         Graphics_ExpandVramTilesByColorTable, void, (u16 *dst))
-FAR_CALL(UiWork_SetAltFlagAndClearTableFar, UiWork_SetAltFlagAndClearTable,
-         void, (s32 flag))
-FAR_CALL(Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry, s32,
-         (s32 arg0, s32 arg1))
-FAR_CALL(Ui_GetTableWordZeroFar, Ui_GetTableWordZero, s32, (s32 no))
-FAR_CALL(UiText_OpenEntryMessageFar, UiText_OpenEntryMessage, s32,
-         (struct UiWindow * window, s32 argument))
-FAR_CALL(SaveState_CountRecordsExcludingFlaggedFar,
-         SaveState_CountRecordsExcludingFlagged, s32, (s32 flag))
-FAR_CALL(UiWindow_DrawFrameFar, UiWindow_DrawFrame, void,
-         (s32 x, s32 y, u32 width, u32 height))
-FAR_CALL(UiWindow_EraseBorderRectFar, UiWindow_EraseBorderRect, void,
-         (s32 x, s32 y, u32 width, u32 height))
-FAR_CALL(Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair, void,
-         (s32 offset))
-FAR_CALL(Party_ShowJoinedMessageFar, Party_ShowJoinedMessage, void, ())
-FAR_CALL(Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage, void,
-         (s32 first, s32 second))
+void UiWindow_MarkVisibleTileAttributesFar(void);
+s32 BattleLayout_HighlightPartyPanelsFar(u16 *ids);
+struct RenderOutput *RenderOutput_CreateLoadedFar(s32 code, s32 layers,
+                                                  struct UiWindow *input, s32 x,
+                                                  s32 y);
+s32 Save_WriteSelectedSlotFar(void);
+s32 SaveState_LoadRecordIntoWorkFar(s32 arg);
+s32 SaveState_CopySlotPairFar(void);
+s32 SaveState_DeleteSelectedSlotFar(void);
+s32 SaveState_ProcessSelectedSlotFar(void);
+s32 SaveState_ScanRecordFlagsFar(void);
+s32 NameEntry_EditOwnerNameFar(s32 entry);
+s32 DebugMenu_BrowseIconsFar(void);
+s32 DebugMenu_BrowseEntryGlyphsFar(void);
+void Djinn_ShowJoinedMessageFar(s32 pc, s32 element, s32 djinn);
+void PaletteGlow_UpdateFar(s32 phase, s32 brightness);
+s32 Menu_RunWorkspaceResultLoopFar();
+s32 Menu_SelectEntry11To14Far(s32 selection);
+s32 Menu_SelectEntry19To1cFar(s32 selection);
+s32 Menu_RunConfirmSelectionFar(s32 low, s32 message, s32 w, s32 selection);
+s32 Menu_SelectEntry20To21Far(s32 selection);
+s32 PartyTalkMenu_ChooseFar(s32 unused);
+s32 Menu_RunConfirmSelectionAtFar(s32 x, s32 y, s32 selection);
+s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
+void UiText_MeasureResourceEntriesFar(s32 no, s32 *x, s32 *y);
+void UiWindow_SetPaletteBitRectFar(s32 x, s32 y, s32 width, s32 height,
+                                   s32 alt);
+void Ability_LoadGlyphFar(s32 action, s32 with_base, s32 *slot, s32 *tile,
+                          s32 reuse);
+void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
+void UiWork_SetAltFlagAndClearTableFar(s32 flag);
+s32 Menu_AnimateSelectionToEntryFar(s32 arg0, s32 arg1);
+s32 Ui_GetTableWordZeroFar(s32 no);
+s32 UiText_OpenEntryMessageFar(struct UiWindow *window, s32 argument);
+s32 SaveState_CountRecordsExcludingFlaggedFar(s32 flag);
+void UiWindow_DrawFrameFar(s32 x, s32 y, u32 width, u32 height);
+void UiWindow_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
+void Link_DrawShiftedTilePairFar(s32 offset);
+void Party_ShowJoinedMessageFar();
+void Party_ShowPairJoinedMessageFar(s32 first, s32 second);

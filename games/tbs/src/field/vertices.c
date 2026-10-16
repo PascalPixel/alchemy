@@ -3,23 +3,47 @@
 #include "frame.h"
 #include "mulq16.h"
 #include "project.h"
+#include "layout_guard.h"
 
 #define VISIBLE_SCANLINES 160 // visible scanlines
 
-// An 8-byte far-call stub (ldr r4 / bx r4) followed by its target. This code
-// runs from a RAM copy, so it calls the runtime through the stubs' targets.
-struct FarCallEntry {
+// An eight-byte runtime entry contains the ldr/bx instructions and a target
+// word. Entries this routine does not call keep their target word opaque.
+struct RuntimeUnusedEntry {
   u32 stub;
-  void *target;
+  u32 target;
 };
 
-extern struct FarCallEntry FarCall_RuntimeTable[];
-extern u32 gScanlineAngle;
+struct RuntimeMathBinaryEntry {
+  u32 stub;
+  s32 (*target)(s32 x, s32 y);
+};
 
-#define FAR_CALL(index, type) ((type)FarCall_RuntimeTable[index].target)
-#define ArcTan2(x, z) FAR_CALL(8, s32 (*)(s32, s32))(x, z)
-#define Sin(angle) FAR_CALL(11, s32 (*)(s32))(angle)
-#define Cos(angle) FAR_CALL(12, s32 (*)(s32))(angle)
+struct RuntimeMathUnaryEntry {
+  u32 stub;
+  s32 (*target)(s32 angle);
+};
+
+// The runtime table's prefix through Trig_Cos, in its assembly order. This
+// routine runs from a RAM copy and calls the target words, not the ROM stubs.
+struct RuntimeMathTable {
+  struct RuntimeUnusedEntry preceding[8];
+  struct RuntimeMathBinaryEntry atan2;
+  struct RuntimeUnusedEntry squareRoots[2];
+  struct RuntimeMathUnaryEntry sin;
+  struct RuntimeMathUnaryEntry cos;
+};
+
+LAYOUT_SIZE_GUARD(RuntimeUnusedEntry_Size, struct RuntimeUnusedEntry, 8);
+LAYOUT_SIZE_GUARD(RuntimeMathBinaryEntry_Size, struct RuntimeMathBinaryEntry,
+                  8);
+LAYOUT_SIZE_GUARD(RuntimeMathUnaryEntry_Size, struct RuntimeMathUnaryEntry, 8);
+LAYOUT_OFFSET_GUARD(RuntimeMathTable_Atan2, struct RuntimeMathTable, atan2, 64);
+LAYOUT_OFFSET_GUARD(RuntimeMathTable_Sin, struct RuntimeMathTable, sin, 88);
+LAYOUT_OFFSET_GUARD(RuntimeMathTable_Cos, struct RuntimeMathTable, cos, 96);
+
+extern const struct RuntimeMathTable FarCall_RuntimeTable;
+extern u32 gScanlineAngle;
 
 struct Position {
   s32 x;
@@ -75,7 +99,8 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
 
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
-    angle = (u16)ArcTan2(targetDeltaX >> 4, depth >> 4);
+    angle =
+        (u16)FarCall_RuntimeTable.atan2.target(targetDeltaX >> 4, depth >> 4);
   }
   // The texture origin: the target at half scale.
   originX = MulQ16(target->x, 0x8000);
@@ -83,8 +108,8 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
   if (angle != gScanlineAngle) {
     // The camera turned: recompute every scanline's rotation terms.
     gScanlineAngle = angle;
-    sinYaw = Sin(angle);
-    cosYaw = Cos(angle);
+    sinYaw = FarCall_RuntimeTable.sin.target(angle);
+    cosYaw = FarCall_RuntimeTable.cos.target(angle);
     negativeSinYaw = -sinYaw;
     for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
       s32 widthScale = line->x;

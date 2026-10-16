@@ -1,16 +1,15 @@
 #ifndef ALCHEMY_FARCALL_H
 #define ALCHEMY_FARCALL_H
 
-// The far-call banks (games/tbs/src/system/far_call) as C declarations.
-// A stub is 8 bytes that jump to a routine of its bank, and code in other
-// banks calls the routine through it. A stub is usually named for its
-// routine with Far added: a call to UiText_DrawNumberAtOffsetFar runs
-// UiText_DrawNumberAtOffset in the window bank.
-// Each bank is one list: FAR_CALL names a stub and declares it, FAR_ENTRY
-// names a stub no declaration is established for, FAR_SLOT is a stub with
-// no name. The bank's assembly reads the same list for the stubs.
-// A translation unit that keeps its own declaration of a listed name
-// defines OWN_<name> before its includes, and the list leaves it out there.
+// Public interfaces to the engine's code banks. Each bank exposes a stable
+// jump table, so another bank can reach its routines beyond Thumb's call range.
+// These headers declare ordinary functions; the ordered assembly tables in
+// src/system/far_call own the entry names and the routines they jump to.
+// For example, UiText_DrawNumberAtOffsetFar is the window bank's entry for
+// UiText_DrawNumberAtOffset. Overlays bind their imported names to these
+// entries in src/system/overlay.inc, using the same 8-byte jump mechanism.
+// A file with a local declaration defines OWN_<name> before including this
+// header to keep that declaration in scope.
 
 #include "callback_scheduler.h"
 #include "effect_slot.h"
@@ -55,19 +54,14 @@ struct TransitionActorList;
 struct UiWindow;
 struct WorldPosition;
 
-// Each stub is declared with its target's parameters (params). Seven rows
-// have empty parameters instead, a declaration with no prototype: the
-// bytes show their callers passing other arguments than the target takes,
-// which C89 accepts only with no prototype in scope. They are the
+// Entries have their target's parameters. Seven keep empty parameter lists
+// (no prototype): their callers pass different arguments than the target
+// takes, which C89 accepts with no prototype in scope. They are the
 // blank-display runners (the entrance in r0), Unit_LearnPsynergyFar (called
 // with none), Party_ShowJoinedMessageFar (two), UiTimedNotice_CreateFar,
 // Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar (one
 // each). The near call UiWork_ResetCounters is declared the same way in
 // unit/window/window.h (UiWindow_Create passes it one).
-#define FAR_CALL(name, target, type, params) type name params;
-#define FAR_ENTRY(name, target)
-#define FAR_SLOT(target)
-
 #include "farcall/runtime.h"
 #include "farcall/field.h"
 #include "farcall/window.h"
@@ -83,9 +77,5 @@ struct WorldPosition;
 #include "farcall/blank_load.h"
 #include "farcall/sound.h"
 #include "farcall/resource.h"
-
-#undef FAR_CALL
-#undef FAR_ENTRY
-#undef FAR_SLOT
 
 #endif

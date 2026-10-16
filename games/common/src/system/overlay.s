@@ -9,3 +9,12 @@
 .Loverlay_target\@:
     .4byte \target
 .endm
+
+@ Publish a named entry in a bank's jump table. Overlay imports use the same
+@ entry form, with their local name and the bank entry they call.
+.macro export name, target
+    .global \name
+    .thumb_func
+\name:
+    overlay_veneer \target
+.endm

@@ -1,5 +1,20 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Shops, inns and the cursors used by their screens.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_ShopTable
 FarCall_ShopTable:
-#include "../../../include/farcall/shop.h"
+	export Battle_ApplyPresetItemsAndFlagsFar, Battle_ApplyPresetItemsAndFlags
+	export Shop_RunFar, Shop_Run
+	export Shop_ConfirmActFar, Shop_ConfirmAct
+	export Inn_CheckInFar, Inn_CheckIn
+	export ShopCursor_AdvanceFar, ShopCursor_Advance
+	export ShopCursor_MoveTowardTargetFar, ShopCursor_MoveTowardTarget
+	export Shop_SetCursorFar, Shop_SetCursor
+	export ShopCursor_SetPositionImmediateFar, ShopCursor_SetPositionImmediate
+	export Shop_FillSelectorFar, Shop_FillSelector
+	export Shop_RestoreSceneTilesFar, Shop_RestoreSceneTiles
+	export Shop_InitEffectFar, Shop_InitEffect
+	export Shop_PickUnitItemFar, Shop_PickUnitItem
+	export AudioCommand_WaitForStateByteClearFar, AudioCommand_WaitForStateByteClear
+	export Inn_PlaySleepFar, Inn_PlaySleep

@@ -1,15 +1,14 @@
-// FarCall_MenuTable: one entry per 8-byte stub, in table order.
-FAR_CALL(RunAssetSelectionScreenFar, RunAssetSelectionScreen, s32, (void))
-FAR_CALL(Menu_OpenConfirmPromptFar, Menu_OpenConfirmPrompt, s32, (void))
-FAR_CALL(Menu_OpenActionFlow, ActionMenu_Open, s32, (void))
-FAR_CALL(Menu_OpenCharacterSelectorFar, Menu_OpenCharacterSelector, s32, (void))
-FAR_SLOT(UiIcon_CreateWithResourceVariant)
-FAR_CALL(PsynergyMenu_InitializeEntryObjectsFar,
-         PsynergyMenu_InitializeEntryObjects, void,
-         (void *source, s32 originX, s32 originY, s32 spacing, s32 unused))
-FAR_CALL(Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects, void, (void))
-FAR_CALL(UiIcon_PrepareObjectFar, UiIcon_PrepareObject, void,
-         (struct RenderOutput * object))
-FAR_CALL(ItemMenu_RunFar, ItemMenu_Run, s32, (void))
-FAR_CALL(ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails, void,
-         (s32 window, s32 item))
+// Party menus and their interactive selection screens.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/MENU.S.
+s32 RunAssetSelectionScreenFar(void);
+s32 Menu_OpenConfirmPromptFar(void);
+s32 Menu_OpenActionFlow(void);
+s32 Menu_OpenCharacterSelectorFar(void);
+void PsynergyMenu_InitializeEntryObjectsFar(void *source, s32 originX,
+                                            s32 originY, s32 spacing,
+                                            s32 unused);
+void Menu_ReleaseEntryObjectsFar(void);
+void UiIcon_PrepareObjectFar(struct RenderOutput *object);
+s32 ItemMenu_RunFar(void);
+void ItemMenu_DrawItemDetailsFar(s32 window, s32 item);

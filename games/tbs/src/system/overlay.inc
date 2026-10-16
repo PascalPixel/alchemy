@@ -8,7 +8,7 @@
 	.include "games/common/src/system/overlay.s"
 @ The stubs an overlay imports, in the order every overlay keeps them:
 @ Camelot's four divide routines, then the far-call entries in the order of
-@ the main image (games/tbs/include/farcall, by bank). The list is here, in
+@ the main image (games/tbs/src/system/far_call, by bank). The list is here, in
 @ the file every stub table includes, and only an import table reads it: an
 @ overlay's import table sets `overlay_imports`, then `import.NAME` for each
 @ stub its overlay calls, and includes this file: those rows, in this order,
@@ -19,10 +19,7 @@
 @ one of them.
 	.macro import name, target
 	.ifdef import.\name
-	.global \name
-	.thumb_func
-\name:
-	overlay_veneer \target
+	export \name, \target
 	.endif
 	.endm
 	.ifdef overlay_imports
@@ -34,7 +31,7 @@
 	import __udivsi3, IwramUnsignedDivide
 	import Math_RemainderUnsigned, IwramUnsignedRemainder
 	import __umodsi3, IwramUnsignedRemainder
-@ farcall/runtime.h
+@ Runtime bank (far_call/RUNTIME.S)
 	import Engine_TaskWait, WaitFramesFar
 	import Scheduler_AddOrUpdateCallback, Scheduler_AddOrUpdateCallbackFar
 	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
@@ -86,7 +83,7 @@
 	import SerialRuntime_BeginReceive, SerialRuntime_BeginReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
 	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
-@ farcall/field.h
+@ Field bank (far_call/FIELD.S)
 	import AnimationObjects_SelectAnimation, AnimationObjects_SelectAnimationFar
 	import Object_InitializeMode, AnimationObjects_SelectAnimationFar
 	import ResourceMetadata_Register, ResourceMetadata_RegisterFar
@@ -137,7 +134,7 @@
 	import ObjectGroup_SetChildValueUnlessFifteen, ObjectGroup_SetChildValueUnlessFifteenFar
 	import Engine_MapSetWorkFlagBits9To11, Map_SetWorkFlagBits9To11Far
 	import SetMapCellCollision, SetMapCellCollisionFar
-@ farcall/window.h
+@ Window bank (far_call/WINDOW.S)
 	import Engine_DebugCreateWindow, UiWindow_CreateFar
 	import UiWindow_Create, UiWindow_CreateFar
 	import Engine_DebugFinalizeWindow, UiWork_FinalizeFar
@@ -194,7 +191,7 @@
 	import Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
 	import SaveState_CountRecordsExcludingFlagged, SaveState_CountRecordsExcludingFlaggedFar
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
-@ farcall/game.h
+@ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	import UnitGet, UnitGetFar
 	import UnitCalc, UnitCalcFar
@@ -246,7 +243,7 @@
 	import InventorySnapshot_Take, InventorySnapshot_SaveFar
 	import Engine_InventorySnapshotRestore, InventorySnapshot_RestoreFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
-@ farcall/object.h
+@ Object bank (far_call/OBJECT.S)
 	import Engine_EventWait, FieldEvent_WaitFramesFar
 	import Engine_EventBegin, FieldEvent_BeginFar
 	import Engine_EventEnd, FieldEvent_EndFar
@@ -412,11 +409,11 @@
 	import QueueSceneSound, BattleFx_SetQueuedSoundAndPlayFar
 	import Resource37c_QueueSoundCue, BattleFx_SetQueuedSoundAndPlayFar
 	import BattleFx_PlayQueuedSound, BattleFx_PlayQueuedSoundFar
-@ farcall/menu.h
+@ Menu bank (far_call/MENU.S)
 	import Menu_OpenCharacterSelector, Menu_OpenCharacterSelectorFar
 	import ItemMenu_Open, ItemMenu_RunFar
 	import Engine_DebugDrawItemDetails, ItemMenu_DrawItemDetailsFar
-@ farcall/shop.h
+@ Shop bank (far_call/SHOP.S)
 	import Battle_ApplyPresetItemsAndFlags, Battle_ApplyPresetItemsAndFlagsFar
 	import Engine_ShopOpen, Shop_RunFar
 	import Shop_Run, Shop_RunFar
@@ -431,16 +428,16 @@
 	import Shop_PickUnitItem, Shop_PickUnitItemFar
 	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
-@ farcall/battle.h
+@ Battle bank (far_call/BATTLE.S)
 	import BattlePlacement_UpdateTimedEntriesTwentyTimes, BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
-@ farcall/scroll.h
+@ Scroll bank (far_call/SCROLL.S)
 	import ScrollFar_Entry00, DisplayScroll_RunSlideshowFar
-@ farcall/palette.h
+@ Palette bank (far_call/PALETTE.S)
 	import PaletteFar_Entry00, Title_ShowIntroFar
 	import Title_ShowSplashScreen, Title_ShowSplashScreenFar
 	import PaletteFar_Entry20, Title_ShowAnimatedSplashFar
-@ farcall/sound.h
+@ Sound bank (far_call/SOUND.S)
 	import Engine_AudioPlayCue, AudioCommand_PlayFar
 	import MusicCommand_SetPitchAndUpdateFrequency, MusicCommand_SetPitchAndUpdateFrequencyFar
 	import AudioCommand_GetStateByte, AudioCommand_GetStateByteFar

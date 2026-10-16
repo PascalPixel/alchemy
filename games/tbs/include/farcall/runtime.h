@@ -1,117 +1,36 @@
-// FarCall_RuntimeTable: one entry per 8-byte stub, in table order.
-FAR_CALL(WaitFramesFar, WaitFrames, void, (s32 frames))
-FAR_SLOT(Scheduler_ResetTaskTable)
-FAR_CALL(Scheduler_AddOrUpdateCallbackFar, Scheduler_AddOrUpdateCallback, s32,
-         (SchedulerCallback callback, s32 order))
-FAR_CALL(Scheduler_RemoveCallbackFar, Scheduler_RemoveCallback, s32,
-         (SchedulerCallback callback))
-FAR_SLOT(Scheduler_SuspendTasks)
-FAR_SLOT(Scheduler_ResumeTasks)
-FAR_SLOT(Scheduler_RunPass)
-FAR_CALL(Random16Far, Random16, u32, (void))
-FAR_CALL(ArcTan2Far, ArcTan2, s32, (s32 x, s32 y))
-FAR_SLOT(Math_IntegerSqrt)
-FAR_CALL(FixedSqrtFar, FixedSqrt, s32, (s32 value))
-FAR_ENTRY(Trig_SinFar, Trig_Sin)
-FAR_ENTRY(Trig_CosFar, Trig_Cos)
-FAR_CALL(Vector_AddPolarOffsetFar, Vector_AddPolarOffset, void,
-         (s32 radius, s32 angle, s32 *position))
-FAR_CALL(Runtime_SetIrqHandlerFar, Runtime_SetIrqHandler, void,
-         (u32 irq, s32 vcount, InterruptHandler handler))
-FAR_SLOT(Runtime_InitializeHeap)
-FAR_CALL(Runtime_AllocateHeapBlockFar, Runtime_AllocateHeapBlock, void *,
-         (s32 kind, s32 size))
-FAR_CALL(Runtime_AllocateBlockFar, Runtime_AllocateBlock, void *,
-         (s32 kind, s32 size))
-FAR_ENTRY(Runtime_ReleaseHeapBlockFar, Runtime_ReleaseHeapBlock)
-FAR_SLOT(Runtime_GetRemainingIwram)
-FAR_SLOT(Runtime_GetRemainingEwram)
-FAR_CALL(Runtime_BumpAllocateFar, MemAlloc, void *, (s32 size))
-FAR_CALL(Runtime_BumpAllocateAlternatePoolFar,
-         Runtime_BumpAllocateAlternatePool, void *, (s32 size))
-FAR_ENTRY(Sys_FreeFar, MemFree)
-FAR_SLOT(DebugText_Print)
-FAR_SLOT(DebugText_PrintHex)
-FAR_SLOT(DebugText_PrintDecimal)
-FAR_SLOT(DebugText_PrintBlanks)
-FAR_CALL(Resource_DecodeByteLzFar, Resource_DecodeByteLz, s32,
-         (const void *source, void *destination))
-FAR_CALL(Resource_DecodeType01Far, Resource_DecodeType01, s32,
-         (const void *source, void *destination))
-FAR_SLOT(VramCache_Reset)
-FAR_CALL(Resource_ResetEntryFar, Resource_ResetEntry, s32, (u32 no))
-FAR_CALL(VramCache_ReleaseVramFar, VramCache_ReleaseVram, s32, (u32 no))
-FAR_CALL(VramCache_LoadFar, VramCache_Load, s32,
-         (u32 no, u32 size, const void *src))
-FAR_CALL(Resource_FindFreeEntryFar, Resource_FindFreeEntry, s32, (void))
-FAR_SLOT(DebugText_Clear)
-FAR_CALL(AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect, s32,
-         (struct AffineTransform * source))
-FAR_CALL(Runtime_PushSlotEntryFar, Runtime_PushSlotEntry, void,
-         (void *slot_entry, s32 slot))
-FAR_CALL(Ui_LoadWindowGraphicsFar, Ui_LoadWindowGraphics, void, (void))
-FAR_SLOT(Palette_LoadBasicObjColors)
-FAR_SLOT(Render_ResetTransformState)
-FAR_SLOT(SceneTransform_ResetMatrix)
-FAR_SLOT(Transform_Push)
-FAR_SLOT(Transform_Pop)
-FAR_SLOT(SceneTransform_ApplyRotation)
-FAR_SLOT(SceneTransform_ApplyPitch)
-FAR_SLOT(SceneTransform_ApplyYaw)
-FAR_SLOT(SceneTransform_ApplyRoll)
-FAR_SLOT(SceneTransform_ApplyPosition)
-FAR_SLOT(SceneTransform_ApplyScale)
-FAR_SLOT(SceneTransform_ApplyRotationTranslation)
-FAR_SLOT(SceneTransform_ApplyScaledRotation)
-FAR_SLOT(Transform_SetLookAt)
-FAR_SLOT(Render_ProjectPoint)
-FAR_SLOT(Projection_SetFieldOfView)
-FAR_SLOT(Projection_Set)
-FAR_SLOT(System_CopyBuildStamp)
-FAR_SLOT(RuntimeDispatch_ReturnZero)
-FAR_CALL(Resource_GetTableEntryFar, Resource_GetTableEntry, void *, (s32 index))
-FAR_CALL(RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook, void,
-         (s32 unused))
-FAR_SLOT(Resource_LoadCode)
-FAR_CALL(Fade_ToBlackFar, Fade_ToBlack, void, (s32 frames))
-FAR_SLOT(Fade_FromBlack)
-FAR_SLOT(Fade_ToWhite)
-FAR_SLOT(Fade_FromWhite)
-FAR_SLOT(Fade_Start)
-FAR_CALL(Fade_WaitFar, Fade_Wait, void, (void))
-FAR_SLOT(RuntimeDispatch_ReservedNoOpA)
-FAR_SLOT(RuntimeDispatch_ReservedNoOpB)
-FAR_SLOT(RuntimeDispatch_ReservedNoOpC)
-FAR_SLOT(RuntimeDispatch_ReservedNoOpD)
-FAR_SLOT(RuntimeDispatch_ReservedNoOpE)
-FAR_CALL(SerialRuntime_InitializeFar, SerialRuntime_Initialize, void, (void))
-FAR_CALL(SerialRuntime_PollAndTransferFar, SerialRuntime_PollAndTransfer, s32,
-         (void *send, void *receive))
-FAR_SLOT(QueueIoWriteDelay1)
-FAR_ENTRY(QueueIoWriteDelay2Far, QueueIoWriteDelay2)
-FAR_ENTRY(QueueIoWriteDelay3Far, QueueIoWriteDelay3)
-FAR_SLOT(QueueIoWriteDelay5)
-FAR_SLOT(QueueIoWriteDelay6)
-FAR_SLOT(QueueIoWriteDelay7)
-FAR_SLOT(QueueIoWriteDelay9)
-FAR_SLOT(QueueIoWriteDelay10)
-FAR_SLOT(QueueIoWriteDelay11)
-FAR_SLOT(Input_ResetKeyRepeat)
-FAR_SLOT(Transform_ApplyLookAt)
-FAR_SLOT(SerialRuntime_WaitForStatusMask)
-FAR_CALL(SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers,
-         void, (void))
-FAR_CALL(Sound_LoadPresetParametersFar, Sound_LoadPresetParameters, s32,
-         (s32 preset))
-FAR_CALL(SerialRuntime_BeginSendFar, SerialRuntime_BeginSend, s32,
-         (void *source, s32 transferValue))
-FAR_CALL(SerialRuntime_BeginReceiveFar, SerialRuntime_BeginReceive, s32,
-         (void *destination))
-FAR_SLOT(SerialRuntime_WaitForSend)
-FAR_SLOT(SerialRuntime_WaitForReceive)
-FAR_SLOT(SerialRuntime_WaitForTransfers)
-FAR_CALL(SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers,
-         s32, (void))
-FAR_SLOT(SerialRuntime_StepBlockTransfer)
-FAR_CALL(Scheduler_SetTaskFlagsFar, Scheduler_SetTaskFlags, s32,
-         (SchedulerCallback callback, u32 mask))
+// Frame scheduling, memory, resources and core runtime services.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/RUNTIME.S.
+void WaitFramesFar(s32 frames);
+s32 Scheduler_AddOrUpdateCallbackFar(SchedulerCallback callback, s32 order);
+s32 Scheduler_RemoveCallbackFar(SchedulerCallback callback);
+u32 Random16Far(void);
+s32 ArcTan2Far(s32 x, s32 y);
+s32 FixedSqrtFar(s32 value);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
+void Runtime_SetIrqHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
+void *Runtime_AllocateHeapBlockFar(s32 kind, s32 size);
+void *Runtime_AllocateBlockFar(s32 kind, s32 size);
+void *Runtime_BumpAllocateFar(s32 size);
+void *Runtime_BumpAllocateAlternatePoolFar(s32 size);
+s32 Resource_DecodeByteLzFar(const void *source, void *destination);
+s32 Resource_DecodeType01Far(const void *source, void *destination);
+s32 Resource_ResetEntryFar(u32 no);
+s32 VramCache_ReleaseVramFar(u32 no);
+s32 VramCache_LoadFar(u32 no, u32 size, const void *src);
+s32 Resource_FindFreeEntryFar(void);
+s32 AffineMatrix_BuildForEffectFar(struct AffineTransform *source);
+void Runtime_PushSlotEntryFar(void *slot_entry, s32 slot);
+void Ui_LoadWindowGraphicsFar(void);
+void *Resource_GetTableEntryFar(s32 index);
+void RuntimeDispatch_NoOpHookFar(s32 unused);
+void Fade_ToBlackFar(s32 frames);
+void Fade_WaitFar(void);
+void SerialRuntime_InitializeFar(void);
+s32 SerialRuntime_PollAndTransferFar(void *send, void *receive);
+void SerialRuntime_RemoveIrqHandlersFar(void);
+s32 Sound_LoadPresetParametersFar(s32 preset);
+s32 SerialRuntime_BeginSendFar(void *source, s32 transferValue);
+s32 SerialRuntime_BeginReceiveFar(void *destination);
+s32 SerialRuntime_GetActiveTransfersFar(void);
+s32 Scheduler_SetTaskFlagsFar(SchedulerCallback callback, u32 mask);

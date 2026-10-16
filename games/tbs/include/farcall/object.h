@@ -1,323 +1,167 @@
-// FarCall_ObjectTable: one entry per 8-byte stub, in table order.
-FAR_CALL(Field_RunSceneFar, Field_RunScene, s32, (s32 entrance))
-FAR_CALL(Game_ResetForNewGameFar, Game_ResetForNewGame, void, (s32 mode))
-FAR_CALL(FieldEvent_WaitFramesFar, FieldEvent_WaitFrames, void, (s32 frames))
-FAR_CALL(FieldEvent_BeginFar, FieldEvent_Begin, void, (void))
-FAR_CALL(FieldEvent_EndFar, FieldEvent_End, void, (void))
-FAR_SLOT(Event_RunObjectHookAndWait)
-FAR_CALL(Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId,
-         void, (struct ScenePlacement * table))
-FAR_CALL(Scene_AssignViewFlagsFar, Scene_AssignViewFlags, void,
-         (struct ScenePlacement * entry))
-FAR_CALL(Event_SetSceneEventsFar, Event_SetSceneEvents, void,
-         (const struct SceneEvent *events))
-FAR_CALL(Event_PrepareObjectAndApplyValueFar, Event_PrepareObjectAndApplyValue,
-         void, (s32 event_id, s32 value))
-FAR_CALL(Event_PrepareTwoObjectsAndApplyFar, Event_PrepareTwoObjectsAndApply,
-         void, (s32 first, s32 second))
-FAR_CALL(Party_RemoveOwnerRestoredFar, Party_RemoveOwnerRestored, void,
-         (s32 owner))
-FAR_CALL(PartyInventory_GiveItemFar, PartyInventory_GiveItem, s32,
-         (s32 item, s32 unused))
-FAR_SLOT(Inventory_TryAddAndReturnOwner)
-FAR_CALL(Event_AskYesNoWithActorAnimationFar, Event_AskYesNoWithActorAnimation,
-         s32, (s32 actor, s32 force_bottom))
-FAR_CALL(Party_LearnAbilityFar, Party_LearnAbility, void,
-         (s32 unit, s32 ability))
-FAR_CALL(Object_GetByIdFar, Object_GetById, struct FieldActor *, (s32 objectId))
-FAR_CALL(ObjectTable_DestroyByIdFar, ObjectTable_DestroyById, void, (s32 index))
-FAR_CALL(ObjectMotion_SetSpeedParametersFar, ObjectMotion_SetSpeedParameters,
-         void, (u32 objectId, s32 speedLimit, s32 acceleration))
-FAR_CALL(ObjectMotion_EnableActionAndSetCallbackFar,
-         ObjectMotion_EnableActionAndSetCallback, void,
-         (u32 objectId, s32 action))
-FAR_CALL(Object_RefreshSelectorByIdFar, Object_RefreshSelectorById, void,
-         (u32 objectId))
-FAR_CALL(ObjectMotion_EnableActionAndResetMotionFar,
-         ObjectMotion_EnableActionAndResetMotion, void, (u32 objectId))
-FAR_CALL(Object_SetActionCallbackAndRefreshByIdFar,
-         Object_SetActionCallbackAndRefreshById, void,
-         (u32 objectId, s32 action))
-FAR_CALL(ObjectMotion_ResetAndSetPositionFar, ObjectMotion_ResetAndSetPosition,
-         void, (u32 objectId, s32 x, s32 z))
-FAR_CALL(ObjectMotion_SetPositionAndCommitFar,
-         ObjectMotion_SetPositionAndCommit, void, (u32 objectId, s32 x, s32 z))
-FAR_CALL(ObjectMotion_ResetAndSetPositionInMode2Far,
-         ObjectMotion_ResetAndSetPositionInMode2, void,
-         (u32 objectId, s32 x, s32 z))
-FAR_CALL(ObjectMotion_SetPositionAndResetFar, ObjectMotion_SetPositionAndReset,
-         void, (u32 objectId, s32 x, s32 z))
-FAR_CALL(ObjectMotion_CenterOnColumnFar, ObjectMotion_CenterOnColumn, void,
-         (u32 objectId, s32 action, s32 z_offset))
-FAR_CALL(ObjectMotion_OffsetPositionAndResetMotionFar,
-         ObjectMotion_OffsetPositionAndResetMotion, void,
-         (u32 objectId, s32 x_offset, s32 z_offset))
-FAR_CALL(ObjectMotion_CommitCurrentPositionAndActivateFar,
-         ObjectMotion_CommitCurrentPositionAndActivate, void, (u32 objectId))
-FAR_CALL(ObjectMotion_SetHorizontalPositionWithTerrainFar,
-         ObjectMotion_SetHorizontalPositionWithTerrain, void,
-         (u32 objectId, s32 x, s32 z))
-FAR_SLOT(ObjectMotion_SetPositionWithTerrain)
-FAR_CALL(Object_SetModeByIdFar, Object_SetModeById, void,
-         (u32 objectId, s32 action))
-FAR_CALL(Object_SetActionByIdFar, Object_SetActionById, void,
-         (u32 objectId, s32 action))
-FAR_CALL(Motion_SetModeAndWaitAnimationFar, Motion_SetModeAndWaitAnimation,
-         void, (u32 objectId, s32 action))
-FAR_CALL(ObjectMotion_WaitForAnimationChangeFar,
-         ObjectMotion_WaitForAnimationChange, void, (u32 objectId))
-FAR_SLOT(ObjectMotion_NoOp)
-FAR_CALL(ObjectMotion_LaunchFar, ObjectMotion_Launch, void,
-         (u32 objectId, s32 speed, s32 event_id))
-FAR_CALL(ObjectMotion_SetVariantCallbackFar, ObjectMotion_SetVariantCallback,
-         void, (u32 objectId, s32 variant))
-FAR_CALL(Motion_SetVarCbAndRefreshFar, Motion_SetVarCbAndRefresh, void,
-         (u32 objectId, s32 variant))
-FAR_CALL(Actor_JumpDownLedgeFar, Actor_JumpDownLedge, void,
-         (s32 sequence_arg, s32 mode_or_frame, s32 optional_action))
-FAR_CALL(ObjectMotion_SetAngleTowardFar, ObjectMotion_SetAngleToward, void,
-         (s32 firstId, s32 second_id, s32 wait))
-FAR_CALL(Object_LinkPairFar, Object_LinkPair, void,
-         (s32 firstId, s32 second_id, s32 wait))
-FAR_CALL(ObjectGroup_ConfigureChildValueFar, ObjectGroup_ConfigureChildValue,
-         void, (s32 objectId, s32 value))
-FAR_CALL(ObjectGroup_SetChildValueFar, ObjectGroup_SetChildValue, void,
-         (struct FieldActor * actor, s32 value))
-FAR_CALL(Object_SetTargetAndCallbackFar, Object_SetTargetAndCallback, void,
-         (u32 objectId, s32 targetId, const void *callback))
-FAR_CALL(Event_SetMessageIdFar, Event_SetMessageId, void, (s32 value))
-FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject,
-         struct UiWindow *, (s32 arg, s32 unused))
-FAR_CALL(FieldEvent_ShowMessageAndWaitFar, FieldEvent_ShowMessageAndWait, void,
-         (s32 action, s32 flag))
-FAR_CALL(BattlePres_RunActionThenWaitIfModeZeroFar,
-         BattlePres_RunActionThenWaitIfModeZero, void,
-         (s32 first, s32 second, s32 value))
-FAR_CALL(FieldEvent_AskYesNoAndShowResponseFar,
-         FieldEvent_AskYesNoAndShowResponse, s32, (s32 objectId, s32 actionId))
-FAR_SLOT(BattleEventRuntime_EmptyCallback)
-FAR_SLOT(Event_ShowSpeakerMessage)
-FAR_SLOT(ObjectTable_CallRefreshHook)
-FAR_SLOT(Event_ShowMessageAtPosition)
-FAR_CALL(ObjectMotion_ArmCallbackFar, ObjectMotion_ArmCallback, void,
-         (s32 objectId, s32 angle, s32 wait))
-FAR_SLOT(Object_ResetTargetAndSetMode1)
-FAR_SLOT(ObjectTable_RunIfActive)
-FAR_CALL(Battle_ShowPairedUnitWorkAndWaitFar, Battle_ShowPairedUnitWorkAndWait,
-         void,
-         (s32 first, s32 first_x, s32 first_y, s32 first_arg, s32 first_extra,
-          s32 second, s32 second_x, s32 second_y, s32 second_arg,
-          s32 second_extra))
-FAR_CALL(Ui_SetMessageVoiceFromActorFar, Ui_SetMessageVoiceFromActor, void,
-         (s32 arg0))
-FAR_CALL(ObjectMotion_SetActionVariantFar, ObjectMotion_SetActionVariant, void,
-         (s32 objectId, s32 priority))
-FAR_CALL(BattleFx_SpawnLinkedFar, BattleFx_SpawnLinked, void,
-         (s32 id, s32 mode, s32 wait))
-FAR_CALL(BattleFx_ConfigureLinkedObjectFar, BattleFx_ConfigureLinkedObject,
-         void, (s32 id, s32 flags))
-FAR_CALL(ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes, void,
-         (u32 targetId, u32 sourceId))
-FAR_CALL(Camera_FollowActorFar, Camera_FollowActor, void, (s32 id, s32 flag))
-FAR_CALL(Camera_SetSpeedParametersFar, Camera_SetSpeedParameters, void,
-         (s32 first, s32 second))
-FAR_CALL(Camera_MoveWithinMapBoundsFar, Camera_MoveWithinMapBounds, void,
-         (s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter))
-FAR_CALL(Camera_WaitForArrivalFar, Camera_WaitForArrival, void, (void))
-FAR_CALL(Object_PlaceCurrentWithinCameraBoundsFar,
-         Object_PlaceCurrentWithinCameraBounds, void, (s32 arg0, s32 arg1))
-FAR_CALL(Camera_GetEventObjectFar, Camera_GetEventObject,
-         struct FieldActor *, (void))
-FAR_CALL(Map_SetViewBoundsFar, Map_SetViewBounds, void,
-         (s32 minX, s32 minY, s32 maxX, s32 maxY))
-FAR_CALL(Event_SetDestinationFar, Event_SetDestination, void,
-         (s32 first, s32 second))
-FAR_SLOT(Event_SetSavedDestination)
-FAR_CALL(Event_SetExitRequestFar, Event_SetExitRequest, void, (u16 value))
-FAR_CALL(Field_RequestBattleFromEncounterTableFar,
-         Field_RequestBattleFromEncounterTable, void,
-         (s32 zone_no, s32 slot_no))
-FAR_CALL(Field_RequestDjinnBattleFar, Field_RequestDjinnBattle, void,
-         (s32 flag, s32 no))
-FAR_CALL(Event_SetNextDestinationFar, Event_SetNextDestination, void,
-         (s32 first, s32 second))
-FAR_CALL(Event_SetDefeatDestinationFar, Event_SetDefeatDestination, void,
-         (s32 first, s32 second))
-FAR_CALL(Event_RequestDestinationFar, Event_RequestDestination, void,
-         (u16 first, u16 second))
-FAR_CALL(Object_GetScreenPositionFar, Object_GetScreenPosition, s32,
-         (s32 objectId, s32 *position))
-FAR_CALL(Object_GetTriggerTileAheadOfCurrentFar,
-         Object_GetTriggerTileAheadOfCurrent, s32, (void))
-FAR_CALL(Party_RemapCharacterIdByFlagsFar, Party_RemapCharacterIdByFlags, s32,
-         (s32 arg0))
-FAR_SLOT(BattleFx_SteerPushedTarget)
-FAR_SLOT(FieldFx_StartCloak)
-FAR_CALL(Field_TryJumpForwardFar, Field_TryJumpForward, s32, (void))
-FAR_CALL(Field_ClimbDownFar, Field_ClimbDown, s32, (void))
-FAR_CALL(Field_ClimbUpFar, Field_ClimbUp, s32, (void))
-FAR_CALL(Leader_StopMovingFar, Leader_StopMoving, void, (void))
-FAR_CALL(FieldFx_StartGroundParticlesFar, FieldFx_StartGroundParticles, void,
-         (void))
-FAR_CALL(FieldFx_StartLightningFar, FieldFx_StartLightning, void, (void))
-FAR_CALL(FieldFx_StopLightningFar, FieldFx_StopLightning, void, (void))
-FAR_CALL(FieldFx_LastLightningFar, FieldFx_LastLightning, void, (void))
-FAR_CALL(FieldFx_ResumeLightningFar, FieldFx_ResumeLightning, void, (void))
-FAR_CALL(BattleFx_StartBufferBlendFar, BattleFx_StartBufferBlend, void,
-         (s32 from, s32 to))
-FAR_SLOT(FieldMotes_Start)
-FAR_CALL(FieldEffect_InitSparklesFar, FieldEffect_InitSparkles, void, (void))
-FAR_CALL(DisplayTransition_InitializeBattleEffectStateFar,
-         DisplayTransition_InitializeBattleEffectState, void, (s32 mode))
-FAR_SLOT(DisplayTransition_InitializeState)
-FAR_SLOT(DisplayTransition_Start)
-FAR_SLOT(DisplayTransition_Finish)
-FAR_SLOT(DisplayState_ClearFlags)
-FAR_SLOT(BattleEffect_InitializeBuffers)
-FAR_CALL(BattleFx_ApplyColorToTargetBufferFar,
-         BattleFx_ApplyColorToTargetBuffer, void, (s32 mode, s32 half))
-FAR_CALL(BattleFx_ApplyColorToSourceBufferFar,
-         BattleFx_ApplyColorToSourceBuffer, void, (s32 mode, s32 half))
-FAR_SLOT(BattleFx_InterpolateBuffers)
-FAR_CALL(BattleFx_StartBufferInterpolationFar,
-         BattleFx_StartBufferInterpolation, void, (s32 frames))
-FAR_SLOT(BattlePalette_StopBlendAndReleaseBuffer)
-FAR_SLOT(BattleFx_SetPrimaryBufferValue)
-FAR_CALL(Event_StartScreenTransitionFar, Event_StartScreenTransition, void,
-         (void))
-FAR_CALL(Event_FinishScreenTransitionFar, Event_FinishScreenTransition, void,
-         (void))
-FAR_CALL(Event_WaitTransitionFramesFar, Event_WaitTransitionFrames, void,
-         (void))
-FAR_CALL(DisplayScroll_InitializeHBlankDmaFar,
-         DisplayScroll_InitializeHBlankDma, void,
-         (s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY, s32 stepY,
-          s32 ampY))
-FAR_CALL(DisplayScroll_DisarmHBlankDmaFar, DisplayScroll_DisarmHBlankDma, void,
-         (void))
-FAR_CALL(BattleFx_PlayCueAndStartEmitterOnTargetFar,
-         BattleFx_PlayCueAndStartEmitterOnTarget, s32,
-         (s32 effect, s32 target, s32 mode))
-FAR_CALL(EffectRuntime_RunRisingObjectSequenceFar,
-         EffectRuntime_RunRisingObjectSequence, void, (void *object, s32 flags))
-FAR_CALL(BattleFx_StartEffectObject22Far, BattleFx_StartEffectObject22, void,
-         (s32 value, s32 flags))
-FAR_SLOT(Marker_GetActor)
-FAR_SLOT(Marker_OpenChest)
-FAR_SLOT(Marker_CloseChest)
-FAR_SLOT(Marker_ShowOpened)
-FAR_CALL(Marker_SetActorPositionFar, Marker_SetActorPosition,
-         void, (s32 id, s32 x, s32 y))
-FAR_SLOT(Marker_Hide)
-FAR_CALL(Marker_MoveLeaderAwayFar, Marker_MoveLeaderAway, void,
-         (void))
-FAR_CALL(Battle_SetObjectFlag5bWhenMode3Far, Battle_SetObjectFlag5bWhenMode3,
-         void, (void))
-FAR_CALL(Battle_ClearObjectFlag5bWhenMode3Far,
-         Battle_ClearObjectFlag5bWhenMode3, void, (void))
-FAR_SLOT(ObjectTable_ResetForObject)
-FAR_SLOT(Event_SpawnObjectTable)
-FAR_SLOT(ObjectTable_DestroyAtIndex)
-FAR_CALL(ObjectTable_GetFar, ObjectTable_Get, void *, (u32 index))
-FAR_CALL(BattleFx_StartFadeOverlayFar, BattleFx_StartFadeOverlay, void,
-         (void *object))
-FAR_SLOT(FadeOverlay_Suspend)
-FAR_SLOT(FadeOverlay_Resume)
-FAR_CALL(Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler, void,
-         (s32 kind))
-FAR_CALL(BattleFx_LoadActionEffectResourcesFar,
-         BattleFx_LoadActionEffectResources, void, (s32 abilityId, s32 mode))
-FAR_CALL(BattleFx_SetupObjectPairFar, BattleFx_SetupObjectPair, void,
-         (s32 user_id, s32 targetId))
-FAR_CALL(EffectRuntime_StopCurrentObjectFar, EffectRuntime_StopCurrentObject,
-         void, (void))
-FAR_CALL(BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects,
-         void, (void))
-FAR_CALL(EventObject_InitializeFar, EventObject_Initialize, void, (void))
-FAR_SLOT(BattleEffect_InitializeSharedScene)
-FAR_SLOT(BattleFx_PrepareBufferInterpolation)
-FAR_CALL(Battle_ResetEffectCounterFar, Battle_ResetEffectCounter, void, (void))
-FAR_CALL(RunSceneTransitionEffectFar, RunSceneTransitionEffect, void,
-         (s32 x, s32 y))
-FAR_CALL(BattleFx_FinishSceneAndReleaseHeapBlockFar,
-         BattleFx_FinishSceneAndReleaseHeapBlock, void, (void))
-FAR_SLOT(Ui_FillBank15PaletteGrey)
-FAR_CALL(Ui_SetBank15PaletteAndClearRenderModeFar,
-         Ui_SetBank15PaletteAndClearRenderMode, void, (void))
-FAR_CALL(BattleFx_HasMatchingEvent5Far, BattleFx_HasMatchingEvent5, s32,
-         (s32 group))
-FAR_CALL(BattleFx_HasTriggerFar, BattleFx_HasTrigger, u32, (u16 item))
-FAR_CALL(Object_ReplaceResourceEntryFar, Object_ReplaceResourceEntry, void *,
-         (void *src, void *alt))
-FAR_CALL(Event_GetSpecialValueFar, Event_GetSpecialValue, s16, (void))
-FAR_SLOT(BattleFx_StartItemBreak)
-FAR_SLOT(BattleFx_SnapScaleToFull)
-FAR_SLOT(UpdateRisingParticleBurst)
-FAR_CALL(BattleParty_ApplyDrainFar, BattleParty_ApplyDrain, void,
-         (s32 amount, s32 unused))
-FAR_SLOT(BattleParty_ApplyHealthDelta)
-FAR_SLOT(ResourceTable_CountFreeBlocks)
-FAR_CALL(Menu_AskYesNoFar, Menu_AskYesNo, s32, (s32 value))
-FAR_SLOT(Encounter_GetEnemyGroupAtSlot)
-FAR_SLOT(Encounter_GetDjinnEnemyGroup)
-FAR_CALL(Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork, void,
-         (void))
-FAR_CALL(Djinn_JoinPartyFar, Djinn_JoinParty, void,
-         (s32 slot, s32 element, s32 djinn))
-FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void,
-         (struct EffectSlot * effect))
-FAR_CALL(EffectSlot_HasPendingTargetFar, EffectSlot_HasPendingTarget, u32,
-         (struct EffectSlot * effect))
-FAR_CALL(EffectSlot_SetPositionFar, EffectSlot_SetPosition, void,
-         (struct EffectSlot * effect, s32 x, s32 z))
-FAR_CALL(EffectSlot_SetObjectModeFar, EffectSlot_SetObjectMode, void,
-         (struct EffectSlot * effect, s32 mode))
-FAR_CALL(EffectSlot_SetCallbackFar, EffectSlot_SetCallback, void,
-         (struct EffectSlot * effect, EffectCallback callback))
-FAR_CALL(EffectSlot_InitializeFar, EffectSlot_Initialize, void,
-         (struct EffectSlot * effect, s32 kind, s32 x, s32 z))
-FAR_CALL(BattleFx_ClearOwnedSlotFar, BattleFx_ClearOwnedSlot, void,
-         (struct EffectSlot * slot))
-FAR_CALL(Camera_WorldToScreenFar, Camera_WorldToScreen, void,
-         (struct EffectVector * position))
-FAR_CALL(BattleFx_GetResourceIdFar, BattleFx_GetResourceId, s32, (u32 id))
-FAR_CALL(Event_ClearInvalidPackedValuesFar, Event_ClearInvalidPackedValues,
-         void, (void))
-FAR_CALL(BattleFx_InitializeSlotsFar, BattleFx_InitializeSlots, void, (void))
-FAR_CALL(BattleFx_ClearActiveSlotsAndScheduleUpdatesFar,
-         BattleFx_ClearActiveSlotsAndScheduleUpdates, void, (void))
-FAR_SLOT(BattleEffect_ClearOutOfBoundsObjects)
-FAR_SLOT(BattleEffect_ClearAllObjects)
-FAR_CALL(Motion_LaunchFromFocusedObjectFar, Motion_LaunchFromFocusedObject,
-         void, (u32 arg0, s32 arg1, s32 arg2, s32 arg3))
-FAR_CALL(ObjectMotion_OffsetPositionAndResetFar,
-         ObjectMotion_OffsetPositionAndReset, void,
-         (u32 objectId, s32 x_offset, s32 z_offset))
-FAR_CALL(ObjectMotion_CommitPositionAndActivateFar,
-         ObjectMotion_CommitPositionAndActivate, void,
-         (u32 objectId, s32 x_offset, s32 z_offset))
-FAR_CALL(Object_LinkObjectAndSetCallbackFar, Object_LinkObjectAndSetCallback,
-         void, (u32 objectId, u32 linked_object_id))
-FAR_CALL(BattleEffect_PauseObjectFar, BattleEffect_PauseObject, void, (s32 id))
-FAR_SLOT(BattleFx_ResumeObject)
-FAR_SLOT(ObjectTable_FindActiveByValue)
-FAR_SLOT(ObjectTable_ReadActiveValue)
-FAR_CALL(SaveState_CaptureObjectTableFar, ObjectTable_Snapshot, void, (void))
-FAR_CALL(ObjectTable_RestoreFar, ObjectTable_Restore, void, (void))
-FAR_CALL(BattleFx_ScheduleRatioTransitionFar, BattleFx_ScheduleRatioTransition,
-         void, (s32 zoom, s32 frames))
-FAR_CALL(Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition, void,
-         (void))
-FAR_CALL(Scene_GetAreaNameIndexFar, Scene_GetAreaNameIndex, s32,
-         (s32 scene, s32 entrance))
-FAR_CALL(ObjectMotion_SetActionCallbackFar, ObjectMotion_SetActionCallback,
-         void, (struct ObjectRuntime * object, s32 kind))
-FAR_CALL(BattleFx_SetQueuedSoundAndPlayFar, BattleFx_SetQueuedSoundAndPlay,
-         void, (s32 sound_id))
-FAR_CALL(BattleFx_PlayQueuedSoundFar, BattleFx_PlayQueuedSound, void, (void))
-FAR_CALL(Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled,
-         s32, (s32 arg0, s32 arg1))
+// Scene events, field Psynergy, objects and effect lifecycles.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/OBJECT.S.
+s32 Field_RunSceneFar(s32 entrance);
+void Game_ResetForNewGameFar(s32 mode);
+void FieldEvent_WaitFramesFar(s32 frames);
+void FieldEvent_BeginFar(void);
+void FieldEvent_EndFar(void);
+void Event_CallWithLastActiveObjectIdFar(struct ScenePlacement *table);
+void Scene_AssignViewFlagsFar(struct ScenePlacement *entry);
+void Event_SetSceneEventsFar(const struct SceneEvent *events);
+void Event_PrepareObjectAndApplyValueFar(s32 event_id, s32 value);
+void Event_PrepareTwoObjectsAndApplyFar(s32 first, s32 second);
+void Party_RemoveOwnerRestoredFar(s32 owner);
+s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
+s32 Event_AskYesNoWithActorAnimationFar(s32 actor, s32 force_bottom);
+void Party_LearnAbilityFar(s32 unit, s32 ability);
+struct FieldActor *Object_GetByIdFar(s32 objectId);
+void ObjectTable_DestroyByIdFar(s32 index);
+void ObjectMotion_SetSpeedParametersFar(u32 objectId, s32 speedLimit,
+                                        s32 acceleration);
+void ObjectMotion_EnableActionAndSetCallbackFar(u32 objectId, s32 action);
+void Object_RefreshSelectorByIdFar(u32 objectId);
+void ObjectMotion_EnableActionAndResetMotionFar(u32 objectId);
+void Object_SetActionCallbackAndRefreshByIdFar(u32 objectId, s32 action);
+void ObjectMotion_ResetAndSetPositionFar(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionAndCommitFar(u32 objectId, s32 x, s32 z);
+void ObjectMotion_ResetAndSetPositionInMode2Far(u32 objectId, s32 x, s32 z);
+void ObjectMotion_SetPositionAndResetFar(u32 objectId, s32 x, s32 z);
+void ObjectMotion_CenterOnColumnFar(u32 objectId, s32 action, s32 z_offset);
+void ObjectMotion_OffsetPositionAndResetMotionFar(u32 objectId, s32 x_offset,
+                                                  s32 z_offset);
+void ObjectMotion_CommitCurrentPositionAndActivateFar(u32 objectId);
+void ObjectMotion_SetHorizontalPositionWithTerrainFar(u32 objectId, s32 x,
+                                                      s32 z);
+void Object_SetModeByIdFar(u32 objectId, s32 action);
+void Object_SetActionByIdFar(u32 objectId, s32 action);
+void Motion_SetModeAndWaitAnimationFar(u32 objectId, s32 action);
+void ObjectMotion_WaitForAnimationChangeFar(u32 objectId);
+void ObjectMotion_LaunchFar(u32 objectId, s32 speed, s32 event_id);
+void ObjectMotion_SetVariantCallbackFar(u32 objectId, s32 variant);
+void Motion_SetVarCbAndRefreshFar(u32 objectId, s32 variant);
+void Actor_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
+                            s32 optional_action);
+void ObjectMotion_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
+void Object_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
+void ObjectGroup_ConfigureChildValueFar(s32 objectId, s32 value);
+void ObjectGroup_SetChildValueFar(struct FieldActor *actor, s32 value);
+void Object_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
+                                    const void *callback);
+void Event_SetMessageIdFar(s32 value);
+struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
+void FieldEvent_ShowMessageAndWaitFar(s32 action, s32 flag);
+void BattlePres_RunActionThenWaitIfModeZeroFar(s32 first, s32 second,
+                                               s32 value);
+s32 FieldEvent_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
+void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
+void Battle_ShowPairedUnitWorkAndWaitFar(s32 first, s32 first_x, s32 first_y,
+                                         s32 first_arg, s32 first_extra,
+                                         s32 second, s32 second_x, s32 second_y,
+                                         s32 second_arg, s32 second_extra);
+void Ui_SetMessageVoiceFromActorFar(s32 arg0);
+void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
+void BattleFx_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
+void BattleFx_ConfigureLinkedObjectFar(s32 id, s32 flags);
+void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
+void Camera_FollowActorFar(s32 id, s32 flag);
+void Camera_SetSpeedParametersFar(s32 first, s32 second);
+void Camera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
+                                   s32 requested_z, s32 use_setter);
+void Camera_WaitForArrivalFar(void);
+void Object_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
+struct FieldActor *Camera_GetEventObjectFar(void);
+void Map_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
+void Event_SetDestinationFar(s32 first, s32 second);
+void Event_SetExitRequestFar(u16 value);
+void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
+void Field_RequestDjinnBattleFar(s32 flag, s32 no);
+void Event_SetNextDestinationFar(s32 first, s32 second);
+void Event_SetDefeatDestinationFar(s32 first, s32 second);
+void Event_RequestDestinationFar(u16 first, u16 second);
+s32 Object_GetScreenPositionFar(s32 objectId, s32 *position);
+s32 Object_GetTriggerTileAheadOfCurrentFar(void);
+s32 Party_RemapCharacterIdByFlagsFar(s32 arg0);
+s32 Field_TryJumpForwardFar(void);
+s32 Field_ClimbDownFar(void);
+s32 Field_ClimbUpFar(void);
+void Leader_StopMovingFar(void);
+void FieldFx_StartGroundParticlesFar(void);
+void FieldFx_StartLightningFar(void);
+void FieldFx_StopLightningFar(void);
+void FieldFx_LastLightningFar(void);
+void FieldFx_ResumeLightningFar(void);
+void BattleFx_StartBufferBlendFar(s32 from, s32 to);
+void FieldEffect_InitSparklesFar(void);
+void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);
+void BattleFx_ApplyColorToTargetBufferFar(s32 mode, s32 half);
+void BattleFx_ApplyColorToSourceBufferFar(s32 mode, s32 half);
+void BattleFx_StartBufferInterpolationFar(s32 frames);
+void Event_StartScreenTransitionFar(void);
+void Event_FinishScreenTransitionFar(void);
+void Event_WaitTransitionFramesFar(void);
+void DisplayScroll_InitializeHBlankDmaFar(s32 mode, s32 freqX, s32 stepX,
+                                          s32 ampX, s32 freqY, s32 stepY,
+                                          s32 ampY);
+void DisplayScroll_DisarmHBlankDmaFar(void);
+s32 BattleFx_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
+                                               s32 mode);
+void EffectRuntime_RunRisingObjectSequenceFar(void *object, s32 flags);
+void BattleFx_StartEffectObject22Far(s32 value, s32 flags);
+void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
+void Marker_MoveLeaderAwayFar(void);
+void Battle_SetObjectFlag5bWhenMode3Far(void);
+void Battle_ClearObjectFlag5bWhenMode3Far(void);
+void *ObjectTable_GetFar(u32 index);
+void BattleFx_StartFadeOverlayFar(void *object);
+void Field_DispatchTypeHandlerFar(s32 kind);
+void BattleFx_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
+void BattleFx_SetupObjectPairFar(s32 user_id, s32 targetId);
+void EffectRuntime_StopCurrentObjectFar(void);
+void BattleEffect_CleanupSceneObjectsFar(void);
+void EventObject_InitializeFar(void);
+void Battle_ResetEffectCounterFar(void);
+void RunSceneTransitionEffectFar(s32 x, s32 y);
+void BattleFx_FinishSceneAndReleaseHeapBlockFar(void);
+void Ui_SetBank15PaletteAndClearRenderModeFar(void);
+s32 BattleFx_HasMatchingEvent5Far(s32 group);
+u32 BattleFx_HasTriggerFar(u16 item);
+void *Object_ReplaceResourceEntryFar(void *src, void *alt);
+s16 Event_GetSpecialValueFar(void);
+void BattleParty_ApplyDrainFar(s32 amount, s32 unused);
+s32 Menu_AskYesNoFar(s32 value);
+void Audio_PlayCueFromEventWorkFar(void);
+void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
+void EffectSlot_UpdateFar(struct EffectSlot *effect);
+u32 EffectSlot_HasPendingTargetFar(struct EffectSlot *effect);
+void EffectSlot_SetPositionFar(struct EffectSlot *effect, s32 x, s32 z);
+void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 mode);
+void EffectSlot_SetCallbackFar(struct EffectSlot *effect,
+                               EffectCallback callback);
+void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 kind, s32 x,
+                              s32 z);
+void BattleFx_ClearOwnedSlotFar(struct EffectSlot *slot);
+void Camera_WorldToScreenFar(struct EffectVector *position);
+s32 BattleFx_GetResourceIdFar(u32 id);
+void Event_ClearInvalidPackedValuesFar(void);
+void BattleFx_InitializeSlotsFar(void);
+void BattleFx_ClearActiveSlotsAndScheduleUpdatesFar(void);
+void Motion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
+                                            s32 z_offset);
+void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
+                                               s32 z_offset);
+void Object_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
+void BattleEffect_PauseObjectFar(s32 id);
+void SaveState_CaptureObjectTableFar(void);
+void ObjectTable_RestoreFar(void);
+void BattleFx_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
+void Event_WaitForZoomTransitionFar(void);
+s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
+void BattleFx_SetQueuedSoundAndPlayFar(s32 sound_id);
+void BattleFx_PlayQueuedSoundFar(void);
+s32 Party_RemapCharacterIdIfEnabledFar(s32 arg0, s32 arg1);
 #if TBS_PATCH_2
-FAR_CALL(BattleFx_ClearRandomParticlesFar, BattleFx_ClearRandomParticles, void,
-         (void))
+void BattleFx_ClearRandomParticlesFar(void);
 #endif

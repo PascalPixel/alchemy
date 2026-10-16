@@ -1,5 +1,16 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Party menus and their interactive selection screens.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_MenuTable
 FarCall_MenuTable:
-#include "../../../include/farcall/menu.h"
+	export RunAssetSelectionScreenFar, RunAssetSelectionScreen
+	export Menu_OpenConfirmPromptFar, Menu_OpenConfirmPrompt
+	export Menu_OpenActionFlow, ActionMenu_Open
+	export Menu_OpenCharacterSelectorFar, Menu_OpenCharacterSelector
+	overlay_veneer UiIcon_CreateWithResourceVariant
+	export PsynergyMenu_InitializeEntryObjectsFar, PsynergyMenu_InitializeEntryObjects
+	export Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects
+	export UiIcon_PrepareObjectFar, UiIcon_PrepareObject
+	export ItemMenu_RunFar, ItemMenu_Run
+	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails

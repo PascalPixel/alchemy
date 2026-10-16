@@ -1,5 +1,22 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Audio mixing, playback commands and music-player updates.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_SoundTable
 FarCall_SoundTable:
-#include "../../../include/farcall/sound.h"
+	export AudioEngine_RunMixerFar, AudioEngine_RunMixer
+	export Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults
+	export AudioCommand_PlayFar, AudioCommand_Play
+	export MusicPlayer_StepVolumeAndPitchTowardTargetsFar, MusicPlayer_StepVolumeAndPitchTowardTargets
+	export MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency
+	overlay_veneer MusicCommand_SetPitch
+	overlay_veneer Audio_SetWorkPairB
+	overlay_veneer MusicCommand_SetVolume
+	overlay_veneer Audio_SetMusicVolumeTargetAndStep
+	export AudioCommand_GetStateByteFar, AudioCommand_GetStateByte
+	overlay_veneer AudioTest_RunParameterController
+	overlay_veneer AudioCommand_StopAllPlayers
+	overlay_veneer AudioCommand_ResumeAllPlayers
+	overlay_veneer AudioCommand_UpdateToggleMask
+	export AudioCommand_GetSecondaryStateByteFar, AudioCommand_GetSecondaryStateByte
+	export AudioCommand_WaitForCompletionFar, AudioCommand_WaitForCompletion

@@ -1,19 +1,7 @@
-@ A far-call bank is its list (games/tbs/include/farcall): this file turns each
-@ entry into its 8-byte stub, and farcall.h turns the same entry into its C
-@ declaration.
+@ Bank jump tables use the same 8-byte entries as overlay imports and entries.
+@ Each bank lists its exports in assembly order; C interfaces live separately
+@ in include/farcall. version.h selects the bank's patch-dependent entries.
 #include "../../../include/version.h"
 	.syntax unified
 	.thumb
 	.include "games/tbs/src/system/overlay.inc"
-	.macro far_call name, target
-	.global \name
-	.thumb_func
-\name:
-	overlay_veneer \target
-	.endm
-	.macro far_slot target
-	overlay_veneer \target
-	.endm
-#define FAR_CALL(name, target, type, params) far_call name, target
-#define FAR_ENTRY(name, target) far_call name, target
-#define FAR_SLOT(target) far_slot target

@@ -1,23 +1,19 @@
-// FarCall_ShopTable: one entry per 8-byte stub, in table order.
-FAR_CALL(Battle_ApplyPresetItemsAndFlagsFar, Battle_ApplyPresetItemsAndFlags,
-         s32, (s32 unused))
-FAR_CALL(Shop_RunFar, Shop_Run, s32, (s32 row, s32 keeper_id))
-FAR_CALL(Shop_ConfirmActFar, Shop_ConfirmAct, s32, (s32 unitId))
-FAR_CALL(Inn_CheckInFar, Inn_CheckIn, s32, (s32 mode, s32 objectId))
-FAR_CALL(ShopCursor_AdvanceFar, ShopCursor_Advance, void,
-         (struct ShopCursor * cursor))
-FAR_CALL(ShopCursor_MoveTowardTargetFar, ShopCursor_MoveTowardTarget, void,
-         (struct ShopCursor * cursor))
-FAR_CALL(Shop_SetCursorFar, Shop_SetCursor, void,
-         (struct ShopCursor * cursor, s32 targetX, s32 targetY, s32 kind))
-FAR_CALL(ShopCursor_SetPositionImmediateFar, ShopCursor_SetPositionImmediate,
-         void, (struct ShopCursor * cursor, s32 x, s32 y))
-FAR_CALL(Shop_FillSelectorFar, Shop_FillSelector, void,
-         (s32 count, s32 selector, u8 *base))
-FAR_CALL(Shop_RestoreSceneTilesFar, Shop_RestoreSceneTiles, void, (s32 layer))
-FAR_CALL(Shop_InitEffectFar, Shop_InitEffect, void, (void))
-FAR_CALL(Shop_PickUnitItemFar, Shop_PickUnitItem, s32,
-         (s32 *selected_unit, s32 *selectedItem))
-FAR_CALL(AudioCommand_WaitForStateByteClearFar,
-         AudioCommand_WaitForStateByteClear, void, (void))
-FAR_CALL(Inn_PlaySleepFar, Inn_PlaySleep, void, (s32 room_price))
+// Shops, inns and the cursors used by their screens.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/SHOP.S.
+s32 Battle_ApplyPresetItemsAndFlagsFar(s32 unused);
+s32 Shop_RunFar(s32 row, s32 keeper_id);
+s32 Shop_ConfirmActFar(s32 unitId);
+s32 Inn_CheckInFar(s32 mode, s32 objectId);
+void ShopCursor_AdvanceFar(struct ShopCursor *cursor);
+void ShopCursor_MoveTowardTargetFar(struct ShopCursor *cursor);
+void Shop_SetCursorFar(struct ShopCursor *cursor, s32 targetX, s32 targetY,
+                       s32 kind);
+void ShopCursor_SetPositionImmediateFar(struct ShopCursor *cursor, s32 x,
+                                        s32 y);
+void Shop_FillSelectorFar(s32 count, s32 selector, u8 *base);
+void Shop_RestoreSceneTilesFar(s32 layer);
+void Shop_InitEffectFar(void);
+s32 Shop_PickUnitItemFar(s32 *selected_unit, s32 *selectedItem);
+void AudioCommand_WaitForStateByteClearFar(void);
+void Inn_PlaySleepFar(s32 room_price);

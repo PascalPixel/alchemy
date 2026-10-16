@@ -1,5 +1,102 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Frame scheduling, memory, resources and core runtime services.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_RuntimeTable
 FarCall_RuntimeTable:
-#include "../../../include/farcall/runtime.h"
+	export WaitFramesFar, WaitFrames
+	overlay_veneer Scheduler_ResetTaskTable
+	export Scheduler_AddOrUpdateCallbackFar, Scheduler_AddOrUpdateCallback
+	export Scheduler_RemoveCallbackFar, Scheduler_RemoveCallback
+	overlay_veneer Scheduler_SuspendTasks
+	overlay_veneer Scheduler_ResumeTasks
+	overlay_veneer Scheduler_RunPass
+	export Random16Far, Random16
+	export ArcTan2Far, ArcTan2
+	overlay_veneer Math_IntegerSqrt
+	export FixedSqrtFar, FixedSqrt
+	export Trig_SinFar, Trig_Sin
+	export Trig_CosFar, Trig_Cos
+	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
+	export Runtime_SetIrqHandlerFar, Runtime_SetIrqHandler
+	overlay_veneer Runtime_InitializeHeap
+	export Runtime_AllocateHeapBlockFar, Runtime_AllocateHeapBlock
+	export Runtime_AllocateBlockFar, Runtime_AllocateBlock
+	export Runtime_ReleaseHeapBlockFar, Runtime_ReleaseHeapBlock
+	overlay_veneer Runtime_GetRemainingIwram
+	overlay_veneer Runtime_GetRemainingEwram
+	export Runtime_BumpAllocateFar, MemAlloc
+	export Runtime_BumpAllocateAlternatePoolFar, Runtime_BumpAllocateAlternatePool
+	export Sys_FreeFar, MemFree
+	overlay_veneer DebugText_Print
+	overlay_veneer DebugText_PrintHex
+	overlay_veneer DebugText_PrintDecimal
+	overlay_veneer DebugText_PrintBlanks
+	export Resource_DecodeByteLzFar, Resource_DecodeByteLz
+	export Resource_DecodeType01Far, Resource_DecodeType01
+	overlay_veneer VramCache_Reset
+	export Resource_ResetEntryFar, Resource_ResetEntry
+	export VramCache_ReleaseVramFar, VramCache_ReleaseVram
+	export VramCache_LoadFar, VramCache_Load
+	export Resource_FindFreeEntryFar, Resource_FindFreeEntry
+	overlay_veneer DebugText_Clear
+	export AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect
+	export Runtime_PushSlotEntryFar, Runtime_PushSlotEntry
+	export Ui_LoadWindowGraphicsFar, Ui_LoadWindowGraphics
+	overlay_veneer Palette_LoadBasicObjColors
+	overlay_veneer Render_ResetTransformState
+	overlay_veneer SceneTransform_ResetMatrix
+	overlay_veneer Transform_Push
+	overlay_veneer Transform_Pop
+	overlay_veneer SceneTransform_ApplyRotation
+	overlay_veneer SceneTransform_ApplyPitch
+	overlay_veneer SceneTransform_ApplyYaw
+	overlay_veneer SceneTransform_ApplyRoll
+	overlay_veneer SceneTransform_ApplyPosition
+	overlay_veneer SceneTransform_ApplyScale
+	overlay_veneer SceneTransform_ApplyRotationTranslation
+	overlay_veneer SceneTransform_ApplyScaledRotation
+	overlay_veneer Transform_SetLookAt
+	overlay_veneer Render_ProjectPoint
+	overlay_veneer Projection_SetFieldOfView
+	overlay_veneer Projection_Set
+	overlay_veneer System_CopyBuildStamp
+	overlay_veneer RuntimeDispatch_ReturnZero
+	export Resource_GetTableEntryFar, Resource_GetTableEntry
+	export RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook
+	overlay_veneer Resource_LoadCode
+	export Fade_ToBlackFar, Fade_ToBlack
+	overlay_veneer Fade_FromBlack
+	overlay_veneer Fade_ToWhite
+	overlay_veneer Fade_FromWhite
+	overlay_veneer Fade_Start
+	export Fade_WaitFar, Fade_Wait
+	overlay_veneer RuntimeDispatch_ReservedNoOpA
+	overlay_veneer RuntimeDispatch_ReservedNoOpB
+	overlay_veneer RuntimeDispatch_ReservedNoOpC
+	overlay_veneer RuntimeDispatch_ReservedNoOpD
+	overlay_veneer RuntimeDispatch_ReservedNoOpE
+	export SerialRuntime_InitializeFar, SerialRuntime_Initialize
+	export SerialRuntime_PollAndTransferFar, SerialRuntime_PollAndTransfer
+	overlay_veneer QueueIoWriteDelay1
+	export QueueIoWriteDelay2Far, QueueIoWriteDelay2
+	export QueueIoWriteDelay3Far, QueueIoWriteDelay3
+	overlay_veneer QueueIoWriteDelay5
+	overlay_veneer QueueIoWriteDelay6
+	overlay_veneer QueueIoWriteDelay7
+	overlay_veneer QueueIoWriteDelay9
+	overlay_veneer QueueIoWriteDelay10
+	overlay_veneer QueueIoWriteDelay11
+	overlay_veneer Input_ResetKeyRepeat
+	overlay_veneer Transform_ApplyLookAt
+	overlay_veneer SerialRuntime_WaitForStatusMask
+	export SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers
+	export Sound_LoadPresetParametersFar, Sound_LoadPresetParameters
+	export SerialRuntime_BeginSendFar, SerialRuntime_BeginSend
+	export SerialRuntime_BeginReceiveFar, SerialRuntime_BeginReceive
+	overlay_veneer SerialRuntime_WaitForSend
+	overlay_veneer SerialRuntime_WaitForReceive
+	overlay_veneer SerialRuntime_WaitForTransfers
+	export SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers
+	overlay_veneer SerialRuntime_StepBlockTransfer
+	export Scheduler_SetTaskFlagsFar, Scheduler_SetTaskFlags

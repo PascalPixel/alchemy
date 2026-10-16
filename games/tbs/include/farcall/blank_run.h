@@ -1,2 +1,4 @@
-// FarCall_BlankRunTable: one entry per 8-byte stub, in table order.
-FAR_CALL(Runtime_BlankDisplayAndRunFar, Runtime_BlankDisplayAndRun, s32, ())
+// The display-blanked callback runner.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/BLANK_RUN.S.
+s32 Runtime_BlankDisplayAndRunFar();

@@ -1,2 +1,4 @@
-// FarCall_BlankLoadTable: one entry per 8-byte stub, in table order.
-FAR_CALL(ReelGame_StartFar, ReelGame_Start, s32, ())
+// The reel-game entry point.
+// Far-call interfaces; their ordered jump stubs live in
+// games/tbs/src/system/far_call/BLANK_LOAD.S.
+s32 ReelGame_StartFar();

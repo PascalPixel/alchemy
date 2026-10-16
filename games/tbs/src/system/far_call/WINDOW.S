@@ -1,5 +1,140 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Window construction, text drawing and selection interfaces.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_WindowTable
 FarCall_WindowTable:
-#include "../../../include/farcall/window.h"
+	export UiWork_InitializeWithResourceCountersFar, UiWork_InitializeWithResourceCounters
+	export UiWork_InitializeFar, UiWork_Initialize
+	export UiWindow_CreateFar, UiWindow_Create
+	export UiWork_FinalizeFar, UiWork_Finalize
+	export Ui_AdjustValueWithoutLimitFar, Ui_AdjustValueWithoutLimit
+	export UiText_DecodeMessageFar, UiText_DecodeMessage
+	export UiText_CopyMessageStringFar, UiText_CopyMessageString
+	export UiText_OpenMessageWindowFar, UiText_OpenMessageWindow
+	export UiText_ShowPositionedMessageAndWaitFar, UiText_ShowPositionedMessageAndWait
+	export UiWork_IsCompleteFar, UiWork_IsComplete
+	export UiWork_IsIdleFar, UiWork_IsIdle
+	export UiWork_SetBusyFlagsFar, UiWork_SetBusyFlags
+	export RenderOutput_PrepareForRedrawFar, RenderOutput_PrepareForRedraw
+	export UiWindow_ClearInteriorTilesFar, UiWindow_ClearInteriorTiles
+	export UiWindow_DrawDividerLineFar, UiWindow_DrawDividerLine
+	export UiText_DrawResourceFar, UiText_DrawResource
+	export UiText_DrawCharacterAtOffsetFar, UiText_DrawCharacterAtOffset
+	export UiText_DrawStringFar, UiText_DrawString
+	export UiText_DrawStringAtOffsetFar, UiText_DrawStringAtOffset
+	export UiText_DrawStringInWindowFar, UiText_DrawStringInWindow
+	export UiText_DrawNumberFar, UiText_DrawNumber
+	export UiText_DrawNumberAtOffsetFar, UiText_DrawNumberAtOffset
+	export UiText_DrawNumberInWindowFar, UiText_DrawNumberInWindow
+	export UiWork_SetParamNibbleFar, UiWork_SetParamNibble
+	overlay_veneer UiWork_SetRenderWord
+	export RenderOutput_CreateFar, RenderOutput_Create
+	export RenderOutput_CreateFromResourceFar, RenderOutput_CreateFromResource
+	export SideObject_CreateFar, CreateSideObject
+	export Ui_LoadCharacterEntryForSlotFar, Ui_LoadCharacterEntryForSlot
+	overlay_veneer RenderOutput_SetAnimation
+	overlay_veneer RenderOutput_SetInvertedSentinel
+	export UiWindow_CreateWithSideObjectFar, UiWindow_CreateWithSideObject
+	export UiWork_FinalizeEntityMatchingLocalizedIdFar, UiWork_FinalizeEntityMatchingLocalizedId
+	export UiText_GetResourceDimensionsFar, UiText_GetResourceDimensions
+	export UiText_GetResourceDimensionsAltFar, UiText_GetResourceDimensionsAlt
+	export UiWork_ClearValueNameTablesFar, UiWork_ClearValueNameTables
+	export UiWork_PushValueSlotFar, UiWork_PushValueSlot
+	export UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds
+	export PartyStatusDrawFar, PartyStatusDraw
+	export UiWork_FinalizeAndReleaseBlock16Far, UiWork_FinalizeAndReleaseBlock16
+	export UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore
+	export UiWork_DrainPendingFar, UiWork_DrainPending
+	overlay_veneer UiGlyph_ResetWorkState
+	overlay_veneer Resource_ClearOwnerListAndCounters
+	overlay_veneer Resource_PushPendingPair
+	overlay_veneer Resource_ScheduleOwnerResetDelayed
+	overlay_veneer Resource_ScheduleOwnerReset
+	overlay_veneer Menu_OpenSelectionWindow
+	overlay_veneer Resource_ResetOwnerEntries
+	overlay_veneer Menu_SetupSelectionBothSides
+	overlay_veneer Menu_SelectionLoop
+	overlay_veneer Menu_WaitForSelectionInput
+	overlay_veneer UiTextResource_NoOpCallbackBank
+	overlay_veneer UiTextResource_NoOpCallback1
+	overlay_veneer MenuSelection_BuildEntries
+	overlay_veneer UiWork_ReservedNoOp
+	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
+	export UiText_ShowMessageAndWaitCoreFar, UiText_ShowMessageAndWaitCore
+	export UiText_PrepareMessageWorkFar, UiText_PrepareMessageWork
+	overlay_veneer UiTextResource_NoOpCallback4
+	export Localization_LookupEntryIdFar, Localization_LookupEntryId
+	export Menu_RunTopSelectionFar, Menu_RunTopSelection
+	export Menu_SelectSaveSlotActionFar, Menu_SelectSaveSlotAction
+	export Menu_SelectResourceLayoutFar, Menu_SelectResourceLayout
+	export UiTimedNotice_CreateFar, UiTimedNotice_Create
+	export UiTimedNotice_CloseIfActiveFar, UiTimedNotice_CloseIfActive
+	export UiText_ShowCenteredMessageFar, UiText_ShowCenteredMessage
+	export UiWork_FinalizeSharedSlotFar, UiWork_FinalizeSharedSlot
+	export UiWork_ResetFreeChannelFar, UiWork_ResetFreeChannel
+	export UiTextResource_InitializeFar, UiTextResource_Initialize
+	export UiTextResource_SetPositionFar, UiTextResource_SetPosition
+	export UiTextResource_ReleaseFar, UiTextResource_Release
+	overlay_veneer Menu_RunSelectionHook
+	overlay_veneer Item_CallHandler48
+	export Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem
+	export UiText_RenderWideStringAtOffsetFar, UiText_RenderWideStringAtOffset
+	overlay_veneer GraphicsPalette_SelectionNoOp
+	export UiWindow_FillFromSceneFar, UiWindow_FillFromScene
+	export RenderOutput_RedrawSavedRectFar, RenderOutput_RedrawSavedRect
+	export RenderOutput_ClearListFar, RenderOutput_ClearList
+	export UiWindow_SetTilemapEntryFar, UiWindow_SetTilemapEntry
+	export Menu_RunSelectionFar, Menu_RunSelection
+	export Menu_RunSelectionWithCursorObjectFar, Menu_RunSelectionWithCursorObject
+	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
+	overlay_veneer Debug_SelectAbilityPair
+	export UiWindow_MarkVisibleTileAttributesFar, UiWindow_MarkVisibleTileAttributes
+	overlay_veneer ItemIcon_Compose
+	export BattleLayout_HighlightPartyPanelsFar, BattleLayout_HighlightPartyPanels
+	overlay_veneer UiIcon_BuildItemIconTiles
+	overlay_veneer UiIcon_BuildAbilityIconTiles
+	export RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded
+	overlay_veneer RenderOutput_CreateFromTable
+	overlay_veneer SaveState_WriteCurrentSlotPair
+	export Save_WriteSelectedSlotFar, Save_WriteSelectedSlot
+	export SaveState_LoadRecordIntoWorkFar, SaveState_LoadRecordIntoWork
+	export SaveState_CopySlotPairFar, SaveState_CopySlotPair
+	export SaveState_DeleteSelectedSlotFar, SaveState_DeleteSelectedSlot
+	export SaveState_ProcessSelectedSlotFar, SaveState_ProcessSelectedSlot
+	overlay_veneer SaveState_WriteSlotPair
+	export SaveState_ScanRecordFlagsFar, SaveState_ScanRecordFlags
+	export NameEntry_EditOwnerNameFar, NameEntry_EditOwnerName
+	overlay_veneer Resource_CopyFixedBlockB
+	overlay_veneer Resource_CopyFixedBlockA
+	overlay_veneer Menu_SetNodeCoordinates
+	export DebugMenu_BrowseIconsFar, DebugMenu_BrowseIcons
+	export DebugMenu_BrowseEntryGlyphsFar, DebugMenu_BrowseEntryGlyphs
+	overlay_veneer Item_ReturnTrue
+	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
+	export PaletteGlow_UpdateFar, PaletteGlow_Update
+	overlay_veneer Menu_RunWorkspaceOptions
+	export Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop
+	overlay_veneer UiWindow_FillScreenBlockRect
+	export Menu_SelectEntry11To14Far, Menu_SelectEntry11To14
+	export Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c
+	export Menu_RunConfirmSelectionFar, Menu_RunConfirmSelection
+	export Menu_SelectEntry20To21Far, Menu_SelectEntry20To21
+	export PartyTalkMenu_ChooseFar, PartyTalkMenu_Choose
+	overlay_veneer RenderResource_LoadTableEntry
+	export Menu_RunConfirmSelectionAtFar, Menu_RunConfirmSelectionAt
+	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
+	export UiText_MeasureResourceEntriesFar, UiText_MeasureResourceEntries
+	export UiWindow_SetPaletteBitRectFar, Ui_SetRectHighlight
+	export Ability_LoadGlyphFar, Ability_LoadGlyph
+	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
+	export UiWork_SetAltFlagAndClearTableFar, UiWork_SetAltFlagAndClearTable
+	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
+	export Ui_GetTableWordZeroFar, Ui_GetTableWordZero
+	export UiText_OpenEntryMessageFar, UiText_OpenEntryMessage
+	export SaveState_CountRecordsExcludingFlaggedFar, SaveState_CountRecordsExcludingFlagged
+	export UiWindow_DrawFrameFar, UiWindow_DrawFrame
+	export UiWindow_EraseBorderRectFar, UiWindow_EraseBorderRect
+	export Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair
+	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
+	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage

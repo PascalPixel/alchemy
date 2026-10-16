@@ -1,5 +1,45 @@
-@ C2: aligned 8-byte veneers: each entry of the list is one overlay_veneer, ldr r4, bx r4 and a target word.
+@ Battle state, unit motion and presentation services.
+@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
+@ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
 	.global FarCall_BattleTable
 FarCall_BattleTable:
-#include "../../../include/farcall/battle.h"
+	export DebugBattle_RunMenuFar, DebugBattle_RunMenu
+	overlay_veneer BattlePres_RunMosaicFadeOut
+	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList
+	overlay_veneer Graphics_FadeAlphaOut
+	overlay_veneer Graphics_FadeAlphaIn
+	export BattlePres_SetupTransitionSceneFar, BattlePres_SetupTransitionScene
+	export BattlePres_SetupTransitionAtPairMidpointFar, BattlePres_SetupTransitionAtPairMidpoint
+	export BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade
+	export BattleBackground_LoadFar, BattleBackground_Load
+	export BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel
+	overlay_veneer Summon_GetEntryByte4
+	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
+	overlay_veneer Battle_GetSpriteFlagHighBits
+	overlay_veneer Summon_IsEntryFlagged
+	export Battle_GetObjectTableValueFar, Battle_GetObjectTableValue
+	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
+	overlay_veneer BattleMotion_InitializeObject
+	export BattleMotion_ApplyVariantMotionFar, BattleMotion_ApplyVariantMotion
+	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
+	export GetBattleObjectSlotFar, BattleObjGet
+	export Battle_RunEncounterFar, Battle_RunEncounter
+	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
+	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
+	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
+	overlay_veneer BattleParty_ListLivingUnits
+	export BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners
+	export Camera_ConfigureSceneFar, Camera_ConfigureScene
+	export GetMotionRecordFar, GetMotionRecord
+	export BattlePres_SetActorModesFar, BattlePres_SetActorModes
+	export BattleEventRuntime_BeginPhaseFar, BattleEventRuntime_BeginPhase
+	export Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped
+	export BattlePlacement_UpdateTimedEntriesFar, BattlePlacement_UpdateTimedEntries
+	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
+	export BattlePlacement_UpdateTimedEntriesTwentyTimesFar, BattlePlacement_UpdateTimedEntriesTwentyTimes
+	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
+	export BattleActor_CommitPlacementFar, BattleObjPut
+	overlay_veneer ReleaseBattleObjectRecords
+	export BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt
+	export BattlePlacement_CountValidEntriesFar, BattlePlacement_CountValidEntries

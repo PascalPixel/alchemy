@@ -285,7 +285,7 @@ static void FieldScene_RunLongPresentationSequence(void) {
   struct FieldActor *actor;
   s32 v6;
   s32 timedUpdate;
-  s32 partyScript;
+  const s32 *partyScript;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -549,11 +549,11 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Engine_EventWait(20);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  partyScript = (s32)gValePartyScript;
-  Engine_ActorEnableActionCallback(GARET, partyScript);
-  Engine_ActorEnableActionCallback(2, partyScript);
-  Object_SetActionCallbackAndRefreshById(3, partyScript);
-  Engine_ActorEnableActionCallback(10, (s32)gValeActor10Script);
+  partyScript = gValePartyScript;
+  Actor_SetActionScript(GARET, partyScript);
+  Actor_SetActionScript(2, partyScript);
+  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
+  Actor_SetActionScript(10, gValeActor10Script);
   Actor_WalkToAndWait(11, 0x345, 0x178);
   Actor_FaceDirection(11, 0xd000, 20);
   GameFlag_Set(0x81d);
@@ -602,7 +602,7 @@ static void Scene_UpdateTimedActor(void) {
     value = 128;
     dst->value = value;
   }
-  Engine_ActorEnableActionCallback(no, gValeTimedActorScript);
+  Actor_SetActionScript(no, gValeTimedActorScript);
 }
 
 s32 gValeFaceTargetScript[] = {

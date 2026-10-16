@@ -167,11 +167,11 @@ s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
 // The Lucky Dice screen's work block (heap slot 45): its sprites and windows.
 struct LuckyDiceSprites {
-  u8 filler[200];            // Lucky Dice never touches these bytes
-  struct OamShadow obj[128]; // copied to OAM each frame
-  s32 coinsWindow;           // the player's coins
-  s32 winningsWindow;        // the winnings of the last throw
-  s32 helpWindow;            // the Throw and Quit buttons
+  u8 filler[200];                  // Lucky Dice never touches these bytes
+  struct OamShadow obj[128];       // copied to OAM each frame
+  struct UiWindow *coinsWindow;    // the player's coins
+  struct UiWindow *winningsWindow; // the winnings of the last throw
+  struct UiWindow *helpWindow;     // the Throw and Quit buttons
 };
 
 #include "keystate.h"
@@ -270,7 +270,7 @@ void LuckyDice_Run(void) {
   struct EffectStep *die;
   struct EffectStep *other;
   s32 resetDice; // put the dice back at the throwing line
-  s32 window;
+  struct UiWindow *window;
   s32 i;
   s32 j;
   s32 roll; // a die's roll angle: 0x400 per face tile, 0xc00 per face

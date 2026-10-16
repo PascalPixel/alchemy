@@ -227,7 +227,7 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
       Engine_EventBegin();
       actor9Record = Object_GetById(9);
       actor9Record->timer = 10;
-      Engine_ActorEnableActionCallback(9, gImil_ActorScriptA);
+      Actor_SetActionScript(9, gImil_ActorScriptA);
       Engine_EventSetMessage(MsgMercuryOoohHelpMe);
       Engine_EventShowMessage(9, 0);
       Engine_ActorStop(8);
@@ -235,7 +235,7 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
       Actor_FaceDirection(8, 53248, 10);
       Engine_ActorStartRepeatedMotion(8, 2);
       Event_ShowMessageAndWait(8, 0, 20);
-      Engine_ActorEnableActionCallback(0, gImil_ActorScriptC);
+      Actor_SetActionScript(0, gImil_ActorScriptC);
       Actor_SetSpeed(8, 104857, 52428);
       Object_SetActionCallbackAndRefreshById(8, (s32)gImil_ActorScriptB);
       Engine_EventWait(40);
@@ -564,7 +564,7 @@ s32 Imil_ApplyEntryState(void) {
         Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
         Engine_MapRedraw();
         Engine_TaskWait(1);
-        Engine_ActorEnableActionCallback(8, (const s32 *)2);
+        Actor_SetBuiltinAction(8, 2);
         Engine_ActorSetPosition(10, 0, 0);
       } else if (Engine_GameFlagIsSet(0x82c) && Engine_GameFlagIsSet(0x82a)) {
         Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
@@ -585,15 +585,15 @@ s32 Imil_ApplyEntryState(void) {
           Engine_ActorSetPosition(8, 0x950000, 0x740000);
           Object_GetById(8)->facing = 0;
           Object_GetById(9)->work = 0;
-          Engine_ActorEnableActionCallback(9, gImil_ActorScriptA);
+          Actor_SetActionScript(9, gImil_ActorScriptA);
         } else {
-          Engine_ActorEnableActionCallback(8, (const s32 *)2);
+          Actor_SetBuiltinAction(8, 2);
         }
       }
     } else if (entrance == 2) {
       if (!Engine_GameFlagIsSet(0x881)) {
         Object_GetById(11)->work = 1;
-        Engine_ActorEnableActionCallback(11, gImil_ActorScriptA);
+        Actor_SetActionScript(11, gImil_ActorScriptA);
       }
     } else if (entrance == 4) {
       if (Engine_GameFlagIsSet(0x881)) {
@@ -645,7 +645,7 @@ s32 Imil_ApplyEntryState(void) {
 
 static void FieldScene_RunPrimaryScriptChoreography(void) {
   struct FieldActor *leader;
-  s32 table;
+  const s32 *table;
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -678,15 +678,15 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   FieldObject_SetTargetAndCallback(1, 0x10003, gImil_PrimaryScript);
   FieldObject_SetTargetAndCallback(2, 0x10003, gImil_PrimaryScript);
   Engine_CameraWaitForMove();
-  table = (s32)gImil_TurnScript;
-  Engine_ActorEnableActionCallback(9, table);
+  table = gImil_TurnScript;
+  Actor_SetActionScript(9, table);
   Engine_EventWait(40);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventSetMessage(MSGNO(MsgImilHowFeeling));
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorEnableActionCallback(9, table);
+  Actor_SetActionScript(9, table);
   Event_ShowMessageAndWait(9, 0, 20);
   Actor_FaceDirection(MIA, 0x8000, 20);
   Actor_FaceDirection(8, 0, 10);
@@ -697,7 +697,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Actor_FaceDirection(MIA, 0x4000, 0);
   Actor_FaceDirection(8, 0x3000, 20);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorEnableActionCallback(9, table);
+  Actor_SetActionScript(9, table);
 
   Imil_CastPsynergyAtActorNine();
   Actor_ShowEmote(MIA, 0x101, 60);
@@ -730,7 +730,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Engine_EventWait(40);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
   Object_GetById(3)->timer = 0;
-  Engine_ActorEnableActionCallback(MIA, gImil_MiaScriptA);
+  Actor_SetActionScript(MIA, gImil_MiaScriptA);
   while (Object_GetById(3)->timer == 0) {
     Engine_TaskWait(1);
   }
@@ -771,7 +771,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Engine_ActorStop(IVAN);
   Actor_SetSpeed(MIA, 0x30000, 0x18000);
   Object_GetById(3)->timer = 0;
-  Engine_ActorEnableActionCallback(MIA, gImil_MiaScriptB);
+  Actor_SetActionScript(MIA, gImil_MiaScriptB);
   while (Object_GetById(3)->timer == 0) {
     Engine_TaskWait(1);
   }
@@ -796,9 +796,9 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_SetSpeed(GARET, 0xcccc, 0x6666);
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  table = (s32)gImil_PrimaryScript2;
-  Engine_ActorEnableActionCallback(GARET, table);
-  Object_SetActionCallbackAndRefreshById(2, table);
+  table = gImil_PrimaryScript2;
+  Actor_SetActionScript(GARET, table);
+  Object_SetActionCallbackAndRefreshById(2, (s32)table);
   Engine_EventWait(20);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -863,7 +863,7 @@ static void Imil_SwayAndSpark(struct FieldActor *actor) {
 }
 
 static void Imil_ShowActorNineTurnMessage(void) {
-  Engine_ActorEnableActionCallback(9, (s32)gImil_TurnScript);
+  Actor_SetActionScript(9, gImil_TurnScript);
   Engine_EventShowMessage(9, 0);
 }
 

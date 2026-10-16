@@ -12,9 +12,9 @@
 
 struct ShopRuntime {
   u8 unk000[0x0c];
-  s32 moneyWindow;
+  struct UiWindow *moneyWindow;
   u8 unk010[0x10];
-  s32 itemWindow;
+  struct UiWindow *itemWindow;
   u8 unk024[0xf0];
   struct AnimationObject *partyMemberIcons[8];
   s16 partyMemberX[8];

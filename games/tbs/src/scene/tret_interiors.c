@@ -277,10 +277,10 @@ static void EV40_TOUCH(void) {
     if (leader != NULL) {
       Engine_ActorSetPosition(3, leader->x.fixed, leader->z.fixed);
     }
-    Engine_ActorEnableActionCallback(3, gTretInteriors_TableActions3);
+    Actor_SetActionScript(3, gTretInteriors_TableActions3);
   }
-  Engine_ActorEnableActionCallback(0, gTretInteriors_TableActions0);
-  Engine_ActorEnableActionCallback(1, gTretInteriors_TableActions1);
+  Actor_SetActionScript(0, gTretInteriors_TableActions0);
+  Actor_SetActionScript(1, gTretInteriors_TableActions1);
   Object_SetActionCallbackAndRefreshById(2, (s32)gTretInteriors_TableActions2);
   Engine_EventWait(10);
   Actor_FaceDirection(0, 0xc000, 0);
@@ -329,7 +329,7 @@ static void FieldScene_RunFourActorEncounter(void) {
   s32 v6;
   s32 v5;
   s32 sparkTask;
-  s32 actions;
+  const s32 *actions;
 
   rec = GameFlag_IsSet(3);
   Object_GetById(3)->priorityFlags &= 254;
@@ -505,12 +505,12 @@ static void FieldScene_RunFourActorEncounter(void) {
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimation(MIA, 3);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
-  actions = (s32)gTretInteriors_ActionTable2;
-  Engine_ActorEnableActionCallback(GARET, actions);
+  actions = gTretInteriors_ActionTable2;
+  Actor_SetActionScript(GARET, actions);
   if (rec != 0) {
-    Engine_ActorEnableActionCallback(MIA, actions);
+    Actor_SetActionScript(MIA, actions);
   }
-  Object_SetActionCallbackAndRefreshById(2, actions);
+  Object_SetActionCallbackAndRefreshById(2, (s32)actions);
   Engine_EventWait(20);
   Object_GetById(0)->priorityFlags |= 1;
   GameFlag_Set(0x844);

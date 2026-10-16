@@ -357,7 +357,7 @@ static void EV12_TALK(void) {
 
   Object_GetById(12)->paused = 0;
 
-  Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
+  Actor_SetActionScript(12, gFuchinTemple_ActorTwelveScript);
   Engine_EventEnd();
 }
 
@@ -933,7 +933,7 @@ static void FieldScene_RunSecondEnsembleBeat(void) {
   Actor_FaceDirection(11, 128 << 8, 20);
   Engine_ActorSetAnimation(10, 5);
   Engine_ActorSetAnimation(11, 5);
-  Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
+  Actor_SetActionScript(12, gFuchinTemple_ActorTwelveScript);
 }
 
 static void EV18_TALK(void) {
@@ -1133,7 +1133,7 @@ static void FieldScene_RunEnsembleStoryBeat(void) {
   Engine_ActorSetAnimation(10, 5);
   Engine_ActorSetAnimation(11, 5);
   Engine_ActorWaitForMove(12);
-  Engine_ActorEnableActionCallback(12, gFuchinTemple_ActorTwelveScript);
+  Actor_SetActionScript(12, gFuchinTemple_ActorTwelveScript);
   Actor_SetSpeed(15, 0xcccc, 0x6666);
   Actor_WalkToAndWait(15, 216, 168);
   Actor_WalkToAndWait(15, 232, 168);

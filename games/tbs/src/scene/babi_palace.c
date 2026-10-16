@@ -202,12 +202,12 @@ static void FieldScene_RunBranchedSteps2006(s32 a) {
 
 static void RunMiddleAuxiliarySequence(s32 a) {
   struct FieldActor *obj;
-  u8 *q;
+  const s32 *q;
 
   obj = Actor_Get(a);
   Event_Begin();
-  q = (u8 *)gBabiPalace_MiddleActionScript;
-  Actor_EnableActionCallback(a, q);
+  q = gBabiPalace_MiddleActionScript;
+  Actor_SetActionScript(a, q);
   Event_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
   Event_ShowMessage(a, 0);
   Actor_Stop(a);
@@ -227,13 +227,13 @@ static void RunMiddleAuxiliarySequence(s32 a) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(a, 2);
   Event_Wait(30);
-  Actor_EnableActionCallback(a, q);
+  Actor_SetActionScript(a, q);
   Event_ShowMessage(a, 0);
   Actor_FaceDirection(a, FACING_NORTHEAST, 0);
   Event_Wait(10);
   obj->scaleY = 0x10000;
   obj->scaleX = 0x10000;
-  Actor_EnableActionCallback(a, q);
+  Actor_SetActionScript(a, q);
   Event_End();
 }
 

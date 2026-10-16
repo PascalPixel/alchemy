@@ -143,7 +143,16 @@ struct FieldActor *Engine_EventGetViewCenter(void);
 struct FieldActor *Engine_ActorLookup(s32 actor);
 void Engine_ActorDestroy(s32 actor);
 void Engine_ActorSetChildValue(s32 actor, s32 value);
-void Engine_ActorEnableActionCallback(s32 actor, const s32 *table);
+void Engine_ActorEnableActionCallback(s32 actor, s32 action);
+// The engine encodes either a built-in action or an action-script address.
+static inline void Actor_SetActionScript(s32 actor, const s32 *script) {
+  Engine_ActorEnableActionCallback(actor, (s32)script);
+}
+
+static inline void Actor_SetBuiltinAction(s32 actor, s32 action) {
+  Engine_ActorEnableActionCallback(actor, action);
+}
+
 void Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void Engine_ActorsRefresh(void);
 void Engine_MapCopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
@@ -275,17 +284,11 @@ static inline void Work_SetValuesIfNonNegative(s32 first, s32 second,
 
 enum { FLAG_ARRIVAL_EVENT_PENDING = 0x12f };
 
-// game_flags.h declares the main image's s32 GameFlag_Set; the scene layer's
-// is void and has its own name
+// Keep the scene wrappers separate from the main-image declarations.
 #define GameFlag_Set FieldEvent_GameFlagSet
-#ifdef MODERN
-// field.h and game_flags.h declare the engine's GameFlag_IsSet and _Clear;
-// modern GCC refuses these static ones under the same names, so the scene
-// layer's take their own
 #define GameFlag_IsSet FieldEvent_GameFlagIsSet
 #define GameFlag_Clear FieldEvent_GameFlagClear
-#endif
-static inline s32 GameFlag_IsSet(s32 flag) {
+static inline s32 FieldEvent_GameFlagIsSet(s32 flag) {
   return Engine_GameFlagIsSet(flag);
 }
 
@@ -293,7 +296,9 @@ static inline void FieldEvent_GameFlagSet(s32 flag) {
   Engine_GameFlagSet(flag);
 }
 
-static inline void GameFlag_Clear(s32 flag) { Engine_GameFlagClear(flag); }
+static inline void FieldEvent_GameFlagClear(s32 flag) {
+  Engine_GameFlagClear(flag);
+}
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Event_PlayCue(s32 cue) { Engine_AudioPlayCue(cue); }

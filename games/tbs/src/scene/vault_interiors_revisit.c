@@ -146,7 +146,7 @@ static void EV1040_PSYNERGY(void) {
   FieldScene_RunActor16Sequence();
   slot = &Object_GetById(16)->paused;
   *slot = clear;
-  Engine_ActorEnableActionCallback(16, 2);
+  Actor_SetBuiltinAction(16, 2);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

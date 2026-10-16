@@ -226,7 +226,7 @@ static void FieldScene_RunScene385SequenceA(void) {
     }
     Event_ShowMessage(16, 0);
     Actor_Get(16)->paused = rec7;
-    Engine_ActorEnableActionCallback(16, 2);
+    Actor_SetBuiltinAction(16, 2);
     Engine_EventEnd();
     GameFlag_Set(0x308);
   } else {

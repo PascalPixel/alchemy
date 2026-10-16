@@ -378,15 +378,14 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
   // The two children run their loops around the plaza.
   Actor_SetPosition(TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
-  Engine_ActorEnableActionCallback(TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
+  Actor_SetActionScript(TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Object_GetById(TOLBI_OLDER_BROTHER);
   kidUpdate = (void (*)(union FieldObject *))Tolbi_UpdateKid;
   ((struct TolbiKid *)actor)->kidFlags = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;
   Engine_ActorSetPosition(TOLBI_YOUNGER_SIBLING, PIXELS(368), PIXELS(320));
-  Engine_ActorEnableActionCallback(TOLBI_YOUNGER_SIBLING,
-                                   gTolbiYoungerSiblingRun);
+  Actor_SetActionScript(TOLBI_YOUNGER_SIBLING, gTolbiYoungerSiblingRun);
   actor = Object_GetById(TOLBI_YOUNGER_SIBLING);
   ((struct TolbiKid *)actor)->kidFlags = clearFlags;
   actor->update = kidUpdate;

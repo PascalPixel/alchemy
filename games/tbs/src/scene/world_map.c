@@ -606,7 +606,7 @@ static void RunEventScript01(void) {
 static void FieldScene_RunActorTransferSequence(void) {
   struct FieldActor *actor;
   struct FieldActor *record;
-  const u8 *action;
+  const s32 *action;
 
   actor = Object_GetById(15);
   Engine_EventBegin();
@@ -631,11 +631,11 @@ static void FieldScene_RunActorTransferSequence(void) {
   Actor_SetSpeed(12, 0x19999, 0x6666);
   Actor_SetSpeed(13, 0x19999, 0x6666);
   Event_PlayCue(141);
-  Engine_ActorEnableActionCallback(10, gTransferArrive10);
+  Actor_SetActionScript(10, gTransferArrive10);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(11, gTransferArrive11);
+  Actor_SetActionScript(11, gTransferArrive11);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(12, gTransferArrive12);
+  Actor_SetActionScript(12, gTransferArrive12);
   Engine_EventWait(20);
   Object_SetActionCallbackAndRefreshById(13, gTransferArrive13);
   Event_PlayCue(0x121);
@@ -659,11 +659,11 @@ static void FieldScene_RunActorTransferSequence(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
   Actor_FaceDirection(GARET, 0x6000, 10);
   Event_PlayCue(141);
-  Engine_ActorEnableActionCallback(10, gTransferDepart10);
+  Actor_SetActionScript(10, gTransferDepart10);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(11, gTransferDepart11);
+  Actor_SetActionScript(11, gTransferDepart11);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(12, gTransferDepart12);
+  Actor_SetActionScript(12, gTransferDepart12);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
   Actor_FaceDirection(GARET, 0x4000, 10);
@@ -741,7 +741,7 @@ static void FieldScene_RunActorTransferSequence(void) {
   Actor_SetPosition(14, 0x15a80000, 0x6a80000);
   Engine_TaskWait(1);
   Actor_SetSpeed(14, 0x4ccc, 0x2666);
-  Engine_ActorEnableActionCallback(14, gTransferGuide14);
+  Actor_SetActionScript(14, gTransferGuide14);
   Engine_EventWait(160);
   actor->gravity = 0x1999;
   actor->bounce = 0x1999;
@@ -809,10 +809,10 @@ static void FieldScene_RunActorTransferSequence(void) {
   Actor_WalkToAndWait(9, 0x1608, 0x6d8);
   Actor_SetPosition(9, 0, 0);
   Event_PlayCue(141);
-  Engine_ActorEnableActionCallback(10, gTransferReturn10);
-  Engine_ActorEnableActionCallback(11, gTransferReturn11);
+  Actor_SetActionScript(10, gTransferReturn10);
+  Actor_SetActionScript(11, gTransferReturn11);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(12, gTransferReturn12);
+  Actor_SetActionScript(12, gTransferReturn12);
   Engine_EventWait(40);
   Object_SetActionCallbackAndRefreshById(13, gTransferReturn13);
   Battle_ClearObjectFlag5bWhenMode3();
@@ -822,17 +822,17 @@ static void FieldScene_RunActorTransferSequence(void) {
   Camera_MoveTo(0x16d80000, -1, 0x6480000, 1);
   Engine_CameraWaitForMove();
   action = gTransferGather;
-  Engine_ActorEnableActionCallback(10, action);
+  Actor_SetActionScript(10, action);
   Engine_EventWait(20);
   Camera_SetSpeed(0x6666, 0xccc);
   Camera_MoveTo(0x16d80000, -1, 0x6080000, 1);
-  Engine_ActorEnableActionCallback(11, action);
+  Actor_SetActionScript(11, action);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(12, action);
+  Actor_SetActionScript(12, action);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
   Actor_FaceDirection(GARET, 0x8000, 0);
-  Engine_ActorEnableActionCallback(13, action);
+  Actor_SetActionScript(13, action);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
   Actor_FaceDirection(GARET, 0xc000, 0);
@@ -974,7 +974,7 @@ static void WorldMap_TransferToExit103(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   actor->timer = 0;
-  Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
+  Actor_SetActionScript(8, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1001,7 +1001,7 @@ static void WorldMap_TransferToExit104(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   actor->timer = 0;
-  Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
+  Actor_SetActionScript(8, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1028,7 +1028,7 @@ static void WorldMap_TransferToTolbiShipInteriors(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   actor->timer = 0;
-  Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
+  Actor_SetActionScript(8, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1056,9 +1056,9 @@ static void WorldMap_TransferToExit106(void) {
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   actor->timer = 0;
   if (StoryScene_ComputeOpposingSlotDelta() == 11) {
-    Engine_ActorEnableActionCallback(8, gTransferLeaderTurn);
+    Actor_SetActionScript(8, gTransferLeaderTurn);
   } else {
-    Engine_ActorEnableActionCallback(8, gTransferLeaderIdle);
+    Actor_SetActionScript(8, gTransferLeaderIdle);
   }
   do {
     Engine_TaskWait(1);
@@ -1423,7 +1423,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 0x1794, 0xd48);
   Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 20);
   Actor_SetSpeed(0, 0xcccc, 0x6666);
-  Engine_ActorEnableActionCallback(0, gBlackOrbLeaderScript);
+  Actor_SetActionScript(0, gBlackOrbLeaderScript);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
@@ -1755,7 +1755,7 @@ static void FieldScene_RunActorPresentationSequence(void) {
   Event_ShowMessage(0x6009, 0);
   Map_LoadDefaultCellsAndUpdateBlock();
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(9, gPresentGuide9);
+  Actor_SetActionScript(9, gPresentGuide9);
   Engine_EventWait(80);
   Engine_ActorSetAnimation(8, 1);
   Engine_ActorJump(8, 4, 40);
@@ -1765,11 +1765,11 @@ static void FieldScene_RunActorPresentationSequence(void) {
   Actor_FaceDirection(JENNA, 0xb000, 40);
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
   Actor_SetSpeed(JENNA, 0x9999, 0x4ccc);
-  Engine_ActorEnableActionCallback(8, gPresentGuide8);
+  Actor_SetActionScript(8, gPresentGuide8);
   Engine_EventWait(20);
   Camera_SetSpeed(0xb333, 0x1666);
   Camera_MoveTo(0x1e380000, -1, 0xdc80000, 1);
-  Engine_ActorEnableActionCallback(5, gPresentGuide5);
+  Actor_SetActionScript(5, gPresentGuide5);
   do {
     Engine_ActorSetAnimation(10, 6);
     Engine_ActorSetAnimation(6, 8);
@@ -2007,7 +2007,7 @@ static void WorldMap_RunOpeningRise(void) {
   Engine_ActorSetSpriteFlags(record, 0);
   Actor_SetSpeed(8, 0x6666, 0x3333);
   actor->timer = 0;
-  Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
+  Actor_SetActionScript(8, gOpeningLeaderRise);
   FieldScheduler_AddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(0x10003, 1);

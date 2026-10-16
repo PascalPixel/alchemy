@@ -806,15 +806,15 @@ static s32 MercuryLighthouse_StartPillarPush(void) {
   Engine_CameraWaitForMove();
   if (!Engine_GameFlagIsSet(0x877)) {
     if (cellX == 50 && Engine_GameFlagIsSet(0x319)) {
-      Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptA);
+      Actor_SetActionScript(9, gMercuryLighthouse_PushScriptA);
     } else if (cellX == 49) {
       if (cellZ == 44 && !Engine_GameFlagIsSet(0x319) &&
           !Engine_GameFlagIsSet(0x31a) && !Engine_GameFlagIsSet(0x31b)) {
-        Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptB);
+        Actor_SetActionScript(9, gMercuryLighthouse_PushScriptB);
       } else if (cellZ == 44 && Engine_GameFlagIsSet(0x319)) {
-        Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptC);
+        Actor_SetActionScript(9, gMercuryLighthouse_PushScriptC);
       } else if (cellZ == 46 && Engine_GameFlagIsSet(0x31a)) {
-        Engine_ActorEnableActionCallback(9, gMercuryLighthouse_PushScriptD);
+        Actor_SetActionScript(9, gMercuryLighthouse_PushScriptD);
         Engine_EventWait(30);
         return 1;
       }

@@ -411,9 +411,9 @@ static void FieldScene_RunComplexActorSequence(void) {
   Actor_SetSpeed(0, 98304, 49152);
   Engine_CameraFollowActor(8, 1);
   Object_GetById(0)->priorityFlags |= 0x1;
-  Engine_ActorEnableActionCallback(8, gValeBabiSharedAction);
+  Actor_SetActionScript(8, gValeBabiSharedAction);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(0, gValeBabiSharedAction);
+  Actor_SetActionScript(0, gValeBabiSharedAction);
   Object_RefreshSelectorById(8);
   Actor_WalkToAndWait(8, 419, 661);
   Actor_WalkToAndWait(8, 408, 661);
@@ -429,8 +429,8 @@ static void FieldScene_RunComplexActorSequence(void) {
   Engine_ActorSetAnimation(0, 3);
   Engine_ActorSetAnimationAndWait(8, 3);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(8, gValeBabiActorExitAction);
-  Engine_ActorEnableActionCallback(0, gValeBabiLeaderExitAction);
+  Actor_SetActionScript(8, gValeBabiActorExitAction);
+  Actor_SetActionScript(0, gValeBabiLeaderExitAction);
   Engine_EventWait(20);
   (*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*control)->transitionFrames = 16;
@@ -478,7 +478,7 @@ static void FieldScene_RunPaletteRampSequence(void) {
   actor->priorityFlags &= 0xfe;
   actor->motionFlags = 0;
   sprite->priority = 1;
-  Engine_ActorEnableActionCallback(10, gValeBabiRampActor10Action);
+  Actor_SetActionScript(10, gValeBabiRampActor10Action);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -501,9 +501,8 @@ static void FieldScene_RunPaletteRampSequence(void) {
   Actor_SetSpeed(8, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_SetSpeed(9, 0x18000, 0xc000);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gValeBabiRampLeaderAction);
-  Engine_ActorEnableActionCallback(8, gValeBabiRampActor8Action);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabiRampLeaderAction);
+  Actor_SetActionScript(8, gValeBabiRampActor8Action);
   Engine_EventOpenScreen();
   Object_RefreshSelectorById(8);
   Engine_AudioPlayCue(158);
@@ -527,12 +526,11 @@ static void FieldScene_RunPaletteRampSequence(void) {
   Engine_ActorSetAnimationAndWait(9, 3);
   Engine_ActorWalkTo(9, 415, 589);
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(8, gValeBabiRampActor8ActionB);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gValeBabiRampLeaderActionB);
+  Actor_SetActionScript(8, gValeBabiRampActor8ActionB);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabiRampLeaderActionB);
   Engine_AudioPlayCue(234);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(10, gValeBabiRampActor10ActionB);
+  Actor_SetActionScript(10, gValeBabiRampActor10ActionB);
   alpha = &REG_BLDALPHA;
 
   i = 0;
@@ -564,7 +562,7 @@ ramp:
   Engine_EventWait(40);
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Engine_CameraFollowActor(8, 1);
-  Engine_ActorEnableActionCallback(8, gValeBabiRampFinalAction);
+  Actor_SetActionScript(8, gValeBabiRampFinalAction);
   Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER,
                                          gValeBabiRampFinalAction);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =

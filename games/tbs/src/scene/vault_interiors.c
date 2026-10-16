@@ -37,7 +37,7 @@
 static void Scene_JoinRodSearch(void);
 static void VaultInteriors_RunBranchingDialogueScene(void);
 static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
-                                                   s32 next, const u8 *desc);
+                                                   s32 next, const s32 *desc);
 static void SceneActor_FaceActors24And25TowardActorZero(void);
 static void FieldScene_RunLateSequence(void);
 static void VaultInteriors_RunVaultEvent(void);
@@ -372,10 +372,10 @@ static void SceneActor_StepActor24AnimationByFacing(void) {
     q = (s16 *)&p->timer;
     v = *q;
     if (v <= 2) {
-      Engine_ActorEnableActionCallback(24, gVaultInteriors_StepActions[v]);
+      Actor_SetActionScript(24, gVaultInteriors_StepActions[v]);
       *(u16 *)q = *(u16 *)q + 1;
     } else {
-      Engine_ActorEnableActionCallback(24, gVaultInteriors_IdleActions[v]);
+      Actor_SetActionScript(24, gVaultInteriors_IdleActions[v]);
       n = *(u16 *)q - 1;
       *(u16 *)q = n;
     }
@@ -383,10 +383,10 @@ static void SceneActor_StepActor24AnimationByFacing(void) {
     q = (s16 *)&p->timer;
     v = *q;
     if (v > 2) {
-      Engine_ActorEnableActionCallback(24, gVaultInteriors_StepActions[v]);
+      Actor_SetActionScript(24, gVaultInteriors_StepActions[v]);
       *(u16 *)q = *(u16 *)q + 1;
     } else {
-      Engine_ActorEnableActionCallback(24, gVaultInteriors_IdleActions[v]);
+      Actor_SetActionScript(24, gVaultInteriors_IdleActions[v]);
       n = *(u16 *)q - 1;
       *(u16 *)q = n;
     }
@@ -405,7 +405,7 @@ static void SceneActor_StepActor24AnimationByFacing(void) {
 
 static inline void VaultInteriors_WalkOn(struct FieldActor *actor, s32 row,
                                          s32 half, u16 turn) {
-  Engine_ActorEnableActionCallback(
+  Actor_SetActionScript(
       25, gVaultInteriors_ResponseScripts[row * 4 + actor->timer]);
   actor->timer = actor->timer - half * 2 + turn;
 }
@@ -426,10 +426,10 @@ static void VaultInteriors_RunActor25Response(void) {
   switch (actor->timer) {
   case 4:
     if (facing > 0x2000 && facing < 0xa000) {
-      Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptR);
+      Actor_SetActionScript(25, gVaultInteriors_PairScriptR);
       actor->timer = 2;
     } else {
-      Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptP);
+      Actor_SetActionScript(25, gVaultInteriors_PairScriptP);
       actor->timer = 3;
     }
     break;
@@ -945,9 +945,9 @@ static void EV08_TALK(void) {
   Actor_FaceActor(GARET, 10, 0);
   Engine_ActorFaceActor(2, 10, 0);
   Engine_ActorFaceActor(8, 10, 0);
-  Engine_ActorEnableActionCallback(11, gVaultInteriors_Villager11ExitScript);
+  Actor_SetActionScript(11, gVaultInteriors_Villager11ExitScript);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(12, gVaultInteriors_Villager12ExitScript);
+  Actor_SetActionScript(12, gVaultInteriors_Villager12ExitScript);
   Object_RefreshSelectorById(12);
   Actor_FaceDirection(11, 8192, 0);
   Actor_FaceDirection(12, 8192, 0);
@@ -1106,8 +1106,8 @@ static void EV10_TOUCH(void) {
   SceneActor_SetModeZeroAndValue(24, 30);
   Actor_SetSpeed(24, 262144, 131072);
   Actor_SetSpeed(25, 229376, 114688);
-  Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptO);
-  Engine_ActorEnableActionCallback(24, gVaultInteriors_PairScriptB);
+  Actor_SetActionScript(25, gVaultInteriors_PairScriptO);
+  Actor_SetActionScript(24, gVaultInteriors_PairScriptB);
   Object_RefreshSelectorById(24);
   Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(2130);
@@ -1129,14 +1129,14 @@ static void EV20_TOUCH(void) {
   Scheduler_RemoveCallback(((s32)SceneActor_FaceActors24And25TowardActorZero));
   GameFlag_Clear(0x300);
   if (actor24->timer <= 3) {
-    Engine_ActorEnableActionCallback(24, gVaultInteriors_PairScriptG);
+    Actor_SetActionScript(24, gVaultInteriors_PairScriptG);
   } else {
-    Engine_ActorEnableActionCallback(24, gVaultInteriors_PairScriptF);
+    Actor_SetActionScript(24, gVaultInteriors_PairScriptF);
   }
   if (actor25->timer <= 2) {
-    Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptK);
+    Actor_SetActionScript(25, gVaultInteriors_PairScriptK);
   } else {
-    Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptF);
+    Actor_SetActionScript(25, gVaultInteriors_PairScriptF);
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_SetSpeed(GARET, 0xcccc, 0x6666);
@@ -1219,8 +1219,8 @@ static void FieldScene_ConfigurePairedActors(void) {
   SceneActor_SetModeZeroAndValue(24, 20);
   Actor_SetSpeed(24, 0x40000, 0x20000);
   Actor_SetSpeed(25, 0x38000, 0x1c000);
-  Engine_ActorEnableActionCallback(25, gVaultInteriors_PairScriptO);
-  Engine_ActorEnableActionCallback(24, gVaultInteriors_PairScriptB);
+  Actor_SetActionScript(25, gVaultInteriors_PairScriptO);
+  Actor_SetActionScript(24, gVaultInteriors_PairScriptB);
   Object_RefreshSelectorById(24);
   {
     struct FieldActor *record = Object_GetById(24);
@@ -1465,69 +1465,69 @@ static void VaultInteriors_PoseDialogueActors(void) {
   switch (gEventWork->touchedTrigger) {
   case 11:
     SceneActor_UpdateAnimationOnStateMatch(24, 1, 2,
-                                           (s32)gVaultInteriors_PairScriptC);
+                                           gVaultInteriors_PairScriptC);
     SceneActor_UpdateAnimationOnStateMatch(25, 3, 4,
-                                           (s32)gVaultInteriors_PairScriptR);
+                                           gVaultInteriors_PairScriptR);
     break;
   case 12:
     SceneActor_UpdateAnimationOnStateMatch(24, 1, 4,
-                                           (s32)gVaultInteriors_PairScriptG);
+                                           gVaultInteriors_PairScriptG);
     SceneActor_UpdateAnimationOnStateMatch(24, 2, 3,
-                                           (s32)gVaultInteriors_PairScriptD);
+                                           gVaultInteriors_PairScriptD);
     SceneActor_UpdateAnimationOnStateMatch(25, 1, 3,
-                                           (s32)gVaultInteriors_PairScriptO);
+                                           gVaultInteriors_PairScriptO);
     break;
   case 13:
     SceneActor_UpdateAnimationOnStateMatch(24, 2, 1,
-                                           (s32)gVaultInteriors_PairScriptA);
+                                           gVaultInteriors_PairScriptA);
     SceneActor_UpdateAnimationOnStateMatch(24, 3, 6,
-                                           (s32)gVaultInteriors_PairScriptJ);
+                                           gVaultInteriors_PairScriptJ);
     SceneActor_UpdateAnimationOnStateMatch(25, 2, 4,
-                                           (s32)gVaultInteriors_PairScriptQ);
+                                           gVaultInteriors_PairScriptQ);
     break;
   case 14:
     SceneActor_UpdateAnimationOnStateMatch(24, 3, 2,
-                                           (s32)gVaultInteriors_PairScriptC);
+                                           gVaultInteriors_PairScriptC);
     SceneActor_UpdateAnimationOnStateMatch(25, 4, 3,
-                                           (s32)gVaultInteriors_PairScriptP);
+                                           gVaultInteriors_PairScriptP);
     break;
   case 15:
     SceneActor_UpdateAnimationOnStateMatch(24, 4, 5,
-                                           (s32)gVaultInteriors_PairScriptH);
+                                           gVaultInteriors_PairScriptH);
     SceneActor_UpdateAnimationOnStateMatch(25, 1, 2,
-                                           (s32)gVaultInteriors_PairScriptM);
+                                           gVaultInteriors_PairScriptM);
     break;
   case 16:
     SceneActor_UpdateAnimationOnStateMatch(24, 4, 1,
-                                           (s32)gVaultInteriors_PairScriptB);
+                                           gVaultInteriors_PairScriptB);
     SceneActor_UpdateAnimationOnStateMatch(24, 5, 6,
-                                           (s32)gVaultInteriors_PairScriptI);
+                                           gVaultInteriors_PairScriptI);
     SceneActor_UpdateAnimationOnStateMatch(25, 3, 1,
-                                           (s32)gVaultInteriors_PairScriptL);
+                                           gVaultInteriors_PairScriptL);
     break;
   case 17:
     SceneActor_UpdateAnimationOnStateMatch(24, 5, 4,
-                                           (s32)gVaultInteriors_PairScriptF);
+                                           gVaultInteriors_PairScriptF);
     SceneActor_UpdateAnimationOnStateMatch(24, 6, 3,
-                                           (s32)gVaultInteriors_PairScriptE);
+                                           gVaultInteriors_PairScriptE);
     SceneActor_UpdateAnimationOnStateMatch(25, 4, 2,
-                                           (s32)gVaultInteriors_PairScriptN);
+                                           gVaultInteriors_PairScriptN);
     break;
   case 18:
     SceneActor_UpdateAnimationOnStateMatch(24, 6, 5,
-                                           (s32)gVaultInteriors_PairScriptH);
+                                           gVaultInteriors_PairScriptH);
     SceneActor_UpdateAnimationOnStateMatch(25, 2, 1,
-                                           (s32)gVaultInteriors_PairScriptK);
+                                           gVaultInteriors_PairScriptK);
     break;
   }
 }
 
 static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
-                                                   s32 next, const u8 *desc) {
+                                                   s32 next, const s32 *desc) {
   struct FieldActor *rec = Object_GetById(actor);
 
   if (rec->timer == expected) {
-    Engine_ActorEnableActionCallback(actor, desc);
+    Actor_SetActionScript(actor, desc);
     rec->timer = next;
   }
 }
@@ -1560,7 +1560,7 @@ s32 VaultInteriors_ApplyEntryState(void) {
 #else
       Actor_SetPosition(16, 0x2180000, 0x1d00000);
 #endif
-      Engine_ActorEnableActionCallback(16, (const s32 *)1);
+      Actor_SetBuiltinAction(16, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(16, 0x5000, 0);
     }
     break;
@@ -1568,7 +1568,7 @@ s32 VaultInteriors_ApplyEntryState(void) {
   case 11:
     if (Engine_GameFlagIsSet(0x855) != 0) {
       Actor_SetPosition(18, 0x2380000, 0x2880000);
-      Engine_ActorEnableActionCallback(18, (const s32 *)1);
+      Actor_SetBuiltinAction(18, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(18, 0x4000, 0);
       OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000,
                                                     0x2a00000);
@@ -1789,7 +1789,7 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 static void RunEventScript01(void) {
   struct FieldActor *record;
   struct EventWork *work;
-  s32 actions;
+  const s32 *actions;
   u8 *actor12Record;
 
   record = Object_GetById(12);
@@ -1809,8 +1809,8 @@ static void RunEventScript01(void) {
   Engine_ActorSetAnimation(12, 9);
   Object_GetById(12)->priorityFlags &= 254;
   actor12Record[9] |= 12;
-  actions = (s32)gVaultInteriors_ActionTable;
-  Engine_ActorEnableActionCallback(10, actions);
+  actions = gVaultInteriors_ActionTable;
+  Actor_SetActionScript(10, actions);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
   Actor_SetPosition(GARET, 0x3280000, 0x1b00000);
   Actor_SetPosition(IVAN, 0x3080000, 0x1b80000);
@@ -1824,9 +1824,9 @@ static void RunEventScript01(void) {
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
   VaultInteriors_OpenWindowTransition();
-  Engine_ActorEnableActionCallback(11, actions);
+  Actor_SetActionScript(11, actions);
   Engine_EventWait(30);
-  Engine_ActorEnableActionCallback(12, actions);
+  Actor_SetActionScript(12, actions);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgVaultTheyTheyGotUs);
   SceneActor_SetModeZeroAndValue(10, 20);
@@ -1858,7 +1858,7 @@ static void RunEventScript01(void) {
   Engine_EventWait(50);
   Engine_ActorRunRepeatedMotion(11, 2);
   SceneActor_SetModeZeroAndValue(11, 20);
-  Engine_ActorEnableActionCallback(11, actions);
+  Actor_SetActionScript(11, actions);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
@@ -1867,7 +1867,7 @@ static void RunEventScript01(void) {
   SceneActor_SetModeZeroAndValue(1, 20);
   Engine_ActorRunRepeatedMotion(12, 2);
   SceneActor_SetModeZeroAndValue(12, 30);
-  Engine_ActorEnableActionCallback(12, actions);
+  Actor_SetActionScript(12, actions);
   Actor_ShowEmote(GARET, 0x103, 0);
   Engine_EventWait(60);
   SceneActor_SetModeZeroAndValue(1, 30);
@@ -2062,13 +2062,13 @@ static void RunDialoguePromptScene(void) {
   Actor_WalkTo(13, 0x2ea, 0x198);
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_FaceDirection(14, 0xb000, 0);
-  Engine_ActorEnableActionCallback(11, gVaultInteriors_VaultScriptB);
+  Actor_SetActionScript(11, gVaultInteriors_VaultScriptB);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(10, gVaultInteriors_VaultScriptB);
+  Actor_SetActionScript(10, gVaultInteriors_VaultScriptB);
   Engine_EventWait(15);
-  Engine_ActorEnableActionCallback(12, gVaultInteriors_VaultScriptB);
+  Actor_SetActionScript(12, gVaultInteriors_VaultScriptB);
   Engine_EventWait(35);
-  Engine_ActorEnableActionCallback(8, gVaultInteriors_VaultScriptA);
+  Actor_SetActionScript(8, gVaultInteriors_VaultScriptA);
   Engine_EventWait(20);
   Engine_ActorWaitForMove(13);
   Actor_SetPosition(13, 0, 0);
@@ -2095,9 +2095,9 @@ static void RunDialoguePromptScene(void) {
   Engine_ActorFaceEachOther(9, 14, 0);
   SceneEffect_ApplyThreeValuesAndFinish(9, 3, 20);
   SceneActor_SetModeZeroAndValue(9, 20);
-  Engine_ActorEnableActionCallback(14, gVaultInteriors_VaultScriptC);
+  Actor_SetActionScript(14, gVaultInteriors_VaultScriptC);
   Engine_EventWait(50);
-  Engine_ActorEnableActionCallback(9, gVaultInteriors_VaultScriptD);
+  Actor_SetActionScript(9, gVaultInteriors_VaultScriptD);
   Actor_SetSpeed(GARET, 0xcccc, 0x6666);
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
   Actor_WalkToAndWait(GARET, 0x318, 0x1c8);
@@ -2254,8 +2254,8 @@ static void RunDialoguePromptScene(void) {
   SceneActor_SetPairZeroAndValue(9, 14, 20);
   SceneActor_SetModeZeroAndValue(9, 20);
   Actor_WalkToAndWait(14, 0x358, 0x198);
-  Engine_ActorEnableActionCallback(9, gVaultInteriors_VaultScriptE);
-  Engine_ActorEnableActionCallback(14, gVaultInteriors_VaultScriptE);
+  Actor_SetActionScript(9, gVaultInteriors_VaultScriptE);
+  Actor_SetActionScript(14, gVaultInteriors_VaultScriptE);
   Actor_WalkTo(GARET, 0x318, 0x1c8);
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
   Actor_WalkTo(IVAN, 0x308, 0x1b0);

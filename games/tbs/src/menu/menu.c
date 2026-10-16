@@ -120,9 +120,9 @@ void UiWindow_InitializeWork(s32 unused) {
 // given by the low byte of flags, stores it in *handle and returns 1. If the
 // window exists, redraws its saved rectangle (unless flags has
 // WINDOW_KEEP_EXISTING) and returns 0.
-s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
-                            s32 flags) {
-  s32 window;
+s32 UiWindow_UpdateOrCreate(struct UiWindow **handle, s32 x, s32 y, s32 w,
+                            s32 h, s32 flags) {
+  struct UiWindow *window;
   s32 style;
 
   window = *handle;
@@ -130,7 +130,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
     if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
-    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+    RenderOutput_RedrawSavedRectFar(window);
     return 0;
   }
   style = flags & WINDOW_STYLE_MASK;
@@ -180,13 +180,14 @@ static inline void Owner_Copy(void *dst, void *src) {
 // item the panel is about, for the equipment and Psynergy item panels. The
 // first parameter, the status window, is not used: the window is the menu
 // work's.
-void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
+void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
+                               s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
   struct InventoryMenuState *state;
   struct BattleUnit *unit;
-  s32 window;
+  struct UiWindow *window;
   s32 ailmentRows;
   s32 value;
   u8 ailments[8];
@@ -197,9 +198,9 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode) {
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created = UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
+    created = UiWindow_UpdateOrCreate(&state->statusWindow, 0, 5, 13, 12,
                                       WINDOW_KEEP_EXISTING | 2);
-  window = (s32)state->statusWindow;
+  window = state->statusWindow;
 
   // The name, then each ailment the member has, one row each; the level
   // takes the third row when no more than one ailment is shown.
@@ -388,11 +389,12 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 // before x.
 //
 // number: the value to draw, 0 or more
-// window: the window to draw in, its struct RenderInput pointer held as an
+// window: the window to draw in, its struct UiWindow pointer held as an
 //         s32, as its callers hold it
 // x:      the field's right edge, in pixels within the window
 // y:      the pixel row of the text, within the window
-void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
+void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
+                                   s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
 
   // Step x back to the field's left edge; the number writer right-aligns the
@@ -410,9 +412,9 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 // then the colour goes back to 15, the default text colour.
 //
 // unit:   the character whose figures are drawn
-// window: the window to draw in, its struct RenderInput pointer held as an
+// window: the window to draw in, its struct UiWindow pointer held as an
 //         s32
-void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
+void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -479,17 +481,16 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 // (before), and beside each one that changes its new value (after) with an up
 // or down arrow: the equipment preview.
 void UiText_DrawStatComparison(const struct BattleUnit *after,
-                               const struct BattleUnit *before, s32 window) {
+                               const struct BattleUnit *before,
+                               struct UiWindow *window) {
   UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, window, 0, 32);
   UiText_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
   if (after->atk != before->atk) {
     UiText_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
     if (after->atk > before->atk) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
-                                   STAT_ARROW_UP);
+      UiIcon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 36,
-                                   STAT_ARROW_DOWN);
+      UiIcon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
     }
   }
   UiText_DrawCharacterAtOffsetFar(MsgPanelDefenseLabel, window, 0, 48);
@@ -497,11 +498,9 @@ void UiText_DrawStatComparison(const struct BattleUnit *after,
   if (after->def != before->def) {
     UiText_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
     if (after->def > before->def) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
-                                   STAT_ARROW_UP);
+      UiIcon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 52,
-                                   STAT_ARROW_DOWN);
+      UiIcon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
     }
   }
   UiText_DrawCharacterAtOffsetFar(MsgAgilityLabel, window, 0, 64);
@@ -509,11 +508,9 @@ void UiText_DrawStatComparison(const struct BattleUnit *after,
   if (after->agi != before->agi) {
     UiText_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
     if (after->agi > before->agi) {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
-                                   STAT_ARROW_UP);
+      UiIcon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
     } else {
-      UiIcon_CreateStatChangeArrow((struct RenderInput *)window, 44, 68,
-                                   STAT_ARROW_DOWN);
+      UiIcon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
     }
   }
 }
@@ -530,8 +527,8 @@ void UiText_DrawStatComparison(const struct BattleUnit *after,
 // Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
 // into a free VRAM block. Returns the sprite, or 0 when no block is free.
 // Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
-UNUSED s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused,
-                                     s32 x, s32 y) {
+UNUSED s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
+                                     s32 y) {
   s32 block;
   s32 icon;
   icon = 0;
@@ -546,7 +543,7 @@ UNUSED s32 UiIcon_CreateWithResource(struct RenderInput *window, s32 unused,
 // Creates the menu's hand cursor sprite in window at (x, y), loading the
 // hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
 // block is free.
-s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
+s32 UiIcon_CreateWithResourceVariant(struct UiWindow *window, s32 x, s32 y) {
   s32 block;
   s32 icon;
 
@@ -583,18 +580,18 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
 
 // Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
 // in it, hidden for now. Selects no tab yet. Returns the window.
-s32 UiMenu_CreateCursor(void *source) {
+struct UiWindow *UiMenu_CreateCursor(void *source) {
   struct PsynergyMenuState *work = source;
-  s32 window;
+  struct UiWindow *window;
   s32 zero = 0;
   s32 sentinel;
   struct RenderOutput *cursor;
 
-  work->auxiliaryWindow = zero;
+  work->auxiliaryWindow = NULL;
   UiWindow_UpdateOrCreate(&work->auxiliaryWindow, zero, zero, 13, 5, 2);
   window = work->auxiliaryWindow;
-  cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
-      (struct RenderInput *)window, -8, 11);
+  cursor =
+      (struct RenderOutput *)UiIcon_CreateWithResourceVariant(window, -8, 11);
   cursor->active = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->tabIndex[1] = zero;
@@ -615,7 +612,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
   u16 ownerIds[14];
   struct PsynergyMenuState *menu = gMenuWork;
-  struct RenderInput *window = source;
+  struct UiWindow *window = source;
   s32 ownerCount = (u16)Party_ListActiveOwnersFar(ownerIds);
   s32 i;
 
@@ -714,12 +711,10 @@ void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuState *work = gMenuWork;
   struct RenderOutput *cursor = work->paneIcon[0];
 
-  cursor->oam.x = cursor->x =
-      gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
-      ((struct RenderInput *)work->auxiliaryWindow)->x * 8 + 8;
-  cursor->oam.y = cursor->y =
-      gUiMenu_CursorBobY[CURSOR_BOB_STEP()] + yOffset +
-      ((struct RenderInput *)work->auxiliaryWindow)->y * 8 + 8;
+  cursor->oam.x = cursor->x = gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
+                              (work->auxiliaryWindow)->x * 8 + 8;
+  cursor->oam.y = cursor->y = gUiMenu_CursorBobY[CURSOR_BOB_STEP()] + yOffset +
+                              (work->auxiliaryWindow)->y * 8 + 8;
 }
 
 // Slides the hand cursor from where it is to (x, y) inside the menu's
@@ -770,12 +765,10 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
     // 64 - 8 = 56: the bias less the window border.
     fineX += stepX;
     cursor->oam.x = cursor->x =
-        (fineX >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->x << 3) -
-        56;
+        (fineX >> 4) + ((work->auxiliaryWindow)->x << 3) - 56;
     fineY += stepY;
     cursor->oam.y = cursor->y =
-        (fineY >> 4) + (((struct RenderInput *)work->auxiliaryWindow)->y << 3) -
-        56;
+        (fineY >> 4) + ((work->auxiliaryWindow)->y << 3) - 56;
     steps--;
     if (steps != 0)
       WaitFrames(1);
@@ -880,7 +873,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
 // for A, B or Start and clears it again.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
-  s32 window;
+  struct UiWindow *window;
   s32 height;
   s32 width;
   s32 top;
@@ -889,15 +882,14 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   menu->paneIcons[0]->active = ICON_HIDDEN;
   if (y != -1) {
     UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
-    if (UiWindow_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
+    if (UiWindow_UpdateOrCreate(&menu->modalWindow, x, y, width, height,
                                 WINDOW_KEEP_EXISTING | 2) == 0)
-      UiWindow_SetBounds((struct RenderInput *)menu->modalWindow, x, y, width,
-                         height);
-    window = (s32)menu->modalWindow;
+      UiWindow_SetBounds(menu->modalWindow, x, y, width, height);
+    window = menu->modalWindow;
   } else {
-    window = (s32)menu->infoWindow;
+    window = menu->infoWindow;
   }
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
 #if EDITION_INTERNATIONAL
   if (y == -1)
@@ -915,7 +907,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
              !(gKeysPressed & KEY_START));
 #if EDITION_INTERNATIONAL
     if (y == -1)
-      RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+      RenderOutput_RedrawSavedRectFar(window);
 #endif
     RenderOutput_ClearListFar((void *)window);
   } else {
@@ -1153,8 +1145,8 @@ void Palette_LightenBankHighlight(s32 bank) {
 // Draws a paged list's page numbers on the top border of window, ending at
 // tile rightEdge: one digit per page between two caps, selectedPage in
 // palette 14 and the others in palette 15. Draws nothing for a single page.
-void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
-                            s32 selectedPage, s32 rightEdge) {
+void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
+                            s32 pageSize, s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
   s32 page;
   s32 x;
@@ -1242,7 +1234,8 @@ void Palette_CopyObjectBankToBackground14(void) {
 // Shows the item icons of one page of the item list: entries first to
 // first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
 // others.
-void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
+void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
+                       s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   struct RenderOutput *icon;
   s32 i;
@@ -1264,7 +1257,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
 }
 
 // Writes the party's coins and the "Coins" label into window (work).
-void UiText_DrawWorkValueWithLabel(s32 work) {
+void UiText_DrawWorkValueWithLabel(struct UiWindow *work) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, work, 8, 0);
   UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 64, 0);
 #if !EDITION_INTERNATIONAL
@@ -1273,7 +1266,7 @@ void UiText_DrawWorkValueWithLabel(s32 work) {
 }
 
 // Moves and resizes a window, in tiles.
-void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
+void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
                         s32 height) {
   if (window != NULL) {
     window->width = width;
@@ -1514,7 +1507,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawMsg(0, MsgWhoseItem);
 #if EDITION_INTERNATIONAL
       RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-      UiText_DrawWorkValueWithLabel((s32)menu->infoWindow);
+      UiText_DrawWorkValueWithLabel(menu->infoWindow);
       command = ItemMenu_PrepOwner(0);
       if (command == -1) {
         selection = command = 0;
@@ -1522,7 +1515,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         done = 1;
       }
 #else
-      UiText_DrawWorkValueWithLabel((s32)menu->infoWindow);
+      UiText_DrawWorkValueWithLabel(menu->infoWindow);
       owner = ItemMenu_PrepOwner(0);
       if (owner == -1) {
         chosen = selection = owner = 0;
@@ -1631,8 +1624,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWin5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
-      UiText_DrawCharacterAtOffsetFar(MsgUseOnWhom, (s32)menu->messageWindow,
-                                      16, 16);
+      UiText_DrawCharacterAtOffsetFar(MsgUseOnWhom, menu->messageWindow, 16,
+                                      16);
 #if EDITION_INTERNATIONAL
       if (ItemMenu_SelectTarget(0) != -1) {
 #else
@@ -1644,8 +1637,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           command = STATUS_PANEL_STATS;
         }
         result = ItemMenu_Use();
-        Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, menu->paneOwner[1],
-                                  0, command);
+        Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->paneOwner[1], 0,
+                                  command);
         if (result != -1) {
           RenderOutput_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
@@ -1672,8 +1665,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWin5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
-      UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, (s32)menu->messageWindow,
-                                      16, 16);
+      UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, menu->messageWindow, 16,
+                                      16);
 #if EDITION_INTERNATIONAL
       giveTarget = ItemMenu_SelectTarget(1);
       state = ITEM_STEP_GIVE;
@@ -2123,8 +2116,7 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 index;
 
-  PsynergyMenu_InitializeEntryObjects((void *)UiMenu_CreateCursor(menu), 2, 2,
-                                      8, 0);
+  PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
   for (index = 3; index >= 0; index--)
     menu->ownerY[index] = 30;
 
@@ -2146,7 +2138,8 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns) {
 // Creates the 32 item icon sprites in window, off screen until placed: slots 0
 // to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
 // slot of the same number.
-void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
+void Menu_SpawnIconEntries(struct InventoryMenuState *state,
+                           struct UiWindow *window) {
   struct RenderOutput **output0;
   s32 index0;
   s32 fifth0;
@@ -2161,8 +2154,8 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
   fifth0 = 0xA8;
   output0 = &state->entryIcons[0];
   do {
-    *output0++ = RenderOutput_CreateFromResourceFar(
-        2, index0, (struct RenderInput *)arg1, 0xF8, fifth0);
+    *output0++ =
+        RenderOutput_CreateFromResourceFar(2, index0, window, 0xF8, fifth0);
     index0++;
   } while (index0 <= 7);
 
@@ -2170,8 +2163,8 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
   fifth1 = 0xA8;
   output1 = &state->entryIcons[8];
   do {
-    *output1++ = RenderOutput_CreateFromResourceFar(
-        2, index1, (struct RenderInput *)arg1, 0x100, fifth1);
+    *output1++ =
+        RenderOutput_CreateFromResourceFar(2, index1, window, 0x100, fifth1);
     index1++;
   } while (index1 <= 15);
 
@@ -2179,8 +2172,8 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1) {
   fifth2 = 0xA8;
   output2 = &state->entryIcons[16];
   do {
-    *output2++ = RenderOutput_CreateFromResourceFar(
-        2, index2, (struct RenderInput *)arg1, 0x100, fifth2);
+    *output2++ =
+        RenderOutput_CreateFromResourceFar(2, index2, window, 0x100, fifth2);
     index2++;
   } while (index2 <= 31);
 }
@@ -2283,7 +2276,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   u8 sortMode;
   s32 showEquipment;
   s32 redraw;
-  s32 window;
+  struct UiWindow *window;
   s32 i;
 
   menu = gMenuWork;
@@ -2294,28 +2287,26 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   sortMode = 0;
   showEquipment = 0;
   owner = UnitGetFar(ownerIds[selection]);
-  if (UiWindow_UpdateOrCreate((s32 *)&menu->itemWindow, 13, 3, 17, 10, 2))
-    Menu_SpawnIconEntries(menu, (s32)menu->itemWindow);
-  if (UiWindow_UpdateOrCreate((s32 *)&menu->helpWindow, 13, 13, 17, 4, 2)) {
-    menu->selectedItemIcon = RenderOutput_CreateFromResourceFar(
-        2, 0, (struct RenderInput *)menu->helpWindow, 0, result);
+  if (UiWindow_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10, 2))
+    Menu_SpawnIconEntries(menu, menu->itemWindow);
+  if (UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 13, 17, 4, 2)) {
+    menu->selectedItemIcon =
+        RenderOutput_CreateFromResourceFar(2, 0, menu->helpWindow, 0, result);
     menu->selectedItemIcon->active = ICON_HIDDEN;
   }
   // The help text: L + A sorts, R shows the equipment.
 #if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, (s32)menu->helpWindow, 0,
-                                  0);
-  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1,
-                                  (s32)menu->helpWindow, 0, 8);
+  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, menu->helpWindow, 0, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1, menu->helpWindow, 0,
+                                  8);
 #else
-  UiText_DrawStringInWindowFar(gItemMenu_ArrangeKeysString,
-                               (s32)menu->helpWindow, 0, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, (s32)menu->helpWindow,
-                                  32, 0);
-  UiText_DrawStringInWindowFar(gItemMenu_EquipmentKeyString,
-                               (s32)menu->helpWindow, 16, 8);
-  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1,
-                                  (s32)menu->helpWindow, 32, 8);
+  UiText_DrawStringInWindowFar(gItemMenu_ArrangeKeysString, menu->helpWindow, 0,
+                               0);
+  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, menu->helpWindow, 32, 0);
+  UiText_DrawStringInWindowFar(gItemMenu_EquipmentKeyString, menu->helpWindow,
+                               16, 8);
+  UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1, menu->helpWindow, 32,
+                                  8);
 #endif
   menu->paneIcons[0]->active = redraw; // ICON_SHOWN
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
@@ -2324,7 +2315,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
     if (redraw) {
       sortMode = 0;
       redraw = 0;
-      window = (s32)menu->statusWindow;
+      window = menu->statusWindow;
       owner = UnitGetFar(ownerIds[selection]);
       if (showEquipment) {
         menu->itemCount =
@@ -2396,7 +2387,7 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   menu = gMenuWork;
   ItemMenu_PosCategory();
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_DrawCategory((s32)menu->itemWindow, ownerId, 0);
+  ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
 // Chooses the party member to use (mode 0) or give (mode 1) the selected item
@@ -2408,7 +2399,7 @@ void ItemMenu_OpenCategory(s32 ownerId) {
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct InventoryMenuState *menu;
-  s32 window;
+  struct UiWindow *window;
   s32 count;
   s32 selection;
   s32 redraw;
@@ -2418,13 +2409,13 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   struct RenderOutput *marker;
 
   menu = gMenuWork;
-  window = (s32)menu->itemWindow;
+  window = menu->itemWindow;
   selection = menu->paneIndex[1];
   count = menu->partyCount;
   redraw = 1;
   result = 0;
   shown = 0;
-  UiWindow_SetBounds((struct RenderInput *)window, 13, 5, 17, 12);
+  UiWindow_SetBounds(window, 13, 5, 17, 12);
   RenderOutput_RedrawSavedRectFar((void *)menu->itemWindow);
   UnitGetFar(menu->ownerIds[menu->paneIndex[0]]);
   Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators,
@@ -2433,7 +2424,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     if (redraw) {
       redraw = 0;
       selection = (selection + count) % count;
-      window = (s32)menu->itemWindow;
+      window = menu->itemWindow;
       UnitGetFar(menu->ownerIds[selection]);
       // The marker over the chosen member.
       marker = menu->paneIcons[1];
@@ -2482,24 +2473,24 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       // Using: the member's status, and the item's name once.
       if (mode == 0) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK))
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow,
+          Menu_DrawOwnerStatusPanel(menu->statusWindow,
                                     menu->ownerIds[selection],
                                     menu->selectedSlots[0], STATUS_PANEL_STATS);
         else
           Menu_DrawOwnerStatusPanel(
-              (s32)menu->statusWindow, menu->ownerIds[selection],
+              menu->statusWindow, menu->ownerIds[selection],
               menu->selectedSlots[0], STATUS_PANEL_EXPERIENCE);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
 #if EDITION_INTERNATIONAL
           RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
           UiText_DrawCharacterAtOffsetFar(
               (menu->selectedItems[0] & ITEM_ID_MASK) + MsgItemPlainName,
-              (s32)menu->infoWindow, 0, 0);
+              menu->infoWindow, 0, 0);
 #else
           RenderOutput_ClearListFar((void *)menu->infoWindow);
           UiText_DrawResourceFar((menu->selectedItems[0] & ITEM_ID_MASK) +
                                      MsgItemPlainName,
-                                 (s32)menu->infoWindow, 0, 0);
+                                 menu->infoWindow, 0, 0);
 #endif
           shown = 1;
         } else {
@@ -2607,7 +2598,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message) {
 
   menu = gMenuWork;
   RenderOutput_RedrawSavedRectFar(menu->messageWindow);
-  UiText_DrawCharacterAtOffsetFar(message, (s32)menu->messageWindow, 0, 0);
+  UiText_DrawCharacterAtOffsetFar(message, menu->messageWindow, 0, 0);
 }
 
 // Hides the icon of each of the 32 list entries whose item is 0.
@@ -2736,8 +2727,7 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   ItemMenu_RefreshEntry(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_Count(ownerId) == 0)
-    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, (s32)menu->itemWindow, 8,
-                                    24);
+    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
 // Does nothing; nothing calls it.
@@ -2765,7 +2755,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
     style = STATUS_PANEL_LOWER_ONLY;
   switch (Item_GetDirectFar(item & ITEM_ID_MASK)->type) {
   case 0: // usable items
-    Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
+    Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
     break;
   case 1: // weapons
   case 2: // armor
@@ -2777,7 +2767,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case 9: // shirts
     if (owner == target) {
       style |= STATUS_PANEL_EQUIP;
-      Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
+      Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
 
@@ -2791,14 +2781,13 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         equipped = Inventory_AddItemFar(target, item);
         if (equipped != -1) {
           style |= STATUS_PANEL_EQUIP;
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, equipped,
+          Menu_DrawOwnerStatusPanel(menu->statusWindow, target, equipped,
                                     style);
         } else {
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot,
-                                    style);
+          Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
         }
       } else {
-        Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
+        Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(state, (void *)owner, size);
       MemFree((void *)owner);
@@ -2807,7 +2796,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case 6: // Psynergy items
     if (target == owner) {
       style |= STATUS_PANEL_LEARN;
-      Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
+      Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
     } else {
       s32 size;
       void *buffer;
@@ -2822,14 +2811,13 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         equipped = Inventory_AddItemFar(target, item);
         if (equipped != -1) {
           style |= STATUS_PANEL_LEARN;
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, equipped,
+          Menu_DrawOwnerStatusPanel(menu->statusWindow, target, equipped,
                                     style);
         } else {
-          Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot,
-                                    style);
+          Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
         }
       } else {
-        Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, target, slot, style);
+        Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, style);
       }
       Iwram_CopyWords(state, (void *)owner, size);
       buffer = (void *)owner;
@@ -2926,11 +2914,11 @@ s32 ItemMenu_ChooseCmd(void) {
   redrawFlag = &menu->flags;
   // Draw the item's name and the command grid, unless they are up already.
   if (*redrawFlag != 1) {
-    s32 messageWindow;
+    struct UiWindow *messageWindow;
 
     ItemMenu_HideAllIcons();
     RenderOutput_RedrawSavedRectFar((void *)menu->listWindow);
-    messageWindow = (s32)menu->messageWindow;
+    messageWindow = menu->messageWindow;
     ItemMenu_SetMsgWin7();
     RenderOutput_RedrawSavedRectFar((void *)messageWindow);
     UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
@@ -2940,12 +2928,12 @@ s32 ItemMenu_ChooseCmd(void) {
     RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
     UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & ITEM_ID_MASK) +
                                         MsgItemPlainName,
-                                    (s32)menu->infoWindow, 0, 0);
+                                    menu->infoWindow, 0, 0);
 #else
     RenderOutput_ClearListFar((void *)menu->infoWindow);
     UiText_DrawResourceFar((menu->selectedItems[0] & ITEM_ID_MASK) +
                                MsgItemPlainName,
-                           (s32)menu->infoWindow, 0, 0);
+                           menu->infoWindow, 0, 0);
 #endif
   }
   *redrawFlag = 0;
@@ -3009,8 +2997,8 @@ s32 ItemMenu_ChooseCmd(void) {
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                   menu->paneOwner[0]);
       } else {
-        Menu_DrawOwnerStatusPanel((s32)menu->statusWindow, menu->paneOwner[0],
-                                  0, STATUS_PANEL_EXPERIENCE);
+        Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->paneOwner[0], 0,
+                                  STATUS_PANEL_EXPERIENCE);
       }
     }
 #if EDITION_INTERNATIONAL
@@ -3152,7 +3140,7 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
 #define TEXT_COLOR_DISABLED 14
 
 // Writes the six command names into window, the disabled ones in grey.
-void ItemMenu_DrawCmd(const s8 *commandStates, s32 window) {
+void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window) {
   s32 disabled;
   s32 value;
   u32 message;
@@ -3267,12 +3255,11 @@ void ItemMenu_TryBreak(void) {
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct InventoryMenuState *menu = gMenuWork;
 
-  UiWindow_UpdateOrCreate((s32 *)&menu->equipWindow, 0, 0, 13, 10, 2);
+  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
   Palette_CopyObjectBankToBackground14();
 
   if (menu->selectedItems[itemIndex] != 0)
-    ItemMenu_DrawItemDetails((s32)menu->equipWindow,
-                             menu->selectedItems[itemIndex]);
+    ItemMenu_DrawItemDetails(menu->equipWindow, menu->selectedItems[itemIndex]);
 
   return 1;
 }
@@ -3290,7 +3277,7 @@ s32 Menu_SelectQuantity(s32 value) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 changed = 1;
 #endif
-  s32 window;
+  struct UiWindow *window;
   s32 counter = 0;
 
 #if EDITION_INTERNATIONAL
@@ -3338,7 +3325,7 @@ s32 Menu_SelectQuantity(s32 value) {
   }
 
   // Close the window and bring the menu back.
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  RenderOutput_RedrawSavedRectFar(window);
   WaitFrames(1);
   UiWork_FinalizeFar((void *)window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
@@ -3375,7 +3362,7 @@ s32 Menu_SelectQuantity(s32 value) {
 // bestows Psynergy, whether it is used up or may break, and for a stack how
 // many there are. An item with nothing to say is rare, important, or
 // undescribed.
-void ItemMenu_DrawItemDetails(s32 window, s32 item) {
+void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 item) {
   struct ItemDefinition *def;
   s32 i;
   s32 hasEffects;
@@ -3576,7 +3563,8 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
 
 // Writes a signed stat change at (x, y) of window: the number, with a plus or
 // minus sign just before its first digit.
-void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
+void ItemMenu_DrawStat(s32 delta, s32 unused, struct UiWindow *window, s32 x,
+                       s32 y) {
   s32 digits;
   s32 magnitude;
 
@@ -3609,49 +3597,43 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
 // Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWin5(void) {
   UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->itemWindow,
+      (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 5, 17, 10);
 }
 
 // Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWin3(void) {
   UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->itemWindow,
+      (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 3, 17, 10);
 }
 
 // Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMsgWin5(void) {
-  UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->messageWindow,
-      13, 0, 17, 5);
+  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
+                         ->messageWindow,
+                     13, 0, 17, 5);
 }
 
 // Makes the message window 6 rows tall.
 void ItemMenu_SetMsgWin6(void) {
-  UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->messageWindow,
-      13, 0, 17, 6);
+  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
+                         ->messageWindow,
+                     13, 0, 17, 6);
 }
 
 // Makes the message window 7 rows tall.
 void ItemMenu_SetMsgWin7(void) {
-  UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->messageWindow,
-      13, 0, 17, 7);
+  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
+                         ->messageWindow,
+                     13, 0, 17, 7);
 }
 
 // Makes the message window 3 rows tall.
 void ItemMenu_SetMsgWin3(void) {
-  UiWindow_SetBounds(
-      (struct RenderInput *)((struct InventoryMenuState *)gMenuWork)
-          ->messageWindow,
-      13, 0, 17, 3);
+  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
+                         ->messageWindow,
+                     13, 0, 17, 3);
 }
 
 // The hand cursor and the "How many?" question of the quantity chooser.
@@ -3678,14 +3660,14 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
   s32 ownerCount;
   struct InventoryMenuState *menu = gMenuWork;
   void *tiles = Runtime_AllocateBlock(14, 0x400);
-  s32 window;
+  struct UiWindow *window;
   struct RenderOutput *rightDial;
 
   changed = 1;
   receiverCount = 0;
-  window = (s32)menu->messageWindow;
+  window = menu->messageWindow;
   ItemMenu_SetMsgWin7();
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  RenderOutput_RedrawSavedRectFar(window);
   // How many each member holds now.
   if (single == 0)
     receiverCount = InventoryMenu_GetItemQuantity(
@@ -3696,17 +3678,15 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
   block = Resource_FindFreeEntry();
   if (block != 96) { // 96: no free VRAM block
     VramCache_Load(block, 256, 0);
-    RenderOutput_CreateFar(block, 0x40004000, (struct RenderInput *)window, 48,
-                           32);
-    rightDial = RenderOutput_CreateFar(block, 0x40004000,
-                                       (struct RenderInput *)window, 80, 32);
+    RenderOutput_CreateFar(block, 0x40004000, window, 48, 32);
+    rightDial = RenderOutput_CreateFar(block, 0x40004000, window, 80, 32);
     rightDial->oam.index += 4;
     UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
     while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
         quantity = (range + quantity) % range;
-        RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+        RenderOutput_RedrawSavedRectFar(window);
         UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, GIVE_ASK_X,
                                         GIVE_ASK_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
@@ -3763,7 +3743,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
       WaitFrames(1);
     }
   }
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
   Runtime_ReleaseHeapBlock(14);
   menu->selectedItemIcon->active = ICON_HIDDEN;
@@ -3784,16 +3764,16 @@ void ItemMenu_DrawItemHead(void) {
   menu->selectedItemIcon->y = 8;
   UiIcon_PrepareObject(menu->selectedItemIcon);
   UiText_DrawStringAtOffsetFar(UnitGetFar(menu->paneOwner[0])->name,
-                               (s32)menu->messageWindow, 16, 0);
+                               menu->messageWindow, 16, 0);
   UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & ITEM_ID_MASK) +
                                       MsgItemName,
-                                  (s32)menu->messageWindow, 16, 8);
+                                  menu->messageWindow, 16, 8);
 }
 
 // Asks whether to drop item (an inventory entry): its name, the question, and
 // Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
 s32 ItemMenu_ConfirmDrop(s32 item) {
-  s32 window;
+  struct UiWindow *window;
   s32 itemId;
   s32 question;
   s32 answer;
@@ -3869,7 +3849,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   struct InventoryMenuState *menu = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(menu->paneOwner[1]);
   struct BattleUnit *saved;
-  s32 window;
+  struct UiWindow *window;
   s32 slot;
   s32 owner;
 
@@ -3878,7 +3858,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   ItemMenu_DrawEquipPreview(owner, slot, 0, owner);
   saved = MemAlloc(BATTLE_UNIT_SIZE);
   Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
-  window = (s32)menu->messageWindow;
+  window = menu->messageWindow;
   // Equip it now; a result of -1 or -2 means it cannot be equipped.
   if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
             2) <= 1) {
@@ -3996,7 +3976,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
 // Updates the item list for the row under the cursor: puts the selected item's
 // plain name in the info window and highlights its row of the five. window and
 // work are not used.
-s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
+s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *work,
                                 struct MenuResult *state) {
   struct InventoryMenuState *menu;
   s32 page;
@@ -4020,9 +4000,9 @@ s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
   if (menu->items[index] != 0) {
     s32 name = (menu->items[index] & ITEM_ID_MASK) + MsgItemPlainName;
 #if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(name, (s32)menu->infoWindow, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(name, menu->infoWindow, 0, 0);
 #else
-    UiText_DrawResourceFar(name, (s32)menu->infoWindow, 0, 0);
+    UiText_DrawResourceFar(name, menu->infoWindow, 0, 0);
 #endif
   }
 
@@ -4053,7 +4033,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 window, void *work,
 
 // Draws one page of the item list into window: up to five item names with
 // their icons, and the page numbers when there is more than one page.
-s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
+s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
                           const struct MenuResult *state) {
   struct InventoryMenuState *menu = gMenuWork;
   u32 page;
@@ -4064,7 +4044,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 
   (void)unused;
 
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+  RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   page = state->page;
@@ -4083,8 +4063,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
     entry = &menu->items[firstEntry];
     do {
       UiText_DrawCharacterAtOffsetFar((entry[0] & ITEM_ID_MASK) + MsgItemName,
-                                      (s32)menu->itemWindow, ENTRY_X,
-                                      row * 16 + 8);
+                                      menu->itemWindow, ENTRY_X, row * 16 + 8);
       row++;
       entry++;
     } while (visibleCount > row);
@@ -4106,7 +4085,7 @@ UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}
 // Returns the chosen inventory entry, or -1 when the player backs out.
 s32 ItemMenu_RunList(s32 pane) {
   struct InventoryMenuState *menu;
-  s32 window;
+  struct UiWindow *window;
   s32 changed;
   s32 moved;
   s32 member;
@@ -4124,8 +4103,8 @@ s32 ItemMenu_RunList(s32 pane) {
   result = 0;
   previous = 0;
   menu->equipPreview = result;
-  UiWindow_UpdateOrCreate((s32 *)&menu->listWindow, 13, 3, 17, 14, 2);
-  window = (s32)menu->listWindow;
+  UiWindow_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  window = menu->listWindow;
   done = 0;
 
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
@@ -4632,7 +4611,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
   s32 redraw;
   s32 result;
   struct BattleUnit *owner;
-  s32 window;
+  struct UiWindow *window;
   s32 shown;
   s32 i;
   u16 *actions;
@@ -4652,7 +4631,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
                           menu->psynergyWindow);
   if (UiWindow_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = RenderOutput_CreateFromResourceFar(
-        2, 0, (struct RenderInput *)menu->shortcutWindow, 0, result);
+        2, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = ICON_HIDDEN;
   }
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
@@ -4674,7 +4653,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
 #if EDITION_INTERNATIONAL
         RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
 #endif
-        UiText_DrawWorkValueWithLabel((s32)menu->infoWindow);
+        UiText_DrawWorkValueWithLabel(menu->infoWindow);
         shown = 1;
       } else {
         GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
@@ -4747,8 +4726,8 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   PsynergyMenu_RefreshOwnerEntries(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
-    UiText_DrawCharacterAtOffsetFar(MsgPsynergyMenuEmpty,
-                                    (s32)menu->psynergyWindow, 0, 24);
+    UiText_DrawCharacterAtOffsetFar(MsgPsynergyMenuEmpty, menu->psynergyWindow,
+                                    0, 24);
   }
 }
 
@@ -4785,9 +4764,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
       UnitGetFar(menu->ownerTable[selection]);
       marker = menu->paneIcon[1];
       marker->oam.x = marker->x =
-          ((((struct RenderInput *)menu->auxiliaryWindow)->x + selection * 3)
-           << 3) -
-          2;
+          (((menu->auxiliaryWindow)->x + selection * 3) << 3) - 2;
       if (mode == 0) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow,
                                   menu->ownerTable[selection], 0,
@@ -4800,12 +4777,12 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
           UiText_DrawCharacterAtOffsetFar(
               (menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
                   MsgAbilityDescription,
-              (s32)menu->infoWindow, 0, 0);
+              menu->infoWindow, 0, 0);
 #else
           RenderOutput_ClearListFar((void *)menu->infoWindow);
           UiText_DrawResourceFar((menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
                                      MsgAbilityDescription,
-                                 (s32)menu->infoWindow, 0, 0);
+                                 menu->infoWindow, 0, 0);
 #endif
           shown = 1;
         } else {
@@ -4871,7 +4848,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut) {
 // colon after "L" and "R" (Japanese). Returns 1.
 #if EDITION_INTERNATIONAL
 
-s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
+s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
   s32 left;
   s32 top;
   s32 width;
@@ -4925,7 +4902,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 }
 #else
 
-s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
+s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
   s32 left;
   s32 top;
   s32 width;
@@ -5001,7 +4978,7 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 // a 30 by 15 window below with a hidden grid cursor and a portrait, and 16
 // Psynergy icon sprites in two rows of eight from (96, 8), on an 8 by 2 grid.
 void PsynergyMenu_CreateEntryGrid(void) {
-  s32 window;
+  struct UiWindow *window;
   struct PsynergyMenuState *menu;
   struct RenderOutput *cursor;
   s32 index;
@@ -5020,8 +4997,8 @@ void PsynergyMenu_CreateEntryGrid(void) {
   menu->columnCount = 8;
   menu->rowCount = 2;
 
-  cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
-      (struct RenderInput *)window, 0, 4);
+  cursor =
+      (struct RenderOutput *)UiIcon_CreateWithResourceVariant(window, 0, 4);
   cursor->active = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
   SideObject_CreateFar(0, 0, 0, window, 0, 0);
@@ -5031,8 +5008,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   output = &menu->entryIcons[0];
   x = 96;
   do {
-    *output++ = RenderOutput_CreateFromResourceFar(
-        4, index, (struct RenderInput *)window, x, y);
+    *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
     index++;
     x += 16;
   } while (index <= 7);
@@ -5042,8 +5018,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   output = &menu->entryIcons[8];
   x = 96;
   do {
-    *output++ = RenderOutput_CreateFromResourceFar(
-        4, index, (struct RenderInput *)window, x, y);
+    *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
     index++;
     x += 16;
   } while (index <= 15);
@@ -5198,7 +5173,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
 // Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 // description in the info window, unless a kept message is there, and
 // highlights its row of the five. window and work are not used.
-s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
+s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
                                 struct MenuResult *state) {
   struct PsynergyMenuState *menu;
   s32 index;
@@ -5222,9 +5197,9 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
       s32 description =
           (menu->psynergies[index] & 0x1ff) + MsgAbilityDescription;
 #if EDITION_INTERNATIONAL
-      UiText_DrawCharacterAtOffsetFar(description, (s32)menu->infoWindow, 0, 0);
+      UiText_DrawCharacterAtOffsetFar(description, menu->infoWindow, 0, 0);
 #else
-      UiText_DrawResourceFar(description, (s32)menu->infoWindow, 0, 0);
+      UiText_DrawResourceFar(description, menu->infoWindow, 0, 0);
 #endif
     }
   } else {
@@ -5258,7 +5233,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 // icons and PP costs, a Psynergy the member cannot afford in the no-HP colour
 // and one restricted here in the low-HP colour, the page numbers, and the help
 // line (how to set a shortcut while Select is held, else how to change member).
-s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
+s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
                                 const struct MenuResult *state) {
   u32 firstEntry;
   u32 visibleCount;
@@ -5345,7 +5320,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
   struct PsynergyMenuState *menu;
   struct BattleAct *ability;
   struct RenderOutput *icon;
-  s32 window;
+  struct UiWindow *window;
   s32 changed;
   s32 moved;
   s8 listMode;
@@ -5805,7 +5780,7 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   cursor->animStep = 0;
   RenderOutput_RedrawSavedRectFar(menu->ownerWindow);
   if (GameFlag_TestFar(0x172))
-    UiWindow_DrawDividerLineFar((s32)menu->ownerWindow, 9, 1, 9, 3);
+    UiWindow_DrawDividerLineFar(menu->ownerWindow, 9, 1, 9, 3);
   if (index == -1)
     menu->ownerIndex[slot] = 0;
   else
@@ -5824,7 +5799,7 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
 // until A, B or Select, then puts the Djinn menu back.
 s32 DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu;
-  s32 window;
+  struct UiWindow *window;
   s32 element;
   s32 djinn;
 
@@ -5924,14 +5899,14 @@ s32 CharacterSelector_RunRearrange(void) {
     if (redraw) {
       redraw = 0;
       // The help lines, and the member's status and figure.
-      RenderOutput_RedrawSavedRectFar((s32)work->selectorWindow);
-      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp,
-                                      (s32)work->selectorWindow, 0, 0);
+      RenderOutput_RedrawSavedRectFar(work->selectorWindow);
+      UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp, work->selectorWindow, 0,
+                                      0);
       if (GameFlag_TestFar(48))
-        UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp,
-                                        (s32)work->selectorWindow, 0, 16);
+        UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp, work->selectorWindow,
+                                        0, 16);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
-                                      (s32)work->selectorWindow, 0, 8);
+                                      work->selectorWindow, 0, 8);
       cursor = (cursor + count) % count;
       UnitGetFar(work->ownerIds[cursor]);
       page = (page + 3) % 3;
@@ -6154,17 +6129,16 @@ void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2,
 // page, and the eight stat sprites; then draws the status and ailments.
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   s32 created;
-  s32 handle;
+  struct UiWindow *handle;
   struct RenderOutput *object;
   struct CharacterMenuState *state;
 
   state = gMenuWork;
   created = 0;
-  handle = (s32)state->statusWindow;
+  handle = state->statusWindow;
   if (handle == 0) {
-    created =
-        UiWindow_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 30, 15, 2);
-    handle = (s32)state->statusWindow;
+    created = UiWindow_UpdateOrCreate(&state->statusWindow, 0, 5, 30, 15, 2);
+    handle = state->statusWindow;
   }
   if (created != 0) {
     object = SideObject_CreateFar(resource, 0, 0, handle, 0, 0);
@@ -6173,11 +6147,10 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
       Menu_SpawnIconEntries((struct InventoryMenuState *)state, handle);
     }
     Menu_CreateEightEntryObjects(handle);
-    CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource,
-                                     0x100);
+    CharacterMenu_DrawStatusAilments(handle, resource, 0x100);
     return;
   }
-  CharacterMenu_DrawStatusAilments((struct UiWindow *)handle, resource, 0);
+  CharacterMenu_DrawStatusAilments(handle, resource, 0);
 }
 
 // The member's status page. The left pane lists their ailments (or the stat
@@ -6210,7 +6183,7 @@ s32 CharacterMenu_SelectCommand(void) {
   hasDjinn = 0;
   if (djinnTotal != 0)
     hasDjinn = 1;
-  UiWindow_UpdateOrCreate((s32 *)&menu->helpWindow, 0, 0, 30, 5, 2);
+  UiWindow_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 104;
@@ -6239,26 +6212,25 @@ s32 CharacterMenu_SelectCommand(void) {
         pane = (pane + 2) % 2;
         if (pane == 0) {
           selected = (selected + limit) % limit;
-          RenderOutput_RedrawSavedRectFar((s32)menu->helpWindow);
+          RenderOutput_RedrawSavedRectFar(menu->helpWindow);
           if (hasAilments == 0) {
-            UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp,
-                                            (s32)menu->statusWindow,
-                                            SWITCH_HELP_X, -24);
+            UiText_DrawCharacterAtOffsetFar(
+                MsgSwitchCharacterHelp, menu->statusWindow, SWITCH_HELP_X, -24);
             UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 1,
-                                            (s32)menu->statusWindow, 0, -24);
+                                            menu->statusWindow, 0, -24);
           }
         } else {
-          RenderOutput_RedrawSavedRectFar((s32)menu->helpWindow);
+          RenderOutput_RedrawSavedRectFar(menu->helpWindow);
           if (hasDjinn != 0)
             selected = (selected + 8) % 8;
           else
             selected = (selected + 7) % 7;
         }
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
-        RenderOutput_ClearListFar((s32)menu->helpWindow);
+        RenderOutput_ClearListFar(menu->helpWindow);
         WaitFrames(1);
         if (pane == 0)
-          CharacterMenu_DrawSelectionLabels((s32)menu->helpWindow, selected,
+          CharacterMenu_DrawSelectionLabels(menu->helpWindow, selected,
                                             entries);
         else
           StatusMenu_ShowOwnerProgressMessage(menu->helpWindow, selected,
@@ -6323,9 +6295,9 @@ s32 CharacterMenu_SelectCommand(void) {
       }
     }
   }
-  RenderOutput_ClearListFar((s32)menu->helpWindow);
-  RenderOutput_RedrawSavedRectFar((s32)menu->helpWindow);
-  UiWindow_ClearInteriorTilesFar((s32)menu->statusWindow, 64, 56, 224, 96);
+  RenderOutput_ClearListFar(menu->helpWindow);
+  RenderOutput_RedrawSavedRectFar(menu->helpWindow);
+  UiWindow_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
   Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 128;
@@ -6383,7 +6355,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 // Writes the advice for the selected ailment (two lines, e.g. how to revive a
 // member who is down) into window target, or that the member is well when
 // they have no ailment.
-void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
+void CharacterMenu_DrawSelectionLabels(struct UiWindow *target, s32 selected,
                                        const u8 *entries) {
   s32 count = 0;
   s32 index = 0;
@@ -6474,7 +6446,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
   else
     djinnRow = 10;
   menu->statusCursor->active = ICON_SHOWN;
-  ItemMenu_DrawOwnerStatus((s32)window, ownerId, mode);
+  ItemMenu_DrawOwnerStatus(window, ownerId, mode);
   CharacterMenu_BuildAvailability(ailments, 1, ownerId);
   CharacterMenu_UpdateSelectionIcons(ailments);
   keepDrawn = mode & 0x100;
@@ -6583,7 +6555,7 @@ spin:
 // Draws the top rows of member owner's status page into window: name, class,
 // level, experience, HP and PP on the left, Attack, Defense, Agility and Luck
 // on the right. flags' 0x100 keeps what is drawn instead of clearing it.
-void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
+void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 owner, s32 flags) {
   struct InventoryMenuState *menu;
   struct BattleUnit *unit;
 
@@ -6761,7 +6733,8 @@ void Menu_BuildPatternTiles(void) {
 
 // Draws a Psynergy's range icon at (x, y) of window: three tiles from the
 // range icon tiles, the left one mirrored.
-void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
+void PsynergyMenu_DrawRange(struct UiWindow *window, s32 x, s32 y, s32 range,
+                            s32 unused) {
   s32 n;
   s32 tile;
 
@@ -6777,7 +6750,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 // Updates the Psynergy page for the row under the cursor: the Psynergy's
 // description in the info window, where it can be used (in the field, in
 // battle, or anywhere), and the row highlights with the range icons.
-s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
+s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
                                struct MenuResult *state) {
   struct PsynergyMenuState *menu;
   struct BattleAct *ability;
@@ -6790,7 +6763,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     defined(TBS_EDITION_FR)
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-  UiWindow_ClearInteriorTilesFar((s32)menu->infoWindow, 0, 0, 224, 8);
+  UiWindow_ClearInteriorTilesFar(menu->infoWindow, 0, 0, 224, 8);
 #else
   RenderOutput_ClearListFar(menu->infoWindow);
 #endif
@@ -6803,7 +6776,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #endif
         (menu->psynergies[state->selectedIndex] & OWNER_ACTION_ID_MASK) +
             MsgAbilityDescription,
-        (s32)menu->infoWindow, 0, 0);
+        menu->infoWindow, 0, 0);
     ability = BattleActGet(menu->psynergies[state->selectedIndex] &
                            OWNER_ACTION_ID_MASK);
 #if EDITION_INTERNATIONAL
@@ -6876,7 +6849,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   return 1;
 }
 
-s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
+s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
                               const struct MenuResult *res) {
   struct PsynergyMenuState *menu = gMenuWork;
   struct BattleUnit *owner;
@@ -6966,7 +6939,7 @@ s32 PsynergyMenu_SelectAction(void) {
   done = 0;
   Menu_BuildPatternTiles();
   RenderOutput_RedrawSavedRectFar(menu->messageWindow);
-  UiWindow_UpdateOrCreate((s32 *)&menu->infoWindow, 0, 0, 30, 5, 2);
+  UiWindow_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   for (i = 3; i >= 0; i--)
     menu->slotY[i] = -16;
   {
@@ -7056,8 +7029,8 @@ s32 PsynergyMenu_SelectAction(void) {
       }
     }
   }
-  RenderOutput_ClearListFar((s32)menu->infoWindow);
-  RenderOutput_RedrawSavedRectFar((s32)menu->infoWindow);
+  RenderOutput_ClearListFar(menu->infoWindow);
+  RenderOutput_RedrawSavedRectFar(menu->infoWindow);
   ItemMenu_HideAllIcons();
   RenderOutput_ClearListFar(menu->messageWindow);
   RenderOutput_RedrawSavedRectFar(menu->statusWindow);
@@ -7086,7 +7059,8 @@ void PsynergyMenu_PreparedIconsSecondNoOp(void) {}
 #define EQUIP_SLOT_WIDTH 9
 #endif
 
-s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
+s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
+                           struct MenuResult *state) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
   s32 base;
@@ -7099,7 +7073,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
     defined(TBS_EDITION_FR)
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-  UiWindow_ClearInteriorTilesFar((s32)menu->infoWindow, 0, 0, 224, 8);
+  UiWindow_ClearInteriorTilesFar(menu->infoWindow, 0, 0, 224, 8);
 #else
   RenderOutput_ClearListFar(menu->infoWindow);
 #endif
@@ -7108,11 +7082,11 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 #if EDITION_INTERNATIONAL
     UiText_DrawCharacterAtOffsetFar(
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
-        (s32)menu->infoWindow, 0, 0);
+        menu->infoWindow, 0, 0);
 #else
     UiText_DrawResourceFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
                                MsgItemPlainName,
-                           (s32)menu->infoWindow, 0, 0);
+                           menu->infoWindow, 0, 0);
 #endif
   }
 
@@ -7140,7 +7114,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   }
 
   for (row = 0; row <= 3; row++) {
-    Render_SetTilemapFlagRect((s32)menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1,
+    Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1,
                               EQUIP_SLOT_WIDTH, 1, 15);
   }
 
@@ -7148,19 +7122,19 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
     switch (item->type) {
     case 1:
-      Render_SetTilemapFlagRect((s32)menu->equipWindow, EQUIP_SLOT_X, 1,
+      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
                                 EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 4:
-      Render_SetTilemapFlagRect((s32)menu->equipWindow, EQUIP_SLOT_X, 3,
+      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3,
                                 EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 3:
-      Render_SetTilemapFlagRect((s32)menu->equipWindow, EQUIP_SLOT_X, 5,
+      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5,
                                 EQUIP_SLOT_WIDTH, 1, 14);
       break;
     case 2:
-      Render_SetTilemapFlagRect((s32)menu->equipWindow, EQUIP_SLOT_X, 7,
+      Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7,
                                 EQUIP_SLOT_WIDTH, 1, 14);
       break;
     }
@@ -7179,7 +7153,8 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 #define SHOP_STAT_X 72
 #endif
 
-s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
+s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
+                      struct MenuResult *state) {
   struct InventoryMenuState *menu = gMenuWork;
   struct BattleUnit *unit;
   u16 *item;
@@ -7246,9 +7221,9 @@ s32 ItemMenu_SelectItem(void) {
     UnitGetFar(menu->ownerIds[id]);
   }
 #if EDITION_INTERNATIONAL
-  UiWindow_UpdateOrCreate((s32 *)&menu->equipWindow, 0, 10, 15, 10, 2);
+  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
 #else
-  UiWindow_UpdateOrCreate((s32 *)&menu->equipWindow, 0, 10, 13, 10, 2);
+  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 13, 10, 2);
 #endif
   ItemMenu_PosCategory();
 
@@ -7260,13 +7235,13 @@ s32 ItemMenu_SelectItem(void) {
   }
 
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
-  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp,
-                                  (s32)menu->statusWindow, 64, -24);
+  UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, menu->statusWindow,
+                                  64, -24);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3,
-                                  (s32)menu->statusWindow, 0, -24);
+                                  menu->statusWindow, 0, -24);
   ItemMenu_PosCategory();
   WaitFrames(1);
-  Menu_SpawnIconEntries(menu, (s32)menu->messageWindow);
+  Menu_SpawnIconEntries(menu, menu->messageWindow);
 
   done = 0;
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
@@ -7279,7 +7254,7 @@ s32 ItemMenu_SelectItem(void) {
     InventoryMenu_SortByListOrder(menu->items, 0);
     Menu_BuildPageResult(&state, 0);
     RenderOutput_RedrawSavedRectFar(menu->equipWindow);
-    ItemMenu_DrawCategory((s32)menu->equipWindow, menu->paneOwner[0], 1);
+    ItemMenu_DrawCategory(menu->equipWindow, menu->paneOwner[0], 1);
     WaitFrames(1);
     ItemMenu_DrawIcons(menu->items, 0);
     redraw = 1;
@@ -7291,9 +7266,9 @@ s32 ItemMenu_SelectItem(void) {
         redraw = 0;
         if (first != 0) {
           first = 0;
-          Shop_DrawItemPage((s32)menu->statusWindow, 0, &state);
+          Shop_DrawItemPage(menu->statusWindow, 0, &state);
         }
-        ItemMenu_DrawEquipPage((s32)menu->statusWindow, 0, &state);
+        ItemMenu_DrawEquipPage(menu->statusWindow, 0, &state);
       }
       menu->paneIcons[0]->active = ICON_SHOWN;
       UiMenu_PositionCursor(96, state.row * 16 + 52);
@@ -7422,7 +7397,7 @@ s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2) {
 
 s32 Menu_ReservedStatusOne(void) { return 1; }
 
-void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode) {
+void ItemMenu_DrawCategory(struct UiWindow *window, s32 owner_id, s32 mode) {
   struct InventoryMenuState *menu = gMenuWork;
   u16 *items;
 
@@ -7448,7 +7423,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode) {
 #define NAME_X 16
 #endif
 
-void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
+void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items) {
   s32 i;
   s32 item;
 
@@ -7556,7 +7531,7 @@ void ItemMenu_PosCategory(void) {
   } while (remaining >= 0);
 }
 
-s32 Menu_CreateEightEntryObjects(s32 resource) {
+s32 Menu_CreateEightEntryObjects(struct UiWindow *window) {
   struct RenderOutput **slot;
   struct RenderOutput *obj;
   s32 i;
@@ -7568,8 +7543,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource) {
   param = 0xA8;
   slot = state->categoryIcons;
   do {
-    obj = RenderOutput_CreateFromResourceFar(
-        2, i, (struct RenderInput *)resource, 0xF8, param);
+    obj = RenderOutput_CreateFromResourceFar(2, i, window, 0xF8, param);
     i += 1;
     *slot = obj;
     slot += 1;
@@ -8571,10 +8545,9 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   ui->menuBusy = 0;
 }
 
-s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4,
-                            s32 arg5) {
-  UiWindow_SetPaletteBitRectFar(((struct UiWindow *)win)->x + arg1 + 1,
-                                ((struct UiWindow *)win)->y + arg2 + 1, arg3,
+s32 Menu_DrawAtWindowOffset(const struct UiWindow *win, s32 arg1, s32 arg2,
+                            s32 arg3, s32 arg4, s32 arg5) {
+  UiWindow_SetPaletteBitRectFar((win)->x + arg1 + 1, (win)->y + arg2 + 1, arg3,
                                 arg4, arg5);
 }
 
@@ -8626,14 +8599,14 @@ void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width,
 }
 
 s32 DjinnMenu_ShowHelp(void) {
-  s32 winB;
-  s32 winA;
+  struct UiWindow *winB;
+  struct UiWindow *winA;
   struct DjinnMenuWork *menu;
   struct UiRenderWork *work;
   s32 result;
   s32 previous;
   s32 selection;
-  s32 list;
+  struct UiWindow *list;
   struct UiChannelSlot *channel;
   s32 message;
   s32 cnt;
@@ -8668,12 +8641,11 @@ s32 DjinnMenu_ShowHelp(void) {
     UiText_DrawResourceFar(selection + MsgDjinnInfoTopic, winA, 0, 0);
     channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(
         winB, selection + MsgDjinnInfoText);
-    Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
-    Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
+    Menu_DrawAtWindowOffset(list, 0, previous, 6, 1, 15);
+    Menu_DrawAtWindowOffset(list, 0, selection, 6, 1, 14);
     previous = selection;
     for (;;) {
-      UiMenu_PositionCursor(-12,
-                            (((struct UiWindow *)list)->y + selection) * 8 + 8);
+      UiMenu_PositionCursor(-12, (list->y + selection) * 8 + 8);
       WaitFrames(1);
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
@@ -8754,7 +8726,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   struct DjinnMenuWork *state = gMenuWork;
   struct DjinnMenuBackdrop *lists = state->backdrop;
   struct BattleUnit *owner;
-  s32 window;
+  struct UiWindow *window;
   s32 redraw = 1;
   u32 refresh;
   s32 i;
@@ -9487,8 +9459,9 @@ static __inline__ void Unit_Copy(struct BattleUnit *dst,
   Iwram_CopyWords(dst, src, sizeof(struct BattleUnit));
 }
 
-s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give,
-                              s32 take, s32 mode, s32 page, s32 side) {
+s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y, s32 owner,
+                              s32 give, s32 take, s32 mode, s32 page,
+                              s32 side) {
   struct BattleUnit *state;
   struct BattleUnit *saved;
   s32 giveElement;
@@ -9986,9 +9959,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   state->ownerX[state->selectedColumn[0]] = 0x10;
   state->ownerY[state->selectedColumn[0]] = 0x20;
 
-  RenderOutput_ClearListFar((struct UiWindow *)state->listWindow);
+  RenderOutput_ClearListFar(state->listWindow);
   WaitFrames(1);
-  UiWindow_CloseIfOpen((struct UiWindow **)&state->helpWindow, 1);
+  UiWindow_CloseIfOpen(&state->helpWindow, 1);
   UiWindow_UpdateOrCreate(&state->helpWindow, 0, 0, 30, 5, 2);
 
   count[0] = 1;
@@ -10097,39 +10070,39 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
   UiWindow_UpdateOrCreate(&state->window, 0, 5, 15, 15, 2);
   UiWindow_UpdateOrCreate(&state->secondWindow, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->helpWindow);
+  RenderOutput_RedrawSavedRectFar(state->helpWindow);
 
   if (mode == 2) {
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareStandby, (struct UiWindow *)state->helpWindow, 96, 0);
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareConfirm, (struct UiWindow *)state->helpWindow, 96, 16);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareStandby, state->helpWindow,
+                                    96, 0);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, state->helpWindow,
+                                    96, 16);
   } else if (mode == 3) {
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareSet, (struct UiWindow *)state->helpWindow, 96, 0);
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareConfirm, (struct UiWindow *)state->helpWindow, 96, 16);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareSet, state->helpWindow, 96,
+                                    0);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, state->helpWindow,
+                                    96, 16);
   } else if (mode == 0) {
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareTrade, (struct UiWindow *)state->helpWindow, 128, 0);
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareConfirm, (struct UiWindow *)state->helpWindow, 128, 8);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareTrade, state->helpWindow,
+                                    128, 0);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, state->helpWindow,
+                                    128, 8);
   } else {
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareGive, (struct UiWindow *)state->helpWindow, 128, 0);
-    UiText_DrawCharacterAtOffsetFar(
-        MsgDjinnCompareConfirm, (struct UiWindow *)state->helpWindow, 128, 8);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareGive, state->helpWindow, 128,
+                                    0);
+    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, state->helpWindow,
+                                    128, 8);
   }
 
   row = (mode == 1);
   if ((state->pairEntries[0] & 0x8000) == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawCharacterAtOffsetFar(
-      ((state->pairEntries[0] & 0xe0) >> 5) * 20 +
-          (state->pairEntries[0] & 31) + MsgDjinnName,
-      (struct UiWindow *)state->helpWindow, 48, row * 8);
-  UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
+  UiText_DrawCharacterAtOffsetFar(((state->pairEntries[0] & 0xe0) >> 5) * 20 +
+                                      (state->pairEntries[0] & 31) +
+                                      MsgDjinnName,
+                                  state->helpWindow, 48, row * 8);
+  UiWindow_SetTilemapEntryFar(state->helpWindow,
                               ((state->pairEntries[0] & 0xe0) >> 5) + 0x5001, 5,
                               row, zero = 0);
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
@@ -10138,11 +10111,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     if ((state->pairEntries[1] & 0x8000) == 0) {
       UiWork_SetParamNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(
-        ((state->pairEntries[1] & 0xe0) >> 5) * 20 +
-            (state->pairEntries[1] & 31) + MsgDjinnName,
-        (struct UiWindow *)state->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
+    UiText_DrawCharacterAtOffsetFar(((state->pairEntries[1] & 0xe0) >> 5) * 20 +
+                                        (state->pairEntries[1] & 31) +
+                                        MsgDjinnName,
+                                    state->helpWindow, 48, 16);
+    UiWindow_SetTilemapEntryFar(state->helpWindow,
                                 ((state->pairEntries[1] & 0xe0) >> 5) + 0x5001,
                                 5, 2, mode);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
@@ -10150,16 +10123,15 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     if ((state->pairEntries[0] & 0x8000) != 0) {
       UiWork_SetParamNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(
-        ((state->pairEntries[0] & 0xe0) >> 5) * 20 +
-            (state->pairEntries[0] & 31) + MsgDjinnName,
-        (struct UiWindow *)state->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow,
+    UiText_DrawCharacterAtOffsetFar(((state->pairEntries[0] & 0xe0) >> 5) * 20 +
+                                        (state->pairEntries[0] & 31) +
+                                        MsgDjinnName,
+                                    state->helpWindow, 48, 16);
+    UiWindow_SetTilemapEntryFar(state->helpWindow,
                                 ((state->pairEntries[0] & 0xe0) >> 5) + 0x5001,
                                 5, 2, zero);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
-    UiWindow_SetTilemapEntryFar((struct UiWindow *)state->helpWindow, 0xf296, 7,
-                                1, zero);
+    UiWindow_SetTilemapEntryFar(state->helpWindow, 0xf296, 7, 1, zero);
   }
 
   for (;;) {
@@ -10194,7 +10166,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         break;
       case 10:
         if (scene->tutorialTimer == 60) {
-          s32 work;
+          struct UiWindow *work;
 
           Iwram_CopyWords(saved, render, size);
           work =
@@ -10234,7 +10206,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         break;
       case 11:
         if (scene->tutorialTimer == 60) {
-          s32 work;
+          struct UiWindow *work;
 
           Iwram_CopyWords(saved, render, size);
           work = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8,
@@ -10282,16 +10254,14 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     if (dirty != 0) {
       swap = 1;
       if (mode <= 1) {
-        UiWindow_ClearInteriorTilesFar((struct RenderInput *)state->helpWindow,
-                                       128, 16, 224, 24);
+        UiWindow_ClearInteriorTilesFar(state->helpWindow, 128, 16, 224, 24);
         if (page == 1) {
-          UiText_DrawCharacterAtOffsetFar(MsgDjinnStatusHelp,
-                                          (struct UiWindow *)state->helpWindow,
+          UiText_DrawCharacterAtOffsetFar(MsgDjinnStatusHelp, state->helpWindow,
                                           128, 16);
         } else {
           UiWork_PushValueSlotFar(state->shownOwner[page != 2], 1);
-          UiText_DrawCharacterAtOffsetFar(
-              MsgDjinnPsyHelp, (struct UiWindow *)state->helpWindow, 128, 16);
+          UiText_DrawCharacterAtOffsetFar(MsgDjinnPsyHelp, state->helpWindow,
+                                          128, 16);
         }
       }
       render->menuBusy = 1;
@@ -10341,7 +10311,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     }
 
     if (page <= 1) {
-      list = (struct UiWindow *)state->secondWindow;
+      list = state->secondWindow;
       if (count[page] > 1) {
         s32 top;
 
@@ -10464,14 +10434,14 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
-  UiWindow_CloseIfOpen((struct UiWindow **)&state->helpWindow, 1);
+  UiWindow_CloseIfOpen(&state->helpWindow, 1);
   WaitFrames(1);
   UiWindow_UpdateOrCreate(&state->helpWindow, 13, 0, 17, 5, 2);
   UiWindow_CloseIfOpen((struct UiWindow **)&state->window, 1);
-  UiWindow_CloseIfOpen((struct UiWindow **)&state->secondWindow, 1);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->listWindow);
+  UiWindow_CloseIfOpen(&state->secondWindow, 1);
+  RenderOutput_RedrawSavedRectFar(state->listWindow);
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->unknownWindow028);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)state->statusWindow);
+  RenderOutput_RedrawSavedRectFar(state->statusWindow);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
   WaitFrames(1);
   return result;
@@ -10511,7 +10481,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   cursor[1] = cursor[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
-  RenderOutput_ClearListFar((struct UiWindow *)menu->listWindow);
+  RenderOutput_ClearListFar(menu->listWindow);
   WaitFrames(1);
   page = pages;
   page[1] = page[0] = 1;
@@ -10530,14 +10500,13 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     page[1] = 1;
   left = (struct UiWindow **)&menu->window;
   UiWindow_UpdateOrCreate(left, 0, 5, 15, 15, 2);
-  right = (struct UiWindow **)&menu->secondWindow;
+  right = &menu->secondWindow;
   UiWindow_UpdateOrCreate(right, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->helpWindow);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->statusWindow);
-  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus,
-                                  (struct UiWindow *)menu->statusWindow, 0, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus + 2,
-                                  (struct UiWindow *)menu->statusWindow, 0, 16);
+  RenderOutput_RedrawSavedRectFar(menu->helpWindow);
+  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
+  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus, menu->statusWindow, 0, 0);
+  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus + 2, menu->statusWindow, 0,
+                                  16);
   side = 0;
   while (1) {
     render = (struct UiRenderWork *)gWindowWork[0];
@@ -10545,16 +10514,16 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     repeat = gKeysRepeat;
     if (pending) {
       render->menuBusy = 1;
-      RenderOutput_PrepareForRedrawFar((struct UiWindow *)menu->window);
-      RenderOutput_PrepareForRedrawFar((struct UiWindow *)menu->secondWindow);
-      DjinnMenu_DrawStatPreview((struct UiWindow *)menu->window, 0, 0,
-                                menu->pairOwner[0], 0, 0, 3, 0, 1);
-      DjinnMenu_DrawStatPreview((struct UiWindow *)menu->secondWindow, 0, 0,
-                                menu->pairOwner[0], 0, 0, 3, cursor[0] + 1, 1);
+      RenderOutput_PrepareForRedrawFar(menu->window);
+      RenderOutput_PrepareForRedrawFar(menu->secondWindow);
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0, 3,
+                                0, 1);
+      DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0], 0,
+                                0, 3, cursor[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (page[side] > 1) {
-      window = (struct UiWindow *)menu->secondWindow;
+      window = menu->secondWindow;
       for (i = 0; i < page[side]; i++) {
         tile = 0xf031 + i;
         if (i > 9)
@@ -10613,15 +10582,14 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   }
   Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
-  UiWindow_CloseIfOpen((struct UiWindow **)&menu->helpWindow, 1);
+  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate((struct UiWindow **)&menu->helpWindow, 13, 0, 17, 5,
-                          2);
+  UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
   UiWindow_CloseIfOpen(left, 1);
   UiWindow_CloseIfOpen(right, 1);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->listWindow);
+  RenderOutput_RedrawSavedRectFar(menu->listWindow);
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->unknownWindow028);
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->statusWindow);
+  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
   WaitFrames(1);
   return result;
@@ -10750,7 +10718,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   return buffer;
 }
 
-s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
+s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
                                     s32 resourceId) {
   s32 slot;
 
@@ -10761,12 +10729,12 @@ s32 UiIcon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
   }
 }
 
-s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
                                  s32 variant) {
   struct RenderOutput *object;
   u32 resource;
   s32 v = variant;
-  struct RenderInput *w = window;
+  struct UiWindow *w = window;
   s32 xx = x;
   struct InventoryMenuState *data = gMenuWork;
 
@@ -10789,12 +10757,12 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
-s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
+s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
                                      s32 variant) {
   struct RenderOutput *object;
   u32 resource;
   s32 v = variant;
-  struct RenderInput *w = window;
+  struct UiWindow *w = window;
   s32 xx = x;
   struct InventoryMenuState *data = gMenuWork;
 

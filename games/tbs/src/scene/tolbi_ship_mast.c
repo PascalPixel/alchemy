@@ -306,7 +306,7 @@ static void Scene_RunFourActorStagingSequence(void) {
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(0, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
   event = &(*(struct FieldGlobals *)gMapWork).event;
   (*event)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
@@ -319,7 +319,7 @@ static void Scene_RunFourActorStagingSequence(void) {
   Object_GetById(9)->motionFlags = zero;
   gTolbiShipMast_CameraCenter[0] = x;
   gTolbiShipMast_CameraCenter[1] = zero;
-  Engine_ActorEnableActionCallback(9, gTolbiShipMast_FollowCameraActions);
+  Actor_SetActionScript(9, gTolbiShipMast_FollowCameraActions);
   Engine_EventWait(20);
   Engine_AudioPlayCue(29);
   Engine_GameFlagSet(0x8f0);
@@ -391,7 +391,7 @@ static void FieldScene_RunActorNinePresentationCycles(void) {
   OverlayObject_InitWithRandomFields(13);
   OverlayObject_InitWithRandomFields(14);
   OverlayObject_InitWithRandomFields(15);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -421,7 +421,7 @@ static void FieldScene_RunActorNinePresentationCycles(void) {
   Actor_SetSpeed(9, 0x20000, 0x10000);
   OverlayObject_InitWithRandomFields(9);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
   Engine_EventWait(120);
   Engine_ActorStop(9);
   rec9->targetX = ACTOR_NO_TARGET;
@@ -486,7 +486,7 @@ static void OverlayObject_InitWithRandomFields(s32 a) {
   obj->riseBaseY = ((x * 3 << 13) >> 16) - 0x3000;
   obj->scaleX = 0x14000;
   obj->scaleY = 0x14000;
-  Engine_ActorEnableActionCallback(a, gTolbiShipMast_DriftActions);
+  Actor_SetActionScript(a, gTolbiShipMast_DriftActions);
 }
 
 static void FieldScene_RunPrimarySequence(void) {
@@ -508,7 +508,7 @@ static void FieldScene_RunPrimarySequence(void) {
   OverlayObject_InitWithRandomFields(13);
   OverlayObject_InitWithRandomFields(14);
   OverlayObject_InitWithRandomFields(15);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -580,7 +580,7 @@ static void FieldScene_RunPrimarySequence(void) {
   Engine_ActorJump(8, 6, 20);
   Event_PlayCue(147);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_WaveActions);
+  Actor_SetActionScript(8, gTolbiShipMast_WaveActions);
   Engine_EventWait(80);
   Engine_ActorSetSpritePriority(17, 1);
   Actor_SetSpeed(17, 0x10000, 0x8000);
@@ -617,7 +617,7 @@ static void FieldScene_RunSevenActorEnsemble(void) {
   OverlayObject_InitWithRandomFields(13);
   OverlayObject_InitWithRandomFields(14);
   OverlayObject_InitWithRandomFields(15);
-  Engine_ActorEnableActionCallback(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -636,13 +636,13 @@ static void FieldScene_RunSevenActorEnsemble(void) {
   Actor_SetSpeed(13, 0x30000, 0x18000);
   Actor_SetSpeed(14, 0x30000, 0x18000);
   Actor_SetSpeed(15, 0x30000, 0x18000);
-  Engine_ActorEnableActionCallback(9, gTolbiShipMast_EnsembleWalk9);
-  Engine_ActorEnableActionCallback(10, gTolbiShipMast_EnsembleWalk10);
-  Engine_ActorEnableActionCallback(11, gTolbiShipMast_EnsembleWalk11);
-  Engine_ActorEnableActionCallback(12, gTolbiShipMast_EnsembleWalk12);
-  Engine_ActorEnableActionCallback(13, gTolbiShipMast_EnsembleWalk13);
-  Engine_ActorEnableActionCallback(14, gTolbiShipMast_EnsembleWalk14);
-  Engine_ActorEnableActionCallback(15, gTolbiShipMast_EnsembleWalk15);
+  Actor_SetActionScript(9, gTolbiShipMast_EnsembleWalk9);
+  Actor_SetActionScript(10, gTolbiShipMast_EnsembleWalk10);
+  Actor_SetActionScript(11, gTolbiShipMast_EnsembleWalk11);
+  Actor_SetActionScript(12, gTolbiShipMast_EnsembleWalk12);
+  Actor_SetActionScript(13, gTolbiShipMast_EnsembleWalk13);
+  Actor_SetActionScript(14, gTolbiShipMast_EnsembleWalk14);
+  Actor_SetActionScript(15, gTolbiShipMast_EnsembleWalk15);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(8, 3);
   Actor_SetAttachedEffect(8, 258);

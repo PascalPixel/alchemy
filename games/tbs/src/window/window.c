@@ -560,7 +560,7 @@ void RenderOutput_ClearList(void *outputs) {
 // Clears an area of a window's interior to the window fill. left, top, right
 // and bottom are pixels inside the window, and the area covers every tile
 // they touch.
-void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left,
+void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom) {
   struct UiRenderWork *work;
   u32 x;
@@ -1554,10 +1554,10 @@ void UiText_ShowMessageAndWaitCore(s32 argument) {
   WaitFrames(1);
 }
 
-// Types a message into an open window (passed as an integer) from its top
+// Types a message into an open window from its top
 // left. Returns the channel typing it (as an integer), or 0 when the message
 // is empty, window is 0 or no channel is free.
-s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
+s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 argument) {
   struct UiRenderWork *work = UI_WORK;
   s32 entry;
   s32 result = 0;
@@ -1573,8 +1573,7 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
     return 0;
   if (window == 0)
     return 0;
-  result = (s32)UiText_QueueRenderEntries((struct UiWindow *)window, entry, 0,
-                                          0, 0, 1);
+  result = (s32)UiText_QueueRenderEntries(window, entry, 0, 0, 0, 1);
   if (result == 0)
     return 0;
   return result;
@@ -2114,7 +2113,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
 // both the work block's copy and VRAM. A NULL buffer draws the decoded text
 // in UiRenderWork.entries.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                        const struct RenderInput *work,
+                                        const struct UiWindow *work,
                                         s32 offsetX, s32 offsetY) {
   struct UiRenderWork *canvas = UI_WORK;
   u32 cell;
@@ -4828,10 +4827,11 @@ s32 Localization_LookupEntryId(u32 value) {
 }
 
 // Opens a portrait window at tile (x, y) showing the portrait of speaker arg0
-// (arg1 is passed on to the portrait object), and returns it as an integer,
+// (arg1 is passed on to the portrait object), and returns it,
 // or 0 when the speaker has no portrait.
-s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y) {
-  s32 win;
+struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
+                                               s32 y) {
+  struct UiWindow *win;
   s32 minus_four;
   s32 offset;
   void *work;
@@ -4843,10 +4843,10 @@ s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y) {
   minus_four = -4;
   offset = minus_four;
   if (((struct UiRenderWork *)work)->mode != 0) {
-    win = (s32)UiWindow_Create(x, y, 6, 5, 2);
+    win = UiWindow_Create(x, y, 6, 5, 2);
     offset = 0;
   } else {
-    win = (s32)UiWindow_Create(x, y, 5, 5, 2);
+    win = UiWindow_Create(x, y, 5, 5, 2);
   }
   if (win != 0) {
     CreateSideObject(arg0, arg1, -1, win, offset, minus_four);
@@ -6630,7 +6630,7 @@ void UiTimedNotice_Create(void) {
   y = (10 - height) >> 1;
   window = UiWindow_Create(x, y, width, height, 2);
   work->window = window;
-  UiText_DrawResource(resource, (s32)window, 0, 0);
+  UiText_DrawResource(resource, window, 0, 0);
   work->countdown = 90;
   Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
@@ -6689,9 +6689,9 @@ struct AbilityListEntry {
 // gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
-  struct RenderInput *win;
-  struct RenderInput *title;
-  struct RenderInput *info;
+  struct UiWindow *win;
+  struct UiWindow *title;
+  struct UiWindow *info;
   struct RenderOutput *cursor;
   u32 first;
   u32 second;
@@ -7225,11 +7225,11 @@ void OptionMenu_Release(void) {
 // Opens the option screen's window: the labels, the hue and brightness
 // sliders with their markers, the cursor and the setting icons. Returns the
 // window.
-struct RenderInput *OptionMenu_Open(void) {
+struct UiWindow *OptionMenu_Open(void) {
   /* FAKEMATCH: the shared cursor union keeps pointer stores before window
    * reads; an equal-size struct reorders these moves in all six editions. */
   struct WorkspaceWork *work;
-  struct RenderInput *win;
+  struct UiWindow *win;
   struct RenderOutput *out;
   s32 x;
   s32 y;
@@ -7334,8 +7334,8 @@ struct RenderInput *OptionMenu_Open(void) {
 // drops them (returns -1). SELECT cycles through the colour presets.
 s32 Menu_RunWorkspaceOptions(void) {
   struct WorkspaceWork *work;
-  struct RenderInput *icon;
-  struct RenderInput *win;
+  struct UiWindow *icon;
+  struct UiWindow *win;
   struct RenderOutput *pair;
   s8 *pA;
   s8 *pB;
@@ -7528,14 +7528,14 @@ void SystemMenu_Release(void) {
 // Opens the system menu's window with its entries (Save your quest, Sleep,
 // Change settings, and the debug entries in debug mode; only Change settings
 // while flag 0x17e is set), their icons and the cursor. Returns the window.
-struct RenderInput *SystemMenu_Open(void) {
+struct UiWindow *SystemMenu_Open(void) {
   struct WorkspaceWork *work;
   s32 rows;
   s32 first;
   s32 settingsOnly;
   s32 top;
   s32 height;
-  struct RenderInput *win;
+  struct UiWindow *win;
   s32 y;
   s32 slot;
   s32 msg;
@@ -7600,7 +7600,7 @@ struct RenderInput *SystemMenu_Open(void) {
 // Runs the system menu until the player picks an entry (its number, counting
 // Save your quest as 0) or cancels with B or START (-1).
 s32 Menu_RunWorkspaceSelectionLoop(void) {
-  struct RenderInput *window;
+  struct UiWindow *window;
   s32 redraw;
   struct RenderOutput *pair;
   s32 first;
@@ -8049,7 +8049,7 @@ void UiRender_ReservedNoOp(void) {}
 // Draws a straight divider line inside a window from tile (x1, y1) to
 // (x2, y2), horizontal or vertical: its ends join the frame or the lines they
 // meet, and it crosses the lines it passes over.
-void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
+void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2) {
   struct UiRenderWork *work = UI_WORK;
   u16 *cursor;
@@ -8221,9 +8221,8 @@ void UiWork_SetRenderWord(u16 value) {
   work->outline = value;
 }
 
-// Decodes a message and draws it into a text canvas window (passed as an
-// integer) at pixel (x, y).
-void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y) {
+// Decodes a message and draws it into a text canvas window at pixel (x, y).
+void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *counter = &canvas->count;
   s32 zero = 0;
@@ -8232,13 +8231,12 @@ void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y) {
   UiText_BuildRenderEntries(message, 1);
   canvas->entries[*counter] = zero;
   *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-  UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)window, x,
-                                  y);
+  UiText_RenderWideStringAtOffset(canvas->entries, window, x, y);
 }
 
 // Decodes a message and draws it as tiles in a window at pixel (offsetX,
 // offsetY) of its interior.
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
+void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
                                   u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
@@ -8268,12 +8266,11 @@ void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
   }
 }
 
-// Draws a byte string into a text canvas window (passed as an integer) at
-// pixel (x, y).
-void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y) {
+// Draws a byte string into a text canvas window at pixel (x, y).
+void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
   s16 *buffer;
   s16 *output;
-  u8 *input;
+  const u8 *input;
 
   input = text;
   buffer = Runtime_BumpAllocateAlternatePool(0x200);
@@ -8286,15 +8283,14 @@ void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y) {
     } while (*input != 0);
   }
   *output = 0;
-  UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)window, x,
-                                  y);
+  UiText_RenderWideStringAtOffset((u16 *)buffer, window, x, y);
   MemFree(buffer);
 }
 
 // Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
 // its interior.
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
-                               s32 offsetY) {
+void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
+                               s32 offsetX, s32 offsetY) {
   s16 *buffer;
   s16 *output;
   struct UiRenderWork *canvas;
@@ -8331,7 +8327,8 @@ void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
 
 // Draws a byte string into a window's tilemap at pixel (x, y) of its
 // interior, rounded down to tiles.
-void UiText_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
+void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
+                               u32 y) {
   u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
   u16 *output = buffer;
 
@@ -8343,14 +8340,14 @@ void UiText_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
   *output = 0;
   x >>= 3;
   y >>= 3;
-  UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)window, x,
-                                  y);
+  UiText_RenderWideStringInWindow((s16 *)buffer, window, x, y);
   MemFree(buffer);
 }
 
 // Draws a number (width as UiText_FormatNumber) into a text canvas window at
 // pixel (x, y).
-void UiText_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
+void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
+                       s32 y) {
   u8 data[16];
 
   UiText_DrawString(UiText_FormatNumber(data, value, width), window, x, y);
@@ -8358,8 +8355,8 @@ void UiText_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
 
 // Draws a number (width as UiText_FormatNumber) as tiles in a window at pixel
 // (x, y) of its interior.
-void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
-                               s32 x, s32 y) {
+void UiText_DrawNumberAtOffset(s32 value, s32 width,
+                               const struct UiWindow *window, s32 x, s32 y) {
   u8 data[16];
 
   UiText_DrawStringAtOffset(UiText_FormatNumber(data, value, width), window, x,
@@ -8368,7 +8365,8 @@ void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
 
 // Draws a number (width as UiText_FormatNumber) into a window's tilemap at
 // pixel (x, y) of its interior.
-void UiText_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
+void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
+                               s32 x, s32 y) {
   u8 data[16];
 
   UiText_DrawStringInWindow(UiText_FormatNumber(data, value, width), window, x,
@@ -8378,7 +8376,7 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
 // Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
 // 0x1e, or 0x1f and 0x1e with variant set) as tiles in window work at pixel
 // (offsetX, offsetY) of its interior.
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
+void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[16];
   s16 output[8];

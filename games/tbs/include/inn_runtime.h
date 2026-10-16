@@ -7,7 +7,7 @@
 
 struct InnRuntimeState {
   u8 padding000[0x0c];
-  s32 window;
+  struct UiWindow *window;
   u8 padding010[0x380];
   u16 resourceEntries[6];
   u8 padding39c[8];

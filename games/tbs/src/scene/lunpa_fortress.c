@@ -806,10 +806,10 @@ static void TriggerScene40AtVillagePath(void) {
 static void RunActor9ScriptedSequence(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(9, 0, 0);
-  Engine_ActorEnableActionCallback(9, 1);
+  Actor_SetBuiltinAction(9, ACTOR_ACTION_IDLE);
   Engine_ActorStop(9);
   OBJ_MODE(9, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   {
     s32 t = MsgLunpaWho2;
 
@@ -829,15 +829,15 @@ static void RunActorScriptedSequenceA(s32 actorId) {
   EV_BEGIN();
   Engine_ActorShowEmote(actorId, EMOTE_IN_FRONT, 1);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
-  Engine_ActorEnableActionCallback(actorId, 1);
+  Actor_SetBuiltinAction(actorId, ACTOR_ACTION_IDLE);
   OBJ_MODE(actorId, 0);
   OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorSetDestinationOffset(actorId, 0, 0);
-  Engine_ActorEnableActionCallback(actorId, 1);
+  Actor_SetBuiltinAction(actorId, ACTOR_ACTION_IDLE);
   Engine_ActorStop(actorId);
   OBJ_MODE(actorId, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   {
     s32 t = MsgLunpaWho2;
 
@@ -1058,7 +1058,7 @@ static void EV32_TOUCH(void) {
 static void EV50_MAIN(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
   SE(113);
@@ -1084,7 +1084,7 @@ static void EV51_MAIN(void) {
 
   EV_BEGIN();
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(113);
   OBJ_EMOTE(21, EMOTE_IN_FRONT, 0);

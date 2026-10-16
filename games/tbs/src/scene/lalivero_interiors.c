@@ -224,7 +224,7 @@ static void TalkToMaid(void) {
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_EventWait(20);
   }
-  Engine_ActorEnableActionCallback(MAID, gLaliveroMaidChores);
+  Actor_SetActionScript(MAID, gLaliveroMaidChores);
   Engine_EventEnd();
 }
 
@@ -720,7 +720,7 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->priority = 2;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
-      Engine_ActorEnableActionCallback(MAID, gLaliveroMaidChores);
+      Actor_SetActionScript(MAID, gLaliveroMaidChores);
     }
     if (gGameState.entrance == ENTRANCE_REPORT_TO_FARAN) {
       ReportToFaran();

@@ -261,11 +261,11 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
     Actor_SetPosition(19, 0x720000, 0x14D0000);
   } else {
-    Engine_ActorEnableActionCallback(19, gValeStorm_ActorNineteenScript);
+    Actor_SetActionScript(19, gValeStorm_ActorNineteenScript);
   }
   if (Engine_GameFlagIsSet(0x841) != 0) {
     s32 h2;
-    u8 *table;
+    const s32 *table;
     FieldScene_BuildPlacementGrid();
     Actor_SetPosition(9, 0xA50000, 0x4CD0000);
     {
@@ -277,7 +277,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       table = gValeStorm_ActorEightScript;
       actor->work = 1;
-      Engine_ActorEnableActionCallback(9, table);
+      Actor_SetActionScript(9, table);
     }
     Engine_ActorSetPosition(26, 0xA50000, 0x4E60000);
     {
@@ -287,7 +287,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->facing = h2;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 2;
-      Engine_ActorEnableActionCallback(26, table);
+      Actor_SetActionScript(26, table);
     }
     Engine_ActorSetPosition(22, 0x980000, 0x5050000);
     {
@@ -297,7 +297,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->facing = h2;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 3;
-      Engine_ActorEnableActionCallback(22, table);
+      Actor_SetActionScript(22, table);
     }
     Engine_ActorSetPosition(8, 0xB80000, 0x5180000);
     {
@@ -307,7 +307,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->facing = h2;
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       actor->work = 4;
-      Engine_ActorEnableActionCallback(8, table);
+      Actor_SetActionScript(8, table);
     }
     Engine_ActorSetAnimation(8, 6);
     Object_GetById(22)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -321,7 +321,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       Engine_ActorSetPosition(22, 0, 0);
     }
   } else if (Engine_GameFlagIsSet(0x83a) != 0) {
-    u8 *table;
+    const s32 *table;
     Actor_SetPosition(10, 0xC00000, 0x4BE0000);
     Actor_FaceDirection(10, 0x2000, 0);
     Engine_ActorSetAnimation(10, 5);
@@ -332,7 +332,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
     table = gValeStorm_ActorEightScript;
-    Engine_ActorEnableActionCallback(10, table);
+    Actor_SetActionScript(10, table);
     Actor_SetPosition(24, 0xE30000, 0x4BE0000);
     Actor_FaceDirection(24, 0x4000, 0);
     Engine_ActorSetAnimation(24, 6);
@@ -342,7 +342,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor = Object_GetById(24);
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
-    Engine_ActorEnableActionCallback(24, table);
+    Actor_SetActionScript(24, table);
     Actor_SetPosition(25, 0xF70000, 0x4BE0000);
     Actor_FaceDirection(25, 0x4000, 0);
     Engine_ActorSetAnimation(25, 6);
@@ -352,7 +352,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
       actor = Object_GetById(25);
       actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
-    Engine_ActorEnableActionCallback(25, table);
+    Actor_SetActionScript(25, table);
     Actor_SetPosition(23, 0xF30000, 0x4FD0000);
     Engine_ActorFaceDirection(23, FACING_NORTH, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
@@ -893,7 +893,7 @@ static void EV32_TOUCH(void) {
         22, (s32)gValeStorm_ActorTwentyTwoScriptA);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(30);
-    Engine_ActorEnableActionCallback(22, gValeStorm_ActorTwentyTwoScriptB);
+    Actor_SetActionScript(22, gValeStorm_ActorTwentyTwoScriptB);
     Event_ShowMessage(22, 0);
     record = Actor_Get(22);
     record->scaleY = 0x10000;
@@ -1010,7 +1010,7 @@ static void EV34_TOUCH(void) {
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(22, 0x20000, 0x10000);
-    Engine_ActorEnableActionCallback(0, gValeStorm_LeaderScript);
+    Actor_SetActionScript(0, gValeStorm_LeaderScript);
     Object_SetActionCallbackAndRefreshById(
         22, (s32)gValeStorm_ActorTwentyTwoScript);
     Object_RefreshSelectorById(0);
@@ -1195,7 +1195,7 @@ static void ActorPresentation_SetFourActorsModeByBit(void) {
 }
 
 static void EV35_TOUCH(void) {
-  u8 *table;
+  const s32 *table;
 
   if (GameFlag_IsSet(0x83a) != 0) {
     return;
@@ -1211,7 +1211,7 @@ static void EV35_TOUCH(void) {
     v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
     table = gValeStorm_ActorEightScript;
     o->timer = v;
-    Engine_ActorEnableActionCallback(10, (s32)table);
+    Actor_SetActionScript(10, table);
   }
   Actor_SetPosition(9, 0xC00000, 0x4A50000);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
@@ -1224,7 +1224,7 @@ static void EV35_TOUCH(void) {
     o = Object_GetById(24);
     v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
     o->timer = v;
-    Engine_ActorEnableActionCallback(24, (s32)table);
+    Actor_SetActionScript(24, table);
   }
   Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
   Actor_FaceDirection(25, FACING_SOUTH, 0);
@@ -1235,7 +1235,7 @@ static void EV35_TOUCH(void) {
     o = Object_GetById(25);
     v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
     o->timer = v;
-    Engine_ActorEnableActionCallback(25, (s32)table);
+    Actor_SetActionScript(25, table);
   }
   Actor_SetPosition(26, 0xE30000, 0x4A50000);
   Actor_FaceDirection(26, 0x3000, 0);
@@ -1436,7 +1436,7 @@ static void EV35_TOUCH(void) {
 static void ValeStorm_RunRiverSearch(void) {
   struct FieldActor *entry;
   s32 record;
-  s32 script;
+  const s32 *script;
   s32 north;
   s32 suppose;
 
@@ -1455,7 +1455,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
   Actor_SetSpeed(26, 0x19999, 0xcccc);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
-  Engine_ActorEnableActionCallback(26, gValeStorm_ActorTwentySixScriptA);
+  Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptA);
   Object_SetActionCallbackAndRefreshById(9, (s32)gValeStorm_ActorNineScriptA);
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
@@ -1479,10 +1479,10 @@ static void ValeStorm_RunRiverSearch(void) {
   entry = Actor_Get(25);
   record = Engine_RandomNext();
   entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
-  script = (s32)gValeStorm_ActorEightScript;
-  Engine_ActorEnableActionCallback(10, script);
-  Engine_ActorEnableActionCallback(24, script);
-  Engine_ActorEnableActionCallback(25, script);
+  script = gValeStorm_ActorEightScript;
+  Actor_SetActionScript(10, script);
+  Actor_SetActionScript(24, script);
+  Actor_SetActionScript(25, script);
   Object_RefreshSelectorById(26);
   Engine_EventWait(10);
   Event_PlayCue(159);
@@ -1494,9 +1494,9 @@ static void ValeStorm_RunRiverSearch(void) {
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
   Engine_EventWait(20);
   BattleFx_PlayQueuedSound();
-  Engine_ActorEnableActionCallback(9, gValeStorm_ActorNineScriptB);
+  Actor_SetActionScript(9, gValeStorm_ActorNineScriptB);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(26, gValeStorm_ActorTwentySixScriptB);
+  Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptB);
   Engine_EventWait(40);
   Event_PlayCue(159);
   Map_AnimateCells(gValeStorm_CellSteps4, 35, 73);
@@ -1511,8 +1511,8 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_ActorSetAnimation(9, 3);
   Engine_ActorSetAnimationAndWait(26, 3);
   Engine_EventWait(30);
-  Engine_ActorEnableActionCallback(9, gValeStorm_ActorNineScriptC);
-  Engine_ActorEnableActionCallback(26, gValeStorm_ActorTwentySixScriptC);
+  Actor_SetActionScript(9, gValeStorm_ActorNineScriptC);
+  Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptC);
   Engine_EventWait(40);
   Camera_SetSpeed(0x20000, 0x4000);
   Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
@@ -1555,7 +1555,7 @@ static void ValeStorm_RunRiverSearch(void) {
     Engine_EventSetMessage((suppose + 2));
     Event_ShowMessage(0x8009, 0);
   }
-  Engine_ActorEnableActionCallback(9, gValeStorm_ActorNineScriptD);
+  Actor_SetActionScript(9, gValeStorm_ActorNineScriptD);
   Engine_EventWait(90);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
   Engine_EventWait(40);
@@ -1574,7 +1574,7 @@ static void ValeStorm_RunRiverSearch(void) {
 
 static void EV10_TALK(void) {
   s32 v2000 = 0x2000;
-  u8 *table;
+  const s32 *table;
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 1);
@@ -1600,7 +1600,7 @@ static void EV10_TALK(void) {
     v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
     table = gValeStorm_ActorEightScript;
     rec->timer = v;
-    Engine_ActorEnableActionCallback(10, table);
+    Actor_SetActionScript(10, table);
   }
   Engine_EventWait(20);
   Engine_GameFlagSet(0x30d);
@@ -1661,7 +1661,7 @@ static void EV36_TOUCH(void) {
       Engine_CameraSetSpeed(0x13333, 0x2666);
       Camera_MoveTo(0x650000, -1, 0x4ad0000, 1);
       Actor_SetSpeed(9, 0x16666, 0xb333);
-      Engine_ActorEnableActionCallback(9, gValeStorm_StormRunActions);
+      Actor_SetActionScript(9, gValeStorm_StormRunActions);
       Engine_EventWait(60);
       Engine_CameraSetSpeed(0x9999, 0x1333);
       Camera_MoveTo(0xbb0000, -1, 0x5300000, 1);
@@ -1736,12 +1736,12 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   struct FieldActor *groupActor;
   struct FieldActor *work;
   u32 random;
-  const u8 *entryActions;
+  const s32 *entryActions;
   s32 zero;
   u8 still;
-  const u8 *moveActions;
+  const s32 *moveActions;
   s32 phase;
-  const u8 *departureActions;
+  const s32 *departureActions;
 
   actor = Actor_Get(19);
   groupActor = Actor_Get(27);
@@ -1754,15 +1754,15 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Actor_SetSpeed(0, 0x13333, 0x9999);
   Actor_SetSpeed(22, 0x13333, 0x9999);
   entryActions = gValeStorm_ArriveScript;
-  Actor_EnableActionCallback(8, entryActions);
+  Actor_SetActionScript(8, entryActions);
   Event_Wait(10);
-  Actor_EnableActionCallback(26, entryActions);
+  Actor_SetActionScript(26, entryActions);
   FieldFx_LastLightning();
   Event_Wait(10);
-  Actor_EnableActionCallback(0, entryActions);
+  Actor_SetActionScript(0, entryActions);
   Event_Wait(10);
   FieldFx_StopLightning();
-  Actor_EnableActionCallback(22, entryActions);
+  Actor_SetActionScript(22, entryActions);
   Event_Wait(128);
   EV14_TOUCH();
   Camera_MoveTo(0xae0000, -1, 0x5940000, 1);
@@ -1771,9 +1771,9 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Actor_WalkToAndWait(9, 158, 0x4f8);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Object_RefreshSelectorById(8);
-  Actor_EnableActionCallback(8, gValeStorm_GatherPath8);
-  Actor_EnableActionCallback(26, gValeStorm_GatherPath26);
-  Actor_EnableActionCallback(0, gValeStorm_GatherPath0);
+  Actor_SetActionScript(8, gValeStorm_GatherPath8);
+  Actor_SetActionScript(26, gValeStorm_GatherPath26);
+  Actor_SetActionScript(0, gValeStorm_GatherPath0);
   Object_SetActionCallbackAndRefreshById(22, gValeStorm_GatherPath22);
   Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
   Event_PlayCue(145);
@@ -1807,12 +1807,12 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   random = Random_Next();
   fieldActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
   moveActions = gValeStorm_LookAroundScript;
-  Actor_EnableActionCallback(9, moveActions);
+  Actor_SetActionScript(9, moveActions);
   Event_Wait(30);
-  Actor_EnableActionCallback(0, moveActions);
-  Actor_EnableActionCallback(26, moveActions);
-  Actor_EnableActionCallback(22, moveActions);
-  Actor_EnableActionCallback(8, moveActions);
+  Actor_SetActionScript(0, moveActions);
+  Actor_SetActionScript(26, moveActions);
+  Actor_SetActionScript(22, moveActions);
+  Actor_SetActionScript(8, moveActions);
   Event_Wait(10);
   Event_PlayCue(17);
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -1878,7 +1878,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
   FieldScheduler_AddCallback(ValeStorm_UpdatePulsingGlow, 0xc80);
-  Actor_EnableActionCallback(19, gValeStorm_ActorNineteenRiseScript);
+  Actor_SetActionScript(19, gValeStorm_ActorNineteenRiseScript);
   Camera_SetSpeed(0x20000, 0x7ae);
   Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
   do {
@@ -2021,7 +2021,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   departureActions = gValeStorm_ActorEightScript;
   actor->work = 1;
-  Actor_EnableActionCallback(9, departureActions);
+  Actor_SetActionScript(9, departureActions);
   Actor_SetPosition(26, 0xa50000, 0x4e60000);
   Actor_SetAnimation(26, 1);
   actor = Actor_Get(26);
@@ -2029,7 +2029,7 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 2;
-  Actor_EnableActionCallback(26, departureActions);
+  Actor_SetActionScript(26, departureActions);
   Actor_SetPosition(22, 0x980000, 0x5050000);
   Actor_SetAnimation(22, 1);
   actor = Actor_Get(22);
@@ -2037,14 +2037,14 @@ static void Scene_RunActorGroupDepartureSequence(void) {
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 3;
-  Actor_EnableActionCallback(22, departureActions);
+  Actor_SetActionScript(22, departureActions);
   Actor_SetPosition(8, 0xb40000, 0x51f0000);
   actor = Actor_Get(8);
   actor->facing = 0xe000;
   random = Random_Next();
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->work = 4;
-  Actor_EnableActionCallback(8, departureActions);
+  Actor_SetActionScript(8, departureActions);
   Actor_SetAnimation(8, 6);
   Object_GetById(22)->priorityFlags &= 254;
   Object_GetById(8)->priorityFlags &= 254;
@@ -2228,7 +2228,7 @@ static void EV08_TALK(void) {
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeICantMoveGetHelp);
     Event_ShowMessage(8, 0);
-    Engine_ActorEnableActionCallback(8, gValeStorm_ActorEightScript);
+    Actor_SetActionScript(8, gValeStorm_ActorEightScript);
     Engine_ActorSetAnimation(8, 6);
   } else {
     Engine_ActorStop(8);
@@ -2259,7 +2259,7 @@ static void EV08_TALK(void) {
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
     Event_ShowMessage(8, 0);
-    Engine_ActorEnableActionCallback(8, gValeStorm_ActorEightScript);
+    Actor_SetActionScript(8, gValeStorm_ActorEightScript);
     Engine_ActorSetAnimation(8, 6);
     GameFlag_Set(0x305);
   }

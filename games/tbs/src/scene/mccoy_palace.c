@@ -932,7 +932,7 @@ static void RunEventScript02(void) {
   }
 
   Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
-  Engine_ActorEnableActionCallback(19, gPalace_PacingActions);
+  Actor_SetActionScript(19, gPalace_PacingActions);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
   actor = Object_GetById(0);

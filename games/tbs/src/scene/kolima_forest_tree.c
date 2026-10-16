@@ -252,15 +252,15 @@ static void PaletteScene_RunActorTransitionSequence(void) {
   if (object != 0) {
     Actor_SetPosition(IVAN, object->x.fixed, object->z.fixed);
   }
-  Engine_ActorEnableActionCallback(GARET, gSceneAction_ActorOneEntry);
-  Engine_ActorEnableActionCallback(IVAN, gSceneAction_ActorTwoEntry);
+  Actor_SetActionScript(GARET, gSceneAction_ActorOneEntry);
+  Actor_SetActionScript(IVAN, gSceneAction_ActorTwoEntry);
   if (actorThreeEnabled != 0) {
     Actor_SetSpeed(MIA, 0x10000, 0x8000);
     object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
       Actor_SetPosition(MIA, object->x.fixed, object->z.fixed);
     }
-    Engine_ActorEnableActionCallback(MIA, gSceneAction_ActorThreeEntry);
+    Actor_SetActionScript(MIA, gSceneAction_ActorThreeEntry);
   }
   Object_RefreshSelectorById(2);
   Engine_EventWait(40);
@@ -581,9 +581,9 @@ static void PaletteScene_RunActorTransitionSequence(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Event_PlayCue(17);
   finalActions = gSceneAction_GroupFinish;
-  Engine_ActorEnableActionCallback(GARET, finalActions);
+  Actor_SetActionScript(GARET, finalActions);
   if (actorThreeEnabled != 0) {
-    Engine_ActorEnableActionCallback(MIA, finalActions);
+    Actor_SetActionScript(MIA, finalActions);
   }
   Object_SetActionCallbackAndRefreshById(2, (s32)finalActions);
   KolimaForestTree_PlayGesture(10, 4);

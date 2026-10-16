@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_SHOP_SHOP_H
 
 #include "types.h"
+struct UiWindow;
 
 struct EffectSlot;
 struct NodeChainNode;
@@ -23,8 +24,8 @@ s32 UiMessage_ShowChoiceVariant(s32 arg0);
 struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state);
 void Shop_FillSelector(s32 count, s32 selector, u8 *base);
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
-struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
-                                            s32 y);
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
+                                            s32 x, s32 y);
 void Shop_RestoreSceneTiles(s32 layer);
 void Shop_InitEffect(void);
 void ShopCursor_Advance(struct ShopCursor *cursor);
@@ -32,16 +33,17 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor);
 void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
+void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y);
 
 s32 Shop_SelectBuy(void);
-void Shop_DrawStock(s32 window, s32 selected);
+void Shop_DrawStock(struct UiWindow *window, s32 selected);
 void Shop_DrawMoney(void);
-void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode);
-void Shop_DrawMsg(s32 win, s32 message);
-void Shop_DrawParty(s32 window, s32 selected, s32 requirement);
-void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 item_id);
-void Shop_DrawUnitItem(s32 window, s32 unitId, s32 item_id);
+void Shop_DrawItemPrice(struct UiWindow *window, s32 item, s32 price,
+                        s32 price_mode);
+void Shop_DrawMsg(struct UiWindow *win, s32 message);
+void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 requirement);
+void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 item_id);
+void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 item_id);
 s32 Shop_SelectBuyNum(s32 unitId, s32 item_id);
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price);
 void Shop_BuyDone(s32 unitId, s32 item_id, s32 quantity);
@@ -50,14 +52,14 @@ s32 Shop_SellOld(s32 unitId, s32 slot);
 s32 Shop_SalePrice(s32 item_id);
 s32 Shop_PickUnit(void);
 s32 Shop_SelectSell(s32 unitId);
-void Shop_DrawUnitGrid(s32 window, s32 unitId);
+void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId);
 s32 Shop_SelectSellNum(s32 unitId, s32 slot);
 void Shop_SellItem(s32 unitId, s32 slot, s32 count);
 s32 Shop_RepairPrice(s32 item_id);
 s32 Shop_SelectUnit(void);
 s32 Shop_SelectRepair(s32 unitId);
 void Shop_RepairItem(s32 unitId, s32 slot);
-void Shop_BuySpecialItem(void *window, s32 itemWindow);
+void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow);
 
 s32 EventTable_GetRowLimit(void);
 void EventTable_ApplyRowAbilities(s32 row_no);
@@ -73,8 +75,8 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0);
 s32 Shop_ConfirmAct(s32 unitId);
 s32 Sanctum_RunPartyService(void);
 void BattleUnit_ResetStateByMode(s32 id, s32 mode);
-void Shop_HiliteUnit(s32 enabled, s32 selected);
-void Shop_DrawSelectMsg(s32 target, s32 selection);
+void Shop_HiliteUnit(struct UiWindow *window, s32 selected);
+void Shop_DrawSelectMsg(struct UiWindow *target, s32 selection);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 void Shop_ResetEffects(void);
 void Shop_RunPartyMemberIconBurst(s32 member);
@@ -85,6 +87,6 @@ void Inn_PlaySleep(s32 room_price);
 
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selectedItem);
 s32 Shop_SelectUse(s32 actor);
-void Shop_DrawUseItem(s32 window, s32 unitId, s32 item_id);
+void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 item_id);
 
 #endif

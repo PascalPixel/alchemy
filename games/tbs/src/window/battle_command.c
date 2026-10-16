@@ -102,8 +102,8 @@
 // it. Returns the output, or NULL with the VRAM slot released when all
 // outputs are in use.
 struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
-                                         struct RenderInput *window,
-                                         s32 offsetX, s32 offsetY) {
+                                         struct UiWindow *window, s32 offsetX,
+                                         s32 offsetY) {
   s32 x;
   struct RenderOutput *output;
   s32 y;
@@ -138,7 +138,7 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
 // it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
 // loaded.
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
-                                                     struct RenderInput *window,
+                                                     struct UiWindow *window,
                                                      s32 x, s32 y) {
   s32 slot;
 
@@ -153,8 +153,8 @@ struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
 // slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
 // when no slot is free.
 struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
-                                               struct RenderInput *window,
-                                               s32 x, s32 y) {
+                                               struct UiWindow *window, s32 x,
+                                               s32 y) {
   s32 slot;
   struct RenderOutput *output;
 
@@ -170,9 +170,9 @@ struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
 // Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
 // over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
 // when no VRAM slot is free.
-struct RenderOutput *
-RenderOutput_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
-                                 s32 y) {
+struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
+                                                      struct UiWindow *window,
+                                                      s32 x, s32 y) {
   s32 slot;
   s32 unusedTile;
   struct RenderOutput *output;
@@ -192,7 +192,7 @@ RenderOutput_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
 // `tableEntry` is passed on to the loader, which loads that same pattern for
 // every value. Returns NULL when no slot is free.
 struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
-                                                  struct RenderInput *window,
+                                                  struct UiWindow *window,
                                                   s32 x, s32 y) {
   s32 slot;
   struct RenderOutput *output;
@@ -213,7 +213,7 @@ struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
 // passed on to the loader, which ignores it. Returns the sprite, or NULL when
 // the character has no portrait or both slots are taken.
 struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      s32 window, s32 x, s32 y) {
+                                      struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *work = UI_WORK;
   struct RenderOutput *portrait = NULL;
   s32 slot;
@@ -243,8 +243,7 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
 
   palette = PORTRAIT_PALETTE + side;
   UiGlyph_LoadEntryWithPalette(icon, unused, &slot, &tile, palette, 0);
-  portrait = RenderOutput_Create(slot, OUTPUT_SIZE_32X32,
-                                 (struct RenderInput *)window, x, y);
+  portrait = RenderOutput_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
   if (portrait != NULL) {
     portrait->oam.palette = palette;
     portrait->kind = 2;
@@ -433,7 +432,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
 // gUiWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
 // line comes first in the list). In battle it also draws the window's bottom
 // edge.
-void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags) {
+void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
   struct UiRenderWork *work = UI_WORK;
   s32 first = 1;
   s32 shift = 0;
@@ -489,10 +488,10 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags) {
 // palette 15.
 // The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
 #ifdef UBFIX
-void UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
+void UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
                                  s32 length) {
 #else
-s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y,
+s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
                                 s32 length) {
 #endif
   s32 i;
@@ -558,7 +557,7 @@ void PartyStatusDraw(s32 flags) {
   void **slot = (void **)gPartyStatusWork;
   struct PartyStatusWindow *layout = slot[0];
   struct BattleWork *battle = slot[-7];
-  struct RenderInput *window = (struct RenderInput *)layout->window;
+  struct UiWindow *window = layout->window;
   struct UiRenderWork *work = slot[-1];
   s32 x = 0;
   u32 count;
@@ -599,7 +598,7 @@ void PartyStatusDraw(s32 flags) {
   // Redraw the frame, laying it out again when the flags changed.
   work->menuBusy = 1;
   if (layout->flags == flags) {
-    RenderOutput_RedrawSavedRect((struct UiWindow *)window);
+    RenderOutput_RedrawSavedRect(window);
     UiWindow_DrawColumnBorders(window, flags);
   } else {
     UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
@@ -672,10 +671,10 @@ void PartyStatusDraw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     BattlePlacement_CountValidEntriesFar(0, standbyDjinn);
-    UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5001, 0, row, 0);
-    UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5002, 2, row, 0);
-    UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5003, 0, row + 1, 0);
-    UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5004, 2, row + 1, 0);
+    UiWindow_SetTilemapEntry(window, 0x5001, 0, row, 0);
+    UiWindow_SetTilemapEntry(window, 0x5002, 2, row, 0);
+    UiWindow_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
+    UiWindow_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     UiWindow_PutGlyph(window, standbyDjinn[0] + '0', 1, row);
     UiWindow_PutGlyph(window, standbyDjinn[1] + '0', 3, row);
     UiWindow_PutGlyph(window, standbyDjinn[2] + '0', 1, row + 1);
@@ -695,7 +694,7 @@ void UiWork_FinalizeAndReleaseBlock16(void) {
 // screen: bit 12 is the lowest bit of the entry's palette number, so this
 // switches the rectangle between two palettes. The clip uses 29 for the
 // bottom edge test and 20 for the clipped height.
-void UiWindow_SetTileAttributeBitRect(const struct RenderInput *window, s32 x,
+void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
                                       s32 y, s32 width, s32 height, u32 set) {
   struct UiRenderWork *work = UI_WORK;
 
@@ -1271,7 +1270,7 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
 
   sum = x + window->x;
   x = sum + 1;
-  sum = y + ((struct UiWindow *)window)->y;
+  sum = y + (window)->y;
   y = sum + 1;
 
   if (x < 0) {
@@ -1321,7 +1320,7 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
 // Shows the party of save file `summary` (up to four members) as sprites in
 // a row from tile (x, y) inside `window`, and starts placing them every
 // frame (SaveMenu_PlacePartySprites).
-void SaveMenu_ShowPartySprites(struct RenderInput *window, s32 x, s32 y,
+void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
                                struct SaveSummary *summary) {
   struct ShopRuntime *menu = gMenuWork;
   s32 i;
@@ -1396,7 +1395,7 @@ void SaveMenu_PlacePartySprites(void) {
 // Shows the four Djinn sprites, one for each element, in a row from tile
 // (x, y) inside `window`, and starts placing them every frame
 // (SaveMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
-void SaveMenu_ShowDjinnSprites(struct RenderInput *window, s32 x, s32 y) {
+void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 i;
 
@@ -1468,7 +1467,7 @@ void SaveMenu_PlaceDjinnSprites(void) {
 // Draws the Djinn counts of save file `summary`, one for each element, two
 // digits each, 24 pixels apart on row 16 of `window`, under the Djinn
 // sprites. Does nothing when `window` is NULL.
-void SaveMenu_DrawDjinnCounts(struct RenderInput *window,
+void SaveMenu_DrawDjinnCounts(struct UiWindow *window,
                               struct SaveSummary *summary) {
   s32 i;
 
@@ -1493,12 +1492,13 @@ void SaveMenu_DrawDjinnCounts(struct RenderInput *window,
 // Draws the summary of save file `summary` into `window`: the leader's name,
 // level and class, the play time and the coins. Does nothing when `window`
 // is 0.
-void SaveMenu_DrawFileSummary(s32 window, struct SaveSummary *summary) {
+void SaveMenu_DrawFileSummary(struct UiWindow *window,
+                              struct SaveSummary *summary) {
   u32 playTime[4]; // the play time text
   s32 y;
 
   if (window != 0) {
-    RenderOutput_PrepareForRedraw((struct UiWindow *)window);
+    RenderOutput_PrepareForRedraw(window);
     UiWindow_DrawDividerLine(window, 0, 4, 13, 4);
     UiText_DrawStringAtOffset(summary->name, window, 0, 0);
     y = 0;
@@ -1507,8 +1507,7 @@ void SaveMenu_DrawFileSummary(s32 window, struct SaveSummary *summary) {
     UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, window,
                               SUMMARY_LEVEL_X, 0);
 #else
-    UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, window, 72,
-                              0);
+    UiText_DrawStringInWindow(gStatusMenu_LevelLetterString, window, 72, 0);
 #endif
     UiText_DrawNumberAtOffset(summary->level, 2, window, 80, y);
     UiText_DrawCharacterAtOffset(summary->classId + MsgClassName, window, 0,
@@ -1520,14 +1519,12 @@ void SaveMenu_DrawFileSummary(s32 window, struct SaveSummary *summary) {
     UiText_DrawCharacterAtOffset(MsgCoins, window, 72, 32);
     UiText_DrawCharacterAtOffset(MsgStatusLabel, window, 0, 48);
     UiText_DrawStringInWindow(
-        (s32)Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48,
-        48);
+        Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48, 48);
 #else
     // "Play Time:" with the time under it, then the coins.
     UiText_DrawCharacterAtOffset(MsgStatusLabel, window, 0, 32);
     UiText_DrawStringInWindow(
-        (s32)Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48,
-        40);
+        Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48, 40);
     y = 48;
     UiText_DrawNumberInWindow(summary->coins, 6, window, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
@@ -1879,8 +1876,8 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
     x = -12;
     y = file * 16 + 4;
-    cursorSprite = RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16,
-                                       (struct RenderInput *)fileList, x, y);
+    cursorSprite =
+        RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, fileList, x, y);
     cursorSprite->active = 1;
     fileCursor.anchor = cursorSprite;
   }
@@ -2147,7 +2144,7 @@ s32 NameEntry_CountLetters(const u8 *name) {
 // Decompresses the type-01 tilemap `source` and copies it over `window`'s
 // rectangle, both into the BG screen block at 0x06002000 and into the UI
 // tilemap that mirrors it.
-void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
+void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
                                 const void *source) {
   struct UiRenderWork *work = UI_WORK;
   s16 *mirror = (s16 *)work->tilemap;
@@ -2180,8 +2177,8 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window,
 // Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
 // palette number of each entry (bits 12-15) after clearing only its lowest
 // bit.
-void UiWindow_SetTileAttributeRect(const struct RenderInput *window, s32 x,
-                                   s32 y, s32 width, s32 height, u32 palette) {
+void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
+                                   s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
 
   x += window->x + 1;
@@ -2271,7 +2268,7 @@ s32 UiText_SetRenderString(const u8 *str) {
 // Draws the name being entered, `name`, at the top left of `window`, with
 // the free places up to its seventh character shown as underscores in text
 // colour 2.
-void UiText_DrawPaddedLabel(s32 window, u8 *name) {
+void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
   u8 text[20];
   s32 length = 0;
 
@@ -2323,7 +2320,7 @@ void UiText_DrawPaddedLabel(s32 window, u8 *name) {
 // B or Delete removes the last letter, and B on an empty name cancels. Ending
 // with an empty name keeps the old one. Returns 0, or -1 when cancelled.
 s32 NameEntry_EditOwnerName(s32 member) {
-  struct RenderInput *label;
+  struct UiWindow *label;
   s32 result = 0;
   s32 originalLength = 0;
   s32 length = 0;
@@ -2333,7 +2330,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   u8 *uiTilemap = gWindowWork[0];
   s32 textDirty = 1;
   s32 cursorDirty = 1;
-  struct RenderInput *window;
+  struct UiWindow *window;
   union MenuCursor cursor;
   union MenuCursor caret;
   s32 column, row, vramSlot;
@@ -2343,8 +2340,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
 
   // The keyboard, the name and the portrait.
   Ui_LoadWindowGraphics();
-  window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
-  label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+  window = (struct UiWindow *)UiWindow_Create(3, 6, 24, 9, 2);
+  label = (struct UiWindow *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
   UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
@@ -2368,7 +2365,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     }
   }
   input[14] = 0;
-  UiText_DrawPaddedLabel((s32)label, name);
+  UiText_DrawPaddedLabel(label, name);
   vramSlot = Resource_FindFreeEntry();
   column = NAME_COMMAND_COLUMN;
   row = 5;
@@ -2491,7 +2488,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         length--;
         *--end = 0;
         RenderOutput_PrepareForRedraw(label);
-        UiText_DrawPaddedLabel((s32)label, input);
+        UiText_DrawPaddedLabel(label, input);
         textDirty = 1;
         continue;
       }
@@ -2507,7 +2504,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         if (length == 0) {
           caret.output->active = 13;
           RenderOutput_PrepareForRedraw(label);
-          UiText_DrawPaddedLabel((s32)label, name);
+          UiText_DrawPaddedLabel(label, name);
           WaitFrames(10);
         } else {
           u8 *dst = name;
@@ -2559,12 +2556,12 @@ s32 NameEntry_EditOwnerName(s32 member) {
         cursorDirty = 1;
       }
       RenderOutput_PrepareForRedraw(label);
-      UiText_DrawPaddedLabel((s32)label, input);
+      UiText_DrawPaddedLabel(label, input);
       textDirty = 1;
     }
   }
-  UiWork_Finalize((struct UiWindow *)window, 2);
-  UiWork_Finalize((struct UiWindow *)label, 2);
+  UiWork_Finalize(window, 2);
+  UiWork_Finalize(label, 2);
   UiWork_FinalizeEntityMatchingLocalizedId(member);
   WaitFrames(1);
   return result;
@@ -2577,7 +2574,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
 // B or Delete removes the last letter, and B on an empty name cancels. Ending
 // with an empty name keeps the old one. Returns 0, or -1 when cancelled.
 s32 NameEntry_EditOwnerName(s32 member) {
-  struct RenderInput *label;
+  struct UiWindow *label;
   s32 result = 0;
   s32 keyboard = 0;
   s32 bytes = 0;
@@ -2588,7 +2585,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   u8 *uiTilemap = gWindowWork[0];
   s32 textDirty = 1;
   s32 cursorDirty = 1;
-  struct RenderInput *window;
+  struct UiWindow *window;
   union MenuCursor cursor;
   union MenuCursor caret;
   s32 column, row, vramSlot, x;
@@ -2598,8 +2595,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
 
   // The keyboard, the name and the portrait.
   Ui_LoadWindowGraphics();
-  window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 13, 2);
-  label = (struct RenderInput *)UiWindow_Create(8, 3, 8, 3, 2);
+  window = (struct UiWindow *)UiWindow_Create(3, 6, 24, 13, 2);
+  label = (struct UiWindow *)UiWindow_Create(8, 3, 8, 3, 2);
   UiWindow_CreateWithSideObject(Localization_LookupEntryId(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
   UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
@@ -2621,7 +2618,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     }
   }
   input[14] = 0;
-  UiText_DrawString(name, (s32)label, 0, 0);
+  UiText_DrawString(name, label, 0, 0);
   column = NAME_COMMAND_COLUMN;
   vramSlot = Resource_FindFreeEntry();
   row = 10;
@@ -2784,7 +2781,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         break;
       }
       RenderOutput_PrepareForRedraw(label);
-      UiText_DrawString(input, (s32)label, 0, 0);
+      UiText_DrawString(input, label, 0, 0);
       textDirty = 1;
       continue;
     }
@@ -2797,7 +2794,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         if (length == 0) {
           caret.output->active = 13;
           RenderOutput_PrepareForRedraw(label);
-          UiText_DrawString(name, (s32)label, 0, 0);
+          UiText_DrawString(name, label, 0, 0);
           WaitFrames(10);
         } else {
           u8 *dst;
@@ -2868,12 +2865,12 @@ s32 NameEntry_EditOwnerName(s32 member) {
         cursorDirty = 1;
       }
       RenderOutput_PrepareForRedraw(label);
-      UiText_DrawString(input, (s32)label, 0, 0);
+      UiText_DrawString(input, label, 0, 0);
       textDirty = 1;
     }
   }
-  UiWork_Finalize((struct UiWindow *)window, 2);
-  UiWork_Finalize((struct UiWindow *)label, 2);
+  UiWork_Finalize(window, 2);
+  UiWork_Finalize(label, 2);
   UiWork_FinalizeEntityMatchingLocalizedId(member);
   WaitFrames(1);
   return result;
@@ -2899,7 +2896,7 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an
    * equal-size struct changes stack-address construction in all six editions.
    */
-  struct RenderInput *window;
+  struct UiWindow *window;
   union MenuCursor cursor;
   s32 slot;
   s32 row;
@@ -3168,9 +3165,8 @@ void RenderResource_LoadPair(s32 picture, s32 slot) {
 // sprites side by side at (x, y) in `window`, on draw layer 253, and
 // returns the left one (the right one follows it in the window's list).
 // Returns NULL when no VRAM slot is free.
-struct RenderOutput *RenderResource_CreatePair(s32 picture,
-                                               struct RenderInput *window,
-                                               s32 x, s32 y) {
+struct RenderOutput *
+RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y) {
   s32 slot;
   struct RenderOutput *first;
   struct RenderOutput *second;
@@ -3226,8 +3222,8 @@ void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
 // 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
 // when no VRAM slot is free.
 struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
-                                                struct RenderInput *window,
-                                                s32 x, s32 y) {
+                                                struct UiWindow *window, s32 x,
+                                                s32 y) {
   s32 slot;
   struct RenderOutput *output;
 
@@ -3304,20 +3300,18 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
 
 // Void changes pop {r1}; bx r1 to r0 and reorders a preview's argument setup.
 #ifdef UBFIX
-void UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
-                                  s32 unused) {
+void UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 arg1, s32 arg2,
+                                  s32 arg3, s32 unused) {
 #else
-int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
-                                 s32 unused) {
+int UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 arg1, s32 arg2,
+                                 s32 arg3, s32 unused) {
 #endif
   s32 tileOffset = arg3 * 2;
   s32 tile = tileOffset + 0xF315;
 
-  UiWindow_SetTilemapEntry((struct UiWindow *)arg0, 0x400 | tile, arg1, arg2,
-                           0);
-  UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tileOffset + 0xF314,
-                           arg1 + 1, arg2, 0);
-  UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile, arg1 + 2, arg2, 0);
+  UiWindow_SetTilemapEntry(window, 0x400 | tile, arg1, arg2, 0);
+  UiWindow_SetTilemapEntry(window, tileOffset + 0xF314, arg1 + 1, arg2, 0);
+  UiWindow_SetTilemapEntry(window, tile, arg1 + 2, arg2, 0);
 }
 
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
@@ -3509,8 +3503,8 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work) {
 //--------------------------------------------------------------------------
 // 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
 //--------------------------------------------------------------------------
-s32 Link_CreateCountdownLabelWindow(void) {
-  s32 win = UiWindow_Create(0, 0, 6, 4, 6);
+struct UiWindow *Link_CreateCountdownLabelWindow(void) {
+  struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) ||                      \
@@ -3810,7 +3804,7 @@ s32 Ui_RunSelectionScreen(s32 mode) {
       RenderOutput_PrepareForRedraw(work->window);
       UiText_DrawCharacterAtOffset(work->entries[work->selection].kind +
                                        MsgCommandName,
-                                   (struct RenderInput *)work->window, 0, 0);
+                                   work->window, 0, 0);
       work->previous = work->selection;
       UiText_DrawCharacter(work, work->selection, work->kinds[work->selection]);
     }
@@ -4073,10 +4067,10 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
 // at pixel (x, y) inside input. Does nothing when no slot is free.
 // The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+void Ui_CreateOutputFromResourceSlot(struct UiWindow *input, s32 x, s32 y,
                                      s32 ability) {
 #else
-s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *input, s32 x, s32 y,
                                     s32 ability) {
 #endif
   s32 slot;
@@ -4088,9 +4082,9 @@ s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
   }
 }
 
-struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
-                                                s32 owner, s32 code, s32 page,
-                                                s32 *pageCount) {
+struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
+                                             s32 code, s32 page,
+                                             s32 *pageCount) {
   struct BattleUnit *unit;
   struct BattleUnit *snap;
   struct BattleAct *info;
@@ -4136,8 +4130,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
       /* FAKEMATCH: typed like the window pointer, the word store waits for the
        * window load but not for the x and y stores, so sched2 places the entry
        * copy before them */
-      *(struct RenderInput **)&entry->attributes =
-          (struct RenderInput *)0x40000400;
+      *(struct UiWindow **)&entry->attributes = (struct UiWindow *)0x40000400;
       zero = 0;
       /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores
        * (sched2 order) */
@@ -4262,7 +4255,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(struct RenderInput *win,
         tile = 11;
       else
         tile--;
-      UiWindow_DrawThreeTileColumn((s32)win, 16, n * 2, tile, 0);
+      UiWindow_DrawThreeTileColumn(win, 16, n * 2, tile, 0);
 
       Ui_CreateOutputFromResourceSlot(win, 0, n * 16 - 4, list[i] & 0x3fff);
       if ((list[i] & 0x8000) != 0)
@@ -4690,121 +4683,96 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         RenderOutput_RedrawSavedRect(winMain);
         UiWindow_MapTextCanvasTiles(winDesc->x, winDesc->y, winDesc->width,
                                     winDesc->height, 0);
-        UiWindow_DrawDividerLine((struct RenderInput *)winMain, 0, 14, 29, 14);
+        UiWindow_DrawDividerLine(winMain, 0, 14, 29, 14);
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
         switch (System_GetLanguage()) {
         case 2:
-          UiText_DrawStringAtOffset((u8 *)object->name,
-                                    (struct RenderInput *)winMain, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NivString,
-                                    (struct RenderInput *)winMain, 51, 0);
-          UiText_DrawNumberInWindow(object->level, 2,
-                                    (struct RenderInput *)winMain, 72, 0);
+          UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NivString, winMain, 51,
+                                    0);
+          UiText_DrawNumberInWindow(object->level, 2, winMain, 72, 0);
           break;
         case 3:
-          UiText_DrawStringAtOffset((u8 *)object->name,
-                                    (struct RenderInput *)winMain, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NvString,
-                                    (struct RenderInput *)winMain, 56, 0);
-          UiText_DrawNumberInWindow(object->level, 2,
-                                    (struct RenderInput *)winMain, 72, 0);
+          UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NvString, winMain, 56,
+                                    0);
+          UiText_DrawNumberInWindow(object->level, 2, winMain, 72, 0);
           break;
         default:
-          UiText_DrawStringAtOffset((u8 *)object->name,
-                                    (struct RenderInput *)winMain, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString,
-                                    (struct RenderInput *)winMain, 56, 0);
-          UiText_DrawNumberInWindow(object->level, 2,
-                                    (struct RenderInput *)winMain, 72, 0);
+          UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain, 56,
+                                    0);
+          UiText_DrawNumberInWindow(object->level, 2, winMain, 72, 0);
           break;
         }
 #else
-        UiText_DrawStringAtOffset((u8 *)object->name,
-                                  (struct RenderInput *)winMain, 0, 0);
+        UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
 #if defined(TBS_EDITION_FR)
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString,
-                                  (struct RenderInput *)winMain, 51, 0);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain, 51,
+                                  0);
 #else
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString,
-                                  (struct RenderInput *)winMain, 56, 0);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain, 56,
+                                  0);
 #endif
-        UiText_DrawNumberInWindow(object->level, 2,
-                                  (struct RenderInput *)winMain, 72, 0);
+        UiText_DrawNumberInWindow(object->level, 2, winMain, 72, 0);
 #endif
-        UiText_DrawCharacterAtOffset(MsgOwnerStatusExp,
-                                     (struct RenderInput *)winMain, 0, 8);
-        UiText_DrawNumberInWindow(object->experience, 8,
-                                  (struct RenderInput *)winMain, 40, 8);
+        UiText_DrawCharacterAtOffset(MsgOwnerStatusExp, winMain, 0, 8);
+        UiText_DrawNumberInWindow(object->experience, 8, winMain, 40, 8);
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
         switch (System_GetLanguage()) {
         case 1:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString,
-                                    (struct RenderInput *)winMain, 40, 24);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, winMain, 40,
+                                    24);
           break;
         case 2:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                    (struct RenderInput *)winMain, 40, 24);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, winMain, 40,
+                                    24);
           break;
         case 3:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                    (struct RenderInput *)winMain, 40, 24);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, winMain, 40,
+                                    24);
           break;
         case 4:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                    (struct RenderInput *)winMain, 40, 24);
+          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, winMain, 40,
+                                    24);
           break;
         }
 #else
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                  (struct RenderInput *)winMain, 40, 24);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, winMain, 40, 24);
 #endif
-        UiText_DrawNumberInWindow(object->hp, 4, (struct RenderInput *)winMain,
-                                  56, 24);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                  (struct RenderInput *)winMain, 88, 24);
-        UiText_DrawNumberInWindow(object->maxHp, 4,
-                                  (struct RenderInput *)winMain, 96, 24);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString,
-                                  (struct RenderInput *)winMain, 40, 32);
-        UiText_DrawNumberInWindow(object->pp, 4, (struct RenderInput *)winMain,
-                                  56, 32);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                  (struct RenderInput *)winMain, 88, 32);
-        UiText_DrawNumberInWindow(object->maxPp, 4,
-                                  (struct RenderInput *)winMain, 96, 32);
+        UiText_DrawNumberInWindow(object->hp, 4, winMain, 56, 24);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, winMain, 88,
+                                  24);
+        UiText_DrawNumberInWindow(object->maxHp, 4, winMain, 96, 24);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString, winMain, 40, 32);
+        UiText_DrawNumberInWindow(object->pp, 4, winMain, 56, 32);
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, winMain, 88,
+                                  32);
+        UiText_DrawNumberInWindow(object->maxPp, 4, winMain, 96, 32);
 
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(0),
-                                     (struct RenderInput *)winMain, 136, 16);
-        UiText_DrawNumberInWindow(object->atk, 3, (struct RenderInput *)winMain,
-                                  OWNER_STATUS_VALUE_X, 16);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(1),
-                                     (struct RenderInput *)winMain, 136, 24);
-        UiText_DrawNumberInWindow(object->def, 3, (struct RenderInput *)winMain,
-                                  OWNER_STATUS_VALUE_X, 24);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(2),
-                                     (struct RenderInput *)winMain, 136, 32);
-        UiText_DrawNumberInWindow(object->agi, 3, (struct RenderInput *)winMain,
-                                  OWNER_STATUS_VALUE_X, 32);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(3),
-                                     (struct RenderInput *)winMain, 136, 40);
-        UiText_DrawNumberInWindow(object->luck, 3,
-                                  (struct RenderInput *)winMain,
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(0), winMain, 136, 16);
+        UiText_DrawNumberInWindow(object->atk, 3, winMain, OWNER_STATUS_VALUE_X,
+                                  16);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(1), winMain, 136, 24);
+        UiText_DrawNumberInWindow(object->def, 3, winMain, OWNER_STATUS_VALUE_X,
+                                  24);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(2), winMain, 136, 32);
+        UiText_DrawNumberInWindow(object->agi, 3, winMain, OWNER_STATUS_VALUE_X,
+                                  32);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(3), winMain, 136, 40);
+        UiText_DrawNumberInWindow(object->luck, 3, winMain,
                                   OWNER_STATUS_VALUE_X, 40);
 
-        UiText_DrawCharacterAtOffset(MsgClassName + object->classIndex,
-                                     (struct RenderInput *)winMain, 0, 48);
+        UiText_DrawCharacterAtOffset(MsgClassName + object->classIndex, winMain,
+                                     0, 48);
         if (extended != 0) {
-          UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(9),
-                                       (struct RenderInput *)winMain, 0, 72);
+          UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(9), winMain, 0, 72);
         }
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(5),
-                                     (struct RenderInput *)winMain, 0, 80);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(6),
-                                     (struct RenderInput *)winMain, 0, 88);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(7),
-                                     (struct RenderInput *)winMain, 0, 96);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(5), winMain, 0, 80);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(6), winMain, 0, 88);
+        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(7), winMain, 0, 96);
 
         for (j = 0; j <= 3; j++) {
           s32 pal;
@@ -4813,28 +4781,21 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           if (extended != 0) {
             pal = 0;
           }
-          UiWindow_SetTilemapEntry((struct RenderInput *)winMain, 0x5001 + j,
-                                   7 + j * 4, pal + 8, 0);
+          UiWindow_SetTilemapEntry(winMain, 0x5001 + j, 7 + j * 4, pal + 8, 0);
           if (extended != 0) {
-            UiText_DrawNumberInWindow(object->djinnActiveCounts[j], 1,
-                                      (struct RenderInput *)winMain,
+            UiText_DrawNumberInWindow(object->djinnActiveCounts[j], 1, winMain,
                                       40 + j * 32, 72);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      (struct RenderInput *)winMain,
+            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, winMain,
                                       48 + j * 32, 72);
-            UiText_DrawNumberInWindow(object->djinnOwnedCounts[j], 1,
-                                      (struct RenderInput *)winMain,
+            UiText_DrawNumberInWindow(object->djinnOwnedCounts[j], 1, winMain,
                                       48 + j * 32 + 8, 72);
           }
           UiText_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
-                                    (struct RenderInput *)winMain, 48 + j * 32,
-                                    80);
-          UiText_DrawNumberInWindow(object->element[j].power, 3,
-                                    (struct RenderInput *)winMain, 40 + j * 32,
-                                    88);
-          UiText_DrawNumberInWindow(object->element[j].resistance, 3,
-                                    (struct RenderInput *)winMain, 40 + j * 32,
-                                    96);
+                                    winMain, 48 + j * 32, 80);
+          UiText_DrawNumberInWindow(object->element[j].power, 3, winMain,
+                                    40 + j * 32, 88);
+          UiText_DrawNumberInWindow(object->element[j].resistance, 3, winMain,
+                                    40 + j * 32, 96);
         }
 
         i = 0;
@@ -4954,7 +4915,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         if (selection[0] == 0) {
           UiText_DrawCharacterAtOffset(object->hp != 0 ? MsgOwnerStatusNormal
                                                        : MsgOwnerStatusDowned,
-                                       (struct RenderInput *)winMain, 112, 0);
+                                       winMain, 112, 0);
         }
       }
 
@@ -5132,6 +5093,8 @@ struct LinkRoundState {
   s32 unk38;
   s32 unk3c;
   s32 unk40;
+  // A pointer field swaps two native initialization stores; keep its encoded
+  // handle and convert at the window API boundaries.
   s32 displayHandle;
   s32 secondaryHandle;
   s32 timer;
@@ -5314,15 +5277,13 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             }
           } else {
             detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
-                (struct RenderInput *)detailWin, owner, (s32)cur, subSelection,
-                &subCnt);
+                detailWin, owner, (s32)cur, subSelection, &subCnt);
             UiText_CopyMessageString(MsgBattleSummonStandby, buf, TEXT_COUNT);
             mask = 1 << ((cur & 0xf00) >> 8);
           }
         } else {
           detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
-              (struct RenderInput *)detailWin, owner, (s32)cur, subSelection,
-              &subCnt);
+              detailWin, owner, (s32)cur, subSelection, &subCnt);
           TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) +
                         MsgDjinnEffect,
                     buf, TEXT_COUNT);
@@ -5343,9 +5304,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         RenderOutput_RedrawSavedRect(listWin);
         j = 0;
         while ((code = table[page + j]) != 0x80000000) {
-          UiWindow_SetTilemapEntry((struct RenderInput *)listWin,
-                                   (s32)((code & 0xf00) >> 8) + 0x5001, 0,
-                                   j * 2, 0);
+          UiWindow_SetTilemapEntry(listWin, (s32)((code & 0xf00) >> 8) + 0x5001,
+                                   0, j * 2, 0);
           if (code & 0x3e0000) {
             UiWork_SetParamNibble(4);
           } else if (code & 0x10000) {
@@ -5353,11 +5313,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
           UiText_DrawCharacterAtOffset(
               (s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + MsgDjinnName,
-              (struct RenderInput *)listWin, 8, j * 16);
+              listWin, 8, j * 16);
           if (code & 0x3e0000) {
-            UiText_DrawNumberAtOffset(
-                (s32)((code & 0x3e0000) >> 17), TURNS_DIGITS,
-                (struct RenderInput *)listWin, TURNS_X, j * 16);
+            UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17),
+                                      TURNS_DIGITS, listWin, TURNS_X, j * 16);
           }
           UiWork_SetParamNibble(15);
           j++;
@@ -5373,7 +5332,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           if (j == (page / 5)) {
             tile = j + 0xf30b;
           }
-          UiWindow_SetTilemapEntry((struct RenderInput *)listWin, tile,
+          UiWindow_SetTilemapEntry(listWin, tile,
                                    listWin->width - pages + j - 2, -1, 0);
         }
       }
@@ -5391,20 +5350,17 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             tile = j + 0xf30b;
           }
         }
-        UiWindow_SetTilemapEntry((struct RenderInput *)listWin, tile,
-                                 listWin->width - ((cnt + 4) / 5) + j - 2, -1,
-                                 0);
+        UiWindow_SetTilemapEntry(
+            listWin, tile, listWin->width - ((cnt + 4) / 5) + j - 2, -1, 0);
       }
       if ((gKeysHeld & 0x100) == 0) {
-        UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf334,
+        UiWindow_SetTilemapEntry(listWin, 0xf334,
                                  listWin->width - (cnt + 4) / 5 - 3, -1, 0);
-        UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf335,
-                                 listWin->width - 2, -1, 0);
+        UiWindow_SetTilemapEntry(listWin, 0xf335, listWin->width - 2, -1, 0);
       } else {
-        UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf011,
+        UiWindow_SetTilemapEntry(listWin, 0xf011,
                                  listWin->width - (cnt + 4) / 5 - 3, -1, 0);
-        UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf012,
-                                 listWin->width - 2, -1, 0);
+        UiWindow_SetTilemapEntry(listWin, 0xf012, listWin->width - 2, -1, 0);
       }
       UiRender_MarkRow(ctx, listWin->y - 1);
     }
@@ -5485,13 +5441,13 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             if ((gFrameCount & 15) <= 11 && i == subSelection - 1) {
               tile = subSelection - 1 + 0xf30b;
             }
-            UiWindow_SetTilemapEntry((struct RenderInput *)detailWin, tile,
+            UiWindow_SetTilemapEntry(detailWin, tile,
                                      detailWin->width - subCnt + i - 2, -1, 0);
           }
-          UiWindow_SetTilemapEntry((struct RenderInput *)detailWin, 0xf334,
+          UiWindow_SetTilemapEntry(detailWin, 0xf334,
                                    detailWin->width - subCnt - 3, -1, 0);
-          UiWindow_SetTilemapEntry((struct RenderInput *)detailWin, 0xf335,
-                                   detailWin->width - 2, -1, 0);
+          UiWindow_SetTilemapEntry(detailWin, 0xf335, detailWin->width - 2, -1,
+                                   0);
           UiRender_MarkRow(ctx, detailWin->y);
         }
         if (subSelection == 0 && subCnt != 0) {
@@ -5828,7 +5784,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
               UiWork_SetParamNibble(2); // 呼べない召喚は色 2
             UiText_DrawCharacterAtOffset(
                 SummonDefinition_Get(id)->nameMessageId + MsgAbilityName,
-                (struct RenderInput *)window, 16, index * 16);
+                window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
                 UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE,
@@ -6149,8 +6105,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
             UiWork_SetParamNibble(2);
           }
           UiText_DrawCharacterAtOffset((entry & ITEM_ID_MASK) + MsgItemName,
-                                       (struct RenderInput *)window, 16,
-                                       i * 16);
+                                       window, 16, i * 16);
           UiWork_SetParamNibble(15);
           sprites[i].oam.f.tile =
               Resource_LoadKind26EntryToBuffer(entry, handles[i]);
@@ -6433,10 +6388,9 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           }
 
           render->level = 5;
-          UiText_DrawCharacterAtOffset(
-              entry + MsgAbilityName, (struct RenderInput *)window, 16, i * 16);
-          UiText_DrawNumberAtOffset(action->ppCost, 2,
-                                    (struct RenderInput *)window, 104, i * 16);
+          UiText_DrawCharacterAtOffset(entry + MsgAbilityName, window, 16,
+                                       i * 16);
+          UiText_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
           UiWork_SetParamNibble(15);
           render->level = 15;
 
@@ -6451,7 +6405,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           } else {
             range--;
           }
-          UiWindow_DrawThreeTileColumn((s32)window, 16, i * 2, range, 0);
+          UiWindow_DrawThreeTileColumn(window, 16, i * 2, range, 0);
         }
         iconCount = i;
         drawnPage = page;
@@ -6931,8 +6885,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #endif
           }
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetSetDjinni,
-                                         (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(MsgTargetSetDjinni, infoWin, 0, 0);
             UiWork_SetParamNibble(15);
             break;
           case 1: {
@@ -6947,30 +6900,30 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
             switch (System_GetLanguage()) {
             case 1:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString,
-                                        (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, infoWin, 0,
+                                        0);
               break;
             case 2:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, infoWin, 0,
+                                        0);
               break;
             case 3:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, infoWin, 0,
+                                        0);
               break;
             case 4:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                        (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, infoWin, 0,
+                                        0);
               break;
             }
 #else
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                      (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, infoWin, 0,
+                                      0);
 #endif
-            UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      (struct RenderInput *)infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxHp, 4, (s32)infoWin, 56, 0);
+            UiText_DrawNumberInWindow(unit->hp, 4, infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, infoWin,
+                                      48, 0);
+            UiText_DrawNumberInWindow(unit->maxHp, 4, infoWin, 56, 0);
             break;
           case 2: {
             s32 anchor;
@@ -6981,12 +6934,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
           }
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString,
-                                      (struct RenderInput *)infoWin, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      (struct RenderInput *)infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->maxPp, 4, (s32)infoWin, 56, 0);
+            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString, infoWin, 0,
+                                      0);
+            UiText_DrawNumberInWindow(unit->pp, 4, infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, infoWin,
+                                      48, 0);
+            UiText_DrawNumberInWindow(unit->maxPp, 4, infoWin, 56, 0);
             break;
           case 5: {
             s32 anchor;
@@ -6999,8 +6952,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
             if (unit->hp != 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetDowned,
-                                         (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(MsgTargetDowned, infoWin, 0, 0);
             break;
           case 3: {
             s32 anchor;
@@ -7013,8 +6965,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
             if (unit->poison == 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetCurePoison,
-                                         (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(MsgTargetCurePoison, infoWin, 0, 0);
             break;
           case 4:
             count = 0;
@@ -7060,31 +7011,27 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             }
             count = 0;
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion, infoWin, 0,
+                                           0);
               count = 1;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureStun, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, infoWin, 0,
                                            count * 8);
               ++count;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, infoWin, 0,
                                            count * 8);
               count++;
             }
@@ -7141,43 +7088,36 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             }
             count = 0;
             if (unit->poison != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCurePoison,
-                                           (struct RenderInput *)infoWin, 0, 0);
+              UiText_DrawCharacterAtOffset(MsgTargetCurePoison, infoWin, 0, 0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureStun, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, infoWin, 0,
                                            count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureHaunt,
-                                           (struct RenderInput *)infoWin, 0,
+              UiText_DrawCharacterAtOffset(MsgTargetCureHaunt, infoWin, 0,
                                            8 * count);
               count++;
             }
@@ -7185,8 +7125,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               break;
           no_condition:
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetNoEffect,
-                                         (struct RenderInput *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(MsgTargetNoEffect, infoWin, 0, 0);
             UiWork_SetParamNibble(15);
             break;
           }
@@ -7425,7 +7364,7 @@ void UpdateLinkSessionCountdown(void) {
 
   timer_ready:
     if (state->displayHandle == 0 && state->secondaryHandle == 0) {
-      state->displayHandle = Link_CreateCountdownLabelWindow();
+      state->displayHandle = (s32)Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 
@@ -7442,13 +7381,14 @@ void UpdateLinkSessionCountdown(void) {
       AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
 
     if (state->displayHandle != 0)
-      UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
+      UiText_DrawNumberInWindow(seconds, 2,
+                                (struct UiWindow *)state->displayHandle, 16, 8);
   }
 }
 
 s32 UiText_ShowLocalizedMessageAndWait(void) {
   s16 buffer[64];
-  s32 work;
+  struct UiWindow *work;
   s32 result;
   struct BattleWork *battle;
   s32 mode;
@@ -7763,11 +7703,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
       case 0:
         win = UiWindow_Create(11, 17, 11, 3, 6);
 #if defined(TBS_EDITION_FR)
-        UiText_DrawCharacterAtOffset(MsgCommandName, (struct RenderInput *)win,
-                                     14, 0);
+        UiText_DrawCharacterAtOffset(MsgCommandName, win, 14, 0);
 #else
-        UiText_DrawCharacterAtOffset(MsgCommandName, (struct RenderInput *)win,
-                                     16, 0);
+        UiText_DrawCharacterAtOffset(MsgCommandName, win, 16, 0);
 #endif
         state->entries[0].oam.f.x = 64;
         AudioCommand_PlayFar(112);
@@ -7853,10 +7791,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         } else if (actor->psySeal != 0) {
           UiWork_SetParamNibble(9);
         }
-        UiText_DrawCharacterAtOffset(param + MsgAbilityName,
-                                     (struct RenderInput *)win, 16, 0);
-        UiText_DrawNumberAtOffset(ability->ppCost, 2, (struct RenderInput *)win,
-                                  104, 0);
+        UiText_DrawCharacterAtOffset(param + MsgAbilityName, win, 16, 0);
+        UiText_DrawNumberAtOffset(ability->ppCost, 2, win, 104, 0);
         ui->level = 15;
         UiWork_SetParamNibble(15);
         UiWindow_SetTilemapEntry(win, 61471, 11, 0, 0);
@@ -8150,9 +8086,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(
             actor->inventory[selection], handle);
         state->entryActive[1] = 1;
-        UiText_DrawCharacterAtOffset((actor->inventory[selection] & 0x1ff) +
-                                         MsgItemName,
-                                     (struct RenderInput *)win, 24, 0);
+        UiText_DrawCharacterAtOffset(
+            (actor->inventory[selection] & 0x1ff) + MsgItemName, win, 24, 0);
         ent->range = cost;
         AudioCommand_PlayFar(112);
         mode = BattleTarget_RunSelection(
@@ -8781,17 +8716,14 @@ void Menu_DrawModeIndicator(void) {
   if (state->previousMode != state->selection) {
     if (state->selection == 0) {
       RenderOutput_ClearList(state->lowerWindow);
-      UiText_DrawResource(MsgPasswordTransferHelp, (s32)state->lowerWindow, 16,
-                          4);
-      UiText_DrawResource(MsgPasswordTransferHelp + 1, (s32)state->lowerWindow,
-                          16, 16);
+      UiText_DrawResource(MsgPasswordTransferHelp, state->lowerWindow, 16, 4);
+      UiText_DrawResource(MsgPasswordTransferHelp + 1, state->lowerWindow, 16,
+                          16);
     } else if (state->previousMode == 0) {
       RenderOutput_ClearList(state->lowerWindow);
-      UiText_DrawResource(MsgCableTransferHelp, (s32)state->lowerWindow, 0, 4);
-      UiText_DrawResource(MsgCableTransferHelp + 1, (s32)state->lowerWindow, 0,
-                          16);
-      UiText_DrawResource(MsgCableTransferHelp + 2, (s32)state->lowerWindow, 0,
-                          28);
+      UiText_DrawResource(MsgCableTransferHelp, state->lowerWindow, 0, 4);
+      UiText_DrawResource(MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
+      UiText_DrawResource(MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
     }
     state->previousMode = state->selection;
   }
@@ -8880,7 +8812,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     msg = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
-    UiText_DrawResource(msg, (s32)window, 0, 4);
+    UiText_DrawResource(msg, window, 0, 4);
 #if EDITION_INTERNATIONAL
 #if defined(TBS_EDITION_DE)
     window = UiWindow_Create(1, 4, 28, 12, 2);
@@ -8888,16 +8820,16 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     window = UiWindow_Create(3, 4, 25, 12, 2);
 #endif
     work->lowerWindow = window;
-    UiText_DrawResource(msg + 1, (s32)window, 8, 0);
-    UiText_DrawResource(msg + 2, (s32)work->lowerWindow, 8, 11);
+    UiText_DrawResource(msg + 1, window, 8, 0);
+    UiText_DrawResource(msg + 2, work->lowerWindow, 8, 11);
     msg += 3;
-    UiText_DrawResource(msg, (s32)work->lowerWindow, 8, 22);
+    UiText_DrawResource(msg, work->lowerWindow, 8, 22);
 #else
     window = UiWindow_Create(5, 4, 21, 12, 2);
     work->lowerWindow = window;
-    UiText_DrawResource(msg + 1, (s32)window, 0, 4);
+    UiText_DrawResource(msg + 1, window, 0, 4);
     msg += 2;
-    UiText_DrawResource(msg, (s32)work->lowerWindow, 0, 16);
+    UiText_DrawResource(msg, work->lowerWindow, 0, 16);
 #endif
   } else {
     Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
@@ -8914,9 +8846,9 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     upper = &work->upperWindow;
     *upper = window;
 #if EDITION_INTERNATIONAL
-    UiText_DrawResource(MsgTransferMethod, (s32)window, 2, 4);
+    UiText_DrawResource(MsgTransferMethod, window, 2, 4);
 #else
-    UiText_DrawResource(MsgTransferMethod, (s32)window, 0, 4);
+    UiText_DrawResource(MsgTransferMethod, window, 0, 4);
 #endif
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -9082,12 +9014,12 @@ void Menu_DrawSelectionRow(struct UiWindow *work, s32 first,
   s16 selected = first;
   s32 label = Scene_GetAreaNameIndexFar(selected, *second) + MsgDebugEntryName;
   RenderOutput_PrepareForRedraw(work);
-  UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
-  UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);
-  UiText_DrawString(gMenu_ColonString, (s32)work, MENU_TEXT_X, 0);
-  UiText_DrawResource(selected + MsgDebugCategoryName, (s32)work, 0, 0);
-  UiText_DrawString(gMenu_ColonString, (s32)work, MENU_TEXT_X, 14);
-  UiText_DrawResource(label, (s32)work, MENU_LABEL_X, 0);
+  UiText_DrawNumber(selected, 3, work, 0, 14);
+  UiText_DrawNumber(*second, 3, work, MENU_LABEL_X, 14);
+  UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
+  UiText_DrawResource(selected + MsgDebugCategoryName, work, 0, 0);
+  UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
+  UiText_DrawResource(label, work, MENU_LABEL_X, 0);
 }
 
 s16 Menu_RunSelection(void) {
@@ -9130,7 +9062,8 @@ s16 Menu_RunSelection(void) {
   }
 }
 
-s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
+s32 Menu_HandleSelectionRowInput(struct UiWindow *arg, s16 value, s16 *sub,
+                                 s16 *mode) {
   if (gKeysRepeat & KEY_A)
     return -1;
   if (gKeysRepeat & KEY_B)
@@ -9149,7 +9082,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 200)
       value = 0;
-    Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*mode == 0) {
       value--;
@@ -9160,7 +9093,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 200;
-    Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   } else if (gKeysRepeat & KEY_R) {
     if (*mode == 0) {
       *sub = 0;
@@ -9202,13 +9135,13 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   s32 cur[2];            // カーソルの列・行
   s32 res;
   s32 page;
-  s32 win;
+  struct UiWindow *win;
   s32 ret;
 
   page = 8;
   win = 0;
-  cur[0] = win;
-  cur[1] = win;
+  cur[0] = 0;
+  cur[1] = 0;
   win = UiWindow_Create(1, 0, 28, 20, 2);
   Menu_DrawFlagBitTable(win, page);
   UiTextResource_Initialize(&obj, &res);
@@ -9254,14 +9187,14 @@ void Text_FormatHex(u32 value, u32 count, u8 *out) {
     *out++ = buf[i];
 }
 
-void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
+void Menu_DrawFlagBitTable(struct UiWindow *window, s32 startFlag) {
   s32 row;
   s32 y;
   s32 flag;
   char label[5];
   char bits[17];
 
-  RenderOutput_PrepareForRedraw((struct UiWindow *)window);
+  RenderOutput_PrepareForRedraw(window);
   UiText_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;
@@ -9273,7 +9206,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
     for (i = 0; i != 5; i++) {
       label[i] = 0;
     }
-    Text_FormatHex(flag, 3, (s32)label);
+    Text_FormatHex(flag, 3, label);
     UiText_DrawStringInWindow((u8 *)label, window, 0, y);
     UiText_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
 
@@ -9287,7 +9220,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
   }
 }
 
-s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
+s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
   if (gKeysRepeat & KEY_A) {
@@ -9369,7 +9302,7 @@ s32 DebugMenu_BrowseIcons(void) {
   s32 tile;
   s32 page;
   s32 mode;
-  struct RenderInput *window;
+  struct UiWindow *window;
   s32 slot;
   s32 base;
   s32 i;
@@ -9458,9 +9391,9 @@ s32 DebugMenu_BrowseIcons(void) {
 
 s32 DebugMenu_BrowseEntryGlyphs(void) {
   struct UiRenderWork *work;
-  struct RenderInput *portrait;
+  struct UiWindow *portrait;
   s32 redraw;
-  struct RenderInput *window;
+  struct UiWindow *window;
   s32 count;
   s32 total;
   s32 index;

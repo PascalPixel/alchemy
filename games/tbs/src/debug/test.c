@@ -56,7 +56,7 @@ static void SceneDialogue_ShowMessageAndWait(s32 arg0) {
 }
 
 static void CommandTable_RunDirectionalInput(s32 x, s32 cnt) {
-  s32 token;
+  struct UiWindow *token;
   s32 i;
 
   gGameState.messageSpeed = 2;
@@ -527,8 +527,8 @@ static void EV05_TALK(void) {
 }
 
 static void DebugMenu_SelectItem(void) {
-  struct RenderInput *window;
-  struct RenderInput *details;
+  struct UiWindow *window;
+  struct UiWindow *details;
   s32 item;
   s32 redraw;
   s32 index;

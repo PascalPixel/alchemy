@@ -711,8 +711,7 @@ static void EV45_TOUCH(void) {
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gVenusLeaderApproachScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusLeaderApproachScript);
   Object_RefreshSelectorById(0);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
   actor->velocityY = 0x40000;
@@ -1276,7 +1275,7 @@ static void EV09_PSYNERGY(void) {
         Object_GetById(10)->collisionFlags = set;
         Object_GetById(10)->priorityFlags |= 2;
         Engine_ActorSetPosition(10, 0x3280000, 0x2d80000);
-        Engine_ActorEnableActionCallback(10, gVenusPushScript);
+        Actor_SetActionScript(10, gVenusPushScript);
         Object_RefreshSelectorById(10);
         Engine_EventWait(30);
         Engine_AudioPlayCue(158);

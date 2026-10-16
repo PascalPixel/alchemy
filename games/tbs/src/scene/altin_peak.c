@@ -454,7 +454,7 @@ static void Mine_DrainFirstWater(void) {
       puddle = Actor_Get(8);
       puddle->scaleY = 0x1999;
       Actor_SetPosition(8, PIXELS(152), PIXELS(216));
-      Engine_ActorEnableActionCallback(8, gAltinPeak_PuddleGrowScript);
+      Actor_SetActionScript(8, gAltinPeak_PuddleGrowScript);
     }
   }
   // Flicker the water away while the timer counts to 100.
@@ -789,8 +789,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
   actor0->timer = 0;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gAltinPeak_LeaderRideScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderRideScript);
   if (GameFlag_IsSet(0x205) != 0) {
     Actor_SetPosition(GARET, 0x36e0000, 0x2100000);
     actor = Actor_Get(GARET);
@@ -802,7 +801,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0) {
   Engine_ActorSetSpritePriority(8, 1);
   Actor_SetSpeed(8, 0x195c2, 0xcae1);
   actor8->timer = 0;
-  Engine_ActorEnableActionCallback(8, gAltinPeak_LogRideScript);
+  Actor_SetActionScript(8, gAltinPeak_LogRideScript);
   do {
     Engine_TaskWait(1);
   } while (actor0->timer == 0);
@@ -1844,8 +1843,8 @@ static void RunEventScript01(void) {
   struct FieldActor *record;
   struct EventWork *work;
   s32 update;
-  s32 celebrate;
-  s32 party;
+  const s32 *celebrate;
+  const s32 *party;
 
   Engine_EventBegin();
   Actor_SetPosition(8, 0x1480000, 0x580000);
@@ -1872,8 +1871,8 @@ static void RunEventScript01(void) {
   Actor_SetSpeed(GARET, 0x9999, 0x4ccc);
   Actor_SetSpeed(IVAN, 0x9999, 0x4ccc);
   Actor_SetSpeed(MIA, 0x9999, 0x4ccc);
-  Engine_ActorEnableActionCallback(1, gAltinPeak_GaretScript);
-  Engine_ActorEnableActionCallback(2, gAltinPeak_IvanScript);
+  Actor_SetActionScript(1, gAltinPeak_GaretScript);
+  Actor_SetActionScript(2, gAltinPeak_IvanScript);
   Object_SetActionCallbackAndRefreshById(3, gAltinPeak_MiaScript);
   Actor_FaceDirection(GARET, 0xc000, 0);
   Actor_FaceDirection(IVAN, 0xc000, 0);
@@ -1925,9 +1924,9 @@ static void RunEventScript01(void) {
   Event_PlayCue(103);
   update = (s32)SceneActor_SetActor8ModeByCounterBit;
   Task_AddCallback((void (*)(void))update, 0xc80);
-  celebrate = (s32)gAltinPeak_CelebrateScript;
-  Engine_ActorEnableActionCallback(9, celebrate);
-  Object_SetActionCallbackAndRefreshById(8, celebrate);
+  celebrate = gAltinPeak_CelebrateScript;
+  Actor_SetActionScript(9, celebrate);
+  Object_SetActionCallbackAndRefreshById(8, (s32)celebrate);
   Engine_TaskRemoveCallback(update);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1950,10 +1949,10 @@ static void RunEventScript01(void) {
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Engine_EventWait(20);
-  party = (s32)gAltinPeak_PartyScript;
-  Engine_ActorEnableActionCallback(GARET, party);
-  Engine_ActorEnableActionCallback(2, party);
-  Object_SetActionCallbackAndRefreshById(3, party);
+  party = gAltinPeak_PartyScript;
+  Actor_SetActionScript(GARET, party);
+  Actor_SetActionScript(2, party);
+  Object_SetActionCallbackAndRefreshById(3, (s32)party);
   Engine_EventWait(20);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

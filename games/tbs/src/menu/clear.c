@@ -258,7 +258,9 @@ s32 __divsi3(s32, s32);
 s32 SaveMenu_Run(void) {
   s32 pageCount;
   s32 encodedSize;
-  s32 pageWindow;
+  struct UiWindow *pageWindow;
+  // Reused numeric/window handles retain the native allocation: separate
+  // pointer locals change SaveMenu_Run's register allocation and four bytes.
   s32 rec5;
   s32 rec7;
   s32 record;
@@ -273,8 +275,8 @@ s32 SaveMenu_Run(void) {
   s32 pageMessage;
   s32 page;
   s32 started;
-  s32 helpWindow;
-  s32 headingWindow;
+  struct UiWindow *helpWindow;
+  struct UiWindow *headingWindow;
   u8 saveData[200];
 #if EDITION_INTERNATIONAL
   u8 password[320];
@@ -458,15 +460,15 @@ menu_top:;
     if (v6 == 1) {
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-      v6 = UiWindow_Create(4, 5, 22, 8, 2);
+      v6 = (s32)UiWindow_Create(4, 5, 22, 8, 2);
 #else
-      v6 = UiWindow_Create(6, 5, 18, 8, 2);
+      v6 = (s32)UiWindow_Create(6, 5, 18, 8, 2);
 #endif
       linkMessage = MsgClearSaveLabel;
 
-      UiText_DrawResource(linkMessage, v6, 0, 4);
-      UiText_DrawResource((linkMessage + 1), v6, 0, 16);
-      UiText_DrawResource((linkMessage + 3), v6, 0, 36);
+      UiText_DrawResource(linkMessage, (struct UiWindow *)v6, 0, 4);
+      UiText_DrawResource((linkMessage + 1), (struct UiWindow *)v6, 0, 16);
+      UiText_DrawResource((linkMessage + 3), (struct UiWindow *)v6, 0, 36);
       SerialRuntime_Initialize();
       Engine_TaskWait(10);
       {
@@ -524,18 +526,18 @@ menu_top:;
         }
         Engine_TaskWait(1);
       }
-      UiWork_Finalize(v6, 2);
+      UiWork_Finalize((struct UiWindow *)v6, 2);
       if (v7 == 0) {
         goto link_select;
       }
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-      v6 = UiWindow_Create(4, 10, 22, 4, 2);
+      v6 = (s32)UiWindow_Create(4, 10, 22, 4, 2);
 #else
-      v6 = UiWindow_Create(5, 10, 20, 4, 2);
+      v6 = (s32)UiWindow_Create(5, 10, 20, 4, 2);
 #endif
 
-      UiText_DrawResource(MsgClearSendingData, v6, 0, 4);
+      UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
       Engine_TaskWait(10);
       SerialRuntime_BeginSend((s32)gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
@@ -557,8 +559,9 @@ menu_top:;
         Engine_TaskWait(1);
       }
       if (v4 == 0) {
-        RenderOutput_PrepareForRedraw(v6);
-        UiText_DrawResource(MsgClearCommunicationError, v6, 0, 4);
+        RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
+        UiText_DrawResource(MsgClearCommunicationError, (struct UiWindow *)v6,
+                            0, 4);
         v5 = 1;
         do {
           Engine_TaskWait(1);
@@ -568,11 +571,11 @@ menu_top:;
       SerialRuntime_RemoveIrqHandlers();
       Engine_TaskWait(10);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-      UiWork_Finalize(v6, 2);
+      UiWork_Finalize((struct UiWindow *)v6, 2);
       Engine_TaskWait(1);
 #else
-      RenderOutput_PrepareForRedraw(v6);
-      UiWork_Finalize(v6, 2);
+      RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
+      UiWork_Finalize((struct UiWindow *)v6, 2);
 #endif
       goto menu_top;
     }
@@ -601,17 +604,17 @@ menu_top:;
       pageCount = ((encodedSize / 50) + 1);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
     defined(TBS_EDITION_IT)
-      record = UiWindow_Create(8, 0, 13, 4, v6);
+      record = (s32)UiWindow_Create(8, 0, 13, 4, v6);
 #else
-      record = UiWindow_Create(10, 0, 10, 4, v6);
+      record = (s32)UiWindow_Create(10, 0, 10, 4, v6);
 #endif
       pageMessage = MsgClearPasswordLabel;
-      headingWindow = record;
+      headingWindow = (struct UiWindow *)record;
       UiText_DrawResource(pageMessage, headingWindow, 6, 4);
       v7 = 1;
       if (pageCount == 1) {
-        record = UiWindow_Create(5, 16, 20, 3, v6);
-        helpWindow = record;
+        record = (s32)UiWindow_Create(5, 16, 20, 3, v6);
+        helpWindow = (struct UiWindow *)record;
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow, 80, 0);
 #else
@@ -620,13 +623,13 @@ menu_top:;
       } else {
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-        record = UiWindow_Create(0, 16, 30, 3, v6);
+        record = (s32)UiWindow_Create(0, 16, 30, 3, v6);
 #elif !EDITION_INTERNATIONAL
-        record = UiWindow_Create(3, 16, 24, 3, v6);
+        record = (s32)UiWindow_Create(3, 16, 24, 3, v6);
 #else
-        record = UiWindow_Create(1, 16, 28, 3, v6);
+        record = (s32)UiWindow_Create(1, 16, 28, 3, v6);
 #endif
-        helpWindow = record;
+        helpWindow = (struct UiWindow *)record;
         UiText_DrawCharacterAtOffset(pageMessage - 1, helpWindow, 0, 0);
       }
       Graphics_ExpandVramTilesByColorTable(0x6006000);
@@ -752,7 +755,7 @@ leave:;
   return 0;
 }
 
-static void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value) {
+static void SaveMenu_FillTileGrid(struct UiWindow *window, s32 value) {
   u16 *shadow;
   u16 *vram;
   s32 saved;
@@ -779,7 +782,7 @@ static void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value) {
   Runtime_BumpFree((void *)saved);
 }
 
-static void SaveMenu_FillTileBlock(const struct RenderInput *window) {
+static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
   s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
   s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
   s16 *vram;

@@ -47,7 +47,7 @@ s32 ConditionalSceneSetup_InitForScene15(void) {
 
 static void RunEventScript01(void) {
   struct EventWork *work;
-  s32 actionScript;
+  const s32 *actionScript;
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(14, 0);
@@ -217,10 +217,9 @@ static void RunEventScript01(void) {
   Camera_MoveTo(0xd60000, -1, 0x1d80000, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gValeEruption_ActionScriptHead);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeEruption_ActionScriptHead);
   Engine_EventWait(30);
-  Engine_ActorEnableActionCallback(GARET, gValeEruption_ActionScriptGaret);
+  Actor_SetActionScript(GARET, gValeEruption_ActionScriptGaret);
   Object_RefreshSelectorById(1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
   Actor_FaceDirection(GARET, 0, 0);
@@ -328,10 +327,10 @@ static void RunEventScript01(void) {
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(40);
   Actor_WalkTo(10, 255, 0x186);
-  actionScript = (s32)gValeEruption_ActionScript;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actionScript);
+  actionScript = gValeEruption_ActionScript;
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, actionScript);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(GARET, actionScript);
+  Actor_SetActionScript(GARET, actionScript);
   Object_RefreshSelectorById(1);
   Actor_ShowEmote(11, 0x102, 0);
   Actor_ShowEmote(12, 0x102, 0);

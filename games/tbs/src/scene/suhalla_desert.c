@@ -409,7 +409,7 @@ static void EV81_TOUCH(void) {
   if (GameFlag_IsSet(2487) == 0) {
     GameFlag_Set(526);
     Actor_SetPosition(12, 240 << 15, 206 << 18);
-    Engine_ActorEnableActionCallback(12, gSuhallaDesertActor12Action);
+    Actor_SetActionScript(12, gSuhallaDesertActor12Action);
   }
 }
 

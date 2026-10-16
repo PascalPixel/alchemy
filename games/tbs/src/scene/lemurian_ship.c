@@ -456,12 +456,12 @@ static void SetSail(void) {
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
   Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
   Engine_EventWait(50);
   Camera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
-  Engine_ActorEnableActionCallback(GARET, gGaretBoardsShip);
+  Actor_SetActionScript(GARET, gGaretBoardsShip);
   Engine_EventWait(50);
-  Engine_ActorEnableActionCallback(IVAN, gIvanBoardsShip);
+  Actor_SetActionScript(IVAN, gIvanBoardsShip);
   Object_RefreshSelectorById(2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
@@ -472,7 +472,7 @@ static void SetSail(void) {
   Engine_EventWait(60);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(MIA, gMiaBoardsShip);
+  Actor_SetActionScript(MIA, gMiaBoardsShip);
   Object_RefreshSelectorById(3);
   Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(20);

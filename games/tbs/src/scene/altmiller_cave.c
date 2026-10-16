@@ -929,10 +929,10 @@ static void FieldScene_RunExtendedActorPresentation(void) {
   Engine_ActorFollow(IVAN, 10);
   Actor_SetSpeed(10, 0x16666, 0xb333);
   Actor_SetSpeed(11, 0x16666, 0xb333);
-  Engine_ActorEnableActionCallback(10, gAltmillerActionA);
+  Actor_SetActionScript(10, gAltmillerActionA);
   Engine_EventWait(3);
   Actor_WalkByAndWait(11, -16, 0);
-  Engine_ActorEnableActionCallback(11, gAltmillerActionA);
+  Actor_SetActionScript(11, gAltmillerActionA);
   Object_RefreshSelectorById(10);
   Actor_WalkByAndWait(10, 0, -16);
   Object_RefreshSelectorById(11);
@@ -1125,9 +1125,9 @@ static void FieldScene_RunExtendedActorPresentation(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_ActorEnableActionCallback(11, gAltmillerActionB);
-  Engine_ActorEnableActionCallback(10, gAltmillerActionC);
-  Engine_ActorEnableActionCallback(9, gAltmillerActionD);
+  Actor_SetActionScript(11, gAltmillerActionB);
+  Actor_SetActionScript(10, gAltmillerActionC);
+  Actor_SetActionScript(9, gAltmillerActionD);
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);

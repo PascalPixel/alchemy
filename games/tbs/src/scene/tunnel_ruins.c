@@ -559,7 +559,7 @@ static void FieldScene_RunFourStepSequenceA(void) {
 }
 
 static void EV19_SCRIPT(void) {
-  Engine_ActorEnableActionCallback(19, gTunnelRuins_FlickerScript);
+  Actor_SetActionScript(19, gTunnelRuins_FlickerScript);
 }
 
 static void SceneState_SetValue202ThenCall(void) {
@@ -604,7 +604,7 @@ static void EV25_SCRIPT(void) {
 static void EV08_SCRIPT(void) {
   struct FieldActor *owner;
 
-  Engine_ActorEnableActionCallback(8, gTunnelRuins_FlickerScript);
+  Actor_SetActionScript(8, gTunnelRuins_FlickerScript);
   Engine_GameFlagSet(0x203);
   owner = Object_GetById(9);
   owner->update =

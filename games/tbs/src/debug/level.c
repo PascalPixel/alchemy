@@ -84,7 +84,7 @@ static void Scene_AddToListedRecordCounts(s32 amount) {
 
 static void EV11_TALK(void) {
   u8 *record;
-  s32 win;
+  struct UiWindow *win;
   s32 flag;
   s32 msg;
 
@@ -137,8 +137,8 @@ static void EV11_TALK(void) {
 }
 
 static void EV08_TALK(void) {
-  struct RenderInput *window;
-  struct RenderInput *details;
+  struct UiWindow *window;
+  struct UiWindow *details;
   s32 item;
   s32 redraw;
   s32 index;
@@ -259,8 +259,8 @@ static void EV08_TALK(void) {
 
 #if EDITION_INTERNATIONAL
 static void ItemLevel_SelectAbility(void) {
-  struct RenderInput *window;
-  struct RenderInput *details;
+  struct UiWindow *window;
+  struct UiWindow *details;
   s32 ability;
   s32 redraw;
   s32 index;
@@ -393,12 +393,12 @@ static void ItemLevel_RunMotionTest(void) {
 
 #if EDITION_INTERNATIONAL
 static void FieldScene_DrawThreeCaptionWindow(void) {
-  struct RenderInput *window;
+  struct UiWindow *window;
   /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
    * bytes. Without it: differ 4 (sp moves 4 for 36). */
   u8 text[32];
 
-  window = (struct RenderInput *)UiWindow_Create(0, 13, 30, 6, 2);
+  window = (struct UiWindow *)UiWindow_Create(0, 13, 30, 6, 2);
   UiText_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
   UiText_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
   UiText_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);

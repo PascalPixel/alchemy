@@ -243,7 +243,7 @@ static void EV26_TALK(void) {
   Engine_EventWait(20);
   Engine_ActorFaceActor(26, ACTOR_PARTY_LEADER, 10);
   Event_SayThenWait(26, 40);
-  Engine_ActorEnableActionCallback(26, 2);
+  Actor_SetBuiltinAction(26, 2);
   Engine_EventEnd();
 }
 
@@ -336,7 +336,7 @@ static void Scene_PsynergyStoneIsGone(void) {
   Engine_GameFlagSet(0x306);
   Engine_ActorStop(21);
   Engine_TaskWait(1);
-  Engine_ActorEnableActionCallback(21, gValeHome_Actor21Actions);
+  Actor_SetActionScript(21, gValeHome_Actor21Actions);
   Engine_EventEnd();
 }
 
@@ -558,15 +558,15 @@ static void EV20_TOUCH(void) {
 #endif
     Actor_SetSpeed(17, 0x19999, 0xcccc);
     Actor_SetSpeed(18, 0x19999, 0xcccc);
-    Engine_ActorEnableActionCallback(17, (s32)gValeHome_Actor17Actions);
+    Actor_SetActionScript(17, gValeHome_Actor17Actions);
     Engine_EventWait(20);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     Object_GetById(18)->priorityFlags |= 1;
 #endif
-    Engine_ActorEnableActionCallback(18, (s32)gValeHome_Actor17Actions);
+    Actor_SetActionScript(18, gValeHome_Actor17Actions);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(25, 0xc000, 60);
-    Engine_ActorEnableActionCallback(0, (s32)gValeHome_LeaderStepActions);
+    Actor_SetActionScript(0, gValeHome_LeaderStepActions);
     Object_SetActionCallbackAndRefreshById(25,
                                            (s32)gValeHome_Actor25StepActions);
     Engine_EventWait(20);
@@ -609,7 +609,7 @@ static void EV20_TOUCH(void) {
     BattleFx_CommitObjectPositionAndWait();
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
-    Engine_ActorEnableActionCallback(22, (s32)gValeHome_Actor22Actions);
+    Actor_SetActionScript(22, gValeHome_Actor22Actions);
     Object_RefreshSelectorById(22);
     ValeHome_TurnAndWaitValue(22, 0x2000, 60);
     Engine_ActorRunRepeatedMotion(19, 2);
@@ -797,11 +797,11 @@ static void FieldScene_RunGroupChoreography(void) {
   Actor_SetAttachedEffect(0, 0x102);
   Engine_ActorSetAttachedEffect(25, 0x102);
   Engine_EventWait(80);
-  Engine_ActorEnableActionCallback(24, (s32)gValeHome_Actor24Actions);
+  Actor_SetActionScript(24, gValeHome_Actor24Actions);
   Engine_EventWait(6);
-  Engine_ActorEnableActionCallback(23, (s32)gValeHome_Actor23Actions);
+  Actor_SetActionScript(23, gValeHome_Actor23Actions);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(0, (s32)gValeHome_LeaderActions);
+  Actor_SetActionScript(0, gValeHome_LeaderActions);
   Engine_EventWait(6);
   Object_SetActionCallbackAndRefreshById(25, (s32)gValeHome_Actor25Actions);
   Battle_SetStart(2);
@@ -865,7 +865,7 @@ static void ValeHome_RunActorPairEffectScene(void) {
   record = Object_GetById(23);
   record->bounce = 0x28f;
   record->gravity = (v5 << 8);
-  Engine_ActorEnableActionCallback(23, (s32)gValeHome_Actor23BounceActions);
+  Actor_SetActionScript(23, gValeHome_Actor23BounceActions);
   Engine_EventWait(24);
   Engine_ActorSetSpeed(24, 0x26666, 0x13333);
   record = Object_GetById(24);
@@ -896,9 +896,9 @@ static void Scene_RunExtendedActorSequence(void) {
   struct EventWork *work;
   s32 v5;
   const u8 *faceActions;
-  const u8 *actor31Actions;
+  const s32 *actor31Actions;
   s32 v6;
-  const u8 *pairActions;
+  const s32 *pairActions;
 
   Party_RestoreHpPp(1);
   Engine_EventBegin();
@@ -956,7 +956,7 @@ static void Scene_RunExtendedActorSequence(void) {
   Actor_SetPosition(30, 0x6e0000, 0x2e80000);
   Engine_TaskWait(2);
   Engine_ActorSetAnimation(30, 3);
-  Engine_ActorEnableActionCallback(30, (s32)gValeHome_Actor30Actions);
+  Actor_SetActionScript(30, gValeHome_Actor30Actions);
   Engine_EventWait(40);
   faceActions = (const u8 *)gValeHome_FaceTargetActions;
   FieldObject_SetTargetAndCallback(11, 0x1001e, faceActions);
@@ -1018,11 +1018,11 @@ static void Scene_RunExtendedActorSequence(void) {
   Actor_SetSpeed(31, 0x39999, 0x1cccc);
   Engine_ActorSetAnimation(31, 2);
   actor31Actions = gValeHome_Actor31Actions;
-  Engine_ActorEnableActionCallback(31, actor31Actions);
+  Actor_SetActionScript(31, actor31Actions);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(30, 3);
   Actor_SetSpeed(30, 0x4cccc, 0x26666);
-  Object_SetActionCallbackAndRefreshById(30, actor31Actions);
+  Object_SetActionCallbackAndRefreshById(30, (s32)actor31Actions);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(12, 2);
   SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1038,14 +1038,14 @@ static void Scene_RunExtendedActorSequence(void) {
   Engine_EventWait(20);
   Actor_SetSpeed(11, 0x26666, 0x13333);
   Actor_SetSpeed(12, 0x26666, 0x13333);
-  Engine_ActorEnableActionCallback(11, (s32)gValeHome_Actor11Actions);
+  Actor_SetActionScript(11, gValeHome_Actor11Actions);
   Engine_EventWait(10);
   Camera_SetSpeed(0x26666, 0x4ccc);
   v6 = 0;
   Battle_GetWorkObject1e0()->motionFlags = v6;
   Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(12, (s32)gValeHome_Actor12Actions);
+  Actor_SetActionScript(12, gValeHome_Actor12Actions);
   Object_RefreshSelectorById(12);
   SceneActor_SetPairZeroAndValue(12, 0x3000, 120);
   Engine_ActorRunRepeatedMotion(13, 2);
@@ -1195,13 +1195,13 @@ static void Scene_RunExtendedActorSequence(void) {
   SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
   Actor_SetSpeed(0, 0xcccc, 0x6666);
   pairActions = gValeHome_Actor0And1Actions;
-  Engine_ActorEnableActionCallback(0, pairActions);
+  Actor_SetActionScript(0, pairActions);
   Engine_EventWait(20);
   Camera_SetSpeed(0x6666, 0xccc);
   Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
   Engine_EventWait(20);
   Actor_SetSpeed(1, 0xcccc, 0x6666);
-  Engine_ActorEnableActionCallback(1, pairActions);
+  Actor_SetActionScript(1, pairActions);
   Engine_EventWait(60);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

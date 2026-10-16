@@ -633,8 +633,8 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
-  Engine_ActorEnableActionCallback(GARET, gVenusAerie_PairActionScript);
-  Engine_ActorEnableActionCallback(IVAN, gVenusAerie_PairActionScript);
+  Actor_SetActionScript(GARET, gVenusAerie_PairActionScript);
+  Actor_SetActionScript(IVAN, gVenusAerie_PairActionScript);
   Object_SetActionCallbackAndRefreshById(MIA, gVenusAerie_PairActionScript);
   Engine_EventWait(20);
   Engine_EventEnd();
@@ -1045,14 +1045,13 @@ static void EV05_TOUCH(void) {
   Object_GetById(ACTOR_FIRST_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(21)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(6)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gSceneAction_EntryGroup);
-  Engine_ActorEnableActionCallback(GARET, gSceneAction_EntryGroup);
-  Engine_ActorEnableActionCallback(IVAN, gSceneAction_EntryGroup);
-  Engine_ActorEnableActionCallback(MIA, gSceneAction_EntryGroup);
-  Engine_ActorEnableActionCallback(ACTOR_SECOND_OF_PAIR,
-                                   gSceneAction_EntryPair);
-  Engine_ActorEnableActionCallback(ACTOR_FIRST_OF_PAIR, gSceneAction_EntryPair);
-  Engine_ActorEnableActionCallback(21, gSceneAction_EntryGroup);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gSceneAction_EntryGroup);
+  Actor_SetActionScript(GARET, gSceneAction_EntryGroup);
+  Actor_SetActionScript(IVAN, gSceneAction_EntryGroup);
+  Actor_SetActionScript(MIA, gSceneAction_EntryGroup);
+  Actor_SetActionScript(ACTOR_SECOND_OF_PAIR, gSceneAction_EntryPair);
+  Actor_SetActionScript(ACTOR_FIRST_OF_PAIR, gSceneAction_EntryPair);
+  Actor_SetActionScript(21, gSceneAction_EntryGroup);
   Object_SetActionCallbackAndRefreshById(6, gSceneAction_EntryGroup);
   Battle_SetStart(3);
   {
@@ -1193,14 +1192,14 @@ static void Scene_RunPairedActorEffectSequence(void) {
   actor->facing = FACING_NORTH + FACING_STEP;
   Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(294), PIXELS(212));
   Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 9);
-  Actor_EnableActionCallback(ACTOR_FIRST_OF_PAIR, gVenusAerie_ScaleStepAction);
+  Actor_SetActionScript(ACTOR_FIRST_OF_PAIR, gVenusAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 0);
   actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
   actor->timer = 10;
   actor->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(286), PIXELS(192));
   Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 7);
-  Actor_EnableActionCallback(ACTOR_SECOND_OF_PAIR, gVenusAerie_ScaleStepAction);
+  Actor_SetActionScript(ACTOR_SECOND_OF_PAIR, gVenusAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 0);
   Event_GetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
@@ -1477,8 +1476,8 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_EnableActionCallback(24, gVenusAerie_BeamOpenAction);
-  Actor_EnableActionCallback(25, gVenusAerie_BeamOpenAction);
+  Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
+  Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Event_PlayCue(145);
   Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
@@ -1492,8 +1491,8 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(120);
-  Actor_EnableActionCallback(24, gVenusAerie_BeamNarrowAction);
-  Actor_EnableActionCallback(25, gVenusAerie_BeamNarrowAction);
+  Actor_SetActionScript(24, gVenusAerie_BeamNarrowAction);
+  Actor_SetActionScript(25, gVenusAerie_BeamNarrowAction);
   Task_Wait(120);
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   ColorBuffer_ApplyTarget(0x203210, 0);
@@ -1616,9 +1615,9 @@ static void Scene_RunPairedActorEffectSequence(void) {
   VenusAerie_ShowMessage(0xa015);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(21, 0x10000, 0x8000);
-  Actor_EnableActionCallback(21, gVenusAerie_WalkOutAction);
+  Actor_SetActionScript(21, gVenusAerie_WalkOutAction);
   Event_Wait(20);
-  Actor_EnableActionCallback(6, gVenusAerie_WalkOutAction);
+  Actor_SetActionScript(6, gVenusAerie_WalkOutAction);
   VenusAerie_FaceActor(GARET, FACING_SOUTHWEST);
   Actor_StartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(GARET);
@@ -2223,8 +2222,8 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_CameraWaitForMove();
   Object_GetById(24)->scaleX = 0x1999;
   Object_GetById(25)->scaleX = 0x1999;
-  Engine_ActorEnableActionCallback(24, gVenusAerie_BeamOpenAction);
-  Engine_ActorEnableActionCallback(25, gVenusAerie_BeamOpenAction);
+  Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
+  Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Engine_AudioPlayCue(145);
   Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
@@ -2307,11 +2306,11 @@ static void VenusAerie_RunActorTransition(void) {
   Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
   Engine_ColorBufferApplyTarget(0x4063ff, 0);
   Engine_ColorBufferInterpolate(120);
-  Engine_ActorEnableActionCallback(24, gVenusAerie_BeamRiseAction);
-  Engine_ActorEnableActionCallback(25, gVenusAerie_BeamRiseAction);
-  Engine_ActorEnableActionCallback(26, gVenusAerie_BeamRiseAction);
-  Engine_ActorEnableActionCallback(27, gVenusAerie_BeamRiseAction);
-  Engine_ActorEnableActionCallback(28, gVenusAerie_BeamRiseAction);
+  Actor_SetActionScript(24, gVenusAerie_BeamRiseAction);
+  Actor_SetActionScript(25, gVenusAerie_BeamRiseAction);
+  Actor_SetActionScript(26, gVenusAerie_BeamRiseAction);
+  Actor_SetActionScript(27, gVenusAerie_BeamRiseAction);
+  Actor_SetActionScript(28, gVenusAerie_BeamRiseAction);
   Engine_TaskWait(120);
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   Engine_ColorBufferApplyTarget(0x203210, 0);
@@ -2323,9 +2322,9 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_TaskWait(120);
   Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
   Object_GetById(24)->scaleY = 0x51e;
-  Engine_ActorEnableActionCallback(25, gVenusAerie_BeamCloseAction);
-  Engine_ActorEnableActionCallback(26, gVenusAerie_BeamCloseAction);
-  Engine_ActorEnableActionCallback(27, gVenusAerie_BeamCloseAction);
+  Actor_SetActionScript(25, gVenusAerie_BeamCloseAction);
+  Actor_SetActionScript(26, gVenusAerie_BeamCloseAction);
+  Actor_SetActionScript(27, gVenusAerie_BeamCloseAction);
   Object_SetActionCallbackAndRefreshById(28, gVenusAerie_BeamCloseAction);
   Engine_AudioPlayCue(0x121);
   Engine_ActorSetChildValue(24, 15);
@@ -2513,7 +2512,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Event_ShowMessageAndWait(6, 0, 20);
   Event_PlayCue(17);
   Engine_ActorRunRepeatedMotion(6, 2);
-  Engine_ActorEnableActionCallback(6, gVenusAerie_StepBackAction);
+  Actor_SetActionScript(6, gVenusAerie_StepBackAction);
   Engine_EventWait(20);
   Actor_SetAttachedEffect(21, 0x102);
   Engine_ActorStartRepeatedMotion(21, 3);
@@ -2552,8 +2551,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 60);
   Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gVenusAerie_ScaleStepAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusAerie_ScaleStepAction);
   Actor_ShowEmote(GARET, 0x100, 80);
   Event_ShowMessageAndWait(GARET, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
@@ -2696,11 +2694,10 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
   Engine_ActorJump(MIA, 6, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   gVenusAerie_PartyHeadingAction);
-  Engine_ActorEnableActionCallback(GARET, gVenusAerie_PartyHeadingAction);
-  Engine_ActorEnableActionCallback(IVAN, gVenusAerie_PartyHeadingAction);
-  Engine_ActorEnableActionCallback(MIA, gVenusAerie_PartyHeadingAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusAerie_PartyHeadingAction);
+  Actor_SetActionScript(GARET, gVenusAerie_PartyHeadingAction);
+  Actor_SetActionScript(IVAN, gVenusAerie_PartyHeadingAction);
+  Actor_SetActionScript(MIA, gVenusAerie_PartyHeadingAction);
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   Engine_EventWait(80);
   Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
@@ -2777,9 +2774,9 @@ static void Scene_RunExtendedActorTransition(void) {
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  Engine_ActorEnableActionCallback(GARET, gVenusAerie_PartyExitAction);
-  Engine_ActorEnableActionCallback(IVAN, gVenusAerie_PartyExitAction);
-  Engine_ActorEnableActionCallback(MIA, gVenusAerie_PartyExitAction);
+  Actor_SetActionScript(GARET, gVenusAerie_PartyExitAction);
+  Actor_SetActionScript(IVAN, gVenusAerie_PartyExitAction);
+  Actor_SetActionScript(MIA, gVenusAerie_PartyExitAction);
   Engine_EventWait(60);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
@@ -2842,7 +2839,7 @@ static void VenusAerie_RunTransitionStep(void) {
     center->scaleX = 0x10000;
     center->scaleY = 0x10000;
     SceneActor_ParkRecord(center);
-    Engine_ActorEnableActionCallback(23, gVenusAerie_RiseActionScript);
+    Actor_SetActionScript(23, gVenusAerie_RiseActionScript);
     break;
   case 25:
     sTransitionStep--;

@@ -1252,7 +1252,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
 
     case 12:
     case 13:
-      Engine_ActorEnableActionCallback(18, gMogallForest_ActorScript);
+      Actor_SetActionScript(18, gMogallForest_ActorScript);
       if (Engine_GameFlagIsSet(0x893) == 0) {
         break;
       }

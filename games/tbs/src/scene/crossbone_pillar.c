@@ -973,7 +973,7 @@ static void CrossbonePillar_RunActorAction(s32 id) {
   Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                          actor->z.fixed >> 20);
   GameFlag_Set(id + 0x1f5);
-  Engine_ActorEnableActionCallback(id, gCrossbonePillar_ActionTable);
+  Actor_SetActionScript(id, gCrossbonePillar_ActionTable);
   Engine_EventEnd();
 }
 
@@ -1104,7 +1104,7 @@ static void EV13_PSYNERGY(void) {
       Map_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       Engine_GameFlagClear(0x201);
       Engine_ActorSetChildValue(12, 0);
-      Engine_ActorEnableActionCallback(12, 1);
+      Actor_SetBuiltinAction(12, ACTOR_ACTION_IDLE);
     } else {
       Engine_EventWait(60);
     }
@@ -1207,7 +1207,7 @@ static void CrossbonePillar_RestoreFlaggedPillar(s32 a0) {
         union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                            actor->z.fixed >> 20);
-    Engine_ActorEnableActionCallback(a0, gCrossbonePillar_ActionTable);
+    Actor_SetActionScript(a0, gCrossbonePillar_ActionTable);
   }
 }
 

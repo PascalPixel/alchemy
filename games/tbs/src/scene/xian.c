@@ -262,7 +262,7 @@ static void EV18_TALK(void) {
   record->targetY = ACTOR_NO_TARGET;
   record = Actor_Get(18);
   record->targetZ = ACTOR_NO_TARGET;
-  Engine_ActorEnableActionCallback(18, 1);
+  Actor_SetBuiltinAction(18, ACTOR_ACTION_IDLE);
   Engine_ActorSetAnimation(18, 1);
   Engine_ActorRunRepeatedMotion(18, 2);
   Engine_EventWait(10);
@@ -394,7 +394,7 @@ static void EV14_TALK(void) {
     Actor_SetDestination(14, 168, 0x138);
     Engine_ActorWaitForMove(14);
     Engine_AudioPlayCue(134);
-    Engine_ActorEnableActionCallback(19, (s32)gXian_Actor19Motion);
+    Actor_SetActionScript(19, gXian_Actor19Motion);
     FieldScheduler_AddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
     params.sprite = 0x11b;
     params.callback = (s32)gXian_EffectScript;
@@ -529,7 +529,7 @@ static void EV21_PSYNERGY(void) {
   s32 cb;
 
   Engine_EventBegin();
-  Engine_ActorEnableActionCallback(19, gXian_Actor19Motion);
+  Actor_SetActionScript(19, gXian_Actor19Motion);
   cb = (s32)SceneEffect_AdvanceRotatingSprite;
   FieldScheduler_AddCallback((void (*)(void))cb, 0xc80);
   Object_RefreshSelectorById(19);
@@ -558,7 +558,7 @@ static void EV200_RAISED(void) {
   s32 record;
 
   Engine_EventBegin();
-  Engine_ActorEnableActionCallback(18, (const s32 *)1);
+  Actor_SetBuiltinAction(18, ACTOR_ACTION_IDLE);
   record = Actor_Get(18);
   *(s32 *)(record + 108) = 0;
   record = Actor_Get(18);
@@ -583,7 +583,7 @@ static void EV200_RAISED(void) {
   Engine_ActorWaitForMove(18);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
-  Engine_ActorEnableActionCallback(18, gXian_ActionTable);
+  Actor_SetActionScript(18, gXian_ActionTable);
   record = Actor_Get(18);
   *(s32 *)(record + 108) = (s32)Xian_WatchGateTrigger;
   Engine_EventEnd();

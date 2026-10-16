@@ -174,7 +174,7 @@ static void EV10_TOUCH(void) { Engine_EventRequestExit(63); }
 
 static void MercuryEntrance_InstallActorEightPath(void) {
   Engine_GameFlagClear(0x205);
-  Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path1);
+  Actor_SetActionScript(8, gMercuryEntrance_Actor8Path1);
 }
 
 static void EV41_TOUCH(void) {
@@ -187,9 +187,9 @@ static void EV41_TOUCH(void) {
   quotient = field8 / 0x100000;
   Engine_GameFlagSet(0x205);
   if (quotient == 7) {
-    Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path2);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path2);
   } else {
-    Engine_ActorEnableActionCallback(8, gMercuryEntrance_Actor8Path3);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path3);
   }
 }
 
@@ -378,7 +378,7 @@ static void MercuryEntrance_CrossDoorway(void) {
   for (i = 0; i < 2; i++) {
     Engine_ActorWalkTo(3, 152, 168);
     Engine_EventWait(10);
-    Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path3);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path3);
     Engine_ActorWaitForMove(3);
     Actor_FaceDirection(3, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(3, 1);
@@ -386,13 +386,13 @@ static void MercuryEntrance_CrossDoorway(void) {
     ivan->steeringFlags &= ~ACTOR_FACES_MOTION;
     Engine_ActorWalkTo(3, 136, 184);
     Engine_EventWait(10);
-    Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path1);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path1);
     Engine_ActorWaitForMove(3);
     Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;
     Engine_EventWait(30);
     Engine_ActorWalkTo(3, 120, 168);
     Engine_EventWait(5);
-    Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path2);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path2);
     Engine_ActorWaitForMove(3);
     Engine_ActorFaceDirection(3, FACING_NORTH, 30);
     Engine_ActorRunRepeatedMotion(3, 1);
@@ -400,7 +400,7 @@ static void MercuryEntrance_CrossDoorway(void) {
     Object_GetById(3)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Engine_ActorWalkTo(3, 136, 184);
     Engine_EventWait(15);
-    Engine_ActorEnableActionCallback(8, (s32)gMercuryEntrance_Actor8Path1);
+    Actor_SetActionScript(8, gMercuryEntrance_Actor8Path1);
     Engine_ActorWaitForMove(3);
     Engine_ActorRunRepeatedMotion(3, 1);
     Object_GetById(3)->steeringFlags |= ACTOR_FACES_MOTION;

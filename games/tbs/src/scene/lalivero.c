@@ -113,7 +113,7 @@ static void TalkToMourner(s32 actor) {
   Event_ShowMessage(actor, 0);
   Actor_FaceDirection(actor, FACING_NORTH, 0);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(actor, gLaliveroMournerSobs);
+  Actor_SetActionScript(actor, gLaliveroMournerSobs);
 }
 
 // After Venus Lighthouse: a villager asks whether the party is leaving

@@ -493,14 +493,13 @@ static void AlpineCrossing_FeizhiArrives(void) {
 
     // Feizhi runs down the path with the camera; the leader follows her
     // until the camera arrives.
-    Engine_ActorEnableActionCallback(ACTOR_FEIZHI, gAlpineCrossing_FeizhiPath);
+    Actor_SetActionScript(ACTOR_FEIZHI, gAlpineCrossing_FeizhiPath);
     Camera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
     GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
     Object_RefreshSelectorById(ACTOR_FEIZHI);
     Engine_CameraWaitForMove();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                     gAlpineCrossing_LeaderPath);
+    Actor_SetActionScript(ACTOR_PARTY_LEADER, gAlpineCrossing_LeaderPath);
     Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
     Engine_EventWait(10);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -864,12 +863,12 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_FEIZHI, PIXELS(184), PIXELS(304));
       Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
-      Engine_ActorEnableActionCallback(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
+      Actor_SetActionScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
     if (!GameFlag_IsSet(FLAG_HSU_RESCUED)) {
       Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
-      Engine_ActorEnableActionCallback(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
+      Actor_SetActionScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
     if (gGameState.entrance == CROSSING_ENTRANCE_5 &&

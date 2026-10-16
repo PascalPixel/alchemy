@@ -24,46 +24,47 @@ FAR_CALL(UiWork_SetBusyFlagsFar, UiWork_SetBusyFlags, void, (s32 flags))
 FAR_CALL(RenderOutput_PrepareForRedrawFar, RenderOutput_PrepareForRedraw, void,
          (struct UiWindow * window))
 FAR_CALL(UiWindow_ClearInteriorTilesFar, UiWindow_ClearInteriorTiles, void,
-         (const struct RenderInput *window, u32 left, u32 top, u32 right,
+         (const struct UiWindow *window, u32 left, u32 top, u32 right,
           u32 bottom))
 FAR_CALL(UiWindow_DrawDividerLineFar, UiWindow_DrawDividerLine, void,
-         (struct RenderInput * win, u32 x1, u32 y1, u32 x2, u32 y2))
+         (struct UiWindow * win, u32 x1, u32 y1, u32 x2, u32 y2))
 FAR_CALL(UiText_DrawResourceFar, UiText_DrawResource, void,
-         (s32 arg0, s32 arg1, s32 arg2, s32 arg3))
+         (s32 arg0, struct UiWindow *arg1, s32 arg2, s32 arg3))
 #ifndef OWN_UiText_DrawCharacterAtOffsetFar
 FAR_CALL(UiText_DrawCharacterAtOffsetFar, UiText_DrawCharacterAtOffset, void,
-         (s32 character, struct RenderInput *position, u32 offsetX,
+         (s32 character, const struct UiWindow *position, u32 offsetX,
           u32 offsetY))
 #endif
 FAR_CALL(UiText_DrawStringFar, UiText_DrawString, void,
-         (u8 *text, s32 arg1, s32 arg2, s32 arg3))
+         (const u8 *text, struct UiWindow *arg1, s32 arg2, s32 arg3))
 FAR_CALL(UiText_DrawStringAtOffsetFar, UiText_DrawStringAtOffset, void,
-         (u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY))
+         (const u8 *text, const struct UiWindow *work, s32 offsetX,
+          s32 offsetY))
 FAR_CALL(UiText_DrawStringInWindowFar, UiText_DrawStringInWindow, void,
-         (u8 *text, s32 arg1, u32 x, u32 y))
+         (const u8 *text, struct UiWindow *arg1, u32 x, u32 y))
 FAR_CALL(UiText_DrawNumberFar, UiText_DrawNumber, void,
-         (s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4))
+         (s32 arg0, s32 arg1, struct UiWindow *arg2, s32 arg3, s32 arg4))
 FAR_CALL(UiText_DrawNumberAtOffsetFar, UiText_DrawNumberAtOffset, void,
-         (s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4))
+         (s32 arg0, s32 arg1, const struct UiWindow *arg2, s32 arg3, s32 arg4))
 FAR_CALL(UiText_DrawNumberInWindowFar, UiText_DrawNumberInWindow, void,
-         (s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4))
+         (s32 arg0, s32 arg1, struct UiWindow *arg2, s32 arg3, s32 arg4))
 FAR_CALL(UiWork_SetParamNibbleFar, UiWork_SetParamNibble, void, (s32 param))
 FAR_SLOT(UiWork_SetRenderWord)
 FAR_CALL(RenderOutput_CreateFar, RenderOutput_Create, struct RenderOutput *,
-         (s32 slot, s32 flags, struct RenderInput *input, s32 offsetX,
+         (s32 slot, s32 flags, struct UiWindow *input, s32 offsetX,
           s32 offsetY))
 FAR_CALL(RenderOutput_CreateFromResourceFar, RenderOutput_CreateFromResource,
          struct RenderOutput *,
-         (s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y))
+         (s32 mode, s32 resource, struct UiWindow *input, s32 x, s32 y))
 FAR_CALL(SideObject_CreateFar, CreateSideObject, struct RenderOutput *,
-         (s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4,
-          s32 arg5))
+         (s32 object_kind, s32 position, s32 side, struct UiWindow *arg3,
+          s32 arg4, s32 arg5))
 FAR_CALL(Ui_LoadCharacterEntryForSlotFar, Ui_LoadCharacterEntryForSlot, void,
          (u32 slot, s32 character, s32 value))
 FAR_SLOT(RenderOutput_SetAnimation)
 FAR_SLOT(RenderOutput_SetInvertedSentinel)
-FAR_CALL(UiWindow_CreateWithSideObjectFar, UiWindow_CreateWithSideObject, s32,
-         (s32 arg0, s32 arg1, s32 x, s32 y))
+FAR_CALL(UiWindow_CreateWithSideObjectFar, UiWindow_CreateWithSideObject,
+         struct UiWindow *, (s32 arg0, s32 arg1, s32 x, s32 y))
 FAR_CALL(UiWork_FinalizeEntityMatchingLocalizedIdFar,
          UiWork_FinalizeEntityMatchingLocalizedId, void, (u32 entry))
 FAR_CALL(UiText_GetResourceDimensionsFar, UiText_GetResourceDimensions, s32,
@@ -151,7 +152,7 @@ FAR_SLOT(UiIcon_BuildItemIconTiles)
 FAR_SLOT(UiIcon_BuildAbilityIconTiles)
 FAR_CALL(RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded,
          struct RenderOutput *,
-         (s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y))
+         (s32 code, s32 layers, struct UiWindow *input, s32 x, s32 y))
 FAR_SLOT(RenderOutput_CreateFromTable)
 FAR_SLOT(SaveState_WriteCurrentSlotPair)
 FAR_CALL(Save_WriteSelectedSlotFar, Save_WriteSelectedSlot, s32, (void))
@@ -207,7 +208,7 @@ FAR_CALL(Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry, s32,
          (s32 arg0, s32 arg1))
 FAR_CALL(Ui_GetTableWordZeroFar, Ui_GetTableWordZero, s32, (s32 no))
 FAR_CALL(UiText_OpenEntryMessageFar, UiText_OpenEntryMessage, s32,
-         (s32 window, s32 argument))
+         (struct UiWindow * window, s32 argument))
 FAR_CALL(SaveState_CountRecordsExcludingFlaggedFar,
          SaveState_CountRecordsExcludingFlagged, s32, (s32 flag))
 FAR_CALL(UiWindow_DrawFrameFar, UiWindow_DrawFrame, void,

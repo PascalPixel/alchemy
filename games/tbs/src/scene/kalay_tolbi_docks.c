@@ -251,7 +251,7 @@ static void EV13_TALK(void) {
 }
 
 static void EV08_TALK_2(void) {
-  s32 rec7;
+  struct UiWindow *rec7;
   struct GameState *state;
   s32 six00;
 
@@ -575,7 +575,7 @@ static void FieldScene_RunScene3aeSequenceA(void) {
   Actor_SetPosition(GARET, 0, 0);
   Engine_EventWait(20);
   Object_GetById(8)->paused = 0;
-  Engine_ActorEnableActionCallback(8, 2);
+  Actor_SetBuiltinAction(8, 2);
   record = Object_GetById(8);
   {
     s32 shown = record->x.fixed / 0x10000;
@@ -730,7 +730,7 @@ static void EV50_TOUCH(void) {
   Actor_WalkByAndWait(10, 24, 0);
   Event_PlayCue(133);
   Engine_ActorJump(16, 6, 0);
-  Engine_ActorEnableActionCallback(16, gKalayTolbiDocks_ActorSixteenScript);
+  Actor_SetActionScript(16, gKalayTolbiDocks_ActorSixteenScript);
   Object_GetById(10)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorJump(10, 6, 0);
   Actor_WalkByAndWait(10, -12, 4);

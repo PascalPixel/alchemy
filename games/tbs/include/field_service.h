@@ -9,10 +9,6 @@
 #include "engine_call.h"
 #include "farcall.h"
 
-static inline void Actor_EnableActionCallback(s32 actor, const s32 *table) {
-  Engine_ActorEnableActionCallback(actor, table);
-}
-
 static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames) {
   Engine_ActorFaceEachOther(actor, other, frames);
 }

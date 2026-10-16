@@ -167,7 +167,7 @@ static void EV09_PSYNERGY(void) {
   Engine_ActorSetAnimation(9, 1);
   Engine_EventWait(2);
   Engine_EventShowMessage(9, 0);
-  Engine_ActorEnableActionCallback(9, 2);
+  Actor_SetBuiltinAction(9, 2);
   Engine_EventEnd();
 }
 
@@ -394,8 +394,8 @@ static void FieldScene_RunScriptedSceneSequence(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, 0xc, 0);
     Actor_FaceActor(GARET, 0xc, 0);
     Engine_EventWait(0x14);
-    Engine_ActorEnableActionCallback(8, 1);
-    Engine_ActorEnableActionCallback(0xc, 1);
+    Actor_SetBuiltinAction(8, ACTOR_ACTION_IDLE);
+    Actor_SetBuiltinAction(0xc, ACTOR_ACTION_IDLE);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_SetSpeed(GARET, 0xcccc, 0x6666);
     Actor_SetSpeed(0xb, 0xcccc, 0x6666);
@@ -1624,8 +1624,8 @@ static void FieldScene_RunPairedActorChoreography(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(0, gSanctum_LeaderCircleScript);
-  Engine_ActorEnableActionCallback(1, gSanctum_GaretCircleScript);
+  Actor_SetActionScript(0, gSanctum_LeaderCircleScript);
+  Actor_SetActionScript(1, gSanctum_GaretCircleScript);
   Object_RefreshSelectorById(0);
   Object_RefreshSelectorById(1);
   Actor_SetSpeed(0, 0x18000, 0xc000);

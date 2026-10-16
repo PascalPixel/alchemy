@@ -223,7 +223,7 @@ static void EV13_TALK(void) {
 
     *target = shown;
   }
-  Engine_ActorEnableActionCallback(13, 2);
+  Actor_SetBuiltinAction(13, 2);
   Engine_EventEnd();
 }
 
@@ -420,17 +420,17 @@ static void EV10_TOUCH(void) {
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(17, 3);
     FieldScene_CallPairWith10(17);
-    Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable1);
-    Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable1);
+    Actor_SetActionScript(1, gColosseumEntrance_ActionTable1);
+    Actor_SetActionScript(2, gColosseumEntrance_ActionTable1);
     Object_SetActionCallbackAndRefreshById(
         3, (s32)gColosseumEntrance_ActionTable1);
     Engine_CameraSetSpeed(0x6666, 0xccc);
     Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
     Actor_SetSpeed(17, 0x10000, 0x8000);
-    Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
+    Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
     Engine_EventWait(10);
     Actor_SetSpeed(0, 0x10000, 0x8000);
-    Engine_ActorEnableActionCallback(0, gColosseumEntrance_ActionTable4);
+    Actor_SetActionScript(0, gColosseumEntrance_ActionTable4);
     Engine_EventWait(80);
     gEventWork->transitionFrames = 40;
     Engine_EventCloseScreen();
@@ -473,17 +473,17 @@ static void EV10_TOUCH(void) {
     if (record == 0) {
       Engine_ActorSetAnimationAndWait(17, 3);
       FieldScene_CallPairWith10(17);
-      Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable1);
-      Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable1);
+      Actor_SetActionScript(1, gColosseumEntrance_ActionTable1);
+      Actor_SetActionScript(2, gColosseumEntrance_ActionTable1);
       Object_SetActionCallbackAndRefreshById(
           3, (s32)gColosseumEntrance_ActionTable1);
       Engine_CameraSetSpeed(0x6666, 0xccc);
       Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
       Actor_SetSpeed(17, 0x10000, 0x8000);
-      Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
+      Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
       Engine_EventWait(10);
       Actor_SetSpeed(0, 0x10000, 0x8000);
-      Engine_ActorEnableActionCallback(0, gColosseumEntrance_ActionTable4);
+      Actor_SetActionScript(0, gColosseumEntrance_ActionTable4);
       Engine_EventWait(80);
       gEventWork->transitionFrames = 40;
       Engine_EventCloseScreen();
@@ -498,7 +498,7 @@ static void EV10_TOUCH(void) {
       SceneState_ForwardMaskedHalfwordWith10(3, 0x8000);
       Engine_ActorSetAnimation(3, 3);
       FieldScene_CallPairWith10(3);
-      Engine_ActorEnableActionCallback(2, gColosseumEntrance_ActionTable2);
+      Actor_SetActionScript(2, gColosseumEntrance_ActionTable2);
       Object_SetActionCallbackAndRefreshById(
           3, (s32)gColosseumEntrance_ActionTable2);
       Engine_EventWait(20);
@@ -511,10 +511,10 @@ static void EV10_TOUCH(void) {
       Engine_CameraSetSpeed(0x6666, 0xccc);
       Engine_CameraMoveTo(0x1000000, -1, 0x640000, 1);
       Actor_SetSpeed(17, 0x10000, 0x8000);
-      Engine_ActorEnableActionCallback(17, gColosseumEntrance_ActionTable4);
+      Actor_SetActionScript(17, gColosseumEntrance_ActionTable4);
       Engine_EventWait(10);
       Actor_SetSpeed(1, 0x10000, 0x8000);
-      Engine_ActorEnableActionCallback(1, gColosseumEntrance_ActionTable4);
+      Actor_SetActionScript(1, gColosseumEntrance_ActionTable4);
       Engine_EventWait(80);
       gEventWork->transitionFrames = 40;
       Engine_EventCloseScreen();
@@ -529,7 +529,7 @@ static void EV10_TOUCH(void) {
 
 static void EV12_TOUCH(void) {
   struct FieldActor *actor;
-  s32 script;
+  const s32 *script;
 
   if (Engine_GameFlagIsSet(0x234) != 0) {
     Engine_GameFlagSet(0x235);
@@ -586,8 +586,8 @@ static void EV12_TOUCH(void) {
       Actor_SetSpeed(13, 0x19999, 0xcccc);
       Actor_SetSpeed(14, 0x19999, 0xcccc);
       Actor_SetSpeed(16, 0x19999, 0xcccc);
-      Engine_ActorEnableActionCallback(13, gColosseumEntrance_ActionTable5);
-      Engine_ActorEnableActionCallback(16, gColosseumEntrance_ActionTable7);
+      Actor_SetActionScript(13, gColosseumEntrance_ActionTable5);
+      Actor_SetActionScript(16, gColosseumEntrance_ActionTable7);
       Engine_EventWait(20);
       Engine_ActorFaceDirection(15, 0xd000, 0);
       Engine_ActorFaceDirection(17, 0xb000, 0);
@@ -623,22 +623,22 @@ static void EV12_TOUCH(void) {
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;
       Engine_TaskWait(1);
-      script = (s32)gColosseumEntrance_ActionTable8;
-      Engine_ActorEnableActionCallback(15, script);
+      script = gColosseumEntrance_ActionTable8;
+      Actor_SetActionScript(15, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(13, script);
+      Actor_SetActionScript(13, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(17, script);
+      Actor_SetActionScript(17, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(14, script);
+      Actor_SetActionScript(14, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(16, script);
+      Actor_SetActionScript(16, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(12, script);
+      Actor_SetActionScript(12, script);
       Engine_EventWait(20);
-      Engine_ActorEnableActionCallback(18, script);
+      Actor_SetActionScript(18, script);
       Engine_EventWait(60);
-      Engine_ActorEnableActionCallback(0, script);
+      Actor_SetActionScript(0, script);
       Engine_EventWait(80);
       Engine_EventRequestExit(66);
     } else {
@@ -739,7 +739,7 @@ static void FieldScene_BuildActorPresentationGroup(void) {
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(16, 3);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(16, (s32)gColosseumEntrance_ActionTable9);
+  Actor_SetActionScript(16, gColosseumEntrance_ActionTable9);
   Engine_EventWait(80);
   Actor_SetAttachedEffect(16, 0x102);
   Engine_EventWait(60);
@@ -871,7 +871,7 @@ static void FieldScene_RunMiddleSequence(void) {
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(17, 3);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(17, (s32)gColosseumEntrance_ActionTable9);
+  Actor_SetActionScript(17, gColosseumEntrance_ActionTable9);
   Engine_EventWait(80);
   Actor_SetAttachedEffect(17, 0x102);
   Engine_EventWait(60);
@@ -1208,8 +1208,8 @@ static void FieldScene_BuildActorPresentationSequence(void) {
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  Engine_ActorEnableActionCallback(GARET, (s32)gColosseumEntrance_ActionTable3);
-  Engine_ActorEnableActionCallback(IVAN, (s32)gColosseumEntrance_ActionTable3);
+  Actor_SetActionScript(GARET, gColosseumEntrance_ActionTable3);
+  Actor_SetActionScript(IVAN, gColosseumEntrance_ActionTable3);
   Object_SetActionCallbackAndRefreshById(3,
                                          (s32)gColosseumEntrance_ActionTable3);
   Engine_EventWait(20);
@@ -1304,7 +1304,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
 
     *target = shown;
   }
-  Engine_ActorEnableActionCallback(13, 2);
+  Actor_SetBuiltinAction(13, 2);
   Actor_FaceDirection(12, 0x3000, 0);
   Actor_FaceDirection(14, 0xb000, 0);
   Actor_FaceDirection(15, 0x5000, 0);
@@ -1332,7 +1332,7 @@ static void ColosseumEntrance_WalkToEastExit(void) {
 }
 
 static void ColosseumEntrance_CelebrateAdvancement(void) {
-  s32 actions;
+  const s32 *actions;
 
   Engine_EventBegin();
   Actor_SetPosition(GARET, 0x3180000, 0x880000);
@@ -1357,10 +1357,10 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  actions = (s32)gColosseumEntrance_ActionTable3;
-  Engine_ActorEnableActionCallback(GARET, actions);
-  Engine_ActorEnableActionCallback(2, actions);
-  Object_SetActionCallbackAndRefreshById(3, actions);
+  actions = gColosseumEntrance_ActionTable3;
+  Actor_SetActionScript(GARET, actions);
+  Actor_SetActionScript(2, actions);
+  Object_SetActionCallbackAndRefreshById(3, (s32)actions);
   Engine_EventWait(20);
   SceneState_ForwardMaskedHalfwordWith10(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1426,7 +1426,7 @@ static void ColosseumEntrance_WalkToWestExit(void) {
 }
 
 static void ColosseumEntrance_CelebrateBothWins(void) {
-  s32 actions;
+  const s32 *actions;
 
   Engine_EventBegin();
   Actor_SetPosition(GARET, 0x3180000, 0x880000);
@@ -1451,10 +1451,10 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  actions = (s32)gColosseumEntrance_ActionTable3;
-  Engine_ActorEnableActionCallback(GARET, actions);
-  Engine_ActorEnableActionCallback(2, actions);
-  Object_SetActionCallbackAndRefreshById(3, actions);
+  actions = gColosseumEntrance_ActionTable3;
+  Actor_SetActionScript(GARET, actions);
+  Actor_SetActionScript(2, actions);
+  Object_SetActionCallbackAndRefreshById(3, (s32)actions);
   Engine_EventWait(20);
   SceneState_ForwardMaskedHalfwordWith10(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

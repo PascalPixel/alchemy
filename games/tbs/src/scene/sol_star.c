@@ -1072,12 +1072,12 @@ static void SolStar_LineUpFollowers(void) {
 
   leader = Object_GetById(0);
   Engine_EventBegin();
-  Engine_ActorEnableActionCallback(5, (const s32 *)1);
-  Engine_ActorEnableActionCallback(9, (const s32 *)1);
-  Engine_ActorEnableActionCallback(11, (const s32 *)1);
-  Engine_ActorEnableActionCallback(10, (const s32 *)1);
-  Engine_ActorEnableActionCallback(14, (const s32 *)1);
-  Engine_ActorEnableActionCallback(13, (const s32 *)1);
+  Actor_SetBuiltinAction(5, ACTOR_ACTION_IDLE);
+  Actor_SetBuiltinAction(9, ACTOR_ACTION_IDLE);
+  Actor_SetBuiltinAction(11, ACTOR_ACTION_IDLE);
+  Actor_SetBuiltinAction(10, ACTOR_ACTION_IDLE);
+  Actor_SetBuiltinAction(14, ACTOR_ACTION_IDLE);
+  Actor_SetBuiltinAction(13, ACTOR_ACTION_IDLE);
   Actor_SetPosition(5, PIXELS(475), PIXELS(332));
   Actor_SetPosition(9, PIXELS(491), PIXELS(332));
   Actor_SetPosition(11, PIXELS(459), PIXELS(348));
@@ -1812,7 +1812,7 @@ static void Scene_EnterStarRoom(void) {
   Event_SayThenWait(9, 10);
   Actor_SetSpeed(ACTOR_KRADEN, 0x3333, 0x1999);
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x18b);
-  Engine_ActorEnableActionCallback(ACTOR_KRADEN, 1);
+  Actor_SetBuiltinAction(ACTOR_KRADEN, ACTOR_ACTION_IDLE);
   Engine_EventWait(30);
   {
     s32 flags = 1 | *kradenFlags;

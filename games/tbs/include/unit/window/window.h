@@ -13,7 +13,7 @@ struct MenuSprite;
 struct NodeChainNode;
 struct NodeChainState;
 struct OwnerActionSlot;
-struct RenderInput;
+struct UiWindow;
 struct RenderOutput;
 struct RenderOutputList;
 struct SaveSummary;
@@ -22,7 +22,6 @@ struct SelectionScreen;
 struct SelectionWork;
 struct TextReader;
 struct UiChannelSlot;
-struct UiWindow;
 struct WorkspaceWork;
 
 // The flags of a UI window (struct UiWindow.flags), which UiWindow_Create takes
@@ -95,7 +94,7 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant);
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *outputs);
-void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left,
+void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
 void RenderOutputList_UpdateTail(struct RenderOutputList *list);
 /* RenderOutput_AppendToList is called from battle_command.c with no prototype
@@ -132,7 +131,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles);
 void UiWork_FinalizeSharedSlot(void);
 void UiText_PrepareMessageWork(s32 argument);
 void UiText_ShowMessageAndWaitCore(s32 argument);
-s32 UiText_OpenEntryMessage(s32 window, s32 argument);
+s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 argument);
 void UiWork_SetBusyFlags(s32 flags);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
                                           u32 packed);
@@ -150,7 +149,7 @@ s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
                                      s32 y);
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                        const struct RenderInput *work,
+                                        const struct UiWindow *work,
                                         s32 offsetX, s32 offsetY);
 /* UiText_RenderWideStringInWindow is called from battle_command.c with no
  * prototype in scope: in one file its definition would come before
@@ -200,7 +199,8 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message);
 s32 UiText_DecodeSymbol(struct TextReader *reader);
 void UiWork_SetTwoEntriesTo999(void);
 s32 Localization_LookupEntryId(u32 value);
-s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y);
+struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
+                                               s32 y);
 void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
 
 #define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
@@ -332,12 +332,12 @@ void GraphicsPalette_SelectionNoOp(void);
 void OptionMenu_AnimateCursors(void);
 void OptionMenu_InitializeWork(void);
 void OptionMenu_Release(void);
-struct RenderInput *OptionMenu_Open(void);
+struct UiWindow *OptionMenu_Open(void);
 s32 Menu_RunWorkspaceOptions(void);
 void SystemMenu_AnimateCursor(void);
 void SystemMenu_Initialize(void);
 void SystemMenu_Release(void);
-struct RenderInput *SystemMenu_Open(void);
+struct UiWindow *SystemMenu_Open(void);
 s32 Menu_RunWorkspaceSelectionLoop(void);
 
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
@@ -348,21 +348,24 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
 void UiWindow_MarkVisibleTileAttributes(void);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
 void UiRender_ReservedNoOp(void);
-void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2,
+void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2);
 void UiWork_SetParamNibble(s32 param);
 void UiWork_SetRenderWord(u16 value);
-void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
+void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
                                   u32 offsetX, u32 offsetY);
-void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
-void UiText_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
-                               s32 offsetY);
-void UiText_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
-void UiText_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
+void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y);
+void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
+                               s32 offsetX, s32 offsetY);
+void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
+                               u32 y);
+void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
+                       s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 width,
+                               const struct UiWindow *window, s32 x, s32 y);
+void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                                s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y);
 /* UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no
  * prototype in scope: in one file its definition would come before
  * PartyStatusDraw, and PartyStatusDraw changes (2 of 435 instructions in

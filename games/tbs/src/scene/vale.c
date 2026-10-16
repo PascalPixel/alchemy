@@ -38,7 +38,7 @@
 
 // 前方宣言
 static void FieldScene_RunScene373SequenceC(void);
-static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1);
+static void Vale_AskAboutSneakingToAleph(const s32 *a0, const s32 *a1);
 static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3);
 static void Vale_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3);
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
@@ -468,10 +468,10 @@ static void EV50_TOUCH(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
   Actor_SetSpeed(22, 0x18000, 0x10000);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
   Engine_EventWait(10);
   Actor_ShowEmote(22, 0x103, 0);
-  Engine_ActorEnableActionCallback(22, gValeActor22WalkActions);
+  Actor_SetActionScript(22, gValeActor22WalkActions);
   Object_RefreshSelectorById(0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x100, 0x1da);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -486,7 +486,7 @@ static void EV50_TOUCH(void) {
   record = Actor_Get(22);
   record->update =
       (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
-  Engine_ActorEnableActionCallback(22, gValeActor22Actions);
+  Actor_SetActionScript(22, gValeActor22Actions);
   GameFlag_Set(0x823);
   Engine_EventEnd();
 }
@@ -497,13 +497,13 @@ static void EV51_TOUCH(void) {
     u8 *q = p;
     q += 100;
     if (*(s16 *)q == 1) {
-      Vale_AskAboutSneakingToAleph((s32)gValePairTableA, (s32)gValePairTableB);
+      Vale_AskAboutSneakingToAleph(gValePairTableA, gValePairTableB);
     }
   }
 }
 
-static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1) {
-  s32 p8;
+static void Vale_AskAboutSneakingToAleph(const s32 *a0, const s32 *a1) {
+  const s32 *p8;
   struct FieldActor *rec8;
   struct FieldActor *record;
 
@@ -514,10 +514,10 @@ static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1) {
   Actor_ShowEmote(22, 0x100, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, a0);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, a0);
   Engine_EventWait(10);
   Actor_ShowEmote(22, 0x103, 0);
-  Object_SetActionCallbackAndRefreshById(22, p8);
+  Object_SetActionCallbackAndRefreshById(22, (s32)p8);
   Object_RefreshSelectorById(0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(22, 2);
@@ -531,7 +531,7 @@ static void Vale_AskAboutSneakingToAleph(s32 a0, s32 a1) {
   record = Actor_Get(22);
   record->update =
       (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
-  Engine_ActorEnableActionCallback(22, gValeActor22Actions);
+  Actor_SetActionScript(22, gValeActor22Actions);
   Engine_EventEnd();
 }
 
@@ -541,7 +541,7 @@ static void EV52_TOUCH(void) {
     u8 *q = p;
     q += 100;
     if (*(s16 *)q == 2) {
-      Vale_AskAboutSneakingToAleph((s32)gValePairTableC, (s32)gValePairTableD);
+      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
     }
   }
 }
@@ -554,9 +554,9 @@ static void EV53_TOUCH(void) {
     q += 100;
     v = *(s16 *)q;
     if (v == 1) {
-      Vale_AskAboutSneakingToAleph((s32)gValePairTableC, (s32)gValePairTableB);
+      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableB);
     } else if (v == 2) {
-      Vale_AskAboutSneakingToAleph((s32)gValePairTableC, (s32)gValePairTableD);
+      Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
     }
   }
 }
@@ -592,17 +592,17 @@ static void HouseScene_RunRepairMorning(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   SceneActor_ResetActorRun(ACTOR_BOARD, 2, 1);
   gEventWork->startTransition = 0;
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
   Actor_SetSpeed(JENNA, 0x8000, 0x4000);
   Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  Engine_ActorEnableActionCallback(JENNA, gJennaAction);
-  Engine_ActorEnableActionCallback(GARET, gGaretAction);
+  Actor_SetActionScript(JENNA, gJennaAction);
+  Actor_SetActionScript(GARET, gGaretAction);
 
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 40);
@@ -629,11 +629,11 @@ static void HouseScene_RunRepairMorning(void) {
   Actor_SetChildValue(ACTOR_BOARD, 0);
   Actor_SetPosition(ACTOR_BOARD, PIXELS(390), PIXELS(842));
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Engine_EventWait(200);
   Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
 
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -656,11 +656,11 @@ static void HouseScene_RunRepairMorning(void) {
   Actor_SetChildValue(ACTOR_BOARD, 0);
   Actor_SetPosition(ACTOR_BOARD, 0, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Engine_EventWait(200);
   Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
 
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -683,10 +683,10 @@ static void HouseScene_RunRepairMorning(void) {
   Actor_SetChildValue(ACTOR_LAST_BOARD, 0);
   Actor_SetPosition(ACTOR_LAST_BOARD, 0, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Engine_EventWait(200);
   Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ACTION_TABLE_STOP);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
 
@@ -1170,7 +1170,7 @@ s32 Vale_ApplyEntryState(void) {
             Actor_SetPosition(22, 0x1000000, 0x1c80000);
             Object_GetById(22)->update =
                 (void *)SceneActor_RunStep18WhenTargetSet;
-            Engine_ActorEnableActionCallback(22, gValeActor22Actions);
+            Actor_SetActionScript(22, gValeActor22Actions);
           }
         } else {
           Object_GetById(22)->paused = set;
@@ -1371,7 +1371,7 @@ static void FieldScene_RunPrimaryActorSequence(void) {
 
 static void FieldScene_RunCompanionActorSequence(void) {
   struct FieldActor *actor_data;
-  s32 shared_data;
+  const s32 *shared_data;
 
   Engine_EventBegin();
   actor_data = Actor_Get(ACTOR_A);
@@ -1385,13 +1385,13 @@ static void FieldScene_RunCompanionActorSequence(void) {
   Engine_ActorSetAnimation(ACTOR_C, 0);
   Engine_TaskWait(20);
   Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-  shared_data = ((s32)gVillagerAction);
-  Engine_ActorEnableActionCallback(ACTOR_A, shared_data);
+  shared_data = gVillagerAction;
+  Actor_SetActionScript(ACTOR_A, shared_data);
   Engine_TaskWait(10);
-  Engine_ActorEnableActionCallback(ACTOR_B, shared_data);
+  Actor_SetActionScript(ACTOR_B, shared_data);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_TaskWait(20);
-  Object_SetActionCallbackAndRefreshById(ACTOR_C, shared_data);
+  Object_SetActionCallbackAndRefreshById(ACTOR_C, (s32)shared_data);
   Actor_ShowEmote(ACTOR_D, 0x100, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_D, 2);
   Actor_FaceDirection(ACTOR_D, 0xd000, 10);
@@ -1540,8 +1540,7 @@ static void FieldScene_RunLargeStagingSequence(void) {
   record = Object_GetById(12);
   Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   (s32)gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Graphics_EnableObjLayerAndCallbacks();
   msg = MsgValeRepairCaption;
   UiText_ShowCenteredMessage(msg, 0, 0);
@@ -1592,7 +1591,7 @@ static void FieldScene_RunLargeStagingSequence(void) {
   Event_ShowMessageAndWait(0x100a, 0, 10);
   rec3->scaleX = 0x10000;
   rec3->scaleY = 0x10000;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1601,8 +1600,7 @@ static void FieldScene_RunLargeStagingSequence(void) {
   Engine_EventWait(40);
   Event_ShowMessageAndWait(0x100a, 0, 40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER,
-                                   (s32)gLeaderHammerAction);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
   Engine_CameraFollowActor(JENNA, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
@@ -1839,7 +1837,7 @@ static void Scene_RepairTheHouse(void) {
   turned = Actor_Get(JENNA);
   turned->facing = turnSide;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
+  Actor_SetActionScript(0, gLeaderHammerAction);
   rec = Actor_Get(23);
   rec->motionFlags = 0;
   rec->x.fixed = 0x1840000;
@@ -1867,10 +1865,10 @@ static void Scene_RepairTheHouse(void) {
   Engine_EventOpenScreen();
   Actor_SetSpeed(JENNA, 0x8000, turnSide);
   Actor_SetSpeed(GARET, 0x8000, turnSide);
-  Engine_ActorEnableActionCallback(5, (u32)gJennaAction);
-  Engine_ActorEnableActionCallback(1, (u32)gGaretAction);
+  Actor_SetActionScript(5, gJennaAction);
+  Actor_SetActionScript(1, gGaretAction);
   Engine_EventWait(40);
-  Engine_ActorEnableActionCallback(0, 1);
+  Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   scene->scaleX = 0x10000;
   scene->scaleY = 0x10000;
   Actor_FaceDirection(0, 0xb000, 40);
@@ -1916,10 +1914,10 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetPosition(23, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
+  Actor_SetActionScript(0, gLeaderHammerAction);
   Engine_EventWait(120);
   Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
-  Engine_ActorEnableActionCallback(0, 1);
+  Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   scene->scaleX = 0x10000;
   scene->scaleY = 0x10000;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1959,10 +1957,10 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetPosition(24, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
+  Actor_SetActionScript(0, gLeaderHammerAction);
   Engine_EventWait(120);
   Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
-  Engine_ActorEnableActionCallback(0, 1);
+  Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   scene->scaleX = 0x10000;
   scene->scaleY = 0x10000;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -2003,11 +2001,11 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetPosition(25, 0, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
-  Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
+  Actor_SetActionScript(0, gLeaderHammerAction);
   Engine_EventWait(120);
   SceneEffect_CleanupSceneObjects();
   Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
-  Engine_ActorEnableActionCallback(0, 1);
+  Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   scene->scaleX = 0x10000;
   scene->scaleY = 0x10000;
   Engine_ActorJump(ACTOR_DORA, 2, 20);

@@ -703,7 +703,7 @@ s32 ValeKraden_RestoreEntryState(void) {
 
       record->radius = shown;
     }
-    Engine_ActorEnableActionCallback(11, gKraden_Actor11Actions);
+    Actor_SetActionScript(11, gKraden_Actor11Actions);
     if (Engine_GameFlagIsSet(0x839) != 0) {
       Engine_ActorSetPosition(11, 0, 0);
     }

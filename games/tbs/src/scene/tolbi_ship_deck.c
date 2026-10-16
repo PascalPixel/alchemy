@@ -583,7 +583,7 @@ static void TolbiShipDeck_TalkToActor21(void) {
       random = Random_Next();
       wait = ((u32)(90 * random) >> 16) + 60;
       passenger->timer = wait;
-      Engine_ActorEnableActionCallback(21, gTolbiShipDeck_RandomActorActions);
+      Actor_SetActionScript(21, gTolbiShipDeck_RandomActorActions);
     } else {
       Actor_ShowEmote(21, 0x103, 0);
       Engine_ActorStartRepeatedMotion(21, 3);
@@ -613,7 +613,7 @@ static void TolbiShipDeck_TalkToActor24(void) {
       random = Random_Next();
       wait = ((u32)(90 * random) >> 16) + 60;
       passenger->timer = wait;
-      Engine_ActorEnableActionCallback(24, gTolbiShipDeck_RandomActorActions);
+      Actor_SetActionScript(24, gTolbiShipDeck_RandomActorActions);
     } else {
       Actor_ShowEmote(24, 0x103, 0);
       Engine_ActorStartRepeatedMotion(24, 3);
@@ -776,9 +776,9 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
     Actor_SetSpeed(23, 0xcccc, 0x6666);
-    Engine_ActorEnableActionCallback(23, gTolbiShipDeck_PresentationActionsA);
+    Actor_SetActionScript(23, gTolbiShipDeck_PresentationActionsA);
     Actor_SetSpeed(22, 0xcccc, 0x6666);
-    Engine_ActorEnableActionCallback(22, gTolbiShipDeck_PresentationActionsB);
+    Actor_SetActionScript(22, gTolbiShipDeck_PresentationActionsB);
     Actor_SetSpeed(20, 0xcccc, 0x6666);
     Actor_WalkToAndWait(20, 182, 0x2f8);
     Engine_ActorStartRepeatedMotion(20, 2);
@@ -1067,11 +1067,11 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Object_GetById(21)->facing = 0x5000;
     actor = Object_GetById(21);
     actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-    Engine_ActorEnableActionCallback(21, gTolbiShipDeck_RandomActorActions);
+    Actor_SetActionScript(21, gTolbiShipDeck_RandomActorActions);
     Engine_ActorSetPosition(24, PIXELS(248), PIXELS(680));
     actor = Actor_Get(24);
     actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-    Engine_ActorEnableActionCallback(24, gTolbiShipDeck_RandomActorActions);
+    Actor_SetActionScript(24, gTolbiShipDeck_RandomActorActions);
     Engine_ActorSetPosition(22, 0, 0);
   } else {
     if (Engine_GameFlagIsSet(0x923) != 0) {
@@ -1124,7 +1124,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
     record->collisionFlags = value | bits;
   }
   Actor_SetSpeed(22, 0x9999, 0x4ccc);
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsA);
+  Actor_SetActionScript(22, gTolbiShipDeck_LeadActionsA);
   {
     struct FieldActor *record = Object_GetById(21);
 
@@ -1132,7 +1132,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
     record->collisionFlags = bits;
   }
   Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
+  Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
   if (GameFlag_IsSet(0x109) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
@@ -1151,13 +1151,13 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   Actor_SetPosition(22, PIXELS(268), PIXELS(678));
   record = Object_GetById(22);
   record->facing = 0;
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsC);
+  Actor_SetActionScript(22, gTolbiShipDeck_LeadActionsC);
   {
     struct FieldActor *record = Object_GetById(21);
     record->collisionFlags = 128 | record->collisionFlags;
   }
   Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
+  Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
   if (GameFlag_IsSet(0x109) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
@@ -1312,7 +1312,8 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
 // Entrance 12: the monsters leap aboard ("It's no use. It's too late!") and
 // someone cries out.
 static void TolbiShipDeck_MonstersBoard(void) {
-  s32 shared;
+  s32 zero;
+  const s32 *shared;
 
   Engine_EventBegin();
   Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
@@ -1334,20 +1335,20 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Actor_SetSpeed(0, 157286, 78643);
   FieldObjectMotion_ResetAndSetPosition(0, 154, 609);
   Engine_AudioPlayCue(146);
-  shared = 0;
-  Object_GetById(24)->timer = shared;
-  Object_GetById(25)->timer = shared;
-  Object_GetById(26)->timer = shared;
+  zero = 0;
+  Object_GetById(24)->timer = zero;
+  Object_GetById(25)->timer = zero;
+  Object_GetById(26)->timer = zero;
   Actor_SetPosition(24, PIXELS(32), PIXELS(484));
   Actor_SetPosition(25, PIXELS(84), PIXELS(496));
   Actor_SetPosition(26, PIXELS(16), PIXELS(596));
   Actor_SetSpeed(24, 157286, 78643);
   Actor_SetSpeed(25, 157286, 78643);
   Actor_SetSpeed(26, 157286, 78643);
-  shared = (s32)gTolbiShipDeck_DeckEventActions;
-  Engine_ActorEnableActionCallback(24, shared);
-  Engine_ActorEnableActionCallback(25, shared);
-  Engine_ActorEnableActionCallback(26, shared);
+  shared = gTolbiShipDeck_DeckEventActions;
+  Actor_SetActionScript(24, shared);
+  Actor_SetActionScript(25, shared);
+  Actor_SetActionScript(26, shared);
   Engine_ActorSetChildValue(24, 3);
   Engine_ActorSetChildValue(25, 3);
   Engine_ActorSetChildValue(26, 3);
@@ -1392,9 +1393,9 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(28), 1);
   Engine_ActorSetSpriteFlags(Object_GetById(29), 1);
   Actor_SetPosition(22, PIXELS(256), PIXELS(640));
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_CrewActionsD);
+  Actor_SetActionScript(22, gTolbiShipDeck_CrewActionsD);
   Actor_SetPosition(21, PIXELS(268), PIXELS(692));
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_CrewActionsD);
+  Actor_SetActionScript(22, gTolbiShipDeck_CrewActionsD);
   Actor_SetPosition(24, PIXELS(242), PIXELS(604));
   Actor_SetPosition(25, PIXELS(264), PIXELS(600));
   Actor_SetPosition(26, PIXELS(254), PIXELS(668));
@@ -1403,10 +1404,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Object_GetById(25)->riseEnabled = 1;
   Object_GetById(26)->riseEnabled = 0;
   Object_GetById(27)->riseEnabled = 1;
-  Engine_ActorEnableActionCallback(24, gTolbiShipDeck_CrewActionsB);
-  Engine_ActorEnableActionCallback(25, gTolbiShipDeck_CrewActionsB);
-  Engine_ActorEnableActionCallback(26, gTolbiShipDeck_CrewActionsA);
-  Engine_ActorEnableActionCallback(27, gTolbiShipDeck_CrewActionsA);
+  Actor_SetActionScript(24, gTolbiShipDeck_CrewActionsB);
+  Actor_SetActionScript(25, gTolbiShipDeck_CrewActionsB);
+  Actor_SetActionScript(26, gTolbiShipDeck_CrewActionsA);
+  Actor_SetActionScript(27, gTolbiShipDeck_CrewActionsA);
   Engine_ActorSetPosition(20, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
@@ -1422,11 +1423,11 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetDestination(0, 174, 0x26c);
   Engine_ObjectMotionSetPositionAndCommit(28, 180, 0x244);
   Engine_AudioPlayCue(146);
-  Engine_ActorEnableActionCallback(28, gTolbiShipDeck_CrewActionsC);
-  Engine_ActorEnableActionCallback(29, gTolbiShipDeck_CrewActionsC);
+  Actor_SetActionScript(28, gTolbiShipDeck_CrewActionsC);
+  Actor_SetActionScript(29, gTolbiShipDeck_CrewActionsC);
   Engine_AudioPlayCue(240);
   Actor_SetPosition(31, PIXELS(134), PIXELS(594));
-  Engine_ActorEnableActionCallback(31, gTolbiShipDeck_CrewActionsE);
+  Actor_SetActionScript(31, gTolbiShipDeck_CrewActionsE);
   Engine_EventWait(10);
   Actor_SetPosition(30, PIXELS(134), PIXELS(584));
   Actor_SetSpeed(30, 0x40000, 0x20000);
@@ -1439,9 +1440,9 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   TolbiShipDeck_Turn(30, FACING_NORTH);
   TolbiShipDeck_OpenFirstDoor();
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(30, gTolbiShipDeck_SailorActions);
+  Actor_SetActionScript(30, gTolbiShipDeck_SailorActions);
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(28, gTolbiShipDeck_SailorActions);
+  Actor_SetActionScript(28, gTolbiShipDeck_SailorActions);
   Engine_EventWait(10);
   Object_SetActionCallbackAndRefreshById(29, gTolbiShipDeck_SailorActions);
   Engine_EventWait(20);
@@ -1466,7 +1467,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   struct FieldActor *monster;
   struct FieldActor *record;
   s32 frame;
-  const u8 *sailorActions;
+  const s32 *sailorActions;
 
   Engine_EventBegin();
   Engine_ActorSetChildValue(0, 15);
@@ -1493,12 +1494,12 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Object_GetById(26)->riseEnabled = 0;
   Object_GetById(27)->riseEnabled = 2;
   Engine_ActorSetPosition(20, 0, 0);
-  Engine_ActorEnableActionCallback(24, gTolbiShipDeck_DeckActionsA);
-  Engine_ActorEnableActionCallback(25, gTolbiShipDeck_DeckActionsA);
-  Engine_ActorEnableActionCallback(26, gTolbiShipDeck_DeckActionsB);
-  Engine_ActorEnableActionCallback(27, gTolbiShipDeck_DeckActionsB);
-  Engine_ActorEnableActionCallback(28, gTolbiShipDeck_DeckActionsC);
-  Engine_ActorEnableActionCallback(29, gTolbiShipDeck_DeckActionsC);
+  Actor_SetActionScript(24, gTolbiShipDeck_DeckActionsA);
+  Actor_SetActionScript(25, gTolbiShipDeck_DeckActionsA);
+  Actor_SetActionScript(26, gTolbiShipDeck_DeckActionsB);
+  Actor_SetActionScript(27, gTolbiShipDeck_DeckActionsB);
+  Actor_SetActionScript(28, gTolbiShipDeck_DeckActionsC);
+  Actor_SetActionScript(29, gTolbiShipDeck_DeckActionsC);
   Engine_ActorSetChildValue(24, 3);
   Engine_ActorSetChildValue(25, 3);
   Engine_ActorSetChildValue(26, 3);
@@ -1545,15 +1546,15 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_TaskWait(1);
   Actor_SetSpeed(28, 0x19999, 0xcccc);
   sailorActions = gTolbiShipDeck_SailorActions;
-  Engine_ActorEnableActionCallback(28, sailorActions);
+  Actor_SetActionScript(28, sailorActions);
   TolbiShipDeck_Turn(30, 0xd000);
   TolbiShipDeck_OpenFirstDoor();
   Engine_EventWait(10);
-  Engine_ActorEnableActionCallback(30, sailorActions);
+  Actor_SetActionScript(30, sailorActions);
   Engine_ActorStop(29);
   Engine_TaskWait(1);
   Actor_SetSpeed(29, 0x19999, 0xcccc);
-  Object_SetActionCallbackAndRefreshById(29, sailorActions);
+  Object_SetActionCallbackAndRefreshById(29, (s32)sailorActions);
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -1693,13 +1694,13 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Actor_SetPosition(22, PIXELS(268), PIXELS(678));
   record = Object_GetById(22);
   record->facing = 0;
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeadActionsC);
+  Actor_SetActionScript(22, gTolbiShipDeck_LeadActionsC);
   {
     struct FieldActor *record = Object_GetById(21);
     record->collisionFlags = 128 | record->collisionFlags;
   }
   Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeadActionsB);
+  Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1953,7 +1954,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
     }
 
     TolbiShipDeck_Say(actor);
-    Engine_ActorEnableActionCallback(actor, gTolbiShipDeck_RosterActions);
+    Actor_SetActionScript(actor, gTolbiShipDeck_RosterActions);
   }
 
   Object_RefreshSelectorById(actor);
@@ -2585,12 +2586,12 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Engine_ActorRunRepeatedMotion(22, 1);
   TolbiShipDeck_Say(22);
   Actor_SetSpeed(22, 0x19999, 0xcccc);
-  Engine_ActorEnableActionCallback(22, gTolbiShipDeck_LeaveActions);
+  Actor_SetActionScript(22, gTolbiShipDeck_LeaveActions);
   Actor_SetSpeed(21, 0x19999, 0xcccc);
   Actor_WalkToAndWait(21, 168, 0x278);
-  Engine_ActorEnableActionCallback(21, gTolbiShipDeck_LeaveActions);
+  Actor_SetActionScript(21, gTolbiShipDeck_LeaveActions);
   Engine_EventWait(80);
-  Engine_ActorEnableActionCallback(26, gTolbiShipDeck_LeaveActions);
+  Actor_SetActionScript(26, gTolbiShipDeck_LeaveActions);
   Engine_EventWait(40);
   TolbiShipDeck_Turn(20, FACING_WEST);
   TolbiShipDeck_Say(SPEAKER(20, 2));

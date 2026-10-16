@@ -1045,13 +1045,13 @@ static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   }
   particle->velocityX = 25;
   particle->velocityY = 128;
-  Engine_ActorEnableActionCallback(kind, gColossoParticleKinds);
+  Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
 static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
 
   struct FieldActor *record;
-  s32 dataTableAddr;
+  const s32 *dataTableAddr;
   s32 callbackTarget;
 
   Engine_ActorDestroy(39);
@@ -1065,7 +1065,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   } else {
     Engine_ActorSetAnimation(8, 8);
   }
-  Engine_ActorEnableActionCallback(8, gColossoLog_Actor8Action);
+  Actor_SetActionScript(8, gColossoLog_Actor8Action);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
   record = Object_GetById(0);
   {
@@ -1073,7 +1073,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
 
     record->facing = shown;
   }
-  Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionA);
+  Actor_SetActionScript(0, gColossoLog_LeaderActionA);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
   Actor_SetSpeed(1, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
@@ -1107,8 +1107,8 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoIsaac);
   Engine_EventWait(60);
-  dataTableAddr = (s32)gColossoMultiPhaseData;
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, dataTableAddr);
+  dataTableAddr = gColossoMultiPhaseData;
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, dataTableAddr);
   record = Object_GetById(0);
   record->scaleX = 0x10000;
   record = Object_GetById(0);
@@ -1120,7 +1120,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   record = Object_GetById(0);
   Engine_ActorSetSpriteFlags(record, 0);
   Engine_EventWait(20);
-  Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionB);
+  Actor_SetActionScript(0, gColossoLog_LeaderActionB);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
   Actor_WalkToAndWait(1, 0x5e0, 176);
@@ -1157,7 +1157,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Object_LinkObjectAndSetCallback(1, 3);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorEnableActionCallback(0, gColossoLog_LeaderActionC);
+  Actor_SetActionScript(0, gColossoLog_LeaderActionC);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Object_LinkObjectAndSetCallback(1, 0);
   Engine_EventWait(20);
@@ -1170,7 +1170,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Object_LinkObjectAndSetCallback(3, 0);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, dataTableAddr);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, dataTableAddr);
   Engine_EventWait(60);
   callbackTarget = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
   gColossoParticleCount = 9;

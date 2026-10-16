@@ -40,7 +40,7 @@ static inline void Effect_InitializeMotion(struct FieldEffect *effect,
    * instead of before it (two instructions differ in tbs-en, 2026-10-16). */
   sprite->image.priority =
       (*(struct AnimationObject **)((u8 *)leader +
-                                   offsetof(struct FieldActor, sprite)))
+                                    offsetof(struct FieldActor, sprite)))
           ->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

@@ -4,6 +4,8 @@
 enum ItemId {
   ITEM_NUT = 0xb5,
   ITEM_VIAL = 0xb6,
+  ITEM_POTION = 0xb7,
+  ITEM_PSY_CRYSTAL = 0xba,
   ITEM_ANTIDOTE = 0xbb,
   ITEM_ELIXIR = 0xbc,
   ITEM_WATER_OF_LIFE = 0xbd,

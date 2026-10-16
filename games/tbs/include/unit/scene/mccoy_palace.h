@@ -7,16 +7,16 @@
 struct SceneEvent;
 struct ScenePlacement;
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 McCoyPalace_ApplyEntryState(s32 a0, s32 a1);
+const struct SceneEntrance *McCoyPalace_GetEntrances(void);
+const struct SceneRegion *McCoyPalace_GetRegions(void);
+const u32 *McCoyPalace_GetExits(void);
+const struct ScenePlacement *McCoyPalace_GetPlacements(void);
+const struct SceneEvent *McCoyPalace_GetEvents(void);
+s32 McCoyPalace_Initialize(void);
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
-extern struct SceneEntrance gPlacement_Scripts[];
-extern u32 gPlacement_Messages[];
+extern struct SceneEntrance gMcCoyPalaceEntrances[];
+extern u32 gMcCoyPalaceExits[];
 extern struct ScenePlacement gMcCoyPalacePlacementsOther[];
 extern struct ScenePlacement gMcCoyPalacePlacements[];
 extern struct SceneEvent gMcCoyPalaceEventsOther[];

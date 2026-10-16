@@ -34,6 +34,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
+#include "flags.h"
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
 
@@ -408,7 +409,7 @@ static void Vault_TalkToDogAfterCapture(void) {
   Engine_EventShowMessage(19, 0);
   Engine_ActorSetAnimation(19, 1);
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
-      Engine_GameFlagIsSet(0x858) == 0) {
+      Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *p = &gEventWork->unk172;
     u16 value = 1;
 
@@ -500,7 +501,7 @@ static void Vault_ReadDogThoughts(void) {
     Engine_EventSetMessage(MsgVaultStealingInMidstVolcanicEruption);
     Engine_ActorSetAnimation(19, 0);
     Engine_EventWait(2);
-  } else if (Engine_GameFlagIsSet(0x858) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Engine_EventSetMessage(MsgVaultCarefulSearchWillRevealPassage);
   } else {
     Engine_EventSetMessage(MsgVaultIfBringMeBoneIll);
@@ -640,7 +641,7 @@ static void Vault_RingBell(void) {
   Engine_EventBegin();
   Event_PlayCue(100);
   Engine_EventWait(40);
-  if (GameFlag_IsSet(0x867) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(23, 0x102);
     Engine_ActorJump(23, 4, 0);
     Engine_EventWait(12);
@@ -650,7 +651,7 @@ static void Vault_RingBell(void) {
     Engine_EventWait(20);
     Actor_WalkToAndWait(23, 408, 104);
     Actor_WalkToAndWait(23, 408, 120);
-    GameFlag_Set(0x867);
+    GameFlag_Set(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   }
   Engine_EventEnd();
 }
@@ -674,7 +675,7 @@ static void Vault_GiveBoneToDog(void) {
   Actor_WalkToAndWait(19, 216, 392);
   Engine_EventWait(10);
   Actor_FaceDirection(19, 0x4000, 20);
-  GameFlag_Set(0x858);
+  GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
   Engine_EventEnd();
 }
 
@@ -711,7 +712,7 @@ s32 Vault_RestoreEntryState(void) {
   actor->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 #endif
-  if (Engine_GameFlagIsSet(0x858) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Actor_SetPosition(19, PIXELS(216), PIXELS(392));
   }
   actor21Flag = Engine_GameFlagIsSet(0x853);
@@ -729,7 +730,7 @@ s32 Vault_RestoreEntryState(void) {
   // Before the thieves are captured, Ivan welcomes the party back at the gates.
   if (gGameState.entrance <= 2) {
     if (Engine_GameFlagIsSet(0x109) == 0) {
-      Engine_GameFlagClear(0x867);
+      Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
       if (Engine_GameFlagIsSet(0x855) == 0) {
         if (Engine_GameFlagIsSet(0x856) != 0) {
           Engine_EventBegin();
@@ -765,7 +766,7 @@ s32 Vault_RestoreEntryState(void) {
       }
     }
   }
-  if (Engine_GameFlagIsSet(0x867) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) != 0) {
     Actor_SetPosition(23, PIXELS(408), PIXELS(120));
   }
   // Use the same greeting for the western entrance while Ivan is absent.
@@ -1263,7 +1264,7 @@ struct SceneEvent gVault_EventsAfterThieves[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultSniffAhTheSmellOfCooking) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RingBell) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_PeerIntoWell) },
-    { 0xe714, 19, 0x858, EVENT_SCRIPT(Vault_GiveBoneToDog) },
+    { 0xe714, 19, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Vault_GiveBoneToDog) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };

@@ -1,8 +1,6 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-// FIELD
-
 #include "types.h"
 #include "edition.h"
 #include "object_runtime.h"
@@ -69,7 +67,6 @@ struct MenuSprite;
 struct ModeRecord;
 struct MotionObject;
 struct ObjectRuntime;
-struct PillarEffect;
 struct FieldRecord;
 struct SceneEntrance;
 struct SceneEntry;
@@ -77,7 +74,6 @@ struct SceneEvent;
 struct FieldSceneObject;
 struct ScenePlacement;
 struct SceneRegion;
-struct ScriptTable;
 struct SparkleFrame;
 struct Sub;
 struct Swirl;
@@ -90,14 +86,6 @@ struct FacingStateActor {
   u16 facing;
   u8 reserved08[92];
   u16 stateFlags;
-};
-struct AcceptActor11 {
-  u8 reserved00[91];
-  u8 accepted;
-};
-struct AcceptActor13 {
-  u8 reserved00[91];
-  u8 accepted;
 };
 struct EffectWork {
   u8 pad[80];
@@ -158,14 +146,6 @@ struct PathRecorder {
   u16 pos;
   s16 still;
 };
-struct Presentation {
-  u8 reserved00[9];
-  u8 flags;
-};
-struct PresentationB {
-  u8 unk00[9];
-  u8 flags;
-};
 struct GridMarkActor {
   s32 f00;
   s32 f04;
@@ -174,32 +154,6 @@ struct GridMarkActor {
   s32 f10;
   u8 pad14[15];
   u8 f23;
-};
-struct PresentedActor {
-  u8 reserved00[35];
-  u8 state23;
-  u8 reserved24[44];
-  struct Presentation *presentation;
-};
-struct PresentedActorB {
-  u8 unk00[35];
-  u8 state23;
-  u8 unk24[44];
-  struct PresentationB *presentation;
-};
-struct PresentedActorC {
-  u8 reserved00[35];
-  u8 state23;
-  u8 reserved24[44];
-  struct Presentation *presentation;
-};
-struct BranchCounterWork {
-  u8 reserved000[472];
-  u16 branchCounter;
-};
-struct Actor18MarkerWork {
-  u8 reserved000[370];
-  u16 actor18Marker;
 };
 struct ScrollLayer {
   u8 unk00[8];

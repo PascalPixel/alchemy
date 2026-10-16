@@ -32,133 +32,122 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "fixed_math.h"
 
-struct ScriptTable {
-  u8 *script[3];
-};
-
-// A pillar fragment's FieldActor view: speed and acceleration move its two
-// plane axes, and work is the signed plane selector.
-struct PillarEffect {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x1c];
-  s32 rateFirst;
-  s32 rateSecond;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  u8 unk44[0x22];
-  s16 plane;
-};
-
-enum PillarEffectPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
+enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
 
 // Actor 13 reacts before actor 12 starts Djinni battle 40.
-static void EV12_TALK(void) {
-  Actor_ShowEmote(13, 256, 0);
+static void GomaCavePillar_StartDjinniBattle(void) {
+  Actor_ShowEmote(13, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(13, 2, 0);
   Field_RequestDjinnBattle(12, 40);
 }
 
 // Advances the fragment's selected coordinate plane and keeps its targets in
 // step.
-static void
-SceneEffect_AdvancePositionByAxisMode(union FieldObject *fieldObject) {
-  struct PillarEffect *effect = (struct PillarEffect *)fieldObject;
-  s16 plane = effect->plane;
+static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
+  struct FieldActor *fragment = (struct FieldActor *)fieldObject;
+  // The actor's speed and acceleration slots carry the two selected axis steps.
+  s16 plane = (s16)fragment->work;
 
   switch (plane) {
   case PLANE_XY:
-    effect->x += effect->rateFirst;
-    effect->targetX = effect->x;
-    effect->y += effect->rateSecond;
-    effect->targetY = effect->y;
+    fragment->x.fixed += fragment->speed;
+    fragment->targetX = fragment->x.fixed;
+    fragment->y.fixed += fragment->acceleration;
+    fragment->targetY = fragment->y.fixed;
     break;
   case PLANE_XZ:
-    effect->x += effect->rateFirst;
-    effect->targetX = effect->x;
-    effect->z += effect->rateSecond;
-    effect->targetZ = effect->z;
+    fragment->x.fixed += fragment->speed;
+    fragment->targetX = fragment->x.fixed;
+    fragment->z.fixed += fragment->acceleration;
+    fragment->targetZ = fragment->z.fixed;
     break;
   case PLANE_YZ:
-    effect->y += effect->rateFirst;
-    effect->targetY = effect->y;
-    effect->z += effect->rateSecond;
-    effect->targetZ = effect->z;
+    fragment->y.fixed += fragment->speed;
+    fragment->targetY = fragment->y.fixed;
+    fragment->z.fixed += fragment->acceleration;
+    fragment->targetZ = fragment->z.fixed;
     break;
   }
 }
 
 // Applies child value 15 at the end of a fragment's lifetime.
-static s32 OverlayObject_ApplyValue15(struct ScriptInterpreter *interpreter) {
+static s32
+GomaCavePillar_FinishFragment(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(actor, 15);
   return 0;
 }
 
 // Creates a fragment with two axis rates, a script and packed plane/priority.
-static void GomaCavePillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
-                                         s32 secondRate, s32 flags, s32 layer) {
-  struct ScriptTable table;
+static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
+                                         s32 secondRate,
+                                         s32 scriptAndChildValue,
+                                         s32 planeAndPriority) {
+  struct GomaCavePillarFragmentScripts table;
   struct FieldActor *leader;
-  struct FieldActor *obj;
+  struct FieldActor *fragment;
   struct AnimationObject *sprite;
-  u32 selection;
+  u32 priority;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  table = *(struct ScriptTable *)gGomaCavePillar_PillarScripts;
-  obj = Engine_ObjectCreate(222, x, y, z);
-  if (obj == 0)
+  table = gGomaCavePillar_PillarScripts;
+  fragment = Engine_ObjectCreate(222, x, y, z);
+  if (fragment == 0)
     return;
-  sprite = (struct AnimationObject *)obj->sprite;
-  Object_SetMode(obj, (flags + 1) & 15);
-  Engine_ObjectSetScript(obj, table.script[flags & 15]);
-  ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
-  obj->motionFlags = 0;
+  sprite = fragment->sprite;
+  Object_SetMode(fragment, (scriptAndChildValue + 1) & 15);
+  Engine_ObjectSetScript(fragment, table.scripts[scriptAndChildValue & 15]);
+  ObjectGroup_SetChildValue(fragment, ((u32)scriptAndChildValue >> 16) & 15);
+  fragment->motionFlags = 0;
   sprite->flags = 0;
-  obj->update = SceneEffect_AdvancePositionByAxisMode;
-  obj->speed = firstRate;
-  obj->acceleration = secondRate;
-  obj->work = *(u16 *)&layer;
-  selection = (u32)layer >> 16;
-  switch (selection) {
+  fragment->update = GomaCavePillar_UpdateFragment;
+  fragment->speed = firstRate;
+  fragment->acceleration = secondRate;
+  fragment->work = (u16)planeAndPriority;
+  priority = (u32)planeAndPriority >> 16;
+  switch (priority) {
   case 0:
-    sprite->image.priority =
-        ((struct AnimationObject *)leader->sprite)->image.priority;
+    sprite->image.priority = leader->sprite->image.priority;
     break;
   case 1:
   case 2:
   case 3:
-    obj->priorityFlags &= 0xfe;
-    sprite->image.priority = selection;
+    fragment->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    sprite->image.priority = priority;
     break;
   }
 }
 
-// Returns entrances through the overlay's byte-pointer API.
-u8 *SceneData_GetScriptTable(void) { return gGomaCavePillar_Scripts; }
+// Return the entrances to the pillar rooms.
+const struct SceneEntrance *GomaCavePillar_GetEntrances(void) {
+  return gGomaCavePillar_Entrances;
+}
 
-// This scene has no exit regions.
-s32 SceneData_ReturnZero(void) { return 0; }
+// These rooms have no region table.
+const struct SceneRegion *GomaCavePillar_GetRegions(void) { return NULL; }
 
-// Returns the exits to the surrounding Goma scenes.
-u8 *SceneData_GetMessageTable(void) { return gGomaCavePillar_Messages; }
+// Return the exits to the surrounding Goma Cave rooms.
+const u32 *GomaCavePillar_GetExits(void) { return gGomaCavePillar_Exits; }
 
-// Returns the placed pillar actors.
-u8 *SceneData_GetActorTable(void) { return gGomaCavePillar_Actors; }
+// Return the placed pillar, Djinni and witness actors.
+const struct ScenePlacement *GomaCavePillar_GetPlacements(void) {
+  return gGomaCavePillar_Placements;
+}
+
+// Restore the collision tiles for either side of the moved pillar.
+static inline void GomaCavePillar_CopyMovedPillarCollision(s32 sourceColumn) {
+  Map_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
+}
 
 // Copies the moved pillar's collision pattern and records its selected side.
-static void EV08_PSYNERGY(void) {
+static void GomaCavePillar_UpdateMovedPillarCollision(void) {
   struct FieldActor *actor;
   s32 x;
-  s32 destinationX;
-  s32 destinationZ;
 
   actor = Object_GetById(8);
   x = actor->x.fixed;
@@ -167,152 +156,161 @@ static void EV08_PSYNERGY(void) {
   x >>= 20;
   Engine_EventBegin();
   if (x == 20) {
-    destinationX = 18;
-    destinationZ = 6;
-    Map_CopyCellAttributes(18, 40, 6, 3, destinationX, destinationZ);
+    GomaCavePillar_CopyMovedPillarCollision(18);
     Engine_GameFlagClear(0x302);
   } else {
-    destinationX = 18;
-    destinationZ = 6;
-    Map_CopyCellAttributes(24, 40, 6, 3, destinationX, destinationZ);
+    GomaCavePillar_CopyMovedPillarCollision(24);
     Engine_GameFlagSet(0x302);
   }
   Engine_EventEnd();
 }
 
 // Emits falling fragments every eighth frame, twice on each sixteenth frame.
-static void FieldScene_RunPrimarySequence(void) {
-  s32 flags;
-  s32 a0;
-  s32 a2;
-  struct FieldActor *rec4;
-  struct FieldActor *rec7a, *reca;
-  s32 v1a, v2a, v3a, ta, ua, na;
-  struct FieldActor *rec7b, *recb;
-  s32 v1b, v2b, v3b, tb, ub, nb;
+static void GomaCavePillar_SpawnFallingFragments(void) {
+  s32 framePhase;
+  s32 fixedX;
+  s32 fixedZ;
+  struct FieldActor *heightSource;
+  struct FieldActor *firstXSource, *firstZSource;
+  s32 firstRandomX, firstRandomSpeed, firstStyle, firstSpeedBand,
+      firstSpeedTimes13, firstFallingSpeed;
+  struct FieldActor *secondXSource, *secondZSource;
+  s32 secondRandomX, secondRandomSpeed, secondStyle, secondSpeedBand,
+      secondSpeedTimes13, secondFallingSpeed;
 
-  flags = gFrameCount & 7;
-  if (flags == 0) {
-    rec7a = Object_GetById(9);
-    v1a = Engine_RandomNext();
-    a0 = rec7a->x.fixed;
-    a0 += ((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-    rec4 = Object_GetById(9);
-    reca = Object_GetById(9);
-    a2 = reca->z.fixed;
-    a2 += 0x60000;
-    v2a = Engine_RandomNext();
-    ta = ((u32)((v2a << 2) + v2a) >> 16);
-    ua = (((ta << 1) + ta) << 2) + ta;
-    na = ua << 6;
-    na -= ua;
-    na <<= 3;
-    na += ta;
-    v3a = (u32)(Engine_RandomNext() << 1) >> 16;
-    na = -na;
-    GomaCavePillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, na, v3a, flags);
-    flags = gFrameCount & 15;
-    if (flags == 0) {
-      rec7b = Object_GetById(9);
-      v1b = Engine_RandomNext();
-      a0 = rec7b->x.fixed;
-      a0 += ((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-      rec4 = Object_GetById(9);
-      recb = Object_GetById(9);
-      a2 = recb->z.fixed;
-      a2 += 0x60000;
-      v2b = Engine_RandomNext();
-      tb = ((u32)((v2b << 2) + v2b) >> 16);
-      ub = (((tb << 1) + tb) << 2) + tb;
-      nb = ub << 6;
-      nb -= ub;
-      nb <<= 3;
-      nb += tb;
-      v3b = (u32)(Engine_RandomNext() << 1) >> 16;
-      nb = -nb;
-      GomaCavePillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, nb, v3b, flags);
+  framePhase = gFrameCount & 7;
+  if (framePhase == 0) {
+    firstXSource = Object_GetById(9);
+    firstRandomX = Engine_RandomNext();
+    fixedX = firstXSource->x.fixed;
+    fixedX +=
+        ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
+    heightSource = Object_GetById(9);
+    firstZSource = Object_GetById(9);
+    fixedZ = firstZSource->z.fixed;
+    fixedZ += PIXELS(6);
+    firstRandomSpeed = Engine_RandomNext();
+    firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
+    // These shifts produce speedBand * 6553: a tenth-pixel falling step.
+    firstSpeedTimes13 =
+        (((firstSpeedBand << 1) + firstSpeedBand) << 2) + firstSpeedBand;
+    firstFallingSpeed = firstSpeedTimes13 << 6;
+    firstFallingSpeed -= firstSpeedTimes13;
+    firstFallingSpeed <<= 3;
+    firstFallingSpeed += firstSpeedBand;
+    firstStyle = (u32)(Engine_RandomNext() << 1) >> 16;
+    firstFallingSpeed = -firstFallingSpeed;
+    GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
+                                 firstFallingSpeed, firstStyle, framePhase);
+    framePhase = gFrameCount & 15;
+    if (framePhase == 0) {
+      secondXSource = Object_GetById(9);
+      secondRandomX = Engine_RandomNext();
+      fixedX = secondXSource->x.fixed;
+      fixedX +=
+          ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
+      heightSource = Object_GetById(9);
+      secondZSource = Object_GetById(9);
+      fixedZ = secondZSource->z.fixed;
+      fixedZ += PIXELS(6);
+      secondRandomSpeed = Engine_RandomNext();
+      secondSpeedBand =
+          ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
+      // Keep the same five falling speeds for the second fragment.
+      secondSpeedTimes13 =
+          (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
+      secondFallingSpeed = secondSpeedTimes13 << 6;
+      secondFallingSpeed -= secondSpeedTimes13;
+      secondFallingSpeed <<= 3;
+      secondFallingSpeed += secondSpeedBand;
+      secondStyle = (u32)(Engine_RandomNext() << 1) >> 16;
+      secondFallingSpeed = -secondFallingSpeed;
+      GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
+                                   secondFallingSpeed, secondStyle, framePhase);
     }
   }
 }
 
-s32 gGomaCavePillar_Actor13Frames;
+s32 gGomaCavePillar_DjinniWitnessFrames;
 
 // Breaks actor 9's pillar only after it has moved into column 25.
-static void EV09_PSYNERGY(void) {
-  s32 kind;
+static void GomaCavePillar_BreakMovedPillar(void) {
+  s32 column;
   s32 zero;
   void (*fragmentCallback)(void);
-  s32 a0;
-  s32 a2;
-  struct FieldActor *rec4;
-  struct FieldActor *r1;
+  s32 fixedX;
+  s32 fixedZ;
+  struct FieldActor *heightSource;
+  struct FieldActor *pillar;
   struct FieldActor *spriteActor;
   struct FieldActor *blendActor;
-  struct FieldActor *r4, *r5;
+  struct FieldActor *bounceActor, *gravityActor;
   struct FieldActor *movedActor;
-  struct FieldActor *r7, *rec7;
-  s32 v1, v2, v3, t, u, n;
-  struct FieldActor *p0;
+  struct FieldActor *zSource, *xSource;
+  s32 randomX, randomSpeed, style, speedBand, speedTimes13, fallingSpeed;
+  struct FieldActor *overlayActor;
 
-  r1 = Object_GetById(9);
-  kind = r1->x.fixed / 0x100000;
+  pillar = Object_GetById(9);
+  column = pillar->x.fixed / PIXELS(16);
   Engine_EventBegin();
-  if (kind == 25) {
-    p0 = Object_GetById(11);
+  if (column == 25) {
+    overlayActor = Object_GetById(11);
     zero = 0;
-    p0->terrainId = 1;
+    overlayActor->terrainId = 1;
     spriteActor = Object_GetById(11);
     Engine_ActorSetSpriteFlags(spriteActor, 0);
     Engine_ActorSetChildValue(11, 14);
     blendActor = Object_GetById(11);
     Engine_ObjectSetBlendMode(blendActor, 1);
-    Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
+    Engine_ActorSetPosition(11, PIXELS(414), PIXELS(240));
     Engine_EventWait(10);
     // Start the falling fragments before moving the pillar out of the way.
-    fragmentCallback = FieldScene_RunPrimarySequence;
-    FieldScheduler_AddCallback(fragmentCallback, 0xc80);
+    fragmentCallback = GomaCavePillar_SpawnFallingFragments;
+    FieldScheduler_AddCallback(fragmentCallback, 3200);
     Engine_AudioPlayCue(141);
     Engine_ActorSetDestinationOffset(9, 1, 0);
     Engine_ActorWaitForMove(9);
     Engine_EventWait(10);
     Engine_ActorSetDestinationOffset(9, 2, 0);
     Engine_ActorWaitForMove(9);
-    r4 = Object_GetById(9);
-    r4->bounce = zero;
-    r5 = Object_GetById(9);
-    r5->gravity = 0x9999;
+    bounceActor = Object_GetById(9);
+    bounceActor->bounce = zero;
+    gravityActor = Object_GetById(9);
+    gravityActor->gravity = PIXELS(3) / 5;
     Engine_EventWait(3);
-    Engine_ActorSetSpeed(9, 0x28000, 0x4000);
-    Engine_AudioPlayCue(0x120);
-    Engine_ActorSetDestination(9, 0x1a0, 200);
+    Engine_ActorSetSpeed(9, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
+    Engine_AudioPlayCue(288);
+    Engine_ActorSetDestination(9, 416, 200);
     movedActor = Object_GetById(9);
     Engine_ActorSetSpriteFlags(movedActor, 0);
     Engine_TaskRemoveCallback(fragmentCallback);
     Engine_EventWait(12);
     Engine_AudioPlayCue(189);
-    rec7 = Object_GetById(9);
-    v1 = Engine_RandomNext();
-    a0 = rec7->x.fixed;
-    a0 += ((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
-    rec4 = Object_GetById(9);
-    r7 = Object_GetById(9);
-    a2 = r7->z.fixed;
-    a2 += 0x60000;
-    v2 = Engine_RandomNext();
-    t = ((u32)((v2 << 2) + v2) >> 16);
-    u = (((t << 1) + t) << 2) + t;
-    n = u << 6;
-    n -= u;
-    n <<= 3;
-    n += t;
-    v3 = (u32)(Engine_RandomNext() << 1) >> 16;
-    n = -n;
-    GomaCavePillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, zero, n, v3, zero);
+    xSource = Object_GetById(9);
+    randomX = Engine_RandomNext();
+    fixedX = xSource->x.fixed;
+    fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
+    heightSource = Object_GetById(9);
+    zSource = Object_GetById(9);
+    fixedZ = zSource->z.fixed;
+    fixedZ += PIXELS(6);
+    randomSpeed = Engine_RandomNext();
+    speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
+    // The final fragment uses the same tenth-pixel speed bands.
+    speedTimes13 = (((speedBand << 1) + speedBand) << 2) + speedBand;
+    fallingSpeed = speedTimes13 << 6;
+    fallingSpeed -= speedTimes13;
+    fallingSpeed <<= 3;
+    fallingSpeed += speedBand;
+    style = (u32)(Engine_RandomNext() << 1) >> 16;
+    fallingSpeed = -fallingSpeed;
+    GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
+                                 fallingSpeed, style, zero);
     Engine_EventWait(20);
-    // Wait for the work-value transition before replacing the map cells.
+    // Let the landing shake decay before replacing the map cells.
     Engine_AudioPlayCue(154);
-    Map_SetShake(0x50000, 0x50000, 0x10000);
-    Map_SetShake(-1, -1, 0xe666);
+    Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+    Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetPosition(9, 0, 0);
     Engine_ActorSetPosition(11, 0, 0);
@@ -323,102 +321,107 @@ static void EV09_PSYNERGY(void) {
 }
 
 // At cell (38,14), bursts actor 10's pillar into six planar fragments.
-static void FieldScene_RunPillarBurst(void) {
+static void GomaCavePillar_BurstPillarAtCrossing(void) {
   s32 x;
   s32 z;
 
-  x = Object_GetById(10)->x.fixed / 0x100000;
-  z = Object_GetById(10)->z.fixed / 0x100000;
+  x = Object_GetById(10)->x.fixed / PIXELS(16);
+  z = Object_GetById(10)->z.fixed / PIXELS(16);
   if (x == 38 && z == 14) {
-    Object_GetById(10)->y.fixed = -0x20000;
+    Object_GetById(10)->y.fixed = -PIXELS(2);
     Object_GetById(10)->targetY = Object_GetById(10)->y.fixed;
     Engine_AudioPlayCue(188);
-    GomaCavePillar_SpawnPillarEffect(Object_GetById(10)->x.fixed,
+    GomaCavePillar_SpawnFragment(
+        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+        Object_GetById(10)->z.fixed, PIXELS(1) / 2, 0, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(
+        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
+        Object_GetById(10)->z.fixed, PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
                                  Object_GetById(10)->y.fixed,
-                                 Object_GetById(10)->z.fixed, 0x8000, 0, 0, 1);
-    GomaCavePillar_SpawnPillarEffect(
+                                 Object_GetById(10)->z.fixed, -PIXELS(2) / 5,
+                                 PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(
         Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, 0x6666, 0x6666, 0, 1);
-    GomaCavePillar_SpawnPillarEffect(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, -0x6666, 0x6666, 0, 1);
-    GomaCavePillar_SpawnPillarEffect(Object_GetById(10)->x.fixed,
+        Object_GetById(10)->z.fixed, -PIXELS(1) / 2, 0, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
                                  Object_GetById(10)->y.fixed,
-                                 Object_GetById(10)->z.fixed, -0x8000, 0, 0, 1);
-    GomaCavePillar_SpawnPillarEffect(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, 0x6666, -0x6666, 0, 1);
-    GomaCavePillar_SpawnPillarEffect(
-        Object_GetById(10)->x.fixed, Object_GetById(10)->y.fixed,
-        Object_GetById(10)->z.fixed, -0x6666, -0x6666, 0, 1);
+                                 Object_GetById(10)->z.fixed, PIXELS(2) / 5,
+                                 -PIXELS(2) / 5, 0, PLANE_XZ);
+    GomaCavePillar_SpawnFragment(Object_GetById(10)->x.fixed,
+                                 Object_GetById(10)->y.fixed,
+                                 Object_GetById(10)->z.fixed, -PIXELS(2) / 5,
+                                 -PIXELS(2) / 5, 0, PLANE_XZ);
     Engine_GameFlagSet(0x301);
   }
 }
 
 // Runs the pillar burst as an event after Psynergy moves it into place.
-static void EV10_PSYNERGY(void) {
+static void GomaCavePillar_CheckMovedPillarBurst(void) {
   Engine_EventBegin();
-  FieldScene_RunPillarBurst();
+  GomaCavePillar_BurstPillarAtCrossing();
   Engine_EventEnd();
 }
 
 // Advances the staged movement, then checks the same pillar burst position.
-static void EV10_SCRIPT(void) {
+static void GomaCavePillar_MovePillarAndCheckBurst(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
-  FieldScene_RunPillarBurst();
+  GomaCavePillar_BurstPillarAtCrossing();
   Engine_EventEnd();
 }
 
-// Jumps the gap: international editions use the shared forward-jump routine.
-static void EV20_TOUCH(void) {
+// Jump the west-facing gap; later patches use the shared forward-jump routine.
+static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
 #else
-  struct FieldActor *obj;
-  struct FixedPointPosition target;
-  struct FixedPointPosition *pos;
-  u8 *flags;
-  u8 saved;
+  struct FieldActor *leader;
+  struct FieldPosition target;
+  struct FieldPosition *destination;
+  u8 *motionFlags;
+  u8 savedMotionFlags;
 
-  obj = Object_GetById(0);
-  flags = &obj->motionFlags;
-  saved = *flags;
-  target.x = Object_GetById(0)->x.fixed - 0x200000;
-  pos = &target;
-  pos->y = Object_GetById(0)->y.fixed;
-  pos->z = Object_GetById(0)->z.fixed;
-  if (FieldObject_CheckMovementCollision(obj, pos) == 0) {
+  leader = Object_GetById(0);
+  motionFlags = &leader->motionFlags;
+  savedMotionFlags = *motionFlags;
+  target.x = Object_GetById(0)->x.fixed - PIXELS(32);
+  destination = &target;
+  destination->y = Object_GetById(0)->y.fixed;
+  destination->z = Object_GetById(0)->z.fixed;
+  if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     Engine_EventBegin();
-    Object_SetMode(obj, 6);
+    Object_SetMode(leader, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(152);
-    Object_SetMode(obj, 7);
-    obj->speed = 0x30000;
-    obj->acceleration = 0x20000;
-    obj->velocityY = 0x40000;
-    *flags &= 0x7e;
-    Engine_ActorSetSpriteFlags(obj, 0);
-    Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2),
-                              *(s16 *)((u8 *)pos + 10));
-    Object_SetMode(obj, 6);
-    Engine_ActorSetSpriteFlags(obj, 1);
-    *flags = saved;
+    Object_SetMode(leader, 7);
+    leader->speed = PIXELS(3);
+    leader->acceleration = PIXELS(2);
+    leader->velocityY = PIXELS(4);
+    *motionFlags &= 0x7e;
+    Engine_ActorSetSpriteFlags(leader, 0);
+    Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)destination + 2),
+                              *(s16 *)((u8 *)destination + 10));
+    Object_SetMode(leader, 6);
+    Engine_ActorSetSpriteFlags(leader, 1);
+    *motionFlags = savedMotionFlags;
     Engine_EventEnd();
   }
 #endif
 }
 
-// Returns the scene's talk, Psynergy and raised-event table.
-u8 *SceneData_GetExtraTable(void) { return gGomaCavePillar_Extras; }
+// Return the talk, Psynergy and raised-event table.
+const struct SceneEvent *GomaCavePillar_GetEvents(void) {
+  return gGomaCavePillar_Events;
+}
 
 // Times actor 13's idle reactions until the Djinni event is no longer pending.
-static void GomaCavePillar_DriveActor13Idle(void) {
+static void GomaCavePillar_UpdateDjinniWitness(void) {
   struct EventWork *work;
   s32 frame;
 
   work = gEventWork;
-  frame = ++gGomaCavePillar_Actor13Frames;
+  frame = ++gGomaCavePillar_DjinniWitnessFrames;
   switch (frame) {
   case 60:
     Actor_FaceDirection(13, FACING_SOUTHEAST, 0);
@@ -440,10 +443,10 @@ static void GomaCavePillar_DriveActor13Idle(void) {
 }
 
 // Ends the idle callback, shows actor 13's reaction and walks the actor away.
-static void EV99_RAISED(void) {
-  Engine_TaskRemoveCallback(GomaCavePillar_DriveActor13Idle);
+static void GomaCavePillar_WitnessDjinniCapture(void) {
+  Engine_TaskRemoveCallback(GomaCavePillar_UpdateDjinniWitness);
   Engine_EventBegin();
-  Actor_ShowEmote(13, 0x100, 30);
+  Actor_ShowEmote(13, EMOTE_IN_FRONT, 30);
   Engine_ActorRunRepeatedMotion(13, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
@@ -451,10 +454,10 @@ static void EV99_RAISED(void) {
   Engine_ActorSetAnimationAndWait(13, 3);
   Engine_EventWait(30);
   Object_GetById(10)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpeed(13, 0x20000, 0x10000);
-  Actor_WalkToAndWait(13, 0x258, 216);
-  Actor_WalkToAndWait(13, 0x258, 248);
-  Actor_WalkToAndWait(13, 0x238, 0x128);
+  Actor_SetSpeed(13, PIXELS(2), PIXELS(1));
+  Actor_WalkToAndWait(13, 600, 216);
+  Actor_WalkToAndWait(13, 600, 248);
+  Actor_WalkToAndWait(13, 568, 296);
   Actor_SetPosition(13, 0, 0);
   Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(0x869);
@@ -462,7 +465,7 @@ static void EV99_RAISED(void) {
 }
 
 // Restores moved/broken pillars and starts the post-Djinni reaction if needed.
-s32 FieldScene_SetupPillarsOnEntry(void) {
+s32 GomaCavePillar_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork *work;
 
@@ -471,17 +474,17 @@ s32 FieldScene_SetupPillarsOnEntry(void) {
   work->transitionFrames = 24;
   Object_GetById(9)->collisionFlags |= 16;
   if (GameFlag_IsSet(0x302) != 0) {
-    Actor_SetPosition(8, 0x1580000, 0x680000);
-    Map_CopyCellAttributes(24, 40, 6, 3, 18, 6);
+    Actor_SetPosition(8, PIXELS(344), PIXELS(104));
+    GomaCavePillar_CopyMovedPillarCollision(24);
   } else {
-    Map_CopyCellAttributes(18, 40, 6, 3, 18, 6);
+    GomaCavePillar_CopyMovedPillarCollision(18);
   }
   if (GameFlag_IsSet(0x300) != 0) {
     Actor_SetPosition(9, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   if (GameFlag_IsSet(0x301) != 0) {
-    Actor_SetPosition(10, 0x2680000, 0xe80000);
+    Actor_SetPosition(10, PIXELS(616), PIXELS(232));
     if (gGameState.entrance == 2 || gGameState.entrance == 3) {
       Object_GetById(10)->terrainId = 2;
       actor = Object_GetById(10);
@@ -490,25 +493,27 @@ s32 FieldScene_SetupPillarsOnEntry(void) {
       Map_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
+  // Entrance 99 reenacts moving and breaking the middle pillar.
   if (gGameState.entrance == 99) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetPosition(9, 0x1800000, 0xc00000);
+    Actor_SetPosition(9, PIXELS(384), PIXELS(192));
     Engine_EventWait(60);
     Object_GetById(9)->terrainId = 2;
-    Actor_MoveToAndWait(9, 0x198, 192);
+    Actor_MoveToAndWait(9, 408, 192);
     Engine_EventWait(60);
-    EV09_PSYNERGY();
+    GomaCavePillar_BreakMovedPillar();
   }
+  // Keep the witness occupied until the Djinni encounter resolves.
   if (gGameState.pendingDjinnEvent != 0) {
-    gGomaCavePillar_Actor13Frames = 0;
-    Task_AddCallback(GomaCavePillar_DriveActor13Idle, 0xc80);
+    gGomaCavePillar_DjinniWitnessFrames = 0;
+    Task_AddCallback(GomaCavePillar_UpdateDjinniWitness, 3200);
   }
   return 0;
 }
 
 // One step per facing: X pixels in the high halfword, Z pixels in the low half.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
@@ -533,16 +538,16 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 *gGomaCavePillar_PillarScripts[] = {
+struct GomaCavePillarFragmentScripts gGomaCavePillar_PillarScripts = {{
     gGomaCavePillar_PillarScript0,
     gGomaCavePillar_PillarScript1,
     gGomaCavePillar_PillarScript2,
-};
+}};
 
 s32 gGomaCavePillar_PillarScript0[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
-    SC_CALL(OverlayObject_ApplyValue15),
+    SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -550,7 +555,7 @@ s32 gGomaCavePillar_PillarScript0[] = {
 s32 gGomaCavePillar_PillarScript1[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
-    SC_CALL(OverlayObject_ApplyValue15),
+    SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
     SC_FREE,
 };
@@ -558,12 +563,12 @@ s32 gGomaCavePillar_PillarScript1[] = {
 s32 gGomaCavePillar_PillarScript2[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
-    SC_CALL(OverlayObject_ApplyValue15),
+    SC_CALL(GomaCavePillar_FinishFragment),
     SC_WAIT(1),
     SC_FREE,
 };
 
-struct SceneEntrance gGomaCavePillar_Scripts[] = {
+struct SceneEntrance gGomaCavePillar_Entrances[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { 2, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
@@ -574,7 +579,7 @@ struct SceneEntrance gGomaCavePillar_Scripts[] = {
     { SCENE_TABLE_END },
 };
 
-u32 gGomaCavePillar_Messages[] = {
+u32 gGomaCavePillar_Exits[] = {
     SCENE_EXITS(27),
     SCENE_EXIT(1, 28, 2),
     SCENE_EXIT(2, 26, 1),
@@ -584,34 +589,34 @@ u32 gGomaCavePillar_Messages[] = {
     SCENE_EXITS_END,
 };
 
-struct SceneEntrance gGomaCavePillar_Actors[] = {
-    { 211, CONDITION_ALWAYS, 1, 0, 0, 0x148, 0, 0, 0, 104, 16384, 2 },
-    { 212, CONDITION_ALWAYS, 1, 0, 0, 0x180, 0, 0, 0, 192, 16384, 2 },
-    { 211, CONDITION_ALWAYS, 1, 0, 0, 0x248, 0, 0, 0, 280, 16384, 2 },
-    { 223, CONDITION_ALWAYS, 1, 0, 0, 0x8, 0, 0, 0, 8, 16384, 2 },
-    { 92, 0x58, 1, 0, 0, 0x298, 0, 0, 0, 216, 16384, 0 },
-    { 134, 0x869, 1, 0, 0, 0x274, 0, 0, 0, 184, 8192, 1 },
-    { SCENE_TABLE_END },
+struct ScenePlacement gGomaCavePillar_Placements[] = {
+    {211, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {212, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {211, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {223, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {92, 0x58, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {134, 0x869, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
+    {SCENE_TABLE_END},
 };
 
-struct SceneEvent gGomaCavePillar_Extras[] = {
+struct SceneEvent gGomaCavePillar_Events[] = {
     { 0x21, 5, CONDITION_ALWAYS, 1 },
     { 0x31, 6, CONDITION_ALWAYS, 2 },
     { 0x31, 7, CONDITION_ALWAYS, 3 },
     { 0x31, 8, CONDITION_ALWAYS, 4 },
     { 0x21, 9, CONDITION_ALWAYS, 5 },
-    { 0x202, 10, 0x301, EVENT_SCRIPT(EV10_SCRIPT) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+    { 0x202, 10, 0x301, EVENT_SCRIPT(GomaCavePillar_MovePillarAndCheckBurst) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_JumpGapWest) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_StartDjinniBattle) },
     { EVENT_TALK, 13, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x300, EVENT_SCRIPT(EV09_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x301, EVENT_SCRIPT(EV10_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_UpdateMovedPillarCollision) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x300, EVENT_SCRIPT(GomaCavePillar_BreakMovedPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x301, EVENT_SCRIPT(GomaCavePillar_CheckMovedPillarBurst) },
     { SEARCH(SEARCH_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(GomaCavePillar_WitnessDjinniCapture) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

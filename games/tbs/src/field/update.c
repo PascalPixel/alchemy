@@ -30,186 +30,200 @@ s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);
 // bounce off the ground; detect arrival at the target; and turn it to face
 // the way it moves. Copied to RAM and run from there.
 void Object_UpdateAll(void) {
-  struct ScriptMotionObject *obj;
+  struct ScriptMotionObject *object;
   s32 y;
   s32 arrived;
-  struct ScriptMotionObject *nextObj;
-  s32 nextIndex;
-  s32 i;
+  struct ScriptMotionObject *nextObject;
+  s32 nextSlot;
+  s32 slot;
   s32 x;
   s32 z;
-  s32 dx;
-  s32 dz;
-  s32 vx;
-  s32 dist;
-  s32 ratio;
-  s32 ground;
-  s32 turn;
-  u16 angle;
+  s32 deltaX;
+  s32 deltaZ;
+  s32 velocityX;
+  s32 velocityZ;
+  s32 distance;
+  s32 speedRatio;
+  s32 groundY;
+  s32 turnDelta;
+  u16 travelAngle;
 
-  for (i = 0, obj = gObjectSlots; i < OBJECT_SLOTS;
-       i = nextIndex, obj = nextObj) {
-    nextIndex = i + 1;
-    nextObj = obj + 1;
-    if (obj->script == NULL)
+  for (slot = 0, object = gObjectSlots; slot < OBJECT_SLOTS;
+       slot = nextSlot, object = nextObject) {
+    nextSlot = slot + 1;
+    nextObject = object + 1;
+    if (object->script == NULL)
       continue;
-    if (obj->hook != NULL)
-      obj->hook((union FieldObject *)obj);
-    if (obj->script == NULL)
+    if (object->hook != NULL)
+      object->hook((union FieldObject *)object);
+    if (object->script == NULL)
       continue;
-    if (obj->paused != 0)
+    if (object->paused != 0)
       continue;
 
     // Count down a wait, or run commands until one yields for this frame.
     // Words above 63 are operands, which the cursor steps over.
-    if (obj->wait != 0) {
-      obj->wait--;
+    if (object->wait != 0) {
+      object->wait--;
     } else {
       for (;;) {
-        s32 cursor = (s16)obj->scriptCursor;
+        s32 cursor = (s16)object->scriptCursor;
 #ifdef UBFIX
-        u32 command = obj->script[cursor];
+        u32 command = object->script[cursor];
 #else
-        u32 command = obj->script->word[cursor];
+        u32 command = object->script->word[cursor];
 #endif
 
         if (command <= 63) {
           if (gScriptObject_CommandTable[command](
-                  (struct ScriptInterpreter *)obj) == 0)
+                  (struct ScriptInterpreter *)object) == 0)
             break;
         } else {
-          obj->scriptCursor++;
+          object->scriptCursor++;
         }
       }
-      if (obj->script == NULL)
+      if (object->script == NULL)
         continue;
     }
 
-    x = obj->x;
-    y = obj->y;
-    z = obj->z;
-    if (obj->frozen == 0) {
+    x = object->x;
+    y = object->y;
+    z = object->z;
+// UB: frozen objects skip the initialization below, but still test arrival.
+#ifdef UBFIX
+    arrived = 0;
+#endif
+    if (object->frozen == 0) {
       arrived = 0;
-      if (obj->targetX != TARGET_UNSET) {
+      if (object->targetX != TARGET_UNSET) {
         // Accelerate towards the target. The first distance is in whole
         // pixels, to stay in range; under 256 pixels it is measured again in
         // 16.16.
-        dx = (obj->targetX - x) / 65536;
-        dz = (obj->targetZ - z) / 65536;
-        dist = IwramSqrt(dx * dx + dz * dz) << 16;
-        if (dist <= 0xffffff) {
-          dx = obj->targetX - x;
-          dz = obj->targetZ - z;
-          dist = IwramSqrt(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
+        deltaX = (object->targetX - x) / 65536;
+        deltaZ = (object->targetZ - z) / 65536;
+        distance = IwramSqrt(deltaX * deltaX + deltaZ * deltaZ) << 16;
+        if (distance <= 0xffffff) {
+          deltaX = object->targetX - x;
+          deltaZ = object->targetZ - z;
+          distance = IwramSqrt(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
+                     << 8;
         }
-        if (dist == 0) {
-          x = obj->targetX;
-          z = obj->targetZ;
+        if (distance == 0) {
+          x = object->targetX;
+          z = object->targetZ;
         } else {
-          ratio = IwramRatioMulQ14(dist, obj->acceleration);
-          vx = obj->velocityX + MulQ16(dx, ratio);
-          obj->velocityX = vx;
-          // dx now carries the new z velocity.
-          dx = obj->velocityZ + MulQ16(dz, ratio);
-          obj->velocityZ = dx;
-          dist = IwramSqrt(MulQ16(vx, vx) + MulQ16(dx, dx)) << 8;
-          if (dist > obj->speedLimit) {
+          speedRatio = IwramRatioMulQ14(distance, object->acceleration);
+          velocityX = object->velocityX + MulQ16(deltaX, speedRatio);
+          object->velocityX = velocityX;
+          // Limit the combined horizontal velocity after accelerating both
+          // axes.
+          velocityZ = object->velocityZ + MulQ16(deltaZ, speedRatio);
+          object->velocityZ = velocityZ;
+          distance = IwramSqrt(MulQ16(velocityX, velocityX) +
+                               MulQ16(velocityZ, velocityZ))
+                     << 8;
+          if (distance > object->speedLimit) {
             // Too fast: scale the velocity back to the speed limit.
-            ratio = IwramRatioMulQ14(dist, obj->speedLimit);
-            obj->velocityX = MulQ16(vx, ratio);
-            obj->velocityZ = MulQ16(dx, ratio);
+            speedRatio = IwramRatioMulQ14(distance, object->speedLimit);
+            object->velocityX = MulQ16(velocityX, speedRatio);
+            object->velocityZ = MulQ16(velocityZ, speedRatio);
           }
         }
       } else {
         // No target: brake by the acceleration until the object stops.
-        dx = obj->velocityX;
-        dz = obj->velocityZ;
-        dist = IwramSqrtFarArm(MulQ16(dx, dx) + MulQ16(dz, dz)) << 8;
-        if (dist != 0) {
-          if (dist - obj->acceleration < 0) {
-            obj->velocityX = 0;
-            obj->velocityZ = 0;
+        deltaX = object->velocityX;
+        deltaZ = object->velocityZ;
+        distance =
+            IwramSqrtFarArm(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
+            << 8;
+        if (distance != 0) {
+          if (distance - object->acceleration < 0) {
+            object->velocityX = 0;
+            object->velocityZ = 0;
           } else {
-            ratio = IwramRatioMulQ14FarArm(dist, dist - obj->acceleration);
-            obj->velocityX = MulQ16(dx, ratio);
-            obj->velocityZ = MulQ16(dz, ratio);
+            speedRatio = IwramRatioMulQ14FarArm(
+                distance, distance - object->acceleration);
+            object->velocityX = MulQ16(deltaX, speedRatio);
+            object->velocityZ = MulQ16(deltaZ, speedRatio);
           }
         } else {
-          obj->velocityX = 0;
-          obj->velocityZ = 0;
+          object->velocityX = 0;
+          object->velocityZ = 0;
         }
       }
 
       // Gravity, and a bounce that loses energy on landing.
-      if (obj->motionFlags & 2) {
-        ground = obj->terrainHeight;
-        if (y > ground)
-          obj->velocityY -= obj->gravity;
-        if (y <= ground && obj->velocityY < 0) {
-          y = ground;
-          obj->velocityY = -MulQ16(obj->velocityY, obj->vertical.bounce);
-          if ((obj->velocityY < 0 ? -obj->velocityY : obj->velocityY) <=
-              obj->gravity)
-            obj->velocityY = 0;
+      if (object->motionFlags & 2) {
+        groundY = object->terrainHeight;
+        if (y > groundY)
+          object->velocityY -= object->gravity;
+        if (y <= groundY && object->velocityY < 0) {
+          y = groundY;
+          object->velocityY =
+              -MulQ16(object->velocityY, object->vertical.bounce);
+          if ((object->velocityY < 0 ? -object->velocityY
+                                     : object->velocityY) <= object->gravity)
+            object->velocityY = 0;
         }
       }
     }
 
-    x += obj->velocityX;
-    y += obj->velocityY;
-    z += obj->velocityZ;
+    // Integrate velocity even when the acceleration and gravity step is frozen.
+    x += object->velocityX;
+    y += object->velocityY;
+    z += object->velocityZ;
 
     // Arrived: the watched axis reached the target, or crossed it this frame
     // (the sign of the offset changed).
-    switch (obj->arrivalAxis) {
+    switch (object->arrivalAxis) {
     case ARRIVAL_AXIS_X:
-      if (x == obj->targetX ||
-          ((obj->x - obj->targetX) ^ (x - obj->targetX)) < 0)
+      if (x == object->targetX ||
+          ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
         arrived = 1;
       break;
     case ARRIVAL_AXIS_Y:
-      if (y == obj->targetY ||
-          ((obj->y - obj->targetY) ^ (y - obj->targetY)) < 0)
+      if (y == object->targetY ||
+          ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
         arrived = 1;
       break;
     case ARRIVAL_AXIS_Z:
-      if (z == obj->targetZ ||
-          ((obj->z - obj->targetZ) ^ (z - obj->targetZ)) < 0)
+      if (z == object->targetZ ||
+          ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
         arrived = 1;
       break;
     }
     if (arrived) {
-      if (obj->snapToTarget) {
-        x = obj->targetX;
-        obj->velocityX = 0;
-        z = obj->targetZ;
-        obj->velocityZ = 0;
-        if (obj->motionFlags == 0) {
-          y = obj->targetY;
-          obj->velocityY = 0;
+      if (object->snapToTarget) {
+        x = object->targetX;
+        object->velocityX = 0;
+        z = object->targetZ;
+        object->velocityZ = 0;
+        if (object->motionFlags == 0) {
+          y = object->targetY;
+          object->velocityY = 0;
         }
       }
-      obj->targetX = TARGET_UNSET;
-      obj->targetY = TARGET_UNSET;
-      obj->targetZ = TARGET_UNSET;
-      obj->arrivalAxis = 0;
+      object->targetX = TARGET_UNSET;
+      object->targetY = TARGET_UNSET;
+      object->targetZ = TARGET_UNSET;
+      object->arrivalAxis = 0;
     }
-    obj->x = x;
-    obj->y = y;
-    obj->z = z;
+    object->x = x;
+    object->y = y;
+    object->z = z;
 
     // Turn to face the direction of travel.
-    if (obj->steeringFlags & 1) {
-      x = obj->velocityX;
-      z = obj->velocityZ;
+    if (object->steeringFlags & 1) {
+      x = object->velocityX;
+      z = object->velocityZ;
       if (x != 0 || z != 0) {
-        angle = ArcTan2FarArm(z, x);
-        turn = (s16)(angle - obj->facing);
-        if (turn > TURN_MAX)
-          turn = TURN_MAX;
-        if (turn < -TURN_MAX)
-          turn = -TURN_MAX;
-        obj->facing += turn;
+        travelAngle = ArcTan2FarArm(z, x);
+        turnDelta = (s16)(travelAngle - object->facing);
+        if (turnDelta > TURN_MAX)
+          turnDelta = TURN_MAX;
+        if (turnDelta < -TURN_MAX)
+          turnDelta = -TURN_MAX;
+        object->facing += turnDelta;
       }
     }
   }

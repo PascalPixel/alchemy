@@ -1,8 +1,3 @@
-//--------------------------------------------------------------------------
-// clear_character_block.c
-// Clear half of the background tile graphics and palette.
-//--------------------------------------------------------------------------
-
 #include "unit/graphics/tile/slides.h"
 #include "unit/runtime/runtime.h"
 #include "dma.h"
@@ -32,29 +27,37 @@
 #include "battle_party.h"
 #include "battle_system.h"
 #include "frame.h"
+#include "flags.h"
 
-//--------------------------------------------------------------------------
+// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
+// 32 tile rows form a ring, with sixteen rows visible at a time.
+#define CREDITS_LINE_PIXELS 192
+#define CREDITS_VISIBLE_ROWS 16
+#define CREDITS_COLUMNS 6
+#define CREDITS_RING_ROWS 32
+#define CREDITS_LINE_TILES 24
+#define CREDITS_BUFFER_BYTES 0x900
+
 // Fill 30 KB of 256-color tiles with color 1 and clear 128 palette colors.
-// alt: 0 selects the first half (VRAM 0x06000000, palette 0-127).
+// alternate: 0 selects the first half (VRAM 0x06000000, palette 0-127).
 //      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
-//--------------------------------------------------------------------------
-void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
-  u32 v;
-  u32 vram;
-  u32 pal;
-  volatile u32 fill;
+void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
+  u32 fillColor;
+  u32 tileDestination;
+  u32 paletteDestination;
+  volatile u32 dmaFill;
 
-  if (alt == 0) {
-    v = 0x01010101;
-    vram = 0x06000000;
-    pal = 0x05000000;
+  if (alternate == 0) {
+    fillColor = 0x01010101;
+    tileDestination = 0x06000000;
+    paletteDestination = 0x05000000;
   } else {
-    v = 0x81818181;
-    vram = 0x06008000;
-    pal = 0x05000100;
+    fillColor = 0x81818181;
+    tileDestination = 0x06008000;
+    paletteDestination = 0x05000100;
   }
-  Dma_Fill32Cell(fill, v, (void *)vram, 0x7800);
-  Dma_Fill32Cell(fill, 0, (void *)pal, 0x100);
+  Dma_Fill32Cell(dmaFill, fillColor, (void *)tileDestination, 0x7800);
+  Dma_Fill32Cell(dmaFill, 0, (void *)paletteDestination, 0x100);
 }
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
@@ -98,63 +101,68 @@ const u32 gDisplayScroll_SlideResources[] = {
 };
 // clang-format on
 
-void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate) {
-  u8 *data;
-  u32 palette;
-  u32 fill;
-  u32 vram;
+// Loads a credits backdrop into one of the two tile/palette halves. A zero
+// resource clears that half; the second half offsets its palette indices.
+void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
+  u8 *resourceData;
+  u32 paletteDestination;
+  u32 paletteOffset;
+  u32 tileDestination;
 
-  if (resource == 0) {
+  if (resourceId == 0) {
     Graphics_ClearCharacterBlockAndPalette(alternate);
     return;
   }
-  data = Resource_GetTableEntry(resource);
+  resourceData = Resource_GetTableEntry(resourceId);
   if (alternate == 0) {
-    fill = 0;
-    vram = 0x06000000;
-    palette = 0x05000000;
+    paletteOffset = 0;
+    tileDestination = 0x06000000;
+    paletteDestination = 0x05000000;
   } else {
-    fill = 0x80808080;
-    vram = 0x06008000;
-    palette = 0x05000100;
+    paletteOffset = 0x80808080;
+    tileDestination = 0x06008000;
+    paletteDestination = 0x05000100;
   }
   RamCode_LoadSlot(49, BattleEffect_Expand, BattleEffect_ExpandCodeSize);
-  ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram,
-                                                             fill);
+  ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(
+      resourceData + 256, tileDestination, paletteOffset);
   Runtime_ReleaseHeapBlock(49);
 
-  IO_WRITE_QUEUE_PUSH(palette, (u32)data, 0x84000040);
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData, 0x84000040);
 }
 
-void DisplayScroll_BuildHblankWordTable(u32 *arg0) {
-  s32 count;
-  u32 value = 0x01FF01FF;
-  u32 step = 0x10000;
+// Builds the 512 tilemap words surrounding a sliding credits backdrop:
+// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
+void DisplayScroll_BuildHblankWordTable(u32 *destination) {
+  s32 remaining;
+  u32 blankTiles = 0x01FF01FF;
+  u32 tilePair = 0x10000;
 
-  count = 31;
+  remaining = 31;
   do {
-    count--;
-    *arg0++ = value;
-  } while (count >= 0);
-  count = 239;
+    remaining--;
+    *destination++ = blankTiles;
+  } while (remaining >= 0);
+  remaining = 239;
   do {
-    count--;
-    *arg0++ = step;
-    step += 0x20002;
-  } while (count >= 0);
-  count = 47;
+    remaining--;
+    *destination++ = tilePair;
+    tilePair += 0x20002;
+  } while (remaining >= 0);
+  remaining = 47;
   do {
-    count--;
-    *arg0++ = value;
-  } while (count >= 0);
-  step = 0;
-  count = 191;
+    remaining--;
+    *destination++ = blankTiles;
+  } while (remaining >= 0);
+  tilePair = 0;
+  remaining = 191;
   do {
-    count--;
-    *arg0++ = step;
-  } while (count >= 0);
+    remaining--;
+    *destination++ = tilePair;
+  } while (remaining >= 0);
 }
 
+// Slides both backdrop layers one pixel left every fourth frame.
 void DisplayScroll_StepPositionEveryFourFrames(void) {
   if ((gFrameTick & 3) == 0) {
     u32 decrement = 0xffff;
@@ -164,6 +172,8 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
   }
 }
 
+// Crossfades the credits backdrop sequence through alternating tile banks,
+// then restores the display for the following screen.
 s32 DisplayScroll_RunSlideshow(void) {
   u32 slide;
   s32 alpha;
@@ -1121,22 +1131,25 @@ const void *gDisplayScroll_LineTable[] = {
 
 #include "../../../../common/src/graphics/display/glyph_widths.h"
 
+// Moves the sixteen visible credits rows through the 32-row tile ring and
+// copies their sprites to OAM. End-of-text holds the scroll position.
 void DisplayScroll_UpdateObjects(void) {
   u32 frame = gFlash_Handler3;
-  u32 fine = frame & 7;
-  s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-  u32 *entry = (u32 *)(SCROLL_OBJECTS + 24);
+  u32 scrollWithinTile = frame & 7;
+  s32 tileIndex = (((s16)frame / 8) & 0x1f) * 3 * 8;
+  u32 *oamWords = (u32 *)(SCROLL_OBJECTS + 24);
   s32 row;
 
-  for (row = 0; row <= 15; row++) {
-    s32 col;
+  for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
+    s32 column;
 
-    for (col = 0; col < 6; col++) {
-      *entry++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
-      *entry++ = tile;
-      tile += 4;
-      if (tile == 0x300)
-        tile = 0;
+    for (column = 0; column < CREDITS_COLUMNS; column++) {
+      *oamWords++ = (row * 8 + 16 - scrollWithinTile) |
+                    ((column * 32 + 24) << 16) | 0x40004000;
+      *oamWords++ = tileIndex;
+      tileIndex += 4;
+      if (tileIndex == 0x300)
+        tileIndex = 0;
     }
   }
   Dma_Set(SCROLL_OBJECTS, OAM, 0x84000100, REG_DMA3);
@@ -1144,81 +1157,92 @@ void DisplayScroll_UpdateObjects(void) {
     gFlash_Handler3++;
 }
 
+// Renders a new line into the tile-ring row sixteen rows ahead of the
+// visible top. A null table entry latches the end-of-text state.
 void DisplayScroll_RenderEnteringLine(void) {
-  u32 current;
-  s32 line;
+  u32 scrollPosition;
+  s32 lineIndex;
 
   if ((*(s16 *)&gFlash_Handler0) == 0) {
-    current = gFlash_Handler3;
+    scrollPosition = gFlash_Handler3;
     if ((s16)gFlash_Handler3 / 8 != *(s16 *)&gFlash / 8) {
-      line = (s16)gFlash_Handler3 / 8;
-      *(s16 *)&gFlash = current;
+      lineIndex = (s16)gFlash_Handler3 / 8;
+      *(s16 *)&gFlash = scrollPosition;
       (*(s16 *)&gFlash_Handler0) = DisplayScroll_DrawLine(
-          gDisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
+          gDisplayScroll_LineTable[lineIndex],
+          ((lineIndex + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *
+              CREDITS_LINE_TILES,
+          1);
     }
   }
 }
 
+// Allocates the credits sprites, builds the blank border and text rows,
+// clears the tile ring and schedules scrolling and line rendering.
 void DisplayScroll_InitObjectTable(void) {
-  volatile u32 fill;
-  u32 *entry;
-  u32 i;
-  u32 j;
+  volatile u32 dmaFill;
+  u32 *oamWords;
+  u32 row;
+  u32 column;
 
   SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(
       128 * sizeof(struct DisplayScrollObject));
-  Dma_Fill32Cell(fill, 0, (void *)0x06010000, 0x6000);
-  Dma_Fill32Cell(fill, 0x11111111, (void *)0x06016000, 0x100);
+  Dma_Fill32Cell(dmaFill, 0, (void *)0x06010000, 0x6000);
+  Dma_Fill32Cell(dmaFill, 0x11111111, (void *)0x06016000, 0x100);
 
-  entry = (u32 *)SCROLL_OBJECTS;
-  for (i = 0; i < 8; i++) {
-    *entry++ = (i << 21) | 0x80004000;
-    *entry++ = 0x300;
+  oamWords = (u32 *)SCROLL_OBJECTS;
+  for (row = 0; row < 8; row++) {
+    *oamWords++ = (row << 21) | 0x80004000;
+    *oamWords++ = 0x300;
   }
-  for (i = 0; i < 8; i++) {
-    *entry++ = (i << 21) | 0x80004088;
-    *entry++ = 0x300;
+  for (row = 0; row < 8; row++) {
+    *oamWords++ = (row << 21) | 0x80004088;
+    *oamWords++ = 0x300;
   }
-  for (i = 0; i < 8; i++) {
-    *entry++ = (i << 21) | 0x40004098;
-    *entry++ = 0x300;
+  for (row = 0; row < 8; row++) {
+    *oamWords++ = (row << 21) | 0x40004098;
+    *oamWords++ = 0x300;
   }
-  for (i = 0; i < 16; i++) {
-    for (j = 0; j < 6; j++) {
-      u32 tile = (i * 3) * 8 + j * 4;
-      *entry++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
-      *entry++ = tile;
+  for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
+    for (column = 0; column < CREDITS_COLUMNS; column++) {
+      u32 tileIndex = (row * 3) * 8 + column * 4;
+      *oamWords++ = (row * 8 + 16) | ((column * 32 + 24) << 16) | 0x40004000;
+      *oamWords++ = tileIndex;
     }
   }
-  for (i = 0; i < 8; i++) {
-    *entry++ = 0x00c000c0;
-    *entry++ = 0x300;
+  for (row = 0; row < 8; row++) {
+    *oamWords++ = 0x00c000c0;
+    *oamWords++ = 0x300;
   }
   gFlash_Handler3 = 0;
   *(s16 *)&gFlash = 0;
   (*(s16 *)&gFlash_Handler0) = 0;
   Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
   Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);
-  for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+  for (row = 0; row < CREDITS_RING_ROWS; row++)
+    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
+                           row * CREDITS_LINE_TILES, 1);
 }
 
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
-  u8 *buf = Runtime_BumpAllocateAlternatePool(0x900);
-  s32 x = 0;
-  s32 width = 192;
+// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
+// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles.
+// Returns -1 at the null end marker, otherwise zero.
+s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
+  u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
+  s32 startX = 0;
+  s32 lineWidth = CREDITS_LINE_PIXELS;
   const u8 *font = gDisplayScroll_Font;
-  s32 tiles;
-  s32 pos;
-  const u8 *p;
-  u8 *dst;
-  u32 c;
-  s32 glyph;
-  s32 w;
+  s32 tileCount;
+  s32 textAdvance;
+  const u8 *sourceBytes;
+  u8 *destination;
+  u32 sourceValue;
+  s32 glyphIndex;
+  s32 glyphWidth;
   s32 row;
-  s32 bit;
-  u32 bits;
-  u32 mask;
+  s32 columnIndex;
+  u32 glyphBits;
+  u32 glyphMask;
 
   /* FAKEMATCH: unused local; its 32 bytes are the native frame space no
    * instruction touches. Without it differ 4 on tbs-ja, tbs-en and tbs-de: sub
@@ -1227,80 +1251,82 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
 
   if (text == NULL)
     return -1;
-  if (!GameFlag_TestFar(0x200)) {
-    Iwram_FillWords(buf, 0x900, 0);
-    GameFlag_SetBitFar(0x200);
+  if (!GameFlag_TestFar(FLAG_SCENE_TEMP_00)) {
+    Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
+    GameFlag_SetBitFar(FLAG_SCENE_TEMP_00);
   } else {
-    Iwram_CopyWords(buf, buf + 0x800, 0x100);
-    Iwram_FillWords(buf + 0x100, 0x800, 0);
+    Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
+    Iwram_FillWords(linePixels + 0x100, 0x800, 0);
   }
 
-  p = text;
-  pos = 0;
-  while ((c = *p++) != 0) {
-    if (c > 31)
-      pos += gDisplayScroll_GlyphWidths[c - 32];
+  // Measure text with the actual credits font before choosing its start.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *sourceBytes++) != 0) {
+    if (sourceValue > 31)
+      textAdvance += gDisplayScroll_GlyphWidths[sourceValue - 32];
   }
-  if (align == 2)
-    x = width - pos;
-  else if (align == 1)
-    x = (width - pos) / 2;
+  if (alignment == 2)
+    startX = lineWidth - textAdvance;
+  else if (alignment == 1)
+    startX = (lineWidth - textAdvance) / 2;
 
-  // p is set to the text again, though nothing reads it before the glyph rows;
-  // the first character is fetched through it
-  p = text;
-  pos = 0;
-  while ((c = *text++) != 0) {
-    if (c > 31) {
-      glyph = c - 32;
-      p = font + glyph * 8;
-      dst = buf + x + pos;
+  // Rasterize each glyph and its one-pixel shadow at the aligned start.
+  sourceBytes = text;
+  textAdvance = 0;
+  while ((sourceValue = *text++) != 0) {
+    if (sourceValue > 31) {
+      glyphIndex = sourceValue - 32;
+      sourceBytes = font + glyphIndex * 8;
+      destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
-        bits = *p++;
-        mask = 0x80;
-        for (bit = 7; bit >= 0; bit--) {
-          if (bits & mask) {
-            dst[0x101] = 1;
-            dst[0] = 15;
+        glyphBits = *sourceBytes++;
+        glyphMask = 0x80;
+        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+          if (glyphBits & glyphMask) {
+            destination[0x101] = 1;
+            destination[0] = 15;
           }
-          dst++;
-          mask >>= 1;
+          destination++;
+          glyphMask >>= 1;
         }
-        dst += 248;
+        destination += 248;
       }
-      w = 1;
-      if (c > 31)
-        w = gDisplayScroll_GlyphWidths[glyph];
-      pos += w;
+      glyphWidth = 1;
+      if (sourceValue > 31)
+        glyphWidth = gDisplayScroll_GlyphWidths[glyphIndex];
+      textAdvance += glyphWidth;
     }
   }
 
-  tiles = width / 8;
-  p = buf;
-  dst = buf;
+  // Pack pairs of pixel indices into bytes, keeping the 256-pixel stride.
+  tileCount = lineWidth / 8;
+  sourceBytes = linePixels;
+  destination = linePixels;
   for (row = 0; row < 8; row++) {
-    for (bit = 0; bit < tiles * 4; bit++) {
-      c = *p++;
-      c |= *p++ << 4;
-      *dst++ = c;
+    for (columnIndex = 0; columnIndex < tileCount * 4; columnIndex++) {
+      sourceValue = *sourceBytes++;
+      sourceValue |= *sourceBytes++ << 4;
+      *destination++ = sourceValue;
     }
-    dst += 256 - tiles * 4;
-    p += 256 - tiles * 8;
+    destination += 256 - tileCount * 4;
+    sourceBytes += 256 - tileCount * 8;
   }
 
-  for (row = 0; row < tiles; row++) {
-    s32 tile = slot + row;
-    u32 *words = (u32 *)buf + row;
+  // Transpose raster rows into the tile ring used by the scrolling sprites.
+  for (row = 0; row < tileCount; row++) {
+    s32 tileIndex = firstTile + row;
+    u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(0x06010000 + tile * 32) = words[0x000];
-    *(u32 *)(0x06010004 + tile * 32) = words[0x040];
-    *(u32 *)(0x06010008 + tile * 32) = words[0x080];
-    *(u32 *)(0x0601000c + tile * 32) = words[0x0c0];
-    *(u32 *)(0x06010010 + tile * 32) = words[0x100];
-    *(u32 *)(0x06010014 + tile * 32) = words[0x140];
-    *(u32 *)(0x06010018 + tile * 32) = words[0x180];
-    *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
+    *(u32 *)(0x06010000 + tileIndex * 32) = words[0x000];
+    *(u32 *)(0x06010004 + tileIndex * 32) = words[0x040];
+    *(u32 *)(0x06010008 + tileIndex * 32) = words[0x080];
+    *(u32 *)(0x0601000c + tileIndex * 32) = words[0x0c0];
+    *(u32 *)(0x06010010 + tileIndex * 32) = words[0x100];
+    *(u32 *)(0x06010014 + tileIndex * 32) = words[0x140];
+    *(u32 *)(0x06010018 + tileIndex * 32) = words[0x180];
+    *(u32 *)(0x0601001c + tileIndex * 32) = words[0x1c0];
   }
-  MemFree(buf);
+  MemFree(linePixels);
   return 0;
 }

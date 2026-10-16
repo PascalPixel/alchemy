@@ -30,6 +30,8 @@
 #include "game_state.h"
 #include "sound_ids.h"
 #include "item.h"
+#include "item_ids.h"
+#include "vram_tab.h"
 #include "fixed_math.h"
 #include "far_runtime.h"
 #include "lib.h"
@@ -38,6 +40,34 @@
 #include "field_runtime.h"
 #include "battle_calc.h"
 #include "field_obj.h"
+
+// English menu entries 48..51 establish the four shop actions.
+enum ShopAction {
+  SHOP_ACTION_BUY,
+  SHOP_ACTION_SELL,
+  SHOP_ACTION_ARTIFACTS,
+  SHOP_ACTION_REPAIR
+};
+
+// These service kinds select the existing condition, fee and cure branches.
+enum SanctumService {
+  SANCTUM_SERVICE_REVIVE,
+  SANCTUM_SERVICE_CURE_POISON,
+  SANCTUM_SERVICE_EXORCISE,
+  SANCTUM_SERVICE_REMOVE_CURSE
+};
+
+enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
+
+// BUG: the original item picker tests its selection result rather than the
+// discard error, so it never shows the cannot-remove message for error -3.
+#ifdef BUGFIX
+#define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult)              \
+  (discardStatus)
+#else
+#define SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult)              \
+  (selectionResult)
+#endif
 
 // Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -92,66 +122,72 @@
 #define SHOP_USE_WINDOW_WIDTH 14
 #endif
 
+// Lists the current shop's artifacts whose shared stock counters are nonzero.
 s32 AbilityMenu_BuildAvailableList(void) {
-  struct ShopRuntime *state;
-  s16 *output;
-  s32 index;
+  struct ShopRuntime *shop;
+  s16 *stockItems;
+  s32 itemId;
   s32 count;
-  s8 mode;
+  s8 equipmentGroup;
 
-  state = gMenuWork;
+  shop = gMenuWork;
   count = 0;
-  index = 0;
-  output = state->stockItemIds;
+  itemId = 0;
+  stockItems = shop->stockItemIds;
   do {
-    mode = state->shopType;
-    if (mode == Item_GetEquipmentGroupFar(index) &&
-        Item_AdjustCounterFar(index, 0) != 0) {
-      *output = index;
+    equipmentGroup = shop->shopType;
+    if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
+        Item_AdjustCounterFar(itemId, 0) != 0) {
+      *stockItems = itemId;
       count++;
-      output++;
+      stockItems++;
     }
-    index++;
-  } while (index <= 0x1ff);
-  state->stockItemIds[count] = 0;
-  state->stockCount = count;
+    itemId++;
+  } while (itemId <= 0x1ff);
+  shop->stockItemIds[count] = 0;
+  shop->stockCount = count;
   return count;
 }
 
+// Advances the cursor in the shared menu state once per scheduled update.
 void Shop_StepCursor(void) {
   ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
 }
 
+// Allocates the shared menu state, lists the party, loads six cursor icons and
+// starts its task.
 void Shop_InitializeCursorWork(void) {
-  struct ShopRuntime *work;
-  s32 slot;
+  struct ShopRuntime *shop;
+  s32 resourceSlot;
 
-  work = Runtime_AllocateHeapBlock(55, 0xa70);
+  shop = Runtime_AllocateHeapBlock(55, 0xa70);
   Battle_ResetEffectCounterFar();
-  Dma_Fill32(0, work, 0x29c * 4);
-  work->mode = 12;
-  work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
-  slot = Resource_FindFreeEntry();
-  work->cursorIcon = slot;
-  VramCache_Load(slot, 128, gShop_HandTiles);
-  slot = Resource_FindFreeEntry();
-  work->previousPageIcon = slot;
-  VramCache_Load(slot, 128, gShop_UpArrowTiles);
-  slot = Resource_FindFreeEntry();
-  work->nextPageIcon = slot;
-  VramCache_Load(slot, 128, gShop_DownArrowTiles);
-  slot = Resource_FindFreeEntry();
-  work->gemIcon = slot;
-  VramCache_Load(slot, 128, gShop_GemTiles);
-  slot = Resource_FindFreeEntry();
-  work->statDownIcon = slot;
-  VramCache_Load(slot, 128, gShop_SmallDownArrowTiles);
-  slot = Resource_FindFreeEntry();
-  work->statUpIcon = slot;
-  VramCache_Load(slot, 128, gShop_SmallUpArrowTiles);
+  Dma_Fill32(0, shop, 0x29c * 4);
+  shop->mode = 12;
+  shop->partyMemberCount = Party_ListActiveOwnersFar(shop->partyMemberIds);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->cursorIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_HandTiles);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->previousPageIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_UpArrowTiles);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->nextPageIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_DownArrowTiles);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->gemIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_GemTiles);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->statDownIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_SmallDownArrowTiles);
+  resourceSlot = Resource_FindFreeEntry();
+  shop->statUpIcon = resourceSlot;
+  VramCache_Load(resourceSlot, 128, gShop_SmallUpArrowTiles);
   Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
+// Stops the shared cursor task and releases the shop, sanctum or inn menu
+// resources.
 void Inn_Cleanup(void) {
   struct ShopRuntime *state;
 
@@ -167,23 +203,26 @@ void Inn_Cleanup(void) {
   Runtime_ReleaseHeapBlock(0x37);
 }
 
-s32 Shop_Run(s32 row, s32 keeperId) {
+// Runs the shop's buy, sell, artifacts and repair menu with the selected
+// shopkeeper.
+s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct RenderOutput *anchor;
   struct UiWindow *window;
-  s32 choice = 0;
+  s32 action = 0;
 
-  if (row >= EventTable_GetRowLimit() || row < 0)
-    row = 0;
-  EventTable_ApplyRowAbilities(row);
+  if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
+    stockRow = 0;
+  // Seed this location's artifact stock before creating the shop UI.
+  EventTable_ApplyRowAbilities(stockRow);
   Shop_InitializeCursorWork();
   shop = gMenuWork;
-  shop->shopType = EventTable_GetRowType(row);
-  if (row == 16)
+  shop->shopType = EventTable_GetRowType(stockRow);
+  if (stockRow == 16)
     shop->warriorShop = 1;
-  if (row == 17)
+  if (stockRow == 17)
     shop->warriorShop = 1;
-  if (row == 18)
+  if (stockRow == 18)
     shop->warriorShop = 1;
   shop->keeperResource =
       ((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(
@@ -201,16 +240,16 @@ s32 Shop_Run(s32 row, s32 keeperId) {
   shop->cursor.anchor = anchor;
   UiMessage_ShowAndWait(MsgWeaponShopWelcome);
   while (1) {
-    choice = Menu_SelectEntry11To14Far(choice);
-    shop->partyAction = choice;
-    if (choice == 0) {
-      shop->stockCount = EventTable_CopyRowHeader(row, shop->stockItemIds);
+    action = Menu_SelectEntry11To14Far(action);
+    shop->partyAction = action;
+    if (action == SHOP_ACTION_BUY) {
+      shop->stockCount = EventTable_CopyRowHeader(stockRow, shop->stockItemIds);
       UiMessage_ShowAndWait(MsgWhatWouldYouLike);
       Shop_SelectBuy();
-    } else if (choice == 1) {
+    } else if (action == SHOP_ACTION_SELL) {
       UiMessage_ShowAndWait(MsgWhatToSell);
       Shop_PickUnit();
-    } else if (choice == 2) {
+    } else if (action == SHOP_ACTION_ARTIFACTS) {
       if (AbilityMenu_BuildAvailableList() != 0) {
         UiMessage_ShowAndWait(MsgConnoisseur);
         Shop_SelectBuy();
@@ -218,7 +257,7 @@ s32 Shop_Run(s32 row, s32 keeperId) {
         UiMessage_ShowAndWait(MsgOutOfStock);
         WaitFrames(1);
       }
-    } else if (choice == 3) {
+    } else if (action == SHOP_ACTION_REPAIR) {
       UiMessage_ShowAndWait(MsgFixDamaged);
       Shop_SelectUnit();
     } else {
@@ -234,11 +273,13 @@ s32 Shop_Run(s32 row, s32 keeperId) {
 }
 
 #if TBS_PATCH_1
-#define FINAL_ARG 1
+#define SHOP_DEBUG_STOCK_ROW 1
 #else
-#define FINAL_ARG 2
+#define SHOP_DEBUG_STOCK_ROW 2
 #endif
 
+// Sets up the original debug shop scenario with money, equipment and party
+// ailments.
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   gGameState.coins = 0x30d40;
   gGameState.shopGifts = 0x1c;
@@ -248,10 +289,11 @@ s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   UnitGetFar(3)->poison = 1;
   UnitGetFar(5)->poison = 1;
   UnitGetFar(2)->haunt = 1;
-  Shop_Run(FINAL_ARG, 0x1e);
+  Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
   return 0;
 }
 
+// Waits one frame at a time until the audio command completes.
 void AudioCommand_WaitForStateByteClear(void) {
   while (AudioCommand_GetStateByteFar() != 0) {
     WaitFrames(1);
@@ -263,86 +305,100 @@ struct SelectorRecord {
   u8 values[21];
 };
 
-void UiMessage_ShowAndWait(s32 arg0) {
-  struct ShopRuntime *state = gMenuWork;
-  s32 value = BattleFx_GetResourceIdFar(state->keeperResource);
-  s32 result = arg0;
-  s8 mode;
+// Resolves shop dialogue and waits for its window to finish, including the
+// final frame.
+// A shared message-resolution inline added four bytes to each dialogue caller
+// in the English native build; both callers retain their direct resolution.
+void UiMessage_ShowAndWait(s32 messageId) {
+  struct ShopRuntime *shop = gMenuWork;
+  s32 portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  s32 resolvedMessage = messageId;
+  s8 shopType;
 
   UiWork_FinalizePendingCoreFar();
-  mode = state->shopType;
-  if (mode == 2)
-    result += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (mode == 0)
-    result += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  if ((s8)state->warriorShop != 0)
-    result += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
-  UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
+  shopType = shop->shopType;
+  if (shopType == 2)
+    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+  if (shopType == 0)
+    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  if ((s8)shop->warriorShop != 0)
+    resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
+  UiText_OpenMessageWindowFar(resolvedMessage, 5, 0,
+                              (portraitResource << 16) | 0x22);
   while (UiWork_IsCompleteFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
 
+// Resolves shop dialogue, hides the cursor while it is shown and restores the
+// saved cursor mode.
 void UiMessage_ShowAndRestoreState(s32 messageId) {
-  s32 variant;
-  s32 no;
-  s8 mode;
-  s8 flag;
-  u8 saved;
-  struct ShopRuntime *state;
-  struct RenderOutput **slot;
+  s32 portraitResource;
+  s32 resolvedMessage;
+  s8 shopType;
+  s8 warriorShop;
+  u8 savedCursorMode;
+  struct ShopRuntime *shop;
+  struct RenderOutput **cursorSlot;
 
-  state = gMenuWork;
-  slot = &state->cursor.anchor;
-  saved = (*slot)->active;
-  no = messageId;
-  variant = BattleFx_GetResourceIdFar(state->keeperResource);
-  mode = state->shopType;
-  if (mode == 2) {
-    no += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+  shop = gMenuWork;
+  cursorSlot = &shop->cursor.anchor;
+  savedCursorMode = (*cursorSlot)->active;
+  resolvedMessage = messageId;
+  portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  shopType = shop->shopType;
+  if (shopType == 2) {
+    resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   }
-  if (mode == 0) {
-    no += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  if (shopType == 0) {
+    resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   }
-  flag = state->warriorShop;
-  if (flag != 0) {
-    no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
+  warriorShop = shop->warriorShop;
+  if (warriorShop != 0) {
+    resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   }
-  (*slot)->active = 13;
+  (*cursorSlot)->active = 13;
   UiWork_FinalizePendingCoreFar();
-  UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
+  UiText_OpenMessageWindowFar(resolvedMessage, 5, 0,
+                              (portraitResource << 0x10) | 0x22);
   while (UiWork_IsCompleteFar() == 0) {
     WaitFrames(1);
   }
   WaitFrames(1);
-  state->cursor.anchor->active = saved;
+  shop->cursor.anchor->active = savedCursorMode;
 }
 
-s32 UiMessage_ShowChoice(s32 arg0) {
-  struct RenderOutput **slot =
+// Prepares the localized confirmation menu and restores the cursor's saved
+// mode.
+s32 UiMessage_ShowChoice(s32 choice) {
+  struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
-  u8 saved = (*slot)->active;
-  UiIcon_PrepareObjectFar(*slot);
-  arg0 = Menu_RunConfirmSelectionAtFar(SHOP_CONFIRM_MENU_X, 5, arg0);
-  (*slot)->active = saved;
-  return arg0;
+  u8 savedCursorMode = (*cursorSlot)->active;
+  UiIcon_PrepareObjectFar(*cursorSlot);
+  choice = Menu_RunConfirmSelectionAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
+  (*cursorSlot)->active = savedCursorMode;
+  return choice;
 }
 
-s32 UiMessage_ShowChoiceVariant(s32 arg0) {
-  struct RenderOutput **slot =
+// Runs the sanctum-position confirmation menu and restores the cursor's saved
+// mode.
+s32 UiMessage_ShowChoiceVariant(s32 choice) {
+  struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
-  u8 saved = (*slot)->active;
-  UiIcon_PrepareObjectFar(*slot);
-  arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);
-  (*slot)->active = saved;
-  return arg0;
+  u8 savedCursorMode = (*cursorSlot)->active;
+  UiIcon_PrepareObjectFar(*cursorSlot);
+  choice = Menu_RunConfirmSelectionAtFar(7, 7, choice);
+  (*cursorSlot)->active = savedCursorMode;
+  return choice;
 }
 
-struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
+// Unused original list walker: follows the requested number of next links.
+UNUSED struct NodeChainNode *
+NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
   struct NodeChainNode *node = state->node;
-  s32 index;
+  s32 linkIndex;
 
-  for (index = 0; index != state->count; ++index) {
+  for (linkIndex = 0; linkIndex != state->count; ++linkIndex) {
     node = node->next;
   }
   return node;
@@ -362,37 +418,41 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-void Shop_FillSelector(s32 count, s32 selector, u8 *base) {
-  const u16 *offset;
+// Fills six selector bytes at each requested offset in the quantity tile
+// buffer.
+void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
+  const u16 *tileOffset;
 
-  selector = (selector << 4) + 1;
+  paletteSelector = (paletteSelector << 4) + 1;
 
-  if (count > 0) {
-    offset = sSelectorTileOffsets;
+  if (itemCount > 0) {
+    tileOffset = sSelectorTileOffsets;
     do {
       struct SelectorRecord *record =
-          (struct SelectorRecord *)(base + *offset++);
-      record->values[0] = selector;
-      record->values[4] = selector;
-      record->values[8] = selector;
-      record->values[12] = selector;
-      record->values[16] = selector;
-      record->values[20] = selector;
-      count--;
-    } while (count != 0);
+          (struct SelectorRecord *)(tileBuffer + *tileOffset++);
+      record->values[0] = paletteSelector;
+      record->values[4] = paletteSelector;
+      record->values[8] = paletteSelector;
+      record->values[12] = paletteSelector;
+      record->values[16] = paletteSelector;
+      record->values[20] = paletteSelector;
+      itemCount--;
+    } while (itemCount != 0);
   }
 }
 
 // Number transfer destinations
 // clang-format off
-static const u16 sGlyphOffsets[5] = {
+static const u16 sPriceDigitTileOffsets[5] = {
     0xc0, 0x90, 0x80, 0x50, 0x40,
 };
 // clang-format on
 
-void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2) {
-  u8 *src = gShop_GlyphBytes + (arg0 << 5);
-  u8 *dst = arg1 + sGlyphOffsets[arg2] + 2;
+// Copies one decimal glyph into its price-tile position, stopping at zero
+// source bytes.
+void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
+  u8 *src = gShop_GlyphBytes + (digit << 5);
+  u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
   s32 count = 3;
 
   do {
@@ -412,92 +472,104 @@ void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2) {
   } while (count >= 0);
 }
 
+// Builds up to five decimal digits in scratch tiles, creates their sprite and
+// frees the scratch block.
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
                                             s32 x, s32 y) {
-  u8 *buf;
-  s32 slot;
-  struct RenderOutput *sprite;
+  u8 *tileBuffer;
+  s32 resourceSlot;
+  struct RenderOutput *priceSprite;
 
-  buf = Runtime_AllocateBlock(14, 0x400);
-  sprite = 0;
-  Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
-  Shop_CopyGlyphs(value % 10, buf, 0);
+  tileBuffer = Runtime_AllocateBlock(14, 0x400);
+  priceSprite = 0;
+  Dma_Set(gShop_PriceTiles, tileBuffer, 0x84000040, REG_DMA3);
+  Shop_CopyGlyphs(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
-    Shop_CopyGlyphs(value % 10, buf, 1);
+    Shop_CopyGlyphs(value % 10, tileBuffer, 1);
     value = value / 10;
     if (value != 0) {
-      Shop_CopyGlyphs(value % 10, buf, 2);
+      Shop_CopyGlyphs(value % 10, tileBuffer, 2);
       value = value / 10;
       if (value != 0) {
-        s32 last;
+        s32 remainingDigits;
 
-        Shop_CopyGlyphs(value % 10, buf, 3);
-        last = value / 10;
-        if (last != 0)
-          Shop_CopyGlyphs(last % 10, buf, 4);
+        Shop_CopyGlyphs(value % 10, tileBuffer, 3);
+        remainingDigits = value / 10;
+        if (remainingDigits != 0)
+          Shop_CopyGlyphs(remainingDigits % 10, tileBuffer, 4);
       }
     }
   }
-  slot = Resource_FindFreeEntry();
-  if (slot != 96) {
-    VramCache_Load(slot, 0x100, buf);
-    sprite = RenderOutput_CreateFar(slot, 0x80008000, window, x, y);
+  resourceSlot = Resource_FindFreeEntry();
+  if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
+    VramCache_Load(resourceSlot, 0x100, tileBuffer);
+    priceSprite =
+        RenderOutput_CreateFar(resourceSlot, 0x80008000, window, x, y);
   }
   Runtime_ReleaseHeapBlock(14);
-  return sprite;
+  return priceSprite;
 }
 
+// Restores the saved field color buffers and starts their interpolation.
 void Shop_RestoreSceneTiles(s32 layer) {
   // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
-  u8 *map = (u8 *)gEventWork;
+  struct BattleEffectBuffers *paletteBuffers = gPaletteBufferWork;
+  u8 *eventBytes = (u8 *)gEventWork;
 #else
-  u32 *scene = (u32 *)&gEventWork;
-  struct BattleEffectBuffers *work = (struct BattleEffectBuffers *)scene[5];
-  u8 *map = (u8 *)scene[0];
+  u32 *workCells = (u32 *)&gEventWork;
+  struct BattleEffectBuffers *paletteBuffers =
+      (struct BattleEffectBuffers *)workCells[5];
+  u8 *eventBytes = (u8 *)workCells[0];
 #endif
-  u16 *saved = work->target;
+  u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(saved, map + 0x236, 0x84000150, REG_DMA3);
-  Dma_Set(saved, work->current, 0x840002a0, REG_DMA3);
+  Dma_Set(savedPalette, eventBytes + 0x236, 0x84000150, REG_DMA3);
+  Dma_Set(savedPalette, paletteBuffers->current, 0x840002a0, REG_DMA3);
   BattleFx_ApplyColorToTargetBufferFar(layer, 1);
   BattleFx_StartBufferInterpolationFar(16);
 }
 
+// Starts restoring the field color buffer after the menu effect.
 void Shop_InitEffect(void) {
   BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
   BattleFx_StartBufferInterpolationFar(0x10);
 }
 
+// Interpolates the cursor from its saved position to its target over the
+// requested duration.
 void ShopCursor_Advance(struct ShopCursor *cursor) {
   struct RenderOutput *sprite;
-  s32 kind;
-  s32 step;
-  s32 x;
-  s32 y;
+  s32 durationFrames;
+  s32 frame;
+  s32 cursorX;
+  s32 cursorY;
 
   if (cursor == NULL)
     return;
-  kind = cursor->kind;
-  if (kind == 0)
+  durationFrames = cursor->kind;
+  if (durationFrames == 0)
     return;
   sprite = cursor->anchor;
-  step = ++cursor->active;
-  x = cursor->x + (cursor->targetX - (s16)cursor->x) * step / kind;
-  sprite->x = x;
-  sprite->oam.x = x;
-  y = cursor->y + (cursor->targetY - (s16)cursor->y) * step / kind;
-  sprite->y = y;
-  sprite->oam.y = y;
-  if (step == kind) {
+  frame = ++cursor->active;
+  cursorX =
+      cursor->x + (cursor->targetX - (s16)cursor->x) * frame / durationFrames;
+  sprite->x = cursorX;
+  sprite->oam.x = cursorX;
+  cursorY =
+      cursor->y + (cursor->targetY - (s16)cursor->y) * frame / durationFrames;
+  sprite->y = cursorY;
+  sprite->oam.y = cursorY;
+  if (frame == durationFrames) {
     cursor->kind = 0;
     cursor->active = 0;
   }
 }
 
+// Moves each cursor axis one quarter of the remaining distance, with a minimum
+// one-pixel step.
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
   struct RenderOutput *sprite;
   s32 delta;
@@ -543,6 +615,8 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
   }
 }
 
+// Saves the cursor's current position, assigns its target and duration, and
+// resets progress.
 void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind) {
   struct RenderOutput *anchor = cursor->anchor;
@@ -555,6 +629,8 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
   cursor->active = 0;
 }
 
+// Places the cursor and its OAM coordinates immediately, preserving the
+// one-frame state.
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
 
   {
@@ -576,21 +652,24 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
   }
 }
 
+// Converts window-relative pixel coordinates to the cursor's absolute target.
 void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
-  s32 cursor_x;
-  s32 cursor_y;
+  s32 cursorX;
+  s32 cursorY;
   struct ShopRuntime *shop;
 
-  cursor_x = x;
-  cursor_y = y;
+  cursorX = x;
+  cursorY = y;
   shop = gMenuWork;
   if (window != NULL) {
-    cursor_x = cursor_x + (window->x * 8) + 8;
-    cursor_y = cursor_y + (window->y * 8) + 8;
+    cursorX = cursorX + (window->x * 8) + 8;
+    cursorY = cursorY + (window->y * 8) + 8;
   }
-  Shop_SetCursor(&shop->cursor, cursor_x, cursor_y, (s8)shop->mode);
+  Shop_SetCursor(&shop->cursor, cursorX, cursorY, (s8)shop->mode);
 }
 
+// Browses stock, selects a recipient, checks capacity and funds, then purchases
+// the chosen quantity.
 s32 Shop_SelectBuy(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow = 0;
@@ -599,20 +678,20 @@ s32 Shop_SelectBuy(void) {
   struct UiWindow *partyWindow;
   s32 selected = 0;
   s32 quantity;
-  struct ItemDefinition *item;
-  s32 askAgain;
+  struct ItemDefinition *selectedDefinition;
+  s32 repromptRecipient;
   struct UiWindow *itemWindow;
   s32 redraw;
-  s32 cursor;
-  s32 count;
+  s32 selectionIndex;
+  s32 stockCount;
   s32 itemId;
-  struct ItemDefinition *stockItem;
-  s32 result;
-  s32 prev;
-  s32 member;
-  s32 slot;
-  s32 i;
-  s16 *ids;
+  struct ItemDefinition *stockDefinition;
+  s32 selectionResult;
+  s32 previousIndex;
+  s32 unitId;
+  s32 capacitySlot;
+  s32 removedCount;
+  s16 *stockIds;
 
   shop->itemWindow = 0;
   shop->moneyWindow =
@@ -621,7 +700,8 @@ s32 Shop_SelectBuy(void) {
   priceWindow = UiWindow_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, 2);
 
 next_page:
-  cursor = selected;
+  // Browse stock first; recipient and quantity selection follow confirmation.
+  selectionIndex = selected;
   stockWindow = UiWindow_CreateFar(0, 12, 30, 4, 2);
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
@@ -629,59 +709,63 @@ next_page:
   redraw = 1;
 
   while (1) {
-    count = shop->stockCount;
+    stockCount = shop->stockCount;
     if (redraw != 0) {
-      ids = shop->stockItemIds;
-      itemId = ids[cursor];
-      stockItem = Item_GetDirectFar(itemId);
+      stockIds = shop->stockItemIds;
+      itemId = stockIds[selectionIndex];
+      stockDefinition = Item_GetDirectFar(itemId);
       redraw = 0;
-      Shop_PlaceCursor(stockWindow, cursor % 7 * 32 - 8, 8);
+      Shop_PlaceCursor(stockWindow,
+                       selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->mode = 4;
-      Shop_DrawStock(stockWindow, cursor);
+      Shop_DrawStock(stockWindow, selectionIndex);
       Shop_DrawMsg(messageWindow, itemId + MsgItemPlainName);
       RenderOutput_RedrawSavedRectFar(priceWindow);
-      Shop_DrawItemPrice(priceWindow, itemId, stockItem->price, 0);
+      Shop_DrawItemPrice(priceWindow, itemId, stockDefinition->price, 0);
     }
     if ((gKeysPressed & KEY_A) != 0) {
-      selected = cursor;
+      selected = selectionIndex;
       AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-      result = 0;
+      selectionResult = 0;
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-      result = -1;
+      selectionResult = -1;
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      prev = cursor;
-      cursor--;
-      cursor = (cursor + count) % count;
-      if (prev != cursor) {
+      previousIndex = selectionIndex;
+      selectionIndex--;
+      selectionIndex = (selectionIndex + stockCount) % stockCount;
+      if (previousIndex != selectionIndex) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      prev = cursor;
-      cursor++;
-      cursor = (cursor + count) % count;
-      if (prev != cursor) {
+      previousIndex = selectionIndex;
+      selectionIndex++;
+      selectionIndex = (selectionIndex + stockCount) % stockCount;
+      if (previousIndex != selectionIndex) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
-    if ((gKeysRepeat & KEY_UP) != 0 && cursor - 7 >= 0) {
-      cursor -= 7;
+    if ((gKeysRepeat & KEY_UP) != 0 &&
+        selectionIndex - SHOP_STOCK_PAGE_ITEMS >= 0) {
+      selectionIndex -= SHOP_STOCK_PAGE_ITEMS;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_DOWN) != 0) {
-      if (cursor + 7 < (count + 6) / 7 * 7) {
-        cursor += 7;
+      if (selectionIndex + SHOP_STOCK_PAGE_ITEMS <
+          (stockCount + (SHOP_STOCK_PAGE_ITEMS - 1)) / SHOP_STOCK_PAGE_ITEMS *
+              SHOP_STOCK_PAGE_ITEMS) {
+        selectionIndex += SHOP_STOCK_PAGE_ITEMS;
         redraw = 1;
       }
-      if (cursor > count - 1)
-        cursor = count - 1;
+      if (selectionIndex > stockCount - 1)
+        selectionIndex = stockCount - 1;
     }
     WaitFrames(1);
   }
@@ -689,16 +773,16 @@ next_page:
   UiWork_FinalizeFar(messageWindow, 2);
   UiWork_FinalizeFar(stockWindow, 2);
   WaitFrames(1);
-  if (result != 0)
+  if (selectionResult != 0)
     goto close;
 
   shop->selectedItem = shop->stockItemIds[selected];
   UiMessage_ShowAndWait(MsgWhoGetsThis);
-  item = Item_GetDirectFar(shop->selectedItem);
+  selectedDefinition = Item_GetDirectFar(shop->selectedItem);
   quantity = 1;
-  member = 0;
-  askAgain = 0;
-  cursor = 0;
+  unitId = 0;
+  repromptRecipient = 0;
+  selectionIndex = 0;
   partyWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
@@ -707,74 +791,76 @@ next_page:
   redraw = 1;
 
   while (1) {
-    if (askAgain != 0) {
-      askAgain = 0;
+    if (repromptRecipient != 0) {
+      repromptRecipient = 0;
       UiMessage_ShowAndWait(MsgWhoGetsThis);
       redraw = 1;
     }
     if (redraw != 0) {
       redraw = 0;
-      cursor = (cursor + shop->partyMemberCount) % shop->partyMemberCount;
-      member = shop->partyMemberIds[cursor];
-      Shop_PlaceCursor(partyWindow, cursor * 24 - 12, 0);
+      selectionIndex =
+          (selectionIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[selectionIndex];
+      Shop_PlaceCursor(partyWindow, selectionIndex * 24 - 12, 0);
       shop->mode = 3;
-      Shop_DrawParty(partyWindow, cursor, shop->selectedItem);
+      Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
       if (Item_GetEquipmentGroupFar(shop->selectedItem) == 0)
-        Shop_DrawUnitItem(itemWindow, member, shop->selectedItem);
+        Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
       else
-        Shop_DrawEquipComparison(itemWindow, member, shop->selectedItem);
+        Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
-      slot = Inventory_AddItemFar(member, shop->selectedItem);
-      if (slot < 0) {
+      // Probe capacity with the original add/remove before checking funds.
+      capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
+      if (capacitySlot < 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-        UiWork_PushValueSlotFar(member, 1);
+        UiWork_PushValueSlotFar(unitId, 1);
         UiWork_PushValueSlotFar(shop->selectedItem, 2);
-        if (Inventory_CountFar(member) == 15)
+        if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
           UiMessage_ShowAndWait(MsgCannotCarryItem);
         continue;
       }
-      Inventory_RemoveFar(member, slot);
-      if ((u32)item->price > gGameState.coins) {
+      Inventory_RemoveFar(unitId, capacitySlot);
+      if ((u32)selectedDefinition->price > gGameState.coins) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         UiMessage_ShowAndRestoreState(MsgBuyNotEnoughMoney);
-        result = -1;
+        selectionResult = -1;
         break;
       }
-      if (Item_IsCompatibleWithOwnerFar(member, shop->selectedItem) == 0) {
-        UiWork_PushValueSlotFar(member, 1);
+      if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
+        UiWork_PushValueSlotFar(unitId, 1);
         UiMessage_ShowAndWait(MsgCannotEquipStillWant);
         if (UiMessage_ShowChoice(0) != 0) {
-          askAgain = 1;
+          repromptRecipient = 1;
           continue;
         }
       }
       AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       WaitFrames(1);
-      quantity = Shop_SelectBuyNum(member, shop->selectedItem);
-      askAgain = 1;
+      quantity = Shop_SelectBuyNum(unitId, shop->selectedItem);
+      repromptRecipient = 1;
       if (quantity == -1)
         continue;
-      Shop_BuyDone(member, shop->selectedItem, quantity);
+      Shop_BuyDone(unitId, shop->selectedItem, quantity);
       Shop_BuySpecialItem(partyWindow, itemWindow);
-      result = 0;
+      selectionResult = 0;
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-      result = -1;
+      selectionResult = -1;
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      cursor--;
+      selectionIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      cursor++;
+      selectionIndex++;
       redraw = 1;
     }
     WaitFrames(1);
@@ -784,8 +870,9 @@ next_page:
   UiWork_FinalizeFar(itemWindow, 2);
   UiWork_FinalizeFar(partyWindow, 2);
   WaitFrames(1);
-  if (result == 0 && shop->partyAction == 2) {
-    for (i = 0; i < quantity; i++)
+  // Artifact quantities are consumed only after the purchase completes.
+  if (selectionResult == 0 && shop->partyAction == SHOP_ACTION_ARTIFACTS) {
+    for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
     if (AbilityMenu_BuildAvailableList() == 0)
       goto close;
@@ -802,66 +889,71 @@ close:
   return 0;
 }
 
+// Draws a seven-item stock page, selection highlight, page arrows and price
+// sprites.
 void Shop_DrawStock(struct UiWindow *window, s32 selected) {
 
   struct ShopRuntime *shop;
   s16 *itemIds;
-  s16 *itemId;
+  s16 *stockCursor;
   s32 itemCount;
-  s32 first;
-  s32 slot;
-  s32 x;
-  s32 clear;
-  s32 highlight;
-  s16 stockItem;
+  s32 stockIndex;
+  s32 pageSlot;
+  s32 priceX;
+  s32 zero;
+  s32 highlightFrame;
+  s16 itemId;
   struct ItemDefinition *definition;
   struct RenderOutput *icon;
 
   shop = gMenuWork;
   itemIds = shop->stockItemIds;
   itemCount = shop->stockCount;
-  first = selected - selected % 7;
+  stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
   if (window != 0) {
     RenderOutput_PrepareForRedrawFar(window);
-    if (first != 0) {
+    if (stockIndex != 0) {
       icon = RenderOutput_CreateFar(shop->previousPageIcon, 0x40000000, window,
                                     216, -16);
-      clear = 0;
-      icon->kind = clear;
+      zero = 0;
+      icon->kind = zero;
       icon->active = 17;
-      icon->animStep = clear;
+      icon->animStep = zero;
     }
-    if (first + 7 < itemCount) {
+    if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
                                     24);
-      clear = 0;
-      icon->kind = clear;
+      zero = 0;
+      icon->kind = zero;
       icon->active = 15;
-      icon->animStep = clear;
+      icon->animStep = zero;
     }
-    slot = 0;
-    if (first < (u32)itemCount) {
-      itemId = (s16 *)((first * 2) + (u32)itemIds);
-      x = 16;
-      for (; (u32)slot <= 6 && first < (u32)itemCount;
-           x += 32, slot++, itemId++, first++) {
-        stockItem = *itemId;
-        definition = Item_GetDirectFar(stockItem);
-        icon = RenderOutput_CreateLoadedFar(stockItem, 1, window, slot * 32, 0);
+    pageSlot = 0;
+    if (stockIndex < (u32)itemCount) {
+      stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
+      priceX = 16;
+      for (;
+           (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
+           priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
+        itemId = *stockCursor;
+        definition = Item_GetDirectFar(itemId);
+        icon =
+            RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
-        if (first == selected) {
+        if (stockIndex == selected) {
           icon->active = 9;
-          highlight = 10;
-          icon->animStep = highlight;
+          highlightFrame = 10;
+          icon->animStep = highlightFrame;
           icon->sentinel = 253;
         }
-        icon = Shop_CreatePriceSprite(definition->price, window, x, 0);
+        icon = Shop_CreatePriceSprite(definition->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
   }
 }
 
+// Draws the party's coins using the edition's layout and currency grammar.
 void Shop_DrawMoney(void) {
   struct ShopRuntime *shop;
   struct UiWindow *window;
@@ -884,38 +976,42 @@ void Shop_DrawMoney(void) {
 
 // X position below the item name, in pixels
 #if TBS_PATCH_1
-#define ITEM_NOTE_X 0
+#define SHOP_ITEM_NOTE_X 0
 #else
-#define ITEM_NOTE_X 8
+#define SHOP_ITEM_NOTE_X 8
 #endif
 
-void Shop_DrawItemPrice(struct UiWindow *window, s32 item, s32 price,
-                        s32 price_mode) {
-  s32 message;
+// Draws the item name and price, or its cannot-buy or not-broken note.
+// A structured switch with early returns reduced the English native extent
+// from 0x98 to 0x90, so the existing shared draw tail remains.
+void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
+                        s32 priceKind) {
+  s32 labelMessage;
 
   if (window == 0)
     return;
   goto draw;
 cannot_buy:
-  UiText_DrawCharacterAtOffsetFar(MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
+  UiText_DrawCharacterAtOffsetFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X,
+                                  8);
   return;
 show_price:
-  message = MsgPrice;
-  UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
-  message -= 3;
+  labelMessage = MsgPrice;
+  UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
+  labelMessage -= 3;
   UiText_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  UiText_DrawCharacterAtOffsetFar(message, window, SHOP_PRICE_LABEL_X, 8);
+  UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   return;
 draw:
   RenderOutput_RedrawSavedRectFar(window);
-  UiText_DrawCharacterAtOffsetFar(item + MsgItemName, window, 0, 0);
+  UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 0, 0);
   if (price != 0)
     goto show_price;
-  switch (price_mode) {
+  switch (priceKind) {
   case 1:
     goto cannot_buy;
   case 2:
-    UiText_DrawCharacterAtOffsetFar(MsgNotBroken, window, ITEM_NOTE_X, 8);
+    UiText_DrawCharacterAtOffsetFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
     break;
   default:
     goto show_price;
@@ -923,50 +1019,54 @@ draw:
   return;
 }
 
-//--------------------------------------------------------------------------
-// Redraw win and write message from its upper-left corner; do nothing if
-// win is 0. The Japanese edition waits one frame after redrawing.
-//--------------------------------------------------------------------------
-void Shop_DrawMsg(struct UiWindow *win, s32 message) {
-  if (win != 0) {
+// Clears or restores the message window, then draws its text; a null window
+// is ignored.
+void Shop_DrawMsg(struct UiWindow *window, s32 message) {
+  if (window != 0) {
 #if TBS_PATCH_1
-    RenderOutput_RedrawSavedRectFar(win);
+    RenderOutput_RedrawSavedRectFar(window);
 #else
-    RenderOutput_ClearListFar(win);
+    RenderOutput_ClearListFar(window);
     WaitFrames(1);
 #endif
-    SHOP_DRAW_MESSAGE(message, win, 0, 0);
+    SHOP_DRAW_MESSAGE(message, window, 0, 0);
   }
 }
 
-void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 requirement) {
+// Highlights the selected party icon and dims members who cannot equip the
+// candidate item.
+void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
-  s32 index;
+  s32 memberIndex;
 
   if (window != 0) {
-    for (index = 0; index < shop->partyMemberCount; index++) {
-      if (index == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 30);
+    for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+      if (memberIndex == selected)
+        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                            30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 1);
-      shop->partyMemberScale[index] = 0x10000;
-      if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[index],
-                                         requirement))
-        shop->partyMemberScale[index] = 0xcccc;
+        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                            1);
+      shop->partyMemberScale[memberIndex] = 0x10000;
+      if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[memberIndex],
+                                         itemId))
+        shop->partyMemberScale[memberIndex] = 0xcccc;
     }
   }
 }
 
+// Temporarily equips the candidate, recalculates stats, restores the slot and
+// draws the comparison.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
-  s32 replaced = -1;
-  s32 slot;
-  s32 saved;
-  s32 i;
-  s32 without[4];
-  s32 with[4];
+  s32 replacedItemId = -1;
+  s32 previewSlot;
+  s32 savedEntry;
+  s32 index;
+  s32 baseStats[4];
+  s32 previewStats[4];
 
   if (window == 0)
     return;
@@ -975,88 +1075,99 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     UiText_DrawResourceFar(MsgShopCannotEquip, window, 8, 24);
     return;
   }
-  slot = Inventory_FindEquippedFar(unitId, item->type);
-  if (slot == -1) {
-    for (i = 0; i <= 14; i++) {
-      if (!(unit->inventory[i] & 0x200))
+  previewSlot = Inventory_FindEquippedFar(unitId, item->type);
+  if (previewSlot == -1) {
+    for (index = 0; index <= 14; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         break;
     }
-    if (i == 15) {
-      for (i = 0; i <= 14; i++) {
-        if (Item_GetDirectFar(unit->inventory[i])->type == 6)
+    if (index == 15) {
+      for (index = 0; index <= 14; index++) {
+        if (Item_GetDirectFar(unit->inventory[index])->type == 6)
           break;
       }
-      if (i == 15)
-        i = 0;
+      if (index == 15)
+        index = 0;
     }
-    slot = i;
+    previewSlot = index;
   } else {
-    replaced = unit->inventory[slot] & 0x1ff;
+    replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
   }
-  saved = unit->inventory[slot];
-  unit->inventory[slot] = itemId | 0x200;
+  // Recalculate a real temporary equipment change, then restore it exactly.
+  savedEntry = unit->inventory[previewSlot];
+  unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   UnitCalcFar(unitId);
-  with[0] = unit->atk;
-  with[1] = unit->def;
-  with[2] = unit->agi;
-  with[3] = unit->luck;
-  unit->inventory[slot] = saved;
+  previewStats[0] = unit->atk;
+  previewStats[1] = unit->def;
+  previewStats[2] = unit->agi;
+  previewStats[3] = unit->luck;
+  unit->inventory[previewSlot] = savedEntry;
   UnitCalcFar(unitId);
-  without[0] = unit->atk;
-  without[1] = unit->def;
-  without[2] = unit->agi;
-  without[3] = unit->luck;
-  for (i = 0; i <= 2; i++) {
-    if (without[i] > with[i])
+  baseStats[0] = unit->atk;
+  baseStats[1] = unit->def;
+  baseStats[2] = unit->agi;
+  baseStats[3] = unit->luck;
+  for (index = 0; index <= 2; index++) {
+    if (baseStats[index] > previewStats[index])
       RenderOutput_CreateFar(shop->statDownIcon, 0x40000000, window, 56,
-                             i * 16 - 4)
+                             index * 16 - 4)
           ->kind = 0;
-    else if (without[i] < with[i])
+    else if (baseStats[index] < previewStats[index])
       RenderOutput_CreateFar(shop->statUpIcon, 0x40000000, window, 56,
-                             i * 16 - 4)
+                             index * 16 - 4)
           ->kind = 0;
-    UiText_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
-    if (without[i] != with[i])
-      UiText_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    UiText_DrawCharacterAtOffsetFar(MsgShopStatLabel + i, window, 0, i * 16);
-    UiWindow_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
+    UiText_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
+    if (baseStats[index] != previewStats[index])
+      UiText_DrawNumberInWindowFar(previewStats[index], 3, window, 72,
+                                   index * 16);
+    UiText_DrawCharacterAtOffsetFar(MsgShopStatLabel + index, window, 0,
+                                    index * 16);
+    UiWindow_DrawDividerLineFar(window, 0, index * 2 + 2, 13, index * 2 + 2);
   }
-  if (replaced != -1)
-    UiText_DrawCharacterAtOffsetFar(replaced + MsgItemName, window, 0, 48);
+  if (replacedItemId != -1)
+    UiText_DrawCharacterAtOffsetFar(replacedItemId + MsgItemName, window, 0,
+                                    48);
 }
+// Shows the quantity already carried and draws the member's existing inventory
+// icons.
+// A typed RenderOutput icon store kept the English text extent but changed
+// 76 text bytes; retain the existing byte view of the sprite.
 void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 
-  u8 *unit;
+  u8 *unitBytes;
   s32 x;
   s32 y;
   s32 itemIndex;
   s32 slot;
-  s32 off;
+  s32 quantityOffset;
   s32 firstOffset;
   s32 itemOffset;
   s32 nextOffset;
   u8 *icon;
 
-  unit = (u8 *)UnitGetFar(unitId);
+  unitBytes = (u8 *)UnitGetFar(unitId);
   x = 8;
   y = 8;
   if (window != 0) {
     RenderOutput_PrepareForRedrawFar(window);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
-      off = slot * 2 + 216;
-      UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
+      quantityOffset = slot * 2 + 216;
+      UiWork_PushValueSlotFar(
+          (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
+              1,
+          5);
       UiText_DrawCharacterAtOffsetFar(MsgYouHave, window, 0, 0);
     } else {
       UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
     }
     itemIndex = 0;
     firstOffset = 216;
-    if (*(u16 *)(unit + firstOffset) != 0) {
+    if (*(u16 *)(unitBytes + firstOffset) != 0) {
       for (;;) {
         itemOffset = itemIndex * 2 + 216;
-        icon = (u8 *)RenderOutput_CreateLoadedFar(*(u16 *)(unit + itemOffset),
-                                                  27, window, x, y);
+        icon = (u8 *)RenderOutput_CreateLoadedFar(
+            *(u16 *)(unitBytes + itemOffset), 27, window, x, y);
         icon[15] = 252;
         x += 16;
         if (itemIndex == 4) {
@@ -1071,7 +1182,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
         if (itemIndex > 14)
           break;
         nextOffset = itemIndex * 2 + 216;
-        if (*(u16 *)(unit + nextOffset) == 0)
+        if (*(u16 *)(unitBytes + nextOffset) == 0)
           break;
       }
     }
@@ -1079,136 +1190,145 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 }
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
-#define ACTION_Y 120
+#define SHOP_QUANTITY_CURSOR_X 120
 #else
-#define ACTION_Y 128
+#define SHOP_QUANTITY_CURSOR_X 128
 #endif
 
+// Limits the purchase by stack space, available coins and artifact stock before
+// asking its quantity.
 s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
   struct ItemDefinition *item;
-  s32 quantity;
-  s32 chance;
+  s32 carriedQuantity;
+  s32 quantityLimit;
   s32 slot;
-  s32 maximum;
-  s32 result;
+  s32 artifactLimit;
+  s32 selectedQuantity;
 
   shop = gMenuWork;
   unit = UnitGetFar(unitId);
   item = Item_GetDirectFar(itemId);
-  result = 1;
-  if (item->flags & 0x10) {
+  selectedQuantity = 1;
+  if (item->flags & ITEM_STACKABLE) {
     UiMessage_ShowAndWait(MsgHowManyToBuy);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
-      quantity = (unit->inventory[slot] >> 11) + 1;
+      carriedQuantity = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
     } else {
-      quantity = 0;
+      carriedQuantity = 0;
     }
 
-    chance = 30;
+    quantityLimit = 30;
     if (item->price != 0)
-      chance = (u32)gGameState.coins / item->price;
+      quantityLimit = (u32)gGameState.coins / item->price;
 
-    if (shop->partyAction == 2) {
-      maximum = Item_AdjustCounterFar(itemId, 0);
-      if (chance > maximum)
-        maximum = Item_AdjustCounterFar(itemId, 0);
+    if (shop->partyAction == SHOP_ACTION_ARTIFACTS) {
+      artifactLimit = Item_AdjustCounterFar(itemId, 0);
+      if (quantityLimit > artifactLimit)
+        artifactLimit = Item_AdjustCounterFar(itemId, 0);
       else
-        maximum = chance;
-      chance = maximum;
+        artifactLimit = quantityLimit;
+      quantityLimit = artifactLimit;
     }
 
-    chance += quantity;
-    if (chance > 30)
-      chance = 30;
+    quantityLimit += carriedQuantity;
+    if (quantityLimit > 30)
+      quantityLimit = 30;
 
     shop->mode = 12;
-    Shop_PlaceCursor(0, ACTION_Y, 0x30);
-    result = Shop_SelectQuantity(quantity, chance, item->price);
+    Shop_PlaceCursor(0, SHOP_QUANTITY_CURSOR_X, 0x30);
+    selectedQuantity =
+        Shop_SelectQuantity(carriedQuantity, quantityLimit, item->price);
   }
-  return result;
+  return selectedQuantity;
 }
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
-#define QUANTITY_X 64
-#define COINS_X 128
+#define SHOP_QUANTITY_NUMBER_X 64
+#define SHOP_QUANTITY_COIN_LABEL_X 128
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define QUANTITY_X 72
-#define COINS_X 144
+#define SHOP_QUANTITY_NUMBER_X 72
+#define SHOP_QUANTITY_COIN_LABEL_X 144
 #else
-#define QUANTITY_X 72
-#define COINS_X 136
+#define SHOP_QUANTITY_NUMBER_X 72
+#define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
+// Polls a wrapped quantity selector, redraws its amount and price, and returns
+// the count or -1.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
-  void *buffer;
+  void *tileBuffer;
   struct UiWindow *window;
-  s32 changed;
-  s32 slot;
-  s32 count;
-  s32 result;
-  struct RenderOutput *sprite;
+  s32 redraw;
+  s32 resourceSlot;
+  s32 quantityIndex;
+  s32 selectedQuantity;
+  struct RenderOutput *quantitySprite;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  s32 msg;
+  s32 unitMessageBase;
 #endif
 
-  buffer = Runtime_AllocateBlock(14, 0x400);
-  changed = 1;
+  tileBuffer = Runtime_AllocateBlock(14, 0x400);
+  redraw = 1;
   maximum -= minimum;
-  result = -1;
-  count = 0;
+  selectedQuantity = -1;
+  quantityIndex = 0;
   window = UiWindow_CreateFar(7, 4, 23, 3, 2);
   if (window != 0) {
-    slot = Resource_FindFreeEntry();
-    if (slot != 96) {
-      VramCache_Load(slot, 0x100, 0);
-      RenderOutput_CreateFar(slot, 0x40004000, window, 0, 0);
-      sprite = RenderOutput_CreateFar(slot, 0x40004000, window, 32, 0);
-      sprite->oam.index += 4;
+    resourceSlot = Resource_FindFreeEntry();
+    if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
+      VramCache_Load(resourceSlot, 0x100, 0);
+      RenderOutput_CreateFar(resourceSlot, 0x40004000, window, 0, 0);
+      quantitySprite =
+          RenderOutput_CreateFar(resourceSlot, 0x40004000, window, 32, 0);
+      quantitySprite->oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {
-          AudioCommand_PlayFar(112);
-          result = count + 1;
+          AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+          selectedQuantity = quantityIndex + 1;
           break;
         }
         if (gKeysPressed & KEY_B) {
-          AudioCommand_PlayFar(113);
-          result = -1;
+          AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+          selectedQuantity = -1;
           break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-          AudioCommand_PlayFar(111);
-          changed = 1;
-          count--;
+          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          redraw = 1;
+          quantityIndex--;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-          AudioCommand_PlayFar(111);
-          changed = 1;
-          count++;
+          AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+          redraw = 1;
+          quantityIndex++;
         }
-        if (changed) {
-          changed = 0;
-          count = (count + maximum) % maximum;
-          Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
-          Shop_FillSelector(30, 14, buffer);
-          Shop_FillSelector(minimum + maximum, 0, buffer);
-          Shop_FillSelector(minimum + count + 1, 10, buffer);
-          Shop_FillSelector(minimum, 2, buffer);
-          VramCache_Load(slot, 0x100, buffer);
-          result = count + 1;
+        if (redraw) {
+          redraw = 0;
+          quantityIndex = (quantityIndex + maximum) % maximum;
+          Dma_Set(gShop_QuantityTiles, tileBuffer, 0x84000040, REG_DMA3);
+          Shop_FillSelector(30, 14, tileBuffer);
+          Shop_FillSelector(minimum + maximum, 0, tileBuffer);
+          Shop_FillSelector(minimum + quantityIndex + 1, 10, tileBuffer);
+          Shop_FillSelector(minimum, 2, tileBuffer);
+          VramCache_Load(resourceSlot, 0x100, tileBuffer);
+          selectedQuantity = quantityIndex + 1;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-          UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
-          UiText_DrawNumberInWindowFar(price * result, 6, window,
-                                       QUANTITY_X + 16, 0);
-          UiText_DrawCharacterAtOffsetFar(MsgCoins, window, COINS_X, 0);
+          UiText_DrawNumberInWindowFar(selectedQuantity, 2, window,
+                                       SHOP_QUANTITY_NUMBER_X, 0);
+          UiText_DrawNumberInWindowFar(price * selectedQuantity, 6, window,
+                                       SHOP_QUANTITY_NUMBER_X + 16, 0);
+          UiText_DrawCharacterAtOffsetFar(MsgCoins, window,
+                                          SHOP_QUANTITY_COIN_LABEL_X, 0);
 #else
-          UiText_DrawNumberInWindowFar(result, 2, window, 64, 0);
-          msg = MsgPiece;
-          UiText_DrawCharacterAtOffsetFar(msg, window, 80, 0);
-          UiText_DrawNumberInWindowFar(price * result, 6, window, 96, 0);
-          UiText_DrawCharacterAtOffsetFar(msg - 1, window, 144, 0);
+          UiText_DrawNumberInWindowFar(selectedQuantity, 2, window, 64, 0);
+          unitMessageBase = MsgPiece;
+          UiText_DrawCharacterAtOffsetFar(unitMessageBase, window, 80, 0);
+          UiText_DrawNumberInWindowFar(price * selectedQuantity, 6, window, 96,
+                                       0);
+          UiText_DrawCharacterAtOffsetFar(unitMessageBase - 1, window, 144, 0);
 #endif
         }
         WaitFrames(1);
@@ -1218,55 +1338,61 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
     }
   }
   Runtime_ReleaseHeapBlock(14);
-  return result;
+  return selectedQuantity;
 }
 
+// Adds each purchased item, charges coins and earns credit before offering to
+// equip it.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
-  s32 remaining;
-  s32 addedSlot;
+  s32 remainingQuantity;
+  s32 lastAddedSlot;
   struct ItemDefinition *item;
 
-  remaining = quantity;
+  remainingQuantity = quantity;
   item = Item_GetDirectFar(itemId);
-  addedSlot = 0;
+  lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
+  // Keep each inventory addition, coin debit and shop-credit increment in
+  // order.
   AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
-  if (addedSlot < remaining) {
+  if (lastAddedSlot < remainingQuantity) {
     do {
-      addedSlot = Inventory_AddItemFar(unitId, itemId);
+      lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
       Party_AdjustCoinsFar(0 - item->price);
-      remaining -= 1;
+      remainingQuantity -= 1;
       Party_AdjustShopCreditFar(item->price);
       Shop_DrawMoney();
-    } while (remaining != 0);
+    } while (remainingQuantity != 0);
   }
   UiMessage_ShowAndRestoreState(MsgHereYouGo);
-  if (Shop_ConfirmEquip(unitId, addedSlot) != 0) {
+  if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {
     Shop_SellOld(unitId, replacedSlot);
   }
 }
 
+// Checks equipment restrictions, asks permission and equips the item, including
+// its curse warning.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
-  struct ShopRuntime *menu = gMenuWork;
+  struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
-  struct ItemDefinition *info = Item_GetDirectFar(itemId);
-  s32 replaced;
-  struct UiWindow *menuValue;
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  struct ItemDefinition *definition = Item_GetDirectFar(itemId);
+  s32 replacedSlot;
+  struct UiWindow *itemWindow;
 
-  if (unit->inventory[slot] & 0x200)
+  if (unit->inventory[slot] & INVENTORY_EQUIPPED)
     return 0;
 
   if (Item_CanOwnerEquip(unitId, itemId) == 0)
     return 0;
 
-  replaced = Inventory_FindEquippedFar(unitId, info->type);
-  if (replaced != -1) {
+  replacedSlot = Inventory_FindEquippedFar(unitId, definition->type);
+  if (replacedSlot != -1) {
     struct ItemDefinition *oldInfo =
-        Item_GetDirectFar(unit->inventory[replaced]);
+        Item_GetDirectFar(unit->inventory[replacedSlot]);
 
-    if (oldInfo->flags & 2)
+    if (oldInfo->flags & ITEM_CANNOT_UNEQUIP)
       return 0;
   }
 
@@ -1276,11 +1402,11 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     return 0;
 
   Inventory_EquipFar(unitId, slot);
-  menuValue = menu->itemWindow;
-  if (menuValue != 0)
-    Shop_DrawUnitGrid(menuValue, unitId);
+  itemWindow = shop->itemWindow;
+  if (itemWindow != 0)
+    Shop_DrawUnitGrid(itemWindow, unitId);
 
-  if (info->flags & 1) {
+  if (definition->flags & ITEM_CURSED) {
     AudioCommand_PlayFar(103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
@@ -1293,6 +1419,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   return 1;
 }
 
+// Offers to sell one replaced equipment item unless its type or flags prohibit
+// it.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
   s32 itemId;
@@ -1301,46 +1429,44 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   if (slot == -1) {
     return 0;
   }
-  itemId = unit->inventory[slot] & 0x1ff;
+  itemId = unit->inventory[slot] & ITEM_ID_MASK;
   if (Item_GetDirectFar(itemId)->type == 6) {
     return 0;
   }
-  if (Item_GetDirectFar(itemId)->flags & 8) {
+  if (Item_GetDirectFar(itemId)->flags & ITEM_INDISPENSABLE) {
     return 0;
   }
   Shop_SellItem(unitId, slot, -1);
   return 1;
 }
 
-s32 Shop_SalePrice(s32 item_id) {
-  s32 price;
+// Returns zero for indispensable items, half price for broken ones or three
+// quarters otherwise.
+s32 Shop_SalePrice(s32 inventoryEntry) {
+  s32 salePrice;
 
-  price = Item_GetDirectFar(item_id)->price;
+  salePrice = Item_GetDirectFar(inventoryEntry)->price;
 
-  if (Item_GetDirectFar(item_id)->flags & 8) {
-    price = 0;
-  } else if (item_id & 0x400) {
-    price = price / 2;
+  if (Item_GetDirectFar(inventoryEntry)->flags & ITEM_INDISPENSABLE) {
+    salePrice = 0;
+  } else if (inventoryEntry & INVENTORY_BROKEN) {
+    salePrice = salePrice / 2;
   } else {
-    price = price * 3 / 4;
+    salePrice = salePrice * 3 / 4;
   }
-  return price;
+  return salePrice;
 }
 
-#if TBS_PATCH_1
-#define BASE_W 12
-#else
-#define BASE_W 11
-#endif
-
+// Selects whose inventory to sell or repair, returning to the party list after
+// each operation.
 s32 Shop_PickUnit(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *listWindow;
-  s32 selection = 0;
+  s32 memberIndex = 0;
   s32 redraw = 1;
   s32 unitId = 0;
 
-  shop->moneyWindow = UiWindow_CreateFar(0, 9, BASE_W, 4, 2);
+  shop->moneyWindow = UiWindow_CreateFar(0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
   Shop_DrawMoney();
   shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
   listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
@@ -1351,11 +1477,12 @@ s32 Shop_PickUnit(void) {
   for (;;) {
     if (redraw != 0) {
       redraw = 0;
-      selection = (selection + shop->partyMemberCount) % shop->partyMemberCount;
-      unitId = shop->partyMemberIds[selection];
-      Shop_PlaceCursor(listWindow, selection * 24 - 12, 0);
+      memberIndex =
+          (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[memberIndex];
+      Shop_PlaceCursor(listWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
-      Shop_DrawParty(listWindow, selection, 0);
+      Shop_DrawParty(listWindow, memberIndex, 0);
       Shop_DrawUnitGrid(shop->itemWindow, unitId);
     }
 
@@ -1365,7 +1492,7 @@ s32 Shop_PickUnit(void) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       } else {
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-        if (shop->partyAction == 1)
+        if (shop->partyAction == SHOP_ACTION_SELL)
           Shop_SelectSell(unitId);
         else
           Shop_SelectRepair(unitId);
@@ -1388,25 +1515,29 @@ s32 Shop_PickUnit(void) {
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      selection--;
+      memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      selection++;
+      memberIndex++;
       redraw = 1;
     }
     WaitFrames(1);
   }
 }
 
+// Selects an inventory slot and quantity to sell, repeating until cancelled or
+// the inventory is empty.
+// Shared previous/next-row inlines added four bytes to each sell, repair and
+// use picker in the English native build; the direct row arithmetic remains.
 s32 Shop_SelectSell(s32 unitId) {
-  struct UiWindow *priceWindow;
+  struct UiWindow *descriptionWindow;
   struct ShopRuntime *shop;
-  struct UiWindow *listWindow;
+  struct UiWindow *priceWindow;
   struct BattleUnit *unit;
-  s32 selection;
-  s32 itemCount;
+  s32 slot;
+  s32 inventoryCount;
   s32 redraw;
   s32 result;
   s32 itemId;
@@ -1416,12 +1547,12 @@ s32 Shop_SelectSell(s32 unitId) {
 
   shop = gMenuWork;
   unit = UnitGetFar(unitId);
-  itemCount = 1;
-  listWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
-  selection = 0;
+  inventoryCount = 1;
+  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  slot = 0;
 
   for (;;) {
-    priceWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursor.anchor->active = 18;
     shop->mode = 12;
     redraw = 1;
@@ -1429,17 +1560,17 @@ s32 Shop_SelectSell(s32 unitId) {
     while (1) {
       if (redraw != 0) {
         redraw = 0;
-        itemCount = Inventory_CountFar(unitId);
-        if (selection > itemCount - 1)
-          selection = itemCount - 1;
-        itemId = 0x1ff & unit->inventory[selection];
+        inventoryCount = Inventory_CountFar(unitId);
+        if (slot > inventoryCount - 1)
+          slot = inventoryCount - 1;
+        itemId = ITEM_ID_MASK & unit->inventory[slot];
         window = shop->itemWindow;
-        x = selection % 5 * 16;
-        Shop_PlaceCursor(window, x, selection / 5 * 16 + 8);
+        x = slot % SHOP_INVENTORY_COLUMNS * 16;
+        Shop_PlaceCursor(window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
         shop->mode = 3;
-        Shop_DrawItemPrice(listWindow, itemId,
-                           Shop_SalePrice(unit->inventory[selection]), 1);
-        Shop_DrawMsg(priceWindow, itemId + MsgItemPlainName);
+        Shop_DrawItemPrice(priceWindow, itemId,
+                           Shop_SalePrice(unit->inventory[slot]), 1);
+        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
       }
 
       if ((gKeysPressed & KEY_A) != 0) {
@@ -1454,54 +1585,56 @@ s32 Shop_SelectSell(s32 unitId) {
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        selection -= 1;
-        selection = (selection + itemCount) % itemCount;
+        slot -= 1;
+        slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        selection += 1;
-        selection = (selection + itemCount) % itemCount;
+        slot += 1;
+        slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_UP) != 0) {
-        selection -= 5;
-        if (selection < 0)
-          selection += 15;
-        while (selection >= itemCount)
-          selection -= 5;
+        slot -= SHOP_INVENTORY_COLUMNS;
+        if (slot < 0)
+          slot += INVENTORY_SLOTS;
+        while (slot >= inventoryCount)
+          slot -= SHOP_INVENTORY_COLUMNS;
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        selection += 5;
-        if (selection >= itemCount)
-          selection -= 15;
-        while (selection < 0)
-          selection += 5;
+        slot += SHOP_INVENTORY_COLUMNS;
+        if (slot >= inventoryCount)
+          slot -= INVENTORY_SLOTS;
+        while (slot < 0)
+          slot += SHOP_INVENTORY_COLUMNS;
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
     }
 
-    UiWork_FinalizeFar(priceWindow, 2);
+    UiWork_FinalizeFar(descriptionWindow, 2);
     WaitFrames(1);
     if (result != 0)
       break;
 
-    quantity = Shop_SelectSellNum(unitId, selection);
+    quantity = Shop_SelectSellNum(unitId, slot);
     if (quantity != -1)
-      Shop_SellItem(unitId, selection, quantity);
+      Shop_SellItem(unitId, slot, quantity);
     UiMessage_ShowAndWait(MsgSellAnythingElse);
     if (Inventory_CountFar(unitId) == 0)
       break;
   }
 
-  UiWork_FinalizeFar(listWindow, 2);
+  UiWork_FinalizeFar(priceWindow, 2);
   return result;
 }
 
+// Draws all fifteen inventory slots in five columns, including any empty
+// positions.
 void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   struct BattleUnit *unit;
   s32 x;
@@ -1540,19 +1673,15 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   }
 }
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
-#define EFFECT_X 0x78
-#else
-#define EFFECT_X 0x80
-#endif
-
+// Asks how many to sell only for stacks larger than one, restoring the cursor
+// afterward.
 s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
   s16 savedY;
-  s32 effect;
-  s32 state;
-  s32 selection;
+  s32 unitSalePrice;
+  s32 stackQuantity;
+  s32 quantityLimit;
   struct ItemDefinition *item;
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
@@ -1561,17 +1690,17 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   unit = UnitGetFar(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
-  effect = Shop_SalePrice(unit->inventory[slot]);
-  state = Shop_GetSelectionState(unitId, slot);
-  selection = state;
-  if ((item->flags & 0x10) && state > 1) {
+  unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
+  stackQuantity = Shop_GetSelectionState(unitId, slot);
+  quantityLimit = stackQuantity;
+  if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
     UiMessage_ShowAndWait(MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
     shop->cursor.anchor->active = 4;
     shop->mode = 0xc;
-    Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
-    result = Shop_SelectQuantity(0, selection, effect);
+    Shop_PlaceCursor(NULL, SHOP_QUANTITY_CURSOR_X, 0x30);
+    result = Shop_SelectQuantity(0, quantityLimit, unitSalePrice);
     WaitFrames(1);
     UiIcon_PrepareObjectFar(shop->cursor.anchor);
     Shop_PlaceCursor(NULL, savedX, savedY);
@@ -1579,19 +1708,21 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   return result;
 }
 
+// Checks the offer and restrictions, discards the chosen count, then credits
+// coins and redraws.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   u8 rare = item->flags & 4;
-  s32 all = 0;
+  s32 sellingReplacedItem = 0;
   s32 total;
   s32 message;
-  s32 i;
+  s32 soldCount;
 
   if (count == -1) {
-    all = 1;
+    sellingReplacedItem = 1;
     count = 1;
   }
   total = Shop_SalePrice(unit->inventory[slot]) * count;
@@ -1600,14 +1731,15 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
     return;
   }
-  if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
+      (item->flags & ITEM_CANNOT_UNEQUIP)) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
     return;
   }
-  if (all)
+  if (sellingReplacedItem)
     message = MsgOldItemSellOffer;
-  else if (unit->inventory[slot] & 0x400)
+  else if (unit->inventory[slot] & INVENTORY_BROKEN)
     message = MsgDamagedSellOffer;
   else if (count > 1)
     message = MsgSellTotal;
@@ -1619,65 +1751,69 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   UiWork_PushValueSlotFar(total, 5);
   UiMessage_ShowAndRestoreState(message);
   if (UiMessage_ShowChoice(0) != 0) {
-    if (rare || all)
+    if (rare || sellingReplacedItem)
       message = MsgKeepIt;
     else
       message = MsgChangedMind;
     UiMessage_ShowAndRestoreState(message);
     return;
   }
+  // Discard each item before crediting coins and rebuilding the inventory grid.
   AudioCommand_PlayFar(102);
-  for (i = 0; i < count; i++)
+  for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);
   Shop_DrawMoney();
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  if (rare || all)
+  if (rare || sellingReplacedItem)
     message = MsgSold;
   else
     message = MsgDeal;
   UiMessage_ShowAndRestoreState(message);
 }
 
-s32 Shop_RepairPrice(s32 item_id) {
-  s32 result = Item_GetDirectFar(item_id)->price / 4;
+// Returns one quarter of the base price for broken items, or zero for intact
+// items.
+s32 Shop_RepairPrice(s32 inventoryEntry) {
+  s32 repairCost = Item_GetDirectFar(inventoryEntry)->price / 4;
 
-  if ((item_id & 0x400) == 0) {
-    result = 0;
+  if ((inventoryEntry & INVENTORY_BROKEN) == 0) {
+    repairCost = 0;
   }
-  return result;
+  return repairCost;
 }
 
-#define SPECIAL_ITEM 228
-
+// Preserves the original repair-owner wrapper and its zero result.
 s32 Shop_SelectUnit(void) {
   Shop_PickUnit();
   return 0;
 }
 
+// Selects an inventory slot for repair and repeats until cancelled or the
+// inventory is empty.
 s32 Shop_SelectRepair(s32 unitId) {
   struct ShopRuntime *shop;
-  s32 itemCount;
+  s32 inventoryCount;
+  struct UiWindow *descriptionWindow;
   struct UiWindow *priceWindow;
-  struct UiWindow *listWindow;
   struct BattleUnit *unit;
-  s32 selection;
+  s32 slot;
   s32 redraw;
   s32 result;
   s32 itemId;
-  s32 price;
+  s32 repairCost;
   struct UiWindow *window;
   s32 x;
   s32 y;
 
   shop = gMenuWork;
   unit = UnitGetFar(unitId);
-  itemCount = 1;
-  listWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
-  selection = 0;
+  inventoryCount = 1;
+  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  slot = 0;
 
   for (;;) {
-    priceWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursor.anchor->active = 18;
     shop->mode = 12;
     redraw = 1;
@@ -1685,18 +1821,18 @@ s32 Shop_SelectRepair(s32 unitId) {
     while (1) {
       if (redraw != 0) {
         redraw = 0;
-        itemCount = Inventory_CountFar(unitId);
-        if (selection > itemCount - 1)
-          selection = itemCount - 1;
-        itemId = 0x1ff & unit->inventory[selection];
+        inventoryCount = Inventory_CountFar(unitId);
+        if (slot > inventoryCount - 1)
+          slot = inventoryCount - 1;
+        itemId = ITEM_ID_MASK & unit->inventory[slot];
         window = shop->itemWindow;
-        x = selection % 5 * 16;
-        y = selection / 5 * 16 + 8;
+        x = slot % SHOP_INVENTORY_COLUMNS * 16;
+        y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
         Shop_PlaceCursor(window, x, y);
         shop->mode = 3;
-        price = Shop_RepairPrice(unit->inventory[selection]);
-        Shop_DrawItemPrice(listWindow, itemId, price, 2);
-        Shop_DrawMsg(priceWindow, itemId + MsgItemPlainName);
+        repairCost = Shop_RepairPrice(unit->inventory[slot]);
+        Shop_DrawItemPrice(priceWindow, itemId, repairCost, 2);
+        Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
@@ -1710,96 +1846,99 @@ s32 Shop_SelectRepair(s32 unitId) {
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        selection -= 1;
-        selection = (selection + itemCount) % itemCount;
+        slot -= 1;
+        slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-        selection += 1;
-        selection = (selection + itemCount) % itemCount;
+        slot += 1;
+        slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_UP) != 0) {
-        selection -= 5;
-        if (selection < 0)
-          selection += 15;
-        while (selection >= itemCount)
-          selection -= 5;
+        slot -= SHOP_INVENTORY_COLUMNS;
+        if (slot < 0)
+          slot += INVENTORY_SLOTS;
+        while (slot >= inventoryCount)
+          slot -= SHOP_INVENTORY_COLUMNS;
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        selection += 5;
-        if (selection >= itemCount)
-          selection -= 15;
-        while (selection < 0)
-          selection += 5;
+        slot += SHOP_INVENTORY_COLUMNS;
+        if (slot >= inventoryCount)
+          slot -= INVENTORY_SLOTS;
+        while (slot < 0)
+          slot += SHOP_INVENTORY_COLUMNS;
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
     }
 
-    UiWork_FinalizeFar(priceWindow, 2);
+    UiWork_FinalizeFar(descriptionWindow, 2);
     WaitFrames(1);
     if (result != 0)
       break;
 
-    Shop_RepairItem(unitId, selection);
+    Shop_RepairItem(unitId, slot);
     UiMessage_ShowAndWait(MsgRepairAnythingElse);
     if (Inventory_CountFar(unitId) == 0)
       break;
   }
 
-  UiWork_FinalizeFar(listWindow, 2);
+  UiWork_FinalizeFar(priceWindow, 2);
   return result;
 }
 
+// Checks the repair, hides the item during the work sequence, restores it and
+// charges the fee.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
-  u32 price = Shop_RepairPrice(unit->inventory[slot]);
-  s32 message;
-  u8 kind;
-  u32 saved;
+  u32 repairCost = Shop_RepairPrice(unit->inventory[slot]);
+  s32 messageBase;
+  u8 useType;
+  u32 savedEntry;
 
-  kind = item->useType;
-  if (kind != 2) {
+  useType = item->useType;
+  if (useType != 2) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
     return;
   }
-  if (!(unit->inventory[slot] & 0x400)) {
+  if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgNotDamaged);
     return;
   }
-  if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
     return;
   }
-  if (price > gGameState.coins) {
+  if (repairCost > gGameState.coins) {
     UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
     return;
   }
   UiWork_PushValueSlotFar(itemId, 2);
-  UiWork_PushValueSlotFar(price, 5);
-  message = MsgShopRepairConfirm;
-  UiMessage_ShowAndRestoreState(message);
+  UiWork_PushValueSlotFar(repairCost, 5);
+  messageBase = MsgShopRepairConfirm;
+  UiMessage_ShowAndRestoreState(messageBase);
   if (UiMessage_ShowChoice(0) != 0) {
-    UiMessage_ShowAndRestoreState(message + 1);
+    UiMessage_ShowAndRestoreState(messageBase + 1);
     return;
   }
-  saved = unit->inventory[slot];
+  // Hide the item during the work sequence without compacting its slot.
+  savedEntry = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
   UiWork_PushValueSlotFar(itemId, 2);
-  UiMessage_ShowAndRestoreState(message + 2);
+  UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   WaitFrames(10);
   AudioCommand_PlayFar(100);
@@ -1808,22 +1947,23 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   WaitFrames(110);
   AudioCommand_PlayFar(100);
   WaitFrames(110);
-  AudioCommand_PlayFar(112);
+  AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
   WaitFrames(20);
-  unit->inventory[slot] = saved;
+  // Restore the entry, repair it, charge the fee and offer equipment changes.
+  unit->inventory[slot] = savedEntry;
   Inventory_RepairFar(unitId, slot);
-  Party_AdjustCoinsFar(-price);
+  Party_AdjustCoinsFar(-repairCost);
   Shop_DrawMoney();
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
   UiWork_PushValueSlotFar(itemId, 2);
-  UiMessage_ShowAndRestoreState(message + 3);
+  UiMessage_ShowAndRestoreState(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);
 }
 
 // Gift prices
 // clang-format off
-static const s16 sSpecialItemPrices[30] = {
+static const s16 sGameTicketCreditCosts[30] = {
     300, 300, 300, 300, 300,
     500, 500, 500, 500, 500,
     1000, 1000, 1000, 1000, 1000,
@@ -1839,80 +1979,83 @@ const s16 gShop_GiftItemIds[21] = {
 };
 // clang-format on
 
+// Offers a Game Ticket for accumulated shop credit and lets the player choose
+// its recipient.
 void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   struct ShopRuntime *shop = gMenuWork;
-  s32 price;
-  u32 saved;
+  s32 creditCost;
+  u32 savedSelectedItem;
   s32 redraw;
   s32 unitId;
-  s32 selectedIndex;
-  s32 message;
+  s32 memberIndex;
+  s32 messageBase;
   s32 slot;
 
   redraw = 1;
   unitId = 0;
-  saved = shop->selectedItem;
-  price = sSpecialItemPrices[gGameState.shopGifts];
-  selectedIndex = 0;
+  savedSelectedItem = shop->selectedItem;
+  creditCost = sGameTicketCreditCosts[gGameState.shopGifts];
+  memberIndex = 0;
 
-  if (price > gGameState.shopCredit)
+  // Gifts spend accumulated shop credit; they do not debit the party's coins.
+  if (creditCost > gGameState.shopCredit)
     return;
-  shop->selectedItem = SPECIAL_ITEM;
-  UiWork_PushValueSlotFar(SPECIAL_ITEM, 2);
-  message = MsgTokenGift;
-  UiMessage_ShowAndRestoreState(message);
+  shop->selectedItem = ITEM_GAME_TICKET;
+  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, 2);
+  messageBase = MsgTokenGift;
+  UiMessage_ShowAndRestoreState(messageBase);
   UiWork_PushValueSlotFar(shop->selectedItem, 2);
-  UiMessage_ShowAndRestoreState(message + 1);
+  UiMessage_ShowAndRestoreState(messageBase + 1);
 
   while (1) {
     if (redraw != 0) {
       redraw = 0;
-      selectedIndex =
-          (selectedIndex + shop->partyMemberCount) % shop->partyMemberCount;
-      unitId = shop->partyMemberIds[selectedIndex];
-      Shop_PlaceCursor(window, selectedIndex * 24 - 12, 0);
+      memberIndex =
+          (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[memberIndex];
+      Shop_PlaceCursor(window, memberIndex * 24 - 12, 0);
       shop->mode = 3;
-      Shop_DrawParty(window, selectedIndex, shop->selectedItem);
+      Shop_DrawParty(window, memberIndex, shop->selectedItem);
       Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        AudioCommand_PlayFar(0x71);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         UiWork_PushValueSlotFar(unitId, 1);
         UiWork_PushValueSlotFar(shop->selectedItem, 2);
-        if (Inventory_CountFar(unitId) == 15)
+        if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
           UiMessage_ShowAndWait(MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      AudioCommand_PlayFar(0x65);
+      AudioCommand_PlayFar(SOUND_SHOP_PURCHASE);
       UiMessage_ShowAndRestoreState(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
-      Party_AdjustShopCreditFar(-price);
+      Party_AdjustShopCreditFar(-creditCost);
       Party_AdjustShopGiftsFar(1);
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
       UiMessage_ShowAndRestoreState(MsgDontWantIt);
-      AudioCommand_PlayFar(0x71);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(0x6f);
-      selectedIndex--;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(0x6f);
-      selectedIndex++;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      memberIndex++;
       redraw = 1;
     }
     WaitFrames(1);
   }
-  shop->selectedItem = saved;
+  shop->selectedItem = savedSelectedItem;
 }
 
 // Shop stock: 24 regular items, 8 special items (each 0-terminated), then kind.
@@ -2096,44 +2239,48 @@ static const s16 sStockTable[35][33] = {
 };
 // clang-format on
 
+// Returns the number of rows in the shop stock table.
 s32 EventTable_GetRowLimit(void) { return 35; }
 
-void EventTable_ApplyRowAbilities(s32 rowNo) {
-  const s16 *row;
-  const s16 *entry;
-  s32 value;
-  s32 count;
-  s32 flag;
+// Adds a location's initial artifacts to shared stock once, before its first
+// shop visit.
+void EventTable_ApplyRowAbilities(s32 stockRow) {
+  const s16 *stockEntries;
+  const s16 *artifactCursor;
+  s32 itemId;
+  s32 artifactIndex;
+  s32 initializedFlag;
 
-  flag = rowNo + 0x400;
-  if (GameFlag_TestFar(flag) == 0) {
-    GameFlag_SetBitFar(flag);
-    count = 0;
-    value = sStockTable[rowNo][24];
-    if (value != 0) {
-      row = sStockTable[rowNo];
-      entry = row + 24;
+  initializedFlag = stockRow + 0x400;
+  if (GameFlag_TestFar(initializedFlag) == 0) {
+    GameFlag_SetBitFar(initializedFlag);
+    artifactIndex = 0;
+    itemId = sStockTable[stockRow][24];
+    if (itemId != 0) {
+      stockEntries = sStockTable[stockRow];
+      artifactCursor = stockEntries + 24;
       do {
-        Item_AdjustCounterFar(value, 1);
-        count++;
-        if (count > 7)
+        Item_AdjustCounterFar(itemId, 1);
+        artifactIndex++;
+        if (artifactIndex > 7)
           break;
-        entry++;
-        value = *entry;
-      } while (value != 0);
+        artifactCursor++;
+        itemId = *artifactCursor;
+      } while (itemId != 0);
     }
   }
 }
 
-s32 EventTable_CopyRowHeader(s32 rowNo, s16 *output) {
+// Copies up to 24 ordinary stock items and appends a zero terminator.
+s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
   s32 count;
 
   count = 0;
-  if (sStockTable[rowNo][0] != 0) {
+  if (sStockTable[stockRow][0] != 0) {
     dst = output;
-    src = sStockTable[rowNo];
+    src = sStockTable[stockRow];
     do {
       /* FAKEMATCH: only the copy read is volatile, so its lifetime stays
        * separate from the signed sentinel read. Without volatile: differ 41;
@@ -2151,115 +2298,130 @@ s32 EventTable_CopyRowHeader(s32 rowNo, s16 *output) {
   return count;
 }
 
-s32 EventTable_GetRowType(s32 index) { return sStockTable[index][32]; }
+// Reads the shop type from the last word of its stock row.
+s32 EventTable_GetRowType(s32 stockRow) { return sStockTable[stockRow][32]; }
 
-s32 Shop_ServicePrice(s32 entry_id, s32 kind) {
-  u8 value = UnitGetFar(entry_id)->level;
-  s32 result = 0;
+// Calculates the existing fee for reviving, curing poison, exorcising or
+// removing a curse.
+s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
+  u8 level = UnitGetFar(unitId)->level;
+  s32 donation = 0;
 
-  if (kind == 0) {
-    result = value * 20;
-  } else if (kind == 1) {
-    result = 10;
-  } else if (kind == 2) {
-    result = 50;
-  } else if (kind == 3) {
-    result = value * 10;
+  if (serviceKind == SANCTUM_SERVICE_REVIVE) {
+    donation = level * 20;
+  } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
+    donation = 10;
+  } else if (serviceKind == SANCTUM_SERVICE_EXORCISE) {
+    donation = 50;
+  } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
+    donation = level * 10;
   }
-  return result;
+  return donation;
 }
 
-s32 Shop_CanServe(s32 entry_id, s32 kind) {
-  struct BattleUnit *entry = UnitGetFar(entry_id);
-  s32 result = 0;
+// Checks whether a member needs the selected sanctum service.
+s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
+  struct BattleUnit *unit = UnitGetFar(unitId);
+  s32 eligible = 0;
 
-  if ((kind == 0 && entry->hp <= 0) || (kind == 1 && entry->poison != 0) ||
-      (kind == 2 && entry->haunt != 0) ||
-      (kind == 3 && entry->restraint != 0)) {
-    result = 1;
+  if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
+      (serviceKind == SANCTUM_SERVICE_CURE_POISON && unit->poison != 0) ||
+      (serviceKind == SANCTUM_SERVICE_EXORCISE && unit->haunt != 0) ||
+      (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE && unit->restraint != 0)) {
+    eligible = 1;
   }
-  return result;
+  return eligible;
 }
 
+// Counts party members who need the currently selected sanctum service.
 s32 Shop_CountUnits(void) {
   struct ShopRuntime *shop = gMenuWork;
-  s32 active = 0;
-  s32 variant = shop->partyAction;
-  s32 index;
+  s32 eligibleCount = 0;
+  s32 serviceKind = shop->partyAction;
+  s32 memberIndex;
 
-  for (index = 0; index < shop->partyMemberCount; index++) {
-    if (Shop_CanServe(shop->partyMemberIds[index], variant))
-      active++;
+  for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+    if (Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind))
+      eligibleCount++;
   }
-  return active;
+  return eligibleCount;
 }
 
-s32 Shop_MsgByMode(s32 value) {
-  s8 mode = ((struct ShopRuntime *)gMenuWork)->partyAction;
+// Selects the matching poison, exorcism or curse-service message from a revive
+// message base.
+s32 Shop_MsgByMode(s32 messageId) {
+  s8 serviceKind = ((struct ShopRuntime *)gMenuWork)->partyAction;
 
-  if (mode == 1) {
-    value += MsgCurePoisonService - MsgReviveService;
+  if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
+    messageId += MsgCurePoisonService - MsgReviveService;
   }
-  if (mode == 2) {
-    value += MsgExorcismService - MsgReviveService;
+  if (serviceKind == SANCTUM_SERVICE_EXORCISE) {
+    messageId += MsgExorcismService - MsgReviveService;
   }
-  if (mode == 3) {
-    value += MsgRemoveCurseService - MsgReviveService;
+  if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
+    messageId += MsgRemoveCurseService - MsgReviveService;
   }
-  return value;
+  return messageId;
 }
 
-void UiMessage_ShowResolvedAndWait(s32 value) {
-  s32 no;
+// Resolves service dialogue and waits for completion, including the final
+// frame.
+void UiMessage_ShowResolvedAndWait(s32 messageId) {
+  s32 portraitResource;
 
-  no = BattleFx_GetResourceIdFar(
+  portraitResource = BattleFx_GetResourceIdFar(
       ((struct ShopRuntime *)gMenuWork)->keeperResource);
   UiWork_FinalizePendingCoreFar();
-  value = Shop_MsgByMode(value);
-  UiText_OpenMessageWindowFar(value, 5, 0, (no << 0x10) | 0x22);
+  messageId = Shop_MsgByMode(messageId);
+  UiText_OpenMessageWindowFar(messageId, 5, 0,
+                              (portraitResource << 0x10) | 0x22);
   while (UiWork_IsCompleteFar() == 0) {
     WaitFrames(1U);
   }
   WaitFrames(1U);
 }
 
-void UiMessage_ShowResolvedAndRestoreState(s32 arg0) {
-  struct ShopRuntime *state;
-  struct RenderOutput **slot;
-  s32 value;
-  u8 saved;
+// Resolves service dialogue, waits for it and restores the cursor's saved mode.
+void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
+  struct ShopRuntime *shop;
+  struct RenderOutput **cursorSlot;
+  s32 portraitResource;
+  u8 savedCursorMode;
 
-  state = gMenuWork;
-  slot = &state->cursor.anchor;
-  saved = (*slot)->active;
-  value = BattleFx_GetResourceIdFar(state->keeperResource);
-  arg0 = Shop_MsgByMode(arg0);
-  (*slot)->active = 13;
+  shop = gMenuWork;
+  cursorSlot = &shop->cursor.anchor;
+  savedCursorMode = (*cursorSlot)->active;
+  portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  messageId = Shop_MsgByMode(messageId);
+  (*cursorSlot)->active = 13;
   UiWork_FinalizePendingCoreFar();
-  UiText_OpenMessageWindowFar(arg0, 5, 0, (value << 16) | 0x22);
+  UiText_OpenMessageWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (UiWork_IsCompleteFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
-  state->cursor.anchor->active = saved;
+  shop->cursor.anchor->active = savedCursorMode;
 }
 
+// Runs the sanctum service menu using the shared shop cursor and window
+// resources.
 s32 Shop_ConfirmAct(s32 unitId) {
-  s32 partyAction = 0;
+  s32 serviceSelection = 0;
   struct UiWindow *listWindow = 0;
   struct ShopRuntime *shop;
   struct RenderOutput *cursorAnchor;
 
   Shop_InitializeCursorWork();
   shop = gMenuWork;
-  shop->partyAction = partyAction;
+  shop->partyAction = serviceSelection;
 
   {
-    s32 shown = (u16)((struct AnimationObject *)((struct ObjectRuntime *)
-                                                     Object_GetByIdFar(unitId))
-                          ->animation)
-                    ->entries[0]
-                    ->animId;
-    shop->keeperResource = shown;
+    s32 keeperAnimationId =
+        (u16)((struct AnimationObject *)((struct ObjectRuntime *)
+                                             Object_GetByIdFar(unitId))
+                  ->animation)
+            ->entries[0]
+            ->animId;
+    shop->keeperResource = keeperAnimationId;
   }
 
   listWindow = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
@@ -2283,16 +2445,16 @@ s32 Shop_ConfirmAct(s32 unitId) {
   Shop_DrawMoney();
 
   for (;;) {
-    partyAction = Menu_SelectEntry19To1cFar(partyAction);
-    shop->partyAction = partyAction;
-    if (partyAction == -1)
+    serviceSelection = Menu_SelectEntry19To1cFar(serviceSelection);
+    shop->partyAction = serviceSelection;
+    if (serviceSelection == -1)
       break;
 
     {
-      s32 base = MsgReviveService;
-      s32 message = base;
+      s32 messageBase = MsgReviveService;
+      s32 message = messageBase;
 
-      base = 0;
+      messageBase = 0;
       UiMessage_ShowResolvedAndWait(message);
       if (Shop_CountUnits() == 0) {
         UiMessage_ShowResolvedAndWait(message + 1);
@@ -2312,21 +2474,23 @@ s32 Shop_ConfirmAct(s32 unitId) {
   return 0;
 }
 
+// Selects an eligible member, confirms the donation and applies the chosen
+// service.
 s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow;
   s32 redraw;
-  s32 kind;
+  s32 serviceKind;
   struct UiWindow *listWindow;
-  s32 selection;
+  s32 memberIndex;
   s32 unitId;
-  s32 retry;
-  s32 price;
-  s32 message;
+  s32 chooseAgain;
+  s32 donation;
+  s32 messageBase;
 
   priceWindow = 0;
   redraw = 1;
-  kind = shop->partyAction;
+  serviceKind = shop->partyAction;
   UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 
   listWindow = UiWindow_CreateFar(1, 12, 13, 3, 2);
@@ -2336,74 +2500,76 @@ s32 Sanctum_RunPartyService(void) {
   priceWindow = UiWindow_CreateFar(SANCTUM_PRICE_WINDOW_X, 16,
                                    SANCTUM_PRICE_WINDOW_WIDTH, 3, 2);
 
-  selection = 0;
+  memberIndex = 0;
   unitId = 0;
-  retry = 0;
-  while (selection < shop->partyMemberCount) {
-    unitId = shop->partyMemberIds[selection];
-    if (Shop_CanServe(unitId, kind) != 0)
+  chooseAgain = 0;
+  while (memberIndex < shop->partyMemberCount) {
+    unitId = shop->partyMemberIds[memberIndex];
+    if (Shop_CanServe(unitId, serviceKind) != 0)
       break;
-    selection++;
+    memberIndex++;
   }
 
   redraw = 1;
   for (;;) {
-    if (retry != 0) {
-      retry = 0;
+    if (chooseAgain != 0) {
+      chooseAgain = 0;
       UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
       redraw = 1;
-      selection = 0;
-      while (selection < shop->partyMemberCount) {
-        unitId = shop->partyMemberIds[selection];
-        if (Shop_CanServe(unitId, kind) != 0)
+      memberIndex = 0;
+      while (memberIndex < shop->partyMemberCount) {
+        unitId = shop->partyMemberIds[memberIndex];
+        if (Shop_CanServe(unitId, serviceKind) != 0)
           break;
-        selection++;
+        memberIndex++;
       }
     }
 
     if (redraw != 0) {
       redraw = 0;
-      selection = (selection + shop->partyMemberCount) % shop->partyMemberCount;
-      unitId = shop->partyMemberIds[selection];
-      Shop_PlaceCursor(listWindow, selection * 24 - 12, 0);
+      memberIndex =
+          (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[memberIndex];
+      Shop_PlaceCursor(listWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
-      Shop_HiliteUnit(listWindow, selection);
+      Shop_HiliteUnit(listWindow, memberIndex);
       Shop_DrawSelectMsg(priceWindow, unitId);
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
-      price = Shop_ServicePrice(unitId, kind);
-      if (Shop_CanServe(unitId, kind) == 0) {
+      donation = Shop_ServicePrice(unitId, serviceKind);
+      if (Shop_CanServe(unitId, serviceKind) == 0) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         continue;
       }
       UiWork_PushValueSlotFar(unitId, 1);
-      UiWork_PushValueSlotFar(price, 5);
-      message = MsgReviveDonation;
-      UiMessage_ShowResolvedAndWait(message);
+      UiWork_PushValueSlotFar(donation, 5);
+      messageBase = MsgReviveDonation;
+      UiMessage_ShowResolvedAndWait(messageBase);
       if (UiMessage_ShowChoiceVariant(0) != 0) {
-        UiMessage_ShowResolvedAndRestoreState(message + 2);
-        retry = 1;
+        UiMessage_ShowResolvedAndRestoreState(messageBase + 2);
+        chooseAgain = 1;
         continue;
       }
-      if (price > (u32)gGameState.coins) {
+      if (donation > (u32)gGameState.coins) {
         AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-        UiMessage_ShowResolvedAndRestoreState(message + 1);
-        retry = 1;
+        UiMessage_ShowResolvedAndRestoreState(messageBase + 1);
+        chooseAgain = 1;
         continue;
       }
       UiWork_PushValueSlotFar(unitId, 1);
-      UiMessage_ShowResolvedAndWait(message + 3);
+      UiMessage_ShowResolvedAndWait(messageBase + 3);
       UiWork_FinalizePendingCoreFar();
-      BattleUnit_ResetStateByMode(unitId, kind);
-      Shop_RunPartyMemberIconBurst(selection);
-      Party_AdjustCoinsFar(-price);
+      // Apply the cure and animation before collecting the donation.
+      BattleUnit_ResetStateByMode(unitId, serviceKind);
+      Shop_RunPartyMemberIconBurst(memberIndex);
+      Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
       UiWork_PushValueSlotFar(unitId, 1);
-      UiMessage_ShowResolvedAndWait(message + 4);
+      UiMessage_ShowResolvedAndWait(messageBase + 4);
       if (Shop_CountUnits() != 0) {
-        retry = 1;
+        chooseAgain = 1;
         continue;
       }
       break;
@@ -2415,12 +2581,12 @@ s32 Sanctum_RunPartyService(void) {
     if ((gKeysRepeat & KEY_LEFT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       redraw = 1;
-      selection -= 1;
+      memberIndex -= 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       redraw = 1;
-      selection += 1;
+      memberIndex += 1;
     }
     WaitFrames(1);
     continue;
@@ -2433,73 +2599,84 @@ s32 Sanctum_RunPartyService(void) {
   return 0;
 }
 
-void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
+// Revives, cures poison, removes a haunting or unequips cursed items for a
+// sanctum service.
+void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit;
 
-  unit = UnitGetFar(id);
-  if (mode == 0) {
+  unit = UnitGetFar(unitId);
+  if (serviceKind == SANCTUM_SERVICE_REVIVE) {
     unit->hp = unit->maxHp;
-    UnitRatioFar(id);
-  } else if (mode == 1) {
+    UnitRatioFar(unitId);
+  } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
-  } else if (mode == 2) {
+  } else if (serviceKind == SANCTUM_SERVICE_EXORCISE) {
     unit->haunt = 0;
-  } else if (mode == 3) {
-    s32 i;
+  } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
+    s32 inventorySlot;
 
-    for (i = 0; i < 15; i++) {
-      if (unit->inventory[i] & 0x200) {
-        if (Item_GetDirectFar(unit->inventory[i])->flags & 1) {
-          unit->inventory[i] ^= 0x200;
-          UnitCalcFar(id);
+    for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+        if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
+            ITEM_CURSED) {
+          unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
+          UnitCalcFar(unitId);
         }
       }
     }
   }
 }
 
+// Highlights the selected party icon and dims members who do not need the
+// sanctum service.
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   struct ShopRuntime *shop = gMenuWork;
-  s32 index;
-  s32 variant = shop->partyAction;
+  s32 memberIndex;
+  s32 serviceKind = shop->partyAction;
 
   if (window != 0) {
-    for (index = 0; index < shop->partyMemberCount; index++) {
-      if (index == selected)
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 30);
+    for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+      if (memberIndex == selected)
+        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                            30);
       else
-        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[index], 1);
-      shop->partyMemberScale[index] = 0x10000;
-      if (!Shop_CanServe(shop->partyMemberIds[index], variant))
-        shop->partyMemberScale[index] = 0xb333;
+        AnimationObjects_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
+                                            1);
+      shop->partyMemberScale[memberIndex] = 0x10000;
+      if (!Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind))
+        shop->partyMemberScale[memberIndex] = 0xb333;
     }
   }
 }
 
-void Shop_DrawSelectMsg(struct UiWindow *target, s32 selection) {
-  s32 variant;
-  s32 message;
+// Shows the selected member's service price or the message that no treatment is
+// needed.
+void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
+  s32 serviceOrMessage;
+  s32 donation;
 
-  variant = ((struct ShopRuntime *)gMenuWork)->partyAction;
-  message = Shop_ServicePrice(selection, variant);
+  serviceOrMessage = ((struct ShopRuntime *)gMenuWork)->partyAction;
+  donation = Shop_ServicePrice(unitId, serviceOrMessage);
   if (target != 0) {
     RenderOutput_PrepareForRedrawFar(target);
-    if (Shop_CanServe(selection, variant) != 0) {
-      variant = MsgReviveCost;
+    if (Shop_CanServe(unitId, serviceOrMessage) != 0) {
+      serviceOrMessage = MsgReviveCost;
     } else {
-      variant = MsgNoHealingNeeded;
+      serviceOrMessage = MsgNoHealingNeeded;
     }
-    variant = Shop_MsgByMode(variant);
-    UiWork_PushValueSlotFar(message, 5);
-    UiText_DrawResourceFar(variant, target, 0, 0);
+    serviceOrMessage = Shop_MsgByMode(serviceOrMessage);
+    UiWork_PushValueSlotFar(donation, 5);
+    UiText_DrawResourceFar(serviceOrMessage, target, 0, 0);
   }
 }
 
+// Picks random particle positions, moves toward the target and releases
+// finished particles.
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
   s32 state;
-  s32 result;
+  s32 reachedTarget;
 
   statePointer = &effect->state;
   state = *statePointer;
@@ -2518,64 +2695,68 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
     effect->flag42 = state;
     *statePointer = *statePointer + 1;
   } else if (state == 1) {
-    result = BattleFx_HasReachedTargetFar(effect);
-    if (result == 0)
-      *statePointer = result;
+    reachedTarget = BattleFx_HasReachedTargetFar(effect);
+    if (reachedTarget == 0)
+      *statePointer = reachedTarget;
   } else if (state == 2) {
     if (BattleFx_HasReachedTargetFar(effect) == 0)
       BattleFx_ClearOwnedSlotFar(effect);
   }
 }
 
+// Updates all 24 service particles, then randomizes the active member's pose.
 void Shop_ResetEffects(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct EffectSlot *effect = shop->effects;
-  s32 count = 23;
-  s8 member;
+  s32 remainingEffects = 23;
+  s8 burstMember;
 
   do {
-    count--;
+    remainingEffects--;
     EffectSlot_UpdateFar(effect);
     effect++;
-  } while (count >= 0);
-  member = shop->burstMember;
-  if (member != -1)
-    ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member],
-                                              (Random16() * 7) >> 16);
+  } while (remainingEffects >= 0);
+  burstMember = shop->burstMember;
+  if (burstMember != -1)
+    ObjectGroup_SetChildValueUnlessFifteenFar(
+        shop->partyMemberIcons[burstMember], (Random16() * 7) >> 16);
 }
 
 // Sound effects for each party member action
-static const s8 sPartyActionCues[4] = {
+static const s8 sSanctumServiceCues[4] = {
     0x52,
     0x54,
     0x58,
     0x57,
 };
 
+// Animates the selected member and service particles, then restores the menu
+// and cursor.
 void Shop_RunPartyMemberIconBurst(s32 member) {
 
   struct ShopRuntime *shop;
-  s8 savedKind;
+  s8 savedCursorMode;
   struct FixedPointPosition position;
   struct EffectSlot *effect;
-  s32 callbackFlags;
-  s32 i;
+  s32 callbackPriority;
+  s32 effectIndex;
 
   shop = gMenuWork;
-  savedKind = shop->cursor.anchor->active;
+  savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = 0xff;
   shop->cursor.anchor->active = 13;
-  AudioCommand_PlayFar(sPartyActionCues[shop->partyAction]);
+  AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
   Shop_RestoreSceneTiles(0x00202108);
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  callbackFlags = 0xc80;
-  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackFlags);
+  callbackPriority = 0xc80;
+  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
   position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
 
-  i = 0;
+  // Spawn eighteen particles while the task continues updating all twenty-four.
+  effectIndex = 0;
   effect = shop->effects;
   do {
     EffectSlot_InitializeFar(effect, 0x11c, position.x, position.z);
@@ -2586,18 +2767,19 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
     WaitFrames(3);
-    if (i == 5) {
+    if (effectIndex == 5) {
       shop->burstMember = member;
     }
-    i++;
+    effectIndex++;
     effect++;
-  } while (i <= 17);
+  } while (effectIndex <= 17);
 
+  // Let active particles finish, then release remaining slots and restore UI.
   AudioCommand_WaitForStateByteClear();
   {
     u8 activeMode = 2;
     u8 *entry = (u8 *)&shop->effects[0].state;
-    for (i = 23; i >= 0; i--) {
+    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       if (*(s8 *)(entry + 5) != 0) {
         *entry = activeMode;
       }
@@ -2606,24 +2788,24 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   }
 
   WaitFrames(20);
-  AudioCommand_PlayFar(126);
+  AudioCommand_PlayFar(SOUND_RECOVERY);
   shop->burstMember = -1;
   ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
 
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
-    struct EffectSlot *entry2 = shop->effects;
-    for (i = 23; i >= 0; i--) {
+    struct EffectSlot *effectSlot = shop->effects;
+    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       s32 flag = *flagEntry;
 
       flag <<= 24;
 
       flagEntry += 0x48;
       if (flag != 0) {
-        BattleFx_ClearOwnedSlotFar(entry2);
+        BattleFx_ClearOwnedSlotFar(effectSlot);
       }
-      entry2++;
+      effectSlot++;
     }
   }
 
@@ -2631,7 +2813,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
   Shop_InitEffect();
   WaitFrames(30);
-  shop->cursor.anchor->active = savedKind;
+  shop->cursor.anchor->active = savedCursorMode;
 }
 
 enum InnMessageId {
@@ -2642,62 +2824,60 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-#if TBS_PATCH_1
-#define MESSAGE_WINDOW_ROWS 12
-#else
-#define MESSAGE_WINDOW_ROWS 11
-#endif
-
 // Inn price multiplier
 // clang-format off
-static const s8 sInnPriceMultipliers[12] = {
+static const s8 sInnPricesPerGuest[12] = {
     2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
 };
 // clang-format on
 
-s32 Inn_RoomPrice(s32 mode) {
+// Multiplies the inn's price per guest by the number of living party members.
+s32 Inn_RoomPrice(s32 innId) {
   struct ShopRuntime *shop = gMenuWork;
-  s32 active = 0;
-  s32 factor = sInnPriceMultipliers[mode];
-  s32 index;
+  s32 guestCount = 0;
+  s32 pricePerGuest = sInnPricesPerGuest[innId];
+  s32 memberIndex;
 
-  for (index = 0; index < shop->partyMemberCount; index++) {
-    if (UnitGetFar(shop->partyMemberIds[index])->hp != 0)
-      active++;
+  for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+    if (UnitGetFar(shop->partyMemberIds[memberIndex])->hp != 0)
+      guestCount++;
   }
-  return factor * active;
+  return pricePerGuest * guestCount;
 }
 
-s32 Inn_CheckIn(s32 mode, s32 objectId) {
+// Offers an inn stay, checks the fee and restores the innkeeper window after
+// resting.
+s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnRuntimeState *state;
-  struct ObjectRuntime *object;
-  struct UiWindow *win;
-  s32 amount;
+  struct FieldActor *innkeeper;
+  struct UiWindow *innkeeperWindow;
+  s32 roomPrice;
   s32 messageBase;
 
   Shop_InitializeCursorWork();
   state = gMenuWork;
   state->active = 1;
-  if (mode == 5)
+  if (innId == 5)
     state->specialActive = 1;
 
-  object = Object_GetByIdFar(objectId);
+  innkeeper = Object_GetByIdFar(objectId);
   state->resourceId =
-      ((struct AnimationObject *)object->animation)->entries[0]->animId;
-  win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+  innkeeperWindow =
+      UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
-  amount = Inn_RoomPrice(mode);
-  UiWork_PushValueSlotFar(amount, 5);
+  roomPrice = Inn_RoomPrice(innId);
+  UiWork_PushValueSlotFar(roomPrice, 5);
   messageBase = MsgInnWelcome;
   UiMessage_ShowAndWait(messageBase);
-  state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
+  state->window = UiWindow_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
   Shop_DrawMoney();
 
   if (UiMessage_ShowChoice(0) != 0) {
     UiMessage_ShowAndWait(messageBase +
                           (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
     UiWork_FinalizeFar(state->window, 2);
-  } else if (amount > (u32)gGameState.coins) {
+  } else if (roomPrice > (u32)gGameState.coins) {
     UiMessage_ShowAndWait(messageBase +
                           (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
     UiWork_FinalizeFar(state->window, 2);
@@ -2705,44 +2885,49 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
     UiWork_FinalizeFar(state->window, 2);
     UiMessage_ShowAndWait(messageBase +
                           (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(win, 2);
-    Inn_PlaySleep(amount);
+    UiWork_FinalizeFar(innkeeperWindow, 2);
+    Inn_PlaySleep(roomPrice);
 
-    object = Object_GetByIdFar(objectId);
+    innkeeper = Object_GetByIdFar(objectId);
     state->resourceId =
-        ((struct AnimationObject *)object->animation)->entries[0]->animId;
-    win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+    innkeeperWindow =
+        UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
     UiMessage_ShowAndWait(messageBase +
                           (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
   }
 
-  UiWork_FinalizeFar(win, 2);
+  UiWork_FinalizeFar(innkeeperWindow, 2);
   Inn_Cleanup();
   return 0;
 }
 
+// Charges for the stay, restores living members' HP and PP, then plays the rest
+// transition.
 void Inn_PlaySleep(s32 roomPrice) {
-  s16 objects[8];
-  s32 count;
-  s32 index;
-  struct BattleUnit *object;
-  struct FieldWork *state;
+  s16 partyMemberIds[8];
+  s32 memberCount;
+  s32 memberIndex;
+  struct BattleUnit *unit;
+  struct FieldWork *fieldWork;
 
-  count = Party_ListActiveOwnersFar(objects);
+  memberCount = Party_ListActiveOwnersFar(partyMemberIds);
+  // Charge once and restore only party members who are alive.
   Party_AdjustCoinsFar(-roomPrice);
 
-  for (index = 0; index < count; index++) {
-    object = UnitGetFar(objects[index]);
-    if (object->hp != 0) {
-      object->hp = object->maxHp;
-      object->pp = object->maxPp;
-      UnitRatioFar(objects[index]);
+  for (memberIndex = 0; memberIndex < memberCount; memberIndex++) {
+    unit = UnitGetFar(partyMemberIds[memberIndex]);
+    if (unit->hp != 0) {
+      unit->hp = unit->maxHp;
+      unit->pp = unit->maxPp;
+      UnitRatioFar(partyMemberIds[memberIndex]);
     }
   }
 
-  state = (struct FieldWork *)gEventWork;
-  state->transition = 0x209;
-  state->transitionFrames = 60;
+  // Sleep between the two screen-transition halves and the rest sound.
+  fieldWork = (struct FieldWork *)gEventWork;
+  fieldWork->transition = 0x209;
+  fieldWork->transitionFrames = 60;
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
@@ -2755,18 +2940,13 @@ void Inn_PlaySleep(s32 roomPrice) {
   ((struct FieldWork *)gEventWork)->transitionFrames = 16;
 }
 
-// X position below the item name, in pixels
-#if TBS_PATCH_1
-#define ITEM_NOTE_X 0
-#else
-#define ITEM_NOTE_X 8
-#endif
-
-s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
+// Returns the selected party member and inventory slot, or -1 for both when
+// cancelled.
+s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopRuntime *shop;
   struct RenderOutput *cursorAnchor;
-  struct UiWindow *listWindow;
-  s32 selectedIndex = 0;
+  struct UiWindow *partyWindow;
+  s32 memberIndex = 0;
   s32 redraw = 1;
   s32 unitId = 0;
   s32 itemSlot;
@@ -2775,36 +2955,36 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
   Shop_InitializeCursorWork();
   shop = gMenuWork;
   shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
-  listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
   cursorAnchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000,
-                                        listWindow, 0, result);
+                                        partyWindow, 0, result);
   cursorAnchor->active = 4;
   cursorAnchor->kind = result;
   ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, result);
+  PsynergyMenu_InitializeEntryObjectsFar(partyWindow, 2, 0, 8, result);
 
   while (1) {
     if (redraw != 0) {
       redraw = 0;
-      selectedIndex =
-          (selectedIndex + shop->partyMemberCount) % shop->partyMemberCount;
-      unitId = shop->partyMemberIds[selectedIndex];
-      Shop_PlaceCursor(listWindow, selectedIndex * 24 - 12, 0);
+      memberIndex =
+          (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+      unitId = shop->partyMemberIds[memberIndex];
+      Shop_PlaceCursor(partyWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
-      Shop_DrawParty(listWindow, selectedIndex, 0);
+      Shop_DrawParty(partyWindow, memberIndex, 0);
       Shop_DrawUnitGrid(shop->itemWindow, unitId);
     }
 
     WaitFrames(1);
     if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
-        AudioCommand_PlayFar(0x71);
+        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
         continue;
       }
 
-      AudioCommand_PlayFar(0x70);
+      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->active = 4;
@@ -2813,33 +2993,33 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
         continue;
       }
       *selectedUnit = unitId;
-      *selectedItem = itemSlot;
+      *selectedSlot = itemSlot;
       result = 0;
       break;
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(0x71);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       *selectedUnit = -1;
-      *selectedItem = -1;
+      *selectedSlot = -1;
       result = -1;
       break;
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(0x6f);
-      selectedIndex--;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(0x6f);
-      selectedIndex++;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      memberIndex++;
       redraw = 1;
     }
   }
 
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(listWindow, 2);
+  UiWork_FinalizeFar(partyWindow, 2);
   UiWork_FinalizeFar(shop->itemWindow, 2);
   WaitFrames(1);
   Inn_Cleanup();
@@ -2872,64 +3052,69 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
 #define SHOP_USE_COIN_MESSAGE_OFFSET 1
 #endif
 
-s32 Shop_SelectUse(s32 actor) {
+// Selects a discardable inventory slot, showing the original restriction
+// messages on rejection.
+s32 Shop_SelectUse(s32 unitId) {
   struct ShopRuntime *shop = gMenuWork;
 
-  struct UiWindow *win2;
-  struct UiWindow *win1;
-  struct BattleUnit *object;
-  s32 selection;
+  struct UiWindow *descriptionWindow;
+  struct UiWindow *priceWindow;
+  struct BattleUnit *unit;
+  s32 slot;
   s32 redraw;
-  s32 count;
-  s32 result;
-  s32 status;
-  s32 flags;
+  s32 inventoryCount;
+  s32 selectionResult;
+  s32 discardStatus;
+  s32 itemId;
   struct UiWindow *window;
   s32 x;
   s32 y;
 
-  object = UnitGetFar(actor);
-  count = 1;
-  result = 0;
+  unit = UnitGetFar(unitId);
+  inventoryCount = 1;
+  selectionResult = 0;
   redraw = 1;
-  win1 = UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH, 4, 2);
-  win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
+  priceWindow =
+      UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH, 4, 2);
+  descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
-  selection = 0;
+  slot = 0;
 
   while (1) {
     if (redraw != 0) {
       redraw = 0;
-      count = Inventory_CountFar(actor);
-      if (selection > count - 1)
-        selection = count - 1;
+      inventoryCount = Inventory_CountFar(unitId);
+      if (slot > inventoryCount - 1)
+        slot = inventoryCount - 1;
 
-      flags = object->inventory[selection] & 0x1ff;
+      itemId = unit->inventory[slot] & ITEM_ID_MASK;
       window = shop->itemWindow;
-      x = selection % 5 << 4;
-      y = (selection / 5 << 4) + 8;
+      x = slot % SHOP_INVENTORY_COLUMNS << 4;
+      y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
       Shop_PlaceCursor(window, x, y);
       shop->mode = 3;
-      Shop_DrawUseItem(win1, actor, selection);
-      Shop_DrawMsg(win2, flags + MsgItemPlainName);
+      Shop_DrawUseItem(priceWindow, unitId, slot);
+      Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
     }
 
     WaitFrames(1);
 
     if ((gKeysPressed & KEY_A) != 0) {
-      status = Inventory_CheckDiscardFar(actor, selection);
-      if (status == 0) {
-        AudioCommand_PlayFar(112);
-        result = selection;
+      discardStatus = Inventory_CheckDiscardFar(unitId, slot);
+      if (discardStatus == 0) {
+        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+        selectionResult = slot;
         break;
       }
-      if (status == -4) {
+      // BUG: default code selects the error using selectionResult, still zero.
+      if (discardStatus == -4) {
         UiText_OpenMessageWindowFar(MsgCannotDropIt, 8, 1, 2);
-      } else if (result == -3) {
+      } else if (SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) ==
+                 -3) {
         UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
-      AudioCommand_PlayFar(113);
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
       while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
       UiWork_FinalizePendingCoreFar();
@@ -2937,77 +3122,81 @@ s32 Shop_SelectUse(s32 actor) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(113);
-      result = -1;
+      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+      selectionResult = -1;
       break;
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(111);
-      selection -= 1;
-      selection = (selection + count) % count;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      slot -= 1;
+      slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(111);
-      selection += 1;
-      selection = (selection + count) % count;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+      slot += 1;
+      slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_UP) != 0) {
-      selection -= 5;
-      if (selection < 0)
-        selection += 15;
-      while (selection >= count)
-        selection -= 5;
-      AudioCommand_PlayFar(111);
+      slot -= SHOP_INVENTORY_COLUMNS;
+      if (slot < 0)
+        slot += INVENTORY_SLOTS;
+      while (slot >= inventoryCount)
+        slot -= SHOP_INVENTORY_COLUMNS;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_DOWN) != 0) {
-      selection += 5;
-      if (selection >= count)
-        selection -= 15;
-      while (selection < 0)
-        selection += 5;
-      AudioCommand_PlayFar(111);
+      slot += SHOP_INVENTORY_COLUMNS;
+      if (slot >= inventoryCount)
+        slot -= INVENTORY_SLOTS;
+      while (slot < 0)
+        slot += SHOP_INVENTORY_COLUMNS;
+      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }
 
-  UiWork_FinalizeFar(win2, 2);
-  UiWork_FinalizeFar(win1, 2);
+  UiWork_FinalizeFar(descriptionWindow, 2);
+  UiWork_FinalizeFar(priceWindow, 2);
   WaitFrames(1);
-  return result;
+  return selectionResult;
 }
 
-void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 itemId) {
+// Draws the selected slot's item, discard restriction or whole-stack sale
+// value.
+void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
   struct BattleUnit *unit = UnitGetFar(unitId);
-  s32 masked = unit->inventory[itemId] & 0x1ff;
-  u32 entry = unit->inventory[itemId];
-  s32 mult = (entry >> 11) + 1;
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  u32 inventoryEntry = unit->inventory[slot];
+  s32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
   if (window != 0) {
-    s32 result;
+    s32 discardStatus;
 
     RenderOutput_RedrawSavedRectFar(window);
-    UiText_DrawCharacterAtOffsetFar(masked + MsgItemName, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 0, 0);
 
-    result = Inventory_CheckDiscardFar(unitId, itemId);
-    if (result == -4) {
-      UiText_DrawCharacterAtOffsetFar(MsgCannotDrop, window, ITEM_NOTE_X, 8);
-    } else if (result == -3) {
-      UiText_DrawCharacterAtOffsetFar(MsgCannotRemove, window, ITEM_NOTE_X, 8);
+    discardStatus = Inventory_CheckDiscardFar(unitId, slot);
+    if (discardStatus == -4) {
+      UiText_DrawCharacterAtOffsetFar(MsgCannotDrop, window, SHOP_ITEM_NOTE_X,
+                                      8);
+    } else if (discardStatus == -3) {
+      UiText_DrawCharacterAtOffsetFar(MsgCannotRemove, window, SHOP_ITEM_NOTE_X,
+                                      8);
     } else {
-      s32 qty;
-      s32 total;
+      s32 unitSalePrice;
+      s32 stackSalePrice;
 
-      qty = Shop_SalePrice(unit->inventory[itemId]);
-      total = mult * qty;
+      unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
+      stackSalePrice = quantity * unitSalePrice;
 
       UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window,
                                       SHOP_USE_PRICE_LABEL_X, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, SHOP_USE_PRICE_NUMBER_X,
-                                   8);
+      UiText_DrawNumberInWindowFar(stackSalePrice, 5, window,
+                                   SHOP_USE_PRICE_NUMBER_X, 8);
       UiText_DrawCharacterAtOffsetFar(MsgPriceHeading -
                                           SHOP_USE_COIN_MESSAGE_OFFSET,
                                       window, SHOP_USE_COIN_LABEL_X, 8);

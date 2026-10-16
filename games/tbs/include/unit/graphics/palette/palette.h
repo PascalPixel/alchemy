@@ -18,8 +18,11 @@ void Palette_Transform(u32 mode, u16 *src, u16 *dst, s32 half);
 void PaletteFade_Init(void);
 void PaletteFade_Release(void);
 void PaletteFade_SetTarget(s32 index, s32 transform);
-// PaletteFade_SetCurrent is called before its definition with no
-// prototype in scope.
+// UB: the early call implicitly returns int, but the definition returns void.
+// A plain prototype reverses the two argument moves in Title_ShowIntro (EN).
+#ifdef UBFIX
+void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf);
+#endif
 void PaletteFade_SetBackdrop(s32 value);
 void PaletteFade_Start(s32 value);
 s32 Graphics_ClampRgb555Channel(s32 val);

@@ -4,7 +4,7 @@
 #include "mulq16.h"
 #include "project.h"
 
-#define LINES 160 // visible scanlines
+#define VISIBLE_SCANLINES 160 // visible scanlines
 
 // An 8-byte far-call stub (ldr r4 / bx r4) followed by its target. This code
 // runs from a RAM copy, so it calls the runtime through the stubs' targets.
@@ -61,21 +61,21 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
   u32 angle;
   s32 originX;
   s32 originZ;
-  s32 sin;
-  s32 cos;
-  s32 nsin;
-  s32 i;
-  s32 z;
+  s32 sinYaw;
+  s32 cosYaw;
+  s32 negativeSinYaw;
+  s32 scanline;
+  s32 depth;
 
   {
-    s32 tx = target->x;
-    s32 tz = target->z;
-    s32 ez = eye->z;
-    s32 ex = eye->x;
+    s32 targetDeltaX = target->x;
+    s32 targetZ = target->z;
+    s32 eyeZ = eye->z;
+    s32 eyeX = eye->x;
 
-    z = tz - ez;
-    tx -= ex;
-    angle = (u16)ArcTan2(tx >> 4, z >> 4);
+    depth = targetZ - eyeZ;
+    targetDeltaX -= eyeX;
+    angle = (u16)ArcTan2(targetDeltaX >> 4, depth >> 4);
   }
   // The texture origin: the target at half scale.
   originX = MulQ16(target->x, 0x8000);
@@ -83,33 +83,40 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
   if (angle != gScanlineAngle) {
     // The camera turned: recompute every scanline's rotation terms.
     gScanlineAngle = angle;
-    sin = Sin(angle);
-    cos = Cos(angle);
-    nsin = -sin;
-    for (i = LINES - 1; i >= 0; i--) {
-      s32 x = line->x;
-      s32 cx;
-      s32 a;
-      s32 b;
-      s32 u;
-      s32 v;
+    sinYaw = Sin(angle);
+    cosYaw = Cos(angle);
+    negativeSinYaw = -sinYaw;
+    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
+      s32 widthScale = line->x;
+      s32 centerX;
+      s32 horizontalOffset;
+      s32 depthOffset;
+      s32 affinePa;
+      s32 affinePc;
 
-      z = line->z;
-      u = -(MulQ16(x, cos) / 256);
-      a = (s16)u;
-      line->u = u;
-      affine->pa = u;
-      v = MulQ16(x, sin) / 256;
-      line->v = v;
-      affine->pc = v;
+      depth = line->z;
+      affinePa = -(MulQ16(widthScale, cosYaw) / 256);
+      horizontalOffset = (s16)affinePa;
+      line->u = affinePa;
+      affine->pa = affinePa;
+      affinePc = MulQ16(widthScale, sinYaw) / 256;
+      line->v = affinePc;
+      affine->pc = affinePc;
       /* FAKEMATCH: the centre is read through its own address, so the native
        * single literal for it is built; member access loads gProjection and
        * reads at offset 12 (differ 2). */
-      cx = *&gProjection.centerX;
-      a = (a << 8) * cx;
-      b = ((s16)v << 8) * -cx;
-      line->dx = -(a + MulQ16(nsin, z));
-      line->dz = b + MulQ16(cos, z);
+      centerX = *&gProjection.centerX;
+      // UB: affine coefficients can be negative. Multiplication by 256 is
+      // representable for every signed halfword; retain native shifts below.
+#ifdef UBFIX
+      horizontalOffset = (horizontalOffset * 256) * centerX;
+      depthOffset = ((s16)affinePc * 256) * -centerX;
+#else
+      horizontalOffset = (horizontalOffset << 8) * centerX;
+      depthOffset = ((s16)affinePc << 8) * -centerX;
+#endif
+      line->dx = -(horizontalOffset + MulQ16(negativeSinYaw, depth));
+      line->dz = depthOffset + MulQ16(cosYaw, depth);
       affine->x = (originX + line->dx) >> 8;
       affine->y = (originZ + line->dz) >> 8;
       affine[1] = affine[0];
@@ -118,7 +125,7 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
     }
   } else {
     // Same angle: the cached terms stand and only the position moves.
-    for (i = LINES - 1; i >= 0; i--) {
+    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
       if (gFrameCount & 1) {
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample
@@ -126,12 +133,13 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
         /* FAKEMATCH: one scratch variable holds the x sum and then u, as the
          * native keeps both in r3; with separate values three instructions of
          * affine->y come in another order (differ 6). */
-        s32 work;
+        s32 sampleOffset;
 
-        work = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;
-        affine->x = work;
-        work = line->u;
-        affine->y = ((originZ + line->dz) >> 8) + work / 4 + line->v / 2;
+        sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;
+        affine->x = sampleOffset;
+        sampleOffset = line->u;
+        affine->y =
+            ((originZ + line->dz) >> 8) + sampleOffset / 4 + line->v / 2;
       } else {
         affine->x = (originX + line->dx) >> 8;
         affine->y = (originZ + line->dz) >> 8;

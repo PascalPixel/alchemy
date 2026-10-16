@@ -433,3 +433,69 @@ round	lane	source	old_name	new_name	evidence
 1	13	games/tbs/src/scene/lunpa.c	VillagerD_Talk	Lunpa_AskAboutFortressCommotion	English09427 asks about commotion at fortress
 1	13	games/tbs/src/scene/lunpa.c	Guards_Watch	Lunpa_WatchForUncloakedParty	Scheduler tests cloak plus guard position bounds then raises party-spotted trigger
 1	13	games/tbs/src/scene/lunpa.c	Party_WatchForFortress	Lunpa_WatchForFortressApproach	Scheduler tests row10 then raises fortress-approach trigger
+1	11	games/tbs/src/scene/venus_lighthouse.c	ConfigureOverlayObject	VenusLighthouse_ConfigurePassageEffect	Clears actor motion/sprite flags, sets collision8 and child value supplied by two passage-effect creators
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV09_PSYNERGY	VenusLighthouse_OpenGateWithSunkenBlock	MOVE block9 target46,45 sinks block, starts gate actor10 and opens map route
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV10_TALK	VenusLighthouse_DiscussNewlyOpenedDoor	MsgVenusThoughtIdExploreAfterDoor and camera pan toward route
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV11_TALK	VenusLighthouse_DiscussScholarsInjuries	Message9840..9841 says waited to see inside but cannot move without pain
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV13_PSYNERGY	VenusLighthouse_SinkBlockOnFloorSwitch	MOVE actor13 column42 sinks2pixels, sets temp00 and replaces gate-map cells
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV18_TOUCH	VenusLighthouse_EnterRisingPassage	Approach actor0, create kind223 passage effect, rising sequence and exit20
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV25_SEARCH	VenusLighthouse_InspectLockedDoor	MsgFieldDoorTightlyLocked
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV31_TOUCH_3	VenusLighthouse_ClearLeaderEffectTarget	Clears same effect work target at24
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV31_TOUCH_6	VenusLighthouse_StepNorthThroughDust	Directionx0/z-1 to collision-aware dust mover
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV32_TOUCH_3	VenusLighthouse_EnableLeaderEffectTarget	Stores leader into effect work target at24
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV32_TOUCH_6	VenusLighthouse_StepWestThroughDust	Directionx-1/z0
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV33_TOUCH	VenusLighthouse_StepEastThroughDust	Directionx1/z0
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV35_SCRIPT	VenusLighthouse_JumpOrPushSwitchBlock	Try jump or push; then resolve three blocks on switch cells
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV35_TOUCH_3	VenusLighthouse_DescendThroughFloorOpening	Leader staged drop, collision strip PATCH3 width fix, exit20
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV35_TOUCH_4	VenusLighthouse_ActivateSlidingWall	Floor switch,480frames layerx increase and dust, restored collision, exit11
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV36_SCRIPT	VenusLighthouse_JumpOrPushGateBlock	Try jump; otherwise push with collision template; test sunken gate block
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV40_TOUCH	VenusLighthouse_ActivateWestSlidingWall	Switchx532..539, layerx increases320frames, exit18; east switchx788..795
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV41_SEARCH	VenusLighthouse_ConsultPathStatue	Message9864 statue speaks to soul; alternates route flags982/983 and rewrites corresponding map path
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV41_TOUCH	VenusLighthouse_ActivateEastSlidingWall	Switchx788..795, layerx decreases320frames, exit19
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV45_SCRIPT_3	VenusLighthouse_JumpOrPushCarryBlock	Try two-tile jump first; otherwise collision45, push and restore255
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV45_SCRIPT_6	VenusLighthouse_JumpOrPushPillarBlock	Try jump or push with two collision templates; resolve pillar switch blocks
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV45_TOUCH	VenusLighthouse_JumpToLowerPlatform	Leader jumps toward eitherz840 or952, landing particle hook and two shake-head reactions
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV46_TOUCH	VenusLighthouse_UpdateLeaderFloorSwitch	Leader rectangle676..683/788..795 sinks floor and sets temp01; leaving restores it
+1	11	games/tbs/src/scene/venus_lighthouse.c	EV50_SCRIPT	VenusLighthouse_PushBlockAndDiscussCarry	Push block, wait20, then Garet Carry suggestion
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_CallWith560And44	VenusLighthouse_EmitEastPassageParticles	Scheduler emits at pixelx560 versus western432
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_PlaceAndPinSlots8To10	VenusLighthouse_UpdateDepthBlockCollision	Copies collision for blocks8..10 then depth-swap9/10 helper
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunActorEightTenStepLoop	VenusLighthouse_HearAttackReport	Message9837 describes attacking wanderers; ten flickers then actor hides and passage cell opens
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunFlag986ActorOneScene	VenusLighthouse_GaretSuggestsCarry	Message9873..9874 explicitly proposes carrying block and dropping it; one-time flag986
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunLeaderDropSequence	VenusLighthouse_RaiseLeaderWithSpray	Leader lands, offsets synchronize with spray actor20 then rises128pixels and exits21
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunOpeningAuxiliarySequence	VenusLighthouse_ArriveThroughSparkPassage	Fresh entrance hides leader, walks forward with same trail, restores motion/sprite flags
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunSupplementalSequenceOne	VenusLighthouse_LandWithRadialDust	Drops leader from130pixels; emits17 radial particles, impact, restores gravity/bounce
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_RunThreeCallSequence	VenusLighthouse_PushPuzzleBlock	Event begin, shared collision-checked adjacent push, event end
+1	11	games/tbs/src/scene/venus_lighthouse.c	FieldScene_SetFlag987AtActorTwelveTile	VenusLighthouse_RecordCarriedBlockExit	CARRY actor12 sets987 at column54 or row6; entry restoration lowers block at that state
+1	11	games/tbs/src/scene/venus_lighthouse.c	OverlayObject_ApplyZero	VenusLighthouse_ClearScriptedSpriteFlags	SC_CALL-compatible status0 callback clears sprite flags
+1	11	games/tbs/src/scene/venus_lighthouse.c	OverlayObject_PrepareObjectWithCommand15	VenusLighthouse_CreateOccludingPassageEffect	Creates kind with sprite priority1, child value15 and underfoot flag; caller preserves overlapping actor draw order
+1	11	games/tbs/src/scene/venus_lighthouse.c	OverlayObject_ResetObjectWhenFlags12Set	VenusLighthouse_ReleaseFallenCarryBlock	Sprite flags0x0c trigger reset, effect and removal from view; otherwise collision update
+1	11	games/tbs/src/scene/venus_lighthouse.c	OverlayObject_SpawnWithMode14	VenusLighthouse_CreateBlendedPassageEffect	Creates requested kind with sprite priority0, child value14, blend mode1
+1	11	games/tbs/src/scene/venus_lighthouse.c	OverlayObject_UpdateEveryFourFrames	VenusLighthouse_PulseChildEffect	Update toggles child7/0 everyfourframes and sound138 everyeight
+1	11	games/tbs/src/scene/venus_lighthouse.c	RunStagedActorTransition	VenusLighthouse_PushAdjacentBlock	Checks front/destination/above occupancy and transitionBusy, moves block and leader together
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_ApplyKind45AtActorsElevenAndTwelve	VenusLighthouse_MarkCarryBlockCollision	Before MOVE/CARRY event sets collision45 under blocks11/12
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_ApplyPositionsOfActors11And12	VenusLighthouse_RestoreCarryBlockCollision	Blocks11/12 above-16pixels mark collision255 under themselves
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_ApplySlotsMatchingKind212	VenusLighthouse_RestoreScriptedChildValues	Restores actor child value from timer low nibble only when timer high bits equal0x212
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_ClearActorModeAndSetState5	VenusLighthouse_PrepareStandingActor	Clears motion and collision lowbits, sprite flags, mode5 and priority3/underfoot
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_PickHighestSlotAtSameTileAndRelease	VenusLighthouse_StackFloatingBlock	Find highest support at same tile, set timer to support actor and move atop it
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_SetHeightAboveLinkedRecord	VenusLighthouse_FollowSupportingBlockHeight	Update reads actor ID from timer and follows y+16pixels
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_TryMoveActorZeroTwoTilesAhead	VenusLighthouse_TryJumpAcrossGap	Checks one-step terrain/occupancy, then two-step landing; sets jump velocities and walks to landing
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneActor_UpdateSlots11And12ByTile	VenusLighthouse_SettleCarriedBlocks	CARRY callbacks blocks11/12 either stop at their target column or reset fallen state
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneEffect_RunObjectZeroColorSequence	VenusLighthouse_LeaveThroughSparkPassage	Leader six-pixel step with trail, hide sprite, close screen, exit touchedTrigger
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneEffect_SpawnEffect284AtCell	VenusLighthouse_CreateScriptedGateEffect	Creates284 at supplied pixelx/z, movement settings, particle hook and supplied script
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneEffect_SpawnRandomEveryEightFramesB	VenusLighthouse_EmitRisingParticles	Eight-frame cadence, positive vertical speed and randomized x/y
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneEffect_SpawnRandomizedParticleEveryFourFrames	VenusLighthouse_EmitGateParticles	Four-frame kind286 emitter installed on gate actors and temporary gate effect284
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneEffect_SpawnTwoRandomizedParticles	VenusLighthouse_EmitPassageSparkTrail	Two particle patterns installed while leader steps into/out of passage
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_ApplyRectAt19_44AndRunThree	VenusLighthouse_PushDepthBlock	Restore depth-block collision, push, redraw footprints
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_ApplySixRectsAfter161	VenusLighthouse_HideRevealPath	REVEAL area4 row invokes map collision/visual replacement and PATCH1 clears161
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_ApplySixRectsAfterFlag161	VenusLighthouse_ShowRevealPath	REVEAL area5 row switches matching map cells and PATCH1 sets161
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_ApplyStepToSlots15To18	VenusLighthouse_VisitPillarActors	Scheduler only looks up actors15..18 and discards return values; don't claim it animates actors
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_CallWith432And32	VenusLighthouse_EmitWestPassageParticles	Scheduler emits at pixelx432 versus eastern560
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_MarkActorAndApplyRectAtTile	VenusLighthouse_FixBlockAtDestination	Underfoot flag, motion0 and collision cell copied at actor position
+1	11	games/tbs/src/scene/venus_lighthouse.c	SceneState_PassRange0To1	VenusLighthouse_StepSouthThroughDust	Directionx0/z1
+1	11	games/tbs/src/scene/venus_lighthouse.c	Scene_RunEastParticleWaveSequence	VenusLighthouse_AnimateEastTileWave	Eastx34 map rows, flag307 and exit20; installs east emitter
+1	11	games/tbs/src/scene/venus_lighthouse.c	Scene_RunPairedParticleWaveSequence	VenusLighthouse_AnimatePairedTileWaves	Ten map rows in two areas with particles; firstwave row3 repeats, exit21
+1	11	games/tbs/src/scene/venus_lighthouse.c	Scene_RunParticleWaveSequence	VenusLighthouse_AnimateWestTileWave	Westx26 map rows, flag306 and exit19; installs west emitter
+1	11	games/tbs/src/scene/venus_lighthouse.c	Scene_RunScene3c8SequenceA	VenusLighthouse_SettlePillarSwitchBlocks	Actors15..18 settle into eight pillar cells and open paired gate when allfour active
+1	03	games/tbs/src/window/battle_command.c	DrawPartyPanels	BattleMenu_ClearPartyHighlights	Nested helper passes empty0xff actor list to dim party strip and updates actor modes. W7 git log --all -S new name found no collision.
+1	03	games/tbs/src/window/battle_command.c	DrawLocalizedResource	Link_DrawWaitingForOpponent	Nested helper copies MsgWaitingForOpponent into captured link display window. W7 no collision.
+1	03	games/tbs/src/window/battle_command.c	TableGet	ResourceMenu_ReadCommandPosition	Private inline reads signed gMenu_TopEntryPositionByCommand mapping. W7 no collision; no emitted symbol.

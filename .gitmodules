@@ -1,3 +1,6 @@
 [submodule "agscc"]
 	path = agscc
 	url = https://github.com/PascalPixel/agscc.git
+[submodule "psynergy"]
+	path = psynergy
+	url = https://github.com/PascalPixel/psynergy.git

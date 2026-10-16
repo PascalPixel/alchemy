@@ -2,6 +2,7 @@
 *.gba
 out/
 tools/out/
+/tools/compile_flags.txt
 /roms
 
 /.claude/

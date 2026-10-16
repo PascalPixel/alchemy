@@ -30,5 +30,5 @@ Thank you to:
 
 - Tarpman and Karathan, for identifying the compiler and flags Camelot used, and Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc), the compiler Alchemy first built with.
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy measures itself against, and whose [agbcc](https://github.com/pret/agbcc) Alchemy builds the games’ library code with.
-- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter whose behavior Alchemy reimplements in Rust.
+- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter whose behavior [Psynergy](https://github.com/PascalPixel/psynergy) reimplements in Rust.
 - The [r/GoldenSun community](https://www.reddit.com/r/GoldenSun/), for sharing Alchemy, cheering it on, and keeping the love for these games alive.

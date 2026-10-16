@@ -769,7 +769,8 @@ static void ValeBabi_TalkToDoraAtHome(void) {
 
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x203) != 0) {
-    Object_SetTargetAndCallback(8, 0x10000, (s32)gValeBabiActor8Departure);
+    Object_SetTargetAndCallback(8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                (s32)gValeBabiActor8Departure);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeDontWorryBest);
     Engine_EventShowMessage(8, 0);

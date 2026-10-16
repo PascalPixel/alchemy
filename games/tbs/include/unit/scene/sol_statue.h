@@ -4,16 +4,16 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneEventRuntime_GetScriptData(void);
-s32 SceneEventRuntime_ReturnZero(void);
-u8 *SceneEventRuntime_GetMessageData(void);
-u8 *SceneEventRuntime_GetActorData(void);
-u8 *SceneEventRuntime_GetEffectData(void);
-s32 Scene_RunGuardSequenceB(void);
-extern struct SceneEntrance gSceneEventRuntime_ScriptData[];
-extern u32 gSceneEventRuntime_MessageData[];
-extern struct ScenePlacement gSceneEventRuntime_ActorData[];
-extern struct SceneEvent gSceneEventRuntime_EffectData[];
+struct SceneEntrance *SolStatue_GetEntrances(void);
+struct SceneRegion *SolStatue_GetRegions(void);
+u32 *SolStatue_GetExits(void);
+struct ScenePlacement *SolStatue_GetPlacements(void);
+struct SceneEvent *SolStatue_GetEvents(void);
+s32 SolStatue_Initialize(void);
+extern struct SceneEntrance gSolStatue_Entrances[];
+extern u32 gSolStatue_Exits[];
+extern struct ScenePlacement gSolStatue_Placements[];
+extern struct SceneEvent gSolStatue_Events[];
 extern s32 gSolStatue_ScrollPhase;
 
 #endif

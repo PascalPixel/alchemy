@@ -506,8 +506,9 @@ s32 ValeHome_RestoreEntryState(void) {
       if (flag != 0) {
         Engine_ActorSetPosition(17, 0, 0);
         Engine_ActorSetPosition(18, 0, 0);
-        FieldObject_SetTargetAndCallback(19, 0x10000,
-                                         gValeHome_FaceTargetActions);
+        FieldObject_SetTargetAndCallback(
+            19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            gValeHome_FaceTargetActions);
       }
     } else {
       if (Engine_GameFlagIsSet(0x815) != 0) {
@@ -699,7 +700,9 @@ static void ValeHome_SendHelpToElders(void) {
     ValeHome_RejoinParty(25);
     ValeHome_RejoinParty(26);
     ValeHome_RejoinParty(22);
-    FieldObject_SetTargetAndCallback(19, 0x10000, gValeHome_FaceTargetActions);
+    FieldObject_SetTargetAndCallback(
+        19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+        gValeHome_FaceTargetActions);
     Engine_GameFlagSet(0x840);
     Engine_EventEnd();
   }
@@ -822,7 +825,8 @@ static void ValeHome_FightTravelers(void) {
   ValeHome_FaceDirectionAndWait(24, westFacing, 20);
   Engine_ActorRunRepeatedMotion(25, 2);
   Event_SayThenWait(0x1019, 10);
-  FieldObject_SetTargetAndCallback(0, 0x10019, gValeHome_FaceTargetActions);
+  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 25,
+                                   gValeHome_FaceTargetActions);
   Actor_WalkToAndWait(25, 93, 361);
   ValeHome_FaceDirectionAndWait(25, northNortheastFacing, 40);
   Event_SayThenWait(25, 20);
@@ -1011,8 +1015,10 @@ static void ValeHome_DepartForQuest(void) {
   Actor_SetActionScript(30, gValeHome_Actor30Actions);
   Engine_EventWait(40);
   faceActions = gValeHome_FaceTargetActions;
-  FieldObject_SetTargetAndCallback(11, 0x1001e, faceActions);
-  FieldObject_SetTargetAndCallback(12, 0x1001e, faceActions);
+  FieldObject_SetTargetAndCallback(11, ACTOR_LINK_KEEP_MOTION | 30,
+                                   faceActions);
+  FieldObject_SetTargetAndCallback(12, ACTOR_LINK_KEEP_MOTION | 30,
+                                   faceActions);
   Object_RefreshSelectorById(30);
   Engine_ActorStop(11);
   Engine_ActorStop(12);

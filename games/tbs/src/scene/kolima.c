@@ -297,7 +297,8 @@ static void EV10_TOUCH(void) {
   Engine_ActorJump(0, 6, 0);
   Engine_EventWait(20);
   Map_SetShake(-1, -1, 0xe666);
-  FieldObject_SetTargetAndCallback(8, 0x10000, gKolima_Actor8Path);
+  FieldObject_SetTargetAndCallback(
+      8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKolima_Actor8Path);
   Engine_EventWait(60);
   Engine_ActorShowEmote(0, 0x102, 60);
   Engine_GameFlagSet(0x847);

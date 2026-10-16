@@ -4,16 +4,16 @@
 #include "types.h"
 #include "field_scene.h"
 
-void *ValeInteriors_GetEntrances(void);
-int SceneData_ReturnZero(void);
-void *ValeInteriors_SelectExits(void);
-void *SceneData_SelectFlaggedTable(void);
-void *ValeInteriors_SelectEvents(void);
-s32 Scene_RunSupplementalSequenceOne(void);
+struct SceneEntrance *ValeInteriors_GetEntrances(void);
+struct SceneRegion *ValeInteriors_GetRegions(void);
+u32 *ValeInteriors_SelectExits(void);
+struct ScenePlacement *ValeInteriors_SelectPlacements(void);
+struct SceneEvent *ValeInteriors_SelectEvents(void);
+s32 ValeInteriors_Initialize(void);
 extern s32 gValeFaceTargetScript[];
-extern s32 gValeActor10Script[];
-extern s32 gValePartyScript[];
-extern s32 gValeTimedActorScript[];
+extern s32 gValeHouseholdPacingScript[];
+extern s32 gValePartyDepartureScript[];
+extern s32 gValeDriftingSpriteScript[];
 extern struct SceneEntrance gValeHouseEntrances[];
 extern u32 gValeHouseExits[];
 extern u32 gValeHouseLateExits[];

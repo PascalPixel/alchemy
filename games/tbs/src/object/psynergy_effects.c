@@ -1380,8 +1380,8 @@ void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
 }
 
 // Links an actor to the actor in the low 8 bits of targetId and starts script
-// on it. Unless bit 0x10000 is set it also takes action 40 and the target's
-// top speed with twice its acceleration, to keep up with it.
+// on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes action 40 and the
+// target's top speed with twice its acceleration, to keep up with it.
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *script) {
   struct ObjectRuntime *follower = ObjectTable_Get(objectId);
@@ -1389,7 +1389,7 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
 
   if (follower != NULL && target != NULL) {
     follower->linkedObject = target;
-    if (!(targetId & 0x10000)) {
+    if (!(targetId & ACTOR_LINK_KEEP_MOTION)) {
       follower->action = 40;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;

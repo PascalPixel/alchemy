@@ -391,9 +391,15 @@ static void Bilibin_ReceiveJillsHardNut(void) {
   Engine_ActorSetAnimation(13, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(14, ANIM_NOD);
   // Let the villagers resume their shared facing script after the gift.
-  FieldObject_SetTargetAndCallback(12, 0x10000, gVillage_VillagerActions);
-  FieldObject_SetTargetAndCallback(13, 0x10000, gVillage_VillagerActions);
-  FieldObject_SetTargetAndCallback(14, 0x10000, gVillage_VillagerActions);
+  FieldObject_SetTargetAndCallback(12,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gVillage_VillagerActions);
+  FieldObject_SetTargetAndCallback(13,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gVillage_VillagerActions);
+  FieldObject_SetTargetAndCallback(14,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gVillage_VillagerActions);
   GameFlag_Set(0x849);
   Engine_EventEnd();
 }

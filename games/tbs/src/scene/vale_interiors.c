@@ -18,37 +18,48 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "facing_object.h"
+#include "fixed_math.h"
+#include "ram_buffer.h"
 
 // Forward declarations.
-static void FieldScene_RunLongPresentationSequence(void);
-static void Scene_UpdateTimedActor(void);
+static void ValeInteriors_ReuniteWithFamily(void);
+static void ValeInteriors_SpawnDriftingSprite(void);
 
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
+// Move and grow the sprite, using timer/work as signed 8.8 pixel steps.
 static s32
-AdvancePositionScaleAndVelocity(struct ScriptInterpreter *interpreter) {
-  ScaledMotion *motion = (ScaledMotion *)interpreter;
-  motion->x += motion->velocityX << 8;
-  motion->y += motion->velocityY << 8;
-  motion->scaleX += 0x666;
-  motion->scaleY += 0x666;
-  motion->velocityX += 5;
-  motion->velocityY -= 1;
+ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+
+  // This script uses timer and work as signed 8.8 pixel steps.
+  actor->x.fixed += (s16)actor->timer * 256;
+  actor->y.fixed += (s16)actor->work * 256;
+  actor->scaleX += Q16_ONE / 40;
+  actor->scaleY += Q16_ONE / 40;
+  actor->timer += 5;
+  actor->work = (s16)actor->work - 1;
   return 0;
 }
 
-void *ValeInteriors_GetEntrances(void) { return gValeHouseEntrances; }
+// Return the entrance positions and view bounds for the Vale interiors.
+struct SceneEntrance *ValeInteriors_GetEntrances(void) {
+  return gValeHouseEntrances;
+}
 
-int SceneData_ReturnZero(void) { return 0; }
+// This overlay has no separate region table.
+struct SceneRegion *ValeInteriors_GetRegions(void) { return NULL; }
 
-void *ValeInteriors_SelectExits(void) {
+// Choose the normal exits or the exits used during the lightning sequence.
+u32 *ValeInteriors_SelectExits(void) {
   if (Engine_GameFlagIsSet(0x834) != 0)
     return gValeHouseLateExits;
   return gValeHouseExits;
 }
 
-void *SceneData_SelectFlaggedTable(void) {
+// Prepare placements for the first departure or the later return to Vale.
+struct ScenePlacement *ValeInteriors_SelectPlacements(void) {
   struct ScenePlacement *table;
 
   if (Engine_GameFlagIsSet(0x87a)) {
@@ -62,7 +73,8 @@ void *SceneData_SelectFlaggedTable(void) {
   return table;
 }
 
-void *ValeInteriors_SelectEvents(void) {
+// Select dialogue and triggers for the current visit to Vale.
+struct SceneEvent *ValeInteriors_SelectEvents(void) {
   if (Engine_GameFlagIsSet(0x834) != 0)
     return gValeHouseLateEvents;
   if (Engine_GameFlagIsSet(0x87a) != 0)
@@ -72,7 +84,8 @@ void *ValeInteriors_SelectEvents(void) {
   return gValeHouseEvents;
 }
 
-static void EV15_TALK(void) {
+// Ask about Kraden coming to Vale to study Mount Aleph.
+static void ValeInteriors_AskAboutKradensStudies(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
@@ -80,7 +93,8 @@ static void EV15_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV19_TALK(void) {
+// Ask the leader about frightening Kraden's visitors.
+static void ValeInteriors_AskToScareVisitors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
@@ -88,14 +102,16 @@ static void EV19_TALK(void) {
   Engine_EventEnd();
 }
 
-static void Scene_GiveFarewellHerb(void) {
+// Give the one-time farewell herb or remind the leader to rescue Jenna.
+static void ValeInteriors_GiveFarewellHerb(void) {
   s32 gift;
 
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
     Engine_EventSetMessage(MsgValeYouMustSaveJenna);
     Event_ShowMessage(20, 0);
-    FieldObject_SetTargetAndCallback(20, 0x10000, gValeFaceTargetScript);
+    FieldObject_SetTargetAndCallback(
+        20, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gValeFaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Engine_EventSetMessage(gift);
@@ -107,28 +123,32 @@ static void Scene_GiveFarewellHerb(void) {
   Engine_EventEnd();
 }
 
-static void EV16_TALK(void) {
+// Ask about the culprits' unusual powers.
+static void ValeInteriors_AskAboutCulpritsPowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
   Engine_EventAskYesNo(16, 0);
   Engine_EventEnd();
 }
 
-static void EV10_TALK(void) {
+// Ask whether the leader overheard the conversation about Dora.
+static void ValeInteriors_AskAboutDora(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
   Engine_EventAskYesNo(10, 0);
   Engine_EventEnd();
 }
 
-static void EV11_TALK(void) {
+// Show concern about the travelers' health and Garet's appetite.
+static void ValeInteriors_DiscussTravelersHealth(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
   Engine_EventShowMessage(0x800b, 0);
   Engine_EventEnd();
 }
 
-static void ValeInteriors_RequestWindowExit(s32 value) {
+// Stop any lightning effect, close the window transition, and request the exit.
+static void ValeInteriors_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(0x834) != 0)
     FieldFx_StopLightning();
   Engine_AudioPlayCue(123);
@@ -136,31 +156,56 @@ static void ValeInteriors_RequestWindowExit(s32 value) {
   gEventWork->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(value);
+  Engine_EventRequestExit(exitId);
 }
 
-static void EV01_TOUCH(void) { ValeInteriors_RequestWindowExit(1); }
+// Leave through the doorway connected to exit 1.
+static void ValeInteriors_LeaveThroughExit1(void) {
+  ValeInteriors_RequestWindowExit(1);
+}
 
-static void EV02_TOUCH(void) { ValeInteriors_RequestWindowExit(2); }
+// Leave through the doorway connected to exit 2.
+static void ValeInteriors_LeaveThroughExit2(void) {
+  ValeInteriors_RequestWindowExit(2);
+}
 
-static void EV03_TOUCH(void) { ValeInteriors_RequestWindowExit(3); }
+// Leave through the doorway connected to exit 3.
+static void ValeInteriors_LeaveThroughExit3(void) {
+  ValeInteriors_RequestWindowExit(3);
+}
 
-static void EV04_TOUCH(void) { ValeInteriors_RequestWindowExit(4); }
+// Leave through the doorway connected to exit 4.
+static void ValeInteriors_LeaveThroughExit4(void) {
+  ValeInteriors_RequestWindowExit(4);
+}
 
-static void EV05_TOUCH(void) { ValeInteriors_RequestWindowExit(5); }
+// Leave through the doorway connected to exit 5.
+static void ValeInteriors_LeaveThroughExit5(void) {
+  ValeInteriors_RequestWindowExit(5);
+}
 
-static void EV06_TOUCH(void) { ValeInteriors_RequestWindowExit(6); }
+// Leave through the doorway connected to exit 6.
+static void ValeInteriors_LeaveThroughExit6(void) {
+  ValeInteriors_RequestWindowExit(6);
+}
 
-static void EV07_TOUCH(void) { ValeInteriors_RequestWindowExit(7); }
+// Leave through the doorway connected to exit 7.
+static void ValeInteriors_LeaveThroughExit7(void) {
+  ValeInteriors_RequestWindowExit(7);
+}
 
-static void EV08_TOUCH(void) { ValeInteriors_RequestWindowExit(8); }
+// Leave through the doorway connected to exit 8.
+static void ValeInteriors_LeaveThroughExit8(void) {
+  ValeInteriors_RequestWindowExit(8);
+}
 
-s32 Scene_RunSupplementalSequenceOne(void) {
+// Restore the room state and play the returning party's reunion once.
+s32 ValeInteriors_Initialize(void) {
+  struct FieldActor *actor;
+  struct EventWork **eventSlot = &gEventWork;
 
-  struct FieldActor *record;
-  u8 **scene = (u8 **)&gEventWork;
-
-  *(s32 *)(scene[0] + 0x1c0) = 0x209;
+  (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  // The late visit hides residents while lightning plays outside the house.
   if (Engine_GameFlagIsSet(0x834) != 0) {
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
@@ -178,26 +223,29 @@ s32 Scene_RunSupplementalSequenceOne(void) {
     Engine_ActorSetPosition(21, 0, 0);
     Engine_ActorSetPosition(22, 0, 0);
     FieldFx_StartLightning();
-    ((struct FieldBlendWork *)scene[3])->loud = 1;
+    (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
+        ->loud = 1;
     FieldFx_LastLightning();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     FieldFx_ResumeLightning();
   }
+  // The returning party gets the household reunion only on its first visit.
   if (Engine_GameFlagIsSet(0x87a) != 0) {
     if (gGameState.entrance == 6) {
       if (Engine_GameFlagIsSet(0x81d) == 0) {
-        FieldScene_RunLongPresentationSequence();
+        ValeInteriors_ReuniteWithFamily();
       }
     }
     Object_GetById(10)->collisionFlags |= 0x80;
   }
+  // Restore actor 13's pose and map layer after the party's first departure.
   if (gGameState.entrance == 2) {
     if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-      Engine_ActorSetPosition(13, 0x1c60000, 0x960000);
-      record = Object_GetById(13);
-      Engine_ActorSetSpriteFlags((s32)record, 0);
+      Engine_ActorSetPosition(13, PIXELS(454), PIXELS(150));
+      actor = Object_GetById(13);
+      Engine_ActorSetSpriteFlags(actor, 0);
       Engine_ActorSetAnimation(13, 5);
       Map_ClearLayerEntryFlag(4);
     }
@@ -205,16 +253,16 @@ s32 Scene_RunSupplementalSequenceOne(void) {
   return 0;
 }
 
-static void EV21_TALK(void) {
+// Open the weapon shop from the counter or speak to its owner.
+static void ValeInteriors_TalkToWeaponShopkeeper(void) {
+  struct FieldActor *leader;
+  u32 relativeFacing;
 
-  struct FieldActor *p;
-  u32 dir;
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  relativeFacing = leader->facing;
+  relativeFacing += 0xffff5fff;
 
-  p = Object_GetById(ACTOR_PARTY_LEADER);
-  dir = p->facing;
-  dir += 0xffff5fff;
-
-  if (dir <= 0x3ffe) {
+  if (relativeFacing <= 0x3ffe) {
     Engine_ShopOpen(1, 21);
     return;
   }
@@ -234,7 +282,8 @@ static void EV21_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV22_TALK(void) {
+// Open the armor shop from the counter or speak to its owner.
+static void ValeInteriors_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -256,7 +305,8 @@ static void EV22_TALK(void) {
   }
 }
 
-static void EV20_TALK(void) {
+// Open the item shop or speak to its owner about the party's departure.
+static void ValeInteriors_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -270,7 +320,7 @@ static void EV20_TALK(void) {
       Engine_EventEnd();
     } else {
       if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Scene_GiveFarewellHerb();
+        ValeInteriors_GiveFarewellHerb();
       } else {
         Engine_EventBegin();
         Engine_EventSetMessage(MsgValeAWiseManFleesWhen);
@@ -281,36 +331,51 @@ static void EV20_TALK(void) {
   }
 }
 
-static void FieldScene_RunLongPresentationSequence(void) {
-  void Camera_MoveTo();
+// Reset the household poses, waiting for actor 9's animation.
+static inline void ValeInteriors_ResetHouseholdPoses(void) {
+  Engine_ActorSetAnimation(8, 3);
+  Engine_ActorSetAnimation(9, 3);
+  Engine_ActorSetAnimation(10, 3);
+  Engine_ActorSetAnimationAndWait(9, 3);
+}
 
-  struct FieldActor *record;
+// Start the repeated motion before waiting for the requested animation.
+static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 actorId,
+                                                              s32 animation) {
+  Engine_ActorStartRepeatedMotion(actorId, 1);
+  Engine_ActorSetAnimationAndWait(actorId, animation);
+}
+
+// Reunite the returning party with the household, then stage another farewell.
+static void ValeInteriors_ReuniteWithFamily(void) {
+  struct FieldActor *driftingSprite;
   struct FieldActor *actor;
-  s32 v6;
+  s32 motionFlags;
   SchedulerCallback timedUpdate;
   const s32 *partyScript;
 
+  // Stage the returning party and start the three drifting sprites.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_ActorSetSpritePriority(MIA, 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-  Actor_SetSpeed(GARET, 0x6666, 0x3333);
-  Actor_SetSpeed(IVAN, 0x6666, 0x3333);
-  Actor_SetSpeed(MIA, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(MIA, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ActorSetAnimation(8, 5);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x328, 0x1fc);
-  record = Actor_Get(23);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Actor_Get(24);
-  Engine_ActorSetSpriteFlags(record, 0);
-  record = Actor_Get(25);
-  Engine_ActorSetSpriteFlags(record, 0);
-  v6 = 0;
-  Object_GetById(23)->motionFlags = v6;
-  Object_GetById(24)->motionFlags = v6;
-  Object_GetById(25)->motionFlags = v6;
-  timedUpdate = Scene_UpdateTimedActor;
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
+  driftingSprite = Actor_Get(23);
+  Engine_ActorSetSpriteFlags(driftingSprite, 0);
+  driftingSprite = Actor_Get(24);
+  Engine_ActorSetSpriteFlags(driftingSprite, 0);
+  driftingSprite = Actor_Get(25);
+  Engine_ActorSetSpriteFlags(driftingSprite, 0);
+  motionFlags = 0;
+  Object_GetById(23)->motionFlags = motionFlags;
+  Object_GetById(24)->motionFlags = motionFlags;
+  Object_GetById(25)->motionFlags = motionFlags;
+  timedUpdate = ValeInteriors_SpawnDriftingSprite;
   FieldScheduler_AddCallback(timedUpdate, 0xc80);
   Engine_TaskWait(1);
   gEventWork->transitionFrames = 32;
@@ -330,24 +395,30 @@ static void FieldScene_RunLongPresentationSequence(void) {
   if (actor != NULL) {
     Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
   }
-  Actor_WalkTo(GARET, 0x318, 0x200);
-  Actor_WalkTo(IVAN, 0x338, 0x1f8);
-  Actor_WalkToAndWait(MIA, 0x332, 0x20c);
+  Actor_WalkTo(GARET, 792, 512);
+  Actor_WalkTo(IVAN, 824, 504);
+  Actor_WalkToAndWait(MIA, 818, 524);
   Engine_ActorSetAnimation(GARET, 1);
   Engine_ActorSetAnimation(IVAN, 1);
   Engine_EventWait(10);
-  FieldObject_SetTargetAndCallback(0, 0x1000a, gValeFaceTargetScript);
-  FieldObject_SetTargetAndCallback(1, 0x1000a, gValeFaceTargetScript);
-  FieldObject_SetTargetAndCallback(2, 0x1000a, gValeFaceTargetScript);
-  FieldObject_SetTargetAndCallback(3, 0x1000a, gValeFaceTargetScript);
-  Engine_EventWait(0x12c);
-  Camera_GetEventObject()->motionFlags = v6;
-  Camera_SetSpeed(0x1999, 0x333);
-  Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
+  // Turn the party toward actor 10 while the household exchange begins.
+  FieldObject_SetTargetAndCallback(
+      ACTOR_PARTY_LEADER, ACTOR_LINK_KEEP_MOTION | 10, gValeFaceTargetScript);
+  FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | 10,
+                                   gValeFaceTargetScript);
+  FieldObject_SetTargetAndCallback(IVAN, ACTOR_LINK_KEEP_MOTION | 10,
+                                   gValeFaceTargetScript);
+  FieldObject_SetTargetAndCallback(MIA, ACTOR_LINK_KEEP_MOTION | 10,
+                                   gValeFaceTargetScript);
+  Engine_EventWait(300);
+  Camera_GetEventObject()->motionFlags = motionFlags;
+  // Pan slowly into the household conversation and follow its reactions.
+  Camera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
+  Camera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   Engine_EventWait(240);
   Engine_ActorStop(10);
   Actor_ShowEmote(10, 0x102, 80);
-  Actor_WalkToAndWait(10, 0x333, 0x195);
+  Actor_WalkToAndWait(10, 819, 405);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(10, 4);
   Engine_EventWait(40);
@@ -375,15 +446,11 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Actor_ShowEmote(10, 0x102, 20);
   Engine_ActorSetAnimation(10, 4);
   Event_ShowMessageAndWait(0x900a, 0, 10);
-  Engine_ActorStartRepeatedMotion(11, 1);
-  Engine_ActorSetAnimationAndWait(11, 3);
+  ValeInteriors_PlayRepeatedAnimationAndWait(11, 3);
   Engine_EventWait(20);
-  Engine_ActorStartRepeatedMotion(10, 1);
-  Engine_ActorSetAnimationAndWait(10, 4);
-  Engine_ActorStartRepeatedMotion(11, 1);
-  Engine_ActorSetAnimationAndWait(11, 3);
-  Engine_ActorStartRepeatedMotion(10, 1);
-  Engine_ActorSetAnimationAndWait(10, 4);
+  ValeInteriors_PlayRepeatedAnimationAndWait(10, 4);
+  ValeInteriors_PlayRepeatedAnimationAndWait(11, 3);
+  ValeInteriors_PlayRepeatedAnimationAndWait(10, 4);
   Actor_ShowEmote(9, 0x105, 0);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventWait(20);
@@ -392,43 +459,44 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(9, 3);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x4009, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0, 40);
   Engine_ActorSetAnimation(11, 0);
   Engine_ActorRunRepeatedMotion(11, 2);
   Event_ShowMessageAndWait(0x200b, 0, 10);
   Engine_ActorSetAnimationAndWait(9, 4);
   Engine_ActorRunRepeatedMotion(9, 2);
-  Event_ShowMessageAndWait(0x4009, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0, 10);
   Actor_ShowEmote(10, 0x100, 20);
   Actor_FaceDirection(10, 0x5000, 40);
   Engine_ActorSetAnimationAndWait(10, 3);
-  Event_ShowMessageAndWait(0x400a, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Engine_ActorSetAnimationAndWait(9, 4);
   Actor_FaceDirection(9, 0xd000, 10);
   Engine_ActorJump(9, 2, 0);
   Engine_ActorSetAnimation(9, 4);
-  Event_ShowMessageAndWait(0x4009, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0, 10);
   Actor_ShowEmote(11, 0x101, 0);
   Actor_ShowEmote(10, 0x101, 40);
   Actor_FaceDirection(10, 0xd000, 80);
   Actor_FaceDirection(10, 0x5000, 60);
   Engine_ActorStartRepeatedMotion(10, 2);
   Engine_ActorStartRepeatedMotion(11, 2);
-  Event_ShowTwoMessagesAndWait(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
+  Event_ShowTwoMessagesAndWait(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, 0);
   Engine_EventWait(20);
-  Camera_SetSpeed(0x19999, 0x3333);
-  Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
+  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, 3);
   Event_ShowMessageAndWait(0x1001, 0, 20);
   Engine_ActorRunRepeatedMotion(8, 2);
-  Engine_TaskRemoveCallback((void (*)(void))timedUpdate);
+  // Stop the drifting sprites before the camera returns to the party.
+  Engine_TaskRemoveCallback(timedUpdate);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(8, 6);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x4008, 0, 20);
-  Camera_MoveTo(0x2ee0000, 0, 0x1c30000, 1);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
+  Camera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
   Engine_EventWait(20);
   Actor_FaceDirection(11, 0x5000, 0);
   Actor_FaceDirection(10, 0x5000, 10);
@@ -440,15 +508,15 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Engine_ActorSetAnimationAndWait(8, 6);
   Engine_EventWait(60);
   Engine_ActorJump(8, 6, 0);
-  Event_ShowMessageAndWait(0x4008, 0, 20);
-  Actor_SetSpeed(GARET, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(GARET, 0x315, 0x1d9);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
+  Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(GARET, 789, 473);
   Actor_FaceDirection(GARET, 0x7000, 20);
   Engine_ActorSetAnimationAndWait(GARET, 3);
-  Event_ShowMessageAndWait(0x4001, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0, 10);
   Actor_FaceDirection(8, 0x1000, 20);
   Engine_ActorSetAnimationAndWait(8, 3);
-  Event_OpenMessage(0x4008, 0);
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   Actor_FaceDirection(10, 0x5000, 0);
   Actor_FaceDirection(9, 0x1000, 0);
   Actor_FaceDirection(GARET, 0x3000, 0);
@@ -457,24 +525,25 @@ static void FieldScene_RunLongPresentationSequence(void) {
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
   }
-  Camera_MoveTo(0x3090000, 0, 0x1ac0000, 1);
+  Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(10, 2);
   Event_ShowMessage(10, 0);
   Engine_ActorSetAnimationAndWait(11, 4);
   Engine_EventWait(20);
+  // Ask about leaving again and give the companions their individual replies.
   Engine_EventSetMessage(MsgValeYoureLeavingAgainSoon);
   Event_ShowMessage(0x200b, 0);
-  Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
+  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, 0xd000, 20);
   Engine_ActorSetAnimationAndWait(GARET, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(9, 4);
   Actor_FaceDirection(9, 0xd000, 10);
-  Event_ShowMessage(0x4009, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
   Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessage(0x4008, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   Actor_FaceDirection(GARET, 0x7000, 10);
   Engine_ActorSetAnimationAndWait(GARET, 3);
   Actor_FaceDirection(9, 0x1000, 10);
@@ -486,7 +555,7 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Actor_FaceDirection(GARET, 0x3000, 20);
   Actor_ShowEmote(GARET, 0x102, 80);
   Actor_FaceDirection(GARET, 0x7000, 20);
-  Event_ShowMessageAndWait(0x4001, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0, 20);
   Actor_FaceDirection(GARET, 0x3000, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -497,39 +566,34 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, 0x1000, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_WalkToAndWait(IVAN, 0x333, 0x1e9);
+  // Bring Ivan and Mia forward for their goodbyes.
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(IVAN, 819, 489);
   Actor_FaceDirection(IVAN, 0xb000, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
-  Engine_ActorSetAnimation(8, 3);
-  Engine_ActorSetAnimation(9, 3);
-  Engine_ActorSetAnimation(10, 3);
-  Engine_ActorSetAnimationAndWait(9, 3);
-  Object_GetById(3)->priorityFlags &= 254;
+  ValeInteriors_ResetHouseholdPoses();
+  Object_GetById(3)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 1);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  Actor_WalkToAndWait(MIA, 0x31a, 0x208);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(MIA, 794, 520);
   Actor_FaceDirection(GARET, 0x5000, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-  Actor_WalkToAndWait(MIA, 0x310, 0x1f0);
+  Actor_WalkToAndWait(MIA, 784, 496);
   Actor_FaceDirection(MIA, 0x9000, 10);
-  Object_GetById(3)->priorityFlags |= 1;
+  Object_GetById(3)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimation(8, 3);
-  Engine_ActorSetAnimation(9, 3);
-  Engine_ActorSetAnimation(10, 3);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  ValeInteriors_ResetHouseholdPoses();
   Engine_EventWait(20);
-  Camera_MoveTo(0x3090000, 0, 0x1ac0000, 1);
+  Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(11, 0x6666, 0x3333);
-  Actor_WalkToAndWait(11, 0x343, 0x184);
+  Actor_SetSpeed(11, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_WalkToAndWait(11, 835, 388);
   Actor_FaceDirection(11, 0x5000, 0);
   Actor_ShowEmote(11, 0x108, 40);
   Event_ShowMessageAndWait(0x200b, 0, 20);
-  Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
+  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_EventWait(40);
   Actor_FaceDirection(IVAN, 0x7000, 0);
   Actor_FaceDirection(MIA, 0xf000, 40);
@@ -551,61 +615,61 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Engine_EventWait(20);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  partyScript = gValePartyScript;
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  // Send the companions out with the shared departure script.
+  partyScript = gValePartyDepartureScript;
   Actor_SetActionScript(GARET, partyScript);
   Actor_SetActionScript(2, partyScript);
   Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
-  Actor_SetActionScript(10, gValeActor10Script);
-  Actor_WalkToAndWait(11, 0x345, 0x178);
+  Actor_SetActionScript(10, gValeHouseholdPacingScript);
+  Actor_WalkToAndWait(11, 837, 376);
   Actor_FaceDirection(11, 0xd000, 20);
   GameFlag_Set(0x81d);
   Engine_EventEnd();
 }
 
-static void Scene_UpdateTimedActor(void) {
-  s32 no;
-  u32 phase;
-  union SceneActor *actor;
-  s32 *other;
+// Restart one drifting sprite at frames 10, 20, and 30 of each 180-frame cycle.
+static void ValeInteriors_SpawnDriftingSprite(void) {
+  s32 actorId;
+  u32 cycleFrame;
+  struct FieldActor *actor;
+  struct FieldActor *origin;
 
-  phase = gFrameCount % 180;
-  no = 23;
-  switch (phase) {
+  cycleFrame = gFrameCount % 180;
+  actorId = 23;
+  switch (cycleFrame) {
   case 10:
     break;
   case 20:
-    no = 24;
+    actorId = 24;
     break;
   case 30:
-    no = 25;
+    actorId = 25;
     break;
   default:
     return;
   }
-  actor = Object_GetById(no);
+  actor = Object_GetById(actorId);
   if (actor == NULL) {
     return;
   }
-  other = Object_GetById(8);
-  if (other != NULL) {
-    Engine_ActorSetPosition(no, other[2], other[4]);
+  origin = Object_GetById(8);
+  if (origin != NULL) {
+    Engine_ActorSetPosition(actorId, origin->x.fixed, origin->z.fixed);
   }
-  actor->words[6] = 0x6666;
-  actor->words[7] = 0x6666;
+  // Restart this sprite above the origin with a small scale and 8.8 motion.
+  actor->scaleX = 2 * Q16_ONE / 5;
+  actor->scaleY = 2 * Q16_ONE / 5;
   {
-    s32 y = actor->words[3] + 0x180000;
-    union SceneField *dst = (union SceneField *)(actor->halfwords + 50);
-    s32 value;
-    actor->words[3] = y;
-    actor->words[15] = y;
-    value = 25;
-    dst->value = value;
-    dst++;
-    value = 128;
-    dst->value = value;
+    s32 height = actor->y.fixed + PIXELS(24);
+
+    actor->y.fixed = height;
+    actor->targetY = height;
+    // The drifting script consumes these two work fields as signed 8.8 steps.
+    actor->timer = 25; // 25/256 pixel per frame.
+    actor->work = 128; // 1/2 pixel per frame.
   }
-  Actor_SetActionScript(no, gValeTimedActorScript);
+  Actor_SetActionScript(actorId, gValeDriftingSpriteScript);
 }
 
 s32 gValeFaceTargetScript[] = {
@@ -613,9 +677,9 @@ s32 gValeFaceTargetScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeActor10Script[] = {
-    SC_SET(SW_SPEED, 0x9999),
-    SC_SET(SW_ACCEL, 0x4ccc),
+s32 gValeHouseholdPacingScript[] = {
+    SC_SET(SW_SPEED, PIXELS(3) / 5),
+    SC_SET(SW_ACCEL, PIXELS(3) / 10),
     SC_ARG(2),
     SC_MOVE(PIXELS(784), 0, PIXELS(405)),
     SC_SYNC,
@@ -642,15 +706,15 @@ s32 gValeActor10Script[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValePartyScript[] = {
+s32 gValePartyDepartureScript[] = {
     SC_ARG(2),       SC_MOVE(PIXELS(808), 0, PIXELS(508)),
     SC_SYNC,         SC_ARG(1),
     SC_POS(0, 0, 0), SC_WAIT(1),
     SC_END,
 };
 
-s32 gValeTimedActorScript[] = {
-    SC_CALL(AdvancePositionScaleAndVelocity),
+s32 gValeDriftingSpriteScript[] = {
+    SC_CALL(ValeInteriors_AdvanceDriftingSprite),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_POS(0, 0, 0),
@@ -765,7 +829,7 @@ struct ScenePlacement gValeHouseReturnPlacements[] = {
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x6f, 0x0, ACTOR_STAND,
         PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x36, 0x0, (s32)gValeActor10Script,
+    { 0x36, 0x0, (s32)gValeHouseholdPacingScript,
         PIXELS(819), 0, PIXELS(405), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x26, 0x0, ACTOR_STAND,
         PIXELS(841), 0, PIXELS(370), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -801,14 +865,14 @@ struct ScenePlacement gValeHouseReturnPlacements[] = {
 };
 
 struct SceneEvent gValeHouseLateEvents[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit1) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit2) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit5) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit6) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit7) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit8) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -837,22 +901,22 @@ struct SceneEvent gValeHouseEvents[] = {
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_AskAboutKradensStudies) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_AskToScareVisitors) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToItemShopkeeper) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit1) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit2) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit5) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit6) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit7) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit8) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -876,13 +940,13 @@ struct SceneEvent gValeHouseEventsAfterLeaving[] = {
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_AskAboutCulpritsPowers) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToItemShopkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
@@ -898,14 +962,14 @@ struct SceneEvent gValeHouseEventsAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit1) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit2) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit5) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit6) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit7) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit8) },
     { SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
     { SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
@@ -923,8 +987,8 @@ struct SceneEvent gValeHouseEventsAfterLeaving[] = {
 struct SceneEvent gValeHouseReturnEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_AskAboutDora) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_DiscussTravelersHealth) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
@@ -933,9 +997,9 @@ struct SceneEvent gValeHouseReturnEvents[] = {
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_TalkToItemShopkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeItMustBeNiceToBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeHisNewFriendsAreAllSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeItWasntTooSmartToTalk) },
@@ -952,14 +1016,14 @@ struct SceneEvent gValeHouseReturnEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit1) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit2) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit5) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit6) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit7) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeInteriors_LeaveThroughExit8) },
     { SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
     { SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },

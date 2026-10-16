@@ -219,7 +219,8 @@ static void EastGuard_Talk(void) {
         Engine_GameFlagSet(FLAG_GUARDS_LET_PARTY_IN);
       } while (0);
     guard:
-      FieldObject_SetTargetAndCallback(12, 0x10000, gGuardWatchesParty);
+      FieldObject_SetTargetAndCallback(
+          12, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gGuardWatchesParty);
     } else {
       Engine_EventShowMessage(GATE_GUARD_EAST, 0);
       Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -278,7 +279,9 @@ static void Garden_ApplyProgress(void) {
     if (Engine_GameFlagIsSet(FLAG_84F) == 0) {
       if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Engine_ActorSetPosition(GATE_GUARD_WEST, 0, 0);
-        FieldObject_SetTargetAndCallback(12, 0x10000, gGuardWatchesParty);
+        FieldObject_SetTargetAndCallback(
+            12, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            gGuardWatchesParty);
       }
     }
   }

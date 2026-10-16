@@ -34,19 +34,21 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "facing_object.h"
+#include "fixed_math.h"
+#include "palbuf.h"
 
 // Forward declarations.
-static void Scene_BagJupiterStar(void);
-static void FieldScene_StagePairedActors(void);
-static void FieldScene_RunElementalStarDemand(void);
-static void Scene_OfferGuarantee(void);
-static void Scene_UnmaskFelix(void);
-static void Scene_AlexTakesStars(void);
+static void SolStar_BagJupiterStar(void);
+static void SolStar_RevealSaturosAndMenardi(void);
+static void SolStar_DemandElementalStars(void);
+static void SolStar_OfferHostageGuarantee(void);
+static void SolStar_UnmaskFelix(void);
+static void SolStar_AlexTakesStars(void);
 static void SolStar_LineUpFollowers(void);
-static void Event_SayThenWait(s32 speaker, s32 frames);
-static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
-static void Scene_GiveMythrilBags(void);
-static void SolStar_RiseActorFourteenSparks(void);
+static void SolStar_ShowMessageAndWait(s32 speaker, s32 frames);
+static s32 SolStar_PresentStar(s32 item, s32 x, s32 y, s32 z);
+static void SolStar_GiveMythrilBags(void);
+static void SolStar_AnimateAlexTeleport(void);
 
 enum StarRoomActor {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 1,
@@ -70,64 +72,72 @@ enum { ITEM_MYTHRIL_BAG = 224 };
 
 struct ObjectRuntime;
 
-extern struct SceneEvent gPlacement_Effects[];
-
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-static __inline__ void SkipMessage(s32 amount) {
+// Advance through the current dialogue's consecutive messages.
+static __inline__ void SolStar_SkipMessages(s32 amount) {
   gEventWork->message += amount;
 }
 
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-s32 *SceneData_GetScriptTable(void) { return (s32 *)gPlacement_Scripts; }
+// Return the Elemental Star room entrances.
+struct SceneEntrance *SolStar_GetEntrances(void) { return gSolStar_Entrances; }
 
-s32 SceneData_ReturnZero(void) { return 0; }
+// This room has no additional scene regions.
+struct SceneRegion *SolStar_GetRegions(void) { return NULL; }
 
-s32 *SceneData_GetMessageTable(void) { return gPlacement_Messages; }
+// Return the room's exits.
+u32 *SolStar_GetExits(void) { return gSolStar_Exits; }
 
-s32 *SceneData_GetActorTable(void) { return (s32 *)gPlacement_Actors; }
+// Return the room's actor placements.
+struct ScenePlacement *SolStar_GetPlacements(void) {
+  return gSolStar_Placements;
+}
 
-s32 *SceneData_GetEffectTable(void) { return (s32 *)gPlacement_Effects; }
+// Return the star, dialogue, and boundary interactions.
+struct SceneEvent *SolStar_GetEvents(void) { return gSolStar_Events; }
 
-static void EV02_SEARCH(void) {
+// Bag the Venus Star and reveal its pedestal crossings.
+static void SolStar_CollectVenusStar(void) {
   u32 i;
-  s32 obj;
+  s32 itemOwner;
   s32 message;
 
   Engine_EventBegin();
+  // Flash the room before revealing the crossings for this star.
   Engine_AudioPlayCue(141);
   for (i = 0; i != 6; i++) {
     Engine_ColorBufferApplyTarget(0x403a52, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
-    Engine_ColorBufferApplyTarget(0x10000, 1);
+    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (i == 1) {
-      Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+      Engine_WorkSetValuesIfNonNegative(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(30);
-  Engine_CameraSetSpeed(0x26666, 0x4ccc);
-  Camera_MoveTo(0x2980000, -1, 0x1f10000, 1);
+  Engine_CameraSetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  Camera_MoveTo(PIXELS(664), -1, PIXELS(497), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 96, 29);
   Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
   Map_CopyCellsTo(87, 42, 41, 31, 1, 2);
   Engine_EventWait(40);
   Engine_WorkSetValuesIfNonNegative(0, 0, 0);
-  Engine_CameraSetSpeed(0x66666, 0xcccc);
-  Camera_MoveTo(0x1370000, -1, 0x1f10000, 1);
+  Engine_CameraSetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  Camera_MoveTo(PIXELS(311), -1, PIXELS(497), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 74, 29);
@@ -135,9 +145,9 @@ static void EV02_SEARCH(void) {
   Map_CopyCellsTo(87, 42, 19, 31, 1, 2);
   Engine_EventWait(40);
   Engine_WorkSetValuesIfNonNegative(0, 0, 0);
-  Camera_MoveTo(0x2970000, -1, 0xc00000, 1);
+  Camera_MoveTo(PIXELS(663), -1, PIXELS(192), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Engine_AudioPlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 96, 10);
@@ -147,29 +157,30 @@ static void EV02_SEARCH(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x2c60000, -1, 0x1da0000, 0);
+  Camera_MoveTo(PIXELS(710), -1, PIXELS(474), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Map_SetShake(0x20000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Engine_AudioPlayCue(0x121);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
   Engine_EventWait(20);
-  obj = Scene_PresentItem(220, 0x2c80000, 0x100000, 0x1d00000);
+  // Present the collected star, then return to Kraden's explanation.
+  itemOwner = SolStar_PresentStar(220, PIXELS(712), PIXELS(16), PIXELS(464));
   Engine_EventWait(40);
-  UiWork_PushValueSlot(obj, 1);
+  UiWork_PushValueSlot(itemOwner, 1);
   message = MsgSolVenusStarBagged;
   Engine_MessageShowCentered(message, 1);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1ce0000, -1, 0x15e0000, 0);
+  Camera_MoveTo(PIXELS(462), -1, PIXELS(350), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -177,10 +188,10 @@ static void EV02_SEARCH(void) {
   Engine_EventWait(40);
   Engine_ActorJump(9, 4, 30);
   Engine_EventSetMessage(message - 1);
-  Event_SayThenWait(9, 20);
+  SolStar_ShowMessageAndWait(9, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_CameraMoveTo(0x2c60000, -1, 0x1da0000, 0);
+  Engine_CameraMoveTo(PIXELS(710), -1, PIXELS(474), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -189,9 +200,10 @@ static void EV02_SEARCH(void) {
   Engine_EventEnd();
 }
 
-static void EV03_SEARCH(void) {
+// Bag the Mercury Star and reveal its pedestal crossings.
+static void SolStar_CollectMercuryStar(void) {
   u32 i;
-  s32 obj;
+  s32 itemOwner;
   s32 message;
 
   Engine_EventBegin();
@@ -200,20 +212,20 @@ static void EV03_SEARCH(void) {
     ColorBuffer_ApplyTarget(0x404a4e, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
-    ColorBuffer_ApplyTarget(0x10000, 1);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (i == 1) {
-      Map_SetShake(0x10000, 0x10000, 0x10000);
+      Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(30);
   Map_SetShake(0, 0, 0);
-  Camera_SetSpeed(0x59999, 0xb333);
-  Camera_MoveTo(0x1d80000, -1, 0x620000, 1);
+  Camera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
+  Camera_MoveTo(PIXELS(472), -1, PIXELS(98), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 84, 4);
@@ -221,9 +233,9 @@ static void EV03_SEARCH(void) {
   Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
   Engine_EventWait(40);
   Map_SetShake(0, 0, 0);
-  Camera_MoveTo(0x1570000, -1, 0x1710000, 1);
+  Camera_MoveTo(PIXELS(343), -1, PIXELS(369), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 76, 21);
@@ -231,10 +243,10 @@ static void EV03_SEARCH(void) {
   Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
   Engine_EventWait(40);
   Map_SetShake(0, 0, 0);
-  Camera_SetSpeed(0x33333, 0x6666);
-  Camera_MoveTo(0x1570000, -1, 0x1f10000, 1);
+  Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  Camera_MoveTo(PIXELS(343), -1, PIXELS(497), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 76, 29);
@@ -244,29 +256,30 @@ static void EV03_SEARCH(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x2c80000, -1, 0x980000, 0);
+  Camera_MoveTo(PIXELS(712), -1, PIXELS(152), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Map_SetShake(0x20000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Event_PlayCue(0x121);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 43, 46, 3, 3);
   Engine_EventWait(20);
-  obj = Scene_PresentItem(221, 0x2c80000, 0x100000, 0x900000);
+  // Present the collected star, then return to Kraden's explanation.
+  itemOwner = SolStar_PresentStar(221, PIXELS(712), PIXELS(16), PIXELS(144));
   Engine_EventWait(40);
-  UiWork_PushValueSlot(obj, 1);
+  UiWork_PushValueSlot(itemOwner, 1);
   message = MsgSolPutMercuryStar;
   Engine_MessageShowCentered(message, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1ce0000, -1, 0x15e0000, 0);
+  Camera_MoveTo(PIXELS(462), -1, PIXELS(350), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -274,10 +287,10 @@ static void EV03_SEARCH(void) {
   Engine_EventWait(40);
   Engine_ActorJump(ACTOR_KRADEN, 4, 30);
   Engine_EventSetMessage(message - 2);
-  Event_SayThenWait(9, 20);
+  SolStar_ShowMessageAndWait(9, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x2c80000, -1, 0x980000, 0);
+  Camera_MoveTo(PIXELS(712), -1, PIXELS(152), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -286,41 +299,43 @@ static void EV03_SEARCH(void) {
   Engine_EventEnd();
 }
 
-static void EV04_SEARCH(void) {
+// Bag Jupiter, meet the intruders, and surrender the collected stars.
+static void SolStar_CollectJupiterStarAndMeetIntruders(void) {
   Engine_EventBegin();
-  Scene_BagJupiterStar();
-  FieldScene_StagePairedActors();
-  FieldScene_RunElementalStarDemand();
-  Scene_OfferGuarantee();
-  Scene_UnmaskFelix();
-  Scene_AlexTakesStars();
+  SolStar_BagJupiterStar();
+  SolStar_RevealSaturosAndMenardi();
+  SolStar_DemandElementalStars();
+  SolStar_OfferHostageGuarantee();
+  SolStar_UnmaskFelix();
+  SolStar_AlexTakesStars();
   Engine_GameFlagSet(FLAG_STARS_GIVEN_TO_ALEX);
   Engine_EventEnd();
   SolStar_LineUpFollowers();
 }
 
-static void Scene_BagJupiterStar(void) {
+// Reveal the Jupiter crossings and place the star in a mythril bag.
+static void SolStar_BagJupiterStar(void) {
   u32 i;
-  s32 obj;
+  s32 itemOwner;
 
   Event_PlayCue(141);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x4049d2, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
-    ColorBuffer_ApplyTarget(0x10000, 1);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (i == 1) {
-      Map_SetShake(0x10000, 0x10000, 0x10000);
+      Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Map_SetShake(0x20000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Engine_EventWait(30);
-  Camera_SetSpeed(0x26666, 0x4ccc);
-  Camera_MoveTo(0xa70000, -1, 0x2110000, 1);
+  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  Camera_MoveTo(PIXELS(167), -1, PIXELS(529), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 65, 31);
@@ -328,10 +343,10 @@ static void Scene_BagJupiterStar(void) {
   Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
   Engine_EventWait(40);
   Map_SetShake(0, 0, 0);
-  Camera_SetSpeed(0x66666, 0xcccc);
-  Camera_MoveTo(0x1870000, -1, 0xb10000, 1);
+  Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  Camera_MoveTo(PIXELS(391), -1, PIXELS(177), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 79, 9);
@@ -339,10 +354,10 @@ static void Scene_BagJupiterStar(void) {
   Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
   Engine_EventWait(40);
   Map_SetShake(0, 0, 0);
-  Camera_SetSpeed(0x26666, 0x4ccc);
-  Camera_MoveTo(0x2470000, -1, 0xc10000, 1);
+  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  Camera_MoveTo(PIXELS(583), -1, PIXELS(193), 1);
   Engine_CameraWaitForMove();
-  Map_SetShake(0x10000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(20);
   Event_PlayCue(144);
   Engine_MapAnimateCells(gSolStar_StarCells, 91, 10);
@@ -352,46 +367,47 @@ static void Scene_BagJupiterStar(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0xe80000, -1, 0x1dd0000, 0);
+  Camera_MoveTo(PIXELS(232), -1, PIXELS(477), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Map_SetShake(0x20000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
   Event_PlayCue(0x121);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(20);
   Map_CopyCellsTo(0, 40, 13, 66, 3, 3);
   Engine_EventWait(20);
-  obj = Scene_PresentItem(223, 0xe80000, 0x100000, 0x1d00000);
+  itemOwner = SolStar_PresentStar(223, PIXELS(232), PIXELS(16), PIXELS(464));
   Engine_EventWait(40);
-  UiWork_PushValueSlot(obj, 1);
+  UiWork_PushValueSlot(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolJupiterStarBagged, 1);
 }
 
-static void FieldScene_StagePairedActors(void) {
-  struct FieldActor *record;
+// Bring Isaac and Garet back to discover Jenna and Kraden's captors.
+static void SolStar_RevealSaturosAndMenardi(void) {
+  struct FieldActor *leader;
 
   Event_PlayCue(17);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 0x1ea);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 231, 490);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(180);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(80);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 0x1df);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 479);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_WalkToAndWait(GARET, 0x101, 0x1eb);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(GARET, 257, 491);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -401,10 +417,10 @@ static void FieldScene_StagePairedActors(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x109, 0x1c5);
-  Actor_WalkToAndWait(GARET, 0x11a, 0x1d5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 265, 453);
+  Actor_WalkToAndWait(GARET, 282, 469);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
@@ -416,8 +432,8 @@ static void FieldScene_StagePairedActors(void) {
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(491), PIXELS(332));
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(459), PIXELS(348));
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
-  Camera_SetSpeed(0x73333, 0xe666);
-  Camera_MoveTo(0x1e50000, -1, 0x1590000, 1);
+  Camera_SetSpeed(PIXELS(36) / 5, PIXELS(9) / 10);
+  Camera_MoveTo(PIXELS(485), -1, PIXELS(345), 1);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 0);
@@ -426,10 +442,11 @@ static void FieldScene_StagePairedActors(void) {
   Engine_EventWait(40);
 }
 
-static void FieldScene_RunElementalStarDemand(void) {
+// Reveal the masked intruder while the captors demand the stars.
+static void SolStar_DemandElementalStars(void) {
   u8 *motionFlags;
   u8 *spriteFlags;
-  struct FieldActor *star;
+  struct FieldActor *felix;
   struct FieldActor *glow;
   s32 i;
   u8 zero;
@@ -437,67 +454,67 @@ static void FieldScene_RunElementalStarDemand(void) {
   Engine_AudioPlayCue(61);
   Engine_ActorSetAnimation(10, 4);
   Engine_EventSetMessage(MsgSolLooksLikeTheyveSpottedUs);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Engine_ActorSetAnimation(11, 4);
-  Event_SayThenWait(11, 30);
+  SolStar_ShowMessageAndWait(11, 30);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorJump(9, 4, 10);
   Engine_ActorJump(9, 6, 30);
-  Event_SayThenWait(9, 10);
+  SolStar_ShowMessageAndWait(9, 10);
   Engine_ActorRunRepeatedMotion(10, 1);
   Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 10);
-  Event_SayThenWait(10, 20);
+  SolStar_ShowMessageAndWait(10, 20);
   Engine_ActorRunRepeatedMotion(11, 1);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 20);
-  Event_SayThenWait(11, 30);
+  SolStar_ShowMessageAndWait(11, 30);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorFaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(9, FACING_SOUTHWEST + FACING_STEP, 80);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | 2, 40);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Engine_ActorSetAnimation(9, 4);
-  Event_SayThenWait(9, 10);
-  star = Object_GetById(12);
+  SolStar_ShowMessageAndWait(9, 10);
+  felix = Object_GetById(12);
   glow = Object_GetById(8);
-  spriteFlags = &star->sprite->flags;
+  spriteFlags = &felix->sprite->flags;
   zero = 0;
   *spriteFlags = zero;
-  star->scaleX = 0x1999;
-  star->scaleY = 0x1999;
-  glow->scaleX = 0x1999;
-  glow->scaleY = 0x1999;
+  felix->scaleX = Q16_ONE / 10;
+  felix->scaleY = Q16_ONE / 10;
+  glow->scaleX = Q16_ONE / 10;
+  glow->scaleY = Q16_ONE / 10;
   Actor_SetChildValue(12, 0x100);
   Actor_SetPosition(12, PIXELS(471), PIXELS(290));
-  motionFlags = &star->motionFlags;
+  motionFlags = &felix->motionFlags;
   *motionFlags = zero;
-  star->y.fixed = 0x280000;
+  felix->y.fixed = PIXELS(40);
   Engine_EventWait(1);
-  Event_SayThenWait(12, 10);
+  SolStar_ShowMessageAndWait(12, 10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT, 30);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
-  Camera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveTo(0x1d70000, -1, 0x1350000, 1);
+  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
   Engine_ActorSetPosition(8, PIXELS(471), PIXELS(290));
   Event_PlayCue(190);
   Engine_ActorSetSpritePriority(12, 2);
   for (i = 0; i != 90; i++) {
-    star->y.fixed -= 0x1999;
-    star->scaleX += 0x28f;
-    star->scaleY += 0x28f;
-    glow->scaleX += 0x28f;
-    glow->scaleY += 0x28f;
+    felix->y.fixed -= PIXELS(1) / 10;
+    felix->scaleX += Q16_ONE / 100;
+    felix->scaleY += Q16_ONE / 100;
+    glow->scaleX += Q16_ONE / 100;
+    glow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *motionFlags = 5;
   Engine_EventWait(80);
   for (i = 0; i != 60; i++) {
-    star->y.fixed -= 0x8000;
+    felix->y.fixed -= PIXELS(1) / 2;
     Engine_EventWait(1);
   }
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -508,20 +525,20 @@ static void FieldScene_RunElementalStarDemand(void) {
   {
     u8 *flags = &Object_GetById(12)->priorityFlags;
 
-    /* FAKEMATCH: the bit held in the loop counter first keeps the 1 in r5 ahead
-     * of the actor 8 call's arguments; a plain |= loads it after. Plain |=:
-     * differ 31, one instruction shorter; *flags = ACTOR_PRIORITY_AUTOMATIC |
-     * *flags, either operand first, differ 35. */
+    /* FAKEMATCH: the bit held in the loop counter itemSlot keeps the 1 in r5
+     * ahead of the actor 8 call's arguments; a plain |= loads it after. Plain
+     * |=: differ 31, one instruction shorter; *flags = ACTOR_PRIORITY_AUTOMATIC
+     * | *flags, either operand itemSlot, differ 35. */
     i = ACTOR_PRIORITY_AUTOMATIC;
     i |= *flags;
     *flags = i;
   }
   Engine_ActorSetChildValue(12, 0);
-  Actor_SetSpeed(12, 0x8000, 0x4000);
-  Actor_WalkToAndWait(12, 0x1d7, 0x132);
+  Actor_SetSpeed(12, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(12, 471, 306);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(12, 2);
-  Event_SayThenWait(0x400c, 20);
+  SolStar_ShowMessageAndWait(0x400c, 20);
   Engine_ActorFaceEachOther(5, 9, 0);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
@@ -533,16 +550,16 @@ static void FieldScene_RunElementalStarDemand(void) {
   Engine_ActorSetAnimationAndWait(10, 4);
   Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 10);
-  Event_SayThenWait(10, 30);
+  SolStar_ShowMessageAndWait(10, 30);
   Engine_ActorSetAttachedEffect(12, 0x102);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(10);
-  Event_SayThenWait(11, 30);
+  SolStar_ShowMessageAndWait(11, 30);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 30);
   Engine_ActorSetAnimationAndWait(11, 3);
   Engine_EventWait(20);
-  Event_SayThenWait(11, 30);
+  SolStar_ShowMessageAndWait(11, 30);
   Engine_ActorSetAnimationAndWait(12, 3);
   Engine_EventWait(20);
   Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 40);
@@ -552,24 +569,24 @@ static void FieldScene_RunElementalStarDemand(void) {
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1080000, -1, 0x1cc0000, 0);
+  Camera_MoveTo(PIXELS(264), -1, PIXELS(460), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Event_SayThenWait(10, 40);
+  SolStar_ShowMessageAndWait(10, 40);
   Engine_ActorStartRepeatedMotion(0, 3);
   Engine_ActorRunRepeatedMotion(1, 3);
   Engine_EventWait(80);
   Engine_EventOpenMessage(11, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
-    SkipMessage(1);
+    SolStar_SkipMessages(1);
   }
   BattlePres_RunActionThenWaitIfModeZero(9, 0, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_CameraMoveTo(0x1dd0000, -1, 0x14e0000, 0);
+  Engine_CameraMoveTo(PIXELS(477), -1, PIXELS(334), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -578,29 +595,30 @@ static void FieldScene_RunElementalStarDemand(void) {
   Engine_ActorRunRepeatedMotion(10, 2);
   Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_EventSetMessage(MsgSolWhyDenyDont);
-  Event_SayThenWait(10, 20);
+  SolStar_ShowMessageAndWait(10, 20);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(9, 4);
-  Event_SayThenWait(0x5009, 40);
+  SolStar_ShowMessageAndWait(0x5009, 40);
   Engine_ActorRunRepeatedMotion(11, 1);
-  Event_SayThenWait(11, 10);
+  SolStar_ShowMessageAndWait(11, 10);
   Engine_ActorStartRepeatedMotion(5, 2);
   Engine_ActorRunRepeatedMotion(9, 2);
 }
 
-static void Scene_OfferGuarantee(void) {
+// Have the captors offer a guarantee for their hostages' safety.
+static void SolStar_OfferHostageGuarantee(void) {
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_SOUTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
-  Event_SayThenWait(11, 20);
+  SolStar_ShowMessageAndWait(11, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED, 0x102);
   Engine_EventWait(60);
-  Event_SayThenWait(12, 10);
+  SolStar_ShowMessageAndWait(12, 10);
   Actor_FaceActor(ACTOR_SATUROS, ACTOR_FELIX_MASKED, 0);
   Actor_FaceActor(JENNA, ACTOR_FELIX_MASKED, 0);
   Actor_FaceActor(ACTOR_KRADEN, ACTOR_FELIX_MASKED, 0);
@@ -608,7 +626,7 @@ static void Scene_OfferGuarantee(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 10);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 3);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
   Engine_EventWait(10);
@@ -621,7 +639,7 @@ static void Scene_OfferGuarantee(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED, 0x102);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
@@ -634,7 +652,7 @@ static void Scene_OfferGuarantee(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Actor_SetPosition(GARET, PIXELS(280), PIXELS(470));
-  Camera_MoveTo(0x1050000, -1, 0x1d20000, 0);
+  Camera_MoveTo(PIXELS(261), -1, PIXELS(466), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -659,7 +677,7 @@ static void Scene_OfferGuarantee(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1dd0000, -1, 0x14e0000, 0);
+  Camera_MoveTo(PIXELS(477), -1, PIXELS(334), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -668,30 +686,31 @@ static void Scene_OfferGuarantee(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
-  Event_SayThenWait(9, 20);
+  SolStar_ShowMessageAndWait(9, 20);
   Actor_FaceDirection(JENNA, FACING_EAST, 40);
   Engine_ActorSetAnimationAndWait(JENNA, 4);
   Engine_EventWait(20);
-  Event_SayThenWait(5, 10);
+  SolStar_ShowMessageAndWait(5, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
   Engine_EventWait(80);
-  Event_SayThenWait(12, 20);
+  SolStar_ShowMessageAndWait(12, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Actor_FaceDirection(JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX_MASKED, 3);
-  Event_SayThenWait(12, 20);
+  SolStar_ShowMessageAndWait(12, 20);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_NORTHWEST + FACING_STEP, 40);
 }
 
-static void Scene_UnmaskFelix(void) {
-  struct FieldActor *obj;
+// Reveal Felix's identity and let Isaac decide how to hand over the stars.
+static void SolStar_UnmaskFelix(void) {
+  struct FieldActor *actor;
   struct FieldActor *other;
-  u16 *table;
-  s32 left;
-  s32 cnt;
+  u16 *inventoryEntry;
+  s32 remainingSlots;
+  s32 starCount;
   s32 messageA;
   s32 messageB;
 
@@ -709,62 +728,62 @@ static void Scene_UnmaskFelix(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 3);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(10);
   Engine_ActorStartRepeatedMotion(JENNA, 3);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_SayThenWait(9, 40);
+  SolStar_ShowMessageAndWait(9, 40);
   Engine_ActorSetAnimationAndWait(JENNA, 3);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
-  Event_SayThenWait(13, 20);
+  SolStar_ShowMessageAndWait(13, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(10);
-  Event_SayThenWait(13, 40);
+  SolStar_ShowMessageAndWait(13, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   Engine_EventWait(10);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
-  Event_SayThenWait(11, 80);
+  SolStar_ShowMessageAndWait(11, 80);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
-  Event_SayThenWait(13, 40);
+  SolStar_ShowMessageAndWait(13, 40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(10);
-  Event_SayThenWait(5, 10);
+  SolStar_ShowMessageAndWait(5, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(JENNA, 4);
   Engine_EventWait(20);
-  Event_SayThenWait(5, 80);
+  SolStar_ShowMessageAndWait(5, 80);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
-  Event_SayThenWait(13, 80);
+  SolStar_ShowMessageAndWait(13, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(4);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 3);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
-  Event_SayThenWait(11, 10);
+  SolStar_ShowMessageAndWait(11, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 80);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 80);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
-  Event_SayThenWait(11, 20);
+  SolStar_ShowMessageAndWait(11, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1050000, -1, 0x1d20000, 0);
+  Camera_MoveTo(PIXELS(261), -1, PIXELS(466), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
@@ -774,10 +793,10 @@ static void Scene_UnmaskFelix(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 244, 0x1de);
-  Actor_WalkToAndWait(GARET, 0x104, 0x1ea);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 244, 478);
+  Actor_WalkToAndWait(GARET, 260, 490);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -785,108 +804,109 @@ static void Scene_UnmaskFelix(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  cnt = 0;
-  table = UnitGet(1)->inventory;
-  left = 14;
+  starCount = 0;
+  inventoryEntry = UnitGet(1)->inventory;
+  remainingSlots = 14;
   do {
-    u32 id = *table & 0x1ff;
-    table++;
-    if (id == 220 || id == 221 || id == 223)
-      cnt++;
-    left--;
-  } while (left >= 0);
+    u32 item = *inventoryEntry & 0x1ff;
+    inventoryEntry++;
+    if (item == 220 || item == 221 || item == 223)
+      starCount++;
+    remainingSlots--;
+  } while (remainingSlots >= 0);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     messageA = MsgSolGuessTakeElemental;
     Engine_EventSetMessage(messageA);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_EventWait(10);
-    if (cnt <= 2) {
-      Event_SayThenWait(1, 30);
-      Actor_WalkToAndWait(GARET, 252, 0x1e6);
+    if (starCount <= 2) {
+      SolStar_ShowMessageAndWait(1, 30);
+      Actor_WalkToAndWait(GARET, 252, 486);
       Engine_ActorRunRepeatedMotion(GARET, 2);
       Engine_EventWait(10);
       UiText_ShowCenteredMessage((messageA + 1), 1, 0);
     } else {
       Engine_EventSetMessage(MsgSolRightTake);
-      Event_SayThenWait(GARET, 30);
+      SolStar_ShowMessageAndWait(GARET, 30);
     }
   } else {
-    if (cnt <= 2) {
+    if (starCount <= 2) {
       messageB = MsgSolDontHandOver;
       Engine_EventSetMessage(messageB);
       Engine_ActorRunRepeatedMotion(GARET, 3);
       Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-      Event_SayThenWait(1, 10);
+      SolStar_ShowMessageAndWait(1, 10);
       Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
       Engine_ActorRunRepeatedMotion(GARET, 1);
-      Actor_SetSpeed(GARET, 0x20000, 0x10000);
-      obj = Object_GetById(ACTOR_PARTY_LEADER);
-      obj->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(GARET, 244, 0x1de);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+      Actor_SetSpeed(GARET, PIXELS(2), PIXELS(1));
+      actor = Object_GetById(ACTOR_PARTY_LEADER);
+      actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(GARET, 244, 478);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-      Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 0x1d7);
+      Actor_SetDestination(ACTOR_PARTY_LEADER, 218, 471);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
       UiText_ShowCenteredMessage((messageB + 1), 1, 0);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
-      obj->steeringFlags |= ACTOR_FACES_MOTION;
+      actor->steeringFlags |= ACTOR_FACES_MOTION;
     } else {
       Engine_EventSetMessage(MsgSolWontLetGo);
       Engine_ActorRunRepeatedMotion(GARET, 3);
       Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-      Event_SayThenWait(1, 10);
+      SolStar_ShowMessageAndWait(1, 10);
       Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 30);
     }
   }
-  Camera_SetSpeed(0x8000, 0x1000);
+  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   Engine_CameraFollowActor(GARET, 1);
   Engine_CameraWaitForMove();
   Actor_FaceDirection(GARET, FACING_WEST, 30);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  obj = Object_GetById(GARET);
-  obj->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(GARET, 0x108, 0x1e2);
-  obj->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(GARET, 0x116, 0x1e0);
-  obj->speed = 0x30000;
-  obj->acceleration = 0x20000;
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  actor = Object_GetById(GARET);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(GARET, 264, 482);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(GARET, 278, 480);
+  actor->speed = PIXELS(3);
+  actor->acceleration = PIXELS(2);
   Event_PlayCue(153);
-  obj->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x138, 0x1d6);
+  Actor_MoveToAndWait(GARET, 312, 470);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(30);
   Event_PlayCue(153);
-  obj->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x156, 0x1d6);
+  Actor_MoveToAndWait(GARET, 342, 470);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(30);
   Event_PlayCue(153);
-  obj->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x178, 0x1d6);
+  Actor_MoveToAndWait(GARET, 376, 470);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
 }
 
-static void Scene_AlexTakesStars(void) {
+// Have Alex collect the stars and return the party to the final pedestal.
+static void SolStar_AlexTakesStars(void) {
   u32 i;
-  struct FieldActor *rec;
-  s32 record;
+  struct FieldActor *actor;
+  struct FieldActor *alex;
   u8 none;
 
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  record = Actor_Get(ACTOR_ALEX);
-  Engine_ActorSetSpriteFlags(record, 0);
+  alex = Actor_Get(ACTOR_ALEX);
+  Engine_ActorSetSpriteFlags(alex, 0);
   Actor_SetChildValue(ACTOR_ALEX, 15);
   Actor_SetPosition(ACTOR_ALEX, PIXELS(392), PIXELS(454));
-  SolStar_RiseActorFourteenSparks();
+  SolStar_AnimateAlexTeleport();
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
@@ -897,72 +917,72 @@ static void Scene_AlexTakesStars(void) {
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(469), PIXELS(348));
   Engine_EventWait(20);
-  Event_SayThenWait(0x200a, 10);
-  Event_SayThenWait(0x200a, 40);
+  SolStar_ShowMessageAndWait(0x200a, 10);
+  SolStar_ShowMessageAndWait(0x200a, 40);
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(40);
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  Actor_WalkToAndWait(GARET, 0x185, 0x1d4);
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(GARET, 389, 468);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 60);
-  Event_SayThenWait(1, 20);
+  SolStar_ShowMessageAndWait(1, 20);
   UiText_ShowCenteredMessage(MsgSolPermitRelieveElemental + 4, 1, 10);
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  rec = Object_GetById(GARET);
-  rec->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  actor = Object_GetById(GARET);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   none = 0;
-  Actor_WalkToAndWait(GARET, 0x178, 0x1d6);
+  Actor_WalkToAndWait(GARET, 376, 470);
   Engine_EventWait(30);
-  rec->steeringFlags |= ACTOR_FACES_MOTION;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgSolPermitRelieveElemental + 5);
-  Event_SayThenWait(14, 20);
+  SolStar_ShowMessageAndWait(14, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Event_SayThenWait(14, 20);
+  SolStar_ShowMessageAndWait(14, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
   Actor_SetChildValue(ACTOR_ALEX, 0x100);
-  record = Actor_Get(ACTOR_ALEX);
-  Engine_ActorSetSpriteFlags(record, 0);
-  rec = Object_GetById(ACTOR_ALEX);
-  rec->motionFlags = none;
+  alex = Actor_Get(ACTOR_ALEX);
+  Engine_ActorSetSpriteFlags(alex, 0);
+  actor = Object_GetById(ACTOR_ALEX);
+  actor->motionFlags = none;
   Event_PlayCue(220);
   for (i = 0; i != 30; i++) {
-    rec->y.fixed += 0x10000;
+    actor->y.fixed += PIXELS(1);
     Engine_EventWait(1);
   }
-  rec->motionFlags = 5;
+  actor->motionFlags = 5;
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  Event_SayThenWait(1, 10);
+  SolStar_ShowMessageAndWait(1, 10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | 1, 60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 10);
-  Event_SayThenWait(1, 20);
+  SolStar_ShowMessageAndWait(1, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 1);
-  Event_SayThenWait(14, 20);
+  SolStar_ShowMessageAndWait(14, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
-  Event_SayThenWait(1, 30);
+  SolStar_ShowMessageAndWait(1, 30);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | 5, 80);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 10);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Camera_MoveTo(0x1dd0000, -1, 0x14e0000, 0);
+  Camera_MoveTo(PIXELS(477), -1, PIXELS(334), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-  Event_SayThenWait(10, 10);
+  SolStar_ShowMessageAndWait(10, 10);
   Event_OpenMessage(ACTOR_MENARDI, 0);
-  Camera_SetSpeed(0x66666, 0xcccc);
-  Camera_MoveTo(0x1760000, -1, 0x1d60000, 1);
+  Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  Camera_MoveTo(PIXELS(374), -1, PIXELS(470), 1);
   Engine_CameraWaitForMove();
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
@@ -986,17 +1006,17 @@ static void Scene_AlexTakesStars(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgSolThankCooperation);
-  Event_SayThenWait(14, 30);
+  SolStar_ShowMessageAndWait(14, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
   Engine_EventWait(10);
-  Event_SayThenWait(14, 30);
-  rec->motionFlags = 0;
-  Actor_SetSpeed(ACTOR_ALEX, 0x26666, 0x13333);
-  FieldObject_SetMoveTarget((s32)rec, 0x1cc0000, 0, 0x1680000);
+  SolStar_ShowMessageAndWait(14, 30);
+  actor->motionFlags = 0;
+  Actor_SetSpeed(ACTOR_ALEX, PIXELS(12) / 5, PIXELS(6) / 5);
+  FieldObject_SetPosition(actor, PIXELS(460), 0, PIXELS(360));
   Engine_ActorWaitForMove(ACTOR_ALEX);
   Actor_SetChildValue(ACTOR_ALEX, 0);
-  record = Actor_Get(ACTOR_ALEX);
-  Engine_ActorSetSpriteFlags(record, 1);
+  alex = Actor_Get(ACTOR_ALEX);
+  Engine_ActorSetSpriteFlags(alex, 1);
   Engine_EventWait(30);
   Engine_CameraFollowActor(GARET, 1);
   Engine_CameraWaitForMove();
@@ -1004,31 +1024,31 @@ static void Scene_AlexTakesStars(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(20);
-  rec = Object_GetById(GARET);
-  rec->steeringFlags |= ACTOR_FACES_MOTION;
-  rec->speed = 0x30000;
-  rec->acceleration = 0x20000;
+  actor = Object_GetById(GARET);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
+  actor->speed = PIXELS(3);
+  actor->acceleration = PIXELS(2);
   Event_PlayCue(153);
-  rec->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x156, 0x1d6);
+  Actor_MoveToAndWait(GARET, 342, 470);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(30);
   Event_PlayCue(153);
-  rec->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x138, 0x1d6);
+  Actor_MoveToAndWait(GARET, 312, 470);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(30);
   Event_PlayCue(153);
-  rec->velocityY = 0x60000;
+  actor->velocityY = PIXELS(6);
   Engine_ActorSetAnimation(GARET, 7);
-  Actor_MoveToAndWait(GARET, 0x116, 0x1e0);
+  Actor_MoveToAndWait(GARET, 278, 480);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(30);
-  Camera_SetSpeed(0x8000, 0x1000);
+  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
-  Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+  Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -1038,10 +1058,10 @@ static void Scene_AlexTakesStars(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   {
-    s32 slot = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if (slot != 0) {
-      Actor_SetDestination(GARET, *(s16 *)(slot + 10), *(s16 *)(slot + 18));
+    if (leader != NULL) {
+      Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
     }
   }
   Engine_ActorWaitForMove(GARET);
@@ -1051,24 +1071,11 @@ static void Scene_AlexTakesStars(void) {
   PartyInventory_Discard(223);
 }
 
-struct StarFollower {
-  u8 unk00[12];
-  s32 y;
-  u8 unk10[8];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[0x35];
-  u8 motionFlags;
-  u8 unk56[4];
-  u8 flags;
-  u8 unk5b[13];
-  struct FieldActor *leader;
-};
-
+// Arrange the captors and hostages after the exchange.
 static void SolStar_LineUpFollowers(void) {
   struct FieldActor *leader;
-  struct StarFollower *actor;
-  struct StarFollower *menardi;
+  struct FieldActor *actor;
+  struct FieldActor *alex;
 
   leader = Object_GetById(0);
   Engine_EventBegin();
@@ -1084,58 +1091,41 @@ static void SolStar_LineUpFollowers(void) {
   Actor_SetPosition(10, PIXELS(507), PIXELS(348));
   Actor_SetPosition(14, PIXELS(460), PIXELS(360));
   Actor_SetPosition(13, PIXELS(471), PIXELS(306));
-  actor = (struct StarFollower *)Object_GetById(5);
-  actor->leader = leader;
-  actor->flags |= 1;
-  Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
-  actor = (struct StarFollower *)Object_GetById(9);
-  actor->leader = leader;
-  actor->flags |= 1;
-  Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
-  actor = (struct StarFollower *)Object_GetById(11);
-  actor->leader = leader;
-  actor->flags |= 1;
-  Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
-  actor = (struct StarFollower *)Object_GetById(10);
-  actor->leader = leader;
-  actor->flags |= 1;
-  Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
-  menardi = (struct StarFollower *)Object_GetById(14);
-  menardi->leader = leader;
-  menardi->flags |= 1;
-  menardi->scaleX = 0x10000;
-  menardi->scaleY = 0x10000;
-  menardi->motionFlags = Object_GetById(11)->motionFlags;
-  menardi->y = 0;
-  Engine_ObjectSetScript((struct FieldActor *)menardi, gSolStar_AngleScript);
-  actor = (struct StarFollower *)Object_GetById(13);
-  actor->leader = leader;
-  actor->flags |= 1;
-  Engine_ObjectSetScript((struct FieldActor *)actor, gSolStar_AngleScript);
+  actor = Object_GetById(5);
+  actor->linkedObject = leader;
+  actor->steeringFlags |= 1;
+  Engine_ObjectSetScript(actor, gSolStar_AngleScript);
+  actor = Object_GetById(9);
+  actor->linkedObject = leader;
+  actor->steeringFlags |= 1;
+  Engine_ObjectSetScript(actor, gSolStar_AngleScript);
+  actor = Object_GetById(11);
+  actor->linkedObject = leader;
+  actor->steeringFlags |= 1;
+  Engine_ObjectSetScript(actor, gSolStar_AngleScript);
+  actor = Object_GetById(10);
+  actor->linkedObject = leader;
+  actor->steeringFlags |= 1;
+  Engine_ObjectSetScript(actor, gSolStar_AngleScript);
+  alex = Object_GetById(14);
+  alex->linkedObject = leader;
+  alex->steeringFlags |= 1;
+  alex->scaleX = Q16_ONE;
+  alex->scaleY = Q16_ONE;
+  alex->motionFlags = Object_GetById(11)->motionFlags;
+  alex->y.fixed = 0;
+  Engine_ObjectSetScript(alex, gSolStar_AngleScript);
+  actor = Object_GetById(13);
+  actor->linkedObject = leader;
+  actor->steeringFlags |= 1;
+  Engine_ObjectSetScript(actor, gSolStar_AngleScript);
   Engine_EventEnd();
 }
 
-struct Actor {
-  u8 pad[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct EffectParams {
-  s32 count;
-  s32 kind;
-  s32 spread;
-  s32 rise;
-  u8 pad10[8];
-  u16 tile;
-  u16 pad1a;
-  u8 pad1c[12];
-};
-
-static void EV05_SEARCH(void) {
+// Bag the final star and escape as the room starts shaking.
+static void SolStar_CollectMarsStar(void) {
   u8 pass;
-  s32 star;
+  s32 itemOwner;
   struct FieldActor *leader;
 
   Engine_EventBegin();
@@ -1144,55 +1134,55 @@ static void EV05_SEARCH(void) {
     ColorBuffer_ApplyTarget(0x4039d2, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
-    ColorBuffer_ApplyTarget(0x10000, 1);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(8);
     if (pass == 1) {
-      Map_SetShake(0x10000, 0x10000, 0x10000);
+      Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
   Event_PlayCue(0x121);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Map_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_EventWait(20);
-  star = Scene_PresentItem(222, 0xe80000, 0x100000, 0x900000);
+  itemOwner = SolStar_PresentStar(222, PIXELS(232), PIXELS(16), PIXELS(144));
   Engine_EventWait(40);
-  UiWork_PushValueSlot(star, 1);
+  UiWork_PushValueSlot(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolMarsStarBagged, 1);
   Actor_SetPosition(JENNA, PIXELS(307), PIXELS(277));
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(307), PIXELS(277));
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(307), PIXELS(277));
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(307), PIXELS(277));
   Actor_SetPosition(ACTOR_ALEX, PIXELS(307), PIXELS(277));
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
   Engine_EventWait(10);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(GARET, 218, 172);
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
   Event_PlayCue(145);
-  Map_SetShake(0x40000, 0x40000, 0x10000);
+  Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Engine_EventWait(20);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 50);
   Event_PlayCue(144);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_EAST, 50);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
   Event_PlayCue(144);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_EventWait(30);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Engine_ActorJump(GARET, 2, 20);
@@ -1204,7 +1194,8 @@ static void EV05_SEARCH(void) {
   Engine_EventRequestExit(2);
 }
 
-static void EV09_TALK(void) {
+// Let Kraden comment on the remaining stars or the hostage exchange.
+static void SolStar_TalkToKraden(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolKradenIAmResponsible);
@@ -1221,7 +1212,8 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV05_SCRIPT(void) {
+// Let Jenna comment on collecting the stars or finding Felix alive.
+static void SolStar_TalkToJenna(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolJennaMyBrotherIsAlive);
@@ -1238,44 +1230,65 @@ static void EV05_SCRIPT(void) {
   Engine_EventEnd();
 }
 
-static void EV10_TALK(void) {
+// Have Saturos demand the final star.
+static void SolStar_TalkToSaturos(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSaturosBringTheFinalStar);
   Engine_EventShowMessage(ACTOR_SATUROS, 0);
   Engine_EventEnd();
 }
 
-static void EV11_SCRIPT(void) {
+// Have Menardi demand the final gem.
+static void SolStar_TalkToMenardi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolMenardiBringTheFinalGem);
   Engine_EventShowMessage(ACTOR_MENARDI, 0);
   Engine_EventEnd();
 }
 
-static void EV13_TALK(void) {
+// Have Felix remain silent.
+static void SolStar_TalkToFelix(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolFelixSilence);
   Engine_EventShowMessage(ACTOR_FELIX, 0);
   Engine_EventEnd();
 }
 
-static void EV14_TALK(void) {
+// Have Alex remind Isaac that one star remains.
+static void SolStar_TalkToAlex(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolAlexOnlyOneLeft);
   Engine_EventShowMessage(ACTOR_ALEX, 0);
   Engine_EventEnd();
 }
 
-static void EV01_TOUCH(void) {
+// Have Kraden remind Isaac that the stars are inside this room.
+static void SolStar_PreventLeavingBeforeCollectingStars(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolNoStarsOutThere);
-  Event_SayThenWait(9, 10);
+  SolStar_ShowMessageAndWait(9, 10);
   Engine_EventEnd();
 }
 
+// Perform the ordinary interaction in front of the leader.
 static void SolStar_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
 
-static void Scene_EnterStarRoom(void) {
+// Show a pedestal while Kraden describes it, then return to the party.
+static inline void SolStar_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
+                                        s32 actorZ, s32 speaker) {
+  Camera_MoveTo(cameraX, -1, cameraZ, 1);
+  Engine_CameraWaitForMove();
+  Actor_SetPosition(ACTOR_KRADEN, actorX << 16, actorZ << 16);
+  Engine_EventWait(40);
+  Event_ShowMessage(speaker, 0);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
+  Engine_EventWait(80);
+  Camera_MoveTo(PIXELS(471), -1, PIXELS(370), 1);
+  Engine_CameraWaitForMove();
+}
+
+// Introduce the room, explain the Elemental Stars, and give out mythril bags.
+static void SolStar_EnterStarRoom(void) {
   u16 i;
   u8 *leaderMotion;
   u8 *kradenMotion;
@@ -1284,30 +1297,31 @@ static void Scene_EnterStarRoom(void) {
   struct FieldActor *rising;
   struct FieldActor *glow;
   struct FieldActor *leader;
-  u8 *kradenFlags;
-  s32 say4009;
+  u8 *kradenSteeringFlags;
+  s32 kradenSpeaker;
   s32 height;
-  s32 say8009;
+  s32 kradenMessageSpeaker;
   s32 zero;
 
   Engine_EventBegin();
   Map_CopyCellAttributes(27, 16, 5, 1, 27, 17);
-  Camera_MoveTo(0x1d70000, -1, 0x1050000, 0);
+  Camera_MoveTo(PIXELS(471), -1, PIXELS(261), 0);
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
+  // Materialize Isaac above the arrival platform with the expanding glow.
   glow = Actor_Get(8);
-  glow->scaleX = 0x1999;
-  glow->scaleY = 0x1999;
+  glow->scaleX = Q16_ONE / 10;
+  glow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
   leaderSprite = &rising->sprite->flags;
   *leaderSprite = 0;
-  rising->scaleX = 0x1999;
-  rising->scaleY = 0x1999;
+  rising->scaleX = Q16_ONE / 10;
+  rising->scaleY = Q16_ONE / 10;
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 0x100);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(471), PIXELS(290));
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
-  rising->y.fixed = 0x280000;
+  rising->y.fixed = PIXELS(40);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
@@ -1317,19 +1331,19 @@ static void Scene_EnterStarRoom(void) {
   Event_PlayCue(190);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
-    rising->y.fixed += -0x1999;
-    rising->scaleX += 0x28f;
-    rising->scaleY += 0x28f;
-    glow->scaleX += 0x28f;
-    glow->scaleY += 0x28f;
+    rising->y.fixed += -PIXELS(1) / 10;
+    rising->scaleX += Q16_ONE / 100;
+    rising->scaleY += Q16_ONE / 100;
+    glow->scaleX += Q16_ONE / 100;
+    glow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *leaderMotion = 5;
   Engine_EventWait(80);
-  Camera_SetSpeed(0x4ccc, 0x999);
-  Camera_MoveTo(0x1d70000, -1, 0x1220000, 1);
+  Camera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  Camera_MoveTo(PIXELS(471), -1, PIXELS(290), 1);
   for (i = 0; i != 60; i++) {
-    rising->y.fixed += -0x8000;
+    rising->y.fixed += -PIXELS(1) / 2;
     Engine_EventWait(1);
   }
   *leaderMotion = 3;
@@ -1340,6 +1354,7 @@ static void Scene_EnterStarRoom(void) {
     s32 flags = 1 | actor->priorityFlags;
     actor->priorityFlags = flags;
   }
+  // Finish Isaac's arrival and let the companions inspect the room.
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
   {
     s32 shown = 1;
@@ -1350,8 +1365,8 @@ static void Scene_EnterStarRoom(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d7, 0x136);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 471, 310);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
@@ -1364,10 +1379,10 @@ static void Scene_EnterStarRoom(void) {
   if (leader != NULL) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(GARET, 0x8000, 0x4000);
-  Actor_SetSpeed(JENNA, 0x8000, 0x4000);
-  Actor_WalkTo(JENNA, 0x1c5, 0x12e);
-  Actor_WalkToAndWait(GARET, 0x1e9, 0x12e);
+  Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkTo(JENNA, 453, 302);
+  Actor_WalkToAndWait(GARET, 489, 302);
   Engine_ActorSetAnimation(JENNA, 1);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 10);
@@ -1385,21 +1400,21 @@ static void Scene_EnterStarRoom(void) {
   Actor_SetAttachedEffect(JENNA, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(60);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
-  Actor_SetSpeed(JENNA, 0x13333, 0x9999);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1d7, 0x15a);
-  Actor_WalkTo(JENNA, 0x1af, 0x152);
-  Actor_WalkTo(GARET, 0x1ff, 0x152);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 471, 346);
+  Actor_WalkTo(JENNA, 431, 338);
+  Actor_WalkTo(GARET, 511, 338);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(JENNA);
   Engine_ActorSetAnimation(JENNA, 1);
   Engine_ActorWaitForMove(GARET);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
-  Actor_SetSpeed(JENNA, 0x4ccc, 0x2666);
-  Actor_SetSpeed(GARET, 0x4ccc, 0x2666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
+  Actor_SetSpeed(JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
+  Actor_SetSpeed(GARET, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_FaceDirection(JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 60);
@@ -1422,18 +1437,19 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 60);
+  // Materialize Kraden after the companions have explored the chamber.
   rising = Actor_Get(ACTOR_KRADEN);
   kradenSprite = &rising->sprite->flags;
   *kradenSprite = zero;
-  rising->scaleX = 0x1999;
-  rising->scaleY = 0x1999;
-  glow->scaleX = 0x1999;
-  glow->scaleY = 0x1999;
+  rising->scaleX = Q16_ONE / 10;
+  rising->scaleY = Q16_ONE / 10;
+  glow->scaleX = Q16_ONE / 10;
+  glow->scaleY = Q16_ONE / 10;
   Actor_SetChildValue(ACTOR_KRADEN, 0x100);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(290));
   kradenMotion = &rising->motionFlags;
   *kradenMotion = zero;
-  rising->y.fixed = 0x280000;
+  rising->y.fixed = PIXELS(40);
   Engine_EventWait(1);
   Engine_EventSetMessage(MsgSolKradenWhereAreWe);
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -1443,24 +1459,24 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Camera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveTo(0x1d70000, -1, 0x1350000, 1);
+  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
   Actor_SetPosition(8, PIXELS(471), PIXELS(290));
   Event_PlayCue(190);
   Engine_ActorSetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
-    rising->y.fixed += -0x1999;
-    rising->scaleX += 0x28f;
-    rising->scaleY += 0x28f;
-    glow->scaleX += 0x28f;
-    glow->scaleY += 0x28f;
+    rising->y.fixed += -PIXELS(1) / 10;
+    rising->scaleX += Q16_ONE / 100;
+    rising->scaleY += Q16_ONE / 100;
+    glow->scaleX += Q16_ONE / 100;
+    glow->scaleY += Q16_ONE / 100;
     Engine_EventWait(1);
   }
   *kradenMotion = 5;
   Engine_EventWait(80);
   for (i = 0; i != 60; i++) {
-    rising->y.fixed += -0x8000;
+    rising->y.fixed += -PIXELS(1) / 2;
     Engine_EventWait(1);
   }
   *kradenMotion = 3;
@@ -1479,8 +1495,8 @@ static void Scene_EnterStarRoom(void) {
   }
   Actor_SetPosition(8, 0, 0);
   Engine_EventWait(30);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x13333, 0x9999);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x132);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 471, 306);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(ACTOR_KRADEN, 2, 80);
@@ -1495,9 +1511,9 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(30);
-  Event_SayThenWait(9, 20);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x26666, 0x13333);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1a7, 0x132);
+  SolStar_ShowMessageAndWait(9, 20);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 423, 306);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
@@ -1506,41 +1522,41 @@ static void Scene_EnterStarRoom(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(40);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x207, 0x132);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 519, 306);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(30);
-  say4009 = 0x4009;
+  kradenSpeaker = 0x4009;
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Engine_EventWait(40);
-  Event_SayThenWait(say4009, 30);
+  SolStar_ShowMessageAndWait(kradenSpeaker, 30);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
-  Event_SayThenWait(1, 40);
+  SolStar_ShowMessageAndWait(1, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
-  Event_SayThenWait(say4009, 20);
+  SolStar_ShowMessageAndWait(kradenSpeaker, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
-  Event_SayThenWait(say4009, 10);
+  SolStar_ShowMessageAndWait(kradenSpeaker, 10);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(JENNA, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(40);
-  Camera_SetSpeed(0x8000, 0x1000);
-  Camera_MoveTo(0x2150000, -1, 0x1530000, 1);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x8000, 0x4000);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x215, 0x153);
+  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  Camera_MoveTo(PIXELS(533), -1, PIXELS(339), 1);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 533, 339);
   Engine_CameraWaitForMove();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
@@ -1551,34 +1567,34 @@ static void Scene_EnterStarRoom(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(30);
   Engine_CameraFollowActor(ACTOR_KRADEN, 1);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
-  Actor_WalkTo(ACTOR_KRADEN, 0x1c7, 0x168);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkTo(ACTOR_KRADEN, 455, 360);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1c7, 0x168);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 455, 360);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(30);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x168);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 471, 360);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(30);
-  Event_SayThenWait(9, 30);
+  SolStar_ShowMessageAndWait(9, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
-  Event_SayThenWait(9, 30);
-  Actor_SetSpeed(JENNA, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(JENNA, 0x1b8, 0x15a);
+  SolStar_ShowMessageAndWait(9, 30);
+  Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(JENNA, 440, 346);
   Engine_EventWait(10);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 10);
-  Event_SayThenWait(5, 20);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(GARET, 0x1ef, 0x15a);
+  SolStar_ShowMessageAndWait(5, 20);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(GARET, 495, 346);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
@@ -1589,19 +1605,20 @@ static void Scene_EnterStarRoom(void) {
     gEventWork->message++;
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
-  Event_SayThenWait(ACTOR_KRADEN, 30);
+  SolStar_ShowMessageAndWait(ACTOR_KRADEN, 30);
+  // Kraden explains the elements and the stars at the room's four corners.
   Engine_EventSetMessage(MsgSolKradenTheElementsAreThe);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_SayThenWait(9, 10);
+  SolStar_ShowMessageAndWait(9, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
-  Event_SayThenWait(9, 20);
+  SolStar_ShowMessageAndWait(9, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_SayThenWait(9, 10);
+  SolStar_ShowMessageAndWait(9, 10);
   Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
   Engine_EventWait(40);
-  Event_SayThenWait(9, 10);
+  SolStar_ShowMessageAndWait(9, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
@@ -1614,16 +1631,9 @@ static void Scene_EnterStarRoom(void) {
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(JENNA);
   Engine_ActorStop(GARET);
-  Camera_SetSpeed(0x80000, 0x10000);
-  Camera_MoveTo(0x2c70000, -1, 0x1d00000, 1);
-  Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(589), PIXELS(353));
-  Engine_EventWait(40);
-  Event_ShowMessage(0x1009, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
-  Engine_EventWait(80);
-  Camera_MoveTo(0x1d70000, -1, 0x1720000, 1);
-  Engine_CameraWaitForMove();
+  Camera_SetSpeed(PIXELS(8), PIXELS(1));
+  // Tour the four pedestals, returning the view to the party after each.
+  SolStar_ShowPedestal(PIXELS(711), PIXELS(464), 589, 353, 0x1009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
@@ -1631,15 +1641,7 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
-  Camera_MoveTo(0x2c70000, -1, 0x930000, 1);
-  Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(596), PIXELS(238));
-  Engine_EventWait(40);
-  Event_ShowMessage(0x1009, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
-  Engine_EventWait(80);
-  Camera_MoveTo(0x1d70000, -1, 0x1720000, 1);
-  Engine_CameraWaitForMove();
+  SolStar_ShowPedestal(PIXELS(711), PIXELS(147), 596, 238, 0x1009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(10);
@@ -1651,15 +1653,7 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
-  Camera_MoveTo(0xe70000, -1, 0x930000, 1);
-  Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(308), PIXELS(250));
-  Engine_EventWait(40);
-  Event_ShowMessage(0x2009, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
-  Engine_EventWait(80);
-  Camera_MoveTo(0x1d70000, -1, 0x1720000, 1);
-  Engine_CameraWaitForMove();
+  SolStar_ShowPedestal(PIXELS(231), PIXELS(147), 308, 250, 0x2009);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
@@ -1671,15 +1665,7 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Camera_MoveTo(0xe70000, -1, 0x1d00000, 1);
-  Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(306), PIXELS(362));
-  Engine_EventWait(40);
-  Event_ShowMessage(0x2009, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
-  Engine_EventWait(80);
-  Camera_MoveTo(0x1d70000, -1, 0x1720000, 1);
-  Engine_CameraWaitForMove();
+  SolStar_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362, 0x2009);
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 4, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1687,13 +1673,13 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 40);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 40);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Engine_ActorJump(ACTOR_KRADEN, 4, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_SayThenWait(0xa009, 10);
+  SolStar_ShowMessageAndWait(0xa009, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 3);
-  Event_SayThenWait(0xa009, 20);
+  SolStar_ShowMessageAndWait(0xa009, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
@@ -1705,17 +1691,18 @@ static void Scene_EnterStarRoom(void) {
   }
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_WEST, 10);
-  Event_SayThenWait(GARET, 10);
+  SolStar_ShowMessageAndWait(GARET, 10);
+  // Discuss the Wisdom Stone and the power stored in the Elemental Stars.
   Engine_EventSetMessage(MsgSolKradenTheWisdomStone);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
   Engine_ActorJump(ACTOR_KRADEN, 4, 40);
-  Event_SayThenWait(0x8009, 10);
+  SolStar_ShowMessageAndWait(0x8009, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
   Engine_EventWait(40);
-  Event_SayThenWait(0x8009, 40);
+  SolStar_ShowMessageAndWait(0x8009, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 6, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 6, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 6, 60);
@@ -1729,31 +1716,31 @@ static void Scene_EnterStarRoom(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
-  Event_SayThenWait(0x8009, 40);
+  SolStar_ShowMessageAndWait(0x8009, 40);
   Engine_EventSetMessage(MsgSolTheStarsHaveEnormousPower);
   Engine_ActorSetAnimation(JENNA, 4);
-  Event_SayThenWait(5, 10);
+  SolStar_ShowMessageAndWait(5, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Engine_ActorJump(ACTOR_KRADEN, 4, 40);
-  Event_SayThenWait(0xa009, 10);
+  SolStar_ShowMessageAndWait(0xa009, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(JENNA, 1);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-  Event_SayThenWait(0x8009, 40);
+  SolStar_ShowMessageAndWait(0x8009, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 0);
   Engine_ActorJump(GARET, 4, 40);
-  Event_SayThenWait(1, 10);
+  SolStar_ShowMessageAndWait(1, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 80);
-  Event_SayThenWait(0x8009, 10);
+  SolStar_ShowMessageAndWait(0x8009, 10);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1773,58 +1760,59 @@ static void Scene_EnterStarRoom(void) {
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
-  Event_SayThenWait(0x8009, 40);
+  SolStar_ShowMessageAndWait(0x8009, 40);
   rising = Actor_Get(ACTOR_KRADEN);
+  // Kraden demonstrates reaching the platforms, then asks the party to help.
   height = 192;
   Engine_TaskWait(6);
-  rising->speed = 0x30000;
-  rising->acceleration = 0x20000;
+  rising->speed = PIXELS(3);
+  rising->acceleration = PIXELS(2);
   Event_PlayCue(153);
   rising->velocityY = (height << 11);
-  Actor_MoveToAndWait(ACTOR_KRADEN, 0x1d7, 0x18b);
+  Actor_MoveToAndWait(ACTOR_KRADEN, 471, 395);
   Engine_TaskWait(6);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x4ccc, 0x2666);
-  kradenFlags = &rising->steeringFlags;
-  *kradenFlags &= 254;
-  Actor_SetDestination(ACTOR_KRADEN, 0x1d9, 0x18b);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
+  kradenSteeringFlags = &rising->steeringFlags;
+  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetDestination(ACTOR_KRADEN, 473, 395);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_SetDestination(ACTOR_KRADEN, 0x1d5, 0x18b);
+  Actor_SetDestination(ACTOR_KRADEN, 469, 395);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_SetDestination(ACTOR_KRADEN, 0x1d7, 0x18b);
+  Actor_SetDestination(ACTOR_KRADEN, 471, 395);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Event_SayThenWait(9, 10);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x19b);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x4ccc, 0x2666);
-  *kradenFlags &= 254;
-  Actor_SetDestination(ACTOR_KRADEN, 0x1da, 0x19b);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
-  Actor_SetDestination(ACTOR_KRADEN, 0x1d4, 0x19b);
+  SolStar_ShowMessageAndWait(9, 10);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 471, 411);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
+  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetDestination(ACTOR_KRADEN, 474, 411);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
-  Actor_SetDestination(ACTOR_KRADEN, 0x1d7, 0x19b);
+  Actor_SetDestination(ACTOR_KRADEN, 468, 411);
+  Engine_ActorWaitForMove(ACTOR_KRADEN);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetDestination(ACTOR_KRADEN, 471, 411);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 3);
-  Event_SayThenWait(9, 10);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x3333, 0x1999);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x18b);
+  SolStar_ShowMessageAndWait(9, 10);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 471, 395);
   Actor_SetBuiltinAction(ACTOR_KRADEN, ACTOR_ACTION_IDLE);
   Engine_EventWait(30);
   {
-    s32 flags = 1 | *kradenFlags;
-    *kradenFlags = flags;
+    s32 flags = 1 | *kradenSteeringFlags;
+    *kradenSteeringFlags = flags;
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   Engine_TaskWait(6);
-  rising->speed = 0x30000;
-  rising->acceleration = 0x20000;
+  rising->speed = PIXELS(3);
+  rising->acceleration = PIXELS(2);
   Event_PlayCue(153);
   rising->velocityY = (height << 11);
-  Actor_MoveToAndWait(ACTOR_KRADEN, 0x1d7, 0x168);
+  Actor_MoveToAndWait(ACTOR_KRADEN, 471, 360);
   Engine_TaskWait(6);
   Engine_EventWait(40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 80);
@@ -1833,14 +1821,14 @@ static void Scene_EnterStarRoom(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 40);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
-  Event_SayThenWait(0xa009, 30);
+  SolStar_ShowMessageAndWait(0xa009, 30);
   Actor_FaceDirection(JENNA, FACING_EAST, 30);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 6, 60);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 30);
-  Event_SayThenWait(5, 20);
+  SolStar_ShowMessageAndWait(5, 20);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorJump(GARET, 4, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -1855,7 +1843,7 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Engine_EventWait(20);
-  Event_SayThenWait(0x8009, 20);
+  SolStar_ShowMessageAndWait(0x8009, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1866,6 +1854,7 @@ static void Scene_EnterStarRoom(void) {
   Actor_FaceDirection(JENNA, FACING_EAST, 30);
   Event_OpenMessage(JENNA, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
+  // Jenna keeps asking until Isaac agrees to collect the stars.
   while (Engine_EventChooseYesNo(0, 0) != 0) {
     Engine_EventSetMessage(MsgSolJennaWontYouPlease);
     Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 0);
@@ -1877,45 +1866,45 @@ static void Scene_EnterStarRoom(void) {
   Engine_ActorSetAnimationAndWait(JENNA, 3);
   Engine_EventWait(20);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 30);
-  Event_SayThenWait(5, 10);
+  SolStar_ShowMessageAndWait(5, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x3333, 0x1999);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1d7, 0x160);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 471, 352);
   Engine_EventWait(20);
-  say8009 = 0x8009;
+  kradenMessageSpeaker = 0x8009;
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
-  Event_SayThenWait(say8009, 60);
-  *kradenFlags &= 254;
-  Actor_WalkToAndWait(ACTOR_KRADEN, 0x1c8, 0x168);
+  SolStar_ShowMessageAndWait(kradenMessageSpeaker, 60);
+  *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_KRADEN, 456, 360);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgSolTheBagsAreFromKradens);
-  Event_SayThenWait(5, 30);
+  SolStar_ShowMessageAndWait(5, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
-  Event_SayThenWait(1, 10);
+  SolStar_ShowMessageAndWait(1, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
-  Event_SayThenWait(say8009, 20);
+  SolStar_ShowMessageAndWait(kradenMessageSpeaker, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Event_SayThenWait(say8009, 10);
+  SolStar_ShowMessageAndWait(kradenMessageSpeaker, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Engine_EventWait(10);
-  Event_SayThenWait(say8009, 30);
+  SolStar_ShowMessageAndWait(kradenMessageSpeaker, 30);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
@@ -1925,7 +1914,7 @@ static void Scene_EnterStarRoom(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(10);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1935,23 +1924,25 @@ static void Scene_EnterStarRoom(void) {
   Actor_SetPosition(GARET, 0, 0);
   GameFlag_Set(FLAG_STAR_ROOM_EXPLAINED);
   Party_RemoveOwnerRestored(5);
-  Scene_GiveMythrilBags();
+  // Give out the bags and make the pedestal crossings available.
+  SolStar_GiveMythrilBags();
   Map_CopyCellAttributes(8, 0, 5, 1, 27, 17);
   gEventWork->transitionFrames = 16;
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   Engine_EventEnd();
 }
 
-s32 SolStar_ApplyEntryState(void) {
-  s32 base5F;
+// Restore pedestal state and run the first-arrival scene when needed.
+s32 SolStar_Initialize(void) {
+  s32 ringActor;
 
-  Engine_ColorBufferApplySource(0x10000, 0);
+  Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_GameFlagSet(0x144);
-  base5F = 15;
+  ringActor = 15;
   do {
-    Object_GetById(base5F)->collisionFlags = 0;
-    Engine_ActorSetSpritePriority(base5F++, 1);
-  } while ((u32)base5F <= 24);
+    Object_GetById(ringActor)->collisionFlags = 0;
+    Engine_ActorSetSpritePriority(ringActor++, 1);
+  } while ((u32)ringActor <= 24);
   SolStar_SetupElementalRings(15, 16);
   if (GameFlag_IsSet(0x83b) != 0) {
     Actor_SetPosition(9, PIXELS(456), PIXELS(360));
@@ -1996,18 +1987,20 @@ s32 SolStar_ApplyEntryState(void) {
   }
   if (Engine_GameFlagIsSet(0x83b) == 0) {
     if (gGameState.entrance == 10) {
-      Scene_EnterStarRoom();
+      SolStar_EnterStarRoom();
     }
   }
   return 0;
 }
 
-static void Event_SayThenWait(s32 speaker, s32 frames) {
+// Show the current message and wait the requested number of frames.
+static void SolStar_ShowMessageAndWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
+// Animate a star's icon and replace its owner's mythril bag with the star.
+static s32 SolStar_PresentStar(s32 item, s32 x, s32 y, s32 z) {
   GlyphTransfer *glyph;
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -2016,8 +2009,8 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
 
   glyph = NULL;
   actor = Engine_ObjectCreate(22, x, y, z);
-  owner = PartyInventory_FindOwner(224);
-  slot = Inventory_Find(owner, 224);
+  owner = PartyInventory_FindOwner(ITEM_MYTHRIL_BAG);
+  slot = Inventory_Find(owner, ITEM_MYTHRIL_BAG);
   if (actor == NULL)
     return owner;
   Engine_ObjectSetScript(actor, gSolStar_PresentItemScript);
@@ -2026,8 +2019,8 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  actor->velocityY = 0x28000;
-  actor->gravity = 0x4000;
+  actor->velocityY = PIXELS(5) / 2;
+  actor->gravity = PIXELS(1) / 4;
   glyph = Engine_HeapAllocate(17, sizeof(*glyph));
   Engine_ItemLoadIcon(item);
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
@@ -2041,67 +2034,73 @@ static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z) {
   return owner;
 }
 
-static void Scene_GiveMythrilBags(void) {
-  u8 *work = (u8 *)gEventWork;
-  s16 saved = *(s16 *)(work + 472);
-  s32 first;
-  s32 second;
-  s32 cnt;
+// Make inventory room and give the party four bags, preserving the dialogue.
+static void SolStar_GiveMythrilBags(void) {
+  struct EventWork *work = gEventWork;
+  s16 savedMessage = work->message;
+  s32 itemSlot;
+  s32 itemOwner;
+  s32 freeSlots;
 
   Engine_AudioPlayCue(0x53);
   Engine_ItemShowFound(ITEM_MYTHRIL_BAG, 3);
   Engine_MessageShowCentered(MsgSolGotFourMythrilBags, 1);
   do {
-    cnt = 30 - Inventory_Count(0);
-    cnt -= Inventory_Count(1);
+    freeSlots = 30 - Inventory_Count(0);
+    freeSlots -= Inventory_Count(1);
 
-    if (cnt <= 3) {
+    if (freeSlots <= 3) {
       Engine_MessageShowCentered(MsgSolTooManyItems, 1);
-      if (Shop_PickUnitItem(&second, &first) != -1)
-        Inventory_Discard(second, first);
+      if (Shop_PickUnitItem(&itemOwner, &itemSlot) != -1)
+        Inventory_Discard(itemOwner, itemSlot);
     }
-  } while (cnt <= 3);
+  } while (freeSlots <= 3);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
-  *(s16 *)(work + 472) = saved;
+  work->message = savedMessage;
 }
 
-static void SolStar_RiseActorFourteenSparks(void) {
-  struct EffectParams params;
-  struct EffectParams *p;
-  struct Actor *actor;
-  u32 i;
+// Emit sparks while Alex disappears and reappears.
+static void SolStar_AnimateAlexTeleport(void) {
+  struct EffectOptions options;
+  struct EffectOptions *effectOptions;
+  struct FieldActor *alex;
+  u32 frame;
   s32 x;
-  s32 r;
+  s32 xOffset;
 
-  actor = (struct Actor *)Object_GetById(14);
+  alex = Object_GetById(ACTOR_ALEX);
   Engine_AudioPlayCue(190);
-  Engine_ActorSetSpriteFlags((struct Actor *)Object_GetById(14), 0);
-  p = &params;
-  p->count = 1;
-  p->kind = 5;
-  p->tile = 0x11c;
-  p->spread = 0x6666;
-  p->rise = 0x30000;
-  for (i = 0; i <= 31; i++) {
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
+  effectOptions = &options;
+  effectOptions->priority = 1;
+  effectOptions->palette = 5;
+  effectOptions->type = 0x11c;
+  effectOptions->startScaleX = 2 * Q16_ONE / 5;
+  effectOptions->startScaleY = 3 * Q16_ONE;
+  for (frame = 0; frame <= 31; frame++) {
     Engine_EventWait(1);
-    if (!(i & 1)) {
-      r = (((u32)Engine_RandomNext() * 24) >> 16) << 16;
-      x = actor->x;
-      x += r;
-      x += -0xc0000;
+    if (!(frame & 1)) {
+      xOffset = (((u32)Engine_RandomNext() * 24) >> 16) << 16;
+      x = alex->x.fixed;
+      x += xOffset;
+      x += -PIXELS(12);
       Effect_Spawn(x,
-                   actor->y + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       0x200000,
-                   actor->z, 0, -0x40000, 0, 0x1b0000, p);
+                   alex->y.fixed +
+                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                       PIXELS(32),
+                   alex->z.fixed, 0, -PIXELS(4), 0,
+                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                   effectOptions);
     }
-    if (i == 20)
+    if (frame == 20)
       Engine_ActorSetChildValue(14, 0x100);
   }
   Engine_ActorSetChildValue(14, 0);
-  Engine_ActorSetSpriteFlags((struct Actor *)Object_GetById(14), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 1);
 }
 
 // Shared source is included here in ROM order.
@@ -2134,61 +2133,61 @@ s32 gSolStar_AngleScript[] = {
 };
 
 s32 gSolStar_PresentItemScript[] = {
-    SC_SET(SW_SCALE_X, 0x8000),
-    SC_SET(SW_SCALE_Y, 0x8000),
+    SC_SET(SW_SCALE_X, Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xc000),
-    SC_SET(SW_SCALE_Y, 0xc000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xe000),
-    SC_SET(SW_SCALE_Y, 0xe000),
+    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xf000),
-    SC_SET(SW_SCALE_Y, 0xf000),
+    SC_SET(SW_SCALE_X, 15 * Q16_ONE / 16),
+    SC_SET(SW_SCALE_Y, 15 * Q16_ONE / 16),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(16),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
     SC_END,
 };
 
-struct SceneEntrance gPlacement_Scripts[] = {
+struct SceneEntrance gSolStar_Entrances[] = {
     {0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gPlacement_Messages[] = {
+u32 gSolStar_Exits[] = {
     SCENE_EXITS(17),
     SCENE_EXIT(2, 18, 10),
     SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ScenePlacement gPlacement_Actors[] = {
+struct ScenePlacement gSolStar_Placements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2230,25 +2229,25 @@ struct ScenePlacement gPlacement_Actors[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gPlacement_Effects[] = {
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
-    { EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SCRIPT) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+struct SceneEvent gSolStar_Events[] = {
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToKraden) },
+    { EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToJenna) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToSaturos) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToMenardi) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToFelix) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToAlex) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSolKradenIAmResponsible) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SCRIPT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToJenna) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSolSaturosBringTheFinalStar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_TalkToMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSolAlexOnlyOneLeft) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_PreventLeavingBeforeCollectingStars) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_CheckLeaderAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolStar_CheckLeaderAhead) },
-    { SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(EV02_SEARCH) },
-    { SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(EV03_SEARCH) },
-    { SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(EV04_SEARCH) },
-    { SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(EV05_SEARCH) },
+    { SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(SolStar_CollectVenusStar) },
+    { SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(SolStar_CollectMercuryStar) },
+    { SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(SolStar_CollectJupiterStarAndMeetIntruders) },
+    { SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(SolStar_CollectMarsStar) },
     { SCENE_EVENTS_END },
 };
 

@@ -689,9 +689,12 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Actor_WalkTo(GARET, 150, 234);
   Actor_WalkToAndWait(IVAN, 134, 234);
   Engine_ActorSetAnimation(GARET, 1);
-  FieldObject_SetTargetAndCallback(0, 0x10003, gImil_PrimaryScript);
-  FieldObject_SetTargetAndCallback(1, 0x10003, gImil_PrimaryScript);
-  FieldObject_SetTargetAndCallback(2, 0x10003, gImil_PrimaryScript);
+  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 3,
+                                   gImil_PrimaryScript);
+  FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 3,
+                                   gImil_PrimaryScript);
+  FieldObject_SetTargetAndCallback(2, ACTOR_LINK_KEEP_MOTION | 3,
+                                   gImil_PrimaryScript);
   Engine_CameraWaitForMove();
   table = gImil_TurnScript;
   Actor_SetActionScript(9, table);

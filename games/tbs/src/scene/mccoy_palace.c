@@ -791,11 +791,15 @@ accepted:
   Actor_FaceDirection(19, FACING_EAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(19, 3);
   Engine_EventWait(20);
-  FieldObject_SetTargetAndCallback(0, 0x10013, gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 19,
+                                   gPalace_FacingActions);
   // Keep the party looking at its escort while he leaves the audience.
-  FieldObject_SetTargetAndCallback(1, 0x10013, gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(2, 0x10013, gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(3, 0x10013, gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 19,
+                                   gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(2, ACTOR_LINK_KEEP_MOTION | 19,
+                                   gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(3, ACTOR_LINK_KEEP_MOTION | 19,
+                                   gPalace_FacingActions);
   Actor_SetSpeed(19, 0x9999, 0x4ccc);
   Actor_WalkToAndWait(19, 852, 646);
   Actor_WalkToAndWait(19, 852, 666);
@@ -811,7 +815,8 @@ accepted:
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  FieldObject_SetTargetAndCallback(19, 0x10000, gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(
+      19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gPalace_FacingActions);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   record = Object_GetById(ACTOR_PARTY_LEADER);
   if (record != 0) {
@@ -1161,7 +1166,8 @@ static void RunEventScript02(void) {
   Actor_SetPosition(MIA, 0, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
-  FieldObject_SetTargetAndCallback(0, 0x10013, gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 19,
+                                   gPalace_FacingActions);
   Actor_WalkToAndWait(19, 852, 646);
   Actor_WalkToAndWait(19, 852, 666);
   Actor_WalkToAndWait(19, 864, 672);

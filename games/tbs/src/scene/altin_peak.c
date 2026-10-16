@@ -1167,7 +1167,8 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_CameraSetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   Engine_CameraWaitForMove();
-  FieldObject_SetTargetAndCallback(10, 0x10000, gAltinPeak_ActorScript);
+  FieldObject_SetTargetAndCallback(
+      10, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gAltinPeak_ActorScript);
   Engine_GameFlagSet(0x904);
   Engine_EventEnd();
 }
@@ -1341,7 +1342,9 @@ static void AltinPeak_ApplyEntryState(void) {
     actor->y.fixed = PIXELS(32);
     Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
     Actor_SetPosition(10, PIXELS(260), PIXELS(215));
-    FieldObject_SetTargetAndCallback(10, 0x10000, gAltinPeak_ActorScript);
+    FieldObject_SetTargetAndCallback(
+        10, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+        gAltinPeak_ActorScript);
   } else {
     map = gMapWork[0];
     Engine_ActorSetPosition(10, 0, 0);

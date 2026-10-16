@@ -585,8 +585,10 @@ static void EV07_TOUCH(void) {
   }
   Engine_ActorWaitForMove(JENNA);
   Actor_SetPosition(JENNA, 0, 0);
-  FieldObject_SetTargetAndCallback(14, 0x10000, gKraden_StrangerActions);
-  FieldObject_SetTargetAndCallback(15, 0x10000, gKraden_StrangerActions);
+  FieldObject_SetTargetAndCallback(
+      14, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKraden_StrangerActions);
+  FieldObject_SetTargetAndCallback(
+      15, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKraden_StrangerActions);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
 }
@@ -735,8 +737,12 @@ s32 ValeKraden_RestoreEntryState(void) {
       if (Engine_GameFlagIsSet(0x808) != 0) {
         Actor_SetPosition(14, 0x1880000, 0x1780000);
         Actor_SetPosition(15, 0x1780000, 0x1780000);
-        FieldObject_SetTargetAndCallback(14, 0x10000, gKraden_StrangerActions);
-        FieldObject_SetTargetAndCallback(15, 0x10000, gKraden_StrangerActions);
+        FieldObject_SetTargetAndCallback(
+            14, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            gKraden_StrangerActions);
+        FieldObject_SetTargetAndCallback(
+            15, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            gKraden_StrangerActions);
       }
     }
     if (Engine_GameFlagIsSet(0x87a) != 0) {
@@ -800,8 +806,10 @@ static void ValeKraden_RunActorSequence(void) {
         Engine_ActorSetAnimationAndWait(11, 3);
         Engine_EventShowMessageAndWait(11, 0, 10);
         Engine_ActorSetAnimationAndWait(11, 3);
-        FieldObject_SetTargetAndCallback(0, 0x1000b, gKraden_StrangerActions);
-        FieldObject_SetTargetAndCallback(1, 0x1000b, gKraden_StrangerActions);
+        FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 11,
+                                         gKraden_StrangerActions);
+        FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 11,
+                                         gKraden_StrangerActions);
         Object_SetActionCallbackAndRefreshById(
             11, (s32)gKraden_Actor11RockslideActions);
         Engine_ActorStop(0);

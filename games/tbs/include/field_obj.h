@@ -92,6 +92,9 @@ STATIC_ASSERT(offsetof(struct FieldActor, update) == 0x6c);
 
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 
+// Preserve the current action and motion when assigning a linked target.
+enum ActorLinkFlag { ACTOR_LINK_KEEP_MOTION = 0x10000 };
+
 enum ActorPriorityFlag {
   ACTOR_PRIORITY_AUTOMATIC = 0x01,
   ACTOR_PRIORITY_UNDERFOOT = 0x02

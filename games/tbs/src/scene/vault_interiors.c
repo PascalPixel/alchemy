@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "animspr.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -1244,7 +1245,6 @@ static void FieldScene_ConfigurePairedActors(void) {
 }
 
 static void FieldScene_SelectActorPair(void) {
-  u8 *record;
   s32 actor;
   struct EventWork *work;
 
@@ -1310,16 +1310,21 @@ static void FieldScene_SelectActorPair(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Engine_EventWait(40);
-  record = (u8 *)Object_GetById(0);
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
-  record = (u8 *)Object_GetById(1);
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
-  record = (u8 *)Object_GetById(2);
-
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(0)->sprite;
+    sprite->part[0].priority = 1;
+  }
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(1)->sprite;
+    sprite->part[0].priority = 1;
+  }
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(2)->sprite;
+    sprite->part[0].priority = 1;
+  }
   gEventWork->transitionFrames = 24;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventCloseScreen();
@@ -1346,7 +1351,6 @@ static void FieldScene_SelectActorPair(void) {
 }
 
 static void VaultInteriors_RunBranchingDialogueScene(void) {
-  u8 *record;
   s32 v5;
 
   Audio_PlayCueFromEventWork();
@@ -1363,15 +1367,21 @@ static void VaultInteriors_RunBranchingDialogueScene(void) {
   Actor_SetPosition(0, 0xf80000, 0x2d80000);
   Actor_SetPosition(2, 0x1080000, 0x2e80000);
   Engine_ActorSetPosition(1, 0xe80000, 0x2e80000);
-  record = (u8 *)Object_GetById(0);
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
-  record = (u8 *)Object_GetById(1);
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
-  record = (u8 *)Object_GetById(2);
-  ((struct FieldSpritePriority *)((struct FieldActor *)record)->sprite)
-      ->priority = 1;
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(0)->sprite;
+    sprite->part[0].priority = 1;
+  }
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(1)->sprite;
+    sprite->part[0].priority = 1;
+  }
+  {
+    struct AnimationObject *sprite =
+        (struct AnimationObject *)Object_GetById(2)->sprite;
+    sprite->part[0].priority = 1;
+  }
   Engine_ActorFaceEachOther(0, 2, 0);
   FieldScene_RunSplitTripleSteps(1, 2, 30);
   Actor_SetPosition(24, 0x680000, 0x2b80000);

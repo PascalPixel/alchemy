@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "animspr.h"
 #include "window.h"
 #include "unit/scene/vault.h"
 #include "unit/scene/common/vault_range.h"
@@ -539,8 +540,7 @@ static void EV07_TOUCH(void) {
 
 static void EV08_TOUCH(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldSpritePriority *sprite =
-      (struct FieldSpritePriority *)actor->sprite;
+  struct AnimationObject *sprite = (struct AnimationObject *)actor->sprite;
 
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVault_Scene8Cells, 54, 13);
@@ -549,14 +549,13 @@ static void EV08_TOUCH(void) {
     Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   }
   actor->priorityFlags &= ~1;
-  sprite->priority = 3;
+  sprite->part[0].priority = 3;
   SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
 
 static void EV09_TOUCH(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldSpritePriority *sprite =
-      (struct FieldSpritePriority *)actor->sprite;
+  struct AnimationObject *sprite = (struct AnimationObject *)actor->sprite;
 
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVault_Scene9Cells, 49, 10);
@@ -565,7 +564,7 @@ static void EV09_TOUCH(void) {
     Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   }
   actor->priorityFlags &= ~1;
-  sprite->priority = 3;
+  sprite->part[0].priority = 3;
   SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
 
@@ -580,8 +579,7 @@ static void EV10_TOUCH(void) {
 
 static void EV12_TOUCH(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldSpritePriority *sprite =
-      (struct FieldSpritePriority *)actor->sprite;
+  struct AnimationObject *sprite = (struct AnimationObject *)actor->sprite;
 
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVault_Scene12Cells, 35, 9);
@@ -590,7 +588,7 @@ static void EV12_TOUCH(void) {
     Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   }
   actor->priorityFlags &= ~1;
-  sprite->priority = 3;
+  sprite->part[0].priority = 3;
   SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 

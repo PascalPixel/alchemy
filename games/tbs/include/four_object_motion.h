@@ -5,11 +5,13 @@
 #include "global_cells.h"
 #include "static_assert.h"
 
+struct AnimationObject;
+
 struct FourObjectMotionState {
   u8 unk000[0x144];
   s16 verticalOrigins[4];
   u8 unk14c[0xd8];
-  void *objects[4];
+  struct AnimationObject *objects[4];
   s16 positionsX[4];
   s16 positionsY[4];
   s32 phases[4];

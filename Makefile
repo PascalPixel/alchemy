@@ -387,7 +387,7 @@ $(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 tools:
 	$(MAKE) -f tools/Makefile
 
-test:
+test: tools
 	$(MAKE) -f tools/Makefile test
 
 # Reconstruction work is optional. Normal builds use only the C tools above.

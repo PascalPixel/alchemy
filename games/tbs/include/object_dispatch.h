@@ -12,7 +12,7 @@ struct DispatchObject {
   s32 value34;
   u8 unk38[0x18];
   union {
-    void *child;
+    struct AnimationObject *child;
     void **children;
   } target;
   u8 kind;

@@ -6,6 +6,8 @@
 #include "static_assert.h"
 #include "types.h"
 
+struct AnimationObject;
+
 // Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
 struct BattleCanvasOrigin {
   s32 x;
@@ -61,7 +63,7 @@ struct BattleEffectWork {
   u16 padding77ce;
   s32 bg2x;
   s32 bg2y;
-  void *objects[16];
+  struct AnimationObject *objects[16];
   u8 actorTimers[8];
   s32 framesSinceTransfer;
   s32 transferPending;

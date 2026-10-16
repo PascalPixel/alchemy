@@ -943,10 +943,10 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
         previous = ObjectTable_Get(actorIndex - 1);
         if (previous->animationKind == 1 && object->animationKind == 1) {
           sprite = previous->animation;
-          sprite->displayFlags |= 1;
+          sprite->retainCacheEntry = 1;
           spriteSlot = sprite->slot;
           sprite = object->animation;
-          sprite->displayFlags |= 1;
+          sprite->retainCacheEntry = 1;
           Resource_ResetEntry(sprite->slot);
           sprite->slot = spriteSlot;
         }

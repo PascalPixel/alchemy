@@ -1519,8 +1519,8 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
 
     if (sprite != NULL) {
       AnimationObjects_SelectAnimationFar(sprite, 1);
-      ((struct FieldSprite *)sprite)->flags = 0;
-      ((struct FieldSprite *)sprite)->priority = 0;
+      sprite->flags = 0;
+      sprite->part[0].priority = 0;
     }
 
     menu->partyMemberIcons[i] = sprite;
@@ -1587,13 +1587,12 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
   if (window != NULL) {
     for (i = 0; i < 4; i++) {
       struct AnimationObject *sprite =
-          (struct AnimationObject *)ResourceObject_CreateFar(
-              gMenu_PartySpriteResourceIds[i]);
+          ResourceObject_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
         AnimationObjects_SelectAnimationFar(sprite, 2);
-        ((struct FieldSprite *)sprite)->flags = 0;
-        ((struct FieldSprite *)sprite)->priority = 0;
+        sprite->flags = 0;
+        sprite->part[0].priority = 0;
       }
 
       menu->objects[i] = sprite;

@@ -2,6 +2,7 @@
 // and the rising pillars used to cross the interior pools.
 
 #include "script.h"
+#include "animspr.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "heap_state.h"
@@ -522,7 +523,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
       24, source->x.fixed, source->y.fixed, source->z.fixed);
 
   if (effect != 0) {
-    struct FieldSprite *sprite = effect->sprite;
+    struct AnimationObject *sprite = (struct AnimationObject *)effect->sprite;
 
     Engine_ObjectSetScript(effect, gMercuryEntrance_RiseScript);
     effect->motionFlags = 0;
@@ -531,7 +532,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
     if (sprite != 0) {
       AnimationObjects_SelectAnimation(sprite, 2);
       sprite->flags = 0;
-      ((struct FieldSpritePriority *)sprite)->priority = 3;
+      sprite->part[0].priority = 3;
     }
   }
 }

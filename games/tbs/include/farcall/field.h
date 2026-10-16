@@ -8,11 +8,11 @@ void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite,
                                        s32 facing);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state,
                                         s32 flags);
-struct ResourceObject *ResourceObject_CreateFar(s32 id);
-void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
+struct AnimationObject *ResourceObject_CreateFar(s32 id);
+void ResourceObject_ReleaseFar(struct AnimationObject *sprite);
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *state, s32 id);
 void ResourceMetadata_UnregisterFar(struct AnimationObject *state, s32 handle);
-void ResourceMetadata_ClearRecordFar(void *dst);
+void ResourceMetadata_ClearRecordFar(struct AnimationEntry *layer);
 void Animation_SetWorkEntryFar(struct AnimationEntry *work, s32 no);
 void ObjectSystem_InitializeFar(s32 mode);
 void ObjectDispatch_ApplyArgumentToChildrenFar(void *raw, s32 no);

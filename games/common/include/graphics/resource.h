@@ -7,9 +7,10 @@
 #include "farcall.h"
 #endif
 
+#if GAME_TLA
 struct ResourceObject;
 struct ResourceObjectWork;
-#if GAME_TLA
+
 struct ResourceObject *ResourceObject_Create(s32 resource);
 void ResourceObject_Release(struct ResourceObjectWork *work);
 struct ResourceObject *ResourceObject_CreateFar(s32 resource);

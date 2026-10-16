@@ -2462,19 +2462,19 @@ static void SceneState_SetValue19ThenCall(void) {
 }
 
 static void ValeStorm_CopyLeaderSpritePriority(void) {
-  struct FieldSpritePriority *src;
-  struct FieldSpritePriority *dst;
-  struct FieldSpritePriority *dst2;
+  struct AnimationObject *sourceSprite;
+  struct AnimationObject *targetSprite;
+  struct AnimationObject *secondTargetSprite;
 
-  src = (struct FieldSpritePriority *)Object_GetById(0)->sprite;
+  sourceSprite = (struct AnimationObject *)Object_GetById(0)->sprite;
 #if TBS_PATCH_3
-  Engine_ActorSetSpritePriority(22, src->priority);
-  Engine_ActorSetSpritePriority(8, src->priority);
+  Engine_ActorSetSpritePriority(22, sourceSprite->part[0].priority);
+  Engine_ActorSetSpritePriority(8, sourceSprite->part[0].priority);
 #else
-  dst = (struct FieldSpritePriority *)Object_GetById(22)->sprite;
-  dst->priority = src->priority;
-  dst2 = (struct FieldSpritePriority *)Object_GetById(8)->sprite;
-  dst2->priority = src->priority;
+  targetSprite = (struct AnimationObject *)Object_GetById(22)->sprite;
+  targetSprite->part[0].priority = sourceSprite->part[0].priority;
+  secondTargetSprite = (struct AnimationObject *)Object_GetById(8)->sprite;
+  secondTargetSprite->part[0].priority = sourceSprite->part[0].priority;
 #endif
 }
 

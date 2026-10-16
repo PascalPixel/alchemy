@@ -577,11 +577,11 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
 }
 
 // Places a sprite at 3D point for the fixed camera and queues it for drawing:
-// projected to the screen and scaled by its distance (unless displayFlags bit
-// 1 keeps its own scale), with an affine matrix as needed and its shadow on
+// projected to the screen and scaled by its distance (unless useOwnScale
+// keeps its own scale), with an affine matrix as needed and its shadow on
 // the ground below. depth 0 sorts it by distance; any other value is its draw
-// slot. A sprite off screen gives up its VRAM cache entry unless displayFlags
-// bit 0 holds it.
+// slot. A sprite off screen gives up its VRAM cache entry unless
+// retainCacheEntry holds it.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
                                  s32 *scale, s32 facing, s32 depth) {
   s32 flip;
@@ -606,7 +606,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
     z = Render_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {
-      if (sprite->displayFlags & 2)
+      if (sprite->useOwnScale)
         z = sprite->scale;
       else
         z = Iwram_MulQ16(z, sprite->scale);
@@ -685,7 +685,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   }
   // Invisible sprites release cached tiles unless their display flags hold
   // them.
-  if (!(sprite->displayFlags & 1)) {
+  if (!sprite->retainCacheEntry) {
     VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
   }
@@ -920,7 +920,7 @@ void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
   u32 i;
 
   if (sprite != NULL && layer != 0) {
-    ResourceMetadata_ClearRecord(layer);
+    ResourceMetadata_ClearRecord((struct AnimationEntry *)layer);
     // Locate the handle, then trim only empty slots at the end of the list.
     for (index = 0; index < ANIMATION_LAYER_COUNT; index++) {
       if (layer == (s32)sprite->entries[index])
@@ -1159,21 +1159,18 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
 }
 
 // Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
-void ResourceMetadata_ClearRecord(void *record) {
+void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
   if (record != 0) {
-    Dma_Fill32(0, record, sizeof(struct AnimationEntry));
+    Dma_Fill32(0, record, sizeof(*record));
   }
 }
 
 // Creating and releasing animated sprites, and measuring animation lengths.
 
-typedef char
-    ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
-
 // Creates a sprite for animation id, taking one of the 64 free sprites and a
 // VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
 // no room or the id has no image.
-struct ResourceObject *ResourceObject_Create(s32 id) {
+struct AnimationObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationObject *sprite;
   struct AnimationObject *freeSprite;
@@ -1259,20 +1256,20 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
        after a same-byte reload keeps the carrier (differ 32 -> 0). */
     freeSprite->dirty = freeSprite->dirty;
   }
-  return (struct ResourceObject *)freeSprite;
+  return freeSprite;
 }
 
-// Releases a sprite: its VRAM cache entry (unless bit 0 of flags is set),
+// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
 // its four animation layers, and then zeroes its 56 bytes.
-void ResourceObject_Release(struct ResourceObjectWork *sprite) {
+void ResourceObject_Release(struct AnimationObject *sprite) {
   s32 remaining;
-  void **layer;
+  struct AnimationEntry **layer;
 
   if (sprite) {
     // Release dependent records before clearing the sprite itself.
-    if (!(sprite->flags & 1))
-      Resource_ResetEntry(sprite->resource);
-    layer = sprite->children;
+    if (!sprite->retainCacheEntry)
+      Resource_ResetEntry(sprite->slot);
+    layer = sprite->entries;
     remaining = ANIMATION_LAYER_COUNT - 1;
     do {
       ResourceMetadata_ClearRecord(*layer++);
@@ -1503,7 +1500,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 // Releases an object's sprites and zeroes it, freeing it.
 void ObjectDispatch_Release(struct DispatchObject *object) {
   s32 spritesRemaining;
-  struct ResourceObjectWork **sprites;
+  void **sprites;
 
   if (object) {
     switch (object->kind & 15) {
@@ -1511,10 +1508,10 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
       ResourceObject_Release(object->target.child);
       break;
     case 2: // up to four sprites
-      sprites = (struct ResourceObjectWork **)object->target.children;
+      sprites = object->target.children;
       spritesRemaining = 3;
       do {
-        struct ResourceObjectWork *sprite = *sprites++;
+        struct AnimationObject *sprite = *sprites++;
         if (sprite)
           ResourceObject_Release(sprite);
       } while (--spritesRemaining >= 0);
@@ -1533,7 +1530,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
   struct FieldActor *actor;
   struct ScriptMotionObject *motion;
   struct ScriptObjectRuntime *scripted;
-  void *sprite;
+  struct AnimationObject *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
 
@@ -1678,7 +1675,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object,
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation) {
   if (object != 0 && (object->kind & 0xf) == 1)
-    ((struct FieldSprite *)object->target.child)->rotation = rotation;
+    object->target.child->rotation = rotation;
 }
 
 // Gives a one-sprite object's first layer animation id animId and restarts
@@ -1778,25 +1775,25 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
                                         u32 flags) {
   if (object != NULL) {
     if ((object->kind & 0xf) == 1)
-      ((struct AnimationObject *)object->target.child)->flags = flags;
+      object->target.child->flags = flags;
   }
 }
 
 // Sets the OAM blend mode of a one-sprite object's sprite.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == 1) {
-    struct FieldSprite *sprite = object->target.child;
-    sprite->blendMode = mode;
+    struct AnimationObject *sprite = object->target.child;
+    sprite->part[0].objectMode = mode;
   }
 }
 
-// Sets bit 1 of a one-sprite object's displayFlags: when set, the fixed
-// camera draws it at its own scale, not scaled by distance.
-void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *object,
-                                         u32 fixedScale) {
+// Makes the fixed camera draw a one-sprite object at its own scale instead of
+// scaling it by distance.
+void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
+                                       u32 fixedScale) {
   if (object != 0 && object->kind == 1) {
-    struct FieldSprite *sprite = object->target.child;
-    sprite->unk1d1 = fixedScale;
+    struct AnimationObject *sprite = object->target.child;
+    sprite->useOwnScale = fixedScale;
   }
 }
 
@@ -7134,7 +7131,12 @@ void Ui_RunIconMonitor(void) {
   struct SpritePlacement *ring;
   s32 selectedLayer;
   u32 spriteSteps;
-  s32 spriteOrFlagsAddress;
+  // The selected resource offset becomes its sprite, then its flags address.
+  union {
+    s32 resourceOffset;
+    struct AnimationObject *sprite;
+    u8 *flags;
+  } spriteWork;
   s32 changed;
   /* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared
    * (keystate.h): each *held and *repeat is a load of its own. A plain held
@@ -7184,26 +7186,23 @@ restart:
 
   for (i = 0; i <= 9; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].number);
-    spriteOrFlagsAddress = 0;
+    spriteWork.resourceOffset = 0;
     if (spriteMetadata->drawKind == 20 && (i & 1) != 0) {
-      spriteOrFlagsAddress = 1;
+      spriteWork.resourceOffset = 1;
     }
-    spriteOrFlagsAddress = (s32)ResourceObject_Create(
-        layers[0].number + spriteOrFlagsAddress + (spriteOrFlagsAddress << 12));
-    ResourceMetadata_Register((struct AnimationObject *)spriteOrFlagsAddress,
-                              layers[1].number);
-    ResourceMetadata_Register((struct AnimationObject *)spriteOrFlagsAddress,
-                              layers[2].number);
-    ResourceMetadata_Register((struct AnimationObject *)spriteOrFlagsAddress,
-                              layers[3].number);
+    spriteWork.sprite =
+        ResourceObject_Create(layers[0].number + spriteWork.resourceOffset +
+                              (spriteWork.resourceOffset << 12));
+    ResourceMetadata_Register(spriteWork.sprite, layers[1].number);
+    ResourceMetadata_Register(spriteWork.sprite, layers[2].number);
+    ResourceMetadata_Register(spriteWork.sprite, layers[3].number);
     /* FAKEMATCH: needed to match: the native adds the flags offset to the
      * object's own register (r5) in place; a separate address takes a copy.
      * Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the
      * same through a pointer local, or a byte offset from alt all differ 55; a
      * separate object variable 128 (the index and the object share r5). */
-    spriteOrFlagsAddress =
-        (s32)&((struct AnimationObject *)spriteOrFlagsAddress)->flags;
-    *(u8 *)spriteOrFlagsAddress = shadowsEnabled;
+    spriteWork.flags = &spriteWork.sprite->flags;
+    *spriteWork.flags = shadowsEnabled;
   }
 
   for (i = 0; i <= 3; i++) {

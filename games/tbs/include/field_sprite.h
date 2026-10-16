@@ -40,11 +40,4 @@ STATIC_ASSERT(offsetof(struct FieldSprite, vramBlock) == 0x1c);
 STATIC_ASSERT(offsetof(struct FieldSprite, rotation) == 0x1e);
 STATIC_ASSERT(offsetof(struct FieldSprite, partCount) == 0x27);
 
-struct FieldSpritePriority {
-  u8 unk00[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-};
-
 #endif

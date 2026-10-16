@@ -732,7 +732,7 @@ static void Houses_PlaceSheltering(void) {
 // priority 1 and at 0.3 scale.
 static void Spray_Initialize(struct SprayActor *spray) {
   spray->motionFlags = 0;
-  spray->sprite->priority = 1;
+  spray->sprite->part[0].priority = 1;
   ObjectGroup_SetChildValue(spray, 3);
   Engine_ActorSetSpriteFlags((struct FieldActor *)spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;

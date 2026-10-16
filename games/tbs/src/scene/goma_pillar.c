@@ -17,6 +17,7 @@
 #include "system.h"
 #include "mapcopy.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "staged_actor.h"
@@ -107,7 +108,7 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
   struct ScriptTable table;
   struct FieldActor *leader;
   struct FieldActor *obj;
-  struct FieldSprite *spr;
+  struct AnimationObject *sprite;
   u32 selection;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -115,12 +116,12 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
   obj = Engine_ObjectCreate(222, x, y, z);
   if (obj == 0)
     return;
-  spr = obj->sprite;
+  sprite = (struct AnimationObject *)obj->sprite;
   Object_SetMode(obj, (flags + 1) & 15);
   Engine_ObjectSetScript(obj, table.script[flags & 15]);
   ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
   obj->motionFlags = 0;
-  spr->flags = 0;
+  sprite->flags = 0;
   obj->update = SceneEffect_AdvancePositionByAxisMode;
   obj->speed = firstRate;
   obj->acceleration = secondRate;
@@ -128,14 +129,14 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
   selection = (u32)layer >> 16;
   switch (selection) {
   case 0:
-    ((struct FieldSpritePriority *)spr)->priority =
-        ((struct FieldSpritePriority *)leader->sprite)->priority;
+    sprite->part[0].priority =
+        ((struct AnimationObject *)leader->sprite)->part[0].priority;
     break;
   case 1:
   case 2:
   case 3:
     obj->priorityFlags &= 0xfe;
-    ((struct FieldSpritePriority *)spr)->priority = selection;
+    sprite->part[0].priority = selection;
     break;
   }
 }

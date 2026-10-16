@@ -2623,7 +2623,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
   s32 recordIndex;
-  void *record;
+  struct AnimationObject *record;
 
   battleObject = BattleObjGet(unitId);
   if (battleObject != NULL) {

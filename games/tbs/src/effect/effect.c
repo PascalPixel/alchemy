@@ -54,7 +54,6 @@
 #include "irq.h"
 #include "unit/effect/effect_bits.h"
 #include "call.h"
-#include "field_sprite.h"
 
 // The battle screen's display mode while an effect plays: background mode 1
 // with BG0 to BG2, sprites and both windows on.
@@ -9497,7 +9496,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
     scale = gBattleFx10_UnitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
-        ((struct FieldSpritePriority *)work->objects[i])->priority = 0;
+        work->objects[i]->part[0].priority = 0;
       }
     }
     if (frame > 208) {
@@ -9663,7 +9662,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
   // into bouncing chips.
   //------------------------------------------------------------------
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+    ResourceObject_ReleaseFar(work->objects[i]);
   }
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = 0x1010;
@@ -12182,8 +12181,7 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
     if (object != 0) {
       object->flags = 0;
       AnimationObjects_SelectAnimationFar(object, entryIndex);
-      ((struct AnimationObject *)work->objects[entryIndex])->part[0].priority =
-          variant;
+      work->objects[entryIndex]->part[0].priority = variant;
     }
     entryIndex++;
   } while (entryIndex != entryCount);
@@ -13078,7 +13076,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+    ResourceObject_ReleaseFar(work->objects[i]);
   REG_BG2PA = 0x80;
   REG_DISPCNT = 0x7741;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
@@ -16598,7 +16596,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
     BattleEffect_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+    ResourceObject_ReleaseFar(work->objects[i]);
   }
   BattleFx_EndCanvasLayer();
 }
@@ -17154,7 +17152,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
     if (rock != 0) {
       rock->flags = 0;
       AnimationObjects_SelectAnimationFar(rock, i / 4);
-      ((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
+      work->objects[i]->part[0].priority = 1;
     }
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -19842,7 +19840,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       if (object != 0) {
         object->flags = 0;
         AnimationObjects_SelectAnimationFar(object, 2);
-        ((struct AnimationObject *)work->objects[i])->part[0].priority = 3;
+        work->objects[i]->part[0].priority = 3;
       }
     }
   } else {
@@ -20342,7 +20340,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
     if (object != 0) {
       object->flags = 0;
       AnimationObjects_SelectAnimationFar(object, i % 3);
-      ((struct AnimationObject *)work->objects[9 + i])->part[0].priority = 1;
+      work->objects[9 + i]->part[0].priority = 1;
     }
   }
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
@@ -21904,13 +21902,12 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   }
 
   for (i = 0; i != 16; i++) {
-    struct AnimationObject *obj =
-        (struct AnimationObject *)ResourceObject_CreateFar(0x186);
+    struct AnimationObject *obj = ResourceObject_CreateFar(0x186);
     work->objects[i] = obj;
     if (obj != 0) {
       obj->flags = 0;
       AnimationObjects_SelectAnimationFar(obj, (i % 3));
-      ((struct AnimationObject *)work->objects[i])->part[0].priority = 0;
+      work->objects[i]->part[0].priority = 0;
     }
   }
 

@@ -2,6 +2,7 @@
 #define ALCHEMY_ALTIN_H
 
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
 
@@ -34,7 +35,7 @@ struct SprayActor {
   s32 scaleX;
   s32 scaleY;
   u8 gap32[48];
-  struct FieldSpritePriority *sprite;
+  struct AnimationObject *sprite;
   u8 gap84;
   u8 motionFlags;
 };

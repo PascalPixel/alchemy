@@ -11,8 +11,6 @@ struct DispatchObject;
 struct FieldPosition;
 struct MapScanline;
 struct ObjectRuntime;
-struct ResourceObject;
-struct ResourceObjectWork;
 struct ScriptInterpreter;
 struct ScriptObjectEntry;
 struct ScriptObjectRuntime;
@@ -47,9 +45,9 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
                                           s32 step);
 void ObjectSystem_Configure(s32 mode);
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
-void ResourceMetadata_ClearRecord(void *dst);
-struct ResourceObject *ResourceObject_Create(s32 id);
-void ResourceObject_Release(struct ResourceObjectWork *sprite);
+void ResourceMetadata_ClearRecord(struct AnimationEntry *layer);
+struct AnimationObject *ResourceObject_Create(s32 id);
+void ResourceObject_Release(struct AnimationObject *sprite);
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
 void Map_RenderAnimatedTileFramesForObject(u8 *sprite);
@@ -131,14 +129,6 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
 void Ui_SetGridColumnParameter(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
 
-struct ResourceObjectWork {
-  u8 unk00[28];
-  u8 resource; // VRAM cache index
-  u8 flags;    // Bit 0: do not release the VRAM cache entry.
-  u8 unk1e[10];
-  void *children[4];
-};
-
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out);
 void ObjectSystem_Initialize(s32 mode);
 void ResourceTable_ReservedNoOpC0C4(void);
@@ -165,8 +155,8 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
 void ObjectDispatch_WaitForValue16(void *rawObject);
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags);
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode);
-void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj,
-                                         u32 fixedScale);
+void ObjectDispatch_SetChildFixedScale(struct DispatchObject *obj,
+                                       u32 fixedScale);
 void Animation_ApplyChildValues(struct DispatchObject *obj, u32 param);
 void Graphics_EnableObjLayerAndCallbacks(void);
 void ObjectDispatch_StopCallbacksAndHideLayers(void);

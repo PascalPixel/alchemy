@@ -1,4 +1,5 @@
 #include "script.h"
+#include "animspr.h"
 #include "version.h"
 #include "game_state.h"
 #include "keystate.h"
@@ -896,14 +897,14 @@ static void Imil_CastPsynergyAtActorNine(void) {
 }
 
 static void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work) {
-  struct FieldSpritePriority *rec;
+  struct AnimationObject *sprite;
 
   work->motionFlags = 0;
   work->timer = 0;
   work->priorityFlags &= ~1;
 
-  rec = (struct FieldSpritePriority *)work->sprite;
-  rec->priority = 1;
+  sprite = (struct AnimationObject *)work->sprite;
+  sprite->part[0].priority = 1;
 
   ObjectGroup_SetChildValue(work, 9);
   Engine_ActorSetSpriteFlags(work, 0);

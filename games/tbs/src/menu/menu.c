@@ -631,8 +631,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   // Create and position the figures before scheduling their updates.
   for (i = 0; i < ownerCount; i++) {
     struct AnimationObject *figure =
-        (struct AnimationObject *)ResourceObject_CreateFar(
-            Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+        ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
     if (figure != 0) {
       s32 offsetX;
       s32 windowX;
@@ -676,7 +675,7 @@ void Menu_ReleaseEntryObjects(void) {
     figures = menu->tabObjects;
     i = count;
     do {
-      void *figure = *figures++;
+      struct AnimationObject *figure = *figures++;
 
       if (figure != 0) {
         ResourceObject_ReleaseFar(figure);

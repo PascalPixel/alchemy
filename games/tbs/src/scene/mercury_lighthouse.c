@@ -2507,7 +2507,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 // Create the rising effect at the source actor and set its sprite priority.
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   struct FieldActor *effect;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
 
   effect = Engine_ObjectCreate(24, source->x.fixed, source->y.fixed,
                                source->z.fixed);
@@ -2515,7 +2515,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
     return;
   }
 
-  sprite = effect->sprite;
+  sprite = (struct AnimationObject *)effect->sprite;
   Engine_ObjectSetScript(effect, gMercuryLighthouse_RiseScript);
 
   effect->motionFlags = 0;
@@ -2525,7 +2525,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   if (sprite != 0) {
     AnimationObjects_SelectAnimation(sprite, 2);
     sprite->flags = 0;
-    ((struct FieldSpritePriority *)sprite)->priority = 3;
+    sprite->part[0].priority = 3;
   }
 }
 

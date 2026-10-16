@@ -13,6 +13,7 @@
 #define NULL ((void *)0)
 #include "global_cells.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "field_effect.h"
@@ -111,7 +112,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   effect = Engine_ObjectCreate(type, x, y, z);
   if (effect != 0) {
-    ((struct FieldSpritePriority *)effect->sprite)->priority = 0;
+    ((struct AnimationObject *)effect->sprite)->part[0].priority = 0;
     VenusLighthouse_ConfigurePassageEffect(effect, 14);
     Engine_ObjectSetBlendMode(effect, 1);
     return effect;
@@ -126,7 +127,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   object = Engine_ObjectCreate(type, x, y, z);
   if (object != 0) {
-    ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+    ((struct AnimationObject *)object->sprite)->part[0].priority = 1;
     VenusLighthouse_ConfigurePassageEffect(object, 15);
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     return object;

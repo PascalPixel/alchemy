@@ -25,6 +25,7 @@
 #include "system.h"
 #include "global_cells.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
@@ -2007,7 +2008,7 @@ static void AltinPeak_SettleAndMountLeader(struct FieldActor *object) {
   s32 x;
   s32 z;
   s32 centerZ;
-  struct FieldSprite *sprite;
+  struct AnimationObject *sprite;
   struct FieldActor *leader;
 
   Engine_AudioPlayCue(288);
@@ -2029,11 +2030,11 @@ static void AltinPeak_SettleAndMountLeader(struct FieldActor *object) {
   Engine_TaskWait(15);
   Object_SetMode(object, 1);
   Engine_TaskWait(30);
-  sprite = object->sprite;
-  sprite->partCount = 1;
-  ResourceMetadata_ClearRecord(*(s32 *)((u8 *)sprite + 44));
-  *(s32 *)((u8 *)sprite + 44) = 0;
-  ((u8 *)sprite)[37] = 1;
+  sprite = (struct AnimationObject *)object->sprite;
+  sprite->count = 1;
+  ResourceMetadata_ClearRecord(sprite->entries[1]);
+  sprite->entries[1] = NULL;
+  sprite->dirty = 1;
   leader = Engine_ActorLookup(gGameState.selectedActor);
   Engine_AudioPlayCue(152);
   leader->x.fixed = x;

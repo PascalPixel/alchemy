@@ -43,8 +43,6 @@ struct ObjectRuntime;
 struct PolarOffsetOutput;
 struct RenderInput;
 struct RenderOutput;
-struct ResourceObject;
-struct ResourceObjectWork;
 struct SceneEvent;
 struct ScenePlacement;
 struct ScriptObjectEntry;

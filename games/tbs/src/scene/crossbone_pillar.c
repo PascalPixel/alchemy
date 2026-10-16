@@ -11,6 +11,7 @@
 #include "unit/runtime/runtime.h"
 #include "field_obj.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "field_effect.h"
@@ -1039,8 +1040,8 @@ static void CrossbonePillar_RaiseActorFourteen(void) {
   pillar = Object_GetById(14);
   Object_GetById(13)->scaleX = 0x10000;
   Object_GetById(13)->scaleY = 0x10000;
-  ((struct FieldSpritePriority *)Object_GetById(13)->sprite)->priority = 2;
-  ((struct FieldSpritePriority *)pillar->sprite)->priority = 2;
+  ((struct AnimationObject *)Object_GetById(13)->sprite)->part[0].priority = 2;
+  ((struct AnimationObject *)pillar->sprite)->part[0].priority = 2;
   pillar->acceleration = 0x6666;
   pillar->speed = 0xcccc;
   FieldObject_SetPosition(pillar, pillar->x.fixed, 0x200000, pillar->z.fixed);
@@ -1298,7 +1299,7 @@ static void SceneActor_CheckActors8To11NearSlotZero(void) {
           actor->x.fixed < hero->x.fixed + 0x100000) {
         Engine_ActorSetSpritePriority(
             ACTOR_PARTY_LEADER,
-            ((struct FieldSpritePriority *)actor->sprite)->priority);
+            ((struct AnimationObject *)actor->sprite)->part[0].priority);
         return;
       }
     } else {

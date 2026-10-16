@@ -68,7 +68,9 @@ struct AnimationObject {
   struct AnimationSpritePart part[2];
   s32 scale;
   u8 slot;
-  u8 displayFlags;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk1d2 : 6;
   u16 rotation;
   u8 width;
   u8 height;

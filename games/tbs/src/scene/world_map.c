@@ -23,6 +23,7 @@
 #include "system.h"
 #include "global_cells.h"
 #include "types.h"
+#include "animspr.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "map_render_work.h"
@@ -176,7 +177,7 @@ static void StoryActor_ConfigureSpawnedObject(union FieldObject *fieldObject) {
   if (spark == 0)
     return;
   spark->motionFlags = 0;
-  ((struct FieldSpritePriority *)spark->sprite)->priority = 1;
+  ((struct AnimationObject *)spark->sprite)->part[0].priority = 1;
   Engine_ActorSetSpriteFlags(spark, 0);
   Object_SetMode(spark, 1);
   spark->timer = 0;

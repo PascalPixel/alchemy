@@ -5106,7 +5106,7 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   kind = owner->animationKind;
   if (kind == 1) {
     animation = owner->animation;
-    if (animation != 0 && (animation->displayFlags & kind) == 0) {
+    if (animation != 0 && animation->retainCacheEntry == 0) {
       initialCount = animation->count;
       if (initialCount != 0) {
         frameCount = &gFrameCount;
@@ -9368,13 +9368,13 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 // target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
-  s8 *object;
+  struct AnimationObject *object;
 
   Dma_Fill32(0, effect, sizeof *effect);
   object = ResourceObject_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
-    object[9] &= ~0x0c;
+    object->part[0].priority = 0;
   EffectSlot_SetPosition(effect, x, z);
   /* FAKEMATCH: register choice only: 1.0 is held in a local set before
      maxSpeed, so it lives beside 2.0 and takes r2, which lets sched2
@@ -9390,7 +9390,10 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   // BUG: ResourceObject_CreateFar can return NULL, but this and the animation
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
-  ((s8 *)effect->object)[38] = 0;
+  {
+    struct AnimationObject *sprite = effect->object;
+    sprite->flags = 0;
+  }
   effect->stopAtTarget = 1;
   effect->limitTurnStep = 1;
   effect->updateMotion = 1;

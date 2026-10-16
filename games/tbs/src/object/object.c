@@ -45,7 +45,6 @@
 #include "object_dispatch.h"
 #include "field_event.h"
 #include "field_sprite.h"
-#include "battle_effect_counters.h"
 #include "heap_state.h"
 #include "keystate.h"
 #include "owner_value.h"
@@ -1373,34 +1372,32 @@ enum StepTileEvent {
 // Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   short zero;
-  struct BattleEffectCounterState *state;
+  struct FieldWork *state;
   zero = 0;
-  state = (struct BattleEffectCounterState *)gEventWork;
-  state->counters[0] = zero;
-  state->counters[1] = 0;
-  state->counters[2] = 0;
-  state->counters[3] = 0;
-  state->counters[4] = 0;
-  state->counters[5] = 0;
-  state->counters[6] = 0;
-  state->counters[7] = 0;
-  state->counters[8] = 0;
-  state->counters[9] = 0;
-  state->counters[10] = 0;
-  state->counters[11] = 0;
+  state = (struct FieldWork *)gEventWork;
+  state->action = zero;
+  state->input = 0;
+  state->exit = 0;
+  state->menu = 0;
+  state->examine = 0;
+  state->start = 0;
+  state->descriptor = 0;
+  state->tile = 0;
+  state->battle = 0;
+  state->command = 0;
+  state->item = 0;
+  state->event = 0;
 }
 
 // Returns the sum of the field's twelve pending requests (counting the actor
 // event request twice): non-zero while any request is pending.
 s32 Field_CountRequests(void) {
-  struct BattleEffectCounterState *state =
-      (struct BattleEffectCounterState *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
 
-  return state->counters[0] + state->counters[1] + state->counters[2] +
-         state->counters[3] + state->counters[4] + state->counters[5] +
-         state->counters[6] + state->counters[7] + state->counters[6] +
-         state->counters[8] + state->counters[9] + state->counters[10] +
-         state->counters[11];
+  return state->action + state->input + state->exit + state->menu +
+         state->examine + state->start + (s16)state->descriptor + state->tile +
+         (s16)state->descriptor + state->battle + state->command + state->item +
+         state->event;
 }
 
 // Returns the collision code of the map cell 16 pixels ahead of the party
@@ -3220,10 +3217,10 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette) {
 // Clears the field's busy flag and, while Reveal is active, ends it: 0x2090
 // is Reveal (144) with ACT_PACKED, which runs its ending events.
 void Battle_ResetEffectCounter(void) {
-  struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
-  runtime->unkcb6 = 0;
-  if (*(s16 *)runtime->unkcb8 != 0) {
+  runtime->busy = 0;
+  if (runtime->revealActive != 0) {
     Field_RunPsynergyEvents(0x2090);
   }
 }
@@ -4237,10 +4234,10 @@ void RevealMarker_EmitSparkles(const struct FieldActor *source) {
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 count;
   u32 active = 0;
-  struct EffectRuntime *runtime = (struct EffectRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   if (runtime != NULL) {
-    count = ((struct FieldWork *)runtime)->revealActive;
+    count = runtime->revealActive;
     active = (0 - count) | count;
     active >>= 31;
   }

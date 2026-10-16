@@ -103,10 +103,13 @@ struct FieldWork {
   u16 unk1c4;
   u16 transitionActive;
   s32 transitionFrames;
-  s32 messageBusy;
+  s32 fastForward; // debug: skip timed event waits and actor messages
   u8 unk1d0[8];
   s16 message;
-  u8 unk1da[0x1a];
+  u16 unk1da;
+  s16 unk1dc;
+  s16 unk1de;
+  u8 unk1e0[0x14];
   s32 speaker;
   s32 messageWindow;
   s32 sideWindow;
@@ -159,9 +162,12 @@ LAYOUT_OFFSET_GUARD(FieldWork_TransitionActive, struct FieldWork,
                     transitionActive, 0x1c6);
 LAYOUT_OFFSET_GUARD(FieldWork_TransitionFrames, struct FieldWork,
                     transitionFrames, 0x1c8);
-LAYOUT_OFFSET_GUARD(FieldWork_MessageBusy, struct FieldWork, messageBusy,
+LAYOUT_OFFSET_GUARD(FieldWork_FastForward, struct FieldWork, fastForward,
                     0x1cc);
 LAYOUT_OFFSET_GUARD(FieldWork_Message, struct FieldWork, message, 0x1d8);
+LAYOUT_OFFSET_GUARD(FieldWork_Unk1da, struct FieldWork, unk1da, 0x1da);
+LAYOUT_OFFSET_GUARD(FieldWork_Unk1dc, struct FieldWork, unk1dc, 0x1dc);
+LAYOUT_OFFSET_GUARD(FieldWork_Unk1de, struct FieldWork, unk1de, 0x1de);
 LAYOUT_OFFSET_GUARD(FieldWork_Speaker, struct FieldWork, speaker, 0x1f4);
 LAYOUT_OFFSET_GUARD(FieldWork_MessageWindow, struct FieldWork, messageWindow,
                     0x1f8);

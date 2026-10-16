@@ -27,24 +27,6 @@ struct BattleRenderObject {
   u8 kind;
 };
 
-struct BattleRuntime {
-  u8 unk000[0x1c8];
-  s32 unk1c8;
-  s32 mode1cc;
-  u8 unk1d0[0x0a];
-  u16 unk1da;
-  s16 unk1dc;
-  s16 unk1de;
-  u8 unk1e0[0x14];
-  s32 objectId;
-  s32 unk1f8;
-  u8 unk1fc[0xaba];
-  s16 unkcb6;
-  u8 unkcb8[0x0a];
-  s16 unkcc2;
-  s16 unkcc4;
-};
-
 struct BattleEffectEntry {
   u16 id;
   u8 value;

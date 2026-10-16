@@ -43,7 +43,6 @@
 #include "object_dispatch.h"
 #include "field_event.h"
 #include "field_sprite.h"
-#include "battle_effect_counters.h"
 #include "heap_state.h"
 #include "keystate.h"
 #include "owner_value.h"
@@ -106,14 +105,14 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 // (Battle_WaitMode0) end at once and L restores normal waits. Runs as a
 // scheduler callback for the length of an event (Battle_Reset).
 void Event_UpdateDebugSkip(void) {
-  struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   if (gDebugMode != 0) {
     if (gKeysPressed & KEY_L) {
-      runtime->mode1cc = 0;
+      runtime->fastForward = 0;
     }
     if (gKeysPressed & KEY_R) {
-      runtime->mode1cc = -1;
+      runtime->fastForward = -1;
     }
   }
 }
@@ -121,7 +120,7 @@ void Event_UpdateDebugSkip(void) {
 // The event command "wait": waits frames frames, unless the debug fast
 // forward (Event_UpdateDebugSkip) is on.
 void Battle_WaitMode0(s32 frames) {
-  if (((struct BattleRuntime *)gEventWork)->mode1cc == 0 && frames != 0) {
+  if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
   }
 }
@@ -150,24 +149,25 @@ void Leader_StopMoving(void) {
 // clears the event's message and camera state, starts the debug fast-forward
 // callback and makes the leader the camera's subject.
 void Battle_Reset(void) {
-  struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   UiTimedNotice_CloseIfActiveFar();
   Leader_StopMoving();
-  if (runtime->unkcb6 != 0) {
+  // Keep the event reset's signed halfword read.
+  if ((s16)runtime->busy != 0) {
     Battle_ResetEffectCounter();
   }
-  runtime->unkcc2 = 0;
-  runtime->unkcc4 = 0;
-  runtime->unk1c8 = 0x10;
-  runtime->mode1cc = 0;
+  runtime->nameMessage = 0;
+  runtime->nameWidth = 0;
+  runtime->transitionFrames = 0x10;
+  runtime->fastForward = 0;
   runtime->unk1da = 0xFFFF;
   runtime->unk1dc = -1;
   runtime->unk1de = -1;
   Scheduler_AddOrUpdateCallback(Event_UpdateDebugSkip, 0xC80);
   GameFlag_ClearBitFar(0x132);
-  runtime->objectId = gGameState.selectedActor;
-  runtime->unk1f8 = 0;
+  runtime->speaker = gGameState.selectedActor;
+  runtime->messageWindow = 0;
 }
 
 // Ends an event: stops the debug fast-forward callback, gives the camera back
@@ -1550,7 +1550,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   work->speaker = actor;
   y = 0;
   found = 0;
-  if (work->messageBusy == 0) {
+  if (work->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
       if (work->mode == 3) {
@@ -1745,7 +1745,7 @@ void BattleEv_RunWait(s32 actor, s32 flags) {
   }
   UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
 
-  if (runtime->messageBusy == 0) {
+  if (runtime->fastForward == 0) {
     while (UiWork_IsIdleFar(window) == 0) {
       WaitFrames(1);
       frames++;
@@ -1806,7 +1806,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   speaker &= 0xfff;
   ObjectTable_Get(speaker);
   state->speaker = speaker;
-  if (state->messageBusy == 0) {
+  if (state->fastForward == 0) {
     s32 px = pos.x;
     s32 py = pos.y;
     s32 win;
@@ -4801,7 +4801,7 @@ void _call_via_r3(s32, s32);
 // kind (scene->animation).
 void BattleFx_Run(void) {
   struct BattleFxScene *scene;
-  struct BattleRuntime *runtime;
+  struct FieldWork *runtime;
   s32 kind;
   s32 targetId;
   s32 objId;
@@ -4861,7 +4861,7 @@ void BattleFx_Run(void) {
     }
     return;
   case 2: // the wave and colour effect (stopping a running kind 8 first)
-    if (*(s16 *)&runtime->unkcb8[0] != 0)
+    if (runtime->revealActive != 0)
       ResetSceneTransitionEffect();
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     return;
@@ -4884,14 +4884,14 @@ void BattleFx_Run(void) {
 // handler of its kind.
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
-  struct BattleRuntime *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
+  struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   s32 kind = scene->animation;
   s32 targetId = scene->secondObjectId;
 
   scene->enabled = 0;
   switch (kind) {
   case 2:
-    if (*(s16 *)&runtime->unkcb8[0] != 0)
+    if (runtime->revealActive != 0)
       ResetSceneTransitionEffect();
     if (gGameState.pausedObject != scene->secondObjectId)
       ((struct ObjectRuntime *)scene->child)->movementState = 1;

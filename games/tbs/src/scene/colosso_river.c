@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
@@ -1167,7 +1168,9 @@ static void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a) {
   }
 }
 
-static s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a) {
+static s32
+SceneActor_PlaceLinkedActorAbove(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *a = (struct FieldActor *)interpreter;
   struct FieldActor *o = Object_GetById(a->timer);
 
   Engine_ObjectSetPosition(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);

@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "engine_call.h"
 #include "scene_ids.h"
@@ -30,7 +31,9 @@ static void BilibinCave_PrepareWindowTransition(void);
 static void FieldScene_RunScene398SequenceC(void);
 static void Resource398_ImportBankNoOp(s32 unused);
 
-static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no) {
+static s32
+SceneState_ApplyArgMode0AndReturnZero(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *no = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(no, 0);
   return 0;
 }

@@ -29,12 +29,13 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "script.h"
 
 #include "field_obj.h"
 #include "object_effect.h"
 #include "orbit.h"
 
-// 前方宣言
+// Forward declarations.
 static void Kalay_SetupEntryActors(void);
 static void SceneState_CheckFlags941And940(void);
 static void SceneState_ApplyFlagGatedActorEightSetup(void);
@@ -63,7 +64,9 @@ static __inline__ void ClearStep(struct FieldActor *a) {
 
 static void EV12_TALK(void) { Djinn_JoinParty(0xC, 2, 3); }
 
-static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect) {
+static s32
+SceneEffect_UpdateRandomAction(struct ScriptInterpreter *interpreter) {
+  struct Resource3a8Effect *effect = (struct Resource3a8Effect *)interpreter;
   u32 action;
   u32 nextTimer;
 
@@ -90,7 +93,7 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect) {
   return 1;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source, included in link order.
 #include "common/object_heading.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -1611,7 +1614,7 @@ static void FieldScene_RunSecondaryGroupSequence(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source, included in link order.
 #include "common/object_findcell.h"
 
 static void FieldScene_RunLateSequence(void) {
@@ -1782,7 +1785,17 @@ static void FieldScene_RunScene3a8SequenceB(void) {
   }
 }
 
-static void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p) {
+// UB: the native void epilogue returns through r0, leaving the nonzero return
+// address as SC_CALL's status. Repeat once per frame until the object is
+// destroyed, with an explicit status in the modern build.
+#ifdef UBFIX
+static s32
+SceneEffect_UpdateMotionWithDamping(struct ScriptInterpreter *interpreter) {
+#else
+static void
+SceneEffect_UpdateMotionWithDamping(struct ScriptInterpreter *interpreter) {
+#endif
+  struct FieldActor *p = (struct FieldActor *)interpreter;
   s16 *h;
   s32 v;
   s32 a;
@@ -1812,6 +1825,9 @@ static void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p) {
     t -= 1;
     *(u16 *)h = t;
   }
+#ifdef UBFIX
+  return 1;
+#endif
 }
 
 static void FieldScene_RunSupplementalSequenceOne(void) {
@@ -1907,11 +1923,16 @@ static void EV11_PSYNERGY(void) {
   Engine_GameFlagSet(0x201);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source, included in link order.
 #include "common/object_orbit.h"
 
-// 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
+// One tile in each facing direction: x in the high 16 bits, z in the low 16.
+// UB: negative x coordinates cannot be left-shifted as signed integers.
+#ifdef UBFIX
+#define FACING_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
+#else
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+#endif
 
 s32 gKalay_Data01[] = {
     FACING_STEP(16, 0),  FACING_STEP(16, 0),  FACING_STEP(16, 0),

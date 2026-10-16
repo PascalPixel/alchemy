@@ -1,3 +1,4 @@
+#include "script.h"
 // Two scenes share this overlay:
 //
 // - Alpine Crossing, the stretch of the Silk Road where a rockslide traps
@@ -125,7 +126,8 @@ enum { MAP_OBJECT_PASSAGE = 100 };
 
 // Draws the actor behind the background, on sprite priority 3 with automatic
 // priority off. The first worker from Xian runs it from his placement.
-static s32 Actor_DrawBehindScenery(union FieldObject *object) {
+static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
+  union FieldObject *object = (union FieldObject *)interpreter;
   object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->actor.sprite->priority = 3;
   object->actor.sprite->secondPriority = 3;

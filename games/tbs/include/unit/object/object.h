@@ -22,6 +22,7 @@ struct ObjectRuntime;
 struct OrbitEffect;
 struct ScenePlacement;
 struct SceneRegionEntry;
+struct ScriptInterpreter;
 struct SparkObject;
 struct UiWindow;
 union FieldObject;
@@ -163,7 +164,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
 void BattleFx_StartEffectObject22(s32 value, s32 flags);
 void BattleFx_ClearRandomParticles(void);
 void RevealMarker_EmitSparkles(const struct FieldActor *source);
-u32 Field_IsRevealActive(void);
+s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 
 void BattleFx_StartWindowHBlankDma(void);

@@ -1,3 +1,4 @@
+#include "script.h"
 // The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
 // at the Kalay dock while the replacement ship fails to come, setting sail with
 // the passengers at the oars, the sea monsters and the Kraken, the arrival at
@@ -79,7 +80,8 @@ s32 Math_RemainderUnsigned(s32, s16);
 #include "common/object_pulse.h"
 
 // An action-script call: shows the actor's sprite. Returns 0 to end the call.
-static s32 TolbiShipDeck_ShowSprite(s32 a) {
+static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *a = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(a, 1);
   return 0;
 }
@@ -102,7 +104,9 @@ struct DivingMonster {
 // dives at actor 21, who turns and jumps (sometimes with an emote), then it
 // returns to its side. DivingMonster.rightSide picks which side it returns to.
 // Returns 1 to keep running.
-static s32 TolbiShipDeck_HoverAndDiveAtActor21(struct FieldActor *obj) {
+static s32
+TolbiShipDeck_HoverAndDiveAtActor21(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   if (DIVER(obj)->step != 0) {
     switch (DIVER(obj)->step) {
     case 1:
@@ -189,7 +193,9 @@ static s32 TolbiShipDeck_HoverAndDiveAtActor21(struct FieldActor *obj) {
 }
 
 // The same for the monster that dives at actor 22.
-static s32 TolbiShipDeck_HoverAndDiveAtActor22(struct FieldActor *obj) {
+static s32
+TolbiShipDeck_HoverAndDiveAtActor22(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   if (DIVER(obj)->step != 0) {
     switch (DIVER(obj)->step) {
     case 1:
@@ -309,7 +315,8 @@ static s32 sOarDepth[8];
 
 // Bobs the actor between 4 and 12 pixels high by a random amount each frame;
 // the actor's work halfword says which way it is going. Returns 1.
-static s32 TolbiShipDeck_Bob(struct FieldActor *actor) {
+static s32 TolbiShipDeck_Bob(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   s16 *flag = (s16 *)&actor->work;
   s32 val;
   s32 tmp;
@@ -334,7 +341,8 @@ done:
 
 // Now and then (two chances in 32) turns the actor to look north-northeast or
 // north-northwest. Returns 1.
-static s32 TolbiShipDeck_LookAround(struct FieldActor *actor) {
+static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   u32 roll = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
   if (roll == 6)
@@ -348,7 +356,8 @@ static s32 TolbiShipDeck_LookAround(struct FieldActor *actor) {
 // to him, he turns and jumps back (sometimes with an emote), and it lands on
 // one of two spots chosen by riseEnabled. The actor's timer holds the step.
 // Returns 1.
-static s32 TolbiShipDeck_LeapAtActor21(struct FieldActor *obj) {
+static s32 TolbiShipDeck_LeapAtActor21(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   switch (obj->timer) {
   case 0:
     if ((((u32)Engine_RandomNext() * 40) >> 16) == 0) {
@@ -417,7 +426,8 @@ static s32 TolbiShipDeck_LeapAtActor21(struct FieldActor *obj) {
 }
 
 // The same for the monster that leaps at actor 22.
-static s32 TolbiShipDeck_LeapAtActor22(struct FieldActor *obj) {
+static s32 TolbiShipDeck_LeapAtActor22(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   switch (obj->timer) {
   case 0:
     if ((((u32)Engine_RandomNext() * 40) >> 16) == 0) {
@@ -486,7 +496,9 @@ static s32 TolbiShipDeck_LeapAtActor22(struct FieldActor *obj) {
 }
 
 // Makes the actor hop at random, one frame in 40 on average. Returns 1.
-static s32 TolbiShipDeck_RandomlyStartActorHop(struct FieldActor *actor) {
+static s32
+TolbiShipDeck_RandomlyStartActorHop(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
     actor->velocityY = 0x40000;
   return 1;
@@ -503,7 +515,8 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct FieldActor *actor) {
 
 // Turns the actor east, northeast-by-north or southeast-by-south at random
 // intervals of 80 to 160 frames. riseCounter counts down the wait. Returns 1.
-static s32 TolbiShipDeck_IdleTurn(struct FieldActor *actor) {
+static s32 TolbiShipDeck_IdleTurn(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {

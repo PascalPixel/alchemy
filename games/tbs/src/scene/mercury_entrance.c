@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "heap_state.h"
@@ -59,7 +60,8 @@ struct WorkPointers {
 #include "common/object_staged_actor.h"
 #include "common/mercury_sparks.h"
 
-static s32 SceneAudio_PlayCue118AndReturnZero(void) {
+static s32
+SceneAudio_PlayCue118AndReturnZero(struct ScriptInterpreter *interpreter) {
   Engine_AudioPlayCue(118);
   return 0;
 }

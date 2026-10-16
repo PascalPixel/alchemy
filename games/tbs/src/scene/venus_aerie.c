@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -115,7 +116,9 @@ struct WorldMapOam {
   u16 size : 2;
 };
 
-static s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor) {
+static s32
+OverlayObject_StepScaleByCounter(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   s16 *counter = (s16 *)&actor->timer;
 
   switch (*counter) {

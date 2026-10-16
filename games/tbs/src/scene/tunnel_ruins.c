@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -52,7 +53,9 @@ struct Vec {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no) {
+static s32
+SceneState_ApplyArgMode0AndReturnZero(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *no = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(no, 0);
   return 0;
 }

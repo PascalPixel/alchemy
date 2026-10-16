@@ -2,12 +2,10 @@
 #define ALCHEMY_UNIT_FIELD_OBJECT_SCRIPT_H
 
 #include "types.h"
+#include "script.h"
 
-// 命令の処理は物体を受けて、そのフレームのスクリプトを続けるなら 0 以外、
-// 終えるなら 0 を返す。
-// 処理ごとに物体の見方 (構造体) が違うので、引数の型は決めない。
-typedef s32 (*ScriptCommandFn)();
-
-extern const ScriptCommandFn gScriptObject_CommandTable[47];
+// Commands receive the object's interpreter view. A nonzero result continues
+// its script this frame; zero yields until the next frame.
+extern const ScriptCommand gScriptObject_CommandTable[47];
 
 #endif

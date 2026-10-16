@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "map_scroll.h"
 #include "scene_ids.h"
@@ -464,7 +465,9 @@ static void FieldScene_RunScene3b3SequenceE(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-static s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor) {
+static s32
+SceneActor_ApplyCounterLowBitsAsMode(struct ScriptInterpreter *interpreter) {
+  u8 *actor = (u8 *)interpreter;
   ObjectGroup_SetChildValue(actor, *(u16 *)(actor + 100) & 15);
   return 0;
 }

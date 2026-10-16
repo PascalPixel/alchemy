@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/venus_lighthouse.h"
@@ -230,7 +231,9 @@ static void SceneActor_ApplySlotsMatchingKind212(void) {
   }
 }
 
-static s32 VenusLighthouse_UpdateChildFromTimer(struct FieldActor *obj) {
+static s32
+VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(obj, obj->timer & 15);
   return 0;
 }
@@ -265,7 +268,8 @@ static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object) {
   return 0;
 }
 
-static s32 OverlayObject_ApplyZero(void *obj) {
+static s32 OverlayObject_ApplyZero(struct ScriptInterpreter *interpreter) {
+  void *obj = (void *)interpreter;
   Engine_ActorSetSpriteFlags(obj, 0);
   return 0;
 }
@@ -2852,7 +2856,9 @@ struct TrackSprite {
   struct TrackAnimation *animations[4];
 };
 
-static s32 VenusLighthouse_DispatchPushScript(struct FieldActor *actor) {
+static s32
+VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   s32 pos[3];
   struct FieldActor *piece;
   struct TrackSprite *sprite;

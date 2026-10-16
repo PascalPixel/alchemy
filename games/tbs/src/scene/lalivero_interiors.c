@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -72,7 +73,7 @@ enum {
 #define ACTOR_BEHIND_COUNTER 4
 
 // The maid sighs between chores.
-static s32 Maid_Sigh(void) {
+static s32 Maid_Sigh(struct ScriptInterpreter *interpreter) {
   Actor_SetAttachedEffect(MAID, EMOTE_IN_FRONT | 2);
   return 0;
 }

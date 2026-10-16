@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "keystate.h"
 #include "scene_ids.h"
@@ -65,7 +66,9 @@ struct SelectedSubject {
 // 表を符号付き半語で読む見方
 extern s32 gImil_ArcOrigin[];
 
-static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj) {
+static s32
+OverlayObject_UpdateWobbleByCounter(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   switch (obj->timer) {
   case 6:
     obj->scaleX += 0xffffc000;

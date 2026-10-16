@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/vale_storm.h"
@@ -68,7 +69,9 @@ union PairObject;
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-static s32 ValeStorm_RerollHeadingOnCountdown(struct FieldActor *object) {
+static s32
+ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *object = (struct FieldActor *)interpreter;
   s32 loaded = object->timer;
   s32 counter = (s16)loaded;
 

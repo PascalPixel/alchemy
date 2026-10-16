@@ -287,7 +287,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused);
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle);
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot);
-s32 SpawnHeavyImpactEffect(struct MotionObject *src);
+s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter);
 void BattleFx_CallEffect04(s32 unused);
 void RunBattleEffect04(void);
 void BattleFx_UpdateOrbitingParticleMain(struct FieldActor *particle);

@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "heap_state.h"
 #include "iwram_call.h"
@@ -833,14 +834,22 @@ static void SceneActor_UseActorNinePositionWithYOffset(void) {
   SceneEffect_SpawnRandomEveryFourFrames(p[2], b, c);
 }
 
-static s32 MercuryLighthouse_StartActorNineParticles(void) {
+static s32 MercuryLighthouse_StartActorNineParticles(
+    struct ScriptInterpreter *interpreter) {
   s32 n = 0xc80;
 
   FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, n);
   return 0;
 }
 
+// SC_CALL passes the interpreter. The native no-argument form also has two
+// direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
+#ifdef UBFIX
+static s32 MercuryLighthouse_StopActorNinePositionCallback(
+    struct ScriptInterpreter *interpreter) {
+#else
 static s32 MercuryLighthouse_StopActorNinePositionCallback(void) {
+#endif
   Engine_TaskRemoveCallback(SceneActor_UseActorNinePositionWithYOffset);
   return 0;
 }
@@ -884,7 +893,11 @@ static void EV40_SCRIPT(void) {
 
           SceneEffect_SpawnParticleRowsByMode(2);
           x = 210 << 18;
+#ifdef UBFIX
+          MercuryLighthouse_StopActorNinePositionCallback(NULL);
+#else
           MercuryLighthouse_StopActorNinePositionCallback();
+#endif
           MercuryLighthouse_OpenStoneDoor(1);
           Object_RefreshSelectorById(9);
           OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
@@ -902,7 +915,11 @@ static void EV40_SCRIPT(void) {
           Engine_EventRequestExit(15);
         } else {
           SceneEffect_SpawnParticleRowsByMode(2);
+#ifdef UBFIX
+          MercuryLighthouse_StopActorNinePositionCallback(NULL);
+#else
           MercuryLighthouse_StopActorNinePositionCallback();
+#endif
           MercuryLighthouse_OpenStoneDoor(1);
           Engine_EventWait(60);
         }

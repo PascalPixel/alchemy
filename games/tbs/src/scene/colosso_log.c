@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
@@ -606,7 +607,8 @@ far:
   ColossoLogRollingStage_ActivateClearObstacleActors();
 }
 
-static s32 ColossoLogRollingStage_SetSceneEventValues(void) {
+static s32 ColossoLogRollingStage_SetSceneEventValues(
+    struct ScriptInterpreter *interpreter) {
 
   Map_SetLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
@@ -986,8 +988,9 @@ s32 StageSetup_BuildAndDispatch(void) {
   return 0;
 }
 
-static s32
-ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle) {
+static s32 ColossoLogRollingStage_AdvanceParticleMotion(
+    struct ScriptInterpreter *interpreter) {
+  SceneParticle *particle = (SceneParticle *)interpreter;
   particle->x += particle->velocityX << 8;
   particle->y += particle->velocityY << 8;
   particle->scaleX += 0x666;
@@ -1882,8 +1885,9 @@ static void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source) {
   }
 }
 
-static s32
-ColossoLogRollingStage_RaiseLinkedSceneEffect(LinkedStageEffect *source) {
+static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
+    struct ScriptInterpreter *interpreter) {
+  LinkedStageEffect *source = (LinkedStageEffect *)interpreter;
 
   LinkedStageEffect *effect = Object_GetById(source->linkedEffectSlot);
 

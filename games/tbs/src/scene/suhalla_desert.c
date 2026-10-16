@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "engine_call.h"
 #include "unit/scene/suhalla_desert.h"
@@ -73,13 +74,17 @@ void QueueSceneSound(s32 cue);
 
 static void EV15_TALK(void) { BattleFx_SetPhaseRequest(15, 45); }
 
-static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(u8 *obj) {
+static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(
+    struct ScriptInterpreter *interpreter) {
+  u8 *obj = (u8 *)interpreter;
   Engine_ActorSetSpriteFlags(obj, 0);
   ((struct FieldActor *)obj)->collisionFlags = 0;
   return 0;
 }
 
-static s32 SuhallaDesert_ToggleActorActive(u8 *obj) {
+static s32
+SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
+  u8 *obj = (u8 *)interpreter;
   ((struct FieldActor *)obj)->active ^= 1;
   return 1;
 }
@@ -353,7 +358,9 @@ static void EV09_TOUCH(void) {
   }
 }
 
-static s32 SuhallaDesert_FollowLeaderWithSparks(struct FieldActor *actor) {
+static s32
+SuhallaDesert_FollowLeaderWithSparks(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct EffectOptions options;
   struct FieldActor *leader;
   s32 dx;

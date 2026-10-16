@@ -1,4 +1,5 @@
 #include "unit/field/facing.h"
+#include "unit/field/object_script.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -2117,10 +2118,6 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
-
-extern ScriptCommandFn gScriptObject_CommandTable[];
-
 // value squared.
 static __inline__ s32 Square(s32 value) { return value * value; }
 
@@ -2184,7 +2181,8 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)obj->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gScriptObject_CommandTable[command](obj) == 0)
+          if (gScriptObject_CommandTable[command](
+                  (struct ScriptInterpreter *)obj) == 0)
             break;
         } else {
           obj->scriptCursor++;
@@ -2771,7 +2769,7 @@ s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_IF(to): jumps to label to when the last test was true.
-u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
+s32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
@@ -2785,7 +2783,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_IFNOT(to): jumps to label to when the last test was false.
-u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
+s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
@@ -2950,7 +2948,10 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
-s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
+s32 Script_ApplyRelativePosition(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   u8 *entry = (u8 *)(object->script + (s16)object->scriptCursor);
   s32 *cursor = (s32 *)(entry + 4);
   s32 first = *cursor++;
@@ -2965,7 +2966,10 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object) {
 
 // SC_FACE_LINK: stores the angle from the object to its linked object in
 // scriptValue.
-s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
+s32 Script_StoreAngleToLinkedObject(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   struct ScriptObjectRuntime *target;
 
   target = object->linkedObject;
@@ -2976,7 +2980,10 @@ s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object) {
 }
 
 // SC_MOVE_LINK: sends the object towards its linked object.
-s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
+s32 Script_ApplyLinkedObjectPosition(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   struct ScriptObjectRuntime *target;
 
   target = object->linkedObject;
@@ -2988,7 +2995,10 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object) {
 
 // SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
 // that is never filled in; the operands are skipped unread.
-s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object) {
+s32 Script_ApplyLocalOffsetPosition(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   s32 offset[3];
 
   // BUG: offset is never set, so the target is the position plus whatever
@@ -3015,7 +3025,9 @@ struct MapScrollBounds {
 // below the leader. It closes an eighth of the distance a frame, at most
 // its speed limit, and a quarter of a large height difference; when action
 // is set it jumps there at once.
-s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj) {
+s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *obj = (struct ObjectRuntime *)interpreter;
+
   struct ObjectRuntime *leader;
   struct MapScrollBounds *bounds;
   s32 minX;
@@ -3102,7 +3114,9 @@ s32 _call_via_r3(s32, s32, s32, s32);
 // SC_APPROACH_LINK: follows the linked object at its speed. More than 16
 // pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 // within 16 it stands (animation 1) and waits for the next frame.
-s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
+s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+
   s32 len;
   s32 mz;
   s32 dx;
@@ -3141,7 +3155,10 @@ s32 Object_ApproachLinkedObject(struct ObjectRuntime *object) {
 // that no solid object or wall blocks, with clear ground 8 pixels further at
 // 45 degrees either side, and within limit pixels of home. After seven
 // failed tries it turns around (turnedBack) and waits for the next frame.
-s32 Object_Wander(struct ScriptObjectRuntime *object) {
+s32 Object_Wander(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   struct FieldPosition pos;
   struct FieldPosition probe;
   s32 base;
@@ -3214,7 +3231,10 @@ retry:
 // SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
 // more ground around the point, while it is within limit pixels of home;
 // outside that, or when no point works, it heads back towards home.
-s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object) {
+s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
+  struct ScriptObjectRuntime *object =
+      (struct ScriptObjectRuntime *)interpreter;
+
   struct FieldPosition pos;
   struct FieldPosition probe;
   s32 base;
@@ -3474,17 +3494,23 @@ static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation) {
 }
 
 // SC_SET(w, v): sets work value w to v.
-s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
+s32 Script_ApplyOperandSet(struct ScriptInterpreter *interpreter) {
+  struct ScriptOperands *work = (struct ScriptOperands *)interpreter;
+
   return ApplyOperand(work, SCRIPT_OPERAND_SET);
 }
 
 // SC_ADD(w, v): adds v to work value w.
-s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
+s32 Script_ApplyOperandAdd(struct ScriptInterpreter *interpreter) {
+  struct ScriptOperands *work = (struct ScriptOperands *)interpreter;
+
   return ApplyOperand(work, SCRIPT_OPERAND_ADD);
 }
 
 // SC_CMP(w, v): tests whether work value w equals v.
-s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
+s32 Script_ApplyOperandCompare(struct ScriptInterpreter *interpreter) {
+  struct ScriptOperands *work = (struct ScriptOperands *)interpreter;
+
   return ApplyOperand(work, SCRIPT_OPERAND_COMPARE);
 }
 
@@ -3595,7 +3621,9 @@ struct WorldMapSprite {
 // running, sliding around walls, pushing movable objects, turning, playing
 // the matching animation and leaving footprints. Also checks the configured
 // keys. Returns 1.
-s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
+s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
@@ -3944,7 +3972,9 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object) {
 // SC_WORLD: moves the player on the world map by the direction pad, as
 // SC_PLAYER does on the field, and turns the world map camera with the pad.
 // Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
-s32 Object_MoveOnWorldMap(struct ObjectRuntime *object) {
+s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+
   struct FieldPosition position;
 #if EDITION_INTERNATIONAL
   struct FieldPosition testPosition;
@@ -4231,8 +4261,8 @@ update_object:
 
 // SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
 // Returns 1.
-s32 Field_CheckConfiguredKeysAndCount(void *work) {
-  struct ObjectRuntime *object = work;
+s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
   Field_CheckConfiguredKeys();
   object->step++;
@@ -4243,7 +4273,9 @@ s32 Field_CheckConfiguredKeysAndCount(void *work) {
 // and down changing its height (y) rather than its depth. Refuses steps
 // into an occupied cell, across a change of collision code, or onto ground
 // too high (up) or too low (down). Returns 1.
-s32 Object_MoveByKeys(struct ObjectRuntime *object) {
+s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
+  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+
   struct FieldPosition pos;
   /* FAKEMATCH: never used; its 68 bytes are the native frame space no
    * instruction touches. Without it the frame is 12 bytes, not 80 (differ 8:

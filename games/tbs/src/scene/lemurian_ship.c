@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/scene/lemurian_ship.h"
@@ -256,7 +257,7 @@ static void Ship_UpdateSwell(void) {
 
 // Called by each member's boarding script as they step on deck: from then
 // on they bob with the ship.
-static s32 Leader_StepOnDeck(void) {
+static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *d;
   struct FieldActor *p;
 
@@ -266,7 +267,7 @@ static s32 Leader_StepOnDeck(void) {
   return 0;
 }
 
-static s32 Garet_StepOnDeck(void) {
+static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *p;
   struct FieldActor *rec;
 
@@ -276,7 +277,7 @@ static s32 Garet_StepOnDeck(void) {
   return 0;
 }
 
-static s32 Mia_StepOnDeck(void) {
+static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *d;
   struct FieldActor *p;
 
@@ -286,7 +287,7 @@ static s32 Mia_StepOnDeck(void) {
   return 0;
 }
 
-static s32 Ivan_StepOnDeck(void) {
+static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *d;
   struct FieldActor *p;
 

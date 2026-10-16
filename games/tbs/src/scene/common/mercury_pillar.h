@@ -1,3 +1,4 @@
+#include "script.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -94,7 +95,9 @@ struct AnchoredEffect {
   struct EffectAnchor *f104;
 };
 
-static s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work) {
+static s32
+SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
+  struct AnchoredEffect *work = (struct AnchoredEffect *)interpreter;
   struct EffectAnchor *src = work->f104;
   s16 step = ++work->f100;
   s32 seed;
@@ -112,7 +115,9 @@ static s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work) {
   return 1;
 }
 
-static s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o) {
+static s32 OverlayObject_RampWords24And28Over16Frames(
+    struct ScriptInterpreter *interpreter) {
+  struct FieldActor *o = (struct FieldActor *)interpreter;
   u16 *c = &o->timer;
   s16 n;
 
@@ -126,7 +131,9 @@ static s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o) {
   return 1;
 }
 
-static s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o) {
+static s32
+OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *o = (struct FieldActor *)interpreter;
   u16 *c = &o->timer;
   s16 n;
 
@@ -140,7 +147,8 @@ static s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o) {
   return 1;
 }
 
-static s32 Mercury_FollowLeader(struct FieldActor *actor) {
+static s32 Mercury_FollowLeader(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct FieldActor *leader;
   struct FollowSprite *sprite;
   s32 tz;

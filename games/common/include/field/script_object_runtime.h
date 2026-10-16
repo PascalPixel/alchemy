@@ -41,6 +41,12 @@ struct ScriptObjectRuntime {
 };
 
 LAYOUT_SIZE_GUARD(ScriptObjectRuntime_size, struct ScriptObjectRuntime, 0x70);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_offset,
+                    struct ScriptObjectRuntime, script, 0x00);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_cursor_offset,
+                    struct ScriptObjectRuntime, scriptCursor, 0x04);
+LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_script_value_offset,
+                    struct ScriptObjectRuntime, scriptValue, 0x06);
 LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_x_offset, struct ScriptObjectRuntime, x,
                     0x08);
 LAYOUT_OFFSET_GUARD(ScriptObjectRuntime_speed_limit_offset,

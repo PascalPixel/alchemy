@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "keystate.h"
 #include "scene_ids.h"
@@ -1258,7 +1259,8 @@ static void OverlayObject_AdvancePositionByDelta(union FieldObject *raw) {
   object->scaleY += object->scaleRateY;
 }
 
-static s32 OverlayObject_ApplyValue15(s32 obj) {
+static s32 OverlayObject_ApplyValue15(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue((struct FieldActor *)obj, 15);
   return 0;
 }

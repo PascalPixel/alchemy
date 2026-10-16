@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/vale_interiors.h"
@@ -25,7 +26,9 @@ static void Scene_UpdateTimedActor(void);
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_facing.h"
 
-static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion) {
+static s32
+AdvancePositionScaleAndVelocity(struct ScriptInterpreter *interpreter) {
+  ScaledMotion *motion = (ScaledMotion *)interpreter;
   motion->x += motion->velocityX << 8;
   motion->y += motion->velocityY << 8;
   motion->scaleX += 0x666;

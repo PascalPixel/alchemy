@@ -57,7 +57,7 @@ const s32 gObjectDispatch_Table6Script[] = {
 };
 
 // The handler for each script command number; 0x24 onwards act as SC_END.
-const ScriptCommandFn gScriptObject_CommandTable[47] = {
+const ScriptCommand gScriptObject_CommandTable[47] = {
     Script_StoreLookupResult,            // 0x00 SC_WAIT
     Script_WaitForEvent,                 // 0x01 SC_SYNC
     Script_SetPositionAndResetMotion,    // 0x02 SC_POS
@@ -72,8 +72,8 @@ const ScriptCommandFn gScriptObject_CommandTable[47] = {
     Camera_FollowLeaderInBounds,         // 0x0b SC_CAMERA
     Script_RepeatOrJump,                 // 0x0c SC_LOOP
     Script_JumpToLabel,                  // 0x0d SC_JUMP
-    (ScriptCommandFn)Script_JumpIfTrue,  // 0x0e SC_IF
-    (ScriptCommandFn)Script_JumpIfFalse, // 0x0f SC_IFNOT
+    Script_JumpIfTrue,                   // 0x0e SC_IF
+    Script_JumpIfFalse,                  // 0x0f SC_IFNOT
     Script_LoadMainScript,               // 0x10 SC_END
     Script_TestFlag,                     // 0x11 SC_FLAG_CHECK
     Script_SetFlagAndTest,               // 0x12 SC_FLAG_ON

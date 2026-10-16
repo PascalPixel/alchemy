@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -50,7 +51,8 @@ struct Sub {
   u8 f26;
 };
 
-static s32 Kolima_ApplyPendingPose(s32 arg0) {
+static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *arg0 = (struct FieldActor *)interpreter;
   if (gKolima_PendingPose != 0) {
     Object_SetMode(arg0, 2);
     gKolima_PendingPose = 0;
@@ -58,7 +60,9 @@ static s32 Kolima_ApplyPendingPose(s32 arg0) {
   return 1;
 }
 
-static s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p) {
+static s32
+SceneEffect_AdvanceCounterAndSwitchMode(struct ScriptInterpreter *interpreter) {
+  struct Obj *p = (struct Obj *)interpreter;
   s32 v = Engine_RandomNext();
   s32 t = v * 100;
   s32 h = p->f64 + ((u32)t >> 16);
@@ -94,7 +98,9 @@ static void SceneData_InitRecordTable(u8 *o) {
   }
 }
 
-static s32 SceneEffect_UpdateFallingObject(struct Obj *p) {
+static s32
+SceneEffect_UpdateFallingObject(struct ScriptInterpreter *interpreter) {
+  struct Obj *p = (struct Obj *)interpreter;
   p->f08 += p->f24;
   p->f10 += p->f2c;
   p->f2c -= 2621;
@@ -1367,7 +1373,8 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_blink.h"
 
-static s32 Kolima_TriggerRegionScript(struct FieldActor *actor) {
+static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   if (gKolima_LayoutFlag != 0) {
     if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 &&
          actor->z.fixed > 0xd30000 && actor->z.fixed < 0x1010000) ||

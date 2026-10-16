@@ -1,7 +1,10 @@
+#include "script.h"
 #include "types.h"
 #include "facing_object.h"
 
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj) {
+static s32
+OverlayObject_UpdateFacingTowardTarget(struct ScriptInterpreter *interpreter) {
+  struct FacingObject *obj = (struct FacingObject *)interpreter;
   s32 delta;
   u16 old;
   s32 angle;

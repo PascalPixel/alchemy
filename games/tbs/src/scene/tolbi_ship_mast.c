@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -61,7 +62,8 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-static s32 Object_PlaceFromCameraOffset(struct FieldActor *object) {
+static s32 Object_PlaceFromCameraOffset(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *object = (struct FieldActor *)interpreter;
   s32 *position = *((s32 **)gMapWork[0]);
   s32 *origin = gTolbiShipMast_CameraOrigin;
   s32 *center = gTolbiShipMast_CameraCenter;
@@ -74,7 +76,9 @@ static s32 Object_PlaceFromCameraOffset(struct FieldActor *object) {
   return 0;
 }
 
-static s32 SceneActor_SetFacingFromSample(struct FieldActor *object) {
+static s32
+SceneActor_SetFacingFromSample(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *object = (struct FieldActor *)interpreter;
   u32 sample = (u32)(Engine_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
@@ -97,7 +101,8 @@ static void TolbiShipMast_GrowActorScale(struct FieldActor *o) {
   }
 }
 
-static s32 TolbiShipMast_SwayActor(struct SwayActor *actor) {
+static s32 TolbiShipMast_SwayActor(struct ScriptInterpreter *interpreter) {
+  struct SwayActor *actor = (struct SwayActor *)interpreter;
   s16 *state = &actor->xState;
   s32 next;
 
@@ -138,7 +143,9 @@ static s32 TolbiShipMast_SwayActor(struct SwayActor *actor) {
   return 1;
 }
 
-static s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o) {
+static s32
+OverlayObject_ShrinkScaleThenStop(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *o = (struct FieldActor *)interpreter;
   u8 *t = (u8 *)o->sprite;
 
   t[9] |= 12;

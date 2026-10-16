@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "unit/scene/sol_eruption.h"
 #include "unit/scene/common/effect_psynergy.h"
@@ -550,7 +551,9 @@ s32 SolEruption_RunHostageSceneOnEntranceTen(void) {
   return 0;
 }
 
-static s32 OverlayObject_SetRecordAngleFromHeading(Ent *p) {
+static s32
+OverlayObject_SetRecordAngleFromHeading(struct ScriptInterpreter *interpreter) {
+  Ent *p = (Ent *)interpreter;
   *(u16 *)(p->unk50 + 30) = p->unk6 + 0x4000;
   return 1;
 }

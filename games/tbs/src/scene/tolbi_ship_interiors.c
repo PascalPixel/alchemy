@@ -1,3 +1,4 @@
+#include "script.h"
 // Below the decks of the ship across the Karagol Sea: the captain's cabin,
 // the passengers' hold and the rowing deck. Under sail the party chooses which
 // passenger rows at each open seat; flags 0x929 to 0x92b number the seat being
@@ -80,7 +81,9 @@ static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
 
 // An action-script call: stands the actor still at the origin, with no velocity
 // and no target. Returns 0.
-static s32 TolbiShipInteriors_ResetStagedActor(struct StagedActor *actor) {
+static s32
+TolbiShipInteriors_ResetStagedActor(struct ScriptInterpreter *interpreter) {
+  struct StagedActor *actor = (struct StagedActor *)interpreter;
   Object_SetMode(actor, 1);
   actor->x.value = 0;
   actor->y = 0;
@@ -95,7 +98,8 @@ static s32 TolbiShipInteriors_ResetStagedActor(struct StagedActor *actor) {
 
 // Bobs the actor between the floor and 8 pixels up by a random amount each
 // frame. Returns 1.
-static s32 TolbiShipInteriors_Bob(struct StagedActor *actor) {
+static s32 TolbiShipInteriors_Bob(struct ScriptInterpreter *interpreter) {
+  struct StagedActor *actor = (struct StagedActor *)interpreter;
   s16 verticalMotionDirection;
   s32 descendingY;
   s32 ascendingY;
@@ -122,7 +126,9 @@ static s32 TolbiShipInteriors_Bob(struct StagedActor *actor) {
 
 // Now and then (two chances in 64) turns the actor to face south-southeast or
 // south-southwest. Returns 1.
-static s32 TolbiShipInteriors_LookAround(struct FieldActor *o) {
+static s32
+TolbiShipInteriors_LookAround(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *o = (struct FieldActor *)interpreter;
   u32 v = (u32)(Engine_RandomNext(o) << 6) >> 16;
 
   if (v == 6) {
@@ -261,7 +267,8 @@ static void TolbiShipInteriors_WatchPacer(struct FieldActor *record) {
 
 // An action-script call: lays the actor flat on the floor, drawn underfoot at
 // priority 1 with its parts hidden. Returns 1.
-static s32 TolbiShipInteriors_LayFlat(struct FieldActor *work) {
+static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *work = (struct FieldActor *)interpreter;
   struct FieldSprite *rec = work->sprite;
 
   work->collisionFlags = 8;

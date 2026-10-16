@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -44,7 +45,7 @@
 #include "frame.h"
 
 // 前方宣言
-static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
+static s32 StoryActor_ApplyMapRotation(struct ScriptInterpreter *interpreter);
 static void RunEventScript01(void);
 static void FieldScene_RunActorTransferSequence(void);
 static void WorldMap_ShakeTransferStartCamera(void);
@@ -199,7 +200,8 @@ static void WorldMap_UpdateBobbingMarker(struct FieldActor *actor) {
   }
 }
 
-static s32 StoryActor_Initialize(struct FieldActor *actor) {
+static s32 StoryActor_Initialize(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   if (Engine_GameFlagIsSet(0x30) != 0) {
     return 0;
   }
@@ -221,15 +223,17 @@ s32 WorldMap_GetRegions(void) { return 0; }
 
 u8 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
-static s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor) {
-  StoryActor_ApplyMapRotation(actor);
+static s32 StoryActor_ApplyFlaggedMode(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  StoryActor_ApplyMapRotation(interpreter);
   if (Engine_GameFlagIsSet(0x847) != 0) {
     Object_SetMode(actor, 2);
   }
   return 1;
 }
 
-static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor) {
+static s32 StoryActor_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
   struct FieldSprite *sprite = actor->sprite;
 
@@ -238,7 +242,9 @@ static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor) {
   return 1;
 }
 
-static s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor) {
+static s32 StoryActor_ApplyMapRotationWithCollision(
+    struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
   struct FieldSprite *sprite = actor->sprite;
 
@@ -247,7 +253,8 @@ static s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor) {
   return 1;
 }
 
-static s32 StoryActor_ResetPosition(struct FieldActor *actor) {
+static s32 StoryActor_ResetPosition(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ObjectSetPartPalettes(actor, 10);
   actor->collisionFlags = 0;
@@ -259,7 +266,8 @@ static s32 StoryActor_ResetPosition(struct FieldActor *actor) {
   return 0;
 }
 
-static s32 StoryActor_ClearActiveFlag(struct FieldActor *actor) {
+static s32 StoryActor_ClearActiveFlag(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   if ((actor->active & 1) && (gFrameCount & 1))
     actor->active ^= 1;
   return 1;

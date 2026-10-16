@@ -9,6 +9,7 @@ struct ScriptInterpreter;
 
 typedef s32 (*ScriptCommand)(struct ScriptInterpreter *);
 
+// The prefix that command handlers read from a field object's 0x70-byte slot.
 struct ScriptInterpreter {
   const s32 *script;
   s16 cursor;
@@ -22,6 +23,23 @@ struct ScriptInterpreter {
   u8 delay;
 };
 
+LAYOUT_SIZE_GUARD(ScriptInterpreter_size, struct ScriptInterpreter, 0x64);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_script_offset, struct ScriptInterpreter,
+                    script, 0x00);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_cursor_offset, struct ScriptInterpreter,
+                    cursor, 0x04);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_byte_54_offset, struct ScriptInterpreter,
+                    byte54, 0x54);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_condition_result_offset,
+                    struct ScriptInterpreter, conditionResult, 0x57);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_repeat_count_offset,
+                    struct ScriptInterpreter, repeatCount, 0x5d);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_lookup_result_offset,
+                    struct ScriptInterpreter, lookupResult, 0x5e);
+LAYOUT_OFFSET_GUARD(ScriptInterpreter_delay_offset, struct ScriptInterpreter,
+                    delay, 0x60);
+
+// Raw fields of the full slot, addressed by the set/add/compare commands.
 struct ScriptOperands {
   u32 scriptAddress;
   u16 cursor;
@@ -67,6 +85,18 @@ struct ScriptOperands {
   u32 word6c;
 };
 
+LAYOUT_OFFSET_GUARD(ScriptOperands_script_address_offset, struct ScriptOperands,
+                    scriptAddress, 0x00);
+LAYOUT_OFFSET_GUARD(ScriptOperands_cursor_offset, struct ScriptOperands, cursor,
+                    0x04);
+LAYOUT_OFFSET_GUARD(ScriptOperands_unsigned_halfword_offset,
+                    struct ScriptOperands, unsignedHalfword, 0x06);
+LAYOUT_OFFSET_GUARD(ScriptOperands_byte_54_offset, struct ScriptOperands,
+                    byte54, 0x54);
+LAYOUT_OFFSET_GUARD(ScriptOperands_byte_5d_offset, struct ScriptOperands,
+                    byte5d, 0x5d);
+LAYOUT_OFFSET_GUARD(ScriptOperands_byte_60_offset, struct ScriptOperands,
+                    byte60, 0x60);
 LAYOUT_OFFSET_GUARD(ScriptOperands_comparison_result_offset,
                     struct ScriptOperands, comparisonResult, 0x57);
 LAYOUT_OFFSET_GUARD(ScriptOperands_halfword_5e_offset, struct ScriptOperands,

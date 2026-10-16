@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "engine_call.h"
 #include "global_cells.h"
@@ -82,12 +83,15 @@ static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg) {
   return 0;
 }
 
-static s32 MogallForest_CopyTimerToChild(s32 a) {
-  ObjectGroup_SetChildValue(a, ((struct FieldActor *)a)->timer);
+static s32
+MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *a = (struct FieldActor *)interpreter;
+  ObjectGroup_SetChildValue(a, a->timer);
   return 0;
 }
 
-static s32 OverlayObject_ApplyZero(s32 a) {
+static s32 OverlayObject_ApplyZero(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *a = (struct FieldActor *)interpreter;
   Engine_ActorSetSpriteFlags(a, 0);
   return 0;
 }

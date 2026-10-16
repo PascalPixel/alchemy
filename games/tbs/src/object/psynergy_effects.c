@@ -6881,7 +6881,8 @@ again:
 
 // A heavy impact: places object 0x11b 32 pixels below src and scatters 12
 // shards from it.
-s32 SpawnHeavyImpactEffect(struct MotionObject *src) {
+s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
+  struct MotionObject *src = (struct MotionObject *)interpreter;
   struct EffectVector pos;
   struct ObjectRuntime *obj;
   struct ObjectRuntime *frag;

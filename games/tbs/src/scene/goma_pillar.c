@@ -1,3 +1,4 @@
+#include "script.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/goma_pillar.h"
@@ -87,7 +88,8 @@ static void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect) {
   }
 }
 
-static s32 OverlayObject_ApplyValue15(s32 actor) {
+static s32 OverlayObject_ApplyValue15(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(actor, 15);
   return 0;
 }

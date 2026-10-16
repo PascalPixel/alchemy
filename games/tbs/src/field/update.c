@@ -1,4 +1,5 @@
 #include "unit/field/update.h"
+#include "unit/field/object_script.h"
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"
@@ -16,10 +17,7 @@
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
-typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
-
 extern struct ScriptMotionObject *gObjectSlots;
-extern ScriptCommandFn gScriptObject_CommandTable[];
 
 // Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -76,7 +74,8 @@ void Object_UpdateAll(void) {
 #endif
 
         if (command <= 63) {
-          if (gScriptObject_CommandTable[command](obj) == 0)
+          if (gScriptObject_CommandTable[command](
+                  (struct ScriptInterpreter *)obj) == 0)
             break;
         } else {
           obj->scriptCursor++;

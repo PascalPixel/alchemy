@@ -1,7 +1,10 @@
+#include "script.h"
 #include "types.h"
 #include "field_obj.h"
 
-static s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *obj) {
+static s32
+OverlayObject_UpdateHeadingTimer(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *obj = (struct FieldActor *)interpreter;
   s32 cnt = obj->work;
   s32 loaded = (s16)obj->work;
   s32 amount;

@@ -1,3 +1,4 @@
+#include "script.h"
 // Altin Mine, the eleven rooms under Altin where the hydros statues flood
 // the village. The party rides rolling logs, freezes puddles into pillars
 // with Frost, fights the water beasts, lowers the water three times and
@@ -113,7 +114,8 @@ static s32 Object_FollowActor8(struct FieldActor *dst) {
 
 // Script callback for a flying spark: moves by its velocity, grows by its z
 // velocity and falls under its gravity.
-static s32 Spark_Fly(struct FieldActor *actor) {
+static s32 Spark_Fly(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
   s32 rise;
   s32 growth;
 

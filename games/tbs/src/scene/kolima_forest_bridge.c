@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -47,7 +48,9 @@ extern s32 gKolimaForestBridge_SparkleSound;
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_staged_actor.h"
 
-static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object) {
+static s32 OverlayObject_ClearPendingAndRestoreMode(
+    struct ScriptInterpreter *interpreter) {
+  u8 *object = (u8 *)interpreter;
   s32 *pending = &gKolimaForestBridge_TriggerPending;
   if (*pending) {
     Object_SetMode(object, 2);
@@ -56,7 +59,9 @@ static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object) {
   return 1;
 }
 
-static s32 SceneActor_UpdateRandomCounterMode(u8 *object) {
+static s32
+SceneActor_UpdateRandomCounterMode(struct ScriptInterpreter *interpreter) {
+  u8 *object = (u8 *)interpreter;
   u16 *counter = (u16 *)(object + 100);
   *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
   if ((s16)*counter > 1000)
@@ -1010,7 +1015,9 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void) {
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/kolima_blink.h"
 
-static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0) {
+static s32
+SceneActor_CheckRegionTrigger(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *arg0 = (struct FieldActor *)interpreter;
   s32 x;
 
   if (!(gKolimaForestBridge_PartyFlag != 0

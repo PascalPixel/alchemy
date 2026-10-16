@@ -1,3 +1,4 @@
+#include "script.h"
 #include "game_state.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
@@ -1342,7 +1343,9 @@ static void ColossoWall_SpawnRandomSceneEffect(SparkSource *a) {
   }
 }
 
-static s32 ColossoWall_RaiseLinkedSceneEffect(RaisedEffect *a) {
+static s32
+ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
+  RaisedEffect *a = (RaisedEffect *)interpreter;
   RaisedEffect *o = (RaisedEffect *)Object_GetById(a->f64);
 
   Engine_ObjectSetPosition(o, a->f08, a->f0c + 0x240000, a->f10);

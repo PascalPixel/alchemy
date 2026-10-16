@@ -4279,7 +4279,7 @@ void RevealMarker_EmitSparkles(const struct FieldActor *source) {
 }
 
 // Returns 1 while Reveal is active, else 0.
-u32 Field_IsRevealActive(void) {
+s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 count;
   u32 active = 0;
   struct EffectRuntime *runtime = (struct EffectRuntime *)gEventWork;

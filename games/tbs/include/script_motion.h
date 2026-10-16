@@ -60,6 +60,12 @@ struct ScriptMotionObject {
 };
 
 LAYOUT_SIZE_GUARD(ScriptMotionObject_size, struct ScriptMotionObject, 0x70);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_script_offset, struct ScriptMotionObject,
+                    script, 0x00);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_script_cursor_offset,
+                    struct ScriptMotionObject, scriptCursor, 0x04);
+LAYOUT_OFFSET_GUARD(ScriptMotionObject_facing_offset, struct ScriptMotionObject,
+                    facing, 0x06);
 LAYOUT_OFFSET_GUARD(ScriptMotionObject_vertical_offset,
                     struct ScriptMotionObject, vertical, 0x44);
 LAYOUT_OFFSET_GUARD(ScriptMotionObject_arrival_axis_offset,

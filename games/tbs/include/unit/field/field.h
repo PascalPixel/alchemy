@@ -189,8 +189,8 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter);
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key);
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter);
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter);
-u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter);
-u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter);
+s32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter);
+s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter);
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter);
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter);
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter);
@@ -204,14 +204,14 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values);
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter);
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter);
-s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object);
-s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object);
-s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object);
-s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object);
-s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj);
-s32 Object_ApproachLinkedObject(struct ObjectRuntime *object);
-s32 Object_Wander(struct ScriptObjectRuntime *object);
-s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object);
+s32 Script_ApplyRelativePosition(struct ScriptInterpreter *interpreter);
+s32 Script_StoreAngleToLinkedObject(struct ScriptInterpreter *interpreter);
+s32 Script_ApplyLinkedObjectPosition(struct ScriptInterpreter *interpreter);
+s32 Script_ApplyLocalOffsetPosition(struct ScriptInterpreter *interpreter);
+s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter);
+s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter);
+s32 Object_Wander(struct ScriptInterpreter *interpreter);
+s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter);
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
                                s32 value);
@@ -219,18 +219,18 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                s32 value);
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
                                    s32 value);
-s32 Script_ApplyOperandSet(struct ScriptOperands *work);
-s32 Script_ApplyOperandAdd(struct ScriptOperands *work);
-s32 Script_ApplyOperandCompare(struct ScriptOperands *work);
+s32 Script_ApplyOperandSet(struct ScriptInterpreter *interpreter);
+s32 Script_ApplyOperandAdd(struct ScriptInterpreter *interpreter);
+s32 Script_ApplyOperandCompare(struct ScriptInterpreter *interpreter);
 
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value);
 u32 Field_StoreAssignedKeyValue(u32 value);
 s32 Field_CheckConfiguredKeys(void);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object);
-s32 Object_MoveOnWorldMap(struct ObjectRuntime *object);
-s32 Field_CheckConfiguredKeysAndCount(void *work);
-s32 Object_MoveByKeys(struct ObjectRuntime *object);
+s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter);
+s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter);
+s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter);
+s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter);
 
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt);
 void Tilemap_DecodeStagedBuffer(s32 size);

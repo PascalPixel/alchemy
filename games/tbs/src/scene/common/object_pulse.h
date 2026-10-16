@@ -1,7 +1,9 @@
+#include "script.h"
 #include "types.h"
 #include "field_obj.h"
 
-static s32 SceneActor_UpdateScalePulse(struct FieldActor *state) {
+static s32 SceneActor_UpdateScalePulse(struct ScriptInterpreter *interpreter) {
+  struct FieldActor *state = (struct FieldActor *)interpreter;
   switch (state->timer) {
   case 6:
     state->scaleX -= 0x4000;

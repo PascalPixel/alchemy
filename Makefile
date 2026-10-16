@@ -29,7 +29,8 @@ help:
 	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
 	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
 	  'make modern             the six ☀️ editions'\'' C through a current GCC (MODERN_CC)' \
-	  'make test               the tools'\'' tests' \
+	  'make test               test the C build tools' \
+	  'make psynergy           build the optional reconstruction tools (requires Rust)' \
 	  'make progress           DONE code and data in each edition built' \
 	  'make land               on main before committing: all twelve, the tests, the measurement'
 
@@ -60,7 +61,8 @@ clean:
 
 # --- Tools ---------------------------------------------------------------
 
-TOOLS    := tools/out/cargo-target/release
+TOOLS    := tools/out
+PSYNERGY := psynergy/target/release/psynergy
 COMPILER := tools/out/compilers
 
 XGCC   := $(COMPILER)/xgcc -B$(COMPILER)/
@@ -76,19 +78,19 @@ OBJCOPY := $(PREFIX)objcopy
 NM      := $(PREFIX)nm
 LIBGCC  := tools/out/compiler-runtime/libgcc.a
 
-AGSGFX  := $(TOOLS)/agsgfx
-WAV2AGS := $(TOOLS)/wav2ags
-MID2AGS := $(TOOLS)/mid2ags
-PO2AGS  := $(TOOLS)/po2ags
-OBJLIST := $(TOOLS)/objlist
-SCANINC := $(TOOLS)/scaninc
-OVLPACK := $(TOOLS)/ovlpack
-GBAFIX  := $(TOOLS)/gbafix
+AGSGFX  := $(TOOLS)/ags-graphics
+WAV2AGS := $(TOOLS)/ags-audio
+MID2AGS := $(TOOLS)/ags-music
+PO2AGS  := $(TOOLS)/ags-text
+OBJLIST := $(TOOLS)/ags-objects
+SCANINC := $(TOOLS)/ags-deps
+OVLPACK := $(TOOLS)/ags-overlays
+GBAFIX  := $(TOOLS)/ags-header
 
 # --- Assets (A1) ---------------------------------------------------------
 # A picture or table is built beside its source, in every edition the same:
 # games/.../NAME.FORM[.CODEC] from NAME.png, or from NAME.tsv for a table
-# form. agsgfx reads the form and codec from the file name it writes.
+# form. ags-graphics reads the form and codec from the file name it writes.
 
 PICTURE_FORMS := 1bpp 4bpp 4bpp16x16 4bpp16x32 4bpp32x8 4bpp32x16 4bpp32x32 4bpp64x64 \
                  8bpp 8bpp8x16 8bpp16x16 8bpp64x64 bitmap font frames gbapal glyphs icon4 icons strips
@@ -222,11 +224,14 @@ $(BUILD)/overlays/resource_%_overlay.o: $$(OVERLAY_SOURCE) $(OVERLAY_ROM)
 	@mkdir -p $(@D)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $(or $(filter %.s,$^),/dev/null)
 
-# The edition's messages (A6).
-$(BUILD)/text/messages.inc: games/$(GAME)/text/$(LANG).po $(PO2AGS)
+# The edition's messages (A6). Japanese glyphs follow the editable font map.
+CHARMAP_tbs := games/common/src/graphics/font/charmap_ja.tsv
+CHARMAP_tla := games/common/src/graphics/font/charmap_tla_ja.tsv
+CHARMAP := $(if $(filter ja,$(LANG)),$(CHARMAP_$(GAME)))
+$(BUILD)/text/messages.inc: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 	@mkdir -p $(@D)
-	$(PO2AGS) $< $@
-$(BUILD)/text/msg_ids.h: games/$(GAME)/text/$(LANG).po $(PO2AGS)
+	$(PO2AGS) $< $@ $(if $(CHARMAP),--charmap $(CHARMAP))
+$(BUILD)/text/msg_ids.h: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 	@mkdir -p $(@D)
 	$(PO2AGS) $< $@ --header $(if $(filter tbs,$(GAME)),--as-value)
 
@@ -379,20 +384,27 @@ $(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 
 # --- Tools and tests -------------------------------------------------------
 
-CARGO ?= cargo
-export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
-
 tools:
-	$(CARGO) build --release --workspace --manifest-path tools/Cargo.toml
+	$(MAKE) -f tools/Makefile
 
 test:
-	$(CARGO) test --offline --quiet --release --workspace --manifest-path tools/Cargo.toml
+	$(MAKE) -f tools/Makefile test
 
-# make land, on main before committing: all twelve editions, the tests,
-# then the measurement the push to main sends for CI (C3).
-.PHONY: progress land
-progress:
-	$(TOOLS)/alchemy progress
-land: compare-editions test
-	$(TOOLS)/alchemy progress
+# Reconstruction work is optional. Normal builds use only the C tools above.
+CARGO ?= cargo
+.PHONY: psynergy test-psynergy progress land
+psynergy:
+	@test -f psynergy/Cargo.toml || { echo 'Initialize Psynergy with: git submodule update --init psynergy' >&2; exit 1; }
+	$(CARGO) build --locked --release --manifest-path psynergy/Cargo.toml -p psynergy
+
+test-psynergy: psynergy
+	ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --manifest-path psynergy/Cargo.toml
+
+progress: psynergy
+	$(PSYNERGY) progress
+
+# Before landing on main: all twelve editions, both test suites, then the
+# measurement the pre-push hook sends for CI (C3).
+land: compare-editions test test-psynergy
+	$(PSYNERGY) progress
 endif

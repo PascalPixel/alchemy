@@ -18,14 +18,14 @@ jobs:
     name: ☀️ from a clean clone, with no ROM
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    env:
-      RUSTUP_TOOLCHAIN: 1.98.1
     steps:
       - name: Check out the source and the compilers' source
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          submodules: recursive
           persist-credentials: false
+
+      - name: Initialize only the matching compilers
+        run: git submodule update --init --recursive agscc
 
       - name: Confirm the checkout holds no ROM
         run: |
@@ -33,10 +33,7 @@ jobs:
           if find . -name '*.gba' -print | grep .; then exit 1; fi
 
       - name: Install binutils and a current GCC (make modern)
-        run: sudo apt-get update && sudo apt-get install -y binutils-arm-none-eabi gcc-arm-none-eabi
-
-      - name: Install Rust
-        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+        run: sudo apt-get update && sudo apt-get install -y binutils-arm-none-eabi gcc-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
 
       - name: Read the compiler pin
         id: pin
@@ -51,13 +48,13 @@ jobs:
           key: compilers-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.agscc }}-${{ hashFiles('Makefile') }}
 
       - name: Build the compilers from source (make bootstrap)
-        run: make bootstrap
+        run: make bootstrap CARGO=false
 
       - name: Build the six ☀️ editions and check each against rom.sha1
-        run: make -j"$(nproc)" compare-tbs
+        run: make -j"$(nproc)" compare-tbs CARGO=false
 
       - name: Compile ☀️'s C with a current GCC (make modern)
         run: make -j"$(nproc)" modern
 
       - name: Test the tools
-        run: make test
+        run: make test CARGO=false

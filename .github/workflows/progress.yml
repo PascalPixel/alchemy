@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      CARGO_TARGET_DIR: ${{ github.workspace }}/tools/out/cargo-target
       RUSTUP_TOOLCHAIN: 1.98.1
       TZ: Europe/London
     steps:
@@ -26,6 +25,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Initialize Psynergy
+        run: git submodule update --init psynergy
 
       - name: Check out the published progress
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -38,18 +40,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: >-
-          gh release download decomp-reports --dir measured
-          --pattern "${GITHUB_SHA}.tsv" --pattern "${GITHUB_SHA}.pb"
+          gh release download decomp-reports --dir measured --pattern "${GITHUB_SHA}.tsv" --pattern "${GITHUB_SHA}.pb"
 
-      - name: Build Alchemy
+      - name: Build Psynergy
         run: |
           rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
-          cargo build --locked --release --manifest-path tools/Cargo.toml -p alchemy
+          cargo build --locked --release --manifest-path psynergy/Cargo.toml -p psynergy
 
       - name: Record the measurement and draw both figures
         run: >-
-          tools/out/cargo-target/release/alchemy progress
-          --publish "measured/${GITHUB_SHA}.tsv" progress
+          psynergy/target/release/psynergy progress --publish "measured/${GITHUB_SHA}.tsv" progress
 
       - name: Publish the progress branch
         working-directory: progress

@@ -10,52 +10,36 @@ The full build is tested on Apple Silicon macOS and 64-bit ARM and x86-64 Linux.
 
 ### Linux
 
-Install a C compiler, Make, Git, curl, patch, xz, sha1sum and ARM binutils. On Debian or Ubuntu:
+Install a C compiler, Make, Git, curl, patch, xz, sha1sum, ARM binutils, pkg-config, libpng and utf8proc. On Debian or Ubuntu:
 
 ```sh
-sudo apt install build-essential git curl patch xz-utils binutils-arm-none-eabi
+sudo apt install build-essential git curl patch xz-utils binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
 ```
-
-Install Rust and Cargo using [rustup](https://rustup.rs). CI uses Rust 1.98.1.
 
 ### macOS
 
-Install Apple's command-line developer tools:
+With [Homebrew](https://brew.sh) installed:
 
 ```sh
-xcode-select --install
+brew install arm-none-eabi-binutils xz pkg-config libpng utf8proc
 ```
 
-They provide Clang, Make, Git, curl and patch. Install ARM binutils and xz, for example with Homebrew:
-
-```sh
-brew install arm-none-eabi-binutils xz
-```
-
-If you already have ARM tools installed, check that the shell finds the newly installed binutils:
-
-```sh
-command -v arm-none-eabi-objdump
-arm-none-eabi-objdump --version
-```
-
-An older installation earlier on `PATH` can affect the tools' tests even when ROM builds match. On Apple Silicon, Homebrew normally installs under `/opt/homebrew`; put its `bin` directory before older ARM tool installations.
-
-Install Rust and Cargo using [rustup](https://rustup.rs). CI uses Rust 1.98.1. Rosetta is not needed.
+The build uses the Clang, Make and Git supplied by Apple's command-line tools. No Rust or Rosetta is needed.
 
 ## 2. Get the source and build the tools
 
 ```sh
-git clone --recursive https://github.com/PascalPixel/alchemy.git
+git clone https://github.com/PascalPixel/alchemy.git
 cd alchemy
+git submodule update --init --recursive agscc
 make bootstrap
 ```
 
-Use a checkout path without spaces. If you cloned without `--recursive`, run `git submodule update --init --recursive` before bootstrapping.
+Use a checkout path without spaces. The `agscc` submodule supplies the matching compilers. Building and modding need only the C tools in `tools/`; Rust and the optional `psynergy` submodule are for reconstruction work ([AGENTS.md](AGENTS.md#commands)).
 
-The first setup downloads the compiler sources from GitHub, Rust dependencies from crates.io, and GNU binutils 2.10 and GCC 2.95.2 from ftp.gnu.org. The GNU archives are checked against pinned SHA-256 hashes. Once setup is complete, building needs no network connection.
+The first setup downloads the compiler sources from GitHub, and GNU binutils 2.10 and GCC 2.95.2 from ftp.gnu.org. The GNU archives are checked against pinned SHA-256 hashes. Once setup is complete, building needs no network connection.
 
-`make bootstrap` builds the tools, the pinned compilers, their assembler and runtime library. Generated tools go under `tools/out/`; no compiler is installed system-wide. On the tested 18-core Apple Silicon Mac, setup takes about two minutes. The historical compiler sources emit many warnings on current hosts; look for the command's exit status and a final Make error when diagnosing a failure.
+`make bootstrap` builds the tools, the pinned compilers, their assembler and runtime library. Generated tools go under `tools/out/`; no compiler is installed system-wide. The historical compiler sources emit many warnings on current hosts; look for the command's exit status and a final Make error when diagnosing a failure.
 
 The matching compiler choices and their fixed options are documented in [AGENTS.md](AGENTS.md#compilers); their source is in the `agscc` submodule.
 
@@ -97,7 +81,7 @@ The unfinished source under `recon/tla` copies the parts still being reconstruct
 
 ## Editors and a current compiler
 
-[clangd](https://clangd.llvm.org/installation.html) uses the checked-in `.clangd` and `compile_flags.txt` for completion and diagnostics. Build the edition first so its generated message headers exist. The editor configuration uses the English modern-build view; it does not check every edition or the matching compiler's behavior. Use `clang-format` with `.clang-format` for formatting, and reload the language server after changing its configuration.
+[clangd](https://clangd.llvm.org/installation.html) uses the checked-in `.clangd` and `compile_flags.txt` for completion and diagnostics. Build the edition first so its generated message headers exist. The editor configuration uses the English modern-build view; it does not check every edition or the matching compiler's behavior. The C build tools get their own host compiler flags from `make tools`, including the installed library headers. Use `clang-format` with `.clang-format` for formatting, and reload the language server after changing its configuration.
 
 The optional `make modern` check compiles the six first-game editions' C with a current ARM GCC. Install `arm-none-eabi-gcc` on Homebrew or `gcc-arm-none-eabi` on Debian/Ubuntu, then run:
 
@@ -119,12 +103,12 @@ This produces objects under `out/<edition>/modern/`. It checks that the C compil
 
 | Symptom | Check |
 | --- | --- |
-| `cargo` is missing | Install Rust with rustup and open a new terminal so its environment is loaded. |
+| `png.h`, `utf8proc.h` or a pkg-config package is missing | Install libpng, utf8proc and pkg-config, including development packages on Linux, using the commands above. |
 | `arm-none-eabi-as`, `ld` or `ar` is missing | Install ARM binutils and ensure its executables are on `PATH`. |
-| `agscc` is empty or compiler sources are missing | Run `git submodule update --init --recursive`, then `make bootstrap`. |
-| A download fails during bootstrap | Check access to GitHub, crates.io and ftp.gnu.org, then rerun `make bootstrap`. |
+| `agscc` is empty or compiler sources are missing | Run `git submodule update --init --recursive agscc`, then `make bootstrap`. |
+| A download fails during bootstrap | Check access to GitHub and ftp.gnu.org, then rerun `make bootstrap`. |
 | `make modern` rejects `-fdiagnostics-plain-output` | Select a current ARM GCC with `MODERN_CC`; check which installation your shell finds. |
-| An ARM disassembly test differs only in instruction spelling | Check for older ARM binutils earlier on `PATH` than the installed package. |
+| An ARM disassembly test differs only in instruction spelling | Check `command -v arm-none-eabi-objdump` and `arm-none-eabi-objdump --version`. On Apple Silicon, Homebrew normally uses `/opt/homebrew/bin`; put it before older ARM tool installations on `PATH`. |
 | A TLA dump is missing or its hash fails | Check its edition, filename and SHA-1 against `rom.sha1`. |
 | Hash comparison fails after an intentional edit | Build with `make tbs-en`; a modified game is expected to have a different hash. |
 | An unchanged checkout fails | Save the first error and the command, revision, OS and tool versions when reporting it. |

@@ -121,7 +121,7 @@ void BattlePres_ConfigureEffectDisplay(void) {
 // Scheduler callback: every scrollInterval frames, scrolls background 1 by
 // (scrollStepX, scrollStepY).
 void BattleFx_AdvanceScrollOnInterval(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   u32 *timer = (u32 *)&work->scrollTimer;
 
   (*timer)++;
@@ -139,7 +139,7 @@ void Camera_AdvanceBg2Reference(void) {
   s32 timer;
   struct BattleEffectWork *work;
 
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   timer = work->scrollTimer + 1;
   work->scrollTimer = timer;
   if (timer == work->scrollInterval) {
@@ -2458,7 +2458,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect) {
 // i from frame i / 4) as lines three pixels thick that shrink 4 pixels a
 // frame towards the centre of the canvas, a little below its middle.
 void BattlePresentation_DrawStreaks(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 frame;
   s32 i;
   struct Streak *streak;
@@ -2856,7 +2856,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
 // character block 1 the way transferMode says, and counts the frames since
 // the last copy.
 void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
-  void **slots = gBattleFxWork;
+  void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];
   void *source;
   s32 *counter;
@@ -2899,6 +2899,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
+// Sharing the five-mode switch grows native English from 0xc0 to 0xd0 bytes.
+// Inline fade helpers (with either work or value parameters) keep the sizes
+// but move the source setup ahead of the destination and size setup.
 // The same for the effects that draw a full-screen picture in
 // gMapCellBuffer instead of the canvas: copies its 0x7800 bytes to VRAM
 // 0x06008000 the way transferMode says (modes 0 to 3).
@@ -2908,7 +2911,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
   void *source;
   s32 transferMode;
 
-  slots = gBattleFxWork;
+  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   work = slots[0];
   source = Ram_MapCellBuffer;
   if (work->transferPending != 1)
@@ -2947,7 +2950,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
 // Writes the window, display and blend registers the effect keeps in its
 // work, all at once.
 void Graphics_ApplyWindowBlendRegisters(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
   REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
@@ -2962,7 +2965,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
 
 // Writes the effect's background 2 reference point to the hardware.
 void Display_ApplyBg2Reference(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
   REG_BG2X = work->bg2x;
   REG_BG2Y = work->bg2y;
@@ -2987,7 +2990,7 @@ void Palette_StepFadeTransfer(void) {
 
 // Clears every target's flash timer.
 void BattleFx_ClearActorTimers(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 
   Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
@@ -2998,7 +3001,7 @@ void ObjectGroup_TickMemberTimers(void) {
   struct BattleEffectWork *work;
   s32 actorIndex;
 
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   actorIndex = 0;
   do {
     if (work->actorTimers[actorIndex] != 0) {
@@ -8575,9 +8578,12 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 // the whole delta once, and half of it on the frames in between, so the
 // turn stays smooth whatever the effect's frame rate.
 void Camera_ApplyPhasedDelta(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  // Mixing the slot-table work read with a separate camera base grows native
+  // English from 0x58 to 0x5c bytes. Capture both owners from the same table.
+  void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  struct BattleEffectWork *work = slots[0];
   struct BattleCamera *camera =
-      *(struct BattleCamera **)((u8 *)gBattleFxWork - 108);
+      slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   s32 *phase = &work->cameraPhase;
 
   if (*phase == 1) {
@@ -8688,7 +8694,7 @@ void BattleFx_DispatchMode(s32 *arg) {
                             sizeof(struct BattleEffectWork));
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   kind = effect->kind;
   if (kind == 0)
@@ -8807,7 +8813,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
   s32 groupIndex;
 
   slot = GetBattleObjectSlotFar(actorId);
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(slot->object, groupIndex)) != NULL) {
@@ -12168,7 +12174,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode) {
 // variant: the sprite priority they take.
 // Object n plays animation n.
 void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;
 
   if (entryCount == 0) {
@@ -12197,7 +12203,7 @@ void BattleFx_RunNoEffect(void) {}
 // Arms DMA 0 to copy one word of gBattleFxWork's bg2X table into BG2X at
 // each horizontal blank, bending BG2 line by line.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
   Dma_Set(work->bg2X, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
@@ -15981,7 +15987,7 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   struct BgScroll *restoredScroll;
   struct Projection *restoredCenter;
 
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   remainingFrames = &work->shakeFrames;
   if (*remainingFrames > 0) {
     randomX = (randomMask - 1) & Random16();
@@ -17453,7 +17459,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 // Reads the held keys when the first target is an enemy (id 128 or more)
 // and does nothing with them.
 void BattleFx_ProbeKeysForExtendedActor(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleEffectArgument *effect = work->effect;
 
   if (effect->actors[0] > 0x7f)
@@ -18052,6 +18058,19 @@ static __inline__ void CastingImpact_DrawCroppedImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
+// Clear the prelude image, stop its callbacks and release its blitters before
+// the next effect takes over.
+static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
+                                            void *canvas) {
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  work->effect->prelude = 0;
+  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+}
+
 // Djinn abilities
 // Gather sparks around the acting unit, launch the Djinni and draw its impact.
 // Kinds 15, 17, 24, 26 and 35 hand off to another effect after gathering.
@@ -18382,13 +18401,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   }
   // Kinds 15, 17, 24 and 26 clear the canvas and hand off to another effect.
   if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-    Iwram_ClearWords(canvas, 0x4000);
-    work->effect->prelude = 0;
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    CastingImpact_EndPrelude(work, canvas);
     ObjectDispatch_ApplyArgumentToChildrenFar(casterActor, 3);
     if (kind == 15) {
       BattleFx_RunProjectileVolley(command, 9);
@@ -18410,13 +18423,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
   casterActor->verticalMotionStrength = savedVerticalStrength;
   // Kind 35 clears the canvas and hands off to BattleFx_RunSparkGroups.
   if (kind == 35) {
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-    Iwram_ClearWords(canvas, 0x4000);
-    work->effect->prelude = 0;
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    CastingImpact_EndPrelude(work, canvas);
     command->variant = 3;
     BattleFx_RunSparkGroups(command, 2);
     return;
@@ -19317,7 +19324,7 @@ void ObjectGroup_StoreObjectAndRunStep7(struct BattleEffectArgument *effect) {
   s32 originX;
   s32 originY;
 
-  work = gBattleFxWork[0];
+  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side ^ 1, 0, &originX,
@@ -19474,7 +19481,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
 //            2 = 8 in rows of 3, 2, 3; 3 = 8 scaled by 1.25.
 // x, z: formation origin in 16.16 pixels
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct Scale normal = (*(const struct Scale *)&gFormation_NormalScale);
   struct Scale big = (*(const struct Scale *)&gFormation_SmallScale);
   struct Placement pos;
@@ -19712,7 +19719,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 
 // Stream the effect sheet palette row into background palette RAM each HBlank.
 void BattleFx_ArmPaletteHBlankDma(void) {
-  struct BattleEffectWork *work = gBattleFxWork[0];
+  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
   Dma_Set(work->sheet + 0x1f80, (void *)0x05000000, 0xa2600001,

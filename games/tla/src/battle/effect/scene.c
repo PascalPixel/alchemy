@@ -16,17 +16,17 @@ struct EffectVector {
   s32 z;
 };
 
-s32 Render_ProjectPoint(const void *position, struct EffectVector *result);
+s32 Render_ProjectPoint(const void *position, s32 *result);
 
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
   if (*(s8 *)((u8 *)slots->eventWork + 0x18a) == 3) {
-    struct EffectVector result;
+    s32 result[3];
 
-    Render_ProjectPoint(position, &result);
-    position->x = result.x << 16;
-    position->z = result.y << 16;
+    Render_ProjectPoint(position, result);
+    position->x = result[0] << 16;
+    position->z = result[1] << 16;
     position->y = 0;
   } else {
     u8 *state = (u8 *)slots->mapWork;

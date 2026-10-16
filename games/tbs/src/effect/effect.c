@@ -4983,7 +4983,11 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 // every 16 frames.
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
-  struct Vector3 vector;
+  // World input and projected vertices reuse one coordinate workspace.
+  union {
+    struct Vector3 world;
+    struct EffectPosition projected;
+  } position;
   struct EffectPosition screen;
   struct Vector3 scale;
   s32 originX;
@@ -5079,10 +5083,10 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
       if (tick >= 0 && tick < 96) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera->eye, camera->pos);
-        vector.x = object->x;
-        vector.y = object->y;
-        vector.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&vector, &screen);
+        position.world.x = object->x;
+        position.world.y = object->y;
+        position.world.z = object->z;
+        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle: its three corners, turned a third of a circle
@@ -5101,11 +5105,10 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(
-                gSpinningTriangle_Vertex,
-                (struct EffectPosition *)&vector);
-            point->velocityX = vector.x + screen.x;
-            point->velocityY = vector.y + screen.y + 16;
+            EffectPosition_ApplyBaseAndYOffset(gSpinningTriangle_Vertex,
+                                               &position.projected);
+            point->velocityX = position.projected.x + screen.x;
+            point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct EffectStep *from = &work->particles[j + member * 32];
@@ -5146,7 +5149,11 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
 // steps up to the first target.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
-  struct Vector3 vector;
+  // World input and projected vertices reuse one coordinate workspace.
+  union {
+    struct Vector3 world;
+    struct EffectPosition projected;
+  } position;
   struct EffectPosition screen;
   struct Vector3 scale;
   void **slots;
@@ -5218,10 +5225,10 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
       if (tick >= 0 && tick < 96) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera->eye, camera->pos);
-        vector.x = object->x;
-        vector.y = object->y;
-        vector.z = object->z;
-        EffectPosition_ApplyBaseAndYOffset(&vector, &screen);
+        position.world.x = object->x;
+        position.world.y = object->y;
+        position.world.z = object->z;
+        EffectPosition_ApplyBaseAndYOffset(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle: its three corners, turned a third of a circle
@@ -5240,11 +5247,10 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
             SceneTransform_ApplyRoll(j * 0x5555);
-            EffectPosition_ApplyBaseAndYOffset(
-                gTriangleStrike_Vertex,
-                (struct EffectPosition *)&vector);
-            point->velocityX = vector.x + screen.x;
-            point->velocityY = vector.y + screen.y + 16;
+            EffectPosition_ApplyBaseAndYOffset(gTriangleStrike_Vertex,
+                                               &position.projected);
+            point->velocityX = position.projected.x + screen.x;
+            point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct EffectStep *from = &work->particles[j + member * 32];
@@ -12258,8 +12264,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   void *canvas;
   u8 *sprites;
   BlitterPair blit;
-  s32 origin[3];
-  s32 targetSpots[8][3];
+  struct EffectPosition origin;
+  struct EffectPosition targetSpots[8];
   s32 aim[3];
   u16 *color;
   s32 frame;
@@ -12348,26 +12354,26 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     work->particles[i].variant = -1;
   }
 
-  EffectPosition_ApplyAnimationAndYOffset(work->effect->actor, origin);
+  EffectPosition_ApplyAnimationAndYOffset(work->effect->actor, &origin);
   if (mode == 3) {
-    origin[1] -= 16;
+    origin.y -= 16;
   }
   if (mode == 4) {
     if (work->effect->side == 1) {
-      origin[0] += 28;
+      origin.x += 28;
     } else {
-      origin[0] -= 28;
+      origin.x -= 28;
     }
   }
   if (mode == 7) {
     if (work->effect->side == 1) {
-      origin[0] += 16;
+      origin.x += 16;
     } else {
-      origin[0] -= 16;
+      origin.x -= 16;
     }
   }
   if (mode == 5) {
-    origin[0] = origin[0] / 3;
+    origin.x = origin.x / 3;
     REG_BG2PA = 85;
   }
 
@@ -12375,7 +12381,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   i = 0;
   while (i != work->effect->count) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
-                                       (struct EffectPosition *)targetSpots[i]);
+                                       &targetSpots[i]);
     i += 1;
   }
 
@@ -12399,20 +12405,20 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     // a frame for 48 frames at a random point near a target.
     if (mode == 5) {
       if (work->effect->side == 1) {
-        blit[0](canvas, SHEET + ((frame / 3 % 3 * 9) << 9), origin[0] - 2,
-                origin[1] - 32, 72, 62);
+        blit[0](canvas, SHEET + ((frame / 3 % 3 * 9) << 9), origin.x - 2,
+                origin.y - 32, 72, 62);
       } else {
-        blit[0](canvas, SHEET + ((frame / 3 % 3 * 9) << 9), origin[0] - 70,
-                origin[1] - 32, 72, 62);
+        blit[0](canvas, SHEET + ((frame / 3 % 3 * 9) << 9), origin.x - 70,
+                origin.y - 32, 72, 62);
       }
     } else {
-      aim[0] = (targetSpots[target][0] + (Random16() & 31)) - 16;
-      aim[1] = (targetSpots[target][1] + (Random16() & 63)) - 16;
+      aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;
+      aim[1] = (targetSpots[target].y + (Random16() & 63)) - 16;
       if (frame <= 47) {
-        work->particles[frame].x = origin[0] << 15;
-        work->particles[frame].y = origin[1] << 16;
-        work->particles[frame].velocityX = (aim[0] - origin[0]) << 11;
-        work->particles[frame].velocityY = (aim[1] - origin[1]) << 11;
+        work->particles[frame].x = origin.x << 15;
+        work->particles[frame].y = origin.y << 16;
+        work->particles[frame].velocityX = (aim[0] - origin.x) << 11;
+        work->particles[frame].velocityY = (aim[1] - origin.y) << 11;
         work->particles[frame].variant = 0;
       }
     }
@@ -13221,7 +13227,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
   s32 fadeEnd;
   s32 start;
 
-  u8 *age;
+  u8 *variantCursor;
 
   struct DualColumn *setup;
   s32 x;
@@ -13277,12 +13283,12 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode) {
   duration = gDualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
   // Mark all the dust free (variant -1).
-  age = (u8 *)gMapCellBuffer + 0x18;
+  variantCursor = (u8 *)gMapCellBuffer + offsetof(struct EffectStep, variant);
   i = 0;
   do {
     i++;
-    *(s32 *)age = -1;
-    age += sizeof(struct EffectStep);
+    *(s32 *)variantCursor = -1;
+    variantCursor += sizeof(struct EffectStep);
   } while (i != 1024);
 
   // The 16 columns' roots and lengths.
@@ -15648,7 +15654,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  s32 origin[3];
+  struct EffectPosition origin;
   s32 screenY;
   s32 screenX;
   BlitterPair draw;
@@ -15672,7 +15678,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], origin);
+  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
 
   // The chips burst up from the first target.
   for (i = 0; i != PARTICLE_COUNT; i++) {
@@ -15681,8 +15687,8 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
 
     angle = (Random16() & 0x7fff) + 0x4000;
     speed = (Random16() & 0x1ff) + 0x80;
-    gMapCellBuffer[i].x = ((origin[0] / 2 + (Random16() & 0xf)) - 8) << 16;
-    gMapCellBuffer[i].y = (origin[1] + 8) << 16;
+    gMapCellBuffer[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
+    gMapCellBuffer[i].y = (origin.y + 8) << 16;
     gMapCellBuffer[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     gMapCellBuffer[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     gMapCellBuffer[i].z = Random16() & 0x7f;
@@ -21553,7 +21559,7 @@ extern u8 gShockwaveScene_ShardHeights[];
 // images.
 void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   s32 anchor[3];
-  s32 scene[3];
+  struct EffectPosition projectedPosition;
   s32 place[4];
   volatile u32 fill;
   s32 place2[4];
@@ -21704,18 +21710,17 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
         s32 size;
 
         EffectStep_AdvanceWithGravity3D(&SPARKS[i], 60, -0x400);
-        EffectPosition_ApplyBaseAndYOffset(&SPARKS[i],
-                                           (struct EffectPosition *)scene);
-        scene[0] >>= 1;
-        scene[1] -= 120;
-        if (scene[2] < 100) {
-          scene[2] = 100;
+        EffectPosition_ApplyBaseAndYOffset(&SPARKS[i], &projectedPosition);
+        projectedPosition.x >>= 1;
+        projectedPosition.y -= 120;
+        if (projectedPosition.depth < 100) {
+          projectedPosition.depth = 100;
         }
-        if (scene[2] > 900) {
-          scene[2] = 900;
+        if (projectedPosition.depth > 900) {
+          projectedPosition.depth = 900;
         }
-        z = scene[2] - 100;
-        scene[2] = z;
+        z = projectedPosition.depth - 100;
+        projectedPosition.depth = z;
         size = (z / 100) + 1;
         if (minimumDepth > z) {
           minimumDepth = z;
@@ -21724,7 +21729,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
           maximumDepth = z;
         }
         draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1],
-                scene[0] - size / 2, scene[1] - size, size, size * 2);
+                projectedPosition.x - size / 2, projectedPosition.y - size,
+                size, size * 2);
         if (frame == 64) {
           SPARKS[i].velocityX += (Trig_Sin(SPARKS[i].variant) * 255) >> 3;
           SPARKS[i].velocityY += (Trig_Cos(SPARKS[i].variant) * 255) >> 3;
@@ -21752,20 +21758,20 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].x < 0) {
           PARTICLES[i].x = 0;
         }
-        EffectPosition_ApplyBaseAndYOffset(anchor,
-                                           (struct EffectPosition *)scene);
-        if (scene[2] < -60) {
-          scene[2] = -60;
+        EffectPosition_ApplyBaseAndYOffset(anchor, &projectedPosition);
+        if (projectedPosition.depth < -60) {
+          projectedPosition.depth = -60;
         }
-        if (scene[2] > 60) {
-          scene[2] = 60;
+        if (projectedPosition.depth > 60) {
+          projectedPosition.depth = 60;
         }
-        scene[2] += 60;
-        size = ((scene[2]) / 20) + 2;
-        scene[0] += 60;
-        scene[1] += 80;
+        projectedPosition.depth += 60;
+        size = projectedPosition.depth / 20 + 2;
+        projectedPosition.x += 60;
+        projectedPosition.y += 80;
         draw[0](canvas, ramp + gParticleStreams_CellOffsets[size - 1],
-                scene[0] - size / 2, scene[1] - size, size, size * 2);
+                projectedPosition.x - size / 2, projectedPosition.y - size,
+                size, size * 2);
       }
     }
 
@@ -22829,7 +22835,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 // flames.
 void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
   s32 pos[4];
-  s32 seat[3];
+  struct EffectPosition targetPosition;
   void *canvas;
   u8 *particleSheet;
   s32 windowEdgeStep;
@@ -23206,8 +23212,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
   }
   for (i = 0; i != work->effect->count; i++) {
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[i],
-                                       (struct EffectPosition *)seat);
-    work->particles[i].x = seat[0] / 2;
+                                       &targetPosition);
+    work->particles[i].x = targetPosition.x / 2;
   }
   // The second stage raises blue flames and emits sparks as they reach the
   // ground.

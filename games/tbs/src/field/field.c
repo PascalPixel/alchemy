@@ -2129,7 +2129,11 @@ static __inline__ s32 Square(s32 value) { return value * value; }
 // terrain following, floating, and solid objects that refuse to overlap.
 void Object_UpdateAllThumb(void) {
   struct ScriptMotionObject *obj;
+#ifdef UBFIX
+  const s32 *script;
+#else
   const struct ScriptMotionWords *script;
+#endif
   s32 i;
   s32 x;
   s32 y;
@@ -2174,7 +2178,11 @@ void Object_UpdateAllThumb(void) {
       obj->wait--;
     } else {
       for (;;) {
+#ifdef UBFIX
+        command = script[(s16)obj->scriptCursor];
+#else
         command = script->word[(s16)obj->scriptCursor];
+#endif
         if (command <= 63) {
           if (gScriptObject_CommandTable[command](obj) == 0)
             break;

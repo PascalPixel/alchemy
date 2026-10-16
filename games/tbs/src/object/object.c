@@ -5556,8 +5556,7 @@ void BattleEffect_InitializeBuffers(void) {
   Dma_Set((void *)OBJ_PLTT, &buf->palette[COLOR_HALF],
           DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
   BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, buf->palette, buf->target, 0);
-  Scheduler_AddOrUpdateCallback((void (*)(void))BattlePalette_UpdateBlend,
-                                0xc8f);
+  Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }
 
 // Stops the colour buffer and frees it.

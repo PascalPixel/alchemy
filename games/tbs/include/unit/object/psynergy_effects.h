@@ -148,7 +148,11 @@ struct FieldActor *Battle_GetWorkObject1e0(void);
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
                                  s32 keepCurrentPosition);
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
+#ifdef UBFIX
+void BattleFx_StepRatioTransition(void);
+#else
 s32 BattleFx_StepRatioTransition(void);
+#endif
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
 s32 BattleFx_CopyLinkedObjectPosition(void *self);

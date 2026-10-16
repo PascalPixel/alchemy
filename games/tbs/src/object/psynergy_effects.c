@@ -214,7 +214,7 @@ void Battle_Reset(void) {
   runtime->unk1da = 0xFFFF;
   runtime->unk1dc = -1;
   runtime->unk1de = -1;
-  Scheduler_AddOrUpdateCallback((const void *)Event_UpdateDebugSkip, 0xC80);
+  Scheduler_AddOrUpdateCallback(Event_UpdateDebugSkip, 0xC80);
   GameFlag_ClearBitFar(0x132);
   runtime->objectId = gGameState.selectedActor;
   runtime->unk1f8 = 0;
@@ -2157,7 +2157,13 @@ void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 // Scheduler callback: moves the zoom one step from its previous value toward
 // its target, and removes itself on the last step. It waits while the camera
 // is paused.
+// The scheduler calls void(void). Plain void changes the native return from
+// pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
+#ifdef UBFIX
+void BattleFx_StepRatioTransition(void) {
+#else
 s32 BattleFx_StepRatioTransition(void) {
+#endif
   struct PerspectiveWork *work;
   s16 *frames;
   s32 *from;
@@ -2184,7 +2190,11 @@ s32 BattleFx_StepRatioTransition(void) {
   gScanlinePitch = work->pitch + 1;
   if (*step == *frames) {
     *frames = 0;
+#ifdef UBFIX
+    Scheduler_RemoveCallback(BattleFx_StepRatioTransition);
+#else
     Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
+#endif
   }
 }
 
@@ -2204,8 +2214,12 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   work->zoom = inverse;
   work->zoomTransitionFrames = frames;
   work->zoomTransitionStep = 0;
+#ifdef UBFIX
+  Scheduler_AddOrUpdateCallback(BattleFx_StepRatioTransition, 0xc94);
+#else
   Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition,
                                 0xc94);
+#endif
 }
 
 // Waits for a zoom transition to end (on the world map only, at most 300
@@ -3400,7 +3414,7 @@ void FieldMotes_Start(void) {
   Io_Write16(0x3f00, &REG_BLDCNT);
   Io_Write16(0x1008, &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldMotes_Update, 0xc80);
 }
 
 // Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
@@ -3547,7 +3561,7 @@ void FieldEffect_InitSparkles(void) {
     i++;
     p++;
   } while (i < 32);
-  Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }
 
 // Starts the storm's lightning (FieldFx_UpdateLightning): builds the dark
@@ -3566,7 +3580,7 @@ void FieldFx_StartLightning(void) {
   BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Scheduler_AddOrUpdateCallback((s32)(FieldFx_UpdateLightning), 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
 }
 
 // Stops the lightning: no flash for 0x7fff frames, and none after.
@@ -3610,7 +3624,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to) {
   BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Scheduler_AddOrUpdateCallback((s32)(FieldFx_UpdateLightning), 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
 }
 
 //--------------------------------------------------------------------------
@@ -5639,8 +5653,7 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback((void (*)(void))BattleFx_UpdateWaveScene,
-                                0xc80);
+  Scheduler_AddOrUpdateCallback(BattleFx_UpdateWaveScene, 0xc80);
 }
 
 //--------------------------------------------------------------------------
@@ -7564,8 +7577,7 @@ void FieldFx_EndCloak(void) {
 // Starts the Cloak tile check if the leader is hidden.
 void FieldFx_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
-    Scheduler_AddOrUpdateCallback((SchedulerCallback)FieldFx_CheckCloakTile,
-                                  0xc80);
+    Scheduler_AddOrUpdateCallback(FieldFx_CheckCloakTile, 0xc80);
   }
 }
 

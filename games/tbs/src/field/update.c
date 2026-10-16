@@ -69,7 +69,11 @@ void Object_UpdateAll(void) {
     } else {
       for (;;) {
         s32 cursor = (s16)obj->scriptCursor;
+#ifdef UBFIX
+        u32 command = obj->script[cursor];
+#else
         u32 command = obj->script->word[cursor];
+#endif
 
         if (command <= 63) {
           if (gScriptObject_CommandTable[command](obj) == 0)

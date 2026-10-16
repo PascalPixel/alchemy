@@ -4443,7 +4443,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
-      (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   if (gSevenMode_Records[mode * 2] == 0)
     total = work->effect->count * 8 + 72;
   else
@@ -4570,8 +4570,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(
-      (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
@@ -14130,7 +14129,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferValue = 50;
   }
   Scheduler_AddOrUpdateCallback(
-      (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -14516,8 +14515,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     }
   }
 
-  Scheduler_RemoveCallback(
-      (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
@@ -15798,9 +15796,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
+  Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
   Scheduler_AddOrUpdateCallback(
-      (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   work->transferMode = 0;
   BattleEffect_WipeCanvas(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
@@ -16016,7 +16014,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
   // formation, throwing sparks, then violet bolts strike again and again while
   // the formation is pushed back in smoke, ending in an impact burst.
   view->busy = 0;
-  Scheduler_RemoveCallback((u32)BattleFx_AdvanceScrollOnInterval);
+  Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(9, 0x173, 1);
@@ -16270,8 +16268,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *effect) {
     }
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback(
-        (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleEffect_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
@@ -17232,7 +17229,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(
-      (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
   REG_BG1CNT = 0x1f81;
   EffectPosition_ApplyAnimationAndYOffset(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
@@ -17339,8 +17336,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(
-      (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   gBgScroll[1].y = 32;
@@ -17424,7 +17420,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
-      (s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+      BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
   if (big == 1) {
     object = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -17455,7 +17451,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
+    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
     AudioCommand_PlayFar(212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
@@ -17486,7 +17482,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       WaitFrames(1);
     }
-    Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
@@ -17568,8 +17564,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(
-      (u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+  Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   gBgScroll[1].y = 32;

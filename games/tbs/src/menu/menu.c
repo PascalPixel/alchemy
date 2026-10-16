@@ -670,7 +670,7 @@ void Menu_ReleaseEntryObjects(void) {
       }
     } while (--i != 0);
   }
-  Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
+  Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 }
 
 // Scheduler callback: each frame, places every party member sprite created by
@@ -3333,8 +3333,7 @@ s32 Menu_SelectQuantity(s32 value) {
   {
     s32 priority = 0xc80;
 
-    Scheduler_AddOrUpdateCallback(
-        (const void *)Menu_UpdateEntryObjectTransforms, priority);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
   }
 
   {
@@ -9742,11 +9741,10 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
-  Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateAllPositions,
-                                0xc80);
+  Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
-// 4 つのオブジェクトを解放し、スケジューラから update を外す
+// Releases the four objects and removes their scheduler callback.
 #define DEFINE_FOUR_OBJECT_RELEASE(name, update)                               \
   void name(void) {                                                            \
     struct FourObjectMotionState *state = gMenuWork;                           \
@@ -9761,7 +9759,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
       }                                                                        \
       index++;                                                                 \
     } while (index < 4);                                                       \
-    Scheduler_RemoveCallback((u32)update);                                     \
+    Scheduler_RemoveCallback(update);                                          \
   }
 
 DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
@@ -9873,7 +9871,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
   }
-  Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateBottomRow, 0xc80);
+  Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
@@ -10580,7 +10578,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     }
     WaitFrames(1);
   }
-  Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
+  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
   UiWindow_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);

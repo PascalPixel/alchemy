@@ -56,14 +56,18 @@ static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
   SceneActor_SetPairZeroAndValue(actor, facing, frames);
 }
 
+#ifndef UBFIX
 static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline called as returning a value, its result
    * discarded (call.h's Value3 did the same); through ValeHome_TurnAndWait the
    * argument allocation changes, called directly differ 30 (r5 and r6 swap),
    * and through a plain s32 cast EV20_TOUCH differs 15 halfwords (2026-10-13).
+   * Forced tbs-en on 2026-10-16: a direct void call changes 15 Thumb
+   * halfwords across EV20_TOUCH (15 text bytes), with r5 and r6 swapped.
    */
   return ((s32 (*)())SceneActor_SetPairZeroAndValue)(actor, facing, frames);
 }
+#endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_facing.h"
@@ -611,7 +615,11 @@ static void EV20_TOUCH(void) {
     Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
     Actor_SetActionScript(22, gValeHome_Actor22Actions);
     Object_RefreshSelectorById(22);
+#ifdef UBFIX
+    SceneActor_SetPairZeroAndValue(22, 0x2000, 60);
+#else
     ValeHome_TurnAndWaitValue(22, 0x2000, 60);
+#endif
     Engine_ActorRunRepeatedMotion(19, 2);
     Event_SayThenWait(19, 10);
     Engine_ActorSetAnimationAndWait(22, 3);

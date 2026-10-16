@@ -406,6 +406,8 @@ struct LinkOfferList {
   s32 count;
 };
 
+// Measured plain form: replacing only the final offer-transfer wait3/test3
+// polling region with while(active transfers) adds 8 bytes in tbs-en.
 static s32 LinkLobby_SendPartyRecords(void) {
   s32 result;
   u8 *table;

@@ -317,13 +317,23 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)resource, (void *)0x05000000, 0x84000070, REG_DMA3);
   Dma_Set((void *)0x05000000, bgPalette, 0x84000080, REG_DMA3);
   resource += 0x1c0;
+  // UB: Value2 passes integers to the decoder's two pointer parameters.
+  // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
+#ifdef UBFIX
+  Resource_DecodeType01((const void *)resource, Ram_MapCellBuffer);
+#else
   Value2(Resource_DecodeType01, resource, (s32)Ram_MapCellBuffer);
+#endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
   resource = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
   Dma_Set((void *)resource, spritePalette, 0x84000080, REG_DMA3);
   Dma_Set((void *)resource, (void *)0x05000200, 0x84000080, REG_DMA3);
   resource += 0x200;
+#ifdef UBFIX
+  Resource_DecodeType01((const void *)resource, Ram_MapCellBuffer);
+#else
   Value2(Resource_DecodeType01, resource, (s32)Ram_MapCellBuffer);
+#endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
   Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
   Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);

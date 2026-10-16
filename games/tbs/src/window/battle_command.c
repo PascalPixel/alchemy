@@ -7618,12 +7618,17 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
 
       ent = &out[i];
       actorId = in[i];
+      // UB: UnitGetFar returns a pointer, not the cast's doubleword result.
+#ifdef UBFIX
+      actor = UnitGetFar(actorId);
+#else
       /* FAKEMATCH: instruction order only: called through a cast as
          returning a doubleword, the call also sets r1, so the r1
          reload for classId no longer depends on the in reload and
          sched2 loads i * 2 before in, as native (by its prototype,
          differ 2). */
       actor = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
+#endif
       COUNTDOWN->actorId = actorId;
       COUNTDOWN->unk40 = 0;
       slot = &COUNTDOWN->entries[2];

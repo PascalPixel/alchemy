@@ -2325,11 +2325,15 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 4:
     case 5:
+#ifdef UBFIX
+      FieldScene_RunOpeningAuxiliarySequence();
+#else
       /* FAKEMATCH: called through a value-returning cast where the bytes keep
        * this call apart; called by its void prototype, cross-jumping merges it
        * into the identical call before it and two instructions go (differ 42,
        * 2026-10-13). */
       ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
+#endif
       BattleFx_SetQueuedSoundAndPlay(170);
       break;
     case 15:

@@ -466,11 +466,17 @@ static void Imil_RunItemShop(void) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
       Engine_EventShowMessage(14, 0);
+#ifdef UBFIX
+      Engine_ShopOpen(12, 14);
+#else
       /* FAKEMATCH: called through a cast to the value-returning call the bytes
        * show; called by its void prototype, the two argument moves swap (differ
-       * 2). A prototyped s32 (*)(s32, s32) cast matches as well (2026-10-13).
+       * 2). Forced tbs-en on 2026-10-16 confirms the two argument moves swap
+       * (four text bytes). A prototyped s32 (*)(s32, s32) cast also matches
+       * (2026-10-13).
        */
       ((s32 (*)())Engine_ShopOpen)(12, 14);
+#endif
       Engine_EventEnd();
     } else {
       Engine_ActorFaceActor(14, 0, 10);

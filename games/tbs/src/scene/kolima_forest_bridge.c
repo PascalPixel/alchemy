@@ -1036,11 +1036,15 @@ SceneActor_CheckRegionTrigger(struct ScriptInterpreter *interpreter) {
     return 0;
   }
   Engine_AudioPlayCue(106);
+#ifdef UBFIX
+  Engine_ObjectSetScript(arg0, gKolimaForestBridge_TriggerScript);
+#else
   /* FAKEMATCH: called through a cast to the call type the bytes show; called by
    * its prototype or through Object_SetScript, r0 is set before the script
    * literal loads (2 differ) */
   ((s32 (*)())Engine_ObjectSetScript)((s32)arg0,
                                       (s32)gKolimaForestBridge_TriggerScript);
+#endif
   gKolimaForestBridge_TriggerPending = 1;
   return 0;
 }

@@ -1468,6 +1468,8 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 // Takes the exit of the first of the scene's exit regions that contains the
 // position (x, y, z) and whose condition holds: records the region's exit
 // value for Field_RunScene, plays the exit sound and starts leaving the scene.
+// A do/while or while scan changes register allocation (51 text bytes in
+// tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
   struct EventRuntime *runtime;

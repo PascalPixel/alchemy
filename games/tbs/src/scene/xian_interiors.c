@@ -18,6 +18,18 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "flags.h"
+
+enum {
+  ACTOR_XIAN_WEAPON_MERCHANT = 14,
+  ACTOR_XIAN_ARMOR_MERCHANT = 15,
+  ACTOR_XIAN_ITEM_MERCHANT = 16,
+  ACTOR_XIAN_INNKEEPER = 17,
+  XIAN_WEAPON_STOCK = 16,
+  XIAN_ARMOR_STOCK = 17,
+  XIAN_ITEM_STOCK = 18,
+  XIAN_INN = 5
+};
 
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
@@ -26,113 +38,130 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 XianInteriors_GetEntrances(void) { return (s32)gXianInteriors_SceneTable0; }
-
-s32 SceneData_ReturnZero(void) { return 0; }
-
-s32 XianInteriors_GetExits(void) { return (s32)gXianInteriors_SceneTable1; }
-
-s32 XianInteriors_SelectPlacements(void) {
-  if (gGameState.entrance == 8) {
-    return (s32)gXianInteriors_SceneTable2Entrance8;
-  }
-  SceneTable_Prepare(gXianInteriors_SceneTable2);
-  return (s32)gXianInteriors_SceneTable2;
+// Return arrival positions for the homes, shops and recovery room.
+const struct SceneEntrance *XianInteriors_GetEntrances(void) {
+  return gXianInteriors_Entrances;
 }
 
-static void EV14_TALK(void) {
-  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-  u32 value = state[3];
+// These interiors have no region table.
+const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
+
+// Return the connections to Xian and the surrounding rooms.
+const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
+
+// Prepare normal villagers or select the actors for entrance 8.
+const struct ScenePlacement *XianInteriors_GetPlacements(void) {
+  if (gGameState.entrance == 8) {
+    return gXianInteriors_PlacementsEntrance8;
+  }
+  SceneTable_Prepare(gXianInteriors_Placements);
+  return gXianInteriors_Placements;
+}
+
+// Read the leader's facing before a conversation changes actor state.
+static inline u32 XianInteriors_GetLeaderFacing(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  return leader->facing;
+}
+
+// Open the weapon shop from its counter side, or discuss martial arts.
+static void XianInteriors_TalkToWeaponMerchant(void) {
+  u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
   Engine_EventBegin();
-  if (value >= 0xa001 && value <= 0xdfff) {
-    Engine_ShopOpen(16, 14);
+  if (leaderFacing >= FACING_NORTHWEST + 1 &&
+      leaderFacing <= FACING_NORTHEAST - 1) {
+    Engine_ShopOpen(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(0x895) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Engine_EventSetMessage(MsgXianXianHasMartialArtsBut);
     } else {
       Engine_EventSetMessage(MsgXianHsusInjuryTaughtGoodLesson);
     }
-    Engine_EventShowMessage(14, 0);
+    Engine_EventShowMessage(ACTOR_XIAN_WEAPON_MERCHANT, 0);
   }
   Engine_EventEnd();
 }
 
-static void EV15_TALK(void) {
-  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-  u32 value = state[3];
+// Open the armor shop from its counter side, or discuss armor and kung fu.
+static void XianInteriors_TalkToArmorMerchant(void) {
+  u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
   Engine_EventBegin();
-  if (value >= 0xa001 && value <= 0xdfff) {
-    Engine_ShopOpen(17, 15);
+  if (leaderFacing >= FACING_NORTHWEST + 1 &&
+      leaderFacing <= FACING_NORTHEAST - 1) {
+    Engine_ShopOpen(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(0x895) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Engine_EventSetMessage(MsgXianMartialArtistsCantUseHeavy);
     } else {
       Engine_EventSetMessage(MsgXianKungFuMakesQuickDoes);
     }
-    Engine_EventShowMessage(15, 0);
+    Engine_EventShowMessage(ACTOR_XIAN_ARMOR_MERCHANT, 0);
   }
   Engine_EventEnd();
 }
 
-static void EV16_TALK(void) {
+// Open the item shop or ask whether the party will cross the desert.
+static void XianInteriors_TalkToItemMerchant(void) {
 
-  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-  u32 value = state[3];
+  u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
   Engine_EventBegin();
-  if (value >= 0xa001 && value <= 0xdfff) {
-    Engine_ShopOpen(18, 16);
-  } else if (Engine_GameFlagIsSet(0x895) == 0) {
+  if (leaderFacing >= FACING_NORTHWEST + 1 &&
+      leaderFacing <= FACING_NORTHEAST - 1) {
+    Engine_ShopOpen(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
+  } else if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     Engine_EventSetMessage(MsgXianXiansSpecialArmorNotSuited);
-    Engine_EventShowMessage(16, 0);
+    Engine_EventShowMessage(ACTOR_XIAN_ITEM_MERCHANT, 0);
   } else {
     Engine_EventSetMessage(MsgXianDoPlanCrossDesertWarrior);
-    Engine_EventAskYesNo(16, 0);
+    Engine_EventAskYesNo(ACTOR_XIAN_ITEM_MERCHANT, 0);
   }
   Engine_EventEnd();
 }
 
-static void EV17_TALK(void) {
+// Offer a room from the counter side, or discuss travel through Xian.
+static void XianInteriors_TalkToInnkeeper(void) {
 
-  u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
-  u32 value = state[3];
+  u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
   Engine_EventBegin();
-  if (value < 0x2000 || value > 0xe000) {
-    Engine_InnOpen(5, 17);
+  if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
+    Engine_InnOpen(XIAN_INN, ACTOR_XIAN_INNKEEPER);
   } else {
-    if (Engine_GameFlagIsSet(0x895) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Engine_EventSetMessage(MsgXianWarriorsShouldLearnAboutTowns);
     } else {
       Engine_EventSetMessage(MsgXianWeHaveFewCustomersThese);
     }
-    Engine_EventShowMessage(17, 0);
+    Engine_EventShowMessage(ACTOR_XIAN_INNKEEPER, 0);
   }
   Engine_EventEnd();
 }
 
-static void EV10_TALK(void) {
-
+// Ask the resident whether something is wrong on the Silk Road.
+static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
   Engine_EventAskYesNo(10, 0);
   Engine_EventEnd();
 }
 
-static void EV12_TALK(void) {
-
+// Ask what the party knows about the monsters in Altin.
+static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
   Engine_EventAskYesNo(12, 0);
   Engine_EventEnd();
 }
 
-static void EV09_TALK(void) {
+// Welcome the party and thank them for helping rescue Hsu.
+static void XianInteriors_WelcomeHsusRescuers(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
+  // Acknowledge Hsu before thanking the party for his rescue.
   Engine_EventShowMessageAndWait(9, 0, 20);
   Engine_ActorFaceActor(9, 10, 0);
   Engine_EventWait(60);
@@ -142,25 +171,28 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
-s32 XianInteriors_SelectEvents(void) {
+// Select normal town dialogue or the interactions for entrance 8.
+const struct SceneEvent *XianInteriors_GetEvents(void) {
   if (gGameState.entrance == 8) {
-    return (s32)gXianInteriors_SceneTable3Entrance8;
+    return gXianInteriors_EventsEntrance8;
   }
-  return (s32)gXianInteriors_SceneTable3;
+  return gXianInteriors_Events;
 }
 
-s32 XianInteriors_PrepareWindowTransition(void) {
+// Restore interior effects and the arrival state for entrance 8.
+s32 XianInteriors_Initialize(void) {
 
-  s16 scene;
+  s16 entrance;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  scene = gGameState.entrance;
-  if (scene == 4 || scene == 7) {
-    OverlayObject_CreateConfiguredObject(0x00f80000, 0, 0x01a10000, 20);
-  } else if (scene == 6) {
-    OverlayObject_CreateConfiguredObject(0x01cc0000, 0, 0x02380000, 20);
-    OverlayObject_CreateConfiguredObject(0x01e40000, 0, 0x02380000, 20);
-  } else if (scene == 8) {
+  entrance = gGameState.entrance;
+  // Restore the ambient effects shared by connected interior entrances.
+  if (entrance == 4 || entrance == 7) {
+    OverlayObject_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417), 20);
+  } else if (entrance == 6) {
+    OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
+    OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), 20);
+  } else if (entrance == 8) {
     Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     Engine_ActorSetAnimation(10, 6);
   }
@@ -188,7 +220,7 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-struct SceneEntrance gXianInteriors_SceneTable0[] = {
+struct SceneEntrance gXianInteriors_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24, 8, 248, 208, 0},
     {2, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0, 288, 8, 592, 224, 0},
@@ -201,7 +233,7 @@ struct SceneEntrance gXianInteriors_SceneTable0[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gXianInteriors_SceneTable1[] = {
+u32 gXianInteriors_Exits[] = {
     SCENE_EXITS(73),      SCENE_EXIT(1, 72, 5), SCENE_EXIT(2, 72, 6),
     SCENE_EXIT(3, 72, 7), SCENE_EXIT(4, 72, 8), SCENE_EXIT(5, 73, 7),
     SCENE_EXIT(6, 72, 9), SCENE_EXIT(7, 73, 5), SCENE_EXIT(8, 61, 4),
@@ -209,7 +241,7 @@ u32 gXianInteriors_SceneTable1[] = {
 };
 
 // clang-format off
-struct ScenePlacement gXianInteriors_SceneTable2[] = {
+struct ScenePlacement gXianInteriors_Placements[] = {
     { 0xa0, 0x0, ACTOR_STAND,
         PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xa2, 0x0, ACTOR_STAND,
@@ -237,17 +269,17 @@ struct ScenePlacement gXianInteriors_SceneTable2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gXianInteriors_SceneTable2Entrance8[] = {
-    { 0x28, IF_FLAG_SET(0x895), ACTOR_STAND,
+struct ScenePlacement gXianInteriors_PlacementsEntrance8[] = {
+    { 0x28, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x27, IF_FLAG_SET(0x895), ACTOR_STAND,
+    { 0x27, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(200), 0, PIXELS(704), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x29, IF_FLAG_SET(0x895), ACTOR_STAND,
+    { 0x29, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(224), 0, PIXELS(704), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gXianInteriors_SceneTable3[] = {
+struct SceneEvent gXianInteriors_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -255,42 +287,42 @@ struct SceneEvent gXianInteriors_SceneTable3[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_TALK, 8, 0x895, MSGNO(MsgXianInteriorsTheMulberryHarvestIsOverNow) },
-    { EVENT_TALK, 9, 0x895, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
-    { EVENT_TALK, 10, 0x895, MSGNO(MsgXianInteriorsXianSilkIsSentOnSilk) },
-    { EVENT_TALK, 11, 0x895, MSGNO(MsgXianInteriorsSilkRoadEndsInTolbiIt) },
-    { EVENT_TALK, 12, 0x895, MSGNO(MsgXianInteriorsFollowSilkRoadWhenYouSee) },
-    { EVENT_TALK, 13, 0x895, MSGNO(MsgXianInteriorsThereIsAMineInAltin) },
-    { EVENT_TALK, 14, 0x895, EVENT_SCRIPT(EV14_TALK) },
-    { EVENT_TALK, 15, 0x895, EVENT_SCRIPT(EV15_TALK) },
-    { EVENT_TALK, 16, 0x895, EVENT_SCRIPT(EV16_TALK) },
-    { EVENT_TALK, 17, 0x895, EVENT_SCRIPT(EV17_TALK) },
-    { EVENT_TALK, 18, 0x895, MSGNO(MsgXianInteriorsNormallyManyMerchantsComeToThe) },
-    { EVENT_TALK, 19, 0x895, MSGNO(MsgXianInteriorsAllThePeopleWhoCameTo) },
+    { EVENT_TALK, 8, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsTheMulberryHarvestIsOverNow) },
+    { EVENT_TALK, 9, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
+    { EVENT_TALK, 10, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsXianSilkIsSentOnSilk) },
+    { EVENT_TALK, 11, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSilkRoadEndsInTolbiIt) },
+    { EVENT_TALK, 12, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFollowSilkRoadWhenYouSee) },
+    { EVENT_TALK, 13, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsThereIsAMineInAltin) },
+    { EVENT_TALK, 14, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(XianInteriors_TalkToWeaponMerchant) },
+    { EVENT_TALK, 15, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(XianInteriors_TalkToArmorMerchant) },
+    { EVENT_TALK, 16, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(XianInteriors_TalkToItemMerchant) },
+    { EVENT_TALK, 17, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(XianInteriors_TalkToInnkeeper) },
+    { EVENT_TALK, 18, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsNormallyManyMerchantsComeToThe) },
+    { EVENT_TALK, 19, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsAllThePeopleWhoCameTo) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsBringUsCoinsTheyMust) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_AskAboutSilkRoad) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsNoneCanPassThroughLamakanThis) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_AskAboutAltinMonsters) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheMineInAltinFilledWith) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_TalkToWeaponMerchant) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_TalkToArmorMerchant) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_TalkToItemMerchant) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_TalkToInnkeeper) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhenLamakanDesertBurnsItIs) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHotFoodIsGoodForCrossing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgXianInteriorsSoonMasterHammetWillComeHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x895, MSGNO(MsgXianInteriorsFarmWorkIsHardOnThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgXianInteriorsSilkRoadIsFullOfSilk) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x895, MSGNO(MsgXianInteriorsMerchantsSayTolbiIsVeryBeautiful) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x895, MSGNO(MsgXianInteriorsAltinHasManyMenAllScary) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x895, MSGNO(MsgXianInteriorsMiningIsVeryHardWorkIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x895, MSGNO(MsgXianInteriorsSomeSayFightingWithWeaponsIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x895, MSGNO(MsgXianInteriorsInWarriorBattlesYouFightWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x895, MSGNO(MsgXianInteriorsXianIsAVillageOfCraftsmen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x895, MSGNO(MsgXianInteriorsWhenYouGoToANew) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x895, MSGNO(MsgXianInteriorsWhenManyMerchantsComeMyBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x895, MSGNO(MsgXianInteriorsThereAreFewerTravelersSoFewer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSoonMasterHammetWillComeHe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsHardOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSilkRoadIsFullOfSilk) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsMerchantsSayTolbiIsVeryBeautiful) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsAltinHasManyMenAllScary) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsMiningIsVeryHardWorkIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSomeSayFightingWithWeaponsIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsInWarriorBattlesYouFightWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsXianIsAVillageOfCraftsmen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsWhenYouGoToANew) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsWhenManyMerchantsComeMyBusiness) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsThereAreFewerTravelersSoFewer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhyDoesMasterHammetNotCome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsSellSilkItIsLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhiSaidTheDesertBecameEvil) },
@@ -317,10 +349,10 @@ struct SceneEvent gXianInteriors_SceneTable3[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gXianInteriors_SceneTable3Entrance8[] = {
+struct SceneEvent gXianInteriors_EventsEntrance8[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_TALK, 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
-    { EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(EV09_TALK) },
+    { EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(XianInteriors_WelcomeHsusRescuers) },
     { EVENT_TALK, 10, 0x8b3, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8b3, MSGNO(MsgXianInteriorsFeizhisAbilityToSenseTroubleIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b3, MSGNO(MsgXianInteriorsMasterHamaHasGreatPowerYou) },

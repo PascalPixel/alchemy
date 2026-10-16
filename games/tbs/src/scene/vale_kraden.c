@@ -13,7 +13,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "vale_kraden.h"
 #include "call.h"
 #include "types.h"
 #include "field_event.h"
@@ -24,123 +23,173 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "facing_object.h"
+#include "fixed_math.h"
+#include "palbuf.h"
+#include "flags.h"
+
+enum ValeKradenActor {
+  ACTOR_ROCKSLIDE_SURVIVOR = 11,
+  ACTOR_FENCE_ONLOOKER = 12,
+  ACTOR_KRADEN = 13,
+  ACTOR_SATUROS = 14,
+  ACTOR_MENARDI = 15,
+  ACTOR_COTTAGE_VISITOR = 16
+};
 
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
-
-s32 SceneData_ReturnZero(void) { return 0; }
-
-u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
-
-u8 *SceneData_GetActorTable(void) { return (u8 *)gPlacement_Actors; }
-
-u8 *SceneData_SelectEffectTable(void) {
-  if (Engine_GameFlagIsSet(0x87A) != 0) {
-    return (u8 *)gPlacement_Effects87a;
-  }
-  if (Engine_GameFlagIsSet(0x834) != 0) {
-    return (u8 *)gPlacement_Effects834;
-  }
-  return (u8 *)gPlacement_Effects;
+// Return the cottage area's entrance positions.
+const struct SceneEntrance *ValeKraden_GetEntrances(void) {
+  return gValeKraden_Entrances;
 }
 
-static void EV12_TALK(void) {
-  s32 base;
+// This area has no scene regions.
+const struct SceneRegion *ValeKraden_GetRegions(void) { return NULL; }
+
+// Return the cottage area's exits.
+const u32 *ValeKraden_GetExits(void) { return gValeKraden_Exits; }
+
+// Return the cottage residents and story actors.
+const struct ScenePlacement *ValeKraden_GetPlacements(void) {
+  return gValeKraden_Placements;
+}
+
+// Select events for the current visit to Vale.
+const struct SceneEvent *ValeKraden_GetEvents(void) {
+  if (Engine_GameFlagIsSet(0x87A) != 0) {
+    return gValeKraden_Events87a;
+  }
+  if (Engine_GameFlagIsSet(0x834) != 0) {
+    return gValeKraden_Events834;
+  }
+  return gValeKraden_Events;
+}
+
+// Finish the party's nod together before the next line of dialogue.
+static __inline__ void ValeKraden_NodTogether(void) {
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+}
+
+// Turn all three party members toward the strangers.
+static __inline__ void ValeKraden_FacePartySouth(void) {
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
+}
+
+// Start a companion walking back to Isaac's current pixel position.
+static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
+  struct FieldActor *leader;
+
+  Engine_ActorSetAnimation(companionId, ANIM_WALK);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Actor_SetDestination(companionId, leader->x.part.pixel,
+                         leader->z.part.pixel);
+  }
+}
+
+// Ask the onlooker about the growls beyond the fence.
+static void ValeKraden_DiscussFenceGrowls(void) {
+  s32 message;
 
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeIllClimbTheFenceSomeday);
-    Event_ShowMessage(12, 0);
+    Event_ShowMessage(ACTOR_FENCE_ONLOOKER, 0);
   } else {
-    base = MsgValeHearAwfulGrowls;
-    Engine_EventSetMessage(base);
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 10);
-    Engine_ActorRunRepeatedMotion(12, 2);
+    message = MsgValeHearAwfulGrowls;
+    Engine_EventSetMessage(message);
+    Actor_FaceActor(ACTOR_FENCE_ONLOOKER, ACTOR_PARTY_LEADER, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FENCE_ONLOOKER, 2);
     Engine_EventWait(6);
-    Event_OpenMessage(12, 0);
+    Event_OpenMessage(ACTOR_FENCE_ONLOOKER, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      Engine_EventSetMessage(base + 1);
+      Engine_EventSetMessage(message + 1);
     } else {
-      Engine_EventSetMessage(base + 2);
+      Engine_EventSetMessage(message + 2);
     }
-    Engine_ActorStartRepeatedMotion(12, 3);
-    Event_ShowMessage(12, 0);
-    Actor_FaceDirection(12, 49152, 10);
+    Engine_ActorStartRepeatedMotion(ACTOR_FENCE_ONLOOKER, 3);
+    Event_ShowMessage(ACTOR_FENCE_ONLOOKER, 0);
+    Actor_FaceDirection(ACTOR_FENCE_ONLOOKER, FACING_NORTH, 10);
   }
   Engine_EventEnd();
 }
 
-static void EV13_TALK(void) {
-  struct FieldActor *record;
-  s32 x, y;
-  s32 sneak;
+// Have Kraden persuade the party to investigate Sol Sanctum.
+static void ValeKraden_PlanSanctumVisit(void) {
+  struct FieldActor *leader;
+  s32 x, z;
+  s32 sneakingMessage;
 
   if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
+    // Gather Jenna and Garet around Kraden for the explanation.
     Engine_EventBegin();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Engine_EventSetMessage(MsgValeKradenOhIsaac);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 0x108);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 264);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-    record = Object_GetById(0);
-    x = record->x.part.pixel;
-    y = record->z.part.pixel;
-    Actor_SetPosition(JENNA, x << 16, y << 16);
-    Actor_SetPosition(GARET, x << 16, y << 16);
-    Actor_SetSpeed(JENNA, 0x8000, 0x4000);
-    Actor_SetSpeed(GARET, 0x8000, 0x4000);
-    Actor_WalkTo(JENNA, 248, 0x108);
-    Actor_WalkToAndWait(GARET, 216, 0x108);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorSetAnimation(JENNA, 1);
-    Engine_ActorSetAnimation(GARET, 1);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    x = leader->x.part.pixel;
+    z = leader->z.part.pixel;
+    Actor_SetPosition(JENNA, x * Q16_ONE, z * Q16_ONE);
+    Actor_SetPosition(GARET, x * Q16_ONE, z * Q16_ONE);
+    Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_WalkTo(JENNA, 248, 264);
+    Actor_WalkToAndWait(GARET, 216, 264);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_ActorSetAnimation(JENNA, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIM_STAND);
     Engine_EventWait(4);
-    Actor_FaceDirection(JENNA, 0xb000, 0);
-    Actor_FaceDirection(GARET, 0xd000, 20);
-    Engine_ActorSetAnimationAndWait(JENNA, 4);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(JENNA, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-    Actor_FaceDirection(GARET, 0x3000, 40);
+    Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 40);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Event_ShowMessageAndWait(GARET, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 10);
-    Engine_ActorSetAnimation(ACTOR_KRADEN, 3);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
+    Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 8);
-    Actor_FaceDirection(JENNA, 0x3000, 20);
+    Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 20);
     Event_ShowMessageAndWait(JENNA, 0, 10);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(GARET, 0x101, 0);
-    Actor_ShowEmote(JENNA, 0x101, 60);
-    Actor_FaceDirection(GARET, 0xd000, 0);
-    Actor_FaceDirection(JENNA, 0xb000, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
+    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Event_ShowMessageAndWait(JENNA, 0, 10);
-    Actor_ShowEmote(ACTOR_KRADEN, 0x102, 60);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(GARET, FACING_EAST, 0);
     Actor_FaceDirection(JENNA, FACING_WEST, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 60);
-    Actor_FaceDirection(GARET, 0xd000, 0);
-    Actor_FaceDirection(JENNA, 0xb000, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 20);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 40);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 40);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 60);
+    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventSetMessage(MsgValeYouCannotEnterMtAleph);
@@ -148,14 +197,15 @@ static void EV13_TALK(void) {
       Engine_EventSetMessage(MsgValeKradenIWaitedYearsFor);
     }
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+    // Debate whether the strangers can be trusted near Sol Sanctum.
     Engine_EventSetMessage(MsgValeJennaTheyMightBeThieves);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Actor_FaceDirection(JENNA, FACING_WEST, 10);
     Event_ShowMessageAndWait(JENNA, 0, 6);
-    Actor_ShowEmote(GARET, 0x103, 30);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 30);
     Engine_ActorJump(GARET, 4, 30);
     Actor_FaceDirection(GARET, FACING_EAST, 10);
     Event_ShowMessageAndWait(GARET, 0, 6);
@@ -163,12 +213,10 @@ static void EV13_TALK(void) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
     Actor_FaceActor(ACTOR_KRADEN, GARET, 10);
     Actor_FaceActor(ACTOR_KRADEN, JENNA, 10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimationAndWait(JENNA, 3);
+    ValeKraden_NodTogether();
     Engine_EventWait(10);
-    Engine_ActorSetAnimation(JENNA, 1);
-    Engine_ActorSetAnimation(GARET, 1);
+    Engine_ActorSetAnimation(JENNA, ANIM_STAND);
+    Engine_ActorSetAnimation(GARET, ANIM_STAND);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
@@ -177,40 +225,40 @@ static void EV13_TALK(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(GARET, 0x100, 0);
-    Actor_ShowEmote(JENNA, 0x100, 40);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 40);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
-    Actor_FaceDirection(JENNA, 0xb000, 10);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 10);
     Event_ShowMessageAndWait(JENNA, 0, 6);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(6);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
     Engine_ActorJump(GARET, 2, 0);
     Engine_ActorJump(JENNA, 2, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(GARET, 0xd000, 20);
+    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
     Event_ShowMessageAndWait(GARET, 0, 6);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x5000, 10);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(16);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 40);
     Event_ShowMessageAndWait(JENNA, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-    Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(JENNA, 0xb000, 30);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
-    Actor_ShowEmote(GARET, 0x105, 0);
-    Actor_ShowEmote(JENNA, 0x105, 80);
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventSetMessage(MsgValeKradenWeOnlyCheckThe);
@@ -218,15 +266,16 @@ static void EV13_TALK(void) {
       Engine_EventSetMessage(MsgValeKradenWeOnlyCheckMt);
     }
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-    sneak = MsgValeFineIfTheyDontSee;
-    Engine_EventSetMessage(sneak);
+    // Agree to investigate without letting the strangers see the party.
+    sneakingMessage = MsgValeFineIfTheyDontSee;
+    Engine_EventSetMessage(sneakingMessage);
     Actor_FaceDirection(GARET, FACING_EAST, 10);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Event_OpenMessage(GARET, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      Engine_EventSetMessage((sneak + 1));
+      Engine_EventSetMessage((sneakingMessage + 1));
     } else {
-      Engine_EventSetMessage((sneak + 2));
+      Engine_EventSetMessage((sneakingMessage + 2));
     }
     Event_ShowMessageAndWait(GARET, 0, 6);
     Engine_EventSetMessage(MsgValeJennaOurSecret);
@@ -238,22 +287,20 @@ static void EV13_TALK(void) {
       Engine_ActorJump(JENNA, 2, 20);
       Event_ShowMessageAndWait(JENNA, 0, 10);
     } else {
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-      Engine_ActorSetAnimation(GARET, 3);
-      Engine_ActorSetAnimationAndWait(JENNA, 3);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Engine_ActorSetAnimation(GARET, ANIM_NOD);
+      Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
       Engine_EventWait(8);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
       gEventWork->message++;
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(GARET, 0xd000, 0);
-    Actor_FaceDirection(JENNA, 0xb000, 10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(GARET, 3);
-    Engine_ActorSetAnimationAndWait(JENNA, 3);
+    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 10);
+    ValeKraden_NodTogether();
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -270,26 +317,27 @@ static void EV13_TALK(void) {
     Actor_FaceDirection(GARET, FACING_EAST, 10);
     Event_ShowMessageAndWait(GARET, 0, 6);
     Actor_FaceDirection(JENNA, FACING_WEST, 10);
-    Engine_ActorSetAnimationAndWait(JENNA, 4);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(JENNA, 0, 6);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Actor_FaceDirection(GARET, FACING_WEST, 10);
-    Actor_ShowEmote(GARET, 0x103, 30);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 30);
     Event_ShowMessageAndWait(GARET, 0, 10);
-    Actor_ShowEmote(ACTOR_KRADEN, 0x100, 40);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 0, 40);
     Engine_ActorJump(ACTOR_KRADEN, 4, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
-    Actor_FaceDirection(JENNA, 0xb000, 20);
-    Actor_FaceDirection(ACTOR_KRADEN, 0xb000, 10);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
+    // Kraden goes inside to prepare; continue through the cottage exit.
     Event_PlayCue(158);
-    Map_AnimateCells(gKraden_GateCells, 43, 8);
-    Actor_SetSpeed(ACTOR_KRADEN, 0x10000, 0x8000);
+    Map_AnimateCells(gValeKraden_GateCells, 43, 8);
+    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Actor_ShowEmote(GARET, 0x101, 0);
-    Actor_ShowEmote(JENNA, 0x101, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -298,95 +346,86 @@ static void EV13_TALK(void) {
   }
 }
 
-static void Scene_LeaveForMtAleph(void) {
-  struct FieldActor *record;
+// Bring Kraden out of the cottage and join the party.
+static void ValeKraden_LeaveForMtAleph(void) {
+  struct FieldActor *actor;
   s32 facing;
 
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Actor_SetPosition(GARET, 0xd80000, 0x1080000);
-  Actor_SetPosition(JENNA, 0xf80000, 0x1080000);
-  record = Object_GetById(1);
-  facing = 0xc000;
-  record->facing = facing;
-  record = Object_GetById(5);
-  record->facing = facing;
-  Map_AnimateCells(gKraden_GateCells, 43, 8);
+  Actor_SetPosition(GARET, PIXELS(216), PIXELS(264));
+  Actor_SetPosition(JENNA, PIXELS(248), PIXELS(264));
+  actor = Object_GetById(GARET);
+  facing = FACING_NORTH;
+  actor->facing = facing;
+  actor = Object_GetById(JENNA);
+  actor->facing = facing;
+  Map_AnimateCells(gValeKraden_GateCells, 43, 8);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
-  Actor_SetPosition(ACTOR_KRADEN, 0xe60000, 0xdc0000);
+  // Kraden returns outside, then everyone merges into Isaac.
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetPosition(ACTOR_KRADEN, PIXELS(230), PIXELS(220));
   Actor_WalkToAndWait(ACTOR_KRADEN, 230, 232);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventSetMessage(MsgValeKradenOurBestBet);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x3000, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(JENNA, FACING_WEST, 10);
-  Engine_ActorSetAnimation(JENNA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(JENNA, 0xcccc, 0x6666);
+  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorSetAnimation(JENNA, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(JENNA, record->x.part.pixel, record->z.part.pixel);
-  }
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, record->x.part.pixel,
-                         record->z.part.pixel);
-  }
+  ValeKraden_WalkTowardLeader(GARET);
+  ValeKraden_WalkTowardLeader(JENNA);
+  ValeKraden_WalkTowardLeader(ACTOR_KRADEN);
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Actor_SetPosition(JENNA, 0, 0);
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Engine_ActorSetAnimation(GARET, 1);
-  Engine_ActorSetAnimation(JENNA, 1);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Actor_SetPosition(ACTOR_SATUROS, 0, 0);
   Actor_SetPosition(ACTOR_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplySource(0x10000, 0);
+  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   GameFlag_Set(0x242);
   Engine_EventEnd();
 }
 
-static void EV03_TOUCH(void) {
+// Open the cottage gate before taking its entrance.
+static void ValeKraden_EnterCottage(void) {
   if (Engine_GameFlagIsSet(0x242) == 0) {
-    Engine_AudioPlayCue(0x9E);
-    Engine_MapAnimateCells(gKraden_GateCells, 0x2B, 8);
+    Engine_AudioPlayCue(158);
+    Engine_MapAnimateCells(gValeKraden_GateCells, 43, 8);
   }
-  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
   Engine_EventRequestExit(3);
 }
 
-static void EV07_TOUCH(void) {
-  struct FieldActor *record;
+// Confront Saturos and Menardi after overhearing their plans.
+static void ValeKraden_MeetSaturosAndMenardi(void) {
+  struct FieldActor *actor;
   s32 x, z;
-  s32 evt;
-  s32 evt2;
+  s32 strangersMessage;
+  s32 accusationMessage;
 
   if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
     return;
@@ -396,120 +435,119 @@ static void EV07_TOUCH(void) {
   Event_PlayCue(17);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
-  evt = MsgValeTheyKnowLittleOfThe;
-  Engine_EventSetMessage(evt);
+  // Overhear the strangers, then spread the party out to confront them.
+  strangersMessage = MsgValeTheyKnowLittleOfThe;
+  Engine_EventSetMessage(strangersMessage);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 30);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x148);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 328);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 
-  record = Object_GetById(0);
-  x = record->x.part.pixel;
-  z = record->z.part.pixel;
-  Actor_SetPosition(JENNA, x << 16, z << 16);
-  Actor_SetPosition(GARET, x << 16, z << 16);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
+  x = actor->x.part.pixel;
+  z = actor->z.part.pixel;
+  Actor_SetPosition(JENNA, x * Q16_ONE, z * Q16_ONE);
+  Actor_SetPosition(GARET, x * Q16_ONE, z * Q16_ONE);
 
-  Actor_SetSpeed(JENNA, 0x13333, 0x9999);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_WalkTo(JENNA, 0x178, 0x148);
-  Actor_WalkToAndWait(GARET, 0x198, 0x148);
+  Actor_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_WalkTo(JENNA, 376, 328);
+  Actor_WalkToAndWait(GARET, 408, 328);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
   Engine_ActorSetAnimation(JENNA, 0);
   Engine_ActorSetAnimation(GARET, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(JENNA, FACING_EAST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-  Actor_ShowEmote(GARET, 0x101, 0);
-  Actor_ShowEmote(JENNA, 0x101, 30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
-  Camera_SetSpeed(0x60000, 0xc000);
-  Camera_MoveTo(0xd70000, -1, 0x1590000, 1);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 30);
+  ValeKraden_FacePartySouth();
+  Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
+  Camera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Event_PlayCue(61);
 
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
+  // Saturos and Menardi discuss the villagers before noticing Isaac.
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 6);
-  Actor_ShowEmote(ACTOR_SATUROS, 0x100, 0);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
-  Actor_ShowEmote(ACTOR_MENARDI, 0x101, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 60);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 232, 0x168);
+  Actor_WalkToAndWait(ACTOR_SATUROS, 232, 360);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Engine_EventWait(10);
-  Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
-  Actor_WalkToAndWait(ACTOR_MENARDI, 216, 0x168);
-  Actor_WalkTo(ACTOR_MENARDI, 0x178, 0x168);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
-  Camera_MoveTo(0x1890000, -1, 0x1530000, 1);
-  Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
-  Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x168);
+  Actor_WalkTo(ACTOR_SATUROS, 392, 360);
+  Actor_WalkToAndWait(ACTOR_MENARDI, 216, 360);
+  Actor_WalkTo(ACTOR_MENARDI, 376, 360);
+  ValeKraden_FacePartySouth();
+  Camera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
+  Actor_WalkTo(ACTOR_SATUROS, 392, 360);
+  Actor_WalkToAndWait(ACTOR_MENARDI, 376, 360);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
   Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 30);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
-  Actor_ShowEmote(GARET, 258, 60);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
-  Event_OpenMessage(0x100f, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
+  Event_OpenMessage(0x1000 | ACTOR_MENARDI, 0);
 
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventSetMessage(evt + 10);
+    Engine_EventSetMessage(strangersMessage + 10);
   } else {
-    Engine_EventSetMessage(evt + 11);
+    Engine_EventSetMessage(strangersMessage + 11);
   }
 
-  Event_ShowMessageAndWait(0x100f, 0, 10);
+  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
 
-  evt2 = MsgValeYoureTheOnesSneakingAround;
-  Engine_EventSetMessage(evt2);
+  // Garet challenges the pair, who question what the party overheard.
+  accusationMessage = MsgValeYoureTheOnesSneakingAround;
+  Engine_EventSetMessage(accusationMessage);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
-  Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Event_ShowMessageAndWait(0x100f, 0, 10);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
+  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
-  Event_ShowMessageAndWait(0x1005, 0, 20);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+  Event_ShowMessageAndWait(0x1000 | JENNA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST, 20);
   Event_OpenMessage(ACTOR_SATUROS, 0);
 
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventSetMessage(evt2 + 5);
+    Engine_EventSetMessage(accusationMessage + 5);
   } else {
-    Engine_EventSetMessage(evt2 + 6);
+    Engine_EventSetMessage(accusationMessage + 6);
   }
 
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
@@ -518,13 +556,14 @@ static void EV07_TOUCH(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_FaceActor(ACTOR_SATUROS, GARET, 30);
   Actor_FaceActor(ACTOR_SATUROS, JENNA, 30);
-  Actor_ShowEmote(ACTOR_SATUROS, 0x105, 80);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 80);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
+  // The pair threaten the party and back away without turning around.
   Engine_EventSetMessage(MsgValeSaturosGo);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(JENNA, 0x100, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorStartRepeatedMotion(JENNA, 1);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -532,33 +571,33 @@ static void EV07_TOUCH(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 10);
-  Event_ShowMessageAndWait(0x1005, 0, 10);
+  Event_ShowMessageAndWait(0x1000 | JENNA, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
-  Event_ShowMessageAndWait(0x100f, 0, 10);
+  Event_ShowMessageAndWait(0x1000 | ACTOR_MENARDI, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SATUROS, 0xb000, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
-  Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
-  Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
+  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
 
-  record = Object_GetById(14);
-  record->steeringFlags &= ~ACTOR_FACES_MOTION;
-  record = Object_GetById(15);
-  record->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = Object_GetById(ACTOR_SATUROS);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = Object_GetById(ACTOR_MENARDI);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 
-  Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
-  Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
+  Actor_WalkTo(ACTOR_SATUROS, 392, 376);
+  Actor_WalkToAndWait(ACTOR_MENARDI, 376, 376);
   Engine_EventWait(6);
 
-  record = Object_GetById(14);
-  record->steeringFlags |= ACTOR_FACES_MOTION;
-  record = Object_GetById(15);
-  record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
+  actor = Object_GetById(ACTOR_SATUROS);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
+  actor = Object_GetById(ACTOR_MENARDI);
+  actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
 
   Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
   Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
@@ -566,115 +605,114 @@ static void EV07_TOUCH(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Event_PlayCue(17);
 
-  Engine_ActorSetAnimation(GARET, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
-  }
+  ValeKraden_WalkTowardLeader(GARET);
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
 
-  Engine_ActorSetAnimation(JENNA, 2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetDestination(JENNA, record->x.part.pixel, record->z.part.pixel);
-  }
+  ValeKraden_WalkTowardLeader(JENNA);
   Engine_ActorWaitForMove(JENNA);
   Actor_SetPosition(JENNA, 0, 0);
-  FieldObject_SetTargetAndCallback(
-      14, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKraden_StrangerActions);
-  FieldObject_SetTargetAndCallback(
-      15, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKraden_StrangerActions);
+  FieldObject_SetTargetAndCallback(14,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gValeKraden_FaceTargetActions);
+  FieldObject_SetTargetAndCallback(15,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gValeKraden_FaceTargetActions);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
 }
 
-static void EV05_TOUCH(void) {
-  struct FieldActor *record;
+// Let Kraden speculate about the strangers and Alchemy.
+static void ValeKraden_OverhearKraden(void) {
+  struct FieldActor *leader;
 
   if (GameFlag_IsSet(0x800) != 0) {
   } else {
     Engine_EventBegin();
-    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    // Kraden paces while recalling the strangers' knowledge.
     Engine_EventSetMessage(MsgValeWho);
     Engine_EventShowMessage(13, 0);
-    record = Object_GetById(0);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     {
-      s32 x = record->x.part.pixel;
-      s32 y = record->z.part.pixel;
+      s32 x = leader->x.part.pixel;
+      s32 z = leader->z.part.pixel;
 
-      Engine_ActorSetPosition(5, x << 16, y << 16);
-      Engine_ActorSetPosition(1, x << 16, y << 16);
+      Engine_ActorSetPosition(JENNA, x * Q16_ONE, z * Q16_ONE);
+      Engine_ActorSetPosition(GARET, x * Q16_ONE, z * Q16_ONE);
     }
-    Actor_SetSpeed(5, 0xcccc, 0x6666);
-    Actor_SetSpeed(1, 0xcccc, 0x6666);
-    Actor_WalkTo(5, 0x128, 0x148);
-    Actor_WalkToAndWait(1, 0x118, 0x148);
-    Engine_ActorSetAnimation(0, 0);
-    Engine_ActorSetAnimation(5, 0);
-    Engine_ActorSetAnimation(1, 0);
-    Actor_FaceDirection(5, 0xb000, 0);
-    Actor_FaceDirection(1, 0xb000, 0);
-    Actor_FaceDirection(0, 0xb000, 0);
-    Engine_CameraMoveTo(0xe80000, -1, 0xf00000, 1);
+    Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_WalkTo(JENNA, 296, 328);
+    Actor_WalkToAndWait(GARET, 280, 328);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+    Engine_ActorSetAnimation(JENNA, 0);
+    Engine_ActorSetAnimation(GARET, 0);
+    Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
+    Engine_CameraMoveTo(PIXELS(232), -1, PIXELS(240), 1);
     Engine_CameraWaitForMove();
-    Actor_FaceDirection(13, FACING_WEST, 20);
-    Engine_ActorRunRepeatedMotion(13, 2);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+    Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventShowMessage(13, 0);
-    Actor_SetSpeed(13, 0x3333, 0x1999);
-    Engine_ActorWalkToAndWait(13, 216, 232);
+    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
+    Engine_ActorWalkToAndWait(ACTOR_KRADEN, 216, 232);
     Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(13, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Engine_EventWait(10);
     Engine_EventShowMessageAndWait(13, 0, 40);
-    Engine_ActorJump(13, 2, 10);
-    Engine_ActorFaceDirection(13, FACING_EAST, 10);
+    Engine_ActorJump(ACTOR_KRADEN, 2, 10);
+    Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
     Engine_EventShowMessageAndWait(13, 0, 10);
-    Engine_ActorWalkToAndWait(13, 248, 232);
+    Engine_ActorWalkToAndWait(ACTOR_KRADEN, 248, 232);
     Engine_EventWait(40);
-    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(20);
     Engine_EventShowMessage(13, 0);
-    Actor_ShowEmote(13, 0x101, 60);
-    Engine_ActorRunRepeatedMotion(13, 1);
-    Actor_FaceDirection(13, FACING_WEST, 20);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 1, 60);
+    Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Engine_EventShowMessageAndWait(13, 0, 2);
-    Engine_ActorWalkToAndWait(13, 232, 232);
+    Engine_ActorWalkToAndWait(ACTOR_KRADEN, 232, 232);
     Engine_EventWait(2);
-    Actor_FaceDirection(13, FACING_SOUTH, 4);
-    Engine_ActorRunRepeatedMotion(13, 2);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 4);
+    Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(4);
     Engine_EventShowMessageAndWait(13, 0, 2);
-    Engine_ActorSetAnimationAndWait(13, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_CameraFollowActor(0, 1);
     Engine_CameraWaitForMove();
-    Engine_ActorSetAnimation(1, 2);
-    record = Object_GetById(0);
-    if (record != 0) {
-      Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
+    Engine_ActorSetAnimation(GARET, ANIM_WALK);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+      Engine_ActorSetDestination(GARET, leader->x.part.pixel,
+                                 leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(1);
-    Engine_ActorSetPosition(1, 0, 0);
-    Engine_ActorSetAnimation(5, 2);
-    record = Object_GetById(0);
-    if (record != 0) {
-      Engine_ActorSetDestination(5, record->x.part.pixel, record->z.part.pixel);
+    Engine_ActorWaitForMove(GARET);
+    Engine_ActorSetPosition(GARET, 0, 0);
+    Engine_ActorSetAnimation(JENNA, ANIM_WALK);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+      Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
+                                 leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(5);
-    Engine_ActorSetPosition(5, 0, 0);
+    Engine_ActorWaitForMove(JENNA);
+    Engine_ActorSetPosition(JENNA, 0, 0);
     Engine_GameFlagSet(0x800);
     Engine_EventEnd();
   }
 }
 
-s32 ValeKraden_RestoreEntryState(void) {
-  struct FieldActor *record;
-  s32 v5;
+// Restore actors and obstacles for the current story chapter.
+s32 ValeKraden_Initialize(void) {
+  struct FieldActor *actor;
+  s32 debrisRow;
 
   if (gGameState.entrance == 5 || gGameState.entrance == 6) {
     Engine_GameFlagClear(0x12f);
@@ -682,157 +720,166 @@ s32 ValeKraden_RestoreEntryState(void) {
   if (GameFlag_IsSet(0x109) != 0) {
     Engine_GameFlagClear(0x242);
   }
+  // The rockslide chapter replaces residents with debris and a survivor.
   if (Engine_GameFlagIsSet(0x834) != 0) {
     Effect_SoundAndFlash();
     FieldFx_StartLightning();
     Engine_EventBegin();
-    Engine_ActorSetPosition(12, 0, 0);
-    Engine_ActorSetPosition(13, 0, 0);
-    Engine_ActorSetPosition(14, 0, 0);
-    Engine_ActorSetPosition(15, 0, 0);
-    Engine_ActorSetPosition(5, 0, 0);
+    Engine_ActorSetPosition(ACTOR_FENCE_ONLOOKER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
+    Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
+    Engine_ActorSetPosition(ACTOR_MENARDI, 0, 0);
+    Engine_ActorSetPosition(JENNA, 0, 0);
     {
-      struct FieldActor *record = Object_GetById(8);
+      struct FieldActor *actor = Object_GetById(8);
 
-      record->collisionFlags = 8 | record->collisionFlags;
+      actor->collisionFlags = 8 | actor->collisionFlags;
     }
-    Actor_SetPosition(11, 0x530000, 0x1090000);
-    Engine_ActorWalkToAndWait(11, 83, 0x111);
-    Engine_ActorSetAnimation(11, 5);
-    record = Object_GetById(11);
+    Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, PIXELS(83), PIXELS(265));
+    Engine_ActorWalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
+    Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
+    actor = Object_GetById(ACTOR_ROCKSLIDE_SURVIVOR);
     {
-      s32 shown = 12;
+      s32 collisionRadius = 12;
 
-      record->radius = shown;
+      actor->radius = collisionRadius;
     }
-    Actor_SetActionScript(11, gKraden_Actor11Actions);
+    Actor_SetActionScript(ACTOR_ROCKSLIDE_SURVIVOR,
+                          gValeKraden_RockslideSurvivorSwayActions);
     if (Engine_GameFlagIsSet(0x839) != 0) {
-      Engine_ActorSetPosition(11, 0, 0);
+      Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     }
-    v5 = 21;
+    debrisRow = 21;
     Engine_EventEnd();
-    Map_CopyCellAttributes(9, 24, 1, 1, 14, v5);
-    Map_CopyCellAttributes(9, 24, 1, 1, 15, v5);
+    Map_CopyCellAttributes(9, 24, 1, 1, 14, debrisRow);
+    Map_CopyCellAttributes(9, 24, 1, 1, 15, debrisRow);
     Map_CopyCellAttributes(9, 24, 1, 1, 23, 19);
     Map_CopyCellAttributes(9, 24, 1, 1, 24, 19);
-    v5 = 20;
+    debrisRow = 20;
     Map_CopyCellAttributes(9, 24, 1, 1, 23, 20);
     Map_CopyCellAttributes(9, 24, 1, 1, 24, 20);
   } else {
     Engine_ActorSetPosition(9, 0, 0);
     Engine_ActorSetPosition(10, 0, 0);
-    Engine_ActorSetPosition(1, 0, 0);
-    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(GARET, 0, 0);
+    Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x109) == 0) {
       if (gGameState.entrance == 10) {
-        Scene_LeaveForMtAleph();
+        ValeKraden_LeaveForMtAleph();
       }
     }
-    if (Engine_GameFlagIsSet(0x801) != 0) {
-      Engine_ActorSetPosition(13, 0, 0);
-      Engine_ActorSetPosition(14, 0, 0);
-      Engine_ActorSetPosition(15, 0, 0);
+    if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
+      Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
+      Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
+      Engine_ActorSetPosition(ACTOR_MENARDI, 0, 0);
     } else {
-      if (Engine_GameFlagIsSet(0x808) != 0) {
-        Actor_SetPosition(14, 0x1880000, 0x1780000);
-        Actor_SetPosition(15, 0x1780000, 0x1780000);
+      if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
+        Actor_SetPosition(ACTOR_SATUROS, PIXELS(392), PIXELS(376));
+        Actor_SetPosition(ACTOR_MENARDI, PIXELS(376), PIXELS(376));
         FieldObject_SetTargetAndCallback(
             14, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-            gKraden_StrangerActions);
+            gValeKraden_FaceTargetActions);
         FieldObject_SetTargetAndCallback(
             15, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-            gKraden_StrangerActions);
+            gValeKraden_FaceTargetActions);
       }
     }
     if (Engine_GameFlagIsSet(0x87a) != 0) {
-      Actor_SetPosition(16, 0x840000, 0x1080000);
+      Actor_SetPosition(ACTOR_COTTAGE_VISITOR, PIXELS(132), PIXELS(264));
     }
     Engine_EventEnd();
   }
   return 0;
 }
 
-static void ValeKraden_RunActorSequence(void) {
-  struct FieldActor *record;
-  s32 base;
+// Discover that the rockslide survivor can still escape.
+static void ValeKraden_TalkToRockslideSurvivor(void) {
+  struct FieldActor *leader;
+  s32 message;
 
   if (GameFlag_IsSet(0x839) == 0) {
     if (GameFlag_IsSet(0x82f) != 0) {
       Engine_EventBegin();
-      Engine_ActorRunRepeatedMotion(11, 2);
+      Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventSetMessage(MsgValeSaveYourselves);
       Engine_EventShowMessage(11, 0);
       Engine_EventEnd();
     } else {
       Engine_EventBegin();
-      Engine_ActorStop(11);
-      Engine_ActorRunRepeatedMotion(11, 1);
-      base = MsgValeRockslideDestroyedFence;
-      Engine_EventSetMessage(base);
+      Engine_ActorStop(ACTOR_ROCKSLIDE_SURVIVOR);
+      Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 1);
+      // Reassure the survivor or leave him convinced that he is dying.
+      message = MsgValeRockslideDestroyedFence;
+      Engine_EventSetMessage(message);
       Engine_EventShowMessageAndWait(11, 0, 20);
-      Actor_ShowEmote(0, 0x100, 30);
-      Engine_CameraMoveTo(0x620000, -1, 0x11b0000, 1);
-      Actor_WalkToAndWait(0, 94, 0x125);
-      Actor_FaceDirection(0, FACING_NORTHWEST, 0);
-      record = Object_GetById(0);
-      if (record != 0) {
-        Engine_ActorSetPosition(1, record->x.fixed, record->z.fixed);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
+      Engine_CameraMoveTo(PIXELS(98), -1, PIXELS(283), 1);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+      leader = Object_GetById(ACTOR_PARTY_LEADER);
+      if (leader != 0) {
+        Engine_ActorSetPosition(GARET, leader->x.fixed, leader->z.fixed);
       }
-      Actor_WalkToAndWait(1, 110, 0x117);
-      Actor_FaceDirection(1, FACING_NORTHWEST, 40);
-      Engine_ActorRunRepeatedMotion(11, 2);
+      Actor_WalkToAndWait(GARET, 110, 279);
+      Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
+      Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventWait(40);
       Engine_EventOpenMessage(11, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Engine_ActorRunRepeatedMotion(11, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Engine_EventWait(20);
-        Engine_EventSetMessage((base + 2));
+        Engine_EventSetMessage((message + 2));
         Engine_EventShowMessage(11, 0);
         Engine_GameFlagSet(0x82f);
       } else {
-        Engine_ActorRunRepeatedMotion(11, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Engine_EventWait(20);
-        Engine_EventSetMessage((base + 3));
+        Engine_EventSetMessage((message + 3));
         Engine_EventShowMessageAndWait(11, 0, 40);
-        Engine_ActorFaceActor(11, 0, 0);
-        Engine_ActorSetAnimation(11, 1);
-        Engine_ActorJump(11, 4, 40);
-        Engine_ActorSetAnimation(11, 6);
-        Actor_ShowEmote(11, 0x101, 40);
+        Engine_ActorFaceActor(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
+        Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
+        Engine_ActorJump(ACTOR_ROCKSLIDE_SURVIVOR, 4, 40);
+        Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
+        Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR, EMOTE_IN_FRONT | 1, 40);
         Engine_EventShowMessageAndWait(11, 0, 10);
-        Engine_ActorSetAnimation(11, 1);
+        Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_EventWait(10);
-        Engine_ActorSetAnimationAndWait(11, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         Engine_EventShowMessageAndWait(11, 0, 10);
-        Engine_ActorSetAnimationAndWait(11, 3);
-        FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 11,
-                                         gKraden_StrangerActions);
-        FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 11,
-                                         gKraden_StrangerActions);
-        Actor_RunActionScriptAndWait(11, gKraden_Actor11RockslideActions);
-        Engine_ActorStop(0);
-        Engine_ActorStop(1);
-        Actor_FaceDirection(0, FACING_SOUTH, 0);
-        Actor_FaceDirection(1, FACING_SOUTH, 60);
-        Actor_ShowEmote(0, 0x105, 0);
-        Engine_ActorShowEmote(1, 0x105, 120);
+        Engine_ActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
+        // Follow his escape until the party can see that he is unharmed.
+        FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
+                                         ACTOR_LINK_KEEP_MOTION | 11,
+                                         gValeKraden_FaceTargetActions);
+        FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | 11,
+                                         gValeKraden_FaceTargetActions);
+        Actor_RunActionScriptAndWait(
+            ACTOR_ROCKSLIDE_SURVIVOR,
+            gValeKraden_RockslideSurvivorEscapeActions);
+        Engine_ActorStop(ACTOR_PARTY_LEADER);
+        Engine_ActorStop(GARET);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+        Actor_FaceDirection(GARET, FACING_SOUTH, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
+        Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
         Engine_GameFlagSet(0x839);
       }
-      Engine_ActorSetAnimation(1, 2);
-      record = Object_GetById(0);
-      if (record != 0) {
-        Engine_ActorSetDestination(1, record->x.part.pixel,
-                                   record->z.part.pixel);
+      Engine_ActorSetAnimation(GARET, ANIM_WALK);
+      leader = Object_GetById(ACTOR_PARTY_LEADER);
+      if (leader != 0) {
+        Engine_ActorSetDestination(GARET, leader->x.part.pixel,
+                                   leader->z.part.pixel);
       }
-      Engine_ActorWaitForMove(1);
-      Engine_ActorSetPosition(1, 0, 0);
+      Engine_ActorWaitForMove(GARET);
+      Engine_ActorSetPosition(GARET, 0, 0);
       Engine_EventEnd();
     }
   }
 }
 
-static void EV10_TOUCH(void) {
+// Start the first monster encounter near the broken fence.
+static void ValeKraden_StartFirstMonsterBattle(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -847,7 +894,8 @@ static void EV10_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void EV11_TOUCH(void) {
+// Start the second monster encounter near the broken fence.
+static void ValeKraden_StartSecondMonsterBattle(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -862,14 +910,16 @@ static void EV11_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void EV16_TALK(void) {
+// Ask Isaac about his memories of Kraden's cottage.
+static void ValeKraden_RememberCottage(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeMemoriesOfThisCottage);
   Engine_EventAskYesNo(16, 0);
   Engine_EventEnd();
 }
 
-s32 gKraden_Actor11RockslideActions[] = {
+// Lead the party away from the broken fence, then leave the map.
+s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_ARG(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
     SC_SYNC,   SC_MOVE(PIXELS(77), 0, PIXELS(329)),
     SC_SYNC,   SC_MOVE(PIXELS(70), 0, PIXELS(415)),
@@ -877,21 +927,33 @@ s32 gKraden_Actor11RockslideActions[] = {
     SC_END,
 };
 
-s32 gKraden_Actor11Actions[] = {
-    SC_ADD(SW_SCALE_Y, -0x1000), SC_ADD(SW_SCALE_X, 2048),    SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, 2048),    SC_ADD(SW_SCALE_X, -1024),   SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, 1024),    SC_ADD(SW_SCALE_X, -512),    SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, 1024),    SC_ADD(SW_SCALE_X, -512),    SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, 0x10000), SC_SET(SW_SCALE_X, 0x10000), SC_WAIT(60),
+// Alternate the survivor's width and height while he lies by the fence.
+s32 gValeKraden_RockslideSurvivorSwayActions[] = {
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 128),
+    SC_WAIT(2),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gKraden_StrangerActions[] = {
+// Keep a linked actor facing its current target.
+s32 gValeKraden_FaceTargetActions[] = {
     SC_CALL(OverlayObject_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gPlacement_Scripts[] = {
+struct SceneEntrance gValeKraden_Entrances[] = {
     {0, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 454, 0, 290, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 454, 0, 443, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -902,7 +964,7 @@ struct SceneEntrance gPlacement_Scripts[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gPlacement_Messages[] = {
+u32 gValeKraden_Exits[] = {
     SCENE_EXITS(6),       SCENE_EXIT(1, 4, 3),  SCENE_EXIT(2, 4, 4),
     SCENE_EXIT(3, 8, 2),  SCENE_EXIT(4, 93, 1), SCENE_EXIT(6, 93, 3),
     SCENE_EXIT(11, 3, 3), SCENE_EXIT(12, 3, 4), SCENE_EXIT(13, 8, 22),
@@ -910,14 +972,14 @@ u32 gPlacement_Messages[] = {
 };
 
 // clang-format off
-struct ScenePlacement gPlacement_Actors[] = {
+struct ScenePlacement gValeKraden_Placements[] = {
     { 0x127, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x6c, CONDITION_ALWAYS, (s32)gKraden_Actor11Actions,
+    { 0x6c, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
         PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -936,47 +998,47 @@ struct ScenePlacement gPlacement_Actors[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gPlacement_Effects[] = {
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
+struct SceneEvent gValeKraden_Events[] = {
+    { EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_PlanSanctumVisit) },
+    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_DiscussFenceGrowls) },
+    { EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
+    { EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_EnterCottage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_OverhearKraden) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gPlacement_Effects834[] = {
+struct SceneEvent gValeKraden_Events834[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 12 },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_RunActorSequence) },
-    { EVENT_TOUCH, 20, 0x82f, EVENT_SCRIPT(ValeKraden_RunActorSequence) },
-    { EVENT_TOUCH, 10, 0x87d, EVENT_SCRIPT(EV10_TOUCH) },
-    { EVENT_TOUCH, 11, 0x87e, EVENT_SCRIPT(EV11_TOUCH) },
+    { EVENT_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_TalkToRockslideSurvivor) },
+    { EVENT_TOUCH, 20, 0x82f, EVENT_SCRIPT(ValeKraden_TalkToRockslideSurvivor) },
+    { EVENT_TOUCH, 10, 0x87d, EVENT_SCRIPT(ValeKraden_StartFirstMonsterBattle) },
+    { EVENT_TOUCH, 11, 0x87e, EVENT_SCRIPT(ValeKraden_StartSecondMonsterBattle) },
     { SEARCH(SEARCH_JAR), 100, CONDITION_ALWAYS, 0 },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gPlacement_Effects87a[] = {
+struct SceneEvent gValeKraden_Events87a[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_EnterCottage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
+    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
+    { EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_RememberCottage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3
     { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
@@ -985,7 +1047,7 @@ struct SceneEvent gPlacement_Effects87a[] = {
 };
 // clang-format on
 
-u16 gKraden_GateCells[] = {
+u16 gValeKraden_GateCells[] = {
     MAP_CELL_STEP(2, 36, 2, 2, 1),
     MAP_CELL_STEP(4, 36, 2, 2, 1),
     MAP_CELL_STEPS_END,

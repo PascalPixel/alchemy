@@ -4,16 +4,16 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *TretTreeBranch_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *TretTreeBranch_GetExits(void);
-u8 *TretTreeBranch_GetPlacements(void);
-u8 *TretTreeBranch_GetEvents(void);
-s32 TretTreeBranch_InitializeBackdropTransition(void);
-extern struct SceneEntrance gTretTreeBranch_SceneTable0[];
-extern u32 gTretTreeBranch_SceneTable1[];
-extern struct ScenePlacement gTretTreeBranch_SceneTable2[];
-extern struct SceneEvent gTretTreeBranch_SceneTable3[];
+const struct SceneEntrance *TretTreeBranch_GetEntrances(void);
+const struct SceneRegion *TretTreeBranch_GetRegions(void);
+const u32 *TretTreeBranch_GetExits(void);
+const struct ScenePlacement *TretTreeBranch_GetPlacements(void);
+const struct SceneEvent *TretTreeBranch_GetEvents(void);
+s32 TretTreeBranch_Initialize(void);
+extern struct SceneEntrance gTretTreeBranch_Entrances[];
+extern u32 gTretTreeBranch_Exits[];
+extern struct ScenePlacement gTretTreeBranch_Placements[];
+extern struct SceneEvent gTretTreeBranch_Events[];
 extern u16 gTretTreeBranch_CellSteps[];
 
 #endif

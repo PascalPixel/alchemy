@@ -5,6 +5,7 @@
 
 struct FieldPosition;
 struct ObjectRuntime;
+struct SceneEvent;
 struct ScenePlacement;
 struct UiWindow;
 
@@ -28,7 +29,7 @@ void Engine_EventSetNextDestination(s32 first, s32 second);
 void Engine_ResetSceneEffectCounter(void);
 s32 Engine_ShopConfirmAct(s32 unitId);
 void Engine_UiTextDrawQuantity(u32 value, u32 kind);
-void Event_LoadAreaScript(s32 value);
+void Event_LoadAreaScript(const struct SceneEvent *events);
 s32 GetPartyMemberCount(void);
 void InventorySnapshot_Take(void);
 s32 ItemMenu_Open(void);

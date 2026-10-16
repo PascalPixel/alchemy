@@ -1835,7 +1835,7 @@ s32 Field_RunScene(s32 entrance) {
   ObjectSystem_InitializeFar(mode);
   UiWork_InitializeWithResourceCountersFar();
   Field_ClearRequests();
-  work->view = (s32)gOverlayArea.events();
+  work->events = gOverlayArea.events();
   Scene_ApplyEntrance();
   ObjectTable_ResetForObject(
       (struct ScenePlacement *)gOverlayArea.placements());
@@ -2462,28 +2462,6 @@ found:
 #endif
 }
 
-// Part of the event work (gEventWork).
-struct EffectDescriptorRuntime {
-  u8 unused00[16];
-  struct EffectDescriptor *descriptors; // the scene's events, ended by -1
-  u8 unused14[0x15c];
-  s16 queuedResult; // the exit taken
-  u8 unused172[0x2a];
-  s16 limit; // how long the leader has pushed (EventWork's blockedSteps)
-};
-
-// Laid over both an event (struct EffectDescriptor) and the event work, for
-// touch events and exits.
-typedef struct {
-  s32 flags;
-  u8 unk04[4];
-  s32 result;
-  u8 unk0c[0x170 - 0xc];
-  s16 queuedResult;
-  u8 unk172[0x19c - 0x172];
-  s16 limit;
-} EffectDescriptorWorkView;
-
 // Returns whether an event condition holds: -1 always holds; a condition with
 // bit 0x1000 holds while that flag is set, any other while its flag is clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
@@ -2524,9 +2502,8 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
 // for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
 // face within an eighth of a turn of the direction in the top four bits.
 struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
-  struct EffectDescriptorRuntime *work =
-      (struct EffectDescriptorRuntime *)gEventWork;
-  struct EffectDescriptor *ev = work->descriptors;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct EffectDescriptor *ev = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
       ((struct FieldActor *)ObjectTable_Get(gGameState.selectedActor))->facing;
@@ -2550,7 +2527,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
         ok = 1;
         break;
       case EVENT_TOUCH_WALKING:
-        if (work->limit > steps) {
+        if (work->blockedSteps > steps) {
           ok = 1;
         }
         break;
@@ -2559,7 +2536,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
         ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
       case EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING:
-        if (work->limit > steps) {
+        if (work->blockedSteps > steps) {
           flags &= 0xf000;
           ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         }
@@ -2728,18 +2705,18 @@ s32 Scene_RunRaisedEvent(s32 value) {
 // exit (kind 1): plays the exit's sound (and effect) and records where it
 // leads. Returns 0 when something ran, -1 when there was nothing.
 s32 Scene_RunTouchOrExit(s32 value) {
-  EffectDescriptorWorkView *touch;
-  EffectDescriptorWorkView *exit;
+  struct EffectDescriptor *touch;
+  struct EffectDescriptor *exit;
   s32 kind;
   s32 ret;
-  EffectDescriptorWorkView *work;
+  struct FieldWork *work;
 
-  touch = (EffectDescriptorWorkView *)Scene_FindEvent(EVENT_TOUCH, value);
+  touch = Scene_FindEvent(EVENT_TOUCH, value);
   ret = -1;
-  work = (EffectDescriptorWorkView *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   if ((touch != 0) && (touch->result != 0)) {
     if (touch->flags & EVENT_TOUCH_WALKING) {
-      work->limit = 0;
+      work->blockedSteps = 0;
     }
     if (touch->result < 0x10000) {
       Battle_Reset();
@@ -2752,7 +2729,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
       ret = 0;
     }
   } else {
-    exit = (EffectDescriptorWorkView *)Scene_FindEvent(EVENT_EXIT, value);
+    exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
       kind = exit->flags & 0x30;
       switch (kind) {
@@ -2768,7 +2745,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
         ObjectEffect_BeginContextEffect25();
         break;
       }
-      work->queuedResult = exit->result;
+      work->exit = exit->result;
       ret = 0;
     }
   }
@@ -2778,32 +2755,31 @@ s32 Scene_RunTouchOrExit(s32 value) {
 // Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
 // 0xfe), once it has pushed for more than 12 frames; the count then restarts.
 s32 Field_RunPushTileEvent(s32 event) {
-  struct EffectDescriptorRuntime *work =
-      (struct EffectDescriptorRuntime *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 leader = gGameState.selectedActor;
 
   switch (event) {
   case 0xfc: // with Down held
-    if (work->limit > 12 && (gKeysHeld & KEY_DOWN)) {
+    if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, 6, 0);
-      work->limit = 0;
+      work->blockedSteps = 0;
     }
     break;
   case 0xf9:
   case 0xfe: // jump forward
-    if (work->limit > 12) {
+    if (work->blockedSteps > 12) {
       Field_TryJumpForward();
-      work->limit = 0;
+      work->blockedSteps = 0;
     }
     break;
   case 0xfd: // one thing with Down held, another with Up
-    if (work->limit > 12) {
+    if (work->blockedSteps > 12) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
       } else if (gKeysHeld & KEY_UP) {
         Field_ClimbUp();
       }
-      work->limit = 0;
+      work->blockedSteps = 0;
     }
     break;
   }
@@ -3269,7 +3245,7 @@ void Battle_ResetEffectCounter(void) {
 // actor (control flag 0x10) or a tile code, and may also require the leader
 // to face within 0x17ff of a direction.
 s32 Field_FindItemEvent(s32 item) {
-  struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = runtime->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
@@ -3444,7 +3420,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 // kind (0x70000005 for any phase). The event may apply to any target
 // (control flag 0x80), to an actor (0x10) or to a tile code.
 void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
-  struct FieldStepWork *runtime = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = runtime->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;

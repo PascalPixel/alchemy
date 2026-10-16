@@ -76,7 +76,7 @@ struct MarkerSlot {
 // requests from action to event are handled by the field loop.
 struct FieldWork {
   struct ScenePlacement *tables[4];
-  s32 view;
+  const struct SceneEvent *events;
   struct FieldActor *actors[66];
   struct MarkerSlot markers[10];
   s16 action;     // a scene action to run
@@ -95,7 +95,7 @@ struct FieldWork {
   s16 survived;   // 0 when the whole party fell
   s16 quantities[9];
   s16 itemArgument;
-  u8 unk19c[2];
+  s16 blockedSteps;
   s16 mode;
   u8 unk1a0[8];
   s32 unk1a8;
@@ -156,6 +156,7 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork,
 LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
 LAYOUT_SIZE_GUARD(FieldWork_Size, struct FieldWork, 0xccc);
 LAYOUT_OFFSET_GUARD(FieldWork_Tables, struct FieldWork, tables, 0);
+LAYOUT_OFFSET_GUARD(FieldWork_Events, struct FieldWork, events, 0x10);
 LAYOUT_SIZE_GUARD(MarkerSlot_Size, struct MarkerSlot, 8);
 LAYOUT_OFFSET_GUARD(MarkerSlot_Id, struct MarkerSlot, id, 4);
 LAYOUT_OFFSET_GUARD(MarkerSlot_Column, struct MarkerSlot, column, 6);
@@ -166,6 +167,8 @@ LAYOUT_OFFSET_GUARD(FieldWork_Action, struct FieldWork, action, 0x16c);
 LAYOUT_OFFSET_GUARD(FieldWork_Descriptor, struct FieldWork, descriptor, 0x178);
 LAYOUT_OFFSET_GUARD(FieldWork_Battle, struct FieldWork, battle, 0x17c);
 LAYOUT_OFFSET_GUARD(FieldWork_Event, struct FieldWork, event, 0x182);
+LAYOUT_OFFSET_GUARD(FieldWork_BlockedSteps, struct FieldWork, blockedSteps,
+                    0x19c);
 LAYOUT_OFFSET_GUARD(FieldWork_Mode, struct FieldWork, mode, 0x19e);
 LAYOUT_OFFSET_GUARD(FieldWork_Transition, struct FieldWork, transition, 0x1c0);
 LAYOUT_OFFSET_GUARD(FieldWork_TransitionActive, struct FieldWork,

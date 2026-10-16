@@ -199,10 +199,10 @@ void Event_CallWithLastActiveObjectId(struct ScenePlacement *table) {
 }
 
 // Sets the scene's event table, which the field checks as the leader moves.
-void Event_SetSceneEvents(s32 events) {
-  struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+void Event_SetSceneEvents(const struct SceneEvent *events) {
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  work->events = (const struct SceneEvent *)events;
+  work->events = events;
 }
 
 // Adds unit to the party. With announce nonzero it also shows "<name> joined

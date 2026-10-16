@@ -9,7 +9,8 @@ FAR_CALL(Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId,
          void, (struct ScenePlacement * table))
 FAR_CALL(Scene_AssignViewFlagsFar, Scene_AssignViewFlags, void,
          (struct ScenePlacement * entry))
-FAR_CALL(Event_SetSceneEventsFar, Event_SetSceneEvents, void, (s32 value))
+FAR_CALL(Event_SetSceneEventsFar, Event_SetSceneEvents, void,
+         (const struct SceneEvent *events))
 FAR_CALL(Event_PrepareObjectAndApplyValueFar, Event_PrepareObjectAndApplyValue,
          void, (s32 event_id, s32 value))
 FAR_CALL(Event_PrepareTwoObjectsAndApplyFar, Event_PrepareTwoObjectsAndApply,

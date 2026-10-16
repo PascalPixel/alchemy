@@ -5,6 +5,7 @@
 #include "effect_slot.h"
 #include "unit/object/object.h"
 
+struct SceneEvent;
 struct ScenePlacement;
 union FieldObject;
 
@@ -25,7 +26,7 @@ void Event_NoOpHookA(void);
 void Event_NoOpHook(void);
 void Event_RunObjectHookAndWait(struct ScenePlacement *table);
 void Event_CallWithLastActiveObjectId(struct ScenePlacement *table);
-void Event_SetSceneEvents(s32 events);
+void Event_SetSceneEvents(const struct SceneEvent *events);
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second);
 s32 Event_ValidatePackedId(u32 shortcut);

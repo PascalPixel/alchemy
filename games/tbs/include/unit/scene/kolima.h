@@ -3,25 +3,26 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct SceneEntrance *Kolima_GetEntrances(void);
+const struct SceneRegion *Kolima_GetRegions(void);
+const u32 *Kolima_GetExits(void);
+const struct ScenePlacement *Kolima_GetPlacements(void);
+const struct SceneEvent *Kolima_GetEvents(void);
+s32 Kolima_Initialize(void);
 extern s32 gKolima_ActionTable1[];
 extern s32 gKolima_ActionTable2[];
 extern s32 gKolima_ActionTable3[];
-extern s32 gKolima_ActionTable4[];
-extern s32 gKolima_ActionTable5[];
-extern s32 gKolima_ActionTable6[];
-extern s32 gKolima_ActionTable7[];
+extern s32 gKolima_PartySquashActions[];
+extern s32 gKolima_PartyRestoreScaleActions[];
+extern s32 gKolima_ProtectiveFieldGrowActions[];
+extern s32 gKolima_ProtectiveFieldShrinkActions[];
 extern s32 gKolima_EntryActions[];
 extern s32 gKolima_DebrisScript[];
 extern s32 gKolima_Actor8Path[];
@@ -29,7 +30,7 @@ extern u16 gKolima_SwitchCells[];
 extern struct SceneEntrance gKolimaEntrances[];
 extern struct SceneEntrance gKolimaEntrances3[];
 extern struct SceneEntrance gKolimaEntrances2[];
-extern s16 gKolimaRegions2[];
+extern struct SceneRegion gKolimaRegions2[];
 extern u32 gKolimaExits[];
 extern struct ScenePlacement gKolimaPlacements[];
 extern struct ScenePlacement gKolimaPlacements1[];

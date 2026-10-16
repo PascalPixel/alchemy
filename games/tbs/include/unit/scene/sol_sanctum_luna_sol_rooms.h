@@ -9,12 +9,12 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 SolSanctumLunaSolRooms_RestoreEntryState(void);
+const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void);
+const struct SceneRegion *SolSanctumLunaSolRooms_GetRegions(void);
+const u32 *SolSanctumLunaSolRooms_GetExits(void);
+const struct ScenePlacement *SolSanctumLunaSolRooms_GetPlacements(void);
+const struct SceneEvent *SolSanctumLunaSolRooms_GetEvents(void);
+s32 SolSanctumLunaSolRooms_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ScenePlacement gSolSanctumLunaSolRoomsPlacements[];

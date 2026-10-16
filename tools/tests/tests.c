@@ -280,6 +280,24 @@ static void catalog(void) {
   check(strstr((char *)ids.data, "#define MsgGreeting ((s32)MsgGreeting)") !=
             NULL,
         "message names remain linker values");
+  const char *outputs[] = {"text.inc", "text.h"};
+  struct stat before[2];
+  struct timespec fixedTime[2] = {{1, 0}, {1, 0}};
+  for (size_t i = 0; i < 2; i++) {
+    check(!utimensat(AT_FDCWD, outputs[i], fixedTime, 0),
+          "set generated text output timestamps");
+    check(!stat(outputs[i], before + i), "stat generated text output");
+  }
+  RUN("text", true, "text.po", "text.inc");
+  RUN("text", true, "text.po", "text.h", "--header", "--as-value");
+  for (size_t i = 0; i < 2; i++) {
+    struct stat after;
+    check(!stat(outputs[i], &after), "stat unchanged generated text output");
+    check(before[i].st_dev == after.st_dev &&
+              before[i].st_ino == after.st_ino &&
+              before[i].st_mtime == after.st_mtime,
+          "identical text archives and headers retain their inode and mtime");
+  }
   Buffer first = readFile("text.inc");
   po = formatString(
       "%smsgctxt \"MsgGreeting\"\nmsgid \"0\"\nmsgstr \"Goodbye!\"\n", header);
@@ -297,6 +315,58 @@ static void catalog(void) {
   free(first.data);
   free(second.data);
   free(preserved.data);
+  /* PO layout and ending flags must preserve every native symbol, including
+   * embedded ending controls and control arguments that equal an opcode. */
+  po = formatString(
+      "%smsgctxt \"MsgGreeting\"\nmsgid \"0\"\n"
+      "msgstr "
+      "\"Hello{line_break}there{actor_name:2}{end_wait}tail{end_wait}\"\n\n"
+      "msgctxt \"MsgDeparture\"\nmsgid \"1\"\n"
+      "msgstr \"Now{page_break}go!{end_now}\"\n\n"
+      "msgctxt \"MsgLiteral\"\nmsgid \"2\"\n"
+      "msgstr \"Literal{byte:5c}n\"\n\n"
+      "#, alchemy-null\nmsgctxt \"message\"\nmsgid \"3\"\nmsgstr \"\"\n",
+      header);
+  textFile("text.po", po);
+  free(po);
+  RUN("text", true, "text.po", "text.inc");
+  Buffer markup = readFile("text.inc");
+  po = formatString(
+      "%s#, alchemy-end-wait\nmsgctxt \"MsgGreeting\"\nmsgid \"0\"\n"
+      "msgstr \"\"\n\"Hello\\n\"\n"
+      "\"there{actor_name:2}{end_wait}tail\"\n\n"
+      "#, alchemy-end-now\nmsgctxt \"MsgDeparture\"\nmsgid \"1\"\n"
+      "msgstr \"Now{page_break}go!\"\n\n"
+      "msgctxt \"MsgLiteral\"\nmsgid \"2\"\n"
+      "msgstr \"Literal\\\\n\"\n\n"
+      "#, alchemy-null\nmsgctxt \"message\"\nmsgid \"3\"\nmsgstr \"\"\n",
+      header);
+  textFile("text.po", po);
+  free(po);
+  RUN("text", true, "text.po", "text.inc");
+  Buffer multiline = readFile("text.inc");
+  equal(&markup, &multiline,
+        "PO newlines and ending flags preserve legacy markup and literal \\n");
+
+  const char *invalidFlags[] = {
+      "alchemy-end-wait, alchemy-end-now",
+      "alchemy-null, alchemy-end-wait",
+      "alchemy-null, alchemy-end-now",
+  };
+  for (size_t i = 0; i < sizeof(invalidFlags) / sizeof(*invalidFlags); i++) {
+    po = formatString("%s#, %s\nmsgctxt \"message\"\nmsgid \"0\"\n"
+                      "msgstr \"\"\n",
+                      header, invalidFlags[i]);
+    textFile("text.po", po);
+    free(po);
+    RUN("text", false, "text.po", "text.inc");
+    Buffer unchanged = readFile("text.inc");
+    equal(&multiline, &unchanged,
+          "conflicting or null ending flags preserve the previous archive");
+    free(unchanged.data);
+  }
+  free(markup.data);
+  free(multiline.data);
 }
 
 static void buildFiles(void) {

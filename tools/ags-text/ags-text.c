@@ -4,9 +4,16 @@
 #include <ctype.h>
 #include <utf8proc.h>
 
+enum TextControl {
+  TEXT_END_WAIT = 2,
+  TEXT_LINE_BREAK = 3,
+  TEXT_END_NOW = 30
+};
+
 typedef struct {
   char *name, *id, *text;
   bool null;
+  bool endWait, endNow;
   Buffer symbols;
 } Message;
 typedef struct {
@@ -121,9 +128,15 @@ static Catalog readCatalog(const char *path) {
       active = NULL;
     } else if (!strncmp(s, "#,", 2)) {
       Strings flags = split(s + 2, ',');
-      for (size_t j = 0; j < flags.len; j++)
-        if (!strcmp(trim(flags.items[j]), "alchemy-null"))
+      for (size_t j = 0; j < flags.len; j++) {
+        char *flag = trim(flags.items[j]);
+        if (!strcmp(flag, "alchemy-null"))
           m.null = true;
+        else if (!strcmp(flag, "alchemy-end-wait"))
+          m.endWait = true;
+        else if (!strcmp(flag, "alchemy-end-now"))
+          m.endNow = true;
+      }
       freeStrings(&flags);
     } else if (*s == '#')
       continue;
@@ -172,6 +185,10 @@ static Catalog readCatalog(const char *path) {
     seen[id] = true;
     if (m->null && *m->text)
       fail("null message %s is not empty", m->id);
+    if (m->endWait && m->endNow)
+      fail("message %s has conflicting ending flags", m->id);
+    if (m->null && (m->endWait || m->endNow))
+      fail("null message %s has an ending flag", m->id);
     if (!m->name || strcmp(m->name, "message")) {
       if (!m->name || strncmp(m->name, "Msg", 3) ||
           !isupper((unsigned char)m->name[3]))
@@ -300,6 +317,13 @@ static void symbols(Message *m, const Buffer *map, size_t alphabet) {
     return;
   Buffer text = {0};
   for (const char *s = m->text; *s;) {
+    if (*s == '\n') {
+      /* A PO newline starts the next display line. */
+      literal(&m->symbols, &text, map);
+      half(&m->symbols, TEXT_LINE_BREAK);
+      s++;
+      continue;
+    }
     if ((*s == '{' && s[1] == '{') || (*s == '}' && s[1] == '}')) {
       byte(&text, *s);
       s += 2;
@@ -339,6 +363,9 @@ static void symbols(Message *m, const Buffer *map, size_t alphabet) {
   }
   literal(&m->symbols, &text, map);
   free(text.data);
+  /* Ending flags supply the final behavior after all embedded controls. */
+  if (m->endWait || m->endNow)
+    half(&m->symbols, m->endWait ? TEXT_END_WAIT : TEXT_END_NOW);
   for (size_t i = 0; i < m->symbols.len; i += 2)
     if (read16(m->symbols.data + i) >= alphabet)
       fail("message symbol is outside the edition alphabet");
@@ -609,7 +636,7 @@ int main(int argc, char **argv) {
               (unsigned long long)number(c.messages[i].id, 10, 65535));
     print(&out, "\t.global MsgEnd\n\t.set MsgEnd, %zu\n", c.count);
   }
-  writeFile(argv[2], &out);
+  writeChanged(argv[2], &out);
   free(out.data);
   free(map.data);
   free(c.target);

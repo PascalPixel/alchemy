@@ -315,12 +315,14 @@ static void catalog(void) {
   free(first.data);
   free(second.data);
   free(preserved.data);
-  /* PO layout and ending flags must preserve every native symbol, including
+  /* PO line wrapping must preserve every native symbol, including
    * embedded ending controls and control arguments that equal an opcode. */
   po = formatString(
       "%smsgctxt \"MsgGreeting\"\nmsgid \"0\"\n"
       "msgstr "
-      "\"Hello{line_break}there{actor_name:2}{end_wait}tail{end_wait}\"\n\n"
+      "\"{text_color:5}Hello{line_break}there{text_color:1}"
+      "{actor_name:2}{end_wait}{text_color:3}red{text_color:9}blue"
+      "{text_color:16}white{end_wait}\"\n\n"
       "msgctxt \"MsgDeparture\"\nmsgid \"1\"\n"
       "msgstr \"Now{page_break}go!{end_now}\"\n\n"
       "msgctxt \"MsgLiteral\"\nmsgid \"2\"\n"
@@ -332,11 +334,12 @@ static void catalog(void) {
   RUN("text", true, "text.po", "text.inc");
   Buffer markup = readFile("text.inc");
   po = formatString(
-      "%s#, alchemy-end-wait\nmsgctxt \"MsgGreeting\"\nmsgid \"0\"\n"
-      "msgstr \"\"\n\"Hello\\n\"\n"
-      "\"there{actor_name:2}{end_wait}tail\"\n\n"
-      "#, alchemy-end-now\nmsgctxt \"MsgDeparture\"\nmsgid \"1\"\n"
-      "msgstr \"Now{page_break}go!\"\n\n"
+      "%smsgctxt \"MsgGreeting\"\nmsgid \"0\"\n"
+      "msgstr \"\"\n\"{text_color:yellow}Hello\\n\"\n"
+      "\"there{text_color:1}{actor_name:2}{end_wait}{text_color:red}red"
+      "{text_color:blue}blue{text_color:white}white{end_wait}\"\n\n"
+      "msgctxt \"MsgDeparture\"\nmsgid \"1\"\n"
+      "msgstr \"Now{page_break}go!{end_now}\"\n\n"
       "msgctxt \"MsgLiteral\"\nmsgid \"2\"\n"
       "msgstr \"Literal\\\\n\"\n\n"
       "#, alchemy-null\nmsgctxt \"message\"\nmsgid \"3\"\nmsgstr \"\"\n",
@@ -346,9 +349,12 @@ static void catalog(void) {
   RUN("text", true, "text.po", "text.inc");
   Buffer multiline = readFile("text.inc");
   equal(&markup, &multiline,
-        "PO newlines and ending flags preserve legacy markup and literal \\n");
+        "PO newlines and four color names preserve numeric colors, controls "
+        "and literal \\n");
 
   const char *invalidFlags[] = {
+      "alchemy-end-wait",
+      "alchemy-end-now",
       "alchemy-end-wait, alchemy-end-now",
       "alchemy-null, alchemy-end-wait",
       "alchemy-null, alchemy-end-now",
@@ -362,7 +368,19 @@ static void catalog(void) {
     RUN("text", false, "text.po", "text.inc");
     Buffer unchanged = readFile("text.inc");
     equal(&multiline, &unchanged,
-          "conflicting or null ending flags preserve the previous archive");
+          "obsolete ending flags preserve the previous archive");
+    free(unchanged.data);
+  }
+  const char *invalidColors[] = {"{text_color:magenta}", "{actor_name:yellow}"};
+  for (size_t i = 0; i < sizeof(invalidColors) / sizeof(*invalidColors); i++) {
+    po = formatString("%smsgctxt \"message\"\nmsgid \"0\"\nmsgstr \"%s\"\n",
+                      header, invalidColors[i]);
+    textFile("text.po", po);
+    free(po);
+    RUN("text", false, "text.po", "text.inc");
+    Buffer unchanged = readFile("text.inc");
+    equal(&multiline, &unchanged,
+          "unknown colors and color names on other commands preserve output");
     free(unchanged.data);
   }
   free(markup.data);

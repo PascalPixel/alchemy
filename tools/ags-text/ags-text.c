@@ -4,16 +4,19 @@
 #include <ctype.h>
 #include <utf8proc.h>
 
-enum TextControl {
-  TEXT_END_WAIT = 2,
-  TEXT_LINE_BREAK = 3,
-  TEXT_END_NOW = 30
+enum TextControl { TEXT_LINE_BREAK = 3, TEXT_SET_COLOR = 8 };
+/* One-based color indices proven by TBS's standard sprite and tile palettes.
+ * Windows remap these logical colors to their own palette pens. */
+enum TextColor {
+  TEXT_COLOR_RED = 3,
+  TEXT_COLOR_YELLOW = 5,
+  TEXT_COLOR_BLUE = 9,
+  TEXT_COLOR_WHITE = 16
 };
 
 typedef struct {
   char *name, *id, *text;
   bool null;
-  bool endWait, endNow;
   Buffer symbols;
 } Message;
 typedef struct {
@@ -132,10 +135,9 @@ static Catalog readCatalog(const char *path) {
         char *flag = trim(flags.items[j]);
         if (!strcmp(flag, "alchemy-null"))
           m.null = true;
-        else if (!strcmp(flag, "alchemy-end-wait"))
-          m.endWait = true;
-        else if (!strcmp(flag, "alchemy-end-now"))
-          m.endNow = true;
+        else if (!strcmp(flag, "alchemy-end-wait") ||
+                 !strcmp(flag, "alchemy-end-now"))
+          fail("obsolete PO flag %s: use inline {end_wait} or {end_now}", flag);
       }
       freeStrings(&flags);
     } else if (*s == '#')
@@ -185,10 +187,6 @@ static Catalog readCatalog(const char *path) {
     seen[id] = true;
     if (m->null && *m->text)
       fail("null message %s is not empty", m->id);
-    if (m->endWait && m->endNow)
-      fail("message %s has conflicting ending flags", m->id);
-    if (m->null && (m->endWait || m->endNow))
-      fail("null message %s has an ending flag", m->id);
     if (!m->name || strcmp(m->name, "message")) {
       if (!m->name || strncmp(m->name, "Msg", 3) ||
           !isupper((unsigned char)m->name[3]))
@@ -239,8 +237,24 @@ static const char *commands[32] = {NULL,
                                    "end_now",
                                    NULL};
 static bool takesArgument(unsigned n) {
-  return n == 8 || n == 9 || n == 12 || n == 15 || (n >= 17 && n <= 20) ||
-         n == 26 || n == 28 || n == 29;
+  return n == TEXT_SET_COLOR || n == 9 || n == 12 || n == 15 ||
+         (n >= 17 && n <= 20) || n == 26 || n == 28 || n == 29;
+}
+
+static unsigned colorArgument(const char *arg) {
+  static const struct {
+    const char *name;
+    unsigned value;
+  } colors[] = {{"red", TEXT_COLOR_RED},
+                {"yellow", TEXT_COLOR_YELLOW},
+                {"blue", TEXT_COLOR_BLUE},
+                {"white", TEXT_COLOR_WHITE}};
+  for (size_t i = 0; i < sizeof(colors) / sizeof(*colors); i++)
+    if (!strcmp(arg, colors[i].name))
+      return colors[i].value;
+  if (isalpha((unsigned char)*arg))
+    fail("unknown text color: %s", arg);
+  return number(arg, 10, 65535);
 }
 
 static const uint16_t cp1252[32] = {
@@ -356,16 +370,14 @@ static void symbols(Message *m, const Buffer *map, size_t alphabet) {
         fail("invalid message command: %s", command);
       half(&m->symbols, opcode);
       if (arg)
-        half(&m->symbols, number(arg, 10, 65535));
+        half(&m->symbols, opcode == TEXT_SET_COLOR ? colorArgument(arg)
+                                                 : number(arg, 10, 65535));
     }
     free(command);
     s = end + 1;
   }
   literal(&m->symbols, &text, map);
   free(text.data);
-  /* Ending flags supply the final behavior after all embedded controls. */
-  if (m->endWait || m->endNow)
-    half(&m->symbols, m->endWait ? TEXT_END_WAIT : TEXT_END_NOW);
   for (size_t i = 0; i < m->symbols.len; i += 2)
     if (read16(m->symbols.data + i) >= alphabet)
       fail("message symbol is outside the edition alphabet");

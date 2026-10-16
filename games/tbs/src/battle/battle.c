@@ -204,7 +204,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
 // The window work's byte that marks a message window busy; it moved when the
 // international editions grew the work.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
 #define WINDOW_WORK_MESSAGE_BUSY 0x1188
@@ -213,9 +213,9 @@ s32 DebugParty_LoadPreset(s32 preset) {
 // The first message of the viewer's second range: in Japanese, an earlier
 // copy of the first range's opening lines; the localizations moved it
 // elsewhere.
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
 #define DEBUG_SECOND_FORM MsgBecameCursed
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define DEBUG_SECOND_FORM MsgEnd
 #else
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
@@ -830,8 +830,8 @@ void BattleSummon_ReservedNoOp(void) {}
 
 // The longest "Enemy" label the opponent's names take before them; the
 // European editions also put a space after it.
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define NAME_LIMIT 7
 #define APPEND_NAME_SPACE 1
 #else
@@ -10418,7 +10418,7 @@ void BattlePresentation_InitializeTransitionEntries(
 
 s32 BattlePres_DivideBy16(s32 value) { return value / 16; }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define DEBUG_SELECT_VALUE 0x18f
 #else
 #define DEBUG_SELECT_VALUE 480
@@ -11185,7 +11185,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
   MemFree(base);
 }
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 #define CH_CNT 9
 #else
 #define CH_CNT 26

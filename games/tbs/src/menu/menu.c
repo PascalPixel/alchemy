@@ -149,10 +149,20 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
 
 // The status panel's name and ailment column starts further left in the
 // international editions, whose ailment labels are longer.
-#if EDITION_INTERNATIONAL
-#define STATUS_X 32
+#if TBS_PATCH_1
+#define STATUS_PANEL_TEXT_X 32
+#define CANNOT_EQUIP_TEXT_X 0
 #else
-#define STATUS_X 40
+#define STATUS_PANEL_TEXT_X 40
+#define CANNOT_EQUIP_TEXT_X 16
+#endif
+
+#if LANGUAGE == LANGUAGE_SPANISH
+#define LEARN_PSYNERGY_NAME_Y 56
+#define LEARN_PSYNERGY_STATUS_Y 48
+#else
+#define LEARN_PSYNERGY_NAME_Y 48
+#define LEARN_PSYNERGY_STATUS_Y 56
 #endif
 
 // What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
@@ -168,6 +178,22 @@ enum StatusPanelKind {
 // Keeps the open window, the name and the ailments, and redraws only the
 // part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
+
+// The revised information pane restores its tiles and draws directly into them.
+#if TBS_PATCH_1
+#define MENU_RESET_INFO_WINDOW RenderOutput_RedrawSavedRectFar
+#define MENU_DRAW_INFO_TEXT UiText_DrawCharacterAtOffsetFar
+#else
+#define MENU_RESET_INFO_WINDOW RenderOutput_ClearListFar
+#define MENU_DRAW_INFO_TEXT UiText_DrawResourceFar
+#endif
+
+// Status labels use the Latin font's pixel positions or the Japanese tile grid.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define MENU_DRAW_STATUS_LABEL UiText_DrawStringInWindowFar
+#else
+#define MENU_DRAW_STATUS_LABEL UiText_DrawStringAtOffsetFar
+#endif
 
 // Text colours of the status panel's numbers.
 #define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
@@ -215,36 +241,32 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
       WaitFrames(1);
       UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
-    UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_X, 0);
+    UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
     CharacterMenu_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
-      UiText_DrawCharacterAtOffsetFar(MsgPoisonLabel, window, STATUS_X,
-                                      ailmentRows * 8 + 8);
+      UiText_DrawCharacterAtOffsetFar(MsgPoisonLabel, window,
+                                      STATUS_PANEL_TEXT_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[CHARACTER_VENOM]) {
-      UiText_DrawCharacterAtOffsetFar(MsgVenomLabel, window, STATUS_X,
-                                      ailmentRows * 8 + 8);
+      UiText_DrawCharacterAtOffsetFar(MsgVenomLabel, window,
+                                      STATUS_PANEL_TEXT_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[CHARACTER_CURSE]) {
-      UiText_DrawCharacterAtOffsetFar(MsgCurseLabel, window, STATUS_X,
-                                      ailmentRows * 8 + 8);
+      UiText_DrawCharacterAtOffsetFar(MsgCurseLabel, window,
+                                      STATUS_PANEL_TEXT_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[CHARACTER_HAUNT]) {
-      UiText_DrawCharacterAtOffsetFar(MsgHauntLabel, window, STATUS_X,
-                                      ailmentRows * 8 + 8);
+      UiText_DrawCharacterAtOffsetFar(MsgHauntLabel, window,
+                                      STATUS_PANEL_TEXT_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailmentRows < 2) {
       value = unit->level;
-#if EDITION_INTERNATIONAL
-      UiText_DrawStringAtOffsetFar(gUi_LvString, window, 40, 16);
-#else
-      UiText_DrawStringInWindowFar(gUi_LvString, window, 40, 16);
-#endif
+      MENU_DRAW_STATUS_LABEL(gUi_LvString, window, 40, 16);
       UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
@@ -277,11 +299,8 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     struct BattleUnit *backup;
 
     if (!Item_CanOwnerEquip(owner, item)) {
-#if EDITION_INTERNATIONAL
-      UiText_DrawCharacterAtOffsetFar(MsgCannotEquip, window, 0, 48);
-#else
-      UiText_DrawCharacterAtOffsetFar(MsgCannotEquip, window, 16, 48);
-#endif
+      UiText_DrawCharacterAtOffsetFar(MsgCannotEquip, window,
+                                      CANNOT_EQUIP_TEXT_X, 48);
       break;
     }
     // Equip (or, previewing a removal, unequip) the item on the real unit,
@@ -313,23 +332,17 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     }
     // The Psynergy's name and "Learned" or "Will learn"; Spanish puts the
     // label above the name.
-#if defined(TBS_EDITION_ES)
     if (known) {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
-      UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 48);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0,
+                                      LEARN_PSYNERGY_NAME_Y);
+      UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0,
+                                      LEARN_PSYNERGY_STATUS_Y);
     } else {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 56);
-      UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 48);
+      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0,
+                                      LEARN_PSYNERGY_NAME_Y);
+      UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0,
+                                      LEARN_PSYNERGY_STATUS_Y);
     }
-#else
-    if (known) {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
-      UiText_DrawCharacterAtOffsetFar(MsgLearned, window, 0, 56);
-    } else {
-      UiText_DrawCharacterAtOffsetFar(psynergy + MsgAbilityName, window, 0, 48);
-      UiText_DrawCharacterAtOffsetFar(MsgWillLearn, window, 0, 56);
-    }
-#endif
     break;
   }
   case STATUS_PANEL_STATS: {
@@ -354,7 +367,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
 // The pixels the field allows each digit. The Latin font's digits are 7
 // pixels wide, so the digits themselves take a pixel less each.
 #define FIELD_PIXELS_PER_DIGIT 8
@@ -423,7 +436,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // compile differently.
   s16 value;
 
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.
@@ -887,7 +900,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   }
   RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   if (y == -1)
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
   else
@@ -901,7 +914,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
       WaitFrames(1);
     } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
              !(gKeysPressed & KEY_START));
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     if (y == -1)
       RenderOutput_RedrawSavedRectFar(window);
 #endif
@@ -911,7 +924,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   }
   menu->completionFlag = 1;
   menu->paneIcons[0]->active = ICON_SHOWN;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   if (y != -1)
     UiWindow_CloseIfOpen(&menu->modalWindow, 1);
 #endif
@@ -1256,7 +1269,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
 void UiText_DrawWorkValueWithLabel(struct UiWindow *work) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, work, 8, 0);
   UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, work, 64, 0);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
 #endif
 }
@@ -1331,7 +1344,7 @@ struct AssetSelectionResult {
 // in which the player chooses one party member's item. Records the choice in
 // the event work and returns 1 if one was made.
 s32 RunAssetSelectionScreen(void) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   void *backup;
 #endif
   struct InventoryMenuState *screen;
@@ -1339,14 +1352,14 @@ s32 RunAssetSelectionScreen(void) {
   s32 target;
   s32 owner;
   s32 result;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   s32 size;
 #endif
   void **process;
   void **cache;
 
   // Open the menu over the field, which stops moving.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
@@ -1362,7 +1375,7 @@ s32 RunAssetSelectionScreen(void) {
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(0x06002500);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
@@ -1391,7 +1404,7 @@ s32 RunAssetSelectionScreen(void) {
   Menu_ResetTwoResourceEntries();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)cache[0])->suspended = 0;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
   Iwram_CopyWords((void *)0x06004000, backup, size);
@@ -1409,12 +1422,24 @@ s32 RunAssetSelectionScreen(void) {
 
 // The x of the small message windows "Dropped it.", "You were cursed!" and
 // "Removed".
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define MODAL_SHORT_X 14
 #define MODAL_REMOVED_X 14
 #else
 #define MODAL_SHORT_X 15
 #define MODAL_REMOVED_X 17
+#endif
+
+#if LANGUAGE == LANGUAGE_FRENCH
+#define CANNOT_TRADE_MESSAGE_X 11
+#else
+#define CANNOT_TRADE_MESSAGE_X 15
+#endif
+
+#if LANGUAGE == LANGUAGE_ITALIAN
+#define TRADED_MESSAGE_X 13
+#else
+#define TRADED_MESSAGE_X 15
 #endif
 
 // The most items of one kind a stack holds.
@@ -1458,7 +1483,7 @@ enum ItemMenuStep {
 // -1 when the player backed out or pressed Start; 0 otherwise.
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   s32 owner;
   s32 chosen;
 #endif
@@ -1483,7 +1508,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s8 stackSize;
 
   done = 0;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   owner = 0;
   chosen = 0;
 #endif
@@ -1501,7 +1526,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWin3();
       menu->selectedItemIcon->active = ICON_HIDDEN;
       ItemMenu_DrawMsg(0, MsgWhoseItem);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       RenderOutput_RedrawSavedRectFar(menu->infoWindow);
       UiText_DrawWorkValueWithLabel(menu->infoWindow);
       command = ItemMenu_PrepOwner(0);
@@ -1557,7 +1582,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (BattleFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) !=
             0) {
           done = 1;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
           *ownerOut = menu->paneOwner[0];
           *targetOut = command;
           *itemOut = menu->selectedItems[0] & ITEM_ID_MASK;
@@ -1579,7 +1604,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           RenderOutput_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
                                          0, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
           menu->paneIcons[0]->active = ICON_HIDDEN;
@@ -1622,7 +1647,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar(MsgUseOnWhom, menu->messageWindow, 16,
                                       16);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       if (ItemMenu_SelectTarget(0) != -1) {
 #else
       chosen = ItemMenu_SelectTarget(0);
@@ -1639,7 +1664,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           RenderOutput_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
                                          0, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
           menu->paneIcons[0]->active = ICON_HIDDEN;
@@ -1663,7 +1688,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, menu->messageWindow, 16,
                                       16);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       giveTarget = ItemMenu_SelectTarget(1);
       state = ITEM_STEP_GIVE;
       if (giveTarget == -1) {
@@ -1706,7 +1731,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UiWindow_ClearInteriorTilesFar((void *)menu->listWindow, 0, 72, 120, 96);
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       if (ItemMenu_ConfirmDrop(selection) == 0) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         command = menu->paneOwner[0];
         UnitGetFar(command);
         for (dropped = 0; dropped < result + 1; dropped++) {
@@ -1807,7 +1832,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (aborted == 0) {
         menu->paneOwner[0] = menu->paneOwner[1];
         menu->selectedItems[0] &= ITEM_ID_MASK;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         ItemMenu_SetMsgWin6();
 #endif
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
@@ -1852,7 +1877,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMsgWin3();
       ItemMenu_SetItemWin3();
       ItemMenu_DrawMsg(0, MsgSwapForWhat);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
       if (ItemMenu_RunList(1) == -1) {
 #else
       selection = ItemMenu_RunList(1);
@@ -1928,11 +1953,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         CopyWords(IWRAM_COPY_WORDS, source, sourceCopy, BATTLE_UNIT_SIZE);
         CopyWords(IWRAM_COPY_WORDS, target, targetCopy, BATTLE_UNIT_SIZE);
         RenderOutput_ClearListFar(menu->infoWindow);
-#if defined(TBS_EDITION_FR)
-        InventoryMenu_ShowModalMessage(MsgCannotTrade, 11, 14);
+        InventoryMenu_ShowModalMessage(MsgCannotTrade, CANNOT_TRADE_MESSAGE_X,
+                                       14);
+#if TBS_PATCH_LEVEL == 3
         RenderOutput_RedrawSavedRectFar(menu->statusWindow);
-#else
-        InventoryMenu_ShowModalMessage(MsgCannotTrade, 15, 14);
 #endif
       } else {
         UnitCalcFar(menu->paneOwner[0]);
@@ -1940,7 +1964,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_RefreshPsynergyFar(menu->paneOwner[0]);
         Unit_RefreshPsynergyFar(menu->paneOwner[1]);
         ItemMenu_SetMsgWin5();
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         ItemMenu_SetMsgWin6();
         ItemMenu_HidePageIcons();
 #endif
@@ -1967,11 +1991,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                              MODAL_SHORT_X, 14);
             }
           } else {
-#if defined(TBS_EDITION_IT)
-            InventoryMenu_ShowModalMessage(MsgTraded, 13, 14);
-#else
-            InventoryMenu_ShowModalMessage(MsgTraded, 15, 14);
-#endif
+            InventoryMenu_ShowModalMessage(MsgTraded, TRADED_MESSAGE_X, 14);
           }
         }
       }
@@ -1991,7 +2011,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (result == -2) {
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgCannotRemoveItem, 0, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
         RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
         state = ITEM_STEP_ITEM;
@@ -2092,7 +2112,7 @@ s32 ItemMenu_Use(void) {
     RenderOutput_ClearListFar(menu->infoWindow);
     InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
                                    result, result);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
     menu->completionFlag = 1;
@@ -2189,7 +2209,7 @@ void ItemMenu_HideAllIcons(void) {
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 // Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -2291,7 +2311,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
     menu->selectedItemIcon->active = ICON_HIDDEN;
   }
   // The help text: L + A sorts, R shows the equipment.
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
   UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp, menu->helpWindow, 0, 0);
   UiText_DrawCharacterAtOffsetFar(MsgArrangeItemsHelp + 1, menu->helpWindow, 0,
                                   8);
@@ -2386,6 +2406,12 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
+#if TBS_PATCH_1
+#define TRADE_PROMPT_X 0
+#else
+#define TRADE_PROMPT_X 16
+#endif
+
 // Chooses the party member to use (mode 0) or give (mode 1) the selected item
 // to. Using shows each member's status as the cursor passes; giving shows each
 // member's items, how many of this item they already hold, or that they would
@@ -2434,8 +2460,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         if (selection != menu->paneIndex[0]) {
           heldCount = InventoryMenu_GetItemQuantity(
               menu->ownerIds[selection], menu->selectedItems[0] & ITEM_ID_MASK);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
           if (ItemMenu_Count(menu->ownerIds[selection]) == INVENTORY_SLOTS &&
               heldCount == 0)
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 0, 72);
@@ -2456,11 +2482,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           }
           if (ItemMenu_Count(menu->ownerIds[selection]) == INVENTORY_SLOTS &&
               heldCount == 0)
-#if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 0, 72);
-#else
-            UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 16, 72);
-#endif
+            UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window,
+                                            TRADE_PROMPT_X, 72);
 #endif
         }
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
@@ -2477,17 +2500,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
               menu->statusWindow, menu->ownerIds[selection],
               menu->selectedSlots[0], STATUS_PANEL_EXPERIENCE);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
-#if EDITION_INTERNATIONAL
-          RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
-          UiText_DrawCharacterAtOffsetFar(
-              (menu->selectedItems[0] & ITEM_ID_MASK) + MsgItemPlainName,
-              menu->infoWindow, 0, 0);
-#else
-          RenderOutput_ClearListFar((void *)menu->infoWindow);
-          UiText_DrawResourceFar((menu->selectedItems[0] & ITEM_ID_MASK) +
-                                     MsgItemPlainName,
-                                 menu->infoWindow, 0, 0);
-#endif
+          MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
+          MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & ITEM_ID_MASK) +
+                                  MsgItemPlainName,
+                              menu->infoWindow, 0, 0);
           shown = 1;
         } else {
           GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
@@ -2645,7 +2661,7 @@ s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item) {
   do {
     if (unit->inventory[i] != 0 &&
         (unit->inventory[i] & ITEM_ID_MASK) == item) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
       quantity += (unit->inventory[i] & INVENTORY_QUANTITY_MASK) >>
                   INVENTORY_QUANTITY_SHIFT;
       quantity++;
@@ -2854,7 +2870,7 @@ s32 Inventory_RemoveFirstUnflagged(s32 owner) {
   return result;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 
 // The x and y of the item command cursor on column and row of the command grid
 // (three commands to a row).
@@ -2920,17 +2936,10 @@ s32 ItemMenu_ChooseCmd(void) {
     UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
     ItemMenu_DrawCmd(commandStates, messageWindow);
-#if EDITION_INTERNATIONAL
-    RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
-    UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & ITEM_ID_MASK) +
-                                        MsgItemPlainName,
-                                    menu->infoWindow, 0, 0);
-#else
-    RenderOutput_ClearListFar((void *)menu->infoWindow);
-    UiText_DrawResourceFar((menu->selectedItems[0] & ITEM_ID_MASK) +
-                               MsgItemPlainName,
-                           menu->infoWindow, 0, 0);
-#endif
+    MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
+    MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & ITEM_ID_MASK) +
+                            MsgItemPlainName,
+                        menu->infoWindow, 0, 0);
   }
   *redrawFlag = 0;
 
@@ -2962,7 +2971,7 @@ s32 ItemMenu_ChooseCmd(void) {
     row = (s8)(lastCommand / 3);
     index = row * 3 + column;
   }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   x = ItemMenu_CmdCursorX(column, row);
   y = ItemMenu_CmdCursorY(column, row);
   UiMenu_SlideCursor(x, y);
@@ -2997,7 +3006,7 @@ s32 ItemMenu_ChooseCmd(void) {
                                   STATUS_PANEL_EXPERIENCE);
       }
     }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     x = ItemMenu_CmdCursorX(column, row);
     y = ItemMenu_CmdCursorY(column, row);
     UiMenu_PositionCursor(x, y);
@@ -3127,7 +3136,7 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
 }
 
 // The x of the command grid's middle column.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define ITEM_TEXT_X 32
 #else
 #define ITEM_TEXT_X 40
@@ -3240,7 +3249,7 @@ void ItemMenu_TryBreak(void) {
     Inventory_BreakFar(menu->paneOwner[0], menu->selectedSlots[0]);
     AudioCommand_PlayFar(SOUND_ITEM_BREAK);
     InventoryMenu_ShowModalMessage(MsgItemBroke, 0, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
   }
@@ -3260,12 +3269,17 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
+#if TBS_PATCH_1
+#define QUANTITY_WINDOW_WIDTH 30
+#else
+#define QUANTITY_WINDOW_WIDTH 13
+#endif
+
 // The item menu's Details screen: describes the item entry value in a large
-// window (the whole top half in the international editions) and waits for A or
-// B. Up and Down move an unused counter from 0 to 4. Returns the counter, or
-// -1 after B.
+// window (the whole top half after patch 1) and waits for A or B. Up and Down
+// move an unused counter from 0 to 4. Returns the counter, or -1 after B.
 s32 Menu_SelectQuantity(s32 value) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   s32 changed = 1;
   struct InventoryMenuState *menu = gMenuWork;
   struct RenderOutput *itemIcon = menu->selectedItemIcon;
@@ -3276,12 +3290,10 @@ s32 Menu_SelectQuantity(s32 value) {
   struct UiWindow *window;
   s32 counter = 0;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   itemIcon->active = ICON_HIDDEN;
-  window = UiWindow_CreateFar(0, 0, 30, 10, 2);
-#else
-  window = UiWindow_CreateFar(0, 0, 13, 10, 2);
 #endif
+  window = UiWindow_CreateFar(0, 0, QUANTITY_WINDOW_WIDTH, 10, 2);
   // Freeze the party figures and hide the cursor meanwhile.
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
@@ -3334,7 +3346,7 @@ s32 Menu_SelectQuantity(s32 value) {
 
   {
     struct RenderOutput *cursor = menu->cursor;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     cursor->active = ICON_SHOWN;
 #else
     u8 one = 1;
@@ -3343,7 +3355,7 @@ s32 Menu_SelectQuantity(s32 value) {
     menu->flags = one;
 #endif
   }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   UiWindow_DrawFrameFar(13, 0, 17, 10);
 #endif
 
@@ -3444,7 +3456,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 item) {
     case ITEM_EFFECT_SCALE_LUCK:
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
       UiText_DrawStringInWindowFar(gMenu_TimesString, window, 64, row * 8);
       if (amount > 9) {
         UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
@@ -3529,7 +3541,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 item) {
     UiText_DrawCharacterAtOffsetFar(i, window, 16, row * 8);
     row++;
     amount = (item & INVENTORY_QUANTITY_MASK) / INVENTORY_QUANTITY_STEP;
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
     UiWork_PushValueSlotFar(amount + 1, 5);
     UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
 #else
@@ -3632,7 +3644,7 @@ void ItemMenu_SetMsgWin3(void) {
 }
 
 // The hand cursor and the "How many?" question of the quantity chooser.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define GIVE_CURSOR_X 128
 #define GIVE_ASK_X 32
 #define GIVE_ASK_Y 0
@@ -3696,7 +3708,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single) {
             8);
         UiText_DrawNumberInWindowFar(ownerCount - quantity - 1, 2, window, 16,
                                      24);
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
         if (single == 0)
           UiText_DrawNumberInWindowFar(receiverCount + quantity + 1, 2, window,
                                        80, 24);
@@ -3765,6 +3777,12 @@ void ItemMenu_DrawItemHead(void) {
                                   menu->messageWindow, 16, 8);
 }
 
+#if TBS_PATCH_1
+#define DROP_QUESTION_X 0
+#else
+#define DROP_QUESTION_X 8
+#endif
+
 // Asks whether to drop item (an inventory entry): its name, the question, and
 // Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
 s32 ItemMenu_ConfirmDrop(s32 item) {
@@ -3781,17 +3799,9 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   Item_GetDirectFar(itemId);
   UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 24, 0);
   question = MsgConfirmDrop;
-#if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(question, window, 0, 16);
-#else
-  UiText_DrawCharacterAtOffsetFar(question, window, 8, 16);
-#endif
+  UiText_DrawCharacterAtOffsetFar(question, window, DROP_QUESTION_X, 16);
   question++;
-#if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(question, window, 0, 24);
-#else
-  UiText_DrawCharacterAtOffsetFar(question, window, 8, 24);
-#endif
+  UiText_DrawCharacterAtOffsetFar(question, window, DROP_QUESTION_X, 24);
   answer = MsgYes;
   UiText_DrawCharacterAtOffsetFar(answer, window, 24, 40);
   answer++;
@@ -3859,7 +3869,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
             2) <= 1) {
     selection = 1;
   } else {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     UiText_DrawCharacterAtOffsetFar(MsgYes, window, 24, 24);
     UiText_DrawCharacterAtOffsetFar(MsgYes + 1, window, 72, 24);
     UiWindow_ClearInteriorTilesFar((void *)window, 16, 16, 96, 24);
@@ -3888,7 +3898,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = 1;
         break;
       }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       UiMenu_PositionCursor(selection * 48 + 110, 32);
       if (gKeysRepeat & KEY_LEFT) {
 #else
@@ -3899,7 +3909,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         changed = 1;
         AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       if (gKeysRepeat & KEY_RIGHT) {
 #else
       if (gKeysRepeat & KEY_DOWN) {
@@ -3984,21 +3994,13 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *work,
   index += state->row;
   state->selectedIndex = index;
 
-#if EDITION_INTERNATIONAL
-  RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-#else
-  RenderOutput_ClearListFar(menu->infoWindow);
-#endif
+  MENU_RESET_INFO_WINDOW(menu->infoWindow);
   WaitFrames(1);
 
   index = state->selectedIndex;
   if (menu->items[index] != 0) {
     s32 name = (menu->items[index] & ITEM_ID_MASK) + MsgItemPlainName;
-#if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(name, menu->infoWindow, 0, 0);
-#else
-    UiText_DrawResourceFar(name, menu->infoWindow, 0, 0);
-#endif
+    MENU_DRAW_INFO_TEXT(name, menu->infoWindow, 0, 0);
   }
 
   row = 0;
@@ -4018,12 +4020,12 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *work,
 }
 
 // The item list's icon column and name column.
-#if EDITION_INTERNATIONAL
-#define PAGE_X 116
-#define ENTRY_X 24
+#if TBS_PATCH_1
+#define ITEM_LIST_PAGE_ICONS_X 116
+#define ITEM_LIST_NAME_X 24
 #else
-#define PAGE_X 120
-#define ENTRY_X 32
+#define ITEM_LIST_PAGE_ICONS_X 120
+#define ITEM_LIST_NAME_X 32
 #endif
 
 // Draws one page of the item list into window: up to five item names with
@@ -4049,7 +4051,8 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
     visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, ITEM_LIST_PAGE_ICONS_X,
+                    34);
   Menu_DrawPageIndicator(window, state->entryCount, LIST_PAGE_SIZE, state->page,
                          15);
 
@@ -4058,7 +4061,8 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
     entry = &menu->items[firstEntry];
     do {
       UiText_DrawCharacterAtOffsetFar((entry[0] & ITEM_ID_MASK) + MsgItemName,
-                                      menu->itemWindow, ENTRY_X, row * 16 + 8);
+                                      menu->itemWindow, ITEM_LIST_NAME_X,
+                                      row * 16 + 8);
       row++;
       entry++;
     } while (visibleCount > row);
@@ -4230,8 +4234,7 @@ s32 ItemMenu_RunList(s32 pane) {
   return result;
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 #define PROMPT_SAVES_TILES 1
 #define PROMPT_TILES ((void *)0x06004000)
 #define PROMPT_TILES_SIZE 0x2000
@@ -4408,14 +4411,14 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
               PsynergyMenu_SetShortcut(work->ownerIds[0], selection, 0);
               RenderOutput_ClearListFar((void *)work->infoWindow);
               InventoryMenu_ShowModalMessage(MsgShortcutSetL, -1, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
               RenderOutput_RedrawSavedRectFar(work->infoWindow);
 #endif
             } else {
               PsynergyMenu_SetShortcut(work->ownerIds[0], selection, 1);
               RenderOutput_ClearListFar((void *)work->infoWindow);
               InventoryMenu_ShowModalMessage(MsgShortcutSetR, -1, -1);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
               RenderOutput_RedrawSavedRectFar(work->infoWindow);
 #endif
             }
@@ -4646,7 +4649,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
       menu->rowPositions[selection] = 26; // raise the chosen member
       if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
         RenderOutput_ClearListFar((void *)menu->infoWindow);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
 #endif
         UiText_DrawWorkValueWithLabel(menu->infoWindow);
@@ -4768,18 +4771,10 @@ s32 PsynergyMenu_SelectTarget(s32 mode) {
         PsynergyMenu_CallIconRoutineWithValue((s32)menu,
                                               menu->ownerTable[selection]);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
-#if EDITION_INTERNATIONAL
-          RenderOutput_RedrawSavedRectFar((void *)menu->infoWindow);
-          UiText_DrawCharacterAtOffsetFar(
-              (menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
-                  MsgAbilityDescription,
-              menu->infoWindow, 0, 0);
-#else
-          RenderOutput_ClearListFar((void *)menu->infoWindow);
-          UiText_DrawResourceFar((menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
-                                     MsgAbilityDescription,
-                                 menu->infoWindow, 0, 0);
-#endif
+          MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
+          MENU_DRAW_INFO_TEXT((menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
+                                  MsgAbilityDescription,
+                              menu->infoWindow, 0, 0);
           shown = 1;
         } else {
           GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
@@ -4842,7 +4837,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut) {
 // owner, or that it is empty, under a heading that says how to change them.
 // A name too wide for the line hides the owner (international) or drops the
 // colon after "L" and "R" (Japanese). Returns 1.
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
 
 s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
   s32 left;
@@ -5157,7 +5152,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
 #define PSYNERGY_MENU_SHORTCUT_HELP 2
 
 // The highlight over the Psynergy list's rows.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define DETAIL_ROW_X 0
 #define DETAIL_ROW_WIDTH 15
 #else
@@ -5180,22 +5175,14 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
   state->selectedIndex = index;
 
   if (GameFlag_TestFar(FLAG_MENU_INFO_KEPT) == 0) {
-#if EDITION_INTERNATIONAL
-    RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-#else
-    RenderOutput_ClearListFar(menu->infoWindow);
-#endif
+    MENU_RESET_INFO_WINDOW(menu->infoWindow);
     WaitFrames(1);
 
     index = state->selectedIndex;
     if (menu->psynergies[index] != 0) {
       s32 description =
           (menu->psynergies[index] & 0x1ff) + MsgAbilityDescription;
-#if EDITION_INTERNATIONAL
-      UiText_DrawCharacterAtOffsetFar(description, menu->infoWindow, 0, 0);
-#else
-      UiText_DrawResourceFar(description, menu->infoWindow, 0, 0);
-#endif
+      MENU_DRAW_INFO_TEXT(description, menu->infoWindow, 0, 0);
     }
   } else {
     // BUG: clears scene flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
@@ -5223,6 +5210,18 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
   WaitFrames(1);
   return 1;
 }
+
+#if TBS_PATCH_1
+#define PSYNERGY_PAGE_ICONS_X 112
+#define PSYNERGY_PP_LABEL_X 96
+#define PSYNERGY_NAME_X 16
+#define PSYNERGY_LIST_CURSOR_X 88
+#else
+#define PSYNERGY_PAGE_ICONS_X 120
+#define PSYNERGY_PP_LABEL_X 72
+#define PSYNERGY_NAME_X 32
+#define PSYNERGY_LIST_CURSOR_X 98
+#endif
 
 // Draws one page of the Psynergy list into window: up to five names with their
 // icons and PP costs, a Psynergy the member cannot afford in the no-HP colour
@@ -5256,18 +5255,12 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
     visibleCount = LIST_PAGE_SIZE;
   }
 
-#if EDITION_INTERNATIONAL
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, 112, 34);
-#else
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, 120, 34);
-#endif
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PSYNERGY_PAGE_ICONS_X,
+                    34);
   Menu_DrawPageIndicator(window, state->entryCount, LIST_PAGE_SIZE, state->page,
                          15);
-#if EDITION_INTERNATIONAL
-  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 96, 0);
-#else
-  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, 72, 0);
-#endif
+  UiText_DrawCharacterAtOffsetFar(MsgPsynergyPp, window, PSYNERGY_PP_LABEL_X,
+                                  0);
 
   row = 0;
   if (visibleCount > row) {
@@ -5287,11 +5280,7 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
 
       UiText_DrawCharacterAtOffsetFar(
           (OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) + MsgAbilityName,
-#if EDITION_INTERNATIONAL
-          window, 16, row * 16 + 8);
-#else
-          window, 32, row * 16 + 8);
-#endif
+          window, PSYNERGY_NAME_X, row * 16 + 8);
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
       UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
@@ -5355,11 +5344,7 @@ s32 PsynergyMenu_RunList(s32 pane) {
     menu->paneIcon[pane]->active = ICON_SHOWN;
 
     while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-#if EDITION_INTERNATIONAL
-      UiMenu_PositionCursor(88, state.row * 16 + 36);
-#else
-      UiMenu_PositionCursor(98, state.row * 16 + 36);
-#endif
+      UiMenu_PositionCursor(PSYNERGY_LIST_CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;
@@ -5562,10 +5547,10 @@ s32 PsynergyMenu_IsActionRestricted(s32 no) {
 }
 
 // How many party figure rows Menu_OpenCharacterSelector resets.
-#if EDITION_INTERNATIONAL
-#define ROW_CNT 8
+#if TBS_PATCH_1
+#define CHARACTER_SELECTOR_OWNER_COUNT 8
 #else
-#define ROW_CNT 4
+#define CHARACTER_SELECTOR_OWNER_COUNT 4
 #endif
 
 // Lets the player choose one party member, over the field (the Colosso scenes
@@ -5584,7 +5569,7 @@ s32 Menu_OpenCharacterSelector(void) {
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
-  for (index = 0; index < ROW_CNT; index++)
+  for (index = 0; index < CHARACTER_SELECTOR_OWNER_COUNT; index++)
     state->ownerY[index] = 30;
   state->page = 3; // the member chooser
 
@@ -5619,7 +5604,7 @@ s32 CharacterSelector_Run(void) {
 }
 
 // The window tiles from 0x06004000 the Status menu saves and restores.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define SAVED_TILE_BYTES 0x2000
 #else
 #define SAVED_TILE_BYTES 0x800
@@ -5646,7 +5631,7 @@ s32 ActionMenu_Open(void) {
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)0x05000000, 64);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
   Palette_LightenBankHighlight(14);
@@ -5656,7 +5641,7 @@ s32 ActionMenu_Open(void) {
   Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
   Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
   Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
   Iwram_FillWords((void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
@@ -5684,7 +5669,7 @@ s32 ActionMenu_Open(void) {
   Scheduler_DisableOverlayCallbacksWithFlags();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
   WaitFrames(1);
@@ -6371,7 +6356,7 @@ void CharacterMenu_DrawSelectionLabels(struct UiWindow *target, s32 selected,
 }
 
 // The longest status help text, in characters.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define PROGRESS_TEXT_MAX 0x80
 #else
 #define PROGRESS_TEXT_MAX 0x40
@@ -6396,7 +6381,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     if (owner->level == 99) {
       messageVariant = 8; // "These are your experience points."
     } else {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       u64 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
                                                     owner->level + 1) -
                       owner->experience;
@@ -6493,11 +6478,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
   if (mode == 1) {
     if (!hasDjinn)
       djinnRow--;
-#if EDITION_INTERNATIONAL
-    UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
-#else
-    UiText_DrawStringInWindowFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
-#endif
+    MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, djinnRow * 8 + 16);
     UiText_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64,
                                     djinnRow * 8 + 24);
     UiText_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
@@ -6524,7 +6505,7 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 // Spins for 256 loop passes (international editions only).
 void Runtime_RunBusyWaitDelay(void) {
   s32 count = 0xff;
@@ -6538,7 +6519,7 @@ spin:
 #endif
 
 // The stat column of the status page's top rows.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define STAT_DIGITS 3
 #define STAT_X 200
 #else
@@ -6563,26 +6544,14 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 owner, s32 flags) {
   UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   UiText_DrawCharacterAtOffsetFar(unit->classIndex + MsgClassName, window, 0,
                                   32);
-#if EDITION_INTERNATIONAL
-  UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 104, 0);
-#else
-  UiText_DrawStringInWindowFar(gMenu_LvString, window, 104, 0);
-#endif
+  MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 104, 0);
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
-#if EDITION_INTERNATIONAL
-  UiText_DrawStringAtOffsetFar(gMenu_HpString, window, 40, 16);
-#else
-  UiText_DrawStringInWindowFar(gMenu_HpString, window, 40, 16);
-#endif
+  MENU_DRAW_STATUS_LABEL(gMenu_HpString, window, 40, 16);
   UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
   UiText_DrawNumberInWindowFar(unit->maxHp, 4, window, 112, 16);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
-#if EDITION_INTERNATIONAL
-  UiText_DrawStringAtOffsetFar(gMenu_PpString, window, 40, 24);
-#else
-  UiText_DrawStringInWindowFar(gMenu_PpString, window, 40, 24);
-#endif
+  MENU_DRAW_STATUS_LABEL(gMenu_PpString, window, 40, 24);
   UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
   UiText_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
@@ -6642,15 +6611,16 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id) {
   return count;
 }
 
-#if EDITION_INTERNATIONAL
-#define GROUP_LEN 5
+#if TBS_PATCH_1
+#define EQUIP_LIST_PAGE_SIZE 5
 #else
-#define GROUP_LEN 6
+#define EQUIP_LIST_PAGE_SIZE 6
 #endif
 
 // Fills result with the item list of the member in pane index for the
 // equipment pages: their unit, the menu's item count, and the page and row of
-// the item chosen last for them, GROUP_LEN items to a page. Returns 1.
+// the item chosen last for them, EQUIP_LIST_PAGE_SIZE items to a page.
+// Returns 1.
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 unit;
   struct InventoryMenuState *menu = gMenuWork;
@@ -6669,10 +6639,10 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   if (itemCount == 0) {
     selected = 0;
   }
-  page = selected / GROUP_LEN;
-  row = selected % GROUP_LEN;
-  pageCount = itemCount / GROUP_LEN;
-  if (itemCount % GROUP_LEN != 0) {
+  page = selected / EQUIP_LIST_PAGE_SIZE;
+  row = selected % EQUIP_LIST_PAGE_SIZE;
+  pageCount = itemCount / EQUIP_LIST_PAGE_SIZE;
+  if (itemCount % EQUIP_LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
   result->ownerState = unit;
@@ -6692,7 +6662,7 @@ extern const struct TileMask gMenu_PatternRowMasks[];
 // fill of colour 4 with the rows of gMenu_PatternRowMasks XORed in, the first
 // set growing row by row and the second skipping its top row.
 void Menu_BuildPatternTiles(void) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   u32 *vram = (u32 *)0x06005000;
 #else
   u32 *vram = (u32 *)0x06004000;
@@ -6753,27 +6723,22 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
 
   menu = gMenuWork;
   state->selectedIndex = state->page * PAGE_ROWS + state->row;
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_FR)
+#if TBS_PATCH_1 && !TBS_PATCH_4
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#elif TBS_PATCH_4
   UiWindow_ClearInteriorTilesFar(menu->infoWindow, 0, 0, 224, 8);
 #else
   RenderOutput_ClearListFar(menu->infoWindow);
 #endif
   WaitFrames(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
-#if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(
-#else
-    UiText_DrawResourceFar(
-#endif
+    MENU_DRAW_INFO_TEXT(
         (menu->psynergies[state->selectedIndex] & OWNER_ACTION_ID_MASK) +
             MsgAbilityDescription,
         menu->infoWindow, 0, 0);
     ability = BattleActGet(menu->psynergies[state->selectedIndex] &
                            OWNER_ACTION_ID_MASK);
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
     if (ability->type0c != 0 ||
@@ -6904,7 +6869,7 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
   UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0,
                                   32);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
   UiText_DrawStringAtOffsetFar(&gMenu_LvString, (void *)window, 0, 48);
 #else
   UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
@@ -6915,6 +6880,14 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
 }
 
 struct BattleUnit;
+
+#if TBS_PATCH_1
+#define PREPARED_PSYNERGY_CURSOR_X 55
+#define PREPARED_PSYNERGY_CURSOR_Y 60
+#else
+#define PREPARED_PSYNERGY_CURSOR_X 58
+#define PREPARED_PSYNERGY_CURSOR_Y 52
+#endif
 
 s32 PsynergyMenu_SelectAction(void) {
 
@@ -6980,11 +6953,8 @@ s32 PsynergyMenu_SelectAction(void) {
       nav = Menu_HandlePageInput(0, state.entryCount, PAGE_ROWS, &state.row,
                                  &state.page);
       menu->paneIcon[0]->active = ICON_SHOWN;
-#if EDITION_INTERNATIONAL
-      UiMenu_PositionCursor(55, state.row * 16 + 60);
-#else
-      UiMenu_PositionCursor(58, state.row * 16 + 52);
-#endif
+      UiMenu_PositionCursor(PREPARED_PSYNERGY_CURSOR_X,
+                            state.row * 16 + PREPARED_PSYNERGY_CURSOR_Y);
       if (nav == 1) {
         first = 1;
         redraw = 1;
@@ -7045,7 +7015,7 @@ void PsynergyMenu_PreparedIconsNoOp(void) {}
 
 void PsynergyMenu_PreparedIconsSecondNoOp(void) {}
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define EQUIP_SLOT_X 1
 #define EQUIP_SLOT_WIDTH 12
 #else
@@ -7063,25 +7033,18 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   menu = gMenuWork;
   base = state->page * PAGE_ROWS;
   state->selectedIndex = base + state->row;
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_FR)
+#if TBS_PATCH_1 && !TBS_PATCH_4
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#elif TBS_PATCH_4
   UiWindow_ClearInteriorTilesFar(menu->infoWindow, 0, 0, 224, 8);
 #else
   RenderOutput_ClearListFar(menu->infoWindow);
 #endif
   WaitFrames(1);
   if (menu->items[state->selectedIndex] != 0) {
-#if EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffsetFar(
-        (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
-        menu->infoWindow, 0, 0);
-#else
-    UiText_DrawResourceFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
-                               MsgItemPlainName,
-                           menu->infoWindow, 0, 0);
-#endif
+    MENU_DRAW_INFO_TEXT((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
+                            MsgItemPlainName,
+                        menu->infoWindow, 0, 0);
   }
 
   for (row = 0; row < PAGE_ROWS; row++) {
@@ -7137,7 +7100,7 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define SHOP_PAGE_ICONS_X 119
 #define SHOP_ITEM_NAME_X 128
 #define SHOP_STAT_X 80
@@ -7145,6 +7108,12 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
 #define SHOP_PAGE_ICONS_X 123
 #define SHOP_ITEM_NAME_X 136
 #define SHOP_STAT_X 72
+#endif
+
+#if LANGUAGE == LANGUAGE_GERMAN
+#define SHOP_EMPTY_MESSAGE_X 112
+#else
+#define SHOP_EMPTY_MESSAGE_X 120
 #endif
 
 s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
@@ -7166,11 +7135,8 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
   Menu_SetPageIcons(PAGE_ROWS, first, window, SHOP_PAGE_ICONS_X, 52);
   Menu_DrawPageIndicator(window, state->entryCount, PAGE_ROWS, state->page, 28);
   if (menu->itemCount == 0) {
-#if defined(TBS_EDITION_DE)
-    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window, 112, 8);
-#else
-    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window, 120, 8);
-#endif
+    UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, window,
+                                    SHOP_EMPTY_MESSAGE_X, 8);
   } else {
     row = 0;
     if (count > row) {
@@ -7193,6 +7159,12 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
+#if TBS_PATCH_1
+#define EQUIP_WINDOW_WIDTH 15
+#else
+#define EQUIP_WINDOW_WIDTH 13
+#endif
+
 s32 ItemMenu_SelectItem(void) {
 
   struct InventoryMenuState *menu;
@@ -7214,11 +7186,7 @@ s32 ItemMenu_SelectItem(void) {
     result = 0;
     UnitGetFar(menu->ownerIds[id]);
   }
-#if EDITION_INTERNATIONAL
-  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
-#else
-  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, 13, 10, 2);
-#endif
+  UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
   ItemMenu_PosCategory();
 
   for (i = 0; i < 32; i++) {
@@ -7411,7 +7379,7 @@ void ItemMenu_DrawCategory(struct UiWindow *window, s32 owner_id, s32 mode) {
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define NAME_X 8
 #else
 #define NAME_X 16
@@ -8719,7 +8687,7 @@ s32 DjinnMenu_ShowHelp(void) {
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define CURSOR_WIDTH 6
 #else
 #define CURSOR_WIDTH 5
@@ -8833,8 +8801,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         djinn = lists->list.ids[x][selection];
       RenderOutput_RedrawSavedRectFar(state->helpWindow);
       if (mode == 1) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
         UiWindow_SetTilemapEntryFar(
             state->helpWindow, DJINN_ELEMENT(state->pairEntries[0]) + 0x5001, 0,
             0, 0);
@@ -8938,7 +8906,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selection != -1) {
         UiText_DrawCharacterAtOffsetFar(MsgUnleashEffect, state->listWindow, 0,
                                         80);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         UiWindow_ClearInteriorTilesFar(state->listWindow, 0, 96, 224, 104);
         UiText_DrawCharacterAtOffsetFar(
             DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + MsgDjinnEffect,
@@ -9418,10 +9386,10 @@ s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element) {
   return count;
 }
 
-#if EDITION_INTERNATIONAL
-#define ALT_PARAM 2
+#if TBS_PATCH_1
+#define DJINN_SWAP_PREVIEW_MODE 2
 #else
-#define ALT_PARAM 4
+#define DJINN_SWAP_PREVIEW_MODE 4
 #endif
 
 s32 Menu_RunPairedEntryAction(s32 mode, s32 param) {
@@ -9437,14 +9405,14 @@ s32 Menu_RunPairedEntryAction(s32 mode, s32 param) {
                               2, param, mode);
   } else {
     DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->shownOwner[1], 1,
-                              0, ALT_PARAM, param, 1);
+                              0, DJINN_SWAP_PREVIEW_MODE, param, 1);
     DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownOwner[0], 0, 0, 1,
                               param, 0);
   }
   return 1;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define PREVIEW_DIGITS 3
 #define PREVIEW_CURRENT_X 48
 #define PREVIEW_MAX_X 80
@@ -9575,7 +9543,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y, s32 owner,
 
     if (page == 0) {
       s32 column;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       s32 iconX;
 #endif
       s32 px;
@@ -9596,7 +9564,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y, s32 owner,
                                     state->djinnActiveCounts[i] + 0xf030,
                                     column + i * 2 + 1, y + 5, 0);
       }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       iconX = x * 8 + 70;
 #endif
       if (state->hp != saved->hp) {

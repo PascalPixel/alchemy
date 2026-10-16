@@ -801,7 +801,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { SEARCH(SEARCH_BARREL), TOLBI_BARREL, 0xf97, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     { SEARCH(SEARCH_JAR), TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 #else
     { SEARCH(SEARCH_JAR) | EVENT_TOUCH_FACING | FACING_NORTH, TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },

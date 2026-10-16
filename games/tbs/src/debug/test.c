@@ -45,7 +45,7 @@ u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
 u8 *MenuTest_GetPlacements(void) { return (u8 *)gMenuTest_Placements; }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 static void SceneDialogue_ShowMessageAndWait(s32 arg0) {
   UiWork_FinalizePendingCore();
   UiText_OpenMessageWindow(arg0, 5, 0, 0x22);
@@ -126,8 +126,7 @@ static void SceneState_ApplyBlockDa2(void) {
 }
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 static void DebugMenu_RunMessageTest(void) {
   Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Engine_EventSetMessage(MSGNO(MsgValeComeOnHurry));
@@ -153,8 +152,7 @@ static void EV15_SCRIPT(void) {
   ((struct BattleFxScene *)gEffectWork)->childMode = 1;
 }
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 static void DebugMenu_GiveItemToParty(void) { PartyInventory_GiveItem(181, 0); }
 #endif
 
@@ -381,7 +379,7 @@ static void EV09_TALK(void) {
    * instruction touches. Declared inside the benchmark's #if, tbs-en loses sub
    * sp, #256 and its add: differ 4. */
   u8 buf[256];
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   s32 i;
   s32 j;
 
@@ -685,7 +683,7 @@ s32 CommandTable_ConfigureCommandList(void) {
   Item_AdjustCounter(130, 1);
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Unit_LevelUpTo(ISAAC, 50);
   Unit_LevelUpTo(GARET, 30);
   Unit_LevelUpTo(MIA, 30);
@@ -705,14 +703,13 @@ s32 CommandTable_ConfigureCommandList(void) {
 
 static s32 EV15_TALK(void) { return DebugMenu_BrowseIcons(); }
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 static s32 DebugMenu_SelectCharacter(void) {
   return Menu_OpenCharacterSelector();
 }
 #endif
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 #else
 static s32 SceneState_GetFarResult2418(s32 unitId) {
   return Shop_ConfirmAct(unitId);
@@ -787,9 +784,9 @@ struct SceneEvent gMenuTest_Events[] = {
     {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
     {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
     {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK)},
-#if defined(TBS_EDITION_FR)
+#if TBS_PATCH_3 && !TBS_PATCH_4
     {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#elif TBS_PATCH_4
     {EVENT_TALK, 13, CONDITION_ALWAYS,
      MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
@@ -798,10 +795,10 @@ struct SceneEvent gMenuTest_Events[] = {
 #endif
     {EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeKyleAbleStop)},
     {EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     {EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},
     {EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
-#elif defined(TBS_EDITION_EN)
+#elif TBS_PATCH_1 && !TBS_PATCH_2
     {0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
     {0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
     {0x400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCf1)},

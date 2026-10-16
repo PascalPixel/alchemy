@@ -34,7 +34,7 @@ u8 gMenu_ListOrderMode0[20] = {
     0x01, 0x04, 0x03, 0x02, 0x05, 0x06, 0x07, 0x08, 0x09, 0xff,
 };
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 // The x of the item command cursor, three columns on each of two rows.
 s32 gItemMenu_CommandColumnXTable[6] = {
     86, 117, 166,
@@ -45,9 +45,9 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 
 // The width in tiles of the status screen's highlight on each ailment row
 // (Down, Poison, Venom, Curse and Haunt).
-#if defined(TBS_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 u8 gCharacterMenu_CursorWidths[5] = {9, 4, 6, 5, 7};
-#elif defined(TBS_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
 u8 gCharacterMenu_CursorWidths[5] = {7, 5, 7, 6, 5};
 #else
 u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};

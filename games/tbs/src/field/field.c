@@ -3583,7 +3583,7 @@ void ObjectDispatch_SetUpdateValue(void *raw, s32 value) {
     *(s32 *)object->unk6c = value;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 
 #define ASSIGNED_KEYS gKeysPressed
 #else
@@ -4021,7 +4021,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define WORLD_PROBE_RADIUS 0x70000
 #else
 #define WORLD_PROBE_RADIUS 0x80000
@@ -4034,7 +4034,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
   struct FieldPosition position;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   struct FieldPosition testPosition;
   s16 angleOffsets[28];
 #else
@@ -4060,7 +4060,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
 
   mode = 2;
   collision = 0;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   count = 0;
 #endif
   if (gKeysHeld & gGameState.dashKeys) {
@@ -4085,7 +4085,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
     position.z = object->z;
     Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       if (CheckWorldMapCollisionRange((s32)object,
                                       (struct WorldPosition *)&position) == 0) {
         testPosition.x = object->x;

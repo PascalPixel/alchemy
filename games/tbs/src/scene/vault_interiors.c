@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/vault_interiors.h"
@@ -31,6 +32,12 @@
 #include "field_service.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+
+#if TBS_PATCH_3
+#define VAULT_INTERIORS_ENTRY_ACTOR_Z 0x1c30000
+#else
+#define VAULT_INTERIORS_ENTRY_ACTOR_Z 0x1d00000
+#endif
 
 // Forward declarations.
 static void Scene_JoinRodSearch(void);
@@ -77,7 +84,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return table;
 }
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
   struct FieldActor *obj;
   u8 *flags;
@@ -113,7 +120,7 @@ static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
 static void EV40_SCRIPT(void) {
   s32 x;
   s32 z;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   struct FixedPointPosition target;
   struct FixedPointPosition *pos;
   struct FieldActor *obj;
@@ -121,7 +128,7 @@ static void EV40_SCRIPT(void) {
 
   if (Object_GetById(0)->facing >= 0xa000 &&
       Object_GetById(0)->facing <= 0xe000) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
     obj = Object_GetById(0);
@@ -136,7 +143,7 @@ static void EV40_SCRIPT(void) {
     Map_CopyCellAttributes(41, 85, 1, 1, x, z);
   } else if (Object_GetById(0)->facing >= 0x2000 &&
              Object_GetById(0)->facing <= 0x6000) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
     obj = Object_GetById(0);
@@ -221,7 +228,7 @@ static void EV23_TALK(void) {
 #include "common/vault_bone.h"
 
 static void EV250_RAISED(void) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Leader_StopMoving();
 #endif
   Engine_EventSetMessage(MsgVaultWeDontHaveTimeFor);
@@ -1553,12 +1560,7 @@ s32 VaultInteriors_ApplyEntryState(void) {
       Engine_ActorSetPosition(2, 0, 0);
     }
     if (Engine_GameFlagIsSet(0x855) != 0) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-      Actor_SetPosition(16, 0x2180000, 0x1c30000);
-#else
-      Actor_SetPosition(16, 0x2180000, 0x1d00000);
-#endif
+      Actor_SetPosition(16, 0x2180000, VAULT_INTERIORS_ENTRY_ACTOR_Z);
       Actor_SetBuiltinAction(16, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(16, 0x5000, 0);
     }
@@ -2619,7 +2621,7 @@ static void VaultInteriors_UpdateActorStops(void) {
        * test with || and a self-assignment all give the inverted blt (tbs-en 4
        * differ); Japanese matches all of them. */
       d = 0;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {
 #else
     } else {

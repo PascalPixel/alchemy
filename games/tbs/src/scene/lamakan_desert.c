@@ -154,8 +154,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     if (gGameState.entrance == 5) {
       Engine_GameFlagSet(FLAG_SAND_MONSTER_BEATEN);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
       Engine_GameFlagSet(0x87a);
 #endif
     }

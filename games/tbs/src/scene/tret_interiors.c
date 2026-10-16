@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "version.h"
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/tret_interiors.h"
@@ -1123,7 +1124,7 @@ struct SceneEntrance gTretInteriorsEntrances[] = {
 s16 gTretInteriorsRegions[] = {
     420, 28, 68, 428, 36, 76, -1, 10,
     228, 28, 338, 236, 36, 346, -1, 12,
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     163, 28, 148, 171, 36, 156, -1, 14,
 #else
     159, 24, 144, 175, 40, 160, -1, 14,

@@ -1007,7 +1007,7 @@ static void EV31_GUARD(void) {
   WAIT(70);
   OBJ_WALK(12, 672, 88);
   Engine_ActorWaitForMove(12);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
 #endif
   Engine_ActorSetAnimationAndWait(12, 3);

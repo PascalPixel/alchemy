@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/scene/vale_home.h"
@@ -557,14 +558,14 @@ static void EV20_TOUCH(void) {
     Actor_FaceDirection(18, 0xf000, 10);
     Engine_ActorSetAnimationAndWait(19, 3);
     Event_ShowMessageAndWait(0x4013, 0, 10);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
     Engine_ActorSetSpritePriority(18, 1);
 #endif
     Actor_SetSpeed(17, 0x19999, 0xcccc);
     Actor_SetSpeed(18, 0x19999, 0xcccc);
     Actor_SetActionScript(17, gValeHome_Actor17Actions);
     Engine_EventWait(20);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
     Object_GetById(18)->priorityFlags |= 1;
 #endif
     Actor_SetActionScript(18, gValeHome_Actor17Actions);
@@ -1334,8 +1335,7 @@ static void FieldScene_RunStep20(void) {
 static void SceneState_SetValues352_365_2116_2117_40(void) {
   Engine_GameFlagSet(352);
   Engine_GameFlagSet(0x16d);
-#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Engine_GameFlagSet(0x830);
   Engine_GameFlagSet(0x831);
   Engine_GameFlagSet(0x832);
@@ -1677,7 +1677,7 @@ u32 gValeHomeExits[] = {
     SCENE_EXIT(10, 2, 1),
     SCENE_EXIT(11, 28, 5),
     SCENE_EXIT(50, 8, 20),
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     SCENE_EXIT(40, 30, 1),
 #else
     SCENE_EXIT(40, 12, 0),
@@ -1766,7 +1766,7 @@ struct ScenePlacement gValeHomePlacementsFlag834[] = {
         PIXELS(173), 0, PIXELS(568), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(213), 0, PIXELS(771), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
     { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(198), 0, PIXELS(779), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 #else

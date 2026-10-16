@@ -945,7 +945,7 @@ static void FieldScene_RunMiddleSequence(void) {
 
   *(s32 *)(base[0] + 0x1c0) = 0x204;
   BattleFx_StartFadeOverlay(0);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   rec7 = GameFlag_IsSet(0x109);
   if (rec7 != 0) {
     p5 = base[9];

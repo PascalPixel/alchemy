@@ -39,6 +39,59 @@
 #include "battle_calc.h"
 #include "field_obj.h"
 
+// Edition-specific text and window layout values.
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define SHOP_CONFIRM_MENU_X 6
+#else
+#define SHOP_CONFIRM_MENU_X 7
+#endif
+
+#if (LANGUAGE == LANGUAGE_FRENCH)
+#define SHOP_PRICE_NUMBER_X 0x18
+#define SHOP_PRICE_LABEL_X 0x40
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define SHOP_PRICE_NUMBER_X 0x20
+#define SHOP_PRICE_LABEL_X 0x50
+#else
+#define SHOP_PRICE_NUMBER_X 0x20
+#define SHOP_PRICE_LABEL_X 0x48
+#endif
+
+#if (LANGUAGE == LANGUAGE_ITALIAN)
+#define SHOP_EMPTY_GRID_X 20
+#define SHOP_EMPTY_GRID_Y 12
+#else
+#define SHOP_EMPTY_GRID_X 8
+#define SHOP_EMPTY_GRID_Y 20
+#endif
+
+#if TBS_PATCH_1
+#define SHOP_MONEY_WINDOW_WIDTH 12
+#define SHOP_DRAW_MESSAGE UiText_DrawCharacterAtOffsetFar
+#else
+#define SHOP_MONEY_WINDOW_WIDTH 11
+#define SHOP_DRAW_MESSAGE UiText_DrawResourceFar
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define SANCTUM_PRICE_WINDOW_X 0
+#define SANCTUM_PRICE_WINDOW_WIDTH 30
+#elif (LANGUAGE == LANGUAGE_FRENCH)
+#define SANCTUM_PRICE_WINDOW_X 1
+#define SANCTUM_PRICE_WINDOW_WIDTH 25
+#else
+#define SANCTUM_PRICE_WINDOW_X 1
+#define SANCTUM_PRICE_WINDOW_WIDTH 23
+#endif
+
+#if TBS_PATCH_1
+#define SHOP_USE_WINDOW_X 14
+#define SHOP_USE_WINDOW_WIDTH 16
+#else
+#define SHOP_USE_WINDOW_X 16
+#define SHOP_USE_WINDOW_WIDTH 14
+#endif
+
 s32 AbilityMenu_BuildAvailableList(void) {
   struct ShopRuntime *state;
   s16 *output;
@@ -180,7 +233,7 @@ s32 Shop_Run(s32 row, s32 keeperId) {
   return 0;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define FINAL_ARG 1
 #else
 #define FINAL_ARG 2
@@ -270,11 +323,7 @@ s32 UiMessage_ShowChoice(s32 arg0) {
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
   u8 saved = (*slot)->active;
   UiIcon_PrepareObjectFar(*slot);
-#if defined(TBS_EDITION_DE)
-  arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
-#else
-  arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
-#endif
+  arg0 = Menu_RunConfirmSelectionAtFar(SHOP_CONFIRM_MENU_X, 5, arg0);
   (*slot)->active = saved;
   return arg0;
 }
@@ -820,7 +869,7 @@ void Shop_DrawMoney(void) {
   shop = gMenuWork;
   window = shop->moneyWindow;
   if (window != 0) {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     UiText_DrawCharacterAtOffsetFar(MsgYourCoins, window, 0, 0);
     UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
 #else
@@ -834,7 +883,7 @@ void Shop_DrawMoney(void) {
 }
 
 // X position below the item name, in pixels
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define ITEM_NOTE_X 0
 #else
 #define ITEM_NOTE_X 8
@@ -854,16 +903,8 @@ show_price:
   message = MsgPrice;
   UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
   message -= 3;
-#if defined(TBS_EDITION_FR)
-  UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
-  UiText_DrawCharacterAtOffsetFar(message, window, 0x40, 8);
-#elif defined(TBS_EDITION_ES)
-  UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-  UiText_DrawCharacterAtOffsetFar(message, window, 0x50, 8);
-#else
-  UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-  UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
-#endif
+  UiText_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
+  UiText_DrawCharacterAtOffsetFar(message, window, SHOP_PRICE_LABEL_X, 8);
   return;
 draw:
   RenderOutput_RedrawSavedRectFar(window);
@@ -888,14 +929,13 @@ draw:
 //--------------------------------------------------------------------------
 void Shop_DrawMsg(struct UiWindow *win, s32 message) {
   if (win != 0) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(win);
-    UiText_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
     RenderOutput_ClearListFar(win);
     WaitFrames(1);
-    UiText_DrawResourceFar(message, win, 0, 0);
 #endif
+    SHOP_DRAW_MESSAGE(message, win, 0, 0);
   }
 }
 
@@ -1038,7 +1078,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
   }
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define ACTION_Y 120
 #else
 #define ACTION_Y 128
@@ -1091,10 +1131,10 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   return result;
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define QUANTITY_X 64
 #define COINS_X 128
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define QUANTITY_X 72
 #define COINS_X 144
 #else
@@ -1110,7 +1150,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 count;
   s32 result;
   struct RenderOutput *sprite;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   s32 msg;
 #endif
 
@@ -1158,7 +1198,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Shop_FillSelector(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);
           result = count + 1;
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
           UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
           UiText_DrawNumberInWindowFar(price * result, 6, window,
                                        QUANTITY_X + 16, 0);
@@ -1287,7 +1327,7 @@ s32 Shop_SalePrice(s32 item_id) {
   return price;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define BASE_W 12
 #else
 #define BASE_W 11
@@ -1475,11 +1515,8 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   if (window != 0) {
     RenderOutput_PrepareForRedrawFar(window);
     if (Inventory_CountFar(unitId) == 0) {
-#if defined(TBS_EDITION_IT)
-      UiText_DrawResourceFar(MsgNoItems, window, 20, 12);
-#else
-      UiText_DrawResourceFar(MsgNoItems, window, 8, 20);
-#endif
+      UiText_DrawResourceFar(MsgNoItems, window, SHOP_EMPTY_GRID_X,
+                             SHOP_EMPTY_GRID_Y);
     } else {
       slot = 0;
       do {
@@ -1503,7 +1540,7 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   }
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define EFFECT_X 0x78
 #else
 #define EFFECT_X 0x80
@@ -2242,11 +2279,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   shop->cursor.anchor = cursorAnchor;
   UiMessage_ShowResolvedAndWait(MsgSanctumWelcome);
 
-#if EDITION_INTERNATIONAL
-  shop->moneyWindow = UiWindow_CreateFar(16, 11, 12, 4, 2);
-#else
-  shop->moneyWindow = UiWindow_CreateFar(16, 11, 11, 4, 2);
-#endif
+  shop->moneyWindow = UiWindow_CreateFar(16, 11, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
   Shop_DrawMoney();
 
   for (;;) {
@@ -2300,13 +2333,8 @@ s32 Sanctum_RunPartyService(void) {
   shop->cursor.anchor->active = 4;
   shop->mode = redraw;
   PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
-#if defined(TBS_EDITION_DE)
-  priceWindow = UiWindow_CreateFar(0, 16, 30, 3, 2);
-#elif defined(TBS_EDITION_FR)
-  priceWindow = UiWindow_CreateFar(1, 16, 25, 3, 2);
-#else
-  priceWindow = UiWindow_CreateFar(1, 16, 23, 3, 2);
-#endif
+  priceWindow = UiWindow_CreateFar(SANCTUM_PRICE_WINDOW_X, 16,
+                                   SANCTUM_PRICE_WINDOW_WIDTH, 3, 2);
 
   selection = 0;
   unitId = 0;
@@ -2614,7 +2642,7 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define MESSAGE_WINDOW_ROWS 12
 #else
 #define MESSAGE_WINDOW_ROWS 11
@@ -2728,7 +2756,7 @@ void Inn_PlaySleep(s32 roomPrice) {
 }
 
 // X position below the item name, in pixels
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define ITEM_NOTE_X 0
 #else
 #define ITEM_NOTE_X 8
@@ -2817,6 +2845,33 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedItem) {
   Inn_Cleanup();
   return result;
 }
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_ITALIAN
+#define SHOP_USE_PRICE_LABEL_X 8
+#define SHOP_USE_PRICE_NUMBER_X 40
+#define SHOP_USE_COIN_LABEL_X 80
+#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define SHOP_USE_PRICE_LABEL_X 0
+#define SHOP_USE_PRICE_NUMBER_X 32
+#define SHOP_USE_COIN_LABEL_X 72
+#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define SHOP_USE_PRICE_LABEL_X 8
+#define SHOP_USE_PRICE_NUMBER_X 40
+#define SHOP_USE_COIN_LABEL_X 88
+#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define SHOP_USE_PRICE_LABEL_X 8
+#define SHOP_USE_PRICE_NUMBER_X 32
+#define SHOP_USE_COIN_LABEL_X 72
+#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#else
+#define SHOP_USE_PRICE_LABEL_X 8
+#define SHOP_USE_PRICE_NUMBER_X 40
+#define SHOP_USE_COIN_LABEL_X 80
+#define SHOP_USE_COIN_MESSAGE_OFFSET 1
+#endif
+
 s32 Shop_SelectUse(s32 actor) {
   struct ShopRuntime *shop = gMenuWork;
 
@@ -2837,11 +2892,7 @@ s32 Shop_SelectUse(s32 actor) {
   count = 1;
   result = 0;
   redraw = 1;
-#if EDITION_INTERNATIONAL
-  win1 = UiWindow_CreateFar(14, 8, 16, 4, 2);
-#else
-  win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
-#endif
+  win1 = UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH, 4, 2);
   win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
@@ -2953,27 +3004,13 @@ void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 itemId) {
       qty = Shop_SalePrice(unit->inventory[itemId]);
       total = mult * qty;
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 80, 8);
-#elif defined(TBS_EDITION_DE)
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 0, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 72, 8);
-#elif defined(TBS_EDITION_ES)
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 88, 8);
-#elif defined(TBS_EDITION_FR)
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 72, 8);
-#else
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
-      UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 1, window, 80, 8);
-#endif
+      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window,
+                                      SHOP_USE_PRICE_LABEL_X, 8);
+      UiText_DrawNumberInWindowFar(total, 5, window, SHOP_USE_PRICE_NUMBER_X,
+                                   8);
+      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading -
+                                          SHOP_USE_COIN_MESSAGE_OFFSET,
+                                      window, SHOP_USE_COIN_LABEL_X, 8);
     }
   }
 }

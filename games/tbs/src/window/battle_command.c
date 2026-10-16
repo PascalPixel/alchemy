@@ -83,6 +83,156 @@
 #include "unit/object/psynergy_effects.h"
 #include "unit/window/scales.h"
 
+// Edition-specific text and window layout values.
+#if !TBS_PATCH_1
+#define DJINN_PREVIEW_VITALS_X 4
+#else
+#define DJINN_PREVIEW_VITALS_X 5
+#endif
+
+#if !TBS_PATCH_1
+#define DJINN_PREVIEW_STAT_DIGIT_OFFSET 7
+#define DJINN_PREVIEW_STAT_X 4
+#else
+#define DJINN_PREVIEW_STAT_DIGIT_OFFSET 8
+#define DJINN_PREVIEW_STAT_X 6
+#endif
+
+#if !TBS_PATCH_1
+#define DJINN_PREVIEW_HELP_X 40
+#else
+#define DJINN_PREVIEW_HELP_X 24
+#endif
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define PSYNERGY_COST_SECOND_TILE 0xf005
+#else
+#define PSYNERGY_COST_SECOND_TILE 0xf01e
+#endif
+
+#if (LANGUAGE == LANGUAGE_FRENCH)
+#define OWNER_STATUS_LEVEL_X 51
+#else
+#define OWNER_STATUS_LEVEL_X 56
+#endif
+
+#if TBS_PATCH_1
+#define SUMMON_MENU_WINDOW_X 13
+#define SUMMON_MENU_WINDOW_WIDTH 17
+#else
+#define SUMMON_MENU_WINDOW_X 16
+#define SUMMON_MENU_WINDOW_WIDTH 14
+#endif
+
+#if TBS_PATCH_1
+#define BATTLE_CLASS_ICON_X 0
+#else
+#define BATTLE_CLASS_ICON_X 4
+#endif
+
+#if (LANGUAGE == LANGUAGE_FRENCH)
+#define BATTLE_COMMAND_NAME_X 14
+#else
+#define BATTLE_COMMAND_NAME_X 16
+#endif
+
+#if TBS_PATCH_1
+#define BATTLE_SUMMON_ICON_X 80
+#else
+#define BATTLE_SUMMON_ICON_X 104
+#endif
+
+#if TBS_PATCH_1
+#define BATTLE_SUMMON_WINDOW_WIDTH 17
+#else
+#define BATTLE_SUMMON_WINDOW_WIDTH 14
+#endif
+
+#if TBS_PATCH_1
+#define BATTLE_SUMMON_ELEMENT_COLUMN 13
+#define BATTLE_SUMMON_COST_COLUMN 14
+#else
+#define BATTLE_SUMMON_ELEMENT_COLUMN 10
+#define BATTLE_SUMMON_COST_COLUMN 11
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define BATTLE_ITEM_WINDOW_WIDTH 16
+#else
+#define BATTLE_ITEM_WINDOW_WIDTH 15
+#endif
+
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define RESOURCE_MODE0_WINDOW_X 7
+#define RESOURCE_MODE0_WINDOW_WIDTH 17
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define RESOURCE_MODE0_WINDOW_X 5
+#define RESOURCE_MODE0_WINDOW_WIDTH 21
+#elif (LANGUAGE == LANGUAGE_FRENCH)
+#define RESOURCE_MODE0_WINDOW_X 5
+#define RESOURCE_MODE0_WINDOW_WIDTH 22
+#else
+#define RESOURCE_MODE0_WINDOW_X 9
+#define RESOURCE_MODE0_WINDOW_WIDTH 13
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define RESOURCE_MODE1_WINDOW_X 1
+#define RESOURCE_MODE1_WINDOW_WIDTH 28
+#else
+#define RESOURCE_MODE1_WINDOW_X 3
+#define RESOURCE_MODE1_WINDOW_WIDTH 25
+#endif
+
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
+#define TRANSFER_METHOD_WINDOW_X 6
+#define TRANSFER_METHOD_WINDOW_WIDTH 18
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define TRANSFER_METHOD_WINDOW_X 4
+#define TRANSFER_METHOD_WINDOW_WIDTH 21
+#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define TRANSFER_METHOD_WINDOW_X 5
+#define TRANSFER_METHOD_WINDOW_WIDTH 20
+#else
+#define TRANSFER_METHOD_WINDOW_X 9
+#define TRANSFER_METHOD_WINDOW_WIDTH 13
+#endif
+
+#if TBS_PATCH_1
+#define TRANSFER_METHOD_LABEL_X 2
+#else
+#define TRANSFER_METHOD_LABEL_X 0
+#endif
+
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_SPANISH) ||        \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define TRANSFER_HELP_WINDOW_X 1
+#define TRANSFER_HELP_WINDOW_WIDTH 28
+#elif (LANGUAGE == LANGUAGE_GERMAN)
+#define TRANSFER_HELP_WINDOW_X 0
+#define TRANSFER_HELP_WINDOW_WIDTH 30
+#else
+#define TRANSFER_HELP_WINDOW_X 5
+#define TRANSFER_HELP_WINDOW_WIDTH 21
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define ENTRY11_COMMAND_LABEL_WIDTH 8
+#elif TBS_PATCH_1
+#define ENTRY11_COMMAND_LABEL_WIDTH 7
+#else
+#define ENTRY11_COMMAND_LABEL_WIDTH 6
+#endif
+
+#if TBS_PATCH_1
+#define ENTRY19_COMMAND_LABEL_WIDTH 10
+#else
+#define ENTRY19_COMMAND_LABEL_WIDTH 8
+#endif
+
 // OAM attribute bits a sprite output is created with: the size field of
 // attribute 1 (bits 30-31 of the first word). A square sprite of size 1 is
 // 16x16 pixels, of size 2 32x32.
@@ -1200,7 +1350,8 @@ s32 SaveState_DeleteSelectedSlot(void) {
   return result;
 }
 
-#if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
+#if (LANGUAGE != LANGUAGE_JAPANESE) ||                                         \
+    (GAME_TLA && (LANGUAGE == LANGUAGE_JAPANESE))
 
 // A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
 // follows a sine wave of the frame counter, eight frames behind the one
@@ -1248,7 +1399,7 @@ void PaletteGlow_UpdateSine(void) {
 
 #endif
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 
 // Starts the palette glow (PaletteGlow_UpdateSine) in the scheduler.
 void PaletteGlow_Start(void) {
@@ -1479,14 +1630,18 @@ void SaveMenu_DrawDjinnCounts(struct UiWindow *window,
 }
 
 // Where each edition draws the "Lv" label and the coin label, in pixels.
-#if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
-#elif defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+#define SUMMARY_DRAW_LEVEL UiText_DrawStringAtOffset
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 #define SUMMARY_LEVEL_X 59
 #define SUMMARY_COINS_X 56
+#define SUMMARY_DRAW_LEVEL UiText_DrawStringAtOffset
 #else
+#define SUMMARY_LEVEL_X 72
 #define SUMMARY_COINS_X 48
+#define SUMMARY_DRAW_LEVEL UiText_DrawStringInWindow
 #endif
 
 // Draws the summary of save file `summary` into `window`: the leader's name,
@@ -1502,17 +1657,12 @@ void SaveMenu_DrawFileSummary(struct UiWindow *window,
     UiWindow_DrawDividerLine(window, 0, 4, 13, 4);
     UiText_DrawStringAtOffset(summary->name, window, 0, 0);
     y = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR)
-    UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, window,
-                              SUMMARY_LEVEL_X, 0);
-#else
-    UiText_DrawStringInWindow(gStatusMenu_LevelLetterString, window, 72, 0);
-#endif
+    SUMMARY_DRAW_LEVEL(gStatusMenu_LevelLetterString, window, SUMMARY_LEVEL_X,
+                       0);
     UiText_DrawNumberAtOffset(summary->level, 2, window, 80, y);
     UiText_DrawCharacterAtOffset(summary->classId + MsgClassName, window, 0,
                                  16);
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     // Coins on the third row, then "Play Time:" and the time.
     y = 32;
     UiText_DrawNumberInWindow(summary->coins, 6, window, 24, y);
@@ -1527,7 +1677,7 @@ void SaveMenu_DrawFileSummary(struct UiWindow *window,
         Text_FormatPlayTime(summary->playTime, (u8 *)playTime), window, 48, 40);
     y = 48;
     UiText_DrawNumberInWindow(summary->coins, 6, window, 0, y);
-#if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
     // French takes the singular "Pièce" for one coin or none.
     if (summary->coins > 1)
       UiText_DrawCharacterAtOffset(MsgCoins, window, SUMMARY_COINS_X, 48);
@@ -1560,7 +1710,7 @@ enum SaveMenuMode {
 // cursor starts on `file` and moves up and down over the files `mode` allows
 // (see SaveMenuMode). Returns the file chosen with A, -1 when cancelled with
 // B, or SAVE_MENU_NO_FILE when no file is allowed.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 
 s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   struct UiWindow *fileList;
@@ -1765,7 +1915,7 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
 done:
   return result;
 }
-#elif defined(TBS_EDITION_JA)
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
 
 s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   struct UiWindow *fileList;
@@ -2097,7 +2247,7 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   return slot;
 }
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 // Always 1: the international name entry has no voicing marks to check.
 s32 Resource_ReturnTrue(void) { return 1; }
 #else
@@ -2235,7 +2385,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
 #define NAME_COMMAND_COLUMN 18 // the keyboard column of the command keys
 #define NAME_MAX_LETTERS 5
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 // Puts the string `str` into the UI's text entries and returns its width in
 // pixels.
 s32 UiText_SetRenderString(const u8 *str) {
@@ -2294,7 +2444,7 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 }
 
 // The width of the window showing the name, in tiles.
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define NAME_LABEL_WIDTH 9
 #else
 #define NAME_LABEL_WIDTH 8
@@ -2302,13 +2452,13 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 
 // Whether the edition draws the Delete and End key labels as text over the
 // keyboard, and how wide its End key is, in tiles.
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH)
 #define NAME_KEY_LABELS 1
 #else
 #define NAME_KEY_LABELS 0
 #endif
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define NAME_END_KEY_WIDTH 4
 #else
 #define NAME_END_KEY_WIDTH 3
@@ -2877,11 +3027,11 @@ s32 NameEntry_EditOwnerName(s32 member) {
 }
 #endif
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define TALK_WINDOW_X 7
 #define TALK_WINDOW_WIDTH 18
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define TALK_WINDOW_X 9
 #define TALK_WINDOW_WIDTH 12
 #else
@@ -3503,16 +3653,17 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work) {
 //--------------------------------------------------------------------------
 // Open a 6x4 window at the upper left, write its heading and return it.
 //--------------------------------------------------------------------------
+#if (LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH) ||           \
+    (GAME_TLA && (LANGUAGE == LANGUAGE_ITALIAN))
+#define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringAtOffset
+#else
+#define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringInWindow
+#endif
+
 struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) ||                      \
-    defined(TLA_EDITION_IT)
-  UiText_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
-#else
-  UiText_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
-#endif
+  LINK_COUNTDOWN_DRAW_HEADING(gLink_TimeLabelString, win, 0, 0);
   return win;
 }
 
@@ -3631,7 +3782,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
   return result;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define WINDOW_X 22 /* Window X position */
 #else
 #define WINDOW_X 23
@@ -4194,50 +4345,30 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
 
     oldHp = snap->hp;
     UiText_FormatNumberToHalfwords(buf, oldHp);
-#if !EDITION_INTERNATIONAL
-    UiText_RenderWideStringInWindow(buf + 7, win, 4, 1);
-#else
-    UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
-#endif
+    UiText_RenderWideStringInWindow(buf + 7, win, DJINN_PREVIEW_VITALS_X, 1);
     oldPp = snap->pp;
     UiText_FormatNumberToHalfwords(buf, oldPp);
-#if !EDITION_INTERNATIONAL
-    UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
-#else
-    UiText_RenderWideStringInWindow(buf + 7, win, 5, 2);
-#endif
+    UiText_RenderWideStringInWindow(buf + 7, win, DJINN_PREVIEW_VITALS_X, 2);
     oldAtk = snap->atk;
     UiText_FormatNumberToHalfwords(buf, oldAtk);
-#if !EDITION_INTERNATIONAL
-    UiText_RenderWideStringInWindow(buf + 7, win, 4, 3);
-#else
-    UiText_RenderWideStringInWindow(buf + 8, win, 6, 3);
-#endif
+    UiText_RenderWideStringInWindow(buf + DJINN_PREVIEW_STAT_DIGIT_OFFSET, win,
+                                    DJINN_PREVIEW_STAT_X, 3);
     oldDef = snap->def;
     UiText_FormatNumberToHalfwords(buf, oldDef);
-#if !EDITION_INTERNATIONAL
-    UiText_RenderWideStringInWindow(buf + 7, win, 4, 4);
-#else
-    UiText_RenderWideStringInWindow(buf + 8, win, 6, 4);
-#endif
+    UiText_RenderWideStringInWindow(buf + DJINN_PREVIEW_STAT_DIGIT_OFFSET, win,
+                                    DJINN_PREVIEW_STAT_X, 4);
     oldAgi = snap->agi;
     UiText_FormatNumberToHalfwords(buf, oldAgi);
-#if !EDITION_INTERNATIONAL
-    UiText_RenderWideStringInWindow(buf + 7, win, 4, 5);
-#else
-    UiText_RenderWideStringInWindow(buf + 8, win, 6, 5);
-#endif
+    UiText_RenderWideStringInWindow(buf + DJINN_PREVIEW_STAT_DIGIT_OFFSET, win,
+                                    DJINN_PREVIEW_STAT_X, 5);
     UiText_FormatNumberToHalfwords(buf, snap->luck);
     UiText_RenderWideStringInWindow(buf + 8, win, 5, 6);
 
     UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
       UiWork_SetParamNibble(2);
-#if !EDITION_INTERNATIONAL
-    UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win, 40, 64);
-#else
-    UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win, 24, 64);
-#endif
+    UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win,
+                                 DJINN_PREVIEW_HELP_X, 64);
     UiWork_SetParamNibble(15);
   }
 
@@ -4270,12 +4401,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       UiText_DrawCharacterAtOffset((list[i] & 0x3fff) + MsgAbilityName, win, 16,
                                    n * 16);
       UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-      UiWindow_SetTilemapEntry(win, 0xf005, 12, n * 2, 0);
-#else
-      UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
-#endif
+      UiWindow_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12, n * 2, 0);
       UiText_DrawNumberInWindow(BattleActGet(list[i])->ppCost, 2, win, 104,
                                 n * 16);
     }
@@ -4367,7 +4493,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   return win;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define OWNER_STATUS_TEXT_MAX 0x80
 #define OWNER_STATUS_VALUE_X 184
 #else
@@ -4375,7 +4501,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
 #define OWNER_STATUS_VALUE_X 176
 #endif
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusExp - 10 + (row))
@@ -4636,7 +4762,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
       objFace.oam.word.attr01 = 0xC0002400;
       objFace.oam.word.attr23 = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
       /* FAKEMATCH: the zero lives in sl here; sched2 puts the attr23 store
        * before the move into sl and the 0xFC00 load before the face tile load,
        * which may alias that store; native moves into sl between the two stores
@@ -4676,7 +4802,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
     if (redraw != 0) {
       object = UnitGetFar(owner);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       UiWindow_MarkVisibleTileAttributes();
 #endif
       Ui_FillVramBlockPattern();
@@ -4687,7 +4813,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                     winDesc->height, 0);
         UiWindow_DrawDividerLine(winMain, 0, 14, 29, 14);
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
         case 2:
           UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
@@ -4710,19 +4836,14 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
 #else
         UiText_DrawStringAtOffset((u8 *)object->name, winMain, 0, 0);
-#if defined(TBS_EDITION_FR)
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain, 51,
-                                  0);
-#else
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain, 56,
-                                  0);
-#endif
+        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, winMain,
+                                  OWNER_STATUS_LEVEL_X, 0);
         UiText_DrawNumberInWindow(object->level, 2, winMain, 72, 0);
 #endif
         UiText_DrawCharacterAtOffset(MsgOwnerStatusExp, winMain, 0, 8);
         UiText_DrawNumberInWindow(object->experience, 8, winMain, 40, 8);
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
         case 1:
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, winMain, 40,
@@ -4970,7 +5091,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         case 13:
         case 14:
           code = object->resistanceStage * 20;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
           if (code < 0) {
             code = -code;
           }
@@ -5058,7 +5179,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   Resource_ResetEntry(handleFrame);
   Resource_ResetEntry(handleCursor);
   WaitFrames(1);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   UiWindow_MarkVisibleTileAttributes();
 #endif
   UiWork_Finalize(winMain, 1);
@@ -5077,16 +5198,40 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   return 0;
 }
 
-#if EDITION_INTERNATIONAL
-#define TEXT_COUNT 52
-#define TEXT_LOAD UiText_CopyMessageString
+#if TBS_PATCH_1
+#define BATTLE_MENU_MESSAGE_CAPACITY 52
+#define BATTLE_MENU_MESSAGE_COPY UiText_CopyMessageString
 #define TURNS_DIGITS 1
 #define TURNS_X 48
 #else
-#define TEXT_COUNT 32
-#define TEXT_LOAD UiText_DecodeMessage
+#define BATTLE_MENU_MESSAGE_CAPACITY 32
+#define BATTLE_MENU_MESSAGE_COPY UiText_DecodeMessage
 #define TURNS_DIGITS 2
 #define TURNS_X 40
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TARGET_MYSTERY_NAME_COPY UiText_DecodeMessage
+#define TARGET_MYSTERY_NAME_CAPACITY 10
+#else
+#define TARGET_MYSTERY_NAME_COPY UiText_CopyMessageString
+#define TARGET_MYSTERY_NAME_CAPACITY 14
+#endif
+
+#if LANGUAGE == LANGUAGE_GERMAN
+#define TRANSFER_MODE_DRAW_HELP UiText_DrawCharacterAtOffset
+#define TRANSFER_PASSWORD_HELP_X 32
+#define TRANSFER_PASSWORD_HELP_FIRST_Y 8
+#define TRANSFER_PASSWORD_HELP_LAST_Y 24
+#define TRANSFER_CABLE_HELP_FIRST_Y 0
+#define TRANSFER_CABLE_HELP_LAST_Y 32
+#else
+#define TRANSFER_MODE_DRAW_HELP UiText_DrawResource
+#define TRANSFER_PASSWORD_HELP_X PASSWORD_HELP_X
+#define TRANSFER_PASSWORD_HELP_FIRST_Y 4
+#define TRANSFER_PASSWORD_HELP_LAST_Y 16
+#define TRANSFER_CABLE_HELP_FIRST_Y 4
+#define TRANSFER_CABLE_HELP_LAST_Y 28
 #endif
 
 // Entire gLinkCountdownWork block; MenuCell in menu_list.h reads
@@ -5267,7 +5412,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         }
         if (isUsed != 0) {
-          TEXT_LOAD(MsgBattleDjinnTwice, buf, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(MsgBattleDjinnTwice, buf,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
           if (detailWin != 0) {
             UiWork_Finalize(detailWin, 1);
             detailWin = 0;
@@ -5276,9 +5422,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         } else if (cur & 0x10000) {
           if (cur & 0x3e0000) {
             UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
-            TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) +
-                          MsgDjinnEffect,
-                      buf, TEXT_COUNT);
+            BATTLE_MENU_MESSAGE_COPY(
+                (s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) +
+                    MsgDjinnEffect,
+                buf, BATTLE_MENU_MESSAGE_CAPACITY);
             if (detailWin != 0) {
               UiWork_Finalize(detailWin, 1);
               detailWin = 0;
@@ -5287,18 +5434,20 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           } else {
             detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
                 detailWin, owner, (s32)cur, subSelection, &subCnt);
-            UiText_CopyMessageString(MsgBattleSummonStandby, buf, TEXT_COUNT);
+            UiText_CopyMessageString(MsgBattleSummonStandby, buf,
+                                     BATTLE_MENU_MESSAGE_CAPACITY);
             mask = 1 << ((cur & 0xf00) >> 8);
           }
         } else {
           detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
               detailWin, owner, (s32)cur, subSelection, &subCnt);
-          TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) +
-                        MsgDjinnEffect,
-                    buf, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(
+              (s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
+              buf, BATTLE_MENU_MESSAGE_CAPACITY);
         }
       } else {
-        TEXT_LOAD(MsgBattleNoDjinn, buf, TEXT_COUNT);
+        BATTLE_MENU_MESSAGE_COPY(MsgBattleNoDjinn, buf,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       }
       ctx->menuBusy = 0;
       if (subSelection == 0) {
@@ -5414,7 +5563,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           Ui_FillVramBlockPattern();
           UiWork_ClearValueNameTables();
           UiWork_PushValueSlot((s32)((turns & 0x3e0000) >> 17), 5);
-          UiText_CopyMessageString(MsgBattleDjinnRecovering, buf, TEXT_COUNT);
+          UiText_CopyMessageString(MsgBattleDjinnRecovering, buf,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
           UiText_RenderWideStringAtOffset(buf, msgWin, 0, 4);
         }
         AudioCommand_PlayFar(0x72);
@@ -5607,7 +5757,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 
 #if !GAME_TLA
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define SUMMON_COST_X 13 // Column for the required Djinni count
 #else
 #define SUMMON_COST_X 10
@@ -5663,11 +5813,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   counts = UiWindow_Create(20, 8, 10, 3, 6);
   mask = 0;
   MenuCell_GetCursor(page, row, preferred);
-#if EDITION_INTERNATIONAL
-  window = UiWindow_Create(13, 11, 17, 9, 6);
-#else
-  window = UiWindow_Create(16, 11, 14, 9, 6);
-#endif
+  window =
+      UiWindow_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
 
   // Icon sprites for each row.
   for (index = 0; index < 4; index++) {
@@ -5743,13 +5890,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         s32 element;
 
         s = SummonDefinition_Get(ordered[page + row]);
-#if EDITION_INTERNATIONAL
-        UiText_CopyMessageString(s->nameMessageId + MsgAbilityDescription, text,
-                                 52);
-#else
-        UiText_DecodeMessage(s->nameMessageId + MsgAbilityDescription, text,
-                             32);
-#endif
+        BATTLE_MENU_MESSAGE_COPY(s->nameMessageId + MsgAbilityDescription, text,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
         UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0,
                                         4);
         drawnRow = row;
@@ -6082,20 +6224,16 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
       Ui_FillVramBlockPattern();
       if (count != 0) {
         if (Item_ClassifyUseAbility(owner, entries[page + row]) == 2) {
-          TEXT_LOAD(MsgBattleItemUnavailable, buffer, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, buffer,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         } else {
-#if EDITION_INTERNATIONAL
-          UiText_CopyMessageString((entries[page + row] & ITEM_ID_MASK) +
+          BATTLE_MENU_MESSAGE_COPY((entries[page + row] & ITEM_ID_MASK) +
                                        MsgItemPlainName,
-                                   buffer, 52);
-#else
-          UiText_DecodeMessage((entries[page + row] & ITEM_ID_MASK) +
-                                   MsgItemPlainName,
-                               buffer, 32);
-#endif
+                                   buffer, BATTLE_MENU_MESSAGE_CAPACITY);
         }
       } else {
-        TEXT_LOAD(MsgBattleNoItems, buffer, TEXT_COUNT);
+        BATTLE_MENU_MESSAGE_COPY(MsgBattleNoItems, buffer,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       }
       UiText_RenderWideStringAtOffset(buffer, messageWindow, 0, 4);
       drawnRow = row;
@@ -6203,11 +6341,14 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
         }
         AudioCommand_PlayFar(114);
         if (reason == 2) {
-          TEXT_LOAD(MsgBattleItemUnavailable, buffer, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, buffer,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         } else if ((entries[result] & INVENTORY_BROKEN) != 0) {
-          TEXT_LOAD(MsgBattleItemBroken, buffer, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(MsgBattleItemBroken, buffer,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         } else {
-          TEXT_LOAD(MsgBattleItemNoEffect, buffer, TEXT_COUNT);
+          BATTLE_MENU_MESSAGE_COPY(MsgBattleItemNoEffect, buffer,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         }
         Ui_FillVramBlockPattern();
         UiText_RenderWideStringAtOffset(buffer, messageWindow, 0, 4);
@@ -6354,17 +6495,12 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
       if (count != 0) {
-#if EDITION_INTERNATIONAL
-        UiText_CopyMessageString((actions[page + row] & ACTION_ID_MASK) +
+        BATTLE_MENU_MESSAGE_COPY((actions[page + row] & ACTION_ID_MASK) +
                                      MsgAbilityDescription,
-                                 buffer, 52);
-#else
-        UiText_DecodeMessage((actions[page + row] & ACTION_ID_MASK) +
-                                 MsgAbilityDescription,
-                             buffer, 32);
-#endif
+                                 buffer, BATTLE_MENU_MESSAGE_CAPACITY);
       } else {
-        TEXT_LOAD(MSGNO(MsgBattleNoPsynergy), buffer, TEXT_COUNT);
+        BATTLE_MENU_MESSAGE_COPY(MSGNO(MsgBattleNoPsynergy), buffer,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       }
       UiText_RenderWideStringAtOffset(buffer, messageWindow, 0, 4);
       drawnRow = row;
@@ -6380,8 +6516,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           }
           action = BattleActGet(entry);
           UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
           UiWindow_SetTilemapEntry(window, 0xf005, 12, i * 2, 0);
 #else
           UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
@@ -6596,7 +6732,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
    * common 1343, differ 484: infoWin spills and the frame shrinks 324 -> 320.
    * ES 1684/1684, common 1569, differ 230: infoWin/selection swap r10/r9 and
    * spill slots permute. Both extents stayed unchanged. */
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
   struct UiWindow *infoWin;
 #else
   /* FAKEMATCH: register choice only: as an ordinary local the info window is
@@ -6639,7 +6775,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   cnt = 0;
   redraw = 0xFFFF;
   slotId = VramCache_AllocEntry(256);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
   /* FAKEMATCH: register choice only: this value-preserving null
    * initializer is needed to match infoWin in r10; a direct zero swaps
    * high registers and spill slots (2026-10-13: infoWin = 0 differs 94
@@ -6804,7 +6940,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       effect.scaleY = 176;
     }
     effect.angle = 0;
-#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_IT)
+#if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_ITALIAN)
     /* FAKEMATCH: seventeen dead stores restore the native frame's spill slots
      * (table, entries, ids and cursor * 2 at sp+36 to sp+24, above &effect and
      * selectionSlot); without them differ 102 in tbs-en, every row a spill
@@ -6875,7 +7011,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = pos.x / 8;
             column = anchor - 4;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             if (System_GetLanguage() == 4) {
               if (anchor + 6 > 29)
                 column = 20;
@@ -6889,11 +7025,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 column = 21;
               infoWin = UiWindow_Create(column, 8, 9, 3, 6);
             }
-#elif defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
             if (anchor + 5 > 29)
               column = 21;
             infoWin = UiWindow_Create(column, 8, 9, 3, 6);
-#elif defined(TBS_EDITION_JA)
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
             if (anchor + 4 > 29)
               column = 22;
             infoWin = UiWindow_Create(column, 8, 8, 3, 6);
@@ -6916,7 +7052,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
           }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             switch (System_GetLanguage()) {
             case 1:
               UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, infoWin, 0,
@@ -7008,7 +7144,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
               anchor = pos.x / 8;
               column = anchor - 7;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
               if (System_GetLanguage() == 3) {
                 if (anchor + 10 > 29)
                   column = 13;
@@ -7018,7 +7154,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                   column = 14;
                 infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
               }
-#elif defined(TBS_EDITION_JA)
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 column = 16;
               infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
@@ -7085,7 +7221,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
               anchor = pos.x / 8;
               column = anchor - 7;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
               if (System_GetLanguage() == 3) {
                 if (anchor + 10 > 29)
                   column = 13;
@@ -7095,7 +7231,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                   column = 14;
                 infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
               }
-#elif defined(TBS_EDITION_JA)
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 column = 16;
               infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
@@ -7158,11 +7294,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           width = MsgMysteryPersonName;
           if (who->classId == 125)
             width++;
-#if defined(TBS_EDITION_JA)
-          UiText_DecodeMessage(width, name, 10);
-#else
-          UiText_CopyMessageString(width, name, 14);
-#endif
+          TARGET_MYSTERY_NAME_COPY(width, name, TARGET_MYSTERY_NAME_CAPACITY);
         } else {
           for (i = 0; i <= 13; i++) {
             name[i] = n = who->name[i];
@@ -7425,7 +7557,8 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
   if (result != 0) {
     work = UiWindow_Create(0, 7, 30, 4, 42);
     Ui_FillVramBlockPattern();
-    TEXT_LOAD(MsgNoTimeToRun, buffer, TEXT_COUNT);
+    BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
+                             BATTLE_MENU_MESSAGE_CAPACITY);
     UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
     do {
       WaitFrames(1);
@@ -7652,11 +7785,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
       slot->oam.word.attr01 = 0x80000400;
       slot->oam.word.attr23 = 0;
       slot->oam.f.tile = Ui_LoadEntryForKind(actor->classId, res512);
-#if EDITION_INTERNATIONAL
-      slot->oam.f.x = 0;
-#else
-      slot->oam.f.x = 4;
-#endif
+      slot->oam.f.x = BATTLE_CLASS_ICON_X;
       slot->oam.f.y = 0x80;
       slot->oam.f.palette = 14;
       state->entryActive[2] = 1;
@@ -7726,11 +7855,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
       switch (mode) {
       case 0:
         win = UiWindow_Create(11, 17, 11, 3, 6);
-#if defined(TBS_EDITION_FR)
-        UiText_DrawCharacterAtOffset(MsgCommandName, win, 14, 0);
-#else
-        UiText_DrawCharacterAtOffset(MsgCommandName, win, 16, 0);
-#endif
+        UiText_DrawCharacterAtOffset(MsgCommandName, win, BATTLE_COMMAND_NAME_X,
+                                     0);
         state->entries[0].oam.f.x = 64;
         AudioCommand_PlayFar(112);
         mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
@@ -7820,12 +7946,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         ui->level = 15;
         UiWork_SetParamNibble(15);
         UiWindow_SetTilemapEntry(win, 61471, 11, 0, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-        UiWindow_SetTilemapEntry(win, 61445, 12, 0, 0);
-#else
-        UiWindow_SetTilemapEntry(win, 61470, 12, 0, 0);
-#endif
+        UiWindow_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12, 0, 0);
         if (ability->element != 4) {
           UiWindow_SetTilemapEntry(win, ability->element + 20481, 15, 0, 0);
         }
@@ -7857,11 +7978,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         AudioCommand_PlayFar(112);
         MenuCell_SetCursor(0, 0, 0);
       djinn_menu:
-#if EDITION_INTERNATIONAL
-        state->entries[0].oam.f.x = 80;
-#else
-        state->entries[0].oam.f.x = 104;
-#endif
+        state->entries[0].oam.f.x = BATTLE_SUMMON_ICON_X;
         BattleLayout_HighlightPartyPanels(hdr);
         mode = SummonMenu_SelectSummon(0, 0, state->cost[i]);
         BattleLayout_HighlightPartyPanels(hdr);
@@ -7875,11 +7992,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         djinn = SummonDefinition_Get(mode);
         ability = BattleActGet(djinn->nameMessageId);
         handle = VramCache_AllocEntry(128);
-#if EDITION_INTERNATIONAL
-        win = UiWindow_Create(10, 17, 17, 3, 6);
-#else
-        win = UiWindow_Create(10, 17, 14, 3, 6);
-#endif
+        win = UiWindow_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (djinn->djinnRequired[j] > state->cost[i][j]) {
@@ -7913,15 +8026,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
                                      win, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (djinn->djinnRequired[j] != 0) {
-#if EDITION_INTERNATIONAL
-            UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 13, 0, 0);
-            UiWindow_PutGlyph(win, djinn->djinnRequired[j] + 48, n * 2 + 14, 0,
-                              0);
-#else
-            UiWindow_SetTilemapEntry(win, j + 20481, n * 2 + 10, 0, 0);
-            UiWindow_PutGlyph(win, djinn->djinnRequired[j] + 48, n * 2 + 11, 0,
-                              0);
-#endif
+            UiWindow_SetTilemapEntry(
+                win, j + 20481, n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN, 0, 0);
+            UiWindow_PutGlyph(win, djinn->djinnRequired[j] + 48,
+                              n * 2 + BATTLE_SUMMON_COST_COLUMN, 0, 0);
             n++;
           }
         }
@@ -8087,12 +8195,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
         cost = ability->range;
         slot = &state->entries[1];
         handle = VramCache_AllocEntry(128);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-        win = UiWindow_Create(9, 17, 16, 3, 6);
-#else
-        win = UiWindow_Create(9, 17, 15, 3, 6);
-#endif
+        win = UiWindow_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
         state->entries[0].oam.f.x = 48;
         slot->oam.word.attr01 = 0x40000400;
         slot->oam.word.attr23 = 0;
@@ -8178,7 +8281,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
   if (state->enabled != 0) {
     s32 DrawLocalizedResource(void) {
       u16 data[64];
-      TEXT_LOAD(MsgWaitingForOpponent, data, TEXT_COUNT);
+      BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
+                               BATTLE_MENU_MESSAGE_CAPACITY);
       UiText_RenderWideStringAtOffset(
           data, (struct UiWindow *)state->displayHandle, 0, 4);
     }
@@ -8602,7 +8706,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
   return ret;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define ANIMATE_ENTRIES_ROW 7
 #else
 #define ANIMATE_ENTRIES_ROW 5
@@ -8672,7 +8776,7 @@ s32 Menu_SelectSaveSlotAction(void) {
   return ret;
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define MODE_LABEL_X 18
 #define MODE_LABEL_RIGHT 144
 #else
@@ -8726,13 +8830,13 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define PASSWORD_HELP_X 16
 #else
 #define PASSWORD_HELP_X 0
 #endif
 
-#if defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
@@ -8762,30 +8866,19 @@ void Menu_DrawModeIndicator(void) {
     *shown = *current;
     RenderOutput_PrepareForRedraw(state->lowerWindow);
     if (*current == 0) {
-#if defined(TBS_EDITION_DE)
-      UiText_DrawCharacterAtOffset(MsgPasswordTransferHelp, state->lowerWindow,
-                                   32, 8);
-      UiText_DrawCharacterAtOffset(MsgPasswordTransferHelp + 1,
-                                   state->lowerWindow, 32, 24);
-#else
-      UiText_DrawResource(MsgPasswordTransferHelp, state->lowerWindow,
-                          PASSWORD_HELP_X, 4);
-      UiText_DrawResource(MsgPasswordTransferHelp + 1, state->lowerWindow,
-                          PASSWORD_HELP_X, 16);
-#endif
+      TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWindow,
+                              TRANSFER_PASSWORD_HELP_X,
+                              TRANSFER_PASSWORD_HELP_FIRST_Y);
+      TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp + 1, state->lowerWindow,
+                              TRANSFER_PASSWORD_HELP_X,
+                              TRANSFER_PASSWORD_HELP_LAST_Y);
     } else {
-#if defined(TBS_EDITION_DE)
-      UiText_DrawCharacterAtOffset(MsgCableTransferHelp, state->lowerWindow, 0,
-                                   0);
-      UiText_DrawCharacterAtOffset(MsgCableTransferHelp + 1, state->lowerWindow,
-                                   0, 16);
-      UiText_DrawCharacterAtOffset(MsgCableTransferHelp + 2, state->lowerWindow,
-                                   0, 32);
-#else
-      UiText_DrawResource(MsgCableTransferHelp, state->lowerWindow, 0, 4);
-      UiText_DrawResource(MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
-      UiText_DrawResource(MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
-#endif
+      TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp, state->lowerWindow, 0,
+                              TRANSFER_CABLE_HELP_FIRST_Y);
+      TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 1, state->lowerWindow, 0,
+                              16);
+      TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 2, state->lowerWindow, 0,
+                              TRANSFER_CABLE_HELP_LAST_Y);
     }
   }
 }
@@ -8807,15 +8900,15 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     Menu_AppendResourceEntry(46);
     Menu_AppendResourceEntry(47);
     Menu_AppendResourceEntry(48);
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
     Menu_CenterResourceEntries(17, 5, 0);
 #endif
   }
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
   Menu_CenterResourceEntries(17, 7, 0);
-#elif defined(TBS_EDITION_ES)
-#elif defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
   Menu_CenterResourceEntries(17, 9, 0);
 #else
   Menu_CenterResourceEntries(17, 5, 0);
@@ -8823,26 +8916,15 @@ s32 Menu_SelectResourceLayout(s32 mode) {
   if (mode != 0) {
     Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
     work->previousMode = 0xffff;
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_IT)
-    window = UiWindow_Create(7, 0, 17, 4, 2);
-#elif defined(TBS_EDITION_ES)
-    window = UiWindow_Create(5, 0, 21, 4, 2);
-#elif defined(TBS_EDITION_FR)
-    window = UiWindow_Create(5, 0, 22, 4, 2);
-#else
-    window = UiWindow_Create(9, 0, 13, 4, 2);
-#endif
+    window = UiWindow_Create(RESOURCE_MODE0_WINDOW_X, 0,
+                             RESOURCE_MODE0_WINDOW_WIDTH, 4, 2);
     msg = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
     UiText_DrawResource(msg, window, 0, 4);
-#if EDITION_INTERNATIONAL
-#if defined(TBS_EDITION_DE)
-    window = UiWindow_Create(1, 4, 28, 12, 2);
-#else
-    window = UiWindow_Create(3, 4, 25, 12, 2);
-#endif
+#if TBS_PATCH_1
+    window = UiWindow_Create(RESOURCE_MODE1_WINDOW_X, 4,
+                             RESOURCE_MODE1_WINDOW_WIDTH, 12, 2);
     work->lowerWindow = window;
     UiText_DrawResource(msg + 1, window, 8, 0);
     UiText_DrawResource(msg + 2, work->lowerWindow, 8, 11);
@@ -8858,30 +8940,13 @@ s32 Menu_SelectResourceLayout(s32 mode) {
   } else {
     Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
     work->previousMode = 0xffff;
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
-    window = UiWindow_Create(6, 0, 18, 4, 2);
-#elif defined(TBS_EDITION_ES)
-    window = UiWindow_Create(4, 0, 21, 4, 2);
-#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    window = UiWindow_Create(5, 0, 20, 4, 2);
-#else
-    window = UiWindow_Create(9, 0, 13, 4, 2);
-#endif
+    window = UiWindow_Create(TRANSFER_METHOD_WINDOW_X, 0,
+                             TRANSFER_METHOD_WINDOW_WIDTH, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
-#if EDITION_INTERNATIONAL
-    UiText_DrawResource(MsgTransferMethod, window, 2, 4);
-#else
-    UiText_DrawResource(MsgTransferMethod, window, 0, 4);
-#endif
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    work->lowerWindow = UiWindow_Create(1, 5, 28, 7, 2);
-#elif defined(TBS_EDITION_DE)
-    work->lowerWindow = UiWindow_Create(0, 5, 30, 7, 2);
-#else
-    work->lowerWindow = UiWindow_Create(5, 5, 21, 7, 2);
-#endif
+    UiText_DrawResource(MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
+    work->lowerWindow = UiWindow_Create(TRANSFER_HELP_WINDOW_X, 5,
+                                        TRANSFER_HELP_WINDOW_WIDTH, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != 0)
@@ -8915,13 +8980,7 @@ s32 Menu_SelectEntry11To14(s32 selection) {
   Menu_AppendResourceEntry(0x12);
   Menu_AppendResourceEntry(0x13);
   Menu_AppendResourceEntry(0x14);
-#if defined(TBS_EDITION_DE) || defined(TLA_EDITION_DE)
-  Menu_CenterResourceEntries(17, 8, 0); // Name window width
-#elif EDITION_INTERNATIONAL
-  Menu_CenterResourceEntries(17, 7, 0);
-#else
-  Menu_CenterResourceEntries(17, 6, 0);
-#endif
+  Menu_CenterResourceEntries(17, ENTRY11_COMMAND_LABEL_WIDTH, 0);
   ret = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   return ret;
@@ -8938,11 +8997,7 @@ s32 Menu_SelectEntry19To1c(s32 selection) {
   Menu_AppendResourceEntry(0x1A);
   Menu_AppendResourceEntry(0x1B);
   Menu_AppendResourceEntry(0x1C);
-#if EDITION_INTERNATIONAL
-  Menu_CenterResourceEntries(17, 10, 0);
-#else
-  Menu_CenterResourceEntries(17, 8, 0);
-#endif
+  Menu_CenterResourceEntries(17, ENTRY19_COMMAND_LABEL_WIDTH, 0);
   ret = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   return ret;
@@ -9004,10 +9059,9 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 // Menu: select between command icons 0x20 and 0x21
 //--------------------------------------------------------------------------
 // Name window width for each edition
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define PAIR_WIDTH 7
-#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                    \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN)
 #define PAIR_WIDTH 10
 #else
 #define PAIR_WIDTH 9
@@ -9424,9 +9478,9 @@ s32 DebugMenu_BrowseIcons(void) {
   return 0;
 }
 
-#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
+#if !TBS_PATCH_2
 #define DEBUG_GLYPH_NAME MsgDebugGlyphName
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define DEBUG_GLYPH_NAME MsgEnd
 #else
 #define DEBUG_GLYPH_NAME MsgDebugSecondForm

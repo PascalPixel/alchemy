@@ -460,16 +460,16 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
-#if defined(TBS_EDITION_EN) || !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
 #define ASK_WIDTH 17
 #else
 #define ASK_WIDTH 19
 #endif
-#if !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define NUMBER_X 56
 #define TOSS_X 22
 #define TOSS_WIDTH 7
-#elif defined(TBS_EDITION_EN)
+#elif LANGUAGE == LANGUAGE_ENGLISH
 #define NUMBER_X 72
 #define TOSS_X 20
 #define TOSS_WIDTH 9
@@ -496,7 +496,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
   Event_Begin();
   Battle_ResetEffectCounter();
   message = MsgTolbiThrow;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   state = &gGameState;
 prompt:
   coins = state->coins;
@@ -683,7 +683,7 @@ prompt:
       TolbiSpring_RevealPrize(
           ((struct { s32 prize[1]; } *)gTolbiSpring_PrizeItems)->prize[i]);
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       /* FAKEMATCH: the pointer pair keeps the native prize-weight base
        * recomputation in r0 after the call. Without it, the earlier
        * roulette base survives in r5 (280 -> 278 instructions, 42 rows
@@ -722,7 +722,7 @@ prompt:
 #endif
     }
   }
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 end:
 #endif
   Event_End();

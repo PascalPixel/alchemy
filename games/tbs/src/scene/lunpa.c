@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "scene_ids.h"
 #include "unit/scene/lunpa.h"
 #include "unit/scene/common/object_orbit.h"
@@ -157,7 +158,7 @@ static void Reveal_ShowSecrets(void) {
   Map_CopyCellAttributes(34, 37, 3, 3, 13, 3);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, PIXELS(232), PIXELS(72));
   Actor_Get(ACTOR_HIDDEN_PUDDLE)->y.fixed = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
   if (GameFlag_IsSet(FLAG_LUNPA_PUDDLE_FROZEN)) {
     Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
     Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
@@ -640,7 +641,7 @@ static void Cloak_End(void) {
   if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Engine_TaskRemoveCallback(Guards_Watch);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     work->raisedTrigger = TRIGGER_PARTY_SPOTTED;
 #else
     Guards_CatchParty();
@@ -821,7 +822,7 @@ s32 Scene_Initialize(void) {
         Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
       FieldScheduler_AddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
     }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
     if (gGameState.cloaked != 0)
       Cloak_Begin();
 #endif

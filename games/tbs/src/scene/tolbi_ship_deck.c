@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 // The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
 // at the Kalay dock while the replacement ship fails to come, setting sail with
 // the passengers at the oars, the sea monsters and the Kraken, the arrival at
@@ -694,8 +695,7 @@ static void TolbiShipDeck_GoBelow(void) {
   Engine_EventRequestExit(work->touchedTrigger);
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 // In the German, Spanish, French and Italian editions trigger 2 is a plain
 // touch: the leader goes below only while facing west, after walking onto the
 // hatch.
@@ -3122,7 +3122,7 @@ const struct ScenePlacement gTolbiShipDeckPlacementsFlag93e[] = {
 
 const struct SceneEvent gTolbiShipDeckEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
@@ -3169,7 +3169,7 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
 
 const struct SceneEvent gTolbiShipDeckEventsFlag928[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
@@ -3186,7 +3186,7 @@ const struct SceneEvent gTolbiShipDeckEventsFlag928[] = {
 
 const struct SceneEvent gTolbiShipDeckEventsFlag93e[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
@@ -3204,7 +3204,7 @@ const struct SceneEvent gTolbiShipDeckEventsFlag93e[] = {
 
 const struct SceneEvent gTolbiShipDeckEventsFlag8a0[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },

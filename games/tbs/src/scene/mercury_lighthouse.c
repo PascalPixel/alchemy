@@ -49,6 +49,12 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
+#if TBS_PATCH_1
+#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait
+#else
+#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_SetDestination
+#endif
+
 // Forward declarations.
 static void EV11_PSYNERGY(void);
 static void EV08_PSYNERGY_3(void);
@@ -87,8 +93,7 @@ struct SceneLookupRecord {
 
 static void EV12_TALK(void) { BattleFx_SetPhaseRequest(12, 21); }
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 struct LeaderEffectWork {
   u8 unk00[24];
   struct FieldActor *target;
@@ -292,12 +297,8 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   } else if (work->touchedTrigger == 4) {
     Actor_SetDestination(0, 248, 792);
   } else {
-#if EDITION_INTERNATIONAL
-    Actor_MoveToAndWait(0, 696, 592);
-#else
-    Actor_SetDestination(0, 696, 592);
-#endif
-#if EDITION_INTERNATIONAL
+    MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(0, 696, 592);
+#if TBS_PATCH_1
     Actor_SetDestination(0, 696, 600);
     Engine_EventWait(30);
 #endif
@@ -1899,8 +1900,7 @@ s32 Scene_Initialize(void) {
         Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
         Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
       }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
       FieldScheduler_AddCallback(MercuryLighthouse_UpdateLeaderEffectTarget,
                                  0xc80);
 #endif
@@ -1984,8 +1984,7 @@ s32 Scene_Initialize(void) {
       break;
     case 16:
       Engine_TaskWait(1);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
       if (Engine_GameFlagIsSet(0x318))
         Actor_SetPosition(10, 204 << 18, 152 << 18);
       if (Engine_GameFlagIsSet(0x31a))
@@ -2000,8 +1999,7 @@ s32 Scene_Initialize(void) {
 #endif
       SetEffectRecordMode(Object_GetById(0), 1);
       SceneEffect_SpawnParticleRowsByMode(0);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
       if (Engine_GameFlagIsSet(0x319)) {
         MercuryLighthouse_OpenStoneDoor(2);
         if (Object_GetById(9)->z.fixed >> 20 == 44)

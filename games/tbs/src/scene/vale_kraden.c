@@ -971,7 +971,7 @@ struct SceneEvent gPlacement_Effects87a[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
 #endif
     { SCENE_EVENTS_END },

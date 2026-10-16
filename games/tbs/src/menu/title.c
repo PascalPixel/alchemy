@@ -130,8 +130,8 @@ s32 Title_Run(void) {
 static void Title_LoadSprites(s32 unused) {
   u8 *buffer;
   volatile u32 *dma;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   u8 *res;
 
   buffer = Runtime_BumpAllocateAlternatePool(0x9600);
@@ -165,8 +165,8 @@ static void Title_RevealSpriteRow(void) {
   s32 n;
   s32 y;
   s32 x;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   s32 row;
 
   p = gTitleSprites;

@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "engine_call.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -219,7 +220,7 @@ static s32 FieldScene_RunPrimarySequence(s32 a0) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
   saved = *flags;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   to[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
   to[1].fixed = leader->y.fixed;
   to[2].fixed = (leader->z.fixed & -0x100000) + 0x280000;

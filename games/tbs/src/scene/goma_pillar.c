@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/goma_pillar.h"
@@ -370,7 +371,7 @@ static void EV10_SCRIPT(void) {
 
 // Jumps the gap: international editions use the shared forward-jump routine.
 static void EV20_TOUCH(void) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Field_TryJumpForward();
 #else
   struct FieldActor *obj;

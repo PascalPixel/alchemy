@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "keystate.h"
 #include "scene_ids.h"
@@ -1018,8 +1019,7 @@ static void EV11_PSYNERGY(void) {
   s32 a;
   s32 b;
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   struct FieldActor *actor = Object_GetById(11);
 
   a = actor->x.fixed >> 20;

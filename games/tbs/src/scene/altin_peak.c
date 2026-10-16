@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 // Altin Mine, the eleven rooms under Altin where the hydros statues flood
 // the village. The party rides rolling logs, freezes puddles into pillars
 // with Frost, fights the water beasts, lowers the water three times and
@@ -2522,7 +2523,7 @@ struct SceneEntrance gAltinPeakEntrances11[] = {
 };
 
 s16 gAltinPeakRegions9[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     790,
     -106,
     575,
@@ -2560,7 +2561,7 @@ s16 gAltinPeakRegions9[] = {
 };
 
 s16 gAltinPeakRegions10[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     84,
     38,
     420,

@@ -24,9 +24,7 @@ LAYOUT_SIZE_GUARD(VramBlockCacheEntry_Size, struct VramBlockCacheEntry, 4);
 LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry,
                     offset, 2);
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) ||                      \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
 extern struct VramBlockCacheEntry gResourceTableEntries[];
 #else
 extern struct VramBlockCacheEntry gVramBlockCache[];

@@ -2,6 +2,7 @@
 // demonstration that clears the party's route into the cave.
 
 #include "unit/scene/goma_entrance.h"
+#include "version.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -234,7 +235,7 @@ s32 GomaEntrance_RestoreEntryState(void) {
 static void GomaEntrance_RecruitIvan(void) {
   struct FieldActor *leader;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   BattleFx_PlayQueuedSound();
 #endif
   Engine_EventBegin();
@@ -323,7 +324,7 @@ static void GomaEntrance_RecruitIvan(void) {
     GomaEntrance_RunWhirlwindEffect();
     Engine_ActorSetAnimation(IVAN, 1);
     Engine_EventWait(20);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     BattleFx_PlayQueuedSound();
 #endif
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
@@ -559,8 +560,7 @@ static void GomaEntrance_GiveShamansRod(void) {
   tries = 0;
 retry:
   if (++tries > 1000) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     for (i = 0; i <= 14; i++) {
       item = Item_Get(member->items[i]);
       if (((u8 *)item)[3] != 8) {

@@ -317,7 +317,7 @@ FAR_CALL(BattleFx_SetQueuedSoundAndPlayFar, BattleFx_SetQueuedSoundAndPlay,
 FAR_CALL(BattleFx_PlayQueuedSoundFar, BattleFx_PlayQueuedSound, void, (void))
 FAR_CALL(Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled,
          s32, (s32 arg0, s32 arg1))
-#if EDITION_INTERNATIONAL && !defined(TBS_EDITION_EN)
+#if TBS_PATCH_2
 FAR_CALL(BattleFx_ClearRandomParticlesFar, BattleFx_ClearRandomParticles, void,
          (void))
 #endif

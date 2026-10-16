@@ -4163,8 +4163,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 
 // The German, Spanish, French and Italian editions stop Reveal's sparkles
 // while a menu is open.
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 
 #define PARTICLES_PAUSE_FOR_MENU 1
 #endif

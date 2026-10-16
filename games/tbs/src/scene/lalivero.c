@@ -436,8 +436,7 @@ static void ReceiveBlackOrb(void) {
   Event_PlayCue(SOUND_DOOR_OPEN);
   Engine_EventWait(20);
   Actor_SetPosition(IODEM, PIXELS(72), PIXELS(312));
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
   Object_GetById(IODEM)->targetZ = ACTOR_NO_TARGET;
   Actor_SetPosition(IODEM, PIXELS(72), PIXELS(312));
   Engine_EventWait(20);

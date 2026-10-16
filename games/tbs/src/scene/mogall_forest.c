@@ -34,6 +34,18 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+#if TBS_PATCH_LEVEL == 1
+#define MOGALL_FOREST_EAST_ACTOR_CONDITION 0x30b
+#else
+#define MOGALL_FOREST_EAST_ACTOR_CONDITION CONDITION_ALWAYS
+#endif
+
+#if !TBS_PATCH_1
+#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION CONDITION_ALWAYS
+#else
+#define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION 0x30b
+#endif
+
 enum { ITEM_NUT = 181 };
 
 // Shared source is included here in ROM order.
@@ -211,7 +223,7 @@ static void EV20_SCRIPT_1(void) {
 
 static void EV25_TOUCH_1(void) {
   s32 v[3];
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   s32 *p = Object_GetById(ACTOR_PARTY_LEADER);
 
   v[0] = (p[2] & 0xfff00000) + 0x80000;
@@ -231,7 +243,7 @@ static void EV26_TOUCH(void) {
   u8 *fp = &actor->motionFlags;
   s32 saved = *fp;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   pos[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
   pos[1] = actor->y.fixed;
   pos[2] = (actor->z.fixed & 0xfff00000) + 0x280000;
@@ -1140,7 +1152,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
         Engine_ActorSetAnimation(10, 4);
         Object_GetById(10)->priorityFlags = 2;
         Map_CopyCellAttributes(44, 30, 2, 4, 34, 30);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         StagedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
 #endif
       }
@@ -1245,8 +1257,7 @@ s32 FieldScene_RunSceneEntryHook(void) {
           Actor_SetPosition(22, PIXELS(744), PIXELS(504));
           Actor_SetPosition(18, PIXELS(744), PIXELS(504));
         }
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
       } else {
         Engine_ActorSetPosition(18, 0, 0);
 #endif
@@ -1553,26 +1564,16 @@ struct ScenePlacement gMogallForestPlacements3[] = {
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, 0x309, (s32)gMogallForest_ActorScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#if defined(TBS_EDITION_EN)
-    { 0xbf, 0x30b, (s32)gMogallForest_ActorScript,
+    { 0xbf, MOGALL_FOREST_EAST_ACTOR_CONDITION, (s32)gMogallForest_ActorScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#else
-    { 0xbf, CONDITION_ALWAYS, (s32)gMogallForest_ActorScript,
-        PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#endif
     { 0x16, 0x307, (s32)gMogallForestPlacements1_1,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x16, 0x308, (s32)gMogallForestPlacements1_1,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x16, 0x309, (s32)gMogallForestPlacements1_1,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-#if !EDITION_INTERNATIONAL
-    { 0x16, CONDITION_ALWAYS, (s32)gMogallForestPlacements1_1,
+    { 0x16, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (s32)gMogallForestPlacements1_1,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-#else
-    { 0x16, 0x30b, (s32)gMogallForestPlacements1_1,
-        PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-#endif
     { SCENE_TABLE_END },
 };
 

@@ -40,7 +40,7 @@ extern const u8 gOwnerStatus_LevelString[];
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 extern const u8 gOwnerStatus_NivString[];
 extern const u8 gOwnerStatus_NvString[];
 extern const u8 gOwnerStatus_KpString[];

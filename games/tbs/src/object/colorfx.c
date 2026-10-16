@@ -313,7 +313,7 @@ struct ReelWork {
   struct UiWindow *subWindow;
   u8 unk4d0[8];
   u16 scanlineOffsets[160];
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   s32 phase;
 #endif
 };
@@ -470,7 +470,7 @@ void ReelGame_RunFrame(void) {
       }
 
       if (work->state == REEL_CHOOSING_HOLDS) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         if (work->cursor == 5) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
@@ -556,7 +556,7 @@ void ReelGame_RunFrame(void) {
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
       }
     } else if (work->state == REEL_NO_WIN) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       if (work->phase == 0) {
         work->phase = 1;
         UiText_DrawCharacterAtOffsetFar(MsgSlotsPullLever, work->window, 0, 8);
@@ -564,7 +564,7 @@ void ReelGame_RunFrame(void) {
 #endif
       if (work->pressed & KEY_A) {
         work->state = REEL_CHOOSING_HOLDS;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
         work->phase = 0;
 #endif
         AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
@@ -661,7 +661,7 @@ void ReelGame_RunFrame(void) {
           UiWork_FinalizeFar(work->window, 1);
         } else {
           work->state = REEL_NO_WIN;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
           work->phase = 0;
           UiWork_FinalizeFar(work->window, 1);
 #if REEL_HINT_BEFORE_LAST_SPIN
@@ -758,7 +758,7 @@ void ReelGame_RunFrame(void) {
     for (i = 0; i != REEL_TITLE_LETTERS; i++) {
       struct EffectStep *p = &fx->particles[i];
 
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
       if (i == 0)
         work->obj[sprite].attr01 =
             (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | objMode |

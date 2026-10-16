@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "unit/scene/sol_statue.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -22,6 +23,12 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
+
+#if TBS_PATCH_3
+#define SOL_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
+#else
+#define SOL_STATUE_BACK_SCROLL_ROW_Y_OFFSET 8
+#endif
 
 // Forward declarations.
 static void Scene_RunGuardSequenceC(void);
@@ -600,12 +607,7 @@ static void SceneEffect_UpdateScrollingSpriteRows(void) {
     {
       for (i = 0; i <= 8; i++) {
         e->f06 = v;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-        e->f04 = sy + 6;
-#else
-        e->f04 = sy + 8;
-#endif
+        e->f04 = sy + SOL_STATUE_BACK_SCROLL_ROW_Y_OFFSET;
         Runtime_PushSlotEntry(e, 0);
         v += 32;
         e++;

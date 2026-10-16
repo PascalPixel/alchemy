@@ -30,6 +30,15 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 
+// Edition-specific text and window layout values.
+#if TBS_PATCH_1
+#define ITEM_DEBUG_DETAILS_WIDTH 28
+#define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawCharacterAtOffset
+#else
+#define ITEM_DEBUG_DETAILS_WIDTH 13
+#define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawResource
+#endif
+
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
 #define ITEM_COUNT 270
@@ -43,7 +52,7 @@ u8 *ItemLevel_GetExits(void) { return (u8 *)gItemLevelExits; }
 
 u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 static void FieldScene_RunActor13Mode102Step(void) {
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Actor_ShowEmote(13, 0x102, 0);
@@ -151,11 +160,7 @@ static void EV08_TALK(void) {
   Engine_AudioPlayCue(112);
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 7, 2);
-#if EDITION_INTERNATIONAL
-  details = UiWindow_Create(0, 8, 28, 10, 2);
-#else
-  details = UiWindow_Create(0, 8, 13, 10, 2);
-#endif
+  details = UiWindow_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
   Engine_TaskWait(1);
@@ -172,11 +177,7 @@ static void EV08_TALK(void) {
         index = item & 0x1ff;
         Engine_DebugGetItem(index);
         UiText_DrawCharacterAtOffset(index + MsgItemName, window, 120, 0);
-#if EDITION_INTERNATIONAL
-        UiText_DrawCharacterAtOffset(index + MsgItemPlainName, window, 0, 16);
-#else
-        UiText_DrawResource(index + MsgItemPlainName, window, 0, 16);
-#endif
+        ITEM_DEBUG_DRAW_ITEM_NAME(index + MsgItemPlainName, window, 0, 16);
         RenderOutput_RedrawSavedRect(details);
         Engine_DebugDrawItemDetails(details, item);
       } else {
@@ -257,7 +258,7 @@ static void EV08_TALK(void) {
   UiWork_Finalize(details, 1);
 }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 static void ItemLevel_SelectAbility(void) {
   struct UiWindow *window;
   struct UiWindow *details;
@@ -368,7 +369,7 @@ static void SceneState_SetWorkWords1c0And1c8(void) {
 s32 FieldScene_RunEntrySetup(void) {
   gEventWork->startTransition = 516;
   gEventWork->transitionFrames = 24;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Object_GetById(11)->scaleY = 0x19999;
   Object_GetById(11)->scaleX = 0x19999;
   Engine_ActorSetAnimation(13, 5);
@@ -380,7 +381,7 @@ s32 FieldScene_RunEntrySetup(void) {
   return 0;
 }
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 2);
@@ -391,7 +392,7 @@ static void ItemLevel_RunMotionTest(void) {
 }
 #endif
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 static void FieldScene_DrawThreeCaptionWindow(void) {
   struct UiWindow *window;
   /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
@@ -423,23 +424,23 @@ char gItemLevelItemHelp[24] = "A:Get Item  B:Return";
 
 char gItemLevelItemFull[20] = "ITEM FULL........";
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 char gItemLevelPsyPrompt[8] = "Psy No:";
 #endif
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 char gItemLevelPsyHelp[12] = "B:Return";
 #endif
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 char gItemLevelGlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 char gItemLevelGlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 #endif
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 char gItemLevelGlyphsMarks[12] = "! ? # $ %";
 #endif
 
@@ -460,10 +461,10 @@ struct ScenePlacement gItemLevelPlacements[] = {
         TALK_FACE_PARTY, 0},
     {0x21, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(504), FACING_SOUTHEAST,
         TALK_FACE_PARTY, 0},
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     {0x88, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(800), FACING_SOUTHEAST,
         TALK_FACE_PARTY, 0},
-#elif defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#elif TBS_PATCH_1 && !TBS_PATCH_3
     {0x88, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACE_PARTY,
         0},
     {0x8f, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(848), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
@@ -491,10 +492,10 @@ struct SceneEvent gItemLevelEvents[] = {
     {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
     {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
     {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     {PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_RunMotionTest)},
-#elif defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#elif TBS_PATCH_1 && !TBS_PATCH_3
     {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectAbility)},
     {EVENT_TALK, 13, CONDITION_ALWAYS,
      EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},

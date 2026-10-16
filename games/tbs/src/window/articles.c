@@ -12,7 +12,7 @@
 // the name. window.c copies each table whole as a struct ArticleTable. Each
 // table's words come before it in .rodata.
 
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -53,7 +53,7 @@ const s8 *const gUiText_ItemPossessives[4] = {
     gUiText_ArticleEmpty,
 };
 
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -86,7 +86,7 @@ const s8 *const gUiText_ItemPossessives[2] = {
     sPossessiveTus,
 };
 
-#elif defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -106,7 +106,7 @@ const s8 *const gUiText_ArticleTable[8] = {
 
 const s8 gUiText_ItemPronoun[] = "vous ";
 
-#elif defined(TBS_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -139,7 +139,7 @@ const s8 *const gUiText_ItemPossessives[4] = {
     gUiText_ArticleEmpty,
 };
 
-#elif EDITION_INTERNATIONAL
+#elif (LANGUAGE != LANGUAGE_JAPANESE)
 
 const s8 gUiText_ArticleEmpty[] = "";
 
@@ -158,7 +158,7 @@ const s8 *const gUiText_ArticleTable[8] = {
 
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 // The glyph drawn over a kana for the mark in its code's top two bits: none,
 // the voiced mark (dakuten) or the semi-voiced mark (handakuten).
 // clang-format off

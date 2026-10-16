@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "keystate.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -152,8 +153,7 @@ static void BabiPalace_MoveBedAttendant(s32 actorId) {
     Event_Wait(20);
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     Actor_SetPosition(actorId, 56 << 16, 120 << 16);
 #endif
   }

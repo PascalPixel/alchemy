@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -1536,8 +1537,7 @@ static void WorldMap_StopLeaderLeavingShip(void) {
 static void EV96_SEARCH(void) {
 
   Engine_EventBegin();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 #else
   Battle_SetObjectFlag5bWhenMode3();
 #endif
@@ -1545,8 +1545,7 @@ static void EV96_SEARCH(void) {
   if (Engine_GameFlagIsSet(0x234) != 0) {
     ((struct StoryDialogueWork *)gEventWork)->storyResult = 1;
   }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 #else
   Battle_ClearObjectFlag5bWhenMode3();
 #endif

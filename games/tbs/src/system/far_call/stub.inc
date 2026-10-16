@@ -1,7 +1,7 @@
 @ A far-call bank is its list (games/tbs/include/farcall): this file turns each
 @ entry into its 8-byte stub, and farcall.h turns the same entry into its C
 @ declaration.
-#include "../../../../common/include/game/edition.h"
+#include "../../../include/version.h"
 	.syntax unified
 	.thumb
 	.include "games/tbs/src/system/overlay.inc"

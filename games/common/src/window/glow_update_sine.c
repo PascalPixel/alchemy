@@ -1,8 +1,8 @@
 // Sine-driven glow for colors 8 through 11 of background palette 14.
 
 #include "edition.h"
-#if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
 #include "types.h"
+#if GAME_TLA || TBS_PATCH_1
 #include "fixed_math.h"
 
 extern u32 gFrameTick;

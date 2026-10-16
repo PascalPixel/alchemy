@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "version.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_clearing.h"
@@ -129,7 +130,7 @@ struct ScenePlacement gKolimaForestClearing_Actors[] = {
         PIXELS(160), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xcd, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     { 0x16, 0xfd0, 7,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else

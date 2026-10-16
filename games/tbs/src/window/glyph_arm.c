@@ -46,33 +46,33 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
   const u16 *rows;
   u32 width;
   u32 pass;
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   u32 result;
 #endif
   u32 stride;
   u32 row;
   u32 rownext;
   u32 col;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
   u32 index;
 #endif
-#if defined(TBS_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   /* FAKEMATCH: these records reserve the native frame's 64-byte unused area.
    * Without them 6 of 193 differ in tbs-ja (sub sp, #36 for #100, and the
    * stacked argument's offset). */
   struct RenderInput frame[4];
 #endif
 
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
   index = character - 32;
 #endif
   stride = window->height;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
   if (index > 111)
     return 1;
 #endif
 
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   if (character <= 255 || (font != NULL && character - 222 <= 1))
 #else
   if (character <= 255 || font != NULL)
@@ -83,7 +83,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       u32 color;
       u32 bits;
 
-#if defined(TBS_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       u32 fontWidth;
 
       color = 0x1111;
@@ -136,7 +136,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       color1 = 0x1111;
       color3 = 0x3333;
       row = 0;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
       fontWidth = gUiText_GlyphWidths[index];
 #else
       fontWidth = gUiText_GlyphWidths[character - 32];
@@ -180,7 +180,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     rows = (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 26);
     width = *rows++;
   } else {
-#if defined(TBS_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     width = 10;
     rows = (const u16 *)(gUiText_KanjiGlyphs + (character - 256) * 24);
 #else
@@ -189,7 +189,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     rows += 4;
 #endif
   }
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   if (character - 222 <= 1) {
     x -= 3;
     y -= 2;
@@ -254,7 +254,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       }
     }
   }
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   return result;
 #else
   return width;
@@ -318,7 +318,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src) {
           break;
         case 0xf007:
         case 0xf016: // left side
-#if EDITION_INTERNATIONAL || GAME_TLA
+#if (LANGUAGE != LANGUAGE_JAPANESE) || GAME_TLA
         case 0xf01a:
 #endif
           left = col * 8;
@@ -343,7 +343,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src) {
           break;
         case 0xf007:
         case 0xf017: // right side
-#if EDITION_INTERNATIONAL || GAME_TLA
+#if (LANGUAGE != LANGUAGE_JAPANESE) || GAME_TLA
         case 0xf01b:
 #endif
           bottomRight = col * 8 + 8;

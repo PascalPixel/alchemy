@@ -552,14 +552,14 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void) {
   u8 *state;
   u8 old;
   s32 m;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   u32 step;
 #endif
 
   obj = Object_GetById(ACTOR_PARTY_LEADER);
   state = &obj->motionFlags;
   old = *state;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   vec.x = (obj->x.fixed & 0xfff00000) + 0x80000;
   vec.y = obj->y.fixed;
   vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
@@ -575,7 +575,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void) {
 #endif
   if (FieldObject_CheckMovementCollision(obj, &vec) != 1 &&
       SceneData_FindSlotAtPosition(&vec, obj) == 0) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     vec.x = (obj->x.fixed & 0xfff00000) + 0x80000;
     vec.y = obj->y.fixed;
     vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
@@ -726,7 +726,7 @@ static void FieldScene_SetFlag987AtActorTwelveTile(void) {
 }
 
 static void SceneDialogue_ReadRelief(void) {
-#if defined(TBS_EDITION_EN)
+#if TBS_PATCH_LEVEL == 1
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_MessageShowCentered((s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief), 1);
@@ -746,7 +746,7 @@ static void SceneState_ApplySixRectsAfter161(void) {
   s32 x;
   s32 y;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Engine_GameFlagClear(0x161);
 #endif
   x = 23;
@@ -765,7 +765,7 @@ static void SceneState_ApplySixRectsAfterFlag161(void) {
   s32 x;
   s32 y;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Engine_GameFlagSet(0x161);
 #endif
   x = 23;
@@ -1019,19 +1019,16 @@ static void EV35_TOUCH_3(void) {
   struct FieldActor *rec7;
   s32 record;
   s32 zero;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   u8 *state;
 #endif
 
-#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) &&                    \
-    !defined(TBS_EDITION_IT)
+#if !TBS_PATCH_3
   zero = 0;
 #endif
   rec7 = Object_GetById(0);
   Engine_EventBegin();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   state = (u8 *)&rec7->motionFlags;
   zero = 0;
   *state = zero;
@@ -1067,8 +1064,7 @@ static void EV35_TOUCH_3(void) {
     rec7->bounce = zero;
     OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
   }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
   *state = 3;
 #else
@@ -1848,8 +1844,7 @@ static void Scene_RunScene3c8SequenceA(void) {
   effect = 0;
   leader = Actor_Get(0);
   Event_Begin();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Battle_ResetEffectCounter();
 #endif
   Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
@@ -3995,13 +3990,13 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
     { SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     { SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#elif TBS_PATCH_2
     { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
 #endif
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },

@@ -47,7 +47,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
 
 static void EV11_TOUCH(void) {
   u32 buf[3];
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   buf[0] = Object_GetById(0)->x.fixed + 0x1e0000;
   buf[1] = Object_GetById(0)->y.fixed;
   buf[2] = Object_GetById(0)->z.fixed;

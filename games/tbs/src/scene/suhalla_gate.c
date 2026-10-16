@@ -1,7 +1,8 @@
 // Suhalla Gate's approach routes, wounded soldiers and Iodem's inspection of
-// the attack. Localized map repairs stay beside the scenes that apply them.
+// the attack. Observed map repairs stay beside the scenes that apply them.
 
 #include "game_state.h"
+#include "version.h"
 #include "unit/scene/suhalla_gate.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -22,6 +23,12 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+
+#if TBS_PATCH_3
+#define SUHALLA_GATE_RETREAT_SCENE(currentScene) ((s32)&SceneId_SuhallaGate1)
+#else
+#define SUHALLA_GATE_RETREAT_SCENE(currentScene) (currentScene)
+#endif
 
 // Starts the encounter of the Djinni in actor slot 13, using Djinni ID 26.
 static void SuhallaGate_StartDjinnBattle(void) {
@@ -90,8 +97,7 @@ s32 SuhallaGate_EnterScene(void) {
     // Keep the vanished soldier hidden and restore localized gate geometry.
     if (Engine_GameFlagIsSet(0x897))
       Engine_ActorSetPosition(10, 0, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     else if (Engine_GameFlagIsSet(0x96f))
       Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
     if (Engine_GameFlagIsSet(0x96f)) {
@@ -102,21 +108,11 @@ s32 SuhallaGate_EnterScene(void) {
     // Retreat from the interior returns to the side used to enter the gate.
     if (gGameState.entrance == 3) {
       if (Engine_GameFlagIsSet(0x8fb)) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-        gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
-#else
-        gGameState.retreatScene = scene;
-#endif
+        gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
         gGameState.retreatEntrance = 1;
       }
       if (Engine_GameFlagIsSet(0x8fc)) {
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-        gGameState.retreatScene = (s32)&SceneId_SuhallaGate1;
-#else
-        gGameState.retreatScene = scene;
-#endif
+        gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
         gGameState.retreatEntrance = 5;
       }
       Engine_GameFlagClear(0x12f);
@@ -178,8 +174,7 @@ static void SuhallaGate_RepositionGuards(void) {
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   Engine_ActorSetAnimation(8, 1);
   Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
   Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
 #else
@@ -281,8 +276,7 @@ static void SuhallaGate_InspectAttackWithIodem(void) {
   }
   Engine_ActorWaitForMove(11);
   Actor_SetPosition(11, 0, 0);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
   Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
   Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
@@ -363,15 +357,13 @@ static void SuhallaGate_BlinkAndHideSoldier(void) {
 
   GameFlag_Set(0x897);
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Map_CopyCellAttributes(29, 19, 2, 1, 29, 18);
 #endif
   Engine_EventEnd();
 }
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 s32 gSuhallaGate_PatrolStartup[] = {
     SC_SET(SW_COLLISION, 0),
 };
@@ -382,8 +374,7 @@ s32 gSuhallaGatePlacements1Flagged1[] = {
     SC_END,
 };
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
 s32 gSuhallaGate_FirstGuardStartup[] = {
     SC_SET(SW_COLLISION, 0),
 };
@@ -461,7 +452,7 @@ struct ScenePlacement gSuhallaGatePlacements1[] = {
 };
 
 struct ScenePlacement gSuhallaGatePlacements1Flagged[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+#if !TBS_PATCH_3
     { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged0,
         PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGatePlacements1Flagged1,

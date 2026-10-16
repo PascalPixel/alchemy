@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/altmiller_cave.h"
@@ -265,7 +266,7 @@ static void EV12_PSYNERGY(void) {
     actor->terrainHeight = 0;
     actor->priorityFlags = 2;
     Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     Engine_GameFlagSet(0x212);
 #endif
   }
@@ -1754,7 +1755,7 @@ s32 AltmillerCave_ApplyEntryState(void) {
       Object_GetById(11)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     if (Engine_GameFlagIsSet(0x212)) {
       Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
     }

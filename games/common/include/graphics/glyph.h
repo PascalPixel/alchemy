@@ -5,10 +5,10 @@
 #include "edition.h"
 #include "layout_guard.h"
 
-#if EDITION_INTERNATIONAL
-enum { FONT_GLYPH_ROWS = 15 };
-#else
+#if LANGUAGE == LANGUAGE_JAPANESE
 enum { FONT_GLYPH_ROWS = 12 };
+#else
+enum { FONT_GLYPH_ROWS = 15 };
 #endif
 
 struct GlyphPalette {

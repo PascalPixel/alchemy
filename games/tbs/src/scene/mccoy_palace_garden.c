@@ -433,7 +433,7 @@ struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
         PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x16, FLAG_NUT_CAUGHT, 7,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(388), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif

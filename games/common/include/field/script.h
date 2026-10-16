@@ -109,16 +109,8 @@ LAYOUT_OFFSET_GUARD(ScriptOperands_word_6c_offset, struct ScriptOperands,
                     word6c, 0x6c);
 LAYOUT_SIZE_GUARD(ScriptOperands_size, struct ScriptOperands, 0x70);
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) ||                      \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if GAME_TLA
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter);
-#else
-#if GAME_TLA
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter);
-#endif
-#endif
-#if GAME_TLA
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
 #endif

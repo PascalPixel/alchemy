@@ -100,8 +100,4 @@ LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
 
 extern u8 *gWindowWork[];
 
-#if EDITION_INTERNATIONAL
-#else
-#endif
-
 #endif

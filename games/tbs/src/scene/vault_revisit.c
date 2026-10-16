@@ -509,7 +509,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void) {
   if (Engine_GameFlagIsSet(0x858))
     Actor_SetPosition(18, 0xd80000, 0x1880000);
   if (gGameState.entrance <= 2 && !Engine_GameFlagIsSet(52)
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       && !Engine_GameFlagIsSet(0x109)
 #endif
   )

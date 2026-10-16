@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
@@ -1384,7 +1385,7 @@ static void StagedActor_PushActorAhead(void) {
 
 // clang-format off
 const u8 gColosso_PortraitPaletteOffsets[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
     0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
@@ -1574,7 +1575,7 @@ struct SceneEvent gColossoRiver_SceneTableD[] = {
 s16 gColosso_PortraitSlot = -1;
 
 s16 gColossoRiver_RoundSpans[] = {
-#if !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_JAPANESE
     0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
     0x4000, -188, 2048, 0x1000, 384, 1, 0x2000, 16,
@@ -1584,7 +1585,7 @@ s16 gColossoRiver_RoundSpans[] = {
 };
 
 s16 gColossoRiver_ModeRecordFour[] = {
-#if defined(TBS_EDITION_FR)
+#if LANGUAGE == LANGUAGE_FRENCH
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
     6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6,
@@ -1593,7 +1594,7 @@ s16 gColossoRiver_ModeRecordFour[] = {
     0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6, 0x1000,
     512, 6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff,
     6, 0x1000, 512, 6, 0x7fff, 6, -1,
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
     0x1000, 384, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6,

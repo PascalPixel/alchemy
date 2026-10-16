@@ -317,22 +317,22 @@ s32 ValeBabi_RestoreEntryState(void) {
 
 // Wake Isaac, lead him outside into the storm, and send him toward the exit.
 static void ValeBabi_RunIsaacsStormAwakening(void) {
-  s32 base;
+  s32 firstMessage;
   struct FieldSprite *sprite;
-  struct MapScrollWork *work;
-  struct FieldActor *sceneActor;
-  struct EventWork **control;
+  struct MapScrollWork *mapWork;
+  struct FieldActor *viewCenter;
+  struct EventWork **eventSlot;
 
-  control = (struct EventWork **)Ram_EventWork;
+  eventSlot = (struct EventWork **)Ram_EventWork;
   /* FAKEMATCH: needed to match: stage the root reads before consuming
      the event record. Read in place (measured again 2026-10-13, with the
      once-used locals gone): 431 instructions for 430, differ 11 (map
      work first) or 13 (view centre first). */
   {
-    struct EventWork *event = *control;
+    struct EventWork *event = *eventSlot;
 
-    work = *(struct MapScrollWork **)Ram_MapWork;
-    sceneActor = event->viewCenter;
+    mapWork = *(struct MapScrollWork **)Ram_MapWork;
+    viewCenter = event->viewCenter;
   }
   sprite = Object_GetById(17)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
@@ -348,41 +348,41 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   sprite->rotation = 1365;
   Object_GetById(17)->motionFlags = 0;
   Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
-  Engine_ActorSetPosition(17, 37748736, 42598400);
+  Engine_ActorSetPosition(17, PIXELS(576), PIXELS(650));
   Map_ClearLayerEntryFlag(7);
-  Engine_ActorSetPosition(8, 34996224, 45088768);
+  Engine_ActorSetPosition(8, PIXELS(534), PIXELS(688));
   Graphics_EnableObjLayerAndCallbacks();
   Ui_SetRenderResultFromObject(8);
-  base = MsgValeWake;
-  UiText_ShowCenteredMessage(base, 1, 0);
+  firstMessage = MsgValeWake;
+  UiText_ShowCenteredMessage(firstMessage, 1, 0);
   Engine_EventWait(40);
   MapRender_SetValues(65536, 65536, 65536);
   Ui_SetRenderResultFromObject(8);
-  UiText_ShowCenteredMessage(base + 1, 1, 0);
+  UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
   ObjectDispatch_StopCallbacksAndHideLayers();
   Engine_EventWait(40);
-  work->minX = 0x01480000;
   // Widen the camera bounds and reveal the lightning outside.
-  work->minY = 0x02580000;
-  work->maxX = 0x02700000;
-  work->maxY = 0x03300000;
-  sceneActor->x.fixed = 0x02340000;
-  sceneActor->y.fixed = 0;
-  sceneActor->z.fixed = 0x02b30000;
+  mapWork->minX = 0x01480000;
+  mapWork->minY = 0x02580000;
+  mapWork->maxX = 0x02700000;
+  mapWork->maxY = 0x03300000;
+  viewCenter->x.fixed = 0x02340000;
+  viewCenter->y.fixed = 0;
+  viewCenter->z.fixed = 0x02b30000;
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  (*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  (*control)->transitionFrames = 64;
+  (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  (*eventSlot)->transitionFrames = 64;
   FieldFx_StartLightning();
-  (*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud =
-      1;
+  (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
+      ->loud = 1;
   FieldFx_LastLightning();
   Engine_TaskWait(30);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FieldFx_ResumeLightning();
   Engine_ActorSetAnimationAndWait(8, 4);
-  Engine_EventSetMessage(base + 2);
+  Engine_EventSetMessage(firstMessage + 2);
   Event_ShowMessageAndWait(36872, 0, 60);
   Engine_ActorRunRepeatedMotion(0, 2);
   Engine_EventWait(40);
@@ -446,7 +446,7 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   Actor_FaceDirection(8, 16384, 10);
   Event_OpenMessage(32776, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    (*control)->message++;
+    (*eventSlot)->message++;
   }
   Engine_EventWait(20);
   Event_ShowMessageAndWait(32776, 0, 20);
@@ -456,8 +456,8 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   Actor_SetActionScript(8, gValeBabiActorExitAction);
   Actor_SetActionScript(0, gValeBabiLeaderExitAction);
   Engine_EventWait(20);
-  (*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  (*control)->transitionFrames = 16;
+  (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  (*eventSlot)->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(20);
@@ -665,8 +665,8 @@ static void ValeBabi_ReadThoughtsAboutDorasIllness(void) {
 
 // Visit the ill Dora, answer her questions, and see her get out of bed.
 static void ValeBabi_RunSickbedVisit(void) {
-  struct FieldActor *record;
-  s32 msg;
+  struct FieldActor *leader;
+  s32 firstMessage;
 
   Engine_EventBegin();
   Actor_SetSpeed(0, 0x9999, 0x4ccc);
@@ -681,6 +681,7 @@ static void ValeBabi_RunSickbedVisit(void) {
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(80);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
+  // Bring Dora out of bed before asking about her illness.
   Engine_ActorSetDestination(8, 0x248, 0x196);
   Map_SetLayerEntryFlag(11);
   Map_ClearLayerEntryFlag(12);
@@ -714,8 +715,9 @@ static void ValeBabi_RunSickbedVisit(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(8, 0);
   Actor_ShowEmote(8, 0x107, 60);
-  msg = MsgValeWhoToldIll;
-  Engine_EventSetMessage(msg);
+  // Branch on Isaac's replies and whether Mind Read revealed her illness.
+  firstMessage = MsgValeWhoToldIll;
+  Engine_EventSetMessage(firstMessage);
   Engine_EventOpenMessage(8, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message += 1;
@@ -726,7 +728,7 @@ static void ValeBabi_RunSickbedVisit(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(8, 0);
   Engine_ActorShowEmote(8, 0x107, 60);
-  Engine_EventSetMessage(msg + 3);
+  Engine_EventSetMessage(firstMessage + 3);
   Engine_EventShowMessage(8, 0);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_EventWait(20);
@@ -738,8 +740,9 @@ static void ValeBabi_RunSickbedVisit(void) {
   Engine_EventShowMessageAndWait(8, 0, 40);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(40);
-  record = Object_GetById(0);
-  record->facing = 0;
+  // Make room for Dora to walk and demonstrate that she feels well.
+  leader = Object_GetById(0);
+  leader->facing = 0;
   Engine_TaskWait(1);
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(0, 0x22e, 0x184);
@@ -818,12 +821,14 @@ static void ValeBabi_ShowMythrilBag(void) {
   sprite->partCount = clear;
   sprite->fullColor = 0;
   sprite->palette = 0;
+  // Load the item icon into the temporary actor before animating the bag.
   glyph = Engine_HeapAllocate(17, sizeof(*glyph));
   Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
   Engine_VramLoad(sprite->vramBlock, 128, glyph->tiles);
   Engine_HeapRelease(17);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
+  // Walk the presenter into view, then wait for both bag scripts to finish.
   Actor_SetSpeed(18, 0x10000, 0x8000);
   Actor_WalkToAndWait(18, 0x1e0, 176);
   Actor_WalkToAndWait(18, 0x1a4, 164);
@@ -884,13 +889,13 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
   struct AnimationObject *part;
   struct FieldSprite *sprite;
   struct PairWork *work = gEffectWork;
-  s32 i;
+  s32 effectIndex;
 
-  for (i = 0; i < 2; ++i) {
+  for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
     child = (union PairObject *)Engine_ObjectCreate(
         26, parent->object.actor.x.fixed, parent->object.actor.y.fixed,
         parent->object.actor.z.fixed);
-    pair[i] = child;
+    pair[effectIndex] = child;
     if (child != NULL) {
       child->words[5] = parent->words[5];
       part = (struct AnimationObject *)child->object.actor.sprite;
@@ -913,19 +918,19 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
     }
   }
   {
-    union PairObject *p = pair[0];
-    struct FieldSprite *sp = p->object.actor.sprite;
+    union PairObject *effectActor = pair[0];
+    struct FieldSprite *effectSprite = effectActor->object.actor.sprite;
 
-    p->object.actor.update = Effect_AnimateVerticalNegative;
-    sp->priority = 2;
+    effectActor->object.actor.update = Effect_AnimateVerticalNegative;
+    effectSprite->priority = 2;
   }
   {
-    struct FieldActor *p = &pair[1]->object.actor;
-    struct FieldSprite *sp = p->sprite;
+    struct FieldActor *effectActor = &pair[1]->object.actor;
+    struct FieldSprite *effectSprite = effectActor->sprite;
 
-    sp->priority = 2;
-    p->update = Effect_AnimateVerticalPositive;
-    p->priorityFlags = 2;
+    effectSprite->priority = 2;
+    effectActor->update = Effect_AnimateVerticalPositive;
+    effectActor->priorityFlags = 2;
   }
 }
 

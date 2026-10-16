@@ -36,6 +36,18 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
+#if TBS_PATCH_2
+#define VALE_GARET_REUNION_Z 829
+#else
+#define VALE_GARET_REUNION_Z 827
+#endif
+
+#if TBS_PATCH_4
+#define VALE_SOUTH_VILLAGER_Z 887
+#else
+#define VALE_SOUTH_VILLAGER_Z 889
+#endif
+
 // Forward declarations.
 static void FieldScene_RunScene373SequenceC(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *a0, const s32 *a1);
@@ -1150,7 +1162,7 @@ s32 Vale_ApplyEntryState(void) {
     actor->terrainId = 3;
     actor->motionFlags = 0;
     FieldScheduler_AddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
     if (Engine_GameFlagIsSet(0x87a)) {
       if (Engine_GameFlagIsSet(0x109)) {
         if (Engine_GameFlagIsSet(0x204)) {
@@ -1200,7 +1212,7 @@ s32 Vale_ApplyEntryState(void) {
         Scene_RepairTheHouse();
         Engine_GameFlagSet(0x308);
       }
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
       if (Engine_GameFlagIsSet(0x109)) {
         if (Engine_GameFlagIsSet(0x204)) {
           Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -1219,7 +1231,7 @@ s32 Vale_ApplyEntryState(void) {
       }
 #endif
     }
-#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_IT)
+#if !TBS_PATCH_4
     if (Engine_GameFlagIsSet(0x109)) {
       if (Engine_GameFlagIsSet(0x204)) {
         Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -2232,12 +2244,9 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetSpeed(GARET, 0x30000, 0x18000);
   Engine_ActorJump(GARET, 6, 0);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-  Actor_WalkToAndWait(GARET, 374, 829);
-  Actor_SetPosition(GARET, PIXELS(374), PIXELS(829));
-#else
-  Actor_WalkToAndWait(GARET, 374, 827);
+  Actor_WalkToAndWait(GARET, 374, VALE_GARET_REUNION_Z);
+#if TBS_PATCH_2
+  Actor_SetPosition(GARET, PIXELS(374), PIXELS(VALE_GARET_REUNION_Z));
 #endif
   Event_ShowMessage(JENNA, 0);
   Actor_FaceDirection(GARET, 0xb000, 0);
@@ -2301,12 +2310,7 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetSpeed(GARET, 0x40000, 0x20000);
   rec = Actor_Get(GARET);
   rec->steeringFlags &= ~ACTOR_FACES_MOTION;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-  Actor_SetDestination(GARET, 403, 829);
-#else
-  Actor_SetDestination(GARET, 403, 827);
-#endif
+  Actor_SetDestination(GARET, 403, VALE_GARET_REUNION_Z);
   Actor_SetAttachedEffect(JENNA, 258);
   Actor_FaceDirection(JENNA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(JENNA, 0, 1);
@@ -2435,7 +2439,7 @@ static void Scene_RepairTheHouse(void) {
   Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   GameFlag_Set(514);
   GameFlag_Clear(303);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   scene->motionFlags = 3;
   scene->y.fixed = 0xa00000;
   scene->targetY = 0x80000000;
@@ -2645,7 +2649,7 @@ static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x,
 }
 
 static void SceneState_ApplyRectAndRunTwo(void) {
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   // Japanese edition only: look up a villager but do not use the return value.
   if (Engine_GameFlagIsSet(0x87a))
     Object_GetById(ACTOR_DORA);
@@ -2994,13 +2998,8 @@ struct ScenePlacement gValePlacements[] = {
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(373), 0, PIXELS(887), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-#else
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(373), 0, PIXELS(889), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-#endif
+        PIXELS(373), 0, PIXELS(VALE_SOUTH_VILLAGER_Z), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
@@ -3103,13 +3102,8 @@ struct ScenePlacement gValePlacements4[] = {
         PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(373), 0, PIXELS(887), FACING_NORTH, TALK_FACE_PARTY, 0 },
-#else
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(373), 0, PIXELS(889), FACING_NORTH, TALK_FACE_PARTY, 0 },
-#endif
+        PIXELS(373), 0, PIXELS(VALE_SOUTH_VILLAGER_Z), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, ACTOR_STAND,

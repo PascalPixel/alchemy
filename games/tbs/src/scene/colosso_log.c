@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
@@ -1618,8 +1619,7 @@ static void EV37_TALK(s32 event) {
       Engine_EventWait(120);
       OverlayObject_ResetMotionFields(0);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) &&                    \
-    !defined(TBS_EDITION_IT)
+#if !TBS_PATCH_3
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
 #endif
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
@@ -2112,7 +2112,7 @@ const s32 gColossoSceneEventEffect[] = {
 };
 
 const u8 gColosso_PortraitPaletteOffsets[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
     0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
@@ -2455,7 +2455,7 @@ s32 gColossoParticleKinds[] = {
 s16 gColosso_PortraitSlot = -1;
 
 s16 gColossoModeScriptDefault[] = {
-#if !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_JAPANESE
     0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
     0x4000, -188, 2048, 0x1000, 384, 1, 0x2000, 16,
@@ -2465,7 +2465,7 @@ s16 gColossoModeScriptDefault[] = {
 };
 
 s16 gColossoModeScript4[] = {
-#if defined(TBS_EDITION_FR)
+#if LANGUAGE == LANGUAGE_FRENCH
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
     6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6,
@@ -2474,7 +2474,7 @@ s16 gColossoModeScript4[] = {
     0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6, 0x1000,
     512, 6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff,
     6, 0x1000, 512, 6, 0x7fff, 6, -1,
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
     0x1000, 384, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6,

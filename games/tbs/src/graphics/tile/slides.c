@@ -224,7 +224,7 @@ static const u8 sBlank[] = "";
 // clang-format off
 const void *gDisplayScroll_LineTable[] = {
     sBlank,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "GOLDEN SUN STAFF CREDITS",
 #else
     "OUGON NO TAIYO STAFF",
@@ -348,7 +348,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     "Battle Effects",
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "  & Faces",
 #else
     "& Faces",
@@ -419,7 +419,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     sBlank,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Sound Director",
 #else
     "Sound Direction",
@@ -440,7 +440,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     sBlank,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Graphic Supports",
 #else
     "Graphic Support",
@@ -453,7 +453,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     sBlank,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Artwork",
 #else
     "Artwork Design",
@@ -467,7 +467,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     sBlank,
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     "Coordination",
     sBlank,
     "Masaaki Uno",
@@ -479,7 +479,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
 #endif
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     "Public Relations",
     sBlank,
     "Mitsuaki Hagishima",
@@ -592,7 +592,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     0
-#elif defined(TBS_EDITION_EN)
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
     sBlank,
     "North American",
     " Localization",
@@ -699,7 +699,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     0
-#elif defined(TBS_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
     "North American",
     " Localization",
     sBlank,
@@ -803,7 +803,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     0
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
     "North American",
     " Localization",
     sBlank,
@@ -907,7 +907,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlank,
     sBlank,
     0
-#elif defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
     "North American",
     " Localization",
     sBlank,

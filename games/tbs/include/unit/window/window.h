@@ -135,13 +135,10 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
                                           u32 packed);
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags);
 void UiWork_ProcessAll(void);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 s32 UiText_RenderGlyphPair(s32 code, u32 *out);
-
-#endif
-#if !(EDITION_INTERNATIONAL)
+#else
 s32 UiText_RenderGlyphPair(u32 code, u32 *out);
-
 #endif
 s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,

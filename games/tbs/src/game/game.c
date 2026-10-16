@@ -1861,7 +1861,7 @@ void GameFlag_SetNibble(s32 flag, s32 value) {
 
 // The letter that tells apart enemies of one kind: digits from 1 abroad, the
 // alphabet in Japan.
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 #define ENEMY_SUFFIX_FIRST '1'
 #define ENEMY_SUFFIX_LAST 8
 #else

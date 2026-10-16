@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -1038,8 +1039,7 @@ static void SceneState_ApplyRectsAtActors8And9(void) {
   }
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct FieldSprite *sprite;
   struct FieldActor *actor;
@@ -1115,8 +1115,7 @@ s32 BabiLighthouse_SetupScene(void) {
   } else if (copy == (s32)&SceneId_BabiLighthouse3) {
     Actor_SetChildValue(8, 6);
     Actor_SetChildValue(9, 6);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
     ((union FieldObject *)Object_GetById(8))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
     ((union FieldObject *)Object_GetById(9))->actor.update =

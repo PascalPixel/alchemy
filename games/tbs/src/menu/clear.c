@@ -42,6 +42,72 @@
 #include "frame.h"
 #include "map_scroll.h"
 
+// Edition-specific text and window layout values.
+#if TBS_PATCH_1
+#define CLEAR_PASSWORD_BUFFER_SIZE 320
+#else
+#define CLEAR_PASSWORD_BUFFER_SIZE 260
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define CLEAR_LINK_WINDOW_X 4
+#define CLEAR_LINK_WINDOW_WIDTH 22
+#else
+#define CLEAR_LINK_WINDOW_X 6
+#define CLEAR_LINK_WINDOW_WIDTH 18
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define CLEAR_LINK_LANGUAGE_TAG 69
+#elif (LANGUAGE == LANGUAGE_FRENCH)
+#define CLEAR_LINK_LANGUAGE_TAG 70
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define CLEAR_LINK_LANGUAGE_TAG 83
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#define CLEAR_LINK_LANGUAGE_TAG 73
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#define CLEAR_LINK_LANGUAGE_TAG 67
+#else
+#define CLEAR_LINK_LANGUAGE_TAG 85
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define CLEAR_LINK_ERROR_WINDOW_X 4
+#define CLEAR_LINK_ERROR_WINDOW_WIDTH 22
+#else
+#define CLEAR_LINK_ERROR_WINDOW_X 5
+#define CLEAR_LINK_ERROR_WINDOW_WIDTH 20
+#endif
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define CLEAR_HELP_WINDOW_X 8
+#define CLEAR_HELP_WINDOW_WIDTH 13
+#else
+#define CLEAR_HELP_WINDOW_X 10
+#define CLEAR_HELP_WINDOW_WIDTH 10
+#endif
+
+#if TBS_PATCH_1
+#define CLEAR_PAGE_LABEL_X 80
+#else
+#define CLEAR_PAGE_LABEL_X 0
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define CLEAR_MESSAGE_WINDOW_X 0
+#define CLEAR_MESSAGE_WINDOW_WIDTH 30
+#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#define CLEAR_MESSAGE_WINDOW_X 3
+#define CLEAR_MESSAGE_WINDOW_WIDTH 24
+#else
+#define CLEAR_MESSAGE_WINDOW_X 1
+#define CLEAR_MESSAGE_WINDOW_WIDTH 28
+#endif
+
 // Forward declarations
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
@@ -176,7 +242,7 @@ static void Clear_CheckButtonCodes(void) {
 static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   if (cell <= 7)
     text[0] = cell + 'A';
   else if (cell <= 12)
@@ -278,11 +344,7 @@ s32 SaveMenu_Run(void) {
   struct UiWindow *helpWindow;
   struct UiWindow *headingWindow;
   u8 saveData[200];
-#if EDITION_INTERNATIONAL
-  u8 password[320];
-#else
-  u8 password[260];
-#endif
+  u8 password[CLEAR_PASSWORD_BUFFER_SIZE];
   u8 glyph[4];
 
   started = 0;
@@ -458,12 +520,8 @@ menu_top:;
       goto link_load;
     }
     if (v6 == 1) {
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-      v6 = (s32)UiWindow_Create(4, 5, 22, 8, 2);
-#else
-      v6 = (s32)UiWindow_Create(6, 5, 18, 8, 2);
-#endif
+      v6 = (s32)UiWindow_Create(CLEAR_LINK_WINDOW_X, 5, CLEAR_LINK_WINDOW_WIDTH,
+                                8, 2);
       linkMessage = MsgClearSaveLabel;
 
       UiText_DrawResource(linkMessage, (struct UiWindow *)v6, 0, 4);
@@ -501,19 +559,7 @@ menu_top:;
           u16 *received =
               ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
-#if defined(TBS_EDITION_DE)
-          if (received[0] == 69) {
-#elif defined(TBS_EDITION_FR)
-          if (received[0] == 70) {
-#elif defined(TBS_EDITION_ES)
-          if (received[0] == 83) {
-#elif defined(TBS_EDITION_IT)
-          if (received[0] == 73) {
-#elif !EDITION_INTERNATIONAL
-          if (received[0] == 67) {
-#else
-          if (received[0] == 85) {
-#endif
+          if (received[0] == CLEAR_LINK_LANGUAGE_TAG) {
             if (received[1] == 86) {
               if (received[2] == 84) {
                 if (received[3] == 83) {
@@ -530,12 +576,8 @@ menu_top:;
       if (v7 == 0) {
         goto link_select;
       }
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-      v6 = (s32)UiWindow_Create(4, 10, 22, 4, 2);
-#else
-      v6 = (s32)UiWindow_Create(5, 10, 20, 4, 2);
-#endif
+      v6 = (s32)UiWindow_Create(CLEAR_LINK_ERROR_WINDOW_X, 10,
+                                CLEAR_LINK_ERROR_WINDOW_WIDTH, 4, 2);
 
       UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
       Engine_TaskWait(10);
@@ -570,7 +612,7 @@ menu_top:;
       Engine_TaskWait(10);
       SerialRuntime_RemoveIrqHandlers();
       Engine_TaskWait(10);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
       UiWork_Finalize((struct UiWindow *)v6, 2);
       Engine_TaskWait(1);
 #else
@@ -602,12 +644,8 @@ menu_top:;
       pageWindow = UiWindow_Create(5, 4, 20, 12, v6);
       page = 0;
       pageCount = ((encodedSize / 50) + 1);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-      record = (s32)UiWindow_Create(8, 0, 13, 4, v6);
-#else
-      record = (s32)UiWindow_Create(10, 0, 10, 4, v6);
-#endif
+      record = (s32)UiWindow_Create(CLEAR_HELP_WINDOW_X, 0,
+                                    CLEAR_HELP_WINDOW_WIDTH, 4, v6);
       pageMessage = MsgClearPasswordLabel;
       headingWindow = (struct UiWindow *)record;
       UiText_DrawResource(pageMessage, headingWindow, 6, 4);
@@ -615,20 +653,11 @@ menu_top:;
       if (pageCount == 1) {
         record = (s32)UiWindow_Create(5, 16, 20, 3, v6);
         helpWindow = (struct UiWindow *)record;
-#if EDITION_INTERNATIONAL
-        UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow, 80, 0);
-#else
-        UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow, 0, 0);
-#endif
+        UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow,
+                                     CLEAR_PAGE_LABEL_X, 0);
       } else {
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-        record = (s32)UiWindow_Create(0, 16, 30, 3, v6);
-#elif !EDITION_INTERNATIONAL
-        record = (s32)UiWindow_Create(3, 16, 24, 3, v6);
-#else
-        record = (s32)UiWindow_Create(1, 16, 28, 3, v6);
-#endif
+        record = (s32)UiWindow_Create(CLEAR_MESSAGE_WINDOW_X, 16,
+                                      CLEAR_MESSAGE_WINDOW_WIDTH, 3, v6);
         helpWindow = (struct UiWindow *)record;
         UiText_DrawCharacterAtOffset(pageMessage - 1, helpWindow, 0, 0);
       }

@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/scene/lemurian_ship.h"
@@ -41,6 +42,12 @@
 #include "field_scene.h"
 #include "objcmd.h"
 #include "item_ids.h"
+
+#if TBS_PATCH_3
+#define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
+#else
+#define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 80
+#endif
 
 // The Lemurian ship's hidden harbor at Lalivero, and the end of the game.
 //
@@ -500,12 +507,7 @@ static void SetSail(void) {
   Engine_AudioPlayCue(67);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
-  Engine_EventWait(30);
-#else
-  Engine_EventWait(80);
-#endif
+  Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   scroll = gMapWork[0];
   ship = Object_GetById(SHIP_NORTH);
   ship->acceleration = 131;

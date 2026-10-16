@@ -86,11 +86,24 @@
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 
+// Edition-specific text and window layout values.
+#if (LANGUAGE == LANGUAGE_GERMAN)
+#define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
+#define GIFT_RECEIVED_MESSAGE_MODE 1
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
+#define GIFT_RECEIVED_MESSAGE_MODE 1
+#else
+#define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
+#define GIFT_RECEIVED_MESSAGE_MODE 3
+#endif
+
 // Shows "Isaac got <item>." for an item the party has just received. The
 // German release has its own sentence for the Black Orb. flags are the
 // message window flags of UiText_ShowPositionedMessageAndWait.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
   if (item == ITEM_BLACK_ORB) {
     UiText_ShowPositionedMessageAndWaitFar(MsgGotBlackOrb, flags);
     return;
@@ -358,7 +371,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
         count = Shop_GetSelectionState(member, s);
       }
-#if !defined(TBS_EDITION_EN)
+#if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
         UiWork_PushValueSlotFar(member, 1);
         UiWork_PushValueSlotFar(item, 2);
@@ -388,14 +401,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     if (owner != gGameState.selectedActor) {
       UiWork_PushValueSlotFar(item, 2);
       UiWork_PushValueSlotFar(owner, 1);
-#if defined(TBS_EDITION_DE)
-      UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember, 1);
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                    \
-    defined(TBS_EDITION_IT)
-      UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem + 1, 1);
-#else
-      UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem + 1, 3);
-#endif
+      UiText_ShowPositionedMessageAndWaitFar(GIFT_RECEIVED_MESSAGE,
+                                             GIFT_RECEIVED_MESSAGE_MODE);
     }
     work->message = savedMessage;
   }
@@ -1553,7 +1560,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   s32 y;
   s32 found;
   s32 column;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   s32 none;
 #endif
 
@@ -1658,7 +1665,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 
     // A speaker with a portrait: put the portrait's 5 rows just above or
     // below the message, and grow the message to the portrait's height.
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     found = Localization_LookupEntryIdFar(sprite);
     if (found != -1) {
       UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width,
@@ -6469,7 +6476,7 @@ void RunBattleEffect08(void) {
   BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
-#if !defined(TBS_EDITION_EN)
+#if !(TBS_PATCH_1 && !TBS_PATCH_2)
   field->revealActive = 0; // not in the English release
 #endif
   WaitFrames(1);
@@ -9430,8 +9437,7 @@ void BattleFx_SetupResourcesAndWindow(void) {
 // The world map screen: place markers, the cursor and the place-name window.
 //--------------------------------------------------------------------------
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 // The cursor snaps to the nearest place when the d-pad is released.
 #define WORLD_MAP_CURSOR_SNAPS 1
 #define WORLD_MAP_NAME_RANGE 64 // squared distance that shows a place's name

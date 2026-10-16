@@ -10,10 +10,10 @@ const u8 gReelGame_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
 // The tile of each title letter.
 const u8 gReelGame_TitleLetterTiles[REEL_TITLE_LETTERS] = {
-#if !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_JAPANESE
     0, 1, 2, 3, 4,
     2, 5, 6
-#elif defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
+#elif LANGUAGE == LANGUAGE_SPANISH
     7, 0, 1, 2, 3,
     4, 5, 6, 7
 #else
@@ -30,10 +30,10 @@ const u8 gReelGame_FrameSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
 
 // The advance of each title letter.
 const u8 gReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
-#if !EDITION_INTERNATIONAL
+#if LANGUAGE == LANGUAGE_JAPANESE
     32, 24, 22, 28,
     28, 22, 18
-#elif defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
+#elif LANGUAGE == LANGUAGE_SPANISH
     16, 28, 28, 26, 26,
     28, 28, 20, 24
 #else

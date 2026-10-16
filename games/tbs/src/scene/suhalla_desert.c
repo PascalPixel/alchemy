@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "engine_call.h"
 #include "unit/scene/suhalla_desert.h"
@@ -776,7 +777,7 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 #else
     { 0xc401, 4, CONDITION_ALWAYS, 4 },

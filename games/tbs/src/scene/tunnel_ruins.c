@@ -1,4 +1,5 @@
 #include "script.h"
+#include "version.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -90,7 +91,7 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target) {
     actor->motionFlags &= 0x7e;
 
     Engine_ActorSetSpriteFlags(actor, 0);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
                               ((target->x.fixed >> 20) << 4) + 8,
                               ((target->z.fixed >> 20) << 4) + 8);

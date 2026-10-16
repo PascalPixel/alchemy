@@ -379,7 +379,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void) {
   u8 *flags;
   s32 saved;
   s32 mode;
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   s32 step;
 #endif
   s32 *p;
@@ -388,14 +388,14 @@ static s32 FieldScene_RunScene3b3SequenceD(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
   saved = *flags;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   mode = (leader->facing + 0x2000) & 0xc000;
 #endif
   if (gGameState.movementMode != 0) {
     return 0;
   }
   p = buf;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   p[0] = (leader->x.fixed & -0x100000) + 0x80000;
   p[1] = leader->y.fixed;
   p[2] = (leader->z.fixed & -0x100000) + 0x80000;
@@ -410,7 +410,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void) {
 #endif
   if (FieldObject_CheckMovementCollision(leader, p) != 1 &&
       StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0) {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     p[0] = (leader->x.fixed & -0x100000) + 0x80000;
     p[1] = leader->y.fixed;
     p[2] = (leader->z.fixed & -0x100000) + 0x80000;
@@ -922,8 +922,7 @@ static void CrossbonePillar_UpdatePillarActors(void) {
 
 static void CrossbonePillar_PushPillar(void) {
   Engine_EventBegin();
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
   Object_GetById(0)->y.fixed = Map_GetTerrainHeight(
       Object_GetById(0)->terrainId, Object_GetById(0)->x.fixed,
       Object_GetById(0)->z.fixed);
@@ -1392,7 +1391,7 @@ s32 CrossbonePillar_SetupArea(void) {
     Engine_ActorSetChildValue(10, 6);
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     Object_GetById(8)->motionFlags = 0;
     Object_GetById(9)->motionFlags = 0;
 #endif

@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/crossbone_isle.h"
@@ -297,7 +298,7 @@ static void EV08_PSYNERGY(void) {
     return;
   }
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   {
     s32 off = 448;
     slot = (s16 *)((u8 *)((s16 *)&gGameState) + off);
@@ -323,7 +324,7 @@ static void EV08_PSYNERGY(void) {
 
   Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   {
     s32 off = 448;
     slot = (s16 *)((u8 *)((s16 *)&gGameState) + off);
@@ -636,7 +637,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor,
                                      struct Vec *requested) {
   u8 *state = &actor->motionFlags;
   s32 savedState = *state;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   struct Vec destination;
 
   destination.x = (actor->x.fixed & 0xfff00000) + 0x80000;
@@ -666,7 +667,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor,
     *state = (u8)t;
     Engine_ActorSetSpriteFlags(actor, 0);
     {
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
       s16 *coordinates = (s16 *)&destination;
 #else
       s16 *coordinates = (s16 *)requested;

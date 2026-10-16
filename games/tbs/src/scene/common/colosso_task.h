@@ -190,7 +190,7 @@ commands:
     }
     break;
   }
-#if defined(TBS_EDITION_FR)
+#if LANGUAGE == LANGUAGE_FRENCH
   case 4: {
     u32 attr;
     i = 0;

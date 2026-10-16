@@ -6,7 +6,7 @@
 // The German counted nouns, singular and plural, by kind.
 //--------------------------------------------------------------------------
 
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 // {singular, plural}: window.c reads [(kind & 7) * 2 + plural].
 // clang-format off
 const u8 *const gUiText_NumberWords[16] = {

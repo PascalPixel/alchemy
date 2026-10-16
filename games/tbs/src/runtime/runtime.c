@@ -50,8 +50,7 @@
 #include "unit/runtime/numtext.h"
 #include "savedata.h"
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 #define HALT_ON_GAMEPAK_IRQ 1
 #endif
 
@@ -105,7 +104,7 @@ void Runtime_IdleForever(void) {
   }
 }
 
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_4
 
 enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_ENGLISH,

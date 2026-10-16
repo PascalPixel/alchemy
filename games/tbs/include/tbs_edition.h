@@ -1,15 +1,15 @@
 #ifndef GUARD_TBS_EDITION_H
 #define GUARD_TBS_EDITION_H
 
-#include "edition.h"
+#include "version.h"
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define LUNPA_RETURN_TRANSITION_VARIANT 9
 #else
 #define LUNPA_RETURN_TRANSITION_VARIANT 0
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define RENDER_DIRTY_OFFSET 0xF33
 #define RENDER_MODE_OFFSET 0xF34
 #define RENDER_BUSY_OFFSET 0x1189
@@ -79,8 +79,8 @@
 
 #define MENU_TEXT_Y 60
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define COLOSSO_PALETTE_BYTES 192
 #define LOBBY_PREFIX_LIMIT 7
 #else
@@ -88,29 +88,29 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define TICKET_COUNTER_WINDOW_X 18
 #define TICKET_COUNTER_WIDTH 12
 #define TICKET_COUNTER_X 32
 #else
 #define TICKET_COUNTER_WINDOW_X 19
 #define TICKET_COUNTER_WIDTH 11
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define TICKET_COUNTER_X 0
 #else
 #define TICKET_COUNTER_X 24
 #endif
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define SHOP_LIST_X 16
 #define SHOP_LIST_WIDTH 14
 #define HELP_TEXT_X 16
 #define SWITCH_HELP_X 64
 #define PAGE_ROWS 6
 #define MENU_ROW_COUNT 4
-#elif defined(TBS_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
 #define SHOP_LIST_X 14
 #define SHOP_LIST_WIDTH 16
 #define HELP_TEXT_X 0
@@ -126,10 +126,10 @@
 #define MENU_ROW_COUNT 8
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
-#elif defined(TBS_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
 #define SHOP_MONEY_WIDTH 12
 #define SHOP_PRICE_WIDTH 16
 #else
@@ -137,7 +137,7 @@
 #define SHOP_PRICE_WIDTH 15
 #endif
 
-#if defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ITALIAN)
 #define DJINN_JOIN_X 1
 #define DJINN_JOIN_WIDTH 28
 #else
@@ -145,7 +145,7 @@
 #define DJINN_JOIN_WIDTH 26
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define OPTION_WINDOW_X 2
 #define OPTION_WINDOW_WIDTH 26
 #define OPTION_SLIDER_X 100
@@ -160,24 +160,24 @@
 #define OPTION_FRAME_X 84
 #define OPTION_SETTING_X 160
 #define OPTION_SETTING_END 184
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define OPTION_SPEED_END 208
 #else
 #define OPTION_SPEED_END 200
 #endif
 #endif
 
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
 #define STOCK_LABEL_X 32
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define STOCK_LABEL_X 30
-#elif defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 #define STOCK_LABEL_X 29
 #else
 #define STOCK_LABEL_X 24
 #endif
 
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_TITLE_LETTERS 9
 #define REEL_TITLE_X 8
 #else
@@ -185,7 +185,7 @@
 #define REEL_TITLE_X 24
 #endif
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 #define REEL_HELP_WINDOW_X 2
 #define REEL_HELP_WINDOW_WIDTH 26
 #define REEL_JACKPOT_TILES 0x06016e00
@@ -199,10 +199,10 @@
 #define REEL_TITLE_TILES 0x380
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define REEL_STOP_X 23
 #define REEL_STOP_WIDTH 7
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_STOP_X 21
 #define REEL_STOP_WIDTH 9
 #define REEL_ALL_HELD_X 6
@@ -213,7 +213,7 @@
 #define REEL_HOLD_WIDTH 8
 #define REEL_RELEASE_X 22
 #define REEL_RELEASE_WIDTH 8
-#elif defined(TBS_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
 #define REEL_STOP_X 18
 #define REEL_STOP_WIDTH 12
 #define REEL_ALL_HELD_X 10
@@ -224,7 +224,7 @@
 #define REEL_HOLD_WIDTH 9
 #define REEL_RELEASE_X 21
 #define REEL_RELEASE_WIDTH 9
-#elif defined(TBS_EDITION_DE)
+#elif (LANGUAGE == LANGUAGE_GERMAN)
 #define REEL_STOP_X 18
 #define REEL_STOP_WIDTH 12
 #define REEL_ALL_HELD_X 11
@@ -247,8 +247,8 @@
 #define REEL_RELEASE_X 23
 #define REEL_RELEASE_WIDTH 7
 #endif
-#if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                      \
-    defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN) ||         \
+    (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_COIN_DIGITS 3
 #define REEL_COIN_X 56
 #define REEL_HINT_BEFORE_LAST_SPIN 1
@@ -258,16 +258,16 @@
 #define REEL_HINT_BEFORE_LAST_SPIN 0
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define RENDER_RESOURCE_BASE 0x9D4
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                    \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define RENDER_RESOURCE_BASE 0xBDF
 #else
 #define RENDER_RESOURCE_BASE 0x99B
 #endif
 
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
 #define RANGE_ICON_TILE 0xf200
 #define LIST_FIRST_ROW 1
 #define LIST_ICONS_X 86
@@ -287,8 +287,8 @@
 #define LIST_EMPTY_Y 17
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define SAVE_SLOT_NAME_X 6
 #else
 #define SAVE_SLOT_NAME_X 12

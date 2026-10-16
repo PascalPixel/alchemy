@@ -12866,7 +12866,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
             if (trail->x > 0) {
               Transform_Load(MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
-#if defined(TBS_EDITION_JA)
+#if !TBS_PATCH_1
               {
                 /* FAKEMATCH: the named result pointer is a pseudo of its own,
                  * which gives the Japanese frame its 124 bytes and keeps the

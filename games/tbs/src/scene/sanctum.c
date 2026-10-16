@@ -235,9 +235,15 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Engine_EventEnd();
 }
 
+#if TBS_PATCH_1
+#define SANCTUM_NEW_FRIENDS_SPEAKER 2
+#else
+#define SANCTUM_NEW_FRIENDS_SPEAKER 1
+#endif
+
 static void FieldScene_RunScene378SequenceB(void) {
   Engine_EventBegin();
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Event_CallWithLastActiveObjectId((s32)gSanctum_PlacementSequenceB);
   Engine_TaskWait(1);
 #endif
@@ -247,11 +253,8 @@ static void FieldScene_RunScene378SequenceB(void) {
     Engine_EventShowMessage(9, 0);
   } else {
     gEventWork->message++;
-#if EDITION_INTERNATIONAL
-    Event_ShowTwoMessagesAndWait(2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
-#else
-    Event_ShowTwoMessagesAndWait(1, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
-#endif
+    Event_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1, 3,
+                                 7, 16, 1, 14, 0);
     Engine_EventShowMessage(9, 0);
   }
   Engine_EventEnd();
@@ -1423,7 +1426,7 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1) {
   }
 }
 
-#if EDITION_INTERNATIONAL
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define QUESTION_X 2
 #define QUESTION_WIDTH 25
 #define CURSOR_X 24
@@ -2032,7 +2035,7 @@ struct ScenePlacement gSanctum_PlacementB[] = {
     { SCENE_TABLE_END },
 };
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
 struct ScenePlacement gSanctum_PlacementSequenceB[] = {
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },

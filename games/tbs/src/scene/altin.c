@@ -10,6 +10,7 @@
 // A third, empty set of tables serves any other scene number.
 
 #include "game_state.h"
+#include "version.h"
 #include "scene_ids.h"
 #include "unit/scene/altin.h"
 #include "unit/object/object.h"
@@ -34,6 +35,12 @@
 #include "item_ids.h"
 #include "sound_ids.h"
 #include "objcmd.h"
+
+#if !TBS_PATCH_3
+#define ALTIN_COOK_LAST_POT_X 384
+#else
+#define ALTIN_COOK_LAST_POT_X 380
+#endif
 
 #define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin1)
 #define SCENE_ALTIN_HOUSES ((s32)&SceneId_Altin2)
@@ -810,12 +817,7 @@ s32 gAltinHouses_CookScript[] = {
     SC_ARG(ANIM_NOD),
     SC_WAIT(20),
     SC_ARG(ANIM_WALK),
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) ||                      \
-    defined(TBS_EDITION_DE)
-    SC_MOVE(PIXELS(384), 0, PIXELS(746)),
-#else
-    SC_MOVE(PIXELS(380), 0, PIXELS(746)),
-#endif
+    SC_MOVE(PIXELS(ALTIN_COOK_LAST_POT_X), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_ARG(ANIM_NOD),

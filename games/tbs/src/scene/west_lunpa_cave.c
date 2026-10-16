@@ -22,12 +22,16 @@ static u8 Garet_AsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
+// Entrances share the cave's camera bounds and arrival positions.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gCaveEntrances; }
 
+// This overlay has no additional region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
+// Both passages and the wagon departure return through this exit table.
 const u32 *Scene_GetExits(void) { return gCaveExits; }
 
+// Only the cave scene places puddles, Hammet, Bunza and the party members.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_WestLunpaCave) {
     return gCavePlacements;
@@ -35,9 +39,11 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCaveNoPlacements;
 }
 
+// Route switches, Frost targets and the reunion trigger to their handlers.
 const struct SceneEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
-static void EV08_PSYNERGY(void) {
+// Clear the hidden puddle's sprite flags after Frost, if it still exists.
+static void WestLunpaCave_ResetHiddenPuddleSpriteFlags(void) {
   struct FieldActor *puddle;
 
   puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
@@ -46,7 +52,8 @@ static void EV08_PSYNERGY(void) {
   }
 }
 
-static void EV09_PSYNERGY(void) {
+// Restore the south pillar's automatic priority and mark its frozen terrain.
+static void WestLunpaCave_ApplySouthPillarFreeze(void) {
   struct FieldActor *puddle;
 
   puddle = Actor_Get(ACTOR_SOUTH_PUDDLE);
@@ -58,6 +65,7 @@ static void EV09_PSYNERGY(void) {
   GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
 }
 
+// Animate the raised gate resting on the frozen pillar, then open collision.
 static void Gate_DrawPropped(void) {
   struct FieldActor *pillar;
 
@@ -81,7 +89,8 @@ static void Gate_DrawPropped(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-static void EV10_PSYNERGY(void) {
+// Frost props the gate open; play the raising sequence only if still lowered.
+static void WestLunpaCave_PropGateWithFrozenPillar(void) {
   struct FieldActor *pillar;
 
   pillar = Actor_Get(ACTOR_GATE_PUDDLE);
@@ -98,8 +107,12 @@ static void EV10_PSYNERGY(void) {
   }
 }
 
-static void EV11_PSYNERGY(void) { Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR); }
+// Remember the north puddle's frozen state for the next scene load.
+static void WestLunpaCave_RecordNorthPillarFreeze(void) {
+  Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
+}
 
+// Lower the gate in four-frame steps and restore the blocked cell attributes.
 static void Gate_Lower(void) {
   if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) != 0) {
     Map_CopyCells(41, 86, 2, 6, 21, 57);
@@ -123,7 +136,8 @@ static void Gate_Lower(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-static void EV03_SEARCH(void) {
+// The lowering switch has no effect while the frozen pillar props the gate.
+static void WestLunpaCave_LowerGateFromSwitch(void) {
   if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0) {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -135,6 +149,7 @@ static void EV03_SEARCH(void) {
   }
 }
 
+// Raise the unpropped gate and restore its passable cell attributes.
 static void Gate_Raise(void) {
   Map_CopyCells(41, 87, 2, 5, 21, 59);
   Engine_TaskWait(4);
@@ -149,7 +164,8 @@ static void Gate_Raise(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-static void EV04_SEARCH(void) {
+// Raise the gate once unless it is already raised or propped open.
+static void WestLunpaCave_RaiseGateFromSwitch(void) {
   if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -161,12 +177,15 @@ static void EV04_SEARCH(void) {
   }
 }
 
-static void EV10_TOUCH(void) {
+// Reveal Bunza, let Hammet recognize him and stage their reunion below the
+// gate.
+static void WestLunpaCave_RunHammetBunzaReunion(void) {
   struct FieldActor *leader;
   s32 sighting;
   s32 recognition;
 
   if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Engine_EventBegin();
     Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
@@ -213,6 +232,7 @@ static void EV10_TOUCH(void) {
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
     Engine_EventWait(30);
 
+    // The party spots someone ahead, before Hammet recognizes Bunza's voice.
     Engine_ActorRunRepeatedMotion(GARET, 1);
     sighting = MsgLunpaThinkSawSomeone;
     Engine_EventSetMessage(sighting + SIGHTING_GARET_SAW_SOMEONE);
@@ -278,10 +298,12 @@ static void EV10_TOUCH(void) {
   }
 }
 
+// Explain Bunza's arrival and offer his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 plan;
 
+  // Arrange the reunion while the screen is closed, then reveal the group.
   Engine_EventBegin();
   Actor_SetPosition(GARET, PIXELS(200), PIXELS(544));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
@@ -349,6 +371,7 @@ static void Reunion_Converse(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
 
+  // Bunza explains how he reached the cave despite being refused entry.
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 40);
   Actor_FaceActor(MIA, ACTOR_BUNZA, 0);
   Engine_EventSetMessage(reunion + REUNION_MIA_PRAISES_BUNZA);
@@ -462,6 +485,7 @@ static void Reunion_Converse(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Engine_EventWait(30);
 
+  // Bunza checks the passage, worries about pursuit and proposes his wagon.
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 0, 60);
   Actor_SetSpeed(ACTOR_BUNZA, 0x18000, 0xc000);
@@ -569,6 +593,7 @@ static void Reunion_Converse(void) {
   WagonChoice_Run();
 }
 
+// Reconcile the party's answers until they either ride or stay behind.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;
@@ -630,42 +655,50 @@ stay:
   Party_StaysBehind();
 }
 
+// The scene menu encodes Yes as zero; expose it as a Boolean to the dialogue.
 static u8 Leader_AnswersYes(void) {
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Ask whether the party really intends to refuse the ride.
 static u8 Garet_AsksIfNotRiding(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksIfNotRiding);
   Engine_EventOpenMessage(GARET, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Ask whether unfinished business explains the refusal to ride.
 static u8 Garet_AsksAboutUnfinishedBusiness(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksAboutUnfinishedBusiness);
   Engine_EventOpenMessage(GARET, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Reserved confirmation step; it always succeeds and displays no message.
 static u8 Party_ConfirmsStaying(void) { return TRUE; }
 
+// Let Bunza check whether the party has unfinished business before leaving.
 static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
   Engine_EventSetMessage(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
   Engine_EventOpenMessage(ACTOR_BUNZA, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Open Garet's confirmation prompt; WagonChoice_Run collects the answer.
 static u8 Garet_ChecksNothingLeftToDo(void) {
   Engine_EventSetMessage(MsgLunpaGaretChecksNothingLeft);
   Engine_EventOpenMessage(GARET, 0);
   return TRUE;
 }
 
+// Ask whether the party has changed its mind about taking the wagon.
 static u8 Mia_AsksIfRidingAfterAll(void) {
   Engine_EventSetMessage(MsgLunpaMiaAsksIfRidingAfter);
   Engine_EventOpenMessage(MIA, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Explain that Bunza cannot wait and ask again about the party's business.
 static u8 Bunza_CannotWait(void) {
   s32 warning;
 
@@ -685,12 +718,14 @@ static u8 Bunza_CannotWait(void) {
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Ask the leader to confirm that something still needs doing here.
 static u8 Garet_AsksAboutThingsToDo(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksAboutThingsTo);
   Engine_EventOpenMessage(GARET, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
+// Send Hammet and Bunza ahead, then return the companions to the leader.
 static void Party_StaysBehind(void) {
   struct FieldActor *leader;
   s32 farewell;
@@ -768,6 +803,8 @@ static void Party_StaysBehind(void) {
   Engine_EventSetMessage(farewell + FAREWELL_GARET_MOVES_ON);
   Event_ShowMessage(GARET, 0);
 
+  // Merge the companions back into the leader and restore player camera
+  // control.
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -796,6 +833,7 @@ static void Party_StaysBehind(void) {
   GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
 }
 
+// Lead everyone down the passage and request the wagon departure exit.
 static void Party_RidesWagon(void) {
   struct FieldActor *leader;
   s32 departure;
@@ -886,6 +924,7 @@ static void Party_RidesWagon(void) {
   Engine_EventRequestExit(CAVE_EXIT_BY_WAGON);
 }
 
+// Restore the gate and frozen puddles from the persistent puzzle flags.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_WestLunpaCave) {
@@ -958,19 +997,19 @@ const struct SceneEvent gCaveEvents[] = {
     { EVENT_EXIT, TRIGGER_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_WORLD_MAP },
     { EVENT_EXIT, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_LUNPA },
     { EVENT_TOUCH, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
-      EVENT_SCRIPT(EV10_TOUCH) },
+      EVENT_SCRIPT(WestLunpaCave_RunHammetBunzaReunion) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV03_SEARCH) },
+      EVENT_SCRIPT(WestLunpaCave_LowerGateFromSwitch) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV04_SEARCH) },
+      EVENT_SCRIPT(WestLunpaCave_RaiseGateFromSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV08_PSYNERGY) },
+      EVENT_SCRIPT(WestLunpaCave_ResetHiddenPuddleSpriteFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV09_PSYNERGY) },
+      EVENT_SCRIPT(WestLunpaCave_ApplySouthPillarFreeze) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GATE_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV10_PSYNERGY) },
+      EVENT_SCRIPT(WestLunpaCave_PropGateWithFrozenPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EV11_PSYNERGY) },
+      EVENT_SCRIPT(WestLunpaCave_RecordNorthPillarFreeze) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

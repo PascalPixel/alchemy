@@ -111,3 +111,10 @@ round	lane	source	old_name	new_name	evidence
 1	11	games/tbs/src/scene/vale_babi.c	EV09_TOUCH	ValeBabi_ExitSouthAreaWest	Exit9; entrance9 position408,665 in bounds328,600..624,816
 1	11	games/tbs/src/scene/vale_babi.c	EV10_TOUCH	ValeBabi_ExitSouthAreaSouth	Exit10; entrance10 position528,683 in same south-area bounds
 1	11	games/tbs/src/scene/vale_babi.c	EV11_TOUCH	ValeBabi_ExitSoutheastArea	Exit11; entrance11 bounds640,552..952,864
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV08_PSYNERGY	WestLunpaCave_ResetHiddenPuddleSpriteFlags	Existing freeze callback resets hidden puddle sprite flags; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV09_PSYNERGY	WestLunpaCave_ApplySouthPillarFreeze	South pillar freeze and collision-cell update; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV10_PSYNERGY	WestLunpaCave_PropGateWithFrozenPillar	Frozen pillar holds the gate; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV11_PSYNERGY	WestLunpaCave_RecordNorthPillarFreeze	Records north pillar's frozen state; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV03_SEARCH	WestLunpaCave_LowerGateFromSwitch	Switch-search callback lowers the gate; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV04_SEARCH	WestLunpaCave_RaiseGateFromSwitch	Switch-search callback raises the gate; ci checked W7 collisions
+1	12	games/tbs/src/scene/west_lunpa_cave.c	EV10_TOUCH	WestLunpaCave_RunHammetBunzaReunion	Stages Hammet and Bunza reunion/departure; ci checked W7 collisions

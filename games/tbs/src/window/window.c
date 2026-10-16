@@ -93,6 +93,26 @@
 #include "display_transition.h"
 #include "frame.h"
 
+// Edition-specific text and window layout values.
+#if (LANGUAGE == LANGUAGE_SPANISH)
+#define ITEM_POSSESSIVE_TEXT_COUNT 2
+#else
+#define ITEM_POSSESSIVE_TEXT_COUNT 4
+#endif
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define TEXT_ARGUMENT_SPACE ' '
+#else
+#define TEXT_ARGUMENT_SPACE 143
+#endif
+
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define UI_SPRITE_SPACE_WIDTH 7
+#else
+#define UI_SPRITE_SPACE_WIDTH 5
+#endif
+
 #ifdef MODERN
 // In the matching build these calls precede their declarations. Prototypes
 // reorder three argument moves for ClearTileAttributesInRect and two for
@@ -223,13 +243,13 @@ void RenderOutput_InitFreeList(void) {
 // upload and the window update.
 void UiWork_InitializeWithResourceCounters(void) {
   struct UiRenderWork *work;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   volatile u32 fill;
 #endif
 
   // Clear the work block before linking any of its embedded lists.
   work = Runtime_AllocateBlock(HEAP_SLOT_WINDOW, RENDER_WORK_SIZE);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   fill = 0;
   Dma_Set((const void *)&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4),
           REG_DMA3);
@@ -239,7 +259,7 @@ void UiWork_InitializeWithResourceCounters(void) {
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
   work->level = UI_TILEMAP_PALETTE;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   fill = UI_TILE_PAIR(UI_TILE_BLANK);
   Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4),
           REG_DMA3);
@@ -259,7 +279,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 // tutorial flag is set: it loads the glyph tiles the tutorial's messages use.
 void UiWork_Initialize(s32 loadGlyphTiles) {
   struct UiRenderWork *work;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   volatile u32 fill;
 #endif
   s32 tileIndex;
@@ -278,7 +298,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   // Battle windows share the field's pools but use the canvas tile set.
   work = (struct UiRenderWork *)Runtime_AllocateBlock(HEAP_SLOT_WINDOW,
                                                       RENDER_WORK_SIZE);
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   fill = 0;
   Dma_Set(&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4), REG_DMA3);
 #else
@@ -288,7 +308,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   work->glyphResource = NO_GLYPH_RESOURCE;
   work->menuState = 1;
   work->level = UI_TILEMAP_PALETTE;
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   fill = UI_TILE_PAIR(UI_TILE_BLANK);
   Dma_Set(&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4), REG_DMA3);
 #else
@@ -1012,7 +1032,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
           // corner.
           struct UiWindow *pane = ch->work;
 
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
           if (pane->width == 0 || pane->height == 0 ||
               work->pageArrowShown != 0)
             break;
@@ -1069,8 +1089,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         ch->x = ch->startX;
         ch->y = 0;
         ch->line = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
         ch->colour = 15;
         ch->outline = 0;
         ch->lineSpacing = 10;
@@ -1154,13 +1173,13 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
       pixelY = (ch->y + 128) / 256;
       voiceGap = gUiText_SpeedCueGaps[gGameState.messageSpeed];
       nextEntry = ch->entry;
-#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       if (work->mode != 0)
         pixelX += 8;
 #endif
       nextEntry = (nextEntry + 1) & RENDER_ENTRY_MASK;
       next = work->entries[nextEntry];
-#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       // A kana mark after the character is drawn with it.
       if (next == TEXT_VOICED_MARK) {
         code |= TEXT_CODE_VOICED;
@@ -1170,10 +1189,10 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
         ch->entry = (ch->entry + 1) & RENDER_ENTRY_MASK;
       }
 #endif
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       // Two narrow characters that fit in one 16-pixel cell together are drawn
       // as one pair, the second in the code's high byte.
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
       if (!(ch->work->flags & UI_WINDOW_TEXT_CANVAS) && code > TEXT_SPACE &&
           next > TEXT_SPACE) {
         s16 pair = gUiText_Glyphs[code - TEXT_SPACE].width +
@@ -1215,7 +1234,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
           }
         }
         advanceX = advance << 8;
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         if (code == TEXT_SPACE)
           advanceX += ch->spacing[ch->line];
 #else
@@ -1223,7 +1242,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch) {
 #endif
         ch->x += advanceX;
       }
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       else
         return CHANNEL_STEP_CLOSE;
 #endif
@@ -1459,7 +1478,7 @@ s32 UiWork_IsComplete(void) {
 // Returns 1 when a window is fully closed (its slot free), and 0 while it is
 // open or closing.
 s32 UiWork_IsIdle(struct UiWindow *window) {
-#if !EDITION_INTERNATIONAL
+#if !TBS_PATCH_1
   if (window == NULL)
     return 1;
 #endif
@@ -1759,7 +1778,7 @@ void UiWork_ProcessAll(void) {
 // (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 24
 // bytes apart, then packs it into 4bpp tiles.
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 // Draws a character, and a second one when the code carries it in bits 8 to
 // 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 // over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
@@ -1972,10 +1991,8 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 
 // The German, Spanish, French and Italian editions count every character up
 // to 0xff as 10 pixels, and those above as nothing.
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                      \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||            \
+     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN)
 #define WIDE_WIDTH_FIXED 1
 #endif
 
@@ -2044,13 +2061,13 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
     work->entries[work->count] = c;
     work->count = (work->count + 1) & RENDER_ENTRY_MASK;
   }
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   for (;;)
 #else
   while ((c = *text++) != 0)
 #endif
   {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     c = *text++;
     if (c > 0xff)
       c = 0x40;
@@ -2085,19 +2102,19 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       case 11:
       case 12:
       case 17:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       case 29:
 #endif
         text++;
         break;
       }
     } else {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       // Pair two narrow characters into one cell, as UiWork_StepChannelScript
       // does.
       if ((window->flags & UI_WINDOW_TEXT_CANVAS) == 0) {
         next = *text;
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
         if (c > 32 && next > 32) {
           s16 width =
               gUiText_Glyphs[c - 32].width + gUiText_Glyphs[next - 32].width;
@@ -2203,7 +2220,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
         case 11:
         case 12:
         case 17:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         case 29:
 #endif
           text++;
@@ -2211,8 +2228,8 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
         }
       } else {
         UiWindow_PutGlyph(window, c, x, y, 0);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
         if ((u16)(c - TEXT_VOICED_MARK) > 1) // the kana marks share a tile
@@ -2287,11 +2304,11 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   return buffer + 13 - width;
 }
 
-#if EDITION_INTERNATIONAL
-#if defined(TBS_EDITION_IT)
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if (LANGUAGE == LANGUAGE_ITALIAN)
 #define ARTICLE_KINDS 11
 #define ARTICLE_KIND_MASK 15
-#elif defined(TBS_EDITION_ES)
+#elif (LANGUAGE == LANGUAGE_SPANISH)
 #define ARTICLE_KINDS 5
 #define ARTICLE_KIND_MASK 15
 #else
@@ -2315,15 +2332,15 @@ struct ArticleTable {
 // capitalised; 0: anything else). With mode set (battle messages) the name is
 // set off with spaces and the style codes around it.
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 // the others the class's article (in Spanish, form bit 3 asks for the
 // indefinite article), capitalised at the start of a sentence.
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                              s32 plural, s32 *suffix) {
   struct ArticleTable table;
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
   struct ArticleTable indefiniteTable;
   u16 count;
   s16 indefinite;
@@ -2335,7 +2352,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
   s8 c8;
   s32 cnt;
 
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
   count = no & 7;
   indefinite = no & 8;
 #endif
@@ -2347,7 +2364,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
     entry[pos] = 0x0a;
     pos = (pos + 1) & 0x1ff;
   }
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
   if (count == 0 || count == 4) {
 #else
   if (no == 0 || no == 4) {
@@ -2358,14 +2375,14 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
   } else {
     kind = 0;
     table = gUiText_ArticleTable;
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
     indefiniteTable = gUiText_IndefiniteArticles;
 #endif
     if (name[0] == 29) {
       kind = name[1];
       name += 2;
     }
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
     if (indefinite == 0)
       p = table.text[kind & ARTICLE_KIND_MASK];
     else
@@ -2386,12 +2403,12 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
     c = *name++;
     entry[pos] = c;
     pos = (pos + 1) & 0x1ff;
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
     if (c == 's' || c == 'S' || c == 'z' || c == 'Z')
       *suffix = 1;
     else
       *suffix = 0;
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
     if (c == 's' || c == 'S')
       *suffix = 1;
     else
@@ -2410,7 +2427,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
 }
 #endif
 
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
 // The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 // name's first letter unless its class says otherwise), and form 2 (or 3 with
 // several) adds the plural "s" or "es".
@@ -2525,21 +2542,17 @@ enum {
 // The heap block the message decoder routine is copied into to run.
 #define TEXT_WORK_BLOCK 50
 
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) ||                      \
-    defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
+    (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#if defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if (LANGUAGE == LANGUAGE_FRENCH)
 extern s8 gUiText_ItemPronoun[];
 #else
 struct ItemPossessiveTable {
-#if defined(TBS_EDITION_ES)
-  s8 *text[2];
-#else
-  s8 *text[4];
-#endif
+  s8 *text[ITEM_POSSESSIVE_TEXT_COUNT];
 };
 extern const struct ItemPossessiveTable gUiText_ItemPossessives;
 extern const s8 gUiText_ItemGenders[];
@@ -2556,27 +2569,27 @@ extern u8 *gUiText_NumberWords[];
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 ch = 0;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
   s32 head = 1;
 #endif
   s32 quote = 0;
   u32 start = work->count;
   u32 cnt = 0;
   s32 plural = 0;
-#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_IT)
+#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
   s32 running = 1;
 #endif
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
   u32 pos = start;
   u32 prev;
   s32 suffix = 0;
 #else
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
   struct ItemPossessiveTable possessives;
   s32 form;
 #endif
   s32 suffix = 2;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
   s32 running = 1;
 #endif
   s8 *word;
@@ -2592,7 +2605,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   u32 i;
   s32 value;
   s32 tmp;
-#if defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ITALIAN)
   s32 ending;
 #endif
   s32 mag;
@@ -2603,7 +2616,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   u16 name[24];
   u8 numbuf[16];
   struct TextReader st;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
   struct ItemPossessiveTable possessives;
   s32 kind;
 #endif
@@ -2632,7 +2645,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     UiText_LookupMessage(&st, script);
 
     do {
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
       prev = ch;
 #endif
       ch = (u32)decode(&st);
@@ -2694,7 +2707,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       } else {
         // Halting speech pauses before each character.
         if (work->spacingBefore != 0
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
             && head == 0 && ch != 222 && ch != 223
 #endif
         ) {
@@ -2702,7 +2715,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           pos = (pos + 1) & RENDER_ENTRY_MASK;
         }
 
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
         if (work->spacingAfter != 0 && head == 0 && ch != 222 && ch != 223 &&
             prev <= 256 && prev > 127 && prev != 222 && prev != 223 &&
             prev != 32 && prev != 165 && prev != 161 && prev != 164) {
@@ -2732,11 +2745,11 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
           entry[pos] = (u16)ch;
           pos = (pos + 1) & RENDER_ENTRY_MASK;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
           head = 0;
 #else
           if (ch != ' '
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
               && ch != 161 && ch != 191
 #endif
           ) {
@@ -2744,7 +2757,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             if (ch == '.' || ch == '!' || ch == '?')
               suffix = 2;
             if (ch == 's' || ch == 'S'
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
                 || ch == 'z' || ch == 'Z'
 #endif
             )
@@ -2793,14 +2806,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_ARGUMENT_ITEM_NAME:
             no = decode(&st) - 1;
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
             form = no & 7;
 #endif
             tmp = UiText_LookupArgument(MSG_ARG_ITEM, clear);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             tmp &= RENDER_ENTRY_MASK;
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
             if (form == 2 || (form == 3 && plural != 0) || form == 4)
 #else
             if (no == 2 || (no == 3 && plural != 0) || no == 4)
@@ -2889,22 +2902,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
           case MSG_EM_DASH:
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-            entry[pos] = ' ';
-#else
-            entry[pos] = 143;
-#endif
+            entry[pos] = TEXT_ARGUMENT_SPACE;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             entry[pos] = '-';
             pos = (pos + 1) & RENDER_ENTRY_MASK;
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             entry[pos] = ' ';
             pos = (pos + 1) & RENDER_ENTRY_MASK;
 #endif
             break;
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
           case MSG_LOCALIZED_WORD:
             no = decode(&st) - 1;
             src = gUiText_NumberWords[(no & 7) * 2 + plural];
@@ -2914,7 +2922,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             break;
 #endif
-#if defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_ITALIAN)
           case MSG_LOCALIZED_WORD:
             ending = decode(&st) - 1;
             if (ending == 0) {
@@ -2928,12 +2936,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               entry[pos] = 'e';
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
           case MSG_LOCALIZED_WORD:
-#elif defined(TBS_EDITION_EN)
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
           case MSG_PLURAL_SUFFIX:
 #endif
-#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_IT)
+#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
             if (plural != 0) {
               if (suffix != 0) {
                 entry[pos] = 'e';
@@ -2944,9 +2952,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             break;
 #endif
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
           case MSG_PLURAL_SUFFIX:
-#if defined(TBS_EDITION_ES)
+#if (LANGUAGE == LANGUAGE_SPANISH)
             UiText_LookupArgument(MSG_ARG_ITEM, 0);
             possessives = gUiText_ItemPossessives;
             word = possessives.text[plural];
@@ -2971,9 +2979,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             }
             break;
 #endif
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
           case MSG_PLURAL_SUFFIX:
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
             tmp = UiText_LookupArgument(MSG_ARG_ITEM, 0);
             tmp &= RENDER_ENTRY_MASK;
             possessives = gUiText_ItemPossessives;
@@ -2995,13 +3003,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
 #endif
           case MSG_POSSESSIVE_SUFFIX:
-#if defined(TBS_EDITION_DE)
+#if (LANGUAGE == LANGUAGE_GERMAN)
             if (suffix == 1)
               entry[pos] = '\'';
             else
               entry[pos] = 's';
             pos = (pos + 1) & RENDER_ENTRY_MASK;
-#elif defined(TBS_EDITION_EN)
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
             entry[pos] = '\'';
             pos = (pos + 1) & RENDER_ENTRY_MASK;
             if (suffix == 0) {
@@ -3014,13 +3022,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_PAGE_BREAK:
           case MSG_LINE_BREAK:
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
             head = 1;
 #endif
           default:
             entry[pos] = (u16)ch;
             pos = (pos + 1) & RENDER_ENTRY_MASK;
-#if defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_ENGLISH)
             if (ch == 's' || ch == 'S')
               suffix = 1;
             else
@@ -3050,7 +3058,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 
 #endif
 
-#if defined(TBS_EDITION_JA)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 
 // The Japanese form: Japanese has no articles, so the name is copied as it is.
 extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos,
@@ -3340,8 +3348,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 
 #define FIT_FIXED_LIMIT 1
 #endif
@@ -3452,12 +3459,12 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
   u16 widths[4];
   s32 gap;
   u32 style;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   s32 trailing;
 #endif
 
   work = UI_WORK;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   trailing = 0;
 #endif
   width = 0;
@@ -3471,7 +3478,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
     // A character adds its width. Spaces (in Japanese every character) are
     // counted as the points the line can be stretched at.
     if (c > 31) {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       if (c == 32) {
         lineWidth += 5;
         count++;
@@ -3511,13 +3518,13 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
     }
     switch (c) {
     case TEXT_END:
-#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) &&                    \
-    !defined(TBS_EDITION_IT)
+#if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_FRENCH) &&       \
+    !(LANGUAGE == LANGUAGE_ITALIAN)
     case TEXT_PAGE:
 #endif
       goto done;
     case TEXT_NEWLINE:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       count++;
 #else
       lineWidth += trailing;
@@ -3532,8 +3539,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
       lineWidth = 0;
       height += 15;
       break;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
     case TEXT_PAGE:
       work->outline = 0;
       goto done;
@@ -3554,7 +3560,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight,
     }
   }
 done:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   count++;
 #else
   lineWidth += trailing;
@@ -3563,7 +3569,7 @@ done:
   widths[lines] = lineWidth;
   if (width < lineWidth)
     width = lineWidth;
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   if (work->mode)
     width = width + 2;
 #endif
@@ -3584,7 +3590,7 @@ done:
         if (gap < 0)
           gap = 0;
         gap = ((gap << 8) / (counts[i] - 1));
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         if (gap < 0 || gap > 0xc00)
           gap = 0x200;
 #else
@@ -3620,7 +3626,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
   u32 i;
   u32 j;
   s32 gap;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
   s32 trailing;
 
   trailing = 0;
@@ -3651,7 +3657,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
     code = work->entries[start];
     start = (start + 1) & RENDER_ENTRY_MASK;
     if (code >= 32) {
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
         width += 5;
         count++;
@@ -3690,7 +3696,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
     }
     switch (code) {
     case TEXT_NEWLINE:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       counts[line] = ++count;
 #else
       width += trailing;
@@ -3706,7 +3712,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
       pageHeights[page] += 15;
       break;
     case 0:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       counts[line] = ++count;
 #else
       width += trailing;
@@ -3718,7 +3724,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
       page++;
       goto done;
     case TEXT_PAGE:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       counts[line] = ++count;
 #else
       width += trailing;
@@ -3727,8 +3733,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
       widths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if TBS_PATCH_3
       work->outline = 0;
 #endif
       page++;
@@ -3749,7 +3754,7 @@ void UiText_MeasureAllPages(s32 start, u32 *outWidth, u32 *outHeight,
     }
   }
 done:
-#if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
+#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_FRENCH)
   if (work->mode != 0)
     maxWidth += 2;
 #endif
@@ -3771,7 +3776,7 @@ done:
         if (gap < 0)
           gap = 0;
         gap = (gap << 8) / (counts[j] - 1);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
         if (gap < 0 || gap > 0x800)
           gap = 0;
         if (gap < 0 || gap > 0x100)
@@ -3805,7 +3810,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     u8 *font;
     GlyphRoutine draw;
     s32 result;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
     s32 mark;
 
     font = NULL;
@@ -3836,7 +3841,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     if (character != ' ') {
       RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
       result = draw(window, character, x, y, font);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       if ((u16)mark != 0)
         result += draw(window, (u16)mark, x + result, y, font);
 #endif
@@ -3844,11 +3849,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       return result;
     }
   } else if (character == ' ') {
-#if !EDITION_INTERNATIONAL
-    width = 7;
-#else
-    width = 5;
-#endif
+    width = UI_SPRITE_SPACE_WIDTH;
   } else {
     // Other windows show each glyph as a 16x16 sprite, animated by the text
     // style (UiRenderWork.outline 2 to 5) or, in mode 1, as the page arrow.
@@ -3884,7 +3885,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
         output->animStep = 0;
         break;
       }
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       width = UiText_RenderGlyphPair(character, tiles);
 #else
       {
@@ -3903,7 +3904,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = Resource_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) + 1;
 #else
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) - 1;
@@ -3912,7 +3913,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it.
       Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
       ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8;
 #else
       ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
@@ -3962,7 +3963,7 @@ LAYOUT_OFFSET_GUARD(SpriteOutput_Index, struct SpriteOutput, index,
 LAYOUT_OFFSET_GUARD(SpriteOutput_Attr, struct SpriteOutput, attr,
                     LAYOUT_OFFSET(struct RenderOutput, unk10));
 
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 
 // Puts a character into a window's tilemap as a tile at tile (x, y) of its
 // interior. mode 1 shows the next-page arrow sprite in the window's corner
@@ -4368,8 +4369,8 @@ s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
   return count;
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define DECODE_EUROPEAN
 #endif
 
@@ -6523,8 +6524,7 @@ void Resource_ResetPendingTransfer(void) {
   }
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#if TBS_PATCH_2
 
 #define HAS_LOCALIZED_MENU_GUARD 1
 #endif
@@ -7272,7 +7272,7 @@ struct UiWindow *OptionMenu_Open(void) {
   UiText_DrawCharacterAtOffset(msg, win, 8, 0);
   msg++;
   UiText_DrawCharacterAtOffset(msg, win, 8, 16);
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   msg = MsgMessageSpeedLabel;
   UiText_DrawCharacterAtOffset(msg, win, 8, 32);
   msg++;
@@ -7653,7 +7653,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   SystemMenu_Initialize();
   work = gSelectionWork;
   window = SystemMenu_Open();
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   y = -0x18;
   if (gDebugMode != 0) {
     y = -0x10;
@@ -7853,7 +7853,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           pens[1] = gUiText_ColourPens[work->colour];
           break;
         case 3:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
           x += gUiText_GlyphWidths[0];
 #else
           x += 8;
@@ -7866,7 +7866,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         case 11:
         case 12:
         case 17:
-#if EDITION_INTERNATIONAL
+#if (LANGUAGE != LANGUAGE_JAPANESE)
         case 29:
 #endif
           script++;
@@ -7874,7 +7874,7 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         }
       } else {
         c &= 0xFF;
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
         if (c == 222 || c == 223) {
           x -= 3;
           c += 32;
@@ -7901,15 +7901,15 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         }
         if (code == 0xF01D || code == 0xF01F)
           x += 8;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
         else if (code == 0xF01E || code == 0xF005)
 #else
         else if (code == 0xF01E)
 #endif
           x += 3;
         else {
-#if !EDITION_INTERNATIONAL
+#if (LANGUAGE == LANGUAGE_JAPANESE)
           if (c > 128) {
             if (c == 254 || c == 255)
               w = 3;
@@ -8418,8 +8418,8 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 
   canvas = UI_WORK;
   text = UiText_FormatNumber(formatted, value, 4);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
-    defined(TBS_EDITION_IT)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
   if (variant == 0) {
     output[0] = 0xf01d;
     output[1] = 0xf01e;

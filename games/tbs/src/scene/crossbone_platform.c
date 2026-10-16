@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "version.h"
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -37,6 +38,14 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
+
+#if TBS_PATCH_1
+#define CROSSBONE_PURSUER_STEP_Z 16
+#define CROSSBONE_LEADER_STEP_Z 24
+#else
+#define CROSSBONE_PURSUER_STEP_Z 24
+#define CROSSBONE_LEADER_STEP_Z 16
+#endif
 
 // Forward declarations.
 static void SceneActor_BranchOnSlotZeroAtTile38(void);
@@ -479,11 +488,7 @@ static void EV91_RAISED(void) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
   Engine_EventWait(4);
   Event_PlayCue(188);
-#if EDITION_INTERNATIONAL
-  Actor_SetDestinationOffset(8, 0, 16);
-#else
-  Actor_SetDestinationOffset(8, 0, 24);
-#endif
+  Actor_SetDestinationOffset(8, 0, CROSSBONE_PURSUER_STEP_Z);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetDestination(8, 0x168, 152);
   Engine_ActorWaitForMove(8);
@@ -516,11 +521,7 @@ static void EV92_RAISED(void) {
     Actor_SetDestination(9, record->x.part.pixel, record->z.part.pixel);
   }
   Engine_ActorWaitForMove(9);
-#if EDITION_INTERNATIONAL
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-#else
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
-#endif
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   Event_PlayCue(188);
   Engine_EventWait(4);
   Actor_SetDestinationOffset(9, 0, 16);
@@ -576,11 +577,7 @@ static void EV61_TOUCH(void) {
       Actor_SetDestination(10, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(10);
-#if EDITION_INTERNATIONAL
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-#else
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
-#endif
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
     Engine_EventWait(4);
     Event_PlayCue(188);
     Actor_SetDestinationOffset(10, 0, 16);
@@ -616,11 +613,7 @@ static void EV62_TOUCH(void) {
                                  record->z.part.pixel);
     }
     Engine_ActorWaitForMove(11);
-#if EDITION_INTERNATIONAL
-    Engine_ActorSetDestinationOffset(0, 0, 24);
-#else
-    Engine_ActorSetDestinationOffset(0, 0, 16);
-#endif
+    Engine_ActorSetDestinationOffset(0, 0, CROSSBONE_LEADER_STEP_Z);
     Engine_EventWait(4);
     Engine_AudioPlayCue(188);
     Engine_ActorSetDestinationOffset(11, 0, 16);
@@ -658,11 +651,7 @@ static void EV96_RAISED(void) {
     Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
   }
   Engine_ActorWaitForMove(12);
-#if EDITION_INTERNATIONAL
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-#else
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
-#endif
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   Event_PlayCue(188);
   Actor_SetDestinationOffset(12, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -1113,7 +1102,7 @@ static void CrossbonePlatform_InitializeScene3(void) {
   EV10_PSYNERGY_3();
   EV11_PSYNERGY_3();
   EV12_PSYNERGY_3();
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
   Engine_ActorSetSpritePriority(8, 3);
 #endif
   Object_GetById(11)->motionFlags = 0;
@@ -1359,7 +1348,7 @@ struct SceneEvent gCrossbonePlatformEvents3[] = {
      EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38)},
     {0x202, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_SCRIPT)},
     {0x202, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_SCRIPT)},
-#if EDITION_INTERNATIONAL
+#if TBS_PATCH_1
     {0x202, 61, CONDITION_ALWAYS,
      EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38)},
 #endif

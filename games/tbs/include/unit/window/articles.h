@@ -4,7 +4,7 @@
 #include "types.h"
 
 extern const s8 gUiText_ArticleEmpty[];
-#if defined(TBS_EDITION_DE)
+#if LANGUAGE == LANGUAGE_GERMAN
 extern const u8 gUiText_NumberWord0[];
 extern const u8 gUiText_NumberWord1[];
 extern const u8 gUiText_NumberWord2[];

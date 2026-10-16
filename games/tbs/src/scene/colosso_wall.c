@@ -48,6 +48,32 @@
 #include "global_cells.h"
 #include "heap_state.h"
 
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
+#define COLOSSO_WALL_ALTERNATE_PORTRAIT_PALETTE_OFFSET 64
+#else
+#define COLOSSO_WALL_ALTERNATE_PORTRAIT_PALETTE_OFFSET 160
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define COLOSSO_WALL_INTRO_SCALE 256
+#else
+#define COLOSSO_WALL_INTRO_SCALE 384
+#endif
+
+#if LANGUAGE == LANGUAGE_FRENCH
+#define COLOSSO_WALL_PULSE_FIRST_SCALE 512
+#define COLOSSO_WALL_PULSE_HIGH_SCALE 512
+#define COLOSSO_WALL_PULSE_LOW_SCALE 384
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#define COLOSSO_WALL_PULSE_FIRST_SCALE 384
+#define COLOSSO_WALL_PULSE_HIGH_SCALE 384
+#define COLOSSO_WALL_PULSE_LOW_SCALE 256
+#else
+#define COLOSSO_WALL_PULSE_FIRST_SCALE 512
+#define COLOSSO_WALL_PULSE_HIGH_SCALE 384
+#define COLOSSO_WALL_PULSE_LOW_SCALE 256
+#endif
+
 // Forward declarations.
 static void Colosso_RunGreetScene(s32 a0);
 static void ColossoWall_RunScriptedTransition(s32 mode);
@@ -1616,11 +1642,8 @@ const u8 gColossoWall_RollLogScript[] = {2, 2, 3, 3};
 
 // clang-format off
 const u8 gColosso_PortraitPaletteOffsets[] = {
-#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
-    0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
-#else
-    0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
-#endif
+    0, 32, 32, 32, 96, 64, 64,
+    COLOSSO_WALL_ALTERNATE_PORTRAIT_PALETTE_OFFSET, 128, 0,
 };
 
 const s16 gColossoWall_ModeRecordTwo[] = {
@@ -1851,44 +1874,21 @@ struct SceneEvent gColossoWallEvents[] = {
 s16 gColosso_PortraitSlot = -1;
 
 s16 gColossoWall_ModeRecordDefault[] = {
-#if !EDITION_INTERNATIONAL
-    0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
-#else
-    0x4000, -188, 2048, 0x1000, 384, 1, 0x2000, 16,
-#endif
+    0x4000, -188, 2048, 0x1000, COLOSSO_WALL_INTRO_SCALE, 1, 0x2000, 16,
     1, 0x7fff, 14, 0x3000, 0, 20, 0x7fff, 60,
     0x3000, 2048, 20, 0x7fff, 60, -1,
 };
 
 s16 gColossoWall_ModeRecordFour[] = {
-#if defined(TBS_EDITION_FR)
-    0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
-    6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
-    6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6,
-    0x1000, 512, 6, 0x7fff, 6, 0x1000, 384, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 512, 6,
-    0x7fff, 6, 0x1000, 384, 6, 0x7fff, 6, 0x1000,
-    512, 6, 0x7fff, 6, 0x1000, 384, 6, 0x7fff,
-    6, 0x1000, 512, 6, 0x7fff, 6, -1,
-#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    0x1000, 384, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 384,
-    6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6,
-    0x1000, 384, 6, 0x7fff, 6, 0x1000, 256, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 384, 6,
-    0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6, 0x1000,
-    384, 6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff,
-    6, 0x1000, 384, 6, 0x7fff, 6, -1,
-#else
-    0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 384,
-    6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6,
-    0x1000, 384, 6, 0x7fff, 6, 0x1000, 256, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 384, 6,
-    0x7fff, 6, 0x1000, 256, 6, 0x7fff, 6, 0x1000,
-    384, 6, 0x7fff, 6, 0x1000, 256, 6, 0x7fff,
-    6, 0x1000, 384, 6, 0x7fff, 6, -1,
-#endif
+    0x1000, COLOSSO_WALL_PULSE_FIRST_SCALE, 1, 0x2000, 0, 1, 0x1000, COLOSSO_WALL_PULSE_LOW_SCALE,
+    6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, COLOSSO_WALL_PULSE_HIGH_SCALE,
+    6, 0x7fff, 6, 0x1000, COLOSSO_WALL_PULSE_LOW_SCALE, 6, 0x7fff, 6,
+    0x1000, COLOSSO_WALL_PULSE_HIGH_SCALE, 6, 0x7fff, 6, 0x1000, COLOSSO_WALL_PULSE_LOW_SCALE, 6,
+    0x7fff, 6, 0x2000, 0, 30, 0x1000, COLOSSO_WALL_PULSE_HIGH_SCALE, 6,
+    0x7fff, 6, 0x1000, COLOSSO_WALL_PULSE_LOW_SCALE, 6, 0x7fff, 6, 0x1000,
+    COLOSSO_WALL_PULSE_HIGH_SCALE, 6, 0x7fff, 6, 0x1000, COLOSSO_WALL_PULSE_LOW_SCALE, 6, 0x7fff,
+    6, 0x1000, COLOSSO_WALL_PULSE_HIGH_SCALE, 6, 0x7fff, 6, -1,
+
 };
 
 s16 gColossoWall_ModeRecordThree[] = {

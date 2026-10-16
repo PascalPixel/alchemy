@@ -116,6 +116,27 @@ manager (for example Homebrew's `arm-none-eabi-gcc`, or Debian's
 `gcc-arm-none-eabi`), or name another one with
 `make modern MODERN_CC=/path/to/arm-none-eabi-gcc`.
 
+## Editors and formatting
+
+Use a current [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+for C formatting. It reads the repository's `.clang-format` in any editor
+that supports it, or from the command line:
+
+```sh
+clang-format -i games/tbs/src/menu/menu.c
+```
+
+[clangd](https://clangd.llvm.org/installation.html) supplies C diagnostics,
+completion and source fixes. The checked-in `compile_flags.txt` and `.clangd`
+give it the ARM target, integer types and include paths for each game's
+English modern-build view. No editor-specific project settings are needed.
+Build the English edition first to generate its message headers. Reload the
+editor's language server after changing the configuration.
+
+Formatting fixes layout; clangd's source fixes address individual diagnostics.
+The project disables unused-include hints because headers also supply
+declarations indirectly and their order affects matching.
+
 ## See the build
 
 Every rule the ROM is built by is in the [Makefile](Makefile), and make prints

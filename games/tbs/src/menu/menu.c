@@ -8383,7 +8383,14 @@ void Graphics_AdjustPaletteBank(s32 d) {
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
 
+// UB: the implicit int call conflicts with DrawElementList's void definition.
+// The sole caller ignores this wrapper's result. Plain void changes the native
+// tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
+#ifdef UBFIX
+void Menu_OpenBackdropScreen(void) {
+#else
 s32 Menu_OpenBackdropScreen(void) {
+#endif
   struct DjinnMenuWork *work = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = work->backdrop;
 
@@ -8404,7 +8411,11 @@ s32 Menu_OpenBackdropScreen(void) {
   Graphics_AdjustPaletteBank(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
+#ifdef UBFIX
+  DjinnMenu_DrawElementList(&backdrop->list);
+#else
   return DjinnMenu_DrawElementList(&backdrop->list);
+#endif
 }
 
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,

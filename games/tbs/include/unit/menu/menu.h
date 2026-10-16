@@ -236,12 +236,17 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 s32 ItemMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
 void Graphics_AdjustPaletteBank(s32 d);
+#ifdef UBFIX
+void Menu_OpenBackdropScreen(void);
+#else
 s32 Menu_OpenBackdropScreen(void);
+#endif
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *first_count, s32 *second_count);
 s32 Menu_ComputeEntryValues(void *table);
-// DjinnMenu_DrawElementList is called before its definition with no prototype
-// in scope.
+#ifdef UBFIX
+void DjinnMenu_DrawElementList(struct DjinnListTable *table);
+#endif
 s32 Menu_DrawAtWindowOffset(const struct UiWindow *win, s32 arg1, s32 arg2,
                             s32 arg3, s32 arg4, s32 arg5);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);

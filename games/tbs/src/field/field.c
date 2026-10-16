@@ -486,23 +486,27 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   shadow->y = y;
 }
 
-// Places a sprite for the scrolling camera and queues it for drawing. pos is
-// (screen x, height, screen y, ground height) in 16.16 pixels, scale its
-// (x, y) scale and facing its facing angle. Builds an affine matrix when the
+// Places a sprite for the scrolling camera and queues it for drawing. Position
+// holds screen x, height, screen y and ground height in 16.16 pixels; scale
+// holds its x/y factors and facing its angle. Builds an affine matrix when the
 // sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
 // has one) and then the image in a draw slot by depth; an object 100 pixels
 // or more below the ground takes slot 1 instead, its shadow slot 0.
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
-                                    s32 *scale, s32 facing) {
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+                                    const struct SpritePlacement *position,
+                                    const struct SpriteScale *scale,
+                                    s32 facing) {
+  const s32 *pos = SpritePlacement_ReadValues(position);
+  const s32 *scaleValues = scale->values;
   s32 matrix;
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
   s32 shadowHalfWidth = 8;
   s32 shadowHalfHeight = 4;
   s32 affine;
-  s32 scaleX = *scale++;
+  s32 scaleX = *scaleValues++;
   s32 screenX = *pos++;
-  s32 scaleY = *scale;
+  s32 scaleY = *scaleValues;
   s32 height = *pos++;
   s32 screenY = *pos++;
   s32 groundHeight = *pos;
@@ -1920,8 +1924,8 @@ void ObjectSystem_UpdateCamera(void) {
   s32 screenTop;
   struct CameraTile *tile;
   u32 priority;
-  s32 scale[2];
-  s32 drawPosition[4];
+  struct SpriteScale scale;
+  struct SpritePlacement drawPosition;
   u32 layerPlusOne;
 
   // MapScrollWork owns all three layer cell pointers at their 0x30-byte stride.
@@ -1985,23 +1989,23 @@ void ObjectSystem_UpdateCamera(void) {
         layerPlusOne = tile->layer;
         if (layerPlusOne != 0)
           object->layer = layerPlusOne - 1;
-        scale[0] = Iwram_MulQ16(object->scaleX, sprite->scale);
-        scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
-        drawPosition[0] = dx;
-        drawPosition[1] = object->y;
-        drawPosition[2] = dz;
-        drawPosition[3] = object->height;
+        scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
+        scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
+        drawPosition.x = dx;
+        drawPosition.height = object->y;
+        drawPosition.y = dz;
+        drawPosition.groundHeight = object->height;
         if (object->flags & 2) {
-          drawPosition[1] += 0xfec00000; // -320 pixels
-          drawPosition[2] += 0xfec00000;
-          drawPosition[3] += 0xfec00000;
+          drawPosition.height += 0xfec00000; // -320 pixels
+          drawPosition.y += 0xfec00000;
+          drawPosition.groundHeight += 0xfec00000;
         }
         if (object->flags & 4) {
-          drawPosition[1] += 0x1400000; // +320 pixels
-          drawPosition[2] += 0x1400000;
-          drawPosition[3] += 0x1400000;
+          drawPosition.height += 0x1400000; // +320 pixels
+          drawPosition.y += 0x1400000;
+          drawPosition.groundHeight += 0x1400000;
         }
-        Render_ApplyProjectedPlacement(sprite, drawPosition, scale,
+        Render_ApplyProjectedPlacement(sprite, &drawPosition, &scale,
                                        object->angle);
         continue;
       }
@@ -7127,7 +7131,7 @@ void Ui_RunIconMonitor(void) {
   s32 y;
   u32 editMode;
   s32 shadowsEnabled;
-  struct AnimationPosition *ring;
+  struct SpritePlacement *ring;
   s32 selectedLayer;
   u32 spriteSteps;
   s32 spriteOrFlagsAddress;
@@ -7442,8 +7446,8 @@ s32 Ui_FindNextNumberWithMetadata(s32 spriteId, s32 direction) {
 // facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
 // pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
 void Map_BuildProbeRing(s32 centerX, s32 centerY,
-                        struct AnimationPosition *positions) {
-  struct AnimationPosition *pairedPositions;
+                        struct SpritePlacement *positions) {
+  struct SpritePlacement *pairedPositions;
   s32 angle;
   s32 facingIndex;
   u16 initialHeading;
@@ -7460,9 +7464,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
       angle = (u32)angle >> 16;
-      positions->y = 0;
-      positions->z = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      positions->height = 0;
+      positions->y = centerY << 16;
+      Vector_AddPolarOffset(0x380000, (u16)angle,
+                            SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x2aaa);
     }
@@ -7477,9 +7482,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
       angle = (u32)angle >> 16;
-      positions->y = 0;
-      positions->z = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      positions->height = 0;
+      positions->y = centerY << 16;
+      Vector_AddPolarOffset(0x380000, (u16)angle,
+                            SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x2000);
     }
@@ -7492,9 +7498,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
       angle = (u32)angle >> 16;
-      positions->y = 0;
-      positions->z = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      positions->height = 0;
+      positions->y = centerY << 16;
+      Vector_AddPolarOffset(0x380000, (u16)angle,
+                            SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x1999);
     }
@@ -7506,16 +7513,17 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     pairedPositions = positions;
     while (facingIndex < 2) {
       pairedPositions[facingIndex * 2].x = centerX << 16;
-      pairedPositions[facingIndex * 2].y = 0;
-      pairedPositions[facingIndex * 2].z = centerY << 16;
+      pairedPositions[facingIndex * 2].height = 0;
+      pairedPositions[facingIndex * 2].y = centerY << 16;
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      Vector_AddPolarOffset(0x280000, angle, &positions[0].x);
+      Vector_AddPolarOffset(0x280000, angle,
+                            SpritePlacement_Values(&positions[0]));
       pairedPositions[facingIndex * 2 + 1].x = centerX << 16;
       {
-        s32 *point = &positions[1].x;
-        pairedPositions[facingIndex * 2 + 1].y = 0;
-        pairedPositions[facingIndex * 2 + 1].z = centerY << 16;
+        s32 *point = SpritePlacement_Values(&positions[1]);
+        pairedPositions[facingIndex * 2 + 1].height = 0;
+        pairedPositions[facingIndex * 2 + 1].y = centerY << 16;
         Vector_AddPolarOffset(0x280000, (u16)angle, point);
       }
       angle = ((u32)angle + 0x8000) << 16;
@@ -7530,9 +7538,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
       positions->x = centerX << 16;
-      positions->y = 0;
-      positions->z = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      positions->height = 0;
+      positions->y = centerY << 16;
+      Vector_AddPolarOffset(0x380000, (u16)angle,
+                            SpritePlacement_Values(positions));
       positions++;
       angle = (s16)(angle + 0x4000);
     }
@@ -7541,11 +7550,6 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   }
 }
-
-struct Vec2 {
-  s32 x;
-  s32 y;
-};
 
 // Defines name(slot, value), which sets field of entry slot (0-3) in each of
 // the first ten sprites to value.
@@ -7619,15 +7623,15 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *sprite = WORK_SLOT(4);
   u32 facingKind = sprite->entries[0]->kind;
-  struct Vec2 scale;
-  struct AnimationPosition *facingPositions;
+  struct SpriteScale scale;
+  struct SpritePlacement *facingPositions;
   u16 angle;
   u16 step;
   u16 pairedFacingStep = 0;
   u32 count;
   u32 spriteIndex;
 
-  scale = (*(struct Vec2 *)&gBattle_FormationPlacementScale);
+  scale = gBattle_FormationPlacementScale;
   facingPositions = WORK_SLOT(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
@@ -7664,8 +7668,8 @@ void Battle_PlaceActorsByFormationKind(void) {
   }
 
   for (spriteIndex = 0; spriteIndex < count; spriteIndex++) {
-    Render_ApplyProjectedPlacement(sprite, &facingPositions[spriteIndex].x,
-                                   (s32 *)&scale, angle);
+    Render_ApplyProjectedPlacement(sprite, &facingPositions[spriteIndex],
+                                   &scale, angle);
     sprite++;
     angle += step;
     if (spriteIndex & 1)

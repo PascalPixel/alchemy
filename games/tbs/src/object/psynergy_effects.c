@@ -9254,22 +9254,22 @@ void EffectSlot_Update(struct EffectSlot *effect) {
 void BattleFx_DrawScaledObject(struct EffectSlot *object) {
   struct AnimationObject *sprite;
   s32 offset;
-  s32 scale[2];
-  s32 position[4];
+  struct SpriteScale scale;
+  struct SpritePlacement position;
 
   sprite = object->object;
   offset = 0;
   if (object->flags & 4)
     offset = 0x1fc0000 - object->z;
-  scale[0] = Iwram_MulQ16(object->scaleX, sprite->scale);
-  scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
-  position[0] = object->x;
-  position[1] = offset;
-  position[2] = object->z + offset;
-  position[3] = 0;
+  scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
+  scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
+  position.x = object->x;
+  position.height = offset;
+  position.y = object->z + offset;
+  position.groundHeight = 0;
   if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
       object->z < 0xe00000)
-    Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
+    Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
 // Moves an effect slot toward its target, turning at most maxTurnStep a

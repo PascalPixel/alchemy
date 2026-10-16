@@ -2,6 +2,7 @@
 #define ALCHEMY_UNIT_EFFECT_EFFECT_H
 
 #include "types.h"
+#include "render_placement.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
 
@@ -66,13 +67,6 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 #else
 #define HI(v) (((s16 *)&(v))[1])
 #endif
-
-struct Placement {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk0c;
-};
 
 // Two-dimensional {x, y} pair for position or velocity.
 struct Point2D {
@@ -338,7 +332,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift,
                           s32 flags, u32 mode);
 
 extern const s32 gRockWall_Heights[4];
-extern const s32 gFormation_NormalScale[2];
-extern const s32 gFormation_SmallScale[2];
+extern const struct SpriteScale gFormation_NormalScale;
+extern const struct SpriteScale gFormation_SmallScale;
 
 #endif

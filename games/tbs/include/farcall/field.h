@@ -2,8 +2,10 @@
 // Far-call interfaces; their ordered jump stubs live in
 // games/tbs/src/system/far_call/FIELD.S.
 void ObjectSystem_ConfigureFar(s32 mode);
-void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *pos,
-                                       s32 *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite,
+                                       const struct SpritePlacement *position,
+                                       const struct SpriteScale *scale,
+                                       s32 facing);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state,
                                         s32 flags);
 struct ResourceObject *ResourceObject_CreateFar(s32 id);

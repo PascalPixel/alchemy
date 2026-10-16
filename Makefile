@@ -187,7 +187,7 @@ SRCS := $(foreach object,$(OBJS:$(BUILD)/obj/%.o=%),$(call source,$(object)))
 STREAM := $(BUILD)/obj/games/$(GAME)/src/system/overlay/overlays.o
 LINKED := $(filter-out $(STREAM),$(MAIN_OBJS))
 
-$(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC)
+$(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC) $(SRCS)
 	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G text/ -G overlays/ -G baserom.gba -- $(SRCS)
 # Read once the object list is: the scan needs its sources.
 ifneq ($(wildcard $(BUILD)/objects.mk),)

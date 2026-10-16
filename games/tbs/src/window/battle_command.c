@@ -1,3 +1,4 @@
+#include "render_placement.h"
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "unit/object/object.h"
@@ -1552,23 +1553,22 @@ void SaveMenu_HidePartySprites(void) {
 // place and scale for this frame.
 void SaveMenu_PlacePartySprites(void) {
   struct ShopRuntime *menu = gMenuWork;
-  s32 scale[2];
-  s32 position[4];
+  struct SpriteScale scale;
+  struct SpritePlacement position;
   s32 index = 0;
-  s32 sprite;
+  struct AnimationObject *sprite;
 
   while (1) {
-    sprite = (s32)menu->partyMemberIcons[index];
+    sprite = menu->partyMemberIcons[index];
     if (sprite != 0) {
-      // The position is 16.16 fixed point, at depth 500.
-      scale[0] = menu->partyMemberScale[index];
-      scale[1] = menu->partyMemberScale[index];
-      position[0] = menu->partyMemberX[index] << 16;
-      position[1] = 500 << 16;
-      position[2] = (menu->partyMemberY[index] << 16) + (500 << 16);
-      position[3] = 0;
-      Object_ApplyProjectedPlacementFar((struct AnimationObject *)sprite,
-                                        position, scale, 0x4000);
+      // Offset height and y equally to keep the visible row fixed.
+      scale.x = menu->partyMemberScale[index];
+      scale.y = menu->partyMemberScale[index];
+      position.x = menu->partyMemberX[index] << 16;
+      position.height = 500 << 16;
+      position.y = (menu->partyMemberY[index] << 16) + (500 << 16);
+      position.groundHeight = 0;
+      Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0x4000);
     }
     index += 1;
     if (index > 3) {
@@ -1625,25 +1625,25 @@ void SaveMenu_HideDjinnSprites(void) {
 // place, at scale 1.0, for this frame.
 void SaveMenu_PlaceDjinnSprites(void) {
   struct FourObjectMotionState *menu = gMenuWork;
-  s32 scale[2];
-  s32 position[4];
+  struct SpriteScale scale;
+  struct SpritePlacement position;
   s32 index;
 
   index = 0;
   do {
-    void *sprite = menu->objects[index];
+    struct AnimationObject *sprite = menu->objects[index];
 
     if (sprite != NULL) {
       s32 one = 0x10000;
-      s32 depth = 500 << 16;
+      s32 height = 500 << 16;
 
-      scale[0] = one;
-      scale[1] = one;
-      position[0] = menu->positionsX[index] << 16;
-      position[1] = depth;
-      position[2] = (menu->positionsY[index] << 16) + depth;
-      position[3] = 0;
-      Object_ApplyProjectedPlacementFar(sprite, position, scale, 0x4000);
+      scale.x = one;
+      scale.y = one;
+      position.x = menu->positionsX[index] << 16;
+      position.height = height;
+      position.y = (menu->positionsY[index] << 16) + height;
+      position.groundHeight = 0;
+      Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0x4000);
     }
     index++;
   } while (index <= 3);

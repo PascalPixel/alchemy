@@ -2,6 +2,7 @@
 #include "unit/effect/effect.h"
 #include "types.h"
 #include "vector3.h"
+#include "render_placement.h"
 
 //--------------------------------------------------------------------------
 // Battle effect tables
@@ -13,11 +14,6 @@
 // Consumers declare these without const to preserve matching code.
 
 struct BattleEffectArgument;
-
-typedef struct Scale {
-  s32 x;
-  s32 y;
-} Scale;
 
 // Shared cell layouts
 const u16 gParticleStreams_CellOffsets[] = {0,   2,   10,  28,  60,
@@ -685,7 +681,7 @@ const u8 gUnused_SheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};
 const u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 // staged_particles.c
-const Scale gStagedParticles_UnitScale = {0x10000, 0x10000};
+const struct SpriteScale gStagedParticles_UnitScale = {{{0x10000, 0x10000}}};
 
 // columns.c
 const u8 gDualTable_VineWidths[] = {21, 28, 19};

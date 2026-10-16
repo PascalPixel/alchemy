@@ -1,5 +1,6 @@
 // The German, Spanish, French and Italian Psynergy menus save the window
 // tiles they draw over (0x2000 bytes from 0x06004000) and restore them after.
+#include "render_placement.h"
 #include "unit/menu/menu.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -690,8 +691,8 @@ void Menu_ReleaseEntryObjects(void) {
 // the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct PsynergyMenuState *menu = gMenuWork;
-  s32 scale[2];
-  s32 position[4];
+  struct SpriteScale scale;
+  struct SpritePlacement position;
   s32 i;
   s32 count;
 
@@ -703,13 +704,13 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
     if (figure != 0) {
       figure->part[0].priority = 0;
-      scale[0] = menu->ownerScale[i];
-      scale[1] = menu->ownerScale[i];
-      position[0] = menu->tabX[i] << 16;
-      position[1] = placeY;
-      position[2] = (menu->rowPositions[i] << 16) + placeY; // always 482
-      position[3] = 0;
-      Object_ApplyProjectedPlacementFar(figure, position, scale, 0x4000);
+      scale.x = menu->ownerScale[i];
+      scale.y = menu->ownerScale[i];
+      position.x = menu->tabX[i] << 16;
+      position.height = placeY;
+      position.y = (menu->rowPositions[i] << 16) + placeY; // always 482
+      position.groundHeight = 0;
+      Object_ApplyProjectedPlacementFar(figure, &position, &scale, 0x4000);
     }
   }
 }
@@ -9910,8 +9911,8 @@ DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
 void FourObjectMotion_UpdateAllPositions(void) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
-  u32 motion[2];
-  u32 request[4];
+  struct SpriteScale scale;
+  struct SpritePlacement placement;
 
   index = 0;
   while (1) {
@@ -9921,13 +9922,13 @@ void FourObjectMotion_UpdateAllPositions(void) {
       u32 vertical =
           VERTICAL_ORIGIN - ((s32)state->verticalOrigins[index] << 16);
       object->part[0].priority = 0;
-      motion[0] = FIXED_ONE;
-      motion[1] = FIXED_ONE;
-      request[0] = (s32)state->positionsX[index] << 16;
-      request[1] = vertical;
-      request[2] = ((s32)state->positionsY[index] << 16) + vertical;
-      request[3] = 0;
-      Object_ApplyProjectedPlacementFar(object, request, motion, 0x4000);
+      scale.x = FIXED_ONE;
+      scale.y = FIXED_ONE;
+      placement.x = (s32)state->positionsX[index] << 16;
+      placement.height = vertical;
+      placement.y = ((s32)state->positionsY[index] << 16) + vertical;
+      placement.groundHeight = 0;
+      Object_ApplyProjectedPlacementFar(object, &placement, &scale, 0x4000);
     }
     index += 1;
     if (index > 3)
@@ -9939,8 +9940,8 @@ void FourObjectMotion_UpdateAllPositions(void) {
 void FourObjectMotion_UpdateBottomRow(void) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 objectIndex;
-  u32 motion[2];
-  u32 request[4];
+  struct SpriteScale scale;
+  struct SpritePlacement placement;
 
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   objectIndex = 0;
@@ -9960,30 +9961,31 @@ void FourObjectMotion_UpdateBottomRow(void) {
        * which costs limit its r3 preference. */
       /* FAKEMATCH: pins the row's second read to r2, as native; plain locals
        * take r3 and reshuffle the high registers (differ 81), reading rowY
-       * before request[3] = 0 puts it in r2 but emits the ldrsh before the zero
-       * store (4 in all six editions), and with rowY plain the loop index as
-       * u8, s8 or u16 differs 130 to 140, as s16 82. */
+       * before clearing groundHeight puts it in r2 but emits ldrsh before
+       * the zero store (4 in all six editions), and with rowY plain the index
+       * as u8, s8 or u16 differs 130 to 140, as s16 82. */
       register s32 rowY asm("r2");
 
       object->part[0].priority = 0;
       phase = menu->phases[objectIndex];
       if (phase < 0) {
-        motion[0] = -phase;
-        motion[1] = -phase;
+        scale.x = -phase;
+        scale.y = -phase;
       } else {
-        motion[0] = phase + (s32)(0x10000 - phase) / 3;
-        motion[1] = motion[0];
-        menu->phases[objectIndex] = motion[0];
+        scale.x = phase + (s32)(0x10000 - phase) / 3;
+        scale.y = scale.x;
+        menu->phases[objectIndex] = scale.x;
       }
-      request[0] = (u32)(s32)menu->positionsX[objectIndex] << 16;
-      request[1] = projectedY;
-      request[2] = ((u32)(s32)menu->positionsY[objectIndex] << 16) + projectedY;
-      request[3] = 0;
+      placement.x = (u32)(s32)menu->positionsX[objectIndex] << 16;
+      placement.height = projectedY;
+      placement.y =
+          ((u32)(s32)menu->positionsY[objectIndex] << 16) + projectedY;
+      placement.groundHeight = 0;
       rowY = menu->positionsY[objectIndex];
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;
-      Object_ApplyProjectedPlacementFar(object, request, motion, limit);
+      Object_ApplyProjectedPlacementFar(object, &placement, &scale, limit);
     }
     objectIndex++;
   } while (objectIndex <= 3);

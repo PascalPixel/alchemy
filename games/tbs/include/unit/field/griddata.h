@@ -2,7 +2,8 @@
 #define ALCHEMY_UNIT_FIELD_GRIDDATA_H
 
 #include "types.h"
+#include "render_placement.h"
 
-extern const s32 gBattle_FormationPlacementScale[2];
+extern const struct SpriteScale gBattle_FormationPlacementScale;
 
 #endif

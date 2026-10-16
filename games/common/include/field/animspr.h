@@ -4,6 +4,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
+#include "render_placement.h"
 
 struct AnimationEntry {
   s16 animId;
@@ -42,18 +43,8 @@ STATIC_ASSERT(offsetof(struct ObjectSystemWork, count) == 0x18);
 STATIC_ASSERT(offsetof(struct ObjectSystemWork, slots) == 0x1c);
 STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
 
-struct AnimationPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 ground;
-};
-
-STATIC_ASSERT(sizeof(struct AnimationPosition) == 0x10);
-STATIC_ASSERT(offsetof(struct AnimationPosition, ground) == 0x0c);
-
 #if GAME_TLA
-void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *points);
+void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
 #endif
 
 struct AnimationSpritePart {

@@ -4,6 +4,7 @@
 #include "../ags-graphics/graphics.h"
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -29,15 +30,14 @@ static void textFile(const char *path, const char *text) {
   save(path, text, strlen(text));
 }
 
-static void run(const char *name, bool success, char *const args[]) {
-  char *path = formatString("%s/ags-%s", tools, name);
+static void runProgram(const char *path, bool success, char *const args[]) {
   pid_t child = fork();
   check(child >= 0, "fork");
   if (!child) {
     if (!freopen("command.log", "w", stdout) ||
         !freopen("command.log", "a", stderr))
       _exit(127);
-    execv(path, args);
+    execvp(path, args);
     _exit(127);
   }
   int status;
@@ -48,8 +48,13 @@ static void run(const char *name, bool success, char *const args[]) {
       (success ? WEXITSTATUS(status) != 0 : WEXITSTATUS(status) != 1)) {
     Buffer log = readFile("command.log");
     fprintf(stderr, "%s", log.data);
-    fail("%s returned unexpected status %d", name, status);
+    fail("%s returned unexpected status %d", path, status);
   }
+}
+
+static void run(const char *name, bool success, char *const args[]) {
+  char *path = formatString("%s/ags-%s", tools, name);
+  runProgram(path, success, args);
   free(path);
 }
 
@@ -304,6 +309,51 @@ static void buildFiles(void) {
                "out/obj/a.o: a.h b.h out/text/messages.inc") != NULL,
         "include cycles terminate and generated dependencies remain");
   free(deps.data);
+  /* Make must rescan a changed source or header before deciding which
+   * objects need rebuilding, without looping on generated includes. */
+  textFile("scan.c", "#include \"scan.h\"\n");
+  textFile("scan.h", "#include \"out/generated.h\"\n");
+  check(!mkdir("out", 0777), "create generated include directory");
+  textFile("out/generated.h", "");
+  char *makefile = formatString(
+      ".DEFAULT_GOAL := all\ninclude scan.mk\n"
+      "scan.mk: %s/ags-deps\n"
+      "\t%s/ags-deps $@ out out/obj -I. -- scan.c\n"
+      "all: out/obj/scan.o\n"
+      "out/obj/scan.o: scan.c\n\tmkdir -p out/obj\n\ttouch $@\n",
+      tools, tools);
+  textFile("scan.make", makefile);
+  free(makefile);
+  char *const makeArgs[] = {"make", "-f", "scan.make", NULL};
+  char *const queryArgs[] = {"make", "-q", "-f", "scan.make", NULL};
+  runProgram("make", true, makeArgs);
+  runProgram("make", true, queryArgs);
+  /* Force an older scan time, avoiding sleeps and filesystem clock races. */
+  const struct timespec oldTimes[2] = {{1, 0}, {1, 0}};
+  check(!utimensat(AT_FDCWD, "scan.mk", oldTimes, 0), "age dependency graph");
+  textFile("scan.h", "#include \"out/generated.h\"\n#include \"added.h\"\n");
+  textFile("added.h", "");
+  runProgram("make", true, makeArgs);
+  deps = readFile("scan.mk");
+  check(strstr((char *)deps.data, "out/obj/scan.o: added.h out/generated.h scan.h"),
+        "header edits add transitive object dependencies");
+  const char *self = strstr((char *)deps.data, "scan.mk:");
+  check(self && strstr(self, " scan.c") && strstr(self, " scan.h") &&
+            strstr(self, " added.h") &&
+            !strstr(self, " out/generated.h"),
+        "scanner depends on sources and headers, not generated includes");
+  free(deps.data);
+  runProgram("make", true, queryArgs);
+  check(!utimensat(AT_FDCWD, "scan.mk", oldTimes, 0), "age source scan");
+  textFile("scan.c", "#include \"scan.h\"\n#include \"source_added.h\"\n");
+  textFile("source_added.h", "");
+  runProgram("make", true, makeArgs);
+  deps = readFile("scan.mk");
+  check(strstr((char *)deps.data,
+               "out/obj/scan.o: added.h out/generated.h scan.h source_added.h"),
+        "source edits add new object dependencies");
+  free(deps.data);
+  runProgram("make", true, queryArgs);
   textFile("objects.tsv",
            "image\tplace\tobject\tsections\teditions\n"
            "main\trom_start\tgames/a\t\ten\nmain\trom_start\tgames/b\t\tja\n"

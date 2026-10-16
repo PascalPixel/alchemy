@@ -49,6 +49,8 @@ struct SceneEvent;
 struct ScenePlacement;
 struct ScriptObjectEntry;
 struct ShopCursor;
+struct SpritePlacement;
+struct SpriteScale;
 struct SummonDefinition;
 struct TransitionActorList;
 struct UiWindow;

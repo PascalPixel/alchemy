@@ -5606,13 +5606,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// A scale {x, y} in 16.16 fixed point.
-typedef struct Scale {
-  s32 x;
-  s32 y;
-} Scale;
-
-extern const struct Scale gBattleFx_StarsUnitScale;
+extern const struct SpriteScale gBattleFx_StarsUnitScale;
 extern u8 gWhirlwindComets_GridX[];
 extern u8 gWhirlwindComets_GridY[];
 extern u16 gWhirlwindComets_Frames[];
@@ -5666,8 +5660,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
   struct Vector3 world;
   struct EffectPosition screen;
   struct Vector3 shake;
-  struct Placement place;
-  struct Scale scale;
+  struct SpritePlacement place;
+  struct SpriteScale scale;
 
   slots = &gBattleFxWork[1];
   canvas = slots[0];
@@ -5933,12 +5927,12 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
 
       scale.x = 0x10000;
       scale.y = 0x10000;
-      place.unk0c = 0;
+      place.groundHeight = 0;
       index = 0;
       do {
         place.x = (gWhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
-        place.y = 0xff0000 + index * 0x400000;
-        place.z = ((gWhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
+        place.height = 0xff0000 + index * 0x400000;
+        place.y = ((gWhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
         Object_ApplyProjectedPlacementFar(work->objects[index], &place, &scale,
                                           0);
         index++;
@@ -9348,7 +9342,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const Scale gBattleFx10_UnitScale;
+extern const struct SpriteScale gBattleFx10_UnitScale;
 
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00))
@@ -9360,7 +9354,7 @@ extern const Scale gBattleFx10_UnitScale;
 // effect: the targets.
 void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
   s32 rockPoints[32][2]; // a copy of gBattleFx10_Points that nothing reads
-  s32 position[4];
+  struct SpritePlacement position;
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -9379,7 +9373,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
   s32 dropFrame;
   struct EffectStep *spray;
   struct EffectStep *trail;
-  Scale scale;
+  struct SpriteScale scale;
 
   slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
@@ -9513,13 +9507,13 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect) {
 
     scale.x = 0x10000;
     scale.y = 0x10000;
-    position[3] = 0;
-    position[1] = 255 << 16;
+    position.groundHeight = 0;
+    position.height = 255 << 16;
     for (row = 0; row != 3; row++) {
       for (j = 0; j != 3; j++) {
-        position[0] = (j * 32 + 144 - shakeX) << 16;
-        position[2] = (row * 32 + 76 - shakeY) << 16;
-        Object_ApplyProjectedPlacementFar(work->objects[row * 3 + j], position,
+        position.x = (j * 32 + 144 - shakeX) << 16;
+        position.y = (row * 32 + 76 - shakeY) << 16;
+        Object_ApplyProjectedPlacementFar(work->objects[row * 3 + j], &position,
                                           &scale, 0);
       }
     }
@@ -12833,7 +12827,7 @@ void BattleFx_RunTargetBursts(void *object) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const Scale gStagedParticles_UnitScale;
+extern const struct SpriteScale gStagedParticles_UnitScale;
 
 // The trail particles' random rotations, 48 bytes each, after the 384
 // particles in PARTICLES.
@@ -12866,7 +12860,7 @@ enum SlashSheetCell {
 void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
-  s32 position[4];
+  struct SpritePlacement position;
   struct EffectPosition target;
   BlitterPair draw;
   void **slots;
@@ -12973,14 +12967,14 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
         pathY += path[1];
         path += 2;
       }
-      position[3] = 0;
-      position[1] = 0xff0000;
+      position.groundHeight = 0;
+      position.height = 0xff0000;
       for (row = 0; row != 3; row++) {
         for (column = 0; column != 3; column++) {
-          position[0] = (pathX + 80 + column * 32) << 16;
-          position[2] = (64 - pathY + row * 32) << 16;
+          position.x = (pathX + 80 + column * 32) << 16;
+          position.y = (64 - pathY + row * 32) << 16;
           Object_ApplyProjectedPlacementFar(work->objects[row * 3 + column],
-                                            position,
+                                            &position,
                                             &gStagedParticles_UnitScale, 0);
         }
       }
@@ -17034,7 +17028,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect,
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct Scale gRisingWall_UnitScale;
+extern const struct SpriteScale gRisingWall_UnitScale;
 
 // The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
 // in the rebuilt sheet.
@@ -17057,8 +17051,8 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
   u8 *sprites;
   s32 wallX;
   s32 rockX;
-  struct Scale scale;
-  s32 position[4];
+  struct SpriteScale scale;
+  struct SpritePlacement position;
   u8 *src;
   u16 *color;
   void *palette = (void *)BG_PLTT;
@@ -17312,13 +17306,13 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect) {
             scale.x = 0x8000;
           }
           scale.y = scale.x;
-          position[3] = 0;
-          position[0] = (rock->x + rockX * 2) << 16;
-          position[1] = 0x2000000 - (rock->y << 16);
-          position[2] = 0x2000000;
+          position.groundHeight = 0;
+          position.x = (rock->x + rockX * 2) << 16;
+          position.height = 0x2000000 - (rock->y << 16);
+          position.y = 0x2000000;
           slot = (frame / 2 + k) % 11;
           if (slot != -1)
-            Object_ApplyProjectedPlacementFar(work->objects[slot], position,
+            Object_ApplyProjectedPlacementFar(work->objects[slot], &position,
                                               &scale, 0);
           rock->y -= rock->z;
           rock->velocityX += rock->velocityY;
@@ -19486,39 +19480,39 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect) {
 // x, z: formation origin in 16.16 pixels
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  struct Scale normal = (*(const struct Scale *)&gFormation_NormalScale);
-  struct Scale big = (*(const struct Scale *)&gFormation_SmallScale);
-  struct Placement pos;
+  struct SpriteScale normal = gFormation_NormalScale;
+  struct SpriteScale big = gFormation_SmallScale;
+  struct SpritePlacement pos;
   s32 i;
 
-  pos.unk0c = 0;
-  pos.y = 255 << 16;
+  pos.groundHeight = 0;
+  pos.height = 255 << 16;
   switch (formation) {
   case 0:
     for (i = 0; i != 9; i++) {
       pos.x = (i % 3 << 21) + x; // 32-pixel spacing
-      pos.z = (i / 3 << 21) + z;
+      pos.y = (i / 3 << 21) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
   case 1:
     for (i = 0; i != 12; i++) {
       pos.x = (gFormation_TwelveX[i] << 16) + x - (16 << 16);
-      pos.z = (gFormation_TwelveZ[i] << 16) + z - (32 << 16);
+      pos.y = (gFormation_TwelveZ[i] << 16) + z - (32 << 16);
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
       pos.x = (gFormation_RightEightX[i] << 16) + x + (16 << 16);
-      pos.z = (gFormation_RightEightZ[i] << 16) + z;
+      pos.y = (gFormation_RightEightZ[i] << 16) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
   case 3:
     for (i = 0; i != 8; i++) {
       pos.x = (gFormation_SmallEightX[i] << 16) + x;
-      pos.z = (gFormation_SmallEightZ[i] << 16) + z;
+      pos.y = (gFormation_SmallEightZ[i] << 16) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &big, 0);
     }
     break;
@@ -19742,7 +19736,7 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, 1);
 }
 
-extern const struct Scale gCirclingScene_UnitScale;
+extern const struct SpriteScale gCirclingScene_UnitScale;
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_DropPoints[][2];
@@ -19797,12 +19791,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     }
   }
 
-  s32 position[4];
+  struct SpritePlacement position;
   s32 vector[3];
   struct EffectPosition spot;
   struct EffectPosition *screenPosition;
   struct EffectPosition point;
-  struct Scale scale;
+  struct SpriteScale scale;
   s32 frame;
   s32 i;
 
@@ -20043,25 +20037,25 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       else
         x = 64 - frame / 4;
       y = 96 - frame;
-      position[3] = 0;
-      position[1] = 0xff0000;
+      position.groundHeight = 0;
+      position.height = 0xff0000;
       if (mode == 1) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x500000;
-        position[2] = (64 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale,
+        position.x = (x << 16) + 0x500000;
+        position.y = (64 - y) << 16;
+        Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale,
                                           0);
-        Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale,
+        Object_ApplyProjectedPlacementFar(work->objects[1], &position, &scale,
                                           0);
       } else {
         size = angle + 0x10000;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x600000;
-        position[2] = (96 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale,
+        position.x = (x << 16) + 0x600000;
+        position.y = (96 - y) << 16;
+        Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale,
                                           0);
       }
       for (i = 0, y = 32 - y; i != 32; i++) {
@@ -20182,7 +20176,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 size = (frame + 0x1d0) << 8;
     struct BattleCamera *camera = gCameraWork;
     s32 elapsed = frame - 16;
-    struct Scale scale;
+    struct SpriteScale scale;
     s32 x;
     s32 y;
     s32 grow;
@@ -20281,21 +20275,21 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       x = 56 - frame / 2;
     y = 64 - frame * 2;
     grow = (frame << 8) + 0x20000;
-    position[3] = 0;
-    position[1] = 0xff0000;
+    position.groundHeight = 0;
+    position.height = 0xff0000;
     if (mode == 1) {
       scale.x = size;
       scale.y = size;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
-      Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale, 0);
+      position.x = (x << 16) + 0x600000;
+      position.y = (96 - y) << 16;
+      Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->objects[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+      position.x = (x << 16) + 0x600000;
+      position.y = (96 - y) << 16;
+      Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale, 0);
     }
     work->shakeFrames = 1;
     Camera_ApplyShake(8, 8);
@@ -20312,16 +20306,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 // Move a formation and orbiting picture while six rocks bounce and scatter
 // puffs.
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
-  s32 position[4];
+  struct SpritePlacement position;
   DrawRectangle draw[2];
-  struct Scale scale;
+  struct SpriteScale scale;
   void **cache;
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
   u8 *sheet;
-  struct Scale base;
-  struct Scale orb;
+  struct Point2D base;
+  struct Point2D orb;
   s32 i;
   s32 k;
 
@@ -20406,12 +20400,12 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
       work->shakeFrames = 1;
     else if (frame >= 260 && frame <= 263)
       work->shakeFrames = 1;
-    position[3] = 0;
-    position[1] = 0;
+    position.groundHeight = 0;
+    position.height = 0;
     for (i = 0; i != 7; i++) {
-      position[0] = (gCirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
-      position[2] = (gCirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
-      Object_ApplyProjectedPlacementFar(work->objects[i], position, &scale, 0);
+      position.x = (gCirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
+      position.y = (gCirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
+      Object_ApplyProjectedPlacementFar(work->objects[i], &position, &scale, 0);
     }
     if (frame <= 90) {
       orb.x = Trig_Sin(frame << 9) * 16 + 0x9c0000;
@@ -20443,21 +20437,21 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect) {
     if (frame >= 252 && frame <= 275)
       orb.x -= (frame - 250) << 16;
     if (frame <= 259) {
-      position[0] = orb.x;
-      position[1] = -0x1000000;
-      position[2] = orb.y - 0x1000000;
-      Object_ApplyProjectedPlacementFar(work->objects[7], position, &scale, 0);
-      position[0] = orb.x + 0x200000;
-      Object_ApplyProjectedPlacementFar(work->objects[8], position, &scale, 0);
+      position.x = orb.x;
+      position.height = -0x1000000;
+      position.y = orb.y - 0x1000000;
+      Object_ApplyProjectedPlacementFar(work->objects[7], &position, &scale, 0);
+      position.x = orb.x + 0x200000;
+      Object_ApplyProjectedPlacementFar(work->objects[8], &position, &scale, 0);
     }
-    position[1] = 0;
+    position.height = 0;
     for (i = 0; i != 6; i++) {
       struct EffectStep *rock = &work->particles[i];
 
       if (rock->variant != 2) {
-        position[0] = rock->x;
-        position[2] = rock->y;
-        Object_ApplyProjectedPlacementFar(work->objects[9 + i], position,
+        position.x = rock->x;
+        position.y = rock->y;
+        Object_ApplyProjectedPlacementFar(work->objects[9 + i], &position,
                                           &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
@@ -21548,7 +21542,7 @@ struct ShockwaveWork {
   u8 ramp[8][770];
 };
 
-extern const struct Scale gShockwaveScene_UnitScale;
+extern const struct SpriteScale gShockwaveScene_UnitScale;
 extern u16 gShockwaveScene_ShardCells[];
 extern u8 gShockwaveScene_ShardWidths[];
 extern u8 gShockwaveScene_ShardHeights[];
@@ -21560,11 +21554,11 @@ extern u8 gShockwaveScene_ShardHeights[];
 void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   s32 anchor[3];
   struct EffectPosition projectedPosition;
-  s32 place[4];
+  struct SpritePlacement place;
   volatile u32 fill;
-  s32 place2[4];
-  struct Scale pair;
-  struct Scale scale;
+  struct SpritePlacement place2;
+  struct SpriteScale pair;
+  struct SpriteScale scale;
   void *canvas;
   struct BattleEffectWork *work;
   struct BattlePresentationTransition *ctrl;
@@ -21776,12 +21770,12 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
     }
 
     pair = gShockwaveScene_UnitScale;
-    place[3] = 0;
-    place[1] = 0;
+    place.groundHeight = 0;
+    place.height = 0;
     for (i = 0; i != 16; i++) {
-      place[0] = ((i % 4) << 21) + (152 << 15);
-      place[2] = ((i / 4) << 21) + depth;
-      Object_ApplyProjectedPlacementFar(work->objects[i], place, &pair, 0);
+      place.x = ((i % 4) << 21) + (152 << 15);
+      place.y = ((i / 4) << 21) + depth;
+      Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -22330,8 +22324,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 213) {
-      place2[3] = 0;
-      place2[1] = 0;
+      place2.groundHeight = 0;
+      place2.height = 0;
       for (i = 0; i != 16; i++) {
         particle = &work->particles[i];
         if (particle->variant != 0) {
@@ -22340,10 +22334,10 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
             scale.x = 0x800;
           }
           scale.y = scale.x;
-          place2[0] = particle->x;
-          place2[1] = 0xff0000;
-          place2[2] = particle->y + 0xff0000;
-          Object_ApplyProjectedPlacementFar(work->objects[i], place2, &scale,
+          place2.x = particle->x;
+          place2.height = 0xff0000;
+          place2.y = particle->y + 0xff0000;
+          Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &scale,
                                             0);
           particle->y -= particle->velocityY;
           if (particle->y < 0x100000) {
@@ -22409,22 +22403,15 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
 
 #define REG16(address) (*(volatile u16 *)(address))
 
-// battle.h declares gObjectRow_SweepPair and gObjectRow_RisePair
-// under these names; their contents are Scale values.
-struct FxPair {
-  s32 a;
-  s32 b;
-};
-
 // Sweep the object formation across the field, then lift it out through
 // particle bursts.
 void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   void **cursor;
-  struct Placement place;
+  struct SpritePlacement place;
   struct EffectPosition unit;
   u8 jitterRow[16];
   u8 hitRow[14];
-  struct Placement place2;
+  struct SpritePlacement place2;
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle blit;
@@ -22527,7 +22514,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     }
 
     if (frame <= 149) {
-      struct FxPair pair = gObjectRow_SweepPair;
+      struct SpriteScale pair = gObjectRow_SweepPair;
       s32 lift;
 
       lift = 0;
@@ -22554,12 +22541,12 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
         }
       }
-      place.unk0c = 0;
-      place.y = 255 << 16;
+      place.groundHeight = 0;
+      place.height = 255 << 16;
       i = 0;
       do {
         place.x = ((baseX + gObjectRow_Columns[i] - lift) << 16) + (224 << 16);
-        place.z = ((gObjectRow_Rows[i] - wave) << 16) + (144 << 15);
+        place.y = ((gObjectRow_Rows[i] - wave) << 16) + (144 << 15);
         Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
         i++;
       } while (i != 9);
@@ -22690,7 +22677,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if (frame <= 23) {
-        struct FxPair pair2 = gObjectRow_RisePair;
+        struct SpriteScale pair2 = gObjectRow_RisePair;
         s32 ang;
         s32 rise;
 
@@ -22708,12 +22695,12 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
           }
           rise = ((Trig_Sin(ang) * 32)) >> 16;
         }
-        place2.unk0c = 0;
-        place2.y = 255 << 16;
+        place2.groundHeight = 0;
+        place2.height = 255 << 16;
         i = 0;
         do {
           place2.x = (rowX + gObjectRow_Columns[i]) << 16;
-          place2.z = ((gObjectRow_Rows[i] - rise) << 16) + (144 << 15);
+          place2.y = ((gObjectRow_Rows[i] - rise) << 16) + (144 << 15);
           Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &pair2,
                                             0);
           i++;
@@ -22822,7 +22809,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-extern const struct Scale gBattleFx6_UnitScale;
+extern const struct SpriteScale gBattleFx6_UnitScale;
 
 // Restore the background 2 horizontal scale to one screen pixel per source
 // pixel.
@@ -22834,7 +22821,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = 0x80; }
 // Sweep the formation across the field, burst into flares and finish with blue
 // flames.
 void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
-  s32 pos[4];
+  struct SpritePlacement pos;
   struct EffectPosition targetPosition;
   void *canvas;
   u8 *particleSheet;
@@ -22860,7 +22847,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
   struct EffectStep *burstSeed;
   struct EffectStep *flameColumn;
   DrawRectangle blit[2];
-  struct Scale scale;
+  struct SpriteScale scale;
   s32 ground = 112;
 
   cache =
@@ -23000,14 +22987,14 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *effect) {
           formationZ += formationVelocityZ;
         }
       }
-      pos[3] = 0;
-      pos[1] = 0;
+      pos.groundHeight = 0;
+      pos.height = 0;
       for (i = 0; i != 8; i++) {
-        pos[0] =
+        pos.x =
             (((gBattleFx6_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
-        pos[2] =
+        pos.y =
             (((gBattleFx6_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
-        Object_ApplyProjectedPlacementFar(work->objects[i], pos, &scale, 0);
+        Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &scale, 0);
       }
     }
 
@@ -24168,15 +24155,9 @@ s32 BattleEffect_LoadWork(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 }
 
 // {x, y} scale factors (Q16)
-const struct Scale gBattleFx_StarsUnitScale = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gBattleFx_StarsUnitScale = {{{0x10000, 0x10000}}};
 
-const Scale gBattleFx10_UnitScale = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gBattleFx10_UnitScale = {{{0x10000, 0x10000}}};
 
 // Rock wall height
 const s32 gRockWall_Heights[4] = {
@@ -24190,42 +24171,18 @@ const s16 gMode12_Points[6][2] = {
     {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
 };
 
-const struct Scale gRisingWall_UnitScale = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gRisingWall_UnitScale = {{{0x10000, 0x10000}}};
 
-const s32 gFormation_NormalScale[2] = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gFormation_NormalScale = {{{0x10000, 0x10000}}};
 
-const s32 gFormation_SmallScale[2] = {
-    0x14000,
-    0x14000,
-};
+const struct SpriteScale gFormation_SmallScale = {{{0x14000, 0x14000}}};
 
-const struct Scale gCirclingScene_UnitScale = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gCirclingScene_UnitScale = {{{0x10000, 0x10000}}};
 
-const struct Scale gShockwaveScene_UnitScale = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gShockwaveScene_UnitScale = {{{0x10000, 0x10000}}};
 
-const struct FxPair gObjectRow_SweepPair = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gObjectRow_SweepPair = {{{0x10000, 0x10000}}};
 
-const struct FxPair gObjectRow_RisePair = {
-    0x10000,
-    0x10000,
-};
+const struct SpriteScale gObjectRow_RisePair = {{{0x10000, 0x10000}}};
 
-const struct Scale gBattleFx6_UnitScale = {
-    0x18000,
-    0x18000,
-};
+const struct SpriteScale gBattleFx6_UnitScale = {{{0x18000, 0x18000}}};

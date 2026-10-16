@@ -1,11 +1,12 @@
 #ifndef ALCHEMY_UNIT_FIELD_FIELD_H
 #define ALCHEMY_UNIT_FIELD_FIELD_H
 
+#include "render_placement.h"
+
 #include "types.h"
 
 struct AnimationEntry;
 struct AnimationObject;
-struct AnimationPosition;
 struct DispatchObject;
 struct FieldPosition;
 struct MapScanline;
@@ -23,8 +24,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale);
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos,
-                                    s32 *scale, s32 facing);
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+                                    const struct SpritePlacement *position,
+                                    const struct SpriteScale *scale,
+                                    s32 facing);
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
                                  s32 *scale, s32 facing, s32 depth);
 void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
@@ -328,7 +331,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
 
 void Ui_RunIconMonitor(void);
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step);
-void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out);
+void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value);
 void Ui_SetGridColumnNumber(s32 slot, s32 no);
 void Battle_PlaceActorsByFormationKind(void);

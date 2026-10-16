@@ -141,6 +141,18 @@ int main(int argc, char **argv) {
     }
     byte(&out, '\n');
   }
+  /* An include added to any scanned source changes the dependency graph.
+   * Generated includes are build products, not inputs to the scanner. */
+  print(&out, "%s:", argv[1]);
+  for (size_t i = 0; i < entryCount; i++) {
+    const char *path = entries[i].path;
+    size_t length = strlen(build);
+    bool inBuild = !strncmp(path, build, length) &&
+                   (path[length] == '/' || path[length] == 0);
+    if (!inBuild && exists(path))
+      print(&out, " %s", path);
+  }
+  byte(&out, '\n');
   sortStrings(&every);
   for (size_t i = 0; i < every.len; i++)
     if (strncmp(every.items[i], build, strlen(build)))

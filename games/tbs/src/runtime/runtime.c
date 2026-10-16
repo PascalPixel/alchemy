@@ -2311,11 +2311,12 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   projection->far = farDepth;
 }
 
-// Transforms `point` and projects it to the screen: screen[0] and screen[1]
+// Reads three word-aligned coordinates from `point` and projects them to the
+// screen: screen[0] and screen[1]
 // are its pixel position and screen[2] its whole-unit depth. Returns the
 // projection scale (16.16), or 0 when the point is outside the depth range,
 // when only the transformed point is written.
-s32 Render_ProjectPoint(s32 *point, s32 *screen) {
+s32 Render_ProjectPoint(const void *point, s32 *screen) {
   struct Projection *projection;
   s32 depth;
   s32 scale;

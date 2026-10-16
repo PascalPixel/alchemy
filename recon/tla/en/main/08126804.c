@@ -17,7 +17,7 @@ void Projection_Set(s32 span, u32 depth, s32 range);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;

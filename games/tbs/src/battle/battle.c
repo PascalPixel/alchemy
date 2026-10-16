@@ -2936,7 +2936,7 @@ void Camera_InitDefaultTransform(void) {
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = camera->distance;
-  Iwram_TransformVector((s32 *)&eyeOffset, (s32 *)camera);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 }
 
 // MotionObject.targetX and targetZ while the object has no move target.
@@ -3905,7 +3905,7 @@ void Camera_ConfigureScene(s32 verticalOffset) {
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = camera->distance;
-  Iwram_TransformVector((s32 *)&eyeOffset, (s32 *)camera);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
   Projection_Set(0, result, 0x07920000);

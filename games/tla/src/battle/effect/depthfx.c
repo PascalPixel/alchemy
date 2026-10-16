@@ -25,7 +25,7 @@ struct DepthMap {
   struct DepthScroll scroll;
 };
 
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Func_080eb01c(void *work);
 
 void Func_080dba44(void) {

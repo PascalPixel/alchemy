@@ -16,7 +16,7 @@ struct ProjectedPoint {
 };
 
 extern struct Projection gCameraSceneParameters;
-s32 Render_ProjectPoint(s32 *point, struct ProjectedPoint *screen) {
+s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   struct ProjectedPoint view;
   struct Projection *projection;
   s32 depth;

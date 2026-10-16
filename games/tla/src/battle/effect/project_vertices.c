@@ -5,7 +5,7 @@
 #include "io_reg.h"
 #include "ramcode.h"
 
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 extern const u8 Data_0813b9a0[];
 extern u8 Data_0813b9a0CodeSize[];

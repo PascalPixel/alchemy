@@ -660,9 +660,8 @@ void LuckyDice_Run(void) {
       s32 dieY;
 
       rollingDie = &diceWork->particles[drawOrder[index]];
-      // Copying the three input coordinates into the existing array grows
-      // the native English function from 0x1274 to 0x1294 bytes. Its shared
-      // projection input contract still needs the actual owner migration.
+      // Projection reads the record's three coordinate words directly.
+      // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
       Render_ProjectPoint(rollingDie, screen);
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;

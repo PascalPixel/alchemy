@@ -2601,9 +2601,9 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 // forward, over the tile in front, when the map allows it
 // (Map_CheckObjectStep). On a platform object (sprite 207 or 205) the platform
 // plays its animation 7 and the leader bobs down 2 pixels and back. Each jump
-// counts toward random encounters, and the leader keeps jumping while it lands
-// on another jump spot (collision 0xf9). Returns 0 after a jump, -1 when the
-// leader cannot jump.
+// advances walking distance for PP/status progress, and the leader keeps
+// jumping while it lands on another jump spot (collision 0xf9). Returns 0
+// after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
   // An ordinary chained-attempt loop grows native English 0x228 -> 0x230.
   // Keep the landing retry, including its existing failure return behavior.
@@ -2612,7 +2612,7 @@ s32 Field_TryJumpForward(void) {
   s32 angle = (leader->angle + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
   u8 saved = *flags;
-  struct FieldStepWork *work = gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 spriteFlags = 1;
   struct FieldPosition position;
   struct FieldPosition *pos;
@@ -2673,7 +2673,8 @@ again:
     *flags = saved;
     FieldEvent_End();
     if (work != NULL)
-      work->encounterSteps += Iwram_MulQ16(work->encounterRate, 0x200000);
+      work->walkingDistance +=
+          Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) == 0xf9) {
       ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
       WaitFrames(6);
@@ -3435,7 +3436,10 @@ void FieldMotes_Start(void) {
     s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
     /* FAKEMATCH: reusing the integer field cursor for the height x argument
      * keeps the stores in r1. A plain s32 * cursor with x of its own puts the
-     * cursor in r2 and the leader's base in r0 (differ 16). */
+     * cursor in r2 and the leader's base in r0 (differ 16). A real 8-byte
+     * attribute union with named word stores and separate x keeps 0xda bytes
+     * in native English but reorders the stores, replacing cursor stmias with
+     * offset strs and moving the height call two bytes earlier (2026-10-16). */
     u32 p = (u32)mote;
     s32 z;
     *(s32 *)p = 0;
@@ -7568,7 +7572,7 @@ void RunBattleEffect03(void) {
 }
 
 #define CLOAK_TILE 0xfb  // the tile attribute Cloak can stay hidden on
-#define CLOAK_END 0x2092 // psynergyRequest when Cloak can no longer hide
+#define CLOAK_END 0x2092 // field command when Cloak can no longer hide
 
 // Scheduler callback of Cloak: when the tile under the leader is not
 // CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
@@ -7632,7 +7636,7 @@ void FieldFx_CheckCloakTile(void) {
   }
 
   if (tile[2] != CLOAK_TILE)
-    ((struct EventWork *)field)->psynergyRequest = CLOAK_END;
+    field->command = CLOAK_END;
 }
 
 // Ends Cloak: stops the tile check and makes the leader blink back into
@@ -7687,7 +7691,7 @@ void FieldFx_ResumeCloakCheck(void) {
 // set), and the tile check starts; where the leader cannot hide it shows
 // again at once.
 void FieldFx_StartCloak(void) {
-  struct FieldWork *field = gEventWork;
+  struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct AnimationObject *animation = leader->animation;
   struct AnimationEntry *entry = animation->entries[0];

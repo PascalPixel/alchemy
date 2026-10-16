@@ -57,8 +57,8 @@ struct FieldStepWork {
   s16 mode;
   u8 encounterFull[4];
   u8 unk1a4[0xc];
-  s32 encounterRate;
-  s32 encounterSteps;
+  s32 walkingDistanceScale;
+  s32 walkingDistance;
   struct MapCell *tile;
   struct MapCell *previousTile;
 };
@@ -97,11 +97,11 @@ struct FieldWork {
   s16 itemArgument;
   s16 blockedSteps;
   s16 mode;
-  u8 unk1a0[8];
-  s32 unk1a8;
-  u8 unk1ac[4];
-  s32 unk1b0;
-  s32 unk1b4;
+  u8 encounterGroups[8]; // encounter zone for each kind of ground
+  s32 encounterBias;     // randomized distance adjustment between battles
+  s32 encounterThreshold;
+  s32 walkingDistanceScale; // scales movement for PP and status updates
+  s32 walkingDistance;      // accumulated 16.16 distance awaiting an update
   u8 unk1b8[4];
   u8 *cells;
   s32 transition;
@@ -152,8 +152,10 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_StepEvent, struct FieldStepWork, stepEvent,
 LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterEnemyGroup, struct FieldStepWork,
                     encounterEnemyGroup, 0x17c);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Mode, struct FieldStepWork, mode, 0x19e);
-LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork,
-                    encounterRate, 0x1b0);
+LAYOUT_OFFSET_GUARD(FieldStepWork_WalkingDistanceScale, struct FieldStepWork,
+                    walkingDistanceScale, 0x1b0);
+LAYOUT_OFFSET_GUARD(FieldStepWork_WalkingDistance, struct FieldStepWork,
+                    walkingDistance, 0x1b4);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
 LAYOUT_SIZE_GUARD(FieldWork_Size, struct FieldWork, 0xccc);
 LAYOUT_OFFSET_GUARD(FieldWork_Tables, struct FieldWork, tables, 0);
@@ -171,6 +173,16 @@ LAYOUT_OFFSET_GUARD(FieldWork_Event, struct FieldWork, event, 0x182);
 LAYOUT_OFFSET_GUARD(FieldWork_BlockedSteps, struct FieldWork, blockedSteps,
                     0x19c);
 LAYOUT_OFFSET_GUARD(FieldWork_Mode, struct FieldWork, mode, 0x19e);
+LAYOUT_OFFSET_GUARD(FieldWork_EncounterGroups, struct FieldWork,
+                    encounterGroups, 0x1a0);
+LAYOUT_OFFSET_GUARD(FieldWork_EncounterBias, struct FieldWork, encounterBias,
+                    0x1a8);
+LAYOUT_OFFSET_GUARD(FieldWork_EncounterThreshold, struct FieldWork,
+                    encounterThreshold, 0x1ac);
+LAYOUT_OFFSET_GUARD(FieldWork_WalkingDistanceScale, struct FieldWork,
+                    walkingDistanceScale, 0x1b0);
+LAYOUT_OFFSET_GUARD(FieldWork_WalkingDistance, struct FieldWork,
+                    walkingDistance, 0x1b4);
 LAYOUT_OFFSET_GUARD(FieldWork_Transition, struct FieldWork, transition, 0x1c0);
 LAYOUT_OFFSET_GUARD(FieldWork_TransitionActive, struct FieldWork,
                     transitionActive, 0x1c6);

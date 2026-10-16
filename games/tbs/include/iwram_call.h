@@ -17,8 +17,10 @@
 #define Iwram_ExpandBitRuns                                                    \
   FIXED_ADDRESS((s32 (*)(const void *bits, void *destination, s32 value)),     \
                 0x03000214, IwramExpandBitRuns)
+// Reads all three word-aligned coordinates before writing the result. Input
+// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
-  FIXED_ADDRESS((s32 (*)(const s32 *vector, s32 *result)), 0x03000250,         \
+  FIXED_ADDRESS((s32 (*)(const void *vector, s32 *result)), 0x03000250,        \
                 IwramTransformVector)
 #define Iwram_TransformMatrixEntry                                             \
   FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030002c0, IwramTransformMatrix)
@@ -50,7 +52,7 @@ static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
 
 static inline s32 Iwram_Sqrt(s32 value) { return Iwram_SqrtEntry(value); }
 
-static inline s32 Iwram_TransformVector(const s32 *vector, s32 *result) {
+static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
   return Iwram_TransformVectorEntry(vector, result);
 }
 

@@ -16,8 +16,7 @@ struct EffectVector {
   s32 z;
 };
 
-s32 Render_ProjectPoint(struct EffectVector *position,
-                        struct EffectVector *result);
+s32 Render_ProjectPoint(const void *position, struct EffectVector *result);
 
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;

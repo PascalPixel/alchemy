@@ -99,7 +99,7 @@ void EffectPosition_ApplyStepAndYOffset(s32 actor,
                                         struct EffectPosition *position);
 void EffectPosition_ApplyAnimationAndYOffset(s32 actor,
                                              struct EffectPosition *position);
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *camera, void *eye);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,

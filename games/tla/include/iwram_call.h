@@ -18,8 +18,10 @@
   FIXED_ADDRESS((s32 (*)(s32 value)), 0x030002d4, IwramSqrt)
 #define Iwram_TransformMatrixEntry                                             \
   FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030003c8, IwramTransformMatrix)
+// Reads all three word-aligned coordinates before writing the result. Input
+// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
-  FIXED_ADDRESS((void (*)(const s32 *vector, s32 *result)), 0x03000354,        \
+  FIXED_ADDRESS((void (*)(const void *vector, s32 *result)), 0x03000354,       \
                 IwramTransformVector)
 #define Iwram_SignedDivideEntry                                                \
   FIXED_ADDRESS((s32 (*)(s32 dividend, s32 divisor)), 0x03000528,              \

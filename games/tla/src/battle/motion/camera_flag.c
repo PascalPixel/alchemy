@@ -12,7 +12,7 @@ void Render_ResetTransformState(void);
 s32 GameFlag_Test(s32 flag);
 s32 Transform_ApplyLookAt(void *, void *);
 s32 Transform_SetLookAt(void *, void *);
-s32 Render_ProjectPoint(const s32 *, s32 *);
+s32 Render_ProjectPoint(const void *, s32 *);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 extern const s32 gData_08128868[];
 

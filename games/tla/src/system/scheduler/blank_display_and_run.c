@@ -65,7 +65,7 @@ void Camera_ResetSceneDefaults(void) {
   do {
     local.z = state->distance;
   } while (0);
-  Iwram_TransformVector((s32 *)&local, result);
+  Iwram_TransformVector(&local, result);
 
   param = 250;
   param <<= 16;

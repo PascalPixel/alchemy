@@ -18,7 +18,7 @@ u8 *GetMotionRecordFar(s32 *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(u8 *source, u8 *destination);
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 // The Japanese, French and Italian far-call tables do not reach
 // Battle_GetObjectTableValueFar under that name (Japanese names another slot,

@@ -472,7 +472,7 @@ struct EncounterZone {
 // has encounters. Also resets the encounter counters and chooses the battle
 // backdrop.
 void Encounter_SelectSceneZones(s32 useRules) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 scene;
   s32 entrance;
   u8 *groundZones;
@@ -481,7 +481,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
   s16 firstZoneOnGround;
   u32 i;
 
-  work = gEventWork;
+  work = (struct FieldWork *)gEventWork;
   scene = gGameState.scene;
   entrance = gGameState.entrance;
   groundZones = work->encounterGroups;
@@ -545,7 +545,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 // gGameState.cloaked prevent battles. Flag 351 skips the checks and the
 // counting and draws a group at once, from an entry this function never sets.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct EncounterZone *entry;
   s32 rate;
   s32 level;
@@ -556,7 +556,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 pick;
   s32 i;
 
-  work = gEventWork;
+  work = (struct FieldWork *)gEventWork;
   if (GameFlag_TestFar(351) == 0) {
     if (GameFlag_TestFar(352) != 0 || GameFlag_TestFar(353) != 0)
       return 0;
@@ -635,7 +635,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   u8 *zone;
 
-  zone = gEventWork->encounterGroups;
+  zone = ((struct FieldWork *)gEventWork)->encounterGroups;
   return Encounter_SelectEnemyGroup(zone[terrain], steps);
 }
 
@@ -900,7 +900,7 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 // already exists is only moved back to its place, unless the party keeps its
 // position.
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
-  struct FieldStepWork *work;
+  struct FieldWork *work;
   struct ObjectRuntime *object;
   struct ObjectRuntime *previous;
   struct AnimationObject *sprite;
@@ -911,7 +911,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   u8 spriteSlot;
   u16 placementSprite;
 
-  work = (struct FieldStepWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   // Remember the table once, before consuming slots for its placements.
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
     if (work->tables[tableIndex] == entry)
@@ -985,7 +985,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       }
       object->unk23 = 1;
     }
-    work->actors[actorIndex] = object;
+    work->actors[actorIndex] = (struct FieldActor *)object;
   }
 }
 
@@ -1087,13 +1087,13 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
 // Returns the slot after the last placed actor (8 when there is none), or -1
 // when slot 65 is occupied. Earlier holes are not reused by this append scan.
 s32 ObjectTable_FindLastActiveId(void) {
-  struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
   s32 actorIndex = ACTOR_FIRST_PLACED;
-  struct ObjectRuntime **slot = &work->actors[ACTOR_FIRST_PLACED];
+  struct FieldActor **slot = &work->actors[ACTOR_FIRST_PLACED];
 
   do {
-    struct ObjectRuntime *object = *slot++;
+    struct FieldActor *object = *slot++;
 
     if (object != 0) {
       lastActorIndex = actorIndex;
@@ -1210,18 +1210,18 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
 // Destroys every placed actor and places the scene's actors again from its
 // first placement table after the leader's.
 void BattleEffect_ClearAllObjects(void) {
-  struct EventWork *work = gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ScenePlacement *placements;
   s32 slotIndex;
 
   for (slotIndex = 0; slotIndex < PLACED_MAX; slotIndex++) {
-    struct FieldActor *actor = work->placedActors[slotIndex];
+    struct FieldActor *actor = work->actors[ACTOR_FIRST_PLACED + slotIndex];
 
     if (actor != 0) {
       actor->active = 1;
       actor->sprite->unk1d0 = 0;
       ObjectDispatch_ReleaseFar(actor);
-      work->placedActors[slotIndex] = 0;
+      work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
   }
   placements = work->tables[1];
@@ -1456,7 +1456,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  leader = ((struct FieldStepWork *)work)->actors[gGameState.selectedActor];
+  leader = (struct ObjectRuntime *)work->actors[gGameState.selectedActor];
 
   map = WORK_SLOT(8);
 
@@ -1640,14 +1640,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 
     // Every 0x10000 of distance walked (half as fast where full is 0), the
     // party regains PP and takes poison damage.
-    stepDistance = Iwram_MulQ16(work->encounterRate, leader->speedLimit);
+    stepDistance = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
     if (!fullEncounterRate)
       stepDistance /= 2;
-    accumulatedDistance = work->encounterSteps + stepDistance;
-    work->encounterSteps = accumulatedDistance;
+    accumulatedDistance = work->walkingDistance + stepDistance;
+    work->walkingDistance = accumulatedDistance;
     if (accumulatedDistance > 0xffff) {
       amount = accumulatedDistance / 0x10000;
-      work->encounterSteps = accumulatedDistance & 0xffff;
+      work->walkingDistance = accumulatedDistance & 0xffff;
       BattleParty_ApplyDrain(amount, 0);
       if (BattlePlacement_UpdateTimedEntriesFar())
         AudioCommand_PlayFar(STEP_CUE_EFFECT);
@@ -1900,10 +1900,10 @@ s32 Field_RunScene(s32 entrance) {
   work->transition = 0x100;
   work->transitionFrames = 16;
   work->transitionActive = 0;
-  work->unk1b0 = 0x199;
-  work->unk1b4 = 0;
+  work->walkingDistanceScale = 0x199;
+  work->walkingDistance = 0;
   if (gGameState.sceneVariant == 2) {
-    work->unk1b0 = 0;
+    work->walkingDistanceScale = 0;
     GameFlag_SetBitFar(0x144);
   }
   work->cells = Ram_MapCellBuffer;
@@ -2031,7 +2031,7 @@ s32 Field_RunScene(s32 entrance) {
           gGameState.entrance = work->battle;
           work->exit = EXIT_NONE;
           Field_StartEncounterTransition(work->battle);
-          work->unk1a8 = 0;
+          work->encounterBias = 0;
           work->battle = 0;
           gGameState.encounterSteps = 0;
         } else if (work->action != 0) {

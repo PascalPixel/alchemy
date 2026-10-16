@@ -11,7 +11,7 @@ void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Transform_SetLookAt();
-s32 Render_ProjectPoint();
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 

@@ -5647,7 +5647,7 @@ s32 Map_InitializePerspectiveScene(void) {
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = farPlane;
-  Iwram_TransformVector((const s32 *)&eyeOffset, (s32 *)camera);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, cameraPosition);
   RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
@@ -5671,7 +5671,7 @@ s32 Map_InitializePerspectiveScene(void) {
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = *distance + 0x10000;
-  Iwram_TransformVector((s32 *)&eyeOffset, camera->eye);
+  Iwram_TransformVector(&eyeOffset, camera->eye);
   REG_MOSAIC = 0;
   Io_Write16(0x42, &REG_DISPCNT);
   gBgScroll[1].x = 0;
@@ -5965,7 +5965,7 @@ void WorldMap_UpdateView(void) {
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = height + 0x10000;
-  Iwram_TransformVector((s32 *)&eyeOffset, (s32 *)camera);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, cameraPosition);
   // Pitch changes require a new ground-plane intersection for every scanline.

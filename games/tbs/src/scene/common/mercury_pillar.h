@@ -435,7 +435,7 @@ void Mercury_RunActorMove(void) {
   }
   state->active = 0;
   Engine_EventEnd();
-  work->encounterSteps += Iwram_MulQ16(work->encounterRate, 0x200000);
+  work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
 void Mercury_TickSpawnTimer(void) {

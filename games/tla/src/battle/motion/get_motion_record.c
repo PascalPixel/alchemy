@@ -53,7 +53,7 @@ void Camera_InitDefaultTransform(void) {
      * constraint swaps two rows. */
     asm volatile("" : "+l"(result));
     transfer.z = state->distance;
-    Iwram_TransformVector((s32 *)&transfer, (s32 *)result);
+    Iwram_TransformVector(&transfer, (s32 *)result);
     /* FAKEMATCH: canceling XORs keep the state pointer live across the call;
      * without them the unpinned result changes two instruction rows. */
     state->distance ^= 1;

@@ -125,7 +125,7 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 void Transform_ApplyLookAt(s32 *eye, s32 *target);
 void Projection_SetFieldOfView(u32 value, s32 param1, s32 param2);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
-s32 Render_ProjectPoint(s32 *point, s32 *screen);
+s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,

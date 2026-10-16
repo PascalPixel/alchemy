@@ -991,11 +991,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
 
 // Destroys the actor in slot index, if there is one.
 void ObjectTable_DestroyAtIndex(s32 actorIndex) {
-#ifdef UBFIX
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-#else
-  struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-#endif
   void *object = ObjectTable_Get(actorIndex);
 
   if (object != NULL) {
@@ -1560,15 +1556,15 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 // layer: records step events and warps, takes exits, and while walking
 // advances the encounter counter, regenerates PP, hurts the party with poison
 // and hazardous ground, and wears Avoid off. When this hurts the party, the
-// leader flinches and characters who fall are listed in the step work.
+// leader flinches and characters who fall are listed in the field work.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH: needed to match: the StepOwner read prefix preserves the
    * party-load order and the 44-byte frame. Plain struct BattleUnit differs by
    * 2: its alias set ties the poison store to the active-owner read. */
-  struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
+  struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
   struct MapState *map = WORK_SLOT(8);
   s32 leaderId = gGameState.selectedActor;
-  struct ObjectRuntime *leader = work->actors[leaderId];
+  struct ObjectRuntime *leader = (struct ObjectRuntime *)work->actors[leaderId];
   s16 previousHp[8];
   struct MapCell *tile;
 #ifdef UBFIX
@@ -1609,14 +1605,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
   }
   event = tile->collisionCode;
-  work->previousTile = work->tile;
-  work->tile = tile;
+  work->previousTile = work->currentTile;
+  work->currentTile = tile;
   if (event != 0)
     Field_CheckExitRegions(x, y, z);
   if (event >= STEP_EVENT_FIRST && event <= STEP_EVENT_LAST)
-    work->stepEvent = event;
+    work->action = event;
   if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
-    work->warpEvent = event;
+    work->input = event;
 
   if (gGameState.movementMode == 0 && leader != NULL &&
       leader->targetX != ACTOR_NO_TARGET) {
@@ -1627,15 +1623,15 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       encounterSpeed <<= 1;
     if (work->mode == MODE_WORLD_MAP) {
       fullEncounterRate = 1;
-      work->encounterEnemyGroup =
-          Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
+      work->battle = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
     } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
-      fullEncounterRate = work->encounterFull[event - (STEP_TERRAIN_FIRST - 1)];
-      work->encounterEnemyGroup = Encounter_RollTerrain(
-          event - (STEP_TERRAIN_FIRST - 1), encounterSpeed);
+      fullEncounterRate =
+          work->encounterGroups[event - (STEP_TERRAIN_FIRST - 1)];
+      work->battle = Encounter_RollTerrain(event - (STEP_TERRAIN_FIRST - 1),
+                                           encounterSpeed);
     } else {
-      fullEncounterRate = work->encounterFull[0];
-      work->encounterEnemyGroup = Encounter_RollTerrain(0, encounterSpeed);
+      fullEncounterRate = work->encounterGroups[0];
+      work->battle = Encounter_RollTerrain(0, encounterSpeed);
     }
 
     // Every 0x10000 of distance walked (half as fast where full is 0), the
@@ -1668,8 +1664,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       gGameState.avoidDistance -= leader->speedLimit;
       if (gGameState.avoidDistance <= 0) {
         gGameState.avoidDistance = 1;
-        if (work->psynergyRequest == 0)
-          work->psynergyRequest = 0x2096;
+        if (work->command == 0)
+          work->command = 0x2096;
       }
     }
   }
@@ -1692,7 +1688,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 
   if (partyHurt) {
     work->fallenCount = 0;
-    work->standingCount = 0;
+    work->survivorCount = 0;
     leader->velocityY = 0x40000;
     BattleFx_ConfigureLinkedObject(leaderId, 0x102);
     for (i = 0; i < partyCount; i++) {
@@ -1702,10 +1698,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       unitVitals = (struct StepOwner *)UnitGetFar(gGameState.activeOwners[i]);
 #endif
       if (unitVitals->hp > 0) {
-        work->standingCount++;
+        work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallen[work->fallenCount++] = gGameState.activeOwners[i];
-        work->raisedTrigger = 0xffff;
+        work->fallenOwners[work->fallenCount++] = gGameState.activeOwners[i];
+        work->event = -1;
         unitVitals->poison = 0;
       }
     }
@@ -1906,7 +1902,7 @@ s32 Field_RunScene(s32 entrance) {
     work->walkingDistanceScale = 0;
     GameFlag_SetBitFar(0x144);
   }
-  work->cells = Ram_MapCellBuffer;
+  work->previousTile = (struct MapCell *)Ram_MapCellBuffer;
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetDefeatReturnPoint();
     gGameState.hazardLimit = 16;
@@ -1980,13 +1976,13 @@ s32 Field_RunScene(s32 entrance) {
 
             Leader_StopMoving();
             Battle_SetObjectFlag5bWhenMode3();
-            for (i = 0; i < work->count; i++) {
+            for (i = 0; i < work->fallenCount; i++) {
               ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
-              UiWork_PushValueSlotFar(work->quantities[i], 1);
+              UiWork_PushValueSlotFar(work->fallenOwners[i], 1);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldStrengthExhausted,
                                                      1);
             }
-            if (work->survived == 0) {
+            if (work->survivorCount == 0) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct BattleUnit *vitals;
 

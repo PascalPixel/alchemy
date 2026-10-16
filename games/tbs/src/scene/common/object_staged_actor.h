@@ -29,8 +29,8 @@ extern s32 gStagedActor_FootprintBounds[];
 
 static struct StagedActor *StagedActor_FindAtTile(s32 *position,
                                                   struct StagedActor *origin) {
-  struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-  struct ObjectRuntime **slots = work->actors;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldActor **slots = work->actors;
   u32 i;
 
   for (i = 8; i <= 65; i++) {
@@ -189,9 +189,9 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
 
 static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
                                       s32 *footprint) {
-  struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct StagedActor *player = (struct StagedActor *)Object_GetById(0);
-  struct ObjectRuntime **list;
+  struct FieldActor **list;
   u32 i, j;
 
   *direction = player->directionAndKind >> 12;

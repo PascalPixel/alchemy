@@ -1502,9 +1502,10 @@ s32 ObjectTable_ReadActiveValue(s32 actor) {
     return -1;
   entry = (struct ObjectRuntime *)state->actors[actor];
 #else
-  struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 sprite = -1;
-  struct ObjectRuntime *entry = state->actors[actor & 0x0fff];
+  struct ObjectRuntime *entry =
+      (struct ObjectRuntime *)state->actors[actor & 0x0fff];
 #endif
 
   if (entry != 0 && entry->animationKind == 1)
@@ -5671,11 +5672,11 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 
   if ((*eventCell)->mode == 3) {
 #endif
-    struct EffectVector result;
+    s32 result[3];
 
-    Render_ProjectPoint(position, &result);
-    position->x = result.x << 16;
-    position->z = result.y << 16;
+    Render_ProjectPoint(position, result);
+    position->x = result[0] << 16;
+    position->z = result[1] << 16;
     position->y = 0;
   } else {
 #ifdef UBFIX

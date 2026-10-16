@@ -320,7 +320,7 @@ struct SceneTimer {
 };
 
 void Mercury_RunActorMove(void) {
-  struct FieldStepWork *work;
+  struct FieldWork *work;
   struct PushState *state;
   struct FieldActor *actor;
   struct FieldActor *source;
@@ -339,7 +339,7 @@ void Mercury_RunActorMove(void) {
 
   state = *(struct PushState **)WORK_SLOT(35);
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  actor = (struct FieldActor *)work->actors[gGameState.selectedActor];
+  actor = work->actors[gGameState.selectedActor];
   flags = &actor->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
@@ -443,9 +443,8 @@ void Mercury_TickSpawnTimer(void) {
   struct FieldActor *point;
 
   timer = *(struct SceneTimer **)WORK_SLOT(35);
-  point =
-      (struct FieldActor *)((struct FieldStepWork *)WORK_SLOT(HEAP_SLOT_EVENT))
-          ->actors[gGameState.selectedActor];
+  point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
+              ->actors[gGameState.selectedActor];
   if (timer->count != 0) {
     timer->count--;
   } else {

@@ -47,40 +47,6 @@ STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
 STATIC_ASSERT(offsetof(struct SceneEntries, exits) == 0x14);
 STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
 
-struct FieldStepWork {
-  const struct ScenePlacement *tables[4];
-  const struct SceneEvent *events;
-  struct ObjectRuntime *actors[66];
-  u8 unk11c[0x50];
-  s16 stepEvent;
-  s16 warpEvent;
-  u8 unk170[0xc];
-  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
-  s16 psynergyRequest;
-  u8 unk180[2];
-  u16 raisedTrigger;
-  s16 fallenCount;
-  s16 standingCount;
-  u16 fallen[11];
-  s16 mode;
-  u8 encounterFull[4];
-  u8 unk1a4[0xc];
-  s32 walkingDistanceScale;
-  s32 walkingDistance;
-  struct MapCell *tile;
-  struct MapCell *previousTile;
-};
-
-STATIC_ASSERT(sizeof(struct FieldStepWork) == 0x1c0);
-STATIC_ASSERT(offsetof(struct FieldStepWork, events) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldStepWork, actors) == 0x14);
-STATIC_ASSERT(offsetof(struct FieldStepWork, stepEvent) == 0x16c);
-STATIC_ASSERT(offsetof(struct FieldStepWork, encounterEnemyGroup) == 0x17c);
-STATIC_ASSERT(offsetof(struct FieldStepWork, mode) == 0x19e);
-STATIC_ASSERT(offsetof(struct FieldStepWork, walkingDistanceScale) == 0x1b0);
-STATIC_ASSERT(offsetof(struct FieldStepWork, walkingDistance) == 0x1b4);
-STATIC_ASSERT(offsetof(struct FieldStepWork, tile) == 0x1b8);
-
 // A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
   struct ObjectRuntime *object;
@@ -114,9 +80,9 @@ struct FieldWork {
   s16 command;    // a field Psynergy to use
   s16 item;       // an item to use
   s16 event;      // a special event: -1 for poison or hazard damage
-  s16 count;      // the characters who fell
-  s16 survived;   // 0 when the whole party fell
-  s16 quantities[9];
+  s16 fallenCount;
+  s16 survivorCount; // 0 when the whole party fell
+  s16 fallenOwners[9];
   s16 itemArgument;
   s16 blockedSteps;
   s16 mode;
@@ -125,8 +91,8 @@ struct FieldWork {
   s32 encounterThreshold;
   s32 walkingDistanceScale; // scales movement for PP and status updates
   s32 walkingDistance;      // accumulated 16.16 distance awaiting an update
-  u8 unk1b8[4];
-  u8 *cells;
+  struct MapCell *currentTile;
+  struct MapCell *previousTile;
   s32 transition;
   u16 unk1c4;
   u16 transitionActive;
@@ -174,6 +140,8 @@ STATIC_ASSERT(offsetof(struct FieldWork, encounterBias) == 0x1a8);
 STATIC_ASSERT(offsetof(struct FieldWork, encounterThreshold) == 0x1ac);
 STATIC_ASSERT(offsetof(struct FieldWork, walkingDistanceScale) == 0x1b0);
 STATIC_ASSERT(offsetof(struct FieldWork, walkingDistance) == 0x1b4);
+STATIC_ASSERT(offsetof(struct FieldWork, currentTile) == 0x1b8);
+STATIC_ASSERT(offsetof(struct FieldWork, previousTile) == 0x1bc);
 STATIC_ASSERT(offsetof(struct FieldWork, transition) == 0x1c0);
 STATIC_ASSERT(offsetof(struct FieldWork, transitionActive) == 0x1c6);
 STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 0x1c8);

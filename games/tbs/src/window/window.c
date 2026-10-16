@@ -5567,7 +5567,8 @@ void SelectionScreen_Draw(void) {
     } else if (cnt == state->cursorIndex) {
       slot = 241;
       if (cursor->kind != 0) {
-        if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
+        if (BattleMotion_ProjectScaledPositionFar(
+                node->base, EffectPosition_Coordinates(&pos)) != -1) {
           cursor->targetX = pos.x;
           cursor->targetY = pos.y;
           if (cursor->scale == 0) {

@@ -7034,8 +7034,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     targetIndex %= targetCount;
   }
   if (mode != 2) {
-    BattleMotion_ProjectConditionalPositionFar(selection,
-                                               (s32 *)&actorPosition);
+    BattleMotion_ProjectConditionalPositionFar(
+        selection, EffectPosition_Coordinates(&actorPosition));
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 0x80;
@@ -7064,7 +7064,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         break;
       }
       BattleMotion_ProjectConditionalPositionFar(
-          *(u16 *)((u8 *)candidateIds + t), (s32 *)&selectedPosition);
+          *(u16 *)((u8 *)candidateIds + t),
+          EffectPosition_Coordinates(&selectedPosition));
     }
     ((s32 *)firstSprite)[1] = 0x40002000;
     ((s32 *)firstSprite)[2] = 0;
@@ -7169,8 +7170,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       if (candidateIds[targetIndex] <= 7) {
         if (spread != ABILITY_RANGE_ALL && kind != 0) {
           unit = UnitGetFar(candidateIds[targetIndex]);
-          BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
-                                                     (s32 *)&selectedPosition);
+          BattleMotion_ProjectConditionalPositionFar(
+              candidateIds[targetIndex],
+              EffectPosition_Coordinates(&selectedPosition));
           if (conditionWindow != 0)
             UiWork_Finalize(conditionWindow, 1);
           switch (kind) {
@@ -7468,8 +7470,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         }
       } else if (spread != ABILITY_RANGE_ALL) {
         target = UnitGetFar(candidateIds[targetIndex]);
-        BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
-                                                   (s32 *)&namePosition);
+        BattleMotion_ProjectConditionalPositionFar(
+            candidateIds[targetIndex],
+            EffectPosition_Coordinates(&namePosition));
         namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (target->classId == 125 || target->classId == 122) {
           width = MsgMysteryPersonName;
@@ -7501,8 +7504,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       for (i = 1; i < targetCount; i++) {
         marker = &firstSprite[i];
         track = &cursorTracks[spreadTrackIndices[i]];
-        BattleMotion_ProjectConditionalPositionFar(spreadActorIds[i],
-                                                   (s32 *)&markerPosition);
+        BattleMotion_ProjectConditionalPositionFar(
+            spreadActorIds[i], EffectPosition_Coordinates(&markerPosition));
         markerPosition.y =
             markerPosition.y + Trig_Sin(gFrameCount << 12) / 32768;
         *marker = *firstSprite;

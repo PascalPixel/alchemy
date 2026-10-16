@@ -10786,7 +10786,8 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       if (frame <= 24)
         Graphics_ScaleRgb555Clamped(battle->palette, (u16 *)0x050000c0,
                                     *brightness = 0x10000 - frame * 1092, 128);
-      BattleMotion_ProjectScaledPosition(unitId, (s32 *)projectedPosition);
+      BattleMotion_ProjectScaledPosition(
+          unitId, EffectPosition_Coordinates(projectedPosition));
       work->originX = (64U - (u32)projectedPosition->x) << 8;
       work->originY = (64U - (u32)projectedPosition->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
@@ -10800,7 +10801,8 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     BattlePresentation_PrepareSceneFar(element);
     for (frame = 0; frame < 40; frame++) {
       work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
-      BattleMotion_ProjectScaledPosition(unitId, (s32 *)&position2);
+      BattleMotion_ProjectScaledPosition(
+          unitId, EffectPosition_Coordinates(&position2));
       work->originX = (64U - (u32)position2.x) << 8;
       work->originY = (64U - (u32)position2.y) << 8;
       IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&work->originX, 0x84000002);

@@ -16,15 +16,38 @@ struct EffectStep {
 };
 
 struct EffectPosition {
+#ifdef UBFIX
+  // Projection writes three coordinates; effects read their named components.
+  union {
+    struct {
+      s32 x;
+      s32 y;
+      s32 depth;
+    };
+    s32 coordinates[3];
+  };
+#else
   s32 x;
   s32 y;
   s32 depth;
+#endif
 };
+
+// UB: indexing from &x crosses separate scalar members in the legacy record.
+// UBFIX provides a real array while keeping the effects' named coordinates.
+// An always-on union changes native alias analysis in the effect/window code.
+static inline s32 *EffectPosition_Coordinates(struct EffectPosition *position) {
+#ifdef UBFIX
+  return position->coordinates;
+#else
+  return &position->x;
+#endif
+}
 
 #if GAME_TLA
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
+s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
                                        struct EffectPosition *position);
 void EffectPosition_ApplyStepAndYOffset(s32 id,
                                         struct EffectPosition *position);

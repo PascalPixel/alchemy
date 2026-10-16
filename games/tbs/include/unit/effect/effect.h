@@ -290,7 +290,7 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
                                      s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point,
+s32 EffectPosition_ApplyBaseAndYOffset(const void *point,
                                        struct EffectPosition *position);
 void EffectPosition_ApplyAnimationAndYOffset(s32 id,
                                              struct EffectPosition *position);

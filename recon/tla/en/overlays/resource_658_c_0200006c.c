@@ -1,24 +1,26 @@
-/* Draft, differ 16 of 61, after overlay 695's Func_02000d84 (goto loop, so loop.c keeps the
- * zero inside). Left: the native addresses the placement table as base + offset registers
- * (data at [table, i * 8], the two cells at [table, i * 8 + 4] and 2 past it), the draft as
- * table + 4 and table + 6 or one entry pointer; the leader's mode and column calls also
- * order their loads differently. Tried: an entry struct with x and y or a cell[2], a local
- * table pointer, byte offsets, (index - 1) * 8 in one expression (folds the subtraction),
- * 3 minutes of alchemy permute (differ 14 with an inline index helper). */
+// Draft, differ 16 of 61, after overlay 695's Func_02000d84 (goto loop, so
+// loop.c keeps the zero inside). Left: the native addresses the placement table
+// as base + offset registers (data at [table, i * 8], the two cells at [table,
+// i * 8 + 4] and 2 past it), the draft as table + 4 and table + 6 or one entry
+// pointer; the leader's mode and column calls also order their loads
+// differently. Tried: an entry struct with x and y or a cell[2], a local table
+// pointer, byte offsets, (index - 1) * 8 in one expression (folds the
+// subtraction), 3 minutes of alchemy permute (differ 14 with an inline index
+// helper).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
 
 struct MadraEventWork {
-    u8 unk000[0x154];
-    s16 value154;
+  u8 unk000[0x154];
+  s16 value154;
 };
 
 struct MadraPlacement {
-    const void *data;
-    u16 x;
-    u16 y;
+  const void *data;
+  u16 x;
+  u16 y;
 };
 
 extern s32 gData_02003308[];
@@ -35,35 +37,36 @@ void Func_02002c30(s32 a);
 void Func_02002c58(s32 a);
 void Func_02002c90(s32 a);
 
-void Func_0200006c(void)
-{
-    struct MadraEventWork *work = Ram_HeapSlots->eventWork;
-    struct ObjectRuntime *object;
-    u32 id;
+void Func_0200006c(void) {
+  struct MadraEventWork *work = Ram_HeapSlots->eventWork;
+  struct ObjectRuntime *object;
+  u32 id;
 
-    Func_02002b28();
-    Func_02002c58(0);
-    id = 8;
+  Func_02002b28();
+  Func_02002c58(0);
+  id = 8;
 next:
-    object = Object_GetById(id);
-    if (object)
-        object->motionFlags = 0;
-    id++;
-    if (id < 64)
-        goto next;
-    {
-        s32 index = work->value154;
+  object = Object_GetById(id);
+  if (object)
+    object->motionFlags = 0;
+  id++;
+  if (id < 64)
+    goto next;
+  {
+    s32 index = work->value154;
 
-        Func_02002c90(158);
-        index--;
-        Func_02002ae8((const void *)gData_02003308[index * 2], ((u16 *)&gData_02003308[index * 2 + 1])[0], ((u16 *)&gData_02003308[index * 2 + 1])[1]);
-    }
-    Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
-    Object_SetModeById(gPartyState.currentOwner, 2);
-    ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
-    Battle_WaitMode0(10);
-    Func_02002c30(work->value154);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Func_02002b30();
+    Func_02002c90(158);
+    index--;
+    Func_02002ae8((const void *)gData_02003308[index * 2],
+                  ((u16 *)&gData_02003308[index * 2 + 1])[0],
+                  ((u16 *)&gData_02003308[index * 2 + 1])[1]);
+  }
+  Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
+  Object_SetModeById(gPartyState.currentOwner, 2);
+  ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
+  Battle_WaitMode0(10);
+  Func_02002c30(work->value154);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02002b30();
 }

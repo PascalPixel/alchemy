@@ -1,17 +1,17 @@
-/* Draft, differ 78 of 804: Func_08165ab4, summon 1 (Func_0814c994's case 1,
- * actflags 0x8001), The Broken Seal's BattleEffect_RunCirclingFallingScene.
- *
- * Twin: ☀️ BattleEffect_RunCirclingFallingScene
- * (games/tbs/src/effect/effect.c), ported: Func_0813ba50 sets the display,
- * the six rock objects are resource 653 at objects 9 to 14 (☀️ 390), the
- * formation is resource 648 (☀️ 379), the blitters come from
- * Func_081963ec(104, 19) and (188, 3), the effect stays an argument for the
- * hit loop, callback Func_08143000 at 0xc80.
- *
- * Left: the 78 differing rows are only reordered (as a multiset they are the
- * native's): loads and stores ahead of independent constants, and the literal
- * pools that shift with them, the kind Func_08164b2c's header traces to a
- * load costing 3 and a store 2. */
+// Draft, differ 78 of 804: Func_08165ab4, summon 1 (Func_0814c994's case 1,
+// actflags 0x8001), The Broken Seal's BattleEffect_RunCirclingFallingScene.
+
+// Twin: ☀️ BattleEffect_RunCirclingFallingScene
+// (games/tbs/src/effect/effect.c), ported: Func_0813ba50 sets the display,
+// the six rock objects are resource 653 at objects 9 to 14 (☀️ 390), the
+// formation is resource 648 (☀️ 379), the blitters come from
+// Func_081963ec(104, 19) and (188, 3), the effect stays an argument for the
+// hit loop, callback Func_08143000 at 0xc80.
+
+// Left: the 78 differing rows are only reordered (as a multiset they are the
+// native's): loads and stores ahead of independent constants, and the literal
+// pools that shift with them, the kind Func_08164b2c's header traces to a
+// load costing 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

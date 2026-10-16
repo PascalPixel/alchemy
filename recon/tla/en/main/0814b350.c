@@ -1,23 +1,22 @@
-/* Near miss, differ 89 of 744: Func_0814b350, an effect no table reaches
-   (unused), with one tagged dead store (462 without).
+// Near miss, differ 89 of 744: Func_0814b350, an effect no table reaches
+// (unused), with one tagged dead store (462 without).
 
-   ☀️ twin: BattleFx_RunSparkTravel (games/tbs/src/effect/effect.c), shape
-   0.888, structure 1.000. ⚓️'s changes: the effect argument read directly,
-   the Mercury Djinn's small sheet (directory row 0x155) as ☀️'s, the
-   transfer callback at 0xc80, and ⚓️'s names for the shared routines.
-   ☀️'s dead store of the size series A draws at carries over with its tag:
-   without it the frame and allocation move (462).
+// ☀️ twin: BattleFx_RunSparkTravel (games/tbs/src/effect/effect.c), shape
+// 0.888, structure 1.000. ⚓️'s changes: the effect argument read directly,
+// the Mercury Djinn's small sheet (directory row 0x155) as ☀️'s, the
+// transfer callback at 0xc80, and ⚓️'s names for the shared routines.
+// ☀️'s dead store of the size series A draws at carries over with its tag:
+// without it the frame and allocation move (462).
 
-   What is left: one instruction more than the native (745 of 744), where
-   agscc builds the rider record's address as movs r2, #156; add r2, sp and
-   the native as add r2, sp, #156; neighbouring rows in the other order in
-   the prologue and the travel set-up; and pool offsets that follow them.
+// What is left: one instruction more than the native (745 of 744), where
+// agscc builds the rider record's address as movs r2, #156; add r2, sp and
+// the native as add r2, sp, #156; neighbouring rows in the other order in
+// the prologue and the travel set-up; and pool offsets that follow them.
 
-   Tried (differ):
-     ☀️'s body with ⚓️'s names, without the dead store                  462
-     with ☀️'s tagged dead store                                         89
-     greedy declaration-order scan, every local through every place     89 */
-
+// Tried (differ):
+// ☀️'s body with ⚓️'s names, without the dead store                  462
+// with ☀️'s tagged dead store                                         89
+// greedy declaration-order scan, every local through every place     89
 
 #include "types.h"
 #include "system.h"

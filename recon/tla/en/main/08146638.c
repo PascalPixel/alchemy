@@ -1,22 +1,22 @@
-/* Near miss, differ 34 of 480.
- *
- * Twin: The Broken Seal's BattleFx_RunRingBolts (effect kind 68 there and
- * here), ported call for call. The Lost Age's changes: the effect argument is
- * read directly (the dispatcher stores work->effect), the rune palette and
- * resource 0x134 as in Func_08146a6c, Object_SetMode for the caster where The
- * Broken Seal dispatches an argument to its children, one blitter from
- * Func_081963ec(104, MAX), the callback at 0xc80, and the target thrown with
- * Object_ResetMotion and Object_SetPosition. The tables are not const (see
- * Func_08146a6c).
- *
- * Func_081963ec is declared to return s32, as The Lost Age's LoadWork
- * returns its store-flag and The Broken Seal's returns s32: void it is 36.
- *
- * Left: order only. Same frame, registers and instructions; at about fifteen
- * rows the native issues a memory access (the argument's spill, a work slot,
- * a spill reload or a field read) one instruction ahead of the constant or
- * move beside it.
- */
+// Near miss, differ 34 of 480.
+
+// Twin: The Broken Seal's BattleFx_RunRingBolts (effect kind 68 there and
+// here), ported call for call. The Lost Age's changes: the effect argument is
+// read directly (the dispatcher stores work->effect), the rune palette and
+// resource 0x134 as in Func_08146a6c, Object_SetMode for the caster where The
+// Broken Seal dispatches an argument to its children, one blitter from
+// Func_081963ec(104, MAX), the callback at 0xc80, and the target thrown with
+// Object_ResetMotion and Object_SetPosition. The tables are not const (see
+// Func_08146a6c).
+
+// Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+// returns its store-flag and The Broken Seal's returns s32: void it is 36.
+
+// Left: order only. Same frame, registers and instructions; at about fifteen
+// rows the native issues a memory access (the argument's spill, a work slot,
+// a spill reload or a field read) one instruction ahead of the constant or
+// move beside it.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

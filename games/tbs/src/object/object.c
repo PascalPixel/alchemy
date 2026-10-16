@@ -458,8 +458,8 @@ typedef struct TerrainRule {
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
 struct EncounterZone {
-  u16 rate;       // the base encounter rate
-  u16 level;      // the party level the zone is made for
+  u16 rate;                           // the base encounter rate
+  u16 level;                          // the party level the zone is made for
   u16 enemies[ENCOUNTER_GROUP_COUNT]; // the enemy groups that can appear
   u8 weights[ENCOUNTER_GROUP_COUNT];  // each group's relative chance
 };

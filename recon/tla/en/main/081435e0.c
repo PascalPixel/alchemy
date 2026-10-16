@@ -1,13 +1,13 @@
-/* Near miss, differ 10 of 270: The Broken Seal's BattleFx_BeginCanvasLayer with
-   ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Func_08143488 at 0x480,
-   Func_0814355c for the display registers and one more work word cleared. The
-   BLDCNT and WININ rows take BattleFx_OpenCanvasLayer's devices (canvas.c),
-   which match there. Left: the last block, where the native loads gBgScroll's
-   address and both scroll halves one instruction earlier, each between the two
-   halves of a work offset (movs r3, #240; ldr r1, =gBgScroll; lsls r3, r3, #7).
-   Tried: the scroll pointer as a local first, in a one-pass block, the x half
-   read ahead behind a loop note (differ 12 to 20); alchemy permute for 5
-   minutes (no better). */
+// Near miss, differ 10 of 270: The Broken Seal's BattleFx_BeginCanvasLayer with
+// ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Func_08143488 at 0x480,
+// Func_0814355c for the display registers and one more work word cleared. The
+// BLDCNT and WININ rows take BattleFx_OpenCanvasLayer's devices (canvas.c),
+// which match there. Left: the last block, where the native loads gBgScroll's
+// address and both scroll halves one instruction earlier, each between the two
+// halves of a work offset (movs r3, #240; ldr r1, =gBgScroll; lsls r3, r3, #7).
+// Tried: the scroll pointer as a local first, in a one-pass block, the x half
+// read ahead behind a loop note (differ 12 to 20); alchemy permute for 5
+// minutes (no better).
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"

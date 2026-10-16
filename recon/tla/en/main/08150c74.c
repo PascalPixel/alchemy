@@ -1,23 +1,23 @@
-/* Near miss of Func_08150c74, effect kind 1: differ 58 of 444 (draft 444).
- *
- * Twin: The Broken Seal's BattleFx_RunRockWall (effect.c), call for call.
- * The Lost Age reads the effect from its argument, takes its heap blocks as
- * Ram_HeapSlots fields, loads the blitter through Func_081963ec
- * (BLIT_TRANSPARENT is 2 where COMPOSITE_TRANSPARENT is 1), orders the
- * callback 0xc80 and copies the background through a local "cells".
- * ResourceId_RockWallSheet is row 0x14e of directory.s (asset
- * BattleFx_RockWallSheet), not yet named there.
- *
- * Left: the native sets the buffer (r5) and both band-loop counters (r6,
- * r7) before the first call and loads the map buffer again for
- * Iwram_CopyWords; here they start after the copy. The rest is single-row
- * scheduling (immediates and pool loads one slot apart).
- *
- * Tried (trials 0 and 1, 2026-10-15): the map buffer read directly (98),
- * counters and buffer set at the top (382), the buffer at the top only
- * (76), do-while with an explicit offset (382), alchemy permute 6 minutes
- * (58).
- */
+// Near miss of Func_08150c74, effect kind 1: differ 58 of 444 (draft 444).
+
+// Twin: The Broken Seal's BattleFx_RunRockWall (effect.c), call for call.
+// The Lost Age reads the effect from its argument, takes its heap blocks as
+// Ram_HeapSlots fields, loads the blitter through Func_081963ec
+// (BLIT_TRANSPARENT is 2 where COMPOSITE_TRANSPARENT is 1), orders the
+// callback 0xc80 and copies the background through a local "cells".
+// ResourceId_RockWallSheet is row 0x14e of directory.s (asset
+// BattleFx_RockWallSheet), not yet named there.
+
+// Left: the native sets the buffer (r5) and both band-loop counters (r6,
+// r7) before the first call and loads the map buffer again for
+// Iwram_CopyWords; here they start after the copy. The rest is single-row
+// scheduling (immediates and pool loads one slot apart).
+
+// Tried (trials 0 and 1, 2026-10-15): the map buffer read directly (98),
+// counters and buffer set at the top (382), the buffer at the top only
+// (76), do-while with an explicit offset (382), alchemy permute 6 minutes
+// (58).
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -75,15 +75,15 @@ extern char ResourceId_RockWallSheet;
 extern u8 Data_081982f7[][3];                // gRockWall_Timings
 extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 
-/* Three rock pillars rise from the ground, left to right four frames apart,
- * and sink again; targets standing on one are thrown into the air.
- *
- * Setup: the band of background under the targets (x 32-71, y 96-111) is
- * cut out of BG character memory to cap each pillar. Frame loop: each
- * pillar's height follows a sine over its rise time, a target over a
- * pillar is launched upward, and a target that lands flashes; the camera
- * shakes all the while. The variant chooses the length, the rise time and
- * the shake. */
+// Three rock pillars rise from the ground, left to right four frames apart,
+// and sink again; targets standing on one are thrown into the air.
+
+// Setup: the band of background under the targets (x 32-71, y 96-111) is
+// cut out of BG character memory to cap each pillar. Frame loop: each
+// pillar's height follows a sine over its rise time, a target over a
+// pillar is launched upward, and a target that lands flashes; the camera
+// shakes all the while. The variant chooses the length, the rise time and
+// the shake.
 void Func_08150c74(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -1,20 +1,20 @@
-/* Draft, differ 803 of 1022 (draft 1015 instructions, no device): the body
- * of the canvas burst family (BattleFx_RunCanvasMode0,
- * BattleFx_RunCanvasModeByCount and BattleFx_RunCanvasMode3WithAction in
- * canvas_modes.c), written from the listing on The Broken Seal's canvas
- * skeleton (twins: BattleEffect_RunCirclingFallingScene 0.44, by call
- * order BattleFx_RunSparkGroups 0.44).
- * Every call, table and branch of the four modes is in the native's order;
- * the four quarter blits of a disc reload the second blitter for each flip
- * (flags 3, 7, 11, 15 with mode 1), as the native does.
- * Left: the frame. The native's is 88 bytes: effect sp+60, mode sp+56, work
- * sp+52, canvas sp+48, frame sp+44, from sp+76, to sp+64, draw sp+36,
- * graphics sp+32, the disc table sp+28, frames sp+24, &ball sp+20, &to
- * sp+16, &from sp+12, and j spilled at sp+8 across the rays' Trig_Sin;
- * here it is 84 (graphics at sp+40, the rest 4 lower), and the loops'
- * registers follow.
- * Next: j's spill (the native keeps the ray index in memory across the two
- * trig calls), the disc table and draw as the native's spills. */
+// Draft, differ 803 of 1022 (draft 1015 instructions, no device): the body
+// of the canvas burst family (BattleFx_RunCanvasMode0,
+// BattleFx_RunCanvasModeByCount and BattleFx_RunCanvasMode3WithAction in
+// canvas_modes.c), written from the listing on The Broken Seal's canvas
+// skeleton (twins: BattleEffect_RunCirclingFallingScene 0.44, by call
+// order BattleFx_RunSparkGroups 0.44).
+// Every call, table and branch of the four modes is in the native's order;
+// the four quarter blits of a disc reload the second blitter for each flip
+// (flags 3, 7, 11, 15 with mode 1), as the native does.
+// Left: the frame. The native's is 88 bytes: effect sp+60, mode sp+56, work
+// sp+52, canvas sp+48, frame sp+44, from sp+76, to sp+64, draw sp+36,
+// graphics sp+32, the disc table sp+28, frames sp+24, &ball sp+20, &to
+// sp+16, &from sp+12, and j spilled at sp+8 across the rays' Trig_Sin;
+// here it is 84 (graphics at sp+40, the rest 4 lower), and the loops'
+// registers follow.
+// Next: j's spill (the native keeps the ray index in memory across the two
+// trig calls), the disc table and draw as the native's spills.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -142,7 +142,8 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
   if (mode == 3)
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                    128);
   else
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
@@ -238,8 +239,8 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
               s32 x = to.x / 2 + ((radius * Trig_Sin(step->z)) >> 16);
               s32 y = to.y + ((radius * Trig_Cos(step->z)) >> 16);
 
-              draw(canvas, graphics + gData_08197410[8 - 1], x - 2, y - 36,
-                   4, 8);
+              draw(canvas, graphics + gData_08197410[8 - 1], x - 2, y - 36, 4,
+                   8);
             }
           }
         }

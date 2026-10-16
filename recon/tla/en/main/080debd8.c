@@ -1,14 +1,14 @@
-/* Near miss, differ 4 of 79 (2026-10-15), The Broken Seal's
- * MapEvent_RunTileTriggerSequence: the end of Cloak. ⚓️ takes the caster
- * from the effect scene instead of the selected actor and sets its mode
- * directly.
- * Left: the last statement. The native stores the blend before it starts
- * the cloak flag's offset (movs r1, #183) and loads the party state between
- * the offset's halves; this starts the offset first.
- * Tried: the party state through a pointer after an empty asm (the form
- * polar_target.c tags) moves the address load but sets the zero first,
- * still differ 4; the zero as i - 5 differ 7; a volatile store, or a pointer
- * to the flag, differ 4. */
+// Near miss, differ 4 of 79 (2026-10-15), The Broken Seal's
+// MapEvent_RunTileTriggerSequence: the end of Cloak. ⚓️ takes the caster
+// from the effect scene instead of the selected actor and sets its mode
+// directly.
+// Left: the last statement. The native stores the blend before it starts
+// the cloak flag's offset (movs r1, #183) and loads the party state between
+// the offset's halves; this starts the offset first.
+// Tried: the party state through a pointer after an empty asm (the form
+// polar_target.c tags) moves the address load but sets the zero first,
+// still differ 4; the zero as i - 5 differ 7; a volatile store, or a pointer
+// to the flag, differ 4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
@@ -19,8 +19,8 @@
 // ⚓️'s composite sprite (as polar_target.c's CompositeAnimation).
 struct CloakSprite {
   u8 unk00[0x19];
-  u8 dirty;   // redraw the parts
-  u8 blend;   // 2 draws the caster half transparent, 1 shows it plainly
+  u8 dirty; // redraw the parts
+  u8 blend; // 2 draws the caster half transparent, 1 shows it plainly
   u8 unk1b[0x0d];
   struct AnimationEntry *entries[4];
 };

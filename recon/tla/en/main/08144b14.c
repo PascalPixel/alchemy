@@ -1,24 +1,24 @@
-/* Near miss, differ 62 of 652.
- *
- * The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
- * 2). Twin: The Broken Seal's BattleFx_RunMemberBeam, ported call for call.
- * The Lost Age's changes: a third mode (the Mars Djinn); every picture
- * unpacked with its palette by Resource_LoadAndDecompress; the canvas
- * prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two
- * three-word arrays) where The Broken Seal calls
- * BattleFx_PrepareCanvasEffect; Func_08144aac for the Djinn's pair; the
- * callback at 0xc80; the effect argument read directly; the camera read
- * each frame.
- *
- * Left: order only: single swaps of a load (the effect's fields, the work
- * pointer's spill, a table) with the constant beside it, about thirty
- * places.
- *
- * Tried (2026-10-15): the plain port 182; the Djinn arrays declared first
- * (the native's slots 128 and 116) 170; the prelude in its own local, not
- * The Broken Seal's reuse of k (the native keeps it in r7 within the Djinn
- * block) 152; the tagged heap pointer 62.
- */
+// Near miss, differ 62 of 652.
+
+// The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
+// 2). Twin: The Broken Seal's BattleFx_RunMemberBeam, ported call for call.
+// The Lost Age's changes: a third mode (the Mars Djinn); every picture
+// unpacked with its palette by Resource_LoadAndDecompress; the canvas
+// prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two
+// three-word arrays) where The Broken Seal calls
+// BattleFx_PrepareCanvasEffect; Func_08144aac for the Djinn's pair; the
+// callback at 0xc80; the effect argument read directly; the camera read
+// each frame.
+
+// Left: order only: single swaps of a load (the effect's fields, the work
+// pointer's spill, a table) with the constant beside it, about thirty
+// places.
+
+// Tried (2026-10-15): the plain port 182; the Djinn arrays declared first
+// (the native's slots 128 and 116) 170; the prelude in its own local, not
+// The Broken Seal's reuse of k (the native keeps it in r7 within the Djinn
+// block) 152; the tagged heap pointer 62.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

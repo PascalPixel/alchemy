@@ -1,30 +1,30 @@
-/* Draft, differ 1668 of 1864 (20 instructions short).
- *
- * Twin: The Broken Seal's BattleFx_RunTwelveMode, rebuilt by ⚓️ for 21 modes
- * (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
- * record table and the strike, column, wisp, mote, spark and glint parts
- * are the twin's; ⚓️ adds:
- *   - a seventh palette (OrangePaletteB) and two more effect sheets: a flash
- *     (record flag 32) drawn as 32x64 pictures, and a star (flag 64) drawn as
- *     a textured 3D model that swells and shrinks over frames 8 to 17;
- *   - per-mode cues: modes 7, 12 and 13 sound their first hits and only then
- *     move the battle on, and modes 12 and 13 aim each strike afresh at a
- *     jittered point;
- *   - heavier hits (flags 16 and 32) set every spark going, and 256 sparks
- *     where the twin has 512;
- *   - the target is measured once for the wisps, not once for each wisp.
- *
- * Left: allocation through the whole body. The native keeps the addresses
- * of targetPosition, ground, alternate and the blitter pair in spill slots
- * (sp+36, +32, +48, +40) and reads the structs through them, and keeps mode
- * * 8 in two slots (sp+28, +52) for the record index; here the structs are
- * read sp-relative, the frame is 176 bytes for 164, and every spill slot
- * moves. The control flow follows the native block for block; the 20
- * missing instructions are reloads the native's extra pseudos cost.
- *
- * Tried:
- *   the twin rebuilt from the listing                          1668
- */
+// Draft, differ 1668 of 1864 (20 instructions short).
+
+// Twin: The Broken Seal's BattleFx_RunTwelveMode, rebuilt by ⚓️ for 21 modes
+// (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
+// record table and the strike, column, wisp, mote, spark and glint parts
+// are the twin's; ⚓️ adds:
+// - a seventh palette (OrangePaletteB) and two more effect sheets: a flash
+// (record flag 32) drawn as 32x64 pictures, and a star (flag 64) drawn as
+// a textured 3D model that swells and shrinks over frames 8 to 17;
+// - per-mode cues: modes 7, 12 and 13 sound their first hits and only then
+// move the battle on, and modes 12 and 13 aim each strike afresh at a
+// jittered point;
+// - heavier hits (flags 16 and 32) set every spark going, and 256 sparks
+// where the twin has 512;
+// - the target is measured once for the wisps, not once for each wisp.
+
+// Left: allocation through the whole body. The native keeps the addresses
+// of targetPosition, ground, alternate and the blitter pair in spill slots
+// (sp+36, +32, +48, +40) and reads the structs through them, and keeps mode
+// * 8 in two slots (sp+28, +52) for the record index; here the structs are
+// read sp-relative, the frame is 176 bytes for 164, and every spill slot
+// moves. The control flow follows the native block for block; the 20
+// missing instructions are reloads the native's extra pseudos cost.
+
+// Tried:
+// the twin rebuilt from the listing                          1668
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -148,7 +148,7 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
@@ -159,8 +159,8 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 struct ModelDraw *Func_081969f8(s32 count);
 void Func_08196958(const void *corners, void *out, s32 count);
 void Func_08196a7c(struct ModelDraw *draw);
@@ -170,16 +170,15 @@ void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
 void WaitFrames(s32 frames);
 
-/*
- * The body of 21 strike and column effects.
- *
- * Strikes (kind 0) are six-picture slashes across the first target, one
- * every six pictures' time; columns (kind 1) are a pair of mirrored 18x48
- * pillars that rise and fall on it. Each hit flashes and shakes the target,
- * starts eight wisps of smoke and a burst of sparks, and the battle moves on
- * at the first. Around them the mode's flags add rising wisps, motes that
- * stream back to the user, glints, sparks, a flash or a star.
- */
+// The body of 21 strike and column effects.
+
+// Strikes (kind 0) are six-picture slashes across the first target, one
+// every six pictures' time; columns (kind 1) are a pair of mirrored 18x48
+// pillars that rise and fall on it. Each hit flashes and shakes the target,
+// starts eight wisps of smoke and a burst of sparks, and the battle moves on
+// at the first. Around them the mode's flags add rising wisps, motes that
+// stream back to the user, glints, sparks, a flash or a star.
+
 void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;

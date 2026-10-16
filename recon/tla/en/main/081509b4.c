@@ -1,22 +1,22 @@
-/* Near miss of Func_081509b4, effect kind 11: differ 14 of 274 (draft 274).
- *
- * Twin: The Broken Seal's BattleFx_RunPuffArc (effect.c), call for call.
- * The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
- * runs 60 frames instead of 80, reads the effect from its argument, loads
- * its blitter through Func_081963ec (BLIT_ADDITIVE is 0 where
- * COMPOSITE_ADDITIVE is 3) and orders the callback 0xc80.
- *
- * Left: seven swapped pairs, each the native issuing a load or a constant
- * one slot earlier than agscc: the effect argument's spill before the RAM
- * base, the BLDALPHA value before the register address, the first angle
- * before its counter, the cell offset table before the cell, and 0x700
- * (the sheet) after the particle's x in the second and third draws.
- *
- * Tried:
- *   - the four cell tables extern const (the earlier draft): 316; without
- *     const, as The Broken Seal's readers declare them: 14.
- *   - alchemy permute, 8 minutes, 2 jobs: no candidate beat 14.
- */
+// Near miss of Func_081509b4, effect kind 11: differ 14 of 274 (draft 274).
+
+// Twin: The Broken Seal's BattleFx_RunPuffArc (effect.c), call for call.
+// The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
+// runs 60 frames instead of 80, reads the effect from its argument, loads
+// its blitter through Func_081963ec (BLIT_ADDITIVE is 0 where
+// COMPOSITE_ADDITIVE is 3) and orders the callback 0xc80.
+
+// Left: seven swapped pairs, each the native issuing a load or a constant
+// one slot earlier than agscc: the effect argument's spill before the RAM
+// base, the BLDALPHA value before the register address, the first angle
+// before its counter, the cell offset table before the cell, and 0x700
+// (the sheet) after the particle's x in the second and third draws.
+
+// Tried:
+// - the four cell tables extern const (the earlier draft): 316; without
+// const, as The Broken Seal's readers declare them: 14.
+// - alchemy permute, 8 minutes, 2 jobs: no candidate beat 14.
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -53,14 +53,14 @@ extern u8 gData_08197467[];  // gPuffArc_CellWidths
 extern u8 gData_08197473[];  // gPuffArc_CellBiasY
 extern u8 gData_0819746d[];  // gPuffArc_CellHeights
 
-/* Nine flames puff up along a half-circle arc, four frames apart.
- *
- * Setup: the flames are placed on an arc 32 pixels wide and 16 high, from
- * the left when the first target is an enemy (128 and up), else from the
- * right, each one starting four frames after the last. Frame loop: a flame
- * steps through six pictures, four frames each; variant 1 adds a copy 16
- * pixels higher, variant 2 another 32 higher and a brighter trail. The
- * targets are hit from frame 16, eight frames apart. */
+// Nine flames puff up along a half-circle arc, four frames apart.
+
+// Setup: the flames are placed on an arc 32 pixels wide and 16 high, from
+// the left when the first target is an enemy (128 and up), else from the
+// right, each one starting four frames after the last. Frame loop: a flame
+// steps through six pictures, four frames each; variant 1 adds a copy 16
+// pixels higher, variant 2 another 32 higher and a brighter trail. The
+// targets are hit from frame 16, eight frames apart.
 void Func_081509b4(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

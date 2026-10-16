@@ -1,4 +1,4 @@
-/* FarCall_RuntimeTable: one entry per 8-byte stub, in table order. */
+// FarCall_RuntimeTable: one entry per 8-byte stub, in table order.
 FAR_CALL(WaitFramesFar, WaitFrames, void, (s32 frames))
 FAR_SLOT(Scheduler_ResetTaskTable)
 FAR_CALL(Scheduler_AddOrUpdateCallbackFar, Scheduler_AddOrUpdateCallback, s32,

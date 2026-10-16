@@ -1,13 +1,15 @@
-/* Draft, differ 24 of 521: written from the listing with the scene-layer wrappers of s253c.c,
- * where it adopts after Func_020027cc. Its Func_0200578c calls go through s253c.c's
- * Func_0200578c_ArgsFirst (the two values pinned to r1 and r2), which sets the id last as the
- * native does at all but the first call of the if branch (38 to 24). Left: that call sets the id
- * before the 20; the counter at event work 0x1c4 swaps r2 and r3 in the else branch (also as a
- * pointer local, the work base in a local, or read and written apart); the speed 0xc000 finishes
- * one row early; the second party-state address takes r2 where the native has r3. Tried: call.h
- * Call3, unprototyped, u8, s16 or u16 ids, an argument barrier in the wrapper (124) or in a
- * do-while macro (67). UiText_OpenMessageAtObject is unprototyped, as the native's argument
- * order needs (40 to 38). */
+// Draft, differ 24 of 521: written from the listing with the scene-layer
+// wrappers of s253c.c, where it adopts after Func_020027cc. Its Func_0200578c
+// calls go through s253c.c's Func_0200578c_ArgsFirst (the two values pinned to
+// r1 and r2), which sets the id last as the native does at all but the first
+// call of the if branch (38 to 24). Left: that call sets the id before the 20;
+// the counter at event work 0x1c4 swaps r2 and r3 in the else branch (also as a
+// pointer local, the work base in a local, or read and written apart); the
+// speed 0xc000 finishes one row early; the second party-state address takes r2
+// where the native has r3. Tried: call.h Call3, unprototyped, u8, s16 or u16
+// ids, an argument barrier in the wrapper (124) or in a do-while macro (67).
+// UiText_OpenMessageAtObject is unprototyped, as the native's argument order
+// needs (40 to 38).
 #include "types.h"
 #include "text/msg_ids.h"
 #include "object_runtime.h"
@@ -59,7 +61,8 @@ void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
 struct ObjectRuntime *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
 void Func_02005624(struct ObjectRuntime *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct ObjectRuntime *object);
@@ -73,52 +76,51 @@ void Func_020057dc(s32 a, s32 b);
 void Func_020057ec(s32 a);
 void Func_020057c4(s32 exit);
 
-static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
-static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_0200571c(id, x, z, speed);
+static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  Func_0200571c(id, x, z, speed);
 }
 
-static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_ArmCallback(id, angle, frames);
+static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  ObjectMotion_ArmCallback(id, angle, frames);
 }
 
-static __inline__ void Actor_Walk(s32 id, s32 x, s32 z)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    ObjectMotion_SetPositionAndReset(id, x, z);
+static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  ObjectMotion_SetPositionAndReset(id, x, z);
 }
 
-static __inline__ void Func_02005774_(s32 id, s32 value)
-{
-    /* FAKEMATCH: forwarding through the inline sets the id between the halves of the split constant, as the native does; called directly the constant is built first (one reordered pair, differ 2). */
-    Func_02005774(id, value);
+static __inline__ void Func_02005774_(s32 id, s32 value) {
+  /* FAKEMATCH: forwarding through the inline sets the id between the halves of
+   * the split constant, as the native does; called directly the constant is
+   * built first (one reordered pair, differ 2). */
+  Func_02005774(id, value);
 }
 
-static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Motion_CamBounds(x, y, z, mode);
+static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  Motion_CamBounds(x, y, z, mode);
 }
 
 extern u32 gData_02005c40[];
 
-static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b)
-{
-    Func_0200578c(id, a, b);
+static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b) {
+  Func_0200578c(id, a, b);
 }
 
-static __inline__ void Func_02005764_(s32 id, s32 value)
-{
-    Func_02005764(id, value);
+static __inline__ void Func_02005764_(s32 id, s32 value) {
+  Func_02005764(id, value);
 }
 
 struct ObjectRuntime *Func_020057bc(void);
@@ -127,138 +129,136 @@ void Func_0200581c(void);
 s32 UiText_OpenMessageAtObject();
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
 
-static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b)
-{
-    register s32 a_ asm("r1") = a;
-    register s32 b_ asm("r2") = b;
+static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
+  register s32 a_ asm("r1") = a;
+  register s32 b_ asm("r2") = b;
 
-    Func_0200578c(id, a_, b_);
+  Func_0200578c(id, a_, b_);
 }
 
-void Func_02002a64(void)
-{
-    s32 speed;
+void Func_02002a64(void) {
+  s32 speed;
 
-    Func_020056b4();
-    Func_0200580c(0);
-    Camera_SetBounds(-1, -1, -1, 0);
-    speed = 0xc000;
-    Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
-    Actor_Slide(7, 165 << 17, 156 << 17, speed);
-    {
-        s32 slow = 0xb000;
+  Func_020056b4();
+  Func_0200580c(0);
+  Camera_SetBounds(-1, -1, -1, 0);
+  speed = 0xc000;
+  Actor_Slide(gPartyState.currentOwner, 174 << 17, 156 << 17, speed);
+  Actor_Slide(7, 165 << 17, 156 << 17, speed);
+  {
+    s32 slow = 0xb000;
 
-        Actor_Slide(23, 216 << 17, 156 << 17, slow);
-    }
-    Actor_Slide(6, 224 << 17, 156 << 17, speed);
-    Actor_Slide(5, 234 << 17, 156 << 17, speed);
-    WaitFrames(1);
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Battle_WaitMode0(40);
-    Func_0200578c_ArgsFirst(23, 256, 20);
-    Func_02005754(MsgGabombaUnderstandsChannel);
-    Func_02005764_(23, 0);
-    Func_020057bc()->motionFlags = 0;
-    Func_020057a4(0xcccc, 0x1999);
-    Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
-    Func_020057b4();
-    Actor_Turn(gPartyState.currentOwner, 0, 0);
-    Actor_Turn(5, 0x8000, 0);
-    Actor_Turn(7, 0, 0);
-    Func_02005774_(6, 0x8000);
-    Object_SetModeById(6, 3);
-    Func_02005764_(0x4006, 0);
-    UiText_OpenMessageAtObject(0x6005, 0);
-    if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
-        Func_0200578c(7, 256, 20);
-        Actor_SetSpeed(7, 0x20000, 0x10000);
-        Actor_Walk(7, 340, 296);
-        Actor_Walk(7, 354, 296);
-        Actor_Walk(7, 364, 308);
-        Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
-        Func_02005774_(7, 0x6000);
-        Func_02005764(0x6007, 0);
-        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    } else {
-        (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-        Actor_SetSpeed(7, 0x20000, 0x10000);
-        Actor_Walk(7, 340, 296);
-        Actor_Walk(7, 354, 296);
-        Actor_Walk(7, 364, 308);
-        Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
-        Func_02005774_(7, 0x6000);
-        Object_SetModeById(7, 3);
-        Func_02005764(0x6007, 0);
-    }
-    Func_02005774_(23, 0x8000);
-    Motion_SetModeAndWaitAnimation(23, 4);
-    Func_02005764_(0x6017, 0);
-    Actor_Turn(7, 0, 0);
-    Func_0200578c_ArgsFirst(7, 257, 40);
-    Func_02005764_(0x6017, 0);
-    Motion_SetModeAndWaitAnimation(7, 3);
-    Func_0200578c_ArgsFirst(23, 265, 20);
-    Func_02005764_(0x6017, 0);
-    Func_02005764_(0x4007, 0);
-    Func_0200578c_ArgsFirst(7, 256, 40);
-    Func_02005764_(0x4007, 0);
-    Object_SetModeById(23, 3);
-    Func_02005764_(0x4017, 0);
-    Func_0200578c_ArgsFirst(7, 265, 10);
-    Func_02005764_(0x4007, 0);
-    Actor_SetSpeed(6, 0xcccc, 0x6666);
-    Actor_Walk(6, 440, 296);
-    Func_02005774_(6, 0x8000);
-    Motion_SetModeAndWaitAnimation(6, 3);
-    Func_02005764_(0x4006, 0);
-    Actor_Turn(7, 0xe000, 0);
-    Func_0200578c_ArgsFirst(7, 261, 0);
-    Actor_Turn(6, 0x2000, 0);
-    Actor_Turn(5, 0xa000, 0);
-    Actor_Turn(gPartyState.currentOwner, 0, 80);
-    Func_0200578c_ArgsFirst(7, 261, 40);
-    Func_02005774_(7, 0);
-    Func_02005764_(0x4007, 0);
-    Actor_Turn(5, 0x8000, 0);
-    Func_02005774_(6, 0x8000);
-    Object_SetModeById(gPartyState.currentOwner, 3);
-    Object_SetModeById(23, 3);
-    Object_SetModeById(5, 3);
-    Motion_SetModeAndWaitAnimation(6, 3);
-    Motion_SetModeAndWaitAnimation(7, 3);
-    Func_02005774_(23, 0xb000);
-    Func_02005764_(23, 0);
-    Func_0200578c_ArgsFirst(23, 257, 0);
-    Actor_Turn(23, 0xd000, 20);
-    Func_02005774_(23, 0xb000);
-    Func_02005764_(23, 0);
-    Func_020057a4(0x4cccc, 0x9999);
-    Camera_SetBounds(196 << 17, -1, 176 << 16, 1);
-    Func_020057b4();
-    Func_02005764_(23, 0);
-    Func_02005764_(6, 0);
-    Func_02005764_(23, 0);
-    Func_02005764_(7, 0);
-    Func_02005764_(0x2005, 0);
-    Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
-    Func_020057b4();
-    Object_SetModeById(23, 3);
-    Func_02005764_(23, 0);
-    Func_02005774_(23, 0x8000);
-    Func_02005764_(23, 0);
-    Actor_SetSpeed(5, 0x19999, 0xcccc);
-    Actor_SetSpeed(6, 0x19999, 0xcccc);
-    Actor_SetSpeed(23, 0x19999, 0xcccc);
-    Actor_SetSpeed(7, 0xcccc, 0x6666);
-    ObjectMotion_EnableActionAndSetCallback(7, gData_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(23, gData_02005c40);
-    ObjectMotion_EnableActionAndSetCallback(6, gData_02005c40);
-    Object_SetActionCallbackAndRefreshById(5, gData_02005c40);
-    GameFlag_SetBit(0x8f6);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Func_0200581c();
-    Func_020057c4(13);
+    Actor_Slide(23, 216 << 17, 156 << 17, slow);
+  }
+  Actor_Slide(6, 224 << 17, 156 << 17, speed);
+  Actor_Slide(5, 234 << 17, 156 << 17, speed);
+  WaitFrames(1);
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Battle_WaitMode0(40);
+  Func_0200578c_ArgsFirst(23, 256, 20);
+  Func_02005754(MsgGabombaUnderstandsChannel);
+  Func_02005764_(23, 0);
+  Func_020057bc()->motionFlags = 0;
+  Func_020057a4(0xcccc, 0x1999);
+  Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
+  Func_020057b4();
+  Actor_Turn(gPartyState.currentOwner, 0, 0);
+  Actor_Turn(5, 0x8000, 0);
+  Actor_Turn(7, 0, 0);
+  Func_02005774_(6, 0x8000);
+  Object_SetModeById(6, 3);
+  Func_02005764_(0x4006, 0);
+  UiText_OpenMessageAtObject(0x6005, 0);
+  if (Inventory_PromptAndSetObjectMode(gPartyState.currentOwner, 0) == 0) {
+    Func_0200578c(7, 256, 20);
+    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_Walk(7, 340, 296);
+    Actor_Walk(7, 354, 296);
+    Actor_Walk(7, 364, 308);
+    Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
+    Func_02005774_(7, 0x6000);
+    Func_02005764(0x6007, 0);
+    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+  } else {
+    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_Walk(7, 340, 296);
+    Actor_Walk(7, 354, 296);
+    Actor_Walk(7, 364, 308);
+    Actor_Turn(gPartyState.currentOwner, 0xe000, 0);
+    Func_02005774_(7, 0x6000);
+    Object_SetModeById(7, 3);
+    Func_02005764(0x6007, 0);
+  }
+  Func_02005774_(23, 0x8000);
+  Motion_SetModeAndWaitAnimation(23, 4);
+  Func_02005764_(0x6017, 0);
+  Actor_Turn(7, 0, 0);
+  Func_0200578c_ArgsFirst(7, 257, 40);
+  Func_02005764_(0x6017, 0);
+  Motion_SetModeAndWaitAnimation(7, 3);
+  Func_0200578c_ArgsFirst(23, 265, 20);
+  Func_02005764_(0x6017, 0);
+  Func_02005764_(0x4007, 0);
+  Func_0200578c_ArgsFirst(7, 256, 40);
+  Func_02005764_(0x4007, 0);
+  Object_SetModeById(23, 3);
+  Func_02005764_(0x4017, 0);
+  Func_0200578c_ArgsFirst(7, 265, 10);
+  Func_02005764_(0x4007, 0);
+  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_Walk(6, 440, 296);
+  Func_02005774_(6, 0x8000);
+  Motion_SetModeAndWaitAnimation(6, 3);
+  Func_02005764_(0x4006, 0);
+  Actor_Turn(7, 0xe000, 0);
+  Func_0200578c_ArgsFirst(7, 261, 0);
+  Actor_Turn(6, 0x2000, 0);
+  Actor_Turn(5, 0xa000, 0);
+  Actor_Turn(gPartyState.currentOwner, 0, 80);
+  Func_0200578c_ArgsFirst(7, 261, 40);
+  Func_02005774_(7, 0);
+  Func_02005764_(0x4007, 0);
+  Actor_Turn(5, 0x8000, 0);
+  Func_02005774_(6, 0x8000);
+  Object_SetModeById(gPartyState.currentOwner, 3);
+  Object_SetModeById(23, 3);
+  Object_SetModeById(5, 3);
+  Motion_SetModeAndWaitAnimation(6, 3);
+  Motion_SetModeAndWaitAnimation(7, 3);
+  Func_02005774_(23, 0xb000);
+  Func_02005764_(23, 0);
+  Func_0200578c_ArgsFirst(23, 257, 0);
+  Actor_Turn(23, 0xd000, 20);
+  Func_02005774_(23, 0xb000);
+  Func_02005764_(23, 0);
+  Func_020057a4(0x4cccc, 0x9999);
+  Camera_SetBounds(196 << 17, -1, 176 << 16, 1);
+  Func_020057b4();
+  Func_02005764_(23, 0);
+  Func_02005764_(6, 0);
+  Func_02005764_(23, 0);
+  Func_02005764_(7, 0);
+  Func_02005764_(0x2005, 0);
+  Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
+  Func_020057b4();
+  Object_SetModeById(23, 3);
+  Func_02005764_(23, 0);
+  Func_02005774_(23, 0x8000);
+  Func_02005764_(23, 0);
+  Actor_SetSpeed(5, 0x19999, 0xcccc);
+  Actor_SetSpeed(6, 0x19999, 0xcccc);
+  Actor_SetSpeed(23, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  ObjectMotion_EnableActionAndSetCallback(7, gData_02005c40);
+  ObjectMotion_EnableActionAndSetCallback(23, gData_02005c40);
+  ObjectMotion_EnableActionAndSetCallback(6, gData_02005c40);
+  Object_SetActionCallbackAndRefreshById(5, gData_02005c40);
+  GameFlag_SetBit(0x8f6);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_0200581c();
+  Func_020057c4(13);
 }

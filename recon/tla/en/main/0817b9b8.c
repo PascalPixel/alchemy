@@ -1,31 +1,31 @@
-/* Draft (tla-en): listing 436 instructions, draft 436, common 392, differ 88.
- * Written from the listing (☀️'s BattleFx_RunJupiterDjinnFall is only a
- * hint). The pink star burst: 32 smoke puffs rise from the caster for 24
- * frames, the caster rises and leans to the target, and at frame 32 the
- * target bursts into 16 pink stars for 24 frames.
- * Left:
- * - the native frame is 60 bytes with an unreferenced slot at sp+20
- *   between frame (sp+24) and draw (sp+16); 0817c27c has the same unused
- *   slot between the same two. Here "stars" (&particles[32], set once before
- *   the loop) takes that slot, but it is stored and loaded where the
- *   native rebuilds 0x380 + r9 at each loop. Without it the frame is 56
- *   and every stack offset moves (differ 132). Tried for the slot: the
- *   step or source pointer, angle or speed at function scope, a particles
- *   pointer, stars set in each block.
- * - after BattleFx_BeginCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
- *   the pool before the register address: a u16 pinned to r3 with a
- *   one-pass block fixes it (the empty asm of f18284c.c instead moves the
- *   halfword pool by four estimated bytes). Another one-pass block before
- *   the heap loads puts effect's spill first, as the native does.
- * - the native sets Func_081963ec's 3 before its 104.
- * - in the frame-32 block the native schedules the 0x380 + r9 of the
- *   burst loop between the divisions and loads target->x after the
- *   division's 100 (each load comes one row later after a store).
- * 2026-10-15 (lane N2): rewritten with the work struct, named constants and
- * comments, the devices tagged; the same 436 instructions and differ 88.
- * The always-true "frame >= 0" test is a device: without it differ 105.
- * Resources 302 (BattleFx_PinkStarSheet) and 353 (BattleFx_SmokeSheet)
- * need their names in system/resource/directory.s when this is adopted. */
+// Draft (tla-en): listing 436 instructions, draft 436, common 392, differ 88.
+// Written from the listing (☀️'s BattleFx_RunJupiterDjinnFall is only a
+// hint). The pink star burst: 32 smoke puffs rise from the caster for 24
+// frames, the caster rises and leans to the target, and at frame 32 the
+// target bursts into 16 pink stars for 24 frames.
+// Left:
+// - the native frame is 60 bytes with an unreferenced slot at sp+20
+// between frame (sp+24) and draw (sp+16); 0817c27c has the same unused
+// slot between the same two. Here "stars" (&particles[32], set once before
+// the loop) takes that slot, but it is stored and loaded where the
+// native rebuilds 0x380 + r9 at each loop. Without it the frame is 56
+// and every stack offset moves (differ 132). Tried for the slot: the
+// step or source pointer, angle or speed at function scope, a particles
+// pointer, stars set in each block.
+// - after BattleFx_BeginCanvasLayer, REG_BLDALPHA's 0x1010 is loaded from
+// the pool before the register address: a u16 pinned to r3 with a
+// one-pass block fixes it (the empty asm of f18284c.c instead moves the
+// halfword pool by four estimated bytes). Another one-pass block before
+// the heap loads puts effect's spill first, as the native does.
+// - the native sets Func_081963ec's 3 before its 104.
+// - in the frame-32 block the native schedules the 0x380 + r9 of the
+// burst loop between the divisions and loads target->x after the
+// division's 100 (each load comes one row later after a store).
+// 2026-10-15 (lane N2): rewritten with the work struct, named constants and
+// comments, the devices tagged; the same 436 instructions and differ 88.
+// The always-true "frame >= 0" test is a device: without it differ 105.
+// Resources 302 (BattleFx_PinkStarSheet) and 353 (BattleFx_SmokeSheet)
+// need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
@@ -68,8 +68,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081963ec(s32 slot, s32 blitter);
 void Func_0817b970(s32 id, s32 priority);
 void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate);
@@ -217,8 +216,7 @@ void Func_0817b9b8(struct BattleEffectArgument *effect) {
     if (frame >= STAR_BURST_FRAME && frame < STAR_BURST_FRAME + 24) {
       for (i = 0, step = stars; i != STAR_COUNT; i++, step++) {
         if (step->variant >= 0) {
-          draw(canvas,
-               work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
+          draw(canvas, work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
                HI(step->x) - 8, HI(step->y) - 8, 16, 16);
           BattleFxKernels_IntegrateVector2(step, 56, 0);
           step->variant--;

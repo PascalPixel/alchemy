@@ -18,16 +18,11 @@ struct PaletteFade {
 };
 
 LAYOUT_SIZE_GUARD(PaletteFade_Size, struct PaletteFade, 0x3004);
-LAYOUT_OFFSET_GUARD(PaletteFade_Current, struct PaletteFade, current,
-                    0x400);
-LAYOUT_OFFSET_GUARD(PaletteFade_Target, struct PaletteFade, target,
-                    0x1000);
-LAYOUT_OFFSET_GUARD(PaletteFade_Delta, struct PaletteFade, delta,
-                    0x1c00);
-LAYOUT_OFFSET_GUARD(PaletteFade_Packed, struct PaletteFade, packed,
-                    0x2800);
-LAYOUT_OFFSET_GUARD(PaletteFade_Page, struct PaletteFade, page,
-                    0x3000);
+LAYOUT_OFFSET_GUARD(PaletteFade_Current, struct PaletteFade, current, 0x400);
+LAYOUT_OFFSET_GUARD(PaletteFade_Target, struct PaletteFade, target, 0x1000);
+LAYOUT_OFFSET_GUARD(PaletteFade_Delta, struct PaletteFade, delta, 0x1c00);
+LAYOUT_OFFSET_GUARD(PaletteFade_Packed, struct PaletteFade, packed, 0x2800);
+LAYOUT_OFFSET_GUARD(PaletteFade_Page, struct PaletteFade, page, 0x3000);
 
 struct BattleEffectBuffers {
   u16 palette[0x1c0];
@@ -74,16 +69,14 @@ enum PaletteTransform {
 };
 
 #if GAME_TLA
-void Palette_Transform(u32 mode, u16 *source, u16 *destination,
-                                     s32 half);
+void Palette_Transform(u32 mode, u16 *source, u16 *destination, s32 half);
 
 void PaletteFade_Init(void);
 void PaletteFade_Update(void);
 void PaletteFade_SetTarget(s32 index, s32 transform);
 void PaletteFade_SetBackdrop(s32 value);
 void PaletteFade_Start(s32 frames);
-void PaletteFade_ComputeSteps(s16 *source, s16 *target, s16 *step,
-                                        s32 frames);
+void PaletteFade_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames);
 void PaletteFade_Release(void);
 #endif
 

@@ -1,32 +1,32 @@
-/* Draft of Func_0816d724, effect kind 115 (Soul Shatter), The Broken
- * Seal's BattleFx_RunRisingBurst as The Lost Age reworked it (structure
- * twin 0.703): the same two mirrored halves of a column and the same
- * sixteen sparks, over a longer effect in which the target is thrown up
- * and 32 motes of its soul drift back into the user (pulled as
- * Func_0816d130's orb is).
- *
- * Listing 589 instructions, draft 587, differ 176.
- * Left: the spark blitter choice. The native computes the mirror choice
- * as a byte offset (4 or 0) right after the cell clamp, and the constant
- * 3 of the divide stays in a pseudo that is spilled (sp 8) and reused for
- * i & 3; this draft's 0/1 flag is scaled at the call. With the choice
- * written as a byte offset into the blitter pair the differ is 165, which
- * is not kept: it is no natural source. The rest is allocation in the
- * spark and mote loops (r5/r6/r7 rotated) and the pool offsets.
- * Tried (differ):
- *   first draft                                                       261
- *   position declared before screen (stack slots)                     261
- *   the mirror choice in a local after the clamp (the 3 is then
- *     shared and spilled as in the native)                             204
- *   work read before canvas                                            198
- *   the column centre read into a local before the height              186
- *   the user's half height scoped to the drain block (its slot after
- *     the position pointer's)                                          176
- *   the choice as &draw[(i & 3) == 0] taken early                      399
- *   the choice as a byte offset into the pair                          165
- *   alchemy permute 8 minutes, 2 jobs: 170 with one variable expanded
- *     in place (an unclear rewrite of the printed source; not kept)
- */
+// Draft of Func_0816d724, effect kind 115 (Soul Shatter), The Broken
+// Seal's BattleFx_RunRisingBurst as The Lost Age reworked it (structure
+// twin 0.703): the same two mirrored halves of a column and the same
+// sixteen sparks, over a longer effect in which the target is thrown up
+// and 32 motes of its soul drift back into the user (pulled as
+// Func_0816d130's orb is).
+
+// Listing 589 instructions, draft 587, differ 176.
+// Left: the spark blitter choice. The native computes the mirror choice
+// as a byte offset (4 or 0) right after the cell clamp, and the constant
+// 3 of the divide stays in a pseudo that is spilled (sp 8) and reused for
+// i & 3; this draft's 0/1 flag is scaled at the call. With the choice
+// written as a byte offset into the blitter pair the differ is 165, which
+// is not kept: it is no natural source. The rest is allocation in the
+// spark and mote loops (r5/r6/r7 rotated) and the pool offsets.
+// Tried (differ):
+// first draft                                                       261
+// position declared before screen (stack slots)                     261
+// the mirror choice in a local after the clamp (the 3 is then
+// shared and spilled as in the native)                             204
+// work read before canvas                                            198
+// the column centre read into a local before the height              186
+// the user's half height scoped to the drain block (its slot after
+// the position pointer's)                                          176
+// the choice as &draw[(i & 3) == 0] taken early                      399
+// the choice as a byte offset into the pair                          165
+// alchemy permute 8 minutes, 2 jobs: 170 with one variable expanded
+// in place (an unclear rewrite of the printed source; not kept)
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

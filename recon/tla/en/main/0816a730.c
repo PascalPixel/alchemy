@@ -1,28 +1,28 @@
-/* Draft, differ 10 of 320: Func_0816a730, effect kind 320, The Broken Seal's
- * BattleFx_RunRisingBurst.
- *
- * Twin: ☀️ BattleFx_RunRisingBurst (games/tbs/src/effect/effect.c), ported:
- * the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
- * dispatcher stores work->effect), no blitter fetch before the loop (only the
- * one after each frame's columns), a lighter shake while the columns are still
- * below ground (4 where ☀️ has 2), and the callback order 0xc80.
- *
- * Devices: the empty asm at the start stores the argument before 0x03000000 is
- * started (differ 12 without it); the BG2PA halfword pinned to r3 and set in a
- * one-pass block loads from the pool before the register address is started and
- * keeps the first pool where the native has it (an empty asm there moves the
- * pool 4 bytes early; differ 26 as a plain store).
- *
- * Left, five reordered rows: the canvas spill (str r4, [sp, #16]) before
- * movs r0, #0 (here the spill is anti-dependent on the work's load, so the
- * argument wins its tie); movs r4, #0 after the REG_BG2X store; mov r9, r4
- * after the stores to sp+12 and sp+8; and the frame * 6 reload (ldr from sp+8)
- * before movs r3, #136 and before movs r2, #1.
- *
- * Tried (differ): the three heap reads in each order (20 to 102), const heap
- * reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store
- * (16, 14: either moves other rows), alchemy permute 6 minutes on the earlier
- * draft (18), and 5 minutes, 2 jobs, on this one (no candidate beat it). */
+// Draft, differ 10 of 320: Func_0816a730, effect kind 320, The Broken Seal's
+// BattleFx_RunRisingBurst.
+
+// Twin: ☀️ BattleFx_RunRisingBurst (games/tbs/src/effect/effect.c), ported:
+// the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
+// dispatcher stores work->effect), no blitter fetch before the loop (only the
+// one after each frame's columns), a lighter shake while the columns are still
+// below ground (4 where ☀️ has 2), and the callback order 0xc80.
+
+// Devices: the empty asm at the start stores the argument before 0x03000000 is
+// started (differ 12 without it); the BG2PA halfword pinned to r3 and set in a
+// one-pass block loads from the pool before the register address is started and
+// keeps the first pool where the native has it (an empty asm there moves the
+// pool 4 bytes early; differ 26 as a plain store).
+
+// Left, five reordered rows: the canvas spill (str r4, [sp, #16]) before
+// movs r0, #0 (here the spill is anti-dependent on the work's load, so the
+// argument wins its tie); movs r4, #0 after the REG_BG2X store; mov r9, r4
+// after the stores to sp+12 and sp+8; and the frame * 6 reload (ldr from sp+8)
+// before movs r3, #136 and before movs r2, #1.
+
+// Tried (differ): the three heap reads in each order (20 to 102), const heap
+// reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store
+// (16, 14: either moves other rows), alchemy permute 6 minutes on the earlier
+// draft (18), and 5 minutes, 2 jobs, on this one (no candidate beat it).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

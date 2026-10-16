@@ -1,25 +1,25 @@
-/* Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
+// Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
 
-   ☀️ twin: BattleFx_RunFallingCrystals (games/tbs/src/effect/effect.c),
-   shape 0.800, structure 0.979. ⚓️'s changes: the counts table
-   Data_081979b7 holds three bytes for each variant (crystals, frames and the
-   frame that begins phase 134, where ☀️ begins it 80 frames before the
-   end); the boulder sheet is unpacked into the work before the crystal
-   sheet; the shard offsets gData_08197834 are words; the camera is
-   Ram_HeapSlots->cameraWork; Func_08144aac fetches the blitter pair.
+// ☀️ twin: BattleFx_RunFallingCrystals (games/tbs/src/effect/effect.c),
+// shape 0.800, structure 0.979. ⚓️'s changes: the counts table
+// Data_081979b7 holds three bytes for each variant (crystals, frames and the
+// frame that begins phase 134, where ☀️ begins it 80 frames before the
+// end); the boulder sheet is unpacked into the work before the crystal
+// sheet; the shard offsets gData_08197834 are words; the camera is
+// Ram_HeapSlots->cameraWork; Func_08144aac fetches the blitter pair.
 
-   Same frame and instruction count. What is left: the loop counters i and j
-   take r8 and r10 the other way round, which moves every row that uses
-   them, and order rows elsewhere.
+// Same frame and instruction count. What is left: the loop counters i and j
+// take r8 and r10 the other way round, which moves every row that uses
+// them, and order rows elsewhere.
 
-   Tried (differ):
-     trial 1's port (effects trial, 2026-10-15)                        104
-     alchemy permute, 5 minutes: cry->y read into a volatile long gives 61
-       but adds an instruction (504), so it cannot reach 0; not kept
-     the shared work struct and Ram_MapCellBuffer for the shards       104
-     greedy declaration-order scan, every local through every place   104
-     a separate counter k for the shard draw loop (414) or the actor
-       loop (158); j declared before i (104)                             */
+// Tried (differ):
+// trial 1's port (effects trial, 2026-10-15)                        104
+// alchemy permute, 5 minutes: cry->y read into a volatile long gives 61
+// but adds an instruction (504), so it cannot reach 0; not kept
+// the shared work struct and Ram_MapCellBuffer for the shards       104
+// greedy declaration-order scan, every local through every place   104
+// a separate counter k for the shard draw loop (414) or the actor
+// loop (158); j declared before i (104)
 
 #include "types.h"
 #include "system.h"
@@ -160,8 +160,7 @@ void Func_08149268(struct BattleEffectArgument *effect) {
           }
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
-          draw[i & 1](canvas, work->sheet, HI(cry->x) - 16, HI(cry->y), 32,
-                      64);
+          draw[i & 1](canvas, work->sheet, HI(cry->x) - 16, HI(cry->y), 32, 64);
           BattleFxKernels_IntegrateVector2(cry, 64, 0x10000);
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;

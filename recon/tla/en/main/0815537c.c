@@ -1,36 +1,36 @@
-/* Draft of Func_0815537c, effect kind 16: a bolt of lightning strikes each
- * target in turn, eight frames apart, throwing sparks that bounce on the
- * ground and flashing glints of light around the target.
- *
- * Twin: The Broken Seal's BattleFx_RunLightningBolts (effect.c), the same
- * kind, with the same tables, frame counts and cues.
- * Listing 552 instructions, draft 556, differ 144 (204 without the tagged
- * glint pointers).
- *
- * Changes from the twin: the effect argument is read directly (the Lost
- * Age never stores work->effect), the blitter loads through Func_081963ec
- * with the Lost Age's mode numbers (max is 1), the glint blitter loads
- * through Func_08196404 (the twin's BattleEffect_LoadWork), the callback
- * order is 0xc80.
- *
- * What remains:
- *   - the glint draw: here the pointers fold the index in (heights + kind
- *     is kept in r10, widths + kind in r5); the native keeps the bare bases
- *     and reloads kind from the stack before each read. That is the four
- *     extra instructions and about 30 rows.
- *   - order rows elsewhere: pool loads before the constants they sit
- *     beside (the prologue's canvas read, the sheet offsets 0x700 and 0xc56,
- *     the free-spark fill, the spark velocity), one row each, with the
- *     branch and pool offsets that follow.
- *
- * Tried (differ):
- *   the twin as is, with the Lost Age's names                    204
- *   declaration order, greedy scan of every local                no gain
- *   glint table pointers declared and set at the top of the body 240
- *   glint pointers assigned where first read (kept)              144
- *   the same, heights only                                       157
- *   the same, draw indexed by j & 3                              144
- */
+// Draft of Func_0815537c, effect kind 16: a bolt of lightning strikes each
+// target in turn, eight frames apart, throwing sparks that bounce on the
+// ground and flashing glints of light around the target.
+
+// Twin: The Broken Seal's BattleFx_RunLightningBolts (effect.c), the same
+// kind, with the same tables, frame counts and cues.
+// Listing 552 instructions, draft 556, differ 144 (204 without the tagged
+// glint pointers).
+
+// Changes from the twin: the effect argument is read directly (the Lost
+// Age never stores work->effect), the blitter loads through Func_081963ec
+// with the Lost Age's mode numbers (max is 1), the glint blitter loads
+// through Func_08196404 (the twin's BattleEffect_LoadWork), the callback
+// order is 0xc80.
+
+// What remains:
+// - the glint draw: here the pointers fold the index in (heights + kind
+// is kept in r10, widths + kind in r5); the native keeps the bare bases
+// and reloads kind from the stack before each read. That is the four
+// extra instructions and about 30 rows.
+// - order rows elsewhere: pool loads before the constants they sit
+// beside (the prologue's canvas read, the sheet offsets 0x700 and 0xc56,
+// the free-spark fill, the spark velocity), one row each, with the
+// branch and pool offsets that follow.
+
+// Tried (differ):
+// the twin as is, with the Lost Age's names                    204
+// declaration order, greedy scan of every local                no gain
+// glint table pointers declared and set at the top of the body 240
+// glint pointers assigned where first read (kept)              144
+// the same, heights only                                       157
+// the same, draw indexed by j & 3                              144
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"

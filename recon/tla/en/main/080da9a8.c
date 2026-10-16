@@ -1,12 +1,12 @@
-/* Near miss, differ 10 of 95 (2026-10-15). Starts a field effect that animates sixteen tiles of
- * its own: takes a 0x10e4-byte work block at heap offset 164 (worka0.h's
- * WorkA4 lies there), clears it, decodes four 256-byte tile frames into a
- * scratch buffer (one set for kind 372, another for the rest; the second
- * set repeats one frame), loads them into a VRAM slot and schedules the
- * two per-frame routines Func_080daab0 and Func_080dacb8.
- * Left: order only. For five of the eight decodes the native sets the
- * destination (r1) before it loads the source (r0) from the pool; this
- * loads the source first. */
+// Near miss, differ 10 of 95 (2026-10-15). Starts a field effect that animates
+// sixteen tiles of its own: takes a 0x10e4-byte work block at heap offset 164
+// (worka0.h's WorkA4 lies there), clears it, decodes four 256-byte tile frames
+// into a scratch buffer (one set for kind 372, another for the rest; the second
+// set repeats one frame), loads them into a VRAM slot and schedules the
+// two per-frame routines Func_080daab0 and Func_080dacb8.
+// Left: order only. For five of the eight decodes the native sets the
+// destination (r1) before it loads the source (r0) from the pool; this
+// loads the source first.
 #include "types.h"
 #include "dma.h"
 

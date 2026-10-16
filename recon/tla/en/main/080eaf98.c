@@ -1,9 +1,9 @@
-/* Near miss, differ 2 of 57 (2026-10-15). The shape is (attributes >> 30) |
- * (attributes >> 12), as the listing shifts. One pair: the listing loads the
- * size table's address before it starts the 15 mask; this masks first. A
- * table local, and single and paired barriers, measured no better. Rewritten
- * on effect_sprite.h's EffectSprite, whose OAM entry is common's RenderOam
- * (same differ). */
+// Near miss, differ 2 of 57 (2026-10-15). The shape is (attributes >> 30) |
+// (attributes >> 12), as the listing shifts. One pair: the listing loads the
+// size table's address before it starts the 15 mask; this masks first. A
+// table local, and single and paired barriers, measured no better. Rewritten
+// on effect_sprite.h's EffectSprite, whose OAM entry is common's RenderOam
+// (same differ).
 #include "types.h"
 #include "iwram_call.h"
 #include "effect_sprite.h"

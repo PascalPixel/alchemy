@@ -1,4 +1,4 @@
-/* FarCall_GameTable: one entry per 8-byte stub, in table order. */
+// FarCall_GameTable: one entry per 8-byte stub, in table order.
 FAR_CALL(Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable, void *, (s32 arg0))
 #ifndef OWN_UnitGetFar
 FAR_CALL(UnitGetFar, UnitGet, struct BattleUnit *, (u32 owner))
@@ -83,8 +83,7 @@ FAR_CALL(Djinn_TransferFar, Djinn_Transfer, s32,
 FAR_CALL(Summon_ListLearnedFar, Summon_ListLearned, s32, (u8 *output))
 FAR_CALL(SummonDefinition_Get, SummonDefinition_GetNear,
          const struct SummonDefinition *, (u32 summon_id))
-FAR_CALL(Djinn_GetAbilityIdFar, Djinn_GetAbilityId, s32,
-         (u32 group, u32 index))
+FAR_CALL(Djinn_GetAbilityIdFar, Djinn_GetAbilityId, s32, (u32 group, u32 index))
 FAR_CALL(Unit_LevelUpToFar, Unit_LevelUpTo, void, (s32 unit, s32 lv))
 FAR_CALL(Unit_GetElementLevelFar, Unit_GetElementLevel, s32,
          (s32 owner, s32 index))

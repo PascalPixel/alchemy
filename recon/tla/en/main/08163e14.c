@@ -1,21 +1,21 @@
-/* Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
- * call reaches it), a second copy of The Broken Seal's
- * BattleEffect_RunEmberColumns (summon 2's, which The Lost Age keeps at
- * Func_08148458).
- *
- * Twin: ☀️ BattleEffect_RunEmberColumns (games/tbs/src/effect/effect.c),
- * ported: the palette goes by DMA 3, the blitters come from
- * Func_08144aac(0, draw), the effect stays an argument (its count and actors
- * are read from it; only Func_0814cc4c reads the work's copy), formation
- * resource 649, callback Func_08143000 at 0xc80.
- *
- * The column table is not const: the native reads it again after each draw
- * call, and as const data the reuse moved every register (differ 292).
- *
- * Left: everything is reordered rows where the native puts a load or a store
- * ahead of an independent constant (the argument's store before 0x03000000,
- * the work's reloads, the pooled values, the 58 multiply), the kind
- * Func_08164b2c's header traces to a load costing 3 and a store 2. */
+// Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
+// call reaches it), a second copy of The Broken Seal's
+// BattleEffect_RunEmberColumns (summon 2's, which The Lost Age keeps at
+// Func_08148458).
+
+// Twin: ☀️ BattleEffect_RunEmberColumns (games/tbs/src/effect/effect.c),
+// ported: the palette goes by DMA 3, the blitters come from
+// Func_08144aac(0, draw), the effect stays an argument (its count and actors
+// are read from it; only Func_0814cc4c reads the work's copy), formation
+// resource 649, callback Func_08143000 at 0xc80.
+
+// The column table is not const: the native reads it again after each draw
+// call, and as const data the reuse moved every register (differ 292).
+
+// Left: everything is reordered rows where the native puts a load or a store
+// ahead of an independent constant (the argument's store before 0x03000000,
+// the work's reloads, the pooled values, the 58 multiply), the kind
+// Func_08164b2c's header traces to a load costing 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

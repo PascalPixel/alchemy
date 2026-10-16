@@ -1,22 +1,22 @@
-/* Near miss of Func_08153c30, an unused effect (no caller): differ 20 of
- * 291 (draft 291).
- *
- * Twin: The Broken Seal's BattleFx_RunTargetBursts (effect.c), call for
- * call. The Lost Age loads its two blitters through Func_081963ec into heap
- * slots 104 and 188 (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal
- * has 3 and 2), reads the effect from its argument and orders the callback
- * 0xc80. Resources not yet named in directory.s, by row and asset: 0x161
- * BattleFx_SmokeSheet, 0x12d BattleFx_TargetBurstImage and 0x17f
- * BattleFx_PinkBurstSheet.
- *
- * Left: ten rows, each a pair the native issues in the other order: the
- * effect argument's spill before the RAM base, r1 before r0 for the first
- * Func_081963ec, the record's address after the camera word, object->z
- * before its store, the cell's 9x before the frame word.
- *
- * Tried (2026-10-15): the lane's rewrite (named modes, the burst offset as
- * a constant): 22 -> 20.
- */
+// Near miss of Func_08153c30, an unused effect (no caller): differ 20 of
+// 291 (draft 291).
+
+// Twin: The Broken Seal's BattleFx_RunTargetBursts (effect.c), call for
+// call. The Lost Age loads its two blitters through Func_081963ec into heap
+// slots 104 and 188 (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal
+// has 3 and 2), reads the effect from its argument and orders the callback
+// 0xc80. Resources not yet named in directory.s, by row and asset: 0x161
+// BattleFx_SmokeSheet, 0x12d BattleFx_TargetBurstImage and 0x17f
+// BattleFx_PinkBurstSheet.
+
+// Left: ten rows, each a pair the native issues in the other order: the
+// effect argument's spill before the RAM base, r1 before r0 for the first
+// Func_081963ec, the record's address after the camera word, object->z
+// before its store, the cell's 9x before the frame word.
+
+// Tried (2026-10-15): the lane's rewrite (named modes, the burst offset as
+// a constant): 22 -> 20.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -55,12 +55,12 @@ extern char ResourceId_SmokeSheet;
 extern char ResourceId_TargetBurstImage;
 extern char ResourceId_PinkBurstSheet;
 
-/* Bursts of smoke rise from each target in turn, eight frames apart.
- *
- * Setup: 64 puffs, six a target, each but the sixth thrown out at a random
- * heading. Frame loop (96 frames): for 40 frames from its start a
- * target's puffs rise 40 pixels above it through six 24x48 pictures; the
- * sixth, drawn ADDITIVE, is the burst itself and falls faster. */
+// Bursts of smoke rise from each target in turn, eight frames apart.
+
+// Setup: 64 puffs, six a target, each but the sixth thrown out at a random
+// heading. Frame loop (96 frames): for 40 frames from its start a
+// target's puffs rise 40 pixels above it through six 24x48 pictures; the
+// sixth, drawn ADDITIVE, is the burst itself and falls faster.
 void Func_08153c30(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

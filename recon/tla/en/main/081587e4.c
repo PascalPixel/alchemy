@@ -1,43 +1,43 @@
-/* Draft of Func_081587e4, effect kind 203: the Venus Djinn's rock toss.
- *
- * On screen: the background slowly takes on the portal's colours from
- * frame 17. Six rocks leave the caster one after another, every two
- * frames, flung out sideways with a random lift and drift; sixteen frames
- * after each leaves, it is pulled towards the first target and slowed,
- * until it drops below y 20 there: then it vanishes with cue 134, an
- * eight-frame shake, and the target flashing and recoiling. Each rock is
- * drawn with a rotating highlight and four chips that change shape and
- * flip at random every other frame. If the effect has its Djinn prelude,
- * a small Venus Djinn hovers over the anchor point, drawn twice as bright
- * for the first four frames, and rises off from frame 17.
- *
- * Setup: the battle effect canvas and the canvas preparer (kind 0, anchor
- * 2, for the caster's side), a max blitter for the side, the portal sheet
- * and the Djinn sheet in the effect work, the transfer callback, and the
- * eight rocks' starting points and velocities at the caster.
- * Frame loop, 96 frames, as above, with a heavy shake throughout.
- * Teardown: the callback and the blitter are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunVenusDjinnRockToss (kind 203 there
- * too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
- * callback order, no work->effect store, the canvas preparer's packed
- * arguments, and the chips' blitter built by BattleEffect_LoadWork
- * directly. Other editions place a differently built version; only the
- * English listing was compared.
- *
- * Listing 571 instructions, draft 571, differ 36 (2026-10-15). Left: the
- * spill slots of target and of the screen point's address are swapped
- * (sp+24 and sp+28; 8 rows), and rows one place apart (constants and
- * stores around the heap base, the blitter's stacked arguments, pool
- * loads).
- *
- * Tried:
- *   ☀️'s body with The Lost Age's changes                      42
- *   the preparer's two arrays declared before the position,
- *     as the native frame has them (screen at sp+84)          42 -> 36
- *   declaration order, a greedy sweep of 12 locals           36
- */
+// Draft of Func_081587e4, effect kind 203: the Venus Djinn's rock toss.
+
+// On screen: the background slowly takes on the portal's colours from
+// frame 17. Six rocks leave the caster one after another, every two
+// frames, flung out sideways with a random lift and drift; sixteen frames
+// after each leaves, it is pulled towards the first target and slowed,
+// until it drops below y 20 there: then it vanishes with cue 134, an
+// eight-frame shake, and the target flashing and recoiling. Each rock is
+// drawn with a rotating highlight and four chips that change shape and
+// flip at random every other frame. If the effect has its Djinn prelude,
+// a small Venus Djinn hovers over the anchor point, drawn twice as bright
+// for the first four frames, and rises off from frame 17.
+
+// Setup: the battle effect canvas and the canvas preparer (kind 0, anchor
+// 2, for the caster's side), a max blitter for the side, the portal sheet
+// and the Djinn sheet in the effect work, the transfer callback, and the
+// eight rocks' starting points and velocities at the caster.
+// Frame loop, 96 frames, as above, with a heavy shake throughout.
+// Teardown: the callback and the blitter are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunVenusDjinnRockToss (kind 203 there
+// too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
+// callback order, no work->effect store, the canvas preparer's packed
+// arguments, and the chips' blitter built by BattleEffect_LoadWork
+// directly. Other editions place a differently built version; only the
+// English listing was compared.
+
+// Listing 571 instructions, draft 571, differ 36 (2026-10-15). Left: the
+// spill slots of target and of the screen point's address are swapped
+// (sp+24 and sp+28; 8 rows), and rows one place apart (constants and
+// stores around the heap base, the blitter's stacked arguments, pool
+// loads).
+
+// Tried:
+// ☀️'s body with The Lost Age's changes                      42
+// the preparer's two arrays declared before the position,
+// as the native frame has them (screen at sp+84)          42 -> 36
+// declaration order, a greedy sweep of 12 locals           36
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

@@ -43,7 +43,7 @@ struct IntroSprite {
 
 // The title intro's state, in heap slot 43.
 struct IntroWork {
-  s32 backRows; // rows of the far background copied in as it scrolls
+  s32 backRows;  // rows of the far background copied in as it scrolls
   s32 frontRows; // rows of the near background copied in
   s32 frame;
   s32 tick;
@@ -75,7 +75,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
 #define INTRO_OBJ(i) (work->area.objects[i])
 
 // Brings `v` into 0..255 by whole turns of 256
-#define WRAP_TO_BYTE(v)                                                             \
+#define WRAP_TO_BYTE(v)                                                        \
   while ((v) > 255)                                                            \
     (v) -= 256;                                                                \
   while ((v) < 0)                                                              \
@@ -91,16 +91,17 @@ const u8 gTitle_PromptBlendLevels[60] = {
 
 // Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
 // the four quarters of one picture at (x, y)
-#define MIRRORED_QUAD(i, size, shape, tile)                                             \
-  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);                \
-  INTRO_OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400); \
-  INTRO_OBJ((i) + 2).attr01 =                                                        \
+#define MIRRORED_QUAD(i, size, shape, tile)                                    \
+  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);          \
+  INTRO_OBJ((i) + 1).attr01 =                                                  \
+      ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400);                   \
+  INTRO_OBJ((i) + 2).attr01 =                                                  \
       ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);             \
-  INTRO_OBJ((i) + 3).attr01 =                                                        \
+  INTRO_OBJ((i) + 3).attr01 =                                                  \
       ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400);    \
-  INTRO_OBJ(i).attr2 = (tile);                                                       \
-  INTRO_OBJ((i) + 1).attr2 = (tile);                                                 \
-  INTRO_OBJ((i) + 2).attr2 = (tile);                                                 \
+  INTRO_OBJ(i).attr2 = (tile);                                                 \
+  INTRO_OBJ((i) + 1).attr2 = (tile);                                           \
+  INTRO_OBJ((i) + 2).attr2 = (tile);                                           \
   INTRO_OBJ((i) + 3).attr2 = (tile)
 
 // A VBlank task of the title intro: places the rising sprites along the
@@ -620,8 +621,7 @@ void Graphics_NoOpColor(void) {}
 // Writes to `step` each of the 1536 colour components' change per frame,
 // from `src` now to `dst` over `frames` frames (nothing when `frames` is not
 // positive).
-void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step,
-                                        s32 frames) {
+void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
   s32 n;
   s32 from;
   s32 to;
@@ -951,8 +951,8 @@ void PaletteFade_Init(void) {
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
   Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
-  Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette,
-                                  buffer->target, 0);
+  Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
+                    0);
   operation = 3200;
   Scheduler_AddOrUpdateCallback(PaletteFade_Update, operation);
 }
@@ -969,8 +969,7 @@ void PaletteFade_SetTarget(s32 index, s32 transform) {
   struct PaletteFade *target = gPaletteBufferWork;
 
   if (target != NULL)
-    Palette_Transform(index, target->palette, target->target,
-                                    transform);
+    Palette_Transform(index, target->palette, target->target, transform);
 }
 
 // Sets the colours shown now: the saved palettes through mode `index`.
@@ -996,8 +995,8 @@ void PaletteFade_Start(s32 value) {
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    PaletteFade_ComputeSteps(state->current, state->target,
-                                       state->delta, value);
+    PaletteFade_ComputeSteps(state->current, state->target, state->delta,
+                             value);
   }
 }
 

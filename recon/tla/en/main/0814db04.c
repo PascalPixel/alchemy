@@ -1,27 +1,27 @@
-/* Near miss, differ 132 of 1375 (summon 10, the ice and rock scene).
+// Near miss, differ 132 of 1375 (summon 10, the ice and rock scene).
 
-   ☀️ twin: BattleFx_InitializeMode10 (games/tbs/src/effect/effect.c), shape
-   0.915, structure 1.000, ported line for line: the 21 tables are the same
-   data under ⚓️'s labels, a max and a transparent blitter from
-   Func_081963ec(104, 0x13) and (188, 0x23), formation 643, the
-   Animation_ApplyChildArgumentFar, Render_ApplyProjectedPlacementFar and
-   BattleFxKernels_IntegrateVector2 routines, cue 390 where ☀️ plays 289,
-   callbacks at 0xc80, and the camera parameter word 4 through an unsized
-   array (sized, its address folds).
+// ☀️ twin: BattleFx_InitializeMode10 (games/tbs/src/effect/effect.c), shape
+// 0.915, structure 1.000, ported line for line: the 21 tables are the same
+// data under ⚓️'s labels, a max and a transparent blitter from
+// Func_081963ec(104, 0x13) and (188, 0x23), formation 643, the
+// Animation_ApplyChildArgumentFar, Render_ApplyProjectedPlacementFar and
+// BattleFxKernels_IntegrateVector2 routines, cue 390 where ☀️ plays 289,
+// callbacks at 0xc80, and the camera parameter word 4 through an unsized
+// array (sized, its address folds).
 
-   Same frame and instruction count. What is left is order: about 80 rows
-   of neighbouring instructions in the other order (sched2) and the pooled
-   loads whose offsets move with them; the prologue spills the argument
-   (str r0) before the 0x03000000 base in the native.
+// Same frame and instruction count. What is left is order: about 80 rows
+// of neighbouring instructions in the other order (sched2) and the pooled
+// loads whose offsets move with them; the prologue spills the argument
+// (str r0) before the 0x03000000 base in the native.
 
-   Tried (differ):
-     trial 2's port (effects trial, 2026-10-15), heap[n] reads          136
-     Func_081963ec declared returning s32 (plan 0c)                     134
-     the heap slots as Ram_HeapSlots fields                             132
-     the living targets selected from the effect argument in place of
-       work->effect (the native reads the work)                         272
-     trial 2: alchemy permute 6 minutes, 134 through a global type
-       change (not kept); a declaration-order scan, nothing better        */
+// Tried (differ):
+// trial 2's port (effects trial, 2026-10-15), heap[n] reads          136
+// Func_081963ec declared returning s32 (plan 0c)                     134
+// the heap slots as Ram_HeapSlots fields                             132
+// the living targets selected from the effect argument in place of
+// work->effect (the native reads the work)                         272
+// trial 2: alchemy permute 6 minutes, 134 through a global type
+// change (not kept); a declaration-order scan, nothing better
 
 #include "types.h"
 #include "ram_buffer.h"

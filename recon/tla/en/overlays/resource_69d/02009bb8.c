@@ -3,22 +3,22 @@
 #include "object_runtime.h"
 
 struct LightTile {
-    s16 x;
-    s16 z;
-    s16 flag;
-    s16 unk06;
+  s16 x;
+  s16 z;
+  s16 flag;
+  s16 unk06;
 };
 
 struct LightPuzzle {
-    u8 unk00[2];
-    s16 flagBase;
-    u8 unk04[2];
-    s16 x;
-    s16 z;
-    u16 count;
-    s16 current;
-    u8 unk0e[0x12];
-    struct LightTile tiles[1];
+  u8 unk00[2];
+  s16 flagBase;
+  u8 unk04[2];
+  s16 x;
+  s16 z;
+  u16 count;
+  s16 current;
+  u8 unk0e[0x12];
+  struct LightTile tiles[1];
 };
 
 extern struct LightPuzzle gData_02002864;
@@ -30,31 +30,30 @@ void GameFlag_SetByte(s32 index, s32 value);
 void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
 
-s32 Func_02001bb8(void)
-{
-    struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
-    struct LightPuzzle *puzzle = &gData_02002864;
-    struct LightTile *tile = puzzle->tiles;
-    s32 i;
+s32 Func_02001bb8(void) {
+  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct LightPuzzle *puzzle = &gData_02002864;
+  struct LightTile *tile = puzzle->tiles;
+  s32 i;
 
-    for (i = 0; i < (s16)puzzle->count; i++, tile++) {
-        if (tile->x == x && tile->z == z) {
-            if (!GameFlag_Test(tile->flag)) {
-                Func_02001818(puzzle, tile);
-                GameFlag_SetBit(tile->flag);
-                puzzle->current = i;
-                break;
-            }
-            if (i == puzzle->current)
-                break;
-            puzzle->current = i;
-            Func_02001888(puzzle, tile);
-            GameFlag_SetByte(puzzle->flagBase, x);
-            GameFlag_SetByte(puzzle->flagBase + 8, z);
-            return 1;
-        }
+  for (i = 0; i < (s16)puzzle->count; i++, tile++) {
+    if (tile->x == x && tile->z == z) {
+      if (!GameFlag_Test(tile->flag)) {
+        Func_02001818(puzzle, tile);
+        GameFlag_SetBit(tile->flag);
+        puzzle->current = i;
+        break;
+      }
+      if (i == puzzle->current)
+        break;
+      puzzle->current = i;
+      Func_02001888(puzzle, tile);
+      GameFlag_SetByte(puzzle->flagBase, x);
+      GameFlag_SetByte(puzzle->flagBase + 8, z);
+      return 1;
     }
-    return 0;
+  }
+  return 0;
 }

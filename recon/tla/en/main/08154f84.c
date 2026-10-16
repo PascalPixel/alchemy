@@ -1,45 +1,45 @@
-/* Draft of Func_08154f84, effect kind 5: thorns burst out of the ground one
- * after another, eight frames apart, each throwing up two frames of dust.
- *
- * Twin: The Broken Seal's BattleFx_RaisePillars (effect.c), the same kind.
- * Listing 453 instructions, draft 453, differ 50 with two tagged devices
- * (the heap base barrier and the spelled-out lean); 61 with the barrier
- * removed, 84 with age stepped as its own induction variable instead of
- * the lean's spelling.
- *
- * Changes from the twin: the effect argument is read directly (the Lost
- * Age never stores work->effect), blitters load through Func_081963ec with
- * the Lost Age's mode numbers, the callback order is 0xc80 and the cues are
- * 133 where the twin has 132.
- *
- * What remains (order only; the instructions and registers agree):
- *   - the prologue stores the effect argument before it builds the heap
- *     base (1 row; the plan's "str r0 after sub sp" shape).
- *   - pool loads issued one slot before the register address they store
- *     to: BG2PA, BLDALPHA, BG2X, the free-puff fill, BLDCNT's fade (each 1
- *     row, with the pool offsets that follow).
- *   - the pillar loop's preheader loads frame before the table pointer,
- *     and the step reloads the effect argument one slot later.
- *   - the puff draws: sign-extension shifts and pool loads interleave
- *     differently around the two blitter calls (about 12 rows).
- *
- * Tried (differ):
- *   the twin's age = frame - (i * 8 + 8)                         256
- *   age as its own induction variable, age -= 8 per pillar       99
- *   heap slots read as fields                                    95
- *   a pointer to battleFxWork                                    97
- *   heap base barrier (kept)                                     84
- *   barrier after the first blitter read, or before it           122
- *   pointer walked to slot 47, slot 47 as bytes                  101, 95
- *   pillar loop as do-while inside an if, age as biv             84
- *   age = frame - start (the twin's giv) with age * 6            241
- *   age * 6 spelled (age * 2 + age) * 2 or with shifts (kept)    50
- *   age * 2 * 3, 3 * (age * 2), age * 3 << 1, age * 4 + age * 2  241
- *   lean = age * 2; lean += age; lean *= 2                       56
- *   BG2PA or BLDALPHA pinned behind a one-pass block             66, 50
- *   declaration order, greedy scan of every local                no gain
- *   alchemy permute 6 min (trial 1), 10 min on the kept form     no gain
- */
+// Draft of Func_08154f84, effect kind 5: thorns burst out of the ground one
+// after another, eight frames apart, each throwing up two frames of dust.
+
+// Twin: The Broken Seal's BattleFx_RaisePillars (effect.c), the same kind.
+// Listing 453 instructions, draft 453, differ 50 with two tagged devices
+// (the heap base barrier and the spelled-out lean); 61 with the barrier
+// removed, 84 with age stepped as its own induction variable instead of
+// the lean's spelling.
+
+// Changes from the twin: the effect argument is read directly (the Lost
+// Age never stores work->effect), blitters load through Func_081963ec with
+// the Lost Age's mode numbers, the callback order is 0xc80 and the cues are
+// 133 where the twin has 132.
+
+// What remains (order only; the instructions and registers agree):
+// - the prologue stores the effect argument before it builds the heap
+// base (1 row; the plan's "str r0 after sub sp" shape).
+// - pool loads issued one slot before the register address they store
+// to: BG2PA, BLDALPHA, BG2X, the free-puff fill, BLDCNT's fade (each 1
+// row, with the pool offsets that follow).
+// - the pillar loop's preheader loads frame before the table pointer,
+// and the step reloads the effect argument one slot later.
+// - the puff draws: sign-extension shifts and pool loads interleave
+// differently around the two blitter calls (about 12 rows).
+
+// Tried (differ):
+// the twin's age = frame - (i * 8 + 8)                         256
+// age as its own induction variable, age -= 8 per pillar       99
+// heap slots read as fields                                    95
+// a pointer to battleFxWork                                    97
+// heap base barrier (kept)                                     84
+// barrier after the first blitter read, or before it           122
+// pointer walked to slot 47, slot 47 as bytes                  101, 95
+// pillar loop as do-while inside an if, age as biv             84
+// age = frame - start (the twin's giv) with age * 6            241
+// age * 6 spelled (age * 2 + age) * 2 or with shifts (kept)    50
+// age * 2 * 3, 3 * (age * 2), age * 3 << 1, age * 4 + age * 2  241
+// lean = age * 2; lean += age; lean *= 2                       56
+// BG2PA or BLDALPHA pinned behind a one-pass block             66, 50
+// declaration order, greedy scan of every local                no gain
+// alchemy permute 6 min (trial 1), 10 min on the kept form     no gain
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"

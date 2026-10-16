@@ -1,13 +1,13 @@
-/* Near miss, differ 22 of 169 (2026-10-15, written from the listing; ☀️ has no
- * twin). Func_080e8c9c restores what this keeps. What remains: viewX, minZ and
- * maxZ take r10, r9 and r11 here where the ROM has r11, r10 and r9, and the
- * ROM spills viewZ to sp+0 (frame 20 bytes, this 16). Measured: the two tests
- * apart, each with both shakes, as the ROM branches (167 -> 157); the bounds
- * copied to locals after the call (100); the pixel edges in locals before the
- * tests, as the ROM computes all four first (22). viewX or viewZ as s16 (22);
- * reversed declarations, assignments or edges (30-43). Permute 6 min, 2 jobs:
- * 22 at best; taking viewX's address puts it on the stack (18 by its own
- * count, not kept: no reason in the source). */
+// Near miss, differ 22 of 169 (2026-10-15, written from the listing; ☀️ has no
+// twin). Func_080e8c9c restores what this keeps. What remains: viewX, minZ and
+// maxZ take r10, r9 and r11 here where the ROM has r11, r10 and r9, and the
+// ROM spills viewZ to sp+0 (frame 20 bytes, this 16). Measured: the two tests
+// apart, each with both shakes, as the ROM branches (167 -> 157); the bounds
+// copied to locals after the call (100); the pixel edges in locals before the
+// tests, as the ROM computes all four first (22). viewX or viewZ as s16 (22);
+// reversed declarations, assignments or edges (30-43). Permute 6 min, 2 jobs:
+// 22 at best; taking viewX's address puts it on the stack (18 by its own
+// count, not kept: no reason in the source).
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"

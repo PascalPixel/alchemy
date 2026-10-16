@@ -1,43 +1,43 @@
-/* Draft of Func_0815c970, the two-resource family's body (two kinds
- * through two wrappers): a magenta swirl strikes the first target.
- *
- * On screen: a swirl uncoils over the first target in six cels, four
- * frames each, the first four from the swirl sheet and the last two from
- * the tail sheet, on the target's side of the canvas. At frame 8 the hit
- * lands with an eight-frame shake: in mode 0 the battle resumes with hit
- * cue 0x85 and the target recoils; in mode 1 cue 0x86 plays, the target
- * flashes, at frame 13 it is thrown up into the air, and at frame 65 it
- * lands with a short shake and the battle resumes with hit cue 0x86. Mode
- * 0 takes the lime palette and lasts 48 frames; mode 1 lasts 74.
- *
- * Setup: the battle effect canvas at a scale of one, a transparent blitter for
- * the caster's side, the swirl sheet in the effect work and the tail sheet
- * in the map cell buffer, the transfer callback, and BG2 placed on the
- * target.
- * Frame loop, 48 or 74 frames, as above.
- * Teardown: the callback and the blitter are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunTwoResource, with The Lost Age's
- * heap slots, blitter mode (3 minus ☀️'s) and callback order, and no
- * work->effect store.
- *
- * Listing 260 instructions, draft 252, differ 202. The logic and constants
- * agree; the remaining rows are register allocation. The native keeps
- * effect in r8, work in r10, mode in r11, the blitter in r6 and the heap
- * base in r5 across the first two calls, spills canvas and frames to the
- * stack (28-byte frame) and leaves r7 unused (pushed only to save the high
- * registers: reload took it back as a spill register); here effect, work
- * and canvas take r6, r7 and fp.
- *
- * Tried:
- *   the heap base through a local (the native keeps it in r5)  matched rows
- *   the blitter load in each branch, which cross-jumps the
- *     two loader calls into one, as the native has it          matched rows
- *   a conditional argument for the loader (trial 0)            213
- *   Func_081963ec returning s32                                202
- *   declaration order, a greedy sweep of 9 locals              202
- */
+// Draft of Func_0815c970, the two-resource family's body (two kinds
+// through two wrappers): a magenta swirl strikes the first target.
+
+// On screen: a swirl uncoils over the first target in six cels, four
+// frames each, the first four from the swirl sheet and the last two from
+// the tail sheet, on the target's side of the canvas. At frame 8 the hit
+// lands with an eight-frame shake: in mode 0 the battle resumes with hit
+// cue 0x85 and the target recoils; in mode 1 cue 0x86 plays, the target
+// flashes, at frame 13 it is thrown up into the air, and at frame 65 it
+// lands with a short shake and the battle resumes with hit cue 0x86. Mode
+// 0 takes the lime palette and lasts 48 frames; mode 1 lasts 74.
+
+// Setup: the battle effect canvas at a scale of one, a transparent blitter for
+// the caster's side, the swirl sheet in the effect work and the tail sheet
+// in the map cell buffer, the transfer callback, and BG2 placed on the
+// target.
+// Frame loop, 48 or 74 frames, as above.
+// Teardown: the callback and the blitter are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunTwoResource, with The Lost Age's
+// heap slots, blitter mode (3 minus ☀️'s) and callback order, and no
+// work->effect store.
+
+// Listing 260 instructions, draft 252, differ 202. The logic and constants
+// agree; the remaining rows are register allocation. The native keeps
+// effect in r8, work in r10, mode in r11, the blitter in r6 and the heap
+// base in r5 across the first two calls, spills canvas and frames to the
+// stack (28-byte frame) and leaves r7 unused (pushed only to save the high
+// registers: reload took it back as a spill register); here effect, work
+// and canvas take r6, r7 and fp.
+
+// Tried:
+// the heap base through a local (the native keeps it in r5)  matched rows
+// the blitter load in each branch, which cross-jumps the
+// two loader calls into one, as the native has it          matched rows
+// a conditional argument for the loader (trial 0)            213
+// Func_081963ec returning s32                                202
+// declaration order, a greedy sweep of 9 locals              202
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

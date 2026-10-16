@@ -1,26 +1,26 @@
-/* Draft of Func_0816ec58, effect kind 75 (Cool), The Broken Seal's
- * BattleFx_RunRisingBurst as The Lost Age reworked it (structure twin
- * 0.772): the two columns became up to ten leaning ice columns, three
- * more for each level of the spell, each with its own start, height and
- * lean; the columns' blitters are loaded once a frame through
- * Func_08196404 (BattleEffect_LoadWork) itself; and the sparks wait for
- * the columns.
- *
- * Listing 471 instructions, draft 469, differ 164.
- * Left: allocation and one loop invariant. The native keeps the level's
- * stagger (variant * 4) in r6 and builds the frame count from it after
- * the position calls; here it lands in r8 with extra moves. This draft
- * also hoists the heap slot base (0x03000000) out of the frame loop into
- * r7, where the native rebuilds it at each slot read, which shifts the
- * column loop's registers.
- * Tried (differ):
- *   first draft                                                       208
- *   last position declared before first (their stack slots), and the
- *     stagger kept in a local for the frame count                      197
- *   the frame count as sinkFrame + 22                                   206
- *   alchemy permute 8 minutes, 2 jobs: the two positions as one array
- *     (ends[2]; the native reads the last x at first + 12)              164
- */
+// Draft of Func_0816ec58, effect kind 75 (Cool), The Broken Seal's
+// BattleFx_RunRisingBurst as The Lost Age reworked it (structure twin
+// 0.772): the two columns became up to ten leaning ice columns, three
+// more for each level of the spell, each with its own start, height and
+// lean; the columns' blitters are loaded once a frame through
+// Func_08196404 (BattleEffect_LoadWork) itself; and the sparks wait for
+// the columns.
+
+// Listing 471 instructions, draft 469, differ 164.
+// Left: allocation and one loop invariant. The native keeps the level's
+// stagger (variant * 4) in r6 and builds the frame count from it after
+// the position calls; here it lands in r8 with extra moves. This draft
+// also hoists the heap slot base (0x03000000) out of the frame loop into
+// r7, where the native rebuilds it at each slot read, which shifts the
+// column loop's registers.
+// Tried (differ):
+// first draft                                                       208
+// last position declared before first (their stack slots), and the
+// stagger kept in a local for the frame count                      197
+// the frame count as sinkFrame + 22                                   206
+// alchemy permute 8 minutes, 2 jobs: the two positions as one array
+// (ends[2]; the native reads the last x at first + 12)              164
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

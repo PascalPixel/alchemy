@@ -1,13 +1,13 @@
-/* Near miss, differ 2 of 98 (2026-10-15, written from the listing; ☀️ has no
- * twin): one reordered pair in the clear-after-upload case, where the native
- * loads IwramFillWords' entry between the two halves of the size (movs r1,
- * #128; ldr r3; adds r0, r4; lsls r1, r1, #5) and this finishes the size
- * first. Measured, each still 2: the entry in a local pointer, the size in a
- * local, an empty asm on the size, on the buffer, on the entry, and a
- * one-pass block around the call. An asm on the entry with the size split by
- * hand (128, then << 5) leaves only the buffer copy out of place (2). Case 2
- * comes before case 1 in the source: its body comes first in the ROM
- * (differ 18 the other way). */
+// Near miss, differ 2 of 98 (2026-10-15, written from the listing; ☀️ has no
+// twin): one reordered pair in the clear-after-upload case, where the native
+// loads IwramFillWords' entry between the two halves of the size (movs r1,
+// #128; ldr r3; adds r0, r4; lsls r1, r1, #5) and this finishes the size
+// first. Measured, each still 2: the entry in a local pointer, the size in a
+// local, an empty asm on the size, on the buffer, on the entry, and a
+// one-pass block around the call. An asm on the entry with the size split by
+// hand (128, then << 5) leaves only the buffer copy out of place (2). Case 2
+// comes before case 1 in the source: its body comes first in the ROM
+// (differ 18 the other way).
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

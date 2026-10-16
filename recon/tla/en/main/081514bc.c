@@ -1,23 +1,23 @@
-/* Draft of Func_081514bc, effect kind 6.
- *
- * Twin: The Broken Seal's BattleFx_RunRisingMotes (effect.c), call for
- * call. The Lost Age reads the effect from its argument, takes its heap
- * blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
- * frames after the burst (The Broken Seal: 75) and begins the results
- * with phase 133 (132). ResourceId_IceChipSheet and ResourceId_SparkleDots
- * are rows 0x17c and 0x17e of directory.s (assets BattleFx_IceChipSheet and
- * BattleFx_SparkleDots), not yet named there.
- *
- * Draft: differ 114 of 753 (draft 755).
- *
- * Left: the pillar loop (12 rows) and the frame loop's test (11) differ in
- * allocation, and two extra instructions sit in the frame loop's setup;
- * the rest is order residue in the three draws.
- *
- * Tried (2026-10-15):
- *   - greedy declaration-order sweep, two passes: no gain.
- *   - a separate counter for the frame loop: 288.
- */
+// Draft of Func_081514bc, effect kind 6.
+
+// Twin: The Broken Seal's BattleFx_RunRisingMotes (effect.c), call for
+// call. The Lost Age reads the effect from its argument, takes its heap
+// blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
+// frames after the burst (The Broken Seal: 75) and begins the results
+// with phase 133 (132). ResourceId_IceChipSheet and ResourceId_SparkleDots
+// are rows 0x17c and 0x17e of directory.s (assets BattleFx_IceChipSheet and
+// BattleFx_SparkleDots), not yet named there.
+
+// Draft: differ 114 of 753 (draft 755).
+
+// Left: the pillar loop (12 rows) and the frame loop's test (11) differ in
+// allocation, and two extra instructions sit in the frame loop's setup;
+// the rest is order residue in the three draws.
+
+// Tried (2026-10-15):
+// - greedy declaration-order sweep, two passes: no gain.
+// - a separate counter for the frame loop: 288.
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -68,16 +68,16 @@ extern u8 Data_08198383[];  // gRisingMotes_EmberHeights
 extern u16 Data_0819744c[]; // gBattleFx_PuffCells
 extern u8 Data_0819745e[];  // gBattleFx_PuffSizes
 
-/* Motes swirl up around the targets while ice pillars rise one by one;
- * then everything bursts.
- *
- * Setup: each mote gets an angle, a radius of 56-119 and a height of -64 to
- * -33 pixels. Frame loop: until the burst the motes close in and climb five
- * pixels a frame while they turn, and from frame 36 a pillar rises every
- * three frames. At the burst the motes spread and fall, 32 chips leap up
- * from below, and smoke rises half a pixel a frame through the height the
- * motes and chips cover. The variant chooses the number of motes and
- * pillars and the frame of the burst. */
+// Motes swirl up around the targets while ice pillars rise one by one;
+// then everything bursts.
+
+// Setup: each mote gets an angle, a radius of 56-119 and a height of -64 to
+// -33 pixels. Frame loop: until the burst the motes close in and climb five
+// pixels a frame while they turn, and from frame 36 a pillar rises every
+// three frames. At the burst the motes spread and fall, 32 chips leap up
+// from below, and smoke rises half a pixel a frame through the height the
+// motes and chips cover. The variant chooses the number of motes and
+// pillars and the frame of the burst.
 void Func_081514bc(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

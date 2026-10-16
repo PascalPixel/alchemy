@@ -1,24 +1,24 @@
-/* Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
-   tagged forced temporary (355 without).
+// Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
+// tagged forced temporary (355 without).
 
-   ☀️ twin: BattleEffect_RunDitherDissolveScene
-   (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
-   for line: formation 645 spawned first, transparent blitters
-   Func_081963ec(104, 0x23) and (188, 0x27) and then max blitters (104,
-   0x13) and (188, 0x17) for the explosion, Iwram_ClearWords when A or B
-   skips, the camera from Ram_HeapSlots->cameraWork, shake (4, 4) in the
-   middle phase where ☀️ has (2, 2), and the effect argument for every
-   target loop.
+// ☀️ twin: BattleEffect_RunDitherDissolveScene
+// (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
+// for line: formation 645 spawned first, transparent blitters
+// Func_081963ec(104, 0x23) and (188, 0x27) and then max blitters (104,
+// 0x13) and (188, 0x17) for the explosion, Iwram_ClearWords when A or B
+// skips, the camera from Ram_HeapSlots->cameraWork, shake (4, 4) in the
+// middle phase where ☀️ has (2, 2), and the effect argument for every
+// target loop.
 
-   Same frame and instruction count. What is left: register choice and
-   spill slots in the explosion block (frame > 301), and neighbouring rows
-   in the other order elsewhere, with the pool offsets that follow them.
+// Same frame and instruction count. What is left: register choice and
+// spill slots in the explosion block (frame > 301), and neighbouring rows
+// in the other order elsewhere, with the pool offsets that follow them.
 
-   Tried (differ):
-     trial 2's port, no device (effects trial, 2026-10-15)              363
-     trial 2 with the forced temporary at the second explosion blitter   158
-     Func_081963ec declared returning s32 (plan 0c): with the temporary
-       150, without it 355                                                */
+// Tried (differ):
+// trial 2's port, no device (effects trial, 2026-10-15)              363
+// trial 2 with the forced temporary at the second explosion blitter   158
+// Func_081963ec declared returning s32 (plan 0c): with the temporary
+// 150, without it 355
 
 #include "types.h"
 #include "ram_buffer.h"

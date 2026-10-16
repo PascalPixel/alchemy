@@ -1,32 +1,32 @@
-/* Near miss, differ 42 of 456.
- *
- * Twin: The Broken Seal's BattleFx_RunIceFleckBurst, reached from the
- * scenes through the far-call table (table_47.s). It sets up its own heap
- * blocks, so unlike a dispatched effect it stores work->effect and marks
- * the work active (framesSinceTransfer = 1) itself. ⚓️ drops the twin's
- * unused GetBattleObjectSlotFar call, works out the glow's picture again for
- * the mirrored half, and reads the strength from the argument.
- *
- * Left: order only; the allocation matches. Single rows where the native
- * builds a constant or issues a load one slot earlier (the heap base and the
- * work fields after the allocations, BLDALPHA's value, the pillar's sheet
- * offsets, the fleck's y and step constants), and the pool offsets they
- * move.
- *
- * Tried:
- *   the twin as ported (its two FAKEMATCH devices dropped)      261
- *   the work block's real size, 0x7b7c                          257
- *   the twin's devices: work++; work--; and frame ^= 1 twice    261-263
- *   frame / 2 % 4 written out in both halves                   263
- *   alchemy permute, 10 minutes: a one-pass block after the
- *     left half's pillar (tagged)                              129
- *   the one-pass block around the whole left half              133
- *   the pillar's picture as frame / 2 % 4 in each half, with no
- *     shared index: i had held frame / 2, so the loops' counter
- *     shared the pillar's register (129 -> 42; a step local of
- *     its own gives 56)                                         42
- *   the same without the one-pass block                        259
- */
+// Near miss, differ 42 of 456.
+
+// Twin: The Broken Seal's BattleFx_RunIceFleckBurst, reached from the
+// scenes through the far-call table (table_47.s). It sets up its own heap
+// blocks, so unlike a dispatched effect it stores work->effect and marks
+// the work active (framesSinceTransfer = 1) itself. ⚓️ drops the twin's
+// unused GetBattleObjectSlotFar call, works out the glow's picture again for
+// the mirrored half, and reads the strength from the argument.
+
+// Left: order only; the allocation matches. Single rows where the native
+// builds a constant or issues a load one slot earlier (the heap base and the
+// work fields after the allocations, BLDALPHA's value, the pillar's sheet
+// offsets, the fleck's y and step constants), and the pool offsets they
+// move.
+
+// Tried:
+// the twin as ported (its two FAKEMATCH devices dropped)      261
+// the work block's real size, 0x7b7c                          257
+// the twin's devices: work++; work--; and frame ^= 1 twice    261-263
+// frame / 2 % 4 written out in both halves                   263
+// alchemy permute, 10 minutes: a one-pass block after the
+// left half's pillar (tagged)                              129
+// the one-pass block around the whole left half              133
+// the pillar's picture as frame / 2 % 4 in each half, with no
+// shared index: i had held frame / 2, so the loops' counter
+// shared the pillar's register (129 -> 42; a step local of
+// its own gives 56)                                         42
+// the same without the one-pass block                        259
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -86,21 +86,20 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor,
                                                  struct EffectPosition *out);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * A pillar of ice rising at the user's feet with flecks spiralling up
- * around it, for the scenes.
- *
- * The pillar is two mirrored halves of a 17x64 picture with a 24x43 glow,
- * drawn at their maximum: four pillar pictures two frames apart and three
- * glow pictures four frames apart. 32 flecks spiral up around it, one more
- * each frame, turning 0x400 and rising 5 pixels a frame while the spiral
- * widens. effect->kind picks the colours (yellow, ice, red or violet) and
- * effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
- * target flashes; the last 6 frames fade out.
- */
+// A pillar of ice rising at the user's feet with flecks spiralling up
+// around it, for the scenes.
+
+// The pillar is two mirrored halves of a 17x64 picture with a 24x43 glow,
+// drawn at their maximum: four pillar pictures two frames apart and three
+// glow pictures four frames apart. 32 flecks spiral up around it, one more
+// each frame, turning 0x400 and rising 5 pixels a frame while the spiral
+// widens. effect->kind picks the colours (yellow, ice, red or violet) and
+// effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
+// target flashes; the last 6 frames fade out.
+
 void Func_0813e3d0(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct EffectPosition pos;

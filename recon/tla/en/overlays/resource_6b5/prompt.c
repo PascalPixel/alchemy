@@ -1,8 +1,8 @@
-/* Near miss, differ 4 of 63 (2026-10-12), from ☀️ LinkLobby_TalkLinkedWins: in
- * each branch the listing schedules the message load and the tally offset one
- * step apart from this draft (ldr r3 before movs r2 in the first, between movs
- * and lsls in the second). A barrier after the message assignment moves the
- * save of the message (mov r8, r3) ahead instead. */
+// Near miss, differ 4 of 63 (2026-10-12), from ☀️ LinkLobby_TalkLinkedWins: in
+// each branch the listing schedules the message load and the tally offset one
+// step apart from this draft (ldr r3 before movs r2 in the first, between movs
+// and lsls in the second). A barrier after the message assignment moves the
+// save of the message (mov r8, r3) ahead instead.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -30,33 +30,32 @@ void UiText_DrawNumber();
 s32 DebugParty_LoadPreset();
 void UiWork_ClearValueNameTables(void);
 
-s32 Func_02000da0(s32 actor)
-{
-    u32 facing = ((struct ObjectRuntime *)Object_GetById(4))->angle;
-    u16 *count;
-    s32 base;
+s32 Func_02000da0(s32 actor) {
+  u32 facing = ((struct ObjectRuntime *)Object_GetById(4))->angle;
+  u16 *count;
+  s32 base;
 
-    Func_02001a14();
-    Func_02001ab4(0);
-    ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
-    if ((facing - 0xa001) <= 0x3ffe) {
-        base = (s32)MsgItLooksLikeThisIs;
-        count = &gPartyState.linkTallies[4];
-        if (*count == 0) {
-            Func_02001a64((s32)MsgIWillTell);
-            return Func_02001a74(actor, 0);
-        }
-    } else {
-        base = (s32)MsgItLooksLikeThisIsYour;
-        count = &gPartyState.linkTallies[7];
-        if (*count == 0)
-            goto none;
+  Func_02001a14();
+  Func_02001ab4(0);
+  ObjectMotion_SetAngleToward(actor, gPartyState.currentOwner, 0);
+  if ((facing - 0xa001) <= 0x3ffe) {
+    base = (s32)MsgItLooksLikeThisIs;
+    count = &gPartyState.linkTallies[4];
+    if (*count == 0) {
+      Func_02001a64((s32)MsgIWillTell);
+      return Func_02001a74(actor, 0);
     }
-    UiWork_ClearValueNameTables();
-    Func_020019e4(*count, 5);
-    Func_02001a64(base + 1);
-    return Func_02001a74(actor, 0);
+  } else {
+    base = (s32)MsgItLooksLikeThisIsYour;
+    count = &gPartyState.linkTallies[7];
+    if (*count == 0)
+      goto none;
+  }
+  UiWork_ClearValueNameTables();
+  Func_020019e4(*count, 5);
+  Func_02001a64(base + 1);
+  return Func_02001a74(actor, 0);
 none:
-    Func_02001a64((s32)MsgIWillTellYou);
-    return Func_02001a74(actor, 0);
+  Func_02001a64((s32)MsgIWillTellYou);
+  return Func_02001a74(actor, 0);
 }

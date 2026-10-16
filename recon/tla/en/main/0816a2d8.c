@@ -1,34 +1,34 @@
-/* Draft, differ 342 of 469 (441 here): Func_0816a2d8, the body of five effect
- * kinds (variant_a.c's wrappers pass variants 1-5), The Broken Seal's
- * BattleFx_RunRevealColumn rebuilt.
- *
- * Twin: ☀️ BattleFx_RunRevealColumn (games/tbs/src/effect/effect.c), a body of
- * two kinds there; The Lost Age keeps its frame (the 120 x 120 picture in four
- * frames of four, the canvas flooded with colour 0x3f for four frames, the hit
- * at frame 20) and adds:
- *   - six picture sets, with variant 4's colours rotated in the BG palette;
- *   - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
- *     through the second blitter;
- *   - variant 3 hands the canvas to SummonFx_RunCanvasMode2 instead of
- *     closing it, and variant 4 animates the user instead of moving it;
- *   - a blend of 16/16 (BLDCNT cleared but for variants 3 to 5);
- *   - two blitters, flipped by side, where ☀️ builds one copy blitter.
- *
- * Left: 28 instructions short, all in the frame loop. The native keeps 120 in
- * r8, 60 in r11, the frame in r10 and the canvas in r9, with both blitters in
- * r6 and r7; here 120 takes r6 and the blitters r7 and r11, and the frames
- * 8 to 11 and 12 to 15 of the reflected variant share one tail through r5,
- * where the native loads each address from the pool twice and only the last
- * case holds its address in r5. In variant 4's palette loop the native
- * holds the two masks in ip and lr, here r6 and r7.
- *
- * Tried (differ): the approach target as s16, which loads variant 3's user
- * twice (391, then 369 as s32); the palette channels written as one
- * expression of a u16 (394), red first as Func_08166b10 has them (368), blue
- * first (342), red in the store expression (346); alchemy permute 8 minutes,
- * 2 jobs: 320 with a temporary holding 120 for the sizes (not kept, a
- * device of no known source form).
- */
+// Draft, differ 342 of 469 (441 here): Func_0816a2d8, the body of five effect
+// kinds (variant_a.c's wrappers pass variants 1-5), The Broken Seal's
+// BattleFx_RunRevealColumn rebuilt.
+
+// Twin: ☀️ BattleFx_RunRevealColumn (games/tbs/src/effect/effect.c), a body of
+// two kinds there; The Lost Age keeps its frame (the 120 x 120 picture in four
+// frames of four, the canvas flooded with colour 0x3f for four frames, the hit
+// at frame 20) and adds:
+// - six picture sets, with variant 4's colours rotated in the BG palette;
+// - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
+// through the second blitter;
+// - variant 3 hands the canvas to SummonFx_RunCanvasMode2 instead of
+// closing it, and variant 4 animates the user instead of moving it;
+// - a blend of 16/16 (BLDCNT cleared but for variants 3 to 5);
+// - two blitters, flipped by side, where ☀️ builds one copy blitter.
+
+// Left: 28 instructions short, all in the frame loop. The native keeps 120 in
+// r8, 60 in r11, the frame in r10 and the canvas in r9, with both blitters in
+// r6 and r7; here 120 takes r6 and the blitters r7 and r11, and the frames
+// 8 to 11 and 12 to 15 of the reflected variant share one tail through r5,
+// where the native loads each address from the pool twice and only the last
+// case holds its address in r5. In variant 4's palette loop the native
+// holds the two masks in ip and lr, here r6 and r7.
+
+// Tried (differ): the approach target as s16, which loads variant 3's user
+// twice (391, then 369 as s32); the palette channels written as one
+// expression of a u16 (394), red first as Func_08166b10 has them (368), blue
+// first (342), red in the store expression (346); alchemy permute 8 minutes,
+// 2 jobs: 320 with a temporary holding 120 for the sizes (not kept, a
+// device of no known source form).
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

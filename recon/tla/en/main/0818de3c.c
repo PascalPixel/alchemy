@@ -1,16 +1,16 @@
-/* Near miss: listing 142 instructions, draft 142, differ 20 (-mtune=arm7tdmi as
- * an analysis: 18). Registers and stores all match; what is left is sched2
- * order: the inner loop's preheader loads row * columns (sp+8) before row *
- * cellHeight (sp+12), where the native loads cellHeight's first, and the
- * triangle address waits for its pool of the spilled triangles pointer (the
- * native loads it before the * 24 chain), and two ldrb of the spilled v0 sit
- * one slot apart. Measured: the triangle as &triangles[index * 2], triangles +
- * index * 2, a quad struct, or index * 2 + triangles: differ 22 (base + mult;
- * the native adds mult + base, which only the integer form gives); the second
- * triangle as triangle + 1 declared with the first: 146 (it must come after the
- * first triangle's stores); v0 declared before the triangle: 30; v0 and v1 as
- * running variables of the outer loop: 96; the texture coordinates written
- * inline: 20. */
+// Near miss: listing 142 instructions, draft 142, differ 20 (-mtune=arm7tdmi as
+// an analysis: 18). Registers and stores all match; what is left is sched2
+// order: the inner loop's preheader loads row * columns (sp+8) before row *
+// cellHeight (sp+12), where the native loads cellHeight's first, and the
+// triangle address waits for its pool of the spilled triangles pointer (the
+// native loads it before the * 24 chain), and two ldrb of the spilled v0 sit
+// one slot apart. Measured: the triangle as &triangles[index * 2], triangles +
+// index * 2, a quad struct, or index * 2 + triangles: differ 22 (base + mult;
+// the native adds mult + base, which only the integer form gives); the second
+// triangle as triangle + 1 declared with the first: 146 (it must come after the
+// first triangle's stores); v0 declared before the triangle: 30; v0 and v1 as
+// running variables of the outer loop: 96; the texture coordinates written
+// inline: 20.
 #include "types.h"
 
 struct MeshTriangle {

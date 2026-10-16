@@ -1,16 +1,16 @@
-/* Draft, differ 44 of 430 (2026-10-15; 46 before Func_081963ec returned its
- * loader's s32, as nibble_pair.c now does): The Broken Seal's
- * BattleEffect_RunImpactBurst with The Lost Age's blitter loads
- * (Func_081963ec(104, 19) and (188, 3), read back from the heap slots at 0x68
- * and 0xbc), its resources (0x134, 0x120, 0x121) and callback (Func_08143000 at
- * 0xc80). Everything matches but reordered rows, all of one kind: the native
- * puts a store, a load or a pool load before an independent constant (the
- * arguments' spills before 0x03000000, the spills of the heap reads, movs r1,
- * #19 before movs r0, #104, the 0xffff angle mask after the particle stores,
- * the pooled sheet offsets), and the shifted literal pools follow. The empty
- * asm at the start and the BG2PA halfword pinned in a one-pass block (as
- * Func_0816a730) take it from 54 to 48, and the tables declared without const
- * to 46. */
+// Draft, differ 44 of 430 (2026-10-15; 46 before Func_081963ec returned its
+// loader's s32, as nibble_pair.c now does): The Broken Seal's
+// BattleEffect_RunImpactBurst with The Lost Age's blitter loads
+// (Func_081963ec(104, 19) and (188, 3), read back from the heap slots at 0x68
+// and 0xbc), its resources (0x134, 0x120, 0x121) and callback (Func_08143000 at
+// 0xc80). Everything matches but reordered rows, all of one kind: the native
+// puts a store, a load or a pool load before an independent constant (the
+// arguments' spills before 0x03000000, the spills of the heap reads, movs r1,
+// #19 before movs r0, #104, the 0xffff angle mask after the particle stores,
+// the pooled sheet offsets), and the shifted literal pools follow. The empty
+// asm at the start and the BG2PA halfword pinned in a one-pass block (as
+// Func_0816a730) take it from 54 to 48, and the tables declared without const
+// to 46.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

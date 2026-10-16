@@ -1,29 +1,29 @@
-/* Draft, differ 360 of 1632 (1628 here): Func_081693d0, summon 6
- * (Func_0814c994's case 6, actflags 0x8006), The Broken Seal's
- * BattleFx_InitializeMode6 as The Lost Age reworked it.
- *
- * Twin: ☀️ BattleFx_InitializeMode6 (games/tbs/src/effect/effect.c), with The
- * Lost Age's changes: no BattleFx_SpawnObjects; instead its own object build
- * (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
- * Resource_DecodeType01 into the map cell buffer, eight
- * Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
- * each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
- * do); battle work byte 0x867 set; the object grid computed from i (no
- * ObjectX/Y tables); PaletteDma_LoadBlock and a Dma_Set of 16 palette words
- * after the first act; blitter modes 3 and 19 for The Broken Seal's 3 and 2.
- *
- * Left: allocation (spill slots, and the tile pointer the native holds in r8
- * from the start) and order.
- *
- * Tried (differ), in effects trial 2 (2026-10-15): the first port (449); the
- * tile pointer in a local set first (446); work declared right after the
- * canvas, found by a greedy scan of declaration positions (360); alchemy
- * permute 6 minutes: 349 with a reused variable, not kept. Renaming the locals
- * for this draft left 360. alchemy permute 10 minutes, 2 jobs, on this draft
- * (2026-10-15): 278 to 298, each only through an invented temporary (the
- * 0x03000000 base held in the frame variable, the canvas in a two-word array,
- * a spare u16 pointer), not kept; they say the native holds the heap base in
- * a register the frame later takes. */
+// Draft, differ 360 of 1632 (1628 here): Func_081693d0, summon 6
+// (Func_0814c994's case 6, actflags 0x8006), The Broken Seal's
+// BattleFx_InitializeMode6 as The Lost Age reworked it.
+
+// Twin: ☀️ BattleFx_InitializeMode6 (games/tbs/src/effect/effect.c), with The
+// Lost Age's changes: no BattleFx_SpawnObjects; instead its own object build
+// (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
+// Resource_DecodeType01 into the map cell buffer, eight
+// Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
+// each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
+// do); battle work byte 0x867 set; the object grid computed from i (no
+// ObjectX/Y tables); PaletteDma_LoadBlock and a Dma_Set of 16 palette words
+// after the first act; blitter modes 3 and 19 for The Broken Seal's 3 and 2.
+
+// Left: allocation (spill slots, and the tile pointer the native holds in r8
+// from the start) and order.
+
+// Tried (differ), in effects trial 2 (2026-10-15): the first port (449); the
+// tile pointer in a local set first (446); work declared right after the
+// canvas, found by a greedy scan of declaration positions (360); alchemy
+// permute 6 minutes: 349 with a reused variable, not kept. Renaming the locals
+// for this draft left 360. alchemy permute 10 minutes, 2 jobs, on this draft
+// (2026-10-15): 278 to 298, each only through an invented temporary (the
+// 0x03000000 base held in the frame variable, the canvas in a two-word array,
+// a spare u16 pointer), not kept; they say the native holds the heap base in
+// a register the frame later takes.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -1,18 +1,18 @@
-/* Draft, differ 472 of 418 (draft 382 instructions, no device): an unused
- * solid renderer, the filled twin of Func_08196248 (same setup, transform,
- * corner copies and back-face test), written from the listing (no caller in
- * the image; twins12 BattleFx_RunMemberBeam 0.34). Corners are sorted by y
- * with XOR swaps and each half of the triangle is filled along 16.16 edge
- * slopes from IwramRatioMulQ14; a pixel keeps the larger colour (an
- * unsigned compare, bcs, from the u8 pixel against the u8 colour).
- * Left: as in Func_08196248, the native holds each corner field it touches
- * through its own address register or spill (a.y at r11, b.x at r10, b.y
- * at sp+28, c.x at sp+36, c.y at sp+32), and it reloads after every store of
- * a swap (the corners may alias); with three corner pointers (a, b, c) the
- * swaps reload as the native's do, but the addresses stay offsets, so the
- * face loop is still 36 instructions short.
- * Tried: corner[k] fields directly (499), six pointers to the six fields
- * (538). */
+// Draft, differ 472 of 418 (draft 382 instructions, no device): an unused
+// solid renderer, the filled twin of Func_08196248 (same setup, transform,
+// corner copies and back-face test), written from the listing (no caller in
+// the image; twins12 BattleFx_RunMemberBeam 0.34). Corners are sorted by y
+// with XOR swaps and each half of the triangle is filled along 16.16 edge
+// slopes from IwramRatioMulQ14; a pixel keeps the larger colour (an
+// unsigned compare, bcs, from the u8 pixel against the u8 colour).
+// Left: as in Func_08196248, the native holds each corner field it touches
+// through its own address register or spill (a.y at r11, b.x at r10, b.y
+// at sp+28, c.x at sp+36, c.y at sp+32), and it reloads after every store of
+// a swap (the corners may alias); with three corner pointers (a, b, c) the
+// swaps reload as the native's do, but the addresses stay offsets, so the
+// face loop is still 36 instructions short.
+// Tried: corner[k] fields directly (499), six pointers to the six fields
+// (538).
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -137,11 +137,9 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
       middle = b->y >> 16;
       bottom = HI(c->y);
       if (top != middle)
-        slopeA = Iwram_RatioMulQ14(b->y - a->y,
-                                   b->x - a->x);
+        slopeA = Iwram_RatioMulQ14(b->y - a->y, b->x - a->x);
       if (top != bottom)
-        slopeB = Iwram_RatioMulQ14(c->y - a->y,
-                                   c->x - a->x);
+        slopeB = Iwram_RatioMulQ14(c->y - a->y, c->x - a->x);
 
       // The upper half, between the short edge and the long one.
       edgeB = a->x;
@@ -154,8 +152,7 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
 
       // The lower half, from the middle corner.
       if (middle != bottom)
-        slopeA = Iwram_RatioMulQ14(c->y - b->y,
-                                   c->x - b->x);
+        slopeA = Iwram_RatioMulQ14(c->y - b->y, c->x - b->x);
       edgeA = b->x;
       for (row = middle; row != bottom; row++) {
         FILL_SPAN(row, edgeA, edgeB);

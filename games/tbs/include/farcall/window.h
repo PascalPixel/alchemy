@@ -1,4 +1,4 @@
-/* FarCall_WindowTable: one entry per 8-byte stub, in table order. */
+// FarCall_WindowTable: one entry per 8-byte stub, in table order.
 FAR_CALL(UiWork_InitializeWithResourceCountersFar,
          UiWork_InitializeWithResourceCounters, void, (void))
 FAR_CALL(UiWork_InitializeFar, UiWork_Initialize, void, (s32 kind))

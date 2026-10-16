@@ -1,35 +1,35 @@
-/* Near miss, differ 2 of 280 (10 without its devices).
- *
- * Twin: The Broken Seal's BattlePresentation_PrepareScene, the start of the
- * light-streak backdrop the scenes raise behind the battle (Func_0813fd40,
- * already C, takes it down; both are reached through the far-call table,
- * table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
- * the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it
- * fades the battle background's colours over 24 frames (Func_0813fa44), and
- * the streaks are halved into VRAM each frame (Func_0813f89c) rather than
- * through the canvas transfer.
- *
- * Left: one row in the prologue. The native stores the canvas pointer to its
- * stack slot before it starts the heap base for the battle and view reads;
- * here the base's movs comes first.
- *
- * The other eight rows were three values the native loads from the pool
- * before it starts their register's address (BLDCNT, BG2CNT, BG2PA), the
- * same rows BattleFx_OpenCanvasLayer (canvas.c) closes with pinned values
- * behind barriers. They are closed the same way here, tagged; S2's counts
- * of pins and barriers may only fall, so adoption waits on Pascal (plan
- * D2), and the last row in any case.
- *
- * Tried:
- *   from the listing, on canvas.c's set-up                     10
- *   BG2CNT's value set in a one-pass block: it becomes a split
- *     constant (movs, lsls, adds)                              29
- *   the three pins and barriers as in canvas.c                  2
- *   one-pass blocks for the last row: around the canvas
- *     allocation 2 (the work's copy then moves), empty after it
- *     2, around the battle and view reads 4, around both
- *     allocations 6
- */
+// Near miss, differ 2 of 280 (10 without its devices).
+
+// Twin: The Broken Seal's BattlePresentation_PrepareScene, the start of the
+// light-streak backdrop the scenes raise behind the battle (Func_0813fd40,
+// already C, takes it down; both are reached through the far-call table,
+// table_47.s). ⚓️ rebuilt it: instead of BattleFx_BeginCanvasLayer it sets
+// the BG2 canvas up step by step, a frame at a time, as 0813eb70 does; it
+// fades the battle background's colours over 24 frames (Func_0813fa44), and
+// the streaks are halved into VRAM each frame (Func_0813f89c) rather than
+// through the canvas transfer.
+
+// Left: one row in the prologue. The native stores the canvas pointer to its
+// stack slot before it starts the heap base for the battle and view reads;
+// here the base's movs comes first.
+
+// The other eight rows were three values the native loads from the pool
+// before it starts their register's address (BLDCNT, BG2CNT, BG2PA), the
+// same rows BattleFx_OpenCanvasLayer (canvas.c) closes with pinned values
+// behind barriers. They are closed the same way here, tagged; S2's counts
+// of pins and barriers may only fall, so adoption waits on Pascal (plan
+// D2), and the last row in any case.
+
+// Tried:
+// from the listing, on canvas.c's set-up                     10
+// BG2CNT's value set in a one-pass block: it becomes a split
+// constant (movs, lsls, adds)                              29
+// the three pins and barriers as in canvas.c                  2
+// one-pass blocks for the last row: around the canvas
+// allocation 2 (the work's copy then moves), empty after it
+// 2, around the battle and view reads 4, around both
+// allocations 6
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -80,10 +80,9 @@ static inline s32 ClearWords(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-/*
- * Raises the light-streak backdrop in colour set kind (yellow, crystal,
- * ember, violet or dust).
- */
+// Raises the light-streak backdrop in colour set kind (yellow, crystal,
+// ember, violet or dust).
+
 void Func_0813fa88(s32 kind) {
   struct StreakSceneWork *work;
   void *canvas;

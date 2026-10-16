@@ -1,23 +1,23 @@
-/* Near miss, differ 40 of 1072.
- *
- * Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
- * casts the same scene from the caster's side). Twin: The Broken Seal's
- * BattleEffect_RunPaletteParticles, ported call for call. The Lost Age's
- * changes: every picture unpacked by Resource_LoadAndDecompress; the pair
- * from Func_08144aac; BG2CNT set with the blending; an alternate layout
- * (formation 6, eight pixels right and lower, sparks and flashes with it)
- * when the first target's animation kind is 2; formation resource 647; two
- * separate mode-0 tests at the teardown; the callback at 0xc80.
- *
- * Left: order only: about twenty single swaps of a load (the argument's
- * spill, a pooled constant, the work pointer) with the constant beside it.
- *
- * Tried (2026-10-15): The Broken Seal's layout, every local at the top,
- * 102 (the spill slots of dir, the alternate flag and focus come before
- * the blitter pair's address); the effect state (focus, dir, alternate) in a
- * block opened after the transfer callback, as The Broken Seal's
- * EmberColumns does, 40: the native's slot order.
- */
+// Near miss, differ 40 of 1072.
+
+// Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
+// casts the same scene from the caster's side). Twin: The Broken Seal's
+// BattleEffect_RunPaletteParticles, ported call for call. The Lost Age's
+// changes: every picture unpacked by Resource_LoadAndDecompress; the pair
+// from Func_08144aac; BG2CNT set with the blending; an alternate layout
+// (formation 6, eight pixels right and lower, sparks and flashes with it)
+// when the first target's animation kind is 2; formation resource 647; two
+// separate mode-0 tests at the teardown; the callback at 0xc80.
+
+// Left: order only: about twenty single swaps of a load (the argument's
+// spill, a pooled constant, the work pointer) with the constant beside it.
+
+// Tried (2026-10-15): The Broken Seal's layout, every local at the top,
+// 102 (the spill slots of dir, the alternate flag and focus come before
+// the blitter pair's address); the effect state (focus, dir, alternate) in a
+// block opened after the transfer callback, as The Broken Seal's
+// EmberColumns does, 40: the native's slot order.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

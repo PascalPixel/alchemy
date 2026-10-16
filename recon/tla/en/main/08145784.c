@@ -1,24 +1,24 @@
-/* Near miss, differ 97 of 549 (the draft has 550).
- *
- * Effect kind 40. Twin: The Broken Seal's BattleFx_RunCounterReveal, ported
- * call for call and with its three devices (each measured here). The Lost
- * Age's changes: the effect runs 104 frames, not 132, every cue 8 to 16
- * frames earlier (jumps at 24 and 48, panels from 72); both pictures are
- * unpacked by Resource_LoadAndDecompress (the crescents into the map buffer);
- * the blitters are transparent (Func_081963ec, mode 2); both callbacks at
- * 0xc80; and the strike at frame 72 is Func_08118088 on the target with a
- * shake of 8 and the results phase 144, where The Broken Seal throws the
- * target by hand at 88 and drops it at 120; the screen shakes each frame.
- *
- * Left: order. The prologue matches; the rest are single swaps of a load with
- * its neighbour, a literal pool two bytes off the native's (each branch over
- * it is 2 short), and the side read once into r3 for the panel index where
- * the native indexes with r0 (one extra instruction).
- *
- * Tried (2026-10-15): the plain port without the row device 524 (gcse folds
- * row); with it 130; the map buffer through a local set after the first
- * load 103, before the zero 97; the rows ordered row, column (no change).
- */
+// Near miss, differ 97 of 549 (the draft has 550).
+
+// Effect kind 40. Twin: The Broken Seal's BattleFx_RunCounterReveal, ported
+// call for call and with its three devices (each measured here). The Lost
+// Age's changes: the effect runs 104 frames, not 132, every cue 8 to 16
+// frames earlier (jumps at 24 and 48, panels from 72); both pictures are
+// unpacked by Resource_LoadAndDecompress (the crescents into the map buffer);
+// the blitters are transparent (Func_081963ec, mode 2); both callbacks at
+// 0xc80; and the strike at frame 72 is Func_08118088 on the target with a
+// shake of 8 and the results phase 144, where The Broken Seal throws the
+// target by hand at 88 and drops it at 120; the screen shakes each frame.
+
+// Left: order. The prologue matches; the rest are single swaps of a load with
+// its neighbour, a literal pool two bytes off the native's (each branch over
+// it is 2 short), and the side read once into r3 for the panel index where
+// the native indexes with r0 (one extra instruction).
+
+// Tried (2026-10-15): the plain port without the row device 524 (gcse folds
+// row); with it 130; the map buffer through a local set after the first
+// load 103, before the zero 97; the rows ordered row, column (no change).
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

@@ -1,25 +1,25 @@
-/* Near miss of Func_08151b48, effect kind 17.
- *
- * Twin: The Broken Seal's BattleFx_RunClosingBolts (effect.c), call for
- * call, with The Lost Age's changes: on its own side the canvas begins
- * filled (BattleFx_BeginTiledCanvasFilled), with BG control 0x2001; the
- * blitters come through Func_081963ec (BLIT_MAX 1, BLIT_ADDITIVE 0); and
- * outside variant 2 the bolts center on the midpoint of the targets
- * (Func_0815e22c), the canvas scrolled to it and clamped to 0-112, with
- * what the clamp leaves added to every x. Variant 2 reads the side through
- * work->effect, the only place this effect does. ResourceId_LightningBolt-
- * Sheet is row 0x188 of directory.s (asset BattleFx_LightningBoltSheet),
- * not yet named there.
- *
- * Near miss: differ 53 of 519 (draft 520), order residue: the native
- * loads BG2PA's value before it builds the register's address in both
- * branches (so their common tail is merged differently and one more
- * instruction lands here), sets r1 before r0 for Func_081963ec, and
- * issues the sheet offset and the work load one slot apart from agscc.
- *
- * Tried (2026-10-15):
- *   - a separate counter for the frame loop: no change.
- */
+// Near miss of Func_08151b48, effect kind 17.
+
+// Twin: The Broken Seal's BattleFx_RunClosingBolts (effect.c), call for
+// call, with The Lost Age's changes: on its own side the canvas begins
+// filled (BattleFx_BeginTiledCanvasFilled), with BG control 0x2001; the
+// blitters come through Func_081963ec (BLIT_MAX 1, BLIT_ADDITIVE 0); and
+// outside variant 2 the bolts center on the midpoint of the targets
+// (Func_0815e22c), the canvas scrolled to it and clamped to 0-112, with
+// what the clamp leaves added to every x. Variant 2 reads the side through
+// work->effect, the only place this effect does. ResourceId_LightningBolt-
+// Sheet is row 0x188 of directory.s (asset BattleFx_LightningBoltSheet),
+// not yet named there.
+
+// Near miss: differ 53 of 519 (draft 520), order residue: the native
+// loads BG2PA's value before it builds the register's address in both
+// branches (so their common tail is merged differently and one more
+// instruction lands here), sets r1 before r0 for Func_081963ec, and
+// issues the sheet offset and the work load one slot apart from agscc.
+
+// Tried (2026-10-15):
+// - a separate counter for the frame loop: no change.
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -66,14 +66,14 @@ extern char ResourceId_Data134; // the particle sheet
 extern u8 Data_0819839c[][2];   // gLightningBolts_Sparks
 extern u16 gData_08197410[];    // gParticleStreams_CellOffsets
 
-/* Four lightning bolts turn and close in on the targets, throwing sparks
- * from their feet.
- *
- * Setup: 1,024 sparks wait at the canvas center. Frame loop: for 16
- * frames the bolts circle in, their radius shrinking a pixel a frame, the
- * canvas wiped every five frames, and each bolt throws the variant's
- * number of sparks; the sparks fall and bounce off y = 120 until frame 64.
- * The targets are hit from frame 4, four frames apart. */
+// Four lightning bolts turn and close in on the targets, throwing sparks
+// from their feet.
+
+// Setup: 1,024 sparks wait at the canvas center. Frame loop: for 16
+// frames the bolts circle in, their radius shrinking a pixel a frame, the
+// canvas wiped every five frames, and each bolt throws the variant's
+// number of sparks; the sparks fall and bounce off y = 120 until frame 64.
+// The targets are hit from frame 4, four frames apart.
 void Func_08151b48(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

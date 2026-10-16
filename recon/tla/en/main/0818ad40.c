@@ -1,20 +1,20 @@
-/* Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
- * (call order BattleFx_InitializeMode10 0.468): ⚓️'s own effect on ☀️'s frame, a
- * sibling of the four cards of Func_0818a220. The card itself scrolls on a
- * tiled background; its picture is a textured quad by ⚓️'s model kernels.
- * The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the
- * blitter pair 32, the card's scale 28, the background's scroll 24, the
- * card's overflow past the scroll's range 20, the length 16, the length less
- * 8 at 12 and frame - 48 at 8; the texture is at sp+52, the targets' middle
- * at 60 and the card at 72. work stays in r10 and the frame in r11.
- * Written from the listing (2026-10-15, fx-n3), in the native's statement
- * order: 836 at the first compile. Graphics read into a local at the top,
- * as the native loads it into r6 before the first call: the prologue then
- * matches but the rest scores 864, kept as the native's form. Left: this
- * frame is 88, one slot more than the native's, so every spill sits 4
- * higher, and work takes r9 for r10. The smoke's window grouped as (frame
- * >= 40 && frame <= 47), so that it folds into the native's one unsigned
- * compare: 864 to 796. */
+// Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
+// (call order BattleFx_InitializeMode10 0.468): ⚓️'s own effect on ☀️'s frame, a
+// sibling of the four cards of Func_0818a220. The card itself scrolls on a
+// tiled background; its picture is a textured quad by ⚓️'s model kernels.
+// The native frame (84) holds effect at sp+48, the mode 44, canvas 40, the
+// blitter pair 32, the card's scale 28, the background's scroll 24, the
+// card's overflow past the scroll's range 20, the length 16, the length less
+// 8 at 12 and frame - 48 at 8; the texture is at sp+52, the targets' middle
+// at 60 and the card at 72. work stays in r10 and the frame in r11.
+// Written from the listing (2026-10-15, fx-n3), in the native's statement
+// order: 836 at the first compile. Graphics read into a local at the top,
+// as the native loads it into r6 before the first call: the prologue then
+// matches but the rest scores 864, kept as the native's form. Left: this
+// frame is 88, one slot more than the native's, so every spill sits 4
+// higher, and work takes r9 for r10. The smoke's window grouped as (frame
+// >= 40 && frame <= 47), so that it folds into the native's one unsigned
+// compare: 864 to 796.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

@@ -1,7 +1,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-/* SOUND */
+// SOUND
 
 #include "types.h"
 #include "edition.h"

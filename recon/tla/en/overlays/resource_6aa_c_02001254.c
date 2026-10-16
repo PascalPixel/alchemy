@@ -1,6 +1,7 @@
-/* Near misses of overlay 6aa: Func_02001254 differ 36 (the listing keeps one counter address in
- * r5 and loads the other twice), Func_020012e4 differ 22 (the listing reloads the counter sign-extended for the
- * last test and builds its zero in r4 before the first). */
+// Near misses of overlay 6aa: Func_02001254 differ 36 (the listing keeps one
+// counter address in r5 and loads the other twice), Func_020012e4 differ 22
+// (the listing reloads the counter sign-extended for the last test and builds
+// its zero in r4 before the first).
 #include "../../../../games/tla/src/scene/mars_entrance/room.h"
 
 extern char SceneId_Ov6a8Room2;
@@ -46,42 +47,39 @@ void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
-void Func_02001254(void)
-{
-    if (gData_020068a0 < 60) {
-        if (gData_02006868 == 0) {
-            Func_0200246c(0, 3);
-            gData_02006868 = 1;
-        }
-    } else {
-        if (gData_02006868 == 1) {
-            Func_0200246c(0, 67);
-            gData_02006868 = 0;
-        }
+void Func_02001254(void) {
+  if (gData_020068a0 < 60) {
+    if (gData_02006868 == 0) {
+      Func_0200246c(0, 3);
+      gData_02006868 = 1;
     }
-    if (++gData_020068a0 > 300)
-        gData_020068a0 = 0;
+  } else {
+    if (gData_02006868 == 1) {
+      Func_0200246c(0, 67);
+      gData_02006868 = 0;
+    }
+  }
+  if (++gData_020068a0 > 300)
+    gData_020068a0 = 0;
 }
 
-void Func_020012e4(struct ObjectRuntime *object)
-{
-    s16 *count = &object->action;
-    s32 zero;
+void Func_020012e4(struct ObjectRuntime *object) {
+  s16 *count = &object->action;
+  s32 zero;
 
-    ((struct SpriteParts *)object->animation)->unk12 += 0x800;
-    (*count)++;
-    zero = 0;
-    if (*count == 8)
-        object->velocityY = 0x40000;
-    if (*count > 9) {
-        object->x += 0x40000;
-        object->scaleX += 0xfffff800;
-        object->scaleY += 0xfffff800;
-    }
-    if (*count == 32) {
-        object->x = zero;
-        object->z = zero;
-        object->update = (void (*)(void))zero;
-    }
+  ((struct SpriteParts *)object->animation)->unk12 += 0x800;
+  (*count)++;
+  zero = 0;
+  if (*count == 8)
+    object->velocityY = 0x40000;
+  if (*count > 9) {
+    object->x += 0x40000;
+    object->scaleX += 0xfffff800;
+    object->scaleY += 0xfffff800;
+  }
+  if (*count == 32) {
+    object->x = zero;
+    object->z = zero;
+    object->update = (void (*)(void))zero;
+  }
 }
-

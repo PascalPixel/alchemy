@@ -86,8 +86,8 @@ s32 SceneData_ReturnZero(void) { return 0; }
 static s32 LinkLobby_InitializeSerial(void) {
   u32 saved;
 
-  /* Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no
-   * result. */
+  // Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no
+  // result.
 
   IRQ_LOCK(saved);
   SerialRuntime_RemoveIrqHandlers();
@@ -604,7 +604,7 @@ static s32 EV10_TOUCH(void) {
   if (Engine_GameFlagIsSet(0x173)) {
     Engine_EventBegin();
   } else {
-    /* These exits return no value from the s32 handler. */
+    // These exits return no value from the s32 handler.
     if (!Engine_GameFlagIsSet(0x200))
       return;
     if (Engine_GameFlagIsSet(0x205))
@@ -715,7 +715,7 @@ static s32 EV10_TOUCH(void) {
 }
 
 static s32 EV08_TALK(void) {
-  /* Returns no value: r0 is whatever the last call left. */
+  // Returns no value: r0 is whatever the last call left.
 
   s32 answer;
   s32 msg;
@@ -967,8 +967,8 @@ static s32 EV01_TOUCH(void) {
   Event_SetDestination((s32)&SceneId_Clear, 1);
 }
 
-/* The handlers below are s32 and return no value: r0 is whatever
- * Engine_EventEnd left. */
+// The handlers below are s32 and return no value: r0 is whatever
+// Engine_EventEnd left.
 
 static s32 LinkLobby_TalkToAttendant(s32 actor) {
   s32 message;

@@ -1,28 +1,28 @@
-/* Near miss: listing 303 instructions, draft 303, differ 16. No close ☀️
- * twin: the call order is BattleFx_RunTwoResource's (0.684), whose frame and
- * one-blitter setup this shares, but the picture is ⚓️'s own.
- * Allocation and frame match (effect spilled to sp+8 because the blitter pair
- * holds r6 and r7; the cell buffer through a pointer the build
- * rematerializes, so case 2 loads it last and is not cross-jumped with case
- * 3). Left are load and store orders: effect's spill before the heap base in
- * the prologue, the slot 104 argument last before Func_08196404, both BLDALPHA
- * words before their register address, and the fill's IwramFillWords address
- * before 0x4000. Measured: f18284c.c's blend pin with its empty asm on both
- * stores: 16, but the asm's estimated four bytes move the pool after
- * BattleMotion_ApproachTargetFar one instruction early; the pins alone, or
- * one-pass blocks: 24 to 58.
- * 2026-10-15 (fx-n3): rewritten for reading on struct BattleEffectWork, with
- * the resource ids named from directory.s (0x10b GreyCrescentSheet, 0x10c
- * StarCrescentSheet, 0x150 MarsDjinnSheet) and the blitter's flags and mode
- * spelled out; still 24. The pooled store on Echo Cut's blend alone: 16
- * (Human Hunt's plain, Echo Cut's pinned and held; on Human Hunt's too, or
- * the pin alone on either: 16 or 24, all nine combinations measured). What is
- * left at 16: effect's spill before the heap base, the slot 104 argument last,
- * Human Hunt's blend value before its address, the pool after
- * BattleMotion_ApproachTargetFar one instruction early, and the fill's
- * IwramFillWords address before 0x4000. alchemy permute (10 min, 2 jobs,
- * 7,474 candidates): nothing below 16 (its weighted best differs 24). The
- * crescent's second half as cells + 0x4000 or the fixed 0x02014000: 16. */
+// Near miss: listing 303 instructions, draft 303, differ 16. No close ☀️
+// twin: the call order is BattleFx_RunTwoResource's (0.684), whose frame and
+// one-blitter setup this shares, but the picture is ⚓️'s own.
+// Allocation and frame match (effect spilled to sp+8 because the blitter pair
+// holds r6 and r7; the cell buffer through a pointer the build
+// rematerializes, so case 2 loads it last and is not cross-jumped with case
+// 3). Left are load and store orders: effect's spill before the heap base in
+// the prologue, the slot 104 argument last before Func_08196404, both BLDALPHA
+// words before their register address, and the fill's IwramFillWords address
+// before 0x4000. Measured: f18284c.c's blend pin with its empty asm on both
+// stores: 16, but the asm's estimated four bytes move the pool after
+// BattleMotion_ApproachTargetFar one instruction early; the pins alone, or
+// one-pass blocks: 24 to 58.
+// 2026-10-15 (fx-n3): rewritten for reading on struct BattleEffectWork, with
+// the resource ids named from directory.s (0x10b GreyCrescentSheet, 0x10c
+// StarCrescentSheet, 0x150 MarsDjinnSheet) and the blitter's flags and mode
+// spelled out; still 24. The pooled store on Echo Cut's blend alone: 16
+// (Human Hunt's plain, Echo Cut's pinned and held; on Human Hunt's too, or
+// the pin alone on either: 16 or 24, all nine combinations measured). What is
+// left at 16: effect's spill before the heap base, the slot 104 argument last,
+// Human Hunt's blend value before its address, the pool after
+// BattleMotion_ApproachTargetFar one instruction early, and the fill's
+// IwramFillWords address before 0x4000. alchemy permute (10 min, 2 jobs,
+// 7,474 candidates): nothing below 16 (its weighted best differs 24). The
+// crescent's second half as cells + 0x4000 or the fixed 0x02014000: 16.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -87,9 +87,9 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *cells = Ram_MapCellBuffer;
-  /* The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
-     r7, the second unused, which is why the native pushes r7 and spills
-     effect. */
+  // The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
+  // r7, the second unused, which is why the native pushes r7 and spills
+  // effect.
   DrawRectangle draw[2];
   s32 flags;
   s32 frame;

@@ -4,18 +4,18 @@
 #include "ram_buffer.h"
 
 struct FieldEffectState {
-    u8 padding0[0x1AC];
-    s32 effect;
-    u8 padding1B0[4];
-    s32 delay;
+  u8 padding0[0x1AC];
+  s32 effect;
+  u8 padding1B0[4];
+  s32 delay;
 };
 
 struct FieldObject {
-    u8 padding0[0x34];
-    u16 savedX;
-    u16 savedY;
-    s16 x;
-    u16 y;
+  u8 padding0[0x34];
+  u16 savedX;
+  u16 savedY;
+  s16 x;
+  u16 y;
 };
 
 s32 Party_ListActiveOwnersFar(s16 *);
@@ -27,37 +27,36 @@ void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
 void Event_StartScreenTransitionFar(void);
 
-void Inn_PlaySleep(s32 roomPrice)
-{
-    s16 objects[8];
-    s32 count;
-    s32 index;
-    struct FieldObject *object;
-    struct FieldEffectState *state;
+void Inn_PlaySleep(s32 roomPrice) {
+  s16 objects[8];
+  s32 count;
+  s32 index;
+  struct FieldObject *object;
+  struct FieldEffectState *state;
 
-    count = Party_ListActiveOwnersFar(objects);
-    Party_AdjustCoinsFar(-roomPrice);
+  count = Party_ListActiveOwnersFar(objects);
+  Party_AdjustCoinsFar(-roomPrice);
 
-    for (index = 0; index < count; index++) {
-        object = UnitGet(objects[index]);
-        if (object->x != 0) {
-            object->x = object->savedX;
-            object->y = object->savedY;
-            UnitRatioFar(objects[index]);
-        }
+  for (index = 0; index < count; index++) {
+    object = UnitGet(objects[index]);
+    if (object->x != 0) {
+      object->x = object->savedX;
+      object->y = object->savedY;
+      UnitRatioFar(objects[index]);
     }
+  }
 
-    state = Ram_HeapSlots->eventWork;
-    state->effect = 0x209;
-    state->delay = 60;
-    WaitFrames(20);
-    Event_FinishScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
-    Audio_PlayCue(86);
-    AudioCommand_WaitForStateByteClear();
-    WaitFrames(10);
-    Event_StartScreenTransitionFar();
-    Event_WaitTransitionFramesFar();
-    WaitFrames(30);
-    ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
+  state = Ram_HeapSlots->eventWork;
+  state->effect = 0x209;
+  state->delay = 60;
+  WaitFrames(20);
+  Event_FinishScreenTransitionFar();
+  Event_WaitTransitionFramesFar();
+  Audio_PlayCue(86);
+  AudioCommand_WaitForStateByteClear();
+  WaitFrames(10);
+  Event_StartScreenTransitionFar();
+  Event_WaitTransitionFramesFar();
+  WaitFrames(30);
+  ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
 }

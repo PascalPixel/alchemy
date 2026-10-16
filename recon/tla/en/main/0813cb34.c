@@ -1,30 +1,30 @@
-/* Near miss, differ 61 of 477.
- *
- * Twin: The Broken Seal's BattleFx_RunParticlePool, the body of two
- * effects there. ⚓️ adds a third mode: Slaver's green spray, thrown up in a
- * half-circle fan, falling back under gravity and bouncing on the
- * ground for 96 frames, which hands over to the Impair canvas effect at its
- * end. The other two modes are the twin with ⚓️'s calling conventions.
- *
- * Left: in the launch loop's plain arm the native stores the mote's y before
- * it adds 32 to the speed; here the add comes first, so both arms end in the
- * same store and cross-jumping merges them, one instruction short. That
- * shifts the first literal pool and every pc offset and branch across it
- * (about 30 of the rows). The rest are single rows where the native issues
- * a load or a constant one slot earlier, and the two calls' arguments to
- * EffectPosition_ApplyBaseAndYOffset set in the other order.
- *
- * Tried:
- *   the twin with Slaver's mode added                         83
- *   the group size of 32 as a local: the native divides by
- *     calling __divsi3, as only a divisor in a register gives   89
- *   ClearWords through an inline, as The Broken Seal's
- *     iwram_call.h layer: the two clears keep their own size    73
- *   frames declared before source (the stack slots swap)       61
- *   speed += 32 after the y store                              82 (count right)
- *   the masked speed in its own local before the store         106
- *   speed = 0x3ff; speed &= Random16(), as the twin            113
- */
+// Near miss, differ 61 of 477.
+
+// Twin: The Broken Seal's BattleFx_RunParticlePool, the body of two
+// effects there. ⚓️ adds a third mode: Slaver's green spray, thrown up in a
+// half-circle fan, falling back under gravity and bouncing on the
+// ground for 96 frames, which hands over to the Impair canvas effect at its
+// end. The other two modes are the twin with ⚓️'s calling conventions.
+
+// Left: in the launch loop's plain arm the native stores the mote's y before
+// it adds 32 to the speed; here the add comes first, so both arms end in the
+// same store and cross-jumping merges them, one instruction short. That
+// shifts the first literal pool and every pc offset and branch across it
+// (about 30 of the rows). The rest are single rows where the native issues
+// a load or a constant one slot earlier, and the two calls' arguments to
+// EffectPosition_ApplyBaseAndYOffset set in the other order.
+
+// Tried:
+// the twin with Slaver's mode added                         83
+// the group size of 32 as a local: the native divides by
+// calling __divsi3, as only a divisor in a register gives   89
+// ClearWords through an inline, as The Broken Seal's
+// iwram_call.h layer: the two clears keep their own size    73
+// frames declared before source (the stack slots swap)       61
+// speed += 32 after the y store                              82 (count right)
+// the masked speed in its own local before the store         106
+// speed = 0x3ff; speed &= Random16(), as the twin            113
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -69,7 +69,7 @@ extern char ResourceId_GreenPalette;
 void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+s32 Func_08143000(void);  // the canvas transfer callback
 void Func_08143488(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -81,7 +81,7 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void SummonFx_RunCanvasMode1(void *effect);
 void WaitFrames(s32 frames);
 
@@ -92,21 +92,20 @@ static inline s32 ClearWords(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-/*
- * Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
- * Slaver (mode 2, kind 395).
- *
- * 256 motes burst from 5 pixels above the user and spread in every
- * direction; the first 128 are drawn, a quarter of them starting every 8
- * frames, each swaying on a sine wave and sized by its depth. Soothing Star's
- * burst is half as wide and sounds as it touches each target; Sleep Star's
- * drifts away from the user's side. From frame 48 the targets flash one
- * after another, 8 frames apart, and the first flash lets the battle show its
- * results. Slaver instead throws green drops up in a half-circle fan, turned
- * by the user's side, with a sound at the start; they fall back and bounce
- * on the ground for 96 frames, and then Impair's canvas effect runs on the
- * targets.
- */
+// Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
+// Slaver (mode 2, kind 395).
+
+// 256 motes burst from 5 pixels above the user and spread in every
+// direction; the first 128 are drawn, a quarter of them starting every 8
+// frames, each swaying on a sine wave and sized by its depth. Soothing Star's
+// burst is half as wide and sounds as it touches each target; Sleep Star's
+// drifts away from the user's side. From frame 48 the targets flash one
+// after another, 8 frames apart, and the first flash lets the battle show its
+// results. Slaver instead throws green drops up in a half-circle fan, turned
+// by the user's side, with a sound at the start; they fall back and bounce
+// on the ground for 96 frames, and then Impair's canvas effect runs on the
+// targets.
+
 void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   s32 point[3];
   struct EffectPosition position;
@@ -215,8 +214,8 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gData_08197410[size - 1],
-                position.x - size / 2, position.y - size, size, size * 2);
+        draw[0](canvas, sheet + gData_08197410[size - 1], position.x - size / 2,
+                position.y - size, size, size * 2);
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.

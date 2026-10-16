@@ -1,12 +1,12 @@
-/* Near miss, differ 24 of 91 (2026-10-15), The Broken Seal's
- * BattleFx_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
- * effect scene, sets its mode directly and schedules the ground check at
- * 0x480 where ☀️ uses 0xc80.
- * Left: allocation. The native counts the flicker in r5 and keeps the 2 in
- * r6, which also stores blend = 2 after the loop; this swaps them, and the
- * stores after the loop come in another order.
- * Tried: ☀️'s do/while with n reused as the zero after the loop, differ 59
- * (n then lives in a high register); a for loop and literal zeros, 24. */
+// Near miss, differ 24 of 91 (2026-10-15), The Broken Seal's
+// BattleFx_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
+// effect scene, sets its mode directly and schedules the ground check at
+// 0x480 where ☀️ uses 0xc80.
+// Left: allocation. The native counts the flicker in r5 and keeps the 2 in
+// r6, which also stores blend = 2 after the loop; this swaps them, and the
+// stores after the loop come in another order.
+// Tried: ☀️'s do/while with n reused as the zero after the loop, differ 59
+// (n then lives in a high register); a for loop and literal zeros, 24.
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"

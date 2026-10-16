@@ -1,11 +1,11 @@
-/* Near miss, differ 8 of 39 (2026-10-15; the earlier draft stood at 44 with
- * 35 instructions). The centre is a local set before the calls, as the ROM
- * keeps 63 in r6 (a constant-equivalent pseudo whose set moves down to its
- * uses, which also moves the angle to r8: 44 -> 12), and the multiply is a
- * local pointer, as the ROM keeps it in r10 (12 -> 8). What remains is one
- * load: the ROM loads IwramMulQ16's entry after the cosine call, where this
- * loads it first. Measured: the pointer set after the cosine (43, x reused),
- * the pointer declared after the centre (8), a u16 angle (29). */
+// Near miss, differ 8 of 39 (2026-10-15; the earlier draft stood at 44 with
+// 35 instructions). The centre is a local set before the calls, as the ROM
+// keeps 63 in r6 (a constant-equivalent pseudo whose set moves down to its
+// uses, which also moves the angle to r8: 44 -> 12), and the multiply is a
+// local pointer, as the ROM keeps it in r10 (12 -> 8). What remains is one
+// load: the ROM loads IwramMulQ16's entry after the cosine call, where this
+// loads it first. Measured: the pointer set after the cosine (43, x reused),
+// the pointer declared after the centre (8), a u16 angle (29).
 #include "types.h"
 #include "iwram_call.h"
 #include "fixed_math.h"

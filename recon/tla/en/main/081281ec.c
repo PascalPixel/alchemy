@@ -1,15 +1,15 @@
-/* Draft of Func_081281ec, The Broken Seal's Summon_ClearWorkFields
- * (games/tbs/src/battle/battle.c): differ 2 of 27 (tla-en, 2026-10-15).
- * The battle's spoils sit at 0x550 of The Lost Age's battle work, and the
- * pending item is the party state's halfword at 0x25c.
- *
- * Left: one row. The native loads the party state's address from the pool
- * between the spoils offset's shift and its add (movs, lsls, ldr, adds);
- * here the add comes first: the pooled load issued one slot later, the
- * residue of this lane's other near misses. Tried: the spoils cleared
- * before the pending item (16), the spoils pointer taken after the pending
- * item (30).
- */
+// Draft of Func_081281ec, The Broken Seal's Summon_ClearWorkFields
+// (games/tbs/src/battle/battle.c): differ 2 of 27 (tla-en, 2026-10-15).
+// The battle's spoils sit at 0x550 of The Lost Age's battle work, and the
+// pending item is the party state's halfword at 0x25c.
+
+// Left: one row. The native loads the party state's address from the pool
+// between the spoils offset's shift and its add (movs, lsls, ldr, adds);
+// here the add comes first: the pooled load issued one slot later, the
+// residue of this lane's other near misses. Tried: the spoils cleared
+// before the pending item (16), the spoils pointer taken after the pending
+// item (30).
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

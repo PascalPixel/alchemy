@@ -1,22 +1,22 @@
-/* Near miss, differ 213 of 563.
- *
- * Twin: The Broken Seal's BattleEffect_RunFallingBolts (effect kind 9 in both
- * games), ported as is apart from ⚓️'s calling conventions: the effect read
- * from the argument, the heap blocks as Ram_HeapSlots fields, Func_081963ec
- * with ⚓️'s mode numbers, Func_0813bba0 for the WIN0 HBlank DMA, callback
- * order 0xc80, results phase 133 and BattleFxKernels_IntegrateVector2 for
- * EffectStep_AdvanceWithGravity2D.
- *
- * Left: register choice in the drop and spark loops (the native reloads the
- * effect into r7 each turn and keeps the counts table in r6, where this keeps
- * the table in r7 and the drop in r6), and the line tables' literal pools,
- * placed so that this compiles three instructions more.
- *
- * Tried:
- *   the trial port, slots read as fields                       213
- *   alchemy permute, 6 minutes (trial 1): its best moved the heap base's
- *     assignment into a loop, an uninitialised read            rejected
- */
+// Near miss, differ 213 of 563.
+
+// Twin: The Broken Seal's BattleEffect_RunFallingBolts (effect kind 9 in both
+// games), ported as is apart from ⚓️'s calling conventions: the effect read
+// from the argument, the heap blocks as Ram_HeapSlots fields, Func_081963ec
+// with ⚓️'s mode numbers, Func_0813bba0 for the WIN0 HBlank DMA, callback
+// order 0xc80, results phase 133 and BattleFxKernels_IntegrateVector2 for
+// EffectStep_AdvanceWithGravity2D.
+
+// Left: register choice in the drop and spark loops (the native reloads the
+// effect into r7 each turn and keeps the counts table in r6, where this keeps
+// the table in r7 and the drop in r6), and the line tables' literal pools,
+// placed so that this compiles three instructions more.
+
+// Tried:
+// the trial port, slots read as fields                       213
+// alchemy permute, 6 minutes (trial 1): its best moved the heap base's
+// assignment into a loop, an uninitialised read            rejected
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -61,7 +61,7 @@ void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
 s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+s32 Func_08143000(void);  // the canvas transfer callback
 void Func_0813bba0(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -73,23 +73,22 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
- *
- * Drops of water fall in a slanting column onto the targets' side, 8 pixels
- * down and 4 across a frame. At the ground line each one flashes every
- * target and bursts: its splash pictures play for eight frames while a spray
- * of droplets is thrown up and falls back under gravity. Window 0 is narrowed
- * line by line through an HBlank DMA table into a slanting band over the
- * targets. Deluge throws its droplets higher.
- *
- * Particles hold the drops; the splash droplets live in the map cell buffer
- * after the line table. A variant of -1 is a drop still falling or a free
- * droplet.
- */
+// Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
+
+// Drops of water fall in a slanting column onto the targets' side, 8 pixels
+// down and 4 across a frame. At the ground line each one flashes every
+// target and bursts: its splash pictures play for eight frames while a spray
+// of droplets is thrown up and falls back under gravity. Window 0 is narrowed
+// line by line through an HBlank DMA table into a slanting band over the
+// targets. Deluge throws its droplets higher.
+
+// Particles hold the drops; the splash droplets live in the map cell buffer
+// after the line table. A variant of -1 is a drop still falling or a free
+// droplet.
+
 void Func_0813c0b8(struct BattleEffectArgument *effect) {
   void **heapCache;
   struct BattleEffectWork *work;
@@ -112,8 +111,8 @@ void Func_0813c0b8(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet,
-                             0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
+                             0);
   Func_0813ba50();
   REG_BLDCNT = 0x3f44;
   REG_WININ = 0x3337;
@@ -209,8 +208,8 @@ void Func_0813c0b8(struct BattleEffectArgument *effect) {
           // fixed point, sound every fourth landing and flash the targets.
           drop->variant = 0;
           for (k = 0; k != SPLASH_COUNT(effect->variant); k++) {
-            splash = &gDropSplashes
-                          ->splashes[i * SPLASH_COUNT(effect->variant) + k];
+            splash =
+                &gDropSplashes->splashes[i * SPLASH_COUNT(effect->variant) + k];
             splash->x = (x + 12) << 16;
             splash->y = y << 16;
             splash->velocityX = ((Random16() & 255) - 128) << 9;
@@ -245,8 +244,8 @@ void Func_0813c0b8(struct BattleEffectArgument *effect) {
         if (size > 6)
           size = 6;
         drawSplash(canvas, work->sheet + Data_08197424[size - 1],
-                   ((s16 *)&splash->x)[1] - size,
-                   ((s16 *)&splash->y)[1] - size, size * 2, size * 2);
+                   ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
+                   size * 2, size * 2);
         BattleFxKernels_IntegrateVector2(splash, 60, 0x2000);
         splash->variant--;
       }

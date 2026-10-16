@@ -1,20 +1,20 @@
-/* Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
- * (call order BattleFx_RunFallingSword 0.459): ⚓️'s own effect on ☀️'s frame,
- * its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
- * in Triple Chomp (Func_0818b868) and Legend (Func_08189b14). The native frame
- * (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
- * graphics 60, the card's scale 56, the card's position's address 52, the hit's
- * speed 48, the texture's address 32, the member's actor offset 28, the
- * member's sparks' offset 20 and 100 + (frame - 68) * 3 less 100 at 24; the
- * texture is at sp+88, the aim at 96, the targets' positions at 108 and the
- * card at 204. The mode stays in r9. Written from the listing (2026-10-15,
- * fx-n3), in the native's statement order. Left: this frame is 208, two slots
- * short below the blitter pair (every spill sits 8 lower), the mode takes r11
- * for r9, and the aim's and the particle's addresses are kept in registers
- * where the native reloads them, which adds 18 instructions. Next to try: the
- * strike block's temporaries (the native spills the actor offset, the sparks'
- * offset and the hit's speed as separate induction variables) and the order of
- * the scalar declarations. */
+// Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
+// (call order BattleFx_RunFallingSword 0.459): ⚓️'s own effect on ☀️'s frame,
+// its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
+// in Triple Chomp (Func_0818b868) and Legend (Func_08189b14). The native frame
+// (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
+// graphics 60, the card's scale 56, the card's position's address 52, the hit's
+// speed 48, the texture's address 32, the member's actor offset 28, the
+// member's sparks' offset 20 and 100 + (frame - 68) * 3 less 100 at 24; the
+// texture is at sp+88, the aim at 96, the targets' positions at 108 and the
+// card at 204. The mode stays in r9. Written from the listing (2026-10-15,
+// fx-n3), in the native's statement order. Left: this frame is 208, two slots
+// short below the blitter pair (every spill sits 8 lower), the mode takes r11
+// for r9, and the aim's and the particle's addresses are kept in registers
+// where the native reloads them, which adds 18 instructions. Next to try: the
+// strike block's temporaries (the native spills the actor offset, the sparks'
+// offset and the hit's speed as separate induction variables) and the order of
+// the scalar declarations.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

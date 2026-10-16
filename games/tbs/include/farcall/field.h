@@ -1,4 +1,4 @@
-/* FarCall_FieldTable: one entry per 8-byte stub, in table order. */
+// FarCall_FieldTable: one entry per 8-byte stub, in table order.
 FAR_CALL(ObjectSystem_ConfigureFar, ObjectSystem_Configure, void, (s32 mode))
 FAR_CALL(Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement,
          void,

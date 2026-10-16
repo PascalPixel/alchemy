@@ -1,35 +1,35 @@
-/* Draft of Func_0815806c, effect kind 282: the Mars Djinn's puffs.
- *
- * On screen: a glowing orb swells over the targets for 24 frames; at frame
- * 20 a small Mars Djinn appears in it, and from frame 24 it dives down and
- * to the left, 4 pixels across and 8 down a frame. As it lands (frame 32,
- * cue 0x91, an eight-frame shake) nine fiery puffs bloom in an oval around
- * the targets, two frames apart, each a six-cel ember animation. From frame
- * 40 a column of sixteen sparks rises from under each puff, wobbling as it
- * climbs. At frame 38 every target flashes for 16 frames and recoils.
- *
- * Setup: the battle effect canvas and the max and additive blitter pair,
- * the dot sheet in the sheet block, the Djinn sheet and the orb sheet in
- * the effect work, then the canvas transfer callback; the puff positions
- * and the 144 sparks are placed before the first frame.
- * Frame loop, 112 frames, as above. At frame 56 the battle resumes and
- * resolves the targets.
- * Teardown: the callback and both blitters are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunMarsDjinnPuffs (kind 252 there),
- * with The Lost Age's heap slots and callback order and no work->effect
- * store.
- *
- * Listing 421 instructions, draft 421, differ 22 (trial 0, 2026-10-15).
- * Left: single rows one place apart, the native issuing pool and stack
- * loads and call constants one slot earlier.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names, canvas read first   68
- *   the effect work read before the canvas, as Venus found   68 -> 22
- *   alchemy permute, 5 minutes                                24 at best
- */
+// Draft of Func_0815806c, effect kind 282: the Mars Djinn's puffs.
+
+// On screen: a glowing orb swells over the targets for 24 frames; at frame
+// 20 a small Mars Djinn appears in it, and from frame 24 it dives down and
+// to the left, 4 pixels across and 8 down a frame. As it lands (frame 32,
+// cue 0x91, an eight-frame shake) nine fiery puffs bloom in an oval around
+// the targets, two frames apart, each a six-cel ember animation. From frame
+// 40 a column of sixteen sparks rises from under each puff, wobbling as it
+// climbs. At frame 38 every target flashes for 16 frames and recoils.
+
+// Setup: the battle effect canvas and the max and additive blitter pair,
+// the dot sheet in the sheet block, the Djinn sheet and the orb sheet in
+// the effect work, then the canvas transfer callback; the puff positions
+// and the 144 sparks are placed before the first frame.
+// Frame loop, 112 frames, as above. At frame 56 the battle resumes and
+// resolves the targets.
+// Teardown: the callback and both blitters are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunMarsDjinnPuffs (kind 252 there),
+// with The Lost Age's heap slots and callback order and no work->effect
+// store.
+
+// Listing 421 instructions, draft 421, differ 22 (trial 0, 2026-10-15).
+// Left: single rows one place apart, the native issuing pool and stack
+// loads and call constants one slot earlier.
+
+// Tried:
+// ☀️'s body with The Lost Age's names, canvas read first   68
+// the effect work read before the canvas, as Venus found   68 -> 22
+// alchemy permute, 5 minutes                                24 at best
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

@@ -1,22 +1,22 @@
-/* Near miss of Func_08151040, effect kind 12.
- *
- * Twin: The Broken Seal's BattleFx_RunHomingEmbers (effect.c), call for
- * call. The Lost Age reads the effect from its argument, takes its heap
- * blocks as Ram_HeapSlots fields, loads its blitters through Func_081963ec
- * (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal has 3 and 2),
- * orders both callbacks 0xc80, and plays cue 134 for a landing ember in
- * variant 2 where The Broken Seal always plays 136.
- *
- * Near miss: differ 46 of 513 (draft 513), all order residue: about
- * twenty pairs where the native issues a pool or stack load, or one call
- * argument, one slot away from agscc's place (the camera before the
- * effect's copy, r1 before r0 for both Func_081963ec calls, the particle
- * buffer before its counter, the cell offset table before the size).
- *
- * Tried (2026-10-15):
- *   - greedy declaration-order sweep, two passes: no gain.
- *   - a separate counter for the frame loop's embers: no change.
- */
+// Near miss of Func_08151040, effect kind 12.
+
+// Twin: The Broken Seal's BattleFx_RunHomingEmbers (effect.c), call for
+// call. The Lost Age reads the effect from its argument, takes its heap
+// blocks as Ram_HeapSlots fields, loads its blitters through Func_081963ec
+// (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal has 3 and 2),
+// orders both callbacks 0xc80, and plays cue 134 for a landing ember in
+// variant 2 where The Broken Seal always plays 136.
+
+// Near miss: differ 46 of 513 (draft 513), all order residue: about
+// twenty pairs where the native issues a pool or stack load, or one call
+// argument, one slot away from agscc's place (the camera before the
+// effect's copy, r1 before r0 for both Func_081963ec calls, the particle
+// buffer before its counter, the cell offset table before the size).
+
+// Tried (2026-10-15):
+// - greedy declaration-order sweep, two passes: no gain.
+// - a separate counter for the frame loop's embers: no change.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -66,15 +66,15 @@ extern u8 Data_08198303[];      // gHomingEmbers_FlareWidths
 extern u8 Data_0819830f[];      // gHomingEmbers_FlareBiasY
 extern u8 Data_08198309[];      // gHomingEmbers_FlareHeights
 
-/* Embers spray out of the user, two a frame, then home in on the targets.
- *
- * Setup: up to 64 embers start at the top of the user's body with a random
- * heading and speed. Frame loop: an ember flies for 48 frames (drawn MAX
- * while young, then ADDITIVE), then accelerates toward its target, held to
- * 60/64 of its speed until frame 85 of its life. Below the ground it lands:
- * it leaves a six-picture flare, its target flashes and the screen shakes
- * for two frames. The camera sways between frames 16 and 80. The variant
- * chooses the number of embers. */
+// Embers spray out of the user, two a frame, then home in on the targets.
+
+// Setup: up to 64 embers start at the top of the user's body with a random
+// heading and speed. Frame loop: an ember flies for 48 frames (drawn MAX
+// while young, then ADDITIVE), then accelerates toward its target, held to
+// 60/64 of its speed until frame 85 of its life. Below the ground it lands:
+// it leaves a six-picture flare, its target flashes and the screen shakes
+// for two frames. The camera sways between frames 16 and 80. The variant
+// chooses the number of embers.
 void Func_08151040(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

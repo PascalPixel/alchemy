@@ -1,17 +1,17 @@
-/* Draft, differ 188 of 468 (no device): the cloud swirl that
- * Func_0813e7e0 runs after setting up the effect blocks, written from the
- * listing (twins: BattleFx_BeginCanvasLayer 0.45 by shape,
- * BattleFx_RunOrbitingSparks 0.60 by call order). The rotation goes
- * through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
- * (value, address, control), as the native's inline pushes are.
- * Left: allocation. The native holds canvas in r9 and work in r10, keeps
- * the blitter it loads first at sp+20 and IwramCopyWords' address in r6,
- * and forms &BG_PLTT[96] for each copy; here work takes r9, the blitter
- * stays in r10 and the palette address is formed once. The 16.16 rotation
- * pushes then differ in their temporaries.
- * Tried: savedScrollX as u16 (194: loaded signed) or s32 (188, the
- * native's ldrh into a word slot), canvas and work declared in either
- * order, draw before or after palette, draw declared first (194). */
+// Draft, differ 188 of 468 (no device): the cloud swirl that
+// Func_0813e7e0 runs after setting up the effect blocks, written from the
+// listing (twins: BattleFx_BeginCanvasLayer 0.45 by shape,
+// BattleFx_RunOrbitingSparks 0.60 by call order). The rotation goes
+// through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
+// (value, address, control), as the native's inline pushes are.
+// Left: allocation. The native holds canvas in r9 and work in r10, keeps
+// the blitter it loads first at sp+20 and IwramCopyWords' address in r6,
+// and forms &BG_PLTT[96] for each copy; here work takes r9, the blitter
+// stays in r10 and the palette address is formed once. The 16.16 rotation
+// pushes then differ in their temporaries.
+// Tried: savedScrollX as u16 (194: loaded signed) or s32 (188, the
+// native's ldrh into a word slot), canvas and work declared in either
+// order, draw before or after palette, draw declared first (194).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

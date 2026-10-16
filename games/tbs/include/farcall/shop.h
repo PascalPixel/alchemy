@@ -1,4 +1,4 @@
-/* FarCall_ShopTable: one entry per 8-byte stub, in table order. */
+// FarCall_ShopTable: one entry per 8-byte stub, in table order.
 FAR_CALL(Battle_ApplyPresetItemsAndFlagsFar, Battle_ApplyPresetItemsAndFlags,
          s32, (s32 unused))
 FAR_CALL(Shop_RunFar, Shop_Run, s32, (s32 row, s32 keeper_id))

@@ -1,17 +1,17 @@
-/* Draft of Func_081263fc, The Broken Seal's BattleBackground_Load
- * (games/tbs/src/battle/battle.c): differ 4 of 137 (tla-en, 2026-10-15).
- * The Lost Age copies the decoder into a heap block of its own (RamCode_Load
- * and MemFree) instead of work slot 49, scales the palette with
- * ColorBuffer_Scale, and skips the backdrop's palette copy while the battle
- * work's byte at 0x867 is set (summons 4, 6 and 24 set it).
- *
- * Left: two halfword copies whose address the native starts around its
- * load (the 0x050001e8 colour, ldrh between movs and lsls of 0x050000bc; the
- * BG1CNT value, ldr between movs and lsls of 0x0400000a); here the address
- * is finished first. sched2 issues the pooled load one slot later than the
- * native, the residue the Djinn drafts record. Tried: the colour through a
- * local (differ 27).
- */
+// Draft of Func_081263fc, The Broken Seal's BattleBackground_Load
+// (games/tbs/src/battle/battle.c): differ 4 of 137 (tla-en, 2026-10-15).
+// The Lost Age copies the decoder into a heap block of its own (RamCode_Load
+// and MemFree) instead of work slot 49, scales the palette with
+// ColorBuffer_Scale, and skips the backdrop's palette copy while the battle
+// work's byte at 0x867 is set (summons 4, 6 and 24 set it).
+
+// Left: two halfword copies whose address the native starts around its
+// load (the 0x050001e8 colour, ldrh between movs and lsls of 0x050000bc; the
+// BG1CNT value, ldr between movs and lsls of 0x0400000a); here the address
+// is finished first. sched2 issues the pooled load one slot later than the
+// native, the residue the Djinn drafts record. Tried: the colour through a
+// local (differ 27).
+
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

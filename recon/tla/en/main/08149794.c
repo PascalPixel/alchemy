@@ -1,30 +1,29 @@
-/* Near miss, differ 42 of 457 (effect kind 18, the lightning pillars).
+// Near miss, differ 42 of 457 (effect kind 18, the lightning pillars).
 
-   ☀️ twin: BattleFx_RunLightningPillars (games/tbs/src/effect/effect.c),
-   shape 0.846, structure 1.000. ⚓️'s changes: blitters from
-   Func_081963ec(104, 0x03) (additive, ⚓️ mode 0) and (188, 0x17) (max,
-   mirrored); the effect runs count * 7 + 42 frames where ☀️ runs
-   count * 7 + 48; phase 134 begins at frame 24 where ☀️ begins it at 32;
-   the pillar's cue is 134; Func_08118088 moves the struck targets.
+// ☀️ twin: BattleFx_RunLightningPillars (games/tbs/src/effect/effect.c),
+// shape 0.846, structure 1.000. ⚓️'s changes: blitters from
+// Func_081963ec(104, 0x03) (additive, ⚓️ mode 0) and (188, 0x17) (max,
+// mirrored); the effect runs count * 7 + 42 frames where ☀️ runs
+// count * 7 + 48; phase 134 begins at frame 24 where ☀️ begins it at 32;
+// the pillar's cue is 134; Func_08118088 moves the struck targets.
 
-   Same frame and instruction count; what is left is single-row order: the
-   native builds the sheet offset 0x700 (movs r7, #224; lsls) before
-   BattleFx_BeginCanvasLayer where agscc builds it after, the argument
-   registers of the two Func_081963ec calls in the other order, and pool
-   offsets that move with them.
+// Same frame and instruction count; what is left is single-row order: the
+// native builds the sheet offset 0x700 (movs r7, #224; lsls) before
+// BattleFx_BeginCanvasLayer where agscc builds it after, the argument
+// registers of the two Func_081963ec calls in the other order, and pool
+// offsets that move with them.
 
-   Tried (differ):
-     trial 1's port (effects trial, 2026-10-15)                          42
-     the heap slots as Ram_HeapSlots fields in place of heap[23..47]
-       with Func_081963ec returning void                                 46
-     the same with Func_081963ec returning s32 (plan 0c)                 42
-     the map cell buffer as the gMapCellBuffer symbol or as
-       Ram_MapCellBuffer                                                 42
-     greedy declaration-order scan, every local through every place     42
-     alchemy permute, 5 minutes: 40 by holding the IWRAM copy entry in
-       a local before the call, a forced temporary against the IWRAM
-       call layer; not kept                                               */
-
+// Tried (differ):
+// trial 1's port (effects trial, 2026-10-15)                          42
+// the heap slots as Ram_HeapSlots fields in place of heap[23..47]
+// with Func_081963ec returning void                                 46
+// the same with Func_081963ec returning s32 (plan 0c)                 42
+// the map cell buffer as the gMapCellBuffer symbol or as
+// Ram_MapCellBuffer                                                 42
+// greedy declaration-order scan, every local through every place     42
+// alchemy permute, 5 minutes: 40 by holding the IWRAM copy entry in
+// a local before the call, a forced temporary against the IWRAM
+// call layer; not kept
 
 #include "types.h"
 #include "system.h"
@@ -66,11 +65,11 @@ extern u16 Data_081979c0[];  // ☀️ gLightningPillar_Sparks: sparks, shake
 extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -104,15 +103,15 @@ void Func_08149794(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  Func_081963ec(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
-                                  COMPOSITE_CLIP_Y);
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                             COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet,
-                             work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
+                             1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   if (effect->variant != 2) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
@@ -159,8 +158,8 @@ void Func_08149794(struct BattleEffectArgument *effect) {
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
-          draw[0](canvas, work->sheet,
-                  Data_081979cc[i + effect->side * 7] - 24, 0, 48, 112);
+          draw[0](canvas, work->sheet, Data_081979cc[i + effect->side * 7] - 24,
+                  0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + 0x1500,
                   Data_081979cc[i + effect->side * 7] - 24, 0, 48, 112);

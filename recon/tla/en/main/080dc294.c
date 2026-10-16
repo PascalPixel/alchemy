@@ -1,15 +1,15 @@
-/* Near miss, differ 7 of 102 (2026-10-15), The Broken Seal's
- * BattleEffect_InitializeSharedScene. ☀️ copies the palettes into the target
- * buffer itself and picks the tint from the frame counter, overridden by
- * flags 0x148-0x14f; ⚓️ adds a tint fixed by the animation for its newer
- * kinds and leaves the copy to Field_BeginColorTransition (palfade.c).
- * Left: the last animation test. The native reads the animation twice at
- * the top, signed for the chain (ldrsh) and unsigned (ldrh), and tests the
- * unsigned copy's low half against 30 (lsls r3, r3, #16; cmp with 30 << 16);
- * this tests a halfword load against 30 (cmp r3, #30).
- * Tried: (s16)*(u16 *)&scene->animation, (s16)scene->action and a u16 local
- * read before the chain all fold into the signed load (differ 30-32); the
- * chain on a u16 or s16 local, with (u16) or (s16) casts, differ 18-29. */
+// Near miss, differ 7 of 102 (2026-10-15), The Broken Seal's
+// BattleEffect_InitializeSharedScene. ☀️ copies the palettes into the target
+// buffer itself and picks the tint from the frame counter, overridden by
+// flags 0x148-0x14f; ⚓️ adds a tint fixed by the animation for its newer
+// kinds and leaves the copy to Field_BeginColorTransition (palfade.c).
+// Left: the last animation test. The native reads the animation twice at
+// the top, signed for the chain (ldrsh) and unsigned (ldrh), and tests the
+// unsigned copy's low half against 30 (lsls r3, r3, #16; cmp with 30 << 16);
+// this tests a halfword load against 30 (cmp r3, #30).
+// Tried: (s16)*(u16 *)&scene->animation, (s16)scene->action and a u16 local
+// read before the chain all fold into the signed load (differ 30-32); the
+// chain on a u16 or s16 local, with (u16) or (s16) casts, differ 18-29.
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"

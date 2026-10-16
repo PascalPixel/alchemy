@@ -28,16 +28,14 @@ void PaletteFade_SetTarget(s32 index, s32 transform) {
   struct PaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    Palette_Transform(index, target->palette, target->target,
-                                    transform);
+    Palette_Transform(index, target->palette, target->target, transform);
 }
 
 void PaletteFade_SetCurrent(s32 index, s32 transform) {
   struct PaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    Palette_Transform(index, (u16 *)target, target->current,
-                                    transform);
+    Palette_Transform(index, (u16 *)target, target->current, transform);
 }
 
 void PaletteFade_SetBackdrop(s32 value) {
@@ -53,8 +51,7 @@ void PaletteFade_Start(s32 value) {
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    PaletteFade_ComputeSteps((s16 *)state->current,
-                                       (s16 *)state->target,
-                                       (s16 *)state->delta, value);
+    PaletteFade_ComputeSteps((s16 *)state->current, (s16 *)state->target,
+                             (s16 *)state->delta, value);
   }
 }

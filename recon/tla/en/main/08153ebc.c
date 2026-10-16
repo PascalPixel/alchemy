@@ -1,34 +1,34 @@
-/* Draft of Func_08153ebc, summon scene 4 (Func_0814c994's case 4).
- *
- * Twin: The Broken Seal's BattleEffect_RunStagedParticles (effect.c), call
- * for call, with The Lost Age's changes:
- *   - the giant is eleven sprite objects (Func_0815b290, priority 1, their
- *     1 KB of tiles copied to object VRAM) in a grid of four rows of three,
- *     the bottom row two pieces moved half a piece over, where The Broken
- *     Seal places nine resource objects; battle work byte 0x867 is set to
- *     1 for them;
- *   - the targets come from work->effect, which the dispatcher stored;
- *   - after the giant, object palette 0's sixteen colors are copied into
- *     background palette 5 by DMA and color 0x5e takes object color 0xf4
- *     (Func_0814cca8, then PaletteDma_LoadBlock);
- *   - blitters through Func_081963ec, callbacks ordered 0xc80, the backdrop
- *     ResourceId_VioletSkyBackdrop, the skip on gInput.repeat.
- * Resources not yet named in directory.s, by row and asset: 0xa6
- * Summon_LeafWarriorTiles, 0x12b BattleFx_SlashSheet, 0x163
- * BattleFx_LimePalette, 0x195 BattleFx_StagedParticlePath and 0x178
- * BattleFx_EmberStreakSheet.
- *
- * Draft: differ 966 of 1115 (draft 1147).
- *
- * Left: allocation from the prologue on. The native keeps work in r9 for
- * the whole function and spills the path pointer and the piece counter;
- * here work is spilled (sp+52) and the counters take the high registers,
- * which adds about 32 instructions of reloads. The giant's grid, the
- * flashes and both slash loops follow the listing's blocks in order.
- *
- * Tried (2026-10-15):
- *   - greedy declaration-order sweep, two passes: 964.
- */
+// Draft of Func_08153ebc, summon scene 4 (Func_0814c994's case 4).
+
+// Twin: The Broken Seal's BattleEffect_RunStagedParticles (effect.c), call
+// for call, with The Lost Age's changes:
+// - the giant is eleven sprite objects (Func_0815b290, priority 1, their
+// 1 KB of tiles copied to object VRAM) in a grid of four rows of three,
+// the bottom row two pieces moved half a piece over, where The Broken
+// Seal places nine resource objects; battle work byte 0x867 is set to
+// 1 for them;
+// - the targets come from work->effect, which the dispatcher stored;
+// - after the giant, object palette 0's sixteen colors are copied into
+// background palette 5 by DMA and color 0x5e takes object color 0xf4
+// (Func_0814cca8, then PaletteDma_LoadBlock);
+// - blitters through Func_081963ec, callbacks ordered 0xc80, the backdrop
+// ResourceId_VioletSkyBackdrop, the skip on gInput.repeat.
+// Resources not yet named in directory.s, by row and asset: 0xa6
+// Summon_LeafWarriorTiles, 0x12b BattleFx_SlashSheet, 0x163
+// BattleFx_LimePalette, 0x195 BattleFx_StagedParticlePath and 0x178
+// BattleFx_EmberStreakSheet.
+
+// Draft: differ 966 of 1115 (draft 1147).
+
+// Left: allocation from the prologue on. The native keeps work in r9 for
+// the whole function and spills the path pointer and the piece counter;
+// here work is spilled (sp+52) and the counters take the high registers,
+// which adds about 32 instructions of reloads. The giant's grid, the
+// flashes and both slash loops follow the listing's blocks in order.
+
+// Tried (2026-10-15):
+// - greedy declaration-order sweep, two passes: 964.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -129,16 +129,16 @@ extern u8 gData_08197467[];  // gPuffArc_CellWidths
 extern u8 gData_08197473[];  // gPuffArc_CellBiasY
 extern u8 gData_0819746d[];  // gPuffArc_CellHeights
 
-/* Summon 4: a giant strides across a violet sky and cuts the air; sixteen
- * slashes gather light and fly, then rain down on the targets.
- *
- * Setup: the giant's pieces are built as sprite objects; sixteen slashes
- * each get 24 trails of light in random orientations. First loop (220
- * frames, A or B skips): the giant follows its path table; from frame 64
- * a slash every eight frames draws its trails in, flashes for five frames
- * and flies off. Second loop (88 frames): 32 slashes fall from the sky, the
- * first 24 two frames apart, and burst into flame on the ground, each one
- * shaking the screen and flashing a target. */
+// Summon 4: a giant strides across a violet sky and cuts the air; sixteen
+// slashes gather light and fly, then rain down on the targets.
+
+// Setup: the giant's pieces are built as sprite objects; sixteen slashes
+// each get 24 trails of light in random orientations. First loop (220
+// frames, A or B skips): the giant follows its path table; from frame 64
+// a slash every eight frames draws its trails in, flashes for five frames
+// and flies off. Second loop (88 frames): 32 slashes fall from the sky, the
+// first 24 two frames apart, and burst into flame on the ground, each one
+// shaking the screen and flashing a target.
 void Func_08153ebc(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;

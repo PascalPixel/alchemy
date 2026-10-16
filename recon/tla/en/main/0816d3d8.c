@@ -1,32 +1,32 @@
-/* Draft of Func_0816d3d8, effect kind 100 (Stone Justice), written from the
- * listing on The Broken Seal's canvas skeleton. No close twin (shape
- * BattleFx_RunShatteringRocks 0.502, call order BattleFx_RunFallingCrystals
- * 0.680); the shard drawing follows BattleFx_RunShatteringRocks, and the
- * shard tables are its gShatterRocks_ShardWidths, Heights and Cells.
- *
- * Listing 374 instructions, draft 374, differ 30.
- * Left: order rows only. The native loads the REG_BG2PA value from the
- * pool before it starts the register address, sets r1 (224) before r0 at
- * the first load and r0 (104) before r1 at the blitter, loads the blitter
- * slot before its offset, sets frame (r9) after the two position pointers,
- * and loads the height table after the width's shift; the pool offsets
- * move with them (about 12 rows).
- * Tried (differ):
- *   first draft, plain HI macro, pointer-stepped rock loops          372
- *   the two positions declared user first (their stack slots)        366
- *   scrollSpeed += 0x8000 then * 60 / 64 (two statements; one fold
- *     of the constant into the multiply otherwise)                    356
- *   width and height as locals before the call                        352
- *   the throw loop indexed (&work->particles[i])                       332
- *   both rock loops indexed, an explicit height accumulator,
- *     direct work->particles[i] fields                          332-384
- *   HI as ((struct Half *)&v)->hi, *(s16 *)((u8 *)&v + 2),
- *     (s16)(v >> 16), *((s16 *)&v + 1)                                332
- *   HI through an inline helper (FAKEMATCH below)                       30
- *   alchemy permute 8 minutes, 2 jobs (found the helper)                30
- * The helper is a device here: Func_0816aa08 goes from 36 to 135 with
- * it, and Func_0816f928 from 218 to 212.
- */
+// Draft of Func_0816d3d8, effect kind 100 (Stone Justice), written from the
+// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleFx_RunShatteringRocks 0.502, call order BattleFx_RunFallingCrystals
+// 0.680); the shard drawing follows BattleFx_RunShatteringRocks, and the
+// shard tables are its gShatterRocks_ShardWidths, Heights and Cells.
+
+// Listing 374 instructions, draft 374, differ 30.
+// Left: order rows only. The native loads the REG_BG2PA value from the
+// pool before it starts the register address, sets r1 (224) before r0 at
+// the first load and r0 (104) before r1 at the blitter, loads the blitter
+// slot before its offset, sets frame (r9) after the two position pointers,
+// and loads the height table after the width's shift; the pool offsets
+// move with them (about 12 rows).
+// Tried (differ):
+// first draft, plain HI macro, pointer-stepped rock loops          372
+// the two positions declared user first (their stack slots)        366
+// scrollSpeed += 0x8000 then * 60 / 64 (two statements; one fold
+// of the constant into the multiply otherwise)                    356
+// width and height as locals before the call                        352
+// the throw loop indexed (&work->particles[i])                       332
+// both rock loops indexed, an explicit height accumulator,
+// direct work->particles[i] fields                          332-384
+// HI as ((struct Half *)&v)->hi, *(s16 *)((u8 *)&v + 2),
+// (s16)(v >> 16), *((s16 *)&v + 1)                                332
+// HI through an inline helper (FAKEMATCH below)                       30
+// alchemy permute 8 minutes, 2 jobs (found the helper)                30
+// The helper is a device here: Func_0816aa08 goes from 36 to 135 with
+// it, and Func_0816f928 from 218 to 212.
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

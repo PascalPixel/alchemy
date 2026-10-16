@@ -1,25 +1,25 @@
-/* Near miss, differ 41 of 558.
- *
- * Twin: The Broken Seal's BattleEffect_RunFallingParticles (effect kind 7 in
- * both games), ported as is apart from ⚓️'s calling conventions: the effect is
- * read from the argument (⚓️ never stores work->effect), the heap blocks are
- * read as Ram_HeapSlots fields, the blitters go through Func_081963ec with
- * ⚓️'s mode numbers (3 - The Broken Seal's), Func_0813bba0 arms the WIN0
- * HBlank DMA, the callbacks take order 0xc80 and the results phase is 133.
- *
- * Left: the native stores draw[0] before it builds the pair's address, and
- * builds that address as movs r7, #28; add r7, sp with the alternate
- * blitter's load in between; here the two halves sit together and the
- * peephole makes them add r7, sp, #28, one instruction short, which moves the
- * first literal pool and four pc offsets. The rest are single rows where the
- * native issues a constant or a pooled load one slot earlier.
- *
- * Tried:
- *   the trial port as written                                  47
- *   the shard's y stored after x and variant (permute)         41
- *   alchemy permute, 6 + 8 minutes (trial 1)                   41
- *   alchemy permute, 10 minutes, 2 jobs (2,218 candidates)     41
- */
+// Near miss, differ 41 of 558.
+
+// Twin: The Broken Seal's BattleEffect_RunFallingParticles (effect kind 7 in
+// both games), ported as is apart from ⚓️'s calling conventions: the effect is
+// read from the argument (⚓️ never stores work->effect), the heap blocks are
+// read as Ram_HeapSlots fields, the blitters go through Func_081963ec with
+// ⚓️'s mode numbers (3 - The Broken Seal's), Func_0813bba0 arms the WIN0
+// HBlank DMA, the callbacks take order 0xc80 and the results phase is 133.
+
+// Left: the native stores draw[0] before it builds the pair's address, and
+// builds that address as movs r7, #28; add r7, sp with the alternate
+// blitter's load in between; here the two halves sit together and the
+// peephole makes them add r7, sp, #28, one instruction short, which moves the
+// first literal pool and four pc offsets. The rest are single rows where the
+// native issues a constant or a pooled load one slot earlier.
+
+// Tried:
+// the trial port as written                                  47
+// the shard's y stored after x and variant (permute)         41
+// alchemy permute, 6 + 8 minutes (trial 1)                   41
+// alchemy permute, 10 minutes, 2 jobs (2,218 candidates)     41
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -59,7 +59,7 @@ void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 void Func_0813ba50(void); // BattlePres_ConfigureEffectDisplay
 s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+s32 Func_08143000(void);  // the canvas transfer callback
 void Func_0813bba0(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -69,23 +69,22 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
- *
- * Shards of ice fall in a slanting column onto the targets' side. Each one
- * flies down at 8 pixels a frame until it reaches the ground line, then
- * flashes every target, shakes the screen and shatters: fourteen frames of
- * breaking pictures, with a burst of sparkle puffs in the middle of them.
- * Window 0 is narrowed line by line through an HBlank DMA table into a
- * slanting band, so the shards appear only over the targets.
- *
- * Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
- * its age: -1 is a shard still falling or a free puff.
- */
+// Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
+
+// Shards of ice fall in a slanting column onto the targets' side. Each one
+// flies down at 8 pixels a frame until it reaches the ground line, then
+// flashes every target, shakes the screen and shatters: fourteen frames of
+// breaking pictures, with a burst of sparkle puffs in the middle of them.
+// Window 0 is narrowed line by line through an HBlank DMA table into a
+// slanting band, so the shards appear only over the targets.
+
+// Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
+// its age: -1 is a shard still falling or a free puff.
+
 void Func_0813bbd8(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -219,8 +218,8 @@ void Func_0813bbd8(struct BattleEffectArgument *effect) {
 
         if (shard->variant >= 1 && shard->variant <= 14) {
           draw[effect->variant == 2 ? 1 : 0](
-              canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x,
-              y, 32, 32);
+              canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
+              32, 32);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
           for (k = 0; k != 32; k++) {

@@ -1,12 +1,12 @@
-/* Near miss of Func_0815f0a0, ported from The Broken Seal's
- * Palette_StepTowardResource (listing 97 instructions, draft 97, differ 2,
- * one reordered row): the native loads the halfword mask 0x1f from the pool
- * (ldr r7, the loop invariant) before it stores dst[0] = 0; here it comes
- * after the store and i's copy to ip. The load has the same priority as the
- * store and loses on dependants; a load latency of 3 would put it first.
- * Tried: dst[0] = 0 in a one-pass block, before or after it, in the for
- * header, as dst[0] = i = 0, an empty asm after it (all differ 2 or 19),
- * alchemy permute 4 minutes (no better). */
+// Near miss of Func_0815f0a0, ported from The Broken Seal's
+// Palette_StepTowardResource (listing 97 instructions, draft 97, differ 2,
+// one reordered row): the native loads the halfword mask 0x1f from the pool
+// (ldr r7, the loop invariant) before it stores dst[0] = 0; here it comes
+// after the store and i's copy to ip. The load has the same priority as the
+// store and loses on dependants; a load latency of 3 would put it first.
+// Tried: dst[0] = 0 in a one-pass block, before or after it, in the for
+// header, as dst[0] = i = 0, an empty asm after it (all differ 2 or 19),
+// alchemy permute 4 minutes (no better).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

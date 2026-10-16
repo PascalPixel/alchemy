@@ -1,27 +1,27 @@
-/* Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
- * Func_08151fe4) and 380 (mode 1, through Func_08151fd8).
- *
- * Twin: The Broken Seal's BattleFx_RunParticleField (effect.c), call for
- * call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
- * argument, takes its heap blocks as Ram_HeapSlots fields, loads its
- * blitter through Func_081963ec (BLIT_MAX 1 where COMPOSITE_MAX is 2),
- * orders the callback 0xc80 and keeps the puff sizes as halfwords.
- * ResourceId_BlastSheet and ResourceId_FireStreakSheet are rows 0x184 and
- * 0x159 of directory.s (assets BattleFx_BlastSheet and
- * BattleFx_FireStreakSheet), not yet named there.
- *
- * Near miss: differ 22 of 464 (draft 464), all order residue: nine pairs
- * where the native issues a pool load or a constant one slot earlier
- * than agscc (the RAM base before the mode's spill, the BLDALPHA value,
- * the mote buffer before its counter, the cell offset table, r0 before
- * r1 for Func_081963ec, the actor offset before the cue arguments).
- *
- * Tried (2026-10-15):
- *   - The Broken Seal's body ported call for call: differ 40, every frame
- *     offset four bytes off (frame 52 for 56).
- *   - the blitter as a pair, as The Broken Seal's twin (tagged): 22.
- *   - greedy declaration-order sweep, two passes: no gain.
- */
+// Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
+// Func_08151fe4) and 380 (mode 1, through Func_08151fd8).
+
+// Twin: The Broken Seal's BattleFx_RunParticleField (effect.c), call for
+// call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
+// argument, takes its heap blocks as Ram_HeapSlots fields, loads its
+// blitter through Func_081963ec (BLIT_MAX 1 where COMPOSITE_MAX is 2),
+// orders the callback 0xc80 and keeps the puff sizes as halfwords.
+// ResourceId_BlastSheet and ResourceId_FireStreakSheet are rows 0x184 and
+// 0x159 of directory.s (assets BattleFx_BlastSheet and
+// BattleFx_FireStreakSheet), not yet named there.
+
+// Near miss: differ 22 of 464 (draft 464), all order residue: nine pairs
+// where the native issues a pool load or a constant one slot earlier
+// than agscc (the RAM base before the mode's spill, the BLDALPHA value,
+// the mote buffer before its counter, the cell offset table, r0 before
+// r1 for Func_081963ec, the actor offset before the cue arguments).
+
+// Tried (2026-10-15):
+// - The Broken Seal's body ported call for call: differ 40, every frame
+// offset four bytes off (frame 52 for 56).
+// - the blitter as a pair, as The Broken Seal's twin (tagged): 22.
+// - greedy declaration-order sweep, two passes: no gain.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -71,17 +71,17 @@ extern u16 gData_08197410[];  // gParticleStreams_CellOffsets
 extern u16 Data_081983ac[];   // gParticleField_PuffCells
 extern u16 Data_081983ba[];   // gParticleField_PuffSizes
 
-/* A blast of motes and smoke puffs bursts from the near or far edge of the
- * field toward the targets.
- *
- * Setup: mode 1 builds a grey ramp in the first 64 background colors and
- * always plays variant 1; mode 0 copies the fire palette and plays the
- * effect's variant. The puffs and motes all start at the side's edge with
- * random velocities. Frame loop: the motes fly and fall under gravity,
- * sized by depth; the puffs set out one a frame from frame 3 and grow
- * through seven pictures. The targets are hit from frame 6, a frame apart;
- * in mode 0 they also recoil. The variant chooses the number of motes and
- * puffs and the length. */
+// A blast of motes and smoke puffs bursts from the near or far edge of the
+// field toward the targets.
+
+// Setup: mode 1 builds a grey ramp in the first 64 background colors and
+// always plays variant 1; mode 0 copies the fire palette and plays the
+// effect's variant. The puffs and motes all start at the side's edge with
+// random velocities. Frame loop: the motes fly and fall under gravity,
+// sized by depth; the puffs set out one a frame from frame 3 and grow
+// through seven pictures. The targets are hit from frame 6, a frame apart;
+// in mode 0 they also recoil. The variant chooses the number of motes and
+// puffs and the length.
 void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

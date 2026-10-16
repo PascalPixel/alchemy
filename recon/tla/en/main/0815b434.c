@@ -1,13 +1,13 @@
-/* Near miss of Func_0815b434, decompiled from the listing (106 instructions,
- * draft 106, differ 4, two reordered rows): the native copies map to r9
- * before the clear's size multiply, and reloads scale from the stack
- * (ldr r2, [sp, #4]) before it finishes cos * 63; here both come one row
- * later. The second is the load-latency pattern of this lane's other near
- * misses. Matched on the way: cosine and shade in one variable (the
- * multiply copies scale, not the cosine), the column in its own variable
- * (the sum keeps the product as its first operand), center declared before
- * last (register choice). Tried: the multiply's operands swapped, scale
- * through a forced temporary (differ 88), the map through a local. */
+// Near miss of Func_0815b434, decompiled from the listing (106 instructions,
+// draft 106, differ 4, two reordered rows): the native copies map to r9
+// before the clear's size multiply, and reloads scale from the stack
+// (ldr r2, [sp, #4]) before it finishes cos * 63; here both come one row
+// later. The second is the load-latency pattern of this lane's other near
+// misses. Matched on the way: cosine and shade in one variable (the
+// multiply copies scale, not the cosine), the column in its own variable
+// (the sum keeps the product as its first operand), center declared before
+// last (register choice). Tried: the multiply's operands swapped, scale
+// through a forced temporary (differ 88), the map through a local.
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"

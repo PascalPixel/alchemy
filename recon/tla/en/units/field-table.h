@@ -1,4 +1,7 @@
-@ Unlinked field table macros from the removed games/tla/src/field/common/field_table.inc, kept as a GNU as draft (S4); nothing includes it.
+@Unlinked field table macros from the removed games / tla / src / field /
+    common / field_table.inc,
+    kept as a GNU as draft(S4);
+nothing includes it.
 
 	.set FIELD_OVERLAY_LOAD_BIAS, 0x8000
 

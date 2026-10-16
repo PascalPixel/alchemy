@@ -1,16 +1,16 @@
-/* Near miss, differ 53 of 96 (2026-10-15; was 60): The Broken Seal's
-   Graphics_UpdatePhasePalette with ⚓️'s levels (each scaled sine plus 16, times
-   the index, over 64) and its statement order (the first sine is scaled before
-   the second call, the other two after the third). Left: allocation. The native
-   keeps the blue phase in r10 and the first level in r8, the index in r4 and
-   the output in r5, and scales green and blue in place; here the blue phase
-   takes r8, the level r10, and green's level is a copy. Tried: the first level
-   pinned to r8 with or without the blue phase pinned to r10, the products
-   written either way round, the output set before the index (differ 64 to 71).
-   2026-10-15: green's and blue's scaled sines folded into their levels (60 to
-   53; in place, green += 16: 65; every level in place: 69; red's too: 68). The
-   native still keeps the output pointer in r5 and the index in r4 (here r1 and
-   r5), and copies the first sine through r3, here r2. */
+// Near miss, differ 53 of 96 (2026-10-15; was 60): The Broken Seal's
+// Graphics_UpdatePhasePalette with ⚓️'s levels (each scaled sine plus 16, times
+// the index, over 64) and its statement order (the first sine is scaled before
+// the second call, the other two after the third). Left: allocation. The native
+// keeps the blue phase in r10 and the first level in r8, the index in r4 and
+// the output in r5, and scales green and blue in place; here the blue phase
+// takes r8, the level r10, and green's level is a copy. Tried: the first level
+// pinned to r8 with or without the blue phase pinned to r10, the products
+// written either way round, the output set before the index (differ 64 to 71).
+// 2026-10-15: green's and blue's scaled sines folded into their levels (60 to
+// 53; in place, green += 16: 65; every level in place: 69; red's too: 68). The
+// native still keeps the output pointer in r5 and the index in r4 (here r1 and
+// r5), and copies the first sine through r3, here r2.
 #include "types.h"
 #include "iwram_call.h"
 

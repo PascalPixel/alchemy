@@ -1,17 +1,17 @@
-/* Draft, differ 44 of 620: Func_081665a4, effect kind 58, The Broken Seal's
- * BattleFx_RunFlameBlade.
- *
- * Twin: ☀️ BattleFx_RunFlameBlade (games/tbs/src/effect/effect.c), ported:
- * the strike columns are placed from the first target's position (half its x
- * less 24, or less 92 on side 1), the user's mode is set to 2 (Object_SetMode,
- * where ☀️ applies argument 2 to the children), the effect stays an argument
- * (☀️ also forces variant 1), each target is also flashed when its column
- * starts, callback Func_08143000 at 0xc80.
- *
- * Left: everything is reordered rows where the native puts a load (mostly the
- * work's reload from sp+52, the pooled tables) ahead of an independent
- * constant or shift: the kind Func_08164b2c's header traces to a load costing
- * 3 and a store 2. */
+// Draft, differ 44 of 620: Func_081665a4, effect kind 58, The Broken Seal's
+// BattleFx_RunFlameBlade.
+
+// Twin: ☀️ BattleFx_RunFlameBlade (games/tbs/src/effect/effect.c), ported:
+// the strike columns are placed from the first target's position (half its x
+// less 24, or less 92 on side 1), the user's mode is set to 2 (Object_SetMode,
+// where ☀️ applies argument 2 to the children), the effect stays an argument
+// (☀️ also forces variant 1), each target is also flashed when its column
+// starts, callback Func_08143000 at 0xc80.
+
+// Left: everything is reordered rows where the native puts a load (mostly the
+// work's reload from sp+52, the pooled tables) ahead of an independent
+// constant or shift: the kind Func_08164b2c's header traces to a load costing
+// 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

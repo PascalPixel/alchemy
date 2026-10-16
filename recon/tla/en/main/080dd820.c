@@ -1,13 +1,13 @@
-/* Near miss, differ 8 of 137 (2026-10-15), The Broken Seal's
- * RunBattleEffect08: Reveal. ⚓️
- * centres the transition on the caster from the effect scene, clears the
- * active flag as ☀️'s non-English editions do, finds the Reveal event
- * through Func_080ce31c/Func_080ce458 and schedules the watch only while the
- * scene's mode byte is clear.
- * Left: order only, four pairs. Three times the native loads a field
- * between the halves of a split offset (the caster's x after movs r0, #160,
- * its z before movs r1, #166), one slot earlier than this; and it stores
- * active = 1 before it reloads the centre, where this loads first. */
+// Near miss, differ 8 of 137 (2026-10-15), The Broken Seal's
+// RunBattleEffect08: Reveal. ⚓️
+// centres the transition on the caster from the effect scene, clears the
+// active flag as ☀️'s non-English editions do, finds the Reveal event
+// through Func_080ce31c/Func_080ce458 and schedules the watch only while the
+// scene's mode byte is clear.
+// Left: order only, four pairs. Three times the native loads a field
+// between the halves of a split offset (the caster's x after movs r0, #160,
+// its z before movs r1, #166), one slot earlier than this; and it stores
+// active = 1 before it reloads the centre, where this loads first.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -18,10 +18,10 @@
 // The field event work's Reveal state (eventWork + 0xca4).
 struct RevealEvent {
   u8 unk000[0xca4];
-  s8 active;     // Reveal is showing
-  u8 markers;    // the nearby markers are up
-  s16 frames;    // how long it lasts
-  s16 centreX;   // pixels
+  s8 active;   // Reveal is showing
+  u8 markers;  // the nearby markers are up
+  s16 frames;  // how long it lasts
+  s16 centreX; // pixels
   s16 centreY;
 };
 

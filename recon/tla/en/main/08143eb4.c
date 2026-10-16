@@ -1,12 +1,12 @@
-/* Near miss, differ 4 of 197: The Broken Seal's BattleFx_DrawClippedCanvasLine
-   with ⚓️'s fraction in bit 31 (start 0x80 << 23, step << 23, carry when
-   negative, then cleared with a shift pair) and dx/dy reused as the step
-   direction. Left: at entry the native loads the canvas pointer before it
-   copies y0 to r5 (ldr r3, [r3, #96]; adds r5, r1, #0), and in the second loop
-   it reloads the spilled canvas two rows earlier (ldr r6, [sp, #0] before adds
-   r3, r0, #0). Tried: a one-pass block around the canvas load (differ 12), an
-   operand barrier on it (differ 6), alchemy permute for 6 minutes (no better).
- */
+// Near miss, differ 4 of 197: The Broken Seal's BattleFx_DrawClippedCanvasLine
+// with ⚓️'s fraction in bit 31 (start 0x80 << 23, step << 23, carry when
+// negative, then cleared with a shift pair) and dx/dy reused as the step
+// direction. Left: at entry the native loads the canvas pointer before it
+// copies y0 to r5 (ldr r3, [r3, #96]; adds r5, r1, #0), and in the second loop
+// it reloads the spilled canvas two rows earlier (ldr r6, [sp, #0] before adds
+// r3, r0, #0). Tried: a one-pass block around the canvas load (differ 12), an
+// operand barrier on it (differ 6), alchemy permute for 6 minutes (no better).
+
 #include "types.h"
 #include "ram_buffer.h"
 

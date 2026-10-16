@@ -1,14 +1,14 @@
-/* Near miss, differ 2 of 60 (one reordered row): The Broken Seal's
- * BattlePres_ConfigureEffectDisplay. The native loads each register value from
- * the pool before it starts the register's address; plainly every address
- * starts first (differ 20). One-pass blocks around the BLDCNT, WIN0H and WININ
- * values put those loads first without moving the literal pools (an empty asm
- * counts 4 estimated bytes and moves both pools, differ 12). Left: the native
- * loads WIN0V's value between the first two rows of the window address (movs
- * r3; ldr r2; lsls r3), this draft after them; sched2 ranks the shift 21 and
- * the load
- * 20. Measured: the value assigned before the block, before or after the WIN0H
- * store, unpinned, or behind a "+l" barrier (differ 2 to 30). */
+// Near miss, differ 2 of 60 (one reordered row): The Broken Seal's
+// BattlePres_ConfigureEffectDisplay. The native loads each register value from
+// the pool before it starts the register's address; plainly every address
+// starts first (differ 20). One-pass blocks around the BLDCNT, WIN0H and WININ
+// values put those loads first without moving the literal pools (an empty asm
+// counts 4 estimated bytes and moves both pools, differ 12). Left: the native
+// loads WIN0V's value between the first two rows of the window address (movs
+// r3; ldr r2; lsls r3), this draft after them; sched2 ranks the shift 21 and
+// the load
+// 20. Measured: the value assigned before the block, before or after the WIN0H
+// store, unpinned, or behind a "+l" barrier (differ 2 to 30).
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"

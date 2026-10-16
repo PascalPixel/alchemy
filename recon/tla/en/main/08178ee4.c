@@ -1,28 +1,28 @@
-/* Draft (tla-en): listing 525 instructions, draft 525, common 488, differ 74.
- * Written from the listing (☀️'s BattleFx_RunCounterReveal is only a
- * hint). A large sprite assembled from gMapCellBuffer cells sways on a
- * sine path over 108 frames, faded in and out through BLDALPHA, with two
- * blitters (heap slots 104 and 188) chosen by the effect's side.
- * Devices already in (each a one-pass block): one before the heap loads so
- * effect's spill comes first, as the native; one between BG2PA's pinned
- * 0x100 and its store so the pool load comes before the address.
- * Left:
- * - the native loads gMapCellBuffer into r6 before BattleFx_BeginTiledCanvas
- *   (here after it).
- * - both Func_081963ec calls set r1 before r0 in the native; sched2 breaks
- *   the tie by RTL order here (the two moves are symmetric in the
- *   dependence lists).
- * - the stores of the blitters' stack arguments and the side index's
- *   "lsls r1, r1, #2" are one row apart in several calls, and the
- *   halfword pool loads of the 16 in the BLDALPHA fades come one row
- *   earlier in the native.
- * Resource 220 needs its name in system/resource/directory.s when this is
- * adopted. The cell addresses are gMapCellBuffer offsets (the listing's
- * pool names them Data_020124de, Data_02011f20, Data_02012e6e and
- * Data_02014e9d).
- * 2026-10-15 (lane N2): rewritten with the work struct, named parts and
- * constants, comments and tagged devices; the same 525 instructions and
- * differ 74. */
+// Draft (tla-en): listing 525 instructions, draft 525, common 488, differ 74.
+// Written from the listing (☀️'s BattleFx_RunCounterReveal is only a
+// hint). A large sprite assembled from gMapCellBuffer cells sways on a
+// sine path over 108 frames, faded in and out through BLDALPHA, with two
+// blitters (heap slots 104 and 188) chosen by the effect's side.
+// Devices already in (each a one-pass block): one before the heap loads so
+// effect's spill comes first, as the native; one between BG2PA's pinned
+// 0x100 and its store so the pool load comes before the address.
+// Left:
+// - the native loads gMapCellBuffer into r6 before BattleFx_BeginTiledCanvas
+// (here after it).
+// - both Func_081963ec calls set r1 before r0 in the native; sched2 breaks
+// the tie by RTL order here (the two moves are symmetric in the
+// dependence lists).
+// - the stores of the blitters' stack arguments and the side index's
+// "lsls r1, r1, #2" are one row apart in several calls, and the
+// halfword pool loads of the 16 in the BLDALPHA fades come one row
+// earlier in the native.
+// Resource 220 needs its name in system/resource/directory.s when this is
+// adopted. The cell addresses are gMapCellBuffer offsets (the listing's
+// pool names them Data_020124de, Data_02011f20, Data_02012e6e and
+// Data_02014e9d).
+// 2026-10-15 (lane N2): rewritten with the work struct, named parts and
+// constants, comments and tagged devices; the same 525 instructions and
+// differ 74.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -47,11 +47,11 @@
 #define FIGURE_HIT_FRAME 80   // the second, which starts the result phase
 
 // The parts of the figure in Resource_Data0DC, unpacked into the map cells.
-#define FIGURE_BODY 0            // 96x83
+#define FIGURE_BODY 0             // 96x83
 #define FIGURE_ARM_LOWERED 0x1f20 // 42x35
 #define FIGURE_ARM_RAISED 0x24de  // 48x51
-#define FIGURE_SWING 0x2e6e      // four cels, Data_081993d0 to d8
-#define FIGURE_FIST 0x4e9d       // 32x29, then eight cels in Data_081993e0..f0
+#define FIGURE_SWING 0x2e6e       // four cels, Data_081993d0 to d8
+#define FIGURE_FIST 0x4e9d        // 32x29, then eight cels in Data_081993e0..f0
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -74,8 +74,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081963ec(s32 slot, s32 blitter);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -174,8 +173,8 @@ void Func_08178ee4(struct BattleEffectArgument *effect) {
 
     // The body, and the arm raised until frame 48.
     if (effect->side == 0) {
-      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2,
-                         96, 83);
+      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2, 96,
+                         83);
       if ((u32)frame < 48)
         draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 31,
                            y + 22, 48, 51);
@@ -183,8 +182,8 @@ void Func_08178ee4(struct BattleEffectArgument *effect) {
         draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 64,
                            y + 16, 42, 35);
     } else {
-      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2,
-                         96, 83);
+      draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2, 96,
+                         83);
       if ((u32)frame < 48)
         draw[effect->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 49,
                            y + 22, 48, 51);
@@ -257,8 +256,8 @@ void Func_08178ee4(struct BattleEffectArgument *effect) {
   }
 
   Scheduler_RemoveCallback((s32)Func_08143000);
-  BattleBackground_LoadFar(
-      1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
+  BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
+                           24);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Func_08143bb8();

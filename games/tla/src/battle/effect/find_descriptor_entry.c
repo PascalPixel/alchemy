@@ -38,8 +38,8 @@ s32 Func_0810b378(s32 value);
 void Func_0810824c(void);
 s32 ArcTan2(s32 y, s32 x);
 
-/* The Spanish and Italian far-call tables reach this function under another
-   slot's name; those two editions keep it on their scaffold. */
+// The Spanish and Italian far-call tables reach this function under another
+// slot's name; those two editions keep it on their scaffold.
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 // Picks the object nearest object id, under 32 pixels away and 48 pixels in
 // height. Distances to ids above 63 count double and to objects with

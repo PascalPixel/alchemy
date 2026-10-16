@@ -1,16 +1,16 @@
-/* Near miss, differ 4 of 76 (2026-10-15): the glow colour from a phase
- * counter and a level, ⚓️'s form of ☀️'s
- * GraphicsPalette_SetTintChannelsFromCounters returning RGB555 instead of
- * storing a tint. Two reordered pairs: after the first modulo the native
- * loads the table's address before it shifts the phase (ldr r2, =table;
- * lsls r5, r5, #18), and after the second it loads the red byte before it
- * starts the bias (ldrb r3; subs r6, #7); this does both the other way.
- * Measured: the bias after the red read (56), an s16 level (7), the table
- * in a local at three places (4 and 6), the modulo and the multiply split
- * around the table's load (4, the load then lands between the shifts), an
- * empty asm barrier after it (6), an asm reading the table (7); four
- * minutes of permuter found nothing better. Belongs between
- * Func_080e97c8 and Func_080e9940. */
+// Near miss, differ 4 of 76 (2026-10-15): the glow colour from a phase
+// counter and a level, ⚓️'s form of ☀️'s
+// GraphicsPalette_SetTintChannelsFromCounters returning RGB555 instead of
+// storing a tint. Two reordered pairs: after the first modulo the native
+// loads the table's address before it shifts the phase (ldr r2, =table;
+// lsls r5, r5, #18), and after the second it loads the red byte before it
+// starts the bias (ldrb r3; subs r6, #7); this does both the other way.
+// Measured: the bias after the red read (56), an s16 level (7), the table
+// in a local at three places (4 and 6), the modulo and the multiply split
+// around the table's load (4, the load then lands between the shifts), an
+// empty asm barrier after it (6), an asm reading the table (7); four
+// minutes of permuter found nothing better. Belongs between
+// Func_080e97c8 and Func_080e9940.
 #include "types.h"
 
 // A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),

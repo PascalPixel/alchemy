@@ -4,39 +4,39 @@
 #include "iwram_call.h"
 
 struct ItemMenuModeState {
-    u8 reserved000[0x20c];
-    u8 mode;
+  u8 reserved000[0x20c];
+  u8 mode;
 };
 
 struct ItemMenuDisplayState {
-    u16 reserved00[2];
-    u16 busy;
+  u16 reserved00[2];
+  u16 busy;
 };
 
 struct ItemMenuSavedGraphics {
-    u8 reserved000[0xa8];
-    u8 tiles[0x2000];
-    u16 palette[64];
-    void *reserved2128;
-    s32 variant;
+  u8 reserved000[0xa8];
+  u8 tiles[0x2000];
+  u16 palette[64];
+  void *reserved2128;
+  s32 variant;
 };
 
 struct ItemMenuWork {
-    u8 reserved000[0x1c];
-    u8 selection;
-    u8 target;
-    u8 reserved01e[0xee];
-    s32 window;
-    u8 reserved110[0x64];
-    u16 slot;
-    u16 targetSlot;
-    u16 item;
-    u8 reserved17a[10];
-    struct ItemMenuSavedGraphics *saved;
-    u8 reserved188[0x80];
-    u16 owners[8];
-    u8 reserved218;
-    u8 count;
+  u8 reserved000[0x1c];
+  u8 selection;
+  u8 target;
+  u8 reserved01e[0xee];
+  s32 window;
+  u8 reserved110[0x64];
+  u16 slot;
+  u16 targetSlot;
+  u16 item;
+  u8 reserved17a[10];
+  struct ItemMenuSavedGraphics *saved;
+  u8 reserved188[0x80];
+  u16 owners[8];
+  u8 reserved218;
+  u8 count;
 };
 
 extern struct ItemMenuModeState gGameState;
@@ -63,71 +63,70 @@ void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 
-s32 ItemMenu_Run(void)
-{
-    struct ItemMenuWork *menu;
-    u32 oldMode;
-    s32 state;
-    struct ItemMenuSavedGraphics *saved;
-    s32 zero;
+s32 ItemMenu_Run(void) {
+  struct ItemMenuWork *menu;
+  u32 oldMode;
+  s32 state;
+  struct ItemMenuSavedGraphics *saved;
+  s32 zero;
 
-    menu = Runtime_AllocateHeapBlock(55, 0xa70);
-    oldMode = gGameState.mode;
-    gGameState.mode = 2;
-    state = gMenuCtrlWork->busy = 1;
-    UiWindow_DrawFrameFar(0, 0, 30, 20);
-    WaitFrames(1);
-    UiWindow_InitializeWork(0);
-    saved = Runtime_BumpAllocateAlternatePool(0x2130);
-    menu->saved = saved;
-    saved->reserved2128 = 0;
-    saved->variant = 0;
-    if (GameFlag_TestFar(0x16e)) {
-        if (!GameFlag_TestFar(0x16f)) {
-            if (!GameFlag_TestFar(0x171))
-                saved->variant = state;
-            else
-                saved->variant = 14;
-        } else {
-            if (!GameFlag_TestFar(0x171))
-                saved->variant = 27;
-            else
-                saved->variant = 28;
-        }
+  menu = Runtime_AllocateHeapBlock(55, 0xa70);
+  oldMode = gGameState.mode;
+  gGameState.mode = 2;
+  state = gMenuCtrlWork->busy = 1;
+  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  WaitFrames(1);
+  UiWindow_InitializeWork(0);
+  saved = Runtime_BumpAllocateAlternatePool(0x2130);
+  menu->saved = saved;
+  saved->reserved2128 = 0;
+  saved->variant = 0;
+  if (GameFlag_TestFar(0x16e)) {
+    if (!GameFlag_TestFar(0x16f)) {
+      if (!GameFlag_TestFar(0x171))
+        saved->variant = state;
+      else
+        saved->variant = 14;
+    } else {
+      if (!GameFlag_TestFar(0x171))
+        saved->variant = 27;
+      else
+        saved->variant = 28;
     }
-    Scheduler_EnableOverlayCallbacksWithFlags();
-    Func_080153e0(1);
-    Link_DrawShiftedTilePairFar((void *)0x06002500);
-    menu->count = Party_ListActiveOwnersFar(menu->owners);
-    Resource_LoadPairedBlocksIfAvailable();
-    ItemMenu_Init(0, 3, 0, 7);
-    Menu_SetFirstObjectRowCoordinates(0);
-    Palette_LightenBankHighlight(14);
-    menu->window = UiWindow_CreateFar(13, 0, 17, 5, 2);
-    menu->item = 255;
-    zero = 0;
-    menu->selection = zero;
-    menu->target = zero;
-    menu->slot = 0;
-    menu->targetSlot = 0;
-    FourObjectMotion_InitializeBottomRow(menu->window, 0);
-    DjinnMenu_RunScreen();
-    FourObjectMotion_ClearSlotsAndScheduleAlt();
-    Menu_ResetTwoResourceEntries();
-    WaitFrames(1);
-    ItemMenu_Close();
-    UiWindow_DrawFrameFar(0, 0, 30, 20);
-    gMenuCtrlWork->busy = 0;
-    Func_080152a8();
-    Func_080153e0(0);
-    Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
-    Iwram_CopyWords((void *)0x05000080, saved->palette, 128);
-    WaitFrames(1);
-    Scheduler_DisableOverlayCallbacksWithFlags();
-    UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    MemFree(menu->saved);
-    Runtime_ReleaseHeapBlock(55);
-    Event_ClearInvalidPackedValuesFar();
-    gGameState.mode = oldMode;
-    return 1;
+  }
+  Scheduler_EnableOverlayCallbacksWithFlags();
+  Func_080153e0(1);
+  Link_DrawShiftedTilePairFar((void *)0x06002500);
+  menu->count = Party_ListActiveOwnersFar(menu->owners);
+  Resource_LoadPairedBlocksIfAvailable();
+  ItemMenu_Init(0, 3, 0, 7);
+  Menu_SetFirstObjectRowCoordinates(0);
+  Palette_LightenBankHighlight(14);
+  menu->window = UiWindow_CreateFar(13, 0, 17, 5, 2);
+  menu->item = 255;
+  zero = 0;
+  menu->selection = zero;
+  menu->target = zero;
+  menu->slot = 0;
+  menu->targetSlot = 0;
+  FourObjectMotion_InitializeBottomRow(menu->window, 0);
+  DjinnMenu_RunScreen();
+  FourObjectMotion_ClearSlotsAndScheduleAlt();
+  Menu_ResetTwoResourceEntries();
+  WaitFrames(1);
+  ItemMenu_Close();
+  UiWindow_DrawFrameFar(0, 0, 30, 20);
+  gMenuCtrlWork->busy = 0;
+  Func_080152a8();
+  Func_080153e0(0);
+  Iwram_CopyWords((void *)0x06004000, saved->tiles, 0x2000);
+  Iwram_CopyWords((void *)0x05000080, saved->palette, 128);
+  WaitFrames(1);
+  Scheduler_DisableOverlayCallbacksWithFlags();
+  UiWindow_EraseBorderRectFar(0, 0, 30, 20);
+  MemFree(menu->saved);
+  Runtime_ReleaseHeapBlock(55);
+  Event_ClearInvalidPackedValuesFar();
+  gGameState.mode = oldMode;
+  return 1;
 }

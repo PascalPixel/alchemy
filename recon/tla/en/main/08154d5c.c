@@ -1,38 +1,38 @@
-/* Draft of Func_08154d5c, effect kind 202: sixteen green vines spring up
- * around the middle of the targets, two frames apart, and sink back.
- *
- * Twin: The Broken Seal's BattleEffect_RunRisingColumns (effect.c), the same
- * kind; the Lost Age keeps its frame counts, cue and tables.
- * Listing 245 instructions, draft 245, differ 20 (28 without the tagged
- * BG2CNT pin).
- *
- * Changes from the twin: the canvas layer opens with control 0 and the
- * effect sets BG2CNT itself; the canvas preparer takes its kind, side and
- * anchor packed into one word and fills two positions; the effect argument
- * is read directly, as the Lost Age never stores work->effect; blitters
- * load through Func_081963ec with the Lost Age's mode numbers (transparent
- * is 2); the callback order is 0xc80.
- *
- * What remains (all order, no allocation):
- *   - the preparer's arguments: the pin's one-pass block moves the flag's
- *     orr before the screen position's address (2 rows; plain they match).
- *   - BLDCNT's zero: the native loads it before it starts the sheet
- *     address (1 swapped row and its pool offset).
- *   - the second blitter load sets r1 before r0 in the native.
- *   - the vine draw: the native loads vine->x and stores both stacked
- *     arguments before it builds the source address (about 8 rows).
- *
- * Tried (differ):
- *   trial 0 port as is                                          36
- *   the two preparer outputs declared before the positions      28
- *   BG2CNT pinned behind a one-pass block (kept)                20
- *   the same pin behind canvas.c's empty asm                    24
- *   BG2CNT through a one-pass block without a pin               38
- *   BLDCNT's zero pinned too, with or without its own block     20
- *   the preparer's flags in another order or in a local         20
- *   alchemy permute 5 min (trial 0)                             no gain (37)
- *   alchemy permute 8 min on the pinned form                    no gain (28)
- */
+// Draft of Func_08154d5c, effect kind 202: sixteen green vines spring up
+// around the middle of the targets, two frames apart, and sink back.
+
+// Twin: The Broken Seal's BattleEffect_RunRisingColumns (effect.c), the same
+// kind; the Lost Age keeps its frame counts, cue and tables.
+// Listing 245 instructions, draft 245, differ 20 (28 without the tagged
+// BG2CNT pin).
+
+// Changes from the twin: the canvas layer opens with control 0 and the
+// effect sets BG2CNT itself; the canvas preparer takes its kind, side and
+// anchor packed into one word and fills two positions; the effect argument
+// is read directly, as the Lost Age never stores work->effect; blitters
+// load through Func_081963ec with the Lost Age's mode numbers (transparent
+// is 2); the callback order is 0xc80.
+
+// What remains (all order, no allocation):
+// - the preparer's arguments: the pin's one-pass block moves the flag's
+// orr before the screen position's address (2 rows; plain they match).
+// - BLDCNT's zero: the native loads it before it starts the sheet
+// address (1 swapped row and its pool offset).
+// - the second blitter load sets r1 before r0 in the native.
+// - the vine draw: the native loads vine->x and stores both stacked
+// arguments before it builds the source address (about 8 rows).
+
+// Tried (differ):
+// trial 0 port as is                                          36
+// the two preparer outputs declared before the positions      28
+// BG2CNT pinned behind a one-pass block (kept)                20
+// the same pin behind canvas.c's empty asm                    24
+// BG2CNT through a one-pass block without a pin               38
+// BLDCNT's zero pinned too, with or without its own block     20
+// the preparer's flags in another order or in a local         20
+// alchemy permute 5 min (trial 0)                             no gain (37)
+// alchemy permute 8 min on the pinned form                    no gain (28)
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

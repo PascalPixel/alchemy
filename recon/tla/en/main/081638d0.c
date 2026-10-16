@@ -1,45 +1,45 @@
-/* Draft, differ 6 of 354: Func_081638d0, effect kind 214, The Broken Seal's
- * BattleFx_RunRipplingDisc.
- *
- * Twin: ☀️ BattleFx_RunRipplingDisc (games/tbs/src/effect/effect.c), ported
- * with The Lost Age's changes: the canvas set up through Func_0815585c
- * (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
- * from frame 72), and a hit at frame 48 (results phase, eight frames of shake,
- * the target's knock-back motion) that ☀️'s disc does not have.
- *
- * Devices: the empty asm at the start stores the argument before 0x03000000 is
- * started (differ 8 without it); the BG2CNT halfword pinned to r3 in a
- * one-pass block loads from the pool before the register address is started.
- * Without the pin the halfword loads after movs r2, #128 and the call pair
- * below matches (differ 6 again); the pin alone, without its block, loads first
- * and keeps the call pair, but the pool entry lands 4 bytes off (differ 6);
- * the pin behind an empty asm holding r2 (12), an unpinned u16 behind an empty
- * asm (30), the store alone in a one-pass block (28), an unpinned u16 set in a
- * one-pass block (40).
- *
- * Left, two reordered pairs:
- *   - the native starts the third argument of Func_0815585c (add r2, sp, #44)
- *     between the side's shift and its orrs;
- *   - in the I/O queue push it increments the count before it scales the entry
- *     offset, and stores the count before it adds the queue's base.
- *
-   Both are ties in sched2 that agscc breaks the other way. In the push,
- *   the increment and the offset's second shift are both ready at the same
- *   cycle with priority 10; the shift is data-dependent on the last insn and
- *   the increment only anti-dependent, so the shift wins. A pooled load costing
- *   3 cycles instead of 2 would give the increment priority 11 (it leads to
- *   the pooled value), which is the native order (the 08164b2c.c header's
- *   finding). At the call, the orrs has one more dependent (add r3 reuses
- *   r3), so it wins its tie with add r2.
- *
- * Tried (differ): the flags written 70 | side << 4, with 0x46, (side << 4) ^
- 70,
- * side * 16 | 70, or in a local first (6); &screenX through a local (64); the
- * screens as struct EffectPosition (6); the push written out with the count
- * stored first (6, the increment then takes r3), ++count (6), the count store
- * in a one-pass block (8); alchemy permute 6 minutes, 2 jobs, on this draft
- * (no candidate beat it). screenX declared first takes sp+44, as the
- * native's. */
+// Draft, differ 6 of 354: Func_081638d0, effect kind 214, The Broken Seal's
+// BattleFx_RunRipplingDisc.
+
+// Twin: ☀️ BattleFx_RunRipplingDisc (games/tbs/src/effect/effect.c), ported
+// with The Lost Age's changes: the canvas set up through Func_0815585c
+// (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
+// from frame 72), and a hit at frame 48 (results phase, eight frames of shake,
+// the target's knock-back motion) that ☀️'s disc does not have.
+
+// Devices: the empty asm at the start stores the argument before 0x03000000 is
+// started (differ 8 without it); the BG2CNT halfword pinned to r3 in a
+// one-pass block loads from the pool before the register address is started.
+// Without the pin the halfword loads after movs r2, #128 and the call pair
+// below matches (differ 6 again); the pin alone, without its block, loads first
+// and keeps the call pair, but the pool entry lands 4 bytes off (differ 6);
+// the pin behind an empty asm holding r2 (12), an unpinned u16 behind an empty
+// asm (30), the store alone in a one-pass block (28), an unpinned u16 set in a
+// one-pass block (40).
+
+// Left, two reordered pairs:
+// - the native starts the third argument of Func_0815585c (add r2, sp, #44)
+// between the side's shift and its orrs;
+// - in the I/O queue push it increments the count before it scales the entry
+// offset, and stores the count before it adds the queue's base.
+
+// Both are ties in sched2 that agscc breaks the other way. In the push,
+// the increment and the offset's second shift are both ready at the same
+// cycle with priority 10; the shift is data-dependent on the last insn and
+// the increment only anti-dependent, so the shift wins. A pooled load costing
+// 3 cycles instead of 2 would give the increment priority 11 (it leads to
+// the pooled value), which is the native order (the 08164b2c.c header's
+// finding). At the call, the orrs has one more dependent (add r3 reuses
+// r3), so it wins its tie with add r2.
+
+// Tried (differ): the flags written 70 | side << 4, with 0x46, (side << 4) ^
+// 70,
+// side * 16 | 70, or in a local first (6); &screenX through a local (64); the
+// screens as struct EffectPosition (6); the push written out with the count
+// stored first (6, the increment then takes r3), ++count (6), the count store
+// in a one-pass block (8); alchemy permute 6 minutes, 2 jobs, on this draft
+// (no candidate beat it). screenX declared first takes sp+44, as the
+// native's.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -1,21 +1,21 @@
-/* Near miss, differ 38 of 312.
- *
- * Twin: The Broken Seal's BattleFx_RunBladeRain. ⚓️ keeps the effect but no
- * handler or caller reaches it. It rains crossed daggers instead of swords:
- * every picture is a 32x32 cell, so the twin's three cell tables are gone,
- * and a landed dagger is drawn whole. The rest is the twin with ⚓️'s
- * calling conventions.
- *
- * Left: the native moves the blitter pair's address into r11 after the
- * first literal pool, where this moves it before the branch around the
- * pool; one row's place flips the pool's alignment pad, which shifts every
- * pc offset and branch until the next pool (about 30 of the rows). The rest
- * are single rows where the native builds a constant or issues a load one
- * slot earlier (the landed dagger's sheet address and its flip index).
- *
- * Tried:
- *   the twin, cell tables replaced by 32x32 cells              38
- */
+// Near miss, differ 38 of 312.
+
+// Twin: The Broken Seal's BattleFx_RunBladeRain. ⚓️ keeps the effect but no
+// handler or caller reaches it. It rains crossed daggers instead of swords:
+// every picture is a 32x32 cell, so the twin's three cell tables are gone,
+// and a landed dagger is drawn whole. The rest is the twin with ⚓️'s
+// calling conventions.
+
+// Left: the native moves the blitter pair's address into r11 after the
+// first literal pool, where this moves it before the branch around the
+// pool; one row's place flips the pool's alignment pad, which shifts every
+// pc offset and branch until the next pool (about 30 of the rows). The rest
+// are single rows where the native builds a constant or issues a load one
+// slot earlier (the landed dagger's sheet address and its flip index).
+
+// Tried:
+// the twin, cell tables replaced by 32x32 cells              38
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -52,19 +52,18 @@ void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * A rain of daggers on the first target (unused).
- *
- * Sixteen daggers fall 8 pixels a frame, one every 4 frames, from columns
- * 16 to 111, drifting towards the middle (x 64) the further out they start,
- * and stick in the ground where they stop. The canvas fades in over 16
- * frames and out from frame 104; from frame 24 to 84 the target flashes and
- * the screen shakes every 4 frames, with a sound every 8.
- */
+// A rain of daggers on the first target (unused).
+
+// Sixteen daggers fall 8 pixels a frame, one every 4 frames, from columns
+// 16 to 111, drifting towards the middle (x 64) the further out they start,
+// and stick in the ground where they stop. The canvas fades in over 16
+// frames and out from frame 104; from frame 24 to 84 the target flashes and
+// the screen shakes every 4 frames, with a sound every 8.
+
 void Func_0813e114(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   BlitterPair draw;
@@ -88,8 +87,8 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
                 BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   blit = draw;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet,
-                             work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
+                             1, 1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
@@ -154,16 +153,14 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
       cell = speed >> 17;
       if (frame < i * 4 + 25) {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32,
-                               32);
+                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32, 32);
         if (frame >= i * 4 + 16) {
           dagger->x += dagger->velocityX;
           dagger->y += dagger->velocityY;
         }
       } else {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32,
-                               32);
+                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32, 32);
       }
     }
 

@@ -1,5 +1,6 @@
-/* Near miss: Func_020019e8 and Func_02001a38 each differ 2 (one reordered row): the cue argument is copied
- * before the work pointer is loaded; the listing copies it after the party state address. */
+// Near miss: Func_020019e8 and Func_02001a38 each differ 2 (one reordered row):
+// the cue argument is copied before the work pointer is loaded; the listing
+// copies it after the party state address.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -19,35 +20,34 @@ void Func_02003b7c(s32 a);
 void Func_02003bcc(s32 value);
 void Func_02003c54(s32 a);
 
-void Func_020019e8(s32 mode, s32 cue)
-{
-    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-    struct PartyState *party = &gPartyState;
+void Func_020019e8(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct PartyState *party = &gPartyState;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
-    } while (0);
-    if (party->scene == (s32)&SceneId_Ov691Room1)
-        work->target = Object_GetById(15);
-    else if (party->scene == (s32)&SceneId_Ov691Room2)
-        work->target = Object_GetById(14);
-    Func_020014bc(mode, cue);
-    GameFlag_SetBit(0x200);
+  /* FAKEMATCH: a one-pass block loads the party state before its offset is
+   * built (one reordered row). */
+  do {
+  } while (0);
+  if (party->scene == (s32)&SceneId_Ov691Room1)
+    work->target = Object_GetById(15);
+  else if (party->scene == (s32)&SceneId_Ov691Room2)
+    work->target = Object_GetById(14);
+  Func_020014bc(mode, cue);
+  GameFlag_SetBit(0x200);
 }
 
-void Func_02001a38(s32 mode, s32 cue)
-{
-    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-    struct PartyState *party = &gPartyState;
+void Func_02001a38(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct PartyState *party = &gPartyState;
 
-    /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-    do {
-    } while (0);
-    if (party->scene == (s32)&SceneId_Ov691Room1)
-        work->target = Object_GetById(16);
-    else if (party->scene == (s32)&SceneId_Ov691Room2)
-        work->target = Object_GetById(10);
-    Func_020014bc(mode, cue);
-    GameFlag_SetBit(0x201);
+  /* FAKEMATCH: a one-pass block loads the party state before its offset is
+   * built (one reordered row). */
+  do {
+  } while (0);
+  if (party->scene == (s32)&SceneId_Ov691Room1)
+    work->target = Object_GetById(16);
+  else if (party->scene == (s32)&SceneId_Ov691Room2)
+    work->target = Object_GetById(10);
+  Func_020014bc(mode, cue);
+  GameFlag_SetBit(0x201);
 }
-

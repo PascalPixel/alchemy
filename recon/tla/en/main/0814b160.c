@@ -1,27 +1,26 @@
-/* Near miss, differ 42 of 222 (effect kinds 41 and 354, the target markers).
+// Near miss, differ 42 of 222 (effect kinds 41 and 354, the target markers).
 
-   ☀️ twin: BattleFx_RunTargetMarkers (games/tbs/src/effect/effect.c), shape
-   0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
-   (the dispatcher stores work->effect), the star cross sheet (directory row
-   0x13b), the blitter from Func_081963ec(104, 0x23) (transparent, ⚓️ mode
-   2) and the transfer callback at 0xc80. ☀️ needs its family's blitter pair
-   for the frame (a FAKEMATCH tag there), and so does this one: as a single
-   DrawRectangle the frame is 4 bytes short (differ 170).
+// ☀️ twin: BattleFx_RunTargetMarkers (games/tbs/src/effect/effect.c), shape
+// 0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
+// (the dispatcher stores work->effect), the star cross sheet (directory row
+// 0x13b), the blitter from Func_081963ec(104, 0x23) (transparent, ⚓️ mode
+// 2) and the transfer callback at 0xc80. ☀️ needs its family's blitter pair
+// for the frame (a FAKEMATCH tag there), and so does this one: as a single
+// DrawRectangle the frame is 4 bytes short (differ 170).
 
-   The frame slots and every instruction match. What is left is order: the
-   native loads the work slot before it sets the first argument, loads each
-   pool word (0x100, -0x7000) ahead of the register's address, sets r1
-   before r0 for Func_081963ec, and reloads its spills one row earlier in the
-   marker loop.
+// The frame slots and every instruction match. What is left is order: the
+// native loads the work slot before it sets the first argument, loads each
+// pool word (0x100, -0x7000) ahead of the register's address, sets r1
+// before r0 for Func_081963ec, and reloads its spills one row earlier in the
+// marker loop.
 
-   Tried (differ):
-     the repository draft (local copy of the work struct)                44
-     the blitter flags in a local first                                  44
-     Func_081963ec declared returning s32 as ☀️'s LoadWork does          42
-     ☀️'s slot form (slot = &battleFxWork[1]; canvas = slot[0];
-       work = slot[-1]; draw[0] = slot[2])                               48
-     greedy declaration-order scan, every local through every place     42 */
-
+// Tried (differ):
+// the repository draft (local copy of the work struct)                44
+// the blitter flags in a local first                                  44
+// Func_081963ec declared returning s32 as ☀️'s LoadWork does          42
+// ☀️'s slot form (slot = &battleFxWork[1]; canvas = slot[0];
+// work = slot[-1]; draw[0] = slot[2])                               48
+// greedy declaration-order scan, every local through every place     42
 
 #include "types.h"
 #include "system.h"
@@ -47,9 +46,9 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 extern char ResourceId_StarCrossSheet; // directory row 0x13b
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);      // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);      // ☀️ ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase); // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);               // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);               // ☀️ ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
 s32 Func_081963ec(s32 slot, s32 flags); // ☀️ BattleEffect_LoadWork
 void Audio_PlayCue(s32 cue);
 
@@ -81,8 +80,8 @@ void Func_0814b160(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  Func_081963ec(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
-                                  COMPOSITE_CLIP_Y);
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   work->transferMode = 1;
   work->transferValue = 0;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -117,8 +116,8 @@ void Func_0814b160(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
           if (frame >= start) {
             cel = ((frame - start) + marker->variant) / 6 % MARKER_CELS;
-            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16,
-                    16, 12);
+            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16,
+                    12);
           }
         }
         marker++;

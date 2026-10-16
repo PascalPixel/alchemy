@@ -1,9 +1,9 @@
-/* Near miss, differ 8 of 155 (2026-10-15, written from the listing; ☀️ has no
- * twin). The sine is taken twice in each arm, as an ABS macro that reads its
- * argument twice gives. What remains is load order: the ROM loads the event
- * work before it copies the direction into r11, and loads each edge before it
- * builds the -1 it compares with (two pairs and a swapped pair). A switch on
- * the edge measured 29. */
+// Near miss, differ 8 of 155 (2026-10-15, written from the listing; ☀️ has no
+// twin). The sine is taken twice in each arm, as an ABS macro that reads its
+// argument twice gives. What remains is load order: the ROM loads the event
+// work before it copies the direction into r11, and loads each edge before it
+// builds the -1 it compares with (two pairs and a swapped pair). A switch on
+// the edge measured 29.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

@@ -1,33 +1,33 @@
-/* Near miss, differ 70 of 511.
- *
- * The body of four effect kinds (Func_081445f8 and the next three wrappers
- * pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst, whose
- * modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the effect:
- * the picture unpacked by Resource_LoadAndDecompress, the palette for mode 0
- * or 3 the pink burst's, Func_0815b634 in mode 3, Func_08144aac for the
- * caster's side; the background's wave moves BG1 (Func_081524b4 arms its
- * HBlank DMA) by an amplitude that swells and dies over the effect; motes are
- * pulled twice as hard across (x and z) and freed once they cross their
- * target, not once they are near it; in mode 3 each arrival pushes the
- * target back (BattleFx_StartActorMotion) with a cue on every other mote.
- * The edition level is "struct": the other editions' scaffolds hold this
- * function in another shape; check them before adopting.
- *
- * Left: order, and one form. The crossing test's first arm: the native
- * keeps target->x < 0 as a store-flag (lsrs #31, then cmp and bne); agscc
- * threads it into a branch on target->x (about 10 rows); the else arm
- * matches. &pos is movs r3, #80; add r3, sp in the native and add r3, sp,
- * #80 here; the rest are single swaps of a load with its neighbour.
- *
- * Tried (2026-10-15): the plain port 261; the BG1 scroll read once before
- * the line loop 143; the crossing test as a flag set in an if, else 0 (from
- * 123 as a ternary in the condition, 104 as a flag set after crossed = 0,
- * 81 with the arms swapped, 125 or 129 with the arms written as shifts);
- * the frame-80 phase as else-if with the call repeated for mode 3 (one
- * load of mode per test, as the native; 108 from 123 with mode == 0 ||
- * mode == 3, 129 as a ternary argument); sin * sway, not sway * sin (4
- * rows); the absolute value of x through a copy (no change).
- */
+// Near miss, differ 70 of 511.
+
+// The body of four effect kinds (Func_081445f8 and the next three wrappers
+// pass modes 0 to 3). Twin: The Broken Seal's BattleFx_RunMemberBurst, whose
+// modes 0 to 2 these are; The Lost Age adds mode 3 and reworks the effect:
+// the picture unpacked by Resource_LoadAndDecompress, the palette for mode 0
+// or 3 the pink burst's, Func_0815b634 in mode 3, Func_08144aac for the
+// caster's side; the background's wave moves BG1 (Func_081524b4 arms its
+// HBlank DMA) by an amplitude that swells and dies over the effect; motes are
+// pulled twice as hard across (x and z) and freed once they cross their
+// target, not once they are near it; in mode 3 each arrival pushes the
+// target back (BattleFx_StartActorMotion) with a cue on every other mote.
+// The edition level is "struct": the other editions' scaffolds hold this
+// function in another shape; check them before adopting.
+
+// Left: order, and one form. The crossing test's first arm: the native
+// keeps target->x < 0 as a store-flag (lsrs #31, then cmp and bne); agscc
+// threads it into a branch on target->x (about 10 rows); the else arm
+// matches. &pos is movs r3, #80; add r3, sp in the native and add r3, sp,
+// #80 here; the rest are single swaps of a load with its neighbour.
+
+// Tried (2026-10-15): the plain port 261; the BG1 scroll read once before
+// the line loop 143; the crossing test as a flag set in an if, else 0 (from
+// 123 as a ternary in the condition, 104 as a flag set after crossed = 0,
+// 81 with the arms swapped, 125 or 129 with the arms written as shifts);
+// the frame-80 phase as else-if with the call repeated for mode 3 (one
+// load of mode per test, as the native; 108 from 123 with mode == 0 ||
+// mode == 3, 129 as a ternary argument); sin * sway, not sway * sin (4
+// rows); the absolute value of x through a copy (no change).
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

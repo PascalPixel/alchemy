@@ -1,22 +1,22 @@
-/* Draft, differ 0 of 29 with two devices, 2 without: summon 29's palette
- * HBlank DMA arm. The Broken Seal's twin is BattleFx_ArmPaletteHBlankDma;
- * The Lost Age has the same routine once more as Func_08164bb4 (adopted in
- * particle_stream_modes.c with these same two devices).
- * Plain (no device): differ 4. The native reads the control word back before
- * it starts the first mask (0xc5ff); here the mask is started first. A
- * one-pass block around the two masks closes that (differ 2).
- * Left without the barrier: the native starts the palette address
- * (movs r1, #160) before the read-back of the control word and shifts it
- * after; agscc starts it after the work offset 0x7640 (one reordered row).
- * Tried without a barrier, each differ 2: the address as BG_PLTT, as a
- * pointer local set before the masks, inside the masks' block, in its own
- * one-pass block, with the read-back in a one-pass block, as a for (;;) with
- * break, as &work[0x7640], and the control word read into a local; the work
- * offset in a block with the read-back gave 4. The empty asm that holds
- * palette's first half closes it, as on Func_08164bb4.
- * Not adopted: the barrier would raise The Lost Age's count of empty asm
- * barriers, which S2 says may only fall; whether that covers new adoptions
- * is Pascal's open decision D2. */
+// Draft, differ 0 of 29 with two devices, 2 without: summon 29's palette
+// HBlank DMA arm. The Broken Seal's twin is BattleFx_ArmPaletteHBlankDma;
+// The Lost Age has the same routine once more as Func_08164bb4 (adopted in
+// particle_stream_modes.c with these same two devices).
+// Plain (no device): differ 4. The native reads the control word back before
+// it starts the first mask (0xc5ff); here the mask is started first. A
+// one-pass block around the two masks closes that (differ 2).
+// Left without the barrier: the native starts the palette address
+// (movs r1, #160) before the read-back of the control word and shifts it
+// after; agscc starts it after the work offset 0x7640 (one reordered row).
+// Tried without a barrier, each differ 2: the address as BG_PLTT, as a
+// pointer local set before the masks, inside the masks' block, in its own
+// one-pass block, with the read-back in a one-pass block, as a for (;;) with
+// break, as &work[0x7640], and the control word read into a local; the work
+// offset in a block with the read-back gave 4. The empty asm that holds
+// palette's first half closes it, as on Func_08164bb4.
+// Not adopted: the barrier would raise The Lost Age's count of empty asm
+// barriers, which S2 says may only fall; whether that covers new adoptions
+// is Pascal's open decision D2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

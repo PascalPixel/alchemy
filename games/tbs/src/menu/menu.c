@@ -4172,7 +4172,8 @@ s32 ItemMenu_RunList(s32 pane) {
         changed = 0;
       }
 
-      if ((gKeysPressed & KEY_A) != 0 && menu->items[state.selectedIndex] != 0) {
+      if ((gKeysPressed & KEY_A) != 0 &&
+          menu->items[state.selectedIndex] != 0) {
         AudioCommand_PlayFar(173); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
@@ -5097,9 +5098,8 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
           struct BattleAct *ability = BattleActGet(
               owner->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK);
 
-          if (pass == 0 &&
-              (ability->type0c != 0 ||
-               (ability->flags & ACTION_USABLE_IN_FIELD) != 0)) {
+          if (pass == 0 && (ability->type0c != 0 ||
+                            (ability->flags & ACTION_USABLE_IN_FIELD) != 0)) {
             actions[count] = owner->actionSlots[i].encodedAction;
             count++;
           } else if (pass == 1) {
@@ -5555,8 +5555,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 no) {
       BattleActGet((u32)(no << 18) >> 18) /* & OWNER_ACTION_ID_MASK */;
 
   if (action->type0c != 0 ||
-      (action->flags &
-       (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==
+      (action->flags & (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==
           (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE))
     return 0;
   return 1;
@@ -6398,13 +6397,13 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
       messageVariant = 8; // "These are your experience points."
     } else {
 #if EDITION_INTERNATIONAL
-      u64 remaining =
-          Unit_GetExperienceForLevelFar(menu->selectedIds[0], owner->level + 1) -
-          owner->experience;
+      u64 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
+                                                    owner->level + 1) -
+                      owner->experience;
 #else
-      u32 remaining =
-          Unit_GetExperienceForLevelFar(menu->selectedIds[0], owner->level + 1) -
-          owner->experience;
+      u32 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
+                                                    owner->level + 1) -
+                      owner->experience;
 #endif
       UiWork_PushValueSlotFar(remaining, 5);
     }
@@ -8254,8 +8253,8 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
-      result = DjinnRecovery_AddStandbyFar(menu->shownOwner[0], menu->pairElement[0],
-                                 menu->pairIndex[0]);
+      result = DjinnRecovery_AddStandbyFar(
+          menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
@@ -8302,8 +8301,8 @@ s32 DjinnMenu_RunScreen(void) {
       AudioCommand_PlayFar(139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
-      result = DjinnRecovery_RemoveFar(menu->shownOwner[0], menu->pairElement[0],
-                                    menu->pairIndex[0]);
+      result = DjinnRecovery_RemoveFar(
+          menu->shownOwner[0], menu->pairElement[0], menu->pairIndex[0]);
       UnitCalcFar(menu->shownOwner[0]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
@@ -8397,8 +8396,8 @@ s32 Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
-  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
-          0x80000010, REG_DMA3);
+  Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
+          REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           0x80000010, REG_DMA3);
@@ -8513,8 +8512,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
           UiWork_SetParamNibbleFar(2);
         usable = 0;
         if (Djinn_IsReadyFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
-                                   (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
-                                   ENTRY & DJINN_ENTRY_INDEX) ||
+                             (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
+                             ENTRY & DJINN_ENTRY_INDEX) ||
             Djinn_IsActiveFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
                               (ENTRY & DJINN_ENTRY_ELEMENT) >> 5,
                               ENTRY & DJINN_ENTRY_INDEX))
@@ -8862,11 +8861,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                                             state->helpWindow, 0, 0);
           }
           if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)) ||
+                               DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
             if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                       DJINN_NUMBER(djinn)))
+                                 DJINN_NUMBER(djinn)))
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
             else
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -8883,11 +8882,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose, state->helpWindow, 0,
                                           0);
           if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)) ||
+                               DJINN_NUMBER(djinn)) ||
               Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn))) {
             if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                       DJINN_NUMBER(djinn))) {
+                                 DJINN_NUMBER(djinn))) {
               UiText_DrawCharacterAtOffsetFar(MsgDjinnChoose + 3,
                                               state->helpWindow, 0, 16);
               FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
@@ -8908,11 +8907,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         }
       } else {
         if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                   DJINN_NUMBER(djinn)) ||
+                             DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn))) {
           if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                     DJINN_NUMBER(djinn)))
+                               DJINN_NUMBER(djinn)))
             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
           else
             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -9132,7 +9131,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
       i = 0;
       if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                 DJINN_NUMBER(djinn)) ||
+                           DJINN_NUMBER(djinn)) ||
           Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn)))
         i = 1;
@@ -9151,13 +9150,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Djinn_DeactivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                             DJINN_NUMBER(djinn));
         DjinnRecovery_AddStandbyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                          DJINN_NUMBER(djinn));
+                                    DJINN_NUMBER(djinn));
       } else {
         AudioCommand_PlayFar(139);
         Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
         DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                             DJINN_NUMBER(djinn));
+                                DJINN_NUMBER(djinn));
       }
       UnitCalcFar(DJINN_OWNER(djinn));
       DjinnMenu_DrawElementList(&lists->list);
@@ -9177,7 +9176,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         }
         i = 0;
         if (Djinn_IsReadyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
-                                   DJINN_NUMBER(djinn)) ||
+                             DJINN_NUMBER(djinn)) ||
             Djinn_IsActiveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn)))
           i = 1;
@@ -9231,7 +9230,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             s32 usable;
             usable = 0;
             if (Djinn_IsReadyFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                       DJINN_NUMBER(entry)) ||
+                                 DJINN_NUMBER(entry)) ||
                 Djinn_IsActiveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                   DJINN_NUMBER(entry)))
               usable = 1;
@@ -9240,15 +9239,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 if (!(entry & 0x8000)) {
                   Djinn_ActivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                  DjinnRecovery_RemoveFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                       DJINN_NUMBER(entry));
+                  DjinnRecovery_RemoveFar(DJINN_OWNER(entry),
+                                          DJINN_ELEMENT(entry),
+                                          DJINN_NUMBER(entry));
                   UnitCalcFar(DJINN_OWNER(entry));
                 }
               } else if (entry & 0x8000) {
                 Djinn_DeactivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
                                     DJINN_NUMBER(entry));
-                DjinnRecovery_AddStandbyFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry),
-                                  DJINN_NUMBER(entry));
+                DjinnRecovery_AddStandbyFar(DJINN_OWNER(entry),
+                                            DJINN_ELEMENT(entry),
+                                            DJINN_NUMBER(entry));
                 UnitCalcFar(DJINN_OWNER(entry));
               }
             }

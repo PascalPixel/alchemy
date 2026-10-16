@@ -1,13 +1,13 @@
-/* Near miss of Func_0815b3b0 (listing 46 instructions, draft 46, differ 2,
- * one reordered row): the native reads the flag byte at +0x11 (ldrb r2)
- * between the two halves of 0x10000 (movs r3, #128 / lsls r3, r3, #9); here
- * the constant is finished first. In sched2 the shift outranks the load by
- * one, which a load latency of 3 would reverse. Tried: the flag clear before
- * the 0x10000 store (differ 10), the constant through
- * asm("" : "+l"(one)) volatile or not (differ 8 and 2), one-pass blocks
- * (differ 17), an empty asm (differ 8), the flag byte read into a local held
- * by an asm (differ 11, the mask becomes 254), an asm on the sprite pointer
- * (differ 22). */
+// Near miss of Func_0815b3b0 (listing 46 instructions, draft 46, differ 2,
+// one reordered row): the native reads the flag byte at +0x11 (ldrb r2)
+// between the two halves of 0x10000 (movs r3, #128 / lsls r3, r3, #9); here
+// the constant is finished first. In sched2 the shift outranks the load by
+// one, which a load latency of 3 would reverse. Tried: the flag clear before
+// the 0x10000 store (differ 10), the constant through
+// asm("" : "+l"(one)) volatile or not (differ 8 and 2), one-pass blocks
+// (differ 17), an empty asm (differ 8), the flag byte read into a local held
+// by an asm (differ 11, the mask becomes 254), an asm on the sprite pointer
+// (differ 22).
 #include "types.h"
 #include "animspr.h"
 #include "ram_buffer.h"

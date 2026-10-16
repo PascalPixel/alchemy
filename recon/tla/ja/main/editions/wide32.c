@@ -2,11 +2,11 @@
 
 extern const u8 gUiText_Glyphs[];
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
-    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || \
-    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) ||                      \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                      \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #define WIDE_WIDTH_FIXED 1
 #endif
@@ -17,38 +17,38 @@ extern const u8 gUiText_Glyphs[];
 #define GLYPH_RECORD_SIZE 32
 #endif
 
-s32 UiText_GetWideStringWidth(u16 *text)
-{
-    s32 width;
-    u16 *p;
-    u32 c;
+s32 UiText_GetWideStringWidth(u16 *text) {
+  s32 width;
+  u16 *p;
+  u32 c;
 #if !defined(WIDE_WIDTH_FIXED)
-    u32 idx;
+  u32 idx;
 #endif
 
-    c = *text;
-    width = 0;
-    p = text + 1;
-    if (c != 0) {
-        do {
-            if (c == 0x20) {
-                width += 4;
-            } else if (c <= 0xFFU) {
+  c = *text;
+  width = 0;
+  p = text + 1;
+  if (c != 0) {
+    do {
+      if (c == 0x20) {
+        width += 4;
+      } else if (c <= 0xFFU) {
 #if defined(WIDE_WIDTH_FIXED)
-                width += 0xA;
+        width += 0xA;
 #else
-                idx = c - 0xDE;
-                if (idx > 1U) {
-                    idx += 0xBE;
-                    width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16, (s32)gUiText_Glyphs);
-                }
-            } else {
-                width += 0xA;
+        idx = c - 0xDE;
+        if (idx > 1U) {
+          idx += 0xBE;
+          width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16,
+                                   (s32)gUiText_Glyphs);
+        }
+      } else {
+        width += 0xA;
 #endif
-            }
-            c = *p;
-            p += 1;
-        } while (c != 0);
-    }
-    return width;
+      }
+      c = *p;
+      p += 1;
+    } while (c != 0);
+  }
+  return width;
 }

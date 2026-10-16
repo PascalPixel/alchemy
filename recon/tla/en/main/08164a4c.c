@@ -1,15 +1,15 @@
-/* Draft, differ 2 of 53: The Broken Seal's Palette_BrightenBgEntries over
- * BG palette entries 1 to 63, with The Lost Age's clamp at 0. Left: in the
- * prologue the native loads the hoisted 0x1f mask from the pool between
- * the two halves of 0x05000000 (movs r5, #160; ldr r7; lsls r5); this
- * shifts first. Tried: an indexed palette, the mask as a const or plain
- * local, the pointer's start in a one-pass block or after a barrier, a
- * pre-incremented pointer, alchemy permute for 3 minutes (no candidate
- * better than differ 2); since: the color as an indexed giv (17), its
- * first half held in an empty asm (6), the mask as an opaque or pinned
- * local (17 to 68). Worked through sched2's ranking by hand, the native
- * order follows exactly if a load costs 3 cycles instead of agscc's 2:
- * the pooled mask (priority 3) then outranks the shift (2). */
+// Draft, differ 2 of 53: The Broken Seal's Palette_BrightenBgEntries over
+// BG palette entries 1 to 63, with The Lost Age's clamp at 0. Left: in the
+// prologue the native loads the hoisted 0x1f mask from the pool between
+// the two halves of 0x05000000 (movs r5, #160; ldr r7; lsls r5); this
+// shifts first. Tried: an indexed palette, the mask as a const or plain
+// local, the pointer's start in a one-pass block or after a barrier, a
+// pre-incremented pointer, alchemy permute for 3 minutes (no candidate
+// better than differ 2); since: the color as an indexed giv (17), its
+// first half held in an empty asm (6), the mask as an opaque or pinned
+// local (17 to 68). Worked through sched2's ranking by hand, the native
+// order follows exactly if a load costs 3 cycles instead of agscc's 2:
+// the pooled mask (priority 3) then outranks the shift (2).
 #include "types.h"
 
 void Func_08164a4c(s32 blue_delta, s32 green_delta, s32 red_delta) {

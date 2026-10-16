@@ -1,18 +1,18 @@
-/* Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
- * 123, written from the listing on The Broken Seal's canvas skeleton
- * (twins: BattleFx_RunFallingSword 0.46, by call order
- * BattleFx_RunJupiterDjinnFall 0.50), with the ARM model renderer for its
- * flashes, shards, splashes and rings.
- * Every call, cue and table read is in the native's order; what is left is
- * the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the
- * blitter pair at sp+60, the texture at sp+52, effect sp+48, canvas sp+44,
- * work sp+40, frame sp+36, graphics sp+32, &draw sp+28, &from sp+24, &to
- * sp+20, the blend offset sp+16, projected sp+12, &texture sp+8. Here it is
- * 100: two more spills move every stack offset by 8, and the loops'
- * registers follow (frame, i and the step pointer).
- * Tried: the arrays declared from, to, draw, texture (no change). Next: the
- * spark loops' blend and size as the native's spills (blend * 4 at sp+16),
- * the step pointer of the burst loop walked rather than indexed. */
+// Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
+// 123, written from the listing on The Broken Seal's canvas skeleton
+// (twins: BattleFx_RunFallingSword 0.46, by call order
+// BattleFx_RunJupiterDjinnFall 0.50), with the ARM model renderer for its
+// flashes, shards, splashes and rings.
+// Every call, cue and table read is in the native's order; what is left is
+// the frame. The native frame is 92 bytes: from at sp+80, to at sp+68, the
+// blitter pair at sp+60, the texture at sp+52, effect sp+48, canvas sp+44,
+// work sp+40, frame sp+36, graphics sp+32, &draw sp+28, &from sp+24, &to
+// sp+20, the blend offset sp+16, projected sp+12, &texture sp+8. Here it is
+// 100: two more spills move every stack offset by 8, and the loops'
+// registers follow (frame, i and the step pointer).
+// Tried: the arrays declared from, to, draw, texture (no change). Next: the
+// spark loops' blend and size as the native's spills (blend * 4 at sp+16),
+// the step pointer of the burst loop walked rather than indexed.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -135,8 +135,7 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                  128);
+                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
@@ -218,8 +217,8 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
           step->velocityY = (speed * Trig_Cos(angle)) >> 9;
           step->x = (from.x / 2) << 16;
           step->x -= step->velocityX << 6;
-          step->y = ((from.y - (Random16() & 15) - 8) << 16) -
-                    (step->velocityY << 6);
+          step->y =
+              ((from.y - (Random16() & 15) - 8) << 16) - (step->velocityY << 6);
           step->variant = 0;
           step++;
         }
@@ -267,8 +266,7 @@ void Func_0818eda4(struct BattleEffectArgument *effect) {
         Func_080151e4(0x8000, 0x10000, 0x8000);
         Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
         Func_080150e4((k << 12) - 0x3800);
-        Func_080151e4(0x5555,
-                      Data_08199ebc[k] * Trig_Sin(age << 11) / 64 * 2,
+        Func_080151e4(0x5555, Data_08199ebc[k] * Trig_Sin(age << 11) / 64 * 2,
                       0x8000);
         Func_08196958(Data_08199ea4, projected, 4);
         Func_08196a7c(model);

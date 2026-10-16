@@ -1,23 +1,23 @@
-/* Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
- * its start with a midpoint callback). Written from the listing; no Broken
- * Seal twin (twins12 0.46).
- * The native frame is 140 bytes: work at sp+4, midpoint at sp+8, the ramp at
- * sp+12 and a word at sp+0 that nothing reads; here the frame is 136 (work
- * sp+0, midpoint sp+4), which shifts every spill (about 10 rows).
- * Left: in the band loop the native keeps y in r5, x in r6, the row offset
- * in r0 and copies the falling edge's giv (r7, 2y - 192) into r4 each row;
- * it computes y * 2 inside the inner loop. Here y, x and the row offset take
- * r4, r0 and r6, and y * 2 is computed once per row (shared with fall).
- * After the push the IO queue entry's address is formed before the count
- * increment (2 rows).
- * Tried: the colour as an if/else chain or as the native's shape
- * (color = y * 2; if (y > 31) { ...; if (y <= 95) color = 63; }) (129-131
- * without the row local); the row offset as a local (109) and the tile
- * index in shifts (105); the falling edge as 63 - (y - 96) * 2,
- * 63 - ((y << 1) - 192) or 63 + (192 - y * 2) (all fold to 255 - 2y, 105),
- * as 63 - ((y - 96) << 1) (123), through a local fall = y * 2 - 192 (83);
- * frames as 192 / |speed| + 1 with half = (frames - 1) >> 1 (66, the
- * native's order of the two). */
+// Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
+// its start with a midpoint callback). Written from the listing; no Broken
+// Seal twin (twins12 0.46).
+// The native frame is 140 bytes: work at sp+4, midpoint at sp+8, the ramp at
+// sp+12 and a word at sp+0 that nothing reads; here the frame is 136 (work
+// sp+0, midpoint sp+4), which shifts every spill (about 10 rows).
+// Left: in the band loop the native keeps y in r5, x in r6, the row offset
+// in r0 and copies the falling edge's giv (r7, 2y - 192) into r4 each row;
+// it computes y * 2 inside the inner loop. Here y, x and the row offset take
+// r4, r0 and r6, and y * 2 is computed once per row (shared with fall).
+// After the push the IO queue entry's address is formed before the count
+// increment (2 rows).
+// Tried: the colour as an if/else chain or as the native's shape
+// (color = y * 2; if (y > 31) { ...; if (y <= 95) color = 63; }) (129-131
+// without the row local); the row offset as a local (109) and the tile
+// index in shifts (105); the falling edge as 63 - (y - 96) * 2,
+// 63 - ((y << 1) - 192) or 63 + (192 - y * 2) (all fold to 255 - 2y, 105),
+// as 63 - ((y - 96) << 1) (123), through a local fall = y * 2 - 192 (83);
+// frames as 192 / |speed| + 1 with half = (frames - 1) >> 1 (66, the
+// native's order of the two).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

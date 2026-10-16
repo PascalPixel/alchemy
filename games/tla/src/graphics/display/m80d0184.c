@@ -8,9 +8,9 @@
 void Func_080cf78c(void);
 void Func_080cf6fc(void);
 
-/* The Spanish and Italian far-call tables reach this function under another
- * slot's name (Func_080d6b90); those two editions keep it on their scaffold
- * (S4). */
+// The Spanish and Italian far-call tables reach this function under another
+// slot's name (Func_080d6b90); those two editions keep it on their scaffold
+// (S4).
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =

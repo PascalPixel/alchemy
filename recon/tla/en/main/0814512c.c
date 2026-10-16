@@ -1,30 +1,30 @@
-/* Draft, differ 679 of 718 (the draft has 719).
- *
- * The body of ten effect kinds (the wrappers in series_d.c pass modes 0 to
- * 9). Twin: The Broken Seal's BattleFx_RunSevenMode (shape 0.67), rebuilt
- * by The Lost Age: three more modes; a four-byte record per mode
- * (Data_08197880: shards or smoke, the shots' blitter, shots per target,
- * frames) where The Broken Seal has two bytes and fixed counts; up to four
- * shots per target, each with its own start; mode 7 prepares a canvas with
- * Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
- * palettes unpacked by Resource_LoadAndDecompress; the pair from
- * Func_08144aac; modes 4 and 7 clear the canvas each frame with blending
- * off; modes 3 and 5 clear both canvases and run a summon canvas effect
- * (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
- *
- * Left: the calls, their order, the loops and the tables are the native's;
- * the allocation is not. The native frame is 100 bytes, this one 108: the
- * native keeps mode * 4 in r11 for the whole effect and the shot's start
- * (k * 8 + i * 4) in r9, where agscc spills mode * 4 and one more value;
- * every frame offset after that differs. The palette chain keeps separate
- * branches for modes 2 and 8 in the native (one load each), where agscc
- * merges them.
- *
- * Tried (2026-10-15): the plain draft 697; the shot's aim in depth through
- * a local set straight after Random16, as the native orders it, 679; the
- * record offset (mode * 4) as a local, 688 declared last, 702 after the
- * camera.
- */
+// Draft, differ 679 of 718 (the draft has 719).
+
+// The body of ten effect kinds (the wrappers in series_d.c pass modes 0 to
+// 9). Twin: The Broken Seal's BattleFx_RunSevenMode (shape 0.67), rebuilt
+// by The Lost Age: three more modes; a four-byte record per mode
+// (Data_08197880: shards or smoke, the shots' blitter, shots per target,
+// frames) where The Broken Seal has two bytes and fixed counts; up to four
+// shots per target, each with its own start; mode 7 prepares a canvas with
+// Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
+// palettes unpacked by Resource_LoadAndDecompress; the pair from
+// Func_08144aac; modes 4 and 7 clear the canvas each frame with blending
+// off; modes 3 and 5 clear both canvases and run a summon canvas effect
+// (SummonFx_RunCanvasMode1 or 3) in place of the canvas teardown.
+
+// Left: the calls, their order, the loops and the tables are the native's;
+// the allocation is not. The native frame is 100 bytes, this one 108: the
+// native keeps mode * 4 in r11 for the whole effect and the shot's start
+// (k * 8 + i * 4) in r9, where agscc spills mode * 4 and one more value;
+// every frame offset after that differs. The palette chain keeps separate
+// branches for modes 2 and 8 in the native (one load each), where agscc
+// merges them.
+
+// Tried (2026-10-15): the plain draft 697; the shot's aim in depth through
+// a local set straight after Random16, as the native orders it, 679; the
+// record offset (mode * 4) as a local, 688 declared last, 702 after the
+// camera.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

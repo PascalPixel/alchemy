@@ -1,4 +1,4 @@
-/* FarCall_MenuTable: one entry per 8-byte stub, in table order. */
+// FarCall_MenuTable: one entry per 8-byte stub, in table order.
 FAR_CALL(RunAssetSelectionScreenFar, RunAssetSelectionScreen, s32, (void))
 FAR_CALL(Menu_OpenConfirmPromptFar, Menu_OpenConfirmPrompt, s32, (void))
 FAR_CALL(Menu_OpenActionFlow, ActionMenu_Open, s32, (void))

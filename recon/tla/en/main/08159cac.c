@@ -1,46 +1,46 @@
-/* Draft of Func_08159cac, effect kind 2: shattering rocks.
- *
- * On screen: boulders drop out of the sky onto the targets, one after
- * another, from the variant's row of drop frames. Each falls faster every
- * frame and comes to rest at y 50; eighteen frames after its drop it
- * shatters into 21 shards that fly up, tumble and fall back under gravity,
- * with cue 134, a short shake, and every target flashing for eight frames.
- * The first boulder's crash lets the battle resume with hit cue 134; 48
- * frames after the last drop it resumes again with hit cue 133.
- *
- * Setup: the battle effect canvas on BG2 at a scale of one, centred
- * between the first and the last target, the boulder and shard sheet in
- * the effect work, a transparent blitter, and the transfer callback (copy
- * mode); each boulder starts 64 pixels above the canvas and each shard at
- * its place in its boulder.
- * Frame loop, the last drop frame + 65 frames: for each boulder, draw and
- * drop it, or draw and move its shards once it has shattered.
- * Teardown: the callback and the blitter are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunShatteringRocks (kind 2 there
- * too), with The Lost Age's heap slots, blitter mode (3 minus ☀️'s) and
- * callback order, no work->effect store, and The Lost Age's timing: the
- * effect runs 65 frames past the last drop, not 80, and the first crash
- * resumes the battle where ☀️ only plays the cue.
- *
- * Listing 409 instructions, draft 409, differ 32 (trial 1, 2026-10-15).
- * Left: 11 single-row order differences (the native issues pool loads
- * before neighbouring immediates, the effect spill before the heap base,
- * movs r1 before movs r0 for the loader), and the first literal pool lands
- * one call later, which shifts four pc offsets.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names                       34
- *   Func_081963ec returning s32 (LoadWork returns its
- *     store-flag result)                                      34 -> 32
- *   an empty asm at the top fixes the first row; the call
- *     argument against the canvas load cannot be reached by
- *     a barrier                                               30, not kept
- *   the loader's parameter types                              no change
- *   alchemy permute, 6 minutes: only a canvas load moved
- *     past the call, which the native does not do             not kept
- */
+// Draft of Func_08159cac, effect kind 2: shattering rocks.
+
+// On screen: boulders drop out of the sky onto the targets, one after
+// another, from the variant's row of drop frames. Each falls faster every
+// frame and comes to rest at y 50; eighteen frames after its drop it
+// shatters into 21 shards that fly up, tumble and fall back under gravity,
+// with cue 134, a short shake, and every target flashing for eight frames.
+// The first boulder's crash lets the battle resume with hit cue 134; 48
+// frames after the last drop it resumes again with hit cue 133.
+
+// Setup: the battle effect canvas on BG2 at a scale of one, centred
+// between the first and the last target, the boulder and shard sheet in
+// the effect work, a transparent blitter, and the transfer callback (copy
+// mode); each boulder starts 64 pixels above the canvas and each shard at
+// its place in its boulder.
+// Frame loop, the last drop frame + 65 frames: for each boulder, draw and
+// drop it, or draw and move its shards once it has shattered.
+// Teardown: the callback and the blitter are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunShatteringRocks (kind 2 there
+// too), with The Lost Age's heap slots, blitter mode (3 minus ☀️'s) and
+// callback order, no work->effect store, and The Lost Age's timing: the
+// effect runs 65 frames past the last drop, not 80, and the first crash
+// resumes the battle where ☀️ only plays the cue.
+
+// Listing 409 instructions, draft 409, differ 32 (trial 1, 2026-10-15).
+// Left: 11 single-row order differences (the native issues pool loads
+// before neighbouring immediates, the effect spill before the heap base,
+// movs r1 before movs r0 for the loader), and the first literal pool lands
+// one call later, which shifts four pc offsets.
+
+// Tried:
+// ☀️'s body with The Lost Age's names                       34
+// Func_081963ec returning s32 (LoadWork returns its
+// store-flag result)                                      34 -> 32
+// an empty asm at the top fixes the first row; the call
+// argument against the canvas load cannot be reached by
+// a barrier                                               30, not kept
+// the loader's parameter types                              no change
+// alchemy permute, 6 minutes: only a canvas load moved
+// past the call, which the native does not do             not kept
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -1,44 +1,44 @@
-/* Draft of Func_0815e3ac, the cast sequence BattleFx_DispatchByIdRange
- * runs for kinds below 100 (except 10): a beam strikes the target and
- * sparks fly from it.
- *
- * On screen: the canvas layer opens over the battle view, centred on the
- * first target within 128 pixels. A beam reaches out from beside the
- * caster towards the target, its picture chosen by the kind: kind 4 a
- * six-cel wave (12 frames), kinds 0-2, 5 and 6 a six-cel arc (12 frames),
- * kind 3 a six-cel strike that stretches across (18 frames). An orb
- * flashes on the target from frame 4 to 15. At frame 4 the target recoils
- * (kind 7 motion 4, kinds 5 and 6 motion 1, kind 8 a long push back, the
- * rest motion 0); at frame 5 the battle resumes with hit cue 134 for an
- * enemy whose summon entry is flagged, 133 otherwise. From frame 4, 64
- * sparks fly out of the middle of the target in pairs, away from the
- * caster, shrinking as they go. After 32 frames the layer closes.
- *
- * Setup: the battle display and the canvas tile map on BG1, two blitters
- * for the caster's side (additive and max; kinds 5 and 6 also flip them
- * vertically), the beam's sheet for the kind, the palette of the Mars
- * Djinn (an enemy caster) or of the star crescent sheet (a party member)
- * by DMA, the spark sheet, the orb sheet, the transfer callback (half the
- * last frame left behind), and the sparks at the target.
- *
- * Port of The Broken Seal's BattlePres_RunBeamSequence, with The Lost
- * Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
- * work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
- * its own test, the beam is drawn additive (☀️ draws it with max), the
- * recoil depends on the kind, the summon test reads the enemy id, and the
- * palette goes by DMA.
- *
- * Listing 687 instructions, draft 687, differ 50 (2026-10-15). Left: rows
- * one place apart (stack and pool loads, constants built around them, the
- * call arguments' stores), the usual residue; no allocation difference.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's changes, the beam with
- *     draw[1] as ☀️ has it                                   210 (695 rows)
- *   the beam with draw[0], as the listing loads [sp, #56]    210 -> 54
- *   declaration order, a greedy sweep                        54
- *   the tables without const, as ☀️'s readers extern theirs 54 -> 50
- */
+// Draft of Func_0815e3ac, the cast sequence BattleFx_DispatchByIdRange
+// runs for kinds below 100 (except 10): a beam strikes the target and
+// sparks fly from it.
+
+// On screen: the canvas layer opens over the battle view, centred on the
+// first target within 128 pixels. A beam reaches out from beside the
+// caster towards the target, its picture chosen by the kind: kind 4 a
+// six-cel wave (12 frames), kinds 0-2, 5 and 6 a six-cel arc (12 frames),
+// kind 3 a six-cel strike that stretches across (18 frames). An orb
+// flashes on the target from frame 4 to 15. At frame 4 the target recoils
+// (kind 7 motion 4, kinds 5 and 6 motion 1, kind 8 a long push back, the
+// rest motion 0); at frame 5 the battle resumes with hit cue 134 for an
+// enemy whose summon entry is flagged, 133 otherwise. From frame 4, 64
+// sparks fly out of the middle of the target in pairs, away from the
+// caster, shrinking as they go. After 32 frames the layer closes.
+
+// Setup: the battle display and the canvas tile map on BG1, two blitters
+// for the caster's side (additive and max; kinds 5 and 6 also flip them
+// vertically), the beam's sheet for the kind, the palette of the Mars
+// Djinn (an enemy caster) or of the star crescent sheet (a party member)
+// by DMA, the spark sheet, the orb sheet, the transfer callback (half the
+// last frame left behind), and the sparks at the target.
+
+// Port of The Broken Seal's BattlePres_RunBeamSequence, with The Lost
+// Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
+// work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
+// its own test, the beam is drawn additive (☀️ draws it with max), the
+// recoil depends on the kind, the summon test reads the enemy id, and the
+// palette goes by DMA.
+
+// Listing 687 instructions, draft 687, differ 50 (2026-10-15). Left: rows
+// one place apart (stack and pool loads, constants built around them, the
+// call arguments' stores), the usual residue; no allocation difference.
+
+// Tried:
+// ☀️'s body with The Lost Age's changes, the beam with
+// draw[1] as ☀️ has it                                   210 (695 rows)
+// the beam with draw[0], as the listing loads [sp, #56]    210 -> 54
+// declaration order, a greedy sweep                        54
+// the tables without const, as ☀️'s readers extern theirs 54 -> 50
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

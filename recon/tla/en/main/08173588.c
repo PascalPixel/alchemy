@@ -1,27 +1,27 @@
-/* Draft of Func_08173588, the body of effect kinds 240 (Rime, mode 0) and
- * 238 (Haze, mode 1) through Func_08173570 and Func_0817357c, written from
- * the listing on The Broken Seal's canvas skeleton. No close twin (shape
- * BattleFx_RunRisingBurst 0.470, call order
- * BattleEffect_RunDualParticleStream 0.456). Func_0815585c, the canvas
- * preparer (The Broken Seal's BattleFx_PrepareCanvasEffect, reworked),
- * fills the centre and base points; its prototype here is read from the
- * calls.
- *
- * Listing 485 instructions, draft 483, differ 258.
- * Left: allocation. The native keeps work in r11, the frame in r9 and
- * the model in r10; here work takes r9, which renames every use of it,
- * and the mirror copy's first load and store come one row apart.
- * Tried (differ):
- *   first draft (the mirror copy through walking pointers)              461
- *   the mirror copy indexed (the native reloads the source byte after
- *     the first store, as both do), centre and base declared first      296
- *   the blitter as The Broken Seal's pair, only the first used (the
- *     native frame's unused word; FAKEMATCH below)                     258
- *   alchemy permute 8 minutes, 2 jobs, from the 296 form: 202 only with
- *     a forced pointer
- *     temporary for Haze's star->variant, 221 with star->y through a
- *     temporary; neither kept
- */
+// Draft of Func_08173588, the body of effect kinds 240 (Rime, mode 0) and
+// 238 (Haze, mode 1) through Func_08173570 and Func_0817357c, written from
+// the listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleFx_RunRisingBurst 0.470, call order
+// BattleEffect_RunDualParticleStream 0.456). Func_0815585c, the canvas
+// preparer (The Broken Seal's BattleFx_PrepareCanvasEffect, reworked),
+// fills the centre and base points; its prototype here is read from the
+// calls.
+
+// Listing 485 instructions, draft 483, differ 258.
+// Left: allocation. The native keeps work in r11, the frame in r9 and
+// the model in r10; here work takes r9, which renames every use of it,
+// and the mirror copy's first load and store come one row apart.
+// Tried (differ):
+// first draft (the mirror copy through walking pointers)              461
+// the mirror copy indexed (the native reloads the source byte after
+// the first store, as both do), centre and base declared first      296
+// the blitter as The Broken Seal's pair, only the first used (the
+// native frame's unused word; FAKEMATCH below)                     258
+// alchemy permute 8 minutes, 2 jobs, from the 296 form: 202 only with
+// a forced pointer
+// temporary for Haze's star->variant, 221 with star->y through a
+// temporary; neither kept
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

@@ -1,21 +1,21 @@
-/* Draft, differ 485 of 734 (one instruction short).
- *
- * No twin: an effect new to ⚓️, reached from the scenes through the
- * far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
- * canvas skeleton of the scene effects (its own heap blocks, the work marked
- * active, the canvas transfer), and its pictures are textured models drawn
- * by the IWRAM renderer (Func_081969f8, Func_08196958, Func_08196a7c), as
- * 0813d098's star is.
- *
- * Left: allocation. The native keeps the centre's address in r11 and the
- * flashes' index as its own induction variable (frame * 2 - 96, in a stack
- * slot), with a frame of 80 bytes; here the centre's address is spilled and
- * the frame is 76 bytes, so every slot and most registers move. The control
- * flow follows the listing block for block.
- *
- * Tried:
- *   written from the listing                                   485
- */
+// Draft, differ 485 of 734 (one instruction short).
+
+// No twin: an effect new to ⚓️, reached from the scenes through the
+// far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
+// canvas skeleton of the scene effects (its own heap blocks, the work marked
+// active, the canvas transfer), and its pictures are textured models drawn
+// by the IWRAM renderer (Func_081969f8, Func_08196958, Func_08196a7c), as
+// 0813d098's star is.
+
+// Left: allocation. The native keeps the centre's address in r11 and the
+// flashes' index as its own induction variable (frame * 2 - 96, in a stack
+// slot), with a frame of 80 bytes; here the centre's address is spilled and
+// the frame is 76 bytes, so every slot and most registers move. The control
+// flow follows the listing block for block.
+
+// Tried:
+// written from the listing                                   485
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -99,7 +99,7 @@ extern char ResourceId_EffectPalette03;
 void BattleFx_BeginCanvasLayer(s32 control);
 void Func_08143bb8(void); // BattleFx_EndCanvasLayer
 s32 Func_081963ec(s32 slot, s32 flags);
-s32 Func_08143000(void); // the canvas transfer callback
+s32 Func_08143000(void);  // the canvas transfer callback
 void Func_08143488(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
@@ -112,8 +112,8 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
@@ -128,17 +128,16 @@ void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
 void WaitFrames(s32 frames);
 
-/*
- * Rings and crystals gather on the user, for the scenes.
- *
- * A glow on the canvas map widens over the user for 56 frames while 16
- * spinning rings rise around it, four abreast. From frame 48 the screen
- * shakes, flashes burst upward and four crystals grow out of the ground one
- * after another, spinning. The user flashes at frames 32 to 68. Kinds 78
- * and 79 stand to either side and hand over to the battle (Func_08118150)
- * at frame 62; kind 80 runs 100 frames, fades to white and restores the
- * scene's view itself.
- */
+// Rings and crystals gather on the user, for the scenes.
+
+// A glow on the canvas map widens over the user for 56 frames while 16
+// spinning rings rise around it, four abreast. From frame 48 the screen
+// shakes, flashes burst upward and four crystals grow out of the ground one
+// after another, spinning. The user flashes at frames 32 to 68. Kinds 78
+// and 79 stand to either side and hand over to the battle (Func_08118150)
+// at frame 62; kind 80 runs 100 frames, fades to white and restores the
+// scene's view itself.
+
 void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   struct EffectPosition center;
   struct ModelTexture texture;
@@ -158,8 +157,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000,
-                             0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -188,14 +187,12 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       work->transferValue = 50;
       if (kind == KIND_LEFT)
         Iwram_CopyWords((void *)BG_PLTT,
-                        Resource_GetTableEntry(
-                            (s32)&ResourceId_OrangePaletteB),
+                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                         128);
       else
-        Iwram_CopyWords((void *)BG_PLTT,
-                        Resource_GetTableEntry(
-                            (s32)&ResourceId_EffectPalette03),
-                        128);
+        Iwram_CopyWords(
+            (void *)BG_PLTT,
+            Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
       if (frame == 0)
         Audio_PlayCue(140);
     }

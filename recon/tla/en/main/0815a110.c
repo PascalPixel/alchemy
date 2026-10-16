@@ -1,75 +1,75 @@
-/* Draft of BattlePres_RunBurstScene, the burst family's body (ten kinds
- * through eight wrappers): blow after blow lands on the first target.
- *
- * On screen: the caster closes in on the first target (kind variant 12
- * lunges further and waits seven frames), then a run of blows lands there,
- * one every few frames: each is an arc (or, every third and fourth blow,
- * a wave low across the ground) drawn mirrored on alternate blows, an orb
- * that bursts over the target, the target flashing, a recoil on every
- * other blow, cue 134 and a short shake, and a spray of motes that fall
- * and bounce off the ground. The last blow recoils the target harder,
- * shakes for eight frames and lets the battle resume with hit cue 134.
- * Some records fill the canvas at each hit. Record mode 1 adds glints
- * sparkling around the target for the first 32 frames; mode 2 ripples BG2
- * through an H-blank line table and lets 16 puffs of smoke rise from the
- * target. With its Djinn prelude the canvas preparer runs first.
- *
- * Each variant has an eight-byte record (☀️'s gBurstScene_Records had
- * seven):
- *   [0] the arc's sheet (0 BlueArcSheetA, else B; 1 also draws every blow
- *       as an arc)
- *   [1] the palette's resource (0 to 3)
- *   [2] the number of blows
- *   [3] the motes each blow throws
- *   [4] the frames between blows
- *   [5] the effect's length in frames
- *   [6] 1 to fill the canvas at each hit
- *   [7] 1 for the glints, 2 for the ripple and the smoke
- *
- * Setup: the battle effect canvas, the dot sheet, the orb sheet packed to
- * half width in the map cell buffer (the canvas is shown twice as wide),
- * the arc, wave and smoke sheets, the record's palette, the approach, the
- * target's position, the transfer callback (and the ripple's), 256 motes
- * waiting 25 pixels above the target, and 64 smoke puffs at its feet.
- * Frame loop, record[5] frames: the ripple's line table, the blows (arc or
- * wave, hit, orb), the motes, then the glints or the smoke.
- * Teardown: the callbacks are removed and the canvas layer is closed; the
- * blitters are built and released every frame.
- *
- * Port of The Broken Seal's BattlePres_RunBurstScene, reworked in The Lost
- * Age: an eighth record byte and its two extras, the orb packed into the
- * map cell buffer, 256 motes where ☀️ has 768, the approach by variant,
- * The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
- * order, and no work->effect store.
- *
- * Listing 989 instructions, draft 990, differ 189 (2026-10-15). Left: the
- * hoisted pointers' spill slots one word off (&actorPos, &draw and
- * camera + 12 at sp+20, 24 and 16 where the native has 24, 28 and 20), the
- * glint loop's invariants (the native keeps the constant 3 in r9 for both
- * masks and re-reads the width and height tables; here the height table
- * and cel * 2 are hoisted), and rows one place apart.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's changes as read from the
- *     listing                                                 584 (975 rows)
- *   the Tornado sheet load after the packing, the arcs at
- *     work->sheet + 0xc80                                      584 -> 535
- *   declaration order (greedy sweep)                           535 -> 509
- *   the record table without const, as ☀️'s readers extern
- *     theirs: the blow count is read again after each call,
- *     and the frame drops to the native 152 bytes              509 -> 362
- *   declaration order again                                    362 -> 328
- *   the packing loop: Ram_MapCellBuffer + 0x2400 as a symbol
- *     (846), folded with 0x2e88 (343), split as
- *     (base + dst)[0x2e88] (295), the base a local pointer set
- *     before the loop (247), dst declared before src (the
- *     native's row * 20 in r6)                                328 -> 239
- *   the height table without const, Trig_Sin(angle) * radius
- *     as the native multiplies                                 239 -> 211
- *     (the width table without const, or both: 295 and 311;
- *     frame & 3 in place of cel: 351)
- *   declaration order again                                    211 -> 189
- */
+// Draft of BattlePres_RunBurstScene, the burst family's body (ten kinds
+// through eight wrappers): blow after blow lands on the first target.
+
+// On screen: the caster closes in on the first target (kind variant 12
+// lunges further and waits seven frames), then a run of blows lands there,
+// one every few frames: each is an arc (or, every third and fourth blow,
+// a wave low across the ground) drawn mirrored on alternate blows, an orb
+// that bursts over the target, the target flashing, a recoil on every
+// other blow, cue 134 and a short shake, and a spray of motes that fall
+// and bounce off the ground. The last blow recoils the target harder,
+// shakes for eight frames and lets the battle resume with hit cue 134.
+// Some records fill the canvas at each hit. Record mode 1 adds glints
+// sparkling around the target for the first 32 frames; mode 2 ripples BG2
+// through an H-blank line table and lets 16 puffs of smoke rise from the
+// target. With its Djinn prelude the canvas preparer runs first.
+
+// Each variant has an eight-byte record (☀️'s gBurstScene_Records had
+// seven):
+// [0] the arc's sheet (0 BlueArcSheetA, else B; 1 also draws every blow
+// as an arc)
+// [1] the palette's resource (0 to 3)
+// [2] the number of blows
+// [3] the motes each blow throws
+// [4] the frames between blows
+// [5] the effect's length in frames
+// [6] 1 to fill the canvas at each hit
+// [7] 1 for the glints, 2 for the ripple and the smoke
+
+// Setup: the battle effect canvas, the dot sheet, the orb sheet packed to
+// half width in the map cell buffer (the canvas is shown twice as wide),
+// the arc, wave and smoke sheets, the record's palette, the approach, the
+// target's position, the transfer callback (and the ripple's), 256 motes
+// waiting 25 pixels above the target, and 64 smoke puffs at its feet.
+// Frame loop, record[5] frames: the ripple's line table, the blows (arc or
+// wave, hit, orb), the motes, then the glints or the smoke.
+// Teardown: the callbacks are removed and the canvas layer is closed; the
+// blitters are built and released every frame.
+
+// Port of The Broken Seal's BattlePres_RunBurstScene, reworked in The Lost
+// Age: an eighth record byte and its two extras, the orb packed into the
+// map cell buffer, 256 motes where ☀️ has 768, the approach by variant,
+// The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
+// order, and no work->effect store.
+
+// Listing 989 instructions, draft 990, differ 189 (2026-10-15). Left: the
+// hoisted pointers' spill slots one word off (&actorPos, &draw and
+// camera + 12 at sp+20, 24 and 16 where the native has 24, 28 and 20), the
+// glint loop's invariants (the native keeps the constant 3 in r9 for both
+// masks and re-reads the width and height tables; here the height table
+// and cel * 2 are hoisted), and rows one place apart.
+
+// Tried:
+// ☀️'s body with The Lost Age's changes as read from the
+// listing                                                 584 (975 rows)
+// the Tornado sheet load after the packing, the arcs at
+// work->sheet + 0xc80                                      584 -> 535
+// declaration order (greedy sweep)                           535 -> 509
+// the record table without const, as ☀️'s readers extern
+// theirs: the blow count is read again after each call,
+// and the frame drops to the native 152 bytes              509 -> 362
+// declaration order again                                    362 -> 328
+// the packing loop: Ram_MapCellBuffer + 0x2400 as a symbol
+// (846), folded with 0x2e88 (343), split as
+// (base + dst)[0x2e88] (295), the base a local pointer set
+// before the loop (247), dst declared before src (the
+// native's row * 20 in r6)                                328 -> 239
+// the height table without const, Trig_Sin(angle) * radius
+// as the native multiplies                                 239 -> 211
+// (the width table without const, or both: 295 and 311;
+// frame & 3 in place of cel: 351)
+// declaration order again                                    211 -> 189
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

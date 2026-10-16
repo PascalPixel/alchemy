@@ -1,17 +1,17 @@
-/* Draft of Func_08127308, The Broken Seal's BattleFx_PlayUnitElementEffect
- * (games/tbs/src/battle/battle.c): differ 36 of 280 (tla-en, 2026-10-15).
- * The Lost Age reads the battle work once (slot 36) and keeps it on the
- * stack, scales the palette with ColorBuffer_Scale, and in mode 1 sends the
- * canvas origin from a local pair rather than the effect work. The twin's
- * unread ten-word tail and its slot-12 pointer are not needed: the frame
- * is the four positions and launches, the origin pair, and two spills.
- *
- * Left: order only, about a dozen places, each a pooled or stack load the
- * native issues one slot earlier than sched2 does here (the session
- * reload inside 0x670 and 0x56c, the brightness pointer's spill, the IO
- * queue entry's first store before the count's, the queue and IME
- * addresses before mode 1's loop). The residue the Djinn drafts record.
- */
+// Draft of Func_08127308, The Broken Seal's BattleFx_PlayUnitElementEffect
+// (games/tbs/src/battle/battle.c): differ 36 of 280 (tla-en, 2026-10-15).
+// The Lost Age reads the battle work once (slot 36) and keeps it on the
+// stack, scales the palette with ColorBuffer_Scale, and in mode 1 sends the
+// canvas origin from a local pair rather than the effect work. The twin's
+// unread ten-word tail and its slot-12 pointer are not needed: the frame
+// is the four positions and launches, the origin pair, and two spills.
+
+// Left: order only, about a dozen places, each a pooled or stack load the
+// native issues one slot earlier than sched2 does here (the session
+// reload inside 0x670 and 0x56c, the brightness pointer's spill, the IO
+// queue entry's first store before the count's, the queue and IME
+// addresses before mode 1's loop). The residue the Djinn drafts record.
+
 #include "types.h"
 #include "effect_step.h"
 #include "io_reg.h"

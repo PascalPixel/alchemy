@@ -1,35 +1,35 @@
-/* Draft of BattleFx_RunProjectileVolleyB, the body behind the 22 wrappers
- * of projectile_volley_b.c (23 effect kinds, modes 0-24).
- *
- * New in The Lost Age. Its nearest relative is The Broken Seal's
- * BattleFx_RunProjectileVolley (effect.c; shape 0.44, structure 0.53): the
- * same frame: a shot launched each frame from the user toward one target
- * after another, every live shot drawn and moved, the targets hit four
- * frames apart, and a fade over the last eight frames. The mode chooses
- * the picture and how it is prepared (holes punched at random, a level
- * remap, a doubled beam, a grey or violet ramp), the palette, the blending,
- * how many shots and where they aim; modes 5 and 23 draw one big picture at
- * the user instead, mode 10 also draws motes into the user, mode 24 adds
- * glints around the targets, and modes 11, 14 and 18 hand over to
- * SummonFx_RunCanvasEffect at the end. Resources not yet named in
- * directory.s, by row and asset: 0x151 BattleFx_MarsDjinnSmallSheet,
- * 0x157 BattleFx_VenusDjinnSmallSheet, 0x11c
- * BattleFx_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
- * BattleFx_BoulderSheet, 0x116 BattleFx_DemonFaceSheet, 0x16e
- * BattleFx_HeartSheet, 0x161 BattleFx_SmokeSheet, 0x13e
- * BattleFx_FlashBurstSheet, 0x12f BattleFx_WaterSpraySheet, 0x164
- * BattleFx_PinkPalette, 0x187 BattleFx_RockSpireSheet, 0x150
- * BattleFx_MarsDjinnSheet, 0x148 BattleFx_OrangePaletteB, 0x163
- * BattleFx_LimePalette, 0x166 BattleFx_CyanPalette, 0x184
- * BattleFx_BlastSheet, 0x190 BattleFx_BlueBeamSheet and 0xb9
- * BattleFx_EffectPalette01.
- *
- * Draft: differ 2442 of 2239 (draft 2215), a first transcription of the
- * listing block by block. The frame is 244 bytes where the native's is 252
- * (two fewer spill slots: the mode sits in r9 here, r11 there), so every
- * stack offset and most allocation differs; 24 instructions are missing,
- * spread over the mode tests.
- */
+// Draft of BattleFx_RunProjectileVolleyB, the body behind the 22 wrappers
+// of projectile_volley_b.c (23 effect kinds, modes 0-24).
+
+// New in The Lost Age. Its nearest relative is The Broken Seal's
+// BattleFx_RunProjectileVolley (effect.c; shape 0.44, structure 0.53): the
+// same frame: a shot launched each frame from the user toward one target
+// after another, every live shot drawn and moved, the targets hit four
+// frames apart, and a fade over the last eight frames. The mode chooses
+// the picture and how it is prepared (holes punched at random, a level
+// remap, a doubled beam, a grey or violet ramp), the palette, the blending,
+// how many shots and where they aim; modes 5 and 23 draw one big picture at
+// the user instead, mode 10 also draws motes into the user, mode 24 adds
+// glints around the targets, and modes 11, 14 and 18 hand over to
+// SummonFx_RunCanvasEffect at the end. Resources not yet named in
+// directory.s, by row and asset: 0x151 BattleFx_MarsDjinnSmallSheet,
+// 0x157 BattleFx_VenusDjinnSmallSheet, 0x11c
+// BattleFx_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
+// BattleFx_BoulderSheet, 0x116 BattleFx_DemonFaceSheet, 0x16e
+// BattleFx_HeartSheet, 0x161 BattleFx_SmokeSheet, 0x13e
+// BattleFx_FlashBurstSheet, 0x12f BattleFx_WaterSpraySheet, 0x164
+// BattleFx_PinkPalette, 0x187 BattleFx_RockSpireSheet, 0x150
+// BattleFx_MarsDjinnSheet, 0x148 BattleFx_OrangePaletteB, 0x163
+// BattleFx_LimePalette, 0x166 BattleFx_CyanPalette, 0x184
+// BattleFx_BlastSheet, 0x190 BattleFx_BlueBeamSheet and 0xb9
+// BattleFx_EffectPalette01.
+
+// Draft: differ 2442 of 2239 (draft 2215), a first transcription of the
+// listing block by block. The frame is 244 bytes where the native's is 252
+// (two fewer spill slots: the mode sits in r9 here, r11 there), so every
+// stack offset and most allocation differs; 24 instructions are missing,
+// spread over the mode tests.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -133,16 +133,16 @@ extern u8 gData_081974ad[];  // the shard heights
 extern u16 gData_081974bc[]; // gShatterRocks_ShardCells
 extern u8 Data_081983c8[];   // gTwelveMode_GlintDrawFlags
 
-/* A volley of shots flies from the user at the targets, one launched each
- * frame toward the next target.
- *
- * Setup: an optional Djinni appears behind the user (the prelude); the
- * mode prepares its picture and palette and moves the launch point. Frame
- * loop: a shot leaves the user each frame for 48 frames (16 in mode 10),
- * aimed near the next target; every live shot is drawn and moved and goes
- * out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
- * are hit four frames apart and recoil; the blend fades out over the last
- * eight frames. */
+// A volley of shots flies from the user at the targets, one launched each
+// frame toward the next target.
+
+// Setup: an optional Djinni appears behind the user (the prelude); the
+// mode prepares its picture and palette and moves the launch point. Frame
+// loop: a shot leaves the user each frame for 48 frames (16 in mode 10),
+// aimed near the next target; every live shot is drawn and moved and goes
+// out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
+// are hit four frames apart and recoil; the blend fades out over the last
+// eight frames.
 void BattleFx_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                                    u32 mode) {
   void *canvas;

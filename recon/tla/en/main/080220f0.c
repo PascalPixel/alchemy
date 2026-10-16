@@ -1,20 +1,20 @@
-/* Draft of Render_ApplyProjectedPlacement: differ 214 of 258 (tla-en,
- * 2026-10-15; the earlier draft, The Broken Seal's C as it stands, was at
- * 332). The Broken Seal's function of the same name
- * (games/tbs/src/field/field.c) as The Lost Age reworked it: the object
- * keeps its shadow's sprite after its own fields (so the shared
- * AnimationObject does not fit), the shadow is an 8 by 4 sprite at a fixed
- * offset, the sprite's anchor turns with the object (sine and cosine of its
- * rotation), a zero scale draws nothing, and both sprites go into the depth
- * list by their depth (Func_080140d8). The twin's two unused arrays stay:
- * they make the native 64-byte frame.
- *
- * Left: allocation. The native keeps the flip in ip, the scales in r6 and
- * r5 and the ground height in r8, with x, y and z at sp+12, sp+8 and sp+4;
- * here the flip takes r6 and the spills sit one word higher, which moves
- * every register after it. Tried: the scales read before the position
- * (216), the transform declared first (216).
- */
+// Draft of Render_ApplyProjectedPlacement: differ 214 of 258 (tla-en,
+// 2026-10-15; the earlier draft, The Broken Seal's C as it stands, was at
+// 332). The Broken Seal's function of the same name
+// (games/tbs/src/field/field.c) as The Lost Age reworked it: the object
+// keeps its shadow's sprite after its own fields (so the shared
+// AnimationObject does not fit), the shadow is an 8 by 4 sprite at a fixed
+// offset, the sprite's anchor turns with the object (sine and cosine of its
+// rotation), a zero scale draws nothing, and both sprites go into the depth
+// list by their depth (Func_080140d8). The twin's two unused arrays stay:
+// they make the native 64-byte frame.
+
+// Left: allocation. The native keeps the flip in ip, the scales in r6 and
+// r5 and the ground height in r8, with x, y and z at sp+12, sp+8 and sp+4;
+// here the flip takes r6 and the spills sit one word higher, which moves
+// every register after it. Tried: the scales read before the position
+// (216), the transform declared first (216).
+
 #include "types.h"
 #include "affine.h"
 #include "animspr.h"

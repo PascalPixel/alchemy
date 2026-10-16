@@ -1,4 +1,5 @@
-/* differ 16: ported from the twin in ☀️ radpart.c; native leaves several loads after independent moves */
+// differ 16: ported from the twin in ☀️ radpart.c; native leaves several loads
+// after independent moves
 #include "types.h"
 #include "system.h"
 #include "animspr.h"
@@ -10,14 +11,15 @@
 #include "ram_buffer.h"
 
 struct EffectVector {
-    s32 x;
-    s32 y;
-    s32 z;
+  s32 x;
+  s32 y;
+  s32 z;
 };
 
 struct BattleFxScene;
 
-#define ObjectGroup_SetChildValueUnlessFifteenFar ((void (*)(s32,s32))Animation_ApplyChildValuesToRecordFar)
+#define ObjectGroup_SetChildValueUnlessFifteenFar                              \
+  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define ObjectDispatch_ReleaseFar Object_Destroy
 #define gBattleFx_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
@@ -28,15 +30,16 @@ void Animation_ApplyChildValuesToRecordFar();
 void Object_Destroy();
 
 struct EffectOwner {
-    u8 unk00[8];
-    struct EffectVector position;
-    u8 unk14[0x3c];
-    struct AnimationObject *sprite;
+  u8 unk00[8];
+  struct EffectVector position;
+  u8 unk14[0x3c];
+  struct AnimationObject *sprite;
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle,
+                           struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh();
 void Camera_WorldToScreen();
@@ -49,39 +52,39 @@ void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
-    u8 unk00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unk14[4];
-    s32 scaleX;
-    s32 scaleY;
-    u8 unk20[68];
-    u16 timer;
-    u8 unk66[6];
-    void *callback;
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[4];
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk20[68];
+  u16 timer;
+  u8 unk66[6];
+  void *callback;
 };
 
 struct OrbitPosition {
-    s32 x;
-    s32 y;
-    s32 z;
+  s32 x;
+  s32 y;
+  s32 z;
 };
 
 struct DescendingOrbitObject {
-    u8 unk00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unk14[80];
-    u16 timer;
-    s16 angle;
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[80];
+  u16 timer;
+  s16 angle;
 };
 
 struct SpreadPosition {
-    s32 x;
-    s32 y;
-    s32 z;
+  s32 x;
+  s32 y;
+  s32 z;
 };
 
 void Audio_PlayCue(s32);
@@ -89,28 +92,28 @@ void Audio_PlayCue(s32);
 extern const s32 gBattleFx_CommonParticleScript[];
 
 struct CaptureObject {
-    u8 unk00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 baseY;
-    s32 scaleX;
-    s32 scaleY;
-    u8 unk20[8];
-    s32 gravity;
-    u8 unk2c[4];
-    s32 speed;
-    u8 unk34[33];
-    u8 mode;
-    u8 unk56[5];
-    u8 visible;
-    u8 unk5c[2];
-    u16 lifetime;
-    u8 unk60[4];
-    u16 timer;
-    u16 angle;
-    u8 unk68[4];
-    void *callback;
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 baseY;
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk20[8];
+  s32 gravity;
+  u8 unk2c[4];
+  s32 speed;
+  u8 unk34[33];
+  u8 mode;
+  u8 unk56[5];
+  u8 visible;
+  u8 unk5c[2];
+  u16 lifetime;
+  u8 unk60[4];
+  u16 timer;
+  u16 angle;
+  u8 unk68[4];
+  void *callback;
 };
 
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
@@ -121,12 +124,12 @@ void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
 struct LinkedCaptureObject {
-    u8 padding000[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 padding014[84];
-    struct LinkedCaptureObject *target;
+  u8 padding000[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 padding014[84];
+  struct LinkedCaptureObject *target;
 };
 
 void BattleFx_SetObjectAlternatingWords(u8 *object);
@@ -135,77 +138,74 @@ void BattleFx_SpinUpAngle(void *obj);
 
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
-{
-    struct EffectOwner *owner;
-    struct EffectVector position;
-    s32 state;
+void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
+  struct EffectOwner *owner;
+  struct EffectVector position;
+  s32 state;
 
-    owner = (struct EffectOwner *)Object_GetById(gPartyState.currentOwner);
-    state = effect->state;
+  owner = (struct EffectOwner *)Object_GetById(gPartyState.currentOwner);
+  state = effect->state;
 
-    if (state == 0) {
-        effect->x = effect->originX;
-        effect->z = effect->originZ;
-        position.x = effect->x;
-        position.z = effect->z;
-        Vector_AddPolarOffset(
-            0x780000,
-            ((Random16() * 3 << 11) >> 16)
-                - ((Random16() * 3 << 11) >> 16)
-                + 0xc000,
-            &position);
-        effect->targetX = position.x;
-        effect->targetZ = position.z;
-        effect->acceleration = 0x50000;
-        effect->maxSpeed = 0x50000;
-        effect->flag42 = state;
-        effect->state++;
+  if (state == 0) {
+    effect->x = effect->originX;
+    effect->z = effect->originZ;
+    position.x = effect->x;
+    position.z = effect->z;
+    Vector_AddPolarOffset(0x780000,
+                          ((Random16() * 3 << 11) >> 16) -
+                              ((Random16() * 3 << 11) >> 16) + 0xc000,
+                          &position);
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->acceleration = 0x50000;
+    effect->maxSpeed = 0x50000;
+    effect->flag42 = state;
+    effect->state++;
 
-        ((struct AnimationObject *)effect->object)->part[0].priority =
-            owner->sprite->part[0].priority;
-        effect->flags = 0;
-        effect->age = 0;
-        if ((gFrameTick & 1) != 0)
-            Audio_PlayCue(134);
-    } else if (state == 1) {
-        if ((s16)effect->age == 3) {
-            ((struct AnimationObject *)effect->object)->part[0].priority = 0;
-            effect->flags = 4;
-        }
-        if (BattleFx_HasReachedTarget(effect) == 0)
-            effect->state--;
-    } else if (state == 2) {
-        if (BattleFx_HasReachedTarget(effect) == 0) {
-            effect->originX = effect->x;
-            effect->originZ = effect->z;
-            ((struct AnimationObject *)effect->object)->part[0].priority = 0;
-            effect->flags = 4;
-            effect->render = 0;
-            effect->state++;
-            effect->callbackDelay = 40;
-        }
-    } else if (state == 3) {
-        effect->render = 1;
-        effect->x = effect->originX;
-        effect->z = effect->originZ;
-        position.x = owner->position.x;
-        position.y = owner->position.y + 0x140000;
-        position.z = owner->position.z;
-        Camera_WorldToScreen(&position);
-        Vector_AddPolarOffset(0x40000, Random16(), &position);
-        effect->targetX = position.x;
-        effect->targetZ = position.z;
-        effect->state++;
-        if ((gFrameTick & 1) != 0)
-            Audio_PlayCue(145);
-    } else if (state == 4) {
-        if (BattleFx_HasReachedTarget(effect) == 0)
-            effect->state--;
-    } else if (state == 5) {
-        if (BattleFx_HasReachedTarget(effect) == 0)
-            BattleFx_ClearOwnedSlot(effect);
+    ((struct AnimationObject *)effect->object)->part[0].priority =
+        owner->sprite->part[0].priority;
+    effect->flags = 0;
+    effect->age = 0;
+    if ((gFrameTick & 1) != 0)
+      Audio_PlayCue(134);
+  } else if (state == 1) {
+    if ((s16)effect->age == 3) {
+      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      effect->flags = 4;
     }
+    if (BattleFx_HasReachedTarget(effect) == 0)
+      effect->state--;
+  } else if (state == 2) {
+    if (BattleFx_HasReachedTarget(effect) == 0) {
+      effect->originX = effect->x;
+      effect->originZ = effect->z;
+      ((struct AnimationObject *)effect->object)->part[0].priority = 0;
+      effect->flags = 4;
+      effect->render = 0;
+      effect->state++;
+      effect->callbackDelay = 40;
+    }
+  } else if (state == 3) {
+    effect->render = 1;
+    effect->x = effect->originX;
+    effect->z = effect->originZ;
+    position.x = owner->position.x;
+    position.y = owner->position.y + 0x140000;
+    position.z = owner->position.z;
+    Camera_WorldToScreen(&position);
+    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->state++;
+    if ((gFrameTick & 1) != 0)
+      Audio_PlayCue(145);
+  } else if (state == 4) {
+    if (BattleFx_HasReachedTarget(effect) == 0)
+      effect->state--;
+  } else if (state == 5) {
+    if (BattleFx_HasReachedTarget(effect) == 0)
+      BattleFx_ClearOwnedSlot(effect);
+  }
 }
 
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
@@ -219,4 +219,3 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 void BattleFx_RunVenusDjinnCapture(s32 arg);
 
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
-

@@ -1,11 +1,11 @@
-/* Draft, differ 252 of 228, first pass (2026-10-15). Turns an object into a
- * chain of links hanging from its cell: starts the chain work
- * (Func_080da9a8) if none is running, takes a chain slot for the object
- * (none if it already has one, or none is free), clears the tile flags of
- * the five cells above, sinks the object a cell down and 64 pixels forward,
- * then hangs seven links (kinds 1, 2, 3/4 alternating, 5 for the last) 14
- * pixels apart from 15 pixels above the cell. When grow is set the links
- * unroll over 28 frames. */
+// Draft, differ 252 of 228, first pass (2026-10-15). Turns an object into a
+// chain of links hanging from its cell: starts the chain work
+// (Func_080da9a8) if none is running, takes a chain slot for the object
+// (none if it already has one, or none is free), clears the tile flags of
+// the five cells above, sinks the object a cell down and 64 pixels forward,
+// then hangs seven links (kinds 1, 2, 3/4 alternating, 5 for the last) 14
+// pixels apart from 15 pixels above the cell. When grow is set the links
+// unroll over 28 frames.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -37,7 +37,10 @@ struct ChainObject {
   s32 y;
   s32 z;
   u8 unk14[0x3c];
-  struct { u8 unk00[0x28]; s16 *entries[4]; } *sprite;
+  struct {
+    u8 unk00[0x28];
+    s16 *entries[4];
+  } *sprite;
   u8 unk54;
   u8 motionFlags;
   u8 unk56[3];

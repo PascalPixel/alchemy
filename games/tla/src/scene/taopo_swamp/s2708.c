@@ -1,7 +1,7 @@
 #include "local.h"
 
-/* The accessors step the work pointer by whole entries and then take entry 0:
- * the bytes add the base to index * 20 before the field offset. */
+// The accessors step the work pointer by whole entries and then take entry 0:
+// the bytes add the base to index * 20 before the field offset.
 #define VENT_AT(work, index)                                                   \
   ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 

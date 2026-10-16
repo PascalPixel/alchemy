@@ -45,11 +45,11 @@ void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
 void Battle_SelectSceneBackdrop(void);
 void Battle_SelectTerrainBackdrop(s32 behavior);
-/* BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
- * in scope, as in object.c above its definition: in one file its definition
- * would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
- * and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split
- * evidence for object|psynergy_effects. */
+// BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
+// in scope, as in object.c above its definition: in one file its definition
+// would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
+// and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split
+// evidence for object|psynergy_effects.
 void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
 void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void RunBattleEffect07(void);
@@ -171,11 +171,11 @@ void DisplayTransition_InitializeState(s32 value);
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 void BattlePalette_UpdateBlend(void);
-/* BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
- * scope: in one file its definition would come before
- * FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
- * (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
- * object|psynergy_effects. */
+// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
+// scope: in one file its definition would come before
+// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
+// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
+// object|psynergy_effects.
 void BattleEffect_InitializeBuffers(void);
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

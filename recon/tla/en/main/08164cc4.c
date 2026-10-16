@@ -1,36 +1,36 @@
-/* Draft, differ 187 of 1681 (the two nested helpers first, then the body;
- * alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
- * BattleEffect_RunParticleStreams, summon 11 and summon 0's default
- * (Func_0814c994's default case, through BattleFx_InitializeDefaultMode and
- * BattleFx_InitializeMode1 in particle_stream_modes.c), with its nested
- * helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
- * adopt with it (S1 notes; alchemy permute cannot parse them).
- *
- * Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
- * ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
- * kept as the argument, Func_08163c2c for the canvas wipe, the fills through
- * IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
- * 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640 in
- * the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
- * orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
- *
- * Devices, as ☀️'s twin has them (each tag gives its measured difference):
- * the mode test through direction, the frame count and work pinned in the
- * heat loop with their barrier, the r6 clobber around the first cue, and the
- * level pin. The helpers match as they are.
- *
- * Left, 187 rows: the prologue's argument spill and heap reads in the other
- * order (the 0x03000000 base first here); the map cell buffer kept in r5
- * across the two IWRAM fills where the native loads it from the pool twice;
- * elsewhere loads issued one slot earlier in the native, the kind
- * Func_08164b2c's header traces to a load costing 3.
- *
- * Tried (differ): the plain port without devices and with the unused fill
- * word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
- * without fill, which fixes the frame of the nested functions' chain (546);
- * the heat devices one by one (477 without the clobber block, 236 without
- * the pins, 219 without the level pin); mode tested directly (189).
- */
+// Draft, differ 187 of 1681 (the two nested helpers first, then the body;
+// alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
+// BattleEffect_RunParticleStreams, summon 11 and summon 0's default
+// (Func_0814c994's default case, through BattleFx_InitializeDefaultMode and
+// BattleFx_InitializeMode1 in particle_stream_modes.c), with its nested
+// helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
+// adopt with it (S1 notes; alchemy permute cannot parse them).
+
+// Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
+// ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
+// kept as the argument, Func_08163c2c for the canvas wipe, the fills through
+// IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
+// 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640 in
+// the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
+// orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
+
+// Devices, as ☀️'s twin has them (each tag gives its measured difference):
+// the mode test through direction, the frame count and work pinned in the
+// heat loop with their barrier, the r6 clobber around the first cue, and the
+// level pin. The helpers match as they are.
+
+// Left, 187 rows: the prologue's argument spill and heap reads in the other
+// order (the 0x03000000 base first here); the map cell buffer kept in r5
+// across the two IWRAM fills where the native loads it from the pool twice;
+// elsewhere loads issued one slot earlier in the native, the kind
+// Func_08164b2c's header traces to a load costing 3.
+
+// Tried (differ): the plain port without devices and with the unused fill
+// word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
+// without fill, which fixes the frame of the nested functions' chain (546);
+// the heat devices one by one (477 without the clobber block, 236 without
+// the pins, 219 without the level pin); mode tested directly (189).
+
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"

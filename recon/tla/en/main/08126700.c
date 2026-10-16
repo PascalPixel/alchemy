@@ -15,56 +15,51 @@ s32 Render_ProjectPoint();
 
 /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 
-void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
-{
-    s32 span = 0x01fe0000;
-    s32 mode;
-    struct BattleCamera *scene = gCameraWork;
-    s32 *pos = scene->pos;
-    s32 *hud = (s32 *)gProjection;
-    s32 scale = __divsi3(mode << 16, 100);
-    s32 render_bounds[3];
-    s32 measured_bounds[3];
-    s32 source_bounds[3];
-    s32 (*blend)(s32, s32);
-    s32 alpha;
-    s32 half;
-    s32 width;
-    u32 result;
+void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
+  s32 span = 0x01fe0000;
+  s32 mode;
+  struct BattleCamera *scene = gCameraWork;
+  s32 *pos = scene->pos;
+  s32 *hud = (s32 *)gProjection;
+  s32 scale = __divsi3(mode << 16, 100);
+  s32 render_bounds[3];
+  s32 measured_bounds[3];
+  s32 source_bounds[3];
+  s32 (*blend)(s32, s32);
+  s32 alpha;
+  s32 half;
+  s32 width;
+  u32 result;
 
-    pos[0] = x;
-    pos[1] = depth;
-    pos[2] = y;
-    source_bounds[0] = 0;
-    alpha = 0xc000;
-    source_bounds[1] = 0;
-    source_bounds[2] = 0;
+  pos[0] = x;
+  pos[1] = depth;
+  pos[2] = y;
+  source_bounds[0] = 0;
+  alpha = 0xc000;
+  source_bounds[1] = 0;
+  source_bounds[2] = 0;
 
-    blend = Iwram_RatioMulQ14;
-    result = blend(span, alpha);
-    Projection_Set(span, result, span * 2);
-    Render_ResetTransformState();
-    SceneTransform_ApplyPosition(pos);
-    SceneTransform_ApplyYaw((s16)scene->yaw);
-    SceneTransform_ApplyPitch((s16)scene->pitch);
-    render_bounds[0] = 0;
-    render_bounds[1] = 0;
-    render_bounds[2] = scene->distance;
-    Iwram_TransformVector(render_bounds, (s32 *)scene);
-    hud[3] = 120;
-    hud[4] = 120;
-    Render_ResetTransformState();
-    Transform_SetLookAt(scene, pos);
-    Render_ProjectPoint(source_bounds, measured_bounds);
+  blend = Iwram_RatioMulQ14;
+  result = blend(span, alpha);
+  Projection_Set(span, result, span * 2);
+  Render_ResetTransformState();
+  SceneTransform_ApplyPosition(pos);
+  SceneTransform_ApplyYaw((s16)scene->yaw);
+  SceneTransform_ApplyPitch((s16)scene->pitch);
+  render_bounds[0] = 0;
+  render_bounds[1] = 0;
+  render_bounds[2] = scene->distance;
+  Iwram_TransformVector(render_bounds, (s32 *)scene);
+  hud[3] = 120;
+  hud[4] = 120;
+  Render_ResetTransformState();
+  Transform_SetLookAt(scene, pos);
+  Render_ProjectPoint(source_bounds, measured_bounds);
 
-    BattleCamera_SetRange(
-        0x780000,
-        0x780000,
-        (120 - measured_bounds[0]) << 8,
-        (120 - measured_bounds[1]) << 8,
-        scale);
-    half = scale * 0xff;
-    width = half * 2;
-    result = blend(width, alpha);
-    Projection_Set(width, result, half * 4);
+  BattleCamera_SetRange(0x780000, 0x780000, (120 - measured_bounds[0]) << 8,
+                        (120 - measured_bounds[1]) << 8, scale);
+  half = scale * 0xff;
+  width = half * 2;
+  result = blend(width, alpha);
+  Projection_Set(width, result, half * 4);
 }

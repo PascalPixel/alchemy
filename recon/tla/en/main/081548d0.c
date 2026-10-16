@@ -1,45 +1,45 @@
-/* Draft of Func_081548d0, the body of a two-kind family: vines (mode 0) or
- * green pillars (mode 1) shoot up out of the ground, left and right in
- * turn four frames apart, each throwing up dust at its root. The number of
- * columns grows with the strength. Its wrappers Func_081548b8 (mode 0) and
- * Func_081548c4 (mode 1) are C in fxmoded.c.
- *
- * Twin: The Broken Seal's BattleFx_RunDualTable (effect.c), with the same
- * tables, frame counts and fade.
- * Listing 514 instructions, draft 515, differ 237.
- *
- * Changes from the twin: the effect argument is read directly (the Lost
- * Age never stores work->effect), blitters load through Func_081963ec with
- * the Lost Age's mode numbers, the callback order is 0xc80 and the cue is
- * 133 where the twin has 132. The puff scan walks a plain pointer: the
- * twin's tagged reuse of length as the pointer is not the Lost Age's form.
- *
- * What remains:
- *   - the column draws (22 rows each): the native keeps i % 3 in r0 from
- *     __modsi3 and takes the width into it, with side = i & 1 in r4; here
- *     shape is copied to r4 and side takes r0.
- *   - the reaction loop: n and start + 4 trade r5 and r6.
- *   - the puff draws (about 30 rows): the native builds the cel offset
- *     0x1e59 into r5 before the mode test and keeps the cel index in r7;
- *     here the order and registers differ.
- *   - one instruction more: the column loop's step reloads the count's
- *     table once more than the native.
- *   - order rows: the prologue's argument spills before the heap base,
- *     pool loads before register addresses.
- *
- * Tried (differ):
- *   a first port written freely from the twin                    436
- *   the twin's body as is, with the Lost Age's names             289
- *   declaration order, greedy scan                               283
- *   fadeStart, fadeEnd, cueFrame declared after draw (the native
- *   frame slots 20, 16, 12)                                      275
- *   the frame marks written inline in the tests                  289
- *   the puff scan through a plain pointer (kept)                 237
- *   without the pair pointer device (rectangle[side])            255
- *   the mirrored puff through draw[1]                            237
- *   shape as s32, or declared apart from its set                 no change
- *   declaration order, greedy scan of the kept form              no gain
- */
+// Draft of Func_081548d0, the body of a two-kind family: vines (mode 0) or
+// green pillars (mode 1) shoot up out of the ground, left and right in
+// turn four frames apart, each throwing up dust at its root. The number of
+// columns grows with the strength. Its wrappers Func_081548b8 (mode 0) and
+// Func_081548c4 (mode 1) are C in fxmoded.c.
+
+// Twin: The Broken Seal's BattleFx_RunDualTable (effect.c), with the same
+// tables, frame counts and fade.
+// Listing 514 instructions, draft 515, differ 237.
+
+// Changes from the twin: the effect argument is read directly (the Lost
+// Age never stores work->effect), blitters load through Func_081963ec with
+// the Lost Age's mode numbers, the callback order is 0xc80 and the cue is
+// 133 where the twin has 132. The puff scan walks a plain pointer: the
+// twin's tagged reuse of length as the pointer is not the Lost Age's form.
+
+// What remains:
+// - the column draws (22 rows each): the native keeps i % 3 in r0 from
+// __modsi3 and takes the width into it, with side = i & 1 in r4; here
+// shape is copied to r4 and side takes r0.
+// - the reaction loop: n and start + 4 trade r5 and r6.
+// - the puff draws (about 30 rows): the native builds the cel offset
+// 0x1e59 into r5 before the mode test and keeps the cel index in r7;
+// here the order and registers differ.
+// - one instruction more: the column loop's step reloads the count's
+// table once more than the native.
+// - order rows: the prologue's argument spills before the heap base,
+// pool loads before register addresses.
+
+// Tried (differ):
+// a first port written freely from the twin                    436
+// the twin's body as is, with the Lost Age's names             289
+// declaration order, greedy scan                               283
+// fadeStart, fadeEnd, cueFrame declared after draw (the native
+// frame slots 20, 16, 12)                                      275
+// the frame marks written inline in the tests                  289
+// the puff scan through a plain pointer (kept)                 237
+// without the pair pointer device (rectangle[side])            255
+// the mirrored puff through draw[1]                            237
+// shape as s32, or declared apart from its set                 no change
+// declaration order, greedy scan of the kept form              no gain
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"

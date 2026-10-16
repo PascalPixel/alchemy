@@ -1,45 +1,45 @@
-/* Draft of Func_0814fab8, the body behind the twelve wrappers of
- * s14fa08.c (17 effect kinds).
- *
- * Twin: The Broken Seal's BattleFx_RunSeriesB (effect.c), grown from six
- * modes to thirteen. The Lost Age:
- *   - packs the prelude Djinni's element, side and anchor for
- *     Func_0815585c (Venus for modes 3 and 6, Mercury for 7, 8 and 11,
- *     Jupiter for 2 and 4, Mars otherwise; mode 10 shows none);
- *   - plays mode 10 as mode 0 started at frame 53 with a fade of 24, which
- *     skips the gathering lights;
- *   - adds modes 6 and 11 (the palette stepping to a resource every four
- *     frames), 8 and 12 (the violet streak; 12 draws a grey ramp for its
- *     Djinni), 9 (the wisp in the Mars palette) and 7;
- *   - calls BattleEffect_LoadWork (Func_08196404) itself, MAX as mode 1 and
- *     ADDITIVE as 0, where The Broken Seal's modes are 2 and 3;
- *   - plays the opening cue at frame 0 inside the loop.
- * Resources not yet named in directory.s, by row and asset: 0x137
- * BattleFx_ParticleSpritesD, 0x17b BattleFx_GlowOrbSheet, 0x174
- * BattleFx_VioletStreakSheet, 0x16a BattleFx_WispSheet, 0x15f
- * BattleFx_DaggerSheet, 0x15e BattleFx_ShieldSheet, 0x17f
- * BattleFx_PinkBurstSheet, 0xb9 BattleFx_EffectPalette01 and the Djinn
- * sheets 0x150, 0x152, 0x154 and 0x156.
- *
- * Draft: differ 341 of 1146 (draft 1145).
- *
- * Each blitter is built and fetched by one statement macro (LOAD_BLITTER),
- * because the native computes the flags afresh for every call: a one-pass
- * block ends CSE's block, where plain calls let agscc keep flags ^
- * COMPOSITE_FLIP_X in r5 across the first call (670, and every register
- * after it shifted).
- *
- * Left: the member loop's setup (35 rows) and the Djinni's position (17)
- * differ in register choice; the rest is order residue in the draws.
- *
- * Tried (2026-10-15):
- *   - greedy declaration-order sweep, two passes: no gain.
- *   - a separate counter for the frame loop's lights: 688.
- *   - flags declared volatile: 916; the loader as a static inline returning
- *     the slot's entry: 774; the macro reading the entry at slot bytes
- *     into Ram_HeapSlots: 390; the macro with the field: 341.
- *   - greedy loop-counter sweep (each loop its own counter): no gain.
- */
+// Draft of Func_0814fab8, the body behind the twelve wrappers of
+// s14fa08.c (17 effect kinds).
+
+// Twin: The Broken Seal's BattleFx_RunSeriesB (effect.c), grown from six
+// modes to thirteen. The Lost Age:
+// - packs the prelude Djinni's element, side and anchor for
+// Func_0815585c (Venus for modes 3 and 6, Mercury for 7, 8 and 11,
+// Jupiter for 2 and 4, Mars otherwise; mode 10 shows none);
+// - plays mode 10 as mode 0 started at frame 53 with a fade of 24, which
+// skips the gathering lights;
+// - adds modes 6 and 11 (the palette stepping to a resource every four
+// frames), 8 and 12 (the violet streak; 12 draws a grey ramp for its
+// Djinni), 9 (the wisp in the Mars palette) and 7;
+// - calls BattleEffect_LoadWork (Func_08196404) itself, MAX as mode 1 and
+// ADDITIVE as 0, where The Broken Seal's modes are 2 and 3;
+// - plays the opening cue at frame 0 inside the loop.
+// Resources not yet named in directory.s, by row and asset: 0x137
+// BattleFx_ParticleSpritesD, 0x17b BattleFx_GlowOrbSheet, 0x174
+// BattleFx_VioletStreakSheet, 0x16a BattleFx_WispSheet, 0x15f
+// BattleFx_DaggerSheet, 0x15e BattleFx_ShieldSheet, 0x17f
+// BattleFx_PinkBurstSheet, 0xb9 BattleFx_EffectPalette01 and the Djinn
+// sheets 0x150, 0x152, 0x154 and 0x156.
+
+// Draft: differ 341 of 1146 (draft 1145).
+
+// Each blitter is built and fetched by one statement macro (LOAD_BLITTER),
+// because the native computes the flags afresh for every call: a one-pass
+// block ends CSE's block, where plain calls let agscc keep flags ^
+// COMPOSITE_FLIP_X in r5 across the first call (670, and every register
+// after it shifted).
+
+// Left: the member loop's setup (35 rows) and the Djinni's position (17)
+// differ in register choice; the rest is order residue in the draws.
+
+// Tried (2026-10-15):
+// - greedy declaration-order sweep, two passes: no gain.
+// - a separate counter for the frame loop's lights: 688.
+// - flags declared volatile: 916; the loader as a static inline returning
+// the slot's entry: 774; the macro reading the entry at slot bytes
+// into Ram_HeapSlots: 390; the macro with the field: 341.
+// - greedy loop-counter sweep (each loop its own counter): no gain.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -130,16 +130,16 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern u16 Data_08197424[]; // gBattleFx6_FlareCells
 
-/* Lights gather around each target in turn, eight frames apart, turning as
- * they close in; at the center they burst, and the mode's picture plays
- * there (a dagger, a shield, a streak or a wisp).
- *
- * Setup: an optional Djinni appears first (the prelude); the canvas is
- * 1.25 times as wide, centered on a lone target or set by the side. Frame
- * loop: the Djinni sways and rises; each target's 32 lights come out one a
- * frame and close in two pixels a frame; from frame 52 of a target its
- * burst plays, six pictures four frames apart, and from frame 80 the
- * mode's picture. */
+// Lights gather around each target in turn, eight frames apart, turning as
+// they close in; at the center they burst, and the mode's picture plays
+// there (a dagger, a shield, a streak or a wisp).
+
+// Setup: an optional Djinni appears first (the prelude); the canvas is
+// 1.25 times as wide, centered on a lone target or set by the side. Frame
+// loop: the Djinni sways and rises; each target's 32 lights come out one a
+// frame and close in two pixels a frame; from frame 52 of a target its
+// burst plays, six pictures four frames apart, and from frame 80 the
+// mode's picture.
 void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

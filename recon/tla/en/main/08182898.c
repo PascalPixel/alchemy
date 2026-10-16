@@ -1,25 +1,25 @@
-/* Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
- * Written from the listing; called only by Func_0818284c (f18284c.c), which
- * opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
- * shapes are BattleFx_RunPuffArc (0.55) and BattleFx_RunFallingCrystals.
- * Statements, registers, stores and the frame (canvas sp+20, the blitter pair
- * sp+12/sp+16, frame sp+8) all match; four places are left where the native
- * loads first and this build does not: Func_08143000's address before work
- * in the prologue, the particle base before the reload pair that clears i in
- * both loop preheaders (after the hoisted heights in the second), and the
- * spilled frame before i * 8 is built. sched2 ties each on priority and takes
- * the other insn for its dependent or its class against the last call.
- * Measured: an empty asm after the spawn pointer fixes the first preheader
- * (differ 6); one-pass blocks or asm operands on i or frame in the actor
- * loop: 25 to 167; a particle-array pointer variable, an inline blitter
- * loader, a volatile pad, copied effect, work through a slot pointer: no
- * gain. Widths and heights are read once each, in argument order, and the
- * tables are not const (the native rereads the heights after the call).
- * 2026-10-15 (lane N2): rewritten with the work struct and named constants;
- * the same 225 instructions and differ 8. alchemy permute, 8 minutes, two
- * jobs: nothing below differ 15.
- * Resource ids 0x190 (BattleFx_BlueBeamSheet) and 0xfd (Resource_Data0FD)
- * need their names in system/resource/directory.s when this is adopted. */
+// Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
+// Written from the listing; called only by Func_0818284c (f18284c.c), which
+// opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
+// shapes are BattleFx_RunPuffArc (0.55) and BattleFx_RunFallingCrystals.
+// Statements, registers, stores and the frame (canvas sp+20, the blitter pair
+// sp+12/sp+16, frame sp+8) all match; four places are left where the native
+// loads first and this build does not: Func_08143000's address before work
+// in the prologue, the particle base before the reload pair that clears i in
+// both loop preheaders (after the hoisted heights in the second), and the
+// spilled frame before i * 8 is built. sched2 ties each on priority and takes
+// the other insn for its dependent or its class against the last call.
+// Measured: an empty asm after the spawn pointer fixes the first preheader
+// (differ 6); one-pass blocks or asm operands on i or frame in the actor
+// loop: 25 to 167; a particle-array pointer variable, an inline blitter
+// loader, a volatile pad, copied effect, work through a slot pointer: no
+// gain. Widths and heights are read once each, in argument order, and the
+// tables are not const (the native rereads the heights after the call).
+// 2026-10-15 (lane N2): rewritten with the work struct and named constants;
+// the same 225 instructions and differ 8. alchemy permute, 8 minutes, two
+// jobs: nothing below differ 15.
+// Resource ids 0x190 (BattleFx_BlueBeamSheet) and 0xfd (Resource_Data0FD)
+// need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "io_reg.h"
@@ -63,8 +63,7 @@ void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081180e8(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Func_081434f8(void);

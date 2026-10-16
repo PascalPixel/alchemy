@@ -1,4 +1,4 @@
-/* FarCall_BattleTable: one entry per 8-byte stub, in table order. */
+// FarCall_BattleTable: one entry per 8-byte stub, in table order.
 FAR_CALL(DebugBattle_RunMenuFar, DebugBattle_RunMenu, void, (void))
 FAR_SLOT(BattlePres_RunMosaicFadeOut)
 FAR_CALL(BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList,

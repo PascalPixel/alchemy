@@ -1,33 +1,32 @@
-/* Draft, differ 386 of 783: BattleFx_RunSparkGroups, the body of the
-   spark-group effects through Func_08149b94 (kind 0), Func_08149ba0
-   (kind 1) and BattleFx_RunSparkApproachVariant4 (kind 2).
+// Draft, differ 386 of 783: BattleFx_RunSparkGroups, the body of the
+// spark-group effects through Func_08149b94 (kind 0), Func_08149ba0
+// (kind 1) and BattleFx_RunSparkApproachVariant4 (kind 2).
 
-   ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape
-   0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade
-   (work->fadeFrames 24, work->fadeStep 0); the blitter pair comes from
-   Func_08144aac(0, draw) where ☀️ loads max and additive blitters itself;
-   the shapes table Data_081979de holds halfwords; the effect runs
-   count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
-   145 at frame 2; the variant 3 wipe goes through the IWRAM call layer
-   (☀️ calls the fixed entry, tagged); the transfer callback runs at 0xc80.
+// ☀️ twin: BattleFx_RunSparkGroups (games/tbs/src/effect/effect.c), shape
+// 0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade
+// (work->fadeFrames 24, work->fadeStep 0); the blitter pair comes from
+// Func_08144aac(0, draw) where ☀️ loads max and additive blitters itself;
+// the shapes table Data_081979de holds halfwords; the effect runs
+// count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
+// 145 at frame 2; the variant 3 wipe goes through the IWRAM call layer
+// (☀️ calls the fixed entry, tagged); the transfer callback runs at 0xc80.
 
-   Same frame and instruction count. What is left is mostly allocation in
-   the two set-up loops and the spark loop: the native reloads the
-   effect's variant after each call and recomputes the shapes row
-   (variant * 10) at the top of each spark loop, keeping the table base in
-   r7, the speed in r8 and the spark in r5, where agscc keeps the row in
-   a register across the loop and shifts every register after it.
+// Same frame and instruction count. What is left is mostly allocation in
+// the two set-up loops and the spark loop: the native reloads the
+// effect's variant after each call and recomputes the shapes row
+// (variant * 10) at the top of each spark loop, keeping the table base in
+// r7, the speed in r8 and the spark in r5, where agscc keeps the row in
+// a register across the loop and shifts every register after it.
 
-   Tried (differ):
-     ☀️'s body with ⚓️'s names, tables and changes                     388
-     the spark index as i * count + j (☀️ writes &sparks[i * count] + j
-       through a local: 668)                                           386
-     the shapes table as a struct of five halfwords                    691
-     alchemy permute, 10 minutes, 2 jobs: 244 with the spark loop's
-       bound read through ((u16)(variant * 5)) + 0, a cast that only
-       breaks CSE of the shapes row (a device, not kept); 370 and 378
-       with other casts                                                    */
-
+// Tried (differ):
+// ☀️'s body with ⚓️'s names, tables and changes                     388
+// the spark index as i * count + j (☀️ writes &sparks[i * count] + j
+// through a local: 668)                                           386
+// the shapes table as a struct of five halfwords                    691
+// alchemy permute, 10 minutes, 2 jobs: 244 with the spark loop's
+// bound read through ((u16)(variant * 5)) + 0, a cast that only
+// breaks CSE of the shapes row (a device, not kept); 370 and 378
+// with other casts
 
 #include "types.h"
 #include "system.h"
@@ -49,9 +48,9 @@
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
 #define CALLBACK_ORDER 0xc80
 
-#define FLASH_POINTS 16  // flash points kept for each group
-#define FLASH_DRAWN 12   // of which the first 12 are drawn
-#define FLASH_FRAMES 18  // six cels of three frames
+#define FLASH_POINTS 16 // flash points kept for each group
+#define FLASH_DRAWN 12  // of which the first 12 are drawn
+#define FLASH_FRAMES 18 // six cels of three frames
 #define GROUND_Y (108 << 16)
 
 // The kinds of spark group, chosen by the effect's entry.
@@ -67,10 +66,10 @@ struct CameraWork {
   u16 scroll;
 };
 
-extern char ResourceId_FlashBurstSheet;     // directory row 0x13e
-extern char ResourceId_ParticleSpritesA;    // directory row 0x134
-extern char ResourceId_OrangePaletteB;      // directory row 0x148
-extern char ResourceId_LightningBoltSheet;  // directory row 0x188
+extern char ResourceId_FlashBurstSheet;    // directory row 0x13e
+extern char ResourceId_ParticleSpritesA;   // directory row 0x134
+extern char ResourceId_OrangePaletteB;     // directory row 0x148
+extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
 // ☀️ gSparkGroups_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
@@ -82,11 +81,11 @@ extern u16 gData_08197410[]; // ☀️ gParticleStreams_CellOffsets
 extern struct EffectStep gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 void Func_08144aac(s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -146,8 +145,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
   Func_08144aac(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   if (kind == SPARKS_ORANGE) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

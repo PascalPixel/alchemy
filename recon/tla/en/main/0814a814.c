@@ -1,27 +1,27 @@
-/* Draft, differ 338 of 755: BattleFx_RenderMode, the body of nine effect
-   kinds through the wrappers in games/tla/src/battle/effect/render_mode.c
-   (modes 0 to 7).
+// Draft, differ 338 of 755: BattleFx_RenderMode, the body of nine effect
+// kinds through the wrappers in games/tla/src/battle/effect/render_mode.c
+// (modes 0 to 7).
 
-   ☀️ twin: BattleFx_RenderMode (games/tbs/src/effect/effect.c), shape 0.898,
-   structure 0.907. ⚓️'s changes: the effect argument read directly; mode
-   1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
-   mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
-   Func_081963ec(104, 0x03) (additive) and (188, 0x13) (max), and the
-   tornado's glints through Func_08196404(188, 7, 7, flags, 1) directly;
-   the affine wave's HBlank arm Func_08152474 and the transfer callback at
-   0xc80. In mode 3's glint block the native ands the frame with the mode
-   register, CSE's reuse of the known mode 3 for the constant: the source
-   is frame & 3.
+// ☀️ twin: BattleFx_RenderMode (games/tbs/src/effect/effect.c), shape 0.898,
+// structure 0.907. ⚓️'s changes: the effect argument read directly; mode
+// 1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
+// mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
+// Func_081963ec(104, 0x03) (additive) and (188, 0x13) (max), and the
+// tornado's glints through Func_08196404(188, 7, 7, flags, 1) directly;
+// the affine wave's HBlank arm Func_08152474 and the transfer callback at
+// 0xc80. In mode 3's glint block the native ands the frame with the mode
+// register, CSE's reuse of the known mode 3 for the constant: the source
+// is frame & 3.
 
-   What is left is allocation (and two instructions: 753 of 755): the native
-   frame is 120 bytes where this draft's is 112, with two more spill slots (the
-   target's offset into the actor list and member * 8 held apart from the loop's
-   own start, angle and the glint height table), mode in r10 where agscc gives
-   it r8, and the rows that follow from that.
+// What is left is allocation (and two instructions: 753 of 755): the native
+// frame is 120 bytes where this draft's is 112, with two more spill slots (the
+// target's offset into the actor list and member * 8 held apart from the loop's
+// own start, angle and the glint height table), mode in r10 where agscc gives
+// it r8, and the rows that follow from that.
 
-   Tried (differ):
-     ☀️'s body with ⚓️'s names and changes                             364
-     greedy declaration-order scan: total, member and count first      338 */
+// Tried (differ):
+// ☀️'s body with ⚓️'s names and changes                             364
+// greedy declaration-order scan: total, member and count first      338
 
 #include "types.h"
 #include "system.h"

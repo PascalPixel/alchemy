@@ -3,105 +3,105 @@
 void *ObjectTable_Get(u32 object);
 
 struct LinkedEffectVisual {
-    u8 unk00[9];
-    u8 flags;
-    u8 unk0a[28];
-    u8 value26;
+  u8 unk00[9];
+  u8 flags;
+  u8 unk0a[28];
+  u8 value26;
 };
 
 struct LinkedEffectObject {
-    u8 unk00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unk14[60];
-    struct LinkedEffectVisual *visual;
-    u8 value54;
-    u8 value55;
-    u8 unk56[14];
-    u16 counter;
-    u16 resourceId;
-    struct LinkedEffectObject *resource;
-    void (*callback)(void);
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[60];
+  struct LinkedEffectVisual *visual;
+  u8 value54;
+  u8 value55;
+  u8 unk56[14];
+  u16 counter;
+  u16 resourceId;
+  struct LinkedEffectObject *resource;
+  void (*callback)(void);
 };
 
 struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009098(struct LinkedEffectObject *object, const void *configuration);
+void Func_08009098(struct LinkedEffectObject *object,
+                   const void *configuration);
 void Func_08009080(struct LinkedEffectObject *object, s32 mode);
 void Func_080090d0(struct LinkedEffectObject *object);
 void BattleFx_CopyLinkedObjectPosition(void);
 extern const u8 gData_0809fd38[];
 
-void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
-{
-    struct LinkedEffectObject *object = ObjectTable_Get(id);
-    struct LinkedEffectObject *child;
-    struct LinkedEffectVisual *visual;
-    s32 mode;
+void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
+  struct LinkedEffectObject *object = ObjectTable_Get(id);
+  struct LinkedEffectObject *child;
+  struct LinkedEffectVisual *visual;
+  s32 mode;
 
-    child = 0;
-    visual = 0;
+  child = 0;
+  visual = 0;
 
-    if (object == 0)
-        return;
+  if (object == 0)
+    return;
 
-    if ((flags & 3) != 0) {
-        if ((flags & 3) == 2 || object->resource == 0) {
-            child = Func_080090c8(209, object->x, object->y, object->z);
-        }
-    } else {
-        child = object->resource;
-        if (child == 0)
-            return;
-        Func_080090d0(child);
-        /* FAKEMATCH: reuse the null visual value for the child link. */
-        object->resource = (struct LinkedEffectObject *)visual;
-        return;
+  if ((flags & 3) != 0) {
+    if ((flags & 3) == 2 || object->resource == 0) {
+      child = Func_080090c8(209, object->x, object->y, object->z);
     }
-
+  } else {
+    child = object->resource;
     if (child == 0)
-        return;
+      return;
+    Func_080090d0(child);
+    /* FAKEMATCH: reuse the null visual value for the child link. */
+    object->resource = (struct LinkedEffectObject *)visual;
+    return;
+  }
 
-    mode = flags & 3;
-    switch (mode) {
-    case 1:
-        Func_08009080(child, 1);
-        object->resource = child;
-        child->counter = 1;
-        break;
-    case 2:
-        Func_08009080(child, 2);
-        Func_08009098(child, gData_0809fd38);
-        child->counter = 1;
-        break;
-    }
+  if (child == 0)
+    return;
 
-    child->resourceId = id;
-    child->value55 = 0;
-    child->callback = BattleFx_CopyLinkedObjectPosition;
-    visual = child->visual;
-    visual->value26 = 0;
-    child->resource = object;
+  mode = flags & 3;
+  switch (mode) {
+  case 1:
+    Func_08009080(child, 1);
+    object->resource = child;
+    child->counter = 1;
+    break;
+  case 2:
+    Func_08009080(child, 2);
+    Func_08009098(child, gData_0809fd38);
+    child->counter = 1;
+    break;
+  }
 
-    if (flags & 0x100) {
-        s32 mask = 13;
-        u8 visualFlags = visual->flags;
+  child->resourceId = id;
+  child->value55 = 0;
+  child->callback = BattleFx_CopyLinkedObjectPosition;
+  visual = child->visual;
+  visual->value26 = 0;
+  child->resource = object;
 
-        mask = -mask;
-        mask &= visualFlags;
-        mask |= 4;
-        visual->flags = mask;
-    } else {
-        s32 copiedFlags = 12;
-        u8 sourceFlags = object->visual->flags;
-        u8 destinationFlags;
-        s32 clearMask = 13;
+  if (flags & 0x100) {
+    s32 mask = 13;
+    u8 visualFlags = visual->flags;
 
-        copiedFlags &= sourceFlags;
-        destinationFlags = visual->flags;
-        clearMask = -clearMask;
-        clearMask &= destinationFlags;
-        clearMask |= copiedFlags;
-        visual->flags = clearMask;
-    }
+    mask = -mask;
+    mask &= visualFlags;
+    mask |= 4;
+    visual->flags = mask;
+  } else {
+    s32 copiedFlags = 12;
+    u8 sourceFlags = object->visual->flags;
+    u8 destinationFlags;
+    s32 clearMask = 13;
+
+    copiedFlags &= sourceFlags;
+    destinationFlags = visual->flags;
+    clearMask = -clearMask;
+    clearMask &= destinationFlags;
+    clearMask |= copiedFlags;
+    visual->flags = clearMask;
+  }
 }

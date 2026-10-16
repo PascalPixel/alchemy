@@ -1,61 +1,61 @@
-/* Draft of BattleFx_RunProjectileVolley, the body of the volley family:
- * the user fires a volley of shots at each target, staggered by shot and
- * by target, and each shot that reaches its target flashes and throws
- * sparks. The mode picks the shot's picture and flight; its wrappers are C
- * in projectile_volley.c.
- *
- * Modes, by the sheets they load and the shots they draw:
- *   0, 5, 8      comets (kind by strength; mode 5 an icy comet, mode 8
- *                always the first), drawn as two mirrored halves, with
- *                large flashes on impact
- *   1            spinning shuriken
- *   2            bouncing pellets
- *   3, 4, 11     yellow sparks, three sizes
- *   6, 12        fireballs trailing smoke (mode 12 from twice the user's x)
- *   7, 9, 10, 18 ice chips (10 and 18 start two steps ahead)
- *   13           a blue beam, its sheet halved into place
- *   14           tumbling crystals
- *   15, 16, 17   streaks falling to the ground; 16 raises smoke and 17
- *                sprays glints of water around the first target
- * A Mercury Djinn may circle the user first (effect->prelude).
- *
- * Twin: The Broken Seal's BattleFx_RunProjectileVolley (effect.c), modes
- * 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
- * no longer opens the canvas differently for mode 10.
- * Listing 2278 instructions, draft 2281, differ 1169.
- *
- * What remains: the control flow and the calls are the native's, block for
- * block, and the four positions sit at the native's frame slots (screen
- * 188, world 176, origin 164, position 152). The rows left are allocation
- * and order:
- *   - mode lives in r10 here and in r9 in the native, which keeps steps in
- *     r10; most branches on mode differ by that register alone.
- *   - the shot and target loops (about 80 rows): the native keeps
- *     i * shots, i * delay, the actor offset and the flash pointer as
- *     spilled induction variables at sp+24..44 in its own order.
- *   - the comet, crystal and glint draws (about 25 rows each): argument
- *     order and the reuse of table bases.
- *   - three instructions more than the native, in the comet halves.
- *   - literal pools placed from these lengths, so most pool offsets after
- *     the first differ by a few words.
- *
- * Tried (differ):
- *   the twin's modes 0-11 extended with the Lost Age's 12-18     1266
- *   the four positions declared in the native's slot order       1258
- *   velocity cases 14 and 9 written apart, as the native tests   1474
- *   ... with 10 and 18 apart as well                             1203
- *   10 and 18 apart alone                                        1245
- *   index declared in the frame loop, as the twin (kept)         1169
- *   shift reused as the smoke counter and spawned declared in
- *   the hit block, as the twin                                   2224
- *
- * Changes from the twin: the effect argument is read directly (the Lost
- * Age never stores work->effect), blitters load through Func_081963ec and
- * Func_08196404 with the Lost Age's mode numbers (max is 1, additive 0),
- * the callback order is 0xc80, the canvas preparer takes its flags packed,
- * the volley time counts count - 1 target delays, and a shot's z velocity
- * is worked out before its y velocity.
- */
+// Draft of BattleFx_RunProjectileVolley, the body of the volley family:
+// the user fires a volley of shots at each target, staggered by shot and
+// by target, and each shot that reaches its target flashes and throws
+// sparks. The mode picks the shot's picture and flight; its wrappers are C
+// in projectile_volley.c.
+
+// Modes, by the sheets they load and the shots they draw:
+// 0, 5, 8      comets (kind by strength; mode 5 an icy comet, mode 8
+// always the first), drawn as two mirrored halves, with
+// large flashes on impact
+// 1            spinning shuriken
+// 2            bouncing pellets
+// 3, 4, 11     yellow sparks, three sizes
+// 6, 12        fireballs trailing smoke (mode 12 from twice the user's x)
+// 7, 9, 10, 18 ice chips (10 and 18 start two steps ahead)
+// 13           a blue beam, its sheet halved into place
+// 14           tumbling crystals
+// 15, 16, 17   streaks falling to the ground; 16 raises smoke and 17
+// sprays glints of water around the first target
+// A Mercury Djinn may circle the user first (effect->prelude).
+
+// Twin: The Broken Seal's BattleFx_RunProjectileVolley (effect.c), modes
+// 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
+// no longer opens the canvas differently for mode 10.
+// Listing 2278 instructions, draft 2281, differ 1169.
+
+// What remains: the control flow and the calls are the native's, block for
+// block, and the four positions sit at the native's frame slots (screen
+// 188, world 176, origin 164, position 152). The rows left are allocation
+// and order:
+// - mode lives in r10 here and in r9 in the native, which keeps steps in
+// r10; most branches on mode differ by that register alone.
+// - the shot and target loops (about 80 rows): the native keeps
+// i * shots, i * delay, the actor offset and the flash pointer as
+// spilled induction variables at sp+24..44 in its own order.
+// - the comet, crystal and glint draws (about 25 rows each): argument
+// order and the reuse of table bases.
+// - three instructions more than the native, in the comet halves.
+// - literal pools placed from these lengths, so most pool offsets after
+// the first differ by a few words.
+
+// Tried (differ):
+// the twin's modes 0-11 extended with the Lost Age's 12-18     1266
+// the four positions declared in the native's slot order       1258
+// velocity cases 14 and 9 written apart, as the native tests   1474
+// ... with 10 and 18 apart as well                             1203
+// 10 and 18 apart alone                                        1245
+// index declared in the frame loop, as the twin (kept)         1169
+// shift reused as the smoke counter and spawned declared in
+// the hit block, as the twin                                   2224
+
+// Changes from the twin: the effect argument is read directly (the Lost
+// Age never stores work->effect), blitters load through Func_081963ec and
+// Func_08196404 with the Lost Age's mode numbers (max is 1, additive 0),
+// the callback order is 0xc80, the canvas preparer takes its flags packed,
+// the volley time counts count - 1 target delays, and a shot's z velocity
+// is worked out before its y velocity.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"

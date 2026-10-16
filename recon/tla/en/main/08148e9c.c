@@ -1,28 +1,27 @@
-/* Near miss, differ 64 of 429 (effect kind 20, the tornado).
+// Near miss, differ 64 of 429 (effect kind 20, the tornado).
 
-   ☀️ twin: BattleFx_RunTornado (games/tbs/src/effect/effect.c), shape 0.835,
-   structure 0.941. Ported with ⚓️'s checklist: the effect argument read
-   directly, the tornado sheet unpacked into the work with
-   Resource_LoadAndDecompress, max blitters from Func_081963ec(104, 0x13)
-   and (188, 0x17), the transfer callback at 0xc80, the shape table
-   gData_081979ae (☀️ gTornado_Shapes) and the glint cell tables
-   gData_08197486/92/98, Func_08118088 for the struck targets, and the two
-   blitters released before the callback is removed, as ☀️ does.
+// ☀️ twin: BattleFx_RunTornado (games/tbs/src/effect/effect.c), shape 0.835,
+// structure 0.941. Ported with ⚓️'s checklist: the effect argument read
+// directly, the tornado sheet unpacked into the work with
+// Resource_LoadAndDecompress, max blitters from Func_081963ec(104, 0x13)
+// and (188, 0x17), the transfer callback at 0xc80, the shape table
+// gData_081979ae (☀️ gTornado_Shapes) and the glint cell tables
+// gData_08197486/92/98, Func_08118088 for the struck targets, and the two
+// blitters released before the callback is removed, as ☀️ does.
 
-   Same frame, registers and instruction count. What is left is order: each
-   row a load (pool word, work slot, the argument spill) that the native
-   issues one instruction earlier than agscc, and the literal pools that
-   move with them (each pool load's offset differs by 4). The prologue's
-   first row is the argument spill (str r0) that the native issues before
-   the 0x03000000 base; the glint loop's cell offset load and the funnel's
-   segment sums account for most of the rest.
+// Same frame, registers and instruction count. What is left is order: each
+// row a load (pool word, work slot, the argument spill) that the native
+// issues one instruction earlier than agscc, and the literal pools that
+// move with them (each pool load's offset differs by 4). The prologue's
+// first row is the argument spill (str r0) that the native issues before
+// the 0x03000000 base; the glint loop's cell offset load and the funnel's
+// segment sums account for most of the rest.
 
-   Tried (differ):
-     the repository draft (local copy of the work struct)                66
-     the shared struct BattleEffectWork                                  66
-     Func_081963ec declared returning s32 (plan 0c)                      64
-     greedy declaration-order scan, every local through every place     64 */
-
+// Tried (differ):
+// the repository draft (local copy of the work struct)                66
+// the shared struct BattleEffectWork                                  66
+// Func_081963ec declared returning s32 (plan 0c)                      64
+// greedy declaration-order scan, every local through every place     64
 
 #include "types.h"
 #include "system.h"
@@ -59,11 +58,11 @@ extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);           // ☀️ ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);      // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -159,9 +158,8 @@ void Func_08148e9c(struct BattleEffectArgument *effect) {
         glint = &work->particles[i * 4 + j];
         if (glint->variant >= 0) {
           cell = glint->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gData_08197486[cell],
-                      glint->x + x, glint->y + y, gData_08197492[cell],
-                      gData_08197498[cell]);
+          draw[j & 1](canvas, work->sheet + gData_08197486[cell], glint->x + x,
+                      glint->y + y, gData_08197492[cell], gData_08197498[cell]);
         }
         glint->variant++;
         if (glint->variant == GLINT_CELS) {

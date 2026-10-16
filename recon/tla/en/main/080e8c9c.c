@@ -1,9 +1,9 @@
-/* Near miss, differ 10 of 45 (2026-10-15): rewritten on view_move.h's
- * ViewMoveWork and the map and event work structs, from the earlier draft at
- * 12. What remains is order only: the ROM sets the call's 1 (movs r1, #1)
- * among the bound stores, where this sets it just before the call, and forms
- * the effect work's address one slot later. Measured: the four work pointers
- * in nine orders (10-22; map, view-move work, scene, event best). */
+// Near miss, differ 10 of 45 (2026-10-15): rewritten on view_move.h's
+// ViewMoveWork and the map and event work structs, from the earlier draft at
+// 12. What remains is order only: the ROM sets the call's 1 (movs r1, #1)
+// among the bound stores, where this sets it just before the call, and forms
+// the effect work's address one slot later. Measured: the four work pointers
+// in nine orders (10-22; map, view-move work, scene, event best).
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"

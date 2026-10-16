@@ -1,15 +1,15 @@
-/* Draft, differ 215 of 203 (draft 170 instructions, no device): an unused
- * wireframe renderer, written from the listing (no caller in the image; no
- * Broken Seal twin, twins12 0.43).
- * Left: the native holds every corner field it reads through its own
- * address register, formed once before the face loop: the three corners'
- * x at r6, r6 + 12 (r9) and r6 + 24 (r10), their y at r6 + 4 (r7), r6 + 16
- * (r11) and r6 + 28 (sp+4); the halfword loads then index those with 2.
- * Here only corners 1 and 2 get registers and the y fields are immediate
- * offsets, so the face loop is 33 instructions shorter. The vertex loop's
- * counter lives at sp+8 in the native (reused as the face counter), here
- * in r9. Next to try: separate pointers for the six fields, a halfword
- * union for the 16.16 values. */
+// Draft, differ 215 of 203 (draft 170 instructions, no device): an unused
+// wireframe renderer, written from the listing (no caller in the image; no
+// Broken Seal twin, twins12 0.43).
+// Left: the native holds every corner field it reads through its own
+// address register, formed once before the face loop: the three corners'
+// x at r6, r6 + 12 (r9) and r6 + 24 (r10), their y at r6 + 4 (r7), r6 + 16
+// (r11) and r6 + 28 (sp+4); the halfword loads then index those with 2.
+// Here only corners 1 and 2 get registers and the y fields are immediate
+// offsets, so the face loop is 33 instructions shorter. The vertex loop's
+// counter lives at sp+8 in the native (reused as the face counter), here
+// in r9. Next to try: separate pointers for the six fields, a halfword
+// union for the 16.16 values.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -63,8 +63,9 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
     Dma_Set(&vertices[face->corner[2]], &corner[2], 0x84000003, REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
-    facing = Iwram_MulQ16(corner[1].x - corner[0].x, corner[2].y - corner[0].y) -
-             Iwram_MulQ16(corner[2].x - corner[0].x, corner[1].y - corner[0].y);
+    facing =
+        Iwram_MulQ16(corner[1].x - corner[0].x, corner[2].y - corner[0].y) -
+        Iwram_MulQ16(corner[2].x - corner[0].x, corner[1].y - corner[0].y);
     if (facing >= 0) {
       color = face->color;
       corner[0].x += 64 << 16;

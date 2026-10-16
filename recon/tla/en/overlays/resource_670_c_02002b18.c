@@ -1,4 +1,5 @@
-// near miss: differ 22 (listing 63 instructions, draft 63); the native builds index * 2 in r10 before the three channels are joined, and stores from r0
+// near miss: differ 22 (listing 63 instructions, draft 63); the native builds
+// index * 2 in r10 before the three channels are joined, and stores from r0
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern u8 gData_0200635c[];
@@ -11,24 +12,23 @@ void Func_02002b18(s32 index, s32 entry, s32 delta);
 void Func_02002ba4(s32 index, s32 entry, s32 delta);
 
 struct KibomboWork90 {
-    u8 unk00[0x18];
-    struct KibomboObject *leader;
+  u8 unk00[0x18];
+  struct KibomboObject *leader;
 };
 
-void Func_02002b18(s32 index, s32 entry, s32 delta)
-{
-    u16 color = gData_02007948[entry];
-    s16 r = color & 0x1f;
-    s16 g = (color >> 5) & 0x1f;
-    s16 b = (color >> 10) & 0x1f;
+void Func_02002b18(s32 index, s32 entry, s32 delta) {
+  u16 color = gData_02007948[entry];
+  s16 r = color & 0x1f;
+  s16 g = (color >> 5) & 0x1f;
+  s16 b = (color >> 10) & 0x1f;
 
-    r += delta;
-    g += delta >> 1;
-    b += delta >> 2;
+  r += delta;
+  g += delta >> 1;
+  b += delta >> 2;
 
-    r = Func_02002b08(r);
-    g = Func_02002b08(g);
-    b = Func_02002b08(b);
-    r |= (b << 10) | (g << 5);
-    ((u16 *)0x05000000)[index] = r;
+  r = Func_02002b08(r);
+  g = Func_02002b08(g);
+  b = Func_02002b08(b);
+  r |= (b << 10) | (g << 5);
+  ((u16 *)0x05000000)[index] = r;
 }

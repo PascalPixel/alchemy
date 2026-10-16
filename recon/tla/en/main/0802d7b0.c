@@ -1,9 +1,9 @@
-/* Draft, differ 52 of 90 (2026-10-15), first pass. A map probe the field
- * Psynergy helpers use, like The Broken Seal's Map_CheckObjectStep (field.c)
- * but taking the point and the height directly. Belongs with
- * cell_collision.c's height probes. Left: allocation from the layer test on
- * (the native reuses the map pointer for the shape grid) and the tail tests'
- * layout. */
+// Draft, differ 52 of 90 (2026-10-15), first pass. A map probe the field
+// Psynergy helpers use, like The Broken Seal's Map_CheckObjectStep (field.c)
+// but taking the point and the height directly. Belongs with
+// cell_collision.c's height probes. Left: allocation from the layer test on
+// (the native reuses the map pointer for the shape grid) and the tail tests'
+// layout.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

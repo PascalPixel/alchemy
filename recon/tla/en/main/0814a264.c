@@ -1,26 +1,25 @@
-/* Near miss, differ 102 of 604 (effect kind 13, the fire pillars).
+// Near miss, differ 102 of 604 (effect kind 13, the fire pillars).
 
-   ☀️ twin: BattleFx_RunFirePillars (games/tbs/src/effect/effect.c), shape
-   0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,
-   the red and orange palettes from directory rows 0x147 and 0x148, two max
-   blitters from Func_081963ec(104, 0x13) and (188, 0x17) (⚓️ max is mode
-   1), the camera from Ram_HeapSlots->cameraWork, the pillar's x before its
-   y, the transfer callback at 0xc80, and the tables under their ⚓️ labels
-   (pillar counts Data_08197a20, depths Data_08197a23, start frames
-   Data_08197a2f).
+// ☀️ twin: BattleFx_RunFirePillars (games/tbs/src/effect/effect.c), shape
+// 0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,
+// the red and orange palettes from directory rows 0x147 and 0x148, two max
+// blitters from Func_081963ec(104, 0x13) and (188, 0x17) (⚓️ max is mode
+// 1), the camera from Ram_HeapSlots->cameraWork, the pillar's x before its
+// y, the transfer callback at 0xc80, and the tables under their ⚓️ labels
+// (pillar counts Data_08197a20, depths Data_08197a23, start frames
+// Data_08197a2f).
 
-   Same frame and instruction count. What is left is order, most of it in
-   the pillar loop's set-up (18 rows: the native keeps the start-frame
-   pointer, the frame's low bit, the sheet address and the screen record's
-   address in four spill slots set in another order) and in the base cel's
-   draws; elsewhere single rows and pool offsets.
+// Same frame and instruction count. What is left is order, most of it in
+// the pillar loop's set-up (18 rows: the native keeps the start-frame
+// pointer, the frame's low bit, the sheet address and the screen record's
+// address in four spill slots set in another order) and in the base cel's
+// draws; elsewhere single rows and pool offsets.
 
-   Tried (differ):
-     ☀️'s body with ⚓️'s names and tables                              120
-     the camera's yaw stepped as ☀️ writes it: yaw + 192, and
-       (s16)yaw - 192 (plain -= 192 builds 0xff40 and adds)             102
-     greedy declaration-order scan, every local through every place    102 */
-
+// Tried (differ):
+// ☀️'s body with ⚓️'s names and tables                              120
+// the camera's yaw stepped as ☀️ writes it: yaw + 192, and
+// (s16)yaw - 192 (plain -= 192 builds 0xff40 and adds)             102
+// greedy declaration-order scan, every local through every place    102
 
 #include "types.h"
 #include "system.h"
@@ -64,11 +63,11 @@ extern u8 Data_08197a2f[];    // ☀️ gFirePillars_StartFrames
 extern u16 gData_08197410[];  // ☀️ gParticleStreams_CellOffsets
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);         // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);         // ☀️ ProcessPendingGraphicsTransfer
-void Func_081434f8(void);         // ☀️ ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);    // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -176,8 +175,8 @@ void Func_0814a264(struct BattleEffectArgument *effect) {
             draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24, 20,
                     37);
           } else {
-            draw[0](canvas, work->sheet + 0x10b4, screen.x - 20,
-                    screen.y - 24, 20, 37);
+            draw[0](canvas, work->sheet + 0x10b4, screen.x - 20, screen.y - 24,
+                    20, 37);
             draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24, 20,
                     37);
           }

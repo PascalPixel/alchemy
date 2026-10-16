@@ -1,43 +1,43 @@
-/* Draft of Func_0815a9e4, effect kind 3: a wall of rock rises and sinks.
- *
- * On screen: the background darkens, the ground in front of the caster
- * heaves up in a mound (frames 0-81), then a wall of rock grows out of it,
- * stretching up row by row (frames 12-87). It stands from frame 88 to 159,
- * with dust streaming up from its foot and the targets flashing every 12
- * frames and recoiling every 4 (frames 86-158); it sinks back down from
- * frame 160 to 183. Rocks fly up out of the ground the whole time from
- * frame 5, six at first and eleven from frame 72, bigger for the larger
- * variants. The wall is symmetric: each piece draws its left half, then
- * its right half mirrored, about x = 64 + wallX on the canvas. Larger
- * variants stretch the layer wider (BG2 at 1.25 and 1.5).
- *
- * Setup: the battle effect canvas; BG2's scale and offset for the variant
- * and the caster's side; the earth wall picture decoded into the map cell
- * buffer and laid out again in the effect work (see below); BG colours
- * 1-63 darkened eight steps; the dot sheet in the sheet block; eleven rock
- * objects; two max blitters, the second mirrored; alpha blending; the
- * transfer callback; the rocks' and the dust's starting points.
- * Frame loop, 192 frames, as above; cues 212, 141 and 145 at frames 0, 40
- * and 96, and the battle resumes with hit cue 134 at frame 120.
- * Teardown: the callback, both blitters and the rock objects are released
- * and the canvas layer is closed.
- *
- * Port of The Broken Seal's BattlePres_RunRisingWall (kind 3 there too),
- * with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
- * callback order, no work->effect store, and the rock object's flags at
- * 0x1a.
- *
- * Listing 973 instructions, draft 974, differ 87 (trial 1, 2026-10-15).
- * Left: single-row order differences and the palette loop's literal pool
- * placed one branch later (one instruction more).
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names                       532
- *   frame declared after canvas (its spill slot)              532 -> 420
- *   the standing wall's width written as 48 where ☀️ has a
- *     local "width = 48", which swaps i and j between r6 and
- *     r7 for the whole function (found by alchemy permute)    420 -> 87
- */
+// Draft of Func_0815a9e4, effect kind 3: a wall of rock rises and sinks.
+
+// On screen: the background darkens, the ground in front of the caster
+// heaves up in a mound (frames 0-81), then a wall of rock grows out of it,
+// stretching up row by row (frames 12-87). It stands from frame 88 to 159,
+// with dust streaming up from its foot and the targets flashing every 12
+// frames and recoiling every 4 (frames 86-158); it sinks back down from
+// frame 160 to 183. Rocks fly up out of the ground the whole time from
+// frame 5, six at first and eleven from frame 72, bigger for the larger
+// variants. The wall is symmetric: each piece draws its left half, then
+// its right half mirrored, about x = 64 + wallX on the canvas. Larger
+// variants stretch the layer wider (BG2 at 1.25 and 1.5).
+
+// Setup: the battle effect canvas; BG2's scale and offset for the variant
+// and the caster's side; the earth wall picture decoded into the map cell
+// buffer and laid out again in the effect work (see below); BG colours
+// 1-63 darkened eight steps; the dot sheet in the sheet block; eleven rock
+// objects; two max blitters, the second mirrored; alpha blending; the
+// transfer callback; the rocks' and the dust's starting points.
+// Frame loop, 192 frames, as above; cues 212, 141 and 145 at frames 0, 40
+// and 96, and the battle resumes with hit cue 134 at frame 120.
+// Teardown: the callback, both blitters and the rock objects are released
+// and the canvas layer is closed.
+
+// Port of The Broken Seal's BattlePres_RunRisingWall (kind 3 there too),
+// with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
+// callback order, no work->effect store, and the rock object's flags at
+// 0x1a.
+
+// Listing 973 instructions, draft 974, differ 87 (trial 1, 2026-10-15).
+// Left: single-row order differences and the palette loop's literal pool
+// placed one branch later (one instruction more).
+
+// Tried:
+// ☀️'s body with The Lost Age's names                       532
+// frame declared after canvas (its spill slot)              532 -> 420
+// the standing wall's width written as 48 where ☀️ has a
+// local "width = 48", which swaps i and j between r6 and
+// r7 for the whole function (found by alchemy permute)    420 -> 87
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -196,7 +196,7 @@ s32 Func_02000a7c(void) {
       PartyInventory_FindOwner(440) != -1 &&
       PartyInventory_FindOwner(441) != -1)
     return 17;
-  /* No remaining combinations: the native falls off the end without a value. */
+  // No remaining combinations: the native falls off the end without a value.
 }
 
 s32 Func_02000b60(s32 group) {

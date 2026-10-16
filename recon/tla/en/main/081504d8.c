@@ -1,28 +1,28 @@
-/* Near miss of SummonFx_RunCanvasEffect, the body behind the four wrappers of
- * summon_canvas_modes.c.
- *
- * Twin: The Broken Seal's BattleFx_RunPaletteRamp (effect.c), call for
- * call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
- * the effect from its argument, takes its heap blocks as Ram_HeapSlots
- * fields and orders the callback 0xc80. Resources not yet named in
- * directory.s, by row and asset: 0x15f BattleFx_DaggerSheet, 0x15e
- * BattleFx_ShieldSheet, 0x17f BattleFx_PinkBurstSheet, 0x17b
- * BattleFx_GlowOrbSheet and 0x160 BattleFx_PaletteRampImage.
- *
- * Near miss: differ 70 of 553 (draft 551).
- *
- * Left: the palette choice. The native tests mode 0, then 3, then 1, and
- * loads the glow palette's id in both the mode-3 and the mode-1 branch;
- * agscc merges those two branches into one (two instructions fewer), which
- * moves the literal pool and every pool offset after it. The rest is
- * order residue (the RAM base and the canvas one slot apart, the ramp's
- * 0x2580 before its first load).
- *
- * Tried (2026-10-15):
- *   - mode == 3 || mode == 1 in one test: 95; the choice nested under
- *     mode != 0: 70 (no change).
- *   - greedy declaration-order sweep, two passes: no gain.
- */
+// Near miss of SummonFx_RunCanvasEffect, the body behind the four wrappers of
+// summon_canvas_modes.c.
+
+// Twin: The Broken Seal's BattleFx_RunPaletteRamp (effect.c), call for
+// call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
+// the effect from its argument, takes its heap blocks as Ram_HeapSlots
+// fields and orders the callback 0xc80. Resources not yet named in
+// directory.s, by row and asset: 0x15f BattleFx_DaggerSheet, 0x15e
+// BattleFx_ShieldSheet, 0x17f BattleFx_PinkBurstSheet, 0x17b
+// BattleFx_GlowOrbSheet and 0x160 BattleFx_PaletteRampImage.
+
+// Near miss: differ 70 of 553 (draft 551).
+
+// Left: the palette choice. The native tests mode 0, then 3, then 1, and
+// loads the glow palette's id in both the mode-3 and the mode-1 branch;
+// agscc merges those two branches into one (two instructions fewer), which
+// moves the literal pool and every pool offset after it. The rest is
+// order residue (the RAM base and the canvas one slot apart, the ramp's
+// 0x2580 before its first load).
+
+// Tried (2026-10-15):
+// - mode == 3 || mode == 1 in one test: 95; the choice nested under
+// mode != 0: 70 (no change).
+// - greedy declaration-order sweep, two passes: no gain.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -66,15 +66,15 @@ extern u16 Data_081974dc[]; // gPaletteRamp_ShardCells
 extern u8 Data_081974f4[];  // gPaletteRamp_ShardWidths
 extern u8 Data_08197500[];  // gPaletteRamp_ShardHeights
 
-/* A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
- * in turn, four frames apart, and breaks into shards that fly off and
- * darken.
- *
- * Setup: seven darker copies of the shard picture are built by clamping
- * its levels; 24 shards a target start in a grid across the target and
- * scatter with random headings toward the user's side. Frame loop: a
- * target's picture plays for 24 frames; at frame 24 a chime sounds and the
- * shards fly for 36 frames, one shade darker every four frames. */
+// A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
+// in turn, four frames apart, and breaks into shards that fly off and
+// darken.
+
+// Setup: seven darker copies of the shard picture are built by clamping
+// its levels; 24 shards a target start in a grid across the target and
+// scatter with random headings toward the user's side. Frame loop: a
+// target's picture plays for 24 frames; at frame 24 a chime sounds and the
+// shards fly for 36 frames, one shade darker every four frames.
 void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

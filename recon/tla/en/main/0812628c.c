@@ -1,15 +1,15 @@
-/* Near miss, differ 30 of 137: The Broken Seal's
- * BattlePresentation_ConfigurePaletteFade, with this game's heap slots, its
- * callback BattlePres_UpdateHBlankScroll at 0xcff and its IO write of 0x1f83 to
- * BG1CNT. The two palette branches take one-pass blocks on the battle work, and
- * the DMA branch an empty barrier after the palette, as the native finishes the
- * palette before it starts the DMA addresses. Left: the native loads the
- * mask 0x1f (ldr r7) before it adds the palette offset, and so places the
- * literal pool after the red channel's branch, this draft after the green
- * one (most of the differing rows are that pool's offsets); and it loads the
- * BG palette word between the rows of its destination (ldr; movs; ldrh; lsls).
- * Measured: the word copy through a local or two pointers (differ 42 and 43),
- * five minutes of permute (14, by moving a statement). */
+// Near miss, differ 30 of 137: The Broken Seal's
+// BattlePresentation_ConfigurePaletteFade, with this game's heap slots, its
+// callback BattlePres_UpdateHBlankScroll at 0xcff and its IO write of 0x1f83 to
+// BG1CNT. The two palette branches take one-pass blocks on the battle work, and
+// the DMA branch an empty barrier after the palette, as the native finishes the
+// palette before it starts the DMA addresses. Left: the native loads the
+// mask 0x1f (ldr r7) before it adds the palette offset, and so places the
+// literal pool after the red channel's branch, this draft after the green
+// one (most of the differing rows are that pool's offsets); and it loads the
+// BG palette word between the rows of its destination (ldr; movs; ldrh; lsls).
+// Measured: the word copy through a local or two pointers (differ 42 and 43),
+// five minutes of permute (14, by moving a statement).
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"

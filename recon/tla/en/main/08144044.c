@@ -1,25 +1,25 @@
-/* Near miss, differ 69 of 355 (the draft has 356).
- *
- * Effect kind 39. Twin: The Broken Seal's BattleFx_RunClosingSkulls, ported
- * call for call. The Lost Age's changes: work and canvas read directly, the
- * camera read again each frame; the skull sheet unpacked with its palette by
- * Resource_LoadAndDecompress and the pink burst palette copied after it;
- * Func_08144aac for the max and additive pair; both callbacks at 0xc80; the
- * effect runs count * 32 + 64 frames (96 there) and begins the results at
- * frame 92 (96 there); the actor loops read the effect argument.
- *
- * Left: order and one instruction. The native takes &pos as add r1, sp, #64
- * where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
- * in the native the address passes through a low register before r8, in the
- * draft r8's pseudo is reloaded); 0xc80 is built whole before the first
- * call in the native; the rest are single swaps of a load with its
- * neighbour.
- *
- * Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
- * temporary for target->z, a block, a moved statement); a greedy scan of
- * the declaration order (k first) 75 -> 69; pos before the point, which
- * gives the native's slots (64 and 52), is 69 too and is kept.
- */
+// Near miss, differ 69 of 355 (the draft has 356).
+
+// Effect kind 39. Twin: The Broken Seal's BattleFx_RunClosingSkulls, ported
+// call for call. The Lost Age's changes: work and canvas read directly, the
+// camera read again each frame; the skull sheet unpacked with its palette by
+// Resource_LoadAndDecompress and the pink burst palette copied after it;
+// Func_08144aac for the max and additive pair; both callbacks at 0xc80; the
+// effect runs count * 32 + 64 frames (96 there) and begins the results at
+// frame 92 (96 there); the actor loops read the effect argument.
+
+// Left: order and one instruction. The native takes &pos as add r1, sp, #64
+// where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
+// in the native the address passes through a low register before r8, in the
+// draft r8's pseudo is reloaded); 0xc80 is built whole before the first
+// call in the native; the rest are single swaps of a load with its
+// neighbour.
+
+// Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
+// temporary for target->z, a block, a moved statement); a greedy scan of
+// the declaration order (k first) 75 -> 69; pos before the point, which
+// gives the native's slots (64 and 52), is 69 too and is kept.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

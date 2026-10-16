@@ -1,28 +1,28 @@
-/* Draft of Func_0816f594, effect kind 110 (Radiant Fire), written from the
- * listing on The Broken Seal's canvas skeleton. No close twin (shape
- * BattleFx_RunRisingBurst 0.525, call order BattleFx_RunIceShardBursts
- * 0.551); the textured square goes through the ARM polygon kernels as in
- * the summons (Func_081969f8, Func_08196958, Func_08196a7c).
- *
- * Listing 389 instructions, draft 392, differ 257.
- * Left: allocation. In the disc loop the native keeps the offset in r7,
- * the size in r6 and 2i in r5, reads the table base back from the stack
- * and multiplies by 2i + 3 (r5 + 3) for size + 1; here the table gets a
- * walking pointer and size + 1 is size's own. The flame loops take r6
- * where the native has r7 and the reverse, and the size test of the
- * disc draw is laid out differently (size * 2 - 2 against 61 in the
- * native).
- * Tried (differ):
- *   first draft                                                       267
- *   locals in the native's stack-slot order (canvas, frame, camera,
- *     savedYaw, target, discs)                                         257
- *   size derived from i ((i + 1) * 2, i * 2 + 2, 2 + i * 2): the
- *     multiply then reads 2i + 3 as the native does, but the offset
- *     spills                                                            292
- *   offset += (i * 2 + 3) * size / 2                                    256
- *   the table read through work->sheet with no discs local             264
- *   alchemy permute 8 minutes, 2 jobs (from the 292 form): 266
- */
+// Draft of Func_0816f594, effect kind 110 (Radiant Fire), written from the
+// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleFx_RunRisingBurst 0.525, call order BattleFx_RunIceShardBursts
+// 0.551); the textured square goes through the ARM polygon kernels as in
+// the summons (Func_081969f8, Func_08196958, Func_08196a7c).
+
+// Listing 389 instructions, draft 392, differ 257.
+// Left: allocation. In the disc loop the native keeps the offset in r7,
+// the size in r6 and 2i in r5, reads the table base back from the stack
+// and multiplies by 2i + 3 (r5 + 3) for size + 1; here the table gets a
+// walking pointer and size + 1 is size's own. The flame loops take r6
+// where the native has r7 and the reverse, and the size test of the
+// disc draw is laid out differently (size * 2 - 2 against 61 in the
+// native).
+// Tried (differ):
+// first draft                                                       267
+// locals in the native's stack-slot order (canvas, frame, camera,
+// savedYaw, target, discs)                                         257
+// size derived from i ((i + 1) * 2, i * 2 + 2, 2 + i * 2): the
+// multiply then reads 2i + 3 as the native does, but the offset
+// spills                                                            292
+// offset += (i * 2 + 3) * size / 2                                    256
+// the table read through work->sheet with no discs local             264
+// alchemy permute 8 minutes, 2 jobs (from the 292 form): 266
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

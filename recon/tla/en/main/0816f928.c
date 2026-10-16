@@ -1,26 +1,26 @@
-/* Draft of Func_0816f928, effect kind 105 (Hurricane), written from the
- * listing on The Broken Seal's canvas skeleton. No close twin (shape
- * BattleFx_RunJupiterDjinnFall 0.513, call order
- * BattleFx_RunLightningPillars 0.600). It ends without closing the canvas
- * layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
- * mode 3.
- *
- * Listing 376 instructions, draft 374, differ 218.
- * Left: allocation. The native's streak loop keeps i * 28 in r10 and
- * adds the map cell buffer's address to it at each splash, where here
- * the splash gets a second walking pointer; with that register gone the
- * native spills the canvas (sp 16) and keeps the frame in r11, and its
- * frame is 32 bytes with an unused word at sp 12 (here 24). It also keeps
- * the streak's new x in r1 for the splash, where this draft reloads it.
- * Tried (differ):
- *   first draft                                                       218
- *   the streak loop as nested ifs instead of continue                 218
- *   splash as PARTICLES + i, and the splash fields written
- *     PARTICLES[i].field with no pointer                                218
- *   the streak loop, and the splash loop, indexed (&work->particles[i])
- *     rather than stepped                                               218
- *   HI through an inline helper (Func_0816d3d8's device)               212
- */
+// Draft of Func_0816f928, effect kind 105 (Hurricane), written from the
+// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleFx_RunJupiterDjinnFall 0.513, call order
+// BattleFx_RunLightningPillars 0.600). It ends without closing the canvas
+// layer: it clears the canvas and hands it to SummonFx_RunCanvasEffect
+// mode 3.
+
+// Listing 376 instructions, draft 374, differ 218.
+// Left: allocation. The native's streak loop keeps i * 28 in r10 and
+// adds the map cell buffer's address to it at each splash, where here
+// the splash gets a second walking pointer; with that register gone the
+// native spills the canvas (sp 16) and keeps the frame in r11, and its
+// frame is 32 bytes with an unused word at sp 12 (here 24). It also keeps
+// the streak's new x in r1 for the splash, where this draft reloads it.
+// Tried (differ):
+// first draft                                                       218
+// the streak loop as nested ifs instead of continue                 218
+// splash as PARTICLES + i, and the splash fields written
+// PARTICLES[i].field with no pointer                                218
+// the streak loop, and the splash loop, indexed (&work->particles[i])
+// rather than stepped                                               218
+// HI through an inline helper (Func_0816d3d8's device)               212
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

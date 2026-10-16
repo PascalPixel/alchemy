@@ -1,32 +1,32 @@
-/* Draft of Func_0816aa08, effect kind 85 (Plume Edge), written from the
- * listing on The Broken Seal's canvas skeleton. No close twin (shape
- * BattleEffect_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
- * 0.677); the pillar's two-piece scroll is BattleEffect_RunEmberColumns'.
- *
- * Listing 467 instructions, draft 467, differ 36.
- * Left: order rows only. The native moves the work pointer to r9 before
- * it loads the sheet slot, starts REG_BLDALPHA's address before loading
- * its value, adds the 32 to each spark's speed before it loads the
- * position's y (both bursts), and sets r1 (32) after the flash's y; it
- * also places the first literal pool straight after the
- * GetBattleObjectSlotFar call, one instruction earlier than here, which
- * moves every pool offset after it (about 20 rows).
- * Tried (differ):
- *   first draft                                                        94
- *   locals declared in the order of the native's stack slots
- *     (canvas, frame, sheet, target, pillarY)                          60
- *   work read before canvas                                            52
- *   HI as *(s16 *)((u8 *)&v + 2), (s32)((s16 *)&v)[1], a struct of
- *     two halves                                                       52
- *   the cell table through a local pointer before the spark loop       51
- *   the spark loop stepped by pointer (step++): loop.c then hoists
- *     the cell table into r10 as the native does                       36
- *   HI through an inline helper (Func_0816d3d8's device)               135
- *   alchemy permute 8 minutes, 2 jobs: 25 only with a forced
- *     temporary for the FlashBurstSheet id taken before the pillar
- *     load, 33 with an unsigned char picture index (a false type);
- *     neither kept
- */
+// Draft of Func_0816aa08, effect kind 85 (Plume Edge), written from the
+// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleEffect_RunImpactBurst 0.566, call order BattleFx_RunJupiterDjinnFall
+// 0.677); the pillar's two-piece scroll is BattleEffect_RunEmberColumns'.
+
+// Listing 467 instructions, draft 467, differ 36.
+// Left: order rows only. The native moves the work pointer to r9 before
+// it loads the sheet slot, starts REG_BLDALPHA's address before loading
+// its value, adds the 32 to each spark's speed before it loads the
+// position's y (both bursts), and sets r1 (32) after the flash's y; it
+// also places the first literal pool straight after the
+// GetBattleObjectSlotFar call, one instruction earlier than here, which
+// moves every pool offset after it (about 20 rows).
+// Tried (differ):
+// first draft                                                        94
+// locals declared in the order of the native's stack slots
+// (canvas, frame, sheet, target, pillarY)                          60
+// work read before canvas                                            52
+// HI as *(s16 *)((u8 *)&v + 2), (s32)((s16 *)&v)[1], a struct of
+// two halves                                                       52
+// the cell table through a local pointer before the spark loop       51
+// the spark loop stepped by pointer (step++): loop.c then hoists
+// the cell table into r10 as the native does                       36
+// HI through an inline helper (Func_0816d3d8's device)               135
+// alchemy permute 8 minutes, 2 jobs: 25 only with a forced
+// temporary for the FlashBurstSheet id taken before the pillar
+// load, 33 with an unsigned char picture index (a false type);
+// neither kept
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

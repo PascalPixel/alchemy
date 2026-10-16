@@ -26,9 +26,7 @@ static void Tolbi_FreezePuddle(void);
 
 // Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
 // Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
-static void Tolbi_JoinEmber(void) {
-  Djinn_JoinParty(TOLBI_EMBER, 2, 4);
-}
+static void Tolbi_JoinEmber(void) { Djinn_JoinParty(TOLBI_EMBER, 2, 4); }
 
 #include "common/object_distance.h"
 

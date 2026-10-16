@@ -1,4 +1,4 @@
-/* FarCall_ObjectTable: one entry per 8-byte stub, in table order. */
+// FarCall_ObjectTable: one entry per 8-byte stub, in table order.
 FAR_CALL(Field_RunSceneFar, Field_RunScene, s32, (s32 entrance))
 FAR_CALL(Game_ResetForNewGameFar, Game_ResetForNewGame, void, (s32 mode))
 FAR_CALL(Battle_WaitMode0Far, Battle_WaitMode0, void, (s32 frames))

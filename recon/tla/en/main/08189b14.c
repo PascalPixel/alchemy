@@ -1,22 +1,22 @@
-/* Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
- * order BattleEffect_RunCirclingFallingScene 0.455): ⚓️'s own effect on ☀️'s
- * frame, with its rune and swords drawn as textured quads by ⚓️'s model
- * kernels, as in Triple Chomp (Func_0818b868).
- * The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
- * the blitter 32, graphics 28, the start's address 24, the vertices 20, the
- * texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
- * offset at 8; the texture is at sp+56, the target's screen position at 64
- * and the start at 76.
- * Written from the listing (2026-10-15, fx-n3): 560 at the first compile,
- * with the instruction count already the native's. The blitter as a pair
- * (its second word fills sp+36) and the aggregates declared start, target,
- * texture (the first declared takes the highest slot): 510.
- * Left, first: the native reloads the map cell buffer's address from the
- * pool for each of the prologue's three calls, where this draft keeps it in
- * r5 across them (as Ram_MapCellBuffer or as a linked gMapCellBuffer[]: 510
- * both), and every slot and register after that follows. The fan's texture
- * is written as two byte stores natively (5, then 6, the texture's address
- * stored again between them), not this draft's bitfield update. */
+// Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
+// order BattleEffect_RunCirclingFallingScene 0.455): ⚓️'s own effect on ☀️'s
+// frame, with its rune and swords drawn as textured quads by ⚓️'s model
+// kernels, as in Triple Chomp (Func_0818b868).
+// The native frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
+// the blitter 32, graphics 28, the start's address 24, the vertices 20, the
+// texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
+// offset at 8; the texture is at sp+56, the target's screen position at 64
+// and the start at 76.
+// Written from the listing (2026-10-15, fx-n3): 560 at the first compile,
+// with the instruction count already the native's. The blitter as a pair
+// (its second word fills sp+36) and the aggregates declared start, target,
+// texture (the first declared takes the highest slot): 510.
+// Left, first: the native reloads the map cell buffer's address from the
+// pool for each of the prologue's three calls, where this draft keeps it in
+// r5 across them (as Ram_MapCellBuffer or as a linked gMapCellBuffer[]: 510
+// both), and every slot and register after that follows. The fan's texture
+// is written as two byte stores natively (5, then 6, the texture's address
+// stored again between them), not this draft's bitfield update.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

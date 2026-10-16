@@ -1,26 +1,26 @@
-/* Near miss, differ 378 of 1102 (two instructions short).
- *
- * Twin: The Broken Seal's BattleEffect_RunTileAndPaletteAnimation, reached
- * from the scenes through the far-call table (table_47.s). It sets up its
- * own heap blocks (only the work and the canvas: the sheet block it releases
- * at the end is never taken), stores work->effect, marks the work active,
- * and reads the target from the argument. The twin's 12 unused frame bytes
- * are gone, and the IWRAM clears keep their own sizes (the twin's size
- * local is gone with them).
- *
- * Left: allocation through the whole body: the tile map's loop keeps its
- * counters on the stack and a constant in lr, the circle reloads cx and cy
- * from stack slots at each use, and the palette loop holds its masks in
- * high registers. Control flow and calls follow the listing.
- *
- * Tried:
- *   the twin as ported                                         378
- *   alchemy permute, 15 minutes: left and cy combined into one
- *     two-word array, so both live in memory as the native's
- *     reloads suggest (not kept: an array no reader would write) 307
- *   the same run's other bests: a temporary (341), an
- *     inequality turned round (326)
- */
+// Near miss, differ 378 of 1102 (two instructions short).
+
+// Twin: The Broken Seal's BattleEffect_RunTileAndPaletteAnimation, reached
+// from the scenes through the far-call table (table_47.s). It sets up its
+// own heap blocks (only the work and the canvas: the sheet block it releases
+// at the end is never taken), stores work->effect, marks the work active,
+// and reads the target from the argument. The twin's 12 unused frame bytes
+// are gone, and the IWRAM clears keep their own sizes (the twin's size
+// local is gone with them).
+
+// Left: allocation through the whole body: the tile map's loop keeps its
+// counters on the stack and a constant in lr, the circle reloads cx and cy
+// from stack slots at each use, and the palette loop holds its masks in
+// high registers. Control flow and calls follow the listing.
+
+// Tried:
+// the twin as ported                                         378
+// alchemy permute, 15 minutes: left and cy combined into one
+// two-word array, so both live in memory as the native's
+// reloads suggest (not kept: an array no reader would write) 307
+// the same run's other bests: a temporary (341), an
+// inequality turned round (326)
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -94,7 +94,7 @@ void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
@@ -112,17 +112,16 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   return Iwram_CopyWords(destination, source, size);
 }
 
-/*
- * The target's picture shatters, for the scenes.
- *
- * A grey circle spreads from (96, 60) over the battle background, 32 pixels
- * of radius a frame for four frames, while the picture in the canvas breaks
- * into 33 pieces that fly outward and fall. Colours 6 to 13 start white and
- * step back to the battle background's own colours from frame 8; colour 1
- * brightens from black to white. At frame 51 a flash sheet replaces the
- * pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
- * frames. At the end the background and the display are put back.
- */
+// The target's picture shatters, for the scenes.
+
+// A grey circle spreads from (96, 60) over the battle background, 32 pixels
+// of radius a frame for four frames, while the picture in the canvas breaks
+// into 33 pieces that fly outward and fall. Colours 6 to 13 start white and
+// step back to the battle background's own colours from frame 8; colour 1
+// brightens from black to white. At frame 51 a flash sheet replaces the
+// pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
+// frames. At the end the background and the display are put back.
+
 void Func_0813eb70(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -193,8 +192,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work->sheet,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work->sheet, 1,
+                             1);
   work->transferMode = 1; // each transfer clears the canvas
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
@@ -392,8 +391,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
     // Frame 51: the flash pictures and colours, and 32 flashes placed at
     // x 32-63, y 80-111.
     if (frame == 51) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                                 work->sheet, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
+                                 1, 0);
       for (i = 1; i != 64; i++) {
         s32 v;
 

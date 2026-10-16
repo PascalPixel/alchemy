@@ -1,11 +1,11 @@
-/* Near miss of Func_0815b68c, decompiled from the listing (101 instructions,
- * draft 101, differ 12): the native forms the position's address (add r1,
- * sp, #8) before the copied scale is stored and starts the 0x6e4 offset
- * after the two zero stores, and it stores x and y (str r3, [r5] and
- * [r6]) one row after the next offset is started; here those rows come
- * one step earlier or later. Matched on the way: the particle's fields read
- * through work at each use (a pointer to the particle shares one base) and
- * position[3] and position[1] cleared first. */
+// Near miss of Func_0815b68c, decompiled from the listing (101 instructions,
+// draft 101, differ 12): the native forms the position's address (add r1,
+// sp, #8) before the copied scale is stored and starts the 0x6e4 offset
+// after the two zero stores, and it stores x and y (str r3, [r5] and
+// [r6]) one row after the next offset is started; here those rows come
+// one step earlier or later. Matched on the way: the particle's fields read
+// through work at each use (a pointer to the particle shares one base) and
+// position[3] and position[1] cleared first.
 #include "types.h"
 #include "battle.h"
 #include "battle_effect_work.h"

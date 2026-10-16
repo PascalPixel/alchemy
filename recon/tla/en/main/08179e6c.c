@@ -1,21 +1,21 @@
-/* Draft (tla-en): listing 74 instructions, draft 74, common 73, differ 2.
- * After the call the native loads 0x784 from the pool before it starts
- * BG2CNT's three-instruction address, and 0x4e before BG2PA's: sched2 ranks
- * the pool load (priority 13) under the address chain (14), so plain stores
- * put the address first (differ 14). The native's hoisted 7 sits in the
- * delay slot of the canvas load before the call, so no loop note or
- * volatile asm may stand between the call and the loop (a pinned value with
- * a one-pass block before each store: differ 6). Here each value is pinned
- * to r3 behind the empty asm that holds r2 (f18284c.c's device): both
- * orders and the 7 match, but the two asms count eight estimated bytes and
- * the literal pool's jump comes one instruction early (mov ip, r3 after
- * it). With only BG2CNT's asm the pool is right and BG2PA's pair is
- * swapped; with only BG2PA's, BG2CNT's (differ 2 each). A forced mask
- * variable for the 7 (differ 41), a u16 local (built in a word: differ 30)
- * and a one-pass block around the whole body (differ 8) do not help.
- * The if/else-if order of the level (y < 32, y > 95, else 63) is the
- * native's: jump optimisation turns it into its "level = y * 2" default.
- */
+// Draft (tla-en): listing 74 instructions, draft 74, common 73, differ 2.
+// After the call the native loads 0x784 from the pool before it starts
+// BG2CNT's three-instruction address, and 0x4e before BG2PA's: sched2 ranks
+// the pool load (priority 13) under the address chain (14), so plain stores
+// put the address first (differ 14). The native's hoisted 7 sits in the
+// delay slot of the canvas load before the call, so no loop note or
+// volatile asm may stand between the call and the loop (a pinned value with
+// a one-pass block before each store: differ 6). Here each value is pinned
+// to r3 behind the empty asm that holds r2 (f18284c.c's device): both
+// orders and the 7 match, but the two asms count eight estimated bytes and
+// the literal pool's jump comes one instruction early (mov ip, r3 after
+// it). With only BG2CNT's asm the pool is right and BG2PA's pair is
+// swapped; with only BG2PA's, BG2CNT's (differ 2 each). A forced mask
+// variable for the 7 (differ 41), a u16 local (built in a word: differ 30)
+// and a one-pass block around the whole body (differ 8) do not help.
+// The if/else-if order of the level (y < 32, y > 95, else 63) is the
+// native's: jump optimisation turns it into its "level = y * 2" default.
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

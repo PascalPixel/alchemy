@@ -1,24 +1,24 @@
-/* Near miss, differ 40 of 380.
- *
- * Twin: The Broken Seal's BattleFx_RunGatheringBurst, reached from the
- * scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
- * its own heap blocks, stores work->effect and marks the work active
- * itself, and reads the actors from the argument. The corner sparks' four
- * blitters are loaded through Func_08196404 directly, with all five
- * arguments.
- *
- * Left: in the corner-spark loop the native hoists the loader's mode (1)
- * into r6 and reads the alternate blitter's slot afresh each turn; here the
- * slot's address is the hoisted value and the 1 is built each turn. The
- * rest are single rows where the native builds a constant or issues a load
- * one slot earlier, and the pool offsets they move.
- *
- * Tried:
- *   the twin, work block allocated by sizeof (the struct is short)  44
- *   the work block's real size, 0x7b7c                             40
- *   the slot read inside the loop: the address is no longer
- *     hoisted, but neither is the 1                                60
- */
+// Near miss, differ 40 of 380.
+
+// Twin: The Broken Seal's BattleFx_RunGatheringBurst, reached from the
+// scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
+// its own heap blocks, stores work->effect and marks the work active
+// itself, and reads the actors from the argument. The corner sparks' four
+// blitters are loaded through Func_08196404 directly, with all five
+// arguments.
+
+// Left: in the corner-spark loop the native hoists the loader's mode (1)
+// into r6 and reads the alternate blitter's slot afresh each turn; here the
+// slot's address is the hoisted value and the 1 is built each turn. The
+// rest are single rows where the native builds a constant or issues a load
+// one slot earlier, and the pool offsets they move.
+
+// Tried:
+// the twin, work block allocated by sizeof (the struct is short)  44
+// the work block's real size, 0x7b7c                             40
+// the slot read inside the loop: the address is no longer
+// hoisted, but neither is the 1                                60
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -82,20 +82,19 @@ void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * Light gathering on the user and bursting, for the scenes.
- *
- * For the first 15 frames four sparks flare at the user's corners, each
- * mirrored to face the middle; 64 motes spiral in from a ring around the
- * user, shrinking as they come. At frame 26 the first target flashes with a
- * sound, and from frame 28 to 48 a 48x48 burst plays out over seven
- * pictures. effect->kind picks the colours (yellow, ice, red or violet). The
- * last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
- * never drawn.
- */
+// Light gathering on the user and bursting, for the scenes.
+
+// For the first 15 frames four sparks flare at the user's corners, each
+// mirrored to face the middle; 64 motes spiral in from a ring around the
+// user, shrinking as they come. At frame 26 the first target flashes with a
+// sound, and from frame 28 to 48 a 48x48 burst plays out over seven
+// pictures. effect->kind picks the colours (yellow, ice, red or violet). The
+// last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
+// never drawn.
+
 void Func_0813f518(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
@@ -152,8 +151,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(Func_08143000, CALLBACK_ORDER);
-  Func_081963ec(SLOT_BLITTER,
-                BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Audio_PlayCue(140);
 

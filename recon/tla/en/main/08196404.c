@@ -1,22 +1,22 @@
-/* Draft of Func_08196404, The Lost Age's BattleEffect_LoadWork: differ 241
- * of 597 (tla-en, 2026-10-15; first written in the effects trial of the
- * same day), on The Broken Seal's step list. Blocked under S1 as written:
- * its copy helpers are inline asm, there only to measure the rest, and stay
- * so until Pascal decides whether the four-register copies are a
- * CAMELOT_ASM helper (plan D3). The Lost Age's builder is one pass: a fixed
- * 436-byte block, short copies as ldmia/stmia pairs, longer ones by DMA, modes
- * numbered 0 additive, 1 max, 2 transparent, default copy, and the second
- * run copied from the first by its measured length. Three copies use four
- * registers (ldmia r0!, {r2, r3, r4, r5}), which agscc never emits
- * (thumb_expand_movstrqi has only movmem12b and movmem8b); and agscc's
- * movmem12b/8b expose the advanced pointers, so CSE reuses them for dst
- * (adds r6, r2, #0) where the native keeps adds r6, #12. Both copy forms
- * are fixed-register asm helpers here only to measure the rest: from
- * differ 627 (struct copies) to 252. Left: a store-flag return (native
- * eors/negs/orrs/lsrs, here a branch; three forms tried), the DMA
- * control 0x84000005 built as 5 | r5 from a kept 0x84000000, one spill
- * slot fewer (frame 148 against 152 with a 136-byte local), and
- * scheduling. */
+// Draft of Func_08196404, The Lost Age's BattleEffect_LoadWork: differ 241
+// of 597 (tla-en, 2026-10-15; first written in the effects trial of the
+// same day), on The Broken Seal's step list. Blocked under S1 as written:
+// its copy helpers are inline asm, there only to measure the rest, and stay
+// so until Pascal decides whether the four-register copies are a
+// CAMELOT_ASM helper (plan D3). The Lost Age's builder is one pass: a fixed
+// 436-byte block, short copies as ldmia/stmia pairs, longer ones by DMA, modes
+// numbered 0 additive, 1 max, 2 transparent, default copy, and the second
+// run copied from the first by its measured length. Three copies use four
+// registers (ldmia r0!, {r2, r3, r4, r5}), which agscc never emits
+// (thumb_expand_movstrqi has only movmem12b and movmem8b); and agscc's
+// movmem12b/8b expose the advanced pointers, so CSE reuses them for dst
+// (adds r6, r2, #0) where the native keeps adds r6, #12. Both copy forms
+// are fixed-register asm helpers here only to measure the rest: from
+// differ 627 (struct copies) to 252. Left: a store-flag return (native
+// eors/negs/orrs/lsrs, here a branch; three forms tried), the DMA
+// control 0x84000005 built as 5 | r5 from a kept 0x84000000, one spill
+// slot fewer (frame 148 against 152 with a 136-byte local), and
+// scheduling.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -57,9 +57,9 @@ extern const u32 BattleEffect_ColorForward[];
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
 #define PUT(word) *dst++ = (word)
-/* Trial: a four-word block copy, ldmia and stmia of four registers, which
- * agscc never emits (thumb_expand_movstrqi has only 12- and 8-byte moves).
- * A CAMELOT_ASM candidate for Pascal, written here to measure the rest. */
+// Trial: a four-word block copy, ldmia and stmia of four registers, which
+// agscc never emits (thumb_expand_movstrqi has only 12- and 8-byte moves).
+// A CAMELOT_ASM candidate for Pascal, written here to measure the rest.
 static __inline__ void Copy4Words(const u32 *from, u32 *to) {
   register const u32 *s __asm__("r0") = from;
   register u32 *d __asm__("r1") = to;

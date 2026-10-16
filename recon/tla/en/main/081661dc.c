@@ -1,27 +1,27 @@
-/* Draft, differ 26 of 427: Func_081661dc, effect kind 55, The Broken Seal's
- * BattleFx_RunFireBurstShards.
- *
- * Twin: ☀️ BattleFx_RunFireBurstShards (games/tbs/src/effect/effect.c),
- * ported: the effect stays an argument, the camera comes from its heap slot
- * (0x30), the blitters from Func_081963ec(104, 3, 7 or 19) and slot 0x68, the
- * canvas filled through IwramFillWords where ☀️ uses Dma_Fill32, callback
- * Func_08143000 at 0xc80.
- *
- * frame declared before the sheet and camera gives the native's spill slots
- * (62 to 26).
- *
- * Left: everything is reordered rows where the native puts a load or a store
- * ahead of an independent constant or copy (the pooled map cell address and
- * 0xff after the heap reads, the work's reload before 0x7780 and before the
- * blitter's frame, the particle's x before the third random's mask, the
- * second size store before the halved size), the same kind as
- * Func_08164b2c's, where a load costing 3 and a store 2 give the native order
- * (not worked through here).
- *
- * Tried (differ): alchemy permute 6 minutes, 2 jobs, on this draft: 24 with
- * size * 2 passed through an inline helper (a wrapper device that closes 2 of
- * the 26 rows, not kept); the best weighted candidate moved a statement and
- * differs 30. */
+// Draft, differ 26 of 427: Func_081661dc, effect kind 55, The Broken Seal's
+// BattleFx_RunFireBurstShards.
+
+// Twin: ☀️ BattleFx_RunFireBurstShards (games/tbs/src/effect/effect.c),
+// ported: the effect stays an argument, the camera comes from its heap slot
+// (0x30), the blitters from Func_081963ec(104, 3, 7 or 19) and slot 0x68, the
+// canvas filled through IwramFillWords where ☀️ uses Dma_Fill32, callback
+// Func_08143000 at 0xc80.
+
+// frame declared before the sheet and camera gives the native's spill slots
+// (62 to 26).
+
+// Left: everything is reordered rows where the native puts a load or a store
+// ahead of an independent constant or copy (the pooled map cell address and
+// 0xff after the heap reads, the work's reload before 0x7780 and before the
+// blitter's frame, the particle's x before the third random's mask, the
+// second size store before the halved size), the same kind as
+// Func_08164b2c's, where a load costing 3 and a store 2 give the native order
+// (not worked through here).
+
+// Tried (differ): alchemy permute 6 minutes, 2 jobs, on this draft: 24 with
+// size * 2 passed through an inline helper (a wrapper device that closes 2 of
+// the 26 rows, not kept); the best weighted candidate moved a statement and
+// differs 30.
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"

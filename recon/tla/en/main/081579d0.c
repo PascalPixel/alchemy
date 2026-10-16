@@ -1,36 +1,36 @@
-/* Draft of Func_081579d0, effect kind 283: the Jupiter Djinn's fall.
- *
- * On screen: a small Jupiter Djinn circles over the targets, 11.25 degrees
- * a frame, on a radius of 64 - 2 x frame pixels (half that across) that
- * shrinks through the middle at frame 32 and opens out on the other side.
- * Meanwhile eight balls of flame drop one after another, every four frames
- * from frame 8, from the upper right to the lower left (6 pixels left and
- * 12 down a frame). Each bursts into 32 dots when it passes y 95, with cue
- * 133 and a shake, and every target flashes and recoils. The dots shrink
- * with age and fall back under gravity.
- *
- * Setup: the battle effect canvas and the max and additive blitter pair,
- * the dot sheet in the sheet block, the Djinn and flame ball sheets in the
- * effect work, then the canvas transfer callback; each ball starts at a
- * random point above the canvas (x 64 to 127, y -80 to -17).
- * Frame loop, 96 frames, as above. At frame 56 the battle resumes and
- * resolves the targets.
- * Teardown: the callback and both blitters are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunJupiterDjinnFall (kind 253 there),
- * with The Lost Age's heap slots and callback order and no work->effect
- * store.
- *
- * Listing 354 instructions, draft 354, differ 32. Left: about a dozen
- * reordered pairs, nearly all a load placed one row earlier by the native
- * (heap words, pool constants, stack reloads), and one branch over a block
- * two bytes longer.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names, work read first     32
- *   (trial 0, 2026-10-15: no further change)
- */
+// Draft of Func_081579d0, effect kind 283: the Jupiter Djinn's fall.
+
+// On screen: a small Jupiter Djinn circles over the targets, 11.25 degrees
+// a frame, on a radius of 64 - 2 x frame pixels (half that across) that
+// shrinks through the middle at frame 32 and opens out on the other side.
+// Meanwhile eight balls of flame drop one after another, every four frames
+// from frame 8, from the upper right to the lower left (6 pixels left and
+// 12 down a frame). Each bursts into 32 dots when it passes y 95, with cue
+// 133 and a shake, and every target flashes and recoils. The dots shrink
+// with age and fall back under gravity.
+
+// Setup: the battle effect canvas and the max and additive blitter pair,
+// the dot sheet in the sheet block, the Djinn and flame ball sheets in the
+// effect work, then the canvas transfer callback; each ball starts at a
+// random point above the canvas (x 64 to 127, y -80 to -17).
+// Frame loop, 96 frames, as above. At frame 56 the battle resumes and
+// resolves the targets.
+// Teardown: the callback and both blitters are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunJupiterDjinnFall (kind 253 there),
+// with The Lost Age's heap slots and callback order and no work->effect
+// store.
+
+// Listing 354 instructions, draft 354, differ 32. Left: about a dozen
+// reordered pairs, nearly all a load placed one row earlier by the native
+// (heap words, pool constants, stack reloads), and one branch over a block
+// two bytes longer.
+
+// Tried:
+// ☀️'s body with The Lost Age's names, work read first     32
+// (trial 0, 2026-10-15: no further change)
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

@@ -1,42 +1,42 @@
-/* Draft of Func_0815cbd0, effect kind 345: a spider web over the targets.
- *
- * On screen: a web fades in over the targets, centred between the first
- * and the last, drawn as four 32-pixel quarters (the one picture flipped
- * each way), stays for the effect's 63 frames and fades out over the last
- * ten. At frame 10 every target flashes for eight frames; at frame 32 the
- * battle resumes with hit cue 143. Then the canvas and its VRAM are
- * cleared and the summon canvas effect runs in mode 1.
- *
- * Setup: the battle effect canvas on BG2 at a scale of one, blending on,
- * the layer centred on the targets' middle, the web sheet in the effect
- * work, and the transfer callback (copy mode).
- * Frame loop, 63 frames: the blend fades, then each quarter is drawn with
- * its own transparent blitter, built and released around the draw.
- * Teardown: the callback is removed, both canvases are cleared, the
- * prelude is cleared, the palette fade is removed, and
- * SummonFx_RunCanvasMode1 takes over (the canvas layer stays open).
- *
- * Port of The Broken Seal's BattleFx_RunSpiderWeb (kind 345 there too),
- * reworked in The Lost Age: the middle comes from Func_0815e22c, the
- * blitter mode is a constant, and the effect ends by chaining into the
- * summon canvas effect instead of closing the canvas.
- *
- * Listing 228 instructions, draft 232, differ 166 (2026-10-15). Left: an
- * allocation cascade. loop.c hoists work->sheet (work + 0x700) out of the
- * frame loop, where the native adds 0x700 to work at each of the four
- * draws; with the sheet in r8, work itself is spilled (the native keeps
- * effect, work and canvas in r9, r10 and r11, size in r8 and the frame in
- * r7), and the native also forms REG_BLDALPHA's address from REG_BG2PA's
- * (adds r2, #50) where here it is built apart.
- *
- * Tried:
- *   ☀️'s body, reworked as the listing shows, with ☀️'s device
- *     (size first holding the blend register's address)      172 (trial 0)
- *   plain, Func_081963ec returning s32                         166
- *   declaration order, a greedy sweep                          166
- *   ☀️'s other device (the frame pinned to r9) does not apply:
- *     the native frame is in r7
- */
+// Draft of Func_0815cbd0, effect kind 345: a spider web over the targets.
+
+// On screen: a web fades in over the targets, centred between the first
+// and the last, drawn as four 32-pixel quarters (the one picture flipped
+// each way), stays for the effect's 63 frames and fades out over the last
+// ten. At frame 10 every target flashes for eight frames; at frame 32 the
+// battle resumes with hit cue 143. Then the canvas and its VRAM are
+// cleared and the summon canvas effect runs in mode 1.
+
+// Setup: the battle effect canvas on BG2 at a scale of one, blending on,
+// the layer centred on the targets' middle, the web sheet in the effect
+// work, and the transfer callback (copy mode).
+// Frame loop, 63 frames: the blend fades, then each quarter is drawn with
+// its own transparent blitter, built and released around the draw.
+// Teardown: the callback is removed, both canvases are cleared, the
+// prelude is cleared, the palette fade is removed, and
+// SummonFx_RunCanvasMode1 takes over (the canvas layer stays open).
+
+// Port of The Broken Seal's BattleFx_RunSpiderWeb (kind 345 there too),
+// reworked in The Lost Age: the middle comes from Func_0815e22c, the
+// blitter mode is a constant, and the effect ends by chaining into the
+// summon canvas effect instead of closing the canvas.
+
+// Listing 228 instructions, draft 232, differ 166 (2026-10-15). Left: an
+// allocation cascade. loop.c hoists work->sheet (work + 0x700) out of the
+// frame loop, where the native adds 0x700 to work at each of the four
+// draws; with the sheet in r8, work itself is spilled (the native keeps
+// effect, work and canvas in r9, r10 and r11, size in r8 and the frame in
+// r7), and the native also forms REG_BLDALPHA's address from REG_BG2PA's
+// (adds r2, #50) where here it is built apart.
+
+// Tried:
+// ☀️'s body, reworked as the listing shows, with ☀️'s device
+// (size first holding the blend register's address)      172 (trial 0)
+// plain, Func_081963ec returning s32                         166
+// declaration order, a greedy sweep                          166
+// ☀️'s other device (the frame pinned to r9) does not apply:
+// the native frame is in r7
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

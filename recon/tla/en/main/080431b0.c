@@ -4,39 +4,38 @@ u32 __udivsi3(s32, s32);
 s32 __umodsi3(s32, s32);
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
-void *Text_FormatPlayTime(s32 value, u8 *out)
-{
-    u8 buf[16];
-    u32 time;
-    u32 minutes;
-    s32 seconds;
-    u8 *s;
-    u8 *p;
+void *Text_FormatPlayTime(s32 value, u8 *out) {
+  u8 buf[16];
+  u32 time;
+  u32 minutes;
+  s32 seconds;
+  u8 *s;
+  u8 *p;
 
-    time = __udivsi3(value, 0xe10);
-    if (time > 0xea5f)
-        time = 0xea5f;
+  time = __udivsi3(value, 0xe10);
+  if (time > 0xea5f)
+    time = 0xea5f;
 
-    minutes = __udivsi3(time, 60);
-    seconds = __umodsi3(time, 60);
+  minutes = __udivsi3(time, 60);
+  seconds = __umodsi3(time, 60);
 
-    s = UiText_FormatNumber(buf, minutes, 3);
-    *out = *s;
-    s++;
-    p = out + 1;
-    *p = *s;
-    p++;
-    *p = s[1];
-    seconds += 100;
-    p++;
-    *p = ':';
+  s = UiText_FormatNumber(buf, minutes, 3);
+  *out = *s;
+  s++;
+  p = out + 1;
+  *p = *s;
+  p++;
+  *p = s[1];
+  seconds += 100;
+  p++;
+  *p = ':';
 
-    s = UiText_FormatNumber(buf, seconds, 2);
-    p++;
-    *p = s[0];
-    p++;
-    *p = s[1];
-    p[1] = 0;
+  s = UiText_FormatNumber(buf, seconds, 2);
+  p++;
+  *p = s[0];
+  p++;
+  *p = s[1];
+  p[1] = 0;
 
-    return out;
+  return out;
 }

@@ -1,35 +1,35 @@
-/* Draft of Func_08157638, effect kind 281: the Mercury Djinn's flames.
- *
- * On screen: a small Mercury Djinn circles over the targets, one turn every
- * 32 frames, on a radius of 64 - 2 x frame pixels (half that across) that
- * shrinks through the middle at frame 32 and opens out on the other side.
- * At frames 4, 7, 10, 21 and 34 it throws a blue flame that shoots left 12
- * pixels a frame and shatters on its fifth frame into 32 dots, with cue
- * 133 and a shake; six frames after each throw every target flashes and
- * recoils. The dots shrink with age and fall back under gravity.
- *
- * Setup: the battle effect canvas and the max and additive blitter pair,
- * the dot sheet in the sheet block, the Djinn sheet in the effect work,
- * and the blue flame sheet turned on its side (decoded into the map cell
- * buffer, then transposed into the effect work) so the flames fly across.
- * Frame loop, 96 frames: move, draw and shatter the flames, draw the Djinn
- * and throw on the launch frames, then draw and move the dots. At frame 56
- * the battle resumes and resolves the targets.
- * Teardown: the callback and both blitters are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunMercuryDjinnFlames (kind 251
- * there), with The Lost Age's heap slots and callback order and no
- * work->effect store.
- *
- * Listing 415 instructions, draft 415, differ 30 (trial 0, 2026-10-15).
- * Left: 15 single rows one place apart, the native issuing pool and stack
- * loads and call constants one slot earlier.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names                       30
- *   alchemy permute, 5 minutes                                43 at best
- */
+// Draft of Func_08157638, effect kind 281: the Mercury Djinn's flames.
+
+// On screen: a small Mercury Djinn circles over the targets, one turn every
+// 32 frames, on a radius of 64 - 2 x frame pixels (half that across) that
+// shrinks through the middle at frame 32 and opens out on the other side.
+// At frames 4, 7, 10, 21 and 34 it throws a blue flame that shoots left 12
+// pixels a frame and shatters on its fifth frame into 32 dots, with cue
+// 133 and a shake; six frames after each throw every target flashes and
+// recoils. The dots shrink with age and fall back under gravity.
+
+// Setup: the battle effect canvas and the max and additive blitter pair,
+// the dot sheet in the sheet block, the Djinn sheet in the effect work,
+// and the blue flame sheet turned on its side (decoded into the map cell
+// buffer, then transposed into the effect work) so the flames fly across.
+// Frame loop, 96 frames: move, draw and shatter the flames, draw the Djinn
+// and throw on the launch frames, then draw and move the dots. At frame 56
+// the battle resumes and resolves the targets.
+// Teardown: the callback and both blitters are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunMercuryDjinnFlames (kind 251
+// there), with The Lost Age's heap slots and callback order and no
+// work->effect store.
+
+// Listing 415 instructions, draft 415, differ 30 (trial 0, 2026-10-15).
+// Left: 15 single rows one place apart, the native issuing pool and stack
+// loads and call constants one slot earlier.
+
+// Tried:
+// ☀️'s body with The Lost Age's names                       30
+// alchemy permute, 5 minutes                                43 at best
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

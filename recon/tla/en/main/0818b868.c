@@ -1,32 +1,32 @@
-/* Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
- * frame and the spark blitting are ☀️'s (BattleFx_RunVenusDjinnColumns, shape
- * 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
- * own. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame
- * 48, the blitter pair at 40 and 44 (the second word unused), graphics 36, the
- * vertices 32, the model 28, the texture's and the position's addresses at 24
- * and 20, the speed (120 + 20 * bite) at 16 and the bite's particle offset at
- * 12; the texture is at sp+64 and the position at sp+72.
- * Earlier: differ 411 (draft 425; the alignment drifts from the first spill).
- * A two-word blitter array (one DImode pseudo, as in Func_08182898 and
- * Func_0818c7b8): 463 to 411.
- * 2026-10-15 (fx-n3), rewritten for reading and measured, in order: the
- * sparks at the fixed map cell buffer + 0x4000 rather than an EWRAM label
- * (the native folds the variant's offset into one pooled address): 336; the
- * burst loop with its own counter: 332; declarations in the native's spill
- * order (work, canvas, frame, the blitter pair, graphics, vertices, model)
- * and the hit's speed as i * 20 + 120: 320; one counter for the clear, bite
- * and draw loops, as the native keeps them in r9 (the frame then is 84): 284;
- * the tables extern without const (the native reloads them after calls):
- * 165; the anchor as (&work->particles[i])->x, written BITE_ANCHOR (an
- * alchemy permute find; work->particles[i].x is 396): 151.
- * No effect: the order of the three aggregate locals (all six, 332); the
- * scalar declarations' order (spark, i, j, model, 24 orders, 284).
- * Worse: each spark as &SPARKS[i * 128 + j] in the burst loop: 387.
- * Left: the model's allocation (the native spills it and reloads it in r0,
- * so its kind is a fresh 7, not the bitfield's), the burst loop's spark and
- * angle registers swapped (r7 and r6 natively), one draw-loop instruction
- * short, and the TLA load-before-constant pairs. alchemy permute (10 min, 2
- * jobs): 151 as above. */
+// Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
+// frame and the spark blitting are ☀️'s (BattleFx_RunVenusDjinnColumns, shape
+// 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
+// own. The native frame (84) holds effect at sp+60, work 56, canvas 52, frame
+// 48, the blitter pair at 40 and 44 (the second word unused), graphics 36, the
+// vertices 32, the model 28, the texture's and the position's addresses at 24
+// and 20, the speed (120 + 20 * bite) at 16 and the bite's particle offset at
+// 12; the texture is at sp+64 and the position at sp+72.
+// Earlier: differ 411 (draft 425; the alignment drifts from the first spill).
+// A two-word blitter array (one DImode pseudo, as in Func_08182898 and
+// Func_0818c7b8): 463 to 411.
+// 2026-10-15 (fx-n3), rewritten for reading and measured, in order: the
+// sparks at the fixed map cell buffer + 0x4000 rather than an EWRAM label
+// (the native folds the variant's offset into one pooled address): 336; the
+// burst loop with its own counter: 332; declarations in the native's spill
+// order (work, canvas, frame, the blitter pair, graphics, vertices, model)
+// and the hit's speed as i * 20 + 120: 320; one counter for the clear, bite
+// and draw loops, as the native keeps them in r9 (the frame then is 84): 284;
+// the tables extern without const (the native reloads them after calls):
+// 165; the anchor as (&work->particles[i])->x, written BITE_ANCHOR (an
+// alchemy permute find; work->particles[i].x is 396): 151.
+// No effect: the order of the three aggregate locals (all six, 332); the
+// scalar declarations' order (spark, i, j, model, 24 orders, 284).
+// Worse: each spark as &SPARKS[i * 128 + j] in the burst loop: 387.
+// Left: the model's allocation (the native spills it and reloads it in r0,
+// so its kind is a fresh 7, not the bitfield's), the burst loop's spark and
+// angle registers swapped (r7 and r6 natively), one draw-loop instruction
+// short, and the TLA load-before-constant pairs. alchemy permute (10 min, 2
+// jobs): 151 as above.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

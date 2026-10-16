@@ -1,7 +1,4 @@
-/*----------------------------------------------------------
-    Lunpa Fortress events
-    Lunpa Fortress events.
-----------------------------------------------------------*/
+// Lunpa Fortress events.
 #include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"

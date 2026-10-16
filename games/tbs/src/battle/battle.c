@@ -2819,13 +2819,13 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
         entry->priority = 1;
         entry->palette = slot->palette;
         if ((resource = slot->overlay) != 0) {
-          entry =
-              (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance, resource);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance,
+                                                                     resource);
           entry->priority = 1;
         }
         if ((resource = slot->animation) != 0) {
-          entry =
-              (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance, resource);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance,
+                                                                     resource);
           slot->animationEntry = entry;
           Animation_SetWorkEntryFar((struct AnimationEntry *)entry, 0);
           entry->priority = 3;
@@ -2833,8 +2833,8 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
         if ((resource = slot->effect) != 0) {
           if (resistance->width == 32)
             resource = NARROW_EFFECT_SPRITE;
-          entry =
-              (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance, resource);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(resistance,
+                                                                     resource);
           slot->effectEntry = entry;
           entry->priority = 0;
           resistance->flags = 0;
@@ -4294,8 +4294,8 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
       UnitGetFar(entry->unitId);
-      action = BattleActGet(Djinn_GetAbilityIdFar(
-          entry->parameter >> 8 & 15, entry->parameter & 0xff));
+      action = BattleActGet(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
+                                                  entry->parameter & 0xff));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
           action->effect == ABILITY_EFFECT_GROUND) {
@@ -4749,8 +4749,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, camera->pos);
-  Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000),
-                              0x7fff0000);
+  Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_TURN;
     WaitFrames(delay);
@@ -5450,7 +5449,8 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     }
   } else if (def->useType == ITEM_USE_MAY_BREAK) {
     if ((BattleRandomFar() & 7) == 0) {
-      BattleEvPush(BATTLE_EVENT_ITEM_NAME, unit->inventory[selection->parameter]);
+      BattleEvPush(BATTLE_EVENT_ITEM_NAME,
+                   unit->inventory[selection->parameter]);
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgUsedItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattleEv_DispatchQueued();
@@ -5838,11 +5838,11 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 // Counts unit's raised stats: Attack, Defense, Resistance and each element.
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                  \
   {                                                                            \
-    if ((unit)->attackStage > 0)                                                     \
+    if ((unit)->attackStage > 0)                                               \
       (count)++;                                                               \
-    if ((unit)->defenseStage > 0)                                                     \
+    if ((unit)->defenseStage > 0)                                              \
       (count)++;                                                               \
-    if ((unit)->resistanceStage > 0)                                                     \
+    if ((unit)->resistanceStage > 0)                                           \
       (count)++;                                                               \
     if ((unit)->elementLevels[0] > 0)                                          \
       (count)++;                                                               \
@@ -5866,44 +5866,44 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     switch ((action)->effect) {                                                \
     case EFFECT_ATK_UP2:                                                       \
     case EFFECT_ATK_UP1:                                                       \
-      if ((unit)->attackStage + 1 <= 4)                                              \
+      if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
-      if ((unit)->attackTurns == 1)                                                 \
+      if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_ATK_DOWN2:                                                     \
     case EFFECT_ATK_DOWN1:                                                     \
-      if ((unit)->attackStage - 1 >= -4)                                             \
+      if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
-      if ((unit)->attackTurns == 1)                                                 \
+      if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_DEF_UP2:                                                       \
     case EFFECT_DEF_UP1:                                                       \
-      if ((unit)->defenseStage + 1 <= 4)                                              \
+      if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
-      if ((unit)->defenseTurns == 1)                                                 \
+      if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_DEF_DOWN2:                                                     \
     case EFFECT_DEF_DOWN1:                                                     \
-      if ((unit)->defenseStage - 1 >= -4)                                             \
+      if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
-      if ((unit)->defenseTurns == 1)                                                 \
+      if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_RES_UP2:                                                       \
     case EFFECT_RES_UP1:                                                       \
-      if ((unit)->resistanceStage + 1 <= 4)                                              \
+      if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
-      if ((unit)->resistanceTurns == 1)                                                 \
+      if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_RES_DOWN2:                                                     \
     case EFFECT_RES_DOWN1:                                                     \
-      if ((unit)->resistanceStage - 1 >= -4)                                             \
+      if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \
-      if ((unit)->resistanceTurns == 1)                                                 \
+      if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case EFFECT_CURE_POISON:                                                   \
@@ -5962,10 +5962,10 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (applies) = 1;                                                           \
       break;                                                                   \
     }                                                                          \
-    if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)     \
+    if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)    \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
-      (kindIndex) = ((action)->flags & ABILITY_KIND_MASK) - 1;            \
+      (kindIndex) = ((action)->flags & ABILITY_KIND_MASK) - 1;                 \
       switch (kindIndex) {                                                     \
       case ABILITY_KIND_ATTACK - 1:                                            \
       case ABILITY_KIND_ATTACK_MULTIPLIED - 1:                                 \
@@ -6109,8 +6109,7 @@ scan_complete:
       ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
            UnitGetFar(actorId)->classId))
               ->targetStrategy != STRATEGY_RANDOM &&
-      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <=
-          2) {
+      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -6364,8 +6363,8 @@ s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
 #define EVENT_FLAG_DJINN_BONUS 1
 
 //--------------------------------------------------------------------------
-// The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of the
-// action. Its operand is ignored.
+// The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of
+// the action. Its operand is ignored.
 //--------------------------------------------------------------------------
 void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand) {
   runtime->flags |= EVENT_FLAG_DJINN_BONUS;
@@ -7714,7 +7713,6 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 }
 
-
 #define ABILITY_PSY_DRAIN 126
 
 //--------------------------------------------------------------------------
@@ -8841,23 +8839,24 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   case CMD_DJINN:
     // If not set, return the standby Djinni to its set state.
     abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(req->parameter),
-                                     DJINN_INDEX(req->parameter));
+                                      DJINN_INDEX(req->parameter));
     if (!Djinn_IsActiveFar(req->unitId, DJINN_ELEMENT(req->parameter),
                            DJINN_INDEX(req->parameter))) {
       if (Djinn_IsReadyFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                                 DJINN_INDEX(req->parameter))) {
+                           DJINN_INDEX(req->parameter))) {
         BattleActGet(abilityId);
         BattlePres_SetActorModes(0, 0);
         Djinn_ActivateFar(req->unitId, DJINN_ELEMENT(req->parameter),
                           DJINN_INDEX(req->parameter));
         DjinnRecovery_RemoveFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                             DJINN_INDEX(req->parameter));
+                                DJINN_INDEX(req->parameter));
         UnitCalcFar(req->unitId);
         BattleEventRuntime_Reset();
         BattleEventRuntime_SchedulePhase(30);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, req->unitId);
-        BattleEvPush(BATTLE_EVENT_ABILITY_NAME, DJINN_ELEMENT(req->parameter) * 20 +
-                                           DJINN_INDEX(req->parameter) + 300);
+        BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
+                     DJINN_ELEMENT(req->parameter) * 20 +
+                         DJINN_INDEX(req->parameter) + 300);
         BattleEvPush(BATTLE_EVENT_SOUND, 175);
         BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
         BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
@@ -8887,7 +8886,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       if (TargetSet(abilityId) == -1)
         return -1;
       DjinnRecovery_AddStandbyFar(req->unitId, DJINN_ELEMENT(req->parameter),
-                        DJINN_INDEX(req->parameter));
+                                  DJINN_INDEX(req->parameter));
       act = BattleActGet(abilityId);
       UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
@@ -8913,7 +8912,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     side = 0;
     if ((u16)req->unitId > ALLY_MAX)
       side = 1;
-    list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list =
+        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
     for (i = 0; i < 4 && counts[i] >= summon->djinnRequired[i]; i++)
       counts[i] = summon->djinnRequired[i];
     abilityId = summon->nameMessageId;
@@ -9156,7 +9156,8 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   }
 
 DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
-DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns, resistanceStage)
+DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
+                     resistanceStage)
 
 // Decrements a status condition's turn counter. Returns one when it reaches
 // zero, or when BattleUnit_RollCounterEarlyEnd(bias) ends it early.
@@ -9335,7 +9336,8 @@ s32 Battle_ProcessRoundEnd(void) {
   work = gBattleWork;
   sides = (work->twoSided != 0) + 1;
   for (side = 0; side < sides; side++) {
-    list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list =
+        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
     i = 0;
     if (i < list->count) {
       timedEntry = list->entries;
@@ -9361,7 +9363,8 @@ s32 Battle_ProcessRoundEnd(void) {
             BattleEventRuntime_SchedulePhase(30);
             BattleEvPush(BATTLE_EVENT_UNIT_NAME, id);
             BattleEvPush(BATTLE_EVENT_ABILITY_NAME, expiredEntry->element * 20 +
-                                               expiredEntry->index + 300);
+                                                        expiredEntry->index +
+                                                        300);
             BattleEvPush(BATTLE_EVENT_SOUND, 175);
             BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
@@ -9374,7 +9377,7 @@ s32 Battle_ProcessRoundEnd(void) {
             element = expiredEntry->element;
             Djinn_ActivateFar(id, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(id, expiredEntry->element,
-                                 expiredEntry->index);
+                                    expiredEntry->index);
             UnitCalcFar(id);
             BattleFx_PlayUnitElementEffect(id, element, 3, 0);
             BattleEventRuntime_WaitForReady();
@@ -9535,9 +9538,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   id = plan->actorId;
   bothSides = 0;
   unit = UnitGetFar(id);
-  list =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar((id < 0 || id > 7)))
-           ->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+               (id < 0 || id > 7)))
+              ->list;
   for (best = 0; best < list->count; best++) {
     if (list->entries[best].unitId == id && list->entries[best].turns == -1) {
       Djinn_DeactivateFar(id, list->entries[best].element,
@@ -9683,8 +9686,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     BattleEv_DispatchQueued();
     BattleEventRuntime_Reset();
     if (unit->grimReaper != 0) {
-      if (--unit->grimReaper == 0 &&
-          Unit_AddHpFar(id, 0xc0000000) == 0) {
+      if (--unit->grimReaper == 0 && Unit_AddHpFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, id);
         PUSH_MESSAGE(MsgReaperCalls);
         BattleEvPush(BATTLE_EVENT_HIT, id);

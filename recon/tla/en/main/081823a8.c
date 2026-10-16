@@ -1,24 +1,24 @@
-/* Draft (tla-en): listing 535 instructions, draft 537, common 388, differ 296.
- * The body of effect kinds 465 and 466 (summon_modes_2.c's Func_08182390
- * and Func_0818239c pass modes 0 and 1). The Lost Age's rework of ☀️'s
- * BattleFx_RunSwirlingStars (structure 0.70): the same four rotations by
- * star and the same depth-sized cels, one swarm per target.
- * Written 2026-10-15 (lane N2) from the listing and the twin.
- * Left:
- * - the native frame is 84 bytes, here 80: the native keeps the effect
- *   argument spilled at sp+68 and gives fp to the yaw angle walker of the
- *   star loop (frame * 256, stepped by frame * 32), with -frame spilled at
- *   sp+24 for the other walker; here the argument takes fp, and every
- *   spill slot after it moves (member, frames, camera, sparkCels).
- * - the native walks the actor offset (sp+16), the point (sp+12) and the
- *   star offset (sp+8, by 0x700) per target and rebuilds start = member *
- *   8 from member; here start is a walker too.
- * - the star count, frames and flash calls follow from those slots.
- * Measured: the first draft 338; the arrival test grouped as two range
- *   pairs, so both fold to one unsigned compare each as in the native: 296.
- * Resource 0x184 (BattleFx_BlastSheet) and the Djinn sheets 0x154, 0x150
- * and 0x152 need names in system/resource/directory.s when this is
- * adopted. */
+// Draft (tla-en): listing 535 instructions, draft 537, common 388, differ 296.
+// The body of effect kinds 465 and 466 (summon_modes_2.c's Func_08182390
+// and Func_0818239c pass modes 0 and 1). The Lost Age's rework of ☀️'s
+// BattleFx_RunSwirlingStars (structure 0.70): the same four rotations by
+// star and the same depth-sized cels, one swarm per target.
+// Written 2026-10-15 (lane N2) from the listing and the twin.
+// Left:
+// - the native frame is 84 bytes, here 80: the native keeps the effect
+// argument spilled at sp+68 and gives fp to the yaw angle walker of the
+// star loop (frame * 256, stepped by frame * 32), with -frame spilled at
+// sp+24 for the other walker; here the argument takes fp, and every
+// spill slot after it moves (member, frames, camera, sparkCels).
+// - the native walks the actor offset (sp+16), the point (sp+12) and the
+// star offset (sp+8, by 0x700) per target and rebuilds start = member *
+// 8 from member; here start is a walker too.
+// - the star count, frames and flash calls follow from those slots.
+// Measured: the first draft 338; the arrival test grouped as two range
+// pairs, so both fold to one unsigned compare each as in the native: 296.
+// Resource 0x184 (BattleFx_BlastSheet) and the Djinn sheets 0x154, 0x150
+// and 0x152 need names in system/resource/directory.s when this is
+// adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_session.h"
@@ -58,8 +58,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_0815f0a0(s32 resourceId);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -158,8 +157,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         star->variant = 0;
       }
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
-                      128);
+                      Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
     }
 
     // Two palette steps a frame from frame 8.
@@ -199,8 +197,8 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         BattleFxKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);
 
-      star = &((struct EffectStep *)
-                   Ram_MapCellBuffer)[member * STARS_PER_TARGET];
+      star =
+          &((struct EffectStep *)Ram_MapCellBuffer)[member * STARS_PER_TARGET];
       for (i = 0; i != starCount; i++, star++) {
         if (frame >= start + i / 8 && star->variant == 0) {
           s32 size;

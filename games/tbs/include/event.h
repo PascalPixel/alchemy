@@ -1,6 +1,4 @@
-/*----------------------------------------------------------
-    Event commands
-----------------------------------------------------------*/
+// Event commands
 // Scene commands: the all-caps macros the scene scripts are written in.
 #ifndef EVENT_H
 #define EVENT_H

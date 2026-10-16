@@ -1,13 +1,13 @@
-/* Near miss, differ 22 of 116 (2026-10-15, written from the listing; ☀️ has no
- * twin). The command's 0 comes from the literal pool, as in the ROM (a
- * halfword zero kept in a register). What remains: the pixel map loop gives the
- * row r5 and its tile row r6 where the ROM has them the other way round (14
- * rows); the fill routine's entry is loaded after the canvas pointer's copy;
- * and the literal pool lands one call later. Measured, no better: every order
- * of the four locals' declarations (22), the tile row and pixel row in locals
- * (24), s16 map entries, the store apart from the increment (22), other
- * formulas for the tile offset (22-53); permute 6 min, 2 jobs: nothing below
- * 22. */
+// Near miss, differ 22 of 116 (2026-10-15, written from the listing; ☀️ has no
+// twin). The command's 0 comes from the literal pool, as in the ROM (a
+// halfword zero kept in a register). What remains: the pixel map loop gives the
+// row r5 and its tile row r6 where the ROM has them the other way round (14
+// rows); the fill routine's entry is loaded after the canvas pointer's copy;
+// and the literal pool lands one call later. Measured, no better: every order
+// of the four locals' declarations (22), the tile row and pixel row in locals
+// (24), s16 map entries, the store apart from the increment (22), other
+// formulas for the tile offset (22-53); permute 6 min, 2 jobs: nothing below
+// 22.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

@@ -1,22 +1,22 @@
-/* Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
- * kinds (series_h.c's Func_08166af8 and Func_08166b04 pass modes 0 and 1),
- * The Broken Seal's BattleFx_RunFallingSword.
- *
- * Twin: ☀️ BattleFx_RunFallingSword (games/tbs/src/effect/effect.c) with The
- * Lost Age's mode argument: mode 2 skips the sword sheet, mode 1 rotates each
- * BG colour's three fields first and at frame 61 copies resource 0x188's
- * palette and calls Func_0815b634, mode 0 steps the palette toward the blast
- * sheet on frames 41 to 63; frame 60 starts phase 144 or 145; frame 9 also
- * flashes the first target. The blitters come from Func_081963ec(104, 19) and
- * (188, 35).
- *
- * frame declared before the blitters, and the sheet held in a local for the
- * column blits, give the native's stack slots (252 to 149).
- *
- * Left: 41 rows differ by register, the frame reloads in the dust loop taking
- * other scratch registers (the loop's pointer and counter start in r1 here,
- * r5 and r6 in the native), and one extra row; the rest is reordered rows of
- * the kind Func_08164b2c's header traces to memory costs. */
+// Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
+// kinds (series_h.c's Func_08166af8 and Func_08166b04 pass modes 0 and 1),
+// The Broken Seal's BattleFx_RunFallingSword.
+
+// Twin: ☀️ BattleFx_RunFallingSword (games/tbs/src/effect/effect.c) with The
+// Lost Age's mode argument: mode 2 skips the sword sheet, mode 1 rotates each
+// BG colour's three fields first and at frame 61 copies resource 0x188's
+// palette and calls Func_0815b634, mode 0 steps the palette toward the blast
+// sheet on frames 41 to 63; frame 60 starts phase 144 or 145; frame 9 also
+// flashes the first target. The blitters come from Func_081963ec(104, 19) and
+// (188, 35).
+
+// frame declared before the blitters, and the sheet held in a local for the
+// column blits, give the native's stack slots (252 to 149).
+
+// Left: 41 rows differ by register, the frame reloads in the dust loop taking
+// other scratch registers (the loop's pointer and counter start in r1 here,
+// r5 and r6 in the native), and one extra row; the rest is reordered rows of
+// the kind Func_08164b2c's header traces to memory costs.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

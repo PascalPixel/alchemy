@@ -1,10 +1,10 @@
-/* Near miss, differ 20 of 48: the same thirteen stores; four pool loads sit one
- * row earlier in the native (ldr r3 before movs r2, #128 at the top; ldr r1
- * and ldr r2 before the window address), which moves the pool words.
- * Tried: each pool value pinned to its register behind a barrier that holds
- * the address register, as in canvas.c (differ 16: the order then matches
- * except the window height, which still loads after the address's shift,
- * and the literal pool moves); alchemy permute for 4 minutes on that form. */
+// Near miss, differ 20 of 48: the same thirteen stores; four pool loads sit one
+// row earlier in the native (ldr r3 before movs r2, #128 at the top; ldr r1
+// and ldr r2 before the window address), which moves the pool words.
+// Tried: each pool value pinned to its register behind a barrier that holds
+// the address register, as in canvas.c (differ 16: the order then matches
+// except the window height, which still loads after the address's shift,
+// and the literal pool moves); alchemy permute for 4 minutes on that form.
 #include "types.h"
 #include "io_reg.h"
 

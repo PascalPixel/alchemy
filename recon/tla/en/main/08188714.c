@@ -1,25 +1,25 @@
-/* Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
- * BattleFx_RunFlippingBurst (effect.c, call order 0.675): the leap, the flip
- * and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
- * spins the jaw quad of Triple Chomp (Func_0818b868) at the target. The native
- * frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter
- * pair at 36 and 40, the target 32, the user's and the target's heights at 28
- * and 24, the target's screen position's address at 20 and the user's action
- * flags' at 16, frame - 56 at 12 and frame * 2 - 92 at 8; the texture is at
- * sp+60, the user's screen position at 68, the user's point at 80 and the
- * target's screen position at 92. Written from the listing on the ☀️ body
- * (2026-10-15, fx-n3): 102 at the first compile, with the instruction count and
- * the frame already the native's. The aggregate locals declared target screen,
- * point, screen, texture (the first declared takes the highest slot): 98. The
- * burst loop's sparks taken as &work->particles[i] (either loop; both: also
- * 76): 76. The jaw loop stepping angle before i: 66. Left (66 rows, about 30
- * pairs): the native issues a load one slot before the constant or address next
- * to it (the heap base before effect's spill, work before 0x700, the pooled
- * 0x1010 between the halves of BLDALPHA's address, the target before 0x91eb,
- * the stack loads before 0xab85 and shakeFrames' offset, the point's y and z
- * loads, the sheet offsets), and in the jaw block it stores the vertices before
- * the texture's pixels and clears i in r0. Tried: the texture's pixels stored
- * first or before the vertices: 186. */
+// Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
+// BattleFx_RunFlippingBurst (effect.c, call order 0.675): the leap, the flip
+// and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
+// spins the jaw quad of Triple Chomp (Func_0818b868) at the target. The native
+// frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter
+// pair at 36 and 40, the target 32, the user's and the target's heights at 28
+// and 24, the target's screen position's address at 20 and the user's action
+// flags' at 16, frame - 56 at 12 and frame * 2 - 92 at 8; the texture is at
+// sp+60, the user's screen position at 68, the user's point at 80 and the
+// target's screen position at 92. Written from the listing on the ☀️ body
+// (2026-10-15, fx-n3): 102 at the first compile, with the instruction count and
+// the frame already the native's. The aggregate locals declared target screen,
+// point, screen, texture (the first declared takes the highest slot): 98. The
+// burst loop's sparks taken as &work->particles[i] (either loop; both: also
+// 76): 76. The jaw loop stepping angle before i: 66. Left (66 rows, about 30
+// pairs): the native issues a load one slot before the constant or address next
+// to it (the heap base before effect's spill, work before 0x700, the pooled
+// 0x1010 between the halves of BLDALPHA's address, the target before 0x91eb,
+// the stack loads before 0xab85 and shakeFrames' offset, the point's y and z
+// loads, the sheet offsets), and in the jaw block it stores the vertices before
+// the texture's pixels and clears i in r0. Tried: the texture's pixels stored
+// first or before the vertices: 186.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

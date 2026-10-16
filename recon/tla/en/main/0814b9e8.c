@@ -1,30 +1,30 @@
-/* First draft, differ 472 of 549: Func_0814b9e8, the body of three effect
-   kinds through Func_0814b9c4 (mode 0), Func_0814b9d0 (mode 1) and
-   Func_0814b9dc (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
+// First draft, differ 472 of 549: Func_0814b9e8, the body of three effect
+// kinds through Func_0814b9c4 (mode 0), Func_0814b9d0 (mode 1) and
+// Func_0814b9dc (mode 2) in games/tla/src/battle/effect/render_mode_entry.c.
 
-   New in The Lost Age: no ☀️ function has this body (shape twin
-   BattleFx_RunLeapingStrike 0.471, structure twin
-   BattleEffect_RunDualParticleStream 0.494). Written from the listing on
-   ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
-   1, a Djinn circling over the canvas when the effect has a prelude, and
-   sixteen textured 64x64 quads drawn through ⚓️'s render jobs
-   (Func_081969f8, Func_08196958, Func_08196a7c), whose job and texture
-   layouts follow project_vertices.c.
+// New in The Lost Age: no ☀️ function has this body (shape twin
+// BattleFx_RunLeapingStrike 0.471, structure twin
+// BattleEffect_RunDualParticleStream 0.494). Written from the listing on
+// ☀️'s canvas skeleton: the canvas preparer Func_0815585c for modes 0 and
+// 1, a Djinn circling over the canvas when the effect has a prelude, and
+// sixteen textured 64x64 quads drawn through ⚓️'s render jobs
+// (Func_081969f8, Func_08196958, Func_08196a7c), whose job and texture
+// layouts follow project_vertices.c.
 
-   The calls, constants and control flow follow the listing; the frame is
-   4 bytes short (84 of 88: one spill slot fewer), which shifts every stack
-   offset, and the quads' starting heights are a giv the native
-   strength-reduces into a register (0xffe00000 stepped by 0xfffc0000)
-   where agscc shifts each time (555 of 549 instructions).
+// The calls, constants and control flow follow the listing; the frame is
+// 4 bytes short (84 of 88: one spill slot fewer), which shifts every stack
+// offset, and the quads' starting heights are a giv the native
+// strength-reduces into a register (0xffe00000 stepped by 0xfffc0000)
+// where agscc shifts each time (555 of 549 instructions).
 
-   Tried (differ):
-     first draft from the listing                                      486
-     the rising quads' start fixed to 32 << 16 (0x200000)              484
-     greedy declaration-order scan: canvas, work, draw after the
-       arrays                                                          472
-     the quads' heights written as -0x200000 - i * 0x40000 (481 before
-       the scan), -(i << 18) - 0x200000 (480), (-32 - i * 4) << 16
-       (483), or as a running y stepped by -0x40000 (504)                 */
+// Tried (differ):
+// first draft from the listing                                      486
+// the rising quads' start fixed to 32 << 16 (0x200000)              484
+// greedy declaration-order scan: canvas, work, draw after the
+// arrays                                                          472
+// the quads' heights written as -0x200000 - i * 0x40000 (481 before
+// the scan), -(i << 18) - 0x200000 (480), (-32 - i * 4) << 16
+// (483), or as a running y stepped by -0x40000 (504)
 
 #include "types.h"
 #include "system.h"

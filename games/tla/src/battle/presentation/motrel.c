@@ -13,9 +13,9 @@ struct Record0811e7dc {
   u8 flags;
 };
 
-/* Far call to Func_080219cc. Table order varies: English and Japanese use
-    the 0x08020370 slot; other editions use the slot named Func_08020340.
-    Both jump to Func_080219cc. */
+// Far call to Func_080219cc. Table order varies: English and Japanese use
+// the 0x08020370 slot; other editions use the slot named Func_08020340.
+// Both jump to Func_080219cc.
 #if defined(TLA_EDITION_EN) || defined(TLA_EDITION_JA)
 void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370

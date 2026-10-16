@@ -1,46 +1,46 @@
-/* Draft of Func_08157d30, effect kind 280: the Venus Djinn's columns.
- *
- * On screen: a small Venus Djinn swings down over the targets on a
- * narrowing arc while ten columns burst out of the ground one after
- * another, one every four frames from frame 16, and climb off the top of
- * the canvas. Each burst throws a spray of sixteen dots that arc and fall
- * back under gravity, shakes the screen, and makes every target flash and
- * recoil; every other burst sounds cue 133.
- *
- * Setup: the battle effect canvas, a max blitter (clipped, flipped
- * vertically) for the columns and an additive one for the Djinn and the
- * dots, the dot sheet in the sheet block and the Djinn and column sheets
- * in the effect work, then the canvas transfer callback.
- * Frame loop, 96 frames: draw the Djinn on its arc, raise and draw each
- * column that has started, start a column's burst on its first frame,
- * and draw and move every live dot. At frame 56 the battle resumes and
- * resolves the targets.
- * Teardown: the callback and both blitters are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunVenusDjinnColumns (kind 250 there),
- * with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
- * order, and no work->effect store: the effect argument stays live instead.
- *
- * Listing 367 instructions, draft 367, differ 24 (2026-10-15). Left: nine
- * places where the native issues a load one slot earlier than agscc: the
- * sheet slot before work moves to r9, the REG_BLDALPHA value before the
- * register's address is built, the dot loop's pool loads before its zero
- * and minus one, ldr [r2, #4] before adds r5, #255 in the burst, a stack
- * reload before movs r3, #15 after Random16, and the column loop's two
- * register copies after its stores.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names                       73
- *   effect work read before the canvas                        54 -> 46
- *   a start variable for each column's delay, stepped
- *     before i (the delay and angle take the native's slots)  46 -> 28
- *   one empty asm in the prologue                             32
- *   Func_081963ec returning s32, as LoadWork returns its
- *     store-flag result (the r1-before-r0 rows close)         28 -> 24
- *   alchemy permute, 5 and 8 minutes: 24, only by a false
- *     u16 return type on the loader                           not kept
- */
+// Draft of Func_08157d30, effect kind 280: the Venus Djinn's columns.
+
+// On screen: a small Venus Djinn swings down over the targets on a
+// narrowing arc while ten columns burst out of the ground one after
+// another, one every four frames from frame 16, and climb off the top of
+// the canvas. Each burst throws a spray of sixteen dots that arc and fall
+// back under gravity, shakes the screen, and makes every target flash and
+// recoil; every other burst sounds cue 133.
+
+// Setup: the battle effect canvas, a max blitter (clipped, flipped
+// vertically) for the columns and an additive one for the Djinn and the
+// dots, the dot sheet in the sheet block and the Djinn and column sheets
+// in the effect work, then the canvas transfer callback.
+// Frame loop, 96 frames: draw the Djinn on its arc, raise and draw each
+// column that has started, start a column's burst on its first frame,
+// and draw and move every live dot. At frame 56 the battle resumes and
+// resolves the targets.
+// Teardown: the callback and both blitters are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunVenusDjinnColumns (kind 250 there),
+// with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
+// order, and no work->effect store: the effect argument stays live instead.
+
+// Listing 367 instructions, draft 367, differ 24 (2026-10-15). Left: nine
+// places where the native issues a load one slot earlier than agscc: the
+// sheet slot before work moves to r9, the REG_BLDALPHA value before the
+// register's address is built, the dot loop's pool loads before its zero
+// and minus one, ldr [r2, #4] before adds r5, #255 in the burst, a stack
+// reload before movs r3, #15 after Random16, and the column loop's two
+// register copies after its stores.
+
+// Tried:
+// ☀️'s body with The Lost Age's names                       73
+// effect work read before the canvas                        54 -> 46
+// a start variable for each column's delay, stepped
+// before i (the delay and angle take the native's slots)  46 -> 28
+// one empty asm in the prologue                             32
+// Func_081963ec returning s32, as LoadWork returns its
+// store-flag result (the r1-before-r0 rows close)         28 -> 24
+// alchemy permute, 5 and 8 minutes: 24, only by a false
+// u16 return type on the loader                           not kept
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

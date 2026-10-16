@@ -2,8 +2,10 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 gData_03001f2c[];
 
-extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
-extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
+extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[],
+    MsgRareSellOffer[];
+extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[],
+    MsgDeal[];
 extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
 
 struct ItemDefinition *Item_Get(s32 item);
@@ -14,63 +16,62 @@ void Audio_PlayCue(s32 cue);
 void Func_080772b0(s32 unitId, s32 slot);
 void Party_AdjustCoinsFar(s32 amount);
 
-void Shop_SellItem(s32 unitId, s32 slot, s32 count)
-{
-    struct ShopRuntime *shop = gMenuWork;
-    struct BattleUnit *unit = UnitGetFar(unitId);
-    s32 itemId = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(itemId);
-    u8 rare = item->flags & 4;
-    s32 all = 0;
-    s32 total;
-    s32 message;
-    s32 i;
+void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
+  struct ShopRuntime *shop = gMenuWork;
+  struct BattleUnit *unit = UnitGetFar(unitId);
+  s32 itemId = unit->inventory[slot] & 0x1ff;
+  struct ItemDefinition *item = Item_Get(itemId);
+  u8 rare = item->flags & 4;
+  s32 all = 0;
+  s32 total;
+  s32 message;
+  s32 i;
 
-    if (count == -1) {
-        all = 1;
-        count = 1;
-    }
-    total = Shop_SalePrice(unit->inventory[slot]) * count;
-    if (total == 0) {
-        UiWork_PushValueSlotFar(itemId, 2);
-        UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
-        return;
-    }
-    if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
-        UiWork_PushValueSlotFar(itemId, 2);
-        UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
-        return;
-    }
-    if (all)
-        message = (s32)MsgOldItemSellOffer;
-    else if (unit->inventory[slot] & 0x400)
-        message = (s32)MsgDamagedSellOffer;
-    else if (count > 1)
-        message = (s32)MsgSellTotal;
-    else if (rare)
-        message = (s32)MsgRareSellOffer;
-    else
-        message = (s32)MsgSellOffer;
+  if (count == -1) {
+    all = 1;
+    count = 1;
+  }
+  total = Shop_SalePrice(unit->inventory[slot]) * count;
+  if (total == 0) {
     UiWork_PushValueSlotFar(itemId, 2);
-    UiWork_PushValueSlotFar(total, 5);
-    UiMessage_ShowAndRestoreState(message);
-    if (UiMessage_ShowChoice(0) != 0) {
-        if (rare || all)
-            message = (s32)MsgKeepIt;
-        else
-            message = (s32)MsgChangedMind;
-        UiMessage_ShowAndRestoreState(message);
-        return;
-    }
-    Audio_PlayCue(102);
-    for (i = 0; i < count; i++)
-        Func_080772b0(unitId, slot);
-    Party_AdjustCoinsFar(total);
-    Shop_DrawMoney();
-    Shop_DrawUnitGrid(shop->itemWindow, unitId);
+    UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
+    return;
+  }
+  if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
+    UiWork_PushValueSlotFar(itemId, 2);
+    UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
+    return;
+  }
+  if (all)
+    message = (s32)MsgOldItemSellOffer;
+  else if (unit->inventory[slot] & 0x400)
+    message = (s32)MsgDamagedSellOffer;
+  else if (count > 1)
+    message = (s32)MsgSellTotal;
+  else if (rare)
+    message = (s32)MsgRareSellOffer;
+  else
+    message = (s32)MsgSellOffer;
+  UiWork_PushValueSlotFar(itemId, 2);
+  UiWork_PushValueSlotFar(total, 5);
+  UiMessage_ShowAndRestoreState(message);
+  if (UiMessage_ShowChoice(0) != 0) {
     if (rare || all)
-        message = (s32)MsgSold;
+      message = (s32)MsgKeepIt;
     else
-        message = (s32)MsgDeal;
+      message = (s32)MsgChangedMind;
     UiMessage_ShowAndRestoreState(message);
+    return;
+  }
+  Audio_PlayCue(102);
+  for (i = 0; i < count; i++)
+    Func_080772b0(unitId, slot);
+  Party_AdjustCoinsFar(total);
+  Shop_DrawMoney();
+  Shop_DrawUnitGrid(shop->itemWindow, unitId);
+  if (rare || all)
+    message = (s32)MsgSold;
+  else
+    message = (s32)MsgDeal;
+  UiMessage_ShowAndRestoreState(message);
 }

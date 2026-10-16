@@ -1,30 +1,30 @@
-/* Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
- * The body of effect kinds 348, 353, 389 and 431 (Func_0817e668 to
- * Func_0817e68c in variant_k.c pass modes 0 to 3). Written from the
- * listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
- * and shape (0.55) but is not its twin.
- * The shape matches, including the three mirrored copies as indexed loops
- * (written with walking pointers loop.c makes outer givs of them: differ
- * 206). Left: in each copy's inner loop the native steps the left pointer
- * before its second load (ldrb, add r4, strb, add r0, ldrb, add r2, strb,
- * sub r1); the draft loads first. After the calls the native loads the
- * pool word (IwramClearWords, IwramCopyWords, BG2PA's 0x100) before the
- * neighbouring constant, and the first "mov r3, #192" comes after the
- * argument's spill. u32 or u8 counters and a s8 canvas change nothing.
- * The copy loops' order is what sched2 gives when a load after a store to
- * the canvas waits two cycles (here one): the second ldrb is ready at
- * once and goes before the left pointer's add. Measured against it: an
- * empty asm or a volatile memory barrier between the copies (loop.c
- * then rebuilds the row pointers: differ 166), a one-pass block around
- * the second copy (differ 278), a volatile load or store (the address
- * givs no longer combine: 166 to 267), an asm with an unused output
- * (deleted), and walking pointers per row (206).
- * 2026-10-15 (lane N2): rewritten with the work struct, one mirroring macro
- * for the three copies and named constants; the same 386 instructions and
- * differ 24.
- * Resources 0x13c (BattleFx_EarthWallSheet), 0x148 (BattleFx_OrangePaletteB),
- * 0x129 (BattleFx_FireballSheet) and 0x150 (BattleFx_MarsDjinnSheet) need
- * their names in system/resource/directory.s when this is adopted. */
+// Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
+// The body of effect kinds 348, 353, 389 and 431 (Func_0817e668 to
+// Func_0817e68c in variant_k.c pass modes 0 to 3). Written from the
+// listing; ☀️'s BattleFx_RunFortyEightFrameEffect has the same frame count
+// and shape (0.55) but is not its twin.
+// The shape matches, including the three mirrored copies as indexed loops
+// (written with walking pointers loop.c makes outer givs of them: differ
+// 206). Left: in each copy's inner loop the native steps the left pointer
+// before its second load (ldrb, add r4, strb, add r0, ldrb, add r2, strb,
+// sub r1); the draft loads first. After the calls the native loads the
+// pool word (IwramClearWords, IwramCopyWords, BG2PA's 0x100) before the
+// neighbouring constant, and the first "mov r3, #192" comes after the
+// argument's spill. u32 or u8 counters and a s8 canvas change nothing.
+// The copy loops' order is what sched2 gives when a load after a store to
+// the canvas waits two cycles (here one): the second ldrb is ready at
+// once and goes before the left pointer's add. Measured against it: an
+// empty asm or a volatile memory barrier between the copies (loop.c
+// then rebuilds the row pointers: differ 166), a one-pass block around
+// the second copy (differ 278), a volatile load or store (the address
+// givs no longer combine: 166 to 267), an asm with an unused output
+// (deleted), and walking pointers per row (206).
+// 2026-10-15 (lane N2): rewritten with the work struct, one mirroring macro
+// for the three copies and named constants; the same 386 instructions and
+// differ 24.
+// Resources 0x13c (BattleFx_EarthWallSheet), 0x148 (BattleFx_OrangePaletteB),
+// 0x129 (BattleFx_FireballSheet) and 0x150 (BattleFx_MarsDjinnSheet) need
+// their names in system/resource/directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -53,10 +53,10 @@
 #define MIRROR_HALF(cel, half, width, height)                                  \
   for (y = 0; y != (height); y++) {                                            \
     for (x = 0; x != (width); x++) {                                           \
-      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 32 -           \
-                  (width) + x] = work->sheet[(half) + y * (width) + x];        \
-      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 31 +           \
-                  (width) - x] = work->sheet[(half) + y * (width) + x];        \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 32 - (width) + \
+                  x] = work->sheet[(half) + y * (width) + x];                  \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 31 + (width) - \
+                  x] = work->sheet[(half) + y * (width) + x];                  \
     }                                                                          \
   }
 
@@ -103,8 +103,7 @@ void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_081963ec(s32 slot, s32 blitter);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 struct RenderPrimitive *Func_081969f8(s32 count);

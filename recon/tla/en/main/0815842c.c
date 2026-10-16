@@ -1,38 +1,38 @@
-/* Draft of Func_0815842c, effect kind 207: a spray of ice chips over a
- * rising wave.
- *
- * On screen: a band of water five tiles wide rises 32 pixels from the
- * bottom of the canvas over the first eight frames and drifts sideways a
- * pixel every four frames, away from the caster's side. From frame 4, 64
- * ice chips spray up from the first target, four more every frame, tumble
- * through four cels and fall back. If the effect has its Djinn prelude, a
- * small Mercury Djinn hovers over the anchor point, drawn twice as bright
- * for the first four frames. At frame 8 the screen shakes, the battle
- * resumes with hit cue 0x86, and the first target flashes for sixteen
- * frames and recoils. The last sixteen frames fade the layer out.
- *
- * Setup: the battle effect canvas, the canvas preparer (kind 1, anchor 2,
- * for the caster's side), the max and additive blitter pair flipped for
- * that side, the water sheet in the effect work and the transfer callback;
- * the chips are placed at the first target before the first frame. The ice
- * chip and Djinn sheets load on frame 1.
- * Frame loop, 64 frames, as above.
- * Teardown: the callback and both blitters are released and the canvas
- * layer is closed.
- *
- * Port of The Broken Seal's BattleFx_RunParticleReveal (kind 207 there
- * too), with The Lost Age's heap slots and callback order, no work->effect
- * store, and the canvas preparer's packed arguments: kind | side << 4 |
- * anchor << 5, with the screen point returned in a three-word array.
- *
- * Listing 422 instructions, draft 422, differ 20 (trial 0, 2026-10-15).
- * Left: 10 single rows one place apart, constant and stack loads around
- * the blitter calls.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names; the cel sizes as u32
- *     (they divide unsigned)                                  20
- */
+// Draft of Func_0815842c, effect kind 207: a spray of ice chips over a
+// rising wave.
+
+// On screen: a band of water five tiles wide rises 32 pixels from the
+// bottom of the canvas over the first eight frames and drifts sideways a
+// pixel every four frames, away from the caster's side. From frame 4, 64
+// ice chips spray up from the first target, four more every frame, tumble
+// through four cels and fall back. If the effect has its Djinn prelude, a
+// small Mercury Djinn hovers over the anchor point, drawn twice as bright
+// for the first four frames. At frame 8 the screen shakes, the battle
+// resumes with hit cue 0x86, and the first target flashes for sixteen
+// frames and recoils. The last sixteen frames fade the layer out.
+
+// Setup: the battle effect canvas, the canvas preparer (kind 1, anchor 2,
+// for the caster's side), the max and additive blitter pair flipped for
+// that side, the water sheet in the effect work and the transfer callback;
+// the chips are placed at the first target before the first frame. The ice
+// chip and Djinn sheets load on frame 1.
+// Frame loop, 64 frames, as above.
+// Teardown: the callback and both blitters are released and the canvas
+// layer is closed.
+
+// Port of The Broken Seal's BattleFx_RunParticleReveal (kind 207 there
+// too), with The Lost Age's heap slots and callback order, no work->effect
+// store, and the canvas preparer's packed arguments: kind | side << 4 |
+// anchor << 5, with the screen point returned in a three-word array.
+
+// Listing 422 instructions, draft 422, differ 20 (trial 0, 2026-10-15).
+// Left: 10 single rows one place apart, constant and stack loads around
+// the blitter calls.
+
+// Tried:
+// ☀️'s body with The Lost Age's names; the cel sizes as u32
+// (they divide unsigned)                                  20
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

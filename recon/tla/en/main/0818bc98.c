@@ -1,22 +1,22 @@
-/* Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
- * (call order BattleEffect_RunDualParticleStream 0.417): ⚓️'s own effect on ☀️'s
- * frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
- * in Triple Chomp (Func_0818b868). The native frame (108) holds the mode at
- * sp+64, work 60, canvas 56, frame 52, graphics 48, the user's position's
- * address 44 (and a copy at 36), the target's 40, the mouth's x 32 and y 28,
- * the sheet's glow cell 24, the blitter pair's address 20, the vertices 16 and
- * the texture's address 12; the texture is at sp+68, the blitter pair at 76,
- * the target at 84 and the user at 96. effect stays in r11. Written from the
- * listing (2026-10-15, fx-n3), measured in order: 328 at the first compile
- * (with or without a goto for Rolling Flame's early frames: the same); frame
- * declared before graphics (their slots): 282; the mouth's x and y declared in
- * the frame loop's block, in that order: 242 (y first: 282); the range tests
- * grouped as their own operand of the &&, so they fold into the native's
- * unsigned compares: 211; the vertex pool of 1024 bytes and the sparks' size
- * stepped with ++: 207; the model's locals scoped to its block: 203. Worse: the
- * beam's y after the ring's clamp (464). Left: the native keeps a second copy
- * of the user's address at sp+36, above the mouth's slots, where this draft's
- * copy falls below them (sp+28), and the TLA load-before-constant pairs. */
+// Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
+// (call order BattleEffect_RunDualParticleStream 0.417): ⚓️'s own effect on ☀️'s
+// frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
+// in Triple Chomp (Func_0818b868). The native frame (108) holds the mode at
+// sp+64, work 60, canvas 56, frame 52, graphics 48, the user's position's
+// address 44 (and a copy at 36), the target's 40, the mouth's x 32 and y 28,
+// the sheet's glow cell 24, the blitter pair's address 20, the vertices 16 and
+// the texture's address 12; the texture is at sp+68, the blitter pair at 76,
+// the target at 84 and the user at 96. effect stays in r11. Written from the
+// listing (2026-10-15, fx-n3), measured in order: 328 at the first compile
+// (with or without a goto for Rolling Flame's early frames: the same); frame
+// declared before graphics (their slots): 282; the mouth's x and y declared in
+// the frame loop's block, in that order: 242 (y first: 282); the range tests
+// grouped as their own operand of the &&, so they fold into the native's
+// unsigned compares: 211; the vertex pool of 1024 bytes and the sparks' size
+// stepped with ++: 207; the model's locals scoped to its block: 203. Worse: the
+// beam's y after the ring's clamp (464). Left: the native keeps a second copy
+// of the user's address at sp+36, above the mouth's slots, where this draft's
+// copy falls below them (sp+28), and the TLA load-before-constant pairs.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

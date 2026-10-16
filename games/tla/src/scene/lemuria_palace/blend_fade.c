@@ -5,8 +5,8 @@ extern u8 gData_0200308c;
 void WaitFrames(s32 frames);
 
 static __inline__ void Blend_WriteAlpha(s32 value) {
-  /* The s32 parameter keeps each constant a word built with shifts; a u16 store
-   * loads it from the literal pool. */
+  // The s32 parameter keeps each constant a word built with shifts; a u16 store
+  // loads it from the literal pool.
   *(volatile u16 *)0x04000052 = value;
 }
 

@@ -56,10 +56,10 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
     }
     *dst++ = palette->slot[index];
   }
-  /* The native copies the tile index down, loads the VRAM base and only then
-     shifts the index; plain C shifts before the load (differ 2). Three barriers
-     keep that order: one barrier on the base alone swaps r1 and r2 (differ 6),
-     and the offset as its own barrier-held value puts them back. */
+  // The native copies the tile index down, loads the VRAM base and only then
+  // shifts the index; plain C shifts before the load (differ 2). Three barriers
+  // keep that order: one barrier on the base alone swaps r1 and r2 (differ 6),
+  // and the offset as its own barrier-held value puts them back.
   /* FAKEMATCH: keeps the index copy first (differ 2 without) */
   __asm__("" : : "l"(tile));
   vram = 0x06004000;

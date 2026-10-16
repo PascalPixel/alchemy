@@ -1,10 +1,10 @@
-/* Near miss, differ 6 of 111 (two reordered rows, 15 before): The Broken
- * Seal's BattlePres_SetupTransitionScene with the camera from its heap slot.
- * The native stores pos[1] and pos[2] before it loads Iwram_RatioMulQ14's entry
- * and stores pos[0] after it; this draft stores pos[0] between them. Later the
- * native copies the camera to r1 (mov r1, r8) before the three render bound
- * stores, this draft after them. Measured: the position stores reordered
- * (differ 12 and 16), the bounds unchanged. */
+// Near miss, differ 6 of 111 (two reordered rows, 15 before): The Broken
+// Seal's BattlePres_SetupTransitionScene with the camera from its heap slot.
+// The native stores pos[1] and pos[2] before it loads Iwram_RatioMulQ14's entry
+// and stores pos[0] after it; this draft stores pos[0] between them. Later the
+// native copies the camera to r1 (mov r1, r8) before the three render bound
+// stores, this draft after them. Measured: the position stores reordered
+// (differ 12 and 16), the bounds unchanged.
 #include "types.h"
 #include "battle_display.h"
 #include "graphics.h"

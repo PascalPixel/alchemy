@@ -1,30 +1,30 @@
-/* Draft, differ 774 of 1493 (the draft has 1507).
- *
- * Summon 8 (Func_0814c994's case 8). Twin: The Broken Seal's
- * BattleFx_RunWhirlwindComets, ported by trial 2 and rewritten here. The
- * Lost Age's changes: Func_08144aac for the pair; the whirlwind unpacked
- * with its palette by Resource_LoadAndDecompress into the work sheet, the
- * comets into work->sheet + 0x3600; frame / 4 % 3 written through
- * Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by 36
- * and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
- * source makes: agscc emits __modsi3 and __divsi3 for the operators); HI()
- * reads of screen.y and screen.depth; Iwram_TransformVector at the comet
- * sparks; formation resource 646; the effect argument for the actor loops;
- * gCameraSceneParameters declared unsized (with the shared u32[3], word 3
- * folds into the address).
- *
- * Left: allocation. The frame is 372 bytes for the native's 364: alive and
- * slot are spilled where the native keeps them in r10 and r11, and index *
- * 2 takes a register where the native spills it; 14 more instructions
- * follow from that, most in the comet strikes (the native keeps the mark's
- * x, wave.x >> 17 + 32, and the ring's angle in stack slots).
- *
- * Tried: trial 2's plain port 854, its declaration order from a greedy scan
- * 774 (kept, with the names changed); alchemy permute 6 minutes reached 552
- * only with a temporary for HI(screen.y) (not kept). 2026-10-15: the effect
- * state in a block opened after the setup, as in summon 7 (whose slots it
- * fixed), 854, and 808 after a declaration scan of that form.
- */
+// Draft, differ 774 of 1493 (the draft has 1507).
+
+// Summon 8 (Func_0814c994's case 8). Twin: The Broken Seal's
+// BattleFx_RunWhirlwindComets, ported by trial 2 and rewritten here. The
+// Lost Age's changes: Func_08144aac for the pair; the whirlwind unpacked
+// with its palette by Resource_LoadAndDecompress into the work sheet, the
+// comets into work->sheet + 0x3600; frame / 4 % 3 written through
+// Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by 36
+// and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
+// source makes: agscc emits __modsi3 and __divsi3 for the operators); HI()
+// reads of screen.y and screen.depth; Iwram_TransformVector at the comet
+// sparks; formation resource 646; the effect argument for the actor loops;
+// gCameraSceneParameters declared unsized (with the shared u32[3], word 3
+// folds into the address).
+
+// Left: allocation. The frame is 372 bytes for the native's 364: alive and
+// slot are spilled where the native keeps them in r10 and r11, and index *
+// 2 takes a register where the native spills it; 14 more instructions
+// follow from that, most in the comet strikes (the native keeps the mark's
+// x, wave.x >> 17 + 32, and the ring's angle in stack slots).
+
+// Tried: trial 2's plain port 854, its declaration order from a greedy scan
+// 774 (kept, with the names changed); alchemy permute 6 minutes reached 552
+// only with a temporary for HI(screen.y) (not kept). 2026-10-15: the effect
+// state in a block opened after the setup, as in summon 7 (whose slots it
+// fixed), 854, and 808 after a declaration scan of that form.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

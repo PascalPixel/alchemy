@@ -1,22 +1,22 @@
-/* Near miss of Func_0814e744, effect kind 43: differ 36 of 337 (draft 337).
- *
- * Twin: The Broken Seal's BattleFx_RunIceShardBursts (effect.c), call for
- * call. The Lost Age reads the effect from its argument (it never stores
- * work->effect), takes its heap blocks as Ram_HeapSlots fields, loads the
- * blitter through Func_081963ec (BLIT_MAX is 1 where The Broken Seal's
- * COMPOSITE_MAX is 2) and orders the callback 0xc80.
- *
- * Left: about a dozen rows where the native issues a load one slot earlier
- * than agscc (canvas before the 1 for BeginCanvasLayer, the blitter word
- * before the loop's zero, object->z before its store, the cell offset table
- * before the size), and the member loop's three invariants (the actor
- * offset 36, &screen, &point) set up in the reverse order.
- *
- * Tried:
- *   - member declared before sheet: 56 -> 36 (sheet and member swap their
- *     frame slots sp+16 and sp+20 into the native's).
- *   - greedy declaration-order sweep from there, two passes: no gain (36).
- */
+// Near miss of Func_0814e744, effect kind 43: differ 36 of 337 (draft 337).
+
+// Twin: The Broken Seal's BattleFx_RunIceShardBursts (effect.c), call for
+// call. The Lost Age reads the effect from its argument (it never stores
+// work->effect), takes its heap blocks as Ram_HeapSlots fields, loads the
+// blitter through Func_081963ec (BLIT_MAX is 1 where The Broken Seal's
+// COMPOSITE_MAX is 2) and orders the callback 0xc80.
+
+// Left: about a dozen rows where the native issues a load one slot earlier
+// than agscc (canvas before the 1 for BeginCanvasLayer, the blitter word
+// before the loop's zero, object->z before its store, the cell offset table
+// before the size), and the member loop's three invariants (the actor
+// offset 36, &screen, &point) set up in the reverse order.
+
+// Tried:
+// - member declared before sheet: 56 -> 36 (sheet and member swap their
+// frame slots sp+16 and sp+20 into the native's).
+// - greedy declaration-order sweep from there, two passes: no gain (36).
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -63,12 +63,12 @@ extern char ResourceId_IceBlockSheet; // its palette
 extern u16 gData_08197410[];          // gParticleStreams_CellOffsets
 extern s32 gData_081982e4[];          // gIceShardBursts_Gravities
 
-/* Ice shards burst up from each target in turn, 20 frames apart.
- *
- * Setup: 128 shards per target are scattered around the middle of its body
- * and thrown sideways and up. Frame loop: from its cue a target flashes, and
- * its shards fall under one of four gravities until they drop below y = 112.
- * The effect runs 20 frames per target plus 56. */
+// Ice shards burst up from each target in turn, 20 frames apart.
+
+// Setup: 128 shards per target are scattered around the middle of its body
+// and thrown sideways and up. Frame loop: from its cue a target flashes, and
+// its shards fall under one of four gravities until they drop below y = 112.
+// The effect runs 20 frames per target plus 56.
 void Func_0814e744(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

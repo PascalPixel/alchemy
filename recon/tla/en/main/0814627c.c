@@ -1,23 +1,23 @@
-/* Near miss, differ 66 of 428.
- *
- * Effect kind 67. Twin: The Broken Seal's BattleFx_RunTriangleStrike, ported
- * call for call. The Lost Age's changes: three Resource_LoadAndDecompress
- * loads (the rune picture with its palette into the work sheet, resource
- * 0x134 into the sheet slot, ParticleSpritesD after the rune picture), the
- * callback at 0xc80, Func_081963ec for the two blitters, the landed picture
- * drawn from work->sheet, and the effect argument read directly.
- *
- * Left: order only. The frame is the native's (132 bytes); the prologue's
- * argument spill, the object's three stores and about a dozen more places
- * are a load one row from its neighbour.
- *
- * Tried (2026-10-15): alchemy permute 10 minutes (56, through four
- * rewrites: REG_BG2PA written before BeginCanvasLayer, which would undo the
- * layer's own 0x80 and was rejected; the work pointer copied; &vector
- * through a pointer temporary; and a 0x03000000 integer held from the setup
- * for the second blitter's read). The last, written as the tagged heap
- * pointer, takes 94 to 66; the others, alone, 88 (rejected), 94 and 94.
- */
+// Near miss, differ 66 of 428.
+
+// Effect kind 67. Twin: The Broken Seal's BattleFx_RunTriangleStrike, ported
+// call for call. The Lost Age's changes: three Resource_LoadAndDecompress
+// loads (the rune picture with its palette into the work sheet, resource
+// 0x134 into the sheet slot, ParticleSpritesD after the rune picture), the
+// callback at 0xc80, Func_081963ec for the two blitters, the landed picture
+// drawn from work->sheet, and the effect argument read directly.
+
+// Left: order only. The frame is the native's (132 bytes); the prologue's
+// argument spill, the object's three stores and about a dozen more places
+// are a load one row from its neighbour.
+
+// Tried (2026-10-15): alchemy permute 10 minutes (56, through four
+// rewrites: REG_BG2PA written before BeginCanvasLayer, which would undo the
+// layer's own 0x80 and was rejected; the work pointer copied; &vector
+// through a pointer temporary; and a 0x03000000 integer held from the setup
+// for the second blitter's read). The last, written as the tagged heap
+// pointer, takes 94 to 66; the others, alone, 88 (rejected), 94 and 94.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

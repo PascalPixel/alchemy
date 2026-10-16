@@ -1,17 +1,17 @@
-/* Draft, differ 2 of 242: The Broken Seal's BattleFx_PlaceFormationObjects
- * with The Lost Age's three more formations (case 4: eleven objects from
- * signed columns, case 5: twelve in a 4x3 grid, case 6: eight more) in the
- * native's case order 0, 5, 1, 2, 6, 3, 4. Case 0 walks an explicit object
- * pointer (its spill is stored before i is cleared, as the native does).
- * Left: in case 5 the native loads the object (ldmia r4!) before it shifts
- * the column and row; here both shifts come first (one reordered row).
- * Tried: the shifts as other expressions (x + ..., * 0x200000, i % 4 * 32),
- * a Placement struct for pos, an object local fetched first (differ 235) or
- * held through one or two empty asms (2, 22), row and column locals (76 to
- * 103), a separate object pointer for case 5 (4), alchemy permute 6 minutes
- * (no candidate below 2). By hand through sched2's ranking, a load costing
- * 3 cycles instead of agscc's 2 gives the object's load priority 37 over
- * the shifts' 36: the native order. */
+// Draft, differ 2 of 242: The Broken Seal's BattleFx_PlaceFormationObjects
+// with The Lost Age's three more formations (case 4: eleven objects from
+// signed columns, case 5: twelve in a 4x3 grid, case 6: eight more) in the
+// native's case order 0, 5, 1, 2, 6, 3, 4. Case 0 walks an explicit object
+// pointer (its spill is stored before i is cleared, as the native does).
+// Left: in case 5 the native loads the object (ldmia r4!) before it shifts
+// the column and row; here both shifts come first (one reordered row).
+// Tried: the shifts as other expressions (x + ..., * 0x200000, i % 4 * 32),
+// a Placement struct for pos, an object local fetched first (differ 235) or
+// held through one or two empty asms (2, 22), row and column locals (76 to
+// 103), a separate object pointer for case 5 (4), alchemy permute 6 minutes
+// (no candidate below 2). By hand through sched2's ranking, a load costing
+// 3 cycles instead of agscc's 2 gives the object's load priority 37 over
+// the shifts' 36: the native order.
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_fx_work.h"

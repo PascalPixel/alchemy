@@ -1,21 +1,21 @@
-/* Draft, differ 538 of 893 (draft 881 instructions, no device): summon 16,
- * written from the listing on The Broken Seal's summon skeleton
- * (BattleEffect_RunEmberColumns: canvas layer, blitter pair through
- * Func_08144aac, transfer callback at 0xc80, SelectLivingTargets,
- * SpawnObjects, a frame loop with an A/B skip, PlaceFormationObjects,
- * RunImpactBurst and the twelve object releases). Its rings use the ARM
- * model renderer as summon 25's pillars do (Func_0819273c).
- * The native frame is 60 bytes: the blitter pair at sp+52, the ring
- * texture at sp+44, effect sp+40, canvas sp+36, graphics sp+32, &draw
- * sp+28, focus sp+20/24, frame - 217 at sp+16 and frame - 91 at sp+12.
- * Left: mostly allocation. The native keeps the mote pointer in r7, the
- * loop counter in r10 and size << 14 in r8 (formed after the draw, again in
- * each arm of the gather test); here r6, r8 and r7, and frame - 91 stays in
- * r10 instead of sp+12. The motes' first loop does not hoist its 255.
- * Measured: the flame column x as (i * 4 + 44) << 16 (strength-reduced to
- * one giv; the native adds a 3i giv to i: (i * 3 + i + 44), 640 -> 558),
- * -((r & 3) + 2) << 16 negated before the shift, the swirl's pull signed
- * (Random16 returns u32; unsigned it divides with lsrs: 558 -> 538). */
+// Draft, differ 538 of 893 (draft 881 instructions, no device): summon 16,
+// written from the listing on The Broken Seal's summon skeleton
+// (BattleEffect_RunEmberColumns: canvas layer, blitter pair through
+// Func_08144aac, transfer callback at 0xc80, SelectLivingTargets,
+// SpawnObjects, a frame loop with an A/B skip, PlaceFormationObjects,
+// RunImpactBurst and the twelve object releases). Its rings use the ARM
+// model renderer as summon 25's pillars do (Func_0819273c).
+// The native frame is 60 bytes: the blitter pair at sp+52, the ring
+// texture at sp+44, effect sp+40, canvas sp+36, graphics sp+32, &draw
+// sp+28, focus sp+20/24, frame - 217 at sp+16 and frame - 91 at sp+12.
+// Left: mostly allocation. The native keeps the mote pointer in r7, the
+// loop counter in r10 and size << 14 in r8 (formed after the draw, again in
+// each arm of the gather test); here r6, r8 and r7, and frame - 91 stays in
+// r10 instead of sp+12. The motes' first loop does not hoist its 255.
+// Measured: the flame column x as (i * 4 + 44) << 16 (strength-reduced to
+// one giv; the native adds a 3i giv to i: (i * 3 + i + 44), 640 -> 558),
+// -((r & 3) + 2) << 16 negated before the shift, the swirl's pull signed
+// (Random16 returns u32; unsigned it divides with lsrs: 558 -> 538).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -215,8 +215,7 @@ void Func_08191d60(struct BattleEffectArgument *effect) {
 
             mote->velocityX = ((Random16() & 63) << 16) + (56 << 16);
             dx = mote->velocityX - mote->x;
-            mote->velocityX =
-                dx / (((114 << 16) - mote->y) / (size << 14));
+            mote->velocityX = dx / (((114 << 16) - mote->y) / (size << 14));
           }
 
           // Frames 142-161: they swirl about the centre line.

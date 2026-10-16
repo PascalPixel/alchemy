@@ -1,14 +1,15 @@
-/* Draft of Func_020028cc (overlay 64B, 91 instructions), differ 8: the puff that
- * trails actor 8 every sixteenth frame, ported from ☀️'s WorldMap_SpawnActorEightPuff
- * (⚓️ creates object 285 with Func_02004b30). Object creation through a forwarding
- * inline took it from differ 34 to 8: the arguments then build in r0 as the native.
- * Three swaps remain, each where the native loads earlier: obj->x after the * 48
- * multiply (here after its first shift) and after the << 5 random (here after the
- * shift); and the sprite's byte 9 right after nextFrame's store, before the leader's
- * sprite pointer (then the native fills the load stall with the first call's
- * adds r0, r5). sched2 gives the shifts and the leader's chain the higher priority.
- * Measured: the random value apart from its shifts in the else branch (no change).
- * alchemy permute, 5 minutes (25,361 candidates): nothing closer. */
+// Draft of Func_020028cc (overlay 64B, 91 instructions), differ 8: the puff
+// that trails actor 8 every sixteenth frame, ported from ☀️'s
+// WorldMap_SpawnActorEightPuff (⚓️ creates object 285 with Func_02004b30).
+// Object creation through a forwarding inline took it from differ 34 to 8: the
+// arguments then build in r0 as the native. Three swaps remain, each where the
+// native loads earlier: obj->x after the * 48 multiply (here after its first
+// shift) and after the << 5 random (here after the shift); and the sprite's
+// byte 9 right after nextFrame's store, before the leader's sprite pointer
+// (then the native fills the load stall with the first call's adds r0, r5).
+// sched2 gives the shifts and the leader's chain the higher priority. Measured:
+// the random value apart from its shifts in the else branch (no change).
+// alchemy permute, 5 minutes (25,361 candidates): nothing closer.
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
@@ -23,42 +24,42 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Func_02004b18(struct ObjectRuntime *object, s32 mode);
 void Func_02004b20(struct ObjectRuntime *object, const u8 *script);
 
-static inline struct ObjectRuntime *CreateObject(s32 kind, s32 x, s32 y, s32 z)
-{
-    return Func_02004b30(kind, x, y, z);
+static inline struct ObjectRuntime *CreateObject(s32 kind, s32 x, s32 y,
+                                                 s32 z) {
+  return Func_02004b30(kind, x, y, z);
 }
 
-void Func_020028cc(void)
-{
-    struct ObjectRuntime *leader;
-    struct ObjectRuntime *obj;
-    struct FieldSprite *spr;
-    u32 value;
+void Func_020028cc(void) {
+  struct ObjectRuntime *leader;
+  struct ObjectRuntime *obj;
+  struct FieldSprite *spr;
+  u32 value;
 
-    if ((gFrameCount & 15) != 0)
-        return;
-    leader = Object_GetById(8);
-    obj = CreateObject(285, leader->x - 0x200000, leader->y, leader->z - 0x100000);
-    if (obj == NULL)
-        return;
-    obj->scaleX = 0x8000;
-    obj->scaleY = 0x8000;
-    spr = obj->animation;
-    if ((Random16Far() * 2) >> 16) {
-        s32 back = ((Random16Far() * 48) >> 16) << 16;
+  if ((gFrameCount & 15) != 0)
+    return;
+  leader = Object_GetById(8);
+  obj =
+      CreateObject(285, leader->x - 0x200000, leader->y, leader->z - 0x100000);
+  if (obj == NULL)
+    return;
+  obj->scaleX = 0x8000;
+  obj->scaleY = 0x8000;
+  spr = obj->animation;
+  if ((Random16Far() * 2) >> 16) {
+    s32 back = ((Random16Far() * 48) >> 16) << 16;
 
-        obj->x -= back >> 1;
-        obj->z -= back;
-    } else {
-        value = Random16Far();
-        obj->x += ((value << 5) >> 16) << 16;
-        obj->z += (s32)(((value << 5) >> 16) << 16) >> 1;
-    }
-    spr->nextFrame = 0;
-    spr->priority = ((struct FieldSprite *)leader->animation)->priority;
-    obj->priorityFlags |= 2;
-    obj->motionFlags = leader->motionFlags;
-    Object_SetPartAttribute(obj, 9);
-    Func_02004b18(obj, 2);
-    Func_02004b20(obj, gData_02004f10);
+    obj->x -= back >> 1;
+    obj->z -= back;
+  } else {
+    value = Random16Far();
+    obj->x += ((value << 5) >> 16) << 16;
+    obj->z += (s32)(((value << 5) >> 16) << 16) >> 1;
+  }
+  spr->nextFrame = 0;
+  spr->priority = ((struct FieldSprite *)leader->animation)->priority;
+  obj->priorityFlags |= 2;
+  obj->motionFlags = leader->motionFlags;
+  Object_SetPartAttribute(obj, 9);
+  Func_02004b18(obj, 2);
+  Func_02004b20(obj, gData_02004f10);
 }

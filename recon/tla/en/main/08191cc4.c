@@ -1,14 +1,14 @@
-/* Draft, differ 2 of 72 (no device): summon 25's closing step, which puts
- * the targets back and restores the battle's camera, palette and backdrop.
- * Left: the native loads the battle work (ldr r3, [r3, #36]) between the two
- * halves of the effect field's offset 0x78f0 (movs r2, #240 / lsls); agscc
- * finishes the constant first (one reordered row).
- * Tried: the three heap reads in all six declaration orders (work first:
- * differ 2; transition first: 20; battle first: 29-41), assigned in
- * statements in other orders than declared (2 or 20), the work read in a
- * one-pass block (20), all three through one HeapSlots pointer (2 or 20), a
- * pointer to the effect field (20); alchemy permute 4 minutes, nothing below
- * 2. */
+// Draft, differ 2 of 72 (no device): summon 25's closing step, which puts
+// the targets back and restores the battle's camera, palette and backdrop.
+// Left: the native loads the battle work (ldr r3, [r3, #36]) between the two
+// halves of the effect field's offset 0x78f0 (movs r2, #240 / lsls); agscc
+// finishes the constant first (one reordered row).
+// Tried: the three heap reads in all six declaration orders (work first:
+// differ 2; transition first: 20; battle first: 29-41), assigned in
+// statements in other orders than declared (2 or 20), the work read in a
+// one-pass block (20), all three through one HeapSlots pointer (2 or 20), a
+// pointer to the effect field (20); alchemy permute 4 minutes, nothing below
+// 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "motobj.h"

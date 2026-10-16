@@ -1,17 +1,17 @@
-/* Near miss, differ 4 of 148 (2026-10-15). The test inside The Broken
- * Seal's BattleEffect_SelectNearbyTargetObject (object.c), taken out into a
- * function of its own: ⚓️'s BattleFx_FindNearestObject
- * (play_cue_and_start_emitter_on_target.c) calls it for each object, and
- * the per-animation limits come from a table (Func_080cda58) instead of ☀️'s
- * literals. Belongs after descriptor_range.c's Func_080cda84.
- * Left: one branch. In the footing test the native branches to the shared
- * -1 on "above" (bgt; b to the distance) where this branches to the
- * distance on "not above" (ble; b to the -1).
- * Tried: plain early returns, differ 23 (the one-pass block below found by
- * alchemy permute brings it to 4); a goto to one -1, differ 58; the two
- * height bases in locals, 38; the tests inverted, 21 and 47; ☀️'s angle
- * as one expression, 30 (the native keeps (u16) on its own statement). A
- * second 6-minute permute found nothing below 4. */
+// Near miss, differ 4 of 148 (2026-10-15). The test inside The Broken
+// Seal's BattleEffect_SelectNearbyTargetObject (object.c), taken out into a
+// function of its own: ⚓️'s BattleFx_FindNearestObject
+// (play_cue_and_start_emitter_on_target.c) calls it for each object, and
+// the per-animation limits come from a table (Func_080cda58) instead of ☀️'s
+// literals. Belongs after descriptor_range.c's Func_080cda84.
+// Left: one branch. In the footing test the native branches to the shared
+// -1 on "above" (bgt; b to the distance) where this branches to the
+// distance on "not above" (ble; b to the -1).
+// Tried: plain early returns, differ 23 (the one-pass block below found by
+// alchemy permute brings it to 4); a goto to one -1, differ 58; the two
+// height bases in locals, 38; the tests inverted, 21 and 47; ☀️'s angle
+// as one expression, 30 (the native keeps (u16) on its own statement). A
+// second 6-minute permute found nothing below 4.
 #include "types.h"
 #include "object_runtime.h"
 #include "iwram_call.h"

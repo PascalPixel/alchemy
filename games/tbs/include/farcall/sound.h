@@ -1,4 +1,4 @@
-/* FarCall_SoundTable: one entry per 8-byte stub, in table order. */
+// FarCall_SoundTable: one entry per 8-byte stub, in table order.
 FAR_CALL(AudioEngine_RunMixerFar, AudioEngine_RunMixer, void, (void))
 FAR_CALL(Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults,
          void, (void))

@@ -1,40 +1,40 @@
-/* Draft of Func_0814ea58, the body behind Func_0814ea3c (mode 0, or 1 when
- * the variant is not 0) and Func_0814ea4c (mode 2).
- *
- * Twin: The Broken Seal's BattleFx_RunGatheringMotes (effect.c), rebuilt
- * around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)
- * and mode 1 its other variants (the blast palette). Mode 2 is new: it
- * draws a 10-pixel disc (Func_0815b510) instead of the particle sheet,
- * throws the motes twice as fast, fades a violet ramp through 16:6
- * blending and trails at 50 instead of darkening. The mote size comes from
- * Data_081982f4 by mode (6, 6, 10) where The Broken Seal draws 6.
- * ResourceId_BlastSheet and ResourceId_VioletPaletteC are rows 0x184 and
- * 0x165 of directory.s (assets BattleFx_BlastSheet and
- * BattleFx_VioletPaletteC), not yet named there.
- *
- * Draft: differ 246 of 479 (draft 481).
- *
- * Left: register allocation in the member loops. The native keeps the
- * mote counter in r8 and spills the member's buffer offset (sp+8), with
- * the effect in r10 and half the height in r9; here the counter and the
- * offset still trade places in the setup loop, so the frame differs by
- * spills and the rest follows.
- *
- * Tried (2026-10-15):
- *   - the palette chosen by nested ?: (440); by an if-else chain into a
- *     local resource id: 440 with the native's branch order;
- *   - each member's motes through an offset and a walking pointer, as
- *     IceShardBursts: same code (440);
- *   - greedy declaration-order sweep: canvas before work, the camera
- *     before the sheet: 426;
- *   - the violet ramp: (i + 1) / 3 into its own temporary, so it is
- *     divided first as the native does: 407; a do-while with i + 1 as the
- *     next counter: 424;
- *   - a separate counter (j) for the frame loop's motes: 282 (the setup
- *     loop's counter alone: 413; both: 415).
- *   - greedy declaration-order sweep from there, two passes: 246 (the
- *     declarations as they stand).
- */
+// Draft of Func_0814ea58, the body behind Func_0814ea3c (mode 0, or 1 when
+// the variant is not 0) and Func_0814ea4c (mode 2).
+
+// Twin: The Broken Seal's BattleFx_RunGatheringMotes (effect.c), rebuilt
+// around a mode. Mode 0 is The Broken Seal's variant 0 (the ice palette)
+// and mode 1 its other variants (the blast palette). Mode 2 is new: it
+// draws a 10-pixel disc (Func_0815b510) instead of the particle sheet,
+// throws the motes twice as fast, fades a violet ramp through 16:6
+// blending and trails at 50 instead of darkening. The mote size comes from
+// Data_081982f4 by mode (6, 6, 10) where The Broken Seal draws 6.
+// ResourceId_BlastSheet and ResourceId_VioletPaletteC are rows 0x184 and
+// 0x165 of directory.s (assets BattleFx_BlastSheet and
+// BattleFx_VioletPaletteC), not yet named there.
+
+// Draft: differ 246 of 479 (draft 481).
+
+// Left: register allocation in the member loops. The native keeps the
+// mote counter in r8 and spills the member's buffer offset (sp+8), with
+// the effect in r10 and half the height in r9; here the counter and the
+// offset still trade places in the setup loop, so the frame differs by
+// spills and the rest follows.
+
+// Tried (2026-10-15):
+// - the palette chosen by nested ?: (440); by an if-else chain into a
+// local resource id: 440 with the native's branch order;
+// - each member's motes through an offset and a walking pointer, as
+// IceShardBursts: same code (440);
+// - greedy declaration-order sweep: canvas before work, the camera
+// before the sheet: 426;
+// - the violet ramp: (i + 1) / 3 into its own temporary, so it is
+// divided first as the native does: 407; a do-while with i + 1 as the
+// next counter: 424;
+// - a separate counter (j) for the frame loop's motes: 282 (the setup
+// loop's counter alone: 413; both: 415).
+// - greedy declaration-order sweep from there, two passes: 246 (the
+// declarations as they stand).
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -83,16 +83,16 @@ extern char ResourceId_VioletPaletteC;
 extern u8 Data_081982f4[];   // the mote size by mode
 extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
 
-/* Motes of light burst out of each target in turn, 20 frames apart, and
- * are drawn into the user.
- *
- * Setup: each target's 128 motes start at the middle of its body with
- * random velocities; the canvas darkens by 4 a transfer (in mode 2 it
- * trails instead). Frame loop: a target flashes as its motes leave; ten
- * frames after leaving (one frame later for each mote) a mote accelerates
- * toward the middle of the user by 1/256 of the distance a frame and goes
- * out within 16 pixels of it across. The user glows from frame 40 until 20
- * frames before the end. */
+// Motes of light burst out of each target in turn, 20 frames apart, and
+// are drawn into the user.
+
+// Setup: each target's 128 motes start at the middle of its body with
+// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
+// trails instead). Frame loop: a target flashes as its motes leave; ten
+// frames after leaving (one frame later for each mote) a mote accelerates
+// toward the middle of the user by 1/256 of the distance a frame and goes
+// out within 16 pixels of it across. The user glows from frame 40 until 20
+// frames before the end.
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

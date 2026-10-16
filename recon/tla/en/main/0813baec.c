@@ -1,11 +1,11 @@
-/* Near miss, differ 2 of 36 (one reordered pair): inside the branch the
- * native loads the scroll table's address between the two halves of the
- * step offset (movs r2, #238; ldr r1, =gBgScroll; lsls r2, r2, #7); this
- * form finishes the shift first. The counter reset written last gives the
- * native registers (work in r4, the counter's address in r5, the zero in
- * r0); written between the two additions it moves all three (differ 24).
- * Measured: the table in a pointer local (same 2), behind a "+l" barrier
- * (differ 34). */
+// Near miss, differ 2 of 36 (one reordered pair): inside the branch the
+// native loads the scroll table's address between the two halves of the
+// step offset (movs r2, #238; ldr r1, =gBgScroll; lsls r2, r2, #7); this
+// form finishes the shift first. The counter reset written last gives the
+// native registers (work in r4, the counter's address in r5, the zero in
+// r0); written between the two additions it moves all three (differ 24).
+// Measured: the table in a pointer local (same 2), behind a "+l" barrier
+// (differ 34).
 #include "types.h"
 #include "ram_buffer.h"
 #include "bg_scroll.h"

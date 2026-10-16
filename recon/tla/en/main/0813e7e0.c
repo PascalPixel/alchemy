@@ -1,22 +1,22 @@
-/* Near miss, differ 36 of 376.
- *
- * No twin: an unused ⚓️ function that no handler or caller reaches. Its
- * set-up is 0813eb70's (The Broken Seal's
- * BattleEffect_RunTileAndPaletteAnimation): the same BG2 canvas, tile map,
- * clears and blitters. After running Func_08191530 on the effect it holds
- * the battle background on screen, fading its colours up from black over 64
- * frames, until A is pressed; B starts the fade again. It reads as a viewer
- * left in from development.
- *
- * Left: single rows where the native builds a constant or issues a load or
- * store one slot earlier (the BG2 registers, view->secondMode before the
- * scroll), and the literal pool offsets they move.
- *
- * Tried:
- *   from the listing on 0813eb70's set-up                      46
- *   the held keys read through a volatile (tagged): the native
- *     reloads them for the second test                         36
- */
+// Near miss, differ 36 of 376.
+
+// No twin: an unused ⚓️ function that no handler or caller reaches. Its
+// set-up is 0813eb70's (The Broken Seal's
+// BattleEffect_RunTileAndPaletteAnimation): the same BG2 canvas, tile map,
+// clears and blitters. After running Func_08191530 on the effect it holds
+// the battle background on screen, fading its colours up from black over 64
+// frames, until A is pressed; B starts the fade again. It reads as a viewer
+// left in from development.
+
+// Left: single rows where the native builds a constant or issues a load or
+// store one slot earlier (the BG2 registers, view->secondMode before the
+// scroll), and the literal pool offsets they move.
+
+// Tried:
+// from the listing on 0813eb70's set-up                      46
+// the held keys read through a volatile (tagged): the native
+// reloads them for the second test                         36
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -65,7 +65,7 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
 // The IWRAM routines are called through one inline each, as The Broken
@@ -82,9 +82,8 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   return Iwram_CopyWords(destination, source, size);
 }
 
-/*
- * Shows the battle background fading in, until A (unused).
- */
+// Shows the battle background fading in, until A (unused).
+
 void Func_0813e7e0(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

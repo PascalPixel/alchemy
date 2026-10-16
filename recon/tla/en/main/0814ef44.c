@@ -1,40 +1,40 @@
-/* Draft of BattleFx_RunSeriesA, the body behind the eleven wrappers of
- * series_a.c (18 effect kinds).
- *
- * Twin: The Broken Seal's BattleFx_RunSeriesA (effect.c), grown from seven
- * modes to fourteen. The Lost Age adds:
- *   - a Djinni of any element for the prelude (Func_0815585c takes the
- *     element, the side and the anchor packed into one word: Venus for
- *     modes 2 and 7, Mars for 6, Jupiter for 9 and 10, Mercury otherwise);
- *   - a blue beam picture, decoded and packed to bytes for mode 12;
- *   - mode 7 (motes thrown up and out from the targets' feet, the palette
- *     stepping to cyan), mode 8 (like mode 0 with 128 motes and a fixed 76
- *     frames), mode 9 (Jupiter, fast yaw, a fixed 54 frames), mode 10,
- *     mode 11 (a wide cloud that never closes in, 46 frames past the
- *     targets), mode 12 (16 beams) and mode 13 (a roll, a fade of 24);
- *   - every effect 58 frames past the targets where The Broken Seal ran 88
- *     or 72, a later hit (frame 36, 24 or 41 by mode), and motes three
- *     quarters as far apart.
- * Resources not yet named in directory.s, by row and asset: 0x17e
- * BattleFx_SparkleDots, 0x190 BattleFx_BlueBeamSheet, 0x177
- * BattleFx_IceShardSheet, 0x184 BattleFx_BlastSheet, 0x148
- * BattleFx_OrangePaletteB, 0x166 BattleFx_CyanPalette and the eight Djinn
- * sheets 0x150-0x157.
- *
- * Draft: differ 299 of 1243 (draft 1240).
- *
- * Left: from the prologue on, register choice (the frame counter in r9
- * where the native has r11) and the loads the native issues one slot
- * earlier; the member loop (36 rows) and the mote loop (23) hold most of
- * it. Three instructions are still missing.
- *
- * Tried (2026-10-15):
- *   - The Broken Seal's declaration order: 315; the five arrays declared
- *     origin, target, base, screen, point, so that they take the native's
- *     frame offsets (blit at sp+80 up to origin at sp+136): 299.
- *   - greedy declaration-order sweep, two passes: no gain.
- *   - a separate counter for the frame loop's motes: no change.
- */
+// Draft of BattleFx_RunSeriesA, the body behind the eleven wrappers of
+// series_a.c (18 effect kinds).
+
+// Twin: The Broken Seal's BattleFx_RunSeriesA (effect.c), grown from seven
+// modes to fourteen. The Lost Age adds:
+// - a Djinni of any element for the prelude (Func_0815585c takes the
+// element, the side and the anchor packed into one word: Venus for
+// modes 2 and 7, Mars for 6, Jupiter for 9 and 10, Mercury otherwise);
+// - a blue beam picture, decoded and packed to bytes for mode 12;
+// - mode 7 (motes thrown up and out from the targets' feet, the palette
+// stepping to cyan), mode 8 (like mode 0 with 128 motes and a fixed 76
+// frames), mode 9 (Jupiter, fast yaw, a fixed 54 frames), mode 10,
+// mode 11 (a wide cloud that never closes in, 46 frames past the
+// targets), mode 12 (16 beams) and mode 13 (a roll, a fade of 24);
+// - every effect 58 frames past the targets where The Broken Seal ran 88
+// or 72, a later hit (frame 36, 24 or 41 by mode), and motes three
+// quarters as far apart.
+// Resources not yet named in directory.s, by row and asset: 0x17e
+// BattleFx_SparkleDots, 0x190 BattleFx_BlueBeamSheet, 0x177
+// BattleFx_IceShardSheet, 0x184 BattleFx_BlastSheet, 0x148
+// BattleFx_OrangePaletteB, 0x166 BattleFx_CyanPalette and the eight Djinn
+// sheets 0x150-0x157.
+
+// Draft: differ 299 of 1243 (draft 1240).
+
+// Left: from the prologue on, register choice (the frame counter in r9
+// where the native has r11) and the loads the native issues one slot
+// earlier; the member loop (36 rows) and the mote loop (23) hold most of
+// it. Three instructions are still missing.
+
+// Tried (2026-10-15):
+// - The Broken Seal's declaration order: 315; the five arrays declared
+// origin, target, base, screen, point, so that they take the native's
+// frame offsets (blit at sp+80 up to origin at sp+136): 299.
+// - greedy declaration-order sweep, two passes: no gain.
+// - a separate counter for the frame loop's motes: no change.
+
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -102,17 +102,17 @@ extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
 extern u16 Data_0819744c[];  // gBattleFx_PuffCells
 extern u8 Data_0819745e[];   // gBattleFx_PuffSizes
 
-/* Motes of light gather around each target in turn, eight frames apart,
- * turning as they close in on its middle; a healing chime sounds as they
- * gather and the target glows.
- *
- * Setup: an optional Djinni appears first (the prelude); the mode chooses
- * the canvas scale, the palette, the Djinni and how the 512 motes are
- * scattered. Frame loop: the Djinni sways and, after frame 32, rises two
- * pixels a frame; each target's motes come out four a frame around a point
- * 40 pixels above it, turn about it by the mode's axes, and close in two
- * pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
- * The variant chooses 32, 64 or 128 motes a target. */
+// Motes of light gather around each target in turn, eight frames apart,
+// turning as they close in on its middle; a healing chime sounds as they
+// gather and the target glows.
+
+// Setup: an optional Djinni appears first (the prelude); the mode chooses
+// the canvas scale, the palette, the Djinni and how the 512 motes are
+// scattered. Frame loop: the Djinni sways and, after frame 32, rises two
+// pixels a frame; each target's motes come out four a frame around a point
+// 40 pixels above it, turn about it by the mode's axes, and close in two
+// pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
+// The variant chooses 32, 64 or 128 motes a target.
 void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

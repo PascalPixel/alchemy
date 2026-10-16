@@ -1,24 +1,24 @@
-/* Near miss, differ 30 of 410.
- *
- * Twin: The Broken Seal's BattleFx_RunSpinningStars (effect kind 62 there and
- * here), ported call for call. The Lost Age's changes: the effect argument is
- * read directly (the dispatcher stores work->effect), resource 0x134 is
- * unpacked into the sheet slot where The Broken Seal decodes its particle
- * sprites, the one blitter comes from Func_081963ec(104, MAX) before the
- * transfer settings, the callback runs at 0xc80, and the radii are bytes.
- * The two tables are not const: as const arrays loop.c hoists the cell offset
- * out of the draw loops and spills it (differ 182).
- *
- * Func_081963ec is declared to return s32, as The Lost Age's LoadWork
- * returns its store-flag and The Broken Seal's returns s32: void it is 32
- * (alchemy permute, 12 minutes, found this and nothing else).
- *
- * Left: order only. Same frame, registers and instructions; at ten rows
- * the native issues a load (the argument's spill, a work slot, a spill reload,
- * a sine operand) one instruction before the constant or store beside it,
- * starting with the prologue's str r0, [sp, #52], which agscc places after
- * the 0x03000000 base.
- */
+// Near miss, differ 30 of 410.
+
+// Twin: The Broken Seal's BattleFx_RunSpinningStars (effect kind 62 there and
+// here), ported call for call. The Lost Age's changes: the effect argument is
+// read directly (the dispatcher stores work->effect), resource 0x134 is
+// unpacked into the sheet slot where The Broken Seal decodes its particle
+// sprites, the one blitter comes from Func_081963ec(104, MAX) before the
+// transfer settings, the callback runs at 0xc80, and the radii are bytes.
+// The two tables are not const: as const arrays loop.c hoists the cell offset
+// out of the draw loops and spills it (differ 182).
+
+// Func_081963ec is declared to return s32, as The Lost Age's LoadWork
+// returns its store-flag and The Broken Seal's returns s32: void it is 32
+// (alchemy permute, 12 minutes, found this and nothing else).
+
+// Left: order only. Same frame, registers and instructions; at ten rows
+// the native issues a load (the argument's spill, a work slot, a spill reload,
+// a sine operand) one instruction before the constant or store beside it,
+// starting with the prologue's str r0, [sp, #52], which agscc places after
+// the 0x03000000 base.
+
 #include "battle.h"
 #include "graphics.h"
 #include "resource.h"

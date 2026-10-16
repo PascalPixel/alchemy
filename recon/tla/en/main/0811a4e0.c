@@ -1,18 +1,18 @@
-/* Draft of Func_0811a4e0, The Broken Seal's SummonSlot_RegisterActorSprites
- * (games/tbs/src/battle/battle.c): differ 6 of 134 (tla-en, 2026-10-15).
- * The Lost Age keys the sprites by the enemy id at 0x14a and lists seven
- * sprite values whose actors load a second part, where The Broken Seal lists
- * two. The twin's union of two halves stays: it keeps the copy of the zero
- * into pass (mov r4, r10), as there.
- *
- * Left: one register. The native builds the first slot's result (slot << 12
- * | spriteValue) in r3 before moving it to r10; reload takes r2 here.
- * Tried: the twin's cancelling XOR pair (6), the OR's operands swapped (6),
- * a block-local value or shifted local (6), a u32 cast (6), result as a
- * plain s32 (8), the store after the slot table's (71), result.halves[0]
- * (43), a u16 spriteValue (122), a u32 slot (10), spriteValue declared
- * before the union (6).
- */
+// Draft of Func_0811a4e0, The Broken Seal's SummonSlot_RegisterActorSprites
+// (games/tbs/src/battle/battle.c): differ 6 of 134 (tla-en, 2026-10-15).
+// The Lost Age keys the sprites by the enemy id at 0x14a and lists seven
+// sprite values whose actors load a second part, where The Broken Seal lists
+// two. The twin's union of two halves stays: it keeps the copy of the zero
+// into pass (mov r4, r10), as there.
+
+// Left: one register. The native builds the first slot's result (slot << 12
+// | spriteValue) in r3 before moving it to r10; reload takes r2 here.
+// Tried: the twin's cancelling XOR pair (6), the OR's operands swapped (6),
+// a block-local value or shifted local (6), a u32 cast (6), result as a
+// plain s32 (8), the store after the slot table's (71), result.halves[0]
+// (43), a u16 spriteValue (122), a u32 slot (10), spriteValue declared
+// before the union (6).
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"

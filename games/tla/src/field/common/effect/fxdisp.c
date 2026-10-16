@@ -20,10 +20,10 @@ void Render_ResetTransformState(void);
 void Transform_SetLookAt(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
-/* The Japanese, French and Italian far-call tables do not reach
- * Battle_GetObjectTableValueFar under that name (Japanese names another slot,
- * the other two keep the slot unnamed on their scaffold); those three editions
- * keep this function on their scaffold (S4). */
+// The Japanese, French and Italian far-call tables do not reach
+// Battle_GetObjectTableValueFar under that name (Japanese names another slot,
+// the other two keep the slot unnamed on their scaffold); those three editions
+// keep this function on their scaffold (S4).
 #if !defined(TLA_EDITION_JA) && !defined(TLA_EDITION_FR) &&                    \
     !defined(TLA_EDITION_IT)
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {

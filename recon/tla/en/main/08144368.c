@@ -1,20 +1,20 @@
-/* Draft, differ 101 of 294 (the draft has 297).
- *
- * Effect kind 34. Twin: The Broken Seal's BattleFx_RunMemberOrbit, ported
- * call for call. The Lost Age's changes: the effect argument read directly,
- * the spiral sheet unpacked with its palette by Resource_LoadAndDecompress,
- * two blitters from Func_081963ec (max, then max clipped and flipped both
- * ways), both callbacks at 0xc80 and Func_0814cd48 for the members' timers.
- *
- * Left: allocation. The instructions are the native's. The native keeps the
- * effect argument in r9, the point array's address in r10, and takes the
- * screen position's address inside the member loop (add r5, sp, #44, then
- * r11 for the four cels), in a 68-byte frame; here the screen address is
- * hoisted out of the frame loop and spilled (72 bytes) and the argument takes
- * r11. Tried: Func_081963ec returning s32 (123 -> 119); screen declared in
- * the member block (no change); a greedy scan of the declaration order
- * (canvas before work, offsetX before member) 119 -> 101.
- */
+// Draft, differ 101 of 294 (the draft has 297).
+
+// Effect kind 34. Twin: The Broken Seal's BattleFx_RunMemberOrbit, ported
+// call for call. The Lost Age's changes: the effect argument read directly,
+// the spiral sheet unpacked with its palette by Resource_LoadAndDecompress,
+// two blitters from Func_081963ec (max, then max clipped and flipped both
+// ways), both callbacks at 0xc80 and Func_0814cd48 for the members' timers.
+
+// Left: allocation. The instructions are the native's. The native keeps the
+// effect argument in r9, the point array's address in r10, and takes the
+// screen position's address inside the member loop (add r5, sp, #44, then
+// r11 for the four cels), in a 68-byte frame; here the screen address is
+// hoisted out of the frame loop and spilled (72 bytes) and the argument takes
+// r11. Tried: Func_081963ec returning s32 (123 -> 119); screen declared in
+// the member block (no change); a greedy scan of the declaration order
+// (canvas before work, offsetX before member) 119 -> 101.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

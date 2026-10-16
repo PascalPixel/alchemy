@@ -1,15 +1,15 @@
-/* Near miss: listing 94 instructions, draft 94, differ 12; all registers match,
- * six pairs are in another order. The same source compiled with -mtune=arm7tdmi
- * in place of K2's -mtune=arm9tdmi matches all 94 instructions (analysis only,
- * outside the build: K2 sets the tuning for every file). Under arm9tdmi the
- * native stores the source and y arguments before it copies size, stores both
- * stack arguments before it copies the slot address for each blit, and
- * subtracts size from y before storing size. Measured: the four callees' return
- * types decide which argument register loads first after each call (all void:
- * differ 20; Func_081963ec s32: 14; it and the blit s32: 12;
- * Runtime_ReleaseHeapBlock's type changes nothing); the blit through a local
- * pointer reloaded per call: 102 instructions, differ 90; the canvas read after
- * the first call: 20. permute (6 min): nothing below 12. */
+// Near miss: listing 94 instructions, draft 94, differ 12; all registers match,
+// six pairs are in another order. The same source compiled with -mtune=arm7tdmi
+// in place of K2's -mtune=arm9tdmi matches all 94 instructions (analysis only,
+// outside the build: K2 sets the tuning for every file). Under arm9tdmi the
+// native stores the source and y arguments before it copies size, stores both
+// stack arguments before it copies the slot address for each blit, and
+// subtracts size from y before storing size. Measured: the four callees' return
+// types decide which argument register loads first after each call (all void:
+// differ 20; Func_081963ec s32: 14; it and the blit s32: 12;
+// Runtime_ReleaseHeapBlock's type changes nothing); the blit through a local
+// pointer reloaded per call: 102 instructions, differ 90; the canvas read after
+// the first call: 20. permute (6 min): nothing below 12.
 #include "types.h"
 #include "ram_buffer.h"
 

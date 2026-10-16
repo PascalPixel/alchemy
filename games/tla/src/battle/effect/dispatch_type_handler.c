@@ -99,12 +99,12 @@ void Field_DispatchTypeHandler(s32 kind) {
     FieldEvent_RunTypeHandler();
 }
 
-/* The Spanish and Italian scaffolds carry three of the handlers under other
- * names (Func_080dc978 as Func_080cdec8, the far-call slot that reaches it
- * there; their Func_080dd054 and Func_080decb8 label other functions), and
- * the French one has Func_080e4a2c and Func_080e4a34 under the names of
- * Func_080e9aec and Func_080e9af4. Until those names are sorted out, the
- * three editions keep both dispatchers on their scaffold (S4). */
+// The Spanish and Italian scaffolds carry three of the handlers under other
+// names (Func_080dc978 as Func_080cdec8, the far-call slot that reaches it
+// there; their Func_080dd054 and Func_080decb8 label other functions), and
+// the French one has Func_080e4a2c and Func_080e4a34 under the names of
+// Func_080e9aec and Func_080e9af4. Until those names are sorted out, the
+// three editions keep both dispatchers on their scaffold (S4).
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_FR) &&                    \
     !defined(TLA_EDITION_IT)
 // Run the field Psynergy animation the scene names, with no target chosen

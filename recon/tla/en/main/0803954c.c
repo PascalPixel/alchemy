@@ -1,4 +1,6 @@
-/* differ 8: the native stores the channel fields before it builds the text-mode offset, and loads the zero before addressing the spacing; only ARM9TDMI scheduling differs */
+// differ 8: the native stores the channel fields before it builds the text-mode
+// offset, and loads the zero before addressing the spacing; only ARM9TDMI
+// scheduling differs
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -21,42 +23,43 @@
 #define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags)
-{
-    u8 *work = (u8 *)Ram_HeapSlots->windowTiles;
-    struct UiChannelSlot *render = ((struct UiRenderWork *)work)->channels;
-    struct UiChannelSlot *found = NULL;
-    u32 i;
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
+                                                s32 entry, s32 x, s32 y,
+                                                u16 *spacing, s32 flags) {
+  u8 *work = (u8 *)Ram_HeapSlots->windowTiles;
+  struct UiChannelSlot *render = ((struct UiRenderWork *)work)->channels;
+  struct UiChannelSlot *found = NULL;
+  u32 i;
 
-    for (i = 0; i != 3; i++, render++) {
-        if (render->work == NULL) {
-            found = render;
-            break;
-        }
+  for (i = 0; i != 3; i++, render++) {
+    if (render->work == NULL) {
+      found = render;
+      break;
     }
-    if (found != NULL) {
-        found->work = window;
-        found->startX = x << 8;
-        found->x = x << 8;
-        found->y = y << 8;
-        found->entry = entry;
-        found->colour = 15;
-        found->lineSpacing = 10;
-        found->countdown = 0;
-        found->outline = 0;
-        found->ended = 0;
-        found->flags = flags;
-        found->unk26 = 0;
-        if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
-            found->unk26 = spacing[3];
-        if (spacing != NULL) {
-            for (i = 0; i < 4; i++)
-                found->spacing[i] = *spacing++;
-        } else {
-            for (i = 0; i < 4; i++)
-                found->spacing[i] = 0;
-        }
-        found->line = 0;
+  }
+  if (found != NULL) {
+    found->work = window;
+    found->startX = x << 8;
+    found->x = x << 8;
+    found->y = y << 8;
+    found->entry = entry;
+    found->colour = 15;
+    found->lineSpacing = 10;
+    found->countdown = 0;
+    found->outline = 0;
+    found->ended = 0;
+    found->flags = flags;
+    found->unk26 = 0;
+    if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
+      found->unk26 = spacing[3];
+    if (spacing != NULL) {
+      for (i = 0; i < 4; i++)
+        found->spacing[i] = *spacing++;
+    } else {
+      for (i = 0; i < 4; i++)
+        found->spacing[i] = 0;
     }
-    return found;
+    found->line = 0;
+  }
+  return found;
 }

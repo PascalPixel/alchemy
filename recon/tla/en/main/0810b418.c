@@ -2,18 +2,18 @@
 #include "system.h"
 
 struct FieldEffectState {
-    u8 padding0[0x1C0];
-    s32 effect;
-    u8 padding1C4[4];
-    s32 delay;
+  u8 padding0[0x1C0];
+  s32 effect;
+  u8 padding1C4[4];
+  s32 delay;
 };
 
 struct FieldObject {
-    u8 padding0[0x34];
-    u16 savedX;
-    u16 savedY;
-    s16 x;
-    u16 y;
+  u8 padding0[0x34];
+  u16 savedX;
+  u16 savedY;
+  s16 x;
+  u16 y;
 };
 
 extern struct FieldEffectState *gEventWork;
@@ -37,26 +37,26 @@ extern s8 gInn_PriceMultipliers[];
 #endif
 
 enum InnMessageId {
-    INN_MESSAGE_WELCOME = 0xd1c,
-    INN_MESSAGE_STAY_COMPLETE,
-    INN_MESSAGE_NOT_ENOUGH_COINS,
-    INN_MESSAGE_GOODBYE,
-    INN_MESSAGE_REST_COMPLETE,
+  INN_MESSAGE_WELCOME = 0xd1c,
+  INN_MESSAGE_STAY_COMPLETE,
+  INN_MESSAGE_NOT_ENOUGH_COINS,
+  INN_MESSAGE_GOODBYE,
+  INN_MESSAGE_REST_COMPLETE,
 };
 
 struct InnGlobalState {
-    u8 padding00[0x10];
-    u32 limit;
+  u8 padding00[0x10];
+  u32 limit;
 };
 
 struct InnObjectComponent {
-    u8 padding00[0x28];
-    u16 *resourceId;
+  u8 padding00[0x28];
+  u16 *resourceId;
 };
 
 struct InnObject {
-    u8 padding00[0x50];
-    struct InnObjectComponent *component;
+  u8 padding00[0x50];
+  struct InnObjectComponent *component;
 };
 
 extern struct InnGlobalState gGameState;
@@ -73,54 +73,53 @@ s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
 struct InnObject *Object_GetByIdFar(s32);
 
-s32 Inn_CheckIn(s32 mode, s32 objectId)
-{
-    struct InnRuntimeState *state;
-    struct InnObject *object;
-    s32 win;
-    s32 amount;
-    s32 messageBase;
+s32 Inn_CheckIn(s32 mode, s32 objectId) {
+  struct InnRuntimeState *state;
+  struct InnObject *object;
+  s32 win;
+  s32 amount;
+  s32 messageBase;
 
-    Shop_InitializeCursorWork();
-    state = gMenuWork;
-    state->active = 1;
-    if (mode == 5)
-        state->specialActive = 1;
+  Shop_InitializeCursorWork();
+  state = gMenuWork;
+  state->active = 1;
+  if (mode == 5)
+    state->specialActive = 1;
+
+  object = Object_GetByIdFar(objectId);
+  state->resourceId = *object->component->resourceId;
+  win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+
+  amount = Inn_RoomPrice(mode);
+  UiWork_PushValueSlotFar(amount, 5);
+  messageBase = (s32)&MsgInnWelcome;
+  UiMessage_ShowAndWait(messageBase);
+  state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
+  Shop_DrawMoney();
+
+  if (UiMessage_ShowChoice(0) != 0) {
+    UiMessage_ShowAndWait(messageBase +
+                          (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
+    UiWork_FinalizeFar(state->window, 2);
+  } else if ((u32)amount > gGameState.limit) {
+    UiMessage_ShowAndWait(messageBase +
+                          (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
+    UiWork_FinalizeFar(state->window, 2);
+  } else {
+    UiWork_FinalizeFar(state->window, 2);
+    UiMessage_ShowAndWait(messageBase +
+                          (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
+    UiWork_FinalizeFar(win, 2);
+    Inn_PlaySleep(amount);
 
     object = Object_GetByIdFar(objectId);
     state->resourceId = *object->component->resourceId;
     win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+    UiMessage_ShowAndWait(messageBase +
+                          (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
+  }
 
-    amount = Inn_RoomPrice(mode);
-    UiWork_PushValueSlotFar(amount, 5);
-    messageBase = (s32)&MsgInnWelcome;
-    UiMessage_ShowAndWait(messageBase);
-    state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
-    Shop_DrawMoney();
-
-    if (UiMessage_ShowChoice(0) != 0) {
-        UiMessage_ShowAndWait(messageBase
-            + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-        UiWork_FinalizeFar(state->window, 2);
-    } else if ((u32)amount > gGameState.limit) {
-        UiMessage_ShowAndWait(messageBase
-            + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-        UiWork_FinalizeFar(state->window, 2);
-    } else {
-        UiWork_FinalizeFar(state->window, 2);
-        UiMessage_ShowAndWait(messageBase
-            + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-        UiWork_FinalizeFar(win, 2);
-        Inn_PlaySleep(amount);
-
-        object = Object_GetByIdFar(objectId);
-        state->resourceId = *object->component->resourceId;
-        win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
-        UiMessage_ShowAndWait(messageBase
-            + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
-    }
-
-    UiWork_FinalizeFar(win, 2);
-    Inn_Cleanup();
-    return 0;
+  UiWork_FinalizeFar(win, 2);
+  Inn_Cleanup();
+  return 0;
 }

@@ -1,20 +1,20 @@
-/* Draft: listing 1123 instructions, draft 1136, differ 855. ☀️ twin:
- * BattleEffect_RunDualParticleStream (effect.c, structure 0.725): the puff arc,
- * the faded copies of the pillar sheet, the head flying the path and its trail,
- * the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
- * target, sends the head to the target before it dives, and added a second
- * variant with orange colours and three showers of sparks. The native frame
- * (248) holds the trail at sp+88, the target's screen position at 76, the
- * head's at 64, the blitter pair at 56, effect 52, canvas 48, frame 44, drift
- * 40, the path 36, x 32, y 28, graphics 24, the blitter pair's address 20, the
- * camera 16 and frame - 18 at 12; work stays in r11. Written from the listing
- * on the ☀️ body (2026-10-15, fx-n3). Every statement is in the native's order,
- * but work is spilled to sp+48 where the native keeps it in r11 all through,
- * and the reloads (13 more instructions) and the shifted slots account for most
- * rows. Tried, no gain: work declared first (855); canvas loaded first (853);
- * ☀️'s heapCache and cursor idiom (865). Next to try: what takes r11 and r10 in
- * this draft's greg dump (alchemy diff --rtl), and the trail loop's addressing
- * (the native walks j * 8 and j * 8 + 4 from sp+88). */
+// Draft: listing 1123 instructions, draft 1136, differ 855. ☀️ twin:
+// BattleEffect_RunDualParticleStream (effect.c, structure 0.725): the puff arc,
+// the faded copies of the pillar sheet, the head flying the path and its trail,
+// the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
+// target, sends the head to the target before it dives, and added a second
+// variant with orange colours and three showers of sparks. The native frame
+// (248) holds the trail at sp+88, the target's screen position at 76, the
+// head's at 64, the blitter pair at 56, effect 52, canvas 48, frame 44, drift
+// 40, the path 36, x 32, y 28, graphics 24, the blitter pair's address 20, the
+// camera 16 and frame - 18 at 12; work stays in r11. Written from the listing
+// on the ☀️ body (2026-10-15, fx-n3). Every statement is in the native's order,
+// but work is spilled to sp+48 where the native keeps it in r11 all through,
+// and the reloads (13 more instructions) and the shifted slots account for most
+// rows. Tried, no gain: work declared first (855); canvas loaded first (853);
+// ☀️'s heapCache and cursor idiom (865). Next to try: what takes r11 and r10 in
+// this draft's greg dump (alchemy diff --rtl), and the trail loop's addressing
+// (the native walks j * 8 and j * 8 + 4 from sp+88).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"

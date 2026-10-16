@@ -1,17 +1,17 @@
-/* Draft, differ 4 of 99 (no device): summon 25's rising pillar, a six-vertex
- * textured strip drawn through the ARM renderer (Func_08196958 projects the
- * vertices, Func_08196a7c draws the model), as Func_08192a4c draws its own
- * model. The native frame matches: work at sp+4, the texture at sp+8, the
- * position at sp+16 and the vertices at sp+28.
- * Left: two reordered rows. The native loads the work pointer back from
- * sp+4 between the halves of the texture's second byte field (before
- * orrs r3, r2); agscc after it. The native loads the pool word 0xffc10000
- * before it shifts x; agscc after.
- * Tried: (x - 63) << 16 for the position (differ 34: agscc folds it to one
- * subtract); x * 0x10000 - 0x3f0000 and (x << 16) + -0x3f0000 (4); the
- * texture's address stored before or between its two size fields (68, 78);
- * position.y before position.x (38); alchemy permute 5 minutes (nothing
- * below 4). */
+// Draft, differ 4 of 99 (no device): summon 25's rising pillar, a six-vertex
+// textured strip drawn through the ARM renderer (Func_08196958 projects the
+// vertices, Func_08196a7c draws the model), as Func_08192a4c draws its own
+// model. The native frame matches: work at sp+4, the texture at sp+8, the
+// position at sp+16 and the vertices at sp+28.
+// Left: two reordered rows. The native loads the work pointer back from
+// sp+4 between the halves of the texture's second byte field (before
+// orrs r3, r2); agscc after it. The native loads the pool word 0xffc10000
+// before it shifts x; agscc after.
+// Tried: (x - 63) << 16 for the position (differ 34: agscc folds it to one
+// subtract); x * 0x10000 - 0x3f0000 and (x << 16) + -0x3f0000 (4); the
+// texture's address stored before or between its two size fields (68, 78);
+// position.y before position.x (38); alchemy permute 5 minutes (nothing
+// below 4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "mem.h"

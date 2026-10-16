@@ -1,11 +1,11 @@
-/* Draft, differ 80 of 178, first pass (2026-10-15). The per-frame routine
- * Func_080da9a8 schedules second: for each of the eight chains in the heap-
- * offset-164 work (worka0.h's WorkA4 slots), advance its phase and hang its
- * five links from the anchor in a swinging arc, then ease the swing towards
- * 32 when the leader stands right under the anchor, or back to 256
- * otherwise. The native reuses one counter for the chains and the links (the
- * link loop leaves it at 6, so after one chain the outer loop takes one more
- * and stops); this keeps that. */
+// Draft, differ 80 of 178, first pass (2026-10-15). The per-frame routine
+// Func_080da9a8 schedules second: for each of the eight chains in the heap-
+// offset-164 work (worka0.h's WorkA4 slots), advance its phase and hang its
+// five links from the anchor in a swinging arc, then ease the swing towards
+// 32 when the leader stands right under the anchor, or back to 256
+// otherwise. The native reuses one counter for the chains and the links (the
+// link loop leaves it at 6, so after one chain the outer loop takes one more
+// and stops); this keeps that.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

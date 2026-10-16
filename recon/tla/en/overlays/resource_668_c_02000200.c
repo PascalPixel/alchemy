@@ -1,14 +1,15 @@
-/*
- * Draft of resource_668 Func_02000200 and Func_02000514 (English 0x02008200 and
- * 0x02008514), listings between scene_tables.c, events2.c and events.c.
- *
- * Func_02000200 differs by 4 instructions: native sets r8 = sp (the address of
- * sparks) inside the creation loop, after the create call; GCSE's PRE hoists it
- * to the loop's entry here (for and do-while loops are strength-reduced instead).
- * Func_02000514 differs by about 70: native computes &plan.value[4] (sp + 24)
- * into r8 once, before the facing test, and saves sl; here each call site adds
- * sp + 24 and only r8 is saved. Its wait loop needs the while form below.
- */
+
+// Draft of resource_668 Func_02000200 and Func_02000514 (English 0x02008200 and
+// 0x02008514), listings between scene_tables.c, events2.c and events.c.
+
+// Func_02000200 differs by 4 instructions: native sets r8 = sp (the address of
+// sparks) inside the creation loop, after the create call; GCSE's PRE hoists it
+// to the loop's entry here (for and do-while loops are strength-reduced
+// instead). Func_02000514 differs by about 70: native computes &plan.value[4]
+// (sp + 24) into r8 once, before the facing test, and saves sl; here each call
+// site adds sp + 24 and only r8 is saved. Its wait loop needs the while form
+// below.
+
 #define OWN_ObjectDispatch_SetSingleChildFlags
 #include "battle.h"
 #include "field.h"
@@ -27,7 +28,7 @@
 #include "text/msg_ids.h"
 
 struct DoorPlan {
-    s32 value[6];
+  s32 value[6];
 };
 
 extern u8 gData_02004d0c[];
@@ -87,126 +88,124 @@ void Func_02004c9c(s32);
 s32 Func_02004c7c();
 s32 Func_02004c8c();
 
-void Func_02000200(s32 mode, s32 id)
-{
-    struct ObjectRuntime *object;
-    struct ObjectRuntime *sparks[4];
-    struct ObjectRuntime *spark;
-    s32 x;
-    s32 z;
-    s32 hit;
-    s32 i;
+void Func_02000200(s32 mode, s32 id) {
+  struct ObjectRuntime *object;
+  struct ObjectRuntime *sparks[4];
+  struct ObjectRuntime *spark;
+  s32 x;
+  s32 z;
+  s32 hit;
+  s32 i;
 
-    object = Object_GetById(id);
-    x = object->x >> 20;
-    hit = 0;
-    z = object->z >> 20;
-    if (id == 10) {
-        Value4(Func_02004c7c, 0x2100000, 0x2000000, 2, 0);
-        Value4(Func_02004c7c, 0x2000000, 0x2000000, 2, 0);
-    }
-    if (x == 31 && z == 32) {
-        GameFlag_SetBit(0x8a0);
-        hit = 1;
-    }
-    if (x == 25 && z == 33) {
-        GameFlag_SetBit(0x8a1);
-        hit = 1;
-    }
-    if (x == 21 && z == 33) {
-        GameFlag_SetBit(0x8a4);
-        hit = 1;
-    }
-    if (x == 27 && z == 33) {
-        GameFlag_SetBit(0x8a5);
-        hit = 1;
-    }
-    if (hit) {
-        if (id != 10)
-            Func_02004c9c(310);
-        object->gravity = 0x170a;
-        object->motionFlags = 3;
-        ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
-        WaitFrames(5);
-        for (i = 0; i < 60 && object->y > 0; i++)
-            WaitFrames(1);
-        Func_02004c9c(298);
-        WaitFrames(1);
-        Func_02004c9c(240);
-        object->collisionFlags = 0;
-        /* FAKEMATCH: ⚓️ stores the cleared flags before it addresses the priority byte. */
-        __asm__ volatile("");
-        object->priorityFlags |= 2;
-        Func_02004a0c(object, 4);
-        i = 0;
-    create:
-        spark = Func_02004a1c(276, object->x, object->y, object->z);
-        sparks[i] = spark;
-        spark->scaleX = 0xa666;
-        Func_02004a0c(spark, 1);
-        ObjectDispatch_SetSingleChildFlags(spark, 0);
-        Func_02004c9c(154);
+  object = Object_GetById(id);
+  x = object->x >> 20;
+  hit = 0;
+  z = object->z >> 20;
+  if (id == 10) {
+    Value4(Func_02004c7c, 0x2100000, 0x2000000, 2, 0);
+    Value4(Func_02004c7c, 0x2000000, 0x2000000, 2, 0);
+  }
+  if (x == 31 && z == 32) {
+    GameFlag_SetBit(0x8a0);
+    hit = 1;
+  }
+  if (x == 25 && z == 33) {
+    GameFlag_SetBit(0x8a1);
+    hit = 1;
+  }
+  if (x == 21 && z == 33) {
+    GameFlag_SetBit(0x8a4);
+    hit = 1;
+  }
+  if (x == 27 && z == 33) {
+    GameFlag_SetBit(0x8a5);
+    hit = 1;
+  }
+  if (hit) {
+    if (id != 10)
+      Func_02004c9c(310);
+    object->gravity = 0x170a;
+    object->motionFlags = 3;
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 1);
+    WaitFrames(5);
+    for (i = 0; i < 60 && object->y > 0; i++)
+      WaitFrames(1);
+    Func_02004c9c(298);
+    WaitFrames(1);
+    Func_02004c9c(240);
+    object->collisionFlags = 0;
+    /* FAKEMATCH: ⚓️ stores the cleared flags before it addresses the priority
+     * byte. */
+    __asm__ volatile("");
+    object->priorityFlags |= 2;
+    Func_02004a0c(object, 4);
+    i = 0;
+  create:
+    spark = Func_02004a1c(276, object->x, object->y, object->z);
+    sparks[i] = spark;
+    spark->scaleX = 0xa666;
+    Func_02004a0c(spark, 1);
+    ObjectDispatch_SetSingleChildFlags(spark, 0);
+    Func_02004c9c(154);
+    i++;
+    WaitFrames(5);
+    if (i <= 2)
+      goto create;
+    Func_02000fa4();
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+    WaitFrames(30);
+    for (i = 0; i <= 2; i++)
+      Func_02004a24(sparks[i]);
+  }
+}
+
+void Func_02000514(void) {
+  struct ObjectRuntime *door;
+  struct ObjectRuntime *block;
+  struct DoorPlan plan;
+  s32 facing;
+  s32 i;
+
+  door = Object_GetById(15);
+  block = Object_GetById(16);
+  facing = (Object_GetById(gPartyState.currentOwner)->angle + 0x2000) & 0xc000;
+  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+    Func_02004c7c(block->x, block->z, 2, 255);
+  if (Func_02004240(&plan) != 0) {
+    if (Value1(GameFlag_Test, 0x8a4) == 0 || facing == 0xc000) {
+      Func_020044c4(plan);
+    } else {
+      GameFlag_SetBit(0x8a6);
+      Func_02004a94();
+      Func_02004be4(0);
+      Motion_CamBounds(0x1500000, -1, 0x2300000, 1);
+      Func_020044c4(plan);
+      Func_02004c7c(door->x - 0x180000, door->z, 0, 0);
+      Func_02004c7c(door->x + 0x80000, door->z, 0, 0);
+      Func_02004c7c(door->x - 0x180000, door->z, 2, 0);
+      Func_02004c7c(door->x - 0x80000, door->z, 2, 0);
+      Func_02004c7c(door->x + 0x80000, door->z, 2, 0);
+      Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
+      Object_SetModeById(15, 3);
+      ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
+      Battle_WaitMode0(20);
+      door->gravity = 0xccc;
+      door->motionFlags = 3;
+      i = 0;
+      while (door->y > 0) {
         i++;
-        WaitFrames(5);
-        if (i <= 2)
-            goto create;
-        Func_02000fa4();
-        ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
-        WaitFrames(30);
-        for (i = 0; i <= 2; i++)
-            Func_02004a24(sparks[i]);
+        WaitFrames(1);
+        if (i > 59)
+          break;
+      }
+      Func_02000fa4();
+      Func_02004c9c(240);
+      Object_SetModeById(15, 8);
+      Battle_WaitMode0(60);
+      Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
+      Func_02004a9c();
     }
+  }
+  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+    Func_02004c7c(block->x, block->z, 2, 0);
 }
-
-void Func_02000514(void)
-{
-    struct ObjectRuntime *door;
-    struct ObjectRuntime *block;
-    struct DoorPlan plan;
-    s32 facing;
-    s32 i;
-
-    door = Object_GetById(15);
-    block = Object_GetById(16);
-    facing = (Object_GetById(gPartyState.currentOwner)->angle + 0x2000) & 0xc000;
-    if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
-        Func_02004c7c(block->x, block->z, 2, 255);
-    if (Func_02004240(&plan) != 0) {
-        if (Value1(GameFlag_Test, 0x8a4) == 0 || facing == 0xc000) {
-            Func_020044c4(plan);
-        } else {
-            GameFlag_SetBit(0x8a6);
-            Func_02004a94();
-            Func_02004be4(0);
-            Motion_CamBounds(0x1500000, -1, 0x2300000, 1);
-            Func_020044c4(plan);
-            Func_02004c7c(door->x - 0x180000, door->z, 0, 0);
-            Func_02004c7c(door->x + 0x80000, door->z, 0, 0);
-            Func_02004c7c(door->x - 0x180000, door->z, 2, 0);
-            Func_02004c7c(door->x - 0x80000, door->z, 2, 0);
-            Func_02004c7c(door->x + 0x80000, door->z, 2, 0);
-            Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
-            Object_SetModeById(15, 3);
-            ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
-            Battle_WaitMode0(20);
-            door->gravity = 0xccc;
-            door->motionFlags = 3;
-            i = 0;
-            while (door->y > 0) {
-                i++;
-                WaitFrames(1);
-                if (i > 59)
-                    break;
-            }
-            Func_02000fa4();
-            Func_02004c9c(240);
-            Object_SetModeById(15, 8);
-            Battle_WaitMode0(60);
-            Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
-            Func_02004a9c();
-        }
-    }
-    if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
-        Func_02004c7c(block->x, block->z, 2, 0);
-}
-

@@ -1,22 +1,22 @@
-/* Near miss, differ 84 of 518.
- *
- * Effect kinds 38 and 218. Twin: The Broken Seal's
- * BattleFx_RunSpinningTriangle, ported call for call; the body is
- * Func_0814627c's (TriangleStrike) with the prelude. The Lost Age's changes
- * are those of Func_0814627c, plus: the canvas is prepared by Func_0815585c
- * (kind 3 | side << 4, then two three-word arrays) where The Broken Seal calls
- * BattleFx_PrepareCanvasEffect(effect, 3, side, 0, &x, &y); the Djinn sheet is
- * unpacked with its palette; and the prelude's blitter pair comes from
- * Func_08144aac.
- *
- * Left: order only, as in Func_0814627c: single swaps of a load with its
- * neighbour.
- *
- * Tried: the prelude arrays declared before the anchor, which gives the
- * native's slots (148, 136, then the anchor at 124): 104 -> 98; the
- * tagged heap pointer for the second blitter's read (see Func_0814627c)
- * 98 -> 84.
- */
+// Near miss, differ 84 of 518.
+
+// Effect kinds 38 and 218. Twin: The Broken Seal's
+// BattleFx_RunSpinningTriangle, ported call for call; the body is
+// Func_0814627c's (TriangleStrike) with the prelude. The Lost Age's changes
+// are those of Func_0814627c, plus: the canvas is prepared by Func_0815585c
+// (kind 3 | side << 4, then two three-word arrays) where The Broken Seal calls
+// BattleFx_PrepareCanvasEffect(effect, 3, side, 0, &x, &y); the Djinn sheet is
+// unpacked with its palette; and the prelude's blitter pair comes from
+// Func_08144aac.
+
+// Left: order only, as in Func_0814627c: single swaps of a load with its
+// neighbour.
+
+// Tried: the prelude arrays declared before the anchor, which gives the
+// native's slots (148, 136, then the anchor at 124): 104 -> 98; the
+// tagged heap pointer for the second blitter's read (see Func_0814627c)
+// 98 -> 84.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

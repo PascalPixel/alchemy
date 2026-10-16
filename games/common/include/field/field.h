@@ -1,7 +1,7 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-/* FIELD */
+// FIELD
 
 #include "types.h"
 #include "edition.h"

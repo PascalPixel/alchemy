@@ -24,42 +24,47 @@ extern u8 MsgPiece[];
 #define SUMMARY_COINS_X 48
 #endif
 
-void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
-{
-    u32 buf[4];
-    s32 extra;
+void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st) {
+  u32 buf[4];
+  s32 extra;
 
-    if (surface != 0) {
-        RenderOutput_PrepareForRedraw();
-        UiWindow_DrawDividerLine(surface, 0, 4, 13, 4);
-        UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
-        extra = 0;
+  if (surface != 0) {
+    RenderOutput_PrepareForRedraw();
+    UiWindow_DrawDividerLine(surface, 0, 4, 13, 4);
+    UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
+    extra = 0;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
-        UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, surface, SUMMARY_LEVEL_X, 0);
+    UiText_DrawStringAtOffset(gStatusMenu_LevelLetterString, surface,
+                              SUMMARY_LEVEL_X, 0);
 #else
-        UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, surface, 72, 0);
+    UiText_DrawStringInWindow((s32)gStatusMenu_LevelLetterString, surface, 72,
+                              0);
 #endif
-        UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
-        UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
+    UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
+    UiText_DrawCharacterAtOffset(st[29] + (s32)&MsgClassName, surface, 0, 16);
 #if defined(TBS_EDITION_JA) || defined(TLA_EDITION_JA)
-        extra = 32;
-        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
-        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
-        UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 48);
-        UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 48);
+    extra = 32;
+    UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 24, extra);
+    UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 72, 32);
+    UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 48);
+    UiText_DrawStringInWindow(
+        (s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48,
+        48);
 #else
-        UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 32);
-        UiText_DrawStringInWindow((s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48, 40);
-        extra = 48;
-        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
+    UiText_DrawCharacterAtOffset((s32)&MsgStatusLabel, surface, 0, 32);
+    UiText_DrawStringInWindow(
+        (s32)Text_FormatPlayTime(*(s32 *)(st + 32), (u8 *)buf), surface, 48,
+        40);
+    extra = 48;
+    UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
 #if defined(TBS_EDITION_FR)
-        if (*(u32 *)(st + 36) > 1)
-            UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
-        else
-            UiText_DrawCharacterAtOffset((s32)MsgPiece, surface, SUMMARY_COINS_X, 48);
+    if (*(u32 *)(st + 36) > 1)
+      UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
+    else
+      UiText_DrawCharacterAtOffset((s32)MsgPiece, surface, SUMMARY_COINS_X, 48);
 #else
-        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
+    UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, SUMMARY_COINS_X, 48);
 #endif
 #endif
-    }
+  }
 }

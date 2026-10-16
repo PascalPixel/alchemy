@@ -1,27 +1,27 @@
-/* Near miss, differ 56 of 580.
- *
- * Twin: The Broken Seal's BattleFx_RunFiveMode, the body of its five
- * coloured streak effects. ⚓️ adds one thing: when each target's streaks
- * start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
- * calling conventions (the effect read from the argument, heap blocks as
- * Ram_HeapSlots fields, Func_081963ec with ⚓️'s mode numbers, callback
- * order 0xc80, BattleFxKernels_IntegrateVector3 for
- * EffectStep_AdvanceWithGravity3D).
- *
- * Left: the native keeps the heap base 0x03000000 in r5 from the prologue
- * to the alternate blitter's read after the side branch (adds r3, r5, #0);
- * here its last use is the first blitter's read, which then lands in r5,
- * and the join builds the base again (two instructions, and the two arms
- * merge one store more). The rest are single rows where the native issues
- * a load or a constant one slot earlier.
- *
- * Tried:
- *   the twin as ported                                         365
- *   alchemy permute, 10 minutes: the start frame kept in lift's local
- *     (tagged; as its own local 365, without lift 388)          56
- *   the heap base through a local (heap)                       no change
- *   the alternate blitter read once after the side branch      66
- */
+// Near miss, differ 56 of 580.
+
+// Twin: The Broken Seal's BattleFx_RunFiveMode, the body of its five
+// coloured streak effects. ⚓️ adds one thing: when each target's streaks
+// start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
+// calling conventions (the effect read from the argument, heap blocks as
+// Ram_HeapSlots fields, Func_081963ec with ⚓️'s mode numbers, callback
+// order 0xc80, BattleFxKernels_IntegrateVector3 for
+// EffectStep_AdvanceWithGravity3D).
+
+// Left: the native keeps the heap base 0x03000000 in r5 from the prologue
+// to the alternate blitter's read after the side branch (adds r3, r5, #0);
+// here its last use is the first blitter's read, which then lands in r5,
+// and the join builds the base again (two instructions, and the two arms
+// merge one store more). The rest are single rows where the native issues
+// a load or a constant one slot earlier.
+
+// Tried:
+// the twin as ported                                         365
+// alchemy permute, 10 minutes: the start frame kept in lift's local
+// (tagged; as its own local 365, without lift 388)          56
+// the heap base through a local (heap)                       no change
+// the alternate blitter read once after the side branch      66
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -75,28 +75,27 @@ s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
-void Func_081180e8(s32 phase); // BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y);   // Camera_ApplyShake
-void Func_081434f8(void);           // ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void Func_081434f8(void);            // ObjectGroup_TickMemberTimers
 void WaitFrames(s32 frames);
 
-/*
- * Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
- * Cry (4): effect kinds 300 to 305.
- *
- * Three streaks rise 20 pixels above the user and fly at each target in turn,
- * 6 frames apart, reaching it in 24 frames; each target starts 32 frames
- * after the one before. A streak is a 20x40 picture drawn twice, its upper
- * half mirrored, and the canvas wobbles line by line on a sine wave while the
- * transfer halves the old picture each frame into a trail. The mode chooses
- * the colour, whether the streak animates, the hit's sound and flash, a
- * recoil, and a tremble of the target.
- */
+// Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
+// Cry (4): effect kinds 300 to 305.
+
+// Three streaks rise 20 pixels above the user and fly at each target in turn,
+// 6 frames apart, reaching it in 24 frames; each target starts 32 frames
+// after the one before. A streak is a 20x40 picture drawn twice, its upper
+// half mirrored, and the canvas wobbles line by line on a sine wave while the
+// transfer halves the old picture each frame into a trail. The mode chooses
+// the colour, whether the streak animates, the hit's sound and flash, a
+// recoil, and a tremble of the target.
+
 void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   struct HeapSlots *heap;
@@ -123,8 +122,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
   if (effect->side == 0) {
-    Func_081963ec(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+    Func_081963ec(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
     drawUpper = heap->unk64[1];
     Func_081963ec(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
     drawLower = heap->unkb8[1];

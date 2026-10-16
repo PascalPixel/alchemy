@@ -1,27 +1,27 @@
-/* Draft (tla-en): listing 464 instructions, draft 462, common 321, differ 284.
- * Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
- * a hint). A five-cell burst drawn on the actor's side for 30 frames;
- * at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
- * from frame 18 on with sizes from gData_08197410.
- * Left:
- * - the native frame is 40 bytes with an unreferenced slot at sp+16
- *   between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
- *   in r11 and draw and sheet are spilled. Here the frame is 36 and canvas
- *   is spilled.
- * - the heap slot base stays in r5 from the first loads to draw's load
- *   after the Func_081963ec call, as through the "heap" pointer here.
- * - the native keeps one Func_081963ec call after the two argument pairs;
- *   here each arm has its call.
- * - cross-jumping of the switch's draw calls: in the native side 0's case
- *   0 keeps its own call (its draw is reloaded into r6, the rest into r4),
- *   cases 1 and 2 of both sides share one call and cases 3 and 4 share
- *   "subs r3, #88" before it.
- * Resources 308, 243 and 329 (BattleFx_EffectPalette02) need names in
- * system/resource/directory.s when this is adopted.
- * 2026-10-15 (lane N2): rewritten with the work struct, named cels and
- * constants and comments. The same differ 284; one Func_081963ec call with
- * the mode chosen by a conditional expression: 289 (the native's single
- * call is the two arms cross-jumped). */
+// Draft (tla-en): listing 464 instructions, draft 462, common 321, differ 284.
+// Written from the listing (☀️'s BattleFx_RunParticleFieldVariant is only
+// a hint). A five-cell burst drawn on the actor's side for 30 frames;
+// at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
+// from frame 18 on with sizes from gData_08197410.
+// Left:
+// - the native frame is 40 bytes with an unreferenced slot at sp+16
+// between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
+// in r11 and draw and sheet are spilled. Here the frame is 36 and canvas
+// is spilled.
+// - the heap slot base stays in r5 from the first loads to draw's load
+// after the Func_081963ec call, as through the "heap" pointer here.
+// - the native keeps one Func_081963ec call after the two argument pairs;
+// here each arm has its call.
+// - cross-jumping of the switch's draw calls: in the native side 0's case
+// 0 keeps its own call (its draw is reloaded into r6, the rest into r4),
+// cases 1 and 2 of both sides share one call and cases 3 and 4 share
+// "subs r3, #88" before it.
+// Resources 308, 243 and 329 (BattleFx_EffectPalette02) need names in
+// system/resource/directory.s when this is adopted.
+// 2026-10-15 (lane N2): rewritten with the work struct, named cels and
+// constants and comments. The same differ 284; one Func_081963ec call with
+// the mode chosen by a conditional expression: 289 (the native's single
+// call is the two arms cross-jumped).
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -65,8 +65,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081963ec(s32 slot, s32 blitter);
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -126,12 +125,12 @@ void Func_0817c27c(struct BattleEffectArgument *effect) {
              30, 76);
         break;
       case 3:
-        draw(canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88,
-             56, 96);
+        draw(canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88, 56,
+             96);
         break;
       case 4:
-        draw(canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88,
-             56, 88);
+        draw(canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88, 56,
+             88);
         break;
       }
     } else {
@@ -148,12 +147,10 @@ void Func_0817c27c(struct BattleEffectArgument *effect) {
              76);
         break;
       case 3:
-        draw(canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56,
-             96);
+        draw(canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56, 96);
         break;
       case 4:
-        draw(canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56,
-             88);
+        draw(canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56, 88);
         break;
       }
     }

@@ -1,15 +1,15 @@
-/* Draft, differ 125 of 334 (2026-10-15), The Broken Seal's
- * RunBattleEffect14 (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and its orbiting motes, and
- * adds two kinds of target, told apart by the target's first animation
- * (372 and 373): for both the orb shrinks away at once, for 372 with motes
- * that wander off round it, and the target is then handed to Func_080db0b0.
- * The kinds are a switch: the listing tests 0, then 1, then 2-3 as one range
- * (subs r3, #2; cmp r3, #1; bhi), and kind 1 falls into kind 0's ending.
- * Left: the prologue's vector copies come in another order and register
- * (the native keeps from in r9 and to in r8 through the carry loop), and
- * the wander loop's 3 << 16 stays in r11 in the native.
- * Tried: the three vectors in each declaration order, 125-131 (this order
- * is best). */
+// Draft, differ 125 of 334 (2026-10-15), The Broken Seal's
+// RunBattleEffect14 (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
+// its orbiting motes, and adds two kinds of target, told apart by the target's
+// first animation (372 and 373): for both the orb shrinks away at once, for 372
+// with motes that wander off round it, and the target is then handed to
+// Func_080db0b0. The kinds are a switch: the listing tests 0, then 1, then 2-3
+// as one range (subs r3, #2; cmp r3, #1; bhi), and kind 1 falls into kind 0's
+// ending. Left: the prologue's vector copies come in another order and register
+// (the native keeps from in r9 and to in r8 through the carry loop), and
+// the wander loop's 3 << 16 stays in r11 in the native.
+// Tried: the three vectors in each declaration order, 125-131 (this order
+// is best).
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -159,7 +159,7 @@ void RunBattleEffect14(void) {
     }
     WaitFrames(20);
     WaitFrames(120);
-    /* fall through */
+    // fall through
   case ORB_PLAIN:
     Object_SetMode(orb, 1);
     WaitFrames(30);

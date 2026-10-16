@@ -120,8 +120,8 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, autoDelay, 0xdc);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, autoMode, 0xe0);
 
 // Restore the previous selection: page, row and return row.
-/* A statement macro (S2: a layer, 4 sites): the three cursor reads stay
- * together at every use; as a plain block, tbs-en differs. */
+// A statement macro (S2: a layer, 4 sites): the three cursor reads stay
+// together at every use; as a plain block, tbs-en differs.
 #define MenuCell_GetCursor(page_, row_, preferred_)                            \
   do {                                                                         \
     (page_) = ((struct MenuCell *)gWindowWork[42])->page;                      \

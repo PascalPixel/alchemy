@@ -1,13 +1,13 @@
-/* Draft: Func_080dda30, TLA English main image, 0x080dda30.
- * Plain source: 113 native instructions, 113 built, 112 common, differ 2
- * (tla-en, 2026-10-16). The priority-address copy is scheduled before the
- * collisionFlags store; the native copies it after that store.
- * An empty asm barrier between those operations matched in the proposed
- * adoption, but would increase the barrier count forbidden by S2. Keep the
- * adoption unlinked until a plain source form matches.
- * Tried: use the just-written collisionFlags in the priority OR (differ 2);
- * traverse both flag bytes through one u8 pointer (118 built, differ 45).
- */
+// Draft: Func_080dda30, TLA English main image, 0x080dda30.
+// Plain source: 113 native instructions, 113 built, 112 common, differ 2
+// (tla-en, 2026-10-16). The priority-address copy is scheduled before the
+// collisionFlags store; the native copies it after that store.
+// An empty asm barrier between those operations matched in the proposed
+// adoption, but would increase the barrier count forbidden by S2. Keep the
+// adoption unlinked until a plain source form matches.
+// Tried: use the just-written collisionFlags in the priority OR (differ 2);
+// traverse both flag bytes through one u8 pointer (118 built, differ 45).
+
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -40,9 +40,9 @@ void Func_080daecc(s32 objectId, s32 mode);
 #define TARGET_KIND_SCATTERS 372 // scatters five falling pieces instead
 #define TARGET_KIND_STAYS 394
 
-/* The Spanish and Italian scaffolds name two of its callees differently
- * (Func_080daecc in both, Func_08020330 in the Italian one); those two
- * editions keep it on their scaffold. */
+// The Spanish and Italian scaffolds name two of its callees differently
+// (Func_080daecc in both, Func_08020330 in the Italian one); those two
+// editions keep it on their scaffold.
 #if !defined(TLA_EDITION_ES) && !defined(TLA_EDITION_IT)
 // Animation 12 on a target: the burst of particles, then the target sinks
 // to the underfoot priority. A target of kind 372 instead throws five pieces

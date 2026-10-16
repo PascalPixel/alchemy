@@ -10,25 +10,24 @@
 #include "resource.h"
 #include "resource_ids.h"
 
-void Graphics_AdvancePaletteCycle(void)
-{
-    s32 _c0 = ((u32)&gData_03001e74);
-    s8 *table;
-    u16 index;
-    s32 next;
-    struct State080c1084 *state;
+void Graphics_AdvancePaletteCycle(void) {
+  s32 _c0 = ((u32)&gData_03001e74);
+  s8 *table;
+  u16 index;
+  s32 next;
+  struct State080c1084 *state;
 
-    state = *(struct State080c1084 **)_c0;
-    if ((state != NULL) && (state->field_650 != 0)) {
-        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
-        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
-        table = Data_080c5c10;
-        *(s16 *)0x04000054 = table[state->index];
-        index = state->index;
-        next = (index + 1) & 0xF;
-        if ((u32)index > 0xEU) {
-            next |= 0x10;
-        }
-        state->index = next;
+  state = *(struct State080c1084 **)_c0;
+  if ((state != NULL) && (state->field_650 != 0)) {
+    FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
+    FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
+    table = Data_080c5c10;
+    *(s16 *)0x04000054 = table[state->index];
+    index = state->index;
+    next = (index + 1) & 0xF;
+    if ((u32)index > 0xEU) {
+      next |= 0x10;
     }
+    state->index = next;
+  }
 }

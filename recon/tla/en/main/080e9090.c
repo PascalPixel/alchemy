@@ -1,13 +1,13 @@
-/* Near miss, differ 90 of 202 (2026-10-15, written from the listing; ☀️ has no
- * twin). Kind 27's Func_080e97c8 (view_sway.c) is the same sway along the
- * other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
- * ROM keeps a copy of the shake phase in its own slot for the object loop and
- * walks the objects and offsets with pointers that loop.c starts there, so
- * every slot of the work, event, tick and phase sits 4 bytes higher. Measured:
- * pointer walks and the phase copy as source variables, at function or block
- * scope (185-190: the copy coalesces and the frame stays 28); the offset as
- * s32 (162). Permute 5 min, 2 jobs: 79 only with (amplitude + 1) > 1, not
- * kept. */
+// Near miss, differ 90 of 202 (2026-10-15, written from the listing; ☀️ has no
+// twin). Kind 27's Func_080e97c8 (view_sway.c) is the same sway along the
+// other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
+// ROM keeps a copy of the shake phase in its own slot for the object loop and
+// walks the objects and offsets with pointers that loop.c starts there, so
+// every slot of the work, event, tick and phase sits 4 bytes higher. Measured:
+// pointer walks and the phase copy as source variables, at function or block
+// scope (185-190: the copy coalesces and the frame stays 28); the offset as
+// s32 (162). Permute 5 min, 2 jobs: 79 only with (amplitude + 1) > 1, not
+// kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

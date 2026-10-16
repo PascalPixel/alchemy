@@ -24,7 +24,7 @@ extern u32 gRandomState;
 
 extern u16 gSleepActive;
 
-/* SYSTEM */
+// SYSTEM
 
 #include "types.h"
 #include "edition.h"

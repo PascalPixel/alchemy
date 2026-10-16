@@ -1,23 +1,23 @@
-/* Near miss of Func_081539d0, an unused effect (no caller): differ 14 of
- * 272 (draft 272).
- *
- * Twin: The Broken Seal's BattleFx_RunSwirlingStars (effect.c), call for
- * call. The Lost Age reads the effect from its argument, takes its heap
- * blocks as Ram_HeapSlots fields and orders the callback 0xc80.
- * ResourceId_StarDotSheet is row 0x14f of directory.s (asset
- * BattleFx_StarDotSheet), not yet named there.
- *
- * Left: seven reordered pairs, each the native placing a load one row
- * earlier (the particle base before the blitter call, the second loop's
- * particle base, the cell offset table, the camera word) or a use of a
- * loaded word one row later (frame's copy to r10 after the record's
- * stores, the negations of the star's coordinates after the stores of the
- * previous sums). Each follows from a load latency of 3 in sched2.
- *
- * Tried: the particle pointer set before the blitter call (differ 32, r5
- * and r6 trade); alchemy permute, 6 minutes, 2 jobs (2026-10-15): nothing
- * below 14 (its best weighted candidate differs 20).
- */
+// Near miss of Func_081539d0, an unused effect (no caller): differ 14 of
+// 272 (draft 272).
+
+// Twin: The Broken Seal's BattleFx_RunSwirlingStars (effect.c), call for
+// call. The Lost Age reads the effect from its argument, takes its heap
+// blocks as Ram_HeapSlots fields and orders the callback 0xc80.
+// ResourceId_StarDotSheet is row 0x14f of directory.s (asset
+// BattleFx_StarDotSheet), not yet named there.
+
+// Left: seven reordered pairs, each the native placing a load one row
+// earlier (the particle base before the blitter call, the second loop's
+// particle base, the cell offset table, the camera word) or a use of a
+// loaded word one row later (frame's copy to r10 after the record's
+// stores, the negations of the star's coordinates after the stores of the
+// previous sums). Each follows from a load latency of 3 in sched2.
+
+// Tried: the particle pointer set before the blitter call (differ 32, r5
+// and r6 trade); alchemy permute, 6 minutes, 2 jobs (2026-10-15): nothing
+// below 14 (its best weighted candidate differs 20).
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -45,13 +45,13 @@ void BattleFxKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 extern char ResourceId_StarDotSheet;
 extern u16 gData_08197410[]; // gParticleStreams_CellOffsets
 
-/* Sixty-four stars swirl about a point in front of the camera and are
- * drawn in.
- *
- * Setup: 256 stars are scattered up to 127 pixels each way. Frame loop
- * (160 frames): four stars a frame join, each turning about one of four
- * axes as fast as its number, sized by depth; thirty frames after joining
- * a star accelerates toward the center by 1/256 of its distance a frame. */
+// Sixty-four stars swirl about a point in front of the camera and are
+// drawn in.
+
+// Setup: 256 stars are scattered up to 127 pixels each way. Frame loop
+// (160 frames): four stars a frame join, each turning about one of four
+// axes as fast as its number, sized by depth; thirty frames after joining
+// a star accelerates toward the center by 1/256 of its distance a frame.
 void Func_081539d0(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;

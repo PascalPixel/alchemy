@@ -3,13 +3,20 @@
 extern struct ShopRuntime *gMenuWork;
 extern u8 gData_03001f2c[];
 
-struct Position { s32 x, y, z; };
-union PositionWord { s32 w; s16 h[2]; };
-struct Effect_080b2f4c { u8 filler[0x48]; };
+struct Position {
+  s32 x, y, z;
+};
+union PositionWord {
+  s32 w;
+  s16 h[2];
+};
+struct Effect_080b2f4c {
+  u8 filler[0x48];
+};
 struct ShopBurstRuntime {
-    u8 unk000[0x134];
-    s16 memberX[8];
-    s16 memberZ[8];
+  u8 unk000[0x134];
+  s16 memberX[8];
+  s16 memberZ[8];
 };
 
 u32 Random16(void);
@@ -19,9 +26,8 @@ void Audio_PlayCue(s32 sound_id);
 void Shop_RestoreSceneTiles(s32 address);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
-void Func_0808a520(
-    struct Effect_080b2f4c *effect,
-    void (*callback)(struct Effect_080b2f4c *));
+void Func_0808a520(struct Effect_080b2f4c *effect,
+                   void (*callback)(struct Effect_080b2f4c *));
 void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
 void AudioCommand_WaitForStateByteClear(void);
@@ -34,96 +40,93 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 gData_080b4ab2[];
 
-void Shop_RunPartyMemberIconBurst(s32 member)
-{
-    struct ShopRuntime *shop;
-    struct ShopBurstRuntime *burst;
-    s8 savedKind;
-    struct Position position;
-    struct Effect_080b2f4c *effect;
-    s32 callbackFlags;
-    s32 i;
+void Shop_RunPartyMemberIconBurst(s32 member) {
+  struct ShopRuntime *shop;
+  struct ShopBurstRuntime *burst;
+  s8 savedKind;
+  struct Position position;
+  struct Effect_080b2f4c *effect;
+  s32 callbackFlags;
+  s32 i;
 
-    shop = gMenuWork;
-    burst = (struct ShopBurstRuntime *)shop;
-    savedKind = shop->cursor.anchor->kind;
-    *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
-    shop->cursor.anchor->kind = 13;
-    Audio_PlayCue(gData_080b4ab2[shop->partyAction]);
-    Shop_RestoreSceneTiles(0x00202108);
-    Func_08009280((s32)shop->partyMemberIcons[member], 0);
-    WaitFrames(20);
-    callbackFlags = 0xc80;
-    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackFlags);
+  shop = gMenuWork;
+  burst = (struct ShopBurstRuntime *)shop;
+  savedKind = shop->cursor.anchor->kind;
+  *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
+  shop->cursor.anchor->kind = 13;
+  Audio_PlayCue(gData_080b4ab2[shop->partyAction]);
+  Shop_RestoreSceneTiles(0x00202108);
+  Func_08009280((s32)shop->partyMemberIcons[member], 0);
+  WaitFrames(20);
+  callbackFlags = 0xc80;
+  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackFlags);
 
-    /* FAKEMATCH: the x store goes through a union with a halfword view so it
-       may alias the memberZ load, which keeps the reference schedule. */
-    ((union PositionWord *)&position.x)->w = (s32)burst->memberX[member] << 16;
-    position.z = ((s32)burst->memberZ[member] << 16) + (s32)0xfff40000;
+  /* FAKEMATCH: the x store goes through a union with a halfword view so it
+     may alias the memberZ load, which keeps the reference schedule. */
+  ((union PositionWord *)&position.x)->w = (s32)burst->memberX[member] << 16;
+  position.z = ((s32)burst->memberZ[member] << 16) + (s32)0xfff40000;
 
-    i = 0;
-    effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
-    do {
-        Func_0808a528(effect, 0x11c, position.x, position.z);
-        Func_0808a520(effect, BattleFx_UpdateRadialMotion);
-        Func_0808a518(effect, 7);
-        Func_08009248(
-            *(s32 *)((u8 *)effect + 0),
-            (Random16() * 7) >> 16);
-        *(s32 *)((u8 *)effect + 44) = 0xb333;
-        *(s32 *)((u8 *)effect + 40) = 0xb333;
-        WaitFrames(3);
-        if (i == 5) {
-            *(u8 *)((u8 *)shop + 0x3ab) = (u8)member;
-        }
-        i++;
-        effect = (struct Effect_080b2f4c *)((u8 *)effect + 0x48);
-    } while (i <= 17);
-
-    AudioCommand_WaitForStateByteClear();
-    {
-        u8 activeMode = 2;
-        u8 *entry = (u8 *)shop + 0x3f0;
-        for (i = 23; i >= 0; i--) {
-            if (*(s8 *)(entry + 5) != 0) {
-                *(u8 *)(entry + 0) = activeMode;
-            }
-            entry += 0x48;
-        }
+  i = 0;
+  effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
+  do {
+    Func_0808a528(effect, 0x11c, position.x, position.z);
+    Func_0808a520(effect, BattleFx_UpdateRadialMotion);
+    Func_0808a518(effect, 7);
+    Func_08009248(*(s32 *)((u8 *)effect + 0), (Random16() * 7) >> 16);
+    *(s32 *)((u8 *)effect + 44) = 0xb333;
+    *(s32 *)((u8 *)effect + 40) = 0xb333;
+    WaitFrames(3);
+    if (i == 5) {
+      *(u8 *)((u8 *)shop + 0x3ab) = (u8)member;
     }
+    i++;
+    effect = (struct Effect_080b2f4c *)((u8 *)effect + 0x48);
+  } while (i <= 17);
 
-    WaitFrames(20);
-    Audio_PlayCue(126);
-    {
-        s32 iconOffset = 0xff;
-
-        *(u8 *)((u8 *)shop + 0x3ab) = iconOffset;
-        iconOffset += 21;
-        iconOffset += member * 4;
-        Func_08009248(*(s32 *)((u8 *)shop + iconOffset), 0);
+  AudioCommand_WaitForStateByteClear();
+  {
+    u8 activeMode = 2;
+    u8 *entry = (u8 *)shop + 0x3f0;
+    for (i = 23; i >= 0; i--) {
+      if (*(s8 *)(entry + 5) != 0) {
+        *(u8 *)(entry + 0) = activeMode;
+      }
+      entry += 0x48;
     }
-    WaitFrames(20);
+  }
 
-    {
-        u8 *flagEntry = (u8 *)shop + 0x3f5;
-        struct Effect_080b2f4c *entry2 =
-            (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
-        for (i = 23; i >= 0; i--) {
-            s32 flag = *flagEntry;
+  WaitFrames(20);
+  Audio_PlayCue(126);
+  {
+    s32 iconOffset = 0xff;
 
-            flag <<= 24;
+    *(u8 *)((u8 *)shop + 0x3ab) = iconOffset;
+    iconOffset += 21;
+    iconOffset += member * 4;
+    Func_08009248(*(s32 *)((u8 *)shop + iconOffset), 0);
+  }
+  WaitFrames(20);
 
-            flagEntry += 0x48;
-            if (flag != 0) {
-                Func_0808a530(entry2);
-            }
-            entry2 = (struct Effect_080b2f4c *)((u8 *)entry2 + 0x48);
-        }
+  {
+    u8 *flagEntry = (u8 *)shop + 0x3f5;
+    struct Effect_080b2f4c *entry2 =
+        (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
+    for (i = 23; i >= 0; i--) {
+      s32 flag = *flagEntry;
+
+      flag <<= 24;
+
+      flagEntry += 0x48;
+      if (flag != 0) {
+        Func_0808a530(entry2);
+      }
+      entry2 = (struct Effect_080b2f4c *)((u8 *)entry2 + 0x48);
     }
+  }
 
-    Scheduler_RemoveCallback(Shop_ResetEffects);
-    Func_08009280((s32)shop->partyMemberIcons[member], 16);
-    Shop_InitEffect();
-    WaitFrames(30);
-    shop->cursor.anchor->kind = savedKind;
+  Scheduler_RemoveCallback(Shop_ResetEffects);
+  Func_08009280((s32)shop->partyMemberIcons[member], 16);
+  Shop_InitEffect();
+  WaitFrames(30);
+  shop->cursor.anchor->kind = savedKind;
 }

@@ -1,7 +1,7 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-/* BATTLE */
+// BATTLE
 
 #include "types.h"
 #include "edition.h"

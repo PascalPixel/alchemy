@@ -1,36 +1,35 @@
-/* Near miss, differ 22 of 500 (effect kind 10, the vortex motes).
+// Near miss, differ 22 of 500 (effect kind 10, the vortex motes).
 
-   ☀️ twin: BattleFx_RunVortexMotes (games/tbs/src/effect/effect.c), shape
-   0.879, structure 0.949. Ported with ⚓️'s checklist: the effect argument is
-   read directly (the dispatcher stores work->effect), the vortex sheet is
-   unpacked straight into the work with Resource_LoadAndDecompress where ☀️
-   copies its palette and decodes, two max blitters from
-   Func_081963ec(104, 0x13) and (188, 0x1f) (⚓️'s mode is 3 minus ☀️'s),
-   the camera callback Func_0814c928 and the transfer callback at order
-   0xc80, phase 133 where ☀️ begins phase 132, the frame and mote counts from
-   the byte table gData_081979a8 (☀️ gVortexMotes_Counts) and Func_08118088
-   for the struck target's motion.
+// ☀️ twin: BattleFx_RunVortexMotes (games/tbs/src/effect/effect.c), shape
+// 0.879, structure 0.949. Ported with ⚓️'s checklist: the effect argument is
+// read directly (the dispatcher stores work->effect), the vortex sheet is
+// unpacked straight into the work with Resource_LoadAndDecompress where ☀️
+// copies its palette and decodes, two max blitters from
+// Func_081963ec(104, 0x13) and (188, 0x1f) (⚓️'s mode is 3 minus ☀️'s),
+// the camera callback Func_0814c928 and the transfer callback at order
+// 0xc80, phase 133 where ☀️ begins phase 132, the frame and mote counts from
+// the byte table gData_081979a8 (☀️ gVortexMotes_Counts) and Func_08118088
+// for the struck target's motion.
 
-   Same frame, registers and instructions. What is left is order at eight
-   places, each a load or constant the native issues one instruction
-   earlier or later: the second blitter's slot (adds r5, #188; ldr) before
-   the BLDALPHA address, the first loop's pool word, the target's y and z
-   loads in the steering block, the position record's address, the splash
-   cel's shift, the seat's y load, and the final WaitFrames argument.
+// Same frame, registers and instructions. What is left is order at eight
+// places, each a load or constant the native issues one instruction
+// earlier or later: the second blitter's slot (adds r5, #188; ldr) before
+// the BLDALPHA address, the first loop's pool word, the target's y and z
+// loads in the steering block, the position record's address, the splash
+// cel's shift, the seat's y load, and the final WaitFrames argument.
 
-   Tried (differ):
-     the repository draft (local copy of the work struct)                24
-     the shared struct BattleEffectWork                                  24
-     Func_081963ec declared returning s32, as ☀️'s LoadWork returns s32
-       and ⚓️'s Func_08196404 ends in a store-flag return (plan 0c)      22
-     the camera as struct BattleCamera (eye, pos)                        22
-     greedy declaration-order scan, every local through every place     22
-     earlier (repository header): the second argument of
-       Func_081963ec(104) pinned to r1 (22 before s32); the BLDALPHA
-       value pinned behind a barrier, the second blitter read first, an
-       empty barrier after the second call (22-24); alchemy permute,
-       6 minutes (no better)                                              */
-
+// Tried (differ):
+// the repository draft (local copy of the work struct)                24
+// the shared struct BattleEffectWork                                  24
+// Func_081963ec declared returning s32, as ☀️'s LoadWork returns s32
+// and ⚓️'s Func_08196404 ends in a store-flag return (plan 0c)      22
+// the camera as struct BattleCamera (eye, pos)                        22
+// greedy declaration-order scan, every local through every place     22
+// earlier (repository header): the second argument of
+// Func_081963ec(104) pinned to r1 (22 before s32); the BLDALPHA
+// value pinned behind a barrier, the second blitter read first, an
+// empty barrier after the second call (22-24); alchemy permute,
+// 6 minutes (no better)
 
 #include "types.h"
 #include "system.h"
@@ -64,12 +63,12 @@ extern char ResourceId_VortexSheet;
 extern u8 gData_081979a8[];
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
-void Func_08143bb8(void);           // ☀️ BattleFx_EndCanvasLayer
-void Func_08143000(void);           // ☀️ ProcessPendingGraphicsTransfer
-void Func_0814c928(void);           // ☀️ Camera_ApplyPhasedDelta
-void Func_081434f8(void);           // ☀️ ObjectGroup_TickMemberTimers
-void Func_08158ce0(s32 x, s32 y);   // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);      // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_08143bb8(void);                  // ☀️ BattleFx_EndCanvasLayer
+void Func_08143000(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void Func_0814c928(void);                  // ☀️ Camera_ApplyPhasedDelta
+void Func_081434f8(void);                  // ☀️ ObjectGroup_TickMemberTimers
+void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 Func_081963ec(s32 slot, s32 flags);    // ☀️ BattleEffect_LoadWork
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -103,12 +102,11 @@ void Func_08148a54(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
-  Func_081963ec(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                                  COMPOSITE_CLIP_Y);
+  Func_081963ec(HEAP_BLITTER,
+                BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Func_081963ec(HEAP_BLITTER_ALTERNATE,
-                BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                    COMPOSITE_FLIP);
+  Func_081963ec(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+                                            COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
   REG_BLDALPHA = 0x0f0f;
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 

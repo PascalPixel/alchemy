@@ -1,15 +1,15 @@
-/* Near miss, differ 14 of 194 (2026-10-15, written from the listing; ☀️ has no
- * twin). Kind 24 (Func_080e9af4) runs it each frame; Func_080e989c gives its
- * colours. What remains is order: the ROM loads the event work just after
- * the player's lookup, counts i after the palette pointer, sets the priority
- * mask earlier, and stores the flattened scale before the screen y.
- * Measured: the first test as == 0 with the hold inside (107 -> 91); the
- * sprite through a local pointer, as the ROM addresses it from work + 0x1000
- * (91 -> 20); x, y, scaleX, scaleY stored in that order (20 -> 14; six
- * other orders 18-20); the scales declared the other way (20); palette[i],
- * OBJ_PALETTE_14[i] and the store apart from its increment (14). Permute 5
- * min, 2 jobs: 12 only with a one-pass block around the palette store, not
- * kept. */
+// Near miss, differ 14 of 194 (2026-10-15, written from the listing; ☀️ has no
+// twin). Kind 24 (Func_080e9af4) runs it each frame; Func_080e989c gives its
+// colours. What remains is order: the ROM loads the event work just after
+// the player's lookup, counts i after the palette pointer, sets the priority
+// mask earlier, and stores the flattened scale before the screen y.
+// Measured: the first test as == 0 with the hold inside (107 -> 91); the
+// sprite through a local pointer, as the ROM addresses it from work + 0x1000
+// (91 -> 20); x, y, scaleX, scaleY stored in that order (20 -> 14; six
+// other orders 18-20); the scales declared the other way (20); palette[i],
+// OBJ_PALETTE_14[i] and the store apart from its increment (14). Permute 5
+// min, 2 jobs: 12 only with a one-pass block around the palette store, not
+// kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

@@ -1,19 +1,19 @@
-/* Draft, differ 126 of 1065: Func_08168a40, summon 3 (Func_0814c994's case 3,
- * actflags 0x8003), The Broken Seal's BattleFx_RunObjectRow.
- *
- * Twin: ☀️ BattleFx_RunObjectRow (games/tbs/src/effect/effect.c), ported:
- * Func_0813ba50 sets the display, the second BG colour is 0x18, the formation
- * is resource 644, the projection's centre is gCameraSceneParameters[4], the
- * control is the heap slot at 0xb0, one blitter (Func_081963ec(104, 3)), the
- * effect stays an argument for the hit loops, callback Func_08143000 at
- * 0xc80.
- *
- * The objects' flag byte is or-ed as a byte (as a struct field the allocation
- * of that block moved: 171).
- *
- * Left: the 126 differing rows are the native's own rows reordered: loads and
- * stores ahead of independent constants, the kind Func_08164b2c's header
- * traces to a load costing 3 and a store 2. */
+// Draft, differ 126 of 1065: Func_08168a40, summon 3 (Func_0814c994's case 3,
+// actflags 0x8003), The Broken Seal's BattleFx_RunObjectRow.
+
+// Twin: ☀️ BattleFx_RunObjectRow (games/tbs/src/effect/effect.c), ported:
+// Func_0813ba50 sets the display, the second BG colour is 0x18, the formation
+// is resource 644, the projection's centre is gCameraSceneParameters[4], the
+// control is the heap slot at 0xb0, one blitter (Func_081963ec(104, 3)), the
+// effect stays an argument for the hit loops, callback Func_08143000 at
+// 0xc80.
+
+// The objects' flag byte is or-ed as a byte (as a struct field the allocation
+// of that block moved: 171).
+
+// Left: the 126 differing rows are the native's own rows reordered: loads and
+// stores ahead of independent constants, the kind Func_08164b2c's header
+// traces to a load costing 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

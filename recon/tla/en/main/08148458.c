@@ -1,24 +1,24 @@
-/* Near miss, differ 60 of 689 (88 without the one device below).
- *
- * Summon 2 (Func_0814c994's case 2). Twin: The Broken Seal's
- * BattleEffect_RunEmberColumns, ported call for call. The Lost Age's changes:
- * the heap blocks are read canvas, work, sheet; three
- * Resource_LoadAndDecompress loads where The Broken Seal copies a palette
- * and decodes two sheets; Func_08144aac for the blitter pair; formation
- * resource 649 for 380; the callback at 0xc80; and the hit loop reads the
- * effect argument. The resource rows WaterSpraySheet (303) and
- * FirePillarSheetA (326) have no name yet in directory.s.
- *
- * Left: order only, and the literal pool offsets that follow it. The
- * prologue stores the argument before it builds the 0x03000000 base in the
- * native, after it here; the rest are single swaps of a pooled or stack load
- * with its neighbour, and the frame loop's pool sits one block later than
- * the native's without the REG_BLDALPHA block.
- *
- * Tried (trial 2, 2026-10-15): the plain port 91; the hit loop through the
- * argument 88; the one-pass block around REG_BLDALPHA 60; alchemy permute
- * 8 + 6 minutes found nothing below 58 without a second block.
- */
+// Near miss, differ 60 of 689 (88 without the one device below).
+
+// Summon 2 (Func_0814c994's case 2). Twin: The Broken Seal's
+// BattleEffect_RunEmberColumns, ported call for call. The Lost Age's changes:
+// the heap blocks are read canvas, work, sheet; three
+// Resource_LoadAndDecompress loads where The Broken Seal copies a palette
+// and decodes two sheets; Func_08144aac for the blitter pair; formation
+// resource 649 for 380; the callback at 0xc80; and the hit loop reads the
+// effect argument. The resource rows WaterSpraySheet (303) and
+// FirePillarSheetA (326) have no name yet in directory.s.
+
+// Left: order only, and the literal pool offsets that follow it. The
+// prologue stores the argument before it builds the 0x03000000 base in the
+// native, after it here; the rest are single swaps of a pooled or stack load
+// with its neighbour, and the frame loop's pool sits one block later than
+// the native's without the REG_BLDALPHA block.
+
+// Tried (trial 2, 2026-10-15): the plain port 91; the hit loop through the
+// argument 88; the one-pass block around REG_BLDALPHA 60; alchemy permute
+// 8 + 6 minutes found nothing below 58 without a second block.
+
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"

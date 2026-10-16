@@ -1,22 +1,22 @@
-/* Near miss: listing 141 instructions, draft 141, differ 6 (three pairs;
- * -mtune=arm7tdmi as an analysis: also 6, the prologue pair fixed and the
- * outer loop's y += 18 one slot early). No ☀️ twin: The Broken Seal has no
- * mesh builder of this kind (closest call order PsynergyMenu_BuildPageResult,
- * 0.600, a false twin).
- * Registers and stores match. Left: the native copies segments into r4 after
- * the loop's stores of y and the ring base; it loads the spilled triangles
- * pointer before the * 24 chain, in the ring's triangle block and at the end
- * marker. Measured: the angle in a local: differ 8 (the native's calls take
- * i * (0x10000 / segments) as written); a vertex pointer computed before
- * Trig_Sin: 62 (the native computes the address after the call returns); the
- * 15 in a variable: 42; the triangle as &triangles[index * 2]: 8 (base + mult,
- * where the native adds mult + base); both triangles indexed directly: 96;
- * segments as u8, s8, u16, s16: 11, 102, 135, 7; the index as
- * i + ring * segments: 10. permute (6 min, then 18 more with seed 7): nothing
- * below 6.
- * 2026-10-15 (fx-n3): rewritten for reading (names, comments, clang-format);
- * still 6. A running ring base and y stepped by the outer loop (the native
- * keeps both in stack slots): 104. */
+// Near miss: listing 141 instructions, draft 141, differ 6 (three pairs;
+// -mtune=arm7tdmi as an analysis: also 6, the prologue pair fixed and the
+// outer loop's y += 18 one slot early). No ☀️ twin: The Broken Seal has no
+// mesh builder of this kind (closest call order PsynergyMenu_BuildPageResult,
+// 0.600, a false twin).
+// Registers and stores match. Left: the native copies segments into r4 after
+// the loop's stores of y and the ring base; it loads the spilled triangles
+// pointer before the * 24 chain, in the ring's triangle block and at the end
+// marker. Measured: the angle in a local: differ 8 (the native's calls take
+// i * (0x10000 / segments) as written); a vertex pointer computed before
+// Trig_Sin: 62 (the native computes the address after the call returns); the
+// 15 in a variable: 42; the triangle as &triangles[index * 2]: 8 (base + mult,
+// where the native adds mult + base); both triangles indexed directly: 96;
+// segments as u8, s8, u16, s16: 11, 102, 135, 7; the index as
+// i + ring * segments: 10. permute (6 min, then 18 more with seed 7): nothing
+// below 6.
+// 2026-10-15 (fx-n3): rewritten for reading (names, comments, clang-format);
+// still 6. A running ring base and y stepped by the outer loop (the native
+// keeps both in stack slots): 104.
 #include "types.h"
 #include "fixed_math.h"
 

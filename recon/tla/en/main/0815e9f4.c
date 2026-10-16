@@ -1,45 +1,45 @@
-/* Draft of Func_0815e9f4, the cast sequence BattleFx_DispatchByIdRange
- * runs for kinds 201 to 209 and 211 up: a ring of sparks gathers, then a
- * burst of sparks at the target.
- *
- * On screen, while the battle view swings to the midpoint between the
- * caster and its target: for kinds above 199 (all that reach it) the caster
- * stops moving, the background fades, and 64 sparks spin in towards it on
- * random axes over 32 frames, then the caster moves on as before. Then a
- * four-cel flash covers the first target for eight frames (frames 0-7),
- * the target recoils at frame 4, the battle resumes with hit cue 134 at
- * frame 5, and 64 sparks fly out of the target in pairs, shrinking as
- * they go, for the rest of 32 frames. Last, the background palette steps
- * back to full over seven frames and the canvas layer closes.
- *
- * Setup: the transition step between each sheet load (the view keeps
- * moving while the sheets decode), the canvas tile map, BG1 on the canvas,
- * two blitters for the caster's side (additive and max, flipped for
- * side 1), the crescent and star sheets, the Mars Djinn's palette when the
- * caster is an enemy (actor 8 and up), the spark sheet, and the transfer
- * callback in copy mode.
- *
- * Port of The Broken Seal's BattlePres_RunRingAndSparkScene, with The Lost
- * Age's heap slots, blitter modes (3 minus ☀️'s) and callback orders (the
- * transfer at 0xc80, the fade at 0x480), no work->effect store, and these
- * changes: the palette goes by DMA, the canvases are cleared 0x3c00 bytes
- * at a time, the flash's middle cels are 128 pixels square from the map
- * cell buffer drawn 4 pixels to the left, and the background's id is the
- * battle work's halfword at 0x670.
- *
- * Listing 676 instructions, draft 676, differ 74 (2026-10-15). Left: rows
- * one place apart through the whole function (heap and stack loads, the
- * draw pair's stores, constants built around a pool or stack load), in
- * both directions: the prologue issues the canvas load after the effect
- * moves to fp, the loops mostly issue loads one slot earlier.
- *
- * Tried:
- *   ☀️'s body with The Lost Age's names and changes            96
- *   the blitter modes as 3 minus ☀️'s (additive and max)    96 -> 88
- *   the clear size as a local set at the top, as ☀️'s words:
- *     the native builds the constant at each call            88 -> 74
- *   declaration order, a greedy sweep of 18 locals           74
- */
+// Draft of Func_0815e9f4, the cast sequence BattleFx_DispatchByIdRange
+// runs for kinds 201 to 209 and 211 up: a ring of sparks gathers, then a
+// burst of sparks at the target.
+
+// On screen, while the battle view swings to the midpoint between the
+// caster and its target: for kinds above 199 (all that reach it) the caster
+// stops moving, the background fades, and 64 sparks spin in towards it on
+// random axes over 32 frames, then the caster moves on as before. Then a
+// four-cel flash covers the first target for eight frames (frames 0-7),
+// the target recoils at frame 4, the battle resumes with hit cue 134 at
+// frame 5, and 64 sparks fly out of the target in pairs, shrinking as
+// they go, for the rest of 32 frames. Last, the background palette steps
+// back to full over seven frames and the canvas layer closes.
+
+// Setup: the transition step between each sheet load (the view keeps
+// moving while the sheets decode), the canvas tile map, BG1 on the canvas,
+// two blitters for the caster's side (additive and max, flipped for
+// side 1), the crescent and star sheets, the Mars Djinn's palette when the
+// caster is an enemy (actor 8 and up), the spark sheet, and the transfer
+// callback in copy mode.
+
+// Port of The Broken Seal's BattlePres_RunRingAndSparkScene, with The Lost
+// Age's heap slots, blitter modes (3 minus ☀️'s) and callback orders (the
+// transfer at 0xc80, the fade at 0x480), no work->effect store, and these
+// changes: the palette goes by DMA, the canvases are cleared 0x3c00 bytes
+// at a time, the flash's middle cels are 128 pixels square from the map
+// cell buffer drawn 4 pixels to the left, and the background's id is the
+// battle work's halfword at 0x670.
+
+// Listing 676 instructions, draft 676, differ 74 (2026-10-15). Left: rows
+// one place apart through the whole function (heap and stack loads, the
+// draw pair's stores, constants built around a pool or stack load), in
+// both directions: the prologue issues the canvas load after the effect
+// moves to fp, the loops mostly issue loads one slot earlier.
+
+// Tried:
+// ☀️'s body with The Lost Age's names and changes            96
+// the blitter modes as 3 minus ☀️'s (additive and max)    96 -> 88
+// the clear size as a local set at the top, as ☀️'s words:
+// the native builds the constant at each call            88 -> 74
+// declaration order, a greedy sweep of 18 locals           74
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

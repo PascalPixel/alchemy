@@ -1,8 +1,8 @@
-/* Near miss, differ 22 of 188 (2026-10-15, written from the listing; ☀️ has no
- * twin). Only scheduling remains, in the three draw blocks: the ROM moves the
- * position and scale out of r8-r10 together after the depth store and stores
- * x before y; this stores y first. Not yet tried: permute, other store orders,
- * the sprite through a local pointer. */
+// Near miss, differ 22 of 188 (2026-10-15, written from the listing; ☀️ has no
+// twin). Only scheduling remains, in the three draw blocks: the ROM moves the
+// position and scale out of r8-r10 together after the depth store and stores
+// x before y; this stores y first. Not yet tried: permute, other store orders,
+// the sprite through a local pointer.
 #include "types.h"
 #include "ram_buffer.h"
 #include "canvas_sprite.h"

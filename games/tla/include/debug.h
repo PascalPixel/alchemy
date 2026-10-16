@@ -1,7 +1,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-/* DEBUG */
+// DEBUG
 
 #include "types.h"
 #include "edition.h"

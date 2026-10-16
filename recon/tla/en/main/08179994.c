@@ -1,24 +1,24 @@
-/* Draft (tla-en): listing 552 instructions, draft 556, common 396, differ 316.
- * Effect kind 78, written from the listing on ☀️'s skeleton; its nearest ☀️
- * shapes are BattleFx_RunLightningPillars (0.49) and
- * BattleFx_RunFireSwirlCharge (0.67 by calls), neither a twin.
- * Written 2026-10-15 (lane N2).
- * Left:
- * - the native frame is 120 bytes, here 124: one more spill slot, so
- *   every spilled value (canvas sp+60, frame sp+56, the spark cels sp+52,
- *   the pair's address sp+48, lift sp+44 in the native) sits one word
- *   off, and work takes sl where the native has r8.
- * - the flame loop rebuilds variant * 7 for each table read; the native
- *   keeps frame / 2's sign word and frame * 4 spilled (sp+28, sp+32).
- * - the hit loop's walkers (the target place sp+24, the actor offset
- *   sp+20, the spark offset sp+12 by 0xe00) and the kept table base.
- * Measured: the first draft 426; a block-scoped pointer for each spark
- *   loop and the speed's +127 folded into its first assignment: 316;
- *   work->particles in place of the ring pointer, frame declared first:
- *   320 (frame stays 124).
- * Resources 0xeb (BattleFx_SmallFlameSheet) and 0x148
- * (BattleFx_OrangePaletteB) need names in system/resource/directory.s
- * when this is adopted. */
+// Draft (tla-en): listing 552 instructions, draft 556, common 396, differ 316.
+// Effect kind 78, written from the listing on ☀️'s skeleton; its nearest ☀️
+// shapes are BattleFx_RunLightningPillars (0.49) and
+// BattleFx_RunFireSwirlCharge (0.67 by calls), neither a twin.
+// Written 2026-10-15 (lane N2).
+// Left:
+// - the native frame is 120 bytes, here 124: one more spill slot, so
+// every spilled value (canvas sp+60, frame sp+56, the spark cels sp+52,
+// the pair's address sp+48, lift sp+44 in the native) sits one word
+// off, and work takes sl where the native has r8.
+// - the flame loop rebuilds variant * 7 for each table read; the native
+// keeps frame / 2's sign word and frame * 4 spilled (sp+28, sp+32).
+// - the hit loop's walkers (the target place sp+24, the actor offset
+// sp+20, the spark offset sp+12 by 0xe00) and the kept table base.
+// Measured: the first draft 426; a block-scoped pointer for each spark
+// loop and the speed's +127 folded into its first assignment: 316;
+// work->particles in place of the ring pointer, frame declared first:
+// 320 (frame stays 124).
+// Resources 0xeb (BattleFx_SmallFlameSheet) and 0x148
+// (BattleFx_OrangePaletteB) need names in system/resource/directory.s
+// when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -39,13 +39,13 @@
 
 // Data_0819940c[variant]: seven bytes for each strength.
 enum {
-  RING_LIFT_STEP,   // pixels the ring rises each frame
-  RING_LIFT_MAX,    // and its highest
-  RING_FLAMES,      // flames in the ring
-  RING_SPACING,     // their spacing round it
-  RING_SPARKS,      // sparks at each target
-  RING_SHAKE,       // frames the screen shakes at the hit
-  RING_BLITTER      // which of the pair draws the flames
+  RING_LIFT_STEP, // pixels the ring rises each frame
+  RING_LIFT_MAX,  // and its highest
+  RING_FLAMES,    // flames in the ring
+  RING_SPACING,   // their spacing round it
+  RING_SPARKS,    // sparks at each target
+  RING_SHAKE,     // frames the screen shakes at the hit
+  RING_BLITTER    // which of the pair draws the flames
 };
 
 // The pixel half of a 16.16 value.
@@ -81,8 +81,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_081180e8(s32 phase);
 void Func_08118088(s32 actor, s32 motion);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);

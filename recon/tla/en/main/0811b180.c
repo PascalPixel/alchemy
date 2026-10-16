@@ -1,15 +1,15 @@
-/* Draft of Func_0811b180, The Broken Seal's Summon_LayoutPositions
- * (games/tbs/src/battle/battle.c): differ 8 of 134 (tla-en, 2026-10-15).
- * The Lost Age keys each actor by the enemy id at 0x14a, and nine enemies
- * stand forward at -50 where The Broken Seal names two. The spacing is
- * unsigned here: the native halves it with lsrs.
- *
- * Left: three order rows, each a load the native issues between the two
- * halves of a constant: actorIds[index] inside 0xff02 (twice) and the enemy
- * id inside 357. Here the constant is finished first, the residue the Djinn
- * drafts record. Tried: the test as (u16)(id + 0xff02) (8), as a shifted
- * u32 (83).
- */
+// Draft of Func_0811b180, The Broken Seal's Summon_LayoutPositions
+// (games/tbs/src/battle/battle.c): differ 8 of 134 (tla-en, 2026-10-15).
+// The Lost Age keys each actor by the enemy id at 0x14a, and nine enemies
+// stand forward at -50 where The Broken Seal names two. The spacing is
+// unsigned here: the native halves it with lsrs.
+
+// Left: three order rows, each a load the native issues between the two
+// halves of a constant: actorIds[index] inside 0xff02 (twice) and the enemy
+// id inside 357. Here the constant is finished first, the residue the Djinn
+// drafts record. Tried: the test as (u16)(id + 0xff02) (8), as a shifted
+// u32 (83).
+
 #include "types.h"
 #include "battle_unit.h"
 

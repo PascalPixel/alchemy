@@ -1,29 +1,29 @@
-/* Draft (tla-en): listing 513 instructions, draft 513, common 393, differ 240.
- * The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
- * Func_08181eb0, Func_08181ebc and Func_08181ec8 pass modes 0, 2 and 1).
- * Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
- * nearest ☀️ shape is BattleFx_RunLightningPillars (0.50), which is no twin.
- * The statements, frame (texture sp+40, the blitter pair sp+48, midpoint
- * sp+56) and the instruction count match.
- * Left:
- * - the spill slots of the blitter pair's address and of "spawned" are
- *   swapped (native: the pair's address at sp+16, spawned at sp+12), and
- *   every access to either is one row off; declaring spawned last changes
- *   nothing (the address is a pseudo made after the declarations).
- * - in the drop spawn loop the native keeps the speed in r7 and the angle
- *   in r5, here the other way round; &midpoint takes r5 there, r7 here.
- * - REG_BLDALPHA's two values each load their pool word before the
- *   register address's shift; here after it.
- * - small scheduling rows in the draw call's argument setup and the
- *   column's scale branches.
- * Measured: the first draft 271; the mode-1 test nested as its own if, so
- *   frame 1..23 compiles as one unsigned compare: 264; Trig_Sin(angle) *
- *   speed (the native copies speed and multiplies by the result): 258;
- *   speed's +32 folded into its first assignment: 240; speed and angle
- *   declared the other way round: no change.
- * Resources 0xc0 (BattleFx_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
- * the Djinn sheets 0x154, 0x150 and 0x152 need names in
- * system/resource/directory.s when this is adopted. */
+// Draft (tla-en): listing 513 instructions, draft 513, common 393, differ 240.
+// The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
+// Func_08181eb0, Func_08181ebc and Func_08181ec8 pass modes 0, 2 and 1).
+// Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
+// nearest ☀️ shape is BattleFx_RunLightningPillars (0.50), which is no twin.
+// The statements, frame (texture sp+40, the blitter pair sp+48, midpoint
+// sp+56) and the instruction count match.
+// Left:
+// - the spill slots of the blitter pair's address and of "spawned" are
+// swapped (native: the pair's address at sp+16, spawned at sp+12), and
+// every access to either is one row off; declaring spawned last changes
+// nothing (the address is a pseudo made after the declarations).
+// - in the drop spawn loop the native keeps the speed in r7 and the angle
+// in r5, here the other way round; &midpoint takes r5 there, r7 here.
+// - REG_BLDALPHA's two values each load their pool word before the
+// register address's shift; here after it.
+// - small scheduling rows in the draw call's argument setup and the
+// column's scale branches.
+// Measured: the first draft 271; the mode-1 test nested as its own if, so
+// frame 1..23 compiles as one unsigned compare: 264; Trig_Sin(angle) *
+// speed (the native copies speed and multiplies by the result): 258;
+// speed's +32 folded into its first assignment: 240; speed and angle
+// declared the other way round: no change.
+// Resources 0xc0 (BattleFx_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
+// the Djinn sheets 0x154, 0x150 and 0x152 need names in
+// system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -155,8 +155,8 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   spawned = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (mode == 0) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CrossTextureSheet,
-                               work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_CrossTextureSheet, work->sheet,
+                               1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
@@ -253,8 +253,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         y = drop->y >> 16;
         if (y > 120) {
           drop->velocityY = -drop->velocityY / 2;
-        } else if (drop->x >= 0 && (x = drop->x >> 16) <= 126 &&
-                   drop->y >= 0) {
+        } else if (drop->x >= 0 && (x = drop->x >> 16) <= 126 && drop->y >= 0) {
           s32 size = (drop->variant - 16) / 8;
 
           if (size < Data_0819966c[mode])

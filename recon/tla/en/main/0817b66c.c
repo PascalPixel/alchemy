@@ -1,34 +1,34 @@
-/* Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
- * Effect kind 76, written from the listing (☀️'s nearest shapes are
- * BattleFx_RunRisingBurst, 0.55, and BattleFx_RunParticleField; neither is
- * a twin). The shape matches; what is left is the arm9tdmi scheduling
- * leftover.
- * In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
- * s2614.c), so it loads from the pool before the register address as the
- * native does, and the frame-80 block's "drift" temporary (alchemy
- * permute's), which puts velocityX's store after velocityY's.
- * Left:
- * - the one-pass block's barrier depends on every earlier use of r10, so
- *   sched2 now prefers "add r1, r10" to the resource id's pool load before
- *   Resource_LoadAndDecompress (a one-pass block around or before that
- *   call only moves the swap). f18284c.c's empty asm instead keeps the
- *   start but counts four estimated bytes, and the halfword pool (range
- *   64) is then placed before the loop with a jump around it.
- * - frame's 0 is set between "mov r3, sp" and "adds r3, #12"; the native
- *   stores &texture at sp+8 first. Through a "source" local set before the
- *   loop the order is right but &texture takes r2 and the 0 r3.
- * - the frame-0 block's setup (y, i, the zero and step) is in another
- *   order; the size mask's pool load comes after the stack load of
- *   texture.size (the native loads the pool word first, as if the load
- *   after the primitive's unk14 store waited a cycle more); the step
- *   mask's pool load comes one row late.
- * The texture's size word is two byte fields written with masks: as u32
- *   bitfields the compiler stores bytes (differ 57).
- * alchemy permute (22 minutes over three runs): differ 16 at best.
- * 2026-10-15 (lane N2): rewritten with the work struct, named constants
- *   and comments; the same 326 instructions and differ 16.
- * Resource 0x139 (BattleFx_CrossedDaggersSheet) needs its name in
- *   system/resource/directory.s when this is adopted. */
+// Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
+// Effect kind 76, written from the listing (☀️'s nearest shapes are
+// BattleFx_RunRisingBurst, 0.55, and BattleFx_RunParticleField; neither is
+// a twin). The shape matches; what is left is the arm9tdmi scheduling
+// leftover.
+// In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
+// s2614.c), so it loads from the pool before the register address as the
+// native does, and the frame-80 block's "drift" temporary (alchemy
+// permute's), which puts velocityX's store after velocityY's.
+// Left:
+// - the one-pass block's barrier depends on every earlier use of r10, so
+// sched2 now prefers "add r1, r10" to the resource id's pool load before
+// Resource_LoadAndDecompress (a one-pass block around or before that
+// call only moves the swap). f18284c.c's empty asm instead keeps the
+// start but counts four estimated bytes, and the halfword pool (range
+// 64) is then placed before the loop with a jump around it.
+// - frame's 0 is set between "mov r3, sp" and "adds r3, #12"; the native
+// stores &texture at sp+8 first. Through a "source" local set before the
+// loop the order is right but &texture takes r2 and the 0 r3.
+// - the frame-0 block's setup (y, i, the zero and step) is in another
+// order; the size mask's pool load comes after the stack load of
+// texture.size (the native loads the pool word first, as if the load
+// after the primitive's unk14 store waited a cycle more); the step
+// mask's pool load comes one row late.
+// The texture's size word is two byte fields written with masks: as u32
+// bitfields the compiler stores bytes (differ 57).
+// alchemy permute (22 minutes over three runs): differ 16 at best.
+// 2026-10-15 (lane N2): rewritten with the work struct, named constants
+// and comments; the same 326 instructions and differ 16.
+// Resource 0x139 (BattleFx_CrossedDaggersSheet) needs its name in
+// system/resource/directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -36,7 +36,7 @@
 #include "types.h"
 
 #define DAGGER_FRAMES 96
-#define DAGGER_COUNT 8      // of the 32 steps set up, the first 8 are drawn
+#define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn
 #define DAGGER_FALL_FRAME 80 // the daggers turn and fall on the target
 #define DAGGER_LAST_HIT 90
 
@@ -78,8 +78,7 @@ u32 Random16(void);
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
-                   s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void *Runtime_BumpAllocateAlternatePool(s32 size);

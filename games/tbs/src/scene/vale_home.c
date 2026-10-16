@@ -1445,8 +1445,8 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(0x81d);
   Engine_GameFlagSet(0x87a);
 #else
-  Engine_GameFlagSet(0x844);
-  Engine_GameFlagSet(0x845);
+  Engine_GameFlagSet(FLAG_TRET_DEFEATED);
+  Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
   Engine_EventRequestExit(40);
 }

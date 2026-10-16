@@ -49,7 +49,6 @@ enum {
   FLAG_GATE_OPEN = 0x200,
   FLAG_SCOLDED_FOR_LATENESS = 0x201,
   FLAG_MCCOY_WAITING = 0x304, // McCoy is looking for the party
-  FLAG_KOLIMA_CURSE_LIFTED = 0x845,
   FLAG_GUARDS_LET_PARTY_IN = 0x84a,
   // Two later steps of McCoy's request; they change the guards' lines.
   FLAG_84E = 0x84e,

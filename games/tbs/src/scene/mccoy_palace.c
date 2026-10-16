@@ -187,7 +187,7 @@ static void McCoyPalace_ReadRewardKeeperThoughts(void) {
 
   if (Engine_GameFlagIsSet(0x202) != 0) {
     Engine_EventSetMessage(MsgBilibinNonethelessIfYourLuckSour);
-  } else if (Engine_GameFlagIsSet(0x845) == 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_EventSetMessage(MsgBilibinGoodTreasureIfGetTurned);
   } else {
     Engine_EventSetMessage(MsgBilibinWeReallyGivingOurTreasure);
@@ -393,7 +393,7 @@ s32 McCoyPalace_Initialize(void) {
     Engine_GameFlagClear(0x200);
   }
   // A first audience and a return to the entrance have different greetings.
-  if (Engine_GameFlagIsSet(0x84f) == 0 && Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(0x84f) == 0 && Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     if (gGameState.entrance == 29) {
       McCoyPalace_ReceiveKolimaRequest();
     } else if (gGameState.entrance == 9 && Engine_GameFlagIsSet(0x321) != 0) {
@@ -405,7 +405,7 @@ s32 McCoyPalace_Initialize(void) {
     } else {
       if (gGameState.entrance == 29) {
         if (Engine_GameFlagIsSet(0x85e) == 0) {
-          curseLifted = Engine_GameFlagIsSet(0x845);
+          curseLifted = Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
             McCoyPalace_ReceiveKolimaReward();
           }

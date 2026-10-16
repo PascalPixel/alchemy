@@ -25,6 +25,7 @@ STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
 enum HeapSlot {
   HEAP_SLOT_MENU_CONTROL = 6,
+  HEAP_SLOT_MAP = 8,
   HEAP_SLOT_BATTLE = 9,
   HEAP_SLOT_CAMERA = 12,
   HEAP_SLOT_WINDOW = 15,

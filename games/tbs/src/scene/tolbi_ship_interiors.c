@@ -1,4 +1,5 @@
 #include "script.h"
+#include "flags.h"
 // Below the decks of the ship across the Karagol Sea: the captain's cabin,
 // the passengers' hold and the rowing deck. Under sail the party chooses which
 // passenger rows at each open seat; flags 0x929 to 0x92b number the seat being
@@ -400,7 +401,7 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
     if (Engine_GameFlagIsSet(0x93e) != 0) {
       return (s32)gTolbiShipInteriors_StepScriptD;
     } else if (Engine_GameFlagIsSet(0x911) != 0) {
-      if (Engine_GameFlagIsSet(0x922) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (GameFlag_IsSet(0x8a0) != 0) {
           gTolbiShipInteriors_StepScriptC[1].talkFacing = 1;
         }
@@ -470,9 +471,8 @@ struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   return gTolbiShipInteriors_SceneTable04;
 }
 
-// Actor 10 in the captain's cabin. Once the warriors want to see the captain
-// (flag 0x922) he asks whether the party wants to too, and on yes the party
-// joins them in forcing the launch.
+// Once the warriors want to see the captain, actor 10 asks whether the party
+// wants to join them in forcing the launch.
 static void TolbiShipInteriors_TalkToCaptainsCabinActor10(void) {
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -480,7 +480,7 @@ static void TolbiShipInteriors_TalkToCaptainsCabinActor10(void) {
     Engine_EventSetMessage(MsgTolbiShipIfShipFromTolbiHad);
     Event_ShowMessage(10, 0);
   } else {
-    if (GameFlag_IsSet(0x922) != 0) {
+    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Engine_EventSetMessage(MsgTolbiShipNowWantSeeCaptainToo);
       Event_OpenMessage(10, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -509,8 +509,8 @@ static void TolbiShipInteriors_TalkToCaptainsCabinActor12(void) {
 
 // The captain, by the voyage's stage: too late to hire mercenaries, then his
 // bad luck at losing his lucky anchor, then uncertain what might happen, and
-// under sail the news of an injured oarsman. While the anchor is lost and flag
-// 0x924 is set, talking to him also sets the event work's halfword at 0x172.
+// under sail the news of an injured oarsman. After finding the Anchor Charm,
+// talking to him also sets the event work's unk172 request.
 static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x928) != 0) {
@@ -526,7 +526,7 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
   } else if (GameFlag_IsSet(0x921) != 0) {
     Engine_EventSetMessage(MsgTolbiShipBadLuckLosingMyLucky);
     Event_ShowMessage(8, 0);
-    if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0) {
+    if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
       gEventWork->unk172 = 1;
     }
   } else {
@@ -1282,10 +1282,10 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
   }
 }
 
-// Once the warriors have gone to the captain (flag 0x922): the three crewmen
+// Once the warriors have gone to the captain, the three crewmen
 // wonder what could have happened to the replacement ship. Sets flag 0x920.
 static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
-  if (Engine_GameFlagIsSet(0x922) == 0)
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
 
   Engine_EventBegin();
@@ -1319,7 +1319,7 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
 
 // Once the party has heard of the delay (flag 0x911): a passenger threatens to
 // go ashore if the ship doesn't sail, and actor 12 storms off past the party.
-// Sets flag 0x922.
+// Records that the warriors have left to seek the captain.
 static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 requestA;
   s32 requestB;
@@ -1439,7 +1439,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Object_RefreshSelectorById(12);
-    GameFlag_Set(0x922);
+    GameFlag_Set(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
     Engine_EventEnd();
   }
 }
@@ -2177,7 +2177,7 @@ static void SceneState_RunFlagGatedSetupCascade(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(0x911) != 0 && Engine_GameFlagIsSet(0x922) != 0) {
+  if (Engine_GameFlagIsSet(0x911) != 0 && Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_ACTORS_13_AND_14, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
   }
@@ -4153,7 +4153,7 @@ struct SceneEvent gTolbiShipInteriors_SceneTable04[] = {
 struct SceneEvent gTolbiShipInteriors_SceneTable05[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
+    { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingPassenger8) },
     { EVENT_TALK, 9, 0x925, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },

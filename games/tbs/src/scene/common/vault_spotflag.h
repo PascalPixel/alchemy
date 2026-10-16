@@ -1,22 +1,24 @@
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
+#include "flags.h"
 
-static void SceneState_SetFlagByActorPosition(void) {
-  struct FieldActor *p0 = Object_GetById(0);
-  s32 rx = p0->x.fixed;
+// Enable the Bone offer while the leader stands beside it.
+static void Vault_UpdateBoneProximityFlag(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  s32 fixedX = leader->x.fixed;
   s32 x;
   s32 z;
 
-  struct FieldActor *p1 = Object_GetById(0);
-  x = rx >> 20;
-  z = p1->z.fixed;
+  struct FieldActor *leaderAtZRead = Object_GetById(ACTOR_PARTY_LEADER);
+  x = fixedX >> 20;
+  z = leaderAtZRead->z.fixed;
   x -= 34;
   z >>= 20;
 
   if ((u32)x <= 1 && z > 40 && z <= 42) {
-    Engine_GameFlagSet(148 << 2);
+    Engine_GameFlagSet(FLAG_SCENE_TEMP_50);
   } else {
-    Engine_GameFlagClear(148 << 2);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_50);
   }
 }

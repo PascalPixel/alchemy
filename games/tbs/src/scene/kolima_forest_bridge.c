@@ -1,4 +1,5 @@
 #include "script.h"
+#include "flags.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -135,7 +136,7 @@ s32 Scene_Initialize(void) {
       FieldScene_RunBranchingFormationPresentation();
     }
   }
-  if (Engine_GameFlagIsSet(0x845) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ActorSetPosition(17, 0, 0);
     Engine_ActorSetPosition(18, 0, 0);
     Engine_ActorSetPosition(19, 0, 0);

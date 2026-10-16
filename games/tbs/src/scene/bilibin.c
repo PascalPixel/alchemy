@@ -3,6 +3,7 @@
 // and Jill's reward for helping the stranded villager.
 
 #include "game_state.h"
+#include "flags.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/bilibin.h"
@@ -313,7 +314,7 @@ static void Bilibin_ReceiveJillsHardNut(void) {
   struct FieldActor *nearbyVillager;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  if (GameFlag_IsSet(0x845) == 0 || GameFlag_IsSet(0x848) == 0)
+  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0 || GameFlag_IsSet(0x848) == 0)
     return;
 
   Engine_EventBegin();
@@ -424,7 +425,7 @@ static void Bilibin_RestoreVillageActors(void) {
   struct FieldActor *actor;
   s16 entrance;
 
-  if (GameFlag_IsSet(0x845) != 0) {
+  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ActorSetPosition(9, 0, 0);
     Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(15, FACING_SOUTH + FACING_STEP, 0);
@@ -510,7 +511,7 @@ static void Bilibin_RestoreRiverActors(void) {
   rescueTarget = Object_GetById(11);
   actor = Actor_Get(8);
   Engine_ActorSetSpriteFlags(actor, 0);
-  populationState = GameFlag_IsSet(0x845);
+  populationState = GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
     // Hide the old actor arrangement and restore the crossing's map cells.
     Actor_SetPosition(9, 0, 0);
@@ -879,47 +880,47 @@ struct SceneEvent gBilibinEvents1[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AnimateExitCells) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_ExamineTreeResemblingMan) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutTreeTransformation) },
-    { EVENT_TALK, 10, 0x845, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
+    { EVENT_TALK, 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
-    { EVENT_TALK, 11, 0x845, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
+    { EVENT_TALK, 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinIfYoureTalkingAboutTheTravelers) },
-    { EVENT_TALK, 12, 0x845, EVENT_SCRIPT(Bilibin_AskAboutEntranceTree) },
+    { EVENT_TALK, 12, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Bilibin_AskAboutEntranceTree) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinYoureWonderingAboutTheTreeNear) },
-    { EVENT_TALK, 13, 0x845, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
+    { EVENT_TALK, 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinISawLordMccoyTheChief) },
-    { EVENT_TALK, 14, 0x845, EVENT_SCRIPT(Bilibin_AskAboutSoutheastRoute) },
+    { EVENT_TALK, 14, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Bilibin_AskAboutSoutheastRoute) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
-    { EVENT_TALK, 15, 0x845, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
+    { EVENT_TALK, 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
-    { EVENT_TALK, 16, 0x845, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
+    { EVENT_TALK, 16, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutCurseBreakers) },
-    { EVENT_TALK, 17, 0x845, MSGNO(MsgBilibinIsItTrueThatAMountain) },
+    { EVENT_TALK, 17, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIsItTrueThatAMountain) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
-    { EVENT_TALK, 18, 0x845, MSGNO(MsgBilibinTheresATowerAtTheTip) },
+    { EVENT_TALK, 18, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheresATowerAtTheTip) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_AskAboutImil) },
-    { EVENT_TALK, 19, 0x845, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
+    { EVENT_TALK, 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheEruptionOnTheOtherSide) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgBilibinINeverWantToBeTurned) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x845, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinNotManyLumberjacksAreWillingTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x845, MSGNO(MsgBilibinYouMustBeMadItsAlmost) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouMustBeMadItsAlmost) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinOneOfTheTwoPeopleThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x845, MSGNO(MsgBilibinWeEndedUpLikeThisBecause) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeEndedUpLikeThisBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinThatGuyMightTurnIntoA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x845, MSGNO(MsgBilibinEveryoneGetsWorriedWhenTownLeaders) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEveryoneGetsWorriedWhenTownLeaders) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoySeemsToBeHaving) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x845, MSGNO(MsgBilibinWhereDidTheseKidsComeFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWhereDidTheseKidsComeFrom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinApparentlyJustAboutAnyoneCouldJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x845, MSGNO(MsgBilibinNoOneWouldDareGoAfter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinNoOneWouldDareGoAfter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgBilibinTheGangOfThreeHaTheyre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x845, MSGNO(MsgBilibinHeBeggedForHelpAsHe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeBeggedForHelpAsHe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinImSureLordMccoyWillGive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x845, MSGNO(MsgBilibinIWantToSeeThatPretty) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWantToSeeThatPretty) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyMustBeReportingYourDeeds) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x845, MSGNO(MsgBilibinOnlyGreatAdeptsCanEnterThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinOnlyGreatAdeptsCanEnterThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x845, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageBlockCells) },
     { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_PushFacedBlock) },

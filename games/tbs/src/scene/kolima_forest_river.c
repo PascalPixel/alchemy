@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "flags.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_river.h"
@@ -84,7 +85,7 @@ s32 KolimaForestRiver_PrepareWindowTransition(void) {
   FieldScene_RedrawActorFootprint(8);
   FieldScene_RedrawActorFootprint(9);
 
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     SceneEffect_AdjustPaletteColors(6);
   }
   return 0;

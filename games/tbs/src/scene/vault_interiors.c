@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "flags.h"
 #include "animspr.h"
 #include "version.h"
 #include "scene_ids.h"
@@ -556,7 +557,7 @@ static void VaultInteriors_ReceiveWaterOfLife(void) {
 static void VaultInteriors_OfferBone(void) {
   Engine_EventBegin();
   VaultInteriors_FaceEachOtherAndWait(18, 0, 2);
-  if (GameFlag_IsSet(0x85b) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
     Event_OpenMessage(18, 0);
   } else {
@@ -577,7 +578,7 @@ static void VaultInteriors_OfferBone(void) {
     } else {
       Engine_ItemShowFound(ITEM_BONE, 3);
       Engine_PartyGiveItem(ITEM_BONE, 0);
-      GameFlag_Set(0x85b);
+      GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
     gEventWork->message++;
@@ -643,7 +644,7 @@ static void VaultInteriors_ReadBoneOwnersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x855) == 0) {
     Engine_EventSetMessage(MsgVaultMasterHisWifeBlindedBy);
-  } else if (Engine_GameFlagIsSet(0x85b) == 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
     Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
@@ -1245,7 +1246,7 @@ static void VaultInteriors_DiscussSuspiciousGuests(void) {
 // Enable the chase flags and start the movement callback.
 static void VaultInteriors_BeginCorneringSuspects(void) {
   Engine_GameFlagSet(0x107);
-  Engine_GameFlagSet(0x250);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_50);
   VaultInteriors_StartActorStops();
 }
 
@@ -1309,7 +1310,7 @@ static void VaultInteriors_ReadCorneredSuspectsMinds(void) {
   Engine_EventBegin();
   Scheduler_RemoveCallback(VaultInteriors_UpdateActorStops);
   GameFlag_Clear(0x107);
-  GameFlag_Clear(0x250);
+  GameFlag_Clear(FLAG_SCENE_TEMP_50);
   Engine_ActorSetAnimation(24, 1);
   Engine_ActorSetAnimation(25, 1);
   Engine_ActorSetAnimation(IVAN, 1);
@@ -1599,7 +1600,7 @@ s32 VaultInteriors_Initialize(void) {
       Actor_FaceDirection(18, 0x4000, 0);
       OverlayObject_ConfigureObject22WithResource17(231, PIXELS(568),
                                                     PIXELS(16), PIXELS(672));
-      Task_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
+      Task_AddCallback(Vault_UpdateBoneProximityFlag, 0xc80);
     } else if (Engine_GameFlagIsSet(0x853) != 0) {
       Engine_ActorSetPosition(18, 0, 0);
     }
@@ -3308,7 +3309,7 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { EVENT_RAISED, 250, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_RefuseToLeaveSearch) },
     { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_EnterThroughExit15) },
     { 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_JumpAcrossRoofGap) },
-    { EVENT_TALK, 2, IF_FLAG_SET(0x250), 0 },
+    { EVENT_TALK, 2, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
     { EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MeetIvan) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkAboutRocks) },
@@ -3329,10 +3330,10 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToInnkeeper) },
-    { EVENT_TALK, 24, IF_FLAG_SET(0x250), 0 },
-    { EVENT_TALK, 25, IF_FLAG_SET(0x250), 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, IF_FLAG_SET(0x250), 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, IF_FLAG_SET(0x250), 0 },
+    { EVENT_TALK, 24, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
+    { EVENT_TALK, 25, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
     { EVENT_TALK, 24, 0x853, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
     { EVENT_TALK, 25, 0x853, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveFirstSuspectAside) },
@@ -3398,7 +3399,7 @@ struct SceneEvent gVaultInteriorsEventsFlag855[] = {
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_ReceiveWaterOfLife) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
-    { EVENT_TALK, 18, 0x250, EVENT_SCRIPT(VaultInteriors_OfferBone) },
+    { EVENT_TALK, 18, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(VaultInteriors_OfferBone) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToArmorShopkeeper) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_TalkToItemShopkeeper) },

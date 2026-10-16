@@ -1,5 +1,6 @@
 
 #include "game_state.h"
+#include "flags.h"
 #include "unit/scene/kolima_interiors.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -57,7 +58,7 @@ u8 *SceneData_GetSecondaryTable(void) {
 u8 *SceneData_GetPreparedRecords(void) {
   struct ScenePlacement *buf;
 
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     SceneData_InitRecordTable(
         (struct Resource390TableEntry *)gEntryLayout_Records);
   }
@@ -141,7 +142,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void) {
 
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     id = 8;
     do {
       struct FieldActor *record = Object_GetById(id);
@@ -262,36 +263,36 @@ struct SceneEvent gEntryLayout_FourthTable[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
-    { EVENT_TALK, 8, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
-    { EVENT_TALK, 9, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
-    { EVENT_TALK, 10, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
-    { EVENT_TALK, 11, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
-    { EVENT_TALK, 12, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
-    { EVENT_TALK, 13, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
-    { EVENT_TALK, 14, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
-    { EVENT_TALK, 15, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
-    { EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV16_TALK) },
-    { EVENT_TALK, 17, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV17_TALK) },
-    { EVENT_TALK, 18, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV18_TALK) },
-    { EVENT_TALK, 19, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV19_TALK) },
-    { EVENT_TALK, 20, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
-    { EVENT_TALK, 21, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
-    { EVENT_TALK, 22, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsTheVillageWasReallyBoomingWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, IF_FLAG_SET(0x845), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
+    { EVENT_TALK, 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
+    { EVENT_TALK, 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
+    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
+    { EVENT_TALK, 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
+    { EVENT_TALK, 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
+    { EVENT_TALK, 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
+    { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
+    { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
+    { EVENT_TALK, 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV16_TALK) },
+    { EVENT_TALK, 17, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV17_TALK) },
+    { EVENT_TALK, 18, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV18_TALK) },
+    { EVENT_TALK, 19, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV19_TALK) },
+    { EVENT_TALK, 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
+    { EVENT_TALK, 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
+    { EVENT_TALK, 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsTheVillageWasReallyBoomingWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatAreTheyStaringAtThey) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIDreamtThatAMightyWarrior) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatWillHappenToMyTreasure) },

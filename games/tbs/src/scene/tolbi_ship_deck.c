@@ -1,4 +1,5 @@
 #include "script.h"
+#include "flags.h"
 #include "version.h"
 // The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
 // at the Kalay dock while the replacement ship fails to come, setting sail with
@@ -556,7 +557,7 @@ u8 *TolbiShipDeck_GetPlacements(void) {
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[13].talkFacing) = underSail;
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[17].talkFacing) = 2;
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[18].talkFacing) = 2;
-    } else if (Engine_GameFlagIsSet(0x922)) {
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[17].talkFacing) = 1;
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[18].talkFacing) = 1;
     }
@@ -576,7 +577,7 @@ u8 *TolbiShipDeck_GetEvents(void) {
 }
 
 // A passenger at Kalay. What he says follows the delay: impatient at first,
-// alarmed once the warriors storm off to the captain (flag 0x922), relieved
+// alarmed once the warriors storm off to the captain, relieved
 // once the party has agreed to protect the ship (flag 0x925). While alarmed he
 // paces at random intervals.
 static void TolbiShipDeck_TalkToActor21(void) {
@@ -589,7 +590,7 @@ static void TolbiShipDeck_TalkToActor21(void) {
     Engine_EventSetMessage(MsgTolbiShipNowWeHaveProtectShip);
     Event_ShowMessage(21, 0);
   } else {
-    if (GameFlag_IsSet(0x922) != 0) {
+    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Engine_ActorRunRepeatedMotion(21, 2);
       Engine_EventSetMessage(MsgTolbiShipSomebodyStopThem);
       Event_ShowMessage(21, 0);
@@ -619,7 +620,7 @@ static void TolbiShipDeck_TalkToActor24(void) {
     Engine_EventSetMessage(MsgTolbiShipHaveMakeThemPromiseHelp);
     Event_ShowMessage(24, 0);
   } else {
-    if (GameFlag_IsSet(0x922) != 0) {
+    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Engine_ActorRunRepeatedMotion(24, 2);
       Engine_EventSetMessage(MsgTolbiShipTheyCantPlanningMutiny);
       Event_ShowMessage(24, 0);
@@ -827,12 +828,12 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 
 // Approaching from the east side of the door: actor 20 comes out, protests "I
 // didn't do anything..." and slips away round the party to the bow. Runs until
-// flag 0x923 is set.
+// the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
   if (GameFlag_IsSet(0x911) != 0) {
-    if (GameFlag_IsSet(0x922) == 0) {
+    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
       TolbiShipDeck_ConfrontCrewman();
@@ -877,7 +878,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
 
   if (GameFlag_IsSet(0x911) != 0) {
-    if (GameFlag_IsSet(0x922) == 0) {
+    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
       TolbiShipDeck_ConfrontCrewman();
@@ -918,7 +919,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 }
 
 // The start both of those share: the camera pans to the door, which opens, and
-// actor 20 steps out and denies everything. Sets flag 0x923.
+// actor 20 steps out and denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
   Camera_SetSpeed(0x19999, 0x3333);
   Camera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
@@ -939,7 +940,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   Engine_EventSetMessage(MsgTolbiShipDidntDoAnything);
   Event_ShowMessageAndWait(20, 0, 20);
   Engine_ActorShowEmote(20, 0x102, 0);
-  GameFlag_Set(0x923);
+  GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED);
 }
 
 // Sets up the scene on entry: turns off flag 0x11c, sets the map's transition,
@@ -1074,7 +1075,7 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Engine_ActorSetPosition(23, 0, 0);
     Engine_ActorSetPosition(20, 0, 0);
   }
-  flag = Engine_GameFlagIsSet(0x922);
+  flag = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
   if (flag != 0) {
     Engine_ActorSetPosition(21, PIXELS(264), PIXELS(702));
     Object_GetById(21)->facing = 0x5000;
@@ -1087,7 +1088,7 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Actor_SetActionScript(24, gTolbiShipDeck_RandomActorActions);
     Engine_ActorSetPosition(22, 0, 0);
   } else {
-    if (Engine_GameFlagIsSet(0x923) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED) != 0) {
       Actor_SetPosition(20, PIXELS(246), PIXELS(512));
       Object_GetById(20)->facing = flag;
     }
@@ -3129,41 +3130,41 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
 #endif
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TALK, 20, 0x923, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
+    { EVENT_TALK, 20, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
     { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckOhAtTheRiskOfSounding) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x923, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIHidTheAnchorCharmNo) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWeApologizeForAnyTroubleThat) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor21) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor24) },
-    { EVENT_TALK, 25, 0x922, MSGNO(MsgTolbiShipDeckIWonderWhatsGoingOnWeve) },
+    { EVENT_TALK, 25, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckIWonderWhatsGoingOnWeve) },
     { EVENT_TALK, 25, 0x925, MSGNO(MsgTolbiShipDeckThoseWarriorsGotTiredOfWaiting) },
     { EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIfWeJustPromiseToHelp) },
-    { EVENT_TALK, 26, 0x922, MSGNO(MsgTolbiShipDeckIWonderIfImTheOnly) },
+    { EVENT_TALK, 26, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckIWonderIfImTheOnly) },
     { EVENT_TALK, 26, 0x925, MSGNO(MsgTolbiShipDeckIWonderIfThoseTwoAre) },
     { EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIllAgreeToAnythingEvenRowing) },
-    { EVENT_TALK, 27, 0x922, MSGNO(MsgTolbiShipDeckTheKaragolIsLikeAHumongous) },
+    { EVENT_TALK, 27, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTheKaragolIsLikeAHumongous) },
     { EVENT_TALK, 27, 0x925, MSGNO(MsgTolbiShipDeckHaHahThoseMercenariesAreGoing) },
     { EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThatSeaDogKajaIsA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThereIsNothingToFearAs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x922, MSGNO(MsgTolbiShipDeckWhenAreWeGoingWhenAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckWhenAreWeGoingWhenAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x925, MSGNO(MsgTolbiShipDeckUsingForceToLaunchTheShip) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckAreYouSeriousAboutSettingSail) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x922, MSGNO(MsgTolbiShipDeckHmmmThisIsSoFrustratingWhy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckHmmmThisIsSoFrustratingWhy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x925, MSGNO(MsgTolbiShipDeckTheyWereJustAboutToLaunch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckItProbablyWontMakeAnyDifference) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x922, MSGNO(MsgTolbiShipDeckTravelingByShipIsFasterThan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTravelingByShipIsFasterThan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x925, MSGNO(MsgTolbiShipDeckThoseThugsAreTooImpatientTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUltimatelyTheyreJustBeingThreatenedInto) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x922, MSGNO(MsgTolbiShipDeckMostOfThePeopleGoingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckMostOfThePeopleGoingTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x925, MSGNO(MsgTolbiShipDeckHeeHeeIfWeCanGet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckBesidesRowingIsAMansJob) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x922, MSGNO(MsgTolbiShipDeckTheKaragolSeaIsPrettyFoggy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTheKaragolSeaIsPrettyFoggy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x925, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUsHelpWithTheRowingGet) },
     { EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(TolbiShipDeck_WatchCrewDecideToSail) },
-    { EVENT_TOUCH, 11, 0x923, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromEast) },
-    { EVENT_TOUCH, 12, 0x923, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromWest) },
+    { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromEast) },
+    { EVENT_TOUCH, 12, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromWest) },
     { SCENE_EVENTS_END },
 };
 

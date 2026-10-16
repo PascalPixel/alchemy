@@ -2,6 +2,7 @@
 // The event table keeps the two sets of conversations in their native order.
 
 #include "unit/scene/bilibin_interiors.h"
+#include "flags.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "battle.h"
@@ -70,7 +71,7 @@ static void BilibinInteriors_TalkToWeaponShopkeeper(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_WEAPON_SHOP, BILIBIN_WEAPON_SHOPKEEPER);
   } else {
-    if (Engine_GameFlagIsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_EventSetMessage(MsgBilibinThereWasAbleHealerIn);
     } else {
       Engine_EventSetMessage(MsgBilibinOurWeaponsBestCanFind);
@@ -91,7 +92,7 @@ static void BilibinInteriors_TalkToItemShopkeeper(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_ITEM_SHOP, BILIBIN_ITEM_SHOPKEEPER);
   } else {
-    if (Engine_GameFlagIsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_EventSetMessage(MsgBilibinMustUsedTypesDangerBeing);
     } else {
       Engine_EventSetMessage(MsgBilibinTurnedOutWarriorsHiredBy);
@@ -116,7 +117,7 @@ static void BilibinInteriors_TalkToArmorShopkeeper(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(BILIBIN_ARMOR_SHOP, BILIBIN_ARMOR_SHOPKEEPER);
   } else {
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_EventSetMessage(MsgBilibinHaveEverHeardOcean);
       Actor_FaceActor(BILIBIN_ARMOR_SHOPKEEPER, ACTOR_PARTY_LEADER, 0);
       Engine_EventWait(10);
@@ -196,7 +197,7 @@ static void BilibinInteriors_TalkToInnkeeper(void) {
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Engine_InnOpen(BILIBIN_INN, BILIBIN_INNKEEPER);
-  } else if (Engine_GameFlagIsSet(0x845) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_EventSetMessage(MsgBilibinWasntCurseInKolimaHorrifying);
     Engine_EventAskYesNo(BILIBIN_INNKEEPER, 0);
   } else {
@@ -371,29 +372,29 @@ struct SceneEvent gBilibinInteriors_TertiaryTable[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_TALK, 8, 0x845, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
-    { EVENT_TALK, 9, 0x845, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
-    { EVENT_TALK, 10, 0x845, MSGNO(MsgBilibinTheSnowIsAlreadyPilingUp) },
-    { EVENT_TALK, 11, 0x845, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
-    { EVENT_TALK, 12, 0x845, MSGNO(MsgBilibinHowArePeopleDoingInKolima) },
-    { EVENT_TALK, 13, 0x845, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
-    { EVENT_TALK, 14, 0x845, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
-    { EVENT_TALK, 15, 0x845, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
-    { EVENT_TALK, 16, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToWeaponShopkeeper) },
-    { EVENT_TALK, 17, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToArmorShopkeeper) },
-    { EVENT_TALK, 18, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToItemShopkeeper) },
-    { EVENT_TALK, 19, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToInnkeeper) },
-    { EVENT_TALK, 20, 0x845, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
-    { EVENT_TALK, 21, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToWorriedChef) },
-    { EVENT_TALK, 22, 0x845, MSGNO(MsgBilibinHeyMisterHeadChefAreYou) },
-    { EVENT_TALK, 23, 0x845, MSGNO(MsgBilibinStartCookingAlready) },
-    { EVENT_TALK, 24, 0x845, EVENT_SCRIPT(BilibinInteriors_TalkToHungryDiner) },
-    { EVENT_TALK, 25, 0x845, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
-    { EVENT_TALK, 26, 0x845, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
-    { EVENT_TALK, 27, 0x845, EVENT_SCRIPT(BilibinInteriors_AskAboutTreeSpirit) },
-    { EVENT_TALK, 28, 0x845, MSGNO(MsgBilibinICantWaitToSeeTodays) },
-    { EVENT_TALK, 29, 0x845, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
-    { EVENT_TALK, 30, 0x845, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
+    { EVENT_TALK, 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
+    { EVENT_TALK, 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
+    { EVENT_TALK, 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheSnowIsAlreadyPilingUp) },
+    { EVENT_TALK, 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
+    { EVENT_TALK, 12, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHowArePeopleDoingInKolima) },
+    { EVENT_TALK, 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
+    { EVENT_TALK, 14, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
+    { EVENT_TALK, 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
+    { EVENT_TALK, 16, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, 17, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToArmorShopkeeper) },
+    { EVENT_TALK, 18, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToItemShopkeeper) },
+    { EVENT_TALK, 19, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToInnkeeper) },
+    { EVENT_TALK, 20, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
+    { EVENT_TALK, 21, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToWorriedChef) },
+    { EVENT_TALK, 22, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeyMisterHeadChefAreYou) },
+    { EVENT_TALK, 23, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinStartCookingAlready) },
+    { EVENT_TALK, 24, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_TalkToHungryDiner) },
+    { EVENT_TALK, 25, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
+    { EVENT_TALK, 26, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
+    { EVENT_TALK, 27, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_AskAboutTreeSpirit) },
+    { EVENT_TALK, 28, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
+    { EVENT_TALK, 29, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
+    { EVENT_TALK, 30, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinInteriors_AskAboutHolyTree) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
@@ -417,29 +418,29 @@ struct SceneEvent gBilibinInteriors_TertiaryTable[] = {
     { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
     { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
     { EVENT_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x845, EVENT_SCRIPT(BilibinInteriors_ReadImilAdmirerMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x845, MSGNO(MsgBilibinItMustBeDifficultToLive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x845, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x845, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x845, MSGNO(MsgBilibinCouldTheWaterOfHermesSave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x845, MSGNO(MsgBilibinTheWaterOfHermesVanishedLong) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x845, MSGNO(MsgBilibinTheWorldWillNeverSeeSuch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x845, MSGNO(MsgBilibinIWishICouldSeeAnother) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x845, MSGNO(MsgBilibinOnlySomeoneReallyBraveWouldGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x845, MSGNO(MsgBilibinIDontBelieveInCursesFrom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x845, MSGNO(MsgBilibinAnyTravelersHeadingEastAreStuck) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x845, MSGNO(MsgBilibinFatherMotherIHopeTheyreAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x845, MSGNO(MsgBilibinShouldIJustForgetThatIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x845, MSGNO(MsgBilibinIveHadAllTheCustomerComplaints) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x845, MSGNO(MsgBilibinArghhhThatsItIJustWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x845, MSGNO(MsgBilibinICameToBilibinHopingTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x845, MSGNO(MsgBilibinISeeWhyTheyCallThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x845, MSGNO(MsgBilibinIDontCareWhoDoesIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0x845, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, 0x845, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, 0x845, MSGNO(MsgBilibinItHasBeenSaidThatA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(BilibinInteriors_ReadImilAdmirerMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinCouldTheWaterOfHermesSave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheWaterOfHermesVanishedLong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheWorldWillNeverSeeSuch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWishICouldSeeAnother) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinOnlySomeoneReallyBraveWouldGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontBelieveInCursesFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAnyTravelersHeadingEastAreStuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinFatherMotherIHopeTheyreAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinShouldIJustForgetThatIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHadAllTheCustomerComplaints) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinArghhhThatsItIJustWant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICameToBilibinHopingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinISeeWhyTheyCallThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontCareWhoDoesIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItHasBeenSaidThatA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderIfThereAreStill) },

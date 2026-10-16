@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "flags.h"
 #include "game_state.h"
 #include "unit/scene/sanctum.h"
 #include "unit/object/object.h"
@@ -1917,7 +1918,7 @@ static void Sanctum_TalkAboutCurse(void) {
   }
 
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(0x845) != 0)
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
     Engine_EventSetMessage(MsgSanctumCurseMayOverButWe);
   else
     Engine_EventSetMessage(MsgSanctumAmStartingFeelOnlyBeginning);
@@ -2217,9 +2218,9 @@ struct SceneEvent gSanctum_SceneTableG[] = {
 
 struct SceneEvent gSanctum_SceneTableH[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_TalkAboutCurse) },
-    { EVENT_TALK, 9, 0x845, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgSanctumWillITurnIntoATree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
+    { EVENT_TALK, 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },

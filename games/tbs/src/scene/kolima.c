@@ -1,4 +1,5 @@
 #include "script.h"
+#include "flags.h"
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -139,7 +140,7 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Kolima1) {
-    if (Engine_GameFlagIsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaPlacements1);
     }
     return gKolimaPlacements1;
@@ -338,7 +339,7 @@ s32 Kolima_Initialize(void) {
   Actor_SetActionScript(25, table);
   Actor_SetActionScript(26, table);
 
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     for (actor = 8; actor <= 16; actor++) {
       Engine_ActorSetSpriteFlags(Object_GetById(actor), 0);
     }
@@ -1399,7 +1400,7 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 
 // Restore the bridge's villagers and collision after its collapse.
 static void Kolima_RestoreBridgeState(void) {
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_ActorSetPosition(8, 0, 0);
     {
       Map_CopyCellAttributes(9, 17, 5, 1, 9, 18);
@@ -1607,13 +1608,13 @@ struct ScenePlacement gKolimaPlacements1[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xdc, 0x843, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, ACTOR_STAND,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x11d, 0x845, ACTOR_STAND,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, ACTOR_STAND,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, ACTOR_STAND,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x5a, 0x31, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1621,15 +1622,15 @@ struct ScenePlacement gKolimaPlacements1[] = {
 };
 
 struct ScenePlacement gKolima_EntryScript[] = {
-    { 0x11d, 0x845, 7,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x11d, 0x845, 7,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, 7,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, 7,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, 0x845, 7,
+    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
@@ -1652,25 +1653,25 @@ struct SceneEvent gKolimaEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { EVENT_TALK, 8, IF_FLAG_SET(0x845), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
-    { EVENT_TALK, 9, IF_FLAG_SET(0x845), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
-    { EVENT_TALK, 10, IF_FLAG_SET(0x845), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
-    { EVENT_TALK, 11, IF_FLAG_SET(0x845), MSGNO(MsgKolimaITurnedIntoATreeRight) },
-    { EVENT_TALK, 12, IF_FLAG_SET(0x845), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
-    { EVENT_TALK, 13, IF_FLAG_SET(0x845), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
-    { EVENT_TALK, 14, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIDidntMindBeingATree) },
-    { EVENT_TALK, 15, IF_FLAG_SET(0x845), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
-    { EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(Kolima_TalkToHealer) },
+    { EVENT_TALK, 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
+    { EVENT_TALK, 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
+    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
+    { EVENT_TALK, 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
+    { EVENT_TALK, 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
+    { EVENT_TALK, 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
+    { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
+    { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
+    { EVENT_TALK, 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
     { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_RecruitDjinni) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x845), MSGNO(MsgKolimaForAWhileIThoughtId) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x845), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x845), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x845), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x845), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKolimaHowCouldAnyoneTurnAGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKolimaThisIsADreamItHas) },

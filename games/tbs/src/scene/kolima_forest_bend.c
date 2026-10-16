@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "flags.h"
 #include "unit/import.h"
 #include "unit/scene/kolima_forest_bend.h"
 #include "unit/scene/common/kolima_palette.h"
@@ -364,7 +365,7 @@ s32 KolimaForestBend_SetupBoard(void) {
   actor->scaleX = 0xc000;
   actor->scaleY = 0xc000;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (Engine_GameFlagIsSet(0x845) == 0)
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     SceneEffect_AdjustPaletteColors(4);
   return 0;
 }

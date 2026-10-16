@@ -1,4 +1,5 @@
 #include "battle_effect_runtime.h"
+#include "flags.h"
 #include "version.h"
 #include "global_cells.h"
 #include "unit/import.h"
@@ -68,7 +69,7 @@ s32 FieldScene_SetupEntryActors8To11(void) {
   FieldScene_RedrawActorFootprint(8);
   FieldScene_RedrawActorFootprint(9);
   FieldScene_RedrawActorFootprint(10);
-  if (Engine_GameFlagIsSet(0x845) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     SceneEffect_AdjustPaletteColors(11);
   }
   return 0;

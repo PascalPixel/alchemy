@@ -5,6 +5,8 @@ enum ItemId {
   ITEM_NUT = 0xb5,
   ITEM_VIAL = 0xb6,
   ITEM_POTION = 0xb7,
+  ITEM_HERMES_WATER = 0xb8,
+  ITEM_EMPTY_BOTTLE = 0xb9,
   ITEM_PSY_CRYSTAL = 0xba,
   ITEM_ANTIDOTE = 0xbb,
   ITEM_ELIXIR = 0xbc,
@@ -19,6 +21,7 @@ enum ItemId {
   ITEM_GAME_TICKET = 0xe4,
   ITEM_LUCKY_MEDAL = 0xe5,
   ITEM_BONE = 0xe7,
+  ITEM_ANCHOR_CHARM = 0xe8,
   ITEM_CELL_KEY = 0xea,
   ITEM_BLACK_ORB = 0xf2
 };

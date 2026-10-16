@@ -3,19 +3,20 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
-u8 *KolimaForestTree_GetEntrances(void);
-u8 *KolimaForestTree_GetRegions(void);
-u8 *KolimaForestTree_GetExits(void);
-u8 *KolimaForestTree_GetPlacements(void);
-u8 *KolimaForestTree_GetEvents(void);
-s32 KolimaForestTree_PrepareActors(void);
-extern s32 gSceneAction_ActorOneEntry[];
-extern s32 gSceneAction_ActorTwoEntry[];
-extern s32 gSceneAction_ActorThreeEntry[];
-extern s32 gSceneAction_GroupFinish[];
+const struct SceneEntrance *KolimaForestTree_GetEntrances(void);
+const struct SceneRegion *KolimaForestTree_GetRegions(void);
+const u32 *KolimaForestTree_GetExits(void);
+const struct ScenePlacement *KolimaForestTree_GetPlacements(void);
+const struct SceneEvent *KolimaForestTree_GetEvents(void);
+s32 KolimaForestTree_Initialize(void);
+extern s32 gKolimaForestTree_GaretApproachActions[];
+extern s32 gKolimaForestTree_IvanApproachActions[];
+extern s32 gKolimaForestTree_MiaApproachActions[];
+extern s32 gKolimaForestTree_RejoinPartyActions[];
 extern struct SceneEntrance gKolimaForestTreeEntrances[];
-extern s16 gKolimaForestTreeRegions[];
+extern struct SceneRegion gKolimaForestTreeRegions[];
 extern u32 gKolimaForestTreeExits[];
 extern struct ScenePlacement gKolimaForestTreePlacements[];
 extern struct SceneEvent gKolimaForestTreeEvents[];

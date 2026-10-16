@@ -1,4 +1,5 @@
 #include "vram_tab.h"
+#include "item_ids.h"
 #include "window.h"
 #include "unit/battle/battle.h"
 #include "unit/object/object.h"
@@ -5159,8 +5160,6 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags) {
 #define ITEM_USE_MAY_BREAK 2 // breaks one time in eight
 #define ITEM_USE_EMPTIES 4   // Hermes' Water leaves an Empty Bottle
 
-#define ITEM_HERMES_WATER 0xb8
-#define ITEM_EMPTY_BOTTLE 0xb9
 
 // Inventory_RemoveFar's result when the last one left its slot, and the
 // slots after it moved up.

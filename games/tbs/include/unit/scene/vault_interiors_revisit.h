@@ -4,15 +4,15 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetPreparedActors(void);
-u8 *SceneData_GetEffectTable(void);
-s32 FieldScene_InitSceneStateByStep(void);
-extern struct SceneEntrance gPlacement_Scripts[];
-extern u32 gPlacement_Messages[];
-extern struct ScenePlacement gPlacement_Actors[];
-extern struct SceneEvent gPlacement_Effects[];
+const struct SceneEntrance *VaultInteriorsRevisit_GetEntrances(void);
+const struct SceneRegion *VaultInteriorsRevisit_GetRegions(void);
+const u32 *VaultInteriorsRevisit_GetExits(void);
+const struct ScenePlacement *VaultInteriorsRevisit_GetPlacements(void);
+const struct SceneEvent *VaultInteriorsRevisit_GetEvents(void);
+s32 VaultInteriorsRevisit_Initialize(void);
+extern struct SceneEntrance gVaultInteriorsRevisit_Entrances[];
+extern u32 gVaultInteriorsRevisit_Exits[];
+extern struct ScenePlacement gVaultInteriorsRevisit_Placements[];
+extern struct SceneEvent gVaultInteriorsRevisit_Events[];
 
 #endif

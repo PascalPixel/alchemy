@@ -520,7 +520,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Actor_RunActionScriptAndWait(IVAN, actions);
   Engine_EventWait(20);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  GameFlag_Set(0x844);
+  GameFlag_Set(FLAG_TRET_DEFEATED);
   FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, 0xc80);
   Engine_EventEnd();
 }
@@ -532,7 +532,7 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
     TretTreeInteriors_PlayPostBattleConversation();
 
   Engine_TaskWait(1);
-  if (Engine_GameFlagIsSet(0x844) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED) != 0) {
     s32 openingColumn = 10;
     Map_CopyCells(121, 34, 3, 1, 93, openingColumn);
     {
@@ -575,7 +575,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   TretTreeInteriors_PlayGesture(0);
   if (gGameState.entrance != 19)
     FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, 0xc80);
-  if (Engine_GameFlagIsSet(0x844)) {
+  if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED)) {
     Engine_ActorSetPosition(TRET_SECOND_ACTOR, 0, 0);
     Engine_ActorSetPosition(TRET_FACE_ACTOR, 0, 0);
   }
@@ -1297,7 +1297,7 @@ struct SceneEvent gTretTreeInteriorsEvents[] = {
      EVENT_SCRIPT(TretTreeInteriors_TouchFloorToLowerMiddleSouth)},
     {EVENT_TOUCH, 59, CONDITION_ALWAYS,
      EVENT_SCRIPT(TretTreeInteriors_TouchFloorToLowerMiddleSoutheast)},
-    {EVENT_TOUCH, 40, 0x844, EVENT_SCRIPT(TretTreeInteriors_StartTretBattle)},
+    {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(TretTreeInteriors_StartTretBattle)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(TretTreeInteriors_StopTintForReveal)},
     {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(0x109)},

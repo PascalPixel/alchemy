@@ -440,9 +440,7 @@ void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
 // and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  s32 sprite =
-      ((struct ScenePlacement *)BattleAction_FindDescriptor(work->speaker))
-          ->sprite;
+  s32 sprite = BattleAction_FindDescriptor(work->speaker)->sprite;
   struct UiWindow *window = (struct UiWindow *)work->messageWindow;
   struct UiWindow *side = (struct UiWindow *)work->sideWindow;
   s32 useBottom = 1;
@@ -1260,14 +1258,34 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first,
   }
 }
 
+#ifndef UBFIX
+struct ObjectSlotTable {
+  u8 unk00[0x14];
+  struct ObjectRuntime *slots[0];
+};
+
+LAYOUT_OFFSET_GUARD(ObjectSlotTable_Slots, struct ObjectSlotTable, slots, 0x14);
+#endif
+
 // The event command "destroy actor": releases the actor and frees its slot.
 void ObjectTable_DestroyById(s32 index) {
   void *object = ObjectTable_Get(index);
+#ifdef UBFIX
+  struct FieldWork *table = (struct FieldWork *)gEventWork;
+  struct ObjectRuntime *empty = NULL;
+#else
   struct ObjectSlotTable *table = (struct ObjectSlotTable *)gEventWork;
+#endif
 
   if (object != 0) {
     ObjectDispatch_ReleaseFar(object);
+#ifdef UBFIX
+    // The getter accepts slots through 191, including nonactor storage.
+    // Copy the pointer representation without extending the actor array.
+    memcpy((u8 *)table + 0x14 + index * sizeof(void *), &empty, sizeof(empty));
+#else
     table->slots[index] = NULL;
+#endif
   }
 }
 
@@ -3812,7 +3830,7 @@ void FieldObject_PlaceSceneActors(void) {
     event &= 0x7ff;
     if (event - DJINNI_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
-        struct ActionDescriptor *desc = BattleAction_FindDescriptor(id);
+        struct ScenePlacement *desc = BattleAction_FindDescriptor(id);
         struct ObjectRuntime *obj;
 
         if (desc == NULL || desc->condition - FLAG_DJINNI_0 != event - DJINNI_0)
@@ -3876,7 +3894,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
         s32 actor;
 
         for (actor = 8; actor <= 65; actor++) {
-          struct ActionDescriptor *found = BattleAction_FindDescriptor(actor);
+          struct ScenePlacement *found = BattleAction_FindDescriptor(actor);
           if (found != 0 &&
               found->condition - FLAG_DJINNI_0 == flag - DJINNI_0) {
             WaitFrames(40);

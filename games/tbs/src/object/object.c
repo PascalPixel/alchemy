@@ -972,12 +972,26 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
 
 // Destroys the actor in slot index, if there is one.
 void ObjectTable_DestroyAtIndex(s32 index) {
+#ifdef UBFIX
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+#else
   struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+#endif
   void *object = ObjectTable_Get(index);
 
   if (object != NULL) {
     ObjectDispatch_ReleaseFar(object);
+#ifdef UBFIX
+    {
+      void *empty = NULL;
+
+      // Get also accepts words past the actor array, within the field work.
+      memcpy((u8 *)work + 0x14 + (u32)index * sizeof(empty), &empty,
+             sizeof(empty));
+    }
+#else
     work->actors[index] = NULL;
+#endif
   }
 }
 
@@ -1230,10 +1244,20 @@ void ObjectTable_ClearAll(void) {
 void *ObjectTable_Get(u32 index) {
   u8 *base = (u8 *)gEventWork;
   u32 offset;
+#ifdef UBFIX
+  void *object;
+#endif
   if (index > 0xbf)
     return 0;
   offset = (index * 4) + 0x14;
+#ifdef UBFIX
+  // The legacy range includes non-pointer fields. Copy their representation
+  // without reading them through an incompatible pointer lvalue.
+  memcpy(&object, base + offset, sizeof(object));
+  return object;
+#else
   return *(void **)(base + offset);
+#endif
 }
 
 // Saves up to 32 actors (only the party's 8 on the world map) into
@@ -2403,41 +2427,52 @@ redraw:
   DebugText_Clear();
 }
 
-struct ActionDescriptorTables {
-  struct ActionDescriptor *tables[4];
-};
-
 // Returns the placement of actor id in the scene's placement tables, or NULL:
 // for a party character (0 to 7) the row with its sprite, and for a placed
 // actor (8 on) the row it was created from, counting the placed rows in order.
-struct ActionDescriptor *BattleAction_FindDescriptor(s32 id) {
-  struct ActionDescriptor *entry;
+struct ScenePlacement *BattleAction_FindDescriptor(s32 id) {
+  struct ScenePlacement *entry;
   s32 i;
   s32 placed = ACTOR_FIRST_PLACED;
 
   for (i = 0; i < 4; i++) {
-    entry = ((struct ActionDescriptorTables *)gEventWork)->tables[i];
+    entry = ((struct FieldWork *)gEventWork)->tables[i];
     if (entry == NULL)
       continue;
     if (id <= 7) {
       for (; (s16)entry->sprite != -1; entry++) {
-        if ((s16)entry->sprite == id)
+        if ((s16)entry->sprite == id) {
+#ifdef UBFIX
+          return entry;
+#else
           goto found;
+#endif
+        }
       }
     } else {
       for (; (s16)entry->sprite != -1; entry++) {
         if ((s16)entry->sprite > 7) {
-          if (placed == id)
+          if (placed == id) {
+#ifdef UBFIX
+            return entry;
+#else
             goto found;
+#endif
+          }
           placed++;
         }
       }
     }
   }
+#ifdef UBFIX
+  return NULL;
+#else
 found:
+  // BUG: a missing actor leaves entry NULL if the final table is absent.
   if ((s16)entry->sprite == -1)
     return NULL;
   return entry;
+#endif
 }
 
 // Part of the event work (gEventWork).
@@ -2448,14 +2483,6 @@ struct EffectDescriptorRuntime {
   s16 queuedResult; // the exit taken
   u8 unused172[0x2a];
   s16 limit; // how long the leader has pushed (EventWork's blockedSteps)
-};
-
-// A row of a placement table (struct ScenePlacement).
-struct BattleEffectAction {
-  s16 sprite;
-  u8 unused02[20];
-  s8 talkFacing; // how the actor turns when talked to
-  u8 unused17;
 };
 
 // Laid over both an event (struct EffectDescriptor) and the event work, for
@@ -2588,8 +2615,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id) {
 // that is a function gives a random line from MsgPonderEllipsis ("...")
 // instead. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_TalkToActor(s32 id) {
-  struct BattleEffectAction *placement =
-      (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
+  struct ScenePlacement *placement = BattleAction_FindDescriptor(id);
   s32 ret = -1;
   struct ObjectRuntime *obj = (struct ObjectRuntime *)Object_GetById(id);
   struct EffectDescriptor *ev;
@@ -2660,11 +2686,11 @@ s32 Scene_TalkToActor(s32 id) {
       // An actor left idle (script command 16) goes back to what its talk
       // facing says: following the leader (3) or its old angle (1).
       if (obj->script[obj->step] == (void *)16) {
-        if (placement->talkFacing == 3) {
+        if ((s8)placement->talkFacing == 3) {
           obj->linkedObject = Object_GetById(gGameState.selectedActor);
           obj->actionFlags |= 1;
           ObjectMotion_SetActionCallback(obj, gObjectMotion_LinkedActionScript);
-        } else if (placement->talkFacing == 1) {
+        } else if ((s8)placement->talkFacing == 1) {
           obj->action = savedAngle;
           ObjectDispatch_InitializeFar(
               (struct DispatchObject *)obj,

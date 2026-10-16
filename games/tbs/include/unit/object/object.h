@@ -4,7 +4,6 @@
 #include "types.h"
 #include "effect_slot.h"
 
-struct ActionDescriptor;
 struct ArcEffectObject;
 struct BattleEffectEntry;
 struct DescendingOrbitObject;
@@ -57,18 +56,6 @@ void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void RunBattleEffect07(void);
 void RunBattleEffect11(void);
 
-struct ActionDescriptor {
-  u16 sprite;
-  s16 condition;
-  s32 behavior;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 facing;
-  u8 talkFacing;
-  u8 flags;
-};
-
 // One of the scene's events (the same 12 bytes as struct SceneEvent).
 struct EffectDescriptor {
   s32 flags; // the low 4 bits are the kind (SceneEventKind; 7 talks to
@@ -118,7 +105,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void);
 void Scene_ApplyEntrance(void);
 void Debug_RunPaletteEditor(void);
 
-struct ActionDescriptor *BattleAction_FindDescriptor(s32 id);
+struct ScenePlacement *BattleAction_FindDescriptor(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Event_SearchIgnoresCondition(s32 flags, s32 result);
 struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 value);

@@ -39,11 +39,6 @@ struct SceneEntries {
   const struct SceneRegion *(*regions)(void);
 };
 
-struct ObjectSlotTable {
-  u8 unk00[0x14];
-  struct ObjectRuntime *slots[0];
-};
-
 struct FieldStepWork {
   const struct ScenePlacement *tables[4];
   const struct SceneEvent *events;
@@ -80,7 +75,7 @@ struct MarkerSlot {
 // Full event work allocated by Field_RunScene (heap slot 27). The twelve
 // requests from action to event are handled by the field loop.
 struct FieldWork {
-  u8 unk000[0x10];
+  struct ScenePlacement *tables[4];
   s32 view;
   struct FieldActor *actors[66];
   struct MarkerSlot markers[10];
@@ -148,7 +143,6 @@ LAYOUT_SIZE_GUARD(SceneRegion_Size, struct SceneRegion, 16);
 LAYOUT_SIZE_GUARD(SceneEntries_Size, struct SceneEntries, 48);
 LAYOUT_OFFSET_GUARD(SceneEntries_Exits, struct SceneEntries, exits, 0x14);
 LAYOUT_OFFSET_GUARD(SceneEntries_Regions, struct SceneEntries, regions, 0x2c);
-LAYOUT_OFFSET_GUARD(ObjectSlotTable_Slots, struct ObjectSlotTable, slots, 0x14);
 LAYOUT_SIZE_GUARD(FieldStepWork_Size, struct FieldStepWork, 0x1c0);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Events, struct FieldStepWork, events, 0x10);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Actors, struct FieldStepWork, actors, 0x14);
@@ -161,6 +155,7 @@ LAYOUT_OFFSET_GUARD(FieldStepWork_EncounterRate, struct FieldStepWork,
                     encounterRate, 0x1b0);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Tile, struct FieldStepWork, tile, 0x1b8);
 LAYOUT_SIZE_GUARD(FieldWork_Size, struct FieldWork, 0xccc);
+LAYOUT_OFFSET_GUARD(FieldWork_Tables, struct FieldWork, tables, 0);
 LAYOUT_SIZE_GUARD(MarkerSlot_Size, struct MarkerSlot, 8);
 LAYOUT_OFFSET_GUARD(MarkerSlot_Id, struct MarkerSlot, id, 4);
 LAYOUT_OFFSET_GUARD(MarkerSlot_Column, struct MarkerSlot, column, 6);

@@ -16,6 +16,15 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// The shop rows and door triggers used by the room event tables below.
+enum {
+  TOLBI_INTERIORS_WEAPON_SHOP = 26,
+  TOLBI_INTERIORS_ARMOR_SHOP = 27,
+  TOLBI_INTERIORS_ITEM_SHOP = 28,
+  TOLBI_INTERIORS_FIRST_DOOR_TRIGGER = 14,
+  TOLBI_INTERIORS_ACTOR_SLOT_END = 66
+};
+
 // Asks a yes/no question, then answers with the message after the question
 // for yes or the one after that for no.
 static inline void TolbiInteriors_AskYesNo(s32 question, s32 speaker) {
@@ -82,20 +91,23 @@ static void TolbiInteriors_EnterDoor(void) {
   struct FieldActor *actor;
   struct EventWork *work;
   s16 *trigger;
-  s32 door;
+  s32 doorIndex;
 
   work = gEventWork;
-  for (actorId = ACTOR_FIRST_PLACED; actorId < 66; actorId++) {
+  // Stop the room's actors before animating the selected doorway.
+  for (actorId = ACTOR_FIRST_PLACED; actorId < TOLBI_INTERIORS_ACTOR_SLOT_END;
+       actorId++) {
     actor = Object_GetById(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;
     }
   }
   trigger = &work->touchedTrigger;
-  door = *trigger - 14;
+  doorIndex = *trigger - TOLBI_INTERIORS_FIRST_DOOR_TRIGGER;
   Engine_AudioPlayCue(158);
-  Map_AnimateCells(gTolbiInteriorsDoors[door].steps,
-                   gTolbiInteriorsDoors[door].x, gTolbiInteriorsDoors[door].y);
+  Map_AnimateCells(gTolbiInteriorsDoors[doorIndex].steps,
+                   gTolbiInteriorsDoors[doorIndex].x,
+                   gTolbiInteriorsDoors[doorIndex].y);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -106,7 +118,7 @@ static void TolbiInteriors_EnterDoor(void) {
 // floor ("Hey, what's this?"), is startled to see the party and hides it in
 // the barrel behind the trash pile. The thing is a Lucky Medal (barrel 102).
 static void TolbiInteriors_WatchWomanHideMedal(void) {
-  s32 sparkle;
+  struct FieldActor *sparkle;
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiHeyWhatsThis);
@@ -175,7 +187,6 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
 // After Colosso, entering by entrance 16: three sailors argue about their
 // captain, who won't sail the ship.
 static void TolbiInteriors_WatchSailorsArgue(void) {
-
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
   Engine_EventWait(30);
@@ -209,23 +220,25 @@ static void TolbiInteriors_WatchSailorsArgue(void) {
 // on their entrances, and the would-be warrior and actor 36 have left once
 // the docks refunded the tickets.
 s32 TolbiInteriors_ApplyEntryState(void) {
-  s32 clear;
+  s32 clearedPriorityFlags;
   struct FieldActor *actor;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    // Restore the changed room tiles and the sailors' fixed draw priority.
     Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     actor = Object_GetById(TOLBI_INTERIORS_ANGRY_SAILOR);
     // Stored as a plain byte: the field store allocates the zero differently.
-    *(u8 *)&actor->priorityFlags = clear = 0;
+    *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
     ((struct TolbiInteriorsSpriteAttr *)actor->sprite)->priority = 2;
     actor = Object_GetById(TOLBI_INTERIORS_SAILOR_B);
-    actor->priorityFlags = clear;
+    actor->priorityFlags = clearedPriorityFlags;
     ((struct TolbiInteriorsSpriteAttr *)actor->sprite)->priority = 2;
     if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) != 0) {
       Actor_SetPosition(TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(560), PIXELS(680));
       Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, FACING_WEST, 0);
     }
+    // Each short scene plays once, only when entering its room.
     if (gGameState.entrance == 19) {
       if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) == 0) {
         Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN);
@@ -240,6 +253,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
         TolbiInteriors_WatchSailorsArgue();
       }
     }
+    // The docks' refund flag also removes these two actors from the rooms.
     if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_TICKETS_REFUNDED) != 0) {
       Engine_ActorSetPosition(TOLBI_INTERIORS_WOULD_BE_WARRIOR, 0, 0);
       Engine_ActorSetPosition(36, 0, 0);
@@ -253,7 +267,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
 static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
-    Engine_ShopOpen(28, speaker);
+    Engine_ShopOpen(TOLBI_INTERIORS_ITEM_SHOP, speaker);
   } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
     Engine_EventSetMessage(MsgTolbiRightOneWell);
     Engine_EventShowMessage(speaker, 0);
@@ -265,12 +279,12 @@ static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   }
 }
 
-// The shopkeeper of shop 26: across the counter (the leader facing north)
+// The weapon shopkeeper: across the counter (the leader facing north)
 // opens the shop; otherwise talks about Colosso.
-static void TolbiInteriors_TalkToShopkeeper26(s32 speaker) {
+static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
-    Engine_ShopOpen(26, speaker);
+    Engine_ShopOpen(TOLBI_INTERIORS_WEAPON_SHOP, speaker);
   } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
     TolbiInteriors_AskYesNo(MsgTolbiComeWayKalay, speaker);
   } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
@@ -285,12 +299,12 @@ static void TolbiInteriors_TalkToShopkeeper26(s32 speaker) {
   }
 }
 
-// The shopkeeper of shop 27: across the counter (the leader facing north)
+// The armor shopkeeper: across the counter (the leader facing north)
 // opens the shop; otherwise talks about the finals.
-static void TolbiInteriors_TalkToShopkeeper27(s32 speaker) {
+static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
-    Engine_ShopOpen(27, speaker);
+    Engine_ShopOpen(TOLBI_INTERIORS_ARMOR_SHOP, speaker);
   } else {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
       Engine_EventSetMessage(MsgTolbiWasntAbleWatch);
@@ -305,9 +319,8 @@ static void TolbiInteriors_TalkToShopkeeper27(s32 speaker) {
   }
 }
 
-// After Colosso: "You look like a warrior, but you were watching Colosso,
-// right?"
-static void TolbiInteriors_TalkToActor26(s32 speaker) {
+// The chef asks whether the party watched Colosso, which he missed.
+static void TolbiInteriors_TalkToChef(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiLookLikeWarrior, speaker);
   Engine_EventEnd();
@@ -352,7 +365,6 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
 
 // Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
-
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_MISSED) == 0) {
     Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
@@ -382,7 +394,6 @@ static void TolbiInteriors_TalkToWouldBeWarrior(s32 speaker) {
 // The priest: across the counter (the leader facing north) opens the
 // sanctum; otherwise talks about the festival.
 static void TolbiInteriors_TalkToPriest(s32 speaker) {
-
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Engine_SanctumOpen(speaker);
@@ -621,9 +632,9 @@ struct SceneEvent gTolbiInteriorsEventsFestival[] = {
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper26) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper27) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
@@ -701,9 +712,9 @@ struct SceneEvent gTolbiInteriorsEventsFinalsDay[] = {
 #endif
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper26) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper27) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
@@ -775,14 +786,14 @@ struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper26) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToShopkeeper27) },
+    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
     { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToMedalWoman) },
-    { EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToActor26) },
+    { EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToChef) },
     { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWaiter) },
     { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
     { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },

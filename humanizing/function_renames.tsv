@@ -1,0 +1,11 @@
+round	lane	source	old_name	new_name	evidence
+1	08	games/tbs/src/scene/tret_branch.c	Actor_ShiftObjectsByBlock	TretBranch_ShiftLeaderAndCameraByCells	Both objects receive the same16-pixel cell displacement and destination terrain height
+1	08	games/tbs/src/scene/tret_branch.c	Scene_RunTwoCallSequence	TretBranch_RunEmptyEvent	Unused body only begins and ends an event
+1	08	games/tbs/src/scene/tret_branch.c	Effect_UpdateBg3HofsByVcount	TretBranch_ApplyBg3ScrollAtScanline	IRQ callback selects BG3HOFS according to VCOUNT against split line
+1	08	games/tbs/src/scene/tret_branch.c	Effect_SetBg3HofsSplit	TretBranch_UpdateBg3ScrollSplit	Per-frame callback updates split line and both horizontal scroll values
+1	09	games/tbs/src/scene/tolbi_interiors.c	TolbiInteriors_TalkToShopkeeper26	TolbiInteriors_TalkToWeaponShopkeeper	Shop_Run reads sStockTable row26 column32=1; Item_GetEquipmentGroup maps1 to weapons; three local event rows
+1	09	games/tbs/src/scene/tolbi_interiors.c	TolbiInteriors_TalkToShopkeeper27	TolbiInteriors_TalkToArmorShopkeeper	Shop_Run reads row27 column32=2; Item_GetEquipmentGroup maps2 to armor; three local event rows
+1	09	games/tbs/src/scene/tolbi_interiors.c	TolbiInteriors_TalkToActor26	TolbiInteriors_TalkToChef	Actor26 festival mind-read describes cooking for inn; actor27 dialogue and mind-read explicitly call adjacent speaker chef
+1	10	games/tbs/src/scene/vault_interiors_revisit.c	SceneActor_RunActorStep	Vault_ShowActorDialogue	Helper selects animation then shows selected actor message; five local callers
+1	10	games/tbs/src/scene/vault_interiors_revisit.c	FieldScene_RunActor16Sequence	Vault_GreetReturningParty	MsgVaultIsaacYouveComeBackVault and party greeting choice; talk row and Mind Read wrapper
+1	10	games/tbs/src/scene/vault_interiors_revisit.c	SceneDialogue_RunActor16Line	Vault_DiscussThievesRevenge	MsgVaultThoseGuysReallyWantedRevenge; actor16 follow-up talk row

@@ -27,7 +27,7 @@
 #include "field_scene.h"
 #include "display_transition.h"
 
-// 前方宣言
+// Starts the scanline-dependent BG3 scroll callbacks.
 static void TretBranch_StartBg3Split(void);
 
 struct SceneObject {
@@ -48,126 +48,153 @@ union SceneCell {
 static u16 sTransferHeader[16];
 static u8 sTransferData[0x60];
 static s32 sSplitLine;
-static u16 sHofsAbove;
-static u16 sHofsBelow;
+static u16 sHofsAtOrAfterSplit;
+static u16 sHofsBeforeSplit;
 
+// Starts the battle for Djinni 0x3d, using actor 8 for its opening hop.
 static void EV08_TALK(void) { BattleFx_SetPhaseRequest(8, 0x3D); }
 
+// Returns the entrance table through the overlay's encoded table interface.
 u8 *TretBranch_GetEntrances(void) { return (u8 *)gTretBranch_SceneTable0; }
 
+// Returns no region table for this overlay.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the packed exits to the adjoining Tret scenes.
 u8 *TretBranch_GetExits(void) { return (u8 *)gTretBranch_SceneTable1; }
 
+// Returns the branch's actor placement table.
 u8 *TretBranch_GetPlacements(void) { return (u8 *)gTretBranch_SceneTable2; }
 
-static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz) {
+// Moves the leader and camera by signed 16-pixel cell offsets, placing each
+// at the terrain height of its destination.
+static void TretBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
+                                                   s32 cellOffsetZ) {
   u8 *work = *(u8 **)&gEventWork;
   struct SceneObject *obj;
-  s32 dx = bx;
-  s32 dz = bz;
-  s32 h;
+  s32 dx = cellOffsetX;
+  s32 dz = cellOffsetZ;
+  s32 terrainHeight;
 
   obj = (struct SceneObject *)Object_GetById(gGameState.selectedActor);
-  dx <<= 20;
-  dz <<= 20;
+  // Multiplication keeps negative cell offsets defined; every caller is within
+  // six cells, so the fixed-point result fits in s32.
+  dx *= 16 * 0x10000;
+  dz *= 16 * 0x10000;
 
+  // Shift the selected actor before the separate camera object.
   if (obj != 0) {
     obj->x += dx;
     obj->z += dz;
-    h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
-    obj->y = h;
-    obj->settledY = h;
+    terrainHeight = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
+    obj->y = terrainHeight;
+    obj->settledY = terrainHeight;
   }
 
   obj = *(struct SceneObject **)(work + 480);
   if (obj != 0) {
     obj->x += dx;
     obj->z += dz;
-    h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
-    obj->y = h;
-    obj->settledY = h;
+    terrainHeight = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
+    obj->y = terrainHeight;
+    obj->settledY = terrainHeight;
   }
 }
 
-static void EV10_TOUCH(void) { Actor_ShiftObjectsByBlock(0, 5); }
+// Moves the leader and camera five cells along positive z.
+static void EV10_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, 5); }
 
-static void EV11_TOUCH(void) { Actor_ShiftObjectsByBlock(0, -5); }
+// Moves the leader and camera five cells along negative z.
+static void EV11_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, -5); }
 
-static void EV12_TOUCH(void) { Actor_ShiftObjectsByBlock(0, 5); }
+// The second five-cell forward trigger uses the same displacement.
+static void EV12_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, 5); }
 
-static void EV13_TOUCH(void) { Actor_ShiftObjectsByBlock(0, -5); }
+// The second five-cell return trigger reverses that displacement.
+static void EV13_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, -5); }
 
-static void EV14_TOUCH(void) { Actor_ShiftObjectsByBlock(0, 6); }
+// Moves the leader and camera six cells along positive z.
+static void EV14_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, 6); }
 
-static void EV15_TOUCH(void) { Actor_ShiftObjectsByBlock(0, -6); }
+// Moves the leader and camera six cells along negative z.
+static void EV15_TOUCH(void) { TretBranch_ShiftLeaderAndCameraByCells(0, -6); }
 
+// Plays the exit cue and requests the exit number recorded by the trigger.
 static void TretBranch_PlayCueAndSelectTouchedExit(void) {
   struct EventWork *state = gEventWork;
-  s16 *cnt;
+  s16 *touchedExit;
 
   Engine_AudioPlayCue(0x7B);
-  cnt = &state->touchedTrigger;
-  Engine_EventRequestExit(*cnt);
+  touchedExit = &state->touchedTrigger;
+  Engine_EventRequestExit(*touchedExit);
 }
 
+// Reveal selects window-transition mode 9 and its blend/window parameters.
 static void EV00_PSYNERGY(void) {
-  u8 *disp;
+  struct DisplayTransitionState *transition;
 
   DisplayTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = 0x3f42;
   REG_BLDALPHA = 0x0c04;
 
-  disp = (u8 *)gDisplayTransition;
+  transition = gDisplayTransition;
   {
-    u16 *slot = (u16 *)(disp + 0x534);
+    s16 *slot = &transition->mask;
     int value = 0x3f3f;
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)(disp + 0x536);
+    s16 *slot = &transition->active;
     int value = 31;
     *slot = value;
   }
   {
-    u16 *slot = (u16 *)(disp + 0x52a);
+    u16 *slot = &transition->value;
     int value = 10;
     *slot = value;
   }
 }
 
+// Returns the touch, talk, exit and Reveal events for this branch.
 u8 *TretBranch_GetEvents(void) { return (u8 *)gTretBranch_SceneTable3; }
 
-static void Scene_RunTwoCallSequence(void) {
+// Unused event hook: begins and immediately ends an event.
+static void UNUSED TretBranch_RunEmptyEvent(void) {
   Engine_EventBegin();
   Engine_EventEnd();
 }
 
-static void State_RunEmptyHookFirst(void) {}
+// Unused empty hook; its original role is not established.
+static void UNUSED State_RunEmptyHookFirst(void) {}
 
-static void State_RunEmptyHook(void) {}
+// Another unused empty hook with no established role.
+static void UNUSED State_RunEmptyHook(void) {}
 
-static void TretBranch_ExchangeInputPacket(void) {
-  u16 *hdr = sTransferHeader;
+// Unused exchange callback: puts held/repeated keys in the transfer header.
+static void UNUSED TretBranch_ExchangeInputPacket(void) {
+  u16 *header = sTransferHeader;
 
-  hdr[0] = gKeysHeld;
-  hdr[1] = gKeysRepeat;
-  SerialRuntime_PollAndTransfer(hdr, sTransferData);
+  header[0] = gKeysHeld;
+  header[1] = gKeysRepeat;
+  SerialRuntime_PollAndTransfer(header, sTransferData);
 }
 
+// Initializes the backdrop transition and installs BG3's scanline scroll split.
+// Returns 0 for the overlay initialization entry point.
 s32 TretBranch_InitializeBackdropTransition(void) {
   u8 **base = (u8 **)&gEventWork;
   u8 *work;
   struct DisplayTransitionState *disp;
-  s32 off = 224;
+  s32 transitionOffset = 224;
   s32 *scene;
 
-  off <<= 1;
+  // The event's transition request occupies the word at offset 0x1c0.
+  transitionOffset <<= 1;
   work = *base;
-  scene = (s32 *)(work + off);
-  off -= 192;
-  *scene = off;
+  scene = (s32 *)(work + transitionOffset);
+  transitionOffset -= 192;
+  *scene = transitionOffset;
 
   DisplayTransition_InitializeBattleEffectState(9);
 
@@ -201,31 +228,35 @@ s32 TretBranch_InitializeBackdropTransition(void) {
   return 0;
 }
 
-static void Effect_UpdateBg3HofsByVcount(void) {
-  u16 *src;
-  u32 value;
+// Interrupt handler: selects BG3's horizontal offset for this scanline.
+static void TretBranch_ApplyBg3ScrollAtScanline(void) {
+  u16 *scrollOffset;
+  u32 horizontalScroll;
 
   if (REG_VCOUNT >= sSplitLine) {
-    src = &sHofsAbove;
+    scrollOffset = &sHofsAtOrAfterSplit;
   } else {
-    src = &sHofsBelow;
+    scrollOffset = &sHofsBeforeSplit;
   }
-  value = *src;
-  REG_BG3HOFS = value;
+  horizontalScroll = *scrollOffset;
+  REG_BG3HOFS = horizontalScroll;
 }
 
-static void Effect_SetBg3HofsSplit(void) {
+// Updates the split from the first map layer's pixel position. Before the
+// split, scroll subtracts one pixel for every four elapsed frames.
+static void TretBranch_UpdateBg3ScrollSplit(void) {
   union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);
   s32 hofs;
 
   sSplitLine = 192 - work[1].h[1];
-  sHofsAbove = hofs = work[0].h[1];
-  sHofsBelow = hofs - (gFrameCount >> 2);
+  sHofsAtOrAfterSplit = hofs = work[0].h[1];
+  sHofsBeforeSplit = hofs - (gFrameCount >> 2);
 }
 
+// Installs the scroll interrupt and its per-frame split-position update.
 static void TretBranch_StartBg3Split(void) {
-  Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-  FieldScheduler_AddCallback(Effect_SetBg3HofsSplit, 0xc80);
+  Runtime_SetIrqHandler(1, 0, TretBranch_ApplyBg3ScrollAtScanline);
+  FieldScheduler_AddCallback(TretBranch_UpdateBg3ScrollSplit, 0xc80);
 }
 
 struct SceneEntrance gTretBranch_SceneTable0[] = {

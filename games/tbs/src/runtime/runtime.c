@@ -64,11 +64,12 @@ void System_Initialize(void) {
     volatile u16 *dma0 = REG_DMA0;
 
     // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
-    dma0[5] &= 0xc5ff;
-    dma0[5] &= 0x7fff;
+    dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+    dma0[5] &= ~DMA_ENABLE;
     dma0[5];
   }
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
+  // Install the resident runtime before any service can use its work blocks.
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
   Runtime_InitializeHeap();
   Runtime_InstallIwramAndIrqs();
@@ -80,11 +81,12 @@ void System_Initialize(void) {
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   REG_DISPCNT = 0x140;
-  Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
+  Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
 #if defined(HALT_ON_GAMEPAK_IRQ)
-  Runtime_SetIrqHandler(13, 1, IwramHalt);
+  Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, IwramHalt);
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+  // Start audio and frame services only after the interrupt handlers are ready.
   Audio_InitializeRuntimeDefaultsFar();
   VramCache_Reset();
   Scheduler_ResetTaskTable();
@@ -105,6 +107,14 @@ void Runtime_IdleForever(void) {
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 
+enum CartridgeLanguage {
+  CARTRIDGE_LANGUAGE_ENGLISH,
+  CARTRIDGE_LANGUAGE_GERMAN,
+  CARTRIDGE_LANGUAGE_FRENCH,
+  CARTRIDGE_LANGUAGE_SPANISH,
+  CARTRIDGE_LANGUAGE_ITALIAN
+};
+
 // Returns the language of this cartridge from the header's game code letter:
 // 0 English, 1 German, 2 French, 3 Spanish, 4 Italian.
 s32 System_GetLanguage(void) {
@@ -112,36 +122,39 @@ s32 System_GetLanguage(void) {
 
   switch (gRom_LanguageCode) {
   case 'D':
-    language = 1;
+    language = CARTRIDGE_LANGUAGE_GERMAN;
     break;
   case 'F':
-    language = 2;
+    language = CARTRIDGE_LANGUAGE_FRENCH;
     break;
   case 'S':
-    language = 3;
+    language = CARTRIDGE_LANGUAGE_SPANISH;
     break;
   case 'I':
-    language = 4;
+    language = CARTRIDGE_LANGUAGE_ITALIAN;
     break;
   default:
-    language = 0;
+    language = CARTRIDGE_LANGUAGE_ENGLISH;
     break;
   }
   return language;
 }
 #endif
 
-// Five empty routines the runtime bank's far-call table still exports; the
-// final game calls none of them.
-void RuntimeDispatch_ReservedNoOpA(void) {}
+// Reserved empty export A in the runtime far-call table; no source caller.
+UNUSED void RuntimeDispatch_ReservedNoOpA(void) {}
 
-void RuntimeDispatch_ReservedNoOpB(void) {}
+// Reserved empty export B in the runtime far-call table; no source caller.
+UNUSED void RuntimeDispatch_ReservedNoOpB(void) {}
 
-void RuntimeDispatch_ReservedNoOpC(void) {}
+// Reserved empty export C in the runtime far-call table; no source caller.
+UNUSED void RuntimeDispatch_ReservedNoOpC(void) {}
 
-void RuntimeDispatch_ReservedNoOpD(void) {}
+// Reserved empty export D in the runtime far-call table; no source caller.
+UNUSED void RuntimeDispatch_ReservedNoOpD(void) {}
 
-void RuntimeDispatch_ReservedNoOpE(void) {}
+// Reserved empty export E in the runtime far-call table; no source caller.
+UNUSED void RuntimeDispatch_ReservedNoOpE(void) {}
 
 // An exported stub that ignores its arguments and reports 0.
 s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
@@ -185,23 +198,35 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 
   entryCount = byteLength >> 1;
   entryIndex = 1;
+#ifndef UBFIX
   entries++;
+#endif
   if (entryIndex < entryCount) {
     u32 nextMarkerMask;
     u32 currentMarkerMask;
     u32 payloadMask = 0x7ff;
     nextMarkerMask = 0xf800;
     currentMarkerMask = 0xf000;
+#ifndef UBFIX
+    // UB: temporarily forms a pointer before the start of the code block.
     entries -= 2;
+#endif
+    // Only adjacent halfwords with both BL marker patterns are relocated.
     do {
       u16 currentEntry;
       u16 nextEntry;
       u32 nextMarkerBits;
       u32 currentMarkerBits;
 
+#ifdef UBFIX
+      nextEntry = entries[1];
+#else
       nextEntry = entries[2];
+#endif
       nextMarkerBits = nextEntry & nextMarkerMask;
+#ifndef UBFIX
       entries++;
+#endif
       if (nextMarkerBits == nextMarkerMask) {
         currentEntry = entries[0];
         currentMarkerBits = currentEntry & nextMarkerBits;
@@ -220,6 +245,9 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
           entries[1] = adjustedNext;
         }
       }
+#ifdef UBFIX
+      entries++;
+#endif
       entryIndex++;
     } while (entryIndex < entryCount);
   }
@@ -229,14 +257,14 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 // its long branches there, with a RAM copy of the ARM routine that does what
 // Code_ResolveLongBranches does.
 void Resource_LoadCode(u32 index, void *destination) {
-  void (*routine)(void *, s32);
-  s32 size;
+  void (*patchBranches)(void *, s32);
+  s32 codeSize;
 
-  size = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
-  RamCode_Load(routine, Resource_PatchThumbBranch,
+  codeSize = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
+  RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
-  routine(destination, size);
-  MemFree(routine);
+  patchBranches(destination, codeSize);
+  MemFree(patchBranches);
 }
 
 // The handler of every interrupt nobody has claimed.
@@ -249,12 +277,13 @@ void Runtime_IgnoreInterrupt(void) {}
 void Runtime_InstallIwramAndIrqs(void) {
   u8 *iwram;
 
+  // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
   Dma_Set(IwramRuntime_Rom, iwram, DMA_ENABLE32 | DMA_32BIT | 0x500, REG_DMA3);
   gIrqVector = iwram;
-  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers, DMA_ENABLE32 | DMA_32BIT | 14,
-          REG_DMA3);
+  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers,
+          DMA_ENABLE32 | DMA_32BIT | IRQ_COUNT, REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
   // Keypad interrupt only when all ten keys are down: in effect off until
   // System_Initialize arms the soft-reset combination.
@@ -329,6 +358,15 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
+// Frame counts used by the sleep transitions and the CPU-load peak display.
+enum {
+  SLEEP_IDLE_FRAMES = 3 * 60 * 60,
+  SLEEP_COMBO_FRAMES = 3 * 60,
+  SLEEP_WHITE_FRAMES = 60,
+  SLEEP_WAKE_FRAMES = 10,
+  CPU_LOAD_PEAK_FRAMES = 30
+};
+
 // The game's frame loop: runs `frames` frames and returns. Each frame runs the
 // scheduled main-loop tasks, builds the OAM list, measures CPU load for the
 // debug display, counts idle time for sleep, steps the debug pause, waits for
@@ -341,12 +379,12 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 // aside first, and the loop runs at that top; the copy is put back on return.
 void WaitFrames(s32 frames) {
   u8 *sp;
-  u32 i;
+  u32 frameIndex;
   u8 *base;
   u32 line;
-  s32 j;
-  s16 dispcnt;
-  s16 backdrop;
+  s32 delayFrame;
+  s16 savedDisplayControl;
+  s16 savedBackdropColor;
 
   CAMELOT_ASM("read the hardware stack pointer for the proven stack switch")
   __asm__ volatile("mov %0, sp" : "=r"(sp));
@@ -364,7 +402,7 @@ void WaitFrames(s32 frames) {
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     __asm__ volatile("mov sp, %0" : "+r"(top) : : "sp", "memory");
   }
-  for (i = 0; i < frames; i++) {
+  for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
     gSchedulerStatus = 1;
     Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP);
@@ -388,7 +426,7 @@ void WaitFrames(s32 frames) {
         gCpuLoadTimer--;
       if (gCpuLoadPeak < line) {
         gCpuLoadPeak = line;
-        gCpuLoadTimer = 30;
+        gCpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
       }
     }
     // Count idle frames and the L+R hold that request sleep
@@ -398,13 +436,13 @@ void WaitFrames(s32 frames) {
           gIdleFrames = 0;
         else {
           gIdleFrames++;
-          if (gIdleFrames > 3 * 60 * 60) // three minutes
+          if (gIdleFrames > SLEEP_IDLE_FRAMES)
             gSleepRequested = 1;
         }
       }
       if (gKeysHeld == KEYS_SHOULDERS) {
         gSleepComboFrames++;
-        if (gSleepComboFrames >= 3 * 60) {
+        if (gSleepComboFrames >= SLEEP_COMBO_FRAMES) {
           gSleepComboFrames = 0;
           gSleepRequested = 1;
         }
@@ -457,12 +495,12 @@ void WaitFrames(s32 frames) {
     // Sleep: after a second of white screen, Stop the CPU until L and R wake
     // it, then restore the screen. A request above 1 counts down first.
     if (gSleepRequested && gSleepDisabled == 0) {
-      dispcnt = REG_DISPCNT;
-      backdrop = PLTT_BACKDROP;
+      savedDisplayControl = REG_DISPCNT;
+      savedBackdropColor = PLTT_BACKDROP;
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
         Io_Write16(0x7fff, &PLTT_BACKDROP);
-        for (j = 0; j < 60; j++) {
+        for (delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES; delayFrame++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
@@ -474,9 +512,9 @@ void WaitFrames(s32 frames) {
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
         gSleepActive = 0;
-        Io_Write16((u16)dispcnt, &REG_DISPCNT);
-        Io_Write16((u16)backdrop, &PLTT_BACKDROP);
-        for (j = 0; j < 10; j++) {
+        Io_Write16((u16)savedDisplayControl, &REG_DISPCNT);
+        Io_Write16((u16)savedBackdropColor, &PLTT_BACKDROP);
+        for (delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES; delayFrame++) {
           CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
@@ -548,7 +586,7 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay = gKeyRepeatTimer;
   u32 keys;
   u32 axis = 0;
-  u32 dirs;
+  u32 directionCount;
   u32 mask;
 
   if (delay <= 0) {
@@ -565,18 +603,18 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 
   if (keys != 0) {
     // Count the D-pad directions in the repeat
-    dirs = 0;
+    directionCount = 0;
     if (keys & KEY_UP)
-      dirs = 1;
+      directionCount = 1;
     if (keys & KEY_DOWN)
-      dirs++;
+      directionCount++;
     if (keys & KEY_LEFT)
-      dirs++;
+      directionCount++;
     if (keys & KEY_RIGHT)
-      dirs++;
+      directionCount++;
 
     gKeysRepeatDirected = keys;
-    switch (dirs) {
+    switch (directionCount) {
     default:
       gKeysDirection = KEYS_HORIZONTAL;
       mask = 0xffff & ~KEYS_DPAD;
@@ -695,10 +733,11 @@ s32 Sound_LoadPresetParameters(s32 preset) {
   return 0;
 }
 
-// Two empty routines the runtime bank exports; nothing calls them.
-void Sound_ReservedNoOpA(void) {}
+// Reserved empty sound export A in the runtime bank; no source caller.
+UNUSED void Sound_ReservedNoOpA(void) {}
 
-void Sound_ReservedNoOpB(void) {}
+// Reserved empty sound export B in the runtime bank; no source caller.
+UNUSED void Sound_ReservedNoOpB(void) {}
 
 // The keypad interrupt: A+B+Select+Start was pressed, so ask the frame loop
 // for a soft reset and disarm the interrupt. During sleep the same interrupt

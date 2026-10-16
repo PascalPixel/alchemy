@@ -3,18 +3,19 @@ scope	TBS humanizing source review	Review ledger is separate from DONE measureme
 linked_c_manifest	145 sources assigned exactly once	Current TBS object list and existing linked C files;data-only C included
 lanes	13 logical lanes	Whole modules assigned once;shared function-bearing headers core;module-private headers follow module
 scene_cohorts	90 whole modules balanced by observed functions	Largest module first, descending source-plus-private-header definition count; ties by source path; assign to least-loaded cohort with lane-number tie break
-reviewed_functions	150 unique source/function pairs	25 source-order definitions each in lanes 02 through 07; every review identity found in compiler inventory
+reviewed_functions	241 unique source/function pairs	First 25 source-order definitions in lanes 01 through 07; whole modules lane08 Tret23, lane09 Tolbi23 and lane10 Vault20; all identities matched after explicit private-name normalization
 review_categories	doc;phases;names;constants;helpers;loops	Edits or assessment of existing form recorded;future improvements may remain
-rename_queue	45 proposals; none applied by inventory	Evidence copied from six lane packets; shared/public changes pending core coordination
+rename_queue	65 proposals; none applied by inventory	Pending shared/public proposals copied from ten lane packets; applied private names are recorded separately in function_renames.tsv
 modern_frontend	870 of870 auxiliary reports succeeded	145 translation units x6 editions;actual make modern commands;analysis-only -fsyntax-only/-aux-info;standard MODERN and edition branches
 modern_definitions	5649 source/function identities	5393 C definitions and256 header definitions in71 headers;NF and OF records;deduplicated source+function across editions and including TUs
 native_branch_frontend	834 of870 auxiliary reports succeeded	Same current compiler analysis flags minus MODERN;36 failures in6 modules due existing native-branch C constraints;no frozen toolchain changes
 native_branch_recovery	36 of36 preprocessing reports succeeded	AltinPeak;ColossoLog/River/Wall;SolEruption;TolbiShipDeck;brace/paren-aware lexical definition scan validated against each matching modern auxiliary set with0missing/0extra
 native_only_identity	ValeHome_TurnAndWaitValue	Source games/tbs/src/scene/vale_home.c;native auxiliary definition;excluded by UBFIX in modern branch
-observed_union	5650 source/function identities	5394 C and 256 header identities across modern and native frontend branches; 150 reviewed; 5500 remain observed/unreviewed
+observed_union	5650 source/function identities	5394 C and 256 header identities across recorded frontend branches; 241 reviewed; 5409 remain observed/unreviewed
 function_denominator	4510 not independently reproduced	Inventory counts source definitions including static/inline/unused/macro-generated functions;not emitted linker functions or a revised DONE metric
 macro_and_conditional_handling	Compiler records after preprocessing	ShrinkObjectAndDestroySlow/Fast counted from macro expansion;old-style ReservedNoOp83B0 counted from OF;locale variants and repeated includes unioned without multiplying review identities
 inventory_limit	Observed configured branches	BUGFIX opt-in and unlinked/header-unincluded code excluded;native36 lexical recovery has lower evidentiary weight than successful auxiliary records;re-enumerate after definitions change
 inventory_provenance	Working tree based on 5029f0cf42	Compiler reports captured during the round-1-next working pass on 2026-10-16; definition_lines are historical report positions, not current clickable line anchors or a clean-commit byte snapshot
-round_limit	Not established	150 reviews and this denominator do not establish all functions finished within 6 rounds
+round_limit	Not established	241 reviews and this denominator do not establish all functions finished within 6 rounds
 authority	AGENTS.md	Metadata records facts/evidence;introduces no repository rules
+private_name_normalization	10 applied private function renames	Inventory identities normalized using explicit source/old_name/new_name/evidence in function_renames.tsv; no definitions added or removed; historical definition_lines retained; no fresh compiler scan claimed

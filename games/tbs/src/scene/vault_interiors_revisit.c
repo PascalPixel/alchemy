@@ -1,4 +1,3 @@
-
 #include "game_state.h"
 #include "unit/scene/vault_interiors_revisit.h"
 #include "unit/scene/common/vault_itemobj.h"
@@ -23,48 +22,57 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
+// Returns this scene's entrance table through the overlay's byte-pointer API.
 u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
 
+// This scene has no region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the exits to the surrounding Vault map.
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
+// Applies view conditions to the placements before the field spawns them.
 u8 *SceneData_GetPreparedActors(void) {
-  struct ScenePlacement *slot = gPlacement_Actors;
+  struct ScenePlacement *placements = gPlacement_Actors;
 
-  FieldScene_PrepareActors(slot);
-  return (u8 *)slot;
+  FieldScene_PrepareActors(placements);
+  return (u8 *)placements;
 }
 
-static void SceneActor_RunActorStep(s32 arg0) {
+// Shows the actor's selected message after selecting animation 1.
+static void Vault_ShowActorDialogue(s32 actor) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(arg0, 1);
-  Engine_EventShowMessage(arg0, 0);
+  Engine_ActorSetAnimation(actor, 1);
+  Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
 }
 
+// The resident thinks the cat stood up.
 static void EV09_TALK(void) {
   Engine_EventSetMessage(MsgVaultThoughtSawCatGetUp);
   Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
-  SceneActor_RunActorStep(9);
+  Vault_ShowActorDialogue(9);
 }
 
+// The resident says Dodonpa's henchmen never attacked Vault.
 static void EV11_TALK(void) {
   Engine_EventSetMessage(MsgVaultDodonpasHenchmenNeverAttackedUs);
   Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
-  SceneActor_RunActorStep(11);
+  Vault_ShowActorDialogue(11);
 }
 
+// The resident talks about the approaching Colosso tournament.
 static void EV12_TALK(void) {
   Engine_EventSetMessage(MsgVaultItsNearTimeForColosso);
   Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
-  SceneActor_RunActorStep(12);
+  Vault_ShowActorDialogue(12);
 }
 
-static void FieldScene_RunActor16Sequence(void) {
+// Greets Isaac's returning party and records the conversation.
+static void Vault_GreetReturningParty(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
   Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
@@ -75,6 +83,7 @@ static void FieldScene_RunActor16Sequence(void) {
   Event_ShowMessageAndWait(16, 0, 20);
   Actor_ShowEmote(16, 0x102, 60);
   Event_ShowMessageAndWait(16, 0, 30);
+  // The negative answer advances to the next message before continuing.
   Event_OpenMessage(16, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
@@ -85,18 +94,21 @@ static void FieldScene_RunActor16Sequence(void) {
   Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Line(void) {
+// After the greeting, the resident discusses the thieves' revenge.
+static void Vault_DiscussThievesRevenge(void) {
   Engine_EventSetMessage(MsgVaultThoseGuysReallyWantedRevenge);
   Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-  SceneActor_RunActorStep(16);
+  Vault_ShowActorDialogue(16);
 }
 
+// The resident talks about cooking.
 static void EV23_TALK(void) {
   Engine_EventSetMessage(MsgVaultDidSomeCookingNowIve);
   Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
-  SceneActor_RunActorStep(23);
+  Vault_ShowActorDialogue(23);
 }
 
+// Offers a Bone, giving it only if the party accepts and has inventory space.
 static void EV18_TALK(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
@@ -108,6 +120,7 @@ static void EV18_TALK(void) {
     Event_OpenMessage(18, 0);
   }
   if (Engine_EventChooseYesNo(0, 0) == 0) {
+    // Show the offer before checking whether the party can carry the gift.
     Engine_EventWait(20);
     Event_ShowMessage(18, 0);
     Engine_EventWait(20);
@@ -124,41 +137,45 @@ static void EV18_TALK(void) {
       GameFlag_Set(0x85b);
     }
   } else {
+    // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(18, 3);
     Engine_EventWait(20);
     Event_ShowMessage(18, 0);
   }
-  Actor_FaceDirection(18, 0x4000, 0);
+  Actor_FaceDirection(18, FACING_SOUTH, 0);
   Engine_EventEnd();
 }
 
+// Mind Read on actor 16 can lead into the return greeting.
 static void EV1040_PSYNERGY(void) {
-  u8 *slot;
+  u8 *paused;
   u8 clear = 0;
 
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(16, 1);
   Engine_EventEnd();
-  slot = &Object_GetById(16)->paused;
-  *slot = 1;
-  FieldScene_RunActor16Sequence();
-  slot = &Object_GetById(16)->paused;
-  *slot = clear;
+  // Keep the actor paused through the conversation, then resume action 2.
+  paused = &Object_GetById(16)->paused;
+  *paused = 1;
+  Vault_GreetReturningParty();
+  paused = &Object_GetById(16)->paused;
+  *paused = clear;
   Actor_SetBuiltinAction(16, 2);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared Bone-item dialogue follows the actor conversations.
 #include "common/vault_bone.h"
 
+// Opens shop 4 when approached facing north; otherwise shows local news.
 static void EV19_TALK(void) {
-  u32 place;
+  u32 leaderFacing;
 
-  place = Object_GetById(0)->facing;
+  leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
   Engine_EventBegin();
 
-  if (place + 0xFFFF5FFF <= 0x3FFE) {
+  if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(4, 19);
   } else {
     Engine_EventSetMessage(MsgVaultTheresRiverFireOnOther);
@@ -168,13 +185,14 @@ static void EV19_TALK(void) {
   Engine_EventEnd();
 }
 
+// Opens shop 5 when approached facing north; otherwise discusses Mt. Aleph.
 static void EV20_TALK(void) {
-  u32 place;
+  u32 leaderFacing;
 
-  place = Object_GetById(0)->facing;
+  leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
   Engine_EventBegin();
 
-  if (place + 0xFFFF5FFF <= 0x3FFE) {
+  if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(5, 20);
   } else {
     Engine_EventSetMessage(MsgVaultTheySayVolcanoOnMt);
@@ -184,13 +202,14 @@ static void EV20_TALK(void) {
   Engine_EventEnd();
 }
 
+// Opens shop 6 when approached facing north; otherwise shows its dialogue.
 static void EV21_TALK(void) {
-  u32 place;
+  u32 leaderFacing;
 
-  place = Object_GetById(0)->facing;
+  leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
   Engine_EventBegin();
 
-  if (place + 0xFFFF5FFF <= 0x3FFE) {
+  if (FACING_IS_NORTH(leaderFacing)) {
     Engine_ShopOpen(6, 21);
   } else {
     Engine_EventSetMessage(MsgVaultWeHaventBeenGettingMany);
@@ -200,13 +219,14 @@ static void EV21_TALK(void) {
   Engine_EventEnd();
 }
 
+// Opens inn 1 when approached facing north; otherwise shows its dialogue.
 static void EV22_TALK(void) {
-  u32 place;
+  u32 leaderFacing;
 
-  place = Object_GetById(0)->facing;
+  leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
   Engine_EventBegin();
 
-  if (place + 0xFFFF5FFF <= 0x3FFE) {
+  if (FACING_IS_NORTH(leaderFacing)) {
     Engine_InnOpen(1, 22);
   } else {
     Engine_EventSetMessage(MsgVaultMmmmNothingDoNothingDo);
@@ -216,6 +236,7 @@ static void EV22_TALK(void) {
   Engine_EventEnd();
 }
 
+// Mind Read changes after the resident has given the party a Bone.
 static void EV18_PSYNERGY(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(0x85B) == 0) {
@@ -227,32 +248,34 @@ static void EV18_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Returns the talk, Psynergy, search and exit event table.
 u8 *SceneData_GetEffectTable(void) { return (u8 *)gPlacement_Effects; }
 
+// Initializes the selected interior: lowers actor 8 or starts the spot check.
 s32 FieldScene_InitSceneStateByStep(void) {
-  s32 scene;
+  s32 entrance;
   s32 zero;
 
-  gEventWork->startTransition = 521;
-  scene = gGameState.entrance;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  entrance = gGameState.entrance;
 
-  if (scene == 5) {
+  if (entrance == 5) {
 
     Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
     zero = 0;
     Object_GetById(8)->motionFlags = zero;
     Object_GetById(8)->y.fixed = zero;
     Object_GetById(8)->terrainHeight = zero;
-  } else if (scene == 7 || scene == 11) {
-    OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000,
-                                                  0x02a00000);
+  } else if (entrance == 7 || entrance == 11) {
+    OverlayObject_ConfigureObject22WithResource17(0xe7, PIXELS(568), PIXELS(16),
+                                                  PIXELS(672));
     FieldScheduler_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
   }
 
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared item-object routines follow the scene initializer.
 #include "common/vault_itemobj.h"
 
 struct SceneEntrance gPlacement_Scripts[] = {
@@ -327,8 +350,8 @@ struct SceneEvent gPlacement_Effects[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
-    { EVENT_TALK, 16, 0x300, EVENT_SCRIPT(FieldScene_RunActor16Sequence) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Line) },
+    { EVENT_TALK, 16, 0x300, EVENT_SCRIPT(Vault_GreetReturningParty) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_DiscussThievesRevenge) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },

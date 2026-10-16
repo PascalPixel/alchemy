@@ -163,7 +163,8 @@ static void Effect_MoveWithDrag(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-static void VenusAerie_StepSpriteRotation(struct FieldActor *actor) {
+static void VenusAerie_StepSpriteRotation(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldSprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
@@ -1737,7 +1738,8 @@ union AerieOrbitEffect {
 
 enum { ORBIT_CENTER_ACTOR = 24 };
 
-static void SceneEffect_UpdateOrbitAroundActor(union AerieOrbitEffect *effect) {
+static void SceneEffect_UpdateOrbitAroundActor(union FieldObject *fieldObject) {
+  union AerieOrbitEffect *effect = (union AerieOrbitEffect *)fieldObject;
   struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
   u16 angle = effect->orbit.angle;
 
@@ -1749,7 +1751,9 @@ static void SceneEffect_UpdateOrbitAroundActor(union AerieOrbitEffect *effect) {
   effect->orbit.angle -= 0x800;
 }
 
-static void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor) {
+static void
+SceneEffect_UpdateCounterDrivenOrbit(union FieldObject *fieldObject) {
+  u8 *actor = (u8 *)fieldObject;
   struct FieldActor *anchor = Object_GetById(23);
   u16 *pangle = (u16 *)(actor + 100);
   s32 angle = *pangle;
@@ -1810,8 +1814,7 @@ static void SceneEffect_SpawnParticlesAboveActor(void) {
     angle = Random_Next() & 0xffff000;
     effect->orbit.angle = angle;
     effect->orbit.unk66 = 0;
-    ((struct FieldEffect *)effect)->update =
-        (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
+    ((struct FieldEffect *)effect)->update = SceneEffect_UpdateOrbitAroundActor;
     effect->orbit.radius =
         Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
     sprite->flags = 0;
@@ -2537,7 +2540,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Actor_SetSpeed(21, 0x30000, 0x18000);
   Object_GetById(21)->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Object_GetById(21);
-  actor->update = (void (*)(union FieldObject *))VenusAerie_StepSpriteRotation;
+  actor->update = VenusAerie_StepSpriteRotation;
   actor->facing = FACING_WEST;
   Actor_MoveToAndWait(21, 184, 237);
   Object_SetActionCallbackAndRefreshById(21, gVenusAerie_LeapAction);
@@ -2910,8 +2913,7 @@ static void VenusAerie_RunTransitionStep(void) {
       effect->timer = angle;
       effect->work = 0;
       effect->riseCounter = (u32)Random_Next() >> 13;
-      effect->update =
-          (void (*)(union FieldObject *))SceneEffect_UpdateCounterDrivenOrbit;
+      effect->update = SceneEffect_UpdateCounterDrivenOrbit;
       effect->speed = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24;
       effect->speed = center->speed >> 16;
       sprite->flags = 0;

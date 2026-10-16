@@ -3452,11 +3452,16 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiWork_PushValueSlotFar(actor, 1);
       UiWork_PushValueSlotFar(itemId, 2);
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
+      // UB: this routine returns void; call it through its declared type.
+#ifdef UBFIX
+      BattleFx_LoadActionEffectResources(actionId, 0);
+#else
       /* FAKEMATCH: called through a cast to the s32 call the bytes show: called
        * as void by its prototype, the 0 is loaded before the action id (differ
        * 2), also with actionId declared at function scope; with actionId read
        * after runtime: differ 8. */
       ((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(actionId, 0);
+#endif
       runtime->resolvingAction = 1;
       BattleFx_Run();
       runtime->resolvingAction = 0;

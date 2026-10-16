@@ -94,7 +94,8 @@ SceneActor_SetFacingFromSample(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-static void TolbiShipMast_GrowActorScale(struct FieldActor *o) {
+static void TolbiShipMast_GrowActorScale(union FieldObject *fieldObject) {
+  struct FieldActor *o = (struct FieldActor *)fieldObject;
   if (o->scaleX < 0x10000) {
     o->scaleX += 160;
     o->scaleY += 160;
@@ -306,7 +307,7 @@ static void Scene_RunFourActorStagingSequence(void) {
   s32 x;
   s32 zero = 0;
   s32 scale;
-  s32 update;
+  void (*update)(union FieldObject *);
 
   Engine_EventBegin();
   Event_CallWithLastActiveObjectId((s32)gTolbiShipMast_StagingObjects);
@@ -347,18 +348,18 @@ static void Scene_RunFourActorStagingSequence(void) {
   Engine_ActorSetChildValue(12, 3);
   actor = Object_GetById(10);
   scale = 0x8000;
-  update = (s32)TolbiShipMast_GrowActorScale;
+  update = TolbiShipMast_GrowActorScale;
   actor->scaleY = scale;
   actor->scaleX = scale;
-  actor->update = (void (*)(union FieldObject *))update;
+  actor->update = update;
   actor = Object_GetById(11);
   actor->scaleY = scale;
   actor->scaleX = scale;
-  actor->update = (void (*)(union FieldObject *))update;
+  actor->update = update;
   actor = Object_GetById(12);
   actor->scaleY = scale;
   actor->scaleX = scale;
-  actor->update = (void (*)(union FieldObject *))update;
+  actor->update = update;
   Engine_TaskWait(1);
   Actor_SetSpeed(10, 0x851e, 0x428f);
   Actor_SetSpeed(11, 0x7333, 0x3999);

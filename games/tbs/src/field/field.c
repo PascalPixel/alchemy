@@ -4680,11 +4680,16 @@ s32 Map_LoadLayeredScene(s32 index) {
   REG_BLDCNT = cnt;
   cnt = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   REG_DISPCNT = cnt;
+  // UB: the scheduler returns s32; call it through its declared type.
+#ifdef UBFIX
+  Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
+#else
   /* FAKEMATCH: Scheduler_AddOrUpdateCallback is called as void (*)(void
    * (*)(void), s32); as s32 (*)(SchedulerCallback, s32), its prototype,
    * Map_LoadLayeredScene has 6 of 868 bytes different */
   ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)(
       Map_UpdateLayerScroll, 0xc85);
+#endif
   return 2;
 }
 

@@ -51,7 +51,7 @@ static void FieldScene_RunStep17(void);
 static void SceneState_SetValue24ThenCall(void);
 static void SceneState_SetValue25ThenCall(void);
 static s32 SceneActor_RunStep18WhenTargetSet(s32 *p);
-static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source);
+static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject);
 static void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter);
 static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x,
                                           s32 delta_z);
@@ -1647,7 +1647,7 @@ static void FieldScene_RunLargeStagingSequence(void) {
   rec8->y.fixed = 0xd00000;
   rec8->z.fixed = 0x2480000;
   rec8->facing = 0x8000;
-  rec8->update = (void (*)(union FieldObject *))Effect_ConfigureSpawnedParticle;
+  rec8->update = Effect_ConfigureSpawnedParticle;
   Engine_EventWait(4);
   Actor_SetSpeed(14, 0x20000, 0x20000);
   FieldObject_SetPosition(rec8, 0x1980000, 0xd00000, 0x2480000);
@@ -2519,7 +2519,8 @@ static s32 SceneActor_RunStep18WhenTargetSet(s32 *p) {
   return 0;
 }
 
-static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source) {
+static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
+  struct SourceEntity *source = (struct SourceEntity *)fieldObject;
   s32 spawn_position[3];
   s32 particle_index;
   struct StagedParticle *particle;

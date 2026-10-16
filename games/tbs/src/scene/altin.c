@@ -496,7 +496,8 @@ static void Village_WalkThroughDoorway(void) {
 // Update callback of the hopping water beast: once a second it leaps up,
 // falls back with a splash that shakes the screen briefly, and stands while
 // on the ground.
-static void Beast_Hop(struct WaterActor *beast) {
+static void Beast_Hop(union FieldObject *fieldObject) {
+  struct WaterActor *beast = (struct WaterActor *)fieldObject;
   if (beast->shakeFrames != 0) {
     if (--beast->shakeFrames == 1)
       Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -713,7 +714,8 @@ static void Spray_Initialize(struct SprayActor *spray) {
 // Update callback of a spray particle: it drifts sideways with a random
 // wobble, rising and stretching for a few frames and then falling and
 // growing, sometimes changing frame, until its life runs out.
-static void Spray_Drift(struct WaterActor *spray) {
+static void Spray_Drift(union FieldObject *fieldObject) {
+  struct WaterActor *spray = (struct WaterActor *)fieldObject;
   spray->x += (spray->timer << 12) +
               ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
   if (spray->timer <= 3) {

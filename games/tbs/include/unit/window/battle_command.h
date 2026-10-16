@@ -197,7 +197,11 @@ s32 Menu_SelectEntry20To21(s32 selection);
 
 void Scheduler_ScheduleCallbackCAfterFrames(void);
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second);
+#ifdef UBFIX
+void Menu_RunSelection(void);
+#else
 s16 Menu_RunSelection(void);
+#endif
 s32 Menu_HandleSelectionRowInput(struct UiWindow *arg, s16 value, s16 *sub,
                                  s16 *mode);
 s32 Menu_RunSelectionWithCursorObject(void);

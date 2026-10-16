@@ -59,7 +59,7 @@ static void AltinPeak_RestoreAreaTen(void);
 static void AltinPeak_RestoreAreaEleven(void);
 static void AltinPeak_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
 static void FieldScene_RunScene3a4SequenceG(void);
-static void SceneState_ForwardByRuntimeSelector(s32 arg);
+static void SceneState_ForwardByRuntimeSelector(union FieldObject *object);
 static void FieldScene_RunActorTenFourStepSequence(void);
 static void FieldScene_RunOpeningAuxiliarySequence(void);
 static void FieldScene_RunScene3a4SequenceF(void);
@@ -103,13 +103,22 @@ static void Mine_TalkToDjinni(void) {
 #include "common/object_facing.h"
 
 // Update callback that keeps an object on actor 8, 12 pixels up.
-static s32 Object_FollowActor8(struct FieldActor *dst) {
+// UB: update hooks return void. Plain void removes the native zero result
+// and changes its return sequence (three instructions in tbs-en).
+#ifdef UBFIX
+static void Object_FollowActor8(union FieldObject *object) {
+#else
+static s32 Object_FollowActor8(union FieldObject *object) {
+#endif
+  struct FieldActor *dst = (struct FieldActor *)object;
   struct FieldActor *src = Object_GetById(8);
 
   dst->x.fixed = src->x.fixed;
   dst->y.fixed = 0xFFF40000;
   dst->z.fixed = src->z.fixed;
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 // Script callback for a flying spark: moves by its velocity, grows by its z
@@ -766,7 +775,11 @@ static void FieldScene_RunSharedSetPiece(s32 a0) {
   actor9->scaleX = 0x13333;
   actor9->scaleY = 0x13333;
   actor9->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+#ifdef UBFIX
+  actor9->update = Object_FollowActor8;
+#else
   actor9->update = (void (*)(union FieldObject *))Object_FollowActor8;
+#endif
   Engine_ActorSetAnimation(8, 4);
   actor8->bounce = 0x8000;
   actor8->x.fixed = 0x3120000;
@@ -990,7 +1003,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return table;
 }
 
-static void SceneMotion_UpdateTimedActor(struct SceneMotion *work) {
+static void SceneMotion_UpdateTimedActor(union FieldObject *object) {
+  struct SceneMotion *work = (struct SceneMotion *)object;
   if (work->delay != 0) {
     if (--work->delay == 1)
       Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -1041,8 +1055,7 @@ static void EV10_TOUCH_1(void) {
   rec3->motion.timer = 0;
   rec3->motion.delay = 0;
   rec3->actor.gravity = 0x6666;
-  rec3->actor.update =
-      (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+  rec3->actor.update = SceneMotion_UpdateTimedActor;
   Actor_SetSpeed(10, 0x13333, 0x9999);
   Actor_MoveToAndWait(10, 0x134, 0x123);
   Engine_ActorMoveToAndWait(10, 0x137, 215);
@@ -1065,8 +1078,7 @@ static void EV10_TOUCH_1(void) {
   rec3->motion.active = 0;
   rec3->motion.timer = 0;
   rec3->motion.delay = 0;
-  rec3->actor.update =
-      (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+  rec3->actor.update = SceneMotion_UpdateTimedActor;
   Actor_MoveToAndWait(10, 0x140, 232);
   Actor_MoveToAndWait(10, 0x154, 0x106);
   Engine_ActorMoveToAndWait(10, 0x176, 0x106);
@@ -1099,8 +1111,7 @@ static void EV10_TOUCH_1(void) {
   rec3->motion.active = 0;
   rec3->motion.timer = 0;
   rec3->motion.delay = 0;
-  rec3->actor.update =
-      (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+  rec3->actor.update = SceneMotion_UpdateTimedActor;
   Actor_MoveToAndWait(10, 0x149, 219);
   rec3->actor.update = 0;
   Engine_ActorSetAnimation(10, 1);
@@ -1183,8 +1194,7 @@ static void EV11_TOUCH_1(void) {
   actor->motion.timer = 0;
   actor->motion.delay = 0;
   actor->actor.gravity = 0x6666;
-  actor->actor.update =
-      (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+  actor->actor.update = SceneMotion_UpdateTimedActor;
   Actor_SetSpeed(10, 0x13333, 0x9999);
   Actor_MoveToAndWait(10, 212, 200);
   Actor_MoveToAndWait(10, 103, 200);
@@ -1222,8 +1232,7 @@ static void EV11_TOUCH_1(void) {
   actor->motion.active = 0;
   actor->motion.timer = 0;
   actor->motion.delay = 0;
-  actor->actor.update =
-      (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+  actor->actor.update = SceneMotion_UpdateTimedActor;
   Actor_SetSpeed(10, 0x13333, 0x9999);
   Actor_MoveToAndWait(10, 120, 215);
   actor->actor.update = NULL;
@@ -1712,7 +1721,8 @@ static void FieldScene_RunScene3a4SequenceG(void) {
   }
 }
 
-static void SceneState_ForwardByRuntimeSelector(s32 arg) {
+static void SceneState_ForwardByRuntimeSelector(union FieldObject *object) {
+  struct FieldActor *arg = (struct FieldActor *)object;
 
   s32 selection = gFrameCount & 7;
 

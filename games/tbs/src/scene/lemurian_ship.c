@@ -129,7 +129,8 @@ static void ShipGlow_CyclePalette(void) {
 
 // The update of a drop of spray: it rises and wobbles for its timer, then
 // falls back by gSprayFallScript.
-static void Spray_Update(u8 *obj) {
+static void Spray_Update(union FieldObject *fieldObject) {
+  u8 *obj = (u8 *)fieldObject;
   u16 *wait = &((struct FieldActor *)obj)->timer;
   s32 left = *wait;
 
@@ -243,7 +244,7 @@ static void Ship_UpdateSwell(void) {
     pos->z = z;
     actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
     if (actor != 0) {
-      actor->update = (void (*)(union FieldObject *))Spray_Update;
+      actor->update = Spray_Update;
       actor->timer = 60;
       actor->work = 1;
       actor->motionFlags = 0;

@@ -143,7 +143,8 @@ static void StoryProgress_TriggerEvent080A(void) {
   }
 }
 
-static void StoryActor_AdvanceTimer(struct FieldActor *actor) {
+static void StoryActor_AdvanceTimer(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor->timer <= 0) {
     actor->timer++;
   } else {
@@ -151,7 +152,8 @@ static void StoryActor_AdvanceTimer(struct FieldActor *actor) {
   }
 }
 
-static void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor) {
+static void StoryActor_ConfigureSpawnedObject(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *spark;
   s32 x;
   s32 y;
@@ -178,10 +180,11 @@ static void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor) {
   Engine_ActorSetSpriteFlags(spark, 0);
   Object_SetMode(spark, 1);
   spark->timer = 0;
-  spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
+  spark->update = StoryActor_AdvanceTimer;
 }
 
-static void WorldMap_UpdateBobbingMarker(struct FieldActor *actor) {
+static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s16 *angle;
 
   if (gFrameCount & 2)
@@ -208,7 +211,7 @@ static s32 StoryActor_Initialize(struct ScriptInterpreter *interpreter) {
   if (Engine_GameFlagIsSet(0x16E) != 0) {
     return 0;
   }
-  actor->update = (void (*)(union FieldObject *))WorldMap_UpdateBobbingMarker;
+  actor->update = WorldMap_UpdateBobbingMarker;
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->work = 0;
@@ -1620,8 +1623,7 @@ static void EV96_SCRIPT(void) {
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
     Heap_Release(17);
     Event_Wait(20);
-    orb->update =
-        (void (*)(union FieldObject *))StoryActor_ConfigureSpawnedObject;
+    orb->update = StoryActor_ConfigureSpawnedObject;
     Event_Wait(80);
   }
   Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;

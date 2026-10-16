@@ -1856,7 +1856,8 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
    * spill of out ahead of the work-address load. Without it the load is
    * scheduled first (differ 2 in tbs-ja, the only edition with this body);
    * assigning work after markGlyph = 0 instead moves the zero too (differ 6).
-   */
+   * Initializing work at its declaration without the block also swaps the
+   * address load and out spill (two instructions in tbs-ja, 2026-10-16). */
   do {
   } while (0);
   work = UI_WORK;
@@ -3756,7 +3757,7 @@ done:
   }
 }
 
-typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
+typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 
 // A render output's sprite cell: the link and OAM attributes in its 12 bytes
 // from offset 0x10.

@@ -347,7 +347,8 @@ static void FieldScene_RunGuardedSixWordStep(void) {
   Engine_EventEnd();
 }
 
-static void AltmillerCave_UpdateScalePulse(struct FieldActor *obj) {
+static void AltmillerCave_UpdateScalePulse(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   s32 v = gAltmillerCave_PulseScales[(obj->timer >> 2) & 3];
 
   obj->scaleX = v;
@@ -409,8 +410,7 @@ static void AltmillerCave_SpinActorWheel(void) {
       wheel->angle = r + 0x4000;
       wheel->phase = 0x63;
       wheel->speed = 0;
-      Object_GetById(v + 11)->update =
-          (void (*)(union FieldObject *))AltmillerCave_UpdateScalePulse;
+      Object_GetById(v + 11)->update = AltmillerCave_UpdateScalePulse;
     }
   } else if (state == 0x63) {
     flag = 0;
@@ -1680,7 +1680,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gAltmillerCaveEventsOther;
 }
 
-static void AltmillerCave_MatchLeaderPriority(struct FieldActor *actor) {
+static void AltmillerCave_MatchLeaderPriority(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor != NULL) {
     actor->priorityFlags = 0;
     actor->sprite->priority = Object_GetById(0)->sprite->priority;

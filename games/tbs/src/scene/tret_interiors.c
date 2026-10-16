@@ -754,7 +754,8 @@ static void TretInteriors_PlayGesture(s32 gesture) {
   Engine_TaskWait(12);
 }
 
-static void TretInteriors_UpdateSwirlObject(struct Swirl *obj) {
+static void TretInteriors_UpdateSwirlObject(union FieldObject *fieldObject) {
+  struct Swirl *obj = (struct Swirl *)fieldObject;
   struct Vec pos;
   s32 t;
 

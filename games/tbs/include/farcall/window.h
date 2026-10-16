@@ -135,7 +135,11 @@ FAR_CALL(RenderOutput_RedrawSavedRectFar, RenderOutput_RedrawSavedRect, void,
 FAR_CALL(RenderOutput_ClearListFar, RenderOutput_ClearList, void, (void *work))
 FAR_CALL(UiWindow_SetTilemapEntryFar, UiWindow_SetTilemapEntry, void,
          (struct UiWindow * window, s32 value, s32 x, s32 y, u32 mode))
+#ifdef UBFIX
+FAR_CALL(Menu_RunSelectionFar, Menu_RunSelection, void, (void))
+#else
 FAR_CALL(Menu_RunSelectionFar, Menu_RunSelection, s16, (void))
+#endif
 FAR_CALL(Menu_RunSelectionWithCursorObjectFar,
          Menu_RunSelectionWithCursorObject, s32, (void))
 #ifndef OWN_Resource_LoadByModeIntoSlotFar

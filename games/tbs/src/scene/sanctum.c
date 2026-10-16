@@ -43,7 +43,7 @@ static void FieldScene_RunScriptedSceneSequence(void);
 static void FieldScene_RunActorUpdateSequence(void);
 static void Sanctum_CopyActorPose(void);
 static void Sanctum_ResetActorUpdate(void);
-static void Sanctum_FollowLeaderOffset(struct FieldActor *actor);
+static void Sanctum_FollowLeaderOffset(union FieldObject *fieldObject);
 static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1);
 static s32 Sanctum_ChooseRestartOption(void);
 static void FieldScene_RunPairedActorChoreography(void);
@@ -1297,7 +1297,7 @@ static void Sanctum_CopyActorPose(void) {
   record = Object_GetById(8);
   rec7->facing = record->facing;
   record = Object_GetById(14);
-  record->update = (void (*)(union FieldObject *))Sanctum_FollowLeaderOffset;
+  record->update = Sanctum_FollowLeaderOffset;
   record = Object_GetById(14);
   p5 = (struct AnimationObject *)record->sprite;
   {
@@ -1320,7 +1320,8 @@ static void Sanctum_ResetActorUpdate(void) {
   Engine_ActorSetPosition(14, 0, 0);
 }
 
-static void Sanctum_FollowLeaderOffset(struct FieldActor *actor) {
+static void Sanctum_FollowLeaderOffset(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *leader;
 
   leader = Object_GetById(8);
@@ -1343,7 +1344,8 @@ static void Sanctum_FollowLeaderOffset(struct FieldActor *actor) {
   }
 }
 
-static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj) {
+static void SceneEffect_StepEllipseOrbit(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor = obj->linkedObject;
   u16 *angle = &obj->timer;
   u16 theta = *angle;
@@ -1384,8 +1386,7 @@ static void Sanctum_SpawnOwnerEffect(s32 a0, s32 a1) {
         rec8->timer = zero;
       }
       rec8->work = p8;
-      rec8->update =
-          (void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
+      rec8->update = SceneEffect_StepEllipseOrbit;
       {
         u16 v = 0;
         p5->flags = v;

@@ -307,7 +307,7 @@ void RenderOutput_SetInvertedSentinel(void *output, s32 priority) {
     ((struct RenderOutput *)output)->sentinel = ~priority;
 }
 
-typedef void (*WindowSpanRoutine)(void *spans, void *tilemap);
+typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
 // Fills `spans` with the horizontal extent of the windows on each of the 20
 // tile rows, read from the UI tilemap by the ARM routine Tile_BuildMetatiles
@@ -3909,7 +3909,9 @@ s32 Ui_RunSelectionScreen(s32 mode) {
         s32 col;
         /* FAKEMATCH: the add of 0x44a stays apart from the store it addresses
          * (adds r3, r7; strh r6, [r3]); as a plain store combine folds it into
-         * strh r6, [r3, r7], 0 -> 33 */
+         * strh r6, [r3, r7], 0 -> 33. An ordinary row pointer with three
+         * post-increment stores shortens Ui_RunSelectionScreen by 24 bytes
+         * in tbs-en instead of matching its address formation. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(render->tilemap + (cnt + 17) * 32 + panel * 3 + 5 +
                             (col & 3)) = 0xf07f;
@@ -9006,7 +9008,11 @@ s32 Menu_SelectEntry20To21(s32 selection) {
 }
 
 void Scheduler_ScheduleCallbackCAfterFrames(void) {
+#ifdef UBFIX
+  Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
+#else
   Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
+#endif
 }
 
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first,
@@ -9022,7 +9028,14 @@ void Menu_DrawSelectionRow(struct UiWindow *work, s32 first,
   UiText_DrawResource(label, work, MENU_LABEL_X, 0);
 }
 
+// The scheduler and the debug menu's far call ignore this selection result.
+// Plain void removes two result moves (252 to 248 bytes in tbs-en) and
+// reorders Event_SetDestinationFar's argument setup.
+#ifdef UBFIX
+void Menu_RunSelection(void) {
+#else
 s16 Menu_RunSelection(void) {
+#endif
   s32 resource;
   s16 mode;
   s16 secondary;
@@ -9048,12 +9061,20 @@ s16 Menu_RunSelection(void) {
       UiTextResource_Release(resource);
       UiWork_Finalize(work, 2);
       Event_SetDestinationFar(primary, secondary);
+#ifdef UBFIX
+      return;
+#else
       return result;
+#endif
     }
     if (result == -2) {
       UiTextResource_Release(resource);
       UiWork_Finalize(work, 2);
+#ifdef UBFIX
+      return;
+#else
       return result;
+#endif
     }
 
     UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);

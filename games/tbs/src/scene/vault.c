@@ -772,7 +772,9 @@ static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay) {
 }
 
 static void
-SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect) {
+SceneEffect_UpdateMotionWithDamping(union FieldObject *fieldObject) {
+  struct OverlayEffectMotion *effect =
+      (struct OverlayEffectMotion *)fieldObject;
   s32 horizontalRate;
   s32 verticalRate;
 
@@ -872,8 +874,7 @@ static void Vault_SpawnDriftingEffect(s32 flags) {
     leaf->motion.mode = 1;
   }
   {
-    void (*update)(union FieldObject *) =
-        (void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
+    void (*update)(union FieldObject *) = SceneEffect_UpdateMotionWithDamping;
     u8 *spriteFlags;
 
     /* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As

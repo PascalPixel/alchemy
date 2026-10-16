@@ -136,14 +136,22 @@ static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
 
 // Update callback that turns the party leader toward Feizhi while she runs
 // past.
-static s32 Leader_FaceFeizhi(void *self) {
-  struct FieldActor *leader = self;
+// UB: update hooks return void. Plain void removes the native zero result
+// and changes its return sequence (three instructions in tbs-en).
+#ifdef UBFIX
+static void Leader_FaceFeizhi(union FieldObject *object) {
+#else
+static s32 Leader_FaceFeizhi(union FieldObject *object) {
+#endif
+  struct FieldActor *leader = (struct FieldActor *)object;
   struct FieldActor *feizhi;
 
   feizhi = Object_GetById(ACTOR_FEIZHI);
   leader->facing = ArcTan2(feizhi->z.fixed - leader->z.fixed,
                            feizhi->x.fixed - leader->x.fixed);
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 // Returns the entrance table of the scene being entered.
@@ -476,7 +484,11 @@ static void AlpineCrossing_FeizhiArrives(void) {
     // The leader turns to follow Feizhi as she runs past; one standing in
     // her row steps aside first.
     leader = Object_GetById(ACTOR_PARTY_LEADER);
+#ifdef UBFIX
+    leader->update = Leader_FaceFeizhi;
+#else
     leader->update = (void (*)(union FieldObject *))Leader_FaceFeizhi;
+#endif
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if ((leader->z.fixed >> 20) == 13) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
@@ -725,7 +737,14 @@ static void AlpineCrossing_HidePath(void) {
 // Update callback of the frozen pillar: it draws under the party leader
 // while the leader stands higher than its top, so the leader can climb onto
 // it, and over the leader otherwise.
-static s32 Pillar_SortAgainstLeader(struct FieldActor *pillar) {
+// UB: this update hook has no result. Plain void changes the native return
+// sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
+#ifdef UBFIX
+static void Pillar_SortAgainstLeader(union FieldObject *object) {
+#else
+static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
+#endif
+  struct FieldActor *pillar = (struct FieldActor *)object;
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
@@ -754,8 +773,12 @@ static void AlpineCrossing_FreezePuddle(void) {
   Object_GetById(ACTOR_PUDDLE)->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
   Object_GetById(ACTOR_PUDDLE)->collisionFlags &= 0xfd;
   Object_GetById(ACTOR_PUDDLE)->motionFlags = 0;
+#ifdef UBFIX
+  Object_GetById(ACTOR_PUDDLE)->update = Pillar_SortAgainstLeader;
+#else
   Object_GetById(ACTOR_PUDDLE)->update =
       (void (*)(union FieldObject *))Pillar_SortAgainstLeader;
+#endif
 
   Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
   Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);

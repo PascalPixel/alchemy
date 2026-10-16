@@ -1554,7 +1554,8 @@ static void FieldScene_ConfigureValue93Scene(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-static void SceneEffect_UpdateArcPosition(struct OverlayObject *object) {
+static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
+  struct OverlayObject *object = (struct OverlayObject *)fieldObject;
   struct OverlayObject *parent;
   u16 angle;
 

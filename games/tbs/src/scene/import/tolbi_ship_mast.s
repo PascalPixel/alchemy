@@ -7,7 +7,7 @@
 	.set import.Engine_MathCos, 1
 	.set import.Engine_MapRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Script_WaitForEventTimeout, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

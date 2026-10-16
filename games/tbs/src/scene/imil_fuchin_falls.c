@@ -1558,7 +1558,7 @@ static void Imil_SlideActorAcrossIce(void) {
 
     Object_SetMode(actor, 2);
     ObjectDispatch_ApplyValueToChildren(actor, 48);
-    Object_CommitPosition(actor);
+    FieldObject_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 
     // Keep sliding through cells with the same collision kind.
@@ -1578,7 +1578,7 @@ static void Imil_SlideActorAcrossIce(void) {
       actor->speed = PIXELS(2);
       actor->acceleration = PIXELS(1) / 10;
       Engine_ObjectSetPosition(actor, probe.x, probe.y, probe.z);
-      Object_CommitPosition(actor);
+      FieldObject_WaitForMove(actor);
       if (nextCollision != startCollision) {
         goto blocked;
       }
@@ -1587,7 +1587,7 @@ static void Imil_SlideActorAcrossIce(void) {
     actor->speed = PIXELS(2);
     actor->acceleration = PIXELS(1);
     Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
-    Object_CommitPosition(actor);
+    FieldObject_WaitForMove(actor);
     Engine_TaskWait(2);
   }
 

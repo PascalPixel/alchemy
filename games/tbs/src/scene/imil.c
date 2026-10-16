@@ -1312,7 +1312,7 @@ static void Imil_RunIceSlide(void) {
     Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
     Object_SetMode(subject, 2);
     ObjectDispatch_ApplyValueToChildren((struct DispatchObject *)subject, 48);
-    Engine_ObjectCommitPosition(subject);
+    FieldObject_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 
     // Advance along the slide until its next cell is blocked or too high.
@@ -1331,7 +1331,7 @@ static void Imil_RunIceSlide(void) {
       subject->speed = PIXELS(2);
       subject->acceleration = PIXELS(1) / 10;
       Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-      Engine_ObjectCommitPosition(subject);
+      FieldObject_WaitForMove(subject);
       if (marker != goal) {
         goto blocked;
       }
@@ -1340,7 +1340,7 @@ static void Imil_RunIceSlide(void) {
     subject->speed = PIXELS(2);
     subject->acceleration = PIXELS(1);
     Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
-    Engine_ObjectCommitPosition(subject);
+    FieldObject_WaitForMove(subject);
     Engine_TaskWait(2);
   }
 

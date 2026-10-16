@@ -271,7 +271,7 @@ static void ColossoWall_KnockDownForceObstacle(void) {
     Engine_TaskWait(1);
     settleRotationStep += 36;
   }
-  Object_CommitPosition(obstacle);
+  FieldObject_WaitForMove(obstacle);
   Engine_EventWait(2);
   Engine_AudioPlayCue(240);
   {
@@ -376,7 +376,7 @@ static void ColossoWall_MovePusherAndLog(s32 logId, s32 offsetX, s32 offsetZ) {
     Object_SetMode(log, 3);
   }
   Engine_AudioPlayCue(226);
-  Object_CommitPosition(pusher);
+  FieldObject_WaitForMove(pusher);
   Engine_AudioPlayCue(288);
   Object_SetMode(log, 2);
   Engine_EventEnd();
@@ -450,9 +450,9 @@ static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
   Engine_AudioPlayCue(239);
-  Object_CommitPosition(pusherActor);
+  FieldObject_WaitForMove(pusherActor);
   Object_SetMode(pusherActor, 1);
-  Object_CommitPosition(log);
+  FieldObject_WaitForMove(log);
   Engine_AudioPlayCue(288);
   Engine_AudioPlayCue(213);
   Object_SetMode(log, 1);
@@ -1219,9 +1219,9 @@ static void ColossoWall_PushBlockToCell(s32 obstacleId, s32 column, s32 row) {
   Object_SetMode(pusherActor, 2);
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
-  Object_CommitPosition(pusherActor);
+  FieldObject_WaitForMove(pusherActor);
   Object_SetMode(pusherActor, 1);
-  Object_CommitPosition(obstacle);
+  FieldObject_WaitForMove(obstacle);
   Object_SetMode(obstacle, 1);
   Engine_AudioPlayCue(288);
   Engine_AudioPlayCue(213);
@@ -1720,7 +1720,7 @@ static void ColossoWall_PushAdjacentObstacle(void) {
   Engine_ObjectSetPosition(pusher, destination.x, destination.y, destination.z);
 
   Engine_AudioPlayCue(0xee);
-  Object_CommitPosition(obstacle);
+  FieldObject_WaitForMove(obstacle);
   Engine_AudioPlayCue(0x120);
 
   obstacle->x = destination.x;

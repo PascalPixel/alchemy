@@ -752,7 +752,7 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
     object->movementState = 0;
     ObjectDispatch_InitFromTable6Far(object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
   }
 }
 
@@ -779,7 +779,7 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
     ObjectDispatch_InitFromTable6Far(object);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   }
 }
@@ -808,7 +808,7 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
     ObjectMotion_SetActionVariant(objectId, priority);
     Object_SetMoveTargetFar(object, object->x, object->y,
                             object->z + (zOffset << 16));
@@ -852,7 +852,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
 
   ObjectMotion_OffsetPositionAndReset(objectId, xOffset, zOffset);
   if (object != NULL) {
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   }
 }
@@ -887,7 +887,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   }
 }
@@ -1193,7 +1193,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
     *objectFlags = 3;
     object->velocityY = 0x30000;
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0x100000);
-    Script_WaitForEventTimeoutFar(object);
+    FieldObject_WaitForMoveFar(object);
     for (pose = 0; (u32)pose <= 0xB3 && object->y > object->terrainHeight;
          pose++) {
       WaitFrames(1);
@@ -2112,7 +2112,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
 // The event command "camera wait for move": waits (at most 600 frames) for
 // the camera to arrive, then 2 frames more.
 void Camera_WaitForArrival(void) {
-  Script_WaitForEventTimeoutFar(((struct FieldWork *)Runtime_AllocateBlock(
+  FieldObject_WaitForMoveFar(((struct FieldWork *)Runtime_AllocateBlock(
                                      HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
                                     ->camera);
   FieldEvent_WaitFrames(2);
@@ -2983,7 +2983,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x10000;
   Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
-  Script_WaitForEventTimeoutFar(leader);
+  FieldObject_WaitForMoveFar(leader);
 }
 
 // Plays the leader's arrival for the way the last scene was left: through an
@@ -3719,17 +3719,17 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
                                              dist, dir);
   AudioCommand_PlayFar(152);
   ObjectMotion_Launch(djinniId, 4, 0);
-  Script_WaitForEventTimeoutFar(djinni);
+  FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
   AudioCommand_PlayFar(152);
   ObjectMotion_Launch(djinniId, 4, 0);
-  Script_WaitForEventTimeoutFar(djinni);
+  FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
   AudioCommand_PlayFar(152);
   ObjectMotion_Launch(djinniId, 4, 0);
-  Script_WaitForEventTimeoutFar(djinni);
+  FieldObject_WaitForMoveFar(djinni);
   WaitFrames(20);
 
   // Afterimages of the same sprite, each chasing the one before it, tinted
@@ -6135,7 +6135,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     Vector_AddPolarOffset(16 << 16, angle, &position);
     Vector_AddPolarOffset(2 << 16, direction, &position);
     Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-    Script_WaitForEventTimeoutFar(pusher);
+    FieldObject_WaitForMoveFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
     position.z = target->z.fixed;
@@ -6207,7 +6207,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       user->acceleration = 0x3333;
       Object_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
-    Script_WaitForEventTimeoutFar(target);
+    FieldObject_WaitForMoveFar(target);
     target->x.fixed = x;
     target->z.fixed = z;
     target->velocityX = 0;
@@ -6369,7 +6369,7 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
       obj->scaleX = next;
       obj->scaleY = next;
     }
-    Script_WaitForEventTimeoutFar(obj);
+    FieldObject_WaitForMoveFar(obj);
   }
 }
 
@@ -6781,7 +6781,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
       Motion_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000, hand->angle);
   }
 
-  Script_WaitForEventTimeoutFar(pair[0]);
+  FieldObject_WaitForMoveFar(pair[0]);
   target->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(130);
   target->motionFlags = 4;
@@ -6839,7 +6839,7 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
         Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle); \
     }                                                                          \
                                                                                \
-    Script_WaitForEventTimeoutFar(pair[0]);                                    \
+    FieldObject_WaitForMoveFar(pair[0]);                                    \
     AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);                                  \
     for (n = 0; n < ANCHOR_SHARD_MAX; n++) {                                   \
       pos.x = work->x;                                                         \
@@ -7532,7 +7532,7 @@ void RunBattleEffect03(void) {
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
     Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
-    Script_WaitForEventTimeoutFar(target);
+    FieldObject_WaitForMoveFar(target);
     ObjectDispatch_ReleaseFar(target);
   }
   if (resourceSlot != 0x60)
@@ -8041,8 +8041,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   p->z = target->z.fixed;
   Object_SetMoveTargetFar(obj, p->x + (16 << 16), p->y, p->z);
   Object_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
-  Script_WaitForEventTimeoutFar(obj);
-  Script_WaitForEventTimeoutFar(right);
+  FieldObject_WaitForMoveFar(obj);
+  FieldObject_WaitForMoveFar(right);
   obj->x.fixed = p->x + (16 << 16);
   obj->velocityX = 0;
   right->x.fixed = p->x - (16 << 16);
@@ -8099,8 +8099,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     Vector_AddPolarOffset(2 << 16, angle, &pos);
     Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
     Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
-    Script_WaitForEventTimeoutFar(hands[0]);
-    Script_WaitForEventTimeoutFar(hands[1]);
+    FieldObject_WaitForMoveFar(hands[0]);
+    FieldObject_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
     pos.y = target->terrainHeight;
     pos.z = target->z.fixed;
@@ -8145,7 +8145,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       second->acceleration = 0x3333;
       Object_SetMoveTargetFar(hands[0], p->x + (16 << 16), p->y, p->z);
       Object_SetMoveTargetFar(second, p->x - (16 << 16), p->y, p->z);
-      Script_WaitForEventTimeoutFar(target);
+      FieldObject_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
       target->velocityX = i;

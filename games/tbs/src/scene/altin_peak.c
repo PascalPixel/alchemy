@@ -2031,7 +2031,7 @@ static void AltinPeak_SettleAndMountLeader(struct FieldActor *object) {
   x += centerZ;
   centerZ += z;
   Engine_ObjectSetPosition(object, x, object->y.fixed, centerZ);
-  Engine_ObjectCommitPosition(object);
+  FieldObject_WaitForMove(object);
   object->terrainId = 0;
   object->x.fixed = x;
   object->z.fixed = centerZ;
@@ -2229,7 +2229,7 @@ static void AltinPeak_RunRollingObject(s32 id, s32 heading) {
   position.z = object->z.fixed;
   FieldVector_AddPolarOffset(PIXELS(24), heading, &position);
   Engine_ObjectSetPosition(object, position.x, object->y.fixed, position.z);
-  Engine_ObjectCommitPosition(object);
+  FieldObject_WaitForMove(object);
   Engine_AudioPlayCue(233);
   // The route cells select turns, a countdown cue, and the destination.
   for (;;) {

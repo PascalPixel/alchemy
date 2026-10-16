@@ -2,6 +2,7 @@
 // and the rumbling mechanism restored when the party returns.
 
 #include "game_state.h"
+#include "unit/field/field.h"
 #include "engine_call.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -200,7 +201,7 @@ static void VaultCave_PushBlockAhead(void) {
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
-  Engine_ObjectCommitPosition(block);
+  FieldObject_WaitForMove(block);
   Engine_AudioPlayCue(288);
   block->x.fixed = destination.x;
   block->z.fixed = destination.z;

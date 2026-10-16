@@ -1,3 +1,4 @@
+#include "unit/field/field.h"
 #include "types.h"
 #include "field_obj.h"
 #include "game_state.h"
@@ -33,6 +34,6 @@ static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   } else {
     Object_SetMode(other, 3);
   }
-  Object_CommitPosition(actor);
+  FieldObject_WaitForMove(actor);
   Engine_EventEnd();
 }

@@ -4,15 +4,15 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetPrimaryTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetSecondaryTable(void);
-u8 *SceneData_GetPreparedRecords(void);
-u8 *SceneData_GetFourthTable(void);
-s32 FieldScene_SetupEntryLayoutsBySelector(void);
-extern struct SceneEntrance gEntryLayout_PrimaryTable[];
-extern u32 gEntryLayout_SecondaryTable[];
-extern struct ScenePlacement gEntryLayout_Records[];
-extern struct SceneEvent gEntryLayout_FourthTable[];
+const struct SceneEntrance *KolimaInteriors_GetEntrances(void);
+const struct SceneRegion *KolimaInteriors_GetRegions(void);
+const u32 *KolimaInteriors_GetExits(void);
+const struct ScenePlacement *KolimaInteriors_GetPlacements(void);
+const struct SceneEvent *KolimaInteriors_GetEvents(void);
+s32 KolimaInteriors_Initialize(void);
+extern struct SceneEntrance gKolimaInteriors_Entrances[];
+extern u32 gKolimaInteriors_Exits[];
+extern struct ScenePlacement gKolimaInteriors_Placements[];
+extern struct SceneEvent gKolimaInteriors_Events[];
 
 #endif

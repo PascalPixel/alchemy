@@ -1,4 +1,5 @@
 #include "script.h"
+#include "flags.h"
 #include "version.h"
 #include "game_state.h"
 #include "engine_call.h"
@@ -266,7 +267,8 @@ static void SuhallaDesert_RestoreSandstormAppearance(s32 stormId) {
   Engine_GameFlagSet((0x1fe + stormIdCopy));
   Engine_GameFlagSet(0x340);
   // The companion warns about the sandstorms once, when travelling with us.
-  if (Engine_GameFlagIsSet(0x9a0) != 0 && GameFlag_IsSet(0x9b6) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
+      GameFlag_IsSet(0x9b6) == 0) {
     Engine_GameFlagSet(0x9b6);
     Actor_SetSpeed(13, 0x10000, 0x8000);
     Actor_SetSpeed(0, 0x18000, 0xc000);
@@ -341,8 +343,8 @@ static void SuhallaDesert_DiscussContinuingToLalivero(void) {
   struct FieldActor *leader;
 
   // Only show this conversation when the companion and story flags allow it.
-  if (GameFlag_IsSet(0x9a0) != 0 && GameFlag_IsSet(0x1b7) == 0 &&
-      GameFlag_IsSet(0x9b0) != 0) {
+  if (GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
+      GameFlag_IsSet(0x1b7) == 0 && GameFlag_IsSet(0x9b0) != 0) {
     GameFlag_Set(0x9b5);
     Engine_EventBegin();
     Engine_EventSetMessage(MsgSuhallaNowhereFound);

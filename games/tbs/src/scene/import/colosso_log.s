@@ -29,7 +29,7 @@
 	.set import.ObjectDispatch_InitFromTable6, 1
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Object_CommitPosition, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Map_ClearLayerEntryFlag, 1
 	.set import.Map_SetLayerEntryFlag, 1
 	.set import.Map_GetTerrainHeight, 1

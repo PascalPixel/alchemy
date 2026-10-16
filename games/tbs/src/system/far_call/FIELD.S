@@ -47,7 +47,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_InitFromTable6Far, ObjectDispatch_InitFromTable6
 	export ObjectDispatch_WaitForValue16Far, ObjectDispatch_WaitForValue16
 	export Object_SetMoveTargetFar, Object_SetMoveTarget
-	export Script_WaitForEventTimeoutFar, Script_WaitForEventTimeout
+	export FieldObject_WaitForMoveFar, FieldObject_WaitForMove
 	overlay_veneer Map_GetScreenRelativePosition
 	overlay_veneer WorldMap_UpdateView
 	export Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock

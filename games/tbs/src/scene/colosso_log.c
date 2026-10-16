@@ -507,9 +507,9 @@ static void ColossoLog_RollFinalLog(void) {
   Object_SetMode(rider, 2);
   Engine_ObjectSetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
-  Object_CommitPosition(rider);
+  FieldObject_WaitForMove(rider);
   Object_SetMode(rider, 1);
-  Object_CommitPosition(log);
+  FieldObject_WaitForMove(log);
   // At the eastern end the log settles into the course exit.
   if (x >= PIXELS(1328)) {
     GameFlag_Set(0x369);
@@ -517,7 +517,7 @@ static void ColossoLog_RollFinalLog(void) {
     Actor_SetDestinationOffset(31, 18, 6);
     Engine_EventWait(30);
     Object_SetMode(log, 8);
-    Object_CommitPosition(log);
+    FieldObject_WaitForMove(log);
     log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     column = 84;
     Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
@@ -601,7 +601,7 @@ static void ColossoLog_PassNorthWallOpening(void) {
   z = actor->z.fixed & 0xFFF00000;
   Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                            z + PIXELS(24));
-  Object_CommitPosition(actor);
+  FieldObject_WaitForMove(actor);
 }
 
 // Move through the southern wall opening and finish the tutorial reaction.
@@ -631,7 +631,7 @@ static void ColossoLog_PassSouthWallOpening(void) {
   z = actor->z.fixed & 0xFFF00000;
   Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                            z + PIXELS(12));
-  Object_CommitPosition(actor);
+  FieldObject_WaitForMove(actor);
   Engine_ActorSetAttachedEffect(*actorId, 258);
   FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
 }
@@ -1317,7 +1317,7 @@ static void ColossoLog_ExplainScales(s32 guideId) {
     pan2 = Object_GetById(11);
     pan2->motionFlags = 0;
     ColossoLog_MoveOnScales(pan2, PIXELS(32));
-    Object_CommitPosition(pan2);
+    FieldObject_WaitForMove(pan2);
     Engine_EventWait(45);
     back1 = Object_GetById(10);
     back1->motionFlags = 0;
@@ -1325,7 +1325,7 @@ static void ColossoLog_ExplainScales(s32 guideId) {
     back2 = Object_GetById(11);
     back2->motionFlags = 0;
     ColossoLog_MoveOnScales(back2, PIXELS(4));
-    Object_CommitPosition(back2);
+    FieldObject_WaitForMove(back2);
     Engine_EventWait(15);
     Engine_EventShowMessage(guideId, 0);
     SceneEffect_SeedMarkerAndInstallTask(104, 68, 0);
@@ -1498,18 +1498,18 @@ static void ColossoLog_ExplainFreeClimb(s32 guideId) {
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
       raisedHeight = PIXELS(6) + y;
       Engine_ObjectSetPosition(actor, x, raisedHeight, actor->z.fixed);
-      Object_CommitPosition(actor);
+      FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 14);
       shiftedX = PIXELS(64) + x;
       Engine_ObjectSetPosition(actor, shiftedX, raisedHeight, actor->z.fixed);
-      Object_CommitPosition(actor);
+      FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
       Engine_ObjectSetPosition(actor, shiftedX, y + PIXELS(54), actor->z.fixed);
-      Object_CommitPosition(actor);
+      FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 15);
       Engine_ObjectSetPosition(actor, x + PIXELS(48), y + PIXELS(54),
                                actor->z.fixed);
-      Object_CommitPosition(actor);
+      FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 12);
       Event_ShowMessage(guideId, 0);
       Colosso_RestoreCompetitor(0);
@@ -1546,7 +1546,7 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
     ObjectDispatch_InitFromTable6(actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
-    Object_CommitPosition(actor);
+    FieldObject_WaitForMove(actor);
     Object_SetMode(actor, 1);
   }
 }
@@ -2021,7 +2021,7 @@ static void ColossoLog_PushActorAhead(void) {
   Engine_ObjectSetPosition(subject, position.x, position.y, position.z);
 
   Engine_AudioPlayCue(0xee);
-  Object_CommitPosition(target);
+  FieldObject_WaitForMove(target);
   Engine_AudioPlayCue(0x120);
 
   target->x.fixed = position.x;

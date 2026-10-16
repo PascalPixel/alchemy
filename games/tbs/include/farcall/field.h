@@ -45,7 +45,7 @@ void ObjectDispatch_WaitForValue16Far(void *raw);
 #ifndef OWN_Object_SetMoveTargetFar
 void Object_SetMoveTargetFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 #endif
-void Script_WaitForEventTimeoutFar(void *fieldObject);
+void FieldObject_WaitForMoveFar(void *fieldObject);
 void Map_LoadDefaultCellsAndUpdateBlockFar(void);
 void Map_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
                                      u32 destination_y);

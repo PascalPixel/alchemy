@@ -1,4 +1,0 @@
-#ifndef GUARD_RESOURCE_390_H
-#define GUARD_RESOURCE_390_H
-
-#endif

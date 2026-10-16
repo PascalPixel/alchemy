@@ -8,13 +8,13 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *BilibinCave_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
-extern s32 gBilibinCavePlacements1_Data[];
+const struct SceneEntrance *BilibinCave_GetEntrances(void);
+const struct SceneRegion *BilibinCave_GetRegions(void);
+const u32 *BilibinCave_GetExits(void);
+const struct ScenePlacement *BilibinCave_GetPlacements(void);
+const struct SceneEvent *BilibinCave_GetEvents(void);
+s32 BilibinCave_Initialize(void);
+extern s32 gBilibinCave_ClearSpriteScript[];
 extern struct SceneEntrance gBilibinCaveEntrancesOther[];
 extern struct SceneEntrance gBilibinCaveEntrances3[];
 extern struct SceneEntrance gBilibinCaveEntrances2[];
@@ -28,6 +28,6 @@ extern struct SceneEvent gBilibinCaveEventsOther[];
 extern struct SceneEvent gBilibinCaveEvents3[];
 extern struct SceneEvent gBilibinCaveEvents2[];
 extern struct SceneEvent gBilibinCaveEvents1[];
-extern s32 gStagedActor_DirectionSteps[];
+extern s32 gBilibinCave_PushSteps[];
 
 #endif

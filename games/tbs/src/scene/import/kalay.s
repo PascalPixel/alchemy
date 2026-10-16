@@ -15,7 +15,7 @@
 	.set import.Object_Destroy, 1
 	.set import.Engine_MapRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Object_CommitPosition, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Engine_MapAnimateCells, 1
 	.set import.Engine_MapCopyCellsTo, 1
 	.set import.Engine_MapCopyCellAttributes, 1

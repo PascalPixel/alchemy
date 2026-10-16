@@ -210,7 +210,7 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   leader->moveRateZ = moveRate;
   Engine_ObjectSetPosition(leader, targetPosition[0], targetPosition[1],
                            targetPosition[2]);
-  Engine_ObjectCommitPosition(block);
+  FieldObject_WaitForMove(block);
   BattleFx_PlayQueuedSound();
   block->x.value = targetPosition[0];
   block->z.value = targetPosition[2];
@@ -2765,7 +2765,7 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
     Object_SetMode(actor, 7);
-    Engine_ObjectCommitPosition(actor);
+    FieldObject_WaitForMove(actor);
     do {
       Engine_TaskWait(1);
     } while (actor->y.fixed != actor->terrainHeight);

@@ -16,164 +16,171 @@
 #include "types.h"
 #include "field_event.h"
 
-#include "resource_390.h"
-#include "resource_390_table.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "field_scene.h"
 #include "item_ids.h"
 
-static void SceneData_InitRecordTable(struct Resource390TableEntry *entry) {
-  u32 i;
-  u8 v16;
-  s32 v04;
-  u16 def00;
-  u16 alt00;
+enum KolimaInteriorActor {
+  ACTOR_FIRST_VILLAGER = 8,
+  ACTOR_WEAPON_MERCHANT = 16,
+  ACTOR_ARMOR_MERCHANT = 17,
+  ACTOR_ITEM_MERCHANT = 18,
+  ACTOR_INNKEEPER = 19,
+  ACTOR_LAST_VILLAGER = 22
+};
 
-  i = 0;
-  v16 = 2;
-  v04 = 1;
-  def00 = 0x69;
-  alt00 = 0x6E;
+// Replace the cursed residents' sprites and disable their movement and turning.
+static void
+KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
+  u32 villagerIndex;
+  u8 talkFacing;
+  s32 behavior;
+  u16 treeSprite;
+  u16 alternateTreeSprite;
+
+  villagerIndex = 0;
+  talkFacing = TALK_KEEP_FACING;
+  behavior = ACTOR_STAND;
+  treeSprite = 0x69;
+  alternateTreeSprite = 0x6E;
   do {
-    entry->unk16 = v16;
-    entry->unk04 = v04;
-    entry->unk00 = def00;
-    if (i == 4 || i == 7) {
-      entry->unk00 = alt00;
+    placement->talkFacing = talkFacing;
+    placement->behavior = behavior;
+    placement->sprite = treeSprite;
+    if (villagerIndex == 4 || villagerIndex == 7) {
+      placement->sprite = alternateTreeSprite;
     }
-    i++;
-    entry = (struct Resource390TableEntry *)((u8 *)entry + 0x18);
-  } while (i <= 0xE);
+    villagerIndex++;
+    placement++;
+  } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 }
 
-u8 *SceneData_GetPrimaryTable(void) { return (u8 *)gEntryLayout_PrimaryTable; }
-
-s32 SceneData_ReturnZero(void) { return 0; }
-
-u8 *SceneData_GetSecondaryTable(void) {
-  return (u8 *)gEntryLayout_SecondaryTable;
+// Return the entrances for Kolima's houses and shops.
+const struct SceneEntrance *KolimaInteriors_GetEntrances(void) {
+  return gKolimaInteriors_Entrances;
 }
 
-u8 *SceneData_GetPreparedRecords(void) {
-  struct ScenePlacement *buf;
+// Kolima's interiors have no scene regions.
+const struct SceneRegion *KolimaInteriors_GetRegions(void) { return NULL; }
+
+// Return the doors and stairs linking the interiors.
+const u32 *KolimaInteriors_GetExits(void) { return gKolimaInteriors_Exits; }
+
+// Apply the curse before preparing the residents' placement records.
+const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
+  struct ScenePlacement *placements;
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    SceneData_InitRecordTable(
-        (struct Resource390TableEntry *)gEntryLayout_Records);
+    KolimaInteriors_TurnVillagersIntoTrees(gKolimaInteriors_Placements);
   }
-  buf = gEntryLayout_Records;
-  FieldScene_PrepareActors(buf);
-  return (u8 *)buf;
+  placements = gKolimaInteriors_Placements;
+  FieldScene_PrepareActors(placements);
+  return placements;
 }
 
-static void EV16_TALK(void) {
-
-  u32 dir = Object_GetById(0)->facing;
+// Offer weapons at the counter or discuss Fuchin Temple.
+static void KolimaInteriors_TalkToWeaponMerchant(void) {
+  u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
   Engine_EventBegin();
-
-  if (dir + 0xFFFF5FFF <= 0x3FFE) {
-    Engine_ShopOpen(13, 16);
+  if (FACING_IS_NORTH(facing)) {
+    Engine_ShopOpen(13, ACTOR_WEAPON_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaFuchinTempleOnOtherSide);
-    Engine_EventShowMessage(16, 0);
+    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
-
   Engine_EventEnd();
 }
 
-static void EV17_TALK(void) {
-
-  u32 dir = Object_GetById(0)->facing;
+// Offer armor at the counter or discuss the bridge.
+static void KolimaInteriors_TalkToArmorMerchant(void) {
+  u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
   Engine_EventBegin();
-
-  if (dir + 0xFFFF5FFF <= 0x3FFE) {
-    Engine_ShopOpen(14, 17);
+  if (FACING_IS_NORTH(facing)) {
+    Engine_ShopOpen(14, ACTOR_ARMOR_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaGrandBridgeAcrossRiverPride);
-    Engine_EventShowMessage(17, 0);
+    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
-
   Engine_EventEnd();
 }
 
-static void EV18_TALK(void) {
-
-  u32 dir = Object_GetById(0)->facing;
+// Offer items at the counter or discuss life after the curse.
+static void KolimaInteriors_TalkToItemMerchant(void) {
+  u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
   Engine_EventBegin();
-
-  if (dir + 0xFFFF5FFF <= 0x3FFE) {
-    Engine_ShopOpen(15, 18);
+  if (FACING_IS_NORTH(facing)) {
+    Engine_ShopOpen(15, ACTOR_ITEM_MERCHANT);
   } else {
     Engine_EventSetMessage(MsgKolimaWhenWasTreeLearnedAppreciate);
-    Engine_EventShowMessage(18, 0);
+    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
   }
-
   Engine_EventEnd();
 }
 
-static void EV19_TALK(void) {
-
-  u32 dir = Object_GetById(0)->facing;
+// Offer a room at the counter or discuss McCoy's construction.
+static void KolimaInteriors_TalkToInnkeeper(void) {
+  u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
   Engine_EventBegin();
 
-  if (dir + 0xFFFF5FFF <= 0x3FFE) {
-    Engine_InnOpen(3, 19);
+  if (FACING_IS_NORTH(facing)) {
+    Engine_InnOpen(3, ACTOR_INNKEEPER);
   } else {
     Engine_EventSetMessage(MsgKolimaTheySayMccoyHaltedConstruction);
-    Engine_EventShowMessage(19, 0);
+    Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
   }
 
   Engine_EventEnd();
 }
 
-u8 *SceneData_GetFourthTable(void) { return (u8 *)gEntryLayout_FourthTable; }
+// Return the residents' conversations, thoughts and searchable objects.
+const struct SceneEvent *KolimaInteriors_GetEvents(void) {
+  return gKolimaInteriors_Events;
+}
 
-s32 FieldScene_SetupEntryLayoutsBySelector(void) {
-
+// Clear resident sprite flags and select the room layout for this entrance.
+s32 KolimaInteriors_Initialize(void) {
   struct EventWork *work = gEventWork;
-  s32 id;
-  s16 *selectionP;
-  u32 selection;
+  s32 actorId;
+  u32 entrance;
 
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
+  // The residents remain visible as trees, with their sprite flags cleared.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    id = 8;
+    actorId = ACTOR_FIRST_VILLAGER;
     do {
-      struct FieldActor *record = Object_GetById(id);
+      struct FieldActor *actor = Object_GetById(actorId);
 
-      id++;
-      Engine_ActorSetSpriteFlags(record, 0);
-    } while ((u32)id <= 22);
+      actorId++;
+      Engine_ActorSetSpriteFlags(actor, 0);
+    } while ((u32)actorId <= ACTOR_LAST_VILLAGER);
   }
 
-  {
-    s32 off = 450;
-    selectionP = (s16 *)((u8 *)&gGameState + off);
-    selection = *(u16 *)selectionP;
-  }
+  entrance = (u16)gGameState.entrance;
 
-  if ((s16)selection == 7) {
-    s32 arg5;
-    s32 arg4;
-    arg4 = 13;
-    arg5 = 8;
-    Map_CopyCellsTo(34, 34, 18, 16, arg4, arg5);
-    Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
-    Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
-  } else if (((selection - 8) << 16) <= (128 << 9)) {
-    s32 arg5;
-    s32 arg4;
-    arg4 = 11;
-    arg5 = 8;
-    Map_CopyCellsTo(34, 43, 19, 23, arg4, arg5);
-    Map_CopyCellsTo(34, 94, 19, 83, arg4, arg5);
-    Map_CopyCellsTo(94, 34, 79, 23, arg4, arg5);
+  // Entrance 7 uses one layout; entrances 8 and 9 use the other.
+  // The unsigned packed comparison below tests the low 16-bit difference.
+  if ((s16)entrance == 7) {
+    s32 height;
+    s32 width;
+    width = 13;
+    height = 8;
+    Map_CopyCellsTo(34, 34, 18, 16, width, height);
+    Map_CopyCellsTo(34, 94, 18, 76, width, height);
+    Map_CopyCellsTo(94, 34, 78, 16, width, height);
+  } else if (((entrance - 8) << 16) <= (1u << 16)) {
+    s32 height;
+    s32 width;
+    width = 11;
+    height = 8;
+    Map_CopyCellsTo(34, 43, 19, 23, width, height);
+    Map_CopyCellsTo(34, 94, 19, 83, width, height);
+    Map_CopyCellsTo(94, 34, 79, 23, width, height);
     Engine_ActorSetPosition(10, 0, 0);
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorSetPosition(12, 0, 0);
@@ -181,7 +188,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void) {
   return 0;
 }
 
-struct SceneEntrance gEntryLayout_PrimaryTable[] = {
+struct SceneEntrance gKolimaInteriors_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
     {2, CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216,
@@ -204,7 +211,7 @@ struct SceneEntrance gEntryLayout_PrimaryTable[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gEntryLayout_SecondaryTable[] = {
+u32 gKolimaInteriors_Exits[] = {
     SCENE_EXITS(37),       SCENE_EXIT(1, 37, 11), SCENE_EXIT(2, 37, 14),
     SCENE_EXIT(3, 36, 4),  SCENE_EXIT(4, 36, 3),  SCENE_EXIT(5, 37, 12),
     SCENE_EXIT(6, 37, 13), SCENE_EXIT(7, 36, 5),  SCENE_EXIT(8, 36, 7),
@@ -214,41 +221,41 @@ u32 gEntryLayout_SecondaryTable[] = {
 };
 
 // clang-format off
-struct ScenePlacement gEntryLayout_Records[] = {
-    { 0x67, 0x0, ACTOR_WANDER,
+struct ScenePlacement gKolimaInteriors_Placements[] = {
+    { 0x67, 0, ACTOR_WANDER,
         PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, 0x0, ACTOR_STAND,
+    { 0x6f, 0, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(144), FACING_EAST, 3, 0 },
-    { 0x65, 0x0, ACTOR_STAND,
+    { 0x65, 0, ACTOR_STAND,
         PIXELS(408), 0, PIXELS(472), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x73, 0x0, ACTOR_STAND,
+    { 0x73, 0, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(440), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0x0, 3,
+    { 0x6b, 0, 3,
         PIXELS(440), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x74, 0x0, ACTOR_STAND,
+    { 0x74, 0, ACTOR_STAND,
         PIXELS(376), 0, PIXELS(616), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { 0x6a, 0, ACTOR_STAND,
         PIXELS(448), 0, PIXELS(680), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0x0, ACTOR_WANDER,
+    { 0x6b, 0, ACTOR_WANDER,
         PIXELS(424), 0, PIXELS(648), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x7c, 0x0, ACTOR_STAND,
+    { 0x7c, 0, ACTOR_STAND,
         PIXELS(624), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7d, 0x0, ACTOR_STAND,
+    { 0x7d, 0, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x76, 0x0, ACTOR_STAND,
+    { 0x76, 0, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x77, 0x0, ACTOR_STAND,
+    { 0x77, 0, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x80, 0x0, ACTOR_WANDER,
+    { 0x80, 0, ACTOR_WANDER,
         PIXELS(624), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x74, 0x0, ACTOR_WANDER,
+    { 0x74, 0, ACTOR_WANDER,
         PIXELS(120), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xab, 0x0, ACTOR_STAND,
+    { 0xab, 0, ACTOR_STAND,
         PIXELS(144), 0, PIXELS(368), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gEntryLayout_FourthTable[] = {
+struct SceneEvent gKolimaInteriors_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -271,10 +278,10 @@ struct SceneEvent gEntryLayout_FourthTable[] = {
     { EVENT_TALK, 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
     { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
     { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
-    { EVENT_TALK, 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV16_TALK) },
-    { EVENT_TALK, 17, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV17_TALK) },
-    { EVENT_TALK, 18, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV18_TALK) },
-    { EVENT_TALK, 19, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(EV19_TALK) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToInnkeeper) },
     { EVENT_TALK, 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
     { EVENT_TALK, 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
     { EVENT_TALK, 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
@@ -286,10 +293,10 @@ struct SceneEvent gEntryLayout_FourthTable[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsTheVillageWasReallyBoomingWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsTheVillageWasReallyBoomingWith) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
@@ -301,10 +308,10 @@ struct SceneEvent gEntryLayout_FourthTable[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsMaybeWeTurnedIntoTreesBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsAtLeastMyFatherWasntThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheHolyTreeOfKolimaHas) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIUsedToCarveWeaponsOut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsManImStuckInsideThatMeans) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsNoIDontWantToBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhoCausedAllThisSomeoneMust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIUsedToCarveWeaponsOut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsManImStuckInsideThatMeans) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsNoIDontWantToBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhoCausedAllThisSomeoneMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsHowAmISupposedToCharge) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheVillagersWereRightINever) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIfOnlyIdLeftTownA) },

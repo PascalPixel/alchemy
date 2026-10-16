@@ -723,7 +723,7 @@ static void SlideDownDune(void) {
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
     Object_SetMode(actor, 7);
-    Engine_ObjectCommitPosition(actor);
+    FieldObject_WaitForMove(actor);
     do {
       Engine_TaskWait(1);
     } while (actor->y.fixed != actor->terrainHeight);

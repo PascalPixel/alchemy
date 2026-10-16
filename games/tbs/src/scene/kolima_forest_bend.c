@@ -536,7 +536,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
                              gKolimaForestBend_PushStepZ[quarter]);
   Engine_EventWait(24);
   Engine_ActorSetAnimation(0, 1);
-  Object_CommitPosition(actor);
+  FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(0x120);
   Event_PlayCue(213);

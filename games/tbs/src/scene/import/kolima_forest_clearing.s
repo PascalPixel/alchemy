@@ -10,7 +10,7 @@
 	.set import.Engine_VramLoad, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Object_CommitPosition, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Engine_MapCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ActorSetSpriteFlags, 1

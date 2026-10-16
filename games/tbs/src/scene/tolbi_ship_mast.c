@@ -462,13 +462,13 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_SetSpeed(9, PIXELS(8), PIXELS(4));
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(144),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(104),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(204), PIXELS(124),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(144), 0, PIXELS(169));
   Engine_ActorStop(8);
   Engine_TaskWait(1);
@@ -485,20 +485,20 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_SetSpeed(9, PIXELS(8), PIXELS(4));
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(144),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   Actor_SetSpeed(9, PIXELS(5), 5 * PIXELS(1) / 2);
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(104),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(114),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(104),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(204), PIXELS(124),
                           PIXELS(321));
-  Script_WaitForEventTimeout(approachingActor);
+  FieldObject_WaitForMove(approachingActor);
   Engine_ObjectSetPosition(approachingActor, PIXELS(144), 0, PIXELS(169));
   Engine_ActorStop(8);
   Engine_TaskWait(1);

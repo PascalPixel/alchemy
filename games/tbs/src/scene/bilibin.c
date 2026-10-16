@@ -644,7 +644,7 @@ static void Bilibin_PushFacedBlock(void) {
       leader->acceleration = 0x3333;
       Engine_ObjectSetPosition(leader, destination[0].fixed,
                                destination[1].fixed, destination[2].fixed);
-      Engine_ObjectCommitPosition(block);
+      FieldObject_WaitForMove(block);
       block->x.fixed = destination[0].fixed;
       block->z.fixed = destination[2].fixed;
       block->velocityX = 0;

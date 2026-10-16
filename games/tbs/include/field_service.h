@@ -79,10 +79,6 @@ static inline void Event_Wait(s32 frames) { Engine_EventWait(frames); }
 
 static inline void Event_WaitForScreen(void) { Engine_EventWaitForScreen(); }
 
-static inline void FieldObject_CommitPosition(struct FieldActor *object) {
-  Engine_ObjectCommitPosition(object);
-}
-
 static inline void FieldObject_SetPosition(struct FieldActor *object,
                                            s32 fixed_x, s32 fixed_y,
                                            s32 fixed_z) {

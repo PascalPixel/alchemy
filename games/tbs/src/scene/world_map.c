@@ -1599,15 +1599,15 @@ static void WorldMap_UseBlackOrb(void) {
     if (leader->x.fixed > PIXELS(5998)) {
       FieldObject_SetPosition(leader, PIXELS(5998), leader->y.fixed,
                               PIXELS(3453));
-      Engine_ObjectCommitPosition(leader);
+      FieldObject_WaitForMove(leader);
     }
   } else if (leader->x.fixed > PIXELS(6010)) {
     // BUG: site is NULL here; this branch reads its height through null.
     FieldObject_SetPosition(leader, PIXELS(6010), site->y.fixed, PIXELS(3400));
-    Engine_ObjectCommitPosition(leader);
+    FieldObject_WaitForMove(leader);
   }
   FieldObject_SetPosition(leader, PIXELS(5993), 0, PIXELS(3432));
-  Engine_ObjectCommitPosition(leader);
+  FieldObject_WaitForMove(leader);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
   Battle_SetObjectFlag5bWhenMode3();
@@ -1674,9 +1674,9 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetAnimation(gWorldMapTriggerActor, 2);
   site = Actor_Get(SITE);
   FieldObject_SetPosition(site, PIXELS(6010), site->y.fixed, PIXELS(3400));
-  Engine_ObjectCommitPosition(site);
+  FieldObject_WaitForMove(site);
   FieldObject_SetPosition(site, PIXELS(6001), 0, PIXELS(3416));
-  Engine_ObjectCommitPosition(site);
+  FieldObject_WaitForMove(site);
   Actor_SetAnimation(SITE, 1);
   Actor_FaceDirection(gWorldMapTriggerActor, FACING_SOUTH + FACING_STEP, 10);
   Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
@@ -1685,12 +1685,12 @@ static void WorldMap_UseBlackOrb(void) {
   Object_GetById(SITE)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(SITE, 2);
   FieldObject_SetPosition(site, PIXELS(5997), 0, PIXELS(3424));
-  Engine_ObjectCommitPosition(site);
+  FieldObject_WaitForMove(site);
   Actor_SetAnimation(SITE, 1);
   Event_Wait(10);
   Actor_SetAnimation(SITE, 2);
   FieldObject_SetPosition(site, PIXELS(6001), 0, PIXELS(3416));
-  Engine_ObjectCommitPosition(site);
+  FieldObject_WaitForMove(site);
   Actor_SetAnimation(SITE, 1);
   Message_ShowCentered(message + 6, 1);
   gEventWork->message++;

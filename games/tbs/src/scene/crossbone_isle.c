@@ -578,7 +578,7 @@ static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
     Object_SetMode(block, 3);
   }
   Engine_AudioPlayCue(226);
-  Object_CommitPosition((s32)selectedActor);
+  FieldObject_WaitForMove(selectedActor);
   Engine_AudioPlayCue(288);
   Engine_EventEnd();
 }

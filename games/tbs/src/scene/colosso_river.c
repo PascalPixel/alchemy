@@ -231,7 +231,7 @@ static void ColossoRiver_FillPipeworks(void) {
   actor->acceleration = PIXELS(2) / 5;
   actor->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
-  Object_CommitPosition((s32)actor);
+  FieldObject_WaitForMove(actor);
   Engine_EventWait(45);
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   Engine_EventEnd();
@@ -270,7 +270,7 @@ static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
     Object_SetMode(actor, 3);
   }
   Engine_AudioPlayCue(226);
-  Object_CommitPosition((s32)leader);
+  FieldObject_WaitForMove(leader);
   Object_SetMode(actor, 2);
   Engine_AudioPlayCue(288);
   Engine_EventEnd();
@@ -380,7 +380,7 @@ static void ColossoRiver_PushPipeworksObject(void) {
                            leader->z.fixed);
   Engine_ActorWaitForMove(leaderId);
   Engine_ActorSetAnimation(leaderId, 1);
-  Object_CommitPosition((s32)actor);
+  FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(288);
   Event_PlayCue(213);
@@ -416,7 +416,7 @@ static void ColossoRiver_PushPipeworksObject(void) {
   actor->acceleration = PIXELS(2) / 5;
   actor->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(32), actor->z.fixed);
-  Object_CommitPosition((s32)actor);
+  FieldObject_WaitForMove(actor);
   Engine_EventWait(15);
   Engine_EventEnd();
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
@@ -871,13 +871,13 @@ static void ColossoRiver_ExplainPipeworks(s32 attendant) {
       ColossoRiver_SetPipeHeight(first, PIXELS(8));
       second = Object_GetById(14);
       ColossoRiver_SetPipeHeight(second, PIXELS(32));
-      Object_CommitPosition((s32)second);
+      FieldObject_WaitForMove(second);
       Engine_EventWait(45);
       first = Object_GetById(13);
       ColossoRiver_SetPipeHeight(first, PIXELS(24));
       second = Actor_Get(14);
       ColossoRiver_SetPipeHeight(second, 0);
-      Object_CommitPosition((s32)second);
+      FieldObject_WaitForMove(second);
       Engine_EventWait(15);
       Engine_EventShowMessage(attendant, 0);
       SceneEffect_SeedMarkerAndInstallTask(56, 64, 0);
@@ -1391,7 +1391,7 @@ static void ColossoRiver_PushObjectAhead(void) {
   Engine_ObjectSetPosition(subject, position.x, position.y, position.z);
 
   Engine_AudioPlayCue(0xee);
-  Object_CommitPosition((s32)target);
+  FieldObject_WaitForMove(target);
   Engine_AudioPlayCue(0x120);
 
   target->x.fixed = position.x;

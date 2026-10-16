@@ -35,7 +35,6 @@ void InventorySnapshot_Take(void);
 s32 ItemMenu_Open(void);
 s32 Object_CheckMovementCollision(struct ObjectRuntime *object,
                                   struct FieldPosition *position);
-void Object_CommitPosition(s32 arg0);
 void SceneEvents_UpdateInView(struct ScenePlacement *entry);
 void UiText_DrawQuantity(u32 value, u32 kind);
 

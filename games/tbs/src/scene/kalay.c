@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "unit/field/field.h"
 #include "engine_call.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -1700,7 +1701,7 @@ static void Kalay_PushTunnelBlock(void) {
       leader->speed = pushSpeed;
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
-      Object_CommitPosition(block);
+      FieldObject_WaitForMove(block);
       BattleFx_PlayQueuedSound();
       block->x.fixed = target->x;
       block->z.fixed = target->z;

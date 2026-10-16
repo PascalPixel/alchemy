@@ -1,3 +1,4 @@
+#include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -257,7 +258,7 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c) {
     ObjectDispatch_InitFromTable6(o);
     Object_SetMode(o, 5);
     Engine_ObjectSetPosition(o, b << 16, o->y.fixed, c << 16);
-    Object_CommitPosition(o);
+    FieldObject_WaitForMove(o);
     Object_SetMode(o, 1);
   }
 }

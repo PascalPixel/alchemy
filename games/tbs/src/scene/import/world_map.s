@@ -23,7 +23,7 @@
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.ObjectDispatch_InitFromTable6, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Engine_ObjectCommitPosition, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Map_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.Map_SetWindowCellTile, 1
 	.set import.Engine_ActorSetSpriteFlags, 1

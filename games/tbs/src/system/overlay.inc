@@ -99,9 +99,7 @@
 	import ObjectDispatch_InitFromTable6, ObjectDispatch_InitFromTable6Far
 	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
-	import Engine_ObjectCommitPosition, Script_WaitForEventTimeoutFar
-	import Object_CommitPosition, Script_WaitForEventTimeoutFar
-	import Script_WaitForEventTimeout, Script_WaitForEventTimeoutFar
+	import FieldObject_WaitForMove, FieldObject_WaitForMoveFar
 	import Map_LoadDefaultCellsAndUpdateBlock, Map_LoadDefaultCellsAndUpdateBlockFar
 	import Engine_MapAnimateCells, Map_PlayMetatileCopySequenceFar
 	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar

@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "unit/field/field.h"
 #include "unit/import.h"
 #include "unit/scene/sol_sanctum_entrance.h"
 #include "unit/object/object.h"
@@ -415,7 +416,7 @@ static void SolSanctumEntrance_PushFacedBlock(void) {
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination->x, destination->y,
                                destination->z);
-      Engine_ObjectCommitPosition(block);
+      FieldObject_WaitForMove(block);
       block->x.fixed = destination->x;
       block->z.fixed = destination->z;
       block->velocityX = stoppedVelocity;

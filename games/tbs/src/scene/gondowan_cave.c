@@ -19,23 +19,19 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "staged_actor_pair_scene.h"
 #include "staged_actor.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "fixed_math.h"
+#include "flags.h"
 
 // The leap event also runs after the shared staged-actor movement.
-static void EV09_PSYNERGY_3(void);
-static void StagedActorPairScene_RunSpinningLeap(s32 id);
+static void GondowanCave_UpdateSecondObjectPosition(void);
+static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Shared effect routines retain their position before the scene handlers.
 #include "common/effect_create.h"
-
-union SpinningActor {
-  union FieldObject object;
-  struct StagedActor staged;
-};
 
 // Particle and movable-object routines precede this scene's entry points.
 #include "common/effect_spawn.h"
@@ -45,7 +41,7 @@ union SpinningActor {
 #include "objcmd.h"
 
 // Select the entrance bounds for the current cave section.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *GondowanCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
@@ -61,13 +57,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // This overlay has no clipping regions.
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *GondowanCave_GetRegions(void) { return NULL; }
 
 // All cave sections share the exit table.
-const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
+const u32 *GondowanCave_GetExits(void) { return gGondowanCaveExits; }
 
 // The first section gains Iodem in its alternate placement table.
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *GondowanCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
@@ -86,7 +82,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 // Match each section's events to its current placement table.
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct SceneEvent *GondowanCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
@@ -105,20 +101,21 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 // Iodem asks whether Isaac intends to turn back.
-static void EV10_TOUCH(void) {
+static void GondowanCave_AskIodemAboutTurningBack(void) {
   struct FieldActor *leader;
 
-  if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
+  if (GameFlag_IsSet(0x98a) == 0 &&
+      GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     Engine_EventBegin();
     // Bring Iodem out of the party before opening his question.
-    Engine_ActorSetSpeed(11, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(11, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPosition(11, leader->x.fixed, leader->z.fixed);
     }
     Engine_ActorSetDestinationOffset(11, -8, 16);
     Engine_ActorWaitForMove(11);
-    Actor_FaceDirection(11, 0xd000, 0);
+    Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
     Engine_EventWait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
     Engine_EventSetMessage(MsgKaragolWhyGoingBackIsaacDo);
@@ -127,7 +124,7 @@ static void EV10_TOUCH(void) {
       // Leave him waiting and retain the return entrance in Tolbi.
       Event_ShowMessage(11, 0);
       Actor_WalkTo(11, 152, 232);
-      GameFlag_Clear(0x9a0);
+      GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ActorWaitForMove(11);
       Engine_ActorSetAnimation(11, 1);
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
@@ -154,7 +151,7 @@ static void EV10_TOUCH(void) {
 }
 
 // Iodem greets Isaac and resumes travelling with the party.
-static void EV11_SCRIPT(void) {
+static void GondowanCave_RejoinIodem(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
@@ -174,12 +171,12 @@ static void EV11_SCRIPT(void) {
   Engine_ActorWaitForMove(11);
   Engine_ActorSetPosition(11, 0, 0);
   Engine_EventWait(20);
-  Engine_GameFlagSet(2464);
+  Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
   Engine_EventEnd();
 }
 
 // Ask about crossing into Gondowan, with the alternate Colosso response.
-static void EV08_TALK(void) {
+static void GondowanCave_AskAboutCrossing(void) {
   s32 firstMessage;
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
@@ -199,8 +196,8 @@ static void EV08_TALK(void) {
 }
 
 // Mind Read reveals whether the soldier missed Colosso.
-static void EV09_PSYNERGY_1(void) {
-  if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
+static void GondowanCave_ReadSoldierThoughts(void) {
+  if (Engine_GameFlagIsSet(0x950) != 0 && Engine_GameFlagIsSet(0x96f) == 0)
     Engine_EventSetMessage(MsgKaragolWeMissedColossoBecauseWe);
   else
     Engine_EventSetMessage(MsgKaragolWarriorsHaveBeenFightingWhile);
@@ -208,55 +205,62 @@ static void EV09_PSYNERGY_1(void) {
 }
 
 // Restore the affected puzzle flags before leaving through the touched exit.
-static void EV01_TOUCH(void) {
-  struct EventWork *work;
+static void GondowanCave_ResetPuzzleAndExit(void) {
+  struct EventWork *event;
 
-  work = gEventWork;
+  event = gEventWork;
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x204) != 0) {
+  // Temporary bit 4 selects the alternate saved arrangement on departure.
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
-    GameFlag_Clear(0x9a5);
+    GameFlag_Clear(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
     GameFlag_Clear(0x9a4);
     GameFlag_Clear(0x9a6);
-    GameFlag_Set(0x9a5);
+    GameFlag_Set(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
     GameFlag_Set(0x9a4);
   }
-  Engine_EventRequestExit(work->touchedTrigger);
+  Engine_EventRequestExit(event->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
 }
 
 // Probe ahead when walking into either of the paired movable actors.
-static void StagedActorPairScene_RunStep(void) { Engine_LeaderCheckAhead(); }
+static void GondowanCave_CheckAheadForMovableObject(void) {
+  Engine_LeaderCheckAhead();
+}
 
 // Move makes actor 8 leap across and opens its former collision cell.
-static void EV08_PSYNERGY(void) {
+static void GondowanCave_BeginFirstObjectLeap(void) {
   Object_GetById(8);
   Engine_EventBegin();
   {
     struct FieldActor *actor = Object_GetById(8);
 
     if ((actor->x.fixed >> 20) <= 30) {
-      StagedActorPairScene_RunSpinningLeap(8);
-      {
-
-        Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
-      }
-      Engine_GameFlagSet(2466);
+      GondowanCave_RunSpinningLeap(8);
+      Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
+      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE);
     }
   }
   Engine_EventEnd();
 }
 
 // Advance the paired actors, then test the second actor's destination.
-static void EV50_SCRIPT(void) {
+static void GondowanCave_PushPairedObject(void) {
   StagedActor_AdvancePair();
-  EV09_PSYNERGY_3();
+  GondowanCave_UpdateSecondObjectPosition();
+}
+
+// Hide the movable actor and show its replacement at the saved destination.
+static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
+  Actor_SetPosition(9, 0, 0);
+  Actor_SetPosition(10, PIXELS(696), PIXELS(288));
+  Engine_ActorSetAnimation(10, animation);
 }
 
 // Replace actor 9 after it crosses the destination cell boundary.
-static void EV09_PSYNERGY_3(void) {
+static void GondowanCave_UpdateSecondObjectPosition(void) {
   Engine_EventBegin();
   if ((Object_GetById(9)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
@@ -264,105 +268,103 @@ static void EV09_PSYNERGY_3(void) {
 
     Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
     Engine_EventWait(8);
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(10, PIXELS(696), PIXELS(288));
-    Engine_ActorSetAnimation(10, 3);
+    GondowanCave_PlaceMovedSecondObject(3);
     Event_PlayCue(154);
-    GameFlag_Set(2469);
+    GameFlag_Set(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
   }
   Engine_EventEnd();
 }
 
 // Unused empty actor callback retained with the overlay's routines.
-static UNUSED void StagedActorPairScene_NoopActorCallback(void) {}
+static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 // Rotate the sprite during the airborne part of the leap.
-static void
-StagedActorPairScene_RotateActorPart(union FieldObject *fieldObject) {
+static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
   fieldObject->actor.sprite->rotation -= 0x400;
 }
 
 // Wait at most forty frames for the actor to descend to the height limit.
-static void StagedActorPairScene_WaitForHeight(union SpinningActor *object,
-                                               s32 heightLimit) {
+static void GondowanCave_WaitForDescent(struct FieldActor *actor,
+                                        s32 heightLimit) {
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
     Engine_TaskWait(1);
     framesRemaining--;
-    if (object->object.actor.y.fixed <= heightLimit) {
+    if (actor->y.fixed <= heightLimit) {
       break;
     }
   }
 }
 
 // Spin, leap to the far side, scatter particles, and settle into place.
-static void StagedActorPairScene_RunSpinningLeap(s32 id) {
-  union SpinningActor *work;
-  u32 cnt;
-  s32 velocity[3];
+static void GondowanCave_RunSpinningLeap(s32 actorId) {
+  struct FieldActor *actor;
+  u32 stepIndex;
+  struct Vector3 particleVelocity;
   s32 angle;
 
-  work = (union SpinningActor *)Object_GetById(id);
+  actor = Object_GetById(actorId);
   // Wind up the spin while horizontal motion is disabled.
-  work->object.actor.motionFlags = 0;
-  for (cnt = 0; cnt < 9; cnt++) {
+  actor->motionFlags = 0;
+  for (stepIndex = 0; stepIndex < 9; stepIndex++) {
     Engine_TaskWait(1);
-    work->object.actor.sprite->rotation -= 0x100;
-    work->object.actor.x.fixed -=
-        Engine_MathCos(work->object.actor.sprite->rotation) / 2;
-    work->staged.targetX = 0x80000000;
+    actor->sprite->rotation -= 0x100;
+    actor->x.fixed -= Engine_MathCos(actor->sprite->rotation) / 2;
+    actor->targetX = ACTOR_NO_TARGET;
   }
-  work->object.actor.update = StagedActorPairScene_RotateActorPart;
+  actor->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
   Engine_AudioPlayCue(136);
-  Actor_SetSpeed(id, 0x20000, 0x10000);
-  Actor_SetDestination(id, 472, 288);
-  work->object.effect.velocity.y = 0xcccc;
-  work->object.actor.motionFlags = 3;
-  work->object.actor.terrainId = 0;
-  Engine_ActorWaitForMove(id);
-  StagedActorPairScene_WaitForHeight(work, 0x200000);
-  Map_SetShake(0x50000, 0x50000, 0x10000);
-  Map_SetShake(-1, -1, 0xe666);
+  Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
+  Actor_SetDestination(actorId, 472, 288);
+  actor->gravity = 4 * PIXELS(1) / 5;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->terrainId = 0;
+  Engine_ActorWaitForMove(actorId);
+  GondowanCave_WaitForDescent(actor, PIXELS(32));
+  Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Emit a complete particle fan, including its closing direction.
-  for (cnt = 0; cnt < 17; cnt++) {
-    angle = cnt << 12;
-    velocity[0] = Engine_MathCos(angle);
-    velocity[1] = 0;
-    velocity[2] = Engine_MathSin(angle);
-    velocity[0] -= velocity[0] / 4;
-    velocity[2] -= velocity[2] / 2;
-    Effect_Spawn(work->object.actor.x.fixed, work->object.actor.y.fixed,
-                 work->object.actor.z.fixed, velocity[0], velocity[1],
-                 velocity[2], 0, 0);
+  for (stepIndex = 0; stepIndex < 17; stepIndex++) {
+    angle = stepIndex << 12;
+    particleVelocity.x = Engine_MathCos(angle);
+    particleVelocity.y = 0;
+    particleVelocity.z = Engine_MathSin(angle);
+    particleVelocity.x -= particleVelocity.x / 4;
+    particleVelocity.z -= particleVelocity.z / 2;
+    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                 particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
+                 0);
   }
-  Actor_SetDestination(id, 440, 308);
+  Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.
-  Engine_ActorWaitForMove(id);
-  StagedActorPairScene_WaitForHeight(work, 0x200000);
-  work->object.actor.update = 0;
-  work->object.actor.sprite->rotation = 0x1000;
+  Engine_ActorWaitForMove(actorId);
+  GondowanCave_WaitForDescent(actor, PIXELS(32));
+  actor->update = 0;
+  actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(154);
-  Engine_ActorSetAnimation(id, 3);
+  Engine_ActorSetAnimation(actorId, 3);
   Map_WaitWorkValuesBelow256();
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(id, 2);
+  Engine_ActorSetAnimation(actorId, 2);
 }
 
 // Unused empty scene callback retained with the overlay's routines.
-static UNUSED void StagedActorPairScene_NoopSceneCallback(void) {}
+static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
 // Lift hides the additional actor at the movable pair.
-static void EV11_PSYNERGY(void) { Engine_ActorSetPosition(12, 0, 0); }
+static void GondowanCave_HideLiftedObject(void) {
+  Engine_ActorSetPosition(12, 0, 0);
+}
 
 // Restore actor positions and collision cells from the saved puzzle flags.
-s32 Scene_Initialize(void) {
+s32 GondowanCave_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.scene == (s32)&SceneId_GondowanCave1) {
     GameFlag_Set(0x144);
-    if (GameFlag_IsSet(0x9a0) != 0) {
+    if (GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       Actor_SetPosition(11, 0, 0);
     }
   }
@@ -370,15 +372,13 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == 1) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
-    if (GameFlag_IsSet(0x9a2) != 0) {
-      Actor_SetPosition(8, 0x1b80000, 0x1340000);
+    if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
+      Actor_SetPosition(8, PIXELS(440), PIXELS(308));
       Engine_ActorSetAnimation(8, 2);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
-    if (GameFlag_IsSet(0x9a5) != 0) {
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(10, 0x2b80000, 0x1200000);
-      Engine_ActorSetAnimation(10, 2);
+    if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
+      GondowanCave_PlaceMovedSecondObject(2);
     }
     actor = Actor_Get(12);
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -539,11 +539,11 @@ struct SceneEvent gGondowanCaveEventsOther[] = {
 struct SceneEvent gGondowanCaveEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_AskAboutCrossing) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_1) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_ReadSoldierThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
     { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -553,12 +553,12 @@ struct SceneEvent gGondowanCaveEvents1[] = {
 struct SceneEvent gGondowanCaveEvents1Flag96f[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
-    { EVENT_TOUCH, 11, 0x9a0, EVENT_SCRIPT(EV11_SCRIPT) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_AskIodemAboutTurningBack) },
+    { EVENT_TOUCH, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(GondowanCave_RejoinIodem) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_RejoinIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
@@ -579,19 +579,20 @@ struct SceneEvent gGondowanCaveEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
+// Temporary bit 5 gates Move on the second movable object.
 struct SceneEvent gGondowanCaveEvents3[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_ResetPuzzleAndExit) },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9a2, EVENT_SCRIPT(EV08_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x205, EVENT_SCRIPT(EV09_PSYNERGY_3) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
-    { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_HideLiftedObject) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(GondowanCave_BeginFirstObjectLeap) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(GondowanCave_UpdateSecondObjectPosition) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_CheckAheadForMovableObject) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_CheckAheadForMovableObject) },
+    { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_PushPairedObject) },
     { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },

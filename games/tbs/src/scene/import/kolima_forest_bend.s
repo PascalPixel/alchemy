@@ -13,7 +13,7 @@
 	.set import.ObjectDispatch_InitFromTable4WithArgument, 1
 	.set import.Engine_MapRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Object_CommitPosition, 1
+	.set import.FieldObject_WaitForMove, 1
 	.set import.Map_GetTerrainHeight, 1
 	.set import.Engine_MapCopyCells, 1
 	.set import.Engine_MapCopyCellAttributes, 1

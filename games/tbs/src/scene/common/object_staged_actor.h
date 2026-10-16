@@ -1,3 +1,4 @@
+#include "unit/field/field.h"
 #include "battle.h"
 #include "engine_call.h"
 #include "debug.h"
@@ -103,7 +104,7 @@ static void StagedActor_AdvancePair(void) {
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
   Engine_ObjectSetPosition((struct FieldActor *)lead, dst[0], dst[1], dst[2]);
-  Object_CommitPosition(next);
+  FieldObject_WaitForMove(next);
   BattleFx_PlayQueuedSound();
   next->x.value = dst[0];
   next->z.value = dst[2];
@@ -427,7 +428,7 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   Engine_ActorWaitForMove(0);
   Engine_ActorSetAnimation(0, 1);
   ((struct StagedActor *)Object_GetById(0))->movementCallback = 0;
-  Object_CommitPosition(actor);
+  FieldObject_WaitForMove(actor);
   Engine_AudioPlayCue(288);
   Engine_AudioPlayCue(213);
 

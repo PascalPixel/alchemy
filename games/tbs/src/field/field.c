@@ -2149,14 +2149,13 @@ s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Waits until the object has arrived at its target (Object_IsTargetUnset),
-// at most 600 frames.
-void Script_WaitForEventTimeout(s32 object) {
+// Polls a field object's common movement state until it arrives, up to 600
+// frames. Actor, camera and effect-object views share this pointer boundary.
+void Script_WaitForEventTimeout(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;
-  while (waitedFrames <= 0x257 &&
-         Object_IsTargetUnset((struct ObjectRuntime *)object) == 0) {
+  while (waitedFrames < 600 && Object_IsTargetUnset(fieldObject) == 0) {
     WaitFrames(1);
     waitedFrames++;
   }

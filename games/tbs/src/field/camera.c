@@ -10,7 +10,6 @@
 #include "sound.h"
 #include "system.h"
 #include "io_reg.h"
-#include "fixed_point_position.h"
 #include "battle_display.h"
 #include "project.h"
 #include "types.h"
@@ -36,7 +35,7 @@ s32 Runtime_BlankDisplayAndRun(void) {
 // and sets the projection's focal length (250), near plane and far plane.
 void Camera_ResetSceneDefaults(void) {
   struct BattleCamera *camera = gCameraWork;
-  struct FixedPointPosition offset;
+  s32 offset[3];
   u32 nearPlane;
   u32 focalLength;
 
@@ -57,10 +56,10 @@ void Camera_ResetSceneDefaults(void) {
   SceneTransform_ApplyYaw((s16)camera->yaw);
   SceneTransform_ApplyPitch((s16)camera->pitch);
 
-  offset.x = 0;
-  offset.y = 0;
-  offset.z = camera->distance;
-  Iwram_TransformVector((s32 *)&offset, (s32 *)camera);
+  offset[0] = 0;
+  offset[1] = 0;
+  offset[2] = camera->distance;
+  Iwram_TransformVector(offset, camera->eye);
 
   focalLength = 250;
   focalLength <<= 16;
@@ -120,6 +119,7 @@ s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "resource_ids.h"
 #include "text/msg_ids.h"
 #include "sound_ids.h"
+#include "heap_state.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
@@ -173,7 +173,8 @@ s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #define DICE_KIND_X 0x280
 #endif
 
-// The Lucky Dice screen's work block (heap slot 45): its sprites and windows.
+// The used prefix of Lucky Dice's 0x618-byte work block (heap slot 45):
+// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
   u8 filler[200];                  // Lucky Dice never touches these bytes
   struct OamShadow obj[128];       // copied to OAM each frame
@@ -314,11 +315,11 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's work blocks and reset the camera and tasks.
-  Runtime_AllocateHeapBlock(41, 0x60e);
-  spritePalette = Runtime_AllocateHeapBlock(40, 0x200);
-  diceWork = Runtime_AllocateBlock(39, 0x782c);
+  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  spritePalette = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  diceWork = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
   sprites = Runtime_AllocateBlock(45, 0x618);
-  camera = Runtime_AllocateBlock(12, 76);
+  camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(*camera));
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   Camera_ResetSceneDefaults();
   Scheduler_ResetTaskTable();
@@ -386,6 +387,8 @@ void LuckyDice_Run(void) {
   resultKind = -1;
   winnings = 0;
   payoutTimer = 0;
+  // Unsigned arithmetic wraps before storage as signed fixed point. Signed
+  // subtraction grows the English routine from 0x1274 to 0x1280 bytes.
   for (index = 0; index != DICE_COUNT; index++) {
     diceWork->particles[index].x = ((Random16() & 127) - 64) << 16;
     diceWork->particles[index].y = (Random16() & 31) << 16;
@@ -657,6 +660,9 @@ void LuckyDice_Run(void) {
       s32 dieY;
 
       rollingDie = &diceWork->particles[drawOrder[index]];
+      // Copying the three input coordinates into the existing array grows
+      // the native English function from 0x1274 to 0x1294 bytes. Its shared
+      // projection input contract still needs the actual owner migration.
       Render_ProjectPoint(rollingDie, screen);
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -944,10 +950,10 @@ void LuckyDice_Run(void) {
     Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(12);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_CAMERA);
   Runtime_ReleaseHeapBlock(45);
-  Runtime_ReleaseHeapBlock(40);
-  Runtime_ReleaseHeapBlock(39);
-  Runtime_ReleaseHeapBlock(41);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
 #endif

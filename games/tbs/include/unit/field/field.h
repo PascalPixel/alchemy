@@ -175,7 +175,7 @@ void ObjectSystem_UpdateCameraFixed(void);
 s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter);
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
-void Script_WaitForEventTimeout(s32 object);
+void Script_WaitForEventTimeout(void *fieldObject);
 s32 Object_IsTargetUnset(struct ObjectRuntime *object);
 void Object_UpdateAllThumb(void);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,

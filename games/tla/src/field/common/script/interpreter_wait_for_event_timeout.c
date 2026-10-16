@@ -9,12 +9,13 @@
 #include "system.h"
 #include "types.h"
 
-void Script_WaitForEventTimeout(s32 arg0) {
-  s32 cnt;
+// Poll the common movement target of a field object for up to 600 frames.
+void Script_WaitForEventTimeout(void *fieldObject) {
+  s32 waitedFrames;
 
-  cnt = 0;
-  while (cnt <= 0x257 && Object_IsTargetUnset(arg0) == 0) {
+  waitedFrames = 0;
+  while (waitedFrames < 600 && Object_IsTargetUnset(fieldObject) == 0) {
     WaitFrames(1);
-    cnt++;
+    waitedFrames++;
   }
 }

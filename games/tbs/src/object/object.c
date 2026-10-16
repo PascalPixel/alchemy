@@ -1020,7 +1020,7 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 // and the cell north of it have collision code 0xfd is raised by the ground
 // height of the cell north of it less 32 pixels, and takes movement mode 1.
 void ObjectTable_ResetForObject(struct ScenePlacement *table) {
-  struct FieldStepWork *work;
+  struct FieldWork *work;
   struct ScenePlacement *entry;
   struct ObjectRuntime *object;
   struct ObjectRuntime *camera;
@@ -1030,7 +1030,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   s32 pos;
   s32 height;
 
-  work = (struct FieldStepWork *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   leader = gGameState.selectedActor;
   // Build the leader's temporary placement before the scene's placed actors.
   // The two-row table lives in the event work at 0x200.
@@ -1049,7 +1049,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   Event_SpawnObjectTable(entry, leader);
   Event_SpawnObjectTable(table, ACTOR_FIRST_PLACED);
 
-  object = work->actors[leader];
+  object = (struct ObjectRuntime *)work->actors[leader];
   object->terrainId = gGameState.turn;
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAP_CELLS[pos];
@@ -1081,7 +1081,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     meta->priority = 9;
   }
   ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
-  ((struct EventWork *)work)->viewCenter = (struct FieldActor *)camera;
+  work->camera = camera;
 }
 
 // Returns the slot after the last placed actor (8 when there is none), or -1
@@ -1155,8 +1155,8 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
 // Destroys the placed actors far from the view's centre: more than 160 pixels
 // to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void BattleEffect_ClearOutOfBoundsObjects(void) {
-  struct EventWork *work = gEventWork;
-  struct FieldActor *viewCenter;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct ObjectRuntime *camera;
   s32 centerX;
   s32 centerZ;
   s32 left;
@@ -1167,14 +1167,14 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
   s32 visibleMask;
   s32 remainingSlots;
 
-  viewCenter = work->viewCenter;
-  centerX = viewCenter->x.fixed;
+  camera = work->camera;
+  centerX = camera->x;
   left = centerX - 0xa00000;
   right = centerX + 0xa00000;
-  centerZ = viewCenter->z.fixed;
+  centerZ = camera->z;
   top = centerZ - 0xc80000;
   bottom = centerZ + 0x640000;
-  actorSlot = work->placedActors;
+  actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   visibleMask = ~1;
 
   for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
@@ -1356,7 +1356,7 @@ void ObjectTable_Restore(void) {
       object->animation = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == *leaderId) {
-        camera = (struct ObjectRuntime *)(*fieldWork)->viewCenter;
+        camera = ((struct FieldWork *)*fieldWork)->camera;
         cameraPosition = (*mapWork)->origin;
         y = object->y;
         camera->terrainHeight = y;
@@ -1819,8 +1819,7 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
       transition->duration = 1;
       transition->step = 0;
     }
-    ((struct ObjectRuntime *)((struct EventWork *)work)->viewCenter)
-        ->movementState = 1;
+    work->camera->movementState = 1;
     Map_ResumeAnimationFar();
   }
 }
@@ -1833,8 +1832,7 @@ void Battle_ClearObjectFlag5bWhenMode3(void) {
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
     Map_LoadAreaGraphicsFar();
-    ((struct ObjectRuntime *)((struct EventWork *)work)->viewCenter)
-        ->movementState = 0;
+    work->camera->movementState = 0;
   }
 }
 

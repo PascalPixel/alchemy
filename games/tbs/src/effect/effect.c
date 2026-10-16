@@ -6195,7 +6195,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   s32 i;
 
   // cursor points at gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], the canvas.
-  cursor = &gBattleFxWork[1];
+  cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   camera = cursor[-28]; // [12] the camera
   work = cursor[-1];    // [39] the effect work
@@ -12877,10 +12877,10 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect) {
   s32 row;
   s32 column;
 
-  // gTransitionWork is work slot 44: the slots before it hold the effect
+  // The background is work slot 44: the slots before it hold the effect
   // work (-5), the canvas (-4) and the sheet (-3), the slots after it the
   // blitters (2 and 3).
-  slots = (void **)&gTransitionWork;
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
   canvas = slots[-4];
   work = slots[-5];
@@ -17512,12 +17512,12 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = gBattleFxWork;
+  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
   sheet = heapCache[2];
-  camera = *(struct BattleCamera **)((u8 *)heapCache - 108);
+  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   kind = effect->kind;
   work->effect = effect;
   unit = UnitGetFar(effect->actor);
@@ -17742,12 +17742,12 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = gBattleFxWork;
+  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
   sheet = heapCache[2];
-  camera = *(struct BattleCamera **)((u8 *)heapCache - 108);
+  camera = heapCache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
   big = 1;
   if (effect->kind <= 199)
     big = 0;
@@ -19914,20 +19914,21 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    struct BattlePresentationWork *presentation =
-        ((void **)&gTransitionWork)[0];
+    // Two independent absolute slot reads grow native EN from 0xe38 to 0xe48.
+    void **slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
+    struct BattlePresentationTransition *presentation = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 8, 7,
                           COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-    draw = ((void **)&gTransitionWork)[2];
+    draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
     work->transferMode = CANVAS_COPY_AND_DARKEN;
     work->transferValue = (s32)(Ram_MapBlocks + 0x202);
     Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
-    presentation->initialValue = 1;
+    presentation->active = 1;
     work->frame = 0;
     frame = 0;
     do {
@@ -20115,7 +20116,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       work->frame++;
     } while (frame != 192);
     WaitFrames(1);
-    presentation->initialValue = 0;
+    presentation->active = 0;
     Scheduler_RemoveCallback(Camera_AdvanceBg2Reference);
     Scheduler_RemoveCallback(BattleFx_ArmPaletteHBlankDma);
     Scheduler_RemoveCallback(BattleFx_FlushPendingGraphicsTransfer);
@@ -20806,7 +20807,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect) {
   s32 size;
   u8 *burstPixels;
 
-  heapCache = gBattleFxWork;
+  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = heapCache;
   work = *cursor++;
   canvas = *cursor;
@@ -21555,7 +21556,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   struct Scale scale;
   void *canvas;
   struct BattleEffectWork *work;
-  struct BattlePresentationWork *ctrl;
+  struct BattlePresentationTransition *ctrl;
   DrawRectangle draw[2];
   s32 frame;
   u8 *ramp;
@@ -21579,7 +21580,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   DrawRectangle blit;
   volatile u16 *ime;
 
-  cache = &gBattleFxWork[1];
+  cache = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   ime = (u16 *)0x04000208;
   canvas = cache[0];
   work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
@@ -21605,7 +21606,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-  ctrl->initialValue = 1;
+  ctrl->active = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
@@ -22044,7 +22045,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect) {
       Dma_Set(&fill, work, 0x85000e10, REG_DMA3);
       fill = 0x01010101;
       Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
-      ctrl->initialValue = 0;
+      ctrl->active = 0;
       REG_BLDALPHA = 0x1010;
       for (i = 0; i != 16; i++) {
         particle = &work->particles[i];

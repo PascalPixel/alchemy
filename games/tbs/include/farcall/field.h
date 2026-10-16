@@ -78,7 +78,7 @@ FAR_CALL(Object_SetMoveTargetFar, Object_SetMoveTarget, void,
          (struct ObjectRuntime * object, s32 x, s32 y, s32 z))
 #endif
 FAR_CALL(Script_WaitForEventTimeoutFar, Script_WaitForEventTimeout, void,
-         (s32 arg0))
+         (void *fieldObject))
 FAR_SLOT(Map_GetScreenRelativePosition)
 FAR_SLOT(WorldMap_UpdateView)
 FAR_CALL(Map_LoadDefaultCellsAndUpdateBlockFar,

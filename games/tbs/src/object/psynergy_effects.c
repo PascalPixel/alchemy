@@ -323,6 +323,8 @@ s32 Party_CheckItemLimit(s32 item) {
 // indispensable one). Returns the member who received the item, or -1 when
 // it was left behind.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
+  // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
+  // retain the original backedges until a plain form matches.
   struct FieldWork *work;
   s32 savedMessage;
   s32 owner;
@@ -1991,12 +1993,12 @@ void Ui_SetMessageVoiceFromActor(s32 actor) {
 void Camera_FollowActor(s32 actor, s32 keepPosition) {
   struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct MapScrollWork *map;
 
   subject = ObjectTable_Get(actor);
-  work = Runtime_AllocateBlock(0x1B, 0xCCC);
-  camera = (struct ObjectRuntime *)work->viewCenter;
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  camera = work->camera;
   map = gMapWork[0];
   if (subject != 0) {
     map->origin = &camera->x;
@@ -2006,7 +2008,7 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
       camera->y = subject->y;
       camera->z = subject->z;
       WaitFrames(1);
-      if (((struct FieldWork *)work)->mode != 3) {
+      if (work->mode != 3) {
         Map_ApplyWorkOriginAndSpanFar();
       }
     }
@@ -2016,9 +2018,10 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
 // The event command "camera set speed": the camera's top speed and
 // acceleration, 16.16 pixels per frame.
 void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
-  struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
-  ((struct ObjectRuntime *)owner->viewCenter)->speedLimit = speedLimit;
-  ((struct ObjectRuntime *)owner->viewCenter)->acceleration = acceleration;
+  struct FieldWork *owner =
+      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  owner->camera->speedLimit = speedLimit;
+  owner->camera->acceleration = acceleration;
 }
 
 // The event command "camera move to": sends the camera to the requested axes,
@@ -2028,7 +2031,7 @@ void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
 void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
                                 s32 glide) {
   s32 shouldGlide;
-  struct EventWork *runtimeBlock;
+  struct FieldWork *runtimeBlock;
   s32 minimumX;
   s32 minimumZ;
   s32 maximumX;
@@ -2044,8 +2047,9 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   positionY = requestedY;
   shouldGlide = glide;
   positionZ = requestedZ;
-  runtimeBlock = Runtime_AllocateBlock(0x1B, 0xCCC);
-  camera = (struct ObjectRuntime *)runtimeBlock->viewCenter;
+  runtimeBlock =
+      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  camera = runtimeBlock->camera;
   map = gMapWork[0];
 
   // Half a screen (120 by 64 to 96 pixels) inside the map's bounds.
@@ -2082,7 +2086,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     camera->y = positionY;
     camera->z = positionZ;
     WaitFrames(1U);
-    if (((struct FieldWork *)runtimeBlock)->mode != 3) {
+    if (runtimeBlock->mode != 3) {
       Map_ApplyWorkOriginAndSpanFar();
     }
   } else {
@@ -2105,14 +2109,17 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
 // The event command "camera wait for move": waits (at most 600 frames) for
 // the camera to arrive, then 2 frames more.
 void Camera_WaitForArrival(void) {
-  Script_WaitForEventTimeoutFar(
-      ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->viewCenter);
+  Script_WaitForEventTimeoutFar(((struct FieldWork *)Runtime_AllocateBlock(
+                                     HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+                                    ->camera);
   FieldEvent_WaitFrames(2);
 }
 
 // The event command "get view centre": returns the camera object.
 struct FieldActor *Camera_GetEventObject(void) {
-  return ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->viewCenter;
+  return (struct FieldActor *)((struct FieldWork *)Runtime_AllocateBlock(
+                                   HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+      ->camera;
 }
 
 // Makes the camera follow target; unless keepCurrentPosition is set it jumps
@@ -2121,9 +2128,9 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
                                  s32 keepCurrentPosition) {
   struct ObjectRuntime *camera;
 
-  camera = (struct ObjectRuntime *)((struct EventWork *)Runtime_AllocateBlock(
-                                        0x1B, 0xCCC))
-               ->viewCenter;
+  camera = ((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
+                                                      sizeof(struct FieldWork)))
+               ->camera;
   if (target != NULL) {
     ObjectDispatch_InitFromTable4WithArgumentFar(camera, NULL);
     camera->linkedObject = target;
@@ -2173,8 +2180,9 @@ s32 BattleFx_StepRatioTransition(void) {
   s32 delta;
 
   work = gMapWork[0];
-  if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))
-          ->viewCenter->paused != 0)
+  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
+                                                 sizeof(struct FieldWork)))
+          ->camera->movementState != 0)
     return;
   frames = (s16 *)&work->zoomTransitionFrames;
   if (*frames == 0)
@@ -2205,7 +2213,8 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;
 
-  if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))
+  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
+                                                 sizeof(struct FieldWork)))
           ->mode != 3)
     return;
   {
@@ -2229,7 +2238,8 @@ void Event_WaitForZoomTransition(void) {
   s32 frames;
   struct PerspectiveWork *work = gMapWork[0];
 
-  if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))
+  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
+                                                 sizeof(struct FieldWork)))
           ->mode == 3) {
     frames = 0;
     if (*(s16 *)&work->zoomTransitionFrames != 0) {
@@ -2595,6 +2605,8 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 // on another jump spot (collision 0xf9). Returns 0 after a jump, -1 when the
 // leader cannot jump.
 s32 Field_TryJumpForward(void) {
+  // An ordinary chained-attempt loop grows native English 0x228 -> 0x230.
+  // Keep the landing retry, including its existing failure return behavior.
   struct ObjectRuntime *leader = Object_GetById(gGameState.selectedActor);
   s32 result = -1;
   s32 angle = (leader->angle + 0x2000) & 0xc000; // to the nearest quarter
@@ -6243,6 +6255,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
 // Effect slot callback of a particle that flies 30 pixels out from where it
 // started, comes back and is freed.
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
+  // Forward state-1 fallthrough keeps the callback extent but changes native
+  // instructions; retain the immediate retry until a plain form matches.
   struct EffectVector position;
   s8 *statePtr = &slot->state;
   s32 state;
@@ -8121,7 +8135,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
      * ahead of the drop path, as the ROM lays them out. Measured: the two
      * tests as one || differ 407 (536 instructions for 531, the
      * allocation changing from the prologue on), under for (;;) or
-     * while (1). */
+     * while (1). Nested success tests with the blocked path at the loop tail
+     * grow native English 0x4f0 -> 0x500 (2026-10-16). */
     if (i != 0)
       goto blocked;
     if (BattleFx_CheckRaisedTargetCollision(target, p) > 0) {
@@ -9248,8 +9263,8 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
 }
 
 // Moves an effect slot toward its target, turning at most maxTurnStep a
-// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed. A
-// slot that stops at its target lands on it once within 8 pixels.
+// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed.
+// A slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 deltaX;
   s32 deltaZ;
@@ -9719,7 +9734,8 @@ void Map_UpdateWorldMapMarkers(void) {
 // "This place doesn't seem to be on the map..." when it is not.
 void Map_ShowWorldMap(s32 picture) {
   struct MapState *map = WORK_SLOT(8);
-  struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+  struct FieldWork *field =
+      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct MapAnimation *layer;
@@ -9731,7 +9747,7 @@ void Map_ShowWorldMap(s32 picture) {
 
   if (field->mode != 3)
     return;
-  field->viewCenter->paused = 1;
+  field->camera->movementState = 1;
   savedStatus = field->transitionFrames;
   field->transitionFrames = 6;
   Event_FinishScreenTransition();
@@ -9777,7 +9793,7 @@ void Map_ShowWorldMap(s32 picture) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   field->transitionFrames = savedStatus;
-  field->viewCenter->paused = 0;
+  field->camera->movementState = 0;
 }
 
 // On the world map, shows only the scene actors within 320 pixels sideways,
@@ -9794,7 +9810,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void) {
 
   // the selected actor is looked up and the result discarded, as the ROM does
   Object_GetById(gGameState.selectedActor);
-  object = (struct ObjectRuntime *)gEventWork->viewCenter;
+  object = ((struct FieldWork *)gEventWork)->camera;
   x = object->x;
   left = x - (320 << 16);
   right = x + (320 << 16);
@@ -9822,7 +9838,8 @@ void BattleFx_UpdateObjectVisibilityBounds(void) {
 
 // On the world map, zooms the view out (0x9d89) while L is held, then back.
 void BattleFx_RunVisibilityTransition(void) {
-  struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
+  struct FieldWork *field =
+      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
 
   if (field->mode == 3) {
     Scheduler_SuspendOverlayTasks();

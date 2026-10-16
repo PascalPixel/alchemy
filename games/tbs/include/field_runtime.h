@@ -114,7 +114,8 @@ struct FieldWork {
   u16 unk1da;
   s16 unk1dc;
   s16 unk1de;
-  u8 unk1e0[0x14];
+  struct ObjectRuntime *camera;
+  u8 unk1e4[0x10];
   s32 speaker;
   s32 messageWindow;
   s32 sideWindow;
@@ -178,6 +179,7 @@ LAYOUT_OFFSET_GUARD(FieldWork_TransitionFrames, struct FieldWork,
 LAYOUT_OFFSET_GUARD(FieldWork_FastForward, struct FieldWork, fastForward,
                     0x1cc);
 LAYOUT_OFFSET_GUARD(FieldWork_Message, struct FieldWork, message, 0x1d8);
+LAYOUT_OFFSET_GUARD(FieldWork_Camera, struct FieldWork, camera, 0x1e0);
 LAYOUT_OFFSET_GUARD(FieldWork_Unk1da, struct FieldWork, unk1da, 0x1da);
 LAYOUT_OFFSET_GUARD(FieldWork_Unk1dc, struct FieldWork, unk1dc, 0x1dc);
 LAYOUT_OFFSET_GUARD(FieldWork_Unk1de, struct FieldWork, unk1de, 0x1de);

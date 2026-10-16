@@ -285,8 +285,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
 
   work = gEventWork;
   Engine_EventBegin();
-  FieldScheduler_AddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame,
-                             0xc80);
+  FieldScheduler_AddCallback(SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
   Actor_SetSpeed(0, 0x28000, 0x14000);
   Engine_ActorSetAnimation(0, ANIM_STAND);
   Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -310,7 +309,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   }
   Engine_ActorWaitForMove(0);
   Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
+  Engine_TaskRemoveCallback(SceneEffect_SpawnParticleEveryFourthFrame);
   Engine_EventEnd();
 }
 
@@ -520,7 +519,7 @@ static void FieldScene_RunSupplementalSequenceOne(s32 a0) {
   Engine_EventWait(a0);
   FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
   Engine_AudioPlayCue(211);
-  FieldScheduler_AddCallback((s32)MercuryLighthouse_SprayAtFountain, 0xc80);
+  FieldScheduler_AddCallback(MercuryLighthouse_SprayAtFountain, 0xc80);
   Engine_MapRenderWaitForValues();
 }
 
@@ -557,7 +556,7 @@ static void MercuryLighthouse_RunSequenceF(void) {
     Map_CopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
     outer++;
   } while ((u32)outer <= 2);
-  Engine_TaskRemoveCallback((s32)MercuryLighthouse_SprayAtFountain);
+  Engine_TaskRemoveCallback(MercuryLighthouse_SprayAtFountain);
 }
 
 static void MercuryLighthouse_RunSequenceE(void) {
@@ -837,13 +836,12 @@ static void SceneActor_UseActorNinePositionWithYOffset(void) {
 static s32 MercuryLighthouse_StartActorNineParticles(void) {
   s32 n = 0xc80;
 
-  FieldScheduler_AddCallback((s32)SceneActor_UseActorNinePositionWithYOffset,
-                             n);
+  FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, n);
   return 0;
 }
 
 static s32 MercuryLighthouse_StopActorNinePositionCallback(void) {
-  Engine_TaskRemoveCallback((s32)SceneActor_UseActorNinePositionWithYOffset);
+  Engine_TaskRemoveCallback(SceneActor_UseActorNinePositionWithYOffset);
   return 0;
 }
 
@@ -1222,7 +1220,7 @@ static void EV10_PSYNERGY(void) {
     MercuryLighthouse_FadePaletteToWhite();
     Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
     Engine_MapAnimateCells((s32)gMercuryLighthouse_ColumnCells, 116, 35);
-    Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries40To47);
+    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries40To47);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(3, ANIM_NOD);
     Engine_EventWait(20);
@@ -1372,7 +1370,7 @@ static void EV12_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventWait(20);
   MercuryLighthouse_FadePaletteToBlack();
-  Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
+  Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
   Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
   Engine_EventWait(30);
   effect = &options;
@@ -1474,7 +1472,7 @@ static void EV12_PSYNERGY(void) {
     Engine_ActorSetAnimation(0, 18);
     MercuryLighthouse_SinkActorWithSparks(0);
     Engine_EventWait(60);
-    Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
+    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
@@ -1556,7 +1554,7 @@ static void EV12_PSYNERGY(void) {
     Engine_EventWait(30);
     MercuryLighthouse_SinkActorWithSparks(2);
     ColorBuffer_ApplySource(0x10000, 0);
-    Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
+    Engine_TaskRemoveCallback(SceneEffect_RotatePaletteEntries97To103);
     ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);

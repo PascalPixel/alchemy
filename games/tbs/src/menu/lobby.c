@@ -143,7 +143,15 @@ static void LinkLobby_WriteSlotValue(s32 slot) {
   dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
+// The scheduler ignores this result. Keep the native status calculation in
+// matching builds: making the function void removes eight instructions. The
+// modern build uses the scheduler's actual callback type to avoid an
+// incompatible indirect call.
+#ifdef UBFIX
+static void LinkLobby_PollPeerReady(void) {
+#else
 static s32 LinkLobby_PollPeerReady(void) {
+#endif
   struct EventWork *work;
   s32 result;
   s32 i;
@@ -196,7 +204,11 @@ static s32 LinkLobby_PollPeerReady(void) {
   if (GameFlag_IsSet(0x205)) {
     work->raisedTrigger = 2;
   }
+#ifdef UBFIX
+  (void)result;
+#else
   return result;
+#endif
 }
 
 u32 gLinkLobbyCallFrames;
@@ -912,7 +924,7 @@ static s32 LinkLobby_PartyContains(s32 id) {
   return 0;
 }
 
-static void State_NoOp(void) {}
+UNUSED static void State_NoOp(void) {}
 
 static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = MsgLobbyCantWaitLets;

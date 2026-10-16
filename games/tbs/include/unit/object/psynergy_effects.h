@@ -107,7 +107,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first,
 void ObjectTable_DestroyById(s32 index);
 void ObjectTable_DestroyNoOp(void);
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
-void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object);
+void ObjectGroup_ApplyIndexedChildValue(union FieldObject *object);
 void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param);
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *script);

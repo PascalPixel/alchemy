@@ -1077,7 +1077,7 @@ static void CrossbonePlatform_InitializeScene2(void) {
   Object_GetById(12)->scaleX = 0xb333;
   FieldScheduler_AddOrUpdateCallback(SceneState_TriggerColumnNineteen, 0xc80);
   FieldScheduler_AddOrUpdateCallback(SceneState_TriggerColumnTen, 0xc80);
-  FieldScheduler_AddCallback((s32)CrossbonePlatform_RaiseTriggerOnStand, 0xc80);
+  FieldScheduler_AddCallback(CrossbonePlatform_RaiseTriggerOnStand, 0xc80);
   Io_Write16(0x3f42, &REG_BLDCNT);
   Io_Write16(0x607, &REG_BLDALPHA);
 }
@@ -1088,8 +1088,7 @@ static void CrossbonePlatform_InitializeScene3(void) {
   Object_GetById(14)->motionFlags = 0;
   FieldScheduler_AddOrUpdateCallback(
       ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
-  FieldScheduler_AddCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight,
-                             0xc80);
+  FieldScheduler_AddCallback(SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
   MapObject_SetPosition(107, 0, 0);
   if (GameFlag_IsSet(0xed9) != 0) {
     Engine_ActorSetAnimation(14, 2);

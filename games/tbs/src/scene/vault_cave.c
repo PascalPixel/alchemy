@@ -678,7 +678,7 @@ static void SceneActor_InitSlots10To15AndStartTask(void) {
     selector++;
   } while (remaining >= 0);
 
-  FieldScheduler_AddCallback((s32)FieldScene_RunScene3a7SequenceD,
+  FieldScheduler_AddCallback(FieldScene_RunScene3a7SequenceD,
                              TASK_PRIORITY_SCENE);
 }
 
@@ -699,7 +699,7 @@ static void SceneActor_SetupActors11To14AndInstallTask(void) {
     no++;
   } while (i <= 3);
 
-  FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence,
+  FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence,
                              TASK_PRIORITY_SCENE);
 }
 
@@ -773,7 +773,7 @@ s32 VaultCave_ApplyEntryState(void) {
         Engine_ActorSetAnimation(21, 5);
         EV21_PSYNERGY();
       }
-      FieldScheduler_AddCallback((s32)SceneState_DispatchByActorZeroDepth,
+      FieldScheduler_AddCallback(SceneState_DispatchByActorZeroDepth,
                                  TASK_PRIORITY_SCENE);
       break;
     case 10:

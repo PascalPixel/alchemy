@@ -218,7 +218,7 @@ static void Effect_SetBg3HofsSplit(void) {
 
 static void TretBranch_StartBg3Split(void) {
   Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-  FieldScheduler_AddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);
+  FieldScheduler_AddCallback(Effect_SetBg3HofsSplit, 0xc80);
 }
 
 struct SceneEntrance gTretBranch_SceneTable0[] = {

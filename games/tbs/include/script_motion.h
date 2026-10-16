@@ -4,6 +4,8 @@
 #include "types.h"
 #include "layout_guard.h"
 
+union FieldObject;
+
 struct ScriptMotionWords {
   s32 word[1];
 };
@@ -45,7 +47,7 @@ struct ScriptMotionObject {
   u8 refused;
   u8 frozen;
   u8 unk62[10];
-  void (*hook)(struct ScriptMotionObject *);
+  void (*hook)(union FieldObject *object);
 };
 
 LAYOUT_SIZE_GUARD(ScriptMotionObject_size, struct ScriptMotionObject, 0x70);

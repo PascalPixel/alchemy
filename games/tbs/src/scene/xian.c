@@ -341,7 +341,7 @@ static void EV20_PSYNERGY(void) {
   x = record->x.fixed;
   record = Object_GetById(20);
   Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (record->z.fixed >> 20));
-  FieldScheduler_AddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
+  FieldScheduler_AddCallback(Actor_UpdatePresentationFlag, 0xc80);
   GameFlag_Set(0x201);
   Engine_ActorSetSpritePriority(20, 2);
   Engine_EventEnd();
@@ -350,7 +350,7 @@ static void EV20_PSYNERGY(void) {
 static void EV14_TALK(void) {
   s32 flag;
   struct FieldActor *leader;
-  s32 cb;
+  SchedulerCallback cb;
   s32 back;
   s32 pos[3];
   struct SpawnParams params;
@@ -385,8 +385,8 @@ static void EV14_TALK(void) {
     Effect_Spawn(0xc00000, 0, 0x1380000, 0x1999, 0x3333, 0, 0x20001, 0);
     Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
     Engine_AudioPlayCue(132);
-    cb = (s32)SceneEffect_SpawnPeriodicEffect;
-    Task_AddCallback((void (*)(void))cb, 0xc80);
+    cb = SceneEffect_SpawnPeriodicEffect;
+    Task_AddCallback(cb, 0xc80);
     Object_GetById(14)->velocityY = 0x60000;
     Object_GetById(14)->gravity = 0x10000;
     Object_GetById(14)->bounce = 0;
@@ -395,7 +395,7 @@ static void EV14_TALK(void) {
     Engine_ActorWaitForMove(14);
     Engine_AudioPlayCue(134);
     Actor_SetActionScript(19, gXian_Actor19Motion);
-    FieldScheduler_AddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
+    FieldScheduler_AddCallback(SceneEffect_AdvanceRotatingSprite, 0xc80);
     params.sprite = 0x11b;
     params.callback = (s32)gXian_EffectScript;
     params.facing = 0x4000;
@@ -526,12 +526,12 @@ static void SceneEffect_DispatchStep(void) {
 }
 
 static void EV21_PSYNERGY(void) {
-  s32 cb;
+  SchedulerCallback cb;
 
   Engine_EventBegin();
   Actor_SetActionScript(19, gXian_Actor19Motion);
-  cb = (s32)SceneEffect_AdvanceRotatingSprite;
-  FieldScheduler_AddCallback((void (*)(void))cb, 0xc80);
+  cb = SceneEffect_AdvanceRotatingSprite;
+  FieldScheduler_AddCallback(cb, 0xc80);
   Object_RefreshSelectorById(19);
   Engine_AudioPlayCue(124);
   Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);

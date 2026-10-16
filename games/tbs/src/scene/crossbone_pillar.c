@@ -615,7 +615,7 @@ static void FieldScene_RunScene3b3SequenceA(void) {
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
   Engine_TaskWait(1);
-  Engine_TaskRemoveCallback((s32)CopyAndOffsetCoordinatePreset);
+  Engine_TaskRemoveCallback(CopyAndOffsetCoordinatePreset);
   Engine_MapRedraw();
   Engine_TaskWait(30);
 }
@@ -1093,7 +1093,7 @@ static void EV13_PSYNERGY(void) {
     Engine_EventWait(20);
     Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
     Engine_EventWait(20);
-    FieldScheduler_AddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
+    FieldScheduler_AddCallback(SceneEffect_SpawnRandomizedParticle, 0xc80);
     Engine_EventWait(40);
     if (GameFlag_IsSet(0x201) != 0) {
       Object_GetById(12)->update = (void (*)(

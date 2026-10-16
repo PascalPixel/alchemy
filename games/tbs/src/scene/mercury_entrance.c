@@ -160,7 +160,7 @@ static void EV16_PSYNERGY(void) {
     Engine_AudioPlayCue(220);
     Engine_EventWait(60);
     GameFlag_Set(0x875);
-    FieldScheduler_AddCallback((s32)Mercury_CyclePalette, 0xc80);
+    FieldScheduler_AddCallback(Mercury_CyclePalette, 0xc80);
     Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
     Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     ColorBuffer_ApplyTarget(0x10000, 0);

@@ -163,8 +163,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0) {
     }
     Engine_ActorWaitForMove((s32)p6);
     Event_PlayCue(244);
-    FieldScheduler_AddCallback((s32)SuhallaDesert_SyncSelectedActorProgress,
-                               0xc80);
+    FieldScheduler_AddCallback(SuhallaDesert_SyncSelectedActorProgress, 0xc80);
     rec7->motionFlags = rec2;
     Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000,
                              rec7->z.fixed);

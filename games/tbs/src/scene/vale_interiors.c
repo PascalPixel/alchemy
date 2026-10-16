@@ -284,7 +284,7 @@ static void FieldScene_RunLongPresentationSequence(void) {
   struct FieldActor *record;
   struct FieldActor *actor;
   s32 v6;
-  s32 timedUpdate;
+  SchedulerCallback timedUpdate;
   const s32 *partyScript;
 
   Engine_EventBegin();
@@ -307,8 +307,8 @@ static void FieldScene_RunLongPresentationSequence(void) {
   Object_GetById(23)->motionFlags = v6;
   Object_GetById(24)->motionFlags = v6;
   Object_GetById(25)->motionFlags = v6;
-  timedUpdate = (s32)Scene_UpdateTimedActor;
-  FieldScheduler_AddCallback((void (*)(void))timedUpdate, 0xc80);
+  timedUpdate = Scene_UpdateTimedActor;
+  FieldScheduler_AddCallback(timedUpdate, 0xc80);
   Engine_TaskWait(1);
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();

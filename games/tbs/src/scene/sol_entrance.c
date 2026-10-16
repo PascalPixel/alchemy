@@ -29,7 +29,7 @@ static void Scene_EnterSolSanctum(void);
 static void Scene_KradenSuspectsHiddenPassage(void);
 static void Scene_RunTransitionCue(void);
 static void Scene_RunActorFormation(s32 a0);
-static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
+static void Scene_UpdateCueTimer(void);
 
 s32 gSolEntrance_CueTimer __attribute__((section(".bss")));
 
@@ -468,7 +468,7 @@ static void SolEntrance_ApplyEntryState(void) {
   gEventWork->startTransition = 0x100;
   if (GameFlag_IsSet(0x814) != 0) {
     gSolEntrance_CueTimer = 0;
-    Task_AddCallback((void (*)(void))Scene_UpdateCueTimer, 0xc80);
+    Task_AddCallback(Scene_UpdateCueTimer, 0xc80);
   }
   if (GameFlag_IsSet(0x879) != 0) {
     Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);
@@ -985,7 +985,7 @@ static void EV10_SEARCH(void) {
   Engine_EventEnd();
 }
 
-static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2) {
+static void Scene_UpdateCueTimer(void) {
   s32 value;
   s32 *timer;
   s32 v3;

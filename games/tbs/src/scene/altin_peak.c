@@ -1842,7 +1842,7 @@ static void SceneActor_SetActor8ModeByCounterBit(void) {
 static void RunEventScript01(void) {
   struct FieldActor *record;
   struct EventWork *work;
-  s32 update;
+  SchedulerCallback update;
   const s32 *celebrate;
   const s32 *party;
 
@@ -1922,8 +1922,8 @@ static void RunEventScript01(void) {
   Actor_ShowEmote(IVAN, 0x100, 0);
   Actor_ShowEmote(MIA, 0x100, 40);
   Event_PlayCue(103);
-  update = (s32)SceneActor_SetActor8ModeByCounterBit;
-  Task_AddCallback((void (*)(void))update, 0xc80);
+  update = SceneActor_SetActor8ModeByCounterBit;
+  Task_AddCallback(update, 0xc80);
   celebrate = gAltinPeak_CelebrateScript;
   Actor_SetActionScript(9, celebrate);
   Object_SetActionCallbackAndRefreshById(8, (s32)celebrate);
@@ -2246,7 +2246,7 @@ static void AltinPeak_StepPaletteAnim(void) {
 static void AltinPeak_StartPaletteAnim(void) {
   gAltinPeak_PaletteStep = 0;
   gAltinPeak_PaletteHold = 0;
-  FieldScheduler_AddCallback((s32)&AltinPeak_StepPaletteAnim, 0xc80);
+  FieldScheduler_AddCallback(AltinPeak_StepPaletteAnim, 0xc80);
 }
 
 // clang-format off

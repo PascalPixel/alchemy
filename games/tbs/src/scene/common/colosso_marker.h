@@ -207,7 +207,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
   gColosso_MarkerBlink = 0;
   gColosso_MarkerSteps = 0;
 
-  FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
 }
 
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
@@ -218,7 +218,7 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
   gColosso_MarkerSteps = duration;
   gColosso_MarkerStep = 0;
 
-  FieldScheduler_AddCallback((s32)Colosso_UpdateMarker, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
 }
 
 void SceneEffect_RemoveMarkerTask(void) {

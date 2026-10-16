@@ -6,6 +6,7 @@
 #include "unit/object/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "field_obj.h"
+#include "script.h"
 #include "types.h"
 #include "field_event.h"
 #include "engine_call.h"
@@ -26,7 +27,7 @@
 #include "objcmd.h"
 #include "global_cells.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunSecondEnsembleBeat(void);
 static void FieldScene_RunEnsembleStoryBeat(void);
 static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1);
@@ -35,20 +36,29 @@ static void FieldScene_FinishSequence(void);
 static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source, included in link order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-static s32 StopXianActor(void *actor) {
-  Engine_ActorSetSpriteFlags(actor, 0);
+static s32 StopXianActor(struct ScriptInterpreter *object) {
+  Engine_ActorSetSpriteFlags((struct FieldActor *)object, 0);
   return 0;
 }
 
-static s32 FaceXianActorToPlayer(struct FieldActor *actor) {
+// UB: update hooks return void. The native produces an unused zero result;
+// plain void changes five instructions in the English build.
+#ifdef UBFIX
+static void FaceXianActorToPlayer(union FieldObject *object) {
+#else
+static s32 FaceXianActorToPlayer(union FieldObject *object) {
+#endif
+  struct FieldActor *actor = (struct FieldActor *)object;
   struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,
                           player->x.fixed - actor->x.fixed);
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -2072,11 +2082,11 @@ static void FieldScene_SpawnEightShots(void) {
   Engine_EventWait(60);
 }
 
-static void FieldScene_SelectActorModeFromInputBit(s32 arg0) {
+static void FieldScene_SelectActorModeFromInputBit(union FieldObject *object) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    ObjectGroup_SetChildValue(arg0, 10);
+    ObjectGroup_SetChildValue((struct FieldActor *)object, 10);
   } else {
-    ObjectGroup_SetChildValue(arg0, 9);
+    ObjectGroup_SetChildValue((struct FieldActor *)object, 9);
   }
 }
 
@@ -2089,16 +2099,14 @@ static void FieldScene_RunParticleRain(void) {
   s32 scale;
 
   Engine_AudioPlayCue(0x83);
-  Object_GetById(8)->update =
-      (void (*)(union FieldObject *))FieldScene_SelectActorModeFromInputBit;
+  Object_GetById(8)->update = FieldScene_SelectActorModeFromInputBit;
   Engine_EventWait(40);
   Engine_ColorBufferApplySource(128 << 9, 0);
   Engine_ColorBufferApplyTarget(0x205c54, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(40);
   Engine_AudioPlayCue(0x83);
-  Object_GetById(2)->update =
-      (void (*)(union FieldObject *))FieldScene_SelectActorModeFromInputBit;
+  Object_GetById(2)->update = FieldScene_SelectActorModeFromInputBit;
   Engine_EventWait(120);
   actor = Object_GetById(8);
   descriptor.priority = 1;

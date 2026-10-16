@@ -1052,7 +1052,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
 
   struct FieldActor *record;
   const s32 *dataTableAddr;
-  s32 callbackTarget;
+  SchedulerCallback callbackTarget;
 
   Engine_ActorDestroy(39);
   Engine_ActorDestroy(40);
@@ -1172,26 +1172,26 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Event_ShowMessage(MIA, 0);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, dataTableAddr);
   Engine_EventWait(60);
-  callbackTarget = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
+  callbackTarget = ColossoLogRollingStage_SpawnPeriodicParticle;
   gColossoParticleCount = 9;
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_EventWait(5);
   Engine_TaskRemoveCallback(callbackTarget);
   Engine_EventWait(55);
   Actor_ShowEmote(GARET, 0x101, 60);
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_EventWait(20);
   Engine_TaskRemoveCallback(callbackTarget);
   Engine_EventWait(40);
   Actor_ShowEmote(IVAN, 0x101, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(callbackTarget);
   Engine_EventWait(25);
   Actor_ShowEmote(MIA, 0x102, 60);
   gColossoParticleCount = 9;
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(callbackTarget);
   Engine_EventWait(25);
@@ -1202,7 +1202,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Object_LinkObjectAndSetCallback(3, 0);
   Object_LinkObjectAndSetCallback(2, 0);
   gColossoParticleCount = 9;
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_EventWait(35);
   Engine_TaskRemoveCallback(callbackTarget);
   Engine_EventWait(25);
@@ -1213,7 +1213,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0) {
   Object_LinkObjectAndSetCallback(3, 2);
   Object_LinkObjectAndSetCallback(1, 2);
   gColossoParticleCount = 9;
-  Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
+  Task_AddCallback(callbackTarget, 0xc80);
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimation(MIA, 3);
@@ -1691,7 +1691,7 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
 
   {
     s32 budget = 0xc80;
-    s32 task = (s32)Colosso_UpdateModeTask;
+    SchedulerCallback task = Colosso_UpdateModeTask;
     FieldScheduler_AddCallback(task, budget);
   }
 

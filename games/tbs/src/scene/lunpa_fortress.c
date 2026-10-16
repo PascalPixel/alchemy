@@ -646,8 +646,8 @@ static void FieldScene_RunScene3bfSequenceB(void) {
     if (IsActorInteractionAvailable(13) != 0) {
       if (gGameState.cloaked == 0) {
         FLAG_SET(0x225);
-        Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
-        Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
+        Engine_TaskRemoveCallback(FieldScene_RunScene3bfSequenceB);
+        Engine_TaskRemoveCallback(FieldScene_RunScene3bfSequenceC);
         work->raisedTrigger = 96;
       }
     }
@@ -663,8 +663,8 @@ static void FieldScene_RunScene3bfSequenceC(void) {
     if (IsActorInteractionAvailable(21) != 0) {
       if (gGameState.cloaked == 0) {
         FLAG_SET(0x225);
-        Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceC);
-        Engine_TaskRemoveCallback((s32)FieldScene_RunScene3bfSequenceB);
+        Engine_TaskRemoveCallback(FieldScene_RunScene3bfSequenceC);
+        Engine_TaskRemoveCallback(FieldScene_RunScene3bfSequenceB);
         work->raisedTrigger = 96;
       }
     }
@@ -2560,9 +2560,9 @@ static void FieldScene_InstallSceneTasks(void) {
   case 6:
   case 7:
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Task_AddCallback((s32)TriggerSceneStage95FromActor12, 3200);
-    Task_AddCallback((s32)FieldScene_RunScene3bfSequenceB, 3200);
-    Task_AddCallback((s32)FieldScene_RunScene3bfSequenceC, 3200);
+    Task_AddCallback(TriggerSceneStage95FromActor12, 3200);
+    Task_AddCallback(FieldScene_RunScene3bfSequenceB, 3200);
+    Task_AddCallback(FieldScene_RunScene3bfSequenceC, 3200);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     break;
   case 12:
@@ -2574,8 +2574,8 @@ static void FieldScene_InstallSceneTasks(void) {
   case 17:
   case 18:
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Task_AddCallback((s32)FieldScene_UpdateActorEighteenInteraction, 3200);
-    Task_AddCallback((s32)TriggerScene41AtVillagePath, 3200);
+    Task_AddCallback(FieldScene_UpdateActorEighteenInteraction, 3200);
+    Task_AddCallback(TriggerScene41AtVillagePath, 3200);
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -2586,7 +2586,7 @@ static void FieldScene_InstallSceneTasks(void) {
   case 14:
   case 15:
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Task_AddCallback((s32)FieldScene_RunScene3bfSequenceA, 3200);
+    Task_AddCallback(FieldScene_RunScene3bfSequenceA, 3200);
     break;
   default:
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);

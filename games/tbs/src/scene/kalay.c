@@ -47,7 +47,7 @@ static void Kalay_AlternateDance(void);
 static void FieldScene_RunTwoActorCutsceneSequence(void);
 static void FieldScene_RunSecondaryGroupSequence(void);
 static void FieldScene_RunScene3a8SequenceB(void);
-static void FieldScene_RunSupplementalSequenceOne(s32 a0);
+static void FieldScene_RunSupplementalSequenceOne(void);
 static void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 static void SceneEffect_UpdateLobeOrbitEffect26(void);
 
@@ -993,7 +993,7 @@ static void FieldScene_RunMiddleSequence(void) {
   Engine_ActorSetSpriteFlags((s32)record, 0);
   record = Actor_Get(9);
   Engine_ActorSetSpriteFlags((s32)record, 0);
-  FieldScheduler_AddCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
+  FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xc80);
   if (GameFlag_IsSet(0x915) != 0) {
     Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
     record = Actor_Get(10);
@@ -1814,7 +1814,7 @@ static void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p) {
   }
 }
 
-static void FieldScene_RunSupplementalSequenceOne(s32 a0) {
+static void FieldScene_RunSupplementalSequenceOne(void) {
   struct FieldActor *a;
   struct FieldActor *b;
 

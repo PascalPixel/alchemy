@@ -2,7 +2,7 @@
 #include "types.h"
 #include "system.h"
 
-// 正弦 1/4 周期 (65536 倍)
+// A quarter-wave sine table, scaled by 65536.
 // clang-format off
 const u16 gMath_SinQuarter[256] = {
     0, 402, 804, 1206, 1608, 2010, 2412, 2814,
@@ -44,12 +44,14 @@ const u16 gMath_TwoPiSteps[8] = {
     0, 6, 12, 18, 25, 31, 37, 43,
 };
 
-// 0, 90, 180, 270 度の正弦 (Q16)
+// The sine at 0, 90, 180 and 270 degrees, in Q16.
 const s32 gMath_QuadrantSin[4] = {
     0, 65536, 0, -65536,
 };
 
-// 正接 256 倍: [i] = tan(i * 45 / 128 度), [128] = tan 45 度; ArcTan2 は [127] から二分探索
+// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees),
+// so index 128 is tan(45 degrees).
+// ArcTan2 starts its binary search at index 127.
 const u16 gMath_TanTable[258] = {
     0, 1, 3, 4, 6, 7, 9, 11,
     12, 14, 15, 17, 18, 20, 22, 23,

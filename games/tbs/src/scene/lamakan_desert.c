@@ -802,7 +802,7 @@ s32 LamakanDesert_EnterArea(s32 a0, s32 a1) {
   } else {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
-    FieldScheduler_AddCallback((s32)HeatGauge_RaiseQuarterTriggers, 0xc80);
+    FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers, 0xc80);
     if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
       Map_CopyCells(22, 7, 4, 2, 64, 126);
       Map_CopyCells(8, 10, 4, 2, 68, 126);

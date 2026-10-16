@@ -328,7 +328,7 @@ static void FieldScene_RunFourActorEncounter(void) {
   struct FieldActor *record;
   s32 v6;
   s32 v5;
-  s32 sparkTask;
+  SchedulerCallback sparkTask;
   const s32 *actions;
 
   rec = GameFlag_IsSet(3);
@@ -470,10 +470,10 @@ static void FieldScene_RunFourActorEncounter(void) {
     s32 *bank = (s32 *)sSparkOrigin;
     bank[0] = 0xa80000;
     bank[1] = 0x200000;
-    sparkTask = (s32)TretInteriors_SpawnSwirlSparks;
+    sparkTask = TretInteriors_SpawnSwirlSparks;
     bank[2] = 0x340000;
   }
-  Task_AddCallback((void (*)(void))sparkTask, 0xc80);
+  Task_AddCallback(sparkTask, 0xc80);
   Engine_EventWait(220);
   Engine_TaskRemoveCallback(sparkTask);
   ColorBuffer_ApplyTarget(0x10000, 1);
@@ -514,7 +514,7 @@ static void FieldScene_RunFourActorEncounter(void) {
   Engine_EventWait(20);
   Object_GetById(0)->priorityFlags |= 1;
   GameFlag_Set(0x844);
-  FieldScheduler_AddCallback((s32)TretPalette_ApplyTint, 0xc80);
+  FieldScheduler_AddCallback(TretPalette_ApplyTint, 0xc80);
   Engine_EventEnd();
 }
 

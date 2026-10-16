@@ -56,7 +56,7 @@ void Object_UpdateAll(void) {
     if (obj->script == NULL)
       continue;
     if (obj->hook != NULL)
-      obj->hook(obj);
+      obj->hook((union FieldObject *)obj);
     if (obj->script == NULL)
       continue;
     if (obj->paused != 0)

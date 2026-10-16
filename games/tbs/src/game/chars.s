@@ -1,6 +1,6 @@
 	.section .rodata
 	.balign 4
-@ 仲間 8 人
+@ Definitions of the eight party members.
 	.global gCharacter_DefinitionTable
 gCharacter_DefinitionTable:
 	.incbin "games/tbs/src/game/chars.table"

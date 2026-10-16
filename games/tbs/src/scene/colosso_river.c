@@ -117,8 +117,7 @@ static void SceneState_ResetCounterAndStartTask(void) {
 
 static void SceneState_SetMode66AndPassOpeningSequence(void) {
   gColossoRiver_Countdown = 66;
-  FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence,
-                             0xC80);
+  FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
 static void ColossoRiver_WaitForCountdown(void) {
@@ -985,7 +984,7 @@ static void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param) {
   gColosso_ModeTaskMode = mode;
   gColosso_ModeTaskParam = (param << 4);
 
-  FieldScheduler_AddCallback((s32)Colosso_UpdateModeTask, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateModeTask, 0xc80);
 
   handler = (s32)gColossoRiver_RoundSpans;
   if (mode == 2) {

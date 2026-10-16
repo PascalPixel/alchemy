@@ -1825,7 +1825,7 @@ static void StoryScene_StartTransition(void) {
   Engine_CameraSetSpeed(0x40000, 0x8000);
   {
     s32 transitionDelay = 3200;
-    void *transitionCallback = (void *)StoryScene_UpdateTransitionEffect;
+    SchedulerCallback transitionCallback = StoryScene_UpdateTransitionEffect;
     FieldScheduler_AddCallback(transitionCallback, transitionDelay);
   }
   Engine_ColorBufferApplySource(0, 0);
@@ -2008,7 +2008,7 @@ static void WorldMap_RunOpeningRise(void) {
   Actor_SetSpeed(8, 0x6666, 0x3333);
   actor->timer = 0;
   Actor_SetActionScript(8, gOpeningLeaderRise);
-  FieldScheduler_AddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
+  FieldScheduler_AddCallback(WorldMap_SpawnActorEightPuff, 0xc80);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(0x10003, 1);
   gEventWork->transitionFrames = 32;
@@ -2063,8 +2063,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0) {
     }
     Engine_ActorWaitForMove(id);
     Event_PlayCue(244);
-    FieldScheduler_AddCallback((s32)StoryScene_UpdateSelectedActorProgress,
-                               0xc80);
+    FieldScheduler_AddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
     actor->motionFlags = rec2;
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000,
                              actor->z.fixed);

@@ -72,7 +72,7 @@ static void FieldScene_RunActors24And25SetupWithValue929(void);
 static void TolbiShipInteriors_SetupReplacementPair(void);
 static void FieldScene_RunActors24And25SetupWithValue92a(void);
 static void FieldScene_RunExtendedFormationPresentation(void);
-static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
+static void Scene_UpdateCueTimer(void);
 static void RunActorsEightAndNineMapEvent(void);
 static void Scene_RunFourActorProgressPresentation(void);
 static void TolbiShipInteriors_DismissReplacementRowers(void);
@@ -3479,7 +3479,7 @@ static void FieldScene_RunExtendedFormationPresentation(void) {
   Object_SetActionCallbackAndRefreshById(3, (s32)action);
   GameFlag_Set(0x302);
   gTolbiShipInteriors_CueTimer = 0;
-  FieldScheduler_AddCallback((s32)Scene_UpdateCueTimer, 0xc80);
+  FieldScheduler_AddCallback(Scene_UpdateCueTimer, 0xc80);
   FieldScene_RunSceneStep(23, 0, 0);
   Engine_ActorDestroy(27);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -3487,7 +3487,7 @@ static void FieldScene_RunExtendedFormationPresentation(void) {
   Engine_EventEnd();
 }
 
-static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2) {
+static void Scene_UpdateCueTimer(void) {
   s32 value;
   s32 *timer = &gTolbiShipInteriors_CueTimer;
   s32 remaining;

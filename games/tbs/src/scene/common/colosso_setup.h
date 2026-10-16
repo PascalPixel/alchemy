@@ -41,7 +41,15 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second,
   *(u16 *)(desc + 216) = pal;
   Engine_VramLoad((s16)pal, 512, handle);
 
-  FieldScheduler_AddCallback((s32)Colosso_DrawGauge + 1, 0xc76);
+  // The native object stores this local Thumb symbol with an even value and
+  // adds the state bit here. Modern GCC already includes that bit in a
+  // function pointer; adding one would turn it into an ARM-state address.
+#ifdef UBFIX
+  FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
+#else
+  FieldScheduler_AddCallback((SchedulerCallback)((s32)Colosso_DrawGauge + 1),
+                             0xc76);
+#endif
 
   Runtime_BumpFree(handle);
 }

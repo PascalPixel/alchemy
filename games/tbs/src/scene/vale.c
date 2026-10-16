@@ -1808,12 +1808,12 @@ static void Scene_RepairTheHouse(void) {
   struct FieldActor *turned;
   s32 none;
   s32 flag;
-  s32 callbackA;
-  s32 callbackB;
-  s32 callbackC;
-  s32 callbackD;
-  s32 callbackE;
-  s32 callbackF;
+  SchedulerCallback callbackA;
+  SchedulerCallback callbackB;
+  SchedulerCallback callbackC;
+  SchedulerCallback callbackD;
+  SchedulerCallback callbackE;
+  SchedulerCallback callbackF;
 
   scene = Actor_Get(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
@@ -1883,17 +1883,17 @@ static void Scene_RepairTheHouse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
   SceneState_SetValue140Mode0();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
-  FieldScheduler_AddCallback((void (*)(void))Effect_PlayStepSound, 3200);
+  FieldScheduler_AddCallback(Effect_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
     OverlayObject_UpdateOnFrameBit1(scene);
     Engine_TaskWait(1);
   }
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-  callbackA = (s32)SceneState_SetValue0ThenCall;
-  Task_AddCallback((void (*)(void))callbackA, 3200);
-  callbackB = (s32)FieldScene_RunStep17;
-  Task_AddCallback((void (*)(void))callbackB, 3200);
+  callbackA = SceneState_SetValue0ThenCall;
+  Task_AddCallback(callbackA, 3200);
+  callbackB = FieldScene_RunStep17;
+  Task_AddCallback(callbackB, 3200);
   Actor_SetSpeed(23, 0x3333, 0x1999);
   Actor_MoveToAndWait(23, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1933,10 +1933,10 @@ static void Scene_RepairTheHouse(void) {
     Engine_TaskWait(1);
   }
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  callbackC = (s32)SceneState_SetValue0ThenCall;
-  Task_AddCallback((void (*)(void))callbackC, 3200);
-  callbackD = (s32)SceneState_SetValue24ThenCall;
-  Task_AddCallback((void (*)(void))callbackD, 3200);
+  callbackC = SceneState_SetValue0ThenCall;
+  Task_AddCallback(callbackC, 3200);
+  callbackD = SceneState_SetValue24ThenCall;
+  Task_AddCallback(callbackD, 3200);
   Actor_SetSpeed(24, 0x3333, 0x1999);
   Actor_MoveToAndWait(24, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1977,9 +1977,9 @@ static void Scene_RepairTheHouse(void) {
     Engine_TaskWait(1);
   }
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  callbackE = (s32)SceneState_SetValue0ThenCall;
-  Task_AddCallback((void (*)(void))callbackE, 3200);
-  callbackF = (s32)SceneState_SetValue25ThenCall;
+  callbackE = SceneState_SetValue0ThenCall;
+  Task_AddCallback(callbackE, 3200);
+  callbackF = SceneState_SetValue25ThenCall;
   FieldScheduler_AddCallback(callbackF, 3200);
   Actor_SetSpeed(25, 0x3333, 0x1999);
   Actor_MoveToAndWait(25, 390, 832);

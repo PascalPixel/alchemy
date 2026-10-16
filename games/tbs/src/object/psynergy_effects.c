@@ -1344,8 +1344,8 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   if (object != NULL) {
     blink = 0x100 & param;
     if (blink != 0) {
-      ((struct ScriptMotionObject *)object)->hook = (void (*)(
-          struct ScriptMotionObject *))ObjectGroup_ApplyIndexedChildValue;
+      ((struct ScriptMotionObject *)object)->hook =
+          ObjectGroup_ApplyIndexedChildValue;
       return;
     }
     ((struct ScriptMotionObject *)object)->hook = NULL;
@@ -1355,7 +1355,9 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
 
 // Per-frame hook of a blinking actor: sets its sprite parts' param from
 // gObjectGroup_BlinkChildValues (7 for two frames out of eight, otherwise 0).
-void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object) {
+void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
+  struct DispatchObject *object = (struct DispatchObject *)fieldObject;
+
   if ((object->kind & 0xf) == 1) {
     u8 param;
     struct AnimationObject *container;

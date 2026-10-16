@@ -4,7 +4,7 @@
 gOwner_FourColumnValues:
 	.4byte 1, 3, 4, 5, 8, 6, 9, 10
 	.4byte 4, 3, 2, 5, 8, 10, 9, 7
-@ レベルごとの属性の力と耐性
+@ Elemental power and resistance at each elemental level.
 	.global gElement_PowerResistByLevel
 gElement_PowerResistByLevel:
 	.2byte 75, 85
@@ -23,7 +23,7 @@ gElement_PowerResistByLevel:
 	.2byte 140, 150
 	.2byte 145, 160
 	.2byte 150, 165
-@ 敵の属性の組 44 種
+@ The 44 enemy element presets.
 	.global gEnemy_ElementPresetTable
 gEnemy_ElementPresetTable:
 	.incbin "games/tbs/src/game/elempre.table"

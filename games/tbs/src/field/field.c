@@ -2161,7 +2161,7 @@ void Object_UpdateAllThumb(void) {
       continue;
 
     if (obj->hook != NULL) {
-      obj->hook(obj);
+      obj->hook((union FieldObject *)obj);
       script = obj->script;
     }
     if (script == NULL)

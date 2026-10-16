@@ -1172,7 +1172,9 @@ s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gVramBlockCache[no].size, (const void *)src);
 }
 
+#ifndef UBFIX
 typedef s32 (*KeyCallbackFn)(void);
+#endif
 
 // The task scheduler: up to 20 routines run each frame by WaitFrames or each
 // VBlank, kept sorted by their order value (see SCHEDULER_KEY_MAIN_LOOP).
@@ -1441,7 +1443,14 @@ void Scheduler_RunPass(s32 key) {
         return;
       task++;
       if (TASK_STATE_HIGH(task) == key) {
+        // UB: callbacks return void, and the stored word is not a pointer
+        // object. The native integer-return call uses r0; a void call uses
+        // r3 instead (two instructions and the call relocation differ).
+#ifdef UBFIX
+        SchedulerCallback callback = (SchedulerCallback)task->callback;
+#else
         KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
+#endif
 
         callback();
       }

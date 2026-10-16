@@ -495,15 +495,10 @@ struct SceneEvent gItemLevelEvents[] = {
 #if !TBS_PATCH_1
     {PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_RunMotionTest)},
-#elif TBS_PATCH_1 && !TBS_PATCH_3
-    {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectAbility)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},
-    {EVENT_TALK, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_RunActor13Mode105Step)},
-    {PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(FieldScene_DrawThreeCaptionWindow)},
 #else
+#if !TBS_PATCH_3
+    {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectAbility)},
+#endif
     {EVENT_TALK, 13, CONDITION_ALWAYS,
      EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},
     {EVENT_TALK, 14, CONDITION_ALWAYS,

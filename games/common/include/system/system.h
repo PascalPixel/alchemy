@@ -144,17 +144,7 @@ extern u8 Tile_CopyStrided[];
 extern u8 Tile_CopyStridedCodeSize[];
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
-#ifndef OWN_Animation_SetWorkEntry
-#endif
 void IwramHalt(void);
-#ifndef OWN_Runtime_GetLowTableAddress
-#endif
-#ifndef OWN_Runtime_GetRemainingEwram
-#endif
-#ifndef OWN_Runtime_GetRemainingIwram
-#endif
-#ifndef OWN_RuntimeDispatch_NoOpHook
-#endif
 void SoundDriver_EnterMixer(void);
 #endif
 

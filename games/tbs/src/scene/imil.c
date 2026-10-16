@@ -33,6 +33,13 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// Keep native call forms while UBFIX uses the declared void contracts.
+#ifdef UBFIX
+#define IMIL_OPEN_SHOP Engine_ShopOpen
+#else
+#define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
+#endif
+
 // Forward declarations.
 static void FieldScene_RunPrimaryScriptChoreography(void);
 static void Imil_CastPsynergyAtActorNine(void);
@@ -468,17 +475,13 @@ static void Imil_RunItemShop(void) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
       Engine_EventShowMessage(14, 0);
-#ifdef UBFIX
-      Engine_ShopOpen(12, 14);
-#else
       /* FAKEMATCH: called through a cast to the value-returning call the bytes
        * show; called by its void prototype, the two argument moves swap (differ
        * 2). Forced tbs-en on 2026-10-16 confirms the two argument moves swap
        * (four text bytes). A prototyped s32 (*)(s32, s32) cast also matches
        * (2026-10-13).
        */
-      ((s32 (*)())Engine_ShopOpen)(12, 14);
-#endif
+      IMIL_OPEN_SHOP(12, 14);
       Engine_EventEnd();
     } else {
       Engine_ActorFaceActor(14, 0, 10);

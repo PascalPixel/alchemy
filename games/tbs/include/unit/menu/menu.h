@@ -237,10 +237,13 @@ s32 ItemMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
 void Graphics_AdjustPaletteBank(s32 d);
 #ifdef UBFIX
-void Menu_OpenBackdropScreen(void);
+typedef void MenuBackdropResult;
 #else
-s32 Menu_OpenBackdropScreen(void);
+typedef s32 MenuBackdropResult;
 #endif
+// The native wrapper forwards an implicit result; the defined interface is
+// void.
+MenuBackdropResult Menu_OpenBackdropScreen(void);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *first_count, s32 *second_count);
 s32 Menu_ComputeEntryValues(void *table);

@@ -1710,10 +1710,11 @@ enum SaveMenuMode {
 // cursor starts on `file` and moves up and down over the files `mode` allows
 // (see SaveMenuMode). Returns the file chosen with A, -1 when cancelled with
 // B, or SAVE_MENU_NO_FILE when no file is allowed.
-#if TBS_PATCH_1
+#if TBS_PATCH_1 || LANGUAGE == LANGUAGE_JAPANESE
 
 s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   struct UiWindow *fileList;
+#if TBS_PATCH_1
   struct SaveWorkspace *save;
   struct UiWindow *summaryWindow;
   struct UiWindow *partyWindow;
@@ -1727,6 +1728,26 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   s32 result;
   s32 i;
   s32 y;
+#else
+  struct UiWindow *summaryWindow;
+  struct SaveWorkspace *save;
+  struct UiWindow *partyWindow;
+  struct UiWindow *djinnWindow;
+  struct SaveSummary *summary;
+  struct RenderOutput *modeSprite;
+  s32 cursorStyle;
+  s32 redraw;
+  struct UiRenderWork *uiWork;
+  u32 buildStamp;
+  void *menuWork;
+  struct ShopCursor fileCursor;
+  s32 result;
+  s32 i;
+  s32 x;
+  s32 y;
+  s32 vramSlot;
+  struct RenderOutput *cursorSprite;
+#endif
 
   menuWork = Runtime_AllocateHeapBlock(55, 0xa70);
   save = *(gWorkSlot + HEAP_SLOT_SAVE);
@@ -1739,6 +1760,7 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   // Start on the first file the mode allows.
   if (file < 0)
     file = 0;
+#if TBS_PATCH_1
   if (mode == SAVE_MENU_CONTINUE) {
     for (i = 0; i < SAVE_FILE_COUNT && (save->summary[file].level == 0 ||
                                         (s8)save->summary[file].sendFlag != 0);
@@ -1810,145 +1832,7 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   }
   UiWindow_DrawDividerLine(fileList, 0, 2, 27, 2);
   UiWindow_DrawDividerLine(fileList, 0, 4, 27, 4);
-  modeSprite = RenderResource_CreatePair(mode, fileList, 72, -24);
-
-  while (1) {
-    // Show the file under the cursor after it moves.
-    if (redraw != 0) {
-      redraw = 0;
-      if (save->summary[file].level != 0) {
-        PaletteGlow_Update(save->summary[file].paletteGlow,
-                           save->summary[file].paletteGlowSub);
-        if (summaryWindow == NULL)
-          summaryWindow = UiWindow_Create(1, 10, 14, 9, 2);
-        SaveMenu_DrawFileSummary(summaryWindow, &save->summary[file]);
-        WaitFrames(1);
-        if (partyWindow == NULL)
-          partyWindow = UiWindow_Create(16, 10, 13, 3, 2);
-        SaveMenu_HidePartySprites();
-        SaveMenu_ShowPartySprites(partyWindow, 0, 0, &save->summary[file]);
-        WaitFrames(1);
-        if ((s8)save->summary[file].djinn[0] +
-                (s8)save->summary[file].djinn[1] +
-                (s8)save->summary[file].djinn[2] +
-                (s8)save->summary[file].djinn[3] !=
-            0) {
-          if (djinnWindow == NULL)
-            djinnWindow = UiWindow_Create(16, 14, 13, 5, 2);
-          SaveMenu_DrawDjinnCounts(djinnWindow, &save->summary[file]);
-          SaveMenu_HideDjinnSprites();
-          SaveMenu_ShowDjinnSprites(djinnWindow, 0, 0);
-        } else {
-          SaveMenu_HideDjinnSprites();
-          UiWork_Finalize(djinnWindow, 2);
-          djinnWindow = NULL;
-        }
-      } else {
-        PaletteGlow_Update(gGameState.paletteGlow[0],
-                           gGameState.paletteGlow[1]);
-        SaveMenu_HideDjinnSprites();
-        SaveMenu_HidePartySprites();
-        UiWork_Finalize(djinnWindow, 2);
-        UiWork_Finalize(partyWindow, 2);
-        UiWork_Finalize(summaryWindow, 2);
-        djinnWindow = NULL;
-        partyWindow = NULL;
-        summaryWindow = NULL;
-      }
-      RenderOutput_RedrawSavedRect(fileList);
-      UiWindow_DrawDividerLine(fileList, 0, 2, 27, 2);
-      UiWindow_DrawDividerLine(fileList, 0, 4, 27, 4);
-      UiWindow_FillTilemapRect(fileList, 0, file * 2, 26, 1);
-    }
-    Ui_ApplyTableOffsetToPair(modeSprite);
-    WaitFrames(1);
-    // Up and down move to the previous or next file the mode allows.
-    if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      redraw = 1;
-      do {
-        file = (file + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT; // previous
-        if (mode == SAVE_MENU_SAVE)
-          break;
-      } while ((
-          save->summary[file].level == 0 ||
-          (mode == SAVE_MENU_CONTINUE &&
-           (s8)save->summary[file].sendFlag != 0) ||
-          (mode == SAVE_MENU_EXTRA && (s8)save->summary[file].flagCount == 0) ||
-          (mode == SAVE_MENU_CLEARED &&
-           (s8)save->summary[file].sendFlag == 0)));
-    } else if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-      redraw = 1;
-      do {
-        file = (file + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT; // next
-        if (mode == SAVE_MENU_SAVE)
-          break;
-      } while ((
-          save->summary[file].level == 0 ||
-          (mode == SAVE_MENU_CONTINUE &&
-           (s8)save->summary[file].sendFlag != 0) ||
-          (mode == SAVE_MENU_EXTRA && (s8)save->summary[file].flagCount == 0) ||
-          (mode == SAVE_MENU_CLEARED &&
-           (s8)save->summary[file].sendFlag == 0)));
-    } else if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-      result = -1;
-      break;
-    } else if (gKeysPressed & KEY_A) {
-      AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-      result = file;
-      break;
-    }
-  }
-  // Close the menu and return to the current game's palette glow.
-  SaveMenu_HideDjinnSprites();
-  SaveMenu_HidePartySprites();
-  UiWork_Finalize(djinnWindow, 2);
-  UiWork_Finalize(partyWindow, 2);
-  UiWork_Finalize(summaryWindow, 2);
-  UiWork_Finalize(fileList, 2);
-  PaletteGlow_Stop();
-  Runtime_ReleaseHeapBlock(55);
-  PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
-  WaitFrames(1);
-done:
-  return result;
-}
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
-
-s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
-  struct UiWindow *fileList;
-  struct UiWindow *summaryWindow;
-  struct SaveWorkspace *save;
-  struct UiWindow *partyWindow;
-  struct UiWindow *djinnWindow;
-  struct SaveSummary *summary;
-  struct RenderOutput *modeSprite;
-  s32 cursorStyle;
-  s32 redraw;
-  struct UiRenderWork *uiWork;
-  u32 buildStamp;
-  void *menuWork;
-  struct ShopCursor fileCursor;
-  s32 result;
-  s32 i;
-  s32 x;
-  s32 y;
-  s32 vramSlot;
-  struct RenderOutput *cursorSprite;
-
-  menuWork = Runtime_AllocateHeapBlock(55, 0xa70);
-  save = *(gWorkSlot + HEAP_SLOT_SAVE);
-  summaryWindow = NULL;
-  partyWindow = NULL;
-  djinnWindow = NULL;
-  redraw = 1;
-  uiWork = *(gWorkSlot + HEAP_SLOT_WINDOW);
-  buildStamp = Runtime_GetBuildStampTimeFar();
-  // Start on the first file the mode allows.
-  if (file < 0)
-    file = 0;
+#else
   if (mode != SAVE_MENU_SAVE) {
     for (i = 0; i < SAVE_FILE_COUNT && (save->summary[file].level == 0); i++) {
       file++;
@@ -2032,6 +1916,7 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
     fileCursor.anchor = cursorSprite;
   }
   cursorStyle = 1;
+#endif
   modeSprite = RenderResource_CreatePair(mode, fileList, 72, -24);
 
   while (1) {
@@ -2077,12 +1962,20 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
         partyWindow = NULL;
         summaryWindow = NULL;
       }
+#if TBS_PATCH_1
+      RenderOutput_RedrawSavedRect(fileList);
+      UiWindow_DrawDividerLine(fileList, 0, 2, 27, 2);
+      UiWindow_DrawDividerLine(fileList, 0, 4, 27, 4);
+      UiWindow_FillTilemapRect(fileList, 0, file * 2, 26, 1);
+    }
+#else
       x = fileList->x * 8 - 4;
       y = (fileList->y << 3) + file * 16 + 12;
       Shop_SetCursorFar(&fileCursor, x, y, cursorStyle);
       cursorStyle = 3;
     }
     ShopCursor_AdvanceFar(&fileCursor);
+#endif
     Ui_ApplyTableOffsetToPair(modeSprite);
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows.
@@ -2131,6 +2024,10 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode) {
   UiWork_Finalize(partyWindow, 2);
   UiWork_Finalize(summaryWindow, 2);
   UiWork_Finalize(fileList, 2);
+#if TBS_PATCH_1
+  PaletteGlow_Stop();
+#else
+#endif
   Runtime_ReleaseHeapBlock(55);
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   WaitFrames(1);
@@ -6516,12 +6413,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           }
           action = BattleActGet(entry);
           UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-          UiWindow_SetTilemapEntry(window, 0xf005, 12, i * 2, 0);
-#else
-          UiWindow_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
-#endif
+          UiWindow_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
+                                   0);
           Ability_LoadGlyph(entry & ACTION_ID_MASK, 0, &handles[i], &glyph, 1);
           sprites[i].oam.f.tile = glyph;
 

@@ -27,8 +27,6 @@ void Menu_AppendResourceEntry(s32 no);
 void Menu_EndResourceSelection(void);
 void Resource_ResetPendingTransfer(void);
 s32 Shop_CanServe(s32 entry_id, s32 kind);
-#endif
-#if GAME_TLA
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 #endif
 
@@ -91,8 +89,6 @@ extern const u8 gMenu_ShortcutRColonString[];
 extern const u8 gMenu_ShortcutRString[];
 extern const u8 gMenu_SlashString[];
 extern u8 gMenu_TimesString[];
-#ifndef OWN_Menu_WorkspaceIconFrames
-#endif
 extern s8 gOptionMenu_SleepFrames[];
 extern s8 gOptionMenu_SpeechFrames[];
 extern s8 gOptionMenu_SpeedFrames[];
@@ -109,50 +105,10 @@ extern const u8 gWorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct BattleAct *Ability_GetData(s32 actionId);
 #endif
-#ifndef OWN_Djinn_ListOwnerEntries
-#endif
-#ifndef OWN_DjinnMenu_DrawStatPreview
-#endif
-#ifndef OWN_DjinnMenu_ShowCurrentList
-#endif
-#ifndef OWN_Inn_CheckIn
-#endif
-#ifndef OWN_InventoryMenu_ShowModalMessage
-#endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
-#ifndef OWN_LinkLobby_PollPeerReady
-#endif
-#ifndef OWN_Menu_DrawPageIndicator
-#endif
-#ifndef OWN_Menu_DrawSelectionRow
-#endif
-#ifndef OWN_Menu_OpenSelectionWindow
-#endif
-#ifndef OWN_Menu_SpawnFourObjectsAtOrigin
-#endif
-#ifndef OWN_ObjectPlacement_CreateGroup
-#endif
-#ifndef OWN_OwnerAction_DiffSlots
-#endif
 s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
-#ifndef OWN_PartyTalkMenu_Choose
-#endif
-#ifndef OWN_PsynergyMenu_DrawListPage
-#endif
-#ifndef OWN_PsynergyMenu_DrawRange
-#endif
 void ScrollFar_Entry00(s32 mode);
-#ifndef OWN_Shop_BuySpecialItem
-#endif
-#ifndef OWN_Shop_FillSelector
-#endif
-#ifndef OWN_Shop_Run
-#endif
-#ifndef OWN_Shop_SetCursor
-#endif
-#ifndef OWN_StatusMenu_DrawCharacterSummary
-#endif
 void UiText_DrawAt(s32, s32, s32, s32);
 void UiWindow_Clear(s32 window);
 void UiWindow_Commit(s32 window);

@@ -1537,16 +1537,14 @@ static void WorldMap_StopLeaderLeavingShip(void) {
 static void EV96_SEARCH(void) {
 
   Engine_EventBegin();
-#if TBS_PATCH_3
-#else
+#if !TBS_PATCH_3
   Battle_SetObjectFlag5bWhenMode3();
 #endif
   Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
   if (Engine_GameFlagIsSet(0x234) != 0) {
     ((struct StoryDialogueWork *)gEventWork)->storyResult = 1;
   }
-#if TBS_PATCH_3
-#else
+#if !TBS_PATCH_3
   Battle_ClearObjectFlag5bWhenMode3();
 #endif
   Engine_EventEnd();

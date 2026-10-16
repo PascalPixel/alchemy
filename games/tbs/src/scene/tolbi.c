@@ -22,6 +22,13 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+#if TBS_PATCH_1
+#define TOLBI_JAR_SEARCH_KIND                                                  \
+  (SEARCH(SEARCH_JAR) | EVENT_TOUCH_FACING | FACING_NORTH)
+#else
+#define TOLBI_JAR_SEARCH_KIND SEARCH(SEARCH_JAR)
+#endif
+
 static void Tolbi_FreezePuddle(void);
 
 // Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
@@ -801,11 +808,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { SEARCH(SEARCH_BARREL), TOLBI_BARREL, 0xf97, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
-#if !TBS_PATCH_1
-    { SEARCH(SEARCH_JAR), TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-#else
-    { SEARCH(SEARCH_JAR) | EVENT_TOUCH_FACING | FACING_NORTH, TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-#endif
+    { TOLBI_JAR_SEARCH_KIND, TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(0xbf) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },

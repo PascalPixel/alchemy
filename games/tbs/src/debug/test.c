@@ -683,16 +683,16 @@ s32 CommandTable_ConfigureCommandList(void) {
   Item_AdjustCounter(130, 1);
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
+#if !TBS_PATCH_1
+  gGameState.coins = 777777;
+#endif
 #if TBS_PATCH_1
   Unit_LevelUpTo(ISAAC, 50);
-  Unit_LevelUpTo(GARET, 30);
-  Unit_LevelUpTo(MIA, 30);
 #else
-  gGameState.coins = 777777;
   Unit_LevelUpTo(ISAAC, 30);
+#endif
   Unit_LevelUpTo(GARET, 30);
   Unit_LevelUpTo(MIA, 30);
-#endif
   Unit_LevelUpTo(IVAN, 30);
   UnitCalc(ISAAC);
   UnitCalc(GARET);
@@ -709,8 +709,7 @@ static s32 DebugMenu_SelectCharacter(void) {
 }
 #endif
 
-#if TBS_PATCH_3
-#else
+#if !TBS_PATCH_3
 static s32 SceneState_GetFarResult2418(s32 unitId) {
   return Shop_ConfirmAct(unitId);
 }
@@ -798,14 +797,6 @@ struct SceneEvent gMenuTest_Events[] = {
 #if !TBS_PATCH_1
     {EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},
     {EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
-#elif TBS_PATCH_1 && !TBS_PATCH_2
-    {0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
-    {0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
-    {0x400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCf1)},
-    {0x4400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD21)},
-    {0xc400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD4c)},
-    {0x8400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD77)},
-    {0x400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockDa2)},
 #else
     {0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
     {0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
@@ -814,7 +805,9 @@ struct SceneEvent gMenuTest_Events[] = {
     {0xc400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD4c)},
     {0x8400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD77)},
     {0x400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockDa2)},
+#if TBS_PATCH_2
     {0x4400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RunMessageTest)},
+#endif
 #endif
     {PSYNERGY_ON_ACTOR(0x4e), 15, CONDITION_ALWAYS,
      EVENT_SCRIPT(EV15_PSYNERGY)},

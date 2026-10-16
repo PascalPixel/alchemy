@@ -9,8 +9,6 @@
 
 #if GAME_TLA
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-#endif
-#if GAME_TLA
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 #endif
 

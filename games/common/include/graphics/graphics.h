@@ -43,36 +43,24 @@ extern u8 *gUiIcon_PsynergyIconPointersEnd[];
 #if GAME_TLA
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
-#endif
 #ifndef OWN_BattleLayout_HighlightPartyPanels
-#if GAME_TLA
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
-#endif
-#if GAME_TLA
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
 s32 Ui_ClearVramBlock(void);
-#endif
-#if GAME_TLA
 s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
-#endif
-#if GAME_TLA
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
 void PartyStatusDraw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-#endif
 #ifndef OWN_UiWindow_SetTilemapEntry
-#if GAME_TLA
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode);
 #endif
-#endif
-#if GAME_TLA
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
 void UiWork_ProcessDirectWork(void);
 void UiWork_ProcessRenderChannels(void);
@@ -186,83 +174,9 @@ extern const struct ArticleTable gUiText_IndefiniteArticles;
 extern const u8 UiText_LookupMessageArm[];
 extern u8 UiText_LookupMessageCodeSize[];
 extern const s8 gUiWindow_PartyColumnOffsets[];
-#ifndef OWN_BattleFx_PlayUnitElementEffect
-#endif
-#ifndef OWN_Camera_StoreSceneParameters
-#endif
-#ifndef OWN_ColorBuffer_BackupAndBrighten
-#endif
-#ifndef OWN_ColorBuffer_BackupAndDarken
-#endif
-#ifndef OWN_ColorBuffer_BackupAndHalve
-#endif
-#ifndef OWN_ColorBuffer_BackupAndScaleThreeQuarters
-#endif
-#ifndef OWN_DisplayBlend_StartScript
-#endif
-#ifndef OWN_DisplayScroll_InitializeHBlankDma
-#endif
 #ifndef OWN_FarCall_EffectTable
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
                         u32 mode);
-#endif
-#ifndef OWN_Graphics_BuildSequentialTileTable
-#endif
-#ifndef OWN_Graphics_TransformSmallPalette
-#endif
-#ifndef OWN_Graphics_TransposeCopy
-#endif
-#ifndef OWN_MenuSelection_BuildEntries
-#endif
-#ifndef OWN_PsynergyMenu_CallIconRoutineWithValue
-#endif
-#ifndef OWN_RenderOutput_Create
-#endif
-#ifndef OWN_RenderResource_CreateFrame
-#endif
-#ifndef OWN_RenderResource_CreatePair
-#endif
-#ifndef OWN_SceneTransform_ApplyPosition
-#endif
-#ifndef OWN_SceneTransform_ApplyScale
-#endif
-#ifndef OWN_Text_FormatHex
-#endif
-#ifndef OWN_Tilemap_DecodeStagedBuffer
-#endif
-#ifndef OWN_Title_ShowSplashScreen
-#endif
-#ifndef OWN_Ui_AdjustValueWithoutLimit
-#endif
-#ifndef OWN_Ui_ApplyTableOffsetToPair
-#endif
-#ifndef OWN_Ui_ApplyTableScaleToObject
-#endif
-#ifndef OWN_UiGlyph_LoadEntryWithPalette
-#endif
-#ifndef OWN_UiIcon_BuildAbilityIconTiles
-#endif
-#ifndef OWN_UiIcon_BuildItemIconTiles
-#endif
-#ifndef OWN_UiIcon_CreateWithLoadedResource
-#endif
-#ifndef OWN_UiIcon_DrawVariantWithTileOffset
-#endif
-#ifndef OWN_UiText_DrawFourNumbersInRow
-#endif
-#ifndef OWN_UiText_GetResourceDimensions
-#endif
-#ifndef OWN_UiText_RenderWideStringAtOffset
-#endif
-#ifndef OWN_UiWindow_ClearInteriorTiles
-#endif
-#ifndef OWN_UiWindow_DrawThreeTileColumn
-#endif
-#ifndef OWN_UiWindow_FillTilemapRect
-#endif
-#ifndef OWN_UiWindow_MapTextCanvasTiles
-#endif
-#ifndef OWN_UiWork_CloseAndRelease
 #endif
 #endif
 

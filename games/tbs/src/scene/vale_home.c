@@ -57,7 +57,9 @@ static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
   SceneActor_SetPairZeroAndValue(actor, facing, frames);
 }
 
-#ifndef UBFIX
+#ifdef UBFIX
+#define VALE_HOME_TURN_AND_WAIT SceneActor_SetPairZeroAndValue
+#else
 static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline called as returning a value, its result
    * discarded (call.h's Value3 did the same); through ValeHome_TurnAndWait the
@@ -68,6 +70,7 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
    */
   return ((s32 (*)())SceneActor_SetPairZeroAndValue)(actor, facing, frames);
 }
+#define VALE_HOME_TURN_AND_WAIT ValeHome_TurnAndWaitValue
 #endif
 
 // Shared source is included here in ROM order.
@@ -616,11 +619,7 @@ static void EV20_TOUCH(void) {
     Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
     Actor_SetActionScript(22, gValeHome_Actor22Actions);
     Object_RefreshSelectorById(22);
-#ifdef UBFIX
-    SceneActor_SetPairZeroAndValue(22, 0x2000, 60);
-#else
-    ValeHome_TurnAndWaitValue(22, 0x2000, 60);
-#endif
+    VALE_HOME_TURN_AND_WAIT(22, 0x2000, 60);
     Engine_ActorRunRepeatedMotion(19, 2);
     Event_SayThenWait(19, 10);
     Engine_ActorSetAnimationAndWait(22, 3);

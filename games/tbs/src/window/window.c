@@ -1849,33 +1849,6 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
     width += secondWidth;
   }
 
-  // Pack the cell into four tiles, eight pixels to a word, the leftmost in
-  // the lowest nibble.
-  pixel = pixels + 7;
-  tileColumn = 0;
-  do {
-    tileRow = 0;
-    do {
-      line = 0;
-      do {
-        tileLine = 0;
-        pixelsLeft = 7;
-        do {
-          tileLine = (tileLine << 4) + *pixel--;
-          pixelsLeft--;
-        } while (pixelsLeft >= 0);
-        *out++ = tileLine;
-        line++;
-        pixel += 24;
-      } while (line <= 7);
-      tileRow++;
-      pixel -= 120;
-    } while (tileRow <= 1);
-    tileColumn++;
-    pixel += 112;
-  } while (tileColumn <= 1);
-  return width;
-}
 #else
 // Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
 // text colour over a shadow, or with an outline when UiRenderWork.outline is
@@ -1961,7 +1934,10 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
       Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
     }
   }
+#endif
 
+  // Pack either font into four tiles, with the leftmost pixel in the low
+  // nibble.
   pixel = pixels + 7;
   tileColumn = 0;
   do {
@@ -1987,7 +1963,6 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   } while (tileColumn <= 1);
   return width;
 }
-#endif
 
 // The German, Spanish, French and Italian editions count every character up
 // to 0xff as 10 pixels, and those above as nothing.

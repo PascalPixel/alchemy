@@ -9,8 +9,6 @@
 
 #if GAME_TLA
 s32 Unit_AddHp(s32 owner, s32 delta);
-#endif
-#if GAME_TLA
 s32 Unit_AddHpFar(s32 owner, s32 delta);
 #endif
 

@@ -74,6 +74,21 @@
 #define COLOSSO_WALL_PULSE_LOW_SCALE 256
 #endif
 
+#ifdef UBFIX
+#define COLOSSO_WALL_SHOW_MESSAGE Engine_EventShowMessage
+#define COLOSSO_WALL_MOVE_ACTOR_PAIR SceneActor_MovePairByTileOffset
+#define COLOSSO_WALL_START_MODE_TASK ColossoWall_InitializeModeTask
+#define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
+  SceneActor_ApplyValueAndMatchingSlots
+#else
+#define COLOSSO_WALL_SHOW_MESSAGE ((s32 (*)())Engine_EventShowMessage)
+#define COLOSSO_WALL_MOVE_ACTOR_PAIR                                           \
+  ((s32 (*)())SceneActor_MovePairByTileOffset)
+#define COLOSSO_WALL_START_MODE_TASK ((s32 (*)())ColossoWall_InitializeModeTask)
+#define COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE                                 \
+  ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)
+#endif
+
 // Forward declarations.
 static void Colosso_RunGreetScene(s32 a0);
 static void ColossoWall_RunScriptedTransition(s32 mode);
@@ -956,16 +971,12 @@ static void EV36_TALK(s32 a0) {
       Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
       Engine_CameraWaitForMove();
       // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-      Engine_EventShowMessage(a0, 0);
-#else
       /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
        * its result discarded (as call.h's Value2 did, 2026-10-13); called
        * directly or through Call2 it differs 2 on tbs-en.
        * Direct prototype rechecked 2026-10-16: 2 argument instructions
        * differ in tbs-en. */
-      ((s32 (*)())Engine_EventShowMessage)(a0, 0);
-#endif
+      COLOSSO_WALL_SHOW_MESSAGE(a0, 0);
       ColossoWall_StartSupplementalSceneTask();
       Event_ShowMessage(a0, 0);
       Colosso_FadeInCompetitor(0, 0x438, 0x108);
@@ -1018,16 +1029,12 @@ static void EV37_TALK(s32 a0) {
       OverlayObject_PlaceWithScale14000(0, 0x348, 232);
       Engine_EventWait(10);
       // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-      SceneActor_MovePairByTileOffset(33, -64, 0);
-#else
       /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
        * its result discarded (as call.h's Value3 did, 2026-10-13); called
        * directly or through Call3 it differs 2 on tbs-en.
        * Direct prototype rechecked 2026-10-16: 2 argument instructions
        * differ in tbs-en. */
-      ((s32 (*)())SceneActor_MovePairByTileOffset)(33, -64, 0);
-#endif
+      COLOSSO_WALL_MOVE_ACTOR_PAIR(33, -64, 0);
       Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
       Engine_EventWait(10);
@@ -1290,16 +1297,12 @@ static void FieldScene_RunLateSequence(s32 a0) {
     Engine_AudioPlayCue(86);
     Colosso_LoadPortrait(8);
     // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-    ColossoWall_InitializeModeTask(3, 1);
-#else
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
      * result discarded (as call.h's Value2 did, 2026-10-13); called directly or
      * through Call2 each of the two calls differs 2 on tbs-en, both 4.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    ((s32 (*)())ColossoWall_InitializeModeTask)(3, 1);
-#endif
+    COLOSSO_WALL_START_MODE_TASK(3, 1);
     Engine_EventWait(-a0 * 60 + 60);
     kind = 0;
   } else {
@@ -1307,15 +1310,11 @@ static void FieldScene_RunLateSequence(s32 a0) {
     Engine_AudioPlayCue(a0 + 90);
     Colosso_LoadPortrait(4);
     // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-    ColossoWall_InitializeModeTask(3, 0);
-#else
     /* FAKEMATCH: called through the s32 cast like the call above; called
      * directly or through Call2 it differs 2 on tbs-en.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    ((s32 (*)())ColossoWall_InitializeModeTask)(3, 0);
-#endif
+    COLOSSO_WALL_START_MODE_TASK(3, 0);
     Engine_EventWait(a0 * 60 + 60);
     kind = 8;
   }
@@ -1455,27 +1454,19 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
 
   if (flag == 0) {
     // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-    SceneActor_ApplyValueAndMatchingSlots(0, handleA);
-#else
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show;
      * called by its void prototype the argument moves are ordered differently:
      * differ 2 on tbs-en, 4 with the call below.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleA);
-#endif
+    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, handleA);
     UiWork_PushValueSlot(handleA, 2);
   } else {
     // UB: the void target is called through an incompatible return type.
-#ifdef UBFIX
-    SceneActor_ApplyValueAndMatchingSlots(0, handleB);
-#else
     /* FAKEMATCH: the same cast as above; by its prototype differ 2 on tbs-en.
      * Direct prototype rechecked 2026-10-16: 2 argument instructions
      * differ in tbs-en. */
-    ((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleB);
-#endif
+    COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, handleB);
     UiWork_PushValueSlot(handleB, 2);
   }
 

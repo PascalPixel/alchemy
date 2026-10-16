@@ -79,11 +79,7 @@ LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
 #if GAME_TLA
 s32 ActivateBattleObjectSlot(s32 objectId);
 struct BattleObj *BattleObjGet(s32 objectId);
-#endif
-#if GAME_TLA
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-#endif
-#if GAME_TLA
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 #endif
 

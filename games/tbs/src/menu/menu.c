@@ -4235,7 +4235,6 @@ s32 ItemMenu_RunList(s32 pane) {
 }
 
 #if TBS_PATCH_2
-#define PROMPT_SAVES_TILES 1
 #define PROMPT_TILES ((void *)0x06004000)
 #define PROMPT_TILES_SIZE 0x2000
 #endif
@@ -4246,7 +4245,7 @@ s32 ItemMenu_RunList(s32 pane) {
 // psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
 // player backs out.
 s32 Menu_OpenConfirmPrompt(void) {
-#if defined(PROMPT_SAVES_TILES)
+#if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
   struct PsynergyMenuState *state =
@@ -4265,7 +4264,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   state->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(0x06002500);
-#if defined(PROMPT_SAVES_TILES)
+#if TBS_PATCH_2
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(saved, PROMPT_TILES, PROMPT_TILES_SIZE);
   Iwram_FillWords(PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
@@ -4289,7 +4288,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 0;
-#if defined(PROMPT_SAVES_TILES)
+#if TBS_PATCH_2
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
   Iwram_CopyWords(PROMPT_TILES, saved, PROMPT_TILES_SIZE);
@@ -6362,6 +6361,13 @@ void CharacterMenu_DrawSelectionLabels(struct UiWindow *target, s32 selected,
 #define PROGRESS_TEXT_MAX 0x40
 #endif
 
+// Native revisions keep different local widths; the text value consumes u32.
+#if TBS_PATCH_1
+typedef u64 ExperienceDifference;
+#else
+typedef u32 ExperienceDifference;
+#endif
+
 // Writes the help text of status entry messageVariant into destination: the
 // entries skip Djinn when the party has none (preserveVariant 0); the
 // experience entry says how many points the next level needs, or, at level 99,
@@ -6381,15 +6387,10 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     if (owner->level == 99) {
       messageVariant = 8; // "These are your experience points."
     } else {
-#if TBS_PATCH_1
-      u64 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
-                                                    owner->level + 1) -
-                      owner->experience;
-#else
-      u32 remaining = Unit_GetExperienceForLevelFar(menu->selectedIds[0],
-                                                    owner->level + 1) -
-                      owner->experience;
-#endif
+      ExperienceDifference remaining =
+          Unit_GetExperienceForLevelFar(menu->selectedIds[0],
+                                        owner->level + 1) -
+          owner->experience;
       UiWork_PushValueSlotFar(remaining, 5);
     }
   }
@@ -8354,11 +8355,7 @@ void Graphics_AdjustPaletteBank(s32 d) {
 // UB: the implicit int call conflicts with DrawElementList's void definition.
 // The sole caller ignores this wrapper's result. Plain void changes the native
 // tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
-#ifdef UBFIX
-void Menu_OpenBackdropScreen(void) {
-#else
-s32 Menu_OpenBackdropScreen(void) {
-#endif
+MenuBackdropResult Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *work = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = work->backdrop;
 

@@ -207,15 +207,9 @@ static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z) {
   Engine_ActorSetPosition(actor, fixed_x, fixed_z);
 }
 
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
   Engine_ActorSetSpeed(actor, speed, acceleration);
 }
-#else
-static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
-  Engine_ActorSetSpeed(actor, speed, acceleration);
-}
-#endif
 
 static inline void Actor_SetDestination(s32 actor, s32 x, s32 z) {
   Engine_ActorSetDestination(actor, x, z);
@@ -265,17 +259,10 @@ static inline void Map_CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
   Engine_MapCopyCells(srcX, srcY, width, height, destX, destY);
 }
 
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
                                           s32 height, s32 destX, s32 destY) {
   Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
-#else
-static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
-                                          s32 height, s32 destX, s32 destY) {
-  Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
-}
-#endif
 
 static inline void Work_SetValuesIfNonNegative(s32 first, s32 second,
                                                s32 third) {

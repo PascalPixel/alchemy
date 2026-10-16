@@ -25,11 +25,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-#ifdef MODERN
-// called before its definition below, which modern GCC refuses for an
-// implicit int declaration of a u16 function
-#endif
-
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 

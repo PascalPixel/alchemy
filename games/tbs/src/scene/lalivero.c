@@ -439,10 +439,11 @@ static void ReceiveBlackOrb(void) {
 #if TBS_PATCH_2
   Object_GetById(IODEM)->targetZ = ACTOR_NO_TARGET;
   Actor_SetPosition(IODEM, PIXELS(72), PIXELS(312));
+#endif
   Engine_EventWait(20);
+#if TBS_PATCH_2
   Actor_WalkToAndWait(IODEM, 72, 328);
 #else
-  Engine_EventWait(20);
   Actor_WalkByAndWait(IODEM, 0, 16);
 #endif
   Engine_MapCopyCellsLayered(32, 0, 1, 2, 4, 18);

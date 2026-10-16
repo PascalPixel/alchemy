@@ -107,11 +107,7 @@ s32 BattleObject_IsValidId(u32 objectId);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BattleObjPut(void);
-#endif
-#if GAME_TLA
 void BattleFx_InitializeModeFar(s32 *context);
-#endif
-#if GAME_TLA
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);

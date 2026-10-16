@@ -12,13 +12,9 @@ struct ResourceObjectWork;
 #if GAME_TLA
 struct ResourceObject *ResourceObject_Create(s32 resource);
 void ResourceObject_Release(struct ResourceObjectWork *work);
-#endif
-#if GAME_TLA
 struct ResourceObject *ResourceObject_CreateFar(s32 resource);
 void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
-#endif
 
-#if GAME_TLA
 void *Resource_GetTableEntry(s32 resourceId);
 
 s32 Resource_FindFreeEntry(void);

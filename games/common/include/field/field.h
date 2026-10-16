@@ -10,8 +10,6 @@
 #include "field_runtime.h"
 #include "field_scene.h"
 #include "menu_list.h"
-#endif
-#if !GAME_TLA
 #include "farcall.h"
 #endif
 
@@ -37,25 +35,17 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 void Object_AttachWorkTargetToObject(s32 id, s32 flag);
 void Object_UpdateAllMotion(void);
 void Object_UpdateAllThumb(void);
-#endif
 #ifndef OWN_ObjectDispatch_SetSingleChildFlags
-#if GAME_TLA
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
                                         u32 value);
 #endif
-#endif
-#if GAME_TLA
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32 ObjectTable_FindLastActiveId(void);
-#endif
-#if GAME_TLA
 void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 s32 Unit_KnowsActionFar(s32 group, s32 entry);
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
-#endif
-#if GAME_TLA
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 #endif
 
@@ -254,24 +244,8 @@ struct WorldMapVramBlock {
   u16 base;
   u16 offset;
 };
-#ifndef OWN_AltinPeak_ActorScript
-#endif
 extern s16 gAltinPeak_PaletteHold;
 extern s16 gAltinPeak_PaletteStep;
-#ifndef OWN_LemurianShip_CountTicks
-#endif
-#ifndef OWN_LemurianShip_DriftActive
-#endif
-#ifndef OWN_LemurianShip_ShimmerActive
-#endif
-#ifndef OWN_LemurianShip_ShimmerPhase
-#endif
-#ifndef OWN_LemurianShip_SwellActive
-#endif
-#ifndef OWN_LemurianShip_SwellLayerSevenY
-#endif
-#ifndef OWN_LemurianShip_SwellLayerSixY
-#endif
 extern const u8 gBattleFx_BurstParticleScriptA[];
 extern const u8 gBattleFx_BurstParticleScriptB[];
 extern u32 gWorldMap_GraphicsResources[][6];
@@ -281,8 +255,6 @@ extern const u8 gField_TileMessageOffsets[];
 extern const u8 gFieldFx_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
 extern s32 gTolbiShipInteriors_CueTimer;
-#ifndef OWN_TolbiShipInteriors_TurnSteps
-#endif
 extern s16 *gKolimaForestBendLayout;
 extern s16 *gKolimaForestBendRecords;
 extern u16 *gKolimaForestBendReturned;
@@ -318,13 +290,7 @@ extern s16 gColosso_ModeScaleStart;
 extern s16 gColosso_ModeScaleStep;
 extern s16 gColosso_ModeScaleTarget;
 extern u32 gColosso_ModeTaskSprites[];
-#ifndef OWN_VaultInteriors_PairScriptP
-#endif
-#ifndef OWN_VaultInteriors_PairScriptR
-#endif
 extern u16 gVaultInteriors_StopTimer;
-#ifndef OWN_Mercury_PillarScript
-#endif
 extern u8 Object_UpdateAllCodeSize[];
 extern u8 gObjectGroup_BlinkChildValues[];
 extern const u8 gObjectMotion_ActionKind1Script[];
@@ -337,8 +303,6 @@ extern const u8 gObjectMotion_ResetActionScript[];
 extern const u8 gObjectMotion_StepAngleScript[];
 extern const u8 gObjectMotion_TurnTowardLinkedScript[];
 extern const u8 gObjectMotion_VariantScripts[];
-#ifndef OWN_LamakanDesert_SandCounter
-#endif
 extern u8 gLamakanDesert_SandEffectTiles[];
 extern const u16 gLamakanDesert_SandPalette[16];
 #ifndef OWN_LamakanDesert_SandPhase
@@ -357,95 +321,27 @@ extern u32 gStagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 Transform_UpdateVerticesSize;
-#ifndef OWN_VenusAerie_BeamOpenAction
-#endif
-#ifndef OWN_VenusAerie_ScaleStepAction
-#endif
 extern const u8 gWorldMap_FootprintActions[];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 CalculateFacingAngle(s32, s32);
-#ifndef OWN_Camera_ApplyShake
-#endif
-#ifndef OWN_EffectPosition_ApplyAlternateStepAndYOffset
-#endif
-#ifndef OWN_EffectPosition_ApplyAnimationAndYOffset
-#endif
-#ifndef OWN_EffectRuntime_GetCurrentObject
-#endif
 void Engine_ActorFollow(s32 actor, s32 leader);
 void Engine_EventClearInvalidPackedValues(void);
 s32 Engine_PartyRemoveItem(s32 item);
-#ifndef OWN_Event_RequestDestination
-#endif
 s32 FarCall_BlankLoadTable(s32 entrance);
 s32 FarCall_BlankRunTable(s32 entrance);
-#ifndef OWN_Field_RunTileAction
-#endif
-#ifndef OWN_Field_TryJumpForward
-#endif
-#ifndef OWN_FieldScene_BuildSceneDescriptorAndInstallTask
-#endif
 #ifndef OWN_FieldScene_PrepareActors
 void FieldScene_PrepareActors(struct ScenePlacement *entry);
-#endif
-#ifndef OWN_FourObjectMotion_InitializeBottomRow
 #endif
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-#ifndef OWN_Mercury_SpawnLightObjects
-#endif
 void Map_ResumeAnimation(void);
-#ifndef OWN_MapGroupTable_SelectEntry
-#endif
 s32 Math_Atan2(s32 dy, s32 dx);
-#ifndef OWN_Menu_FindShortcutEntries
-#endif
-#ifndef OWN_Object_CollectResources
-#endif
 #ifndef OWN_Object_Destroy
 void Object_Destroy(struct DispatchObject *work);
 #endif
-#ifndef OWN_Object_ReplaceResourceEntry
-#endif
-#ifndef OWN_ObjectDispatch_InitFromTable4WithArgument
-#endif
-#ifndef OWN_ObjectDispatch_RegisterChildMetadata
-#endif
-#ifndef OWN_ObjectGroup_UpdateMembers
-#endif
-#ifndef OWN_ObjectTable_ResetForObject
-#endif
-#ifndef OWN_ObjectVisual_CopyAttributes
-#endif
-#ifndef OWN_OverlayObject_PrepareObject
-#endif
-#ifndef OWN_OverlayObject_WaitUntilSettledAndReset
-#endif
-#ifndef OWN_LamakanDesert_EmitSandEffect
-#endif
-#ifndef OWN_Scene_FadeColorFromWhite
-#endif
-#ifndef OWN_Scene_PushBlockAlongRun
-#endif
-#ifndef OWN_SceneActor_PlaceFiveActorsInRow
-#endif
-#ifndef OWN_SceneActor_UpdateTracking
-#endif
-#ifndef OWN_SceneData_FindTileRunAt
-#endif
-#ifndef OWN_SceneEffect_SpawnEffect284AtCell
-#endif
-#ifndef OWN_SceneEffect_SpawnRandomizedParticleEveryFourFrames
-#endif
 void ScenePlacement_ClipToView(struct ScenePlacement *placements);
 void SceneTable_Prepare(struct ScenePlacement *placements);
-#ifndef OWN_StagedActor_CountdownUntilPositionUnset
-#endif
-#ifndef OWN_StoryActor_ConfigureSpawnedObject
-#endif
-#ifndef OWN_CrossbonePillar_ReadMapCell
-#endif
 #endif
 
 #if GAME_TLA

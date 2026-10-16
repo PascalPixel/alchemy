@@ -41,8 +41,6 @@ LAYOUT_OFFSET_GUARD(AnimationMetadata_Animation, struct AnimationMetadata,
 
 #if GAME_TLA
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
-#endif
-#if GAME_TLA
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number);
 #endif
 struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number);

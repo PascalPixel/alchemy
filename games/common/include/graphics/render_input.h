@@ -87,9 +87,7 @@ LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tailLink,
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY);
-#endif
 
-#if GAME_TLA
 struct RenderOutput *RenderOutput_CreateFar(s32 resource, s32 flags,
                                             struct RenderInput *window, s32 x,
                                             s32 y);

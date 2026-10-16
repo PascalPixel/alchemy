@@ -26,6 +26,12 @@
 #include "flags.h"
 #include "facing_object.h"
 
+#ifdef UBFIX
+#define MCCOY_GARDEN_SET_ACTOR_POSITION Engine_ActorSetPosition
+#else
+#define MCCOY_GARDEN_SET_ACTOR_POSITION ((s32 (*)())Engine_ActorSetPosition)
+#endif
+
 // The garden before Lord McCoy's palace in Bilibin. Two guards keep the
 // palace gate and let only brave warriors through; once Kolima's curse is
 // lifted, they arrest the party for breaking it and take them to McCoy.
@@ -199,16 +205,12 @@ static void EastGuard_Talk(void) {
       Actor_FaceDirection(GATE_GUARD_WEST, FACING_NORTH, 10);
       PalaceGate_Open();
       Actor_WalkToAndWait(GATE_GUARD_WEST, 0x148, 246);
-#ifdef UBFIX
-      Engine_ActorSetPosition(11, 0, 0);
-#else
       /* FAKEMATCH: instruction order only: called through a cast with no
          prototype that returns a value, the call sets r0, so sched2 loads
          the actor id after the two zeros, as native. Plain forms measured
          (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
          their prototype load r0 first (differ 2). */
-      ((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-#endif
+      MCCOY_GARDEN_SET_ACTOR_POSITION(11, 0, 0);
       /* FAKEMATCH: instruction order only: the one-pass block's loop note
          after the call above is a scheduling barrier; with the cast it
          keeps r0 last among that call's arguments. A plain call or

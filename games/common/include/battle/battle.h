@@ -7,8 +7,6 @@
 #include "edition.h"
 #if !GAME_TLA
 #include "battle_effect_runtime.h"
-#endif
-#if !GAME_TLA
 #include "farcall.h"
 #endif
 
@@ -33,27 +31,19 @@ extern u16 gResource_SlotAssignments[];
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
 #endif
 struct BattleObj;
-#ifndef OWN_BattlePresentation_SpawnActorObject
 #if GAME_TLA
+#ifndef OWN_BattlePresentation_SpawnActorObject
 void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y);
 #endif
-#endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
-#if GAME_TLA
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
-#endif
-#if GAME_TLA
 void BattleEffect_InitializeSharedScene(void);
 void BattleEvent_Playback(void);
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
-#endif
 #ifndef OWN_BattleFx_GetResourceGroup
-#if GAME_TLA
 s8 BattleFx_GetResourceGroup(s32 effect_index);
 #endif
-#endif
-#if GAME_TLA
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunNoEffect(void);
@@ -66,18 +56,12 @@ s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId);
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 objectId);
-#endif
 #ifndef OWN_BattlePres_BuildOpponentEntries
-#if GAME_TLA
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
 #endif
-#endif
 #ifndef OWN_BattlePres_BuildUnitEntries
-#if GAME_TLA
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
 #endif
-#endif
-#if GAME_TLA
 s32 BattlePres_WaitSync(void);
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count);
@@ -86,8 +70,6 @@ void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void RunBattleEffect05(void);
 s32 Summon_IsEntryFlagged(s32 index);
-#endif
-#if GAME_TLA
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
@@ -97,8 +79,6 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object,
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
-#endif
-#if GAME_TLA
 void UpdateRisingParticleBurst(void *object);
 #endif
 
@@ -376,162 +356,12 @@ u32 __udivsi3(u32 numerator, u32 denominator);
 void _call_via_r0(u32 routine);
 #endif
 void Animation_ApplyChildArgumentFar(void *, s32);
-#ifndef OWN_Animation_ApplyChildPalette
-#endif
-#ifndef OWN_Battle_DispatchInputEvent
-#endif
-#ifndef OWN_Battle_FindTaggedSlotByValue
-#endif
-#ifndef OWN_Battle_GetTaggedSlotValue
-#endif
-#ifndef OWN_Battle_ProcessRoundEnd
-#endif
-#ifndef OWN_Battle_RunEncounter
-#endif
-#ifndef OWN_BattleAction_RunDescriptor
-#endif
-#ifndef OWN_BattleCommand_ExecuteSelectedAction
-#endif
-#ifndef OWN_BattleCommand_ExecuteSelectedItem
-#endif
-#ifndef OWN_BattleCommand_SelectAutomatic
-#endif
-#ifndef OWN_BattleEffect_RunCirclingFallingScene
-#endif
-#ifndef OWN_BattleEffect_RunEmberColumns
-#endif
-#ifndef OWN_BattleEffect_RunStagedParticles
-#endif
-#ifndef OWN_BattleEffect_RunTargetedItemBreak
-#endif
-#ifndef OWN_BattleEffect_SelectNearbyObject
-#endif
-#ifndef OWN_BattleFx_AdvanceSpinAngle
-#endif
-#ifndef OWN_BattleFx_ApplyColorToTargetBuffer
-#endif
-#ifndef OWN_Encounter_RollWorldMap
-#endif
-#ifndef OWN_BattleFx_CallEffect03AndStop
-#endif
-#ifndef OWN_BattleFx_CallEffect04
-#endif
-#ifndef OWN_BattleFx_CallEffect05
-#endif
-#ifndef OWN_BattleFx_CircleAnchor
-#endif
-#ifndef OWN_BattleFx_FindDescriptor
-#endif
-#ifndef OWN_BattleFx_GetCycledTableWord
-#endif
-#ifndef OWN_BattleFx_GetPhaseResult
-#endif
-#ifndef OWN_BattleFx_GetResourceId
-#endif
-#ifndef OWN_BattleFx_HalveDistanceToTarget
-#endif
-#ifndef OWN_BattleFx_InitializeMode10
-#endif
-#ifndef OWN_BattleFx_InitializeMode6
-#endif
-#ifndef OWN_BattleFx_LoadResourceGroup
-#endif
-#ifndef OWN_BattleFx_MarkChildAndRunFallbackTransition
-#endif
-#ifndef OWN_BattleFx_RenderMode5
-#endif
-#ifndef OWN_BattleFx_RunBurstParticleMainObject
-#endif
-#ifndef OWN_BattleFx_RunCastingImpact
-#endif
-#ifndef OWN_BattleFx_RunDescriptorAction
-#endif
-#ifndef OWN_BattleFx_RunEffect13Hook
-#endif
-#ifndef OWN_BattleFx_RunEventAction
-#endif
-#ifndef OWN_BattleFx_RunKind6DescriptorAction
-#endif
-#ifndef OWN_BattleFx_RunObjectRow
-#endif
-#ifndef OWN_BattleFx_RunSparkEmitter
-#endif
-#ifndef OWN_BattleFx_SetCallbackWhenTargetUnset
-#endif
-#ifndef OWN_BattleFx_SetSpecialFromTable
-#endif
-#ifndef OWN_BattleFx_ShrinkObjectScaleUntilHalf
-#endif
-#ifndef OWN_BattleFx_SpawnDescendingArcParticles
-#endif
-#ifndef OWN_BattleFx_SpawnItemBreakMode1
-#endif
-#ifndef OWN_BattleFx_SpawnRadialParticleRing
-#endif
-#ifndef OWN_BattleFx_StartOrbitingParticles
-#endif
-#ifndef OWN_BattleFx_UpdateItemBreakFragment
-#endif
-#ifndef OWN_BattleFx_UpdatePairedArcSpawner
-#endif
-#ifndef OWN_BattleFx_UpdateScaledArcObjectA
-#endif
-#ifndef OWN_BattleFx_UpdateScaledArcObjectB
-#endif
-#ifndef OWN_BattleFx_UpdateShrinkingOrbitObject
-#endif
-#ifndef OWN_BattleMotion_ProjectScaledPosition
-#endif
-#ifndef OWN_BattleParty_ReconcileDjinnRecovery
-#endif
-#ifndef OWN_BattleParty_ResetActiveRuntimeFields
-#endif
-#ifndef OWN_BattlePres_RunItem
-#endif
-#ifndef OWN_BattlePres_SetActorModeAndAction
-#endif
-#ifndef OWN_BattlePresentation_BuildSortedUnitEntries
-#endif
-#ifndef OWN_BattlePresentation_BuildTilemap
-#endif
-#ifndef OWN_BattlePresentation_ConfigurePaletteFade
-#endif
-#ifndef OWN_BattlePresentation_WaitForPromptAt
-#endif
-#ifndef OWN_BattleRandomPercent
-#endif
-#ifndef OWN_BattleSummon_UpdateAvailability
-#endif
-#ifndef OWN_BattleTarget_SelectForAction
-#endif
-#ifndef OWN_BattleUnit_ProcessTurnEnd
-#endif
 void BitDecoder_DecodeImage(void);
-#ifndef OWN_Camera_WorldToScreen
-#endif
-#ifndef OWN_Encounter_RollTerrain
-#endif
-#ifndef OWN_EffectRuntime_PrepareRisingObject
-#endif
-#ifndef OWN_EffectSlot_Initialize
-#endif
 void FarCall_WindowTable(void);
 struct AnimationObject *GetBattleEffectObject(s32 kind);
-#ifndef OWN_Graphics_ScaleRgb555
-#endif
-#ifndef OWN_Item_EncodeBankedId
-#endif
 void ItemIcon_LoadTilesFar(s32 item);
-#ifndef OWN_Motion_SetTargetPositionFromMagnitudeAngle
-#endif
 #ifndef OWN_Object_InitializeMode
 s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
-#endif
-#ifndef OWN_ObjectGroup_ApplyRandomChildValues
-#endif
-#ifndef OWN_ObjectGroup_SetActionForOthers
-#endif
-#ifndef OWN_Party_ReservedNoOp5B14
 #endif
 #endif
 

@@ -52,12 +52,6 @@ extern s16 gCharacter_SpriteTable[];
 extern s16 gCharacter_ChildSpriteTable[];
 extern u8 gSummon_OrderList[16];
 s32 Audio_Check(void);
-#ifndef OWN_BattleEffect_ApplyToTargets
-#endif
-#ifndef OWN_Party_GetAverageLevel
-#endif
-#ifndef OWN_Party_LookupCharacterValueByFlag32
-#endif
 #endif
 
 #if GAME_TLA

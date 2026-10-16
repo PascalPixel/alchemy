@@ -9,18 +9,17 @@ union FieldObject;
 // UB: scripts have variable lengths, so a one-word member cannot describe
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
 // Thumb load's base/index order; a pointer to an unbounded array does too.
-#ifndef UBFIX
+#ifdef UBFIX
+typedef s32 ScriptMotionWords;
+#else
 struct ScriptMotionWords {
   s32 word[1];
 };
+typedef struct ScriptMotionWords ScriptMotionWords;
 #endif
 
 struct ScriptMotionObject {
-#ifdef UBFIX
-  const s32 *script;
-#else
-  const struct ScriptMotionWords *script;
-#endif
+  const ScriptMotionWords *script;
   u16 scriptCursor;
   u16 facing;
   s32 x;

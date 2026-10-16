@@ -36,6 +36,22 @@
 #include "scene_ids.h"
 #include "map.h"
 
+#ifdef UBFIX
+#define VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE                                  \
+  FieldScene_RunOpeningAuxiliarySequence
+#else
+#define VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE                                  \
+  ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)
+#endif
+
+#if TBS_PATCH_3
+#define VENUS_DESCENT_COLLISION_X 33
+#define VENUS_DESCENT_COLLISION_WIDTH 7
+#else
+#define VENUS_DESCENT_COLLISION_X 34
+#define VENUS_DESCENT_COLLISION_WIDTH 5
+#endif
+
 // Forward declarations.
 struct DirXZ;
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir);
@@ -726,20 +742,20 @@ static void FieldScene_SetFlag987AtActorTwelveTile(void) {
 }
 
 static void SceneDialogue_ReadRelief(void) {
-#if TBS_PATCH_LEVEL == 1
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_MessageShowCentered((s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief), 1);
-  Engine_EventEnd();
-#else
+  s32 message;
+#if TBS_PATCH_LEVEL != 1
   struct EventWork *work = gEventWork;
-
+#endif
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  Engine_MessageShowCentered(
-      work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35, 1);
-  Engine_EventEnd();
+#if TBS_PATCH_LEVEL == 1
+  message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
+#else
+  message =
+      work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) - 35;
 #endif
+  Engine_MessageShowCentered(message, 1);
+  Engine_EventEnd();
 }
 
 static void SceneState_ApplySixRectsAfter161(void) {
@@ -1064,11 +1080,11 @@ static void EV35_TOUCH_3(void) {
     rec7->bounce = zero;
     OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
   }
+  Map_CopyCellAttributes(VENUS_DESCENT_COLLISION_X, 35,
+                         VENUS_DESCENT_COLLISION_WIDTH, 1,
+                         VENUS_DESCENT_COLLISION_X, 34);
 #if TBS_PATCH_3
-  Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
   *state = 3;
-#else
-  Map_CopyCellAttributes(34, 35, 5, 1, 34, 34);
 #endif
   OverlayObject_WaitUntilIdle(0);
   Engine_ActorSetChildValue(0, 15);
@@ -2320,15 +2336,11 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 4:
     case 5:
-#ifdef UBFIX
-      FieldScene_RunOpeningAuxiliarySequence();
-#else
       /* FAKEMATCH: called through a value-returning cast where the bytes keep
        * this call apart; called by its void prototype, cross-jumping merges it
        * into the identical call before it and two instructions go (differ 42,
        * 2026-10-13). */
-      ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
-#endif
+      VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
       BattleFx_SetQueuedSoundAndPlay(170);
       break;
     case 15:
@@ -3995,8 +4007,8 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-#elif TBS_PATCH_2
+#endif
+#if TBS_PATCH_LEVEL != 1
     { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
 #endif
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },

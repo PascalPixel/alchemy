@@ -55,6 +55,14 @@
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_SetDestination
 #endif
 
+#ifdef UBFIX
+#define MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT                              \
+  Engine_ActorSetAnimationAndWait
+#else
+#define MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT                              \
+  ((s32 (*)())Engine_ActorSetAnimationAndWait)
+#endif
+
 // Forward declarations.
 static void EV11_PSYNERGY(void);
 static void EV08_PSYNERGY_3(void);
@@ -2212,15 +2220,11 @@ static void EV08_PSYNERGY_1(void) {
     Engine_EventOpenMessage(3, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
       Engine_EventWait(20);
-#ifdef UBFIX
-      Engine_ActorSetAnimationAndWait(3, 4);
-#else
       /* FAKEMATCH: called through a cast to the unprototyped call the bytes
        * show, which loads r1 before r0; called by its prototype, also through
        * the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2
        * at each site. */
-      ((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
-#endif
+      MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(3, 4);
       Engine_EventWait(20);
       event = base + 5;
       for (;;) {
@@ -2230,15 +2234,11 @@ static void EV08_PSYNERGY_1(void) {
           break;
         }
         Engine_EventWait(20);
-#ifdef UBFIX
-        Engine_ActorSetAnimationAndWait(3, 4);
-#else
         /* FAKEMATCH: called through a cast to the unprototyped call the bytes
          * show, which loads r1 before r0; called by its prototype, also through
          * the script layer's Actor_SetAnimationAndWait, r0 loads first: differ
          * 2 at each site. */
-        ((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
-#endif
+        MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(3, 4);
         Engine_EventWait(20);
         event = MsgMercuryDontHideTruth;
       }

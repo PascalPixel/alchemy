@@ -23,11 +23,6 @@
 #include "ability_ids.h"
 #include "field_scene.h"
 
-#ifdef MODERN
-// called before its definition below, which modern GCC refuses for an
-// implicit int declaration of a u16 function
-#endif
-
 enum { ITEM_NUT = 181 };
 
 typedef struct {

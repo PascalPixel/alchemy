@@ -1,5 +1,5 @@
 	.section .rodata
-@ 場面ごとの重ねマップ (ResourceId_Map001 からの番号)
+@ Layered maps by scene, indexed from ResourceId_Map001
 	.global gMap_LayeredScenes
 gMap_LayeredScenes:
 	.incbin "games/tbs/src/field/layered.table"

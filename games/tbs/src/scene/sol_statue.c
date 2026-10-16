@@ -23,7 +23,7 @@
 #include "sound.h"
 #include "system.h"
 
-// 前方宣言
+// Forward declarations.
 static void Scene_RunGuardSequenceC(void);
 static void EV17_PSYNERGY(void);
 static void SolStatue_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);

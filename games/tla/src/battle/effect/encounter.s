@@ -1,5 +1,5 @@
 	.section .rodata
-@ 遭遇する敵の組 110 個
+@ 110 enemy encounter groups.
 	.global gEncounter_EnemyGroupTable
 gEncounter_EnemyGroupTable:
 	.incbin "games/tla/src/battle/effect/encounter.table"

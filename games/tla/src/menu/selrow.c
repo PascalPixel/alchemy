@@ -1,8 +1,8 @@
 #include "types.h"
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版のビルドでは、この far call の名前が違う（shop.c
-// と同じ）
+// Spanish and Italian builds use a different name for this far call,
+// as in shop.c.
 s32 Func_080c8638(s32 scene, s32 entrance);
 #else
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);

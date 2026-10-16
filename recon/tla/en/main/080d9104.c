@@ -31,7 +31,7 @@ struct LinkEntry {
 
 void Func_080d9194(s32 slot, s32 x0, s32 y0, s32 z0, s32 x1, s32 y1, s32 z1);
 
-// 2 つのオブジェクトをつなぐ
+// Link two objects.
 void Func_080d9104(s32 slot, s32 firstId, s32 secondId)
 {
     struct LinkEntry *entries = Ram_HeapSlots->unk84[6];

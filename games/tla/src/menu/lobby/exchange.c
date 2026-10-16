@@ -20,7 +20,8 @@ static __inline__ void Flag_SetByte(s32 flag, s32 value) {
   GameFlag_SetByte(flag, value);
 }
 
-// ⚓️ の順で書く転送状態のリセット（system/link/reset_transfer.c と同じ内容）
+// Reset transfer state in TLA's store order; same as
+// system/link/reset_transfer.c.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;

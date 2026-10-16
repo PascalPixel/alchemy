@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // position_owner_entry.c
-// アイテムメニュー：持ち物のアイコンを格子の位置に置く
+// Item menu: position an inventory icon on a grid.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -16,9 +16,9 @@
 #include "m7_interfaces.h"
 
 //--------------------------------------------------------------------------
-// i 番目（15 より大きければ 0）を、横 cols 個の格子（1 つ 24x16 ドット）の
-// 位置に置く
-// x0, y0 : 格子の左上
+// Place item i (or 0 if above 15) in a grid with cols columns
+// of 24x16-pixel cells.
+// x0, y0: top left of the grid.
 //--------------------------------------------------------------------------
 void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
                        s32 cols) {

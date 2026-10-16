@@ -43,7 +43,7 @@ union RenderTableValue {
   } half;
 };
 
-// OAM に写す属性 0-2 と未使用の 1 ワード
+// Attributes zero through two copied to OAM, plus one unused word.
 struct RenderOam {
   u16 y : 8;
   u16 affineMode : 2;

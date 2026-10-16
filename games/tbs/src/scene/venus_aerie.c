@@ -51,7 +51,7 @@
 #include "heap_state.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 union PairObject;
 static void EV11_TOUCH(void);
 static void Scene_RunScriptedActorPresentation(void);
@@ -80,7 +80,7 @@ static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object);
 
 s32 Math_RemainderUnsigned(s32, s32);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -176,7 +176,7 @@ static void VenusAerie_StepSpriteRotation(union FieldObject *fieldObject) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_heading.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -191,7 +191,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusAeriePlacements;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
@@ -1089,7 +1089,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent) {
@@ -1145,7 +1145,7 @@ static void VenusAerie_SpawnLinkedPairEffects(union PairObject *parent) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep6(void) {
@@ -1824,7 +1824,7 @@ static void SceneEffect_SpawnParticlesAboveActor(void) {
 
 enum { PARTICLE_SOURCE_ACTOR = 23 };
 
-// 目標なし (停止中) か
+// Test whether the actor has no target and is stopped.
 static __inline__ s32 Actor_IsParked(struct FieldActor *actor) {
   if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
       actor->targetZ == actor->targetY) {
@@ -1840,8 +1840,8 @@ static void VenusAerie_UpdateBeamActors(void) {
 
   first = Object_GetById(ACTOR_FIRST_OF_PAIR);
   second = Object_GetById(ACTOR_SECOND_OF_PAIR);
-  stopped = Actor_IsParked(
-      first); // 上書きされる: ROM に 1 体目の判定の読み込みだけが残っている
+  stopped = Actor_IsParked(first); // Overwritten; only the first actor's test
+                                   // loads remain in the ROM.
   stopped = Actor_IsParked(second);
   if (stopped != 0) {
     first->facing = 0;

@@ -38,7 +38,7 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
-// 前方宣言
+// Forward declarations.
 static void SceneActor_BranchOnSlotZeroAtTile38(void);
 static void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 static void SceneActor_PassActorNinePositionWithId107(void);
@@ -61,7 +61,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered) {
   Object_GetById(8)->y.fixed = 0x200000;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 static void EV15_SCRIPT(void) { Djinn_JoinParty(15, 0, 6); }
@@ -1041,7 +1041,7 @@ static void CrossbonePlatform_UpdateItemIcons(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_item_icon.h"
 
 static void CrossbonePlatform_InitializeScene1(void) {
@@ -1141,7 +1141,7 @@ static void CrossbonePlatform_InitializeScene3(void) {
   }
 }
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

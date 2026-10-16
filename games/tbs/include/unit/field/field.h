@@ -130,8 +130,8 @@ void Ui_SetGridColumnPriority(s32 slot, s32 value);
 
 struct ResourceObjectWork {
   u8 unk00[28];
-  u8 resource; // VRAM キャッシュの番号
-  u8 flags;    // ビット 0：VRAM キャッシュを返さない
+  u8 resource; // VRAM cache index
+  u8 flags;    // Bit 0: do not release the VRAM cache entry.
   u8 unk1e[10];
   void *children[4];
 };

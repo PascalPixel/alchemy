@@ -23,8 +23,8 @@ void Func_0802386c(void);
 void Func_08023e18(void);
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版のビルドでは、この 2 つの far call
-// の名前が違う（shop.c と同じ）
+// Spanish and Italian builds use different names for these two far calls,
+// as in shop.c.
 void Func_080c8368(s32, s32);
 void BattleFx_ApplyColorToSourceBufferFar(s32);
 #endif

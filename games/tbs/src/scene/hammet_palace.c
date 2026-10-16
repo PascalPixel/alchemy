@@ -21,18 +21,20 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Entrance setup and the two long conversations use the helpers below.
 static void FieldScene_DispatchSceneByIndex(void);
 static void RunEventScript01(void);
-static void ConfigureFourSceneChannelsAndHandoff(s32 handoff);
-static void SceneChannel_ConfigureUniformAndHandoff(s32 handoff);
+static void HammetPalace_FacePartyOutward(s32 waitFrames);
+static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void Scene_RunPartySequence(void);
 
-static __inline__ void Scene_AdvanceStep(s32 amount) {
+// Advance within the current conversation's consecutive message block.
+static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 
   gEventWork->message += amount;
 }
 
+// Select the palace's entrances, or the fallback table for this overlay.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -42,10 +44,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gHammetPalaceEntrancesOther;
 }
 
+// The overlay supplies no clipping regions.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Return the packed exit data through this overlay's legacy entry point.
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
+// Apply placement clipping before returning the palace's actor rows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_HammetPalace) {
     FieldScene_PrepareActors(gHammetPalacePlacements);
@@ -54,6 +59,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gHammetPalacePlacementsOther;
 }
 
+// Select the palace's dialogue and doorway handlers.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -63,6 +69,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gHammetPalaceEventsOther;
 }
 
+// Ask whether Lord Hammet will be released soon.
 static void EV13_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayLordHammetWillReleasedSoon);
@@ -70,6 +77,7 @@ static void EV13_TALK(void) {
   Engine_EventEnd();
 }
 
+// Ask about Lord Hammet's silk-trading legacy.
 static void EV16_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayHasLegacyLordHammetsSilk);
@@ -77,6 +85,7 @@ static void EV16_TALK(void) {
   Engine_EventEnd();
 }
 
+// Respond to Isaac's visit to Lunpa, then record this conversation.
 static void EV08_TALK(void) {
 
   Engine_EventBegin();
@@ -93,14 +102,15 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
+// Hide the doorway layers while Isaac walks through the selected exit.
 static void HammetPalace_LeaveThroughDoor(void) {
 
-  struct EventWork *p5;
+  struct EventWork *work;
 
-  p5 = gEventWork;
+  work = gEventWork;
   Engine_EventBegin();
   Engine_EventWait(10);
-  if (p5->touchedTrigger == 4) {
+  if (work->touchedTrigger == 4) {
     Event_PlayCue(188);
   } else {
     Event_PlayCue(158);
@@ -110,18 +120,20 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-  if (p5->touchedTrigger == 4) {
+  if (work->touchedTrigger == 4) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
   Engine_EventWait(16);
-  Engine_EventRequestExit(p5->touchedTrigger);
+  Engine_EventRequestExit(work->touchedTrigger);
+  // Restore the layer entries before returning control to the field engine.
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
   Engine_EventEnd();
 }
 
+// Open the palace with its window transition and run entrance-specific setup.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (u32)&SceneId_HammetPalace) {
@@ -130,11 +142,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+// Restore the doorway and actors, or begin a pending arrival conversation.
 static void FieldScene_DispatchSceneByIndex(void) {
-  struct FieldActor *rec;
-  s32 h;
-  s32 x1 = 0x038a0000;
-  s32 z1 = 0x01a60000;
+  struct FieldActor *actor;
+  s32 facing;
+  s32 waitingX = 0x038a0000;
+  s32 waitingZ = 0x01a60000;
 
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
@@ -142,9 +155,9 @@ static void FieldScene_DispatchSceneByIndex(void) {
   switch (gGameState.entrance) {
   case 9:
     if (Engine_GameFlagIsSet(0x941) != 0) {
-      rec = Object_GetById(8);
-      h = 0x1000;
-      rec->facing = h;
+      actor = Object_GetById(8);
+      facing = 0x1000;
+      actor->facing = facing;
 
       if (Engine_GameFlagIsSet(0x914) == 0) {
         Scene_RunPartySequence();
@@ -152,10 +165,10 @@ static void FieldScene_DispatchSceneByIndex(void) {
     } else {
       Engine_ActorSetPosition(9, 0, 0);
       if (Engine_GameFlagIsSet(0x321) != 0) {
-        Engine_ActorSetPosition(8, x1, z1);
-        rec = Object_GetById(8);
-        h = 0xd000;
-        rec->facing = h;
+        Engine_ActorSetPosition(8, waitingX, waitingZ);
+        actor = Object_GetById(8);
+        facing = 0xd000;
+        actor->facing = facing;
       }
     }
     break;
@@ -184,16 +197,18 @@ static void FieldScene_DispatchSceneByIndex(void) {
   }
 }
 
+// Stage the party's return conversation after hearing the news about Ivan.
 static void RunEventScript01(void) {
 
   struct EventWork *work;
-  s32 v5;
-  const s32 *table;
+  s32 advanceAfterReply;
+  const s32 *partyScript;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ColorBuffer_ApplySource(0x10002, 0);
+  // Position the participants under the closed screen before revealing them.
   ColorBuffer_ApplyTarget(0x10002, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
@@ -230,7 +245,7 @@ static void RunEventScript01(void) {
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Engine_EventWait(20);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyNorth(20);
   Actor_SetAttachedEffect(8, 0x102);
   Engine_ActorStartRepeatedMotion(8, 2);
   Engine_EventWait(60);
@@ -257,6 +272,7 @@ static void RunEventScript01(void) {
   Engine_TaskWait(60);
   Actor_ShowEmote(8, 0x105, 60);
   Engine_EventSetMessage(MsgKalayWhenHeardWereBackIvan);
+  // The following replies advance through this conversation's message block.
   Event_ShowMessageAndWait(8, 0, 10);
   Engine_ActorRunRepeatedMotion(10, 2);
   Event_ShowMessageAndWait(10, 0, 10);
@@ -302,8 +318,8 @@ static void RunEventScript01(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(8, 0xd000, 20);
   Actor_ShowEmote(8, 0x105, 60);
-  ConfigureFourSceneChannelsAndHandoff(60);
-  SceneChannel_ConfigureUniformAndHandoff(40);
+  HammetPalace_FacePartyOutward(60);
+  HammetPalace_FacePartyNorth(40);
   Actor_WalkToAndWait(8, 0x358, 0x1b8);
   Engine_EventWait(40);
   Actor_FaceDirection(8, 0x9000, 20);
@@ -339,7 +355,7 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(11, 0xb000, 10);
   Engine_ActorRunRepeatedMotion(10, 2);
   Event_ShowMessageAndWait(10, 0, 20);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(8, 0, 10);
@@ -354,13 +370,13 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
   Event_OpenMessage(GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  v5 = 1;
+  advanceAfterReply = 1;
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
-    v5 = 0;
+    advanceAfterReply = 0;
   }
   Event_ShowMessageAndWait(GARET, 0, 10);
-  if (v5 != 0) {
+  if (advanceAfterReply != 0) {
     gEventWork->message++;
   }
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
@@ -394,7 +410,7 @@ static void RunEventScript01(void) {
     gEventWork->message++;
     Event_ShowMessageAndWait(8, 0, 10);
   }
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyNorth(20);
   Actor_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -411,8 +427,8 @@ static void RunEventScript01(void) {
   Event_ShowMessageAndWait(0x2002, 0, 10);
   Engine_ActorSetAnimationAndWait(8, 4);
   Event_ShowMessageAndWait(8, 0, 10);
-  ConfigureFourSceneChannelsAndHandoff(40);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyOutward(40);
+  HammetPalace_FacePartyNorth(20);
   Actor_ShowEmote(8, 0x105, 60);
   Event_ShowMessageAndWait(8, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -474,7 +490,7 @@ static void RunEventScript01(void) {
   Event_ShowMessageAndWait(8, 0, 10);
   Engine_ActorRunRepeatedMotion(8, 1);
   Event_ShowMessageAndWait(8, 0, 10);
-  SceneChannel_ConfigureUniformAndHandoff(10);
+  HammetPalace_FacePartyNorth(10);
   Engine_ActorSetAnimationAndWait(8, 4);
   Event_ShowMessageAndWait(8, 0, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
@@ -484,10 +500,10 @@ static void RunEventScript01(void) {
   Actor_SetAttachedEffect(8, 0x102);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(8, 0, 10);
-  ConfigureFourSceneChannelsAndHandoff(40);
+  HammetPalace_FacePartyOutward(40);
   Engine_ActorSetAnimationAndWait(8, 4);
   Event_ShowMessageAndWait(8, 0, 10);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Event_ShowMessageAndWait(0x2002, 0, 10);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -521,8 +537,8 @@ static void RunEventScript01(void) {
   Actor_ShowEmote(8, 0x100, 40);
   Actor_FaceDirection(8, 0x3000, 10);
   Event_ShowMessageAndWait(8, 0, 10);
-  ConfigureFourSceneChannelsAndHandoff(40);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyOutward(40);
+  HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorSetAnimationAndWait(8, 3);
@@ -582,7 +598,7 @@ static void RunEventScript01(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    SceneChannel_ConfigureUniformAndHandoff(10);
+    HammetPalace_FacePartyNorth(10);
     Engine_ActorSetAnimation(GARET, 3);
     Engine_ActorSetAnimation(IVAN, 3);
     Engine_ActorSetAnimationAndWait(MIA, 3);
@@ -594,7 +610,7 @@ static void RunEventScript01(void) {
     Engine_ActorRunRepeatedMotion(GARET, 2);
     gEventWork->message++;
     Event_ShowMessageAndWait(GARET, 0, 10);
-    SceneChannel_ConfigureUniformAndHandoff(10);
+    HammetPalace_FacePartyNorth(10);
     Engine_ActorSetAnimation(GARET, 3);
     Engine_ActorSetAnimation(IVAN, 3);
     Engine_ActorSetAnimationAndWait(MIA, 3);
@@ -632,10 +648,10 @@ static void RunEventScript01(void) {
   Actor_SetSpeed(GARET, 0x10000, 0x8000);
   Actor_SetSpeed(IVAN, 0x10000, 0x8000);
   Actor_SetSpeed(MIA, 0x10000, 0x8000);
-  table = gHammetPalace_PartyActions;
-  Actor_SetActionScript(GARET, table);
-  Actor_SetActionScript(2, table);
-  Object_SetActionCallbackAndRefreshById(3, (s32)table);
+  partyScript = gHammetPalace_PartyActions;
+  Actor_SetActionScript(GARET, partyScript);
+  Actor_SetActionScript(2, partyScript);
+  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -644,37 +660,41 @@ static void RunEventScript01(void) {
   Engine_EventEnd();
 }
 
-static void ConfigureFourSceneChannelsAndHandoff(s32 handoff) {
+// Turn the party outward from the group, then optionally wait.
+static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirection(2, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(3, FACING_NORTHWEST, 0);
-  if (handoff != 0) {
-    Engine_EventWait(handoff);
+  if (waitFrames != 0) {
+    Engine_EventWait(waitFrames);
   }
 }
 
-static void SceneChannel_ConfigureUniformAndHandoff(s32 handoff) {
+// Turn all four party members north, then optionally wait.
+static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirection(1, FACING_NORTH, 0);
   Actor_FaceDirection(2, FACING_NORTH, 0);
   Actor_FaceDirection(3, FACING_NORTH, 0);
-  if (handoff != 0) {
-    Engine_EventWait(handoff);
+  if (waitFrames != 0) {
+    Engine_EventWait(waitFrames);
   }
 }
 
+// Bring the party into the audience and play the alternate Ivan conversation.
 static void Scene_RunPartySequence(void) {
 
-  struct FieldActor *record;
+  struct FieldActor *leader;
   struct EventWork *work;
   s32 v5;
-  const s32 *table;
+  const s32 *partyScript;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Camera_MoveTo(0x3600000, -1, 0x2180000, 0);
+  // Pan from the entrance while the party walks into its speaking positions.
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
@@ -688,17 +708,17 @@ static void Scene_RunPartySequence(void) {
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
   Actor_SetSpeed(MIA, 0xcccc, 0x6666);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x360, 0x1f2);
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetPosition(IVAN, record->x.fixed, record->z.fixed);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
   }
-  record = Object_GetById(0);
-  if (record != 0) {
-    Actor_SetPosition(MIA, record->x.fixed, record->z.fixed);
+  leader = Object_GetById(0);
+  if (leader != 0) {
+    Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(ACTOR_PARTY_LEADER, 0x358, 0x1e6);
   Actor_WalkTo(GARET, 0x350, 0x1f6);
@@ -708,7 +728,7 @@ static void Scene_RunPartySequence(void) {
   Engine_ActorSetAnimation(GARET, 1);
   Engine_ActorSetAnimation(IVAN, 1);
   Engine_EventWait(10);
-  SceneChannel_ConfigureUniformAndHandoff(10);
+  HammetPalace_FacePartyNorth(10);
   Actor_ShowEmote(9, v5, 20);
   Actor_FaceDirection(9, 0x5000, 20);
   Engine_EventSetMessage(MsgKalayItsIvanHisCompanionsPerfect);
@@ -739,13 +759,13 @@ static void Scene_RunPartySequence(void) {
     Engine_ActorSetAnimation(8, 3);
   } else {
     Engine_EventWait(10);
-    Scene_AdvanceStep(1);
+    HammetPalace_AdvanceMessage(1);
     Engine_ActorSetAnimation(8, 4);
     v5 = 0;
   }
   Event_ShowMessageAndWait(8, 0, 10);
   if (v5 != 0) {
-    Scene_AdvanceStep(1);
+    HammetPalace_AdvanceMessage(1);
   }
   Engine_ActorStartRepeatedMotion(9, 2);
   Actor_SetAttachedEffect(9, 0x102);
@@ -783,14 +803,14 @@ static void Scene_RunPartySequence(void) {
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Scene_AdvanceStep(1);
+    HammetPalace_AdvanceMessage(1);
   } else {
     Engine_EventWait(20);
     Event_ShowMessageAndWait(GARET, 0, 10);
   }
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
-  SceneChannel_ConfigureUniformAndHandoff(20);
+  HammetPalace_FacePartyNorth(20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Event_ShowMessageAndWait(0x2009, 0, 10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -817,10 +837,10 @@ static void Scene_RunPartySequence(void) {
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Engine_EventWait(20);
-  table = gHammetPalace_PartyActions;
-  Actor_SetActionScript(GARET, table);
-  Actor_SetActionScript(2, table);
-  Object_SetActionCallbackAndRefreshById(3, (s32)table);
+  partyScript = gHammetPalace_PartyActions;
+  Actor_SetActionScript(GARET, partyScript);
+  Actor_SetActionScript(2, partyScript);
+  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

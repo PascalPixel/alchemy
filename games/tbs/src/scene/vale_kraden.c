@@ -25,7 +25,7 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }

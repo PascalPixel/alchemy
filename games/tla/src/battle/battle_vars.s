@@ -2,7 +2,7 @@
 	.balign 4
 	.include "games/common/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 38
-@ 敵の編成 660 個
+@ 660 enemy formations.
 	.global gBattleFormation_Records
 gBattleFormation_Records:
 	.incbin "games/tla/src/battle/formatn.table"
@@ -19,7 +19,7 @@ Data_08130c5c:
 	.2byte 0x069, 0x06b, 0x06e, 0x070, 0x071, 0x073, 0x0db, 0x0dc
 	.2byte 0x156, 0x158, 0x15a, 0x160, 0x163, 0x170, 0x171, 0x172
 	.2byte 0x173, 0x174, 0x175, 0x176, 0x177, 0x178, 0x179, 0x000
-@ 戦闘の絵 387 個
+@ 387 battle graphics entries.
 	.global gSummon_EntryTable
 gSummon_EntryTable:
 	.incbin "games/tla/src/battle/summon/sprites.table"

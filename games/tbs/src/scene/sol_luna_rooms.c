@@ -22,7 +22,7 @@
 #include "text/msg_ids.h"
 #include "iowrite.h"
 
-// 前方宣言
+// Forward declarations.
 static void Scene_EnterInnerSanctum(void);
 static void FieldScene_RunActorPositionTransition(void);
 static s32 CheckAllStatueLights(void);
@@ -447,7 +447,7 @@ static void EV09_TOUCH(void) {
   if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 0x120, 0xe8);
   } else {
-    // 結果は使わない
+    // The result is unused.
     GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
   }
   Actor_WalkToAndWait(ACTOR_KRADEN, 0x120, 0xe8);

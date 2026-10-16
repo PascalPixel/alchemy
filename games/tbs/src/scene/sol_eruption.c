@@ -31,7 +31,7 @@
 #include "global_cells.h"
 #include "vram_tab.h"
 
-// 前方宣言
+// Forward declarations.
 union PairObject;
 static void SolEruption_RaiseAndShrinkActor(s32 a0);
 static void SolEruption_ThrowEruptionRing(void);
@@ -1655,7 +1655,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 static void SolEruption_SpawnEffectPair(union PairObject *parent) {
@@ -1706,14 +1706,14 @@ static void SolEruption_SpawnEffectPair(union PairObject *parent) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 static void FieldScene_RunActor15TwoStep(void) {
   SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(15));
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/sol_star_ring_setup.h"
 
 s32 gEruption_ArcOriginsHead[] = {

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // create_countdown_label_window.c
-// 通信：残り時間の見出しのウィンドウを開く
+// Link communication: open the remaining-time label window.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -23,7 +23,7 @@
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 
 //--------------------------------------------------------------------------
-// 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
+// Open a 6x4 window at the upper left, draw its label, and return its handle.
 //--------------------------------------------------------------------------
 s32 Link_CreateCountdownLabelWindow(void) {
   s32 win = UiWindow_Create(0, 0, 6, 4, 6);

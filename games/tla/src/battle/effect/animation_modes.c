@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // animation_modes.c
-// 演出：バースト演出の入口
+// Effects: burst effect entry points.
 //--------------------------------------------------------------------------
 
 #include "effect_step.h"
@@ -8,8 +8,8 @@
 void BattlePres_RunBurstScene(struct EffectStep *, s32);
 
 //--------------------------------------------------------------------------
-// 演出ごとの入口。バーストの型を BattlePres_RunBurstScene に渡す
-// step : 演出の引数
+// Each entry passes a burst type to BattlePres_RunBurstScene.
+// step: effect arguments.
 //--------------------------------------------------------------------------
 void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step) {
   if (step->variant == 0) {

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // decode_staged_buffer.c
-// マップ：展開したブロックのデータを gMapBlocks にほどく
+// Map: unpack decoded block data into gMapBlocks.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -12,11 +12,11 @@ extern u32 gMapBlocks[];
 extern u8 gMapCellBuffer[];
 
 //--------------------------------------------------------------------------
-// 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
-// size : 方式のバイトを含む長さ（偶数ならデータなし）
-//   方式 0 : そのまま写す
-//   方式 1 : 上位バイトの列のあとに下位バイトの列。前の値と XOR して戻す
-//   方式 2 : 前の値と XOR して戻す
+// Decoded buffer [1] selects the method; halfword data starts at [2].
+// size: length including the method byte (even means no data).
+// Method 0: copy unchanged.
+// Method 1: high bytes followed by low bytes; reconstruct by XOR with prior
+// values. Method 2: reconstruct by XOR with prior values.
 //--------------------------------------------------------------------------
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *dst;

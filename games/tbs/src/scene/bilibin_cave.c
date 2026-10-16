@@ -25,102 +25,113 @@
 #include "objcmd.h"
 #include "field_obj.h"
 
-// 前方宣言
+// The entry points dispatch to the section-specific setup routines below.
 static void RunGuardedSceneSetup(void);
 static void BilibinCave_PrepareWindowTransition(void);
 static void FieldScene_RunScene398SequenceC(void);
 static void Resource398_ImportBankNoOp(s32 unused);
 
+// Clear the scripted actor's sprite flags and complete this script command.
 static s32
 SceneState_ApplyArgMode0AndReturnZero(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *no = (struct FieldActor *)interpreter;
-  Engine_ActorSetSpriteFlags(no, 0);
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  Engine_ActorSetSpriteFlags(actor, 0);
   return 0;
 }
 
+// Select the entrance bounds for the current cave section.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gGameState.scene;
+  s16 scene = gGameState.scene;
 
-  if (selector == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCave3) {
     return gBilibinCaveEntrances3;
   }
-  if (selector == (s32)&SceneId_BilibinCave2) {
+  if (scene == (s32)&SceneId_BilibinCave2) {
     return gBilibinCaveEntrances2;
   }
-  if (selector == (s32)&SceneId_BilibinCave1) {
+  if (scene == (s32)&SceneId_BilibinCave1) {
     return gBilibinCaveEntrances1;
   }
   return gBilibinCaveEntrancesOther;
 }
 
+// No clipping-region table is supplied by this overlay.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Return the shared packed exit table through the overlay's existing ABI.
 u8 *BilibinCave_GetExits(void) { return (u8 *)gBilibinCaveExits; }
 
+// Each cave section has its own movable actors and obstacles.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  s16 selector = gGameState.scene;
+  s16 scene = gGameState.scene;
 
-  if (selector == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCave3) {
     return gBilibinCavePlacements3;
   }
-  if (selector == (s32)&SceneId_BilibinCave2) {
+  if (scene == (s32)&SceneId_BilibinCave2) {
     return gBilibinCavePlacements2;
   }
-  if (selector == (s32)&SceneId_BilibinCave1) {
+  if (scene == (s32)&SceneId_BilibinCave1) {
     return gBilibinCavePlacements1;
   }
   return gBilibinCavePlacementsOther;
 }
 
+// Pair the section's placements with their touch and Psynergy handlers.
 const struct SceneEvent *Scene_GetEvents(void) {
-  s16 selector = gGameState.scene;
+  s16 scene = gGameState.scene;
 
-  if (selector == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCave3) {
     return gBilibinCaveEvents3;
   }
-  if (selector == (s32)&SceneId_BilibinCave2) {
+  if (scene == (s32)&SceneId_BilibinCave2) {
     return gBilibinCaveEvents2;
   }
-  if (selector == (s32)&SceneId_BilibinCave1) {
+  if (scene == (s32)&SceneId_BilibinCave1) {
     return gBilibinCaveEvents1;
   }
   return gBilibinCaveEventsOther;
 }
 
+// Replace the crossing cell with the attributes at source cell (1, 0).
 static void EV10_TOUCH(void) { Map_CopyCellAttributes(1, 0, 1, 1, 21, 14); }
 
+// Restore the crossing cell from source cell (0, 0).
 static void EV11_TOUCH(void) { Map_CopyCellAttributes(0, 0, 1, 1, 21, 14); }
 
+// Replace the narrow tile strip and its two-row collision rectangle.
 static void SceneState_ApplyTwoRects(void) {
   {
-    s32 a5 = 1;
-    s32 a6 = 3;
+    s32 width = 1;
+    s32 height = 3;
 
-    Map_CopyCellsTo(111, 37, 97, 21, a5, a6);
+    Map_CopyCellsTo(111, 37, 97, 21, width, height);
   }
   {
-    s32 a5 = 32;
-    s32 a6 = 24;
+    s32 destinationCellX = 32;
+    s32 destinationCellZ = 24;
 
-    Map_CopyCellAttributes(46, 38, 3, 2, a5, a6);
+    Map_CopyCellAttributes(46, 38, 3, 2, destinationCellX, destinationCellZ);
   }
 }
 
+// Restore the strip's tiles and its one-row collision rectangle.
 static void FieldScene_RunTwoLayoutSteps(void) {
   {
-    s32 fifth = 1;
-    s32 sixth = 3;
+    s32 width = 1;
+    s32 height = 3;
 
-    Map_CopyCellsTo(95, 21, 97, 21, fifth, sixth);
+    Map_CopyCellsTo(95, 21, 97, 21, width, height);
   }
   {
-    s32 fifth = 32;
-    s32 sixth = 25;
+    s32 destinationCellX = 32;
+    s32 destinationCellZ = 25;
 
-    Map_CopyCellAttributes(46, 38, 3, 1, fifth, sixth);
+    Map_CopyCellAttributes(46, 38, 3, 1, destinationCellX, destinationCellZ);
   }
 }
 
+// Douse removes actor 9 and records its persistent state.
 static void EV09_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(9, 0, 0);
@@ -128,11 +139,13 @@ static void EV09_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Douse removes actor 8, then makes actor 15 a walkable surface.
 static void EV08_PSYNERGY_1(void) {
   Engine_EventBegin();
   Actor_SetPosition(8, 0, 0);
   GameFlag_Set(0x883);
   Engine_EventWait(40);
+  // Match the replacement's drawing priority to its collision cell.
   Engine_ActorSetAnimationAndWait(15, 2);
   Actor_Get(15)->motionFlags = 0;
   Actor_Get(15)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -141,6 +154,7 @@ static void EV08_PSYNERGY_1(void) {
   Engine_EventEnd();
 }
 
+// Frost clears actor 15's child effect before its freezing animation.
 static void EV15_PSYNERGY(void) {
 
   Engine_EventBegin();
@@ -151,6 +165,7 @@ static void EV15_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Frost clears actor 16's child effect before its freezing animation.
 static void EV16_PSYNERGY(void) {
 
   Engine_EventBegin();
@@ -161,6 +176,7 @@ static void EV16_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Frost clears actor 17's child effect before its freezing animation.
 static void EV17_PSYNERGY(void) {
 
   Engine_EventBegin();
@@ -171,19 +187,21 @@ static void EV17_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Switch actor 17's animation when either movable actor occupies cell (35, 23).
 static void FieldScene_RunScene398SequenceB(void) {
-  struct FieldActor *rec7;
-  struct FieldActor *rec8;
-  s32 v5;
+  struct FieldActor *firstActor;
+  struct FieldActor *secondActor;
+  s32 destinationCellX;
 
-  rec7 = Object_GetById(11);
-  rec8 = Actor_Get(12);
-  if ((rec7->x.fixed >> 20) == 35 && (rec7->z.fixed >> 20) == 23) {
+  firstActor = Object_GetById(11);
+  secondActor = Actor_Get(12);
+  if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(0x303);
   } else {
     GameFlag_Clear(0x303);
   }
-  if ((rec8->x.fixed >> 20) == 35 && (rec8->z.fixed >> 20) == 23) {
+  if ((secondActor->x.fixed >> 20) == 35 &&
+      (secondActor->z.fixed >> 20) == 23) {
     GameFlag_Set(0x304);
   } else {
     GameFlag_Clear(0x304);
@@ -193,10 +211,10 @@ static void FieldScene_RunScene398SequenceB(void) {
       Engine_EventBegin();
       Engine_EventWait(40);
       Event_PlayCue(210);
-      v5 = 36;
+      destinationCellX = 36;
       Engine_ActorSetAnimationAndWait(17, 6);
-      Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
-      Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
+      Map_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
+      Map_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
     }
     GameFlag_Set(0x302);
@@ -205,26 +223,30 @@ static void FieldScene_RunScene398SequenceB(void) {
       Engine_EventBegin();
       Engine_EventWait(40);
       Event_PlayCue(220);
-      v5 = 36;
+      destinationCellX = 36;
       Engine_ActorSetAnimationAndWait(17, 2);
-      Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
-      Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
+      Map_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
+      Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
     }
     GameFlag_Clear(0x302);
   }
 }
 
+// Growth replaces the affected cell's collision attributes.
 static void EV08_PSYNERGY_3(void) {
 
   Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   Engine_GameFlagSet(0x305);
 }
 
+// Enable the map-work byte while crossing this touch trigger.
 static void EV20_TOUCH(void) { FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1; }
 
+// Clear the same map-work byte at the opposing trigger.
 static void EV21_TOUCH(void) { FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0; }
 
+// Restore the current section's saved puzzle state.
 s32 Scene_Initialize(void) {
   s16 variant = gGameState.scene;
 
@@ -238,6 +260,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+// Restore the collision change already made by Growth.
 static void RunGuardedSceneSetup(void) {
   if (Engine_GameFlagIsSet(0x305) != 0) {
 
@@ -246,6 +269,7 @@ static void RunGuardedSceneSetup(void) {
   }
 }
 
+// Open section 2 and restore its Douse target.
 static void BilibinCave_PrepareWindowTransition(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -260,29 +284,30 @@ static void BilibinCave_PrepareWindowTransition(void) {
   }
 }
 
+// Initialize section 1's animated actors and persistent puzzle states.
 static void FieldScene_RunScene398SequenceC(void) {
-  struct FieldActor *record;
-  s32 v5;
+  struct FieldActor *actor;
+  s32 destinationCellX;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  record = Actor_Get(18);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(19);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(20);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(21);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(22);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(23);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(24);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(25);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
-  record = Actor_Get(26);
-  Engine_ActorSetSpriteFlags((s32)record, 0);
+  actor = Actor_Get(18);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(19);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(20);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(21);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(22);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(23);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(24);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(25);
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor = Actor_Get(26);
+  Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(18, 5);
   Engine_ActorSetAnimation(19, 5);
   Engine_ActorSetAnimation(20, 5);
@@ -323,21 +348,21 @@ static void FieldScene_RunScene398SequenceC(void) {
     Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
     Engine_ActorSetAnimation(8, 2);
-    record = Actor_Get(8);
-    Engine_ActorSetSpriteFlags((s32)record, 0);
+    actor = Actor_Get(8);
+    Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ActorSetAnimation(15, 1);
   }
   Engine_ActorSetAnimation(16, 1);
   if (GameFlag_IsSet(0x302) != 0) {
-    v5 = 36;
+    destinationCellX = 36;
     Engine_ActorSetAnimation(17, 1);
-    Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
-    Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
+    Map_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
+    Map_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
-    v5 = 36;
+    destinationCellX = 36;
     Engine_ActorSetAnimation(17, 5);
-    Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
-    Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
+    Map_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
+    Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_IsSet(0x303) != 0) {
     Actor_SetPosition(11, 0x23a0000, 0x1780000);
@@ -347,47 +372,50 @@ static void FieldScene_RunScene398SequenceC(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// The shared cell lookup retains its position before the push handler.
 #include "common/object_findcell.h"
 
+// Push the actor ahead only when its next cell and movement probe are clear.
 static void StagedActor_PushActorAhead(void) {
   struct FieldActor *player;
   struct FieldActor *target;
   struct FieldActor *blocker;
   s32 heading;
-  s32 tx;
-  s32 tz;
-  s32 pos[3];
+  s32 nextCellX;
+  s32 nextCellZ;
+  s32 destinationPosition[3];
 
   player = Object_GetById(ACTOR_PARTY_LEADER);
   heading = player->facing >> 12;
 
-  tx = (player->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >>
-       4;
-  tz = (player->z.part.pixel +
-        ((gStagedActor_DirectionSteps[heading] << 16) >> 16)) >>
-       4;
-  target = SceneActor_FindActorAtCell(tx, tz);
+  nextCellX =
+      (player->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >>
+      4;
+  nextCellZ =
+      (player->z.part.pixel + (s16)gStagedActor_DirectionSteps[heading]) >> 4;
+  target = SceneActor_FindActorAtCell(nextCellX, nextCellZ);
   if (target == 0)
     return;
 
-  tx = (target->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >>
-       4;
-  tz = (target->z.part.pixel +
-        ((gStagedActor_DirectionSteps[heading] << 16) >> 16)) >>
-       4;
-  blocker = SceneActor_FindActorAtCell(tx, tz);
+  nextCellX =
+      (target->x.part.pixel + (gStagedActor_DirectionSteps[heading] >> 16)) >>
+      4;
+  nextCellZ =
+      (target->z.part.pixel + (s16)gStagedActor_DirectionSteps[heading]) >> 4;
+  blocker = SceneActor_FindActorAtCell(nextCellX, nextCellZ);
   if (blocker != 0)
     return;
 
+  // Check the destination before moving both actors into their push states.
   target->terrainId = 2;
 
-  pos[0] =
+  destinationPosition[0] =
       target->x.fixed + (gStagedActor_DirectionSteps[heading] & 0xffff0000);
-  pos[1] = target->y.fixed;
-  pos[2] = target->z.fixed + (gStagedActor_DirectionSteps[heading] << 16);
+  destinationPosition[1] = target->y.fixed;
+  destinationPosition[2] =
+      target->z.fixed + (s16)gStagedActor_DirectionSteps[heading] * 0x10000;
 
-  if (FieldObject_CheckMovementCollision(target, pos) > 0)
+  if (FieldObject_CheckMovementCollision(target, destinationPosition) > 0)
     return;
 
   Object_SetMode(player, 8);
@@ -396,16 +424,18 @@ static void StagedActor_PushActorAhead(void) {
 
   target->speed = 0x3333;
   target->acceleration = 0x3333;
-  Engine_ObjectSetPosition(target, pos[0], pos[1], pos[2]);
+  Engine_ObjectSetPosition(target, destinationPosition[0],
+                           destinationPosition[1], destinationPosition[2]);
 
   player->speed = 0x3333;
   player->acceleration = 0x3333;
-  Engine_ObjectSetPosition(player, pos[0], pos[1], pos[2]);
+  Engine_ObjectSetPosition(player, destinationPosition[0],
+                           destinationPosition[1], destinationPosition[2]);
 
   Object_CommitPosition(target);
 
-  target->x.fixed = pos[0];
-  target->z.fixed = pos[2];
+  target->x.fixed = destinationPosition[0];
+  target->z.fixed = destinationPosition[2];
   target->velocityX = (s32)blocker;
   target->velocityZ = (s32)blocker;
 
@@ -413,6 +443,7 @@ static void StagedActor_PushActorAhead(void) {
   FieldScene_RunScene398SequenceB();
 }
 
+// The original setup calls this empty hook for each animated actor.
 static void Resource398_ImportBankNoOp(s32 unused) {}
 
 s32 gBilibinCavePlacements1_Data[] = {
@@ -536,7 +567,7 @@ struct SceneEvent gBilibinCaveEvents3[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
-    { PSYNERGY_ON_ACTOR(0xc), 8, 0x305, EVENT_SCRIPT(EV08_PSYNERGY_3) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 8, 0x305, EVENT_SCRIPT(EV08_PSYNERGY_3) },
     { SCENE_EVENTS_END },
 };
 
@@ -550,7 +581,7 @@ struct SceneEvent gBilibinCaveEvents2[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xf5d, FIND_ITEM(0x16) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyTwoRects) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoLayoutSteps) },
-    { PSYNERGY_ON_ACTOR(0x21), 9, 0x882, EVENT_SCRIPT(EV09_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x882, EVENT_SCRIPT(EV09_PSYNERGY) },
     { SCENE_EVENTS_END },
 };
 
@@ -562,12 +593,12 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
-    { PSYNERGY_ON_ACTOR(0x21), 8, 0x883, EVENT_SCRIPT(EV08_PSYNERGY_1) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x883, EVENT_SCRIPT(EV08_PSYNERGY_1) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x883, EVENT_SCRIPT(EV15_PSYNERGY) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x302), EVENT_SCRIPT(EV17_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
-    { PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
     { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActor_PushActorAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActor_PushActorAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
@@ -577,8 +608,8 @@ struct SceneEvent gBilibinCaveEvents1[] = {
 };
 // clang-format on
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),

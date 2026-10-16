@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // release_battle_object_records.c
-// バトル：オブジェクトの絵の解放
+// Battle: release an object's graphics.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,8 +8,8 @@
 #include "resource.h"
 
 //--------------------------------------------------------------------------
-// オブジェクトが持つ絵をすべて解放し、絵なしにもどす
-// no : オブジェクト番号
+// Release all graphics owned by the object and mark it as having none.
+// no: object ID.
 //--------------------------------------------------------------------------
 void ReleaseBattleObjectRecords(s32 no) {
   struct BattleObj *slot;
@@ -28,7 +28,7 @@ void ReleaseBattleObjectRecords(s32 no) {
         ResourceObject_ReleaseFar(rec);
         i += 1;
       }
-      obj->recordStorageKind = 0; // 絵なし
+      obj->recordStorageKind = 0; // No graphics.
       obj->records = NULL;
     }
   }

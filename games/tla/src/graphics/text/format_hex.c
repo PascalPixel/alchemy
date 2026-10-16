@@ -1,13 +1,13 @@
 //--------------------------------------------------------------------------
 // format_hex.c
-// 文字：数を 16 進の文字列にする
+// Text: format a number as a hexadecimal string.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// value の下から count けた（5 けたまで）を、上のけたから大文字の
-// 16 進で out に書く（終わりの 0 は書かない）
+// Write the lowest count digits of value (up to five), most significant first,
+// to out as uppercase hexadecimal, without a terminating zero.
 //--------------------------------------------------------------------------
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 buf[8];

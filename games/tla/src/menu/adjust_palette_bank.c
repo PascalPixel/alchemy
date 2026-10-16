@@ -1,13 +1,13 @@
 //--------------------------------------------------------------------------
 // adjust_palette_bank.c
-// メニュー：BG パレットの明るさを変えた写しを作る
+// Menu: make brightness-adjusted copies of BG palettes.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// BG パレット 15・5・7 の 16 色の RGB に d を足し（0〜31 に収める）、
-// それぞれ 1 つ前のパレット 14・4・6 に書く。7 は d でなく -12 を足す
+// Add d to the 16 colors' RGB components in BG palettes 15, 5, and 7, clamping
+// to 0-31; write palettes 14, 4, and 6. Palette 7 uses -12 instead of d.
 //--------------------------------------------------------------------------
 void Graphics_AdjustPaletteBank(s32 d) {
   s32 n;
@@ -50,7 +50,8 @@ void Graphics_AdjustPaletteBank(s32 d) {
       v = b << 10;
       v |= g << 5;
       v |= r;
-      ((s16 *)0x04FFFFE0)[idx] = v; // 16 色前（1 つ前のパレット）
+      ((s16 *)0x04FFFFE0)[idx] =
+          v; // 16 colors earlier (the preceding palette).
     }
     if (n == 0) {
       bank = 5;

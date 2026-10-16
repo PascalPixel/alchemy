@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // present.c
-// バトル表示：ユニットの絵の半透明の切りかえ
+// Battle presentation: toggle translucency on unit graphics.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -68,8 +68,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
 }
 
 //--------------------------------------------------------------------------
-// except 以外の全ユニットの絵を半透明（OBJ モード 1）にする
-// except : そのままにするユニット番号
+// Make all unit graphics except except translucent (OBJ mode 1).
+// except: unit ID to leave unchanged.
 //--------------------------------------------------------------------------
 void BattlePres_SetOtherActorRecordModes(s32 except) {
   s16 list[14];
@@ -83,7 +83,7 @@ void BattlePres_SetOtherActorRecordModes(s32 except) {
 }
 
 //--------------------------------------------------------------------------
-// 全ユニットの絵をふつう（OBJ モード 0）にもどす
+// Restore normal rendering (OBJ mode 0) for all units.
 //--------------------------------------------------------------------------
 void BattlePres_ClearAllActorRecordModes(void) {
   s16 list[14];

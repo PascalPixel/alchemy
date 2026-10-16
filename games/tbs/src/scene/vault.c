@@ -33,12 +33,12 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void SceneActor_RunActorStep(s32 actor);
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -47,7 +47,7 @@ union DriftingObject {
   struct OverlayEffectMotion motion;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_nearby.h"
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -102,7 +102,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
   return UnitGet(2)->djinnOwnedCounts[0];
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
 static void Vault_SayFarewellToIvan(void) {
@@ -291,7 +291,7 @@ static void SceneActor_RunActorStep(s32 actor) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
 static void EV08_TALK(void) {
@@ -509,7 +509,7 @@ static void EV21_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_toggle.h"
 
 static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation) {
@@ -575,7 +575,7 @@ static void EV10_TOUCH(void) {
   SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_scene_cells.h"
 
 static void EV12_TOUCH(void) {
@@ -786,7 +786,7 @@ s32 Vault_RestoreEntryState(void) {
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 

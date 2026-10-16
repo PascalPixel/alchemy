@@ -17,7 +17,7 @@ void Func_02000ca8(s32 actor, s32 x, s32 z);
 void Func_02000d08(s32 actor, s32 value, s32 frames);
 void Func_02000d48(s32 actor, s32 dx, s32 dz, s32 angle);
 
-// 主人公の位置へ集まる
+// Gather at the player character's position.
 static inline void Actor_JoinLeader(s32 actor) {
   struct FieldActor *leader;
 

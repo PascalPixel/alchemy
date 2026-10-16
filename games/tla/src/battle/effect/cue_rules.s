@@ -1,6 +1,6 @@
 	.section .rodata
-@ シーンの曲: シーンかグループと入口 (-1 はどれでも) から、
-@ フラグ (-1 は常に) が立っている最初の行の曲
+@ Scene music: match scene/group and entrance (-1 matches any), then use
+@ the first row whose flag is set (-1 is unconditional).
 	.macro scene_cue scene:req, entrance:req, flag:req, cue:req
 	.2byte \scene, (\entrance & 0x7fff) | 0x8000, \flag, \cue
 	.endm
@@ -138,4 +138,4 @@ gScene_CueRuleTable:
 	group_cue 83, -1, -1, 79
 	group_cue 82, -1, -1, 0
 	group_cue 84, -1, -1, 709
-	.2byte 0xffff, 0xffff, 0xffff, 0x0000	@ 終わり
+	.2byte 0xffff, 0xffff, 0xffff, 0x0000	@ End.

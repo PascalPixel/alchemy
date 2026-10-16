@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // classify_use_ability.c
-// アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
+// Items: summon-selection menu and battle item-use eligibility.
 //--------------------------------------------------------------------------
 
 #include "battle_system.h"
@@ -11,13 +11,13 @@
 #include "graphics.h"
 #include "uiwindow.h"
 
-#define BATTLE_OK 0x80 // flags：戦闘で使える
+#define BATTLE_OK 0x80 // flags: usable in battle.
 
 //--------------------------------------------------------------------------
-// 戦闘でアイテムを使えるか
-// 戻り値 : 0 使える / 1 使えない / 2 戦闘では使えない
-// unit   : キャラクター番号
-// item   : 持ち物の値
+// Determine whether an item can be used in battle.
+// Returns: 0 usable / 1 unusable / 2 unavailable in battle.
+// unit: character index.
+// item: carried item value.
 //--------------------------------------------------------------------------
 s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   s32 ret;
@@ -30,7 +30,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   def = Item_Get(item);
 #endif
   ret = 1;
-  if (def->useType == 3) // エナジーを授ける装備
+  if (def->useType == 3) // Equipment that grants Psynergy.
   {
     return ret;
   }

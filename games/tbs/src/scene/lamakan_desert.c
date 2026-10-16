@@ -11,6 +11,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "fixed_point_position.h"
+#include "field_runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -124,18 +125,18 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
 
 // Where the party can enter each of the four maps.
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 v = gGameState.scene;
+  s16 scene = gGameState.scene;
 
-  if (v == (s32)&SceneId_LamakanDesert1) {
+  if (scene == (s32)&SceneId_LamakanDesert1) {
     return gLamakanDesertEntrances1;
   }
-  if (v == (s32)&SceneId_LamakanDesert2) {
+  if (scene == (s32)&SceneId_LamakanDesert2) {
     return gLamakanDesertEntrances2;
   }
-  if (v == (s32)&SceneId_LamakanDesert3) {
+  if (scene == (s32)&SceneId_LamakanDesert3) {
     return gLamakanDesertEntrances3;
   }
-  if (v == (s32)&SceneId_LamakanDesert4) {
+  if (scene == (s32)&SceneId_LamakanDesert4) {
     return gLamakanDesertEntrances4;
   }
   return gLamakanDesertEntrancesOther;
@@ -144,6 +145,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 // The desert has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
+// All four desert maps share the packed exit table.
 const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
 
 // The pits and the monster of each map. Arriving at the third map's
@@ -195,7 +197,7 @@ const struct SceneEvent *Scene_GetEvents(void) { return gLamakanDesertEvents; }
 static s32 Reveal_HideSecrets(void) {
   // Declared s32 but returns no value: the native ends pop {r1}; bx r1
   // without setting r0.
-  s32 v5;
+  s32 mapObjectId;
 
   Engine_GameFlagClear(FLAG_SECRETS_REVEALED);
   if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
@@ -245,11 +247,12 @@ static s32 Reveal_HideSecrets(void) {
   Engine_ActorSetPosition(11, 0, 0);
   Engine_ActorSetPosition(12, 0, 0);
   Engine_ActorSetPosition(SMOG, 0, 0);
-  v5 = 100;
+  // Hide the searchable map objects independently of the actor placements.
+  mapObjectId = 100;
   do {
-    Engine_MapObjectSetPosition(v5, 0, 0);
-    v5 = (v5 + 1);
-  } while (v5 <= 107);
+    Engine_MapObjectSetPosition(mapObjectId, 0, 0);
+    mapObjectId = mapObjectId + 1;
+  } while (mapObjectId <= 107);
   if (gGameState.scene != (s32)&SceneId_LamakanDesert4) {
     DisplayScroll_StartHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
                                  0x4000);
@@ -263,6 +266,7 @@ static s32 Reveal_ShowSecrets(void) {
 
   Engine_GameFlagClear(FLAG_HAZARDS_PAUSED);
   Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
+  // Restore each hidden patch from the spare cells saved on entry.
   if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
     Map_CopyCells(64, 126, 4, 2, 22, 7);
     Map_CopyCells(68, 126, 4, 2, 8, 10);
@@ -403,13 +407,13 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 }
 
 // The distance in whole pixels between two x, z positions.
-static s32 DistanceInPixels(s32 *position_a, s32 *position_b) {
-  s32 dx = (*position_b++ - *position_a++) >> 16;
-  s32 dz = (*position_b - position_a[1]) >> 16;
-  s32 dz_squared = dz * dz;
-  s32 dx_squared = dx * dx;
+static s32 DistanceInPixels(s32 *firstPosition, s32 *secondPosition) {
+  s32 dx = (*secondPosition++ - *firstPosition++) >> 16;
+  s32 dz = (*secondPosition - firstPosition[1]) >> 16;
+  s32 squaredDeltaZ = dz * dz;
+  s32 squaredDeltaX = dx * dx;
 
-  return Iwram_Sqrt(dx_squared + dz_squared);
+  return Iwram_Sqrt(squaredDeltaX + squaredDeltaZ);
 }
 
 // A recovery point: where a collapsed leader comes to.
@@ -469,6 +473,7 @@ static void CollapseFromHeat(void) {
     points = gLamakanDesertRecoveryPointsOther;
   }
   left = count;
+  // Keep the nearest recovery point, choosing the later point on a tie.
   point = points;
   if (count != 0) {
     offset = 0;
@@ -484,6 +489,7 @@ static void CollapseFromHeat(void) {
     } while (--count != 0);
   }
   nearest <<= 1;
+  // Move the collapsed leader to safety before draining the heat gauge.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
   {
     struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -515,6 +521,7 @@ static void CollapseFromHeat(void) {
   hold = (u16 *)(work + 0xcba);
   progress = &gGameState.hazardSteps;
   zero = 0;
+  // Hold the gauge in view until both the minimum delay and cooling finish.
   do {
     s32 held = 600;
 
@@ -618,6 +625,7 @@ static void FallIntoPit(void) {
   best = 9;
   GameFlag_Set(FLAG_HAZARDS_PAUSED);
   min = 0x100000;
+  // Select the closest live pit using Manhattan distance in whole pixels.
   for (id = FIRST_PIT; id <= LAST_PIT; id++) {
     struct FieldActor *other = Actor_Get(id);
 
@@ -641,6 +649,7 @@ static void FallIntoPit(void) {
     }
   }
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  // Face the pit, then reverse the walking direction while being pulled in.
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
   Engine_EventWait(20);
@@ -681,7 +690,7 @@ static void SlideDownDune(void) {
   struct FieldActor *center;
   s32 id;
   struct FieldActor *actor;
-  s32 pos[3];
+  struct FieldPosition probePosition;
   struct EffectOptions params;
   s32 hit;
   s32 phase;
@@ -695,10 +704,11 @@ static void SlideDownDune(void) {
     center = event->viewCenter;
   }
   actor = Object_GetById(id);
-  pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed + 0x18000;
-  hit = FieldObject_CheckMovementCollision(actor, pos);
+  // First check for a ledge immediately below the sliding actor.
+  probePosition.x = actor->x.fixed;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x18000;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
@@ -709,6 +719,7 @@ static void SlideDownDune(void) {
                  0x800000, &params);
   }
   if (hit < 0) {
+    // Let the fall complete before returning to ordinary field movement.
     Actor_SetAttachedEffect(id, 0x102);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + 0x80000);
@@ -721,24 +732,25 @@ static void SlideDownDune(void) {
     Engine_TaskWait(3);
     return;
   }
-  pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed + 0x80000;
-  hit = FieldObject_CheckMovementCollision(actor, pos);
+  // Probe ahead and on both diagonals before advancing actor and camera.
+  probePosition.x = actor->x.fixed;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x80000;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  pos[0] = actor->x.fixed + 0x5b333;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(actor, pos);
+  probePosition.x = actor->x.fixed + 0x5b333;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x5b333;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  pos[0] = actor->x.fixed - 0x5b333;
-  pos[1] = actor->y.fixed;
-  pos[2] = actor->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(actor, pos);
+  probePosition.x = actor->x.fixed - 0x5b333;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x5b333;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
@@ -749,27 +761,28 @@ static void SlideDownDune(void) {
 // Trigger 40 on the third map, until the monster is beaten: the leader
 // stops and backs away as the monster rises out of the sand.
 static void MeetSandMonster(void) {
-  s32 rec8;
+  s32 paused;
   struct FieldActor *record;
-  s32 rect[3];
-  s32 shown;
-  u16 *shownAddr;
-  u8 *p5;
+  struct FieldPosition backwardOffset;
+  s32 holdFrames;
+  u16 *holdTimer;
+  u8 *eventBytes;
 
-  p5 = (u8 *)gEventWork;
+  eventBytes = (u8 *)gEventWork;
   HeatGauge_CountStep();
   if (GameFlag_IsSet(FLAG_SAND_MONSTER_BEATEN) == 0) {
-    rec8 = GameFlag_IsSet(FLAG_HAZARDS_PAUSED);
-    if (rec8 == 0) {
+    paused = GameFlag_IsSet(FLAG_HAZARDS_PAUSED);
+    if (paused == 0) {
       GameFlag_Set(FLAG_HAZARDS_PAUSED);
+      // Suspend heat accumulation while the leader notices the monster.
       HeatGauge_SetHeld(1);
-      shownAddr = (u16 *)(p5 + 0xcba);
-      shown = 0x258;
-      *shownAddr = shown;
+      holdTimer = (u16 *)(eventBytes + 0xcba);
+      holdFrames = 0x258;
+      *holdTimer = holdFrames;
       record = Object_GetById(ACTOR_PARTY_LEADER);
-      record->velocityX = rec8;
+      record->velocityX = paused;
       record = Object_GetById(ACTOR_PARTY_LEADER);
-      record->velocityZ = rec8;
+      record->velocityZ = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetX = -0x80000000;
       record = Actor_Get(ACTOR_PARTY_LEADER);
@@ -781,16 +794,16 @@ static void MeetSandMonster(void) {
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
       Engine_EventWait(40);
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      rect[0] = rec8;
-      rect[1] = rec8;
-      rect[2] = rec8;
+      backwardOffset.x = paused;
+      // Step backward without turning away from the emerging monster.
+      backwardOffset.y = paused;
+      backwardOffset.z = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldVector_AddPolarOffset(-0x100000, record->facing,
-                                 (struct FieldPosition *)rect);
+      FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, rect[0] / 0x10000,
-                                 rect[2] / 0x10000);
+      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
+                                 backwardOffset.z / 0x10000);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
       Engine_EventWait(2);
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -802,7 +815,7 @@ static void MeetSandMonster(void) {
       Actor_WalkToAndWait(SAND_MONSTER, 168, 104);
       Actor_SetSpeed(SAND_MONSTER, 0x8000, 0x4000);
       Actor_WalkToAndWait(SAND_MONSTER, 168, 92);
-      *shownAddr = shown;
+      *holdTimer = holdFrames;
       HeatGauge_SetHeld(0);
     }
   }
@@ -920,6 +933,7 @@ static void HeatGauge_Draw(void) {
     }
   }
 
+  // Tint the six changing palette entries before composing the gauge tiles.
   buffer = MemAlloc(0x900);
   Dma_Set(gLamakanDesert_SandPalette, buffer, 0x80000010, REG_DMA3);
   colors = (s16 *)(buffer + 12);
@@ -965,6 +979,7 @@ static void HeatGauge_Draw(void) {
     }
   }
 
+  // Fill the remaining bar and overlay its nontransparent frame pixels.
   Dma_Set(gLamakanDesert_SandTileBuffer, buffer, 0x84000240, REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
@@ -991,6 +1006,7 @@ static void HeatGauge_Draw(void) {
   }
   Engine_VramLoad((*(s16 *)&gLamakanDesert_SandVramSlot), 0x480, buffer);
 
+  // Submit four wide sprites and the narrow cap at the gauge's right end.
   attributes = 0x80008000;
   sprite = gLamakanDesert_SandWork;
   for (i = 0, offset = 0, x = 8; i < 5; i++) {
@@ -1018,14 +1034,14 @@ struct Half {
 // Loads the gauge's tiles, claims VRAM for them and starts drawing it.
 void HeatGauge_Start(void) {
   s32 slot;
-  u16 *slotp;
+  u16 *slotAddress;
   struct Half zero;
 
   FieldResource_DecodeType01(gLamakanDesert_SandEffectTiles,
                              gLamakanDesert_SandTileBuffer);
-  slotp = &gLamakanDesert_SandVramSlot;
+  slotAddress = &gLamakanDesert_SandVramSlot;
   slot = Resource_FindFreeEntry();
-  *slotp = slot;
+  *slotAddress = slot;
   Engine_VramLoad((s16)slot, 0x480, 0);
   zero.v = 0;
   gHeatGaugeSlide = zero.v;

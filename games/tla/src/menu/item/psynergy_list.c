@@ -18,7 +18,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 count);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
-// 持ち主のエナジーを集めて一覧を描きなおす。ひとつもなければその旨を出す
+// Collect the owner's Psynergy and redraw the list; indicate when it is empty.
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   u16 *psynergies;
   struct PsynergyMenuState *menu;

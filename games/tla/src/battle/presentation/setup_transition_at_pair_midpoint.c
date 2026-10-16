@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // setup_transition_at_pair_midpoint.c
-// バトル表示：ふたりの中間へのカメラ合わせ
+// Battle presentation: center the camera between two objects.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,9 +8,9 @@
 #include "battle_display.h"
 
 //--------------------------------------------------------------------------
-// ふたつのオブジェクトの中間（x, z）にカメラを合わせる
-// a, b : オブジェクト番号
-// zoom : 拡大率（%）
+// Center the camera on two objects' midpoint in x and z.
+// a, b: object IDs.
+// zoom: scale in percent.
 //--------------------------------------------------------------------------
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   struct MotionObject *obj_a = BattleObjGet(a)->object;

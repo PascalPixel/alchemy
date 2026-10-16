@@ -34,7 +34,7 @@
 #include "objcmd.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Forward declarations.
 static void BabiLighthouse_CloseTruthDoor(void);
 static void SceneState_ApplyRectsAtActors8And9(void);
 
@@ -42,16 +42,16 @@ static __inline__ s32 Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
 static void EV08_TALK(void) { BattleFx_SetPhaseRequest(8, 66); }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
@@ -1249,7 +1249,7 @@ s32 BabiLighthouse_SetupScene(void) {
   return 0;
 }
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

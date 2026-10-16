@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // runtime_close_and_release.c
-// ウィンドウ：ヒープ 16 番のウィンドウを閉じてブロックを返す
+// Windows: close the window in heap slot 16 and release its block.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -15,6 +15,6 @@
 #include "system.h"
 
 //--------------------------------------------------------------------------
-// ヒープ 16 番のウィンドウを閉じ、ブロックを返す
+// Close the window in heap slot 16 and release its block.
 //--------------------------------------------------------------------------
 void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }

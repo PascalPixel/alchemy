@@ -8,7 +8,7 @@
  * the blendControl pointer and the explicit __divsi3 are differ 41 to 58. */
 //--------------------------------------------------------------------------
 // blend.c
-// 表示：画面の明るさのフェード（白・黒）の設定と、終わるまでの待ち
+// Display: configure white/black brightness fades and wait for completion.
 //--------------------------------------------------------------------------
 
 #include "battle.h"

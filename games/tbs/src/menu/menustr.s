@@ -202,7 +202,7 @@ gMenu_PpString:
 	.asciz "EP"
 	.balign 4, 0
 	.endif
-@ 色 5 で一画素ずつ伸びる 4bpp 行
+@ 4bpp row that grows one pixel at a time in color 5
 	.global gMenu_PatternRowMasks
 gMenu_PatternRowMasks:
 	.4byte 0x00055000, 0x00000000

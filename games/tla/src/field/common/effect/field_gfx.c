@@ -47,7 +47,7 @@ extern const u8 gData_080f38b2[];
 void Func_080d7034(void);
 #if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) ||                      \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-// 欧州版の far call 表では、地形の高さへ届く口の名前が違う
+// European far-call tables use a different name for the terrain height entry.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else

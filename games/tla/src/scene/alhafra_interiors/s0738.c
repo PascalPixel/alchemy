@@ -46,7 +46,7 @@ void Func_02000738(void) {
   t0 = Value1(GameFlag_Test, 0x903);
   if (t0 != 0) {
   } else {
-#if !defined(TLA_EDITION_JA) /* 日本版は 0x200 を見ない */
+#if !defined(TLA_EDITION_JA) /* The Japanese edition does not check 0x200. */
     t1 = Value1(GameFlag_Test, 0x200);
     if (t1 == 0) {
     } else

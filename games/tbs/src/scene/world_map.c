@@ -43,7 +43,7 @@
 #include "field_obj.h"
 #include "frame.h"
 
-// 前方宣言
+// Forward declarations.
 static s32 StoryActor_ApplyMapRotation(struct ScriptInterpreter *interpreter);
 static void RunEventScript01(void);
 static void FieldScene_RunActorTransferSequence(void);
@@ -70,7 +70,7 @@ static void WorldMap_RunOpeningRise(void);
 static void StoryScene_UpdateSelectedActorProgress(void);
 static void Scene_RunScene371SequenceA(s32 palette);
 
-// 戦闘開始の種類 (battle/party/party.c と同じ)
+// Battle-start kinds, as in battle/party/party.c.
 
 #define SCENE_PHASE (gEventWork->startTransition)
 #define ACTOR 8
@@ -2278,7 +2278,7 @@ static void SceneState_RunSlotStepOnOddFrames(s32 arg0) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.h"
 

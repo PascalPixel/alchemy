@@ -102,6 +102,7 @@ static void LeaveTheShip(void) {
 // again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
+// Starts the two-axis ripple with its original frequencies and amplitudes.
 static void Ripple_Start(void) {
   DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
                                     0x8000, 0x4000);
@@ -116,11 +117,12 @@ const struct SceneEvent *LemurianShip_GetEvents(void) {
 // (6 palettes of 6 frames each) into palette 7.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
-  s32 v;
+  s32 paletteIndex;
 
   frame = &gShipGlowStep;
-  v = Math_DivideUnsigned(*frame, 6);
-  Dma_Set((const void *)(((u32)(v << 16) >> 15) + (u32)gShipGlowPalettes),
+  paletteIndex = Math_DivideUnsigned(*frame, 6);
+  Dma_Set((const void *)(((u32)(paletteIndex << 16) >> 15) +
+                         (u32)gShipGlowPalettes),
           (void *)0x050000e8, DMA_ENABLE32 | 6, REG_DMA3);
   (*frame)++;
   if (*frame > 35)
@@ -157,10 +159,10 @@ static void Spray_Update(union FieldObject *fieldObject) {
 
 // Every 40 frames, the Black Orb's glow fades a step, down to 4.
 static void OrbGlow_Fade(void) {
-  s32 n = gOrbGlowFadeFrames + 1;
+  s32 frame = gOrbGlowFadeFrames + 1;
 
-  gOrbGlowFadeFrames = n;
-  if (n == 40) {
+  gOrbGlowFadeFrames = frame;
+  if (frame == 40) {
     if (gOrbGlowStrength > 4) {
       gOrbGlowStrength -= 1;
       gOrbGlowFadeFrames = 0;
@@ -259,42 +261,45 @@ static void Ship_UpdateSwell(void) {
 // Called by each member's boarding script as they step on deck: from then
 // on they bob with the ship.
 static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
-  s32 *d;
-  struct FieldActor *p;
+  s32 *deckY;
+  struct FieldActor *actor;
 
-  d = &gLeaderDeckY;
-  p = Object_GetById(0);
-  *d = p->y.fixed;
+  deckY = &gLeaderDeckY;
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
+  *deckY = actor->y.fixed;
   return 0;
 }
 
+// Remembers Garet's boarding height for the swell callback.
 static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
-  s32 *p;
-  struct FieldActor *rec;
+  s32 *deckY;
+  struct FieldActor *actor;
 
-  p = &gGaretDeckY;
-  rec = Object_GetById(1);
-  *p = rec->y.fixed;
+  deckY = &gGaretDeckY;
+  actor = Object_GetById(GARET);
+  *deckY = actor->y.fixed;
   return 0;
 }
 
+// Remembers Mia's boarding height for the swell callback.
 static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
-  s32 *d;
-  struct FieldActor *p;
+  s32 *deckY;
+  struct FieldActor *actor;
 
-  d = &gMiaDeckY;
-  p = Object_GetById(3);
-  *d = p->y.fixed;
+  deckY = &gMiaDeckY;
+  actor = Object_GetById(MIA);
+  *deckY = actor->y.fixed;
   return 0;
 }
 
+// Remembers Ivan's boarding height for the swell callback.
 static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
-  s32 *d;
-  struct FieldActor *p;
+  s32 *deckY;
+  struct FieldActor *actor;
 
-  d = &gIvanDeckY;
-  p = Object_GetById(2);
-  *d = p->y.fixed;
+  deckY = &gIvanDeckY;
+  actor = Object_GetById(IVAN);
+  *deckY = actor->y.fixed;
   return 0;
 }
 
@@ -784,8 +789,8 @@ static void Ripple_Stop(void) {
   Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
   Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
   reg = REG_DMA0;
-  reg[5] = 0xC5FF & reg[5];
-  reg[5] = 0x7FFF & reg[5];
+  reg[5] = ~DMA_START_HBLANK_REPEAT & reg[5];
+  reg[5] = ~DMA_ENABLE & reg[5];
   reg[5];
 }
 
@@ -842,12 +847,12 @@ static void Curtain_Close(void) {
 // Fills a 256-byte tile with color 1 and starts the curtains 48 pixels
 // open.
 static void Curtain_Start(void) {
-  u8 *buf;
+  u8 *tiles;
 
-  buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
+  tiles = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
   sCurtainVramSlot = Resource_FindFreeEntry();
-  Dma_Fill32(0x11111111, buf, 0x100);
-  Engine_VramLoad(sCurtainVramSlot, 0x100, (s32)buf);
+  Dma_Fill32(0x11111111, tiles, 0x100);
+  Engine_VramLoad(sCurtainVramSlot, 0x100, (s32)tiles);
 
   sCurtainGap = 0x30;
   FieldScheduler_AddCallback(Curtain_Close, 0xc80);

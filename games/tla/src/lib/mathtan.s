@@ -1,6 +1,6 @@
 	.section .rodata
-@ 正接 256 倍: [i] = tan(i * 45 / 128 度), [128] = tan 45 度
-@ The Broken Seal's gMath_TanTable, byte for byte; ArcTan2 は [127] から二分探索
+@ Tangent scaled by 256: [i] = tan(i * 45 / 128 degrees), [128] = tan(45 degrees).
+@ Identical to TBS's gMath_TanTable; ArcTan2 binary-searches starting at [127].
 	.global gMath_TanTable
 gMath_TanTable:
 	.2byte 0, 1, 3, 4, 6, 7, 9, 11

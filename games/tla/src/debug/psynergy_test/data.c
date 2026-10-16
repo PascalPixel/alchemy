@@ -151,7 +151,7 @@ struct SceneEvent gSceneEvents[] = {
     {0xc400, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000068)},
     {0, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000058)},
     {0, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Func_0200070c)},
-#if defined(TLA_EDITION_JA) /* 日本版だけの行 */
+#if defined(TLA_EDITION_JA) /* Rows exclusive to the Japanese edition. */
     {0x8d15, 10, CONDITION_ALWAYS, 5618},
 #endif
     {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},

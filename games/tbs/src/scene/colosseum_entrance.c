@@ -22,7 +22,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_DispatchBySelector(void);
 static void FieldScene_CallPairWith10(s32 no);
 static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1);
@@ -37,8 +37,8 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ActorPresentation_SetActorsTwelveToEighteen(void);
 
-// 向きを変える (10 フレーム): SceneState_ForwardMaskedHalfwordWith10
-// をインライン関数を通して呼ぶ
+// Turn over ten frames by calling SceneState_ForwardMaskedHalfwordWith10
+// through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   /* FAKEMATCH: forwarding inline for EV10_TOUCH's one call (call.h's Call2 did
    * the same); called directly EV10_TOUCH's later message skip swaps r2 and r3

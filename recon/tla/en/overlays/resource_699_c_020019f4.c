@@ -33,7 +33,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001654(struct CellTargetTable *table, struct CellTarget *target);
 void Func_020016c4(struct CellTargetTable *table, struct CellTarget *target);
 
-// 先頭の仲間が立っているマスの仕掛けを動かす。動かしたら 1
+// Activates the tile mechanism under the party leader; returns one if
+// activated.
 s32 Func_020019f4(void)
 {
     struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);

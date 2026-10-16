@@ -20,7 +20,7 @@ u16 gData_02002438[] = {
     256, 770, 515, 1,
 };
 
-// 英字の表: 日本版にはない ("ABCDE FGHJK LMNPQ R" ...)
+// Alphabet table, absent in Japanese ("ABCDE FGHJK LMNPQ R" ...).
 #if !defined(TLA_EDITION_JA)
 u32 gData_02002440[] = {
     0x44434241, 0x47462045, 0x204b4a48, 0x504e4d4c, 0x522051,

@@ -19,7 +19,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 
-// 表から今の相手の行を探して縮める
+// Finds the current target's table row and shrinks it.
 void Func_02005428(u16 *list, s32 mode, s32 count)
 {
     struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;

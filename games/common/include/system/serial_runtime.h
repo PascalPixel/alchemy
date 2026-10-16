@@ -125,7 +125,7 @@ extern u8 gSerialPeerPayloads[4][24];
 // runtime.c)
 extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
-// 通信の状態。VBlank の通信処理が書き換える
+// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for
  * 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */

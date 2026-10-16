@@ -222,7 +222,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(16);
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(TRIGGER_TEMPLE_DOOR);
 }
 
 // Hama's farewell, once the party has freed Hsu: she thanks the Adepts,
@@ -554,6 +554,7 @@ static void AlpineCrossing_TalkToFeizhi(void) {
 // move, and none of them knows how to free him.
 static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventBegin();
+  // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
@@ -770,6 +771,7 @@ static void AlpineCrossing_PrepareFrost(void) {
 static void AlpineCrossing_FreezePuddle(void) {
   Engine_EventBegin();
 
+  // Stop the pillar and install its height-dependent drawing priority.
   Object_GetById(ACTOR_PUDDLE)->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
   Object_GetById(ACTOR_PUDDLE)->collisionFlags &= 0xfd;
   Object_GetById(ACTOR_PUDDLE)->motionFlags = 0;

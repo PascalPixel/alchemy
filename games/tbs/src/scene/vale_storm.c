@@ -33,7 +33,7 @@
 #include "global_cells.h"
 #include "vram_tab.h"
 
-// 前方宣言
+// Forward declarations.
 union PairObject;
 static void Scene_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
@@ -84,7 +84,7 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
 u8 *ValeStorm_GetEntrances(void) { return gValeStorm_SceneTable0; }
@@ -109,7 +109,7 @@ static void EV14_TOUCH(void) {
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vale.h"
 
 static void ValeStorm_OpenBackdropExit11(void) {
@@ -2389,7 +2389,7 @@ static void ValeStorm_CycleObjectPalettes(s32 o) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 static void ValeStorm_SpawnEffectPair(union PairObject *parent) {
@@ -2444,7 +2444,7 @@ static void ValeStorm_SpawnEffectPair(union PairObject *parent) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 static void FieldScene_RunFourPairedSteps(void) {

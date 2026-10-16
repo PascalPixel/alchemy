@@ -1,20 +1,20 @@
 //--------------------------------------------------------------------------
 // contains_id.c
-// バトル：ユニット番号リストの検索
+// Battle: search a unit ID list.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 並び番号のユニットがリストにいれば 1 を返す
-// list : ユニット番号のリスト（0xff で終わる、最大 14）
-// no   : 並び番号（0-7 味方、8-13 敵）
+// Return 1 if the unit at this formation position is in the list.
+// list: unit IDs, terminated by 0xff, at most 14 entries.
+// no: formation position (0-7 allies, 8-13 enemies).
 //--------------------------------------------------------------------------
 s32 BattlePlacement_ContainsId(s16 *list, s32 no) {
   u32 i;
 
   if (no > 7)
-    no += 120; // 敵のユニット番号は 128 から
+    no += 120; // Enemy unit IDs start at 128.
   i = 0;
   do {
     u16 id = *list++;

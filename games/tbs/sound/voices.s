@@ -238,8 +238,9 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x09, 60, 0, 0, 0, 0, 6, 0, 3
 
-@ キースプリット表らしきもの (未使用): 鍵 0-35 は 0、36-71 は 1 の 72 鍵を二つ。
-@ どの音色も参照せず、この版に keysplit (0x40) の音色はない。⚓️ にも同じ位置に同じ表がある。
+@ Apparent unused key-split tables: two 72-key rows, 0 for keys 0-35 and 1 for 36-71.
+@ No voice references these; this edition has no key-split (0x40) voices.
+@ TLA has the same tables in the corresponding position.
 	.global Sound_UnusedKeySplitTables
 Sound_UnusedKeySplitTables:
 	.fill 36, 1, 0

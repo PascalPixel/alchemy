@@ -37,7 +37,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
-// どうぐ一覧の 1 ページ（5 行）の名前を描く
+// Draws the names on one five-row page of the item list.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state)
 {
     struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;

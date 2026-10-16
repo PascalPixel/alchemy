@@ -16,7 +16,7 @@ void Func_0200122c(void);
 void Func_02001304(void);
 void Func_02001388(void);
 
-// 通信相手と照合する値。版ごとに異なる (each word is four ASCII characters)
+// Edition-specific link handshake values (each word is four ASCII characters).
 // clang-format off
 u32 gLinkLobby_SlotValues[] = {
 #if defined(TLA_EDITION_JA)

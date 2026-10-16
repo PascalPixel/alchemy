@@ -6,7 +6,7 @@ void Func_080af8cc(void) {}
 
 extern u32 gOwner_ExperienceThresholds[];
 
-// レベルに必要な経験値。表は 8 人分、1 人 99 段
+// Experience required per level: eight characters, 99 levels each.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   struct BattleUnit *state = (struct BattleUnit *)UnitGet(owner);
 

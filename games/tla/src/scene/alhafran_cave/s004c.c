@@ -94,7 +94,8 @@ s32 Func_02000258(void) {
 }
 
 s32 Func_0200027c(void) {
-#if defined(TLA_EDITION_JA) /* 日本版は入口を見ない */
+#if defined(TLA_EDITION_JA) /* The Japanese edition does not check the         \
+                               entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
   if (gPartyState.scene == (s32)&SceneId_Ov66aRoom1)
     Func_020002f8();

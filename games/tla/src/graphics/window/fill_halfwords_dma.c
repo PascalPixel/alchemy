@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // fill_halfwords_dma.c
-// メモリ：DMA で 16 ビットずつ埋める
+// Memory: fill halfwords using DMA.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,7 +8,7 @@
 #include "io_reg.h"
 
 //--------------------------------------------------------------------------
-// dst から count 個を value で埋め、埋め終えた次の位置を返す
+// Fill count halfwords at dst with value; return the position after the fill.
 //--------------------------------------------------------------------------
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
   if (count > 0) {

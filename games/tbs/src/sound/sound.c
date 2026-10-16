@@ -16,6 +16,17 @@
 #include "types.h"
 #include "io_reg.h"
 
+enum {
+  MUSIC_UNITY_SCALE = 0x100,
+  MUSIC_DEFAULT_RAMP_STEP = 4,
+  MUSIC_ALL_TRACKS = 0xff,
+  MUSIC_PLAYER_COUNT = 8,
+  MUSIC_RESTORE_DELAY_FRAMES = 10,
+  MUSIC_WAIT_TIMEOUT_FRAMES = 300
+};
+
+// Dispatches a packed cue: fade controls, allocated sound effects, fanfares,
+// or background music with an optional silent start.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -33,6 +44,7 @@ void AudioCommand_Play(s32 id) {
     gMusicPlayerVolumes[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
   } else if (id >= AUDIO_SONG_FIRST) {
+    // Slot 7 borrows a free effect player, searching backwards through 4..7.
     player = gSound_SongTable[id].slot;
     if (player == 7) {
     next:
@@ -51,7 +63,7 @@ void AudioCommand_Play(s32 id) {
     gMusicVolumeTarget = 0;
     gMusicVolume = 0;
     Audio_PlaySound(id);
-    gMusicRestoreDelay = 10;
+    gMusicRestoreDelay = MUSIC_RESTORE_DELAY_FRAMES;
   } else {
     if (id == AUDIO_CUE_KEEP_BGM)
       return;
@@ -63,13 +75,15 @@ void AudioCommand_Play(s32 id) {
     if (flags & AUDIO_CUE_START_SILENT)
       gMusicVolume = 0;
     else
-      gMusicVolume = 0x100;
-    gMusicVolumeTarget = 0x100;
-    gMusicVolumeStep = 4;
+      gMusicVolume = MUSIC_UNITY_SCALE;
+    gMusicVolumeTarget = MUSIC_UNITY_SCALE;
+    gMusicVolumeStep = MUSIC_DEFAULT_RAMP_STEP;
     gMusicFadeRequested = 0;
   }
 }
 
+// Restores BGM after a fanfare and steps its volume and combined tempo/pitch
+// ramps once per VBlank, clamping each ramp when it crosses its target.
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
   s32 delta;
 
@@ -77,7 +91,7 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
     if (gMusicRestoreDelay == 1) {
       if ((u8)gMusicPlayerFanfare.status == 0) {
         gMusicRestoreDelay = 0;
-        gMusicVolumeTarget = 0x100;
+        gMusicVolumeTarget = MUSIC_UNITY_SCALE;
       }
     } else {
       gMusicRestoreDelay -= 1;
@@ -93,7 +107,7 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
     if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
       gMusicVolume = gMusicVolumeTarget;
     }
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, gMusicVolume);
   }
   if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
     delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
@@ -106,11 +120,14 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
       gMusicPitch = gMusicPitchTarget;
     }
     MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
-    MusicPlayer_SetPitch(&gMusicPlayerBgm, 255, (s16)gMusicPitch * 12 - 3072);
+    MusicPlayer_SetPitch(&gMusicPlayerBgm, MUSIC_ALL_TRACKS,
+                         (s16)gMusicPitch * 12 - 12 * MUSIC_UNITY_SCALE);
   }
   Sound_TickDmaRestartTimer();
 }
 
+// Runs the audio test's three cue selectors and five mixer presets forever.
+// Buttons play, fade or adjust the selected cue while frames keep advancing.
 void AudioTest_RunParameterController(void) {
   s32 cues[3] = {0, 80, 100};
   s32 preset;
@@ -161,14 +178,15 @@ void AudioTest_RunParameterController(void) {
     if (gKeysRepeat & KEY_B)
       AudioCommand_Play(19);
     if (gKeysRepeat & KEY_START)
-      AudioCommand_Play(17);
+      AudioCommand_Play(AUDIO_CUE_FADE_BGM);
     if (gKeysRepeat & KEY_SELECT)
-      AudioCommand_Play(0x121);
+      AudioCommand_Play(AUDIO_CUE_FADE_SLOT3);
 
     WaitFrames(1);
   }
 }
 
+// Starts the sound driver, resets BGM ramps and clears all player cue records.
 void Audio_InitializeRuntimeDefaults(void) {
   s16 *playerVolume;
   s32 remaining;
@@ -176,17 +194,17 @@ void Audio_InitializeRuntimeDefaults(void) {
   Audio_Initialize();
   gAudioSecondaryState = 0xff;
   gMusicRestoreDelay = 0;
-  gMusicVolumeTarget = 0x100;
-  gMusicVolume = 0x100;
-  gMusicVolumeStep = 4;
-  gMusicPitchTarget = 0x100;
-  gMusicPitch = 0x100;
-  gMusicPitchStep = 4;
+  gMusicVolumeTarget = MUSIC_UNITY_SCALE;
+  gMusicVolume = MUSIC_UNITY_SCALE;
+  gMusicVolumeStep = MUSIC_DEFAULT_RAMP_STEP;
+  gMusicPitchTarget = MUSIC_UNITY_SCALE;
+  gMusicPitch = MUSIC_UNITY_SCALE;
+  gMusicPitchStep = MUSIC_DEFAULT_RAMP_STEP;
   gMusicFadeRequested = 0;
   gAudio_CommandMask = 0;
   playerVolume = gMusicPlayerVolumes;
   gEwram_Data1 = 0;
-  remaining = 7;
+  remaining = MUSIC_PLAYER_COUNT - 1;
   do {
     remaining--;
     *playerVolume = 0;
@@ -194,36 +212,45 @@ void Audio_InitializeRuntimeDefaults(void) {
   } while (remaining >= 0);
 }
 
-void MusicCommand_SetPitchAndUpdateFrequency(u16 value) {
-  MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, value);
+// Sets the BGM tempo scale directly; 0x100 preserves its native tempo.
+void MusicCommand_SetPitchAndUpdateFrequency(u16 tempoScale) {
+  MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, tempoScale);
 }
 
+// Applies a pitch offset to every active BGM track.
 void MusicCommand_SetPitch(u16 pitch) {
-  MusicPlayer_SetPitch(&gMusicPlayerBgm, 0xFF, pitch);
+  MusicPlayer_SetPitch(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, pitch);
 }
 
-void Audio_SetWorkPairB(u16 primary, u16 secondary) {
-  gMusicPitchTarget = primary;
-  gMusicPitchStep = secondary;
+// Sets the target and per-frame step of the combined BGM tempo/pitch ramp.
+void Audio_SetWorkPairB(u16 targetScale, u16 step) {
+  gMusicPitchTarget = targetScale;
+  gMusicPitchStep = step;
 }
 
+// Sets BGM volume immediately and cancels any outstanding volume ramp.
 void MusicCommand_SetVolume(s16 volume) {
-  MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xFF, volume);
+  MusicPlayer_SetVolume(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, volume);
   gMusicVolumeTarget = volume;
   gMusicVolume = volume;
 }
 
-void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary) {
-  gMusicVolumeTarget = primary;
-  gMusicVolumeStep = secondary;
+// Sets the BGM volume target and its per-frame adjustment.
+void Audio_SetMusicVolumeTargetAndStep(u16 targetVolume, u16 step) {
+  gMusicVolumeTarget = targetVolume;
+  gMusicVolumeStep = step;
 }
 
+// Returns the remaining delay before BGM can be restored after a fanfare.
 s32 AudioCommand_GetStateByte(void) { return gMusicRestoreDelay; }
 
+// Stops every sound player while preserving its state for a later resume.
 void AudioCommand_StopAllPlayers(void) { Audio_StopAllPlayers(); }
 
+// Resumes the sound players after AudioCommand_StopAllPlayers.
 void AudioCommand_ResumeAllPlayers(void) { Audio_ResumeAllPlayers(); }
 
+// Replaces the audio command mask, or toggles its requested bits when flagged.
 void AudioCommand_UpdateToggleMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -234,21 +261,24 @@ void AudioCommand_UpdateToggleMask(u32 command) {
     gAudio_CommandMask = command;
 }
 
+// Returns the last BGM cue or fade state selected by AudioCommand_Play.
 s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }
 
+// Waits for fanfare restoration, giving up after 300 frames.
 void AudioCommand_WaitForCompletion(void) {
-  s32 wait_count = 0;
+  s32 framesWaited = 0;
 
   do {
     if (gMusicRestoreDelay == 0)
       break;
     WaitFrames(1);
-    wait_count++;
-  } while (wait_count <= 299);
+    framesWaited++;
+  } while (framesWaited < MUSIC_WAIT_TIMEOUT_FRAMES);
 }
 
+// Returns the mixer preset chosen by the cue dispatcher.
 s32 AudioCommand_GetWidth(s32 command) {
-  if (command == 0x46 || command == 0x4b || command == 0x43)
+  if (command == 70 || command == 75 || command == 67)
     return 3;
   return 2;
 }

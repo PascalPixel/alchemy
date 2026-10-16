@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // build_sequential_table.c
-// タイル：1 バイトずつ連番のマップを作る
+// Tiles: build a map of consecutive byte values.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,15 +8,15 @@
 #include "scene.h"
 
 //--------------------------------------------------------------------------
-// 0〜255 と 0〜223 の連番のバイトを続けて書き、
-// 残りの 544 バイトを 0xff で埋める（あわせて 1024 バイト）
+// Write consecutive bytes 0-255 followed by 0-223,
+// then fill the remaining 544 bytes with 0xff (1024 bytes total).
 //--------------------------------------------------------------------------
 void Graphics_BuildSequentialTileTable(s32 *dst) {
   s32 v;
   s32 n;
   s32 (*fill)(void *, s32, u32);
 
-  // 4 バイトずつ書くので 1 回に 4 つ進める
+  // Advance by four entries because each store writes four bytes.
   v = 0x03020100;
   n = 0;
   do {

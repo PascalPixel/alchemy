@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------------
 // render.c
-// 表示：変換行列の退避・復帰と、回転・移動・拡大・カメラの行列づくり
+// Display: save/restore transforms and build rotation, translation, scale,
+// and camera matrices.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -22,24 +23,24 @@
 #include "fixed_math.h"
 #include "iwram_call.h"
 
-// 変換行列 gTransform は s32 が 12 個（Q16 で 1.0 = 0x10000）。
-// [0]〜[8] が 3x3 の回転、[9]〜[11] が平行移動。
-// Iwram_TransformMatrix は渡した行列を今の行列にかけ合わせる。
+// gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
+// Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
+// Iwram_TransformMatrix multiplies the supplied matrix into the current one.
 
-#define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // 行列 1 つ分の DMA
+#define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // DMA for one matrix.
 
-// ⚓️ は余弦を正弦の 90 度先で引く
+// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + 0x4000)
 
 #include "ram_buffer.h"
 
 //--------------------------------------------------------------------------
-// 何もしない
+// Do nothing.
 //--------------------------------------------------------------------------
 void Render_EmptyHook(void) {}
 
 //--------------------------------------------------------------------------
-// 行列の退避先を確保し、今の行列を単位行列にする
+// Allocate matrix-save storage and initialize the current matrix to identity.
 //--------------------------------------------------------------------------
 void Render_ResetTransformState(void) {
   gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
@@ -49,7 +50,7 @@ void Render_ResetTransformState(void) {
 }
 
 //--------------------------------------------------------------------------
-// 退避先を作業領域の先頭に戻す
+// Reset the save pointer to the start of the workspace.
 //--------------------------------------------------------------------------
 void SceneTransform_RewindStack(void) {
   gTransformStackTop = Ram_HeapSlots->transformStack;
@@ -57,7 +58,7 @@ void SceneTransform_RewindStack(void) {
 }
 
 //--------------------------------------------------------------------------
-// 今の行列を退避する（1 段まで）
+// Save the current matrix (one level deep).
 //--------------------------------------------------------------------------
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
@@ -68,19 +69,19 @@ void Transform_Push(void) {
 }
 
 //--------------------------------------------------------------------------
-// 今の行列を dst に写す
+// Copy the current matrix into dst.
 //--------------------------------------------------------------------------
 void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
 //--------------------------------------------------------------------------
-// src の行列を今の行列にする
+// Make src the current matrix.
 //--------------------------------------------------------------------------
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
 }
 
 //--------------------------------------------------------------------------
-// 退避した行列を戻す
+// Restore the saved matrix.
 //--------------------------------------------------------------------------
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
@@ -91,7 +92,7 @@ void Transform_Pop(void) {
 }
 
 //--------------------------------------------------------------------------
-// 今の行列を単位行列にする
+// Set the current matrix to identity.
 //--------------------------------------------------------------------------
 void SceneTransform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -99,8 +100,8 @@ void SceneTransform_ResetMatrix(void) {
 }
 
 //--------------------------------------------------------------------------
-// X・Y・Z 軸の回転をかける
-// ang : 3 軸の角度
+// Apply rotations around the X, Y, and Z axes.
+// ang: the three axis angles.
 //--------------------------------------------------------------------------
 void SceneTransform_ApplyRotation(s32 *ang) {
   s32 sx, cx, sy, cy, sz, cz;
@@ -277,7 +278,7 @@ void Func_0801521c(s32 scale) {
   Iwram_TransformMatrix(m);
 }
 //--------------------------------------------------------------------------
-// 回転と平行移動をまとめてかける
+// Apply rotation and translation together.
 //--------------------------------------------------------------------------
 void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
@@ -310,8 +311,8 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
 }
 
 //--------------------------------------------------------------------------
-// 回転・行ごとの拡大・平行移動をまとめてかける
-// scale : 回転行列の 1〜3 行目にかける倍率
+// Apply rotation, scaling by row, and translation together.
+// scale: scale factors for rows 1-3 of the rotation matrix.
 //--------------------------------------------------------------------------
 void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   s32 sx, cx, sy, cy, sz, cz;

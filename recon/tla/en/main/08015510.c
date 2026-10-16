@@ -38,18 +38,18 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out)
 	s32			 scale;
 	s32			 ez;
 	s32			 t;
-	u32			 num = 0x80000000; // 逆数を求めるときの被除数 2^31
-	u32 (*divide)(u32 dividend, u32 divisor);
+        u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
+        u32 (*divide)(u32 dividend, u32 divisor);
 	s32 (*mul)(s32 a, s32 b);
 
-	// 内積のルーチンをスタックに写して、そこで呼ぶ
-	divide = Iwram_UnsignedDivideEntry;
+        // Copy the dot-product routine to the stack and call it there.
+        divide = Iwram_UnsignedDivideEntry;
 	mul = Iwram_MulQ16;
 	dot = (Dot3Fn)code;
 	Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
 
-	// 視線の向き d（target から eye へ、長さ 1）
-	dx = target[0] - eye[0];
+        // Unit viewing direction d, from target to eye.
+        dx = target[0] - eye[0];
 	dy = target[1] - eye[1];
 	dz = target[2] - eye[2];
 	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
@@ -67,16 +67,16 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out)
 		dz = t;
 	} while (0);
 
-	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
-	t = mul(dy, dy);
+        // Normalize the horizontal axis u = (dz, 0, -dx).
+        t = mul(dy, dy);
 	scale = 0x10000;
 	if (scale - t > 0)
 		scale = divide(num, FixedSqrt(scale - t)) << 1;
 	ux = mul(dz, scale);
 	uz = mul(uz, scale);
 
-	// 上の軸 v = d と u の外積
-	vx = mul(dy, uz);
+        // Up axis v is the cross product of d and u.
+        vx = mul(dy, uz);
 	vy = mul(dz, ux) - mul(dx, uz);
 	vz = -mul(dy, ux);
 	scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
@@ -84,8 +84,9 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out)
 	vy = mul(vy, scale);
 	vz = mul(vz, scale);
 
-	// 3 つの軸を列に置き、移動は eye との内積
-	ex = eye[0];
+        // Place the three axes in columns; translation uses dot products with
+        // eye.
+        ex = eye[0];
 	ey = eye[1];
 	ez = eye[2];
 	{

@@ -1,19 +1,19 @@
 //--------------------------------------------------------------------------
 // check_status_or_special_id.c
-// バトル：PP を使うわざの判定
+// Battle: test whether an ability uses PP.
 //--------------------------------------------------------------------------
 
 #include "battle_system.h"
 
 //--------------------------------------------------------------------------
-// PP を使うわざなら 1 を返す。エナジードレインは PP に関係なく 1
-// abilityId : わざ番号
+// Return 1 for PP-consuming abilities; Psy Drain returns 1 regardless of PP.
+// abilityId: ability ID.
 //--------------------------------------------------------------------------
 u32 Ability_CheckStatusOrSpecialId(s32 abilityId) {
   u8 pp;
 
-  if (abilityId == 126) // エナジードレイン
+  if (abilityId == 126) // Psy Drain.
     return 1;
   pp = BattleActGet(abilityId)->ppCost;
-  return (u32)((0 - pp) | pp) >> 31; // pp が 0 でなければ 1
+  return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
 }

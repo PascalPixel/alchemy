@@ -20,14 +20,15 @@ void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
 void Audio_PlayCue(s32 cue);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版の far call 表では、同じ処理へ届く口の名前が違う
+// Spanish and Italian far-call tables name the entry to the same routine
+// differently.
 void Func_080c8688(void);
 #define Func_080c8698 Func_080c8688
 #else
 void Func_080c8698(void);
 #endif
 
-// 見出しの x: フランス語版だけ違う
+// Heading x coordinate: only French differs.
 #if defined(TLA_EDITION_FR)
 #define SAVING_X 40
 #define ERASING_X 48
@@ -38,7 +39,7 @@ void Func_080c8698(void);
 #define COPYING_X 84
 #endif
 
-// 記録中の画面を開く: 0 は記録、1 は消去、2 は写し
+// Open the progress screen: 0 saves, 1 erases, 2 copies.
 struct UiWindow *SaveProgress_Open(u32 kind) {
   struct UiWindow *window;
   void *tiles;
@@ -69,7 +70,7 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
   return window;
 }
 
-// 記録中の画面を閉じる
+// Close the progress screen.
 struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
   WaitFrames(10);
   Func_080c8698();

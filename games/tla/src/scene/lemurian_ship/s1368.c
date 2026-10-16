@@ -16,7 +16,7 @@ void Func_02001380(s32 id) {
   object->timer = 1;
 }
 
-// 日本版にはない: 日本版では 10 番と 11 番も動作 1 を使う
+// Absent from Japanese, where actors 10 and 11 also use action 1.
 #if !defined(TLA_EDITION_JA)
 void Func_020013b8(s32 id) {
   struct LemurianShipObject *object = Object_GetById(id);

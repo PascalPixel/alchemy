@@ -29,7 +29,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void RunEventScript01(void);
 static void PaletteScene_RunActorTransitionSequence(void);
 static void PaletteScene_SpawnEffect(void);
@@ -644,7 +644,7 @@ s32 KolimaForestTree_PrepareActors(void) {
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
 static void PaletteScene_SpawnEffect(void) {
@@ -889,7 +889,7 @@ static void PaletteScene_SetRecordValue(s32 key, s32 value) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
 s32 gSceneAction_ActorOneEntry[] = {

@@ -42,7 +42,7 @@ struct PeriodicEffectConfig {
 
 void Effect_Spawn();
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -112,7 +112,7 @@ static void SceneEffect_SpawnPeriodicEffect(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 
 static s32 SceneActor_UpdateTracking(struct MapActor *actor,

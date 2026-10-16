@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // draw_four_numbers_in_row.c
-// セーブ：記録のジンの数を属性ごとに横に並べて書く
+// Saves: draw the recorded Djinn counts in a row, one per element.
 //--------------------------------------------------------------------------
 
 #include "text_render_runtime.h"
@@ -18,15 +18,15 @@
 #include "edition.h"
 #include "text/msg_ids.h"
 
-// セーブの記録（SaveSummary）のうち、ここで読むところ
+// The portion of the save record (SaveSummary) read here.
 struct NumberRow {
   u8 unk00[0x28];
-  s8 values[4]; // 属性ごとのジンの数
+  s8 values[4]; // Djinn count for each element.
 };
 
 //--------------------------------------------------------------------------
-// 4 つの数を 2 けたで、24 ドットおきに y 16 に書く
-// win : 書き込み先（0 なら何もしない）
+// Draw four two-digit numbers 24 pixels apart at y = 16.
+// win: destination; do nothing if zero.
 //--------------------------------------------------------------------------
 void UiText_DrawFourNumbersInRow(struct RenderInput *win,
                                  struct NumberRow *row) {
@@ -42,7 +42,7 @@ void UiText_DrawFourNumbersInRow(struct RenderInput *win,
 
 // draw_character_summary.c
 
-// セーブ：記録の名前・レベル・クラス・コイン・プレイ時間を書く
+// Saves: draw the recorded name, level, class, coins, and play time.
 
 //--------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(s32, s32, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
-// 版ごとの「Lv」と「コイン」の x（ドット）
+// Edition-specific x positions of the level and coin labels, in pixels.
 #if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
@@ -72,12 +72,12 @@ void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 #endif
 
 //--------------------------------------------------------------------------
-// win : 書き込み先（0 なら何もしない）
-// rec : セーブの記録（SaveSummary）
-//       +16 名前、+28 レベル、+29 クラス、+32 プレイ時間、+36 コイン
+// win: destination; do nothing if zero.
+// rec: save record (SaveSummary).
+//      +16 name, +28 level, +29 class, +32 play time, +36 coins.
 //--------------------------------------------------------------------------
 void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
-  u32 buf[4]; // プレイ時間の文字列
+  u32 buf[4]; // Formatted play time.
   s32 y;
 
   if (win != 0) {
@@ -108,7 +108,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
     y = 48;
     UiText_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
-    // フランス語版は 1 枚以下なら単数形
+    // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
       UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
     else

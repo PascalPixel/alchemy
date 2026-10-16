@@ -32,7 +32,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunPrimaryScriptChoreography(void);
 static void Imil_CastPsynergyAtActorNine(void);
 static void FieldScene_RunScene399SequenceA(void);
@@ -63,7 +63,7 @@ struct SelectedSubject {
   s32 selectedSubject;
 };
 
-// 表を符号付き半語で読む見方
+// View the table as signed halfwords.
 extern s32 gImil_ArcOrigin[];
 
 static s32
@@ -96,7 +96,7 @@ OverlayObject_UpdateWobbleByCounter(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -1701,7 +1701,7 @@ u16 *gImil_ExitCellSteps[] = {
     gImil_ExitCellStep5,
 };
 
-// 出口ごとのセル位置 (x, y)
+// Cell position (x, y) for each exit.
 s16 gImil_ExitCellPoints[][2] = {
     { 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };

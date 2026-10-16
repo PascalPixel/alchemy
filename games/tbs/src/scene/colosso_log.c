@@ -48,7 +48,7 @@
 #include "field_obj.h"
 #include "heap_state.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunMultiPhaseActorSequence(s32 a0);
 static void Colosso_RunGreetScene(s32 a0);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
@@ -157,7 +157,7 @@ static inline void InitializeSelectedActor(s32 actorId) {
 
 extern s32 gColossoParticleCount;
 
-// コロッセオ共通 (scene/common/colosso_*.c)
+// Shared Colosso routines (scene/common/colosso_*.c).
 
 u8 *ColossoLogRollingStage_GetScriptData(void) {
   return (u8 *)gColossoLogEntrances;
@@ -207,7 +207,7 @@ static void ColossoLogRollingStage_SceneTask(void) {
   }
 }
 
-// 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
+// Function from another file; its callers use no declaration (implicit int).
 
 static void ColossoLogRollingStage_ResetAndRunSceneTask(void) {
   SceneTaskEntry entry;
@@ -1688,7 +1688,7 @@ static void EV38_TALK(s32 actor) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1836,7 +1836,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0) {
   Engine_EventWaitForScreen();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1987,7 +1987,7 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 firstHandle,
   return flag;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
@@ -2077,7 +2077,7 @@ static void ColossoLogRollingStage_PushStagedActor(void) {
   Object_SetMode(subject, 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 const s32 gColossoLog_Record30Script[] = {
@@ -2180,7 +2180,7 @@ s32 gColossoLinkedEffect[] = {
     SC_END,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
 u32 gStagedActor_DirectionSteps[] = {

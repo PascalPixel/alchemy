@@ -8010,8 +8010,8 @@ void Dma_StopAllThenRunHook(void) {
 }
 
 //--------------------------------------------------------------------------
-// 止まっている再生を、対象の処理から始める
-// cue : 当たったときの効果音 (0 なら変えない)
+// Resumes paused playback from target processing.
+// cue: hit sound effect; zero leaves it unchanged.
 //--------------------------------------------------------------------------
 void BattleEventRuntime_BeginPhase(s32 cue) {
   struct BattleEventState *ev;
@@ -8026,8 +8026,8 @@ void BattleEventRuntime_BeginPhase(s32 cue) {
 }
 
 //--------------------------------------------------------------------------
-// イベントの列を空にして、再生を登録する
-// frames : 最初のイベントまでの待ち
+// Clears the event sequence and schedules playback.
+// frames: delay before the first event.
 //--------------------------------------------------------------------------
 s32 BattleEventRuntime_SchedulePhase(s32 frames) {
   struct BattleEventState *ev;
@@ -8042,23 +8042,23 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// バトルイベントの再生
+// Battle event playback.
 //--------------------------------------------------------------------------
-#define PLAY_MESSAGE 3      // メッセージの表示を待つ
-#define PLAY_ADVANCE 5      // 送りのキーを待つ
-#define PLAY_HIT 10         // 当たった者を点滅させる
-#define PLAY_FELLED 11      // 倒れた敵を消す
-#define PLAY_MESSAGE_ADD 13 // 続きのメッセージ (キーを待たない)
+#define PLAY_MESSAGE 3      // Wait for message display.
+#define PLAY_ADVANCE 5      // Wait for the advance key.
+#define PLAY_HIT 10         // Flash the unit that was hit.
+#define PLAY_FELLED 11      // Remove a defeated enemy.
+#define PLAY_MESSAGE_ADD 13 // Continue the message without waiting for a key.
 
-#define POSE_DAMAGE 5 // ダメージを受けたポーズ
-#define PAL_HIT 7     // 点滅の色
+#define POSE_DAMAGE 5 // Pose when taking damage.
+#define PAL_HIT 7     // Flash colour.
 
-#define FELLED_FLASH 0x400 // 色を変えている間のタイマーの基準
+#define FELLED_FLASH 0x400 // Timer base while changing colour.
 
 #define OBJ_VRAM 0x06010000
 
 //--------------------------------------------------------------------------
-// スケジューラから呼ばれ、BattleTargetExec が積んだイベントを順に実行する
+// Scheduler callback that runs BattleTargetExec's queued events in order.
 //--------------------------------------------------------------------------
 void BattleEvent_Playback(void) {
   u16 selection[8];
@@ -8066,7 +8066,7 @@ void BattleEvent_Playback(void) {
   struct BattleWork *work = gBattleWork;
   struct BattleEventState *ev = &work->events;
 
-  // キャラのタイルを消す
+  // Clear the character's tiles.
   void ClrRecTiles(struct AnimationObject * rec, s32 value) {
     u8 *tiles = (u8 *)OBJ_VRAM + gVramBlockCache[rec->slot].offset;
 
@@ -8079,7 +8079,7 @@ void BattleEvent_Playback(void) {
     if (ev->phase == BATTLE_PLAYBACK_READY)
       return;
     if (ev->phase == BATTLE_PLAYBACK_RESOLVE_TARGET) {
-      // 次の対象の効果を計算し、イベントを積む
+      // Calculate effects for the next target and enqueue its events.
       if (ev->queue.targetIndex < work->plan.targetCount) {
         ev->queue.count = 0;
         ev->eventIndex = 0;
@@ -8091,7 +8091,7 @@ void BattleEvent_Playback(void) {
         ev->phase = BATTLE_PLAYBACK_READY;
       }
     } else if (ev->phase == BATTLE_PLAYBACK_DISPATCH) {
-      // 積んだイベントを順に実行する
+      // Run the queued events in order.
       while (ev->eventIndex < ev->queue.count) {
         {
           s32 i = ev->eventIndex;
@@ -8103,47 +8103,49 @@ void BattleEvent_Playback(void) {
             return;
           }
           switch (ev->queue.opcodes[i]) {
-          case BATTLE_EVENT_SOUND: // 効果音
+          case BATTLE_EVENT_SOUND: // Sound effect.
             AudioCommand_PlayFar(ev->queue.operands[i]);
             break;
           case BATTLE_EVENT_DJINN_BONUS:
             Battle_SetRuntimeFlagBit0(ev, ev->queue.operands[i]);
             break;
-          case BATTLE_EVENT_UNIT_NAME: // メッセージに入れる名前
+          case BATTLE_EVENT_UNIT_NAME: // Name inserted into the message.
             UiWork_PushValueSlotFar(ev->queue.operands[i], VALUE_UNIT_NAME);
             break;
-          case BATTLE_EVENT_NUMBER: // メッセージに入れる数
+          case BATTLE_EVENT_NUMBER: // Number inserted into the message.
             UiWork_PushValueSlotFar(ev->queue.operands[i], VALUE_NUMBER);
             break;
-          case BATTLE_EVENT_ITEM_NAME: // メッセージに入れるアイテム名
+          case BATTLE_EVENT_ITEM_NAME: // Item name inserted into the message.
             UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x1ff,
                                     VALUE_ITEM_NAME);
             break;
-          case BATTLE_EVENT_ABILITY_NAME: // メッセージに入れるわざ名
+          case BATTLE_EVENT_ABILITY_NAME: // Ability name inserted into the
+                                          // message.
             UiWork_PushValueSlotFar(ev->queue.operands[i] & 0x3fff,
                                     VALUE_ABILITY_NAME);
             break;
           case BATTLE_EVENT_MARK:
             gBattleDisplayWork->marked = 1;
             break;
-          case BATTLE_EVENT_MESSAGE: // メッセージを出し、送りを待つ
+          case BATTLE_EVENT_MESSAGE: // Show the message and wait for advance.
             if ((s32)ev->queue.operands[i] >= 0)
               UiText_PrepareMessageWorkFar(ev->queue.operands[i]);
             ev->phase = PLAY_MESSAGE;
             gKeysPressedLatch = 0;
             break;
-          case BATTLE_EVENT_MESSAGE_NO_WAIT: // メッセージを出し、送りを待たない
+          case BATTLE_EVENT_MESSAGE_NO_WAIT: // Show without waiting for
+                                             // advance.
             if ((s32)ev->queue.operands[i] >= 0)
               UiText_PrepareMessageWorkFar(ev->queue.operands[i]);
             ev->phase = PLAY_MESSAGE_ADD;
             break;
-          case BATTLE_EVENT_CLEAR_ARGUMENTS: // メッセージに入れたものを消す
+          case BATTLE_EVENT_CLEAR_ARGUMENTS: // Clear message arguments.
             UiWork_ClearValueNameTablesFar();
             break;
           case BATTLE_EVENT_REMOVE_UNIT:
             BattleActor_DestroyTemporaryObject(ev->queue.operands[i]);
             break;
-          case BATTLE_EVENT_HIT: // 当たった
+          case BATTLE_EVENT_HIT: // Hit.
             if (ev->pendingCue > 0)
               AudioCommand_PlayFar(ev->pendingCue);
             ev->actorId = ev->queue.operands[i];
@@ -8152,7 +8154,7 @@ void BattleEvent_Playback(void) {
             ev->phase = PLAY_HIT;
             ev->timer = 0;
             break;
-          case BATTLE_EVENT_DEFEAT: // 倒れた
+          case BATTLE_EVENT_DEFEAT: // Defeated.
           {
             struct BattleUnit *unit;
             struct AnimationObject *rec;
@@ -8176,10 +8178,11 @@ void BattleEvent_Playback(void) {
             }
             break;
           }
-          case BATTLE_EVENT_DRAW_STATUS: // 仲間の状態を描き直す
+          case BATTLE_EVENT_DRAW_STATUS: // Redraw party status.
             PartyStatusDrawFar(gBattleWork->partyStatus);
             break;
-          case BATTLE_EVENT_REFRESH_UNIT: // 状態アイコン・色・ポーズを今の状態に合わせる
+          case BATTLE_EVENT_REFRESH_UNIT: // Update status icons, colour and
+                                          // pose.
           {
             struct BattleObj *slot;
 
@@ -8199,7 +8202,7 @@ void BattleEvent_Playback(void) {
       if (ev->phase == BATTLE_PLAYBACK_DISPATCH)
         ev->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
     } else if (ev->phase == PLAY_MESSAGE || ev->phase == PLAY_MESSAGE_ADD) {
-      // メッセージが出きるまで待つ
+      // Wait until the message finishes appearing.
       if (UiWork_IsCompleteFar() == 0)
         return;
       if (ev->phase == PLAY_MESSAGE_ADD) {
@@ -8211,9 +8214,8 @@ void BattleEvent_Playback(void) {
         ev->timer = gFrameTick;
       }
     } else if (ev->phase == PLAY_ADVANCE) {
-      // 矢印を出して送りのキーを待つ
-      // B を押し続けるか送りのキーを押すと進み、10
-      // ティックを過ぎれば押し続けていても進む
+      // Show the arrow and wait for advance. Holding B or pressing an advance
+      // key proceeds; after ten ticks, holding an advance key also proceeds.
       struct BattlePromptSprite *spr = &ev->displayEntry;
       u8 *arrow = gBattlePres_AdvanceArrowTiles;
       s32 pat = (s32)arrow + ((gFrameCount >> 2) & 7) * 128;
@@ -8245,7 +8247,7 @@ void BattleEvent_Playback(void) {
         return;
       }
     } else if (ev->phase == PLAY_HIT) {
-      // 2 フレームごとに色を変え、9 フレームで戻る
+      // Change colour every two frames and restore it after nine frames.
       if (ev->timer & 1) {
         if (ev->timer & 2) {
           struct BattleObj *slot;
@@ -8268,7 +8270,7 @@ void BattleEvent_Playback(void) {
       ev->phase = BATTLE_PLAYBACK_DISPATCH;
       ev->timer = 0;
     } else if (ev->phase == PLAY_FELLED) {
-      // flags があれば、まず 30 フレームのあいだ色を変える
+      // With flags set, first change colour for 30 frames.
       if (ev->timer == 0 || ev->timer >= FELLED_FLASH) {
         s32 frame = 6;
 
@@ -8322,7 +8324,7 @@ void BattleEvent_Playback(void) {
         return;
       }
       if (ev->timer > 4) {
-        // タイルを順に描き換えて消す
+        // Remove the image by replacing its tiles in sequence.
         struct BattleObj *slot;
         struct AnimationObject *rec;
         s32 count;
@@ -8399,11 +8401,11 @@ s32 BattleEventRuntime_WaitForReady(void) {
 
 //--------------------------------------------------------------------------
 // is_unit_listed.c
-// バトル：ユニットが戦闘中の並びにいるかの判定
+// Battle: checks whether a unit is in the active formation.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// ユニットが自分の側の並びにいれば 1 を返す
-// id : ユニット番号（0-7 味方、それ以外は敵）
+// Returns one when the unit is in its side's formation.
+// id: unit id; zero through seven are party members, the rest are enemies.
 //--------------------------------------------------------------------------
 u32 BattleParty_IsUnitListed(u32 id) {
   u16 list[8];
@@ -8467,16 +8469,17 @@ s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts) {
 
 //--------------------------------------------------------------------------
 // command.c
-// バトル：行動の宣言と、対象・効果の計画
+// Battle: announces actions and plans targets and effects.
 //--------------------------------------------------------------------------
-// ジンの指定：属性 (bit 8-11) と番号 (bit 0-7)
+// Djinni selector: element in bits 8..11, index in bits 0..7.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
 #define TARGET_MAX 14
 
 //--------------------------------------------------------------------------
-// 行動を宣言し、対象と効果の計画を作る
-// 返り値 : 0 = 実行する、-1 = 失敗 (メッセージ済み)、-2 = 何もしない
+// Announces the action and plans its targets and effects.
+// Returns zero to execute, -1 on failure (already reported), or -2 for no
+// action.
 //--------------------------------------------------------------------------
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
                             struct BattlePlan *plan) {
@@ -8486,8 +8489,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   s32 abilityId;
 
   //----------------------------------------------------------------------
-  // わざの範囲にいる者を対象に並べる
-  // 誰もいなければ、身を守って -1
+  // List targets within the ability's range; defend and return -1 if none
+  // exist.
   //----------------------------------------------------------------------
   s32 TargetSet(s32 no) {
     struct BattleAct *act = BattleActGet(no);
@@ -8502,14 +8505,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     s32 id;
 
     switch (act->effect) {
-    case 5: // ふっき
+    case 5: // Revive.
     case 56:
     case 57:
       deadOk = 1;
       break;
     }
     switch (mode) {
-    case 0: // ひとり
+    case 0: // Single target.
       plan->targetOffset[0] = mode;
       plan->targetCount = 1;
       plan->targetIds[0] = tid;
@@ -8522,7 +8525,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       plan->targetMultiplier[0] = 1;
       break;
     default:
-      // 狙った位置から range - 1 までの並び
+      // Formation positions through range - 1 from the selected position.
       cnt = 0;
       for (pos = 0; work->partyUnits[pos] != BATTLE_UNIT_LIST_END; pos++)
         ;
@@ -8539,7 +8542,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         for (pos = first; pos <= last; pos++) {
           if (pos < 0)
             continue;
-          if (req->target & 128) // 敵の側
+          if (req->target & 128) // Enemy side.
           {
             if (pos >= enemyCount)
               continue;
@@ -8590,7 +8593,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   if (unit->hp == 0)
     return -2;
 
-  // デバッグ：R を押していれば敵全員 (SELECT も押せば味方全員) を倒す
+  // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
   if (BATTLE_AUTO_MODE && GameFlag_TestFar(0x16d) && (BATTLE_OPTIONS & KEY_R)) {
     s32 enemy = 1;
     s32 i;
@@ -8616,7 +8619,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     return -2;
   }
 
-  // 動けない状態
+  // Conditions that prevent acting.
   UiWork_ClearValueNameTablesFar();
   if (unit->immobile) {
     unit->immobile = 0;
@@ -8634,7 +8637,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     UiText_ShowMessageAndWaitCoreFar(MsgIsParalyzed);
     return -1;
   }
-  // かなしばりは 1/4 で動けない
+  // Paralysis prevents acting one quarter of the time.
   if ((unit->restraint & 1) && req->command != CMD_DEFEND &&
       (BattleRandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
@@ -8654,7 +8657,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   }
 
   //----------------------------------------------------------------------
-  // 行動ごとの宣言
+  // Announce the selected action.
   //----------------------------------------------------------------------
   switch (req->command) {
   case CMD_FLEE:
@@ -8669,7 +8672,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     return 0;
 
   case CMD_ATTACK:
-    // 武器の力が発動すれば、そのわざになる
+    // A weapon unleash replaces the action with its ability.
     abilityId = RollWeaponUnleashFar(unit);
     if (TargetSet(abilityId) == -1)
       return -1;
@@ -8695,7 +8698,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgActorCasts);
-    // PPが足りないか、ふうじなら失敗
+    // Fail if PP is insufficient or Psynergy is sealed.
     if (unit->pp < act->ppCost) {
       plan->failure = 2;
       ok = 0;
@@ -8743,10 +8746,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       case 6:
       case 7:
       case 8:
-        UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem); // かざした
+        UiText_ShowMessageAndWaitCoreFar(
+            MsgActorRaisesItem); // Raises the item.
         break;
       default:
-        UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem); // つかった
+        UiText_ShowMessageAndWaitCoreFar(
+            MsgActorUsesBattleItem); // Uses the item.
         break;
       }
     } else {
@@ -8775,58 +8780,58 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       message = MsgActorUnleashesAbility;
     else
       message = MsgActorUsesAbility;
-    // わざごとの言い方
+    // Select the wording for each ability.
     switch (abilityId) {
-    case 435: // ちょうおんぱ
+    case 435: // Ultrasonic waves.
     case 436:
       message = MsgEmitsUltrasonicWaves;
       break;
-    case 224: // ヒートミラージュ
+    case 224: // Heat mirage.
       message = MsgActorCasts;
       break;
-    case 500: // おどし
+    case 500: // Intimidation.
       message = MsgGlowersFerociously;
       break;
-    case 501: // てがふるえている
+    case 501: // Trembling hands.
       message = MsgIsIntimidated;
       break;
-    case 499: // けんせい
+    case 499: // Threatening gaze.
       message = MsgBalefulGaze;
       break;
-    case 494: // ミミズをたべる
+    case 494: // Eating worms.
       message = MsgEatsWorms;
       break;
-    case 437: // スクウィールロアー ～ じごくのとおぼえ
+    case 437: // Roaring and howling abilities.
     case 438:
     case 439:
     case 440:
     case 441:
       message = MsgLetsOutAbility;
       break;
-    case 442: // ウイングビート ～ ウイングストローク
+    case 442: // Wing attacks.
     case 443:
     case 444:
       message = MsgActorUsesAbility;
       break;
-    case 472: // くさったたいえき
+    case 472: // Rotten bodily fluid.
       message = MsgEnemyUnleashesAbility;
       break;
-    case 488: // せつないひとみ
+    case 488: // Sorrowful gaze.
       message = MsgGlowersMiserably;
       break;
-    case 492: // ふらんしゅう
+    case 492: // Stench of decay.
       message = MsgSmellOfDecay;
       break;
-    case 495: // きょうぼうか
+    case 495: // Becoming enraged.
       message = MsgFuriousRage;
       break;
-    case 503: // ぞうしょくうんどう
+    case 503: // Attempting to divide.
       message = MsgAttemptsToDivide;
       break;
-    case 504: // なかまをさがす
+    case 504: // Looking for allies.
       message = MsgLooksForAllies;
       break;
-    case 508: // たすけをさがす
+    case 508: // Looking for help.
       message = MsgLooksForHelp;
       break;
     }
@@ -8834,7 +8839,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   } break;
 
   case CMD_DJINN:
-    // セットされていなければ、スタンバイのジンをセットし直す
+    // If not set, return the standby Djinni to its set state.
     abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(req->parameter),
                                      DJINN_INDEX(req->parameter));
     if (!Djinn_IsActiveFar(req->unitId, DJINN_ELEMENT(req->parameter),
@@ -8867,7 +8872,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         BattleEventRuntime_WaitForReady();
         return -2;
       }
-      // リカバリー中
+      // Recovering.
       UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       AudioCommand_PlayFar(SOUND_MENU_ERROR);
@@ -8875,7 +8880,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
       WaitFrames(60);
       return -1;
     }
-    // セットされたジンを解き放つ
+    // Unleash the set Djinni.
     {
       struct BattleAct *act;
 
@@ -8902,7 +8907,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     u8 unused[8];
     s32 i;
 
-    // 属性ごとのスタンバイの数が足りるか
+    // Check whether enough Djinn of each element are on standby.
     summon = SummonDefinition_Get(req->parameter);
     BattlePlacement_CountValidEntries(req->unitId, counts);
     side = 0;
@@ -8923,7 +8928,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgActorSummons);
-    // 使うスタンバイのジンに印 (-2) をつける
+    // Mark the standby Djinn being used with -2.
     for (i = 0; i != list->count; i++) {
       struct DjinnRecoveryEntry *entry = &list->entries[i];
 
@@ -8937,7 +8942,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   }
 
   //----------------------------------------------------------------------
-  // こうげきの計画
+  // Plan a normal attack.
   //----------------------------------------------------------------------
   if (abilityId == ABILITY_ATTACK) {
     struct BattleUnit *target = UnitGetFar(plan->targetIds[0]);
@@ -8945,7 +8950,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(req->unitId);
     plan->outcome = 2;
-    if (unit->classIndex == 0) // 敵
+    if (unit->classIndex == 0) // Enemy.
     {
       plan->presentationFlags =
           Battle_GetSpriteFlagNibble(unit->classId) | 0x4000;
@@ -8971,8 +8976,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     }
     UiWork_PushValueSlotFar(req->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
-    // 外れ：まぼろしなら 153/256、ほかに 1/32
-    // 相手が動けなければ外れない
+    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
+    // Attacks cannot miss a target that cannot move.
     /* FAKEMATCH: the one-pass block places the body ahead of its five tests,
      * reached by a backward beq from the last one, whose zero (r5) the first
      * store reuses. As a plain if, with the tests negated or not, or as a while
@@ -8988,7 +8993,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     } while (0);
     if (GameFlag_TestFar(366))
       plan->targetMultiplier[0] = 0;
-    // 会心：1/32、または装備による確率
+    // Critical hit: one chance in 32, or the equipment's chance.
     if (target->hp != 0) {
       if ((BattleRandomFar() & 31) == 0)
         plan->targetCritical[0] = 1;
@@ -8999,7 +9004,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
   }
 
   //----------------------------------------------------------------------
-  // わざの計画
+  // Plan an ability.
   //----------------------------------------------------------------------
   else {
     struct BattleAct *act = BattleActGet(abilityId);
@@ -9009,7 +9014,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
     plan->abilityId = abilityId;
     if (act->effect == 65 || act->effect == 41 || act->effect == 42 ||
         act->effect == 43 || act->effect == 44 || act->effect == 68) {
-      // ある確率で、ダメージの倍率を上げる
+      // Chance to increase the damage multiplier.
       s32 chance;
       s32 amount;
 
@@ -9030,7 +9035,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
           plan->targetMultiplier[i] += amount;
       }
     } else if (act->effect >= 36 && act->effect <= 40) {
-      // 会心の確率 1/64 ～ 1/4
+      // Critical-hit chance ranges from 1/64 to 1/4.
       s32 mask;
 
       switch (act->effect) {
@@ -9057,7 +9062,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req,
         for (i = 0; i < plan->targetCount; i++)
           plan->targetCritical[i] = 2;
       }
-    } else if (abilityId == 178) // めっさつのじゅつ：命中を先に決める
+    } else if (abilityId == 178) // Lethal technique: roll the hit first.
     {
       s32 i;
 
@@ -9127,9 +9132,9 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   return 0;
 }
 
-// 能力変化の残りターン (counter) を 1 減らす。0
-// になったとき、または下がった能力 (level が負) が
-// BattleUnit_RollCounterEarlyEnd で早く切れたときに、level を戻して 1 を返す
+// Decrements a stat change's turn counter. Resets level and returns one when
+// the counter reaches zero, or when BattleUnit_RollCounterEarlyEnd ends a
+// negative-level stat reduction early.
 #define DEFINE_TICK_MODIFIER(name, counter, level)                             \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -9153,8 +9158,8 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
 DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
 DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns, resistanceStage)
 
-// 状態異常の残りターン (counter) を 1 減らす。0 になったとき、または
-// BattleUnit_RollCounterEarlyEnd (bias) で早く切れたときに 1 を返す
+// Decrements a status condition's turn counter. Returns one when it reaches
+// zero, or when BattleUnit_RollCounterEarlyEnd(bias) ends it early.
 #define DEFINE_TICK_STATUS(name, counter, bias)                                \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -9744,17 +9749,17 @@ s32 BattlePres_RunMosaicFadeOut(void) {
 
 //--------------------------------------------------------------------------
 // build_sequential_table.c
-// タイル：1 バイトずつ連番のマップを作る
+// Tiles: builds a map of sequential byte indices.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 0〜255 と 0〜223 の連番のバイトを続けて書き、
-// 残りの 544 バイトを 0xff で埋める（あわせて 1024 バイト）
+// Writes byte sequences 0..255 and 0..223, then fills the remaining 544 bytes
+// with 0xff, for 1024 bytes total.
 //--------------------------------------------------------------------------
 void Graphics_BuildSequentialTileTable(s32 *dst) {
   s32 v;
   s32 n;
 
-  // 4 バイトずつ書くので 1 回に 4 つ進める
+  // Advance four indices per iteration because each store writes four bytes.
   v = 0x03020100;
   n = 0;
   do {
@@ -10259,7 +10264,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale) {
 
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   s32 span = 0x01fe0000;
-  // 元のバグ：mode は初期化されず、入口の r4 をそのまま読む（lsls r0, r4, #16）
+  // BUG: mode is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
   s32 mode;
   struct BattleCamera *scene = gCameraWork;
   s32 *pos = scene->pos;
@@ -10351,12 +10356,12 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
 
 //--------------------------------------------------------------------------
 // setup_transition_at_pair_midpoint.c
-// バトル表示：ふたりの中間へのカメラ合わせ
+// Battle display: centers the camera between two actors.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// ふたつのオブジェクトの中間（x, z）にカメラを合わせる
-// a, b : オブジェクト番号
-// zoom : 拡大率（%）
+// Centers the camera at the two objects' midpoint in x and z.
+// a, b: object ids.
+// zoom: scale percentage.
 //--------------------------------------------------------------------------
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   struct MotionObject *obj_a = BattleObjGet(a)->object;
@@ -10482,11 +10487,11 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
 
 //--------------------------------------------------------------------------
 // present.c
-// バトル表示：ユニットの絵の半透明の切りかえ
+// Battle display: toggles translucent unit sprites.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// except 以外の全ユニットの絵を半透明（OBJ モード 1）にする
-// except : そのままにするユニット番号
+// Makes every unit sprite except the selected one translucent (OBJ mode one).
+// except: unit id left unchanged.
 //--------------------------------------------------------------------------
 void BattlePres_SetOtherActorRecordModes(s32 except) {
   s16 list[14];
@@ -10500,7 +10505,7 @@ void BattlePres_SetOtherActorRecordModes(s32 except) {
 }
 
 //--------------------------------------------------------------------------
-// 全ユニットの絵をふつう（OBJ モード 0）にもどす
+// Restores every unit sprite to normal rendering (OBJ mode zero).
 //--------------------------------------------------------------------------
 void BattlePres_ClearAllActorRecordModes(void) {
   s16 list[14];
@@ -10925,8 +10930,8 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant) {
     }
     Graphics_ResetVramBlockAndReleaseHeapBlocks(kind);
   } else if (mode == 1) {
-    // ここのワークは effect.c の struct BattleEffectWork
-    // だが、星のワークと同じオフセットに書く
+    // This workspace is effect.c's BattleEffectWork, but these stores use
+    // the same offsets as the star workspace.
     BattlePresentation_PrepareSceneFar(kind);
     for (frame = 0; frame < 40; frame++) {
       work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
@@ -11704,7 +11709,7 @@ void Battle_AwardSpoils(void) {
   s32 slot;
   u16 *found;
   s32 value;
-  struct LevelUpResult gains; // 上がった分は符号つきで読む
+  struct LevelUpResult gains; // Read stat increases as signed values.
   u16 units[8];
 
   spoils = &gBattleWork->spoils;

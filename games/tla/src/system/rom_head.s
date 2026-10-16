@@ -3,14 +3,14 @@
 	.arm
 	.global Cartridge_Restart
 Cartridge_Restart:
-	b	Entry				@ 起動
-	.space	156				@ 任天堂ロゴ (gbafix が書き込む)
+	b	Entry				@ Entry.
+	.space	156				@ Nintendo logo (written by gbafix).
 	.ifdef TLA_EDITION_JA
-	.ascii	"OUGONTAIYO_B"			@ ゲームタイトル
+	.ascii	"OUGONTAIYO_B"			@ Game title.
 	.else
 	.ascii	"GOLDEN_SUN_B"
 	.endif
-	.ascii	"AGF"				@ ゲームコード
+	.ascii	"AGF"				@ Game code.
 	.ifdef TLA_EDITION_JA
 	.ascii	"J"
 	.endif
@@ -29,11 +29,11 @@ Cartridge_Restart:
 	.ifdef TLA_EDITION_IT
 	.ascii	"I"
 	.endif
-	.ascii	"01"				@ メーカーコード
-	.byte	0x96				@ 固定値
-	.byte	0				@ 本体コード
-	.byte	0				@ デバイスタイプ
-	.space	7				@ 予約
-	.byte	0				@ ソフトバージョン
-	.byte	0				@ 補数チェック (gbafix が計算)
-	.space	2				@ 予約
+	.ascii	"01"				@ Maker code.
+	.byte	0x96				@ Fixed value.
+	.byte	0				@ Main unit code.
+	.byte	0				@ Device type.
+	.space	7				@ Reserved.
+	.byte	0				@ Software version.
+	.byte	0				@ Complement check (calculated by gbafix).
+	.space	2				@ Reserved.

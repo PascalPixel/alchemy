@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // clear_character_block.c
-// タイル：BG のキャラクターとパレットの半分を消す
+// Clear half of the background tile graphics and palette.
 //--------------------------------------------------------------------------
 
 #include "unit/graphics/tile/slides.h"
@@ -34,9 +34,9 @@
 #include "frame.h"
 
 //--------------------------------------------------------------------------
-// 256 色のキャラクター 30K バイトを色 1 で埋め、パレット 128 色を 0 にする
-// alt : 0 なら前半（VRAM 0x06000000・パレット 0〜127）
-//       1 なら後半（VRAM 0x06008000・パレット 128〜255、色 129 で埋める）
+// Fill 30 KB of 256-color tiles with color 1 and clear 128 palette colors.
+// alt: 0 selects the first half (VRAM 0x06000000, palette 0-127).
+//      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 //--------------------------------------------------------------------------
 void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
   u32 v;
@@ -59,7 +59,7 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
-// スタッフロールで順に映す戦闘背景（0 で消す）
+// Battle backgrounds shown in the credits; 0 clears the display.
 // clang-format off
 const u32 gDisplayScroll_SlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,
@@ -94,7 +94,7 @@ const u32 gDisplayScroll_SlideResources[] = {
     (u32)&ResourceId_VenusAerieStormBackdrop,
     (u32)&ResourceId_DuskCloudsBackdrop,
     (u32)&ResourceId_VioletSkyBackdrop,
-    0               // 消す
+    0               // Clear
 };
 // clang-format on
 
@@ -211,16 +211,16 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
-extern u16 gFlash_Handler3; // クレジットはフラッシュ用のワードを流用する
+extern u16 gFlash_Handler3; // The credits reuse a flash-library work word.
 
-// OAM へ送る 128 個の表（これもフラッシュ用のワードに置く）
+// 128 entries sent to OAM, also stored in flash-library work space.
 #define SCROLL_OBJECTS                                                         \
   (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
 
-// スタッフロールの空行
+// Blank credits line
 static const u8 sBlank[] = "";
 
-// スタッフロール：1 行ずつ、0 で終わり
+// Credits text, one row per line, terminated by 0.
 // clang-format off
 const void *gDisplayScroll_LineTable[] = {
     sBlank,

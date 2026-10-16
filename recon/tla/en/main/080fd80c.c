@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// エナジーメニューの作業領域（わかっている欄だけ）
+// Psynergy menu workspace (known fields only).
 struct PsynergyMenuState {
     u8 unk000[0x24];
     s32 listWindow;
@@ -33,7 +33,7 @@ struct MenuResult {
 
 s32 UnitGet(s32 owner);
 
-// index 番目の欄の持ち主のエナジーを 5 行ずつのページに割る
+// Split the selected slot owner's Psynergy into pages of five rows.
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 ownerState;

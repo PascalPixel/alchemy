@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // table_run_if_active.c
-// フィールド：話し手の表示の後しまつ
+// Field: finish the speaker display.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -9,8 +9,8 @@ s32 UiWork_FinalizeEntityMatchingLocalizedIdFar();
 s32 ObjectTable_ReadActiveValue();
 
 //--------------------------------------------------------------------------
-// アクターに絵があれば、その絵番号を話し手としてウィンドウの表示を終える
-// id : アクター番号
+// If the actor has graphics, use its graphics ID as speaker and end the window.
+// id: actor ID.
 //--------------------------------------------------------------------------
 void ObjectTable_RunIfActive(s32 id) {
   s32 no;

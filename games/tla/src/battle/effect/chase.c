@@ -59,7 +59,7 @@ s32 ArcTan2(s32 y, s32 x);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-// 目標へ speed だけ近づけ、通り過ぎたら目標に合わせる
+// Approach the target by speed; clamp to it on overshoot.
 void Func_080e9ee4(struct Chase *chase, s32 speed) {
   s32 dx = chase->targetX - chase->x;
   s32 dz = chase->targetZ - chase->z;

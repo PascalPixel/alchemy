@@ -34,7 +34,8 @@ void Func_0200102c(void) {
   UiText_ShowPositionedMessageAndWait(msg + 1, 1);
   UiText_ShowPositionedMessageAndWait(msg + 2, 1);
   UiText_ShowPositionedMessageAndWait(msg + 3, 1);
-#if !defined(TLA_EDITION_ES) /* スペイン語版は四つのメッセージで終わる */
+#if !defined(TLA_EDITION_ES) /* The Spanish edition ends after four messages.  \
+                              */
   UiText_ShowPositionedMessageAndWait(msg + 4, 1);
 #endif
   Func_02004074();

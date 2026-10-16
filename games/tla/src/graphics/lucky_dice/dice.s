@@ -1,5 +1,5 @@
 	.section .rodata
-@ さいころ 19 こま
+@ Nineteen dice frames.
 	.global Resource_Data087
 Resource_Data087:
 	.incbin "games/tla/src/graphics/lucky_dice/dice.gbapal"

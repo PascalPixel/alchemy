@@ -34,7 +34,7 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
 
 void Audio_NoopStub(void) {}
 
-// プレイヤー数と最大ライン数はサウンドデータ側のシンボルの値
+// The sound data's symbols supply the player count and maximum track count.
 extern char Sound_PlayerCount[];
 extern char Sound_MaxLines[];
 #define SOUND_PLAYER_COUNT ((u16)(u32)Sound_PlayerCount)

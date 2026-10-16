@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// IWRAM に常駐するルーチンの固定アドレス
+// Fixed addresses of IWRAM-resident routines.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \
@@ -35,7 +35,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03001388, IwramCopyWords)
 
-// 呼び出しは全てこの層を通る
+// All calls go through this layer.
 static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }

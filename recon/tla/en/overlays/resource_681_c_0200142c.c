@@ -33,7 +33,7 @@ struct GaiaRockInsideOrbit {
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-// 円を描いて回る
+// Moves around in a circle.
 s32 Func_0200142c(struct GaiaRockInsideOrbit *object)
 {
     s16 *speed = &object->speed;

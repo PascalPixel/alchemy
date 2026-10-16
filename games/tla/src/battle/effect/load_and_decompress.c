@@ -1,14 +1,15 @@
 //--------------------------------------------------------------------------
 // load_and_decompress.c
-// リソース：パレットつきのリソースを展開する
+// Resources: decompress a resource with a palette.
 //--------------------------------------------------------------------------
 
 #include "resource.h"
 #include "iwram_call.h"
 
 //--------------------------------------------------------------------------
-// リソース id を dst に展開する。先頭 128 バイトがパレットのとき、
-// copy_pal なら BG パレットの先頭に写し、skip_pal ならとばして展開する
+// Decompress resource id into dst. If the first 128 bytes are a palette,
+// copy_pal copies it to the start of BG palettes; skip_pal skips it on
+// decoding.
 //--------------------------------------------------------------------------
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   u8 *res = Resource_GetTableEntry(id);

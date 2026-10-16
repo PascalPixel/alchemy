@@ -20,14 +20,14 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 extern u8 MsgDebugEntryName;
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版の far call 表では、Scene_GetAreaNameIndex
-// へ届く口の名前が違う
+// The Spanish and Italian far-call tables use different entry names for
+// Scene_GetAreaNameIndex.
 s32 Func_080c8638(s32 scene, s32 entrance);
 #define Scene_GetAreaNameIndexFar Func_080c8638
 #endif
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 
-// 地名の窓を開き、90 フレーム後に閉じる
+// Open the area-name window, then close it after ninety frames.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *work;
   s32 height;

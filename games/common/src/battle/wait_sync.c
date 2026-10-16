@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // wait_sync.c
-// バトル：通信対戦の合図あわせ
+// Battle synchronization signals over the link cable.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -12,9 +12,9 @@
 extern u16 gLinkPeerSignatures[][12];
 
 //--------------------------------------------------------------------------
-// 通信対戦なら、相手と "EXEC" の合図をそろえる
-// 30 フレームのうちにそろえば 0、通信が切れたりそろわなければ -1
-// 通信対戦でなければ 0
+// In a link battle, exchanges the "EXEC" signal with the other console.
+// Returns zero if both agree within 30 frames, or -1 on timeout or disconnect.
+// Returns zero immediately outside a link battle.
 //--------------------------------------------------------------------------
 s32 BattlePres_WaitSync(void) {
 #if GAME_TLA
@@ -37,7 +37,7 @@ s32 BattlePres_WaitSync(void) {
       sig[3] = 'C';
 
       for (i = 0; i <= 29; i++) {
-        if ((gLinkStatus & 3) != 3) // 2 台の通信がとぎれた
+        if ((gLinkStatus & 3) != 3) // The two consoles lost their connection.
         {
           lost++;
           if (lost > 24)
@@ -56,10 +56,12 @@ s32 BattlePres_WaitSync(void) {
 }
 
 //--------------------------------------------------------------------------
-// 通信対戦なら、行動のたびとラウンド終了処理のあとに相手と合図を順にそろえる
+// In a link battle, synchronizes successive signals after each action and
+// after the end-of-round processing.
 // "ex" "TU" → "rn" → "EXEC" → "tu" → "RN"
-// 通信が切れているか、前にそろえた合図が相手と食いちがうか、
-// 通信が 25 フレーム続けてとぎれたら -1。そろえば（通信対戦でなくても）0
+// Returns -1 if disconnected, if an earlier signal disagrees with the peer,
+// or after 25 consecutive frames without a connection. Returns zero on
+// agreement, or outside a link battle.
 //--------------------------------------------------------------------------
 s32 BattlePres_SyncTurn(void) {
 #if GAME_TLA
@@ -155,7 +157,7 @@ s32 BattlePres_SyncTurn(void) {
       WaitFrames(1);
     }
 
-    // "RN"：相手が "rn" から変わるのを待つ
+    // "RN": wait for the peer to move on from "rn".
     sig[6] = 'R';
     sig[7] = 'N';
     for (;;) {

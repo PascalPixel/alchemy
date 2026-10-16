@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // uiwork.c
-// ウィンドウ：メッセージのチャンネルの後始末と、メッセージに埋める値の表
+// Windows: message-channel cleanup and the table of message substitutions.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -19,7 +19,7 @@
 #include "ram_buffer.h"
 
 //--------------------------------------------------------------------------
-// メッセージに埋める値の表（8 つ）を空にする
+// Clear the eight-entry table of values substituted into messages.
 //--------------------------------------------------------------------------
 void UiWork_ClearValueNameTables(void) {
   s32 no;
@@ -39,8 +39,8 @@ void UiWork_ClearValueNameTables(void) {
 }
 
 //--------------------------------------------------------------------------
-// 表のあいているところに、種類 kind の値 value を入れる
-// （いっぱいなら入れない）
+// Insert value of type kind in a free entry.
+// Do nothing if the table is full.
 //--------------------------------------------------------------------------
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;

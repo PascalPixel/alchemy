@@ -50,10 +50,11 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect);
 void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
 
-// 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
+// Particle storage: reuse Ram_MapCellBuffer as an array of struct EffectStep.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // 上下左右ではみ出しを切る
+#define CLIP                                                                   \
+  (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // Clip overflow on all four sides.
 
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -64,15 +65,15 @@ struct Placement {
   s32 unk0c;
 };
 
-// 2 次元の組 {x, y}（位置や速さ）
+// Two-dimensional {x, y} pair for position or velocity.
 struct Point2D {
   s32 x;
   s32 y;
 };
 
-// 演出の描画ルーチンの組：[0] は HEAP_SLOT_BLITTER、[1] は
-// HEAP_SLOT_BLITTER_ALTERNATE に BattleEffect_LoadWork
-// が作る。演出の多くがこの組をフレームに置く
+// Effect renderer pair: BattleEffect_LoadWork creates [0] in
+// HEAP_SLOT_BLITTER and [1] in HEAP_SLOT_BLITTER_ALTERNATE.
+// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
 #define gBlitters ((DrawRectangle *)gWorkSlot)

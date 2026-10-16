@@ -1,6 +1,6 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-@ 雲二枚と「Camelot presents / Golden Sun / Book Two」の文字 (言語ごと)
+@ Two cloud images and "Camelot presents / Golden Sun / Book Two" (per language).
 	.global Resource_Data018
 Resource_Data018:
 	.ifeq EDITION_INTERNATIONAL

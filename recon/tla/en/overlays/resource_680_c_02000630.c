@@ -19,7 +19,7 @@ struct Work02000630 {
     struct Slot02000630 slots[8];
 };
 
-// 種類 8 の枠を探して進める
+// Finds a type-eight slot and advances it.
 void Func_02000630(void)
 {
     struct Work02000630 *work = Ram_HeapSlots->unk84[8];

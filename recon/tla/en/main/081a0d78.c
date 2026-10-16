@@ -14,7 +14,8 @@ extern const u8 *gDisplayScroll_LineTable[];
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
-// スタッフロール：入ってくる行を描く。表の 255 は終わりのしるしで、あとは空行をくりかえす
+// Credits: draw incoming rows. Table value 255 ends the text; blank rows
+// follow.
 void Func_081a0d78(void)
 {
 	u32		  current;

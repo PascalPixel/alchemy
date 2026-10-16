@@ -12,7 +12,7 @@
 #include "io_reg.h"
 #include "battle_effect_runtime.h"
 
-// 前方宣言
+// Forward declarations.
 static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 static void KolimaPalette_SaveFirst(void);
 static void KolimaPalette_SaveSecond(void);

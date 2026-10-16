@@ -75,7 +75,7 @@ void Func_0200290c(void) {
 
 void Func_02002a5c(void) {
   Func_02005338(0);
-#if !defined(TLA_EDITION_JA) /* 日本版にはない */
+#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
   if (gPartyState.entrance == 1)
     GameFlag_ClearBit(0x12f);
 #endif

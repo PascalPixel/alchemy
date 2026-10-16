@@ -3,10 +3,10 @@
 	.arm
 	.global Rom_Start
 Rom_Start:
-	b	System_Entry			@ 起動
-	.space	156				@ 任天堂ロゴ (gbafix が書き込む)
+	b	System_Entry			@ Entry point
+	.space	156				@ Nintendo logo, written by gbafix
 	.ifdef TBS_EDITION_JA
-	.ascii	"OugonTaiyo_A"			@ ゲームタイトル
+	.ascii	"OugonTaiyo_A"			@ Game title
 	.else
 	.ifdef TBS_EDITION_EN
 	.ascii	"Golden_Sun_A"
@@ -14,7 +14,7 @@ Rom_Start:
 	.ascii	"GOLDEN_SUN_A"
 	.endif
 	.endif
-	.ascii	"AGS"				@ ゲームコード
+	.ascii	"AGS"				@ Game code
 	.global gRom_LanguageCode
 gRom_LanguageCode:
 	.ifdef TBS_EDITION_JA
@@ -35,11 +35,11 @@ gRom_LanguageCode:
 	.ifdef TBS_EDITION_IT
 	.ascii	"I"
 	.endif
-	.ascii	"01"				@ メーカーコード
-	.byte	0x96				@ 固定値
-	.byte	0				@ 本体コード
-	.byte	0				@ デバイスタイプ
-	.space	7				@ 予約
-	.byte	0				@ ソフトバージョン
-	.byte	0				@ 補数チェック (gbafix が計算)
-	.space	2				@ 予約
+	.ascii	"01"				@ Maker code
+	.byte	0x96				@ Fixed value
+	.byte	0				@ Main unit code
+	.byte	0				@ Device type
+	.space	7				@ Reserved
+	.byte	0				@ Software version
+	.byte	0				@ Complement check, calculated by gbafix
+	.space	2				@ Reserved

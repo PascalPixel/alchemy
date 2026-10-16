@@ -1,9 +1,9 @@
 	.section .rodata
-@ 技ごとの状態 (The Broken Seal の actstat.table と同じ形、734 個)
+@ 734 ability statuses (same layout as The Broken Seal's actstat.table).
 	.global Data_08128972
 Data_08128972:
 	.incbin "games/tla/src/battle/actstat.table"
-@ 技ごとの演出 (効果番号と段階, フラグ): The Broken Seal の gBattle_ActionFlags と同じ形、733 個
+@ 733 ability effects (effect ID, stage, flags), like TBS's gBattle_ActionFlags.
 	.global Data_08128c50
 Data_08128c50:
 	.incbin "games/tla/src/battle/actflags.table"

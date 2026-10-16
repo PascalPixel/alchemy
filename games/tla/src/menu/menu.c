@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // confirm_selection.c
-// メニュー：コマンドのアイコンを並べてえらばせる（はい・いいえ など）
+// Menu: select command icons, such as Yes and No.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -19,11 +19,11 @@
 
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 
-// アイコンは ResourceId_CommandIcons の番号。
-// えらんでいるコマンドの名前をウィンドウに出す
+// Icons are indices into ResourceId_CommandIcons.
+// Show the selected command's name in a window.
 //--------------------------------------------------------------------------
-// アイコン 0x11〜0x14 を画面の中央に並べてえらぶ（行 17）
-// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
+// Select centered icons 0x11-0x14 on row 17.
+// selection: initial selection; return the selected position.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry11To14(s32 selection) {
   s32 ret;
@@ -34,7 +34,7 @@ s32 Menu_SelectEntry11To14(s32 selection) {
   Menu_AppendResourceEntry(0x13);
   Menu_AppendResourceEntry(0x14);
 #if defined(TBS_EDITION_DE) || defined(TLA_EDITION_DE)
-  Menu_CenterResourceEntries(17, 8, 0); // 名前のウィンドウの幅
+  Menu_CenterResourceEntries(17, 8, 0); // Name window width.
 #elif EDITION_INTERNATIONAL
   Menu_CenterResourceEntries(17, 7, 0);
 #else
@@ -46,7 +46,7 @@ s32 Menu_SelectEntry11To14(s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// アイコン 0x19〜0x1c を画面の中央に並べてえらぶ（行 17）
+// Select centered icons 0x19-0x1c on row 17.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry19To1c(s32 selection) {
   s32 ret;
@@ -67,11 +67,11 @@ s32 Menu_SelectEntry19To1c(s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// はい・いいえ（アイコン 5・6）をえらぶ。キャンセルは 1（いいえ）
-// low  : 0 なら行 0、0 でなければ行 17 に出す
-// message  : 名前のメッセージの先頭（0 ならコマンド名）
-// w    : 名前のウィンドウの幅（0 なら 3）
-// selection  : はじめにえらんでいる位置
+// Select Yes/No (icons 5 and 6). Cancel returns 1 (No).
+// low: row 0 if zero, otherwise row 17.
+// message: first name message, or 0 for command names.
+// w: name window width, or 3 if zero.
+// selection: initial selection.
 //--------------------------------------------------------------------------
 s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
   s32 row;
@@ -100,7 +100,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// はい・いいえを (x, y) に出してえらぶ。キャンセルは 1（いいえ）
+// Select Yes/No at (x, y). Cancel returns 1 (No).
 //--------------------------------------------------------------------------
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = (s32)MsgCommandYes;
@@ -121,11 +121,11 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 
 // select_entry_20_to_21.c
 
-// メニュー：コマンドのアイコン 0x20・0x21 の 2 つからえらばせる
+// Menu: select between command icons 0x20 and 0x21.
 
 //--------------------------------------------------------------------------
 
-// 版ごとの名前のウィンドウの幅
+// Name window width for each edition.
 #if !EDITION_INTERNATIONAL
 #define PAIR_WIDTH 7
 #elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                    \
@@ -136,8 +136,8 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #endif
 
 //--------------------------------------------------------------------------
-// アイコン 0x20・0x21 を画面の中央に並べてえらぶ（行 17）
-// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
+// Select centered icons 0x20 and 0x21 on row 17.
+// selection: initial selection; return the selected position.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry20To21(s32 selection) {
   s32 ret;

@@ -48,7 +48,7 @@
 #include "field_obj.h"
 #include "heap_state.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunCommandSequence(s32 a0);
 static void FieldScene_RunTwoArmSequence(s32 a);
 static void FieldScene_RunLateSequence(s32 a0);
@@ -66,9 +66,9 @@ typedef struct PartyInteractionRecord {
 
 typedef void (*SceneTask)(void);
 
-#define KEYS_HELD gKeysHeld // VBlank で書く
+#define KEYS_HELD gKeysHeld // Written during VBlank.
 
-// コロッセオ共通 (scene/common/colosso_*.c)
+// Shared Colosso routines (scene/common/colosso_*.c).
 
 u8 *ColossoRiver_GetEntrances(void) { return (u8 *)gColossoRiver_SceneTableA; }
 
@@ -988,7 +988,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1126,7 +1126,7 @@ static void FieldScene_RunLateSequence(s32 a0) {
   Engine_EventWaitForScreen();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1289,7 +1289,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
   return flag;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
@@ -1379,7 +1379,7 @@ static void StagedActor_PushActorAhead(void) {
   Object_SetMode(subject, 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 // clang-format off
@@ -1452,7 +1452,7 @@ s32 gColossoRiver_ScriptB[] = {
     SC_END,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
 u32 gColossoRiver_DirectionSteps[] = {

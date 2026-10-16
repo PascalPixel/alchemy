@@ -44,16 +44,16 @@ enum ActorAnimation {
   (srcX), (srcY), (width), (height), (frames)
 #define MAP_CELL_STEPS_END 0xffff
 
-// セル書き換え: 手順と書き込み先のセル
+// Cell replacement: procedure and destination cells
 struct MapCellAnim {
   const u16 *steps;
   u16 x;
   u16 y;
 };
 
-// 本体のルーチンを呼ぶ import。EventRequestExit, ActorSetPosition,
-// ActorSetAnimation と RandomNext は、呼ぶ場所によって引数の数が違う
-// (バイトがそう示す) ので、引数を 書かない古い形で宣言する
+// Imports of main-image routines. EventRequestExit, ActorSetPosition,
+// ActorSetAnimation and RandomNext have differing argument counts at their
+// call sites, as measured in the bytes, so retain old-style declarations.
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);

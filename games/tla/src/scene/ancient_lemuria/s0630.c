@@ -4,8 +4,8 @@
 
 extern s16 gData_02001c30[];
 
-// 4 フレームごとにパレット 7 と 8 の色 2-14 を 1 つずつ送り、色 0x7f
-// を表から選ぶ
+// Every four frames, rotate palette 7 and 8 colors 2-14 by one entry,
+// and select color 0x7f from the table.
 s32 Func_02000630(void) {
   if ((*Ram_FrameCount & 3) == 0) {
     volatile u16 *palette;

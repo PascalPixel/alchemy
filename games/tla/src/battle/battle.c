@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // actor_commit_placement.c
-// バトル：全ユニットのオブジェクト配置
+// Battle: place objects for all units.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -9,8 +9,8 @@
 #include "battle_display.h"
 
 //--------------------------------------------------------------------------
-// 戦闘中の全ユニットの絵を用意し（いなくなったユニットの絵は解放）、
-// 全員の表示モードと動作を設定し直す
+// Prepare all units' battle graphics, releasing those of departed units,
+// and reset everyone's display mode and motion.
 //--------------------------------------------------------------------------
 void BattleObjPut(void) {
   s16 list[14];
@@ -23,12 +23,12 @@ void BattleObjPut(void) {
 
 // list_all_units_and_submit.c
 
-// バトル：全ユニットのオブジェクト配置
+// Battle: place objects for all units.
 
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-// 戦闘中の全ユニットの絵を用意する（いなくなったユニットの絵は解放）
+// Prepare battle graphics for all units, releasing those of departed units.
 //--------------------------------------------------------------------------
 void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 list[14];

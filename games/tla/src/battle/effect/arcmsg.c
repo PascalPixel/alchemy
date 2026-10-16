@@ -67,7 +67,7 @@ void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
 void Func_080e1154(struct ArcEffectObject *obj);
 
-// エナジー演出 16：使う者が回りながら弧の粒を降らせ、点滅して終わる
+// Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleFx_RunEffect16(void) {
   struct ArcScene *scene;
   struct ArcEffectObject *object;
@@ -131,7 +131,7 @@ void BattleFx_RunEffect16(void) {
   object->callback = NULL;
   object->angle = angle;
 
-  // 70 フレーム、5 フレームの周期で flags に 2 を立てては戻す
+  // For 70 frames, set and clear flags bit 2 on a five-frame cycle.
   for (count = 0; count < 70; count++) {
     phase = count % 5;
     if (phase == 0) {

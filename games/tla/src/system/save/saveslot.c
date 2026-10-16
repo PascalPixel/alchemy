@@ -20,7 +20,8 @@ s32 Func_08042f10(s32 slot, void *buffer);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Audio_PlayCue(s32 cue);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版の far call 表では、同じ処理へ届く口の名前が違う
+// Spanish and Italian far-call tables name the entry to the same routine
+// differently.
 void Object_BuildRecordSnapshotFar(void);
 #define ObjectTable_SnapshotFar Object_BuildRecordSnapshotFar
 #else
@@ -29,7 +30,7 @@ void ObjectTable_SnapshotFar(void);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
-// 番号で指定したファイルへ記録する
+// Save to the file specified by index.
 s32 SaveState_SaveToSlot(u32 slot) {
   s32 result = 0;
   s32 found;

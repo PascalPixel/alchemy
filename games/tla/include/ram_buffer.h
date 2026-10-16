@@ -11,8 +11,8 @@
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-// overlay 693 の Func_02000c14 はフレームカウンタを定数アドレスで読む
-// (2 回のテストがそれぞれアドレスを読み直す。シンボルでは 1 回にまとまる)
+// Overlay 693's Func_02000c14 reads the frame counter at a constant address.
+// Each test reloads the address; using the symbol combines the two loads.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
 struct BattleWork;

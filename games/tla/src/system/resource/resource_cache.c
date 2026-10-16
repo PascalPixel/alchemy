@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // resource_cache.c
-// リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
+// Resources: cache allocating OBJ VRAM in blocks.
 //--------------------------------------------------------------------------
 
 #include "resource.h"
@@ -9,14 +9,14 @@
 #include "iwram_call.h"
 #include "affine.h"
 
-// OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
-// gResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
-// キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
-// size が 16 以下のものは VRAM を持っていない
+// Divide OBJ character memory (from 0x06010000) into 512 blocks of 64 bytes;
+// gResourceBlockOwners records each block's owner (cache index).
+// There are 96 cache entries; byte offset 0xffff marks a free entry.
+// Entries with size <= 16 do not own VRAM.
 
 //--------------------------------------------------------------------------
-// キャッシュ no に、今の大きさのまま src を写しなおす
-// 戻り値 : OBJ のタイル番号
+// Copy src into cache no again, retaining its current size.
+// Return the OBJ tile index.
 //--------------------------------------------------------------------------
 s32 VramCache_Reload(s32 no, s32 src) {
 #if GAME_TLA

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// テキストワークの末尾: 日本語版は表が 0x200 バイト短い
+// Text-workspace tail: the Japanese edition's table is 0x200 bytes shorter.
 #if defined(TLA_EDITION_JA)
 #define TEXT_WORK_TAIL 0x1184
 #else

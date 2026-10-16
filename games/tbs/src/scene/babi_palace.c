@@ -38,25 +38,27 @@ struct OwnerState {
   u16 pp;
 };
 
+// Restores active owners' HP/PP, rejoins the companions and restores inventory.
 static __inline__ void Party_RestoreAll(void) {
   s16 owners[8];
   struct OwnerState *state;
-  s32 cnt;
+  s32 ownerCount;
   s32 i;
 
-  cnt = FieldParty_ListActiveOwners(owners);
-  for (i = 0; i < cnt; i++) {
+  ownerCount = FieldParty_ListActiveOwners(owners);
+  for (i = 0; i < ownerCount; i++) {
     state = UnitGet(owners[i]);
     state->hp = state->maxHp;
     state->pp = state->maxPp;
     Engine_OwnerRecalculateRatios(owners[i]);
   }
-  Party_AddActiveOwner(1);
-  Party_AddActiveOwner(2);
-  Party_AddActiveOwner(3);
+  Party_AddActiveOwner(GARET);
+  Party_AddActiveOwner(IVAN);
+  Party_AddActiveOwner(MIA);
   Engine_InventorySnapshotRestore();
 }
 
+// Selects the palace interior's entrance table.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
     return gBabiPalaceEntrances2;
@@ -64,10 +66,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gBabiPalaceEntrancesOther;
 }
 
+// Returns the empty region table through the legacy encoded-pointer API.
 s32 BabiPalace_GetRegions(void) { return (s32)gBabiPalace_EmptyTable; }
 
+// Returns exits through the same encoded-pointer API.
 s32 BabiPalace_GetExits(void) { return (s32)gBabiPalace_MessageTable; }
 
+// Selects the palace's occupants before, during or after Colosso.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
     return gBabiPalacePlacements2;
@@ -81,18 +86,20 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gBabiPalacePlacementsOther;
 }
 
-static void FieldScene_RunBranchedSteps1FF1(s32 a) {
-  s32 k = MsgTolbiRunBabisSoldiers;
+// Selects the adjacent answer to the question about Babi's soldiers.
+static void FieldScene_RunBranchedSteps1FF1(s32 actorId) {
+  s32 question = MsgTolbiRunBabisSoldiers;
 
-  Engine_EventSetMessage(k);
-  Engine_EventOpenMessage(a, 0);
+  Engine_EventSetMessage(question);
+  Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0)
-    Engine_EventSetMessage(k + 1);
+    Engine_EventSetMessage(question + 1);
   else
-    Engine_EventSetMessage(k + 2);
-  Engine_EventShowMessage(a, 0);
+    Engine_EventSetMessage(question + 2);
+  Engine_EventShowMessage(actorId, 0);
 }
 
+// Moves the attendant aside for the beds, or returns the attendant afterward.
 static void RunOpeningAuxiliarySequence(s32 a) {
 
   struct FieldActor *ret;
@@ -150,41 +157,43 @@ static void RunOpeningAuxiliarySequence(s32 a) {
   Event_End();
 }
 
-static void BabiPalace_OfferRest(s32 a0) {
-  s32 base6_2241;
+// Offers the beds once, then keeps their invitation available.
+static void BabiPalace_OfferRest(s32 actorId) {
+  s32 question;
 
   Event_Begin();
   Battle_ResetEffectCounter();
   if (GameFlag_IsSet(0x966) == 0) {
     GameFlag_Set(0x966);
     GameFlag_Set(0x967);
-    Actor_FaceDirection(a0, FACING_SOUTH, 0);
+    Actor_FaceDirection(actorId, FACING_SOUTH, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Event_Wait(20);
-    base6_2241 = MsgTolbiCameRestBefore;
-    Event_SetMessage(base6_2241);
-    Event_OpenMessage(a0, 0);
+    question = MsgTolbiCameRestBefore;
+    Event_SetMessage(question);
+    Event_OpenMessage(actorId, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
       Event_Wait(10);
-      Event_SetMessage((base6_2241 + 1));
+      Event_SetMessage(question + 1);
     } else {
-      Event_SetMessage((base6_2241 + 2));
+      Event_SetMessage(question + 2);
     }
-    Event_ShowMessage(a0, 0);
+    Event_ShowMessage(actorId, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(a0, 3);
+    Actor_SetAnimationAndWait(actorId, 3);
     Event_Wait(20);
-    Actor_SetSpeed(a0, 0x10000, 0x8000);
-    Actor_WalkByAndWait(a0, -64, 0);
-    Actor_WalkByAndWait(a0, 0, 48);
+    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Actor_WalkByAndWait(actorId, -64, 0);
+    Actor_WalkByAndWait(actorId, 0, 48);
   } else {
     Event_SetMessage(MsgTolbiTiredFeelFreeRest);
-    Event_OpenMessage(a0, 0);
+    Event_OpenMessage(actorId, 0);
   }
   Event_End();
 }
 
+// Chooses the answer and emote to the question about entering Colosso.
 static void FieldScene_RunBranchedSteps2006(s32 a) {
   s32 k = MsgTolbiPlanningEnterColosso;
 
@@ -202,6 +211,7 @@ static void FieldScene_RunBranchedSteps2006(s32 a) {
   Engine_EventShowMessage(a, 0);
 }
 
+// Animates the actor's indigestion while continuing the selected dialogue.
 static void RunMiddleAuxiliarySequence(s32 a) {
   struct FieldActor *obj;
   const s32 *q;
@@ -239,6 +249,7 @@ static void RunMiddleAuxiliarySequence(s32 a) {
   Event_End();
 }
 
+// Cancels Psynergy once for the palace-escape conversation.
 static void EV06_PSYNERGY(s32 unused0, s32 a1) {
   Event_Begin();
   Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
@@ -259,6 +270,7 @@ static void EV06_PSYNERGY(s32 unused0, s32 a1) {
   Event_End();
 }
 
+// Selects the adjacent answer to the question about meeting Babi.
 static void SceneDialogue_ShowMessage22a8Branch(s32 a) {
   s32 k = MsgTolbiMeetBabi;
 
@@ -271,6 +283,7 @@ static void SceneDialogue_ShowMessage22a8Branch(s32 a) {
   Engine_EventShowMessage(a, 0);
 }
 
+// Asks about Karagol's eastern shores and selects the matching answer.
 static void SceneDialogue_RunChoiceSequence22ab(s32 no) {
   s32 msg = MsgTolbiEasternShoresKaragol;
 
@@ -283,6 +296,7 @@ static void SceneDialogue_RunChoiceSequence22ab(s32 no) {
   Engine_EventShowMessage(no, 0);
 }
 
+// Offers the Cloak Ball, granting it and setting its chest flag on acceptance.
 static void EV16_TALK(void) {
   s32 msg;
 
@@ -316,6 +330,7 @@ static void EV16_TALK(void) {
   }
 }
 
+// Wakes the rested party, handles the choice dialogue and rejoins companions.
 static void FieldScene_RunScene3b8SequenceB(void) {
   struct FieldActor *record;
 
@@ -460,6 +475,7 @@ static void FieldScene_RunScene3b8SequenceB(void) {
   Event_End();
 }
 
+// The bed search stages the party's rest and wake-up dialogue the first time.
 static void EV70_SEARCH(void) {
   struct FieldActor *record;
   s16 dir;
@@ -624,14 +640,15 @@ static void EV70_SEARCH(void) {
   Event_End();
 }
 
+// Stages Iodem's conversation with actors 21 and 22, then walks them away.
 static void EV60_TOUCH(void) {
   GameFlag_Set(2411);
   Event_Begin();
   Battle_ResetEffectCounter();
   Event_SetMessage(MsgTolbiIodemIodem);
   Actor_WalkToAndWait(0, 520, 424);
-  Actor_FaceDirection(0, 57344, 0);
-  Camera_MoveTo(36700160, -1, 24117248, 1);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+  Camera_MoveTo(PIXELS(560), -1, PIXELS(368), 1);
   Camera_WaitForMove();
   Actor_SetSpeed(20, 65536, 32768);
   Actor_WalkByAndWait(20, 40, 0);
@@ -877,6 +894,7 @@ static void EV60_TOUCH(void) {
   Event_End();
 }
 
+// Wakes the party through a brightness transition and branching conversation.
 static void FieldScene_RunBranchingActorSequence(void) {
   struct FieldActor *actor;
   s32 step;
@@ -1088,6 +1106,7 @@ static void FieldScene_RunBranchingActorSequence(void) {
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
+  // Wait for the player to leave the bed before the companions rejoin.
   while ((gKeysHeld & KEYS_DPAD) == 0) {
     Task_Wait(1);
   }
@@ -1149,6 +1168,7 @@ static void FieldScene_RunBranchingActorSequence(void) {
   Event_End();
 }
 
+// Gathers the waiting companions for the palace conversation and departure.
 static void FieldScene_RunMainCutsceneSequence(void) {
   s16 *position;
 
@@ -1188,6 +1208,7 @@ static void FieldScene_RunMainCutsceneSequence(void) {
   Event_Wait(30);
   Event_ShowMessage(14, 0);
 
+  // The reward branch selects a different starting point in the dialogue.
   if (GameFlag_IsSet(0x951) != 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(20, 3);
@@ -1979,6 +2000,7 @@ static void FieldScene_RunMainCutsceneSequence(void) {
   Event_Wait(30);
   Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
   Event_Wait(20);
+  // The party tracks each departing speaker before gathering back together.
   Object_LinkObjectAndSetCallback(0, 20);
   Object_LinkObjectAndSetCallback(1, 20);
   Object_LinkObjectAndSetCallback(3, 20);
@@ -2066,6 +2088,7 @@ static void FieldScene_RunMainCutsceneSequence(void) {
   Event_End();
 }
 
+// Opens the touched door's map layer, walks through and restores the layers.
 static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
 
@@ -2097,6 +2120,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Event_End();
 }
 
+// Animates the cell-step door and leaves through exit 2.
 static void EV02_TOUCH(void) {
   Event_Begin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -2108,6 +2132,7 @@ static void EV02_TOUCH(void) {
   Event_End();
 }
 
+// Gives actor 8's yes/no exchange, with actor 9 reacting to the refusal.
 static void RunSupplementalSequenceOne(void) {
   s32 p;
   GameFlag_Set(2412);
@@ -2153,6 +2178,7 @@ static void RunSupplementalSequenceOne(void) {
   Event_End();
 }
 
+// Thanks the party once, then directs them to Babi at the Colosseum.
 static void SceneDialogue_ThankForSavingBabi(void) {
   if (GameFlag_IsSet(0x96d) == 0) {
     GameFlag_Set(0x96d);
@@ -2164,6 +2190,7 @@ static void SceneDialogue_ThankForSavingBabi(void) {
   }
 }
 
+// Asks about the warriors who stayed, then shows the chosen answer.
 static void SceneDialogue_AskIfLeavingPalace(s32 a) {
   s32 k = MsgTolbiWarriorsWhoStayed;
 
@@ -2178,6 +2205,7 @@ static void SceneDialogue_AskIfLeavingPalace(s32 a) {
   }
 }
 
+// Shows the two lines describing the well's clean water.
 static void EV90_SEARCH(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -2185,6 +2213,7 @@ static void EV90_SEARCH(void) {
   Engine_EventEnd();
 }
 
+// Selects events by palace scene and the same Colosso state as the placements.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
@@ -2204,6 +2233,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gBabiPalaceEventsOther;
 }
 
+// Restores door layers, the Cloak Ball display and entrance-specific scenes.
 s32 BabiPalace_ApplyEntryState(void) {
   struct FieldActor *actor;
   struct FieldSprite *sprite;

@@ -55,7 +55,7 @@ void Func_020009a4(void) {
   }
 }
 
-// 部屋ごとの表を返す
+// Return the table for the current room.
 const void *Func_020009dc(void) {
   s16 scene = gPartyState.scene;
 

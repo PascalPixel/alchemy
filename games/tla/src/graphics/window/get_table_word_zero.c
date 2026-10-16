@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // get_table_word_zero.c
-// ウィンドウ：固定のタイルの表の先頭を返す
+// Windows: return the first entry of the fixed tile table.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -22,7 +22,7 @@ extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_Decompress4bppCodeSize[];
 
 //--------------------------------------------------------------------------
-// gUi_FixedTileBlocks[0] を返す（0 以外の no も 0 として読む）
+// Return gUi_FixedTileBlocks[0], treating every no value as zero.
 //--------------------------------------------------------------------------
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)

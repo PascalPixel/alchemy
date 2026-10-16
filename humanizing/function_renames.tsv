@@ -9,3 +9,58 @@ round	lane	source	old_name	new_name	evidence
 1	10	games/tbs/src/scene/vault_interiors_revisit.c	SceneActor_RunActorStep	Vault_ShowActorDialogue	Helper selects animation then shows selected actor message; five local callers
 1	10	games/tbs/src/scene/vault_interiors_revisit.c	FieldScene_RunActor16Sequence	Vault_GreetReturningParty	MsgVaultIsaacYouveComeBackVault and party greeting choice; talk row and Mind Read wrapper
 1	10	games/tbs/src/scene/vault_interiors_revisit.c	SceneDialogue_RunActor16Line	Vault_DiscussThievesRevenge	MsgVaultThoseGuysReallyWantedRevenge; actor16 follow-up talk row
+1	11	games/tbs/src/scene/hammet_palace.c	Scene_AdvanceStep	HammetPalace_AdvanceMessage	Only operation increments gEventWork->message; W7 collision search empty
+1	11	games/tbs/src/scene/hammet_palace.c	ConfigureFourSceneChannelsAndHandoff	HammetPalace_FacePartyOutward	Calls FaceDirection on four party actors then optional frame wait; W7 search empty
+1	11	games/tbs/src/scene/hammet_palace.c	SceneChannel_ConfigureUniformAndHandoff	HammetPalace_FacePartyNorth	Four party actors face FACING_NORTH then optional wait; W7 search empty
+1	11	games/tbs/src/scene/suhalla.c	MoveProp	Suhalla_OpenGrownPropCell	Only copies open collision cell; both event tables dispatch ABILITY_GROWTH; W7 search empty
+1	11	games/tbs/src/scene/mccoy_palace.c	FieldScene_RunSlotSubjectBranch	McCoyPalace_ClaimReward	Presents item; gives it; sets claimed and chest flags only on success; W7 search empty
+1	11	games/tbs/src/scene/mccoy_palace.c	FieldScene_RunChestStep	McCoyPalace_ShowUnavailableChest	Dispatches empty versus locked chest message from selected chest flag; W7 search empty
+1	11	games/tbs/src/scene/vault_revisit.c	ActorPresentation_RunActorModeOneThenZero	VaultRevisit_ShowStandingActorMessage	Sets animation1 and shows currently selected message; never switches to animation0; W7 search empty
+1	11	games/tbs/src/scene/vault_revisit.c	FieldScene_RunScene385SequenceA	VaultRevisit_ReadJailRumor	Mind Read event registrations for actor16 and jail-rumor messages; W7 search empty
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV16_TALK	BilibinInteriors_TalkToWeaponShopkeeper	Shop row7 has equipment group1 (weapons); dialogue explicitly says our weapons.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV18_TALK	BilibinInteriors_TalkToItemShopkeeper	Shop row9 has group0 with consumable stock; actor18 opens that row.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV17_TALK	BilibinInteriors_TalkToArmorShopkeeper	Shop row8 has equipment group2 (armor); actor17 opens that row.
+1	12	games/tbs/src/scene/bilibin_interiors.c	FieldScene_ConfigureActor21Scene	BilibinInteriors_TalkToWorriedChef	Actor21 says he cannot focus on cooking because his hometown Kolima is cursed; actor22 calls him head chef.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV24_TALK	BilibinInteriors_TalkToHungryDiner	English messages after Grrr describe stomach growling and waiting for dinner.
+1	12	games/tbs/src/scene/bilibin_interiors.c	FieldScene_RunActor27Sequence	BilibinInteriors_AskAboutTreeSpirit	The first message asks whether a tree spirit can curse a person.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV08_TALK	BilibinInteriors_AskAboutHolyTree	The first message asks whether the holy tree survived.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV13_TALK	BilibinInteriors_AskAboutSilk	The first message asks what silk is.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV19_TALK	BilibinInteriors_TalkToInnkeeper	The service call opens inn row2 for actor19.
+1	12	games/tbs/src/scene/bilibin_interiors.c	FieldScene_RunActor21SequenceOnFlag300	BilibinInteriors_TalkToBusyChef	Actor21 calls out meal orders once then refers diners to the waitress.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV22_TALK	BilibinInteriors_TalkToKitchenWorker	Actor22 complains about the head chef; earlier mind-read says he is new and should start cooking.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV23_TALK	BilibinInteriors_TalkToWaitress	Actor23 describes serving water and silverware; mind-read mentions handling customer complaints.
+1	12	games/tbs/src/scene/bilibin_interiors.c	FieldScene_RunActor27Message	BilibinInteriors_TalkAboutMeal	The first message asks whether the party enjoys the meal.
+1	12	games/tbs/src/scene/bilibin_interiors.c	EV10_PSYNERGY	BilibinInteriors_ReadImilAdmirerMind	Both messages concern visiting or admiring someone in Imil; no identity or meaning of flag3 inferred.
+1	12	games/tbs/src/scene/suhalla_gate.c	EV13_TALK	SuhallaGate_StartDjinnBattle	BattleFx_SetPhaseRequest proves actor13 and Djinni26; exact Djinni identity remains neutral.
+1	12	games/tbs/src/scene/suhalla_gate.c	EV03_TOUCH	SuhallaGate_AnimateExit	Both2x2 copy frames and frame waits remain ordered; exit trigger local named.
+1	12	games/tbs/src/scene/suhalla_gate.c	Dialogue_ShowMessages8fbAnd8fc	SuhallaGate_ClearRouteFlagsAndExit	Function clears route flags rather than showing messages; corrected private name.
+1	12	games/tbs/src/scene/suhalla_gate.c	Scene_RunPrimarySequence	SuhallaGate_RepositionGuards	Two soldiers move to passage before localized cell copies; no unsupported gate-opening meaning inferred.
+1	12	games/tbs/src/scene/suhalla_gate.c	Scene_RunScene3c3SequenceA	SuhallaGate_InspectAttackWithIodem	Dialogue identifies actor11 as Iodem; wounded soldiers explain attack; existing branching/waits retained.
+1	12	games/tbs/src/scene/suhalla_gate.c	EV09_TALK	SuhallaGate_TalkToGateGuard	Raw u16 owner+472 message increment replaced actual gEventWork->message +=2; EN entire normalized ELF exact.
+1	12	games/tbs/src/scene/suhalla_gate.c	Scene_RunActorTenRepeatedMotion	SuhallaGate_BlinkAndHideSoldier	Six slow/twelve fast blinks then hiding retained; disappearance not labeled death.
+1	12	games/tbs/src/scene/kalay_interiors.c	EV08_TALK_2	KalayInteriors_TalkToPriest	Engine_SanctumOpen proves priest service; retained original16-bit facing predicate after measured macro mismatch.
+1	12	games/tbs/src/scene/kalay_interiors.c	EV08_TALK	KalayInteriors_TalkToInnkeeper	Engine_InnOpen row7 and empty-inn/tour-group dialogue prove role.
+1	12	games/tbs/src/scene/kalay_interiors.c	EV12_TALK	KalayInteriors_AskPartyToFinishMeal	Message asks tour guests to finish eating before departure; flag910 records conversation.
+1	12	games/tbs/src/scene/kalay_interiors.c	EV16_TALK	KalayInteriors_AskAboutSouthernContinent	Message asks about continent south of Tolbi.
+1	12	games/tbs/src/scene/kalay_interiors.c	FieldScene_RunArrivalPlacement	KalayInteriors_OpenDoorAndExit	Triggers12/13/16/19 select four door animations, stop placed actors then walk leader out.
+1	12	games/tbs/src/scene/kalay_interiors.c	SceneState_ClearSlotsBySubState	KalayInteriors_ApplyRoomState	Entrance groups select tile repair or guest removals after flag911; no guessed meanings for individual guest IDs.
+1	12	games/tbs/src/scene/goma_entrance.c	FieldScene_RequestAndWaitFrames	GomaEntrance_ShowActorMessageAndWait	Selects actor, displays its queued message, then waits frames.
+1	12	games/tbs/src/scene/goma_entrance.c	EV09_PSYNERGY	GomaEntrance_UpdateMovableObjectTiles	Actor9 callback computes affected map cells from movable object position.
+1	12	games/tbs/src/scene/goma_entrance.c	EV10_PSYNERGY	GomaEntrance_SetMovedObjectUnderfoot	Actor10 callback records moved-object underfoot tile.
+1	12	games/tbs/src/scene/goma_entrance.c	FieldScene_RunScene387SequenceD	GomaEntrance_PushObjectSideways	Touch triggers5/6 choose opposite horizontal push directions.
+1	12	games/tbs/src/scene/goma_entrance.c	Resource387_NoOpCallbackA	GomaEntrance_NoOpA	Empty unreferenced static callback.
+1	12	games/tbs/src/scene/goma_entrance.c	Resource387_NoOpCallbackB	GomaEntrance_NoOpB	Empty unreferenced static callback.
+1	12	games/tbs/src/scene/goma_entrance.c	EV16_PSYNERGY	GomaEntrance_RecordWhirlwindUse	Callback sets the flag tracking Whirlwind use.
+1	12	games/tbs/src/scene/goma_entrance.c	FieldScene_RunScene387SequenceA	GomaEntrance_RecruitIvan	Dialogue explicitly recruits Ivan (actor2).
+1	12	games/tbs/src/scene/goma_entrance.c	Overlay387_ConfigureActorEightAtDepth	GomaEntrance_LeapObjectIntoPlace	Configures actor8 leap depth/trajectory.
+1	12	games/tbs/src/scene/goma_entrance.c	GomaEntrance_SetEntranceFlag	GomaEntrance_RunWhirlwindEffect	Loads ability78=Whirlwind resources and runs its effect.
+1	12	games/tbs/src/scene/goma_entrance.c	OverlayObject_TurnStateByEighth	GomaEntrance_RotateLeapingObject	Updates facing during the leaping object hook.
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	OverlayObject_InitWithRandomFields	TolbiShipMast_InitializeDriftingActor	Initializes seven actors then installs gTolbiShipMast_DriftActions
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	SceneData_GetDifferenceOfPairSums	TolbiShipMast_GetFlagPairDifference	Returns group0 plus group2 minus group1 minus group3
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	SceneData_GetValueByFirstSetFlag	TolbiShipMast_GetFlagGroupValue	Selects one of four nine-flag ranges and returns first set flag table value
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	Scene_RunFourActorStagingSequence	TolbiShipMast_RunAvastScene	Four-actor staging and MsgTolbiShipAvast lookout reaction
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	FieldScene_RunActorNinePresentationCycles	TolbiShipMast_ShowMonsters	Repeated actor9 approaches then MsgTolbiShipMonsters2
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	FieldScene_RunPrimarySequence	TolbiShipMast_RunLandingSequence	Uses gTolbiShipMast_LandingObjects and stages both actors
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	FieldScene_RunSevenActorEnsemble	TolbiShipMast_AnnounceLand	Seven-actor movement before MsgTolbiShipLandHo
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	SceneActor_SetFacingFromSample	TolbiShipMast_RandomizeLookoutFacing	Random sample selects lookout-script facing on two values
+1	13	games/tbs/src/scene/tolbi_ship_mast.c	OverlayObject_ShrinkScaleThenStop	TolbiShipMast_ShrinkAndStopActor	Shrinks scales then clears position/velocities in seven ensemble scripts

@@ -133,7 +133,7 @@ LAYOUT_OFFSET_GUARD(GameState_StartStamp, struct GameState, startStamp, 0x2b8);
 extern struct GameState gGameState;
 #endif
 
-// 戦闘開始の種類を設定
+// Set the battle start type.
 /* A statement macro (S2: a layer, 34 sites): written as one, its store stays in
  * place at every use; as a plain assignment, tbs-en differs. */
 #define Battle_SetStart(mode)                                                  \

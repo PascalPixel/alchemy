@@ -35,8 +35,8 @@ struct ScriptTable {
   u8 *script[3];
 };
 
-// 柱の破片が struct FieldActor を読む見方（speed と acceleration
-// は面ごとの速さ、work は符号付きの面番号）
+// A pillar fragment's FieldActor view: speed and acceleration move its two
+// plane axes, and work is the signed plane selector.
 struct PillarEffect {
   u8 unk00[8];
   s32 x;
@@ -54,15 +54,18 @@ struct PillarEffect {
 
 enum PillarEffectPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
 
+// Actor 13 reacts before actor 12 starts Djinni battle 40.
 static void EV12_TALK(void) {
   Actor_ShowEmote(13, 256, 0);
   Engine_ActorJump(13, 2, 0);
   BattleFx_SetPhaseRequest(12, 40);
 }
 
+// Advances the fragment's selected coordinate plane and keeps its targets in
+// step.
 static void
 SceneEffect_AdvancePositionByAxisMode(union FieldObject *fieldObject) {
   struct PillarEffect *effect = (struct PillarEffect *)fieldObject;
@@ -90,21 +93,23 @@ SceneEffect_AdvancePositionByAxisMode(union FieldObject *fieldObject) {
   }
 }
 
+// Applies child value 15 at the end of a fragment's lifetime.
 static s32 OverlayObject_ApplyValue15(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(actor, 15);
   return 0;
 }
 
-static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4,
-                                         s32 flags, s32 layer) {
+// Creates a fragment with two axis rates, a script and packed plane/priority.
+static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 firstRate,
+                                         s32 secondRate, s32 flags, s32 layer) {
   struct ScriptTable table;
   struct FieldActor *leader;
   struct FieldActor *obj;
   struct FieldSprite *spr;
   u32 selection;
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   table = *(struct ScriptTable *)gGomaPillar_PillarScripts;
   obj = Engine_ObjectCreate(222, x, y, z);
   if (obj == 0)
@@ -116,8 +121,8 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4,
   obj->motionFlags = 0;
   spr->flags = 0;
   obj->update = SceneEffect_AdvancePositionByAxisMode;
-  obj->speed = a3;
-  obj->acceleration = a4;
+  obj->speed = firstRate;
+  obj->acceleration = secondRate;
   obj->work = *(u16 *)&layer;
   selection = (u32)layer >> 16;
   switch (selection) {
@@ -134,19 +139,24 @@ static void GomaPillar_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4,
   }
 }
 
+// Returns entrances through the overlay's byte-pointer API.
 u8 *SceneData_GetScriptTable(void) { return gGomaPillar_Scripts; }
 
+// This scene has no exit regions.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the exits to the surrounding Goma scenes.
 u8 *SceneData_GetMessageTable(void) { return gGomaPillar_Messages; }
 
+// Returns the placed pillar actors.
 u8 *SceneData_GetActorTable(void) { return gGomaPillar_Actors; }
 
+// Copies the moved pillar's collision pattern and records its selected side.
 static void EV08_PSYNERGY(void) {
   struct FieldActor *actor;
   s32 x;
-  s32 a4;
-  s32 a5;
+  s32 destinationX;
+  s32 destinationZ;
 
   actor = Object_GetById(8);
   x = actor->x.fixed;
@@ -155,19 +165,20 @@ static void EV08_PSYNERGY(void) {
   x >>= 20;
   Engine_EventBegin();
   if (x == 20) {
-    a4 = 18;
-    a5 = 6;
-    Map_CopyCellAttributes(18, 40, 6, 3, a4, a5);
+    destinationX = 18;
+    destinationZ = 6;
+    Map_CopyCellAttributes(18, 40, 6, 3, destinationX, destinationZ);
     Engine_GameFlagClear(0x302);
   } else {
-    a4 = 18;
-    a5 = 6;
-    Map_CopyCellAttributes(24, 40, 6, 3, a4, a5);
+    destinationX = 18;
+    destinationZ = 6;
+    Map_CopyCellAttributes(24, 40, 6, 3, destinationX, destinationZ);
     Engine_GameFlagSet(0x302);
   }
   Engine_EventEnd();
 }
 
+// Emits falling fragments every eighth frame, twice on each sixteenth frame.
 static void FieldScene_RunPrimarySequence(void) {
   s32 flags;
   s32 a0;
@@ -224,17 +235,19 @@ static void FieldScene_RunPrimarySequence(void) {
 
 s32 gGomaPillar_Actor13Frames;
 
+// Breaks actor 9's pillar only after it has moved into column 25.
 static void EV09_PSYNERGY(void) {
   s32 kind;
   s32 zero;
-  s32 base;
+  void (*fragmentCallback)(void);
   s32 a0;
   s32 a2;
   struct FieldActor *rec4;
   struct FieldActor *r1;
-  s32 r2, r3;
+  struct FieldActor *spriteActor;
+  struct FieldActor *blendActor;
   struct FieldActor *r4, *r5;
-  s32 r6;
+  struct FieldActor *movedActor;
   struct FieldActor *r7, *rec7;
   s32 v1, v2, v3, t, u, n;
   struct FieldActor *p0;
@@ -246,15 +259,16 @@ static void EV09_PSYNERGY(void) {
     p0 = Object_GetById(11);
     zero = 0;
     p0->terrainId = 1;
-    r2 = (s32)Object_GetById(11);
-    Engine_ActorSetSpriteFlags(r2, 0);
+    spriteActor = Object_GetById(11);
+    Engine_ActorSetSpriteFlags(spriteActor, 0);
     Engine_ActorSetChildValue(11, 14);
-    r3 = (s32)Object_GetById(11);
-    Engine_ObjectSetBlendMode(r3, 1);
+    blendActor = Object_GetById(11);
+    Engine_ObjectSetBlendMode(blendActor, 1);
     Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
     Engine_EventWait(10);
-    base = (s32)FieldScene_RunPrimarySequence;
-    FieldScheduler_AddCallback(base, 0xc80);
+    // Start the falling fragments before moving the pillar out of the way.
+    fragmentCallback = FieldScene_RunPrimarySequence;
+    FieldScheduler_AddCallback(fragmentCallback, 0xc80);
     Engine_AudioPlayCue(141);
     Engine_ActorSetDestinationOffset(9, 1, 0);
     Engine_ActorWaitForMove(9);
@@ -269,9 +283,9 @@ static void EV09_PSYNERGY(void) {
     Engine_ActorSetSpeed(9, 0x28000, 0x4000);
     Engine_AudioPlayCue(0x120);
     Engine_ActorSetDestination(9, 0x1a0, 200);
-    r6 = (s32)Object_GetById(9);
-    Engine_ActorSetSpriteFlags(r6, 0);
-    Engine_TaskRemoveCallback(base);
+    movedActor = Object_GetById(9);
+    Engine_ActorSetSpriteFlags(movedActor, 0);
+    Engine_TaskRemoveCallback(fragmentCallback);
     Engine_EventWait(12);
     Engine_AudioPlayCue(189);
     rec7 = Object_GetById(9);
@@ -293,6 +307,7 @@ static void EV09_PSYNERGY(void) {
     n = -n;
     GomaPillar_SpawnPillarEffect(a0, rec4->y.fixed, a2, zero, n, v3, zero);
     Engine_EventWait(20);
+    // Wait for the work-value transition before replacing the map cells.
     Engine_AudioPlayCue(154);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -305,6 +320,7 @@ static void EV09_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// At cell (38,14), bursts actor 10's pillar into six planar fragments.
 static void FieldScene_RunPillarBurst(void) {
   s32 x;
   s32 z;
@@ -337,12 +353,14 @@ static void FieldScene_RunPillarBurst(void) {
   }
 }
 
+// Runs the pillar burst as an event after Psynergy moves it into place.
 static void EV10_PSYNERGY(void) {
   Engine_EventBegin();
   FieldScene_RunPillarBurst();
   Engine_EventEnd();
 }
 
+// Advances the staged movement, then checks the same pillar burst position.
 static void EV10_SCRIPT(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -350,6 +368,7 @@ static void EV10_SCRIPT(void) {
   Engine_EventEnd();
 }
 
+// Jumps the gap: international editions use the shared forward-jump routine.
 static void EV20_TOUCH(void) {
 #if EDITION_INTERNATIONAL
   Field_TryJumpForward();
@@ -388,17 +407,19 @@ static void EV20_TOUCH(void) {
 #endif
 }
 
+// Returns the scene's talk, Psynergy and raised-event table.
 u8 *SceneData_GetExtraTable(void) { return gGomaPillar_Extras; }
 
+// Times actor 13's idle reactions until the Djinni event is no longer pending.
 static void GomaPillar_DriveActor13Idle(void) {
   struct EventWork *work;
-  s32 t;
+  s32 frame;
 
   work = gEventWork;
-  t = ++gGomaPillar_Actor13Frames;
-  switch (t) {
+  frame = ++gGomaPillar_Actor13Frames;
+  switch (frame) {
   case 60:
-    Actor_FaceDirection(13, 0x2000, 0);
+    Actor_FaceDirection(13, FACING_SOUTHEAST, 0);
     Engine_ActorShowEmote(13, 2, 0);
     break;
   case 180:
@@ -416,12 +437,13 @@ static void GomaPillar_DriveActor13Idle(void) {
     work->raisedTrigger = 99;
 }
 
+// Ends the idle callback, shows actor 13's reaction and walks the actor away.
 static void EV99_RAISED(void) {
   Engine_TaskRemoveCallback(GomaPillar_DriveActor13Idle);
   Engine_EventBegin();
   Actor_ShowEmote(13, 0x100, 30);
   Engine_ActorRunRepeatedMotion(13, 2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(13, 0);
   Engine_ActorSetAnimationAndWait(13, 3);
@@ -437,6 +459,7 @@ static void EV99_RAISED(void) {
   Engine_EventEnd();
 }
 
+// Restores moved/broken pillars and starts the post-Djinni reaction if needed.
 s32 FieldScene_SetupPillarsOnEntry(void) {
   struct FieldActor *actor;
   struct EventWork *work;
@@ -482,7 +505,7 @@ s32 FieldScene_SetupPillarsOnEntry(void) {
   return 0;
 }
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// One step per facing: X pixels in the high halfword, Z pixels in the low half.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

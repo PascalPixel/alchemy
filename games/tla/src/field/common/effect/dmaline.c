@@ -14,7 +14,7 @@ struct DmaFxPages {
   u8 page;
 };
 
-// 毎フレーム: 今のページの先頭を書き、残りを HBlank DMA に任せる
+// Per frame: write the current page's first entry; HBlank DMA handles the rest.
 void Func_080d5ff8(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;
@@ -37,8 +37,8 @@ void Func_080d5ff8(void) {
     do {
       control = dma[5];
     } while (0);
-    dma[5] = control & 0xc5ff; // 開始タイミングとリピートを消す
-    dma[5] &= 0x7fff;          // 止める
+    dma[5] = control & 0xc5ff; // Clear start timing and repeat.
+    dma[5] &= 0x7fff;          // Stop.
     target = dest;
     /* FAKEMATCH: the barrier copies the transfer destination before the last
      * control read, as the native does; plain, the copy follows the first line

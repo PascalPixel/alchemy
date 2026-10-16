@@ -5,7 +5,7 @@ Data_08129828:
 	.global Data_08129830
 Data_08129830:
 	.4byte 0x04e, 0x44e, 0x84e, 0xc4e
-@ 2 個ずつの組、-1 で終わる列が 2 本
+@ Two sequences of pairs, each terminated by -1.
 	.2byte 0, 0
 	.2byte 1, 1
 	.2byte 2, 2

@@ -1,6 +1,6 @@
 	.section .rodata
-@ 色変換表とバイト置換表の二つ目の写し (gResourceSlot_ConversionTables から
-@ Data_080209a8 の終わりまでと同じ並び)
+@ Second copy of the color conversion and byte remap tables, matching the sequence
+@ from gResourceSlot_ConversionTables through the end of Data_080209a8.
 	.global Data_080c89cc
 Data_080c89cc:
 	.incbin "games/common/src/system/resource/colconv0.table"

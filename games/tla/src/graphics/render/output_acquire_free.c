@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // output_acquire_free.c
-// 表示：スプライト出力（RenderOutput）のあきリスト
+// Display: free list of sprite outputs (RenderOutput).
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -15,7 +15,7 @@
 #endif
 
 //--------------------------------------------------------------------------
-// あきリストの先頭をとり出す（なければ NULL）
+// Remove the first entry from the free list, or return NULL if empty.
 //--------------------------------------------------------------------------
 struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct UiRenderWork *work = UI_WORK;
@@ -23,7 +23,7 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
 
   if (out != NULL) {
     if (out->next == NULL)
-      work->freeOutputs.tailLink = &work->freeOutputs.head; // 空になった
+      work->freeOutputs.tailLink = &work->freeOutputs.head; // Now empty.
     work->freeOutputs.head = out->next;
     out->next = NULL;
   }
@@ -31,7 +31,7 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
 }
 
 //--------------------------------------------------------------------------
-// あきリストの最後に返す（outputs[] の外のものは返さない）
+// Return an entry to the free-list tail; reject entries outside outputs[].
 //--------------------------------------------------------------------------
 void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   struct UiRenderWork *work = UI_WORK;
@@ -47,7 +47,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
 }
 
 //--------------------------------------------------------------------------
-// outputs[] の 64 個をすべてつないで、あきリストにする
+// Link all 64 outputs[] entries into the free list.
 //--------------------------------------------------------------------------
 void UiWork_InitFreeList(void) {
   s32 n;

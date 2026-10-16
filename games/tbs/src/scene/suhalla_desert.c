@@ -33,7 +33,7 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
-// 前方宣言
+// Forward declarations.
 static void SuhallaDesert_ApplyVisitFlagBlend(void);
 static void SuhallaDesert_ApplyAltarFlagBlend(void);
 
@@ -58,11 +58,11 @@ static u16 sSuhallaDesertShownLevel;
 
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// 戦闘開始の種類 (battle/party/party.c と同じ)
+// Battle-start kinds, as in battle/party/party.c.
 
 struct FieldGlobals {
   u8 *map;

@@ -32,11 +32,11 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 static void ValeCave_ApplyEntryState(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -510,7 +510,7 @@ static void DialogueLayout_ConfigureRowsByFlag301(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
 static void EV20_TOUCH(void) {
@@ -647,7 +647,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

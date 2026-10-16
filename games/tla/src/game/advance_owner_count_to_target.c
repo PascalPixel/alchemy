@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // advance_owner_count_to_target.c
-// パーティ：キャラクターを指定のレベルまで上げる
+// Party: raise a character to a specified level.
 //--------------------------------------------------------------------------
 
 #include "owner_state.h"
@@ -31,12 +31,12 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
 }
 
 //--------------------------------------------------------------------------
-// 目標のレベルになるまで 1 つずつレベルアップさせ、能力を計算しなおす
-// unit : キャラクター番号
-// lv   : 目標のレベル
+// Level up one level at a time until the target, recalculating stats each time.
+// unit: character ID.
+// lv: target level.
 //--------------------------------------------------------------------------
 void Unit_LevelUpTo(s32 unit, s32 lv) {
-  u8 res[16]; // struct LevelUpResult の受け取り（使わない）
+  u8 res[16]; // Receives struct LevelUpResult (unused).
   s32 cur = ((struct BattleUnit *)UnitGet(unit))->level;
 
   while (cur < lv) {

@@ -35,7 +35,7 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-// 前方宣言
+// Forward declarations.
 static void Scene_BagJupiterStar(void);
 static void FieldScene_StagePairedActors(void);
 static void FieldScene_RunElementalStarDemand(void);
@@ -72,7 +72,7 @@ struct ObjectRuntime;
 
 extern struct SceneEvent gPlacement_Effects[];
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -80,7 +80,7 @@ static __inline__ void SkipMessage(s32 amount) {
   gEventWork->message += amount;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 s32 *SceneData_GetScriptTable(void) { return (s32 *)gPlacement_Scripts; }
@@ -2104,7 +2104,7 @@ static void SolStar_RiseActorFourteenSparks(void) {
   Engine_ActorSetSpriteFlags((struct Actor *)Object_GetById(14), 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/sol_star_ring_setup.h"
 
 s32 gEffectScript0[] = {

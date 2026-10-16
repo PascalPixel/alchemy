@@ -26,7 +26,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void SceneState_ApplyThreeRects(void);
 static void VaultCave_RaiseActorPriorities(void);
 static void VaultCave_EnableGroupAutomaticPriority(void);

@@ -11,7 +11,7 @@ extern char MsgItemCommandUse[];
 s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
-// コマンドの並び（command_states の添字）
+// Command order (indices into command_states).
 enum {
     ITEM_COMMAND_USE,
     ITEM_COMMAND_EQUIP,
@@ -23,7 +23,7 @@ enum {
 
 #define ITEM_TEXT_X 40
 
-// どうぐのコマンド 6 つを描く。使えないものは色 14
+// Draw six item commands; unavailable commands use color 14.
 void ItemMenu_DrawCmd(const s8 *command_states, s32 window)
 {
     s32 disabled;

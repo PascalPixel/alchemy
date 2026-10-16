@@ -20,11 +20,11 @@
 #include "field_event.h"
 #include "types.h"
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 extern s32 gStagedActor_DirectionSteps[];
 extern s32 gStagedActor_FootprintBounds[];
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "object_distance.h"
 
 static struct StagedActor *StagedActor_FindAtTile(s32 *position,

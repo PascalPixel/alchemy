@@ -1,7 +1,7 @@
 #define OWN_UiText_DrawCharacterAtOffsetFar
 //--------------------------------------------------------------------------
 // draw_message.c
-// ショップ：ウィンドウのメッセージを書きかえる
+// Shop: replace a window's message.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -24,8 +24,8 @@ void RenderOutput_ClearListFar();
 #endif
 
 //--------------------------------------------------------------------------
-// win を描きなおし、メッセージ message を左上から書く（win が 0
-// なら何もしない） 日本版は描きなおしたあと 1 フレーム待つ
+// Redraw win and write message from the top left; do nothing if win is 0.
+// The Japanese edition waits one frame after redrawing.
 //--------------------------------------------------------------------------
 void Shop_DrawMsg(s32 win, s32 message) {
   if (win != 0) {

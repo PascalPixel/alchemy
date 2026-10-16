@@ -4,7 +4,7 @@
 #include "types.h"
 
 // OAM buffer: sprite entries a routine builds by hand and DMA copies to OAM.
-// 手で組む OAM の写し 1 体分。DMA でそのまま OAM へ送る
+// One manually assembled OAM entry, copied directly to OAM by DMA.
 // （LuckyDice_Run、ReelGame_RunFrame、Title_UpdateIntroSprites）
 /* FAKEMATCH: the OAM shadow words are volatile, the form the bytes prove in all
  * three lists: loop.c forms no DEST_ADDR givs for volatile stores, so every
@@ -14,7 +14,7 @@
  * 1729); Title_UpdateIntroSprites (palette.c) differs 205 (471 for 496). */
 struct OamShadow {
   volatile u32 attr01; // attr0 | attr1 << 16
-  volatile u32 attr2;  // attr2 | アフィン値 << 16
+  volatile u32 attr2;  // attr2 | affine value << 16
 };
 
 #endif

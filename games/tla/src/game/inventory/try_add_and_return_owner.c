@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // try_add_and_return_owner.c
-// 持ち物：アイテムを持たせて、持ち主を返す
+// Inventory: give an item and return its owner.
 //--------------------------------------------------------------------------
 
 #include "inventory.h"
@@ -9,11 +9,11 @@
 s32 Inventory_AddItemFar(s32, s32);
 
 //--------------------------------------------------------------------------
-// アイテムを持たせる
-// 持てればキャラクター番号を、持ち物がいっぱいなら -1 を返す
-// item   : アイテム番号
-// unused : 使わない
-// owner  : 持たせるキャラクター番号
+// Give the item.
+// Return the character ID on success, or -1 if the inventory is full.
+// item: item ID.
+// unused: unused.
+// owner: recipient character ID.
 //--------------------------------------------------------------------------
 s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner) {
   if (Inventory_AddItemFar(owner, item) >= 0)
@@ -22,6 +22,6 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner) {
 }
 
 //--------------------------------------------------------------------------
-// 何もしない
+// Do nothing.
 //--------------------------------------------------------------------------
 void Inventory_NoOpCallback(void) {}

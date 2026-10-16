@@ -48,7 +48,7 @@
 #include "global_cells.h"
 #include "heap_state.h"
 
-// 前方宣言
+// Forward declarations.
 static void Colosso_RunGreetScene(s32 a0);
 static void ColossoWall_RunScriptedTransition(s32 mode);
 static void FieldScene_RunLateSequence(s32 a0);
@@ -118,8 +118,8 @@ static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-// 戦闘開始の種類 (battle/party/party.c と同じ)
-// 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
+// Battle-start kinds, as in battle/party/party.c.
+// Function from another file; its callers use no declaration (implicit int).
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColossoWallEntrances;
@@ -1160,7 +1160,7 @@ static void EV39_TALK(s32 speaker) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1304,7 +1304,7 @@ static void FieldScene_RunLateSequence(s32 a0) {
   Engine_EventWaitForScreen();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1461,7 +1461,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB) {
   return flag;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode,
@@ -1521,7 +1521,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource) {
   FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
@@ -1609,7 +1609,7 @@ static void StagedActor_PushActorAhead(void) {
   Object_SetMode(subject, 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 const u8 gColossoWall_RollLogScript[] = {2, 2, 3, 3};

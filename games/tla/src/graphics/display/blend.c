@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------------
 // blend.c
-// 表示：画面の明るさのフェード（白・黒）の設定と、終わるまでの待ち
+// Display: configure brightness fades to white or black and wait for
+// completion.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -18,15 +19,15 @@
 #include "iwram_call.h"
 #include "affine.h"
 
-// フェードは VBlank ごとに Fade_Update が進める。
-// 明るさ（BLDY）は 0 で元のまま、16 で真っ白または真っ黒。
-//   gBlendBrighten   : 0 黒へ / 1 白へ
-//   gBlendLayers     : BLDCNT の対象レイヤー（下の 4 つは 0x3e で
-//   BG1〜3・OBJ・背景色） gBlendFramesLeft : 残りフレーム数
+// Fade_Update advances the fade each VBlank.
+// BLDY 0 leaves brightness unchanged; 16 produces solid white or black.
+//   gBlendBrighten: 0 fades to black; 1 fades to white.
+//   gBlendLayers: BLDCNT target layers (the four helpers below use 0x3e:
+//   BG1-3, OBJ, and backdrop). gBlendFramesLeft: remaining frame count.
 
 //--------------------------------------------------------------------------
-// 黒へフェードアウト
-// frames : かけるフレーム数
+// Fade out to black.
+// frames: fade duration in frames.
 //--------------------------------------------------------------------------
 void Fade_ToBlack(s32 frames) {
   gBlendBrighten = 0;
@@ -38,7 +39,7 @@ void Fade_ToBlack(s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// 黒からフェードイン
+// Fade in from black.
 //--------------------------------------------------------------------------
 void Fade_FromBlack(s32 frames) {
   gBlendBrighten = 0;
@@ -50,7 +51,7 @@ void Fade_FromBlack(s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// 白へフェードアウト
+// Fade out to white.
 //--------------------------------------------------------------------------
 void Fade_ToWhite(s32 frames) {
   gBlendBrighten = 1;
@@ -62,7 +63,7 @@ void Fade_ToWhite(s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// 白からフェードイン
+// Fade in from white.
 //--------------------------------------------------------------------------
 void Fade_FromWhite(s32 frames) {
   gBlendBrighten = 1;
@@ -74,12 +75,12 @@ void Fade_FromWhite(s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// フェードを指定する
-// bright : 0 黒へ / 1 白へ
-// layer  : BLDCNT の対象レイヤー（下位 6 ビット）
-// start  : はじめの明るさ（16 より大きければ今の目標の明るさから）
-// target : 目標の明るさ
-// frames : かけるフレーム数
+// Configure a fade.
+// bright: 0 for black; 1 for white.
+// layer: BLDCNT target layers, in the low six bits.
+// start: initial brightness; values above 16 use the current target brightness.
+// target: target brightness.
+// frames: fade duration in frames.
 //--------------------------------------------------------------------------
 void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
@@ -94,7 +95,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
 }
 
 //--------------------------------------------------------------------------
-// フェードが終わるまで待つ
+// Wait for the fade to finish.
 //--------------------------------------------------------------------------
 void Fade_Wait(void) {
   if (gBlendDuration != 0) {

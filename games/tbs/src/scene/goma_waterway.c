@@ -24,10 +24,10 @@
 #include "fixed_math.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void SceneEffect_RunActorBurst(s32 no);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -101,7 +101,7 @@ static void SceneEffect_RotateRecord(RotatingEffectWork *work) {
   record->angle -= 0x800;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_waitdown.h"
 
 union SceneActor {

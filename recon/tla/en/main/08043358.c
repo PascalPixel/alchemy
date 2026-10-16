@@ -22,7 +22,7 @@ extern u32 gGameFlagBytes[];
 u32 Runtime_GetBuildStampTimeFar(s32);
 s32 GameFlag_Test(s32 flag);
 
-// セーブの見出しを作る
+// Builds the save header.
 s32 SaveState_BuildSummaryHeader(void)
 {
     u16 owners[14];

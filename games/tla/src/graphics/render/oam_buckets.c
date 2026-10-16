@@ -3,7 +3,7 @@
 extern u8 gOamBucketMasks[];
 extern void *gOamBuckets[];
 
-// 優先度 0〜239 のバケツの先頭に entry をつなぐ
+// Link entry at the head of its priority bucket (0-239).
 void Func_080140d8(void *entry, s32 slot) {
   u8 *mask;
   void **buckets;
@@ -31,7 +31,7 @@ void Func_080140d8(void *entry, s32 slot) {
   }
 }
 
-// 優先度ごとのバケツの先頭に entry をつなぐ
+// Link entry at the head of its priority bucket.
 void Runtime_PushSlotEntry(void *entry, s32 slot) {
   u8 *mask;
   void **head;

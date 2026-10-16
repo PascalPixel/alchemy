@@ -1,20 +1,20 @@
 //--------------------------------------------------------------------------
 // lz.c
-// リソース：LZ 圧縮の展開
+// Resources: decompress LZ data.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 #include "scene.h"
 
 //--------------------------------------------------------------------------
-// source を destination に展開して destination を返す
-// source[0・1] : コマンドの列までのオフセット（0 なら圧縮なしで source + 2
-// を返す） source + 2   : そのまま写すバイトの列 コマンドの列 :
-// 制御バイトを下位ビットから 1 ビットずつ読む
-//   1 : そのまま写すバイトを 1 つ写す
-//   0 : 2 バイト（上位・下位）を読む。0 なら終わり。
-//       下位 12 ビットが距離、上位 4 ビット + 2 が長さ（4 ビットが 0
-//       なら次のバイト + 18） source + 2 から距離だけ前のところから写す
+// Decompress source into destination and return destination.
+// source[0-1]: offset to commands; 0 means uncompressed, returning source + 2.
+// source + 2 contains literal bytes. In the command stream,
+// read each control byte from its least significant bit:
+// 1: copy one literal byte.
+// 0: read two bytes, high then low; zero terminates.
+// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte + 18
+// if those 4 bits are zero. Copy from that distance behind source + 2.
 //--------------------------------------------------------------------------
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   s32 token;
@@ -35,7 +35,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   command = source + token;
   control = *command;
   sentinel = 128;
-  sentinel <<= 1; // 8 ビット読み終えたしるし
+  sentinel <<= 1; // Marker indicating all eight bits were read.
   base = literal;
   start = destination;
   command++;
@@ -67,7 +67,8 @@ shift:
 
 dispatch:
   if ((control & 1) != 0) {
-    if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
+    if (control !=
+        1) // Read the next control byte when only the marker remains.
       *destination++ = *literal++;
     goto shift;
   }

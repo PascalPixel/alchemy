@@ -1,5 +1,5 @@
 	.section .rodata
-@ 地名: シーンかグループと入口 (-1 はどれでも) から地名番号
+@ Area names: map scene/group and entrance (-1 matches any) to an area name ID.
 	.macro scene_name scene:req, entrance:req, name:req
 	.2byte \scene, (\entrance & 0x7fff) | 0x8000
 	.4byte \name
@@ -120,4 +120,4 @@ gScene_AreaNameRules:
 	group_name 94, -1, 95
 	group_name 95, -1, 96
 	group_name 96, -1, 97
-	.2byte 0xffff, 0xffff, 0xffff, 0xffff	@ 終わり
+	.2byte 0xffff, 0xffff, 0xffff, 0xffff	@ End.

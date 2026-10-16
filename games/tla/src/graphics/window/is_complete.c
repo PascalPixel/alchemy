@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // is_complete.c
-// 表示：メッセージのチャンネルがすべて書き終えたか
+// Display: test whether every message channel has finished writing.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -11,8 +11,8 @@
 #endif
 
 //--------------------------------------------------------------------------
-// 3 つのチャンネルのうち、ウィンドウがあって書き終えていない（state が 0）
-// ものがあれば 0、なければ 1 を返す
+// Return zero if any of the three channels has a window still writing
+// (state is zero); otherwise return one.
 //--------------------------------------------------------------------------
 s32 UiWork_IsComplete(void) {
   struct UiChannelSlot *ch;

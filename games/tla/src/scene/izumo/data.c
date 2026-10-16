@@ -637,7 +637,7 @@ s32 gData_02001b00[] = {
     0x40009085,
     -0x10000,
     (s32)Func_02000ba4,
-#if !defined(TLA_EDITION_JA) /* 日本版にはない */
+#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
     0x50008905,
     (s32)0xffff0015,
     (s32)Func_020001cc,

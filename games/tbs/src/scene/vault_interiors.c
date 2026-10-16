@@ -32,7 +32,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void Scene_JoinRodSearch(void);
 static void VaultInteriors_RunBranchingDialogueScene(void);
 static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
@@ -52,7 +52,7 @@ static void SceneState_SetValue2ThenFinish(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-// 戦闘開始の種類 (battle/party/party.c と同じ)
+// Battle-start kinds, as in battle/party/party.c.
 
 u8 *SceneData_GetScriptTable(void) { return gVaultInteriors_Scripts; }
 
@@ -217,7 +217,7 @@ static void EV23_TALK(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_bone.h"
 
 static void EV250_RAISED(void) {
@@ -261,7 +261,7 @@ static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
 static void SceneDialogue_PromptAndCountSkip(s32 x) {
@@ -1531,7 +1531,7 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected,
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_spotflag.h"
 
 s32 VaultInteriors_ApplyEntryState(void) {
@@ -1782,7 +1782,7 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
   return UnitGet(2)->djinnOwnedCounts[0];
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
 static void RunEventScript01(void) {
@@ -2464,7 +2464,7 @@ static void SceneState_SetValue2ThenFinish(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vault_itemobj.h"
 
 static u8 *SceneData_FindEntryAtPosition(s32 *o) {

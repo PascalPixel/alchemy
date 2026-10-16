@@ -31,7 +31,7 @@ void Func_0200025c(s32 unused, s32 id) {
     Func_020001f4(unused, 16);
   } else if (id == 10) {
     Object_GetById(10)->motionFlags = 3;
-#if !defined(TLA_EDITION_JA) /* 日本版にはない */
+#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
     Func_020002ec();
 #endif
   }

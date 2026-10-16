@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // clear_character_block.c
-// タイル：BG のキャラクターとパレットの半分を消す
+// Tiles: clear half of the BG character and palette storage.
 //--------------------------------------------------------------------------
 
 #include "dma.h"
@@ -8,9 +8,10 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 256 色のキャラクター 30K バイトを色 1 で埋め、パレット 128 色を 0 にする
-// alt : 0 なら前半（VRAM 0x06000000・パレット 0〜127）
-//       1 なら後半（VRAM 0x06008000・パレット 128〜255、色 129 で埋める）
+// Fill 30K bytes of 256-color characters with color 1; clear 128 palette
+// colors. alt: 0 selects the first half (VRAM 0x06000000, palette colors
+// 0-127).
+//      1 selects the second (VRAM 0x06008000, colors 128-255, fill color 129).
 //--------------------------------------------------------------------------
 void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
   u32 v;

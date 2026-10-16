@@ -1,7 +1,7 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// サウンドライブラリの表
+// Sound library tables.
 //--------------------------------------------------------------------------
 
 struct SoundPlayer;
@@ -60,7 +60,7 @@ void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
                                    struct SoundTrack *track);
 void Runtime_CallWorkEntryWithArgs();
 
-// プレイヤーごとにコピーするシーケンスコマンドとドライバの入口
+// Sequence commands copied for each player, and driver entry points.
 // clang-format off
 const SoundFunc gSound_CommandTableTemplate[] = {
     MusicTrack_FinishSequence,
@@ -101,7 +101,7 @@ const SoundFunc gSound_CommandTableTemplate[] = {
     SoundDriver_ClearBuffer
 };
 
-// PCM の音階：上 4 ビットがオクターブ、下 4 ビットが音名
+// PCM pitches: the high four bits hold the octave, the low four the note.
 const u8 gSound_PcmPitchCodes[] = {
     0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb,
     0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb,
@@ -120,19 +120,19 @@ const u8 gSound_PcmPitchCodes[] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b
 };
 
-// 音名ごとの周波数（オクターブ 0、32 ビット固定小数点）
+// Frequencies by note at octave zero, in 32-bit fixed point.
 const u32 gSound_PcmFrequencySteps[] = {
     0x80000000, 0x879c7c97, 0x8facd61e, 0x9837f052,
     0xa14517cc, 0xaadc0848, 0xb504f334, 0xbfc886bb,
     0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-// 再生周波数の設定ごとの 1 フレームのサンプル数
+// Samples per frame for each playback frequency setting.
 const u16 gSound_FrameLengths[] = {
     96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
 
-// CGB チャンネルの音階
+// CGB channel pitches.
 const u8 gSound_CgbPitchCodes[] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b,
@@ -147,12 +147,12 @@ const u8 gSound_CgbPitchCodes[] = {
     0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab
 };
 
-// CGB チャンネルの音名ごとの周波数
+// Frequencies by note for CGB channels.
 const s16 gSound_CgbFrequencySteps[] = {
     -2004, -1891, -1785, -1685, -1591, -1501, -1417, -1337, -1262, -1192, -1125, -1062
 };
 
-// ノイズチャンネルの音階
+// Noise channel pitches.
 const u8 gSound_NoisePitchCodes[] = {
     0xd7, 0xd6, 0xd5, 0xd4, 0xc7, 0xc6, 0xc5, 0xc4, 0xb7, 0xb6, 0xb5, 0xb4,
     0xa7, 0xa6, 0xa5, 0xa4, 0x97, 0x96, 0x95, 0x94, 0x87, 0x86, 0x85, 0x84,
@@ -161,12 +161,12 @@ const u8 gSound_NoisePitchCodes[] = {
     0x17, 0x16, 0x15, 0x14, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-// CGB チャンネル 3（波形）の音量
+// CGB channel 3 waveform volumes.
 const u8 gSound_Cgb3LevelCodes[] = {
     0x00, 0x00, 0x60, 0x60, 0x60, 0x60, 0x40, 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x20, 0x20
 };
 
-// 音符の長さ（クロック数）
+// Note durations in clock ticks.
 const u8 gSound_ClockLengths[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 30, 32, 36, 40, 42, 44,
@@ -174,7 +174,7 @@ const u8 gSound_ClockLengths[] = {
     96
 };
 
-// 拡張コマンド（0 と 3 は何もしない）
+// Extended commands; entries zero and three do nothing.
 const SoundCommand gSound_ExtendedCommandTable[] = {
     (SoundCommand)Runtime_CallWorkEntryWithArgs,
     MusicTrack_ReadVoiceTarget,

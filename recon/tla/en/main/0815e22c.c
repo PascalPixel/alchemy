@@ -23,7 +23,7 @@ struct BattleFxWorkTail {
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
 
-// 最初と最後の対象のまんなか
+// Midpoint between the first and last targets.
 void Func_0815e22c(struct EffectPosition *position) {
   struct BattleFxWorkTail *work;
   struct EffectPosition first;

@@ -27,28 +27,34 @@
 #include "edition.h"
 #include "call.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared effect and proximity routines precede the scene's entry points.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
+// Return the revisited town's entrance table through the existing overlay ABI.
 const void *SceneData_GetScriptTable(void) { return gVaultRevisit_Scripts; }
 
+// This overlay has no clipping regions.
 int SceneData_ReturnZero(void) { return 0; }
 
+// The legacy message-table entry actually returns packed scene exits.
 const void *SceneData_GetMessageTable(void) { return gVaultRevisit_Messages; }
 
+// Return the villagers, dog, and Djinni placements.
 const void *SceneData_GetActorTable(void) { return gVaultRevisit_Actors; }
 
-static void ActorPresentation_RunActorModeOneThenZero(s32 actor) {
+// Stand the actor still while showing the message already selected.
+static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, 1);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
 }
 
+// Record the villager's recognition of the warriors who caught the thieves.
 static void EV08_TALK(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 2);
@@ -58,13 +64,15 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
+// Discuss the rumor about Lunpa's thieves while facing the leader.
 static void EV11_TALK(void) {
 
   Engine_EventSetMessage(MsgVaultRumorsThievesLunpa);
   Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
-  ActorPresentation_RunActorModeOneThenZero(11);
+  VaultRevisit_ShowStandingActorMessage(11);
 }
 
+// Record the conversation about the mayor and the escaped thieves.
 static void EV12_TALK(void) {
 
   Engine_EventBegin();
@@ -76,13 +84,15 @@ static void EV12_TALK(void) {
   Engine_EventEnd();
 }
 
+// Face the leader while discussing the volcano's continued calm.
 static void EV13_TALK(void) {
 
   Engine_EventSetMessage(MsgVaultVolcanoStaysCalm);
   Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 2);
-  ActorPresentation_RunActorModeOneThenZero(13);
+  VaultRevisit_ShowStandingActorMessage(13);
 }
 
+// Pause the proximity reaction, speak, then restore this actor's facing.
 static void EV14_TALK(void) {
   struct FieldActor *actor = Actor_Get(14);
   u16 facing = actor->facing;
@@ -109,24 +119,26 @@ static void EV14_TALK(void) {
   GameFlag_Set(0x307);
 }
 
+// Preserve the actor's facing around its conversation about the elders.
 static void EV15_TALK(void) {
   struct FieldActor *actor;
-  s16 facing0;
+  s16 originalFacing;
 
   actor = Object_GetById(15);
-  facing0 = actor->facing;
+  originalFacing = actor->facing;
   actor->timer |= 2;
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultWishVaultsElders);
   Engine_ActorSetAnimation(15, 0);
   Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
   Engine_EventShowMessageAndWait(15, 0, 10);
-  actor->facing = facing0;
+  actor->facing = originalFacing;
   Engine_TaskWait(1);
   Engine_EventEnd();
   actor->timer = 0;
 }
 
+// Ask the leader to check the jail and record that the request was heard.
 static void EV16_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
@@ -140,6 +152,7 @@ static void EV16_TALK(void) {
   Engine_EventEnd();
 }
 
+// Mind Read on the unacknowledged villager first triggers recognition.
 static void EV1032_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(8, 1);
@@ -151,13 +164,15 @@ static void EV1032_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Temporarily mark actor 11 while showing its thoughts about Dodonpa.
 static void EV11_PSYNERGY(void) {
   Engine_EventSetMessage(MsgVaultOnceDodonpaTook);
   ((struct AcceptActor11 *)Object_GetById(11))->accepted = 1;
-  ActorPresentation_RunActorModeOneThenZero(11);
+  VaultRevisit_ShowStandingActorMessage(11);
   ((struct AcceptActor11 *)Object_GetById(11))->accepted = 0;
 }
 
+// Mind Read first acknowledges the conversation about the mayor.
 static void EV1036_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(12, 1);
@@ -170,19 +185,22 @@ static void EV1036_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Temporarily mark actor 13 while showing its thoughts about the resolved
+// crisis.
 static void EV13_PSYNERGY(void) {
   Engine_EventSetMessage(MsgVaultGreatEverythingSolved);
   ((struct AcceptActor13 *)Object_GetById(13))->accepted = 1;
-  ActorPresentation_RunActorModeOneThenZero(13);
+  VaultRevisit_ShowStandingActorMessage(13);
   ((struct AcceptActor13 *)Object_GetById(13))->accepted = 0;
 }
 
+// Mind Read reuses the first conversation until actor 14 has spoken once.
 static void VaultRevisit_RunActor14Talk(void) {
   Actor_Get(14)->timer |= 2;
   Engine_EventBegin();
   if (GameFlag_IsSet(0x307) != 0) {
     Engine_EventSetMessage(MsgVaultWatchingGuysMakes);
-    ActorPresentation_RunActorModeOneThenZero(14);
+    VaultRevisit_ShowStandingActorMessage(14);
   } else {
     EV14_TALK();
     GameFlag_Set(0x307);
@@ -191,6 +209,7 @@ static void VaultRevisit_RunActor14Talk(void) {
   Actor_Get(14)->timer = 1;
 }
 
+// Pause the proximity reaction while reading actor 15's thoughts.
 static void EV15_PSYNERGY(void) {
   {
     struct FieldActor *actor = Object_GetById(15);
@@ -198,7 +217,7 @@ static void EV15_PSYNERGY(void) {
   }
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGrownUpsAlways);
-  ActorPresentation_RunActorModeOneThenZero(15);
+  VaultRevisit_ShowStandingActorMessage(15);
   Engine_EventEnd();
   {
     s32 clear = 0;
@@ -207,12 +226,13 @@ static void EV15_PSYNERGY(void) {
   }
 }
 
-static void FieldScene_RunScene385SequenceA(void) {
-  s32 rec7;
+// Mind Read introduces the jail request once, then shows its later thought.
+static void VaultRevisit_ReadJailRumor(void) {
+  s32 requestHeard;
   s32 v5;
 
-  rec7 = GameFlag_IsSet(0x308);
-  if (rec7 == 0) {
+  requestHeard = GameFlag_IsSet(0x308);
+  if (requestHeard == 0) {
     Engine_EventBegin();
     Actor_Get(16)->paused = 1;
     Engine_ActorSetAnimation(16, 1);
@@ -225,39 +245,41 @@ static void FieldScene_RunScene385SequenceA(void) {
       gEventWork->message++;
     }
     Event_ShowMessage(16, 0);
-    Actor_Get(16)->paused = rec7;
+    Actor_Get(16)->paused = requestHeard;
     Actor_SetBuiltinAction(16, 2);
     Engine_EventEnd();
     GameFlag_Set(0x308);
   } else {
     Engine_EventSetMessage(MsgVaultNotLikeEasy);
     Actor_Get(16)->paused = 1;
-    ActorPresentation_RunActorModeOneThenZero(16);
+    VaultRevisit_ShowStandingActorMessage(16);
     v5 = 0;
     Actor_Get(16)->paused = v5;
   }
 }
 
+// Give the actor vertical velocity, move it, and wait briefly for it to settle.
 static void ActorPresentation_MoveActorToPositionAndWait(int actor, int x,
-                                                         int z, int field40) {
-  u8 *record = Object_GetById(actor);
+                                                         int z, int velocityY) {
+  struct FieldActor *jumpingActor = Object_GetById(actor);
   int frames;
   Engine_ActorSetSpeed(actor, 0x30000, 0x18000);
-  *(s32 *)(record + 72) = 0x8000;
-  *(s32 *)(record + 68) = 0;
-  *(s32 *)(record + 40) = field40;
-  Engine_ActorSetSpriteFlags(record, 0);
+  jumpingActor->gravity = 0x8000;
+  jumpingActor->bounce = 0;
+  jumpingActor->velocityY = velocityY;
+  Engine_ActorSetSpriteFlags(jumpingActor, 0);
   Engine_ActorMoveToAndWait(actor, x, z);
   Engine_ActorSetPosition(actor, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     Engine_TaskWait(1);
-    if (*(s16 *)(record + 42) == 0)
+    if ((s16)((u32)jumpingActor->velocityY >> 16) == 0)
       break;
   }
-  Engine_ActorSetSpriteFlags(record, 1);
-  *(s32 *)(record + 72) = 0x10000;
+  Engine_ActorSetSpriteFlags(jumpingActor, 1);
+  jumpingActor->gravity = 0x10000;
 }
 
+// Ringing the bell makes the Djinni jump out and move to its new position once.
 static void EV30_SEARCH(void) {
   Engine_EventBegin();
   Event_PlayCue(100);
@@ -277,33 +299,38 @@ static void EV30_SEARCH(void) {
   Engine_EventEnd();
 }
 
-static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay) {
+// Walk the leader into a doorway during the sixteen-frame exit delay.
+static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 z, s32 exitId) {
   s32 zero = 0;
 
   Actor_SetSpeed(zero, 0x8000, 0x4000);
-  Actor_WalkTo(zero, x, y);
+  Actor_WalkTo(zero, x, z);
   gEventWork->transitionFrames = 16;
-  Engine_EventRequestExit(delay);
+  Engine_EventRequestExit(exitId);
 }
 
+// Open the doorway at trigger 5 and walk through it.
 static void EV05_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
   SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
+// Open the doorway at trigger 6 and walk through it.
 static void EV06_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
   SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
+// Open the doorway at trigger 7 and walk through it.
 static void EV07_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
   SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
+// Open trigger 8's doorway and update the leader's drawing flags for entry.
 static void EV08_TOUCH(void) {
   struct PresentedActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct Presentation *presentation = actor->presentation;
@@ -322,6 +349,7 @@ static void EV08_TOUCH(void) {
   SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
 
+// Open trigger 9's doorway and update the leader's drawing flags for entry.
 static void EV09_TOUCH(void) {
   struct PresentedActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct Presentation *presentation = actor->presentation;
@@ -340,18 +368,20 @@ static void EV09_TOUCH(void) {
   SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
 
+// Open the doorway at trigger 10 and walk through it.
 static void EV10_TOUCH(void) {
   Engine_AudioPlayCue(158);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
   SceneActor_PlaceAndSetSceneDelay(120, 144, 10);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// The remaining doorway helper retains its position in the overlay.
 #include "common/vault_scene_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
 
+// Open trigger 12's doorway and update the leader's drawing flags for entry.
 static void EV12_TOUCH(void) {
   struct PresentedActorB *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct PresentationB *presentation = actor->presentation;
@@ -370,13 +400,15 @@ static void EV12_TOUCH(void) {
   SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared entrance toggles precede the Djinni and dog events.
 #include "common/vault_toggle.h"
 
+// Join the Venus Djinni in actor slot 21 to the party.
 static void EV21_TALK(void) { Djinn_JoinParty(21, 0, 4); }
 
+// Consume the offered bone and make the dog indicate the hidden passage.
 static void EV18_SCRIPT(void) {
-  PartyInventory_Discard(231);
+  PartyInventory_Discard(ITEM_BONE);
   Engine_EventBegin();
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(18, 2);
@@ -397,18 +429,21 @@ static void EV18_SCRIPT(void) {
   Engine_EventEnd();
 }
 
+// Cover the hidden passage when Reveal ends.
 static void ActorPresentation_SetPairedSceneCells(void) {
 
   Map_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
+// Restore the passage's visible tiles and collision cell during Reveal.
 static void ActorPresentation_SetAlternatePairedSceneCells(void) {
 
   Map_CopyCellAttributes(37, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
+// Bark at the leader and offer the bone interaction if the party has one.
 static void EV18_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
@@ -418,13 +453,15 @@ static void EV18_TALK(void) {
   Engine_EventShowMessage(18, 0);
   Engine_ActorSetAnimation(18, 1);
 
-  if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0) {
+  if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
+      Engine_GameFlagIsSet(0x858) == 0) {
     ((struct Actor18MarkerWork *)gEventWork)->actor18Marker = 1;
   }
 
   Engine_EventEnd();
 }
 
+// Describe the water heard at the bottom of the well.
 static void EV90_SEARCH(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -432,14 +469,15 @@ static void EV90_SEARCH(void) {
   Engine_EventEnd();
 }
 
+// Return the town's talk, search, Psynergy, and doorway events.
 const u8 *SceneData_GetExtraTable(void) {
   return (const u8 *)gVaultRevisit_Extras;
 }
 
+// Restore dog and Djinni progress, proximity reactions, and entrance flags.
 s32 SceneSetup_InitializeActorsAndFlags(void) {
 
   struct FieldActor *actor;
-  s16 *scene;
   s32 mode;
 
   if (Engine_GameFlagIsSet(0x200))
@@ -478,10 +516,9 @@ s32 SceneSetup_InitializeActorsAndFlags(void) {
     Engine_GameFlagClear(0x867);
   if (Engine_GameFlagIsSet(0x867) && !Engine_GameFlagIsSet(52))
     Actor_SetPosition(21, 0x1980000, 0x780000);
-  scene = (s16 *)&gGameState;
-  if (scene[225] == 11)
+  if (gGameState.entrance == 11)
     Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
-  if (scene[225] == 13)
+  if (gGameState.entrance == 13)
     Engine_GameFlagClear(0x120);
   return 0;
 }
@@ -683,8 +720,8 @@ struct SceneEvent gVaultRevisit_Extras[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x307, EVENT_SCRIPT(VaultRevisit_RunActor14Talk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RunActor14Talk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x308, EVENT_SCRIPT(FieldScene_RunScene385SequenceA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene385SequenceA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x308, EVENT_SCRIPT(VaultRevisit_ReadJailRumor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadJailRumor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(0x858), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },

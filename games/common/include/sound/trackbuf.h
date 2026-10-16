@@ -7,8 +7,8 @@
 #include "audio_engine_symbols.h"
 
 struct AudioSlotNode {
-  struct AudioSlotNode *next; // 同じ値の次のノード
-  struct AudioSlotNode *prev; // 前のノード（先頭ならバケツの欄）
+  struct AudioSlotNode *next; // Next node with the same value.
+  struct AudioSlotNode *prev; // Previous node, or the bucket field at the head.
   s32 slot;
 };
 

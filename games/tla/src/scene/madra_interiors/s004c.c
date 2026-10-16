@@ -39,7 +39,7 @@ void Func_020000fc(void) {
       Func_02001f08(1, 22);
     } else {
 #ifdef TLA_EDITION_JA
-      // 日本語版は選択肢なし
+      // The Japanese edition has no choice prompt.
       if (FlagCheck(0x8ff))
         Func_02001e18((s32)MsgMadraInteriors155);
       else if (FlagCheck(0x8ab))

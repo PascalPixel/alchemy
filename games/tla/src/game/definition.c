@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // definition.c
-// アイテム：定義データの参照と装備できるかの判定
+// Items: access definitions and check equipment eligibility.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -17,8 +17,8 @@
 #include "edition.h"
 
 //--------------------------------------------------------------------------
-// アイテムの定義データを返す
-// item : アイテム番号（持ち物の値なら上位の装備・個数ビットを無視する）
+// Return the item's definition.
+// item: item ID; ignore inventory equipment and quantity bits.
 //--------------------------------------------------------------------------
 struct ItemDefinition *Item_GetDirect(s32 item) {
   return gItem_DefinitionTable + (item & ITEM_ID_MASK);
@@ -27,8 +27,8 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 #include "battle_unit.h"
 
 //--------------------------------------------------------------------------
-// キャラクターがアイテムを装備できるか
-// equipMask の classId 番目のビットで決まり、classId が 8 以上なら 0
+// Test whether a character can equip the item.
+// Check equipMask bit classId; return 0 for classId >= 8.
 //--------------------------------------------------------------------------
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
 #if GAME_TLA
@@ -44,7 +44,8 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
 }
 
 //--------------------------------------------------------------------------
-// 装備品でなければ 1、装備品ならキャラクターが装備できるかを返す
+// Return 1 for non-equipment, or the character's equipment eligibility
+// otherwise.
 //--------------------------------------------------------------------------
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == 0) {

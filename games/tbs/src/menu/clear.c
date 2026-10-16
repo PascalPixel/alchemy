@@ -42,7 +42,7 @@
 #include "frame.h"
 #include "map_scroll.h"
 
-// 前方宣言
+// Forward declarations
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
@@ -120,7 +120,7 @@ static void Clear_UpdateBlend(void) {
     Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
-// 隠しコマンド: 押したキーの並び、0 で終わり
+// Hidden command: sequence of pressed keys, terminated by 0.
 // clang-format off
 const u16 gClear_CodeSequence[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,

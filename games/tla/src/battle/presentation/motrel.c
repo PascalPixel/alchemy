@@ -13,9 +13,9 @@ struct Record0811e7dc {
   u8 flags;
 };
 
-/* Func_080219cc の遠隔呼び出し。表の並びが版で違い、英語版と日本語版では
-   0x08020370 の枠、ほかの版では Func_08020340 の名前の枠（どちらも
-   Func_080219cc へ飛ぶ） */
+/* Far call to Func_080219cc. Table order varies: English and Japanese use
+    the 0x08020370 slot; other editions use the slot named Func_08020340.
+    Both jump to Func_080219cc. */
 #if defined(TLA_EDITION_EN) || defined(TLA_EDITION_JA)
 void Func_08020370(void *record);
 #define Func_080219ccFar Func_08020370
@@ -26,7 +26,7 @@ void Func_08020340(void *record);
 s32 WaitFrames(s32 frames);
 void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
 
-// 借りたバッファを返し、モーションの絵の枠を放す
+// Return the borrowed buffer and release the motion graphics slot.
 void Func_0811e7dc(struct Work0811e7dc *work) {
   struct MotionObject *object = BattleObjGet(work->objectId)->object;
 

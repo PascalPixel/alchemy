@@ -38,7 +38,7 @@
 #include "objcmd.h"
 #include "frame.h"
 
-// 前方宣言
+// Forward declarations.
 static void AltmillerCave_ReleaseWallBurst(void);
 
 typedef struct {
@@ -67,7 +67,7 @@ struct RockPuzzle {
 
 u16 gAltmillerActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 static void EV13_TALK(void) { BattleFx_SetPhaseRequest(13, 0x41); }
@@ -1916,7 +1916,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

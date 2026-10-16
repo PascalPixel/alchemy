@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-// 速度を加え、1/8 ずつ減衰させる
+// Add velocity and decay by one eighth each update.
 void Func_020011b8(struct ObjectRuntime *object) {
   object->x += object->bounce;
   object->y += object->gravity;

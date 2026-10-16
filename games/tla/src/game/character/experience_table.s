@@ -18,7 +18,7 @@ Data_080b1290:
 	.2byte 70, 50, 30, 60, 70, 40, 70
 	.2byte 50, 50, 70, 50, 20, 70, 70
 	.balign 4
-@ レベルごとの経験値
+@ Experience per level.
 	.global gOwner_ExperienceThresholds
 gOwner_ExperienceThresholds:
 	.incbin "games/tla/src/game/character/level_experience_0.table"

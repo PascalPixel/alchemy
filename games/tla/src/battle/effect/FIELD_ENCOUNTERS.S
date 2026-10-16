@@ -1,5 +1,5 @@
 	.section .rodata
-@ シーンの遭遇: シーン、入口 (-1 はどれでも)、フラグ (-1 は常に)、値 2 バイト。シーン -1 で終わり
+@ Scene encounters: scene, entrance (-1 any), flag (-1 always), two-byte value; scene -1 ends.
 	.macro encounter scene:req, entrance:req, flag:req, value0:req, value1:req
 	.2byte \scene, \entrance, \flag
 	.byte \value0, \value1

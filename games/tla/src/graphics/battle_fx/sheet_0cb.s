@@ -1,5 +1,5 @@
 	.section .rodata
-@ 色なしの絵: BattleFx_OrangePaletteB の色で描いてある (同じ効果が読む)
+@ Uncolored art using BattleFx_OrangePaletteB colors (same effect).
 	.global Resource_Data0CB
 Resource_Data0CB:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0cb.bitmap.lz"

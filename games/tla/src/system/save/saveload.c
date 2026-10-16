@@ -27,7 +27,7 @@ s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
-// ファイルを選んで読み込む
+// Select a file and load it.
 s32 SaveState_SelectAndLoad(s32 mode) {
   s32 result = 0;
   s32 slot;
@@ -61,7 +61,7 @@ s32 SaveProgress_Open(s32 arg0);
 void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 
-// ファイルを選んで空きへ写す
+// Select a file and copy it to a free slot.
 s32 SaveState_CopySlot(void) {
   s32 result = 0;
   s32 value;
@@ -113,12 +113,12 @@ s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
 #if defined(TLA_EDITION_FR)
-#define ERASE_CONFIRM_X 4 // フランス語版は確認の窓が左へ寄る
+#define ERASE_CONFIRM_X 4 // The French confirmation window is farther left.
 #else
 #define ERASE_CONFIRM_X 8
 #endif
 
-// ファイルを選んで消す
+// Select a file and erase it.
 s32 SaveState_DeleteSelectedSlot(void) {
   s32 result = 0;
   s32 value;

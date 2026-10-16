@@ -19,7 +19,7 @@
 #include "text/msg_ids.h"
 #include "field_obj.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "ability_ids.h"

@@ -3,7 +3,7 @@
 	.global Data_0812cacc
 Data_0812cacc:
 	.4byte 17
-@ 資源番号 | 枠 << 9, 0xffff で終わり
+@ Resource ID | slot << 9, terminated by 0xffff.
 	.global gResource_SlotAssignments
 gResource_SlotAssignments:
 	.2byte 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008

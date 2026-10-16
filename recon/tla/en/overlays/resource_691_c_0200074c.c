@@ -26,7 +26,8 @@ struct Object0200074c {
     u8 marked;
 };
 
-// オブジェクトの前後のマスに付けた印（レイヤー 2 のセルの 3 バイト目）を消す
+// Clears markers on the tiles ahead of and behind the object, stored in the
+// third byte of each layer-two cell.
 void Func_0200074c(struct Object0200074c *object)
 {
     struct MapLayers *map;

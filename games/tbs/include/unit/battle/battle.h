@@ -47,7 +47,7 @@ s32 BattleUnit_TickSleep(s32 unitId);
 // Pushes a message to show, waiting for the player to read it.
 #define PUSH_MESSAGE(message) BattleEvPush(BATTLE_EVENT_MESSAGE, (message))
 
-// L・R を押しているあいだカメラの yaw を 512 ずつ動かす。同じ関数がふたつある
+// Move camera yaw by 512 while L/R is held; two identical functions exist.
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
     struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);                    \

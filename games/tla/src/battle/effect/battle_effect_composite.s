@@ -1,5 +1,5 @@
-@ 合成ルーチンへ書き込まれる命令の雛形。関数ではない：r1 が読み出し元、
-@ r9 が書き込み先、r5/r8/sl は作業用で、呼び出し規約を持たない。
+@ Instruction templates written into the compositing routine, not functions: r1
+@ is the source, r9 the destination, and r5/r8/sl scratch; no calling convention.
 .syntax unified
 .text
 	.arm

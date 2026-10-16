@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------------
 // resource_obj.c
-// リソース：アニメのスプライトオブジェクトの作成・解放と、コマの長さ
+// Resources: create/release animated sprite objects and calculate frame
+// durations.
 //--------------------------------------------------------------------------
 
 #include "edition.h"
@@ -12,13 +13,13 @@
 struct ResourceObjectWork {
 #if GAME_TLA
   u8 unk00[16];
-  u8 resource; // VRAM キャッシュの番号
-  u8 flags;    // ビット 0：VRAM キャッシュを返さない
+  u8 resource; // VRAM cache index.
+  u8 flags;    // Bit 0: do not return the VRAM cache entry.
   u8 unk12[22];
 #else
   u8 unk00[28];
-  u8 resource; // VRAM キャッシュの番号
-  u8 flags;    // ビット 0：VRAM キャッシュを返さない
+  u8 resource; // VRAM cache index.
+  u8 flags;    // Bit 0: do not return the VRAM cache entry.
   u8 unk1e[10];
 #endif
   void *children[4];
@@ -30,7 +31,7 @@ typedef char
 void ResourceMetadata_ClearRecord(void *destination);
 
 #if !GAME_TLA
-// 失われし時代の版（0x08022d40）は、まだリストのまま
+// The Lost Age version (0x08022d40) is still an assembly listing.
 #include "metadata_lookup.h"
 #include "vram_tab.h"
 
@@ -39,9 +40,9 @@ extern struct AnimationObject *gSpriteObjects;
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 //--------------------------------------------------------------------------
-// アニメ id のスプライトオブジェクトを作る
-// あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
-// 戻り値 : オブジェクト（作れなければ NULL）
+// Create an animated sprite object for animation id.
+// Use one of 64 free objects and a VRAM cache entry.
+// Return the object, or NULL on failure.
 //--------------------------------------------------------------------------
 struct ResourceObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *meta;
@@ -60,7 +61,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   if (meta->width == 0)
     return NULL;
   for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) // 幅 0 はあき
+    if (obj->width == 0) // Width 0 marks a free object.
     {
       found = obj;
       break;
@@ -77,7 +78,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   found->rotation = 0;
   found->flags = 1;
 
-  // 幅・高さ（ドット）から OBJ の形とサイズのビット（属性 0・1）
+  // Derive OBJ shape and size bits (attributes 0 and 1) from pixel dimensions.
   switch ((u32)((meta->width << 8) + meta->height)) {
   case 0x0808: // 8x8
     shape = 0;
@@ -114,8 +115,8 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
     break;
   }
 
-  // パーツ 0：256 色、優先度 2
-  // パーツ 1：16x8・256 色、VRAM キャッシュ 93 のタイル、優先度 2
+  // Part 0: 256 colors, priority 2.
+  // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
   word = (u32 *)found->part;
   *word++ = 0;
   *word++ = shape | 0x2000;
@@ -133,9 +134,9 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 #endif
 
 //--------------------------------------------------------------------------
-// オブジェクトを解放する
-// VRAM キャッシュ（flags のビット 0 が立っていなければ）と 4 つの子を
-// 返し、ワーク 56 バイトを 0 で埋める
+// Release an object.
+// Return the VRAM cache entry unless flags bit 0 is set, release four children,
+// and zero the 56-byte workspace.
 //--------------------------------------------------------------------------
 void ResourceObject_Release(struct ResourceObjectWork *work) {
   volatile u32 zero;
@@ -162,9 +163,9 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 #include "scene.h"
 
 //--------------------------------------------------------------------------
-// アニメ id の no 番の、はじめの cnt コマの長さを足す
-// コマンドは 2 バイト（コマンド・値）で、254・241・253・239 で終わる。
-// 245・255・238 以下のコマンドの値を足す
+// Sum the first cnt frame durations of animation id's entry no.
+// Commands are two bytes (command, value); 254, 241, 253, and 239 terminate.
+// Add values for commands 245, 255, and commands <= 238.
 //--------------------------------------------------------------------------
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   struct AnimationMetadata *info;

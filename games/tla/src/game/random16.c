@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // random16.c
-// バトル：乱数と、ダメージ・回復量の計算
+// Battle: random numbers and damage/recovery calculations.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -15,7 +15,7 @@
 #include "battle_type.h"
 
 //--------------------------------------------------------------------------
-// バトル用の乱数（線形合同法）。種の 8-23 ビット目の 16 ビットを返す
+// Battle linear congruential generator; return seed bits 8-23.
 //--------------------------------------------------------------------------
 u32 BattleRandom(void) {
   s32 seed;
@@ -26,18 +26,18 @@ u32 BattleRandom(void) {
 }
 
 //--------------------------------------------------------------------------
-// 0 から 99 までの乱数
+// Random number from 0 to 99.
 //--------------------------------------------------------------------------
 u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
 
 //--------------------------------------------------------------------------
-// こうげきのダメージ（BattleAtkCalc）
-// (atk - def + add * 2) / 2 に、属性の差による倍率をかける
-// 倍率は 256 で 1 倍。差の効きは BattlePowerCalc の半分（128 から 384）
-// atk   : こうげき
-// def   : ぼうぎょ（atk - def が負なら 0 にする）
-// add   : わざの威力
-// bonus : 属性の差（力 - たいせい）
+// Attack damage (BattleAtkCalc).
+// Multiply (atk - def + add * 2) / 2 by the elemental difference multiplier.
+// 256 is unity; the difference has half BattlePowerCalc's effect (128-384).
+// atk: attack.
+// def: defense (clamp atk - def to zero).
+// add: ability power.
+// bonus: elemental difference (power - resistance).
 //--------------------------------------------------------------------------
 s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   s32 dmg;
@@ -57,11 +57,11 @@ s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
 }
 
 //--------------------------------------------------------------------------
-// エナジーの威力（BattlePowerCalc）
-// power に属性の差による倍率（256 で 1 倍、0 から 512）と rate をかける
-// power   : 威力
-// bonus : 属性の差（力 - たいせい）
-// rate  : 倍率（256 で 1 倍）
+// Psynergy power (BattlePowerCalc).
+// Multiply power by rate and the elemental multiplier (0-512, with 256 unity).
+// power: power.
+// bonus: elemental difference (power - resistance).
+// rate: multiplier, with 256 unity.
 //--------------------------------------------------------------------------
 s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   s32 val;
@@ -73,12 +73,11 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
 }
 
 //--------------------------------------------------------------------------
-// かいふくの量（BattleRecoveryCalc）
-// 属性の力が 100 をこえた分の 2 倍で倍率（256 で 1 倍）を引き、
-// power と rate にかける
-// power  : 威力
-// element  : 行動側の属性の力（100 で 1 倍、200 以上で 2 倍、0 以下で 0）
-// rate : 倍率（256 で 1 倍）
+// Recovery amount (BattleRecoveryCalc).
+// Derive the multiplier (256 is unity) from twice the elemental power above
+// 100, then apply it to power and rate. power: power. element: user's elemental
+// power (100: unity, >=200: double, <=0: zero). rate: multiplier, with 256
+// unity.
 //--------------------------------------------------------------------------
 s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
   s32 val;
@@ -95,9 +94,9 @@ s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
 s32 Enemy_GetAttackElement(void *state);
 
 //--------------------------------------------------------------------------
-// ユニットの攻撃の属性を返す（4 は属性なし）
-// 敵は種類ごとの属性、味方は装備した武器の属性
-// id : ユニット番号
+// Return the unit's attack element (4 means no element).
+// Enemies use their species' element; allies use their equipped weapon's
+// element. id: unit ID.
 //--------------------------------------------------------------------------
 s32 Item_GetEquippedElement(s32 id) {
   struct ItemDefinition *item;
@@ -106,7 +105,7 @@ s32 Item_GetEquippedElement(s32 id) {
   unit = UnitGet(id);
   if (unit->classIndex == 0)
     return Enemy_GetAttackElement(unit);
-  item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
+  item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1: weapon.
   if (item != NULL)
     return item->element;
   return 4;

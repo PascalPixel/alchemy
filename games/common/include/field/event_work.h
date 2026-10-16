@@ -104,7 +104,7 @@ struct EventWork {
   u8 unk1da[6];
   struct FieldActor *viewCenter;
   u8 unk1e4[0xade];
-  u16 choiceMessage; // 選択肢のメッセージ
+  u16 choiceMessage; // Message containing the choices.
   u16 unkcc4;
 };
 

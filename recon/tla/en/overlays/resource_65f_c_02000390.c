@@ -13,7 +13,7 @@ extern const u16 gData_020054b8[];
 
 #define BG_PLTT_COLOR(n) (*(volatile u16 *)(0x05000000 + (n) * 2))
 
-// BG パレット 1 の色 8〜15 を表から作る
+// Build BG palette 1 colors 8-15 from the table.
 void Func_02000390(void)
 {
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
@@ -26,7 +26,7 @@ void Func_02000390(void)
     }
 }
 
-// BG パレット 6 の色 1〜9 を表から作る
+// Build BG palette 6 colors 1-9 from the table.
 void Func_020003d8(void)
 {
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;

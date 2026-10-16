@@ -383,7 +383,7 @@ struct SceneEvent gSceneEvents[] = {
     {0x400, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004e20)},
     {0x2400, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004e20)},
     {0, 29, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004e50)},
-#if !defined(TLA_EDITION_JA) /* 日本版にはない */
+#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
     {0x9115, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004ec0)},
     {0x9115, 17, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004ecc)},
     {0x9115, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02004ed8)},

@@ -44,11 +44,11 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void MercuryEntrance_CrossDoorway(void);
 static void MercuryEntrance_RunDoorScene(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -81,7 +81,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(union FieldObject *fieldObject) {
 #endif
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_palette_cycle.h"
 
 static void EV21_TOUCH(void) { Mercury_TickSpawnTimer(); }
@@ -109,7 +109,7 @@ static void EV01_SEARCH(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_risedrop.h"
 
 static void EV67_TOUCH(void) { SceneActor_RunActorZeroHandledMotion(17); }
@@ -209,7 +209,7 @@ static void MercuryEntrance_OpenEntrance(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_arrive.h"
 
 s32 MercuryEntrance_ApplyEntryState(void) {
@@ -459,7 +459,7 @@ static void MercuryEntrance_RunDoorScene(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_lights.h"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src) {
@@ -481,7 +481,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_pillar.h"
 
 s32 gEffectScript0[] = {
@@ -499,7 +499,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

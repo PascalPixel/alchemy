@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // run_selection_with_cursor_object.c
-// メニュー：フラグの一覧画面（カーソルで選んで A で切りかえる）
+// Menu: flag list (move the cursor and press A to toggle).
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -21,12 +21,12 @@ void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 
 //--------------------------------------------------------------------------
-// 1 ページ 16x16 のフラグを表示し、閉じるまで入力を受ける
-// ページ 8 から始める。戻り値はいつも 0
+// Show 16x16 flags per page and accept input until closed.
+// Start on page 8. Always return 0.
 //--------------------------------------------------------------------------
 s32 Menu_RunSelectionWithCursorObject(void) {
-  u8 obj[12]; // カーソルのオブジェクト
-  s32 cur[2]; // カーソルの列・行
+  u8 obj[12]; // Cursor object.
+  s32 cur[2]; // Cursor column and row.
   s32 res;
   s32 page;
   s32 win;
@@ -43,9 +43,9 @@ s32 Menu_RunSelectionWithCursorObject(void) {
     WaitFrames(1);
     ret = Menu_HandleFlagGridInput(win, &page, cur);
     if (ret == -1)
-      break; // 閉じる
+      break; // Close.
     if (ret == 1)
-      Menu_DrawFlagBitTable(win, page); // フラグかページが変わった
+      Menu_DrawFlagBitTable(win, page); // A flag or the page changed.
     UiTextResource_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
   }
   UiTextResource_Release(res);

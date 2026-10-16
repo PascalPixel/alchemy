@@ -27,7 +27,7 @@
 #include "facing_object.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
 static void EV20_PSYNERGY(void);
 static void FieldScene_RunScene38bSequenceA(void);
@@ -43,7 +43,7 @@ struct SpawnCounter {
 
 struct SpawnCounter gCornerSpawnCounter;
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -570,7 +570,7 @@ static void Bilibin_RestoreRaisedEntrance(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
 static void Bilibin_PushFacedBlock(void) {
@@ -980,7 +980,7 @@ u32 gVillage_RepaintCells[] = {
 };
 // clang-format on
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibin_FacingCellSteps[] = {

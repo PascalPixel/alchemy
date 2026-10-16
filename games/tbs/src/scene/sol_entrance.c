@@ -22,7 +22,7 @@
 #include "ability_ids.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Forward declarations.
 static void SolEntrance_ApplyEntryState(void);
 static void FieldScene_RunSceneEntryHook(void);
 static void Scene_EnterSolSanctum(void);
@@ -389,7 +389,7 @@ static void EV14_PSYNERGY(void) {
   Scene_RunActorFormation(0);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
 static void SolEntrance_PushFacedBlock(void) {
@@ -1243,7 +1243,7 @@ struct SceneEvent gSolEntranceEvents1Entrances14To16[] = {
 };
 // clang-format on
 
-// 向きごとの押す一歩: 上位16ビットがx、下位16ビットがz (ピクセル)
+// Push step by direction: X in the upper halfword, Z in the lower (pixels).
 #define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
 
 s32 gSolPushSteps[] = {

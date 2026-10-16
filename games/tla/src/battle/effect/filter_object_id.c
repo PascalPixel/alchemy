@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // filter_object_id.c
-// バトル演出：演出の対象オブジェクトのしぼりこみ
+// Battle effects: filter the effect's target object.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,8 +8,8 @@
 s32 BattleFx_GetFlags();
 
 //--------------------------------------------------------------------------
-// 今の演出定義の flags が 0xff なら、対象なし (-1) を返す
-// id : 対象オブジェクト番号
+// Return no target (-1) when the current effect definition's flags are 0xff.
+// id: target object ID.
 //--------------------------------------------------------------------------
 s32 BattleFx_FilterObjectIdByFlags(s32 id) {
   if (BattleFx_GetFlags() == 0xff)

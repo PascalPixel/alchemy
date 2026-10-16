@@ -1,5 +1,5 @@
 	.section .rodata
-@ バイト置換表 256 個ずつ。前の四つは The Broken Seal の gRuntime_ByteRemapTable と同じ
+@ 256-entry byte remap tables; the first four match TBS's gRuntime_ByteRemapTable.
 	.global gRuntime_ByteRemapTable
 gRuntime_ByteRemapTable:
 	.incbin "games/common/src/field/common/remap0.table"

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// DMA チャンネルのレジスタ (DMAxSAD, DMAxDAD, DMAxCNT)
+// DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT).
 struct DmaRegisters {
   u32 source;
   u32 destination;
@@ -29,7 +29,8 @@ struct DmaRegisters {
 // Map_InitializePerspectiveScene sp+28, where Dma_Fill32's inner word lands
 // at sp+16), and a function that fills several blocks keeps one word for
 // all of them and forms its address once.
-// 語は関数の局所変数。何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
+// The fill word is local to the function. Repeated fills reuse that one word,
+// assigning its value before each transfer.
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \
@@ -37,7 +38,7 @@ struct DmaRegisters {
             (volatile u32 *)0x040000d4);                                       \
   }
 
-// pret の CpuFill32: BIOS の CpuSet で同じ語を埋める
+// pret's CpuFill32: repeats one word through the BIOS CpuSet service.
 #define Cpu_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \

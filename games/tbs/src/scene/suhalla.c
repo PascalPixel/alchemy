@@ -22,7 +22,7 @@
 // Suhalla, the town at the edge of the Suhalla Desert.
 
 enum {
-  FLAG_PROP_MOVED = 0x201,
+  FLAG_PROP_GROWN = 0x201,
   // Set on arriving by entrance 90; the townsfolk then stand and talk
   // differently.
   FLAG_SUHALLA_LATER = 0x96f
@@ -53,67 +53,68 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 // A villager asks whether the party is going to Lalivero.
-static void AskIfGoingToLalivero(s32 obj) {
-  s32 cue = MsgSuhallaTryingGetLalivero;
-  Engine_EventSetMessage(cue);
-  Engine_EventOpenMessage(obj, 0);
+static void AskIfGoingToLalivero(s32 actorId) {
+  s32 firstMessage = MsgSuhallaTryingGetLalivero;
+  Engine_EventSetMessage(firstMessage);
+  Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_EventSetMessage(cue + 1);
+    Engine_EventSetMessage(firstMessage + 1);
   } else {
-    Engine_EventSetMessage(cue + 2);
+    Engine_EventSetMessage(firstMessage + 2);
   }
-  Engine_EventShowMessage(obj, 0);
+  Engine_EventShowMessage(actorId, 0);
 }
 
 // A villager asks whether the sandstorm brought the party to Suhalla.
-static void AskIfBroughtBySandstorm(s32 obj) {
-  s32 cue = MsgSuhallaBroughtSuhallaSandstorm;
-  Engine_EventSetMessage(cue);
-  Engine_EventOpenMessage(obj, 0);
+static void AskIfBroughtBySandstorm(s32 actorId) {
+  s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
+  Engine_EventSetMessage(firstMessage);
+  Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_EventSetMessage(cue + 1);
+    Engine_EventSetMessage(firstMessage + 1);
   } else {
-    Engine_EventSetMessage(cue + 2);
+    Engine_EventSetMessage(firstMessage + 2);
   }
-  Engine_EventShowMessage(obj, 0);
+  Engine_EventShowMessage(actorId, 0);
 }
 
-// Ability 12 on the prop: its cell takes cell 25, 9's attributes.
-static void MoveProp(void) {
+// The prop's cell takes the open cell's attributes after it is moved.
+static void Suhalla_OpenGrownPropCell(void) {
 
   Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-  Engine_GameFlagSet(FLAG_PROP_MOVED);
+  Engine_GameFlagSet(FLAG_PROP_GROWN);
 }
 
 // The leader walks into a doorway: the door opens and the touched exit is
 // taken.
 static void EnterDoor(void) {
   struct EventWork *work = gEventWork;
-  s32 no = work->touchedTrigger;
-  u16 x = gSuhallaDoorCells[no][0];
-  u16 y = gSuhallaDoorCells[no][1];
+  s32 exitTrigger = work->touchedTrigger;
+  u16 cellX = gSuhallaDoorCells[exitTrigger][0];
+  u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Event_PlayCue(SOUND_DOOR_OPEN);
-  Map_AnimateCells(gSuhallaDoorOpenSteps, x, y);
+  Map_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
+  // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gEventWork->transitionFrames = 16;
-  Engine_EventRequestExit(no);
+  Engine_EventRequestExit(exitTrigger);
 }
 
 // The same through the wide door of trigger 2.
 static void EnterWideDoor(void) {
   struct EventWork *work = gEventWork;
-  s32 no = work->touchedTrigger;
-  u16 x = gSuhallaDoorCells[no][0];
-  u16 y = gSuhallaDoorCells[no][1];
+  s32 exitTrigger = work->touchedTrigger;
+  u16 cellX = gSuhallaDoorCells[exitTrigger][0];
+  u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Event_PlayCue(SOUND_DOOR_OPEN);
-  Map_AnimateCells(gSuhallaWideDoorOpenSteps, x, y);
+  Map_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gEventWork->transitionFrames = 16;
-  Engine_EventRequestExit(no);
+  Engine_EventRequestExit(exitTrigger);
 }
 
 // The doors, the townsfolk and the prop, earlier or later.
@@ -136,8 +137,9 @@ s32 Scene_Initialize(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
-  if (Engine_GameFlagIsSet(FLAG_PROP_MOVED) != 0) {
-    MoveProp();
+  // Match the persistent prop state to its collision cell and animation.
+  if (Engine_GameFlagIsSet(FLAG_PROP_GROWN) != 0) {
+    Suhalla_OpenGrownPropCell();
     Engine_ActorSetAnimation(PROP, 4);
   }
   return 0;
@@ -246,7 +248,7 @@ struct SceneEvent gSuhallaEvents[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
     { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(0xc), PROP, FLAG_PROP_MOVED, EVENT_SCRIPT(MoveProp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), PROP, FLAG_PROP_GROWN, EVENT_SCRIPT(Suhalla_OpenGrownPropCell) },
     { SCENE_EVENTS_END },
 };
 
@@ -278,7 +280,7 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
     { SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-    { PSYNERGY_ON_ACTOR(0xc), PROP, FLAG_PROP_MOVED, EVENT_SCRIPT(MoveProp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), PROP, FLAG_PROP_GROWN, EVENT_SCRIPT(Suhalla_OpenGrownPropCell) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

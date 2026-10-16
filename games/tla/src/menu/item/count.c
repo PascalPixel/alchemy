@@ -1,7 +1,7 @@
 #include "types.h"
 #include "owner_state.h"
 
-// owner の持ちもののうち空でない欄の数
+// Count the nonempty slots in owner's inventory.
 s32 ItemMenu_Count(s32 owner_id) {
   s32 count = 0;
   struct OwnerInventoryState *state = UnitGet(owner_id);

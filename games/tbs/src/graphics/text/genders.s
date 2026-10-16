@@ -1,6 +1,6 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-@ 道具の名の性 (言語ごと)
+@ Grammatical gender of item names, by language
 	.ifdef TBS_EDITION_DE
 	.global gUiText_ItemGenders
 gUiText_ItemGenders:

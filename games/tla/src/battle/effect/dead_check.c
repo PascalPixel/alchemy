@@ -1,21 +1,21 @@
 //--------------------------------------------------------------------------
 // dead_check.c
-// バトル：倒れた相手にも追加効果を出す効果の判定
+// Battle: identify effects that apply additional effects to defeated targets.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 対象が倒れていても追加効果を出す効果なら 1 を返す
-// うばう効果は、与えたダメージを行動側に戻すため
-// effect : 効果番号
+// Return 1 if the additional effect applies even when the target is defeated.
+// Drain effects return damage dealt to the user.
+// effect: effect ID.
 //--------------------------------------------------------------------------
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
-  case 31: // HPをうばう
-  case 32: // PPをうばう
-  case 60: // HPをうばう（半分）
-  case 69: // PPをうばう（1/10）
+  case 31: // Drain HP.
+  case 32: // Drain PP.
+  case 60: // Drain HP (half).
+  case 69: // Drain PP (one tenth).
     return 1;
   default:
     return 0;

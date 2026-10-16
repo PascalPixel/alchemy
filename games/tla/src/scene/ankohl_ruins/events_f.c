@@ -42,13 +42,14 @@ void Func_02002260(void) {
     Func_02002ee4();
     Func_02002ebc(20);
   }
-#if defined(TLA_EDITION_JA) /* 日本版はここでセルを写す */
+#if defined(TLA_EDITION_JA) /* The Japanese edition copies cells here. */
   Map_CopyCells(40, 98, 3, 5, 25, 98);
 #endif
 }
 
 void Func_020022a8(void) {
-#if !defined(TLA_EDITION_JA) /* 日本版はフラグ 0x205 に触れない */
+#if !defined(                                                                  \
+    TLA_EDITION_JA) /* The Japanese edition does not touch flag 0x205. */
   GameFlag_SetBit(0x205);
 #endif
   Map_CopyCells(35, 34, 3, 5, 25, 34);

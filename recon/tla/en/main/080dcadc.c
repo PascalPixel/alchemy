@@ -18,16 +18,16 @@
 void Func_080dcdc8(void);
 void Func_08038348(s32 first, s32 second);
 
-// 走査線スクロールを止め、BG パレット 15 を戻す
+// Stops scanline scrolling and restores background palette 15.
 void Func_080dcadc(void)
 {
     u8 *work = Ram_HeapSlots->windowTiles;
 
     Scheduler_RemoveCallback((SchedulerCallback)Func_080dcdc8);
-    BG_PLTT_COLOR(15, 1) = 0x7fff;  // 白
-    BG_PLTT_COLOR(15, 3) = 0;       // 黒
-    BG_PLTT_COLOR(15, 11) = 0x294a; // 灰 (10)
-    BG_PLTT_COLOR(15, 12) = 0x5294; // 灰 (20)
+    BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
+    BG_PLTT_COLOR(15, 3) = 0;       // Black.
+    BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
+    BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
     Func_08038348(gPartyState.unk220[5], gPartyState.unk220[6]);
     work[4] = 0;
 }

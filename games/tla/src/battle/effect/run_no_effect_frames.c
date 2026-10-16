@@ -1,14 +1,14 @@
 //--------------------------------------------------------------------------
 // run_no_effect_frames.c
-// バトル演出：空の演出の繰り返し
+// Battle effects: repeat an empty effect.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 #include "battle.h"
 
 //--------------------------------------------------------------------------
-// 何もしない BattleFx_RunNoEffect を cnt 回呼ぶ（フレーム待ちはしない）
-// cnt : 呼ぶ回数
+// Call the empty BattleFx_RunNoEffect cnt times without waiting for frames.
+// cnt: call count.
 //--------------------------------------------------------------------------
 void BattleFx_RunNoEffectFrames(s32 cnt) {
   s32 n;

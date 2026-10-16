@@ -26,8 +26,8 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-// 前方宣言
-static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag);
+// The entrance handler dispatches the palace's request and reward sequences.
+static void McCoyPalace_ClaimReward(s32 actor, s32 item, s32 flag);
 static void Palace_RunKolimaRequest(void);
 static void FieldScene_RunPalaceGreeting(void);
 static void RunEventScript02(void);
@@ -44,15 +44,19 @@ struct PalaceSceneRecord {
   u8 field238;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// The shared facing callback precedes the scene's entry points.
 #include "common/object_facing.h"
 
+// Return the entrance table through the overlay's existing entry-point ABI.
 u8 *SceneData_GetScriptTable(void) { return (u8 *)gPlacement_Scripts; }
 
+// The palace has no clipping-region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Return the packed exit table, despite the entry point's legacy name.
 u8 *SceneData_GetMessageTable(void) { return (u8 *)gPlacement_Messages; }
 
+// Prepare palace placements and update reward-room conversation facings.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *p;
 
@@ -74,6 +78,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMcCoyPalacePlacementsOther;
 }
 
+// Select palace dialogue, reward chests, and doorway events.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceEvents;
@@ -81,6 +86,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceEventsOther;
 }
 
+// Ask whether the party is willing to visit Kolima Forest.
 static void EV10_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
@@ -88,6 +94,7 @@ static void EV10_TALK(void) {
   Engine_EventEnd();
 }
 
+// Interrupt the startled actor's reaction to face the party and speak.
 static void EV14_TALK(void) {
   Engine_EventBegin();
   Actor_ShowEmote(14, EMOTE_IN_FRONT | 2, 0);
@@ -102,6 +109,7 @@ static void EV14_TALK(void) {
   Engine_EventEnd();
 }
 
+// Change the warrior's assessment after the first conversation.
 static void EV15_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
@@ -113,6 +121,7 @@ static void EV15_TALK(void) {
   Engine_EventEnd();
 }
 
+// Ask about what the observer saw from this position.
 static void EV16_TALK(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
@@ -120,6 +129,7 @@ static void EV16_TALK(void) {
   Engine_EventEnd();
 }
 
+// Explain the reward selection, accounting for the item already taken.
 static void EV17_TALK(void) {
   Engine_EventBegin();
 
@@ -138,6 +148,7 @@ static void EV17_TALK(void) {
   Engine_EventEnd();
 }
 
+// Mind Read changes this actor's thoughts after the first reading.
 static void EV15_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -149,6 +160,7 @@ static void EV15_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Mind Read reveals the actor's thoughts about offering a reward.
 static void EV17_PSYNERGY(void) {
   Engine_EventBegin();
 
@@ -167,22 +179,23 @@ static void EV17_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Temporarily hide doorway layers while the leader walks through an exit.
 static void McCoyPalace_RunDoorExitScene(void) {
   struct EventWork *work;
-  s32 lock;
+  s32 hideDoorLayers;
 
   work = gEventWork;
-  lock = 0;
+  hideDoorLayers = 0;
   if (work->touchedTrigger == 9) {
     if (Engine_GameFlagIsSet(0x200) == 0) {
       Engine_AudioPlayCue(188);
-      lock = 1;
+      hideDoorLayers = 1;
     }
   } else {
     Engine_AudioPlayCue(158);
-    lock = 1;
+    hideDoorLayers = 1;
   }
-  if (lock != 0) {
+  if (hideDoorLayers != 0) {
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);
   }
@@ -201,19 +214,22 @@ static void McCoyPalace_RunDoorExitScene(void) {
   Map_SetLayerEntryFlag(2);
 }
 
+// Explain that the selected reward chest has already been emptied.
 static void FieldScene_ShowChestEmpty(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinIsaacCheckedChestButWas, 1);
   Engine_EventEnd();
 }
 
+// Explain that an unavailable reward chest remains locked.
 static void FieldScene_ShowChestLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinTreasureChestLocked, 1);
   Engine_EventEnd();
 }
 
-static void FieldScene_RunChestStep(s32 flag) {
+// Distinguish the emptied reward chest from the other locked choices.
+static void McCoyPalace_ShowUnavailableChest(s32 flag) {
   if (Engine_GameFlagIsSet(flag) != 0) {
     FieldScene_ShowChestEmpty();
   } else {
@@ -221,39 +237,44 @@ static void FieldScene_RunChestStep(s32 flag) {
   }
 }
 
+// Offer the first chest only while no reward has been claimed.
 static void EV100_SEARCH(void) {
   if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
-    FieldScene_RunChestStep(0x210);
+    McCoyPalace_ShowUnavailableChest(0x210);
   } else {
-    FieldScene_RunSlotSubjectBranch(21, 182, 0x210);
+    McCoyPalace_ClaimReward(21, 182, 0x210);
   }
 }
 
+// Offer the second chest only while no reward has been claimed.
 static void EV101_SEARCH(void) {
   if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
-    FieldScene_RunChestStep(0x211);
+    McCoyPalace_ShowUnavailableChest(0x211);
   } else {
-    FieldScene_RunSlotSubjectBranch(22, 183, 0x211);
+    McCoyPalace_ClaimReward(22, 183, 0x211);
   }
 }
 
+// Offer the third chest only while no reward has been claimed.
 static void EV102_SEARCH(void) {
   if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
-    FieldScene_RunChestStep(0x212);
+    McCoyPalace_ShowUnavailableChest(0x212);
   } else {
-    FieldScene_RunSlotSubjectBranch(23, 186, 0x212);
+    McCoyPalace_ClaimReward(23, 186, 0x212);
   }
 }
 
+// Offer the fourth chest only while no reward has been claimed.
 static void EV103_SEARCH(void) {
   if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
-    FieldScene_RunChestStep(0x213);
+    McCoyPalace_ShowUnavailableChest(0x213);
   } else {
-    FieldScene_RunSlotSubjectBranch(24, 189, 0x213);
+    McCoyPalace_ClaimReward(24, 189, 0x213);
   }
 }
 
-static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag) {
+// Present the reward and commit its flags only if the party can carry it.
+static void McCoyPalace_ClaimReward(s32 actor, s32 item, s32 flag) {
   s32 record;
 
   Engine_EventBegin();
@@ -275,6 +296,7 @@ static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag) {
   Engine_EventEnd();
 }
 
+// Stop the party from leaving before it chooses the offered reward.
 static void EV51_TOUCH(void) {
   if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(0x322) != 0) {
@@ -293,6 +315,7 @@ static void EV51_TOUCH(void) {
   }
 }
 
+// After a reward is claimed, finish the farewell and dismiss the escort.
 static void EV50_TOUCH(void) {
   if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
     Engine_EventBegin();
@@ -318,6 +341,7 @@ static void EV50_TOUCH(void) {
   }
 }
 
+// Restore the audience or reward room and run the pending arrival sequence.
 s32 McCoyPalace_ApplyEntryState(s32 a0, s32 a1) {
   s32 rec8;
   s32 record;
@@ -387,9 +411,11 @@ s32 McCoyPalace_ApplyEntryState(s32 a0, s32 a1) {
   return 0;
 }
 
+// Present McCoy's Kolima request, including refusal and reconsideration paths.
 static void Palace_RunKolimaRequest(void) {
   struct FieldActor *record;
 
+  // Stage the first audience, or place the leader for a return visit.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -504,8 +530,7 @@ static void Palace_RunKolimaRequest(void) {
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      // 最初の申し出と心変わりは断りと承諾を一つずつ共有し、互いのブロックへ飛ぶ
-      // (構造化すると複製が要りバイトが変わる)
+      // The initial offer and reconsideration share their accept/refuse paths.
       goto accepted;
     }
   declined:
@@ -593,10 +618,11 @@ static void Palace_RunKolimaRequest(void) {
   Engine_EventSetMessage(MsgBilibinYehveChangeHeart);
   Engine_EventOpenMessage(0x2012, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    // 最初の申し出の断りへ
+    // Reuse the initial refusal's dialogue and departure.
     goto declined;
   }
 accepted:
+  // Both ways of accepting join the same explanation and departure.
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -766,6 +792,7 @@ accepted:
   Engine_ActorSetAnimationAndWait(19, 3);
   Engine_EventWait(20);
   FieldObject_SetTargetAndCallback(0, 0x10013, gPalace_FacingActions);
+  // Keep the party looking at its escort while he leaves the audience.
   FieldObject_SetTargetAndCallback(1, 0x10013, gPalace_FacingActions);
   FieldObject_SetTargetAndCallback(2, 0x10013, gPalace_FacingActions);
   FieldObject_SetTargetAndCallback(3, 0x10013, gPalace_FacingActions);
@@ -820,6 +847,7 @@ leave:
   Engine_EventEnd();
 }
 
+// Receive the party at the doorway after it returns from McCoy's request.
 static void FieldScene_RunPalaceGreeting(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -869,29 +897,33 @@ static void FieldScene_RunPalaceGreeting(void) {
   Engine_EventEnd();
 }
 
+// Turn the three companions toward their dialogue partners.
 static void ConfigurePrimarySceneChannels(void) {
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirection(2, FACING_NORTHWEST, 0);
   Actor_FaceDirection(3, FACING_WEST, 0);
 }
 
+// Restore the companions' northward audience facings.
 static void ConfigureSecondarySceneChannels(void) {
   Actor_FaceDirection(1, FACING_NORTH, 0);
   Actor_FaceDirection(2, FACING_NORTH, 0);
   Actor_FaceDirection(3, FACING_NORTHWEST, 0);
 }
 
+// Escort the party into McCoy's audience after Kolima's curse is lifted.
 static void RunEventScript02(void) {
-  struct FieldActor *buf;
+  struct FieldActor *viewCenter;
   struct FieldActor *actor;
   s32 flag;
 
   Engine_EventBegin();
+  // Reveal the approach, then walk the leader and escort into the audience.
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  buf = Engine_EventGetViewCenter();
+  viewCenter = Engine_EventGetViewCenter();
   flag = 0;
-  buf->motionFlags = flag;
+  viewCenter->motionFlags = flag;
   Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -920,6 +952,7 @@ static void RunEventScript02(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(19, 2);
   Engine_EventSetMessage(MsgBilibinWeveBroughtWarriorsMilord);
+  // Adjacent variants depend on whether McCoy's earlier request was declined.
 
   flag = 1;
   if (GameFlag_IsSet(0x84f) == 0) {
@@ -1150,10 +1183,12 @@ static void RunEventScript02(void) {
   Engine_EventEnd();
 }
 
+// Arrange the four reward chests and explain the one-item choice.
 static void McCoyPalace_RunActorRowScene(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
+  // Restore the chest-row collision patches before presenting the reward.
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventGetViewCenter()->motionFlags = 0;
   Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);

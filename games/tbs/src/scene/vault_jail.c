@@ -69,12 +69,16 @@ enum JailSprite {
 
 enum { CELL_COLLISION_FLAGS = 0x14 };
 
+// Returns the entrances from Vault, Lunpa and the revisited Vault.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
 
+// This scene has no exit regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
+// Returns the exits back to the three surrounding scene states.
 const u32 *Scene_GetExits(void) { return gJailExits; }
 
+// The revisit entrance replaces the thieves with the lone prisoner.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerPlacements;
@@ -82,6 +86,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gJailThiefPlacements;
 }
 
+// Selects the events belonging to the same entrance-dependent occupants.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerEvents;
@@ -89,6 +94,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gJailThiefEvents;
 }
 
+// The leader silences the two thieves before addressing the party.
 static void EV08_TALK(void) {
   Engine_EventBegin();
 
@@ -105,6 +111,7 @@ static void EV08_TALK(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
   Engine_EventWait(20);
 
+  // Turn from the two thieves to the party for the remaining dialogue.
   Engine_ActorFaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
 
@@ -116,6 +123,7 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
+// The left thief regrets the escape.
 static void EV09_TALK(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -125,6 +133,7 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
+// The right thief regrets staying behind.
 static void EV10_TALK(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -134,6 +143,7 @@ static void EV10_TALK(void) {
   Engine_EventEnd();
 }
 
+// Mind Read on the thieves' leader.
 static void EV08_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
@@ -141,6 +151,7 @@ static void EV08_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Mind Read on the left thief.
 static void EV09_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
@@ -148,6 +159,7 @@ static void EV09_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Mind Read on the right thief.
 static void EV10_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRightThiefThoughts);
@@ -155,11 +167,13 @@ static void EV10_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Plays the map-exit sound before returning to Vault.
 static void EV01_TOUCH(void) {
   Engine_AudioPlayCue(SOUND_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
+// Sets the transition and the collision flags of the entrance's occupants.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

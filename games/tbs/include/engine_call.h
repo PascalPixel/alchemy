@@ -6,11 +6,10 @@
 // call of them goes through it. Main-image code calls them as ordinary
 // functions; only the shared scene/common/scroll_initialize_hblank_dma.h, which
 // object/psynergy_effects.c includes as lemurian_ship.c does, reaches the layer
-// there. 本体の関数を呼ぶ層: オーバーレイは本体のルーチンをこのインライン関数を
-// 通して呼ぶ (オーバーレイでは呼び出しは import スタブへ行く)。
-// 引数はインラインの仮引数を通るので、呼び出しごとに定数を作り直す。
-// field_service.h がこれを取り込む;
-// シーンの命令層を使わない部屋はこれだけを使う。
+// there. Overlays call main-image routines through these inline functions;
+// their calls resolve to import stubs. Passing arguments through inline
+// parameters rematerializes constants at each call. field_service.h includes
+// this layer; rooms without the scene command layer use it directly.
 
 #include "types.h"
 #include "unit/object/psynergy_effects.h"
@@ -23,9 +22,9 @@ struct FieldActor;
 struct FieldPosition;
 struct MenuSprite;
 
-// 本体のスケジューラにコールバックを登録する。シーン層の Task_AddCallback と
-// FieldScheduler_AddOrUpdateCallback もこれを通る
-// (オーバーレイはこのルーチンを一つの名前で呼ぶ)。
+// Register a main-image scheduler callback. The scene layer's Task_AddCallback
+// and FieldScheduler_AddOrUpdateCallback also use this wrapper, so overlays
+// import this routine under one name.
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
                                              s32 priority) {
   return Scheduler_AddOrUpdateCallback(callback, priority);
@@ -77,9 +76,9 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-// 型 01
-// の圧縮データを展開する。シーンのほかタイトルとクリアのメニューもこれを取り込む。
-// 本体の field/camera.c の同じ展開は call.h のタグ付きの Value2 で呼ぶ。
+// Decode type-01 compressed data. Scenes and the title and clear menus use
+// this wrapper. The same decode in main-image field/camera.c uses call.h's
+// tagged Value2 instead.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {
   return Resource_DecodeType01(source, destination);

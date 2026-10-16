@@ -1,7 +1,7 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
-@ 文字入りの 64x16 見出し (32x16 二枚)
+@ 64x16 text headings, each made of two 32x16 sprites
 	.global gRenderResource_PairSourceTable
 gRenderResource_PairSourceTable:
 	.4byte UiLabel_Save, UiLabel_Continue, UiLabel_Copy, UiLabel_Erase

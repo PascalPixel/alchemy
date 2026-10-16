@@ -1,6 +1,6 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-@ 256 色 (言語ごと)
+@ 256 colors, per language.
 	.global Resource_Data01B
 Resource_Data01B:
 	.ifeq EDITION_INTERNATIONAL

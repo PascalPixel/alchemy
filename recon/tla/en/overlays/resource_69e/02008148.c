@@ -20,7 +20,7 @@
 #include "types.h"
 #include "object_runtime.h"
 
-// 16.16 固定小数点の座標
+// 16.16 fixed-point coordinates.
 union FieldCoordinate {
     s32 fixed;
     struct {
@@ -48,7 +48,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-// アクター 23 のまわりを回る
+// Orbit actor 23.
 void Func_02000148(struct OrbitEffect *effect)
 {
     struct ObjectRuntime *center = Object_GetById(23);

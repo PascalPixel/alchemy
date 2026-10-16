@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // sio_xchg.c
-// 通信：毎フレームのデータの受け渡しと、送るパケットの組み立て
+// Link: exchange per-frame data and assemble outgoing packets.
 //--------------------------------------------------------------------------
 
 #include "serial_runtime.h"
@@ -8,12 +8,11 @@
 #include "io_reg.h"
 
 //--------------------------------------------------------------------------
-// phase 1 なら受けたデータを receive に集め、send から次のパケットを作る
-// 戻り値は通信の状態
-//   ビット 0〜7  : currentMask（mode 8 ならビット 7 も立てる）
-//   ビット 8〜15 : receivedMask
-//   0x1000       : 親
-//   0x2000       : SIOCNT のマルチプレイ ID が 2 以上
+// In phase 1, collect incoming data in receive and build the next packet from
+// send. Return link status: Bits 0-7: currentMask (also set bit 7 in mode 8).
+// Bits 8-15: receivedMask.
+// 0x1000: parent.
+// 0x2000: SIOCNT multiplayer ID is at least 2.
 //--------------------------------------------------------------------------
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
@@ -32,13 +31,13 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   if (gSerialRuntime.mode == 8)
     st |= 0x80;
   ret = SerialRuntime_AddParentFlag(st);
-  if (((cnt << 26) >> 30) > 1) // ビット 4・5
+  if (((cnt << 26) >> 30) > 1) // Bits 4 and 5.
     ret |= 0x2000;
   return ret;
 }
 
 //--------------------------------------------------------------------------
-// 送るパケットを sendBuffer[0] に組み立てる（作りは上と同じ）
+// Build the outgoing packet in sendBuffer[0], using the same format as above.
 //--------------------------------------------------------------------------
 void SerialRuntime_PrepareSendPacket(void *payload) {
   volatile struct SerialRuntime *sr;

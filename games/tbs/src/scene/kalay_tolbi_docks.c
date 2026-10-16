@@ -27,7 +27,7 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void KalayTolbiDocks_PreparePort(void);
 static void FieldScene_ConfigureFlaggedActors(void);
 static void KalayTolbiDocks_PrepareWindowTransition(void);

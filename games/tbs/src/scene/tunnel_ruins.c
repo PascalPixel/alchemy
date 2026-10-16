@@ -33,7 +33,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 #ifdef UBFIX
 static void OverlayObject_SetYAboveLinkedActor(union FieldObject *fieldObject);
 #else
@@ -50,10 +50,10 @@ struct Vec {
   s32 z;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -162,7 +162,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_depth.h"
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -253,7 +253,7 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track) {
   track->targetY = ACTOR_NO_TARGET;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
 static void TunnelRuins_RunLeaderSpray(void) {
@@ -307,7 +307,7 @@ static void TunnelRuins_RunLeaderSpray(void) {
   ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 #endif
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -1385,7 +1385,7 @@ s32 FieldScene_InitializeActorGroups(void) {
   return 0;
 }
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

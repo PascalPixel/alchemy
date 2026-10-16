@@ -261,7 +261,7 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BattleUnit, haunt, 0x140);
 
 LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BattleUnit, enemyId, 0x14a);
 
-// ゲージの割合 (0x4000 で満タン) を 0〜0x4000 に収める
+// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
 static __inline__ s32 Vitals_Clamp(s32 ratio) {
   s32 clamped;
 
@@ -274,7 +274,7 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
   return clamped;
 }
 
-// HP と PP のゲージを計算し直す（残っていれば最低 1）
+// Recalculates HP and PP gauges, keeping at least one when any points remain.
 // A statement macro, written do { } while (0): every site matches through
 // that shape. Written out at each site, or as an inline function, the
 // gauge loads are scheduled across the store before them.

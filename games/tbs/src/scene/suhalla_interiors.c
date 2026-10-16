@@ -11,12 +11,16 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
+// Returns the interior entrances through the overlay's byte-pointer API.
 u8 *SuhallaInteriors_GetEntrances(void) { return gSuhallaInteriorsEntrances; }
 
+// Returns the two interior exit regions.
 u8 *SuhallaInteriors_GetRegions(void) { return gSuhallaInteriorsRegions; }
 
+// Returns exits between the interiors and Suhalla.
 u8 *SuhallaInteriors_GetExits(void) { return gSuhallaInteriorsExits; }
 
+// Selects the placement table for the current state of flag 0x96f.
 s32 SuhallaInteriors_SelectPlacements(void) {
   if (Engine_GameFlagIsSet(0x96f) != 0) {
     return (s32)gSuhallaInteriorsPlacements96f;
@@ -24,81 +28,88 @@ s32 SuhallaInteriors_SelectPlacements(void) {
   return (s32)gSuhallaInteriorsPlacements;
 }
 
-static void EV12_TALK(s32 no) {
+// Opens shop 31 when facing north, or offers the shopkeeper's dialogue.
+static void EV12_TALK(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-  if (facing == 0xc000) {
-    Engine_ShopOpen(31, no);
+  if (facing == FACING_NORTH) {
+    Engine_ShopOpen(31, actorId);
   } else if (Engine_GameFlagIsSet(0x96f)) {
-    s32 msg = MsgSuhallaArentSurprisedFind;
-    Engine_EventSetMessage(msg);
-    Engine_EventOpenMessage(no, 0);
+    s32 question = MsgSuhallaArentSurprisedFind;
+    Engine_EventSetMessage(question);
+    Engine_EventOpenMessage(actorId, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
       Engine_EventWait(10);
-      Engine_EventSetMessage(msg + 1);
+      Engine_EventSetMessage(question + 1);
     } else {
-      Engine_EventSetMessage(msg + 2);
+      Engine_EventSetMessage(question + 2);
     }
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   } else {
     Engine_EventSetMessage(MsgSuhallaOursOnlyStore);
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   }
 }
 
-static void EV13_TALK(s32 no) {
+// Opens inn 10 when facing north, or shows its current dialogue.
+static void EV13_TALK(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-  if (facing == 0xc000) {
-    Engine_InnCheckIn(10, no);
+  if (facing == FACING_NORTH) {
+    Engine_InnCheckIn(10, actorId);
   } else if (Engine_GameFlagIsSet(0x96f)) {
     Engine_EventSetMessage(MsgSuhallaBusyEverSince);
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   } else {
     Engine_EventSetMessage(MsgSuhallaSighNothinMaybe);
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   }
 }
 
-static void EV18_TALK(s32 no) {
+// Opens the confirmation service when facing north, or shows local dialogue.
+static void EV18_TALK(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
-  if (facing == 0xc000) {
-    Engine_ShopConfirmAct(no);
+  if (facing == FACING_NORTH) {
+    Engine_ShopConfirmAct(actorId);
   } else if (Engine_GameFlagIsSet(0x96f)) {
     Engine_EventSetMessage(MsgSuhallaWonderWhySandstorms);
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   } else {
     Engine_EventSetMessage(MsgSuhallaGetSickThinkingAboutLalivero);
-    Engine_EventShowMessage(no, 0);
+    Engine_EventShowMessage(actorId, 0);
   }
 }
 
-static void EV17_TALK(s32 obj) {
-  s32 msg = MsgSuhallaSupposeFolkBlown;
-  Engine_EventSetMessage(msg);
-  Engine_EventOpenMessage(obj, 0);
+// Asks about the people blown away, then selects the adjacent answer line.
+static void EV17_TALK(s32 actorId) {
+  s32 question = MsgSuhallaSupposeFolkBlown;
+  Engine_EventSetMessage(question);
+  Engine_EventOpenMessage(actorId, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
-    Engine_EventSetMessage(msg + 1);
+    Engine_EventSetMessage(question + 1);
   } else {
-    Engine_EventSetMessage(msg + 2);
+    Engine_EventSetMessage(question + 2);
   }
-  Engine_EventShowMessage(obj, 0);
+  Engine_EventShowMessage(actorId, 0);
 }
 
+// Requests the touched exit before playing its door cue.
 static void SuhallaInteriors_PlayCueAndRequestTouchedExit(void) {
   struct EventWork *state = gEventWork;
-  s16 *cnt = (s16 *)&state->touchedTrigger;
+  s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
 
-  Engine_EventRequestExit(*cnt);
+  Engine_EventRequestExit(*touchedTrigger);
   Engine_AudioPlayCue(0x7B);
 }
 
+// Stages Iodem's conversation and movement before returning camera control.
 static void EV50_TOUCH(void) {
-  struct FieldActor *record;
-  GameFlag_Set(2480);
-  if (GameFlag_IsSet(2442) == 0) {
+  struct FieldActor *leader;
+  GameFlag_Set(0x9b0);
+  if (GameFlag_IsSet(0x98a) == 0) {
     Event_PlayCue(30);
     Event_Begin();
-    Camera_MoveTo(24117248, -1, 6815744, 1);
+    // Frame the speakers and bring the leader over before the dialogue.
+    Camera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
     Actor_WalkToAndWait(0, 368, 160);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     FieldMotion_LaunchFromFocusedObject(19, 0, -16, FACING_NORTH);
@@ -318,6 +329,7 @@ static void EV50_TOUCH(void) {
     Actor_FaceEachOther(19, 0, 20);
     Actor_WalkByAndWait(19, -12, 0);
     Event_Wait(20);
+    // Both answers converge on the following line after different waits.
     Event_OpenMessage(19, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
       Event_Wait(20);
@@ -343,9 +355,10 @@ static void EV50_TOUCH(void) {
     Event_PlayCue(30);
     Actor_SetSpeed(19, 78643, 39321);
     Actor_SetAnimation(19, 2);
-    record = Actor_Get(0);
-    if (record != 0) {
-      Actor_SetDestination(19, record->x.part.pixel, record->z.part.pixel);
+    // Rejoin the leader before hiding the actor and ending the event.
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+      Actor_SetDestination(19, leader->x.part.pixel, leader->z.part.pixel);
     }
     Actor_WaitForMove(19);
     Actor_SetPosition(19, 0, 0);
@@ -355,6 +368,7 @@ static void EV50_TOUCH(void) {
   }
 }
 
+// Selects the matching event table for flag 0x96f's current state.
 s32 SuhallaInteriors_SelectEvents(void) {
   if (Engine_GameFlagIsSet(0x96F) != 0) {
     return (s32)gSuhallaInteriorsEvents96f;
@@ -362,11 +376,12 @@ s32 SuhallaInteriors_SelectEvents(void) {
   return (s32)gSuhallaInteriorsEvents;
 }
 
+// Sets the entrance transition and initializes the two conversation actors.
 s32 Scene_InitActorRecords(void) {
   union SceneActor *work;
   if (gGameState.entrance == 90)
     Engine_GameFlagSet(0x96f);
-  gEventWork->startTransition = 521;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   gEventWork->transitionFrames = 24;
   ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
   ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;

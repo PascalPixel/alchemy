@@ -17,7 +17,7 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
 }
 
 #if defined(TLA_EDITION_JA)
-// 日本版: 4 人にそれぞれ 7 番からのジンをセットで渡す
+// Japanese edition: give each of four characters a Djinni set starting at 7.
 void Func_02000638(void) {
   s32 djinn;
 

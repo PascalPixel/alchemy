@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// ヒープスロット 0x9c のワーク: 8 本のスロットと 128 個の節
+// Heap-slot 0x9c workspace: eight slots and 128 nodes.
 struct Work9cNode {
   struct Work9cNode *next;
   s32 x;

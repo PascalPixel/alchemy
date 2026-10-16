@@ -12,8 +12,8 @@ void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-// 効果オブジェクトを出す関数の本体。常駐側（遠隔呼び出し）とオーバーレイ側（直接呼び出し）で
-// 同じ本体を 1 回ずつコンパイルする
+// Compile the effect-spawning body once for the resident far-call version
+// and once for each overlay's direct-call version.
 
 extern const s32 *gEffectScripts[];
 
@@ -93,11 +93,11 @@ enum {
   }
 
 #ifdef EFFECT_SPAWN_RESIDENT
-// 常駐版: エンジンを遠隔呼び出しで使う
+// The resident version uses far calls to the engine.
 EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar,
              ObjectDispatch_ApplyArgumentToChildrenFar,
              ObjectDispatch_InitializeFar)
 #else
-// オーバーレイに 1 つずつ入る版
+// Each overlay includes its own copy of this version.
 EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetMode, Object_SetScript)
 #endif

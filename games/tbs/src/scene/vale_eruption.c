@@ -17,7 +17,7 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void RunEventScript01(void);
 
 u8 *ConditionalSceneSetup_GetScriptData(void) {

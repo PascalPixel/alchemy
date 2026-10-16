@@ -30,7 +30,7 @@ void Event_FinishScreenTransition(void);
 void Func_0200517c(const void *data, s32 a, s32 b);
 void Func_020052c4(s32 value);
 
-// 部屋ごとの表を返す
+// Return the table for the current room.
 const void *Func_02000440(void) {
   s16 scene = gPartyState.scene;
 

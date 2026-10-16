@@ -8,7 +8,8 @@
 
 extern const u16 gData_080f39c4[];
 
-// 16x16 の絵を BG の地図へ写す。画面（30x20 タイル）の外になるマスは写さない
+// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
+// screen.
 void Func_080e7fec(s32 x, s32 y)
 {
     const u16 *tiles = gData_080f39c4;

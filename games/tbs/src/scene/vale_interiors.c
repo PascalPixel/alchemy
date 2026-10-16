@@ -19,11 +19,11 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunLongPresentationSequence(void);
 static void Scene_UpdateTimedActor(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 static s32

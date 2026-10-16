@@ -20,7 +20,7 @@ void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 s32 GameFlag_Test(s32 flag);
 void Audio_PlayCue(s32 cue);
 
-// 稲光: 残り時間に合わせてパレットを切り替える
+// Lightning: selects the palette according to the remaining duration.
 void BattleFx_UpdateStormFlash(void)
 {
     struct FieldBlendWork *work = Ram_HeapSlots->unk70[2];

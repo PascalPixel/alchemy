@@ -34,7 +34,7 @@
 #include "heap_state.h"
 #include "field_effect.h"
 
-// 前方宣言
+// Forward declarations.
 static void TretPalette_CaptureBank(void);
 static void TretPalette_ApplyTint(void);
 static void TretInteriors_PlayGesture(s32 gesture);
@@ -46,7 +46,7 @@ static u8 sSparkOrigin[12];
 static u8 sSparkCounter[4];
 static s16 *sPaletteBuffer;
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 
 struct Vec {
@@ -89,7 +89,7 @@ struct EffectParams {
   s32 script;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -857,7 +857,7 @@ static void EV00_PSYNERGY(void) {
   Engine_TaskRemoveCallback(TretPalette_ApplyTint);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
 static void TretInteriors_RunLandingDustScene(void) {
@@ -928,7 +928,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// フラグ、有効、コピー元 x y、コピー先 x y
+// Flag, enabled, source x/y, destination x/y.
 // clang-format off
 s16 gTretInteriors_MapPatches[] = {
     0x200, 1, 64, 35, 113, 6,

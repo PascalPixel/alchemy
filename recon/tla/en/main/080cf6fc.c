@@ -14,8 +14,9 @@
 #include "display_transition.h"
 
 //--------------------------------------------------------------------------
-// ウィンドウ 0/1 を有効にし、ページの値を WININ, WINOUT, WIN0H, WIN1H に入れてから
-// 残りを HBlank ごとに DMA0 で WIN0H と WIN1H へ 1 ワードずつ送る
+// Enables windows zero and one, loads the page's WININ, WINOUT, WIN0H and
+// WIN1H values, then streams the rest to WIN0H/WIN1H one word per HBlank via
+// DMA0.
 //--------------------------------------------------------------------------
 void BattleFx_StartWindowHBlankDma(void)
 {

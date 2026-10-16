@@ -34,7 +34,7 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
-// 前方宣言
+// Forward declarations.
 static void ValeHome_RunScriptScene(void);
 static void FieldScene_RunGroupChoreography(void);
 static void ValeHome_RunActorPairEffectScene(void);
@@ -48,7 +48,7 @@ static void FieldScene_RunStep17(void);
 static void FieldScene_RunStep20(void);
 static void SceneState_SetValues352_365_2116_2117_40(void);
 
-// 向きを変えて待つ: SceneActor_SetPairZeroAndValue をインライン関数を通して呼ぶ
+// Turn and wait by calling SceneActor_SetPairZeroAndValue through this inline.
 static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline for Scene_RunExtendedActorSequence's three
    * calls (call.h's Call3 did the same); called directly the function grows by
@@ -69,7 +69,7 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
 }
 #endif
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 u8 *ValeHome_GetEntrances(void) { return (u8 *)gValeHomeEntrances; }
@@ -344,7 +344,7 @@ static void Scene_PsynergyStoneIsGone(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/vale.h"
 
 static void EV01_TOUCH(void) {
@@ -1260,7 +1260,7 @@ static void SceneEffect_UpdateByFrameBit(s32 no) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 static void ValeHome_SpawnEffectPair(union PairObject *parent) {
@@ -1316,7 +1316,7 @@ static void ValeHome_SpawnEffectPair(union PairObject *parent) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep15(void) {

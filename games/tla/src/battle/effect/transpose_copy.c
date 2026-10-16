@@ -1,13 +1,13 @@
 //--------------------------------------------------------------------------
 // transpose_copy.c
-// タイル：バイトの絵を右に 90 度回して写す
+// Tiles: copy a byte image rotated 90 degrees clockwise.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 幅 w・高さ h の src を、幅 h・高さ w の dst に右へ 90 度回して写す
-// （src のいちばん上の行が dst のいちばん右の列になる）
+// Rotate w-by-h src clockwise into h-by-w dst.
+// The top row of src becomes the rightmost column of dst.
 //--------------------------------------------------------------------------
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;

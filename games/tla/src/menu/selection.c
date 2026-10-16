@@ -94,7 +94,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
   return ret;
 }
 
-// 日本語版はこの関数が違うので、まだ scaffold のまま (S4)
+// The Japanese function differs and remains scaffolded (S4).
 #if !defined(TLA_EDITION_JA)
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   UiWindow_OpenMode1AndWaitFrame();

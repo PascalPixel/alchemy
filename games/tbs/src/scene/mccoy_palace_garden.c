@@ -121,6 +121,7 @@ static void NorthWorker_Talk(void) {
   Engine_EventEnd();
 }
 
+// McCoy asks whether the palace work makes him responsible for the curse.
 static void McCoy_Talk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
@@ -141,6 +142,7 @@ static void WestGuard_Talk(void) {
 // partner; after, he scolds them once for keeping McCoy waiting.
 static void EastGuard_Talk(void) {
   Engine_EventBegin();
+  // Once admitted, the party only receives the guard's current reminder.
   if (GameFlag_IsSet(FLAG_GUARDS_LET_PARTY_IN) != 0) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_WAITING) != 0) {
       if (GameFlag_IsSet(FLAG_SCOLDED_FOR_LATENESS) == 0) {
@@ -159,12 +161,13 @@ static void EastGuard_Talk(void) {
       goto guard;
     }
   } else {
+    // On the first visit, the guards confer before opening the gate.
     Engine_EventSetMessage(MsgBilibinLordOnlyMeet);
     Engine_EventOpenMessage(GATE_GUARD_EAST, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
       gEventWork->message++;
       Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 10);
-      if (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed < 0x10e0000) {
+      if (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
         Actor_SetSpeed(GATE_GUARD_EAST, 0xcccc, 0x6666);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x15a, 0x112);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 0x11a);
@@ -277,6 +280,7 @@ static void Garden_ApplyProgress(void) {
       }
     }
   }
+  // McCoy's outdoor meeting and the arrest happen only after the curse lifts.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Actor_SetPosition(MCCOY, PIXELS(224), PIXELS(292));
     Actor_FaceDirection(MCCOY, FACING_SOUTH, 0);
@@ -292,6 +296,7 @@ static void Garden_ApplyProgress(void) {
 // the palace to McCoy.
 static void Guards_ArrestParty(void) {
 
+  // Bring the leader into view before the guards interrupt.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Camera_MoveTo(0x1400000, -1, 0x1400000, 0);
@@ -321,6 +326,7 @@ static void Guards_ArrestParty(void) {
   Engine_ActorRunRepeatedMotion(GATE_GUARD_EAST, 1);
   Engine_EventOpenMessage(GATE_GUARD_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+  // Refusals repeat the accusation until the player acknowledges it.
   while (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
     Engine_ActorShowEmote(GATE_GUARD_EAST, EMOTE_IN_FRONT, 60);
     Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
@@ -345,16 +351,17 @@ static void Guards_ArrestParty(void) {
   Engine_EventWait(60);
   if (Engine_GameFlagIsSet(FLAG_GUARDS_LET_PARTY_IN) == 0) {
     Engine_ActorSetSpeed(GATE_GUARD_EAST, 0x10000, 0x8000);
-    Object_GetById(GATE_GUARD_EAST)->steeringFlags &= 254;
+    Object_GetById(GATE_GUARD_EAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Engine_ActorWalkToAndWait(GATE_GUARD_EAST, 0x15a, 0x107);
     Engine_EventWait(1);
     {
-      struct FieldActor *record = Object_GetById(GATE_GUARD_EAST);
+      struct FieldActor *guard = Object_GetById(GATE_GUARD_EAST);
 
-      record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
+      guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
     }
   }
   Actor_SetSpeed(GATE_GUARD_WEST, 0xcccc, 0x6666);
+  // Escort Isaac through the opened gate before changing to the palace.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_WalkTo(GATE_GUARD_WEST, 0x148, 0x106);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 0x116);

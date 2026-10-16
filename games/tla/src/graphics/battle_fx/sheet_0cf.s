@@ -1,5 +1,5 @@
 	.section .rodata
-@ 色なしの絵: BattleFx_BlueFlameSheet の色で描いてある (同じ効果が読む)
+@ Uncolored art using BattleFx_BlueFlameSheet colors (same effect).
 	.global Resource_Data0CF
 Resource_Data0CF:
 	.incbin "games/tla/src/graphics/battle_fx/sheet_0cf.bitmap.lz"

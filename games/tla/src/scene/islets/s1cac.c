@@ -5,7 +5,7 @@
 extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];
 
-// 走査線ごとの BG1 横スクロールを HBlank DMA に掛ける
+// Apply BG1 horizontal scanline scrolling with HBlank DMA.
 void Func_02001cac(void) {
   s16 *lines = gData_02004f10[gData_02004f04];
   s32 first = lines[0];
@@ -22,8 +22,8 @@ void Func_02001cac(void) {
   /* FAKEMATCH: the one-pass block reads the control before its mask is started;
    * without it the mask is started first (differ 2) */
   do {
-    dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
-    dma[5] &= 0x7fff; // 止める
+    dma[5] &= 0xc5ff; // Clear start timing and repeat.
+    dma[5] &= 0x7fff; // Stop.
     lines++;
     /* FAKEMATCH: keeps the cursor step before the last control read */
     __asm__("" : : "r"(lines));

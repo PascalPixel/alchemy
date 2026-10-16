@@ -299,7 +299,7 @@ struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
   return node;
 }
 
-// 選択枠のタイル位置
+// Selection frame tile positions
 // clang-format off
 static const u16 sSelectorTileOffsets[30] = {
     0x00, 0x01, 0x02, 0x03,
@@ -334,7 +334,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base) {
   }
 }
 
-// 数字の転送先
+// Number transfer destinations
 // clang-format off
 static const u16 sGlyphOffsets[5] = {
     0xc0, 0x90, 0x80, 0x50, 0x40,
@@ -833,7 +833,7 @@ void Shop_DrawMoney(void) {
   }
 }
 
-// アイテム名の下の行の x（ドット）
+// X position below the item name, in pixels
 #if EDITION_INTERNATIONAL
 #define ITEM_NOTE_X 0
 #else
@@ -883,8 +883,8 @@ draw:
 }
 
 //--------------------------------------------------------------------------
-// win を描きなおし、メッセージ message を左上から書く（win が 0
-// なら何もしない） 日本版は描きなおしたあと 1 フレーム待つ
+// Redraw win and write message from its upper-left corner; do nothing if
+// win is 0. The Japanese edition waits one frame after redrawing.
 //--------------------------------------------------------------------------
 void Shop_DrawMsg(struct UiWindow *win, s32 message) {
   if (win != 0) {
@@ -1784,7 +1784,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_SellOld(unitId, equipped);
 }
 
-// 贈り物の値段
+// Gift prices
 // clang-format off
 static const s16 sSpecialItemPrices[30] = {
     300, 300, 300, 300, 300,
@@ -1795,7 +1795,7 @@ static const s16 sSpecialItemPrices[30] = {
     8000, 8000, 8000, 8000, 8000,
 };
 
-// 贈り物の品物 (0 で終わり)。どの関数も読まない
+// Gift items, terminated by 0; no function reads this table.
 const s16 gShop_GiftItemIds[21] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
     16, 195, 38, 84, 89, 90, 180, 181, 190, 0,
@@ -1878,7 +1878,7 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   shop->selectedItem = saved;
 }
 
-// 店ごとの品物: 品物 24 個 (0 で終わり), 特別な品物 8 個 (0 で終わり), 種類
+// Shop stock: 24 regular items, 8 special items (each 0-terminated), then kind.
 // clang-format off
 static const s16 sStockTable[35][33] = {
     {
@@ -2516,7 +2516,7 @@ void Shop_ResetEffects(void) {
                                               (Random16() * 7) >> 16);
 }
 
-// 仲間の動作ごとの効果音
+// Sound effects for each party member action
 static const s8 sPartyActionCues[4] = {
     0x52,
     0x54,
@@ -2620,7 +2620,7 @@ enum InnMessageId {
 #define MESSAGE_WINDOW_ROWS 11
 #endif
 
-// 宿代の倍率
+// Inn price multiplier
 // clang-format off
 static const s8 sInnPriceMultipliers[12] = {
     2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
@@ -2727,7 +2727,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   ((struct FieldWork *)gEventWork)->transitionFrames = 16;
 }
 
-// アイテム名の下の行の x（ドット）
+// X position below the item name, in pixels
 #if EDITION_INTERNATIONAL
 #define ITEM_NOTE_X 0
 #else

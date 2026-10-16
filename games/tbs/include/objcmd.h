@@ -7,43 +7,43 @@
 
 #include "types.h"
 
-#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) // 飛び先
+#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) // Branch destination
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
-#define SC_TOP 0 // 先頭
+#define SC_TOP 0 // Script start
 #define SC_FOREVER 0xffff
 
-#define SC_WAIT(n) 0x00, (n)                    // n フレーム待つ
-#define SC_SYNC 0x01                            // 到着を待つ
-#define SC_POS(x, y, z) 0x02, (x), (y), (z)     // 位置を置く
-#define SC_MOVE(x, y, z) 0x03, (x), (y), (z)    // 目標へ移動
-#define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z) // 相対移動
-#define SC_FACE_LINK 0x05                       // 連結先の方角
-#define SC_MOVE_LINK 0x06                       // 連結先へ移動
+#define SC_WAIT(n) 0x00, (n)                    // Wait n frames.
+#define SC_SYNC 0x01                            // Wait for arrival.
+#define SC_POS(x, y, z) 0x02, (x), (y), (z)     // Set position.
+#define SC_MOVE(x, y, z) 0x03, (x), (y), (z)    // Move toward the target.
+#define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z) // Move by a relative offset.
+#define SC_FACE_LINK 0x05                       // Face the linked object.
+#define SC_MOVE_LINK 0x06                       // Move to the linked object.
 #define SC_MOVE_LOCAL(a, b) 0x07, (a), (b)
-#define SC_WANDER(a, b, c) 0x08, (a), (b), (c) // うろうろ
+#define SC_WANDER(a, b, c) 0x08, (a), (b), (c) // Wander.
 #define SC_WANDER_HOME(a, b, c) 0x09, (a), (b), (c)
 #define SC_APPROACH_LINK 0x0a
-#define SC_CAMERA 0x0b                 // 先頭を追う
-#define SC_LOOP(n, to) 0x0c, (n), (to) // n 回まで繰り返す
+#define SC_CAMERA 0x0b                 // Follow the leader.
+#define SC_LOOP(n, to) 0x0c, (n), (to) // Repeat up to n times.
 #define SC_JUMP(to) 0x0d, (to)
-#define SC_IF(to) 0x0e, (to)    // 結果が真なら
-#define SC_IFNOT(to) 0x0f, (to) // 結果が偽なら
-#define SC_END 0x10             // 本スクリプトへ戻る
+#define SC_IF(to) 0x0e, (to)    // Branch if the result is true.
+#define SC_IFNOT(to) 0x0f, (to) // Branch if the result is false.
+#define SC_END 0x10             // Return to the main script.
 #define SC_FLAG_CHECK(f) 0x11, (f)
 #define SC_FLAG_ON(f) 0x12, (f)
 #define SC_FLAG_OFF(f) 0x13, (f)
 #define SC_FLAG_REV(f) 0x14, (f)
-#define SC_SET(w, v) 0x15, (w), (v) // 作業値を書く
+#define SC_SET(w, v) 0x15, (w), (v) // Write a work value.
 #define SC_ADD(w, v) 0x16, (w), (v)
 #define SC_CMP(w, v) 0x17, (w), (v)
-#define SC_PLAYER 0x18 // キー操作
+#define SC_PLAYER 0x18 // Player input control
 #define SC_KEYS 0x19
-#define SC_WORLD 0x1a // ワールドマップ操作
-#define SC_FREE 0x1b  // 解放
+#define SC_WORLD 0x1a // World map control
+#define SC_FREE 0x1b  // Release
 #define SC_ARG(v) 0x1c, (v)
 #define SC_NOP(v) 0x1d, (v)
-#define SC_SE(n) 0x1e, (n) // 効果音
-#define SC_BASE 0x1f       // 次の語から始め直す
+#define SC_SE(n) 0x1e, (n) // Sound effect
+#define SC_BASE 0x1f       // Restart from the next word.
 #define SC_B54_OFF 0x20
 #define SC_B54_ON 0x21
 #define SC_CALL(fn) 0x22, (s32)(fn)

@@ -34,7 +34,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static void DialogueLayout_ConfigureGroupOne(void);
 static void DialogueLayout_ConfigureGroupTwo(void);
 static void DialogueLayout_ConfigureGroupThree(void);
@@ -137,7 +137,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gImilFuchinFallsPlacementsOther;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
 static void EV11_TOUCH_2(void) {

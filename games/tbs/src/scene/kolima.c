@@ -29,7 +29,7 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunExtendedActorSequence(void);
 static void FieldScene_RunPairedStepA(s32 arg0, s32 arg1);
 static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2);
@@ -116,7 +116,7 @@ SceneEffect_UpdateFallingObject(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -1327,7 +1327,7 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2) {
   Engine_EventWait(arg2);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void) {
@@ -1370,7 +1370,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void) {
   Engine_ObjectSetScript(p, gKolima_Object26Script);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_blink.h"
 
 static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
@@ -1399,7 +1399,7 @@ static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_forest_bridge_falling_effect.h"
 s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_LayoutFlag __attribute__((section(".bss")));

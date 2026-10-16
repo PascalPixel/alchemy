@@ -759,15 +759,24 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
     IO_WRITE_QUEUE_PUSH(address, value, delay);                                \
   }
 
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 0x20000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, 0x30000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, 0x50000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, 0x60000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, 0x70000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 0x90000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 0xa0000)
-DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 0xb0000)
+// Queues a register write for the next VBlank.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 1 << 16)
+// Queues a register write two frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 2 << 16)
+// Queues a register write three frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, 3 << 16)
+// Queues a register write five frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, 5 << 16)
+// Queues a register write six frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, 6 << 16)
+// Queues a register write seven frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, 7 << 16)
+// Queues a register write nine frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 9 << 16)
+// Queues a register write ten frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 10 << 16)
+// Queues a register write eleven frames ahead.
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 11 << 16)
 
 // Called from VBlank: runs the queued register writes, with a copy of the
 // executor routine on the stack.
@@ -780,22 +789,31 @@ void IoWriteQueue_FlushPending(void) {
   if (count != 0) {
     QueueFlushRoutine routine;
     u32 size = (u32)TransferCommandExecutor_Size;
-    u32 word_count = size >> 2;
+    u32 wordCount = size >> 2;
     u32 zero = 0;
     u32 control = 0x84;
 
     control <<= 24;
     {
-      u8 routine_bytes[word_count << 2];
+      u8 routineBytes[wordCount << 2];
 
-      routine = (QueueFlushRoutine)routine_bytes;
-      Dma_Set(Resource_ExecuteTransfer, (void *)routine, word_count | control,
+      // The executor must finish before this stack buffer goes out of scope.
+      routine = (QueueFlushRoutine)routineBytes;
+      Dma_Set(Resource_ExecuteTransfer, (void *)routine, wordCount | control,
               REG_DMA3);
       routine(queue, count);
       queue->count = zero;
     }
   }
 }
+
+enum {
+  FADE_GAME_LAYERS = 0x3e,
+  FADE_LAYER_MASK = 0x3f,
+  FADE_BRIGHTEN = 0x80,
+  FADE_DARKEN = 0xc0,
+  FADE_LEVEL_MAX = 16
+};
 
 // Steps the screen fade once a frame from VBlank: sets BLDCNT to brighten or
 // darken the chosen layers and moves BLDY one step from the start level to
@@ -807,10 +825,10 @@ void Fade_Update(void) {
       u32 control;
 
       if (gBlendBrighten != 0) {
-        control = gBlendLayers | 0x80;
+        control = gBlendLayers | FADE_BRIGHTEN;
         blendControl = &REG_BLDCNT;
       } else {
-        control = gBlendLayers | 0xc0;
+        control = gBlendLayers | FADE_DARKEN;
         blendControl = &REG_BLDCNT;
       }
       *blendControl = control;
@@ -852,7 +870,7 @@ void Fade_Update(void) {
 #define DEFINE_BLEND_FADE(name, brighten, level)                               \
   void name(s32 frames) {                                                      \
     gBlendBrighten = brighten;                                                 \
-    gBlendLayers = 0x3e;                                                       \
+    gBlendLayers = FADE_GAME_LAYERS;                                           \
     gBlendStartLevel = gBlendTargetLevel;                                      \
     gBlendTargetLevel = level;                                                 \
     gBlendDuration = frames;                                                   \
@@ -860,13 +878,13 @@ void Fade_Update(void) {
   }
 
 // Fades out to black.
-DEFINE_BLEND_FADE(Fade_ToBlack, 0, 16)
+DEFINE_BLEND_FADE(Fade_ToBlack, 0, FADE_LEVEL_MAX)
 
 // Fades in from black.
 DEFINE_BLEND_FADE(Fade_FromBlack, 0, 0)
 
 // Fades out to white.
-DEFINE_BLEND_FADE(Fade_ToWhite, 1, 16)
+DEFINE_BLEND_FADE(Fade_ToWhite, 1, FADE_LEVEL_MAX)
 
 // Fades in from white.
 DEFINE_BLEND_FADE(Fade_FromWhite, 1, 0)
@@ -879,8 +897,8 @@ DEFINE_BLEND_FADE(Fade_FromWhite, 1, 0)
 //   frames : how long the fade takes
 void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
-  gBlendLayers = layer & 0x3f;
-  if (start > 16U) {
+  gBlendLayers = layer & FADE_LAYER_MASK;
+  if (start > FADE_LEVEL_MAX) {
     gBlendStartLevel = gBlendTargetLevel;
   } else {
     gBlendStartLevel = start;
@@ -912,6 +930,8 @@ void Render_ResetFrame(void) {
 
 typedef void (*OamBuildRoutine)(void *work);
 
+enum { OBJ_AFFINE_MATRIX_COUNT = 32, RENDER_DEPTH_SLOT_COUNT = 256 };
+
 // Hands out the next OAM affine matrix for a sprite drawn with `source`'s
 // scale and rotation and fills it in. Returns the matrix number, or 0 when
 // all 32 are taken.
@@ -927,7 +947,7 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   xScale = (s16)source->scaleX;
   yScale = (s16)source->scaleY;
   angle = source->angle;
-  if (index > 31)
+  if (index >= OBJ_AFFINE_MATRIX_COUNT)
     return 0;
 
   matrix = &gObjAffineMatrices[index];
@@ -943,7 +963,7 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
       xReciprocal = -reciprocal;
 
     matrix->rows[0] = (u16)xReciprocal;
-    matrix->rows[1] = reciprocal << 16;
+    matrix->rows[1] = (u32)reciprocal << 16;
   } else {
     // The inverse of rotate-then-scale
     s32 sine;
@@ -966,18 +986,18 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
 
 // Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
 // frame. The entry's first word becomes its link to the next entry.
-void Runtime_PushSlotEntry(void *slot_entry, s32 slot) {
+void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
   void **head;
-  void *previous_head;
+  void *previousHead;
 
-  if (slot > 0xFF)
-    slot = 0xFF;
+  if (slot >= RENDER_DEPTH_SLOT_COUNT)
+    slot = RENDER_DEPTH_SLOT_COUNT - 1;
   if (slot < 0)
     slot = 0;
   head = &gRenderSlotHeads[slot];
-  previous_head = *head;
-  *head = slot_entry;
-  *(void **)slot_entry = previous_head;
+  previousHead = *head;
+  *head = slotEntry;
+  *(void **)slotEntry = previousHead;
 }
 
 // Builds this frame's OAM list in `work` from the sprites linked into the
@@ -1040,44 +1060,44 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
 // Returns the length, in blocks, of the longest run of free blocks.
 s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
-  u8 *p = gResourceBlockOwners;
-  s32 max = 0;
-  s32 n = VRAM_BLOCK_COUNT;
+  u8 *owner = gResourceBlockOwners;
+  s32 longestRun = 0;
+  s32 remaining = VRAM_BLOCK_COUNT;
 
   do {
-    if (*p++ != VRAM_BLOCK_OWNER_FREE) {
+    if (*owner++ != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
     } else {
       run++;
-      if (max < run)
-        max = run;
+      if (longestRun < run)
+        longestRun = run;
     }
-    n--;
-  } while (n != 0);
-  return max;
+    remaining--;
+  } while (remaining != 0);
+  return longestRun;
 }
 
 // Frees every block entry `id` owns. Returns -1 when it freed any (or `id` is
 // out of range) and 0 when the entry owned none.
 s32 VramCache_FreeBlocks(s32 id) {
   s32 cleared = 0;
-  s32 n;
-  u8 *p;
+  s32 remaining;
+  u8 *owner;
   u8 empty;
 
   if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
-  p = gResourceBlockOwners;
+  owner = gResourceBlockOwners;
   empty = VRAM_BLOCK_OWNER_FREE;
-  n = VRAM_BLOCK_COUNT;
+  remaining = VRAM_BLOCK_COUNT;
   do {
-    if (*p == id) {
-      *p = empty;
+    if (*owner == id) {
+      *owner = empty;
       cleared++;
     }
-    n--;
-    p++;
-  } while (n != 0);
+    remaining--;
+    owner++;
+  } while (remaining != 0);
   if (cleared != 0)
     return -1;
   return 0;
@@ -1127,6 +1147,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
     return 0;
   if (size > 8192)
     return 0;
+  // A same-size upload keeps its existing VRAM run.
   if (entry->size > 16) {
     if (entry->size != size) {
       Resource_ResetEntry(no);
@@ -1139,6 +1160,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   }
 
   if (offset != -1) {
+    // Commit the allocation before copying, clearing or leaving its pixels.
     dst = (void *)(0x06010000 + offset);
     entry->size = size;
     entry->offset = offset;
@@ -1236,11 +1258,11 @@ void Scheduler_ResetTaskTable(void) {
   gSchedulerReady = 1;
 }
 
-// Copies `byte_count` bytes a word at a time.
-void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count) {
+// Copies `byteCount` bytes a word at a time.
+void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
-  byte_count >>= 2;
-  for (index = 0; index < byte_count; index++)
+  byteCount >>= 2;
+  for (index = 0; index < byteCount; index++)
     *destination++ = *source++;
 }
 
@@ -1276,19 +1298,19 @@ void Scheduler_SortTasks(void) {
 s32 Scheduler_FindCallback(SchedulerCallback callback) {
   s32 result;
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       result = i;
       break;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1296,7 +1318,7 @@ s32 Scheduler_FindCallback(SchedulerCallback callback) {
 // new order, and re-sorts the table. Returns the task's index, or -1 when
 // the table is full.
 s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
-  u32 saved_interrupt_state;
+  u32 savedInterruptState;
   s32 index;
   struct SchedulerTask *task;
   s32 i;
@@ -1304,7 +1326,8 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   index = -1;
   task = gSchedulerTaskTable;
   (void)gSchedulerStatus;
-  IRQ_LOCK(saved_interrupt_state);
+  IRQ_LOCK(savedInterruptState);
+  // Update an existing callback before looking for an unused task slot.
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       task->state = order;
@@ -1325,25 +1348,26 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
     }
   }
   Scheduler_SortTasks();
-  IRQ_UNLOCK(saved_interrupt_state);
+  IRQ_UNLOCK(savedInterruptState);
   return index;
 }
 
-// Two empty task routines.
+// Empty scheduler callback; it leaves all runtime state unchanged.
 void Scheduler_Idle(void) {}
 
+// Alternate empty scheduler callback with the same no-op behavior.
 void Scheduler_EmptyCallback(void) {}
 
 // Unschedules the task running `callback`. Returns its old index, or -1.
 s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       task->callback = 0;
@@ -1352,7 +1376,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
       break;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1361,13 +1385,13 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
 // or -1.
 s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (callback != 0) {
       if (task->callback != (u32)callback)
@@ -1376,7 +1400,7 @@ s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
     TASK_STATE_HIGH(task) |= 1;
     result = i;
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1385,20 +1409,20 @@ s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
 // while they are open. Returns the last index changed, or -1.
 s32 Scheduler_SuspendOverlayTasks(void) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
       result = i;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1406,13 +1430,13 @@ s32 Scheduler_SuspendOverlayTasks(void) {
 // the overlay tasks are suspended. Returns its index, or -1.
 s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       task->mask = mask;
@@ -1420,7 +1444,7 @@ s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
       break;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1428,20 +1452,20 @@ s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
 // Returns the last index changed, or -1.
 s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (callback == 0 || task->callback == (u32)callback) {
       TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1449,20 +1473,20 @@ s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
 // changed, or -1.
 s32 Scheduler_ResumeOverlayTasks(void) {
   struct SchedulerTask *task;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
   s32 result;
   s32 i;
 
   result = -1;
   task = gSchedulerTaskTable;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if ((task->callback >> 24) == 2) {
       TASK_STATE_HIGH(task) &= ~1;
       result = i;
     }
   }
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -1500,7 +1524,8 @@ void Scheduler_RunPass(s32 key) {
 // Advances the game's random number generator (the C library's classic
 // linear congruential one) and returns 16 bits of it.
 u32 Random16(void) {
-  u32 value = gRandomSeed * 0x41c64e6d + 0x3039;
+  enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
+  u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
 
   gRandomSeed = value;
   return (value << 8) >> 16;
@@ -1648,49 +1673,58 @@ void NumberText_FormatHex(u32 value) {
 // Writes `number` to the number buffer as eleven characters: spaces, a sign
 // (a space or '-') and its decimal digits, right-aligned.
 void NumberText_FormatDecimal(s32 number) {
-  u32 *table;
-  s8 *out;
-  s32 count;
-  u32 word;
-  s32 result;
-  s32 val;
+  u32 *placeValues;
+  s8 *output;
+  s32 placesLeft;
+  u32 placeValue;
+  s32 digit;
+#ifdef UBFIX
+  u32 magnitude;
+#else
+  s32 magnitude;
+#endif
   s8 sign;
 
-  result = number;
-  val = result;
-  table = (u32 *)gText_PowersOfTen;
+  digit = number;
+  magnitude = digit;
+  placeValues = (u32 *)gText_PowersOfTen;
   sign = ' ';
-  out = gNumberTextBuffer;
-  if (val < 0) {
-    val = -val;
+  output = gNumberTextBuffer;
+  if (number < 0) {
+#ifdef UBFIX
+    magnitude = 0U - magnitude;
+#else
+    // UB: negating INT_MIN cannot be represented as a signed s32.
+    magnitude = -magnitude;
+#endif
     sign = '-';
   }
   // Pad with a space for each power of ten above the number
-  word = *table++;
-  count = 9;
-  if (val < word) {
+  placeValue = *placeValues++;
+  placesLeft = 9;
+  if (magnitude < placeValue) {
     do {
-      count -= 1;
-      *out++ = ' ';
-      if (count == 0)
+      placesLeft -= 1;
+      *output++ = ' ';
+      if (placesLeft == 0)
         break;
-      word = *table++;
-    } while (val < word);
+      placeValue = *placeValues++;
+    } while (magnitude < placeValue);
   }
-  *out++ = sign;
+  *output++ = sign;
   // Then one digit for each remaining power of ten
-  table -= 1;
-  if (count != 0) {
+  placeValues -= 1;
+  if (placesLeft != 0) {
     do {
-      word = *table++;
-      result = val / word;
-      *out++ = result + '0';
-      val -= result * word;
-      count -= 1;
-    } while (count != 0);
+      placeValue = *placeValues++;
+      digit = magnitude / placeValue;
+      *output++ = digit + '0';
+      magnitude -= digit * placeValue;
+      placesLeft -= 1;
+    } while (placesLeft != 0);
   }
-  out[0] = val + '0';
-  out[1] = 0;
+  output[0] = magnitude + '0';
+  output[1] = 0;
 }
 
 // Writes `count` blank characters at the debug text cursor.
@@ -1943,8 +1977,8 @@ void *Runtime_BumpAllocateAlternatePool(s32 size) {
   return (void *)allocationAddress;
 }
 
-// An empty routine the runtime bank exports; nothing calls it.
-void RuntimeMemory_ReservedNoOp(void) {}
+// Reserved empty memory export; its historical purpose is not established.
+UNUSED void RuntimeMemory_ReservedNoOp(void) {}
 
 // The 3D transform. gTransform is twelve s32 in 16.16 fixed point (1.0 is
 // 0x10000): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
@@ -1994,161 +2028,174 @@ void SceneTransform_ResetMatrix(void) {
   Transform_ResetCurrent();
 }
 
-// Rotates the transform by the angles ang[0], ang[1] and ang[2] about the X,
+// Rotates the transform by angles[0], angles[1] and angles[2] about the X,
 // Y and Z axes.
-void SceneTransform_ApplyRotation(s32 *ang) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 m[12];
+void SceneTransform_ApplyRotation(s32 *angles) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 matrix[12];
 
-  sx = Trig_Sin(ang[0]);
-  cx = Trig_Cos(ang[0]);
-  sy = Trig_Sin(ang[1]);
-  cy = Trig_Cos(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = Trig_Cos(ang[2]);
-  m[0] = Iwram_MulQ16(cy, cz);
-  m[1] = Iwram_MulQ16(cy, sz);
-  m[2] = -sy;
-  m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
-  m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
-  m[5] = Iwram_MulQ16(sx, cy);
-  m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
-  m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
-  m[8] = Iwram_MulQ16(cx, cy);
-  m[9] = 0;
-  m[10] = 0;
-  m[11] = 0;
-  Iwram_TransformMatrix(m);
+  sinX = Trig_Sin(angles[0]);
+  cosX = Trig_Cos(angles[0]);
+  sinY = Trig_Sin(angles[1]);
+  cosY = Trig_Cos(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = Trig_Cos(angles[2]);
+  matrix[0] = Iwram_MulQ16(cosY, cosZ);
+  matrix[1] = Iwram_MulQ16(cosY, sinZ);
+  matrix[2] = -sinY;
+  matrix[3] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) - Iwram_MulQ16(cosX, sinZ);
+  matrix[4] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) + Iwram_MulQ16(cosX, cosZ);
+  matrix[5] = Iwram_MulQ16(sinX, cosY);
+  matrix[6] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) + Iwram_MulQ16(sinX, sinZ);
+  matrix[7] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
+  matrix[8] = Iwram_MulQ16(cosX, cosY);
+  matrix[9] = 0;
+  matrix[10] = 0;
+  matrix[11] = 0;
+  Iwram_TransformMatrix(matrix);
 }
 
 // Rotates the transform about the X axis.
-void SceneTransform_ApplyPitch(s32 ang) {
-  s32 m[12];
-  s32 sin = Trig_Sin(ang);
-  s32 cos = Trig_Cos(ang);
+void SceneTransform_ApplyPitch(s32 angle) {
+  s32 matrix[12];
+  s32 sine = Trig_Sin(angle);
+  s32 cosine = Trig_Cos(angle);
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(m);
-  m[4] = cos;
-  m[5] = sin;
-  m[7] = -sin;
-  m[8] = cos;
-  Iwram_TransformMatrix(m);
+  Transform_SetIdentity(matrix);
+  matrix[4] = cosine;
+  matrix[5] = sine;
+  matrix[7] = -sine;
+  matrix[8] = cosine;
+  Iwram_TransformMatrix(matrix);
 }
 
 // Rotates the transform about the Y axis.
-void SceneTransform_ApplyYaw(s32 ang) {
-  s32 m[12];
-  s32 sin = Trig_Sin(ang);
-  s32 cos = Trig_Cos(ang);
+void SceneTransform_ApplyYaw(s32 angle) {
+  s32 matrix[12];
+  s32 sine = Trig_Sin(angle);
+  s32 cosine = Trig_Cos(angle);
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(m);
-  m[0] = cos;
-  m[2] = -sin;
-  m[6] = sin;
-  m[8] = cos;
-  Iwram_TransformMatrix(m);
+  Transform_SetIdentity(matrix);
+  matrix[0] = cosine;
+  matrix[2] = -sine;
+  matrix[6] = sine;
+  matrix[8] = cosine;
+  Iwram_TransformMatrix(matrix);
 }
 
 // Rotates the transform about the Z axis.
-void SceneTransform_ApplyRoll(s32 ang) {
-  s32 m[12];
-  s32 sin = Trig_Sin(ang);
-  s32 cos = Trig_Cos(ang);
+void SceneTransform_ApplyRoll(s32 angle) {
+  s32 matrix[12];
+  s32 sine = Trig_Sin(angle);
+  s32 cosine = Trig_Cos(angle);
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(m);
-  m[0] = cos;
-  m[1] = sin;
-  m[3] = -sin;
-  m[4] = cos;
-  Iwram_TransformMatrix(m);
+  Transform_SetIdentity(matrix);
+  matrix[0] = cosine;
+  matrix[1] = sine;
+  matrix[3] = -sine;
+  matrix[4] = cosine;
+  Iwram_TransformMatrix(matrix);
 }
 
-// Translates the transform by `pos` (x, y, z in 16.16).
-void SceneTransform_ApplyPosition(const s32 *pos) {
-  s32 m[12];
+// Translates the transform by `position` (x, y, z in 16.16).
+void SceneTransform_ApplyPosition(const s32 *position) {
+  s32 matrix[12];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(m);
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  Transform_SetIdentity(matrix);
+  matrix[9] = position[0];
+  matrix[10] = position[1];
+  matrix[11] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 // Scales the transform by `scale` (x, y, z factors in 16.16).
 void SceneTransform_ApplyScale(const s32 *scale) {
-  s32 m[12];
+  s32 matrix[12];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(m);
-  m[0] = scale[0];
-  m[4] = scale[1];
-  m[8] = scale[2];
-  Iwram_TransformMatrix(m);
+  Transform_SetIdentity(matrix);
+  matrix[0] = scale[0];
+  matrix[4] = scale[1];
+  matrix[8] = scale[2];
+  Iwram_TransformMatrix(matrix);
 }
 
-// Rotates by `ang` and translates by `pos` in one matrix.
-void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 m[12];
+// Rotates by `angles` and translates by `position` in one matrix.
+void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 matrix[12];
 
-  sx = Trig_Sin(ang[0]);
-  cx = Trig_Cos(ang[0]);
-  sy = Trig_Sin(ang[1]);
-  cy = Trig_Cos(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = Trig_Cos(ang[2]);
-  m[0] = Iwram_MulQ16(cy, cz);
-  m[1] = Iwram_MulQ16(cy, sz);
-  m[2] = -sy;
-  m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
-  m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
-  m[5] = Iwram_MulQ16(sx, cy);
-  m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
-  m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
-  m[8] = Iwram_MulQ16(cx, cy);
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  sinX = Trig_Sin(angles[0]);
+  cosX = Trig_Cos(angles[0]);
+  sinY = Trig_Sin(angles[1]);
+  cosY = Trig_Cos(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = Trig_Cos(angles[2]);
+  matrix[0] = Iwram_MulQ16(cosY, cosZ);
+  matrix[1] = Iwram_MulQ16(cosY, sinZ);
+  matrix[2] = -sinY;
+  matrix[3] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) - Iwram_MulQ16(cosX, sinZ);
+  matrix[4] =
+      Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) + Iwram_MulQ16(cosX, cosZ);
+  matrix[5] = Iwram_MulQ16(sinX, cosY);
+  matrix[6] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) + Iwram_MulQ16(sinX, sinZ);
+  matrix[7] =
+      Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
+  matrix[8] = Iwram_MulQ16(cosX, cosY);
+  matrix[9] = position[0];
+  matrix[10] = position[1];
+  matrix[11] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
-// Rotates by `ang`, scales each row of the rotation by `scale` and translates
-// by `pos`, in one matrix.
-void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
-  s32 sx, cx, sy, cy, sz, cz;
-  s32 s;
-  s32 m[12];
+// Rotates by `angles`, scales each rotation row by `scale` and translates by
+// `position`, in one matrix.
+void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position,
+                                        s32 *scale) {
+  s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
+  s32 axisScale;
+  s32 matrix[12];
 
-  sx = Trig_Sin(ang[0]);
-  cx = Trig_Cos(ang[0]);
-  sy = Trig_Sin(ang[1]);
-  cy = Trig_Cos(ang[1]);
-  sz = Trig_Sin(ang[2]);
-  cz = Trig_Cos(ang[2]);
-  s = scale[0];
-  m[0] = Iwram_MulQ16(s, Iwram_MulQ16(cy, cz));
-  m[1] = Iwram_MulQ16(s, Iwram_MulQ16(cy, sz));
-  m[2] = Iwram_MulQ16(s, -sy);
-  s = scale[1];
-  m[3] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) -
-                             Iwram_MulQ16(cx, sz));
-  m[4] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) +
-                             Iwram_MulQ16(cx, cz));
-  m[5] = Iwram_MulQ16(s, Iwram_MulQ16(sx, cy));
-  s = scale[2];
-  m[6] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) +
-                             Iwram_MulQ16(sx, sz));
-  m[7] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) -
-                             Iwram_MulQ16(sx, cz));
-  m[8] = Iwram_MulQ16(s, Iwram_MulQ16(cx, cy));
-  m[9] = pos[0];
-  m[10] = pos[1];
-  m[11] = pos[2];
-  Iwram_TransformMatrix(m);
+  sinX = Trig_Sin(angles[0]);
+  cosX = Trig_Cos(angles[0]);
+  sinY = Trig_Sin(angles[1]);
+  cosY = Trig_Cos(angles[1]);
+  sinZ = Trig_Sin(angles[2]);
+  cosZ = Trig_Cos(angles[2]);
+  axisScale = scale[0];
+  matrix[0] = Iwram_MulQ16(axisScale, Iwram_MulQ16(cosY, cosZ));
+  matrix[1] = Iwram_MulQ16(axisScale, Iwram_MulQ16(cosY, sinZ));
+  matrix[2] = Iwram_MulQ16(axisScale, -sinY);
+  axisScale = scale[1];
+  matrix[3] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), cosZ) -
+                                  Iwram_MulQ16(cosX, sinZ));
+  matrix[4] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(sinX, sinY), sinZ) +
+                                  Iwram_MulQ16(cosX, cosZ));
+  matrix[5] = Iwram_MulQ16(axisScale, Iwram_MulQ16(sinX, cosY));
+  axisScale = scale[2];
+  matrix[6] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), cosZ) +
+                                  Iwram_MulQ16(sinX, sinZ));
+  matrix[7] =
+      Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) -
+                                  Iwram_MulQ16(sinX, cosZ));
+  matrix[8] = Iwram_MulQ16(axisScale, Iwram_MulQ16(cosX, cosY));
+  matrix[9] = position[0];
+  matrix[10] = position[1];
+  matrix[11] = position[2];
+  Iwram_TransformMatrix(matrix);
 }
 
 // Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
@@ -2318,10 +2365,13 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
     return result;                                                             \
   }
 
+// Decodes a type-01 resource and returns its unpacked byte count.
 DEFINE_RESOURCE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
                        Resource_DecodeType01CodeSize)
+// Decodes a type-02 resource and returns its unpacked byte count.
 DEFINE_RESOURCE_DECODE(Resource_DecodeType2, Resource_Decode2,
                        Resource_Decode2CodeSize)
+// Decodes a byte-oriented LZ resource and returns its unpacked byte count.
 DEFINE_RESOURCE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
                        Resource_DecodeByteLzCodeSize)
 
@@ -2416,6 +2466,15 @@ void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
 // Writing a record goes to a free sector before the old copy is invalidated,
 // and the highest sequence number of a record id is its current copy.
 
+enum {
+  SAVE_FLASH_IDENTIFY_ATTEMPTS = 8,
+  SAVE_SECTOR_COUNT = 16,
+  SAVE_RECORD_NONE = 16,
+  SAVE_FILE_COUNT = 3,
+  SAVE_SEQUENCE_LIMIT = 65000,
+  SAVE_CHECKSUM_BYTES = 0xfe8
+};
+
 // Allocates the save workspace, identifies the flash chip (up to eight
 // tries) and scans all 16 sectors: a sector counts as taken when its
 // signature and checksum are good, and of two copies of a record only the
@@ -2430,21 +2489,21 @@ s32 SaveState_InitializeWorkspace(void) {
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(2, &gIrqHandlers[IRQ_TIMER2]);
 
-  for (index = 0; index < 8; index++) {
+  for (index = 0; index < SAVE_FLASH_IDENTIFY_ATTEMPTS; index++) {
     if ((u16)IdentifyFlash() == 0)
       break;
     WaitFrames(1);
   }
-  if (index > 7)
+  if (index >= SAVE_FLASH_IDENTIFY_ATTEMPTS)
     return 1;
 
-  for (index = 0; index <= 15; index++) {
+  for (index = 0; index < SAVE_SECTOR_COUNT; index++) {
     u32 status;
     u32 record;
     u8 id;
 
     work->occupied[index] = 0;
-    work->recordId[index] = 0x10;
+    work->recordId[index] = SAVE_RECORD_NONE;
     work->sequence[index] = 0;
     status = SaveState_ReadSlotAndCheckChecksum(index);
     START_DMA(&work->slot, &header, 0x84000004);
@@ -2456,7 +2515,7 @@ s32 SaveState_InitializeWorkspace(void) {
     work->sequence[index] = slot->sequence;
     record = slot->recordId;
     id = record;
-    if (id > 15)
+    if (id >= SAVE_RECORD_NONE)
       continue;
     if (status != 0)
       continue;
@@ -2482,7 +2541,7 @@ s32 SaveState_InitializeWorkspace(void) {
 // sector only goes to a record that already has a copy, so replacing a save
 // always has room. Returns 16 when there is no sector to use.
 u32 SaveState_SelectWriteSlot(s32 mode) {
-  u32 empty[16];
+  u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
   u32 index;
   u8 *slot;
@@ -2497,13 +2556,13 @@ u32 SaveState_SelectWriteSlot(s32 mode) {
       empty[count++] = index;
     }
     index += 1;
-  } while (index <= 0xFU);
-  index = 0x10;
+  } while (index < SAVE_SECTOR_COUNT);
+  index = SAVE_SECTOR_COUNT;
   if (count != 0) {
     if (count == 1) {
       index = empty[0];
-      if (SaveState_FindLatestSlot(mode) == 0x10) {
-        index = 0x10;
+      if (SaveState_FindLatestSlot(mode) == SAVE_SECTOR_COUNT) {
+        index = SAVE_SECTOR_COUNT;
       }
     } else {
       index = Random16() % count;
@@ -2568,9 +2627,10 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   WAIT_DMA();
   current = SaveState_FindLatestSlot(recordId);
   slot = SaveState_SelectWriteSlot(recordId);
-  if (slot > 15)
+  if (slot >= SAVE_SECTOR_COUNT)
     return 1;
 
+  // Build the new sector before changing which old sector counts as current.
   START_DMA(source, work->slot.record.payload, 0x840003fc);
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
@@ -2583,10 +2643,11 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
 
   if (SaveState_WriteWorkspaceSlot(slot) != 0)
     return 1;
-  if (current <= 15 && SaveState_InvalidateSlot(current) != 0)
+  if (current < SAVE_SECTOR_COUNT && SaveState_InvalidateSlot(current) != 0)
     return 1;
 
-  if (header.sequence > 65000) {
+  if (header.sequence > SAVE_SEQUENCE_LIMIT) {
+    // Restart sequence numbering only after the replacement was written.
     header.sequence = 1;
     START_DMA(&header, &work->slot.record.header, 0x84000004);
     WAIT_DMA();
@@ -2611,7 +2672,7 @@ u32 SaveState_ReadRecordPayload(s32 recordId, void *destination) {
 
   work = gSaveWorkspace;
   index = SaveState_FindLatestSlot(recordId);
-  if (index > 15)
+  if (index >= SAVE_SECTOR_COUNT)
     return 1;
   SaveState_ReadSlotAndCheckChecksum(index);
   START_DMA(work->slot.record.payload, destination, 0x840003fc);
@@ -2626,14 +2687,15 @@ u32 SaveState_DeleteRecord(s32 recordId) {
   s32 deletionResult;
 
   index = SaveState_FindLatestSlot(recordId);
-  if (index > 0xFU) {
+  if ((u32)index >= SAVE_SECTOR_COUNT) {
     return 1U;
   }
   deletionResult = SaveState_InvalidateSlot(index);
   return (u32)((0 - deletionResult) | deletionResult) >> 0x1F;
 }
 
-// Returns the byte sum of the sector buffer's payload.
+// Sums the first 0xfe8 payload bytes; the final eight payload bytes are
+// excluded.
 s32 SaveState_ChecksumWorkspace(void) {
   struct SaveWorkspace *work;
   u32 limit;
@@ -2641,7 +2703,7 @@ s32 SaveState_ChecksumWorkspace(void) {
   s32 sum;
 
   work = gSaveWorkspace;
-  limit = 0xFE7;
+  limit = SAVE_CHECKSUM_BYTES - 1;
   sum = 0;
   offset = 0;
   do {
@@ -2666,9 +2728,9 @@ u32 SaveState_FindLatestSlot(s32 recordId) {
   u32 i;
 
   work = gSaveWorkspace;
-  latestSlot = 0x10;
+  latestSlot = SAVE_SECTOR_COUNT;
   latestSequence = 0;
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
       if (latestSequence < work->sequence[i]) {
         latestSequence = work->sequence[i];
@@ -2690,14 +2752,14 @@ s32 SaveState_InvalidateSlot(s32 index) {
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, 0x84000002);
   WAIT_DMA();
-  header.recordId = 0x10;
+  header.recordId = SAVE_RECORD_NONE;
   header.sequence = 0;
   START_DMA(&header, &work->slot.record.header, 0x84000004);
   WAIT_DMA();
   if (SaveState_WriteWorkspaceSlot(index) != 0)
     return 1;
   work->occupied[index] = 0;
-  work->recordId[index] = 0x10;
+  work->recordId[index] = SAVE_RECORD_NONE;
   work->sequence[index] = 0;
   return 0;
 }
@@ -2725,7 +2787,7 @@ u32 SaveState_GetLatestSequence(s32 recordId) {
 
   work = gSaveWorkspace;
   latestSequence = 0;
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
       if (latestSequence < work->sequence[i])
         latestSequence = work->sequence[i];
@@ -2752,18 +2814,18 @@ s32 SaveState_LoadSummaryRecords(void) {
 
     Dma_Fill32(0, summary, sizeof(*summary));
     index = SaveState_FindLatestSlot(group);
-    if (index <= 15) {
+    if (index < SAVE_SECTOR_COUNT) {
       ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
       count++;
     }
-    index = SaveState_FindLatestSlot(group + 3);
-    if (index <= 15)
+    index = SaveState_FindLatestSlot(group + SAVE_FILE_COUNT);
+    if (index < SAVE_SECTOR_COUNT)
       ReadFlash(index, 0x110, summary->unk38, sizeof(summary->unk38));
     else
       *(u32 *)summary->unk38 = 0;
     group++;
     summary++;
-  } while (group <= 2);
+  } while (group < SAVE_FILE_COUNT);
   return count;
 }
 
@@ -2778,6 +2840,14 @@ u32 SaveState_ReleaseWorkspace(void) {
 // multiplayer mode; the parent clocks the transfers from timer 3, a halfword
 // at a time. Bulk data rides on that exchange in 20-byte blocks (the
 // BeginTransfer functions and SerialRuntime_StepBlockTransfer).
+
+enum {
+  SERIAL_PACKET_HALFWORDS = 14,
+  SERIAL_PAYLOAD_BYTES = 24,
+  SERIAL_BLOCK_BYTES = 20,
+  SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
+  SERIAL_IDLE_HALFWORD = 0xfefe
+};
 
 // Resets the serial port into multiplayer mode, installs the serial and
 // timer 3 interrupt handlers, sets up the packet buffers and starts the
@@ -2794,6 +2864,7 @@ void SerialRuntime_Initialize(void) {
    * 2 in tbs-en, 123 instructions either way). */
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
+  // Replace both interrupt handlers before configuring multiplayer transfers.
   Runtime_SetIrqHandler(IRQ_SERIAL, 0, SerialRuntime_HandleTransferInterrupt);
   Runtime_SetIrqHandler(IRQ_TIMER3, 0, SerialRuntime_HandleTransferInterrupt);
   REG_IME = 0;
@@ -2818,6 +2889,7 @@ void SerialRuntime_Initialize(void) {
   state->sendIndex = -1;
   state->sendBuffer[0] = (u16 *)(state->storage + 0);
   state->sendBuffer[1] = (u16 *)(state->storage + 32);
+  // Each console has separate incoming, completed and pending packet buffers.
   for (index = 0; index <= 1; index++) {
     state->incomingBuffer[index] = (u16 *)(state->storage + 64 + index * 96);
     state->readyBuffer[index] = (u16 *)(state->storage + 96 + index * 96);
@@ -2961,24 +3033,24 @@ s32 SerialRuntime_PollStatus(void) {
 //   0x2000       : SIOCNT's multiplayer id is 2 or more
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
-  u32 cnt;
-  s32 st;
-  s32 ret;
+  u32 control;
+  s32 status;
+  s32 result;
 
   siocnt = &REG_SIOCNT;
-  cnt = *siocnt;
+  control = *siocnt;
   if (gSerialRuntime.phase == 1) {
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
     gSerialRuntime.sequence++;
   }
-  st = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
+  status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
   if (gSerialRuntime.mode == 8)
-    st |= 0x80;
-  ret = SerialRuntime_AddParentFlag(st);
-  if (((cnt << 26) >> 30) > 1) // SIOCNT bits 4 and 5, the multiplayer id
-    ret |= 0x2000;
-  return ret;
+    status |= 0x80;
+  result = SerialRuntime_AddParentFlag(status);
+  if (((control << 26) >> 30) > 1) // SIOCNT bits 4 and 5, the multiplayer id
+    result |= 0x2000;
+  return result;
 }
 
 // Builds the packet to send in sendBuffer[0]: [0] the sequence number, [1]
@@ -3013,7 +3085,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     u32 v;
 
     pkt = sr->sendBuffer[0];
-    for (i = 0; i <= 13; i++) {
+    for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
       v = *pkt;
       pkt++;
       sum += v;
@@ -3048,6 +3120,7 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   s32 sum;
 
   *(u32 *)&flags[4] = 0;
+  // Swap completed buffers with interrupts masked, then validate outside it.
   Io_Write16(0, &REG_IME);
   for (i = 0; i <= 3; i++) {
     swap = gSerialRuntime.pendingBuffer[i];
@@ -3061,11 +3134,11 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   for (i = 0; i <= 1; i++) {
     packet = gSerialRuntime.pendingBuffer[i];
     sum = 0;
-    for (k = 0; k <= 13; k++)
+    for (k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
       sum += packet[k];
     if (flags[i] == 1 && (s16)sum == -1) {
-      Dma_Set(gSerialRuntime.pendingBuffer[i] + 2, (u8 *)payload + i * 24,
-              0x84000006, REG_DMA3);
+      Dma_Set(gSerialRuntime.pendingBuffer[i] + 2,
+              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, 0x84000006, REG_DMA3);
       gSerialRuntime.currentMask |= 1 << i;
     }
     if ((s16)sum == -1)
@@ -3095,7 +3168,7 @@ void SerialRuntime_HandleTransferInterrupt(void) {
   sendState->isParent = (*sioControl << 25) >> 31;
 
   if (sendState->sendIndex == -1) {
-    u32 idleWord = 0xfefe;
+    u32 idleWord = SERIAL_IDLE_HALFWORD;
     u16 *swap;
 
     ((volatile u16 *)sioControl)[1] = idleWord;
@@ -3107,7 +3180,7 @@ void SerialRuntime_HandleTransferInterrupt(void) {
         sendState->sendBuffer[1][sendState->sendIndex];
   }
   receiveState = &gSerialRuntime;
-  if (receiveState->sendIndex <= 14)
+  if (receiveState->sendIndex <= SERIAL_PACKET_HALFWORDS)
     receiveState->sendIndex++;
 
   channel = 0;
@@ -3116,13 +3189,14 @@ receive_loop:
     s32 receiveIndex;
     u16 *incoming;
 
-    if (recv[channel] == 0xfefe && receiveState->receiveIndex[channel] > 13) {
+    if (recv[channel] == SERIAL_IDLE_HALFWORD &&
+        receiveState->receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
       receiveState->receiveIndex[channel] = -1;
     } else {
       receiveIndex = receiveState->receiveIndex[channel];
       incoming = receiveState->incomingBuffer[channel];
       incoming[receiveIndex] = recv[channel];
-      if (receiveIndex == 13) {
+      if (receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
         u16 *swap = receiveState->readyBuffer[channel];
 
         receiveState->readyBuffer[channel] = incoming;
@@ -3134,7 +3208,7 @@ receive_loop:
   tailState = &gSerialRuntime;
   if (tailState->isParent != 0)
     tailState->channelFlags[channel] |= 2;
-  if (tailState->receiveIndex[channel] <= 14)
+  if (tailState->receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
     tailState->receiveIndex[channel]++;
   channel++;
   receiveState = tailState;
@@ -3188,17 +3262,17 @@ s32 SerialRuntime_BeginSend(void *source, s32 size) {
 // a receive is already running, 0 otherwise.
 s32 SerialRuntime_BeginReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
-  u32 saved_interrupt_master;
+  u32 savedInterruptMaster;
 
   if (gSerialReceiveDest != 0)
     return -1;
-  IRQ_LOCK(saved_interrupt_master);
+  IRQ_LOCK(savedInterruptMaster);
   state->status = 0x81;
   gSerialReceiveDest = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
   gSerialBlockSequence = 0;
-  IRQ_UNLOCK(saved_interrupt_master);
+  IRQ_UNLOCK(savedInterruptMaster);
   return 0;
 }
 
@@ -3212,11 +3286,13 @@ s32 SerialRuntime_BeginReceive(void *destination) {
       do {                                                                     \
         WaitFrames(1);                                                         \
         count++;                                                               \
-      } while (count < 600000 && pending != 0);                                \
+      } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && pending != 0);        \
     }                                                                          \
   }
 
+// Waits for the current send, up to the protocol's frame timeout.
 DEFINE_SERIAL_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
+// Waits for the current receive, up to the protocol's frame timeout.
 DEFINE_SERIAL_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
 
 // Waits until both the send and the receive have finished, giving up after
@@ -3228,7 +3304,7 @@ void SerialRuntime_WaitForTransfers(void) {
   while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {
     WaitFrames(1);
     count++;
-    if (count >= 600000)
+    if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
       return;
   }
 }
@@ -3279,6 +3355,7 @@ void SerialRuntime_StepBlockTransfer(void) {
   peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
   if ((gLinkStatus & 3) != 3)
     return;
+  // Receiving advances only when the peer presents the expected sequence.
   {
     s32 *receive = &gSerialReceiveDest;
     s32 dest = *receive;
@@ -3289,13 +3366,13 @@ void SerialRuntime_StepBlockTransfer(void) {
           switch (peer->peerFlags) {
           case 1:
             Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
-            *receive += 20;
-            gSerialReceivedSize += 20;
+            *receive += SERIAL_BLOCK_BYTES;
+            gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | 0x80;
             break;
           case 2:
             Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
-            gSerialReceivedSize += 20;
+            gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->flags = 2;
             own->status = 0;
             own->active = one.v;
@@ -3321,26 +3398,27 @@ void SerialRuntime_StepBlockTransfer(void) {
   {
     s32 *send = &gSerialSendSource;
     s32 src = *send;
+    // A peer behind our sequence requests a rewind before the next block.
     if (src != 0) {
       if (peer->flags == 1) {
         if (peer->active & 0x80) {
           gap = (gSerialBlockSequence - peer->active) & 0x7f;
-          *send = src - gap * 20;
-          gSerialSendSize += gap * 20;
+          *send = src - gap * SERIAL_BLOCK_BYTES;
+          gSerialSendSize += gap * SERIAL_BLOCK_BYTES;
           gSerialBlockSequence -= gap;
           gSerialBlockSequence &= 0x7f;
         }
         if (gSerialSendSize != 0) {
           Dma_Set((void *)*send, own->payload, 0x84000005, REG_DMA3);
-          gSerialSendSize += -20;
+          gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = 1;
             own->active = gSerialBlockSequence & 0x7f;
-            *send += 20;
+            *send += SERIAL_BLOCK_BYTES;
           } else {
             own->peerFlags = 2;
             own->active = gSerialBlockSequence & 0x7f;
-            *send += 20;
+            *send += SERIAL_BLOCK_BYTES;
           }
           gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
         }

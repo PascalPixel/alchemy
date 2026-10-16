@@ -3,7 +3,7 @@
 gObject_ShadowTiles:
 	.incbin "games/common/src/system/resource/shadow.8bpp"
 
-@ 敵スプライトの資源番号と敵番号
+@ Enemy sprite resource IDs and enemy IDs
 	.global gResourceSlot_NumberTable
 gResourceSlot_NumberTable:
 	.2byte ResourceId_AxeGoblinSprites, 400

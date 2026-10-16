@@ -1,5 +1,5 @@
 lane	area	linked_c_sources	reviewed_functions	observed_c_functions	observed_header_functions	remaining_observed_functions
-01	core: shared headers, common C, runtime, system, game, sound	16	25	379	255	609
+01	core: shared headers, common C, runtime, system, game, sound	16	179	379	255	455
 02	field and graphics	14	25	275	0	250
 03	window	6	25	349	0	324
 04	menu, shop and debug	9	25	403	0	378
@@ -9,6 +9,6 @@ lane	area	linked_c_sources	reviewed_functions	observed_c_functions	observed_head
 08	scene cohort 1	15	23	512	0	489
 09	scene cohort 2	15	23	512	0	489
 10	scene cohort 3	15	20	511	0	491
-11	scene cohort 4	15	0	512	0	512
-12	scene cohort 5	15	0	511	0	511
-13	scene cohort 6	15	0	510	1	511
+11	scene cohort 4	15	214	512	0	298
+12	scene cohort 5	15	69	511	0	442
+13	scene cohort 6	15	119	511	1	393

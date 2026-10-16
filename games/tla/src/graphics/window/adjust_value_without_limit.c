@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // adjust_value_without_limit.c
-// ウィンドウ：メッセージを長さの制限なしに文字列にする
+// Windows: expand a message into a string without a length limit.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -13,7 +13,7 @@
 void UiText_BuildRenderEntries(s32 key, s32 mode);
 
 //--------------------------------------------------------------------------
-// メッセージ message を buf に展開する（長さの上限なし）
+// Expand message into buf without an upper length bound.
 //--------------------------------------------------------------------------
 void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
   UiText_DecodeMessage(message, buf, 0x7fffffff);

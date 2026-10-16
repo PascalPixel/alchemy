@@ -12,7 +12,7 @@ struct MapLayers {
   struct MapLayer layers[3];
 };
 
-// レイヤーのセル矩形の 3 バイト目を value で埋める
+// Fill the third byte of each cell in a layer rectangle with value.
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
                            s32 value) {
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;

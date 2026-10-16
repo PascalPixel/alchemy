@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// IWRAM に常駐するルーチンの固定アドレス
+// Fixed addresses of the routines resident in IWRAM.
 #define Iwram_ClearWordsEntry                                                  \
   FIXED_ADDRESS((s32 (*)(void *destination, s32 size)), 0x03000258,            \
                 IwramClearWords)
@@ -34,7 +34,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03000730, IwramCopyWords)
 
-// このゲームでは固定アドレスを直接呼ぶ
+// This game calls the fixed entries directly.
 #define Iwram_ClearWords Iwram_ClearWordsEntry
 #define Iwram_FillWords Iwram_FillWordsEntry
 #define Iwram_RatioMulQ14 Iwram_RatioMulQ14Entry

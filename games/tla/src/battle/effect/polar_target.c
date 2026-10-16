@@ -28,7 +28,7 @@ void Func_080e87c4(void);
 
 void Func_080dca50(void);
 
-// party_state.h の unk26a
+// unk26a from party_state.h.
 struct PartyPauseView {
   u8 unk000[0x26a];
   s16 pausedObject;
@@ -51,7 +51,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   }
 }
 
-// 種類ごとの追加処理
+// Additional processing for each type.
 void FieldEvent_RunTypeHandler(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 

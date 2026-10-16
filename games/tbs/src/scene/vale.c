@@ -36,7 +36,7 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunScene373SequenceC(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *a0, const s32 *a1);
 static void Vale_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3);
@@ -71,7 +71,7 @@ enum HouseActor { ACTOR_BOARD = 23, ACTOR_LAST_BOARD = 24 };
 
 enum { ANIM_HAMMER = 11 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 s32 MapStagedScene_SelectPrimaryData(void) { return (s32)gValeEntrances; }
@@ -1670,7 +1670,7 @@ static void FieldScene_RunLargeStagingSequence(void) {
   Engine_EventWait(40);
   Actor_SetSpeed(9, 0x2666, 0x1333);
   Actor_SetSpeed(14, 0x2666, 0x1333);
-  // 戻り値は使わない
+  // The return value is unused.
   Object_GetById(9);
   Engine_ObjectSetPosition((s32)rec8, 0x1880000, 0xd00000, 0x2480000);
   Actor_MoveToAndWait(9, 0x17a, 0x248);
@@ -2446,7 +2446,7 @@ static void Scene_RepairTheHouse(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 static void SceneState_SetValue1ThenCall(void) {
@@ -2646,7 +2646,7 @@ static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x,
 
 static void SceneState_ApplyRectAndRunTwo(void) {
 #if !EDITION_INTERNATIONAL
-  // 日本版のみ: 村人を引くが戻り値は使わない
+  // Japanese edition only: look up a villager but do not use the return value.
   if (Engine_GameFlagIsSet(0x87a))
     Object_GetById(ACTOR_DORA);
   else
@@ -2727,7 +2727,7 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_orbit.h"
 
 static void OverlayObject_UpdateOnFrameBit1(s32 p) {
@@ -2752,11 +2752,11 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p) {
     Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.h"
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

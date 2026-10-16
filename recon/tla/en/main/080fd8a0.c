@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// エナジーメニューの作業領域（わかっている欄だけ）
+// Psynergy menu workspace; only identified fields are declared here.
 struct PsynergyMenuState {
     u8 unk000[0x24];
     s32 listWindow;
@@ -40,7 +40,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height, s32 value);
 
-// 選んだ行の説明を出し、5 行の地の色を塗り分ける
+// Shows the selected row's description and sets the five rows' backgrounds.
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 {
     struct PsynergyMenuState *menu;

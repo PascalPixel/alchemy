@@ -1,12 +1,12 @@
 	.section .rodata
 	.balign 4
 	.4byte 16
-@ 中央からの並び
+@ Formation order from the center.
 	.global gBattleParty_CenterOrderOffsets
 gBattleParty_CenterOrderOffsets:
 	.byte 0, -1, 1, -2, 2, -3, 3, -4, 4
 	.balign 4
-@ クラスごとの武器の動作
+@ Weapon motions by class.
 	.global gBattleUnit_WeaponAnimsClass0
 gBattleUnit_WeaponAnimsClass0:
 	.2byte 0x140, 0x14e, 0x146, 0x147, 0x140, 0x140, 0x140
@@ -50,12 +50,12 @@ gBattleCommand_SelectionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32
 	.byte 53, 47, 41, 35, 29, 23, 17, 11
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
-@ 技ごとの結果の状態
+@ Resulting states by ability.
 	.global gBattle_ActionStatus
 gBattle_ActionStatus:
 	.incbin "games/tbs/src/battle/actstat.table"
 	.balign 4, 0
-@ 技ごとの演出 (効果番号と段階, フラグ)
+@ Ability presentations: effect id, phase and flags.
 	.global gBattle_ActionFlags
 gBattle_ActionFlags:
 	.incbin "games/tbs/src/battle/actflags.table"
@@ -66,7 +66,7 @@ gBattleParty_RoundEndGroupOrder:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
-@ 星の作業領域の位置
+@ Star workspace positions.
 	.global gBattleFx_StarWorkOffsets
 gBattleFx_StarWorkOffsets:
 	.4byte 0, 1, 5, 14, 30, 46, 62

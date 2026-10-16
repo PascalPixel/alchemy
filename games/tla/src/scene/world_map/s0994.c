@@ -35,7 +35,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
 
-// 主人公の位置へ集まる
+// Gather at the player character's position.
 static __inline__ void Actor_JoinLeader(s32 actor) {
   struct ObjectRuntime *leader;
 

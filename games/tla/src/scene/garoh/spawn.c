@@ -33,7 +33,7 @@ s32 Func_02001344(void) {
     return Flag_IsSet(0x91e);
 }
 
-// DriftScene_SpawnObject の双子: 五つ目の引数を 0x5e に置く
+// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
 void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;

@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // copy_list_order.c
-// メニュー：並べかえの順番の表を写す
+// Menu: copy the sorting order table.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -16,8 +16,8 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// mode 0〜2 の順番の表（それ以外は標準の表）を order に写す
-// 表は 0xff で終わる。写すのは 0xff を含めて 32 バイトまで
+// Copy the order table for modes 0-2, or the default table, into order.
+// Tables end with 0xff. Copy at most 32 bytes, including the terminator.
 //--------------------------------------------------------------------------
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;

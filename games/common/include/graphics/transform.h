@@ -31,7 +31,7 @@ static __inline__ void Transform_SetIdentity(void *matrix) {
                    : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-// 今の行列を単位行列に戻す。
+// Resets the current matrix to identity.
 static __inline__ void Transform_ResetCurrent(void) {
   s32 zero;
 

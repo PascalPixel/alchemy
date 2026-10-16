@@ -1,15 +1,15 @@
 //--------------------------------------------------------------------------
 // pack_rows.c
-// タイル：横 2 バイトを 1 バイトに詰める
+// Tiles: pack each horizontal pair of bytes into one byte.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 #include "scene.h"
 
 //--------------------------------------------------------------------------
-// 1 行 40 バイトを 288 行、横に 2 バイトずつ 1 バイトに詰めて写す
-// （あとの奇数列のバイトが残る）
-// stride : src の 1 行のバイト数（dst はその半分）
+// Copy 288 rows of 40 bytes, reducing each horizontal pair to one byte.
+// The second byte, from the odd column, survives.
+// stride: source bytes per row; destination uses half as many.
 //--------------------------------------------------------------------------
 void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride) {
   s32 y = 0;

@@ -6,8 +6,8 @@
 
 extern void *gWorkSlot[64];
 
-// スロットを自分のアドレスで読む: 隣のスロットは同じアドレスから差で届く
-// (gWorkSlot[n] は表の先頭 + オフセットになる)
+// Read slots through their own addresses; adjacent slots are reached by
+// offsets. (gWorkSlot[n] instead addresses from the table's start.)
 #define WORK_SLOT(n) (*(gWorkSlot + (n)))
 
 union HeapState {

@@ -28,7 +28,7 @@ struct UiWindow {
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 
-// 開閉の途中の枠を描く
+// Draw the frame partway through opening or closing.
 void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition)
 {
     struct UiWindow *window = arg;

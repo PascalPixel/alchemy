@@ -26,9 +26,9 @@ void QueueIoWriteDelay11(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 #endif
 
-// 割り込みを止めて I/O 書き込みキューに 1 件積む。満杯（32 件）なら何もしない
-// address : 書き込み先、value : 値、control : 遅延フレーム << 16、または DMA
-// の制御語
+// Disables interrupts to enqueue one I/O write; a full 32-entry queue is
+// ignored. address: destination, value: value to write, control: delay frames
+// << 16 or a DMA control word.
 /* FAKEMATCH: the count is read and stored through count_, a u16 pointer to
  * q->count held in a local; written as q->count, 15 linked sections of tbs-en
  * differ (measured 2026-10-13: the nine QueueIoWriteDelay writers, 18 functions
@@ -58,8 +58,8 @@ void IoWriteQueue_FlushPending(void);
     IRQ_UNLOCK(saved);                                                         \
   }
 
-// IO_WRITE_QUEUE_PUSH と同じだが、IME のアドレスを呼び出し側の ime
-// に持ったまま止める・戻す
+// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
+// variable while disabling and restoring interrupts.
 /* FAKEMATCH: the count goes through count_ as in IO_WRITE_QUEUE_PUSH (see its
  * tag): written as q->count, BattleFx_PlayUnitElementEffect and
  * BattleEffect_RunShockwaveScene, its users, are among the sections that

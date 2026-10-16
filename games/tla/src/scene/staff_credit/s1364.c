@@ -15,7 +15,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   Motion_CamBounds(x, y, z, mode);
 }
 
-// 3 フレームごとにカメラを斜めに 1 ピクセル揺らす
+// Every three frames, shake the camera diagonally by one pixel.
 void Func_02001364(void) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
   s32 x = *(s16 *)((u8 *)object + 10);

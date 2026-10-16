@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// 8 フレームごとにパレットの色 5-9 と 13-15 を 1 つずつ送る
+// Every eight frames, rotate palette colors 5-9 and 13-15 by one entry.
 void Func_02000c14(void) {
   if ((*Ram_FrameCount & 7) == 0) {
     volatile u16 *palette;

@@ -54,7 +54,7 @@ LAYOUT_OFFSET_GUARD(UiChannelSlot_Transition, struct UiChannelSlot, transition,
                     0x1c);
 LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
 
-// 窓の行 y のあるタイルマップの帯 (4 行) を転送させる
+// Requests transfer of the four-row tilemap band containing window row y.
 /* A statement macro (S2: a layer, 10 sites): the dirty-row store stays where it
  * is written at every use; as a plain expression, tbs-en differs. */
 #define UiRender_MarkRow(render, y)                                            \

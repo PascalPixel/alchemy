@@ -4,8 +4,8 @@
 #include "ram_buffer.h"
 
 struct PairScene {
-  u16 angle;  // 四方向
-  u16 angle8; // 八方向
+  u16 angle;  // Four directions.
+  u16 angle8; // Eight directions.
   s32 x;
   s32 y;
   s32 z;
@@ -35,7 +35,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   scene->secondObjectId = targetId;
   scene->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
-  scene->angle = (user->angle + 0x2000) & 0xc000; // 四方向にまるめる
+  scene->angle = (user->angle + 0x2000) & 0xc000; // Round to four directions.
   scene->angle8 = (user->angle + 0x1000) & 0xe000;
   scene->child = target;
   if (user != NULL) {
@@ -53,7 +53,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
     scene->savedPriority = (u32)(((u8 *)user->animation)[9] << 28) >> 30;
   }
   if (target != NULL) {
-    // 対象の動きと色を、あとで戻すために取っておく
+    // Save target motion and colors for later restoration.
     scene->savedCallback = target->update;
     scene->savedScript = target->script;
     scene->savedPalette =

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// どうぐメニューの作業領域（わかっている欄だけ）
+// Item menu workspace (known fields only).
 struct InventoryMenuState {
   u8 unk000[0x24];
   s32 itemWindow;
@@ -23,7 +23,7 @@ extern char ResourceId_MenuSmallDownArrowTiles;
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
 
-// ページ送りの矢印 2 枚を空いているタイルの枠に読む
+// Load two page arrows into free tile slots.
 void Resource_LoadPairedBlocks(void) {
   struct InventoryMenuState *state = Ram_HeapSlots->menuRuntime;
   s32 value = Resource_FindFreeEntry();
@@ -49,7 +49,7 @@ struct MenuResult {
 s32 UnitGet(s32 owner);
 s32 ItemMenu_Count(s32 owner);
 
-// index 番目の欄の持ち主のどうぐを 5 行ずつのページに割る
+// Split the selected slot owner's items into pages of five rows.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 encoded;
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;

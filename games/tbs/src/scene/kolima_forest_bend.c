@@ -30,22 +30,28 @@
 #include "field_scene.h"
 #include "map_scroll.h"
 
-// 前方宣言
+// Board placement, repainting and push helpers.
 struct IcePlacement;
 static void State_ApplyRectByLayoutSelector(void);
 static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry);
 static void Scene_PushBlockAlongRun(struct TileRun2 *runs);
 
+// Returns the board's entrances through the overlay's byte-pointer API.
 u8 *KolimaForestBend_GetEntrances(void) { return gKolimaForestBendEntrances; }
 
+// This scene has no exit regions.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns exits to the adjacent forest scenes.
 u8 *KolimaForestBend_GetExits(void) { return gKolimaForestBendExits; }
 
+// Returns the board's initial actor placements.
 u8 *KolimaForestBend_GetPlacements(void) { return gKolimaForestBendPlacements; }
 
+// Returns the switch, push and jump events.
 u8 *KolimaForestBend_GetEvents(void) { return gKolimaForestBendEvents; }
 
+// Pushes a board piece, then restores attributes and stamps its new cells.
 static void EV11_SCRIPT(void) {
   Scene_PushBlockAlongRun(gKolimaForestBendRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -53,6 +59,7 @@ static void EV11_SCRIPT(void) {
   State_ApplyRectByLayoutSelector();
 }
 
+// Uses the shared forward-jump action at the gap.
 static void EV10_TOUCH(void) { Field_TryJumpForward(); }
 
 struct IcePlacement {
@@ -71,9 +78,10 @@ struct TileRun2 {
   struct FieldActor *object;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared panel drawing stays in its linked position.
 #include "common/map_panel.h"
 
+// Selects the four-cell attribute strip from the returned-piece state.
 static void State_ApplyRectByLayoutSelector(void) {
   if (*(s16 *)gKolimaForestBendReturned == 1) {
     Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
@@ -82,6 +90,7 @@ static void State_ApplyRectByLayoutSelector(void) {
   }
 }
 
+// Repaints the selected board layout and updates its pieces' height and cells.
 static void Scene_RepaintBoardRecords(void) {
   struct FieldActor *piece;
   s16 *record = gKolimaForestBendRecords;
@@ -103,6 +112,7 @@ static void Scene_RepaintBoardRecords(void) {
     Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
   }
 
+  // Keep each piece's display and four occupied cells in the same layout.
   while (record[0] != -1) {
     piece = *(struct FieldActor **)(record + 4);
 
@@ -110,7 +120,7 @@ static void Scene_RepaintBoardRecords(void) {
       Object_SetMode(piece, 4);
       piece->priorityFlags = 3;
       piece->motionFlags = 0;
-      piece->y.fixed = 0x1a0000;
+      piece->y.fixed = PIXELS(26);
 
       if (record[3] != 0) {
         Map_CopyCells(68, 40, 1, 4, record[1] + 32, record[2]);
@@ -139,6 +149,7 @@ static void Scene_RepaintBoardRecords(void) {
   State_ApplyRectByLayoutSelector();
 }
 
+// HBlank callback: selects the captured shake scroll above the split line.
 static void State_UpdateScrollRegistersWithPreset(void) {
   u16 line;
   u32 *source;
@@ -161,24 +172,26 @@ static void State_UpdateScrollRegistersWithPreset(void) {
   *destination = *source;
 }
 
+// Captures three background scroll pairs and adds the vertical shake offset.
 static void KolimaForestBend_CaptureShakeScroll(void) {
-  u32 *dst;
-  const u32 *src;
-  u16 *p;
+  u32 *destination;
+  const u32 *source;
+  u16 *scroll;
 
-  src = (const u32 *)((u8 *)gBgScroll + 4);
-  dst = gKolimaForestBend_ShakeScroll;
-  *dst++ = *src++;
-  *dst++ = *src++;
-  *dst = *src;
-  p = (u16 *)gKolimaForestBend_ShakeScroll;
-  p[1] += 0xb0;
-  p[3] += 0xb0;
-  p[5] += 0xb0;
+  source = (const u32 *)((u8 *)gBgScroll + 4);
+  destination = gKolimaForestBend_ShakeScroll;
+  *destination++ = *source++;
+  *destination++ = *source++;
+  *destination = *source;
+  scroll = (u16 *)gKolimaForestBend_ShakeScroll;
+  scroll[1] += 0xb0;
+  scroll[3] += 0xb0;
+  scroll[5] += 0xb0;
 }
 
+// Animates the switch, shakes the board, then flips its layout.
 static void EV09_SEARCH(void) {
-  s32 v3;
+  s32 nextShakeChance;
 
   Engine_EventBegin();
   Engine_CameraSetSpeed(0x10000, 0x2000);
@@ -241,17 +254,18 @@ static void EV09_SEARCH(void) {
     Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 30);
   }
 
+  // Temporarily install the frame capture and HBlank shake callbacks.
   gKolimaForestBend_ShakeChance = 0;
   FieldScheduler_AddCallback(KolimaForestBend_CaptureShakeScroll, 0xc80);
   Engine_TaskWait(1);
-  Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
+  Runtime_SetIrqHandler(IRQ_HBLANK, 0, State_UpdateScrollRegistersWithPreset);
   Engine_AudioPlayCue(231);
   gKolimaForestBend_ShakeChance = 0;
   do {
     Engine_TaskWait(1);
-    v3 = (gKolimaForestBend_ShakeChance + 1);
+    nextShakeChance = (gKolimaForestBend_ShakeChance + 1);
     gKolimaForestBend_ShakeChance += 1;
-  } while (v3 <= 100);
+  } while (nextShakeChance <= 100);
   Engine_AudioPlayCue(0x121);
   if (*gKolimaForestBendLayout == 0) {
     Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestBendLayout, 9, 19);
@@ -263,7 +277,7 @@ static void EV09_SEARCH(void) {
     Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 19);
   }
   Engine_TaskWait(1);
-  Runtime_SetIrqHandler(1, 0, 0);
+  Runtime_SetIrqHandler(IRQ_HBLANK, 0, 0);
   Engine_TaskWait(1);
   Engine_TaskRemoveCallback(KolimaForestBend_CaptureShakeScroll);
   *(u16 *)gKolimaForestBendLayout ^= 1;
@@ -272,6 +286,7 @@ static void EV09_SEARCH(void) {
   Engine_EventEnd();
 }
 
+// Returns actor 8 to the left position and restores its attribute strip.
 static void EV13_TOUCH(void) {
 
   Engine_EventBegin();
@@ -297,6 +312,7 @@ static void EV13_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// Moves actor 8 to the right position and selects its alternate strip.
 static void EV12_TOUCH(void) {
 
   Engine_EventBegin();
@@ -322,6 +338,7 @@ static void EV12_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// Restores the board records, places its pieces and applies the chosen layout.
 s32 KolimaForestBend_SetupBoard(void) {
   struct FieldActor *actor;
 
@@ -352,6 +369,7 @@ s32 KolimaForestBend_SetupBoard(void) {
   return 0;
 }
 
+// Creates each four-cell piece at its orientation-dependent centre and height.
 static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry) {
   struct FieldActor *actor;
   s32 height;
@@ -387,6 +405,7 @@ static void KolimaForestBend_PlaceObjects(struct IcePlacement *entry) {
   }
 }
 
+// Writes the collision code to all four cells of each piece's recorded run.
 void State_StampRecordCells(s16 *records, s32 value) {
 
   s16 *record = records;
@@ -410,6 +429,7 @@ void State_StampRecordCells(s16 *records, s32 value) {
   } while (record[0] != -1);
 }
 
+// Finds the horizontal or vertical four-cell run containing the queried cell.
 static const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run,
                                                      s32 x, s32 y) {
   while (run->id != -1) {
@@ -430,6 +450,7 @@ static const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run,
   return 0;
 }
 
+// Rejects a four-cell run when a cell is blocked or has collision code 0xff.
 static s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode) {
   s32 i;
 
@@ -449,6 +470,7 @@ static s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode) {
   return 0;
 }
 
+// Finds the piece ahead and advances it through at most eleven clear cells.
 static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
   struct FieldActor *actor;
   struct TileRun2 *run;
@@ -461,7 +483,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
   s32 quarter;
 
   moved = 0;
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   facing = (actor->facing + 0x2000) & 0xc000;
   point[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
   point[1] = actor->y.fixed;
@@ -521,7 +543,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared palette adjustment stays after the board movement code.
 #include "common/kolima_palette.h"
 
 // clang-format off

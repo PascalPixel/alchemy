@@ -18,7 +18,7 @@ void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
 void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
 void Func_020022c8(s32 cue);
 
-// 落ちて止まるまで待つ
+// Wait until the object finishes falling and stops.
 void Func_02000094(s32 unused, s32 id)
 {
     struct ObjectRuntime *object = Object_GetById(id);

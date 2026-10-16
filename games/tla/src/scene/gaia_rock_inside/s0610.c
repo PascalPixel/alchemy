@@ -18,7 +18,7 @@ s32 Func_02000610(void) {
   return 0;
 }
 
-// 拡大率を乱数で揺らす
+// Randomly vary the scale.
 void Func_0200062c(struct ObjectRuntime *object) {
   u32 random = Random16Far();
   s32 scale = object->scaleX;

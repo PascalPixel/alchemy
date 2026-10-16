@@ -75,7 +75,7 @@ BitDecoder_DecodeImage:
 	bx	lr
 	.section .rodata
 	.balign 4
-@ BitDecoder_DecodeImage の定数
+@ Constants for BitDecoder_DecodeImage
 	.4byte 0x60606060, Model_DispatchHandlers
 .syntax unified
 	.section .text.bit_dispatch,"ax",%progbits
@@ -89,7 +89,7 @@ AlchemyUncredited_tile_decode_1:
 AlchemyUncreditedEnd_tile_decode_1:
 	.section .data,"aw",%progbits
 	.balign 4
-@ IWRAM の写しで実行時に埋まる分岐先
+@ Branch targets filled in at runtime in the IWRAM copy
 	.space 32, 0
 	.global Model_DispatchHandlers
 Model_DispatchHandlers:

@@ -38,7 +38,7 @@
 #include "objcmd.h"
 #include "frame.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunScriptedSceneSequence(void);
 static void FieldScene_RunActorUpdateSequence(void);
 static void Sanctum_CopyActorPose(void);

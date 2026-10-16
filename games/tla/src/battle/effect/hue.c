@@ -11,7 +11,7 @@ struct WaveFxScroll {
   u8 delay;
 };
 
-// BG0 の走査線スクロールを HBlank DMA に掛ける
+// Apply BG0 scanline scrolling with HBlank DMA.
 void Func_080dcdc8(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
@@ -24,13 +24,13 @@ void Func_080dcdc8(void) {
     s32 line = work->page * 81;
     volatile u16 *dma = (volatile u16 *)0x040000b0;
 
-    dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
-    dma[5] &= 0x7fff; // 止める
+    dma[5] &= 0xc5ff; // Clear start timing and repeat.
+    dma[5] &= 0x7fff; // Stop.
     /* FAKEMATCH: see above; the control word is stored before the rest. */
     asm volatile("");
     line *= 4;
     (void)dma[5];
-    // HBlank ごとに 16 ビットを 1 回 (リピート、転送先リロード)
+    // One halfword per HBlank, repeating with destination reload.
     Dma_Set((u8 *)work + line, (void *)0x04000010, 0xa2600001,
             (volatile u32 *)dma);
   }
@@ -56,10 +56,10 @@ struct WaveFxWork {
   u8 red;
   u8 green;
   u8 blue;
-  u16 hue; // 度
+  u16 hue; // Degrees.
 };
 
-// 色相を 4 度すすめ、その色を求める
+// Advance hue by four degrees and calculate its color.
 void Func_080dce60(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
   s16 r;
@@ -75,7 +75,7 @@ void Func_080dce60(void) {
   g = Func_080dce20(work->hue + 120);
   b = Func_080dce20(work->hue + 240);
 
-  // 0〜31 を 4〜11 に縮める
+  // Scale 0-31 down to 4-11.
   work->red = (r / 4 + 4) & 31;
   work->green = (g / 4 + 4) & 31;
   work->blue = (b / 4 + 4) & 31;

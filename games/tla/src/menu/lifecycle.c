@@ -1,7 +1,7 @@
 #define OWN_UiWindow_CreateFar
 //--------------------------------------------------------------------------
 // lifecycle.c
-// ウィンドウ：ハンドルで持つウィンドウを開く・閉じる
+// Windows: open and close windows held by handles.
 //--------------------------------------------------------------------------
 
 #include "uiwindow.h"
@@ -12,9 +12,9 @@ struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height,
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 
 //--------------------------------------------------------------------------
-// *handle のウィンドウがなければ作って 1 を返す
-// すでにあれば 0 を返し、flags に 0x100 がなければ保存した矩形で描きなおす
-// flags : 下位 8 ビットがウィンドウの種類
+// Create *handle's window if absent and return 1.
+// Otherwise return 0; redraw its saved rectangle unless flags has 0x100 set.
+// flags: the low 8 bits select the window type.
 //--------------------------------------------------------------------------
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
                             s32 flags) {
@@ -35,9 +35,9 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
 }
 
 //--------------------------------------------------------------------------
-// *handle のウィンドウがあれば閉じて、ハンドルを NULL にする
-// 引数 1 つの宣言だが、呼び出し元の 2 つめの引数が r1 のまま
-// UiWork_FinalizeFar に渡る
+// Close *handle's window if present, then set the handle to NULL.
+// Although declared with one argument, the caller's second argument stays in r1
+// and reaches UiWork_FinalizeFar.
 //--------------------------------------------------------------------------
 void UiWindow_CloseIfOpen(void **handle) {
   if (*handle != NULL) {

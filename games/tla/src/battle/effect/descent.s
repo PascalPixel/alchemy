@@ -2,11 +2,11 @@
 	.global Data_080eff22
 Data_080eff22:
 	.byte 2, 3, 13, 8, 30, 31
-@ Func_080cda58 が番号で探す 8 バイトの行、番号 -1 で終わり
+@ 8-byte rows searched by ID by Func_080cda58; ID -1 terminates.
 	.global gData_080eff28
 gData_080eff28:
 	.incbin "games/tla/src/battle/effect/descent.table"
-@ ObjectDispatch_InitializeFar に渡す動作 (語の列)
+@ Actions passed to ObjectDispatch_InitializeFar (word sequences).
 	.global gData_080effd8
 gData_080effd8:
 	.4byte 22, 9, 32768, 22

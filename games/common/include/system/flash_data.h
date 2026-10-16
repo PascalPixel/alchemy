@@ -5,7 +5,7 @@
 
 typedef u16 (*FlashWaitProc)(s32 mode, volatile u8 *address, u8 expected);
 
-// セクタの大きさと数
+// Sector size and count.
 struct FlashSector {
   s32 size;
   u8 shift;
@@ -13,19 +13,20 @@ struct FlashSector {
   u16 top;
 };
 
-// フラッシュの種類 (gFlash が指す 24 バイト)
+// Flash chip type (the 24-byte record pointed to by gFlash).
 struct FlashType {
   u32 romSize;
   struct FlashSector sector;
-  u16 wait[2]; // REG_WAITCNT の下位 2 ビット
+  u16 wait[2]; // Low two bits of REG_WAITCNT.
   u16 id;
 };
 
-// フラッシュ型番ごとの設定 (44 バイト)。flashset.s の flash_setup と同じ並び
+// Settings for each flash chip model (44 bytes), in flash_setup's field order
+// from flashset.s.
 struct FlashSetupInfo {
-  u32 handlers[3];    // 書き込み, 全消去, セクタ消去
-  FlashWaitProc wait; // 書き込み待ち
-  u16 *maxTime;       // 待ち時間の表
+  u32 handlers[3];    // Program, erase all, erase sector.
+  FlashWaitProc wait; // Wait for programming to finish.
+  u16 *maxTime;       // Wait-time table.
   struct FlashType type;
 };
 

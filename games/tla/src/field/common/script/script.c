@@ -1,12 +1,12 @@
 //--------------------------------------------------------------------------
 // script.c
-// オブジェクトスクリプト：位置の移動と byte54 の命令
+// Object scripts: move the instruction cursor and control byte54.
 //--------------------------------------------------------------------------
 
 #include "script.h"
 
 //--------------------------------------------------------------------------
-// スクリプトの読む位置を移し、1 を返して次の命令を続けて実行する
+// Move the script cursor and return 1 to continue with the next command.
 //--------------------------------------------------------------------------
 #if GAME_TLA
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
@@ -15,7 +15,7 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
   s32 zero;
 
 #if GAME_TLA
-  // 命令の次の語が指すスクリプトへ飛ぶ
+  // Jump to the script pointed to by the following word.
   sc->script = (const s32 *)sc->script[sc->cursor + 1];
 #endif
   zero = 0;
@@ -24,7 +24,7 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
 }
 
 //--------------------------------------------------------------------------
-// byte54 を 0 にして、次の命令へ
+// Clear byte54 and advance to the next command.
 //--------------------------------------------------------------------------
 s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
   sc->byte54 = 0;
@@ -33,7 +33,7 @@ s32 Script_ClearByte54(struct ScriptInterpreter *sc) {
 }
 
 //--------------------------------------------------------------------------
-// byte54 を 1 にして、次の命令へ
+// Set byte54 to 1 and advance to the next command.
 //--------------------------------------------------------------------------
 s32 Script_SetByte54(struct ScriptInterpreter *sc) {
   sc->byte54 = 1;

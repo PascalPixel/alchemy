@@ -28,7 +28,7 @@ void Func_080dca50(void) {
 
 void Func_080dcdc8(void);
 
-// BG パレット 15 の色 1, 3〜12 を灰色にし、走査線スクロールを始める
+// Gray BG palette 15 colors 1 and 3-12, then start scanline scrolling.
 void Func_080dca84(void) {
   volatile u16 *p;
 

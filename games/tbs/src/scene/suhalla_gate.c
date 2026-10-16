@@ -1,3 +1,6 @@
+// Suhalla Gate's approach routes, wounded soldiers and Iodem's inspection of
+// the attack. Localized map repairs stay beside the scenes that apply them.
+
 #include "game_state.h"
 #include "unit/scene/suhalla_gate.h"
 #include "unit/object/object.h"
@@ -20,8 +23,12 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-static void EV13_TALK(void) { BattleFx_SetPhaseRequest(0xD, 0x1A); }
+// Starts the encounter of the Djinni in actor slot 13, using Djinni ID 26.
+static void SuhallaGate_StartDjinnBattle(void) {
+  BattleFx_SetPhaseRequest(13, 26);
+}
 
+// Selects the entrance table for the gate's current scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -34,10 +41,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaGateEntrancesOther;
 }
 
+// These scenes have no exit-region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the gate's combined exit destination table.
 u8 *SceneData_GetSceneTable(void) { return (u8 *)gSuhallaGate_SceneTable; }
 
+// The first scene has a different guard arrangement after flag 0x96f is set.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -53,6 +63,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaGatePlacementsOther;
 }
 
+// Selects the events for the approach, Djinni area or final gate scene.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -65,6 +76,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaGateEventsOther;
 }
 
+// Restores route-dependent Retreat destinations, actors and gate tiles.
+// The Spanish, French and Italian editions repair additional map cells.
 s32 SuhallaGate_EnterScene(void) {
   s32 scene;
 
@@ -74,6 +87,7 @@ s32 SuhallaGate_EnterScene(void) {
   }
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_SuhallaGate1) {
+    // Keep the vanished soldier hidden and restore localized gate geometry.
     if (Engine_GameFlagIsSet(0x897))
       Engine_ActorSetPosition(10, 0, 0);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
@@ -85,6 +99,7 @@ s32 SuhallaGate_EnterScene(void) {
       Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
     }
 #endif
+    // Retreat from the interior returns to the side used to enter the gate.
     if (gGameState.entrance == 3) {
       if (Engine_GameFlagIsSet(0x8fb)) {
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) ||                      \
@@ -125,32 +140,35 @@ s32 SuhallaGate_EnterScene(void) {
   return 0;
 }
 
-static void EV03_TOUCH(void) {
-  s32 arg;
-  s32 v5;
+// Animates two 2x2 map-cell frames before walking through exit trigger 3.
+static void SuhallaGate_AnimateExit(void) {
+  s32 exitTrigger;
+  s32 cellSize;
 
-  arg = gEventWork->touchedTrigger;
-  Actor_Get(0)->motionFlags = 0;
-  v5 = 2;
+  exitTrigger = gEventWork->touchedTrigger;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  cellSize = 2;
   Event_PlayCue(158);
-  Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
+  Map_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   Engine_TaskWait(4);
-  Map_CopyCellsTo(68, 36, 71, 8, v5, v5);
+  Map_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
   Engine_TaskWait(4);
   Actor_CenterAndWalk(0, 3, -16);
-  Engine_EventRequestExit(arg);
+  Engine_EventRequestExit(exitTrigger);
 }
 
-static void Dialogue_ShowMessages8fbAnd8fc(void) {
-  s16 token = gEventWork->touchedTrigger;
+// Clears both remembered approach routes when leaving by trigger 1 or 5.
+static void SuhallaGate_ClearRouteFlagsAndExit(void) {
+  s16 exitTrigger = gEventWork->touchedTrigger;
 
   Engine_AudioPlayCue(123);
   Engine_GameFlagClear(0x8FB);
   Engine_GameFlagClear(0x8FC);
-  Engine_EventRequestExit(token);
+  Engine_EventRequestExit(exitTrigger);
 }
 
-static void Scene_RunPrimarySequence(void) {
+// Moves the two guards to the passage and updates the tiles behind them.
+static void SuhallaGate_RepositionGuards(void) {
   Engine_EventBegin();
   Actor_SetSpeed(8, 65536, 32768);
   Actor_SetSpeed(9, 65536, 32768);
@@ -170,17 +188,18 @@ static void Scene_RunPrimarySequence(void) {
   Engine_EventEnd();
 }
 
-static void Scene_RunScene3c3SequenceA(void) {
-  struct FieldActor *record;
-  s32 v5;
+// Iodem questions the wounded guards, then follows the party out of view.
+static void SuhallaGate_InspectAttackWithIodem(void) {
+  struct FieldActor *leader;
+  s32 destinationColumn;
 
   Engine_EventBegin();
   Actor_SetSpeed(0, 0x19999, 0xcccc);
   Actor_WalkToAndWait(0, 120, 0x1b6);
   Actor_FaceDirection(0, FACING_NORTH, 0);
-  record = Actor_Get(0);
-  if (record != 0) {
-    Actor_SetPosition(11, record->x.fixed, record->z.fixed);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetPosition(11, leader->x.fixed, leader->z.fixed);
   }
   Engine_TaskWait(1);
   Actor_SetSpeed(11, 0x19999, 0xcccc);
@@ -194,6 +213,7 @@ static void Scene_RunScene3c3SequenceA(void) {
   Engine_ActorStartRepeatedMotion(11, 2);
   Engine_EventSetMessage(MsgSuhallaMeaning);
   Event_ShowMessageAndWait(11, 0, 40);
+  // The guards describe the attack before Iodem asks who was responsible.
   Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
   Engine_ActorRunRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 10);
@@ -219,6 +239,7 @@ static void Scene_RunScene3c3SequenceA(void) {
   Event_ShowMessageAndWait(9, 0, 20);
   Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(11, 0);
+  // Continue with the answer selected by the preceding yes/no question.
   if (GameFlag_IsSet(0x9b0) != 0) {
     Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 40);
     Actor_SetAttachedEffect(11, 0x102);
@@ -254,9 +275,9 @@ static void Scene_RunScene3c3SequenceA(void) {
   Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(11, 0, 10);
   Engine_ActorSetAnimation(11, 2);
-  record = Actor_Get(0);
-  if (record != 0) {
-    Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetDestination(11, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(11);
   Actor_SetPosition(11, 0, 0);
@@ -266,17 +287,16 @@ static void Scene_RunScene3c3SequenceA(void) {
   Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
   Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
 #else
-  v5 = 7;
-  Map_CopyCellAttributes(6, 27, 1, 1, v5, 27);
-  Map_CopyCellAttributes(9, 26, 2, 1, v5, 26);
+  destinationColumn = 7;
+  Map_CopyCellAttributes(6, 27, 1, 1, destinationColumn, 27);
+  Map_CopyCellAttributes(9, 26, 2, 1, destinationColumn, 26);
 #endif
   GameFlag_Set(0x89f);
   Engine_EventEnd();
 }
 
-static void EV09_TALK(void) {
-  u8 *work;
-
+// The guard asks about Babi Lighthouse before Iodem's scene, then vows revenge.
+static void SuhallaGate_TalkToGateGuard(void) {
   Engine_EventBegin();
 
   if (Engine_GameFlagIsSet(0x89f) != 0) {
@@ -296,8 +316,7 @@ static void EV09_TALK(void) {
       Engine_ActorSetAnimationAndWait(9, 4);
       Engine_EventShowMessage(9, 0);
     } else {
-      work = (u8 *)gEventWork;
-      *(u16 *)(work + 472) += 2;
+      gEventWork->message += 2;
       Engine_EventShowMessage(9, 0);
     }
   }
@@ -305,7 +324,9 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
-static void Scene_RunActorTenRepeatedMotion(void) {
+// After describing the attack, the soldier blinks slowly, then faster, and
+// disappears.
+static void SuhallaGate_BlinkAndHideSoldier(void) {
   unsigned int beat;
 
   Engine_EventBegin();
@@ -314,6 +335,7 @@ static void Scene_RunActorTenRepeatedMotion(void) {
   Event_ShowMessageAndWait(10, 0, 10);
 
   beat = 0;
+  // Six slow blinks are followed by twelve fast ones.
   do {
     Actor_SetChildValue(10, 0);
     Engine_ActorSetSpriteFlags(Actor_Get(10), 1);
@@ -460,22 +482,22 @@ struct ScenePlacement gSuhallaGatePlacements1Flagged[] = {
 };
 
 struct SceneEvent gSuhallaGateEventsOther[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_ShowMessages8fbAnd8fc) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuhallaGate_ClearRouteFlagsAndExit) },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_ShowMessages8fbAnd8fc) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
-    { EVENT_TOUCH, 10, 0x96f, EVENT_SCRIPT(Scene_RunPrimarySequence) },
-    { EVENT_TOUCH, 10, 0x89f, EVENT_SCRIPT(Scene_RunScene3c3SequenceA) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(SuhallaGate_ClearRouteFlagsAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuhallaGate_AnimateExit) },
+    { EVENT_TOUCH, 10, 0x96f, EVENT_SCRIPT(SuhallaGate_RepositionGuards) },
+    { EVENT_TOUCH, 10, 0x89f, EVENT_SCRIPT(SuhallaGate_InspectAttackWithIodem) },
     { EVENT_TALK, 8, 0x89f, MSGNO(MsgSuhallaTravelPapersRequired) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SuhallaGate_TalkToGateGuard) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x89f, MSGNO(MsgSuhallaObeyBabiOrders) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaAshamedBeforeIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x89f, MSGNO(MsgSuhallaSeeColossoNextYear) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSuhallaSurvivedAttack) },
-    { EVENT_TALK, 10, 0x897, EVENT_SCRIPT(Scene_RunActorTenRepeatedMotion) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, 0x897, EVENT_SCRIPT(Scene_RunActorTenRepeatedMotion) },
+    { EVENT_TALK, 10, 0x897, EVENT_SCRIPT(SuhallaGate_BlinkAndHideSoldier) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, 0x897, EVENT_SCRIPT(SuhallaGate_BlinkAndHideSoldier) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -486,7 +508,8 @@ struct SceneEvent gSuhallaGateEvents2[] = {
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK)},
+    {EVENT_TALK, 13, CONDITION_ALWAYS,
+     EVENT_SCRIPT(SuhallaGate_StartDjinnBattle)},
     {0xc413, 100, 0xfb4, FIND_ITEM(0xc3)},
     {0x413, 100, 0xfb4, FIND_ITEM(0xc3)},
     {0x8413, 100, 0xfb4, FIND_ITEM(0xc3)},

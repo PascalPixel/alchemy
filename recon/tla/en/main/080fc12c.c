@@ -27,7 +27,7 @@ void UiIcon_PrepareObject(struct RenderOutput *icon);
 void UiText_DrawStringAtOffsetFar(void *string, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
-// 選んだどうぐの絵と、持ち主・どうぐの名前を見出しに描く
+// Draws the selected item's icon, owner and item name in the heading.
 void ItemMenu_DrawItemHead(void)
 {
     struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;

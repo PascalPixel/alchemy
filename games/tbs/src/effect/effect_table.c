@@ -3,13 +3,13 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// 戦闘効果のテーブル
-// 使う演出のコードと同じ順に並ぶ。セルの位置はシートの先頭からのバイト数で、
-// 幅×高さを順に足したもの。
+// Battle effect tables
+// Ordered like the effect code that uses them. Cell offsets are bytes from
+// the sheet start, accumulated as width times height.
 // Battle effect tables, in the order of the effect code that reads them.
 //--------------------------------------------------------------------------
 
-// 使う側は const なしで extern する（その形でコードが一致する）。
+// Consumers declare these without const to preserve matching code.
 
 struct BattleEffectArgument;
 
@@ -26,7 +26,7 @@ typedef struct Scale {
   s32 y;
 } Scale;
 
-// 共有のセル配置
+// Shared cell layouts
 const u16 gParticleStreams_CellOffsets[] = {0,   2,   10,  28,  60,
                                             110, 182, 280, 408, 570};
 const u16 gBattleFx6_FlareCells[] = {0,   4,   20,   56,   120,  220, 364,
@@ -190,7 +190,7 @@ const u8 gFirePillars_StartFrames[] = {8, 18, 24, 30, 34};
 const u8 gRenderMode_GlintFlips[] = {0, 4, 8, 12};
 
 // dispatch.c
-// 効果の種類 - 1 ごとの処理
+// Handler for each effect kind minus 1
 const BattleFxHandler gBattleFx_ModeHandlers[] = {
     BattleFx_RunRockWall,               // 1
     BattleFx_RunShatteringRocks,        // 2
@@ -683,7 +683,7 @@ const u8 gParticleField_Counts[][3] = {
 const u16 gParticleField_PuffCells[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 const u16 gParticleField_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-// 参照されないセル配置（6x6 から 20x20 まで）
+// Unreferenced cell layouts, from 6x6 through 20x20
 const u16 gUnused_SheetCells6[] = {0, 36, 100, 200, 344, 540};
 const u16 gUnused_SheetCells[] = {0,   36,   100,  200,  344, 540,
                                   796, 1120, 1520, 1900, 2300};

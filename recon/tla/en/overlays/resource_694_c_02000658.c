@@ -8,7 +8,7 @@
 s32 ArcTan2(s32 y, s32 x);
 s32 Func_02000620(s32 *a, s32 *b);
 
-// other が range より近く、object がその方角（前後 1/16 回転まで）を向いているか
+// Test range and whether object faces other within 1/16 turn either side.
 s32 Func_02000658(struct ObjectRuntime *object, struct ObjectRuntime *other, s32 range)
 {
     s32 *to = &other->x;

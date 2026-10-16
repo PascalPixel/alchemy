@@ -6,13 +6,13 @@
 	.4byte \place
 	.endm
 
-@ 一覧の書き方：
-@   resource NAME, PLACE   一件。NAME があれば ResourceId_NAME がその番号になる
-@   group KIND, 名前...    KIND_名前 を名前つきで続けて並べる
-@   area SET, 枚, マップ... マップ（複数可）のあとに、そのタイルセットのパレットとタイル A〜（枚は ABCD など、無ければ -）
-@   recolor NN, マップ...  マップのあとにパレットだけ（タイルは前のものを使う）
-@   overlays ID...         シーンのオーバーレイを番号順に
-@   unused N               空き N 件
+@ Directory syntax:
+@   resource NAME, PLACE   One entry; NAME defines its ResourceId_NAME.
+@   group KIND, names...   Consecutive named entries KIND_name.
+@   area SET, count, maps... Maps, then palette and tiles A onward; count is ABCD or -.
+@   recolor NN, maps...    Maps followed by a palette; reuse the preceding tiles.
+@   overlays ID...         Scene overlays in ID order.
+@   unused N               N unused entries.
 	.macro group kind:req, names:vararg
 	.irp n, \names
 	resource \n, \kind\()_\n
@@ -306,7 +306,7 @@ Resource_DirectoryTable:
 	overlays 3C3, 3C4, 3C5, 3C6, 3C7, 3C8, 3C9, 3CA, 3CB, 3CC, 3CD, 3CE
 	unused 25
 
-@ ビルドの日時（年月日時分秒、二桁ずつ）
+@ Build timestamp: year, month, day, hour, minute and second, two digits each
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.ifdef TBS_EDITION_JA

@@ -32,7 +32,7 @@ s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height, s
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 
-// どうぐ一覧で選んだ行の名前を出し、その行だけ色を変える
+// Draws the selected item-list row's name and highlights only that row.
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state)
 {
     struct InventoryMenuState *menu;

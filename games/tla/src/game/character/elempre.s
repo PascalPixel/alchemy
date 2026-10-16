@@ -1,5 +1,5 @@
 	.section .rodata
-@ 敵の属性の組 48 種 (The Broken Seal の gEnemy_ElementPresetTable と同じ形)
+@ 48 enemy elemental presets (same layout as TBS's gEnemy_ElementPresetTable).
 	.global gData_080c6684
 gData_080c6684:
 	.incbin "games/tla/src/game/character/elempre.table"

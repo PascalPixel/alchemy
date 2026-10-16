@@ -9,7 +9,7 @@
 
 void Func_081049c8(u8 *counts);
 
-// from から 1 つ to へ移しても釣り合うか
+// Test whether moving one from from to to preserves the balance.
 s32 Func_0810498c(s32 from, s32 to)
 {
     s8 counts[16];

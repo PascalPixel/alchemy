@@ -8085,7 +8085,7 @@ s32 ItemMenu_Run(void) {
   return 1;
 }
 
-// 移した Djinn を一覧の中で探し、その位置を選び直す
+// Find the moved Djinni in the list and select its new position.
 /* FAKEMATCH: a statement macro local to DjinnMenu_RunScreen, used at its two
  * places, not a habit of the game (S2): the do { } while (0) wrapper ends the
  * selection store's scheduling region. As plain statements the two shifts of
@@ -8320,11 +8320,11 @@ s32 DjinnMenu_RunScreen(void) {
 
 //--------------------------------------------------------------------------
 // adjust_palette_bank.c
-// メニュー：BG パレットの明るさを変えた写しを作る
+// Create copies of background palettes with adjusted brightness.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// BG パレット 15・5・7 の 16 色の RGB に d を足し（0〜31 に収める）、
-// それぞれ 1 つ前のパレット 14・4・6 に書く。7 は d でなく -12 を足す
+// Add d to the RGB channels of palettes 15, 5 and 7, clamping to 0-31,
+// and write palettes 14, 4 and 6. Palette 7 uses -12 instead of d.
 //--------------------------------------------------------------------------
 void Graphics_AdjustPaletteBank(s32 d) {
   s32 n;
@@ -8367,7 +8367,7 @@ void Graphics_AdjustPaletteBank(s32 d) {
       v = b << 10;
       v |= g << 5;
       v |= r;
-      ((s16 *)0x04FFFFE0)[idx] = v; // 16 色前（1 つ前のパレット）
+      ((s16 *)0x04FFFFE0)[idx] = v; // 16 colors earlier: the preceding palette
     }
     if (n == 0) {
       bank = 5;

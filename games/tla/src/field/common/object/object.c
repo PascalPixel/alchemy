@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // object.c
-// オブジェクト：フィールドのオブジェクトの作成・解放と、毎フレームの表示
+// Objects: create and release field objects, and render them each frame.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -51,11 +51,11 @@ s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 
 //--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す処理の 1 回分
-// 8×8 ドット（256 色）のキャラごとに、消す順の表にしたがって 1 ドット消す
-// キャラごとに pos を 1 ずつずらし、pos が 64 から 127 のキャラだけ消す
-// obj : 絵（AnimationObject）
-// pos : 何回目か（0 から 127）
+// One step of erasing graphics pixel by pixel.
+// Erase one pixel per 8x8, 256-color tile according to the erase order table.
+// Offset pos by one per tile; erase only tiles whose pos is 64-127.
+// obj: graphics (AnimationObject).
+// pos: iteration index (0-127).
 //--------------------------------------------------------------------------
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *dst;
@@ -68,7 +68,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 
   struct AnimationObject *spr = (struct AnimationObject *)obj;
 
-  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ の VRAM
+  dst = (u16 *)(0x06010000 + gVramBlockCache[spr->slot].offset); // OBJ VRAM.
   cnt = (spr->width * spr->height) / 64;
   n = 0;
 
@@ -84,7 +84,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
         u16 *cell;
         u32 odd;
 
-        // VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
+        // VRAM cannot accept byte writes; read two pixels and erase one.
         dot = table[(pos + n * 16) & indexMask];
         cell = (u16 *)((u8 *)dst + (dot & offsetMask));
         odd = 1;
@@ -99,8 +99,8 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 }
 
 //--------------------------------------------------------------------------
-// 絵を 1 ドットずつ消す。1 フレームに 4 回分、32 フレームで消え終わる
-// obj : 絵（AnimationObject）
+// Erase graphics pixel by pixel: four steps per frame, finishing in 32 frames.
+// obj: graphics (AnimationObject).
 //--------------------------------------------------------------------------
 void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
   u32 pos;
@@ -117,9 +117,9 @@ void Map_RenderAnimatedTileFramesForObject(u8 *obj) {
 }
 
 //--------------------------------------------------------------------------
-// いくつもの絵を、いっしょに 1 ドットずつ消す（32 フレーム）
-// table : 絵の並び
-// cnt : 絵の数
+// Erase several graphics together, pixel by pixel, over 32 frames.
+// table: graphics list.
+// cnt: graphics count.
 //--------------------------------------------------------------------------
 void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
   u8 **top;
@@ -153,10 +153,10 @@ void Map_RenderAllAnimatedTileFrames(u8 **table, s32 cnt) {
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトの画面上の位置（ドット）を out[0], out[1] に返す
-// 画面のまわりの範囲にいれば 0、外なら 0, 0 として -1
-// obj : オブジェクト
-// out : x と y
+// Return the object's screen position in pixels in out[0] and out[1].
+// Return 0 near the screen; outside it, return -1 and write (0, 0).
+// obj: object.
+// out: x and y.
 //--------------------------------------------------------------------------
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
   struct MapScrollWork *map = gMapWork[0];
@@ -181,9 +181,9 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out) {
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトのしくみを用意する
-// 64 個のオブジェクトの領域をとって 0 でうめ、毎フレームの処理を登録する
-// mode : 4 なら動きの処理を Object_UpdateAllMotion で、3 と 4 は固定カメラ
+// Initialize the object system.
+// Allocate and zero 64 objects, then register the per-frame callback.
+// mode: 4 uses Object_UpdateAllMotion; 3 and 4 use the fixed camera.
 //--------------------------------------------------------------------------
 void ObjectSystem_Initialize(s32 mode) {
   struct ObjectSystemWork *sys;
@@ -194,7 +194,7 @@ void ObjectSystem_Initialize(s32 mode) {
   objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
   ObjectSystem_Configure(mode);
   fill = 0;
-  Dma_Set((const void *)&fill, objs, 0x85000700, REG_DMA3); // 32 ビットでうめる
+  Dma_Set((const void *)&fill, objs, 0x85000700, REG_DMA3); // Fill with words.
   fill = 0;
   Dma_Set((const void *)&fill, sys, 0x85000017, REG_DMA3);
   if (mode == 4)
@@ -213,20 +213,20 @@ void ObjectSystem_Initialize(s32 mode) {
 }
 
 //--------------------------------------------------------------------------
-// 何もしない
+// Do nothing.
 //--------------------------------------------------------------------------
 void ResourceTable_ReservedNoOpC0C4(void) {}
 
 //--------------------------------------------------------------------------
-// 何もしない
+// Do nothing.
 //--------------------------------------------------------------------------
 void ResourceTable_ReservedNoOp2(void) {}
 
 #endif
 
 //--------------------------------------------------------------------------
-// 64 個のうち、使われていない（スクリプトのない）オブジェクトを返す
-// 空きがなければ 0
+// Return an unused object (one without a script) from the 64 slots.
+// Return 0 if none are free.
 //--------------------------------------------------------------------------
 void *ObjectDispatch_FindFreeObject(void) {
 #if GAME_TLA
@@ -249,8 +249,8 @@ void *ObjectDispatch_FindFreeObject(void) {
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトの絵を解放し、オブジェクトを 0 でうめて空きにする
-// obj : オブジェクト
+// Release the object's graphics and zero the object to free it.
+// obj: object.
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj) {
   volatile u32 zero;
@@ -260,10 +260,10 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
 
   if (obj) {
     switch (obj->kind & 15) {
-    case 1: // 絵がひとつ
+    case 1: // One graphic.
       ResourceObject_Release((struct ResourceObjectWork *)obj->target.child);
       break;
-    case 2: // 絵が 4 つまで
+    case 2: // Up to four graphics.
       child = (struct ResourceObjectWork **)obj->target.children;
       n = 3;
       do {
@@ -282,9 +282,9 @@ void ObjectDispatch_Release(struct DispatchObject *obj) {
 
 #if !GAME_TLA
 //--------------------------------------------------------------------------
-// フィールドのオブジェクトを作る。空きがなければ 0
-// id      : 4096 で割った商が種類（0 絵ひとつ、2 絵ふたつ）、下の 12 ビットが絵
-// x, y, z : 位置（16.16 固定小数）
+// Create a field object; return 0 if no slot is free.
+// id: quotient by 4096 is the type (0: one graphic, 2: two); low 12 bits select
+// graphics. x, y, z: 16.16 fixed-point position.
 //--------------------------------------------------------------------------
 struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *obj;
@@ -315,7 +315,8 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
       }
       break;
     case 2:
-      // 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
+      // Allocate and zero four graphics slots, then insert graphics id and id
+      // + 1.
       ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
       obj->animationKind = kind;
       zero = 0;
@@ -349,16 +350,16 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z) {
     obj->actionFlags = 1;
     act->riseBaseY = 0;
     obj->angle = 0x4000;
-    sc->homeX = x / 65536; // もとの位置（ドット）
+    sc->homeX = x / 65536; // Home position in pixels.
     sc->homeZ = z / 65536;
   }
   return obj;
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトにスクリプトを与え、はじめから動かす
-// obj    : オブジェクト
-// script : スクリプト
+// Assign an object's script and start it from the beginning.
+// obj: object.
+// script: script.
 //--------------------------------------------------------------------------
 void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
   if (obj != 0) {
@@ -371,7 +372,7 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script) {
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトの絵（すべて）のアニメを no にする
+// Set animation no on all of the object's graphics.
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no) {
   struct DispatchObject *obj;
@@ -400,7 +401,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no) {
 }
 
 //--------------------------------------------------------------------------
-// オブジェクトの絵（すべて）の AnimationObjects_SetActiveTimerSteps を呼ぶ
+// Call AnimationObjects_SetActiveTimerSteps for all of the object's graphics.
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val) {
   s32 n;
@@ -427,7 +428,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val) {
 }
 
 //--------------------------------------------------------------------------
-// 上のふたつをいっしょに：アニメを no にし、steps をわたす
+// Combine the previous two operations: set animation no and pass steps.
 //--------------------------------------------------------------------------
 void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
                                         s32 steps) {
@@ -456,7 +457,7 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *obj, s32 no,
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の回転を設定する
+// Set rotation when the object has a single graphic.
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot) {
   if (obj != 0 && (obj->kind & 0xf) == 1)
@@ -464,8 +465,8 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *obj, u32 rot) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、アニメ番号を no にして初めから動かす
-// no が負ならなにもしない
+// Set animation no and restart it when the object has a single graphic.
+// Do nothing if no is negative.
 //--------------------------------------------------------------------------
 void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
   struct DispatchObject *obj = raw;
@@ -481,8 +482,8 @@ void Animation_SetIndexAndInitObjects(void *raw, s32 no) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、その絵に no の情報を登録する
-// no が負ならなにもしない
+// Register no's information when the object has a single graphic.
+// Do nothing if no is negative.
 //--------------------------------------------------------------------------
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
   if (obj != 0 && (obj->kind & 0xf) == 1) {
@@ -493,7 +494,7 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
 }
 
 //--------------------------------------------------------------------------
-// 決まったスクリプトでオブジェクトを動かしはじめる
+// Start the object with a predefined script.
 //--------------------------------------------------------------------------
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
                                                s32 arg) {
@@ -533,7 +534,7 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
 }
 
 //--------------------------------------------------------------------------
-// スクリプトが命令 0x10 に来るまで待つ（300 フレームまで）
+// Wait up to 300 frames for script command 0x10.
 //--------------------------------------------------------------------------
 void ObjectDispatch_WaitForValue16(void *raw) {
   struct ScriptInterpreter *sc = raw;
@@ -551,7 +552,7 @@ void ObjectDispatch_WaitForValue16(void *raw) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の flags を設定する
+// Set graphics flags when the object has a single graphic.
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
   if (obj != NULL) {
@@ -561,7 +562,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *obj, u32 flags) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の半透明のしかたを設定する
+// Set graphics translucency mode when the object has a single graphic.
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
   if (obj != 0 && obj->kind == 1) {
@@ -571,7 +572,7 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *obj, u32 mode) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、絵の displayFlags の bit1 を設定する
+// Set graphics displayFlags bit 1 when the object has a single graphic.
 //--------------------------------------------------------------------------
 void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
   if (obj != 0 && obj->kind == 1) {
@@ -581,7 +582,7 @@ void ObjectDispatch_SetChildDisplayFlag1(struct DispatchObject *obj, u32 on) {
 }
 
 //--------------------------------------------------------------------------
-// 絵がひとつのオブジェクトなら、ObjectGroup_SetChildValueUnlessFifteen を呼ぶ
+// Call ObjectGroup_SetChildValueUnlessFifteen for a single-graphic object.
 //--------------------------------------------------------------------------
 void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
   if (obj != NULL && obj->kind == 1)
@@ -589,7 +590,7 @@ void Animation_ApplyChildValues(struct DispatchObject *obj, u32 val) {
 }
 
 //--------------------------------------------------------------------------
-// カメラの処理を動かし、BG1-3 を消して OBJ を出す
+// Start camera updates, hide BG1-3, and show OBJ.
 //--------------------------------------------------------------------------
 void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
@@ -601,7 +602,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 }
 
 //--------------------------------------------------------------------------
-// カメラの処理を止め、BG1-3 と OBJ を消す
+// Stop camera updates and hide BG1-3 and OBJ.
 //--------------------------------------------------------------------------
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
@@ -611,15 +612,16 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
 
 s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
-// マップのセル
+// Map cell.
 struct CameraTile {
   u32 unk00 : 12;
-  u32 layer : 2;    // 0 でなければ、上にいるオブジェクトのレイヤー + 1
-  u32 priority : 2; // 0 でなければ、上にいるオブジェクトの表示の優先度
+  u32 layer : 2; // If nonzero, the layer of objects above this cell plus one.
+  u32 priority
+      : 2; // If nonzero, the display priority of objects above this cell.
   u32 unk10 : 16;
 };
 
-// オブジェクトの絵（OAM の属性をふくむ）
+// Object graphics, including OAM attributes.
 struct CameraSprite {
   u8 unk00[4];
   u16 y : 8;
@@ -641,13 +643,13 @@ struct CameraSprite {
   u16 secondPalette : 4;
   u8 unk16[2];
   s32 scale;
-  u8 resource; // VRAM ブロックの番号
+  u8 resource; // VRAM block index.
   u8 flags1d;
   u8 unk1e[7];
   u8 activated;
 };
 
-// オブジェクト
+// Object.
 struct CameraObject {
   u32 active;
   u16 unk04;
@@ -663,7 +665,7 @@ struct CameraObject {
   u8 flags;
   u8 unk24[0x2c];
   void *sprite;
-  u8 kind; // 1 絵ひとつ、2 絵が 4 つまで
+  u8 kind; // 1: one graphic; 2: up to four graphics.
   u8 unk55[7];
   u8 held;
   u8 unk5d[0x13];
@@ -674,10 +676,10 @@ struct CameraLayer {
   u8 unk04[44];
 };
 
-// マップ
+// Map.
 struct CameraState {
   u8 unk000[0xe4];
-  s32 x; // 見ている位置
+  s32 x; // Viewing position.
   s32 z;
   u8 unk0ec[0x44];
   struct CameraLayer layers[1];
@@ -695,12 +697,12 @@ struct CameraPoint {
   s32 z;
 };
 
-// 固定カメラ
+// Fixed camera.
 struct FixedCamera {
   struct CameraPoint eye;
   struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    // あればこちらの視点を使う
-  struct CameraPoint *targetOverride; // あればこちらの注視点を使う
+  struct CameraPoint *eyeOverride;    // Use this eye position when present.
+  struct CameraPoint *targetOverride; // Use this look-at target when present.
 };
 
 extern u8 Render_DecodeFrame[];
@@ -712,9 +714,9 @@ void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale,
                                  s32 angle, s32 layer);
 
 //--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（ふつうのカメラ）
-// 画面のまわりにいるオブジェクトは、足もとのセルからレイヤーと優先度を決めて
-// 置く。外にいれば絵の VRAM ブロックを手放す
+// Per frame: position object graphics on screen with the normal camera.
+// For objects near the screen, choose layer and priority from the cell beneath
+// them. Release graphics VRAM blocks for objects outside that range.
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH: needed to match: unused; the native frame keeps room for three
@@ -745,7 +747,7 @@ void ObjectSystem_UpdateCamera(void) {
   camX = cam[0] & 0xffff0000;
   camZ = cam[1] & 0xffff0000;
   sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
-  // 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
+  // Copy the rendering routine (Render_DecodeFrame) into the workspace.
   RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
   sync->count = 0;
   obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
@@ -771,7 +773,7 @@ void ObjectSystem_UpdateCamera(void) {
       spr = obj->sprite;
       if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 &&
           top < 0xe00000) {
-        // 足もとのセルの情報
+        // Cell information beneath the object.
         tile = &map->layers[obj->layer]
                     .tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
         if (obj->flags & 1) {
@@ -791,12 +793,12 @@ void ObjectSystem_UpdateCamera(void) {
         pos[2] = dz;
         pos[3] = obj->height;
         if (obj->flags & 2) {
-          pos[1] += 0xfec00000; // -20 ドット
+          pos[1] += 0xfec00000; // -20 pixels.
           pos[2] += 0xfec00000;
           pos[3] += 0xfec00000;
         }
         if (obj->flags & 4) {
-          pos[1] += 0x1400000; // +20 ドット
+          pos[1] += 0x1400000; // +20 pixels.
           pos[2] += 0x1400000;
           pos[3] += 0x1400000;
         }
@@ -826,10 +828,10 @@ void ObjectSystem_UpdateCamera(void) {
 s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 //--------------------------------------------------------------------------
-// 毎フレーム：オブジェクトの絵を画面に置く（固定カメラ）
-// 視点と注視点から向きを決め、64 番目のオブジェクトから順に置く
-// コマンドを選んでいるあいだ（フラグ 363）は、決まった向きの行列を使い
-// 大きさを 1 倍にする
+// Per frame: position object graphics on screen with the fixed camera.
+// Derive orientation from eye and target, then place all 64 objects in reverse.
+// While selecting commands (flag 363), use a fixed-orientation matrix
+// and scale 1.
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 cnt;

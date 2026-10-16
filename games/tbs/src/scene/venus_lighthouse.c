@@ -36,7 +36,7 @@
 #include "scene_ids.h"
 #include "map.h"
 
-// 前方宣言
+// Forward declarations.
 struct DirXZ;
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *dir);
 static void Scene_RunPairedParticleWaveSequence(void);
@@ -106,12 +106,12 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_findslot.h"
 
@@ -410,7 +410,7 @@ static void EV32_TOUCH_3(void) {
 
 static void EV31_TOUCH_3(void) { *(s32 *)(gActorEffectWork + 24) = 0; }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_depth.h"
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
@@ -464,7 +464,7 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
@@ -3086,7 +3086,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// 向き (16 方向) ごとの一歩: 上位 16 ビットが x、下位 16 ビットが z
+// Step for each of 16 directions: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 u32 gStagedActor_DirectionSteps[] = {

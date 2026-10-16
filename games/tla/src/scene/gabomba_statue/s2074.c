@@ -13,7 +13,7 @@ struct IoReg16 {
 
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
 
-// 奥へ進むほど濃くなる半透明
+// Increase translucency intensity farther inside.
 void Func_02002074(void) {
   s32 blend;
   struct ObjectRuntime *object =

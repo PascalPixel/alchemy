@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// facing.c
-// オブジェクト：相手のほうへ向きを変える
-//--------------------------------------------------------------------------
+// Vale's storm, departure, and return scenes share this overlay with the bag
+// scene.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -45,7 +43,7 @@
 #include "iowrite.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Entry setup selects the longer sequences defined after the touch handlers.
 static void FieldScene_RunComplexActorSequence(void);
 static void FieldScene_RunPaletteRampSequence(void);
 static void ActorPresentation_SetTwoSceneCells(void);
@@ -53,7 +51,7 @@ static void FieldScene_RunSupplementalSequenceOne(void);
 static void ValeBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
 enum {
@@ -63,10 +61,13 @@ enum {
 
 extern struct SceneEvent gValeBabiEvents2[];
 
+// Return the shared entrance table through this overlay's existing ABI.
 s32 *ValeBabi_GetEntrances(void) { return gValeBabiEntrances; }
 
+// The overlay has no clipping-region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// The storm changes which exits are available.
 s32 ValeBabi_SelectExits(void) {
   if (Engine_GameFlagIsSet(0x834) != 0) {
     return (s32)gValeBabiExits2;
@@ -74,6 +75,7 @@ s32 ValeBabi_SelectExits(void) {
   return (s32)gValeBabiExits;
 }
 
+// Select placements for the bag scene, storm, departure, or return to Vale.
 s32 ValeBabi_SelectPlacements(void) {
   struct ScenePlacement *table;
 
@@ -89,6 +91,7 @@ s32 ValeBabi_SelectPlacements(void) {
   return (s32)table;
 }
 
+// Ask whether the party knows Kraden and discuss his travels.
 static void EV09_TALK(s32 object) {
   s32 msg = MsgValeFolksSeemKnow;
 
@@ -103,6 +106,7 @@ static void EV09_TALK(s32 object) {
   Engine_EventShowMessage(object, 0);
 }
 
+// Match the event table to the entrance and the party's story progress.
 s32 ValeBabi_SelectEvents(void) {
   if (gGameState.entrance == 19) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
@@ -123,6 +127,7 @@ s32 ValeBabi_SelectEvents(void) {
   return (s32)gValeBabiEvents;
 }
 
+// Ask Isaac whether he has business with the speaker, then show the reply.
 static void EV16_TALK(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(16, 2);
@@ -145,6 +150,7 @@ static void EV16_TALK(void) {
   Engine_EventEnd();
 }
 
+// Discuss the masked man being Felix, with a follow-up question on refusal.
 static void EV14_TALK(void) {
   struct EventWork *work;
 
@@ -162,6 +168,7 @@ static void EV14_TALK(void) {
   Engine_EventEnd();
 }
 
+// Stop storm lightning before fading through the requested exit.
 static void ValeBabi_CloseScreenAndExit(s32 object) {
   if (Engine_GameFlagIsSet(0x834) != 0) {
     FieldFx_StopLightning();
@@ -172,61 +179,74 @@ static void ValeBabi_CloseScreenAndExit(s32 object) {
   Engine_EventRequestExit(object);
 }
 
+// Play the exit cue before leaving through trigger 1.
 static void EV01_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(1);
 }
 
+// Play the exit cue before leaving through trigger 2.
 static void EV02_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(2);
 }
 
+// Play the exit cue before leaving through trigger 3.
 static void EV03_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(3);
 }
 
+// Play the exit cue before leaving through trigger 4.
 static void EV04_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(4);
 }
 
+// Play the alternate exit cue before leaving through trigger 5.
 static void EV05_TOUCH(void) {
   Engine_AudioPlayCue(0x80);
   ValeBabi_CloseScreenAndExit(5);
 }
 
+// Play the exit cue before leaving through trigger 6.
 static void EV06_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(6);
 }
 
+// Play the alternate exit cue before leaving through trigger 7.
 static void EV07_TOUCH(void) {
   Engine_AudioPlayCue(0x80);
   ValeBabi_CloseScreenAndExit(7);
 }
 
+// Play the exit cue before leaving through trigger 8.
 static void EV08_TOUCH(void) {
   Engine_AudioPlayCue(0x81);
   ValeBabi_CloseScreenAndExit(8);
 }
 
+// Play the exit cue before leaving through trigger 9.
 static void EV09_TOUCH(void) {
   Engine_AudioPlayCue(0x81);
   ValeBabi_CloseScreenAndExit(9);
 }
 
+// Play the exit cue before leaving through trigger 10.
 static void EV10_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(10);
 }
 
+// Play the exit cue before leaving through trigger 11.
 static void EV11_TOUCH(void) {
   Engine_AudioPlayCue(0x7B);
   ValeBabi_CloseScreenAndExit(11);
 }
 
+// Restore story-dependent actors, storm effects, and the selected arrival
+// scene.
 s32 ValeBabi_RestoreEntryState(void) {
   s32 record;
 
@@ -295,6 +315,7 @@ s32 ValeBabi_RestoreEntryState(void) {
   return 0;
 }
 
+// Wake Isaac, lead him outside into the storm, and send him toward the exit.
 static void FieldScene_RunComplexActorSequence(void) {
   s32 base;
   struct FieldSprite *sprite;
@@ -314,6 +335,7 @@ static void FieldScene_RunComplexActorSequence(void) {
     sceneActor = event->viewCenter;
   }
   sprite = Object_GetById(17)->sprite;
+  // Present the bedside conversation before revealing the wider storm scene.
   Engine_EventBegin();
   Engine_ActorSetPosition(11, 0, 0);
   Engine_ActorSetPosition(12, 0, 0);
@@ -340,6 +362,7 @@ static void FieldScene_RunComplexActorSequence(void) {
   ObjectDispatch_StopCallbacksAndHideLayers();
   Engine_EventWait(40);
   work->minX = 0x01480000;
+  // Widen the camera bounds and reveal the lightning outside.
   work->minY = 0x02580000;
   work->maxX = 0x02700000;
   work->maxY = 0x03300000;
@@ -387,6 +410,7 @@ static void FieldScene_RunComplexActorSequence(void) {
   Engine_EventWait(20);
   Event_ShowMessage(36872, 0);
   FieldScene_RunSixStepSequence17e4();
+  // Resolve the Psynergy demonstration before the pair walks away together.
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(36872, 0, 20);
   Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -439,8 +463,10 @@ static void FieldScene_RunComplexActorSequence(void) {
   Engine_EventRequestExit(20);
 }
 
+// Select the hardware blend targets for the storm sequence.
 static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
+// Set the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 union PairObject {
@@ -457,6 +483,8 @@ struct PairWork {
   u16 vramBlock;
 };
 
+// Run the boulder warning and collapse, fading its sprite through alpha
+// blending.
 static void FieldScene_RunPaletteRampSequence(void) {
   struct FieldActor *actor;
   struct FieldSprite *sprite;
@@ -475,7 +503,7 @@ static void FieldScene_RunPaletteRampSequence(void) {
   Actor_SetPosition(8, PIXELS(431), PIXELS(391));
   Engine_ActorSetPosition(10, PIXELS(463), PIXELS(404));
   Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-  actor->priorityFlags &= 0xfe;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->priority = 1;
   Actor_SetActionScript(10, gValeBabiRampActor10Action);
@@ -533,6 +561,7 @@ static void FieldScene_RunPaletteRampSequence(void) {
   Actor_SetActionScript(10, gValeBabiRampActor10ActionB);
   alpha = &REG_BLDALPHA;
 
+  // Bring the boulder fully into view before fading it away.
   i = 0;
 ramp:
   *alpha = 0x100e + i;
@@ -573,6 +602,7 @@ ramp:
   Engine_EventRequestExit(21);
 }
 
+// Open inn service from the counter, or discuss Vale's current circumstances.
 static void ValeBabi_RunInnkeeperTalk(void) {
   struct FieldActor *actor;
 
@@ -604,6 +634,7 @@ static void ValeBabi_RunInnkeeperTalk(void) {
   }
 }
 
+// Acknowledge how much Isaac has grown and record the conversation.
 static void SceneDialogue_ShowLine1C13WithActor16Steps(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
@@ -614,6 +645,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void) {
   Engine_EventEnd();
 }
 
+// Mind Read learns that Dora would not let Isaac remain in Vale.
 static void EV13_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWouldntLetHimStay);
@@ -622,6 +654,7 @@ static void EV13_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Mind Read learns of Dora's illness before visiting her.
 static void EV16_PSYNERGY(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
@@ -630,6 +663,7 @@ static void EV16_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Visit the ill Dora, answer her questions, and see her get out of bed.
 static void ValeBabi_RunSickbedVisit(void) {
   struct FieldActor *record;
   s32 msg;
@@ -735,6 +769,7 @@ static void ValeBabi_RunSickbedVisit(void) {
   Engine_EventEnd();
 }
 
+// Show Dora's sickbed dialogue or her reassurance after the visit.
 static void EV08_TALK(void) {
   s32 message;
 
@@ -755,11 +790,13 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
+// Restore the room's tiles and collision patch outside the storm sequence.
 static void ActorPresentation_SetTwoSceneCells(void) {
   Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
+// Display the Mythril Bag icon while its actor lifts and examines it.
 static void FieldScene_RunSupplementalSequenceOne(void) {
   struct FieldActor *actor;
   struct FieldSprite *sprite;
@@ -805,6 +842,7 @@ static void FieldScene_RunSupplementalSequenceOne(void) {
   Engine_EventRequestExit(22);
 }
 
+// Flash between two palettes and emit a paired effect every sixteen frames.
 static void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, 7);
@@ -816,6 +854,7 @@ static void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object) {
   }
 }
 
+// Cycle six palettes on odd frames and periodically emit paired effects.
 static void OverlayObject_UpdateOnFrameParity(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
@@ -825,6 +864,7 @@ static void OverlayObject_UpdateOnFrameParity(union FieldObject *object) {
   }
 }
 
+// Advance deterministically through six palettes on odd frames.
 static void
 OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
@@ -834,9 +874,10 @@ OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared vertical-effect callbacks precede their paired-effect creator.
 #include "common/effect_vertical.h"
 
+// Copy the parent's terrain height into two oppositely moving vertical effects.
 static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
   union PairObject *parent = (union PairObject *)object;
   union PairObject *pair[2];
@@ -889,20 +930,23 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
+// Apply the cycling-palette update to actor 8.
 static void FieldScene_RunActor8TwoStep(void) {
   OverlayObject_UpdateOnFrameParity((union FieldObject *)Object_GetById(8));
 }
 
+// Apply the cycling-palette update to actor 17.
 static void FieldScene_RunStep17(void) {
   OverlayObject_ApplyRandomSlotOnOddFrames(
       (union FieldObject *)Object_GetById(17));
 }
 
+// Demonstrate Catch on actor 8, then release its temporary effect objects.
 static void FieldScene_RunSixStepSequence17e4(void) {
-  Engine_PsynergyBegin(0x94, 1);
+  Engine_PsynergyBegin(ABILITY_CATCH, 1);
   Engine_PsynergySetTarget(8, 0x11);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);

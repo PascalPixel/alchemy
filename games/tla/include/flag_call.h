@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// フラグ操作のスクリプト層
+// Script layer for flag operations.
 // A scene builds its flag id again for every command: each call goes
 // through an inline, as the ☀️ scene script layer does.
 

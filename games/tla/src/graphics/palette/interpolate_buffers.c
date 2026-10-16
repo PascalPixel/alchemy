@@ -1,18 +1,18 @@
 //--------------------------------------------------------------------------
 // interpolate_buffers.c
-// パレット：フェードの 1 フレームあたりの変化量を求める
+// Palette: calculate the per-frame fade increments.
 //--------------------------------------------------------------------------
 
 #include "types.h"
 #include "iwram_call.h"
 
 //--------------------------------------------------------------------------
-// 512 色の RGB 成分（1536 個）について、今の値から目標の値までを
-// frames で割った変化量を step に書く
-// src    : 今の成分
-// dst    : 目標の成分
-// step   : 変化量の書き込み先
-// frames : かけるフレーム数（0 以下なら何もしない）
+// For the 1536 RGB components of 512 colors, write to step the difference
+// between current and target values divided by frames.
+// src: current components.
+// dst: target components.
+// step: destination for component increments.
+// frames: fade duration; do nothing if zero or negative.
 //--------------------------------------------------------------------------
 void PaletteFade_ComputeSteps(s16 *src, s16 *dst, s16 *step,
                                         s32 frames) {

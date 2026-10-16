@@ -22,7 +22,7 @@ struct EffectWork {
     s16 target;
 };
 
-/* 層の切り替え表: 3 語ずつ (id, mode, flag)、0xffff で終わり */
+/* Layer switch table: three words (id, mode, flag), terminated by 0xffff. */
 void Func_020053bc(const u16 *entry)
 {
     s32 value;

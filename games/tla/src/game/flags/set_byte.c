@@ -15,7 +15,7 @@ u32 GameFlag_SetByte(u32 flag, u8 value) {
   return flag;
 }
 
-// フラグ 8 個ぶんのバイトを 1 ふやす (255 で止まる)
+// Increment the byte holding eight flags, saturating at 255.
 s32 Func_08016d7c(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 
@@ -28,7 +28,7 @@ s32 Func_08016d7c(s32 flag) {
   return bytes[flag];
 }
 
-// フラグ 8 個ぶんのバイトを 1 へらす (0 で止まる)
+// Decrement the byte holding eight flags, saturating at 0.
 s32 Func_08016d98(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 

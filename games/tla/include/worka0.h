@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// ヒープスロット 0xa0 のワーク: 8 本のスロットと 128 個の節
+// Heap-slot 0xa0 workspace: eight slots and 128 nodes.
 struct WorkA0Node {
   struct WorkA0Node *next;
   u8 unk04[12];
@@ -29,7 +29,7 @@ struct WorkA0 {
 
 #define WORK_A0 ((struct WorkA0 *)Ram_HeapSlots->unk84[7])
 
-// ヒープスロット 0xa4 のワーク
+// Heap-slot 0xa4 workspace.
 struct WorkA4Slot {
   s16 id;
   u8 unk02[26];

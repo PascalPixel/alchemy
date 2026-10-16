@@ -27,7 +27,7 @@ enum Facing {
 
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
-// 出現位置
+// Entrance positions.
 struct SceneEntrance {
   s16 entrance;
   s16 requiredFlag;
@@ -43,7 +43,7 @@ struct SceneEntrance {
   s16 unused2;
 };
 
-// 出口: 先頭はこのシーン番号、以下は出口ごとの行き先
+// Exits: the current scene number, followed by each exit's destination.
 #define SCENE_EXITS(scene) ((u32)(scene))
 #define SCENE_EXIT(exit, scene, entrance)                                      \
   ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
@@ -51,7 +51,7 @@ struct SceneEntrance {
   (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
 #define SCENE_EXITS_END 0x1ff
 
-// 配置
+// Actor placements.
 struct ScenePlacement {
   s16 sprite;
   s16 condition;
@@ -66,7 +66,7 @@ struct ScenePlacement {
 
 #define PIXELS(value) ((value) << 16)
 
-// イベント
+// Events.
 struct SceneEvent {
   u32 control;
   s16 trigger;

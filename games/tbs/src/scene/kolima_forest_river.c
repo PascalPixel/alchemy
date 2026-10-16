@@ -30,7 +30,7 @@
 // implicit int declaration of a u16 function
 #endif
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 u8 *MapStagedScene_SelectPrimaryData(void) {
@@ -68,7 +68,7 @@ static void EV10_SCRIPT(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
 u8 *KolimaForestRiver_GetEvents(void) { return gKolimaForestRiverEvents; }
@@ -95,10 +95,10 @@ s32 KolimaForestRiver_PrepareWindowTransition(void) {
   return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -158,6 +158,6 @@ struct SceneEvent gKolimaForestRiverEvents[] = {
     {SCENE_EVENTS_END},
 };
 
-// .bss 内の並びは最初に宣言した順 (field.h の extern)
+// The .bss order follows the first declarations (externs in field.h).
 u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
 u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));

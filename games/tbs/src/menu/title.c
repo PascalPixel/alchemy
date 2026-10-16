@@ -37,7 +37,7 @@
 #include "field_scene.h"
 #include "map_scroll.h"
 
-// 前方宣言
+// Forward declarations
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 

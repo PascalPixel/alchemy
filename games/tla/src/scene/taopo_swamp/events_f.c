@@ -48,7 +48,7 @@ void Func_02001038(s32 a, s32 id) {
   }
 }
 
-#if !defined(TLA_EDITION_JA) /* 日本版にはない */
+#if !defined(TLA_EDITION_JA) /* Absent from the Japanese edition. */
 void Func_020010bc(void) { Func_02002948(); }
 #endif
 

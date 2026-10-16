@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // render_mode.c
-// バトル演出：粒子の演出の入口
+// Battle effects: particle effect entry points.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -8,8 +8,8 @@
 #include "battle_effect_work.h"
 
 //--------------------------------------------------------------------------
-// 演出ごとの入口。粒子の型（色と数）を BattleFx_RenderMode に渡す
-// effect : 演出の引数
+// Each entry passes a particle type (color and count) to BattleFx_RenderMode.
+// effect: effect arguments.
 //--------------------------------------------------------------------------
 void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {

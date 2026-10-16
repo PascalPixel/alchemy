@@ -1,3 +1,6 @@
+// Kalay's homes, inn, dining rooms and sanctum. The inn changes when the
+// Colosso tour group leaves; room entrances select their shared actor tables.
+
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/kalay_interiors.h"
@@ -20,9 +23,10 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-// 前方宣言
-static void SceneState_ClearSlotsBySubState(void);
+// Room setup is shared by the scene's entry points.
+static void KalayInteriors_ApplyRoomState(void);
 
+// Selects the entrance table for the rooms or sanctum in this scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -35,10 +39,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKalayInteriorsEntrancesOther;
 }
 
+// The rooms have no exit-region table.
 s32 SceneData_ReturnZero(void) { return 0; }
 
+// Returns the combined destinations of the rooms' numbered exits.
 u8 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
+// The inn rooms share a placement table, clipped to the current view.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -70,6 +77,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gKalayInteriorsPlacementsOther;
 }
 
+// Selects room dialogue with the same entrance grouping as the placements.
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
@@ -96,7 +104,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gKalayInteriorsEventsOther;
 }
 
-static void EV12_TALK(void) {
+// Reminds tour guests to finish eating and records that the party was told.
+static void KalayInteriors_AskPartyToFinishMeal(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);
   Engine_EventShowMessage(0xC, 0);
@@ -104,17 +113,19 @@ static void EV12_TALK(void) {
   Engine_EventEnd();
 }
 
-static void EV16_TALK(void) {
+// Asks whether the party knows the continent south of Tolbi.
+static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
   Engine_EventAskYesNo(16, 0);
   Engine_EventEnd();
 }
 
-static void EV08_TALK(void) {
-  struct FieldActor *p = Object_GetById(0);
+// Opens the inn across the west-facing counter, or discusses the tour group.
+static void KalayInteriors_TalkToInnkeeper(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((u16)(p->facing - 0x6001) <= 0x3FFE) {
+  if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
     Engine_InnOpen(7, 8);
   } else {
     Engine_EventBegin();
@@ -132,11 +143,13 @@ static void EV08_TALK(void) {
   }
 }
 
-static void EV08_TALK_2(void) {
+// Opens the sanctum across the north-facing counter, or talks about Kalay.
+static void KalayInteriors_TalkToPriest(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  struct FieldActor *p = Object_GetById(0);
-
-  if ((u16)(p->facing + 0x5FFF) <= 0x3FFE) {
+  // FACING_IS_NORTH removes the native EN halfword shift and changes its
+  // comparison constant. Keep the original unsigned-halfword arithmetic.
+  if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
     Engine_SanctumOpen(8);
   } else {
     Engine_EventBegin();
@@ -146,35 +159,36 @@ static void EV08_TALK_2(void) {
   }
 }
 
-static void FieldScene_RunArrivalPlacement(void) {
-
+// Stops the room actors, opens the selected door and walks the leader out.
+static void KalayInteriors_OpenDoorAndExit(void) {
   struct EventWork *work = gEventWork;
   u32 slot;
-  s32 idx;
-  struct FieldActor *p;
+  s32 doorIndex;
+  struct FieldActor *leader;
 
   Engine_EventBegin();
 
-  for (slot = 8; slot <= 65; slot++) {
-    struct FieldActor *rec = Object_GetById(slot);
+  // Prevent idle movement while the doorway cells are animated.
+  for (slot = ACTOR_FIRST_PLACED; slot <= 65; slot++) {
+    struct FieldActor *actor = Object_GetById(slot);
 
-    if (rec != 0) {
-      rec->motionFlags = 0;
+    if (actor != 0) {
+      actor->motionFlags = 0;
     }
   }
 
   switch (work->touchedTrigger) {
   case 12:
-    idx = 0;
+    doorIndex = 0;
     break;
   case 13:
-    idx = 1;
+    doorIndex = 1;
     break;
   case 16:
-    idx = 2;
+    doorIndex = 2;
     break;
   case 19:
-    idx = 3;
+    doorIndex = 3;
     break;
   default:
     return;
@@ -183,18 +197,19 @@ static void FieldScene_RunArrivalPlacement(void) {
   Engine_AudioPlayCue(158);
 
   {
-    u32 x = gKalayInteriors_ArrivalPlacements[idx].x;
-    u32 y = gKalayInteriors_ArrivalPlacements[idx].y;
+    u32 x = gKalayInteriors_ArrivalPlacements[doorIndex].x;
+    u32 y = gKalayInteriors_ArrivalPlacements[doorIndex].y;
 
-    Engine_MapAnimateCells(gKalayInteriors_ArrivalPlacements[idx].steps, x, y);
+    Engine_MapAnimateCells(gKalayInteriors_ArrivalPlacements[doorIndex].steps,
+                           x, y);
   }
 
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
-  p = Object_GetById(0);
-  p->motionFlags = 0;
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader->motionFlags = 0;
 
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
   Engine_EventWait(10);
 
@@ -204,18 +219,21 @@ static void FieldScene_RunArrivalPlacement(void) {
   Engine_EventEnd();
 }
 
+// Sets the opening transition and restores room-specific actors and tiles.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (s32)&SceneId_KalayInteriors1) {
-    SceneState_ClearSlotsBySubState();
+    KalayInteriors_ApplyRoomState();
   }
   return 0;
 }
 
-static void SceneState_ClearSlotsBySubState(void) {
-  s16 sub = gGameState.entrance;
+// After the tour leaves, removes its guests from the appropriate room table.
+// Entrance 3 instead restores a rectangle of map cells.
+static void KalayInteriors_ApplyRoomState(void) {
+  s16 entrance = gGameState.entrance;
 
-  switch (sub) {
+  switch (entrance) {
   case 3: {
     Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
     return;
@@ -379,9 +397,9 @@ struct SceneEvent gKalayInteriorsEvents1[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
@@ -390,7 +408,7 @@ struct SceneEvent gKalayInteriorsEvents1[] = {
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
     { EVENT_TALK, 18, 0x911, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
@@ -425,17 +443,17 @@ struct SceneEvent gKalayInteriorsEvents1Entrance9[] = {
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunArrivalPlacement) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToInnkeeper) },
     { EVENT_TALK, 9, 0x911, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskPartyToFinishMeal) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
@@ -472,7 +490,7 @@ struct SceneEvent gKalayInteriorsEvents1Entrance9[] = {
 
 struct SceneEvent gKalayInteriorsEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { SCENE_EVENTS_END },
 };

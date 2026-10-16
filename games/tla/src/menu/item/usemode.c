@@ -6,8 +6,8 @@
 struct ItemDefinition *Item_Get(s32);
 s32 BattleFx_HasTriggerFar(s32);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// スペイン語版とイタリア語版のビルドでは、この far call の名前が違う（shop.c
-// と同じ）
+// Spanish and Italian builds use a different name for this far call,
+// as in shop.c.
 s32 Func_080c8500(s32);
 #endif
 void *BattleActGet(s32);

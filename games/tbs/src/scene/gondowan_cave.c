@@ -25,11 +25,11 @@
 #include "text/msg_ids.h"
 #include "field_obj.h"
 
-// 前方宣言
+// The leap event also runs after the shared staged-actor movement.
 static void EV09_PSYNERGY_3(void);
 static void StagedActorPairScene_RunSpinningLeap(s32 id);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared effect routines retain their position before the scene handlers.
 #include "common/effect_create.h"
 
 union SpinningActor {
@@ -37,13 +37,14 @@ union SpinningActor {
   struct StagedActor staged;
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Particle and movable-object routines precede this scene's entry points.
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
 
+// Select the entrance bounds for the current cave section.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -59,10 +60,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGondowanCaveEntrancesOther;
 }
 
+// This overlay has no clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
+// All cave sections share the exit table.
 const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
+// The first section gains Iodem in its alternate placement table.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -81,6 +85,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGondowanCavePlacementsOther;
 }
 
+// Match each section's events to its current placement table.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -99,11 +104,13 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGondowanCaveEventsOther;
 }
 
+// Iodem asks whether Isaac intends to turn back.
 static void EV10_TOUCH(void) {
   struct FieldActor *leader;
 
   if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
     Engine_EventBegin();
+    // Bring Iodem out of the party before opening his question.
     Engine_ActorSetSpeed(11, 0x10000, 0x8000);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -117,6 +124,7 @@ static void EV10_TOUCH(void) {
     Engine_EventSetMessage(MsgKaragolWhyGoingBackIsaacDo);
     Event_OpenMessage(11, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
+      // Leave him waiting and retain the return entrance in Tolbi.
       Event_ShowMessage(11, 0);
       Actor_WalkTo(11, 152, 232);
       GameFlag_Clear(0x9a0);
@@ -125,6 +133,7 @@ static void EV10_TOUCH(void) {
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
       gGameState.savedEntrance = 30;
     } else {
+      // Rejoin the party, then move Isaac away from the trigger.
       gEventWork->message += 1;
       Event_ShowMessage(11, 0);
       Engine_ActorSetAnimation(11, 2);
@@ -144,6 +153,7 @@ static void EV10_TOUCH(void) {
   }
 }
 
+// Iodem greets Isaac and resumes travelling with the party.
 static void EV11_SCRIPT(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
@@ -155,10 +165,11 @@ static void EV11_SCRIPT(void) {
   Engine_EventShowMessage(11, 0);
   Engine_ActorSetAnimation(11, 2);
   {
-    s16 *position = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-    if (position != 0)
-      Engine_ActorSetDestination(11, position[5], position[9]);
+    if (leader != 0)
+      Engine_ActorSetDestination(11, leader->x.part.pixel,
+                                 leader->z.part.pixel);
   }
   Engine_ActorWaitForMove(11);
   Engine_ActorSetPosition(11, 0, 0);
@@ -167,16 +178,17 @@ static void EV11_SCRIPT(void) {
   Engine_EventEnd();
 }
 
+// Ask about crossing into Gondowan, with the alternate Colosso response.
 static void EV08_TALK(void) {
-  s32 base;
+  s32 firstMessage;
 
-  base = MsgKaragolDoYouWishCrossInto;
-  Engine_EventSetMessage(base);
+  firstMessage = MsgKaragolDoYouWishCrossInto;
+  Engine_EventSetMessage(firstMessage);
   Engine_EventOpenMessage(8, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
       if (Engine_GameFlagIsSet(0x96f) == 0) {
-        Engine_EventSetMessage((base + 8));
+        Engine_EventSetMessage(firstMessage + 8);
       }
     }
     Engine_EventShowMessage(8, 0);
@@ -186,6 +198,7 @@ static void EV08_TALK(void) {
   }
 }
 
+// Mind Read reveals whether the soldier missed Colosso.
 static void EV09_PSYNERGY_1(void) {
   if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
     Engine_EventSetMessage(MsgKaragolWeMissedColossoBecauseWe);
@@ -194,6 +207,7 @@ static void EV09_PSYNERGY_1(void) {
   Engine_EventShowMessage(9, 0);
 }
 
+// Restore the affected puzzle flags before leaving through the touched exit.
 static void EV01_TOUCH(void) {
   struct EventWork *work;
 
@@ -213,8 +227,10 @@ static void EV01_TOUCH(void) {
   Engine_EventEnd();
 }
 
+// Probe ahead when walking into either of the paired movable actors.
 static void StagedActorPairScene_RunStep(void) { Engine_LeaderCheckAhead(); }
 
+// Move makes actor 8 leap across and opens its former collision cell.
 static void EV08_PSYNERGY(void) {
   Object_GetById(8);
   Engine_EventBegin();
@@ -233,21 +249,23 @@ static void EV08_PSYNERGY(void) {
   Engine_EventEnd();
 }
 
+// Advance the paired actors, then test the second actor's destination.
 static void EV50_SCRIPT(void) {
   StagedActor_AdvancePair();
   EV09_PSYNERGY_3();
 }
 
+// Replace actor 9 after it crosses the destination cell boundary.
 static void EV09_PSYNERGY_3(void) {
   Engine_EventBegin();
   if ((Object_GetById(9)->x.fixed >> 20) > 42) {
-    s32 x = 107;
-    s32 y = 17;
+    s32 destinationCellX = 107;
+    s32 destinationCellZ = 17;
 
-    Map_CopyCellAttributes(108, 17, 1, 1, x, y);
+    Map_CopyCellAttributes(108, 17, 1, 1, destinationCellX, destinationCellZ);
     Engine_EventWait(8);
     Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(10, 45613056, 18874368);
+    Actor_SetPosition(10, PIXELS(696), PIXELS(288));
     Engine_ActorSetAnimation(10, 3);
     Event_PlayCue(154);
     GameFlag_Set(2469);
@@ -255,30 +273,30 @@ static void EV09_PSYNERGY_3(void) {
   Engine_EventEnd();
 }
 
-static void StagedActorPairScene_NoopActorCallback(void) {}
+// Unused empty actor callback retained with the overlay's routines.
+static UNUSED void StagedActorPairScene_NoopActorCallback(void) {}
 
+// Rotate the sprite during the airborne part of the leap.
 static void
 StagedActorPairScene_RotateActorPart(union FieldObject *fieldObject) {
-  u8 *actor = (u8 *)fieldObject;
-  u8 *sprite_part = *(u8 **)(actor + 80);
-
-  *(u16 *)(sprite_part + 30) -= 0x400;
+  fieldObject->actor.sprite->rotation -= 0x400;
 }
 
-static void
-StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
-                                   s32 limit) {
-  s32 frames = 40;
+// Wait at most forty frames for the actor to descend to the height limit.
+static void StagedActorPairScene_WaitForHeight(union SpinningActor *object,
+                                               s32 heightLimit) {
+  s32 framesRemaining = 40;
 
-  while (frames != 0) {
+  while (framesRemaining != 0) {
     Engine_TaskWait(1);
-    frames--;
-    if (object->height <= limit) {
+    framesRemaining--;
+    if (object->object.actor.y.fixed <= heightLimit) {
       break;
     }
   }
 }
 
+// Spin, leap to the far side, scatter particles, and settle into place.
 static void StagedActorPairScene_RunSpinningLeap(s32 id) {
   union SpinningActor *work;
   u32 cnt;
@@ -286,6 +304,7 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
   s32 angle;
 
   work = (union SpinningActor *)Object_GetById(id);
+  // Wind up the spin while horizontal motion is disabled.
   work->object.actor.motionFlags = 0;
   for (cnt = 0; cnt < 9; cnt++) {
     Engine_TaskWait(1);
@@ -295,6 +314,7 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
     work->staged.targetX = 0x80000000;
   }
   work->object.actor.update = StagedActorPairScene_RotateActorPart;
+  // Continue spinning through the first jump.
   Engine_AudioPlayCue(136);
   Actor_SetSpeed(id, 0x20000, 0x10000);
   Actor_SetDestination(id, 472, 288);
@@ -305,6 +325,7 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
   StagedActorPairScene_WaitForHeight(work, 0x200000);
   Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+  // Emit a complete particle fan, including its closing direction.
   for (cnt = 0; cnt < 17; cnt++) {
     angle = cnt << 12;
     velocity[0] = Engine_MathCos(angle);
@@ -317,6 +338,7 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
                  velocity[2], 0, 0);
   }
   Actor_SetDestination(id, 440, 308);
+  // Finish the second movement before restoring the resting animation.
   Engine_ActorWaitForMove(id);
   StagedActorPairScene_WaitForHeight(work, 0x200000);
   work->object.actor.update = 0;
@@ -328,10 +350,13 @@ static void StagedActorPairScene_RunSpinningLeap(s32 id) {
   Engine_ActorSetAnimation(id, 2);
 }
 
-static void StagedActorPairScene_NoopSceneCallback(void) {}
+// Unused empty scene callback retained with the overlay's routines.
+static UNUSED void StagedActorPairScene_NoopSceneCallback(void) {}
 
+// Lift hides the additional actor at the movable pair.
 static void EV11_PSYNERGY(void) { Engine_ActorSetPosition(12, 0, 0); }
 
+// Restore actor positions and collision cells from the saved puzzle flags.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
@@ -376,8 +401,9 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+// Shift the unsigned representation so westward steps remain defined C.
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
@@ -547,7 +573,7 @@ struct SceneEvent gGondowanCaveEvents2[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
@@ -560,9 +586,9 @@ struct SceneEvent gGondowanCaveEvents3[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { PSYNERGY_ON_ACTOR(0x8f), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x9a2, EVENT_SCRIPT(EV08_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x205, EVENT_SCRIPT(EV09_PSYNERGY_3) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9a2, EVENT_SCRIPT(EV08_PSYNERGY) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x205, EVENT_SCRIPT(EV09_PSYNERGY_3) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
     { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },

@@ -2,7 +2,7 @@
 #define TLA_INPUT_H
 
 // The Lost Age's key input state: held, pressed and repeating keys.
-// ⚓️ のキー入力。☀️ のキー入力は keystate.h にある。
+// The Broken Seal's input state is declared separately in keystate.h.
 
 #include "types.h"
 #include "layout_guard.h"

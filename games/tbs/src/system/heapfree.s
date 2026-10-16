@@ -62,7 +62,7 @@ MemFree:
 	.set GAMEPAK_STOP, 1
 	.endif
 	.ifdef GAMEPAK_STOP
-@ カートリッジ割り込みなら音を止めて止まる
+@ On a cartridge interrupt, stop the sound and halt.
 	.section .text.gamepak, "ax", %progbits
 	.balign 4
 	.arm

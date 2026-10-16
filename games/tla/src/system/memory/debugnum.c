@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // debugnum.c
-// デバッグ：数を右そろえでデバッグ文字にする
+// Debug: format a right-aligned number in debug characters.
 //--------------------------------------------------------------------------
 
 #include "battle.h"
@@ -15,10 +15,11 @@
 #include "system.h"
 #include "types.h"
 
-// どちらも数を作業域に右づめで作り、その終わりから digits 文字を書く
+// Both format into a right-aligned buffer and write digits characters from its
+// end.
 
 //--------------------------------------------------------------------------
-// 16 進で digits けた（1〜8、範囲外なら 8）
+// Hexadecimal, digits places (1-8, or 8 if out of range).
 //--------------------------------------------------------------------------
 void DebugText_PrintHex(u32 value, s32 digits) {
   s32 n;
@@ -32,7 +33,7 @@ void DebugText_PrintHex(u32 value, s32 digits) {
 }
 
 //--------------------------------------------------------------------------
-// 符号つきの 10 進で digits けた（1〜10、範囲外なら 10）
+// Signed decimal, digits places (1-10, or 10 if out of range).
 //--------------------------------------------------------------------------
 void DebugText_PrintDecimal(s32 value, s32 digits) {
   s32 n;

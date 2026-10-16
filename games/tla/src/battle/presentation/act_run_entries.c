@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // act_run_entries.c
-// バトル表示：行動の効果を対象ごとに出す
+// Battle presentation: apply the action's effects to each target.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -13,9 +13,9 @@
 void BattlePresentation_WaitForAdvance(void);
 
 //--------------------------------------------------------------------------
-// ハイライトを消し、対象ごとに効果をかけてイベントを流す
-// 対象がいなければ、メッセージの送りを待つだけ
-// plan : 行動と対象の情報
+// Clear highlights, apply each target's effect, and run the events.
+// With no targets, only wait for message advancement.
+// plan: action and target information.
 //--------------------------------------------------------------------------
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 i;

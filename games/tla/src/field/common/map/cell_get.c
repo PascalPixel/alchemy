@@ -4,7 +4,7 @@
 
 extern u8 gMapCellBuffer[];
 
-// セルの当たりコードと属性を 16 ビットで読む
+// Read a cell's collision code and attributes as a halfword.
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *cell;

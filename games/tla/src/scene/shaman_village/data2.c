@@ -132,7 +132,7 @@ s16 gData_02005158[] = {
     -1,
 };
 
-// 版ごとの拡大率
+// Scale for each edition.
 #if defined(TLA_EDITION_FR)
 #define SHAMAN_GRAPHIC1_SCALE 384
 #define SHAMAN_GRAPHIC4_START_SCALE 512

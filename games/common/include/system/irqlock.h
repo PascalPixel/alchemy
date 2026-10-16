@@ -4,9 +4,9 @@
 #include "io_reg.h"
 #include "types.h"
 
-// IME を ime（REG_IME を指すポインタ）越しに読み書きする 3 つの手順。
-// 止めるときは IME にレジスタ自身のアドレスの下位 16 ビット
-// （0x0208、ビット 0 は 0）が書かれる。
+// Three operations access IME through ime, a pointer to REG_IME.
+// Disabling writes the low 16 address bits (0x0208, with bit zero clear)
+// back to the register itself.
 // Each step is its own statement macro, written do { } while (0), the shape
 // ☀️'s lock sites and write-queue pushes and ⚓️'s callback scheduler match
 // through: the saved copy is taken before IME is written.
@@ -14,19 +14,19 @@
 // IME_RESTORE's and IRQ_UNLOCK's wrappers are devices, not this layer: a plain
 // restore matches at some sites (see their tags).
 
-// 元の IME を saved に入れる
+// Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                   \
   do {                                                                         \
     (saved) = *(ime);                                                          \
   } while (0)
 
-// 割り込みを止める
+// Disables interrupts.
 #define IME_DISABLE(ime)                                                       \
   do {                                                                         \
     *(ime) = (u16)(u32)(ime);                                                  \
   } while (0)
 
-// IME を saved に戻す
+// Restores IME from saved.
 /* FAKEMATCH: the do { } while (0) wrapper steers: written plainly as *(ime) =
  * (saved), BattleFx_PlayUnitElementEffect differs 2 and
  * BattleEffect_RunShockwaveScene differs 6 in all six ☀️ editions;
@@ -38,7 +38,7 @@
     *(ime) = (saved);                                                          \
   } while (0)
 
-// 割り込みを止めて、元の IME を saved に入れる。IRQ_UNLOCK で元に戻す。
+// Disables interrupts and saves IME in saved; IRQ_UNLOCK restores it.
 #define IRQ_LOCK(saved)                                                        \
   do {                                                                         \
     volatile u16 *ime_ = &REG_IME;                                             \
@@ -47,7 +47,7 @@
     IME_DISABLE(ime_);                                                         \
   } while (0)
 
-// IRQ_LOCK で止めた IME を saved に戻す
+// Restores the IME value saved by IRQ_LOCK.
 /* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart
  * from the code before it. Written plainly as REG_IME = saved, 7 of the 8
  * Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en

@@ -17,7 +17,7 @@ extern char MsgStatusNameDown[];
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 
-// 使えるものにアイコンと名前を並べる。ひとつも無ければ「なし」
+// Lists usable entries with icons and names, or "none" when no entries qualify.
 void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled)
 {
     s32 count = 0;

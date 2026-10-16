@@ -1,19 +1,19 @@
 //--------------------------------------------------------------------------
 // motion_set_position_and_reset_motion.c
-// オブジェクト：位置の設定と移動の取り消し
+// Objects: set position and cancel motion.
 //--------------------------------------------------------------------------
 
 #include "object_runtime.h"
 
 //--------------------------------------------------------------------------
-// 位置を置き、移動先を「なし」に、速度を 0 にする
-// obj     : オブジェクト
-// x, y, z : 位置（16.16 固定小数）
+// Set position, clear the destination, and zero velocity.
+// obj: object.
+// x, y, z: 16.16 fixed-point position.
 //--------------------------------------------------------------------------
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *obj, s32 x, s32 y,
                                       s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // 移動先なし
+  obj->targetX = 0x80000000; // No destination.
   obj->targetY = 0x80000000;
   obj->targetZ = 0x80000000;
   obj->x = x;

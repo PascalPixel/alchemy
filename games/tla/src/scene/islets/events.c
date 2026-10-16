@@ -20,7 +20,8 @@ void Func_020025b0(void) {
   return;
 }
 
-#if !defined(TLA_EDITION_JA) /* 日本版にはない: 次の六つ */
+#if !defined(TLA_EDITION_JA) /* The following six are absent from the Japanese \
+                                edition. */
 void Func_020025bc(void) {
   Call7((void (*)())Func_02003fec, 65, 0, 4, 4, 65, 10, 1);
   return;

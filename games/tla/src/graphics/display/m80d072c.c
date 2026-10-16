@@ -24,7 +24,7 @@ struct MapLayerFlags {
  * temporary swaps the two registers (differ 24). */
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
-// マップの層ごとのフラグを落とす
+// Clear the flags for each map layer.
 void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
   struct MapLayerFlags *map;
   u16 flags;

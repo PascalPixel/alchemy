@@ -29,7 +29,7 @@
 #include "text/msg_ids.h"
 #include "field_obj.h"
 
-// 前方宣言
+// Forward declarations.
 static void FieldScene_RunFourActorPresentation(void);
 static void EV11_TOUCH(void);
 static void RunScene59Sequence(void);
@@ -41,7 +41,7 @@ static void MercuryAerie_FlickerActorEight(void);
 
 #define NULL ((void *)0)
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 
 struct EffectParams {
@@ -60,7 +60,7 @@ struct ActorTable {
   struct FieldActor *actors[66];
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
@@ -246,7 +246,7 @@ static void FieldScene_RunFourActorPresentation(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 

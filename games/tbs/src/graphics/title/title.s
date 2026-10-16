@@ -70,7 +70,7 @@ Field_WorldMapPicture:
 	.incbin "games/tbs/src/graphics/world_map/picture.gbapal"
 	.incbin "games/tbs/src/graphics/world_map/picture.8bpp.lz"
 	.byte 0x02, 0x31, 0x01	@ PACKER: left in the buffer by Title_IntroGraphicsC+0x3b01
-@ 「つづく」の文字
+@ "To be continued" lettering
 	.global Title_IntroTilesB
 Title_IntroTilesB:
 	.ifdef TBS_EDITION_DE

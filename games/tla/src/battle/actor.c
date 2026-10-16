@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // actor.c
-// バトル：倒れたユニットの絵と並びの後しまつ
+// Battle: clean up defeated units' graphics and formation entries.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -20,9 +20,9 @@ struct BattleUnit *UnitGet(s32);
 void Animation_ApplyChildArgumentFar(void *, s32);
 
 //--------------------------------------------------------------------------
-// ユニットを味方か敵の並びから外し、行動の予定からも消す
-// 外せたら 0、どちらの並びにもいなければ -1 を返す
-// id : ユニット番号
+// Remove the unit from ally/enemy formations and planned actions.
+// Return 0 on removal, or -1 if absent from both formations.
+// id: unit ID.
 //--------------------------------------------------------------------------
 s32 BattleActor_RemoveFromLists(s32 id) {
   struct BattleWork *work;
@@ -30,7 +30,7 @@ s32 BattleActor_RemoveFromLists(s32 id) {
   u32 j;
   s32 unit;
 
-  // 味方の並び
+  // Ally formation.
   work = Ram_HeapSlots->battleWork;
   UnitGet(id)->side = BATTLE_UNIT_ABSENT;
   for (i = 0;; i++) {
@@ -43,7 +43,7 @@ s32 BattleActor_RemoveFromLists(s32 id) {
       break;
   }
 
-  // 敵の並び
+  // Enemy formation.
   for (j = 0;; j++) {
     unit = work->enemyIds[j];
     if (unit == id) {
@@ -65,9 +65,9 @@ removed:
 }
 
 //--------------------------------------------------------------------------
-// 倒れたユニットの絵：味方はアニメ 4、敵はアニメ 5 にする
-// 敵はさらに 4 フレーム待って並びから外し、そのあと絵を 1 ドットずつ消す
-// id : ユニット番号
+// Defeated unit graphics: animation 4 for allies, 5 for enemies.
+// Enemies wait four more frames, leave the formation, then erase pixel by
+// pixel. id: unit ID.
 //--------------------------------------------------------------------------
 void BattleMotion_InitializeActorRecords(s32 id) {
   void *recs[4];
@@ -102,7 +102,7 @@ void BattleMotion_InitializeActorRecords(s32 id) {
     }
     WaitFrames(4);
     BattleActor_RemoveFromLists(id);
-    Map_RenderAllAnimatedTileFramesFar(recs, n); // 1 ドットずつ消す
+    Map_RenderAllAnimatedTileFramesFar(recs, n); // Erase pixel by pixel.
     ActivateBattleObjectSlot(id);
   }
 }

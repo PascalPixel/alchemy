@@ -29,7 +29,7 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
   Iwram_CopyWords(b, &temporary, sizeof(struct BattleActionRecord));
 }
 
-// 行動を優先度の高い順に並べる
+// Sort actions by descending priority.
 void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   s32 i;
   s32 j;

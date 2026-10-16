@@ -3477,10 +3477,10 @@ s32 Ui_LoadEntryForKind(u32 kind, s32 value) {
 
 //--------------------------------------------------------------------------
 // get_table_word_zero.c
-// ウィンドウ：固定のタイルの表の先頭を返す
+// Window: return the start of the fixed tile table.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// gUi_FixedTileBlocks[0] を返す（0 以外の no も 0 として読む）
+// Return gUi_FixedTileBlocks[0]; treat any nonzero no as 0 as well.
 //--------------------------------------------------------------------------
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
@@ -3498,10 +3498,10 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work) {
 
 //--------------------------------------------------------------------------
 // create_countdown_label_window.c
-// 通信：残り時間の見出しのウィンドウを開く
+// Link: open the remaining-time heading window.
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
+// Open a 6x4 window at the upper left, write its heading and return it.
 //--------------------------------------------------------------------------
 struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
@@ -3632,7 +3632,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 }
 
 #if EDITION_INTERNATIONAL
-#define WINDOW_X 22 /* 窓の X */
+#define WINDOW_X 22 /* Window X position */
 #else
 #define WINDOW_X 23
 #endif
@@ -5089,8 +5089,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 #define TURNS_X 40
 #endif
 
-// gLinkCountdownWork のブロック全体。0x28 から 0xe4 までは menu_list.h の
-// MenuCell が読むところ
+// Entire gLinkCountdownWork block; MenuCell in menu_list.h reads
+// the region from 0x28 through 0xe4.
 struct LinkRoundState {
   struct MenuSprite entries[3];
   u8 entryActive[3];
@@ -5600,40 +5600,40 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 
 //--------------------------------------------------------------------------
 // classify_use_ability.c
-// アイテム：召喚えらびのメニューと、戦闘でアイテムを使えるかの判定
+// Summon selection menu and checks for item usability in battle
 //--------------------------------------------------------------------------
 
-#define BATTLE_OK 0x80 // flags：戦闘で使える
+#define BATTLE_OK 0x80 // flags: usable in battle
 
 #if !GAME_TLA
 
 #if EDITION_INTERNATIONAL
-#define SUMMON_COST_X 13 // 必要ジン数の列
+#define SUMMON_COST_X 13 // Column for the required Djinni count
 #else
 #define SUMMON_COST_X 10
 #endif
 
 enum {
-  SUMMON_ELEMENT_TILE = 0x5001,       // 属性アイコン
-  LIST_TILE_PAGE_NUMBER = 0xf301,     // ページ番号
-  LIST_TILE_PAGE_NUMBER_LIT = 0xf30b, // 表示中のページ番号
-  LIST_TILE_PAGES_LEFT = 0xf334,      // 左矢印
-  LIST_TILE_PAGES_RIGHT = 0xf335      // 右矢印
+  SUMMON_ELEMENT_TILE = 0x5001,       // Element icon
+  LIST_TILE_PAGE_NUMBER = 0xf301,     // Page number
+  LIST_TILE_PAGE_NUMBER_LIT = 0xf30b, // Current page number
+  LIST_TILE_PAGES_LEFT = 0xf334,      // Left arrow
+  LIST_TILE_PAGES_RIGHT = 0xf335      // Right arrow
 };
 
-#define SUMMON_END 32 // 召喚リストの終わり
+#define SUMMON_END 32 // End of summon list
 
 //--------------------------------------------------------------------------
-// 召喚えらび
-// 覚えた召喚を 1 ページ 4 つずつ並べ、えらんだ召喚の番号を返す
-// （キャンセルは -1）
-// standby : 属性ごとのスタンバイ中のジンの数
+// Summon selection
+// Show learned summons four per page; return the selected summon number.
+// Cancel returns -1.
+// standby: number of standby Djinn for each element
 //--------------------------------------------------------------------------
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   struct CursorSprite cursor;
   struct MenuSprite sprites[4];
-  u8 available[33]; // 覚えた召喚
-  u8 ordered[33];   // 呼べるものを先にした並び
+  u8 available[33]; // Learned summons
+  u8 ordered[33];   // Order with usable summons first
   u16 text[64];
   s32 handles[4];
   u8 visible[4];
@@ -5658,7 +5658,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   render = UI_WORK;
   drawnRow = -1;
   drawnPage = -1;
-  cursorHandle = (s16)VramCache_AllocEntry(128); // 16x16 スプライト 1 枚分
+  cursorHandle = (s16)VramCache_AllocEntry(128); // One 16x16 sprite
   description = UiWindow_Create(0, 4, 30, 4, 42);
   counts = UiWindow_Create(20, 8, 10, 3, 6);
   mask = 0;
@@ -5669,7 +5669,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   window = UiWindow_Create(16, 11, 14, 9, 6);
 #endif
 
-  // 行ごとのアイコンのスプライト
+  // Icon sprites for each row.
   for (index = 0; index < 4; index++) {
     s32 y = index * 2;
 
@@ -5684,7 +5684,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     sprites[index].oam.f.tile = VramCache_Reload(slot, -1);
   }
 
-  // 今のスタンバイ数で呼べる召喚を後ろから順に先頭へ、残りをもとの順で後ろへ
+  // Move usable summons to the front in reverse traversal; keep others in
+  // order.
   count = Summon_ListLearnedFar(available);
   /* FAKEMATCH: instruction order only (block placement and schedule):
      with the first scan's exit inside this one-pass block, loop.c's
@@ -5728,7 +5729,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     cur = &cursor;
 
     //------------------------------------------------------------------
-    // ページか行が変わったら描きなおす
+    // Redraw when the page or row changes.
     //------------------------------------------------------------------
     if (page != drawnPage || row != drawnRow) {
       render->menuBusy = 1;
@@ -5736,7 +5737,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
 
-      // 説明文と、必要なジンの属性
+      // Description and required Djinni elements.
       {
         const struct SummonDefinition *s;
         s32 element;
@@ -5759,7 +5760,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
 
-      // スタンバイ数と、ページの召喚 4 つ
+      // Standby counts and the four summons on this page.
       if (page != drawnPage) {
         RenderOutput_RedrawSavedRect(window);
         {
@@ -5790,7 +5791,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
-              UiWork_SetParamNibble(2); // 呼べない召喚は色 2
+              UiWork_SetParamNibble(2); // Color 2 for unavailable summons
             UiText_DrawCharacterAtOffset(
                 SummonDefinition_Get(id)->nameMessageId + MsgAbilityName,
                 window, 16, index * 16);
@@ -5814,7 +5815,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         drawnPage = page;
       }
 
-      // ページ番号
+      // Page numbers
       if (count > 4) {
         for (index = 0; index < (count + 3) / 4; index++) {
           tile = index + LIST_TILE_PAGE_NUMBER;
@@ -5831,14 +5832,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     }
 
     //------------------------------------------------------------------
-    // 毎フレームの表示
+    // Per-frame display
     //------------------------------------------------------------------
     for (index = 0; index <= 3; index++) {
       if (visible[index] != 0)
         Runtime_PushSlotEntry((s32 *)&sprites[index], 240);
     }
 
-    // カーソルは 4 フレームごとに揺れる
+    // The cursor wobbles every four frames.
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (row * 2 + window->y) * 8 + 20;
     ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
@@ -5855,7 +5856,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     sprite = (struct MenuSprite *)&cursor;
     Runtime_PushSlotEntry(sprite, 242);
 
-    // 必要な属性のスタンバイ数を 8 フレームごとに点滅させる
+    // Blink required elements' standby counts every eight frames.
     {
       s32 element, tile, blink;
 
@@ -5869,7 +5870,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       }
     }
 
-    // ページ番号（表示中のものは点滅）と左右の矢印
+    // Page numbers (current page blinking) and left/right arrows.
     if (count > 4) {
       for (index = 0; index < (count + 3) / 4; index++) {
         tile = index + LIST_TILE_PAGE_NUMBER;
@@ -5886,14 +5887,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     }
 
     //------------------------------------------------------------------
-    // 入力
+    // Input
     //------------------------------------------------------------------
     MenuCell_SetCursor(page, row, preferred);
     nav = gLinkCountdownWork;
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
 
-    // 自動入力中は 120 フレームごとに決定する
+    // Automatic input confirms every 120 frames.
     if (nav->autoEnabled != 0) {
       repeated = 0;
       pressed = 0;
@@ -5925,13 +5926,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       row--;
       if (row < 0) {
         if (page == ((count - 1) / 4) * 4)
-          row = count - page - 1; // 最後のページ
+          row = count - page - 1; // Last page
         else
           row = 3;
       }
       preferred = row;
     } else if (repeated & KEY_RIGHT) {
-      // 次のページ（最後からは先頭へ）
+      // Next page, wrapping from last to first.
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (page + 4 >= count) {
@@ -5949,7 +5950,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
     } else if (repeated & KEY_LEFT) {
-      // 前のページ（先頭からは最後へ）
+      // Previous page, wrapping from first to last.
       AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (page != 0) {
@@ -5968,7 +5969,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     WaitFrames(1);
   }
 
-  // 後かたづけ
+  // Cleanup
   WaitFrames(1);
   for (index = 0; index < 4; index++)
     Resource_ResetEntry(handles[index]);
@@ -5982,10 +5983,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
 #endif
 
 //--------------------------------------------------------------------------
-// 戦闘でアイテムを使えるか
-// 戻り値 : 0 使える / 1 使えない / 2 戦闘では使えない
-// unit   : キャラクター番号
-// item   : 持ち物の値
+// Check whether an item can be used in battle.
+// Return: 0 usable, 1 unusable, 2 unusable in battle.
+// unit: character index
+// item: inventory item value
 //--------------------------------------------------------------------------
 s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   s32 ret;
@@ -5996,7 +5997,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   }
   def = Item_GetDirectFar(item);
   ret = 1;
-  if (def->useType == 3) // エナジーを授ける装備
+  if (def->useType == 3) // Equipment that grants Psynergy
   {
     return ret;
   }
@@ -7436,13 +7437,13 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
 
 //--------------------------------------------------------------------------
 // classify_entry_kind.c
-// バトル：わざの対象選びの種類
+// Battle: ability target selection category
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// わざの効果から、対象選びで使う種類を返す
-// 0 その他、1 HPかいふく、2 PPかいふく、3 毒がきえる、4 状態異常をなおす、
-// 5 ふっき、6 状態異常をすべてなおす
-// act : わざのデータ
+// Return the target selection category for an ability's effect.
+// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure status ailments,
+// 5 revive, 6 cure all status ailments.
+// act: ability data
 //--------------------------------------------------------------------------
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 val;
@@ -7452,19 +7453,19 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 
   kind = 0;
   type = act->flags & 15;
-  if (type == 1) // HPかいふく
+  if (type == 1) // Restore HP
     kind = 1;
-  if (type == 11) // PPかいふく
+  if (type == 11) // Restore PP
     kind = 2;
   val = (s8)act->effect;
   effect = val;
-  if (effect == 3) // 毒がきえる
+  if (effect == 3) // Cure poison
     kind = 3;
-  if (effect == 4) // 状態異常をなおす
+  if (effect == 4) // Cure status ailments
     kind = 4;
-  if (effect == 64) // 状態異常をすべてなおす
+  if (effect == 64) // Cure all status ailments
     kind = 6;
-  if (Battle_IsReviveEffectFar(act->effect) != 0) // ふっき
+  if (Battle_IsReviveEffectFar(act->effect) != 0) // Revive
     kind = 5;
   return kind;
 }
@@ -8898,13 +8899,13 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 
 //--------------------------------------------------------------------------
 // confirm_selection.c
-// メニュー：コマンドのアイコンを並べてえらばせる（はい・いいえ など）
+// Menu: arrange command icons for selection, such as Yes/No
 //--------------------------------------------------------------------------
-// アイコンは ResourceId_CommandIcons の番号。
-// えらんでいるコマンドの名前をウィンドウに出す
+// Icon numbers refer to ResourceId_CommandIcons.
+// Show the selected command's name in a window.
 //--------------------------------------------------------------------------
-// アイコン 0x11〜0x14 を画面の中央に並べてえらぶ（行 17）
-// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
+// Select icons 0x11-0x14 centered on row 17.
+// selection: initial position; return the selected position.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry11To14(s32 selection) {
   s32 ret;
@@ -8915,7 +8916,7 @@ s32 Menu_SelectEntry11To14(s32 selection) {
   Menu_AppendResourceEntry(0x13);
   Menu_AppendResourceEntry(0x14);
 #if defined(TBS_EDITION_DE) || defined(TLA_EDITION_DE)
-  Menu_CenterResourceEntries(17, 8, 0); // 名前のウィンドウの幅
+  Menu_CenterResourceEntries(17, 8, 0); // Name window width
 #elif EDITION_INTERNATIONAL
   Menu_CenterResourceEntries(17, 7, 0);
 #else
@@ -8927,7 +8928,7 @@ s32 Menu_SelectEntry11To14(s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// アイコン 0x19〜0x1c を画面の中央に並べてえらぶ（行 17）
+// Select icons 0x19-0x1c centered on row 17.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry19To1c(s32 selection) {
   s32 ret;
@@ -8948,11 +8949,11 @@ s32 Menu_SelectEntry19To1c(s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// はい・いいえ（アイコン 5・6）をえらぶ。キャンセルは 1（いいえ）
-// low  : 0 なら行 0、0 でなければ行 17 に出す
-// message  : 名前のメッセージの先頭（0 ならコマンド名）
-// w    : 名前のウィンドウの幅（0 なら 3）
-// selection  : はじめにえらんでいる位置
+// Select Yes/No (icons 5/6); cancel returns 1 (No).
+// low: 0 places the menu on row 0; otherwise row 17.
+// message: first name message, or 0 for command names.
+// w: name window width, or 0 for width 3.
+// selection: initial position
 //--------------------------------------------------------------------------
 s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
   s32 row;
@@ -8981,7 +8982,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection) {
 }
 
 //--------------------------------------------------------------------------
-// はい・いいえを (x, y) に出してえらぶ。キャンセルは 1（いいえ）
+// Select Yes/No at (x, y); cancel returns 1 (No).
 //--------------------------------------------------------------------------
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = MsgCommandYes;
@@ -9000,9 +9001,9 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 
 //--------------------------------------------------------------------------
 // select_entry_20_to_21.c
-// メニュー：コマンドのアイコン 0x20・0x21 の 2 つからえらばせる
+// Menu: select between command icons 0x20 and 0x21
 //--------------------------------------------------------------------------
-// 版ごとの名前のウィンドウの幅
+// Name window width for each edition
 #if !EDITION_INTERNATIONAL
 #define PAIR_WIDTH 7
 #elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) ||                    \
@@ -9013,8 +9014,8 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #endif
 
 //--------------------------------------------------------------------------
-// アイコン 0x20・0x21 を画面の中央に並べてえらぶ（行 17）
-// selection : はじめにえらんでいる位置。戻り値はえらんだ位置
+// Select icons 0x20 and 0x21 centered on row 17.
+// selection: initial position; return the selected position.
 //--------------------------------------------------------------------------
 s32 Menu_SelectEntry20To21(s32 selection) {
   s32 ret;
@@ -9166,15 +9167,15 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *arg, s16 value, s16 *sub,
 
 //--------------------------------------------------------------------------
 // run_selection_with_cursor_object.c
-// メニュー：フラグの一覧画面（カーソルで選んで A で切りかえる）
+// Menu: flag grid, toggled with A at the cursor
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// 1 ページ 16x16 のフラグを表示し、閉じるまで入力を受ける
-// ページ 8 から始める。戻り値はいつも 0
+// Show a 16x16 flag grid per page and process input until closed.
+// Start on page 8; always return 0.
 //--------------------------------------------------------------------------
 s32 Menu_RunSelectionWithCursorObject(void) {
-  struct MenuSprite obj; // カーソルのオブジェクト
-  s32 cur[2];            // カーソルの列・行
+  struct MenuSprite obj; // Cursor object
+  s32 cur[2];            // Cursor column and row
   s32 res;
   s32 page;
   struct UiWindow *win;
@@ -9191,9 +9192,9 @@ s32 Menu_RunSelectionWithCursorObject(void) {
     WaitFrames(1);
     ret = Menu_HandleFlagGridInput(win, &page, cur);
     if (ret == -1)
-      break; // 閉じる
+      break; // Close
     if (ret == 1)
-      Menu_DrawFlagBitTable(win, page); // フラグかページが変わった
+      Menu_DrawFlagBitTable(win, page); // Flag or page changed
     UiTextResource_SetPosition(&obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
   }
   UiTextResource_Release(res);
@@ -9203,11 +9204,11 @@ s32 Menu_RunSelectionWithCursorObject(void) {
 
 //--------------------------------------------------------------------------
 // format_hex.c
-// 文字：数を 16 進の文字列にする
+// Text: convert a number to a hexadecimal string
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-// value の下から count けた（5 けたまで）を、上のけたから大文字の
-// 16 進で out に書く（終わりの 0 は書かない）
+// Write the lowest count digits of value, up to five, most significant first
+// as uppercase hexadecimal in out; do not append a null terminator.
 //--------------------------------------------------------------------------
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 buf[8];

@@ -1,13 +1,13 @@
 	.section .rodata
 	.balign 4
-@ デバッグ用の仲間 (owner -1 で区切り)
+@ Debug party members, delimited by owner -1.
 	.global gDebug_PartyPresets
 gDebug_PartyPresets:
 	.incbin "games/tbs/src/battle/presets.table"
 	.global gBattlePres_ActorObjectScript
 gBattlePres_ActorObjectScript:
 	.4byte 16
-@ 資源番号 | 枠 << 9, 0xffff で終わり
+@ Resource id | slot << 9, terminated by 0xffff.
 	.global gResource_SlotAssignments
 gResource_SlotAssignments:
 	.2byte 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008
@@ -38,7 +38,7 @@ gBattlePres_CurtainTiles:
 	.incbin "games/common/src/battle/presentation/curtain.4bpp"
 	.include "games/common/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 27
-@ 敵の編成 380 個
+@ 380 enemy formations.
 	.global gBattleFormation_Records
 gBattleFormation_Records:
 	.incbin "games/tbs/src/battle/formatn.table"
@@ -46,7 +46,7 @@ gBattleFormation_Records:
 gBattleFormation_LevelMatchedEnemies:
 	.2byte 0x75, 0x7a, 0x7d, 0x85, 0x87, 0x89, 0x9e, 0x9f, 0xa0, 0xa1
 	.2byte 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab
-@ 戦闘の絵 172 個
+@ 172 battle graphics.
 	.global gSummon_EntryTable
 gSummon_EntryTable:
 	.incbin "games/tbs/src/battle/sprites.table"

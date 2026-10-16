@@ -48,7 +48,7 @@ struct ObjectAnimation {
     struct ObjectAnimationEntry *entries[1];
 };
 
-// 向いている先でいちばん近いオブジェクトを探す
+// Find the nearest object in the direction being faced.
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self, s32 id)
 {
     struct ObjectRuntime *entry;

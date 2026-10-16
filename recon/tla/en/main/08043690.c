@@ -32,7 +32,7 @@ void ObjectTable_SnapshotFar(void);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
-// ファイルを選んで記録する
+// Select a file and save.
 s32 SaveState_SelectAndSave(void)
 {
     s32 result = 0;

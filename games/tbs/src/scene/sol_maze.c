@@ -1,5 +1,3 @@
-
-
 #include "unit/scene/sol_maze.h"
 #include "unit/scene/common/sol_initzoom.h"
 #include "battle.h"
@@ -27,13 +25,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolMazeEntrances;
 }
 
-// No regions.
+// This maze has no exit regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSolMazeExits; }
 
-// Nobody is placed here.
+// Returns the empty placement table; this maze has no placed actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolMazePlacements;
 }

@@ -30,7 +30,7 @@ void Func_02004d9c(struct ObjectRuntime *object, s32 mode);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 
-// 部屋ごとの表を返す
+// Return the table for the current room.
 const void *Func_020009e8(void) {
   if (gPartyState.scene == (s32)&SceneId_Ov681Room2)
     return gData_02005a54;

@@ -10,7 +10,7 @@ s32 UnitCalc(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
-// The Broken Seal の Party_RestoreHpPp
+// Party_RestoreHpPp from The Broken Seal.
 void Func_080ae16c(s32 arg0) {
   s32 count;
   s32 n;
@@ -75,7 +75,7 @@ void Func_080ae16c(s32 arg0) {
 
 extern const u8 gCharacter_ElementGroupTable[];
 
-// The Broken Seal の Party_RestorePpOfLitElements
+// Party_RestorePpOfLitElements from The Broken Seal.
 void Func_080ae220(void) {
   s32 count;
   s32 n;
@@ -162,7 +162,7 @@ struct UnitDjinnSets {
   u32 djinn[4];
 };
 
-// 持っているジンのうち最後のものの属性と番号
+// Element and index of the last owned Djinni.
 s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
   u32 *sets = ((struct UnitDjinnSets *)UnitGet(unit))->djinn;
   s32 element = -1;

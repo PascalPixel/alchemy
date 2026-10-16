@@ -1,3 +1,6 @@
+// Goma Cave's entrance: moving obstacles, Ivan's reunion and the Whirlwind
+// demonstration that clears the party's route into the cave.
+
 #include "unit/scene/goma_entrance.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
@@ -25,17 +28,18 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "global_cells.h"
+#include "ability_ids.h"
 
-// 前方宣言
-static void GomaEntrance_SetEntranceFlag(void);
+// Private scene actions used by the reunion sequence.
+static void GomaEntrance_RunWhirlwindEffect(void);
 static void GomaEntrance_RunSpinningLeap(s32 id);
 static void GomaEntrance_GiveShamansRod(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared effects stay at their native positions in the overlay.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
+// A legacy actor view that also reads sprite rotation as a signed halfword.
 struct Actor {
   u8 pad00[8];
   s32 x;
@@ -77,31 +81,37 @@ struct Item_387 {
   u8 equippable;
 };
 
-static void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames) {
-  Engine_EventShowMessage(selector, 0);
+// Shows the next message at the actor and leaves a pause before the next cue.
+static void GomaEntrance_ShowActorMessageAndWait(s32 actorId, s32 frames) {
+  Engine_EventShowMessage(actorId, 0);
   Engine_EventWait(frames);
 }
 
+// Returns the cave entrance's entrance table.
 void *GomaEntrance_GetEntrances(void) { return gGomaEntrance_SceneTableA; }
 
+// No exit-region table is used here.
 int SceneData_ReturnZero(void) { return 0; }
 
+// Returns the two numbered exit destinations.
 void *GomaEntrance_GetExits(void) { return gGomaEntrance_SceneTableB; }
 
+// Returns the obstacles, companions and temporary effect actors.
 void *GomaEntrance_GetPlacements(void) { return gGomaEntrance_SceneTableC; }
 
-static void EV09_PSYNERGY(void) {
-  struct FieldActor *record;
-  s32 v3;
+// Records the moved object's column and restores the cells underneath it.
+static void GomaEntrance_UpdateMovableObjectTiles(void) {
+  struct FieldActor *object;
+  s32 tileX;
 
-  record = Object_GetById(9);
-  v3 = record->x.fixed / 0x100000;
+  object = Object_GetById(9);
+  tileX = object->x.fixed / 0x100000;
   GameFlag_Clear(0x861);
   GameFlag_Clear(0x862);
-  if (v3 == 15) {
+  if (tileX == 15) {
     Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
-  } else if (v3 == 16) {
-    Map_CopyCellAttributes(48, 18, 1, 2, v3, 18);
+  } else if (tileX == 16) {
+    Map_CopyCellAttributes(48, 18, 1, 2, tileX, 18);
     GameFlag_Set(0x861);
   } else {
     Map_CopyCellAttributes(47, 18, 1, 2, 16, 18);
@@ -109,7 +119,8 @@ static void EV09_PSYNERGY(void) {
   }
 }
 
-static void EV10_PSYNERGY(void) {
+// Once actor 10 reaches column 23, makes it stationary and restores its cell.
+static void GomaEntrance_SetMovedObjectUnderfoot(void) {
   struct FieldActor *actor;
   s32 tileX;
 
@@ -125,43 +136,50 @@ static void EV10_PSYNERGY(void) {
   }
 }
 
-static void FieldScene_RunScene387SequenceD(void) {
-  struct EventWork *p5;
-  s32 v5;
+// Touch triggers 5 and 6 push the leader and object 16 pixels in opposite
+// horizontal directions, then update the object's saved map position.
+static void GomaEntrance_PushObjectSideways(void) {
+  struct EventWork *work;
+  s32 offsetX;
 
-  p5 = gEventWork;
+  work = gEventWork;
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
   Actor_SetSpeed(9, 0x3333, 0x1999);
   Event_PlayCue(185);
-  v5 = (11 - (p5->touchedTrigger << 1)) << 4;
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, v5, 0);
-  Actor_SetDestinationOffset(9, v5, 0);
+  offsetX = (11 - (work->touchedTrigger << 1)) << 4;
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
+  Actor_SetDestinationOffset(9, offsetX, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorWaitForMove(9);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-  EV09_PSYNERGY();
+  GomaEntrance_UpdateMovableObjectTiles();
   BattleFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
-static void Resource387_NoOpCallbackA(void) {}
+// Reserved overlay hook; no current scene calls it.
+UNUSED static void GomaEntrance_NoOpA(void) {}
 
-static void Resource387_NoOpCallbackB(void) {}
+// A second reserved hook, also unused by the scene.
+UNUSED static void GomaEntrance_NoOpB(void) {}
 
-static void EV16_PSYNERGY(void) {
+// Remembers Whirlwind being used on the second temporary effect actor.
+static void GomaEntrance_RecordWhirlwindUse(void) {
   Engine_EventBegin();
   Engine_GameFlagSet(0x866);
   Engine_EventEnd();
 }
 
+// Returns the Move, Whirlwind and touch handlers for the entrance puzzle.
 void *GomaEntrance_GetEvents(void) { return gGomaEntrance_SceneTableD; }
 
+// Reapplies saved obstacle positions and their map cells when re-entering.
 s32 GomaEntrance_RestoreEntryState(void) {
-  u8 *record;
+  struct FieldActor *movedObject;
   s32 v5;
 
   Engine_GameFlagSet(0x144);
@@ -204,15 +222,17 @@ s32 GomaEntrance_RestoreEntryState(void) {
     ((struct Flags35 *)Object_GetById(10))->flags = 2;
     v5 = 0;
     Object_GetById(10)->motionFlags = v5;
-    record = (s32)Object_GetById(10);
-    Engine_ActorSetSpriteFlags((s32)record, 0);
+    movedObject = Object_GetById(10);
+    Engine_ActorSetSpriteFlags(movedObject, 0);
     Map_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
   return 0;
 }
 
-static void FieldScene_RunScene387SequenceA(void) {
-  struct FieldActor *record;
+// Garet cannot free the obstacle alone. If Ivan has arrived, he demonstrates
+// Whirlwind, rejoins the party and receives the Shaman's Rod.
+static void GomaEntrance_RecruitIvan(void) {
+  struct FieldActor *leader;
 
 #if EDITION_INTERNATIONAL
   BattleFx_PlayQueuedSound();
@@ -223,9 +243,9 @@ static void FieldScene_RunScene387SequenceA(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_SetSpeed(GARET, 0xcccc, 0x6666);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
-  record = Object_GetById(ACTOR_PARTY_LEADER);
-  if (record != 0) {
-    Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(GARET, 0x108, 168);
   Actor_FaceDirection(GARET, 0x6000, 20);
@@ -237,14 +257,15 @@ static void FieldScene_RunScene387SequenceA(void) {
   Engine_EventWait(20);
   if (GameFlag_IsSet(0x855) == 0) {
     Engine_ActorSetAnimation(GARET, 2);
-    record = Object_GetById(ACTOR_PARTY_LEADER);
-    if (record != 0) {
-      Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    if (leader != 0) {
+      Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
     }
     Engine_ActorWaitForMove(GARET);
     Actor_SetPosition(GARET, 0, 0);
     Engine_EventEnd();
   } else {
+    // Ivan joins the conversation and clears the obstacle with Whirlwind.
     Actor_SetPosition(IVAN, 0x1680000, 0xf80000);
     Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
     Actor_WalkToAndWait(IVAN, 0x110, 248);
@@ -299,7 +320,7 @@ static void FieldScene_RunScene387SequenceA(void) {
     Engine_ActorSetAnimationAndWait(IVAN, 3);
     Engine_EventWait(20);
     Actor_FaceDirection(IVAN, 0x8000, 20);
-    GomaEntrance_SetEntranceFlag();
+    GomaEntrance_RunWhirlwindEffect();
     Engine_ActorSetAnimation(IVAN, 1);
     Engine_EventWait(20);
 #if EDITION_INTERNATIONAL
@@ -309,7 +330,7 @@ static void FieldScene_RunScene387SequenceA(void) {
     Actor_ShowEmote(GARET, 0x100, 60);
     Engine_ActorJump(GARET, 2, 0);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(1, 20);
+    GomaEntrance_ShowActorMessageAndWait(1, 20);
     Actor_WalkToAndWait(IVAN, 0x108, 184);
     Engine_EventWait(10);
     Actor_FaceActor(IVAN, GARET, 0);
@@ -318,7 +339,7 @@ static void FieldScene_RunScene387SequenceA(void) {
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(IVAN, 3);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 60);
+    GomaEntrance_ShowActorMessageAndWait(2, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
     Actor_ShowEmote(GARET, 0x105, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
@@ -330,12 +351,12 @@ static void FieldScene_RunScene387SequenceA(void) {
     Actor_FaceDirection(GARET, 0x4000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
     Engine_EventWait(10);
-    FieldScene_RequestAndWaitFrames(1, 20);
+    GomaEntrance_ShowActorMessageAndWait(1, 20);
     Actor_ShowEmote(IVAN, 0x105, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(IVAN, 4);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 20);
+    GomaEntrance_ShowActorMessageAndWait(2, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
@@ -343,13 +364,13 @@ static void FieldScene_RunScene387SequenceA(void) {
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(IVAN, 2);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 30);
+    GomaEntrance_ShowActorMessageAndWait(2, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(GARET, 0x101, 0);
     Engine_EventWait(80);
     Engine_ActorSetAnimationAndWait(IVAN, 3);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 20);
+    GomaEntrance_ShowActorMessageAndWait(2, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorStartRepeatedMotion(GARET, 1);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
@@ -357,7 +378,7 @@ static void FieldScene_RunScene387SequenceA(void) {
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(IVAN, 4);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 20);
+    GomaEntrance_ShowActorMessageAndWait(2, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(GARET, 0x8000, 0);
     Engine_EventWait(80);
@@ -366,31 +387,32 @@ static void FieldScene_RunScene387SequenceA(void) {
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(IVAN, 3);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 30);
+    GomaEntrance_ShowActorMessageAndWait(2, 30);
     Engine_ActorSetAnimationAndWait(IVAN, 4);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 20);
+    GomaEntrance_ShowActorMessageAndWait(2, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(IVAN, 3);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 40);
+    GomaEntrance_ShowActorMessageAndWait(2, 40);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(GARET, 3);
     Engine_EventWait(20);
-    Event_PrepareObjectAndApplyValue(2, 1);
+    // Restore Ivan's party membership and equipment before everyone departs.
+    Event_PrepareObjectAndApplyValue(IVAN, 1);
     Engine_EventWait(60);
     GomaEntrance_GiveShamansRod();
     Engine_ActorRunRepeatedMotion(IVAN, 1);
     Engine_EventWait(20);
     Actor_WalkToAndWait(IVAN, 248, 184);
     Engine_EventWait(20);
-    FieldScene_RequestAndWaitFrames(2, 20);
+    GomaEntrance_ShowActorMessageAndWait(2, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(GARET, 0x8000, 0);
     Engine_EventWait(120);
-    FieldScene_RequestAndWaitFrames(2, 30);
+    GomaEntrance_ShowActorMessageAndWait(2, 30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
     Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
@@ -412,7 +434,8 @@ static void FieldScene_RunScene387SequenceA(void) {
   }
 }
 
-static void Overlay387_ConfigureActorEightAtDepth(void) {
+// Triggers the spinning leap when the obstacle is in map row 11.
+static void GomaEntrance_LeapObjectIntoPlace(void) {
   s32 depth;
   struct OverlayActorState *state;
 
@@ -429,15 +452,15 @@ static void Overlay387_ConfigureActorEightAtDepth(void) {
   Engine_EventEnd();
 }
 
-static void GomaEntrance_SetEntranceFlag(void) {
+// Runs Ivan's Whirlwind effect on actor 15 and waits for its dispatcher.
+static void GomaEntrance_RunWhirlwindEffect(void) {
+  u8 *effectWork;
 
-  u8 *p5;
-
-  p5 = gEffectWork;
-  BattleFx_LoadActionEffectResources(78, 1);
+  effectWork = gEffectWork;
+  BattleFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
   BattleFx_SetupObjectPair(2, 15);
   {
-    u8 *f = (u8 *)((s32)p5 + 0x71c);
+    u8 *f = (u8 *)((s32)effectWork + 0x71c);
     s32 t = 8;
 
     t |= *f;
@@ -448,16 +471,20 @@ static void GomaEntrance_SetEntranceFlag(void) {
   EffectRuntime_StopCurrentObject();
 }
 
-static void OverlayObject_TurnStateByEighth(struct FieldActor *obj) {
+// The leaping object's update hook turns its sprite a fixed amount per frame.
+static void GomaEntrance_RotateLeapingObject(union FieldObject *fieldObject) {
+  struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldSprite *state = obj->sprite;
   s32 v = state->rotation - 0x800;
 
   state->rotation = v;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared height-wait code stays at its native position in the overlay.
 #include "common/object_waitdown.h"
 
+// Spins the obstacle, sends it through two landing points and emits a ring
+// of particles before the final stretch effect.
 static void GomaEntrance_RunSpinningLeap(s32 id) {
   struct Vec dir;
   struct EffectOptions params;
@@ -476,7 +503,7 @@ static void GomaEntrance_RunSpinningLeap(s32 id) {
     actor->x -= Engine_MathCos((u16)actor->sprite->angle) / 2;
     actor->hover = 0x80000000;
   }
-  actor->callback = (s32)OverlayObject_TurnStateByEighth;
+  actor->callback = (s32)GomaEntrance_RotateLeapingObject;
   Actor_SetSpeed(id, 0x30000, 0x18000);
   Engine_ActorSetDestination(id, 160, 192);
   actor->accel = 0xcccc;
@@ -515,9 +542,11 @@ static void GomaEntrance_RunSpinningLeap(s32 id) {
   Engine_MapWaitWorkValuesBelow256();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared inventory equipment code stays at its native overlay position.
 #include "common/item_equip.h"
 
+// Gives Ivan the rod, discarding eligible items and retrying if his inventory
+// is full. The localized fallback prefers preserving items with byte 3 == 8.
 static void GomaEntrance_GiveShamansRod(void) {
   struct Member_387 *member;
   struct Item_387 *item;
@@ -636,13 +665,13 @@ struct ScenePlacement gGomaEntrance_SceneTableC[] = {
 struct SceneEvent gGomaEntrance_SceneTableD[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene387SequenceD) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene387SequenceD) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x865, EVENT_SCRIPT(FieldScene_RunScene387SequenceA) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x860, EVENT_SCRIPT(Overlay387_ConfigureActorEightAtDepth) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x863, EVENT_SCRIPT(EV10_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x4e), 16, 0x866, EVENT_SCRIPT(EV16_PSYNERGY) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(GomaEntrance_PushObjectSideways) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(GomaEntrance_PushObjectSideways) },
+    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x865, EVENT_SCRIPT(GomaEntrance_RecruitIvan) },
+    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x860, EVENT_SCRIPT(GomaEntrance_LeapObjectIntoPlace) },
+    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(GomaEntrance_UpdateMovableObjectTiles) },
+    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x863, EVENT_SCRIPT(GomaEntrance_SetMovedObjectUnderfoot) },
+    { PSYNERGY_ON_ACTOR(0x4e), 16, 0x866, EVENT_SCRIPT(GomaEntrance_RecordWhirlwindUse) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

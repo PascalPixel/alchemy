@@ -367,7 +367,7 @@
 #include "party_state.h"
 #include "ram_buffer.h"
 
-#define ALLY      2           /* 味方 */
+#define ALLY 2 /* Ally. */
 
 #define STEP_LIM(v)                                                           \
     {                                                                          \

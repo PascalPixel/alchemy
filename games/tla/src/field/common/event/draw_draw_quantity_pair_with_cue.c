@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // draw_draw_quantity_pair_with_cue.c
-// メッセージ：わざを覚えさせて「覚えた」と出す
+// Messages: teach an ability and display the learning message.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -16,12 +16,12 @@ void UiText_DrawQuantity(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 //--------------------------------------------------------------------------
-// わざを覚えさせ、効果音とメッセージを出して、送られるまで待つ
-// unit : キャラクター番号（メッセージの名前 1）
-// ability : わざの番号（メッセージのわざ 4）
+// Teach the ability, play a sound, show a message, and wait for advancement.
+// unit: character ID (message name 1).
+// ability: ability ID (message ability 4).
 //--------------------------------------------------------------------------
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability) {
-  // 引数なしの宣言だが、r0・r1 の unit・ability がそのまま渡る
+  // Declared without arguments, but unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
 #if GAME_TLA
   Audio_PlayCue(83);

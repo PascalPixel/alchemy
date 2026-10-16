@@ -12,7 +12,8 @@ void Func_0200025c(void);
 void Func_02000280(void);
 void Func_020002b8(void);
 void Func_020002ec(void);
-#if defined(TLA_EDITION_JA) /* 日本版には Func_020002ec がなく、表は 0 を持つ \
+#if defined(TLA_EDITION_JA) /* The Japanese edition has no Func_020002ec; its  \
+                             * table contains 0.                               \
                              */
 #define MARS_ROOM_F_FUNC_020002EC 0
 #else

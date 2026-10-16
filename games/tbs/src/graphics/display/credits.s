@@ -1,4 +1,4 @@
-@ スタッフロールの文字（0x20-0x7f、8x8、1 ビット）
+@ Credits font (0x20-0x7f, 8x8, 1 bit)
 	.section .rodata
 	.global gDisplayScroll_Font
 gDisplayScroll_Font:

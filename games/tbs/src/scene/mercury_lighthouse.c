@@ -49,7 +49,7 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
-// 前方宣言
+// Forward declarations.
 static void EV11_PSYNERGY(void);
 static void EV08_PSYNERGY_3(void);
 static void MercuryLighthouse_SyncBlockFlags(void);
@@ -80,7 +80,7 @@ struct SceneLookupRecord {
   u16 table[1];
 };
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -107,7 +107,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 }
 #endif
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_sparks.h"
 #include "common/mercury_palette_cycle.h"
 
@@ -179,7 +179,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMercuryLighthouseEventsOther;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_risedrop.h"
 
 static void EV53_TOUCH(void) {
@@ -1643,7 +1643,7 @@ static void EV15_TOUCH(void) {
   Engine_EventEnd();
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_arrive.h"
 
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
@@ -2390,7 +2390,7 @@ static void SceneState_SetRecordTableValue(s32 key, s32 value) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_lights.h"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src) {
@@ -2416,7 +2416,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src) {
   }
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/mercury_pillar.h"
 
 s32 gEffectScript0[] = {
@@ -2434,7 +2434,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

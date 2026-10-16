@@ -1,5 +1,5 @@
 /*----------------------------------------------------------
-    ルンパ城  イベント
+    Lunpa Fortress events
     Lunpa Fortress events.
 ----------------------------------------------------------*/
 #include "game_state.h"
@@ -32,7 +32,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-// 前方宣言
+// Forward declarations.
 static s32 TryStartActorInteraction(s32 actorId, s32 interaction_id);
 static void FieldScene_RunScene3bfSequenceC(void);
 static s32 IsActorInteractionAvailable(s32 actorId);
@@ -51,7 +51,7 @@ static void FieldScene_ActivateTwoActorGroup(void);
 static void FieldScene_ActivateAlternateActorGroup(void);
 static void ActivateFiveActorGroupFromFlags(void);
 
-// ここに共通ソースが入る（ROM の並びのとおり）
+// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -2787,8 +2787,8 @@ static void ActivateFiveActorGroupFromFlags(void) {
   }
 }
 
-// 共通ソースと field.h の宣言は const でないが、この三つの表は ROM では .rodata
-// にある 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+// The shared source and field.h declarations lack const, but these three
+// tables occupy .rodata. Pixel steps pack X above Z in two halfwords.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 /* FAKEMATCH: the three section attributes below place non-const tables in

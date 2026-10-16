@@ -6,9 +6,9 @@
 #include "mem.h"
 #include "types.h"
 
-// ARM ルーチンを RAM へ写して使う。bytes はルーチンの大きさ (リンカの記号)
+// Copies an ARM routine to RAM for execution. bytes is its linker-defined size.
 
-// ヒープに場所を取って写す。使い終わったら MemFree
+// Allocates a heap copy; release it with MemFree when finished.
 #define RamCode_Load(to, code, bytes)                                          \
   do {                                                                         \
     u32 size_;                                                                 \
@@ -19,7 +19,7 @@
     Dma_Set((const void *)(code), (to), 0x84000000 | (size_ >> 2), REG_DMA3);  \
   } while (0)
 
-// 作業スロットに場所を取って写す。使い終わったら Runtime_ReleaseHeapBlock
+// Allocates a work-slot copy; release it with Runtime_ReleaseHeapBlock.
 #define RamCode_LoadSlot(slot, code, bytes)                                    \
   do {                                                                         \
     u32 size_;                                                                 \

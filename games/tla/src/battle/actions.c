@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // actions.c
-// バトル：ターンの行動の組み立てと、並びの位置の変換
+// Battle: build turn actions and convert formation positions.
 //--------------------------------------------------------------------------
 
 #include "types.h"
@@ -25,8 +25,8 @@ void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
 //--------------------------------------------------------------------------
-// BG パレットのバンク 15 を 14 へ、5 を 4 へ、明るさを変えて写す
-// offset : RGB 各成分に足す値（0 から 31 におさめる）
+// Copy BG palette banks 15 to 14 and 5 to 4, adjusting brightness.
+// offset: amount added to each RGB component, clamped to 0-31.
 //--------------------------------------------------------------------------
 void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
   s32 n;
@@ -69,7 +69,7 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       val = b << 10;
       val |= g << 5;
       val |= r;
-      ((s16 *)0x04ffffe0)[idx] = val; // ひとつ前のバンクへ
+      ((s16 *)0x04ffffe0)[idx] = val; // Into the preceding bank.
     }
     n++;
     bank = 5;
@@ -77,10 +77,10 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
 }
 
 //--------------------------------------------------------------------------
-// このターンの行動を組み立て、優先度の高い順にならべる
-// 味方のコマンドと、通信対戦の相手または敵の行動を集める
-// 返り値は行動の数。負の値なら中止（通信の失敗など）
-// acts : 行動の並び（20 まで）
+// Build this turn's actions and sort them by descending priority.
+// Collect ally commands and either link opponents' or enemies' actions.
+// Return the action count, or a negative value on cancellation or link failure.
+// acts: action list, up to 20 entries.
 //--------------------------------------------------------------------------
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   struct BattleUnit *unit;
@@ -99,13 +99,13 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
 
     for (n = 0; n < 20; n++) {
       rec[n].unitId = BATTLE_UNIT_LIST_END;
-      rec[n].priority = 0x8000; // いちばん低い優先度
+      rec[n].priority = 0x8000; // Lowest priority.
     }
   }
 
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
-  // コマンドを選ぶあいだ立てるフラグ
+  // Flag set while commands are being selected.
 #if GAME_TLA
   GameFlag_SetBit(363);
 #endif
@@ -113,19 +113,19 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   Camera_ConfigureScene(0);
   UiWork_FinalizeSharedSlotFar();
 
-  // 味方のコマンド（敵の先手なら選べない）
+  // Ally commands (unavailable when enemies strike first).
   if (*mode != 2) {
     cnt = BattlePres_BuildUnitEntries(acts);
     if (cnt < 0)
       goto finish;
-    // にげるに失敗したら、このターンは敵の先手と同じあつかい
+    // A failed escape gives enemies the same advantage as striking first.
     if (cnt != 0 && acts[0].command == 99 && BattleEscape_CheckSuccess() == 0)
       *mode = 2;
   } else {
     cnt = 0;
   }
 
-  // 通信対戦の相手か、敵の行動
+  // Link opponent or enemy actions.
 #if GAME_TLA
   if (Ram_HeapSlots->battleWork->twoSided != 0) {
 #endif
@@ -143,7 +143,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
     cnt += BattlePres_BuildOpponentEntries(acts + cnt);
   }
 
-  // 優先度の順にならべ、ぼうぎょ（3 と 7）のガードを先に立てる
+  // Sort by priority and set guards for Defend (3 and 7) first.
   BattleQueue_SortByPriority(acts, cnt);
   if (cnt > 0) {
     struct BattleActionRecord *act = acts;
@@ -173,8 +173,8 @@ finish:
 }
 
 //--------------------------------------------------------------------------
-// 並びの位置からユニット番号を返す
-// slot : 下位 4 ビットが位置、0x80 が立っていれば敵の並び
+// Return the unit ID at a formation position.
+// slot: low 4 bits are the position; 0x80 selects the enemy formation.
 //--------------------------------------------------------------------------
 s16 Battle_GetTaggedSlotValue(s32 slot) {
 #if GAME_TLA
@@ -187,9 +187,9 @@ s16 Battle_GetTaggedSlotValue(s32 slot) {
 }
 
 //--------------------------------------------------------------------------
-// ユニット番号から並びの位置を返す（いなければ -1）
-// 味方は 0x100 | 位置、敵は 0x180 | 位置
-// id : ユニット番号（0-7 味方、それ以外は敵）
+// Return a unit's formation position, or -1 if absent.
+// Allies use 0x100 | position; enemies use 0x180 | position.
+// id: unit ID (0-7 allies, all others enemies).
 //--------------------------------------------------------------------------
 s32 Battle_FindTaggedSlotByValue(u32 id) {
 #if GAME_TLA

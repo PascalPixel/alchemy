@@ -1,6 +1,7 @@
 #include "mars_aerie.h"
 
-// 日本版にはない: この四つと、その行、Func_02004e80
+// These four, their rows, and Func_02004e80 are absent from the Japanese
+// edition.
 #if !defined(TLA_EDITION_JA)
 
 void Func_02004ec0(void) { Func_02004e80(28, 2); }

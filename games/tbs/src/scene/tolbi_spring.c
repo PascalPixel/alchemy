@@ -34,7 +34,7 @@
 #include "iowrite.h"
 #include "frame.h"
 
-// 前方宣言
+// Forward declarations.
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);
@@ -1416,7 +1416,7 @@ const struct SceneEvent gTolbiSpringEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-// BLDALPHA の段階
+// BLDALPHA steps.
 const u16 gTolbiSpring_AlphaSteps[] = {
     0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
 };

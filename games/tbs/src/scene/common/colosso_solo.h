@@ -176,7 +176,7 @@ void Colosso_FinishSoloRound(s32 id) {
   s32 res;
 
   work = gEventWork;
-  // 話者を二度引き、どちらの結果も使わない (original behaviour: two real calls)
+  // Look up the speaker twice and discard both results (two original calls).
   Object_GetById(id);
   Object_GetById(id);
   slot = gGameState.selectedActor;

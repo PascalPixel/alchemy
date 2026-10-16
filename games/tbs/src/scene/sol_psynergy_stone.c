@@ -45,17 +45,15 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSolPsynergyStoneEvents;
 }
 
-// Opens the room through a window, and once flag 0x814 is set plays sound
-// 141, sets the map render values to 1 and starts the sparkles
-// (Resource37c_FinalizeSetup imports FieldEffect_InitSparkles).
+// Open with a window transition and restore the stone's sparkle effect.
 s32 Scene_Initialize(void) {
-
   s32 scaleX = 0x10000;
   s32 scaleY = 0x10000;
   s32 scaleZ = 0x10000;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Engine_GameFlagSet(FLAG_144);
+  // The persistent flag enables both the sound and the initialized sparkles.
   if (Engine_GameFlagIsSet(FLAG_814) != 0) {
     Resource37c_QueueSoundCue(141);
     Engine_WorkSetValuesIfNonNegative(scaleX, scaleY, scaleZ);

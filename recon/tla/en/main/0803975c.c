@@ -25,7 +25,7 @@
 #define PANEL_ROW_WORDS 32
 #define PANEL_ROW_LEAD 8
 
-// パネルの各行を左へ step 文字ぶん詰める
+// Shifts each panel row left by step characters.
 void UiWork_ShiftPanelRowsLeft(s32 step)
 {
     s32 shift = step * 6;

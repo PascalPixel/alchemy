@@ -2226,6 +2226,7 @@ void BattleEffect_RunTileAndPaletteAnimation(
     if (frame <= 50) {
       for (i = 0; i != 33; i++) {
         piece = &work->particles[i];
+        // The last two packed pieces extend into the scanline scratch area.
         draw[0](canvas, (u8 *)work + gBattlePieceOffset[i], HI(piece->x),
                 HI(piece->y), gBattlePieceWidth[i], gBattlePieceHeight[i]);
         if (frame > 3)
@@ -2279,7 +2280,7 @@ void BattleEffect_RunTileAndPaletteAnimation(
           cell = piece->variant / 4;
           if (cell > 5)
             cell = 5;
-          draw[1](canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16,
+          draw[1](canvas, work->sheet + (cell << 11), HI(piece->x) - 16,
                   HI(piece->y) - 32, 32, 64);
           EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
           piece->variant++;
@@ -5094,7 +5095,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);
               scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(&scale);
+              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
               SceneTransform_ApplyRoll((64 - tick) << 9);
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
@@ -5233,7 +5234,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);
               scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(&scale);
+              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
               SceneTransform_ApplyRoll((64 - tick) << 9);
               SceneTransform_ApplyYaw((64 - tick) << 9);
             }
@@ -5372,7 +5373,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
           size = 10;
         Render_ResetTransformState();
         Transform_SetLookAt(camera->eye, camera->pos);
-        SceneTransform_ApplyPosition(step);
+        SceneTransform_ApplyPosition(EffectStep_Coordinates(step));
         // The ring's ten points, alternately near and far from its centre,
         // projected onto the canvas; peak is the farthest depth.
         peak = 0;
@@ -5387,7 +5388,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect) {
             scale.x = 0x10000;
           scale.y = scale.x;
           scale.z = scale.x;
-          SceneTransform_ApplyScale(&scale);
+          SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
           SceneTransform_ApplyRoll(j * 0x199a);
           depth = EffectPosition_ApplyBaseAndYOffset(
               &gRingBolts_Points[j & 1], &screenPosition);
@@ -5815,7 +5816,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
     }
 
     if ((u32)(frame - 160) <= 239) {
-      image = (u8 *)work + frame / 4 % 3 * 3072;
+      image = work->sheet + frame / 4 % 3 * 3072;
       draw[0](canvas, image, 8, 0, width, 64);
       draw[0](canvas, image, 8, 64, width, 64);
     }
@@ -5833,7 +5834,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
           EffectPosition_ApplyBaseAndYOffset(&world.x, &screen);
           screen.x >>= 1;
           if (point[index].y <= 0x3fffff) {
-            draw[0](canvas, (u8 *)work + 0x2400, screen.x - 12, screen.y - 12,
+            draw[0](canvas, work->sheet + 0x2400, screen.x - 12, screen.y - 12,
                     16, 16);
           }
           if (point[index].z > 24)
@@ -5875,7 +5876,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
       resource += 0x80;
-      Resource_DecodeType01(resource, (u8 *)work + 0x3600);
+      Resource_DecodeType01(resource, work->sheet + 0x3600);
 
       index = 0;
       do {
@@ -5944,7 +5945,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
         shake.x = 0;
         shake.y = 0;
         Render_ResetTransformState();
-        SceneTransform_ApplyPosition(&shake);
+        SceneTransform_ApplyPosition(Vector3_Coordinates(&shake));
 
         // Frames 256 to 329: the motes close in on the middle of the
         // block a pixel a frame; those that arrive swell one mote there.
@@ -6071,7 +6072,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument) {
             size = (frame - threshold) / 2;
             if (size > 2)
               size = 2;
-            draw[1](canvas, (u8 *)work + gWhirlwindComets_CellOffsets[size],
+            draw[1](canvas, work->sheet + gWhirlwindComets_CellOffsets[size],
                     mark->x, mark->y - gWhirlwindComets_CellBiasY[size],
                     gWhirlwindComets_CellWidths[size],
                     gWhirlwindComets_CellHeights[size]);
@@ -20071,7 +20072,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       point.y = 0;
       point.depth = 0x2000000;
       Render_ResetTransformState();
-      SceneTransform_ApplyPosition(&point.x);
+      SceneTransform_ApplyPosition(EffectPosition_Coordinates(&point));
       SceneTransform_ApplyRoll(0x800);
       SceneTransform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
@@ -20081,7 +20082,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         EffectPosition_ApplyBaseAndYOffset(vector, screenPosition = &spot);
         screenPosition->x = HI(screenPosition->x) + 128;
         screenPosition->y = HI(screenPosition->y) + 60;
-        draw(Ram_MapCellBuffer, (u8 *)work + 0x1f40, screenPosition->x - 4,
+        draw(Ram_MapCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
              screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
@@ -20093,7 +20094,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80,
+          draw(Ram_MapCellBuffer, work->sheet + 0x1c80,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
           ParticleStreams_SpawnFlame(
@@ -20103,7 +20104,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         struct EffectStep *mote = &work->particles[i];
 
         if (mote->variant >= 0) {
-          draw(Ram_MapCellBuffer, (u8 *)work + (mote->variant << 10),
+          draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
                HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
           mote->x -= direction * 0x14000;
           mote->y -= 0x50000;
@@ -20208,7 +20209,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 799;
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
-             (u8 *)work +
+             work->sheet +
                  (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
                  0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
@@ -20229,7 +20230,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 size = rise + 3;
 
       draw(canvas,
-           (u8 *)work +
+           work->sheet +
                (gParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) +
                0x3200,
            mote->x - size / 2, mote->y - size, size, size * 2);
@@ -20246,7 +20247,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;
 
-          draw(canvas, (u8 *)work + gParticleStreams_FlashSheetOffsets[cell],
+          draw(canvas, work->sheet + gParticleStreams_FlashSheetOffsets[cell],
                point.x - gParticleStreams_FlashSizes[cell] / 2,
                point.y - gParticleStreams_FlashSizes[cell] / 2,
                gParticleStreams_FlashSizes[cell],
@@ -21328,7 +21329,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect) {
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
-                      (u8 *)work + (gFallingSword_FlashCells[life / 3] << 11) +
+                      work->sheet + (gFallingSword_FlashCells[life / 3] << 11) +
                           (221 << 4),
                       x - 16, y + 48, 32, 64);
         }

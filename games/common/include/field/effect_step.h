@@ -6,14 +6,35 @@
 #include "static_assert.h"
 
 struct EffectStep {
+#ifdef UBFIX
+  union {
+    struct {
+      s32 x;
+      s32 y;
+      s32 z;
+    };
+    s32 coordinates[3];
+  };
+#else
   s32 x;
   s32 y;
   s32 z;
+#endif
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
   s32 variant;
 };
+
+// UB: indexing from &x crosses the step's separate scalar members.
+// UBFIX supplies a real coordinate array without including motion state.
+static inline const s32 *EffectStep_Coordinates(const struct EffectStep *step) {
+#ifdef UBFIX
+  return step->coordinates;
+#else
+  return &step->x;
+#endif
+}
 
 struct EffectPosition {
 #ifdef UBFIX

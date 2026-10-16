@@ -1,6 +1,7 @@
 #include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"
 #include "types.h"
+#include "vector3.h"
 
 //--------------------------------------------------------------------------
 // Battle effect tables
@@ -12,12 +13,6 @@
 // Consumers declare these without const to preserve matching code.
 
 struct BattleEffectArgument;
-
-struct Vector3 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 typedef struct Scale {
   s32 x;
@@ -125,11 +120,12 @@ const u8 gCounterReveal_PanelY[] = {0, 20, 2, 2, 34, 64, 68,
                                     0, 9,  4, 4, 4,  4,  4};
 
 // triangle.c
-const struct Vector3 gSpinningTriangle_Vertex[] = {{0, 24, 0}};
-const struct Vector3 gTriangleStrike_Vertex[] = {{0, 24, 0}};
+const struct Vector3 gSpinningTriangle_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
+const struct Vector3 gTriangleStrike_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 
 // stars.c
-const struct Vector3 gRingBolts_Points[] = {{0, 48 << 16, 0}, {0, 28 << 16, 0}};
+const struct Vector3 gRingBolts_Points[] = {
+    {.x = 0, .y = 48 << 16, .z = 0}, {.x = 0, .y = 28 << 16, .z = 0}};
 const u8 gSpinningStars_Radii[] = {32, 16};
 const u8 gWhirlwindComets_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 const u8 gWhirlwindComets_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};

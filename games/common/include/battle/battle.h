@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "edition.h"
+#include "vector3.h"
 #if !GAME_TLA
 #include "battle_effect_runtime.h"
 #include "farcall.h"
@@ -144,11 +145,6 @@ struct Ring {
   s32 age;
 };
 struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-struct Vector3 {
   s32 x;
   s32 y;
   s32 z;

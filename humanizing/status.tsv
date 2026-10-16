@@ -1,12 +1,20 @@
 topic	status	evidence_or_limit
 scope	TBS humanizing source review	Review ledger is separate from DONE measurements and existing build gates
-linked_c_manifest	145 sources assigned exactly once	Current TBS object list and existing linked C source files; data-only translation units included
-lanes	13 logical lanes	01 core;02 field/graphics;03 window;04 menu/shop/debug;05 battle;06 effect;07 object;08-13 scene cohorts
-scene_cohorts	15 whole modules per cohort	90 scene C modules sorted and divided by module count; function-weighted balance not yet measured
-reviewed_functions	75 unique source/function pairs	25 source-order definitions each from lane02 field.c;lane03 window.c;lane04 menu.c;static inline and edition-specific definitions included
-review_categories	doc;phases;names;constants;helpers;loops	Each review records edits or an explicit assessment of existing form; future improvements may remain
-rename_queue	21 proposals;none applied by inventory	Evidence and scope copied from lane packets; coordinated shared-field/public-API work remains pending
-function_denominator	Unverified	Requested4510 has not been independently established;ctags alone misses macro-generated definitions and duplicates conditional definitions
-compiler_inventory	Pending	Collect GCC -aux-info definition records across all6 standard modern edition branches;separately account native-only conditional definitions and included bodies
-round_limit	Unverified	These initial75 reviews do not establish completion within6 rounds
-authority	AGENTS.md	This ledger records status and evidence;it introduces no repository rules
+linked_c_manifest	145 sources assigned exactly once	Current TBS object list and existing linked C files;data-only C included
+lanes	13 logical lanes	Whole modules assigned once;shared function-bearing headers core;module-private headers follow module
+scene_cohorts	90 whole modules balanced by observed functions	Largest module first, descending source-plus-private-header definition count; ties by source path; assign to least-loaded cohort with lane-number tie break
+reviewed_functions	150 unique source/function pairs	25 source-order definitions each in lanes 02 through 07; every review identity found in compiler inventory
+review_categories	doc;phases;names;constants;helpers;loops	Edits or assessment of existing form recorded;future improvements may remain
+rename_queue	45 proposals; none applied by inventory	Evidence copied from six lane packets; shared/public changes pending core coordination
+modern_frontend	870 of870 auxiliary reports succeeded	145 translation units x6 editions;actual make modern commands;analysis-only -fsyntax-only/-aux-info;standard MODERN and edition branches
+modern_definitions	5649 source/function identities	5393 C definitions and256 header definitions in71 headers;NF and OF records;deduplicated source+function across editions and including TUs
+native_branch_frontend	834 of870 auxiliary reports succeeded	Same current compiler analysis flags minus MODERN;36 failures in6 modules due existing native-branch C constraints;no frozen toolchain changes
+native_branch_recovery	36 of36 preprocessing reports succeeded	AltinPeak;ColossoLog/River/Wall;SolEruption;TolbiShipDeck;brace/paren-aware lexical definition scan validated against each matching modern auxiliary set with0missing/0extra
+native_only_identity	ValeHome_TurnAndWaitValue	Source games/tbs/src/scene/vale_home.c;native auxiliary definition;excluded by UBFIX in modern branch
+observed_union	5650 source/function identities	5394 C and 256 header identities across modern and native frontend branches; 150 reviewed; 5500 remain observed/unreviewed
+function_denominator	4510 not independently reproduced	Inventory counts source definitions including static/inline/unused/macro-generated functions;not emitted linker functions or a revised DONE metric
+macro_and_conditional_handling	Compiler records after preprocessing	ShrinkObjectAndDestroySlow/Fast counted from macro expansion;old-style ReservedNoOp83B0 counted from OF;locale variants and repeated includes unioned without multiplying review identities
+inventory_limit	Observed configured branches	BUGFIX opt-in and unlinked/header-unincluded code excluded;native36 lexical recovery has lower evidentiary weight than successful auxiliary records;re-enumerate after definitions change
+inventory_provenance	Working tree based on 5029f0cf42	Compiler reports captured during the round-1-next working pass on 2026-10-16; definition_lines are historical report positions, not current clickable line anchors or a clean-commit byte snapshot
+round_limit	Not established	150 reviews and this denominator do not establish all functions finished within 6 rounds
+authority	AGENTS.md	Metadata records facts/evidence;introduces no repository rules

@@ -1,3 +1,7 @@
+// Battle effects combine a software canvas, sprite reactions and scanline
+// window or scroll tables. Each runner prepares its resources, advances the
+// effect one frame at a time, then releases its callbacks and drawing buffers.
+
 #include "unit/effect/effect_table.h"
 #include "unit/effect/effect.h"
 #include "unit/object/object.h"
@@ -100,6 +104,7 @@ enum CanvasTransferMode {
 // battle view (lines 16 to 135), and the effect display mode queued for the
 // next frame. Waits one frame.
 void BattlePres_ConfigureEffectDisplay(void) {
+  // Restore the battle viewport before the next effect changes its layers.
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0x100e; // 14/16 of the top layer over all of the bottom
   REG_WIN0H = 0x00f0;    // x 0 to 240
@@ -138,6 +143,7 @@ void Camera_AdvanceBg2Reference(void) {
   timer = work->scrollTimer + 1;
   work->scrollTimer = timer;
   if (timer == work->scrollInterval) {
+    // Display the current reference before advancing to the next one.
     REG_BG2X = work->bg2x;
     REG_BG2Y = work->bg2y;
     work->bg2x += work->scrollStepX;
@@ -151,10 +157,13 @@ void Camera_AdvanceBg2Reference(void) {
 // the effect drew there (a slanted or shaped window).
 void BattleFx_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
+  // Stop the preceding scanline transfer before replacing its source.
   Dma_Stop(channel);
   Dma_Set(gMapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
+
+enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 // Battle effect 7: ice shards rain down diagonally onto the targets' side of
 // the field and shatter into puffs of sparkle, flashing and shaking each
@@ -184,6 +193,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
   canvas = *cursor;
   sparkles = slots[2];
   work->effect = effect;
+  // Load the shard and puff images before shaping their visible canvas.
   BattleFx_BeginCanvasLayer(0x2001);
   REG_BG2PA = 0x100; // unscaled
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
@@ -198,7 +208,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
     s32 y;
     s32 slant;
 
-    for (i = 0, y = -128, slant = -16; i != 32; y -= 64, i++, slant -= 8) {
+    for (i = 0, y = -128, slant = -16; i != FALLING_SHARD_COUNT;
+         y -= 64, i++, slant -= 8) {
       s32 x;
 
       shard = &work->particles[i];
@@ -212,8 +223,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
       shard->variant = -1; // still falling
     }
   }
-  for (i = 0; i != 32; i++)
-    work->particles[32 + i].variant = -1; // puff slot free
+  for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
+    work->particles[FALLING_SHARD_COUNT + i].variant = -1; // puff slot free
 
   // The shards fall towards the targets' side, so the blitters mirror them
   // when the targets are the party.
@@ -314,8 +325,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
         // Frames 9 to 11 each start a puff in the first free slot, near
         // the shard.
         if (shard->variant >= 9 && shard->variant <= 11) {
-          for (k = 0; k != 32; k++) {
-            puff = &work->particles[32 + k];
+          for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
+            puff = &work->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
               puff->variant = 18;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
@@ -331,8 +342,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
 
     // Puffs: count down from 18, two frames on each of the nine sparkle
     // images (8 down to 0), centred on the puff's position.
-    for (i = 0; i != 32; i++) {
-      puff = &work->particles[32 + i];
+    for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
+      puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
@@ -364,9 +375,11 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect) {
 
 // The falling bolts keep their sparks after window 0's scanline table in
 // gMapCellBuffer.
+enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
+
 struct BoltSparkBuffer {
   u16 lines[160];
-  struct EffectStep sparks[512];
+  struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT];
 };
 
 #define gBoltSparks ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
@@ -404,6 +417,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
+  // The beam and its sparks use separate images but the same clipped canvas.
   BattleFx_BeginCanvasLayer(0x2001);
   REG_BG2PA = 0x100; // unscaled
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
@@ -421,11 +435,11 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
                         COMPOSITE_ADDITIVE);
   drawSpark = slots[8];
 
-  for (i = 0; i != 512; i++)
+  for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++)
     gBoltSparks->sparks[i].variant = -1; // spark slot free
 
   // Line the bolts up above the screen along the slant, BOLT_SPACING apart.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != FALLING_BOLT_COUNT; i++) {
     s32 x;
     s32 y;
 
@@ -538,7 +552,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
     }
     // Sparks: a dot that shrinks as its life runs out, falling under
     // gravity.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++) {
       spark = &gBoltSparks->sparks[i];
       if (spark->variant != -1) {
         s32 size = spark->variant + 1;
@@ -556,6 +570,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
+  // Stop both transfers before releasing the blitters and canvas.
   Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
   Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -578,34 +593,42 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect) {
 
 #define STREAK_MAX 3 // streaks fired at each target
 
+enum StreakStyle {
+  STREAK_STYLE_EMBER,
+  STREAK_STYLE_LIME,
+  STREAK_STYLE_VIOLET,
+  STREAK_STYLE_RED,
+  STREAK_STYLE_CYAN
+};
+
 // Battle effect 300: ember streaks.
 void BattleFx_RunEmberStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 0);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_EMBER);
 }
 
 // Battle effect 301: lime streaks.
 void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 1);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
 
 // Battle effect 302: violet streaks.
 void BattleFx_RunVioletStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 2);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_VIOLET);
 }
 
 // Battle effect 304: cyan streaks.
 void BattleFx_RunCyanStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 4);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_CYAN);
 }
 
 // Battle effect 305: red streaks.
 void BattleFx_RunRedStreaks(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 3);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_RED);
 }
 
 // Lime streaks again; no effect table entry points here.
 UNUSED void BattleFx_RunLimeStreaksAgain(struct BattleEffectArgument *effect) {
-  BattleFx_RunStreakVolley(effect, 1);
+  BattleFx_RunStreakVolley(effect, STREAK_STYLE_LIME);
 }
 
 // Fires STREAK_MAX streaks at each target from 20 pixels above the user,
@@ -629,7 +652,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   struct MotionObject *target;
   s32 resource;
   s32 frame;
-  s32 j;
+  s32 streakIndex;
   s32 streaks = STREAK_MAX;
   s32 lift = 20 << 16; // 20 pixels, 16.16
 
@@ -662,19 +685,19 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   // The streak images, and the background palette for the style's colour.
   Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
   switch (mode) {
-  case 0:
+  case STREAK_STYLE_EMBER:
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
-  case 1:
+  case STREAK_STYLE_LIME:
     resource = (s32)&ResourceId_LimePalette;
     break;
-  case 2:
+  case STREAK_STYLE_VIOLET:
     resource = (s32)&ResourceId_VioletPaletteD;
     break;
-  case 3:
+  case STREAK_STYLE_RED:
     resource = (s32)&ResourceId_RedPaletteB;
     break;
-  case 4:
+  case STREAK_STYLE_CYAN:
   default:
     resource = (s32)&ResourceId_CyanPalette;
     break;
@@ -687,14 +710,14 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   {
-    s32 total = streaks * work->effect->count * 6 + 48;
+    s32 totalFrames = streaks * work->effect->count * 6 + 48;
 
     // Every streak starts 20 pixels above the user and moves in a straight
     // line to 20 pixels above its target over 24 frames.
     for (k = 0; k != work->effect->count; k++) {
       target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
-      for (j = 0; j != streaks; j++) {
-        struct EffectStep *streak = &work->particles[k * streaks + j];
+      for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
+        struct EffectStep *streak = &work->particles[k * streaks + streakIndex];
 
         streak->x = source->x;
         streak->y = source->y + lift;
@@ -706,7 +729,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    for (frame = 0; frame != total; frame++) {
+    for (frame = 0; frame != totalFrames; frame++) {
       s32 *row = work->bg2X;
 
       // A sine wave of BG2X offsets, one per scanline, for the wave
@@ -714,15 +737,16 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.
-      if (frame > total - 16)
-        REG_BLDALPHA = (total - frame) | 0x1000;
+      if (frame > totalFrames - 16)
+        REG_BLDALPHA = (totalFrames - frame) | 0x1000;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
       for (k = 0; k != work->effect->count; k++) {
         if (frame >= k * 32) {
-          for (j = 0; j != streaks; j++) {
-            if (frame >= k * 32 + j * 6) {
-              struct EffectStep *streak = &work->particles[k * streaks + j];
+          for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
+            if (frame >= k * 32 + streakIndex * 6) {
+              struct EffectStep *streak =
+                  &work->particles[k * streaks + streakIndex];
               s32 step;
 
               // Project the streak onto the half-width canvas; its image
@@ -799,14 +823,17 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
+enum MoteFountainMode { MOTE_FOUNTAIN_HEALING, MOTE_FOUNTAIN_DRIFTING };
+enum { MOTE_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
+
 // Battle effect 349: rising motes that drift onto the targets and strike.
 void BattleFx_RunDriftingMoteFountain(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, 1);
+  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
 }
 
 // Battle effect 344: rising healing motes.
 void BattleFx_RunHealingMoteFountain(struct BattleEffectArgument *effect) {
-  BattleFx_RunMoteFountain(effect, 0);
+  BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_HEALING);
 }
 
 // Motes burst out of the user in every direction and float upwards,
@@ -817,7 +844,7 @@ void BattleFx_RunHealingMoteFountain(struct BattleEffectArgument *effect) {
 // mode 1: motes on the earth palette that drift across towards the far side
 //         of the field; each target flinches (an attack).
 void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
-  s32 point[3];
+  s32 worldPoint[3];
   struct EffectPosition position;
   struct BattleEffectWork *work;
   void *canvas;
@@ -835,7 +862,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
   sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  if (mode == 0)
+  if (mode == MOTE_FOUNTAIN_HEALING)
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
@@ -847,7 +874,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == 0)
+  if (mode == MOTE_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;
   else
     resource = (s32)&ResourceId_EarthWallSheet;
@@ -861,7 +888,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   // speed, mostly upwards, and a life of 48 to 79 frames. Only the first 128
   // are ever drawn.
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != MOTE_INITIALIZED_COUNT; i++) {
     s32 speed;
     s32 angle;
 
@@ -877,7 +904,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
     mote->velocityY = ((Random16() & 255) - 32) << 9;
     mote->velocityZ = -(Trig_Cos(angle) * (speed + 32) << 1) >> 8;
     mote->variant = (Random16() & 31) + 48;
-    if (mode == 0) {
+    if (mode == MOTE_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
       mote->velocityZ /= 2;
     }
@@ -886,17 +913,17 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != 128; frame++) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
-    for (i = 0; i != 128; i++) {
+    for (i = 0; i != MOTE_VISIBLE_COUNT; i++) {
       mote = &PARTICLES[i];
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
         s32 size;
 
         // Wobble sideways, project onto the half-width canvas and draw a
         // 1x2 to 6x12 mote, larger the nearer it is to the camera.
-        point[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
-        point[1] = mote->y;
-        point[2] = mote->z;
-        EffectPosition_ApplyBaseAndYOffset(point, &position);
+        worldPoint[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
+        worldPoint[1] = mote->y;
+        worldPoint[2] = mote->z;
+        EffectPosition_ApplyBaseAndYOffset(worldPoint, &position);
         position.x >>= 1;
         if (position.depth <= 313)
           position.depth = 314;
@@ -907,7 +934,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
                 position.x - size / 2, position.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
         // Mode 1 pushes every mote towards the other side of the field.
-        if (mode == 1) {
+        if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
             mote->velocityX += 0x2000;
           else
@@ -917,7 +944,7 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     // Each target reacts in turn, and the battle shows its result.
-    if (mode == 1) {
+    if (mode == MOTE_FOUNTAIN_DRIFTING) {
       for (i = 0; i != work->effect->count; i++) {
         if (frame == i * 8 + 48) {
           BattleEventRuntime_BeginPhaseFar(-1);
@@ -969,44 +996,56 @@ enum {
 #define STRIKE_SPARKS 8 // each hit scatters sparks
 #define STRIKE_HEAVY 16 // one heavy hit: a big shake and the target recoils
 
+// Rows of gTwelveMode_Records used by these effect entry points.
+enum {
+  STRIKE_STYLE_BLUE_SPARK_COLUMNS = 0,
+  STRIKE_STYLE_LIME_SMOKE_COLUMN = 1,
+  STRIKE_STYLE_EMBER_DRAIN_COLUMNS = 3,
+  STRIKE_STYLE_MARS_DRAIN_COLUMNS = 4,
+  STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS = 5,
+  STRIKE_STYLE_LIGHTNING_GLINT_SLASH = 6,
+  STRIKE_STYLE_LIME_SMOKE_SLASH = 9,
+  STRIKE_STYLE_MARS_SMOKE_COLUMN = 10
+};
+
 // Battle effect 313: one slash with glints, lightning colours.
 void BattleFx_RunLightningGlintSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 6);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 
 // Battle effect 316: three ember columns that drain the target into the user.
 void BattleFx_RunEmberDrainColumns(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 3);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
 }
 
 // Battle effects 318 and 323: one lime column with smoke.
 void BattleFx_RunLimeSmokeColumn(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 1);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }
 
 // Battle effect 336: one column with smoke, Mars Djinn colours.
 void BattleFx_RunMarsSmokeColumn(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 0xA);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_SMOKE_COLUMN);
 }
 
 // Battle effect 324: three lightning columns with glints.
 void BattleFx_RunLightningGlintColumns(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 5);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
 }
 
 // Battle effect 325: one lime slash with smoke.
 void BattleFx_RunLimeSmokeSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 9);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 
 // Battle effect 327: three columns that drain the target, Mars Djinn colours.
 void BattleFx_RunMarsDrainColumns(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 4);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_MARS_DRAIN_COLUMNS);
 }
 
 // Battle effect 332: two blue columns with sparks.
 void BattleFx_RunBlueSparkColumns(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetStrike(effect, 0);
+  BattleFx_RunTargetStrike(effect, STRIKE_STYLE_BLUE_SPARK_COLUMNS);
 }
 
 // Battle effect 333: one heavy slash with sparks, Mars Djinn colours.

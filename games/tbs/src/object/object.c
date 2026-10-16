@@ -105,7 +105,7 @@
 // back to the scene of its first exit.
 void Scene_TakeExit(s32 exitKind) {
   s16 currentScene;
-  const u32 *p;
+  const u32 *exitTable;
   const u32 *firstExit;
   u32 word;
   s32 scene;
@@ -116,7 +116,7 @@ void Scene_TakeExit(s32 exitKind) {
   s32 flag;
 
   currentScene = gGameState.scene;
-  p = gOverlayArea.exits();
+  exitTable = gOverlayArea.exits();
   nextScene = EXIT_NONE;
   nextEntrance = 0;
   if (exitKind == EXIT_NONE)
@@ -124,7 +124,7 @@ void Scene_TakeExit(s32 exitKind) {
 
   for (;;) {
     // Find the header of the current scene: exit words have high bits set.
-    scene = *p++;
+    scene = *exitTable++;
     if (scene & ~EXIT_SCENE_MASK)
       continue;
     scene &= EXIT_SCENE_MASK;
@@ -133,15 +133,15 @@ void Scene_TakeExit(s32 exitKind) {
     if (scene != currentScene)
       continue;
 
-    firstExit = p;
+    firstExit = exitTable;
     for (;;) {
-      word = *p++;
+      word = *exitTable++;
       scene = word & EXIT_SCENE_MASK;
       entrance = EXIT_ENTRANCE(word);
       kind = EXIT_KIND(word);
       flag = word & EXIT_HAS_FLAG;
       if (flag)
-        flag = *p++;
+        flag = *exitTable++;
       if (scene == EXIT_TABLE_END || kind == 0) {
         nextScene = *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
         break;
@@ -157,6 +157,7 @@ void Scene_TakeExit(s32 exitKind) {
     break;
   }
 
+  // Commit the chosen exit only after a matching scene header was found.
   if (nextScene != EXIT_NONE) {
     gGameState.scene = nextScene;
     gGameState.entrance = nextEntrance;
@@ -166,10 +167,10 @@ void Scene_TakeExit(s32 exitKind) {
 // Chooses where the game continues after a battle or another scene that is
 // not a field map (see Game_ResetForNewGame). result is that scene's result:
 // -1 when the party was defeated, which revives the leader with 1 HP (and, with
-// flag 0x20, fully heals the first two characters) and returns to the defeat
-// point, or to the last saved point when none is set. Any other result goes to
-// the next scene the event set, or to the default scene with the party keeping
-// its position.
+// FLAG_CHILDHOOD, fully heals the first two characters) and returns to the
+// defeat point, or to the last saved point when none is set. Any other result
+// goes to the next scene the event set, or to the default scene with the party
+// keeping its position.
 void Scene_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
   s32 i;
@@ -178,12 +179,13 @@ void Scene_ReturnFromBattle(s32 result) {
 
   gGameState.sceneChangeReason = result;
   if (result == -1) {
+    // Revive the leader before choosing the defeat return point.
     unit = UnitGetFar(gGameState.selectedActor);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
-    if (GameFlag_TestFar(32)) {
+    if (GameFlag_TestFar(FLAG_CHILDHOOD)) {
       for (i = 0; i < 2; i++) {
         unit = UnitGetFar(i);
         unit->hp = unit->maxHp;
@@ -207,6 +209,7 @@ void Scene_ReturnFromBattle(s32 result) {
         gGameState.entrance = gGameState.defaultEntrance;
     }
   } else {
+    // An explicit event destination overrides the scene's default return.
     scene = gGameState.nextScene;
     entrance = gGameState.nextEntrance;
     if (scene != -1 || entrance != -1) {
@@ -241,28 +244,35 @@ enum {
   SCENE_BATTLE = 0x1fe
 };
 
-// Runs the Lucky Dice minigame, keeping BG palette 14 across it.
+// The minigames borrow the final two 16-colour background palettes.
+enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
+
+// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15.
 static __inline__ s32 RunLuckyDice(s32 entrance) {
-  void *palette = (void *)&BG_PLTT_COLOR(14, 0);
-  void *saved = MemAlloc(64);
+  void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
+  void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
-  Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
+  Dma_Set(palette, saved,
+          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
   result = Runtime_BlankDisplayAndRunFar(entrance);
-  Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
+  Dma_Set(saved, palette,
+          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
   MemFree(saved);
   return result;
 }
 
-// Runs the slot machine, keeping BG palette 14 across it.
+// Runs the slot machine, preserving BG palettes 14 and 15.
 static __inline__ s32 RunReelGame(s32 entrance) {
-  void *palette = (void *)&BG_PLTT_COLOR(14, 0);
-  void *saved = MemAlloc(64);
+  void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
+  void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
-  Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
+  Dma_Set(palette, saved,
+          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
   result = ReelGame_StartFar(entrance);
-  Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
+  Dma_Set(saved, palette,
+          DMA_ENABLE32 | DMA_32BIT | (MINIGAME_PALETTE_BYTES / 4), REG_DMA3);
   MemFree(saved);
   return result;
 }
@@ -279,6 +289,7 @@ void Game_ResetForNewGame(s32 mode) {
   s32 entrance;
 
   table = gField_SceneTable;
+  // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == 1) {
     gGameState.scene = (s32)&SceneId_ValeHome;
     gGameState.entrance = mode;
@@ -378,18 +389,20 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 flag;
 
   if (keep == 0) {
+    // Local puzzle flags expire on every normal scene entrance.
     for (flag = 0x200; flag <= 0x2ff; flag++)
       GameFlag_ClearBitFar(flag);
     if (group != gGameState.sceneGroup) {
+      // Group state and Retreat's destination survive moves within a place.
       for (flag = 0x300; flag <= 0x3ff; flag++)
         GameFlag_ClearBitFar(flag);
       GameFlag_SetBitFar(FLAG_SHOW_LOCATION_NAME);
       gGameState.encounterSteps = 0;
       gGameState.hazardSteps = 0;
-      GameFlag_ClearBitFar(0x110);
-      GameFlag_ClearBitFar(0x111);
-      GameFlag_ClearBitFar(0x112);
-      GameFlag_ClearBitFar(0x113);
+      GameFlag_ClearBitFar(FLAG_VENUS_LIGHTHOUSE_LIT);
+      GameFlag_ClearBitFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      GameFlag_ClearBitFar(FLAG_MARS_LIGHTHOUSE_LIT);
+      GameFlag_ClearBitFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
       gGameState.retreatScene = gGameState.scene;
       gGameState.retreatEntrance = gGameState.entrance;
     }
@@ -442,11 +455,13 @@ typedef struct TerrainRule {
 } TerrainRule;
 
 // An encounter zone (encounter.tsv).
+enum { ENCOUNTER_GROUP_COUNT = 8 };
+
 struct EncounterZone {
   u16 rate;       // the base encounter rate
   u16 level;      // the party level the zone is made for
-  u16 enemies[8]; // the enemy groups that can appear
-  u8 weights[8];  // each group's chance, relative to the others
+  u16 enemies[ENCOUNTER_GROUP_COUNT]; // the enemy groups that can appear
+  u8 weights[ENCOUNTER_GROUP_COUNT];  // each group's relative chance
 };
 
 // Chooses the current scene's encounter zones, one for each kind of ground
@@ -460,7 +475,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
   struct EventWork *work;
   s32 scene;
   s32 entrance;
-  u8 *out;
+  u8 *groundZones;
   const struct BattleLocationRule *rule;
   s32 zone;
   s16 firstZoneOnGround;
@@ -469,7 +484,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
   work = gEventWork;
   scene = gGameState.scene;
   entrance = gGameState.entrance;
-  out = work->encounterGroups;
+  groundZones = work->encounterGroups;
   rule = gBattle_LocationRules;
   zone = 0;
   firstZoneOnGround = 0;
@@ -487,9 +502,10 @@ void Encounter_SelectSceneZones(s32 useRules) {
     }
   }
 
-  *out++ = 0;
+  // Ground zero is normally safe; the rule can move the first zone onto it.
+  *groundZones++ = 0;
   for (i = 0; i <= 6; i++) {
-    *out++ = zone;
+    *groundZones++ = zone;
     if (zone != 0)
       zone++;
   }
@@ -592,7 +608,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   // Draw one of the eight groups by weight.
   work->encounterBias = 0;
   sum = 0;
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < ENCOUNTER_GROUP_COUNT; i++)
     sum += entry->weights[i];
   if (sum == 0)
     return 0;
@@ -602,7 +618,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   if (pick >= 0) {
     do {
       i++;
-      if (i > 7)
+      if (i >= ENCOUNTER_GROUP_COUNT)
         break;
       pick -= entry->weights[i];
     } while (pick >= 0);
@@ -667,26 +683,26 @@ void Scene_ResolveInteractionResult(void) {
   s16 scene = gGameState.scene;
   s16 entrance = gGameState.entrance;
   s16 group = gGameState.sceneGroup;
-  const struct SceneInteractionEntry *p = gScene_InteractionRuleTable;
+  const struct SceneInteractionEntry *rule = gScene_InteractionRuleTable;
 
-  for (; p->id != -1; p++) {
-    if (p->idIsScene) {
-      if (p->id != scene)
+  for (; rule->id != -1; rule++) {
+    if (rule->idIsScene) {
+      if (rule->id != scene)
         continue;
-      if (p->entrance != -1 && p->entrance != entrance)
+      if (rule->entrance != -1 && rule->entrance != entrance)
         continue;
-      if (p->flag != -1 && GameFlag_TestFar(p->flag) == 0)
+      if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
         continue;
-      music = p->music;
+      music = rule->music;
       break;
     }
-    if (p->id != group)
+    if (rule->id != group)
       continue;
-    if (p->entrance != -1 && p->entrance != entrance)
+    if (rule->entrance != -1 && rule->entrance != entrance)
       continue;
-    if (p->flag != -1 && GameFlag_TestFar(p->flag) == 0)
+    if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
       continue;
-    music = p->music;
+    music = rule->music;
     break;
   }
 
@@ -707,27 +723,27 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 // Returns the place name of scene and entrance, from the first rule matching
 // the scene or its group; 0 when none does.
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
-  const struct SceneAreaNameRule *p = gScene_AreaNameRules;
+  const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
   s32 name = 0;
   s32 group = BattleFx_GetResourceGroup(scene);
 
-  while (p->id != -1) {
-    if (p->useSceneId) {
-      if (p->id == scene) {
-        if (p->entrance == -1 || p->entrance == entrance) {
-          name = p->areaNameIndex;
+  while (rule->id != -1) {
+    if (rule->useSceneId) {
+      if (rule->id == scene) {
+        if (rule->entrance == -1 || rule->entrance == entrance) {
+          name = rule->areaNameIndex;
           break;
         }
       }
     } else {
-      if (p->id == group) {
-        if (p->entrance == -1 || p->entrance == entrance) {
-          name = p->areaNameIndex;
+      if (rule->id == group) {
+        if (rule->entrance == -1 || rule->entrance == entrance) {
+          name = rule->areaNameIndex;
           break;
         }
       }
     }
-    p++;
+    rule++;
   }
   return name;
 }
@@ -832,14 +848,14 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
 }
 
 // Returns the sprite of character, which is the character itself except that
-// flag 0x20 gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21 gives
-// character 0 sprite 0x11.
+// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21
+// gives character 0 sprite 0x11.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
 
   sprite = character;
   if (sprite <= 8) {
-    if (GameFlag_TestFar(0x20) != 0) {
+    if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
       if (sprite == 0) {
         sprite = 0x12;
       }
@@ -854,12 +870,12 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 }
 
 // Returns the sprite of character as Party_RemapCharacterIdByFlags would with
-// flag 0x20 set to flag20 (as recorded in a save file's summary).
-s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 flag20) {
+// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
+s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
   sprite = character;
-  if ((sprite <= 8) && (flag20 != 0)) {
+  if ((sprite <= 8) && (childhood != 0)) {
     if (sprite == 0) {
       sprite = 0x12;
     }

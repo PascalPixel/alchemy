@@ -516,7 +516,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ActorSetAnimationAndWait(21, ANIM_NOD);
     Actor_FaceDirection(21, FACING_EAST, 0);
     Actor_SetSpeed(20, PIXELS(8) / 5, PIXELS(4) / 5);
-    Object_SetActionCallbackAndRefreshById(20, (s32)gKalay_DanceScriptB);
+    Actor_RunActionScriptAndWait(20, gKalay_DanceScriptB);
     Actor_WalkToAndWait(20, 228, 296);
     Actor_FaceDirection(20, FACING_NORTH, 40);
     Actor_WalkToAndWait(20, 212, 296);
@@ -1632,7 +1632,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   exitActions = gKalay_Data03;
   Actor_SetActionScript(GARET, exitActions);
   Actor_SetActionScript(IVAN, exitActions);
-  Object_SetActionCallbackAndRefreshById(3, (s32)exitActions);
+  Actor_RunActionScriptAndWait(3, exitActions);
   Camera_MoveTo(PIXELS(410), -1, PIXELS(300), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 416, 312);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);

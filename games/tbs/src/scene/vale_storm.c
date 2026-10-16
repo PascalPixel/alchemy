@@ -810,7 +810,7 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Engine_ActorRunRepeatedMotion(20, 2);
   Engine_EventSetMessage((message + 4));
   Event_ShowMessageAndWait(20, 0, 20);
-  Object_SetActionCallbackAndRefreshById(20, (s32)gValeStorm_ActorTwentyScript);
+  Actor_RunActionScriptAndWait(20, gValeStorm_ActorTwentyScript);
   GameFlag_Set(0x835);
   Engine_EventEnd();
 }
@@ -922,8 +922,7 @@ static void ValeStorm_GaretJoinsIsaac(void) {
     Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
     Actor_SetSpeed(22, PIXELS(2), PIXELS(1));
-    Object_SetActionCallbackAndRefreshById(
-        22, (s32)gValeStorm_ActorTwentyTwoScriptA);
+    Actor_RunActionScriptAndWait(22, gValeStorm_ActorTwentyTwoScriptA);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(30);
     Actor_SetActionScript(22, gValeStorm_ActorTwentyTwoScriptB);
@@ -1048,8 +1047,7 @@ static void ValeStorm_WatchBoulderFall(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
     Actor_SetSpeed(22, PIXELS(2), PIXELS(1));
     Actor_SetActionScript(0, gValeStorm_LeaderScript);
-    Object_SetActionCallbackAndRefreshById(
-        22, (s32)gValeStorm_ActorTwentyTwoScript);
+    Actor_RunActionScriptAndWait(22, gValeStorm_ActorTwentyTwoScript);
     Object_RefreshSelectorById(0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(22, 0x100, 30);
@@ -1505,7 +1503,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetSpeed(26, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetSpeed(9, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptA);
-  Object_SetActionCallbackAndRefreshById(9, (s32)gValeStorm_ActorNineScriptA);
+  Actor_RunActionScriptAndWait(9, gValeStorm_ActorNineScriptA);
   Event_PlayCue(158);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
   Engine_EventWait(10);
@@ -1836,7 +1834,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetActionScript(8, gValeStorm_GatherPath8);
   Actor_SetActionScript(26, gValeStorm_GatherPath26);
   Actor_SetActionScript(0, gValeStorm_GatherPath0);
-  Object_SetActionCallbackAndRefreshById(22, gValeStorm_GatherPath22);
+  Actor_RunActionScriptAndWait(22, gValeStorm_GatherPath22);
   ValeStorm_PlayImpactBeat(PIXELS(4), 20);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);

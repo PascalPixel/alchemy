@@ -75,6 +75,7 @@ void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action);
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId);
 void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId);
 void Object_RefreshSelectorById(u32 objectId);
+// Accepts a built-in action number or script address; waits up to 300 frames.
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action);
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z);

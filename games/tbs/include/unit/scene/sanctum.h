@@ -4,18 +4,18 @@
 #include "types.h"
 #include "field_scene.h"
 
-void *Sanctum_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-void *Sanctum_GetExits(void);
-void *SceneData_SelectPlacementTableBySubstate(void);
-u8 *SceneData_SelectTableBySceneIdAndFlags(void);
-s32 Sanctum_ApplyEntryState(void);
+struct SceneEntrance *Sanctum_GetEntrances(void);
+struct SceneRegion *Sanctum_GetRegions(void);
+u32 *Sanctum_GetExits(void);
+struct ScenePlacement *Sanctum_GetPlacements(void);
+struct SceneEvent *Sanctum_GetEvents(void);
+s32 Sanctum_Initialize(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
 extern s32 gSanctum_ItemIconGrowScript[];
 extern s32 gSanctum_ItemIconEndScript[];
-extern struct SceneEntrance gSanctum_TableA[];
-extern u32 gSanctum_TableB[];
+extern struct SceneEntrance gSanctum_Entrances[];
+extern u32 gSanctum_Exits[];
 extern struct ScenePlacement gSanctum_PlacementA[];
 extern struct ScenePlacement gSanctum_PlacementB[];
 extern struct ScenePlacement gSanctum_PlacementSequenceB[];

@@ -585,7 +585,7 @@ static void PaletteScene_RunActorTransitionSequence(void) {
   if (actorThreeEnabled != 0) {
     Actor_SetActionScript(MIA, finalActions);
   }
-  Object_SetActionCallbackAndRefreshById(2, (s32)finalActions);
+  Actor_RunActionScriptAndWait(2, finalActions);
   KolimaForestTree_PlayGesture(10, 4);
   KolimaForestTree_PlayGesture(10, 4);
   Engine_EventWait(20);

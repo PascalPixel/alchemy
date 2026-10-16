@@ -583,8 +583,7 @@ ramp:
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Engine_CameraFollowActor(8, 1);
   Actor_SetActionScript(8, gValeBabiRampFinalAction);
-  Object_SetActionCallbackAndRefreshById(ACTOR_PARTY_LEADER,
-                                         gValeBabiRampFinalAction);
+  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER, gValeBabiRampFinalAction);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;

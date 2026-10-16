@@ -444,8 +444,8 @@ static void ColosseumEntrance_InvitePartyToFinals(void) {
     ColosseumEntrance_ShowMessageAndPause(17);
     Actor_SetActionScript(1, gColosseumEntrance_GatherAtSpectatorLeaderScript);
     Actor_SetActionScript(2, gColosseumEntrance_GatherAtSpectatorLeaderScript);
-    Object_SetActionCallbackAndRefreshById(
-        3, (s32)gColosseumEntrance_GatherAtSpectatorLeaderScript);
+    Actor_RunActionScriptAndWait(
+        3, gColosseumEntrance_GatherAtSpectatorLeaderScript);
     Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     Engine_CameraMoveTo(PIXELS(256), -1, PIXELS(100), 1);
     Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
@@ -499,8 +499,8 @@ static void ColosseumEntrance_InvitePartyToFinals(void) {
                             gColosseumEntrance_GatherAtSpectatorLeaderScript);
       Actor_SetActionScript(2,
                             gColosseumEntrance_GatherAtSpectatorLeaderScript);
-      Object_SetActionCallbackAndRefreshById(
-          3, (s32)gColosseumEntrance_GatherAtSpectatorLeaderScript);
+      Actor_RunActionScriptAndWait(
+          3, gColosseumEntrance_GatherAtSpectatorLeaderScript);
       Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
       Engine_CameraMoveTo(PIXELS(256), -1, PIXELS(100), 1);
       Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
@@ -523,11 +523,11 @@ static void ColosseumEntrance_InvitePartyToFinals(void) {
       Engine_ActorSetAnimation(3, 3);
       ColosseumEntrance_ShowMessageAndPause(3);
       Actor_SetActionScript(2, gColosseumEntrance_GatherAtSpectatorPartyScript);
-      Object_SetActionCallbackAndRefreshById(
-          3, (s32)gColosseumEntrance_GatherAtSpectatorPartyScript);
+      Actor_RunActionScriptAndWait(
+          3, gColosseumEntrance_GatherAtSpectatorPartyScript);
       Engine_EventWait(20);
-      Object_SetActionCallbackAndRefreshById(
-          0, (s32)gColosseumEntrance_GatherAtSpectatorPartyScript);
+      Actor_RunActionScriptAndWait(
+          0, gColosseumEntrance_GatherAtSpectatorPartyScript);
       Actor_WalkToAndWait(1, 262, 188);
       ColosseumEntrance_FaceDirection(1, FACING_NORTH);
       Engine_ActorSetAnimationAndWait(1, 3);
@@ -619,8 +619,8 @@ static void ColosseumEntrance_SendContestantsToFinals(void) {
       Engine_ActorFaceDirection(0, FACING_NORTHWEST, 0);
       Engine_ActorFaceDirection(12, FACING_NORTH + FACING_STEP, 0);
       Engine_ActorFaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
-      Object_SetActionCallbackAndRefreshById(
-          14, (s32)gColosseumEntrance_JoinFinalsFromEastScript);
+      Actor_RunActionScriptAndWait(14,
+                                   gColosseumEntrance_JoinFinalsFromEastScript);
       Engine_EventWait(20);
       Engine_ActorFaceDirection(8, FACING_EAST, 0);
       Engine_ActorFaceDirection(11, FACING_WEST, 40);
@@ -1256,8 +1256,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_SetActionScript(GARET, gColosseumEntrance_RejoinPartyScript);
   Actor_SetActionScript(IVAN, gColosseumEntrance_RejoinPartyScript);
-  Object_SetActionCallbackAndRefreshById(
-      3, (s32)gColosseumEntrance_RejoinPartyScript);
+  Actor_RunActionScriptAndWait(3, gColosseumEntrance_RejoinPartyScript);
   Engine_EventWait(20);
   ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1408,7 +1407,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   actions = gColosseumEntrance_RejoinPartyScript;
   Actor_SetActionScript(GARET, actions);
   Actor_SetActionScript(2, actions);
-  Object_SetActionCallbackAndRefreshById(3, (s32)actions);
+  Actor_RunActionScriptAndWait(3, actions);
   Engine_EventWait(20);
   ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1503,7 +1502,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   actions = gColosseumEntrance_RejoinPartyScript;
   Actor_SetActionScript(GARET, actions);
   Actor_SetActionScript(2, actions);
-  Object_SetActionCallbackAndRefreshById(3, (s32)actions);
+  Actor_RunActionScriptAndWait(3, actions);
   Engine_EventWait(20);
   ColosseumEntrance_FaceDirection(0, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

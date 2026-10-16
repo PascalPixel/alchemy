@@ -4,18 +4,14 @@
 #include "field_effect.h"
 #include "vram_block.h"
 #include "b5_context.h"
+#include "fx_scene.h"
 
-struct PairWork {
-  u8 unk00[70];
-  u16 vramBlock;
-};
-
-void WorldMap_CreateLinkedEffects(void *object) {
-  struct FieldActor *parent = object;
+// Attach two rising particles to the actor, sharing the effect's cached tiles.
+void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct PairWork *work = (struct PairWork *)gEffectWork;
+  struct BattleFxScene *work = gEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {
@@ -32,7 +28,7 @@ void WorldMap_CreateLinkedEffects(void *object) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->vramBlock;
+        sprite->slot = work->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;

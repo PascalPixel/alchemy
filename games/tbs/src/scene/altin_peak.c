@@ -1892,7 +1892,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetActionScript(1, gAltinPeak_GaretScript);
   Actor_SetActionScript(2, gAltinPeak_IvanScript);
-  Object_SetActionCallbackAndRefreshById(3, gAltinPeak_MiaScript);
+  Actor_RunActionScriptAndWait(3, gAltinPeak_MiaScript);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
@@ -1946,7 +1946,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Task_AddCallback(update, ALTIN_CALLBACK_PRIORITY);
   celebrate = gAltinPeak_CelebrateScript;
   Actor_SetActionScript(9, celebrate);
-  Object_SetActionCallbackAndRefreshById(8, (s32)celebrate);
+  Actor_RunActionScriptAndWait(8, celebrate);
   Engine_TaskRemoveCallback(update);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
@@ -1973,7 +1973,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   party = gAltinPeak_PartyScript;
   Actor_SetActionScript(GARET, party);
   Actor_SetActionScript(2, party);
-  Object_SetActionCallbackAndRefreshById(3, (s32)party);
+  Actor_RunActionScriptAndWait(3, party);
   Engine_EventWait(20);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

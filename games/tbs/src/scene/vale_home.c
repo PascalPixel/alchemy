@@ -629,8 +629,7 @@ static void ValeHome_SendHelpToElders(void) {
     Actor_FaceDirection(0, FACING_NORTH, 0);
     Actor_FaceDirection(25, FACING_NORTH, 60);
     Actor_SetActionScript(0, gValeHome_LeaderStepActions);
-    Object_SetActionCallbackAndRefreshById(25,
-                                           (s32)gValeHome_Actor25StepActions);
+    Actor_RunActionScriptAndWait(25, gValeHome_Actor25StepActions);
     Engine_EventWait(20);
     Engine_ActorFaceDirection(0, 0, 0);
     Engine_ActorFaceDirection(25, 0, 10);
@@ -853,7 +852,7 @@ static void ValeHome_FightTravelers(void) {
   Engine_EventWait(20);
   Actor_SetActionScript(0, gValeHome_LeaderActions);
   Engine_EventWait(6);
-  Object_SetActionCallbackAndRefreshById(25, (s32)gValeHome_Actor25Actions);
+  Actor_RunActionScriptAndWait(25, gValeHome_Actor25Actions);
   // The confrontation continues in battle; both outcomes return here.
   Battle_SetStart(2);
   {
@@ -925,8 +924,7 @@ static void ValeHome_TravelersLeaveAfterBattle(void) {
   actor = Object_GetById(24);
   actor->bounce = 0x28f;
   actor->gravity = gravityQ8 << 8;
-  Object_SetActionCallbackAndRefreshById(24,
-                                         (s32)gValeHome_Actor24BounceActions);
+  Actor_RunActionScriptAndWait(24, gValeHome_Actor24BounceActions);
   Engine_EventWait(40);
   FieldFx_StopLightning();
   FieldFx_LastLightning();
@@ -1080,7 +1078,7 @@ static void ValeHome_DepartForQuest(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimation(30, 3);
   Actor_SetSpeed(30, PIXELS(24) / 5, PIXELS(12) / 5);
-  Object_SetActionCallbackAndRefreshById(30, (s32)actor31Actions);
+  Actor_RunActionScriptAndWait(30, actor31Actions);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(12, 2);
   ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);

@@ -149,6 +149,11 @@ static inline void Actor_SetActionScript(s32 actor, const s32 *script) {
   Engine_ActorEnableActionCallback(actor, (s32)script);
 }
 
+// Run a script, waiting at most 300 frames for its final command.
+static inline void Actor_RunActionScriptAndWait(s32 actor, const s32 *script) {
+  Object_SetActionCallbackAndRefreshById(actor, (s32)script);
+}
+
 static inline void Actor_SetBuiltinAction(s32 actor, s32 action) {
   Engine_ActorEnableActionCallback(actor, action);
 }

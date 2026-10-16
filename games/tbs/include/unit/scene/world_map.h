@@ -7,12 +7,12 @@
 struct SceneEvent;
 struct ScenePlacement;
 
-u8 *WorldMap_GetEntrances(void);
-s32 WorldMap_GetRegions(void);
-u8 *WorldMap_GetExits(void);
-struct ScenePlacement *StoryScene_SelectPlacementTable(void);
+struct SceneEntrance *WorldMap_GetEntrances(void);
+struct SceneRegion *WorldMap_GetRegions(void);
+u32 *WorldMap_GetExits(void);
+struct ScenePlacement *WorldMap_GetPlacements(void);
 struct SceneEvent *WorldMap_GetEvents(void);
-s32 WorldMap_EnterScene(void);
+s32 WorldMap_Initialize(void);
 extern s32 gWorldMapTriggerActor;
 extern u16 gWorldMapBlend;
 extern s32 gTransferArrive10[];

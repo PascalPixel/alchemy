@@ -1,7 +1,10 @@
 #include "types.h"
 #include "field_obj.h"
 #include "field_effect.h"
+#include "field_scene.h"
+#include "fixed_math.h"
 
+// Rise beside the linked actor, expanding and shrinking over half a sine wave.
 static void Effect_AnimateVerticalPositive(union FieldObject *object) {
   struct FieldActor *self = &object->actor;
   struct FieldActor *anchor;
@@ -21,10 +24,11 @@ static void Effect_AnimateVerticalPositive(union FieldObject *object) {
   self->scaleX = amplitude;
   self->scaleY = amplitude;
   self->x.fixed = anchor->x.fixed;
-  self->y.fixed += 0x10000;
-  self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+  self->y.fixed += PIXELS(1);
+  self->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + PIXELS(8);
 }
 
+// Mirror the rising particle vertically and pass behind the linked actor.
 static void Effect_AnimateVerticalNegative(union FieldObject *object) {
   struct FieldActor *self = &object->actor;
   struct FieldActor *anchor;
@@ -44,6 +48,6 @@ static void Effect_AnimateVerticalNegative(union FieldObject *object) {
   self->scaleX = amplitude;
   self->scaleY = -amplitude;
   self->x.fixed = anchor->x.fixed;
-  self->y.fixed += 0x10000;
-  self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+  self->y.fixed += PIXELS(1);
+  self->z.fixed = anchor->z.fixed - (Q16_ONE - amplitude) * 5 + PIXELS(16);
 }

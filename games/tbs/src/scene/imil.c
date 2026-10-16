@@ -245,7 +245,7 @@ static void Imil_TalkToSickMan(void) {
       Event_ShowMessageAndWait(8, 0, 20);
       Actor_SetActionScript(0, gImil_ActorScriptC);
       Actor_SetSpeed(8, PIXELS(8) / 5, PIXELS(4) / 5);
-      Object_SetActionCallbackAndRefreshById(8, (s32)gImil_ActorScriptB);
+      Actor_RunActionScriptAndWait(8, gImil_ActorScriptB);
       Engine_EventWait(40);
       Engine_ActorJump(8, 2, 0);
       Engine_ActorStartRepeatedMotion(8, 2);
@@ -419,7 +419,7 @@ static void Imil_RunWeaponShop(void) {
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(20);
-      Object_SetActionCallbackAndRefreshById(12, (s32)gImil_TurnScript);
+      Actor_RunActionScriptAndWait(12, gImil_TurnScript);
       Engine_EventSetMessage(MsgMercuryStoreClosedUntilWell);
       Engine_EventShowMessage(12, 0);
       Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
@@ -453,7 +453,7 @@ static void Imil_RunArmorShop(void) {
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(20);
-      Object_SetActionCallbackAndRefreshById(13, (s32)gImil_TurnScript);
+      Actor_RunActionScriptAndWait(13, gImil_TurnScript);
       Engine_EventSetMessage(MsgMercuryTooSickBusiness);
       Engine_EventShowMessage(13, 0);
       Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
@@ -832,7 +832,7 @@ static void Imil_MeetMiaAtSickMansHouse(void) {
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   table = gImil_PrimaryScript2;
   Actor_SetActionScript(GARET, table);
-  Object_SetActionCallbackAndRefreshById(2, (s32)table);
+  Actor_RunActionScriptAndWait(2, table);
   Engine_EventWait(20);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

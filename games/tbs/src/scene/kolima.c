@@ -790,7 +790,7 @@ static void FieldScene_RunExtendedActorSequence(void) {
   if (gKolima_LayoutFlag != 0) {
     Actor_SetActionScript(21, actionsD);
   }
-  Object_SetActionCallbackAndRefreshById(22, (s32)actionsD);
+  Actor_RunActionScriptAndWait(22, actionsD);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
@@ -1143,7 +1143,7 @@ static void FieldScene_RunExtendedActorSequence(void) {
   if (*work != 0) {
     Actor_SetActionScript(21, actionsD);
   }
-  Object_SetActionCallbackAndRefreshById(22, (s32)actionsD);
+  Actor_RunActionScriptAndWait(22, actionsD);
   Engine_EventWait(20);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetSpritePriority(GARET, 2);

@@ -563,7 +563,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderActions);
   Engine_EventWait(10);
   Actor_ShowEmote(22, 0x103, 0);
-  Object_SetActionCallbackAndRefreshById(22, (s32)replyActions);
+  Actor_RunActionScriptAndWait(22, replyActions);
   Object_RefreshSelectorById(0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(22, 2);
@@ -1444,7 +1444,7 @@ UNUSED static void FieldScene_RunCompanionActorSequence(void) {
   Actor_SetActionScript(ACTOR_B, actions);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_TaskWait(20);
-  Object_SetActionCallbackAndRefreshById(ACTOR_C, (s32)actions);
+  Actor_RunActionScriptAndWait(ACTOR_C, actions);
   Actor_ShowEmote(ACTOR_D, 0x100, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_D, 2);
   Actor_FaceDirection(ACTOR_D, 0xd000, 10);

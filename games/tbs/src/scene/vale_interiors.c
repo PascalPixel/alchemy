@@ -620,7 +620,7 @@ static void ValeInteriors_ReuniteWithFamily(void) {
   partyScript = gValePartyDepartureScript;
   Actor_SetActionScript(GARET, partyScript);
   Actor_SetActionScript(2, partyScript);
-  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
+  Actor_RunActionScriptAndWait(3, partyScript);
   Actor_SetActionScript(10, gValeHouseholdPacingScript);
   Actor_WalkToAndWait(11, 837, 376);
   Actor_FaceDirection(11, 0xd000, 20);

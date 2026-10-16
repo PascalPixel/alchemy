@@ -3,6 +3,8 @@
 
 #include "types.h"
 
-void WorldMap_CreateLinkedEffects(void *object);
+struct FieldActor;
+
+void WorldMap_CreateLinkedEffects(struct FieldActor *parent);
 
 #endif

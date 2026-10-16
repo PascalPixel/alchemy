@@ -1457,7 +1457,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_EventWait(10);
   Actor_SetActionScript(28, gTolbiShipDeck_SailorActions);
   Engine_EventWait(10);
-  Object_SetActionCallbackAndRefreshById(29, gTolbiShipDeck_SailorActions);
+  Actor_RunActionScriptAndWait(29, gTolbiShipDeck_SailorActions);
   Engine_EventWait(20);
   Engine_AudioPlayCue(147);
   Engine_EventCloseScreen();
@@ -1567,7 +1567,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ActorStop(29);
   Engine_TaskWait(1);
   Actor_SetSpeed(29, 0x19999, 0xcccc);
-  Object_SetActionCallbackAndRefreshById(29, (s32)sailorActions);
+  Actor_RunActionScriptAndWait(29, sailorActions);
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();

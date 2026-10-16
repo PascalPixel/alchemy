@@ -810,8 +810,7 @@ static void ValeKraden_RunActorSequence(void) {
                                          gKraden_StrangerActions);
         FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 11,
                                          gKraden_StrangerActions);
-        Object_SetActionCallbackAndRefreshById(
-            11, (s32)gKraden_Actor11RockslideActions);
+        Actor_RunActionScriptAndWait(11, gKraden_Actor11RockslideActions);
         Engine_ActorStop(0);
         Engine_ActorStop(1);
         Actor_FaceDirection(0, FACING_SOUTH, 0);

@@ -3244,8 +3244,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
                                        0x10000000);
   Actor_SetActionScript(GARET, gTolbiShipInteriors_ProgressTableA);
   Actor_SetActionScript(2, gTolbiShipInteriors_ProgressTableA);
-  Object_SetActionCallbackAndRefreshById(
-      3, (s32)gTolbiShipInteriors_ProgressTableA);
+  Actor_RunActionScriptAndWait(3, gTolbiShipInteriors_ProgressTableA);
   Engine_EventWait(40);
   GameFlag_Set(0x301);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
@@ -3329,7 +3328,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   action = gTolbiShipInteriors_ActionScriptC;
   Actor_SetActionScript(GARET, action);
   Actor_SetActionScript(IVAN, action);
-  Object_SetActionCallbackAndRefreshById(3, (s32)action);
+  Actor_RunActionScriptAndWait(3, action);
   Camera_SetSpeed(0x9999, 0x1333);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -3521,7 +3520,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   action = gTolbiShipInteriors_ActionScriptD;
   Actor_SetActionScript(GARET, action);
   Actor_SetActionScript(IVAN, action);
-  Object_SetActionCallbackAndRefreshById(3, (s32)action);
+  Actor_RunActionScriptAndWait(3, action);
   GameFlag_Set(0x302);
   gTolbiShipInteriors_CueTimer = 0;
   FieldScheduler_AddCallback(TolbiShipInteriors_UpdateCueTimer, 0xc80);
@@ -3576,7 +3575,7 @@ static void TolbiShipInteriors_ReachIsland(void) {
   struct FieldActor *actor;
   s32 reaction = 0;
   const s32 *progressB;
-  s32 progressC;
+  const s32 *progressC;
   const s32 *progressA;
 
   firstRower = TolbiShipInteriors_FindFirstSetFlag(0, 0);
@@ -3659,7 +3658,7 @@ static void TolbiShipInteriors_ReachIsland(void) {
   TolbiShipInteriors_Say(firstRower);
   Actor_SetSpeed(firstRower, PIXELS(1), PIXELS(1) / 2);
   progressB = gTolbiShipInteriors_ProgressTableB;
-  Object_SetActionCallbackAndRefreshById(firstRower, (s32)progressB);
+  Actor_RunActionScriptAndWait(firstRower, progressB);
   Actor_FaceDirection(secondRower, 0x5000, 0);
   Engine_ActorFaceDirection(thirdRower, FACING_EAST, 0);
   Actor_FaceDirection(fourthRower, FACING_WEST, 40);
@@ -3671,18 +3670,18 @@ static void TolbiShipInteriors_ReachIsland(void) {
   Actor_SetSpeed(fourthRower, PIXELS(1), PIXELS(1) / 2);
   Actor_SetActionScript(thirdRower, progressB);
   Engine_EventWait(40);
-  progressC = (s32)&gTolbiShipInteriors_ProgressTableC;
-  Object_SetActionCallbackAndRefreshById(secondRower, progressC);
+  progressC = gTolbiShipInteriors_ProgressTableC;
+  Actor_RunActionScriptAndWait(secondRower, progressC);
   Actor_SetActionScript(secondRower, progressB);
-  Object_SetActionCallbackAndRefreshById(fourthRower, progressC);
-  Object_SetActionCallbackAndRefreshById(fourthRower, (s32)progressB);
+  Actor_RunActionScriptAndWait(fourthRower, progressC);
+  Actor_RunActionScriptAndWait(fourthRower, progressB);
   Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(2, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(3, PIXELS(1), PIXELS(1) / 2);
   progressA = gTolbiShipInteriors_ProgressTableA;
   Actor_SetActionScript(1, progressA);
   Actor_SetActionScript(2, progressA);
-  Object_SetActionCallbackAndRefreshById(3, (s32)progressA);
+  Actor_RunActionScriptAndWait(3, progressA);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   Engine_GameFlagClear(0x927);
   Engine_GameFlagSet(0x8a0);

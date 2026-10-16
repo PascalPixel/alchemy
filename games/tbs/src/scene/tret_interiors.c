@@ -285,8 +285,7 @@ static void TretInteriors_StartTretBattle(void) {
   }
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gTretInteriors_TableActions0);
   Actor_SetActionScript(GARET, gTretInteriors_TableActions1);
-  Object_SetActionCallbackAndRefreshById(IVAN,
-                                         (s32)gTretInteriors_TableActions2);
+  Actor_RunActionScriptAndWait(IVAN, gTretInteriors_TableActions2);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -492,8 +491,7 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   Event_ShowMessageAndWait(0x8009, 0, 10);
   TretInteriors_PlayGesture(0);
   Event_ShowMessage(0x8009, 0);
-  Object_SetActionCallbackAndRefreshById(TRET_FACE_ACTOR,
-                                         (s32)gTretInteriors_ActionTable1);
+  Actor_RunActionScriptAndWait(TRET_FACE_ACTOR, gTretInteriors_ActionTable1);
   Engine_EventWait(40);
   Actor_ShowEmote(GARET, 0x102, 60);
   Event_ShowMessage(0x8001, 0);
@@ -519,7 +517,7 @@ static void TretInteriors_PlayPostBattleConversation(void) {
   if (hasMia != 0) {
     Actor_SetActionScript(MIA, actions);
   }
-  Object_SetActionCallbackAndRefreshById(IVAN, (s32)actions);
+  Actor_RunActionScriptAndWait(IVAN, actions);
   Engine_EventWait(20);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(0x844);

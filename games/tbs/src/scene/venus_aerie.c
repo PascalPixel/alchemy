@@ -51,31 +51,36 @@
 #include "window.h"
 #include "heap_state.h"
 #include "objcmd.h"
+#include "fixed_math.h"
+#include "fx_scene.h"
+#include "palbuf.h"
+
+enum { ITEM_SHAMANS_ROD = 65, ITEM_VENUS_STAR = 220 };
 
 // Forward declarations.
-static void EV11_TOUCH(void);
-static void Scene_RunScriptedActorPresentation(void);
+static void VenusAerie_EnablePillarGravity(void);
+static void VenusAerie_EnterAndConfrontAntagonists(void);
 static void VenusAerie_ShowPartyMember(s32 actor, s32 shown);
-static void SceneEffect_UpdateObjectByFrameParity(s32 a);
+static void VenusAerie_FlashActorPalette(struct FieldActor *actor);
 static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent);
-static void FieldScene_RunStep6(void);
-static void Scene_RunPairedActorEffectSequence(void);
+static void VenusAerie_UpdateShebaPalette(void);
+static void VenusAerie_CombineSaturosAndMenardi(void);
 static void VenusAerie_FlashScreen(void);
-static void SceneEffect_SpawnParticlesAboveActor(void);
+static void VenusAerie_SpawnUpperOrbitParticles(void);
 static void VenusAerie_UpdateBeamActors(void);
-static void FieldScene_RunThreeStepsInBracket(void);
-static void FieldScene_RunBracketedSceneWithFlag282(void);
+static void VenusAerie_FinishSaturosAndMenardiBattle(void);
+static void VenusAerie_PlayFallWarningExit(void);
 static void VenusAerie_RunLeapEntrance(void);
-static void FieldScene_RunPairDefeat(void);
-static void FieldScene_RunMultiActorPresentation(void);
-static void VenusAerie_RunActorTransition(void);
-static void FieldScene_RestageParty(void);
+static void VenusAerie_ShowSaturosAndMenardiFall(void);
+static void VenusAerie_DiscussSaturosAndMenardiDefeat(void);
+static void VenusAerie_EruptBeacon(void);
+static void VenusAerie_RestorePartyOnBrokenAerie(void);
 static void VenusAerie_TryToPreventFall(void);
-static void Scene_RunExtendedActorTransition(void);
-static void SceneActor_ParkRecord(struct FieldActor *actor);
-static void VenusAerie_RunTransitionStep(void);
-static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
-static void SceneEffect_SpawnParticlesBesideActor(void);
+static void VenusAerie_PlayShebasFall(void);
+static void VenusAerie_StopActorMotion(struct FieldActor *actor);
+static void VenusAerie_UpdateBeaconRise(void);
+static void VenusAerie_AdvanceActorRise(struct FieldActor *actor);
+static void VenusAerie_SpawnSideOrbitParticles(void);
 static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object);
 
 s32 Math_RemainderUnsigned(s32, s32);
@@ -84,32 +89,27 @@ s32 Math_RemainderUnsigned(s32, s32);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-struct PairWork {
-  u8 unk00[70];
-  u16 vramBlock;
-};
-
-static s32
-OverlayObject_StepScaleByCounter(struct ScriptInterpreter *interpreter) {
+// Pulse the actor scale around the countdown, then choose its next pause.
+static s32 VenusAerie_PulseActorScale(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  s16 *counter = (s16 *)&actor->timer;
+  s16 *counter = &actor->timer;
 
   switch (*counter) {
   case 6:
-    actor->scaleX += -0x2000;
-    actor->scaleY += 0x1000;
+    actor->scaleX += -Q16_ONE / 8;
+    actor->scaleY += Q16_ONE / 16;
     break;
   case 4:
-    actor->scaleX += 0x1000;
-    actor->scaleY += -0x800;
+    actor->scaleX += Q16_ONE / 16;
+    actor->scaleY += -Q16_ONE / 32;
     break;
   case 2:
-    actor->scaleX += 0x800;
-    actor->scaleY += -0x400;
+    actor->scaleX += Q16_ONE / 32;
+    actor->scaleY += -Q16_ONE / 64;
     break;
   case 0:
-    actor->scaleX += 0x800;
-    actor->scaleY += -0x400;
+    actor->scaleX += Q16_ONE / 32;
+    actor->scaleY += -Q16_ONE / 64;
     *counter = Math_RemainderUnsigned(Engine_RandomNext(), 80) + 80;
     break;
   }
@@ -121,7 +121,8 @@ OverlayObject_StepScaleByCounter(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-static void Effect_MoveWithDrag(union FieldObject *object) {
+// Move a particle, damp its horizontal velocity and update its scale and spin.
+static void VenusAerie_UpdateDriftingParticle(union FieldObject *object) {
   s32 velocityX = object->effect.velocity.x;
   s32 velocityZ;
 
@@ -136,15 +137,17 @@ static void Effect_MoveWithDrag(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
+// Turn the falling actor sprite until its rotation leaves the negative
+// half-turn.
 static void VenusAerie_StepSpriteRotation(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct AnimationObject *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
-  if (((rotation + 0xffff) << 16) < 0) {
+  if ((s16)(rotation - 1) < 0) {
     {
-      s32 t = rotation - 0xa00;
-      sprite->rotation = t;
+      s32 nextRotation = rotation - 0xa00;
+      sprite->rotation = nextRotation;
     }
   }
 }
@@ -152,15 +155,19 @@ static void VenusAerie_StepSpriteRotation(union FieldObject *fieldObject) {
 // Shared source is included here in ROM order.
 #include "common/object_heading.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
+// Return the aerie arrival positions.
+const struct SceneEntrance *VenusAerie_GetEntrances(void) {
   return gVenusAerieEntrances;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+// The aerie has no separate trigger-region table.
+const struct SceneRegion *VenusAerie_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gVenusAerieExits; }
+// Return the aerie scene destinations.
+const u32 *VenusAerie_GetExits(void) { return gVenusAerieExits; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
+// Return the platforms, antagonists, companions and beacon effects.
+const struct ScenePlacement *VenusAerie_GetPlacements(void) {
   return gVenusAeriePlacements;
 }
 
@@ -168,78 +175,85 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
-static void InitializeActorZeroMotion(void) {
+// Jump the leader to the next clear tile and restore the prior motion flags.
+static void VenusAerie_TryLeaderJump(void) {
   struct FieldActor *actor;
-  s32 position[3];
+  union {
+    struct FieldPosition position;
+    s32 coordinates[3];
+  } destination;
   s32 angle;
   u8 flags;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   angle = (actor->facing + 0x1000) & 0xe000;
   flags = actor->motionFlags;
-  position[0] = (actor->x.fixed & 0xfff00000) + 0x80000;
-  position[1] = actor->y.fixed;
-  position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x200000, angle, position);
-  if (FieldObject_CheckMovementCollision(actor, position) == 0) {
+  destination.coordinates[0] = (actor->x.fixed & 0xfff00000) + PIXELS(8);
+  destination.coordinates[1] = actor->y.fixed;
+  destination.coordinates[2] = (actor->z.fixed & 0xfff00000) + PIXELS(8);
+  Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
+  if (FieldObject_CheckMovementCollision(actor, &destination.position) == 0) {
     Engine_GameFlagClear(592);
-    EV11_TOUCH();
+    VenusAerie_EnablePillarGravity();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Object_SetMode(actor, 7);
-    actor->speed = 0x30000;
-    actor->acceleration = 0x20000;
+    actor->speed = PIXELS(3);
+    actor->acceleration = PIXELS(2);
     Engine_AudioPlayCue(152);
-    actor->velocityY = 0x40000;
+    actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position[0] >> 16,
-                              position[2] >> 16);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
+                              destination.coordinates[0] >> 16,
+                              destination.coordinates[2] >> 16);
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     actor->motionFlags = flags;
   }
 }
 
-static void EV10_TOUCH(void) {
+// Dip the nearest pillar with the leader, then rebound to its original height.
+static void VenusAerie_BouncePillarUnderLeader(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *pillar;
-  s32 id;
-  s32 k;
+  s32 pillarId;
+  s32 reboundStep;
 
   Engine_EventBegin();
-  id = SceneActor_FindNearestSlotOfKindF2();
-  gVenusAerie_NearestActor = id;
-  if (id != 0) {
+  pillarId = SceneActor_FindNearestSlotOfKindF2();
+  gVenusAerie_NearestActor = pillarId;
+  if (pillarId != 0) {
     Engine_GameFlagSet(592);
     pillar = Object_GetById(gVenusAerie_NearestActor);
     pillar->motionFlags = 0;
     leader->motionFlags &= 0xfe;
-    pillar->y.fixed += -0x30000;
-    leader->y.fixed += -0x30000;
-    leader->terrainHeight += -0x30000;
+    pillar->y.fixed += -PIXELS(3);
+    leader->y.fixed += -PIXELS(3);
+    leader->terrainHeight += -PIXELS(3);
     Engine_TaskWait(2);
-    pillar->y.fixed += -0x20000;
-    leader->y.fixed += -0x20000;
-    leader->terrainHeight += -0x20000;
+    pillar->y.fixed += -PIXELS(2);
+    leader->y.fixed += -PIXELS(2);
+    leader->terrainHeight += -PIXELS(2);
     Engine_TaskWait(10);
-    k = 0x20000;
-    pillar->y.fixed += k;
-    leader->y.fixed += k;
-    leader->terrainHeight += k;
+    reboundStep = PIXELS(2);
+    pillar->y.fixed += reboundStep;
+    leader->y.fixed += reboundStep;
+    leader->terrainHeight += reboundStep;
     Engine_TaskWait(4);
-    pillar->y.fixed += k;
-    leader->y.fixed += k;
-    leader->terrainHeight += k;
+    pillar->y.fixed += reboundStep;
+    leader->y.fixed += reboundStep;
+    leader->terrainHeight += reboundStep;
     Engine_TaskWait(4);
-    pillar->y.fixed += 0x10000;
-    leader->y.fixed += 0x10000;
-    leader->terrainHeight += 0x10000;
+    pillar->y.fixed += PIXELS(1);
+    leader->y.fixed += PIXELS(1);
+    leader->terrainHeight += PIXELS(1);
   }
   Engine_EventEnd();
 }
 
-static void EV11_TOUCH(void) {
+// Let the leader and the six outer pillars fall with the terrain.
+static void VenusAerie_EnablePillarGravity(void) {
   s32 flags;
 
   Object_GetById(0)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -252,14 +266,18 @@ static void EV11_TOUCH(void) {
   Object_GetById(17)->motionFlags = flags;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gVenusAerieEvents; }
+// Return the pillar and confrontation triggers.
+const struct SceneEvent *VenusAerie_GetEvents(void) {
+  return gVenusAerieEvents;
+}
 
-s32 Scene_Initialize(void) {
-  s32 v;
-  u32 i;
-  s32 z;
-  s16 mode;
-  struct FieldActor *obj;
+// Restore the platforms and run the scene selected by the arrival.
+s32 VenusAerie_Initialize(void) {
+  s32 mirroredScale;
+  u32 platformId;
+  s32 clear;
+  s16 entrance;
+  struct FieldActor *platform;
 
   Engine_GameFlagSet(324);
   Engine_TaskWait(1);
@@ -268,37 +286,37 @@ s32 Scene_Initialize(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-  v = 0xffff0000;
-  Object_GetById(10)->scaleX = v;
-  Object_GetById(11)->scaleX = v;
-  i = 12;
-  z = 0;
+  mirroredScale = -Q16_ONE;
+  Object_GetById(10)->scaleX = mirroredScale;
+  Object_GetById(11)->scaleX = mirroredScale;
+  platformId = 12;
+  clear = 0;
   do {
-    obj = Object_GetById(i);
-    Engine_ActorSetSpriteFlags(Object_GetById(i), z);
-    Engine_ActorSetSpritePriority(i, 1);
-    obj->motionFlags = 4;
-    obj->priorityFlags |= 2;
-    obj->y.fixed = 0x8000;
-    i++;
-  } while (i <= 17);
+    platform = Object_GetById(platformId);
+    Engine_ActorSetSpriteFlags(Object_GetById(platformId), clear);
+    Engine_ActorSetSpritePriority(platformId, 1);
+    platform->motionFlags = 4;
+    platform->priorityFlags |= 2;
+    platform->y.fixed = PIXELS(1) / 2;
+    platformId++;
+  } while (platformId <= 17);
 
-  mode = gGameState.entrance;
+  entrance = gGameState.entrance;
 
-  switch (mode) {
+  switch (entrance) {
   case 1:
     if (Engine_GameFlagIsSet(0x109) == 0) {
-      Scene_RunScriptedActorPresentation();
+      VenusAerie_EnterAndConfrontAntagonists();
     }
     break;
   case 2:
-    Scene_RunPairedActorEffectSequence();
+    VenusAerie_CombineSaturosAndMenardi();
     break;
   case 3:
-    FieldScene_RunThreeStepsInBracket();
+    VenusAerie_FinishSaturosAndMenardiBattle();
     break;
   case 0x5d:
-    FieldScene_RunBracketedSceneWithFlag282();
+    VenusAerie_PlayFallWarningExit();
     break;
   case 4:
     VenusAerie_RunLeapEntrance();
@@ -306,13 +324,13 @@ s32 Scene_Initialize(void) {
   case 9:
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x345) != 0) {
-      Inventory_AddItem(0, 65);
+      Inventory_AddItem(0, ITEM_SHAMANS_ROD);
     } else if (Engine_GameFlagIsSet(0x346) != 0) {
-      Inventory_AddItem(1, 65);
+      Inventory_AddItem(1, ITEM_SHAMANS_ROD);
     } else if (Engine_GameFlagIsSet(0x347) != 0) {
-      Inventory_AddItem(2, 65);
+      Inventory_AddItem(2, ITEM_SHAMANS_ROD);
     } else {
-      Inventory_AddItem(3, 65);
+      Inventory_AddItem(3, ITEM_SHAMANS_ROD);
     }
     Engine_EventRequestExit(9);
     break;
@@ -322,37 +340,41 @@ s32 Scene_Initialize(void) {
     s32 slot = SceneActor_FindNearestSlotOfKindF2();
 
     if (slot != 0) {
-      struct FieldActor *p = Object_GetById(slot);
-      if (p != 0) {
-        p->motionFlags = 0;
+      struct FieldActor *nearestPillar = Object_GetById(slot);
+      if (nearestPillar != 0) {
+        nearestPillar->motionFlags = 0;
       }
     }
   }
-  return z;
+  return clear;
 }
 
+// Show the selected speaker message, then pause for ten frames.
 static void VenusAerie_ShowMessage(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
+// Turn one actor and wait ten frames.
 static void VenusAerie_FaceActor(s32 actor, s32 facing) {
   Engine_ActorFaceDirection(actor, facing, 10);
 }
 
-static void Scene_RunScriptedActorPresentation(void) {
-  struct FieldActor *companion;
+// Bring the party onto the aerie and reveal the argument over Sheba.
+static void VenusAerie_EnterAndConfrontAntagonists(void) {
+  struct FieldActor *arrivalPlatform;
   struct FieldActor *leader;
 
-  companion = Object_GetById(18);
+  // Bring the leader across on the moving platform, then reveal the party.
+  arrivalPlatform = Object_GetById(18);
   Engine_EventBegin();
   VenusAerie_ShowPartyMember(1, 0);
   VenusAerie_ShowPartyMember(2, 0);
   VenusAerie_ShowPartyMember(3, 0);
   Engine_CameraMoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  companion->motionFlags = 0;
-  companion->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  arrivalPlatform->motionFlags = 0;
+  arrivalPlatform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
   Engine_ActorSetSpritePriority(18, 1);
   Engine_ActorSetPosition(18, PIXELS(580), PIXELS(338));
@@ -364,8 +386,8 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(18, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(18, 580, 221);
   Actor_MoveToAndWait(0, 581, 171);
@@ -386,7 +408,7 @@ static void Scene_RunScriptedActorPresentation(void) {
   leader->facing = FACING_WEST;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_AudioPlayCue(152);
-  leader->velocityY = 0x40000;
+  leader->velocityY = PIXELS(4);
   Engine_AudioPlayCue(152);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
   Engine_ActorMoveToAndWait(0, 504, 148);
@@ -406,7 +428,7 @@ static void Scene_RunScriptedActorPresentation(void) {
   Actor_MoveToAndWait(18, 580, 221);
   Engine_ActorSetDestination(18, 580, 338);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   VenusAerie_ShowPartyMember(1, 1);
   VenusAerie_ShowPartyMember(2, 1);
   VenusAerie_ShowPartyMember(3, 1);
@@ -424,6 +446,7 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_ActorWaitForMove(18);
   Engine_ActorSetPosition(18, 0, 0);
   Engine_AudioPlayCue(0x121);
+  // Reveal Saturos and Menardi arguing with Felix about Sheba.
   Engine_EventSetMessage(MsgVenusLongLastTime);
   VenusAerie_ShowMessage(0x4013);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -431,156 +454,154 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   VenusAerie_FaceActor(MIA, FACING_WEST);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Engine_CameraSetSpeed(0x4cccc, 0x9999);
-  Engine_CameraMoveTo(0x1300000, 0x200000, 0x9e0000, 1);
+  Engine_CameraSetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
+  Engine_CameraMoveTo(PIXELS(304), PIXELS(32), PIXELS(158), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_AudioPlayCue(61);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x4013);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 40);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 40);
   VenusAerie_ShowMessage(0x2014);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x100, 0);
-  Engine_ActorShowEmote(20, 0x100, 20);
-  Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 20);
-  Engine_CameraSetSpeed(0x19999, 0x3333);
-  Camera_MoveTo(0x1260000, -1, 0xc20000, 1);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT, 0);
+  Engine_ActorShowEmote(20, EMOTE_IN_FRONT, 20);
+  Actor_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  Camera_MoveTo(PIXELS(294), -1, PIXELS(194), 1);
   Engine_EventWait(20);
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(21, 272, 200);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_FELIX, 272, 200);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
   VenusAerie_ShowMessage(0x2014);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Engine_ActorSetAnimationAndWait(21, 3);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 40);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 40);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorSetAnimationAndWait(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 60);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 60);
   Engine_EventShowMessageAndWait(19, 0, 40);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x106, 40);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 6, 40);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorFaceDirection(6, FACING_EAST, 0);
-  Actor_ShowEmote(21, 0x103, 40);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP,
-                            40);
-  Engine_ActorRunRepeatedMotion(21, 1);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 0);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTH + FACING_STEP);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x108, 20);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 40);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 8, 20);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x103, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
   Engine_EventShowMessageAndWait(21, 0, 20);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 40);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
   Engine_EventShowMessageAndWait(0x2014, 0, 40);
-  Engine_ActorSetAnimationAndWait(21, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventShowMessageAndWait(21, 0, 20);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP,
-                            20);
-  Engine_ActorStartRepeatedMotion(21, 2);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 0);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x105, 80);
-  Engine_ActorStartRepeatedMotion(21, 2);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 60);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 5, 80);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 60);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorSetAnimationAndWait(21, 3);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(21, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
   Engine_EventShowMessageAndWait(21, 0, 20);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
   Engine_EventShowMessageAndWait(0x2014, 0, 20);
-  VenusAerie_FaceActor(21, FACING_NORTHWEST + FACING_STEP);
-  VenusAerie_ShowMessage(21);
-  VenusAerie_FaceActor(6, FACING_SOUTHEAST + FACING_STEP);
-  Engine_ActorRunRepeatedMotion(6, 2);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  VenusAerie_FaceActor(SHEBA, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Engine_EventWait(20);
-  VenusAerie_FaceActor(21, FACING_NORTH + FACING_STEP);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_NORTH + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorFaceDirection(6, FACING_EAST, 0);
-  Engine_ActorRunRepeatedMotion(21, 1);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorSetAnimationAndWait(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 0);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 80);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 0);
-  Engine_CameraSetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(0x1260000, -1, 0xb40000, 1);
-  Actor_WalkToAndWait(21, 262, 176);
-  Engine_ActorFaceDirection(21, FACING_WEST, 40);
-  Engine_ActorFaceDirection(21, FACING_EAST, 20);
-  Engine_ActorStartRepeatedMotion(21, 2);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 80);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
+  Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  Camera_MoveTo(PIXELS(294), -1, PIXELS(180), 1);
+  Actor_WalkToAndWait(ACTOR_FELIX, 262, 176);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 40);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusAerie_ShowMessage(0x8015);
-  Engine_ActorShowEmote(19, 0x100, 20);
+  Engine_ActorShowEmote(19, EMOTE_IN_FRONT, 20);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorStartRepeatedMotion(21, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   VenusAerie_ShowMessage(0x8015);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 40);
   Event_ShowMessageAndWait(0xa014, 0, 20);
-  Actor_ShowEmote(21, 0x105, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 20);
   VenusAerie_ShowMessage(0x8015);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x101, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 40);
   VenusAerie_ShowMessage(0x8015);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
   VenusAerie_ShowMessage(0xa014);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x103, 60);
-  Engine_ActorFaceDirection(21, FACING_WEST, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 60);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 20);
   Engine_EventShowMessageAndWait(0xa015, 0, 40);
-  Actor_ShowEmote(6, 0x105, 120);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 120);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
   VenusAerie_ShowMessage(0xa014);
-  Engine_ActorFaceDirection(21, FACING_EAST, 40);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 3);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventShowMessageAndWait(0x8015, 0, 20);
   VenusAerie_ShowMessage(0xa014);
-  Engine_ActorShowEmote(21, 0x100, 40);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
+  Engine_ActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT, 40);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(6, 0x105, 40);
-  Engine_ActorShowEmote(20, 0x108, 40);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 40);
+  Engine_ActorShowEmote(20, EMOTE_IN_FRONT | 8, 40);
   VenusAerie_ShowMessage(0xa014);
-  Engine_ActorShowEmote(19, 0x103, 20);
+  Engine_ActorShowEmote(19, EMOTE_IN_FRONT | 3, 20);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventWait(20);
-  Engine_ActorStartRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
   VenusAerie_ShowMessage(0xa014);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_CameraMoveTo(0x1f80000, -0x180000, 0xa80000, 0);
+  Engine_CameraMoveTo(PIXELS(504), -PIXELS(24), PIXELS(168), 0);
   Engine_TaskWait(1);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -589,7 +610,7 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   VenusAerie_ShowMessage(0x8001);
-  Engine_ActorShowEmote(3, 0x101, 40);
+  Engine_ActorShowEmote(3, EMOTE_IN_FRONT | 1, 40);
   VenusAerie_ShowMessage(MIA);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Engine_EventShowMessageAndWait(0x1002, 0, 40);
@@ -612,49 +633,51 @@ static void Scene_RunScriptedActorPresentation(void) {
   Engine_ActorSetAnimationAndWait(MIA, 3);
   Actor_SetActionScript(GARET, gVenusAerie_PairActionScript);
   Actor_SetActionScript(IVAN, gVenusAerie_PairActionScript);
-  Object_SetActionCallbackAndRefreshById(MIA, gVenusAerie_PairActionScript);
+  Actor_RunActionScriptAndWait(MIA, gVenusAerie_PairActionScript);
   Engine_EventWait(20);
   Engine_EventEnd();
 }
 
-static void VenusAerie_ShowPartyMember(s32 actor, s32 shown) {
-  s32 record;
+// Show or hide one companion, setting its movement speed when shown.
+static void VenusAerie_ShowPartyMember(s32 actorId, s32 shown) {
+  struct FieldActor *member;
 
   if (shown != 0) {
-    Actor_SetChildValue(actor, 0);
-    record = Actor_Get(actor);
-    Engine_ActorSetSpriteFlags(record, 1);
-    Actor_SetSpeed(actor, 0xcccc, 0x6666);
+    Actor_SetChildValue(actorId, 0);
+    member = Actor_Get(actorId);
+    Engine_ActorSetSpriteFlags(member, 1);
+    Actor_SetSpeed(actorId, PIXELS(4) / 5, PIXELS(2) / 5);
   } else {
-    Actor_SetChildValue(actor, 15);
-    record = Actor_Get(actor);
-    Engine_ActorSetSpriteFlags(record, 0);
+    Actor_SetChildValue(actorId, 15);
+    member = Actor_Get(actorId);
+    Engine_ActorSetSpriteFlags(member, 0);
   }
 }
 
-static void EV05_TOUCH(void) {
-  s32 owner;
+// Resolve the hostage argument and Shaman's Rod exchange, then start battle.
+static void VenusAerie_ConfrontSaturosAndMenardi(void) {
+  s32 rodOwner;
   struct FieldActor *object;
-  s32 pending;
+  s32 answerAccepted;
   s32 frame;
-  s32 message;
+  s32 receiptMessage;
 
   Engine_EventBegin();
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Camera_SetSpeed(0xcccc, 0x1999);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(332), PIXELS(32), PIXELS(180), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 340, 184);
   VenusAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_WEST);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventSetMessage(MsgVenusIsaac);
   VenusAerie_ShowMessage(0x9015);
   Engine_EventGetViewCenter()->motionFlags = 0;
-  Camera_SetSpeed(0xcccc, 0x1999);
+  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x16666, 0xb333);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(7) / 5, PIXELS(7) / 10);
   object = Object_GetById(ACTOR_PARTY_LEADER);
   if (object != 0) {
     Actor_SetPosition(GARET, object->x.fixed, object->z.fixed);
@@ -675,319 +698,319 @@ static void EV05_TOUCH(void) {
   Engine_ActorFaceDirection(GARET, FACING_WEST, 0);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   VenusAerie_FaceActor(MIA, FACING_WEST);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 0);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x103, 20);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorStartRepeatedMotion(21, 2);
-  Event_ShowMessageAndWait(21, 0, 20);
-  Engine_ActorFaceDirection(21, FACING_NORTH + FACING_STEP, 40);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorSetAnimationAndWait(21, 4);
-  VenusAerie_FaceActor(21, FACING_EAST);
-  Event_ShowMessageAndWait(21, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 40);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_WEST);
   VenusAerie_ShowMessage(0x2014);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   VenusAerie_ShowMessage(MIA);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   VenusAerie_ShowMessage(IVAN);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x106, 40);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 20);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 6, 40);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 20);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  Engine_ActorFaceDirection(21, FACING_WEST, 0);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x102, 40);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 0);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 2, 40);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 20);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Engine_ActorFaceDirection(GARET, FACING_WEST, 0);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_ActorFaceDirection(MIA, FACING_WEST, 0);
-  Engine_ActorFaceDirection(21, FACING_EAST, 20);
-  Actor_ShowEmote(6, 0x101, 40);
-  VenusAerie_ShowMessage(6);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 1, 40);
+  VenusAerie_ShowMessage(SHEBA);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 20);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorRunRepeatedMotion(6, 2);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(6, 3);
-  VenusAerie_ShowMessage(6);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
+  Engine_ActorSetAnimation(SHEBA, 3);
+  VenusAerie_ShowMessage(SHEBA);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   VenusAerie_ShowMessage(0x2014);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(6, 260, 186);
-  Engine_ActorFaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_WalkToAndWait(6, 276, 192);
-  object = Object_GetById(ACTOR_SECOND_OF_PAIR);
+  Actor_SetSpeed(SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(SHEBA, 260, 186);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_WalkToAndWait(SHEBA, 276, 192);
+  object = Object_GetById(ACTOR_MENARDI);
   object->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorJump(6, 2, 20);
-  Actor_SetSpeed(6, 0x26666, 0x13333);
-  Actor_WalkToAndWait(6, 260, 186);
-  Engine_ActorFaceDirection(21, FACING_WEST, 0);
-  Actor_WalkToAndWait(6, 248, 172);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
-  Engine_ActorFaceDirection(21, FACING_WEST, 0);
-  Engine_ActorFaceDirection(6, FACING_EAST, 20);
-  Engine_ActorSetAnimationAndWait(6, 3);
+  Engine_ActorJump(SHEBA, 2, 20);
+  Actor_SetSpeed(SHEBA, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_WalkToAndWait(SHEBA, 260, 186);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 0);
+  Actor_WalkToAndWait(SHEBA, 248, 172);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_WEST, 0);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 20);
+  Engine_ActorSetAnimationAndWait(SHEBA, 3);
   Engine_EventWait(40);
   SceneState_SetValue140Mode0();
   Engine_TaskWait(1);
   frame = 0;
   do {
-    object = Object_GetById(6);
-    SceneEffect_UpdateObjectByFrameParity((s32)object);
+    object = Object_GetById(SHEBA);
+    VenusAerie_FlashActorPalette(object);
     frame = (frame + 1);
     Engine_TaskWait(1);
   } while ((u32)frame <= 39);
-  FieldScheduler_AddCallback(FieldScene_RunStep6, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(VenusAerie_UpdateShebaPalette,
+                             TASK_PRIORITY_SCENE);
   Engine_EventWait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ActorFaceDirection(21, FACING_EAST, 40);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
-  VenusAerie_FaceActor(21, FACING_WEST);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x101, 40);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_WEST);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 1, 40);
   Event_ShowMessageAndWait(0x2014, 0, 20);
-  Actor_ShowEmote(6, 0x105, 80);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 5, 80);
+  Engine_ActorStartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusAerie_ShowMessage(0x2013);
-  Scheduler_RemoveCallback((u32)FieldScene_RunStep6);
+  Scheduler_RemoveCallback(VenusAerie_UpdateShebaPalette);
   Engine_TaskWait(1);
-  Actor_SetChildValue(6, 0);
+  Actor_SetChildValue(SHEBA, 0);
   Engine_TaskWait(10);
   SceneEffect_CleanupSceneObjects();
-  Engine_ActorJump(6, 2, 40);
-  VenusAerie_ShowMessage(6);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
+  Engine_ActorJump(SHEBA, 2, 40);
+  VenusAerie_ShowMessage(SHEBA);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 20);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorRunRepeatedMotion(6, 2);
-  Object_GetById(6)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(6, 250, 176);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
+  Object_GetById(SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(SHEBA, 250, 176);
   Engine_EventWait(1);
-  Object_GetById(6)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_ShowEmote(21, 0x103, 20);
-  Engine_ActorFaceDirection(21, FACING_EAST, 20);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
+  Object_GetById(SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 20);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorRunRepeatedMotion(6, 2);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Engine_EventWait(40);
-  Actor_SetSpeed(6, 0x9999, 0x4ccc);
-  Object_GetById(6)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(6, 248, 172);
+  Actor_SetSpeed(SHEBA, PIXELS(3) / 5, PIXELS(3) / 10);
+  Object_GetById(SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(SHEBA, 248, 172);
   Engine_EventWait(1);
-  Object_GetById(6)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(6, 3);
+  Engine_ActorSetAnimationAndWait(SHEBA, 3);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
   VenusAerie_ShowMessage(0x2013);
-  Engine_ActorSetAnimationAndWait(6, 3);
-  VenusAerie_ShowMessage(6);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x105, 0);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 60);
-  Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 4);
+  Engine_ActorSetAnimationAndWait(SHEBA, 3);
+  VenusAerie_ShowMessage(SHEBA);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
   VenusAerie_ShowMessage(0x2014);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 40);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x105, 100);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 100);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_EventWait(20);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-  Event_OpenMessage(ACTOR_FIRST_OF_PAIR, 0);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
+  Event_OpenMessage(ACTOR_SATUROS, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-    pending = 1;
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+    answerAccepted = 1;
   } else {
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
     gEventWork->message += 1;
-    pending = 0;
+    answerAccepted = 0;
   }
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  if (pending != 0) {
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  if (answerAccepted != 0) {
     gEventWork->message += 1;
   }
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
-  Event_OpenMessage(ACTOR_FIRST_OF_PAIR, 0);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  Event_OpenMessage(ACTOR_SATUROS, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
     Engine_ActorSetAnimation(IVAN, 3);
-    pending = 1;
+    answerAccepted = 1;
   } else {
     Engine_EventWait(20);
     Engine_ActorSetAnimation(IVAN, 4);
     gEventWork->message += 1;
-    pending = 0;
+    answerAccepted = 0;
   }
   VenusAerie_ShowMessage(IVAN);
-  if (pending != 0) {
+  if (answerAccepted != 0) {
     gEventWork->message += 1;
   }
   Engine_ActorRunRepeatedMotion(GARET, 2);
   VenusAerie_FaceActor(GARET, FACING_SOUTH);
   VenusAerie_ShowMessage(GARET);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   VenusAerie_FaceActor(MIA, FACING_WEST);
   Engine_ActorSetAnimationAndWait(GARET, 4);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-  Event_ShowMessageAndWait(ACTOR_FIRST_OF_PAIR, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
   Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(MIA, 3);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 3);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   Engine_EventWait(40);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_WEST);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_WEST);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorRunRepeatedMotion(21, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(21, 0, 40);
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 40);
   VenusAerie_ShowMessage(0x2014);
-  Actor_ShowEmote(21, 0x103, 60);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_WEST);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 60);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_WEST);
+  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x105, 60);
-  Engine_ActorSetAnimationAndWait(21, 3);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
   Engine_EventWait(20);
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(21, 288, 192);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 0);
-  Actor_WalkToAndWait(21, 310, 192);
-  Actor_WalkToAndWait(21, 328, 186);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_FELIX, 288, 192);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 310, 192);
+  Actor_WalkToAndWait(ACTOR_FELIX, 328, 186);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(21, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
 
-  message = MsgVenusIsaacHandedOverShamansRod;
-  Engine_MessageShowCentered(message, 1);
-  Actor_WalkToAndWait(21, 310, 192);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_WEST, 0);
-  Actor_WalkToAndWait(21, 288, 192);
-  Actor_WalkToAndWait(21, 262, 176);
-  Engine_ActorFaceDirection(21, FACING_EAST, 40);
-  Engine_EventSetMessage((message + 1));
-  VenusAerie_ShowMessage(21);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
+  // Complete the Shaman's Rod exchange before the confrontation resumes.
+  receiptMessage = MsgVenusIsaacHandedOverShamansRod;
+  Engine_MessageShowCentered(receiptMessage, 1);
+  Actor_WalkToAndWait(ACTOR_FELIX, 310, 192);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 288, 192);
+  Actor_WalkToAndWait(ACTOR_FELIX, 262, 176);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 40);
+  Engine_EventSetMessage((receiptMessage + 1));
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
   VenusAerie_ShowMessage(0x2014);
-  Engine_ActorSetAnimationAndWait(21, 3);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-  VenusAerie_FaceActor(21, FACING_WEST);
-  Engine_ActorSetAnimationAndWait(21, 3);
-  Engine_ActorSetAnimationAndWait(6, 3);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(6, 260, 186);
-  Engine_ActorFaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_WalkToAndWait(6, 276, 192);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_WEST);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  Engine_ActorSetAnimationAndWait(SHEBA, 3);
+  Actor_SetSpeed(SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(SHEBA, 260, 186);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_WalkToAndWait(SHEBA, 276, 192);
   Event_PlayCue(19);
-  object = Object_GetById(ACTOR_SECOND_OF_PAIR);
+  object = Object_GetById(ACTOR_MENARDI);
   object->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Engine_ActorRunRepeatedMotion(6, 2);
-  Engine_ActorFaceDirection(21, FACING_EAST, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorJump(MIA, 2, 20);
   VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
   VenusAerie_ShowMessage(MIA);
-  Engine_ActorFaceDirection(21, FACING_EAST, 0);
-  Engine_ActorFaceDirection(6, FACING_EAST, 0);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 80);
-  Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 0);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_EAST, 40);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 0);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 80);
+  Engine_ActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
   Event_PlayCue(29);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorFaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_NORTHWEST + FACING_STEP, 20);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   VenusAerie_ShowMessage(IVAN);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Engine_ActorFaceDirection(21, FACING_EAST, 0);
-  VenusAerie_FaceActor(6, FACING_NORTH + FACING_STEP);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Engine_ActorFaceDirection(ACTOR_FELIX, FACING_EAST, 0);
+  VenusAerie_FaceActor(SHEBA, FACING_NORTH + FACING_STEP);
   Engine_ActorSetAnimation(MIA, 3);
   VenusAerie_ShowMessage(MIA);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x100, 20);
-  Engine_ActorFaceDirection(ACTOR_FIRST_OF_PAIR, FACING_SOUTHEAST + FACING_STEP,
-                            20);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Actor_ShowEmote(6, 0x102, 0);
-  Actor_ShowEmote(21, 0x102, 60);
-  Engine_ActorFaceDirection(6, FACING_EAST, 0);
-  VenusAerie_FaceActor(21, FACING_EAST);
-  Actor_ShowEmote(GARET, 0x103, 40);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT, 20);
+  Engine_ActorFaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 2, 60);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(GARET);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 4);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-  Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 4);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorFaceDirection(6, FACING_NORTH + FACING_STEP, 0);
-  Actor_ShowEmote(6, 0x101, 0);
-  Actor_ShowEmote(MIA, 0x101, 60);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Engine_ActorFaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 0);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 4);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Actor_SetAttachedEffect(IVAN, 0x102);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
   Event_ShowMessageAndWait(IVAN, 0, 20);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-  Engine_ActorSetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
@@ -1000,36 +1023,37 @@ static void EV05_TOUCH(void) {
   VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
   VenusAerie_ShowMessage(MIA);
   Engine_ActorFaceDirection(GARET, FACING_WEST, 20);
-  Actor_ShowEmote(GARET, 0x103, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(GARET);
-  Engine_ActorFaceDirection(6, FACING_EAST, 0);
+  Engine_ActorFaceDirection(SHEBA, FACING_EAST, 0);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 40);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 40);
-  Engine_ActorStartRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  owner = PartyInventory_FindOwner(65);
-  GameFlag_Set(owner + 0x345);
-  PartyInventory_Remove(65);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 3, 40);
+  Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 2);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  // Save the rod owner for the defeat return path, then enter battle.
+  rodOwner = PartyInventory_FindOwner(ITEM_SHAMANS_ROD);
+  GameFlag_Set(rodOwner + 0x345);
+  PartyInventory_Remove(ITEM_SHAMANS_ROD);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(ACTOR_SECOND_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(ACTOR_FIRST_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(21)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(6)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_MENARDI)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_SATUROS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gSceneAction_EntryGroup);
   Actor_SetActionScript(GARET, gSceneAction_EntryGroup);
   Actor_SetActionScript(IVAN, gSceneAction_EntryGroup);
   Actor_SetActionScript(MIA, gSceneAction_EntryGroup);
-  Actor_SetActionScript(ACTOR_SECOND_OF_PAIR, gSceneAction_EntryPair);
-  Actor_SetActionScript(ACTOR_FIRST_OF_PAIR, gSceneAction_EntryPair);
-  Actor_SetActionScript(21, gSceneAction_EntryGroup);
-  Object_SetActionCallbackAndRefreshById(6, gSceneAction_EntryGroup);
+  Actor_SetActionScript(ACTOR_MENARDI, gSceneAction_EntryPair);
+  Actor_SetActionScript(ACTOR_SATUROS, gSceneAction_EntryPair);
+  Actor_SetActionScript(ACTOR_FELIX, gSceneAction_EntryGroup);
+  Actor_RunActionScriptAndWait(SHEBA, gSceneAction_EntryGroup);
   Battle_SetStart(3);
   {
     s32 actor = (s32)&SceneId_VenusAerie;
@@ -1041,42 +1065,45 @@ static void EV05_TOUCH(void) {
   GameFlag_Set(0x350);
 }
 
-static void SceneEffect_UpdateObjectByFrameParity(s32 a) {
+// Flash an actor palette and emit paired effects every fifteenth frame.
+static void VenusAerie_FlashActorPalette(struct FieldActor *actor) {
   if (*(s32 *)&gFrameCount & 2) {
-    Engine_ObjectSetPartPalettes(a, 7);
+    Engine_ObjectSetPartPalettes(actor, 7);
   } else {
-    Engine_ObjectSetPartPalettes(a, 0);
+    Engine_ObjectSetPartPalettes(actor, 0);
   }
   if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
-    VenusAerie_SpawnLinkedPairEffects(a);
+    VenusAerie_SpawnLinkedPairEffects(actor);
   }
 }
 
-static void SceneState_ForwardByRuntimeWordBits(s32 a) {
+// Cycle the actor palette and emit paired effects every fifteenth frame.
+static void VenusAerie_CycleActorPalette(struct FieldActor *actor) {
   if (gFrameCount & 1) {
-    Engine_ObjectSetPartPalettes(a,
+    Engine_ObjectSetPartPalettes(actor,
                                  Math_RemainderUnsigned(gFrameCount >> 1, 6));
   }
   if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
-    VenusAerie_SpawnLinkedPairEffects(a);
+    VenusAerie_SpawnLinkedPairEffects(actor);
   }
 }
 
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
+// Spawn two vertical effects using the parent position and shared cached tiles.
 static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct PairWork *work = gEffectWork;
-  s32 i;
+  struct BattleFxScene *sceneWork = gEffectWork;
+  s32 effectIndex;
 
   Engine_AudioPlayCue(131);
-  for (i = 0; i < 2; ++i) {
+  for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
     child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
                                 parent->z.fixed);
-    pair[i] = child;
+    pair[effectIndex] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
       sprite = child->sprite;
@@ -1087,7 +1114,7 @@ static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->vramBlock;
+        sprite->slot = sceneWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
@@ -1118,10 +1145,12 @@ static void VenusAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-static void FieldScene_RunStep6(void) {
-  SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
+// Advance Sheba's palette cycle.
+static void VenusAerie_UpdateShebaPalette(void) {
+  VenusAerie_CycleActorPalette(Object_GetById(SHEBA));
 }
 
+// Build the horizontal velocity for an elliptical radial particle burst.
 static inline void VenusAerie_AimBurst(s32 velocity[3], s32 angle) {
   s32 sine;
   s32 cosine;
@@ -1136,18 +1165,30 @@ static inline void VenusAerie_AimBurst(s32 velocity[3], s32 angle) {
   velocity[0] = cosine;
 }
 
-static void Scene_RunPairedActorEffectSequence(void) {
-  struct EffectOptions secondBurst;
+// Give Felix, Sheba and the party the same reaction, then wait after Mia.
+static inline void VenusAerie_ShowGroupEmote(s32 emote, s32 waitFrames) {
+  Actor_ShowEmote(ACTOR_FELIX, emote, 0);
+  Actor_ShowEmote(SHEBA, emote, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, emote, 0);
+  Actor_ShowEmote(GARET, emote, 0);
+  Actor_ShowEmote(IVAN, emote, 0);
+  Actor_ShowEmote(MIA, emote, waitFrames);
+}
+
+// Show the Venus Star lighting the beacon and the antagonists combining.
+static void VenusAerie_CombineSaturosAndMenardi(void) {
+  struct EffectOptions menardiBurst;
   s32 velocity[3];
-  struct EffectOptions firstBurst;
+  struct EffectOptions saturosBurst;
   struct FieldActor *actor;
-  struct FieldActor *second;
-  struct FieldActor *first;
+  struct FieldActor *menardi;
+  struct FieldActor *saturos;
   union FieldObject *star = NULL;
-  struct FieldActor *bird;
+  struct FieldActor *starCarrier;
   struct AnimationObject *sprite;
-  u8 *buffer;
-  u32 i;
+  u8 *iconPixels;
+  // Reuse the dialogue answer word for the later radial burst directions.
+  u32 sceneStep;
 
   Event_Begin();
   Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
@@ -1157,24 +1198,24 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_SetPosition(IVAN, PIXELS(340), PIXELS(196));
   Actor_Get(MIA)->facing = FACING_WEST;
   Actor_SetPosition(MIA, PIXELS(326), PIXELS(204));
-  Actor_Get(6)->facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPosition(6, PIXELS(268), PIXELS(154));
-  Actor_Get(21)->facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPosition(21, PIXELS(268), PIXELS(164));
-  actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
+  Actor_Get(SHEBA)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_SetPosition(SHEBA, PIXELS(268), PIXELS(154));
+  Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_SetPosition(ACTOR_FELIX, PIXELS(268), PIXELS(164));
+  actor = Actor_Get(ACTOR_SATUROS);
   actor->timer = 10;
   actor->facing = FACING_NORTH + FACING_STEP;
-  Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(294), PIXELS(212));
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 9);
-  Actor_SetActionScript(ACTOR_FIRST_OF_PAIR, gVenusAerie_ScaleStepAction);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 0);
-  actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
+  Actor_SetPosition(ACTOR_SATUROS, PIXELS(294), PIXELS(212));
+  Actor_SetAnimation(ACTOR_SATUROS, 9);
+  Actor_SetActionScript(ACTOR_SATUROS, gVenusAerie_ScaleStepAction);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
+  actor = Actor_Get(ACTOR_MENARDI);
   actor->timer = 10;
   actor->facing = FACING_EAST;
-  Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(286), PIXELS(192));
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 7);
-  Actor_SetActionScript(ACTOR_SECOND_OF_PAIR, gVenusAerie_ScaleStepAction);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 0);
+  Actor_SetPosition(ACTOR_MENARDI, PIXELS(286), PIXELS(192));
+  Actor_SetAnimation(ACTOR_MENARDI, 7);
+  Actor_SetActionScript(ACTOR_MENARDI, gVenusAerie_ScaleStepAction);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
   Event_GetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
   Task_Wait(1);
@@ -1192,107 +1233,108 @@ static void Scene_RunPairedActorEffectSequence(void) {
   VenusAerie_ShowMessage(MIA);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   VenusAerie_FaceActor(IVAN, FACING_NORTHWEST);
-  Actor_RunRepeatedMotion(21, 2);
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_Get(21)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(21, 0x118, 164);
+  Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_FELIX, 280, 164);
   Event_Wait(1);
-  Actor_Get(21)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  Actor_ShowEmote(IVAN, 0x102, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 40);
   VenusAerie_ShowMessage(IVAN);
-  Actor_SetAnimationAndWait(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(GARET, 0x103, 20);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
   Actor_RunRepeatedMotion(GARET, 1);
   VenusAerie_ShowMessage(GARET);
-  Actor_RunRepeatedMotion(21, 1);
-  VenusAerie_FaceActor(21, FACING_EAST);
-  VenusAerie_ShowMessage(21);
+  Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
   Actor_StartRepeatedMotion(MIA, 2);
   VenusAerie_ShowMessage(MIA);
   Actor_SetAnimation(MIA, 4);
   VenusAerie_ShowMessage(MIA);
-  Actor_ShowEmote(21, 0x105, 40);
-  VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
-  VenusAerie_ShowMessage(21);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 5, 40);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
   Actor_Jump(IVAN, 2, 20);
   VenusAerie_ShowMessage(IVAN);
-  Actor_SetAnimationAndWait(21, 3);
-  VenusAerie_ShowMessage(21);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
   Actor_RunRepeatedMotion(GARET, 1);
   VenusAerie_FaceActor(GARET, FACING_SOUTHEAST);
   Event_OpenMessage(GARET, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Event_ChooseYesNo(0, 0) == 0) {
-    i = TRUE;
+    sceneStep = TRUE;
   } else {
     gEventWork->message++;
-    i = FALSE;
+    sceneStep = FALSE;
   }
   Task_Wait(20);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
-  VenusAerie_FaceActor(21, FACING_EAST);
-  Event_ShowMessage(21, 0);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
+  Event_ShowMessage(ACTOR_FELIX, 0);
   Event_PlayCue(17);
   Event_Wait(40);
-  if (i) {
+  if (sceneStep) {
     gEventWork->message++;
   }
 
-  Actor_Stop(ACTOR_FIRST_OF_PAIR);
-  Actor_Stop(ACTOR_SECOND_OF_PAIR);
+  // The defeated antagonists recover before using the Venus Star.
+  Actor_Stop(ACTOR_SATUROS);
+  Actor_Stop(ACTOR_MENARDI);
   Task_Wait(1);
-  actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
-  actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor = Actor_Get(ACTOR_SATUROS);
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
+  actor = Actor_Get(ACTOR_MENARDI);
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   Task_Wait(1);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 40);
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_OF_PAIR), 1);
+  Actor_SetAnimation(ACTOR_SATUROS, 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 1);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_FIRST_OF_PAIR, 0x3333, 0x1999);
-  Actor_WalkToAndWait(ACTOR_FIRST_OF_PAIR, 0x12c, 206);
+  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_WalkToAndWait(ACTOR_SATUROS, 300, 206);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
+  Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
   Event_Wait(20);
-  Actor_Get(ACTOR_FIRST_OF_PAIR)->scaleX = -0x10000;
+  Actor_Get(ACTOR_SATUROS)->scaleX = -Q16_ONE;
   Event_PlayCue(161);
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 8);
+  Actor_SetAnimation(ACTOR_SATUROS, 8);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_OF_PAIR), 1);
-  Actor_Jump(ACTOR_SECOND_OF_PAIR, 4, 40);
-  Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x3333, 0x1999);
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_SECOND_OF_PAIR, 0x128, 186);
-  Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x1999, 0xccc);
-  Actor_WalkToAndWait(ACTOR_SECOND_OF_PAIR, 0x124, 186);
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->scaleX = -0x10000;
+  Actor_SetAnimation(ACTOR_MENARDI, 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 1);
+  Actor_Jump(ACTOR_MENARDI, 4, 40);
+  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_Get(ACTOR_MENARDI)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_MENARDI, 296, 186);
+  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 10, PIXELS(1) / 20);
+  Actor_WalkToAndWait(ACTOR_MENARDI, 292, 186);
+  Actor_Get(ACTOR_MENARDI)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_MENARDI)->scaleX = -Q16_ONE;
   Event_PlayCue(161);
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 5);
+  Actor_SetAnimation(ACTOR_MENARDI, 5);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Event_Wait(80);
   Actor_SetAnimationAndWait(MIA, 4);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(40);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
@@ -1302,20 +1344,20 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
 
-  actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
+  actor = Actor_Get(ACTOR_SATUROS);
   actor->facing = FACING_SOUTHEAST + FACING_STEP;
-  actor->scaleX = 0x10000;
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 1);
+  actor->scaleX = Q16_ONE;
+  Actor_SetAnimation(ACTOR_SATUROS, 1);
   Event_Wait(10);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
-  Actor_Jump(ACTOR_FIRST_OF_PAIR, 6, 0);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  Actor_Jump(ACTOR_SATUROS, 6, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_EAST, 0);
   star = (union FieldObject *)Object_Create(
       22, actor->x.fixed, actor->y.fixed + PIXELS(8), actor->z.fixed);
   if (star != NULL) {
@@ -1327,33 +1369,34 @@ static void Scene_RunPairedActorEffectSequence(void) {
     star->actor.priorityFlags &= ~1;
     star->actor.motionFlags = 0;
     star->actor.unk5c = 1;
-    star->actor.speed = 0x19999;
+    star->actor.speed = PIXELS(8) / 5;
     star->actor.acceleration = 0xcccc;
-    buffer = Heap_Allocate(17, 0x608);
-    Item_LoadIcon(220);
-    Vram_Load(sprite->slot, 128, buffer + 0x400);
+    iconPixels = Heap_Allocate(17, 0x608);
+    // Display the Venus Star icon before sending it toward the beacon.
+    Item_LoadIcon(ITEM_VENUS_STAR);
+    Vram_Load(sprite->slot, 128, iconPixels + 0x400);
     Heap_Release(17);
   }
   Actor_SetSpritePriority(22, 1);
-  bird = Actor_Get(22);
-  bird->x.fixed = actor->x.fixed;
-  bird->y.fixed = PIXELS(32);
-  bird->z.fixed = actor->z.fixed;
-  bird->motionFlags = 3;
-  bird->speed = 0x19999;
-  bird->acceleration = 0xcccc;
-  bird->scaleX = 0xc000;
-  bird->scaleY = 0xc000;
+  starCarrier = Actor_Get(22);
+  starCarrier->x.fixed = actor->x.fixed;
+  starCarrier->y.fixed = PIXELS(32);
+  starCarrier->z.fixed = actor->z.fixed;
+  starCarrier->motionFlags = 3;
+  starCarrier->speed = PIXELS(8) / 5;
+  starCarrier->acceleration = PIXELS(4) / 5;
+  starCarrier->scaleX = 3 * Q16_ONE / 4;
+  starCarrier->scaleY = 3 * Q16_ONE / 4;
   if (star != NULL) {
     star->actor.motionFlags = 3;
-    star->effect.velocity.y = 0x9999;
-    star->effect.velocity.x = 0xcccc;
+    star->effect.velocity.y = PIXELS(3) / 5;
+    star->effect.velocity.x = PIXELS(4) / 5;
     star->actor.velocityY = PIXELS(8);
     FieldObject_SetPosition(&star->actor, PIXELS(308), PIXELS(32), PIXELS(164));
   }
-  Actor_MoveToAndWait(22, 0x134, 164);
+  Actor_MoveToAndWait(22, 308, 164);
   Actor_SetPosition(22, 0, 0);
-  Actor_SetSpritePriority(21, 0);
+  Actor_SetSpritePriority(ACTOR_FELIX, 0);
   if (star != NULL) {
     Event_PlayCue(0x135);
     Actor_SetSpriteFlags(&star->actor, 0);
@@ -1373,50 +1416,41 @@ static void Scene_RunPairedActorEffectSequence(void) {
     star->actor.x.fixed = 0;
     star->actor.y.fixed = 0;
     star->actor.z.fixed = 0;
-    SceneActor_ParkRecord(&star->actor);
+    VenusAerie_StopActorMotion(&star->actor);
   }
-  Actor_ShowEmote(21, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(IVAN, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 30);
-  Actor_SetSpritePriority(21, 1);
-  Actor_Get(21)->priorityFlags |= 1;
+  // Let the group react as the Venus Star reaches the beacon.
+  VenusAerie_ShowGroupEmote(EMOTE_IN_FRONT, 30);
+  Actor_SetSpritePriority(ACTOR_FELIX, 1);
+  Actor_Get(ACTOR_FELIX)->priorityFlags |= 1;
   Actor_StartRepeatedMotion(IVAN, 2);
   VenusAerie_ShowMessage(IVAN);
   Actor_RunRepeatedMotion(MIA, 1);
   Event_ShowMessageAndWait(MIA, 0, 40);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
+  Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Event_Wait(20);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 0);
-  VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(21, 0x101, 0);
-  Actor_ShowEmote(6, 0x101, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-  Actor_ShowEmote(GARET, 0x101, 0);
-  Actor_ShowEmote(IVAN, 0x101, 0);
-  Actor_ShowEmote(MIA, 0x101, 60);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  Actor_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  VenusAerie_ShowGroupEmote(EMOTE_IN_FRONT | 1, 60);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 40);
   Event_OpenMessage(GARET, 0);
   if (Event_ChooseYesNo(0, 0) == 0) {
     Actor_SetAnimation(GARET, ANIM_NOD);
-    i = TRUE;
+    sceneStep = TRUE;
   } else {
     gEventWork->message++;
     Actor_SetAnimation(GARET, ANIM_SHAKE_HEAD);
-    i = FALSE;
+    sceneStep = FALSE;
   }
   VenusAerie_ShowMessage(GARET);
-  if (i) {
+  if (sceneStep) {
     gEventWork->message++;
   }
   Event_Wait(20);
@@ -1424,8 +1458,8 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_SetSpriteFlags(Actor_Get(24), 0);
   Actor_SetChildValue(24, 7);
   actor = Actor_Get(24);
-  actor->scaleY = -0x10000;
-  actor->scaleX = 0x1999;
+  actor->scaleY = -Q16_ONE;
+  actor->scaleX = Q16_ONE / 10;
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(64);
   actor->x.fixed = PIXELS(304);
@@ -1433,85 +1467,80 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_SetSpriteFlags(Actor_Get(25), 0);
   Actor_SetChildValue(25, 7);
   actor = Actor_Get(25);
-  actor->scaleY = -0x10000;
-  actor->scaleX = 0x1999;
+  actor->scaleY = -Q16_ONE;
+  actor->scaleX = Q16_ONE / 10;
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(96);
   actor->x.fixed = PIXELS(304);
   actor->z.fixed = PIXELS(158);
-  Actor_ShowEmote(21, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(IVAN, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 0);
+  VenusAerie_ShowGroupEmote(EMOTE_IN_FRONT, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_EAST, 0);
   Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
   Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Event_PlayCue(145);
-  Map_SetShake(0x60000, 0x60000, 0x10000);
+  Map_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(16);
   Task_Wait(20);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   ColorBuffer_Interpolate(24);
   Task_Wait(60);
-  Task_AddCallback(SceneEffect_SpawnParticlesAboveActor, TASK_PRIORITY_SCENE);
+  Task_AddCallback(VenusAerie_SpawnUpperOrbitParticles, TASK_PRIORITY_SCENE);
   Event_PlayCue(141);
-  Map_SetShake(0x40000, 0x40000, 0x10000);
+  Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(120);
   Actor_SetActionScript(24, gVenusAerie_BeamNarrowAction);
   Actor_SetActionScript(25, gVenusAerie_BeamNarrowAction);
   Task_Wait(120);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   ColorBuffer_ApplyTarget(0x203210, 0);
   ColorBuffer_Interpolate(120);
   Task_Wait(120);
   Event_PlayCue(63);
-  Map_SetShake(0x20000, 0x20000, 0x10000);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_Interpolate(120);
   Task_Wait(120);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
 
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 1);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 0);
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->scaleX = 0x10000;
-  Actor_Jump(ACTOR_SECOND_OF_PAIR, 4, 40);
-  Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
-  Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 20);
+  Actor_SetAnimation(ACTOR_MENARDI, 1);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
+  Actor_Get(ACTOR_MENARDI)->scaleX = Q16_ONE;
+  Actor_Jump(ACTOR_MENARDI, 4, 40);
+  Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
-  Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_RunRepeatedMotion(MIA, 1);
   VenusAerie_FaceActor(MIA, FACING_WEST);
   VenusAerie_ShowMessage(MIA);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_EAST);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 4);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x103, 20);
-  Actor_StartRepeatedMotion(ACTOR_SECOND_OF_PAIR, 2);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
-  Actor_ShowEmote(GARET, 0x100, 20);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 20);
+  Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
   VenusAerie_FaceActor(GARET, FACING_SOUTHWEST);
   VenusAerie_ShowMessage(GARET);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-  Event_ShowMessageAndWait(ACTOR_FIRST_OF_PAIR, 0, 20);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Actor_RunRepeatedMotion(GARET, 1);
   VenusAerie_ShowMessage(GARET);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusAerie_ShowMessage(0x2013);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(GARET, 1);
@@ -1521,144 +1550,146 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   VenusAerie_FaceActor(MIA, FACING_NORTHWEST);
-  Actor_ShowEmote(21, 0x101, 80);
-  VenusAerie_ShowMessage(21);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 80);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 1);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
   VenusAerie_ShowMessage(0x2014);
-  Actor_SetAnimationAndWait(21, 3);
-  Actor_FaceDirection(21, FACING_NORTHWEST + FACING_STEP, 60);
-  Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 1);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusAerie_ShowMessage(0x2013);
-  Actor_FaceDirection(21, FACING_EAST, 40);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP, 40);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 40);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 40);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
   VenusAerie_ShowMessage(0x2014);
-  Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_FaceDirection(21, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_SetAnimationAndWait(21, 3);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_ShowEmote(ACTOR_SECOND_OF_PAIR, 0x101, 40);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 40);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 1, 40);
   VenusAerie_ShowMessage(0x2013);
-  VenusAerie_FaceActor(21, FACING_SOUTHEAST + FACING_STEP);
-  Actor_ShowEmote(21, 0x101, 20);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(ACTOR_FIRST_OF_PAIR, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 4);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 1, 20);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_SetAnimation(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x103, 80);
-  VenusAerie_ShowMessage(21);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_OF_PAIR, 3);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 80);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x103, 20);
-  Actor_StartRepeatedMotion(21, 2);
-  VenusAerie_ShowMessage(21);
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 4);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 20);
+  Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_SetAnimation(ACTOR_MENARDI, 4);
   VenusAerie_ShowMessage(0x2013);
-  Actor_ShowEmote(21, 0x102, 60);
-  Actor_RunRepeatedMotion(21, 1);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x108, 40);
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 4);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 2, 60);
+  Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 8, 40);
+  Actor_SetAnimation(ACTOR_SATUROS, 4);
   Event_ShowMessageAndWait(0x2014, 0, 40);
-  Actor_RunRepeatedMotion(21, 1);
+  Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(IVAN, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 0);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Actor_FaceDirection(ACTOR_SECOND_OF_PAIR, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 3);
-  Actor_SetAnimationAndWait(ACTOR_FIRST_OF_PAIR, 3);
-  Actor_FaceDirection(21, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_SetAnimation(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP, 20);
   VenusAerie_ShowMessage(0xa015);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(21, 0x10000, 0x8000);
-  Actor_SetActionScript(21, gVenusAerie_WalkOutAction);
+  Actor_SetSpeed(SHEBA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetActionScript(ACTOR_FELIX, gVenusAerie_WalkOutAction);
   Event_Wait(20);
-  Actor_SetActionScript(6, gVenusAerie_WalkOutAction);
+  Actor_SetActionScript(SHEBA, gVenusAerie_WalkOutAction);
   VenusAerie_FaceActor(GARET, FACING_SOUTHWEST);
   Actor_StartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(GARET);
   Event_PlayCue(17);
+  // Flash the antagonists and release their matching radial bursts.
   ColorBuffer_ApplyTarget(0x40250d, 1);
   ColorBuffer_Interpolate(40);
-  VenusAerie_FaceActor(ACTOR_FIRST_OF_PAIR, FACING_NORTH + FACING_STEP);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  VenusAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   VenusAerie_FlashScreen();
-  Actor_SetChildValue(ACTOR_FIRST_OF_PAIR, 7);
-  Actor_SetChildValue(ACTOR_SECOND_OF_PAIR, 7);
+  Actor_SetChildValue(ACTOR_SATUROS, 7);
+  Actor_SetChildValue(ACTOR_MENARDI, 7);
   Event_Wait(20);
-  Actor_SetChildValue(ACTOR_FIRST_OF_PAIR, 0x100);
-  Actor_SetChildValue(ACTOR_SECOND_OF_PAIR, 0x100);
+  Actor_SetChildValue(ACTOR_SATUROS, 0x100);
+  Actor_SetChildValue(ACTOR_MENARDI, 0x100);
   Event_Wait(20);
   VenusAerie_FlashScreen();
   Actor_Jump(MIA, 2, 20);
   VenusAerie_ShowMessage(MIA);
-  VenusAerie_FaceActor(ACTOR_SECOND_OF_PAIR, FACING_EAST);
-  VenusAerie_ShowMessage(ACTOR_SECOND_OF_PAIR);
+  VenusAerie_FaceActor(ACTOR_MENARDI, FACING_EAST);
+  VenusAerie_ShowMessage(ACTOR_MENARDI);
   VenusAerie_FlashScreen();
 
-  second = Actor_Get(ACTOR_SECOND_OF_PAIR);
-  secondBurst.palette = 7;
-  secondBurst.update = Effect_MoveWithDrag;
-  secondBurst.startScaleX = 0x10000;
-  secondBurst.startScaleY = 0x10000;
-  for (i = 0; i <= 16; i++) {
-    VenusAerie_AimBurst(velocity, i << 12);
-    Effect_Spawn(second->x.fixed, second->y.fixed, second->z.fixed, velocity[0],
-                 velocity[1], velocity[2],
+  menardi = Actor_Get(ACTOR_MENARDI);
+  menardiBurst.palette = 7;
+  menardiBurst.update = VenusAerie_UpdateDriftingParticle;
+  menardiBurst.startScaleX = Q16_ONE;
+  menardiBurst.startScaleY = Q16_ONE;
+  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
+    VenusAerie_AimBurst(velocity, sceneStep << 12);
+    Effect_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
+                 velocity[0], velocity[1], velocity[2],
                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                      EFFECT_USE_PALETTE,
-                 &secondBurst);
+                 &menardiBurst);
   }
   Event_PlayCue(212);
   Task_Wait(6);
   VenusAerie_FlashScreen();
-  first = Actor_Get(ACTOR_FIRST_OF_PAIR);
-  firstBurst.palette = 7;
-  firstBurst.update = Effect_MoveWithDrag;
-  firstBurst.startScaleX = 0x10000;
-  firstBurst.startScaleY = 0x10000;
-  for (i = 0; i <= 16; i++) {
-    VenusAerie_AimBurst(velocity, i << 12);
-    Effect_Spawn(first->x.fixed, first->y.fixed, first->z.fixed, velocity[0],
-                 velocity[1], velocity[2],
+  saturos = Actor_Get(ACTOR_SATUROS);
+  saturosBurst.palette = 7;
+  saturosBurst.update = VenusAerie_UpdateDriftingParticle;
+  saturosBurst.startScaleX = Q16_ONE;
+  saturosBurst.startScaleY = Q16_ONE;
+  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
+    VenusAerie_AimBurst(velocity, sceneStep << 12);
+    Effect_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
+                 velocity[0], velocity[1], velocity[2],
                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                      EFFECT_USE_PALETTE,
-                 &firstBurst);
+                 &saturosBurst);
   }
   Event_PlayCue(212);
   Actor_Jump(IVAN, 6, 20);
   Event_PlayCue(54);
   VenusAerie_ShowMessage(IVAN);
-  Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 4);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
+  Actor_SetAnimation(ACTOR_SATUROS, 4);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
   VenusAerie_FlashScreen();
-  Actor_SetSpeed(ACTOR_FIRST_OF_PAIR, 0x3333, 0x1999);
-  Actor_SetSpeed(ACTOR_SECOND_OF_PAIR, 0x3333, 0x1999);
-  Actor_Get(ACTOR_FIRST_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetDestination(ACTOR_FIRST_OF_PAIR, 0x126, 196);
-  Actor_SetDestination(ACTOR_SECOND_OF_PAIR, 0x126, 196);
+  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_Get(ACTOR_SATUROS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_MENARDI)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetDestination(ACTOR_SATUROS, 294, 196);
+  Actor_SetDestination(ACTOR_MENARDI, 294, 196);
+  // Slide the two transformed actors together, then start the fusion battle.
   Task_AddCallback(VenusAerie_UpdateBeamActors, TASK_PRIORITY_SCENE);
   Actor_StartRepeatedMotion(GARET, 2);
   Event_ShowMessage(GARET, 0);
@@ -1677,6 +1708,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
   GameFlag_Set(0x351);
 }
 
+// Flash the object palette white, then restore the transformation colour.
 static void VenusAerie_FlashScreen(void) {
   Engine_AudioPlayCue(187);
   Engine_ColorBufferApplyTarget(0x7fff, 1);
@@ -1687,73 +1719,54 @@ static void VenusAerie_FlashScreen(void) {
   Engine_TaskWait(1);
 }
 
-union AerieOrbitEffect {
-  s32 words[26];
-  struct {
-    u8 unk00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unk14[0x1c];
-    s32 radius;
-    u8 unk34[4];
-    s32 savedX;
-    s32 unk3c;
-    s32 savedZ;
-    u8 unk44[0x20];
-    u16 angle;
-    u16 unk66;
-  } orbit;
-};
-
 enum { ORBIT_CENTER_ACTOR = 24 };
 
-static void SceneEffect_UpdateOrbitAroundActor(union FieldObject *fieldObject) {
-  union AerieOrbitEffect *effect = (union AerieOrbitEffect *)fieldObject;
+// Orbit a particle around the upper beam and keep its target at that position.
+static void VenusAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
+  struct FieldActor *effect = &fieldObject->actor;
   struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
-  u16 angle = effect->orbit.angle;
+  u16 angle = effect->timer;
 
-  effect->orbit.x =
-      center->x.fixed + Engine_MathCos(angle) * (effect->orbit.radius + 3);
-  effect->orbit.z = center->z.fixed + (Engine_MathSin(angle) << 1);
-  effect->orbit.savedX = effect->orbit.x;
-  effect->orbit.savedZ = effect->orbit.z;
-  effect->orbit.angle -= 0x800;
+  effect->x.fixed =
+      center->x.fixed + Engine_MathCos(angle) * (effect->speed + 3);
+  effect->z.fixed = center->z.fixed + Engine_MathSin(angle) * 2;
+  effect->targetX = effect->x.fixed;
+  effect->targetZ = effect->z.fixed;
+  effect->timer -= 0x800;
 }
 
-static void
-SceneEffect_UpdateCounterDrivenOrbit(union FieldObject *fieldObject) {
-  u8 *actor = (u8 *)fieldObject;
+// Orbit a particle around the rising beam using its rise counter as a radius.
+static void VenusAerie_UpdateRisingOrbit(union FieldObject *fieldObject) {
+  struct FieldActor *actor = &fieldObject->actor;
   struct FieldActor *anchor = Object_GetById(23);
-  u16 *pangle = (u16 *)(actor + 100);
-  s32 angle = *pangle;
+  s32 angle = (u16)actor->timer;
   s32 cosine;
   s32 sine;
   s32 along;
   s32 across;
 
   cosine = Engine_MathCos(angle);
-  along = anchor->x.fixed +
-          cosine * (*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
-  *(s32 *)(actor + 8) = along;
+  along = anchor->x.fixed + cosine * (actor->speed + actor->riseCounter + 6);
+  actor->x.fixed = along;
 
   sine = Engine_MathSin(angle);
-  across = anchor->z.fixed + sine * (*(u8 *)(actor + 98) + 4);
-  *(s32 *)(actor + 16) = across;
+  across = anchor->z.fixed + sine * (actor->riseCounter + 4);
+  actor->z.fixed = across;
 
-  *(s32 *)(actor + 56) = *(s32 *)(actor + 8);
-  *(s32 *)(actor + 64) = across;
+  actor->targetX = actor->x.fixed;
+  actor->targetZ = across;
 
   {
-    s32 next = *pangle;
+    s32 next = (u16)actor->timer;
     next += 0xfffff800;
-    *pangle = next;
+    actor->timer = next;
   }
 }
 
-static void SceneEffect_SpawnParticlesAboveActor(void) {
+// Emit rising particles around the upper beam at the current beacon stage.
+static void VenusAerie_SpawnUpperOrbitParticles(void) {
   struct FieldActor *center;
-  union AerieOrbitEffect *effect;
+  struct FieldActor *effect;
   struct AnimationObject *sprite;
   s32 angle;
 
@@ -1763,29 +1776,26 @@ static void SceneEffect_SpawnParticlesAboveActor(void) {
   }
   center = Actor_Get(ORBIT_CENTER_ACTOR);
   if (GameFlag_IsSet(0x236) != 0) {
-    effect = (union AerieOrbitEffect *)Object_Create(
-        284, center->x.fixed,
-        (s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed -
-            0x1c0000,
-        center->z.fixed);
+    effect = Object_Create(284, center->x.fixed,
+                           (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
+                               center->y.fixed - PIXELS(28),
+                           center->z.fixed);
   } else {
-    effect = (union AerieOrbitEffect *)Object_Create(
-        284, center->x.fixed,
-        (s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed -
-            0x1c0000,
-        center->z.fixed);
+    effect = Object_Create(284, center->x.fixed,
+                           (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
+                               center->y.fixed - PIXELS(28),
+                           center->z.fixed);
   }
   if (effect != 0) {
-    sprite = ((struct FieldEffect *)effect)->sprite;
-    Object_SetScript((struct FieldActor *)effect,
-                     gVenusAerie_OrbitParticleScript);
-    ObjectGroup_SetChildValue((struct FieldActor *)effect, 1);
-    ((struct FieldEffect *)effect)->motionFlags = 0;
+    sprite = effect->sprite;
+    Object_SetScript(effect, gVenusAerie_OrbitParticleScript);
+    ObjectGroup_SetChildValue(effect, 1);
+    effect->motionFlags = 0;
     angle = Random_Next() & 0xffff000;
-    effect->orbit.angle = angle;
-    effect->orbit.unk66 = 0;
-    ((struct FieldEffect *)effect)->update = SceneEffect_UpdateOrbitAroundActor;
-    effect->orbit.radius =
+    effect->timer = angle;
+    effect->work = 0;
+    effect->update = VenusAerie_UpdateUpperOrbit;
+    effect->speed =
         Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->image.priority = 1;
@@ -1794,7 +1804,7 @@ static void SceneEffect_SpawnParticlesAboveActor(void) {
 
 enum { PARTICLE_SOURCE_ACTOR = 23 };
 
-// Test whether the actor has no target and is stopped.
+// Test whether all three movement targets are unset.
 static __inline__ s32 Actor_IsParked(struct FieldActor *actor) {
   if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
       actor->targetZ == actor->targetY) {
@@ -1803,61 +1813,64 @@ static __inline__ s32 Actor_IsParked(struct FieldActor *actor) {
   return 0;
 }
 
+// Pulse and slide Saturos and Menardi while their beam flags are active.
 static void VenusAerie_UpdateBeamActors(void) {
-  struct FieldActor *first;
-  struct FieldActor *second;
-  s32 stopped;
+  struct FieldActor *saturos;
+  struct FieldActor *menardi;
+  s32 pairParked;
 
-  first = Object_GetById(ACTOR_FIRST_OF_PAIR);
-  second = Object_GetById(ACTOR_SECOND_OF_PAIR);
-  stopped = Actor_IsParked(first); // Overwritten; only the first actor's test
-                                   // loads remain in the ROM.
-  stopped = Actor_IsParked(second);
-  if (stopped != 0) {
-    first->facing = 0;
-    second->facing = 0;
+  saturos = Object_GetById(ACTOR_SATUROS);
+  menardi = Object_GetById(ACTOR_MENARDI);
+  pairParked = Actor_IsParked(saturos); // Overwritten; only the saturos actor's
+                                        // test loads remain in the ROM.
+  pairParked = Actor_IsParked(menardi);
+  if (pairParked != 0) {
+    saturos->facing = 0;
+    menardi->facing = 0;
     if (Engine_GameFlagIsSet(FLAG_PAIR_GROWING) != 0) {
-      Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 7);
-      Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 7);
-      if (first->scaleX < 0x14000) {
-        first->scaleX += 0x200;
-        first->scaleY += 0x200;
-        second->scaleX += 0x200;
-        second->scaleY += 0x200;
+      Engine_ActorSetChildValue(ACTOR_SATUROS, 7);
+      Engine_ActorSetChildValue(ACTOR_MENARDI, 7);
+      if (saturos->scaleX < 5 * Q16_ONE / 4) {
+        saturos->scaleX += Q16_ONE / 128;
+        saturos->scaleY += Q16_ONE / 128;
+        menardi->scaleX += Q16_ONE / 128;
+        menardi->scaleY += Q16_ONE / 128;
       }
     } else {
       if ((*(s32 *)&gFrameCount & 2) != 0) {
-        Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 15);
-        Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 0);
+        Engine_ActorSetChildValue(ACTOR_SATUROS, 15);
+        Engine_ActorSetChildValue(ACTOR_MENARDI, 0);
       } else {
-        Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 0);
-        Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 15);
+        Engine_ActorSetChildValue(ACTOR_SATUROS, 0);
+        Engine_ActorSetChildValue(ACTOR_MENARDI, 15);
       }
     }
     if (Engine_GameFlagIsSet(FLAG_PAIR_SLIDING) != 0) {
-      if (first->x.fixed < PIXELS(312)) {
-        first->x.fixed += 0x1000;
-        second->x.fixed += 0x1000;
+      if (saturos->x.fixed < PIXELS(312)) {
+        saturos->x.fixed += PIXELS(1) / 16;
+        menardi->x.fixed += PIXELS(1) / 16;
       }
-      if (first->z.fixed > PIXELS(182)) {
-        first->z.fixed += -0x1000;
-        second->z.fixed += -0x1000;
+      if (saturos->z.fixed > PIXELS(182)) {
+        saturos->z.fixed += -PIXELS(1) / 16;
+        menardi->z.fixed += -PIXELS(1) / 16;
       }
     }
   }
 }
 
-static void FieldScene_RunThreeStepsInBracket(void) {
+// Play the antagonists' defeat, the party discussion and the beacon eruption.
+static void VenusAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventBegin();
-  FieldScene_RunPairDefeat();
-  FieldScene_RunMultiActorPresentation();
-  VenusAerie_RunActorTransition();
+  VenusAerie_ShowSaturosAndMenardiFall();
+  VenusAerie_DiscussSaturosAndMenardiDefeat();
+  VenusAerie_EruptBeacon();
   Engine_EventEnd();
 }
 
-static void FieldScene_RunBracketedSceneWithFlag282(void) {
+// Restore the broken aerie, show the fall warning and leave through exit one.
+static void VenusAerie_PlayFallWarningExit(void) {
   Engine_EventBegin();
-  FieldScene_RestageParty();
+  VenusAerie_RestorePartyOnBrokenAerie();
   VenusAerie_TryToPreventFall();
   Engine_GameFlagSet(141 << 1);
 
@@ -1870,6 +1883,7 @@ static void FieldScene_RunBracketedSceneWithFlag282(void) {
   Engine_EventEnd();
 }
 
+// Stage the broken aerie for the fall sequence and the party escape.
 static void VenusAerie_RunLeapEntrance(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1888,15 +1902,15 @@ static void VenusAerie_RunLeapEntrance(void) {
   Engine_TaskWait(1);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Engine_ActorDestroy(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorDestroy(ACTOR_SECOND_OF_PAIR);
+  Engine_ActorDestroy(ACTOR_SATUROS);
+  Engine_ActorDestroy(ACTOR_MENARDI);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   leader->x.fixed = PIXELS(346);
   leader->z.fixed = PIXELS(205);
   leader->y.fixed = PIXELS(32);
   leader->facing = FACING_SOUTHWEST;
-  SceneActor_ParkRecord(leader);
+  VenusAerie_StopActorMotion(leader);
   Engine_ActorSetAnimation(GARET, 18);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   actor = Actor_Get(GARET);
@@ -1904,7 +1918,7 @@ static void VenusAerie_RunLeapEntrance(void) {
   actor->z.fixed = PIXELS(192);
   actor->facing = FACING_NORTHWEST;
   actor->y.fixed = PIXELS(32);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   Engine_ActorSetAnimation(IVAN, 18);
   Engine_ActorSetSpriteFlags(Actor_Get(IVAN), 0);
   actor = Actor_Get(IVAN);
@@ -1912,7 +1926,7 @@ static void VenusAerie_RunLeapEntrance(void) {
   actor->facing = FACING_SOUTHEAST;
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   Engine_ActorSetAnimation(MIA, 18);
   Engine_ActorSetSpriteFlags(Actor_Get(MIA), 0);
   actor = Actor_Get(MIA);
@@ -1920,42 +1934,43 @@ static void VenusAerie_RunLeapEntrance(void) {
   actor->facing = FACING_WEST;
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
-  SceneActor_ParkRecord(actor);
-  Actor_SetPosition(21, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(21, 5);
-  Actor_SetPosition(6, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(6, 5);
-  Engine_ActorSetSpriteFlags(Actor_Get(6), 0);
+  VenusAerie_StopActorMotion(actor);
+  Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
+  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
+  Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
+  Engine_ActorSetAnimation(SHEBA, 5);
+  Engine_ActorSetSpriteFlags(Actor_Get(SHEBA), 0);
   actor = Actor_Get(8);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(9);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Actor_Get(10);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(11);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  VenusAerie_StopActorMotion(actor);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_ActorSetSpriteFlags(Actor_Get(PARTICLE_SOURCE_ACTOR), 0);
   Object_GetById(PARTICLE_SOURCE_ACTOR)->motionFlags = 4;
   Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
   Actor_Get(PARTICLE_SOURCE_ACTOR)->y.fixed = PIXELS(40);
-  FieldScheduler_AddCallback(SceneEffect_SpawnParticlesBesideActor,
+  FieldScheduler_AddCallback(VenusAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gEventWork->transitionFrames = 24;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Scene_RunExtendedActorTransition();
+  VenusAerie_PlayShebasFall();
   GameFlag_Set(0x9a7);
   Engine_EventRequestExit(2);
 }
 
-static void FieldScene_RunPairDefeat(void) {
+// Show Saturos and Menardi falling into the beacon after their final defeat.
+static void VenusAerie_ShowSaturosAndMenardiFall(void) {
   struct FieldActor *actor;
 
   Event_PlayCue(141);
@@ -1967,21 +1982,21 @@ static void FieldScene_RunPairDefeat(void) {
   Actor_SetPosition(IVAN, PIXELS(340), PIXELS(196));
   Actor_Get(MIA)->facing = FACING_NORTHWEST;
   Actor_SetPosition(MIA, PIXELS(326), PIXELS(204));
-  Actor_Get(21)->facing = FACING_NORTH + FACING_STEP;
-  Actor_SetPosition(21, PIXELS(200), PIXELS(216));
-  Actor_Get(6)->facing = FACING_NORTH + FACING_STEP;
-  Actor_SetPosition(6, PIXELS(200), PIXELS(216));
-  Actor_Get(ACTOR_FIRST_OF_PAIR)->facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(310), PIXELS(158));
-  Actor_Get(ACTOR_SECOND_OF_PAIR)->facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(292), PIXELS(158));
+  Actor_Get(ACTOR_FELIX)->facing = FACING_NORTH + FACING_STEP;
+  Actor_SetPosition(ACTOR_FELIX, PIXELS(200), PIXELS(216));
+  Actor_Get(SHEBA)->facing = FACING_NORTH + FACING_STEP;
+  Actor_SetPosition(SHEBA, PIXELS(200), PIXELS(216));
+  Actor_Get(ACTOR_SATUROS)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_SetPosition(ACTOR_SATUROS, PIXELS(310), PIXELS(158));
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_SetPosition(ACTOR_MENARDI, PIXELS(292), PIXELS(158));
 
   Engine_ActorSetSpriteFlags(Actor_Get(24), 0);
   Actor_SetChildValue(24, 7);
   Engine_ActorSetSpritePriority(24, 1);
   actor = Actor_Get(24);
-  actor->scaleY = -0x10000;
-  actor->scaleX = 0x3333;
+  actor->scaleY = -Q16_ONE;
+  actor->scaleX = Q16_ONE / 5;
   actor->motionFlags = 0;
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(2);
@@ -1991,75 +2006,77 @@ static void FieldScene_RunPairDefeat(void) {
   Actor_SetChildValue(25, 7);
   Engine_ActorSetSpritePriority(25, 1);
   actor = Actor_Get(25);
-  actor->scaleY = -0x10000;
-  actor->scaleX = 0x3333;
+  actor->scaleY = -Q16_ONE;
+  actor->scaleX = Q16_ONE / 5;
   actor->motionFlags = 0;
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(34);
   actor->z.fixed = PIXELS(96);
 
-  FieldScheduler_AddCallback(SceneEffect_SpawnParticlesAboveActor,
+  FieldScheduler_AddCallback(VenusAerie_SpawnUpperOrbitParticles,
                              TASK_PRIORITY_SCENE);
   Engine_EventGetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
   Engine_TaskWait(1);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Engine_EventWait(10);
+  // Give Saturos and Menardi their final exchange before they fall.
   Engine_EventSetMessage(MsgVenusPairDefeated);
-  VenusAerie_ShowMessage(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
+  VenusAerie_ShowMessage(ACTOR_SATUROS);
+  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 3);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 40);
+  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 40);
   Event_PlayCue(17);
 
-  actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
+  actor = Actor_Get(ACTOR_SATUROS);
   actor->x.fixed = PIXELS(308);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 10);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, 10);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(306);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 11);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, 11);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(21);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_FIRST_OF_PAIR, 12);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, 12);
   Engine_EventWait(8);
-  Engine_ActorDestroy(ACTOR_FIRST_OF_PAIR);
+  Engine_ActorDestroy(ACTOR_SATUROS);
 
-  actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
+  actor = Actor_Get(ACTOR_MENARDI);
   actor->x.fixed = PIXELS(294);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 8);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 8);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(300);
   actor->y.fixed = PIXELS(27);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 9);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 9);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(17);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SECOND_OF_PAIR, 10);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, 10);
   Engine_EventWait(8);
-  Engine_ActorDestroy(ACTOR_SECOND_OF_PAIR);
+  Engine_ActorDestroy(ACTOR_MENARDI);
   Engine_EventWait(160);
 }
 
-static void FieldScene_RunMultiActorPresentation(void) {
-  s32 count_flag;
-  s32 request_a;
-  s32 request_b;
+// Let the party discuss the battle while Felix and Sheba remain on the aerie.
+static void VenusAerie_DiscussSaturosAndMenardiDefeat(void) {
+  s32 answerAccepted;
+  s32 garetSpeaker;
+  s32 miaSpeaker;
 
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
@@ -2067,110 +2084,111 @@ static void FieldScene_RunMultiActorPresentation(void) {
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
   Event_OpenMessage(IVAN, 0);
-  Actor_FaceDirection(IVAN, 0xc000, 0);
-  VenusAerie_FaceActor(0, 0x4000);
-  count_flag = 0;
+  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
+  VenusAerie_FaceActor(0, FACING_SOUTH);
+  answerAccepted = 0;
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(IVAN, 4);
-    count_flag = 1;
+    answerAccepted = 1;
   } else {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(IVAN, 1);
     gEventWork->message += 1;
   }
   VenusAerie_ShowMessage(2);
-  if (count_flag != 0) {
+  if (answerAccepted != 0) {
     gEventWork->message += 1;
   }
-  Actor_SetSpeed(GARET, 0x19999, 0xcccc);
-  request_a = 0x1001;
-  Actor_WalkToAndWait(GARET, 0x141, 174);
-  VenusAerie_FaceActor(1, 0x2000);
-  VenusAerie_ShowMessage(request_a);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-  Actor_FaceDirection(IVAN, 0xa000, 0);
-  VenusAerie_FaceActor(3, 0xc000);
-  VenusAerie_FaceActor(1, 0x4000);
-  VenusAerie_ShowMessage(request_a);
-  Actor_ShowEmote(GARET, 0x105, 40);
-  Actor_FaceDirection(GARET, 0x2000, 20);
-  VenusAerie_ShowMessage(request_a);
-  Actor_FaceDirection(GARET, 0xa000, 40);
+  Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  garetSpeaker = 0x1001;
+  Actor_WalkToAndWait(GARET, 321, 174);
+  VenusAerie_FaceActor(1, FACING_SOUTHEAST);
+  VenusAerie_ShowMessage(garetSpeaker);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  VenusAerie_FaceActor(3, FACING_NORTH);
+  VenusAerie_FaceActor(1, FACING_SOUTH);
+  VenusAerie_ShowMessage(garetSpeaker);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
+  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  VenusAerie_ShowMessage(garetSpeaker);
+  Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
   Event_ShowMessageAndWait(0x8001, 0, 40);
-  Actor_FaceDirection(GARET, 0x2000, 20);
-  VenusAerie_ShowMessage(request_a);
+  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  VenusAerie_ShowMessage(garetSpeaker);
   Event_PlayCue(17);
   Engine_ActorSetAnimation(MIA, 4);
   VenusAerie_ShowMessage(3);
-  Actor_FaceDirection(GARET, 0x4000, 80);
-  Actor_FaceDirection(MIA, 0x6000, 80);
-  Actor_ShowEmote(MIA, 0x100, 40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 60);
+  Actor_FaceDirection(GARET, FACING_SOUTH, 80);
+  Actor_FaceDirection(MIA, FACING_SOUTHWEST, 80);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  VenusAerie_FaceActor(2, 0xc000);
-  Actor_ShowEmote(IVAN, 0x101, 60);
-  Actor_FaceDirection(IVAN, 0x6000, 40);
+  VenusAerie_FaceActor(2, FACING_NORTH);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
   Engine_ActorJump(IVAN, 4, 60);
-  VenusAerie_FaceActor(1, 0x2000);
-  Actor_ShowEmote(GARET, 0x101, 40);
-  VenusAerie_ShowMessage(request_a);
-  Actor_FaceDirection(GARET, 0x6000, 40);
-  Actor_ShowEmote(GARET, 0x100, 0);
+  VenusAerie_FaceActor(1, FACING_SOUTHEAST);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
+  VenusAerie_ShowMessage(garetSpeaker);
+  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(GARET, 4, 40);
   VenusAerie_ShowMessage(1);
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_SetDestination(21, 200, 188);
-  Actor_SetDestination(6, 200, 204);
-  Camera_SetSpeed(0x33333, 0x6666);
-  Camera_MoveTo(0xfc0000, 0, 0xbe0000, 1);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetDestination(ACTOR_FELIX, 200, 188);
+  Actor_SetDestination(SHEBA, 200, 204);
+  Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  Camera_MoveTo(PIXELS(252), 0, PIXELS(190), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Event_PlayCue(23);
-  Actor_SetAttachedEffect(21, 0x102);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventWait(20);
-  VenusAerie_ShowMessage(21);
-  Engine_ActorSetAnimationAndWait(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(21, 0x3000, 20);
-  VenusAerie_ShowMessage(21);
-  Actor_SetAttachedEffect(6, 0x102);
-  request_b = 0x2003;
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_SetAttachedEffect(SHEBA, EMOTE_IN_FRONT | 2);
+  miaSpeaker = 0x2003;
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(MIA, 2);
-  VenusAerie_ShowMessage(request_b);
-  Engine_ActorRunRepeatedMotion(21, 2);
+  VenusAerie_ShowMessage(miaSpeaker);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
   Engine_EventWait(20);
   VenusAerie_ShowMessage(0x2002);
-  VenusAerie_FaceActor(21, 0xe000);
+  VenusAerie_FaceActor(ACTOR_FELIX, FACING_NORTHEAST);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   VenusAerie_ShowMessage(1);
-  Engine_ActorRunRepeatedMotion(21, 1);
-  Event_ShowMessageAndWait(21, 0, 20);
-  VenusAerie_ShowMessage(request_b);
-  Engine_ActorSetAnimationAndWait(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_SetAttachedEffect(IVAN, 0x102);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
+  VenusAerie_ShowMessage(miaSpeaker);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
   VenusAerie_ShowMessage(0x2002);
-  Engine_ActorSetAnimation(21, 3);
-  VenusAerie_ShowMessage(21);
-  Actor_ShowEmote(GARET, 0x103, 40);
+  Engine_ActorSetAnimation(ACTOR_FELIX, 3);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(1);
-  Engine_ActorSetAnimation(21, 4);
-  VenusAerie_ShowMessage(21);
-  Actor_FaceDirection(21, 0x5000, 20);
+  Engine_ActorSetAnimation(ACTOR_FELIX, 4);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorJump(MIA, 4, 20);
-  Event_ShowMessageAndWait(request_b, 0, 20);
-  Actor_ShowEmote(21, 0x103, 40);
+  Event_ShowMessageAndWait(miaSpeaker, 0, 20);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 40);
 }
 
 static s32 sTransitionTimer;
 static s32 sTransitionStep;
 
-static void VenusAerie_RunActorTransition(void) {
+// Raise the beacon effects and split the aerie beneath the group.
+static void VenusAerie_EruptBeacon(void) {
   struct FieldActor *lower;
   struct FieldActor *middle;
   struct FieldActor *upper;
@@ -2178,30 +2196,31 @@ static void VenusAerie_RunActorTransition(void) {
 
   Engine_AudioPlayCue(19);
   Engine_AudioPlayCue(0x120);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(IVAN, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 0);
-  Actor_ShowEmote(21, 0x100, 0);
-  Actor_ShowEmote(6, 0x100, 10);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(SHEBA, EMOTE_IN_FRONT, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(21, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_NORTH + FACING_STEP, 0);
-  Map_SetShake(0x20000, 0x20000, 0x10000);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 0);
+  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_EventWait(10);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
   Engine_CameraWaitForMove();
-  Object_GetById(24)->scaleX = 0x1999;
-  Object_GetById(25)->scaleX = 0x1999;
+  // Open the beacon beam before splitting the surrounding platform.
+  Object_GetById(24)->scaleX = Q16_ONE / 10;
+  Object_GetById(25)->scaleX = Q16_ONE / 10;
   Actor_SetActionScript(24, gVenusAerie_BeamOpenAction);
   Actor_SetActionScript(25, gVenusAerie_BeamOpenAction);
   Engine_AudioPlayCue(145);
-  Map_SetShake(0x60000, 0x60000, 0x10000);
+  Map_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   Engine_ColorBufferInterpolate(16);
   Engine_TaskWait(20);
@@ -2214,8 +2233,9 @@ static void VenusAerie_RunActorTransition(void) {
   Object_GetById(25)->y.fixed = -PIXELS(64);
   Engine_ActorSetChildValue(26, 7);
   Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
+  // Stack three more beam segments under the rising upper pair.
   lower = Object_GetById(26);
-  lower->scaleY = -0x10000;
+  lower->scaleY = -Q16_ONE;
   lower->scaleX = Object_GetById(24)->scaleX;
   lower->motionFlags = 0;
   lower->x.fixed = PIXELS(304);
@@ -2224,7 +2244,7 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_ActorSetChildValue(27, 7);
   Engine_ActorSetSpriteFlags(Object_GetById(27), 0);
   middle = Object_GetById(27);
-  middle->scaleY = -0x10000;
+  middle->scaleY = -Q16_ONE;
   middle->scaleX = Object_GetById(24)->scaleX;
   middle->motionFlags = 0;
   middle->x.fixed = PIXELS(304);
@@ -2233,7 +2253,7 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_ActorSetChildValue(28, 7);
   Engine_ActorSetSpriteFlags(Object_GetById(28), 0);
   upper = Object_GetById(28);
-  upper->scaleY = -0x10000;
+  upper->scaleY = -Q16_ONE;
   upper->scaleX = Object_GetById(24)->scaleX;
   upper->motionFlags = 0;
   upper->x.fixed = PIXELS(304);
@@ -2248,38 +2268,38 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_TaskWait(1);
   actor = Object_GetById(8);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(9);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(10);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(11);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->x.fixed += PIXELS(16);
   actor->z.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(GARET);
   actor->x.fixed += PIXELS(16);
   actor->z.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(IVAN);
   actor->x.fixed += PIXELS(16);
   actor->z.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(MIA);
   actor->x.fixed += PIXELS(16);
   actor->z.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
-  Actor_SetPosition(21, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(21, 5);
-  Actor_SetPosition(6, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(6, 5);
-  Engine_ActorSetSpriteFlags(Object_GetById(6), 0);
-  Map_SetShake(0x40000, 0x40000, 0x10000);
+  VenusAerie_StopActorMotion(actor);
+  Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
+  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
+  Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
+  Engine_ActorSetAnimation(SHEBA, 5);
+  Engine_ActorSetSpriteFlags(Object_GetById(SHEBA), 0);
+  Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Engine_ColorBufferApplyTarget(0x4063ff, 0);
   Engine_ColorBufferInterpolate(120);
   Actor_SetActionScript(24, gVenusAerie_BeamRiseAction);
@@ -2288,36 +2308,36 @@ static void VenusAerie_RunActorTransition(void) {
   Actor_SetActionScript(27, gVenusAerie_BeamRiseAction);
   Actor_SetActionScript(28, gVenusAerie_BeamRiseAction);
   Engine_TaskWait(120);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_ColorBufferApplyTarget(0x203210, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
-  Map_SetShake(0x20000, 0x20000, 0x10000);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
-  Object_GetById(24)->scaleY = 0x51e;
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  Object_GetById(24)->scaleY = Q16_ONE / 50;
   Actor_SetActionScript(25, gVenusAerie_BeamCloseAction);
   Actor_SetActionScript(26, gVenusAerie_BeamCloseAction);
   Actor_SetActionScript(27, gVenusAerie_BeamCloseAction);
-  Object_SetActionCallbackAndRefreshById(28, gVenusAerie_BeamCloseAction);
+  Actor_RunActionScriptAndWait(28, gVenusAerie_BeamCloseAction);
   Engine_AudioPlayCue(0x121);
   Engine_ActorSetChildValue(24, 15);
   Engine_EventWait(20);
-  Object_SetActionCallbackAndRefreshById(24, gVenusAerie_BeamEndAction);
-  Scheduler_RemoveCallback((u32)SceneEffect_SpawnParticlesAboveActor);
+  Actor_RunActionScriptAndWait(24, gVenusAerie_BeamEndAction);
+  Scheduler_RemoveCallback(VenusAerie_SpawnUpperOrbitParticles);
   Engine_ActorJump(IVAN, 2, 20);
   VenusAerie_ShowMessage(IVAN);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   VenusAerie_ShowMessage(GARET);
-  Actor_SetSpeed(MIA, 0xcccc, 0x6666);
+  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ActorWalkToAndWait(MIA, 326, 220);
   Engine_EventWait(40);
-  Engine_ActorSetAttachedEffect(MIA, 0x102);
+  Engine_ActorSetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   VenusAerie_ShowMessage(MIA);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->riseCounter = 0;
@@ -2339,11 +2359,11 @@ static void VenusAerie_RunActorTransition(void) {
   actor->riseEnabled = 1;
   actor->facing = FACING_NORTHWEST;
   actor->riseBaseY = actor->y.fixed;
-  actor = Actor_Get(21);
+  actor = Actor_Get(ACTOR_FELIX);
   actor->riseCounter = 0;
   actor->riseEnabled = 1;
   actor->riseBaseY = actor->y.fixed;
-  actor = Actor_Get(6);
+  actor = Actor_Get(SHEBA);
   actor->riseCounter = 0;
   actor->riseEnabled = 1;
   actor->riseBaseY = actor->y.fixed;
@@ -2353,7 +2373,7 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_ActorSetSpritePriority(PARTICLE_SOURCE_ACTOR, 2);
   sTransitionStep = 0;
   sTransitionTimer = 240;
-  FieldScheduler_AddCallback(VenusAerie_RunTransitionStep, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(VenusAerie_UpdateBeaconRise, TASK_PRIORITY_SCENE);
   do {
     Engine_TaskWait(1);
   } while (Engine_GameFlagIsSet(0x237) == 0);
@@ -2372,11 +2392,12 @@ static void VenusAerie_RunActorTransition(void) {
   Engine_EventWaitForScreen();
 }
 
-static void FieldScene_RestageParty(void) {
+// Place the party on the broken platform and resume its falling effects.
+static void VenusAerie_RestorePartyOnBrokenAerie(void) {
   struct FieldActor *actor;
 
-  Engine_ActorDestroy(ACTOR_FIRST_OF_PAIR);
-  Engine_ActorDestroy(ACTOR_SECOND_OF_PAIR);
+  Engine_ActorDestroy(ACTOR_SATUROS);
+  Engine_ActorDestroy(ACTOR_MENARDI);
   Event_PlayCue(141);
   Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
@@ -2385,7 +2406,7 @@ static void FieldScene_RestageParty(void) {
   Map_CopyCellAttributes(19, 6, 3, 7, 13, 6);
   Map_CopyCellAttributes(19, 6, 3, 7, 22, 13);
   Map_CopyCellAttributes(19, 6, 3, 7, 13, 13);
-  Map_SetShake(0x20000, 0x20000, 0x10000);
+  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorsRefresh();
   Engine_MapRedraw();
@@ -2404,120 +2425,124 @@ static void FieldScene_RestageParty(void) {
   actor->x.fixed = PIXELS(346);
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(205);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = 0x20000;
+  actor->velocityY = PIXELS(2);
 
   actor = Actor_Get(GARET);
   actor->x.fixed = PIXELS(356);
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(192);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = 0x20000;
+  actor->velocityY = PIXELS(2);
 
   actor = Actor_Get(IVAN);
   actor->x.fixed = PIXELS(360);
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = 0x20000;
+  actor->velocityY = PIXELS(2);
 
   actor = Actor_Get(MIA);
   actor->x.fixed = PIXELS(334);
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = 0x20000;
+  actor->velocityY = PIXELS(2);
 
-  Actor_Get(21)->riseCounter = 0;
-  Actor_Get(6)->riseCounter = 0;
+  Actor_Get(ACTOR_FELIX)->riseCounter = 0;
+  Actor_Get(SHEBA)->riseCounter = 0;
   Actor_Get(PARTICLE_SOURCE_ACTOR)->motionFlags |= 4;
   Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
-  FieldScheduler_AddCallback(SceneEffect_SpawnParticlesBesideActor,
+  FieldScheduler_AddCallback(VenusAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
   gEventWork->transitionFrames = 1;
   Engine_EventOpenScreen();
   ColorBuffer_ApplySource(0x7fff, 0);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(60);
 }
 
+// Show Felix urging Sheba to hold on at the edge of the platform.
 static void VenusAerie_TryToPreventFall(void) {
   Engine_EventSetMessage(MsgVenusNoooo);
-  VenusAerie_ShowMessage(21);
+  VenusAerie_ShowMessage(ACTOR_FELIX);
   Event_PlayCue(62);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
-  Camera_SetSpeed(0x4cccc, 0x9999);
-  Camera_SetSpeed(0x40000, 0x8000);
-  Camera_MoveTo(0xc00000, -0x400000, 0xee0000, 1);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  Camera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
+  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  Camera_MoveTo(PIXELS(192), -PIXELS(64), PIXELS(238), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Event_ShowMessageAndWait(0x2015, 0, 40);
-  Engine_ActorRunRepeatedMotion(6, 3);
-  VenusAerie_ShowMessage(6);
-  Actor_SetAttachedEffect(21, 0x102);
+  Engine_ActorRunRepeatedMotion(SHEBA, 3);
+  VenusAerie_ShowMessage(SHEBA);
+  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(0x2015, 0, 80);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(SHEBA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(6, 2);
-  VenusAerie_ShowMessage(6);
+  Engine_ActorStartRepeatedMotion(SHEBA, 2);
+  VenusAerie_ShowMessage(SHEBA);
 }
 
-static void Scene_RunExtendedActorTransition(void) {
+// Show Sheba falling, Felix jumping after her and the party escaping.
+static void VenusAerie_PlayShebasFall(void) {
   struct FieldActor *actor;
   s32 stepPending;
 
   stepPending = 0;
+  // Sheba loses her grip while Felix tries to keep her on the platform.
   Engine_EventSetMessage(MsgVenusWhyHappeningProtectVenusLighthouse);
-  Actor_SetAttachedEffect(21, 0x102);
+  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(0x2015, 0, 20);
-  Engine_ActorRunRepeatedMotion(6, 2);
-  Event_ShowMessageAndWait(6, 0, 20);
-  Engine_ActorSetAnimation(6, 6);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
+  Event_ShowMessageAndWait(SHEBA, 0, 20);
+  Engine_ActorSetAnimation(SHEBA, 6);
   Engine_EventWait(10);
-  Engine_ActorStartRepeatedMotion(21, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Event_ShowMessageAndWait(0x2015, 0, 40);
-  Engine_ActorSetAnimation(6, 7);
-  Event_ShowMessageAndWait(6, 0, 20);
+  Engine_ActorSetAnimation(SHEBA, 7);
+  Event_ShowMessageAndWait(SHEBA, 0, 20);
   Event_PlayCue(17);
-  Engine_ActorRunRepeatedMotion(6, 2);
-  Actor_SetActionScript(6, gVenusAerie_StepBackAction);
+  Engine_ActorRunRepeatedMotion(SHEBA, 2);
+  Actor_SetActionScript(SHEBA, gVenusAerie_StepBackAction);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(21, 0x102);
-  Engine_ActorStartRepeatedMotion(21, 3);
-  Object_RefreshSelectorById(6);
+  Actor_SetAttachedEffect(ACTOR_FELIX, EMOTE_IN_FRONT | 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
+  Object_RefreshSelectorById(SHEBA);
   Engine_EventWait(160);
-  Engine_ActorRunRepeatedMotion(21, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
   Engine_EventWait(20);
-  Object_GetById(21)->facing = FACING_SOUTH + FACING_STEP;
-  Engine_ActorSetAnimation(21, 0);
+  Object_GetById(ACTOR_FELIX)->facing = FACING_SOUTH + FACING_STEP;
+  Engine_ActorSetAnimation(ACTOR_FELIX, 0);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(21, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(21, 0, 40);
-  Engine_ActorSetAnimation(21, 5);
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 40);
+  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
   Engine_EventWait(10);
-  Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
-  Engine_ActorSetAnimation(21, 0);
-  Engine_ActorJump(21, 6, 0);
-  Actor_SetSpeed(21, 0x30000, 0x18000);
-  Object_GetById(21)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  actor = Object_GetById(21);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FELIX), 0);
+  Engine_ActorSetAnimation(ACTOR_FELIX, 0);
+  Engine_ActorJump(ACTOR_FELIX, 6, 0);
+  Actor_SetSpeed(ACTOR_FELIX, PIXELS(3), PIXELS(3) / 2);
+  Object_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = Object_GetById(ACTOR_FELIX);
+  // Felix jumps after Sheba; the remaining party watches from the far side.
   actor->update = VenusAerie_StepSpriteRotation;
   actor->facing = FACING_WEST;
-  Actor_MoveToAndWait(21, 184, 237);
-  Object_SetActionCallbackAndRefreshById(21, gVenusAerie_LeapAction);
+  Actor_MoveToAndWait(ACTOR_FELIX, 184, 237);
+  Actor_RunActionScriptAndWait(ACTOR_FELIX, gVenusAerie_LeapAction);
   Engine_EventWait(120);
   VenusAerie_ShowMessage(ACTOR_PARTY_LEADER);
   Event_PlayCue(72);
-  Camera_SetSpeed(0x40000, 0x8000);
+  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
@@ -2528,12 +2553,12 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 60);
   Object_GetById(ACTOR_PARTY_LEADER)->timer = 10;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusAerie_ScaleStepAction);
-  Actor_ShowEmote(GARET, 0x100, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 80);
   Event_ShowMessageAndWait(GARET, 0, 40);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Engine_EventWait(20);
   VenusAerie_ShowMessage(IVAN);
-  Actor_ShowEmote(MIA, 0x102, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
   VenusAerie_ShowMessage(MIA);
   Engine_ActorSetSpriteFlags(Object_GetById(GARET), 1);
   Engine_ActorSetAnimation(GARET, 1);
@@ -2567,11 +2592,11 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   VenusAerie_ShowMessage(MIA);
-  Actor_ShowEmote(GARET, 0x100, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
   VenusAerie_FaceActor(GARET, FACING_SOUTH);
   VenusAerie_ShowMessage(GARET);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(GARET, 0x19999, 0xcccc);
+  Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(GARET, 333, 194);
   Actor_WalkToAndWait(GARET, 333, 206);
   Actor_FaceDirection(GARET, FACING_EAST, 20);
@@ -2579,10 +2604,10 @@ static void Scene_RunExtendedActorTransition(void) {
   Event_ShowMessageAndWait(GARET, 0, 80);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_TaskWait(1);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 80);
   VenusAerie_FaceActor(GARET, FACING_SOUTHEAST);
   Engine_ActorJump(GARET, 4, 0);
   VenusAerie_ShowMessage(GARET);
@@ -2610,14 +2635,14 @@ static void Scene_RunExtendedActorTransition(void) {
     gEventWork->message += 3;
   }
   VenusAerie_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
   Event_PlayCue(17);
-  Actor_ShowEmote(GARET, 0x100, 20);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 20);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 40);
   Actor_FaceDirection(GARET, FACING_WEST, 20);
-  Actor_ShowEmote(IVAN, 0x101, 40);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 40);
   VenusAerie_ShowMessage(IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
@@ -2627,11 +2652,11 @@ static void Scene_RunExtendedActorTransition(void) {
   Actor_FaceDirection(MIA, FACING_WEST, 40);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   VenusAerie_ShowMessage(MIA);
   Event_PlayCue(141);
-  Map_SetShake(0x60000, 0x60000, 0x10000);
+  Map_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   Engine_EventWait(40);
   Event_PlayCue(145);
   Map_CopyCellsTo(110, 105, 74, 4, 18, 23);
@@ -2642,41 +2667,42 @@ static void Scene_RunExtendedActorTransition(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->z.fixed -= PIXELS(32);
   actor->work = 0;
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(GARET);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(32);
   actor->work = 0;
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(IVAN);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(32);
   actor->work = 0;
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(MIA);
   actor->x.fixed -= PIXELS(4);
   actor->z.fixed -= PIXELS(18);
   actor->work = 0;
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   Object_GetById(23)->y.fixed = PIXELS(56);
   Camera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-  Actor_ShowEmote(GARET, 0x100, 0);
-  Actor_ShowEmote(IVAN, 0x100, 0);
-  Actor_ShowEmote(MIA, 0x100, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
   Engine_ActorJump(MIA, 6, 0);
+  // Shake the party and split away the remaining central floor tiles.
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gVenusAerie_PartyHeadingAction);
   Actor_SetActionScript(GARET, gVenusAerie_PartyHeadingAction);
   Actor_SetActionScript(IVAN, gVenusAerie_PartyHeadingAction);
   Actor_SetActionScript(MIA, gVenusAerie_PartyHeadingAction);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_EventWait(80);
-  Map_SetShake(0x60000, 0x60000, 0x10000);
+  Map_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   Engine_EventWait(40);
   Event_PlayCue(145);
   Map_CopyCellAttributes(110, 106, 18, 14, 10, 5);
@@ -2684,40 +2710,40 @@ static void Scene_RunExtendedActorTransition(void) {
   Map_CopyCellsTo(92, 86, 11, 68, 16, 20);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(GARET);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(IVAN);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(MIA);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(8);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(9);
   actor->x.fixed += PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(10);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   actor = Object_GetById(11);
   actor->x.fixed -= PIXELS(16);
-  SceneActor_ParkRecord(actor);
+  VenusAerie_StopActorMotion(actor);
   Camera_MoveTo(PIXELS(322), PIXELS(32), PIXELS(180), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
-  Actor_SetAttachedEffect(IVAN, 0x102);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorJump(IVAN, 6, 0);
   Engine_ActorJump(MIA, 6, 0);
-  Map_SetShake(-1, -1, 0xe666);
+  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(80);
   Event_PlayCue(0x121);
   Engine_EventWait(40);
@@ -2726,7 +2752,7 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_ActorStop(IVAN);
   Engine_ActorStop(MIA);
   Engine_EventWait(120);
-  Actor_ShowEmote(IVAN, 0x105, 120);
+  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 120);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   VenusAerie_ShowMessage(IVAN);
@@ -2747,14 +2773,14 @@ static void Scene_RunExtendedActorTransition(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(20);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Actor_SetSpeed(MIA, 0x10000, 0x8000);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_SetActionScript(GARET, gVenusAerie_PartyExitAction);
   Actor_SetActionScript(IVAN, gVenusAerie_PartyExitAction);
   Actor_SetActionScript(MIA, gVenusAerie_PartyExitAction);
   Engine_EventWait(60);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Engine_EventWait(80);
@@ -2773,7 +2799,8 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_EventWait(80);
 }
 
-static void SceneActor_ParkRecord(struct FieldActor *actor) {
+// Clear all movement targets and velocities and reset the actor timer.
+static void VenusAerie_StopActorMotion(struct FieldActor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
@@ -2785,37 +2812,40 @@ static void SceneActor_ParkRecord(struct FieldActor *actor) {
   actor->timer = 0;
 }
 
-static void VenusAerie_RunTransitionStep(void) {
+// Advance the beacon rise sequence, its flashes and orbiting particles.
+static void VenusAerie_UpdateBeaconRise(void) {
   struct FieldActor *center;
   struct FieldActor *effect;
   struct AnimationObject *sprite;
-  s32 spawn;
-  u32 rise;
+  s32 spawnParticles;
+  u32 randomHeight;
   s32 angle;
 
   center = Actor_Get(23);
-  spawn = 0;
+  spawnParticles = 0;
   switch (sTransitionStep) {
   case 0:
     Event_PlayCue(220);
-    Map_SetShake(0x60000, 0x60000, 0x10000);
+    Map_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
     ColorBuffer_ApplyTarget(0x2063ff, 1);
     Engine_ColorBufferInterpolate(8);
     break;
   case 8:
-    ColorBuffer_ApplyTarget(0x10000, 1);
+    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
     Engine_ColorBufferInterpolate(8);
     break;
   case 16:
-    Map_SetShake(0x10000, 0x10000, 0x10000);
+    Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     break;
+    // Start the lower beam beneath the floor, then pause each rise stage.
+
   case 24:
-    center->x.fixed = 152 << 17;
-    center->y.fixed = -0x1680000;
-    center->z.fixed = 164 << 16;
-    center->scaleX = 0x10000;
-    center->scaleY = 0x10000;
-    SceneActor_ParkRecord(center);
+    center->x.fixed = PIXELS(304);
+    center->y.fixed = -PIXELS(360);
+    center->z.fixed = PIXELS(164);
+    center->scaleX = Q16_ONE;
+    center->scaleY = Q16_ONE;
+    VenusAerie_StopActorMotion(center);
     Actor_SetActionScript(23, gVenusAerie_RiseActionScript);
     break;
   case 25:
@@ -2828,26 +2858,26 @@ static void VenusAerie_RunTransitionStep(void) {
       Actor_Get(1)->riseCounter = 1;
       Actor_Get(2)->riseCounter = 1;
       Actor_Get(3)->riseCounter = 1;
-      Actor_Get(21)->riseCounter = 1;
-      Actor_Get(6)->riseCounter = 1;
+      Actor_Get(ACTOR_FELIX)->riseCounter = 1;
+      Actor_Get(SHEBA)->riseCounter = 1;
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlayCue(246);
-      spawn = 1;
-      center->y.fixed += 0x24000;
+      spawnParticles = 1;
+      center->y.fixed += PIXELS(9) / 4;
     }
     break;
   case 26:
     sTransitionStep--;
-    if (center->y.fixed > (160 << 14)) {
-      ColorBuffer_ApplyTarget(0x10000, 0);
+    if (center->y.fixed > (PIXELS(40))) {
+      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
       Engine_ColorBufferInterpolate(40);
       sTransitionStep++;
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlayCue(246);
-      spawn = 1;
-      center->y.fixed += 0x24000;
+      spawnParticles = 1;
+      center->y.fixed += PIXELS(9) / 4;
     }
     break;
   case 27:
@@ -2858,7 +2888,7 @@ static void VenusAerie_RunTransitionStep(void) {
   case 32:
   case 33:
   case 34:
-    spawn = 1;
+    spawnParticles = 1;
     break;
   case 36:
     Event_PlayCue(187);
@@ -2870,11 +2900,11 @@ static void VenusAerie_RunTransitionStep(void) {
     GameFlag_Set(0x237);
     break;
   }
-  if (spawn) {
-    rise = ((u32)(Random_Next() * 80) >> 16) << 16;
-    effect =
-        Object_Create(284, center->x.fixed, center->y.fixed - rise + 0xfff80000,
-                      center->z.fixed);
+  if (spawnParticles) {
+    randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
+    effect = Object_Create(284, center->x.fixed,
+                           center->y.fixed - randomHeight + -PIXELS(8),
+                           center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
       Object_SetScript(effect, gVenusAerie_RiseParticleScript);
@@ -2884,7 +2914,7 @@ static void VenusAerie_RunTransitionStep(void) {
       effect->timer = angle;
       effect->work = 0;
       effect->riseCounter = (u32)Random_Next() >> 13;
-      effect->update = SceneEffect_UpdateCounterDrivenOrbit;
+      effect->update = VenusAerie_UpdateRisingOrbit;
       effect->speed = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24;
       effect->speed = center->speed >> 16;
       sprite->flags = 0;
@@ -2892,21 +2922,22 @@ static void VenusAerie_RunTransitionStep(void) {
     }
   }
   sTransitionStep++;
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(0));
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(1));
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(2));
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(3));
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(21));
-  SceneEffect_AdvanceGatedRiseCounter(Actor_Get(6));
+  VenusAerie_AdvanceActorRise(Actor_Get(0));
+  VenusAerie_AdvanceActorRise(Actor_Get(1));
+  VenusAerie_AdvanceActorRise(Actor_Get(2));
+  VenusAerie_AdvanceActorRise(Actor_Get(3));
+  VenusAerie_AdvanceActorRise(Actor_Get(ACTOR_FELIX));
+  VenusAerie_AdvanceActorRise(Actor_Get(SHEBA));
 }
 
-static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor) {
+// Raise an enabled actor according to its gated rise counter.
+static void VenusAerie_AdvanceActorRise(struct FieldActor *actor) {
   if (actor->riseEnabled != 0) {
     u8 counter = actor->riseCounter;
 
     actor->y.fixed = actor->riseBaseY + ((counter >> 2) << 16);
 
-    SceneActor_ParkRecord(actor);
+    VenusAerie_StopActorMotion(actor);
 
     if (actor->riseCounter != 0) {
       if (actor->riseCounter <= 31) {
@@ -2916,7 +2947,8 @@ static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor) {
   }
 }
 
-static void SceneEffect_SpawnParticlesBesideActor(void) {
+// Emit particles beside the lower beam and link each to its source actor.
+static void VenusAerie_SpawnSideOrbitParticles(void) {
   union FieldObject *center;
   struct FieldActor *effect;
   struct AnimationObject *sprite;
@@ -2930,13 +2962,13 @@ static void SceneEffect_SpawnParticlesBesideActor(void) {
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(map->viewY >> 16) <= 129) {
     if (gFrameCount & 1) {
-      Actor_SetPosition(23, 152 << 17, 164 << 16);
-      Actor_Get(23)->scaleX = 0x10000;
-      Actor_Get(23)->scaleY = 0x10000;
+      Actor_SetPosition(23, PIXELS(304), PIXELS(164));
+      Actor_Get(23)->scaleX = Q16_ONE;
+      Actor_Get(23)->scaleY = Q16_ONE;
     } else {
-      Actor_SetPosition(23, 152 << 17, 171 << 16);
-      Actor_Get(23)->scaleX = 0x14ccc;
-      Actor_Get(23)->scaleY = 0x14ccc;
+      Actor_SetPosition(23, PIXELS(304), PIXELS(171));
+      Actor_Get(23)->scaleX = 13 * Q16_ONE / 10;
+      Actor_Get(23)->scaleY = 13 * Q16_ONE / 10;
     }
   } else {
     Actor_SetPosition(23, 0, 0);
@@ -2946,10 +2978,10 @@ static void SceneEffect_SpawnParticlesBesideActor(void) {
   phase = gFrameCount & 15;
   if (phase != 0)
     return;
-  effect = Object_Create(284, center->actor.x.fixed + 0x80000,
-                         center->actor.y.fixed + drift + 0x80000,
+  effect = Object_Create(284, center->actor.x.fixed + PIXELS(8),
+                         center->actor.y.fixed + drift + PIXELS(8),
                          center->actor.z.fixed);
-  drift /= 0x60000;
+  drift /= PIXELS(6);
   drift <<= 16;
   if (effect == 0)
     return;
@@ -2967,15 +2999,16 @@ static void SceneEffect_SpawnParticlesBesideActor(void) {
   sprite->image.priority = center->actor.sprite->image.priority;
 }
 
+// Move a linked particle along its horizontal ellipse and preserve its target.
 static void VenusAerie_UpdateOrbitingEffect(union FieldObject *object) {
-  struct FieldEffect *anchor;
+  struct FieldActor *anchor;
   s32 spin;
 
-  anchor = (struct FieldEffect *)object->actor.linkedObject;
+  anchor = object->actor.linkedObject;
   spin = object->effect.spin;
   object->effect.x =
-      anchor->x + Engine_MathCos(spin) * (object->actor.speed + 28);
-  object->effect.z = (Engine_MathSin(spin) << 4) + 0xa40000;
+      anchor->x.fixed + Engine_MathCos(spin) * (object->actor.speed + 28);
+  object->effect.z = Engine_MathSin(spin) * 16 + PIXELS(164);
   object->actor.targetX = object->effect.x;
   object->actor.targetZ = object->effect.z;
   object->effect.spin -= 0x200;
@@ -3010,17 +3043,17 @@ s32 gVenusAerie_PairActionScript[] = {
 };
 
 s32 gSceneAction_EntryGroup[] = {
-    SC_SET(SW_SPEED, 0x3333),
-    SC_SET(SW_ACCEL, 0x1999),
+    SC_SET(SW_SPEED, PIXELS(1) / 5),
+    SC_SET(SW_ACCEL, PIXELS(1) / 10),
     SC_ARG(2),
-    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_MOVE_BY(-PIXELS(8), 0, 0),
     SC_SYNC,
     SC_END,
 };
 
 s32 gSceneAction_EntryPair[] = {
-    SC_SET(SW_SPEED, 0x3333),
-    SC_SET(SW_ACCEL, 0x1999),
+    SC_SET(SW_SPEED, PIXELS(1) / 5),
+    SC_SET(SW_ACCEL, PIXELS(1) / 10),
     SC_ARG(2),
     SC_MOVE_BY(PIXELS(8), 0, 0),
     SC_SYNC,
@@ -3028,12 +3061,12 @@ s32 gSceneAction_EntryPair[] = {
 };
 
 s32 gVenusAerie_ScaleStepAction[] = {
-    SC_CALL(OverlayObject_StepScaleByCounter),
+    SC_CALL(VenusAerie_PulseActorScale),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gVenusAerie_BeamOpenAction[] = {
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
@@ -3064,8 +3097,8 @@ s32 gVenusAerie_BeamEndAction[] = {
 };
 
 s32 gVenusAerie_OrbitParticleScript[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
     SC_ARG(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, PIXELS(1)),
@@ -3077,11 +3110,11 @@ s32 gVenusAerie_OrbitParticleScript[] = {
 };
 
 s32 gVenusAerie_RiseParticleScript[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
     SC_ARG(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, -PIXELS(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
     SC_POS(0, 0, 0),
@@ -3114,13 +3147,21 @@ s32 gVenusAerie_RiseActionScript[] = {
 };
 
 s32 gVenusAerie_StepBackAction[] = {
-    SC_ADD(SW_Y, -0xc000), SC_WAIT(1), SC_LOOP(120, SC_TOP),
-    SC_POS(0, 0, 0),       SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, -(PIXELS(3) / 4)),
+    SC_WAIT(1),
+    SC_LOOP(120, SC_TOP),
+    SC_POS(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gVenusAerie_LeapAction[] = {
-    SC_ADD(SW_Y, -0x48000), SC_WAIT(1), SC_LOOP(80, SC_TOP),
-    SC_POS(0, 0, 0),        SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, -(PIXELS(9) / 2)),
+    SC_WAIT(1),
+    SC_LOOP(80, SC_TOP),
+    SC_POS(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 s32 gVenusAerie_PartyExitAction[] = {
@@ -3207,17 +3248,19 @@ struct ScenePlacement gVenusAeriePlacements[] = {
 s32 gVenusAerie_NearestActor = 0;
 
 struct SceneEvent gVenusAerieEvents[] = {
-    {0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion)},
-    {EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH)},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion)},
-    {EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(EV10_TOUCH)},
-    {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH)},
+    {0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusAerie_TryLeaderJump)},
+    {EVENT_TOUCH, 11, CONDITION_ALWAYS,
+     EVENT_SCRIPT(VenusAerie_EnablePillarGravity)},
+    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusAerie_TryLeaderJump)},
+    {EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(VenusAerie_BouncePillarUnderLeader)},
+    {EVENT_TOUCH, 5, CONDITION_ALWAYS,
+     EVENT_SCRIPT(VenusAerie_ConfrontSaturosAndMenardi)},
     {SCENE_EVENTS_END},
 };
 
 s32 gVenusAerie_BesideParticleScript[] = {
-    SC_SET(SW_SCALE_Y, 0x16666),
-    SC_SET(SW_SCALE_X, 0x16666),
+    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
     SC_ARG(4),
     SC_WAIT(30),
     SC_FREE,

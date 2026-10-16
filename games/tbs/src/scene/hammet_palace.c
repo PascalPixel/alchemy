@@ -651,7 +651,7 @@ static void RunEventScript01(void) {
   partyScript = gHammetPalace_PartyActions;
   Actor_SetActionScript(GARET, partyScript);
   Actor_SetActionScript(2, partyScript);
-  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
+  Actor_RunActionScriptAndWait(3, partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -840,7 +840,7 @@ static void Scene_RunPartySequence(void) {
   partyScript = gHammetPalace_PartyActions;
   Actor_SetActionScript(GARET, partyScript);
   Actor_SetActionScript(2, partyScript);
-  Object_SetActionCallbackAndRefreshById(3, (s32)partyScript);
+  Actor_RunActionScriptAndWait(3, partyScript);
   work = gEventWork;
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

@@ -425,7 +425,7 @@ static void FieldScene_RunBranchingFormationPresentation(void) {
   if (gKolimaForestBridge_PartyFlag != 0) {
     Actor_SetActionScript(15, finishAction);
   }
-  Object_SetActionCallbackAndRefreshById(16, (s32)finishAction);
+  Actor_RunActionScriptAndWait(16, finishAction);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
@@ -777,7 +777,7 @@ static void FieldScene_RunBranchingFormationPresentation(void) {
   if (*partyFlag != 0) {
     Actor_SetActionScript(15, finishAction);
   }
-  Object_SetActionCallbackAndRefreshById(16, (s32)finishAction);
+  Actor_RunActionScriptAndWait(16, finishAction);
   Engine_EventWait(20);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetSpritePriority(GARET, 2);

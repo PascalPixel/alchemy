@@ -2042,7 +2042,8 @@ void BattleEffect_RunTileAndPaletteAnimation(
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
+                             work->imageStorage, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(
@@ -2226,9 +2227,9 @@ void BattleEffect_RunTileAndPaletteAnimation(
     if (frame <= 50) {
       for (i = 0; i != 33; i++) {
         piece = &work->particles[i];
-        // The last two packed pieces extend into the scanline scratch area.
-        draw[0](canvas, (u8 *)work + gBattlePieceOffset[i], HI(piece->x),
-                HI(piece->y), gBattlePieceWidth[i], gBattlePieceHeight[i]);
+        draw[0](canvas, work->imageStorage + gBattlePieceOffset[i],
+                HI(piece->x), HI(piece->y), gBattlePieceWidth[i],
+                gBattlePieceHeight[i]);
         if (frame > 3)
           EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
       }
@@ -18463,7 +18464,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
     REG_BLDALPHA = 0xe10;
   }
   if (kind == 32) {
-    CastingImpact_LoadResource(&ResourceId_BlueBeastSheet, work, 1, 1);
+    CastingImpact_LoadResource(&ResourceId_BlueBeastSheet, work->imageStorage,
+                               1, 1);
     CastingImpact_LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer,
                                1, 0);
     REG_BLDALPHA = 0xe10;
@@ -18934,25 +18936,25 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind) {
       }
       if (frame <= 3) {
         if (work->effect->side == 1) {
-          blitters[0](canvas, work, 0, 24, 80, 104);
+          blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
         } else {
-          blitters[0](canvas, work, 48, 24, 80, 104);
+          blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
         }
       } else {
         if (frame <= 7) {
           if (work->effect->side == 1) {
-            blitters[0](canvas, work, 0, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
           } else {
-            blitters[0](canvas, work, 48, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
           }
         }
         if (work->effect->side == 1) {
-          blitters[0](canvas, work->sheet + 0x1e00, 16, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + 0x1e00, 16, 16, 80, 104);
         } else {
-          blitters[0](canvas, work->sheet + 0x1e00, 32, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + 0x1e00, 32, 16, 80, 104);
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->sheet + 0x3e80, 0, 16, 128, 91);
+          blitters[0](canvas, work->imageStorage + 0x3e80, 0, 16, 128, 91);
         }
         if (frame == 8 || frame == 9) {
           CastingImpact_DrawCroppedImage(canvas, Ram_MapCellBuffer, 0, 16, 128,
@@ -23357,17 +23359,21 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   BattleFx_BeginCanvasLayer(0);
   REG_BLDCNT = 0;
 
-  // Frames 1-2 use work->sheet; frames 3-4 use gMapCellBuffer (all 120x120).
+  // Each pair of 120x120 frames fills the image storage before the particles.
+  // Frames 1-2 use the work buffer; frames 3-4 use gMapCellBuffer.
   if (variant == 0) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
+                               1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1,
                                1);
   } else if (variant == 1) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
+                               1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, gMapCellBuffer, 1,
                                1);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
+                               1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, gMapCellBuffer, 1,
                                1);
   }
@@ -23395,9 +23401,9 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect,
   AudioCommand_PlayFar(212);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)
-      draw[0](canvas, work, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
     else if (frame <= 7)
-      draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
     else if (frame <= 11)
       draw[0](canvas, gMapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 15)

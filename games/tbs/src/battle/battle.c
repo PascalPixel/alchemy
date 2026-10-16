@@ -68,6 +68,7 @@
 #include "irqlock.h"
 #include "transform.h"
 #include "battle_effect.h"
+#include "battle_effect_work.h"
 #include "character.h"
 #include "io_write_queue.h"
 #include "item.h"
@@ -10459,10 +10460,11 @@ struct SparkWork {
   struct Ring rings[3];
   s32 frames;
   s32 ready;
-  s32 originX;
-  s32 originY;
-  s32 originPending;
+  struct BattleCanvasOrigin canvasOrigin;
 };
+
+STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
+              offsetof(struct BattleEffectWork, trackedCanvas.origin));
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
@@ -10660,7 +10662,7 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   }
   work->frames = 0;
   work->ready = 0;
-  work->originPending = 0;
+  work->canvasOrigin.unk08 = 0;
   Iwram_ClearWords(gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
   graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWords(BG_PLTT, graphics, 128);
@@ -10797,25 +10799,28 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(
           unitId, EffectPosition_Coordinates(projectedPosition));
-      work->originX = (64U - (u32)projectedPosition->x) << 8;
-      work->originY = (64U - (u32)projectedPosition->y) << 8;
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
-      work->originPending = 1;
+      work->canvasOrigin.x = (64U - (u32)projectedPosition->x) << 8;
+      work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
+      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->canvasOrigin.x,
+                              0x84000002);
+      work->canvasOrigin.unk08 = 1;
       WaitFrames(1);
     }
     Graphics_ResetVramBlockAndReleaseHeapBlocks(element);
   } else if (mode == 1) {
-    // This workspace is effect.c's BattleEffectWork, but these stores use
-    // the same offsets as the star workspace.
+    struct BattleEffectWork *effectWork;
+
+    // The scene uses its image area to stage the tracked canvas origin.
     BattlePresentation_PrepareSceneFar(element);
     for (frame = 0; frame < 40; frame++) {
-      work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+      effectWork = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
       BattleMotion_ProjectScaledPosition(
           unitId, EffectPosition_Coordinates(&position2));
-      work->originX = (64U - (u32)position2.x) << 8;
-      work->originY = (64U - (u32)position2.y) << 8;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&work->originX, 0x84000002);
-      work->originPending = 1;
+      effectWork->trackedCanvas.origin.x = (64U - (u32)position2.x) << 8;
+      effectWork->trackedCanvas.origin.y = (64U - (u32)position2.y) << 8;
+      IO_WRITE_QUEUE_PUSH(0x04000028, (u32)&effectWork->trackedCanvas.origin.x,
+                          0x84000002);
+      effectWork->trackedCanvas.origin.unk08 = 1;
       WaitFrames(1);
     }
     BattleFx_ScheduleCallbacksAndReleaseBlocksFar();

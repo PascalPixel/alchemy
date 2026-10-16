@@ -6,10 +6,33 @@
 #include "static_assert.h"
 #include "types.h"
 
+// Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
+struct BattleCanvasOrigin {
+  s32 x;
+  s32 y;
+  // Written after staging the coordinates; no reader has been identified.
+  s32 unk08;
+};
+
+STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
+
 struct BattleEffectWork {
-  u8 sheet[0x6980];
-  s32 bg2X[160];
-  u8 unk6c00[0x480];
+  // Images and scanline tables reuse the storage before the particles.
+  // The tile-animation mask extends beyond sheet into the table area.
+  union {
+    struct {
+      u8 sheet[0x6980];
+      s32 bg2X[160];
+      u8 unk6c00[0x480];
+    };
+    u8 imageStorage[0x7080];
+    // The tracked elemental scene stages its origin inside the image area.
+    struct {
+      u8 image[0x13c4];
+      struct BattleCanvasOrigin origin;
+    } trackedCanvas;
+  };
   struct EffectStep particles[64];
   s32 transferMode;
   s32 transferValue;
@@ -46,6 +69,9 @@ struct BattleEffectWork {
 };
 
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2X) == 0x6980);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, imageStorage) == 0);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) ==
+              0x13c4);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 0x7080);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferValue) == 0x7784);

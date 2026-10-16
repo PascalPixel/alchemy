@@ -32,7 +32,7 @@ void Func_02003d30(void) {
   ShamanVillage_ObjWalk2(16, 208, 264);
   ShamanVillage_ObjWalk(17, 240, 264);
   Object_SetModeById(16, 1);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   ShamanVillage_ObjArm(16, angle, 0);
   ShamanVillage_ObjArm(17, angle, 0);
   ShamanVillage_ObjTurn(15, 0x8000);

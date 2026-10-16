@@ -10,8 +10,8 @@
 #include "callback_scheduler.h"
 
 void WaitFrames(s32);
-void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z,
-                      s32 use_setter);
+void Camera_MoveWithinMapBounds(s32 requested_x, s32 requested_y,
+                                s32 requested_z, s32 use_setter);
 s32 __divsi3(s32, s32);
 extern u32 gData_03001144;
 
@@ -19,14 +19,14 @@ void Func_080d450c(s32 id, s32 use_setter) {
   struct ObjectRuntime *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    Motion_CamBounds(obj->x, -1, obj->z, use_setter);
+    Camera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
 }
 
 void Func_080d452c(s32 id, s32 use_setter) {
   struct ObjectRuntime *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    Motion_CamBounds(obj->x, obj->y, obj->z, use_setter);
+    Camera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
 }
 
 void Func_080d4548(void) {

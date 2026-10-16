@@ -5,9 +5,9 @@
 	.thumb_func
 Game_ResetForNewGameFar:
 	overlay_veneer Game_ResetForNewGame
-	.global Battle_WaitMode0Far
+	.global FieldEvent_WaitFramesFar
 	.thumb_func
-Battle_WaitMode0Far:
+FieldEvent_WaitFramesFar:
 	overlay_veneer EventRuntime_Wait
 	.global EventRuntime_BeginFar
 	.thumb_func

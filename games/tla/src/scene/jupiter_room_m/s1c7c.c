@@ -11,7 +11,7 @@ void Event_WaitTransitionFrames(void);
 void Func_0200488c(const u8 *message);
 void Func_0200489c(s32 actor, s32 a, s32 b);
 struct ObjectRuntime *Func_020048cc(s32 actor, s32 emote, s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -79,18 +79,18 @@ void Func_02001c7c(void) {
   Func_0200488c(MsgIMSorry);
   Func_0200489c(2, 0, 5);
   Func_020048cc(4, 0x100, 30);
-  Motion_CamBounds(705 << 16, 0, 177 << 16, 1);
+  Camera_MoveWithinMapBounds(705 << 16, 0, 177 << 16, 1);
   Func_020048f4();
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(2), 0);
   Object_SetModeById(2, 32);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   JupiterRoomM_Func_020048b4(0, 0x6000);
   Func_0200489c(0, 0, 5);
   Func_020048cc(26, 0x107, 30);
   Func_0200489c(26, 0, 5);
   ObjectMotion_OffsetPositionAndReset(26, 24, 0);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   do {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
      * zero is not kept in r8 for the store of the owner below (without: differ

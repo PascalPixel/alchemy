@@ -9,7 +9,7 @@ s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02000f00(void);
 void Func_02000fac(void);
 void Func_02004e5c(void);
@@ -39,10 +39,10 @@ void Func_020011c8(void) {
     Func_02000f00();
     Func_02004f0c((s32)MsgGaiaRockInside03);
     ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02004f14(10, 0);
     Motion_SetModeAndWaitAnimation(10, 3);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02000fac();
   }
   Func_02004e64();

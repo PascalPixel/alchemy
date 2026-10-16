@@ -27,7 +27,7 @@ struct CellTarget {
 
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object,
@@ -58,5 +58,5 @@ void Func_02001654(struct CellTarget *target) {
   Func_020015cc();
   Func_02001d4c(161);
   Func_02001c34(target->x, target->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

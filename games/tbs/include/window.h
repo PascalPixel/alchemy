@@ -40,7 +40,8 @@ struct UiRenderWork {
   u16 names[8];
   u16 resourceIds[2];
   u16 outputIds[2];
-  u16 result[2];
+  u16 speakerVoiceSound;
+  u16 speakerVoiceCountdown;
   u8 pageArrowShown;
   u8 busy;
   u8 spacingBefore;
@@ -88,8 +89,10 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_ResourceIds, struct UiRenderWork, resourceIds,
                     RENDER_SLOT_ID_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_OutputIds, struct UiRenderWork, outputIds,
                     RENDER_SLOT_VALUE_OFFSET);
-LAYOUT_OFFSET_GUARD(UiRenderWork_Result, struct UiRenderWork, result,
-                    RENDER_RESULT_OFFSET);
+LAYOUT_OFFSET_GUARD(UiRenderWork_SpeakerVoiceSound, struct UiRenderWork,
+                    speakerVoiceSound, RENDER_RESULT_OFFSET);
+LAYOUT_OFFSET_GUARD(UiRenderWork_SpeakerVoiceCountdown, struct UiRenderWork,
+                    speakerVoiceCountdown, RENDER_RESULT_OFFSET + 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy,
                     RENDER_BUSY_OFFSET);
 LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingBefore, struct UiRenderWork,

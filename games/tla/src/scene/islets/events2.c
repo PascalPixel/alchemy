@@ -18,7 +18,7 @@ void Object_LinkObjectAndSetCallback();
 void WaitFrames();
 struct ObjectRuntime *Object_GetById();
 void Func_02003ff4();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void Func_02003f3c();
 void Func_02003f5c();
 void GameFlag_SetBit();
@@ -197,7 +197,7 @@ void Func_02000440(void) {
   Call3((void (*)())ObjectMotion_Launch, 9, 4, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Call2((void (*)())Func_02003f5c, 9, 0x102);
-  Call1((void (*)())Battle_WaitMode0, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())GameFlag_SetBit, 0x214);
 L_020084b6:
   Call3((void (*)())ObjectMotion_SetAngleToward, 8, gPartyState.currentOwner,
@@ -277,7 +277,7 @@ void Func_02000568(void) {
       ObjectDispatch_SetSingleChildFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
-    Call1((void (*)())Battle_WaitMode0, 10);
+    Call1((void (*)())FieldEvent_WaitFrames, 10);
     ((void (*)())Func_02003fc4)();
     Call2((void (*)())UiText_ShowPositionedMessageAndWait, (s32)MsgOhMyThat + 1,
           1);

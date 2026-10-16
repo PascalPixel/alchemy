@@ -118,10 +118,10 @@ PartyInventory_FindOwner:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02003e64
 	.thumb_func
 Func_02003e64:
@@ -253,11 +253,11 @@ Func_02003f5c:
 	.global Func_02003f64
 	.thumb_func
 Func_02003f64:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02003f74
 	.thumb_func
 Func_02003f74:

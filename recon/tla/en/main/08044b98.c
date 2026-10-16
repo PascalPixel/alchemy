@@ -50,8 +50,8 @@ void Func_08044b98(s32 member) {
     *p++ = 0;
     *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
     *p = palette | 0xe000;
-    work->result[0] = 0;
-    work->result[1] = 0;
+    work->speakerVoiceSound = 0;
+    work->speakerVoiceCountdown = 0;
     UiWork_PushValueSlot(member, 1);
     UiText_QueueRenderEntries(
         window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);

@@ -15,7 +15,7 @@ void Func_02003684(void) {
   Func_020051c0();
   Func_02005370(0);
   Func_02005388(162);
-  Motion_CamBounds_(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   WaitFrames_(1);
   leader->motionFlags = 0;
   Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),
@@ -65,7 +65,7 @@ void Func_020037e0(void) {
   Func_020051c0();
   Func_02005370(0);
   Func_02005388(162);
-  Motion_CamBounds_(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   WaitFrames_(1);
   leader->motionFlags = 0;
   Object_SetPositionAndResetMotion_(Object_GetById(gPartyState.currentOwner),

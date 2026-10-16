@@ -18,7 +18,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Object_AttachWorkTargetToObject(s32 id, s32 a);
+void Camera_FollowActor(s32 id, s32 a);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void WaitFrames(s32 frames);
@@ -50,7 +50,7 @@ void Func_02000230(s32 kind) {
     target[2] = 144 << 18;
   }
   Scheduler_AddOrUpdateCallback(Func_020000b4, 0x480);
-  Object_AttachWorkTargetToObject(owner, 1);
+  Camera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Object_Spawn(280, leader->x, leader->y, leader->z);

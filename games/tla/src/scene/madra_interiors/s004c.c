@@ -19,10 +19,10 @@ void Func_020000a4(void) {
   Func_02001e18(msg);
   UiText_OpenMessageAtObject(9, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02001e18(msg + 1);
   } else {
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_02001e18(msg + 2);
   }
   Func_02001e30(9, 0);
@@ -54,10 +54,10 @@ void Func_020000fc(void) {
         Func_02001e18(msg);
         UiText_OpenMessageAtObject(22, 0);
         if (Event_AskYesNoWithActorAnimation(Func_02001ee8(), 0) == 0) {
-          Battle_WaitMode0(10);
+          FieldEvent_WaitFrames(10);
           Func_02001e18(msg + 1);
         } else {
-          Battle_WaitMode0(20);
+          FieldEvent_WaitFrames(20);
           Func_02001e18(msg + 2);
         }
         Func_02001e30(22, 0);

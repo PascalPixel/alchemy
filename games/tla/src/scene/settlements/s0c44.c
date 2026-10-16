@@ -41,7 +41,7 @@ loop:
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   CenterOn(gPartyState.currentOwner, 2, -4);
-  Battle_WaitMode0(6);
+  FieldEvent_WaitFrames(6);
   Func_02002110(2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

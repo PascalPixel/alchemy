@@ -9,7 +9,7 @@
 #include "../../../../games/tla/src/scene/caverns/caverns.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void Camera_FollowActor(s32 actor, s32 target);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_020003b4(u32 layer, s32 x, s32 y);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
@@ -47,6 +47,6 @@ done:
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
-    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gPartyState.currentOwner, 0);
   }
 }

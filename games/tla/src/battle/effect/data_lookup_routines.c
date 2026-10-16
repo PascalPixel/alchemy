@@ -21,28 +21,38 @@ s32 Encounter_RollTerrain(u32 index, s32 steps) {
   return Encounter_SelectEnemyGroup(table[index], steps);
 }
 
-s32 Encounter_RollWorldMap(s32 arg0, s32 arg1) {
-  return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)arg0), arg1);
+// Choose a world-map encounter from the terrain zone and step weight.
+s32 Encounter_RollWorldMap(s32 position, s32 steps) {
+  return Encounter_SelectEnemyGroup(
+      Encounter_ResolveWorldMapZoneAndBackdrop((void *)position), steps);
 }
 
-u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1) {
+// Return the selected group from a fourteen-halfword encounter row.
+u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   u16 *table;
-  s32 row;
+  s32 byteOffset;
 
-  row = arg0 * 14;
+  byteOffset = zone * 14;
   table = gEncounter_EnemyGroupTable;
-  /* FAKEMATCH: ⚓️ loads the table between the row and the column */
-  asm volatile("" : "+l"(table), "+l"(row));
-  row += arg1;
-  row <<= 1;
-  row += 4;
-  return *(u16 *)((u8 *)table + row);
+  /* FAKEMATCH: ⚓️ loads the table between scaling the zone and adding the slot. */
+  asm volatile("" : "+l"(table), "+l"(byteOffset));
+  byteOffset += slot;
+  byteOffset <<= 1;
+  byteOffset += 4;
+  return *(u16 *)((u8 *)table + byteOffset);
 }
 
-u16 BattleFx_GetPhaseResult(s32 phase) {
-  u16 *entry = (u16 *)(gEncounter_AreaEntryTable + phase * 4);
+// Resolve the Djinni table's zone/slot pair to its enemy group.
+u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
+  u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
-  BattleFx_GetWeightedResult(entry[0], entry[1]);
+#ifdef UBFIX
+  return Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+#else
+  // UB: no return statement; the native leaves the called getter's result in
+  // r0.
+  Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+#endif
 }
 
 s32 GameFlag_Test(s32 flag);

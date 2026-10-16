@@ -36,7 +36,7 @@ void Func_02001500(void) {
   if (flag == 0) {
     Func_02001cc4();
     Func_02001dcc(0);
-    Motion_CamBounds_(-1, -1, -1, 0);
+    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
     Func_02001d04(*owner, ((s16 *)&leader->x)[1] << 16,
                   (((s16 *)&leader->z)[1] << 16) - 0x100000);

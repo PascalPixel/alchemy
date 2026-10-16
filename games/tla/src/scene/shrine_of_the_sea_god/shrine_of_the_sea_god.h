@@ -63,7 +63,7 @@ struct ShrineOfTheSeaGodMapWork {
 
 struct ShrineOfTheSeaGodObject *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -120,7 +120,7 @@ void ObjectMotion_EnableActionAndResetMotion(s32 actor);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
@@ -176,7 +176,7 @@ static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
 
 static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void ShrineOfTheSeaGod_ObjLaunch(s32 actor, s32 speed,
@@ -197,7 +197,7 @@ static inline void ShrineOfTheSeaGod_ObjModeWait(s32 actor, s32 mode) {
 
 static inline void ShrineOfTheSeaGod_Wait(s32 frames) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void ShrineOfTheSeaGod_ObjVar(s32 actor, s32 value) {

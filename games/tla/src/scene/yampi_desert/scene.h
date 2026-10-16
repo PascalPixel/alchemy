@@ -76,12 +76,12 @@ void Func_02000918(u16 *list);
 void Func_0200095c(u16 *list);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Camera_FollowActor(s32 id, s32 mode);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void PartyInventory_GiveItem(s32 item, s32 flags);
 struct FieldActor *Func_02001b70(void);
 void Func_02003fc8(struct FieldActor *object);
@@ -98,7 +98,7 @@ void Func_02003fe8(struct FieldActor *object);
 void Func_020040e8(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
 void Func_02004118(s32 a, s32 b);
-void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
+void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void Func_020021d4(void);
@@ -161,7 +161,7 @@ static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
 
 static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, a, z, b);
+  Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {

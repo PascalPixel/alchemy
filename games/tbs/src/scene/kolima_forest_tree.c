@@ -51,7 +51,7 @@ u8 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
 
 u8 *KolimaForestTree_GetPlacements(void) { return gKolimaForestTreePlacements; }
 
-static void PaletteScene_Initialize(void) {
+UNUSED static void PaletteScene_Initialize(void) {
   struct EventWork *scene;
 
   scene = gEventWork;

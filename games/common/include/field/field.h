@@ -32,7 +32,7 @@ extern u8 gRuntime_ByteRemapTable[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Event_ValidatePackedId(u32 packed_id);
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
-void Object_AttachWorkTargetToObject(s32 id, s32 flag);
+void Camera_FollowActor(s32 id, s32 flag);
 void Object_UpdateAllMotion(void);
 void Object_UpdateAllThumb(void);
 #ifndef OWN_ObjectDispatch_SetSingleChildFlags

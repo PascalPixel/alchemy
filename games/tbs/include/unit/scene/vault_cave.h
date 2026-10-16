@@ -3,13 +3,14 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
-u8 *VaultCave_GetRegions(void);
+const struct SceneRegion *VaultCave_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
@@ -20,7 +21,7 @@ extern struct SceneEntrance gVaultCaveEntrancesOther[];
 extern struct SceneEntrance gVaultCaveEntrances1[];
 extern struct SceneEntrance gVaultCaveEntrances2[];
 extern struct SceneEntrance gVaultCaveEntrances3[];
-extern s16 gVaultCaveRegions[];
+extern struct SceneRegion gVaultCaveRegions[];
 extern u32 gVaultCaveExitsOther[];
 extern u32 gVaultCaveExits1[];
 extern u32 gVaultCaveExits2[];

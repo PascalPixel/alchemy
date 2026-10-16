@@ -52,7 +52,7 @@
 	.set import.Engine_EventOpenMessage, 1
 	.set import.Engine_EventShowMessage, 1
 	.set import.Event_SetDestination, 1
-	.set import.BattleFx_SetWeightedResult, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.set import.Engine_EventOpenScreen, 1

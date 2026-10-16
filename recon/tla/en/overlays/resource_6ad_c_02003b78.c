@@ -35,5 +35,5 @@ void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry) {
   Func_02003af0();
   Func_020056c0(161);
   Func_020054e0_(work->sourceX, work->sourceZ + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

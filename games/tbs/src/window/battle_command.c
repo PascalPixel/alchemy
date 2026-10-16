@@ -3110,8 +3110,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
     *p = palette | 0xe000;
 
-    work->result[0] = zero;
-    work->result[1] = zero;
+    work->speakerVoiceSound = zero;
+    work->speakerVoiceCountdown = zero;
 
     // The Djinni's name is ability 300 + 20 * element + djinn.
     UiWork_PushValueSlot(member, 1);
@@ -3171,8 +3171,8 @@ void Party_ShowJoinedMessage(s32 member) {
     *p++ = 0;
     *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
     *p = palette | 0xe000;
-    work->result[0] = 0;
-    work->result[1] = 0;
+    work->speakerVoiceSound = 0;
+    work->speakerVoiceCountdown = 0;
     UiWork_PushValueSlot(member, 1);
     UiText_QueueRenderEntries(
         window, UiText_BuildRenderEntriesMode1(MsgJoinedParty), 36, 2, 0);
@@ -3232,8 +3232,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p++ = 0x802c000c;
     *p = palette | 0xf000;
 
-    ((struct UiRenderWork *)work)->result[0] = zero;
-    ((struct UiRenderWork *)work)->result[1] = zero;
+    ((struct UiRenderWork *)work)->speakerVoiceSound = zero;
+    ((struct UiRenderWork *)work)->speakerVoiceCountdown = zero;
 
     UiWork_PushValueSlot(first, 1);
     UiWork_PushValueSlot(second, 1);

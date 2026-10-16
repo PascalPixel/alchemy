@@ -4,7 +4,7 @@ extern char SceneId_SuhallaGate1;
 extern char SceneId_VenusEntrance;
 extern u8 MsgWaahhhItS[];
 
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
@@ -24,13 +24,13 @@ void Func_020003ac(void) {
   Func_02000a70(0);
   Func_02000a00((s32)MsgWaahhhItS);
   ObjectMotion_ResetAndSetPositionInMode2(gPartyState.currentOwner, 472, 320);
-  Motion_CamBounds(0x1c80000, -1, 0x1180000, 1);
+  Camera_MoveWithinMapBounds(0x1c80000, -1, 0x1180000, 1);
   Func_02000a30();
   ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xa000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_Launch(8, 6, 20);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02000a08(8, 0, 10);
   {
     s32 x = 256;
@@ -43,7 +43,7 @@ void Func_020003ac(void) {
   }
   Func_02000a08(8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02000a08(8, 0, 10);
   ObjectMotion_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);

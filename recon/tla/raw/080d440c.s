@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.balign 4
-	.global Motion_CamBounds
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
+Camera_MoveWithinMapBounds:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

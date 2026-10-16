@@ -100,7 +100,7 @@ void Func_02004534(void) {
     WaitFrames(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     i = 0;
     goto test_stand;
   next_stand:
@@ -112,7 +112,7 @@ void Func_02004534(void) {
         goto next_stand;
     }
     Object_SetModeById(gPartyState.currentOwner, 42);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     i = 0;
     goto test_turn;
   next_turn:

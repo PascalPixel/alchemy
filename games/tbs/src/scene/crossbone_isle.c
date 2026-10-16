@@ -55,7 +55,7 @@ union GameStateRows {
   s16 halves[512][1];
 };
 
-static void NoOpEffectCallback(void) {}
+UNUSED static void NoOpEffectCallback(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
@@ -134,7 +134,7 @@ static void EV10_TOUCH(void) {
   base = (u8 *)&gGameState;
   Event_SetNextDestination(*(s16 *)(base + 448), 5);
   base[555] = 3;
-  BattleFx_SetWeightedResult(84, 5);
+  Field_RequestBattleFromEncounterTable(84, 5);
   Engine_EventEnd();
 }
 
@@ -354,31 +354,31 @@ static void EV03_TOUCH(void) {
     ((u8 *)((s16 (*)[1]) & gGameState))[0x22b] = 3;
     switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6) {
     case 0:
-      BattleFx_SetWeightedResult(63, 0);
+      Field_RequestBattleFromEncounterTable(63, 0);
       break;
     case 1:
-      BattleFx_SetWeightedResult(63, 1);
+      Field_RequestBattleFromEncounterTable(63, 1);
       break;
     case 2:
-      BattleFx_SetWeightedResult(63, 2);
+      Field_RequestBattleFromEncounterTable(63, 2);
       break;
     case 3:
-      BattleFx_SetWeightedResult(63, 3);
+      Field_RequestBattleFromEncounterTable(63, 3);
       break;
     case 4:
-      BattleFx_SetWeightedResult(84, 0);
+      Field_RequestBattleFromEncounterTable(84, 0);
       break;
     case 5:
-      BattleFx_SetWeightedResult(84, 1);
+      Field_RequestBattleFromEncounterTable(84, 1);
       break;
     case 6:
-      BattleFx_SetWeightedResult(84, 2);
+      Field_RequestBattleFromEncounterTable(84, 2);
       break;
     case 7:
-      BattleFx_SetWeightedResult(84, 3);
+      Field_RequestBattleFromEncounterTable(84, 3);
       break;
     case 8:
-      BattleFx_SetWeightedResult(84, 4);
+      Field_RequestBattleFromEncounterTable(84, 4);
       break;
     }
     Engine_EventEnd();

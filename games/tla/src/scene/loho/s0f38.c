@@ -8,7 +8,7 @@ struct EventWork154 {
   s16 value;
 };
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -43,7 +43,7 @@ void Func_02000f38(void) {
   else
     Func_02001348_(8, 0xe00000, 0xe00000);
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_GetById(4)->actionFlags &= 0xfe;
   Func_020012a8_(96, 14, 72, 14, 2, 1);
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
@@ -53,7 +53,7 @@ void Func_02000f38(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   Object_SetModeById(4, 10);
-  Battle_WaitMode0(14);
+  FieldEvent_WaitFrames(14);
   Func_02001448(123);
   Func_020013d0(value);
   Func_020012e8();

@@ -58,8 +58,8 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
           WaitFrames(1);
       } else
         UiWork_Finalize(window, 1);
-      work->result[0] = 0;
-      work->result[1] = 0;
+      work->speakerVoiceSound = 0;
+      work->speakerVoiceCountdown = 0;
     }
   }
 }

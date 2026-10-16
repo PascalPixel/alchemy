@@ -18,10 +18,10 @@ struct SparkleFrame {
 extern const struct SparkleFrame gFieldFx_SparkleFrames[32];
 
 void Event_UpdateDebugSkip(void);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Leader_StopMoving(void);
-void Battle_Reset(void);
-void BattleFx_FinishAction(void);
+void FieldEvent_Begin(void);
+void FieldEvent_End(void);
 void Event_NoOpHookA(void);
 void Event_NoOpHook(void);
 void Event_RunObjectHookAndWait(struct ScenePlacement *table);
@@ -47,8 +47,8 @@ void Event_WaitTransitionFrames(void);
 void Event_SetDestination(s32 scene, s32 entrance);
 void Event_SetSavedDestination(u16 scene, u16 entrance);
 void Event_SetExitRequest(u16 request);
-void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo);
-void BattleFx_SetPhaseRequest(s32 flag, s32 no);
+void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
+void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_SetNextDestination(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);
 void Event_RequestDestination(u16 scene, u16 entrance);
@@ -126,9 +126,9 @@ void Event_SetMessageId(s32 message);
 s32 ObjectTable_ReadActiveValue(s32 actor);
 s32 ObjectTable_FindActiveByValue(s32 sprite);
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused);
-void BattleEv_RunWait(s32 actor, s32 flags);
+void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags);
 void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait);
-s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags);
+s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags);
 void BattleEventRuntime_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
 void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y);
@@ -140,12 +140,12 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 secondPortraitX, s32 secondPortraitY);
 void Ui_SetMessageVoiceFromActor(s32 actor);
 
-void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition);
-void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration);
-void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                      s32 glide);
+void Camera_FollowActor(s32 actor, s32 keepPosition);
+void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
+void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
+                                s32 glide);
 void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide);
-void BattleFx_CommitObjectPositionAndWait(void);
+void Camera_WaitForArrival(void);
 struct FieldActor *Camera_GetEventObject(void);
 void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
                                  s32 keepCurrentPosition);

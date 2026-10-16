@@ -25,7 +25,7 @@ void Func_02000438(void) {
     drop = 9;
   }
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_GetById(4)->actionFlags &= ~1;
   Func_02000618_(96, 14, 72, 14, 2, 1);
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
@@ -35,7 +35,7 @@ void Func_02000438(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, drop);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   Object_SetModeById(4, 10);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_020006f0(123);
   Func_020006b8(sound);
   Func_02000650();

@@ -113,7 +113,7 @@ static void StoryProgress_TriggerEvent0808(void) {
   if (gGameState.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
     if ((u32)Engine_RandomNext() < 0x8000) {
-      BattleFx_SetPhaseRequest(0x808, 3);
+      Field_RequestDjinnBattle(0x808, 3);
       work->encounterBias = 0;
     } else {
       gGameState.encounterSteps = work->encounterThreshold;
@@ -127,7 +127,7 @@ static void StoryProgress_TriggerEvent0809(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    BattleFx_SetPhaseRequest(0x809, 42);
+    Field_RequestDjinnBattle(0x809, 42);
     work->encounterBias = 0;
   }
 }
@@ -138,7 +138,7 @@ static void StoryProgress_TriggerEvent080A(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    BattleFx_SetPhaseRequest(0x80a, 24);
+    Field_RequestDjinnBattle(0x80a, 24);
     work->encounterBias = 0;
   }
 }
@@ -1126,7 +1126,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   GameFlag_Set(0x171);
   ItemMenu_Open();
   Engine_EventWait(30);
-  BattleFx_SetWeightedResult(12, 6);
+  Field_RequestBattleFromEncounterTable(12, 6);
 }
 
 #define DJINNI 8
@@ -2099,9 +2099,9 @@ static void EV54_PSYNERGY(void) {
   Engine_GameFlagClear(0x2f0);
   Engine_GameFlagSet(0x2f1);
   FieldGameFlag_SetByte(0x2f8, 0);
-  BattleFx_SetWeightedResult(98, 5);
+  Field_RequestBattleFromEncounterTable(98, 5);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(98, 7);
+  Field_RequestBattleFromEncounterTable(98, 7);
   selectedActor = Object_GetById(gGameState.selectedActor);
   selectedActor->motionFlags = 2;
 }
@@ -2247,7 +2247,7 @@ static void Scene_RunScene371SequenceA(s32 palette) {
   Engine_GameFlagSet(0x101);
 }
 
-static void SceneActor_UpdateObjectByCounterBits(u8 *obj) {
+UNUSED static void SceneActor_UpdateObjectByCounterBits(u8 *obj) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(obj, 7);
   } else {
@@ -2258,7 +2258,7 @@ static void SceneActor_UpdateObjectByCounterBits(u8 *obj) {
   }
 }
 
-static void OverlayObject_UpdateOnFrameParity(u8 *obj) {
+UNUSED static void OverlayObject_UpdateOnFrameParity(u8 *obj) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(obj, ((u32)((gFrameCount >> 1)) % (u32)6));
   }
@@ -2267,7 +2267,7 @@ static void OverlayObject_UpdateOnFrameParity(u8 *obj) {
   }
 }
 
-static void SceneState_RunSlotStepOnOddFrames(s32 arg0) {
+UNUSED static void SceneState_RunSlotStepOnOddFrames(s32 arg0) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 

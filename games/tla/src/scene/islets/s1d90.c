@@ -47,11 +47,11 @@ void Func_02001db0(void) {
   Call2((void (*)())Func_02003f2c, 9, 0);
   Object_GetById(9)->actionFlags &= ~1;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 222, 186);
-  Call1((void (*)())Battle_WaitMode0, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   Object_GetById(9)->actionFlags |= 1;
   Object_GetById(9)->actionFlags &= ~1;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 232, 186);
-  Call1((void (*)())Battle_WaitMode0, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   Object_GetById(9)->actionFlags |= 1;
   Call2((void (*)())Func_02003f3c, gPartyState.currentOwner, 0x4000);
   Call2((void (*)())Object_SetModeById, gPartyState.currentOwner, 28);
@@ -61,7 +61,7 @@ void Func_02001db0(void) {
   Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
   Call4((void (*)())Object_SetPositionAndResetMotion, (s32)item, leader->x,
         leader->y + 0x180000, leader->z);
-  Call1((void (*)())Battle_WaitMode0, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   ((void (*)())Func_02003fc4)();
   Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);
   ((void (*)())Func_02003fbc)();

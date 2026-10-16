@@ -30,10 +30,10 @@ Func_020002a8:
 	.endif
 	.endif
 	.endif
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020002b8
 	.thumb_func
 Func_020002b8:
@@ -93,11 +93,11 @@ ObjectMotion_ArmCallback:
 	.global Func_02000328
 	.thumb_func
 Func_02000328:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02000338
 	.thumb_func
 Func_02000338:

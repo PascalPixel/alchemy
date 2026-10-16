@@ -187,7 +187,7 @@ Func_0200013c:
 	cmp r2, #0
 	bge .L_0200825e
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #1
 	mov r0, r10
 	strb r3, [r0]
@@ -634,7 +634,7 @@ Func_02000d2c:
 	lsls r0, r0, #17
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r1, #11
 	mov r11, r1
 	movs r5, #114
@@ -670,7 +670,7 @@ Func_02000d2c:
 	movs r0, #24
 	bl WaitFrames
 	movs r0, #120
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Func_020028a0
 	movs r0, #204
 	lsls r0, r0, #2
@@ -2642,7 +2642,7 @@ Func_02002144:
 	cmp r2, #0
 	bge .L_0200a1f2
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [sp, #0]
 	ldrb r2, [r7, #17]
 	movs r3, #1

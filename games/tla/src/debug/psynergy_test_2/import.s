@@ -141,7 +141,7 @@ Object_SetModeById:
 	.global Func_020005d8
 	.thumb_func
 Func_020005d8:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_020005e0
 	.thumb_func
 Func_020005e0:

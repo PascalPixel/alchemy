@@ -57,7 +57,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -102,6 +102,6 @@ void Func_020014e0(s32 value);
 void Func_020014f8(const void *data);
 void Func_02001538(s32 cue);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 id, s32 flag);
+void Camera_FollowActor(s32 id, s32 flag);
 
 #endif

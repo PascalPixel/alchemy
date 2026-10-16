@@ -12,7 +12,7 @@ void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020040b4(void);
 struct ObjectRuntime *Func_020048fc(void);
 

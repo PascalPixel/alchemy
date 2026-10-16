@@ -13,7 +13,7 @@ s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001bc4(s32 script, s32 x, s32 z);
@@ -50,7 +50,7 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Object_SetModeById(gPartyState.currentOwner, 2);
   Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2,
         -8);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02001cd4(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

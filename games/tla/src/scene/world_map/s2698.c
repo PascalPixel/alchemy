@@ -3,8 +3,8 @@
 #include "text/msg_ids.h"
 
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -24,10 +24,10 @@ void Func_02004db0(void);
 void Func_02004df8(s32 value, s32 mode);
 void Func_02004e30(s32 cue);
 
-static __inline__ void Motion_CamBounds_(s32 a, s32 b, s32 c, s32 d) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Func_02004b78_(s32 a, s32 b, s32 c) {
@@ -59,7 +59,7 @@ void Func_02002698(void) {
   Func_02004cd8((s32)MsgTheyVeDone);
   Func_02004cf0(8, 0);
   Func_02004b78_(0x40000, 0x40000, 0x10000);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004cf0(5, 0);
   Func_02004db0();
   Func_02004e30(145);
@@ -68,18 +68,18 @@ void Func_02002698(void) {
   Func_02004d88(60);
   Scheduler_AddOrUpdateCallback(Func_02002594, 0x480);
   Func_02004b78_(0x50000, 0x50000, 0x10000);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004b78_(0x70000, 0x60000, 0x10000);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004da8();
   Func_02004b78_(0x30000, 0x30000, 0x10000);
   Func_02004cf0(9, 0);
   Func_02004db0();
   Func_02004b78_(0x70000, 0x70000, 0x10000);
-  Motion_CamBounds_(0x07c40000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(0x07c40000, -1, 0x1d810000, 1);
   Func_02004df8_(0x9999, 60);
   Func_02004d30();
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004da8();
   Func_02004cf0(5, 0);
   Func_02004cf0(8, 0);
@@ -95,7 +95,7 @@ void Func_02002698(void) {
   WaitFrames(4);
   Func_02002640(64, 128, 32, 0);
   WaitFrames(4);
-  Motion_CamBounds_(0x08040000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(0x08040000, -1, 0x1d810000, 1);
   Func_02004d30();
   Func_02004da8();
   Func_02004b78_(0x30000, 0x30000, 0x10000);
@@ -108,7 +108,7 @@ void Func_02002698(void) {
   Func_02002640(0, 160, 32, 0);
   WaitFrames(20);
   Func_02002640(32, 160, 32, 0);
-  Motion_CamBounds_(0x08640000, -1, 0x1d810000, 1);
+  Camera_MoveWithinMapBounds_(0x08640000, -1, 0x1d810000, 1);
   Func_02004d30();
   Func_02004da8();
   Func_02004cf0(8, 0);
@@ -118,5 +118,5 @@ void Func_02002698(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004d40(64);
-  Battle_WaitMode0(120);
+  FieldEvent_WaitFrames(120);
 }

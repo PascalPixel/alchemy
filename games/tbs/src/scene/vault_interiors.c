@@ -1052,7 +1052,7 @@ static void EV08_TALK(void) {
   Event_SetNextDestination(base, 17);
   Event_SetDefeatDestination(base, 16);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(12, 5);
+  Field_RequestBattleFromEncounterTable(12, 5);
   Engine_EventEnd();
 }
 
@@ -1777,7 +1777,7 @@ static void VaultInteriors_RunVaultEvent(void) {
   Event_SetNextDestination((s32)&SceneId_VaultInteriors, 17);
   Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(12, 5);
+  Field_RequestBattleFromEncounterTable(12, 5);
 }
 
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {

@@ -4,7 +4,7 @@
 
 s32 Func_02004464();
 s32 Func_020045ec();
-s32 Motion_CamBounds();
+s32 Camera_MoveWithinMapBounds();
 s32 Func_0200456c();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_SetPositionAndReset();
@@ -17,7 +17,7 @@ s32 WaitFrames();
 s32 ObjectMotion_EnableActionAndSetCallback();
 s32 Object_SetActionCallbackAndRefreshById();
 struct ObjectRuntime *Object_GetById(s32 id);
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 s32 Motion_SetModeAndWaitAnimation();
 s32 Motion_SetVarCbAndRefresh();
 s32 Event_AskYesNoWithActorAnimation();
@@ -37,7 +37,7 @@ void Func_02000dac(void) {
   Func_02004464();
   Call1(Func_020045ec, 0);
   Call2(Func_0200456c, 0xcccc, 0x1999);
-  Call4(Motion_CamBounds, 0xa00000, -1, 0xa00000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xa00000, -1, 0xa00000, 1);
   Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
         0x6666);
   Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x86, 0x9c);
@@ -82,7 +82,7 @@ void Func_02000dac(void) {
   Call3(ObjectMotion_SetSpeedParameters, 0, 0x26666, 0x13333);
   Object_GetById(0)->actionFlags &= 0xfe;
   Call3(ObjectMotion_SetPositionAndReset, 0, 0xa0, 0x8c);
-  Call1(Battle_WaitMode0, 1);
+  Call1(FieldEvent_WaitFrames, 1);
   Object_GetById(0)->actionFlags |= 1;
   Call2(Motion_SetModeAndWaitAnimation, 0, 0x15);
   Call3(ObjectMotion_ArmCallback, 0xc, 0xb000, 0);
@@ -95,9 +95,9 @@ void Func_02000dac(void) {
   Call2(Func_0200454c, 0x12, 0xb000);
   Call2(Func_02004534, 0x8012, 0);
   Call2(Object_SetModeById, 0, 0);
-  Call1(Battle_WaitMode0, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Call2(Object_SetModeById, 0, 1);
-  Call1(Battle_WaitMode0, 0xa);
+  Call1(FieldEvent_WaitFrames, 0xa);
   Call2(Func_0200454c, 0, 0x2000);
   Call2(Object_SetModeById, 0x12, 3);
   Call2(Func_02004534, 0x8012, 0);

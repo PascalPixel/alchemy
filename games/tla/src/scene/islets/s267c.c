@@ -14,7 +14,7 @@ void Func_0200267c(void) {
   object = Object_GetById(party->currentOwner);
   Func_02003e64();
   Func_02003fa4(0);
-  Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Object_SetModeById(party->currentOwner, 2);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, party->currentOwner,
         0x8000, 0x4000);

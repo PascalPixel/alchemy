@@ -26,7 +26,7 @@ Func_080e3698:
 	adds r0, r2, #0
 	adds r1, r2, #0
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r1, [sp, #8]
 	movs r3, #0
 	strb r3, [r1]
@@ -137,7 +137,7 @@ Func_080e3698:
 	bl WaitFrames
 	movs r1, #1
 	ldr r0, [sp, #20]
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3

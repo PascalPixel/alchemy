@@ -350,10 +350,10 @@ UiText_ShowPositionedMessageAndWait:
 	.thumb_func
 Party_CountActiveOwners:
 	overlay_veneer Party_CountActiveOwnersFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02004ca8
 	.thumb_func
 Func_02004ca8:
@@ -409,11 +409,11 @@ Func_02004d08:
 	.global Func_02004d10
 	.thumb_func
 Func_02004d10:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02004d20
 	.thumb_func
 Func_02004d20:

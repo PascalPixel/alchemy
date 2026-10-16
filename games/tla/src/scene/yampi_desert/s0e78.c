@@ -15,7 +15,7 @@ void Func_02000e78(void) {
   Scheduler_RemoveCallbackFar(Func_02002180);
   Scene_ArmCallback(21, 0x4000, 0);
   ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   GameFlag_SetBit(0x88b);
   Func_02004048();
 }

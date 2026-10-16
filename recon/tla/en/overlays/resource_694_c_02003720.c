@@ -25,7 +25,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
-void Object_AttachWorkTargetToObject(s32 actor, s32 mode);
+void Camera_FollowActor(s32 actor, s32 mode);
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 s32 Func_020006d0(struct ObjectRuntime *object);
 void Func_02001724(void);
@@ -85,7 +85,7 @@ void Func_02003720(void) {
   }
   if (GameFlag_Test(0x200) != 0) {
     Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
-    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02003ffc();
     WaitFrames(1);
   }

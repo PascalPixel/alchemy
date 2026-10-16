@@ -25,7 +25,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -134,7 +134,7 @@ s32 Func_020037d8(struct IsletsTarget *target);
 void Func_02003a5c(struct IsletsTarget target);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle,
                               struct IsletsVector *position);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);

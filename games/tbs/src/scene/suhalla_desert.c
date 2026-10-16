@@ -73,7 +73,7 @@ void QueueSceneSound(s32 cue);
 
 // Starts the Djinn battle associated with actor 15.
 static void SuhallaDesert_StartDjinnBattle(void) {
-  BattleFx_SetPhaseRequest(15, 45);
+  Field_RequestDjinnBattle(15, 45);
 }
 
 // Clears this scripted actor's sprite and collision flags; returns the original
@@ -480,15 +480,15 @@ static void SuhallaDesert_DouseSandstormAndStartBattle(s32 unused,
   }
   FieldGameFlag_SetByte(0x210, 0);
   // Most storms use the same encounter; two second-room storms override it.
-  BattleFx_SetWeightedResult(98, 5);
+  Field_RequestBattleFromEncounterTable(98, 5);
   Battle_SetStart(3);
   state = &gGameState;
   if (state->scene == (s32)&SceneId_SuhallaDesert2) {
     if (stormId == 11) {
-      BattleFx_SetWeightedResult(98, 7);
+      Field_RequestBattleFromEncounterTable(98, 7);
     } else {
       if (stormId == 12) {
-        BattleFx_SetWeightedResult(98, 6);
+        Field_RequestBattleFromEncounterTable(98, 6);
         Engine_ActorStop(12);
         Engine_ActorSetPosition(12, 0, 0);
       }

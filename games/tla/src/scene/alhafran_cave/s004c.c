@@ -22,10 +22,10 @@ void Func_020000a0(s32 id) {
   Func_020014b8((s32)&MsgOhStoppedBy);
   UiText_OpenMessageAtObject(id, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001590(), 0) == 0) {
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_020014b8((s32)(&MsgOhStoppedBy + 1));
   } else {
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_020014b8((s32)(&MsgOhStoppedBy + 2));
   }
   Func_020014d0(id, 0);

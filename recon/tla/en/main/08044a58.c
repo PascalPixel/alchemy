@@ -66,8 +66,8 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
     *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
     *p = palette | 0xe000;
 
-    work->result[0] = zero;
-    work->result[1] = zero;
+    work->speakerVoiceSound = zero;
+    work->speakerVoiceCountdown = zero;
 
     UiWork_PushValueSlot(pc, 1);
     UiWork_PushValueSlot(element * 20 + djinn + 300, 4);

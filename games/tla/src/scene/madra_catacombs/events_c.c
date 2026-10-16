@@ -30,8 +30,8 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -120,7 +120,7 @@ static __inline__ void Cue(s32 cue) {
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
@@ -135,7 +135,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   else
     Cue(158);
   Map_CopyCells(a, b, c, d, mode, f);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
     object = Object_GetById(gPartyState.currentOwner);
@@ -172,7 +172,7 @@ void Func_02000c94(void) {
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_0200117c(3);
 }
 
@@ -186,6 +186,6 @@ void Func_02000cf4(void) {
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_0200117c(8);
 }

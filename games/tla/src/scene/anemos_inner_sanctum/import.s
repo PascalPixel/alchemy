@@ -262,10 +262,10 @@ Func_02003380:
 	.thumb_func
 Func_02003388:
 	overlay_veneer Func_08038210
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02003398
 	.thumb_func
 Func_02003398:
@@ -330,18 +330,18 @@ ObjectMotion_SetActionVariant:
 	.thumb_func
 Func_02003410:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
 	.global Func_02003420
 	.thumb_func
 Func_02003420:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02003430
 	.thumb_func
 Func_02003430:

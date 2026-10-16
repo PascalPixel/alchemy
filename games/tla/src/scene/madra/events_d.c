@@ -7,7 +7,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -181,7 +181,7 @@ void Func_020029c8(void) {
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
     next = 15;
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_GetById(4)->actionFlags &= 0xfe;
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
@@ -190,7 +190,7 @@ void Func_020029c8(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   Object_SetModeById(4, 10);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02002c90(123);
   Func_02002c30(next);
   Func_02002b30();

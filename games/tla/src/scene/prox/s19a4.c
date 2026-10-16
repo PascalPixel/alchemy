@@ -13,7 +13,7 @@ extern const u8 gData_020046f8[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Event_FinishScreenTransition(void);
@@ -63,7 +63,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     else
       Cue(158);
     Map_CopyCells(a, b, c, d, mode, f);
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
   }
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {

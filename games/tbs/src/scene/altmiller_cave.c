@@ -71,7 +71,7 @@ u16 gAltmillerActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-static void EV13_TALK(void) { BattleFx_SetPhaseRequest(13, 0x41); }
+static void EV13_TALK(void) { Field_RequestDjinnBattle(13, 0x41); }
 
 u8 *AltmillerCave_GetEntrances(void) { return gAltmillerCave_SceneTableA; }
 

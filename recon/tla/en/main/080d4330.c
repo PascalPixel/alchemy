@@ -21,14 +21,14 @@ void Func_080d4330(s32 key) {
   s32 id;
 
   if (key == 0x80000000) {
-    *(s16 *)&work->result[0] = (value = 0);
-    *(s16 *)&work->result[1] = value;
+    *(s16 *)&work->speakerVoiceSound = (value = 0);
+    *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
     do {
       id = Func_080d1eac(ObjectTable_ReadActiveValue(key));
       value = gData_080f330c[gPartyState.eventMode];
-      *(s16 *)&work->result[0] = id;
+      *(s16 *)&work->speakerVoiceSound = id;
     } while (0);
-    *(s16 *)&work->result[1] = value;
+    *(s16 *)&work->speakerVoiceCountdown = value;
   }
 }

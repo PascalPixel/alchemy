@@ -6,7 +6,7 @@ gData_080eedbc:
 	.global gData_080eef34
 gData_080eef34:
 	.incbin "games/tla/src/battle/effect/world_encounters_2.table"
-@ 80 rows of two arguments for BattleFx_GetPhaseResult.
+@ 80 rows of two arguments for Encounter_GetDjinnEnemyGroup.
 	.global gEncounter_AreaEntryTable
 gEncounter_AreaEntryTable:
 	.incbin "games/tla/src/battle/effect/encounter_areas.table"

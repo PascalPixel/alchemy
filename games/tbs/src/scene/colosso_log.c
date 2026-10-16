@@ -700,9 +700,9 @@ static void EV05_RAISED(void) {
   FieldBattleFx_RunRisingObjectSequence(*slot, 6, 0);
 }
 
-static void ColossoLogRollingStage_NoopSceneEventHook(void) {}
+UNUSED static void ColossoLogRollingStage_NoopSceneEventHook(void) {}
 
-static void ColossoLog_RunCompetitorTalk(s32 a0) {
+UNUSED static void ColossoLog_RunCompetitorTalk(s32 a0) {
   struct EventWork *work;
   s32 owner;
   s32 lines;
@@ -766,7 +766,7 @@ static void EV50_TOUCH(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Engine_ActorSetAnimation(8, 9);
   Engine_EventWait(10);
-  BattleFx_SetWeightedResult(72, last - place + 1);
+  Field_RequestBattleFromEncounterTable(72, last - place + 1);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoLog, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoLog, 5);
@@ -1791,7 +1791,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   Engine_GameFlagSet(0x123);
 }
 
-static void FieldScene_RunScene3bcSequenceA(s32 a0) {
+UNUSED static void FieldScene_RunScene3bcSequenceA(s32 a0) {
 
   s32 kind;
 
@@ -1843,7 +1843,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-static void WriteU32AsHex(u8 *hex_text, u32 value) {
+UNUSED static void WriteU32AsHex(u8 *hex_text, u32 value) {
   s32 digit_index;
 
   hex_text += 8;
@@ -1858,7 +1858,7 @@ static void WriteU32AsHex(u8 *hex_text, u32 value) {
 
 static void ColossoLogRollingStage_NoopSceneHook(void) {}
 
-static void ColossoLogRollingStage_SetBalanceStateReady(void) {
+UNUSED static void ColossoLogRollingStage_SetBalanceStateReady(void) {
   SceneControl *control = (SceneControl *)gSceneState;
 
   control->enabled = 9;

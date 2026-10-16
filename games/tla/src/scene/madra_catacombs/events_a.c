@@ -81,8 +81,8 @@ extern const u8 gData_020012f4[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void PartyInventory_Remove(s32 item);
 void Func_0200110c(void);
@@ -109,7 +109,7 @@ static __inline__ void Speed_Set(s32 speed, s32 acceleration) {
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 void Func_02000568(void) {
@@ -139,19 +139,19 @@ void Func_02000568(void) {
   Actor_Place(19, 184 << 16, 258 << 16);
   ObjectMotion_EnableActionAndSetCallback(14, gData_02001264);
   ObjectMotion_EnableActionAndSetCallback(19, gData_02001264);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02001214(168);
   Actor_Place(13, 120 << 16, 226 << 16);
   Actor_Place(18, 200 << 16, 226 << 16);
   ObjectMotion_EnableActionAndSetCallback(13, gData_02001264);
   ObjectMotion_EnableActionAndSetCallback(18, gData_02001264);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02001214(168);
   Actor_Place(12, 120 << 16, 194 << 16);
   Actor_Place(17, 200 << 16, 194 << 16);
   ObjectMotion_EnableActionAndSetCallback(12, gData_02001264);
   ObjectMotion_EnableActionAndSetCallback(17, gData_02001264);
-  Battle_WaitMode0(60);
+  FieldEvent_WaitFrames(60);
   Func_02001214(229);
   Actor_Place(11, 136 << 16, 162 << 16);
   Actor_Place(16, 184 << 16, 162 << 16);
@@ -161,7 +161,7 @@ void Func_02000568(void) {
   ObjectMotion_EnableActionAndSetCallback(16, gData_020012f4);
   ObjectMotion_EnableActionAndSetCallback(10, gData_020012f4);
   ObjectMotion_EnableActionAndSetCallback(15, gData_020012f4);
-  Battle_WaitMode0(80);
+  FieldEvent_WaitFrames(80);
   Func_02000958();
   PartyInventory_Remove(459);
   GameFlag_SetBit(0x8c9);

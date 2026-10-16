@@ -14,7 +14,7 @@
 #include "text/msg_ids.h"
 
 void GameFlag_SetBit();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 s32 Event_AskYesNoWithActorAnimation();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_EnableActionAndSetCallback();
@@ -32,7 +32,7 @@ void ObjectMotion_ArmCallback();
 s32 Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
 void Engine_CameraSetSpeed();
-void Motion_CamBounds();
+void Camera_MoveWithinMapBounds();
 void Func_02003310();
 void Object_LinkObjectAndSetCallback();
 void Func_02003320();
@@ -43,7 +43,7 @@ void Idejima_RunAlexDeparture(void) {
   Engine_EventBegin();
   Func_02003310(0);
   Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
-  Call4(Motion_CamBounds, 0x6c0000, -1, 0x2d00000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0x6c0000, -1, 0x2d00000, 1);
   Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xcccc,
         0x6666);
   Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 86, 0x2c8);
@@ -168,14 +168,14 @@ void Idejima_RunAlexDeparture(void) {
   Object_LinkObjectAndSetCallback(5, 6);
   Call3(ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
   Call3(ObjectMotion_SetPositionAndReset, 6, 86, 0x2ec);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Value3(Engine_ActorShowEmote, 6, 0x109, 80);
   Call2(Engine_EventShowMessage, 0x2008, 0);
   ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
   ObjectMotion_EnableActionAndResetMotion(8);
   ObjectMotion_EnableActionAndResetMotion(5);
   Motion_SetModeAndWaitAnimation(6, 3);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Engine_ActorSetAnimation(5, 4);
   Engine_EventShowMessage(5, 0);
   Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
@@ -230,7 +230,7 @@ void Idejima_RunAlexDeparture(void) {
   }
   Value3(Engine_ActorShowEmote, 8, 0x109, 40);
   Motion_SetModeAndWaitAnimation(6, 4);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Call2(Engine_EventShowMessage, 0x2008, 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Call3(ObjectMotion_ArmCallback, 8, 0x8000, 20);

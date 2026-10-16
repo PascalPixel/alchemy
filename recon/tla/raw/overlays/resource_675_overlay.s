@@ -421,7 +421,7 @@ Func_020005fc:
 	ldr r0, [r5]
 	bl ObjectMotion_OffsetPositionAndResetMotion
 	movs r0, #6
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #0
 	ldrsh r0, [r6, r3]
 	bl Func_020012cc

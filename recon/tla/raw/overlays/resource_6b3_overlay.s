@@ -369,7 +369,7 @@ Func_02000318:
 	str r3, [r2]
 	bl Func_02000098
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #5
 	movs r1, #0
 	movs r2, #40
@@ -449,7 +449,7 @@ Func_02000318:
 	ldr r0, .L_de_020086b8
 	bl Func_0200084c
 	movs r0, #100
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #60
 	movs r1, #2
 	movs r2, #30
@@ -484,13 +484,13 @@ Func_02000318:
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_de_020086b4
 	movs r2, #120
 	ldr r0, .L_de_020086bc
 	bl Func_0200084c
 	movs r0, #120
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #5
 	movs r1, #2
 	movs r2, #30
@@ -604,11 +604,11 @@ Func_02000318:
 	ldr r0, .L_de_020086c0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #73
 	bl Func_0200086c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #64
 	movs r1, #2
 	movs r2, #30
@@ -655,7 +655,7 @@ Func_02000318:
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #62
 	movs r1, #2
 	movs r2, #20
@@ -681,7 +681,7 @@ Func_02000318:
 	movs r0, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	mov r3, r8
 	mov r2, r8
 	strh r3, [r5, #14]
@@ -693,7 +693,7 @@ Func_02000318:
 	movs r2, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	b .L_de_020086ce
 	.2byte 0x0000
 .L_de_020086a4:
@@ -727,27 +727,27 @@ Func_02000318:
 	ldr r0, .L_de_020087ac
 	bl Func_0200084c
 	movs r0, #120
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #120
 	bl Func_02000854
 	movs r0, #1
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #180
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_de_020087a8
 	movs r2, #0
 	ldr r0, .L_de_020087b0
 	bl Func_0200084c
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_de_020087a8
 	movs r2, #0
 	ldr r0, .L_de_020087b4
 	bl Func_0200084c
 	movs r0, #180
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_0200086c
 	ldr r3, .L_de_020087b8
@@ -757,7 +757,7 @@ Func_02000318:
 	movs r0, #150
 	strb r7, [r3]
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r3, .L_de_020087a4
 	movs r5, #0
 	ldr r3, [r3, #4]
@@ -782,7 +782,7 @@ Func_02000318:
 	movs r0, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #0
 	movs r3, #128
 	lsls r3, r3, #19
@@ -867,7 +867,7 @@ Func_02000318:
 	str r3, [r2]
 	bl Func_02000098
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #5
 	movs r1, #0
 	movs r2, #40
@@ -943,7 +943,7 @@ Func_02000318:
 	ldr r0, .L_0200867c
 	bl Func_0200084c
 	movs r0, #100
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #60
 	movs r1, #2
 	movs r2, #30
@@ -974,13 +974,13 @@ Func_02000318:
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_02008678
 	movs r2, #120
 	ldr r0, .L_02008680
 	bl Func_0200084c
 	movs r0, #120
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #5
 	movs r1, #2
 	movs r2, #30
@@ -1082,11 +1082,11 @@ Func_02000318:
 	ldr r0, .L_02008684
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #73
 	bl Func_0200086c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #64
 	movs r1, #2
 	movs r2, #30
@@ -1129,7 +1129,7 @@ Func_02000318:
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #62
 	movs r1, #2
 	movs r2, #20
@@ -1155,7 +1155,7 @@ Func_02000318:
 	movs r0, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	mov r3, r8
 	mov r2, r8
 	strh r3, [r5, #14]
@@ -1167,7 +1167,7 @@ Func_02000318:
 	movs r2, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	b .L_02008692
 	.2byte 0x0000
 .L_02008668:
@@ -1201,27 +1201,27 @@ Func_02000318:
 	ldr r0, .L_02008770
 	bl Func_0200084c
 	movs r0, #120
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #120
 	bl Func_02000854
 	movs r0, #1
 	bl WaitFrames
 	bl Func_0200085c
 	movs r0, #180
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_0200876c
 	movs r2, #0
 	ldr r0, .L_02008774
 	bl Func_0200084c
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r1, .L_0200876c
 	movs r2, #0
 	ldr r0, .L_02008778
 	bl Func_0200084c
 	movs r0, #180
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_0200086c
 	ldr r3, .L_0200877c
@@ -1231,7 +1231,7 @@ Func_02000318:
 	movs r0, #150
 	strb r7, [r3]
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r3, .L_02008768
 	movs r5, #0
 	ldr r3, [r3, #4]
@@ -1256,7 +1256,7 @@ Func_02000318:
 	movs r0, #0
 	bl Func_0200084c
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #0
 	movs r3, #128
 	lsls r3, r3, #19

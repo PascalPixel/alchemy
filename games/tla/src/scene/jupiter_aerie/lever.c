@@ -11,10 +11,10 @@ struct JupiterAerieObject {
 struct JupiterAerieObject *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Object_SetModeById(s32 actor, s32 mode);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void Camera_FollowActor(s32 actor, s32 target);
 void Func_02000054(s32 step);
 void Func_02001070(struct JupiterAerieObject *object);
 void Func_020017a8(s32 a, s32 b, s32 c);
@@ -31,15 +31,15 @@ void Func_020001b4(void) {
   Object_SetModeById(gPartyState.currentOwner, 1);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
   Func_020017a8(11, 9, 0);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   if (GameFlag_Test(0xa0b) == 0) {
     Func_02000054(0);
-    Battle_WaitMode0(40);
+    FieldEvent_WaitFrames(40);
   } else {
     Func_02000054(2);
   }
-  Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
-  Battle_WaitMode0(40);
+  Camera_FollowActor(gPartyState.currentOwner, 1);
+  FieldEvent_WaitFrames(40);
   Func_02001070(Object_GetById(9));
   Func_02001070(Object_GetById(10));
   Func_02001070(Object_GetById(11));
@@ -55,15 +55,15 @@ void Func_02000264(void) {
   Object_SetModeById(gPartyState.currentOwner, 1);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x8000, 0);
   Func_020017a8(12, 10, 1);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   if (GameFlag_Test(0xa0a) == 0) {
     Func_02000054(1);
-    Battle_WaitMode0(40);
+    FieldEvent_WaitFrames(40);
   } else {
     Func_02000054(3);
   }
-  Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
-  Battle_WaitMode0(40);
+  Camera_FollowActor(gPartyState.currentOwner, 1);
+  FieldEvent_WaitFrames(40);
   Func_02001070(Object_GetById(9));
   Func_02001070(Object_GetById(10));
   Func_02001070(Object_GetById(11));

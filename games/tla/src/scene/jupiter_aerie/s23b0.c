@@ -17,6 +17,6 @@ void Func_020023b0(void) {
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  Battle_WaitMode0(4);
+  FieldEvent_WaitFrames(4);
   Func_02002af8()->y -= 0x80000;
 }

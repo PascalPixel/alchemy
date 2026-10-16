@@ -7,7 +7,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-s32 Object_AttachWorkTargetToObject(s32 id, s32 a);
+s32 Camera_FollowActor(s32 id, s32 a);
 s32 Func_02003b50(void);
 
 void Func_02002c24(s32 height) {
@@ -21,7 +21,7 @@ void Func_02002c24(s32 height) {
     object->velocityY = 0;
     gPartyState.renderMode = 2;
     object->actionFlags = 1;
-    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02003b50();
     WaitFrames(1);
   }

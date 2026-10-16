@@ -21,7 +21,7 @@ extern const u8 gData_0200323c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020021c4(void);
 void Func_020021cc(void);
 void Func_020022bc(s32 skip);
@@ -160,23 +160,23 @@ void Func_02000298(void) {
   if (!FlagCheck(0x922)) {
     Func_02002244((s32)MsgSusaSNot);
     Func_02002254(8, 0);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     ActorAnimate(8, 265, 0);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     Func_02002254(8, 0);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     ActorAnimate(8, 261, 0);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     Func_02002254(8, 0);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     ObjectMotion_SetVariantCallback(8, 1);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     Func_02002254(8, 0);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     FlagSet(0x922);
   }
   Object_SetModeById(8, 4);
-  Battle_WaitMode0(60);
+  FieldEvent_WaitFrames(60);
   Func_02002244((s32)MsgIfTheSerpent);
   Func_02002254(8, 0);
   Func_020021cc();
@@ -216,10 +216,10 @@ void Func_02000400(void) {
   Func_02002244(msg);
   UiText_OpenMessageAtObject(16, 0);
   if (Event_AskYesNoWithActorAnimation(Func_020022dc(), 0) == 0) {
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02002244(msg + 1);
   } else {
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_02002244(msg + 2);
   }
   Func_02002254(16, 0);
@@ -242,7 +242,7 @@ void Func_02000458(void) {
       Func_02002254(15, 0);
       LeaderAnimate(258, 30);
       Object_SetModeById(15, 4);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02002254(15, 0);
     }
     FlagSet(0x92b);

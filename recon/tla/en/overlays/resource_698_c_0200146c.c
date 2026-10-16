@@ -15,7 +15,7 @@ struct Tile {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020013e4(void);
 void Func_02001b44(s32 sound);
 void Func_02001a44(s32 x, s32 z, s32 width, s32 height, s32 from_x, s32 from_z);
@@ -28,5 +28,5 @@ void Func_0200146c(struct Tile *tile) {
   Func_020013e4();
   Func_02001b44(161);
   Func_02001a44(tile->x, tile->z + 1, 1, 1, fromX, fromZ);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

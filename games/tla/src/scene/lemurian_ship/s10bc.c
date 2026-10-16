@@ -35,7 +35,7 @@ void Func_02001138(void) {
   work->field16a = 0;
   GameFlag_ClearBit(0x202);
   GameFlag_ClearBit(0x204);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002de0(186);
   for (i = 0; i <= 63; i++) {
     object->y += 0x4000;
@@ -47,7 +47,7 @@ void Func_02001138(void) {
   Func_02002de0(188);
   LemurianShip_MapCopy(7, 124, 31, 64, 3, 2);
   GameFlag_ClearBit(0x982);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002c70();
 }
 
@@ -61,7 +61,7 @@ void Func_020011f4(void) {
   work->field16a = 0;
   GameFlag_ClearBit(0x203);
   GameFlag_ClearBit(0x205);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002de0(186);
   for (i = 0; i <= 63; i++) {
     object->y += 0x4000;
@@ -73,6 +73,6 @@ void Func_020011f4(void) {
   Func_02002de0(188);
   LemurianShip_MapCopy(7, 124, 31, 64, 3, 2);
   GameFlag_ClearBit(0x982);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002c70();
 }

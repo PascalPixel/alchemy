@@ -11,7 +11,7 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 s32 Func_02004040();
 s32 Func_02004048();
 s32 Func_02004090();
@@ -24,7 +24,7 @@ s32 Func_02004128();
 s32 Func_02004130();
 s32 Func_020041b8();
 s32 GameFlag_SetBit();
-s32 Motion_CamBounds();
+s32 Camera_MoveWithinMapBounds();
 s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_ArmCallback();
 s32 ObjectMotion_EnableActionAndResetMotion();
@@ -76,7 +76,7 @@ void Func_02001690(void) {
   t1 = Func_02004130();
   *(u8 *)((t1 + 85)) = 0;
   Call2(Func_02004118, 0x19999, 0x3333);
-  Call4(Motion_CamBounds, 0xd40000, 0, 0xd40000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   Func_02004128();
   Call2(Func_020040d0, 12, 0);
   Call3(ObjectMotion_ArmCallback, 11, 0, 10);
@@ -95,7 +95,7 @@ void Func_02001690(void) {
   Call3(ObjectMotion_SetSpeedParameters, 13, 0x10000, 0x8000);
   Call2(ObjectMotion_EnableActionAndSetCallback, 14, ((s32)gData_0200468c));
   Call2(Func_02004118, 0xcccc, 0x1999);
-  Call4(Motion_CamBounds, 0xf00000, -1, 0x1040000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
   Func_02004128();
   Call1(ObjectMotion_EnableActionAndResetMotion, 8);
   Call1(ObjectMotion_EnableActionAndResetMotion, 9);
@@ -104,9 +104,9 @@ void Func_02001690(void) {
   Call1(ObjectMotion_EnableActionAndResetMotion, 12);
   Call1(ObjectMotion_EnableActionAndResetMotion, 13);
   Call2(Func_02004118, 0x26666, 0x4ccc);
-  Call4(Motion_CamBounds, 0xd40000, -1, 0xd40000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
   Func_02004128();
-  Call1(Battle_WaitMode0, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call3(ObjectMotion_ArmCallback, 8, 0xd000, 0);
   Call3(ObjectMotion_ArmCallback, 9, 0x5000, 20);
   Call2(Func_020040d0, 9, 0);
@@ -148,16 +148,16 @@ void Func_02001690(void) {
   Call2(Object_LinkObjectAndSetCallback, *(s32 *)(v6), 13);
   v5 = ((s32)gData_020046dc);
   Call2(ObjectMotion_EnableActionAndSetCallback, 13, v5);
-  Call1(Battle_WaitMode0, 10);
+  Call1(FieldEvent_WaitFrames, 10);
   Call2(ObjectMotion_EnableActionAndSetCallback, 12, v5);
   Call2(Func_02004118, 0x6666, 0xccc);
-  Call4(Motion_CamBounds, 0xf00000, -1, 0x1180000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000, 1);
   Call2(ObjectMotion_EnableActionAndSetCallback, 8, v5);
-  Call1(Battle_WaitMode0, 10);
+  Call1(FieldEvent_WaitFrames, 10);
   Call2(ObjectMotion_EnableActionAndSetCallback, 9, v5);
   v5 = ((s32)gData_02004718);
   Call2(ObjectMotion_EnableActionAndSetCallback, 10, v5);
-  Call1(Battle_WaitMode0, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Object_SetActionCallbackAndRefreshById, 11, v5);
   Call1(ObjectMotion_EnableActionAndResetMotion, *(s32 *)(v6));
   Call1(WaitFrames, 1);

@@ -251,7 +251,7 @@ Func_02000310:
 	cmp r0, #0
 	beq .L_020083a0
 	mov r0, r10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r5, #0
 	movs r1, #2
 	bl UiWork_Finalize

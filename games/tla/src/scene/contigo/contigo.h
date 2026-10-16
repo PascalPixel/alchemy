@@ -10,7 +10,7 @@
 struct ContigoObject;
 
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
@@ -19,7 +19,7 @@ void Func_020040e4(s32 actor, s32 target);
 void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_0200412c(s32 message);
 void Func_02004144(s32 speaker, s32 flags);
@@ -74,7 +74,7 @@ static inline void Contigo_ObjFollow(s32 actor, s32 target) {
 
 static inline void Contigo_Wait(s32 frames) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void Contigo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
@@ -119,7 +119,7 @@ static inline void Contigo_ObjReset(s32 actor) {
 
 static inline void Contigo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Contigo_ObjModeWait(s32 actor, s32 mode) {

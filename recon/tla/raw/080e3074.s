@@ -356,7 +356,7 @@ Func_080e3074:
 	adds r0, r2, #0
 	adds r1, r2, #0
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	mov r4, r10
 	mov r2, r10
 	ldr r3, [r4, #16]
@@ -509,7 +509,7 @@ Func_080e3074:
 	adds r0, r2, #0
 	adds r1, r2, #0
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	mov r3, r10
 	ldr r2, [r3, #12]
 	ldr r1, [r3, #8]

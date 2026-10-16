@@ -21,7 +21,7 @@ extern const u8 gData_0200323c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020021c4(void);
 void Func_020021cc(void);
 void Func_020022bc(s32 skip);
@@ -73,19 +73,19 @@ s32 Func_0200051c(void) {
   if (!FlagCheck(0x925)) {
     Func_02002244((s32)MsgSusaDonT);
     Func_02002254(17, 0);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     Func_02002254(17, 0);
-    Battle_WaitMode0(60);
-    Battle_WaitMode0(15);
+    FieldEvent_WaitFrames(60);
+    FieldEvent_WaitFrames(15);
     Func_02002254(17, 0);
-    Battle_WaitMode0(60);
-    Battle_WaitMode0(15);
+    FieldEvent_WaitFrames(60);
+    FieldEvent_WaitFrames(15);
     Func_02002254(17, 0);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     ObjectMotion_SetVariantCallback(17, 1);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Func_02002254(17, 0);
-    Battle_WaitMode0(60);
+    FieldEvent_WaitFrames(60);
     FlagSet(0x925);
   } else {
     Func_02002244((s32)MsgSusaPleaseDon);

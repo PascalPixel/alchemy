@@ -1,9 +1,9 @@
 #include "trial_road.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Task_Wait(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -23,10 +23,10 @@ void Func_02005938(s32 message);
 s32 Func_02005960(s32 actor, s32 value, s32 frames);
 void Func_02005940(s32 actor, s32 flags);
 
-static __inline__ void Motion_CamBounds_(s32 a, s32 b, s32 c, s32 d) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
@@ -59,7 +59,7 @@ void Func_0200322c(void) {
   Func_02005880();
   Func_020059e8(0);
   Func_02005970_(0x20000, 0x4000);
-  Motion_CamBounds_(0x1000000, -1, 0x1080000, 1);
+  Camera_MoveWithinMapBounds_(0x1000000, -1, 0x1080000, 1);
   Func_020058f0(5, 4);
   Func_020058f0(6, 4);
   Func_020058f0(7, 4);
@@ -91,7 +91,7 @@ void Func_0200322c(void) {
   Object_SetModeById(5, 3);
   Object_SetModeById(6, 3);
   Object_SetModeById(7, 3);
-  Battle_WaitMode0(15);
+  FieldEvent_WaitFrames(15);
   ObjectMotion_SetSpeedParameters_(4, 0x20000, 0x10000);
   ObjectMotion_SetSpeedParameters_(5, 0x1e666, 0xf333);
   ObjectMotion_SetSpeedParameters_(6, 0x1b333, 0xd999);
@@ -110,5 +110,5 @@ void Func_0200322c(void) {
   Task_Wait(1);
   ObjectMotion_OffsetPositionAndReset(6, Func_02002d38(3), 0);
   Task_Wait(1);
-  Battle_WaitMode0(6);
+  FieldEvent_WaitFrames(6);
 }

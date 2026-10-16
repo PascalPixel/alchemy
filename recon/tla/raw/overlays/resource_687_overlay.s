@@ -1905,7 +1905,7 @@ Func_02001108:
 	lsls r2, r2, #16
 	movs r3, #1
 	lsls r0, r0, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02001ffc
 	movs r0, #8
 	bl ObjectMotion_CommitCurrentPositionAndActivate
@@ -2073,7 +2073,7 @@ Func_02001108:
 	b .L_020091c0
 .L_020092b8:
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r4, #0
 	mov r8, r4
 .L_020092c2:
@@ -2206,12 +2206,12 @@ Func_02001108:
 	adds r5, r0, #0
 	str r3, [r5, #108]
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r5, #0
 	movs r1, #1
 	bl Func_02001f4c
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r3, .L_02009414
 	movs r4, #166
 	lsls r4, r4, #1
@@ -2596,7 +2596,7 @@ Func_02001a14:
 	lsls r2, r2, #16
 	negs r1, r1
 	lsls r0, r0, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Event_StartScreenTransition
 	movs r0, #1
 	bl WaitFrames
@@ -2606,7 +2606,7 @@ Func_02001a14:
 	bl Scheduler_AddOrUpdateCallback
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #21
 	movs r1, #23
 	movs r2, #9
@@ -2631,7 +2631,7 @@ Func_02001a14:
 	lsls r2, r2, #16
 	movs r3, #1
 	lsls r0, r0, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02001ffc
 	movs r0, #128
 	lsls r0, r0, #2
@@ -2649,7 +2649,7 @@ Func_02001a14:
 	adds r0, #18
 	bl Func_02002054
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r7, #0
 .L_02009af0:
 	movs r3, #31

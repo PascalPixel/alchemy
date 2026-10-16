@@ -25,7 +25,7 @@ extern u32 gFrameCount;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Fade_ToBlack(s32 frames);
 void Fade_Wait(void);
 void Func_0200031c(s32 unused);
@@ -82,7 +82,7 @@ s32 Func_0200005c(void) {
     Func_02000644(78);
     Fade_ToBlack(60);
     Fade_Wait();
-    Battle_WaitMode0(240);
+    FieldEvent_WaitFrames(240);
     Func_02000644(0);
     Func_02000604((s32)&SceneId_Title, 2);
     return 0;
@@ -144,7 +144,7 @@ s32 Func_0200005c(void) {
   Func_02000644(78);
   Fade_ToBlack(30);
   Fade_Wait();
-  Battle_WaitMode0(60);
+  FieldEvent_WaitFrames(60);
   Func_02000644(0);
   return 0;
 }

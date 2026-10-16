@@ -30,8 +30,8 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,

@@ -24,7 +24,7 @@ s32 GetWorldMapTerrainBehaviorFar(void *position, s32 *terrain);
 s32 GameFlag_Test(s32 flag);
 void Func_080ca514(s32 behavior);
 
-s32 BattleFx_LookupResult(void *position) {
+s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   struct TerrainResult *entry = gData_080eedbc;
   s32 behavior;
   u32 terrain;

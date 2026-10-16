@@ -16,7 +16,7 @@ struct EffectScene {
 };
 
 void Runtime_SetWorkTripleIfNonNegativeFar(s32 shakeX, s32 shakeY, s32 decay);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Camera_FollowActor(s32 id, s32 mode);
 
 // Ends a view move: gives the map back the view bounds Func_080e89e4 kept
 // and lets the view follow the scene's first object again. Where the view
@@ -34,6 +34,6 @@ void Func_080e8c9c(void) {
     map->maxX = work->savedMaxX;
     map->minZ = work->savedMinZ;
     map->maxZ = work->savedMaxZ;
-    Object_AttachWorkTargetToObject(scene->firstObjectId, 1);
+    Camera_FollowActor(scene->firstObjectId, 1);
   }
 }

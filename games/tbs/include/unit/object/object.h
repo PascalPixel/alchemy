@@ -33,12 +33,12 @@ void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Audio_PlayCueFromEventWork(void);
 void Encounter_SelectSceneZones(s32 useRules);
-s32 BattleFx_LookupResult(void *pos);
+s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos);
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
 s32 Encounter_RollTerrain(u32 terrain, s32 steps);
 s32 Encounter_RollWorldMap(s32 pos, s32 steps);
-u16 BattleFx_GetWeightedResult(s32 zone, s32 slot);
-s16 BattleFx_GetPhaseResult(s32 djinni);
+u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot);
+s16 Encounter_GetDjinnEnemyGroup(s32 djinni);
 void Scene_ResolveInteractionResult(void);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
 void Scene_SetDefeatReturnPoint(void);
@@ -47,9 +47,9 @@ void Battle_SelectSceneBackdrop(void);
 void Battle_SelectTerrainBackdrop(s32 behavior);
 // BattleFx_SelectBattleCue is called from psynergy_effects.c with no prototype
 // in scope, as in object.c above its definition: in one file its definition
-// would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult,
-// and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split
-// evidence for object|psynergy_effects.
+// would come before Field_RequestDjinnBattle and
+// Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
+// (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects.
 void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
 void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void RunBattleEffect07(void);
@@ -115,7 +115,7 @@ s32 Scene_RunRaisedEvent(s32 value);
 s32 Scene_RunTouchOrExit(s32 value);
 s32 Field_RunPushTileEvent(s32 event);
 s32 Field_SearchTile(s32 tile);
-s32 BattleFx_MapKeyThroughTable(s32 mode);
+s32 Field_GetPsynergyTargetRange(s32 mode);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 mode);
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode);

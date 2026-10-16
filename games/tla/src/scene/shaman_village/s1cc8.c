@@ -30,13 +30,13 @@ void Func_02001d3c(void) {
   Func_02004a24(0);
   Engine_AudioPlayCue(158);
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
   ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x26666, 0x13333);
   ObjectMotion_Launch(gPartyState.currentOwner, 4, 0);
   Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 220);
-  Battle_WaitMode0(1);
+  FieldEvent_WaitFrames(1);
   {
     u8 *flags = &Object_GetById(gPartyState.currentOwner)->actionFlags;
 
@@ -72,7 +72,7 @@ void Func_02001d3c(void) {
   ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x6666, 0x3333);
   Object_GetById(gPartyState.currentOwner)->actionFlags &= ~1;
   ShamanVillage_ObjWalk(gPartyState.currentOwner, 120, 264);
-  Battle_WaitMode0(1);
+  FieldEvent_WaitFrames(1);
   Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */

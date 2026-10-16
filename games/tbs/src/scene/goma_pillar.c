@@ -62,7 +62,7 @@ enum PillarEffectPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 static void EV12_TALK(void) {
   Actor_ShowEmote(13, 256, 0);
   Engine_ActorJump(13, 2, 0);
-  BattleFx_SetPhaseRequest(12, 40);
+  Field_RequestDjinnBattle(12, 40);
 }
 
 // Advances the fragment's selected coordinate plane and keeps its targets in

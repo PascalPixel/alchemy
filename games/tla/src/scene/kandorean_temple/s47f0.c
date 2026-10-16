@@ -7,7 +7,7 @@ void Func_020044d4(void) {
 
   Func_020051c0();
   Func_02005370(0);
-  Motion_CamBounds_(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   WaitFrames_(1);
   Func_02005230_(gPartyState.currentOwner, 0x1480000, 0x1680000);
   angle = 0x5000;
@@ -18,9 +18,9 @@ void Func_020044d4(void) {
   ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0xcccc, 0x6666);
   ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 328, 392);
   Func_020052d8_(0xcccc, 0x1999);
-  Motion_CamBounds_(0x1980000, -1, 0x1900000, 1);
+  Camera_MoveWithinMapBounds_(0x1980000, -1, 0x1900000, 1);
   ObjectMotion_SetPositionAndReset_(gPartyState.currentOwner, 376, 408);
-  Battle_WaitMode0_(20);
+  FieldEvent_WaitFrames_(20);
   Motion_SetVarCbAndRefresh(12, 1);
   Func_02005280((s32)&MsgKandoreanTemple05);
   Func_02005298(12, 0);
@@ -60,7 +60,7 @@ void Func_020046d8(void) {
   Func_02005230_(gPartyState.currentOwner, 0, 0);
   Func_02005230_(12, 0, 0);
   Func_02005230_(15, 0, 0);
-  Motion_CamBounds_(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   WaitFrames_(1);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
@@ -73,9 +73,9 @@ void Func_020046d8(void) {
   ObjectMotion_ArmCallback_(12, 0x5000, 20);
   ObjectMotion_ArmCallback_(12, 0x3000, 0);
   Func_020052d8(0x4cccc, 0x9999);
-  Motion_CamBounds_(0x1c80000, 0x280000, 0x2980000, 1);
+  Camera_MoveWithinMapBounds_(0x1c80000, 0x280000, 0x2980000, 1);
   Func_020052e8();
-  Battle_WaitMode0_(40);
+  FieldEvent_WaitFrames_(40);
   Func_02005280((s32)&MsgKandoreanTemple06);
   Func_02005298(0x800c, 0);
   ObjectMotion_SetPositionAndReset_(12, 472, 648);

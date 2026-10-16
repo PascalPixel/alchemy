@@ -16,7 +16,7 @@ struct TileSprite {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02002450(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02002458(struct ObjectRuntime *object);
@@ -63,7 +63,7 @@ void Func_020022f8(void) {
     step += 40;
   }
   Func_02002458(object);
-  Battle_WaitMode0(2);
+  FieldEvent_WaitFrames(2);
   Func_020025a0(240);
   sprite->tile = 0;
   object->x = 0xa80000;

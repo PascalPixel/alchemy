@@ -20,7 +20,7 @@ struct FieldActor *Object_GetById();
 void Func_02001474();
 void Func_02001bd4();
 void Func_02001adc();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 
 void Func_020014fc(struct LightSwitch *light) {
   struct FieldActor *object = Object_GetById(gPartyState.currentOwner);
@@ -30,5 +30,5 @@ void Func_020014fc(struct LightSwitch *light) {
   Func_02001474();
   Func_02001bd4(161);
   Call6(Func_02001adc, light->x, light->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

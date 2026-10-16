@@ -16,7 +16,7 @@ void Func_02004740(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }
@@ -31,7 +31,7 @@ void Func_020047b0(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 280, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }
@@ -46,7 +46,7 @@ void Func_02004818(void) {
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 248, 136);
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 264, 136);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xc000, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02004534();
   }
 }

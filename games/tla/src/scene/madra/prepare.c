@@ -8,7 +8,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -182,10 +182,10 @@ void Func_0200083c(s32 actor) {
   Func_02002bd0(msg);
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02002bd0(msg + 1);
   } else {
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_02002bd0(msg + 2);
   }
   Func_02002be8(actor, 0);
@@ -202,10 +202,10 @@ void Func_02000894(void) {
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
     } else {
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Func_02002bd0(msg + 2);
     }
     Func_02002be8(8, 0);
@@ -216,10 +216,10 @@ void Func_02000894(void) {
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
     } else {
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Func_02002bd0(msg + 2);
     }
     Func_02002be8(8, 0);
@@ -239,10 +239,10 @@ void Func_02000968(void) {
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
     } else {
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Func_02002bd0(msg + 2);
     }
     Func_02002be8(8, 0);
@@ -259,10 +259,10 @@ void Func_02000968(void) {
     Func_02002bd0(msg);
     UiText_OpenMessageAtObject(8, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Func_02002bd0(msg + 1);
     } else {
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Func_02002bd0(msg + 2);
     }
     Func_02002be8(8, 0);

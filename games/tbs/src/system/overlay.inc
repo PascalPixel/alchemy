@@ -247,9 +247,9 @@
 	import Engine_InventorySnapshotRestore, InventorySnapshot_RestoreFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 @ farcall/object.h
-	import Engine_EventWait, Battle_WaitMode0Far
-	import Engine_EventBegin, Battle_ResetFar
-	import Engine_EventEnd, BattleFx_FinishActionFar
+	import Engine_EventWait, FieldEvent_WaitFramesFar
+	import Engine_EventBegin, FieldEvent_BeginFar
+	import Engine_EventEnd, FieldEvent_EndFar
 	import Event_CallWithLastActiveObjectId, Event_CallWithLastActiveObjectIdFar
 	import FieldScene_PrepareActors, Scene_AssignViewFlagsFar
 	import SceneEvents_UpdateInView, Scene_AssignViewFlagsFar
@@ -300,11 +300,11 @@
 	import Engine_EventSetMessage, Event_SetMessageIdFar
 	import Engine_EventOpenMessage, UiText_OpenMessageAtObjectFar
 	import UiText_OpenMessageAtObject, UiText_OpenMessageAtObjectFar
-	import BattleEv_RunWait, BattleEv_RunWaitFar
-	import Engine_EventShowMessage, BattleEv_RunWaitFar
+	import FieldEvent_ShowMessageAndWait, FieldEvent_ShowMessageAndWaitFar
+	import Engine_EventShowMessage, FieldEvent_ShowMessageAndWaitFar
 	import BattlePres_RunActionThenWaitIfModeZero, BattlePres_RunActionThenWaitIfModeZeroFar
 	import Engine_EventShowMessageAndWait, BattlePres_RunActionThenWaitIfModeZeroFar
-	import Engine_EventAskYesNo, BattleEventRuntime_ProcessActionFar
+	import Engine_EventAskYesNo, FieldEvent_AskYesNoAndShowResponseFar
 	import Engine_ActorFaceDirection, ObjectMotion_ArmCallbackFar
 	import Engine_EventShowTwoMessagesAndWait, Battle_ShowPairedUnitWorkAndWaitFar
 	import Ui_SetMessageVoiceFromActor, Ui_SetMessageVoiceFromActorFar
@@ -312,11 +312,11 @@
 	import Engine_ActorShowEmote, BattleFx_SpawnLinkedFar
 	import Engine_ActorSetAttachedEffect, BattleFx_ConfigureLinkedObjectFar
 	import ObjectVisual_CopyAttributes, ObjectVisual_CopyAttributesFar
-	import Engine_CameraFollowActor, Object_AttachWorkTargetToObjectFar
-	import Engine_CameraSetSpeed, ObjectTable_AllocateAndSetObjectSpeedFar
-	import Engine_CameraMoveTo, Motion_CamBoundsFar
-	import BattleFx_CommitObjectPositionAndWait, BattleFx_CommitObjectPositionAndWaitFar
-	import Engine_CameraWaitForMove, BattleFx_CommitObjectPositionAndWaitFar
+	import Engine_CameraFollowActor, Camera_FollowActorFar
+	import Engine_CameraSetSpeed, Camera_SetSpeedParametersFar
+	import Engine_CameraMoveTo, Camera_MoveWithinMapBoundsFar
+	import Camera_WaitForArrival, Camera_WaitForArrivalFar
+	import Engine_CameraWaitForMove, Camera_WaitForArrivalFar
 	import Engine_CameraMoveToActor, Object_PlaceCurrentWithinCameraBoundsFar
 	import Object_PlaceCurrentWithinCameraBounds, Object_PlaceCurrentWithinCameraBoundsFar
 	import Camera_GetEventObject, Camera_GetEventObjectFar
@@ -324,9 +324,9 @@
 	import Map_SetViewBounds, Map_SetViewBoundsFar
 	import Event_SetDestination, Event_SetDestinationFar
 	import Engine_EventRequestExit, Event_SetExitRequestFar
-	import BattleFx_SetWeightedResult, BattleFx_SetWeightedResultFar
-	import Engine_BattleFxSetWeightedResult, BattleFx_SetWeightedResultFar
-	import BattleFx_SetPhaseRequest, BattleFx_SetPhaseRequestFar
+	import Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
+	import Engine_BattleFxSetWeightedResult, Field_RequestBattleFromEncounterTableFar
+	import Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	import Engine_EventSetNextDestination, Event_SetNextDestinationFar
 	import Event_SetNextDestination, Event_SetNextDestinationFar
 	import Event_SetDefeatDestination, Event_SetDefeatDestinationFar

@@ -42,7 +42,7 @@ void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 struct FieldActor *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);

@@ -1005,10 +1005,10 @@ Func_02000b64:
 	movs r3, #1
 	lsls r1, r1, #15
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02003228
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #9
 	movs r1, #0
@@ -1074,10 +1074,10 @@ Func_02000b64:
 	lsls r2, r2, #16
 	movs r3, #1
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02003228
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	bl Object_GetById
 	adds r2, r0, #0
@@ -1220,7 +1220,7 @@ Func_02000b64:
 	str r5, [sp, #4]
 	bl Func_02003170
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #49
@@ -3323,7 +3323,7 @@ Func_02002708:
 .L_0200a820:
 	movs r5, #0
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r6, #0
 	str r5, [r6, #108]
 	movs r1, #0

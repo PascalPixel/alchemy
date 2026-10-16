@@ -61,7 +61,7 @@ struct Vec {
   s32 z;
 };
 
-static void EV18_TALK(void) { BattleFx_SetPhaseRequest(18, 2); }
+static void EV18_TALK(void) { Field_RequestDjinnBattle(18, 2); }
 
 static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg) {
   struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
@@ -348,7 +348,7 @@ static void EV14_PSYNERGY_1(void) {
 
   Battle_SetStart(3);
 
-  BattleFx_SetWeightedResult(53, 0);
+  Field_RequestBattleFromEncounterTable(53, 0);
 
   Engine_EventEnd();
 }
@@ -776,7 +776,7 @@ static void EV19_PSYNERGY(void) {
   Engine_EventWait(10);
   Engine_GameFlagSet(0x307);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(53, 0);
+  Field_RequestBattleFromEncounterTable(53, 0);
   Engine_EventEnd();
 }
 
@@ -1019,7 +1019,7 @@ static void EV23_TOUCH(void) {
   Engine_EventWait(10);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_MogallForest3, 15);
-  BattleFx_SetWeightedResult(53, 1);
+  Field_RequestBattleFromEncounterTable(53, 1);
   Engine_EventEnd();
 }
 

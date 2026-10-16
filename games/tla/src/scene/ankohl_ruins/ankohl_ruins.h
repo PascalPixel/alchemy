@@ -24,8 +24,8 @@ extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Func_02000b30(s32 id, s32 cue);
@@ -60,7 +60,7 @@ static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
 
 static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -87,7 +87,7 @@ static inline void AnkohlRuins_ObjOffset(s32 actor, s32 x, s32 z) {
 
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void Camera_FollowActor(s32 actor, s32 target);
 void Func_02002e34(struct ObjectRuntime *object, s32 a);
 void Func_02002e6c(s32 id, s32 a, s32 b);
 void Func_02002eb4(void);

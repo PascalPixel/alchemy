@@ -27,7 +27,7 @@ void Func_02000bdc(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 340);
 
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   BYTE_AT(Object_GetById(4), 90) &= ~1;
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
@@ -38,26 +38,26 @@ void Func_02000bdc(void) {
   ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(4);
   Object_SetModeById(4, 13);
-  Battle_WaitMode0(14);
+  FieldEvent_WaitFrames(14);
   Func_02000db0(value);
 }
 
 void Func_02000c58(void) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 16, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }
 
 void Func_02000c7c(void) {
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, 0, -14);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 4, -16, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }
 
 void Func_02000ca4(void) {
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000bdc();
 }

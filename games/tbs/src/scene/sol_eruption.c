@@ -539,9 +539,9 @@ static void SolEruption_RaiseAndShrinkActor(s32 a0) {
   Actor_SetPosition(8, 0, 0);
 }
 
-static void Resource381_NoOpCallbackA(void) {}
+UNUSED static void Resource381_NoOpCallbackA(void) {}
 
-static void Resource381_NoOpCallbackB(void) {}
+UNUSED static void Resource381_NoOpCallbackB(void) {}
 
 s32 SolEruption_RunHostageSceneOnEntranceTen(void) {
   if (gGameState.entrance == 10) {

@@ -11,7 +11,7 @@ extern const u8 MsgItTakesOur[];
 extern const u8 MsgHereSThe[];
 extern const u8 MsgManSunshineWould[];
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 count);

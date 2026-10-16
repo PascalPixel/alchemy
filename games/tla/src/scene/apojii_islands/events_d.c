@@ -98,7 +98,7 @@ void Func_02000c38(void) {
   Func_02001e2c(123);
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_CenterOnColumn_(gPartyState.currentOwner, 2, -6);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02001d94(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

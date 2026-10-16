@@ -43,7 +43,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_GetByte(s32 flag);

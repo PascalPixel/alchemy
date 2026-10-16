@@ -278,10 +278,10 @@ Func_02003d64:
 	.thumb_func
 PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02003d7c
 	.thumb_func
 Func_02003d7c:
@@ -385,11 +385,11 @@ Func_02003e3c:
 	.global Func_02003e44
 	.thumb_func
 Func_02003e44:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02003e54
 	.thumb_func
 Func_02003e54:
@@ -526,10 +526,10 @@ Func_02003eb4:
 	.thumb_func
 Func_02003ebc:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_GetWeightedResultFar
+	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_GetWeightedResultFar
+	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
 	.else
 	overlay_veneer Party_PlaySavedMusicFar
 	.endif

@@ -70,10 +70,10 @@ Func_02000804:
 	.thumb_func
 UiText_GetResourceDimensions:
 	overlay_veneer UiText_GetResourceDimensionsFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

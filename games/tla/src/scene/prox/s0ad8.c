@@ -10,9 +10,9 @@
 s32 Func_02004464();
 s32 Func_020045ec();
 s32 Func_0200456c();
-s32 Motion_CamBounds();
+s32 Camera_MoveWithinMapBounds();
 s32 Func_0200457c();
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 s32 Motion_SetVarCbAndRefresh();
 s32 Func_0200454c();
 s32 Func_0200451c();
@@ -31,9 +31,9 @@ void Func_02000ad8(void) {
   Func_02004464();
   Call1(Func_020045ec, 0);
   Call2(Func_0200456c, 0x4cccc, 0x9999);
-  Call4(Motion_CamBounds, 0xa00000, -1, 0xa00000, 1);
+  Call4(Camera_MoveWithinMapBounds, 0xa00000, -1, 0xa00000, 1);
   Func_0200457c();
-  Call1(Battle_WaitMode0, 0x28);
+  Call1(FieldEvent_WaitFrames, 0x28);
   Call2(Motion_SetVarCbAndRefresh, 0xa, 1);
   Call2(Func_0200454c, 0xa, 0xb000);
   Call1(Func_0200451c, (s32)MsgProx62);
@@ -44,7 +44,7 @@ void Func_02000ad8(void) {
   Call2(Func_02004564, 0xf, 0x102);
   Call2(Func_02004564, 0x10, 0x102);
   Call2(Func_02004564, 0x11, 0x102);
-  Call1(Battle_WaitMode0, 0x14);
+  Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Func_0200454c, 0xa, 0x5000);
   Call2(Func_02004534, 0xa, 0);
   Call2(Func_02004534, 0xa, 0);
@@ -54,7 +54,7 @@ void Func_02000ad8(void) {
   Call2(Func_02004564, 0xf, 0x102);
   Call2(Func_02004564, 0x10, 0x102);
   Call2(Func_02004564, 0x11, 0x102);
-  Call1(Battle_WaitMode0, 0x14);
+  Call1(FieldEvent_WaitFrames, 0x14);
   Call2(Object_SetModeById, 0xc, 4);
   Call2(Func_02004534, 0xc, 0);
   Call3(ObjectMotion_ArmCallback, 0xa, 0x3000, 0);

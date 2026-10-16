@@ -710,7 +710,8 @@ static void ColossoWall_StartFinalsBattle(void) {
    * - rivalFinishedFirst + 1 is not folded; written 3 - rivalFinishedFirst or 2
    * - rivalFinishedFirst + 1 it differs 10 on tbs-en, two instructions fewer.
    */
-  BattleFx_SetWeightedResult(72, resultBase - rivalFinishedFirst + 1);
+  Field_RequestBattleFromEncounterTable(72,
+                                        resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoWall, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoWall, 5);

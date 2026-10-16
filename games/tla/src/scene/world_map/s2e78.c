@@ -13,7 +13,7 @@ struct EventCounters {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
@@ -30,7 +30,7 @@ void Func_02004da8(void);
 void Func_02004db0(void);
 void Func_02004db8(s32 value);
 void WaitFrames(s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02004d20(s32 a, s32 b);
 void Func_02004d38(s32 scene, s32 b);
 
@@ -48,7 +48,7 @@ void Func_02002e00(void) {
                                      0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02004d20(0x40000, 0x8000);
   {
     /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y,
@@ -57,7 +57,7 @@ void Func_02002e00(void) {
      * no closer). */
     register s32 mode asm("r3") = 1;
 
-    Motion_CamBounds(11890 << 16, -1, 10090 << 16, mode);
+    Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
   }
   // Entered at its test: as a while loop the test is copied ahead of it and
   // gInput hoisted (differ 17).
@@ -84,7 +84,7 @@ void Func_02002e78(void) {
     Event_WaitTransitionFrames();
     Func_02004da8();
     Func_02004cd8((s32)MsgTakeTheTiller);
-    Battle_WaitMode0(40);
+    FieldEvent_WaitFrames(40);
     Func_02004ce8(7, 0, 10);
     Func_02004d08_(8, 256, 30);
     Func_02004ce8(4, 0, 10);

@@ -69,8 +69,8 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Camera_GetEventObject, 1
-	.set import.BattleFx_SetWeightedResult, 1
-	.set import.BattleFx_SetPhaseRequest, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
+	.set import.Field_RequestDjinnBattle, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

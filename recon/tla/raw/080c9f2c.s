@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global BattleFx_LookupResult
+	.global Encounter_ResolveWorldMapZoneAndBackdrop
 	.thumb_func
-BattleFx_LookupResult:
+Encounter_ResolveWorldMapZoneAndBackdrop:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

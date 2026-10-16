@@ -48,7 +48,7 @@ void Func_02003584(void) {
                                      object->z + 0x30000);
     WaitFrames_(1);
   }
-  Battle_WaitMode0_(20);
+  FieldEvent_WaitFrames_(20);
   party = &gPartyState;
   object->angle = 0x4000;
   /* FAKEMATCH: the native loads the party state's address among the angle's
@@ -58,9 +58,9 @@ void Func_02003584(void) {
   asm volatile("" : "+l"(party));
   Func_020052d0(party->currentOwner, 258);
   Object_SetModeById_(party->currentOwner, 27);
-  Battle_WaitMode0_(30);
+  FieldEvent_WaitFrames_(30);
   Object_SetModeById_(party->currentOwner, 28);
-  Battle_WaitMode0_(10);
+  FieldEvent_WaitFrames_(10);
   ObjectMotion_SetActionVariant_(party->currentOwner, 3);
   for (i = 0; i <= 39; i++) {
     {

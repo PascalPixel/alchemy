@@ -6,9 +6,9 @@ extern u8 MsgIsTheWay[];
 extern const u8 gData_020017f8[];
 
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
@@ -37,7 +37,7 @@ void Func_02000960(void) {
   Func_02001104(MsgIsTheWay);
   Call3((void (*)())Func_020010d4, 27, 0x1380000, 0x1300000);
   Func_0200110c(27, 0);
-  Motion_CamBounds(0x1000000, -1, 0x1880000, 1);
+  Camera_MoveWithinMapBounds(0x1000000, -1, 0x1880000, 1);
   Func_02001134();
   ObjectMotion_ResetTargetsAndVelocity(11);
   ObjectMotion_SetAngleToward(11, 27, 0);
@@ -66,7 +66,7 @@ void Func_02000960(void) {
   WaitFrames(30);
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);
-  Battle_WaitMode0(60);
+  FieldEvent_WaitFrames(60);
   Call3((void (*)())Func_020010d4, 27, 0, 0);
   ObjectMotion_EnableActionAndSetCallback(11, gData_020017f8);
   Func_0200108c();

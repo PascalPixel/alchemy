@@ -1636,10 +1636,10 @@ Resource_FarCall006:
 Game_ResetForNewGameFar:
 	.incbin "baserom.gba", 0x000c8008, 0x00000008
 	.section .rom.000c8010, "ax"
-	.global Battle_WaitMode0Far
-	.type Battle_WaitMode0Far, %function
+	.global FieldEvent_WaitFramesFar
+	.type FieldEvent_WaitFramesFar, %function
 	.thumb_func
-Battle_WaitMode0Far:
+FieldEvent_WaitFramesFar:
 	.incbin "baserom.gba", 0x000c8010, 0x00000008
 	.section .rom.000c8018, "ax"
 	.global EventRuntime_BeginFar
@@ -2423,10 +2423,10 @@ Func_080c8948:
 	.balign 4
 	.incbin "baserom.gba", 0x000c9e48, 0x000000e4
 	.section .rom.000c9f2c, "ax"
-	.global BattleFx_LookupResult
-	.type BattleFx_LookupResult, %function
+	.global Encounter_ResolveWorldMapZoneAndBackdrop
+	.type Encounter_ResolveWorldMapZoneAndBackdrop, %function
 	.thumb_func
-BattleFx_LookupResult:
+Encounter_ResolveWorldMapZoneAndBackdrop:
 	.incbin "baserom.gba", 0x000c9f2c, 0x000000ac
 	.section .rom.000c9fd8, "ax"
 	.global Encounter_SelectEnemyGroup
@@ -2770,10 +2770,10 @@ Func_080d4330:
 	.incbin "baserom.gba", 0x000d4310, 0x00000054
 	.section .rom.000d43ec, "ax"
 	.balign 4
-	.global Motion_CamBounds
-	.type Motion_CamBounds, %function
+	.global Camera_MoveWithinMapBounds
+	.type Camera_MoveWithinMapBounds, %function
 	.thumb_func
-Motion_CamBounds:
+Camera_MoveWithinMapBounds:
 	.incbin "baserom.gba", 0x000d43ec, 0x00000100
 	.section .rom.000d4794, "ax"
 	.global Func_080d47b4

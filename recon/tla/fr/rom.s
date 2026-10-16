@@ -1783,10 +1783,10 @@ Game_ResetForNewGame:
 	.balign 4
 	.incbin "baserom.gba", 0x000cee48, 0x000000e4
 	.section .rom.000cef2c, "ax"
-	.global BattleFx_LookupResult
-	.type BattleFx_LookupResult, %function
+	.global Encounter_ResolveWorldMapZoneAndBackdrop
+	.type Encounter_ResolveWorldMapZoneAndBackdrop, %function
 	.thumb_func
-BattleFx_LookupResult:
+Encounter_ResolveWorldMapZoneAndBackdrop:
 	.incbin "baserom.gba", 0x000cef2c, 0x000000ac
 	.section .rom.000cefd8, "ax"
 	.global Encounter_SelectEnemyGroup
@@ -2184,10 +2184,10 @@ Func_080d4330:
 	.incbin "baserom.gba", 0x000d9324, 0x00000054
 	.section .rom.000d9400, "ax"
 	.balign 4
-	.global Motion_CamBounds
-	.type Motion_CamBounds, %function
+	.global Camera_MoveWithinMapBounds
+	.type Camera_MoveWithinMapBounds, %function
 	.thumb_func
-Motion_CamBounds:
+Camera_MoveWithinMapBounds:
 	.incbin "baserom.gba", 0x000d9400, 0x00000100
 	.section .rom.000d97a8, "ax"
 	.global Func_080d47b4

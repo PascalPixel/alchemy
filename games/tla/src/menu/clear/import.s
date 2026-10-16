@@ -250,10 +250,10 @@ Func_02002398:
 	.thumb_func
 Func_020023a0:
 	overlay_veneer Func_080ad330
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

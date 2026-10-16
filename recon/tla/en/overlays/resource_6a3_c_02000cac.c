@@ -58,10 +58,10 @@ void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Camera_FollowActor(s32 id, s32 mode);
 void Object_LinkPair(s32 a, s32 b, s32 c);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 d);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
@@ -74,7 +74,7 @@ static __inline__ void I_Func_0200488c(const u8 *message) {
 static __inline__ void I_Func_020049c4(s32 cue) { Func_020049c4(cue); }
 
 static __inline__ void I_Battle_WaitMode0(s32 frames) {
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ void
@@ -101,7 +101,7 @@ static __inline__ void I_Func_02004964(s32 actor, s32 x, s32 z, s32 angle) {
 }
 
 static __inline__ void I_Object_AttachWorkTargetToObject(s32 id, s32 mode) {
-  Object_AttachWorkTargetToObject(id, mode);
+  Camera_FollowActor(id, mode);
 }
 
 static __inline__ void I_ObjectMotion_CommitCurrentPositionAndActivate(s32 id) {
@@ -141,7 +141,7 @@ static __inline__ void I_ObjectMotion_SetSpeedParameters(s32 actor, s32 speed,
 static __inline__ void I_Func_020048e4(s32 a, s32 b) { Func_020048e4(a, b); }
 
 static __inline__ void I_Motion_CamBounds(s32 x, s32 y, s32 z, s32 d) {
-  Motion_CamBounds(x, y, z, d);
+  Camera_MoveWithinMapBounds(x, y, z, d);
 }
 
 static __inline__ void I_Object_RefreshSelectorById(u32 a0) {

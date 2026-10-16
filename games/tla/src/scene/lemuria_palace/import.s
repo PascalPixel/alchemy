@@ -74,10 +74,10 @@ Func_02001fb4:
 	.thumb_func
 Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001fcc
 	.thumb_func
 Func_02001fcc:
@@ -182,14 +182,14 @@ Func_0200208c:
 	.thumb_func
 Func_02002094:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global Motion_CamBounds
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_020020ac
 	.thumb_func
 Func_020020ac:

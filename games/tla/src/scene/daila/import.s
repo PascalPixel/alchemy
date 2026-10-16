@@ -33,7 +33,7 @@ Func_02000c48:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:

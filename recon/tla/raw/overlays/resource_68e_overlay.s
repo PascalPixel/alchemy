@@ -316,7 +316,7 @@ Func_020001e4:
 	movs r0, #113
 	bl Func_02001408
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	b .L_ja_02008486
 .L_ja_020083de:
 	movs r7, #0
@@ -655,7 +655,7 @@ Func_020001e4:
 	movs r0, #113
 	bl Func_02001408
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	b .L_02008468
 .L_020083c0:
 	movs r7, #0

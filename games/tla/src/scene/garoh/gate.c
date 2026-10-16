@@ -24,7 +24,7 @@ struct EventWork {
 
 extern s32 gData_0200632c;
 
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020052c4(s32 a);
 void Func_02002694(void);
 void Func_02003878(void);
@@ -32,7 +32,7 @@ void Func_02003878(void);
 static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters build each -1 on
    * its own; a direct call copies one register */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_02000960(void) {

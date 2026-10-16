@@ -17,7 +17,7 @@ void Func_020010ec(void) {
   UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy, 1);
   Func_02003ef4(126);
   Func_02003eb4(999, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   GameFlag_ClearBit(0x142);
   UiText_ShowPositionedMessageAndWait(MsgCheckedThePsynergy + 1, 1);
   Func_02003d84();

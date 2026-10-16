@@ -64,16 +64,16 @@
 	.set import.Engine_EventSetMessage, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.BattleEv_RunWait, 1
+	.set import.FieldEvent_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_ES
-	.set import.BattleEv_RunWait, 1
+	.set import.FieldEvent_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.BattleEv_RunWait, 1
+	.set import.FieldEvent_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.BattleEv_RunWait, 1
+	.set import.FieldEvent_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
 	.set import.Menu_OpenCharacterSelector, 1

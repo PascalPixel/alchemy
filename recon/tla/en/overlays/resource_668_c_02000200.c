@@ -48,7 +48,7 @@ void ObjectMotion_ArmCallback();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
 void Motion_SetVarCbAndRefresh();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 s32 UiText_OpenMessageAtObject();
 s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
@@ -178,7 +178,7 @@ void Func_02000514(void) {
       GameFlag_SetBit(0x8a6);
       Func_02004a94();
       Func_02004be4(0);
-      Motion_CamBounds(0x1500000, -1, 0x2300000, 1);
+      Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
       Func_020044c4(plan);
       Func_02004c7c(door->x - 0x180000, door->z, 0, 0);
       Func_02004c7c(door->x + 0x80000, door->z, 0, 0);
@@ -188,7 +188,7 @@ void Func_02000514(void) {
       Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
       Object_SetModeById(15, 3);
       ObjectMotion_OffsetPositionAndResetMotion(15, 0, 16);
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       door->gravity = 0xccc;
       door->motionFlags = 3;
       i = 0;
@@ -201,8 +201,8 @@ void Func_02000514(void) {
       Func_02000fa4();
       Func_02004c9c(240);
       Object_SetModeById(15, 8);
-      Battle_WaitMode0(60);
-      Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
+      FieldEvent_WaitFrames(60);
+      Camera_FollowActor(gPartyState.currentOwner, 1);
       Func_02004a9c();
     }
   }

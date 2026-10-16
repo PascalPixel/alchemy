@@ -112,7 +112,7 @@ static void EV14_TOUCH(void) {
 // Shared source is included here in ROM order.
 #include "common/vale.h"
 
-static void ValeStorm_OpenBackdropExit11(void) {
+UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_AudioPlayCue(0x9E);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
@@ -1183,7 +1183,7 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   }
 }
 
-static void ActorPresentation_SetFourActorsModeByBit(void) {
+UNUSED static void ActorPresentation_SetFourActorsModeByBit(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
     Storm_SetActorFrameMode(Object_GetById(33), 1);
@@ -2329,7 +2329,7 @@ static void EV16_TOUCH(void) {
   state->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   state->transitionFrames = 64;
   Engine_GameFlagSet(0x87c);
-  BattleFx_SetWeightedResult(12, 2);
+  Field_RequestBattleFromEncounterTable(12, 2);
   Engine_GameFlagSet(0x900);
   Engine_EventEnd();
 }
@@ -2343,7 +2343,7 @@ static void EV17_TOUCH(void) {
   state->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   state->transitionFrames = 64;
   Engine_GameFlagSet(0x87f);
-  BattleFx_SetWeightedResult(12, 3);
+  Field_RequestBattleFromEncounterTable(12, 3);
   Engine_GameFlagSet(0x900);
   Engine_EventEnd();
 }

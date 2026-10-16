@@ -18,7 +18,7 @@ struct AnemosInnerSanctumPicture {
 extern const s16 gData_020043e4[];
 extern const struct AnemosInnerSanctumPicture gData_02004410[];
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -70,7 +70,7 @@ loop:
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner, 0, -4);
-  Battle_WaitMode0(6);
+  FieldEvent_WaitFrames(6);
   Func_02003450(work->value);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -47,7 +47,7 @@ extern const s16 gData_020047fc[];
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Func_020043dc(void);
 void Func_02004234(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 

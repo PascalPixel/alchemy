@@ -95,7 +95,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_SetActionVariant
 	movs r0, #8
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #9
 	movs r2, #0
@@ -116,7 +116,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r5, .L_020083b4
 	movs r3, #133
 	lsls r3, r3, #2
@@ -139,7 +139,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -149,7 +149,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -159,7 +159,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -170,7 +170,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -180,7 +180,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -191,7 +191,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -201,7 +201,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -211,7 +211,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #0
 	movs r2, #0
@@ -225,7 +225,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -235,7 +235,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -245,7 +245,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -255,7 +255,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #12
 	movs r1, #5
 	movs r2, #0
@@ -265,7 +265,7 @@ Func_02000110:
 	movs r0, #12
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r2, #0
 	movs r0, #12

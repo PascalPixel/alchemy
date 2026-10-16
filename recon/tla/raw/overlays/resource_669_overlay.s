@@ -223,7 +223,7 @@ Func_02000438:
 	movs r0, #151
 	bl Func_020032a8
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5, #8]
 	ldr r3, .L_020084f0
 	ldr r1, [r5, #12]
@@ -238,7 +238,7 @@ Func_02000438:
 	movs r0, #151
 	bl Func_020032a8
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5, #8]
 	ldr r1, [r5, #12]
 	ldr r2, [r5, #16]
@@ -250,7 +250,7 @@ Func_02000438:
 	movs r0, #151
 	bl Func_020032a8
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5, #8]
 	ldr r1, [r5, #12]
 	ldr r3, .L_020084f0
@@ -263,7 +263,7 @@ Func_02000438:
 	movs r0, #151
 	bl Func_020032a8
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	add sp, #4
 	pop {r3, r5, r6}
 	mov r8, r3

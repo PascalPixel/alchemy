@@ -66,10 +66,10 @@ Func_020005e4:
 	.thumb_func
 Func_020005ec:
 	overlay_veneer Party_SetLeaderFelixFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

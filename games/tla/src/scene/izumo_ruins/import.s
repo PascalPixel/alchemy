@@ -162,10 +162,10 @@ Func_020014c0:
 	.thumb_func
 ObjectVisual_CopyAttributes:
 	overlay_veneer ObjectVisual_CopyAttributesFar
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
 	.global Func_020014d8
 	.thumb_func
 Func_020014d8:

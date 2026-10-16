@@ -66,7 +66,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetWeightedResult, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Effect_SoundAndFlash, 1
 	.set import.FieldFx_StartLightning, 1
 	.set import.FieldFx_StopLightning, 1

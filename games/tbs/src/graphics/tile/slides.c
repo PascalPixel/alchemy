@@ -712,7 +712,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlankCreditLine,
     0
 #else
-    // European releases share the credits order; only local staff differ.
+    // European releases share this order, with local staff and publisher rows.
     "North American",
     " Localization",
     sBlankCreditLine,

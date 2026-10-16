@@ -74,14 +74,14 @@ void Func_020007d8(void) {
   Func_02001294(6, 0);
   Object_LinkObjectAndSetCallback(6, gPartyState.currentOwner);
   GondowanCliffs_ObjEmote(gPartyState.currentOwner, 258);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
   Object_SetModeById(gPartyState.currentOwner, 3);
   Object_SetModeById(6, 3);
   Object_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   GondowanCliffs_ObjWalk(gPartyState.currentOwner, 584, 472);
   Func_0200124c(22, 0, 0);
   GondowanCliffs_ObjWalk(gPartyState.currentOwner, 568, 480);

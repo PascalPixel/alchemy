@@ -31,7 +31,7 @@ void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void ObjectMotion_SetActionVariant(u32 id, s32 variant);
@@ -40,7 +40,7 @@ void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Func_02002764(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
 void Func_02002840(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -195,10 +195,10 @@ static __inline__ void WaitFrames_(s32 frames) {
   WaitFrames(frames);
 }
 
-static __inline__ void Battle_WaitMode0_(s32 frames) {
+static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {
@@ -252,10 +252,10 @@ static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 id, s32 x,
   ObjectMotion_CommitPositionAndActivate(id, x, z);
 }
 
-static __inline__ void Motion_CamBounds_(s32 a, s32 b, s32 c, s32 d) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Func_02002764_(s32 id, s32 a) {

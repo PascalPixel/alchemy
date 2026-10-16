@@ -122,7 +122,7 @@ Func_080e4a34:
 	adds r0, r2, #0
 	adds r1, r2, #0
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r3, [sp, #44]
 	mov r5, r8
 	ldr r0, [r3, #16]
@@ -297,7 +297,7 @@ Func_080e4a34:
 	movs r1, #1
 	movs r2, #24
 	ldrsh r0, [r3, r2]
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 	ldr r6, [sp, #24]
 	add r0, sp, #20
 	str r6, [r5, #12]

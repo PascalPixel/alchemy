@@ -6,7 +6,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 WaitFrames(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 id, s32 a);
+void Camera_FollowActor(s32 id, s32 a);
 
 void Func_020024c8(void) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
@@ -27,7 +27,7 @@ void Func_020024c8(void) {
     {
       s64 flags = zero;
 
-      Object_AttachWorkTargetToObject(gPartyState.currentOwner, flags);
+      Camera_FollowActor(gPartyState.currentOwner, flags);
     }
   }
 }

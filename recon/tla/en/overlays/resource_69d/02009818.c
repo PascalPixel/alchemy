@@ -13,7 +13,7 @@ struct LightSpot {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02001790(void);
 void Func_02001f08(s32 cue);
 void Func_02001df0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -29,5 +29,5 @@ void Func_02001818(struct LightSpot *spot) {
   Func_02001790();
   Func_02001f08(161);
   Func_02001df0(spot->x, spot->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

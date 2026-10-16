@@ -34,10 +34,10 @@ Object_SetPositionAndResetMotion:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02003130
 	.thumb_func
 Func_02003130:
@@ -146,14 +146,14 @@ Func_020031f8:
 	.thumb_func
 Func_02003200:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global Motion_CamBounds
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02003218
 	.thumb_func
 Func_02003218:
@@ -161,7 +161,7 @@ Func_02003218:
 	.global Func_02003220
 	.thumb_func
 Func_02003220:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

@@ -7,17 +7,17 @@ void Func_020056bc(void);
 void Func_0200580c(s32 value);
 struct ObjectRuntime *Func_020057bc(void);
 void Func_020057a4(s32 speed, s32 acceleration);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020057b4(void);
 void Func_02005854(s32 sound);
 void Func_020020f0(s32 value);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_020019d0(void) {
@@ -31,15 +31,15 @@ void Func_020019d0(void) {
   Func_020057b4();
   Func_02005854(586);
   Func_020020f0(0);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02005854(582);
   actor->motionFlags = 0;
   actor->y = 0x80000;
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   actor->y = 0;
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_020020f0(-1);
   GameFlag_SetBit(0x8cd);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_020056bc();
 }

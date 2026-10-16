@@ -21,11 +21,11 @@ s32 BattleAction_RunDescriptor(s32 arg0) {
       work->limit = 0;
     }
     if (desc->result < 0x10000) {
-      Battle_Reset();
+      FieldEvent_Begin();
       Event_SetMessageId(desc->result);
-      BattleEv_RunWait(-1, 0);
+      FieldEvent_ShowMessageAndWait(-1, 0);
       ret = 0;
-      BattleFx_FinishAction();
+      FieldEvent_End();
     } else {
       ((void (*)(s32))desc->result)(arg0);
       goto block_17;

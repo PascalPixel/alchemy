@@ -71,7 +71,7 @@ void Func_02000270(void) {
   Func_02005b4c((s32)MsgNowThatAkafubu);
   Func_02005b64(24, 0);
   ObjectMotion_SetAngleToward(24, gPartyState.currentOwner, 0);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02005b64(24, 0);
   Kibombo_ObjTurn(24, 0x3000);
   Func_02005aa4();
@@ -161,7 +161,7 @@ void Func_0200042c(void) {
     Func_02005a9c();
     Func_02005c3c(0);
     ObjectMotion_SetAngleToward(36, gPartyState.currentOwner, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
     Func_02005aa4();
@@ -172,7 +172,7 @@ void Func_0200042c(void) {
     Func_02005b5c(36, 0, 40);
     Func_02005b64(36, 0);
     ObjectMotion_SetAngleToward(36, gPartyState.currentOwner, 0);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
     Kibombo_FlagSet(0x9df);
@@ -414,7 +414,7 @@ void Func_02000b2c(void) {
   Kibombo_ObjArm(5, 0, 0);
   Kibombo_ObjArm(6, 0xe000, 0);
   Func_02005b9c(7, 0x102);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02005b64(7, 0);
   Func_02005b5c(26, 0, 20);
   Func_02005b64(7, 0);

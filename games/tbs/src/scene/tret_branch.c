@@ -52,7 +52,7 @@ static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
 
 // Starts the battle for Djinni 0x3d, using actor 8 for its opening hop.
-static void EV08_TALK(void) { BattleFx_SetPhaseRequest(8, 0x3D); }
+static void EV08_TALK(void) { Field_RequestDjinnBattle(8, 0x3D); }
 
 // Returns the entrance table through the overlay's encoded table interface.
 u8 *TretBranch_GetEntrances(void) { return (u8 *)gTretBranch_SceneTable0; }

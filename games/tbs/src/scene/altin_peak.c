@@ -97,7 +97,7 @@ extern s32 gAltinPeak_LeafOrigin[3];
 // Talking to the Djinni in room 7 makes it hop and starts the battle for
 // Djinni 23.
 static void Mine_TalkToDjinni(void) {
-  BattleFx_SetPhaseRequest(ACTOR_DJINNI, 23);
+  Field_RequestDjinnBattle(ACTOR_DJINNI, 23);
 }
 
 // Shared source, included where its bytes sit in the ROM.
@@ -271,19 +271,19 @@ static void Mine_RideLog(s32 log) {
 static void Mine_FightRoom1Beast(void) {
   Battle_SetStart(3);
   Event_SetNextDestination(SCENE_MINE_ROOM(1), ENTRANCE_AFTER_BATTLE);
-  BattleFx_SetWeightedResult(53, 2);
+  Field_RequestBattleFromEncounterTable(53, 2);
 }
 
 static void Mine_FightRoom3Beast(void) {
   Battle_SetStart(3);
   Event_SetNextDestination(SCENE_MINE_ROOM(3), ENTRANCE_AFTER_BATTLE);
-  BattleFx_SetWeightedResult(53, 2);
+  Field_RequestBattleFromEncounterTable(53, 2);
 }
 
 static void Mine_FightRoom5Beast(void) {
   Battle_SetStart(3);
   Event_SetNextDestination(SCENE_MINE_ROOM(5), ENTRANCE_AFTER_BATTLE);
-  BattleFx_SetWeightedResult(53, 2);
+  Field_RequestBattleFromEncounterTable(53, 2);
 }
 
 // Move on room 7's block: the cell it left becomes free again and the cell
@@ -1840,7 +1840,7 @@ static void EV10_TOUCH_10(void) {
   Engine_ActorWaitForMove(8);
   Battle_SetStart(3);
   Event_SetNextDestination(SCENE_MINE_ROOM(10), ENTRANCE_AFTER_BATTLE);
-  BattleFx_SetWeightedResult(53, 3);
+  Field_RequestBattleFromEncounterTable(53, 3);
 }
 
 static void SceneActor_SetActor8ModeByCounterBit(void) {
@@ -1974,7 +1974,7 @@ static void RunEventScript01(void) {
   Engine_EventEnd();
 }
 
-static void AltinPeak_RequestPsynergy(void) {
+UNUSED static void AltinPeak_RequestPsynergy(void) {
   gEventWork->psynergyRequest = 0x1018;
 }
 
@@ -2049,7 +2049,7 @@ static void AltinPeak_SettleAndMountLeader(struct FieldActor *object) {
   Engine_AudioPlayCue(159);
 }
 
-static void AltinPeak_ReservedNoOp(void) {}
+UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 static void AltinPeak_TurnRollingObjectA(struct FieldActor *object) {
   union FieldCoordinate *p;

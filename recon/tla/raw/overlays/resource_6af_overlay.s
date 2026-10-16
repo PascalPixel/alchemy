@@ -284,7 +284,7 @@ Func_0200043c:
 	add r0, r9
 	add r2, r9
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02001014
 	movs r1, #128
 	movs r2, #128
@@ -376,7 +376,7 @@ Func_0200043c:
 	str r5, [sp, #12]
 	bl Func_0200015c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r2, [r6]
 	ldr r3, [r6, #4]
 	adds r2, #63
@@ -389,7 +389,7 @@ Func_0200043c:
 	movs r0, #6
 	bl Func_02000f9c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r2, [r6]
 	ldr r3, [r6, #4]
 	adds r2, #63
@@ -402,7 +402,7 @@ Func_0200043c:
 	movs r0, #3
 	bl Func_02000f9c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r7, #0
 	mov r1, r11
 	bl Func_020003fc

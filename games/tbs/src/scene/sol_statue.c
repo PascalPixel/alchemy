@@ -631,7 +631,7 @@ static void EV11_SCRIPT(void) {
   }
 }
 
-static void FieldScene_RunPrimarySequenceHead(void) {
+UNUSED static void FieldScene_RunPrimarySequenceHead(void) {
   if (GameFlag_IsSet(GATE_CODE) == 0) {
     Engine_EventBegin();
     Object_GetById(TARGET_ID);

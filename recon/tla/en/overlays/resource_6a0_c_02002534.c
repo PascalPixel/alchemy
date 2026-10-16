@@ -14,5 +14,5 @@ void Func_02002534(struct JupiterRoom7Cell *cell) {
   Func_020024ac();
   Func_02002c5c(161);
   Func_02002b1c(cell->x, cell->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

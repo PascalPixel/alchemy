@@ -11,7 +11,7 @@ extern const u8 MsgItTakesOur[];
 extern const u8 MsgHereSThe[];
 extern const u8 MsgManSunshineWould[];
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void PartyInventory_GiveItem(s32 item, s32 count);
@@ -35,10 +35,10 @@ void Func_020001d4(s32 actor) {
     Func_02000e08(message);
     UiText_OpenMessageAtObject(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000e30(), 0) == 0) {
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Func_02000e08(message + 1);
     } else {
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Func_02000e08(message + 2);
     }
     Func_02000e18(actor, 0);

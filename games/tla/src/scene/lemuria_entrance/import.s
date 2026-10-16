@@ -46,10 +46,10 @@ UiText_GetResourceDimensions:
 	.thumb_func
 UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_0200055c
 	.thumb_func
 Func_0200055c:

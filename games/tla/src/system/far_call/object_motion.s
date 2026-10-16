@@ -209,18 +209,18 @@ Func_080c8218:
 	.thumb_func
 ObjectVisual_CopyAttributesFar:
 	overlay_veneer ObjectVisual_CopyAttributes
-	.global Object_AttachWorkTargetToObjectFar
+	.global Camera_FollowActorFar
 	.thumb_func
-Object_AttachWorkTargetToObjectFar:
-	overlay_veneer Object_AttachWorkTargetToObject
-	.global ObjectTable_AllocateAndSetObjectSpeedFar
+Camera_FollowActorFar:
+	overlay_veneer Camera_FollowActor
+	.global Camera_SetSpeedParametersFar
 	.thumb_func
-ObjectTable_AllocateAndSetObjectSpeedFar:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeed
-	.global Motion_CamBoundsFar
+Camera_SetSpeedParametersFar:
+	overlay_veneer Camera_SetSpeedParameters
+	.global Camera_MoveWithinMapBoundsFar
 	.thumb_func
-Motion_CamBoundsFar:
-	overlay_veneer Motion_CamBounds
+Camera_MoveWithinMapBoundsFar:
+	overlay_veneer Camera_MoveWithinMapBounds
 	.global Func_080c8240
 	.thumb_func
 Func_080c8240:

@@ -835,7 +835,7 @@ static void EV10_TOUCH(void) {
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(0x87D);
-  BattleFx_SetWeightedResult(12, 0);
+  Field_RequestBattleFromEncounterTable(12, 0);
   Engine_GameFlagSet(0x900);
   Engine_EventEnd();
 }
@@ -850,7 +850,7 @@ static void EV11_TOUCH(void) {
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(0x87E);
-  BattleFx_SetWeightedResult(12, 1);
+  Field_RequestBattleFromEncounterTable(12, 1);
   Engine_GameFlagSet(0x900);
   Engine_EventEnd();
 }

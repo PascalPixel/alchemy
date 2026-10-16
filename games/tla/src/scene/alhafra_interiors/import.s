@@ -16,10 +16,10 @@ GameFlag_SetBit:
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
 	.endif
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02000a94
 	.thumb_func
 Func_02000a94:
@@ -128,14 +128,14 @@ Func_02000b5c:
 	.thumb_func
 Func_02000b64:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global Motion_CamBounds
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02000b7c
 	.thumb_func
 Func_02000b7c:

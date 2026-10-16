@@ -150,10 +150,10 @@ Func_020010cc:
 	.endif
 	.endif
 	.endif
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020010dc
 	.thumb_func
 Func_020010dc:
@@ -194,10 +194,10 @@ Object_SetPartAttribute:
 	.thumb_func
 ObjectMotion_ArmCallback:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
 	.global Func_02001134
 	.thumb_func
 Func_02001134:

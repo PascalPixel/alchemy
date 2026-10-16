@@ -871,7 +871,7 @@ Func_02000fc8:
 	movs r0, #22
 	bl Func_02004090
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #232
 	movs r1, #1
 	movs r2, #196
@@ -879,7 +879,7 @@ Func_02000fc8:
 	negs r1, r1
 	lsls r2, r2, #16
 	movs r3, #1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r5, .L_02009264
 	movs r3, #133
 	lsls r3, r3, #2
@@ -902,7 +902,7 @@ Func_02000fc8:
 	movs r2, #164
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #128
 	lsls r2, r2, #7
 	mov r8, r2
@@ -961,7 +961,7 @@ Func_02000fc8:
 	movs r0, #21
 	bl Func_020040e8
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Func_02002ca0
 	movs r0, #136
 	bl Func_020041f8
@@ -971,7 +971,7 @@ Func_02000fc8:
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #129
 	ldr r0, [r5]
 	lsls r1, r1, #1
@@ -980,12 +980,12 @@ Func_02000fc8:
 	movs r1, #27
 	bl Object_SetModeById
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r5]
 	movs r1, #28
 	bl Object_SetModeById
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #204
 	bl Func_020041f8
 	movs r5, #0
@@ -1028,7 +1028,7 @@ Func_02000fc8:
 	movs r0, #21
 	bl ObjectMotion_SetPositionAndCommit
 	movs r0, #3
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #204
 	bl Func_020041f8
 	movs r5, #0
@@ -1452,7 +1452,7 @@ Func_02001690:
 	lsls r2, r2, #16
 	lsls r0, r0, #16
 	movs r1, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02004128
 	movs r0, #12
 	movs r1, #0
@@ -1525,7 +1525,7 @@ Func_02001690:
 	movs r3, #1
 	negs r1, r1
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02004128
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndResetMotion
@@ -1551,10 +1551,10 @@ Func_02001690:
 	negs r1, r1
 	lsls r2, r2, #16
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02004128
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #208
 	movs r0, #8
 	lsls r1, r1, #8
@@ -1697,7 +1697,7 @@ Func_02001690:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #12
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -1715,12 +1715,12 @@ Func_02001690:
 	lsls r2, r2, #17
 	lsls r0, r0, #16
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	adds r1, r5, #0
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #9
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -1729,7 +1729,7 @@ Func_02001690:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #11
 	bl Object_SetActionCallbackAndRefreshById
@@ -3400,7 +3400,7 @@ Func_02002ebc:
 	negs r1, r1
 	negs r2, r2
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r0, #232
 	movs r1, #1
 	movs r2, #184
@@ -3408,7 +3408,7 @@ Func_02002ebc:
 	negs r1, r1
 	lsls r2, r2, #16
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02003fd8
 	movs r0, #1
 	bl WaitFrames
@@ -3475,7 +3475,7 @@ Func_02002ebc:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #24
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r2, [r6, #16]
 	ldr r1, [r6, #12]
 	ldr r0, [r6, #8]
@@ -3500,7 +3500,7 @@ Func_02002ebc:
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildFlags
 	movs r0, #24
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	mov r3, r8
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
@@ -3515,14 +3515,14 @@ Func_02002ebc:
 	lsls r1, r1, #8
 	bl ObjectMotion_ArmCallback
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #147
 	bl Func_020041f8
 	movs r1, #3
 	movs r0, #8
 	bl Object_SetModeById
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #128
 	mov r2, r8
 	lsls r3, r3, #12

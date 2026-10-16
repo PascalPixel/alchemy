@@ -103,7 +103,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 
 // Start the Djinn encounter for the actor being spoken to.
 static void MercuryLighthouse_StartDjinnBattle(void) {
-  BattleFx_SetPhaseRequest(12, 21);
+  Field_RequestDjinnBattle(12, 21);
 }
 
 #if TBS_PATCH_3

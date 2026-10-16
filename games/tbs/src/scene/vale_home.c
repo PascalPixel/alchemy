@@ -534,7 +534,7 @@ static void EV20_TOUCH(void) {
     Engine_EventBegin();
     Camera_SetSpeed(0x19999, 0x3333);
     Engine_CameraMoveTo(0xc50000, -1, 0x3000000, 1);
-    BattleFx_CommitObjectPositionAndWait();
+    Camera_WaitForArrival();
     Engine_EventSetMessage(MsgValeGoAidElders);
     Engine_ActorRunRepeatedMotion(19, 2);
     Event_ShowMessageAndWait(0x4013, 0, 10);
@@ -614,7 +614,7 @@ static void EV20_TOUCH(void) {
     SceneActor_SetPairZeroAndValue(25, 0xe000, 10);
     Engine_CameraSetSpeed(0x13333, 0x2666);
     Camera_MoveTo(0xd70000, -1, 0x2f60000, 1);
-    BattleFx_CommitObjectPositionAndWait();
+    Camera_WaitForArrival();
     Engine_CameraSetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
     Actor_SetActionScript(22, gValeHome_Actor22Actions);
@@ -696,7 +696,7 @@ static void ValeHome_RunScriptScene(void) {
   rec7[85] = 0;
   Camera_SetSpeed(0x30000, 0x6000);
   Engine_CameraMoveTo(0x6d0000, 0xb00000, 0x1190000, 1);
-  BattleFx_CommitObjectPositionAndWait();
+  Camera_WaitForArrival();
   Engine_EventWait(40);
   Actor_SetPosition(24, 0x870000, 0xb10000);
   Actor_SetSpeed(24, 0xcccc, 0x6666);
@@ -748,7 +748,7 @@ static void FieldScene_RunGroupChoreography(void) {
   SceneActor_SetPairZeroAndValue(24, walkSpeed, 40);
   Engine_CameraSetSpeed(0x18000, 0x3000);
   Engine_CameraMoveTo(0x590000, 0xb00000, 0x1390000, 1);
-  BattleFx_CommitObjectPositionAndWait();
+  Camera_WaitForArrival();
   Engine_EventWait(40);
   Actor_FaceDirection(23, 0xe000, 0);
   SceneActor_SetPairZeroAndValue(24, 0x7000, 40);
@@ -819,7 +819,7 @@ static void FieldScene_RunGroupChoreography(void) {
     Event_SetNextDestination((s32)message, 19);
     Event_SetDefeatDestination((s32)message, 19);
   }
-  BattleFx_SetWeightedResult(12, 4);
+  Field_RequestBattleFromEncounterTable(12, 4);
   Engine_GameFlagSet(0x11a);
 }
 

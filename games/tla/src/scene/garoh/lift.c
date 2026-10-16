@@ -23,7 +23,7 @@ void Func_02000e78(s32 id, struct ObjectRuntime *object) {
   }
   for (i = 16; i > 0; i--) {
     object->y -= 0x20000;
-    Battle_WaitMode0(1);
+    FieldEvent_WaitFrames(1);
   }
   Func_02005394(136);
   Func_020012a8(saved);

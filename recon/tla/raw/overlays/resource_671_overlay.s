@@ -1799,7 +1799,7 @@ Func_02002394:
 	negs r2, r2
 	movs r3, #0
 	negs r0, r0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_0200564c
 	movs r0, #1
 	bl WaitFrames
@@ -1830,7 +1830,7 @@ Func_02002394:
 	movs r3, #3
 	strb r3, [r5]
 	movs r0, #24
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	add r2, sp, #28
 	movs r3, #7
 	str r3, [r2, #4]
@@ -1981,7 +1981,7 @@ Func_02002a64:
 	negs r1, r1
 	negs r2, r2
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r3, .L_0200ac1c
 	movs r2, #133
 	lsls r2, r2, #2
@@ -2037,7 +2037,7 @@ Func_02002a64:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r2, #20
 	lsls r1, r1, #1
@@ -2066,7 +2066,7 @@ Func_02002a64:
 	lsls r0, r0, #17
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020057b4
 	ldr r0, [r6]
 	movs r1, #0
@@ -2408,7 +2408,7 @@ Func_02002a64:
 	movs r3, #1
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020057b4
 	movs r0, #23
 	movs r1, #0
@@ -2434,7 +2434,7 @@ Func_02002a64:
 	lsls r2, r2, #17
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020057b4
 	movs r0, #23
 	movs r1, #3
@@ -2617,7 +2617,7 @@ Func_02003634:
 	ldr r2, [r5, #16]
 	negs r1, r1
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_0200564c
 	movs r0, #1
 	bl WaitFrames

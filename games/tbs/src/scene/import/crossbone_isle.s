@@ -40,7 +40,7 @@
 	.set import.ObjectGroup_SetChildValue, 1
 	.set import.Engine_ActorSetSpritePriority, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetWeightedResult, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1

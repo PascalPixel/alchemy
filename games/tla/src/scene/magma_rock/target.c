@@ -4,7 +4,7 @@
 #include "magma_rock.h"
 
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02000ff4(void);
 void Func_020011e4(struct ObjectRuntime *object);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
@@ -21,13 +21,13 @@ void Func_02001444(void) {
 
   Func_02003aec();
   Func_02003bcc(0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   object = work->target;
   object->update = NULL;
   Object_SetPartAttribute(object, 7);
-  Battle_WaitMode0(3);
+  FieldEvent_WaitFrames(3);
   Object_SetPartAttribute(work->target, 0);
-  Battle_WaitMode0(1);
+  FieldEvent_WaitFrames(1);
   Func_020011e4(work->target);
   Func_02003af4();
 }

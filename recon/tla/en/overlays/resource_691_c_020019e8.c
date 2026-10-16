@@ -11,7 +11,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Func_020014bc(s32 mode, s32 cue);
 void Func_02003aec(void);

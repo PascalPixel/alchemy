@@ -58,10 +58,10 @@ Party_AdjustCoins:
 	.thumb_func
 Func_020010d0:
 	overlay_veneer Party_FindOwnerWithActionFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020010e0
 	.thumb_func
 Func_020010e0:

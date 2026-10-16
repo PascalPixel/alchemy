@@ -324,7 +324,7 @@ static void TretInteriors_StartTretBattle(void) {
   gEventWork->transitionFrames = 64;
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_TretInteriors, 19);
-  BattleFx_SetWeightedResult(36, 0);
+  Field_RequestBattleFromEncounterTable(36, 0);
   Engine_EventEnd();
 }
 

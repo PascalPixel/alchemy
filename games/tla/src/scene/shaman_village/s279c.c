@@ -47,7 +47,7 @@ void Func_02002878(void) {
 
 void Func_0200289c(void) {
   ShamanVillage_ObjSpeed(gPartyState.currentOwner, 0x19999, 0xcccc);
-  Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
+  Camera_FollowActor(gPartyState.currentOwner, 1);
   ShamanVillage_ObjWalk(gPartyState.currentOwner, 168, 304);
   ShamanVillage_ObjArm(16, 0x4000, 0);
   ShamanVillage_ObjArm(17, 0x4000, 0);

@@ -10,7 +10,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Camera_FollowActor(s32 id, s32 mode);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
 void ObjectMotion_Launch(s32 id, s32 target, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);

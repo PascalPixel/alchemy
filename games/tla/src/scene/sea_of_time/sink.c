@@ -34,8 +34,8 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   Func_020018a8(x, z, actor);
   for (i = 0; i != 10; i++) {
     Object_GetById(actor)->scale += 0x1999;
-    Battle_WaitMode0(1);
+    FieldEvent_WaitFrames(1);
   }
   Object_GetById(actor)->scale = 0x10000;
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
 }

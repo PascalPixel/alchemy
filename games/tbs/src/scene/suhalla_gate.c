@@ -32,7 +32,7 @@
 
 // Starts the encounter of the Djinni in actor slot 13, using Djinni ID 26.
 static void SuhallaGate_StartDjinnBattle(void) {
-  BattleFx_SetPhaseRequest(13, 26);
+  Field_RequestDjinnBattle(13, 26);
 }
 
 // Selects the entrance table for the gate's current scene.

@@ -17,13 +17,13 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020056b4(void);
 void Func_0200580c(s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_0200564c(void);
 void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02005854(s32 sound);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -36,7 +36,7 @@ void Func_0200569c(void);
 void Func_020056bc(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
@@ -62,7 +62,7 @@ void Func_02002394(void) {
   Event_WaitTransitionFrames();
   Func_02005854(204);
   actor->motionFlags = 3;
-  Battle_WaitMode0(24);
+  FieldEvent_WaitFrames(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;

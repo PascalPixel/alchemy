@@ -8,7 +8,7 @@ struct EventTransition {
 };
 
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void Camera_FollowActor(s32 actor, s32 target);
 void Event_StartScreenTransition(void);
 void Func_020034d4(s32 actor, s32 x, s32 z);
 s32 Func_02003544(s32 actor, s32 value, s32 frames);
@@ -41,10 +41,10 @@ void Func_02001774(void) {
   ObjectMotion_ArmCallback_(8, 0x5000, 0);
   ObjectMotion_ArmCallback_(11, 0xb000, 0);
   Object_SetModeById(gPartyState.currentOwner, 41);
-  Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+  Camera_FollowActor(gPartyState.currentOwner, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02003544(11, 264, 30);
   Func_0200351c(11, 0, 5);
   Motion_SetModeAndWaitAnimation(8, 4);

@@ -12,5 +12,5 @@ void Func_02002438(struct JupiterAerieWork *work,
   Func_020023b0();
   Func_02002b68(161);
   Func_02002a40(work->x, work->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

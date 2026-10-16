@@ -2,7 +2,7 @@
 
 s32 PartyInventory_FindOwner(s32 item);
 void Func_02003218(s32 a, s32 b);
-void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
+void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Func_02003228(void);
 void Func_0200080c(void);
 
@@ -127,9 +127,10 @@ void Func_020013a0(void) {
       Func_020031e0();
       Func_02003280(0);
       Call2((void (*)())Func_02003218, 0x20000, 0x4000);
-      Call4((void (*)())Motion_CamBounds, 0xe00000, 0x400000, 0xd80000, 1);
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x400000,
+            0xd80000, 1);
       Func_02003228();
-      Call1((void (*)())Battle_WaitMode0, 20);
+      Call1((void (*)())FieldEvent_WaitFrames, 20);
       Call2((void (*)())Func_02003250, 0x10000, 0);
       Call2((void (*)())Func_02003248, 0x10003, 0);
       Call1((void (*)())Func_02003258, 20);
@@ -155,9 +156,10 @@ void Func_020013a0(void) {
     Func_020031e0();
     Func_02003280(0);
     Call2((void (*)())Func_02003218, 0x20000, 0x4000);
-    Call4((void (*)())Motion_CamBounds, 0xe00000, 0x400000, 0xd80000, 1);
+    Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x400000, 0xd80000,
+          1);
     Func_02003228();
-    Call1((void (*)())Battle_WaitMode0, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call2((void (*)())Func_02003250, 0x10000, 0);
     Call2((void (*)())Func_02003248, 0x10003, 0);
     Call1((void (*)())Func_02003258, 20);
@@ -169,12 +171,13 @@ void Func_020013a0(void) {
     message++;
     Call1((void (*)())WaitFrames, 10);
     Func_020031c0(message, 0, 3);
-    Call4((void (*)())Motion_CamBounds, 0xe00000, 0x580000, 0xd80000, 1);
+    Call4((void (*)())Camera_MoveWithinMapBounds, 0xe00000, 0x580000, 0xd80000,
+          1);
     Func_02003228();
-    Call1((void (*)())Battle_WaitMode0, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call1((void (*)())Func_020032b8, 560);
     Func_0200080c();
-    Call1((void (*)())Battle_WaitMode0, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
     Call2((void (*)())Func_02003248, 0x10000, 0);
     Call1((void (*)())Func_02003258, 20);
     Call1((void (*)())WaitFrames, 40);

@@ -10,7 +10,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Camera_FollowActor(s32 id, s32 mode);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
 void ObjectMotion_Launch(s32 id, s32 target, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
@@ -30,7 +30,7 @@ void Func_02000074(void) {
     Func_02000214(0);
     Func_020001e4((s32)MsgKibomboWarriorsFound);
     Func_02000204(0x10000, 0x2000);
-    Object_AttachWorkTargetToObject(8, 1);
+    Camera_FollowActor(8, 1);
     Func_0200020c();
     ObjectMotion_SetAngleToward(10, 4, 2);
     {

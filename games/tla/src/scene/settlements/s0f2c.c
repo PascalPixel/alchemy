@@ -18,7 +18,7 @@ void Func_02000f2c(void) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y -= 0x20000;
-      Battle_WaitMode0(1);
+      FieldEvent_WaitFrames(1);
     }
     Func_0200156c(9);
     Func_020020c0(9, 0, 0);

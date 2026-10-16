@@ -413,7 +413,7 @@ static void EV12_TOUCH(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-static void SceneState_ApplyValue768(void) { Engine_GameFlagSet(768); }
+UNUSED static void SceneState_ApplyValue768(void) { Engine_GameFlagSet(768); }
 
 static void EV50_TOUCH(void) {
   s32 approach;
@@ -450,7 +450,7 @@ static void EV50_TOUCH(void) {
   /* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is
    * built as movs #0, subs, adds #1, as the native does. 1 - approach or
    * -approach + 1 folds into movs #1, subs (differ 7 in tbs-en). */
-  BattleFx_SetWeightedResult(72, base - approach + 1);
+  Field_RequestBattleFromEncounterTable(72, base - approach + 1);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoRiver, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColossoRiver, 5);
@@ -1132,7 +1132,7 @@ static void FieldScene_RunLateSequence(s32 a0) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-static void Text_WriteU32AsHex(u8 *buf, u32 value) {
+UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
   buf += 8;
@@ -1147,7 +1147,7 @@ static void Text_WriteU32AsHex(u8 *buf, u32 value) {
 
 static void Resource3ba_NoOpCallback(void) {}
 
-static void ColossoRiver_MarkStageReady(void) {
+UNUSED static void ColossoRiver_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;
 

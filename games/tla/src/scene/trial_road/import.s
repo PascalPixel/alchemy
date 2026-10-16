@@ -266,10 +266,10 @@ Func_02005868:
 	.thumb_func
 Func_02005870:
 	overlay_veneer Func_080ad308
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02005880
 	.thumb_func
 Func_02005880:
@@ -393,11 +393,11 @@ ObjectVisual_CopyAttributes:
 	.global Func_02005970
 	.thumb_func
 Func_02005970:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02005980
 	.thumb_func
 Func_02005980:
@@ -413,7 +413,7 @@ Func_02005990:
 	.global Func_02005998
 	.thumb_func
 Func_02005998:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_020059a0
 	.thumb_func
 Func_020059a0:

@@ -19,7 +19,7 @@ struct DoorStep {
 
 struct ObjectRuntime *Object_GetById();
 void ObjectMotion_SetSpeedParameters();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_02001fb4();
@@ -49,7 +49,7 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Object_SetModeById(gPartyState.currentOwner, 2);
   Call3((void (*)())ObjectMotion_CenterOnColumn, gPartyState.currentOwner, 2,
         -8);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_020020b4(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

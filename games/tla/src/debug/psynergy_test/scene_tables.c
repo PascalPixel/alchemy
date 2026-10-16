@@ -34,7 +34,7 @@ s32 Unit_AddPp(s32, s32);
 void GameFlag_SetBit(s32);
 struct ObjectRuntime *Object_GetById(s32);
 void ObjectMotion_Launch(s32, s32, s32);
-void Battle_WaitMode0(s32);
+void FieldEvent_WaitFrames(s32);
 void ObjectMotion_SetPositionAndReset(s32, s32, s32);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void ObjectMotion_SetAngleToward(s32, s32, s32);
@@ -242,7 +242,7 @@ void Func_02000464(s32 unused, s32 actor) {
   Object_Emote(actor, 0x100, 50);
   ObjectMotion_Launch(actor, 6, 15);
   ObjectMotion_Launch(actor, 6, 15);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   if (GameFlag_TestBit(0x200) == 0) {
     Func_02000e94((s32)MsgDailaInteriorsGah);
     Func_02000e9c(actor, 0);
@@ -256,31 +256,31 @@ void Func_02000464(s32 unused, s32 actor) {
     ObjectMotion_ArmCallback(actor, 0x8000, 0);
     GameFlag_ClearBit(0x200);
   }
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
 }
 
 void Func_02000508(s32 unused, s32 actor) {
   ObjectMotion_SetAngleToward(actor, 4, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_Emote(actor, 0x103, 50);
   ObjectMotion_Launch(actor, 6, 15);
   ObjectMotion_Launch(actor, 6, 15);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
   Func_02000e9c(actor, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
 }
 
 void Func_0200055c(s32 unused, s32 actor) {
   ObjectMotion_SetAngleToward(actor, 4, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_Emote(actor, 0x103, 50);
   ObjectMotion_Launch(actor, 6, 15);
   ObjectMotion_Launch(actor, 6, 15);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
   Func_02000e9c(actor, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
 }
 
 void Func_020005b0(void) {
@@ -288,7 +288,7 @@ void Func_020005b0(void) {
   s32 flags;
 
   Object_SetModeById(21, 2);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   frames = 25;
   flags = 0;
   Func_02000dac(57, 16, 4, 6, frames, flags);

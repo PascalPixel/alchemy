@@ -6,10 +6,10 @@ void Func_020004f4(s32 actor) {
   Func_02000b24(msg);
   UiText_OpenMessageAtObject(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02000ba4(), 0) == 0) {
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02000b24(msg + 1);
   } else {
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_02000b24(msg + 2);
   }
   Func_02000b3c(actor, 0);

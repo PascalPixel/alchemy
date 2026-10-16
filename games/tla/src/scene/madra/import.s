@@ -74,10 +74,10 @@ Func_02002b10:
 	.thumb_func
 Func_02002b18:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02002b28
 	.thumb_func
 Func_02002b28:
@@ -198,14 +198,14 @@ Func_02002c08:
 	.thumb_func
 Func_02002c10:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global Motion_CamBounds
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02002c28
 	.thumb_func
 Func_02002c28:
@@ -278,10 +278,10 @@ Func_02002c58:
 	.thumb_func
 Func_02002c60:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_GetWeightedResultFar
+	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_GetWeightedResultFar
+	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
 	.else
 	overlay_veneer Party_PlaySavedMusicFar
 	.endif

@@ -15,7 +15,7 @@
 
 void WaitFrames(s32);
 
-void Object_AttachWorkTargetToObject(s32 id, s32 flag) {
+void Camera_FollowActor(s32 id, s32 flag) {
   struct ObjectRuntime *obj;
   struct ObjectRuntime *target;
   struct EventWork *work;
@@ -39,7 +39,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag) {
   }
 }
 
-void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second) {
+void Camera_SetSpeedParameters(s32 first, s32 second) {
   struct EventWork *work = Runtime_AllocateBlock(108, 0xd50);
 
   work->viewCenter->speedLimit = first;

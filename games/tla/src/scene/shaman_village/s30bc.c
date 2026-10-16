@@ -69,9 +69,9 @@ void Func_020030bc(void) {
   ShamanVillage_CamSpeed(0x4cccc, 0x9999);
   ShamanVillage_CamMove(0xa80000, -1, 0x21c0000, 1);
   Func_020049f4();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ShamanVillage_ObjEmoteWait(15, 258);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ShamanVillage_MessagePut(15, 0);
   ShamanVillage_ObjEmoteWait(17, 258);
   ShamanVillage_MessagePut(0x8011, 0);
@@ -144,7 +144,7 @@ void Func_020030bc(void) {
   ShamanVillage_MessagePut(0x8010, 0);
   ShamanVillage_ObjArm(16, 0, 0);
   ShamanVillage_ObjTurn(17, 0x8000);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(16, 3);
   Motion_SetModeAndWaitAnimation(17, 3);
   ShamanVillage_CamSpeed(0x6666, 0xccc);
@@ -208,7 +208,7 @@ void Func_020030bc(void) {
   ShamanVillage_MessagePut(6, 0);
   ShamanVillage_ObjArm(15, 0xc000, 20);
   Motion_SetModeAndWaitAnimation(15, 4);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(17, 262, 0)
@@ -224,7 +224,7 @@ void Func_020030bc(void) {
   ShamanVillage_MessagePut(17, 0);
   ShamanVillage_ObjTurn(16, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   ShamanVillage_ObjTurn(16, 0x2000);
   ShamanVillage_MessagePut(16, 0);
   ShamanVillage_ObjArm(6, 0x6000, 0);
@@ -237,13 +237,13 @@ void Func_020030bc(void) {
   ShamanVillage_ObjEmoteWait(15, 258);
   ShamanVillage_ObjArm(15, 0xc000, 40);
   ShamanVillage_ObjTurn(15, 0xe000);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Motion_SetModeAndWaitAnimation(17, 3);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ShamanVillage_ObjTurn(15, 0xa000);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Motion_SetModeAndWaitAnimation(16, 3);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ShamanVillage_ObjTurn(15, 0xc000);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
@@ -279,7 +279,7 @@ void Func_020030bc(void) {
   Object_LinkObjectAndSetCallback(6, 15);
   *done = 0;
   ObjectMotion_EnableActionAndSetCallback(15, gData_0200504c);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ObjectMotion_EnableActionAndSetCallback(17, gData_0200504c);
   ObjectMotion_EnableActionAndSetCallback(16, gData_0200504c);
   Engine_AudioPlayCue(78);
@@ -294,7 +294,7 @@ void Func_020030bc(void) {
   Func_02004a2c();
   ShamanVillage_CamSpeed(0x4cccc, 0x9999);
   ShamanVillage_CamMove(0xa80000, -1, 0x21c0000, 1);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   angle = 0x4000;
   ShamanVillage_ObjPut(15, 0xe00000, 0x1180000, angle);
   ShamanVillage_ObjPut(16, 0xd00000, 0x1080000, angle);
@@ -304,7 +304,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
   ShamanVillage_ObjTurn(6, 0x2000);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Object_SetModeById(18, 3);
   Object_SetModeById(5, 3);
   Object_SetModeById(7, 3);

@@ -1237,7 +1237,7 @@ Func_02000d80:
 	adds r0, r6, #0
 	bl Func_02001d30
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r5, #59
 .L_02008eb8:
 	ldr r3, [r6, #12]

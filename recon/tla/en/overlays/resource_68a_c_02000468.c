@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);

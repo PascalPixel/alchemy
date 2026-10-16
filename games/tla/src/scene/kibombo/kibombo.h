@@ -68,7 +68,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct KibomboObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct KibomboObject *object, s32 x,
                                       s32 y, s32 z);
@@ -155,7 +155,7 @@ static inline void Kibombo_ObjSetPos(struct KibomboObject *object, s32 x, s32 y,
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct KibomboObject *Func_02005bbc(void);
 void Func_02005ba4(s32 speed, s32 acceleration);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -175,7 +175,7 @@ void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void Kibombo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Kibombo_CamSpeed(s32 speed, s32 acceleration) {
@@ -214,7 +214,7 @@ static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 
 static inline void Kibombo_Wait(s32 frames) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void Kibombo_SePlay(s32 cue) {

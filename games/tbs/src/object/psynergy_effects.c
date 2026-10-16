@@ -117,8 +117,8 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 }
 
 // Debug only: while debug mode is on, R makes every event wait
-// (Battle_WaitMode0) end at once and L restores normal waits. Runs as a
-// scheduler callback for the length of an event (Battle_Reset).
+// (FieldEvent_WaitFrames) end at once and L restores normal waits. Runs as a
+// scheduler callback for the length of an event (FieldEvent_Begin).
 void Event_UpdateDebugSkip(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -134,7 +134,7 @@ void Event_UpdateDebugSkip(void) {
 
 // The event command "wait": waits the requested frames, unless debug fast
 // forward (Event_UpdateDebugSkip) is on.
-void Battle_WaitMode0(s32 frames) {
+void FieldEvent_WaitFrames(s32 frames) {
   if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
   }
@@ -144,15 +144,15 @@ void Battle_WaitMode0(s32 frames) {
 // speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 // or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
-  struct BattleRenderObject *object;
+  struct ObjectRuntime *object;
 
   object = ObjectTable_Get(gGameState.selectedActor);
-  object->unk30 = 0x10000;
-  object->unk34 = 0x8000;
-  object->unk38 = 0x80000000;
-  object->unk40 = 0x80000000;
-  object->unk24 = 0;
-  object->unk2c = 0;
+  object->speedLimit = 0x10000;
+  object->acceleration = 0x8000;
+  object->targetX = ACTOR_NO_TARGET;
+  object->targetZ = ACTOR_NO_TARGET;
+  object->velocityX = 0;
+  object->velocityZ = 0;
   if (gGameState.movementMode == 1) {
     ObjectDispatch_ApplyArgumentToChildrenFar(object, 0xC);
     return;
@@ -161,9 +161,9 @@ void Leader_StopMoving(void) {
 }
 
 // The event command "begin event": closes any timed notice, stops the leader,
-// clears the event's message and camera state, starts the debug fast-forward
-// callback and makes the leader the camera's subject.
-void Battle_Reset(void) {
+// resets the message and timing state, and starts the debug fast-forward
+// callback with the leader as the message speaker.
+void FieldEvent_Begin(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   UiTimedNotice_CloseIfActiveFar();
@@ -187,9 +187,9 @@ void Battle_Reset(void) {
 
 // Ends an event: stops the debug fast-forward callback, gives the camera back
 // to the leader and refreshes the lure cap.
-void BattleFx_FinishAction(void) {
+void FieldEvent_End(void) {
   Scheduler_RemoveCallback(Event_UpdateDebugSkip);
-  Object_AttachWorkTargetToObject(gGameState.selectedActor, 1);
+  Camera_FollowActor(gGameState.selectedActor, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -568,24 +568,24 @@ void Event_SetExitRequest(u16 request) {
 
 // Sets up a battle with enemy group slot of encounter table zone. On the
 // world map (mode 3) the terrain under the leader picks the battle backdrop.
-void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
+void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
   struct FieldWork *field = (struct FieldWork *)gEventWork;
 
-  field->battle = BattleFx_GetWeightedResult(zone, slot); // enemy group
+  field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
   if (field->mode == 3)
-    BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.selectedActor) +
-                          8); // position
+    Encounter_ResolveWorldMapZoneAndBackdrop(
+        (u8 *)ObjectTable_Get(gGameState.selectedActor) + 8); // position
   BattleFx_SelectBattleCue(zone, slot);
 }
 
 // Sets up the battle with Djinni no. The low 8 bits of flag are the Djinni's
 // actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
 // to an element (Djinn_ResolvePendingEvent).
-void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
+void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *field;
   struct GameState *gameState;
   s32 skipHop;
@@ -599,11 +599,11 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
 
   gameState = &gGameState;
   gameState->pendingDjinnEvent = (no + DJINNI_0) | skipHop;
-  field->battle = BattleFx_GetPhaseResult(no); // the Djinni's enemy group
+  field->battle = Encounter_GetDjinnEnemyGroup(no); // the Djinni's enemy group
   if (field->mode == 3) {
     void *obj = ObjectTable_Get(gameState->selectedActor);
 
-    BattleFx_LookupResult((u8 *)obj + 8); // position
+    Encounter_ResolveWorldMapZoneAndBackdrop((u8 *)obj + 8); // position
   }
   BattleFx_SelectBattleCue(0, 0);
 }
@@ -1038,7 +1038,7 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
     } else {
       AudioCommand_PlayFar(0x98);
     }
-    Battle_WaitMode0(frames);
+    FieldEvent_WaitFrames(frames);
   }
 }
 
@@ -1210,7 +1210,7 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   second = ObjectTable_Get(secondId);
   if (first != 0 && second != 0) {
     first->angle = ArcTan2(second->z - first->z, second->x - first->x);
-    Battle_WaitMode0(wait);
+    FieldEvent_WaitFrames(wait);
   }
 }
 
@@ -1222,7 +1222,7 @@ void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 
   if (first != NULL && second != NULL) {
     FacingObject_TurnPairToFaceEachOther(first, second);
-    Battle_WaitMode0(wait);
+    FieldEvent_WaitFrames(wait);
   }
 }
 
@@ -1441,7 +1441,7 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
     object->action = angle;
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  (const s32 *)gObjectMotion_StepAngleScript);
-    Battle_WaitMode0(wait);
+    FieldEvent_WaitFrames(wait);
   }
 }
 
@@ -1768,7 +1768,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 // (UiText_OpenMessageAtObject) and waits until it has been read. The message
 // closes by itself after 600 frames, or at once while Select, L, R and A are
 // all held.
-void BattleEv_RunWait(s32 actor, s32 flags) {
+void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
   s32 member;
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
   struct UiWindow *window = UiText_OpenMessageAtObject(actor, flags);
@@ -1804,14 +1804,14 @@ void BattleEv_RunWait(s32 actor, s32 flags) {
 // The event command "show message and wait": shows the message, then waits
 // wait frames.
 void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait) {
-  BattleEv_RunWait(actor, flags);
-  Battle_WaitMode0(wait);
+  FieldEvent_ShowMessageAndWait(actor, flags);
+  FieldEvent_WaitFrames(wait);
 }
 
 // The event command "ask yes or no": opens the question at actor, lets the
 // leader answer, then shows the next message for yes or the one after it for
 // no. Returns 0 for yes, 1 for no.
-s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags) {
+s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
   struct GameState *save;
@@ -1820,13 +1820,13 @@ s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags) {
   save = &gGameState;
   answer = Event_AskYesNoWithActorAnimation(save->selectedActor, 0);
   if (answer == 0) {
-    BattleEv_RunWait(actor, flags);
+    FieldEvent_ShowMessageAndWait(actor, flags);
     runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
   } else {
     runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
-    BattleEv_RunWait(actor, flags);
+    FieldEvent_ShowMessageAndWait(actor, flags);
   }
   return answer;
 }
@@ -1972,21 +1972,23 @@ void Ui_SetMessageVoiceFromActor(s32 actor) {
   u8 rate;
   s32 voice;
 
+  // Direct u16 stores shrink the English function from 0x58 to 0x54 bytes.
+  // Keep the original signed stores; the corresponding u16 alias is legal.
   if (actor == 0x80000000) {
-    *(s16 *)&state->result[0] = (rate = 0);
-    *(s16 *)&state->result[1] = rate;
+    *(s16 *)&state->speakerVoiceSound = (rate = 0);
+    *(s16 *)&state->speakerVoiceCountdown = rate;
   } else {
     voice = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(actor));
     rate = gUi_RenderResultValues[gGameState.messageSpeed];
-    *(s16 *)&state->result[0] = voice;
-    *(s16 *)&state->result[1] = rate;
+    *(s16 *)&state->speakerVoiceSound = voice;
+    *(s16 *)&state->speakerVoiceCountdown = rate;
   }
 }
 
 // The event command "camera follow actor": the camera (the event's view
 // centre) follows actor. Unless keepPosition is set it jumps there at once
 // and, off the world map, the map is redrawn around it.
-void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition) {
+void Camera_FollowActor(s32 actor, s32 keepPosition) {
   struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
   struct EventWork *work;
@@ -2013,7 +2015,7 @@ void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition) {
 
 // The event command "camera set speed": the camera's top speed and
 // acceleration, 16.16 pixels per frame.
-void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration) {
+void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
   ((struct ObjectRuntime *)owner->viewCenter)->speedLimit = speedLimit;
   ((struct ObjectRuntime *)owner->viewCenter)->acceleration = acceleration;
@@ -2023,8 +2025,8 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration) {
 // 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 // screen never shows past its edge. With glide 0 the camera jumps there at
 // once; otherwise it travels at its own speed.
-void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                      s32 glide) {
+void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
+                                s32 glide) {
   s32 shouldGlide;
   struct EventWork *runtimeBlock;
   s32 minimumX;
@@ -2088,24 +2090,24 @@ void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   }
 }
 
-// The event command "camera move to actor": Motion_CamBounds to the actor's
-// x and z.
+// The event command "camera move to actor": Camera_MoveWithinMapBounds to the
+// actor's x and z.
 void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
   struct ObjectRuntime *subject;
 
   subject = ObjectTable_Get(actor);
   Runtime_AllocateBlock(0x1B, 0xCCC);
   if (subject != NULL) {
-    Motion_CamBounds(subject->x, -1, subject->z, glide);
+    Camera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
   }
 }
 
 // The event command "camera wait for move": waits (at most 600 frames) for
 // the camera to arrive, then 2 frames more.
-void BattleFx_CommitObjectPositionAndWait(void) {
+void Camera_WaitForArrival(void) {
   Script_WaitForEventTimeoutFar(
       ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->viewCenter);
-  Battle_WaitMode0(2);
+  FieldEvent_WaitFrames(2);
 }
 
 // The event command "get view centre": returns the camera object.
@@ -2143,7 +2145,7 @@ void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target,
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
 // The event command "set view bounds": the camera keeps the screen inside
-// these map coordinates (Motion_CamBounds).
+// these map coordinates (Camera_MoveWithinMapBounds).
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapScrollWork *work = gMapWork[0];
 
@@ -2327,7 +2329,7 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
         SPRITE_ATTR2_HIGH(bubble->sprite) = mask;
       }
     }
-    Battle_WaitMode0(wait);
+    FieldEvent_WaitFrames(wait);
   }
 }
 
@@ -2621,7 +2623,7 @@ again:
     // Crouch, then jump there.
     if (leader->animationKind == 1)
       spriteFlags = ((struct FieldSprite *)leader->animation)->flags;
-    Battle_Reset();
+    FieldEvent_Begin();
     ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
     WaitFrames(6);
     AudioCommand_PlayFar(152);
@@ -2657,7 +2659,7 @@ again:
       WaitFrames(6);
     }
     *flags = saved;
-    BattleFx_FinishAction();
+    FieldEvent_End();
     if (work != NULL)
       work->encounterSteps += Iwram_MulQ16(work->encounterRate, 0x200000);
     if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) == 0xf9) {
@@ -2683,7 +2685,7 @@ s32 Field_ClimbDown(void) {
       8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
   s32 result;
 
-  Battle_Reset();
+  FieldEvent_Begin();
 
   if (gGameState.movementMode == 0) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -2727,17 +2729,17 @@ s32 Field_ClimbDown(void) {
     object->velocityY = 0x40000;
     object->terrainHeight = object->y;
     ObjectDispatch_SetSingleChildFlagsFar(object, 1);
-    Battle_WaitMode0(6);
+    FieldEvent_WaitFrames(6);
     gGameState.movementMode = 0;
     object->actionFlags = 1;
     object->angle = 0xc000;
   }
 
-  BattleFx_FinishAction();
+  FieldEvent_End();
   return 0;
 
 failure:
-  BattleFx_FinishAction();
+  FieldEvent_End();
   return -1;
 }
 
@@ -2755,7 +2757,7 @@ s32 Field_ClimbUp(void) {
       8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
   s32 result;
 
-  Battle_Reset();
+  FieldEvent_Begin();
 
   if (object->animationKind == 1)
     spriteFlags = ((struct FieldSprite *)object->animation)->flags;
@@ -2811,16 +2813,16 @@ s32 Field_ClimbUp(void) {
     spriteFlags |= 1;
     object->terrainHeight = object->y;
     ObjectDispatch_SetSingleChildFlagsFar(object, spriteFlags);
-    Battle_WaitMode0(4);
+    FieldEvent_WaitFrames(4);
     gGameState.movementMode = 0;
     object->actionFlags = 1;
   }
 
-  BattleFx_FinishAction();
+  FieldEvent_End();
   return 0;
 
 failure:
-  BattleFx_FinishAction();
+  FieldEvent_End();
   return -1;
 }
 
@@ -2993,15 +2995,15 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         leaderId = gGameState.selectedActor;
         leader = ObjectTable_Get(leaderId);
         leader->y += 0x00a00000;
-        Motion_CamBounds(-1, -1, -1, 0);
+        Camera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (leader->y + leader->velocityY > leader->terrainHeight) {
           WaitFrames(1);
         }
         AudioCommand_PlayFar(159);
         leader->y = leader->terrainHeight;
         ObjectDispatch_ApplyArgumentToChildrenFar(leader, 22);
-        Battle_WaitMode0(15);
-        Object_AttachWorkTargetToObject(leaderId, 1);
+        FieldEvent_WaitFrames(15);
+        Camera_FollowActor(leaderId, 1);
         result = 3;
       }
     }
@@ -3712,7 +3714,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // The way the leader faces, to the nearest quarter turn.
   djinni = Object_GetById(djinniId);
   dir = (Object_GetById(gGameState.selectedActor)->facing + 0x2000) & 0xc000;
-  Battle_Reset();
+  FieldEvent_Begin();
   WaitFrames(10);
   AudioCommand_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -3795,7 +3797,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetY = ACTOR_NO_TARGET;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 0);
   djinni->sprite->priority = 2;
-  BattleFx_FinishAction();
+  FieldEvent_End();
 }
 
 // A Djinni joins the party: djinn (0 to 19) of element goes to the member with
@@ -3816,7 +3818,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 
   if (owner >= 0) {
-    Battle_Reset();
+    FieldEvent_Begin();
     Battle_SetObjectFlag5bWhenMode3();
     if (slot != -1) {
       if (work->mode == 3)
@@ -3838,7 +3840,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);
     Battle_ClearObjectFlag5bWhenMode3();
-    BattleFx_FinishAction();
+    FieldEvent_End();
   }
 }
 
@@ -5045,18 +5047,18 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
     script = ((struct EffectDescriptor *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
-        Battle_Reset();
+        FieldEvent_Begin();
         Event_SetMessageId(((struct EffectDescriptor *)event)->result);
-        BattleEv_RunWait(target, 0);
-        BattleFx_FinishAction();
+        FieldEvent_ShowMessageAndWait(target, 0);
+        FieldEvent_End();
       } else {
         _call_via_r3(param, target);
       }
     }
     if (GameFlag_TestFar(322) != 0) {
-      Battle_Reset();
+      FieldEvent_Begin();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
-      BattleFx_FinishAction();
+      FieldEvent_End();
     }
   }
   return 0;
@@ -8874,8 +8876,8 @@ void BattleFx_RunEffect15(void) {
   u8 last;
   u32 i;
 
-  Battle_Reset();
-  Motion_CamBounds(-1, -1, -1, 0);
+  FieldEvent_Begin();
+  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_InitializeSharedScene();
   WaitFrames(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);

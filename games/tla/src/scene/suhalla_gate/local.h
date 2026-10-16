@@ -15,7 +15,7 @@ extern const struct SceneEvent gSceneEvents[];
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetModeById(u32 id, s32 mode);
 void Object_SetActionCallback(struct ObjectRuntime *object, s32 a);
@@ -45,7 +45,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Object_AttachWorkTargetToObject(s32 id, s32 a);
+void Camera_FollowActor(s32 id, s32 a);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Event_StartScreenTransition(void);
@@ -71,10 +71,10 @@ static __inline__ void WaitFrames_(s32 frames) {
   WaitFrames(frames);
 }
 
-static __inline__ void Battle_WaitMode0_(s32 frames) {
+static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {

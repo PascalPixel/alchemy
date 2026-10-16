@@ -13,10 +13,10 @@ EventRuntime_SetSavedDestinationFar:
 	.thumb_func
 EventRuntime_SetCountdownFar:
 	overlay_veneer EventRuntime_SetCountdown
-	.global BattleFx_SetWeightedResultFar
+	.global Field_RequestBattleFromEncounterTableFar
 	.thumb_func
-BattleFx_SetWeightedResultFar:
-	overlay_veneer BattleFx_SetWeightedResult
+Field_RequestBattleFromEncounterTableFar:
+	overlay_veneer Field_RequestBattleFromEncounterTable
 	.global Func_080c8288
 	.thumb_func
 Func_080c8288:

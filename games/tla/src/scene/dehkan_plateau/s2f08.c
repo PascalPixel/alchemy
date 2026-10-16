@@ -105,14 +105,14 @@ struct EffectWork7c4 {
   s16 active;
   s16 timer;
 };
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void Object_LinkObjectAndSetCallback(s32 id, s32 target);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
@@ -122,7 +122,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Actor_FaceToward(s32 id, s32 target, s32 mode) {
@@ -182,7 +182,7 @@ static __inline__ void Cue(s32 cue) {
 static __inline__ void Pause(s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ void Actor_SetVariant(s32 id, s32 variant) {

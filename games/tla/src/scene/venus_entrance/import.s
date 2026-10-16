@@ -106,10 +106,10 @@ Party_RemoveActiveOwner:
 	.thumb_func
 Func_020028a4:
 	overlay_veneer Func_080ad208
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020028b4
 	.thumb_func
 Func_020028b4:
@@ -206,18 +206,18 @@ Func_02002964:
 	.thumb_func
 Func_0200296c:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
 	.global Func_0200297c
 	.thumb_func
 Func_0200297c:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_0200298c
 	.thumb_func
 Func_0200298c:
@@ -233,7 +233,7 @@ Func_0200299c:
 	.global Func_020029a4
 	.thumb_func
 Func_020029a4:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

@@ -62,7 +62,7 @@ void Func_02000730(void) {
       GameFlag_SetBit(0xa20);
     } else {
       Func_02000d4c(9, 0, 0);
-      Battle_WaitMode0(1);
+      FieldEvent_WaitFrames(1);
       Object_GetById(9)->unk28 = saved28;
       Object_GetById(9)->y = savedY;
       Object_GetById(9)->unk48 = saved48;

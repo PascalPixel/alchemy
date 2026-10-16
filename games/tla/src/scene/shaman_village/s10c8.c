@@ -95,12 +95,12 @@ void Func_0200122c(void) {
       Object_SetModeById(17, 5);
       Func_020049a4(17, 0);
       Func_020011f8();
-      Battle_WaitMode0(20);
+      FieldEvent_WaitFrames(20);
       Object_SetModeById(17, 1);
       Object_SetModeById(17, 3);
       Func_020049a4(17, 0);
       ShamanVillage_ObjEmoteWait(17, 0x102);
-      Battle_WaitMode0(40);
+      FieldEvent_WaitFrames(40);
       Func_020049a4(17, 0);
       Motion_SetVarCbAndRefresh(17, 1);
       Func_020049a4(17, 0);
@@ -143,10 +143,10 @@ void Func_02001380(void) {
     ShamanVillage_MessagePut(0x200f, 0);
     ShamanVillage_CamMove(0xb20000, -1, 0xdc0000, 1);
     Func_020049f4();
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     ShamanVillage_CamMove(0x10e0000, -1, 0xdc0000, 1);
     Func_020049f4();
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_020049a4(15, 0);
     ShamanVillage_CamMove(0xe20000, -1, 0x1180000, 1);
     Func_020049f4();

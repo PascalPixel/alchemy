@@ -130,10 +130,10 @@ Animation_SetStateFlags:
 	.thumb_func
 Func_02000ca4:
 	overlay_veneer Func_08038210
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02000cb4
 	.thumb_func
 Func_02000cb4:
@@ -177,7 +177,7 @@ ObjectMotion_ArmCallback:
 	.global Func_02000d04
 	.thumb_func
 Func_02000d04:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02000d0c
 	.thumb_func
 Func_02000d0c:

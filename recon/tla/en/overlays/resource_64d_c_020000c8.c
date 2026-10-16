@@ -16,7 +16,7 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020026f4(void);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void VenusEntrance_StopSparks(void);
 void VenusEntrance_UpdateSparkTrail(void);
 
@@ -36,6 +36,6 @@ void Func_020000c8(s32 actor) {
   ObjectMotion_CommitPositionAndActivate(actor, -96, 96);
   object->update = 0;
   object->priorityFlags = 1;
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   VenusEntrance_StopSparks();
 }

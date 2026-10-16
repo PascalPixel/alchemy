@@ -19,9 +19,9 @@ void Func_02000fe4(void) {
   Func_020010dc();
   Func_0200113c(0);
   Func_02001164(158);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Call6((void (*)())Func_02001094, 7, 94, 6, 94, 1, 2);
-  Battle_WaitMode0(16);
+  FieldEvent_WaitFrames(16);
   Func_02001164(123);
   Func_02001134(8);
   Func_020010e4();

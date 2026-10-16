@@ -10,7 +10,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const u8 *callback);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 value);

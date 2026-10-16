@@ -33,6 +33,6 @@
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetPhaseRequest, 1
+	.set import.Field_RequestDjinnBattle, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

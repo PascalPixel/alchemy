@@ -12,7 +12,7 @@ s32 Func_02003c88();
 s32 Func_02003cd8();
 s32 Func_02003b68();
 s32 Func_02003b70();
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 s32 ObjectMotion_SetSpeedParameters();
 s32 ObjectMotion_ResetAndSetPositionInMode2();
 s32 Event_FinishScreenTransition();
@@ -28,12 +28,12 @@ void Func_02000568(void) {
   Call1(Func_02003cd8, 0x9e);
   Call6(Func_02003b68, 0x40, 0x40, 0x53, 0x23, 1, 2);
   Call1(Func_02003b70, 0);
-  Call1(Battle_WaitMode0, 0x2d);
+  Call1(FieldEvent_WaitFrames, 0x2d);
   Call3(ObjectMotion_SetSpeedParameters, FIELD_AT(gPartyState, s32, 532),
         0x8000, 0x4000);
   Call3(ObjectMotion_ResetAndSetPositionInMode2,
         FIELD_AT(gPartyState, s32, 532), 0x138, 0x2a8);
-  Call1(Battle_WaitMode0, 5);
+  Call1(FieldEvent_WaitFrames, 5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Call1(ObjectMotion_CommitCurrentPositionAndActivate,

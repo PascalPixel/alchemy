@@ -742,7 +742,7 @@ static s32 LinkLobby_EnterBattle(void) {
     }
     // Publish EXEC only after the battle and return destinations are ready.
     Battle_SetStart(4);
-    BattleFx_SetWeightedResult(1, 1);
+    Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
     signature[0] = 0x45;
     signature[1] = 0x58;

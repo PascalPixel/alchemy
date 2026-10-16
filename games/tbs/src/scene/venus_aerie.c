@@ -1064,7 +1064,7 @@ static void EV05_TOUCH(void) {
     Event_SetNextDestination(actor, 2);
     Event_SetDefeatDestination(actor, 9);
   }
-  BattleFx_SetWeightedResult(98, 1);
+  Field_RequestBattleFromEncounterTable(98, 1);
   GameFlag_Set(0x350);
 }
 
@@ -1702,7 +1702,7 @@ static void Scene_RunPairedActorEffectSequence(void) {
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_VenusAerie, 3);
   Event_SetDefeatDestination((s32)&SceneId_VenusAerie, 9);
-  BattleFx_SetWeightedResult(98, 0);
+  Field_RequestBattleFromEncounterTable(98, 0);
   Party_RestorePpOfLitElements();
   GameFlag_Set(0x351);
 }
@@ -2795,8 +2795,9 @@ static void Scene_RunExtendedActorTransition(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
   Graphics_EnableObjLayerAndCallbacks();
-  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[0] = 0;
-  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[1] = 0;
+  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceSound = 0;
+  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceCountdown =
+      0;
   UiText_ShowCenteredMessage(MsgVenusDespiteLongTiring, 0, 0);
   ObjectDispatch_StopCallbacksAndHideLayers();
   Engine_EventWait(80);

@@ -3,7 +3,7 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void ObjectMotion_Launch(s32 actor, s32 height, s32 frames);
@@ -31,7 +31,7 @@ void Func_020011fc(void) {
                     ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
                 (s32)MsgAfterBringingA);
   Func_02004cf0(9, 0);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004e30(111);
   Menu_AnimateSelectionToEntry(0, 2);
   Flag_Clear(0x16f);
@@ -55,6 +55,6 @@ void Func_020011fc(void) {
   Flag_Clear(0x16f);
   Flag_Set(0x171);
   Func_02004e28();
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004d48(9, 5);
 }

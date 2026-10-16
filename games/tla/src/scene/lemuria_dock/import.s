@@ -22,10 +22,10 @@ Func_02000454:
 	.thumb_func
 Func_0200045c:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_0200046c
 	.thumb_func
 Func_0200046c:

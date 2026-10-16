@@ -93,7 +93,7 @@ Party_RemoveActiveOwner:
 	.global Engine_EventWait
 	.thumb_func
 Engine_EventWait:
-	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
@@ -178,14 +178,14 @@ ObjectMotion_ArmCallback:
 	.thumb_func
 Func_02001c34:
 	overlay_veneer Func_080c8210
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global Motion_CamBounds
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02001c4c
 	.thumb_func
 Func_02001c4c:

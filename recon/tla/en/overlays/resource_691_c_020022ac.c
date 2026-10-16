@@ -28,8 +28,8 @@ struct MagmaRockEventWork {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
@@ -57,7 +57,7 @@ void Func_020022ac(void) {
 
   Func_02003aec();
   Func_02003bcc(0);
-  Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02003a7c();
   WaitFrames(1);
   leader->y += 0x820000;
@@ -69,7 +69,7 @@ void Func_020022ac(void) {
   Event_WaitTransitionFrames();
   Func_02003c54(204);
   leader->motionFlags = 3;
-  Battle_WaitMode0(24);
+  FieldEvent_WaitFrames(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.scaleX = 0xcccc;

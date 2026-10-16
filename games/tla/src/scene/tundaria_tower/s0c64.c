@@ -3,7 +3,7 @@
 void Func_02002fb0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_02002fb8(struct ObjectRuntime *object);
 void Func_02003178(void);
-void Object_AttachWorkTargetToObject(u16 actor, s32 value);
+void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 void WaitFrames(s32 frames);
 
@@ -38,7 +38,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
           8) != 255) {
     Func_02002fb0(object, (dx << 20) + object->x, object->y,
                   (dz << 20) + object->z);
-    Object_AttachWorkTargetToObject(actor, 1);
+    Camera_FollowActor(actor, 1);
     Func_02002fb8(object);
     WaitFrames(1);
   }

@@ -6,13 +6,13 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000ff8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
@@ -31,7 +31,7 @@ void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
     Func_02001010();
     Call1(Func_02001108, 0);
-    Call4(Motion_CamBounds, 96 << 16, -1, 308 << 16, 1);
+    Call4(Camera_MoveWithinMapBounds, 96 << 16, -1, 308 << 16, 1);
     {
       /* FAKEMATCH: the angle is shifted from a local so that it is built first,
        * as the native builds it; as a constant it is built last (differ 2). */
@@ -58,7 +58,7 @@ void Func_02000208(void) {
     Call3(ObjectMotion_SetPositionAndReset, 10, 80, 316);
     Call2(Func_020010b8, 10, 0);
     Object_GetById(9)->velocityY = 0x40000;
-    Call1(Battle_WaitMode0, 10);
+    Call1(FieldEvent_WaitFrames, 10);
     Call1(Func_02001098, (s32)MsgWhereDoYouThink);
     Call2(Func_020010a8, 0x4009, 0);
     Value3(Func_020010c8, 10, 265, 0);

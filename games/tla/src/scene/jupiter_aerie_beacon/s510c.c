@@ -4,7 +4,7 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -28,6 +28,6 @@ void Func_0200510c(void) {
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  Battle_WaitMode0(4);
+  FieldEvent_WaitFrames(4);
   Func_0200592c()->y -= 0x80000;
 }

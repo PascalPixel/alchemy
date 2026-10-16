@@ -68,7 +68,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct LemurianShipObject *Object_GetById(s32 id);
 void Object_SetPositionAndResetMotion(struct LemurianShipObject *object, s32 x,
                                       s32 y, s32 z);
@@ -138,7 +138,7 @@ static inline void LemurianShip_ObjSetPos(struct LemurianShipObject *object,
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02002d58(s32 speed, s32 acceleration);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -157,7 +157,7 @@ void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void LemurianShip_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void LemurianShip_ObjSpeed(s32 actor, s32 speed,
@@ -179,7 +179,7 @@ static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static inline void LemurianShip_Wait(s32 frames) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static inline void LemurianShip_SePlay(s32 cue) {
@@ -222,7 +222,7 @@ static inline void LemurianShip_MessageOpen(s32 speaker, s32 flags) {
 
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void ObjectMotion_EnableActionAndResetMotion(s32 actor);
-void Object_AttachWorkTargetToObject(s32 actor, s32 value);
+void Camera_FollowActor(s32 actor, s32 value);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);

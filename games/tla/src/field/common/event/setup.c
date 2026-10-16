@@ -73,9 +73,9 @@ void EventRuntime_End(void) {
      */
     __asm__ volatile("" : "+r"(party));
     if (party->ownerOverride == 0)
-      Object_AttachWorkTargetToObject(party->currentOwner, 1);
+      Camera_FollowActor(party->currentOwner, 1);
     else
-      Object_AttachWorkTargetToObject(8, 1);
+      Camera_FollowActor(8, 1);
     GameFlag_RefreshLureCapFar();
   }
 }

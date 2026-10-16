@@ -29,6 +29,8 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "objcmd.h"
+#include "map_scroll.h"
+#include "field_runtime.h"
 
 // Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
@@ -37,14 +39,6 @@ static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
 s32 Math_RemainderUnsigned();
-
-struct MapShake {
-  u8 unk00[0x18];
-  s32 directionX;
-  s32 directionZ;
-  u8 unk20[4];
-  s32 scroll;
-};
 
 #include "io_write_queue.h"
 
@@ -67,7 +61,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // Returns the region boxes used by the cave exits.
-u8 *VaultCave_GetRegions(void) { return (u8 *)gVaultCaveRegions; }
+const struct SceneRegion *VaultCave_GetRegions(void) {
+  return gVaultCaveRegions;
+}
 
 // Selects the current cave map's packed exit destinations.
 const u32 *Scene_GetExits(void) {
@@ -134,12 +130,20 @@ static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
   return NULL;
 }
 
+#ifdef UBFIX
+// The table stores Z then X as halfwords. Build its packed word without
+// reading a halfword array through an incompatible, more-aligned struct.
+#define DIRECTION_STEP(heading)                                                \
+  ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
+         (u16)gVaultCave_DirectionSteps[(heading) * 2]))
+#else
 struct DirectionSteps {
   s32 xz[16];
 };
 
 #define DIRECTION_STEP(heading)                                                \
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
+#endif
 
 // Pushes the faced block one cell unless another actor or terrain blocks it.
 static void VaultCave_PushBlockAhead(void) {
@@ -148,11 +152,11 @@ static void VaultCave_PushBlockAhead(void) {
    * pointer cast the address is summed once into a register and no longer
    * matches, the table as const s32 words indexed directly differs 79 (143
    * instructions for 146), a const s32 local pointer 94. */
-  struct FieldActor *leader = Object_GetById(0);
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
   struct FieldActor *block;
   struct FieldActor *beyond;
-  union FieldCoordinate destination[3];
+  struct FieldPosition destination;
   s32 fallingIndex;
   s32 column;
   s32 row;
@@ -181,11 +185,10 @@ static void VaultCave_PushBlockAhead(void) {
     return;
   }
   block->terrainId = 2;
-  destination[0].fixed =
-      block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
-  destination[1].fixed = block->y.fixed;
-  destination[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
-  if (FieldObject_CheckMovementCollision(block, destination) > 0) {
+  destination.x = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+  destination.y = block->y.fixed;
+  destination.z = block->z.fixed + (s32)((u32)DIRECTION_STEP(direction) << 16);
+  if (FieldObject_CheckMovementCollision(block, &destination) > 0) {
     return;
   }
   Object_SetMode(leader, 8);
@@ -193,16 +196,14 @@ static void VaultCave_PushBlockAhead(void) {
   Engine_AudioPlayCue(238);
   block->speed = 0x3333;
   block->acceleration = 0x3333;
-  Engine_ObjectSetPosition(block, destination[0].fixed, destination[1].fixed,
-                           destination[2].fixed);
+  Engine_ObjectSetPosition(block, destination.x, destination.y, destination.z);
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
-  Engine_ObjectSetPosition(leader, destination[0].fixed, destination[1].fixed,
-                           destination[2].fixed);
+  Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
   Engine_ObjectCommitPosition(block);
   Engine_AudioPlayCue(288);
-  block->x.fixed = destination[0].fixed;
-  block->z.fixed = destination[2].fixed;
+  block->x.fixed = destination.x;
+  block->z.fixed = destination.z;
   block->velocityX = 0;
   block->velocityZ = 0;
   leader->velocityX = 0;
@@ -259,25 +260,26 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   return 0;
 }
 
+// Finish the southern switch only after the block reaches its target cell.
+static inline void VaultCave_CompleteSouthernSwitch(void) {
+  if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
+    GameFlag_Set(0x9a9);
+    Event_PlayCue(80);
+    VaultCave_ApplySouthernSwitchCells();
+  }
+}
+
 // Checks the southern switch after an ordinary block push.
 static void VaultCave_CheckSouthernSwitchAfterPush(void) {
   if (GameFlag_IsSet(0x9a9) == 0) {
     VaultCave_PushBlockAhead();
-    if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
-      GameFlag_Set(0x9a9);
-      Event_PlayCue(80);
-      VaultCave_ApplySouthernSwitchCells();
-    }
+    VaultCave_CompleteSouthernSwitch();
   }
 }
 
 // Restores the map cells and attributes of the completed southern switch.
 static void VaultCave_ApplySouthernSwitchCells(void) {
-
-  {
-
-    Map_CopyCells(87, 50, 2, 4, 80, 50);
-  }
+  Map_CopyCells(87, 50, 2, 4, 80, 50);
   Map_CopyCells(23, 52, 1, 2, 16, 52);
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
@@ -285,11 +287,7 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
 // Checks the same southern switch after Move finishes.
 static void VaultCave_CheckSouthernSwitchAfterMove(void) {
   if (GameFlag_IsSet(0x9a9) == 0) {
-    if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
-      GameFlag_Set(0x9a9);
-      Event_PlayCue(80);
-      VaultCave_ApplySouthernSwitchCells();
-    }
+    VaultCave_CompleteSouthernSwitch();
   }
 }
 
@@ -298,11 +296,7 @@ static void UNUSED VaultCave_UnusedNoOp(void) {}
 
 // Restores the map cells and attributes of the completed northern switch.
 static void VaultCave_ApplyNorthernSwitchCells(void) {
-
-  {
-
-    Map_CopyCells(90, 9, 2, 3, 80, 9);
-  }
+  Map_CopyCells(90, 9, 2, 3, 80, 9);
   Map_CopyCells(27, 10, 1, 2, 17, 10);
   Map_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
@@ -330,9 +324,8 @@ static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
   return 0;
 }
 
-// Pushes the block and checks whether the northern switch can be completed.
-static void VaultCave_CheckNorthernSwitchAfterPush(void) {
-  VaultCave_PushBlockAhead();
+// The northern switch also waits until the falling-object guard is clear.
+static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_IsSet(0x9aa) == 0) {
     if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
       if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
@@ -342,6 +335,12 @@ static void VaultCave_CheckNorthernSwitchAfterPush(void) {
       }
     }
   }
+}
+
+// Pushes the block and checks whether the northern switch can be completed.
+static void VaultCave_CheckNorthernSwitchAfterPush(void) {
+  VaultCave_PushBlockAhead();
+  VaultCave_CompleteNorthernSwitch();
 }
 
 // Leaves this Move target unchanged; the event table still uses the callback.
@@ -350,18 +349,12 @@ static void VaultCave_IgnoreMoveInteraction(void) {}
 // Checks the northern switch after Move, preserving its extra scene-state
 // guard.
 static void VaultCave_CheckNorthernSwitchAfterMove(void) {
-  if (GameFlag_IsSet(0x9aa) == 0) {
-    if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
-      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
-        Event_PlayCue(80);
-        VaultCave_ApplyNorthernSwitchCells();
-        GameFlag_Set(0x9aa);
-      }
-    }
-  }
+  VaultCave_CompleteNorthernSwitch();
 }
 
 // Restores the upper western Frost target and remembers its state.
+// An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
+// of r5 alone and changes the map-copy argument registers in native English.
 static void VaultCave_ApplyWestUpperFrostState(void) {
   struct FieldActor *target = Object_GetById(16);
 
@@ -492,10 +485,11 @@ static void VaultCave_UseAutomaticFrostPriorities(void) {
   } while (remaining >= 0);
 }
 
-// Shakes the map, advances its scroll and fades the mechanism's final map
-// state.
+// Moves the third map layer through its phases, then fades the mechanism's
+// final map state.
 static void VaultCave_RunRumble(void) {
-  struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
+  struct MapLayerScroll *layer =
+      &((struct MapScrollWork *)gMapWork[0])->layers[2];
   s32 frame;
   s32 fadeLevel;
   s32 lowFadeLevel;
@@ -503,11 +497,11 @@ static void VaultCave_RunRumble(void) {
 
   Engine_EventBegin();
   if (gFrameCount & 1) {
-    shake->directionX = 1;
-    shake->directionZ = 1;
+    layer->speedX = 1;
+    layer->speedY = 1;
   } else {
-    shake->directionX = -1;
-    shake->directionZ = -1;
+    layer->speedX = -1;
+    layer->speedY = -1;
   }
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -516,7 +510,7 @@ static void VaultCave_RunRumble(void) {
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
 
-    shake->scroll = (double)shake->scroll - (4718.592 - (double)scrollDrift);
+    layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Engine_EventWait(1);
   }
   // Keep the packed native value written to BLDALPHA.
@@ -585,7 +579,7 @@ static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
       s32 xDelta = subjectColumn - fallingColumn;
 
       if (xDelta == 0 && zDelta == 0) {
-        fallingActor->y.fixed = 0x00ff0000;
+        fallingActor->y.fixed = PIXELS(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
         return 1;
@@ -624,7 +618,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
       if (fallingActor->velocityY >= 0) {
         if (fallingActor->y.fixed <= 0xffff) {
           VaultCave_SpawnPuffs(fallingActor);
-          fallingActor->y.fixed = 0xff0000;
+          fallingActor->y.fixed = PIXELS(255);
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
           fallingActor->paused = 0;
@@ -678,7 +672,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
             continue;
           }
         }
-        fallingActor->y.fixed = 0xff0000;
+        fallingActor->y.fixed = PIXELS(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
         Engine_AudioPlayCue(106);
@@ -690,7 +684,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         }
         fallingActor->gravity = stateValue;
         fallingActor->velocityY = stateValue;
-        fallingActor->y.fixed = 0xff0000;
+        fallingActor->y.fixed = PIXELS(255);
         Engine_AudioPlayCue(106);
       }
     }
@@ -753,7 +747,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
     fallingActor->bounce = 0x1999;
     fallingActor->gravity = 0;
     remaining--;
-    fallingActor->y.fixed = 0x00ff0000;
+    fallingActor->y.fixed = PIXELS(255);
     actorSlot++;
   } while (remaining >= 0);
 
@@ -773,7 +767,7 @@ static void VaultCave_StartTimedFalls(void) {
     fallingActor = Object_GetById(actorSlot);
     fallingActor->bounce = 0x1999;
     fallingActor->gravity = 0;
-    fallingActor->y.fixed = 0x00ff0000;
+    fallingActor->y.fixed = PIXELS(255);
     Engine_ActorSetSpritePriority(fallingIndex + 11, 1);
     fallingIndex++;
     actorSlot++;
@@ -785,7 +779,8 @@ static void VaultCave_StartTimedFalls(void) {
 
 // Restores each room's puzzles and actors, then sets the Retreat destination.
 s32 VaultCave_ApplyEntryState(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  ((struct FieldWork *)gEventWork)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_VaultCave1) {
     switch (gGameState.entrance) {
     case 5:
@@ -861,7 +856,7 @@ s32 VaultCave_ApplyEntryState(void) {
     case 11:
       if (Engine_GameFlagIsSet(0x9a9) != 0) {
         VaultCave_ApplySouthernSwitchCells();
-        Actor_SetPosition(9, 0xf80000, 0x36c0000);
+        Actor_SetPosition(9, PIXELS(248), PIXELS(876));
       }
       Object_GetById(8)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       break;
@@ -895,7 +890,7 @@ s32 VaultCave_ApplyEntryState(void) {
       Object_GetById(9)->collisionFlags = 1;
       if (Engine_GameFlagIsSet(0x9aa) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
-        Actor_SetPosition(10, 0x1080000, 0xcc0000);
+        Actor_SetPosition(10, PIXELS(264), PIXELS(204));
       }
       break;
     }
@@ -982,9 +977,9 @@ struct SceneEntrance gVaultCaveEntrances3[] = {
     { SCENE_TABLE_END },
 };
 
-s16 gVaultCaveRegions[] = {
-    447, 47, 783, 463, 63, 799, -1, 10,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gVaultCaveRegions[] = {
+    { 447, 47, 783, 463, 63, 799, -1, 10 },
+    { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 u32 gVaultCaveExitsOther[] = {

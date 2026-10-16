@@ -33,9 +33,9 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
   struct UiRenderWork *work;
 
   work = UI_WORK;
-  work->result[0] = (packed << 4) >> 20;
+  work->speakerVoiceSound = (packed << 4) >> 20;
   window = NULL;
-  work->result[1] = 0;
+  work->speakerVoiceCountdown = 0;
   packed &= 0xffff;
   flags = 0;
   entry = UiText_BuildRenderEntries(message, 1);

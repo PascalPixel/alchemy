@@ -350,7 +350,7 @@ Func_02000454:
 	adds r3, r3, r2
 	ldr r0, [r3]
 	movs r1, #0
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 .L_02008532:
 	pop {r3}
 	mov r8, r3

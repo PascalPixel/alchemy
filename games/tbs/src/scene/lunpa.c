@@ -11,6 +11,7 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 #include "edition.h"
 #include "lunpa.h"
 #include "text/msg_ids.h"
@@ -107,6 +108,13 @@ static void FloatingNut_Catch(void) {
   Engine_EventEnd();
 }
 
+// Restore the frozen pillar's three collision cells, including its sides.
+static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
+  Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
+  Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
+  Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
+}
+
 // Frost on the puddle Reveal shows: it freezes into a pillar the party can
 // stand on.
 static void HiddenPuddle_Freeze(void) {
@@ -114,9 +122,7 @@ static void HiddenPuddle_Freeze(void) {
 
   pillar = Actor_Get(ACTOR_HIDDEN_PUDDLE);
   Actor_Get(ACTOR_PARTY_LEADER);
-  Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
-  Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
-  Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
+  Lunpa_ApplyFrozenPuddleCollision();
   if (pillar != NULL) {
     Engine_ActorSetSpriteFlags(pillar, 0);
     pillar->motionFlags = ACTOR_FALLS;
@@ -169,9 +175,7 @@ static void Reveal_ShowSecrets(void) {
   Actor_Get(ACTOR_HIDDEN_PUDDLE)->y.fixed = 0;
 #if TBS_PATCH_4
   if (GameFlag_IsSet(FLAG_LUNPA_PUDDLE_FROZEN)) {
-    Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
-    Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
-    Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
+    Lunpa_ApplyFrozenPuddleCollision();
   }
 #endif
   // The opened passage replaces the glint; otherwise show the hidden switch.
@@ -374,7 +378,7 @@ static void LeftGuard_MindRead(void) {
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
-      gEventWork->psynergyRequest = recognizedHammet;
+      ((struct FieldWork *)gEventWork)->command = recognizedHammet;
       Engine_PsynergyCancel();
       Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
       Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
@@ -409,7 +413,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 
   if (GameFlag_IsSet(FLAG_GATE_TURNING_BACK) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_GATE_TURNING_BACK);
-    gEventWork->touchedTrigger = TRIGGER_FORTRESS_APPROACH;
+    ((struct FieldWork *)gEventWork)->action = TRIGGER_FORTRESS_APPROACH;
   }
 }
 
@@ -431,12 +435,12 @@ static void Garet_TurnsBack(void) {
 
 // The leader walks into a doorway: the door opens and the leader goes in.
 static void Door_Enter(void) {
-  struct EventWork *eventWork;
+  struct FieldWork *fieldWork;
   struct FieldActor *placedActor;
   u32 actorId;
   s32 doorIndex;
 
-  eventWork = gEventWork;
+  fieldWork = (struct FieldWork *)gEventWork;
   Engine_EventBegin();
   // Freeze placed actors before opening the selected door and crossing it.
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_PLACED; actorId++) {
@@ -446,7 +450,7 @@ static void Door_Enter(void) {
     }
   }
   Event_PlayCue(SOUND_DOOR_OPEN);
-  doorIndex = eventWork->touchedTrigger - TRIGGER_FIRST_HOME_DOOR;
+  doorIndex = fieldWork->action - TRIGGER_FIRST_HOME_DOOR;
   Map_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                    gLunpaDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -456,7 +460,7 @@ static void Door_Enter(void) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Engine_EventWait(10);
   }
-  Engine_EventRequestExit(eventWork->touchedTrigger);
+  Engine_EventRequestExit(fieldWork->action);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -499,7 +503,7 @@ static void Fortress_Enter(void) {
 static void UNUSED Party_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 // Reveal's sound when it uncovers something.
-static void Reveal_PlayTreasureCue(void) {
+UNUSED static void Reveal_PlayTreasureCue(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
     Engine_AudioPlayCue(SOUND_TREASURE_FOUND);
   }
@@ -530,6 +534,13 @@ static void HiddenSwitch_Press(void) {
   GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
+// Copy one open or blocked source cell across the three-cell gateway.
+static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
+  Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 7, 11);
+  Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 8, 11);
+  Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
+}
+
 // Coming close uncloaked, the guards step in front of the fortress door
 // and the gateway closes.
 static void Guards_BlockGate(void) {
@@ -551,9 +562,7 @@ static void Guards_BlockGate(void) {
     Engine_EventSetMessage(MsgLunpaGuardsWarnPartyAway);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
-    Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
-    Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
-    Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
+    Lunpa_CopyGatewayCollision(6, 11);
     Engine_EventEnd();
   }
 }
@@ -563,9 +572,7 @@ static void UNUSED Scene_DoNothing(void) {}
 
 // Cloak: the gateway closes behind the guards.
 static void Cloak_Begin(void) {
-  Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
-  Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
-  Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
+  Lunpa_CopyGatewayCollision(6, 11);
   Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
@@ -631,18 +638,14 @@ static void Guards_CatchParty(void) {
 }
 
 // The gateway opens again.
-static void Gateway_Reopen(void) {
-  Map_CopyCellAttributes(7, 12, 1, 1, 7, 11);
-  Map_CopyCellAttributes(7, 12, 1, 1, 8, 11);
-  Map_CopyCellAttributes(7, 12, 1, 1, 9, 11);
-}
+static void Gateway_Reopen(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
 // Cloak fades: if the leader is still among the guards, they are caught.
 static void Cloak_End(void) {
-  struct EventWork *eventWork;
+  struct FieldWork *fieldWork;
   struct FieldActor *leader;
 
-  eventWork = gEventWork;
+  fieldWork = (struct FieldWork *)gEventWork;
   Engine_GameFlagClear(FLAG_GATE_CLOAK_CAST);
   Engine_GameFlagClear(FLAG_GATE_GUARDS_BLOCKING);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -650,7 +653,7 @@ static void Cloak_End(void) {
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
-    eventWork->raisedTrigger = TRIGGER_PARTY_SPOTTED;
+    fieldWork->event = TRIGGER_PARTY_SPOTTED;
 #else
     Guards_CatchParty();
 #endif
@@ -662,16 +665,16 @@ static void Cloak_End(void) {
 // Every frame at the gate: an uncloaked leader in front of the guards is
 // spotted.
 static void Lunpa_WatchForUncloakedParty(void) {
-  struct EventWork *eventWork;
+  struct FieldWork *fieldWork;
   struct FieldActor *leader;
 
-  eventWork = gEventWork;
+  fieldWork = (struct FieldWork *)gEventWork;
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
-    eventWork->raisedTrigger = TRIGGER_PARTY_SPOTTED;
+    fieldWork->event = TRIGGER_PARTY_SPOTTED;
   }
 }
 
@@ -807,7 +810,8 @@ s32 Scene_Initialize(void) {
   struct FieldActor *puddle;
 
   if (gGameState.scene == (s32)&SceneId_Lunpa1) {
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    ((struct FieldWork *)gEventWork)->transition =
+        SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Reveal_HideSecrets();
     if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       InitializeStagedActorSceneOrbitingEffect(ACTOR_FLOATING_NUT);
@@ -820,7 +824,8 @@ s32 Scene_Initialize(void) {
   }
   // Restore the gate's arrival scene and active detection tasks separately.
   if (gGameState.scene == (s32)&SceneId_Lunpa2) {
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    ((struct FieldWork *)gEventWork)->transition =
+        SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatEntrance = GATE_RETREAT_ENTRANCE;
     if (gGameState.entrance == GATE_ENTRANCE_THROWN_OUT &&
         Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {

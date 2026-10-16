@@ -43,7 +43,8 @@ struct UiRenderWork {
   u16 names[8];
   u16 resourceIds[2];
   u16 outputIds[2];
-  u16 result[2];
+  u16 speakerVoiceSound;
+  u16 speakerVoiceCountdown;
   u8 unk1388;
   u8 busy;
   u8 unk138a[2];

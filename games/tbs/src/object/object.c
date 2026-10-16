@@ -520,7 +520,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
 
 // Returns the world map encounter zone for the terrain at pos (0 for none),
 // and chooses the battle backdrop for that terrain.
-s32 BattleFx_LookupResult(void *pos) {
+s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
   TerrainRule *rule = gWorldMap_EncounterRules;
   s32 behavior = GetWorldMapTerrainBehaviorFar(pos, &kind);
@@ -642,25 +642,26 @@ s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
 // Rolls a random battle on the world map, taking the zone from the tile at pos.
 // Returns the enemy group to fight, or 0 for no battle.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
-  return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)pos), steps);
+  return Encounter_SelectEnemyGroup(
+      Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
 // Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
-u16 BattleFx_GetWeightedResult(s32 zone, s32 slot) {
+u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
 // Returns the enemy group of Djinni battle djinni, which the table gives as
 // a zone and slot.
-s16 BattleFx_GetPhaseResult(s32 djinni) {
+s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
   u16 *zoneAndSlot;
 
   zoneAndSlot = (u16 *)&gEncounter_AreaEntryTable[djinni * 2];
 #ifdef UBFIX
-  return BattleFx_GetWeightedResult(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
   // UB: no return statement; the result of the call is left in r0.
-  BattleFx_GetWeightedResult(zoneAndSlot[0], zoneAndSlot[1]);
+  Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #endif
 }
 
@@ -2639,10 +2640,10 @@ s32 Scene_TalkToActor(s32 id) {
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
-        Battle_Reset();
+        FieldEvent_Begin();
         Event_SetMessageId(message);
-        BattleEv_RunWait(id, 0);
-        BattleFx_FinishAction();
+        FieldEvent_ShowMessageAndWait(id, 0);
+        FieldEvent_End();
         goto finish;
       }
     }
@@ -2676,10 +2677,10 @@ s32 Scene_TalkToActor(s32 id) {
     // A result below 0x10000 is a message; above, a function to call.
     if (event->result < 0x10000) {
       UiWork_SetBusyFlagsFar(usePausedDialogue);
-      Battle_Reset();
+      FieldEvent_Begin();
       Event_SetMessageId(event->result);
-      BattleEv_RunWait(id, 0);
-      BattleFx_FinishAction();
+      FieldEvent_ShowMessageAndWait(id, 0);
+      FieldEvent_End();
     } else {
       Leader_StopMoving();
       ((void (*)(s32))event->result)(id);
@@ -2728,11 +2729,11 @@ s32 Scene_RunRaisedEvent(s32 value) {
     result = event->result;
     if (result != 0) {
       if (result < 0x10000) {
-        Battle_Reset();
+        FieldEvent_Begin();
         Event_SetMessageId(event->result);
-        BattleEv_RunWait(-1, 0);
+        FieldEvent_ShowMessageAndWait(-1, 0);
         handled = 0;
-        BattleFx_FinishAction();
+        FieldEvent_End();
       } else {
         ((void (*)(s32))result)(value);
         handled = 0;
@@ -2760,11 +2761,11 @@ s32 Scene_RunTouchOrExit(s32 value) {
       work->blockedSteps = 0;
     }
     if (touch->result < 0x10000) {
-      Battle_Reset();
+      FieldEvent_Begin();
       Event_SetMessageId(touch->result);
-      BattleEv_RunWait(-1, 0);
+      FieldEvent_ShowMessageAndWait(-1, 0);
       handled = 0;
-      BattleFx_FinishAction();
+      FieldEvent_End();
     } else {
       ((void (*)(s32))touch->result)(value);
       handled = 0;
@@ -2883,7 +2884,7 @@ s32 Field_SearchTile(s32 tile) {
         }
       } else {
         // A chest; its condition flag is set once it has been opened.
-        Battle_Reset();
+        FieldEvent_Begin();
         if (GameFlag_IsConditionActive(condition) != 0) {
           searchResult = event->value;
           canOpen = 1;
@@ -2912,7 +2913,7 @@ s32 Field_SearchTile(s32 tile) {
               UiWork_FinalizeAndReleaseBlock16Far();
               ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
               AudioCommand_PlayFar(246);
-              Battle_WaitMode0(30);
+              FieldEvent_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
               Marker_Hide(tile);
@@ -2927,7 +2928,8 @@ s32 Field_SearchTile(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              work->battle = BattleFx_GetWeightedResult(99, (u16)event->value);
+              work->battle =
+                  Encounter_GetEnemyGroupAtSlot(99, (u16)event->value);
               Battle_SetStart(2);
               BattleFx_SelectBattleCue(99, (u16)event->value);
               AudioCommand_PlayFar(gGameState.sceneCue);
@@ -2992,7 +2994,7 @@ s32 Field_SearchTile(s32 tile) {
           UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + messageOffset,
                                                  1);
         }
-        BattleFx_FinishAction();
+        FieldEvent_End();
         BattleFx_PlayQueuedSound();
       }
     } else {
@@ -3011,7 +3013,7 @@ s32 Field_SearchTile(s32 tile) {
 // Returns how far, in pixels, a field Psynergy of the given kind reaches:
 // gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
 // not listed reaches 16 pixels.
-s32 BattleFx_MapKeyThroughTable(s32 kind) {
+s32 Field_GetPsynergyTargetRange(s32 kind) {
   s16 *rangeEntry = gBattleFx_TargetRangeByMode;
   s32 range = 16;
   s32 listedKind = *rangeEntry;
@@ -3119,7 +3121,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   s32 coneHalfAngle;
 
   nearestActor = -1;
-  nearestDistance = BattleFx_MapKeyThroughTable(kind);
+  nearestDistance = Field_GetPsynergyTargetRange(kind);
   source = (struct ObjectRuntime *)ObjectTable_Get(id);
   if (source == 0)
     return nearestActor;
@@ -3393,10 +3395,10 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if ((s32)event->value < 0x10000) {
       s32 nearbyActor =
           Field_FindNearbyTalkTarget(gGameState.selectedActor);
-      Battle_Reset();
+      FieldEvent_Begin();
       Event_SetMessageId(event->value);
-      BattleEv_RunWait(nearbyActor, 0);
-      BattleFx_FinishAction();
+      FieldEvent_ShowMessageAndWait(nearbyActor, 0);
+      FieldEvent_End();
     } else {
       ((BattleItemCallback)event->value)(itemId, actor, slot);
     }

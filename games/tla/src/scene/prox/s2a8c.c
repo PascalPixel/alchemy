@@ -1,7 +1,7 @@
 #include "local.h"
 #include "input.h"
 
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 s32 Func_02004414();
 s32 Func_020044dc();
 s32 Func_0200451c();
@@ -18,7 +18,7 @@ s32 Func_0200463c();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
 s32 Event_AskYesNoWithActorAnimation();
-s32 Motion_CamBounds();
+s32 Camera_MoveWithinMapBounds();
 s32 Motion_SetModeAndWaitAnimation();
 s32 ObjectMotion_ArmCallback();
 s32 ObjectMotion_EnableActionAndSetCallback();
@@ -59,7 +59,7 @@ void Func_02002a8c(void) {
     Call1(Func_0200451c, (s32)MsgProx153);
     Call2(Func_02004534, 5, 0);
     Call2(Func_0200456c, 0x33333, 0x6666);
-    Call4(Motion_CamBounds, 0x900000, -1, 0xe40000, 1);
+    Call4(Camera_MoveWithinMapBounds, 0x900000, -1, 0xe40000, 1);
     Func_0200457c();
     Prox_Jump(0xa, 0x108, 0);
     Call2(Func_02004534, 0x200a, 0);
@@ -194,25 +194,25 @@ void Func_02002a8c(void) {
     Call2(ObjectMotion_SetActionVariant, 2, 2);
     Call2(ObjectMotion_SetActionVariant, 1, 2);
     Call2(Func_0200456c, 0x6666, 0xccc);
-    Call4(Motion_CamBounds, 0x900000, -1, 0xf60000, 1);
+    Call4(Camera_MoveWithinMapBounds, 0x900000, -1, 0xf60000, 1);
     Call2(ObjectMotion_EnableActionAndSetCallback, 9, (s32)gData_02005f70);
     Call2(ObjectMotion_EnableActionAndSetCallback, 0xa, (s32)gData_02005fac);
-    Call1(Battle_WaitMode0, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(ObjectMotion_EnableActionAndSetCallback, 8, (s32)gData_02005fe8);
     Call2(ObjectMotion_EnableActionAndSetCallback, 3, (s32)gData_02006038);
-    Call1(Battle_WaitMode0, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(ObjectMotion_EnableActionAndSetCallback, 6, (s32)gData_02005fe8);
     Call2(ObjectMotion_EnableActionAndSetCallback, 7, (s32)gData_02005fe8);
-    Call1(Battle_WaitMode0, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(ObjectMotion_EnableActionAndSetCallback, 2, (s32)gData_02006038);
     Call2(ObjectMotion_EnableActionAndSetCallback, 1, (s32)gData_02006088);
-    Call1(Battle_WaitMode0, 0x1e);
+    Call1(FieldEvent_WaitFrames, 0x1e);
     Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_020060cc);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(ObjectMotion_EnableActionAndSetCallback, 0, (s32)gData_020060fc);
     Call2(ObjectMotion_EnableActionAndSetCallback, gPartyState.currentOwner,
           (s32)gData_0200617c);
-    Call1(Battle_WaitMode0, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call2(Object_SetActionCallbackAndRefreshById, 0xb, (s32)gData_020061fc);
     Prox_Jump(0xb, 0x101, 0x14);
     Call3(ObjectMotion_ArmCallback, 0xb, 0xb000, 0);
@@ -286,7 +286,7 @@ void Func_02002a8c(void) {
     Call2(Object_SetModeById, 0, 3);
     Call2(Object_SetModeById, 1, 3);
     Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Func_02004534, 1, 0);
     Prox_Jump(0xb, 0x103, 0);
     Call2(Func_0200454c, 0xb, 0x3000);
@@ -308,12 +308,12 @@ void Func_02002a8c(void) {
     Call2(Func_0200454c, 1, 0);
     Call2(Object_SetModeById, 5, 3);
     Call2(Motion_SetModeAndWaitAnimation, 1, 3);
-    Call1(Battle_WaitMode0, 0xa);
+    Call1(FieldEvent_WaitFrames, 0xa);
     Call3(ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
     Call3(ObjectMotion_SetSpeedParameters, 1, 0x19999, 0xcccc);
     Call2(ObjectMotion_EnableActionAndSetCallback, 5, (s32)gData_0200622c);
     Call2(Object_SetActionCallbackAndRefreshById, 1, (s32)gData_02006268);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Func_0200454c, 0xb, 0xb000);
     Call2(Object_SetModeById, 0xb, 3);
     Call2(Func_02004534, 0xa00b, 0);
@@ -341,9 +341,9 @@ void Func_02002a8c(void) {
     Call2(Object_SetModeById, 0xb, 4);
     Call3(Func_0200452c, 0xa00b, 0, 0x14);
     Call2(Func_02004534, 0, 0);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Call2(Func_02004534, 0xa00b, 0);
     Call3(ObjectMotion_ArmCallback, 0, 0, 0);
     Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 0x28);
@@ -361,7 +361,7 @@ void Func_02002a8c(void) {
     Call2(Func_02004534, 0xa00b, 0);
     Call2(Object_SetModeById, 0, 3);
     Call2(Motion_SetModeAndWaitAnimation, gPartyState.currentOwner, 3);
-    Call1(Battle_WaitMode0, 0x14);
+    Call1(FieldEvent_WaitFrames, 0x14);
     Prox_Jump(0xb, 0x100, 0);
     Call3(ObjectMotion_ArmCallback, 0xb, 0x3000, 0x14);
     Call3(ObjectMotion_Launch, 0xb, 4, 0xa);
@@ -392,7 +392,7 @@ void Func_02002a8c(void) {
     Call1(Func_02004414, 5);
     Call1(Func_02004414, 6);
     Call1(Func_0200463c, 0x4e);
-    Call1(Battle_WaitMode0, 0x28);
+    Call1(FieldEvent_WaitFrames, 0x28);
     Call2(Func_0200459c, 0x10009, 0);
     Call1(Func_020045a4, 0x78);
     Call1(WaitFrames, 0x78);

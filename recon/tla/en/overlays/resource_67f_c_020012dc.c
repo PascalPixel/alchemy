@@ -37,7 +37,7 @@ s32 Func_020012dc(void) {
                                       object->z - object->y);
         object->terrainHeight = height;
         object->y = height;
-        Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+        Camera_FollowActor(gPartyState.currentOwner, 0);
       }
     }
   }

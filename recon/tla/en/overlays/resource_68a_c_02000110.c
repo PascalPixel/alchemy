@@ -25,7 +25,7 @@ void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 a, s32 b);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02000048(void);
 void Func_0200195c(s32 id, s32 x, s32 z);
@@ -42,7 +42,7 @@ static inline void PlaceActor(s32 id, s32 x, s32 z) { Func_0200195c(id, x, z); }
 static inline void Hop(s32 dx, s32 dz) {
   ObjectMotion_Launch(12, 5, 0);
   ObjectMotion_CommitPositionAndActivate(12, dx, dz);
-  Battle_WaitMode0(3);
+  FieldEvent_WaitFrames(3);
 }
 
 void Func_02000110(void) {
@@ -78,12 +78,12 @@ void Func_02000110(void) {
   object->scaleX = 0x10000;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 1);
   ObjectMotion_SetActionVariant(12, 1);
-  Battle_WaitMode0(8);
+  FieldEvent_WaitFrames(8);
   ObjectMotion_Launch(12, 9, 0);
   ObjectMotion_SetPositionAndReset(12, 120, 200);
   Object_GetById(12)->priorityFlags |= 1;
   ObjectMotion_SetPositionAndReset(12, 136, 200);
-  Battle_WaitMode0(3);
+  FieldEvent_WaitFrames(3);
   Object_SetModeById(gPartyState.currentOwner, 1);
   ObjectMotion_ArmCallback(gPartyState.currentOwner, 0xe000, 0);
   Hop(0, -16);

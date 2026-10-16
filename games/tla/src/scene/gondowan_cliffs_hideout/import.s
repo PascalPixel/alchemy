@@ -50,14 +50,14 @@ Func_020001ec:
 	.thumb_func
 Func_020001f4:
 	overlay_veneer Func_080c8218
-	.global Object_AttachWorkTargetToObject
+	.global Camera_FollowActor
 	.thumb_func
-Object_AttachWorkTargetToObject:
-	overlay_veneer Object_AttachWorkTargetToObjectFar
+Camera_FollowActor:
+	overlay_veneer Camera_FollowActorFar
 	.global Func_02000204
 	.thumb_func
 Func_02000204:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	overlay_veneer Camera_SetSpeedParametersFar
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:

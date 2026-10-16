@@ -15,7 +15,7 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
     ObjectMotion_CenterOnColumn_(id, 2, -8);
   else
     ObjectMotion_OffsetPositionAndResetMotion_(id, 0, -8);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02003574(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

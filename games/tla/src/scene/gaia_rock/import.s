@@ -86,10 +86,10 @@ Func_02000e5c:
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02000e74
 	.thumb_func
 Func_02000e74:
@@ -130,10 +130,10 @@ Func_02000eb4:
 	.thumb_func
 Func_02000ebc:
 	overlay_veneer Func_080c8218
-	.global Motion_CamBounds
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:

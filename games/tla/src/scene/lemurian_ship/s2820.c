@@ -32,7 +32,7 @@ void Func_02002820(void) {
     Object_SetPartAttribute(Object_GetById(64), 0);
     LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
     LemurianShip_CamSet(0x80000, 0x100000, 0xf80000, 0x1000000);
-    Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+    Camera_FollowActor(gPartyState.currentOwner, 0);
     Func_02002c10();
     LemurianShip_WaitFrames(1);
   }

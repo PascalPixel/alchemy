@@ -29,7 +29,7 @@ void Func_02001a68(void) {
   Call3((void (*)())ObjectMotion_SetAngleToward, 9, gPartyState.currentOwner,
         0);
 
-  Call1((void (*)())Battle_WaitMode0, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
 
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
 
@@ -62,7 +62,7 @@ void Func_02001a68(void) {
 
     Call2((void (*)())Object_SetModeById, 9, 3);
 
-    Call1((void (*)())Battle_WaitMode0, 20);
+    Call1((void (*)())FieldEvent_WaitFrames, 20);
 
     ((void (*)())Func_02003fc4)();
 
@@ -76,7 +76,7 @@ void Func_02001a68(void) {
     Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 9,
           (s32)gData_020045a4);
 
-    Call1((void (*)())Battle_WaitMode0, 30);
+    Call1((void (*)())FieldEvent_WaitFrames, 30);
 
     Object_GetById(10)->update = Func_02000df8;
     Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10,

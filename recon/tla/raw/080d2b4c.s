@@ -62,7 +62,7 @@ Func_080d2b4c:
 	adds r2, r2, r1
 	strh r3, [r2]
 	adds r0, r6, #0
-	bl BattleFx_GetPhaseResult
+	bl Encounter_GetDjinnEnemyGroup
 	movs r3, #178
 	lsls r3, r3, #1
 	add r3, r10
@@ -78,7 +78,7 @@ Func_080d2b4c:
 	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	adds r0, #8
-	bl BattleFx_LookupResult
+	bl Encounter_ResolveWorldMapZoneAndBackdrop
 .L_080d2bec:
 	movs r0, #0
 	movs r1, #0

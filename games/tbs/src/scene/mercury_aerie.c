@@ -753,7 +753,7 @@ static void EV05_TOUCH(void) {
   Actor_WalkToAndWait(0x16, 0x150, 0xD8);
   Event_SetNextDestination((s32)&SceneId_MercuryAerie1, 2);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(0x24, 2);
+  Field_RequestBattleFromEncounterTable(0x24, 2);
   Engine_EventEnd();
 }
 
@@ -1545,7 +1545,7 @@ static void MercuryAerie_RaiseCollectedActors(void) {
   Engine_TaskWait(2);
 }
 
-static void FieldScene_ConfigureValue93Scene(void) {
+UNUSED static void FieldScene_ConfigureValue93Scene(void) {
   Engine_PsynergyBegin(93, 1);
   Engine_PsynergySetTarget(24, 9);
   Engine_PsynergyRaiseHands();

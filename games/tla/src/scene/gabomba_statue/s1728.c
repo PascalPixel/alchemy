@@ -9,7 +9,7 @@ void Func_0200580c(s32 value);
 void Func_02005854(s32 sound);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
@@ -48,9 +48,9 @@ void Func_0200176c(void) {
   Actor_SetSpeed(gPartyState.currentOwner, speed, 0x19999);
   Actor_SetPosition(gPartyState.currentOwner, 152, 488);
   actor->motionFlags = 3;
-  Battle_WaitMode0(8);
+  FieldEvent_WaitFrames(8);
   Func_02005854(161);
   Object_SetModeById(gPartyState.currentOwner, 22);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_020056bc();
 }

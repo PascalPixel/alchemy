@@ -40,7 +40,7 @@
 	.set import.Engine_EventShowMessage, 1
 	.set import.Engine_ActorFaceDirection, 1
 	.set import.Engine_ActorShowEmote, 1
-	.set import.BattleFx_SetPhaseRequest, 1
+	.set import.Field_RequestDjinnBattle, 1
 	.ifndef TBS_EDITION_JA
 	.set import.Field_TryJumpForward, 1
 	.endif

@@ -12,7 +12,7 @@ struct VenusActor {
 };
 
 void Func_02001c1c(s32 message);
-void Object_AttachWorkTargetToObject(s32 actor, s32 target);
+void Camera_FollowActor(s32 actor, s32 target);
 void Func_02001c4c(void);
 void Engine_EventWait(s32 frames);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -21,7 +21,7 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Func_02001c34(s32 actor, s32 height, s32 frames);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
 void Func_02001c24(s32 actor, s32 value);
 void Engine_AudioPlayCue(s32 cue);
@@ -54,7 +54,7 @@ static inline void Venus_MessageSet(s32 message) {
 
 static inline void Venus_ObjAttach(s32 actor, s32 target) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Object_AttachWorkTargetToObject(actor, target);
+  Camera_FollowActor(actor, target);
 }
 
 static inline void Venus_Wait(s32 frames) {
@@ -98,7 +98,7 @@ static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Venus_ObjVar(s32 actor, s32 value) {

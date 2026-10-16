@@ -19,7 +19,7 @@ void ObjectMotion_SetActionVariant(u32, s32);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 void Object_SetModeById(u32, s32);
@@ -72,7 +72,7 @@ void Func_020001b0(void) {
   WORD_AT(Ram_HeapSlots->eventWork, 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Talk(13, 14);
   Func_02000598((s32)MsgImilVoicesDisbeliefReply);
   Say(3, 0);
@@ -140,7 +140,7 @@ void Func_020001b0(void) {
   Talk(13, 14);
   Say(6, 0);
   Func_02000608();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   *(u16 *)0x05000000 = 0;
   WaitFrames(1);
   WORD_AT(Ram_HeapSlots->eventWork, 436) = 16;

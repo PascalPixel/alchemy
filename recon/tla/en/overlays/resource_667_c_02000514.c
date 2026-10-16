@@ -17,10 +17,10 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000658(void);
@@ -41,7 +41,7 @@ s32 Func_02000514(void) {
     ObjectMotion_ArmCallback(14, 0x5000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02001538((s32)&MsgAlhafraManor10);
     Func_02001550(14, 0);
     GameFlag_ClearBit(0x12f);
@@ -55,13 +55,13 @@ s32 Func_02000514(void) {
     Func_02001500(19, 0, 0);
   }
   if (gPartyState.entrance == 99) {
-    Motion_CamBounds(152 << 17, -1, 160 << 17, 0);
+    Camera_MoveWithinMapBounds(152 << 17, -1, 160 << 17, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02001578(0x20000, 0x4000);
-    Motion_CamBounds(144 << 16, -1, 160 << 17, 1);
+    Camera_MoveWithinMapBounds(144 << 16, -1, 160 << 17, 1);
     while (gInput.held == 0)
       WaitFrames(1);
     Func_02001588((s32)&SceneId_Ov667, 80);

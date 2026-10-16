@@ -15,7 +15,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void Func_0200031c();
 void Func_0200282c();
 void Func_02002834();
@@ -73,7 +73,7 @@ L_020080ba:
   ((void (*)())Func_0200031c)();
   goto L_020080f6;
 L_020080dc:
-  Value1((s32 (*)())Battle_WaitMode0, 20);
+  Value1((s32 (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_020028c4, arg0, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, arg0, 0x8000, 0);
 L_020080f6:

@@ -21,6 +21,6 @@ void Func_020001a0(void) {
     party[0x2c2] = 2;
   }
   Func_02005744(1);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02005010();
 }

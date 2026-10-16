@@ -1279,15 +1279,15 @@ static void TolbiShipInteriors_FightMonstersInHold(void) {
   GameFlag_Clear(0x8f0);
   if (Engine_GameFlagIsSet(0x928) == 0) {
     Event_SetNextDestination((s32)&SceneId_TolbiShipInteriors, 16);
-    BattleFx_SetWeightedResult(62, 0);
+    Field_RequestBattleFromEncounterTable(62, 0);
   } else {
     if (Engine_GameFlagIsSet(0x929) == 0) {
       Event_SetNextDestination((s32)&SceneId_TolbiShipInteriors, 18);
-      BattleFx_SetWeightedResult(62, 1);
+      Field_RequestBattleFromEncounterTable(62, 1);
     } else {
       if (Engine_GameFlagIsSet(0x92a) == 0) {
         Event_SetNextDestination((s32)&SceneId_TolbiShipInteriors, 20);
-        BattleFx_SetWeightedResult(62, 2);
+        Field_RequestBattleFromEncounterTable(62, 2);
       }
     }
   }

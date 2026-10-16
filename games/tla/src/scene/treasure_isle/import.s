@@ -90,10 +90,10 @@ Func_02000fb4:
 	.thumb_func
 Func_02000fbc:
 	overlay_veneer Func_08038210
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02000fcc
 	.thumb_func
 Func_02000fcc:
@@ -125,11 +125,11 @@ Object_SetPartAttribute:
 	.global Func_02001004
 	.thumb_func
 Func_02001004:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02001014
 	.thumb_func
 Func_02001014:
@@ -137,7 +137,7 @@ Func_02001014:
 	.global Func_0200101c
 	.thumb_func
 Func_0200101c:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02001024
 	.thumb_func
 Func_02001024:

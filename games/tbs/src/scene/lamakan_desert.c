@@ -330,7 +330,7 @@ static void FightSandMonster(void) {
   Engine_ActorRunRepeatedMotion(SAND_MONSTER, 2);
   Event_SetNextDestination((s32)&SceneId_LamakanDesert3, 5);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(LAMAKAN_ENCOUNTERS, 5);
+  Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
 }
 
 // Raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
@@ -680,7 +680,7 @@ static void FallIntoPit(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   record = Object_GetById(ACTOR_PARTY_LEADER);
   record->update = NULL;
-  BattleFx_SetWeightedResult(LAMAKAN_ENCOUNTERS, 4);
+  Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 4);
 }
 
 // Trigger 30, on a slope of sand: the sand carries the leader south 1.5

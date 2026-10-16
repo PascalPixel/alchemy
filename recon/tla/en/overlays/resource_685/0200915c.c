@@ -36,7 +36,7 @@ struct Position {
 void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
@@ -71,10 +71,10 @@ static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
   Func_020034d4(actor, x, z);
 }
 
-static __inline__ void Motion_CamBounds_(s32 a, s32 b, s32 c, s32 d) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
@@ -135,9 +135,9 @@ void Func_0200115c(void) {
     Func_0200350c((s32)MsgBackForMore);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
-    Motion_CamBounds_(664 << 16, -1, 0x1000000, 1);
+    Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Motion_SetModeAndWaitAnimation(8, 4);
     Func_0200351c_(0x2008, 0, 5);
     Func_02003544_(8, 265, 30);
@@ -148,9 +148,9 @@ void Func_0200115c(void) {
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
     ObjectMotion_ArmCallback(gPartyState.currentOwner, 0, 0);
-    Motion_CamBounds_(664 << 16, -1, 0x1000000, 1);
+    Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     ObjectMotion_Launch(11, 6, 15);
     ObjectMotion_Launch(11, 6, 23);
     Func_0200351c_(11, 0, 5);
@@ -158,64 +158,64 @@ void Func_0200115c(void) {
     Func_0200351c_(11, 0, 5);
     Func_02003544_(8, 257, 30);
     Func_02003534_(8, 0x3000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_0200351c_(8, 0, 5);
     Func_02003544_(11, 256, 30);
     Func_02003534_(11, 0xb000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_0200351c_(11, 0, 5);
     Func_02003544_(11, 263, 30);
     Func_0200351c_(11, 0, 5);
     Motion_SetModeAndWaitAnimation(8, 3);
     Func_0200351c_(8, 0, 5);
     Func_02003534_(8, 0x8000);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Motion_SetModeAndWaitAnimation(8, 4);
     Func_0200351c_(8, 0, 5);
     Func_02003534_(11, 0x8000);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Func_02003534_(11, 0xb000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02003544_(11, 258, 30);
     Func_0200351c_(11, 0, 5);
     Func_02003534_(11, 0x8000);
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Motion_SetVarCbAndRefresh(11, 2);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Func_0200351c_(11, 0, 5);
     Func_02003544_(8, 257, 30);
     Func_0200351c_(8, 0, 5);
     Func_02003534_(11, 0xb000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_02003544_(11, 265, 45);
     Func_02003534_(11, 0x300a);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_0200351c_(11, 0, 5);
     Func_02003544_(8, 258, 30);
     Func_02003534_(8, 0x3000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Func_0200351c_(8, 0, 5);
     Func_02003534_(11, 0xb000);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Motion_SetModeAndWaitAnimation(8, 4);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Func_02003534_(8, 0x8000);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Func_0200351c_(8, 0, 5);
     Motion_SetModeAndWaitAnimation(11, 3);
-    Battle_WaitMode0(10);
+    FieldEvent_WaitFrames(10);
     Motion_SetModeAndWaitAnimation(11, 3);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     Func_0200351c_(11, 0, 5);
     Func_02003534_(11, 0x8000);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
   }
   Func_0200350c((s32)MsgOhAllRightListen);
   Func_02003534_(8, 0xb000);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Object_GetById(8)->facing = 0x5000;
   Object_SetModeById(8, 5);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 6);
   Func_020034d4_(12, 724 << 16, 252 << 16);
   WORD_AT(Object_GetById(12), 24) = 0x13333;
@@ -224,16 +224,16 @@ void Func_0200115c(void) {
   UiText_OpenMessageAtObject_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020035bc();
-    Battle_WaitMode0(15);
+    FieldEvent_WaitFrames(15);
     Func_020034d4_(12, 0, 0);
     Object_SetModeById(8, 1);
     Object_GetById(8)->facing = 0x8000;
     Func_0200351c_(0x2008, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     ObjectMotion_CommitPositionAndActivate(4, -16, 0);
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
   } else {
-    Battle_WaitMode0(25);
+    FieldEvent_WaitFrames(25);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Func_0200351c_(0x2008, 0, 5);
     Func_02003544_(8, 263, 30);
@@ -255,13 +255,13 @@ void Func_0200115c(void) {
     ObjectMotion_SetActionVariant(12, 1);
     ObjectMotion_SetSpeedParameters_(12, 0x30000, 0x18000);
     ObjectMotion_ResetAndSetPositionInMode2_(12, 644, 248);
-    Battle_WaitMode0(21);
+    FieldEvent_WaitFrames(21);
     Func_020034d4_(12, 0, 0);
-    Battle_WaitMode0(50);
+    FieldEvent_WaitFrames(50);
     Func_02003434_(0x20000, 0x20000, 0x10000);
-    Battle_WaitMode0(70);
+    FieldEvent_WaitFrames(70);
     Func_0200362c(148);
-    Battle_WaitMode0(25);
+    FieldEvent_WaitFrames(25);
     colour = (const u16 *)0x050000e4;
     current.colour[0] = *colour++;
     current.colour[1] = *colour++;
@@ -280,7 +280,7 @@ void Func_0200115c(void) {
     to[3] = *colour++;
     to[4] = *colour++;
     Func_02000734(&current, (struct Palette5 *)to, 48);
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_0200362c(194);
     position.x = 0x02960000;
     position.y = 0;

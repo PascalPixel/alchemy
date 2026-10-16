@@ -16,10 +16,10 @@ void Func_02000338(void);
 void Func_02000340(s32 skip);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
@@ -56,7 +56,7 @@ void Func_020000c8(void) {
     Func_02000340(0);
     if (FlagCheck(0x301) == 0) {
       Func_02000328(0x18000, 0x3000);
-      Motion_CamBounds(0xa40000, -1, 0x1040000, 1);
+      Camera_MoveWithinMapBounds(0xa40000, -1, 0x1040000, 1);
       ObjPlace(gPartyState.currentOwner, 158, 316);
     }
     Object_GetById(8)->actionFlags &= ~1;
@@ -75,7 +75,7 @@ void Func_020000c8(void) {
     MapCopyAttr(11, 9, 4, 1, 8, 14);
     if (FlagCheck(0x301) == 0) {
       Func_02000300((s32)MsgMadraNeedEldersPermission);
-      Battle_WaitMode0(10);
+      FieldEvent_WaitFrames(10);
       Motion_SetVarCbAndRefresh(8, 1);
       Func_02000310(8, 0, 5);
       Motion_SetModeAndWaitAnimation(9, 3);

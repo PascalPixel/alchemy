@@ -16,7 +16,7 @@ struct MapStep {
 };
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02001494(void);
 void Func_02001bec(s32 cue);
 void Func_02001afc(s32 x, s32 z, s32 width, s32 height, s32 to_x, s32 to_z);
@@ -31,5 +31,5 @@ void Func_0200151c(struct MapStep *step) {
   Func_02001494();
   Func_02001bec(161);
   Func_02001afc(step->x, step->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

@@ -14,7 +14,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
 void Func_02004df4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
@@ -51,15 +51,15 @@ void Func_0200225c(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 12, 528, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
-  Battle_WaitMode0(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
   WaitFrames(30);
   Object_SetModeById(8, 2);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 3);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bd)) {
     for (i = 19; i >= 0; i--) {
@@ -86,7 +86,7 @@ void Func_0200225c(void) {
     }
     Func_02005014(564);
     Object_SetModeById(8, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -96,7 +96,7 @@ void Func_0200225c(void) {
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x308);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -108,9 +108,9 @@ void Func_0200225c(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -139,15 +139,15 @@ void Func_020024b8(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 12, 672, 372);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(12);
-  Battle_WaitMode0(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(9, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(9, 5);
   WaitFrames(30);
   Object_SetModeById(9, 2);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(9, 3);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9be)) {
     for (i = 19; i >= 0; i--) {
@@ -174,7 +174,7 @@ void Func_020024b8(void) {
     }
     Func_02005014(564);
     Object_SetModeById(9, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -184,7 +184,7 @@ void Func_020024b8(void) {
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x309);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -196,9 +196,9 @@ void Func_020024b8(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(9, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
@@ -227,15 +227,15 @@ void Func_02002718(void) {
   Call3(ObjectMotion_ResetAndSetPosition, 14, 336, 396);
   partner->velocityY = 0x60000;
   ObjectMotion_CommitCurrentPositionAndActivate(14);
-  Battle_WaitMode0(45);
+  FieldEvent_WaitFrames(45);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   Func_02005014(576);
   Object_SetModeById(8, 5);
   WaitFrames(30);
   Object_SetModeById(8, 2);
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Object_SetModeById(8, 3);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_02005014(191);
   if (!GameFlag_Test(0x9bc)) {
     for (i = 19; i >= 0; i--) {
@@ -262,7 +262,7 @@ void Func_02002718(void) {
     }
     Func_02005014(564);
     Object_SetModeById(8, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
@@ -272,7 +272,7 @@ void Func_02002718(void) {
     Func_02004ebc(14, 0, 0);
     if (!GameFlag_Test(0x927)) {
       GameFlag_SetBit(0x307);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
@@ -284,9 +284,9 @@ void Func_02002718(void) {
       object->velocityY = Random16Far();
       WaitFrames(1);
     }
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Object_SetModeById(8, 4);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     leader = Object_GetById(gPartyState.currentOwner);
     if (leader != NULL)
       ObjectMotion_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),

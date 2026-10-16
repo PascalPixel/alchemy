@@ -34,11 +34,11 @@ void Func_020013b0(s32 id) {
   __asm__ volatile("" : "+r"(dx));
   Func_02001360(x + dx, y + 0x1c0000, object->z, 0x1000, 20);
   Func_02005394(151);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02001360(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
                 20);
   Func_02005394(151);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
 }
 
 void Func_02001418(s32 actor) {

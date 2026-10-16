@@ -41,7 +41,7 @@ void Func_020009e8(void) {
   Func_02004ca8();
   Func_02004da0(0);
   Func_02004d20();
-  Battle_WaitMode0(120);
+  FieldEvent_WaitFrames(120);
   Func_02004cb0();
 }
 

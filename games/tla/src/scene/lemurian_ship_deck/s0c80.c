@@ -8,7 +8,7 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -16,7 +16,7 @@ void ObjectMotion_SetPositionAndReset(s32 id, s32 x, s32 z);
 void ObjectMotion_ResetAndSetPosition(s32 id, s32 x, s32 z);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 id);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 flags);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 flags);
 void UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02001f5c(void);
@@ -67,25 +67,25 @@ void Func_02000ce0(void) {
   Call4((void (*)())Func_020020b4, 5, 16, -16, 0x4000);
   Call4((void (*)())Func_020020b4, 9, 32, -16, 0x4000);
   Call4((void (*)())Func_020020b4, 6, -16, -16, 0x4000);
-  Call1((void (*)())Battle_WaitMode0, 80);
+  Call1((void (*)())FieldEvent_WaitFrames, 80);
   Value3(Func_0200204c, 9, 0x102, 20);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0x19999, 0xcccc);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 300, 152);
-  Call1((void (*)())Battle_WaitMode0, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x3000, 20);
   Call3((void (*)())ObjectMotion_ArmCallback, 9, 0x5000, 0);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_0200205c, 0x4cccc, 0x9999);
-  Call4((void (*)())Motion_CamBounds, 0xc80000, -1, 0x1580000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0xc80000, -1, 0x1580000, 1);
   Func_0200206c();
-  Call1((void (*)())Battle_WaitMode0, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_0200205c, 0x13333, 0x2666);
-  Call4((void (*)())Motion_CamBounds, 0x2580000, -1, 0x1580000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x2580000, -1, 0x1580000, 1);
   Func_0200206c();
-  Call1((void (*)())Battle_WaitMode0, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call2((void (*)())Func_0200205c, 0x66666, 0xcccc);
-  Call4((void (*)())Motion_CamBounds, 0x1080000, -1, 0x800000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1080000, -1, 0x800000, 1);
   Func_0200206c();
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
   Call2((void (*)())Func_02002034, 0x2005, 0);
@@ -121,7 +121,7 @@ void Func_02000ce0(void) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 9, 0xcccc, 0x6666);
   Object_GetById(9)->actionFlags &= ~1;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 9, 288, 144);
-  Call1((void (*)())Battle_WaitMode0, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 1);
   Object_GetById(9)->actionFlags |= 1;
   Call2((void (*)())Func_02002034, 0x2009, 0);
   Call2((void (*)())Object_SetModeById, 6, 3);

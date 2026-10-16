@@ -10,7 +10,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const u8 *callback);
 void ObjectMotion_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 value);
@@ -35,7 +35,7 @@ void Func_02000ffc(void) {
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   ObjectMotion_CommitPositionAndActivate(id, x, -back);
   ObjectMotion_CommitPositionAndActivate(4, 16, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000f38();
 }
 
@@ -53,7 +53,7 @@ void Func_0200102c(void) {
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   ObjectMotion_CommitPositionAndActivate(id, x, -back);
   ObjectMotion_CommitPositionAndActivate(4, -16, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000f38();
 }
 
@@ -61,7 +61,7 @@ void Func_0200105c(void) {
   Func_020012e0();
   Func_020013f8(0);
   ObjectMotion_ArmCallback(4, 0xc000, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02000f38();
 }
 

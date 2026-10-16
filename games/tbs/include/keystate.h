@@ -8,7 +8,7 @@
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its
  * own. Measured 2026-10-12 with alchemy diff on tbs-en: without it 18 functions
  * differ, most UiWork_StepChannelScript (249), Clear_CheckButtonCodes (134) and
- * BattleEv_RunWait (58). */
+ * FieldEvent_ShowMessageAndWait (58). */
 extern volatile u32 gKeysHeld; // keys down now
 /* FAKEMATCH: volatile, as gKeysHeld above: without it 41 functions differ in
  * tbs-en, most PsynergyMenu_RunList (299), PsynergyMenu_SelectAction (261) and

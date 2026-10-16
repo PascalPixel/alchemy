@@ -65,15 +65,15 @@ void EventRuntime_SetCountdown(u16 frames) {
   event->countdown = frames;
 }
 
-void BattleFx_SetWeightedResult(s32 row, s32 column) {
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  event->encounterEnemyGroup = BattleFx_GetWeightedResult(row, column);
+  event->encounterEnemyGroup = Encounter_GetEnemyGroupAtSlot(row, column);
   /* FAKEMATCH: the ARM9 scheduling would address the control mode before
    * storing the group. */
   __asm__("");
   if (event->controlMode == 3)
-    BattleFx_LookupResult(
+    Encounter_ResolveWorldMapZoneAndBackdrop(
         (u8 *)ObjectTable_Get(EventRuntime_GetControlledOwner()) + 8);
   BattleFx_SelectBattleCue(row, column);
 }

@@ -11,7 +11,7 @@ struct SceneEntrance;
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
 void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -94,7 +94,7 @@ void Func_02000378(void) {
     Func_02000ef4(0);
     Func_02000ea4(MsgYouReGoing);
     Call2((void (*)())ObjectMotion_SetVariantCallback, 20, 1);
-    Battle_WaitMode0(15);
+    FieldEvent_WaitFrames(15);
     Func_02000eb4(20, 0);
     GameFlag_SetBit(0x9ab);
     Func_02000e7c();

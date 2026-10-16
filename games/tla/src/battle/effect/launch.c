@@ -37,7 +37,7 @@ struct SpinVector {
 };
 
 void EventRuntime_Begin(void);
-void Motion_CamBounds(s32, s32, s32, s32);
+void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
@@ -65,7 +65,7 @@ void BattleFx_RunEffect15(void) {
   u32 i;
 
   EventRuntime_Begin();
-  Motion_CamBounds(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_InitializeSharedScene();
   WaitFrames(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);

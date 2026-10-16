@@ -77,10 +77,10 @@ BattleParty_ApplyHealthDeltaFar:
 	.thumb_func
 Func_080c8550:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_GetWeightedResult
+	overlay_veneer Encounter_GetEnemyGroupAtSlot
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_GetWeightedResult
+	overlay_veneer Encounter_GetEnemyGroupAtSlot
 .else
 	overlay_veneer ResourceTable_CountFreeBlocks
 .endif
@@ -89,36 +89,36 @@ Func_080c8550:
 	.thumb_func
 Func_080c8558:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleFx_GetPhaseResult
+	overlay_veneer Encounter_GetDjinnEnemyGroup
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleFx_GetPhaseResult
+	overlay_veneer Encounter_GetDjinnEnemyGroup
 .else
 	overlay_veneer Func_080d295c
 .endif
 .endif
-	.global BattleFx_GetWeightedResultFar
+	.global Encounter_GetEnemyGroupAtSlotFar
 	.thumb_func
-BattleFx_GetWeightedResultFar:
+Encounter_GetEnemyGroupAtSlotFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Party_PlaySavedMusic
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer Party_PlaySavedMusic
 .else
-	overlay_veneer BattleFx_GetWeightedResult
+	overlay_veneer Encounter_GetEnemyGroupAtSlot
 .endif
 .endif
-	.global BattleFx_GetPhaseResultFar
+	.global Encounter_GetDjinnEnemyGroupFar
 	.thumb_func
-BattleFx_GetPhaseResultFar:
+Encounter_GetDjinnEnemyGroupFar:
 .ifdef TLA_EDITION_ES
 	overlay_veneer Scene_ResolveInteractionResult
 .else
 .ifdef TLA_EDITION_IT
 	overlay_veneer Scene_ResolveInteractionResult
 .else
-	overlay_veneer BattleFx_GetPhaseResult
+	overlay_veneer Encounter_GetDjinnEnemyGroup
 .endif
 .endif
 	.global Party_PlaySavedMusicFar

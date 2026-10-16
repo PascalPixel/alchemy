@@ -74,7 +74,7 @@ Func_020001d8:
 	movs r0, #13
 	bl Object_SetModeById
 	movs r0, #28
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #112
 	bl Func_02002124
 	ldr r1, [r6, #8]
@@ -147,7 +147,7 @@ Func_020001d8:
 	adds r0, r6, #0
 	bl Func_02001f9c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5
@@ -483,7 +483,7 @@ Func_0200058c:
 	cmp r7, #0
 	beq .L_0200863c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -516,7 +516,7 @@ Func_0200058c:
 	movs r0, #16
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	movs r1, #24
 	movs r2, #0
@@ -583,10 +583,10 @@ Func_0200058c:
 	negs r1, r1
 	lsls r2, r2, #17
 	lsls r0, r0, #18
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020020ac
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #160
 	movs r0, #16
 	lsls r1, r1, #7
@@ -602,12 +602,12 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -638,17 +638,17 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #14
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #14
 	movs r1, #0
@@ -666,7 +666,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r0, #15
 	lsls r1, r1, #8
@@ -693,7 +693,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #132
 	lsls r1, r1, #1
 	movs r2, #30
@@ -714,7 +714,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #13
 	movs r1, #0
@@ -724,12 +724,12 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -738,7 +738,7 @@ Func_0200058c:
 	bl Func_0200206c
 	movs r0, #13
 	movs r1, #1
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 	movs r1, #216
 	movs r2, #222
 	lsls r1, r1, #2
@@ -746,7 +746,7 @@ Func_0200058c:
 	movs r0, #13
 	bl ObjectMotion_ResetAndSetPositionInMode2
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #212
 	movs r2, #222
 	lsls r1, r1, #2
@@ -754,7 +754,7 @@ Func_0200058c:
 	movs r0, #14
 	bl ObjectMotion_ResetAndSetPositionInMode2
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #208
 	movs r2, #222
 	lsls r2, r2, #1
@@ -797,10 +797,10 @@ Func_0200058c:
 	lsls r2, r2, #17
 	movs r3, #1
 	lsls r0, r0, #18
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020020ac
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #176
 	movs r0, #17
 	movs r1, #16
@@ -829,12 +829,12 @@ Func_0200058c:
 	movs r0, #6
 	bl ObjectMotion_CommitCurrentPositionAndActivate
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -845,18 +845,18 @@ Func_0200058c:
 	movs r0, #7
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #7
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #7
 	movs r0, #7
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #7
 	movs r1, #0
 	movs r2, #5
@@ -876,12 +876,12 @@ Func_0200058c:
 	movs r0, #6
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #6
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #7
@@ -905,12 +905,12 @@ Func_0200058c:
 	movs r0, #5
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #5
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #6
@@ -934,12 +934,12 @@ Func_0200058c:
 	movs r0, #4
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #4
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #6
@@ -971,7 +971,7 @@ Func_0200058c:
 	movs r0, #17
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	bl Object_GetById
 	adds r0, #90
@@ -982,17 +982,17 @@ Func_0200058c:
 	orrs r3, r2
 	strb r3, [r0]
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #17
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #14
 	movs r1, #0
@@ -1002,12 +1002,12 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r2, #0
 	movs r0, #14
@@ -1018,7 +1018,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #132
 	lsls r1, r1, #1
 	movs r2, #30
@@ -1038,7 +1038,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_02002094
 	movs r0, #37
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #17
 	movs r1, #0
@@ -1047,7 +1047,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #13
@@ -1063,7 +1063,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #15
 	movs r1, #0
@@ -1073,7 +1073,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #13
@@ -1095,7 +1095,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #13
@@ -1110,13 +1110,13 @@ Func_0200058c:
 	movs r0, #7
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #224
 	lsls r1, r1, #8
 	movs r0, #7
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #7
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -1129,7 +1129,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -1167,12 +1167,12 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	bl Func_020001d8
 	movs r1, #132
@@ -1181,9 +1181,9 @@ Func_0200058c:
 	movs r0, #32
 	bl Func_02002114
 	movs r0, #32
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Func_020003a0
 	ldr r5, .L_02008fe0
 	ldr r6, .L_02008fe4
@@ -1233,7 +1233,7 @@ Func_0200058c:
 	bl Func_020001d8
 	bl Func_02000550
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	mov r2, r8
 	movs r0, #153
 	str r7, [r6]
@@ -1264,7 +1264,7 @@ Func_0200058c:
 	movs r0, #17
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	bl Object_GetById
 	adds r0, #90
@@ -1274,7 +1274,7 @@ Func_0200058c:
 	strb r2, [r0]
 	movs r0, #25
 	mov r9, r2
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #3
 	bl ObjectMotion_SetVariantCallback
@@ -1283,7 +1283,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_02002094
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #0
 	movs r2, #5
@@ -1303,7 +1303,7 @@ Func_0200058c:
 	movs r0, #6
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	adds r1, #255
 	movs r2, #30
@@ -1322,7 +1322,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #10
 	adds r1, #255
 	movs r2, #30
@@ -1341,7 +1341,7 @@ Func_0200058c:
 	movs r0, #5
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #5
 	movs r1, #0
@@ -1368,12 +1368,12 @@ Func_0200058c:
 	movs r0, #6
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r1, #0
@@ -1384,14 +1384,14 @@ Func_0200058c:
 	bl Func_020001d8
 	bl Func_02000550
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r3, .L_02008fe8
 	ldr r2, .L_02008fec
 	str r7, [r3]
 	movs r3, #2
 	strb r3, [r2]
 	movs r0, #150
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #3
 	bl ObjectMotion_SetVariantCallback
@@ -1400,7 +1400,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_02002094
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #0
 	movs r2, #0
@@ -1426,7 +1426,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #218
 	movs r1, #1
 	movs r2, #236
@@ -1434,16 +1434,16 @@ Func_0200058c:
 	lsls r2, r2, #17
 	negs r1, r1
 	lsls r0, r0, #18
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020020ac
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #15
 	movs r1, #0
@@ -1452,7 +1452,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -1464,7 +1464,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	movs r1, #0
 	movs r2, #5
@@ -1479,7 +1479,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	bl Func_020001d8
 	movs r0, #153
@@ -1522,12 +1522,12 @@ Func_0200058c:
 	.endif
 	.endif
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #13
 	movs r1, #0
@@ -1536,7 +1536,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #13
 	movs r1, #0
@@ -1545,7 +1545,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r2, #0
 	movs r0, #14
@@ -1557,7 +1557,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -1568,12 +1568,12 @@ Func_0200058c:
 	movs r0, #7
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #7
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #7
 	movs r1, #0
 	movs r2, #5
@@ -1628,7 +1628,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
@@ -1640,7 +1640,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #0
 	movs r2, #5
@@ -1677,13 +1677,13 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #25
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r0, #17
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r2, #30
@@ -1698,12 +1698,12 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #17
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #17
 	movs r1, #0
@@ -1712,7 +1712,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	movs r2, #5
@@ -1732,7 +1732,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #17
 	movs r1, #0
@@ -1759,7 +1759,7 @@ Func_0200058c:
 	movs r0, #7
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #7
 	movs r1, #0
 	movs r2, #5
@@ -1779,7 +1779,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -1797,7 +1797,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #15
 	movs r1, #0
@@ -1809,7 +1809,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	movs r2, #5
@@ -1830,7 +1830,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	movs r2, #5
@@ -1845,7 +1845,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #13
 	movs r1, #0
@@ -1855,7 +1855,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #4
 	adds r1, #255
 	movs r2, #30
@@ -1870,7 +1870,7 @@ Func_0200058c:
 	cmp r0, #0
 	bne .L_020093b8
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #15
 	movs r1, #0
@@ -1890,7 +1890,7 @@ Func_0200058c:
 	.4byte Data_02003098
 .L_020093b8:
 	movs r0, #35
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r2, [r3, #108]
@@ -1910,7 +1910,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #8
 	adds r1, #255
 	movs r2, #30
@@ -1924,12 +1924,12 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	movs r2, #5
@@ -1964,7 +1964,7 @@ Func_0200058c:
 	movs r0, #15
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	bl Object_GetById
 	adds r0, #90
@@ -2004,12 +2004,12 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #15
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #15
 	movs r1, #0
@@ -2025,7 +2025,7 @@ Func_0200058c:
 	movs r0, #7
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #7
 	movs r1, #0
@@ -2034,7 +2034,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	movs r1, #0
 	movs r2, #5
@@ -2077,7 +2077,7 @@ Func_0200058c:
 	movs r0, #15
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	movs r1, #0
 	movs r2, #5
@@ -2116,7 +2116,7 @@ Func_0200058c:
 	bl Object_LinkObjectAndSetCallback
 	movs r0, #15
 	movs r1, #1
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 	movs r1, #8
 	movs r0, #15
 	negs r1, r1
@@ -2142,7 +2142,7 @@ Func_0200058c:
 	movs r0, #5
 	bl Func_02002094
 	movs r0, #37
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #4
 	ldr r1, .L_02009980
 	ldr r2, .L_02009984
@@ -2171,7 +2171,7 @@ Func_0200058c:
 	movs r0, #5
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #4
 	movs r1, #15
 	bl Object_LinkObjectAndSetCallback
@@ -2183,13 +2183,13 @@ Func_0200058c:
 	movs r0, #15
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #208
 	lsls r1, r1, #8
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #8
 	adds r1, #255
 	movs r2, #40
@@ -2204,19 +2204,19 @@ Func_0200058c:
 	movs r0, #15
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	lsls r1, r1, #8
 	movs r0, #16
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	lsls r1, r1, #6
 	movs r0, #16
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	movs r1, #5
 	bl Object_SetModeById
@@ -2227,13 +2227,13 @@ Func_0200058c:
 	negs r0, r0
 	negs r1, r1
 	negs r2, r2
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r1, #0
 	movs r2, #96
 	movs r0, #15
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #15
 	movs r1, #0
 	movs r2, #0
@@ -2300,10 +2300,10 @@ Func_0200058c:
 	lsls r2, r2, #17
 	negs r1, r1
 	lsls r0, r0, #18
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_020020ac
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #16
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #16
@@ -2314,7 +2314,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #17
 	movs r1, #0
@@ -2364,7 +2364,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r0, #7
 	lsls r1, r1, #6
@@ -2400,7 +2400,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
@@ -2433,17 +2433,17 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #0
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #14
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r2, #0
 	movs r0, #13
@@ -2454,7 +2454,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #24
 	movs r2, #26
@@ -2464,12 +2464,12 @@ Func_0200058c:
 	movs r0, #14
 	bl ObjectMotion_CommitPositionAndActivate
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #4
 	movs r2, #20
@@ -2502,7 +2502,7 @@ Func_0200058c:
 	lsls r3, r3, #9
 	str r3, [r0, #28]
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -2539,12 +2539,12 @@ Func_0200058c:
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	movs r2, #5
@@ -2567,7 +2567,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r0, #6
 	lsls r1, r1, #8
@@ -2588,12 +2588,12 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #13
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -2604,7 +2604,7 @@ Func_0200058c:
 	movs r0, #7
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	adds r1, #255
 	movs r2, #30
@@ -2637,7 +2637,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -2648,7 +2648,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #17
 	movs r1, #0
 	movs r2, #5
@@ -2662,7 +2662,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #3
 	bl Object_SetModeById
@@ -2670,7 +2670,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r2, #0
 	movs r0, #14
@@ -2681,7 +2681,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -2692,7 +2692,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	movs r2, #5
@@ -2712,7 +2712,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #5
@@ -2723,7 +2723,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	movs r2, #5
@@ -2746,7 +2746,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #4
 	movs r1, #3
 	bl Object_SetModeById
@@ -2760,7 +2760,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r0, #6
 	lsls r1, r1, #8
@@ -2781,12 +2781,12 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #13
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #128
 	lsls r0, r0, #6
 	movs r2, #10
@@ -2798,7 +2798,7 @@ Func_0200058c:
 	movs r0, #13
 	bl Func_0200207c
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #216
 	movs r2, #196
 	lsls r2, r2, #1
@@ -2813,7 +2813,7 @@ Func_0200058c:
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #5
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #14
 	movs r1, #0
@@ -2823,12 +2823,12 @@ Func_0200058c:
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #14
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #5
 	movs r0, #14
 	movs r1, #0
@@ -2838,12 +2838,12 @@ Func_0200058c:
 	movs r0, #14
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #2
 	movs r0, #14
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #14
 	movs r1, #0
 	movs r2, #5
@@ -2866,7 +2866,7 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #4
 	movs r1, #3
 	bl Object_SetModeById
@@ -2880,7 +2880,7 @@ Func_0200058c:
 	movs r0, #17
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #192
 	movs r0, #4
 	lsls r1, r1, #8
@@ -2969,7 +2969,7 @@ Func_0200058c:
 	movs r0, #6
 	bl Func_02002024
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #32
 	movs r2, #48
 	movs r0, #4
@@ -2991,17 +2991,17 @@ Func_0200058c:
 	movs r0, #4
 	bl Func_0200207c
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #4
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #7
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #153
 	lsls r2, r2, #8
 	movs r0, #7
@@ -3029,12 +3029,12 @@ Func_0200058c:
 	movs r0, #7
 	bl Func_02002024
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	movs r0, #14
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #210
 	movs r2, #204
 	lsls r2, r2, #1
@@ -3051,7 +3051,7 @@ Func_0200058c:
 	movs r2, #0
 	bl ObjectMotion_ArmCallback
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Func_02001fd4
 .L_02009f20:
 	pop {r3, r5, r6}

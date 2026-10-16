@@ -11,12 +11,12 @@ void Func_020020fc(void) {
       Func_02002edc(0);
       Func_02002eec(207);
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-      Battle_WaitMode0(10);
-      Motion_CamBounds(0xe80000, -1, 0x1880000, 1);
+      FieldEvent_WaitFrames(10);
+      Camera_MoveWithinMapBounds(0xe80000, -1, 0x1880000, 1);
       Func_02002eb4();
       Scheduler_AddOrUpdateCallback(Func_02001f7c, 0x480);
-      Battle_WaitMode0(40);
-      Object_AttachWorkTargetToObject(gPartyState.currentOwner, 1);
+      FieldEvent_WaitFrames(40);
+      Camera_FollowActor(gPartyState.currentOwner, 1);
       Func_02002eb4();
       AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);

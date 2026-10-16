@@ -26,7 +26,7 @@ next:
     Object_SetModeById(gPartyState.currentOwner, mode);
   }
   ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
-  Battle_WaitMode0(5);
+  FieldEvent_WaitFrames(5);
   Func_02001210(123);
   Func_02001198(work->value154);
   Event_FinishScreenTransition();

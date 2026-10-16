@@ -46,10 +46,10 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001080
 	.thumb_func
 Func_02001080:
@@ -173,11 +173,11 @@ Func_02001168:
 	.global Func_02001170
 	.thumb_func
 Func_02001170:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02001180
 	.thumb_func
 Func_02001180:
@@ -197,7 +197,7 @@ Func_02001198:
 	.global Func_020011a0
 	.thumb_func
 Func_020011a0:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_020011a8
 	.thumb_func
 Func_020011a8:

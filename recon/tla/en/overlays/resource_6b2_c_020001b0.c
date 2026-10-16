@@ -22,7 +22,7 @@ extern u8 MsgImilVoicesDisbeliefReply[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
@@ -58,7 +58,7 @@ void Func_020001b0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Call2((void (*)())Func_02000600, 13, 14);
   Func_02000598(MsgImilVoicesDisbeliefReply);
   Call2((void (*)())Func_020005a0, 3, 0);
@@ -126,7 +126,7 @@ void Func_020001b0(void) {
   Call2((void (*)())Func_02000600, 13, 14);
   Call2((void (*)())Func_020005a0, 6, 0);
   Func_02000608();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   *(u16 *)0x05000000 = 0;
   WaitFrames(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 16;

@@ -52,5 +52,5 @@ void Func_02004524(void) {
   work->screenEffect = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
 }

@@ -13,7 +13,7 @@ struct SceneEvent;
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void ObjectMotion_EnableActionAndResetMotion(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);

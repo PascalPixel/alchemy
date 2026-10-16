@@ -4,7 +4,7 @@
 #include "party_state.h"
 
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
@@ -27,6 +27,6 @@ void Func_02004068(void) {
   WaitFrames(1);
   Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                    (z << 20) + 0x80000);
-  Battle_WaitMode0(4);
+  FieldEvent_WaitFrames(4);
   Func_02004d28()->y -= 0x80000;
 }

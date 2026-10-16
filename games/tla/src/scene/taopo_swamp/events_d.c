@@ -12,7 +12,7 @@ void Func_0200065c(void) {
   Func_02002968(0);
   ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
   Func_02002908(gPartyState.currentOwner, 256, 30);
-  Motion_CamBounds(0x1980000, -1, 0x1380000, 1);
+  Camera_MoveWithinMapBounds(0x1980000, -1, 0x1380000, 1);
   Func_02002928();
   Func_02002910_(8, 257);
   speed = 0x8000;
@@ -28,7 +28,7 @@ void Func_0200065c(void) {
   Func_020029b0(310);
   object->velocityY = 0x40000;
   ObjectMotion_CommitPositionAndActivate(8, 0, 8);
-  Battle_WaitMode0(60);
+  FieldEvent_WaitFrames(60);
   GameFlag_SetBit(0x310);
   Func_020028a0();
 }
@@ -94,9 +94,9 @@ void Func_02000810(s32 id) {
       object->z >> 20 == leader->z >> 20) {
     Func_02002910_(gPartyState.currentOwner, 0x102);
     ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
-    Battle_WaitMode0_(2);
+    FieldEvent_WaitFrames_(2);
     ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
-    Battle_WaitMode0_(10);
+    FieldEvent_WaitFrames_(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
 }
@@ -149,9 +149,9 @@ void Func_020009c0(s32 id) {
       object->z >> 20 == leader->z >> 20) {
     Func_02002910_(gPartyState.currentOwner, 0x102);
     ObjectMotion_CommitPositionAndActivate_(gPartyState.currentOwner, 0, 16);
-    Battle_WaitMode0_(2);
+    FieldEvent_WaitFrames_(2);
     ObjectMotion_ArmCallback_(gPartyState.currentOwner, 0xc000, 0);
-    Battle_WaitMode0_(10);
+    FieldEvent_WaitFrames_(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);
 }

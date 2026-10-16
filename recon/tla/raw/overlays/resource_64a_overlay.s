@@ -75,13 +75,13 @@ Func_02000328:
 	beq .L_ja_0200836a
 .L_ja_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_ja_020086b4
 	movs r1, #1
 	bl Func_020023b8
@@ -844,13 +844,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_ja_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -959,13 +959,13 @@ Func_02000328:
 	beq .L_fr_0200836a
 .L_fr_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_fr_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -1728,13 +1728,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_fr_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -1843,13 +1843,13 @@ Func_02000328:
 	beq .L_de_0200836a
 .L_de_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_de_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -2612,13 +2612,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_de_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -2724,13 +2724,13 @@ Func_02000328:
 	beq .L_es_0200836a
 .L_es_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_es_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -3493,13 +3493,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_es_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -3605,13 +3605,13 @@ Func_02000328:
 	beq .L_it_0200836a
 .L_it_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_it_020086ac
 	movs r1, #1
 	bl Func_020023b8
@@ -4374,13 +4374,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3, #0]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_it_02008a24:
 	movs r0, #0
 	pop {r3, r5}
@@ -4485,13 +4485,13 @@ Func_02000328:
 	beq .L_0200836a
 .L_020083cc:
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	bl Event_FinishScreenTransition
 	movs r0, #78
 	bl Func_02002408
 	movs r0, #150
 	lsls r0, r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, .L_020086b4
 	movs r1, #1
 	bl Func_020023b8
@@ -5258,13 +5258,13 @@ Func_02000328:
 	adds r2, #255
 	strh r2, [r3]
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #78
 	bl Func_02002408
 	bl Event_FinishScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 .L_02008a2c:
 	movs r0, #0
 	pop {r3, r5}

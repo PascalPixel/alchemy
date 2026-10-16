@@ -8,7 +8,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
@@ -62,13 +62,13 @@ void Func_02000500(s32 unused, s32 id) {
     Func_0200220c(28, 39, 1, 1, 20, 39);
     CopyCells(28, 39, 1, 1, 20, 39);
     CopyCells(92, 39, 1, 1, 84, 39);
-    Battle_WaitMode0(30);
+    FieldEvent_WaitFrames(30);
     Func_0200232c(167);
     CopyCells(92, 40, 1, 1, 84, 40);
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_0200232c(167);
     CopyCells(92, 41, 1, 1, 84, 41);
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_0200232c(167);
     CopyCells(93, 41, 1, 1, 85, 41);
     Func_02002304(168 << 17, 164 << 18, 2, 236);

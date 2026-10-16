@@ -85,7 +85,7 @@ Func_080e4730:
 	adds r0, r2, #0
 	adds r1, r2, #0
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	mov r2, r8
 	adds r2, #85
 	movs r3, #0
@@ -242,7 +242,7 @@ Func_080e4730:
 	movs r1, #1
 	movs r5, #24
 	ldrsh r0, [r6, r5]
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 	movs r0, #142
 	lsls r0, r0, #1
 	adds r0, #255

@@ -33,7 +33,7 @@ extern const u8 gData_0200059c[];
 extern const struct WarpTarget gData_02000610;
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);

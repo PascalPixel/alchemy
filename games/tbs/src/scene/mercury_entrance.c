@@ -249,7 +249,7 @@ static void MercuryEntrance_OpenEntrance(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   Event_SetNextDestination((s32)&SceneId_MercuryEntrance, 31);
   Battle_SetStart(3);
-  BattleFx_SetWeightedResult(36, 1);
+  Field_RequestBattleFromEncounterTable(36, 1);
   Engine_EventEnd();
 }
 

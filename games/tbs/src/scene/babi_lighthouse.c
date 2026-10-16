@@ -54,7 +54,7 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 // Starts the Djinn battle for actor 8; the engine maps Djinn 66 to its enemy
 // group.
 static void BabiLighthouse_StartDjinnBattle(void) {
-  BattleFx_SetPhaseRequest(8, 66);
+  Field_RequestDjinnBattle(8, 66);
 }
 
 // Shared source is included here in ROM order.

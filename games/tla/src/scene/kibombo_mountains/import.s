@@ -82,10 +82,10 @@ Func_0200106c:
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildFlagsFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001084
 	.thumb_func
 Func_02001084:
@@ -170,10 +170,10 @@ Func_0200111c:
 	.thumb_func
 Func_02001124:
 	overlay_veneer Func_080c8218
-	.global Motion_CamBounds
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_02001134
 	.thumb_func
 Func_02001134:

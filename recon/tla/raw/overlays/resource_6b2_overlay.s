@@ -137,7 +137,7 @@ Func_020001b0:
 	bl Event_StartScreenTransition
 	bl Event_WaitTransitionFrames
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #14
 	movs r0, #13
 	bl Func_02000600
@@ -369,7 +369,7 @@ Func_020001b0:
 	bl Func_020005a0
 	bl Func_02000608
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r3, #160
 	lsls r3, r3, #19
 	movs r0, #1

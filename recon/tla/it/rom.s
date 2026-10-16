@@ -1783,10 +1783,10 @@ Resource_FarCall006:
 Game_ResetForNewGameFar:
 	.incbin "baserom.gba", 0x000c8008, 0x00000008
 	.section .rom.000c8010, "ax"
-	.global Battle_WaitMode0Far
-	.type Battle_WaitMode0Far, %function
+	.global FieldEvent_WaitFramesFar
+	.type FieldEvent_WaitFramesFar, %function
 	.thumb_func
-Battle_WaitMode0Far:
+FieldEvent_WaitFramesFar:
 	.incbin "baserom.gba", 0x000c8010, 0x00000008
 	.section .rom.000c8018, "ax"
 	.global EventRuntime_BeginFar
@@ -2185,22 +2185,22 @@ Func_080c8218:
 ObjectVisual_CopyAttributesFar:
 	.incbin "baserom.gba", 0x000c8220, 0x00000008
 	.section .rom.000c8228, "ax"
-	.global Object_AttachWorkTargetToObjectFar
-	.type Object_AttachWorkTargetToObjectFar, %function
+	.global Camera_FollowActorFar
+	.type Camera_FollowActorFar, %function
 	.thumb_func
-Object_AttachWorkTargetToObjectFar:
+Camera_FollowActorFar:
 	.incbin "baserom.gba", 0x000c8228, 0x00000008
 	.section .rom.000c8230, "ax"
-	.global ObjectTable_AllocateAndSetObjectSpeedFar
-	.type ObjectTable_AllocateAndSetObjectSpeedFar, %function
+	.global Camera_SetSpeedParametersFar
+	.type Camera_SetSpeedParametersFar, %function
 	.thumb_func
-ObjectTable_AllocateAndSetObjectSpeedFar:
+Camera_SetSpeedParametersFar:
 	.incbin "baserom.gba", 0x000c8230, 0x00000008
 	.section .rom.000c8238, "ax"
-	.global Motion_CamBoundsFar
-	.type Motion_CamBoundsFar, %function
+	.global Camera_MoveWithinMapBoundsFar
+	.type Camera_MoveWithinMapBoundsFar, %function
 	.thumb_func
-Motion_CamBoundsFar:
+Camera_MoveWithinMapBoundsFar:
 	.incbin "baserom.gba", 0x000c8238, 0x00000008
 	.section .rom.000c8240, "ax"
 	.global Func_080c8240
@@ -2696,10 +2696,10 @@ Game_ResetForNewGame:
 	.balign 4
 	.incbin "baserom.gba", 0x000c9e48, 0x000000e4
 	.section .rom.000c9f2c, "ax"
-	.global BattleFx_LookupResult
-	.type BattleFx_LookupResult, %function
+	.global Encounter_ResolveWorldMapZoneAndBackdrop
+	.type Encounter_ResolveWorldMapZoneAndBackdrop, %function
 	.thumb_func
-BattleFx_LookupResult:
+Encounter_ResolveWorldMapZoneAndBackdrop:
 	.incbin "baserom.gba", 0x000c9f2c, 0x000000ac
 	.section .rom.000c9fd8, "ax"
 	.global Encounter_SelectEnemyGroup
@@ -3120,10 +3120,10 @@ Func_080d4330:
 	.incbin "baserom.gba", 0x000d4324, 0x00000054
 	.section .rom.000d4400, "ax"
 	.balign 4
-	.global Motion_CamBounds
-	.type Motion_CamBounds, %function
+	.global Camera_MoveWithinMapBounds
+	.type Camera_MoveWithinMapBounds, %function
 	.thumb_func
-Motion_CamBounds:
+Camera_MoveWithinMapBounds:
 	.incbin "baserom.gba", 0x000d4400, 0x00000100
 	.section .rom.000d47a8, "ax"
 	.incbin "baserom.gba", 0x000d47a8, 0x000000b4

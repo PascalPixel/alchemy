@@ -15,7 +15,7 @@ void Func_020012b4(void) {
   Func_02002cd0(64, object->x, object->z + 0xfed00000);
   Object_SetPartAttribute(Object_GetById(64), 0);
   WaitFrames(10);
-  Object_AttachWorkTargetToObject(gPartyState.currentOwner, 0);
+  Camera_FollowActor(gPartyState.currentOwner, 0);
   WaitFrames(1);
   LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
   Func_02002c10();

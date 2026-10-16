@@ -154,10 +154,10 @@ Func_020011f4:
 	.thumb_func
 Func_020011fc:
 	overlay_veneer Func_08020230
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_0200120c
 	.thumb_func
 Func_0200120c:

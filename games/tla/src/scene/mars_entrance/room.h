@@ -56,9 +56,9 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
 void Object_SetModeById(u32 id, s32 mode);
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 use_setter);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -147,7 +147,7 @@ static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
    * own constants; direct calls share registers or load the stack arguments one
    * at a time */
-  Motion_CamBounds(x, y, z, use_setter);
+  Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 #endif

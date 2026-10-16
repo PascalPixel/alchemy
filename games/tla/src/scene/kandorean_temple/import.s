@@ -146,10 +146,10 @@ UiText_ShowPositionedMessageAndWait:
 	.thumb_func
 Func_020051b0:
 	overlay_veneer Func_08038248
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_020051c0
 	.thumb_func
 Func_020051c0:
@@ -293,11 +293,11 @@ Func_020052d0:
 	.global Func_020052d8
 	.thumb_func
 Func_020052d8:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_020052e8
 	.thumb_func
 Func_020052e8:
@@ -313,7 +313,7 @@ Func_020052f8:
 	.global Func_02005300
 	.thumb_func
 Func_02005300:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02005308
 	.thumb_func
 Func_02005308:

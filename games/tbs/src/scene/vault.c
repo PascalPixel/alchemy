@@ -826,7 +826,7 @@ SceneEffect_UpdateMotionWithDamping(union FieldObject *fieldObject) {
   effect->verticalRate = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-static void Vault_SpawnDriftingEffect(s32 flags) {
+UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   union DriftingObject *leader;
   union DriftingObject *leaf;
   struct FieldSprite *sprite;

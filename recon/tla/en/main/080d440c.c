@@ -17,8 +17,8 @@
 
 void WaitFrames(s32);
 
-void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                      s32 useSetter) {
+void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
+                                s32 useSetter) {
   s32 shouldUseSetter;
   struct EventWork *runtimeBlock;
   s32 minimumX;

@@ -210,10 +210,10 @@ Party_CountActiveOwners:
 	.thumb_func
 Func_02001a04:
 	overlay_veneer Func_080ad208
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001a14
 	.thumb_func
 Func_02001a14:
@@ -277,7 +277,7 @@ Func_02001a84:
 	.global Func_02001a8c
 	.thumb_func
 Func_02001a8c:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

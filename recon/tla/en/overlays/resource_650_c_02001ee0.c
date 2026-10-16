@@ -24,8 +24,8 @@ extern const u8 gData_0200350c[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
-void Battle_WaitMode0();
-void Motion_CamBounds();
+void FieldEvent_WaitFrames();
+void Camera_MoveWithinMapBounds();
 void Engine_CameraSetSpeed();
 s32 Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
@@ -54,7 +54,7 @@ void Func_02001ee0(void) {
   Call1((void (*)())Func_02003310, 0);
   Func_0200161c();
   DriftScene_Prepare();
-  Call4((void (*)())Motion_CamBounds, -1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call3((void (*)())Func_02003228, 6, 0x1bc0000, 0xd40000);
   Call2((void (*)())Engine_ActorSetAnimation, 6, 19);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
@@ -66,7 +66,7 @@ void Func_02001ee0(void) {
                                      0);
   Call3((void (*)())Func_02003228, 10, 0x1880000, 0xac0000);
   Task_Wait(1);
-  Call4((void (*)())Motion_CamBounds, 0xc00000, -1, 0xd60000, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0xc00000, -1, 0xd60000, 0);
   Func_02003180();
   Task_Wait(1);
   Call3((void (*)())Func_02003228, 5, 0xd00000, 0xda0000);
@@ -78,7 +78,7 @@ void Func_02001ee0(void) {
   Task_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1((void (*)())Battle_WaitMode0, 120);
+  Call1((void (*)())FieldEvent_WaitFrames, 120);
   Call1((void (*)())Engine_EventSetMessage, (s32)MsgIdejimaHowLongWillWeDrift);
   Call3((void (*)())Func_02003298, 5, 0, 40);
   Call2((void (*)())Engine_EventShowMessage, 8, 0);
@@ -94,7 +94,7 @@ void Func_02001ee0(void) {
   Value3((s32 (*)())Engine_ActorShowEmote, 5, 258, 0);
   Call2((void (*)())Engine_EventShowMessage, 5, 0);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 8, 258);
-  Call1((void (*)())Battle_WaitMode0, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call2((void (*)())Engine_EventShowMessage, 8, 0);
   Value3((s32 (*)())Engine_ActorShowEmote, 5, 261, 40);
   Call3((void (*)())Func_02003298, 8, 0, 40);
@@ -113,7 +113,7 @@ void Func_02001ee0(void) {
   Call2((void (*)())Engine_EventShowMessage, 10, 0);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 10,
         gData_020033a8);
-  Call1((void (*)())Battle_WaitMode0, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call2((void (*)())Engine_ActorSetAnimation, 8, 1);
   ObjectDispatch_SetSingleChildFlags(Object_GetById(8), 1);
   Call3((void (*)())ObjectMotion_Launch, 8, 4, 20);
@@ -125,15 +125,15 @@ void Func_02001ee0(void) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_02003400);
-  Call1((void (*)())Battle_WaitMode0, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call2((void (*)())Engine_CameraSetSpeed, 0xcccc, 0x1999);
-  Call4((void (*)())Motion_CamBounds, 0x1700000, -1, 0xd20000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1700000, -1, 0xd20000, 1);
   actor->action = 0;
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, gData_0200346c);
   do {
     Task_Wait(1);
   } while (actor->action == 0);
-  Call1((void (*)())Battle_WaitMode0, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 8, 258);
   Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 258);
   Call11((void (*)())Func_020032b8, 5, 7, 13, 2, 12, 8, 9, 2, 4, 1, 0);
@@ -142,7 +142,7 @@ void Func_02001ee0(void) {
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0x19999, 0xcccc);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_020034e4);
   Call2((void (*)())Object_SetActionCallbackAndRefreshById, 5, gData_0200350c);
-  Call1((void (*)())Battle_WaitMode0, 40);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call2((void (*)())Engine_EventShowMessage, 0x5008, 0);
   Call3((void (*)())ObjectMotion_Launch, 5, 4, 10);
   Call2((void (*)())Engine_EventShowMessage, 0x1005, 0);

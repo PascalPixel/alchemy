@@ -1,9 +1,9 @@
 // FarCall_ObjectTable: one entry per 8-byte stub, in table order.
 FAR_CALL(Field_RunSceneFar, Field_RunScene, s32, (s32 entrance))
 FAR_CALL(Game_ResetForNewGameFar, Game_ResetForNewGame, void, (s32 mode))
-FAR_CALL(Battle_WaitMode0Far, Battle_WaitMode0, void, (s32 frames))
-FAR_CALL(Battle_ResetFar, Battle_Reset, void, (void))
-FAR_CALL(BattleFx_FinishActionFar, BattleFx_FinishAction, void, (void))
+FAR_CALL(FieldEvent_WaitFramesFar, FieldEvent_WaitFrames, void, (s32 frames))
+FAR_CALL(FieldEvent_BeginFar, FieldEvent_Begin, void, (void))
+FAR_CALL(FieldEvent_EndFar, FieldEvent_End, void, (void))
 FAR_SLOT(Event_RunObjectHookAndWait)
 FAR_CALL(Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId,
          void, (struct ScenePlacement * table))
@@ -88,12 +88,13 @@ FAR_CALL(Object_SetTargetAndCallbackFar, Object_SetTargetAndCallback, void,
 FAR_CALL(Event_SetMessageIdFar, Event_SetMessageId, void, (s32 value))
 FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject,
          struct UiWindow *, (s32 arg, s32 unused))
-FAR_CALL(BattleEv_RunWaitFar, BattleEv_RunWait, void, (s32 action, s32 flag))
+FAR_CALL(FieldEvent_ShowMessageAndWaitFar, FieldEvent_ShowMessageAndWait, void,
+         (s32 action, s32 flag))
 FAR_CALL(BattlePres_RunActionThenWaitIfModeZeroFar,
          BattlePres_RunActionThenWaitIfModeZero, void,
          (s32 first, s32 second, s32 value))
-FAR_CALL(BattleEventRuntime_ProcessActionFar, BattleEventRuntime_ProcessAction,
-         s32, (s32 objectId, s32 actionId))
+FAR_CALL(FieldEvent_AskYesNoAndShowResponseFar,
+         FieldEvent_AskYesNoAndShowResponse, s32, (s32 objectId, s32 actionId))
 FAR_SLOT(BattleEventRuntime_EmptyCallback)
 FAR_SLOT(Event_ShowSpeakerMessage)
 FAR_SLOT(ObjectTable_CallRefreshHook)
@@ -117,14 +118,12 @@ FAR_CALL(BattleFx_ConfigureLinkedObjectFar, BattleFx_ConfigureLinkedObject,
          void, (s32 id, s32 flags))
 FAR_CALL(ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes, void,
          (u32 targetId, u32 sourceId))
-FAR_CALL(Object_AttachWorkTargetToObjectFar, Object_AttachWorkTargetToObject,
-         void, (s32 id, s32 flag))
-FAR_CALL(ObjectTable_AllocateAndSetObjectSpeedFar,
-         ObjectTable_AllocateAndSetObjectSpeed, void, (s32 first, s32 second))
-FAR_CALL(Motion_CamBoundsFar, Motion_CamBounds, void,
+FAR_CALL(Camera_FollowActorFar, Camera_FollowActor, void, (s32 id, s32 flag))
+FAR_CALL(Camera_SetSpeedParametersFar, Camera_SetSpeedParameters, void,
+         (s32 first, s32 second))
+FAR_CALL(Camera_MoveWithinMapBoundsFar, Camera_MoveWithinMapBounds, void,
          (s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter))
-FAR_CALL(BattleFx_CommitObjectPositionAndWaitFar,
-         BattleFx_CommitObjectPositionAndWait, void, (void))
+FAR_CALL(Camera_WaitForArrivalFar, Camera_WaitForArrival, void, (void))
 FAR_CALL(Object_PlaceCurrentWithinCameraBoundsFar,
          Object_PlaceCurrentWithinCameraBounds, void, (s32 arg0, s32 arg1))
 FAR_CALL(Camera_GetEventObjectFar, Camera_GetEventObject,
@@ -135,9 +134,10 @@ FAR_CALL(Event_SetDestinationFar, Event_SetDestination, void,
          (s32 first, s32 second))
 FAR_SLOT(Event_SetSavedDestination)
 FAR_CALL(Event_SetExitRequestFar, Event_SetExitRequest, void, (u16 value))
-FAR_CALL(BattleFx_SetWeightedResultFar, BattleFx_SetWeightedResult, void,
+FAR_CALL(Field_RequestBattleFromEncounterTableFar,
+         Field_RequestBattleFromEncounterTable, void,
          (s32 zone_no, s32 slot_no))
-FAR_CALL(BattleFx_SetPhaseRequestFar, BattleFx_SetPhaseRequest, void,
+FAR_CALL(Field_RequestDjinnBattleFar, Field_RequestDjinnBattle, void,
          (s32 flag, s32 no))
 FAR_CALL(Event_SetNextDestinationFar, Event_SetNextDestination, void,
          (s32 first, s32 second))
@@ -258,8 +258,8 @@ FAR_CALL(BattleParty_ApplyDrainFar, BattleParty_ApplyDrain, void,
 FAR_SLOT(BattleParty_ApplyHealthDelta)
 FAR_SLOT(ResourceTable_CountFreeBlocks)
 FAR_CALL(Menu_AskYesNoFar, Menu_AskYesNo, s32, (s32 value))
-FAR_SLOT(BattleFx_GetWeightedResult)
-FAR_SLOT(BattleFx_GetPhaseResult)
+FAR_SLOT(Encounter_GetEnemyGroupAtSlot)
+FAR_SLOT(Encounter_GetDjinnEnemyGroup)
 FAR_CALL(Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork, void,
          (void))
 FAR_CALL(Djinn_JoinPartyFar, Djinn_JoinParty, void,

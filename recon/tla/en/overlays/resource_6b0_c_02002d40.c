@@ -13,7 +13,7 @@ struct CellStep {
   s16 z;
 };
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02002cb8(void);
 void Func_020034b8(s32 cue);
@@ -27,5 +27,5 @@ void Func_02002d40(struct CellStep *step) {
   Func_02002cb8();
   Func_020034b8(161);
   Func_02003350(step->x, step->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

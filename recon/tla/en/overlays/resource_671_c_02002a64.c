@@ -47,7 +47,7 @@ void Func_0200582c(s32 index, s32 a, s32 b);
 s32 Func_02003604(void);
 void Func_020056b4(void);
 void Func_0200580c(s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
 void Func_0200571c(s32 id, s32 x, s32 z, s32 speed);
 void Func_0200564c(void);
@@ -67,7 +67,7 @@ void Func_02005624(struct ObjectRuntime *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct ObjectRuntime *object);
 void Func_02005794(s32 id, s32 value);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_0200578c(s32 id, s32 a, s32 b);
@@ -110,7 +110,7 @@ static __inline__ void Func_02005774_(s32 id, s32 value) {
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 extern u32 gData_02005c40[];
@@ -156,7 +156,7 @@ void Func_02002a64(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_0200578c_ArgsFirst(23, 256, 20);
   Func_02005754(MsgGabombaUnderstandsChannel);
   Func_02005764_(23, 0);

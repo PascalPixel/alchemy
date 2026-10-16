@@ -208,10 +208,10 @@ Func_02000dc8:
 	.thumb_func
 Func_02000dd0:
 	overlay_veneer Func_080ad2f8
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global PartyInventory_GiveItem
 	.thumb_func
 PartyInventory_GiveItem:
@@ -247,7 +247,7 @@ Func_02000e18:
 	.global Func_02000e20
 	.thumb_func
 Func_02000e20:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02000e28
 	.thumb_func
 Func_02000e28:

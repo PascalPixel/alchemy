@@ -13,7 +13,7 @@ struct WarpTarget {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 s32 ArcTan2(s32, s32);
 struct ObjectRuntime *Object_GetById(s32 id);
 void Animation_SetIndexAndInitObjects(struct ObjectRuntime *object, s32 index);
@@ -77,10 +77,10 @@ static __inline__ void WaitFrames_(s32 frames) {
   WaitFrames(frames);
 }
 
-static __inline__ void Battle_WaitMode0_(s32 frames) {
+static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Battle_WaitMode0(frames);
+  FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ s32 ArcTan2_(s32 a0, s32 a1) {

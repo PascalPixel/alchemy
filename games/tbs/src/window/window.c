@@ -1119,21 +1119,21 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       case TEXT_PAUSE_SHORT:
         if (channel->countdown == 0)
           channel->countdown = 20;
-        work->result[1] = 0;
+        work->speakerVoiceCountdown = 0;
         UiText_CheckPauseSkipped(channel);
         break;
 
       case TEXT_PAUSE_LONGEST:
         if (channel->countdown == 0)
           channel->countdown = 120;
-        work->result[1] = 0;
+        work->speakerVoiceCountdown = 0;
         UiText_CheckPauseSkipped(channel);
         break;
 
       case TEXT_PAUSE_LONG:
         if (channel->countdown == 0)
           channel->countdown = 60;
-        work->result[1] = 0;
+        work->speakerVoiceCountdown = 0;
         break;
 
       case TEXT_COLOUR:
@@ -1230,16 +1230,17 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       glyphWidth = UiText_DrawGlyph(channel->work, code, pixelX, pixelY, 0);
       channel->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
       if (glyphWidth != 0) {
-        // The speaker's voice blip (result[0], the first of four sounds) every
-        // few characters, and the pen moves on by the glyph's width.
-        if (work->result[0] != 0) {
-          if (work->result[1] == 0) {
+        // The speaker's voice blip (speakerVoiceSound, the first of four
+        // sounds) every few characters, and the pen moves on by the glyph's
+        // width.
+        if (work->speakerVoiceSound != 0) {
+          if (work->speakerVoiceCountdown == 0) {
             if (code != TEXT_SPACE) {
-              AudioCommand_PlayFar(work->result[0] + (code & 3));
-              work->result[1] = voiceGap;
+              AudioCommand_PlayFar(work->speakerVoiceSound + (code & 3));
+              work->speakerVoiceCountdown = voiceGap;
             }
           } else {
-            work->result[1]--;
+            work->speakerVoiceCountdown--;
           }
         }
         glyphAdvance = glyphWidth << 8;
@@ -1622,8 +1623,8 @@ s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
    * bytes, not 16 (differ 4 in tbs-en). */
   u16 frameReserve[4];
 
-  work->result[0] = 0;
-  work->result[1] = 0;
+  work->speakerVoiceSound = 0;
+  work->speakerVoiceCountdown = 0;
   entry = UiText_BuildRenderEntries(message, 1);
   if (work->entries[entry] == 0)
     return 0;
@@ -1672,11 +1673,11 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
   struct UiRenderWork *work;
 
   work = UI_WORK;
-  work->result[0] = (packed << 4) >> 20;
+  work->speakerVoiceSound = (packed << 4) >> 20;
   // the window starts as NULL, though it is assigned before it is read; the
   // same zero serves the zeros below
   window = NULL;
-  work->result[1] = 0;
+  work->speakerVoiceCountdown = 0;
   packed &= 0xffff;
   flags = 0;
   entry = UiText_BuildRenderEntries(message, 1);
@@ -1772,8 +1773,8 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
 
   zero = 0;
   state->busy = zero;
-  state->result[0] = zero;
-  state->result[1] = zero;
+  state->speakerVoiceSound = zero;
+  state->speakerVoiceCountdown = zero;
   WaitFrames(3);
 }
 
@@ -4769,8 +4770,8 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
           WaitFrames(1);
       } else
         UiWork_Finalize(messageWindow, 1);
-      render->result[0] = 0;
-      render->result[1] = 0;
+      render->speakerVoiceSound = 0;
+      render->speakerVoiceCountdown = 0;
     }
   }
 }

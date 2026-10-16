@@ -59,7 +59,7 @@ void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
 void Func_02001608(void);
 void Func_020032a8(void);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_0200166c(void);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Func_0200055c(void);

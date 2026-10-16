@@ -15,7 +15,7 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Camera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
@@ -41,7 +41,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         id = gPartyState.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
-        Motion_CamBounds(-1, -1, -1, 0);
+        Camera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y + object->velocityY > object->terrainHeight) {
           WaitFrames(1);
         }
@@ -49,7 +49,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         object->y = object->terrainHeight;
         Object_SetMode(object, 22);
         EventRuntime_Wait(15);
-        Object_AttachWorkTargetToObject(id, 1);
+        Camera_FollowActor(id, 1);
         result = 3;
       }
     }

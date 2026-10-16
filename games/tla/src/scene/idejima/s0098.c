@@ -35,7 +35,7 @@ void Engine_EventEnd();
 void Engine_EventSetMessage();
 void Engine_EventShowMessage();
 void GameFlag_SetBit();
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void ObjectMotion_SetSpeedParameters();
 void ObjectMotion_SetPositionAndReset();
 void ObjectMotion_CommitCurrentPositionAndActivate();
@@ -82,7 +82,7 @@ void Func_020000f0(void) {
   Call2(Engine_EventShowMessage, 8, 0);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
   Call2(Engine_ActorSetAttachedEffect, 8, 0x102);
-  Call1(Battle_WaitMode0, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call3(Func_02003298, 8, 0, 20);
   Engine_ActorShowEmote(8, 0x101, 20);
   Call2(Engine_EventShowMessage, 8, 0);
@@ -95,10 +95,10 @@ void Func_020000f0(void) {
   Call2(Engine_EventShowMessage, 8, 0);
   Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x8000, 20);
   Call2(Engine_ActorSetAttachedEffect, gPartyState.currentOwner, 0x102);
-  Call1(Battle_WaitMode0, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   Call2(Engine_EventShowMessage, 8, 0);
   ObjectMotion_SetAngleToward(8, gPartyState.currentOwner, 0);
-  Call1(Battle_WaitMode0, 20);
+  Call1(FieldEvent_WaitFrames, 20);
   ObjectMotion_SetAngleToward(gPartyState.currentOwner, 8, 0);
   Call2(Engine_EventShowMessage, 8, 0);
   Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
@@ -121,9 +121,9 @@ void Func_020002b4(void) {
   Engine_EventBegin();
   Func_02003310(0);
   Motion_SetVarCbAndRefresh(5, 1);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Motion_SetVarCbAndRefresh(5, 2);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Engine_EventSetMessage(MsgIdejimaAwakeningExclamation);
   Func_02003298(5, 0, 40);
   Value3(Engine_ActorShowEmote, 5, 0x101, 20);
@@ -145,12 +145,12 @@ void Func_020002b4(void) {
   ObjectMotion_Launch(5, 4, 20);
   Engine_EventShowMessage(5, 0);
   ObjectMotion_SetAngleToward(5, gPartyState.currentOwner, 0);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   ObjectMotion_SetAngleToward(gPartyState.currentOwner, 5, 0);
   Engine_ActorShowEmote(5, 0x108, 0);
   Engine_EventShowMessage(5, 0);
   Motion_SetModeAndWaitAnimation(gPartyState.currentOwner, 3);
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Value3(Engine_ActorShowEmote, 5, 0x101, 0);
   Value2(UiText_OpenMessageAtObject, 5, 0);
   if (Event_AskYesNoWithActorAnimation(gPartyState.currentOwner, 0) == 0) {

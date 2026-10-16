@@ -821,7 +821,8 @@ static void FieldScene_RunPrimaryScriptChoreography(void) {
   Engine_EventEnd();
 }
 
-static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o) {
+UNUSED static void
+SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o) {
   s32 buf[3];
   s32 *b;
   s32 n;
@@ -846,7 +847,7 @@ static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o) {
   }
 }
 
-static void Imil_SwayAndSpark(struct FieldActor *actor) {
+UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   s32 pos[3];
   struct FieldActor *spark;
   s32 radius;

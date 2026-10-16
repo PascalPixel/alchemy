@@ -80,7 +80,7 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions,
 
 static void EV08_TALK(void) { Djinn_JoinParty(8, 2, 1); }
 
-static void EV11_TALK(void) { BattleFx_SetPhaseRequest(0xB, 0x3E); }
+static void EV11_TALK(void) { Field_RequestDjinnBattle(0xB, 0x3E); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 v = gGameState.scene;

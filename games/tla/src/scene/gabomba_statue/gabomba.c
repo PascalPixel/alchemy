@@ -35,7 +35,7 @@ void Func_0200582c(s32 index, s32 a, s32 b);
 s32 Func_02003604(void);
 void Func_020056b4(void);
 void Func_0200580c(s32 value);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
 void Func_0200571c(s32 id, s32 x, s32 z, s32 speed);
 void Func_0200564c(void);
@@ -55,7 +55,7 @@ void Func_02005624(struct ObjectRuntime *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct ObjectRuntime *object);
 void Func_02005794(s32 id, s32 value);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_Launch(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Func_0200578c(s32 id, s32 a, s32 b);
@@ -98,7 +98,7 @@ static __inline__ void Func_02005774_(s32 id, s32 value) {
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(x, y, z, mode);
+  Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 void Func_02002f70(void) {
@@ -178,7 +178,7 @@ void Func_02002f70(void) {
   Func_02005774_(5, 0x2000);
   Func_02005764(5, 0);
   Func_02005794(24, 258);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02005764(24, 0);
   Actor_Slide(gPartyState.currentOwner, 236 << 17, 204 << 16, fast);
   Actor_Slide(7, 220 << 17, 204 << 16, fast);
@@ -197,7 +197,7 @@ void Func_02002f70(void) {
   Func_02005764(0x8006, 0);
   Object_SetModeById(23, 4);
   Func_02005764(0x9017, 0);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_020057e4(0x10000, 0);
   Func_020057dc(0, 0);
   Func_020057ec(60);

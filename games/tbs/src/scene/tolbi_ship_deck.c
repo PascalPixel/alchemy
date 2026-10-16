@@ -1690,7 +1690,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   gGameState.savedEntrance = 30;
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_TolbiShipDeck, 16);
-  BattleFx_SetWeightedResult(62, 3);
+  Field_RequestBattleFromEncounterTable(62, 3);
   Engine_EventEnd();
 }
 

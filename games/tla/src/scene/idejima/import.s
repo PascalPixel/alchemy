@@ -78,10 +78,10 @@ UiText_ShowPositionedMessageAndWait:
 	.thumb_func
 Func_020031a8:
 	overlay_veneer Func_080ad208
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Engine_EventBegin
 	.thumb_func
 Engine_EventBegin:
@@ -225,11 +225,11 @@ Engine_ActorSetAttachedEffect:
 	.global Engine_CameraSetSpeed
 	.thumb_func
 Engine_CameraSetSpeed:
-	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
-	.global Motion_CamBounds
+	overlay_veneer Camera_SetSpeedParametersFar
+	.global Camera_MoveWithinMapBounds
 	.thumb_func
-Motion_CamBounds:
-	overlay_veneer Motion_CamBoundsFar
+Camera_MoveWithinMapBounds:
+	overlay_veneer Camera_MoveWithinMapBoundsFar
 	.global Func_020032e0
 	.thumb_func
 Func_020032e0:

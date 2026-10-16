@@ -13,7 +13,7 @@ void Func_02000670(void) {
   Func_020055d0(0x50000, 0xa000);
   Camera_SetBounds(0xf80000, -1, 0x3680000, 1);
   Func_020055e0();
-  Battle_WaitMode0(120);
+  FieldEvent_WaitFrames(120);
   Func_02005568();
 }
 
@@ -105,7 +105,7 @@ void Func_02000944(void) {
   Func_02005608();
   ObjectDispatch_SetSingleChildFlags(object, 0);
   Object_SetModeById(gPartyState.currentOwner, 28);
-  Battle_WaitMode0(16);
+  FieldEvent_WaitFrames(16);
   frame = 0;
 step:
   if (frame == 5)

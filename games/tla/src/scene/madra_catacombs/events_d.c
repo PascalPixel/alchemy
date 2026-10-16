@@ -30,8 +30,8 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
-void Battle_WaitMode0(s32 frames);
-void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void FieldEvent_WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -120,7 +120,7 @@ static __inline__ void Cue(s32 cue) {
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Motion_CamBounds(a, b, c, d);
+  Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 void Func_0200072c(void) {
@@ -142,7 +142,7 @@ void Func_020007a0(void) {
     Func_020011ac(1);
     Cue(161);
     Map_CopyCells(72, 63, 36, 38, 1, 2);
-    Battle_WaitMode0(40);
+    FieldEvent_WaitFrames(40);
     Cue(188);
     Map_CopyCells(71, 66, 97, 39, 2, 2);
     Wait(2);

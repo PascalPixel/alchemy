@@ -724,7 +724,7 @@ Func_020015d0:
 	ldr r0, [r6]
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	ldr r0, [r6]
 	bl Object_GetById
 	adds r0, #90
@@ -758,7 +758,7 @@ Func_020015d0:
 	movs r0, #20
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #1
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #20
 	bl Object_GetById
 	adds r0, #90
@@ -779,7 +779,7 @@ Func_020015d0:
 	lsls r0, r0, #9
 	bl Func_02004444
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r2, #230
 	movs r0, #1
 	movs r1, #1
@@ -791,11 +791,11 @@ Func_020015d0:
 	movs r0, #127
 	bl Func_0200463c
 	movs r0, #30
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #146
 	bl Func_0200463c
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #6
 	movs r2, #40
 	ldr r0, [r6]

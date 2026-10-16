@@ -16,7 +16,7 @@ struct LohoPicture {
 
 extern const struct LohoPicture gData_02001f14;
 
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
@@ -88,7 +88,7 @@ loop:
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x4000);
   Offset_(gPartyState.currentOwner, 0, -4);
   Func_02001448(123);
-  Battle_WaitMode0(6);
+  FieldEvent_WaitFrames(6);
   Func_020013d0(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

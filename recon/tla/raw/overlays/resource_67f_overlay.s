@@ -1841,7 +1841,7 @@ Func_020012dc:
 	str r0, [r5, #12]
 	ldr r0, [r7]
 	movs r1, #0
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 .L_020093ca:
 	movs r0, #0
 	add sp, #8

@@ -6,7 +6,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void Func_020032a8();
 void GameFlag_SetBit();
 void ObjectMotion_ArmCallback();
@@ -36,7 +36,7 @@ void Func_0200008c(void) {
         0x20000, 0x10000);
   Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
         *(s32 *)((u8 *)v5 + 0), 136, 0x1e8);
-  Call1((void (*)())Battle_WaitMode0, 10);
+  Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call3((void (*)())ObjectMotion_ResetAndSetPosition, 15, 120, 0x1d8);
   Call3((void (*)())ObjectMotion_SetPositionAndCommit, 14, 136, 0x1db);
   object1 = Object_GetById(15);
@@ -47,7 +47,7 @@ void Func_0200008c(void) {
   Call2((void (*)())Object_SetModeById, *(s32 *)((u8 *)v5 + 0), 1);
   Call3((void (*)())ObjectMotion_ArmCallback, *(s32 *)((u8 *)v5 + 0), 0xc000,
         0);
-  Call1((void (*)())Battle_WaitMode0, 20);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 15);
   Call1((void (*)())Func_020032a8, 159);
   return;
@@ -58,7 +58,7 @@ void Func_02000128(s32 arg0) {
   return;
 }
 
-void Battle_WaitMode0();
+void FieldEvent_WaitFrames();
 void Field_BeginPaletteTransition();
 void Func_02003130();
 void Func_02003138();
@@ -91,7 +91,7 @@ void Func_0200013c(s32 id) {
   Func_02003278();
   Call2((void (*)())Func_02003290, (s32)Object_GetById(id), 2);
   Call1((void (*)())Func_020032a8, 201);
-  Call1((void (*)())Battle_WaitMode0, 30);
+  Call1((void (*)())FieldEvent_WaitFrames, 30);
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
@@ -101,24 +101,24 @@ void Func_0200013c(s32 id) {
      * the barrier). */
     __asm__ volatile("" : "+r"(y));
     object->y = y + 0x3333;
-    Call1((void (*)())Battle_WaitMode0, 1);
+    Call1((void (*)())FieldEvent_WaitFrames, 1);
   }
-  Call1((void (*)())Battle_WaitMode0, 70);
+  Call1((void (*)())FieldEvent_WaitFrames, 70);
   Call2((void (*)())Func_02003290, (s32)Object_GetById(id), 0);
   Func_02003288();
   Func_02003280();
   Call1((void (*)())Field_BeginPaletteTransition, 8);
   *flags = 3;
   object->gravity = 0x8000;
-  Call1((void (*)())Battle_WaitMode0, 5);
+  Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call1((void (*)())Func_020032a8, 132);
   if (Value1((s32 (*)())GameFlag_Test, 0x8ae) == 0) {
     Call1((void (*)())GameFlag_SetBit, 0x8ae);
-    Call1((void (*)())Battle_WaitMode0, 30);
+    Call1((void (*)())FieldEvent_WaitFrames, 30);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0x3000, 0);
-    Call1((void (*)())Battle_WaitMode0, 30);
+    Call1((void (*)())FieldEvent_WaitFrames, 30);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
-    Call1((void (*)())Battle_WaitMode0, 10);
+    Call1((void (*)())FieldEvent_WaitFrames, 10);
     Call3((void (*)())Func_020031d8, 10, 0, 10);
     Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xafff, 0);
   }

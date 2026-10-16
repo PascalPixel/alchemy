@@ -12,7 +12,7 @@ struct Cell {
 };
 
 struct FieldActor *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_02001b38(void);
 void Func_020021a8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020022c8(s32 value);
@@ -25,5 +25,5 @@ void Func_02001bc0(struct Cell *cell) {
   Func_02001b38();
   Func_020022c8(161);
   Func_020021a8(cell->x, cell->z + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

@@ -23,5 +23,5 @@ void Func_02003bfc(struct MarsStarCell *cell) {
   Func_02003b74();
   Func_0200446c(161);
   Func_02004234(cell->column, cell->row + 1, 1, 1, x, z);
-  Battle_WaitMode0(12);
+  FieldEvent_WaitFrames(12);
 }

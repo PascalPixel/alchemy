@@ -17,7 +17,7 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_02004e20(void);
-void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02004cb0(struct FieldActor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
@@ -43,10 +43,10 @@ void Func_020028ac(void) {
   Func_02004e90(0);
   Call3((void (*)())Func_02004d10, 0x20000, 0x10000, 0x10000);
   Func_02004f30(141);
-  Battle_WaitMode0(30);
-  Motion_CamBounds(0x780000, -1, 0x1580000, 1);
+  FieldEvent_WaitFrames(30);
+  Camera_MoveWithinMapBounds(0x780000, -1, 0x1580000, 1);
   Func_02004e20();
-  Battle_WaitMode0(30);
+  FieldEvent_WaitFrames(30);
   Func_02004f30(0x22d);
   {
     register u16 alpha __asm__("r3") =
@@ -65,13 +65,13 @@ void Func_020028ac(void) {
   i = 0;
   do {
     other->y -= 0x10000;
-    Battle_WaitMode0(5);
+    FieldEvent_WaitFrames(5);
     i++;
   } while (i != 32);
   Func_02004f30(0x22a);
   Func_02004c98(other, 4);
   Func_02004cb0(actor);
-  Battle_WaitMode0(1);
+  FieldEvent_WaitFrames(1);
   {
     register u16 off __asm__("r3") =
         0; /* FAKEMATCH: the zero pinned to r3 in a one-pass block (differ 4 as

@@ -29,7 +29,7 @@ void Func_020000d8(void) {
     object->gravity = 0x8000;
     Object_SetModeById(10, 3);
     ObjectMotion_OffsetPositionAndResetMotion(10, 0, 8);
-    Battle_WaitMode0(22);
+    FieldEvent_WaitFrames(22);
     Func_02003ffc(240);
     Object_SetModeById(10, 8);
     object->priorityFlags |= 2;

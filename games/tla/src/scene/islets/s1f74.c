@@ -24,7 +24,7 @@ void Func_02001f74(void) {
   object->motionFlags = 3;
   ObjectMotion_SetActionVariant(10, 2);
   ObjectMotion_SetAngleToward(10, gPartyState.currentOwner, 0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   ObjectMotion_Launch(10, 4, 0);
   ObjectMotion_SetPositionAndCommit(10, 120, 312);
   Object_SetModeById(10, 5);

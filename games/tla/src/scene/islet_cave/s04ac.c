@@ -4,7 +4,7 @@
 #include "event_work.h"
 
 void WaitFrames(s32 frames);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void Func_020000f4(void);
 void Func_02000158(void);
 void Func_02000178(void);
@@ -45,7 +45,7 @@ void Func_02000508(void) {
   do {
   } while (0);
   gPartyState.unk2c2 = 1;
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_0200129c(gPartyState.currentOwner, 232 << 16, 136 << 16);
   Func_020004ac();
 }
@@ -59,7 +59,7 @@ void Func_02000544(void) {
   do {
   } while (0);
   gPartyState.unk2c2 = 1;
-  Battle_WaitMode0(40);
+  FieldEvent_WaitFrames(40);
   Func_0200129c(gPartyState.currentOwner, 240 << 16, 480 << 16);
   Func_020004ac();
 }

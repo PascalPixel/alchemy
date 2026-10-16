@@ -42,8 +42,8 @@
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Event_SetDestination, 1
-	.set import.BattleFx_SetWeightedResult, 1
-	.set import.BattleFx_SetPhaseRequest, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
+	.set import.Field_RequestDjinnBattle, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_MapObjectSetPosition, 1

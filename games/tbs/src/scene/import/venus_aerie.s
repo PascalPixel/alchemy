@@ -79,7 +79,7 @@
 	.set import.Engine_EventGetViewCenter, 1
 	.set import.Event_SetDestination, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetWeightedResult, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Event_SetDefeatDestination, 1
 	.set import.Engine_ColorBufferApplyTarget, 1

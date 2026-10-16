@@ -344,7 +344,7 @@ static void StagedActor_StepDownUntilClamp(s32 index) {
   }
 }
 
-static void FieldScene_RunPrimarySequence(void) {
+UNUSED static void FieldScene_RunPrimarySequence(void) {
 
   struct FieldActor *rec;
   s32 flag;

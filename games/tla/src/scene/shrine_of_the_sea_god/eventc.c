@@ -110,7 +110,7 @@ void Func_0200279c(void) {
 
 void Func_020027d4(void) {
   Object_LinkObjectAndSetCallback(14, gPartyState.currentOwner);
-  Battle_WaitMode0(5);
+  FieldEvent_WaitFrames(5);
   Func_020039e0();
 }
 

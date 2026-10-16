@@ -146,10 +146,10 @@ Unit_LevelUpTo:
 	.thumb_func
 Item_AdjustCounter:
 	overlay_veneer Item_AdjustCounterFar
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:
@@ -201,7 +201,7 @@ Func_02000eb4:
 	.global Func_02000ebc
 	.thumb_func
 Func_02000ebc:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_02000ec4
 	.thumb_func
 Func_02000ec4:

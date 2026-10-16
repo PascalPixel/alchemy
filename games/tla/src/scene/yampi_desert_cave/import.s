@@ -88,10 +88,10 @@ ObjectDispatch_SetSingleChildFlags:
 	.thumb_func
 Func_02001860:
 	overlay_veneer Func_08038210
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001870
 	.thumb_func
 Func_02001870:
@@ -151,7 +151,7 @@ Func_020018d8:
 	.global Func_020018e0
 	.thumb_func
 Func_020018e0:
-	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Field_RequestBattleFromEncounterTableFar
 	.global Func_020018e8
 	.thumb_func
 Func_020018e8:

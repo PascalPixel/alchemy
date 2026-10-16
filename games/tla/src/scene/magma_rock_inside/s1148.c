@@ -24,13 +24,13 @@ void Func_02001148(void) {
 
   Func_02004d40();
   Func_02004e90(0);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   object = work->target;
   object->update = NULL;
   Object_SetPartAttribute(object, 7);
-  Battle_WaitMode0(3);
+  FieldEvent_WaitFrames(3);
   Object_SetPartAttribute(work->target, 0);
-  Battle_WaitMode0(1);
+  FieldEvent_WaitFrames(1);
   Func_02000ed0(work->target);
   Func_02004d48();
 }

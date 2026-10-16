@@ -7,7 +7,7 @@ void Func_02001bec(void) {
   Func_020041b8(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Object_SetModeById(gPartyState.currentOwner, 28);
   object = Func_02001b70();
   PartyInventory_GiveItem(209, 0);

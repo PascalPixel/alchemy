@@ -161,7 +161,7 @@ static void DebugMenu_BrowseWarriorItemShopMessages(void) {
 static void DebugMenu_RunMessageTest(void) {
   Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Engine_EventSetMessage(MSGNO(MsgValeComeOnHurry));
-  BattleEv_RunWait(-1, 0);
+  FieldEvent_ShowMessageAndWait(-1, 0);
 }
 #endif
 
@@ -171,7 +171,7 @@ static void DebugMenu_RunPresetShop(void) {
 }
 
 // UNUSED: the original empty debug callback.
-static void DebugMenu_NoOp(void) {}
+UNUSED static void DebugMenu_NoOp(void) {}
 
 // Opens the shop inventory selector and discards its selected owner and slot.
 static void DebugMenu_TestItemSelection(void) {

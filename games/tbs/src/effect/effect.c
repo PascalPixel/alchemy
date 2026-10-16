@@ -19771,7 +19771,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   // Start a mote in the first free particle slot from 0 to 31.
-  void ParticleStreams_SpawnMote(s32 x, s32 y) {
+  UNUSED void ParticleStreams_SpawnMote(s32 x, s32 y) {
     s32 i;
 
     for (i = 0; i != 32; i++) {

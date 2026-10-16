@@ -26,7 +26,7 @@ struct MadraPlacement {
 extern s32 gData_02003308[];
 
 struct ObjectRuntime *Object_GetById(s32 id);
-void Battle_WaitMode0(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -64,7 +64,7 @@ next:
   Object_GetById(gPartyState.currentOwner)->motionFlags = 0;
   Object_SetModeById(gPartyState.currentOwner, 2);
   ObjectMotion_CenterOnColumn(gPartyState.currentOwner, 2, -8);
-  Battle_WaitMode0(10);
+  FieldEvent_WaitFrames(10);
   Func_02002c30(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

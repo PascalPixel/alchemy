@@ -28,12 +28,12 @@ void Func_02001e48();
 void Func_02001ed0();
 void ObjectDispatch_SetSingleChildFlags();
 void WaitFrames();
-void Motion_CamBounds();
+void Camera_MoveWithinMapBounds();
 struct FieldActor *Func_02001ea8();
 void Func_02001dd8();
 void Func_02001f08();
 void Func_02001de0();
-void Object_AttachWorkTargetToObject();
+void Camera_FollowActor();
 void Func_02001e50();
 
 // differ 8: native rebuilds the buffer address (mov r7, sp) inside each pass

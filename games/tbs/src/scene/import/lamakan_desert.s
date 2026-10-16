@@ -48,7 +48,7 @@
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.BattleFx_SetWeightedResult, 1
+	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Event_SetNextDestination, 1
 	.set import.Engine_DisplayScrollStartHBlankDma, 1
 	.set import.DisplayScroll_DisarmHBlankDma, 1

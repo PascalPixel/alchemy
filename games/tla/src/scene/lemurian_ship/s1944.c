@@ -10,11 +10,11 @@ void Func_02001944(s32 actor, s32 id) {
   WaitFrames(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002de0(103);
   ObjectMotion_EnableActionAndSetCallback(actor, gData_02002e30);
   Object_SetActionCallbackAndRefreshById(id, gData_02002e6c);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   Func_02002c70();
 }
 
@@ -24,7 +24,7 @@ void Func_020019ac(void) {
     Func_02002da8(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Battle_WaitMode0(20);
+    FieldEvent_WaitFrames(20);
     Func_02001a04();
     Func_02002c70();
   }
@@ -49,7 +49,7 @@ void Func_02001a04(void) {
   LemurianShip_ObjSpeed(9, 0xcccc, 0x6666);
   ObjectMotion_Launch(9, 6, 0);
   LemurianShip_ObjCommit(9, 0x340, 88);
-  Battle_WaitMode0(20);
+  FieldEvent_WaitFrames(20);
   LemurianShip_ObjSpeed(9, 0x19999, 0xcccc);
   ObjectMotion_SetActionVariant(9, 3);
   LemurianShip_ObjCommit(9, 0x338, 72);

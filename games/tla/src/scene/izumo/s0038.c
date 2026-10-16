@@ -22,19 +22,19 @@ void Func_02000048(void) {
     if (!Flag_IsSet(0x924)) {
       Func_02000d00();
       Func_02000dd0(0);
-      Object_AttachWorkTargetToObject(22, 1);
+      Camera_FollowActor(22, 1);
       Func_02000da0();
       Func_02000d88(22, 257, 0);
-      Battle_WaitMode0(60);
+      FieldEvent_WaitFrames(60);
       ObjectMotion_ArmCallback(22, 0x8000, 0);
-      Battle_WaitMode0(60);
+      FieldEvent_WaitFrames(60);
       Func_02000d88(22, 256, 0);
-      Battle_WaitMode0(60);
+      FieldEvent_WaitFrames(60);
       Func_02000d60(MsgTheMisalignedStone);
       Func_02000d70(22, 0);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02000d88(22, 262, 0);
-      Battle_WaitMode0(30);
+      FieldEvent_WaitFrames(30);
       Func_02000d70(22, 0);
       ObjectMotion_ArmCallback(22, 0x4000, 0);
       Func_02000d08();

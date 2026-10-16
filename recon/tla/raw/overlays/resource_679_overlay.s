@@ -883,7 +883,7 @@ Func_020007a4:
 	lsls r0, r0, #17
 	negs r1, r1
 	lsls r2, r2, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r1, #128
 	lsls r1, r1, #1
 	movs r2, #20
@@ -897,7 +897,7 @@ Func_020007a4:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02001d8c
 	movs r0, #236
 	movs r1, #1
@@ -906,7 +906,7 @@ Func_020007a4:
 	negs r1, r1
 	lsls r2, r2, #17
 	movs r3, #1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r0, #77
 	bl Func_02001d94
 	pop {r5, pc}

@@ -388,7 +388,7 @@ Func_02000688:
 	lsls r2, r2, #16
 	movs r3, #1
 	lsls r0, r0, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02003ac8
 	movs r0, #244
 	bl Func_02003b48
@@ -755,7 +755,7 @@ Func_02000994:
 	negs r1, r1
 	movs r3, #0
 	negs r0, r0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r0, [r5]
 	bl Object_GetById
 	movs r3, #0
@@ -1110,7 +1110,7 @@ Func_02000ce8:
 	negs r1, r1
 	negs r2, r2
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r0, #172
 	movs r1, #1
 	movs r2, #248
@@ -1118,7 +1118,7 @@ Func_02000ce8:
 	negs r1, r1
 	lsls r2, r2, #16
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r3, #19
 	movs r2, #6
 	str r3, [sp, #0]
@@ -1257,7 +1257,7 @@ Func_02000e38:
 	negs r1, r1
 	negs r2, r2
 	movs r3, #0
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r0, #172
 	movs r1, #1
 	movs r2, #248
@@ -1265,7 +1265,7 @@ Func_02000e38:
 	negs r1, r1
 	lsls r2, r2, #16
 	movs r3, #1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r3, #19
 	movs r2, #6
 	str r3, [sp, #0]
@@ -1706,7 +1706,7 @@ Func_02001d24:
 	lsls r0, r0, #17
 	negs r1, r1
 	lsls r2, r2, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	ldr r1, .L_0200a160
 	movs r2, #133
 	lsls r2, r2, #2
@@ -1798,7 +1798,7 @@ Func_02001d24:
 	lsls r0, r0, #16
 	lsls r1, r1, #15
 	lsls r2, r2, #16
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r2, #204
 	lsls r2, r2, #8
 	movs r0, #13
@@ -1810,7 +1810,7 @@ Func_02001d24:
 	movs r0, #13
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r0, #13
 	movs r1, #0
 	bl Func_02003a80
@@ -1826,7 +1826,7 @@ Func_02001d24:
 	lsls r2, r2, #16
 	negs r1, r1
 	lsls r0, r0, #17
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	movs r0, #13
 	bl Object_GetById
 	adds r5, r0, #0
@@ -2044,7 +2044,7 @@ Func_02001d24:
 	movs r3, #1
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	bl Func_02003ac8
 	movs r0, #12
 	movs r1, #0
@@ -2061,7 +2061,7 @@ Func_02001d24:
 	lsls r2, r2, #16
 	lsls r0, r0, #17
 	negs r1, r1
-	bl Motion_CamBounds
+	bl Camera_MoveWithinMapBounds
 	mov r1, r9
 	ldr r0, [r1]
 	movs r1, #12
@@ -2280,12 +2280,12 @@ Func_02001d24:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r1, r5, #0
 	movs r0, #13
 	bl Object_SetActionCallbackAndRefreshById
 	movs r0, #40
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	mov r2, r9
 	ldr r0, [r2]
 	bl ObjectMotion_EnableActionAndResetMotion

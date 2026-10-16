@@ -75,7 +75,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered) {
 
 static void EV15_SCRIPT(void) { Djinn_JoinParty(15, 0, 6); }
 
-static void Resource3b4_EmptyHookA(void) {}
+UNUSED static void Resource3b4_EmptyHookA(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
@@ -560,7 +560,7 @@ static void EV53_TOUCH_2(void) { SceneActor_TrackOriginColumnForSlot(0); }
 
 static void EV54_TOUCH_2(void) { SceneActor_TrackOriginColumnForSlot(1); }
 
-static void FieldScene_RunLateIndexedStep2(void) {
+UNUSED static void FieldScene_RunLateIndexedStep2(void) {
   SceneActor_TrackOriginColumnForSlot(2);
 }
 
@@ -709,7 +709,7 @@ static void EV60_SCRIPT(void) {
   }
 }
 
-static void FieldScene_NoOpCallback(void) {}
+UNUSED static void FieldScene_NoOpCallback(void) {}
 
 static void EV13_PSYNERGY(void) {
   struct FieldActor *slot = Object_GetById(13);
@@ -934,7 +934,7 @@ static void EV12_PSYNERGY_3(void) {
   ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-static void FieldScene_RunThreeStepSequence(void) {
+UNUSED static void FieldScene_RunThreeStepSequence(void) {
   SceneState_ApplyFourRectsAt48_55();
   StagedActor_AdvancePair();
   EV12_PSYNERGY_3();
@@ -993,7 +993,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-static void CrossbonePlatform_UpdateItemIcons(void) {
+UNUSED static void CrossbonePlatform_UpdateItemIcons(void) {
   if (++gCrossbonePlatform_IconTimer > 16) {
     gCrossbonePlatform_IconTimer = 0;
   }

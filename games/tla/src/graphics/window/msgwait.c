@@ -34,8 +34,8 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
    * block or a bare barrier after the load moves the stack adjustment and the
    * argument copies up instead (differ 6). */
   asm("" : "+l"(work) : : "r2");
-  work->result[0] = 0;
-  work->result[1] = 0;
+  work->speakerVoiceSound = 0;
+  work->speakerVoiceCountdown = 0;
   entry = UiText_BuildRenderEntries(argument, 1);
   if (work->entries[entry] == 0)
     return 0;

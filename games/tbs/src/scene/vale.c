@@ -585,7 +585,7 @@ static void EV53_TOUCH(void) {
   }
 }
 
-static void HouseScene_RunRepairMorning(void) {
+UNUSED static void HouseScene_RunRepairMorning(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   u8 leaderMotionFlags;
@@ -1397,7 +1397,7 @@ static void FieldScene_RunPrimaryActorSequence(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunCompanionActorSequence(void) {
+UNUSED static void FieldScene_RunCompanionActorSequence(void) {
   struct FieldActor *actor_data;
   const s32 *shared_data;
 

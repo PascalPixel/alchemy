@@ -848,7 +848,8 @@ static void ValeBabi_ShowMythrilBag(void) {
 }
 
 // Flash between two palettes and emit a paired effect every sixteen frames.
-static void ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
+UNUSED static void
+ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, 7);
   } else {
@@ -938,12 +939,12 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
 #include "common/effect_psynergy.h"
 
 // Apply the cycling-palette update to actor 8.
-static void ValeBabi_CyclePaletteWithParticles(void) {
+UNUSED static void ValeBabi_CyclePaletteWithParticles(void) {
   ValeBabi_CyclePaletteAndSpawnPair((union FieldObject *)Object_GetById(8));
 }
 
 // Apply the cycling-palette update to actor 17.
-static void ValeBabi_CyclePaletteWithoutParticles(void) {
+UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
   ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
 }
 

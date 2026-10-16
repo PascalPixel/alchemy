@@ -11,7 +11,7 @@ s32 Object_GetById();
 s32 Func_0200510c();
 s32 Func_020059f4();
 s32 Func_0200579c();
-s32 Battle_WaitMode0();
+s32 FieldEvent_WaitFrames();
 extern u8 gPartyState[];
 
 void Func_02005194(s32 a0) {
@@ -25,5 +25,5 @@ void Func_02005194(s32 a0) {
          (((0x40 & FIELD_AT(a0, u16, 6)) << 16) >> 16)),
         ((FIELD_AT(t0, s32, 16) >> 20) |
          (((0x40 & FIELD_AT(a0, u16, 8)) << 16) >> 16)));
-  Call1(Battle_WaitMode0, 0xc);
+  Call1(FieldEvent_WaitFrames, 0xc);
 }

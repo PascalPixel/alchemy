@@ -110,10 +110,10 @@ PartyInventory_CountFreeSlots:
 	.thumb_func
 Func_02001370:
 	overlay_veneer Func_080ad2f8
-	.global Battle_WaitMode0
+	.global FieldEvent_WaitFrames
 	.thumb_func
-Battle_WaitMode0:
-	overlay_veneer Battle_WaitMode0Far
+FieldEvent_WaitFrames:
+	overlay_veneer FieldEvent_WaitFramesFar
 	.global Func_02001380
 	.thumb_func
 Func_02001380:

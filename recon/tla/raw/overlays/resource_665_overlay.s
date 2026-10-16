@@ -32,7 +32,7 @@ Func_0200066c:
 	cmp r0, #0
 	beq .L_020086c2
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r5, #1
 	bl Func_02001c74
 	adds r0, r6, #0
@@ -45,7 +45,7 @@ Func_0200066c:
 	adds r0, #185
 	bl GameFlag_SetBit
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r5, #2
 	bl Func_02001c74
 	adds r0, r6, #0
@@ -66,7 +66,7 @@ Func_0200066c:
 	ldr r0, [r5]
 	bl ObjectMotion_ArmCallback
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #128
 	movs r2, #128
 	adds r0, r6, #0
@@ -89,12 +89,12 @@ Func_0200066c:
 	adds r0, r6, #0
 	bl ObjectMotion_ArmCallback
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	movs r1, #3
 	adds r0, r6, #0
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl FieldEvent_WaitFrames
 	adds r0, r6, #0
 	movs r1, #0
 	bl Func_02001c8c

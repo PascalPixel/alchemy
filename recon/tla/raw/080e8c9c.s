@@ -48,7 +48,7 @@ Func_080e8c9c:
 	str r3, [r2]
 	movs r3, #24
 	ldrsh r0, [r4, r3]
-	bl Object_AttachWorkTargetToObject
+	bl Camera_FollowActor
 .L_080e8cf8:
 	pop {r5, pc}
 	.2byte 0x0000

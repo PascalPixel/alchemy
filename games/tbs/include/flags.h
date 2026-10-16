@@ -46,4 +46,10 @@
 #define FLAG_SCENE_TEMP_0E 0x20e
 #define FLAG_SCENE_TEMP_0F 0x20f
 
+#define FLAG_SCENE_TEMP_10 0x210 // Tret: lower middle east landing
+#define FLAG_SCENE_TEMP_11 0x211 // Tret: second floor to west landing
+#define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
+#define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
+#define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+
 #endif

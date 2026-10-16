@@ -1,3 +1,6 @@
+// Vault's cave puzzles: movable switches, Frost targets, falling objects
+// and the rumbling mechanism restored when the party returns.
+
 #include "game_state.h"
 #include "engine_call.h"
 #include "scene_ids.h"
@@ -24,12 +27,13 @@
 #include "call.h"
 #include "object_runtime.h"
 #include "ability_ids.h"
+#include "flags.h"
 #include "objcmd.h"
 
 // Forward declarations.
-static void SceneState_ApplyThreeRects(void);
-static void VaultCave_RaiseActorPriorities(void);
-static void VaultCave_EnableGroupAutomaticPriority(void);
+static void VaultCave_ApplySouthernSwitchCells(void);
+static void VaultCave_UseUnderfootFrostPriorities(void);
+static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
 s32 Math_RemainderUnsigned();
@@ -42,10 +46,11 @@ struct MapShake {
   s32 scroll;
 };
 
-void QueueIoWriteDelay2(u32 address, s32 value);
+#include "io_write_queue.h"
 
 #define TILE(position) ((position) / 0x100000)
 
+// Selects the cave map's entrance positions and camera bounds.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -61,8 +66,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultCaveEntrancesOther;
 }
 
+// Returns the region boxes used by the cave exits.
 u8 *VaultCave_GetRegions(void) { return (u8 *)gVaultCaveRegions; }
 
+// Selects the current cave map's packed exit destinations.
 const u32 *Scene_GetExits(void) {
   s16 scene = gGameState.scene;
 
@@ -78,6 +85,7 @@ const u32 *Scene_GetExits(void) {
   return gVaultCaveExitsOther;
 }
 
+// Selects the movable blocks, falling objects and Frost targets.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -93,18 +101,37 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVaultCavePlacementsOther;
 }
 
-static s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz) {
-  s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
-  u32 i;
+// Finds a placed actor with collision enabled at the requested map cell.
+static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
+                                                              s32 row) {
+  // UB: scene creation leaves unused actor slots NULL. The plain safe lookup
+  // adds four native bytes in EN; retain the original reads for matching.
+#ifdef UBFIX
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  u32 actorSlot;
 
-  for (i = 8; i <= 65; i++) {
-    s32 *p = slots[i];
+  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
+    struct FieldActor *actor = work->actors[actorSlot];
 
-    if (cx == (p[2] >> 20) && cz == (p[4] >> 20) && *((u8 *)p + 0x59) != 0) {
-      return p;
+    if (actor != NULL && column == (actor->x.fixed >> 20) &&
+        row == (actor->z.fixed >> 20) && actor->collisionFlags != 0) {
+      return actor;
     }
   }
-  return 0;
+#else
+  s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+  u32 actorSlot;
+
+  for (actorSlot = 8; actorSlot <= 65; actorSlot++) {
+    s32 *actorWords = slots[actorSlot];
+
+    if (column == (actorWords[2] >> 20) && row == (actorWords[4] >> 20) &&
+        *((u8 *)actorWords + 0x59) != 0) {
+      return (struct FieldActor *)actorWords;
+    }
+  }
+#endif
+  return NULL;
 }
 
 struct DirectionSteps {
@@ -114,6 +141,7 @@ struct DirectionSteps {
 #define DIRECTION_STEP(heading)                                                \
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 
+// Pushes the faced block one cell unless another actor or terrain blocks it.
 static void VaultCave_PushBlockAhead(void) {
   /* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one
    * word per heading through an array reference, as native; through a plain s32
@@ -124,33 +152,40 @@ static void VaultCave_PushBlockAhead(void) {
   s32 direction = leader->facing >> 12;
   struct FieldActor *block;
   struct FieldActor *beyond;
-  union FieldCoordinate pos[3];
-  s32 i;
-  s32 cx;
-  s32 cz;
+  union FieldCoordinate destination[3];
+  s32 fallingIndex;
+  s32 column;
+  s32 row;
 
-  cx = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
-  cz = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
-  block = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
-  if (block->collisionFlags == 0 || block == 0) {
+  column = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
+  row = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
+  block = VaultCave_FindCollidableActorAtCell(column, row);
+  // UB: the lookup may return NULL. The plain safe guard moves the null
+  // branch ahead of the byte load in EN, so matching keeps its original order.
+#ifdef UBFIX
+  if (block == NULL || block->collisionFlags == 0) {
+#else
+  if (block->collisionFlags == 0 || block == NULL) {
+#endif
     return;
   }
-  for (i = 0; i <= 3; i++) {
-    if (block == Object_GetById(i + 11)) {
+  for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
+    if (block == Object_GetById(fallingIndex + 11)) {
       return;
     }
   }
-  cx = (block->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
-  cz = (block->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
-  beyond = (struct FieldActor *)SceneData_FindActiveSlotAtCell(cx, cz);
+  column = (block->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
+  row = (block->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
+  beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != 0 && (beyond->collisionFlags & 1)) {
     return;
   }
   block->terrainId = 2;
-  pos[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
-  pos[1].fixed = block->y.fixed;
-  pos[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
-  if (FieldObject_CheckMovementCollision(block, pos) > 0) {
+  destination[0].fixed =
+      block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+  destination[1].fixed = block->y.fixed;
+  destination[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
+  if (FieldObject_CheckMovementCollision(block, destination) > 0) {
     return;
   }
   Object_SetMode(leader, 8);
@@ -158,14 +193,16 @@ static void VaultCave_PushBlockAhead(void) {
   Engine_AudioPlayCue(238);
   block->speed = 0x3333;
   block->acceleration = 0x3333;
-  Engine_ObjectSetPosition(block, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+  Engine_ObjectSetPosition(block, destination[0].fixed, destination[1].fixed,
+                           destination[2].fixed);
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
-  Engine_ObjectSetPosition(leader, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+  Engine_ObjectSetPosition(leader, destination[0].fixed, destination[1].fixed,
+                           destination[2].fixed);
   Engine_ObjectCommitPosition(block);
   Engine_AudioPlayCue(288);
-  block->x.fixed = pos[0].fixed;
-  block->z.fixed = pos[2].fixed;
+  block->x.fixed = destination[0].fixed;
+  block->z.fixed = destination[2].fixed;
   block->velocityX = 0;
   block->velocityZ = 0;
   leader->velocityX = 0;
@@ -175,12 +212,15 @@ static void VaultCave_PushBlockAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-static void EV22_PSYNERGY(void) { Engine_GameFlagSet(0x300); }
+// Remembers Whirlwind use on the target in the second cave map.
+static void VaultCave_RecordWhirlwindUse(void) { Engine_GameFlagSet(0x300); }
 
-static void EV99_SEARCH(void) {
+// Shows the locked-door message without starting another event.
+static void VaultCave_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
+// Selects the cave map's searches, movement checks and Psynergy callbacks.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -196,40 +236,43 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultCaveEventsOther;
 }
 
-static s32 IsActor9AtTile15x54(void) {
-  struct FieldActor *actor = Object_GetById(9);
-  s32 z = actor->z.fixed;
-  s32 x;
-  s32 z_tile;
-  s32 x_tile;
+// Tests the southern block's cell, rounding fixed coordinates toward zero.
+static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
+  struct FieldActor *block = Object_GetById(9);
+  s32 fixedZ = block->z.fixed;
+  s32 fixedX;
+  s32 row;
+  s32 column;
 
-  if (z < 0) {
-    z += 0x000FFFFF;
+  if (fixedZ < 0) {
+    fixedZ += 0x000FFFFF;
   }
-  x = actor->x.fixed;
-  z_tile = z >> 20;
-  if (x < 0) {
-    x += 0x000FFFFF;
+  fixedX = block->x.fixed;
+  row = fixedZ >> 20;
+  if (fixedX < 0) {
+    fixedX += 0x000FFFFF;
   }
-  x_tile = x >> 20;
-  if (x_tile == 15 && z_tile == 54) {
+  column = fixedX >> 20;
+  if (column == 15 && row == 54) {
     return 1;
   }
   return 0;
 }
 
-static void EV60_SCRIPT(void) {
+// Checks the southern switch after an ordinary block push.
+static void VaultCave_CheckSouthernSwitchAfterPush(void) {
   if (GameFlag_IsSet(0x9a9) == 0) {
     VaultCave_PushBlockAhead();
-    if (IsActor9AtTile15x54() != 0) {
+    if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
       GameFlag_Set(0x9a9);
       Event_PlayCue(80);
-      SceneState_ApplyThreeRects();
+      VaultCave_ApplySouthernSwitchCells();
     }
   }
 }
 
-static void SceneState_ApplyThreeRects(void) {
+// Restores the map cells and attributes of the completed southern switch.
+static void VaultCave_ApplySouthernSwitchCells(void) {
 
   {
 
@@ -239,19 +282,22 @@ static void SceneState_ApplyThreeRects(void) {
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-static void EV09_PSYNERGY_2(void) {
+// Checks the same southern switch after Move finishes.
+static void VaultCave_CheckSouthernSwitchAfterMove(void) {
   if (GameFlag_IsSet(0x9a9) == 0) {
-    if (IsActor9AtTile15x54() != 0) {
+    if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
       GameFlag_Set(0x9a9);
       Event_PlayCue(80);
-      SceneState_ApplyThreeRects();
+      VaultCave_ApplySouthernSwitchCells();
     }
   }
 }
 
-static void FieldScene_NoOp(void) {}
+// Unused empty function retained from this overlay.
+static void UNUSED VaultCave_UnusedNoOp(void) {}
 
-static void SceneState_ApplyThreeRectsRows9And10(void) {
+// Restores the map cells and attributes of the completed northern switch.
+static void VaultCave_ApplyNorthernSwitchCells(void) {
 
   {
 
@@ -261,183 +307,199 @@ static void SceneState_ApplyThreeRectsRows9And10(void) {
   Map_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-static s32 SceneActor_IsActor10AtTile16x12(void) {
-  struct FieldActor *p = Object_GetById(10);
-  s32 z = p->z.fixed;
-  s32 x;
-  s32 cz;
-  s32 cx;
+// Tests the northern block's cell with the same signed-coordinate rounding.
+static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
+  struct FieldActor *block = Object_GetById(10);
+  s32 fixedZ = block->z.fixed;
+  s32 fixedX;
+  s32 row;
+  s32 column;
 
-  if (z < 0) {
-    z += 0x000FFFFF;
+  if (fixedZ < 0) {
+    fixedZ += 0x000FFFFF;
   }
-  x = p->x.fixed;
-  cz = z >> 20;
-  if (x < 0) {
-    x += 0x000FFFFF;
+  fixedX = block->x.fixed;
+  row = fixedZ >> 20;
+  if (fixedX < 0) {
+    fixedX += 0x000FFFFF;
   }
-  cx = x >> 20;
-  if (cx == 16 && cz == 12) {
+  column = fixedX >> 20;
+  if (column == 16 && row == 12) {
     return 1;
   }
   return 0;
 }
 
-static void EV50_SCRIPT(void) {
+// Pushes the block and checks whether the northern switch can be completed.
+static void VaultCave_CheckNorthernSwitchAfterPush(void) {
   VaultCave_PushBlockAhead();
   if (GameFlag_IsSet(0x9aa) == 0) {
-    if (SceneActor_IsActor10AtTile16x12() != 0) {
-      if (GameFlag_IsSet(0x207) == 0) {
+    if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
+      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
         Event_PlayCue(80);
-        SceneState_ApplyThreeRectsRows9And10();
+        VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(0x9aa);
       }
     }
   }
 }
 
-static void EV09_PSYNERGY_3(void) {}
+// Leaves this Move target unchanged; the event table still uses the callback.
+static void VaultCave_IgnoreMoveInteraction(void) {}
 
-static void EV10_PSYNERGY(void) {
+// Checks the northern switch after Move, preserving its extra scene-state
+// guard.
+static void VaultCave_CheckNorthernSwitchAfterMove(void) {
   if (GameFlag_IsSet(0x9aa) == 0) {
-    if (SceneActor_IsActor10AtTile16x12() != 0) {
-      if (GameFlag_IsSet(0x207) == 0) {
+    if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
+      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
         Event_PlayCue(80);
-        SceneState_ApplyThreeRectsRows9And10();
+        VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(0x9aa);
       }
     }
   }
 }
 
-static void EV16_PSYNERGY(void) {
-  struct FieldActor *rec = Object_GetById(16);
+// Restores the upper western Frost target and remembers its state.
+static void VaultCave_ApplyWestUpperFrostState(void) {
+  struct FieldActor *target = Object_GetById(16);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
-  if (rec != 0) {
+  if (target != 0) {
 
     Object_GetById(16)->motionFlags = 0;
-    rec->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x200);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
-static void EV17_PSYNERGY(void) {
-  struct FieldActor *rec = Object_GetById(17);
+// Restores the lower western Frost target and remembers its state.
+static void VaultCave_ApplyWestLowerFrostState(void) {
+  struct FieldActor *target = Object_GetById(17);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
-  if (rec != 0) {
+  if (target != 0) {
 
     Object_GetById(17)->motionFlags = 0;
-    rec->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x201);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
-static void EV18_PSYNERGY(void) {
-  struct FieldActor *record = Object_GetById(18);
+// Restores the adjacent inner western Frost target.
+static void VaultCave_ApplyInnerWestLowerFrostState(void) {
+  struct FieldActor *target = Object_GetById(18);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
-  if (record != 0) {
+  if (target != 0) {
 
     Object_GetById(18)->motionFlags = 0;
-    record->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x202);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
 }
 
-static void EV19_PSYNERGY(void) {
-  struct FieldActor *p = Object_GetById(19);
+// Restores the upper eastern Frost target, including its sprite flags.
+static void VaultCave_ApplyEastUpperFrostState(void) {
+  struct FieldActor *target = Object_GetById(19);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
-  if (p != 0) {
-    Engine_ActorSetSpriteFlags(p, 0);
+  if (target != 0) {
+    Engine_ActorSetSpriteFlags(target, 0);
 
     Object_GetById(19)->motionFlags = 0;
-    p->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x203);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
 }
 
-static void EV20_PSYNERGY(void) {
-  struct FieldActor *rec = Object_GetById(20);
+// Restores the lower eastern Frost target, including its sprite flags.
+static void VaultCave_ApplyEastLowerFrostState(void) {
+  struct FieldActor *target = Object_GetById(20);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
-  if (rec != 0) {
-    Engine_ActorSetSpriteFlags(rec, 0);
+  if (target != 0) {
+    Engine_ActorSetSpriteFlags(target, 0);
 
     Object_GetById(20)->motionFlags = 0;
-    rec->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x204);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
 }
 
-static void EV21_PSYNERGY(void) {
-  struct FieldActor *record = Object_GetById(21);
+// Restores the far eastern Frost target, including its sprite flags.
+static void VaultCave_ApplyFarEastFrostState(void) {
+  struct FieldActor *target = Object_GetById(21);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
-  if (record != 0) {
-    Engine_ActorSetSpriteFlags(record, 0);
+  if (target != 0) {
+    Engine_ActorSetSpriteFlags(target, 0);
 
     Object_GetById(21)->motionFlags = 0;
-    record->priorityFlags = 1;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(0x205);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_05);
 }
 
-static void SceneState_DispatchByActorZeroDepth(void) {
-  struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
+// Changes the Frost targets' draw priorities when the leader is above them.
+static void VaultCave_UpdateFrostTargetPriorities(void) {
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (p->y.fixed >= 0x100000) {
-    VaultCave_RaiseActorPriorities();
+  if (leader->y.fixed >= PIXELS(16)) {
+    VaultCave_UseUnderfootFrostPriorities();
   } else {
-    VaultCave_EnableGroupAutomaticPriority();
+    VaultCave_UseAutomaticFrostPriorities();
   }
 }
 
-static void VaultCave_RaiseActorPriorities(void) {
-  s32 i;
-  s32 id;
+// Keeps all six Frost targets beneath the leader's feet.
+static void VaultCave_UseUnderfootFrostPriorities(void) {
+  s32 targetIndex;
+  s32 actorSlot;
 
-  id = 16;
-  for (i = 0; i < 6; i++) {
-    Object_GetById(id)->priorityFlags |= 2;
-    id++;
+  actorSlot = 16;
+  for (targetIndex = 0; targetIndex < 6; targetIndex++) {
+    Object_GetById(actorSlot)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actorSlot++;
   }
 }
 
-static void VaultCave_EnableGroupAutomaticPriority(void) {
-  s32 index = 16;
-  s32 flag = 1;
+// Restores automatic draw priority for the same six targets.
+static void VaultCave_UseAutomaticFrostPriorities(void) {
+  s32 actorSlot = 16;
+  s32 priority = ACTOR_PRIORITY_AUTOMATIC;
   s32 remaining = 5;
 
   do {
-    struct FieldActor *entry = Object_GetById(index);
+    struct FieldActor *target = Object_GetById(actorSlot);
 
     remaining--;
-    entry->priorityFlags = flag;
-    index++;
+    target->priorityFlags = priority;
+    actorSlot++;
   } while (remaining >= 0);
 }
 
+// Shakes the map, advances its scroll and fades the mechanism's final map
+// state.
 static void VaultCave_RunRumble(void) {
   struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
-  s32 frames;
-  s32 eva;
-  s32 evb;
-  s32 top;
+  s32 frame;
+  s32 fadeLevel;
+  s32 lowFadeLevel;
+  s32 upperFadeBits;
 
   Engine_EventBegin();
   if (gFrameCount & 1) {
@@ -450,25 +512,29 @@ static void VaultCave_RunRumble(void) {
   Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Event_PlayCue(163);
-  for (frames = 0x1df; frames >= 0; frames--) {
-    u32 drift = (u32)(Random_Next() << 11) >> 16;
+  // Scroll and shake for 480 frames before the final fade.
+  for (frame = 479; frame >= 0; frame--) {
+    u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
 
-    shake->scroll = (double)shake->scroll - (4718.592 - (double)drift);
+    shake->scroll = (double)shake->scroll - (4718.592 - (double)scrollDrift);
     Engine_EventWait(1);
   }
-  eva = 6;
-  evb = 6;
-  frames = 0;
-  top = eva << 10;
+  // Keep the packed native value written to BLDALPHA.
+  fadeLevel = 6;
+  lowFadeLevel = 6;
+  frame = 0;
+  upperFadeBits = fadeLevel << 10;
   do {
-    QueueIoWriteDelay2(0x4000052, top | (eva << 5) | evb);
+    QueueIoWriteDelay2(0x4000052,
+                       upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
     Engine_EventWait(1);
-    if (frames % 20 == 0) {
-      evb--;
-      eva--;
+    if (frame % 20 == 0) {
+      lowFadeLevel--;
+      fadeLevel--;
     }
-    frames++;
-  } while (frames <= 69);
+    frame++;
+  } while (frame <= 69);
+  // Replace the mechanism's map cells after the fade completes.
   Map_CopyCells(19, 83, 15, 8, 19, 91);
   Event_PlayCue(0x120);
   Engine_MapRedraw();
@@ -476,182 +542,194 @@ static void VaultCave_RunRumble(void) {
   Engine_EventEnd();
 }
 
-static void EV20_SEARCH(void) {
-  s32 v5;
-  s32 v6;
+// Animates the switch once, then runs the rumbling mechanism.
+static void VaultCave_FlipRumbleSwitch(void) {
+  s32 destinationRow;
+  s32 destinationColumn;
 
   if (GameFlag_IsSet(0x9a8) == 0) {
     Engine_MessageShowCentered(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(0x9a8);
-    v5 = 27;
-    v6 = 92;
+    // Animate the switch face before the adjacent mechanism starts.
+    destinationRow = 27;
+    destinationColumn = 92;
     Event_PlayCue(155);
-    Map_CopyCells(107, 27, 1, 1, v6, v5);
+    Map_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
     Engine_EventWait(39);
-    Map_CopyCells(108, 27, 1, 1, v6, v5);
+    Map_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
     Engine_EventWait(50);
-    v6 = 25;
+    destinationColumn = 25;
     Event_PlayCue(156);
-    Map_CopyCells(1, 24, 1, 2, v6, v5);
+    Map_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
     Engine_EventWait(40);
-    Map_CopyCells(2, 24, 1, 2, v6, v5);
+    Map_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
     Engine_EventWait(40);
     VaultCave_RunRumble();
   }
 }
 
-static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subjectActor) {
-  struct FieldActor *subject = Object_GetById(subjectActor);
-  s32 index = 0;
+// Resets a low falling object sharing the subject's cell and reports a hit.
+static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
+  struct FieldActor *subject = Object_GetById(subjectActorId);
+  s32 fallingIndex = 0;
 
   do {
-    struct FieldActor *actor = Object_GetById(index + 11);
+    struct FieldActor *fallingActor = Object_GetById(fallingIndex + 11);
 
-    if ((u32)(actor->y.fixed - 1) <= 0x000ffffe) {
-      s32 actorZ = TILE(actor->z.fixed);
-      s32 actorX = TILE(actor->x.fixed);
-      s32 subjectZ = TILE(subject->z.fixed);
-      s32 subjectX = TILE(subject->x.fixed);
-      s32 zDelta = subjectZ - actorZ;
-      s32 xDelta = subjectX - actorX;
+    if ((u32)(fallingActor->y.fixed - 1) <= 0x000ffffe) {
+      s32 fallingRow = TILE(fallingActor->z.fixed);
+      s32 fallingColumn = TILE(fallingActor->x.fixed);
+      s32 subjectRow = TILE(subject->z.fixed);
+      s32 subjectColumn = TILE(subject->x.fixed);
+      s32 zDelta = subjectRow - fallingRow;
+      s32 xDelta = subjectColumn - fallingColumn;
 
       if (xDelta == 0 && zDelta == 0) {
-        actor->y.fixed = 0x00ff0000;
-        actor->gravity = 0;
-        actor->velocityY = 0;
+        fallingActor->y.fixed = 0x00ff0000;
+        fallingActor->gravity = 0;
+        fallingActor->velocityY = 0;
         return 1;
       }
     }
 
-    index++;
-  } while (index <= 3);
+    fallingIndex++;
+  } while (fallingIndex <= 3);
 
   return 0;
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void) {
-  s32 i;
-  struct FieldActor *rec7;
-  s32 flag;
-  s32 index;
+// Drops four objects on a repeating schedule and handles their landings.
+static void VaultCave_UpdateTimedFallingObjects(void) {
+  s32 fallingIndex;
+  struct FieldActor *fallingActor;
+  s32 paused;
+  s32 scheduleIndex;
 
-  flag = Object_GetById(10)->paused;
-  if (flag == 0) {
+  paused = Object_GetById(10)->paused;
+  if (paused == 0) {
     if (++gVaultCave_ScheduleTimer > 190) {
       gVaultCave_ScheduleTimer = 0;
     }
-    index = gVaultCave_ScheduleIndex;
-    if (gVaultCave_ScheduleFrames[index] == gVaultCave_ScheduleTimer) {
-      rec7 = Actor_Get((index + 11));
-      rec7->gravity = 0xa3d;
+    scheduleIndex = gVaultCave_ScheduleIndex;
+    if (gVaultCave_ScheduleFrames[scheduleIndex] == gVaultCave_ScheduleTimer) {
+      fallingActor = Actor_Get((scheduleIndex + 11));
+      fallingActor->gravity = 0xa3d;
       if (++gVaultCave_ScheduleIndex > 3) {
         gVaultCave_ScheduleIndex = 0;
       }
     }
-    for (i = 0; i <= 3; i++) {
-      rec7 = Actor_Get((i + 11));
-      if (rec7->velocityY >= 0) {
-        if (rec7->y.fixed <= 0xffff) {
-          VaultCave_SpawnPuffs(rec7);
-          rec7->y.fixed = 0xff0000;
-          rec7->gravity = 0;
-          rec7->velocityY = 0;
-          rec7->paused = 0;
+    // Reset objects that have reached the floor and spawn their landing puffs.
+    for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
+      fallingActor = Actor_Get((fallingIndex + 11));
+      if (fallingActor->velocityY >= 0) {
+        if (fallingActor->y.fixed <= 0xffff) {
+          VaultCave_SpawnPuffs(fallingActor);
+          fallingActor->y.fixed = 0xff0000;
+          fallingActor->gravity = 0;
+          fallingActor->velocityY = 0;
+          fallingActor->paused = 0;
           Event_PlayCue(106);
         }
       }
     }
-    if (SceneActor_LiftLowActorOnSubjectTile(10) != 0) {
+    // A falling object landing on either movable block restarts at the top.
+    if (VaultCave_ResetFallingObjectAtActorCell(10) != 0) {
       Engine_ActorSetAnimation(10, 1);
-      if (GameFlag_IsSet(0x207) == 0) {
-        GameFlag_Set(0x207);
+      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
+        GameFlag_Set(FLAG_SCENE_TEMP_07);
         Event_PlayCue(204);
       } else {
         Event_PlayCue(106);
       }
     }
-    if (SceneActor_LiftLowActorOnSubjectTile(9) != 0) {
+    if (VaultCave_ResetFallingObjectAtActorCell(9) != 0) {
       Event_PlayCue(106);
     }
   }
 }
 
-static void FieldScene_RunScene3a7SequenceD(void) {
+// Drops a random object every 64 frames, with reset height set by its Frost
+// target.
+static void VaultCave_UpdateFrostControlledFallingObjects(void) {
 
-  s32 i;
-  struct FieldActor *rec7;
-  s32 record;
-  s32 *selected;
+  s32 fallingIndex;
+  struct FieldActor *fallingActor;
+  s32 stateValue;
+  s32 *selectedIndex;
 
-  rec7 = Object_GetById(10);
-  if (rec7->paused == 0) {
+  fallingActor = Object_GetById(10);
+  if (fallingActor->paused == 0) {
+    // Preserve one random selection per 64 frames.
     if ((++gVaultCave_TickCounter & 63) == 0) {
-      selected = &gVaultCave_TickValue;
-      record = Engine_RandomNext();
-      record = Math_RemainderUnsigned(record, 6);
-      *selected = record;
-      rec7 = Object_GetById((record + 10));
-      rec7->gravity = 0xa3d;
+      selectedIndex = &gVaultCave_TickValue;
+      stateValue = Engine_RandomNext();
+      stateValue = Math_RemainderUnsigned(stateValue, 6);
+      *selectedIndex = stateValue;
+      fallingActor = Object_GetById((stateValue + 10));
+      fallingActor->gravity = 0xa3d;
     }
-    for (i = 0; i <= 5; i++) {
-      rec7 = Object_GetById((i + 10));
-      record = Engine_GameFlagIsSet((i + 0x200));
-      if (record != 0) {
-        if (rec7->velocityY <= 0) {
-          if (rec7->y.fixed > 0x20ffff) {
+    // Each object's paired Frost flag selects its reset height.
+    for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
+      fallingActor = Object_GetById((fallingIndex + 10));
+      stateValue = Engine_GameFlagIsSet((fallingIndex + FLAG_SCENE_TEMP_00));
+      if (stateValue != 0) {
+        if (fallingActor->velocityY <= 0) {
+          if (fallingActor->y.fixed > 0x20ffff) {
             continue;
           }
         }
-        rec7->y.fixed = 0xff0000;
-        rec7->gravity = 0;
-        rec7->velocityY = 0;
+        fallingActor->y.fixed = 0xff0000;
+        fallingActor->gravity = 0;
+        fallingActor->velocityY = 0;
         Engine_AudioPlayCue(106);
       } else {
-        if (rec7->velocityY <= 0) {
-          if (rec7->y.fixed > 0xffff) {
+        if (fallingActor->velocityY <= 0) {
+          if (fallingActor->y.fixed > 0xffff) {
             continue;
           }
         }
-        rec7->gravity = record;
-        rec7->velocityY = record;
-        rec7->y.fixed = 0xff0000;
+        fallingActor->gravity = stateValue;
+        fallingActor->velocityY = stateValue;
+        fallingActor->y.fixed = 0xff0000;
         Engine_AudioPlayCue(106);
       }
     }
   }
 }
 
-static void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0,
-                                                       s32 v1) {
-  s32 pos[3];
+// Offsets an actor's current position by a polar displacement.
+static void VaultCave_OffsetActorRadially(struct FieldActor *actor, s32 radius,
+                                          s32 angle) {
+  s32 destination[3];
 
-  if (rec == 0) {
+  if (actor == NULL) {
     return;
   }
-  pos[0] = rec[2];
-  pos[1] = rec[3];
-  pos[2] = rec[4];
-  Vector_AddPolarOffset(v0, v1, pos);
-  Engine_ObjectSetPosition(rec, pos[0], pos[1], pos[2]);
+  destination[0] = actor->x.fixed;
+  destination[1] = actor->y.fixed;
+  destination[2] = actor->z.fixed;
+  Vector_AddPolarOffset(radius, angle, destination);
+  Engine_ObjectSetPosition(actor, destination[0], destination[1],
+                           destination[2]);
 }
 
+// Spawns up to four short-lived puffs around a landing object.
 static void VaultCave_SpawnPuffs(struct FieldActor *source) {
   struct FieldActor *puff;
-  s32 i;
+  s32 puffIndex;
 
-  for (i = 0; i < 4; i++) {
+  for (puffIndex = 0; puffIndex < 4; puffIndex++) {
     puff = Engine_ObjectCreate(240, source->x.fixed, source->y.fixed,
                                source->z.fixed);
     if (puff == 0)
       break;
     puff->scaleY = 0x8ccc;
     puff->scaleX = 0x8ccc;
-    puff->motionFlags = 2;
+    puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -0x10000;
     puff->speed = Engine_RandomNext() + 0xcccc;
     puff->collisionFlags = 1;
-    SceneActor_TransformAndApplyRecordPosition(puff, 0x200000,
-                                               Engine_RandomNext());
+    VaultCave_OffsetActorRadially(puff, 0x200000, Engine_RandomNext());
     {
       u16 *timer = (u16 *)&puff->unk5d[1];
       s32 frames = 8;
@@ -662,47 +740,50 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source) {
   }
 }
 
-static void SceneActor_InitSlots10To15AndStartTask(void) {
-  s32 selector = 10;
+// Initializes six falling objects and starts their Frost-controlled updater.
+static void VaultCave_StartFrostControlledFalls(void) {
+  s32 actorSlot = 10;
   s32 remaining = 5;
 
   do {
-    struct FieldActor *record;
+    struct FieldActor *fallingActor;
 
-    Engine_ActorSetSpriteFlags(Object_GetById(selector), 0);
-    record = Object_GetById(selector);
-    record->bounce = 0x1999;
-    record->gravity = 0;
+    Engine_ActorSetSpriteFlags(Object_GetById(actorSlot), 0);
+    fallingActor = Object_GetById(actorSlot);
+    fallingActor->bounce = 0x1999;
+    fallingActor->gravity = 0;
     remaining--;
-    record->y.fixed = 0x00ff0000;
-    selector++;
+    fallingActor->y.fixed = 0x00ff0000;
+    actorSlot++;
   } while (remaining >= 0);
 
-  FieldScheduler_AddCallback(FieldScene_RunScene3a7SequenceD,
+  FieldScheduler_AddCallback(VaultCave_UpdateFrostControlledFallingObjects,
                              TASK_PRIORITY_SCENE);
 }
 
-static void SceneActor_SetupActors11To14AndInstallTask(void) {
-  s32 no = 11;
-  s32 i = 0;
+// Initializes four falling objects and starts their timed updater.
+static void VaultCave_StartTimedFalls(void) {
+  s32 actorSlot = 11;
+  s32 fallingIndex = 0;
 
   do {
-    struct FieldActor *rec;
+    struct FieldActor *fallingActor;
 
-    Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
-    rec = Object_GetById(no);
-    rec->bounce = 0x1999;
-    rec->gravity = 0;
-    rec->y.fixed = 0x00ff0000;
-    Engine_ActorSetSpritePriority(i + 11, 1);
-    i++;
-    no++;
-  } while (i <= 3);
+    Engine_ActorSetSpriteFlags(Object_GetById(actorSlot), 0);
+    fallingActor = Object_GetById(actorSlot);
+    fallingActor->bounce = 0x1999;
+    fallingActor->gravity = 0;
+    fallingActor->y.fixed = 0x00ff0000;
+    Engine_ActorSetSpritePriority(fallingIndex + 11, 1);
+    fallingIndex++;
+    actorSlot++;
+  } while (fallingIndex <= 3);
 
-  FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence,
+  FieldScheduler_AddCallback(VaultCave_UpdateTimedFallingObjects,
                              TASK_PRIORITY_SCENE);
 }
 
+// Restores each room's puzzles and actors, then sets the Retreat destination.
 s32 VaultCave_ApplyEntryState(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_VaultCave1) {
@@ -748,41 +829,41 @@ s32 VaultCave_ApplyEntryState(void) {
     case 8:
     case 9:
     case 14:
-      SceneActor_InitSlots10To15AndStartTask();
-      if (Engine_GameFlagIsSet(0x200) != 0) {
+      VaultCave_StartFrostControlledFalls();
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
         Engine_ActorSetAnimation(16, 5);
-        EV16_PSYNERGY();
+        VaultCave_ApplyWestUpperFrostState();
       }
-      if (Engine_GameFlagIsSet(0x201) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
         Engine_ActorSetAnimation(17, 5);
-        EV17_PSYNERGY();
+        VaultCave_ApplyWestLowerFrostState();
       }
-      if (Engine_GameFlagIsSet(0x202) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
         Engine_ActorSetAnimation(18, 5);
-        EV18_PSYNERGY();
+        VaultCave_ApplyInnerWestLowerFrostState();
       }
-      if (Engine_GameFlagIsSet(0x203) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
         Engine_ActorSetAnimation(19, 5);
-        EV19_PSYNERGY();
+        VaultCave_ApplyEastUpperFrostState();
       }
-      if (Engine_GameFlagIsSet(0x204) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04) != 0) {
         Engine_ActorSetAnimation(20, 5);
-        EV20_PSYNERGY();
+        VaultCave_ApplyEastLowerFrostState();
       }
-      if (Engine_GameFlagIsSet(0x205) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) != 0) {
         Engine_ActorSetAnimation(21, 5);
-        EV21_PSYNERGY();
+        VaultCave_ApplyFarEastFrostState();
       }
-      FieldScheduler_AddCallback(SceneState_DispatchByActorZeroDepth,
+      FieldScheduler_AddCallback(VaultCave_UpdateFrostTargetPriorities,
                                  TASK_PRIORITY_SCENE);
       break;
     case 10:
     case 11:
       if (Engine_GameFlagIsSet(0x9a9) != 0) {
-        SceneState_ApplyThreeRects();
+        VaultCave_ApplySouthernSwitchCells();
         Actor_SetPosition(9, 0xf80000, 0x36c0000);
       }
-      Object_GetById(8)->priorityFlags = 2;
+      Object_GetById(8)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       break;
     }
     Engine_ActorSetAnimation(8, 2);
@@ -793,7 +874,7 @@ s32 VaultCave_ApplyEntryState(void) {
   }
   if (gGameState.scene == (s32)&SceneId_VaultCave3) {
     Engine_ActorSetAnimation(8, 2);
-    if (Engine_GameFlagIsSet(0x207) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
       Engine_ActorSetAnimation(10, 2);
     }
     Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
@@ -804,7 +885,7 @@ s32 VaultCave_ApplyEntryState(void) {
     switch (gGameState.entrance) {
     case 5:
     case 6:
-      SceneActor_SetupActors11To14AndInstallTask();
+      VaultCave_StartTimedFalls();
       Object_GetById(11)->collisionFlags = 2;
       Object_GetById(12)->collisionFlags = 2;
       Object_GetById(13)->collisionFlags = 2;
@@ -813,12 +894,13 @@ s32 VaultCave_ApplyEntryState(void) {
       Object_GetById(10)->collisionFlags = 1;
       Object_GetById(9)->collisionFlags = 1;
       if (Engine_GameFlagIsSet(0x9aa) != 0) {
-        SceneState_ApplyThreeRectsRows9And10();
+        VaultCave_ApplyNorthernSwitchCells();
         Actor_SetPosition(10, 0x1080000, 0xcc0000);
       }
       break;
     }
   }
+  // Retreat always returns to the first cave map's outer entrance.
   gGameState.retreatEntrance = 10;
   gGameState.retreatScene = (s32)&SceneId_VaultCave1;
   return 0;
@@ -1035,8 +1117,8 @@ struct SceneEvent gVaultCaveEvents1[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
+    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_FlipRumbleSwitch) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
     { SEARCH(SEARCH_CHEST), 100, 0xef3, 0x500003 },
     { SCENE_EVENTS_END },
 };
@@ -1056,16 +1138,16 @@ struct SceneEvent gVaultCaveEvents2[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { SEARCH(SEARCH_CHEST), 100, 0xfc4, FIND_ITEM(0x82) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x9a9, EVENT_SCRIPT(EV09_PSYNERGY_2) },
-    { 0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SCRIPT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x200, EVENT_SCRIPT(EV16_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, 0x201, EVENT_SCRIPT(EV17_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, 0x202, EVENT_SCRIPT(EV18_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, 0x203, EVENT_SCRIPT(EV19_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x204, EVENT_SCRIPT(EV20_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x205, EVENT_SCRIPT(EV21_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x4e), 22, 0x300, EVENT_SCRIPT(EV22_PSYNERGY) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9a9, EVENT_SCRIPT(VaultCave_CheckSouthernSwitchAfterMove) },
+    { FLAG_SCENE_TEMP_02, 60, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_CheckSouthernSwitchAfterPush) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(VaultCave_ApplyWestUpperFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(VaultCave_ApplyWestLowerFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(VaultCave_ApplyInnerWestLowerFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(VaultCave_ApplyEastUpperFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(VaultCave_ApplyEastLowerFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(VaultCave_ApplyFarEastFrostState) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x300, EVENT_SCRIPT(VaultCave_RecordWhirlwindUse) },
     { SCENE_EVENTS_END },
 };
 
@@ -1076,10 +1158,10 @@ struct SceneEvent gVaultCaveEvents3[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { 0x21, 6, CONDITION_ALWAYS, 6 },
-    { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x9aa, EVENT_SCRIPT(EV10_PSYNERGY) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_3) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
+    { FLAG_SCENE_TEMP_02, 50, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_CheckNorthernSwitchAfterPush) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9aa, EVENT_SCRIPT(VaultCave_CheckNorthernSwitchAfterMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_IgnoreMoveInteraction) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
     { SCENE_EVENTS_END },
 };
 

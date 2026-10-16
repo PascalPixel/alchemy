@@ -34,61 +34,31 @@
 #include "text/msg_ids.h"
 #include "heap_state.h"
 #include "field_effect.h"
+#include "flags.h"
+
+#define TRET_FACE_ACTOR 8
+#define TRET_SECOND_ACTOR 9
+#define FLOOR_FALL_SPIN_FRAMES 30
+#define SWIRL_SPARK_LAST_FRAME 79
+#define SWIRL_SPARK_SHRINK_LAST_FRAME 39
+#define TRET_TINT_COLOR_COUNT 63
+#define TRET_TINT_CHANNEL_MAX 31
+#define TRET_TINT_END 99
 
 // Forward declarations.
-static void TretPalette_CaptureBank(void);
-static void TretPalette_ApplyTint(void);
+static void TretPalette_SaveSceneColors(void);
+static void TretPalette_UpdateSceneTint(void);
 static void TretInteriors_PlayGesture(s32 gesture);
 static void TretInteriors_SpawnSwirlSparks(void);
 static void TretInteriors_ApplyFlaggedMapPatches(void);
 static void TretInteriors_RunLandingDustScene(void);
 
-static u8 sSparkOrigin[12];
-static u8 sSparkCounter[4];
-static s16 *sPaletteBuffer;
+static struct FieldPosition sSparkOrigin;
+static s32 sSparkFrame;
+static s16 *sLastFloorEntrance;
 
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
-
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct Swirl {
-  u8 pad00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 pad20[24];
-  s32 ox;
-  s32 oy;
-  s32 oz;
-  u8 pad44[12];
-  u8 *sprite;
-  u8 pad54[16];
-  s16 timer;
-  s16 angle;
-};
-
-struct Spark {
-  u8 unk00[0x64];
-  u16 phase;
-  u16 angle;
-};
-
-struct EffectParams {
-  s32 count;
-  s32 kind;
-  s32 spread;
-  s32 rise;
-  u8 pad10[20];
-  s32 script;
-};
 
 // Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
@@ -96,223 +66,257 @@ struct EffectParams {
 #include "item_ids.h"
 #include "objcmd.h"
 
+// Return the interior entrance and landing positions.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretInteriorsEntrances;
 }
 
+// Return the upper exit regions for the tree interior.
 const struct SceneRegion *Scene_GetRegions(void) {
   return gTretInteriorsRegions;
 }
 
+// Return the interior's packed exits.
 const u32 *Scene_GetExits(void) { return gTretInteriorsExits; }
 
+// Return the staged party and Tret actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gTretInteriorsPlacements;
 }
 
-static void TretInteriors_HandleFloorSwitch(s32 flag, s32 srcX, s32 srcY,
-                                            s32 entrance) {
-  s32 destX;
-  s32 destY;
-  s32 leader;
+// Change a floor tile on first touch, then collapse it on a later touch.
+static void TretInteriors_TouchCollapsingFloor(s32 floorFlag, s32 sourceColumn,
+                                               s32 sourceRow, s32 entrance) {
+  s32 destinationColumn;
+  s32 destinationRow;
+  s32 selectedActorId;
   struct FieldActor *actor;
-  s32 cnt;
+  s32 spinFrame;
 
-  destX = (gGameState.x >> 20) + 64;
-  destY = gGameState.z >> 20;
-  leader = gGameState.selectedActor;
-  actor = Object_GetById(leader);
-  if (entrance == *sPaletteBuffer)
+  destinationColumn = (gGameState.x >> 20) + 64;
+  destinationRow = gGameState.z >> 20;
+  selectedActorId = gGameState.selectedActor;
+  actor = Object_GetById(selectedActorId);
+  if (entrance == *sLastFloorEntrance)
     return;
-  *sPaletteBuffer = entrance;
-  if (Engine_GameFlagIsSet(flag) == 0) {
-    Map_CopyCells(srcX, srcY, 1, 1, destX, destY);
-    Engine_GameFlagSet(flag);
+  *sLastFloorEntrance = entrance;
+  if (Engine_GameFlagIsSet(floorFlag) == 0) {
+    Map_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
+                  destinationRow);
+    Engine_GameFlagSet(floorFlag);
     return;
   }
-  *sPaletteBuffer = -1;
-  Map_CopyCells(srcX, srcY + 1, 1, 1, destX, destY);
+  // On the next touch, replace the tile and spin the actor into the fall.
+  *sLastFloorEntrance = -1;
+  Map_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
+                destinationRow);
   Engine_AudioPlayCue(206);
   Engine_EventBegin();
   Event_SetDestination((s32)&SceneId_TretInteriors, entrance);
-  Engine_ActorSetAnimation(leader, 27);
-  Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
-  Actor_SetAttachedEffect(leader, 0x101);
+  Engine_ActorSetAnimation(selectedActorId, 27);
+  Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
+  Actor_SetAttachedEffect(selectedActorId, 0x101);
   Engine_EventWait(30);
   Camera_MoveTo(-1, -1, -1, 0);
-  actor->motionFlags = 2;
+  actor->motionFlags = ACTOR_FALLS;
   actor->terrainHeight = -0xa00000;
   actor->gravity = 0x8000;
   Engine_AudioPlayCue(204);
   Engine_EventWait(3);
   actor->terrainId = 2;
-  Engine_ActorSetSpritePriority(leader, 3);
-  for (cnt = 29; cnt >= 0; cnt--) {
+  Engine_ActorSetSpritePriority(selectedActorId, 3);
+  for (spinFrame = FLOOR_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
-    actor->facing += 0x2000;
+    actor->facing += 2 * FACING_STEP;
     Engine_TaskWait(1);
   }
   if (entrance != 50)
     Engine_GameFlagSet(0x122);
 }
 
-static void EV21_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x200, 64, 35, 21);
+// Advance the floor that falls to the upper middle northwest landing.
+static void TretInteriors_TouchFloorToUpperMiddleNorthwest(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_00, 64, 35, 21);
 }
 
-static void EV22_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x201, 65, 35, 22);
+// Advance the floor that falls to the upper middle northeast landing.
+static void TretInteriors_TouchFloorToUpperMiddleNortheast(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_01, 65, 35, 22);
 }
 
-static void EV23_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x202, 66, 35, 23);
+// Advance the floor that falls to the upper middle west upper landing.
+static void TretInteriors_TouchFloorToUpperMiddleWestUpper(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_02, 66, 35, 23);
 }
 
-static void EV24_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x203, 67, 35, 24);
+// Advance the floor that falls to the upper middle west lower landing.
+static void TretInteriors_TouchFloorToUpperMiddleWestLower(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_03, 67, 35, 24);
 }
 
-static void EV25_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x204, 68, 35, 25);
+// Advance the floor that falls to the upper middle southwest upper landing.
+static void TretInteriors_TouchFloorToUpperMiddleSouthwestUpper(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_04, 68, 35, 25);
 }
 
-static void EV26_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x205, 69, 35, 26);
+// Advance the floor that falls to the upper middle south upper landing.
+static void TretInteriors_TouchFloorToUpperMiddleSouthUpper(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_05, 69, 35, 26);
 }
 
-static void EV27_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x206, 70, 35, 27);
+// Advance the floor that falls to the upper middle southwest lower landing.
+static void TretInteriors_TouchFloorToUpperMiddleSouthwestLower(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_06, 70, 35, 27);
 }
 
-static void EV28_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x207, 71, 35, 28);
+// Advance the floor that falls to the upper middle south lower landing.
+static void TretInteriors_TouchFloorToUpperMiddleSouthLower(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_07, 71, 35, 28);
 }
 
-static void EV29_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x208, 72, 35, 29);
+// Advance the floor that falls to the upper middle southeast lower landing.
+static void TretInteriors_TouchFloorToUpperMiddleSoutheastLower(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_08, 72, 35, 29);
 }
 
-static void EV31_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x209, 73, 35, 31);
+// Advance the floor that falls to the upper right northwest landing.
+static void TretInteriors_TouchFloorToUpperRightNorthwest(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_09, 73, 35, 31);
 }
 
-static void EV32_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20a, 74, 35, 32);
+// Advance the floor that falls to the upper right northeast landing.
+static void TretInteriors_TouchFloorToUpperRightNortheast(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0A, 74, 35, 32);
 }
 
-static void EV50_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20b, 79, 35, 50);
+// Advance the floor that falls to the lower middle center landing.
+static void TretInteriors_TouchFloorToLowerMiddleCenter(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0B, 79, 35, 50);
 }
 
-static void EV51_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20c, 75, 35, 51);
+// Advance the floor that falls to the lower middle northwest landing.
+static void TretInteriors_TouchFloorToLowerMiddleNorthwest(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0C, 75, 35, 51);
 }
 
-static void EV52_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20d, 76, 35, 52);
+// Advance the floor that falls to the lower middle north landing.
+static void TretInteriors_TouchFloorToLowerMiddleNorth(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0D, 76, 35, 52);
 }
 
-static void EV53_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20e, 77, 35, 53);
+// Advance the floor that falls to the lower middle northeast landing.
+static void TretInteriors_TouchFloorToLowerMiddleNortheast(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0E, 77, 35, 53);
 }
 
-static void EV54_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x20f, 78, 35, 54);
+// First independent floor event for the lower middle room's west landing.
+static void TretInteriors_TouchFloorToLowerMiddleWestA(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_0F, 78, 35, 54);
 }
 
-static void EV55_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x210, 80, 35, 55);
+// Advance the floor that falls to the lower middle east landing.
+static void TretInteriors_TouchFloorToLowerMiddleEast(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_10, 80, 35, 55);
 }
 
-static void EV56_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x211, 81, 35, 56);
+// Second independent floor event for the same west landing.
+static void TretInteriors_TouchFloorToLowerMiddleWestB(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_11, 81, 35, 56);
 }
 
-static void EV57_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x212, 82, 35, 57);
+// Advance the floor that falls to the lower middle southwest landing.
+static void TretInteriors_TouchFloorToLowerMiddleSouthwest(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_12, 82, 35, 57);
 }
 
-static void EV58_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x213, 83, 35, 58);
+// Advance the floor that falls to the lower middle south landing.
+static void TretInteriors_TouchFloorToLowerMiddleSouth(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_13, 83, 35, 58);
 }
 
-static void EV59_TOUCH(void) {
-  TretInteriors_HandleFloorSwitch(0x214, 84, 35, 59);
+// Advance the floor that falls to the lower middle southeast landing.
+static void TretInteriors_TouchFloorToLowerMiddleSoutheast(void) {
+  TretInteriors_TouchCollapsingFloor(FLAG_SCENE_TEMP_14, 84, 35, 59);
 }
 
-static void SceneState_ClearStoryVariantWhenIdle(void) {
+// Release the floor-touch latch once the leader leaves its trigger.
+static void TretInteriors_ResetFloorTouchLatchWhenClear(void) {
   if (Engine_LeaderCheckAhead() == 0)
-    *sPaletteBuffer = -1;
+    *sLastFloorEntrance = -1;
 }
 
+// Return the floor, story, Reveal and search event bindings.
 const struct SceneEvent *Scene_GetEvents(void) { return gTretInteriorsEvents; }
 
-static void EV40_TOUCH(void) {
-  s32 rec8;
+// Stage the party's confrontation with Tret and start the battle.
+static void TretInteriors_StartTretBattle(void) {
+  s32 hasMia;
   struct FieldActor *leader;
 
-  rec8 = Engine_GameFlagIsSet(3);
+  hasMia = Engine_GameFlagIsSet(3);
   Engine_EventBegin();
   Engine_AudioPlayCue(17);
   Engine_EventSetMessage(MsgTretHmHrooom);
   Engine_EventShowMessageAndWait(0x8009, 0, 20);
   Engine_AudioPlayCue(29);
-  Actor_SetSpeed(0, 0x10000, 0x8000);
-  Actor_SetSpeed(1, 0x10000, 0x8000);
-  Actor_SetSpeed(2, 0x10000, 0x8000);
-  Engine_ActorSetSpeed(3, 0x10000, 0x8000);
-  Object_GetById(3)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(3, 2);
-  Object_GetById(0)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(0, 2);
-  leader = Object_GetById(0);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(GARET, 0x10000, 0x8000);
+  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
+  Engine_ActorSetSpeed(MIA, 0x10000, 0x8000);
+  Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  Engine_ActorSetSpritePriority(MIA, 2);
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
+  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ActorSetPosition(1, leader->x.fixed, leader->z.fixed);
+    Engine_ActorSetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ActorSetPosition(2, leader->x.fixed, leader->z.fixed);
+    Engine_ActorSetPosition(IVAN, leader->x.fixed, leader->z.fixed);
   }
-  if (rec8 != 0) {
-    leader = Object_GetById(0);
+  if (hasMia != 0) {
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Engine_ActorSetPosition(3, leader->x.fixed, leader->z.fixed);
+      Engine_ActorSetPosition(MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetActionScript(3, gTretInteriors_TableActions3);
+    Actor_SetActionScript(MIA, gTretInteriors_TableActions3);
   }
-  Actor_SetActionScript(0, gTretInteriors_TableActions0);
-  Actor_SetActionScript(1, gTretInteriors_TableActions1);
-  Object_SetActionCallbackAndRefreshById(2, (s32)gTretInteriors_TableActions2);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gTretInteriors_TableActions0);
+  Actor_SetActionScript(GARET, gTretInteriors_TableActions1);
+  Object_SetActionCallbackAndRefreshById(IVAN,
+                                         (s32)gTretInteriors_TableActions2);
   Engine_EventWait(10);
-  Actor_FaceDirection(0, 0xc000, 0);
-  Actor_FaceDirection(1, 0xc000, 0);
-  Actor_FaceDirection(3, 0xc000, 0);
-  Actor_FaceDirection(2, 0xc000, 40);
-  Engine_ActorSetAnimation(8, 11);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+  Actor_FaceDirection(GARET, 0xc000, 0);
+  Actor_FaceDirection(MIA, 0xc000, 0);
+  Actor_FaceDirection(IVAN, 0xc000, 40);
+  Engine_ActorSetAnimation(TRET_FACE_ACTOR, 11);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(8, 8);
+  Engine_ActorSetAnimation(TRET_FACE_ACTOR, 8);
   Engine_EventWait(20);
   TretInteriors_PlayGesture(8);
   Event_ShowMessage(0x8008, 0);
-  Engine_ActorStartRepeatedMotion(0, 2);
-  Engine_ActorStartRepeatedMotion(1, 2);
-  Engine_ActorStartRepeatedMotion(3, 2);
-  Engine_ActorStartRepeatedMotion(2, 2);
-  Actor_ShowEmote(0, 0x100, 0);
-  Actor_ShowEmote(1, 0x100, 0);
-  Actor_ShowEmote(3, 0x100, 0);
-  Engine_ActorShowEmote(2, 0x100, 60);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorStartRepeatedMotion(GARET, 2);
+  Engine_ActorStartRepeatedMotion(MIA, 2);
+  Engine_ActorStartRepeatedMotion(IVAN, 2);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+  Actor_ShowEmote(GARET, 0x100, 0);
+  Actor_ShowEmote(MIA, 0x100, 0);
+  Engine_ActorShowEmote(IVAN, 0x100, 60);
   TretInteriors_PlayGesture(11);
   Event_ShowMessageAndWait(0x8008, 0, 10);
-  Engine_ActorStartRepeatedMotion(0, 1);
-  Engine_ActorStartRepeatedMotion(1, 1);
-  Engine_ActorStartRepeatedMotion(3, 1);
-  Engine_ActorRunRepeatedMotion(2, 1);
+  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorStartRepeatedMotion(GARET, 1);
+  Engine_ActorStartRepeatedMotion(MIA, 1);
+  Engine_ActorRunRepeatedMotion(IVAN, 1);
   Event_ShowMessage(0x8008, 0);
-  Actor_SetAttachedEffect(0, 0x102);
-  Actor_SetAttachedEffect(1, 0x102);
-  Actor_SetAttachedEffect(3, 0x102);
-  Engine_ActorSetAttachedEffect(2, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Actor_SetAttachedEffect(GARET, 0x102);
+  Actor_SetAttachedEffect(MIA, 0x102);
+  Engine_ActorSetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(40);
   TretInteriors_PlayGesture(11);
   Engine_EventShowMessage(0x8008, 0);
@@ -324,18 +328,20 @@ static void EV40_TOUCH(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunFourActorEncounter(void) {
-  s32 rec;
-  struct FieldActor *record;
-  s32 v6;
-  s32 v5;
+// Play Tret's post-battle conversation, map changes and fading effects.
+static void TretInteriors_PlayPostBattleConversation(void) {
+  s32 hasMia;
+  struct FieldActor *partyActor;
+  s32 openingColumn;
   SchedulerCallback sparkTask;
   const s32 *actions;
 
-  rec = GameFlag_IsSet(3);
-  Object_GetById(3)->priorityFlags &= 254;
+  // Restore the party positions before opening the post-battle conversation.
+  hasMia = GameFlag_IsSet(3);
+  Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 2);
-  Object_GetById(0)->priorityFlags &= 254;
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindOwner(184);
   Event_PlayCue(17);
@@ -345,19 +351,18 @@ static void FieldScene_RunFourActorEncounter(void) {
   Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
   Actor_SetSpeed(MIA, 0xcccc, 0x6666);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa60000, 0x500000);
-  v6 = 192;
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->facing = v6 << 8;
+  partyActor = Actor_Get(ACTOR_PARTY_LEADER);
+  partyActor->facing = FACING_NORTH;
   Actor_SetPosition(GARET, 0x940000, 0x5a0000);
-  record = Actor_Get(GARET);
-  record->facing = v6 << 8;
+  partyActor = Actor_Get(GARET);
+  partyActor->facing = FACING_NORTH;
   Actor_SetPosition(IVAN, 0xb60000, 0x5a0000);
-  record = Object_GetById(IVAN);
-  record->facing = v6 << 8;
-  if (rec != 0) {
+  partyActor = Object_GetById(IVAN);
+  partyActor->facing = FACING_NORTH;
+  if (hasMia != 0) {
     Actor_SetPosition(MIA, 0xa60000, 0x680000);
-    record = Object_GetById(MIA);
-    record->facing = v6 << 8;
+    partyActor = Object_GetById(MIA);
+    partyActor->facing = FACING_NORTH;
   }
   TretInteriors_PlayGesture(0);
   Engine_TaskWait(10);
@@ -370,16 +375,17 @@ static void FieldScene_RunFourActorEncounter(void) {
   Camera_MoveTo(0xa80000, -1, 0x980000, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  v5 = 10;
+  // Open the passage beside Tret before continuing the conversation.
+  openingColumn = 10;
   Event_PlayCue(123);
-  Map_CopyCellAttributes(26, 3, 1, 2, v5, 8);
-  Map_CopyCells(26, 38, 1, 1, v5, 43);
+  Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
+  Map_CopyCells(26, 38, 1, 1, openingColumn, 43);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 37, 1, 2, v5, 42);
+  Map_CopyCells(26, 37, 1, 2, openingColumn, 42);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 36, 1, 3, v5, 41);
+  Map_CopyCells(26, 36, 1, 3, openingColumn, 41);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 35, 1, 4, v5, 40);
+  Map_CopyCells(26, 35, 1, 4, openingColumn, 40);
   Engine_TaskWait(80);
   Engine_EventSetMessage(MsgTretMmmmm);
   Event_ShowMessageAndWait(0x8009, 0, 20);
@@ -432,9 +438,9 @@ static void FieldScene_RunFourActorEncounter(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, (v6 << 8), 0);
-  Engine_ActorFaceDirection(1, (v6 << 8), 0);
-  Actor_FaceDirection(IVAN, (v6 << 8), 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 40);
   TretInteriors_PlayGesture(4);
   Event_OpenMessage(0x8009, 0);
   Actor_FaceDirection(GARET, 0xe000, 0);
@@ -463,16 +469,17 @@ static void FieldScene_RunFourActorEncounter(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Actor_FaceDirection(GARET, (v6 << 8), 0);
-  Actor_FaceDirection(IVAN, (v6 << 8), 20);
+  Actor_FaceDirection(GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(IVAN, FACING_NORTH, 20);
   Engine_EventWait(20);
-  *(s32 *)sSparkCounter = 0;
+  // Send fading sparks toward Tret before returning to the normal tint.
+  sSparkFrame = 0;
   {
-    s32 *bank = (s32 *)sSparkOrigin;
-    bank[0] = 0xa80000;
-    bank[1] = 0x200000;
+    struct FieldPosition *origin = &sSparkOrigin;
+    origin->x = 0xa80000;
+    origin->y = 0x200000;
     sparkTask = TretInteriors_SpawnSwirlSparks;
-    bank[2] = 0x340000;
+    origin->z = 0x340000;
   }
   Task_AddCallback(sparkTask, 0xc80);
   Engine_EventWait(220);
@@ -485,7 +492,8 @@ static void FieldScene_RunFourActorEncounter(void) {
   Event_ShowMessageAndWait(0x8009, 0, 10);
   TretInteriors_PlayGesture(0);
   Event_ShowMessage(0x8009, 0);
-  Object_SetActionCallbackAndRefreshById(8, (s32)gTretInteriors_ActionTable1);
+  Object_SetActionCallbackAndRefreshById(TRET_FACE_ACTOR,
+                                         (s32)gTretInteriors_ActionTable1);
   Engine_EventWait(40);
   Actor_ShowEmote(GARET, 0x102, 60);
   Event_ShowMessage(0x8001, 0);
@@ -498,7 +506,7 @@ static void FieldScene_RunFourActorEncounter(void) {
   Event_ShowMessageAndWait(0x8001, 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Event_ShowMessageAndWait(0x8002, 0, 10);
-  if (rec != 0) {
+  if (hasMia != 0) {
     Engine_ActorRunRepeatedMotion(MIA, 1);
     Engine_EventShowMessageAndWait(0x8003, 0, 10);
   }
@@ -508,91 +516,96 @@ static void FieldScene_RunFourActorEncounter(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   actions = gTretInteriors_ActionTable2;
   Actor_SetActionScript(GARET, actions);
-  if (rec != 0) {
+  if (hasMia != 0) {
     Actor_SetActionScript(MIA, actions);
   }
-  Object_SetActionCallbackAndRefreshById(2, (s32)actions);
+  Object_SetActionCallbackAndRefreshById(IVAN, (s32)actions);
   Engine_EventWait(20);
-  Object_GetById(0)->priorityFlags |= 1;
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(0x844);
-  FieldScheduler_AddCallback(TretPalette_ApplyTint, 0xc80);
+  FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, 0xc80);
   Engine_EventEnd();
 }
 
-static void SceneState_ApplyRectsByFlag844(s32 flag) {
-  if (flag != 0 && Engine_GameFlagIsSet(0x109) == 0)
-    FieldScene_RunFourActorEncounter();
+// Restore the post-battle map and optionally play its conversation.
+static void TretInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
+  if (playRecoveryScene != 0 &&
+      Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
+    TretInteriors_PlayPostBattleConversation();
 
   Engine_TaskWait(1);
   if (Engine_GameFlagIsSet(0x844) != 0) {
-    s32 w1 = 10;
-    Map_CopyCells(121, 34, 3, 1, 93, w1);
+    s32 openingColumn = 10;
+    Map_CopyCells(121, 34, 3, 1, 93, openingColumn);
     {
-      s32 w2 = 30;
-      Map_CopyCells(46, 38, 1, 1, w2, 43);
-      Map_CopyCellAttributes(0, 0, 1, 2, w2, 9);
+      s32 passageColumn = 30;
+      Map_CopyCells(46, 38, 1, 1, passageColumn, 43);
+      Map_CopyCellAttributes(0, 0, 1, 2, passageColumn, 9);
     }
-    Map_CopyCellAttributes(26, 3, 1, 2, w1, 8);
-    Map_CopyCells(26, 35, 1, 4, w1, 40);
+    Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
+    Map_CopyCells(26, 35, 1, 4, openingColumn, 40);
   } else {
-    s32 w1 = 10;
-    s32 w2 = 8;
-    Map_CopyCellAttributes(11, 8, 1, 2, w1, w2);
+    s32 openingColumn = 10;
+    s32 passageColumn = 8;
+    Map_CopyCellAttributes(11, 8, 1, 2, openingColumn, passageColumn);
   }
 }
 
+// Restore the room, tint and entry fall before continuing its story event.
 s32 TretInteriors_EnterRoom(void) {
-  struct FieldActor *lamp;
+  struct FieldActor *tret;
   struct FieldActor *actor;
-  u8 *work;
-  s32 *camera;
+  u8 *mapWork;
+  s32 *scrollWords;
   s32 entrance;
-  s32 leader;
+  s32 selectedActorId;
 
-  lamp = Object_GetById(8);
-  sPaletteBuffer = (s16 *)gSceneState;
-  TretPalette_CaptureBank();
-  lamp->motionFlags = 0;
-  lamp->y.fixed = -0xa0000;
+  tret = Object_GetById(TRET_FACE_ACTOR);
+  // Restore scene-local floor state and the saved palette first.
+  sLastFloorEntrance = (s16 *)gSceneState;
+  TretPalette_SaveSceneColors();
+  tret->motionFlags = 0;
+  tret->y.fixed = -0xa0000;
   {
-    struct FieldActor *other = Object_GetById(9);
+    struct FieldActor *secondTretActor = Object_GetById(TRET_SECOND_ACTOR);
 
-    other->motionFlags = 0;
-    other->y.fixed = -0xa0000;
+    secondTretActor->motionFlags = 0;
+    secondTretActor->y.fixed = -0xa0000;
   }
-  Engine_ActorSetChildValue(9, 15);
+  Engine_ActorSetChildValue(TRET_SECOND_ACTOR, 15);
   TretInteriors_PlayGesture(0);
   if (gGameState.entrance != 19)
-    FieldScheduler_AddCallback(TretPalette_ApplyTint, 0xc80);
+    FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, 0xc80);
   if (Engine_GameFlagIsSet(0x844)) {
-    Engine_ActorSetPosition(9, 0, 0);
-    Engine_ActorSetPosition(8, 0, 0);
+    Engine_ActorSetPosition(TRET_SECOND_ACTOR, 0, 0);
+    Engine_ActorSetPosition(TRET_FACE_ACTOR, 0, 0);
   }
-  if (GameFlag_IsSet(0x109))
+  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION))
     TretInteriors_ApplyFlaggedMapPatches();
-  work = WORK_SLOT(8);
-  camera = (s32 *)(work + 260);
-  camera[2] += Iwram_MulQ16(*(s32 *)(work + 236) + 0xa00000, 0x1999);
-  camera[3] += Iwram_MulQ16(*(s32 *)(work + 240) + 0x880000, 0x1999);
-  camera[4] = 0xe666;
-  camera[5] = 0xe666;
-  Engine_GameFlagSet(0x201);
-  Engine_GameFlagSet(0x20d);
-  Engine_GameFlagSet(0x20f);
-  Engine_GameFlagSet(0x213);
+  mapWork = WORK_SLOT(8);
+  scrollWords = (s32 *)(mapWork + 260);
+  scrollWords[2] += Iwram_MulQ16(*(s32 *)(mapWork + 236) + 0xa00000, 0x1999);
+  scrollWords[3] += Iwram_MulQ16(*(s32 *)(mapWork + 240) + 0x880000, 0x1999);
+  scrollWords[4] = 0xe666;
+  scrollWords[5] = 0xe666;
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_0D);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_0F);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_13);
   Engine_TaskWait(1);
-  SceneState_ApplyRectsByFlag844(0);
+  TretInteriors_ApplyPostBattleState(0);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition = 0x202;
   entrance = gGameState.entrance;
-  leader = gGameState.selectedActor;
-  actor = Object_GetById(leader);
+  selectedActorId = gGameState.selectedActor;
+  actor = Object_GetById(selectedActorId);
+  // Upper landings continue a fall; the other entries resume their scene.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
-    Engine_ActorSetAnimation(leader, 27);
-    Engine_ActorSetSpriteFlags(Object_GetById(leader), 0);
-    Actor_SetAttachedEffect(leader, 0x101);
+    Engine_ActorSetAnimation(selectedActorId, 27);
+    Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
+    Actor_SetAttachedEffect(selectedActorId, 0x101);
     Camera_MoveTo(-1, -1, -1, 0);
-    actor->motionFlags = 2;
+    actor->motionFlags = ACTOR_FALLS;
     actor->y.fixed = 0x640000;
     actor->terrainHeight = -0xa00000;
     actor->gravity = 0x8000;
@@ -600,205 +613,211 @@ s32 TretInteriors_EnterRoom(void) {
     Event_SetDestination((s32)&SceneId_TretInteriors, entrance - 10);
     Engine_EventWait(20);
     actor->terrainId = 2;
-    Engine_ActorSetSpritePriority(leader, 3);
+    Engine_ActorSetSpritePriority(selectedActorId, 3);
     Engine_EventWait(2);
-    Engine_ActorSetAttachedEffect(leader, 0x100);
+    Engine_ActorSetAttachedEffect(selectedActorId, 0x100);
     Engine_EventWait(8);
   } else if (entrance == 10) {
-    if (!Engine_GameFlagIsSet(0x109))
+    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
       TretInteriors_RunLandingDustScene();
   } else if (entrance == 19) {
-    SceneState_ApplyRectsByFlag844(1);
+    TretInteriors_ApplyPostBattleState(1);
   }
   return 0;
 }
 
-static void TretPalette_CaptureBank(void) {
+// Save the scene colors used as the base for Tret's tint animation.
+static void TretPalette_SaveSceneColors(void) {
   Dma_Set((const void *)0x05000000, *(void **)&gPaletteBufferWork, 0x84000070,
           REG_DMA3);
 }
 
-static void TretPalette_ApplyTint(void) {
-  u16 *src;
-  u16 *dst;
-  u32 i;
-  s32 r;
-  s32 g;
-  s32 b;
+// Apply bounded tint steps to the scene colors every thirty-two frames.
+static void TretPalette_UpdateSceneTint(void) {
+  u16 *sourceColors;
+  u16 *destinationColors;
+  u32 colorIndex;
+  s32 redStep;
+  s32 greenStep;
+  s32 blueStep;
   s32 red;
   s32 green;
   s32 blue;
   u32 color;
-  u8 *event;
+  u8 *eventBytes;
 
-  event = WORK_SLOT(HEAP_SLOT_EVENT);
-  src = WORK_SLOT(32);
-  if (*(s16 *)(event + 0x17e) != 0)
+  eventBytes = WORK_SLOT(HEAP_SLOT_EVENT);
+  sourceColors = WORK_SLOT(32);
+  if (*(s16 *)(eventBytes + 0x17e) != 0)
     return;
   if ((gFrameCount & 31) != 0)
     return;
-  src += 16;
-  dst = (u16 *)0x05000020;
-  i = 0;
-  for (; i <= 62; i++, src++) {
-    r = gTretInteriors_TintSteps[gTretInteriors_TintIndex];
-    g = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 1];
-    b = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 2];
-    if (i > 47) {
-      r -= r / 2 + r / 3;
-      g -= g / 2 + g / 3;
-      b -= b / 2 + b / 3;
-    } else if (i > 31) {
-      r -= r / 3 + r / 4;
-      g -= g / 3 + g / 4;
-      b -= b / 3 + b / 4;
-    } else if (i > 15) {
-      r -= r / 4 + r / 5;
-      g -= g / 4 + g / 5;
-      b -= b / 4 + b / 5;
+  sourceColors += 16;
+  destinationColors = (u16 *)0x05000020;
+  colorIndex = 0;
+  for (; colorIndex < TRET_TINT_COLOR_COUNT; colorIndex++, sourceColors++) {
+    redStep = gTretInteriors_TintSteps[gTretInteriors_TintIndex];
+    greenStep = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 1];
+    blueStep = gTretInteriors_TintSteps[gTretInteriors_TintIndex + 2];
+    if (colorIndex > 47) {
+      redStep -= redStep / 2 + redStep / 3;
+      greenStep -= greenStep / 2 + greenStep / 3;
+      blueStep -= blueStep / 2 + blueStep / 3;
+    } else if (colorIndex > 31) {
+      redStep -= redStep / 3 + redStep / 4;
+      greenStep -= greenStep / 3 + greenStep / 4;
+      blueStep -= blueStep / 3 + blueStep / 4;
+    } else if (colorIndex > 15) {
+      redStep -= redStep / 4 + redStep / 5;
+      greenStep -= greenStep / 4 + greenStep / 5;
+      blueStep -= blueStep / 4 + blueStep / 5;
     }
-    color = *src;
+    color = *sourceColors;
     red = color & 31;
     green = (color >> 5) & 31;
     blue = (color >> 10) & 31;
-    red += r;
-    green += g;
-    blue += b;
-    if (red > 31)
-      red = 31;
-    if (green > 31)
-      green = 31;
-    if (blue > 31)
-      blue = 31;
+    red += redStep;
+    green += greenStep;
+    blue += blueStep;
+    if (red > TRET_TINT_CHANNEL_MAX)
+      red = TRET_TINT_CHANNEL_MAX;
+    if (green > TRET_TINT_CHANNEL_MAX)
+      green = TRET_TINT_CHANNEL_MAX;
+    if (blue > TRET_TINT_CHANNEL_MAX)
+      blue = TRET_TINT_CHANNEL_MAX;
     if (red < 0)
       red = 0;
     if (green < 0)
       green = 0;
     if (blue < 0)
       blue = 0;
-    *dst++ = (blue << 10) | (green << 5) | red;
+    *destinationColors++ = (blue << 10) | (green << 5) | red;
   }
   gTretInteriors_TintIndex += (Engine_RandomNext() & 7) * 3;
-  if (gTretInteriors_TintSteps[gTretInteriors_TintIndex] == 99)
+  if (gTretInteriors_TintSteps[gTretInteriors_TintIndex] == TRET_TINT_END)
     gTretInteriors_TintIndex = 0;
 }
 
+// Play a Tret animation sequence with its original pauses.
 static void TretInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case 0:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 3);
     break;
   case 1:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     break;
   case 2:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 5);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 5);
     break;
   case 3:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 4);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 4);
     break;
   case 4:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 3);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 3);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 3);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     break;
   case 5:
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 2);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 2);
     break;
   case 7:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 8);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 8);
     break;
   case 8:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     break;
   case 9:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 9);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 9);
     break;
   case 10:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 10);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 10);
     break;
   case 11:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 8);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 8);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 8);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 8);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     break;
   case 12:
-    Engine_ActorSetAnimation(8, 6);
+    Engine_ActorSetAnimation(TRET_FACE_ACTOR, 6);
     break;
   }
   Engine_TaskWait(12);
 }
 
-static void TretInteriors_UpdateSwirlObject(union FieldObject *fieldObject) {
-  struct Swirl *obj = (struct Swirl *)fieldObject;
-  struct Vec pos;
-  s32 t;
+// Move a fading spark outward from its saved origin, then release it.
+static void TretInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
+  struct FieldActor *spark = (struct FieldActor *)fieldObject;
+  struct FieldPosition position;
+  s32 frame;
 
-  t = obj->timer;
-  if (t <= 79) {
-    pos.x = obj->ox;
-    pos.y = obj->oy;
-    pos.z = obj->oz;
+  frame = spark->timer;
+  if (frame <= SWIRL_SPARK_LAST_FRAME) {
+    position.x = spark->targetX;
+    position.y = spark->targetY;
+    position.z = spark->targetZ;
     {
-      s32 a = obj->angle;
+      s32 initialAngle = (s16)spark->work;
 
-      Vector_AddPolarOffset(t << 16, ((t * 3) << 8) + a, &pos);
+      Vector_AddPolarOffset(frame << 16, ((frame * 3) << 8) + initialAngle,
+                            &position);
     }
-    obj->x = pos.x;
-    obj->y = pos.y;
-    obj->z = pos.z;
-    if (obj->timer <= 39) {
-      obj->scaleX += -0x51e;
-      obj->scaleY += -0x51e;
+    spark->x.fixed = position.x;
+    spark->y.fixed = position.y;
+    spark->z.fixed = position.z;
+    if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
+      spark->scaleX += -0x51e;
+      spark->scaleY += -0x51e;
     }
-    obj->timer++;
+    spark->timer++;
   } else {
-    Resource_ResetEntry(obj->sprite[28]);
-    Engine_ObjectDispatchRelease(obj);
+    Resource_ResetEntry(spark->sprite->vramBlock);
+    Engine_ObjectDispatchRelease(spark);
   }
 }
 
+// Emit five shrinking waves of fading sparks from the saved origin.
 static void TretInteriors_SpawnSwirlSparks(void) {
   struct FieldActor *spark;
   u32 frame;
-  s32 previous;
+  s32 previousResourceEntry;
   s32 wave;
-  u32 i;
+  u32 sparkIndex;
   s32 *counter;
 
-  counter = &sSparkCounter;
+  counter = &sSparkFrame;
   frame = *counter;
-  previous = 0;
+  previousResourceEntry = 0;
   /* FAKEMATCH: the explicit libgcc call keeps the final count's reload
    * in r3. Measured: (s32)frame / 10, or frame declared s32 and
    * divided with /, reload it into r5 (differ 6); the division moved
-   * above previous = 0 differs 10. */
+   * above previousResourceEntry = 0 differs 10. */
   wave = __divsi3(frame, 10);
   switch (frame) {
   case 0:
@@ -807,24 +826,23 @@ static void TretInteriors_SpawnSwirlSparks(void) {
   case 30:
   case 40:
     Engine_AudioPlayCue(220);
-    for (i = 0; i < 6 - wave; i++) {
-      spark = Engine_ObjectCreate(0x11d, (*(struct Vec *)sSparkOrigin).x,
-                                  (*(struct Vec *)sSparkOrigin).y,
-                                  (*(struct Vec *)sSparkOrigin).z);
+    for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
+      spark = Engine_ObjectCreate(0x11d, sSparkOrigin.x, sSparkOrigin.y,
+                                  sSparkOrigin.z);
       if (spark != 0) {
-        previous = Object_ReplaceResourceEntry(spark->sprite, previous);
+        previousResourceEntry =
+            Object_ReplaceResourceEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->priority = 0;
         Engine_ActorSetSpriteFlags(spark, 0);
         Object_SetMode(spark, 1);
-        ((struct Spark *)spark)->phase = 0;
-        ((struct Spark *)spark)->angle =
-            ((360 / (u32)(6 - wave) * i) << 16) / 360;
-        spark->targetX = (*(struct Vec *)sSparkOrigin).x;
-        spark->targetY = (*(struct Vec *)sSparkOrigin).y;
-        spark->targetZ = (*(struct Vec *)sSparkOrigin).z;
+        spark->timer = 0;
+        spark->work = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
+        spark->targetX = sSparkOrigin.x;
+        spark->targetY = sSparkOrigin.y;
+        spark->targetZ = sSparkOrigin.z;
         spark->speed = 0x19999;
-        spark->update = TretInteriors_UpdateSwirlObject;
+        spark->update = TretInteriors_UpdateSwirlSpark;
       }
     }
   case 44:
@@ -833,7 +851,7 @@ static void TretInteriors_SpawnSwirlSparks(void) {
      * across the spark loop, where the loop index takes its register.
      * Measured: without it, differ 36; with the division also written
      * with /, differ 51. */
-    counter = &sSparkCounter;
+    counter = &sSparkFrame;
     break;
   }
   if (++*counter > 120) {
@@ -841,76 +859,85 @@ static void TretInteriors_SpawnSwirlSparks(void) {
   }
 }
 
+// Restore each enabled single-cell patch whose puzzle flag is set.
 static void TretInteriors_ApplyFlaggedMapPatches(void) {
-  s32 i;
+  s32 patchOffset;
 
-  for (i = 0; gTretInteriors_MapPatches[i] != -1; i += 6) {
-    if (Engine_GameFlagIsSet(gTretInteriors_MapPatches[i]) &&
-        gTretInteriors_MapPatches[i + 1] != 0)
-      Map_CopyCellsTo(gTretInteriors_MapPatches[i + 2],
-                      gTretInteriors_MapPatches[i + 3],
-                      gTretInteriors_MapPatches[i + 4],
-                      gTretInteriors_MapPatches[i + 5], 1, 1);
+  for (patchOffset = 0; gTretInteriors_MapPatches[patchOffset] != -1;
+       patchOffset += 6) {
+    if (Engine_GameFlagIsSet(gTretInteriors_MapPatches[patchOffset]) &&
+        gTretInteriors_MapPatches[patchOffset + 1] != 0)
+      Map_CopyCellsTo(gTretInteriors_MapPatches[patchOffset + 2],
+                      gTretInteriors_MapPatches[patchOffset + 3],
+                      gTretInteriors_MapPatches[patchOffset + 4],
+                      gTretInteriors_MapPatches[patchOffset + 5], 1, 1);
   }
 }
 
-static void EV00_PSYNERGY(void) {
-  Engine_TaskRemoveCallback(TretPalette_ApplyTint);
+// Stop the scene tint while Reveal is active.
+static void TretInteriors_StopTintForReveal(void) {
+  Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
 
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
+// Drop the leader into the room with a ring of landing particles.
 static void TretInteriors_RunLandingDustScene(void) {
-  struct EffectParams params;
-  struct Vec dir;
-  struct EffectParams *p;
-  struct Vec *v;
+  struct EffectOptions options;
+  struct FieldPosition velocity;
+  struct EffectOptions *particleOptions;
+  struct FieldPosition *particleVelocity;
   struct FieldActor *leader;
-  u32 i;
-  s32 x;
-  s32 z;
+  u32 particleIndex;
+  s32 velocityX;
+  s32 velocityZ;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Object_GetById(0)->y.fixed = 0x820000;
-  Object_GetById(0)->gravity = 0x8000;
-  Object_GetById(0)->bounce = 0;
-  Object_GetById(0)->motionFlags = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = 0x820000;
+  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_AudioPlayCue(204);
-  Object_GetById(0)->motionFlags = 3;
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(24);
-  leader = Object_GetById(0);
-  p = &params;
-  p->kind = 7;
-  p->script = (s32)Effect_AdvanceMotion;
-  p->spread = 0xcccc;
-  p->rise = 0xcccc;
-  for (i = 0; i <= 16; i++) {
-    v = &dir;
-    v->x = Engine_MathCos(i << 12);
-    v->y = 0;
-    z = Engine_MathSin(i << 12);
-    x = v->x;
-    v->z = z;
-    x += x / 2;
-    v->x = x;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, x, v->y, z,
-                 0x1090001, p);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  // Spread particles around the leader while the landing effect finishes.
+  particleOptions = &options;
+  particleOptions->palette = 7;
+  particleOptions->update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  particleOptions->startScaleX = 0xcccc;
+  particleOptions->startScaleY = 0xcccc;
+  for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
+    particleVelocity = &velocity;
+    particleVelocity->x = Engine_MathCos(particleIndex << 12);
+    particleVelocity->y = 0;
+    velocityZ = Engine_MathSin(particleIndex << 12);
+    velocityX = particleVelocity->x;
+    particleVelocity->z = velocityZ;
+    velocityX += velocityX / 2;
+    particleVelocity->x = velocityX;
+    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
+                 particleVelocity->y, velocityZ,
+                 EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                     EFFECT_USE_PALETTE | 1,
+                 particleOptions);
   }
   Engine_AudioPlayCue(188);
-  Actor_SetAttachedEffect(0, 0x101);
-  Engine_ActorSetAnimation(0, 22);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
   Work_SetValuesIfNonNegative(-1, -1, 0xe666);
   Engine_MapWaitWorkValuesBelow256();
-  Engine_ActorSetAttachedEffect(0, 0x100);
-  Object_GetById(0)->gravity = 0x10000;
-  Object_GetById(0)->bounce = 0x4000;
+  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
+  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   Engine_EventEnd();
 }
 
@@ -1180,72 +1207,93 @@ struct SceneEvent gTretInteriorsEvents[] = {
     {EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {EVENT_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0x202, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {0x202, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle)},
-    {EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH)},
-    {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TOUCH)},
-    {EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TOUCH)},
-    {EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TOUCH)},
-    {EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH)},
-    {EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH)},
-    {EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH)},
-    {EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
-    {EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(EV29_TOUCH)},
-    {EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH)},
-    {EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_TOUCH)},
-    {EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH)},
-    {EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH)},
-    {EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH)},
-    {EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH)},
-    {EVENT_TOUCH, 55, CONDITION_ALWAYS, EVENT_SCRIPT(EV55_TOUCH)},
-    {EVENT_TOUCH, 56, CONDITION_ALWAYS, EVENT_SCRIPT(EV56_TOUCH)},
-    {EVENT_TOUCH, 57, CONDITION_ALWAYS, EVENT_SCRIPT(EV57_TOUCH)},
-    {EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(EV58_TOUCH)},
-    {EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(EV59_TOUCH)},
-    {EVENT_TOUCH, 40, 0x844, EVENT_SCRIPT(EV40_TOUCH)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 21, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 22, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 23, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 24, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 26, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 27, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 52, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 53, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 54, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 55, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 56, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 57, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 58, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 59, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_ResetFloorTouchLatchWhenClear)},
+    {EVENT_TOUCH, 21, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleNorthwest)},
+    {EVENT_TOUCH, 22, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleNortheast)},
+    {EVENT_TOUCH, 23, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleWestUpper)},
+    {EVENT_TOUCH, 24, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleWestLower)},
+    {EVENT_TOUCH, 25, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleSouthwestUpper)},
+    {EVENT_TOUCH, 26, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleSouthUpper)},
+    {EVENT_TOUCH, 27, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleSouthwestLower)},
+    {EVENT_TOUCH, 28, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleSouthLower)},
+    {EVENT_TOUCH, 29, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperMiddleSoutheastLower)},
+    {EVENT_TOUCH, 31, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperRightNorthwest)},
+    {EVENT_TOUCH, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToUpperRightNortheast)},
+    {EVENT_TOUCH, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleCenter)},
+    {EVENT_TOUCH, 51, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleNorthwest)},
+    {EVENT_TOUCH, 52, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleNorth)},
+    {EVENT_TOUCH, 53, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleNortheast)},
+    {EVENT_TOUCH, 54, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleWestA)},
+    {EVENT_TOUCH, 55, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleEast)},
+    {EVENT_TOUCH, 56, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleWestB)},
+    {EVENT_TOUCH, 57, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleSouthwest)},
+    {EVENT_TOUCH, 58, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleSouth)},
+    {EVENT_TOUCH, 59, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TretInteriors_TouchFloorToLowerMiddleSoutheast)},
+    {EVENT_TOUCH, 40, 0x844, EVENT_SCRIPT(TretInteriors_StartTretBattle)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EV00_PSYNERGY)},
+     EVENT_SCRIPT(TretInteriors_StopTintForReveal)},
     {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(0x109)},
     {SEARCH(SEARCH_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
     {SEARCH(SEARCH_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},

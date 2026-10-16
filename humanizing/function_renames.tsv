@@ -328,3 +328,108 @@ round	lane	source	old_name	new_name	evidence
 1	13	games/tbs/src/scene/suhalla_desert.c	EncounterPalette_Pulse	SuhallaDesert_PulseRevealPalette	Pulses the Reveal palette color with a triangular frame-based brightness ramp.
 1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunOpeningAuxiliarySequence	SuhallaDesert_HideRevealObjects	Hides the Reveal objects in the second room and restores the saved palette color.
 1	13	games/tbs/src/scene/suhalla_desert.c	FieldScene_RunScene3c0SequenceA	SuhallaDesert_ShowRevealObjects	Shows the hidden actor and stone in the second room and starts their palette pulse.
+1	10	games/tbs/src/scene/tret_interiors.c	TretInteriors_HandleFloorSwitch	TretInteriors_TouchCollapsingFloor	First touch changes a floor cell and sets its flag; second touch selects fall destination and spins the selected actor downward
+1	10	games/tbs/src/scene/tret_interiors.c	SceneState_ClearStoryVariantWhenIdle	TretInteriors_ResetFloorTouchLatchWhenClear	Only resets the scene-local last entrance latch when leader-ahead check clears
+1	10	games/tbs/src/scene/tret_interiors.c	EV40_TOUCH	TretInteriors_StartTretBattle	Tret dialogue and party staging lead to Battle_SetStart and return entrance19
+1	10	games/tbs/src/scene/tret_interiors.c	FieldScene_RunFourActorEncounter	TretInteriors_PlayPostBattleConversation	Tret conversation, fading sparks, map restoration and flag844; no stronger item identity asserted
+1	10	games/tbs/src/scene/tret_interiors.c	SceneState_ApplyRectsByFlag844	TretInteriors_ApplyPostBattleState	Optionally plays recovery scene and restores map/collision cells based on844
+1	10	games/tbs/src/scene/tret_interiors.c	TretPalette_CaptureBank	TretPalette_SaveSceneColors	Copies112words from hardware palette into palette work; not a single bank
+1	10	games/tbs/src/scene/tret_interiors.c	TretPalette_ApplyTint	TretPalette_UpdateSceneTint	Applies clamped RGB steps to63palette colors with frame/RNG gating
+1	10	games/tbs/src/scene/tret_interiors.c	TretInteriors_UpdateSwirlObject	TretInteriors_UpdateSwirlSpark	Update hook attached to each emitted swirl spark
+1	10	games/tbs/src/scene/tret_interiors.c	EV00_PSYNERGY	TretInteriors_StopTintForReveal	Reveal phase5 removes the palette tint scheduler callback
+1	10	games/tbs/src/scene/tret_interiors.c	EV21_TOUCH	TretInteriors_TouchFloorToUpperMiddleNorthwest	Fall entrance21 at472,104 inside camera bounds352,0..640,272
+1	10	games/tbs/src/scene/tret_interiors.c	EV22_TOUCH	TretInteriors_TouchFloorToUpperMiddleNortheast	Fall entrance22 at504,104 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV23_TOUCH	TretInteriors_TouchFloorToUpperMiddleWestUpper	Fall entrance23 at424,136 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV24_TOUCH	TretInteriors_TouchFloorToUpperMiddleWestLower	Fall entrance24 at424,168 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV25_TOUCH	TretInteriors_TouchFloorToUpperMiddleSouthwestUpper	Fall entrance25 at440,200 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV26_TOUCH	TretInteriors_TouchFloorToUpperMiddleSouthUpper	Fall entrance26 at488,200 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV27_TOUCH	TretInteriors_TouchFloorToUpperMiddleSouthwestLower	Fall entrance27 at456,232 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV28_TOUCH	TretInteriors_TouchFloorToUpperMiddleSouthLower	Fall entrance28 at488,232 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV29_TOUCH	TretInteriors_TouchFloorToUpperMiddleSoutheastLower	Fall entrance29 at520,232 in upper-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV31_TOUCH	TretInteriors_TouchFloorToUpperRightNorthwest	Fall entrance31 at760,104 inside bounds672,0..944,272
+1	10	games/tbs/src/scene/tret_interiors.c	EV32_TOUCH	TretInteriors_TouchFloorToUpperRightNortheast	Fall entrance32 at856,120 in upper-right room
+1	10	games/tbs/src/scene/tret_interiors.c	EV50_TOUCH	TretInteriors_TouchFloorToLowerMiddleCenter	Fall entrance50 at488,424 inside bounds352,272..640,544
+1	10	games/tbs/src/scene/tret_interiors.c	EV51_TOUCH	TretInteriors_TouchFloorToLowerMiddleNorthwest	Fall entrance51 at456,392 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV52_TOUCH	TretInteriors_TouchFloorToLowerMiddleNorth	Fall entrance52 at488,392 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV53_TOUCH	TretInteriors_TouchFloorToLowerMiddleNortheast	Fall entrance53 at520,392 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV54_TOUCH	TretInteriors_TouchFloorToLowerMiddleWestA	Entrance54 at456,424; same destination as56; original source-tile distinction remains neutralA/B
+1	10	games/tbs/src/scene/tret_interiors.c	EV55_TOUCH	TretInteriors_TouchFloorToLowerMiddleEast	Fall entrance55 at520,424 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV56_TOUCH	TretInteriors_TouchFloorToLowerMiddleWestB	Entrance56 at456,424; same destination as54; original source-tile distinction remains neutralA/B
+1	10	games/tbs/src/scene/tret_interiors.c	EV57_TOUCH	TretInteriors_TouchFloorToLowerMiddleSouthwest	Fall entrance57 at456,456 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV58_TOUCH	TretInteriors_TouchFloorToLowerMiddleSouth	Fall entrance58 at488,456 in lower-middle room
+1	10	games/tbs/src/scene/tret_interiors.c	EV59_TOUCH	TretInteriors_TouchFloorToLowerMiddleSoutheast	Fall entrance59 at552,456 in lower-middle room
+1	11	games/tbs/src/scene/mercury_lighthouse.c	Door_DriftStep	MercuryLighthouse_RandomDoorParticleSpeed	Random16 scaled8 times0x3333; caller subtracts0xcccc for signed jitter
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV03_TALK	MercuryLighthouse_MiaDiscussesBlockedEntrance	MsgImilStatueBlocksEntrance and actor3 dialogue
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV05_SCRIPT	MercuryLighthouse_FillHermesWaterBottle	Shows Hermes water184; replaces inventory185 with184; got-item text
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV05_SEARCH	MercuryLighthouse_InspectHealingFountain	Dry/flowing-water messages; empty-bottle ownership enables item use
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV08_PSYNERGY_1	MercuryLighthouse_MiaJoinsAfterRescue	MOVE statue48, SavedMeAgain dialogue, party flag68; gives/activates Djinn and UnitCalcMIA
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV08_PSYNERGY_3	MercuryLighthouse_OpenStairGateWithMovedBlock	MOVE actor8 at10,23 sinks floor switch and animates gate, sets878
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV10_PSYNERGY	MercuryLighthouse_MiaOpensEntranceWithPly	MOVE statue column51; Mia dialogue then casts existing PLY93 on actor11, entry column animates
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV10_SCRIPT	MercuryLighthouse_PushGateSwitchBlock	StagedActor_AdvancePair then actor11 floor-switch check
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV10_SEARCH	MercuryLighthouse_InspectBlockedPassage	MsgMercuryLighthouseStrangeForcesBlockWay
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV10_TOUCH	MercuryLighthouse_ReleaseStairFloorSwitch	Clears256, raises leader and closes gate using FloorSwitchCloseCells
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV11_PSYNERGY	MercuryLighthouse_OpenGateWithMovedBlock	MOVE actor11 at cell5,13 sinks block and opens gate, sets874
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV11_TOUCH	MercuryLighthouse_RaiseEntrancePillar	Only MercuryEntrance_RaisePillar
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV12_PSYNERGY	MercuryLighthouse_PlyOpensWaterfallPassage	PLY event row12; fade/spark/waterfall map animation and party enters passage; exits8 or9
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV12_TALK	MercuryLighthouse_StartDjinnBattle	BattleFx_SetPhaseRequest definition starts a Djinn battle; arguments actor12 andDjinn21 retained
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV12_TOUCH_2	MercuryLighthouse_PressGateFloorSwitch	Leader within84..91/212..219 sinks and opens gate; temporary state256
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV12_TOUCH_3	MercuryLighthouse_PressStairFloorSwitch	Leader within164..171/372..379 sinks and animates stair gate
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV15_TOUCH	MercuryLighthouse_EnterRisingPassage	Rising-object service and special entrance transition; effect appearance left unnamed
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV20_PSYNERGY	MercuryLighthouse_OpenMovedBlockCrossing	MOVE actor20 at column28 sets348 and copies collision into31,20
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV20_SEARCH	MercuryLighthouse_InspectLockedDoor	MsgFieldDoorTightlyLocked
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV21_TOUCH	MercuryLighthouse_TickEntranceSpawnTimer	Only Mercury_TickSpawnTimer and scene1 event row
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV25_SCRIPT	MercuryLighthouse_MoveChannelBlocks	Actor9..11 clear-position movement updates channel flags310..312 and exit gate
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV40_SCRIPT	MercuryLighthouse_MovePillarDoorBlocks	Staged actors10/11 choose doors and actor9 scripted pillar push; successful side exits15
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV42_SEARCH	MercuryLighthouse_ReadHermesFountainInscription	MsgImilHermesHealingWaterFountain
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV47_SCRIPT	MercuryLighthouse_PushAndSaveBlockPositions	StagedActor_AdvancePair then SyncBlockFlags
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV53_TOUCH	MercuryLighthouse_ExitWithSparks	Shared mercury_risedrop helper moves leader six pixels, enables spark trail and exits via touchedTrigger-50; no guessed route identity
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV55_TOUCH	MercuryLighthouse_LeaveWithSparkTrail	Shared mercury_risedrop helper moves leader six pixels, enables spark trail and exits via touchedTrigger-50; no guessed route identity
+1	11	games/tbs/src/scene/mercury_lighthouse.c	EV63_TOUCH	MercuryLighthouse_ExitAfterSparkStep	Shared mercury_risedrop helper moves leader six pixels, enables spark trail and exits via touchedTrigger-50; no guessed route identity
+1	11	games/tbs/src/scene/mercury_lighthouse.c	FieldScene_RunActorThreeBranchSequence	MercuryLighthouse_MiaSensesSomeoneInside	MIA placement and dialogue5495..5500 mention Alex and blocked statue
+1	11	games/tbs/src/scene/mercury_lighthouse.c	FieldScene_RunFourSteps	MercuryLighthouse_PushStairSwitchBlock	StagedActor_AdvancePair then actor8 switch check
+1	11	games/tbs/src/scene/mercury_lighthouse.c	FieldScene_RunOpeningAuxiliarySequence	MercuryLighthouse_AnimateFountainTiles	Progressive map strips with optional frame delay; callers fountain block movement
+1	11	games/tbs/src/scene/mercury_lighthouse.c	FieldScene_RunSingleStep	MercuryLighthouse_MoveEntranceActor	Only Mercury_RunActorMove; entrance moving actors share callback
+1	11	games/tbs/src/scene/mercury_lighthouse.c	FieldScene_RunSupplementalSequenceOne	MercuryLighthouse_OpenFountainWithSpray	Animates two particle rows and tiles, schedules SprayAtFountain
+1	11	games/tbs/src/scene/mercury_lighthouse.c	MercuryLighthouse_CastPsynergyAtActor11	MercuryLighthouse_MiaCastsPlyOnEntrance	Engine_PsynergyBegin93=ABILITY_PLY, actor3 targets11
+1	11	games/tbs/src/scene/mercury_lighthouse.c	MercuryLighthouse_RunSequenceE	MercuryLighthouse_MoveStairAndFountainBlocks	Staged actor8 toggles stairs302; actor10 opens/closes fountain306
+1	11	games/tbs/src/scene/mercury_lighthouse.c	MercuryLighthouse_RunSequenceF	MercuryLighthouse_StopFountainSpray	Three particle rows while restoring tile strip, removes fountain scheduler
+1	11	games/tbs/src/scene/mercury_lighthouse.c	MercuryLighthouse_RunSequenceG	MercuryLighthouse_RestoreFountainTiles	Three map-copy steps after fountain block moves away; retains measured width/height locals
+1	11	games/tbs/src/scene/mercury_lighthouse.c	SceneActor_UseActorNinePositionWithYOffset	MercuryLighthouse_SprayAbovePillar	Actor9 position with random height offset feeds four-frame particle spawner
+1	11	games/tbs/src/scene/mercury_lighthouse.c	SceneEffect_SpawnParticleRowsByMode	MercuryLighthouse_CloseStoneDoor	Three particle strips and copy tiles inverse to OpenStoneDoor for same side0..2
+1	11	games/tbs/src/scene/mercury_lighthouse.c	SceneState_SetRecordTableValue	MercuryLighthouse_ReplaceInventoryItem	Inventory_Find returns-1 or0..14; UnitGet returns BattleUnit with inventory[15] at0xd8; fountain replaces bottle185 by water184
+1	12	games/tbs/src/scene/vault_cave.c	SceneData_FindActiveSlotAtCell	VaultCave_FindCollidableActorAtCell	Scans actors8..65, compares X/Zcells and collisionFlags0x59.
+1	12	games/tbs/src/scene/vault_cave.c	EV22_PSYNERGY	VaultCave_RecordWhirlwindUse	WHIRLWIND0x4e on actor22 sets flag300; do not guess leaf/foliage identity.
+1	12	games/tbs/src/scene/vault_cave.c	EV99_SEARCH	VaultCave_ShowLockedDoor	Displays MsgFieldDoorTightlyLocked.
+1	12	games/tbs/src/scene/vault_cave.c	IsActor9AtTile15x54	VaultCave_IsSouthernBlockOnSwitch	Actor9 coordinates truncate to signed tile15,54; separate negative correction.
+1	12	games/tbs/src/scene/vault_cave.c	EV60_SCRIPT	VaultCave_CheckSouthernSwitchAfterPush	Tries push then locks flag9a9 if actor9 on switch.
+1	12	games/tbs/src/scene/vault_cave.c	SceneState_ApplyThreeRects	VaultCave_ApplySouthernSwitchCells	Updates south-room switch map cells and attributes.
+1	12	games/tbs/src/scene/vault_cave.c	EV09_PSYNERGY_2	VaultCave_CheckSouthernSwitchAfterMove	MOVE0x8c completion checks same southern block/flag as push handler.
+1	12	games/tbs/src/scene/vault_cave.c	FieldScene_NoOp	VaultCave_UnusedNoOp	Unreferenced private empty definition; no callback table references.
+1	12	games/tbs/src/scene/vault_cave.c	SceneState_ApplyThreeRectsRows9And10	VaultCave_ApplyNorthernSwitchCells	Updates north-room switch cells/attributes at rows9..11.
+1	12	games/tbs/src/scene/vault_cave.c	SceneActor_IsActor10AtTile16x12	VaultCave_IsNorthernBlockOnSwitch	Actor10 truncating tile check at16,12.
+1	12	games/tbs/src/scene/vault_cave.c	EV50_SCRIPT	VaultCave_CheckNorthernSwitchAfterPush	Pushes then checks9aa, block target and temp07 before map/cue/flag.
+1	12	games/tbs/src/scene/vault_cave.c	EV09_PSYNERGY_3	VaultCave_IgnoreMoveInteraction	Empty MOVE callback remains referenced by event table.
+1	12	games/tbs/src/scene/vault_cave.c	EV10_PSYNERGY	VaultCave_CheckNorthernSwitchAfterMove	Same northern completion predicates without push call.
+1	12	games/tbs/src/scene/vault_cave.c	EV16_PSYNERGY	VaultCave_ApplyWestUpperFrostState	FROST target atcell23,32; map attribute update; priority automatic; temp00.
+1	12	games/tbs/src/scene/vault_cave.c	EV17_PSYNERGY	VaultCave_ApplyWestLowerFrostState	FROST target atcell23,34; flagtemp01.
+1	12	games/tbs/src/scene/vault_cave.c	EV18_PSYNERGY	VaultCave_ApplyInnerWestLowerFrostState	FROST target atcell24,34; flagtemp02.
+1	12	games/tbs/src/scene/vault_cave.c	EV19_PSYNERGY	VaultCave_ApplyEastUpperFrostState	FROST target atcell26,32; spriteflags call; temp03.
+1	12	games/tbs/src/scene/vault_cave.c	EV20_PSYNERGY	VaultCave_ApplyEastLowerFrostState	FROST target atcell26,34; spriteflags call; temp04.
+1	12	games/tbs/src/scene/vault_cave.c	EV21_PSYNERGY	VaultCave_ApplyFarEastFrostState	FROST target atcell28,33; spriteflags call; temp05.
+1	12	games/tbs/src/scene/vault_cave.c	SceneState_DispatchByActorZeroDepth	VaultCave_UpdateFrostTargetPriorities	Leader Y>=16pixels switches priorities of actors16..21.
+1	12	games/tbs/src/scene/vault_cave.c	VaultCave_RaiseActorPriorities	VaultCave_UseUnderfootFrostPriorities	Six actors16..21 ORunderfoot flag2.
+1	12	games/tbs/src/scene/vault_cave.c	VaultCave_EnableGroupAutomaticPriority	VaultCave_UseAutomaticFrostPriorities	Six actors16..21 assigned automatic flag1.
+1	12	games/tbs/src/scene/vault_cave.c	EV20_SEARCH	VaultCave_FlipRumbleSwitch	MsgFieldFlippedSwitch;set9a8;animate2switch/cell stages;run rumble.
+1	12	games/tbs/src/scene/vault_cave.c	SceneActor_LiftLowActorOnSubjectTile	VaultCave_ResetFallingObjectAtActorCell	Actors11..14 atY1..0xffff and same cell as subject reset toY255/gravity0/velocity0.
+1	12	games/tbs/src/scene/vault_cave.c	FieldScene_RunOpeningAuxiliarySequence	VaultCave_UpdateTimedFallingObjects	191frame timer; schedule20/80/115/170 controls4objects11..14; landing puffs;subject collision resets.
+1	12	games/tbs/src/scene/vault_cave.c	FieldScene_RunScene3a7SequenceD	VaultCave_UpdateFrostControlledFallingObjects	Every64frames random actor10..15 falls; each paired temp00..05 changes reset height.
+1	12	games/tbs/src/scene/vault_cave.c	SceneActor_TransformAndApplyRecordPosition	VaultCave_OffsetActorRadially	Copies actorX/Y/Z; Vector_AddPolarOffset(radius,angle); sets actual actor position.
+1	12	games/tbs/src/scene/vault_cave.c	SceneActor_InitSlots10To15AndStartTask	VaultCave_StartFrostControlledFalls	Initializes6actors10..15 atY255/bounce and registers random/frost updater.
+1	12	games/tbs/src/scene/vault_cave.c	SceneActor_SetupActors11To14AndInstallTask	VaultCave_StartTimedFalls	Initializes4actors11..14 and registers timed updater.
+1	13	games/tbs/src/scene/lunpa.c	VillagerA_Talk	Lunpa_AskAboutLengthOfStay	English07078 asks how long party has been in Lunpa
+1	13	games/tbs/src/scene/lunpa.c	VillagerC_Talk	Lunpa_AskAboutHammetsKidnapping	English07082 asks whether Dodonpa kidnapped Hammet for ransom
+1	13	games/tbs/src/scene/lunpa.c	VillagerG_Talk	Lunpa_AskAboutSeeingDonpa	English07088 asks whether party wants to see Donpa
+1	13	games/tbs/src/scene/lunpa.c	VillagerB_Talk	Lunpa_ComplainAboutCold	English09425 describes shivering as it gets colder; callback uses repeated motion3
+1	13	games/tbs/src/scene/lunpa.c	VillagerD_Talk	Lunpa_AskAboutFortressCommotion	English09427 asks about commotion at fortress
+1	13	games/tbs/src/scene/lunpa.c	Guards_Watch	Lunpa_WatchForUncloakedParty	Scheduler tests cloak plus guard position bounds then raises party-spotted trigger
+1	13	games/tbs/src/scene/lunpa.c	Party_WatchForFortress	Lunpa_WatchForFortressApproach	Scheduler tests row10 then raises fortress-approach trigger

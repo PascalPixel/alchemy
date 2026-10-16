@@ -8,7 +8,7 @@ lane	area	linked_c_sources	reviewed_functions	observed_c_functions	observed_head
 07	object	6	25	440	0	415
 08	scene cohort 1	15	23	512	0	489
 09	scene cohort 2	15	23	512	0	489
-10	scene cohort 3	15	103	512	0	409
-11	scene cohort 4	15	360	512	0	152
-12	scene cohort 5	15	177	511	0	334
-13	scene cohort 6	15	216	513	1	298
+10	scene cohort 3	15	143	512	0	369
+11	scene cohort 4	15	429	512	0	83
+12	scene cohort 5	15	215	511	0	296
+13	scene cohort 6	15	259	514	1	256

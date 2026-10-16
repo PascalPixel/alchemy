@@ -38,7 +38,6 @@
 #include "field_effect.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
-#include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "field_obj.h"

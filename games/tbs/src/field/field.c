@@ -42,7 +42,6 @@
 #include "fixed_math.h"
 #include "keystate.h"
 #include "field_runtime.h"
-#include "event_runtime.h"
 #include "game_state.h"
 #include "map.h"
 #include "map_scroll.h"

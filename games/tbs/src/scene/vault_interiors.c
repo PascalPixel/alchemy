@@ -29,7 +29,6 @@
 #include "battle_party.h"
 #include "text/msg_ids.h"
 #include "field_service.h"
-#include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 

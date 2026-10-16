@@ -103,7 +103,14 @@ struct FieldWork {
   u16 unk1c4;
   u16 transitionActive;
   s32 transitionFrames;
-  u8 unk1cc[0xaea];
+  s32 messageBusy;
+  u8 unk1d0[8];
+  s16 message;
+  u8 unk1da[0x1a];
+  s32 speaker;
+  s32 messageWindow;
+  s32 sideWindow;
+  u8 unk200[0xab6];
   u16 busy;
   s16 revealActive;  // nonzero while Reveal is active
   s16 revealFrames;  // the frames Reveal has left
@@ -112,7 +119,8 @@ struct FieldWork {
   // Nonzero lets the Reveal countdown advance; menus and other effects pause
   // it.
   s16 effectTimerRunning;
-  u8 unkcc2[4];
+  s16 nameMessage;    // first message of the menu's name window (0: none)
+  s16 nameWidth;      // width of the name window (0: the default)
   s8 resolvingAction; // set while a Psynergy's effect plays
   s8 castStarted;     // set once a cast has been announced
   s16 queuedSound;
@@ -151,6 +159,13 @@ LAYOUT_OFFSET_GUARD(FieldWork_TransitionActive, struct FieldWork,
                     transitionActive, 0x1c6);
 LAYOUT_OFFSET_GUARD(FieldWork_TransitionFrames, struct FieldWork,
                     transitionFrames, 0x1c8);
+LAYOUT_OFFSET_GUARD(FieldWork_MessageBusy, struct FieldWork, messageBusy,
+                    0x1cc);
+LAYOUT_OFFSET_GUARD(FieldWork_Message, struct FieldWork, message, 0x1d8);
+LAYOUT_OFFSET_GUARD(FieldWork_Speaker, struct FieldWork, speaker, 0x1f4);
+LAYOUT_OFFSET_GUARD(FieldWork_MessageWindow, struct FieldWork, messageWindow,
+                    0x1f8);
+LAYOUT_OFFSET_GUARD(FieldWork_SideWindow, struct FieldWork, sideWindow, 0x1fc);
 LAYOUT_OFFSET_GUARD(FieldWork_Busy, struct FieldWork, busy, 0xcb6);
 LAYOUT_OFFSET_GUARD(FieldWork_RevealActive, struct FieldWork, revealActive,
                     0xcb8);
@@ -162,6 +177,9 @@ LAYOUT_OFFSET_GUARD(FieldWork_RevealCenterY, struct FieldWork, revealCenterY,
                     0xcbe);
 LAYOUT_OFFSET_GUARD(FieldWork_EffectTimerRunning, struct FieldWork,
                     effectTimerRunning, 0xcc0);
+LAYOUT_OFFSET_GUARD(FieldWork_NameMessage, struct FieldWork, nameMessage,
+                    0xcc2);
+LAYOUT_OFFSET_GUARD(FieldWork_NameWidth, struct FieldWork, nameWidth, 0xcc4);
 LAYOUT_OFFSET_GUARD(FieldWork_ResolvingAction, struct FieldWork,
                     resolvingAction, 0xcc6);
 LAYOUT_OFFSET_GUARD(FieldWork_CastStarted, struct FieldWork, castStarted,

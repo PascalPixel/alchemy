@@ -44,7 +44,6 @@
 #include "field_obj.h"
 #include "object_dispatch.h"
 #include "field_event.h"
-#include "event_runtime.h"
 #include "field_sprite.h"
 #include "battle_effect_counters.h"
 #include "heap_state.h"
@@ -1472,7 +1471,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 // tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
-  struct EventRuntime *runtime;
+  struct FieldWork *runtime;
   s32 z;
   s32 y;
   s32 x;
@@ -1489,7 +1488,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   y = positionY;
   z = positionZ;
   region = gOverlayArea.regions();
-  if (region != 0 && (runtime = (struct EventRuntime *)gEventWork,
+  if (region != 0 && (runtime = (struct FieldWork *)gEventWork,
                       minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
@@ -1503,12 +1502,12 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         y < REGION_FIXED(maxY) && x >= REGION_FIXED(minX) &&
         x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
         z < REGION_FIXED(maxZ)) {
-      runtime->value170 = exitValue;
+      runtime->exit = exitValue;
       AudioCommand_PlayFar(SOUND_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    runtime = (struct EventRuntime *)gEventWork;
+    runtime = (struct FieldWork *)gEventWork;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -2893,15 +2892,15 @@ s32 Field_SearchTile(s32 tile) {
                 GameFlag_SetBitFar(condition);
             } else if (type == 0x500000) {
               // A mimic: a battle with enemy group slot of zone 99.
-              struct EventRuntime *work = (struct EventRuntime *)gEventWork;
+              struct FieldWork *work = (struct FieldWork *)gEventWork;
 
               if ((event->control & 0x1ff) == 19)
                 Marker_LaunchMimic(tile);
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              work->encounterEnemyGroup = BattleFx_GetWeightedResult(
-                  99, (*(const u16 *)&event->value));
+              work->battle =
+                  BattleFx_GetWeightedResult(99, (*(const u16 *)&event->value));
               Battle_SetStart(2);
               BattleFx_SelectBattleCue(99, (*(const u16 *)&event->value));
               AudioCommand_PlayFar(gGameState.sceneCue);

@@ -48,12 +48,6 @@
 static void MercuryEntrance_CrossDoorway(void);
 static void MercuryEntrance_RunDoorScene(void);
 
-struct WorkPointers {
-  u8 *event;
-  u8 *unk04[7];
-  u8 *scene;
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"

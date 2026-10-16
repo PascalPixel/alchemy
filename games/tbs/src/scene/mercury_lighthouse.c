@@ -75,12 +75,6 @@ static void SceneState_SetRecordTableValue(s32 key, s32 value);
 
 enum { ITEM_HERMES_WATER = 184 };
 
-struct WorkPointers {
-  u8 *event;
-  u8 *unk04[7];
-  u8 *scene;
-};
-
 struct SceneLookupRecord {
   u8 pad00[216];
   u16 table[1];

@@ -42,7 +42,6 @@
 #include "field_obj.h"
 #include "object_dispatch.h"
 #include "field_event.h"
-#include "event_runtime.h"
 #include "field_sprite.h"
 #include "battle_effect_counters.h"
 #include "heap_state.h"
@@ -308,7 +307,7 @@ s32 Party_CheckItemLimit(s32 item) {
 // indispensable one). Returns the member who received the item, or -1 when
 // it was left behind.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  struct EventRuntime *work;
+  struct FieldWork *work;
   s32 savedMessage;
   s32 owner;
   s32 result;
@@ -317,7 +316,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 member;
   s32 slot;
 
-  work = (struct EventRuntime *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   savedMessage = work->message;
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
@@ -414,15 +413,6 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit) {
 // Does nothing.
 void Inventory_NoOpCallback(void) {}
 
-// The event work as Inventory_PromptAndSetObjectMode reads it: the yes/no
-// menu's name window, which Battle_Reset clears at the start of each event.
-struct EventPromptWork {
-  struct EventRuntime event;
-  u8 unk200[0xac2];
-  s16 nameMessage; // first message of the menu's name window (0: none)
-  s16 nameWidth;   // width of the name window (0: the default)
-};
-
 // Does nothing.
 void Inventory_ReservedNoOp(void) {}
 
@@ -450,12 +440,12 @@ void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
 // past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 // and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 forceBottom) {
-  struct EventPromptWork *work = (struct EventPromptWork *)gEventWork;
-  s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(
-                    work->event.speaker))
-                   ->sprite;
-  struct UiWindow *window = (struct UiWindow *)work->event.messageWindow;
-  struct UiWindow *side = (struct UiWindow *)work->event.sideWindow;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  s32 sprite =
+      ((struct ScenePlacement *)BattleAction_FindDescriptor(work->speaker))
+          ->sprite;
+  struct UiWindow *window = (struct UiWindow *)work->messageWindow;
+  struct UiWindow *side = (struct UiWindow *)work->sideWindow;
   s32 useBottom = 1;
   s32 answer;
 
@@ -538,7 +528,7 @@ void Event_WaitTransitionFrames(void) {
 
 // Makes the event leave for entrance entrance of scene scene.
 void Event_SetDestination(s32 scene, s32 entrance) {
-  ((struct EventRuntime *)gEventWork)->value170 = 999;
+  ((struct FieldWork *)gEventWork)->exit = 999;
   gGameState.scene = scene;
   gGameState.entrance = entrance;
 }
@@ -546,8 +536,8 @@ void Event_SetDestination(s32 scene, s32 entrance) {
 // Makes the event leave and records scene and entrance as the saved
 // destination.
 void Event_SetSavedDestination(u16 scene, u16 entrance) {
-  struct EventRuntime *state = (struct EventRuntime *)gEventWork;
-  state->value170 = 999;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  state->exit = 999;
   gGameState.savedScene = scene;
   gGameState.savedEntrance = entrance;
 }
@@ -555,8 +545,8 @@ void Event_SetSavedDestination(u16 scene, u16 entrance) {
 // The event command "request exit": sets the field's exit request (999 leaves
 // for gGameState's scene and entrance).
 void Event_SetExitRequest(u16 request) {
-  struct EventRuntime *state = (struct EventRuntime *)gEventWork;
-  state->value170 = request;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  state->exit = request;
 }
 
 //--------------------------------------------------------------------------
@@ -572,12 +562,12 @@ void Event_SetExitRequest(u16 request) {
 void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
+  struct FieldWork *ev = (struct FieldWork *)gEventWork;
 
-  ev->encounterEnemyGroup = BattleFx_GetWeightedResult(zone, slot); // enemy group
+  ev->battle = BattleFx_GetWeightedResult(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
-  if (ev->mode19e == 3)
+  if (ev->mode == 3)
     BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.selectedActor) +
                           8); // position
   BattleFx_SelectBattleCue(zone, slot);
@@ -587,11 +577,11 @@ void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
 // actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
 // to an element (Djinn_ResolvePendingEvent).
 void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
-  struct EventRuntime *ev;
+  struct FieldWork *ev;
   struct GameState *gs;
   s32 skip;
 
-  ev = (struct EventRuntime *)gEventWork;
+  ev = (struct FieldWork *)gEventWork;
   skip = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
@@ -600,8 +590,8 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
 
   gs = &gGameState;
   gs->pendingDjinnEvent = (no + DJINNI_0) | skip;
-  ev->encounterEnemyGroup = BattleFx_GetPhaseResult(no); // the Djinni's enemy group
-  if (ev->mode19e == 3) {
+  ev->battle = BattleFx_GetPhaseResult(no); // the Djinni's enemy group
+  if (ev->mode == 3) {
     void *obj = ObjectTable_Get(gs->selectedActor);
 
     BattleFx_LookupResult((u8 *)obj + 8); // position
@@ -623,10 +613,10 @@ void Event_SetDefeatDestination(s32 scene, s32 entrance) {
 
 // Makes the event leave for entrance entrance of scene scene.
 void Event_RequestDestination(u16 scene, u16 entrance) {
-  struct EventRuntime *work = (struct EventRuntime *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   gGameState.scene = scene;
   gGameState.entrance = entrance;
-  work->value170 = 999;
+  work->exit = 999;
 }
 
 // Plays sound effect 0x12a, then soundId (0x121 for -1), and remembers
@@ -1463,7 +1453,7 @@ void ObjectVisual_ReservedNoOp(void) {}
 
 // The event command "set message": the number of the event's next message.
 void Event_SetMessageId(s32 message) {
-  ((struct EventRuntime *)gEventWork)->message = message;
+  ((struct FieldWork *)gEventWork)->message = message;
 }
 
 // Returns the sprite (the first animation's id) of the actor in the low 12
@@ -1497,6 +1487,14 @@ s32 ObjectTable_FindActiveByValue(s32 sprite) {
   return result;
 }
 
+#ifndef UBFIX
+struct WorkPointers {
+  u8 *window;
+  u8 unk04[0x2c];
+  struct FieldWork *event;
+};
+#endif
+
 // The event command "open message": opens the event's current message in a
 // speech window next to the speaking actor, with the speaker's portrait
 // beside it when it has one, and moves on to the next message. The low 12
@@ -1506,7 +1504,7 @@ s32 ObjectTable_FindActiveByValue(s32 sprite) {
 // Returns the message window.
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   struct UiRenderWork *win;
-  struct EventRuntime *work;
+  struct FieldWork *work;
   s32 sprite;
   s32 extra;
   s32 portraitTop;
@@ -1530,7 +1528,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 #endif
 
   win = (struct UiRenderWork *)gWindowWork[0];
-  work = ((struct WorkPointers *)gWindowWork)->event;
+  // UB: the fabricated WorkPointers aggregate reaches from the window slot
+  // into event slot 27. Its named load adds eight bytes in native EN
+  // (0x344 to 0x34c).
+#ifdef UBFIX
+  work = (struct FieldWork *)gEventWork;
+#else
+  work = (struct FieldWork *)((struct WorkPointers *)gWindowWork)->event;
+#endif
   handle = 0;
   portrait = 0;
   sprite = ObjectTable_ReadActiveValue(actor);
@@ -1548,7 +1553,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   if (work->messageBusy == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
-      if (work->mode19e == 3) {
+      if (work->mode == 3) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -1565,7 +1570,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     } else if (actor <= 7) {
       sprite = actor;
       object = ObjectTable_Get(gGameState.selectedActor);
-      if (work->mode19e == 3) {
+      if (work->mode == 3) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -1723,7 +1728,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 // all held.
 void BattleEv_RunWait(s32 actor, s32 flags) {
   s32 member;
-  struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
   struct UiWindow *window = UiText_OpenMessageAtObject(actor, flags);
   s32 sprite;
   u32 frames;
@@ -1766,7 +1771,7 @@ void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait) {
 // no. Returns 0 for yes, 1 for no.
 s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags) {
   s32 answer;
-  struct EventRuntime *runtime;
+  struct FieldWork *runtime;
   struct GameState *save;
 
   UiText_OpenMessageAtObject(actor, flags);
@@ -1774,10 +1779,10 @@ s32 BattleEventRuntime_ProcessAction(s32 actor, s32 flags) {
   answer = Inventory_PromptAndSetObjectMode(save->selectedActor, 0);
   if (answer == 0) {
     BattleEv_RunWait(actor, flags);
-    runtime = (struct EventRuntime *)gEventWork;
+    runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
   } else {
-    runtime = (struct EventRuntime *)gEventWork;
+    runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
     BattleEv_RunWait(actor, flags);
   }
@@ -1796,7 +1801,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   struct {
     s32 x, y;
   } pos;
-  struct EventRuntime *state = (struct EventRuntime *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
 
   speaker &= 0xfff;
   ObjectTable_Get(speaker);
@@ -1834,7 +1839,7 @@ void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y) {
 // point (x, y), kept on screen, waits until it has been read and moves on to
 // the next message.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
-  struct EventRuntime *state = (struct EventRuntime *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 py = y;
   s32 px = x;
   s32 minX = 8;
@@ -1878,7 +1883,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 second, s32 secondX, s32 secondY,
                                       s32 secondPortraitX,
                                       s32 secondPortraitY) {
-  struct EventRuntime *rt = (struct EventRuntime *)gEventWork;
+  struct FieldWork *rt = (struct FieldWork *)gEventWork;
   s32 firstSprite = ObjectTable_ReadActiveValue(first);
   s32 secondSprite = ObjectTable_ReadActiveValue(second);
   s32 firstWindow;
@@ -1956,7 +1961,7 @@ void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition) {
       camera->y = obj->y;
       camera->z = obj->z;
       WaitFrames(1);
-      if (((struct EventRuntime *)work)->mode19e != 3) {
+      if (((struct FieldWork *)work)->mode != 3) {
         Map_ApplyWorkOriginAndSpanFar();
       }
     }
@@ -2032,7 +2037,7 @@ void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     camera->y = positionY;
     camera->z = positionZ;
     WaitFrames(1U);
-    if (((struct EventRuntime *)runtimeBlock)->mode19e != 3) {
+    if (((struct FieldWork *)runtimeBlock)->mode != 3) {
       Map_ApplyWorkOriginAndSpanFar();
     }
   } else {
@@ -5580,13 +5585,13 @@ void BattleFx_PrepareBufferInterpolation(void) {
 // projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
-  struct EventRuntime *event = (struct EventRuntime *)gEventWork;
+  struct FieldWork *event = (struct FieldWork *)gEventWork;
 
-  if (event->mode19e == 3) {
+  if (event->mode == 3) {
 #else
-  struct EventRuntime **eventCell = (struct EventRuntime **)&gEventWork;
+  struct FieldWork **eventCell = (struct FieldWork **)&gEventWork;
 
-  if ((*eventCell)->mode19e == 3) {
+  if ((*eventCell)->mode == 3) {
 #endif
     struct EffectVector result;
 
@@ -7492,7 +7497,7 @@ void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
 #endif
-  struct EventRuntime *ev;
+  struct FieldWork *ev;
   struct ObjectRuntime *obj;
   u8 *tile;
   s32 x;
@@ -7501,7 +7506,7 @@ void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   slot = (u32)&gEventWork;
 #endif
-  ev = gEventWork;
+  ev = (struct FieldWork *)gEventWork;
   obj = ObjectTable_Get(gGameState.selectedActor);
 #ifdef UBFIX
   tile = gMapWork[0];
@@ -7511,7 +7516,7 @@ void FieldFx_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 #endif
 
-  if (ev->mode19e == 3) {
+  if (ev->mode == 3) {
     u32 tx;
     u32 ty;
 

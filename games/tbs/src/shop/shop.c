@@ -35,7 +35,7 @@
 #include "lib.h"
 #include "fixed_point_position.h"
 #include "inn_runtime.h"
-#include "event_runtime.h"
+#include "field_runtime.h"
 #include "battle_calc.h"
 #include "field_obj.h"
 
@@ -2698,7 +2698,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 count;
   s32 index;
   struct BattleUnit *object;
-  struct EventRuntime *state;
+  struct FieldWork *state;
 
   count = Party_ListActiveOwnersFar(objects);
   Party_AdjustCoinsFar(-roomPrice);
@@ -2712,9 +2712,9 @@ void Inn_PlaySleep(s32 roomPrice) {
     }
   }
 
-  state = (struct EventRuntime *)gEventWork;
-  state->value1c0 = 0x209;
-  state->value1c8 = 60;
+  state = (struct FieldWork *)gEventWork;
+  state->transition = 0x209;
+  state->transitionFrames = 60;
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
@@ -2724,7 +2724,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   WaitFrames(30);
-  ((struct EventRuntime *)gEventWork)->value1c8 = 16;
+  ((struct FieldWork *)gEventWork)->transitionFrames = 16;
 }
 
 // アイテム名の下の行の x（ドット）

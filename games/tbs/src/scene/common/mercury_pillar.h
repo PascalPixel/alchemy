@@ -295,7 +295,7 @@ struct PushState {
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
-  s32 *record = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
+  s32 *record = *(s32 **)WORK_SLOT(35);
   s32 *target;
 
   if (record[0] == 0) {

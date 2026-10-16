@@ -44,6 +44,38 @@ struct SoundTrack;
 typedef void (*SoundCommand)(struct SoundPlayer *player,
                              struct SoundTrack *track);
 
+// Driver entries follow gSound_CommandTableTemplate, including its helper tail.
+#define SOUND_COMMAND_FINISH 0
+#define SOUND_COMMAND_GOTO 1
+#define SOUND_COMMAND_WORK_BYTE 8
+#define SOUND_COMMAND_LFO_SPEED 17
+#define SOUND_COMMAND_MODULATION 19
+#define SOUND_COMMAND_EXTENDED 28
+#define SOUND_COMMAND_RELEASE_KEY 29
+#define SOUND_COMMAND_PCM_RATE 30
+#define SOUND_COMMAND_STOP_TRACK 31
+#define SOUND_COMMAND_FADE 32
+#define SOUND_COMMAND_CALCULATE_OUTPUT 33
+#define SOUND_COMMAND_DETACH_NOTE 34
+#define SOUND_COMMAND_CLEAR_WORK 35
+
+enum SoundDriverLimit {
+  SOUND_PCM_NOTE_CAPACITY = 12,
+  SOUND_CGB_CHANNEL_COUNT = 4,
+  SOUND_PLAYER_TRACK_LIMIT = 16
+};
+
+enum SoundModulationTarget {
+  SOUND_MODULATION_PITCH,
+  SOUND_MODULATION_VOLUME,
+  SOUND_MODULATION_PAN
+};
+
+enum SoundFadeFlag { SOUND_FADE_PAUSE = 1, SOUND_FADE_IN = 2 };
+
+#define SOUND_FADE_FULL_VOLUME 0x100
+#define SOUND_FADE_STEP 16
+
 struct SoundVoice {
   u8 kind;
   u8 baseKey;

@@ -86,6 +86,9 @@
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 
+#define PSYNERGY_EFFECT_SLOT_COUNT 24
+#define FIELD_WEATHER_PARTICLE_COUNT 32
+
 // Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
@@ -129,7 +132,7 @@ void Event_UpdateDebugSkip(void) {
   }
 }
 
-// The event command "wait": waits frames frames, unless the debug fast
+// The event command "wait": waits the requested frames, unless debug fast
 // forward (Event_UpdateDebugSkip) is on.
 void Battle_WaitMode0(s32 frames) {
   if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
@@ -265,9 +268,9 @@ void Event_ClearInvalidPackedValues(void) {
 // party is never left all down.
 void Party_RemoveOwnerRestored(s32 unit) {
   struct BattleUnit *vitals;
-  s32 i;
-  s32 count;
-  s32 standing;
+  s32 partyIndex;
+  s32 partyCount;
+  s32 survivingMembers;
 
   Party_RemoveActiveOwnerFar(unit);
   Event_ClearInvalidPackedValues();
@@ -276,14 +279,14 @@ void Party_RemoveOwnerRestored(s32 unit) {
   vitals->pp = vitals->maxPp;
   Unit_UpdateGauges(vitals);
   vitals->poison = 0;
-  standing = 0;
-  count = Party_CountActiveOwnersFar();
-  for (i = 0; i < count; i++) {
-    vitals = UnitGetFar(gGameState.activeOwners[i]);
+  survivingMembers = 0;
+  partyCount = Party_CountActiveOwnersFar();
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+    vitals = UnitGetFar(gGameState.activeOwners[partyIndex]);
     if (vitals->hp != 0)
-      standing++;
+      survivingMembers++;
   }
-  if (standing == 0) {
+  if (survivingMembers == 0) {
     vitals = UnitGetFar(gGameState.selectedActor);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
@@ -295,15 +298,16 @@ void Party_RemoveOwnerRestored(s32 unit) {
 // carry any more <item>s..." and "Isaac threw the <item> as far away as
 // possible." and returns -1; otherwise returns 0.
 s32 Party_CheckItemLimit(s32 item) {
-  s32 count;
-  s32 sum = 0;
-  s32 i;
+  s32 partyCount;
+  s32 heldQuantity = 0;
+  s32 partyIndex;
 
-  count = Party_CountActiveOwnersFar();
-  for (i = 0; i < count; i++)
-    sum += Inventory_CountItemFar(gGameState.activeOwners[i], item);
+  partyCount = Party_CountActiveOwnersFar();
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
+    heldQuantity +=
+        Inventory_CountItemFar(gGameState.activeOwners[partyIndex], item);
 
-  if (sum >= count * 30) {
+  if (heldQuantity >= partyCount * 30) {
     UiWork_PushValueSlotFar(item, 2);
     UiText_ShowPositionedMessageAndWaitFar(MsgCannotCarryMore, 1);
     UiWork_PushValueSlotFar(item, 2);
@@ -323,8 +327,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 savedMessage;
   s32 owner;
   s32 result;
-  s32 count;
-  s32 i;
+  s32 discardQuantity;
+  s32 discardIndex;
   s32 member;
   s32 slot;
 
@@ -367,9 +371,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         /* FAKEMATCH: the ROM loads the slot argument before the member. Only
          * the English build, without the thirty-item check below, needs the
          * copy; the direct call matches the rest. */
-        s32 s = slot;
+        s32 selectedSlot = slot;
 
-        count = Shop_GetSelectionState(member, s);
+        discardQuantity = Shop_GetSelectionState(member, selectedSlot);
       }
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
@@ -379,7 +383,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         goto retry;
       }
 #endif
-      for (i = 0; i < count; i++)
+      for (discardIndex = 0; discardIndex < discardQuantity; discardIndex++)
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       AudioCommand_PlayFar(83);
@@ -425,15 +429,16 @@ void Inventory_ReservedNoOp(void) {}
 // Waits, at most 90 frames, for an actor's animation to stop being animation:
 // the actor has finished a one-off animation such as a nod.
 void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
-  struct ObjectRuntime *obj = ObjectTable_Get(actor);
+  struct ObjectRuntime *actorObject = ObjectTable_Get(actor);
 
-  if (obj != 0 && obj->animationKind == 1) {
+  if (actorObject != 0 && actorObject->animationKind == 1) {
     s32 frames = 0;
-    u8 *current = &((struct AnimationObject *)obj->animation)->lastNo;
+    u8 *animationNumber =
+        &((struct AnimationObject *)actorObject->animation)->lastNo;
 
     while (frames <= 89) {
       WaitFrames(1);
-      if (animation != *current) {
+      if (animation != *animationNumber) {
         break;
       }
       frames++;
@@ -566,12 +571,12 @@ void Event_SetExitRequest(u16 request) {
 void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct FieldWork *ev = (struct FieldWork *)gEventWork;
+  struct FieldWork *field = (struct FieldWork *)gEventWork;
 
-  ev->battle = BattleFx_GetWeightedResult(zone, slot); // enemy group
+  field->battle = BattleFx_GetWeightedResult(zone, slot); // enemy group
   if (zone == AERIE && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusAerieStormBackdrop;
-  if (ev->mode == 3)
+  if (field->mode == 3)
     BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.selectedActor) +
                           8); // position
   BattleFx_SelectBattleCue(zone, slot);
@@ -581,22 +586,22 @@ void BattleFx_SetWeightedResult(s32 zoneNo, s32 slotNo) {
 // actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
 // to an element (Djinn_ResolvePendingEvent).
 void BattleFx_SetPhaseRequest(s32 flag, s32 no) {
-  struct FieldWork *ev;
-  struct GameState *gs;
-  s32 skip;
+  struct FieldWork *field;
+  struct GameState *gameState;
+  s32 skipHop;
 
-  ev = (struct FieldWork *)gEventWork;
-  skip = flag & DJINN_NO_HOP;
+  field = (struct FieldWork *)gEventWork;
+  skipHop = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
-  if (skip == 0)
+  if (skipHop == 0)
     Djinn_RunBattleStartHop(flag);
 
-  gs = &gGameState;
-  gs->pendingDjinnEvent = (no + DJINNI_0) | skip;
-  ev->battle = BattleFx_GetPhaseResult(no); // the Djinni's enemy group
-  if (ev->mode == 3) {
-    void *obj = ObjectTable_Get(gs->selectedActor);
+  gameState = &gGameState;
+  gameState->pendingDjinnEvent = (no + DJINNI_0) | skipHop;
+  field->battle = BattleFx_GetPhaseResult(no); // the Djinni's enemy group
+  if (field->mode == 3) {
+    void *obj = ObjectTable_Get(gameState->selectedActor);
 
     BattleFx_LookupResult((u8 *)obj + 8); // position
   }
@@ -988,13 +993,13 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
    * 4-byte frame, stored once and loaded again for each compare. Without it
    * differ 29, 26 instructions for 31 and no frame. */
   volatile s32 saved;
-  s32 i;
+  s32 elapsedFrames;
 
   object = ObjectTable_Get(objectId);
   if (object != NULL && object->animationKind == 1) {
     sprite = object->animation;
     saved = sprite->lastNo;
-    for (i = 0; i <= 89; i++) {
+    for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
       WaitFrames(1);
       if (saved != sprite->lastNo) {
         break;
@@ -1223,43 +1228,43 @@ void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 
 // Turns two actors to face each other, at most 1/16 turn a frame each, until
 // both do (at most 60 frames).
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first,
-                                          struct FacingObject *raw_second) {
-  struct ObjectRuntime *first = (struct ObjectRuntime *)raw_first;
-  struct ObjectRuntime *second = (struct ObjectRuntime *)raw_second;
-  s32 toward;
-  s32 away;
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
+                                          struct FacingObject *secondObject) {
+  struct ObjectRuntime *first = (struct ObjectRuntime *)firstObject;
+  struct ObjectRuntime *second = (struct ObjectRuntime *)secondObject;
+  s32 firstTargetAngle;
+  s32 secondTargetAngle;
   s32 frame;
-  s32 turning;
-  s32 delta;
+  s32 actorsTurning;
+  s32 angleDifference;
 
   if (first == NULL || second == NULL)
     return;
-  toward = (u16)ArcTan2(second->z - first->z, second->x - first->x);
-  away = toward + 0x8000;
+  firstTargetAngle = (u16)ArcTan2(second->z - first->z, second->x - first->x);
+  secondTargetAngle = firstTargetAngle + 0x8000;
   for (frame = 0; frame < 60; frame++) {
-    turning = 2;
-    delta = (s16)(toward - first->angle);
-    if (delta != 0) {
-      if (delta > 0x1000)
-        delta = 0x1000;
-      if (delta < -0x1000)
-        delta = -0x1000;
-      first->angle += delta;
+    actorsTurning = 2;
+    angleDifference = (s16)(firstTargetAngle - first->angle);
+    if (angleDifference != 0) {
+      if (angleDifference > 0x1000)
+        angleDifference = 0x1000;
+      if (angleDifference < -0x1000)
+        angleDifference = -0x1000;
+      first->angle += angleDifference;
     } else {
-      turning = 1;
+      actorsTurning = 1;
     }
-    delta = (s16)(away - second->angle);
-    if (delta != 0) {
-      if (delta > 0x1000)
-        delta = 0x1000;
-      if (delta < -0x1000)
-        delta = -0x1000;
-      second->angle += delta;
+    angleDifference = (s16)(secondTargetAngle - second->angle);
+    if (angleDifference != 0) {
+      if (angleDifference > 0x1000)
+        angleDifference = 0x1000;
+      if (angleDifference < -0x1000)
+        angleDifference = -0x1000;
+      second->angle += angleDifference;
     } else {
-      turning--;
+      actorsTurning--;
     }
-    if (turning == 0)
+    if (actorsTurning == 0)
       break;
     WaitFrames(1);
   }
@@ -1920,19 +1925,20 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 second, s32 secondX, s32 secondY,
                                       s32 secondPortraitX,
                                       s32 secondPortraitY) {
-  struct FieldWork *rt = (struct FieldWork *)gEventWork;
+  struct FieldWork *field = (struct FieldWork *)gEventWork;
   s32 firstSprite = ObjectTable_ReadActiveValue(first);
   s32 secondSprite = ObjectTable_ReadActiveValue(second);
   s32 firstWindow;
   s32 secondWindow;
 
-  firstWindow = UiText_OpenMessageWindowFar(
-      rt->message++, firstX, firstY, BattleFx_GetResourceId(firstSprite) << 16);
+  firstWindow =
+      UiText_OpenMessageWindowFar(field->message++, firstX, firstY,
+                                  BattleFx_GetResourceId(firstSprite) << 16);
   UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
                                    firstPortraitY);
 
   secondWindow =
-      UiText_OpenMessageWindowFar(rt->message++, secondX, secondY,
+      UiText_OpenMessageWindowFar(field->message++, secondX, secondY,
                                   BattleFx_GetResourceId(secondSprite) << 16);
   UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
                                    secondPortraitY);
@@ -1981,22 +1987,22 @@ void Ui_SetRenderResultFromObject(s32 actor) {
 // centre) follows actor. Unless keepPosition is set it jumps there at once
 // and, off the world map, the map is redrawn around it.
 void Object_AttachWorkTargetToObject(s32 actor, s32 keepPosition) {
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
   struct EventWork *work;
   struct MapScrollWork *map;
 
-  obj = ObjectTable_Get(actor);
+  subject = ObjectTable_Get(actor);
   work = Runtime_AllocateBlock(0x1B, 0xCCC);
   camera = (struct ObjectRuntime *)work->viewCenter;
   map = gMapWork[0];
-  if (obj != 0) {
+  if (subject != 0) {
     map->origin = &camera->x;
-    ObjectDispatch_InitFromTable4WithArgumentFar(camera, obj);
+    ObjectDispatch_InitFromTable4WithArgumentFar(camera, subject);
     if (keepPosition == 0) {
-      camera->x = obj->x;
-      camera->y = obj->y;
-      camera->z = obj->z;
+      camera->x = subject->x;
+      camera->y = subject->y;
+      camera->z = subject->z;
       WaitFrames(1);
       if (((struct FieldWork *)work)->mode != 3) {
         Map_ApplyWorkOriginAndSpanFar();
@@ -2013,7 +2019,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 speedLimit, s32 acceleration) {
   ((struct ObjectRuntime *)owner->viewCenter)->acceleration = acceleration;
 }
 
-// The event command "camera move to": sends the camera toward (x, y, z),
+// The event command "camera move to": sends the camera to the requested axes,
 // 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 // screen never shows past its edge. With glide 0 the camera jumps there at
 // once; otherwise it travels at its own speed.
@@ -2085,12 +2091,12 @@ void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 // The event command "camera move to actor": Motion_CamBounds to the actor's
 // x and z.
 void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *subject;
 
-  obj = ObjectTable_Get(actor);
+  subject = ObjectTable_Get(actor);
   Runtime_AllocateBlock(0x1B, 0xCCC);
-  if (obj != NULL) {
-    Motion_CamBounds(obj->x, -1, obj->z, glide);
+  if (subject != NULL) {
+    Motion_CamBounds(subject->x, -1, subject->z, glide);
   }
 }
 
@@ -2104,8 +2110,7 @@ void BattleFx_CommitObjectPositionAndWait(void) {
 
 // The event command "get view centre": returns the camera object.
 struct FieldActor *Battle_GetWorkObject1e0(void) {
-  return (s32)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))
-      ->viewCenter;
+  return ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->viewCenter;
 }
 
 // Makes the camera follow target; unless keepCurrentPosition is set it jumps
@@ -2445,8 +2450,10 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = object->action;
     if (distance >= step) {
-      newX = object->x + (pixelsX << 20) / step;
-      newZ = object->z + (pixelsZ << 20) / step;
+      // Offsets can be negative. Shift their word representation before
+      // reading it as a signed displacement, rather than shifting a negative.
+      newX = object->x + (s32)((u32)pixelsX << 20) / step;
+      newZ = object->z + (s32)((u32)pixelsZ << 20) / step;
       Object_SetMoveTargetFar(object, newX, object->y, newZ);
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
     } else {
@@ -2521,48 +2528,48 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
                                                      s32 sprite) {
   struct ObjectRuntime *entry;
   struct ObjectRuntime *found;
-  s32 cnt;
-  s32 best;
-  s32 dy;
-  s32 dx;
-  s32 dz;
-  s32 dist;
+  s32 slotIndex;
+  s32 nearestDistance;
+  s32 heightDifference;
+  s32 pixelX;
+  s32 pixelZ;
+  s32 distance;
   s32 angle;
-  s32 turn;
+  s32 angleDifference;
 
   found = NULL;
-  best = 40;
+  nearestDistance = 40;
   entry = gObjectSlots;
-  for (cnt = 0; cnt < 64; cnt++, entry++) {
+  for (slotIndex = 0; slotIndex < 64; slotIndex++, entry++) {
     if (entry->script == NULL)
       continue;
     if (entry == self)
       continue;
     if (entry->animationKind != 1)
       continue;
-    dy = entry->y - self->y;
-    if (dy >= 0) {
-      if (dy > 0x2fffff)
+    heightDifference = entry->y - self->y;
+    if (heightDifference >= 0) {
+      if (heightDifference > 0x2fffff)
         continue;
     } else {
       if (self->y - entry->y > 0x2fffff)
         continue;
     }
-    dx = (entry->x - self->x) / 0x10000;
-    dz = (entry->z - self->z) / 0x10000;
-    dist = Iwram_Sqrt(dx * dx + dz * dz);
-    if (dist >= best)
+    pixelX = (entry->x - self->x) / 0x10000;
+    pixelZ = (entry->z - self->z) / 0x10000;
+    distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ);
+    if (distance >= nearestDistance)
       continue;
     angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
-    if (dist > 23) {
-      turn = (s16)(angle - self->angle);
-      if (turn < -0x2fff)
+    if (distance > 23) {
+      angleDifference = (s16)(angle - self->angle);
+      if (angleDifference < -0x2fff)
         continue;
-      if (turn > 0x2fff)
+      if (angleDifference > 0x2fff)
         continue;
     }
     found = entry;
-    best = dist;
+    nearestDistance = distance;
   }
   if (found == NULL)
     return NULL;
@@ -2934,27 +2941,28 @@ void ObjectEffect_BeginContextEffect25(void) {
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selectedActor);
-  struct AnimationObject *ctx = obj->animation;
+  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct AnimationObject *spriteAnimation = leader->animation;
   struct AnimationEntry *eff =
-      (struct AnimationEntry *)ResourceMetadata_RegisterFar(ctx, 27);
+      (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
+                                                            27);
 
   zero = 0;
   mask = 0xfff00000;
-  ctx->flags = zero;
+  spriteAnimation->flags = zero;
   eff->param = 15;
-  obj->x = (obj->x & mask) + 0x80000;
-  obj->z &= mask;
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, animation);
+  leader->x = (leader->x & mask) + 0x80000;
+  leader->z &= mask;
+  ObjectDispatch_ApplyArgumentToChildrenFar(leader, animation);
   WaitFrames(30);
-  ctx->count = 1;
-  ResourceMetadata_ClearRecordFar(ctx->entries[1]);
-  ctx->entries[1] = (void *)zero;
-  ctx->flags = 1;
-  obj->acceleration = 0x10000;
-  obj->speedLimit = 0x10000;
-  Object_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
-  Script_WaitForEventTimeoutFar(obj);
+  spriteAnimation->count = 1;
+  ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
+  spriteAnimation->entries[1] = (void *)zero;
+  spriteAnimation->flags = 1;
+  leader->acceleration = 0x10000;
+  leader->speedLimit = 0x10000;
+  Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
+  Script_WaitForEventTimeoutFar(leader);
 }
 
 // Plays the leader's arrival for the way the last scene was left: through an
@@ -2978,22 +2986,22 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
     } else {
       flag = 0x122;
       if (GameFlag_TestFar(flag) != 0) {
-        s32 id;
-        struct ObjectRuntime *obj;
+        s32 leaderId;
+        struct ObjectRuntime *leader;
 
         GameFlag_ClearBitFar(flag);
-        id = gGameState.selectedActor;
-        obj = ObjectTable_Get(id);
-        obj->y += 0x00a00000;
+        leaderId = gGameState.selectedActor;
+        leader = ObjectTable_Get(leaderId);
+        leader->y += 0x00a00000;
         Motion_CamBounds(-1, -1, -1, 0);
-        while (obj->y + obj->velocityY > obj->terrainHeight) {
+        while (leader->y + leader->velocityY > leader->terrainHeight) {
           WaitFrames(1);
         }
         AudioCommand_PlayFar(159);
-        obj->y = obj->terrainHeight;
-        ObjectDispatch_ApplyArgumentToChildrenFar(obj, 22);
+        leader->y = leader->terrainHeight;
+        ObjectDispatch_ApplyArgumentToChildrenFar(leader, 22);
         Battle_WaitMode0(15);
-        Object_AttachWorkTargetToObject(id, 1);
+        Object_AttachWorkTargetToObject(leaderId, 1);
         result = 3;
       }
     }
@@ -3049,28 +3057,29 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   u16 *row;
   s32 step;
   s32 phase;
-  s32 amp;
-  s32 i;
+  s32 amplitude;
+  s32 scanline;
   u16 wave;
 
   row = &work->rows[work->page ^ 1][0][0].x;
   step = work->stepX;
   phase = (work->frame + (u16)y3) * work->freqX;
   if (step == 0) {
-    for (i = 0; i != 160; i++) {
-      row[i * 6] = x3;
-      row[i * 6 + 2] = x2;
-      row[i * 6 + 4] = x1;
+    for (scanline = 0; scanline != 160; scanline++) {
+      row[scanline * 6] = x3;
+      row[scanline * 6 + 2] = x2;
+      row[scanline * 6 + 4] = x1;
     }
   } else {
     u16 a = x3;
     u16 b = x2;
     u16 c = x1;
 
-    amp = work->ampX;
-    for (i = 0; i != 160; i++) {
-      wave =
-          Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
+    amplitude = work->ampX;
+    for (scanline = 0; scanline != 160; scanline++) {
+      wave = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255],
+                          amplitude) /
+             256;
       *row = a + wave;
       row += 2;
       *row = b + wave;
@@ -3084,20 +3093,21 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   step = work->stepY;
   phase = (work->frame + (u16)y3) * work->freqY;
   if (step == 0) {
-    for (i = 0; i != 160; i++) {
-      row[i * 6] = y3;
-      row[i * 6 + 2] = y2;
-      row[i * 6 + 4] = y1;
+    for (scanline = 0; scanline != 160; scanline++) {
+      row[scanline * 6] = y3;
+      row[scanline * 6 + 2] = y2;
+      row[scanline * 6 + 4] = y1;
     }
   } else {
     u16 a = y3;
     u16 b = y2;
     u16 c = y1;
 
-    amp = work->ampY;
-    for (i = 0; i != 160; i++) {
-      wave =
-          Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255], amp) / 256;
+    amplitude = work->ampY;
+    for (scanline = 0; scanline != 160; scanline++) {
+      wave = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255],
+                          amplitude) /
+             256;
       *row = a + wave;
       row += 2;
       *row = b + wave;
@@ -3157,7 +3167,7 @@ LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
 struct GroundParticleWork {
   s32 entry;    // the resource entry holding the effect's tiles
   s32 tileBase; // their first tile in VRAM
-  struct GroundParticle particles[32];
+  struct GroundParticle particles[FIELD_WEATHER_PARTICLE_COUNT];
   s32 unk408;  // never used here
   s32 stopped; // sparkles: no new bursts while set
 };
@@ -3178,13 +3188,15 @@ void FieldFx_UpdateGroundParticles(void) {
   struct GroundParticle *particle = work->particles;
   u32 i;
 
-  for (i = 0; i < 32; i++, particle++) {
+  for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++, particle++) {
     s16 *frame;
     s32 x;
     s32 y;
 
     if (--particle->timer == 0xffff)
       continue;
+    // BUG: freezing a timer of 16 indexes past the 16-frame table. Which
+    // frame should be held is not established, so keep the original timing.
     if (GameFlag_TestFar(0x166))
       particle->timer++;
     frame = &gFieldFx_GroundParticleFrames[5 * particle->timer];
@@ -3228,9 +3240,10 @@ void FieldFx_UpdateLightning(void) {
   switch ((*timer)--) {
   case 0:
     if (work->enabled != 0) {
-      u32 a = Random16();
-      u32 b = Random16();
-      work->timer = ((a * 400) >> 16) - ((b * 100) >> 16) + 150;
+      u32 intervalDraw = Random16();
+      u32 intervalJitter = Random16();
+      work->timer =
+          ((intervalDraw * 400) >> 16) - ((intervalJitter * 100) >> 16) + 150;
       if (work->loud != 0)
         AudioCommand_PlayFar(172);
       else
@@ -3282,7 +3295,7 @@ void FieldFx_StartGroundParticles(void) {
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   Runtime_ReleaseHeapBlock(14);
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
     s32 z;
 
@@ -3323,7 +3336,7 @@ void FieldMotes_Update(void) {
   u32 i;
   struct GroundParticle *mote = work->particles;
 
-  for (i = 0; i < 32; i++, mote++) {
+  for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++, mote++) {
     s32 x;
     s32 y;
 
@@ -3332,16 +3345,17 @@ void FieldMotes_Update(void) {
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
       u16 age = mote->timer;
-      u32 a;
-      u32 b;
+      u32 firstJitterDraw;
+      u32 secondJitterDraw;
 
       if (GameFlag_TestFar(0x166)) {
         mote->timer++;
         mote->delay--;
       }
-      a = Random16();
-      b = Random16();
-      x = ((mote->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1) - 1;
+      firstJitterDraw = Random16();
+      secondJitterDraw = Random16();
+      x = ((mote->posX - cameraX) >> 16) +
+          (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
       y = ((mote->posZ - mote->posY - cameraZ) >> 16) - age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
@@ -3403,7 +3417,7 @@ void FieldMotes_Start(void) {
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   Runtime_ReleaseHeapBlock(14);
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
     /* FAKEMATCH: reusing the integer field cursor for the height x argument
      * keeps the stores in r1. A plain s32 * cursor with x of its own puts the
@@ -3521,7 +3535,7 @@ void FieldEffect_UpdateSparkles(void) {
     }
     i++;
     sparkle++;
-  } while (i <= 31);
+  } while (i < FIELD_WEATHER_PARTICLE_COUNT);
 }
 
 // Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
@@ -3529,8 +3543,8 @@ void FieldEffect_UpdateSparkles(void) {
 void FieldEffect_InitSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work = Runtime_AllocateBlock(29, size);
-  struct GroundParticle *p = work->particles;
-  u8 *buf;
+  struct GroundParticle *sparkle = work->particles;
+  u8 *tiles;
   u32 i;
   s32 clear;
 
@@ -3541,10 +3555,10 @@ void FieldEffect_InitSparkles(void) {
    * differs 10: the zero takes r3 and p is formed after the fill. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  buf = Runtime_AllocateBlock(14, 0x400);
-  Resource_DecodeByteLz(gFieldFx_SparkleTiles, buf);
+  tiles = Runtime_AllocateBlock(14, 0x400);
+  Resource_DecodeByteLz(gFieldFx_SparkleTiles, tiles);
   work->entry = Resource_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x200, buf);
+  work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
   Runtime_ReleaseHeapBlock(14);
   i = 0;
   clear = 0;
@@ -3557,7 +3571,7 @@ void FieldEffect_InitSparkles(void) {
     u32 attr;
     s32 z;
 
-    attr = (u32)p;
+    attr = (u32)sparkle;
     *(u32 *)attr = clear;
     attr += sizeof(union DustWord);
     leader = view->origin;
@@ -3566,13 +3580,13 @@ void FieldEffect_InitSparkles(void) {
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];
-    p->posX = clear;
-    p->posZ = clear;
-    p->posY = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
-    p->timer = (i & 15) + 1;
+    sparkle->posX = clear;
+    sparkle->posZ = clear;
+    sparkle->posY = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
+    sparkle->timer = (i & 15) + 1;
     i++;
-    p++;
-  } while (i < 32);
+    sparkle++;
+  } while (i < FIELD_WEATHER_PARTICLE_COUNT);
   Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }
 
@@ -3657,13 +3671,19 @@ struct Object {
 
 // Per-frame update of an afterimage: closes half the distance to the object
 // it is linked to, on all three axes.
-void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
-  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
-  struct ObjectRuntime *target = obj->linkedObject;
+static inline void
+BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
+  struct FieldActor *afterimage = (struct FieldActor *)fieldObject;
+  struct FieldActor *target = afterimage->linkedObject;
 
-  obj->x += (target->x - obj->x) / 2;
-  obj->y += (target->y - obj->y) / 2;
-  obj->z += (target->z - obj->z) / 2;
+  afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
+  afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
+  afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
+}
+
+// Update hook shared by the Djinni battle-start and Mercury afterimages.
+void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
+  BattleFx_MoveAfterimageHalfway(fieldObject);
 }
 
 //--------------------------------------------------------------------------
@@ -3916,21 +3936,21 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 }
 
 // Runs the update of each of the 24 effect slots.
-static __inline__ void UpdateAllEffectSlots(void) {
+static __inline__ void BattleFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
-  s32 n;
+  s32 remainingSlots;
 
   slot = ((struct BattleFxScene *)gEffectWork)->slots;
-  n = 23;
+  remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
-    n -= 1;
+    remainingSlots -= 1;
     EffectSlot_Update(slot);
     slot++;
-  } while (n >= 0);
+  } while (remainingSlots >= 0);
 }
 
 // Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllSlots(void) { UpdateAllEffectSlots(); }
+void BattleFx_UpdateAllSlots(void) { BattleFx_UpdateSceneSlots(); }
 
 // Allocates and clears the effect slots (heap block 56) and starts their
 // update callback.
@@ -3950,7 +3970,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   s32 i;
 
   Scheduler_RemoveCallback(BattleFx_UpdateAllSlots);
-  for (i = 0; i < 24; i++) {
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     slot = &scene->slots[i];
     if (slot->active != 0)
       BattleFx_ClearOwnedSlot(slot);
@@ -3968,64 +3988,64 @@ void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
 // Effect slot callback of a Jupiter Djinni's light particles: each circles
 // its centre while it widens for 60 frames, circles 40, drifts toward a point
 // 20 pixels over the leader for 40, closes in for 60 and is freed.
-void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor) {
+void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct MotionObject *target;
-  struct EffectVector pos;
+  struct EffectVector position;
 
   target = (struct MotionObject *)Object_GetById(gGameState.selectedActor);
-  if (actor->state == 0) {
-    actor->orbitRadius += 1;
-    actor->orbitAngle += 1;
-    if ((s16)actor->age == 60) {
-      actor->age = 0;
-      actor->state += 1;
+  if (particle->state == 0) {
+    particle->orbitRadius += 1;
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 60) {
+      particle->age = 0;
+      particle->state += 1;
     }
-  } else if (actor->state == 1) {
-    actor->orbitAngle += 1;
-    if ((s16)actor->age == 40) {
-      actor->age = 0;
-      actor->state += 1;
+  } else if (particle->state == 1) {
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 40) {
+      particle->age = 0;
+      particle->state += 1;
     }
-  } else if (actor->state == 2) {
-    actor->orbitAngle += 1;
-    pos.x = target->x;
-    pos.y = target->y + 0x140000;
-    pos.z = target->z;
-    Camera_WorldToScreen(&pos);
-    actor->originX += (pos.x - actor->originX) / 8;
-    actor->originZ += (pos.z - actor->originZ) / 8;
-    if ((s16)actor->age == 40) {
-      actor->age = 0;
-      actor->state += 1;
+  } else if (particle->state == 2) {
+    particle->orbitAngle += 1;
+    position.x = target->x;
+    position.y = target->y + 0x140000;
+    position.z = target->z;
+    Camera_WorldToScreen(&position);
+    particle->originX += (position.x - particle->originX) / 8;
+    particle->originZ += (position.z - particle->originZ) / 8;
+    if ((s16)particle->age == 40) {
+      particle->age = 0;
+      particle->state += 1;
     }
-  } else if (actor->state == 3) {
-    actor->orbitRadius -= 1;
-    actor->orbitAngle += 1;
-    if ((s16)actor->age == 60) {
-      actor->age = 0;
-      actor->state += 1;
+  } else if (particle->state == 3) {
+    particle->orbitRadius -= 1;
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 60) {
+      particle->age = 0;
+      particle->state += 1;
     }
-  } else if (actor->state == 4) {
-    BattleFx_ClearOwnedSlot(actor);
+  } else if (particle->state == 4) {
+    BattleFx_ClearOwnedSlot(particle);
   }
-  pos.x = actor->originX;
-  pos.z = actor->originZ;
-  Vector_AddPolarOffset(actor->orbitRadius << 16, actor->orbitAngle << 11,
-                        &pos);
-  actor->x = pos.x;
-  actor->z = pos.z;
+  position.x = particle->originX;
+  position.z = particle->originZ;
+  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+                        &position);
+  particle->x = position.x;
+  particle->z = position.z;
 }
 
 // A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 // of sight and bursts into 24 light particles that circle and close in on
 // the leader, who turns to the camera and plays animation 28.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
-  struct EffectVector pos;
+  struct EffectVector position;
   struct MotionObject *djinni;
   struct BattleFxScene *scene;
   struct EffectSlot *slot;
   s32 scale;
-  s32 cnt;
+  s32 remainingParticles;
 
   djinni = (struct MotionObject *)Object_GetById(djinniId);
   if (djinni == NULL)
@@ -4049,16 +4069,16 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   ObjectMotion_Launch(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
-  pos.x = djinni->x;
-  pos.y = djinni->y;
-  pos.z = djinni->z;
-  Camera_WorldToScreen(&pos);
+  position.x = djinni->x;
+  position.y = djinni->y;
+  position.z = djinni->z;
+  Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar(djinni);
   AudioCommand_PlayFar(164);
   slot = scene->slots;
-  cnt = 23;
+  remainingParticles = 23;
   do {
-    EffectSlot_Initialize(slot, 284, pos.x, pos.z);
+    EffectSlot_Initialize(slot, 284, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
@@ -4066,10 +4086,10 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;
-    cnt--;
+    remainingParticles--;
     WaitFrames(1);
     slot++;
-  } while (cnt >= 0);
+  } while (remainingParticles >= 0);
 
   // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
@@ -4138,7 +4158,7 @@ void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gBattleFx_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
-  u32 scale = index[table];
+  u32 scale = table[index];
   ((struct MotionObject *)object)->scaleX = scale;
   ((struct MotionObject *)object)->scaleY = scale;
 }
@@ -4650,12 +4670,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
 // Per-frame update of an afterimage: closes half the distance to the object
 // it is linked to.
 void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
-  struct FieldActor *object = (struct FieldActor *)fieldObject;
-  struct FieldActor *target = object->linkedObject;
-
-  object->x.fixed += (target->x.fixed - object->x.fixed) / 2;
-  object->y.fixed += (target->y.fixed - object->y.fixed) / 2;
-  object->z.fixed += (target->z.fixed - object->z.fixed) / 2;
+  BattleFx_MoveAfterimageHalfway(fieldObject);
 }
 
 //--------------------------------------------------------------------------
@@ -4807,8 +4822,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 //--------------------------------------------------------------------------
 // Running a Psynergy effect on the field, by its kind.
 //--------------------------------------------------------------------------
-// Each effect passes its objects and positions in a structure of its own,
-// so the handlers take void *.
+// The dispatchers use the common effect scene. Individual update hooks use
+// their actor or EffectSlot contract; neither is a scene-script callback.
 
 // Runs one step of the current Psynergy effect: 0 casts it with no target,
 // 1 casts it on its target (secondObjectId), 2 finishes it and 3 runs its
@@ -4841,7 +4856,7 @@ void BattleFx_Run(void) {
   struct FieldWork *runtime;
   s32 kind;
   s32 targetId;
-  s32 objId;
+  s32 nearestTargetId;
 
   scene = *(gWorkSlot + HEAP_SLOT_FX);
   runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
@@ -4885,14 +4900,14 @@ void BattleFx_Run(void) {
       gGameState.pausedObject = -1;
     }
 
-    objId =
+    nearestTargetId =
         BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, kind);
-    objId = BattleFx_FilterObjectIdByFlags(objId);
-    if (BattleFx_FindDescriptorWithOverride(objId) != 0) {
-      BattleFx_SetupObjectPair(gGameState.selectedActor, objId);
-      BattleFx_MarkChildAndRunFallbackTransition(objId);
-      BattleEffect_PauseObject(objId);
-      gGameState.pausedObject = objId;
+    nearestTargetId = BattleFx_FilterObjectIdByFlags(nearestTargetId);
+    if (BattleFx_FindDescriptorWithOverride(nearestTargetId) != 0) {
+      BattleFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
+      BattleFx_MarkChildAndRunFallbackTransition(nearestTargetId);
+      BattleEffect_PauseObject(nearestTargetId);
+      gGameState.pausedObject = nearestTargetId;
     } else {
       BattleEffect_RunFallbackObjectTransition();
     }
@@ -5050,13 +5065,13 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target) {
 // Per-frame update: sets every part of an object's sprite to param
 // frame % 6, which cycles its colours.
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
-  void *owner = (void *)fieldObject;
+  struct ObjectRuntime *owner = (struct ObjectRuntime *)fieldObject;
   s32 kind;
-  void *anim;
+  struct AnimationObject *animation;
   s32 initialCount;
-  s32 cnt;
-  void **entry;
-  void *part;
+  s32 remainingParts;
+  struct AnimationEntry **parts;
+  struct AnimationEntry *spritePart;
   /* FAKEMATCH: volatile, as gFrameCount is declared (frame.h): each *frameCount
    * is a load of its own through the pointer local. A plain pointer differs 16;
    * gFrameCount read directly in the loop differs 6; 46 instructions every way.
@@ -5064,24 +5079,23 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   volatile u32 *frameCount;
   s32 param;
 
-  kind = ((struct ObjectRuntime *)owner)->animationKind;
+  kind = owner->animationKind;
   if (kind == 1) {
-    anim = ((struct ObjectRuntime *)owner)->animation;
-    if (anim != 0 &&
-        (((struct AnimationObject *)anim)->displayFlags & kind) == 0) {
-      initialCount = ((struct AnimationObject *)anim)->count;
+    animation = owner->animation;
+    if (animation != 0 && (animation->displayFlags & kind) == 0) {
+      initialCount = animation->count;
       if (initialCount != 0) {
         frameCount = &gFrameCount;
-        entry = (void **)((struct AnimationObject *)anim)->entries;
-        cnt = initialCount;
+        parts = animation->entries;
+        remainingParts = initialCount;
         do {
-          part = *entry++;
+          spritePart = *parts++;
           param = *frameCount % 6;
-          cnt--;
-          ((struct AnimationEntry *)part)->param = param;
-        } while (cnt != 0);
+          remainingParts--;
+          spritePart->param = param;
+        } while (remainingParts != 0);
       }
-      ((struct AnimationObject *)anim)->dirty = 1;
+      animation->dirty = 1;
     }
   }
 }
@@ -5118,26 +5132,27 @@ s32 ResourceTable_CountFreeBlocks(void) {
   return freeCount;
 }
 
-// Makes the sprite src share the VRAM block of alt, releasing its own; with
-// no alt it keeps its block. Marks the sprite for redrawing and returns the
-// sprite whose block is shared from now on (alt, or src when there was none),
-// or NULL for no src. Chains of afterimages pass one block along this way.
-void *Object_ReplaceResourceEntry(void *src, void *alt) {
+// Makes sourceSprite share sharedSprite's VRAM block, releasing its own;
+// with no sharedSprite it keeps its block. Marks the sprite for redrawing and
+// returns the sprite whose block is shared from now on (sharedSprite, or
+// sourceSprite when there was none), or NULL for no sourceSprite. Chains of
+// afterimages pass one block along this way.
+void *Object_ReplaceResourceEntry(void *sourceSprite, void *sharedSprite) {
   void *shared;
-  struct FieldSprite *obj;
+  struct FieldSprite *sprite;
 
-  obj = src;
+  sprite = sourceSprite;
   shared = NULL;
-  if (obj != NULL) {
-    if (alt == NULL) {
-      obj->unk1d0 = 1;
+  if (sprite != NULL) {
+    if (sharedSprite == NULL) {
+      sprite->unk1d0 = 1;
     } else {
-      Resource_ResetEntry(obj->vramBlock);
-      obj->vramBlock = ((struct FieldSprite *)alt)->vramBlock;
-      obj->unk1d0 = 1;
-      obj = alt;
+      Resource_ResetEntry(sprite->vramBlock);
+      sprite->vramBlock = ((struct FieldSprite *)sharedSprite)->vramBlock;
+      sprite->unk1d0 = 1;
+      sprite = sharedSprite;
     }
-    shared = obj;
+    shared = sprite;
   }
   return shared;
 }
@@ -5147,23 +5162,23 @@ void *Object_ReplaceResourceEntry(void *src, void *alt) {
 // and NULL returned.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct BattleFxScene *work = gEffectWork;
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
 
-  obj = Object_CreateFar(kind, x, y, z);
-  if (obj != NULL) {
-    if (obj->animationKind == 0) {
-      ObjectDispatch_ReleaseFar(obj);
+  object = Object_CreateFar(kind, x, y, z);
+  if (object != NULL) {
+    if (object->animationKind == 0) {
+      ObjectDispatch_ReleaseFar(object);
       return NULL;
     }
-    obj->terrainHeight =
+    object->terrainHeight =
         ((struct ObjectRuntime *)work->mainObject)->terrainHeight;
-    obj->flags = 4;
-    obj->unk23 = 4;
-    ((struct AnimationObject *)obj->animation)->part[0].priority = 0;
-    ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+    object->flags = 4;
+    object->unk23 = 4;
+    ((struct AnimationObject *)object->animation)->part[0].priority = 0;
+    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+    ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
   }
-  return obj;
+  return object;
 }
 
 // Sets the movement state and animation timer steps of every object but the
@@ -5171,19 +5186,19 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;
-  struct ObjectRuntime *obj;
-  s32 id;
+  struct ObjectRuntime *object;
+  s32 actorId;
 
-  id = 0;
+  actorId = 0;
   player = (s16 *)gPlayerObjectId;
   do {
-    obj = ObjectTable_Get(id);
-    if (id != *player && obj != NULL && obj != except) {
-      obj->movementState = state;
-      ObjectDispatch_ApplyValueToChildrenFar(obj, value);
+    object = ObjectTable_Get(actorId);
+    if (actorId != *player && object != NULL && object != except) {
+      object->movementState = state;
+      ObjectDispatch_ApplyValueToChildrenFar(object, value);
     }
-    id++;
-  } while (id <= OBJ_LAST);
+    actorId++;
+  } while (actorId <= OBJ_LAST);
 }
 
 // Per-frame update of arc A: over 32 frames it swells and shrinks again
@@ -5191,45 +5206,49 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
 // it follows, 9 pixels in front of it and up to 5 pixels further while
 // small.
 void BattleFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
-  struct FieldActor *link;
-  s32 v;
+  // A shared inline kernel with a constant inversion argument changes both
+  // arc updates from 0x58 to 0x5c bytes in the forced native English build.
+  struct FieldActor *arc = (struct FieldActor *)fieldObject;
+  struct FieldActor *anchor;
+  s32 frame;
+  s32 scale;
 
-  link = obj->linkedObject;
-  v = ++obj->timer;
-  if (v > 31) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  anchor = arc->linkedObject;
+  frame = ++arc->timer;
+  if (frame > 31) {
+    ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
                                  gBattleFx_CommonParticleScript);
     return;
   }
-  v = Trig_Sin(v << 10);
-  obj->scaleX = v;
-  obj->scaleY = v;
-  obj->x.fixed = link->x.fixed;
-  obj->y.fixed += 0x10000;
-  obj->z.fixed = link->z.fixed + (0x10000 - v) * 5 + 0x90000;
+  scale = Trig_Sin(frame << 10);
+  arc->scaleX = scale;
+  arc->scaleY = scale;
+  arc->x.fixed = anchor->x.fixed;
+  arc->y.fixed += 0x10000;
+  arc->z.fixed = anchor->z.fixed + (0x10000 - scale) * 5 + 0x90000;
 }
 
 // Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 // object and up to 5 pixels nearer while small.
 void BattleFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
-  struct FieldActor *link;
-  s32 v;
+  struct FieldActor *arc = (struct FieldActor *)fieldObject;
+  struct FieldActor *anchor;
+  s32 frame;
+  s32 scale;
 
-  link = obj->linkedObject;
-  v = ++obj->timer;
-  if (v > 31) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  anchor = arc->linkedObject;
+  frame = ++arc->timer;
+  if (frame > 31) {
+    ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
                                  gBattleFx_CommonParticleScript);
     return;
   }
-  v = Trig_Sin(v << 10);
-  obj->scaleX = v;
-  obj->scaleY = -v;
-  obj->x.fixed = link->x.fixed;
-  obj->y.fixed += 0x10000;
-  obj->z.fixed = link->z.fixed - (0x10000 - v) * 5 + 0x100000;
+  scale = Trig_Sin(frame << 10);
+  arc->scaleX = scale;
+  arc->scaleY = -scale;
+  arc->x.fixed = anchor->x.fixed;
+  arc->y.fixed += 0x10000;
+  arc->z.fixed = anchor->z.fixed - (0x10000 - scale) * 5 + 0x100000;
 }
 
 //--------------------------------------------------------------------------
@@ -5270,75 +5289,77 @@ struct ArcSprite {
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
-  struct FieldActor *objs[2];
-  struct FieldActor *obj;
-  struct ArcSprite *spr;
-  s32 i;
+  struct FieldActor *arcs[2];
+  struct FieldActor *arc;
+  struct ArcSprite *sprite;
+  s32 arcIndex;
 
-  for (i = 0; i <= 1; i++) {
-    obj = (struct FieldActor *)Object_CreateFar(
+  for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
+    arc = (struct FieldActor *)Object_CreateFar(
         26, linked->x.fixed, linked->y.fixed, linked->z.fixed);
-    objs[i] = obj;
-    if (obj == 0)
+    arcs[arcIndex] = arc;
+    if (arc == 0)
       continue;
-    obj->terrainHeight = linked->terrainHeight;
-    spr = obj->sprite;
-    obj->motionFlags = 0;
-    obj->timer = 0;
-    obj->linkedObject = linked;
-    obj->scaleX = obj->scaleY = 0x1999; // 0.1
-    if (spr == 0)
+    arc->terrainHeight = linked->terrainHeight;
+    sprite = arc->sprite;
+    arc->motionFlags = 0;
+    arc->timer = 0;
+    arc->linkedObject = linked;
+    arc->scaleX = arc->scaleY = 0x1999; // 0.1
+    if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the effect's tiles.
-    AnimationObjects_SelectAnimationFar((struct AnimationObject *)spr, 0);
-    spr->flags = 0;
-    Resource_ResetEntry(spr->slot);
-    spr->slot = scene->tileSlot;
-    spr->active = 1;
-    spr->tile = (gVramBlockCache[spr->slot].offset >> 5) & 0x3ff;
-    spr->color = 0;
-    spr->shape = 1;
-    spr->size = 2;
-    spr->child->frame = 0;
+    AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    sprite->flags = 0;
+    Resource_ResetEntry(sprite->slot);
+    sprite->slot = scene->tileSlot;
+    sprite->active = 1;
+    sprite->tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+    sprite->color = 0;
+    sprite->shape = 1;
+    sprite->size = 2;
+    sprite->child->frame = 0;
   }
   // Arc B in front of everything, arc A at the caster's priority.
-  objs[0]->update = BattleFx_UpdateScaledArcObjectB;
-  objs[0]->sprite->priority = 0;
-  objs[1]->update = BattleFx_UpdateScaledArcObjectA;
-  objs[1]->sprite->priority = source->sprite->priority;
-  objs[1]->priorityFlags = 2;
+  // BUG: allocation failures above leave a missing arc or sprite here.
+  // The original does not define a partial-pair recovery path.
+  arcs[0]->update = BattleFx_UpdateScaledArcObjectB;
+  arcs[0]->sprite->priority = 0;
+  arcs[1]->update = BattleFx_UpdateScaledArcObjectA;
+  arcs[1]->sprite->priority = source->sprite->priority;
+  arcs[1]->priorityFlags = 2;
 }
 
 // Per-frame update: flashes an object between sprite param 7 and 0 every 2
 // frames and spawns the swelling arcs on it every 16.
 void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 7);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)actor, 7);
   } else {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 0);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    BattleFx_SpawnScaledArcObjects(obj);
+    BattleFx_SpawnScaledArcObjects(actor);
   }
 }
 
 // Per-frame update: cycles an object through sprite params 0 to 5, one step
 // every 2 frames, and spawns the swelling arcs on it every 16.
 void BattleFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {
-    s32 col = (gFrameCount >> 1) % 6;
+    s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Animation_ApplyChildValuesFar((struct DispatchObject *)obj, col);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
-    BattleFx_SpawnScaledArcObjects(obj);
+    BattleFx_SpawnScaledArcObjects(actor);
   }
 }
 
 // Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllEffectSlots(void) { UpdateAllEffectSlots(); }
+void BattleFx_UpdateAllEffectSlots(void) { BattleFx_UpdateSceneSlots(); }
 
 // Prepares the work of the Psynergy effect for ability (heap slot 56) and
 // loads its spark tiles. Called again while an effect resolves, it only
@@ -5517,45 +5538,47 @@ void BattleEffect_CleanupSceneObjects(void) {
 // still. With flag 0x140 the caster's colours keep cycling and it
 // takes pose 21; otherwise the caster's hook stops.
 void EventObject_Initialize(void) {
-  s32 eventValue;
-  s32 eventIndex;
-  struct FieldActor *eventObject;
-  struct BattleFxScene *eventState;
+  s32 ability;
+  s32 announcedAbility;
+  struct FieldActor *caster;
+  struct BattleFxScene *scene;
   void *renderState;
 
-  eventState = *(void **)Ram_EffectWork;
+  scene = *(void **)Ram_EffectWork;
   renderState = *(void **)Ram_EventWork;
-  eventObject = eventState->mainObject;
-  eventValue = (s16)eventState->action;
-  eventIndex = eventValue;
-  ObjectDispatch_ApplyArgumentToChildrenFar(eventObject, 0x14);
-  eventObject->targetX = eventObject->x.fixed;
-  eventObject->targetY = eventObject->y.fixed;
-  eventObject->targetZ = eventObject->z.fixed;
-  eventObject->velocityX = 0;
-  eventObject->velocityY = 0;
-  eventObject->velocityZ = 0;
-  if (eventState->visible != 0) {
+  caster = scene->mainObject;
+  ability = (s16)scene->action;
+  announcedAbility = ability;
+  ObjectDispatch_ApplyArgumentToChildrenFar(caster, 0x14);
+  caster->targetX = caster->x.fixed;
+  caster->targetY = caster->y.fixed;
+  caster->targetZ = caster->z.fixed;
+  caster->velocityX = 0;
+  caster->velocityY = 0;
+  caster->velocityZ = 0;
+  if (scene->visible != 0) {
     AudioCommand_PlayFar(212);
-    eventObject->update = BattleFx_FlickerObjectAndTick;
+    caster->update = BattleFx_FlickerObjectAndTick;
   }
-  if (eventState->active != 0) {
-    ObjectGroup_SetActionForOthers(eventObject, 1, 0);
-    UiWork_PushValueSlotFar(eventIndex, 4);
-    if ((s8)eventState->mode != 0) {
+  if (scene->active != 0) {
+    ObjectGroup_SetActionForOthers(caster, 1, 0);
+    UiWork_PushValueSlotFar(announcedAbility, 4);
+    // The mode branches currently show the same message. Merging them shrinks
+    // the native English function by 32 bytes, so keep this existing form.
+    if ((s8)scene->mode != 0) {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             eventState->messageMode);
+                                             scene->messageMode);
     } else {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             eventState->messageMode);
+                                             scene->messageMode);
     }
-    ObjectGroup_SetActionForOthers(eventObject, 0, 0x10);
+    ObjectGroup_SetActionForOthers(caster, 0, 0x10);
   }
   if (GameFlag_TestFar(0x140) != 0) {
-    if (eventState->visible != 0) {
-      eventObject->update = BattleFx_CycleObjectValueByCounter;
+    if (scene->visible != 0) {
+      caster->update = BattleFx_CycleObjectValueByCounter;
     }
-    ObjectDispatch_ApplyArgumentToChildrenFar(eventObject, 0x15);
+    ObjectDispatch_ApplyArgumentToChildrenFar(caster, 0x15);
   } else {
     EffectRuntime_StopCurrentObject();
   }
@@ -5731,10 +5754,10 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
 void BattleFx_UpdateWaveScene(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   u16 *line;
-  u32 i;
-  struct FieldActor *src;
-  struct FieldActor *dst;
-  struct FieldActor *obj;
+  u32 scanline;
+  struct FieldActor *caster;
+  struct FieldActor *target;
+  struct FieldActor *particle;
   struct WaveFxSprite *sprite;
   struct EffectVector from;
   struct EffectVector to;
@@ -5748,8 +5771,9 @@ void BattleFx_UpdateWaveScene(void) {
   // The 160 scanlines' offsets, a sine wave of 4 pixels either way, on the
   // hidden page; then show that page.
   line = work->lines[work->page ^ 1];
-  for (i = 0; i < 160; i++)
-    *line++ = Trig_Sin(((u32)((work->phase + i * 8) << 16) / (u32)160)) >> 14;
+  for (scanline = 0; scanline < 160; scanline++)
+    *line++ =
+        Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
   work->phase += 4;
   work->page ^= 1;
   if (work->page != 0) {
@@ -5763,31 +5787,31 @@ void BattleFx_UpdateWaveScene(void) {
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
-    src = Object_GetById(work->sourceId);
-    dst = Object_GetById(work->targetId);
-    if (src != 0 && dst != 0) {
+    caster = Object_GetById(work->sourceId);
+    target = Object_GetById(work->targetId);
+    if (caster != 0 && target != 0) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
-      from.x = src->x.fixed;
+      from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)BattleAction_FindDescriptor(work->sourceId)->sprite);
-      from.y = src->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
-      from.z = src->z.fixed;
-      to.x = dst->x.fixed;
+      from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
+      from.z = caster->z.fixed;
+      to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)BattleAction_FindDescriptor(work->targetId)->sprite);
-      to.y = dst->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
-      to.z = dst->z.fixed;
-      obj = Object_CreateFar(281, to.x, to.y, to.z);
-      if (obj != 0) {
-        sprite = obj->sprite;
-        obj->motionFlags = 0;
-        obj->speed = 0xa3d7; // 0.64 pixels a frame
-        obj->acceleration = 0xa3d7;
-        obj->facing = ArcTan2(from.z - to.z, from.x - to.x);
-        obj->update = BattleFx_SetCallbackWhenTargetUnset;
+      to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
+      to.z = target->z.fixed;
+      particle = Object_CreateFar(281, to.x, to.y, to.z);
+      if (particle != 0) {
+        sprite = particle->sprite;
+        particle->motionFlags = 0;
+        particle->speed = 0xa3d7; // 0.64 pixels a frame
+        particle->acceleration = 0xa3d7;
+        particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
+        particle->update = BattleFx_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;
-        Object_SetMoveTargetFar(obj, from.x, from.y, from.z);
+        Object_SetMoveTargetFar(particle, from.x, from.y, from.z);
       }
     }
   }
@@ -5893,16 +5917,16 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
 // Per-frame update: once the object has arrived (no destination left), runs
 // the script for untargeted objects.
 void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
-  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
-  s32 ty;
-  s32 tx;
+  struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
+  s32 targetY;
+  s32 targetX;
 
-  tx = obj->targetX;
-  if (tx == 0x80000000) // no destination
+  targetX = object->targetX;
+  if (targetX == 0x80000000) // no destination
   {
-    ty = obj->targetY;
-    if ((ty == tx) && (obj->targetZ == ty)) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+    targetY = object->targetY;
+    if ((targetY == targetX) && (object->targetZ == targetY)) {
+      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                    gBattleFx_UntargetedObjectScript);
     }
   }
@@ -5974,51 +5998,59 @@ struct ItemBreakFragmentObject {
   u16 lifetime;
 };
 
+// Both item fragments and Lift shed the same short-lived falling particle.
+// Spawn and choose its position at the call site: combining the spawn here
+// moves the kind load after the coordinate loads in the native English build.
+static inline void
+BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
+  if (fragment != NULL) {
+    fragment->motionFlags = ACTOR_FALLS;
+    fragment->gravity = 0x1999;
+    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 0);
+    fragment->lifetime = 12;
+    ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
+                                 gBattleFx_CommonParticleScript);
+  }
+}
+
 // Per-frame update of a broken item's main fragment: turns it toward the
 // object it is linked to, at most 1/16 turn a frame, and sheds a particle
 // (object 0x11d) round it.
 void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
-  struct FieldActor *src = (struct FieldActor *)fieldObject;
+  struct FieldActor *source = (struct FieldActor *)fieldObject;
   struct FieldActor *target;
-  struct EffectVector pos;
-  struct ItemBreakFragmentObject *obj;
+  struct EffectVector position;
+  struct ItemBreakFragmentObject *fragment;
   s32 turn;
-  s32 dist;
+  s32 radius;
 
-  target = src->linkedObject;
+  target = source->linkedObject;
   if (target != 0) {
-    s32 dx = target->x.fixed - src->x.fixed;
-    s32 dz = target->z.fixed - src->z.fixed;
+    s32 dx = target->x.fixed - source->x.fixed;
+    s32 dz = target->z.fixed - source->z.fixed;
 
     if (dx != 0 || dz != 0) {
-      turn = (s16)(ArcTan2(dz, dx) - src->facing);
+      turn = (s16)(ArcTan2(dz, dx) - source->facing);
       if (turn > 0x1000)
         turn = 0x1000;
       if (turn < -0x1000)
         turn = -0x1000;
-      src->facing += turn;
+      source->facing += turn;
     }
-    src->steeringFlags = 0;
+    source->steeringFlags = 0;
   }
 
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
-  pos.x = src->x.fixed;
-  pos.y = src->y.fixed - (Random16() << 4) - 0x80000;
-  pos.z = src->z.fixed;
-  dist = Random16() * 3;
-  dist <<= 4;
-  Vector_AddPolarOffset(dist, Random16(), &pos);
+  position.x = source->x.fixed;
+  position.y = source->y.fixed - (Random16() << 4) - 0x80000;
+  position.z = source->z.fixed;
+  radius = Random16() * 3;
+  radius <<= 4;
+  Vector_AddPolarOffset(radius, Random16(), &position);
 
-  obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
-  if (obj != 0) {
-    obj->motionFlags = 2;
-    obj->gravity = 0x1999;
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    obj->lifetime = 12;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_CommonParticleScript);
-  }
+  fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
+  BattleFx_InitializeFallingFragment(fragment);
 }
 
 //--------------------------------------------------------------------------
@@ -6045,11 +6077,11 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   s32 z;
   s32 angle;
   s32 moved;
-  s32 dir;
+  s32 direction;
   s32 keys;
   s32 cellX;
   s32 cellZ;
-  struct EffectVector *p;
+  struct EffectVector *candidate;
 
   work = gEffectWork;
   user = work->mainObject;
@@ -6070,12 +6102,12 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
 
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
   pusher->linkedObject = target;
-  p = &position;
-  p->x = target->x.fixed;
-  p->y = target->y.fixed + (16 << 16);
-  p->z = target->z.fixed;
-  Vector_AddPolarOffset(16 << 16, angle, p);
-  Object_SetMoveTargetFar(pusher, p->x, p->y, p->z);
+  candidate = &position;
+  candidate->x = target->x.fixed;
+  candidate->y = target->y.fixed + (16 << 16);
+  candidate->z = target->z.fixed;
+  Vector_AddPolarOffset(16 << 16, angle, candidate);
+  Object_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
   BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
@@ -6092,8 +6124,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       break;
 
     // With the d-pad released, the hand goes back to its place.
-    dir = (u16)Input_GetDpadAngle(gKeysHeld);
-    if (dir == 0xffff) {
+    direction = (u16)Input_GetDpadAngle(gKeysHeld);
+    if (direction == 0xffff) {
       position.x = target->x.fixed;
       position.y = target->y.fixed + (16 << 16);
       position.z = target->z.fixed;
@@ -6112,24 +6144,24 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     position.y = target->y.fixed + (16 << 16);
     position.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &position);
-    Vector_AddPolarOffset(2 << 16, dir, &position);
+    Vector_AddPolarOffset(2 << 16, direction, &position);
     Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
     Script_WaitForEventTimeoutFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
     position.z = target->z.fixed;
-    Vector_AddPolarOffset(16 << 16, dir, &position);
+    Vector_AddPolarOffset(16 << 16, direction, &position);
     beyond.x = target->x.fixed;
     beyond.y = target->y.fixed;
     beyond.z = target->z.fixed;
-    Vector_AddPolarOffset(32 << 16, dir, &beyond);
+    Vector_AddPolarOffset(32 << 16, direction, &beyond);
     if (Map_CheckObjectStepFar(target, &position) > 0) {
       ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SOUND_MENU_ERROR);
       continue;
     }
-    hit = ScriptObject_FindOverlappingEntryFar(target, p);
+    hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
     if (hit != NULL) {
       if (hit != user) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
@@ -6143,7 +6175,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       // tile 32 pixels on, the caster moves along when the tile beyond is free.
       cellX = user->x.fixed & CELL_MASK;
       cellZ = user->z.fixed & CELL_MASK;
-      if (cellX == (p->x & CELL_MASK) && cellZ == (p->z & CELL_MASK)) {
+      if (cellX == (candidate->x & CELL_MASK) &&
+          cellZ == (candidate->z & CELL_MASK)) {
         ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           AudioCommand_PlayFar(SOUND_MENU_ERROR);
@@ -6167,7 +6200,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     x = position.x;
     z = position.z;
     ObjectDispatch_ApplyArgumentToChildrenFar(
-        pusher, gBattleFx_QuadrantModes[(u16)(angle - dir) >> 14]);
+        pusher, gBattleFx_QuadrantModes[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
     target->paused = 0;
     target->speed = 0x3333;
@@ -6176,7 +6209,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     pusher->motionFlags = 0;
     pusher->speed = 0x3333;
     pusher->acceleration = 0x3333;
-    Vector_AddPolarOffset(16 << 16, dir, &position);
+    Vector_AddPolarOffset(16 << 16, direction, &position);
     Object_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
                             position.z);
     if (moved == 1) {
@@ -6282,18 +6315,18 @@ void BattleFx_RunItemBreakSequence(void) {
 // pixels the way object faces (to the nearest quarter turn), with 8
 // particles round it. Returns the item, or 0.
 void *BattleFx_StartItemBreak(void *object) {
-  struct MotionObject *src = object;
+  struct MotionObject *source = object;
   struct MotionObject *parent;
   struct MotionObject *child;
   s32 angle;
-  s32 dist;
+  s32 radius;
   s32 speed;
-  s32 i;
+  s32 fragmentIndex;
   u32 spread;
   u32 jitter;
 
-  angle = (src->angle + 0x2000) & 0xc000; // to the nearest quarter turn
-  parent = Object_Spawn(215, src->x, src->y + (16 << 16), src->z);
+  angle = (source->angle + 0x2000) & 0xc000; // to the nearest quarter turn
+  parent = Object_Spawn(215, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000; // from 0.25
@@ -6307,8 +6340,8 @@ void *BattleFx_StartItemBreak(void *object) {
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
-  for (i = 7; i >= 0; i--) {
-    child = Object_Spawn(285, src->x, src->y + (16 << 16), src->z);
+  for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
+    child = Object_Spawn(285, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
                                    gBattleFx_FragmentScript);
@@ -6319,10 +6352,10 @@ void *BattleFx_StartItemBreak(void *object) {
       child->verticalMotionStrength = 0x51e;
       spread = Random16();
       child->velocityY = spread - Random16();
-      dist = Random16() * 24 + (8 << 16);
+      radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
       Motion_SetTargetPositionFromMagnitudeAngle(
-          child, dist, ((jitter - Random16()) >> 3) + src->angle);
+          child, radius, ((jitter - Random16()) >> 3) + source->angle);
     }
   }
   AudioCommand_PlayFar(SOUND_ITEM_BREAK);
@@ -6401,25 +6434,25 @@ void UpdateRisingParticleBurst(void *object) {
 // whose first sprite part shows sprite 200.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   struct ObjectRuntime *object = gObjectSlots;
-  s32 cnt = 63;
+  s32 remainingActors = 63;
 
   do {
     if (object->script != NULL) {
       u8 kind = object->animationKind;
 
       if (kind == 1) {
-        struct AnimationObject *anim = object->animation;
-        struct AnimationEntry *entry = anim->entries[0];
+        struct AnimationObject *animation = object->animation;
+        struct AnimationEntry *entry = animation->entries[0];
 
         if (entry->animId == 200) {
           entry->param = value;
-          anim->dirty = kind;
+          animation->dirty = kind;
         }
       }
     }
-    cnt--;
+    remainingActors--;
     object++;
-  } while (cnt >= 0);
+  } while (remainingActors >= 0);
 }
 
 // Scheduler callback of the timed effect (kind 8): asks for it to end once
@@ -6430,8 +6463,8 @@ void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
   s16 *timer;
-  s32 dx;
-  s32 dz;
+  s32 distanceX;
+  s32 distanceZ;
 
   work = (struct FieldWork *)gEventWork;
   actor = ObjectTable_Get(gGameState.selectedActor);
@@ -6442,9 +6475,10 @@ void FieldEffect_WatchLeaderDistance(void) {
   }
 
   // x is scaled by 0xd105 (about 0.82) for the comparison.
-  dx = Iwram_MulQ16(work->revealCenterX - actor->x / 0x10000, 0xd105);
-  dz = work->revealCenterY - (actor->z - actor->y) / 0x10000;
-  if (dx * dx + dz * dz >= 3600 || work->revealFrames == 0) {
+  distanceX = Iwram_MulQ16(work->revealCenterX - actor->x / 0x10000, 0xd105);
+  distanceZ = work->revealCenterY - (actor->z - actor->y) / 0x10000;
+  if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
+      work->revealFrames == 0) {
     u16 *slot = (u16 *)&work->command; // psynergyRequest
     u32 request = 0x2090;
 
@@ -6561,8 +6595,8 @@ void ResetSceneTransitionEffect(void) {
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
 #endif
   s16 zero;
-  s32 tid;
-  void *ev;
+  s32 eventTarget;
+  void *event;
 
   if (state->revealActive != 0) {
     AudioCommand_PlayFar(SOUND_SCENE_TRANSITION);
@@ -6580,9 +6614,9 @@ void ResetSceneTransitionEffect(void) {
     BattleFx_StartBufferInterpolation(30);
     WaitFrames(1);
 
-    ev = BattleFx_FindMatchingEvent(PSYNERGY_EV_4, FX_REVEAL, &tid);
-    if (ev != NULL)
-      BattleFx_RunEventAction(ev, gGameState.selectedActor, tid);
+    event = BattleFx_FindMatchingEvent(PSYNERGY_EV_4, FX_REVEAL, &eventTarget);
+    if (event != NULL)
+      BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
 
     if (work->childOption == 0) {
       scene->nextMode = 0;
@@ -6618,30 +6652,30 @@ void BattleFx_RunBurstParticles(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
-  s32 n;
+  s32 remainingObjects;
 
   BattleEffect_SpawnBurstParticleField();
   AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
   p = &pos;
-  n = FALL_LAST;
+  remainingObjects = FALL_LAST;
   do {
-    struct FieldActor *obj;
-    s32 dist;
+    struct FieldActor *particle;
+    s32 radius;
 
     p->values[0] = work->x;
     p->values[2] = work->z;
-    dist = (Random16() * 6) + 0x40000;
-    Vector_AddPolarOffset(dist, Random16(), p);
+    radius = (Random16() * 6) + 0x40000;
+    Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = work->y;
-    obj = Object_Spawn(FALL_OBJ, p->values[0], p->values[1], p->values[2]);
-    if (obj != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+    particle = Object_Spawn(FALL_OBJ, p->values[0], p->values[1], p->values[2]);
+    if (particle != 0) {
+      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_BurstParticleObjectScript);
-      obj->motionFlags = ACTOR_FALLS;
+      particle->motionFlags = ACTOR_FALLS;
     }
     WaitFrames(((Random16() * 2) >> 16) + 2);
-    n--;
-  } while (n >= 0);
+    remainingObjects--;
+  } while (remainingObjects >= 0);
   WaitFrames(30);
   BattleFx_PrepareBufferInterpolation();
 }
@@ -6651,56 +6685,56 @@ void BattleFx_RunBurstParticles(void) {
 // 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
 void BattleEffect_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
-  struct FieldActor *user;
+  struct FieldActor *caster;
   s32 pos[3];
-  s32 n;
+  s32 particleIndex;
 
   work = gEffectWork;
-  user = work->mainObject;
+  caster = work->mainObject;
   BattleEffect_InitializeSharedScene();
 
-  for (n = 0; n < PARTICLE_MAX; n++) {
-    struct FieldActor *obj;
+  for (particleIndex = 0; particleIndex < PARTICLE_MAX; particleIndex++) {
+    struct FieldActor *particle;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
-    s32 dist;
+    s32 radius;
 
     if (work->angle == 0x4000) {
-      pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + 0xa0000;
-      pos[2] = user->z.fixed;
+      pos[0] = caster->x.fixed;
+      pos[1] = caster->y.fixed + 0xa0000;
+      pos[2] = caster->z.fixed;
     } else if (work->angle == 0xc000) {
-      pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + 0x180000;
-      pos[2] = user->z.fixed;
+      pos[0] = caster->x.fixed;
+      pos[1] = caster->y.fixed + 0x180000;
+      pos[2] = caster->z.fixed;
     } else {
-      pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + 0xa0000;
-      pos[2] = user->z.fixed;
+      pos[0] = caster->x.fixed;
+      pos[1] = caster->y.fixed + 0xa0000;
+      pos[2] = caster->z.fixed;
       Vector_AddPolarOffset(0xa0000, work->angle, pos);
     }
 
     // Copy the flip, shape and palette to the child sprite.
-    obj = Object_Spawn(PARTICLE_OBJ, pos[0], pos[1], pos[2]);
-    visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
-    child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
+    particle = Object_Spawn(PARTICLE_OBJ, pos[0], pos[1], pos[2]);
+    visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
+    child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
     child->flip = visual->flip;
     child->flagsAHigh = visual->flagsAHigh;
     child->flagsBHigh = visual->flagsBHigh;
     child->attributes.bits.shape = visual->attributes.bits.shape;
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
-    if (obj != 0) {
-      obj->scaleY = 0xb333; // 0.7
-      obj->scaleX = 0xb333;
-      obj->acceleration = 0x18000;
-      obj->speed = 0x18000;
-      obj->motionFlags = 0;
-      Animation_ApplyChildValuesFar(obj, 11);
-      ObjectDispatch_ApplyArgumentToChildrenFar(obj, 7);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+    if (particle != 0) {
+      particle->scaleY = 0xb333; // 0.7
+      particle->scaleX = 0xb333;
+      particle->acceleration = 0x18000;
+      particle->speed = 0x18000;
+      particle->motionFlags = 0;
+      Animation_ApplyChildValuesFar(particle, 11);
+      ObjectDispatch_ApplyArgumentToChildrenFar(particle, 7);
+      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_CommonParticleScript + 1);
-      ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
+      ObjectDispatch_SetSingleChildFlagsFar(particle, 1);
 
       // Destination: 4 to 10 pixels from the effect's position.
       pos[0] = work->x;
@@ -6708,9 +6742,9 @@ void BattleEffect_SpawnBurstParticleField(void) {
       pos[2] = work->z;
       if (work->angle == 0xc000)
         Vector_AddPolarOffset(0xe0000, work->angle, pos);
-      dist = Random16() * 6 + 0x40000;
-      Vector_AddPolarOffset(dist, Random16(), pos);
-      Object_SetMoveTargetFar(obj, pos[0], pos[1], pos[2]);
+      radius = Random16() * 6 + 0x40000;
+      Vector_AddPolarOffset(radius, Random16(), pos);
+      Object_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }
     AudioCommand_PlayFar(131);
     WaitFrames(2);
@@ -6722,23 +6756,23 @@ void BattleEffect_SpawnBurstParticleField(void) {
 // each moves 14 pixels in, and they lift the target 32 pixels with them.
 void BattleEffect_RunTargetedItemBreak(s32 unused) {
   struct BattleFxScene *work;
-  struct DispatchObject *user;
+  struct DispatchObject *caster;
   struct FieldActor *target;
   struct MotionObject *pair[2];
   s32 pos[3];
   s32 x, y, z;
-  s32 n;
+  s32 handIndex;
   s32 startY;
 
   work = gEffectWork;
   target = work->child;
-  user = work->mainObject;
+  caster = work->mainObject;
   if (target == NULL)
     return;
 
   BattleEffect_InitializeSharedScene();
-  user->argument = (s32)target;
-  ObjectDispatch_InitializeFar(user, gBattleFx_CommonParticleScript + 3);
+  caster->argument = (s32)target;
+  ObjectDispatch_InitializeFar(caster, gBattleFx_CommonParticleScript + 3);
 
   x = work->x;
   pos[0] = x;
@@ -6750,10 +6784,10 @@ void BattleEffect_RunTargetedItemBreak(s32 unused) {
   pair[1] = BattleFx_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
 
   WaitFrames(15);
-  for (n = 0; n < 2; n++) {
-    struct MotionObject *obj = pair[n];
-    if (obj != NULL)
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0xe0000, obj->angle);
+  for (handIndex = 0; handIndex < 2; handIndex++) {
+    struct MotionObject *hand = pair[handIndex];
+    if (hand != NULL)
+      Motion_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000, hand->angle);
   }
 
   Script_WaitForEventTimeoutFar(pair[0]);
@@ -6844,35 +6878,37 @@ DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect07, BattleFx_SpawnItemBreakMode3)
 // 24 frames; angle is the way it faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle) {
-  struct MotionObject *obj;
+  struct MotionObject *fragment;
   s32 scale;
 
   AudioCommand_PlayFar(SOUND_ITEM_BREAK);
-  obj = Object_Spawn(215, x, y, z);
-  if (obj != NULL) {
-    obj->scaleX = obj->scaleY = 0x4000;
-    obj->acceleration = obj->speedLimit = 0x30000; // 3 pixels a frame
-    ((struct FieldSprite *)obj->records)->priority = 0;
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 3);
-    scale = obj->scaleX;
+  fragment = Object_Spawn(215, x, y, z);
+  if (fragment != NULL) {
+    fragment->scaleX = fragment->scaleY = 0x4000;
+    fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
+    ((struct FieldSprite *)fragment->records)->priority = 0;
+    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 3);
+    scale = fragment->scaleX;
     if (scale < 0x10000) {
       do {
         scale += 0x800;
-        obj->scaleY = scale;
-        obj->scaleX = scale;
-        obj->angle += 0x2000; // 1/8 turn
+        fragment->scaleY = scale;
+        fragment->scaleX = scale;
+        fragment->angle += 0x2000; // 1/8 turn
         WaitFrames(1);
-        scale = obj->scaleX;
+        scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }
-    obj->angle = angle;
+    fragment->angle = angle;
   }
-  return obj;
+  return fragment;
 }
 
 // Effect slot callback of a particle that scatters 25 pixels from its origin
 // in a random direction, then gathers beside the main object and is freed.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
+  // A for/continue retry keeps the same states but grows the native English
+  // callback from 0xf8 to 0xfc bytes. State 1 must enter state 2 immediately.
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
   s32 state;
@@ -6905,11 +6941,11 @@ again:
   if (state == 2) {
     // 8 pixels toward scene->angle from 16 pixels above the main object, on
     // screen, give or take 4 pixels.
-    struct MotionObject *obj = scene->mainObject;
+    struct MotionObject *caster = scene->mainObject;
 
-    pos.x = obj->x;
-    pos.y = obj->y + (16 << 16);
-    pos.z = obj->z;
+    pos.x = caster->x;
+    pos.y = caster->y + (16 << 16);
+    pos.z = caster->z;
     Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
@@ -6925,38 +6961,38 @@ again:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-// A heavy impact: places object 0x11b 32 pixels below src and scatters 12
-// shards from it.
+// A heavy impact: places object 0x11b 32 pixels below the source and scatters
+// 12 shards from it.
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
-  struct MotionObject *src = (struct MotionObject *)interpreter;
+  struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;
-  struct ObjectRuntime *obj;
-  struct ObjectRuntime *frag;
-  s32 i;
+  struct ObjectRuntime *impact;
+  struct ObjectRuntime *fragment;
+  s32 fragmentIndex;
 
   AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
-  pos.x = src->x;
-  pos.y = src->y;
-  pos.z = src->z;
-  obj = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
-  if (obj != NULL) {
-    obj->flags = 0;
-    obj->unk5e = 20;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  pos.x = source->x;
+  pos.y = source->y;
+  pos.z = source->z;
+  impact = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
+  if (impact != NULL) {
+    impact->flags = 0;
+    impact->unk5e = 20;
+    ObjectDispatch_InitializeFar((struct DispatchObject *)impact,
                                  gBattleFx_CommonParticleScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
-  for (i = 0; i < 12; i++) {
-    frag = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
-    if (frag != NULL) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)frag,
+  for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
+    fragment = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
+    if (fragment != NULL) {
+      ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
                                    gBattleFx_FragmentScript);
-      frag->speedLimit = Random16() + (1 << 16);
-      frag->acceleration = 1 << 16;
-      frag->flags = 0;
+      fragment->speedLimit = Random16() + (1 << 16);
+      fragment->acceleration = 1 << 16;
+      fragment->flags = 0;
       Motion_SetTargetPositionFromMagnitudeAngle(
-          frag, Random16() * 24 + (8 << 16), Random16());
+          fragment, Random16() * 24 + (8 << 16), Random16());
     }
   }
   return 0;
@@ -6972,9 +7008,10 @@ void BattleFx_CallEffect04(s32 unused) { RunBattleEffect04(); }
 
 #define ABOVE (16 << 16) // 16 pixels up
 
-// The position 16 pixels above obj.
-static __inline__ void PosAbove(struct FieldActor *obj,
-                                struct EffectVector *pos) {
+// Writes the position 16 pixels above the actor.
+static __inline__ void
+BattleFx_GetPositionAboveActor(struct FieldActor *obj,
+                               struct EffectVector *pos) {
   pos->x = obj->x.fixed;
   pos->y = obj->y.fixed + ABOVE;
   pos->z = obj->z.fixed;
@@ -7009,19 +7046,19 @@ struct SparkObject {
 // pixels.
 void RunBattleEffect04(void) {
   struct FieldActor *target;
-  s32 ctx;
+  s32 eventTarget;
   struct FieldActor *copies[4];
   struct EffectVector pos;
-  struct FieldActor *obj;
+  struct FieldActor *projectile;
   struct FieldActor *copy;
-  struct FieldActor *src;
+  struct FieldActor *caster;
   struct BattleFxScene *scene;
   struct EffectSlot *slot;
-  struct AnimationObject *res;
-  void *ev;
+  struct AnimationObject *sharedAnimation;
+  void *event;
   s32 scale;
   s32 i;
-  u8 resSlot;
+  u8 resourceSlot;
 
   scene = gEffectWork;
   target = scene->child;
@@ -7031,8 +7068,8 @@ void RunBattleEffect04(void) {
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
-    src = scene->mainObject;
-    PosAbove(src, &pos);
+    caster = scene->mainObject;
+    BattleFx_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
     EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
@@ -7046,41 +7083,41 @@ void RunBattleEffect04(void) {
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full
   // size.
-  src = scene->mainObject;
-  pos.x = src->x.fixed;
-  pos.y = src->y.fixed + ABOVE;
-  pos.z = src->z.fixed;
+  caster = scene->mainObject;
+  pos.x = caster->x.fixed;
+  pos.y = caster->y.fixed + ABOVE;
+  pos.z = caster->z.fixed;
   Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
-  obj = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
-  if (obj == NULL) {
+  projectile = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
+  if (projectile == NULL) {
     BattleFx_PrepareBufferInterpolation();
     return;
   }
-  obj->scaleY = 0x4000;
-  obj->scaleX = 0x4000;
-  obj->facing = scene->angle;
-  obj->speed = 4 << 16;
-  obj->acceleration = 4 << 16;
-  obj->motionFlags = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 5);
-  Animation_ApplyChildValuesFar(obj, 3);
-  scale = obj->scaleX;
+  projectile->scaleY = 0x4000;
+  projectile->scaleX = 0x4000;
+  projectile->facing = scene->angle;
+  projectile->speed = 4 << 16;
+  projectile->acceleration = 4 << 16;
+  projectile->motionFlags = 0;
+  ObjectDispatch_ApplyArgumentToChildrenFar(projectile, 5);
+  Animation_ApplyChildValuesFar(projectile, 3);
+  scale = projectile->scaleX;
   if (scale < 0x10000) {
     do {
       scale += 0x500;
-      obj->scaleY = scale;
-      obj->scaleX = scale;
+      projectile->scaleY = scale;
+      projectile->scaleX = scale;
       WaitFrames(1);
-      scale = obj->scaleX;
+      scale = projectile->scaleX;
     } while (scale <= 0xffff);
   }
   WaitFrames(3);
 
   // Three afterimages, sharing one set of graphics.
-  res = NULL;
+  sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] =
-        Object_Spawn(0xd7, obj->x.fixed, obj->y.fixed, obj->z.fixed);
+    copy = copies[i] = Object_Spawn(0xd7, projectile->x.fixed,
+                                    projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
@@ -7090,27 +7127,27 @@ void RunBattleEffect04(void) {
       copy->motionFlags = 0;
       ObjectDispatch_ApplyArgumentToChildrenFar(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
-      res = Object_ReplaceResourceEntry((struct AnimationObject *)copy->sprite,
-                                        res);
+      sharedAnimation = Object_ReplaceResourceEntry(
+          (struct AnimationObject *)copy->sprite, sharedAnimation);
     }
   }
-  resSlot = res->slot;
+  resourceSlot = sharedAnimation->slot;
 
   // Destination: 56 pixels in front of the caster with scene->enabled set,
   // otherwise the effect's position.
   if (scene->enabled != 0) {
-    src = scene->mainObject;
-    pos.x = src->x.fixed;
-    pos.y = src->y.fixed + ABOVE;
-    pos.z = src->z.fixed;
+    caster = scene->mainObject;
+    pos.x = caster->x.fixed;
+    pos.y = caster->y.fixed + ABOVE;
+    pos.z = caster->z.fixed;
     Vector_AddPolarOffset(56 << 16, scene->angle, &pos);
   } else {
     pos.x = scene->x;
     pos.y = scene->y + ABOVE;
     pos.z = scene->z;
   }
-  Object_SetMoveTargetFar(obj, pos.x, pos.y, pos.z);
-  ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  Object_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
+  ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
                                gBattleFx_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
@@ -7123,7 +7160,8 @@ void RunBattleEffect04(void) {
   }
 
   // Wait, at most 60 frames, for the shot's script to end.
-  for (i = 0; i <= 59 && ((struct ScriptMotionObject *)obj)->script != NULL;
+  for (i = 0;
+       i <= 59 && ((struct ScriptMotionObject *)projectile)->script != NULL;
        i++)
     WaitFrames(1);
 
@@ -7145,14 +7183,14 @@ void RunBattleEffect04(void) {
   }
 
   // Run the map's event for it, if there is one.
-  ev = BattleFx_FindMatchingEvent(0x50000005, 4, &ctx);
-  if (ev != NULL)
-    BattleFx_RunEventAction(ev, gGameState.selectedActor, ctx);
+  event = BattleFx_FindMatchingEvent(0x50000005, 4, &eventTarget);
+  if (event != NULL)
+    BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(20);
-  if (resSlot != 96)
-    Resource_ResetEntry(resSlot);
+  if (resourceSlot != 96)
+    Resource_ResetEntry(resourceSlot);
 }
 
 // Per-frame update: flashes (animation 2) for 2 frames in every 8.
@@ -7181,58 +7219,45 @@ void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: spirals anticlockwise in on the target, at a radius of
-// twice the frames left in pixels, turning 0x800 a frame. work holds its
-// starting direction and timer the frames left; at 0 it shrinks away.
-void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
+// Both winding directions share the countdown and position update. timer is
+// initialized to 60; preserve its halfword narrowing before computing radius.
+static inline void BattleFx_UpdateSpiralParticle(union FieldObject *fieldObject,
+                                                 s32 clockwise) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
-  struct EffectVector pos;
-  s16 life;
-  s32 cnt;
+  struct EffectVector position;
+  s16 remainingFrames;
+  s32 decrementedTimer;
 
   if (particle != NULL) {
-    cnt = (u16)particle->timer - 1;
-    particle->timer = cnt;
-    life = cnt;
-    if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
-      Vector_AddPolarOffset(life << 17, (s16)particle->work + (life << 11),
-                            &pos);
-      particle->x.fixed = pos.x;
-      particle->y.fixed = pos.y;
-      particle->z.fixed = pos.z;
+    decrementedTimer = (u16)particle->timer - 1;
+    particle->timer = decrementedTimer;
+    remainingFrames = decrementedTimer;
+    if (remainingFrames != 0) {
+      position.x = particle->targetX;
+      position.y = particle->targetY;
+      position.z = particle->targetZ;
+      Vector_AddPolarOffset(remainingFrames << 17,
+                            clockwise
+                                ? (s16)particle->work - (remainingFrames << 11)
+                                : (s16)particle->work + (remainingFrames << 11),
+                            &position);
+      particle->x.fixed = position.x;
+      particle->y.fixed = position.y;
+      particle->z.fixed = position.z;
     } else {
       particle->update = BattleFx_UpdateOrbitingParticleFade;
     }
   }
 }
 
+// Spirals anticlockwise at twice the frames left in pixels, then fades.
+void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
+  BattleFx_UpdateSpiralParticle(fieldObject, 0);
+}
+
 // Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
 void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
-  struct FieldActor *particle = (struct FieldActor *)fieldObject;
-  struct EffectVector pos;
-  s16 life;
-  s32 cnt;
-
-  if (particle != NULL) {
-    cnt = (u16)particle->timer - 1;
-    particle->timer = cnt;
-    life = cnt;
-    if (life != 0) {
-      pos.x = particle->targetX;
-      pos.y = particle->targetY;
-      pos.z = particle->targetZ;
-      Vector_AddPolarOffset(life << 17, (s16)particle->work - (life << 11),
-                            &pos);
-      particle->x.fixed = pos.x;
-      particle->y.fixed = pos.y;
-      particle->z.fixed = pos.z;
-    } else {
-      particle->update = BattleFx_UpdateOrbitingParticleFade;
-    }
-  }
+  BattleFx_UpdateSpiralParticle(fieldObject, 1);
 }
 
 // Effect 6 cast on a target (scene->child); with childMode the target is
@@ -7254,14 +7279,14 @@ void BattleFx_StartOrbitingParticles(s32 unused) {
 // make the target flash 16 times; without childOption the target takes
 // mode 2.
 void BattleFx_RunOrbitingParticles(void) {
-  s32 ctx;
+  s32 eventTarget;
   struct EffectVector pos;
   struct EffectVector *p;
   struct BattleFxScene *scene;
   struct FieldActor *target;
   struct FieldActor *particle;
-  void *ev;
-  s32 cnt;
+  void *event;
+  s32 remainingCycles;
 
   scene = gEffectWork;
   target = scene->child;
@@ -7271,12 +7296,12 @@ void BattleFx_RunOrbitingParticles(void) {
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the effect's position.
   p = &pos;
-  cnt = 15;
+  remainingCycles = 15;
   do {
     particle = Object_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
-      s32 dist;
+      s32 radius;
 
       scale = (Random16() >> 1) + 0x8000;
       particle->scaleY = scale;
@@ -7294,16 +7319,16 @@ void BattleFx_RunOrbitingParticles(void) {
       p->x = scene->x;
       p->y = scene->y;
       p->z = scene->z;
-      dist = (Random16() << 2) + (2 << 16);
-      Vector_AddPolarOffset(dist, Random16(), p);
+      radius = (Random16() << 2) + (2 << 16);
+      Vector_AddPolarOffset(radius, Random16(), p);
       particle->targetX = p->x;
       particle->targetY = p->y;
       particle->targetZ = p->z;
     }
 
     WaitFrames(3);
-    cnt--;
-  } while (cnt >= 0);
+    remainingCycles--;
+  } while (remainingCycles >= 0);
 
   WaitFrames(10);
   AudioCommand_PlayFar(115);
@@ -7313,14 +7338,14 @@ void BattleFx_RunOrbitingParticles(void) {
     AudioCommand_PlayFar(212);
 
     // Flash for 1 frame in every 5.
-    cnt = 15;
+    remainingCycles = 15;
     do {
       Animation_ApplyChildValuesFar(target, 7);
       WaitFrames(1);
       Animation_ApplyChildValuesFar(target, 0);
       WaitFrames(4);
-      cnt--;
-    } while (cnt >= 0);
+      remainingCycles--;
+    } while (remainingCycles >= 0);
 
     if (scene->childOption == 0) {
       AudioCommand_PlayFar(220);
@@ -7328,9 +7353,9 @@ void BattleFx_RunOrbitingParticles(void) {
     }
 
     target->update = BattleFx_UpdateOrbitingParticleMain;
-    ev = BattleFx_FindMatchingEvent(0x50000005, 6, &ctx);
-    if (ev != NULL) {
-      BattleFx_RunEventAction(ev, gGameState.selectedActor, ctx);
+    event = BattleFx_FindMatchingEvent(0x50000005, 6, &eventTarget);
+    if (event != NULL) {
+      BattleFx_RunEventAction(event, gGameState.selectedActor, eventTarget);
     }
     WaitFrames(20);
   }
@@ -7354,26 +7379,28 @@ void BattleFx_SwayParticle(union FieldObject *fieldObject) {
 // position, at a radius of as many pixels as frames are left; released when
 // timer reaches 0.
 void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
+  struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
-  s16 life;
-  s32 cnt;
+  s16 remainingFrames;
+  s32 decrementedTimer;
 
-  if (obj != NULL) {
-    cnt = (u16)obj->timer - 1;
-    obj->timer = cnt;
-    life = cnt;
-    if (life != 0) {
+  if (particle != NULL) {
+    decrementedTimer = (u16)particle->timer - 1;
+    particle->timer = decrementedTimer;
+    remainingFrames = decrementedTimer;
+    if (remainingFrames != 0) {
       pos.x = scene->x;
       pos.y = scene->y + (10 << 16);
       pos.z = scene->z;
-      Vector_AddPolarOffset(life << 16, (s16)obj->work + (life << 11), &pos);
-      obj->x.fixed = pos.x;
-      obj->y.fixed = pos.y;
-      obj->z.fixed = pos.z;
+      Vector_AddPolarOffset(remainingFrames << 16,
+                            (s16)particle->work + (remainingFrames << 11),
+                            &pos);
+      particle->x.fixed = pos.x;
+      particle->y.fixed = pos.y;
+      particle->z.fixed = pos.z;
     } else {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_CommonParticleScript);
     }
   }
@@ -7383,26 +7410,26 @@ void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 // above the effect's position, and every 3 frames sheds a spark that sways
 // as it slowly falls. With phase -1 it stays where it is.
 void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
-  struct SparkObject *obj = (struct SparkObject *)fieldObject;
+  struct SparkObject *emitter = (struct SparkObject *)fieldObject;
   struct BattleFxScene *scene;
   s16 *phase;
   struct SparkObject *spark;
   s32 pos[3];
 
-  phase = &obj->phase;
+  phase = &emitter->phase;
   scene = gEffectWork;
   if (*phase != -1) {
-    obj->x = scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10));
-    obj->y = scene->y + ABOVE;
-    obj->z = scene->z;
+    emitter->x = scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10));
+    emitter->y = scene->y + ABOVE;
+    emitter->z = scene->z;
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
-    pos[0] = obj->x;
-    pos[1] = obj->y + (2 << 16);
-    pos[2] = obj->z;
+    pos[0] = emitter->x;
+    pos[1] = emitter->y + (2 << 16);
+    pos[2] = emitter->z;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
     if (spark != 0) {
@@ -7434,11 +7461,11 @@ void BattleFx_CallEffect03AndStop(s32 unused) {
 // Psynergy effect 3: eight particles spiral into the centre, where one
 // appears, sheds sparks and flies far away.
 void RunBattleEffect03(void) {
-  struct BattleFxScene *scn = gEffectWork;
-  struct FieldActor *target = scn->mainObject;
+  struct BattleFxScene *scene = gEffectWork;
+  struct FieldActor *target = scene->mainObject;
   struct FieldActor *object;
   struct FieldSprite *last;
-  u8 marker;
+  u8 resourceSlot;
   s32 i;
 
   BattleEffect_InitializeSharedScene();
@@ -7460,7 +7487,7 @@ void RunBattleEffect03(void) {
     WaitFrames(1);
   }
 
-  marker = last->vramBlock;
+  resourceSlot = last->vramBlock;
   AudioCommand_PlayFar(130);
   WaitFrames(110);
 
@@ -7470,9 +7497,9 @@ void RunBattleEffect03(void) {
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
-    target->x.fixed = scn->x;
-    target->y.fixed = scn->y + 0x100000;
-    target->z.fixed = scn->z;
+    target->x.fixed = scene->x;
+    target->y.fixed = scene->y + 0x100000;
+    target->z.fixed = scene->z;
     target->motionFlags = 4;
     Animation_ApplyChildValuesFar(target, 7);
   }
@@ -7501,7 +7528,7 @@ void RunBattleEffect03(void) {
   if (object != 0) {
     target->update = BattleFx_RunSparkEmitter;
     target->timer = 0;
-    if (scn->enabled != 0)
+    if (scene->enabled != 0)
       WaitFrames(128);
     else
       WaitFrames(192);
@@ -7517,10 +7544,10 @@ void RunBattleEffect03(void) {
     Script_WaitForEventTimeoutFar(target);
     ObjectDispatch_ReleaseFar(target);
   }
-  if (marker != 0x60)
-    Resource_ResetEntry(marker);
-  if (scn->finishCallback != 0)
-    scn->finishCallback();
+  if (resourceSlot != 0x60)
+    Resource_ResetEntry(resourceSlot);
+  if (scene->finishCallback != 0)
+    scene->finishCallback();
   BattleFx_PrepareBufferInterpolation();
 }
 
@@ -7534,8 +7561,8 @@ void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
 #endif
-  struct FieldWork *ev;
-  struct ObjectRuntime *obj;
+  struct FieldWork *field;
+  struct ObjectRuntime *leader;
   u8 *tile;
   s32 x;
   s32 y;
@@ -7543,8 +7570,8 @@ void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   slot = (u32)&gEventWork;
 #endif
-  ev = (struct FieldWork *)gEventWork;
-  obj = ObjectTable_Get(gGameState.selectedActor);
+  field = (struct FieldWork *)gEventWork;
+  leader = ObjectTable_Get(gGameState.selectedActor);
 #ifdef UBFIX
   tile = gMapWork[0];
 #else
@@ -7553,34 +7580,34 @@ void FieldFx_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 #endif
 
-  if (ev->mode == 3) {
+  if (field->mode == 3) {
     u32 tx;
     u32 ty;
 
-    x = obj->x;
+    x = leader->x;
     if (x < 0)
       x += 0x1fffff;
     tx = (x >> 21) & 31;
 
-    y = obj->z;
+    y = leader->z;
     if (y < 0)
       y += 0x1fffff;
     ty = (y >> 21) & 31;
 
     tile = (u8 *)gMapBlocks + ((tx + (ty << 5)) << 2);
   } else {
-    if (obj->terrainId <= 2) {
-      tile = (u8 *)((struct MapState *)tile)->layers[obj->terrainId].cells;
+    if (leader->terrainId <= 2) {
+      tile = (u8 *)((struct MapState *)tile)->layers[leader->terrainId].cells;
     } else
       tile = (u8 *)gMapCellBuffer;
 
-    x = obj->x;
+    x = leader->x;
     if (x < 0)
       x += 0xfffff;
     {
       u32 tx = x >> 20;
 
-      y = obj->z;
+      y = leader->z;
       if (y < 0)
         y += 0xfffff;
 
@@ -7589,7 +7616,7 @@ void FieldFx_CheckCloakTile(void) {
   }
 
   if (tile[2] != CLOAK_TILE)
-    ((struct EventWork *)ev)->psynergyRequest = CLOAK_END;
+    ((struct EventWork *)field)->psynergyRequest = CLOAK_END;
 }
 
 // Ends Cloak: stops the tile check and makes the leader blink back into
@@ -7644,38 +7671,38 @@ void FieldFx_ResumeCloakCheck(void) {
 // set), and the tile check starts; where the leader cannot hide it shows
 // again at once.
 void FieldFx_StartCloak(void) {
-  struct EventWork *ev = gEventWork;
-  struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selectedActor);
-  struct AnimationObject *anim = obj->animation;
-  struct AnimationEntry *entry = anim->entries[0];
+  struct FieldWork *field = gEventWork;
+  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct AnimationObject *animation = leader->animation;
+  struct AnimationEntry *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 
   AudioCommand_PlayFar(130);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-  ((struct ScriptMotionObject *)obj)->hook = 0;
+  ObjectDispatch_ApplyArgumentToChildrenFar(leader, 0);
+  ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
   do {
     entry->param = 7;
-    anim->dirty = 1;
-    anim->flags = 2;
+    animation->dirty = 1;
+    animation->flags = 2;
     WaitFrames(2);
-    anim->dirty = 1;
-    anim->flags = 0;
+    animation->dirty = 1;
+    animation->flags = 0;
     WaitFrames(2);
     n++;
   } while (n <= 9);
   n = 0;
   entry->param = n;
-  anim->flags = 2;
-  anim->dirty = 1;
+  animation->flags = 2;
+  animation->dirty = 1;
   check = FieldFx_CheckCloakTile;
   Scheduler_AddOrUpdateCallback(check, 0xc80);
   gGameState.cloaked = 1;
   check();
-  if (ev->psynergyRequest == CLOAK_END) {
+  if (field->command == CLOAK_END) {
     FieldFx_EndCloak();
-    ev->psynergyRequest = n;
+    field->command = n;
   }
 }
 
@@ -7716,24 +7743,24 @@ struct Effect05State {
 // Per-frame update of a falling particle: on reaching altitude, it scatters
 // three small particles.
 void BattleFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
-  struct Effect05Object *obj = (struct Effect05Object *)fieldObject;
+  struct Effect05Object *particle = (struct Effect05Object *)fieldObject;
   s32 i;
   struct Effect05Object *p;
   s32 phase = 2;
   s32 phase2;
   s16 *pp;
 
-  if (obj->y <= obj->altitude) {
-    obj->phase = phase;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  if (particle->y <= particle->altitude) {
+    particle->phase = phase;
+    ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                  gBattleFx_CommonParticleScript);
     p = NULL;
-    obj->callback = NULL;
+    particle->callback = NULL;
 
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = Object_Spawn(0xf0, obj->x, obj->y, obj->z);
+      p = Object_Spawn(0xf0, particle->x, particle->y, particle->z);
       if (p == NULL) {
         break;
       }
@@ -7755,25 +7782,20 @@ void BattleFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 // Per-frame update: drifts from side to side as it slowly falls, and is
 // released on reaching the ground.
 void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
-  struct ObjectRuntime *obj = (struct ObjectRuntime *)fieldObject;
+  struct ObjectRuntime *particle = (struct ObjectRuntime *)fieldObject;
   s32 drift;
 
-  obj->y -= 0x4ccc;
+  particle->y -= 0x4ccc;
   drift = Random16();
-  obj->x += drift - Random16();
-  if (obj->y <= obj->terrainHeight) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  particle->x += drift - Random16();
+  if (particle->y <= particle->terrainHeight) {
+    ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                  gBattleFx_CommonParticleScript);
   }
 }
 
 // Effect 5 cast on a target.
 void BattleFx_CallEffect05(s32 unused) { RunBattleEffect05(); }
-
-// From start to end in 10 steps: the value at step (0 to 10).
-static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
-  return start + step * (end - start) / 10;
-}
 
 // Psynergy effect 5: an orb of light rises from 16 pixels above the target
 // to 32 pixels above the destination (80 with variant) over 10 frames,
@@ -7785,17 +7807,17 @@ void RunBattleEffect05(void) {
   struct EffectVector end;
   struct Effect05State *work = gEffectWork;
   struct Object *target = work->target;
-  struct Effect05Object *orb;
+  struct Effect05Object *lightOrb;
   struct EffectVector *from;
   struct EffectVector *to;
-  s32 i;
+  s32 step;
   s32 steps = 11;
   s32 count;
   s32 y;
-  struct Effect05Object *mote;
+  struct Effect05Object *particle;
 
-  orb = Object_Spawn(0xef, i = 0, 0, 0);
-  if (orb == 0)
+  lightOrb = Object_Spawn(0xef, step = 0, 0, 0);
+  if (lightOrb == 0)
     return;
   BattleEffect_InitializeSharedScene();
   AudioCommand_PlayFar(138);
@@ -7819,7 +7841,7 @@ void RunBattleEffect05(void) {
     to->y = y + (80 << 16);
 
   // Grow from a quarter to full size on the way.
-  for (; i < steps; i++) {
+  for (; step < steps; step++) {
     s32 scale;
 
     {
@@ -7829,20 +7851,20 @@ void RunBattleEffect05(void) {
 
       e = b->x;
       t = a->x;
-      t += i * (e - t) / 10;
-      orb->x = t;
+      t += step * (e - t) / 10;
+      lightOrb->x = t;
       e = b->y;
       t = a->y;
-      t += i * (e - t) / 10;
-      orb->y = t;
+      t += step * (e - t) / 10;
+      lightOrb->y = t;
       e = b->z;
       t = a->z;
-      t += i * (e - t) / 10;
-      orb->z = t;
+      t += step * (e - t) / 10;
+      lightOrb->z = t;
     }
-    scale = Lerp10(0x4000, 0x10000, i);
-    orb->scaleX = scale;
-    orb->scaleY = scale;
+    scale = BattleFx_Interpolate(0x10000, 0x4000, step);
+    lightOrb->scaleX = scale;
+    lightOrb->scaleY = scale;
     WaitFrames(1);
   }
   WaitFrames(10);
@@ -7853,22 +7875,22 @@ void RunBattleEffect05(void) {
     count = 10;
     if ((s8)work->highArc == 0)
       count = 24;
-    for (i = 0; i < count; i++) {
-      pos.x = orb->x;
-      pos.y = orb->y;
-      pos.z = orb->z;
+    for (step = 0; step < count; step++) {
+      pos.x = lightOrb->x;
+      pos.y = lightOrb->y;
+      pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      if (i == count - 1) {
+      if (step == count - 1) {
         WaitFrames(25);
-        pos.x = orb->x;
-        pos.y = orb->y;
-        pos.z = orb->z;
+        pos.x = lightOrb->x;
+        pos.y = lightOrb->y;
+        pos.z = lightOrb->z;
       }
-      mote = Object_Spawn(0xf0, pos.x, pos.y, pos.z);
-      if (mote != 0) {
-        mote->altitude = pos.y - (32 << 16);
-        mote->callback = BattleFx_SpawnRandomAngleTriplet;
-        mote->flag = 2;
+      particle = Object_Spawn(0xf0, pos.x, pos.y, pos.z);
+      if (particle != 0) {
+        particle->altitude = pos.y - (32 << 16);
+        particle->callback = BattleFx_SpawnRandomAngleTriplet;
+        particle->flag = 2;
       }
       AudioCommand_PlayFar(132);
       WaitFrames(6);
@@ -7881,18 +7903,18 @@ void RunBattleEffect05(void) {
       count = 10;
     else
       count = 30;
-    for (i = 0; i < count; i++) {
-      pos.x = orb->x;
-      pos.y = orb->y;
-      pos.z = orb->z;
+    for (step = 0; step < count; step++) {
+      pos.x = lightOrb->x;
+      pos.y = lightOrb->y;
+      pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      mote = Object_Spawn(0x11c, pos.x, pos.y, pos.z);
-      if (mote != 0) {
-        mote->callback = BattleFx_UpdateDriftingFallObject;
-        mote->flag = 0;
-        mote->sprite->mode = 2;
-        ObjectDispatch_ApplyArgumentToChildrenFar(mote, 8);
-        Animation_ApplyChildValuesFar(mote, 7);
+      particle = Object_Spawn(0x11c, pos.x, pos.y, pos.z);
+      if (particle != 0) {
+        particle->callback = BattleFx_UpdateDriftingFallObject;
+        particle->flag = 0;
+        particle->sprite->mode = 2;
+        ObjectDispatch_ApplyArgumentToChildrenFar(particle, 8);
+        Animation_ApplyChildValuesFar(particle, 7);
       }
       WaitFrames(6);
     }
@@ -7900,7 +7922,7 @@ void RunBattleEffect05(void) {
   }
 
   // Shrink back to a quarter on the way back over the target.
-  i = 0;
+  step = 0;
   do {
     s32 scale;
 
@@ -7911,24 +7933,24 @@ void RunBattleEffect05(void) {
 
       e = b->x;
       t = a->x;
-      t += i * (e - t) / 10;
-      orb->x = t;
+      t += step * (e - t) / 10;
+      lightOrb->x = t;
       e = b->y;
       t = a->y;
-      t += i * (e - t) / 10;
-      orb->y = t;
+      t += step * (e - t) / 10;
+      lightOrb->y = t;
       e = b->z;
       t = a->z;
-      t += i * (e - t) / 10;
-      orb->z = t;
+      t += step * (e - t) / 10;
+      lightOrb->z = t;
     }
-    scale = Lerp10(0x10000, 0x4000, i);
-    orb->scaleX = scale;
-    orb->scaleY = scale;
+    scale = BattleFx_Interpolate(0x4000, 0x10000, step);
+    lightOrb->scaleX = scale;
+    lightOrb->scaleY = scale;
     WaitFrames(1);
-    i++;
-  } while (i < steps);
-  ObjectDispatch_ReleaseFar(orb);
+    step++;
+  } while (step < steps);
+  ObjectDispatch_ReleaseFar(lightOrb);
   BattleFx_PrepareBufferInterpolation();
 }
 
@@ -7936,39 +7958,26 @@ void RunBattleEffect05(void) {
 // Particles falling round a lifted object.
 //--------------------------------------------------------------------------
 
-struct FallScene {
-  u8 reserved00[20];
-  struct FieldActor *child; // the lifted object
-};
-
 LAYOUT_SIZE_GUARD(FallPos_Size, struct EffectVector, 0x0c);
-LAYOUT_OFFSET_GUARD(FallScene_Child, struct FallScene, child, 0x14);
 
 // Per-frame update: drops one particle round the lifted object, 8 to 24
 // pixels above it and 0 to 48 pixels away in a random direction.
 void BattleFx_SpawnFallingParticles(void) {
-  struct FieldActor *src;
-  struct EffectVector pos;
-  struct ItemBreakFragmentObject *obj;
-  u32 dist;
+  struct FieldActor *liftedObject;
+  struct EffectVector position;
+  struct ItemBreakFragmentObject *fragment;
+  u32 radius;
 
-  src = ((struct FallScene *)gEffectWork)->child;
-  pos.x = src->x.fixed;
-  pos.y = src->y.fixed - Random16() * 16 + (24 << 16);
-  pos.z = src->z.fixed;
+  liftedObject = ((struct BattleFxScene *)gEffectWork)->child;
+  position.x = liftedObject->x.fixed;
+  position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
+  position.z = liftedObject->z.fixed;
 
-  dist = Random16() * 3;
-  Vector_AddPolarOffset(dist * 16, Random16(), &pos);
+  radius = Random16() * 3;
+  Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
-  obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
-  if (obj != 0) {
-    obj->motionFlags = ACTOR_FALLS;
-    obj->gravity = 0x1999; // gravity 0.1 pixel
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    obj->lifetime = 12;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_CommonParticleScript);
-  }
+  fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
+  BattleFx_InitializeFallingFragment(fragment);
 }
 
 //--------------------------------------------------------------------------
@@ -7978,15 +7987,17 @@ void BattleFx_SpawnFallingParticles(void) {
 
 #define SHARD_MAX 20 // shards
 
-// Whether obj, raised 16 pixels, would collide moving to pos.
-static __inline__ s32 ObjProbeUp(struct FieldActor *obj,
-                                 struct EffectVector *pos) {
-  s32 hit;
+// Tests the target's move with its terrain reference raised 16 pixels.
+// Restore the reference before returning the collision result.
+static __inline__ s32
+BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
+                                    struct EffectVector *position) {
+  s32 collision;
 
-  obj->terrainHeight += 16 << 16;
-  hit = Map_CheckObjectStepFar(obj, pos);
-  obj->terrainHeight -= 16 << 16;
-  return hit;
+  target->terrainHeight += 16 << 16;
+  collision = Map_CheckObjectStepFar(target, position);
+  target->terrainHeight -= 16 << 16;
+  return collision;
 }
 
 // Effect 11 cast on a target: two hands lift it to 24 pixels above the
@@ -8111,7 +8122,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
      * while (1). */
     if (i != 0)
       goto blocked;
-    if (ObjProbeUp(target, p) > 0) {
+    if (BattleFx_CheckRaisedTargetCollision(target, p) > 0) {
     blocked: // the way is blocked: a buzzer every 16 frames
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
       ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
@@ -8223,32 +8234,32 @@ DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect11, BattleFx_SpawnItemBreakMode1)
 // faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle) {
-  struct MotionObject *obj;
+  struct MotionObject *fragment;
   s32 scale;
 
   AudioCommand_PlayFar(SOUND_ITEM_BREAK);
-  obj = Object_Spawn(215, x, y, z);
-  if (obj != NULL) {
-    obj->scaleY = 0x4000;
-    obj->scaleX = 0x4000;
-    obj->speedLimit = 0x30000;
-    obj->acceleration = 0x30000;
-    obj->autoFaceMotion = 0;
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
-    scale = obj->scaleX;
+  fragment = Object_Spawn(215, x, y, z);
+  if (fragment != NULL) {
+    fragment->scaleY = 0x4000;
+    fragment->scaleX = 0x4000;
+    fragment->speedLimit = 0x30000;
+    fragment->acceleration = 0x30000;
+    fragment->autoFaceMotion = 0;
+    ObjectDispatch_ApplyArgumentToChildrenFar(fragment, 1);
+    scale = fragment->scaleX;
     if (scale < 0x10000) {
       do {
         scale += 0x800;
-        obj->scaleY = scale;
-        obj->scaleX = scale;
-        obj->angle += 0x2000;
+        fragment->scaleY = scale;
+        fragment->scaleX = scale;
+        fragment->angle += 0x2000;
         WaitFrames(1);
-        scale = obj->scaleX;
+        scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }
-    obj->angle = angle;
+    fragment->angle = angle;
   }
-  return obj;
+  return fragment;
 }
 
 // A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
@@ -8477,16 +8488,18 @@ void RunBattleEffect14(void) {
 // heads for a point 4 pixels round 8 pixels above the effect's position on
 // screen; state 3 frees the slot on arrival.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
+  // A for/continue retry grows the native English callback 0x100 -> 0x104.
+  // Retain the immediate state-1-to-state-2 transition on arrival.
   struct BattleFxScene *scene;
   struct EffectVector pos;
-  s8 *st;
+  s8 *statePointer;
   s16 angle;
   s32 state;
 
   scene = gEffectWork;
-  st = &effect->state;
+  statePointer = &effect->state;
 top:
-  state = *st;
+  state = *statePointer;
   if (state == 0) {
     pos.x = effect->originX;
     pos.z = effect->originZ;
@@ -8497,13 +8510,13 @@ top:
     effect->acceleration = 4 << 16;
     effect->maxSpeed = 4 << 16;
     effect->flag42 = state;
-    *st = *st + 1;
+    *statePointer = *statePointer + 1;
     return;
   }
   if (state == 1) {
     if (BattleFx_HasReachedTarget(effect) != 0)
       return;
-    *st = *st + 1;
+    *statePointer = *statePointer + 1;
     goto top;
   }
   if (state == 2) {
@@ -8516,7 +8529,7 @@ top:
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
     effect->flag42 = 1;
-    *st = *st + 1;
+    *statePointer = *statePointer + 1;
     return;
   }
   if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
@@ -8536,8 +8549,8 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
 // and scatters it into 16 particles.
 void BattleEffect_RunFallbackObjectTransition(void) {
   struct BattleFxScene *scene = gEffectWork;
-  struct MotionObject *user = scene->mainObject;
-  struct MotionObject *obj;
+  struct MotionObject *caster = scene->mainObject;
+  struct MotionObject *orb;
   struct EffectSlot *slot;
   struct EffectVector pos;
   struct EffectVector from;
@@ -8545,18 +8558,18 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   s32 step;
   s32 i;
 
-  scene->y = user->y;
-  obj = Object_Spawn(250, 0, 0, 0);
+  scene->y = caster->y;
+  orb = Object_Spawn(250, 0, 0, 0);
   step = 0;
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-  if (obj == 0)
+  ObjectDispatch_ApplyArgumentToChildrenFar(orb, 0);
+  if (orb == 0)
     return;
 
   // From 16 pixels above the caster to 8 pixels above the effect's position.
   BattleEffect_InitializeSharedScene();
-  from.x = user->x;
-  from.y = user->y + (16 << 16);
-  from.z = user->z;
+  from.x = caster->x;
+  from.y = caster->y + (16 << 16);
+  from.z = caster->z;
   to.x = scene->x;
   to.y = scene->y + (8 << 16);
   to.z = scene->z;
@@ -8564,12 +8577,12 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     s32 steps = 11;
     s32 scale;
 
-    obj->x = from.x + (to.x - from.x) * step / 10;
-    obj->y = from.y + (to.y - from.y) * step / 10;
-    obj->z = from.z + (to.z - from.z) * step / 10;
+    orb->x = from.x + (to.x - from.x) * step / 10;
+    orb->y = from.y + (to.y - from.y) * step / 10;
+    orb->z = from.z + (to.z - from.z) * step / 10;
     scale = BattleFx_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
-    obj->scaleX = scale;
-    obj->scaleY = scale;
+    orb->scaleX = scale;
+    orb->scaleY = scale;
     WaitFrames(1);
     step++;
     if (step >= steps)
@@ -8577,7 +8590,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   }
 
   WaitFrames(5);
-  ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+  ObjectDispatch_ApplyArgumentToChildrenFar(orb, 1);
   AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
   WaitFrames(10);
   AudioCommand_PlayFar(SOUND_TRIPLE_TONE_LOW);
@@ -8590,9 +8603,9 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   // position.
   slot = &scene->slots[0];
   for (i = 0; i < 16; i++) {
-    pos.x = obj->x;
-    pos.y = obj->y + (8 << 16);
-    pos.z = obj->z;
+    pos.x = orb->x;
+    pos.y = orb->y + (8 << 16);
+    pos.z = orb->z;
     Camera_WorldToScreen(&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     EffectSlot_Initialize(slot, 285, pos.x, pos.z);
@@ -8601,11 +8614,11 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     slot++;
   }
 
-  pos.x = obj->x;
-  pos.y = obj->y + (8 << 16);
-  pos.z = obj->z;
+  pos.x = orb->x;
+  pos.y = orb->y + (8 << 16);
+  pos.z = orb->z;
   WaitFrames(8);
-  ObjectDispatch_ReleaseFar(obj);
+  ObjectDispatch_ReleaseFar(orb);
   WaitFrames(4);
   WaitFrames(30);
   BattleFx_PrepareBufferInterpolation();
@@ -8614,47 +8627,47 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 // Per-frame update of a paused object: gives its sprite one of the table's
 // eight params at random.
 void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
-  void *obj = (void *)fieldObject;
+  void *object = (void *)fieldObject;
   s8 *table = gBattleFx_RandomChildValues;
   s32 random = Random16();
-  Animation_ApplyChildValuesFar(obj, table[(u32)(random * 8) >> 16]);
+  Animation_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
 }
 
 // Pauses object id, keeping its per-frame update and, if it is animated, its
 // first animation's param in gGameState.
-void BattleEffect_PauseObject(s32 id) {
-  struct FieldActor *obj;
+void BattleEffect_PauseObject(s32 actorId) {
+  struct FieldActor *object;
   struct AnimationEntry *entry;
 
-  obj = ObjectTable_Get(id);
-  if (obj != NULL) {
-    gGameState.pausedUpdate = (u32)obj->update;
+  object = ObjectTable_Get(actorId);
+  if (object != NULL) {
+    gGameState.pausedUpdate = (u32)object->update;
     gGameState.pausedPose = 0;
-    if (obj->active == 1) {
-      entry = ((struct AnimationObject *)obj->sprite)->entries[0];
+    if (object->active == 1) {
+      entry = ((struct AnimationObject *)object->sprite)->entries[0];
       if (entry != NULL) {
         gGameState.pausedPose = entry->param;
       }
     }
-    obj->update = BattleEffect_SetRandomTableValueOnObject;
-    obj->paused = 1;
-    ObjectDispatch_ApplyValueToChildrenFar(obj, 0);
+    object->update = BattleEffect_SetRandomTableValueOnObject;
+    object->paused = 1;
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0);
   }
 }
 
 // Resumes object id with the update and param kept by
 // BattleEffect_PauseObject.
-void BattleFx_ResumeObject(s32 id) {
-  struct FieldActor *obj = ObjectTable_Get(id);
-  if (obj != 0) {
-    if (obj->update == BattleEffect_SetRandomTableValueOnObject) {
+void BattleFx_ResumeObject(s32 actorId) {
+  struct FieldActor *object = ObjectTable_Get(actorId);
+  if (object != 0) {
+    if (object->update == BattleEffect_SetRandomTableValueOnObject) {
       struct GameState *state = &gGameState;
-      obj->update = (void (*)(union FieldObject *))state->pausedUpdate;
+      object->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Animation_ApplyChildValuesFar(obj, state->pausedPose);
+      Animation_ApplyChildValuesFar(object, state->pausedPose);
     }
-    obj->paused = 0;
-    ObjectDispatch_ApplyValueToChildrenFar(obj, 16);
+    object->paused = 0;
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
   }
 }
 
@@ -8774,7 +8787,7 @@ void RunBattleEffect13(void) {
 // out.
 //--------------------------------------------------------------------------
 
-#define SLOT_MAX 24 // effect slots (particles)
+// The scene owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
 // Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 // (timer counts up) until timer * 0x50 reaches 0x1000.
@@ -8904,7 +8917,7 @@ void BattleFx_RunEffect15(void) {
     i++;
     WaitFrames(1);
     slot++;
-  } while (i < SLOT_MAX);
+  } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(70);
 
   // The flying particles vanish once they arrive.
@@ -8914,7 +8927,7 @@ void BattleFx_RunEffect15(void) {
     if (scene->slots[i].active != 0)
       scene->slots[i].state = last;
     i++;
-  } while (i < SLOT_MAX);
+  } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(10);
@@ -8926,6 +8939,8 @@ void BattleFx_RunEffect15(void) {
 // on the clear screen).
 void BattleFx_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject) {
+  // One shared inline kernel with constant inversion grows the positive and
+  // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct FieldActor *source;
   s32 y;
@@ -9022,13 +9037,13 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *objects[2];
   struct FieldActor *object;
   struct DescendingArcSprite *sprite;
-  s32 i;
+  s32 arcIndex;
   u8 zero;
 
-  for (i = 0; i <= 1; i++) {
+  for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     object = Object_CreateFar(26, source->x.fixed, source->y.fixed + 0x400000,
                               source->z.fixed);
-    objects[i] = object;
+    objects[arcIndex] = object;
     if (object == NULL)
       continue;
     object->terrainHeight = source->terrainHeight;
@@ -9052,6 +9067,8 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
     sprite->size = 2;
     sprite->frame->frame = zero;
   }
+  // BUG: failed allocations above leave a missing arc or sprite here.
+  // Preserve the original partial-pair behavior until recovery is established.
   objects[0]->update = BattleFx_UpdateDescendingParticleNegativeArc;
   ((struct DescendingArcSprite *)objects[0]->sprite)->attr.byte.variant = 0;
   objects[1]->update = BattleFx_UpdateDescendingParticlePositiveArc;
@@ -9070,13 +9087,13 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
 // End of the effect: switches the caster's display flags between 3 and 1 on
 // a 5-frame cycle.
 void BattleFx_UpdateEffect16State(void) {
-  struct ArcEffectObject *obj;
+  struct ArcEffectObject *caster;
   struct AnimationObject *rec;
   struct AnimationEntry *entry;
   s32 phase;
 
-  obj = ObjectTable_Get(gGameState.selectedActor);
-  rec = obj->records;
+  caster = ObjectTable_Get(gGameState.selectedActor);
+  rec = caster->records;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
   if (phase == 0) {
@@ -9092,22 +9109,22 @@ void BattleFx_UpdateEffect16State(void) {
 // The caster during the effect: sheds a pair of falling arcs every 5 frames
 // (7 on the world map), and spins in phase 1.
 void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
-  struct ArcEffectObject *obj = (struct ArcEffectObject *)fieldObject;
+  struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
-  s32 cnt;
+  s32 elapsedFrames;
 
-  phase = obj->phase;
-  cnt = obj->step++;
+  phase = caster->phase;
+  elapsedFrames = caster->step++;
 
   if (gGameState.map == (s32)&SceneId_Clear) {
-    if (cnt % 7 == 0)
-      BattleFx_SpawnDescendingArcParticles(obj);
-  } else if (cnt % 5 == 0) {
-    BattleFx_SpawnDescendingArcParticles(obj);
+    if (elapsedFrames % 7 == 0)
+      BattleFx_SpawnDescendingArcParticles(caster);
+  } else if (elapsedFrames % 5 == 0) {
+    BattleFx_SpawnDescendingArcParticles(caster);
   }
 
   if (phase == 1)
-    obj->angle += 0xc00;
+    caster->angle += 0xc00;
 }
 
 // Avoid (or the Sacred Feather) has worn off: "Avoid's effects wore off." (or
@@ -9194,6 +9211,7 @@ void EffectSlot_Update(struct EffectSlot *effect) {
       effect->callbackDelay--;
     else if (effect->callback != 0)
       effect->callback(effect);
+    // A callback may release its own slot; do not move or draw it afterward.
     if (effect->active != 0) {
       if (effect->updateMotion != 0)
         EffectSlot_UpdateMotion(effect);
@@ -9231,11 +9249,11 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
 // frame when flag42 is set and speeding up by acceleration to maxSpeed. A
 // slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
-  s32 dx;
-  s32 dz;
+  s32 deltaX;
+  s32 deltaZ;
   s32 distance;
-  s32 ix;
-  s32 iz;
+  s32 pixelX;
+  s32 pixelZ;
   s32 speed;
   s16 angle;
   s32 heading;
@@ -9244,20 +9262,21 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
 
   if (effect->targetX == EFFECT_NO_TARGET)
     return;
-  dx = effect->targetX - effect->x;
-  dz = effect->targetZ - effect->z;
+  deltaX = effect->targetX - effect->x;
+  deltaZ = effect->targetZ - effect->z;
   if (effect->stopAtTarget != 0) {
-    ix = dx / 0x10000;
-    iz = dz / 0x10000;
-    distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
+    pixelX = deltaX / 0x10000;
+    pixelZ = deltaZ / 0x10000;
+    distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ) << 16;
     if (distance < 0x800000)
-      distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+      distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
+                           Iwram_MulQ16(deltaZ, deltaZ));
     if (distance <= 0x80000) {
       EffectSlot_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }
-  angle = ArcTan2(dz, dx);
+  angle = ArcTan2(deltaZ, deltaX);
   if (effect->flag42 != 0) {
     heading = effect->heading;
     turn = angle - heading;
@@ -9340,6 +9359,9 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
   effect->originX = x;
   effect->originZ = z;
+  // BUG: ResourceObject_CreateFar can return NULL, but this and the animation
+  // setup below still require a sprite. Callers also immediately use it, so
+  // guarding this store alone would not establish allocation-failure recovery.
   ((s8 *)effect->object)[38] = 0;
   effect->stopAtTarget = 1;
   effect->flag42 = 1;
@@ -9359,6 +9381,15 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot) {
 }
 
 #define FLAG_NOT_ON_MAP 284 // the current place is not on the world map
+#define WORLD_MAP_MARKER_TILE_BYTES 0x80
+
+// BUG: the original reserves 32 bytes but writes and uploads 128. The bump
+// allocator takes bytes, not words; reserve the whole tile buffer with BUGFIX.
+#ifdef BUGFIX
+#define WORLD_MAP_MARKER_ALLOCATION_SIZE WORLD_MAP_MARKER_TILE_BYTES
+#else
+#define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
+#endif
 
 // The world map screen's work, kept in gMapCellBuffer.
 struct WorldMapWork {
@@ -9370,7 +9401,7 @@ struct WorldMapWork {
   s16 shown; // the marker whose name is shown (-1: none)
   u8 padding14[4];
   s32 speed; // the cursor's speed
-  s32 window;
+  struct UiWindow *window;
   struct AnimationSpritePart markers[67];
 };
 
@@ -9379,41 +9410,44 @@ struct WorldMapWork {
 // on it), and the place-name window.
 void BattleFx_SetupResourcesAndWindow(void) {
   u32 *oam;
-  u32 *pal;
+  u32 *markerTiles;
   struct WorldMapWork *work;
   struct FieldActor *object;
-  s32 attr;
+  s32 tileAttributes;
   u32 i;
   u32 tile;
-  u32 attr2;
+  u32 cursorAttributes;
 
-  pal = Runtime_BumpAllocateAlternatePool(32);
+  markerTiles =
+      Runtime_BumpAllocateAlternatePool(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldMapWork *)gMapCellBuffer;
   oam = (u32 *)work->markers;
   object = Object_GetById(gGameState.selectedActor);
   work->vramBlock = Resource_FindFreeEntry();
-  Dma_Fill32(0, pal, 0x80);
-  pal[0] = 255;
-  pal[1] = 0x1ff;
-  pal[2] = 272;
-  pal[8] = 68;
-  pal[9] = 324;
-  pal[10] = 272;
-  pal[16] = 119;
-  pal[17] = 0x177;
-  pal[18] = 272;
-  pal[24] = 0xff0;
-  pal[25] = 0xffff;
-  pal[26] = 0x1ffff;
-  pal[27] = 0x11ff0;
-  pal[28] = 0x1100;
-  attr = VramCache_Load(work->vramBlock, 128, pal) | 0x400;
+  Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
+  markerTiles[0] = 255;
+  markerTiles[1] = 0x1ff;
+  markerTiles[2] = 272;
+  markerTiles[8] = 68;
+  markerTiles[9] = 324;
+  markerTiles[10] = 272;
+  markerTiles[16] = 119;
+  markerTiles[17] = 0x177;
+  markerTiles[18] = 272;
+  markerTiles[24] = 0xff0;
+  markerTiles[25] = 0xffff;
+  markerTiles[26] = 0x1ffff;
+  markerTiles[27] = 0x11ff0;
+  markerTiles[28] = 0x1100;
+  tileAttributes = VramCache_Load(work->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
+                                  markerTiles) |
+                   0x400;
   for (i = 0; i < 66; i++) {
     *oam++ = 0;
     *oam++ = 0;
-    *oam++ = attr;
+    *oam++ = tileAttributes;
   }
-  MemFree(pal);
+  MemFree(markerTiles);
   if (GameFlag_TestFar(284)) {
     work->x.fixed = 240 << 15;
     work->z.fixed = 160 << 15;
@@ -9428,9 +9462,9 @@ void BattleFx_SetupResourcesAndWindow(void) {
   work->speed = 0x10000;
   *oam++ = 0;
   *oam++ = 0x40000000;
-  attr2 = 0x400;
-  attr2 |= tile >> 5;
-  *oam = attr2;
+  cursorAttributes = 0x400;
+  cursorAttributes |= tile >> 5;
+  *oam = cursorAttributes;
 }
 
 //--------------------------------------------------------------------------
@@ -9466,23 +9500,23 @@ void Map_UpdateWorldMapMarkers(void) {
   const s32 *place;
   s32 tileBase;
   s32 blend;
-  s32 best;
-  s32 bestDist;
+  s32 nearestMarker;
+  s32 nearestDistanceSquared;
   s32 cursorX;
-  s32 bestX;
-  s32 bestY;
+  s32 nearestX;
+  s32 nearestY;
   s32 message;
-  s32 bestMessage;
+  s32 nearestName;
   s32 height;
   s32 width;
   s32 pos[3];
   struct WorldMapWork *work;
-  struct FieldActor *obj;
+  struct FieldActor *placeActor;
   s32 cursorY;
   s32 tile;
   s32 mode;
   s32 flag;
-  s32 i;
+  s32 markerIndex;
   struct AnimationSpritePart *marker;
   s32 x;
   s32 y;
@@ -9501,8 +9535,8 @@ void Map_UpdateWorldMapMarkers(void) {
   tileBase = gVramBlockCache[work->vramBlock].offset >> 5;
   marker = work->markers;
 #endif
-  best = -1;
-  bestDist = WORLD_MAP_NAME_RANGE;
+  nearestMarker = -1;
+  nearestDistanceSquared = WORLD_MAP_NAME_RANGE;
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
 
   //------------------------------------------------------------------
@@ -9510,10 +9544,10 @@ void Map_UpdateWorldMapMarkers(void) {
   //------------------------------------------------------------------
   if (!GameFlag_TestFar(FLAG_NOT_ON_MAP) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current place.
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    if (obj != NULL) {
-      cursorX = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
-      cursorY = obj->z.part.pixel * 160 / 4096;
+    placeActor = ObjectTable_Get(gGameState.selectedActor);
+    if (placeActor != NULL) {
+      cursorX = ((placeActor->x.fixed - 0x10000000) >> 16) * 240 / 4096;
+      cursorY = placeActor->z.part.pixel * 160 / 4096;
     }
   } else {
     // The d-pad: faster the longer it is held.
@@ -9547,10 +9581,10 @@ void Map_UpdateWorldMapMarkers(void) {
   // gWorldMap_PlaceMarkers, (flag, name) pairs whose flag carries the marker's
   // tile in its upper 16 bits.
   //------------------------------------------------------------------
-  for (i = 0; i <= 65; i++) {
-    if (i != leader && i <= 10)
+  for (markerIndex = 0; markerIndex <= 65; markerIndex++) {
+    if (markerIndex != leader && markerIndex <= 10)
       continue;
-    if (i == 0) {
+    if (markerIndex == 0) {
       if (GameFlag_TestFar(FLAG_NOT_ON_MAP))
         continue;
       tile = 0;
@@ -9575,41 +9609,41 @@ void Map_UpdateWorldMapMarkers(void) {
     }
     if (!GameFlag_TestFar(flag))
       continue;
-    obj = ObjectTable_Get(i);
-    if (obj == NULL)
+    placeActor = ObjectTable_Get(markerIndex);
+    if (placeActor == NULL)
       continue;
 
     // The world's 4096 pixels square shrunk to 240 by 160.
-    x = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
-    y = obj->z.part.pixel * 160 / 4096;
+    x = ((placeActor->x.fixed - 0x10000000) >> 16) * 240 / 4096;
+    y = placeActor->z.part.pixel * 160 / 4096;
     marker->objectMode = mode;
     marker->tile = tileBase + tile;
     marker->x = x - 1;
     marker->y = y - 1;
     width = x - cursorX;
     height = y - cursorY;
-    if (width * width + height * height < bestDist) {
-      bestMessage = message;
-      best = i;
-      bestDist = width * width + height * height;
-      bestX = x;
-      bestY = y;
+    if (width * width + height * height < nearestDistanceSquared) {
+      nearestName = message;
+      nearestMarker = markerIndex;
+      nearestDistanceSquared = width * width + height * height;
+      nearestX = x;
+      nearestY = y;
     }
-    if (i != 0 || (gFrameCount & 15) <= 7) // the current place blinks
+    if (markerIndex != 0 || (gFrameCount & 15) <= 7) // the current place blinks
       Runtime_PushSlotEntry(marker++, y);
   }
 #if WORLD_MAP_CURSOR_SNAPS
   // With the d-pad released, the cursor moves onto the nearest marker.
   if (gKeysHeld == 0) {
-    if (best != -1) {
-      if (bestDist <= 1) {
-        work->x.fixed = bestX << 16;
-        work->z.fixed = bestY << 16;
+    if (nearestMarker != -1) {
+      if (nearestDistanceSquared <= 1) {
+        work->x.fixed = nearestX << 16;
+        work->z.fixed = nearestY << 16;
         work->speed = 0x10000;
       } else {
         if (work->speed < 0x20000)
           work->speed = 0x20000;
-        angle = ArcTan2(bestY - cursorY, bestX - cursorX);
+        angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
         pos[0] = work->x.fixed;
         pos[1] = 0;
         pos[2] = work->z.fixed;
@@ -9628,12 +9662,12 @@ void Map_UpdateWorldMapMarkers(void) {
 #endif
 
   // The blinking frame round the nearest marker.
-  if (best != -1 && (gFrameCount & 15) <= 7) {
+  if (nearestMarker != -1 && (gFrameCount & 15) <= 7) {
     marker->objectMode = 0;
     marker->tile = tileBase + 3;
-    marker->x = bestX - 2;
-    marker->y = bestY - 2;
-    Runtime_PushSlotEntry(marker, bestY);
+    marker->x = nearestX - 2;
+    marker->y = nearestY - 2;
+    Runtime_PushSlotEntry(marker, nearestY);
   }
 
   // The cursor.
@@ -9646,28 +9680,28 @@ void Map_UpdateWorldMapMarkers(void) {
   //------------------------------------------------------------------
   // The place-name window, redrawn only when the marker changes.
   //------------------------------------------------------------------
-  if (work->shown != best) {
-    work->shown = best;
+  if (work->shown != nearestMarker) {
+    work->shown = nearestMarker;
     RenderOutput_PrepareForRedrawFar(work->window);
-    if (best != -1) {
-      if (best == 0)
-        bestMessage = MsgPresentLocation;
+    if (nearestMarker != -1) {
+      if (nearestMarker == 0)
+        nearestName = MsgPresentLocation;
       else
-        bestMessage =
-            Scene_GetAreaNameIndex(bestMessage, 1) + MsgDebugEntryName;
-      UiText_MeasureResourceEntriesFar(bestMessage, &width, &height);
-      cursorX = bestX;
-      cursorY = bestY;
+        nearestName =
+            Scene_GetAreaNameIndex(nearestName, 1) + MsgDebugEntryName;
+      UiText_MeasureResourceEntriesFar(nearestName, &width, &height);
+      cursorX = nearestX;
+      cursorY = nearestY;
       cursorX -= WORLD_MAP_NAME_LEFT;
       cursorY -= 11;
       if (cursorX + width > 240) {
         // Past the right edge, it goes up and left of the marker.
         cursorX = 232 - width;
-        cursorY = bestY - 20;
+        cursorY = nearestY - 20;
       }
       if (cursorY < 0)
         cursorY = 0;
-      UiText_DrawResourceFar(bestMessage, work->window, cursorX, cursorY);
+      UiText_DrawResourceFar(nearestName, work->window, cursorX, cursorY);
     }
   }
 

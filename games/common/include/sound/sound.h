@@ -26,7 +26,7 @@ void Audio_EmptyCallback(void);
 void Audio_ResumeAllPlayers(void);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 void Audio_StopAllPlayers(void);
-s32 Audio_UmulHigh32(s32, s32);
+u32 Audio_UmulHigh32(u32 left, u32 right);
 void AudioEngine_Initialize(struct SoundWork *work);
 void AudioEngine_ResumeDirectSound(void);
 void AudioEngine_RunMixerTick(void);

@@ -142,14 +142,14 @@ void Marker_Hide(s32 id);
 void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y);
 
 void BattleFx_EmitRandomParticle(void);
-void ItemDisplay_EmitSparkles(struct ObjectRuntime *emitter);
+void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
 void BattleFx_StartEffectObject22(s32 value, s32 flags);
 void BattleFx_ClearRandomParticles(void);
-void RevealMarker_EmitSparkles(const struct FieldActor *source);
+void RevealMarker_EmitSparkles(union FieldObject *fieldObject);
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 

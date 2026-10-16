@@ -19,8 +19,6 @@ struct Vector3 {
   s32 z;
 };
 
-typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
-
 typedef struct Scale {
   s32 x;
   s32 y;

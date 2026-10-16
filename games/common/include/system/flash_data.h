@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-typedef u16 (*FlashWaitProc)(s32 mode, volatile u8 *address, u8 expected);
+typedef u16 (*FlashWaitProc)(u8 timingIndex, volatile u8 *address, u8 expected);
 
 // Sector size and count.
 struct FlashSector {
@@ -31,6 +31,7 @@ struct FlashSetupInfo {
 };
 
 extern const struct FlashType *gFlash;
+extern const struct FlashSetupInfo gFlash_ChipUnknown;
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 extern struct FlashSetupInfo gFlash_ChipAtmelLayout;
 

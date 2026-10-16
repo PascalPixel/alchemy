@@ -7,12 +7,13 @@ s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));
 
 extern FlashWaitProc gFlash_Handler3;
 
-s32 _call_via_r3(s32, u8 *, u8, s32);
+u16 _call_via_r3(s32 mode, u8 *address, u8 expected, FlashWaitProc wait);
 
+// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  s32 *status;
+  FlashWaitProc *wait;
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
@@ -25,19 +26,21 @@ u16 EraseFlashChip(void) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  status = (s32 *)&gFlash_Handler3;
-  result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
+  wait = &gFlash_Handler3;
+  result = _call_via_r3(3, (u8 *)0x0E000000, 255, *wait);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
   return result;
 }
 
+// Erases one of sixteen sectors, restoring the cartridge wait setting
+// afterward.
 u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
   u16 setting;
-  s32 *status;
+  FlashWaitProc *wait;
   const struct FlashType *chip;
   volatile u16 *waitcnt;
   volatile u8 *command;
@@ -66,14 +69,15 @@ u16 EraseFlashSector(u16 sector) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  status = (s32 *)&gFlash_Handler3;
-  result = _call_via_r3(2, (u8 *)target, 255, *status);
+  wait = &gFlash_Handler3;
+  result = _call_via_r3(2, (u8 *)target, 255, *wait);
 
   *waitcnt = (*waitcnt & 0xFFFC) | 3;
 
   return result;
 }
 
+// Issues a byte-program command and waits for its destination to match.
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
   FlashWaitProc *wait;
 
@@ -87,6 +91,7 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
 
 extern u16 gFlashNumRemainingBytes;
 
+// Erases and verifies a sector with retries, then programs its bytes.
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   u8 ramCode[96];
   u16 status;
@@ -119,11 +124,12 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     remaining = remaining - 2;
   }
 
+  // Retry until erase verification succeeds or all 81 attempts fail.
   attempt = 0;
   for (;;) {
     status = EraseFlashSector(sector);
     if (status == 0) {
-      status = RunFlashEraseVerifier(destination, ramCode + 1);
+      status = RunFlashEraseVerifier(destination, (s32 (*)(u8 *))(ramCode + 1));
       if (status == 0) {
         break;
       }
@@ -134,6 +140,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     }
   }
 
+  // A previously failed erase receives six more conditioning erases.
   rounds = 1;
   if (attempt != 0) {
     rounds = 6;
@@ -151,6 +158,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   chip = gFlash;
   *waitcnt = setting | chip->wait[0];
 
+  // Program the verified sector, stopping at the first failed byte.
   gFlashNumRemainingBytes = chip->sector.size;
   counter = &gFlashNumRemainingBytes;
   while (*counter != 0) {
@@ -168,18 +176,20 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   return status;
 }
 
-s32 CountRemainingErasedFlashBytes(u8 *ptr) {
+// Returns how many bytes remain when the first non-erased byte is found.
+s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   s32 remaining;
 
   for (remaining = gFlash->sector.size; remaining != 0; remaining--) {
-    if (*ptr++ != 0xff)
+    if (*cursor++ != 0xff)
       break;
   }
   return remaining;
 }
 
-s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *)) {
-  if (verify(ptr) != 0)
+// Converts a nonzero erased-byte remainder into the flash verification error.
+s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *)) {
+  if (verify(sector) != 0)
     return 0x8004;
   return 0;
 }

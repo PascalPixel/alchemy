@@ -29,25 +29,17 @@ extern u16 gSleepActive;
 #include "types.h"
 #include "edition.h"
 
-struct FlashChipInfo;
-struct FlashChipAtmelInfo;
-
-struct FlashChipType {
-  u32 handlers[5];
-  u32 size;
-  u16 sectorSize;
-  u16 unk1a;
-  u8 sectorShift;
-};
-extern struct FlashChipAtmelInfo gFlash_ChipAtmel;
-extern const struct FlashChipType gFlash_ChipUnknown;
+struct FlashType;
+struct FlashSetupInfo;
+extern struct FlashSetupInfo gFlash_ChipAtmel;
+extern const struct FlashSetupInfo gFlash_ChipUnknown;
 extern u32 gFlash_Handler1;
 extern u32 gEraseFlashSector;
 #ifndef OWN_Flash_Handler4
-extern u32 gFlash_Handler4;
+extern u16 *gFlash_Handler4;
 #endif
 #ifndef OWN_gFlash
-extern struct FlashChipInfo *gFlash;
+extern const struct FlashType *gFlash;
 #endif
 #ifndef OWN_gFlashSavedIme
 extern u16 gFlashSavedIme;

@@ -4,6 +4,7 @@
 
 extern FlashWaitProc gFlash_Handler3;
 
+// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -30,27 +31,28 @@ u16 EraseAtmelFlashChip(void) {
   return result;
 }
 
+// Erases one small Atmel sector by programming every byte to 0xff.
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
-  u16 saved;
-  s32 count;
+  u16 savedIme;
+  s32 bytesRemaining;
   u16 result;
 
   cursor = (u8 *)(0x0E000000 + (sector << info->type.sector.shift));
-  saved = REG_IME;
+  savedIme = REG_IME;
   REG_IME = 0;
   *(volatile u8 *)0x0E005555 = 0xAA;
   *(volatile u8 *)0x0E002AAA = 0x55;
   *(volatile u8 *)0x0E005555 = 0xA0;
-  count = info->type.sector.size;
-  while (count != 0) {
+  bytesRemaining = info->type.sector.size;
+  while (bytesRemaining != 0) {
     *cursor = 0xFF;
     cursor++;
-    count--;
+    bytesRemaining--;
   }
   cursor--;
-  REG_IME = saved;
+  REG_IME = savedIme;
   result = gFlash_Handler3(1, cursor, 0xFF);
   if (result != 0) {
     result = (result & 0xFF00) | 2;
@@ -58,12 +60,14 @@ u16 EraseAtmelFlashSector(u16 sector) {
   return result;
 }
 
+// Erases thirty-two small sectors, trying each sector at most twice.
+// Both structured retry-loop trials add four bytes to the native EN body.
 u16 EraseAtmelFlashBlock(u16 sector) {
   u8 savedCode[64];
   u16 result;
-  u16 current;
-  u16 retries;
-  u16 count;
+  u16 smallSector;
+  u16 attemptsRemaining;
+  u16 sectorsErased;
 
   if ((u32)sector > 15)
     return 0x80ff;
@@ -71,42 +75,44 @@ u16 EraseAtmelFlashBlock(u16 sector) {
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  current = sector << 4;
-  current = (u16)(current << 1);
-  count = 0;
-next_sector:
-  retries = 2;
-  goto attempt;
-retry_failed:
-  retries -= 1;
-  if (retries == 0)
-    goto advance;
-attempt:
-  result = EraseAtmelFlashSector(current);
+  smallSector = sector << 4;
+  smallSector = (u16)(smallSector << 1);
+  sectorsErased = 0;
+nextSector:
+  attemptsRemaining = 2;
+  goto eraseAttempt;
+retryErase:
+  attemptsRemaining -= 1;
+  if (attemptsRemaining == 0)
+    goto advanceSector;
+eraseAttempt:
+  result = EraseAtmelFlashSector(smallSector);
   if (result != 0)
-    goto retry_failed;
-advance:
-  current += 1;
+    goto retryErase;
+advanceSector:
+  smallSector += 1;
   if (result == 0) {
-    count += 1;
-    if ((u32)count <= 31)
-      goto next_sector;
+    sectorsErased += 1;
+    if ((u32)sectorsErased <= 31)
+      goto nextSector;
   }
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
   return result;
 }
 
-u16 ProgramAtmelFlashSector(u32 slot, const u8 *source) {
+// Programs a small Atmel sector with interrupts disabled, then polls its last
+// byte.
+u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
   u32 savedIme;
   s32 remaining;
 
   input = source;
-  slot = (u16)slot;
+  sector = (u16)sector;
   destination =
       (volatile u8 *)(0x0e000000 +
-                      (slot << gFlash_ChipAtmelLayout.type.sector.shift));
+                      (sector << gFlash_ChipAtmelLayout.type.sector.shift));
   savedIme = REG_IME;
   REG_IME = 0;
   *(volatile u8 *)0x0e005555 = 0xaa;
@@ -129,11 +135,13 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source) {
 
 extern u16 gFlashNumRemainingBytes;
 
+// Programs an Atmel block in small sectors, trying each sector at most twice.
+// The ordinary decrementing retry loop shortens the native EN body by 16 bytes.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;
-  u16 current;
-  u16 retries;
+  u16 smallSector;
+  u16 attemptsRemaining;
 
   if ((u32)sector > 15)
     return 0x80ff;
@@ -141,19 +149,18 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  current = sector << 5;
+  smallSector = sector << 5;
   gFlashNumRemainingBytes = gFlash_ChipAtmel.type.sector.size;
 
   while (gFlashNumRemainingBytes != 0) {
-    retries = 2;
-    goto attempt;
+    attemptsRemaining = 2;
+    goto programAttempt;
     do {
-    retry_failed:
-      retries -= 1;
-      if (retries == 0)
+      attemptsRemaining -= 1;
+      if (attemptsRemaining == 0)
         break;
-    attempt:
-      result = ProgramAtmelFlashSector(current, source);
+    programAttempt:
+      result = ProgramAtmelFlashSector(smallSector, source);
     } while (result != 0);
 
     if (result != 0)
@@ -161,7 +168,7 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
 
     gFlashNumRemainingBytes -= gFlash_ChipAtmelLayout.type.sector.size;
     source += gFlash_ChipAtmelLayout.type.sector.size;
-    current += 1;
+    smallSector += 1;
   }
 
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;

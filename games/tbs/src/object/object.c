@@ -903,52 +903,54 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   struct ObjectRuntime *object;
   struct ObjectRuntime *previous;
   struct AnimationObject *sprite;
-  s32 i;
-  s32 index;
-  s32 character;
+  s32 tableIndex;
+  s32 actorIndex;
+  s32 spriteId;
   s32 condition;
-  u8 resource;
-  u16 id;
+  u8 spriteSlot;
+  u16 placementSprite;
 
   work = (struct FieldStepWork *)gEventWork;
-  for (i = 0; i < 4; i++) {
-    if (work->tables[i] == entry)
+  // Remember the table once, before consuming slots for its placements.
+  for (tableIndex = 0; tableIndex < 4; tableIndex++) {
+    if (work->tables[tableIndex] == entry)
       break;
-    if (work->tables[i] == 0) {
-      work->tables[i] = entry;
+    if (work->tables[tableIndex] == 0) {
+      work->tables[tableIndex] = entry;
       break;
     }
   }
-  for (id = entry->sprite; (s16)id != -1 && slot <= 65;
-       entry++, id = entry->sprite) {
+  for (placementSprite = entry->sprite;
+       (s16)placementSprite != -1 && slot <= 65;
+       entry++, placementSprite = entry->sprite) {
     if (entry->sprite <= 7)
-      index = entry->sprite;
+      actorIndex = entry->sprite;
     else if (entry->sprite <= 0x2705)
-      index = slot++;
+      actorIndex = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
     if ((u32)(condition - 48) <= 79 && work->mode != MODE_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + 80))
       continue;
-    character = Party_RemapCharacterIdByFlags(entry->sprite);
-    object = ObjectTable_Get(index);
+    spriteId = Party_RemapCharacterIdByFlags(entry->sprite);
+    object = ObjectTable_Get(actorIndex);
     if (object == 0) {
-      object = Object_CreateFar(character, entry->x, entry->y, entry->z);
+      object = Object_CreateFar(spriteId, entry->x, entry->y, entry->z);
       // Placement flag 1: share the previous actor's sprite resource.
-      if (entry->flags & 1) {
-        previous = ObjectTable_Get(index - 1);
+      if (entry->flags & PLACEMENT_SHARE_PREVIOUS_SPRITE) {
+        previous = ObjectTable_Get(actorIndex - 1);
         if (previous->animationKind == 1 && object->animationKind == 1) {
           sprite = previous->animation;
           sprite->displayFlags |= 1;
-          resource = sprite->slot;
+          spriteSlot = sprite->slot;
           sprite = object->animation;
           sprite->displayFlags |= 1;
           Resource_ResetEntry(sprite->slot);
-          sprite->slot = resource;
+          sprite->slot = spriteSlot;
         }
       }
-      if (GameFlag_TestFar(0x21) && (u32)(character - 0x12) <= 1)
+      if (GameFlag_TestFar(0x21) && (u32)(spriteId - 0x12) <= 1)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
                                                 226);
     } else if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
@@ -982,18 +984,18 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       }
       object->unk23 = 1;
     }
-    work->actors[index] = object;
+    work->actors[actorIndex] = object;
   }
 }
 
 // Destroys the actor in slot index, if there is one.
-void ObjectTable_DestroyAtIndex(s32 index) {
+void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 #ifdef UBFIX
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 #else
   struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
 #endif
-  void *object = ObjectTable_Get(index);
+  void *object = ObjectTable_Get(actorIndex);
 
   if (object != NULL) {
     ObjectDispatch_ReleaseFar(object);
@@ -1002,11 +1004,11 @@ void ObjectTable_DestroyAtIndex(s32 index) {
       void *empty = NULL;
 
       // Get also accepts words past the actor array, within the field work.
-      memcpy((u8 *)work + 0x14 + (u32)index * sizeof(empty), &empty,
+      memcpy((u8 *)work + 0x14 + (u32)actorIndex * sizeof(empty), &empty,
              sizeof(empty));
     }
 #else
-    work->actors[index] = NULL;
+    work->actors[actorIndex] = NULL;
 #endif
   }
 }
@@ -1029,7 +1031,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
 
   work = (struct FieldStepWork *)gEventWork;
   leader = gGameState.selectedActor;
-  // A two-placement table for the leader, built in the event work at 0x200.
+  // Build the leader's temporary placement before the scene's placed actors.
+  // The two-row table lives in the event work at 0x200.
   entry = (struct ScenePlacement *)((u8 *)work + 0x200);
   entry[0] = gField_DefaultPlacements[0];
   entry[1] = gField_DefaultPlacements[1];
@@ -1064,6 +1067,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     gGameState.movementMode = 0;
   }
 
+  // The camera follows this leader and starts at its resolved ground height.
   camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera,
@@ -1079,32 +1083,32 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   ((struct EventWork *)work)->viewCenter = (struct FieldActor *)camera;
 }
 
-// Returns the actor slot after the last placed actor (8 when there is none),
-// or -1 when every slot up to 65 is taken.
+// Returns the slot after the last placed actor (8 when there is none), or -1
+// when slot 65 is occupied. Earlier holes are not reused by this append scan.
 s32 ObjectTable_FindLastActiveId(void) {
   struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
-  s32 result = ACTOR_FIRST_PLACED - 1;
-  s32 index = ACTOR_FIRST_PLACED;
-  struct ObjectRuntime **actor = &work->actors[ACTOR_FIRST_PLACED];
+  s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
+  s32 actorIndex = ACTOR_FIRST_PLACED;
+  struct ObjectRuntime **slot = &work->actors[ACTOR_FIRST_PLACED];
 
   do {
-    struct ObjectRuntime *current = *actor++;
+    struct ObjectRuntime *object = *slot++;
 
-    if (current != 0) {
-      result = index;
+    if (object != 0) {
+      lastActorIndex = actorIndex;
     }
-    index++;
-  } while (index <= 65);
-  result++;
-  if (result == 66) {
-    result = -1;
+    actorIndex++;
+  } while (actorIndex <= 65);
+  lastActorIndex++;
+  if (lastActorIndex == 66) {
+    lastActorIndex = -1;
   }
-  return result;
+  return lastActorIndex;
 }
 
 // Returns the address of actor slot index in the event work.
-void *ObjectTable_GetSlotAddress(u32 index) {
-  return (u8 *)gEventWork + 0x14 + index * sizeof(void *);
+void *ObjectTable_GetSlotAddress(u32 actorIndex) {
+  return (u8 *)gEventWork + 0x14 + actorIndex * sizeof(void *);
 }
 
 //--------------------------------------------------------------------------
@@ -1130,8 +1134,8 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
      * 2026-10-13: entry->condition == 0, directly or through an s16 local,
      * hoists both bound addresses (differ 18); (u16)entry->condition == 0
      * loads with ldrh (differ 23). */
-    u16 raw = entry->condition;
-    s16 condition = raw;
+    u16 rawCondition = entry->condition;
+    s16 condition = rawCondition;
 
     if (condition == 0) {
       s32 x = entry->x;
@@ -1151,29 +1155,29 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
 // to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void BattleEffect_ClearOutOfBoundsObjects(void) {
   struct EventWork *work = gEventWork;
-  struct FieldActor *center;
-  s32 x;
-  s32 z;
+  struct FieldActor *viewCenter;
+  s32 centerX;
+  s32 centerZ;
   s32 left;
   s32 right;
   s32 top;
   s32 bottom;
-  struct FieldActor **slot;
-  s32 mask;
-  s32 i;
+  struct FieldActor **actorSlot;
+  s32 visibleMask;
+  s32 remainingSlots;
 
-  center = work->viewCenter;
-  x = center->x.fixed;
-  left = x - 0xa00000;
-  right = x + 0xa00000;
-  z = center->z.fixed;
-  top = z - 0xc80000;
-  bottom = z + 0x640000;
-  slot = work->placedActors;
-  mask = ~1;
+  viewCenter = work->viewCenter;
+  centerX = viewCenter->x.fixed;
+  left = centerX - 0xa00000;
+  right = centerX + 0xa00000;
+  centerZ = viewCenter->z.fixed;
+  top = centerZ - 0xc80000;
+  bottom = centerZ + 0x640000;
+  actorSlot = work->placedActors;
+  visibleMask = ~1;
 
-  for (i = PLACED_MAX - 1; i >= 0; i--) {
-    struct FieldActor *actor = *slot;
+  for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
+    struct FieldActor *actor = *actorSlot;
 
     if (actor != NULL) {
       s32 actorX = actor->x.fixed;
@@ -1190,15 +1194,15 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           *removed = 1;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
-          sprite[29] = flags & mask;
+          sprite[29] = flags & visibleMask;
           ObjectDispatch_ReleaseFar(actor);
           sprite = NULL;
-          *slot = (struct FieldActor *)sprite;
+          *actorSlot = (struct FieldActor *)sprite;
         }
       }
     }
 
-    slot++;
+    actorSlot++;
   }
 }
 
@@ -1206,60 +1210,60 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
 // first placement table after the leader's.
 void BattleEffect_ClearAllObjects(void) {
   struct EventWork *work = gEventWork;
-  struct ScenePlacement *table;
-  s32 i;
+  struct ScenePlacement *placements;
+  s32 slotIndex;
 
-  for (i = 0; i < PLACED_MAX; i++) {
-    struct FieldActor *actor = work->placedActors[i];
+  for (slotIndex = 0; slotIndex < PLACED_MAX; slotIndex++) {
+    struct FieldActor *actor = work->placedActors[slotIndex];
 
     if (actor != 0) {
       actor->active = 1;
       actor->sprite->unk1d0 = 0;
       ObjectDispatch_ReleaseFar(actor);
-      work->placedActors[i] = 0;
+      work->placedActors[slotIndex] = 0;
     }
   }
-  table = work->tables[1];
+  placements = work->tables[1];
   work->tables[1] = 0;
   work->tables[2] = 0;
   work->tables[3] = 0;
-  if (table != 0)
-    Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
+  if (placements != 0)
+    Event_SpawnObjectTable(placements, ObjectTable_FindLastActiveId());
 }
 
 // Empties all 66 actor slots, without destroying the actors.
 void ObjectTable_ClearAll(void) {
   struct FieldWork *work;
-  struct FieldActor *zero;
-  s32 index;
+  struct FieldActor *emptyActor;
+  s32 actorIndex;
 
-  zero = NULL;
-  index = 65;
+  emptyActor = NULL;
+  actorIndex = 65;
   work = (struct FieldWork *)gEventWork;
   do {
-    work->actors[index] = zero;
-    index--;
-  } while (index >= 0);
+    work->actors[actorIndex] = emptyActor;
+    actorIndex--;
+  } while (actorIndex >= 0);
 }
 
 // Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
 // past the actor slots into the rest of the event work; larger ones give NULL.
-void *ObjectTable_Get(u32 index) {
-  u8 *base = (u8 *)gEventWork;
-  u32 offset;
+void *ObjectTable_Get(u32 actorIndex) {
+  u8 *workBytes = (u8 *)gEventWork;
+  u32 slotOffset;
 #ifdef UBFIX
   void *object;
 #endif
-  if (index > 0xbf)
+  if (actorIndex > 0xbf)
     return 0;
-  offset = (index * 4) + 0x14;
+  slotOffset = (actorIndex * 4) + 0x14;
 #ifdef UBFIX
   // The legacy range includes non-pointer fields. Copy their representation
   // without reading them through an incompatible pointer lvalue.
-  memcpy(&object, base + offset, sizeof(object));
+  memcpy(&object, workBytes + slotOffset, sizeof(object));
   return object;
 #else
-  return *(void **)(base + offset);
+  return *(void **)(workBytes + slotOffset);
 #endif
 }
 
@@ -1268,77 +1272,78 @@ void *ObjectTable_Get(u32 index) {
 // that ObjectTable_Restore can put them back. The 32 bytes before
 // gObjectSnapshots list the saved slots, ended by 255.
 void ObjectTable_Snapshot(void) {
-  struct ObjectRuntime *copy = gObjectSnapshots;
+  struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *animations = (u8 *)&gObjectSnapshots[32];
   u8 *spriteFlags = animations + 32;
   u8 *priorities = animations + 64;
   u8 *indices = (u8 *)gObjectSnapshots - 32;
-  u32 count = 0;
-  s32 limit = 66;
+  u32 savedCount = 0;
+  s32 actorLimit = 66;
   struct ObjectRuntime *object;
-  s32 i;
+  s32 actorIndex;
   u32 animation;
-  u32 flags;
+  u32 spriteFlagBits;
   u32 priority;
 
   if (((struct FieldWork *)gEventWork)->mode == MODE_WORLD_MAP)
-    limit = 8;
-  for (i = 0; i < limit; i++) {
-    object = ObjectTable_Get(i);
+    actorLimit = 8;
+  // Keep each actor and its three sprite-state bytes at matching save indices.
+  for (actorIndex = 0; actorIndex < actorLimit; actorIndex++) {
+    object = ObjectTable_Get(actorIndex);
     if (object == NULL)
       continue;
-    *indices++ = i;
-    Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
+    *indices++ = actorIndex;
+    Dma_Set(object, snapshot, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
             REG_DMA3);
     if (object->animationKind == 1) {
       animation = ((struct AnimationObject *)object->animation)->lastNo;
-      flags = ((struct FieldSprite *)object->animation)->flags;
+      spriteFlagBits = ((struct FieldSprite *)object->animation)->flags;
       priority = ((struct FieldSprite *)object->animation)->priority;
     } else {
       animation = 0;
-      flags = 0;
+      spriteFlagBits = 0;
       priority = 0;
     }
     *animations++ = animation;
-    *spriteFlags++ = flags;
+    *spriteFlags++ = spriteFlagBits;
     *priorities++ = priority;
-    count++;
-    copy++;
-    if (count > 31)
+    savedCount++;
+    snapshot++;
+    if (savedCount > 31)
       break;
   }
-  for (i = count; i < 32; i++)
+  for (actorIndex = savedCount; actorIndex < 32; actorIndex++)
     *indices++ = 255;
 }
 
 // Puts back the actors ObjectTable_Snapshot saved, and moves the camera to the
 // party leader's height.
 void ObjectTable_Restore(void) {
-  struct ObjectRuntime *copy = gObjectSnapshots;
+  struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *indices = (u8 *)gObjectSnapshots - 32;
   u8 *animations = (u8 *)&gObjectSnapshots[32];
   u8 *spriteFlags = animations + 32;
   u8 *priorities = animations + 64;
-  s32 count;
+  s32 restoredCount;
   struct ObjectRuntime *object;
   struct FieldSprite *sprite;
   struct ObjectRuntime *camera;
-  s32 *view;
-  s32 index;
+  s32 *cameraPosition;
+  s32 actorIndex;
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *selected = &gGameState.selectedActor;
-  struct EventWork **work = &gEventWork;
-  struct MapScrollWork **map = (struct MapScrollWork **)gMapWork;
+  s32 *leaderId = &gGameState.selectedActor;
+  struct EventWork **fieldWork = &gEventWork;
+  struct MapScrollWork **mapWork = (struct MapScrollWork **)gMapWork;
 
-  count = 0;
-  index = *indices++;
-  while (index != 255) {
-    object = ObjectTable_Get(index);
+  restoredCount = 0;
+  actorIndex = *indices++;
+  while (actorIndex != 255) {
+    object = ObjectTable_Get(actorIndex);
     if (object != NULL) {
       sprite = object->animation;
-      Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
+      Dma_Set(snapshot, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
@@ -1348,37 +1353,49 @@ void ObjectTable_Restore(void) {
       sprite->priority = priority;
       sprite->secondPriority = priority;
       object->animation = sprite;
-      if (index == *selected) {
-        camera = (struct ObjectRuntime *)(*work)->viewCenter;
-        view = (*map)->origin;
+      // Re-anchor the camera only when restoring the selected leader.
+      if (actorIndex == *leaderId) {
+        camera = (struct ObjectRuntime *)(*fieldWork)->viewCenter;
+        cameraPosition = (*mapWork)->origin;
         y = object->y;
         camera->terrainHeight = y;
         camera->y = y;
-        view[1] = y;
+        cameraPosition[1] = y;
         ObjectDispatch_InitFromTable6Far(object);
       }
     }
-    copy++;
+    snapshot++;
     animations++;
     spriteFlags++;
     priorities++;
-    count++;
-    if (count > 31)
+    restoredCount++;
+    if (restoredCount > 31)
       break;
-    index = *indices++;
+    actorIndex = *indices++;
   }
 }
+
+// The polar-offset routine walks three array elements. Named coordinates
+// remain useful to callers; the union gives that array real storage.
+union PolarOffsetPosition {
+  struct EffectVector vector;
+  s32 coordinates[3];
+};
+
+LAYOUT_SIZE_GUARD(PolarOffsetPosition_Size, union PolarOffsetPosition, 12);
 
 // A scene region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 // The fields of struct BattleUnit that Field_ProcessStep reads (see its tag).
+#ifndef UBFIX
 struct StepOwner {
   u8 unitFieldsBeforeHp[0x38];
   s16 hp;
   u8 unitFieldsBeforePoison[0x131 - 0x3a];
   u8 poison;
 };
+#endif
 
 // The collision codes of map cells that mean something when stepped on.
 enum StepTileEvent {
@@ -1397,90 +1414,90 @@ enum StepTileEvent {
 
 // Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
-  short zero;
-  struct FieldWork *state;
-  zero = 0;
-  state = (struct FieldWork *)gEventWork;
-  state->action = zero;
-  state->input = 0;
-  state->exit = 0;
-  state->menu = 0;
-  state->examine = 0;
-  state->start = 0;
-  state->descriptor = 0;
-  state->tile = 0;
-  state->battle = 0;
-  state->command = 0;
-  state->item = 0;
-  state->event = 0;
+  s16 noRequest;
+  struct FieldWork *work;
+  noRequest = 0;
+  work = (struct FieldWork *)gEventWork;
+  work->action = noRequest;
+  work->input = 0;
+  work->exit = 0;
+  work->menu = 0;
+  work->examine = 0;
+  work->start = 0;
+  work->descriptor = 0;
+  work->tile = 0;
+  work->battle = 0;
+  work->command = 0;
+  work->item = 0;
+  work->event = 0;
 }
 
 // Returns the sum of the field's twelve pending requests (counting the actor
 // event request twice): non-zero while any request is pending.
 s32 Field_CountRequests(void) {
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  return state->action + state->input + state->exit + state->menu +
-         state->examine + state->start + (s16)state->descriptor + state->tile +
-         (s16)state->descriptor + state->battle + state->command + state->item +
-         state->event;
+  return work->action + work->input + work->exit + work->menu + work->examine +
+         work->start + (s16)work->descriptor + work->tile +
+         (s16)work->descriptor + work->battle + work->command + work->item +
+         work->event;
 }
 
 // Returns the collision code of the map cell 16 pixels ahead of the party
 // leader (a world map block on the world map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
-  struct FieldWork *runtime;
-  struct ObjectRuntime *object;
+  struct FieldWork *work;
+  struct ObjectRuntime *leader;
   struct MapState *map;
-  struct FieldPosition position;
+  union PolarOffsetPosition position;
   u8 *tile;
-  s32 x;
-  s32 y;
+  s32 fixedX;
+  s32 fixedZ;
 
-  runtime = WORK_SLOT(HEAP_SLOT_EVENT);
-  object = ((struct FieldStepWork *)runtime)->actors[gGameState.selectedActor];
+  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  leader = ((struct FieldStepWork *)work)->actors[gGameState.selectedActor];
 
   map = WORK_SLOT(8);
 
-  if (object == 0)
+  if (leader == 0)
     return 0;
 
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
-  Vector_AddPolarOffset(0x100000, object->angle, &position);
+  position.vector.x = leader->x;
+  position.vector.y = leader->y;
+  position.vector.z = leader->z;
+  Vector_AddPolarOffset(0x100000, leader->angle, position.coordinates);
 
-  if (runtime->mode == MODE_WORLD_MAP) {
+  if (work->mode == MODE_WORLD_MAP) {
     // World map blocks are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
 
-    x = position.x;
-    if (x < 0)
-      x += 0x1fffff;
-    tileX = (x >> 21) & 31;
+    fixedX = position.vector.x;
+    if (fixedX < 0)
+      fixedX += 0x1fffff;
+    tileX = (fixedX >> 21) & 31;
 
-    y = position.z;
-    if (y < 0)
-      y += 0x1fffff;
-    tileY = (y >> 21) & 31;
+    fixedZ = position.vector.z;
+    if (fixedZ < 0)
+      fixedZ += 0x1fffff;
+    tileY = (fixedZ >> 21) & 31;
 
     tile = (u8 *)gMapBlocks + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
     tile = (u8 *)map->layers[0].cells;
 
-    x = position.x;
-    if (x < 0)
-      x += 0xfffff;
+    fixedX = position.vector.x;
+    if (fixedX < 0)
+      fixedX += 0xfffff;
     {
-      u32 tileX = x >> 20;
+      u32 tileX = fixedX >> 20;
 
-      y = position.z;
-      if (y < 0)
-        y += 0xfffff;
+      fixedZ = position.vector.z;
+      if (fixedZ < 0)
+        fixedZ += 0xfffff;
 
-      tile = (u8 *)((u32)tile + ((tileX + ((y >> 20) << 7)) << 2));
+      tile = (u8 *)((u32)tile + ((tileX + ((fixedZ >> 20) << 7)) << 2));
     }
   }
 
@@ -1494,10 +1511,10 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 // tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
-  struct FieldWork *runtime;
-  s32 z;
-  s32 y;
-  s32 x;
+  struct FieldWork *work;
+  s32 fixedZ;
+  s32 fixedY;
+  s32 fixedX;
   s16 condition;
   s16 minZ;
   s16 maxY;
@@ -1507,11 +1524,11 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s16 minX;
   const struct SceneRegion *region;
 
-  x = positionX;
-  y = positionY;
-  z = positionZ;
+  fixedX = positionX;
+  fixedY = positionY;
+  fixedZ = positionZ;
   region = gOverlayArea.regions();
-  if (region != 0 && (runtime = (struct FieldWork *)gEventWork,
+  if (region != 0 && (work = (struct FieldWork *)gEventWork,
                       minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
@@ -1521,16 +1538,16 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
     maxZ = region->maxZ;
     condition = region->condition;
     exitValue = region->value;
-    if (GameFlag_IsConditionActive(condition) != 0 && y >= REGION_FIXED(minY) &&
-        y < REGION_FIXED(maxY) && x >= REGION_FIXED(minX) &&
-        x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
-        z < REGION_FIXED(maxZ)) {
-      runtime->exit = exitValue;
+    if (GameFlag_IsConditionActive(condition) != 0 &&
+        fixedY >= REGION_FIXED(minY) && fixedY < REGION_FIXED(maxY) &&
+        fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
+        fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
+      work->exit = exitValue;
       AudioCommand_PlayFar(SOUND_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    runtime = (struct FieldWork *)gEventWork;
+    work = (struct FieldWork *)gEventWork;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -1549,29 +1566,36 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * 2: its alias set ties the poison store to the active-owner read. */
   struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
   struct MapState *map = WORK_SLOT(8);
-  s32 selected = gGameState.selectedActor;
-  struct ObjectRuntime *actor = work->actors[selected];
-  s16 hp[8];
+  s32 leaderId = gGameState.selectedActor;
+  struct ObjectRuntime *leader = work->actors[leaderId];
+  s16 previousHp[8];
   struct MapCell *tile;
-  struct StepOwner *owner;
-  u32 count;
-  s32 hurt;
+#ifdef UBFIX
+  // UnitGet returns the real BattleUnit; the native prefix aliases that owner
+  // through an unrelated struct type. The plain owner keeps 0x41c bytes but
+  // changes allocation from .text+0x1c90 in English (2026-10-16).
+  struct BattleUnit *unitVitals;
+#else
+  struct StepOwner *unitVitals;
+#endif
+  u32 partyCount;
+  s32 partyHurt;
   u32 i;
   u32 event;
-  s32 speed;
-  s32 steps;
-  s32 n;
-  s32 sum;
-  s32 full;
+  s32 encounterSpeed;
+  s32 stepDistance;
+  s32 amount;
+  s32 accumulatedDistance;
+  s32 fullEncounterRate;
 
-  hurt = 0;
+  partyHurt = 0;
   if (work == NULL)
     return;
 
   // Note each character's HP, to see who falls.
-  count = Party_CountActiveOwnersFar();
-  for (i = 0; i < count; i++)
-    hp[i] = UnitGetFar(gGameState.activeOwners[i])->hp;
+  partyCount = Party_CountActiveOwnersFar();
+  for (i = 0; i < partyCount; i++)
+    previousHp[i] = UnitGetFar(gGameState.activeOwners[i])->hp;
 
   if (work->mode == MODE_WORLD_MAP) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
@@ -1593,53 +1617,54 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
     work->warpEvent = event;
 
-  if (gGameState.movementMode == 0 && actor != NULL &&
-      actor->targetX != ACTOR_NO_TARGET) {
+  if (gGameState.movementMode == 0 && leader != NULL &&
+      leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the world map terrain, or from the
     // ground the leader stands on.
-    speed = actor->speedLimit;
+    encounterSpeed = leader->speedLimit;
     if (GameFlag_TestFar(STEP_FLAG_DOUBLE_SPEED))
-      speed <<= 1;
+      encounterSpeed <<= 1;
     if (work->mode == MODE_WORLD_MAP) {
-      full = 1;
-      work->encounterEnemyGroup = Encounter_RollWorldMap((s32)&actor->x, speed);
-    } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
-      full = work->encounterFull[event - (STEP_TERRAIN_FIRST - 1)];
+      fullEncounterRate = 1;
       work->encounterEnemyGroup =
-          Encounter_RollTerrain(event - (STEP_TERRAIN_FIRST - 1), speed);
+          Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
+    } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
+      fullEncounterRate = work->encounterFull[event - (STEP_TERRAIN_FIRST - 1)];
+      work->encounterEnemyGroup = Encounter_RollTerrain(
+          event - (STEP_TERRAIN_FIRST - 1), encounterSpeed);
     } else {
-      full = work->encounterFull[0];
-      work->encounterEnemyGroup = Encounter_RollTerrain(0, speed);
+      fullEncounterRate = work->encounterFull[0];
+      work->encounterEnemyGroup = Encounter_RollTerrain(0, encounterSpeed);
     }
 
     // Every 0x10000 of distance walked (half as fast where full is 0), the
     // party regains PP and takes poison damage.
-    steps = Iwram_MulQ16(work->encounterRate, actor->speedLimit);
-    if (!full)
-      steps /= 2;
-    sum = work->encounterSteps + steps;
-    work->encounterSteps = sum;
-    if (sum > 0xffff) {
-      n = sum / 0x10000;
-      work->encounterSteps = sum & 0xffff;
-      BattleParty_ApplyDrain(n, 0);
+    stepDistance = Iwram_MulQ16(work->encounterRate, leader->speedLimit);
+    if (!fullEncounterRate)
+      stepDistance /= 2;
+    accumulatedDistance = work->encounterSteps + stepDistance;
+    work->encounterSteps = accumulatedDistance;
+    if (accumulatedDistance > 0xffff) {
+      amount = accumulatedDistance / 0x10000;
+      work->encounterSteps = accumulatedDistance & 0xffff;
+      BattleParty_ApplyDrain(amount, 0);
       if (BattlePlacement_UpdateTimedEntriesFar())
         AudioCommand_PlayFar(STEP_CUE_EFFECT);
       Event_ClearInvalidPackedValues();
-      hurt = BattleParty_ApplyStatusDamage();
+      partyHurt = BattleParty_ApplyStatusDamage();
     }
 
     // Hazardous ground: entering it starts the count half way.
     if (gGameState.hazardMode == 0 && event == STEP_EVENT_HAZARD) {
       if (work->previousTile->collisionCode == STEP_EVENT_HAZARD)
-        gGameState.hazardSteps += actor->speedLimit / 0x10000;
+        gGameState.hazardSteps += leader->speedLimit / 0x10000;
       else
         gGameState.hazardSteps = gGameState.hazardLimit / 2;
     }
 
     // Avoid wears off with distance, outside scenes of variant 2.
     if (gGameState.avoidDistance != 0 && gGameState.sceneVariant != 2) {
-      gGameState.avoidDistance -= actor->speedLimit;
+      gGameState.avoidDistance -= leader->speedLimit;
       if (gGameState.avoidDistance <= 0) {
         gGameState.avoidDistance = 1;
         if (work->psynergyRequest == 0)
@@ -1653,30 +1678,34 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == 1) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      BattleFx_ConfigureLinkedObject(selected, 0x101);
+      BattleFx_ConfigureLinkedObject(leaderId, 0x101);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      BattleFx_ConfigureLinkedObject(selected, 0x100);
+      BattleFx_ConfigureLinkedObject(leaderId, 0x100);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
-    n = gGameState.hazardDamage;
+    amount = gGameState.hazardDamage;
     gGameState.hazardSteps = 0;
-    BattleParty_ApplyHealthDelta(-(n & 255), n & 0x100);
-    hurt++;
+    BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
+    partyHurt++;
   }
 
-  if (hurt) {
+  if (partyHurt) {
     work->fallenCount = 0;
     work->standingCount = 0;
-    actor->velocityY = 0x40000;
-    BattleFx_ConfigureLinkedObject(selected, 0x102);
-    for (i = 0; i < count; i++) {
-      owner = (struct StepOwner *)UnitGetFar(gGameState.activeOwners[i]);
-      if (owner->hp > 0) {
+    leader->velocityY = 0x40000;
+    BattleFx_ConfigureLinkedObject(leaderId, 0x102);
+    for (i = 0; i < partyCount; i++) {
+#ifdef UBFIX
+      unitVitals = UnitGetFar(gGameState.activeOwners[i]);
+#else
+      unitVitals = (struct StepOwner *)UnitGetFar(gGameState.activeOwners[i]);
+#endif
+      if (unitVitals->hp > 0) {
         work->standingCount++;
-      } else if (hp[i] != 0) {
+      } else if (previousHp[i] != 0) {
         work->fallen[work->fallenCount++] = gGameState.activeOwners[i];
         work->raisedTrigger = 0xffff;
-        owner->poison = 0;
+        unitVitals->poison = 0;
       }
     }
   }
@@ -1685,20 +1714,21 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 // Gives each character in the party amount PP (PP regenerates as the party
 // walks).
 void BattleParty_ApplyDrain(s32 amount, s32 unused) {
-  s32 count = Party_CountActiveOwnersFar();
-  s32 i;
+  s32 partyCount = Party_CountActiveOwnersFar();
+  s32 partyIndex;
 
-  for (i = 0; i < count; i++)
-    Unit_AddPpFar(gGameState.activeOwners[i], amount);
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
+    Unit_AddPpFar(gGameState.activeOwners[partyIndex], amount);
 }
 
-// Changes the HP of each character in the party by amount, or by amount
-// percent of their maximum HP (at least 1) when percent is set, with a flash
-// and a sound for damage or the recovery sound for healing.
+// Changes each party member's HP by amount, or by that percentage of maximum
+// HP when percent is set. A percentage that truncates to zero falls back to
+// the positive magnitude of amount. Damage flashes and plays an impact sound;
+// healing plays the recovery sound.
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
-  s32 count;
-  s32 i;
-  s32 value;
+  s32 partyCount;
+  s32 partyIndex;
+  s32 hpDelta;
   struct BattleUnit *unit;
 
   if (amount < 0) {
@@ -1712,20 +1742,20 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
     AudioCommand_PlayFar(SOUND_RECOVERY);
   }
 
-  count = Party_CountActiveOwnersFar();
-  for (i = 0; i < count; i++) {
-    unit = UnitGetFar(gGameState.activeOwners[i]);
+  partyCount = Party_CountActiveOwnersFar();
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+    unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
     if (!percent) {
-      value = amount;
+      hpDelta = amount;
     } else {
-      value = unit->maxHp * amount / 100;
-      if (value == 0) {
-        value = amount;
-        if (value < 0)
-          value = -value;
+      hpDelta = unit->maxHp * amount / 100;
+      if (hpDelta == 0) {
+        hpDelta = amount;
+        if (hpDelta < 0)
+          hpDelta = -hpDelta;
       }
     }
-    Unit_AddHpFar(gGameState.activeOwners[i], value);
+    Unit_AddHpFar(gGameState.activeOwners[partyIndex], hpDelta);
   }
 }
 
@@ -1733,43 +1763,43 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 // their maximum HP and venom a tenth (at least 1). Returns 0 when nobody was
 // hurt, else the worst status found (1 poison, 2 venom), after a flash.
 s32 BattleParty_ApplyStatusDamage(void) {
-  s32 worst = 0;
-  s32 count = Party_CountActiveOwnersFar();
-  s32 i;
+  s32 worstPoison = 0;
+  s32 partyCount = Party_CountActiveOwnersFar();
+  s32 partyIndex;
 
-  for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = UnitGetFar(gGameState.activeOwners[i]);
-    s32 amount;
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+    struct BattleUnit *unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
+    s32 hpDelta;
 
     switch (unit->poison) {
     case 1:
-      amount = -((unit->maxHp + 10) / 20);
-      if (amount == 0)
-        amount = -1;
-      if (worst <= 0)
-        worst = 1;
+      hpDelta = -((unit->maxHp + 10) / 20);
+      if (hpDelta == 0)
+        hpDelta = -1;
+      if (worstPoison <= 0)
+        worstPoison = 1;
       break;
     case 2:
-      amount = -((unit->maxHp + 5) / 10);
-      if (amount == 0)
-        amount = -1;
-      if (worst <= 1)
-        worst = 2;
+      hpDelta = -((unit->maxHp + 5) / 10);
+      if (hpDelta == 0)
+        hpDelta = -1;
+      if (worstPoison <= 1)
+        worstPoison = 2;
       break;
     default:
-      amount = 0;
+      hpDelta = 0;
       break;
     }
-    Unit_AddHpFar(gGameState.activeOwners[i], amount);
+    Unit_AddHpFar(gGameState.activeOwners[partyIndex], hpDelta);
   }
 
-  if (worst != 0) {
+  if (worstPoison != 0) {
     BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleFx_StartBufferInterpolation(4);
     AudioCommand_PlayFar(133);
   }
 
-  return worst;
+  return worstPoison;
 }
 
 // Starts an event or menu on the world map: ends any colour ratio transition
@@ -1779,7 +1809,7 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;
 
-  work = Runtime_AllocateBlock(0x1B, 0xCCC);
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
     transition = Runtime_AllocateBlock(0x1F, 0x540);
     if ((transition != NULL) && (transition->step != 0)) {
@@ -1799,7 +1829,7 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
 void Battle_ClearObjectFlag5bWhenMode3(void) {
   struct FieldWork *work;
 
-  work = Runtime_AllocateBlock(0x1B, 0xCCC);
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
     Map_LoadAreaGraphicsFar();
     ((struct ObjectRuntime *)((struct EventWork *)work)->viewCenter)
@@ -2178,23 +2208,6 @@ struct Object {
   struct AnimationObject *sprite;
 };
 
-// One of the scene's entrances (gOverlayArea.entrances), ended by entrance -1:
-// where the party appears, and the scroll bounds to use. -1 keeps a bound.
-struct EntranceView {
-  s16 entrance;
-  s16 flag; // -1, or a flag that must be set
-  s16 x;
-  s16 y;
-  s16 z;
-  u16 heading;
-  s16 unk0c;
-  s16 left;
-  s16 top;
-  s16 right;
-  s16 bottom;
-  s16 unk16;
-};
-
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0 // the tile of digit 0, in BG palette 15
@@ -2204,41 +2217,46 @@ struct EntranceView {
 // whose ground is no more than 64 pixels above the leader, or a code the
 // scene has a search event for. Returns 0 otherwise.
 s32 Object_GetTriggerTileAheadOfCurrent(void) {
-  u8 *state;
-  u8 *map;
+  u8 *workBytes;
+  u8 *mapBytes;
   struct Object *leader;
-  struct EffectVector pos;
+  union PolarOffsetPosition probePosition;
   u8 *cell;
-  u8 *base;
-  s32 code;
-  s32 height;
+  u8 *cells;
+  s32 collisionCode;
+  s32 terrainHeight;
   s32 result;
 
   result = 0;
   leader = ObjectTable_Get(gGameState.selectedActor);
-  state = *(u8 **)Ram_EventWork;
-  map = *(u8 **)Ram_MapWork;
+  workBytes = *(u8 **)Ram_EventWork;
+  mapBytes = *(u8 **)Ram_MapWork;
   if (leader != 0) {
-    pos.x = leader->pos.x;
-    pos.y = leader->pos.y;
-    pos.z = leader->pos.z;
-    Vector_AddPolarOffset(0x100000, leader->angle, &pos);
-    if (((struct FieldWork *)state)->mode == MODE_WORLD_MAP) {
+    probePosition.vector.x = leader->pos.x;
+    probePosition.vector.y = leader->pos.y;
+    probePosition.vector.z = leader->pos.z;
+    Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
+    if (((struct FieldWork *)workBytes)->mode == MODE_WORLD_MAP) {
       cell =
-          Ram_MapBlocks +
-          ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
+          Ram_MapBlocks + ((((probePosition.vector.x / 0x200000) & 31) +
+                            (((probePosition.vector.z / 0x200000) & 31) << 5))
+                           << 2);
     } else {
-      base = *(u8 **)(map + 0x130);
-      cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);
+      cells = *(u8 **)(mapBytes + 0x130);
+      cell = cells + (((probePosition.vector.x / 0x100000) +
+                       ((probePosition.vector.z / 0x100000) << 7))
+                      << 2);
     }
-    code = cell[2];
-    if (code >= 242 && code <= 247) {
-      height = Map_GetTerrainHeightFar(leader->kind, pos.x, pos.z);
-      if (height >= leader->pos.y && height <= leader->pos.y + 0x400000) {
-        result = code;
+    collisionCode = cell[2];
+    if (collisionCode >= 242 && collisionCode <= 247) {
+      terrainHeight = Map_GetTerrainHeightFar(
+          leader->kind, probePosition.vector.x, probePosition.vector.z);
+      if (terrainHeight >= leader->pos.y &&
+          terrainHeight <= leader->pos.y + 0x400000) {
+        result = collisionCode;
       }
-    } else if (Scene_FindEvent(EVENT_SEARCH, code) != 0) {
-      result = code;
+    } else if (Scene_FindEvent(EVENT_SEARCH, collisionCode) != 0) {
+      result = collisionCode;
     }
   }
   return result;
@@ -2248,43 +2266,45 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
 // the scene's first one) unless it keeps its position, and sets the map's
 // scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 void Scene_ApplyEntrance(void) {
-  struct MapScrollWork *work = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
   s32 entrance = gGameState.entrance;
-  struct EntranceView *view = (struct EntranceView *)gOverlayArea.entrances();
-  s32 found = 0;
+  const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
+  s32 foundEntrance = 0;
 
-  while (view->entrance != -1) {
-    if (view->entrance == entrance &&
-        (view->flag == -1 || GameFlag_TestFar(view->flag))) {
-      found = 1;
+  while (entranceEntry->entrance != -1) {
+    if (entranceEntry->entrance == entrance &&
+        (entranceEntry->requiredFlag == -1 ||
+         GameFlag_TestFar(entranceEntry->requiredFlag))) {
+      foundEntrance = 1;
       break;
     }
-    view++;
+    entranceEntry++;
   }
-  if (!found)
-    view = (struct EntranceView *)gOverlayArea.entrances();
+  if (!foundEntrance)
+    entranceEntry = gOverlayArea.entrances();
 
+  // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
-    gGameState.x = view->x << 16;
-    gGameState.y = view->y << 16;
-    gGameState.z = view->z << 16;
-    gGameState.heading = view->heading;
+    gGameState.x = REGION_FIXED(entranceEntry->x);
+    gGameState.y = REGION_FIXED(entranceEntry->y);
+    gGameState.z = REGION_FIXED(entranceEntry->z);
+    gGameState.heading = entranceEntry->facing;
     gGameState.turn = 0;
   }
 
-  if (view->left != -1)
-    work->minX = view->left << 16;
-  if (view->top != -1)
-    work->minY = view->top << 16;
-  if (view->right != -1)
-    work->maxX = view->right << 16;
-  if (view->bottom != -1)
-    work->maxY = view->bottom << 16;
+  if (entranceEntry->cameraLeft != -1)
+    map->minX = REGION_FIXED(entranceEntry->cameraLeft);
+  if (entranceEntry->cameraTop != -1)
+    map->minY = REGION_FIXED(entranceEntry->cameraTop);
+  if (entranceEntry->cameraRight != -1)
+    map->maxX = REGION_FIXED(entranceEntry->cameraRight);
+  if (entranceEntry->cameraBottom != -1)
+    map->maxY = REGION_FIXED(entranceEntry->cameraBottom);
 
-  if (work->minX + (240 << 16) > work->maxX)
-    work->minX = work->maxX - (240 << 16);
-  if (work->minY + (160 << 16) > work->maxY)
-    work->minY = work->maxY - (160 << 16);
+  if (map->minX + (240 << 16) > map->maxX)
+    map->minX = map->maxX - (240 << 16);
+  if (map->minY + (160 << 16) > map->maxY)
+    map->minY = map->maxY - (160 << 16);
 }
 
 // The debug palette editor (L on the pause menu in debug mode). Shows colours
@@ -2296,11 +2316,11 @@ void Debug_RunPaletteEditor(void) {
   s32 palette = 0;
   s32 channel = 1;
   s32 color = 1;
-  u16 *map;
-  u16 *p;
-  u16 *colors;
+  u16 *swatchColumn;
+  u16 *tileEntry;
+  u16 *paletteColor;
   u32 tile;
-  u32 value;
+  u32 rgb555;
   u32 red;
   u32 green;
   u32 blue;
@@ -2311,28 +2331,28 @@ redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch and its three channels.
   tile = (palette << 12) + 0xd1;
-  colors = &PALETTE[palette * 16 + 1];
-  map = EDITOR_MAP;
-  p = map;
-  *p = HEX_DIGIT + palette;
-  p += 32;
-  *p = 0xf000 | 'R';
-  p += 32;
-  *p = 0xf000 | 'G';
-  p += 32;
-  *p = 0xf000 | 'B';
-  map++;
+  paletteColor = &PALETTE[palette * 16 + 1];
+  swatchColumn = EDITOR_MAP;
+  tileEntry = swatchColumn;
+  *tileEntry = HEX_DIGIT + palette;
+  tileEntry += 32;
+  *tileEntry = 0xf000 | 'R';
+  tileEntry += 32;
+  *tileEntry = 0xf000 | 'G';
+  tileEntry += 32;
+  *tileEntry = 0xf000 | 'B';
+  swatchColumn++;
   for (i = 1; i < 16; i++) {
-    p = map;
-    *p = tile++;
-    value = *colors++;
-    p += 32;
-    *p = (value & 31) + HEX_DIGIT;
-    p += 32;
-    *p = ((value >> 5) & 31) + HEX_DIGIT;
-    p += 32;
-    *p = ((value >> 10) & 31) + HEX_DIGIT;
-    map++;
+    tileEntry = swatchColumn;
+    *tileEntry = tile++;
+    rgb555 = *paletteColor++;
+    tileEntry += 32;
+    *tileEntry = (rgb555 & 31) + HEX_DIGIT;
+    tileEntry += 32;
+    *tileEntry = ((rgb555 >> 5) & 31) + HEX_DIGIT;
+    tileEntry += 32;
+    *tileEntry = ((rgb555 >> 10) & 31) + HEX_DIGIT;
+    swatchColumn++;
   }
   WaitFrames(1);
   for (;;) {
@@ -2369,57 +2389,57 @@ redraw:
       goto redraw;
     }
     if (gKeysRepeat & KEY_A) {
-      colors = &PALETTE[palette * 16 + color];
-      value = *colors;
-      red = value & 31;
-      green = (value >> 5) & 31;
-      blue = (value >> 10) & 31;
+      paletteColor = &PALETTE[palette * 16 + color];
+      rgb555 = *paletteColor;
+      red = rgb555 & 31;
+      green = (rgb555 >> 5) & 31;
+      blue = (rgb555 >> 10) & 31;
       if (channel == 1 && red < 31)
         red++;
       if (channel == 2 && green < 31)
         green++;
       if (channel == 3 && blue < 31)
         blue++;
-      *colors = (blue << 10) | (green << 5) | red;
+      *paletteColor = (blue << 10) | (green << 5) | red;
       goto redraw;
     }
     if (gKeysRepeat & KEY_B) {
-      colors = &PALETTE[palette * 16 + color];
-      value = *colors;
-      red = value & 31;
-      green = (value >> 5) & 31;
-      blue = (value >> 10) & 31;
+      paletteColor = &PALETTE[palette * 16 + color];
+      rgb555 = *paletteColor;
+      red = rgb555 & 31;
+      green = (rgb555 >> 5) & 31;
+      blue = (rgb555 >> 10) & 31;
       if (channel == 1 && red != 0)
         red--;
       if (channel == 2 && green != 0)
         green--;
       if (channel == 3 && blue != 0)
         blue--;
-      *colors = (blue << 10) | (green << 5) | red;
+      *paletteColor = (blue << 10) | (green << 5) | red;
       goto redraw;
     }
     if (gKeysRepeat & KEY_START) {
       // Blink white, the colour, black, the colour, every 10 frames; red
       // counts the frames here.
-      colors = &PALETTE[palette * 16 + color];
-      value = *colors;
+      paletteColor = &PALETTE[palette * 16 + color];
+      rgb555 = *paletteColor;
       red = 0;
       for (;;) {
         WaitFrames(1);
         if (!(gKeysHeld & KEY_START))
           break;
         if (red == 0)
-          *colors = 0x7fff;
+          *paletteColor = 0x7fff;
         if (red == 10)
-          *colors = value;
+          *paletteColor = rgb555;
         if (red == 20)
-          *colors = 0;
+          *paletteColor = 0;
         if (red == 30)
-          *colors = value;
+          *paletteColor = rgb555;
         if (++red >= 40)
           red = 0;
       }
-      *colors = value;
+      *paletteColor = rgb555;
     }
     if (gKeysRepeat & KEY_SELECT)
       break;
@@ -2434,35 +2454,35 @@ redraw:
 // for a party character (0 to 7) the row with its sprite, and for a placed
 // actor (8 on) the row it was created from, counting the placed rows in order.
 struct ScenePlacement *BattleAction_FindDescriptor(s32 id) {
-  struct ScenePlacement *entry;
-  s32 i;
-  s32 placed = ACTOR_FIRST_PLACED;
+  struct ScenePlacement *placement;
+  s32 tableIndex;
+  s32 placedActor = ACTOR_FIRST_PLACED;
 
-  for (i = 0; i < 4; i++) {
-    entry = ((struct FieldWork *)gEventWork)->tables[i];
-    if (entry == NULL)
+  for (tableIndex = 0; tableIndex < 4; tableIndex++) {
+    placement = ((struct FieldWork *)gEventWork)->tables[tableIndex];
+    if (placement == NULL)
       continue;
     if (id <= 7) {
-      for (; (s16)entry->sprite != -1; entry++) {
-        if ((s16)entry->sprite == id) {
+      for (; (s16)placement->sprite != -1; placement++) {
+        if ((s16)placement->sprite == id) {
 #ifdef UBFIX
-          return entry;
+          return placement;
 #else
           goto found;
 #endif
         }
       }
     } else {
-      for (; (s16)entry->sprite != -1; entry++) {
-        if ((s16)entry->sprite > 7) {
-          if (placed == id) {
+      for (; (s16)placement->sprite != -1; placement++) {
+        if ((s16)placement->sprite > 7) {
+          if (placedActor == id) {
 #ifdef UBFIX
-            return entry;
+            return placement;
 #else
             goto found;
 #endif
           }
-          placed++;
+          placedActor++;
         }
       }
     }
@@ -2472,16 +2492,16 @@ struct ScenePlacement *BattleAction_FindDescriptor(s32 id) {
 #else
 found:
   // BUG: a missing actor leaves entry NULL if the final table is absent.
-  if ((s16)entry->sprite == -1)
+  if ((s16)placement->sprite == -1)
     return NULL;
-  return entry;
+  return placement;
 #endif
 }
 
 // Returns whether an event condition holds: -1 always holds; a condition with
 // bit 0x1000 holds while that flag is set, any other while its flag is clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
-  s32 on;
+  s32 flagSet;
 
   if (condition == -1) {
     return 1;
@@ -2489,28 +2509,28 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   if (0x1000 & condition) {
     return GameFlag_TestFar(condition);
   }
-  on = GameFlag_TestFar(condition);
-  return on == 0;
+  flagSet = GameFlag_TestFar(condition);
+  return flagSet == 0;
 }
 
 // Returns 1 for a search event (kind 3) that holds whatever its condition: one
 // with more flags than its kind, unless its result is a mimic battle (type
 // 0x005 in its top 12 bits).
 u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
-  u32 tmp;
-  s32 kind;
-  u32 ret;
+  u32 mimicDifference;
+  s32 searchFlags;
+  u32 ignoresCondition;
 
   if ((flags & 0xf) != EVENT_SEARCH)
     return 0;
-  kind = flags & 0x1ff;
-  ret = 0;
-  if (kind != EVENT_SEARCH) {
-    tmp = (result & 0xfff00000) ^ 0x500000;
-    ret = tmp | (0U - tmp);
-    ret >>= 31; // 1 when tmp is not 0
+  searchFlags = flags & 0x1ff;
+  ignoresCondition = 0;
+  if (searchFlags != EVENT_SEARCH) {
+    mimicDifference = (result & 0xfff00000) ^ 0x500000;
+    ignoresCondition = mimicDifference | (0U - mimicDifference);
+    ignoresCondition >>= 31; // 1 when tmp is not 0
   }
-  return ret;
+  return ignoresCondition;
 }
 
 // Returns the first of the scene's events of kind for target whose condition
@@ -2519,53 +2539,54 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
 // face within an eighth of a turn of the direction in the top four bits.
 struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  struct EffectDescriptor *ev = (struct EffectDescriptor *)work->events;
+  struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
       ((struct FieldActor *)ObjectTable_Get(gGameState.selectedActor))->facing;
 
-  flags = ev->flags;
+  flags = event->flags;
+  // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
-    if ((flags & 0xf) == kind && ev->value == target &&
-        (Event_SearchIgnoresCondition(flags, ev->result) != 0 ||
-         (GameFlag_IsConditionActive(ev->condition) != 0 &&
-          (flags = ev->flags, 1)))) {
-      s32 ok = 0;
-      s32 steps = 12;
-      s32 need;
+    if ((flags & 0xf) == kind && event->value == target &&
+        (Event_SearchIgnoresCondition(flags, event->result) != 0 ||
+         (GameFlag_IsConditionActive(event->condition) != 0 &&
+          (flags = event->flags, 1)))) {
+      s32 matches = 0;
+      s32 minimumPushFrames = 12;
+      s32 touchRequirements;
 
       if ((flags & 0x800) != 0)
-        steps = 2;
-      need = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
+        minimumPushFrames = 2;
+      touchRequirements = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
 
-      switch (need) {
+      switch (touchRequirements) {
       case 0:
-        ok = 1;
+        matches = 1;
         break;
       case EVENT_TOUCH_WALKING:
-        if (work->blockedSteps > steps) {
-          ok = 1;
+        if (work->blockedSteps > minimumPushFrames) {
+          matches = 1;
         }
         break;
       case EVENT_TOUCH_FACING:
         flags &= 0xf000;
-        ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+        matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
       case EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING:
-        if (work->blockedSteps > steps) {
+        if (work->blockedSteps > minimumPushFrames) {
           flags &= 0xf000;
-          ok = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+          matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         }
         break;
       }
-      if (ok) {
-        return ev;
+      if (matches) {
+        return event;
       }
     }
-    ev++;
-    if (ev->flags == -1)
+    event++;
+    if (event->flags == -1)
       break;
-    flags = ev->flags;
+    flags = event->flags;
   }
   return 0;
 }
@@ -2576,17 +2597,17 @@ void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 // Returns the talk event of actor id: for the actor the party has stopped, its
 // kind 7 event if it has one.
 s32 BattleFx_FindDescriptorWithOverride(s32 id) {
-  struct EffectDescriptor *ev = Scene_FindEvent(EVENT_TALK, id);
-  s32 paused = gGameState.pausedObject;
+  struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
+  s32 pausedActor = gGameState.pausedObject;
 
-  if (paused == id) {
-    struct EffectDescriptor *alt = Scene_FindEvent(7, paused);
+  if (pausedActor == id) {
+    struct EffectDescriptor *pausedEvent = Scene_FindEvent(7, pausedActor);
 
-    if (alt != 0) {
-      return (s32)alt;
+    if (pausedEvent != 0) {
+      return (s32)pausedEvent;
     }
   }
-  return (s32)ev;
+  return (s32)talkEvent;
 }
 
 // Talks to actor id: shows its event's message or calls its event function,
@@ -2596,27 +2617,28 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id) {
 // instead. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_TalkToActor(s32 id) {
   struct ScenePlacement *placement = BattleAction_FindDescriptor(id);
-  s32 ret = -1;
-  struct ObjectRuntime *obj = (struct ObjectRuntime *)Object_GetById(id);
-  struct EffectDescriptor *ev;
-  s32 paused = 0;
+  s32 result = -1;
+  struct ObjectRuntime *actor = (struct ObjectRuntime *)Object_GetById(id);
+  struct EffectDescriptor *event;
+  s32 actorPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
-  s32 talk = 0;
+  s32 usePausedDialogue = 0;
 
   if (gGameState.pausedObject == id) {
-    paused = 1;
-    ev = Scene_FindEvent(7, id);
-    if (ev == 0) {
-      ev = Scene_FindEvent(EVENT_TALK, id);
-      talk = 1;
-      if (ev == 0) {
+    actorPaused = 1;
+    event = Scene_FindEvent(7, id);
+    if (event == 0) {
+      event = Scene_FindEvent(EVENT_TALK, id);
+      usePausedDialogue = 1;
+      if (event == 0) {
         return -1;
       }
-      if (ev->result >= 0x10000) {
-        s32 no = BattleFx_GetFlags(id);
+      if (event->result >= 0x10000) {
+        s32 definitionFlags = BattleFx_GetFlags(id);
         u32 random = Random16();
-        s32 message = MsgPonderEllipsis + no * 2 + (random * 2 >> 16);
+        s32 message =
+            MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
         Battle_Reset();
         Event_SetMessageId(message);
         BattleEv_RunWait(id, 0);
@@ -2625,18 +2647,18 @@ s32 Scene_TalkToActor(s32 id) {
       }
     }
   } else {
-    ev = Scene_FindEvent(EVENT_TALK, id);
+    event = Scene_FindEvent(EVENT_TALK, id);
   }
 
-  if (ev != 0 && ev->result != 0) {
-    if (!paused) {
+  if (event != 0 && event->result != 0) {
+    if (!actorPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader and
       // link the two.
-      u8 *busy = &obj->movementState;
+      u8 *movementState = &actor->movementState;
 
-      *busy = 1;
-      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 0);
-      savedAngle = obj->angle;
+      *movementState = 1;
+      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)actor, 0);
+      savedAngle = actor->angle;
       talkFacing = (u8)placement->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct ObjectRuntime *leader =
@@ -2652,69 +2674,72 @@ s32 Scene_TalkToActor(s32 id) {
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
-    if (ev->result < 0x10000) {
-      UiWork_SetBusyFlagsFar(talk);
+    if (event->result < 0x10000) {
+      UiWork_SetBusyFlagsFar(usePausedDialogue);
       Battle_Reset();
-      Event_SetMessageId(ev->result);
+      Event_SetMessageId(event->result);
       BattleEv_RunWait(id, 0);
       BattleFx_FinishAction();
     } else {
       Leader_StopMoving();
-      ((void (*)(s32))ev->result)(id);
+      ((void (*)(s32))event->result)(id);
     }
-    if (!paused) {
+    if (!actorPaused) {
       // An actor left idle (script command 16) goes back to what its talk
       // facing says: following the leader (3) or its old angle (1).
-      if (obj->script[obj->step] == (void *)16) {
+      if (actor->script[actor->step] == 16) {
         if ((s8)placement->talkFacing == 3) {
-          obj->linkedObject = Object_GetById(gGameState.selectedActor);
-          obj->actionFlags |= 1;
-          ObjectMotion_SetActionCallback(obj, gObjectMotion_LinkedActionScript);
+          actor->linkedObject = Object_GetById(gGameState.selectedActor);
+          actor->actionFlags |= 1;
+          ObjectMotion_SetActionCallback(actor,
+                                         gObjectMotion_LinkedActionScript);
         } else if ((s8)placement->talkFacing == 1) {
-          obj->action = savedAngle;
+          actor->action = savedAngle;
           ObjectDispatch_InitializeFar(
-              (struct DispatchObject *)obj,
+              (struct DispatchObject *)actor,
               (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
-      obj->movementState = 0;
-      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 16);
+      actor->movementState = 0;
+      ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)actor,
+                                             16);
     }
-    ret = 0;
+    result = 0;
   }
 finish:
-  if (paused) {
+  // Both a normal event and the paused actor's fallback line release the pause.
+  if (actorPaused) {
     BattleFx_ResumeObject(gGameState.pausedObject);
     gGameState.pausedObject = -1;
   }
-  return ret;
+  return result;
 }
 
 // Runs the scene's raised event (kind 6) for value: its message or its
 // function. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_RunRaisedEvent(s32 value) {
   s32 result;
-  s32 ret;
-  struct EffectDescriptor *ev;
+  s32 handled;
+  struct EffectDescriptor *event;
 
-  ev = Scene_FindEvent(EVENT_RAISED, value);
-  ret = -1;
-  if (ev != NULL) {
-    result = ev->result;
+  event = Scene_FindEvent(EVENT_RAISED, value);
+  handled = -1;
+  if (event != NULL) {
+    result = event->result;
     if (result != 0) {
       if (result < 0x10000) {
         Battle_Reset();
-        Event_SetMessageId(ev->result);
+        Event_SetMessageId(event->result);
         BattleEv_RunWait(-1, 0);
-        ret = 0;
+        handled = 0;
         BattleFx_FinishAction();
       } else {
         ((void (*)(s32))result)(value);
-        ret = 0;
+        handled = 0;
       }
     }
   }
-  return ret;
+  return handled;
 }
 
 // Runs the touch event (kind 2) of what the leader touched, or else takes its
@@ -2723,12 +2748,12 @@ s32 Scene_RunRaisedEvent(s32 value) {
 s32 Scene_RunTouchOrExit(s32 value) {
   struct EffectDescriptor *touch;
   struct EffectDescriptor *exit;
-  s32 kind;
-  s32 ret;
+  s32 exitKind;
+  s32 handled;
   struct FieldWork *work;
 
   touch = Scene_FindEvent(EVENT_TOUCH, value);
-  ret = -1;
+  handled = -1;
   work = (struct FieldWork *)gEventWork;
   if ((touch != 0) && (touch->result != 0)) {
     if (touch->flags & EVENT_TOUCH_WALKING) {
@@ -2738,17 +2763,17 @@ s32 Scene_RunTouchOrExit(s32 value) {
       Battle_Reset();
       Event_SetMessageId(touch->result);
       BattleEv_RunWait(-1, 0);
-      ret = 0;
+      handled = 0;
       BattleFx_FinishAction();
     } else {
       ((void (*)(s32))touch->result)(value);
-      ret = 0;
+      handled = 0;
     }
   } else {
     exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
-      kind = exit->flags & 0x30;
-      switch (kind) {
+      exitKind = exit->flags & 0x30;
+      switch (exitKind) {
       case 0:
         AudioCommand_PlayFar(SOUND_MAP_EXIT);
         break;
@@ -2762,19 +2787,19 @@ s32 Scene_RunTouchOrExit(s32 value) {
         break;
       }
       work->exit = exit->result;
-      ret = 0;
+      handled = 0;
     }
   }
-  return ret;
+  return handled;
 }
 
 // Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
 // 0xfe), once it has pushed for more than 12 frames; the count then restarts.
-s32 Field_RunPushTileEvent(s32 event) {
+s32 Field_RunPushTileEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 leader = gGameState.selectedActor;
 
-  switch (event) {
+  switch (collisionCode) {
   case 0xfc: // with Down held
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, 6, 0);
@@ -2809,17 +2834,17 @@ s32 Field_RunPushTileEvent(s32 event) {
 s32 Field_SearchTile(s32 tile) {
   const struct SceneEvent *event;
   s32 leader;
-  u32 n;
+  u32 messageOffset;
   s16 condition;
-  u32 value;
-  s32 type;
-  s32 allowed;
+  u32 searchResult;
+  s32 rewardType;
+  s32 canOpen;
 
   leader = gGameState.selectedActor;
-  n = tile - 242;
-  if (n <= 5) {
+  messageOffset = tile - 242;
+  if (messageOffset <= 5) {
     Leader_StopMoving();
-    tile = gField_TileMessageOffsets[n];
+    tile = gField_TileMessageOffsets[messageOffset];
     UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
     UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
   } else {
@@ -2830,27 +2855,29 @@ s32 Field_SearchTile(s32 tile) {
       // Bits 4 to 8 choose what the leader says on checking (flag 0x142 marks
       // that it was said).
       condition = event->condition;
-      n = (flags >> 4) & 31;
-      if ((event->trigger & 0x400) == 0 && n != 0) {
+      messageOffset = (flags >> 4) & 31;
+      if ((event->trigger & 0x400) == 0 && messageOffset != 0) {
         Leader_StopMoving();
-        UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + n, 1);
+        UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + messageOffset,
+                                               1);
         GameFlag_SetBitFar(0x142);
       } else {
         GameFlag_ClearBitFar(0x142);
       }
-      value = event->value;
-      if ((value & 0x0f000000) != 0 || (value & 0xfff00000) == 0x400000) {
-        if ((value & 0x0f000000) != 0) {
+      searchResult = event->value;
+      if ((searchResult & 0x0f000000) != 0 ||
+          (searchResult & 0xfff00000) == 0x400000) {
+        if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
             ((void (*)(s32))event->value)(gGameState.selectedActor);
           if (GameFlag_TestFar(0x142) != 0)
-            UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + n, 1);
+            UiText_ShowPositionedMessageAndWaitFar(
+                MsgTileResult + messageOffset, 1);
         } else {
           // A message (type 0x004).
           if (GameFlag_IsConditionActive(condition) != 0)
-            UiText_ShowPositionedMessageAndWaitFar(
-                (*(const u16 *)&event->value), 1);
+            UiText_ShowPositionedMessageAndWaitFar((u16)event->value, 1);
           else
             UiText_ShowPositionedMessageAndWaitFar(MsgButFoundNothing, 1);
         }
@@ -2858,15 +2885,15 @@ s32 Field_SearchTile(s32 tile) {
         // A chest; its condition flag is set once it has been opened.
         Battle_Reset();
         if (GameFlag_IsConditionActive(condition) != 0) {
-          value = event->value;
-          allowed = 1;
-          if ((value & 0xf0000) == 0x10000 && leader <= 7)
-            allowed = 0;
-          if (allowed != 0) {
+          searchResult = event->value;
+          canOpen = 1;
+          if ((searchResult & 0xf0000) == 0x10000 && leader <= 7)
+            canOpen = 0;
+          if (canOpen != 0) {
             if ((event->control & 0x1ff) == 19)
               Marker_OpenChest(tile);
-            type = event->value & 0xfff00000;
-            if (type == 0x300000) {
+            rewardType = event->value & 0xfff00000;
+            if (rewardType == 0x300000) {
               // A Psynergy stone: restores all PP.
               void *object;
 
@@ -2875,7 +2902,7 @@ s32 Field_SearchTile(s32 tile) {
               object = Marker_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
-              UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
+              UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               BattleParty_ApplyDrain(999, 0);
               UiWindow_CreateWithLayoutBoundsFar(1);
@@ -2891,7 +2918,7 @@ s32 Field_SearchTile(s32 tile) {
               Marker_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
-            } else if (type == 0x500000) {
+            } else if (rewardType == 0x500000) {
               // A mimic: a battle with enemy group slot of zone 99.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 
@@ -2900,13 +2927,12 @@ s32 Field_SearchTile(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              work->battle =
-                  BattleFx_GetWeightedResult(99, (*(const u16 *)&event->value));
+              work->battle = BattleFx_GetWeightedResult(99, (u16)event->value);
               Battle_SetStart(2);
-              BattleFx_SelectBattleCue(99, (*(const u16 *)&event->value));
+              BattleFx_SelectBattleCue(99, (u16)event->value);
               AudioCommand_PlayFar(gGameState.sceneCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
-            } else if (type == 0x200000) {
+            } else if (rewardType == 0x200000) {
               // Coins.
               void *object;
 
@@ -2917,23 +2943,23 @@ s32 Field_SearchTile(s32 tile) {
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
-              UiWork_PushValueSlotFar((*(const u16 *)&event->value), 5);
+              UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
-              Party_AdjustCoinsFar((*(const u16 *)&event->value));
+              Party_AdjustCoinsFar((u16)event->value);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
               ObjectDispatch_ReleaseFar(object);
             } else {
               // An item, which stays in the chest when nobody can carry it.
               void *object;
-              s32 owner;
+              s32 recipient;
 
               object = BattleFx_StartRandomParticleEmitter(
                   gGameState.selectedActor, event->value & 0xfff);
               WaitFrames(30);
-              owner = PartyInventory_AddFar((*(const u16 *)&event->value));
-              n = 0xffff;
-              if (owner == -1) {
+              recipient = PartyInventory_AddFar((u16)event->value);
+              messageOffset = 0xffff;
+              if (recipient == -1) {
                 UiWork_PushValueSlotFar(event->value & 0xfff, 2);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
@@ -2945,12 +2971,12 @@ s32 Field_SearchTile(s32 tile) {
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 AudioCommand_PlayFar(SOUND_TREASURE_FOUND);
-                UiWork_PushValueSlotFar(event->value & n, 2);
-                if (owner == gGameState.selectedActor) {
+                UiWork_PushValueSlotFar(event->value & messageOffset, 2);
+                if (recipient == gGameState.selectedActor) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
                                                          3);
                 } else {
-                  UiWork_PushValueSlotFar(owner, 1);
+                  UiWork_PushValueSlotFar(recipient, 1);
                   UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember,
                                                          3);
                 }
@@ -2963,7 +2989,8 @@ s32 Field_SearchTile(s32 tile) {
             UiText_ShowPositionedMessageAndWaitFar(MsgCantOpenIt, 1);
           }
         } else {
-          UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + n, 1);
+          UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + messageOffset,
+                                                 1);
         }
         BattleFx_FinishAction();
         BattleFx_PlayQueuedSound();
@@ -2985,18 +3012,18 @@ s32 Field_SearchTile(s32 tile) {
 // gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
 // not listed reaches 16 pixels.
 s32 BattleFx_MapKeyThroughTable(s32 kind) {
-  s16 *p = gBattleFx_TargetRangeByMode;
+  s16 *rangeEntry = gBattleFx_TargetRangeByMode;
   s32 range = 16;
-  s32 key = *p;
+  s32 listedKind = *rangeEntry;
 
-  while (key != -1) {
-    ++p;
-    if (kind == key) {
-      range = *p;
+  while (listedKind != -1) {
+    ++rangeEntry;
+    if (kind == listedKind) {
+      range = *rangeEntry;
       break;
     }
-    ++p;
-    key = *p;
+    ++rangeEntry;
+    listedKind = *rangeEntry;
   }
   return range;
 }
@@ -3006,70 +3033,70 @@ s32 BattleFx_MapKeyThroughTable(s32 kind) {
 // 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
 // with flag 4 count as 10/13 as far.
 s32 BattleEffect_SelectNearbyObject(s32 id) {
-  struct ObjectRuntime *src;
-  struct ObjectRuntime *obj;
-  s32 best;
-  s32 bestDist;
-  s32 i;
+  struct ObjectRuntime *source;
+  struct ObjectRuntime *candidate;
+  s32 nearestActor;
+  s32 nearestDistance;
+  s32 actorIndex;
   s32 dx;
   s32 dy;
   s32 dz;
-  s32 xx;
-  s32 yy;
-  s32 zz;
-  s32 sq;
-  s32 dist;
+  s32 squaredX;
+  s32 squaredY;
+  s32 squaredZ;
+  s32 squaredDistance;
+  s32 distance;
   s32 angle;
 
-  best = -1;
-  bestDist = 32;
-  src = ObjectTable_Get(id);
-  if (src != 0) {
-    for (i = 0; i <= OBJ_LAST; i++) {
-      if (i == id)
+  nearestActor = -1;
+  nearestDistance = 32;
+  source = ObjectTable_Get(id);
+  if (source != 0) {
+    for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+      if (actorIndex == id)
         continue;
 
-      obj = ObjectTable_Get(i);
-      if (obj == 0 || (obj->unk59 & 8) != 0)
+      candidate = ObjectTable_Get(actorIndex);
+      if (candidate == 0 || (candidate->unk59 & 8) != 0)
         continue;
 
-      if (obj->y - src->y >= 0) {
-        if (obj->y - src->y >= 48 << 16)
+      if (candidate->y - source->y >= 0) {
+        if (candidate->y - source->y >= 48 << 16)
           continue;
-      } else if (src->y - obj->y >= 48 << 16) {
+      } else if (source->y - candidate->y >= 48 << 16) {
         continue;
       }
 
       // The distance in pixels.
-      dx = (obj->x - src->x) / 0x10000;
-      dy = (obj->y - src->y) / 0x10000;
-      dz = (obj->z - src->z) / 0x10000;
+      dx = (candidate->x - source->x) / 0x10000;
+      dy = (candidate->y - source->y) / 0x10000;
+      dz = (candidate->z - source->z) / 0x10000;
 
-      xx = dx * dx;
-      yy = dy * dy;
-      zz = dz * dz;
-      sq = xx + yy + zz;
-      dist = Iwram_Sqrt(sq);
-      if ((obj->unk59 & 4) != 0)
-        dist = dist * 10 / 13;
-      if (dist >= bestDist)
+      squaredX = dx * dx;
+      squaredY = dy * dy;
+      squaredZ = dz * dz;
+      squaredDistance = squaredX + squaredY + squaredZ;
+      distance = Iwram_Sqrt(squaredDistance);
+      if ((candidate->unk59 & 4) != 0)
+        distance = distance * 10 / 13;
+      if (distance >= nearestDistance)
         continue;
 
-      angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
-      if (dist > 11) {
-        s32 diff = (s16)(angle - src->angle);
+      angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
+      if (distance > 11) {
+        s32 angleDifference = (s16)(angle - source->angle);
 
-        if (diff < -0x2fff)
+        if (angleDifference < -0x2fff)
           continue;
-        if (diff > 0x2fff)
+        if (angleDifference > 0x2fff)
           continue;
       }
 
-      best = i;
-      bestDist = dist;
+      nearestActor = actorIndex;
+      nearestDistance = distance;
     }
   }
-  return best;
+  return nearestActor;
 }
 
 // Returns the actor nearest in front of actor id that a field Psynergy of the
@@ -3077,111 +3104,111 @@ s32 BattleEffect_SelectNearbyObject(s32 id) {
 // the distance measured on the ground; kind sets the range, the height
 // allowed and the width of the cone.
 s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 kind) {
-  struct ObjectRuntime *src;
-  struct ObjectRuntime *obj;
-  s32 best;
-  s32 bestDist;
-  s32 dir;
-  s32 i;
-  s32 dyMax;
+  struct ObjectRuntime *source;
+  struct ObjectRuntime *candidate;
+  s32 nearestActor;
+  s32 nearestDistance;
+  s32 facingQuadrant;
+  s32 actorIndex;
+  s32 heightLimit;
   s32 dx;
   s32 dz;
-  s32 cz;
-  s32 dist;
+  s32 pixelZ;
+  s32 distance;
   s32 angle;
-  s32 width;
+  s32 coneHalfAngle;
 
-  best = -1;
-  bestDist = BattleFx_MapKeyThroughTable(kind);
-  src = (struct ObjectRuntime *)ObjectTable_Get(id);
-  if (src == 0)
-    return best;
+  nearestActor = -1;
+  nearestDistance = BattleFx_MapKeyThroughTable(kind);
+  source = (struct ObjectRuntime *)ObjectTable_Get(id);
+  if (source == 0)
+    return nearestActor;
 
-  dir = (src->angle + 0x2000) & 0xc000;
-  for (i = 0; i <= OBJ_LAST; i++) {
-    if (i == id)
+  facingQuadrant = (source->angle + 0x2000) & 0xc000;
+  for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+    if (actorIndex == id)
       continue;
 
-    obj = (struct ObjectRuntime *)ObjectTable_Get(i);
-    if (obj == 0 || (obj->unk59 & 8) != 0)
+    candidate = (struct ObjectRuntime *)ObjectTable_Get(actorIndex);
+    if (candidate == 0 || (candidate->unk59 & 8) != 0)
       continue;
 
     // The height allowed: 8 pixels, or 48 for kind 13, 64 for 5, 16 for 2.
-    dyMax = 8 << 16;
+    heightLimit = 8 << 16;
     if (kind == 13)
-      dyMax = 48 << 16;
+      heightLimit = 48 << 16;
     if (kind == 5)
-      dyMax = 64 << 16;
+      heightLimit = 64 << 16;
     if (kind == 2)
-      dyMax = 16 << 16;
+      heightLimit = 16 << 16;
 
     {
-      s32 dy = obj->y - src->y;
+      s32 dy = candidate->y - source->y;
       if (dy >= 0) {
-        if (dy > dyMax)
+        if (dy > heightLimit)
           continue;
-      } else if (src->y - obj->y > dyMax) {
+      } else if (source->y - candidate->y > heightLimit) {
         continue;
       }
     }
 
     // The distance in whole pixels, rounded toward 0.
-    dx = obj->x - src->x;
+    dx = candidate->x - source->x;
     if (dx < 0)
       dx += 0xffff;
     dx >>= 16;
 
-    dz = obj->z - src->z;
+    dz = candidate->z - source->z;
     if (dz < 0)
       dz += 0xffff;
-    cz = dz >> 16;
+    pixelZ = dz >> 16;
 
-    dist = Iwram_Sqrt(dx * dx + cz * cz);
-    if ((obj->unk59 & 0x10) != 0)
-      dist = dist * 2 / 3;
-    if (dist >= bestDist)
+    distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
+    if ((candidate->unk59 & 0x10) != 0)
+      distance = distance * 2 / 3;
+    if (distance >= nearestDistance)
       continue;
 
     // The cone: 0x1800 either side up to 19 pixels, 0x1000 beyond; 0x2000
     // for kind 2.
-    angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
-    width = 0x1800;
-    if (dist > 19)
-      width = 0x1000;
+    angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
+    coneHalfAngle = 0x1800;
+    if (distance > 19)
+      coneHalfAngle = 0x1000;
     if (kind == 2)
-      width = 0x2000;
+      coneHalfAngle = 0x2000;
 
-    if (dist > 11) {
-      s32 diff = (s16)(angle - dir);
-      if (diff < 0)
-        diff = -diff;
-      if (diff >= width)
+    if (distance > 11) {
+      s32 angleDifference = (s16)(angle - facingQuadrant);
+      if (angleDifference < 0)
+        angleDifference = -angleDifference;
+      if (angleDifference >= coneHalfAngle)
         continue;
     }
 
-    best = i;
-    bestDist = dist;
+    nearestActor = actorIndex;
+    nearestDistance = distance;
   }
 
-  return best;
+  return nearestActor;
 }
 
 // If actor target exists, plays sound 124, gives it animation 4 and, 12 frames
-// later, starts a particle emitter on actor (mode as for
-// BattleFx_StartRandomParticleEmitter); returns the emitter, or 0.
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 mode) {
-  void *obj;
-  s32 ret;
+// later, shows itemId in front of actor with sparkles. Returns the picture's
+// encoded actor pointer, or 0 when the target or picture is absent.
+s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
+  void *targetActor;
+  s32 emitter;
 
-  obj = Object_GetById(target);
-  ret = 0;
-  if (obj != 0) {
+  targetActor = Object_GetById(target);
+  emitter = 0;
+  if (targetActor != 0) {
     AudioCommand_PlayFar(124);
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 4);
+    ObjectDispatch_ApplyArgumentToChildrenFar(targetActor, 4);
     WaitFrames(12);
-    ret = (s32)BattleFx_StartRandomParticleEmitter(actor, mode);
+    emitter = (s32)BattleFx_StartRandomParticleEmitter(actor, itemId);
   }
-  return ret;
+  return emitter;
 }
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
@@ -3189,42 +3216,42 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 // Gives every part of a motion object's sprite (but those at palette 15)
 // palette - 1, or for palette 0 the next palette of a cycle that changes every
 // 2 frames.
-void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette) {
-  struct AnimationObject *state;
-  struct AnimationEntry **p;
-  struct AnimationEntry *current;
-  s32 cnt;
+void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
+  struct AnimationObject *sprite;
+  struct AnimationEntry **entrySlot;
+  struct AnimationEntry *entry;
+  s32 remainingParts;
   s32 replacement;
-  u8 n;
+  u8 partCount;
 
-  if ((obj->recordStorageKind & 15) == 1) {
-    state = obj->records;
+  if ((object->recordStorageKind & 15) == 1) {
+    sprite = object->records;
     replacement = palette - 1;
     if (palette == 0)
       replacement = gAnimation_ChildPaletteCycle[(gFrameCount >> 1) & 7];
 
-    n = state->count;
-    if (n != 0) {
-      p = state->entries;
-      cnt = n;
+    partCount = sprite->count;
+    if (partCount != 0) {
+      entrySlot = sprite->entries;
+      remainingParts = partCount;
       do {
-        current = *p++;
-        if (current != 0 && current->script != 0 && current->param != 15)
-          current->param = replacement;
-        cnt--;
-      } while (cnt != 0);
+        entry = *entrySlot++;
+        if (entry != 0 && entry->script != 0 && entry->param != 15)
+          entry->param = replacement;
+        remainingParts--;
+      } while (remainingParts != 0);
     }
-    state->dirty = 1;
+    sprite->dirty = 1;
   }
 }
 
 // Clears the field's busy flag and, while Reveal is active, ends it: 0x2090
 // is Reveal (144) with ACT_PACKED, which runs its ending events.
 void Battle_ResetEffectCounter(void) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  runtime->busy = 0;
-  if (runtime->revealActive != 0) {
+  work->busy = 0;
+  if (work->revealActive != 0) {
     Field_RunPsynergyEvents(0x2090);
   }
 }
@@ -3261,32 +3288,34 @@ void Battle_ResetEffectCounter(void) {
 // actor (control flag 0x10) or a tile code, and may also require the leader
 // to face within 0x17ff of a direction.
 s32 Field_FindItemEvent(s32 item) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
-  const struct SceneEvent *event = runtime->events;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  const struct SceneEvent *event = work->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
   s32 actorAhead = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
   s32 tileAhead;
 
   item &= 0x1ff;
+  // Query both target forms once; matching events choose actor or tile below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
   while (event->control != -1) {
-    s32 direction = event->trigger & 0xf000;
-    s16 hasDirection = event->trigger & 0x0800;
-    s32 target = event->trigger & 0xff;
+    s32 eventFacing = event->trigger & 0xf000;
+    s16 requiresFacing = event->trigger & 0x0800;
+    s32 eventTarget = event->trigger & 0xff;
 
     if ((event->control & 0x0f) == 4 &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
-        (hasDirection == 0 || (u16)(direction - facing + 0x17ff) <= 0x2ffe)) {
+        (requiresFacing == 0 ||
+         (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
       u32 flags = event->control;
       s32 eventItem = ((const u8 *)&event->control)[1];
 
       if (item == 0 || eventItem == item) {
         if ((flags & 0x10) != 0) {
-          if (target == actorAhead)
+          if (eventTarget == actorAhead)
             return (s32)event;
-        } else if (target == tileAhead) {
+        } else if (eventTarget == tileAhead) {
           return (s32)event;
         }
       }
@@ -3306,46 +3335,46 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 actor;
-  struct BattleUnit *obj;
+  struct BattleUnit *unit;
   const struct SceneEvent *event;
-  s32 j;
-  s32 i;
-  s32 best;
-  s32 matches;
-  s32 count;
-  struct FieldWork *runtime;
+  s32 inventorySlot;
+  s32 partyIndex;
+  s32 mostMatchingSlots;
+  s32 matchingSlots;
+  s32 partyCount;
+  struct FieldWork *work;
 
   result = -1;
   itemId = packedItem & 0x3ff;
   actor = (packedItem >> 10) & 0xf;
   {
-    best = 0;
-    count = Party_CountActiveOwnersFar();
+    mostMatchingSlots = 0;
+    partyCount = Party_CountActiveOwnersFar();
 
     if (actor == 15) {
       actor = 0;
-      for (i = 0; i < count; i++) {
-        obj = UnitGetFar(gGameState.activeOwners[i]);
-        matches = 0;
-        for (j = 0; j < 15; j++) {
-          if ((obj->inventory[j] & 0x1ff) == itemId)
-            matches++;
+      for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+        unit = UnitGetFar(gGameState.activeOwners[partyIndex]);
+        matchingSlots = 0;
+        for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+          if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
+            matchingSlots++;
         }
 
-        if (best < matches) {
-          best = matches;
-          actor = gGameState.activeOwners[i];
+        if (mostMatchingSlots < matchingSlots) {
+          mostMatchingSlots = matchingSlots;
+          actor = gGameState.activeOwners[partyIndex];
         }
       }
     } else {
-      obj = UnitGetFar(actor);
-      for (j = 0; j < 15; j++) {
-        if ((obj->inventory[j] & 0x1ff) == itemId)
-          best++;
+      unit = UnitGetFar(actor);
+      for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
+        if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
+          mostMatchingSlots++;
       }
     }
 
-    if (best == 0) {
+    if (mostMatchingSlots == 0) {
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
       return -1;
     }
@@ -3362,10 +3391,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 objref = BattleEffect_SelectNearbyObject(gGameState.selectedActor);
+      s32 nearbyActor =
+          BattleEffect_SelectNearbyObject(gGameState.selectedActor);
       Battle_Reset();
       Event_SetMessageId(event->value);
-      BattleEv_RunWait(objref, 0);
+      BattleEv_RunWait(nearbyActor, 0);
       BattleFx_FinishAction();
     } else {
       ((BattleItemCallback)event->value)(itemId, actor, slot);
@@ -3378,7 +3408,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(0x143);
     GameFlag_SetBitFar(0x142);
     actionId = Item_GetDirectFar(itemId)->actionId;
-    runtime = (struct FieldWork *)gEventWork;
+    work = (struct FieldWork *)gEventWork;
 
     if (actionId != 0) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
@@ -3390,14 +3420,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         /* FAKEMATCH: needed to match: the owner index doubles as the declined
          * flag, which ranks it above best in global allocation (r6, best r7). A
          * declined local of its own: differ 109. */
-        i = Menu_AskYesNo(1);
+        partyIndex = Menu_AskYesNo(1);
         UiWork_FinalizePendingCoreFar();
-        if (i != 0)
+        if (partyIndex != 0)
           return 0;
 
         gGameState.scene = gGameState.retreatScene;
         gGameState.entrance = gGameState.retreatEntrance;
-        runtime->exit = EXIT_RETREAT;
+        work->exit = EXIT_RETREAT;
       }
 
       UiWork_PushValueSlotFar(actor, 1);
@@ -3413,9 +3443,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
        * after runtime: differ 8. */
       ((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(actionId, 0);
 #endif
-      runtime->resolvingAction = 1;
+      work->resolvingAction = 1;
       BattleFx_Run();
-      runtime->resolvingAction = 0;
+      work->resolvingAction = 0;
       BattleEffect_CleanupSceneObjects();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
@@ -3436,8 +3466,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 // kind (0x70000005 for any phase). The event may apply to any target
 // (control flag 0x80), to an actor (0x10) or to a tile code.
 void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
-  const struct SceneEvent *event = runtime->events;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  const struct SceneEvent *event = work->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
   s32 actorAhead =
@@ -3446,18 +3476,20 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   s32 anyPhase = 0;
 
   *(s32 *)target = actorAhead;
+  // The target output is filled even when no event ultimately matches.
   tileAhead = Field_GetCollisionAheadOfLeader();
   if (eventFlags == PSYNERGY_EV_ANY)
     anyPhase = 1;
 
   while (event->control != -1) {
-    s32 direction = event->trigger & 0xf000;
-    s16 hasDirection = event->trigger & 0x0800;
+    s32 eventFacing = event->trigger & 0xf000;
+    s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
     if ((event->control & 0x0f) == EVENT_PSYNERGY &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
-        (hasDirection == 0 || (u16)(direction - facing + 0x17ff) <= 0x2ffe) &&
+        (requiresFacing == 0 ||
+         (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
         BattleActGet(((const u8 *)&event->control)[1])->type0c == group &&
         (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
       if ((event->control & 0x80) != 0)
@@ -3480,25 +3512,25 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
 // its user (bits 10 to 13).
 s32 Field_RunPsynergyEvents(s32 packed) {
   s32 target;
-  s32 ability;
-  s32 user;
+  s32 abilityId;
+  s32 userId;
   u8 group;
-  void *first;
-  void *second;
+  void *beforeEvent;
+  void *afterEvent;
 
-  ability = packed & 0x3FF;
-  user = ((u32)packed >> 10) & 0xF;
-  group = BattleActGet(ability)->type0c;
+  abilityId = packed & 0x3FF;
+  userId = ((u32)packed >> 10) & 0xF;
+  group = BattleActGet(abilityId)->type0c;
   // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
-  first = BattleFx_FindMatchingEvent(PSYNERGY_EV(3), group, &target);
-  second = BattleFx_FindMatchingEvent(PSYNERGY_EV(2), group, &target);
-  BattleFx_LoadActionEffectResources(ability, 0);
+  beforeEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(3), group, &target);
+  afterEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(2), group, &target);
+  BattleFx_LoadActionEffectResources(abilityId, 0);
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
-  BattleFx_RunEventAction(first, user, target);
+  BattleFx_RunEventAction(beforeEvent, userId, target);
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(second, user, target);
+  BattleFx_RunEventAction(afterEvent, userId, target);
   BattleEffect_CleanupSceneObjects();
   return 0;
 }
@@ -3520,51 +3552,51 @@ s32 Field_UsePsynergy(u32 code) {
   const struct SceneEvent *before;
   const struct SceneEvent *after;
   const struct SceneEvent *during;
-  s32 user;
+  s32 userId;
   s32 target;
   s32 retreat;
-  s32 group;
-  s32 cost;
-  s32 answer;
+  s32 abilityGroup;
+  s32 ppCost;
+  s32 declined;
 
-  group = BattleActGet(abilityId)->type0c;
-  user = ACT_UNIT(code);
+  abilityGroup = BattleActGet(abilityId)->type0c;
+  userId = ACT_UNIT(code);
   ObjectTable_Get(gGameState.selectedActor);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearBitFar(FLAG_ITEM_USE);
-  if (user == UNIT_NONE)
-    user = 0;
+  if (userId == UNIT_NONE)
+    userId = 0;
 
   // Where Psynergy has no effect.
   if (GameFlag_TestFar(FLAG_PSYNERGY_NONE)) {
-    PSYNERGY_MESSAGE(user, abilityId, MsgNothingHappened);
+    PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
   if (work->mode == MODE_WORLD_MAP && abilityId == PSYNERGY_REVEAL) {
-    PSYNERGY_MESSAGE(user, PSYNERGY_REVEAL, MsgNothingHappened);
+    PSYNERGY_MESSAGE(userId, PSYNERGY_REVEAL, MsgNothingHappened);
     return 0;
   }
 
   // Retreat: ask, then go back to where the party entered this place.
   if (abilityId == PSYNERGY_RETREAT) {
     if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
-      PSYNERGY_MESSAGE(user, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
+      PSYNERGY_MESSAGE(userId, PSYNERGY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
     UiWork_PushValueSlotFar(PSYNERGY_RETREAT, 4);
     UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
-    answer = Menu_AskYesNo(1); // 0 is yes
+    declined = Menu_AskYesNo(1); // 0 is yes
     UiWork_FinalizePendingCoreFar();
-    if (answer != 0)
+    if (declined != 0)
       return 0;
     {
-      struct GameState *st = &gGameState;
-      s32 scene, ent;
-      scene = (u16)st->retreatScene;
-      st->scene = scene;
-      ent = (u16)st->retreatEntrance;
-      st->entrance = ent;
+      struct GameState *state = &gGameState;
+      s32 scene, returnEntrance;
+      scene = (u16)state->retreatScene;
+      state->scene = scene;
+      returnEntrance = (u16)state->retreatEntrance;
+      state->entrance = returnEntrance;
     }
     work->exit = EXIT_RETREAT;
     retreat = 1;
@@ -3573,27 +3605,27 @@ s32 Field_UsePsynergy(u32 code) {
     return Field_RunPsynergyEvents(code);
 
   // A party member pays the PP.
-  if (user <= ALLY_MAX) {
-    cost = BattleActGet(abilityId)->ppCost;
-    if (UnitGetFar(user)->pp < cost) {
-      PSYNERGY_MESSAGE(user, abilityId, MsgNotEnoughPp);
+  if (userId <= ALLY_MAX) {
+    ppCost = BattleActGet(abilityId)->ppCost;
+    if (UnitGetFar(userId)->pp < ppCost) {
+      PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       if (retreat)
         work->exit = 0;
       return 0;
     }
-    Unit_AddPpFar(user, -cost);
+    Unit_AddPpFar(userId, -ppCost);
   }
 
   // Find the scene's events, and choose how the effect plays.
-  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), group, &target);
-  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), group, &target);
-  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), group, &target);
+  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), abilityGroup, &target);
+  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), abilityGroup, &target);
+  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), abilityGroup, &target);
   target = -1;
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target =
-        BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, group);
+    target = BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor,
+                                                   abilityGroup);
     if (after && (after->trigger & 0x400)) // the event plays the effect
     {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -3610,7 +3642,7 @@ s32 Field_UsePsynergy(u32 code) {
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
   EventObject_Initialize();
 
-  BattleFx_RunEventAction(before, user, target);
+  BattleFx_RunEventAction(before, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
     if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
       BattleFx_DispatchRequestKind();
@@ -3618,7 +3650,7 @@ s32 Field_UsePsynergy(u32 code) {
       BattleFx_Run();
   }
   EffectRuntime_StopCurrentObject();
-  BattleFx_RunEventAction(after, user, target);
+  BattleFx_RunEventAction(after, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
     BattleFx_ClearChildValueOnMismatch();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -3634,27 +3666,27 @@ s32 Field_UsePsynergy(u32 code) {
 // Psynergy of group and what the leader faces.
 s32 BattleFx_HasMatchingEvent5(s32 group) {
   s32 target;
-  s32 ev =
+  s32 eventAddress =
       (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &target);
-  return (u32)((-ev) | ev) >> 31;
+  return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
 // Returns whether the scene has an event for item and what the leader faces.
 u32 BattleFx_HasTrigger(u16 item) {
-  s32 ev;
+  s32 eventAddress;
 
-  ev = Field_FindItemEvent(item);
-  return (u32)((0 - ev) | ev) >> 31;
+  eventAddress = Field_FindItemEvent(item);
+  return (u32)((0 - eventAddress) | eventAddress) >> 31;
 }
 
 // Puts an actor on the ground under it.
 void ObjectMotion_SnapToTerrain(void *object) {
-  struct ObjectRuntime *obj = object;
-  s32 height;
+  struct ObjectRuntime *actor = object;
+  s32 terrainHeight;
 
-  height = Map_GetTerrainHeightFar(0, obj->x, obj->z);
-  obj->y = height;
-  obj->terrainHeight = height;
+  terrainHeight = Map_GetTerrainHeightFar(0, actor->x, actor->z);
+  actor->y = terrainHeight;
+  actor->terrainHeight = terrainHeight;
 }
 
 // The start of the map's work.
@@ -3670,16 +3702,23 @@ struct MarkerMap {
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MarkerMap *map = gMapWork[0];
+#ifdef UBFIX
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+#else
+  // UB: the event cell is a separate global, beyond gMapWork's one pointer.
+  // Reading gEventWork plainly grows 0x254 to 0x25c bytes in English.
   struct FieldWork *work = gMapWork[HEAP_SLOT_EVENT - 8];
-  s32 count = 0;
+#endif
+  s32 markerCount = 0;
   u8 *list = map->markers;
   struct MarkerSlot *slot = work->markers;
   const struct SceneEvent *event;
-  struct ScriptObjectRuntime *obj;
+  struct ScriptObjectRuntime *markerActor;
   u32 column;
   u32 row;
 
   Dma_Fill32(0, slot, sizeof(struct MarkerSlot) * MARKER_MAX);
+  // A marker without an eligible scene event consumes no slot.
   if (list == NULL)
     return;
 
@@ -3694,31 +3733,31 @@ void Field_PlaceMapMarkers(void) {
           continue;
         if ((event->control & 0x1ff) == 19) {
           // A chest, at the centre of its cell.
-          obj = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerActor = (struct ScriptObjectRuntime *)Object_CreateFar(
               20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
-          if (obj == NULL)
+          if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(obj);
-          ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
+          ObjectMotion_SnapToTerrain(markerActor);
+          ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
           if (GameFlag_TestFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              ObjectDispatch_ReleaseFar(obj);
+              ObjectDispatch_ReleaseFar(markerActor);
               continue;
             }
-            ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+            ObjectDispatch_ApplyArgumentToChildrenFar(markerActor, 2);
           }
-          ObjectDispatch_InitFromTable6Far(obj);
-          obj->homeX = obj->x / 0x10000;
-          obj->homeZ = obj->z / 0x10000;
-          obj->unk23 = 1;
-          obj->flags59 = 1;
+          ObjectDispatch_InitFromTable6Far(markerActor);
+          markerActor->homeX = markerActor->x / 0x10000;
+          markerActor->homeZ = markerActor->z / 0x10000;
+          markerActor->unk23 = 1;
+          markerActor->flags59 = 1;
           slot->id = event->trigger;
-          slot->object = (struct ObjectRuntime *)obj;
-          slot->column = obj->x / 0x100000;
-          slot->row = obj->z / 0x100000;
+          slot->object = (struct ObjectRuntime *)markerActor;
+          slot->column = markerActor->x / 0x100000;
+          slot->row = markerActor->z / 0x100000;
           slot++;
-          count++;
-          if (count >= MARKER_MAX)
+          markerCount++;
+          if (markerCount >= MARKER_MAX)
             return;
         } else if ((event->control & 0x1ff) == EVENT_SEARCH) {
           // A Psynergy stone not yet taken.
@@ -3726,25 +3765,25 @@ void Field_PlaceMapMarkers(void) {
             continue;
           if (GameFlag_TestFar(event->condition))
             continue;
-          obj = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerActor = (struct ScriptObjectRuntime *)Object_CreateFar(
               28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
-          if (obj == NULL)
+          if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(obj);
-          ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-          ObjectDispatch_InitFromTable6Far(obj);
-          ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
-          obj->homeX = obj->x / 0x10000;
-          obj->homeZ = obj->z / 0x10000;
-          obj->flags59 = 1;
-          obj->unk23 = 1;
-          slot->object = (struct ObjectRuntime *)obj;
+          ObjectMotion_SnapToTerrain(markerActor);
+          ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
+          ObjectDispatch_InitFromTable6Far(markerActor);
+          ObjectDispatch_ApplyArgumentToChildrenFar(markerActor, 1);
+          markerActor->homeX = markerActor->x / 0x10000;
+          markerActor->homeZ = markerActor->z / 0x10000;
+          markerActor->flags59 = 1;
+          markerActor->unk23 = 1;
+          slot->object = (struct ObjectRuntime *)markerActor;
           slot->id = event->trigger;
-          slot->column = obj->x / 0x100000;
-          slot->row = obj->z / 0x100000;
+          slot->column = markerActor->x / 0x100000;
+          slot->row = markerActor->z / 0x100000;
           slot++;
-          count++;
-          if (count >= MARKER_MAX)
+          markerCount++;
+          if (markerCount >= MARKER_MAX)
             return;
         } else {
           continue;
@@ -3759,19 +3798,19 @@ void Field_PlaceMapMarkers(void) {
 
 // Returns the marker slot (0 to 9) whose event trigger is id, or -1.
 s32 Marker_FindSlot(s32 id) {
-  s32 index;
-  s32 found;
+  s32 slotIndex;
+  s32 matchingSlot;
   struct MarkerSlot *slot;
 
   slot = ((struct FieldWork *)gEventWork)->markers;
-  found = -1;
-  for (index = 0; index <= 9; index++, slot++) {
+  matchingSlot = -1;
+  for (slotIndex = 0; slotIndex <= 9; slotIndex++, slot++) {
     if (slot->id == id) {
-      found = index;
+      matchingSlot = slotIndex;
       break;
     }
   }
-  return found;
+  return matchingSlot;
 }
 
 // Does nothing.
@@ -3780,18 +3819,18 @@ void EffectRuntime_ReservedNoOp(void) {}
 // Gives the actor of marker id animation, plays sound and waits 12 frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
-  s32 slot;
+  s32 slotIndex;
   struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = Marker_FindSlot(id);
-  if (slot != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  slotIndex = Marker_FindSlot(id);
+  if (slotIndex != -1) {
+    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, animation);
     AudioCommand_PlayFar(sound);
-    WaitFrames(0xc);
+    WaitFrames(12);
   }
 }
 
@@ -3800,20 +3839,20 @@ void Marker_CloseChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 5, 0x7d); }
 
 // Makes the chest of marker id jump up as a mimic.
 void Marker_LaunchMimic(s32 id) {
-  s32 slot;
+  s32 slotIndex;
   struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = Marker_FindSlot(id);
-  if (slot != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  slotIndex = Marker_FindSlot(id);
+  if (slotIndex != -1) {
+    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
-    WaitFrames(0x12);
+    WaitFrames(18);
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
     AudioCommand_PlayFar(0x92);
     if (object != NULL) {
-      object->velocityY = 0x80000;
+      object->velocityY = 8 << 16;
       ObjectDispatch_SetSingleChildFlagsFar(object, 1);
     }
   }
@@ -3824,13 +3863,13 @@ void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, 0x7c); }
 
 // Shows the chest of marker id open (animation 2).
 void Marker_ShowOpened(s32 id) {
-  s32 slot;
+  s32 slotIndex;
   struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = Marker_FindSlot(id);
-  if (slot != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  slotIndex = Marker_FindSlot(id);
+  if (slotIndex != -1) {
+    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
@@ -3839,24 +3878,24 @@ void Marker_ShowOpened(s32 id) {
 
 // Returns the actor of marker id, or NULL.
 struct ObjectRuntime *Marker_GetActor(s32 id) {
-  s32 slot = Marker_FindSlot(id);
+  s32 slotIndex = Marker_FindSlot(id);
   struct MarkerSlot *marker;
 
-  if (slot == -1)
+  if (slotIndex == -1)
     return NULL;
-  marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
   return marker->object;
 }
 
 // Hides the actor of marker id.
 void Marker_Hide(s32 id) {
-  s32 slot;
+  s32 slotIndex;
   struct MarkerSlot *marker;
   struct ObjectRuntime *object;
 
-  slot = Marker_FindSlot(id);
-  if (slot != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  slotIndex = Marker_FindSlot(id);
+  if (slotIndex != -1) {
+    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       object->animationKind = 0;
@@ -3866,8 +3905,8 @@ void Marker_Hide(s32 id) {
 // Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
 // of its cell on that axis.
 void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
-  s32 slot;
-  s32 height;
+  s32 slotIndex;
+  s32 terrainHeight;
   s32 objectX;
   s32 objectZ;
   struct MarkerSlot *marker;
@@ -3875,9 +3914,9 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
 
   objectZ = z;
   objectX = x;
-  slot = Marker_FindSlot(id);
-  if (slot != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slot];
+  slotIndex = Marker_FindSlot(id);
+  if (slotIndex != -1) {
+    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL) {
       if (objectX == -1)
@@ -3886,9 +3925,9 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 z) {
         objectZ = (marker->row << 20) + 0x80000;
       object->x = objectX;
       object->z = objectZ;
-      height = Map_GetTerrainHeightFar(0, objectX, objectZ);
-      object->terrainHeight = height;
-      object->y = height;
+      terrainHeight = Map_GetTerrainHeightFar(0, objectX, objectZ);
+      object->terrainHeight = terrainHeight;
+      object->y = terrainHeight;
     }
   }
 }
@@ -3907,88 +3946,78 @@ LAYOUT_OFFSET_GUARD(ParticleEffectObject_child_offset, struct ObjectRuntime,
 
 // An actor as these effects see it.
 struct EffectObj {
-  s32 data; // its script
+  s32 scriptWord; // the encoded script pointer
   u8 pad0[0x24];
-  u32 travel;
+  s32 velocityY;
   u8 pad1[0x1c];
-  u32 dy;
+  s32 gravity;
   u8 pad2[4];
-  struct AnimationObject *vis;
+  struct AnimationObject *animation;
   u8 pad3[24];
-  void (*proc)(void); // called each frame
+  void (*updateHook)(union FieldObject *object); // frame hook at offset 0x6c
 };
 
-// The table of 64 actors, 88 bytes before gEventWork.
-#define EffectPool (*(struct EffectObj **)((u8 *)&gEventWork - 88))
+LAYOUT_SIZE_GUARD(EffectObj_Size, struct EffectObj, 0x70);
+LAYOUT_OFFSET_GUARD(EffectObj_UpdateHook, struct EffectObj, updateHook, 0x6c);
 
-// One of the scene's events (ended by flags -1).
-struct MapEventEntry {
-  s32 flags; // the low 4 bits are the kind
-  s16 id;
-  s16 flag;
-  s32 position;
-};
+// ObjectSystem_Initialize allocates 64 ObjectRuntime records in heap slot 5.
+#define EFFECT_OBJECT_COUNT 64
+#ifdef UBFIX
+#define EFFECT_OBJECT_POOL ((struct EffectObj *)gObjectSlots)
+#else
+// UB: gObjectSlots and gEventWork are separate globals. The named pool load
+// changes register allocation and shrinks StartRandomParticleEmitter from
+// 0x158 to 0x156 bytes (English, 2026-10-16); keep the native read here.
+#define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
+#endif
+#define SPARKLE_OBJECT_ID 285
 
 // Keeps the party leader off the markers: a leader within 16 pixels of a
 // marker cell's centre is moved 20 pixels from that centre, in the direction
 // it stood, and loses its move target.
 void BattleFx_EmitRandomParticle(void) {
-  struct ObjectRuntime *actor = ObjectTable_Get(gGameState.selectedActor);
-  struct MarkerSlot *cell = ((struct FieldWork *)gEventWork)->markers;
-  s32 i = 0;
+  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
+  s32 markerIndex = 0;
   s32 x;
   s32 z;
-  s32 cx;
-  s32 cz;
+  s32 cellX;
+  s32 cellZ;
   s32 dx;
   s32 dz;
 
-  if (cell->id != 0) {
-    x = actor->x;
-    z = actor->z;
+  if (marker->id != 0) {
+    x = leader->x;
+    z = leader->z;
     for (;;) {
-      cx = cell->column << 20;
-      dx = x - cx - (8 << 16);
-      cz = cell->row << 20;
-      dz = z - cz - (8 << 16);
+      cellX = marker->column << 20;
+      dx = x - cellX - (8 << 16);
+      cellZ = marker->row << 20;
+      dz = z - cellZ - (8 << 16);
       if ((dx >= -0xfffff && dx <= 0xfffff) &&
           (dz >= -0xfffff && dz <= 0xfffff)) {
-        actor->x = cx + (8 << 16);
-        actor->z = cz + (8 << 16);
+        leader->x = cellX + (8 << 16);
+        leader->z = cellZ + (8 << 16);
         Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
-                              (struct EffectVector *)&actor->x);
-        actor->targetX = ACTOR_NO_TARGET;
-        actor->targetY = ACTOR_NO_TARGET;
-        actor->targetZ = ACTOR_NO_TARGET;
+                              (struct EffectVector *)&leader->x);
+        leader->targetX = ACTOR_NO_TARGET;
+        leader->targetY = ACTOR_NO_TARGET;
+        leader->targetZ = ACTOR_NO_TARGET;
         return;
       }
-      i++;
-      cell++;
-      if (i > 9 || cell->id == 0)
+      markerIndex++;
+      marker++;
+      if (markerIndex > 9 || marker->id == 0)
         break;
     }
   }
 }
 
-// Each frame of a found item's picture: one time in ten, a sparkle appears
-// within 16 pixels of it.
-void ItemDisplay_EmitSparkles(struct ObjectRuntime *emitter) {
-  struct EffectVector pos;
-  struct ObjectRuntime *obj;
-  u32 randomAngle;
-
-  if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
-    emitter->flags = 0;
-
-  if ((100 * Random16() >> 16) > 9)
-    return;
-
-  pos.x = emitter->x;
-  pos.y = emitter->y;
-  pos.z = emitter->z;
-  randomAngle = Random16();
-  Vector_AddPolarOffset(randomAngle << 4, Random16(), &pos);
-  obj = Object_Spawn(285, pos.x, pos.y, pos.z);
+// Starts the particle script and its first child at priority 1, if the spawn
+// succeeded. Allocation failure leaves the effect absent.
+// Sharing the offset and spawn as well changes literal/argument load order in
+// both emitters, without changing their sizes (English, 2026-10-16).
+static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   if (obj != 0) {
     // Draw the sparkle at priority 1.
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
@@ -3998,80 +4027,109 @@ void ItemDisplay_EmitSparkles(struct ObjectRuntime *emitter) {
   }
 }
 
+// Each frame of a found item's picture: one time in ten, a sparkle appears
+// within 16 pixels of it.
+void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
+  struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
+  union PolarOffsetPosition position;
+  struct ObjectRuntime *obj;
+  u32 randomRadius;
+
+  if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
+    emitter->flags = 0;
+
+  // Test the chance before drawing the radius and angle from the RNG.
+  if ((100 * Random16() >> 16) > 9)
+    return;
+
+  position.vector.x = emitter->x;
+  position.vector.y = emitter->y;
+  position.vector.z = emitter->z;
+  randomRadius = Random16();
+  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
+  obj = Object_Spawn(SPARKLE_OBJECT_ID, position.vector.x, position.vector.y,
+                     position.vector.z);
+  Object_InitializeSparkle(obj);
+}
+
 // Shows the picture of item (0 for none) at the centre of the cell 16 pixels
 // in front of character actor, 16 pixels up, with sparkles. While Reveal is
 // active, its sparkles are cleared first. Returns the picture's actor, or 0.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
-  struct EffectObj *obj;
+  struct EffectObj *picture;
 
   s32 work = (s32)gEventWork;
-  u32 off = (actor * 4) + 0x14; // EventWork's actors[actor]
+  u32 actorOffset = (actor * 4) + 0x14; // EventWork's actors[actor]
 
-  s32 srcZ = (s32)*(struct FieldActor **)(work + off);
-  struct EffectVector pos;
-  s32 x;
+  s32 srcZ = (s32)*(struct FieldActor **)(work + actorOffset);
+  union PolarOffsetPosition picturePosition;
+  s32 pictureX;
 
   if (srcZ == 0)
     return 0;
 
-  pos.x = ((struct FieldActor *)srcZ)->x.fixed;
-  pos.y = ((struct FieldActor *)srcZ)->y.fixed;
-  pos.z = ((struct FieldActor *)srcZ)->z.fixed;
-  Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing, &pos);
-  x = (pos.x & 0xfff00000) + (8 << 16);
-  srcZ = (pos.z & 0xfff00000) + (8 << 16); // srcZ now holds the cell's z
+  picturePosition.vector.x = ((struct FieldActor *)srcZ)->x.fixed;
+  picturePosition.vector.y = ((struct FieldActor *)srcZ)->y.fixed;
+  picturePosition.vector.z = ((struct FieldActor *)srcZ)->z.fixed;
+  Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing,
+                        picturePosition.coordinates);
+  pictureX = (picturePosition.vector.x & 0xfff00000) + (8 << 16);
+  srcZ = (picturePosition.vector.z & 0xfff00000) +
+         (8 << 16); // srcZ now holds the cell's z
 
   if (((struct FieldWork *)work)->revealActive != 0) {
-    struct EffectObj *ent = EffectPool;
+    // Stop both the marker emitters and the sparkle actors they already made.
+    struct EffectObj *effect = EFFECT_OBJECT_POOL;
 
-    work = 63; // work now counts the actors left
+    work = EFFECT_OBJECT_COUNT - 1; // work now counts the actors left
 
     do {
-      if (ent->data != 0) {
-        if (ent->proc == (void (*)(void))RevealMarker_EmitSparkles) {
-          ObjectDispatch_ReleaseFar(ent);
+      if (effect->scriptWord != 0) {
+        if (effect->updateHook == RevealMarker_EmitSparkles) {
+          ObjectDispatch_ReleaseFar(effect);
         }
-        if (ent->data == (s32)gBattleFx_ParticleScript) {
-          ObjectDispatch_ReleaseFar(ent);
+        if (effect->scriptWord == (s32)gBattleFx_ParticleScript) {
+          ObjectDispatch_ReleaseFar(effect);
         }
       }
       work--;
-      ent++;
+      effect++;
     } while (work >= 0);
   }
 
   WaitFrames(3);
-  obj = (struct EffectObj *)Object_CreateFar(22, x, 16 << 16, srcZ);
-  if (obj == 0)
+  picture = (struct EffectObj *)Object_CreateFar(22, pictureX, 16 << 16, srcZ);
+  if (picture == 0)
     return 0;
 
-  ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  ObjectDispatch_InitializeFar((struct DispatchObject *)picture,
                                gBattleFx_ParticleEmitterScript);
   {
-    struct AnimationObject *vis = obj->vis;
-    void *buf;
+    struct AnimationObject *sprite = picture->animation;
+    void *iconBuffer;
 
-    vis->flags = 0;
-    vis->count = 0;
-    vis->part[0].fullColor = 0;
-    vis->part[0].palette = 0;
-    vis->part[0].priority = 1;
+    sprite->flags = 0;
+    sprite->count = 0;
+    sprite->part[0].fullColor = 0;
+    sprite->part[0].palette = 0;
+    sprite->part[0].priority = 1;
 
-    obj->travel = 0x20000;
-    obj->dy = 0x4000;
+    picture->velocityY = 0x20000;
+    picture->gravity = 0x4000;
 
     // Draw the item's icon into heap block 17, then send it to the sprite's
     // tiles.
-    buf = Runtime_AllocateHeapBlock(17, 0x608);
+    iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
-    vis->part[0].tile = VramCache_Load(vis->slot, 128, (u8 *)buf + 0x400);
+    sprite->part[0].tile =
+        VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
 
     Runtime_ReleaseHeapBlock(17);
-    obj->proc = (void (*)(void))ItemDisplay_EmitSparkles;
+    picture->updateHook = ItemDisplay_EmitSparkles;
   }
 
-  return obj;
+  return picture;
 }
 
 // Destroys object if there is one.
@@ -4083,38 +4141,37 @@ void Object_DestroyIfPresent(void *object) {
 // Raises a found item's picture to 36 pixels above the party leader, who
 // holds it up (animation 28) facing the screen.
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
-  struct ObjectRuntime *actor;
+  struct ObjectRuntime *leader;
 
   if (object == 0)
     return;
 
-  actor = ObjectTable_Get(gGameState.selectedActor);
+  leader = ObjectTable_Get(gGameState.selectedActor);
   object->acceleration = 1 << 16;
   object->speedLimit = 2 << 16;
   object->flags = 0;
-  Object_SetMoveTargetFar(object, actor->x, actor->y + (36 << 16), actor->z);
+  Object_SetMoveTargetFar(object, leader->x, leader->y + (36 << 16), leader->z);
   WaitFrames(3);
-  ObjectDispatch_ApplyArgumentToChildrenFar(actor, 28);
+  ObjectDispatch_ApplyArgumentToChildrenFar(leader, 28);
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gBattleFx_RisingPulseScript);
-  actor->angle = 0x4000;
+  leader->angle = 0x4000;
 }
 
 // Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 // above the leader, with waits of 60 and 80 frames around that when both are
 // set. The leader then returns to animation 1.
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
-  void *actor;
+  void *leader;
 
   if (object != NULL) {
-    actor = ObjectTable_Get(gGameState.selectedActor);
+    leader = ObjectTable_Get(gGameState.selectedActor);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gBattleFx_ParticleEmitterScript);
-      ((struct EffectObj *)object)->travel = 0x20000;
-      ((struct EffectObj *)object)->dy = 0x4000;
-      ((struct EffectObj *)object)->proc =
-          (void (*)(void))ItemDisplay_EmitSparkles;
+      ((struct EffectObj *)object)->velocityY = 0x20000;
+      ((struct EffectObj *)object)->gravity = 0x4000;
+      ((struct EffectObj *)object)->updateHook = ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {
       WaitFrames(60);
@@ -4125,38 +4182,38 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
     if (flags == 3) {
       WaitFrames(80);
     }
-    ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
   }
 }
 
 // Shows the picture of item 36 pixels above the party leader for 80 frames;
 // flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void BattleFx_StartEffectObject22(s32 item, s32 flags) {
-  struct FieldActor *actor = ObjectTable_Get(gGameState.selectedActor);
-  void *handle = Runtime_AllocateHeapBlock(17, 0x608);
+  struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
+  void *iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
   struct EffectObj *object = (struct EffectObj *)Object_CreateFar(
-      22, actor->x.fixed, actor->y.fixed + (36 << 16), actor->z.fixed);
+      22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
 
   if (object != 0) {
-    struct AnimationObject *visual = object->vis;
+    struct AnimationObject *sprite = object->animation;
 
-    visual->flags = 0;
-    visual->count = 0;
-    visual->part[0].fullColor = 0;
-    visual->part[0].palette = 0;
-    visual->part[0].priority = 1;
+    sprite->flags = 0;
+    sprite->count = 0;
+    sprite->part[0].fullColor = 0;
+    sprite->part[0].palette = 0;
+    sprite->part[0].priority = 1;
 
     Ui_PrepareTransferForItemFar(item);
-    VramCache_Load(visual->slot, 128, (u8 *)handle + 0x400);
+    VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
     Runtime_ReleaseHeapBlock(17);
 
     if (flags & 1)
-      object->proc = (void (*)(void))ItemDisplay_EmitSparkles;
+      object->updateHook = ItemDisplay_EmitSparkles;
     if (flags & 2)
       ItemDisplay_RaiseAboveLeader((struct ObjectRuntime *)object);
 
     WaitFrames(80);
-    ObjectDispatch_ApplyArgumentToChildrenFar(actor, 1);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
     ObjectDispatch_ReleaseFar(object);
   }
 }
@@ -4174,17 +4231,17 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 // While Reveal is active, destroys all its sparkles.
 void BattleFx_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
-    struct EffectObj *ent = EffectPool;
-    s32 n = 63;
+    struct EffectObj *effect = EFFECT_OBJECT_POOL;
+    s32 remainingActors = EFFECT_OBJECT_COUNT - 1;
 
     do {
-      if (ent->data != 0) {
-        if (ent->data == (s32)gBattleFx_ParticleScript)
-          ObjectDispatch_ReleaseFar(ent);
+      if (effect->scriptWord != 0) {
+        if (effect->scriptWord == (s32)gBattleFx_ParticleScript)
+          ObjectDispatch_ReleaseFar(effect);
       }
-      n--;
-      ent++;
-    } while (n >= 0);
+      remainingActors--;
+      effect++;
+    } while (remainingActors >= 0);
   }
 }
 
@@ -4192,10 +4249,11 @@ void BattleFx_ClearRandomParticles(void) {
 
 // Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 // pixels of it.
-void RevealMarker_EmitSparkles(const struct FieldActor *source) {
-  struct EffectVector pos;
+void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
+  const struct FieldActor *source = (const struct FieldActor *)fieldObject;
+  union PolarOffsetPosition position;
   struct ObjectRuntime *obj;
-  u32 random;
+  u32 randomRadius;
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
   if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFFSET) != 0)
@@ -4204,32 +4262,28 @@ void RevealMarker_EmitSparkles(const struct FieldActor *source) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  pos.x = source->x.fixed;
-  pos.y = source->y.fixed;
-  pos.z = source->z.fixed;
-  random = Random16();
-  Vector_AddPolarOffset(random << 4, Random16(), &pos);
-  obj = Object_Spawn(285, pos.x, pos.y, pos.z);
-  if (obj != 0) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                 gBattleFx_ParticleScript);
-    ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-    ((struct AnimationObject *)obj->animation)->part[0].priority = 1;
-  }
+  position.vector.x = source->x.fixed;
+  position.vector.y = source->y.fixed;
+  position.vector.z = source->z.fixed;
+  randomRadius = Random16();
+  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
+  obj = Object_Spawn(SPARKLE_OBJECT_ID, position.vector.x, position.vector.y,
+                     position.vector.z);
+  Object_InitializeSparkle(obj);
 }
 
 // Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
-  s16 count;
-  u32 active = 0;
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  s16 revealState;
+  u32 isActive = 0;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  if (runtime != NULL) {
-    count = runtime->revealActive;
-    active = (0 - count) | count;
-    active >>= 31;
+  if (work != NULL) {
+    revealState = work->revealActive;
+    isActive = (0 - revealState) | revealState;
+    isActive >>= 31;
   }
-  return active;
+  return isActive;
 }
 
 // Reveal: marks with sparkles the hidden things within 8 cells across and 5
@@ -4237,49 +4291,51 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 // event (kind 3) gives an item, coins, a Psynergy stone or a mimic (types 0
 // to 3 and 5) and has not been found yet.
 void FieldEffect_SpawnNearbyMarkers(void) {
-  u8 *list;
+  u8 *markerData;
   struct ObjectRuntime *actor;
-  struct MapEventEntry *entry;
-  s32 actorX;
-  s32 actorZ;
-  s32 x;
-  s32 z;
+  const struct SceneEvent *entry;
+  s32 leaderColumn;
+  s32 leaderRow;
+  s32 column;
+  s32 row;
   s32 id;
 
   // The map's places: (x, z, id) triples, ended by x and z 0xff.
-  list = *(u8 **)(((u8 *)gMapWork[0]) + 16);
+  markerData = *(u8 **)(((u8 *)gMapWork[0]) + 16);
   actor = ObjectTable_Get(gGameState.selectedActor);
-  actorX = actor->x >> 20;
-  actorZ = actor->z >> 20;
-  if (list != 0) {
-    while (x = *list++, z = *list++, x != 0xff || z != 0xff) {
-      id = *list++;
+  leaderColumn = actor->x >> 20;
+  leaderRow = actor->z >> 20;
+  if (markerData != 0) {
+    while (column = *markerData++, row = *markerData++,
+           column != 0xff || row != 0xff) {
+      id = *markerData++;
       if (Marker_GetActor(id) != NULL)
         continue;
       if (id < 100 || id > 239)
         continue;
-      if (actorX - x >= 0) {
-        if (actorX - x > 8)
+      if (leaderColumn - column >= 0) {
+        if (leaderColumn - column > 8)
           continue;
-      } else if (x - actorX > 8)
+      } else if (column - leaderColumn > 8)
         continue;
-      if (actorZ - z >= 0) {
-        if (actorZ - z > 5)
+      if (leaderRow - row >= 0) {
+        if (leaderRow - row > 5)
           continue;
-      } else if (z - actorZ > 5)
+      } else if (row - leaderRow > 5)
         continue;
-      entry = (struct MapEventEntry *)gOverlayArea.events();
-      if (entry->flags == -1)
+      entry = gOverlayArea.events();
+      if (entry->control == (u32)-1)
         continue;
       do {
-        if (entry->id == id && (entry->flags & 15) == 3) {
-          switch (entry->position & 0xfff00000) {
+        if (entry->trigger == id && (entry->control & 15) == EVENT_SEARCH) {
+          switch (entry->value & 0xfff00000) {
           case 0:
           case 0x100000:
           case 0x200000:
           case 0x300000:
           case 0x500000:
-            if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0) {
+            if (entry->condition != -1 &&
+                GameFlag_TestFar(entry->condition) == 0) {
               /* FAKEMATCH: the spawned object reuses the actor variable, so the
                * one pseudo keeps ObjectTable_Get's result in r5 (adds r5, r0,
                * #0) before the actorX and actorZ loads. 2026-10-13: a separate
@@ -4287,20 +4343,20 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                * declaration position, differs 9 of 163: the copy into r5 is
                * gone, the loads read r0 and three pool offsets move. */
               actor = (struct ObjectRuntime *)Object_CreateFar(
-                  22, (x << 20) + (8 << 16), 0, (z << 20) + (8 << 16));
+                  22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (actor != 0) {
                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor,
                                              gBattleFx_MarkerParticleScript);
                 ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
-                ((struct EffectObj *)actor)->proc =
-                    (void (*)(void))RevealMarker_EmitSparkles;
+                ((struct EffectObj *)actor)->updateHook =
+                    RevealMarker_EmitSparkles;
               }
             }
             break;
           }
         }
         entry++;
-      } while (entry->flags != -1);
+      } while (entry->control != (u32)-1);
     }
   }
 }
@@ -4311,20 +4367,22 @@ void FieldEffect_SpawnNearbyMarkers(void) {
 // of the screen gets its own window edges.
 void BattleFx_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work = gDisplayTransition;
-  u16 *src = work->pages[work->page];
-  volatile u16 *channel = REG_DMA0;
+  u16 *scanlineData = work->pages[work->page];
+  volatile u16 *dma0 = REG_DMA0;
 
-  channel[5] &= 0xc5ff;
-  channel[5] &= 0x7fff;
-  (void)channel[5];
+  // Stop the previous transfer before priming the first line's registers.
+  dma0[5] &= 0xc5ff;
+  dma0[5] &= 0x7fff;
+  (void)dma0[5];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  Io_Write16(*src++, &REG_WININ);
-  Io_Write16(*src++, &REG_WINOUT);
-  Io_Write16(*src++, &REG_WIN0H);
-  Io_Write16(*src++, &REG_WIN1H);
+  Io_Write16(*scanlineData++, &REG_WININ);
+  Io_Write16(*scanlineData++, &REG_WINOUT);
+  Io_Write16(*scanlineData++, &REG_WIN0H);
+  Io_Write16(*scanlineData++, &REG_WIN1H);
   Io_Write16(160, &REG_WIN0V);
   Io_Write16(160, &REG_WIN1V);
-  Dma_Set(src, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)channel);
+  // HBlank repeats one word: both horizontal window bounds for the next line.
+  Dma_Set(scanlineData, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)dma0);
 }
 
 struct TransitionSpan {
@@ -4358,33 +4416,45 @@ void DisplayTransition_UpdateScanlineTable(void) {
   struct TransitionSpan *span;
   struct TransitionShape *shape;
   struct MapScrollWork *map;
-  u16 *dst;
+  u16 *scanlineData;
+#ifndef UBFIX
+  // UB: viewX is a scalar, so indexing its address cannot reach viewY.
+  // Four direct named-member pairs change 0x90c to 0x914 native bytes
+  // (English, 2026-10-16). Modern code reads the actual members below.
   s32 *view7;
   s32 *view8;
   s32 *view9;
   s32 *view77;
+#endif
   struct ObjectRuntime *obj;
   u32 i;
   s32 k;
-  s32 cnt;
-  s32 v;
-  s32 rr;
-  s32 d;
-  u32 h;
-  s32 lo;
-  s32 hi;
-  s32 cx;
-  s32 cy;
+  s32 lineCount;
+  s32 value;
+  s32 radiusSquaredQ16;
+  s32 delta;
+  u32 horizontalExtent;
+  s32 left;
+  s32 right;
+  s32 centerX;
+  s32 centerY;
 
-  s32 ay;
-  s32 bx;
-  s32 by;
-  u32 w;
-  s32 e;
+  s32 cameraY;
+  s32 cameraX;
+  s32 cameraY8;
+  u32 leftEdge;
+  s32 oppositeEdges;
 
   map = gMapWork[0];
+#ifdef UBFIX
+  state = gDisplayTransition;
+#else
+  // UB: this indexes past gMapWork into the separate transition-work cell.
+  // The named cell grows 0x90c to 0x910 native bytes in English.
   state = gMapWork[23];
+#endif
 
+  // Finish or advance the timed phase before generating the hidden page.
   if (state->duration != 0) {
     if (state->step >= state->duration) {
       state->duration = 0;
@@ -4416,56 +4486,61 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
   }
 
-  dst = state->pages[1 ^ state->page];
-  UiWindow_FillFromSceneFar(dst + 2);
+  scanlineData = state->pages[1 ^ state->page];
+  UiWindow_FillFromSceneFar(scanlineData + 2);
 
   switch (state->mode) {
   case 0:
-    *dst++ = 0x7f7f;
-    *dst++ = 1;
-    v = state->value;
-    if (v & 32) {
-      v = 32 - (v & 31);
+    *scanlineData++ = 0x7f7f;
+    *scanlineData++ = 1;
+    value = state->value;
+    if (value & 32) {
+      value = 32 - (value & 31);
     } else {
-      v &= 31;
+      value &= 31;
     }
-    v = gDisplayTransition_NoiseWidths[v];
+    value = gDisplayTransition_NoiseWidths[value];
     for (i = 0; i < 160; i++) {
-      w = (Random16() * (241 - v)) >> 16;
-      dst[0] = ((w << 8) | (w + v));
-      dst += 2;
+      leftEdge = (Random16() * (241 - value)) >> 16;
+      scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
+      scanlineData += 2;
     }
     break;
 
   case 1:
-    v = state->value;
-    shape = &gDisplayTransition_Shapes[v & 31];
-    if (v & 32) {
-      *dst++ = shape->first;
-      *dst++ = shape->second;
+    value = state->value;
+    shape = &gDisplayTransition_Shapes[value & 31];
+    if (value & 32) {
+      *scanlineData++ = shape->first;
+      *scanlineData++ = shape->second;
     } else {
-      *dst++ = shape->second;
-      *dst++ = shape->first;
+      *scanlineData++ = shape->second;
+      *scanlineData++ = shape->first;
     }
     for (i = 0; i < 3; i++) {
       span = &shape->spans[i];
-      cnt = span->cnt;
-      hi = span->val;
-      if (cnt != 0) {
-        if (hi != 0) {
-          for (k = 0; k < cnt; k++) {
-            dst[0] = hi;
-            dst += 2;
+      lineCount = span->cnt;
+      right = span->val;
+      if (lineCount != 0) {
+        if (right != 0) {
+          for (k = 0; k < lineCount; k++) {
+            scanlineData[0] = right;
+            scanlineData += 2;
           }
         } else {
-          rr = span->x0;
-          lo = span->y0;
-          d = span->x1;
-          hi = span->y1;
-          for (k = 0; k < cnt; k++) {
-            dst[0] =
-                (((rr + (d - rr) * k / cnt) << 8) + (lo + (hi - lo) * k / cnt));
-            dst += 2;
+          // These shared temporaries hold the left and right endpoints here.
+          // Four span-local endpoints shrink 0x90c to 0x8bc bytes in English;
+          // keep this reuse until a plain form matches.
+          radiusSquaredQ16 = span->x0;
+          left = span->y0;
+          delta = span->x1;
+          right = span->y1;
+          for (k = 0; k < lineCount; k++) {
+            scanlineData[0] = (((radiusSquaredQ16 +
+                                 (delta - radiusSquaredQ16) * k / lineCount)
+                                << 8) +
+                               (left + (right - left) * k / lineCount));
+            scanlineData += 2;
           }
         }
       }
@@ -4473,168 +4548,207 @@ void DisplayTransition_UpdateScanlineTable(void) {
     break;
 
   case 2:
-    v = state->value - 1;
-    if (v & 32) {
-      *dst++ = 1;
-      *dst++ = 0x7f7f;
+    value = state->value - 1;
+    if (value & 32) {
+      *scanlineData++ = 1;
+      *scanlineData++ = 0x7f7f;
     } else {
-      *dst++ = 0x7f7f;
-      *dst++ = 1;
+      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = 1;
     }
-    v &= 31;
+    value &= 31;
     for (i = 0; i < 160; i++) {
-      h = (v << 4) + ((16 * Random16()) >> 16);
-      if (h > 255) {
-        h = 255;
+      horizontalExtent = (value << 4) + ((16 * Random16()) >> 16);
+      if (horizontalExtent > 255) {
+        horizontalExtent = 255;
       }
-      dst[0] = h;
-      dst += 2;
+      scanlineData[0] = horizontalExtent;
+      scanlineData += 2;
     }
     break;
 
-  case 3:
-    v = state->value;
-    *dst++ = 0x7f7f;
-    *dst++ = 1;
-    if ((u32)v > 32) {
-      *dst++ = 1;
-      *dst++ = 0x7f7f;
-      v = 64 - v;
+  case 3: {
+#ifdef UBFIX
+    // Closing writes four header halfwords, then 160 pairs: its last write
+    // crosses the 322-halfword page. Keep that write into the following page
+    // or solid tile, using bytes of the whole allocated state rather than an
+    // out-of-bounds page pointer or a u16 alias of the u32 solid tile.
+    u8 *pageBytes = (u8 *)state + (1 ^ state->page) * sizeof(state->pages[0]);
+    const u16 header[4] = {0x7f7f, 1, 1, 0x7f7f};
+    u32 headerSize = 2 * sizeof(u16);
+    u16 edges;
+#endif
+    value = state->value;
+#ifdef UBFIX
+    if ((u32)value > 32) {
+      headerSize = sizeof(header);
+      value = 64 - value;
     }
-    v *= 5;
-    rr = (v * v) << 16;
+    memcpy(pageBytes, header, headerSize);
+    pageBytes += headerSize;
+#else
+    *scanlineData++ = 0x7f7f;
+    *scanlineData++ = 1;
+    if ((u32)value > 32) {
+      *scanlineData++ = 1;
+      *scanlineData++ = 0x7f7f;
+      value = 64 - value;
+    }
+#endif
+    value *= 5;
+    radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      v = i - 80;
-      h = Iwram_Sqrt(rr - ((v * v) << 16)) >> 8;
-      lo = 120 - h;
-      hi = h + 120;
-      if (lo < 0) {
-        lo = 0;
+      value = i - 80;
+      horizontalExtent =
+          Iwram_Sqrt(radiusSquaredQ16 - ((value * value) << 16)) >> 8;
+      left = 120 - horizontalExtent;
+      right = horizontalExtent + 120;
+      if (left < 0) {
+        left = 0;
       }
-      if (hi < 0) {
-        hi = 0;
+      if (right < 0) {
+        right = 0;
       }
-      if (lo > 240) {
-        lo = 240;
+      if (left > 240) {
+        left = 240;
       }
-      if (hi > 240) {
-        hi = 240;
+      if (right > 240) {
+        right = 240;
       }
-      dst[0] = ((lo << 8) + hi);
-      dst += 2;
+#ifdef UBFIX
+      edges = (left << 8) + right;
+      memcpy(pageBytes, &edges, sizeof(edges));
+      pageBytes += 2 * sizeof(u16);
+#else
+      scanlineData[0] = ((left << 8) + right);
+      scanlineData += 2;
+#endif
     }
     break;
+  }
 
   case 4:
-    v = state->value;
-    if (v & 32) {
-      *dst++ = 1;
-      *dst++ = 0x7f7f;
+    value = state->value;
+    if (value & 32) {
+      *scanlineData++ = 1;
+      *scanlineData++ = 0x7f7f;
     } else {
-      *dst++ = 0x7f7f;
-      *dst++ = 1;
+      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = 1;
     }
-    v = (u32)(240 * (v & 31)) >> 5;
+    value = (u32)(240 * (value & 31)) >> 5;
     for (i = 0; i < 160; i += 2) {
-      e = ((240 - v) << 8) + 240;
-      dst[0] = v;
-      dst[2] = e;
-      dst += 4;
+      oppositeEdges = ((240 - value) << 8) + 240;
+      scanlineData[0] = value;
+      scanlineData[2] = oppositeEdges;
+      scanlineData += 4;
     }
     break;
 
   case 7: {
     s32 ax;
 
+#ifdef UBFIX
+    ax = map->viewX & 0xffff0000;
+    cameraY = map->viewY & 0xffff0000;
+#else
     view7 = &map->viewX;
     ax = view7[0] & 0xffff0000;
-    ay = view7[1] & 0xffff0000;
+    cameraY = view7[1] & 0xffff0000;
+#endif
     obj = ObjectTable_Get(gGameState.selectedActor);
-    cx = (obj->x - ax) / 0x10000;
-    cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
+    centerX = (obj->x - ax) / 0x10000;
+    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
     // the frame counter is read here, where mode 8 forms its index, and the
     // value is not used
     gFrameCount;
-    *dst++ = state->active;
-    *dst++ = state->mask;
-    v = state->value;
-    if ((v & 32) == 0) {
-      v = 32 - (v & 31);
+    *scanlineData++ = state->active;
+    *scanlineData++ = state->mask;
+    value = state->value;
+    if ((value & 32) == 0) {
+      value = 32 - (value & 31);
     } else {
-      v &= 31;
+      value &= 31;
     }
     if (gFrameCount & 1) {
-      v = 0;
+      value = 0;
     }
-    v *= 5;
-    rr = (v * v) << 16;
+    value *= 5;
+    radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      v = i - cy;
-      h = Iwram_Sqrt(rr - ((v * v * 3) << 15)) >> 8;
-      lo = cx - h;
-      hi = cx + h;
-      if (lo < 0) {
-        lo = 0;
+      value = i - centerY;
+      horizontalExtent =
+          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+      left = centerX - horizontalExtent;
+      right = centerX + horizontalExtent;
+      if (left < 0) {
+        left = 0;
       }
-      if (hi < 0) {
-        hi = 0;
+      if (right < 0) {
+        right = 0;
       }
-      if (lo > 240) {
-        lo = 240;
+      if (left > 240) {
+        left = 240;
       }
-      if (hi > 240) {
-        hi = 240;
+      if (right > 240) {
+        right = 240;
       }
-      dst[0] = ((lo << 8) + hi);
-      dst += 2;
+      scanlineData[0] = ((left << 8) + right);
+      scanlineData += 2;
     }
     break;
   }
   case 8:
+#ifdef UBFIX
+    cameraX = map->viewX & 0xffff0000;
+    cameraY8 = map->viewY & 0xffff0000;
+#else
     view8 = &map->viewX;
-    bx = view8[0] & 0xffff0000;
-    by = view8[1] & 0xffff0000;
-    cx = (state->centreX - bx) / 0x10000;
-    cy = (state->centreY - by) / 0x10000 - 16;
-    k = -cy * 2 + gFrameCount;
-    *dst++ = state->mask;
-    *dst++ = state->active;
-    v = state->value;
-    if (v & 32) {
-      v = 32 - (v & 31);
+    cameraX = view8[0] & 0xffff0000;
+    cameraY8 = view8[1] & 0xffff0000;
+#endif
+    centerX = (state->centreX - cameraX) / 0x10000;
+    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
+    k = -centerY * 2 + gFrameCount;
+    *scanlineData++ = state->mask;
+    *scanlineData++ = state->active;
+    value = state->value;
+    if (value & 32) {
+      value = 32 - (value & 31);
     } else {
-      v &= 31;
+      value &= 31;
     }
-    v *= 5;
-    rr = (v * v) << 16;
+    value *= 5;
+    radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      v = i - cy;
-      h = Iwram_Sqrt(rr - ((v * v * 3) << 15)) >> 8;
-      lo = cx - h;
-      hi = cx + h;
-      if (lo < hi) {
-        d = gDisplayTransition_EdgeOffsets[k & 31];
-        lo -= d;
-        hi += d;
-        if (lo >= hi) {
-          lo = 240;
-          hi = 240;
+      value = i - centerY;
+      horizontalExtent =
+          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+      left = centerX - horizontalExtent;
+      right = centerX + horizontalExtent;
+      if (left < right) {
+        delta = gDisplayTransition_EdgeOffsets[k & 31];
+        left -= delta;
+        right += delta;
+        if (left >= right) {
+          left = 240;
+          right = 240;
         }
       }
-      if (lo < 0) {
-        lo = 0;
+      if (left < 0) {
+        left = 0;
       }
-      if (hi < 0) {
-        hi = 0;
+      if (right < 0) {
+        right = 0;
       }
-      if (lo > 240) {
-        lo = 240;
+      if (left > 240) {
+        left = 240;
       }
-      if (hi > 240) {
-        hi = 240;
+      if (right > 240) {
+        right = 240;
       }
-      dst[0] = ((lo << 8) + hi);
-      dst += 2;
+      scanlineData[0] = ((left << 8) + right);
+      scanlineData += 2;
       k += 2;
     }
     break;
@@ -4642,93 +4756,106 @@ void DisplayTransition_UpdateScanlineTable(void) {
   case 9: {
     s32 ax;
 
+#ifdef UBFIX
+    ax = map->viewX & 0xffff0000;
+    cameraY = map->viewY & 0xffff0000;
+#else
     view9 = &map->viewX;
     ax = view9[0] & 0xffff0000;
-    ay = view9[1] & 0xffff0000;
+    cameraY = view9[1] & 0xffff0000;
+#endif
     obj = ObjectTable_Get(gGameState.selectedActor);
-    cx = (obj->x - ax) / 0x10000;
-    cy = ((obj->z - obj->y) - ay) / 0x10000 - 16;
+    centerX = (obj->x - ax) / 0x10000;
+    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
     // the frame counter is read here, where mode 8 forms its index, and the
     // value is not used
     gFrameCount;
-    *dst++ = state->mask;
-    *dst++ = state->active;
-    v = state->value;
-    if (v & 32) {
-      v = 32 - (v & 31);
+    *scanlineData++ = state->mask;
+    *scanlineData++ = state->active;
+    value = state->value;
+    if (value & 32) {
+      value = 32 - (value & 31);
     } else {
-      v &= 31;
+      value &= 31;
     }
-    v *= 5;
-    rr = (v * v) << 16;
+    value *= 5;
+    radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      v = i - cy;
-      h = Iwram_Sqrt(rr - ((v * v * 3) << 15)) >> 8;
-      lo = cx - h;
-      hi = cx + h;
-      if (lo < 0) {
-        lo = 0;
+      value = i - centerY;
+      horizontalExtent =
+          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+      left = centerX - horizontalExtent;
+      right = centerX + horizontalExtent;
+      if (left < 0) {
+        left = 0;
       }
-      if (hi < 0) {
-        hi = 0;
+      if (right < 0) {
+        right = 0;
       }
-      if (lo > 240) {
-        lo = 240;
+      if (left > 240) {
+        left = 240;
       }
-      if (hi > 240) {
-        hi = 240;
+      if (right > 240) {
+        right = 240;
       }
-      dst[0] = ((lo << 8) + hi);
-      dst += 2;
+      scanlineData[0] = ((left << 8) + right);
+      scanlineData += 2;
     }
     break;
   }
   case 77: {
     s32 ax;
 
+#ifdef UBFIX
+    ax = map->viewX & 0xffff0000;
+    cameraY = map->viewY & 0xffff0000;
+#else
     view77 = &map->viewX;
     ax = view77[0] & 0xffff0000;
-    ay = view77[1] & 0xffff0000;
+    cameraY = view77[1] & 0xffff0000;
+#endif
     obj = ObjectTable_Get(gGameState.selectedActor);
-    cx = (obj->x - ax) / 0x10000;
-    cy = ((obj->z - obj->y) - ay) / 0x10000 - 8;
+    centerX = (obj->x - ax) / 0x10000;
+    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 8;
     // the frame counter is read here, where mode 8 forms its index, and the
     // value is not used
     gFrameCount;
-    *dst++ = state->mask;
-    *dst++ = state->active;
-    v = state->value;
-    if (v & 32) {
-      v = 32 - (v & 31);
+    *scanlineData++ = state->mask;
+    *scanlineData++ = state->active;
+    value = state->value;
+    if (value & 32) {
+      value = 32 - (value & 31);
     } else {
-      v &= 31;
+      value &= 31;
     }
-    v *= 5;
-    rr = (v * v) << 16;
+    value *= 5;
+    radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      v = i - cy;
-      h = Iwram_Sqrt(rr - ((v * v * 3) << 14)) >> 8;
-      lo = cx - h;
-      hi = cx + h;
-      if (lo < 0) {
-        lo = 0;
+      value = i - centerY;
+      horizontalExtent =
+          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 14)) >> 8;
+      left = centerX - horizontalExtent;
+      right = centerX + horizontalExtent;
+      if (left < 0) {
+        left = 0;
       }
-      if (hi < 0) {
-        hi = 0;
+      if (right < 0) {
+        right = 0;
       }
-      if (lo > 240) {
-        lo = 240;
+      if (left > 240) {
+        left = 240;
       }
-      if (hi > 240) {
-        hi = 240;
+      if (right > 240) {
+        right = 240;
       }
-      dst[0] = ((lo << 8) + hi);
-      dst += 2;
+      scanlineData[0] = ((left << 8) + right);
+      scanlineData += 2;
     }
     break;
   }
   }
 
+  // Publish only after every span of the next page is ready.
   state->page ^= 1;
 }
 
@@ -4768,13 +4895,13 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
 // flickers).
 void DisplayTransition_Start(s32 mode, s32 frames) {
   struct DisplayTransitionWindow *display;
-  s32 value;
-  s32 kind;
+  s32 variant;
+  s32 transitionKind;
 
-  kind = (mode >> 8) & 0xff;
+  transitionKind = (mode >> 8) & 0xff;
   display = gMapWork[0];
-  value = mode & 0xff;
-  switch (kind) {
+  variant = mode & 0xff;
+  switch (transitionKind) {
   case 0:
     Fade_ToBlack(0);
     Fade_FromBlack(frames);
@@ -4791,7 +4918,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   case 2: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    state->mode = variant;
     state->value = 0;
     state->mask = 63;
     state->active = 1;
@@ -4809,7 +4936,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   case 3: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    state->mode = variant;
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
@@ -4830,7 +4957,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     display->firstLine = 80;
     display->secondLine = 80;
     WaitFrames(1);
-    if (value == 0) {
+    if (variant == 0) {
       Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
@@ -4855,12 +4982,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 // Fades the screen out over frames frames, as DisplayTransition_Start fades
 // it in.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
-  s32 value;
-  s32 kind;
+  s32 variant;
+  s32 transitionKind;
 
-  kind = (mode >> 8) & 0xff;
-  value = mode & 0xff;
-  switch (kind) {
+  transitionKind = (mode >> 8) & 0xff;
+  variant = mode & 0xff;
+  switch (transitionKind) {
   case 0:
     Fade_FromBlack(0);
     Fade_ToBlack(frames);
@@ -4872,7 +4999,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   case 2: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    state->mode = variant;
     state->value = 32;
     state->mask = 63;
     state->active = 1;
@@ -4888,7 +5015,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   case 3: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    state->mode = variant;
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
@@ -4902,7 +5029,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   case 4: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
-    if (value == 0) {
+    if (variant == 0) {
       Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 0;
@@ -4924,18 +5051,18 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
 
 // Clears the map's display-control bits for backgrounds 3, 2 and 1
 // (0x0800, 0x0400 and 0x0200) for each argument that is set.
-void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
+void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
   struct DisplayTransitionWindow *state;
 
   state = gMapWork[0];
   if (state != NULL) {
-    if (clear_0200 != 0) {
+    if (clearBg1 != 0) {
       state->dispcnt &= 0xFDFF;
     }
-    if (clear_0400 != 0) {
+    if (clearBg2 != 0) {
       state->dispcnt &= 0xFBFF;
     }
-    if (clear_0800 != 0) {
+    if (clearBg3 != 0) {
       state->dispcnt &= 0xF7FF;
     }
   }
@@ -4948,7 +5075,7 @@ void DisplayTransition_Update(void) {
   struct DisplayTransitionWindow *display =
       *(struct DisplayTransitionWindow **)Ram_MapWork;
   s8 *duration = &state->duration;
-  u32 displayValue;
+  u32 edgeDistance;
 
   if (*duration != 0) {
     s8 *step = &state->step;
@@ -4968,13 +5095,13 @@ void DisplayTransition_Update(void) {
     }
   }
 
-  displayValue = state->value;
-  if (displayValue > 79) {
+  edgeDistance = state->value;
+  if (edgeDistance > 79) {
     display->firstLine = 200;
     display->secondLine = 250;
   } else {
-    display->firstLine = displayValue;
-    display->secondLine = 159 - displayValue;
+    display->firstLine = edgeDistance;
+    display->secondLine = 159 - edgeDistance;
   }
 }
 
@@ -4984,7 +5111,7 @@ void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionWindow *window =
       *(struct DisplayTransitionWindow **)Ram_MapWork;
   s8 *duration = &state->duration;
-  u16 value;
+  u16 edgeDistance;
 
   if (*duration != 0) {
     s8 *step = &state->step;
@@ -4996,21 +5123,21 @@ void DisplayTransition_UpdateFromCentre(void) {
       return;
     } else {
       s32 delta = state->end - state->start;
-      s32 offset;
+      s32 edgeOffset;
 
       (*step)++;
-      offset = Iwram_SignedDivide(delta * *step, *duration);
-      state->value = state->start + offset;
+      edgeOffset = Iwram_SignedDivide(delta * *step, *duration);
+      state->value = state->start + edgeOffset;
     }
   }
 
-  value = state->value;
-  if (value > 79) {
+  edgeDistance = state->value;
+  if (edgeDistance > 79) {
     window->firstLine = 200;
     window->secondLine = 250;
-  } else if (value != 0 && (gFrameCount & 1)) {
-    window->firstLine = value + 80;
-    window->secondLine = 80 - value;
+  } else if (edgeDistance != 0 && (gFrameCount & 1)) {
+    window->firstLine = edgeDistance + 80;
+    window->secondLine = 80 - edgeDistance;
   } else {
     window->firstLine = 0;
     window->secondLine = 159;
@@ -5021,40 +5148,42 @@ void DisplayTransition_UpdateFromCentre(void) {
 // to mode 2 (nothing shown) at the first line and back to mode 0 at the
 // second.
 void DisplayTransition_UpdateScanline(void) {
-  u32 line;
+  u32 scanline;
   struct DisplayTransitionWindow *state;
 
-  line = REG_VCOUNT;
+  scanline = REG_VCOUNT;
   state = gMapWork[0];
 
+  // Keep the same VCount sample across phase changes. A for/switch retry loop
+  // changes this function from 0xd2 to 0xba bytes (English, 2026-10-16).
 again:
   switch (state->irqPhase) {
   case 3:
-    if (line >= state->irqFirstLine) {
+    if (scanline >= state->irqFirstLine) {
       REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
       state->irqPhase = 9;
     }
     break;
   case 2:
-    if (line >= state->irqSecondLine) {
+    if (scanline >= state->irqSecondLine) {
       REG_DISPCNT &= 0xFFF8;
       state->irqPhase = 9;
     }
     break;
   case 1:
-    if (line >= state->irqFirstLine) {
+    if (scanline >= state->irqFirstLine) {
       REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
       state->irqPhase++;
       goto again;
     }
-    if (line >= state->irqSecondLine) {
+    if (scanline >= state->irqSecondLine) {
       REG_DISPCNT &= 0xFFF8;
       state->irqPhase = 3;
       goto again;
     }
     break;
   case 0:
-    if (line <= 158) {
+    if (scanline <= 158) {
       state->irqPhase = 1;
       goto again;
     }
@@ -5067,8 +5196,8 @@ again:
 // gDisplayTransition_DitherTable, to colour 15 (or 0 when closing).
 void DisplayTransition_UpdateFrame(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
-  s32 value;
-  s32 blend;
+  s32 ditherIndex;
+  s32 colorIndex;
   u32 i;
 
   if (state->duration != 0) {
@@ -5089,27 +5218,25 @@ void DisplayTransition_UpdateFrame(void) {
     }
   }
 
-  value = state->value - 1;
+  ditherIndex = state->value - 1;
   state->ditherToggle ^= 1;
-  blend = 0;
-  if (value & 32)
-    blend = 15;
-  value = (value & 31) * 2;
+  colorIndex = 0;
+  if (ditherIndex & 32)
+    colorIndex = 15;
+  ditherIndex = (ditherIndex & 31) * 2;
   for (i = 0; i <= 1; i++) {
-    u8 entry = gDisplayTransition_DitherTable[value & 63];
-    u8 *p = &state->paletteNibbles[entry >> 1];
-    if (entry & 1)
-      *p = (*p & 0x0f) | (blend << 4);
+    u8 pixelIndex = gDisplayTransition_DitherTable[ditherIndex & 63];
+    u8 *tileByte = &state->paletteNibbles[pixelIndex >> 1];
+    if (pixelIndex & 1)
+      *tileByte = (*tileByte & 0x0f) | (colorIndex << 4);
     else
-      *p = (*p & 0xf0) | blend;
-    value++;
+      *tileByte = (*tileByte & 0xf0) | colorIndex;
+    ditherIndex++;
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
                       0x84000008);
 }
-
-typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 // Fills background screen block 4 with tile 0 in palette 15 and, unless color
 // is -1, makes tile 0 solid color.
@@ -5118,12 +5245,12 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   if (color != -1) {
     u32 pattern = 0;
-    s32 cnt;
+    s32 remainingWords;
     u32 *tile;
-    for (cnt = 7; cnt >= 0; --cnt)
+    for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       pattern = (pattern << 4) | color;
     tile = work->solidTile;
-    for (cnt = 7; cnt >= 0; --cnt)
+    for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0), 0x84000008, REG_DMA3);
   }
@@ -5142,25 +5269,31 @@ void DisplayTransition_InitializeState(s32 value) {
   WaitFrames(0x78);
 }
 
-// Sets each of the 0x540 colour channels of step to the amount to add each
+// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
+#define HEAP_SLOT_PALBUF 32 // the colour buffer (gPaletteBufferWork)
+#define COLOR_MAX 448
+#define COLOR_HALF 224
+#define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
+
+// Sets each of the 1344 colour channels of step to the amount to add each
 // frame for source to reach target in frames frames.
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames) {
-  s32 index;
-  s32 first;
-  s32 second;
+  s32 remainingChannels;
+  s32 sourceChannel;
+  s32 targetChannel;
 
   if (frames > 0) {
-    index = 0x53F;
+    remainingChannels = COLOR_CHANNEL_COUNT - 1;
     do {
-      first = *source;
-      second = *target;
-      *step = Iwram_SignedDivide(second - first, frames);
-      index--;
+      sourceChannel = *source;
+      targetChannel = *target;
+      *step = Iwram_SignedDivide(targetChannel - sourceChannel, frames);
+      remainingChannels--;
       source++;
       target++;
       step++;
-    } while (index >= 0);
+    } while (remainingChannels >= 0);
   }
 }
 
@@ -5169,7 +5302,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
 // palettes.
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
-  u16 *add = work->delta;
+  u16 *channelDelta = work->delta;
   s32 i;
 
   if (GameFlag_TestFar(0x152) != 0) {
@@ -5178,10 +5311,11 @@ void BattlePalette_UpdateBlend(void) {
   if (work->duration == 0) {
     return;
   }
+  // Accumulate modular 16-bit channel steps, snapping to the exact target.
   if (++work->step < work->duration) {
-    u16 *sum = work->current;
-    for (i = 0; i < 0x540; i++) {
-      *sum++ += *add++;
+    u16 *currentChannel = work->current;
+    for (i = 0; i < COLOR_CHANNEL_COUNT; i++) {
+      *currentChannel++ += *channelDelta++;
     }
   } else {
     Iwram_CopyWords(work->current, work->target, sizeof(work->current));
@@ -5189,14 +5323,15 @@ void BattlePalette_UpdateBlend(void) {
   }
 
   {
+    // Pack B, G, R fixed-point channels into the hidden RGB555 page.
     u16 *packed = work->packed[1 ^ work->page];
-    s32 blue = 0x7c00;
+    s32 blueMask = 0x7c00;
     u16 *current;
 
-    i = 0x1c0;
+    i = COLOR_MAX;
     current = work->current;
     for (; i != 0; i--) {
-      *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) |
+      *packed++ = (current[0] & blueMask) | (((s16)current[1] >> 5) & 0x3e0) |
                   (((s16)current[2] >> 10) & 0x1f);
       current += 3;
     }
@@ -5206,8 +5341,10 @@ void BattlePalette_UpdateBlend(void) {
   {
     u16 *packed = work->packed[work->page];
 
-    IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed, 0x84000070);
-    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + 0xe0), 0x84000070);
+    IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
+                        DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2));
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + COLOR_HALF),
+                        DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2));
   }
 }
 
@@ -5215,11 +5352,6 @@ void BattlePalette_UpdateBlend(void) {
 // The colour buffer: palette colour changes for Psynergy and transitions,
 // building target colours and moving the palettes toward them.
 //--------------------------------------------------------------------------
-
-#define HEAP_SLOT_PALBUF 32 // the colour buffer (gPaletteBufferWork)
-
-#define COLOR_MAX 448 // 224 BG colours and 224 OBJ colours
-#define COLOR_HALF 224
 
 // Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
 extern u16 gBattlePalette_ChannelCurve[];
@@ -5234,20 +5366,20 @@ extern u16 gBattlePalette_ChannelCurveContrast[];
 // colours, 1 for the BG's 224, 2 for the OBJ's 224.
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
-  u32 cnt = COLOR_MAX;
-  s32 r;
-  s32 b;
-  u32 c;
-  s32 g;
+  u32 colorCount = COLOR_MAX;
+  s32 red;
+  s32 blue;
+  u32 color;
+  s32 green;
 
   if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
     mode = *(u16 *)BG_PLTT;
   if (half == 1) {
-    cnt = COLOR_HALF;
+    colorCount = COLOR_HALF;
   } else if (half == 2) {
     dst += COLOR_HALF * 3;
     src += COLOR_HALF;
-    cnt = COLOR_HALF;
+    colorCount = COLOR_HALF;
   }
 
   // One colour: write it once, then let DMA copy it over the rest.
@@ -5255,247 +5387,253 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
     *dst++ = (mode & 0x001f) << 10;
-    Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
+    Dma_Set(dst - 3, dst, (((colorCount - 1) * 6) >> 1) | DMA_ENABLE32,
+            REG_DMA3);
   } else if (mode < PALETTE_TRANSFORM_FLAGS) {
     switch (mode) {
     case PALETTE_TRANSFORM_GREY: // grey of brightness (2R + 4G + B) / 7
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = ((c << 11) & 0xf800);
-        g = ((c << 7) & 0x1f000);
-        b = (c & 0x7c00);
-        c = Iwram_SignedDivide(r + g + b, 7);
-        *dst++ = c;
-        *dst++ = c;
-        *dst++ = c;
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = ((color << 11) & 0xf800);
+        green = ((color << 7) & 0x1f000);
+        blue = (color & 0x7c00);
+        color = Iwram_SignedDivide(red + green + blue, 7);
+        *dst++ = color;
+        *dst++ = color;
+        *dst++ = color;
       }
       break;
     case PALETTE_TRANSFORM_SEPIA: // the brightness, red stronger, within 8 to
                                   // 28
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = c & 31;
-        c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
-        r = c * 4 + 5;
-        b = c * 3 + 5;
-        g = b;
-        if (r < 8)
-          r = 8;
-        if (g < 8)
-          g = 8;
-        if (b < 8)
-          b = 8;
-        if (r > 28)
-          r = 28;
-        if (g > 28)
-          g = 28;
-        if (b > 28)
-          b = 28;
-        *dst++ = gBattlePalette_ChannelCurveLight[b];
-        *dst++ = gBattlePalette_ChannelCurveLight[g];
-        *dst++ = gBattlePalette_ChannelCurveLight[r];
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = color & 31;
+        color = Iwram_SignedDivide(
+            red + ((color >> 5) & 31) + ((color >> 10) & 31), 10);
+        red = color * 4 + 5;
+        blue = color * 3 + 5;
+        green = blue;
+        if (red < 8)
+          red = 8;
+        if (green < 8)
+          green = 8;
+        if (blue < 8)
+          blue = 8;
+        if (red > 28)
+          red = 28;
+        if (green > 28)
+          green = 28;
+        if (blue > 28)
+          blue = 28;
+        *dst++ = gBattlePalette_ChannelCurveLight[blue];
+        *dst++ = gBattlePalette_ChannelCurveLight[green];
+        *dst++ = gBattlePalette_ChannelCurveLight[red];
       }
       break;
     case PALETTE_TRANSFORM_WARM: // half R + 10, two thirds G + 8, B - 7 (black
                                  // stays black)
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = c & 31;
-        g = (c >> 5) & 31;
-        b = (c >> 10) & 31;
-        if ((r | g | b) != 0) {
-          r -= (u32)r >> 1;
-          g -= g / 3;
-          r += 10;
-          g += 8;
-          b -= 7;
-          r = BattleFx_ClampRgb555Channel(r);
-          g = BattleFx_ClampRgb555Channel(g);
-          b = BattleFx_ClampRgb555Channel(b);
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        if ((red | green | blue) != 0) {
+          red -= (u32)red >> 1;
+          green -= green / 3;
+          red += 10;
+          green += 8;
+          blue -= 7;
+          red = BattleFx_ClampRgb555Channel(red);
+          green = BattleFx_ClampRgb555Channel(green);
+          blue = BattleFx_ClampRgb555Channel(blue);
         }
-        *dst++ = gBattlePalette_ChannelCurveContrast[b];
-        *dst++ = gBattlePalette_ChannelCurveLight[g];
-        *dst++ = gBattlePalette_ChannelCurve[r];
+        *dst++ = gBattlePalette_ChannelCurveContrast[blue];
+        *dst++ = gBattlePalette_ChannelCurveLight[green];
+        *dst++ = gBattlePalette_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_MUTED: // narrow the range, G and B + 2
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = c & 31;
-        g = (c >> 5) & 31;
-        b = (c >> 10) & 31;
-        if (r < 10)
-          r = 10;
-        if (g < 16)
-          g = 16;
-        if (b < 16)
-          b = 16;
-        if (r > 28)
-          r = 28;
-        if (g > 24)
-          g = 24;
-        if (b > 26)
-          b = 26;
-        g += 2;
-        b += 2;
-        r = BattleFx_ClampRgb555Channel(r);
-        g = BattleFx_ClampRgb555Channel(g);
-        b = BattleFx_ClampRgb555Channel(b);
-        *dst++ = gBattlePalette_ChannelCurve[b];
-        *dst++ = gBattlePalette_ChannelCurve[g];
-        *dst++ = gBattlePalette_ChannelCurve[r];
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        if (red < 10)
+          red = 10;
+        if (green < 16)
+          green = 16;
+        if (blue < 16)
+          blue = 16;
+        if (red > 28)
+          red = 28;
+        if (green > 24)
+          green = 24;
+        if (blue > 26)
+          blue = 26;
+        green += 2;
+        blue += 2;
+        red = BattleFx_ClampRgb555Channel(red);
+        green = BattleFx_ClampRgb555Channel(green);
+        blue = BattleFx_ClampRgb555Channel(blue);
+        *dst++ = gBattlePalette_ChannelCurve[blue];
+        *dst++ = gBattlePalette_ChannelCurve[green];
+        *dst++ = gBattlePalette_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_PALE: // half of each, plus the mean
-      for (i = 0; i < cnt; i++) {
+      for (i = 0; i < colorCount; i++) {
         s32 mean;
 
-        c = *src++;
-        r = c & 31;
-        g = (c >> 5) & 31;
-        b = (c >> 10) & 31;
-        mean = BattleFx_ClampRgb555Channel((r + g + b) / 3);
-        r = (r >> 1) + mean;
-        g = (g >> 1) + mean;
-        b = (b >> 1) + mean;
-        r = BattleFx_ClampRgb555Channel(r);
-        g = BattleFx_ClampRgb555Channel(g);
-        b = BattleFx_ClampRgb555Channel(b);
-        dst[0] = gBattlePalette_ChannelCurveContrast[b];
-        dst[1] = gBattlePalette_ChannelCurveContrast[g];
-        dst[2] = gBattlePalette_ChannelCurveContrast[r];
+        color = *src++;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        mean = BattleFx_ClampRgb555Channel((red + green + blue) / 3);
+        red = (red >> 1) + mean;
+        green = (green >> 1) + mean;
+        blue = (blue >> 1) + mean;
+        red = BattleFx_ClampRgb555Channel(red);
+        green = BattleFx_ClampRgb555Channel(green);
+        blue = BattleFx_ClampRgb555Channel(blue);
+        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
+        dst[1] = gBattlePalette_ChannelCurveContrast[green];
+        dst[2] = gBattlePalette_ChannelCurveContrast[red];
         dst += 3;
       }
       break;
     case PALETTE_TRANSFORM_RED: // an eighth of G and B added to R; G and B two
                                 // thirds
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = c & 31;
-        g = (c >> 5) & 31;
-        b = (c >> 10) & 31;
-        r += ((g >> 3) + (b >> 3));
-        r = BattleFx_ClampRgb555Channel(r);
-        g -= g / 3;
-        b -= b / 3;
-        dst[0] = gBattlePalette_ChannelCurve[b];
-        dst[1] = gBattlePalette_ChannelCurve[g];
-        dst[2] = gBattlePalette_ChannelCurveLight[r];
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        red += ((green >> 3) + (blue >> 3));
+        red = BattleFx_ClampRgb555Channel(red);
+        green -= green / 3;
+        blue -= blue / 3;
+        dst[0] = gBattlePalette_ChannelCurve[blue];
+        dst[1] = gBattlePalette_ChannelCurve[green];
+        dst[2] = gBattlePalette_ChannelCurveLight[red];
         dst += 3;
       }
       break;
     case PALETTE_TRANSFORM_WARM2: // half R + 6, two thirds G + 4, B - 6
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        r = c & 31;
-        g = (c >> 5) & 31;
-        b = (c >> 10) & 31;
-        r -= (u32)r >> 1;
-        g -= g / 3;
-        r += 6;
-        g += 4;
-        b -= 6;
-        r = BattleFx_ClampRgb555Channel(r);
-        g = BattleFx_ClampRgb555Channel(g);
-        b = BattleFx_ClampRgb555Channel(b);
-        dst[0] = gBattlePalette_ChannelCurveContrast[b];
-        dst[1] = gBattlePalette_ChannelCurveLight[g];
-        dst[2] = gBattlePalette_ChannelCurve[r];
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        red -= (u32)red >> 1;
+        green -= green / 3;
+        red += 6;
+        green += 4;
+        blue -= 6;
+        red = BattleFx_ClampRgb555Channel(red);
+        green = BattleFx_ClampRgb555Channel(green);
+        blue = BattleFx_ClampRgb555Channel(blue);
+        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
+        dst[1] = gBattlePalette_ChannelCurveLight[green];
+        dst[2] = gBattlePalette_ChannelCurve[red];
         dst += 3;
       }
       break;
     default: // unchanged
-      for (i = 0; i < cnt; i++) {
-        c = *src++;
-        dst[i * 3 + 0] = c & 0x7c00;
-        dst[i * 3 + 1] = (c & 0x03e0) << 5;
-        dst[i * 3 + 2] = (c & 0x001f) << 10;
+      for (i = 0; i < colorCount; i++) {
+        color = *src++;
+        dst[i * 3 + 0] = color & 0x7c00;
+        dst[i * 3 + 1] = (color & 0x03e0) << 5;
+        dst[i * 3 + 2] = (color & 0x001f) << 10;
       }
       break;
     }
   } else if (mode & PALETTE_TRANSFORM_TINT) {
     // The brightness (2R + 4G + B) times the colour in mode.
-    u32 tr;
-    u32 tg;
-    u32 tb;
-    s32 r;
-    s32 g;
+    u32 tintRed;
+    u32 tintGreen;
+    u32 tintBlue;
+    s32 red;
+    s32 green;
 
-    tr = mode & 31;
-    tg = (mode >> 5) & 31;
-    tb = (mode >> 10) & 31;
-    for (i = 0; i < cnt; i++) {
-      c = *src++;
-      r = ((c << 11) & 0xf800);
-      g = ((c << 7) & 0x1f000);
-      b = (c & 0x7c00);
-      c = Iwram_SignedDivide(r + g + b, 96);
-      r = c * tr;
-      g = c * tg;
-      b = c * tb;
-      r = BattleFx_ClampRgb555Component(r);
-      g = BattleFx_ClampRgb555Component(g);
-      b = BattleFx_ClampRgb555Component(b);
-      dst[0] = b;
-      dst[1] = g;
-      dst[2] = r;
+    tintRed = mode & 31;
+    tintGreen = (mode >> 5) & 31;
+    tintBlue = (mode >> 10) & 31;
+    for (i = 0; i < colorCount; i++) {
+      color = *src++;
+      red = ((color << 11) & 0xf800);
+      green = ((color << 7) & 0x1f000);
+      blue = (color & 0x7c00);
+      color = Iwram_SignedDivide(red + green + blue, 96);
+      red = color * tintRed;
+      green = color * tintGreen;
+      blue = color * tintBlue;
+      red = BattleFx_ClampRgb555Component(red);
+      green = BattleFx_ClampRgb555Component(green);
+      blue = BattleFx_ClampRgb555Component(blue);
+      dst[0] = blue;
+      dst[1] = green;
+      dst[2] = red;
       dst += 3;
     }
   } else if (mode & PALETTE_TRANSFORM_BLEND) {
     // The brightness R + G + B shared out in the proportions of mode's colour.
-    u32 tr;
-    u32 tg;
-    u32 tb;
-    s32 nr;
-    s32 ng;
-    s32 nb;
+    u32 tintRed;
+    u32 tintGreen;
+    u32 tintBlue;
+    s32 blendedRed;
+    s32 blendedGreen;
+    s32 blendedBlue;
 
-    tr = mode & 31;
-    tg = (mode >> 5) & 31;
-    tb = (mode >> 10) & 31;
-    for (i = 0; i < cnt; i++) {
-      c = *src++;
-      r = c & 31;
-      c = Iwram_SignedDivide((r + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4,
-                             tr + tg + tb);
-      nr = Iwram_MulQ16(((c * tr) >> 4) << 16, (s32)(tr << 16) >> 4);
-      ng = Iwram_MulQ16(((c * tg) >> 4) << 16, (s32)(tg << 16) >> 4);
-      nb = Iwram_MulQ16(((c * tb) >> 4) << 16, (s32)(tb << 16) >> 4);
-      nr = BattleFx_ClampRgb555Channel((u32)nr >> 16);
-      ng = BattleFx_ClampRgb555Channel((u32)ng >> 16);
-      nb = BattleFx_ClampRgb555Channel((u32)nb >> 16);
-      *dst++ = gBattlePalette_ChannelCurve[nb];
-      *dst++ = gBattlePalette_ChannelCurve[ng];
-      *dst++ = gBattlePalette_ChannelCurve[nr];
+    tintRed = mode & 31;
+    tintGreen = (mode >> 5) & 31;
+    tintBlue = (mode >> 10) & 31;
+    for (i = 0; i < colorCount; i++) {
+      color = *src++;
+      red = color & 31;
+      color = Iwram_SignedDivide(
+          (red + ((color >> 5) & 31) + ((color >> 10) & 31)) << 4,
+          tintRed + tintGreen + tintBlue);
+      blendedRed = Iwram_MulQ16(((color * tintRed) >> 4) << 16,
+                                (s32)(tintRed << 16) >> 4);
+      blendedGreen = Iwram_MulQ16(((color * tintGreen) >> 4) << 16,
+                                  (s32)(tintGreen << 16) >> 4);
+      blendedBlue = Iwram_MulQ16(((color * tintBlue) >> 4) << 16,
+                                 (s32)(tintBlue << 16) >> 4);
+      blendedRed = BattleFx_ClampRgb555Channel((u32)blendedRed >> 16);
+      blendedGreen = BattleFx_ClampRgb555Channel((u32)blendedGreen >> 16);
+      blendedBlue = BattleFx_ClampRgb555Channel((u32)blendedBlue >> 16);
+      *dst++ = gBattlePalette_ChannelCurve[blendedBlue];
+      *dst++ = gBattlePalette_ChannelCurve[blendedGreen];
+      *dst++ = gBattlePalette_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TRANSFORM_SPLIT) {
-    for (i = 0; i < cnt; i++) {
-      c = *src++;
-      dst[i * 3 + 0] = c & 0x7c00;
-      dst[i * 3 + 1] = (c & 0x03e0) << 5;
-      dst[i * 3 + 2] = (c & 0x001f) << 10;
+    for (i = 0; i < colorCount; i++) {
+      color = *src++;
+      dst[i * 3 + 0] = color & 0x7c00;
+      dst[i * 3 + 1] = (color & 0x03e0) << 5;
+      dst[i * 3 + 2] = (color & 0x001f) << 10;
     }
   } else {
     // Copy a ready buffer.
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst,
-            ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            ((colorCount * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
   }
 }
 
 // Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
 // starts updating the palettes from it each frame.
 void BattleEffect_InitializeBuffers(void) {
-  struct BattleEffectBuffers *buf;
+  struct BattleEffectBuffers *work;
 
-  buf = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*buf));
-  Dma_Fill32(0, buf, sizeof(*buf));
-  Dma_Set((void *)BG_PLTT, &buf->palette[0],
+  work = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*work));
+  Dma_Fill32(0, work, sizeof(*work));
+  Dma_Set((void *)BG_PLTT, &work->palette[0],
           DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &buf->palette[COLOR_HALF],
+  Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
           DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
-  BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, buf->palette, buf->target, 0);
+  BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, work->palette, work->target, 0);
   Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }
 
@@ -5507,39 +5645,40 @@ void Runtime_ScheduleCallbackAndReleaseBlock32B(void) {
 
 // Sets the colours the buffer moves toward (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
-  struct BattleEffectBuffers *buf = gPaletteBufferWork;
+  struct BattleEffectBuffers *work = gPaletteBufferWork;
 
-  if (buf != NULL) {
-    BattleFx_BuildBuffer(mode, buf->palette, buf->target, half);
+  if (work != NULL) {
+    BattleFx_BuildBuffer(mode, work->palette, work->target, half);
   }
 }
 
 // Sets the colours the buffer shows now (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
-  struct BattleEffectBuffers *buf = gPaletteBufferWork;
+  struct BattleEffectBuffers *work = gPaletteBufferWork;
 
-  if (buf != NULL) {
-    BattleFx_BuildBuffer(mode, buf->palette, buf->current, half);
+  if (work != NULL) {
+    BattleFx_BuildBuffer(mode, work->palette, work->current, half);
   }
 }
 
 // Sets the buffer's source backdrop colour.
-void BattleFx_SetPrimaryBufferValue(u32 col) {
-  struct BattleEffectBuffers *buf = gPaletteBufferWork;
+void BattleFx_SetPrimaryBufferValue(u32 color) {
+  struct BattleEffectBuffers *work = gPaletteBufferWork;
 
-  if (buf != NULL) {
-    buf->palette[0] = col;
+  if (work != NULL) {
+    work->palette[0] = color;
   }
 }
 
 // Starts moving the shown colours to the target colours over frames frames.
 void BattleFx_StartBufferInterpolation(s32 frames) {
-  struct BattleEffectBuffers *buf = gPaletteBufferWork;
+  struct BattleEffectBuffers *work = gPaletteBufferWork;
 
-  if (buf != NULL) {
-    buf->duration = frames;
-    buf->step = 0;
-    BattleFx_InterpolateBuffers(buf->current, buf->target, buf->delta, frames);
+  if (work != NULL) {
+    work->duration = frames;
+    work->step = 0;
+    BattleFx_InterpolateBuffers(work->current, work->target, work->delta,
+                                frames);
   }
 }
 
@@ -5559,26 +5698,19 @@ s32 BattleFx_ClampRgb555Component(s32 value) {
   return value;
 }
 
-struct FadeActor {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[2];
-  s16 floor;
-  u8 unk18[10];
-  u8 layer;
-};
-
 struct FadeWork {
   struct AnimationSpritePart marks[2];
-  struct FadeActor *actor;
+  struct ObjectRuntime *actor;
 };
 
+LAYOUT_SIZE_GUARD(FadeWork_Size, struct FadeWork, 28);
+
+#ifndef UBFIX
 struct FadeView {
   u8 unk00[228];
   s16 camera[4];
 };
+#endif
 
 // Each frame of the fade overlay: on each of the two cells beside the actor
 // (left and right of it), where the ground one or two cells south rises above
@@ -5586,19 +5718,28 @@ struct FadeView {
 // at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeWork *work = WORK_SLOT(36);
+#ifdef UBFIX
+  struct MapScrollWork *map = WORK_SLOT(8);
+  s32 cameraX = map->viewX >> 16;
+  s32 cameraZ = map->viewY >> 16;
+#else
+  // UB: the legacy halfword overlay aliases the map's s32 coordinates.
+  // Named-member high halves keep 0x1da bytes but change load scheduling
+  // from .text+0x6cce in English; the actor's named fields match plainly.
   s16 *camera = ((struct FadeView *)WORK_SLOT(8))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
+#endif
   struct AnimationSpritePart *mark = work->marks;
-  struct FadeActor *actor = work->actor;
+  struct ObjectRuntime *actor = work->actor;
   s32 x;
   s32 z;
-  s32 floor;
-  s32 layer;
+  s32 terrainFloor;
+  s32 terrainLayer;
   u32 tile;
   s32 height;
-  s32 other;
-  s32 row;
+  s32 secondHeight;
+  s32 screenRow;
   /* FAKEMATCH: never used; nothing reads or writes these four bytes of the
    * native frame. Without them the frame is 12 bytes, not 16 (differ 4: the sp
    * adjustments), measured 2026-10-13. */
@@ -5608,40 +5749,45 @@ void FadeOverlay_DrawMarks(void) {
     return;
   x = actor->x;
   z = actor->z;
-  floor = actor->floor;
-  layer = actor->layer;
+  terrainFloor = actor->terrainHeight >> 16;
+  terrainLayer = actor->terrainId;
   tile = gVramBlockCache[94].offset >> 5;
+  // Probe the left-hand cell first, preserving the two terrain queries per
+  // side.
   x -= 0x80000;
-  height = Map_GetTerrainHeightFar(layer, x, z + 0x100000) >> 16;
-  other = (Map_GetTerrainHeightFar(layer, x, z + 0x200000) >> 16) - 16;
-  if (other > height)
-    height = other;
-  if (height > 0 && height > floor) {
+  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  secondHeight =
+      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+  if (secondHeight > height)
+    height = secondHeight;
+  if (height > 0 && height > terrainFloor) {
     ((u32 *)mark)[1] = 0x40000800;
     ((u32 *)mark)[2] = 0x400;
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = 1;
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
-    row = (z >> 16) & 0xf0;
-    mark->y = row - cameraZ - height + 16;
+    screenRow = (z >> 16) & 0xf0;
+    mark->y = screenRow - cameraZ - height + 16;
     Runtime_PushSlotEntry(mark, 0);
   }
+  // The right-hand mark uses its own OAM initializer and terrain probes.
   x += 0x100000;
-  height = Map_GetTerrainHeightFar(layer, x, z + 0x100000) >> 16;
+  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
-  other = (Map_GetTerrainHeightFar(layer, x, z + 0x200000) >> 16) - 16;
-  if (other > height)
-    height = other;
-  if (height > 0 && height > floor) {
+  secondHeight =
+      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+  if (secondHeight > height)
+    height = secondHeight;
+  if (height > 0 && height > terrainFloor) {
     ((u32 *)mark)[1] = 0x40000800;
     ((u32 *)mark)[2] = 0;
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = 1;
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
-    row = (z >> 16) & 0xf0;
-    mark->y = row - cameraZ - height + 16;
+    screenRow = (z >> 16) & 0xf0;
+    mark->y = screenRow - cameraZ - height + 16;
     Runtime_PushSlotEntry(mark, 0);
   }
 }
@@ -5649,11 +5795,12 @@ void FadeOverlay_DrawMarks(void) {
 // Starts the fade overlay on object (the party leader when NULL): loads its
 // solid tiles, sets the blending and draws it each frame.
 void BattleFx_StartFadeOverlay(void *object) {
-  u32 *work;
+  struct FadeWork *work;
   u8 *tiles;
   volatile u32 fill;
 
-  work = Runtime_AllocateBlock(36, 28);
+  work = Runtime_AllocateBlock(36, sizeof(*work));
+  // Upload the solid sprite tiles before enabling the drawing callback.
   tiles = Runtime_AllocateHeapBlock(14, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
@@ -5662,10 +5809,10 @@ void BattleFx_StartFadeOverlay(void *object) {
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(16, &REG_BLDALPHA);
   Io_Write16(31, &REG_BLDY);
-  Dma_Fill32Cell(fill, 0, work, 28);
+  Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
     object = ObjectTable_Get(gGameState.selectedActor);
-  work[6] = (u32)object;
+  work->actor = object;
 }
 
 // Suspends the fade overlay.
@@ -5682,20 +5829,21 @@ void Object_DisableEffectSpawnCallback(void) {
 // or its last entry when there is none.
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
   struct BattleEffectEntry *entry = gBattleFx_DefinitionTable;
-  u32 index = 0;
+  u32 definitionIndex = 0;
 
   if (entry->id != id) {
     do {
-      index += 1;
+      definitionIndex += 1;
       entry++;
-      if (index > 0x81)
+      if (definitionIndex > 0x81)
         break;
     } while (entry->id != id);
   }
   return entry;
 }
 
-// Returns the sprite of actor id, or 0 when it has no animated sprite.
+// Returns the sprite id stored by a live actor's animated sprite, or 0 when
+// that actor has no animated sprite or its sprite-id pointer is absent.
 s32 BattleFx_GetAnimationValue(s32 id) {
   struct BattleRenderObject *object = ObjectTable_Get(id);
 
@@ -5710,13 +5858,13 @@ s32 BattleFx_GetAnimationValue(s32 id) {
 // its definition's value), or 0 with no portrait or with gGameState.speech
 // off.
 s32 BattleFx_GetResourceId(u32 id) {
-  u8 value;
+  u8 portraitId;
 
   if (gGameState.speech == 0 ||
-      (value = BattleFx_FindDefinition(id)->value) == 0xFF) {
+      (portraitId = BattleFx_FindDefinition(id)->value) == 0xFF) {
     return 0;
   }
-  return value + 0x100;
+  return portraitId + 0x100;
 }
 
 // Returns the definition flags of actor id's sprite, which choose its line

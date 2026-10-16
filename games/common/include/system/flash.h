@@ -13,7 +13,7 @@ void CopyFlashReadRoutineToRam(void *destination);
 s32 ReadFlashId(void);
 s32 IdentifyFlash(void);
 u16 EraseFlashChip(void);
-s32 WaitForFlashWrite(u8 timing_index, s32 address, u8 expected);
+u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected);
 u16 EraseAtmelFlashChip(void);
 u16 EraseAtmelFlashSector(u16 sector);
 u16 EraseAtmelFlashBlock(u16 block);

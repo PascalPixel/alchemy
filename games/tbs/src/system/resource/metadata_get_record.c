@@ -3,6 +3,7 @@
 
 extern struct AnimationMetadata gCharacter_DescriptorTable[];
 
-struct AnimationMetadata *Resource_GetMetadataRecord(u32 number) {
-  return &gCharacter_DescriptorTable[number & 0xfff];
+// Looks up animation metadata using the descriptor ID in the low twelve bits.
+struct AnimationMetadata *Resource_GetMetadataRecord(u32 descriptorId) {
+  return &gCharacter_DescriptorTable[descriptorId & 0xfff];
 }
